@@ -28,8 +28,8 @@ catalogs:
       specifier: ^4.17.12
       version: 4.17.12
     '@types/node':
-      specifier: ^25.0.2
-      version: 25.0.2
+      specifier: ^25.0.3
+      version: 25.0.3
     '@types/react':
       specifier: ^19.2.7
       version: 19.2.7
@@ -40,14 +40,14 @@ catalogs:
       specifier: ^5.1.2
       version: 5.1.2
     '@vitest/coverage-v8':
-      specifier: ^4.0.15
-      version: 4.0.15
+      specifier: ^4.0.16
+      version: 4.0.16
     lodash-es:
-      specifier: ^4.17.21
-      version: 4.17.21
+      specifier: ^4.17.22
+      version: 4.17.22
     maplibre-gl:
-      specifier: ^5.14.0
-      version: 5.14.0
+      specifier: ^5.15.0
+      version: 5.15.0
     react:
       specifier: ^19.2.3
       version: 19.2.3
@@ -82,8 +82,8 @@ catalogs:
       specifier: ^2.3.0
       version: 2.3.0
     vitest:
-      specifier: ^4.0.15
-      version: 4.0.15
+      specifier: ^4.0.16
+      version: 4.0.16
 
 importers:
 
@@ -115,11 +115,11 @@ importers:
         version: 0.5.0
       lodash-es:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.17.22
     devDependencies:
       '@microsoft/api-extractor':
         specifier: 'catalog:'
-        version: 7.55.2(@types/node@25.0.2)
+        version: 7.55.2(@types/node@25.0.3)
       '@types/geojson':
         specifier: 'catalog:'
         version: 7946.0.16
@@ -128,7 +128,7 @@ importers:
         version: 4.17.12
       '@vitest/coverage-v8':
         specifier: 'catalog:'
-        version: 4.0.15(vitest@4.0.15(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
+        version: 4.0.16(vitest@4.0.16(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -146,19 +146,19 @@ importers:
         version: link:../shared-configs
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
       vite-plugin-dts:
         specifier: 'catalog:'
-        version: 5.0.0-beta.6(@microsoft/api-extractor@7.55.2(@types/node@25.0.2))(esbuild@0.27.1)(rollup@4.53.5)(typescript@5.9.3)(vite@7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
+        version: 5.0.0-beta.6(@microsoft/api-extractor@7.55.2(@types/node@25.0.3))(esbuild@0.27.2)(rollup@4.53.5)(typescript@5.9.3)(vite@7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
       vitest:
         specifier: 'catalog:'
-        version: 4.0.15(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 4.0.16(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples:
     dependencies:
@@ -177,7 +177,7 @@ importers:
     devDependencies:
       '@microsoft/api-extractor':
         specifier: 'catalog:'
-        version: 7.55.2(@types/node@25.0.2)
+        version: 7.55.2(@types/node@25.0.3)
       '@tsconfig/recommended':
         specifier: 'catalog:'
         version: 1.0.13
@@ -186,7 +186,7 @@ importers:
         version: 4.0.9
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       '@types/react':
         specifier: 'catalog:'
         version: 19.2.7
@@ -195,7 +195,7 @@ importers:
         version: 19.2.3(@types/react@19.2.7)
       '@vitejs/plugin-react':
         specifier: 'catalog:'
-        version: 5.1.2(vite@7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
+        version: 5.1.2(vite@7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
       js-yaml:
         specifier: ^4.1.1
         version: 4.1.1
@@ -207,16 +207,16 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
       vite-plugin-dts:
         specifier: 'catalog:'
-        version: 5.0.0-beta.6(@microsoft/api-extractor@7.55.2(@types/node@25.0.2))(esbuild@0.27.1)(rollup@4.53.5)(typescript@5.9.3)(vite@7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
+        version: 5.0.0-beta.6(@microsoft/api-extractor@7.55.2(@types/node@25.0.3))(esbuild@0.27.2)(rollup@4.53.5)(typescript@5.9.3)(vite@7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
       vite-plugin-singlefile:
         specifier: 'catalog:'
-        version: 2.3.0(rollup@4.53.5)(vite@7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
+        version: 2.3.0(rollup@4.53.5)(vite@7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
       vitest:
         specifier: 'catalog:'
-        version: 4.0.15(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 4.0.16(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/autocomplete-fuzzy-search-playground:
     dependencies:
@@ -226,10 +226,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -238,13 +238,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/basic-geometry:
     dependencies:
@@ -254,10 +254,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -266,13 +266,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/byod-geojson-heatmap:
     dependencies:
@@ -285,10 +285,10 @@ importers:
         version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -297,13 +297,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/default-map:
     dependencies:
@@ -313,10 +313,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -325,13 +325,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/ev-charging-stations-playground:
     dependencies:
@@ -343,17 +343,17 @@ importers:
         version: 7.3.1
       lodash-es:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.17.22
     devDependencies:
       '@types/lodash-es':
         specifier: 'catalog:'
         version: 4.17.12
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -362,13 +362,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/geocode:
     dependencies:
@@ -378,10 +378,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -390,13 +390,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/geocode-init:
     dependencies:
@@ -406,10 +406,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -418,13 +418,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/geometry-search-playground:
     dependencies:
@@ -437,10 +437,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -449,13 +449,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/geometry-search-with-poi-categories:
     dependencies:
@@ -468,10 +468,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -480,13 +480,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/hillshade:
     dependencies:
@@ -496,10 +496,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -508,13 +508,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/interactive-roads-and-numbers:
     dependencies:
@@ -530,10 +530,10 @@ importers:
         version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -542,13 +542,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/keep-state-when-changing-style:
     dependencies:
@@ -558,10 +558,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -570,13 +570,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/layer-group-toggling:
     dependencies:
@@ -586,10 +586,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -598,13 +598,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/layer-groups-visibility-animation:
     dependencies:
@@ -614,10 +614,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -626,13 +626,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/ldevr-custom-charging-stops:
     dependencies:
@@ -642,10 +642,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -654,13 +654,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/ldevr-detailed-vehicle:
     dependencies:
@@ -670,10 +670,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -682,13 +682,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/ldevr-model-id:
     dependencies:
@@ -698,10 +698,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -710,13 +710,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/load-style-parts:
     dependencies:
@@ -726,10 +726,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -738,13 +738,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/map-config-playground:
     dependencies:
@@ -754,10 +754,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -766,13 +766,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/map-events:
     dependencies:
@@ -782,10 +782,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -794,13 +794,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/map-language:
     dependencies:
@@ -810,10 +810,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -822,13 +822,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/multiple-geometries:
     dependencies:
@@ -838,10 +838,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -850,13 +850,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/multiple-geometry-modules:
     dependencies:
@@ -869,10 +869,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -881,13 +881,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/multiple-maps-with-geometries:
     dependencies:
@@ -903,10 +903,10 @@ importers:
         version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -915,13 +915,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/nodejs-geocode:
     dependencies:
@@ -971,10 +971,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -983,13 +983,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/places-customize-playground:
     dependencies:
@@ -998,11 +998,11 @@ importers:
         version: link:../..
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -1011,13 +1011,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/places-default-icon-styling:
     dependencies:
@@ -1026,11 +1026,11 @@ importers:
         version: link:../..
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -1039,13 +1039,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/places-in-geometry:
     dependencies:
@@ -1058,10 +1058,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -1070,13 +1070,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/places-maplibre-customization:
     dependencies:
@@ -1086,10 +1086,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -1098,13 +1098,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/places-multiple-icons-same-category:
     dependencies:
@@ -1113,11 +1113,11 @@ importers:
         version: link:../..
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -1126,13 +1126,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/poi-filters:
     dependencies:
@@ -1142,10 +1142,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -1154,13 +1154,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/reachable-ranges:
     dependencies:
@@ -1170,10 +1170,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -1182,13 +1182,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/rest-of-the-map-click:
     dependencies:
@@ -1198,10 +1198,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -1210,13 +1210,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/rev-geo-json:
     dependencies:
@@ -1226,10 +1226,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -1238,13 +1238,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/rev-geo-playground:
     dependencies:
@@ -1257,10 +1257,10 @@ importers:
         version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -1269,13 +1269,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/reverse-geocode:
     dependencies:
@@ -1285,10 +1285,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -1297,13 +1297,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/route:
     dependencies:
@@ -1313,10 +1313,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -1325,13 +1325,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/route-custom-main-color:
     dependencies:
@@ -1341,10 +1341,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -1353,13 +1353,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/route-geometry-searches:
     dependencies:
@@ -1375,10 +1375,10 @@ importers:
         version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -1387,13 +1387,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/route-maplibre-customization:
     dependencies:
@@ -1403,10 +1403,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -1415,13 +1415,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/route-monitor-traffic:
     dependencies:
@@ -1431,10 +1431,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -1443,13 +1443,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/route-multiple-origin-destinations:
     dependencies:
@@ -1459,10 +1459,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -1471,13 +1471,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/route-multiple-origins:
     dependencies:
@@ -1487,10 +1487,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -1499,13 +1499,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/route-reconstruction:
     dependencies:
@@ -1518,10 +1518,10 @@ importers:
         version: 7946.0.16
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -1530,13 +1530,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/route-waypoint-icon-style:
     dependencies:
@@ -1546,10 +1546,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -1558,13 +1558,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/route-with-alternatives:
     dependencies:
@@ -1574,10 +1574,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -1586,13 +1586,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/route-with-guidance:
     dependencies:
@@ -1602,10 +1602,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -1614,13 +1614,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/search-parking:
     dependencies:
@@ -1630,10 +1630,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -1642,13 +1642,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/traffic-config-playground:
     dependencies:
@@ -1658,10 +1658,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -1670,13 +1670,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/traffic-flow:
     dependencies:
@@ -1686,10 +1686,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -1698,13 +1698,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/traffic-incidents:
     dependencies:
@@ -1714,10 +1714,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -1726,13 +1726,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/waypoints:
     dependencies:
@@ -1742,10 +1742,10 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -1754,13 +1754,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   map:
     dependencies:
@@ -1772,14 +1772,14 @@ importers:
         version: link:../core
       lodash-es:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.17.22
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
     devDependencies:
       '@microsoft/api-extractor':
         specifier: 'catalog:'
-        version: 7.55.2(@types/node@25.0.2)
+        version: 7.55.2(@types/node@25.0.3)
       '@types/geojson':
         specifier: 'catalog:'
         version: 7946.0.16
@@ -1788,7 +1788,7 @@ importers:
         version: 4.17.12
       '@vitest/coverage-v8':
         specifier: 'catalog:'
-        version: 4.0.15(vitest@4.0.15(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
+        version: 4.0.16(vitest@4.0.16(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -1806,19 +1806,19 @@ importers:
         version: link:../shared-configs
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
       vite-plugin-dts:
         specifier: 'catalog:'
-        version: 5.0.0-beta.6(@microsoft/api-extractor@7.55.2(@types/node@25.0.2))(esbuild@0.27.1)(rollup@4.53.5)(typescript@5.9.3)(vite@7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
+        version: 5.0.0-beta.6(@microsoft/api-extractor@7.55.2(@types/node@25.0.3))(esbuild@0.27.2)(rollup@4.53.5)(typescript@5.9.3)(vite@7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
       vitest:
         specifier: 'catalog:'
-        version: 4.0.15(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 4.0.16(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   map-integration-tests:
     devDependencies:
@@ -1836,34 +1836,34 @@ importers:
         version: 4.17.12
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       '@vitejs/plugin-basic-ssl':
         specifier: ^2.1.0
-        version: 2.1.0(vite@7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
+        version: 2.1.0(vite@7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
       core:
         specifier: workspace:*
         version: link:../core
       lodash-es:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.17.22
       map:
         specifier: workspace:*
         version: link:../map
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.14.0
+        version: 5.15.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   services:
     dependencies:
@@ -1872,14 +1872,14 @@ importers:
         version: link:../core
       lodash-es:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.17.22
       zod:
         specifier: ^4.2.1
         version: 4.2.1
     devDependencies:
       '@microsoft/api-extractor':
         specifier: 'catalog:'
-        version: 7.55.2(@types/node@25.0.2)
+        version: 7.55.2(@types/node@25.0.3)
       '@types/geojson':
         specifier: 'catalog:'
         version: 7946.0.16
@@ -1888,10 +1888,10 @@ importers:
         version: 4.17.12
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       '@vitest/coverage-v8':
         specifier: 'catalog:'
-        version: 4.0.15(vitest@4.0.15(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
+        version: 4.0.16(vitest@4.0.16(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
       rimraf:
         specifier: 'catalog:'
         version: 6.1.2
@@ -1909,25 +1909,25 @@ importers:
         version: link:../shared-configs
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@types/node@25.0.2)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
       vite-plugin-dts:
         specifier: 'catalog:'
-        version: 5.0.0-beta.6(@microsoft/api-extractor@7.55.2(@types/node@25.0.2))(esbuild@0.27.1)(rollup@4.53.5)(typescript@5.9.3)(vite@7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
+        version: 5.0.0-beta.6(@microsoft/api-extractor@7.55.2(@types/node@25.0.3))(esbuild@0.27.2)(rollup@4.53.5)(typescript@5.9.3)(vite@7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
       vitest:
         specifier: 'catalog:'
-        version: 4.0.15(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 4.0.16(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   shared-configs:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 25.0.2
+        version: 25.0.3
       rollup-plugin-analyzer:
         specifier: 'catalog:'
         version: 4.0.0
@@ -1939,13 +1939,13 @@ importers:
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
       vite:
         specifier: 'catalog:'
-        version: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
       vite-plugin-dts:
         specifier: 'catalog:'
-        version: 5.0.0-beta.6(@microsoft/api-extractor@7.55.2(@types/node@25.0.2))(esbuild@0.27.1)(rollup@4.53.5)(typescript@5.9.3)(vite@7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
+        version: 5.0.0-beta.6(@microsoft/api-extractor@7.55.2(@types/node@25.0.3))(esbuild@0.27.2)(rollup@4.53.5)(typescript@5.9.3)(vite@7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
       vitest:
         specifier: 'catalog:'
-        version: 4.0.15(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 4.0.16(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
 packages:
 
@@ -2098,8 +2098,8 @@ packages:
   '@codemirror/autocomplete@6.20.0':
     resolution: {integrity: sha512-bOwvTOIJcG5FVo5gUUupiwYh8MioPLQ4UcqbcRf7UQ98X90tCa9E1kZ3Z7tqwpZxYyOvh1YTYbmZE9RTfTp5hg==}
 
-  '@codemirror/commands@6.10.0':
-    resolution: {integrity: sha512-2xUIc5mHXQzT16JnyOFkh8PvfeXuIut3pslWGfsGOhxP/lpgRm9HOl/mpzLErgt5mXDovqA0d11P21gofRLb9w==}
+  '@codemirror/commands@6.10.1':
+    resolution: {integrity: sha512-uWDWFypNdQmz2y1LaNJzK7fL7TYKLeUAU0npEC685OKTF3KcQ2Vu3klIM78D7I6wGhktme0lh3CuQLv0ZCrD9Q==}
 
   '@codemirror/lang-css@6.3.1':
     resolution: {integrity: sha512-kr5fwBGiGtmz6l0LSJIbno9QrifNMUusivHbnA1H6Dmqy4HZFte3UAICix1VuKo0lMPKQr2rqB+0BkKi/S3Ejg==}
@@ -2156,8 +2156,8 @@ packages:
     cpu: [ppc64]
     os: [aix]
 
-  '@esbuild/aix-ppc64@0.27.1':
-    resolution: {integrity: sha512-HHB50pdsBX6k47S4u5g/CaLjqS3qwaOVE5ILsq64jyzgMhLuCuZ8rGzM9yhsAjfjkbgUPMzZEPa7DAp7yz6vuA==}
+  '@esbuild/aix-ppc64@0.27.2':
+    resolution: {integrity: sha512-GZMB+a0mOMZs4MpDbj8RJp4cw+w1WV5NYD6xzgvzUJ5Ek2jerwfO2eADyI6ExDSUED+1X8aMbegahsJi+8mgpw==}
     engines: {node: '>=18'}
     cpu: [ppc64]
     os: [aix]
@@ -2168,8 +2168,8 @@ packages:
     cpu: [arm64]
     os: [android]
 
-  '@esbuild/android-arm64@0.27.1':
-    resolution: {integrity: sha512-45fuKmAJpxnQWixOGCrS+ro4Uvb4Re9+UTieUY2f8AEc+t7d4AaZ6eUJ3Hva7dtrxAAWHtlEFsXFMAgNnGU9uQ==}
+  '@esbuild/android-arm64@0.27.2':
+    resolution: {integrity: sha512-pvz8ZZ7ot/RBphf8fv60ljmaoydPU12VuXHImtAs0XhLLw+EXBi2BLe3OYSBslR4rryHvweW5gmkKFwTiFy6KA==}
     engines: {node: '>=18'}
     cpu: [arm64]
     os: [android]
@@ -2180,8 +2180,8 @@ packages:
     cpu: [arm]
     os: [android]
 
-  '@esbuild/android-arm@0.27.1':
-    resolution: {integrity: sha512-kFqa6/UcaTbGm/NncN9kzVOODjhZW8e+FRdSeypWe6j33gzclHtwlANs26JrupOntlcWmB0u8+8HZo8s7thHvg==}
+  '@esbuild/android-arm@0.27.2':
+    resolution: {integrity: sha512-DVNI8jlPa7Ujbr1yjU2PfUSRtAUZPG9I1RwW4F4xFB1Imiu2on0ADiI/c3td+KmDtVKNbi+nffGDQMfcIMkwIA==}
     engines: {node: '>=18'}
     cpu: [arm]
     os: [android]
@@ -2192,8 +2192,8 @@ packages:
     cpu: [x64]
     os: [android]
 
-  '@esbuild/android-x64@0.27.1':
-    resolution: {integrity: sha512-LBEpOz0BsgMEeHgenf5aqmn/lLNTFXVfoWMUox8CtWWYK9X4jmQzWjoGoNb8lmAYml/tQ/Ysvm8q7szu7BoxRQ==}
+  '@esbuild/android-x64@0.27.2':
+    resolution: {integrity: sha512-z8Ank4Byh4TJJOh4wpz8g2vDy75zFL0TlZlkUkEwYXuPSgX8yzep596n6mT7905kA9uHZsf/o2OJZubl2l3M7A==}
     engines: {node: '>=18'}
     cpu: [x64]
     os: [android]
@@ -2204,8 +2204,8 @@ packages:
     cpu: [arm64]
     os: [darwin]
 
-  '@esbuild/darwin-arm64@0.27.1':
-    resolution: {integrity: sha512-veg7fL8eMSCVKL7IW4pxb54QERtedFDfY/ASrumK/SbFsXnRazxY4YykN/THYqFnFwJ0aVjiUrVG2PwcdAEqQQ==}
+  '@esbuild/darwin-arm64@0.27.2':
+    resolution: {integrity: sha512-davCD2Zc80nzDVRwXTcQP/28fiJbcOwvdolL0sOiOsbwBa72kegmVU0Wrh1MYrbuCL98Omp5dVhQFWRKR2ZAlg==}
     engines: {node: '>=18'}
     cpu: [arm64]
     os: [darwin]
@@ -2216,8 +2216,8 @@ packages:
     cpu: [x64]
     os: [darwin]
 
-  '@esbuild/darwin-x64@0.27.1':
-    resolution: {integrity: sha512-+3ELd+nTzhfWb07Vol7EZ+5PTbJ/u74nC6iv4/lwIU99Ip5uuY6QoIf0Hn4m2HoV0qcnRivN3KSqc+FyCHjoVQ==}
+  '@esbuild/darwin-x64@0.27.2':
+    resolution: {integrity: sha512-ZxtijOmlQCBWGwbVmwOF/UCzuGIbUkqB1faQRf5akQmxRJ1ujusWsb3CVfk/9iZKr2L5SMU5wPBi1UWbvL+VQA==}
     engines: {node: '>=18'}
     cpu: [x64]
     os: [darwin]
@@ -2228,8 +2228,8 @@ packages:
     cpu: [arm64]
     os: [freebsd]
 
-  '@esbuild/freebsd-arm64@0.27.1':
-    resolution: {integrity: sha512-/8Rfgns4XD9XOSXlzUDepG8PX+AVWHliYlUkFI3K3GB6tqbdjYqdhcb4BKRd7C0BhZSoaCxhv8kTcBrcZWP+xg==}
+  '@esbuild/freebsd-arm64@0.27.2':
+    resolution: {integrity: sha512-lS/9CN+rgqQ9czogxlMcBMGd+l8Q3Nj1MFQwBZJyoEKI50XGxwuzznYdwcav6lpOGv5BqaZXqvBSiB/kJ5op+g==}
     engines: {node: '>=18'}
     cpu: [arm64]
     os: [freebsd]
@@ -2240,8 +2240,8 @@ packages:
     cpu: [x64]
     os: [freebsd]
 
-  '@esbuild/freebsd-x64@0.27.1':
-    resolution: {integrity: sha512-GITpD8dK9C+r+5yRT/UKVT36h/DQLOHdwGVwwoHidlnA168oD3uxA878XloXebK4Ul3gDBBIvEdL7go9gCUFzQ==}
+  '@esbuild/freebsd-x64@0.27.2':
+    resolution: {integrity: sha512-tAfqtNYb4YgPnJlEFu4c212HYjQWSO/w/h/lQaBK7RbwGIkBOuNKQI9tqWzx7Wtp7bTPaGC6MJvWI608P3wXYA==}
     engines: {node: '>=18'}
     cpu: [x64]
     os: [freebsd]
@@ -2252,8 +2252,8 @@ packages:
     cpu: [arm64]
     os: [linux]
 
-  '@esbuild/linux-arm64@0.27.1':
-    resolution: {integrity: sha512-W9//kCrh/6in9rWIBdKaMtuTTzNj6jSeG/haWBADqLLa9P8O5YSRDzgD5y9QBok4AYlzS6ARHifAb75V6G670Q==}
+  '@esbuild/linux-arm64@0.27.2':
+    resolution: {integrity: sha512-hYxN8pr66NsCCiRFkHUAsxylNOcAQaxSSkHMMjcpx0si13t1LHFphxJZUiGwojB1a/Hd5OiPIqDdXONia6bhTw==}
     engines: {node: '>=18'}
     cpu: [arm64]
     os: [linux]
@@ -2264,8 +2264,8 @@ packages:
     cpu: [arm]
     os: [linux]
 
-  '@esbuild/linux-arm@0.27.1':
-    resolution: {integrity: sha512-ieMID0JRZY/ZeCrsFQ3Y3NlHNCqIhTprJfDgSB3/lv5jJZ8FX3hqPyXWhe+gvS5ARMBJ242PM+VNz/ctNj//eA==}
+  '@esbuild/linux-arm@0.27.2':
+    resolution: {integrity: sha512-vWfq4GaIMP9AIe4yj1ZUW18RDhx6EPQKjwe7n8BbIecFtCQG4CfHGaHuh7fdfq+y3LIA2vGS/o9ZBGVxIDi9hw==}
     engines: {node: '>=18'}
     cpu: [arm]
     os: [linux]
@@ -2276,8 +2276,8 @@ packages:
     cpu: [ia32]
     os: [linux]
 
-  '@esbuild/linux-ia32@0.27.1':
-    resolution: {integrity: sha512-VIUV4z8GD8rtSVMfAj1aXFahsi/+tcoXXNYmXgzISL+KB381vbSTNdeZHHHIYqFyXcoEhu9n5cT+05tRv13rlw==}
+  '@esbuild/linux-ia32@0.27.2':
+    resolution: {integrity: sha512-MJt5BRRSScPDwG2hLelYhAAKh9imjHK5+NE/tvnRLbIqUWa+0E9N4WNMjmp/kXXPHZGqPLxggwVhz7QP8CTR8w==}
     engines: {node: '>=18'}
     cpu: [ia32]
     os: [linux]
@@ -2288,8 +2288,8 @@ packages:
     cpu: [loong64]
     os: [linux]
 
-  '@esbuild/linux-loong64@0.27.1':
-    resolution: {integrity: sha512-l4rfiiJRN7sTNI//ff65zJ9z8U+k6zcCg0LALU5iEWzY+a1mVZ8iWC1k5EsNKThZ7XCQ6YWtsZ8EWYm7r1UEsg==}
+  '@esbuild/linux-loong64@0.27.2':
+    resolution: {integrity: sha512-lugyF1atnAT463aO6KPshVCJK5NgRnU4yb3FUumyVz+cGvZbontBgzeGFO1nF+dPueHD367a2ZXe1NtUkAjOtg==}
     engines: {node: '>=18'}
     cpu: [loong64]
     os: [linux]
@@ -2300,8 +2300,8 @@ packages:
     cpu: [mips64el]
     os: [linux]
 
-  '@esbuild/linux-mips64el@0.27.1':
-    resolution: {integrity: sha512-U0bEuAOLvO/DWFdygTHWY8C067FXz+UbzKgxYhXC0fDieFa0kDIra1FAhsAARRJbvEyso8aAqvPdNxzWuStBnA==}
+  '@esbuild/linux-mips64el@0.27.2':
+    resolution: {integrity: sha512-nlP2I6ArEBewvJ2gjrrkESEZkB5mIoaTswuqNFRv/WYd+ATtUpe9Y09RnJvgvdag7he0OWgEZWhviS1OTOKixw==}
     engines: {node: '>=18'}
     cpu: [mips64el]
     os: [linux]
@@ -2312,8 +2312,8 @@ packages:
     cpu: [ppc64]
     os: [linux]
 
-  '@esbuild/linux-ppc64@0.27.1':
-    resolution: {integrity: sha512-NzdQ/Xwu6vPSf/GkdmRNsOfIeSGnh7muundsWItmBsVpMoNPVpM61qNzAVY3pZ1glzzAxLR40UyYM23eaDDbYQ==}
+  '@esbuild/linux-ppc64@0.27.2':
+    resolution: {integrity: sha512-C92gnpey7tUQONqg1n6dKVbx3vphKtTHJaNG2Ok9lGwbZil6DrfyecMsp9CrmXGQJmZ7iiVXvvZH6Ml5hL6XdQ==}
     engines: {node: '>=18'}
     cpu: [ppc64]
     os: [linux]
@@ -2324,8 +2324,8 @@ packages:
     cpu: [riscv64]
     os: [linux]
 
-  '@esbuild/linux-riscv64@0.27.1':
-    resolution: {integrity: sha512-7zlw8p3IApcsN7mFw0O1Z1PyEk6PlKMu18roImfl3iQHTnr/yAfYv6s4hXPidbDoI2Q0pW+5xeoM4eTCC0UdrQ==}
+  '@esbuild/linux-riscv64@0.27.2':
+    resolution: {integrity: sha512-B5BOmojNtUyN8AXlK0QJyvjEZkWwy/FKvakkTDCziX95AowLZKR6aCDhG7LeF7uMCXEJqwa8Bejz5LTPYm8AvA==}
     engines: {node: '>=18'}
     cpu: [riscv64]
     os: [linux]
@@ -2336,8 +2336,8 @@ packages:
     cpu: [s390x]
     os: [linux]
 
-  '@esbuild/linux-s390x@0.27.1':
-    resolution: {integrity: sha512-cGj5wli+G+nkVQdZo3+7FDKC25Uh4ZVwOAK6A06Hsvgr8WqBBuOy/1s+PUEd/6Je+vjfm6stX0kmib5b/O2Ykw==}
+  '@esbuild/linux-s390x@0.27.2':
+    resolution: {integrity: sha512-p4bm9+wsPwup5Z8f4EpfN63qNagQ47Ua2znaqGH6bqLlmJ4bx97Y9JdqxgGZ6Y8xVTixUnEkoKSHcpRlDnNr5w==}
     engines: {node: '>=18'}
     cpu: [s390x]
     os: [linux]
@@ -2348,8 +2348,8 @@ packages:
     cpu: [x64]
     os: [linux]
 
-  '@esbuild/linux-x64@0.27.1':
-    resolution: {integrity: sha512-z3H/HYI9MM0HTv3hQZ81f+AKb+yEoCRlUby1F80vbQ5XdzEMyY/9iNlAmhqiBKw4MJXwfgsh7ERGEOhrM1niMA==}
+  '@esbuild/linux-x64@0.27.2':
+    resolution: {integrity: sha512-uwp2Tip5aPmH+NRUwTcfLb+W32WXjpFejTIOWZFw/v7/KnpCDKG66u4DLcurQpiYTiYwQ9B7KOeMJvLCu/OvbA==}
     engines: {node: '>=18'}
     cpu: [x64]
     os: [linux]
@@ -2360,8 +2360,8 @@ packages:
     cpu: [arm64]
     os: [netbsd]
 
-  '@esbuild/netbsd-arm64@0.27.1':
-    resolution: {integrity: sha512-wzC24DxAvk8Em01YmVXyjl96Mr+ecTPyOuADAvjGg+fyBpGmxmcr2E5ttf7Im8D0sXZihpxzO1isus8MdjMCXQ==}
+  '@esbuild/netbsd-arm64@0.27.2':
+    resolution: {integrity: sha512-Kj6DiBlwXrPsCRDeRvGAUb/LNrBASrfqAIok+xB0LxK8CHqxZ037viF13ugfsIpePH93mX7xfJp97cyDuTZ3cw==}
     engines: {node: '>=18'}
     cpu: [arm64]
     os: [netbsd]
@@ -2372,8 +2372,8 @@ packages:
     cpu: [x64]
     os: [netbsd]
 
-  '@esbuild/netbsd-x64@0.27.1':
-    resolution: {integrity: sha512-1YQ8ybGi2yIXswu6eNzJsrYIGFpnlzEWRl6iR5gMgmsrR0FcNoV1m9k9sc3PuP5rUBLshOZylc9nqSgymI+TYg==}
+  '@esbuild/netbsd-x64@0.27.2':
+    resolution: {integrity: sha512-HwGDZ0VLVBY3Y+Nw0JexZy9o/nUAWq9MlV7cahpaXKW6TOzfVno3y3/M8Ga8u8Yr7GldLOov27xiCnqRZf0tCA==}
     engines: {node: '>=18'}
     cpu: [x64]
     os: [netbsd]
@@ -2384,8 +2384,8 @@ packages:
     cpu: [arm64]
     os: [openbsd]
 
-  '@esbuild/openbsd-arm64@0.27.1':
-    resolution: {integrity: sha512-5Z+DzLCrq5wmU7RDaMDe2DVXMRm2tTDvX2KU14JJVBN2CT/qov7XVix85QoJqHltpvAOZUAc3ndU56HSMWrv8g==}
+  '@esbuild/openbsd-arm64@0.27.2':
+    resolution: {integrity: sha512-DNIHH2BPQ5551A7oSHD0CKbwIA/Ox7+78/AWkbS5QoRzaqlev2uFayfSxq68EkonB+IKjiuxBFoV8ESJy8bOHA==}
     engines: {node: '>=18'}
     cpu: [arm64]
     os: [openbsd]
@@ -2396,8 +2396,8 @@ packages:
     cpu: [x64]
     os: [openbsd]
 
-  '@esbuild/openbsd-x64@0.27.1':
-    resolution: {integrity: sha512-Q73ENzIdPF5jap4wqLtsfh8YbYSZ8Q0wnxplOlZUOyZy7B4ZKW8DXGWgTCZmF8VWD7Tciwv5F4NsRf6vYlZtqg==}
+  '@esbuild/openbsd-x64@0.27.2':
+    resolution: {integrity: sha512-/it7w9Nb7+0KFIzjalNJVR5bOzA9Vay+yIPLVHfIQYG/j+j9VTH84aNB8ExGKPU4AzfaEvN9/V4HV+F+vo8OEg==}
     engines: {node: '>=18'}
     cpu: [x64]
     os: [openbsd]
@@ -2408,8 +2408,8 @@ packages:
     cpu: [arm64]
     os: [openharmony]
 
-  '@esbuild/openharmony-arm64@0.27.1':
-    resolution: {integrity: sha512-ajbHrGM/XiK+sXM0JzEbJAen+0E+JMQZ2l4RR4VFwvV9JEERx+oxtgkpoKv1SevhjavK2z2ReHk32pjzktWbGg==}
+  '@esbuild/openharmony-arm64@0.27.2':
+    resolution: {integrity: sha512-LRBbCmiU51IXfeXk59csuX/aSaToeG7w48nMwA6049Y4J4+VbWALAuXcs+qcD04rHDuSCSRKdmY63sruDS5qag==}
     engines: {node: '>=18'}
     cpu: [arm64]
     os: [openharmony]
@@ -2420,8 +2420,8 @@ packages:
     cpu: [x64]
     os: [sunos]
 
-  '@esbuild/sunos-x64@0.27.1':
-    resolution: {integrity: sha512-IPUW+y4VIjuDVn+OMzHc5FV4GubIwPnsz6ubkvN8cuhEqH81NovB53IUlrlBkPMEPxvNnf79MGBoz8rZ2iW8HA==}
+  '@esbuild/sunos-x64@0.27.2':
+    resolution: {integrity: sha512-kMtx1yqJHTmqaqHPAzKCAkDaKsffmXkPHThSfRwZGyuqyIeBvf08KSsYXl+abf5HDAPMJIPnbBfXvP2ZC2TfHg==}
     engines: {node: '>=18'}
     cpu: [x64]
     os: [sunos]
@@ -2432,8 +2432,8 @@ packages:
     cpu: [arm64]
     os: [win32]
 
-  '@esbuild/win32-arm64@0.27.1':
-    resolution: {integrity: sha512-RIVRWiljWA6CdVu8zkWcRmGP7iRRIIwvhDKem8UMBjPql2TXM5PkDVvvrzMtj1V+WFPB4K7zkIGM7VzRtFkjdg==}
+  '@esbuild/win32-arm64@0.27.2':
+    resolution: {integrity: sha512-Yaf78O/B3Kkh+nKABUF++bvJv5Ijoy9AN1ww904rOXZFLWVc5OLOfL56W+C8F9xn5JQZa3UX6m+IktJnIb1Jjg==}
     engines: {node: '>=18'}
     cpu: [arm64]
     os: [win32]
@@ -2444,8 +2444,8 @@ packages:
     cpu: [ia32]
     os: [win32]
 
-  '@esbuild/win32-ia32@0.27.1':
-    resolution: {integrity: sha512-2BR5M8CPbptC1AK5JbJT1fWrHLvejwZidKx3UMSF0ecHMa+smhi16drIrCEggkgviBwLYd5nwrFLSl5Kho96RQ==}
+  '@esbuild/win32-ia32@0.27.2':
+    resolution: {integrity: sha512-Iuws0kxo4yusk7sw70Xa2E2imZU5HoixzxfGCdxwBdhiDgt9vX9VUCBhqcwY7/uh//78A1hMkkROMJq9l27oLQ==}
     engines: {node: '>=18'}
     cpu: [ia32]
     os: [win32]
@@ -2456,8 +2456,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@esbuild/win32-x64@0.27.1':
-    resolution: {integrity: sha512-d5X6RMYv6taIymSk8JBP+nxv8DQAMY6A51GPgusqLdK9wBz5wWIXy1KjTck6HnjE9hqJzJRdk+1p/t5soSbCtw==}
+  '@esbuild/win32-x64@0.27.2':
+    resolution: {integrity: sha512-sRdU18mcKf7F+YgheI/zGf5alZatMUTKj/jNS6l744f9u3WFu4v7twcUI9vu4mknF4Y9aDlblIie0IM+5xxaqQ==}
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
@@ -3364,8 +3364,8 @@ packages:
   '@types/lodash@4.17.21':
     resolution: {integrity: sha512-FOvQ0YPD5NOfPgMzJihoT+Za5pdkDJWcbpuj1DjaKZIr/gxodQjY/uWEFlTNqW2ugXHUiL8lRQgw63dzKHZdeQ==}
 
-  '@types/node@25.0.2':
-    resolution: {integrity: sha512-gWEkeiyYE4vqjON/+Obqcoeffmk0NF15WSBwSs7zwVA2bAbTaE0SJ7P0WNGoJn8uE7fiaV5a7dKYIJriEqOrmA==}
+  '@types/node@25.0.3':
+    resolution: {integrity: sha512-W609buLVRVmeW693xKfzHeIV6nJGGz98uCPfeXI1ELMLXVeKYZ9m15fAMSaUPBHYLGFsVRcMmSCksQOrZV9BYA==}
 
   '@types/react-dom@19.2.3':
     resolution: {integrity: sha512-jp2L/eY6fn+KgVVQAOqYItbF0VY/YApe5Mz2F0aykSO8gx31bYCZyvSeYxCHKvzHG5eZjc+zyaS5BrBWya2+kQ==}
@@ -3396,20 +3396,20 @@ packages:
     peerDependencies:
       vite: ^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0
 
-  '@vitest/coverage-v8@4.0.15':
-    resolution: {integrity: sha512-FUJ+1RkpTFW7rQITdgTi93qOCWJobWhBirEPCeXh2SW2wsTlFxy51apDz5gzG+ZEYt/THvWeNmhdAoS9DTwpCw==}
+  '@vitest/coverage-v8@4.0.16':
+    resolution: {integrity: sha512-2rNdjEIsPRzsdu6/9Eq0AYAzYdpP6Bx9cje9tL3FE5XzXRQF1fNU9pe/1yE8fCrS0HD+fBtt6gLPh6LI57tX7A==}
     peerDependencies:
-      '@vitest/browser': 4.0.15
-      vitest: 4.0.15
+      '@vitest/browser': 4.0.16
+      vitest: 4.0.16
     peerDependenciesMeta:
       '@vitest/browser':
         optional: true
 
-  '@vitest/expect@4.0.15':
-    resolution: {integrity: sha512-Gfyva9/GxPAWXIWjyGDli9O+waHDC0Q0jaLdFP1qPAUUfo1FEXPXUfUkp3eZA0sSq340vPycSyOlYUeM15Ft1w==}
+  '@vitest/expect@4.0.16':
+    resolution: {integrity: sha512-eshqULT2It7McaJkQGLkPjPjNph+uevROGuIMJdG3V+0BSR2w9u6J9Lwu+E8cK5TETlfou8GRijhafIMhXsimA==}
 
-  '@vitest/mocker@4.0.15':
-    resolution: {integrity: sha512-CZ28GLfOEIFkvCFngN8Sfx5h+Se0zN+h4B7yOsPVCcgtiO7t5jt9xQh2E1UkFep+eb9fjyMfuC5gBypwb07fvQ==}
+  '@vitest/mocker@4.0.16':
+    resolution: {integrity: sha512-yb6k4AZxJTB+q9ycAvsoxGn+j/po0UaPgajllBgt1PzoMAAmJGYFdDk0uCcRcxb3BrME34I6u8gHZTQlkqSZpg==}
     peerDependencies:
       msw: ^2.4.9
       vite: ^6.0.0 || ^7.0.0-0
@@ -3419,20 +3419,20 @@ packages:
       vite:
         optional: true
 
-  '@vitest/pretty-format@4.0.15':
-    resolution: {integrity: sha512-SWdqR8vEv83WtZcrfLNqlqeQXlQLh2iilO1Wk1gv4eiHKjEzvgHb2OVc3mIPyhZE6F+CtfYjNlDJwP5MN6Km7A==}
+  '@vitest/pretty-format@4.0.16':
+    resolution: {integrity: sha512-eNCYNsSty9xJKi/UdVD8Ou16alu7AYiS2fCPRs0b1OdhJiV89buAXQLpTbe+X8V9L6qrs9CqyvU7OaAopJYPsA==}
 
-  '@vitest/runner@4.0.15':
-    resolution: {integrity: sha512-+A+yMY8dGixUhHmNdPUxOh0la6uVzun86vAbuMT3hIDxMrAOmn5ILBHm8ajrqHE0t8R9T1dGnde1A5DTnmi3qw==}
+  '@vitest/runner@4.0.16':
+    resolution: {integrity: sha512-VWEDm5Wv9xEo80ctjORcTQRJ539EGPB3Pb9ApvVRAY1U/WkHXmmYISqU5E79uCwcW7xYUV38gwZD+RV755fu3Q==}
 
-  '@vitest/snapshot@4.0.15':
-    resolution: {integrity: sha512-A7Ob8EdFZJIBjLjeO0DZF4lqR6U7Ydi5/5LIZ0xcI+23lYlsYJAfGn8PrIWTYdZQRNnSRlzhg0zyGu37mVdy5g==}
+  '@vitest/snapshot@4.0.16':
+    resolution: {integrity: sha512-sf6NcrYhYBsSYefxnry+DR8n3UV4xWZwWxYbCJUt2YdvtqzSPR7VfGrY0zsv090DAbjFZsi7ZaMi1KnSRyK1XA==}
 
-  '@vitest/spy@4.0.15':
-    resolution: {integrity: sha512-+EIjOJmnY6mIfdXtE/bnozKEvTC4Uczg19yeZ2vtCz5Yyb0QQ31QWVQ8hswJ3Ysx/K2EqaNsVanjr//2+P3FHw==}
+  '@vitest/spy@4.0.16':
+    resolution: {integrity: sha512-4jIOWjKP0ZUaEmJm00E0cOBLU+5WE0BpeNr3XN6TEF05ltro6NJqHWxXD0kA8/Zc8Nh23AT8WQxwNG+WeROupw==}
 
-  '@vitest/utils@4.0.15':
-    resolution: {integrity: sha512-HXjPW2w5dxhTD0dLwtYHDnelK3j8sR8cWIaLxr22evTyY6q8pRCjZSmhRWVjBaOVXChQd6AwMzi9pucorXCPZA==}
+  '@vitest/utils@4.0.16':
+    resolution: {integrity: sha512-h8z9yYhV3e1LEfaQ3zdypIrnAg/9hguReGZoS7Gl0aBG5xgA410zBqECqmaF/+RkTggRsfnzc1XaAHA6bmUufA==}
 
   '@volar/language-core@2.4.27':
     resolution: {integrity: sha512-DjmjBWZ4tJKxfNC1F6HyYERNHPYS7L7OPFyCrestykNdUZMFYzI9WTyvwPcaNaHlrEUwESHYsfEw3isInncZxQ==}
@@ -3522,8 +3522,8 @@ packages:
     resolution: {integrity: sha512-x1FCFnFifvYDDzTaLII71vG5uvDwgtmDTEVWAxrgeiR8VjMONcCXJx7E+USjDtHlwFmt9MysbqgF9b9Vjr6w+w==}
     engines: {node: '>=4'}
 
-  ast-v8-to-istanbul@0.3.8:
-    resolution: {integrity: sha512-szgSZqUxI5T8mLKvS7WTjF9is+MVbOeLADU73IseOcrqhxr/VAvy6wfoVE39KnKzA7JRhjF5eUagNlHwvZPlKQ==}
+  ast-v8-to-istanbul@0.3.9:
+    resolution: {integrity: sha512-dSC6tJeOJxbZrPzPbv5mMd6CMiQ1ugaVXXPRad2fXUSsy1kstFn9XQWemV9VW7Y7kpxgQ/4WMoZfwdH8XSU48w==}
 
   b4a@1.7.3:
     resolution: {integrity: sha512-5Q2mfq2WfGuFp3uS//0s6baOJLMoVduPYVeNmDYxu5OUA1/cBfvr2RIS7vi62LdNj/urk1hfmj867I3qt6uZ7Q==}
@@ -3577,8 +3577,8 @@ packages:
   base64-js@1.5.1:
     resolution: {integrity: sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==}
 
-  baseline-browser-mapping@2.9.7:
-    resolution: {integrity: sha512-k9xFKplee6KIio3IDbwj+uaCLpqzOwakOgmqzPezM0sFJlFKcg30vk2wOiAJtkTSfx0SSQDSe8q+mWA/fSH5Zg==}
+  baseline-browser-mapping@2.9.8:
+    resolution: {integrity: sha512-Y1fOuNDowLfgKOypdc9SPABfoWXuZHBOyCS4cD52IeZBhr4Md6CLLs6atcxVrzRmQ06E7hSlm5bHHApPKR/byA==}
     hasBin: true
 
   basic-ftp@5.0.5:
@@ -3800,8 +3800,8 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
-  esbuild@0.27.1:
-    resolution: {integrity: sha512-yY35KZckJJuVVPXpvjgxiCuVEJT67F6zDeVTv4rizyPrfGBUpZQsvmxnN+C371c2esD/hNMjj4tpBhuueLN7aA==}
+  esbuild@0.27.2:
+    resolution: {integrity: sha512-HyNQImnsOC7X9PMNaCIeAm4ISCQXs5a5YasTXVliKv4uuBo1dKrG0A+uQS8M5eXjVMnLg3WgXaKvprHlFJQffw==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -4189,8 +4189,8 @@ packages:
     resolution: {integrity: sha512-arhlxbFRmoQHl33a0Zkle/YWlmNwoyt6QNZEIJcqNbdrsix5Lvc4HyyI3EnwxTYlZYc32EbYrQ8SzEZ7dqgg9A==}
     engines: {node: '>=14'}
 
-  lodash-es@4.17.21:
-    resolution: {integrity: sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==}
+  lodash-es@4.17.22:
+    resolution: {integrity: sha512-XEawp1t0gxSi9x01glktRZ5HDy0HXqrM0x5pXQM98EaI0NxO6jVM7omDOxsuEo5UIASAnm2bRp1Jt/e0a2XU8Q==}
 
   lodash@4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
@@ -4237,8 +4237,8 @@ packages:
   make-error@1.3.6:
     resolution: {integrity: sha512-s8UhlNe7vPKomQhC1qFelMokr/Sc3AgNbso3n74mVPA5LTZwkB9NlXf4XPamLxJE8h0gh73rM94xvwRT2CVInw==}
 
-  maplibre-gl@5.14.0:
-    resolution: {integrity: sha512-O2ok6N/bQ9NA9nJ22r/PRQQYkUe9JwfDMjBPkQ+8OwsVH4TpA5skIAM2wc0k+rni5lVbAVONVyBvgi1rF2vEPA==}
+  maplibre-gl@5.15.0:
+    resolution: {integrity: sha512-pPeu/t4yPDX/+Uf9ibLUdmaKbNMlGxMAX+tBednYukol2qNk2TZXAlhdohWxjVvTO3is8crrUYv3Ok02oAaKzA==}
     engines: {node: '>=16.14.0', npm: '>=8.1.0'}
 
   markdown-it@14.1.0:
@@ -5010,8 +5010,8 @@ packages:
     resolution: {integrity: sha512-5uKD0nqiYVzlmCRs01Fhs2BdkEgBS3SAVP6ndrBsuK42iC2+JHyxM05Rm9G8+5mkmRtzMZGY8Ct5+mliZxU/Ww==}
     engines: {node: '>=18.12.0'}
 
-  update-browserslist-db@1.2.2:
-    resolution: {integrity: sha512-E85pfNzMQ9jpKkA7+TJAi4TJN+tBCuWh5rUcS/sv6cFi+1q9LYDwDI5dpUL0u/73EElyQ8d3TEaeW4sPedBqYA==}
+  update-browserslist-db@1.2.3:
+    resolution: {integrity: sha512-Js0m9cx+qOgDxo0eMiFGEueWztz+d4+M3rGlmKPT+T4IS/jP4ylw3Nwpu6cpTTP8R1MAC1kF4VbdLt3ARf209w==}
     hasBin: true
     peerDependencies:
       browserslist: '>= 4.21.0'
@@ -5086,18 +5086,18 @@ packages:
       yaml:
         optional: true
 
-  vitest@4.0.15:
-    resolution: {integrity: sha512-n1RxDp8UJm6N0IbJLQo+yzLZ2sQCDyl1o0LeugbPWf8+8Fttp29GghsQBjYJVmWq3gBFfe9Hs1spR44vovn2wA==}
+  vitest@4.0.16:
+    resolution: {integrity: sha512-E4t7DJ9pESL6E3I8nFjPa4xGUd3PmiWDLsDztS2qXSJWfHtbQnwAWylaBvSNY48I3vr8PTqIZlyK8TE3V3CA4Q==}
     engines: {node: ^20.0.0 || ^22.0.0 || >=24.0.0}
     hasBin: true
     peerDependencies:
       '@edge-runtime/vm': '*'
       '@opentelemetry/api': ^1.9.0
       '@types/node': ^20.0.0 || ^22.0.0 || >=24.0.0
-      '@vitest/browser-playwright': 4.0.15
-      '@vitest/browser-preview': 4.0.15
-      '@vitest/browser-webdriverio': 4.0.15
-      '@vitest/ui': 4.0.15
+      '@vitest/browser-playwright': 4.0.16
+      '@vitest/browser-preview': 4.0.16
+      '@vitest/browser-webdriverio': 4.0.16
+      '@vitest/ui': 4.0.16
       happy-dom: '*'
       jsdom: '*'
     peerDependenciesMeta:
@@ -5365,7 +5365,7 @@ snapshots:
       '@codemirror/view': 6.39.4
       '@lezer/common': 1.4.0
 
-  '@codemirror/commands@6.10.0':
+  '@codemirror/commands@6.10.1':
     dependencies:
       '@codemirror/language': 6.11.3
       '@codemirror/state': 6.5.2
@@ -5445,7 +5445,7 @@ snapshots:
   '@codesandbox/sandpack-react@2.20.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:
       '@codemirror/autocomplete': 6.20.0
-      '@codemirror/commands': 6.10.0
+      '@codemirror/commands': 6.10.1
       '@codemirror/lang-css': 6.3.1
       '@codemirror/lang-html': 6.4.11
       '@codemirror/lang-javascript': 6.2.4
@@ -5491,157 +5491,157 @@ snapshots:
   '@esbuild/aix-ppc64@0.25.12':
     optional: true
 
-  '@esbuild/aix-ppc64@0.27.1':
+  '@esbuild/aix-ppc64@0.27.2':
     optional: true
 
   '@esbuild/android-arm64@0.25.12':
     optional: true
 
-  '@esbuild/android-arm64@0.27.1':
+  '@esbuild/android-arm64@0.27.2':
     optional: true
 
   '@esbuild/android-arm@0.25.12':
     optional: true
 
-  '@esbuild/android-arm@0.27.1':
+  '@esbuild/android-arm@0.27.2':
     optional: true
 
   '@esbuild/android-x64@0.25.12':
     optional: true
 
-  '@esbuild/android-x64@0.27.1':
+  '@esbuild/android-x64@0.27.2':
     optional: true
 
   '@esbuild/darwin-arm64@0.25.12':
     optional: true
 
-  '@esbuild/darwin-arm64@0.27.1':
+  '@esbuild/darwin-arm64@0.27.2':
     optional: true
 
   '@esbuild/darwin-x64@0.25.12':
     optional: true
 
-  '@esbuild/darwin-x64@0.27.1':
+  '@esbuild/darwin-x64@0.27.2':
     optional: true
 
   '@esbuild/freebsd-arm64@0.25.12':
     optional: true
 
-  '@esbuild/freebsd-arm64@0.27.1':
+  '@esbuild/freebsd-arm64@0.27.2':
     optional: true
 
   '@esbuild/freebsd-x64@0.25.12':
     optional: true
 
-  '@esbuild/freebsd-x64@0.27.1':
+  '@esbuild/freebsd-x64@0.27.2':
     optional: true
 
   '@esbuild/linux-arm64@0.25.12':
     optional: true
 
-  '@esbuild/linux-arm64@0.27.1':
+  '@esbuild/linux-arm64@0.27.2':
     optional: true
 
   '@esbuild/linux-arm@0.25.12':
     optional: true
 
-  '@esbuild/linux-arm@0.27.1':
+  '@esbuild/linux-arm@0.27.2':
     optional: true
 
   '@esbuild/linux-ia32@0.25.12':
     optional: true
 
-  '@esbuild/linux-ia32@0.27.1':
+  '@esbuild/linux-ia32@0.27.2':
     optional: true
 
   '@esbuild/linux-loong64@0.25.12':
     optional: true
 
-  '@esbuild/linux-loong64@0.27.1':
+  '@esbuild/linux-loong64@0.27.2':
     optional: true
 
   '@esbuild/linux-mips64el@0.25.12':
     optional: true
 
-  '@esbuild/linux-mips64el@0.27.1':
+  '@esbuild/linux-mips64el@0.27.2':
     optional: true
 
   '@esbuild/linux-ppc64@0.25.12':
     optional: true
 
-  '@esbuild/linux-ppc64@0.27.1':
+  '@esbuild/linux-ppc64@0.27.2':
     optional: true
 
   '@esbuild/linux-riscv64@0.25.12':
     optional: true
 
-  '@esbuild/linux-riscv64@0.27.1':
+  '@esbuild/linux-riscv64@0.27.2':
     optional: true
 
   '@esbuild/linux-s390x@0.25.12':
     optional: true
 
-  '@esbuild/linux-s390x@0.27.1':
+  '@esbuild/linux-s390x@0.27.2':
     optional: true
 
   '@esbuild/linux-x64@0.25.12':
     optional: true
 
-  '@esbuild/linux-x64@0.27.1':
+  '@esbuild/linux-x64@0.27.2':
     optional: true
 
   '@esbuild/netbsd-arm64@0.25.12':
     optional: true
 
-  '@esbuild/netbsd-arm64@0.27.1':
+  '@esbuild/netbsd-arm64@0.27.2':
     optional: true
 
   '@esbuild/netbsd-x64@0.25.12':
     optional: true
 
-  '@esbuild/netbsd-x64@0.27.1':
+  '@esbuild/netbsd-x64@0.27.2':
     optional: true
 
   '@esbuild/openbsd-arm64@0.25.12':
     optional: true
 
-  '@esbuild/openbsd-arm64@0.27.1':
+  '@esbuild/openbsd-arm64@0.27.2':
     optional: true
 
   '@esbuild/openbsd-x64@0.25.12':
     optional: true
 
-  '@esbuild/openbsd-x64@0.27.1':
+  '@esbuild/openbsd-x64@0.27.2':
     optional: true
 
   '@esbuild/openharmony-arm64@0.25.12':
     optional: true
 
-  '@esbuild/openharmony-arm64@0.27.1':
+  '@esbuild/openharmony-arm64@0.27.2':
     optional: true
 
   '@esbuild/sunos-x64@0.25.12':
     optional: true
 
-  '@esbuild/sunos-x64@0.27.1':
+  '@esbuild/sunos-x64@0.27.2':
     optional: true
 
   '@esbuild/win32-arm64@0.25.12':
     optional: true
 
-  '@esbuild/win32-arm64@0.27.1':
+  '@esbuild/win32-arm64@0.27.2':
     optional: true
 
   '@esbuild/win32-ia32@0.25.12':
     optional: true
 
-  '@esbuild/win32-ia32@0.27.1':
+  '@esbuild/win32-ia32@0.27.2':
     optional: true
 
   '@esbuild/win32-x64@0.25.12':
     optional: true
 
-  '@esbuild/win32-x64@0.27.1':
+  '@esbuild/win32-x64@0.27.2':
     optional: true
 
   '@gerrit0/mini-shiki@3.20.0':
@@ -5773,23 +5773,23 @@ snapshots:
 
   '@marijn/find-cluster-break@1.0.2': {}
 
-  '@microsoft/api-extractor-model@7.32.2(@types/node@25.0.2)':
+  '@microsoft/api-extractor-model@7.32.2(@types/node@25.0.3)':
     dependencies:
       '@microsoft/tsdoc': 0.16.0
       '@microsoft/tsdoc-config': 0.18.0
-      '@rushstack/node-core-library': 5.19.1(@types/node@25.0.2)
+      '@rushstack/node-core-library': 5.19.1(@types/node@25.0.3)
     transitivePeerDependencies:
       - '@types/node'
 
-  '@microsoft/api-extractor@7.55.2(@types/node@25.0.2)':
+  '@microsoft/api-extractor@7.55.2(@types/node@25.0.3)':
     dependencies:
-      '@microsoft/api-extractor-model': 7.32.2(@types/node@25.0.2)
+      '@microsoft/api-extractor-model': 7.32.2(@types/node@25.0.3)
       '@microsoft/tsdoc': 0.16.0
       '@microsoft/tsdoc-config': 0.18.0
-      '@rushstack/node-core-library': 5.19.1(@types/node@25.0.2)
+      '@rushstack/node-core-library': 5.19.1(@types/node@25.0.3)
       '@rushstack/rig-package': 0.6.0
-      '@rushstack/terminal': 0.19.5(@types/node@25.0.2)
-      '@rushstack/ts-command-line': 5.1.5(@types/node@25.0.2)
+      '@rushstack/terminal': 0.19.5(@types/node@25.0.3)
+      '@rushstack/ts-command-line': 5.1.5(@types/node@25.0.3)
       diff: 8.0.2
       lodash: 4.17.21
       minimatch: 10.0.3
@@ -6040,7 +6040,7 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.53.5':
     optional: true
 
-  '@rushstack/node-core-library@5.19.1(@types/node@25.0.2)':
+  '@rushstack/node-core-library@5.19.1(@types/node@25.0.3)':
     dependencies:
       ajv: 8.13.0
       ajv-draft-04: 1.0.0(ajv@8.13.0)
@@ -6051,28 +6051,28 @@ snapshots:
       resolve: 1.22.11
       semver: 7.5.4
     optionalDependencies:
-      '@types/node': 25.0.2
+      '@types/node': 25.0.3
 
-  '@rushstack/problem-matcher@0.1.1(@types/node@25.0.2)':
+  '@rushstack/problem-matcher@0.1.1(@types/node@25.0.3)':
     optionalDependencies:
-      '@types/node': 25.0.2
+      '@types/node': 25.0.3
 
   '@rushstack/rig-package@0.6.0':
     dependencies:
       resolve: 1.22.11
       strip-json-comments: 3.1.1
 
-  '@rushstack/terminal@0.19.5(@types/node@25.0.2)':
+  '@rushstack/terminal@0.19.5(@types/node@25.0.3)':
     dependencies:
-      '@rushstack/node-core-library': 5.19.1(@types/node@25.0.2)
-      '@rushstack/problem-matcher': 0.1.1(@types/node@25.0.2)
+      '@rushstack/node-core-library': 5.19.1(@types/node@25.0.3)
+      '@rushstack/problem-matcher': 0.1.1(@types/node@25.0.3)
       supports-color: 8.1.1
     optionalDependencies:
-      '@types/node': 25.0.2
+      '@types/node': 25.0.3
 
-  '@rushstack/ts-command-line@5.1.5(@types/node@25.0.2)':
+  '@rushstack/ts-command-line@5.1.5(@types/node@25.0.3)':
     dependencies:
-      '@rushstack/terminal': 0.19.5(@types/node@25.0.2)
+      '@rushstack/terminal': 0.19.5(@types/node@25.0.3)
       '@types/argparse': 1.0.38
       argparse: 1.0.10
       string-argv: 0.3.2
@@ -7316,7 +7316,7 @@ snapshots:
 
   '@types/lodash@4.17.21': {}
 
-  '@types/node@25.0.2':
+  '@types/node@25.0.3':
     dependencies:
       undici-types: 7.16.0
 
@@ -7336,14 +7336,14 @@ snapshots:
 
   '@types/yauzl@2.10.3':
     dependencies:
-      '@types/node': 25.0.2
+      '@types/node': 25.0.3
     optional: true
 
-  '@vitejs/plugin-basic-ssl@2.1.0(vite@7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))':
+  '@vitejs/plugin-basic-ssl@2.1.0(vite@7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))':
     dependencies:
-      vite: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+      vite: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
-  '@vitejs/plugin-react@5.1.2(vite@7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))':
+  '@vitejs/plugin-react@5.1.2(vite@7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))':
     dependencies:
       '@babel/core': 7.28.5
       '@babel/plugin-transform-react-jsx-self': 7.27.1(@babel/core@7.28.5)
@@ -7351,15 +7351,15 @@ snapshots:
       '@rolldown/pluginutils': 1.0.0-beta.53
       '@types/babel__core': 7.20.5
       react-refresh: 0.18.0
-      vite: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+      vite: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/coverage-v8@4.0.15(vitest@4.0.15(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))':
+  '@vitest/coverage-v8@4.0.16(vitest@4.0.16(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))':
     dependencies:
       '@bcoe/v8-coverage': 1.0.2
-      '@vitest/utils': 4.0.15
-      ast-v8-to-istanbul: 0.3.8
+      '@vitest/utils': 4.0.16
+      ast-v8-to-istanbul: 0.3.9
       istanbul-lib-coverage: 3.2.2
       istanbul-lib-report: 3.0.1
       istanbul-lib-source-maps: 5.0.6
@@ -7368,47 +7368,47 @@ snapshots:
       obug: 2.1.1
       std-env: 3.10.0
       tinyrainbow: 3.0.3
-      vitest: 4.0.15(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+      vitest: 4.0.16(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/expect@4.0.15':
+  '@vitest/expect@4.0.16':
     dependencies:
       '@standard-schema/spec': 1.1.0
       '@types/chai': 5.2.3
-      '@vitest/spy': 4.0.15
-      '@vitest/utils': 4.0.15
+      '@vitest/spy': 4.0.16
+      '@vitest/utils': 4.0.16
       chai: 6.2.1
       tinyrainbow: 3.0.3
 
-  '@vitest/mocker@4.0.15(vite@7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))':
+  '@vitest/mocker@4.0.16(vite@7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))':
     dependencies:
-      '@vitest/spy': 4.0.15
+      '@vitest/spy': 4.0.16
       estree-walker: 3.0.3
       magic-string: 0.30.21
     optionalDependencies:
-      vite: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+      vite: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
-  '@vitest/pretty-format@4.0.15':
+  '@vitest/pretty-format@4.0.16':
     dependencies:
       tinyrainbow: 3.0.3
 
-  '@vitest/runner@4.0.15':
+  '@vitest/runner@4.0.16':
     dependencies:
-      '@vitest/utils': 4.0.15
+      '@vitest/utils': 4.0.16
       pathe: 2.0.3
 
-  '@vitest/snapshot@4.0.15':
+  '@vitest/snapshot@4.0.16':
     dependencies:
-      '@vitest/pretty-format': 4.0.15
+      '@vitest/pretty-format': 4.0.16
       magic-string: 0.30.21
       pathe: 2.0.3
 
-  '@vitest/spy@4.0.15': {}
+  '@vitest/spy@4.0.16': {}
 
-  '@vitest/utils@4.0.15':
+  '@vitest/utils@4.0.16':
     dependencies:
-      '@vitest/pretty-format': 4.0.15
+      '@vitest/pretty-format': 4.0.16
       tinyrainbow: 3.0.3
 
   '@volar/language-core@2.4.27':
@@ -7486,7 +7486,7 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  ast-v8-to-istanbul@0.3.8:
+  ast-v8-to-istanbul@0.3.9:
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
       estree-walker: 3.0.3
@@ -7535,7 +7535,7 @@ snapshots:
 
   base64-js@1.5.1: {}
 
-  baseline-browser-mapping@2.9.7: {}
+  baseline-browser-mapping@2.9.8: {}
 
   basic-ftp@5.0.5: {}
 
@@ -7551,11 +7551,11 @@ snapshots:
 
   browserslist@4.28.1:
     dependencies:
-      baseline-browser-mapping: 2.9.7
+      baseline-browser-mapping: 2.9.8
       caniuse-lite: 1.0.30001760
       electron-to-chromium: 1.5.267
       node-releases: 2.0.27
-      update-browserslist-db: 1.2.2(browserslist@4.28.1)
+      update-browserslist-db: 1.2.3(browserslist@4.28.1)
 
   buffer-builder@0.2.0:
     optional: true
@@ -7760,34 +7760,34 @@ snapshots:
       '@esbuild/win32-x64': 0.25.12
     optional: true
 
-  esbuild@0.27.1:
+  esbuild@0.27.2:
     optionalDependencies:
-      '@esbuild/aix-ppc64': 0.27.1
-      '@esbuild/android-arm': 0.27.1
-      '@esbuild/android-arm64': 0.27.1
-      '@esbuild/android-x64': 0.27.1
-      '@esbuild/darwin-arm64': 0.27.1
-      '@esbuild/darwin-x64': 0.27.1
-      '@esbuild/freebsd-arm64': 0.27.1
-      '@esbuild/freebsd-x64': 0.27.1
-      '@esbuild/linux-arm': 0.27.1
-      '@esbuild/linux-arm64': 0.27.1
-      '@esbuild/linux-ia32': 0.27.1
-      '@esbuild/linux-loong64': 0.27.1
-      '@esbuild/linux-mips64el': 0.27.1
-      '@esbuild/linux-ppc64': 0.27.1
-      '@esbuild/linux-riscv64': 0.27.1
-      '@esbuild/linux-s390x': 0.27.1
-      '@esbuild/linux-x64': 0.27.1
-      '@esbuild/netbsd-arm64': 0.27.1
-      '@esbuild/netbsd-x64': 0.27.1
-      '@esbuild/openbsd-arm64': 0.27.1
-      '@esbuild/openbsd-x64': 0.27.1
-      '@esbuild/openharmony-arm64': 0.27.1
-      '@esbuild/sunos-x64': 0.27.1
-      '@esbuild/win32-arm64': 0.27.1
-      '@esbuild/win32-ia32': 0.27.1
-      '@esbuild/win32-x64': 0.27.1
+      '@esbuild/aix-ppc64': 0.27.2
+      '@esbuild/android-arm': 0.27.2
+      '@esbuild/android-arm64': 0.27.2
+      '@esbuild/android-x64': 0.27.2
+      '@esbuild/darwin-arm64': 0.27.2
+      '@esbuild/darwin-x64': 0.27.2
+      '@esbuild/freebsd-arm64': 0.27.2
+      '@esbuild/freebsd-x64': 0.27.2
+      '@esbuild/linux-arm': 0.27.2
+      '@esbuild/linux-arm64': 0.27.2
+      '@esbuild/linux-ia32': 0.27.2
+      '@esbuild/linux-loong64': 0.27.2
+      '@esbuild/linux-mips64el': 0.27.2
+      '@esbuild/linux-ppc64': 0.27.2
+      '@esbuild/linux-riscv64': 0.27.2
+      '@esbuild/linux-s390x': 0.27.2
+      '@esbuild/linux-x64': 0.27.2
+      '@esbuild/netbsd-arm64': 0.27.2
+      '@esbuild/netbsd-x64': 0.27.2
+      '@esbuild/openbsd-arm64': 0.27.2
+      '@esbuild/openbsd-x64': 0.27.2
+      '@esbuild/openharmony-arm64': 0.27.2
+      '@esbuild/sunos-x64': 0.27.2
+      '@esbuild/win32-arm64': 0.27.2
+      '@esbuild/win32-ia32': 0.27.2
+      '@esbuild/win32-x64': 0.27.2
 
   escalade@3.2.0: {}
 
@@ -8166,7 +8166,7 @@ snapshots:
       pkg-types: 2.3.0
       quansync: 0.2.11
 
-  lodash-es@4.17.21: {}
+  lodash-es@4.17.22: {}
 
   lodash@4.17.21: {}
 
@@ -8211,7 +8211,7 @@ snapshots:
 
   make-error@1.3.6: {}
 
-  maplibre-gl@5.14.0:
+  maplibre-gl@5.15.0:
     dependencies:
       '@mapbox/geojson-rewind': 0.5.2
       '@mapbox/jsonlint-lines-primitives': 2.0.2
@@ -8970,14 +8970,14 @@ snapshots:
     dependencies:
       commander: 2.20.3
 
-  ts-node@10.9.2(@types/node@25.0.2)(typescript@5.9.3):
+  ts-node@10.9.2(@types/node@25.0.3)(typescript@5.9.3):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.12
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      '@types/node': 25.0.2
+      '@types/node': 25.0.3
       acorn: 8.15.0
       acorn-walk: 8.3.4
       arg: 4.1.3
@@ -9023,7 +9023,7 @@ snapshots:
 
   universalify@2.0.1: {}
 
-  unplugin-dts@1.0.0-beta.6(@microsoft/api-extractor@7.55.2(@types/node@25.0.2))(esbuild@0.27.1)(rollup@4.53.5)(typescript@5.9.3)(vite@7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)):
+  unplugin-dts@1.0.0-beta.6(@microsoft/api-extractor@7.55.2(@types/node@25.0.3))(esbuild@0.27.2)(rollup@4.53.5)(typescript@5.9.3)(vite@7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)):
     dependencies:
       '@rollup/pluginutils': 5.3.0(rollup@4.53.5)
       '@volar/typescript': 2.4.27
@@ -9035,10 +9035,10 @@ snapshots:
       typescript: 5.9.3
       unplugin: 2.3.11
     optionalDependencies:
-      '@microsoft/api-extractor': 7.55.2(@types/node@25.0.2)
-      esbuild: 0.27.1
+      '@microsoft/api-extractor': 7.55.2(@types/node@25.0.3)
+      esbuild: 0.27.2
       rollup: 4.53.5
-      vite: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+      vite: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
     transitivePeerDependencies:
       - supports-color
 
@@ -9049,7 +9049,7 @@ snapshots:
       picomatch: 4.0.3
       webpack-virtual-modules: 0.6.2
 
-  update-browserslist-db@1.2.2(browserslist@4.28.1):
+  update-browserslist-db@1.2.3(browserslist@4.28.1):
     dependencies:
       browserslist: 4.28.1
       escalade: 3.2.0
@@ -9064,13 +9064,13 @@ snapshots:
   varint@6.0.0:
     optional: true
 
-  vite-plugin-dts@5.0.0-beta.6(@microsoft/api-extractor@7.55.2(@types/node@25.0.2))(esbuild@0.27.1)(rollup@4.53.5)(typescript@5.9.3)(vite@7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)):
+  vite-plugin-dts@5.0.0-beta.6(@microsoft/api-extractor@7.55.2(@types/node@25.0.3))(esbuild@0.27.2)(rollup@4.53.5)(typescript@5.9.3)(vite@7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)):
     dependencies:
-      unplugin-dts: 1.0.0-beta.6(@microsoft/api-extractor@7.55.2(@types/node@25.0.2))(esbuild@0.27.1)(rollup@4.53.5)(typescript@5.9.3)(vite@7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
+      unplugin-dts: 1.0.0-beta.6(@microsoft/api-extractor@7.55.2(@types/node@25.0.3))(esbuild@0.27.2)(rollup@4.53.5)(typescript@5.9.3)(vite@7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
     optionalDependencies:
-      '@microsoft/api-extractor': 7.55.2(@types/node@25.0.2)
+      '@microsoft/api-extractor': 7.55.2(@types/node@25.0.3)
       rollup: 4.53.5
-      vite: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+      vite: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
     transitivePeerDependencies:
       - '@rspack/core'
       - '@vue/language-core'
@@ -9080,22 +9080,22 @@ snapshots:
       - typescript
       - webpack
 
-  vite-plugin-singlefile@2.3.0(rollup@4.53.5)(vite@7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)):
+  vite-plugin-singlefile@2.3.0(rollup@4.53.5)(vite@7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)):
     dependencies:
       micromatch: 4.0.8
       rollup: 4.53.5
-      vite: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+      vite: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
-  vite@7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2):
+  vite@7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2):
     dependencies:
-      esbuild: 0.27.1
+      esbuild: 0.27.2
       fdir: 6.5.0(picomatch@4.0.3)
       picomatch: 4.0.3
       postcss: 8.5.6
       rollup: 4.53.5
       tinyglobby: 0.2.15
     optionalDependencies:
-      '@types/node': 25.0.2
+      '@types/node': 25.0.3
       fsevents: 2.3.3
       jiti: 2.6.1
       less: 4.4.1
@@ -9108,15 +9108,15 @@ snapshots:
       tsx: 4.20.6
       yaml: 2.8.2
 
-  vitest@4.0.15(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2):
+  vitest@4.0.16(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2):
     dependencies:
-      '@vitest/expect': 4.0.15
-      '@vitest/mocker': 4.0.15(vite@7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
-      '@vitest/pretty-format': 4.0.15
-      '@vitest/runner': 4.0.15
-      '@vitest/snapshot': 4.0.15
-      '@vitest/spy': 4.0.15
-      '@vitest/utils': 4.0.15
+      '@vitest/expect': 4.0.16
+      '@vitest/mocker': 4.0.16(vite@7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
+      '@vitest/pretty-format': 4.0.16
+      '@vitest/runner': 4.0.16
+      '@vitest/snapshot': 4.0.16
+      '@vitest/spy': 4.0.16
+      '@vitest/utils': 4.0.16
       es-module-lexer: 1.7.0
       expect-type: 1.3.0
       magic-string: 0.30.21
@@ -9128,10 +9128,10 @@ snapshots:
       tinyexec: 1.0.2
       tinyglobby: 0.2.15
       tinyrainbow: 3.0.3
-      vite: 7.3.0(@types/node@25.0.2)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+      vite: 7.3.0(@types/node@25.0.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
       why-is-node-running: 2.3.0
     optionalDependencies:
-      '@types/node': 25.0.2
+      '@types/node': 25.0.3
     transitivePeerDependencies:
       - jiti
       - less
