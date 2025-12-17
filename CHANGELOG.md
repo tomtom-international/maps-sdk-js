@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.38.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.37.0...v0.38.0) (2025-12-17)
+
+
+### Features
+
+* improve bbox types for places, routes and geometries ([602fa50](https://github.com/tomtom-international/maps-sdk-js/commit/602fa50025c71d4351a96beb5ed8fb742af27df1))
+
 ## [0.37.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.36.9...v0.37.0) (2025-12-16)
 
 
