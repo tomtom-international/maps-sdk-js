@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
-import type { BBox, Routes, Waypoint } from 'core';
+import type { Routes, Waypoint } from 'core';
 import type { EventType } from 'map';
 import rotterdamToAmsterdamRoutesJson from './data/RoutingModuleRotterdamToAmsterdamNoInstructions.test.data.json';
 import { MapsSDKThis } from './types/MapsSDKThis';
@@ -124,7 +124,7 @@ test.describe('Routing and waypoint events tests', () => {
     test.beforeEach(async ({ page }) => {
         await mapEnv.loadPageAndMap(
             page,
-            { bounds: rotterdamToAmsterdamRoutes.bbox as BBox, fitBoundsOptions: { padding: 150 } },
+            { bounds: rotterdamToAmsterdamRoutes.bbox, fitBoundsOptions: { padding: 150 } },
             {
                 // We use longer-than-default delays to help with unstable resource capacity in CI/CD:
                 events: { longHoverDelayAfterMapMoveMS: 3500, longHoverDelayOnStillMapMS: 3000 },

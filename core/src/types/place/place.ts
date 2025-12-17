@@ -532,12 +532,17 @@ export type Place<P extends CommonPlaceProps = CommonPlaceProps> = Omit<Feature<
  */
 export type Places<P extends CommonPlaceProps = CommonPlaceProps, FeatureCollectionProps = unknown> = Omit<
     FeatureCollectionWithProperties<Point, P, FeatureCollectionProps>,
-    'features'
+    'features' | 'bbox'
 > & {
     /**
      * Array of place features.
-     *
-     * Each place has a required string ID.
+     * * Each place has a required string ID.
      */
     features: Place<P>[];
+
+    /**
+     * Bounding box that contains all the places, including their bounding boxes.
+     * * Only included if any places are present.
+     */
+    bbox?: BBox;
 };

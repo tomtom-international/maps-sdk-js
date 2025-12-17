@@ -1,4 +1,5 @@
 import {
+    BBox,
     bboxFromGeoJSON,
     type ChargingStop,
     type CountrySectionProps,
@@ -382,13 +383,11 @@ const parseGuidance = (apiGuidance: GuidanceAPI, path: Position[]): Guidance => 
 
 const parseRoute = (apiRoute: RouteAPI, index: number, params: CalculateRouteParams): Route => {
     const geometry = parseRoutePath(apiRoute.legs);
-    const bbox = bboxFromGeoJSON(geometry);
-    const id = generateId();
     return {
         type: 'Feature',
         geometry,
-        id,
-        ...(bbox && { bbox }),
+        id: generateId(),
+        bbox: bboxFromGeoJSON(geometry) as BBox, // Route geometry should always have area
         properties: {
             index,
             summary: parseSummary(apiRoute.summary, params),

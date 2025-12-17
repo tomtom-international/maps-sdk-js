@@ -1,4 +1,4 @@
-import type { PolygonFeature, PolygonFeatures } from '@tomtom-org/maps-sdk/core';
+import { bboxFromGeoJSON, PolygonFeature, PolygonFeatures } from '@tomtom-org/maps-sdk/core';
 import { callService } from '../shared/serviceTemplate';
 import type { ReachableRangeTemplate } from './reachableRangeTemplate';
 import { reachableRangeTemplate } from './reachableRangeTemplate';
@@ -147,5 +147,6 @@ export const calculateReachableRanges = async (
         // we sequentially fetch reachable ranges (less speed but better to prevent QPS limit breaches):
         features.push(await calculateReachableRange(params, customTemplate));
     }
-    return { type: 'FeatureCollection', features: features };
+    const bbox = bboxFromGeoJSON(features);
+    return { type: 'FeatureCollection', ...(bbox && { bbox }), features };
 };

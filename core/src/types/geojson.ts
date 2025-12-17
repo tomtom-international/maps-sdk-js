@@ -123,7 +123,12 @@ export type OptionalBBox = BBox | undefined;
  *
  * @group Shared
  */
-export type PolygonFeature<P = GeoJsonProperties> = Feature<Polygon | MultiPolygon, P>;
+export type PolygonFeature<P = GeoJsonProperties> = Omit<Feature<Polygon | MultiPolygon, P>, 'bbox'> & {
+    /**
+     * Bounding box that contains the feature's geometry.
+     */
+    bbox: BBox;
+};
 
 /**
  * GeoJSON FeatureCollection containing polygon or multi-polygon features.
@@ -156,7 +161,21 @@ export type PolygonFeature<P = GeoJsonProperties> = Feature<Polygon | MultiPolyg
  *
  * @group Shared
  */
-export type PolygonFeatures<P = GeoJsonProperties> = FeatureCollection<Polygon | MultiPolygon, P>;
+export type PolygonFeatures<P = GeoJsonProperties> = Omit<
+    FeatureCollection<Polygon | MultiPolygon, P>,
+    'features' | 'bbox'
+> & {
+    /**
+     * Array of polygon or multi-polygon features.
+     */
+    features: PolygonFeature<P>[];
+
+    /**
+     * Bounding box that contains all features in the collection, including their bounding boxes, if any.
+     * * Only included if any features present.
+     */
+    bbox?: BBox;
+};
 
 /**
  * Extended GeoJSON FeatureCollection with additional properties at the collection level.
@@ -187,6 +206,7 @@ export interface FeatureCollectionWithProperties<
 > extends Omit<FeatureCollection<G, P>, 'bbox'> {
     /**
      * Optional bounding box that contains all features in the collection, including their bounding boxes, if any.
+     * * Only included if any features are present.
      */
     bbox?: BBox;
 

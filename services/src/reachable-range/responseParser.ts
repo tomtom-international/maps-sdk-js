@@ -1,4 +1,4 @@
-import type { PolygonFeature } from '@tomtom-org/maps-sdk/core';
+import type { BBox, PolygonFeature } from '@tomtom-org/maps-sdk/core';
 import { bboxFromGeoJSON } from '@tomtom-org/maps-sdk/core';
 import type { Polygon } from 'geojson';
 import type { ReachableRangeResponseAPI } from './types/apiResponseTypes';
@@ -17,6 +17,6 @@ export const parseReachableRangeResponse = (
         type: 'Polygon',
         coordinates: [apiResponse.reachableRange.boundary.map((point) => [point.longitude, point.latitude])],
     };
-    const bbox = bboxFromGeoJSON(geometry);
+    const bbox = bboxFromGeoJSON(geometry) as BBox; // the geometry should always have a bbox
     return { type: 'Feature', geometry, bbox, properties: params };
 };

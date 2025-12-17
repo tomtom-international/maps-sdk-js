@@ -1,4 +1,4 @@
-import type { FeatureCollection, MultiPolygon, Polygon } from 'geojson';
+import type { PolygonFeatures } from '@tomtom-org/maps-sdk/core';
 import { describe, expect, test } from 'vitest';
 import type { ColorPaletteOptions } from '../layers/geometryLayers';
 import { colorPalettes } from '../layers/geometryLayers';
@@ -62,16 +62,18 @@ describe('prepareGeometryForDisplay', () => {
     });
 
     test('Prepare geometry for display', () => {
-        const geometry: FeatureCollection<Polygon> = {
+        const geometry: PolygonFeatures = {
             type: 'FeatureCollection',
             features: [
                 {
                     type: 'Feature',
+                    bbox: [0, 0, 1, 1],
                     properties: { title: 'TomTom' },
                     geometry: { type: 'Polygon', coordinates: [] },
                 },
                 {
                     type: 'Feature',
+                    bbox: [0, 0, 1, 1],
                     properties: { address: { freeformAddress: 'TomTom' }, color: '#00aabb' },
                     geometry: { type: 'Polygon', coordinates: [] },
                 },
@@ -92,11 +94,12 @@ describe('prepareGeometryForDisplay', () => {
     });
 
     test('Prepare geometry for display with undefined title and color', () => {
-        const geometry: FeatureCollection<Polygon> = {
+        const geometry: PolygonFeatures = {
             type: 'FeatureCollection',
             features: [
                 {
                     type: 'Feature',
+                    bbox: [0, 0, 1, 1],
                     properties: {},
                     geometry: { type: 'Polygon', coordinates: [] },
                 },
@@ -113,18 +116,20 @@ describe('prepareGeometryForDisplay', () => {
     });
 
     test('Prepare title for display', () => {
-        const geometries: FeatureCollection<Polygon | MultiPolygon> = {
+        const geometries: PolygonFeatures = {
             type: 'FeatureCollection',
             features: [
                 {
+                    bbox: [-7.1036325, 43.4264427, -7.1036325, 43.4264427],
                     type: 'Feature',
                     properties: {},
                     geometry: {
                         type: 'Polygon',
                         coordinates: [[[-7.1036325, 43.4264427]]],
                     },
-                },
+                } as import('@tomtom-org/maps-sdk/core').PolygonFeature<any>,
                 {
+                    bbox: [-7.1036325, 43.4264427, -7.1036325, 43.4264427],
                     type: 'Feature',
                     properties: {
                         placeCoordinates: [[-7.1036325, 43.4264427]],
@@ -133,8 +138,9 @@ describe('prepareGeometryForDisplay', () => {
                         type: 'Polygon',
                         coordinates: [],
                     },
-                },
+                } as import('@tomtom-org/maps-sdk/core').PolygonFeature<any>,
                 {
+                    bbox: [100, 0, 103, 3],
                     type: 'Feature',
                     properties: {},
                     geometry: {
@@ -167,7 +173,7 @@ describe('prepareGeometryForDisplay', () => {
                             ],
                         ],
                     },
-                },
+                } as import('@tomtom-org/maps-sdk/core').PolygonFeature<any>,
             ],
         };
 
@@ -184,7 +190,11 @@ describe('prepareGeometryForDisplay', () => {
                     geometry: { type: 'Point', coordinates: [[-7.1036325, 43.4264427]] },
                     properties: { placeCoordinates: [[-7.1036325, 43.4264427]] },
                 },
-                { type: 'Feature', geometry: { type: 'Point', coordinates: [102.5, 2.5] }, properties: {} },
+                {
+                    type: 'Feature',
+                    geometry: { type: 'Point', coordinates: [102.5, 2.5] },
+                    properties: {},
+                },
             ],
         });
     });

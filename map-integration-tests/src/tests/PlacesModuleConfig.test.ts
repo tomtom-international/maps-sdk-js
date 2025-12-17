@@ -1,6 +1,5 @@
 import { expect, test } from '@playwright/test';
 import { bboxFromGeoJSON, type Place } from '@tomtom-org/maps-sdk/core';
-import type { LngLatBoundsLike } from 'maplibre-gl';
 import { MapTestEnv } from './util/MapTestEnv';
 import {
     applyPlacesIconConfig,
@@ -34,7 +33,7 @@ test.describe('GeoJSON Places apply different configs', () => {
     };
 
     test('GeoJSON Places with init config tests', async ({ page }) => {
-        const bounds = bboxFromGeoJSON(testPlace) as LngLatBoundsLike;
+        const bounds = bboxFromGeoJSON(testPlace);
         const mapEnv = await MapTestEnv.loadPageAndMap(page, { bounds });
         await initPlaces(page, { theme: 'circle' });
         const { layerIDs } = await getPlacesSourceAndLayerIDs(page);

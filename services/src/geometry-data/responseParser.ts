@@ -1,4 +1,4 @@
-import { bboxFromGeoJSON, generateId, PolygonFeatures } from '@tomtom-org/maps-sdk/core';
+import { bboxFromGeoJSON, generateId, PolygonFeature, PolygonFeatures } from '@tomtom-org/maps-sdk/core';
 import type { GeometryDataResponseAPI } from './types/apiTypes';
 
 /**
@@ -17,7 +17,7 @@ export const parseGeometryDataResponse = (apiResponse: GeometryDataResponseAPI):
                 bbox: bboxFromGeoJSON(feature.geometry),
             })),
         )
-        .filter((feature) => feature);
+        .filter((feature) => feature) as PolygonFeature[];
     return {
         type: 'FeatureCollection',
         bbox: bboxFromGeoJSON(features),

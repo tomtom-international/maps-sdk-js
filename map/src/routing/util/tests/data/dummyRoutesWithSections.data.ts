@@ -17,6 +17,7 @@ export const dummyRoutesWithSectionsData: Routes<DisplayRouteProps> = {
                     [0, 5],
                 ],
             },
+            bbox: [0, 0, 0, 5],
             id: 'route-0',
             properties: {
                 index: 0,
@@ -53,6 +54,7 @@ export const dummyRoutesWithSectionsData: Routes<DisplayRouteProps> = {
                     [1, 5],
                 ],
             },
+            bbox: [1, 0, 1, 5],
             id: 'route-1',
             properties: {
                 index: 1,

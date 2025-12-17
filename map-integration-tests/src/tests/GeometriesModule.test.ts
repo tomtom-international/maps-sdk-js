@@ -4,7 +4,7 @@ import type { PolygonFeatures } from 'core';
 import type { Position } from 'geojson';
 import type { DisplayGeometryProps, GeometryBeforeLayerConfig } from 'map';
 import { mapStyleLayerIDs } from 'map';
-import type { LngLatBoundsLike, MapGeoJSONFeature } from 'maplibre-gl';
+import type { MapGeoJSONFeature } from 'maplibre-gl';
 import amsterdamGeometryData from './data/GeometriesModule.test.data.json';
 import netherlandsGeometryData from './data/GeometriesModule-Netherlands.test.data.json';
 import { MapsSDKThis } from './types/MapsSDKThis';
@@ -52,7 +52,7 @@ test.describe('Geometry integration tests', () => {
     const outsideAmsterdamSouth = [4.8799, 52.3087];
 
     test('Show a geometry on the map, default module config', async ({ page }) => {
-        const mapEnv = await MapTestEnv.loadPageAndMap(page, { bounds: geometryData.bbox as LngLatBoundsLike });
+        const mapEnv = await MapTestEnv.loadPageAndMap(page, { bounds: geometryData.bbox });
         await initGeometries(page);
         const sourcesAndLayers = await getGeometriesSourceAndLayerIDs(page);
         const sourceId = sourcesAndLayers?.geometry?.sourceID as string;
@@ -77,7 +77,7 @@ test.describe('Geometry integration tests', () => {
     });
 
     test('Show a geometry on the map right after changing the map style', async ({ page }) => {
-        const mapEnv = await MapTestEnv.loadPageAndMap(page, { bounds: geometryData.bbox as LngLatBoundsLike });
+        const mapEnv = await MapTestEnv.loadPageAndMap(page, { bounds: geometryData.bbox });
         await initGeometries(page);
         const sourcesAndLayers = await getGeometriesSourceAndLayerIDs(page);
         const sourceId = sourcesAndLayers?.geometry?.sourceID as string;
@@ -98,7 +98,7 @@ test.describe('Geometry integration tests', () => {
     });
 
     test('Show multiple geometries in the map with title, default config', async ({ page }) => {
-        const mapEnv = await MapTestEnv.loadPageAndMap(page, { bounds: netherlandsData.bbox as LngLatBoundsLike });
+        const mapEnv = await MapTestEnv.loadPageAndMap(page, { bounds: netherlandsData.bbox });
         await initGeometries(page);
 
         const sourcesAndLayers = await getGeometriesSourceAndLayerIDs(page);
@@ -124,7 +124,7 @@ test.describe('Geometry integration tests', () => {
     });
 
     test('Show multiple geometries in the map with title, custom config', async ({ page }) => {
-        const mapEnv = await MapTestEnv.loadPageAndMap(page, { bounds: netherlandsData.bbox as LngLatBoundsLike });
+        const mapEnv = await MapTestEnv.loadPageAndMap(page, { bounds: netherlandsData.bbox });
         await initGeometries(page, {
             colorConfig: { fillColor: '#00ccbb', fillOpacity: 0.6 },
             textConfig: { textField: 'CustomText' },

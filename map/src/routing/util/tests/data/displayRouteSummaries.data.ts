@@ -20,6 +20,7 @@ export const displayRouteSummariesData: TestCase[] = [
                             [3, 3],
                         ],
                     },
+                    bbox: [0, 0, 3, 3],
                     id: 'route-0',
                     properties: {
                         index: 0,
@@ -73,6 +74,7 @@ export const displayRouteSummariesData: TestCase[] = [
                             [5, 5],
                         ],
                     },
+                    bbox: [0, 0, 5, 5],
                     id: 'route-10',
                     properties: {
                         index: 0,
@@ -135,6 +137,7 @@ export const displayRouteSummariesData: TestCase[] = [
                             [3, 3],
                         ],
                     },
+                    bbox: [0, 0, 3, 3],
                     id: 'route-0',
                     properties: {
                         index: 0,
@@ -201,6 +204,7 @@ export const displayRouteSummariesData: TestCase[] = [
                             [3, 3],
                         ],
                     },
+                    bbox: [0, 0, 3, 3],
                     id: 'route-0',
                     properties: {
                         index: 0,
@@ -223,6 +227,7 @@ export const displayRouteSummariesData: TestCase[] = [
                             [3, 3],
                         ],
                     },
+                    bbox: [0, 0, 3, 3],
                     id: 'route-1',
                     properties: {
                         index: 0,

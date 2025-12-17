@@ -223,7 +223,7 @@ export type Route<P extends RouteProps = RouteProps> = Omit<Feature<LineString, 
     /**
      * Bounding box that contains the entire route or at least its waypoints.
      */
-    bbox?: BBox;
+    bbox: BBox;
 };
 
 /**
@@ -262,7 +262,7 @@ export type Routes<P extends RouteProps = RouteProps, FeatureCollectionProps = u
     features: Route<P>[];
 
     /**
-     * Bounding box that contains all the routes or at least their waypoints.
+     * Bounding box that contains all the routes or at least their waypoints. Only defined if routes are present.
      */
     bbox?: BBox;
 };
