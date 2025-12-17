@@ -38,10 +38,10 @@ Each example is a standalone application you can run and modify.
 pnpm install
 pnpm build
 
-# Run examples in development mode
-cd examples
-pnpm dev
-# Open browser to http://localhost:5173
+# Run an example in development mode
+cd examples/<example-name>
+pnpm develop
+# Open browser to http://localhost:5173/<example-name>
 ```
 
 See [../CONTRIBUTING.md](../CONTRIBUTING.md) for detailed setup.
@@ -228,4 +228,3 @@ main();
 - **Real APIs** - Examples make real API calls to TomTom services
 - **Browser only** - These are web examples (for Node.js examples, see those prefixed with `nodejs-`)
 - **Live examples online** - View at https://docs.tomtom.com/maps-sdk-js/examples/
-
