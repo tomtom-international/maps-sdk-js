@@ -9,7 +9,7 @@
 .sdk-example-button-container {
     position: absolute;
     right: 20px;
-    bottom: 20px;
+    top: 20px;
     display: flex;
     flex-direction: column;
 }
