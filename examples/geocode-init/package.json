@@ -2,8 +2,8 @@
   "name": "@examples/geocode-init",
   "description": "Example integrating Geocoding and Map initialization.",
   "scripts": {
-    "build": "vite build",
-    "develop": "vite",
+    "build": "vite build --config ../example-vite.config.ts",
+    "develop": "vite --config ../example-vite.config.ts",
     "develop:sandpack": "vite --config ../example-sandpack-vite.config.ts",
     "type-check": "tsc --noEmit"
   },

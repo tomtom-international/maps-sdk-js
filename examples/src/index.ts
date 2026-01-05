@@ -1,8 +1,8 @@
 /**
  * @fileoverview Entry point for the @tomtom-org/maps-sdk-examples package
  *
- * This module contains all utils and constants that are part of examples.
+ * This module contains all components, utils and constants that are part of examples.
  */
 
 export * from './constants/tags';
-export * from './sandpack/SDKExamplePreview';
+export * from './sandpack/LiveCodingPreview';

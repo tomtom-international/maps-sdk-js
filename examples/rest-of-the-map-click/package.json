@@ -2,9 +2,9 @@
   "name": "@examples/rest-of-the-map-click",
   "description": "Example showing how to detect clicks on the rest of the map",
   "scripts": {
-    "build": "vite build",
+    "build": "vite build --config ../example-vite.config.ts",
     "clean:dist": "rimraf ./dist",
-    "develop": "vite",
+    "develop": "vite --config ../example-vite.config.ts",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {

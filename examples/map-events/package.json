@@ -2,9 +2,9 @@
   "name": "@examples/map-events",
   "description": "Map events example",
   "scripts": {
-    "build": "vite build",
+    "build": "vite build --config ../example-vite.config.ts",
     "clean:dist": "rimraf ./dist",
-    "develop": "vite",
+    "develop": "vite --config ../example-vite.config.ts",
     "develop:sandpack": "vite --config ../example-sandpack-vite.config.ts",
     "type-check": "tsc --noEmit"
   },

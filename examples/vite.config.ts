@@ -3,7 +3,6 @@ import analyze from 'rollup-plugin-analyzer';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig, loadEnv } from 'vite';
 import dts from 'vite-plugin-dts';
-import { sandpackTransformPlugins } from './example-sandpack-vite.config';
 
 export default defineConfig(({ mode }) => {
     return {
@@ -20,7 +19,6 @@ export default defineConfig(({ mode }) => {
             },
         },
         plugins: [
-            ...sandpackTransformPlugins,
             dts({
                 outDirs: 'dist',
                 include: ['index.ts', 'src/**/*'],

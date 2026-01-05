@@ -1723,7 +1723,7 @@ importers:
         version: 6.1.2
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.53.5)
+        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.54.0)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.0.3)(typescript@5.9.3)
