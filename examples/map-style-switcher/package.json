@@ -1,0 +1,23 @@
+{
+  "name": "@examples/map-style-switcher",
+  "description": "Example showing how to switch between different standard map styles.",
+  "scripts": {
+    "build": "vite build --config ../example-vite.config.ts",
+    "clean:dist": "rimraf ./dist",
+    "develop": "vite --config ../example-vite.config.ts",
+    "develop:sandpack": "vite --config ../example-sandpack-vite.config.ts",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tomtom-org/maps-sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "maplibre-gl": "catalog:",
+    "rimraf": "catalog:",
+    "rollup-plugin-visualizer": "catalog:",
+    "ts-node": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  }
+}

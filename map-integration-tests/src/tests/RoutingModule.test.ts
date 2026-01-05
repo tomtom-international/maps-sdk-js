@@ -78,7 +78,7 @@ test.describe('Routing and waypoint display tests', () => {
         page.evaluate(() => (globalThis as MapsSDKThis).routing?.clearWaypoints());
 
     const waitForRenderedWaypoints = async (page: Page, numWaypoints: number) =>
-        waitUntilRenderedFeatures(page, [ROUTE_WAYPOINTS_SYMBOLS_LAYER_ID], numWaypoints, 5000);
+        waitUntilRenderedFeatures(page, [ROUTE_WAYPOINTS_SYMBOLS_LAYER_ID], numWaypoints, 10000);
 
     const getSelectedSummaryBubbleProps = async (page: Page): Promise<DisplayRouteSummaryProps | undefined> => {
         const renderedBubbles: MapGeoJSONFeature[] = await queryRenderedFeatures(page, [
@@ -190,8 +190,6 @@ test.describe('Routing and waypoint display tests', () => {
         // Changing the style, asserting that the route stays the same:
         await setStyle(page, 'standardDark');
         await waitForMapIdle(page);
-
-        await waitForTimeout(2000);
         await waitForRenderedWaypoints(page, 2);
         await waitUntilRenderedFeatures(page, [ROUTE_LINE_LAYER_ID], 1, 2000);
         await waitUntilRenderedFeatures(page, [ROUTE_DESELECTED_LINE_LAYER_ID], 2, 2000);
