@@ -5,4 +5,4 @@
  */
 
 export * from './constants/tags';
-export * from './sandpack/LiveCodingPreview';
+export * from './sandpack/LiveCodingExample';
