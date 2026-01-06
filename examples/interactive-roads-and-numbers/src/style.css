@@ -25,7 +25,11 @@
     flex-direction: column;
     bottom: 25px;
     width: 400px;
+    max-width: calc(100vw - 40px);
     height: 140px;
+    max-height: calc(100vh - 50px);
+    overflow-y: auto;
+    box-sizing: border-box;
 }
 
 .sdk-example-info-label {

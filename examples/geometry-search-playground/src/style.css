@@ -31,6 +31,9 @@
     right: 20px;
     display: flex;
     flex-direction: row;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    box-sizing: border-box;
 }
 
 .sdk-example-refit-button-container {
@@ -39,6 +42,9 @@
     bottom: 20px;
     display: flex;
     flex-direction: column;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    box-sizing: border-box;
 }
 
 #sdk-map {

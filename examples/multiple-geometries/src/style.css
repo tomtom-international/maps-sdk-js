@@ -12,6 +12,9 @@
     bottom: 20px;
     display: flex;
     flex-direction: column;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    box-sizing: border-box;
 }
 
 .sdk-example-panel {
@@ -25,6 +28,9 @@
     color: #333;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 20px;
+    max-height: calc(100vh - 50px);
+    overflow-y: auto;
+    box-sizing: border-box;
 }
 
 .sdk-example-heading-label {

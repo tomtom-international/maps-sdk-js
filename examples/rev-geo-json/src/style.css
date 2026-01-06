@@ -3,5 +3,7 @@
     color: white;
     padding: 12px;
     height: 600px;
-    overflow: scroll;
+    max-height: calc(100vh - 24px);
+    overflow: auto;
+    box-sizing: border-box;
 }

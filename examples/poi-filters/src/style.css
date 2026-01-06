@@ -11,11 +11,14 @@
     right: 0;
     background: white;
     padding: 8px 16px;
-    margin: 50px 10px;
+    margin: 16px;
     font-family: Gilroy, sans-serif;
     color: #333;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 20px;
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+    box-sizing: border-box;
 }
 
 #sdk-example-mode-selector {

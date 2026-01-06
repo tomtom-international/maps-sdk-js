@@ -18,6 +18,9 @@
     color: #333;
     z-index: 1;
     max-width: 300px;
+    max-height: calc(100vh - 20px);
+    overflow-y: auto;
+    box-sizing: border-box;
 }
 
 .info-panel h3 {
