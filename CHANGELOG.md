@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.39.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.38.1...v0.39.0) (2026-01-06)
+
+
+### Features
+
+* add live coding for few guides ([05b3876](https://github.com/tomtom-international/maps-sdk-js/commit/05b3876cb6791e65fff5c6a990191b88f89fe6fc))
+* new map style switcher example ([efdbbdd](https://github.com/tomtom-international/maps-sdk-js/commit/efdbbdd3006508114f9dd178fcc48d8bb62858ca))
+
+
+### Bug Fixes
+
+* simplify how sandpack examples are exposed ([3f75204](https://github.com/tomtom-international/maps-sdk-js/commit/3f752040d2f7f39f15e894fb6174645ef725b25a))
+
 ## [0.38.1](https://github.com/tomtom-international/maps-sdk-js/compare/v0.38.0...v0.38.1) (2025-12-17)
 
 
