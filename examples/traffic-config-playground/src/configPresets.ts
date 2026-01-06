@@ -19,13 +19,14 @@ export const configPresets: {
     {
         title: 'Incidents',
         config: {
+            incidents: { visible: true },
             flow: { visible: false },
         },
     },
     {
         title: 'Icon-less Incidents',
         config: {
-            incidents: { icons: { visible: false } },
+            incidents: { visible: true, icons: { visible: false } },
             flow: { visible: false },
         },
     },
@@ -33,12 +34,14 @@ export const configPresets: {
         title: 'Flow',
         config: {
             incidents: { visible: false },
+            flow: { visible: true },
         },
     },
     {
         title: 'Incidents with delays',
         config: {
             incidents: {
+                visible: true,
                 filters: {
                     any: [
                         {
@@ -54,6 +57,7 @@ export const configPresets: {
         title: 'Road works and closures',
         config: {
             incidents: {
+                visible: true,
                 filters: {
                     any: [
                         {
@@ -69,6 +73,7 @@ export const configPresets: {
         title: 'Incidents with indefinite or more than 5 min delays',
         config: {
             incidents: {
+                visible: true,
                 filters: {
                     any: [
                         {
@@ -85,6 +90,7 @@ export const configPresets: {
         config: {
             incidents: { visible: false },
             flow: {
+                visible: true,
                 filters: {
                     any: [
                         {
@@ -100,6 +106,7 @@ export const configPresets: {
         config: {
             incidents: { visible: false },
             flow: {
+                visible: true,
                 filters: {
                     any: [
                         {
@@ -111,9 +118,10 @@ export const configPresets: {
         },
     },
     {
-        title: 'Flow in main roads with major incidents and icon-less road closures',
+        title: 'Main roads flow, major incidents, icon-less road closures',
         config: {
             incidents: {
+                visible: true,
                 filters: {
                     any: [
                         {
@@ -136,6 +144,7 @@ export const configPresets: {
                 },
             },
             flow: {
+                visible: true,
                 filters: {
                     any: [
                         {
@@ -149,10 +158,9 @@ export const configPresets: {
     {
         title: 'Flow in streets (when zoomed in close)',
         config: {
-            incidents: {
-                visible: false,
-            },
+            incidents: { visible: false },
             flow: {
+                visible: true,
                 filters: {
                     any: [
                         {
