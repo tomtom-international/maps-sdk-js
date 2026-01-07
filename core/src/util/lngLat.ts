@@ -52,7 +52,7 @@ const getMainEntryPoint = (place: Place): EntryPoint | undefined =>
  * getPosition(undefined); // Returns: null
  * ```
  *
- * @group Shared
+ * @group Utils
  */
 export const getPosition = (hasLngLat: HasLngLat | undefined, options?: GetPositionOptions): Position | null => {
     if (hasLngLat) {

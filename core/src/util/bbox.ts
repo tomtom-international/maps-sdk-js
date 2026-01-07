@@ -160,7 +160,7 @@ export const bboxFromCoordsArray = (coordinates: Position[] | undefined): Option
  * // Returns bbox encompassing all three places
  * ```
  *
- * @group Shared
+ * @group Utils
  */
 export const bboxFromGeoJSON = (hasBBox: HasBBox): OptionalBBox => {
     // Edge case:

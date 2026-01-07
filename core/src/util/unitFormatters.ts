@@ -56,7 +56,7 @@ const hourUnits = (displayUnits?: TimeDisplayUnits): string => displayUnits?.hou
  * // Output: "Estimated time: 2 hr 15 min"
  * ```
  *
- * @group Shared
+ * @group Utils
  */
 export const formatDuration = (seconds: number | undefined, options?: TimeDisplayUnits): string | undefined => {
     if (seconds) {
@@ -118,7 +118,7 @@ export const formatDuration = (seconds: number | undefined, options?: TimeDispla
  * const ukSystem: DistanceUnitsType = 'imperial_uk';  // United Kingdom
  * ```
  *
- * @group Shared
+ * @group Utils
  */
 export type DistanceUnitsType = 'metric' | 'imperial_us' | 'imperial_uk';
 
@@ -259,7 +259,7 @@ const formatUk = (meters: number, displayUnits: DistanceDisplayUnits): string =>
  * ```
  * @param meters
  * @param options Options for the display units, including their type and custom ways to display them.
- * @group Shared
+ * @group Utils
  */
 export const formatDistance = (meters: number, options?: DistanceDisplayUnits): string => {
     if (isNil(meters)) {

@@ -6,7 +6,6 @@ import { commonServiceRequestSchema } from './commonParamsSchema';
 
 /**
  * Validate Error Class for validating params input, this will be used by SDKError class.
- * @group Shared
  * @ignore
  */
 export class ValidationError extends Error {
