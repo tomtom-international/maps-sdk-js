@@ -1,7 +1,7 @@
-import type { Place } from '@tomtom-org/maps-sdk/core';
+import type { BBox, Place } from '@tomtom-org/maps-sdk/core';
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import type { MapFont, PlaceIconConfig, PlacesTheme } from '@tomtom-org/maps-sdk/map';
-import { PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { calculatePaddedBBox, PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { search } from '@tomtom-org/maps-sdk/services';
 import type { DataDrivenPropertyValueSpecification } from 'maplibre-gl';
 import tomtomLogo from './tomtomLogo.png';
@@ -52,7 +52,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
             await search({
                 query: '',
                 poiCategories: ['ELECTRIC_VEHICLE_STATION', 'CAFE_PUB'],
-                boundingBox: map.getBBox(),
+                boundingBox: calculatePaddedBBox({ map, surroundingElements: ['.sdk-example-panel'] }) as BBox,
                 limit: 100,
             }),
         );

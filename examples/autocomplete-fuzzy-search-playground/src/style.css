@@ -126,6 +126,7 @@
 
 #sdk-example-search-this-area {
     text-align: center;
+    float: right;
 }
 
 .sdk-example-search-this-area-btn {

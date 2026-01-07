@@ -1,6 +1,7 @@
-import type { Places } from '@tomtom-org/maps-sdk/core';
+import type { BBox, Places } from '@tomtom-org/maps-sdk/core';
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import {
+    calculateFittingBBox,
     GeometriesModule,
     type GeometryBeforeLayerConfig,
     type StandardStyleID,
@@ -18,15 +19,20 @@ import { API_KEY } from './config';
 TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 
 (async () => {
-    const fitBoundsOptions = { padding: 50 };
-
-    const map = new TomTomMap({ container: 'sdk-map', fitBoundsOptions });
+    const map = new TomTomMap({ container: 'sdk-map' });
     const geometryModule = await GeometriesModule.get(map);
     let placeSubdivisions: Places;
 
+    const placeBBox = () =>
+        calculateFittingBBox({
+            map,
+            toBeContainedBBox: placeSubdivisions.bbox as BBox,
+            surroundingElements: ['#sdk-example-panel'],
+        }) as LngLatBoundsLike;
+
     const updateMap = async (config: Config) => {
         placeSubdivisions = await geocode({ limit: 100, query: '', ...config.searchConfig });
-        map.mapLibreMap.fitBounds(placeSubdivisions.bbox as LngLatBoundsLike, fitBoundsOptions);
+        map.mapLibreMap.fitBounds(placeBBox());
         const geometries = await geometryData({ geometries: placeSubdivisions, zoom: 14 });
         geometryModule.applyConfig(config.geometryConfig);
         geometryModule.show(geometries);
@@ -53,12 +59,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 
         document
             .querySelector('#sdk-example-reCenter')
-            ?.addEventListener(
-                'click',
-                () =>
-                    placeSubdivisions &&
-                    map.mapLibreMap.fitBounds(placeSubdivisions.bbox as LngLatBoundsLike, fitBoundsOptions),
-            );
+            ?.addEventListener('click', () => placeSubdivisions && map.mapLibreMap.fitBounds(placeBBox()));
     };
 
     await updateMap(namedConfigs.france);
