@@ -7,7 +7,6 @@
 **This directory is primarily for internal contributors.**
 
 - 🔵 **Internal Contributors** - Working on SDK codebase → Essential reading
-- 🟢 **External Customers** - Should refer to [../.ai/](../.ai/) directory and official docs instead
 
 ## Overview
 
@@ -27,6 +26,10 @@ documentation/
 │   ├── testing/        # Testing approaches
 │   └── workflows/      # Common development tasks
 └── docs-portal/        # Documentation site source
+    ├── AGENTS.md       # Guide writing instructions
+    ├── guides/         # Customer-facing guides
+    ├── introduction/   # Getting started content
+    └── examples/       # Example code references
 ```
 
 ## For Internal Contributors
@@ -49,7 +52,7 @@ documentation/
 - **Add a new feature** → Review architecture docs, follow patterns
 - **Write tests** → See `development/testing/`
 - **Release process** → Check release documentation
-- **Update documentation** → Edit relevant files in this directory
+- **Write or update guides** → See [docs-portal/AGENTS.md](docs-portal/AGENTS.md) for guide writing instructions
 
 ## For External Customers
 
