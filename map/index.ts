@@ -13,3 +13,4 @@ export * from './src/routing';
 export * from './src/shared';
 export * from './src/TomTomMap';
 export * from './src/traffic';
+export * from './src/utils';
