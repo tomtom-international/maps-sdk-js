@@ -42,6 +42,10 @@ pnpm build
 cd examples/<example-name>
 pnpm develop
 # Open browser to http://localhost:5173/<example-name>
+
+# Or run with Sandpack live coding preview
+pnpm develop:sandpack
+# Open browser to see interactive code editor with live preview
 ```
 
 See [../CONTRIBUTING.md](../CONTRIBUTING.md) for detailed setup.
@@ -61,6 +65,45 @@ pnpm dev
 # Navigate to http://localhost:5173/my-new-example
 ```
 
+### Sandpack Live Coding Preview
+
+Sandpack provides an interactive code editor with live preview for examples. This is useful for:
+- Testing examples in an isolated environment
+- Providing interactive documentation
+- Debugging examples with real-time code changes
+
+**Run Sandpack preview:**
+```bash
+cd examples/<example-name>
+pnpm develop:sandpack
+# Opens a React app with Sandpack editor showing your example
+```
+
+**Customize Sandpack behavior:**
+
+Create a `sandpack.ts` file in your example directory to customize the Sandpack editor:
+
+```typescript
+// my-example/sandpack.ts
+import type { SandpackOptions } from '@codesandbox/sandpack-react';
+
+export const sandpackOptions: Partial<SandpackOptions> = {
+  editorHeight: '600px',
+  layout: 'preview',  // or 'console'
+  showLineNumbers: true,
+  // ... other Sandpack options
+};
+```
+
+The Sandpack preview:
+- Automatically loads all example files (index.html, index.ts, style.css)
+- Hides utility files (config.ts) by default
+- Uses the amethyst theme with custom colors
+- Resolves workspace dependencies to their published versions
+- Injects API keys from environment variables
+
+
+
 ### Testing SDK Changes
 ```bash
 # 1. Make changes in ../map or ../services
@@ -79,10 +122,16 @@ pnpm dev
 examples/
 ├── vite.config.ts          # Vite configuration for all examples
 ├── example-vite.config.ts  # Individual example config
+├── example-sandpack-vite.config.ts  # Sandpack preview config
+├── src/
+│   └── sandpack/
+│       ├── LiveCodingExample.tsx    # Sandpack component
+│       └── localPreview/            # Local preview app
 ├── default-map/            # Example: Basic map
 │   ├── index.html
 │   ├── index.ts
-│   └── style.css (optional)
+│   ├── style.css (optional)
+│   └── sandpack.ts (optional)  # Sandpack customization
 └── route/                  # Example: Routing
     ├── index.html
     └── index.ts
@@ -95,6 +144,8 @@ examples/
 - **Verify bug fix** → Run affected examples to validate fix
 - **Document API usage** → Create example showing best practices
 - **Generate thumbnails** → Run `pnpm generate-thumbnails` (see scripts)
+- **Test example interactively** → Use `pnpm develop:sandpack` for live code editing
+- **Share interactive demo** → Create sandpack.ts to customize the preview experience
 
 ## Example Catalog
 
