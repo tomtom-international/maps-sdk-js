@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.40.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.39.0...v0.40.0) (2026-01-07)
+
+
+### Features
+
+* new padded bbox calculation utilities for map bundle ([7b686e0](https://github.com/tomtom-international/maps-sdk-js/commit/7b686e022a0035988db773e123bed0582b851823))
+* new polygonFromBBox core utility ([ada872d](https://github.com/tomtom-international/maps-sdk-js/commit/ada872d9f76ea0a4f9dc4fd7b3132b568213e59d))
+* sdk upgrade ([42ab185](https://github.com/tomtom-international/maps-sdk-js/commit/42ab185898820c60cb003b914a15d244324cb75b))
+
 ## [0.39.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.38.1...v0.39.0) (2026-01-06)
 
 
