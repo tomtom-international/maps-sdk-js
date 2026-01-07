@@ -20,6 +20,7 @@ import {
     bboxFromGeoJSON,
     bboxOnlyIfWithArea,
     isBBoxWithArea,
+    polygonFromBBox,
 } from '../bbox';
 
 import { bestExecutionTimeMS } from './performanceTestUtils';
@@ -451,5 +452,109 @@ describe('Bounding box calculation performance tests', () => {
 describe('Bounding box center', () => {
     test('Calculate bounding box center', () => {
         expect(bboxCenter([2, 4, 6, 8])).toEqual([4, 6]);
+    });
+});
+
+describe('Polygon from bounding box', () => {
+    test('Create polygon from simple bbox', () => {
+        const bbox: [number, number, number, number] = [0, 0, 10, 10];
+        const polygon = polygonFromBBox(bbox);
+
+        expect(polygon.type).toBe('Feature');
+        expect(polygon.geometry.type).toBe('Polygon');
+        expect(polygon.properties).toEqual({});
+        expect(polygon.geometry.coordinates).toEqual([
+            [
+                [0, 0],
+                [10, 0],
+                [10, 10],
+                [0, 10],
+                [0, 0],
+            ],
+        ]);
+    });
+
+    test('Create polygon from bbox with negative coordinates', () => {
+        const bbox: [number, number, number, number] = [-10, -20, 30, 40];
+        const polygon = polygonFromBBox(bbox);
+
+        expect(polygon.geometry.coordinates).toEqual([
+            [
+                [-10, -20],
+                [30, -20],
+                [30, 40],
+                [-10, 40],
+                [-10, -20],
+            ],
+        ]);
+    });
+
+    test('Create polygon from bbox crossing antimeridian', () => {
+        const bbox: [number, number, number, number] = [170, -10, -170, 10];
+        const polygon = polygonFromBBox(bbox);
+
+        expect(polygon.geometry.coordinates).toEqual([
+            [
+                [170, -10],
+                [-170, -10],
+                [-170, 10],
+                [170, 10],
+                [170, -10],
+            ],
+        ]);
+    });
+
+    test('Create polygon from bbox with decimal coordinates', () => {
+        const bbox: [number, number, number, number] = [4.88, 52.36, 4.9, 52.38];
+        const polygon = polygonFromBBox(bbox);
+
+        expect(polygon.geometry.coordinates).toEqual([
+            [
+                [4.88, 52.36],
+                [4.9, 52.36],
+                [4.9, 52.38],
+                [4.88, 52.38],
+                [4.88, 52.36],
+            ],
+        ]);
+    });
+
+    test('Create polygon from world bbox', () => {
+        const bbox: [number, number, number, number] = [-180, -90, 180, 90];
+        const polygon = polygonFromBBox(bbox);
+
+        expect(polygon.geometry.coordinates).toEqual([
+            [
+                [-180, -90],
+                [180, -90],
+                [180, 90],
+                [-180, 90],
+                [-180, -90],
+            ],
+        ]);
+    });
+
+    test('Polygon is closed (first and last coordinates are the same)', () => {
+        const bbox: [number, number, number, number] = [1, 2, 3, 4];
+        const polygon = polygonFromBBox(bbox);
+        const coords = polygon.geometry.coordinates[0];
+
+        expect(coords[0]).toEqual(coords[coords.length - 1]);
+        expect(coords.length).toBe(5);
+    });
+
+    test('Polygon from zero-area bbox', () => {
+        const bbox: [number, number, number, number] = [5, 5, 5, 5];
+        const polygon = polygonFromBBox(bbox);
+
+        expect(polygon.geometry.coordinates).toEqual([
+            [
+                [5, 5],
+                [5, 5],
+                [5, 5],
+                [5, 5],
+                [5, 5],
+            ],
+        ]);
     });
 });

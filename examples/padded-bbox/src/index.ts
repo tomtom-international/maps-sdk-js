@@ -1,4 +1,4 @@
-import { type BBox, TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { polygonFromBBox, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { calculatePaddedBBox, calculatePaddedCenter, mapStyleLayerIDs, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import type { GeoJSONSource, Map } from 'maplibre-gl';
 import './style.css';
@@ -27,26 +27,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 
     const surroundingElements = [panelLeft, panelTop, panelRight] as HTMLElement[];
 
-    const createBBoxPolygon = (bbox: BBox) => {
-        const [west, south, east, north] = bbox;
-        return {
-            type: 'Feature' as const,
-            geometry: {
-                type: 'Polygon' as const,
-                coordinates: [
-                    [
-                        [west, south],
-                        [east, south],
-                        [east, north],
-                        [west, north],
-                        [west, south],
-                    ],
-                ],
-            },
-            properties: {},
-        };
-    };
-
     const BBOX_SOURCE_ID = 'padded-bbox-source';
     const BBOX_LAYER_ID = 'padded-bbox-layer';
     const CENTER_SOURCE_ID = 'center-x-source';
@@ -68,7 +48,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         if (!bbox) return;
 
         const bboxSource = mapLibreMap.getSource(BBOX_SOURCE_ID) as GeoJSONSource;
-        bboxSource.setData(createBBoxPolygon(bbox));
+        bboxSource.setData(polygonFromBBox(bbox));
 
         const center = calculatePaddedCenter({ map, surroundingElements });
         if (center) {

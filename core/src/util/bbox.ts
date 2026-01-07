@@ -226,3 +226,27 @@ export const bboxExpandedWithGeoJSON = (geoJson: GeoJsonObject, bboxToExpand?: B
  * @param bbox
  * */
 export const bboxCenter = (bbox: BBox): Position => [(bbox[0] + bbox[2]) / 2, (bbox[1] + bbox[3]) / 2];
+
+/**
+ * Creates a GeoJSON Polygon Feature representing the area of the given bounding box.
+ * @param bbox The bounding box defined as [west, south, east, north]
+ */
+export const polygonFromBBox = (bbox: BBox): Feature<Polygon> => {
+    const [west, south, east, north] = bbox;
+    return {
+        type: 'Feature' as const,
+        geometry: {
+            type: 'Polygon' as const,
+            coordinates: [
+                [
+                    [west, south],
+                    [east, south],
+                    [east, north],
+                    [west, north],
+                    [west, south],
+                ],
+            ],
+        },
+        properties: {},
+    };
+};

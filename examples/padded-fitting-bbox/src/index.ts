@@ -1,4 +1,4 @@
-import { type BBox, TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { type BBox, polygonFromBBox, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { calculateFittingBBox, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import type { GeoJSONSource, Map } from 'maplibre-gl';
 import './style.css';
@@ -20,26 +20,6 @@ const toBeContainedBBox: BBox = [4.8, 52.3, 4.95, 52.4];
 
     const surroundingElements = [panelLeft, panelTop, panelRight] as HTMLElement[];
 
-    const createBBoxPolygon = (bbox: BBox) => {
-        const [west, south, east, north] = bbox;
-        return {
-            type: 'Feature' as const,
-            geometry: {
-                type: 'Polygon' as const,
-                coordinates: [
-                    [
-                        [west, south],
-                        [east, south],
-                        [east, north],
-                        [west, north],
-                        [west, south],
-                    ],
-                ],
-            },
-            properties: {},
-        };
-    };
-
     const TO_BE_CONTAINED_SOURCE_ID = 'to-be-contained-bbox-source';
     const EXPANDED_BBOX_SOURCE_ID = 'expanded-bbox-source';
 
@@ -55,7 +35,7 @@ const toBeContainedBBox: BBox = [4.8, 52.3, 4.95, 52.4];
         if (!expandedBBox) return;
 
         const expandedBBoxSource = mapLibreMap.getSource(EXPANDED_BBOX_SOURCE_ID) as GeoJSONSource;
-        expandedBBoxSource.setData(createBBoxPolygon(expandedBBox));
+        expandedBBoxSource.setData(polygonFromBBox(expandedBBox));
         mapLibreMap.fitBounds(expandedBBox);
     };
 
@@ -75,7 +55,7 @@ const toBeContainedBBox: BBox = [4.8, 52.3, 4.95, 52.4];
     // Add source and layer for the "to be contained" bbox (blue)
     mapLibreMap.addSource(TO_BE_CONTAINED_SOURCE_ID, {
         type: 'geojson',
-        data: createBBoxPolygon(toBeContainedBBox),
+        data: polygonFromBBox(toBeContainedBBox),
     });
 
     mapLibreMap.addLayer({
