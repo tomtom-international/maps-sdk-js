@@ -66,6 +66,10 @@ export const TAG_GROUPS: TagGroup[] = [
                 id: 'byod',
                 label: 'Bring Your Own Data',
             },
+            {
+                id: 'utilities',
+                label: 'Utilities',
+            },
         ],
     },
     {

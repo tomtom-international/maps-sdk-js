@@ -1,0 +1,48 @@
+* {
+    box-sizing: border-box;
+}
+
+#sdk-map {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.panel {
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: sans-serif;
+    font-size: 14px;
+    color: #333;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+}
+
+.panel-left {
+    left: 16px;
+    top: 16px;
+    width: 150px;
+    height: 300px;
+}
+
+.panel-top {
+    left: 50%;
+    transform: translateX(-50%);
+    top: 16px;
+    width: 200px;
+    height: 50px;
+}
+
+.panel-right {
+    right: 16px;
+    top: 100px;
+    width: 100px;
+    height: 200px;
+}
