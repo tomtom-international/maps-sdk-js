@@ -332,6 +332,7 @@ describe('Map utils - tryToAddSourceToMapIfMissing', () => {
         const tomtomMapMock = {
             mapLibreMap: {
                 getSource: vi.fn().mockReturnValueOnce(undefined).mockReturnValueOnce(vi.fn()),
+                getStyle: vi.fn().mockReturnValueOnce({ layers: [] }),
                 isStyleLoaded: vi.fn().mockReturnValue(true),
                 isSourceLoaded: vi.fn().mockReturnValue(true),
                 once: vi.fn().mockReturnValue(Promise.resolve()),

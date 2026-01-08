@@ -7,6 +7,7 @@ import { MapTestEnv } from './util/MapTestEnv';
 import {
     getLayerById,
     getNumLayersBySource,
+    getNumVisibleLayersBySource,
     getNumVisiblePOILayers,
     setStyle,
     waitForMapReady,
@@ -47,8 +48,61 @@ test.describe('Map Init tests', () => {
             expect(mapEnv.consoleErrors).toHaveLength(0);
         });
     }
+});
 
-    test('Multiple modules auto-added to the style right after map init', async ({ page }) => {
+test.describe('Loading map style parts', () => {
+    const mapEnv = new MapTestEnv();
+
+    test('Multiple modules auto-added to the style after map init with visibility', async ({ page }) => {
+        await mapEnv.loadPageAndMap(
+            page,
+            { center: [7.12621, 48.50394], zoom: 10 },
+            { style: { type: 'standard', include: [] } },
+        );
+        await waitForMapReady(page);
+
+        expect(await getNumVisibleLayersBySource(page, TRAFFIC_INCIDENTS_SOURCE_ID)).toBe(0);
+        expect(await getNumVisibleLayersBySource(page, TRAFFIC_FLOW_SOURCE_ID)).toBe(0);
+        expect(await getNumVisibleLayersBySource(page, HILLSHADE_SOURCE_ID)).toBe(0);
+
+        await page.evaluate(async () => {
+            const mapsSdkThis = globalThis as MapsSDKThis;
+            await mapsSdkThis.MapsSDK.TrafficIncidentsModule.get(mapsSdkThis.tomtomMap, { visible: true });
+        });
+        expect(await getNumVisibleLayersBySource(page, TRAFFIC_INCIDENTS_SOURCE_ID)).toBeGreaterThan(0);
+
+        await page.evaluate(async () => {
+            const mapsSdkThis = globalThis as MapsSDKThis;
+            await mapsSdkThis.MapsSDK.TrafficFlowModule.get(mapsSdkThis.tomtomMap, { visible: true });
+        });
+        expect(await getNumVisibleLayersBySource(page, TRAFFIC_FLOW_SOURCE_ID)).toBeGreaterThan(0);
+
+        await page.evaluate(async () => {
+            const mapsSdkThis = globalThis as MapsSDKThis;
+            await mapsSdkThis.MapsSDK.HillshadeModule.get(mapsSdkThis.tomtomMap, { visible: true });
+        });
+        expect(await getNumVisibleLayersBySource(page, HILLSHADE_SOURCE_ID)).toBeGreaterThan(0);
+
+        // changing style, verifying all parts are still there:
+        await setStyle(page, 'monoLight');
+        await waitForMapReady(page);
+        expect(await getNumVisiblePOILayers(page)).toBeGreaterThan(0);
+        expect(await getNumVisibleLayersBySource(page, TRAFFIC_INCIDENTS_SOURCE_ID)).toBeGreaterThan(0);
+        expect(await getNumVisibleLayersBySource(page, TRAFFIC_FLOW_SOURCE_ID)).toBeGreaterThan(0);
+        expect(await getNumVisibleLayersBySource(page, HILLSHADE_SOURCE_ID)).toBeGreaterThan(0);
+
+        // we verify that all the base map key layers are present:
+        expect(await getLayerById(page, mapStyleLayerIDs.lowestBuilding)).toBeDefined();
+        expect(await getLayerById(page, mapStyleLayerIDs.lowestLabel)).toBeDefined();
+        expect(await getLayerById(page, mapStyleLayerIDs.lowestRoadLine)).toBeDefined();
+        expect(await getLayerById(page, mapStyleLayerIDs.lowestPlaceLabel)).toBeDefined();
+        expect(await getLayerById(page, mapStyleLayerIDs.country)).toBeDefined();
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test('Multiple modules auto-added to the style right after map init without visibility', async ({ page }) => {
+        // NOTE: this is not a best practice scenario, but we want to make sure the map handles it well anyway.
         await mapEnv.loadPageAndMap(
             page,
             { center: [7.12621, 48.50394], zoom: 10 },

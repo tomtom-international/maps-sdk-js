@@ -20,7 +20,7 @@ test.describe('Map vector tiles hillshade module tests', () => {
         expect(await getNumVisibleLayersBySource(page, HILLSHADE_SOURCE_ID)).toBe(1);
     });
 
-    test('Success to initialize if not included in the style, but auto adding it', async ({ page }) => {
+    test('Success to initialize if not included in the style, but auto adding it later', async ({ page }) => {
         await mapEnv.loadPageAndMap(
             page,
             { center: [7.12621, 48.50394], zoom: 8 },
@@ -28,12 +28,6 @@ test.describe('Map vector tiles hillshade module tests', () => {
         );
         await initHillshade(page, { visible: true });
         await waitForMapReady(page);
-        expect(await getNumLayersBySource(page, HILLSHADE_SOURCE_ID)).toBe(1);
-        // hidden when added:
-        expect(await getNumVisibleLayersBySource(page, HILLSHADE_SOURCE_ID)).toBe(0);
-
-        // now visible:
-        await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.setVisible(true));
         expect(await getNumVisibleLayersBySource(page, HILLSHADE_SOURCE_ID)).toBe(1);
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });

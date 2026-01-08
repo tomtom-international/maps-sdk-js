@@ -308,20 +308,22 @@ export const updateStyleWithModule = (style: StyleInput | undefined, styleModule
  */
 export const ensureAddedToStyle = async (map: TomTomMap, sourceId: string, styleModule: StyleModule): Promise<void> => {
     if (!map.mapLibreMap.getSource(sourceId)) {
-        if (!map.mapLibreMap.isStyleLoaded()) {
+        const mapLibreMap = map.mapLibreMap;
+        if (!mapLibreMap.isStyleLoaded()) {
             // we let the map settle before changing its style again, so the previous style/data load goes smoother:
-            await map.mapLibreMap.once('idle');
+            await mapLibreMap.once('idle');
         }
         map.setStyle(updateStyleWithModule(map.getStyle(), styleModule));
         await waitUntilSourceIsLoaded(map, sourceId);
 
-        map.mapLibreMap.once('styledata', () => {
-            // we're loading a bunch of style layers to the map, and we hide them all by default:
-            // see TomTomMap.handleStyleData for similar logic
-            for (const layer of filterLayersBySources(map.mapLibreMap, [sourceId])) {
-                map.mapLibreMap.setLayoutProperty(layer.id, 'visibility', 'none', { validate: false });
-            }
-        });
+        await mapLibreMap.once('styledata');
+        // we're loading a bunch of style layers to the map, and we hide them all by default:
+        // see TomTomMap.handleStyleData for similar logic
+        for (const layer of filterLayersBySources(mapLibreMap, [sourceId])) {
+            mapLibreMap.setLayoutProperty(layer.id, 'visibility', 'none', { validate: false });
+        }
+        // Since we just changed the style visibility, we ensure to wait until the style data is changed before returning to prevent race conditions:
+        await mapLibreMap.once('styledata');
     }
 };
 
