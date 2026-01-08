@@ -26,9 +26,13 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
     document
         .querySelector('#sdk-example-addIncidents')
-        ?.addEventListener('click', () => TrafficIncidentsModule.get(map));
-    document.querySelector('#sdk-example-addFlow')?.addEventListener('click', () => TrafficFlowModule.get(map));
-    document.querySelector('#sdk-example-addHillshade')?.addEventListener('click', () => HillshadeModule.get(map));
+        ?.addEventListener('click', () => TrafficIncidentsModule.get(map, { visible: true }));
+    document
+        .querySelector('#sdk-example-addFlow')
+        ?.addEventListener('click', () => TrafficFlowModule.get(map, { visible: true }));
+    document
+        .querySelector('#sdk-example-addHillshade')
+        ?.addEventListener('click', () => HillshadeModule.get(map, { visible: true }));
 
     const stylesSelector = document.querySelector('#sdk-example-mapStyles') as HTMLSelectElement;
     standardStyleIDs.forEach((id) => stylesSelector.add(new Option(id)));

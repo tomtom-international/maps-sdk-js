@@ -23,7 +23,7 @@
 }
 
 .sdk-example-button {
-    height: 26px;
+    height: 32px;
     margin-bottom: 5px;
     padding: 8px 16px;
     font-family: Gilroy, sans-serif;
@@ -40,7 +40,7 @@
 
 #sdk-example-mapStyles {
     margin-top: 10px;
-    height: 26px;
+    height: 32px;
     padding: 8px 16px;
     font-family: Gilroy, sans-serif;
     color: #fff;
