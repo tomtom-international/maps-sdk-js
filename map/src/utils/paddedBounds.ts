@@ -84,37 +84,67 @@ const adjustForFloatingElement = (
     }
 };
 
+/**
+ * Clamps the element bounds to the container boundaries.
+ * This handles cases where UI elements extend beyond the visible container
+ * (e.g., a sidebar that goes past the screen edge).
+ */
+const clampBoundsToContainer = (bounds: BoundsPX, containerWidth: number, containerHeight: number): BoundsPX => ({
+    left: Math.max(0, bounds.left),
+    top: Math.max(0, bounds.top),
+    right: Math.min(containerWidth, bounds.right),
+    bottom: Math.min(containerHeight, bounds.bottom),
+});
+
 const adjustVisibleBoundsForElement = (
     bounds: BoundsPX,
     currentVisible: BoundsPX, // will be mutated
-    containerWidth: number,
-    containerHeight: number,
+    mapWidthPX: number,
+    mapHeightPX: number,
     padding: number,
 ): void => {
-    // Calculate distances from element to each edge of the container
-    const distanceFromLeft = bounds.left;
-    const distanceFromRight = containerWidth - bounds.right;
-    const distanceFromTop = bounds.top;
-    const distanceFromBottom = containerHeight - bounds.bottom;
+    // Clamp bounds to container to handle elements that extend beyond the screen
+    const clampedBounds = clampBoundsToContainer(bounds, mapWidthPX, mapHeightPX);
 
-    // Determine if the element spans the full width or height of the container
-    const spansFullWidth = distanceFromLeft === 0 && distanceFromRight === 0;
-    const spansFullHeight = distanceFromTop === 0 && distanceFromBottom === 0;
+    // Determine if the element touches or extends beyond the full width or height of the container
+    // An element "spans full width" if it touches both left and right edges (or extends beyond)
+    const spansFullWidth = bounds.left <= 0 && bounds.right >= mapWidthPX;
+    const spansFullHeight = bounds.top <= 0 && bounds.bottom >= mapHeightPX;
 
     // For elements spanning full width (horizontal bars), only consider vertical adjustment
     if (spansFullWidth && !spansFullHeight) {
-        adjustForHorizontalBar(bounds, currentVisible, containerHeight, padding);
+        adjustForHorizontalBar(clampedBounds, currentVisible, mapHeightPX, padding);
         return;
     }
 
     // For elements spanning full height (vertical bars), only consider horizontal adjustment
     if (spansFullHeight && !spansFullWidth) {
-        adjustForVerticalBar(bounds, currentVisible, containerWidth, padding);
+        adjustForVerticalBar(clampedBounds, currentVisible, mapWidthPX, padding);
         return;
     }
 
-    // For other elements, find the minimum distance to determine which edge the element is closest to
-    adjustForFloatingElement(bounds, currentVisible, containerWidth, containerHeight, padding);
+    // Check if element touches/extends beyond an edge (makes it act like a bar on that side)
+    const touchesLeft = bounds.left <= 0;
+    const touchesRight = bounds.right >= mapWidthPX;
+    const touchesTop = bounds.top <= 0;
+    const touchesBottom = bounds.bottom >= mapHeightPX;
+
+    // If element touches opposite edges in one dimension but not the other,
+    // treat it as a bar in that dimension
+    if ((touchesLeft || touchesRight) && !touchesTop && !touchesBottom) {
+        // Element extends horizontally but not vertically - treat as horizontal bar
+        adjustForHorizontalBar(clampedBounds, currentVisible, mapHeightPX, padding);
+        return;
+    }
+    if ((touchesTop || touchesBottom) && !touchesLeft && !touchesRight) {
+        // Element extends vertically but not horizontally - treat as vertical bar
+        adjustForVerticalBar(clampedBounds, currentVisible, mapWidthPX, padding);
+        return;
+    }
+
+    // For corner elements (touching edges in both dimensions) or floating elements
+    // determine the best adjustment based on which edge the element is closest to
+    adjustForFloatingElement(clampedBounds, currentVisible, mapWidthPX, mapHeightPX, padding);
 };
 
 /**
@@ -145,8 +175,8 @@ const getMapLibreMap = (map: TomTomMap | Map): Map => {
 
 type VisibleAreaResult = {
     visibleAreaBounds: BoundsPX;
-    containerWidth: number;
-    containerHeight: number;
+    mapWidthPX: number;
+    mapHeightPX: number;
 } | null;
 
 /**
@@ -158,17 +188,15 @@ const calculateVisibleAreaBounds = (
     surroundingElements: (HTMLElement | string)[],
     paddingPX: number,
 ): VisibleAreaResult => {
-    const mapLibreMap = getMapLibreMap(map);
-    const container = mapLibreMap.getContainer();
-    const containerRect = container.getBoundingClientRect();
-    const { width: containerWidth, height: containerHeight } = containerRect;
+    const containerRect = getMapLibreMap(map).getContainer().getBoundingClientRect();
+    const { width: mapWidthPX, height: mapHeightPX } = containerRect;
 
     // Initialize visible bounds with padding applied to all edges (will be mutated)
     const visibleAreaBounds: BoundsPX = {
         left: paddingPX,
         top: paddingPX,
-        right: containerWidth - paddingPX,
-        bottom: containerHeight - paddingPX,
+        right: mapWidthPX - paddingPX,
+        bottom: mapHeightPX - paddingPX,
     };
 
     for (const elementRef of surroundingElements) {
@@ -179,18 +207,18 @@ const calculateVisibleAreaBounds = (
         const elementRect = element.getBoundingClientRect();
         const elementBounds = getRelativeElementBounds(elementRect, containerRect);
 
-        if (isElementOutsideContainer(elementBounds, containerWidth, containerHeight)) {
+        if (isElementOutsideContainer(elementBounds, mapWidthPX, mapHeightPX)) {
             continue;
         }
 
-        adjustVisibleBoundsForElement(elementBounds, visibleAreaBounds, containerWidth, containerHeight, paddingPX);
+        adjustVisibleBoundsForElement(elementBounds, visibleAreaBounds, mapWidthPX, mapHeightPX, paddingPX);
     }
 
     if (visibleAreaBounds.left >= visibleAreaBounds.right || visibleAreaBounds.top >= visibleAreaBounds.bottom) {
         return null;
     }
 
-    return { visibleAreaBounds, containerWidth, containerHeight };
+    return { visibleAreaBounds, mapWidthPX, mapHeightPX };
 };
 
 /**
@@ -267,14 +295,14 @@ export const calculateFittingBBox = (options: CalculateFittingBBoxOptions): BBox
         return null;
     }
 
-    const { visibleAreaBounds, containerWidth, containerHeight } = result;
+    const { visibleAreaBounds, mapWidthPX, mapHeightPX } = result;
 
     // Calculate the ratios of how much the visible area is offset from the full container
     // These represent what fraction of the full map the visible area occupies
-    const leftRatio = visibleAreaBounds.left / containerWidth;
-    const rightRatio = visibleAreaBounds.right / containerWidth;
-    const topRatio = visibleAreaBounds.top / containerHeight;
-    const bottomRatio = visibleAreaBounds.bottom / containerHeight;
+    const leftRatio = visibleAreaBounds.left / mapWidthPX;
+    const rightRatio = visibleAreaBounds.right / mapWidthPX;
+    const topRatio = visibleAreaBounds.top / mapHeightPX;
+    const bottomRatio = visibleAreaBounds.bottom / mapHeightPX;
 
     // Calculate the width and height ratios of the visible area
     const widthRatio = rightRatio - leftRatio;
