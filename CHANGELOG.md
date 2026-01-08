@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.40.1](https://github.com/tomtom-international/maps-sdk-js/compare/v0.40.0...v0.40.1) (2026-01-08)
+
+
+### Bug Fixes
+
+* calculate padded bboxes correctly if any of the surrounding elements goes beyond the visible screen ([6083ceb](https://github.com/tomtom-international/maps-sdk-js/commit/6083ceb25aab9a404c111802a68503e3b8b26225))
+* ensure map style parts which were excluded are loaded more robustly ([33e74ff](https://github.com/tomtom-international/maps-sdk-js/commit/33e74ff8804c3acd63b71d6b8c7c335b0a0f2891))
+
 ## [0.40.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.39.0...v0.40.0) (2026-01-07)
 
 
