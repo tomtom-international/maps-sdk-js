@@ -1,7 +1,9 @@
 import type {
     ChargingPark,
+    ChargingParkWithAvailability,
     ChargingStationsAvailability,
-    EVChargingStationPlaceProps,
+    CommonPlaceProps,
+    EVChargingStationWithAvailabilityPlaceProps,
     Place,
     Places,
 } from '@tomtom-org/maps-sdk/core';
@@ -68,7 +70,7 @@ export const evChargingStationsAvailability = async (
  * Enhance a place with real-time EV charging availability data.
  *
  * Fetches availability information for an EV charging station and merges it into
- * the place properties. Non-EV places are returned unchanged.
+ * the place properties. Non-EV places and EV stations without availability data are returned unchanged.
  *
  * @param place - The place to enhance with availability data
  *
@@ -80,7 +82,7 @@ export const evChargingStationsAvailability = async (
  * const searchResult = await search({ query: 'EV charging', ... });
  * const place = searchResult.features[0];
  *
- * const enhancedPlace = await buildPlaceWithEVAvailability(place);
+ * const enhancedPlace = await getPlaceWithEVAvailability(place);
  * const availability = enhancedPlace.properties.chargingPark?.availability;
  *
  * if (availability) {
@@ -90,10 +92,12 @@ export const evChargingStationsAvailability = async (
  *
  * @group EV Charging
  */
-export const buildPlaceWithEVAvailability = async (place: Place): Promise<Place<EVChargingStationPlaceProps>> => {
+export const getPlaceWithEVAvailability = async <P extends CommonPlaceProps = CommonPlaceProps>(
+    place: Place<P>,
+): Promise<Place<EVChargingStationWithAvailabilityPlaceProps> | undefined> => {
     const availabilityId = place.properties.dataSources?.chargingAvailability?.id;
     if (!availabilityId) {
-        return place;
+        return undefined;
     }
     try {
         const availability = await evChargingStationsAvailability({ id: availabilityId });
@@ -111,11 +115,11 @@ export const buildPlaceWithEVAvailability = async (place: Place): Promise<Place<
                       },
                   },
               }
-            : place;
+            : undefined;
     } catch (e) {
         // (Likely a QPS limit error)
         console.error(e);
-        return place;
+        return undefined;
     }
 };
 
@@ -123,7 +127,7 @@ export const buildPlaceWithEVAvailability = async (place: Place): Promise<Place<
  * Enhance multiple places with real-time EV charging availability data.
  *
  * Fetches availability information for all EV charging stations in a collection
- * and merges it into their properties. Non-EV places are returned unchanged.
+ * and merges it into their properties. Non-EV places and EV stations without availability data are returned unchanged.
  *
  * @remarks
  * **Important**: Availability requests are made sequentially to avoid exceeding
@@ -144,7 +148,7 @@ export const buildPlaceWithEVAvailability = async (place: Place): Promise<Place<
  *   radius: 5000
  * });
  *
- * const withAvailability = await buildPlacesWithEVAvailability(results, {
+ * const withAvailability = await getPlacesWithEVAvailability(results, {
  *   includeIfAvailabilityUnknown: false  // Filter out stations with unknown availability
  * });
  *
@@ -157,25 +161,53 @@ export const buildPlaceWithEVAvailability = async (place: Place): Promise<Place<
  *
  * @group EV Charging
  */
-export const buildPlacesWithEVAvailability = async (
-    places: Places,
+export async function getPlacesWithEVAvailability<P extends CommonPlaceProps = CommonPlaceProps>(
+    places: Places<P>,
+    options: {
+        includeIfAvailabilityUnknown: false;
+    },
+): Promise<Places<EVChargingStationWithAvailabilityPlaceProps>>;
+
+export async function getPlacesWithEVAvailability<P extends CommonPlaceProps = CommonPlaceProps>(
+    places: Places<P>,
+    options?: {
+        includeIfAvailabilityUnknown?: true;
+    },
+): Promise<Places<P | EVChargingStationWithAvailabilityPlaceProps>>;
+
+export async function getPlacesWithEVAvailability<P extends CommonPlaceProps = CommonPlaceProps>(
+    places: Places<P>,
     options: {
         /**
          * If true, places with unknown availability will be still included. Otherwise, they will be filtered out.
          * @default true
          */
-        includeIfAvailabilityUnknown: boolean;
+        includeIfAvailabilityUnknown?: boolean;
     } = { includeIfAvailabilityUnknown: true },
-): Promise<Places<EVChargingStationPlaceProps>> => {
-    const placesWithAvailability = [];
+): Promise<Places<P | EVChargingStationWithAvailabilityPlaceProps>> {
+    const placesWithAvailability: Array<Place<P> | Place<EVChargingStationWithAvailabilityPlaceProps>> = [];
     for (const place of places.features) {
         // (We fetch the availabilities sequentially on purpose to prevent QPS limit errors)
-        const placeWithAvailability = await buildPlaceWithEVAvailability(place);
-        if (placeWithAvailability.properties.chargingPark?.availability || options.includeIfAvailabilityUnknown) {
-            placesWithAvailability.push(placeWithAvailability);
+        const placeWithAvailability = await getPlaceWithEVAvailability(place);
+        const chargingPark = placeWithAvailability?.properties.chargingPark;
+        if (placeWithAvailability && (hasChargingAvailability(chargingPark) || options.includeIfAvailabilityUnknown)) {
+            placesWithAvailability.push(placeWithAvailability ?? place);
         }
     }
     return { ...places, features: placesWithAvailability, bbox: bboxFromGeoJSON(placesWithAvailability) };
-};
+}
+
+/**
+ * Type guard to check if a ChargingPark has availability data.
+ *
+ * @param chargingPark - The charging park to check
+ * @returns True if the charging park has availability data
+ *
+ * @group EV Charging
+ */
+export const hasChargingAvailability = (
+    chargingPark: ChargingPark | ChargingParkWithAvailability | undefined,
+): chargingPark is ChargingParkWithAvailability =>
+    Boolean(chargingPark && 'availability' in chargingPark && chargingPark.availability);
 
 export default evChargingStationsAvailability;

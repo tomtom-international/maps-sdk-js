@@ -1,7 +1,5 @@
 import {
-    type ChargingParkWithAvailability,
-    type ConnectorAvailability,
-    type EVChargingStationPlaceProps,
+    type EVChargingStationWithAvailabilityPlaceProps,
     geographyTypes,
     type Place,
     type PolygonFeatures,
@@ -9,19 +7,18 @@ import {
 } from '@tomtom-org/maps-sdk/core';
 import { GeometriesModule, PlacesModule, PlacesModuleConfig, POIsModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import {
-    buildPlacesWithEVAvailability,
-    buildPlaceWithEVAvailability,
     geometryData,
+    getPlacesWithEVAvailability,
+    getPlaceWithEVAvailability,
+    hasChargingAvailability,
     search,
 } from '@tomtom-org/maps-sdk/services';
 import { bboxPolygon, difference } from '@turf/turf';
-import { isEmpty, without } from 'lodash-es';
-import { type LngLatBoundsLike, NavigationControl, Popup } from 'maplibre-gl';
-import { connectorIcons } from './connectorIcons';
-import { connectorNames } from './connectorNames';
-import genericIcon from './ic-generic-24.svg?raw';
+import { without } from 'lodash-es';
+import { type LngLatBoundsLike, Popup } from 'maplibre-gl';
 import './style.css';
 import { API_KEY } from './config';
+import { connectorsHTML } from './htmlTemplates';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
@@ -50,7 +47,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     });
     const mapEVStations = await PlacesModule.get(map, { theme: 'base-map' });
 
-    const buildAvailabilityText = (place: Place<EVChargingStationPlaceProps>): string => {
+    const buildAvailabilityText = (place: Place<EVChargingStationWithAvailabilityPlaceProps>): string => {
         const availability = getChargingPointAvailability(place);
         return availability ? `${availability.availableCount}/${availability.totalCount}` : '';
     };
@@ -58,7 +55,8 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     const evStationPinConfig: PlacesModuleConfig = {
         extraFeatureProps: {
             availabilityText: buildAvailabilityText,
-            availabilityRatio: (place: Place) => getChargingPointAvailability(place)?.ratio ?? 0,
+            availabilityRatio: (place: Place<EVChargingStationWithAvailabilityPlaceProps>) =>
+                getChargingPointAvailability(place)?.ratio ?? 0,
         },
         text: {
             title: [
@@ -90,38 +88,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     let minPowerKWMapEVStations = 50;
     let minPowerKWSearchedEVStations = 0;
 
-    const connectorsHTML = (chargingPark: ChargingParkWithAvailability): string => {
-        const availability = chargingPark?.availability;
-        const connectorAvailabilities = availability
-            ? availability.connectorAvailabilities
-            : chargingPark.connectorCounts;
-        return `<ul class="sdk-example-connector-ul">
-        ${connectorAvailabilities
-            .map((connectorAvailability) => {
-                const statusCounts = (connectorAvailability as ConnectorAvailability).statusCounts;
-                const hasStatuses = !isEmpty(statusCounts);
-                const availableCount = statusCounts.Available ?? 0;
-                const connectorType = connectorAvailability.connector.type;
-                const connectorName = connectorNames[connectorType] ?? connectorType;
-                return `
-                <li class="sdk-example-connector-li">
-                    <div class="sdk-example-connectorIcon">${connectorIcons[connectorType] ?? genericIcon}</div>
-                    <label class="sdk-example-connectorName sdk-example-label">${connectorName ?? ''}</label>
-                    <label class="sdk-example-connectorPower sdk-example-label"> | ${connectorAvailability.connector.ratedPowerKW} KW</label>
-                    <label class="sdk-example-label ${
-                        hasStatuses
-                            ? availableCount
-                                ? 'sdk-example-available'
-                                : 'sdk-example-unavailable'
-                            : 'sdk-example-noStatus'
-                    }">${hasStatuses ? `${availableCount} / ` : ''}${connectorAvailability.count}</label>
-                </li>`;
-            })
-            .join('')}
-        </ul>`;
-    };
-
-    const showPopup = (evStation: Place<EVChargingStationPlaceProps>) => {
+    const showPopup = (evStation: Place | Place<EVChargingStationWithAvailabilityPlaceProps>) => {
         const { address, poi, chargingPark } = evStation.properties;
         popUp
             .setHTML(
@@ -129,7 +96,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
                     <h3>${poi?.name}</h3>
                     <label class="sdk-example-address sdk-example-label">${address.freeformAddress}</label>
                     <br/><br/>
-                    ${connectorsHTML(chargingPark as ChargingParkWithAvailability)}
+                    ${chargingPark ? connectorsHTML(chargingPark) : 'Charging park data not available.'}
                 `,
             )
             .setLngLat(evStation.geometry.coordinates as [number, number])
@@ -196,7 +163,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         });
         // We first show the places, then fetch their EV availability and show them again:
         mapSearchedEVStationsModule.show(places);
-        mapSearchedEVStationsModule.show(await buildPlacesWithEVAvailability(places));
+        mapSearchedEVStationsModule.show(await getPlacesWithEVAvailability(places));
     };
 
     const clear = () => {
@@ -209,7 +176,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         mapBasePOIs.setVisible(true);
     };
 
-    const selectEVStation = (evStation: Place<EVChargingStationPlaceProps>) => {
+    const selectEVStation = (evStation: Place | Place<EVChargingStationWithAvailabilityPlaceProps>) => {
         selectedEVStationModule.show(evStation);
         showPopup(evStation);
     };
@@ -217,7 +184,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     const listenToMapUserEvents = async () => {
         map.mapLibreMap.on('moveend', updateMapEVStations);
         mapEVStations.events.on('click', async (evStation) =>
-            selectEVStation(await buildPlaceWithEVAvailability(evStation)),
+            selectEVStation((await getPlaceWithEVAvailability(evStation)) ?? evStation),
         );
         mapSearchedEVStationsModule.events.on('click', async (evWithAvailability) =>
             selectEVStation(evWithAvailability),
@@ -249,10 +216,11 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     };
 
     const getChargingPointAvailability = (
-        place: Place<EVChargingStationPlaceProps>,
+        place: Place | Place<EVChargingStationWithAvailabilityPlaceProps>,
     ): { availableCount: number; totalCount: number; ratio: number } | undefined => {
-        const availability = place.properties.chargingPark?.availability?.chargingPointAvailability;
-        if (availability) {
+        const chargingPark = place.properties.chargingPark;
+        if (hasChargingAvailability(chargingPark)) {
+            const availability = chargingPark.availability.chargingPointAvailability;
             const available = availability.statusCounts.Available ?? 0;
             return {
                 availableCount: available,
@@ -262,8 +230,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         }
         return undefined;
     };
-
-    map.mapLibreMap.addControl(new NavigationControl(), 'bottom-right');
 
     await updateMapEVStations();
     await listenToMapUserEvents();
