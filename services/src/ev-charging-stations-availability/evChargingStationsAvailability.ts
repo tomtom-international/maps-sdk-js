@@ -70,11 +70,12 @@ export const evChargingStationsAvailability = async (
  * Enhance a place with real-time EV charging availability data.
  *
  * Fetches availability information for an EV charging station and merges it into
- * the place properties. Non-EV places and EV stations without availability data are returned unchanged.
+ * the place properties.
  *
  * @param place - The place to enhance with availability data
  *
  * @returns Promise resolving to the place with merged availability information
+ * @returns undefined if no availability data is present for the `place` input parameter.
  *
  * @example
  * ```typescript

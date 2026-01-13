@@ -142,26 +142,6 @@ export const apiAndParsedResponses: Array<[string, GeometrySearchResponseAPI, Ge
                         chargingPark: {
                             connectors: [
                                 {
-                                    id: 'connector-1',
-                                    type: 'IEC62196Type2Outlet',
-                                    ratedPowerKW: 7.4,
-                                    voltageV: 230,
-                                    currentA: 32,
-                                    currentType: 'AC1',
-                                    chargingSpeed: 'slow',
-                                },
-                                {
-                                    id: 'connector-2',
-                                    type: 'StandardHouseholdCountrySpecific',
-                                    ratedPowerKW: 7.4,
-                                    voltageV: 230,
-                                    currentA: 32,
-                                    currentType: 'AC1',
-                                    chargingSpeed: 'slow',
-                                },
-                            ],
-                            connectorCounts: [
-                                {
                                     connector: {
                                         id: 'connector-1',
                                         currentA: 32,
@@ -668,17 +648,6 @@ export const apiAndParsedResponses: Array<[string, GeometrySearchResponseAPI, Ge
                         },
                         chargingPark: {
                             connectors: [
-                                {
-                                    id: 'connector-3',
-                                    type: 'IEC62196Type2Outlet',
-                                    ratedPowerKW: 22,
-                                    voltageV: 400,
-                                    currentA: 32,
-                                    currentType: 'AC3',
-                                    chargingSpeed: 'regular',
-                                },
-                            ],
-                            connectorCounts: [
                                 {
                                     connector: {
                                         id: 'connector-3',

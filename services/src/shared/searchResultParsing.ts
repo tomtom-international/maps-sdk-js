@@ -83,11 +83,7 @@ export const parseSearchAPIResult = (result: CommonSearchPlaceResultAPI): Place<
             ...(connectors?.length && {
                 chargingPark: {
                     ...chargingPark,
-                    connectors: connectors.map((connector) => ({
-                        ...connector,
-                        chargingSpeed: toChargingSpeed(connector.ratedPowerKW),
-                    })),
-                    connectorCounts: toConnectorCounts(connectors),
+                    connectors: toConnectorCounts(connectors),
                 },
             }),
             ...(poi && {

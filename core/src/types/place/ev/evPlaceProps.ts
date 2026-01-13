@@ -1,6 +1,5 @@
 import type { CommonPlaceProps } from '../place';
 import type { ChargingStationsAvailability, ConnectorCount } from './chargingStationsAvailability';
-import type { Connector } from './connector';
 
 /**
  * Information about an EV charging park.
@@ -12,12 +11,8 @@ import type { Connector } from './connector';
  * ```typescript
  * const chargingPark: ChargingPark = {
  *   connectors: [
- *     { id: 'c1', type: 'IEC62196Type2CCS', ratedPowerKW: 150, ... },
- *     { id: 'c2', type: 'Chademo', ratedPowerKW: 50, ... }
- *   ],
- *   connectorCounts: [
- *     { connector: {...}, count: 4, statusCounts: {} },
- *     { connector: {...}, count: 2, statusCounts: {} }
+ *     { connector: {...}, count: 4 },
+ *     { connector: {...}, count: 2 }
  *   ]
  * };
  * ```
@@ -25,13 +20,6 @@ import type { Connector } from './connector';
  * @group Place
  */
 export type ChargingPark = {
-    /**
-     * Array of all unique connector types offered at this charging park.
-     *
-     * Each connector represents a different charging standard available.
-     * Use this to determine compatibility with your vehicle.
-     */
-    connectors: Connector[];
     /**
      * Count of connectors grouped by type and power level.
      *
@@ -43,7 +31,7 @@ export type ChargingPark = {
      * For real-time availability, use the availability property instead.
      * This field shows total counts regardless of current operational status.
      */
-    connectorCounts: ConnectorCount[];
+    connectors: ConnectorCount[];
 };
 
 /**
@@ -56,7 +44,6 @@ export type ChargingPark = {
  * ```typescript
  * const parkWithAvailability: ChargingParkWithAvailability = {
  *   connectors: [...],
- *   connectorCounts: [...],
  *   availability: {
  *     id: 'park-123',
  *     chargingStations: [...],
@@ -82,7 +69,7 @@ export type ChargingParkWithAvailability = ChargingPark & {
      * 2. Call the EV Charging Stations Availability service
      * 3. Merge the result into this property
      */
-    availability?: ChargingStationsAvailability;
+    availability: ChargingStationsAvailability;
 };
 
 /**
@@ -102,7 +89,6 @@ export type ChargingParkWithAvailability = ChargingPark & {
  *   // EV-specific properties
  *   chargingPark: {
  *     connectors: [...],
- *     connectorCounts: [...],
  *     availability: {...}
  *   }
  * };
@@ -110,7 +96,7 @@ export type ChargingParkWithAvailability = ChargingPark & {
  *
  * @group Place
  */
-export type EVChargingStationPlaceProps = Omit<CommonPlaceProps, 'chargingPark'> & {
+export type EVChargingStationWithAvailabilityPlaceProps = Omit<CommonPlaceProps, 'chargingPark'> & {
     /**
      * Charging infrastructure and availability information.
      *

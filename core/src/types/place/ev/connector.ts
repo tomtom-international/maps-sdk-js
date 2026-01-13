@@ -102,7 +102,7 @@ export type Connector = {
     /**
      * Unique identifier for this connector.
      */
-    id: string;
+    id?: string;
     /**
      * Physical connector type/standard.
      *

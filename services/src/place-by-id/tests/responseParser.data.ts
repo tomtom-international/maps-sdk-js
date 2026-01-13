@@ -130,26 +130,6 @@ const data: [string, PlaceByIdResponseAPI, PlaceByIdResponse][] = [
                 chargingPark: {
                     connectors: [
                         {
-                            id: '1',
-                            type: 'IEC62196Type2Outlet',
-                            ratedPowerKW: 7.4,
-                            chargingSpeed: 'slow',
-                            voltageV: 230,
-                            currentA: 32,
-                            currentType: 'AC1',
-                        },
-                        {
-                            id: '2',
-                            type: 'StandardHouseholdCountrySpecific',
-                            ratedPowerKW: 7.4,
-                            chargingSpeed: 'slow',
-                            voltageV: 230,
-                            currentA: 32,
-                            currentType: 'AC1',
-                        },
-                    ],
-                    connectorCounts: [
-                        {
                             connector: {
                                 id: '1',
                                 currentA: 32,

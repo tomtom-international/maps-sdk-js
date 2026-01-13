@@ -138,6 +138,7 @@ export type ChargingPointRestriction = (typeof chargingPointRestrictions)[number
  * Individual charging point (EVSE - Electric Vehicle Supply Equipment).
  *
  * Represents a single charging unit with one or more connectors.
+ * A charging point can have several charging connectors, of which only one can be used at a time.
  *
  * @remarks
  * A charging station typically contains multiple charging points.
@@ -199,7 +200,7 @@ export type ChargingPoint = {
  * Electric vehicle charging station.
  *
  * Represents a complete charging station facility with one or more charging points.
- * A station is typically at a single location but may have multiple charging units.
+ * A station is typically at a single location but may have multiple charging points.
  *
  * @example
  * ```typescript
