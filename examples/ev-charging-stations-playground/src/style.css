@@ -19,13 +19,26 @@
     max-height: calc(100vh - 20px);
     overflow-y: auto;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background: rgba(255, 255, 255, 0.75);
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.sdk-example-mainPanel > div:first-child {
+    display: inline-block;
 }
 
 .sdk-example-minKWPanel-container {
-    margin-top: 60px;
-    float: right;
+    margin-top: 10px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: center;
+
+    gap: 10px;
 }
 
 .sdk-example-minKWLabel {
@@ -42,10 +55,8 @@
 .sdk-example-element {
     border: 0 solid rgba(0, 0, 0, 0);
     border-radius: 20px;
-    height: 26px;
-    line-height: 26px;
-    margin-left: 10px;
-    margin-right: 10px;
+    margin-left: 4px;
+    margin-right: 4px;
     font-size: 14px;
 }
 
@@ -63,6 +74,9 @@
     border: 0 solid rgba(0, 0, 0, 0);
     border-radius: 20px;
     cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Overwriting Maplibre original CSS class */
