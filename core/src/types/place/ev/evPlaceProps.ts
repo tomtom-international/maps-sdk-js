@@ -103,5 +103,5 @@ export type EVChargingStationWithAvailabilityPlaceProps = Omit<CommonPlaceProps,
      * Contains details about available connectors, counts, and optionally
      * real-time availability status if fetched from the availability service.
      */
-    chargingPark?: ChargingParkWithAvailability;
+    chargingPark: ChargingParkWithAvailability;
 };

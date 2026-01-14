@@ -186,16 +186,17 @@ export async function getPlacesWithEVAvailability<P extends CommonPlaceProps = C
         includeIfAvailabilityUnknown?: boolean;
     } = { includeIfAvailabilityUnknown: true },
 ): Promise<Places<P | EVChargingStationWithAvailabilityPlaceProps>> {
-    const placesWithAvailability: Array<Place<P> | Place<EVChargingStationWithAvailabilityPlaceProps>> = [];
+    const enhancedPlaces: Array<Place<P> | Place<EVChargingStationWithAvailabilityPlaceProps>> = [];
     for (const place of places.features) {
         // (We fetch the availabilities sequentially on purpose to prevent QPS limit errors)
         const placeWithAvailability = await getPlaceWithEVAvailability(place);
-        const chargingPark = placeWithAvailability?.properties.chargingPark;
-        if (placeWithAvailability && (hasChargingAvailability(chargingPark) || options.includeIfAvailabilityUnknown)) {
-            placesWithAvailability.push(placeWithAvailability ?? place);
+        if (placeWithAvailability) {
+            enhancedPlaces.push(placeWithAvailability);
+        } else if (options.includeIfAvailabilityUnknown) {
+            enhancedPlaces.push(place);
         }
     }
-    return { ...places, features: placesWithAvailability, bbox: bboxFromGeoJSON(placesWithAvailability) };
+    return { ...places, features: enhancedPlaces, bbox: bboxFromGeoJSON(enhancedPlaces) };
 }
 
 /**

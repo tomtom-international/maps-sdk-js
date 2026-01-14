@@ -31,8 +31,7 @@ export const evStationBaseTestProps: SearchPlaceProps = {
     address: expect.any(Object),
     poi: expect.objectContaining(basePoiObjTestProps),
     chargingPark: expect.objectContaining({
-        // connectors: expect.any(Array),
-        connectorCounts: expect.any(Array),
+        connectors: expect.any(Array),
     }),
 };
 
