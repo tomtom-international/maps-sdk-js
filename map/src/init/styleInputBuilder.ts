@@ -1,5 +1,5 @@
 import type { StyleSpecification } from 'maplibre-gl';
-import type { StandardStyle, StandardStyleID, StyleInput, StyleModule, TomTomMapParams } from './types/mapInit';
+import type { InternalTomTomMapParams, StandardStyle, StandardStyleID, StyleInput, StyleModule, TomTomMapParams } from './types/mapInit';
 import { styleModules } from './types/mapInit';
 
 const DEFAULT_STANDARD_STYLE_ID: StandardStyleID = 'standardLight';
@@ -90,7 +90,7 @@ const withApiKey = (givenUrl: string, apiKey: string): string => {
  * @param mapParams The SDK parameters to convert to input renderer style.
  * @return The map style to load into the renderer.
  */
-export const buildStyleInput = (mapParams: TomTomMapParams): StyleSpecification | string => {
+export const buildStyleInput = (mapParams: InternalTomTomMapParams): StyleSpecification | string => {
     const style = mapParams.style;
     const baseUrl = mapParams.commonBaseURL;
     const apiKey = mapParams.apiKey;

@@ -2,7 +2,7 @@ import { type BBox, type Language, mergeFromGlobal } from '@tomtom-org/maps-sdk/
 import { isEqual } from 'lodash-es';
 import { getRTLTextPluginStatus, Map, setRTLTextPlugin } from 'maplibre-gl';
 import { version as maplibreVersion } from 'maplibre-gl/package.json';
-import type { MapLibreOptions, StyleInput, TomTomMapParams } from './init';
+import type { InternalTomTomMapParams, MapLibreOptions, StyleInput, TomTomMapParams } from './init';
 import { buildMapOptions } from './init/buildMapOptions';
 import { buildStyleInput, withPreviousStyleParts } from './init/styleInputBuilder';
 import {
@@ -102,38 +102,38 @@ export type StyleChangeHandler = {
  * ```typescript
  * import { TomTomMap } from '@tomtom-international/maps-sdk-js/map';
  *
- * const map = new TomTomMap(
- *   {
+ * const map = new TomTomMap({
+ *   key: 'YOUR_API_KEY',
+ *   style: 'standardLight',
+ *   mapLibre: {
  *     container: 'map',
  *     center: [4.9041, 52.3676],
  *     zoom: 10
- *   },
- *   {
- *     key: 'YOUR_API_KEY',
- *     style: 'standardLight'
  *   }
- * );
+ * });
  * ```
  *
  * @example
  * With modules and configuration:
  * ```typescript
- * const map = new TomTomMap(
- *   { container: 'map', center: [-74.006, 40.7128], zoom: 12 },
- *   {
- *     key: 'YOUR_API_KEY',
- *     style: {
- *       type: 'standard',
- *       id: 'standardDark',
- *       include: ['trafficFlow', 'trafficIncidents']
- *     },
- *     language: 'en-US',
- *     events: {
- *       precisionMode: 'point-then-box',
- *       cursorOnHover: 'pointer'
- *     }
+ * const map = new TomTomMap({
+ *   key: 'YOUR_API_KEY',
+ *   style: {
+ *     type: 'standard',
+ *     id: 'standardDark',
+ *     include: ['trafficFlow', 'trafficIncidents']
+ *   },
+ *   language: 'en-US',
+ *   events: {
+ *     precisionMode: 'point-then-box',
+ *     cursorOnHover: 'pointer'
+ *   },
+ *   mapLibre: {
+ *     container: 'map',
+ *     center: [-74.006, 40.7128],
+ *     zoom: 12
  *   }
- * );
+ * });
  *
  * // Access MapLibre functionality directly
  * map.mapLibreMap.on('load', () => {
@@ -209,7 +209,7 @@ export class TomTomMap {
     /**
      * @ignore
      */
-    _params: TomTomMapParams;
+    _params: InternalTomTomMapParams;
 
     styleLightDarkTheme: LightDark;
 
@@ -218,12 +218,8 @@ export class TomTomMap {
     /**
      * Constructs a new TomTom Map instance and attaches it to a DOM element.
      *
-     * @param mapLibreOptions - MapLibre map configuration for viewport, controls, and rendering.
-     * Includes properties like `container`, `center`, `zoom`, `bearing`, `pitch`, etc.
-     * See {@link MapLibreOptions} for all available options.
-     *
-     * @param mapParams - TomTom-specific parameters including API key, style, and events.
-     * Can be partially specified here if already set via global configuration.
+     * @param mapParams - Combined TomTom and MapLibre parameters for map initialization.
+     * Includes API key, style, events, and MapLibre options like container, center, zoom, etc.
      * See {@link TomTomMapParams} for all available parameters.
      *
      * @remarks
@@ -240,17 +236,32 @@ export class TomTomMap {
      * @example
      * Minimal initialization:
      * ```typescript
-     * const map = new TomTomMap(
-     *   { container: 'map', center: [0, 0], zoom: 2 },
-     *   { key: 'YOUR_API_KEY' }
-     * );
+     * const map = new TomTomMap({
+     *   key: 'YOUR_API_KEY',
+     *   mapLibre: {
+     *     container: 'map',
+     *     center: [0, 0],
+     *     zoom: 2
+     *   }
+     * });
      * ```
      *
      * @example
      * Full configuration:
      * ```typescript
-     * const map = new TomTomMap(
-     *   {
+     * const map = new TomTomMap({
+     *   key: 'YOUR_API_KEY',
+     *   style: {
+     *     type: 'standard',
+     *     id: 'standardLight',
+     *     include: ['trafficFlow', 'hillshade']
+     *   },
+     *   language: 'en-US',
+     *   events: {
+     *     precisionMode: 'point-then-box',
+     *     paddingBoxPx: 10
+     *   },
+     *   mapLibre: {
      *     container: 'map',
      *     center: [-122.4194, 37.7749],
      *     zoom: 13,
@@ -259,21 +270,8 @@ export class TomTomMap {
      *     antialias: true,
      *     maxZoom: 18,
      *     minZoom: 8
-     *   },
-     *   {
-     *     key: 'YOUR_API_KEY',
-     *     style: {
-     *       type: 'standard',
-     *       id: 'standardLight',
-     *       include: ['trafficFlow', 'hillshade']
-     *     },
-     *     language: 'en-US',
-     *     events: {
-     *       precisionMode: 'point-then-box',
-     *       paddingBoxPx: 10
-     *     }
      *   }
-     * );
+     * });
      * ```
      *
      * @throws Will log errors if RTL text plugin fails to load (non-blocking)
@@ -285,12 +283,12 @@ export class TomTomMap {
      * @see [Map Styles Guide](https://docs.tomtom.com/maps-sdk-js/guides/map/map-styles)
      * @see [User Interaction Events Guide](https://docs.tomtom.com/maps-sdk-js/guides/map/user-events)
      */
-    constructor(mapLibreOptions: MapLibreOptions, mapParams?: Partial<TomTomMapParams>) {
-        this._params = mergeFromGlobal(mapParams) as TomTomMapParams;
+    constructor(mapParams: TomTomMapParams) {
+        this._params = mergeFromGlobal(mapParams);
         this.styleLightDarkTheme = getStyleLightDarkTheme(this._params.style);
         this.ensureMapLibreCSSLoaded();
 
-        this.mapLibreMap = new Map(buildMapOptions(mapLibreOptions, this._params));
+        this.mapLibreMap = new Map(buildMapOptions(this._params));
         this.mapLibreMap.once('styledata', () => {
             this.handleStyleData(false);
         });

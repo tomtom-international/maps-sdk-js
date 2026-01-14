@@ -1,18 +1,12 @@
 import type { MapOptions } from 'maplibre-gl';
-import type { MapLibreOptions, TomTomMapParams } from '../types/mapInit';
+import type { TomTomMapParams } from '../types/mapInit';
 
-type BuildMapOptionsTestCase = [
-    testName: string,
-    mapLibreOptions: MapLibreOptions,
-    tomtomMapParams: TomTomMapParams,
-    expectedMapOptions: MapOptions,
-];
+type BuildMapOptionsTestCase = [testName: string, tomtomMapParams: TomTomMapParams, expectedMapOptions: MapOptions];
 
 /**
  * Test data for buildMapOptions tests.
  * Each entry is a tuple containing:
  * - Test case description
- * - Input MapLibreOptions
  * - Input TomTomMapParams
  * - Expected MapOptions output
  */
@@ -20,12 +14,12 @@ export const sdkAndRendererInitParams: BuildMapOptionsTestCase[] = [
     [
         'Default map init',
         {
-            container: "<div id='map'></div>",
-        },
-        {
+            mapLibre: {
+                container: "<div id='map'></div>",
+            },
             commonBaseURL: 'https://api-test.tomtom.com',
             apiKey: 'TEST_API_KEY',
-        } as TomTomMapParams,
+        },
         {
             container: "<div id='map'></div>",
             style: 'https://api-test.tomtom.com/maps/orbis/assets/styles/0.6.0-0/style.json?apiVersion=1&key=TEST_API_KEY&map=basic_street-light&trafficIncidents=incidents_light&trafficFlow=flow_relative-light&hillshade=hillshade_light',
@@ -38,12 +32,12 @@ export const sdkAndRendererInitParams: BuildMapOptionsTestCase[] = [
     [
         'Default map init changing some SDK defaults',
         {
-            container: "<div id='map'></div>",
-            cancelPendingTileRequestsWhileZooming: true,
-            maxTileCacheZoomLevels: 10,
-            validateStyle: true,
-        },
-        {
+            mapLibre: {
+                container: "<div id='map'></div>",
+                cancelPendingTileRequestsWhileZooming: true,
+                maxTileCacheZoomLevels: 10,
+                validateStyle: true,
+            },
             commonBaseURL: 'https://api-test.tomtom.com',
             apiKey: 'TEST_API_KEY',
         } as TomTomMapParams,
@@ -59,21 +53,21 @@ export const sdkAndRendererInitParams: BuildMapOptionsTestCase[] = [
     [
         'Map init with many params set',
         {
-            container: "<div id='map'></div>",
-            zoom: 7,
-            center: [10, 20],
-            minZoom: 2,
-            maxZoom: 20,
-            bearing: 90,
-        },
-        {
+            mapLibre: {
+                container: "<div id='map'></div>",
+                zoom: 7,
+                center: [10, 20],
+                minZoom: 2,
+                maxZoom: 20,
+                bearing: 90,
+            },
             commonBaseURL: 'https://api-test.tomtom.com',
             apiKey: 'TEST_API_KEY',
             style: {
                 type: 'custom',
                 url: 'https://test_url',
             },
-        } as TomTomMapParams,
+        },
         {
             container: "<div id='map'></div>",
             style: 'https://test_url/?key=TEST_API_KEY',
@@ -91,16 +85,16 @@ export const sdkAndRendererInitParams: BuildMapOptionsTestCase[] = [
     [
         'Map init showing traffic flow & traffic incidents using include options',
         {
-            container: "<div id='map'></div>",
-        },
-        {
+            mapLibre: {
+                container: "<div id='map'></div>",
+            },
             commonBaseURL: 'https://api-test.tomtom.com',
             apiKey: 'TEST_API_KEY',
             style: {
                 type: 'standard',
                 include: ['trafficFlow', 'trafficIncidents'],
             },
-        } as TomTomMapParams,
+        },
         {
             container: "<div id='map'></div>",
             style: 'https://api-test.tomtom.com/maps/orbis/assets/styles/0.6.0-0/style.json?apiVersion=1&key=TEST_API_KEY&map=basic_street-light&trafficFlow=flow_relative-light&trafficIncidents=incidents_light',
@@ -113,16 +107,16 @@ export const sdkAndRendererInitParams: BuildMapOptionsTestCase[] = [
     [
         'Map init showing poi and hillshade using include options',
         {
-            container: "<div id='map'></div>",
-        },
-        {
+            mapLibre: {
+                container: "<div id='map'></div>",
+            },
             commonBaseURL: 'https://api-test.tomtom.com',
             apiKey: 'TEST_API_KEY',
             style: {
                 type: 'standard',
                 include: ['hillshade'],
             },
-        } as TomTomMapParams,
+        },
         {
             container: "<div id='map'></div>",
             style: 'https://api-test.tomtom.com/maps/orbis/assets/styles/0.6.0-0/style.json?apiVersion=1&key=TEST_API_KEY&map=basic_street-light&hillshade=hillshade_light',

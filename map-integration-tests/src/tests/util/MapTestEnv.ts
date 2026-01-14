@@ -67,21 +67,18 @@ export class MapTestEnv {
                 mapsSdkThis.mapLibreMap?.remove();
                 document.querySelector('.maplibregl-control-container')?.remove();
                 document.querySelector('canvas')?.remove();
-                mapsSdkThis.tomtomMap = new mapsSdkThis.MapsSDK.TomTomMap(
-                    { ...mapLibreOptions, container: 'map' },
-                    { ...tomtomMapParams, apiKey },
-                );
+                mapsSdkThis.tomtomMap = new mapsSdkThis.MapsSDK.TomTomMap({
+                    ...tomtomMapParams,
+                    apiKey,
+                    mapLibre: { ...mapLibreOptions, container: 'map' },
+                });
                 mapsSdkThis.mapLibreMap = mapsSdkThis.tomtomMap.mapLibreMap;
             },
             { mapLibreOptions, tomtomMapParams, apiKey: process.env.API_KEY_TESTS },
         );
     }
 
-    async loadPageAndMap(
-        page: Page,
-        mapLibreOptions: Partial<MapLibreOptions>,
-        tomtomMapParams?: Partial<TomTomMapParams>,
-    ) {
+    async loadPageAndMap(page: Page, mapLibreOptions: Partial<MapLibreOptions>, tomtomMapParams?: Partial<TomTomMapParams>) {
         await this.loadPage(page);
         await this.loadMap(page, mapLibreOptions, tomtomMapParams);
     }

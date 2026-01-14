@@ -1,3 +1,4 @@
+import { mergeFromGlobal } from '@tomtom-org/maps-sdk/core';
 import type { StyleSpecification } from 'maplibre-gl';
 import { describe, expect, test } from 'vitest';
 import { buildStyleInput, withPreviousStyleParts } from '../styleInputBuilder';
@@ -8,7 +9,7 @@ describe('Map style input builder tests', () => {
     test.each(mapsSdkInitParamsAndMapStyles)(`'%s`, (_name: string, tomtomMapParams: TomTomMapParams, rendererStyle:
         | StyleSpecification
         | string) => {
-        expect(buildStyleInput(tomtomMapParams)).toEqual(rendererStyle);
+        expect(buildStyleInput(mergeFromGlobal(tomtomMapParams))).toEqual(rendererStyle);
     });
 
     test('With previous style parts test', () => {

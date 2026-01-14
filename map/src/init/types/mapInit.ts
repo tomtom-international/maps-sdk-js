@@ -281,27 +281,50 @@ export type StyleModule = (typeof styleModules)[number];
 export type StyleInput = StandardStyleID | (StandardStyle & { type: 'standard' }) | (CustomStyle & { type: 'custom' });
 
 /**
+ * MapLibre-specific options for advanced map configuration.
+ *
+ * Extends MapLibre GL JS MapOptions, excluding style and attribution control
+ * which are handled by the TomTom SDK.
+ *
+ * @remarks
+ * Includes options for:
+ * - Initial viewport (center, zoom, bearing, pitch)
+ * - Interaction controls (zoom, rotation, drag)
+ * - Rendering options (antialiasing, terrain)
+ * - Localization and accessibility
+ *
+ * @see [MapLibre MapOptions](https://maplibre.org/maplibre-gl-js/docs/API/type-aliases/MapOptions/)
+ *
+ * @group Map
+ */
+export type MapLibreOptions = Omit<MapOptions, 'style' | 'attributionControl'>;
+
+/**
  * Parameters for initializing a TomTom map instance.
  *
- * Combines global SDK configuration with map-specific settings like style and events.
+ * Combines global SDK configuration with map-specific settings like style, events, and MapLibre options.
+ * All GlobalConfig properties (key, baseURL, etc.) are optional and will be merged from global configuration.
+ * Only mapLibre.container is strictly required.
  *
  * @example
  * ```typescript
  * const mapParams: TomTomMapParams = {
  *   key: 'your-api-key',
- *   container: 'map-container',
- *   center: [4.9041, 52.3676],
- *   zoom: 12,
  *   style: 'standardLight',
  *   events: {
  *     onClick: (event) => console.log('Map clicked', event)
+ *   },
+ *   mapLibre: {
+ *     container: 'map-container',
+ *     center: [4.9041, 52.3676],
+ *     zoom: 12
  *   }
  * };
  * ```
  *
  * @group Map
  */
-export type TomTomMapParams = GlobalConfig & {
+export type TomTomMapParams = Partial<GlobalConfig> & {
     /**
      * Map style to load.
      *
@@ -342,23 +365,34 @@ export type TomTomMapParams = GlobalConfig & {
      * ```
      */
     events?: MapEventsConfig;
+
+    /**
+     * MapLibre-specific options for map configuration.
+     *
+     * Includes options for viewport settings, interaction controls, rendering options, and more.
+     *
+     * @example
+     * ```typescript
+     * mapLibre: {
+     *   container: 'map',
+     *   center: [4.9041, 52.3676],
+     *   zoom: 12,
+     *   pitch: 45,
+     *   bearing: -17.6,
+     *   antialias: true,
+     *   maxZoom: 18,
+     *   minZoom: 8
+     * }
+     * ```
+     */
+    mapLibre: MapLibreOptions;
 };
 
 /**
- * MapLibre-specific options for advanced map configuration.
+ * Complete TomTom map parameters after merging with global configuration.
+ * This type represents the fully resolved configuration used internally by the SDK.
  *
- * Extends MapLibre GL JS MapOptions, excluding style and attribution control
- * which are handled by the TomTom SDK.
- *
- * @remarks
- * Includes options for:
- * - Initial viewport (center, zoom, bearing, pitch)
- * - Interaction controls (zoom, rotation, drag)
- * - Rendering options (antialiasing, terrain)
- * - Localization and accessibility
- *
- * @see [MapLibre MapOptions](https://maplibre.org/maplibre-gl-js-docs/api/map/)
- *
- * @group Map
+ * @ignore
  */
-export type MapLibreOptions = Omit<MapOptions, 'style' | 'attributionControl'>;
+export type InternalTomTomMapParams = GlobalConfig & TomTomMapParams;
+

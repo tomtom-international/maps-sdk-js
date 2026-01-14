@@ -30,7 +30,7 @@ describe('Map localization mocked tests', () => {
     afterEach(() => vi.clearAllMocks());
 
     test('Localize map after initialization', () => {
-        const tomtomMap = new TomTomMap({ container: mockedContainer });
+        const tomtomMap = new TomTomMap({ mapLibre: { container: mockedContainer } });
         vi.spyOn(tomtomMap, 'setLanguage');
         tomtomMap.setLanguage('ar');
         expect(tomtomMap.setLanguage).toHaveBeenCalledTimes(1);

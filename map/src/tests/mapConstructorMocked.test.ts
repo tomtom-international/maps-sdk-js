@@ -31,7 +31,7 @@ describe('Map initialization mocked tests', () => {
 
     test('Map init with mostly default parameters', () => {
         TomTomConfig.instance.put({ apiKey: 'TEST_KEY' });
-        const tomtomMap = new TomTomMap({ container: mockedContainer });
+        const tomtomMap = new TomTomMap({ mapLibre: { container: mockedContainer } });
         expect(tomtomMap).toBeDefined();
         expect(Map).toHaveBeenCalledWith({
             container: mockedContainer,
@@ -46,17 +46,15 @@ describe('Map initialization mocked tests', () => {
 
     test('Map init with some given parameters', () => {
         TomTomConfig.instance.put({ apiKey: 'TEST_KEY' });
-        const tomtomMap = new TomTomMap(
-            { container: mockedContainer, zoom: 3, center: [10, 20] },
-            {
-                apiKey: 'TEST_KEY_2',
-                commonBaseURL: 'https://api-test.tomtom.com',
-                style: {
-                    type: 'custom',
-                    url: 'https://custom-style.test.tomtom.com/foo/bar',
-                },
+        const tomtomMap = new TomTomMap({
+            mapLibre: { container: mockedContainer, zoom: 3, center: [10, 20] },
+            apiKey: 'TEST_KEY_2',
+            commonBaseURL: 'https://api-test.tomtom.com',
+            style: {
+                type: 'custom',
+                url: 'https://custom-style.test.tomtom.com/foo/bar',
             },
-        );
+        });
         expect(tomtomMap).toBeDefined();
         expect(Map).toHaveBeenCalledWith({
             container: mockedContainer,
