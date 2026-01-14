@@ -8,9 +8,11 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
 (async () => {
     const map = new TomTomMap({
-        container: 'sdk-map',
-        center: [11.108922, 47.109197],
-        zoom: 7,
+        mapLibre: {
+            container: 'sdk-map',
+            center: [11.108922, 47.109197],
+            zoom: 7,
+        },
     });
     await HillshadeModule.get(map, { visible: true });
 })();

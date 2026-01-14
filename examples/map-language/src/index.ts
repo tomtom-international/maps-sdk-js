@@ -20,10 +20,15 @@ const configLanguage: Language = 'nl-NL';
 TomTomConfig.instance.put({ apiKey: API_KEY });
 
 (async () => {
-    const map = new TomTomMap(
-        { container: 'sdk-map', zoom: 3, minZoom: 2, center: [18.33157, 39.78563] },
-        { language: configLanguage },
-    );
+    const map = new TomTomMap({
+        mapLibre: {
+            container: 'sdk-map',
+            zoom: 3,
+            minZoom: 2,
+            center: [18.33157, 39.78563],
+        },
+        language: configLanguage,
+    });
 
     const languageSelector = document.querySelector('#sdk-example-mapLanguages') as HTMLSelectElement;
     for (const language of mapLanguages) {

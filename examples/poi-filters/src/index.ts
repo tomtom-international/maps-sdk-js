@@ -100,9 +100,11 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     };
 
     const map = new TomTomMap({
-        container: 'sdk-map',
-        center: [4.89437, 52.36859],
-        zoom: 16.5,
+        mapLibre: {
+            container: 'sdk-map',
+            center: [4.89437, 52.36859],
+            zoom: 16.5,
+        },
     });
     poisModule = await POIsModule.get(map);
 

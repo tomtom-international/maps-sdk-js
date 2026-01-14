@@ -11,9 +11,11 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     const location = await geocodeOne('Amsterdam Centraal, NL');
 
     const map = new TomTomMap({
-        container: 'sdk-map',
-        center: location.geometry.coordinates as [number, number],
-        zoom: 17,
+        mapLibre: {
+            container: 'sdk-map',
+            center: location.geometry.coordinates as [number, number],
+            zoom: 17,
+        },
     });
 
     const placesModule = await PlacesModule.get(map);

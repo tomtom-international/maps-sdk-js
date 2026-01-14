@@ -18,9 +18,11 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
     ]);
 
     const map = new TomTomMap({
-        container: 'sdk-map',
-        bounds: bboxFromGeoJSON([spainAirports, italyAirports, franceAirports]),
-        fitBoundsOptions: { padding: 50 },
+        mapLibre: {
+            container: 'sdk-map',
+            bounds: bboxFromGeoJSON([spainAirports, italyAirports, franceAirports]),
+            fitBoundsOptions: { padding: 50 },
+        },
     });
 
     const spainAirportsModule = await PlacesModule.get(map, {

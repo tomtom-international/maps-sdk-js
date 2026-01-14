@@ -15,9 +15,11 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
     ]);
 
     const map = new TomTomMap({
-        container: 'sdk-map',
-        bounds: bboxFromGeoJSON([firstGroup, secondGroup]),
-        fitBoundsOptions: { padding: 50 },
+        mapLibre: {
+            container: 'sdk-map',
+            bounds: bboxFromGeoJSON([firstGroup, secondGroup]),
+            fitBoundsOptions: { padding: 50 },
+        },
     });
 
     const firstPlacesModule = await PlacesModule.get(map, {

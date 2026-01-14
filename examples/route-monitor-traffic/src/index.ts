@@ -18,9 +18,11 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     const locations = searchResults.filter((result): result is Place => result !== undefined);
 
     const map = new TomTomMap({
-        container: 'sdk-map',
-        bounds: bboxFromGeoJSON(locations),
-        fitBoundsOptions: { padding: 100 },
+        mapLibre: {
+            container: 'sdk-map',
+            bounds: bboxFromGeoJSON(locations),
+            fitBoundsOptions: { padding: 100 },
+        },
     });
 
     const routingModule = await RoutingModule.get(map);

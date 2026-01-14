@@ -8,9 +8,11 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
 (async () => {
     const map = new TomTomMap({
-        container: 'sdk-map',
-        center: [2.34281, 48.85639],
-        zoom: 12,
+        mapLibre: {
+            container: 'sdk-map',
+            center: [2.34281, 48.85639],
+            zoom: 12,
+        },
     });
     await TrafficFlowModule.get(map, { visible: true });
 })();

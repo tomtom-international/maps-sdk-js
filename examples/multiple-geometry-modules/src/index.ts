@@ -20,10 +20,12 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
     const mainPlace = await geocode({ query: 'Germany', geographyTypes: ['Country'] });
     const map = new TomTomMap({
-        container: 'sdk-map',
-        minZoom: 2,
-        zoom: 13,
-        bounds: mainPlace.bbox,
+        mapLibre: {
+            container: 'sdk-map',
+            minZoom: 2,
+            zoom: 13,
+            bounds: mainPlace.bbox,
+        },
     });
     const mainGeometry = await geometryData({ geometries: mainPlace });
 

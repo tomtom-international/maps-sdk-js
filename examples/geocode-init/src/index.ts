@@ -10,12 +10,12 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
 (async () => {
     const location = await geocodeOne('Canary Islands');
 
-    new TomTomMap(
-        {
+    new TomTomMap({
+        mapLibre: {
             container: 'sdk-map',
             fitBoundsOptions: { padding: 50 },
             bounds: location.bbox,
         },
-        { style: 'satellite' },
-    );
+        style: 'satellite',
+    });
 })();

@@ -13,9 +13,11 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
 (async () => {
     const map = new TomTomMap({
-        container: 'sdk-map',
-        center: [4.90435, 52.36876],
-        zoom: 10,
+        mapLibre: {
+            container: 'sdk-map',
+            center: [4.90435, 52.36876],
+            zoom: 10,
+        },
     });
     const places = await PlacesModule.get(map);
 

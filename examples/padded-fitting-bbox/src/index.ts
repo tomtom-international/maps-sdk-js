@@ -10,7 +10,14 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 const toBeContainedBBox: BBox = [4.8, 52.3, 4.95, 52.4];
 
 (async () => {
-    const map = new TomTomMap({ container: 'sdk-map', bounds: toBeContainedBBox, zoom: 8 }, { style: 'monoLight' });
+    const map = new TomTomMap({
+        mapLibre: {
+            container: 'sdk-map',
+            bounds: toBeContainedBBox,
+            zoom: 8,
+        },
+        style: 'monoLight',
+    });
     const mapLibreMap: Map = map.mapLibreMap;
     await mapLibreMap.once('load');
 

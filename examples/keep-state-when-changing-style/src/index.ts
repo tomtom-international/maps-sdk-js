@@ -21,9 +21,11 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'es-ES' });
     ).map((result: SearchResponse) => result.features[0]);
 
     const map = new TomTomMap({
-        container: 'sdk-map',
-        bounds: bboxFromGeoJSON(locations),
-        fitBoundsOptions: { padding: 100 },
+        mapLibre: {
+            container: 'sdk-map',
+            bounds: bboxFromGeoJSON(locations),
+            fitBoundsOptions: { padding: 100 },
+        },
     });
     await POIsModule.get(map, {
         filters: { categories: { show: 'only', values: ['IMPORTANT_TOURIST_ATTRACTION'] } },

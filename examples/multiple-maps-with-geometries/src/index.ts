@@ -27,7 +27,13 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         div.className = 'sdk-example-map';
         mapsElement.appendChild(div);
 
-        const map = new TomTomMap({ container: div.id, bounds: geometry.bbox as LngLatBoundsLike, interactive: false });
+        const map = new TomTomMap({
+            mapLibre: {
+                container: div.id,
+                bounds: geometry.bbox as LngLatBoundsLike,
+                interactive: false,
+            },
+        });
         (
             await GeometriesModule.get(map, {
                 beforeLayerConfig: 'lowestPlaceLabel',

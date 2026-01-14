@@ -10,9 +10,11 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
 
 (async () => {
     const map = new TomTomMap({
-        container: 'sdk-map',
-        bounds: bboxFromCoordsArray(routePairs.flat()),
-        fitBoundsOptions: { padding: 100 },
+        mapLibre: {
+            container: 'sdk-map',
+            bounds: bboxFromCoordsArray(routePairs.flat()),
+            fitBoundsOptions: { padding: 100 },
+        },
     });
 
     // Create routing modules dynamically for each route pair

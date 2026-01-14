@@ -20,7 +20,13 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     const fuzzySearchResultsList = document.getElementById('sdk-example-fuzzySearchResults') as HTMLUListElement;
     const searchThisAreaButton = document.getElementById('sdk-example-search-this-area') as HTMLInputElement;
 
-    const map = new TomTomMap({ container: 'sdk-map', center: [4.8156, 52.4414], zoom: 8 });
+    const map = new TomTomMap({
+        mapLibre: {
+            container: 'sdk-map',
+            center: [4.8156, 52.4414],
+            zoom: 8,
+        },
+    });
     const placesModule = await PlacesModule.get(map);
     const baseMapModule = await BaseMapModule.get(map);
 

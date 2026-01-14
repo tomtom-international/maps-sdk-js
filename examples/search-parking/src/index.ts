@@ -11,9 +11,11 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     const areaToSearch = await geocode({ query: 'paris', limit: 1 });
 
     const map = new TomTomMap({
-        container: 'sdk-map',
-        fitBoundsOptions: { padding: 50 },
-        bounds: bboxFromGeoJSON(areaToSearch),
+        mapLibre: {
+            container: 'sdk-map',
+            fitBoundsOptions: { padding: 50 },
+            bounds: bboxFromGeoJSON(areaToSearch),
+        },
     });
 
     const areaGeometry = await geometryData({ geometries: areaToSearch });

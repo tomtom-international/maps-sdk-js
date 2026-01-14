@@ -13,7 +13,13 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     const bounds = bboxFromGeoJSON(waypoints) as LngLatBoundsLike;
     const fitBoundsOptions = { padding: 150 };
 
-    const map = new TomTomMap({ bounds, fitBoundsOptions, container: 'sdk-map' });
+    const map = new TomTomMap({
+        mapLibre: {
+            bounds,
+            fitBoundsOptions,
+            container: 'sdk-map',
+        },
+    });
 
     const routingModule = await RoutingModule.get(map);
     routingModule.showWaypoints(waypoints);

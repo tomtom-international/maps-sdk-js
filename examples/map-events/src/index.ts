@@ -10,9 +10,11 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
 
 (async () => {
     const map = new TomTomMap({
-        container: 'sdk-map',
-        center: [-0.12634, 51.50276],
-        zoom: 14,
+        mapLibre: {
+            container: 'sdk-map',
+            center: [-0.12634, 51.50276],
+            zoom: 14,
+        },
     });
     const popUp = new Popup({
         closeButton: true,

@@ -260,9 +260,11 @@ TomTomConfig.instance.put({ apiKey: 'YOUR_API_KEY' });
 
 async function main() {
   const map = new TomTomMap({
-    container: 'map',
-    center: [0, 0],
-    zoom: 2
+    mapLibre: {
+      container: 'map',
+      center: [0, 0],
+      zoom: 2
+    }
   });
   
   // Add example-specific logic here

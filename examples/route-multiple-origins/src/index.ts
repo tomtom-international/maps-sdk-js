@@ -16,14 +16,14 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         searchOne('Utrecht Centraal'),
     ])) as Place[];
 
-    const map = new TomTomMap(
-        {
+    const map = new TomTomMap({
+        mapLibre: {
             container: 'sdk-map',
             bounds: bboxFromGeoJSON([...origins, destination]),
             fitBoundsOptions: { padding: 100 },
         },
-        { style: 'monoLight' },
-    );
+        style: 'monoLight',
+    });
 
     // Show a single place for the common destination:
     (await PlacesModule.get(map)).show(destination);

@@ -9,14 +9,14 @@ import { API_KEY } from './config';
 TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 
 (async () => {
-    const map = new TomTomMap(
-        {
+    const map = new TomTomMap({
+        mapLibre: {
             container: 'sdk-map',
             center: [4.3156, 52.3414],
             zoom: 8,
         },
-        { style: 'monoLight' },
-    );
+        style: 'monoLight',
+    });
 
     const mapLibreMap: Map = map.mapLibreMap;
     await mapLibreMap.once('load');

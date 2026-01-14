@@ -9,14 +9,14 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
 
 (async () => {
     const location = await geocodeOne('Schiphol Airport, NL');
-    const map = new TomTomMap(
-        {
+    const map = new TomTomMap({
+        mapLibre: {
             container: 'sdk-map',
             zoom: 11,
             center: location.geometry.coordinates as [number, number],
         },
-        { language: 'en-GB' },
-    );
+        language: 'en-GB',
+    });
     const geometryModule = await GeometriesModule.get(map);
 
     const geometryToSearch = await geometryData({ geometries: [location] });

@@ -13,7 +13,13 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
 (async () => {
     const fitBoundsOptions = { padding: 50 };
 
-    const map = new TomTomMap({ container: 'sdk-map', zoom: 2 }, { language: 'en-GB' });
+    const map = new TomTomMap({
+        mapLibre: {
+            container: 'sdk-map',
+            zoom: 2,
+        },
+        language: 'en-GB',
+    });
     const placesModule = await PlacesModule.get(map);
     const geometryModule = await GeometriesModule.get(map);
 

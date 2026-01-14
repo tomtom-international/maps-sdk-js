@@ -17,10 +17,12 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 (async () => {
     // Main map and modules initialization
     const map = new TomTomMap({
-        container: 'sdk-map',
-        zoom: 14,
-        minZoom: 2,
-        center: [-0.12621, 51.50394],
+        mapLibre: {
+            container: 'sdk-map',
+            zoom: 14,
+            minZoom: 2,
+            center: [-0.12621, 51.50394],
+        },
     });
 
     // Traffic Incidents and Flow

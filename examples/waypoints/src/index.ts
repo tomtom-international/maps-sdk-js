@@ -30,14 +30,14 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         },
     };
 
-    const map = new TomTomMap(
-        {
+    const map = new TomTomMap({
+        mapLibre: {
             container: 'sdk-map',
             bounds: bboxFromGeoJSON(allWaypoints),
             fitBoundsOptions: { padding: 100 },
         },
-        { style: 'monoLight' },
-    );
+        style: 'monoLight',
+    });
 
     const examplesSelector = document.querySelector('#sdk-example-waypointExamples') as HTMLSelectElement;
     for (const exampleKey in examples) {

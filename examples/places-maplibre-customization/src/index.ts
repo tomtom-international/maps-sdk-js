@@ -10,9 +10,11 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 (async () => {
     // Create a map centered on Amsterdam
     const map = new TomTomMap({
-        container: 'sdk-map',
-        center: [4.90435, 52.36876],
-        zoom: 12,
+        mapLibre: {
+            container: 'sdk-map',
+            center: [4.90435, 52.36876],
+            zoom: 12,
+        },
     });
 
     const placesModule = await PlacesModule.get(map, {

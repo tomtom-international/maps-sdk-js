@@ -16,9 +16,11 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     ]);
 
     const map = new TomTomMap({
-        container: 'sdk-map',
-        bounds: bboxFromGeoJSON(waypoints),
-        fitBoundsOptions: { padding: 100 },
+        mapLibre: {
+            container: 'sdk-map',
+            bounds: bboxFromGeoJSON(waypoints),
+            fitBoundsOptions: { padding: 100 },
+        },
     });
 
     const routingModule = await RoutingModule.get(map, {

@@ -14,9 +14,11 @@ const infoPanel = document.getElementById('info-panel') as HTMLElement;
     const place = (await searchOne('British Museum, London')) as Place;
 
     const map = new TomTomMap({
-        container: 'sdk-map',
-        center: place.geometry.coordinates as [number, number],
-        zoom: 13,
+        mapLibre: {
+            container: 'sdk-map',
+            center: place.geometry.coordinates as [number, number],
+            zoom: 13,
+        },
     });
 
     const placesModule = await PlacesModule.get(map);

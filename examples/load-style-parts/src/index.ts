@@ -14,15 +14,15 @@ import { API_KEY } from './config';
 TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
 (async () => {
-    const map = new TomTomMap(
-        {
+    const map = new TomTomMap({
+        mapLibre: {
             container: 'sdk-map',
             zoom: 13,
             minZoom: 2,
             center: [2.1493, 41.4001],
         },
-        { style: { type: 'standard', include: [] } },
-    );
+        style: { type: 'standard', include: [] },
+    });
 
     document
         .querySelector('#sdk-example-addIncidents')

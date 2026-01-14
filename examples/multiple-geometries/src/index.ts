@@ -19,7 +19,11 @@ import { API_KEY } from './config';
 TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 
 (async () => {
-    const map = new TomTomMap({ container: 'sdk-map' });
+    const map = new TomTomMap({
+        mapLibre: {
+            container: 'sdk-map',
+        },
+    });
     const geometryModule = await GeometriesModule.get(map);
     let placeSubdivisions: Places;
 

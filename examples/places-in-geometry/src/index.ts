@@ -14,9 +14,11 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     const bounds = placeToSearchInside.bbox as BBox;
 
     const map = new TomTomMap({
-        container: 'sdk-map',
-        fitBoundsOptions,
-        bounds,
+        mapLibre: {
+            container: 'sdk-map',
+            fitBoundsOptions,
+            bounds,
+        },
     });
 
     document

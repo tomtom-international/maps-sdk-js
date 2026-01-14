@@ -12,9 +12,11 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     const location = await reverseGeocode({ position });
 
     const map = new TomTomMap({
-        container: 'sdk-map',
-        center: position as [number, number],
-        zoom: 17,
+        mapLibre: {
+            container: 'sdk-map',
+            center: position as [number, number],
+            zoom: 17,
+        },
     });
 
     const placesModule = await PlacesModule.get(map);

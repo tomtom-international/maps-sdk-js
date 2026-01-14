@@ -12,9 +12,11 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     const waypoints: Waypoint[] = await Promise.all([geocodeOne('London'), geocodeOne('Paris')]);
 
     const map = new TomTomMap({
-        container: 'sdk-map',
-        bounds: bboxFromGeoJSON(waypoints),
-        fitBoundsOptions: { padding: 100 },
+        mapLibre: {
+            container: 'sdk-map',
+            bounds: bboxFromGeoJSON(waypoints),
+            fitBoundsOptions: { padding: 100 },
+        },
     });
 
     const routingModule = await RoutingModule.get(map, { theme: { mainColor: '#DF1B12' } });

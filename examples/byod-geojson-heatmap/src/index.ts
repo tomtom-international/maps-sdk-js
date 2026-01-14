@@ -8,9 +8,11 @@ import { addHeatmapSourceAndLayer } from './heatmapLayers';
 TomTomConfig.instance.put({ apiKey: API_KEY });
 
 const map = new TomTomMap({
-    container: 'sdk-map',
-    center: [-1.7, 53.75],
-    zoom: 9.5,
+    mapLibre: {
+        container: 'sdk-map',
+        center: [-1.7, 53.75],
+        zoom: 9.5,
+    },
 });
 
 const DATA_URL = 'https://dataworks.calderdale.gov.uk/download/2kyp8/hcj/listed%20buildings%20west%20yorkshire.json';
