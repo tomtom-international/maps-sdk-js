@@ -171,13 +171,6 @@ export async function getPlacesWithEVAvailability<P extends CommonPlaceProps = C
 
 export async function getPlacesWithEVAvailability<P extends CommonPlaceProps = CommonPlaceProps>(
     places: Places<P>,
-    options?: {
-        includeIfAvailabilityUnknown?: true;
-    },
-): Promise<Places<P | EVChargingStationWithAvailabilityPlaceProps>>;
-
-export async function getPlacesWithEVAvailability<P extends CommonPlaceProps = CommonPlaceProps>(
-    places: Places<P>,
     options: {
         /**
          * If true, places with unknown availability will be still included. Otherwise, they will be filtered out.
