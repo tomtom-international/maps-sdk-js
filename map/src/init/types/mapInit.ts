@@ -395,4 +395,3 @@ export type TomTomMapParams = Partial<GlobalConfig> & {
  * @ignore
  */
 export type InternalTomTomMapParams = GlobalConfig & TomTomMapParams;
-

@@ -301,9 +301,7 @@ export class TomTomConfig {
  * Merges the global configuration into the given one, with the latter having priority.
  * @ignore
  */
-export const mergeFromGlobal = <T extends Partial<GlobalConfig>>(
-    givenConfig: T = {} as T,
-): GlobalConfig & T => ({
+export const mergeFromGlobal = <T extends Partial<GlobalConfig>>(givenConfig: T = {} as T): GlobalConfig & T => ({
     ...TomTomConfig.instance.get(),
     ...givenConfig,
 });

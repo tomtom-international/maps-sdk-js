@@ -78,7 +78,11 @@ export class MapTestEnv {
         );
     }
 
-    async loadPageAndMap(page: Page, mapLibreOptions: Partial<MapLibreOptions>, tomtomMapParams?: Partial<TomTomMapParams>) {
+    async loadPageAndMap(
+        page: Page,
+        mapLibreOptions: Partial<MapLibreOptions>,
+        tomtomMapParams?: Partial<TomTomMapParams>,
+    ) {
         await this.loadPage(page);
         await this.loadMap(page, mapLibreOptions, tomtomMapParams);
     }

@@ -4,7 +4,10 @@ import { beforeAll, describe, expect, test, vi } from 'vitest';
 import { search } from '../../search';
 import { SDKServiceError } from '../../shared';
 import { putIntegrationTestsAPIKey } from '../../shared/tests/integrationTestUtils';
-import evChargingStationsAvailability, { getPlacesWithEVAvailability, hasChargingAvailability } from '../evChargingStationsAvailability';
+import evChargingStationsAvailability, {
+    getPlacesWithEVAvailability,
+    hasChargingAvailability,
+} from '../evChargingStationsAvailability';
 import type { ChargingStationsAvailabilityResponseAPI } from '../types/apiTypes';
 
 describe('charging availability errors', () => {
@@ -76,7 +79,9 @@ describe('evChargingStationsAvailability integration tests', () => {
         const evStationsWithAvailability = await getPlacesWithEVAvailability(evStationsWithoutAvailability);
         const evStationFeatures = evStationsWithAvailability.features;
         expect(evStationFeatures).toHaveLength(evStationsWithoutAvailability.features.length);
-        expect(evStationFeatures.some((feature) => hasChargingAvailability(feature.properties.chargingPark))).toBe(true);
+        expect(evStationFeatures.some((feature) => hasChargingAvailability(feature.properties.chargingPark))).toBe(
+            true,
+        );
         expect(evStationFeatures.every((feature) => feature.properties.chargingPark?.connectors)).toBe(true);
         // (opening hours are mapped from the EV station to the POI):
         expect(evStationFeatures.some((feature) => feature.properties.poi?.openingHours)).toBe(true);

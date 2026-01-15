@@ -1,5 +1,5 @@
 import type { StyleSpecification } from 'maplibre-gl';
-import type { InternalTomTomMapParams, StandardStyle, StandardStyleID, StyleInput, StyleModule, TomTomMapParams } from './types/mapInit';
+import type { InternalTomTomMapParams, StandardStyle, StandardStyleID, StyleInput, StyleModule } from './types/mapInit';
 import { styleModules } from './types/mapInit';
 
 const DEFAULT_STANDARD_STYLE_ID: StandardStyleID = 'standardLight';
