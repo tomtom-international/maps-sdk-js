@@ -1,6 +1,6 @@
-# 🧪 TESTING THE SDK
+# 🧪 Testing the SDK
 
-This guide covers the complete testing strategy for the TomTom Maps SDK for JavaScript, including unit tests, integration tests, and end-to-end tests.
+This guide covers the testing strategy for the TomTom Maps SDK for JavaScript when building from source.
 
 ## 🎯 TESTING PHILOSOPHY
 

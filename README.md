@@ -119,3 +119,24 @@ is a set of utilities and TypeScript types which are common to both [Map](#map) 
 ### 🔧 Using the Core Bundle
 If you use Map and/or Services, there is no need to install any further packages.\
 Code imports from the SDK Core Bundle will come from ```@tomtom-org/maps-sdk/core```
+
+## � License
+
+This repository uses a **dual-licensing model**.
+
+### SDK Packages - Proprietary License
+The SDK packages (`@tomtom-org/maps-sdk/*` - core, services, map) are distributed under a **proprietary license**.
+
+📋 **[LICENSE.txt](./LICENSE.txt)** - Full license terms
+
+These packages require a TomTom API key and agreement to our terms of service.
+
+### Examples - MIT License  
+All example code in the `examples/` directory is **open-source** under the MIT License.
+
+📋 **[examples/LICENSE](./examples/LICENSE)** - MIT License
+
+The examples can be freely copied, modified, and used in your projects.
+
+### Source-Available Repository
+This repository is source-available for transparency and learning. This is a read-only mirror - see [CONTRIBUTING.md](./CONTRIBUTING.md) for how to provide feedback through issues and discussions.

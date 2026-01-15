@@ -1,6 +1,12 @@
 # 🏗️ Building the SDK
 
-This guide covers everything you need to know about building the TomTom Maps SDK for JavaScript from source.
+This guide covers building the TomTom Maps SDK for JavaScript from source.
+
+> **Note**: Official SDK packages are published to npm. Building from source is useful for:
+> - Understanding the SDK internals
+> - Testing unreleased changes
+> - Learning from the codebase
+> - Running examples locally
 
 ## 📦 Workspace Architecture
 

@@ -1,13 +1,15 @@
-# 🔧 Internal SDK Development Documentation
+# 🔧 SDK Development Documentation
 
-This directory contains documentation for **internal SDK development** - building, testing, and contributing to the TomTom Maps SDK for JavaScript codebase.
+This directory contains documentation for building and testing the TomTom Maps SDK for JavaScript from source.
 
 ## 🎯 Who This Is For
 
-- SDK contributors (TomTom team members)
-- External contributors wanting to submit PRs
 - Developers building the SDK from source
-- Anyone needing to modify or test the SDK itself
+- Anyone wanting to understand the SDK's internals
+- Contributors providing feedback through issues and discussions
+
+> [!IMPORTANT]
+> We are not currently accepting pull requests. However, we greatly value feedback from the community through issues and discussions.
 
 ## 📚 Available Documents
 
@@ -72,21 +74,6 @@ This directory contains documentation for **internal SDK development** - buildin
 
 ---
 
-### CI/CD
-
-#### **[CI_CD.md](./CI_CD.md)**
-*Continuous integration and deployment*
-- CI/CD pipeline overview
-- GitHub Actions workflows
-- Automated checks
-- Quality gates
-- Release process
-- Deployment procedures
-
-**Reference when setting up or troubleshooting CI/CD**
-
----
-
 ### Dependencies
 
 #### **[DEPENDENCIES.md](./DEPENDENCIES.md)**
@@ -117,111 +104,7 @@ This directory contains documentation for **internal SDK development** - buildin
 
 ---
 
-## 🆚 Internal vs External Documentation
-
-### Internal Development (This Directory)
-**Purpose**: Building and contributing to the SDK itself
-- Cloning repository
-- Setting up development environment
-- Building from source
-- Running SDK tests
-- Making code changes
-- Submitting PRs
-
-### External Usage ([../../.ai/](../../.ai/))
-**Purpose**: Using the published SDK in customer applications
-- Installing npm package
-- Using SDK features
-- Customer code examples
-- Troubleshooting customer apps
-- Understanding SDK capabilities
-
----
-
-## 🚀 Quick Start for New Contributors
-
-### 1. Environment Setup
-```bash
-# Follow GETTING_STARTED.md
-nvm use 22
-corepack enable
-git clone https://github.com/tomtom-international/maps-sdk-js.git
-cd maps-sdk-js
-pnpm install
-```
-
-### 2. Build the SDK
-```bash
-# Follow BUILD.md
-pnpm build:sdk
-```
-
-### 3. Run Tests
-```bash
-# Follow TESTING.md
-pnpm test:sdk
-```
-
-### 4. Check Code Quality
-```bash
-# Follow QUALITY.md
-pnpm lint:fix
-pnpm format:fix
-pnpm type-check:sdk
-```
-
-### 5. Make Changes
-- Create a feature branch
-- Make your changes
-- Write/update tests
-- Run all checks
-- Submit PR (see [../../CONTRIBUTING.md](../../CONTRIBUTING.md))
-
----
-
-## 📋 Pre-Commit Checklist
-
-Before committing changes:
-- [ ] Code builds successfully (`pnpm build:sdk`)
-- [ ] All tests pass (`pnpm test:sdk`)
-- [ ] Code is formatted (`pnpm format:fix`)
-- [ ] Code is linted (`pnpm lint:fix`)
-- [ ] Types are correct (`pnpm type-check:sdk`)
-- [ ] New features have tests
-- [ ] Breaking changes are documented
-
----
-
-## 🔗 Related Documentation
+##  Related Documentation
 
 - **[CONTRIBUTING.md](../../CONTRIBUTING.md)** - Contribution guidelines and PR process
-- **[.ai/](../../.ai/)** - Customer-facing SDK usage documentation
 - **[README.md](../../README.md)** - Project overview
-
----
-
-## 💡 For AI Agents
-
-When helping with:
-- **Customer questions about using the SDK** → Direct to [../../.ai/](../../.ai/)
-- **Contributing to SDK or building from source** → Use documents in this directory
-- **Unclear which** → Ask if they want to use the SDK (external) or contribute to it (internal)
-
----
-
-## 📊 Document Summary
-
-| Document | Purpose | When to Use |
-|----------|---------|-------------|
-| GETTING_STARTED.md | Setup environment | First time setup |
-| BUILD.md | Build SDK | Building from source |
-| TESTING.md | Test SDK | Writing/running tests |
-| QUALITY.md | Code quality | Before committing |
-| CI_CD.md | CI/CD pipelines | Understanding automation |
-| DEPENDENCIES.md | Update deps | Dependency management |
-| DOCUMENTATION.md | Generate docs | API reference updates |
-
----
-
-*For using the SDK in applications, see [../../.ai/](../../.ai/) instead!*
-

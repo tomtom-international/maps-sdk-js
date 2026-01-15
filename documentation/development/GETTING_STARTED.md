@@ -1,6 +1,12 @@
 # 🚀 Getting Started with SDK Development
 
-This guide helps you set up your local development environment to build, test, and contribute to the TomTom Maps SDK for JavaScript.
+This guide helps you set up your local development environment to build and test the TomTom Maps SDK for JavaScript from source.
+
+> [!IMPORTANT]
+> **This guide is for SDK source development** (building the SDK itself from source).
+> 
+> **If you want to use the SDK in your application**, see the official documentation:  
+> 👉 **[Project Setup Guide](https://docs.tomtom.com/maps-sdk-js/introduction/project-setup)**
 
 ## 📋 Prerequisites
 
@@ -9,7 +15,7 @@ Before you begin, ensure you have the following tools installed:
 ### Required Tools
 - **Git** - Latest version for version control
 - **NVM** (Node Version Manager) - Latest version for Node.js management
-- **Node.js 22+** (LTS) - Installed via NVM
+- **Node.js 24+** (LTS) - Installed via NVM
 - **pnpm 10+** - Package manager (see `packageManager` field in root `package.json`)
 
 ### Optional but Recommended
@@ -19,11 +25,8 @@ Before you begin, ensure you have the following tools installed:
 ## ⚙️ Setup Node.js/pnpm
 
 ```shell
-nvm install 22
-nvm use 22
-
-# making 22nd version the default one (optional)
-nvm alias default 22
+nvm install 24
+nvm use 24
 
 # Enable corepack to use the project's specified pnpm version
 corepack enable
@@ -32,14 +35,13 @@ corepack enable
 npm install -g pnpm@10+
 ```
 
-## 📥 Check out
+## 📥 Clone the Repository
 
-Check out the repository https://github.com/tomtom-international/maps-sdk-js:
+Clone the repository:
 
 ```shell
-git clone git@github.com:tomtom-international/maps-sdk-js.git
-# or
 git clone https://github.com/tomtom-international/maps-sdk-js.git
+cd maps-sdk-js
 ```
 
 ## 📦 Installation
@@ -60,6 +62,42 @@ pnpm install -F './examples/*'
 ```
 
 The `node_modules` directory appears in each workspace as well as the root directory. This is the expected behavior with pnpm workspaces.
+
+## 🔑 Environment Variables Setup
+
+The SDK requires API keys for running examples and tests. You need to create `.env` files in two locations:
+
+### 1. Examples API Key
+
+For running example applications:
+
+```shell
+# Copy the template
+cp examples/.env.example examples/.env
+
+# Edit and add your API key
+# examples/.env
+API_KEY_EXAMPLES=your_api_key_here
+```
+
+### 2. Tests API Key
+
+For running integration tests:
+
+```shell
+# Copy the template
+cp shared-configs/.env.example shared-configs/.env
+
+# Edit and add your API key
+# shared-configs/.env
+API_KEY_TESTS=your_api_key_here
+```
+
+> [!TIP]
+> You can obtain a TomTom API key from [MyTomTom](https://my.tomtom.com/).
+
+> [!NOTE]
+> `.env` files are git-ignored for security. Never commit them to the repository.
 
 ## Workspace Structure
 
@@ -116,11 +154,11 @@ pnpm lint:fix
 ### Node.js Version Issues
 ```shell
 # Verify Node.js version
-node --version  # Should be 22.x.x or higher
+node --version  # Should be 24.x.x or higher
 
 # If wrong version, switch with NVM
-nvm use 22
-nvm alias default 22
+nvm use 24
+nvm alias default 24
 ```
 
 ### pnpm Issues
@@ -161,10 +199,9 @@ pnpm build:sdk
 
 ## 🆘 Getting Help
 
-- Check **[TROUBLESHOOTING.md](../../.ai/TROUBLESHOOTING.md)** for common issues
-- Review **[CONTRIBUTING.md](../../CONTRIBUTING.md)** for contribution guidelines
-- Open an issue on GitHub for SDK-specific problems
-- Contact the team via internal channels for support
+- Check [CONTRIBUTING.md](../../CONTRIBUTING.md) for contribution guidelines
+- Open an [issue on GitHub](https://github.com/tomtom-international/maps-sdk-js/issues) for problems or questions
+- Start a [GitHub Discussion](https://github.com/tomtom-international/maps-sdk-js/discussions) for general questions
 
 ## 📚 Additional Resources
 

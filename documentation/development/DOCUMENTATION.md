@@ -1,12 +1,13 @@
-# 📚 Maps SDK JS documentation
+# 📚 SDK Documentation
 
-## 📝 Writing Customer-Facing Documentation
+## 📝 Documentation Structure
 
-Maps SDK JS documentation consists of two main types:
-- **Guides** (static, manually written)
-- **API Reference** (dynamically generated)
+The Maps SDK JS documentation consists of:
+- **Guides** - Static, manually written guides
+- **API Reference** - Dynamically generated from source code
+- **Examples** - Interactive code examples
 
-Guides are written by the team and should be clear, direct, and helpful for customers. Use Markdown (or MDX) with frontmatter for metadata (e.g., title, tags, visibility). Structure guides with:
+Documentation is written in Markdown/MDX with frontmatter for metadata. Use Markdown (or MDX) with frontmatter for metadata (e.g., title, tags, visibility). Structure guides with:
 - A concise introduction
 - Key features or concepts
 - Step-by-step instructions or examples
@@ -31,14 +32,7 @@ Guides are written by the team and should be clear, direct, and helpful for cust
 ### 🚀 Generating and Publishing Documentation
 
 - API reference is generated using TypeDoc and custom themes
-- Guides and reference docs are written in Markdown/MDX and delivered to the developer portal
-- Test generated documentation using the [drumkit monorepo project](https://github.com/tomtom-international/drumkit-monorepo)
-- Commit updates to [docs-portal documentation](https://github.com/tomtom-international/devportal-documentation)
-
-### 📖 Reference Guides
-- [Technical guidelines](https://confluence.tomtomgroup.com/display/DR/Technical+Documentation+Guidelines)
-- [Publication process](https://confluence.tomtomgroup.com/display/DR/Publication+process)
-- [Documentation guide](https://confluence.tomtomgroup.com/display/DR/Documentation+guide)
+- Guides and reference docs are written in Markdown/MDX and delivered to the Docs portal
 
 ## 🔄 Maintaining Documentation
 
@@ -65,7 +59,3 @@ titleTags:
 ```
 
 For more examples, see the files in [`../docs-portal/introduction/`](../docs-portal/introduction/) and [`../docs-portal/guides/`](../docs-portal/guides/).
-
-## 🌐 Published Documentation and Examples
-
-See the live documentation and examples at '{DOCS_PORTAL_ENV}/maps-sdk-js/...'

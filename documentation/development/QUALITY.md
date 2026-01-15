@@ -1,8 +1,6 @@
-# 🔍 Quality Control
+# 🔍 Code Quality
 
-## 🎯 Code Quality Standards
-
-The project maintains high code quality through automated tools and standardized practices.
+The SDK maintains code quality through automated tools and standardized practices. This guide helps you understand and run quality checks when building from source.
 
 ## 🎨 Linting and Formatting
 
