@@ -150,7 +150,7 @@ export const getPlaceWithEVAvailability = async <P extends CommonPlaceProps = Co
  * });
  *
  * const withAvailability = await getPlacesWithEVAvailability(results, {
- *   includeIfAvailabilityUnknown: false  // Filter out stations with unknown availability
+ *   excludeIfAvailabilityUnknown: true  // Filter out stations with unknown availability
  * });
  *
  * // Display only stations with known availability
@@ -164,20 +164,20 @@ export const getPlaceWithEVAvailability = async <P extends CommonPlaceProps = Co
  */
 export async function getPlacesWithEVAvailability<P extends CommonPlaceProps = CommonPlaceProps>(
     places: Places<P>,
-    options: {
-        includeIfAvailabilityUnknown: false;
+    options?: {
+        excludeIfAvailabilityUnknown: true;
     },
 ): Promise<Places<EVChargingStationWithAvailabilityPlaceProps>>;
 
 export async function getPlacesWithEVAvailability<P extends CommonPlaceProps = CommonPlaceProps>(
     places: Places<P>,
-    options: {
+    options?: {
         /**
-         * If true, places with unknown availability will be still included. Otherwise, they will be filtered out.
-         * @default true
+         * If true, places with unknown availability will be filtered out. Otherwise, they will be included.
+         * @default false
          */
-        includeIfAvailabilityUnknown?: boolean;
-    } = { includeIfAvailabilityUnknown: true },
+        excludeIfAvailabilityUnknown?: boolean;
+    },
 ): Promise<Places<P | EVChargingStationWithAvailabilityPlaceProps>> {
     const enhancedPlaces: Array<Place<P> | Place<EVChargingStationWithAvailabilityPlaceProps>> = [];
     for (const place of places.features) {
@@ -185,7 +185,7 @@ export async function getPlacesWithEVAvailability<P extends CommonPlaceProps = C
         const placeWithAvailability = await getPlaceWithEVAvailability(place);
         if (placeWithAvailability) {
             enhancedPlaces.push(placeWithAvailability);
-        } else if (options.includeIfAvailabilityUnknown) {
+        } else if (!options?.excludeIfAvailabilityUnknown) {
             enhancedPlaces.push(place);
         }
     }

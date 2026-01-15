@@ -88,7 +88,7 @@ describe('evChargingStationsAvailability integration tests', () => {
 
         // we re-calculate now but filtering out the ones with unknown availability:
         const evStationsWithKnownAvailability = await getPlacesWithEVAvailability(evStationsWithoutAvailability, {
-            includeIfAvailabilityUnknown: false,
+            excludeIfAvailabilityUnknown: true,
         });
         expect(evStationsWithKnownAvailability.features.length).toBeLessThan(evStationFeatures.length);
         expect(evStationsWithKnownAvailability.features).toHaveLength(
