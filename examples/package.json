@@ -18,17 +18,17 @@
   "devDependencies": {
     "@microsoft/api-extractor": "catalog:",
     "@tsconfig/recommended": "catalog:",
+    "@types/js-yaml": "^4.0.9",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
-    "@types/js-yaml": "^4.0.9",
+    "js-yaml": "^4.1.1",
     "rollup-plugin-analyzer": "catalog:",
     "rollup-plugin-visualizer": "catalog:",
     "vite": "catalog:",
     "vite-plugin-dts": "catalog:",
     "vite-plugin-singlefile": "catalog:",
-    "js-yaml": "^4.1.1",
     "vitest": "catalog:"
   },
   "files": [

@@ -42,7 +42,7 @@
     "@size-limit/file": "^11.2.0",
     "@size-limit/preset-app": "^11.2.0",
     "size-limit": "^11.2.0",
-    "typedoc": "^0.28.15",
+    "typedoc": "^0.28.16",
     "yaml": "^2.8.2"
   },
   "size-limit": [
@@ -60,7 +60,7 @@
     "node": ">=24",
     "pnpm": ">=10"
   },
-  "packageManager": "pnpm@10.27.0",
+  "packageManager": "pnpm@10.28.0",
   "files": [
     "core/dist",
     "core/package.json",
