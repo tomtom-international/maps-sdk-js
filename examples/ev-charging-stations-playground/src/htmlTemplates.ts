@@ -4,7 +4,7 @@ import {
     ConnectorAvailability,
     ConnectorCount,
 } from '@tomtom-org/maps-sdk/core';
-import { hasChargingAvailability } from '../../../services';
+import { hasChargingAvailability } from '@tomtom-org/maps-sdk/services';
 import { connectorIcons } from './connectorIcons';
 import { connectorNames } from './connectorNames';
 import genericIcon from './ic-generic-24.svg?raw';
