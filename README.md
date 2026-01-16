@@ -120,7 +120,7 @@ is a set of utilities and TypeScript types which are common to both [Map](#map) 
 If you use Map and/or Services, there is no need to install any further packages.\
 Code imports from the SDK Core Bundle will come from ```@tomtom-org/maps-sdk/core```
 
-## � License
+## 📄 License
 
 This repository uses a **dual-licensing model**.
 
