@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.41.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.40.1...v0.41.0) (2026-01-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* merge mapParams and mapLibreOptions
+* **ev-search:** merge connectors and connectorCounts
+* **ev-search:** getPlacesWithEvAvailability return type
+
+### Bug Fixes
+
+* css responsiveness ([37b0c8b](https://github.com/tomtom-international/maps-sdk-js/commit/37b0c8b7e01e36893f3acde03fbfbdb09d30ac0e))
+* **ev-search:** getPlacesWithEvAvailability return type ([1a8134c](https://github.com/tomtom-international/maps-sdk-js/commit/1a8134cc16fb7a3701b09ef13a6897dd158ad861))
+
+
+### Code Refactoring
+
+* **ev-search:** merge connectors and connectorCounts ([352c404](https://github.com/tomtom-international/maps-sdk-js/commit/352c404abea41e407e2060ac74fe6b3a1fa64794))
+* merge mapParams and mapLibreOptions ([3756aaf](https://github.com/tomtom-international/maps-sdk-js/commit/3756aafdf1b23f9af8a07a72b8ee388aade789e6))
+
 ## [0.40.1](https://github.com/tomtom-international/maps-sdk-js/compare/v0.40.0...v0.40.1) (2026-01-08)
 
 
