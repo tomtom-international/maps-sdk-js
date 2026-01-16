@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.41.1](https://github.com/tomtom-international/maps-sdk-js/compare/v0.41.0...v0.41.1) (2026-01-16)
+
+
+### Bug Fixes
+
+* **examples:** import in ev-charging-stations-playground ([2d66e62](https://github.com/tomtom-international/maps-sdk-js/commit/2d66e62f948658abd652042ffaca5431c93d9966))
+
 ## [0.41.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.40.1...v0.41.0) (2026-01-16)
 
 
