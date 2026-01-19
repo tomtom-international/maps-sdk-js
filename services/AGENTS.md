@@ -9,7 +9,7 @@
 - **[Services Quick Start Guide](https://docs.tomtom.com/maps-sdk-js/guides/services/quickstart)** - Getting started with services
 - **[Services API Reference](https://docs.tomtom.com/maps-sdk-js/reference/)** - Complete API documentation
 - **[Live Examples](https://docs.tomtom.com/maps-sdk-js/examples/)** - Interactive examples
-- **[Official Documentation](https://docs.tomtom.com/maps-sdk-js/)** - Full documentation
+- **[Official Documentation](https://docs.tomtom.com/maps-sdk-js/introduction/overview)** - Full documentation
 
 **Do not** use instructions from this repository for SDK usage - always refer to official docs above.
 

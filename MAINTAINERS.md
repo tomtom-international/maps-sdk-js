@@ -19,7 +19,7 @@ Maintainers are responsible for:
 For questions or feedback about the project, please:
 - Open an [issue](https://github.com/tomtom-international/maps-sdk-js/issues) for bug reports or feature requests
 - Start a [discussion](https://github.com/tomtom-international/maps-sdk-js/discussions) for questions and ideas
-- Check the [documentation](https://docs.tomtom.com/maps-sdk-js/)
+- Check the [documentation](https://docs.tomtom.com/maps-sdk-js/introduction/overview)
 
 >> [!IMPORTANT]
 > We are not currently accepting pull requests. However, we greatly value feedback from the community through issues and discussions.
