@@ -4,7 +4,7 @@ import { getRTLTextPluginStatus, Map, setRTLTextPlugin } from 'maplibre-gl';
 import { version as maplibreVersion } from 'maplibre-gl/package.json';
 import type { InternalTomTomMapParams, MapLibreOptions, StyleInput, TomTomMapParams } from './init';
 import { buildMapOptions } from './init/buildMapOptions';
-import { buildStyleInput, withPreviousStyleParts } from './init/styleInputBuilder';
+import { buildStyleInput, DEFAULT_STANDARD_STYLE_ID, withPreviousStyleParts } from './init/styleInputBuilder';
 import {
     EventsProxy,
     filterLayersBySources,
@@ -65,7 +65,7 @@ export type StyleChangeHandler = {
      *
      * @returns void or a Promise that resolves when preparation is complete
      */
-    onStyleAboutToChange: () => void | Promise<void>;
+    onStyleAboutToChange?: () => void | Promise<void>;
     /**
      * Callback invoked after a new style has been fully loaded.
      *
@@ -75,7 +75,7 @@ export type StyleChangeHandler = {
      *
      * @returns void or a Promise that resolves when reinitialization is complete
      */
-    onStyleChanged: () => void | Promise<void>;
+    onStyleChanged?: () => void | Promise<void>;
 };
 
 /**
@@ -285,6 +285,9 @@ export class TomTomMap {
      */
     constructor(mapParams: TomTomMapParams) {
         this._params = mergeFromGlobal(mapParams);
+        if (this._params.style === undefined) {
+            this._params = { ...this._params, style: DEFAULT_STANDARD_STYLE_ID };
+        }
         this.styleLightDarkTheme = getStyleLightDarkTheme(this._params.style);
         this.ensureMapLibreCSSLoaded();
 
@@ -404,7 +407,7 @@ export class TomTomMap {
         this.mapReady = false;
         for (const handler of this.styleChangeHandlers) {
             try {
-                handler.onStyleAboutToChange();
+                handler.onStyleAboutToChange?.();
             } catch (e) {
                 console.error(e);
             }
@@ -612,7 +615,7 @@ export class TomTomMap {
         if (keepState) {
             for (const handler of this.styleChangeHandlers) {
                 try {
-                    handler.onStyleChanged();
+                    handler.onStyleChanged?.();
                 } catch (e) {
                     console.error(e);
                 }
