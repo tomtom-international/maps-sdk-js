@@ -7,10 +7,10 @@
   "scripts": {
     "build": "pnpm build:sdk",
     "build:api-reference": "typedoc",
-    "build:examples": "pnpm --workspace-concurrency=0 -F './examples/*' build && pnpm -F @tomtom-org/maps-sdk-examples build",
+    "build:examples": "pnpm -F @tomtom-org/maps-sdk-examples build",
     "build:sdk": "pnpm -F core build  && pnpm -F services build && pnpm -F map build",
     "clean": "pnpm -r --no-bail clean:dist && pnpm -r --no-bail clean:cache",
-    "e2e-test:examples": "pnpm -F examples test",
+    "e2e-test:examples": "pnpm -F @tomtom-org/maps-sdk-examples test:e2e",
     "e2e-test:sdk": "pnpm -F map-integration-tests test",
     "format": "biome format .",
     "format:fix": "biome format . --write",

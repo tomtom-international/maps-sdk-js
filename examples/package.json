@@ -6,8 +6,12 @@
   "module": "dist/examples.js",
   "types": "dist/examples.d.ts",
   "scripts": {
-    "build": "vite build",
-    "test": "vitest run"
+    "build": "pnpm --parallel -F './*' build && vite build",
+    "test": "vitest run",
+    "test:e2e": "pnpm exec playwright install --with-deps chromium && playwright test",
+    "test:e2e:ui": "pnpm exec playwright install --with-deps chromium && playwright test --ui",
+    "test:e2e:update-snapshots": "pnpm exec playwright install --with-deps chromium && playwright test --update-snapshots",
+    "start-test-server": "npx serve . -p 9050"
   },
   "dependencies": {
     "@codesandbox/sandpack-react": "catalog:",
@@ -17,6 +21,7 @@
   },
   "devDependencies": {
     "@microsoft/api-extractor": "catalog:",
+    "@playwright/test": "catalog:",
     "@tsconfig/recommended": "catalog:",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "catalog:",

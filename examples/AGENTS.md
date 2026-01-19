@@ -21,6 +21,7 @@ This section is for developers working on the SDK examples codebase.
 ### Overview
 
 This directory contains 50+ runnable examples demonstrating SDK features:
+
 - Map display and interaction
 - Search and geocoding
 - Routing and navigation
@@ -29,7 +30,6 @@ This directory contains 50+ runnable examples demonstrating SDK features:
 - Custom styling and theming
 
 Each example is a standalone application you can run and modify.
-
 
 ### Development Setup
 
@@ -51,6 +51,7 @@ pnpm develop:sandpack
 See [../CONTRIBUTING.md](../CONTRIBUTING.md) for detailed setup.
 
 ### Creating a New Example
+
 ```bash
 # Copy an existing example as template
 cp -r default-map my-new-example
@@ -68,11 +69,13 @@ pnpm dev
 ### Sandpack Live Coding Preview
 
 Sandpack provides an interactive code editor with live preview for examples. This is useful for:
+
 - Testing examples in an isolated environment
 - Providing interactive documentation
 - Debugging examples with real-time code changes
 
 **Run Sandpack preview:**
+
 ```bash
 cd examples/<example-name>
 pnpm develop:sandpack
@@ -96,15 +99,15 @@ export const sandpackOptions: Partial<SandpackOptions> = {
 ```
 
 The Sandpack preview:
+
 - Automatically loads all example files (index.html, index.ts, style.css)
 - Hides utility files (config.ts) by default
 - Uses the amethyst theme with custom colors
 - Resolves workspace dependencies to their published versions
 - Injects API keys from environment variables
 
-
-
 ### Testing SDK Changes
+
 ```bash
 # 1. Make changes in ../map or ../services
 cd ../map
@@ -118,6 +121,7 @@ pnpm dev
 ```
 
 ### Example Structure
+
 ```
 examples/
 ├── vite.config.ts          # Vite configuration for all examples
@@ -140,6 +144,7 @@ examples/
 ## Contributor Workflows
 
 **Contributor wants to:**
+
 - **Test new SDK feature** → Add example demonstrating the feature
 - **Verify bug fix** → Run affected examples to validate fix
 - **Document API usage** → Create example showing best practices
@@ -150,11 +155,13 @@ examples/
 ## Example Catalog
 
 ### Map Basics
+
 - **default-map** - Basic map initialization with styles, center, and zoom
 - **map-language** - Display maps in different languages
 - **keep-state-when-changing-style** - Maintain map state when switching styles
 
 ### Geometry & Data Visualization
+
 - **basic-geometry** - Display simple geometries (points, lines, polygons)
 - **multiple-geometries** - Show multiple geometric shapes on one map
 - **byod-geojson-heatmap** - Create heatmaps from GeoJSON data
@@ -162,6 +169,7 @@ examples/
 - **layer-groups-visibility-animation** - Animate layer visibility changes
 
 ### Search & Geocoding
+
 - **geocode** - Convert addresses to coordinates (forward geocoding)
 - **geocode-init** - Initialize map at geocoded location
 - **reverse-geocode** - Convert coordinates to addresses
@@ -171,10 +179,12 @@ examples/
 - **search-parking** - Search for parking locations
 
 ### Geometry Search
+
 - **geometry-search-playground** - Search within custom geometries
 - **geometry-search-with-poi-categories** - Search for specific POI types in areas
 
 ### Routing
+
 - **route** - Basic A-to-B routing and route visualization
 - **route-with-alternatives** - Calculate and show alternative routes
 - **route-with-guidance** - Turn-by-turn navigation instructions
@@ -186,11 +196,13 @@ examples/
 - **route-geometry-searches** - Find POIs along a route
 
 ### Routing Customization
+
 - **route-custom-main-color** - Customize route line color
 - **route-waypoint-icon-style** - Custom waypoint markers
 - **route-maplibre-customization** - Advanced route styling with MapLibre
 
 ### EV Routing
+
 - **ldevr-model-id** - EV routing with vehicle model
 - **ldevr-detailed-vehicle** - Detailed EV parameters for routing
 - **ldevr-custom-charging-stops** - Custom charging station preferences
@@ -198,6 +210,7 @@ examples/
 - **ev-charging-stations-playground** - Find and display EV charging stations
 
 ### Places & POIs
+
 - **places-customize-playground** - Customize place markers
 - **places-default-icon-styling** - Default place icon styles
 - **places-maplibre-customization** - Advanced place styling with MapLibre
@@ -206,24 +219,29 @@ examples/
 - **poi-filters** - Filter POIs by category
 
 ### Interactions
+
 - **pin-interaction** - Interactive map pins with click handlers
 - **map-events** - Map interaction events (click, hover)
 - **interactive-roads-and-numbers** - Interactive road highlighting
 - **rest-of-the-map-click** - Detect clicks outside a known feature
 
 ### Traffic
+
 - **traffic-flow** - Display traffic flow on roads
 - **traffic-incidents** - Show traffic incidents and alerts
 - **traffic-config-playground** - Configure traffic display options
 
 ### Map Configuration
+
 - **map-config-playground** - Explore various map configuration options
 - **load-style-parts** - Load specific style components
 
 ### Terrain
+
 - **hillshade** - Display terrain with hillshading
 
 ### Node.js Examples
+
 - **nodejs-geocode** - Server-side geocoding
 - **nodejs-rev-geo** - Server-side reverse geocoding
 - **nodejs-routing** - Server-side route calculation
@@ -232,6 +250,7 @@ examples/
 ## Common Example Patterns
 
 ### Typical HTML Structure
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -251,6 +270,7 @@ examples/
 ```
 
 ### Typical TypeScript Structure
+
 ```typescript
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { TomTomMap } from '@tomtom-org/maps-sdk/map';

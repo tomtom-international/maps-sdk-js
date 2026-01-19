@@ -4,11 +4,11 @@
   "scripts": {
     "test": "pnpm exec playwright install --with-deps chromium && pnpm exec playwright test",
     "test:coverage": "",
-    "start-dev-server": "vite",
+    "start-test-server": "vite",
     "type-check": "tsc --noEmit"
   },
   "devDependencies": {
-    "@playwright/test": "^1.57.0",
+    "@playwright/test": "catalog:",
     "@tsconfig/recommended": "catalog:",
     "@types/geojson": "catalog:",
     "@types/lodash-es": "catalog:",

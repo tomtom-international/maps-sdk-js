@@ -41,7 +41,7 @@ export default defineConfig({
     /* Run your local dev server before starting the tests */
     webServer: {
         ignoreHTTPSErrors: true,
-        command: 'pnpm start-dev-server',
+        command: 'pnpm start-test-server',
         url: 'https://localhost:9001/',
         reuseExistingServer: true,
     },

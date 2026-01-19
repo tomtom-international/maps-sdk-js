@@ -1,17 +1,23 @@
 {
   "name": "@examples/default-map",
-  "description": "Example for default map display",
+  "description": "Default map example",
+  "type": "module",
   "scripts": {
     "build": "vite build --config ../example-vite.config.ts",
     "clean:dist": "rimraf ./dist",
     "develop": "vite --config ../example-vite.config.ts",
     "develop:sandpack": "vite --config ../example-sandpack-vite.config.ts",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test  --ui",
+    "test:e2e:update-snapshots": "playwright test --update-snapshots",
+    "start-test-server": "vite preview --port 9050"
   },
   "dependencies": {
     "@tomtom-org/maps-sdk": "workspace:*"
   },
   "devDependencies": {
+    "@playwright/test": "catalog:",
     "@types/node": "catalog:",
     "maplibre-gl": "catalog:",
     "rimraf": "catalog:",
