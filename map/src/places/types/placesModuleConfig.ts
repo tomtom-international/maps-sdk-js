@@ -24,6 +24,95 @@ import type {
 export type PlacesTheme = 'pin' | 'circle' | 'base-map';
 
 /**
+ * Configuration for EV charging station availability display.
+ *
+ * @remarks
+ * **Opt-In Feature:**
+ * - Disabled by default - set `enabled: true` to activate
+ * - Requires fetching availability via {@link getPlacesWithEVAvailability}
+ * - Each PlacesModule can enable/disable independently
+ *
+ * When enabled, displays formatted availability text (e.g., "3/10") below the station name
+ * with color-coding based on availability ratio: green (high), orange (limited), red (none/low).
+ *
+ * @example
+ * ```typescript
+ * // Enable with defaults
+ * const places = await PlacesModule.get(map, {
+ *   evAvailability: { enabled: true }
+ * });
+ * const stations = await search({ poiCategories: ['ELECTRIC_VEHICLE_STATION'] });
+ * places.show(await getPlacesWithEVAvailability(stations));
+ *
+ * // Custom thresholds and format
+ * const places = await PlacesModule.get(map, {
+ *   evAvailability: {
+ *     enabled: true,
+ *     thresholds: { high: 0.5, low: 0.1 },
+ *     formatText: (available, total) => `${available} of ${total}`
+ *   }
+ * });
+ *
+ * // Combine with custom icon
+ * const places = await PlacesModule.get(map, {
+ *   icon: {
+ *     categoryIcons: [{
+ *       id: 'ELECTRIC_VEHICLE_STATION',
+ *       image: customEvIconSvg,
+ *       pixelRatio: 2
+ *     }]
+ *   },
+ *   evAvailability: { enabled: true }
+ * });
+ * ```
+ *
+ * @group Places
+ */
+export type EVAvailabilityConfig = {
+    /**
+     * Enable or disable EV availability display.
+     *
+     * @remarks
+     * Must be explicitly set to `true` to display availability.
+     */
+    enabled?: boolean;
+
+    /**
+     * Availability ratio thresholds for color coding.
+     *
+     * @remarks
+     * - `ratio >= high`: Green (good availability)
+     * - `low < ratio < high`: Orange (limited availability)
+     * - `ratio <= low`: Red (no/very low availability)
+     *
+     * @default { high: 0.25, low: 0 }
+     */
+    thresholds?: {
+        /**
+         * Minimum ratio for green (good availability).
+         * @default 0.25
+         */
+        high?: number;
+        /**
+         * Maximum ratio for red (no/low availability).
+         * @default 0
+         */
+        low?: number;
+    };
+
+    /**
+     * Custom function to format the availability text.
+     *
+     * @param available - Number of available charging points
+     * @param total - Total number of charging points
+     * @returns Formatted availability text
+     *
+     * @default (available, total) => `${available}/${total}`
+     */
+    formatText?: (available: number, total: number) => string;
+};
+
+/**
  * Configuration for the default place icon.
  * * This is the icon that is used for clicked locations and addresses without a specific category.
  *
@@ -405,6 +494,17 @@ export type PlacesModuleConfig = MapModuleCommonConfig & {
      * * Use this only if you need fine MapLibre control on how places are displayed.
      */
     layers?: PlaceLayersConfig;
+
+    /**
+     * Configuration for EV charging station availability display.
+     *
+     * @remarks
+     * Disabled by default - set `enabled: true` to show availability on EV stations.
+     * Requires calling {@link getPlacesWithEVAvailability} to fetch availability data.
+     *
+     * @default undefined (disabled)
+     */
+    evAvailability?: EVAvailabilityConfig;
 
     /**
      * Additional properties to compute for each place feature.
