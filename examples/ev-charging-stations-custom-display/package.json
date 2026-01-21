@@ -1,0 +1,18 @@
+{
+    "name": "ev-charging-stations-custom-icon",
+    "version": "1.0.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "develop": "vite --config ../example-vite.config.ts",
+        "build": "vite build --config ../example-vite.config.ts"
+    },
+    "devDependencies": {
+        "@tomtom-org/maps-sdk": "workspace:*",
+        "vite": "catalog:"
+    },
+    "dependencies": {
+        "@turf/turf": "catalog:",
+        "maplibre-gl": "catalog:"
+    }
+}
