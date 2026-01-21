@@ -9,6 +9,7 @@ import { SELECTED_PIN_ICON_SIZE } from '../../shared/layers/commonLayerProps';
 import { isClickEventState } from '../../shared/layers/eventState';
 import { ICON_ID, pinLayerBaseSpec, TITLE } from '../../shared/layers/symbolLayers';
 import type { PlaceLayerName, PlaceLayersConfig, PlacesModuleConfig } from '../types/placesModuleConfig';
+import { getAvailabilityColorExpression } from '../utils/evAvailabilityHelpers';
 
 /**
  * @ignore
@@ -54,6 +55,39 @@ const withConfig = (
 ): LayerSpecTemplate<SymbolLayerSpecification> => {
     const textConfig = config?.text;
     const customLayer = config?.layers?.[layerName];
+    const evAvailabilityEnabled = config?.evAvailability?.enabled === true;
+
+    // Build the text field expression with EV availability if enabled
+    let textFieldExpression: any;
+    if (evAvailabilityEnabled) {
+        // Check if place has EV availability data by looking for the evAvailabilityText property
+        textFieldExpression = [
+            'case',
+            ['has', 'evAvailabilityText'],
+            // If has EV availability, show two-line format with colored availability
+            [
+                'format',
+                ['get', TITLE],
+                {},
+                '\n',
+                {},
+                ['get', 'evAvailabilityText'],
+                {
+                    'font-scale': 1.1,
+                    'text-color': getAvailabilityColorExpression(config?.evAvailability),
+                },
+            ],
+            // Otherwise, show normal title
+            ['get', TITLE],
+        ];
+    } else {
+        textFieldExpression = ['get', TITLE];
+    }
+
+    // Override with custom text config if provided
+    const finalTextField =
+        textConfig?.title && typeof textConfig?.title !== 'function' ? textConfig.title : textFieldExpression;
+
     return {
         ...layerSpec,
         layout: {
@@ -61,10 +95,7 @@ const withConfig = (
             ...(textConfig?.size && { 'text-size': textConfig.size }),
             ...(textConfig?.font && { 'text-font': textConfig.font }),
             ...(textConfig?.offset && { 'text-offset': textConfig.offset }),
-            ...(textConfig?.title &&
-                typeof textConfig?.title !== 'function' && {
-                    'text-field': textConfig?.title,
-                }),
+            'text-field': finalTextField,
             ...customLayer?.layout,
         },
         paint: {
