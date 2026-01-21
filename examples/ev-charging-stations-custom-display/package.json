@@ -1,18 +1,30 @@
 {
-    "name": "ev-charging-stations-custom-icon",
-    "version": "1.0.0",
-    "private": true,
+    "name": "@examples/ev-charging-stations-custom-display",
+    "description": "Example showing EV charging station display customization with real-time controls.",
     "type": "module",
     "scripts": {
+        "build": "vite build --config ../example-vite.config.ts",
+        "clean:dist": "rimraf ./dist",
         "develop": "vite --config ../example-vite.config.ts",
-        "build": "vite build --config ../example-vite.config.ts"
-    },
-    "devDependencies": {
-        "@tomtom-org/maps-sdk": "workspace:*",
-        "vite": "catalog:"
+        "develop:sandpack": "vite --config ../example-sandpack-vite.config.ts",
+        "type-check": "tsc --noEmit",
+        "test:e2e": "playwright test",
+        "test:e2e:ui": "playwright test  --ui",
+        "test:e2e:update-snapshots": "playwright test --update-snapshots",
+        "start-test-server": "vite preview --port 9050"
     },
     "dependencies": {
+        "@tomtom-org/maps-sdk": "workspace:*",
         "@turf/turf": "catalog:",
         "maplibre-gl": "catalog:"
+    },
+    "devDependencies": {
+        "@playwright/test": "catalog:",
+        "@types/node": "catalog:",
+        "rimraf": "catalog:",
+        "rollup-plugin-visualizer": "catalog:",
+        "ts-node": "catalog:",
+        "typescript": "catalog:",
+        "vite": "catalog:"
     }
 }

@@ -30,7 +30,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     const popUp = new Popup({ closeButton: false, offset: 35, className: 'maps-sdk-js-popup' });
 
     // =============================================================================
-    // CUSTOMIZATION STATE: All configurable options in one place
+    // CUSTOMIZATION STATE: All configurable options
     // =============================================================================
     const state = {
         bgAvailability: false,
@@ -41,7 +41,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         lowThreshold: 0.05,
         textColor: '#ffffff',
         haloWidth: 1,
-        formatOption: 'of' as 'slash' | 'of' | 'available',
+        formatOption: 'slash' as 'slash' | 'of' | 'available',
     };
 
     // =============================================================================
@@ -57,12 +57,16 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
             : undefined;
 
     const buildEVConfig = (enabled: boolean) => {
-        if (!enabled) return undefined;
+        if (!enabled) {
+            return undefined;
+        }
+
         const formats = {
             slash: (a: number, t: number) => `${a}/${t}`,
             of: (a: number, t: number) => `${a} of ${t}`,
             available: (a: number) => `${a} available`,
         };
+        
         return {
             enabled: true,
             thresholds: { high: state.highThreshold, low: state.lowThreshold },
@@ -80,7 +84,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     // PLACES MODULES: Three separate layers for different use cases
     // =============================================================================
     
-    // Background stations: Show all stations on the map (availability disabled by default)
+    // Background stations: Show all stations on the map
     const bgStations = await PlacesModule.get(map, {
         theme: 'base-map',
         icon: buildIconConfig(state.bgCustomIcon),
@@ -88,14 +92,14 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         text: buildTextConfig(),
     });
 
-    // Searched stations: User-searched results (availability enabled by default)
+    // Searched stations: User-searched results
     const searchedStations = await PlacesModule.get(map, {
         icon: buildIconConfig(state.searchCustomIcon),
         evAvailability: buildEVConfig(state.searchAvailability),
         text: buildTextConfig(),
     });
 
-    // Selected station: Highlighted with gold text
+    // Selected station: With highlighted style
     const selectedStation = await PlacesModule.get(map, {
         icon: buildIconConfig(state.searchCustomIcon),
         evAvailability: buildEVConfig(state.searchAvailability),
@@ -133,7 +137,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         }
     };
 
-    // Search for EV stations by brand name
+    // Simplified earch focusing on EV stations by brand name
     const searchEVStations = async () => {
         const evBrandTextBox = document.querySelector('#sdk-example-evBrandTextBox') as HTMLInputElement;
         popUp.remove();
@@ -163,8 +167,8 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     };
 
     // Show selected station with popup
-    const selectStation = async (station: Place) => {
-        // Always fetch availability for popup display (detailed view)
+    const selectEVStation = async (station: Place) => {
+        // Fetch availability for popup display (detailed view)
         const stationWithAvailability = (await getPlaceWithEVAvailability(station)) ?? station;
         selectedStation.show(stationWithAvailability);
         
@@ -181,7 +185,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     };
 
     // =============================================================================
-    // DYNAMIC RECONFIGURATION: Apply state changes to modules
+    // DYNAMIC RECONFIGURATION: Apply customizations state changes to modules
     // =============================================================================
     
     // Update background stations configuration and re-render
@@ -221,7 +225,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     };
 
     // =============================================================================
-    // EVENT LISTENERS: Wire up UI controls to state and configuration changes
+    // EVENT LISTENERS: UI state controls and configuration changes
     // =============================================================================
     const setupEventListeners = () => {
         // Search controls
@@ -300,8 +304,8 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 
         // Map interaction events
         map.mapLibreMap.on('moveend', updateBackgroundStations);
-        bgStations.events.on('click', selectStation);
-        searchedStations.events.on('click', selectStation);
+        bgStations.events.on('click', selectEVStation);
+        searchedStations.events.on('click', selectEVStation);
         popUp.on('close', () => selectedStation.clear());
     };
 

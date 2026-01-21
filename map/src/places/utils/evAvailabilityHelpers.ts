@@ -72,7 +72,7 @@ export const buildAvailabilityText = (place: Place, config?: EVAvailabilityConfi
  * Build availability ratio for a place with EV availability data.
  * @ignore
  */
-export const buildAvailabilityRatio = (place: Place): number => {
+export const getAvailabilityRatio = (place: Place): number => {
     const availability = getChargingPointAvailability(place);
     return availability?.ratio ?? 0;
 };

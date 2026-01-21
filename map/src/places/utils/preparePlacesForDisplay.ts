@@ -5,7 +5,7 @@ import { suffixNumber } from '../../shared/layers/utils';
 import type { DisplayPlaceProps } from '../types/placeDisplayProps';
 import type { PlacesModuleConfig, PlacesTheme } from '../types/placesModuleConfig';
 import {
-    buildAvailabilityRatio,
+    getAvailabilityRatio,
     buildAvailabilityText,
     isEVStationWithAvailability,
 } from './evAvailabilityHelpers';
@@ -126,7 +126,7 @@ const mergeEVAvailabilityProps = (
         // Only compute these for EV stations with availability data
         evAvailabilityText: (place: Place) =>
             isEVStationWithAvailability(place) ? buildAvailabilityText(place, evAvailabilityConfig) : '',
-        evAvailabilityRatio: (place: Place) => (isEVStationWithAvailability(place) ? buildAvailabilityRatio(place) : 0),
+        evAvailabilityRatio: (place: Place) => (isEVStationWithAvailability(place) ? getAvailabilityRatio(place) : 0),
     };
 };
 
@@ -141,8 +141,11 @@ export const preparePlacesForDisplay = (
 ): Places<DisplayPlaceProps> => {
     const places = toPlaces(placesInput);
 
-    // Merge EV availability into extraFeatureProps so all places are treated uniformly
-    const mergedExtraFeatureProps = mergeEVAvailabilityProps(config.extraFeatureProps, config.evAvailability, places);
+    // Only merge EV availability props when explicitly enabled
+    const mergedExtraFeatureProps =
+        config.evAvailability?.enabled === true
+            ? mergeEVAvailabilityProps(config.extraFeatureProps, config.evAvailability, places)
+            : config.extraFeatureProps;
 
     return {
         ...places,
