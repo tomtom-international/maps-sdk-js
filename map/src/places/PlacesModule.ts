@@ -44,16 +44,28 @@ type PlacesSourcesAndLayers = {
  * - Data-driven styling via MapLibre expressions
  * - Interactive events (click, hover, etc.)
  * - Support for custom feature properties
+ * - EV charging station availability display (opt-in)
  *
  * **Marker Styles:**
  * - `pin`: Traditional teardrop-shaped map pins
  * - `circle`: Simple circular markers
  * - `base-map`: Mimics built-in POI layer styling
  *
+ * **EV Charging Station Availability:**
+ * When displaying EV charging stations with availability data from
+ * {@link getPlacesWithEVAvailability}, the module can:
+ * - Show available/total charging points (e.g., "3/10")
+ * - Color-code availability (green = good, orange = limited, red = none/low)
+ * - Display as formatted text within the station's label
+ *
+ * This feature is disabled by default. To enable it, set `evAvailability.enabled` to `true`
+ * in the configuration.
+ *
  * **Common Use Cases:**
  * - Search result visualization
  * - Custom location markers
  * - Store locators
+ * - EV charging station maps with real-time availability
  * - Delivery/pickup points
  * - Saved locations display
  *
@@ -72,6 +84,19 @@ type PlacesSourcesAndLayers = {
  *
  * // Display places from search
  * await placesModule.show(searchResults);
+ *
+ * // EV Charging Stations - Opt-in to availability display
+ * const evStations = await PlacesModule.get(map, {
+ *   evAvailability: { enabled: true }
+ * });
+ * const results = await search({ poiCategories: ['ELECTRIC_VEHICLE_STATION'] });
+ * evStations.show(await getPlacesWithEVAvailability(results)); // Shows availability
+ *
+ * // Granular control: Enable for searched stations only, background stations without
+ * const bgStations = await PlacesModule.get(map); // EV availability disabled
+ * const searched = await PlacesModule.get(map, {
+ *   evAvailability: { enabled: true }
+ * });
  *
  * // Handle clicks
  * placesModule.events.on('click', (feature) => {
