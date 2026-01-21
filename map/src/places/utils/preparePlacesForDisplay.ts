@@ -4,6 +4,11 @@ import { DEFAULT_PLACE_ICON_ID } from '../../shared/layers/symbolLayers';
 import { suffixNumber } from '../../shared/layers/utils';
 import type { DisplayPlaceProps } from '../types/placeDisplayProps';
 import type { PlacesModuleConfig, PlacesTheme } from '../types/placesModuleConfig';
+import {
+    buildAvailabilityRatio,
+    buildAvailabilityText,
+    isEVStationWithAvailability,
+} from './evAvailabilityHelpers';
 import { toPinImageID } from './toPinImageID';
 
 /**
@@ -79,6 +84,53 @@ export const toPlaces = (places: Place | Place[] | Places): Places => {
 };
 
 /**
+ * Merges EV availability props into extraFeatureProps if enabled.
+ * This makes EV stations use the same mechanism as any other custom properties.
+ * @ignore
+ */
+const mergeEVAvailabilityProps = (
+    extraFeatureProps: PlacesModuleConfig['extraFeatureProps'],
+    evAvailabilityConfig: PlacesModuleConfig['evAvailability'],
+    places: Places,
+): PlacesModuleConfig['extraFeatureProps'] => {
+    // Only merge if explicitly enabled (opt-in)
+    if (evAvailabilityConfig?.enabled !== true) {
+        return extraFeatureProps;
+    }
+
+    // Check if any EV stations exist but lack availability data (single pass for performance)
+    let hasEVStations = false;
+    let hasEVStationsWithAvailability = false;
+    
+    for (const place of places.features) {
+        const isEVStation = place.properties.poi?.classifications?.[0]?.code === 'ELECTRIC_VEHICLE_STATION';
+        if (isEVStation) {
+            hasEVStations = true;
+            if (isEVStationWithAvailability(place)) {
+                hasEVStationsWithAvailability = true;
+                break; // Found what we need, stop checking
+            }
+        }
+    }
+
+    if (hasEVStations && !hasEVStationsWithAvailability) {
+        console.warn(
+            'PlacesModule: evAvailability is enabled but no availability data found. ' +
+                'Did you call getPlacesWithEVAvailability() before passing the data to show()?',
+        );
+    }
+
+    // Merge EV availability functions into extraFeatureProps
+    return {
+        ...extraFeatureProps,
+        // Only compute these for EV stations with availability data
+        evAvailabilityText: (place: Place) =>
+            isEVStationWithAvailability(place) ? buildAvailabilityText(place, evAvailabilityConfig) : '',
+        evAvailabilityRatio: (place: Place) => (isEVStationWithAvailability(place) ? buildAvailabilityRatio(place) : 0),
+    };
+};
+
+/**
  * prepare places features to be displayed on map by adding needed  properties for title, icon and style
  * @ignore
  */
@@ -88,15 +140,19 @@ export const preparePlacesForDisplay = (
     config: PlacesModuleConfig = {},
 ): Places<DisplayPlaceProps> => {
     const places = toPlaces(placesInput);
+
+    // Merge EV availability into extraFeatureProps so all places are treated uniformly
+    const mergedExtraFeatureProps = mergeEVAvailabilityProps(config.extraFeatureProps, config.evAvailability, places);
+
     return {
         ...places,
         features: places.features.map((place) => {
             const title =
                 typeof config?.text?.title === 'function' ? config?.text?.title(place) : buildPlaceTitle(place);
 
-            const extraFeatureProps = config.extraFeatureProps
+            const extraFeatureProps = mergedExtraFeatureProps
                 ? Object.fromEntries(
-                      Object.entries(config.extraFeatureProps).map(([prop, value]) => [
+                      Object.entries(mergedExtraFeatureProps).map(([prop, value]) => [
                           prop,
                           typeof value === 'function' ? value(place) : value,
                       ]),
