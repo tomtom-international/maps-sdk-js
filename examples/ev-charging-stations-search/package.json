@@ -1,5 +1,5 @@
 {
-  "name": "@examples/ev-charging-stations-playground",
+  "name": "@examples/ev-charging-stations-search",
   "description": "Playground allowing to explore and search EV charging with availability information.",
   "type": "module",
   "scripts": {

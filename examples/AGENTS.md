@@ -207,7 +207,8 @@ examples/
 - **ldevr-detailed-vehicle** - Detailed EV parameters for routing
 - **ldevr-custom-charging-stops** - Custom charging station preferences
 - **reachable-ranges** - Calculate reachable area on single charge
-- **ev-charging-stations-playground** - Find and display EV charging stations
+- **ev-charging-stations-search** - EV charging station discovery with availability data
+- **ev-charging-stations-custom-display** - Customize EV charging station icons, text, and availability display
 
 ### Places & POIs
 
