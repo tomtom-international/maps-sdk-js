@@ -128,8 +128,8 @@ describe('calculateFittingBBox', () => {
         });
         // The expanded bounds should extend west to compensate for the left bar
         expect(result).not.toBeNull();
-        expect(result![0]).toBeLessThan(0);
-        expect(result![2]).toEqual(80);
+        expect(result?.[0]).toBeLessThan(0);
+        expect(result?.[2]).toEqual(80);
     });
 
     test('expands bounds to account for top bar', () => {
@@ -140,7 +140,7 @@ describe('calculateFittingBBox', () => {
         });
         // The expanded bounds should extend north to compensate for the top bar
         expect(result).not.toBeNull();
-        expect(result![3]).toBeGreaterThan(80);
+        expect(result?.[3]).toBeGreaterThan(80);
     });
 
     test('expands bounds to account for right bar', () => {
@@ -151,7 +151,7 @@ describe('calculateFittingBBox', () => {
         });
         // The expanded bounds should extend east to compensate for the right bar
         expect(result).not.toBeNull();
-        expect(result![2]).toBeGreaterThan(80);
+        expect(result?.[2]).toBeGreaterThan(80);
     });
 
     test('expands bounds to account for bottom bar', () => {
@@ -162,7 +162,7 @@ describe('calculateFittingBBox', () => {
         });
         // The expanded bounds should extend south to compensate for the bottom bar
         expect(result).not.toBeNull();
-        expect(result![1]).toBeLessThan(0);
+        expect(result?.[1]).toBeLessThan(0);
     });
 
     test('applies padding when expanding bounds', () => {
@@ -180,10 +180,10 @@ describe('calculateFittingBBox', () => {
         // With padding, the expanded bounds should be larger
         expect(resultWithPadding).not.toBeNull();
         expect(resultWithoutPadding).not.toBeNull();
-        expect(resultWithPadding![0]).toBeLessThan(resultWithoutPadding![0]);
-        expect(resultWithPadding![1]).toBeLessThan(resultWithoutPadding![1]);
-        expect(resultWithPadding![2]).toBeGreaterThan(resultWithoutPadding![2]);
-        expect(resultWithPadding![3]).toBeGreaterThan(resultWithoutPadding![3]);
+        expect(resultWithPadding?.[0]).toBeLessThan(resultWithoutPadding?.[0] as number);
+        expect(resultWithPadding?.[1]).toBeLessThan(resultWithoutPadding?.[1] as number);
+        expect(resultWithPadding?.[2]).toBeGreaterThan(resultWithoutPadding?.[2] as number);
+        expect(resultWithPadding?.[3]).toBeGreaterThan(resultWithoutPadding?.[3] as number);
     });
 
     test('returns null when visible area is too small', () => {
@@ -205,8 +205,8 @@ describe('calculateFittingBBox', () => {
         });
         // The expanded bounds should compensate for both bars
         expect(result).not.toBeNull();
-        expect(result![0]).toBeLessThan(0);
-        expect(result![3]).toBeGreaterThan(80);
+        expect(result?.[0]).toBeLessThan(0);
+        expect(result?.[3]).toBeGreaterThan(80);
     });
 });
 
@@ -264,7 +264,7 @@ describe('calculatePaddedBBox with elements extending beyond container', () => {
         // Should adjust for the corner element
         expect(result).not.toBeNull();
         // The visible area should be reduced by the corner element
-        expect(result![2]).toBeLessThanOrEqual(70);
+        expect(result?.[2]).toBeLessThanOrEqual(70);
     });
 
     test('handles sidebar extending beyond left and bottom edges', () => {
@@ -275,7 +275,7 @@ describe('calculatePaddedBBox with elements extending beyond container', () => {
             surroundingElements: [createMockElement(-10, 20, 40, 120)],
         });
         expect(result).not.toBeNull();
-        expect(result![0]).toEqual(40);
+        expect(result?.[0]).toEqual(40);
     });
 
     test('handles element extending beyond all four edges', () => {
@@ -300,7 +300,7 @@ describe('calculateFittingBBox with elements extending beyond container', () => 
         });
         // Should expand west to compensate for the left bar
         expect(result).not.toBeNull();
-        expect(result![0]).toBeLessThan(30);
+        expect(result?.[0]).toBeLessThan(30);
     });
 
     test('expands bounds for right bar extending beyond right edge', () => {
@@ -312,7 +312,7 @@ describe('calculateFittingBBox with elements extending beyond container', () => 
         });
         // Should expand east to compensate for the right bar
         expect(result).not.toBeNull();
-        expect(result![2]).toBeGreaterThan(70);
+        expect(result?.[2]).toBeGreaterThan(70);
     });
 
     test('expands bounds for top bar extending beyond top edge', () => {
@@ -324,7 +324,7 @@ describe('calculateFittingBBox with elements extending beyond container', () => 
         });
         // Should expand north to compensate for the top bar
         expect(result).not.toBeNull();
-        expect(result![3]).toBeGreaterThan(75);
+        expect(result?.[3]).toBeGreaterThan(75);
     });
 
     test('expands bounds for bottom bar extending beyond bottom edge', () => {
@@ -336,7 +336,7 @@ describe('calculateFittingBBox with elements extending beyond container', () => 
         });
         // Should expand south to compensate for the bottom bar
         expect(result).not.toBeNull();
-        expect(result![1]).toBeLessThan(25);
+        expect(result?.[1]).toBeLessThan(25);
     });
 
     test('expands bounds for corner element extending beyond two edges', () => {
@@ -359,7 +359,7 @@ describe('calculateFittingBBox with elements extending beyond container', () => 
         });
         // Should expand west to compensate for the sidebar
         expect(result).not.toBeNull();
-        expect(result![0]).toBeLessThan(40);
+        expect(result?.[0]).toBeLessThan(40);
     });
 
     test('returns null for element extending beyond all four edges', () => {
