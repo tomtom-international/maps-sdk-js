@@ -137,7 +137,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         }
     };
 
-    // Simplified earch focusing on EV stations by brand name
+    // Simplified search focusing on EV stations by brand name
     const searchEVStations = async () => {
         const evBrandTextBox = document.querySelector('#sdk-example-evBrandTextBox') as HTMLInputElement;
         popUp.remove();
@@ -185,7 +185,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     };
 
     // =============================================================================
-    // DYNAMIC RECONFIGURATION: Apply customizations state changes to modules
+    // DYNAMIC RECONFIGURATION: Apply customizations menu state changes to modules
     // =============================================================================
     
     // Update background stations configuration and re-render
@@ -214,7 +214,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         selectedStation.applyConfig({
             icon: buildIconConfig(state.searchCustomIcon),
             evAvailability: buildEVConfig(state.searchAvailability),
-            text: { ...buildTextConfig(), color: '#FFD700', haloWidth: 3 },
+            text: { ...buildTextConfig(), color: '#90D5FF', haloWidth: 2 },
         });
         if (searchedStationsData) {
             const dataToShow = state.searchAvailability

@@ -179,9 +179,16 @@ export const mapFonts = [MAP_REGULAR_FONT, MAP_ITALIC_FONT, MAP_BOLD_FONT, MAP_M
 export type MapFont = (typeof mapFonts)[number];
 
 /**
+ * Default pin icon scale at max zoom level (zoom 22).
+ * This is the icon-size scale factor - 1.0 would be the original icon size.
  * @ignore
  */
-export const PIN_ICON_SIZE: ExpressionSpecification = ['interpolate', ['linear'], ['zoom'], 8, 0.6, 22, 0.8];
+export const DEFAULT_MAX_PIN_SCALE = 0.8;
+
+/**
+ * @ignore
+ */
+export const PIN_ICON_SIZE: ExpressionSpecification = ['interpolate', ['linear'], ['zoom'], 8, 0.6, 22, DEFAULT_MAX_PIN_SCALE];
 
 /**
  * @ignore

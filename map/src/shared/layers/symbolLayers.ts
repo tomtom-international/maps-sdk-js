@@ -13,6 +13,20 @@ export const TITLE = 'title';
 export const ICON_ID = 'iconID';
 
 /**
+ * Y-offset multiplier for text positioned below icons (top anchor).
+ * In ems, relative to icon scale.
+ * @ignore
+ */
+export const TEXT_OFFSET_Y_BELOW = 0.7;
+
+/**
+ * X/Y-offset multiplier for text positioned beside icons (left/right anchors).
+ * In ems, relative to icon scale.
+ * @ignore
+ */
+export const TEXT_OFFSET_BESIDE = 1.4;
+
+/**
  * @ignore
  */
 export const DEFAULT_PLACE_ICON_ID = 'default_place';
@@ -46,7 +60,14 @@ export const pinTextBaseLayout: SymbolLayerSpecification['layout'] = {
     'text-justify': 'auto',
     'text-variable-anchor': ['top', 'left', 'right'],
     // NOTE: make sure to text against pins and waypoints, in a way that there's enough distance from the pin so the text doesn't disappear
-    'text-variable-anchor-offset': ['top', [0, 0.7], 'left', [1.4, -1.4], 'right', [-1.4, -1.4]],
+    'text-variable-anchor-offset': [
+        'top',
+        [0, TEXT_OFFSET_Y_BELOW],
+        'left',
+        [TEXT_OFFSET_BESIDE, -TEXT_OFFSET_BESIDE],
+        'right',
+        [-TEXT_OFFSET_BESIDE, -TEXT_OFFSET_BESIDE],
+    ],
     'text-size': DEFAULT_TEXT_SIZE,
     'text-padding': 5,
 };
