@@ -1,12 +1,10 @@
 {
-  "name": "@tomtom-org/maps-sdk-examples",
+  "name": "plugins",
   "version": "0.41.1",
   "type": "module",
-  "description": "JavaScript library for examples of TomTom maps and location services",
-  "module": "dist/examples.js",
-  "types": "dist/examples.d.ts",
+  "description": "Plugins for TomTom Maps SDK JS",
   "scripts": {
-    "build": "pnpm --parallel -F './*' build && vite build",
+    "build": "pnpm --parallel -F './*' build",
     "test": "vitest run",
     "test:e2e": "pnpm exec playwright install --with-deps chromium && playwright test",
     "test:e2e:ui": "pnpm exec playwright install --with-deps chromium && playwright test --ui",
@@ -14,12 +12,7 @@
     "type-check": "pnpm --parallel -F './*' type-check",
     "start-test-server": "npx serve . -p 9050"
   },
-  "dependencies": {
-    "@codesandbox/sandpack-react": "catalog:",
-    "@codesandbox/sandpack-themes": "catalog:",
-    "react": "catalog:",
-    "react-dom": "catalog:"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@microsoft/api-extractor": "catalog:",
     "@playwright/test": "catalog:",
@@ -30,20 +23,12 @@
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "js-yaml": "^4.1.1",
+    "rollup-plugin-analyzer": "catalog:",
+    "rollup-plugin-license": "catalog:",
     "rollup-plugin-visualizer": "catalog:",
     "vite": "catalog:",
     "vite-plugin-dts": "catalog:",
     "vite-plugin-singlefile": "catalog:",
     "vitest": "catalog:"
-  },
-  "files": [
-    "dist",
-    "*/dist"
-  ],
-  "exports": {
-    ".": {
-      "types": "./dist/examples.d.ts",
-      "import": "./dist/examples.js"
-    }
   }
 }

@@ -13,7 +13,7 @@
     "@types/geojson": "catalog:",
     "@types/lodash-es": "catalog:",
     "@types/node": "catalog:",
-    "@vitejs/plugin-basic-ssl": "^2.1.3",
+    "@vitejs/plugin-basic-ssl": "^2.1.4",
     "core": "workspace:*",
     "lodash-es": "catalog:",
     "map": "workspace:*",

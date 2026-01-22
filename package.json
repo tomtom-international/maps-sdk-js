@@ -9,6 +9,7 @@
     "build:api-reference": "typedoc",
     "build:examples": "pnpm -F @tomtom-org/maps-sdk-examples build",
     "build:sdk": "pnpm -F core build  && pnpm -F services build && pnpm -F map build",
+    "build:plugins": "pnpm -F './plugins/*' build",
     "clean": "pnpm -r --no-bail clean:dist && pnpm -r --no-bail clean:cache",
     "e2e-test:examples": "pnpm -F @tomtom-org/maps-sdk-examples test:e2e",
     "e2e-test:sdk": "pnpm -F map-integration-tests test",
@@ -21,7 +22,8 @@
     "test:sdk": "pnpm -F core test && pnpm -F services test && pnpm -F map test",
     "test:sdk:coverage": "pnpm -F core test:coverage && pnpm -F services test:coverage && pnpm -F map test:coverage",
     "test:examples": "pnpm -F @tomtom-org/maps-sdk-examples test",
-    "type-check:examples": "pnpm --workspace-concurrency=0 -F './examples/*' type-check",
+    "type-check:examples": "pnpm -F @tomtom-org/maps-sdk-examples type-check",
+    "type-check:plugins": "pnpm -F plugins type-check",
     "type-check:sdk": "pnpm -F core type-check && pnpm -F services type-check && pnpm -F map type-check && pnpm -F map-integration-tests type-check"
   },
   "keywords": [

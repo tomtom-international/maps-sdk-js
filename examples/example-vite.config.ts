@@ -54,7 +54,6 @@ export default defineConfig(({ mode }) => {
                   ]),
             viteSingleFile(),
         ],
-        server: { port: 9022 },
         resolve: {
             alias: {
                 // We ensure to locally alias imports from @tomtom-org/maps-sdk/core from the SDK code itself to the locally built core package.

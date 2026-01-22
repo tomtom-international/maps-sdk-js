@@ -70,6 +70,10 @@ export const TAG_GROUPS: TagGroup[] = [
                 id: 'utilities',
                 label: 'Utilities',
             },
+            {
+                id: 'plugins',
+                label: 'Plugins',
+            },
         ],
     },
     {

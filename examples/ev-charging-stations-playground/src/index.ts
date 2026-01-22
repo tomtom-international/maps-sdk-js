@@ -17,6 +17,7 @@ import { bboxPolygon, difference } from '@turf/turf';
 import { without } from 'lodash-es';
 import { type LngLatBoundsLike, Popup } from 'maplibre-gl';
 import './style.css';
+import { ViewportPlaces } from '@tomtom-org/maps-sdk-plugin-viewport-places';
 import { API_KEY } from './config';
 import { connectorsHTML } from './htmlTemplates';
 
@@ -47,7 +48,8 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
             categories: { show: 'all_except', values: ['ELECTRIC_VEHICLE_STATION'] },
         },
     });
-    const mapEVStations = await PlacesModule.get(map, { theme: 'base-map' });
+    const placesLayers = new ViewportPlaces(map);
+    let mapEVStationsModule: PlacesModule | null = null;
 
     const buildAvailabilityText = (place: Place<EVChargingStationWithAvailabilityPlaceProps>): string => {
         const availability = getChargingPointAvailability(place);
@@ -90,6 +92,8 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     let minPowerKWMapEVStations = 50;
     let minPowerKWSearchedEVStations = 0;
 
+    const mapEVStationsId = 'ev-stations';
+
     const showPopup = (evStation: Place | Place<EVChargingStationWithAvailabilityPlaceProps>) => {
         const { address, poi, chargingPark } = evStation.properties;
         popUp
@@ -103,22 +107,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
             )
             .setLngLat(evStation.geometry.coordinates as [number, number])
             .addTo(map.mapLibreMap);
-    };
-
-    const updateMapEVStations = async () => {
-        const zoom = map.mapLibreMap.getZoom();
-        if (zoom < 7) {
-            mapEVStations.clear();
-        } else {
-            const chargingStations = await search({
-                query: '',
-                poiCategories: ['ELECTRIC_VEHICLE_STATION'],
-                minPowerKW: minPowerKWMapEVStations,
-                boundingBox: map.getBBox(),
-                limit: zoom < 10 ? 50 : 100,
-            });
-            mapEVStations.show(chargingStations);
-        }
     };
 
     // inverts the polygon, so it looks like a hole on the map instead
@@ -184,8 +172,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     };
 
     const listenToMapUserEvents = async () => {
-        map.mapLibreMap.on('moveend', updateMapEVStations);
-        mapEVStations.events.on('click', async (evStation) =>
+        mapEVStationsModule?.events.on('click', async (evStation) =>
             selectEVStation((await getPlaceWithEVAvailability(evStation)) ?? evStation),
         );
         mapSearchedEVStationsModule.events.on('click', async (evWithAvailability) =>
@@ -209,7 +196,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         minPowerKWSearchedEVStationsInput.value = String(minPowerKWSearchedEVStations);
         minPowerKWMapEVStationsInput.addEventListener('keyup', async () => {
             minPowerKWMapEVStations = Number(minPowerKWMapEVStationsInput.value);
-            await updateMapEVStations();
+            await placesLayers.update({ id: mapEVStationsId, searchOptions: { minPowerKW: minPowerKWMapEVStations } });
         });
         minPowerKWSearchedEVStationsInput.addEventListener(
             'keyup',
@@ -233,7 +220,11 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         return undefined;
     };
 
-    await updateMapEVStations();
+    mapEVStationsModule = await placesLayers.addBaseMapPOICategories({
+        id: mapEVStationsId,
+        categories: ['ELECTRIC_VEHICLE_STATION'],
+        minZoom: 7,
+    });
     await listenToMapUserEvents();
     listenToHTMLUserEvents();
 })();

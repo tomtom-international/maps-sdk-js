@@ -1,5 +1,5 @@
 {
-  "entryPoints": ["./core", "./map", "./services"],
+  "entryPoints": ["./core/index.ts", "./map/index.ts", "./services/index.ts", "./plugins/index.ts"],
   "out": "documentation/docs-portal/api-reference",
   "readme": "none",
   "name": "TomTom Maps for JavaScript",

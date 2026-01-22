@@ -14,6 +14,10 @@ export const getSdkVersion = () => {
     return sdkVersion;
 };
 
+/**
+ * Builds a Vite configuration for a main SDK bundle (core/services/map).
+ * @param bundleName The name of the bundle to build ('core', 'services', or 'map').
+ */
 export const buildViteConfig = (bundleName: 'core' | 'services' | 'map'): UserConfig =>
     defineConfig({
         build: {

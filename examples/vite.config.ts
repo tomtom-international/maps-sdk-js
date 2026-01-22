@@ -1,9 +1,9 @@
 import path from 'node:path';
-import analyze from 'rollup-plugin-analyzer';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig, loadEnv } from 'vite';
 import dts from 'vite-plugin-dts';
 
+// NOTE: This config is meant to build the examples package located in ./src and to be consumed in docs portal for the examples pages
 export default defineConfig(({ mode }) => {
     return {
         build: {
@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => {
             emptyOutDir: true,
             sourcemap: true,
             rollupOptions: {
-                external: ['maplibre-gl', '@codesandbox/sandpack-react', '@codesandbox/sandpack-themes'],
+                external: ['@codesandbox/sandpack-react', '@codesandbox/sandpack-themes'],
             },
         },
         plugins: [
@@ -34,10 +34,6 @@ export default defineConfig(({ mode }) => {
                           gzipSize: true,
                       }),
                   ]),
-            analyze({
-                summaryOnly: true,
-                limit: 10,
-            }),
         ],
         define: {
             'process.env': JSON.stringify(loadEnv(mode, path.resolve('.'), '')),
