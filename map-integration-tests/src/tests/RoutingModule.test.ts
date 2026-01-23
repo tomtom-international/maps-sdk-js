@@ -482,7 +482,6 @@ test.describe('Routing and waypoint display tests', () => {
             layers: {
                 mainLines: {
                     routeLine: {
-                        ...defaultRoutingLayers.mainLines?.routeLine,
                         paint: { ...defaultRoutingLayers.mainLines?.routeLine?.paint, 'line-color': '#ff0000' },
                     },
                 },
@@ -494,7 +493,6 @@ test.describe('Routing and waypoint display tests', () => {
         // Changing the style with extra poi included style part, asserting that the config stays the same:
         await setStyle(page, 'monoLight');
         await waitForMapIdle(page);
-        await waitForTimeout(1000);
         expect(await getPaintProperty(page, ROUTE_LINE_LAYER_ID, 'line-color')).toBe('#ff0000');
 
         expect(mapEnv.consoleErrors).toHaveLength(0);

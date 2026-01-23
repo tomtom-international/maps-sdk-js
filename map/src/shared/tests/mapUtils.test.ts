@@ -283,6 +283,7 @@ describe('Map utils - addLayersInCorrectOrder', () => {
     });
 
     test('error case', () => {
+        const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
         const mapMock = {
             getLayer: vi.fn().mockReturnValueOnce(undefined).mockReturnValueOnce(undefined),
         } as unknown as Map;
@@ -290,7 +291,9 @@ describe('Map utils - addLayersInCorrectOrder', () => {
         const id2 = 'id2';
         const layer1 = { id: id1, beforeID: id2 } as ToBeAddedLayerSpec;
         const layer2 = { id: id2, beforeID: id1 } as ToBeAddedLayerSpec;
-        expect(() => addLayers([layer1, layer2], mapMock)).toThrow();
+        addLayers([layer1, layer2], mapMock);
+        expect(consoleErrorSpy).toHaveBeenCalled();
+        consoleErrorSpy.mockRestore();
     });
 });
 

@@ -264,8 +264,11 @@ export const addLayers = (layersToAdd: ToBeAddedLayerSpec[], map: Map): void => 
     // try to process the rest of layers
     while (Object.keys(mapIdDependency).length > 0) {
         const idsWeCanProcess = Object.keys(mapIdDependency).filter((id) => layerIdsAlreadyOnMap.has(id));
-        if (idsWeCanProcess.length === 0) {
-            throw Error(`Circular dependency for before Ids ${JSON.stringify(Object.keys(mapIdDependency))}`);
+        if (!idsWeCanProcess.length) {
+            console.error(
+                `Some layers cannot be added. Check for non-existing layers, or circular beforeID dependencies for the following: ${JSON.stringify(Object.keys(mapIdDependency))}`,
+            );
+            return;
         }
         idsWeCanProcess.forEach((id) => {
             mapIdDependency[id].forEach((layer) => addLayer(layer));

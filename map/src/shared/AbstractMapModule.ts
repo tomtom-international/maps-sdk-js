@@ -89,6 +89,7 @@ export abstract class AbstractMapModule<
         this.tomtomMap = tomtomMap;
         this.eventsProxy = tomtomMap._eventsProxy;
         this.mapLibreMap = tomtomMap.mapLibreMap;
+        // TODO: we need to find a cleaner separation between initSourcesWithLayers and applyConfig for most modules to prevent double work, particularly with adding layers
         this.initSourcesWithLayers(config);
         this.applyConfig(config);
         this.tomtomMap.addStyleChangeHandler({
