@@ -58,7 +58,7 @@ export const getTextOffset = (
 
     // Build dynamic text-offset expression for custom icons
     if (iconTextOffsetScales && iconTextOffsetScales.size > 0) {
-        const caseExpr: any[] = ['case'];
+        const caseExpr: (string | number | ExpressionSpecification)[] = ['case'];
 
         for (const [iconId, customScale] of iconTextOffsetScales.entries()) {
             const yOffset = TEXT_OFFSET_Y_BELOW * customScale;
