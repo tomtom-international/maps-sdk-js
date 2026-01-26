@@ -1,15 +1,20 @@
 import type {
-    DataDrivenPropertyValueSpecification,
     ExpressionSpecification,
-    Map,
+    Map as MapLibreMap,
     SymbolLayerSpecification,
 } from 'maplibre-gl';
 import type { LayerSpecTemplate } from '../../shared';
 import { SELECTED_PIN_ICON_SIZE } from '../../shared/layers/commonLayerProps';
-import { isClickEventState } from '../../shared/layers/eventState';
-import { ICON_ID, pinLayerBaseSpec, TITLE } from '../../shared/layers/symbolLayers';
-import type { PlaceLayerName, PlaceLayersConfig, PlacesModuleConfig } from '../types/placesModuleConfig';
-import { getAvailabilityColorExpression } from '../utils/evAvailabilityHelpers';
+import { pinLayerBaseSpec } from '../../shared/layers/symbolLayers';
+import type { LightDark } from '../../shared/types/style';
+import type { PlaceLayersConfig, PlacesModuleConfig, PlaceLayerName  } from '../types/placesModuleConfig';
+import {
+    buildLayoutConfig,
+    buildPaintConfig,
+    buildTextFieldExpression,
+} from '../utils/layerConfiguration';
+import { buildCustomIconScalesMap, type IconScalesMap } from '../utils/customIconScales';
+import { buildPoiLikeLayerSpec } from '../utils/layerSpecBuilders';
 
 /**
  * @ignore
@@ -48,126 +53,76 @@ export const selectedPinLayerSpec: LayerSpecTemplate<SymbolLayerSpecification> =
     },
 };
 
+/**
+ * Applies configuration to a layer specification template.
+ * @ignore
+ */
 const withConfig = (
     layerSpec: LayerSpecTemplate<SymbolLayerSpecification>,
     config: PlacesModuleConfig | undefined,
     layerName: PlaceLayerName,
+    styleLightDarkTheme: LightDark,
+    iconTextOffsetScales?: IconScalesMap,
 ): LayerSpecTemplate<SymbolLayerSpecification> => {
     const textConfig = config?.text;
     const customLayer = config?.layers?.[layerName];
     const evAvailabilityEnabled = config?.evAvailability?.enabled === true;
+    const isDarkMode = styleLightDarkTheme === 'dark';
 
-    // Build the text field expression with EV availability if enabled
-    let textFieldExpression: any;
-    if (evAvailabilityEnabled) {
-        // Check if place has EV availability data by looking for the evAvailabilityText property
-        textFieldExpression = [
-            'case',
-            ['has', 'evAvailabilityText'],
-            // If has EV availability, show two-line format with colored availability
-            [
-                'format',
-                ['get', TITLE],
-                {},
-                '\n',
-                {},
-                ['get', 'evAvailabilityText'],
-                {
-                    'font-scale': 1.1,
-                    'text-color': getAvailabilityColorExpression(config?.evAvailability),
-                },
-            ],
-            // Otherwise, show normal title
-            ['get', TITLE],
-        ];
-    } else {
-        textFieldExpression = ['get', TITLE];
-    }
-
-    // Override with custom text config if provided
-    const finalTextField =
-        textConfig?.title && typeof textConfig?.title !== 'function' ? textConfig.title : textFieldExpression;
+    const textFieldExpression = buildTextFieldExpression(config, evAvailabilityEnabled);
+    const textField =
+        textConfig?.title && typeof textConfig?.title !== 'function'
+            ? textConfig.title
+            : textFieldExpression;
 
     return {
         ...layerSpec,
-        layout: {
-            ...layerSpec.layout,
-            ...(textConfig?.size && { 'text-size': textConfig.size }),
-            ...(textConfig?.font && { 'text-font': textConfig.font }),
-            ...(textConfig?.offset && { 'text-offset': textConfig.offset }),
-            'text-field': finalTextField,
-            ...customLayer?.layout,
-        },
-        paint: {
-            ...layerSpec.paint,
-            ...(textConfig?.color && { 'text-color': textConfig.color }),
-            ...(textConfig?.haloColor && { 'text-halo-color': textConfig.haloColor }),
-            ...(textConfig?.haloWidth && { 'text-halo-width': textConfig.haloWidth }),
-            ...customLayer?.paint,
-        },
+        layout: buildLayoutConfig(layerSpec, config, layerName, textField, iconTextOffsetScales),
+        paint: buildPaintConfig(layerSpec, config, layerName, isDarkMode),
         ...customLayer,
     };
 };
 
 /**
+ * Builds layer specifications for places display.
  * @ignore
  */
-export const getTextSizeSpec = (
-    textSize?: DataDrivenPropertyValueSpecification<number>,
-): DataDrivenPropertyValueSpecification<number> => {
-    return JSON.parse(JSON.stringify(textSize)?.replace(/name/g, TITLE));
-};
+export const buildPlacesLayerSpecs = (
+    config: PlacesModuleConfig | undefined,
+    mapLibreMap: MapLibreMap,
+    styleLightDarkTheme: LightDark,
+    instanceIndex: number,
+): PlaceLayersConfig => {
+    const iconTextOffsetScales = buildCustomIconScalesMap(config, instanceIndex);
 
-const buildPoiLikeLayerSpec = (map: Map): LayerSpecTemplate<SymbolLayerSpecification> => {
-    const poiLayer = (map.getStyle().layers.filter((layer) => layer.id === 'POI')[0] as SymbolLayerSpecification) || {};
-    const textSize = poiLayer.layout?.['text-size'];
-    return {
-        filter: ['!', isClickEventState],
-        type: 'symbol',
-        paint: poiLayer.paint,
-        layout: {
-            ...poiLayer.layout,
-            'text-field': ['get', TITLE],
-            'icon-image': ['get', ICON_ID],
-            ...(textSize && { 'text-size': getTextSizeSpec(textSize) }),
-        },
-    };
-};
+    // Build layer spec templates based on the configured theme
+    let main: LayerSpecTemplate<SymbolLayerSpecification>;
+    let selected: LayerSpecTemplate<SymbolLayerSpecification>;
 
-/**
- * @ignore
- */
-export const buildPlacesLayerSpecs = (config: PlacesModuleConfig | undefined, map: Map): PlaceLayersConfig => {
-    // Build the layer spec templates based on the theme:
-    let layerSpecTemplates;
     if (config?.theme === 'base-map') {
-        const poiLikeLayerSpec = buildPoiLikeLayerSpec(map);
-        layerSpecTemplates = {
-            main: poiLikeLayerSpec,
-            selected: {
-                ...poiLikeLayerSpec,
-                filter: hasEventState,
-                layout: {
-                    ...poiLikeLayerSpec.layout,
-                    'text-allow-overlap': true,
-                },
-                paint: {
-                    ...poiLikeLayerSpec.paint,
-                    'text-color': SELECTED_COLOR,
-                },
+        const poiLikeLayerSpec = buildPoiLikeLayerSpec(mapLibreMap);
+        main = poiLikeLayerSpec;
+        selected = {
+            ...poiLikeLayerSpec,
+            filter: hasEventState,
+            layout: {
+                ...poiLikeLayerSpec.layout,
+                'text-allow-overlap': true,
+            },
+            paint: {
+                ...poiLikeLayerSpec.paint,
+                'text-color': SELECTED_COLOR,
             },
         };
     } else {
         // pin / circle
-        layerSpecTemplates = {
-            main: pinLayerSpec,
-            selected: selectedPinLayerSpec,
-        };
+        main = pinLayerSpec;
+        selected = selectedPinLayerSpec;
     }
 
     return {
-        main: withConfig(layerSpecTemplates.main, config, 'main'),
-        selected: withConfig(layerSpecTemplates.selected, config, 'selected'),
+        main: withConfig(main, config, 'main', styleLightDarkTheme, iconTextOffsetScales),
+        selected: withConfig(selected, config, 'selected', styleLightDarkTheme, iconTextOffsetScales),
         ...config?.layers?.additional,
     };
 };
