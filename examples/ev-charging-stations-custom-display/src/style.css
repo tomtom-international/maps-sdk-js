@@ -1,7 +1,7 @@
 .sdk-example-body {
     margin: 0;
     padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: Gilroy, sans-serif;
     user-select: none;
 }
 
@@ -19,6 +19,7 @@
     background: white;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    font-family: Gilroy, sans-serif;
     z-index: 1;
 }
 
@@ -168,18 +169,18 @@
 }
 
 .sdk-example-color-box {
-    flex: 1;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    gap: 8px;
     font-size: 11px;
     color: #666;
 }
 
 .sdk-example-color-indicator {
-    width: 100%;
-    height: 24px;
-    border-radius: 4px;
-    margin-bottom: 4px;
+    width: 16px;
+    height: 16px;
     border: 1px solid #ddd;
+    flex-shrink: 0;
 }
 
 .sdk-example-color-selector {
@@ -189,6 +190,12 @@
     border: 2px solid #ddd;
     cursor: pointer;
     transition: transform 0.2s, border-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: bold;
+    color: #666;
 }
 
 .sdk-example-color-selector:hover {
@@ -231,7 +238,7 @@
     .sdk-example-slider { width: calc(100% - 45px); }
     .sdk-example-value { min-width: 38px; font-size: 10px; }
     .sdk-example-color-selector { width: 26px; height: 26px; }
-    .sdk-example-color-indicator { height: 18px; }
+    .sdk-example-color-indicator { width: 14px; height: 14px; }
     .sdk-example-color-box { font-size: 9px; }
 }
 
@@ -254,7 +261,7 @@
     .sdk-example-label { margin: 8px 0 4px; font-size: 11px; }
     .sdk-example-select { font-size: 11px; padding: 4px 6px; }
     .sdk-example-color-selector { width: 28px; height: 28px; }
-    .sdk-example-color-indicator { height: 20px; }
+    .sdk-example-color-indicator { width: 14px; height: 14px; }
 }
 
 /* Popup Styles */
