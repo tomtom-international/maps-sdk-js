@@ -17,6 +17,7 @@ export default defineConfig(({ mode }) => {
             rollupOptions: {
                 external: ['@codesandbox/sandpack-react', '@codesandbox/sandpack-themes'],
             },
+            minify: 'terser',
         },
         plugins: [
             dts({

@@ -26,8 +26,16 @@ export default defineConfig(({ mode }) => {
         build: {
             emptyOutDir: true,
             outDir: '../dist',
+            minify: 'terser',
             rollupOptions: {
                 external: ['maplibre-gl'],
+                onwarn: (warning, warn) => {
+                    // Suppress warnings about pure annotations, which are used in the SDK codebase and have no significant impact here.
+                    if (warning.message.includes('/* @__PURE__ */')) {
+                        return;
+                    }
+                    warn(warning);
+                },
                 output: {
                     globals: {
                         'maplibre-gl': 'maplibregl',
@@ -52,7 +60,7 @@ export default defineConfig(({ mode }) => {
                           gzipSize: true,
                       }),
                   ]),
-            viteSingleFile(),
+            viteSingleFile({ removeViteModuleLoader: true }),
         ],
         resolve: {
             alias: {
