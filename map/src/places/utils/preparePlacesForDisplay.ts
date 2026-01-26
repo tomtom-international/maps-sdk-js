@@ -8,6 +8,7 @@ import {
     getAvailabilityRatio,
     buildAvailabilityText,
     isEVStationWithAvailability,
+    getEVAvailabilityIconID,
 } from './evAvailabilityHelpers';
 import { toPinImageID } from './toPinImageID';
 
@@ -54,12 +55,22 @@ export const getIconIDForPlace = (place: Place, instanceIndex: number, config: P
 
     // Next, try to match any custom icon:
     const poiCategory = place.properties.poi?.classifications?.[0]?.code as POICategory;
+    
+    // Check for EV availability-specific icon selection
+    const evAvailabilityIconID = getEVAvailabilityIconID(place, poiCategory, instanceIndex, config, iconTheme);
+    if (evAvailabilityIconID) {
+        return evAvailabilityIconID;
+    }
+    
+    // Regular custom icon matching (no availability)
     const matchingCustomIcon = config.icon?.categoryIcons?.find((customIcon) => customIcon.id === poiCategory);
     if (matchingCustomIcon) {
         return suffixNumber(matchingCustomIcon.id, instanceIndex);
     }
-    // Else: if no custom icon matched, we map to the map style icons:
-    return toImageID(poiCategory, iconTheme, defaultPlaceIconID);
+    
+    // Else: if no custom icon matched, we map to the map style icons or default:
+    const baseIconID = toImageID(poiCategory, iconTheme, defaultPlaceIconID);
+    return baseIconID;
 };
 
 /**

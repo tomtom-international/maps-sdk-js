@@ -1,5 +1,7 @@
-import type { ChargingPark, ChargingParkWithAvailability, Place } from '@tomtom-org/maps-sdk/core';
-import type { EVAvailabilityConfig } from '../types/placesModuleConfig';
+import type { ChargingPark, ChargingParkWithAvailability, Place, POICategory } from '@tomtom-org/maps-sdk/core';
+import { suffixNumber } from '../../shared/layers/utils';
+import type { AvailabilityLevel } from '../../shared/types/image';
+import type { EVAvailabilityConfig, PlacesModuleConfig, PlacesTheme } from '../types/placesModuleConfig';
 
 /**
  * Type guard to check if a charging park has availability data.
@@ -40,13 +42,10 @@ export const getChargingPointAvailability = (
 };
 
 /**
- * Default thresholds for EV availability color coding.
+ * Default threshold for EV availability - available vs occupied.
  * @ignore
  */
-export const DEFAULT_EV_AVAILABILITY_THRESHOLDS = {
-    high: 0.25,
-    low: 0,
-};
+export const DEFAULT_EV_AVAILABILITY_THRESHOLD = 0.3;
 
 /**
  * Default formatter for EV availability text.
@@ -82,17 +81,51 @@ export const getAvailabilityRatio = (place: Place): number => {
  * @ignore
  */
 export const getAvailabilityColorExpression = (config?: EVAvailabilityConfig): any[] => {
-    const thresholds = {
-        high: config?.thresholds?.high ?? DEFAULT_EV_AVAILABILITY_THRESHOLDS.high,
-        low: config?.thresholds?.low ?? DEFAULT_EV_AVAILABILITY_THRESHOLDS.low,
-    };
+    const threshold = config?.threshold ?? DEFAULT_EV_AVAILABILITY_THRESHOLD;
 
     return [
         'case',
-        ['>=', ['get', 'evAvailabilityRatio'], thresholds.high],
+        ['>=', ['get', 'evAvailabilityRatio'], threshold],
         'green',
-        ['>', ['get', 'evAvailabilityRatio'], thresholds.low],
-        'orange',
         'red',
     ];
+};
+
+/**
+ * Handles icon selection for EV stations with availability data.
+ * Returns icon ID if availability-specific icon should be used, or undefined to fall through to regular selection.
+ * @ignore
+ */
+export const getEVAvailabilityIconID = (
+    place: Place,
+    poiCategory: POICategory,
+    instanceIndex: number,
+    config: PlacesModuleConfig,
+    iconTheme: PlacesTheme,
+): string | undefined => {
+    if (!config.evAvailability?.enabled || !isEVStationWithAvailability(place)) {
+        return undefined;
+    }
+
+    const ratio = getAvailabilityRatio(place);
+    const threshold = config.evAvailability.threshold ?? 0.3;
+    const requiredLevel: AvailabilityLevel = ratio >= threshold ? 'available' : 'occupied';
+    const hasAnyCustomIcons = config.icon?.categoryIcons && config.icon.categoryIcons.length > 0;
+
+    const customIconWithAvailability = config.icon?.categoryIcons?.find(
+        (customIcon) => customIcon.id === poiCategory && customIcon.availabilityLevel === requiredLevel,
+    );
+
+    // If a custom icon with the required availability level exists, use it
+    if (customIconWithAvailability) {
+        return suffixNumber(`${customIconWithAvailability.id}-${requiredLevel}`, instanceIndex);
+    }
+    
+    // For pin theme: use CDN availability sprites when no custom icons are defined
+    if (!hasAnyCustomIcons && iconTheme === 'pin') {
+        return `7309-${requiredLevel}`;
+    }
+
+    // Otherwise, fall through to regular icon selection
+    return undefined;
 };
