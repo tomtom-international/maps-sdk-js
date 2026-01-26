@@ -44,11 +44,11 @@ export type PlacesTheme = 'pin' | 'circle' | 'base-map';
  * const stations = await search({ poiCategories: ['ELECTRIC_VEHICLE_STATION'] });
  * places.show(await getPlacesWithEVAvailability(stations));
  *
- * // Custom thresholds and format
+ * // Custom threshold and format
  * const places = await PlacesModule.get(map, {
  *   evAvailability: {
  *     enabled: true,
- *     thresholds: { high: 0.5, low: 0.1 },
+ *     threshold: 0.5,
  *     formatText: (available, total) => `${available} of ${total}`
  *   }
  * });
@@ -78,27 +78,15 @@ export type EVAvailabilityConfig = {
     enabled?: boolean;
 
     /**
-     * Availability ratio thresholds for color coding.
+     * Availability ratio threshold for determining available vs occupied.
      *
      * @remarks
-     * - `ratio >= high`: Green (good availability)
-     * - `low < ratio < high`: Orange (limited availability)
-     * - `ratio <= low`: Red (no/very low availability)
+     * - `ratio >= threshold`: Available (green)
+     * - `ratio < threshold`: Occupied (red)
      *
-     * @default { high: 0.25, low: 0 }
+     * @default 0.3
      */
-    thresholds?: {
-        /**
-         * Minimum ratio for green (good availability).
-         * @default 0.25
-         */
-        high?: number;
-        /**
-         * Maximum ratio for red (no/low availability).
-         * @default 0
-         */
-        low?: number;
-    };
+    threshold?: number;
 
     /**
      * Custom function to format the availability text.

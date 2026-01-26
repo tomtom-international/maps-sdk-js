@@ -1,4 +1,10 @@
 /**
+ * Availability level for POI icons with availability indicators.
+ * 
+ */
+export type AvailabilityLevel = 'available' | 'occupied';
+
+/**
  * Basic structure to define custom map icons, which end up in the map sprite.
  *
  * Allows you to provide custom images for various map icons such as
@@ -42,7 +48,7 @@ export type CustomImage<I extends string = string> = {
      * The specific values depend on the context:
      * - For POI categories: Use MapStylePOICategory values (e.g., 'RESTAURANT', 'HOTEL_MOTEL')
      * - For route waypoints: Use waypoint identifiers (e.g., 'waypoint-start', 'waypoint-end')
-     * - For charging stations: Use station type identifiers
+     * - For charging stations: Use station type identifiers (e.g., 'ELECTRIC_VEHICLE_STATION')
      * - For custom markers: Use any unique string identifier
      */
     id: I;
@@ -95,6 +101,37 @@ export type CustomImage<I extends string = string> = {
      * ```
      */
     pixelRatio?: number;
+
+    /**
+     * Availability level for POI icons with availability indicators.
+     *
+     * @remarks
+     * Used when displaying custom icons for POIs with real-time availability data.
+     * The SDK will select the appropriate icon based on the availability ratio and
+     * configured threshold.
+     *
+     * - `'available'`: Used when ratio >= threshold (sufficient capacity available)
+     * - `'occupied'`: Used when ratio < threshold (low or no availability)
+     *
+     *
+     * @example
+     * ```typescript
+     * // Define custom icons for both availability states
+     * categoryIcons: [
+     *   {
+     *     id: 'ELECTRIC_VEHICLE_STATION',
+     *     image: greenChargingSVG,
+     *     availabilityLevel: 'available'
+     *   },
+     *   {
+     *     id: 'ELECTRIC_VEHICLE_STATION',
+     *     image: redChargingSVG,
+     *     availabilityLevel: 'occupied'
+     *   }
+     * ]
+     * ```
+     */
+    availabilityLevel?: AvailabilityLevel;
 };
 
 /**
