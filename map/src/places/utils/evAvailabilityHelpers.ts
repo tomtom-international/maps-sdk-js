@@ -1,4 +1,5 @@
 import type { ChargingPark, ChargingParkWithAvailability, Place, POICategory } from '@tomtom-org/maps-sdk/core';
+import type { ExpressionSpecification } from 'maplibre-gl';
 import { suffixNumber } from '../../shared/layers/utils';
 import type { AvailabilityLevel } from '../../shared/types/image';
 import type { EVAvailabilityConfig, PlacesModuleConfig, PlacesTheme } from '../types/placesModuleConfig';
@@ -80,15 +81,10 @@ export const getAvailabilityRatio = (place: Place): number => {
  * Get the color expression for EV availability based on ratio.
  * @ignore
  */
-export const getAvailabilityColorExpression = (config?: EVAvailabilityConfig): any[] => {
+export const getAvailabilityColorExpression = (config?: EVAvailabilityConfig): ExpressionSpecification => {
     const threshold = config?.threshold ?? DEFAULT_EV_AVAILABILITY_THRESHOLD;
 
-    return [
-        'case',
-        ['>=', ['get', 'evAvailabilityRatio'], threshold],
-        'green',
-        'red',
-    ];
+    return ['case', ['>=', ['get', 'evAvailabilityRatio'], threshold], 'green', 'red'] as ExpressionSpecification;
 };
 
 /**
@@ -110,7 +106,7 @@ export const getEVAvailabilityIconID = (
     const ratio = getAvailabilityRatio(place);
     const threshold = config.evAvailability.threshold ?? 0.3;
     const requiredLevel: AvailabilityLevel = ratio >= threshold ? 'available' : 'occupied';
-    const hasAnyCustomIcons = config.icon?.categoryIcons && config.icon.categoryIcons.length > 0;
+    const hasCustomIcons = config.icon?.categoryIcons && config.icon.categoryIcons.length > 0;
 
     const customIconWithAvailability = config.icon?.categoryIcons?.find(
         (customIcon) => customIcon.id === poiCategory && customIcon.availabilityLevel === requiredLevel,
@@ -120,9 +116,9 @@ export const getEVAvailabilityIconID = (
     if (customIconWithAvailability) {
         return suffixNumber(`${customIconWithAvailability.id}-${requiredLevel}`, instanceIndex);
     }
-    
+
     // For pin theme: use CDN availability sprites when no custom icons are defined
-    if (!hasAnyCustomIcons && iconTheme === 'pin') {
+    if (!hasCustomIcons && iconTheme === 'pin') {
         return `7309-${requiredLevel}`;
     }
 

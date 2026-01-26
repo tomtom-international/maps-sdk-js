@@ -1,4 +1,4 @@
-import type { SymbolLayerSpecification,  } from 'maplibre-gl';
+import type { DataDrivenPropertyValueSpecification, SymbolLayerSpecification } from 'maplibre-gl';
 import type { LayerSpecTemplate } from '../../shared';
 import { TITLE } from '../../shared/layers/symbolLayers';
 import type { PlaceLayerName, PlacesModuleConfig } from '../types/placesModuleConfig';
@@ -20,7 +20,7 @@ export type IconScalesMap = Map<string, number>;
 export const buildTextFieldExpression = (
     config: PlacesModuleConfig | undefined,
     evAvailabilityEnabled: boolean,
-): any => {
+): DataDrivenPropertyValueSpecification<string> => {
     if (!evAvailabilityEnabled) {
         return ['get', TITLE];
     }
@@ -47,16 +47,16 @@ export const buildTextFieldExpression = (
 };
 
 /**
- * Builds the layout configuration 
+ * Builds the layout configuration
  * @ignore
  */
 export const buildLayoutConfig = (
     layerSpec: LayerSpecTemplate<SymbolLayerSpecification>,
     config: PlacesModuleConfig | undefined,
     layerName: PlaceLayerName,
-    textField: any,
+    textField: DataDrivenPropertyValueSpecification<string>,
     iconTextOffsetScales?: IconScalesMap,
-): any => {
+): SymbolLayerSpecification['layout'] => {
     const textConfig = config?.text;
     const customLayer = config?.layers?.[layerName];
     const iconSize = layerSpec.layout?.['icon-size'];
@@ -97,7 +97,7 @@ export const buildPaintConfig = (
     config: PlacesModuleConfig | undefined,
     layerName: PlaceLayerName,
     isDarkMode: boolean,
-): any => {
+): SymbolLayerSpecification['paint'] => {
     const textConfig = config?.text;
     const customLayer = config?.layers?.[layerName];
     const { textColor: baseTextColor, haloColor: baseHaloColor } = getThemeAdaptiveTextColors(isDarkMode);

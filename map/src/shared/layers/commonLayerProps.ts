@@ -188,7 +188,15 @@ export const DEFAULT_MAX_PIN_SCALE = 0.8;
 /**
  * @ignore
  */
-export const PIN_ICON_SIZE: ExpressionSpecification = ['interpolate', ['linear'], ['zoom'], 8, 0.6, 22, DEFAULT_MAX_PIN_SCALE];
+export const PIN_ICON_SIZE: ExpressionSpecification = [
+    'interpolate',
+    ['linear'],
+    ['zoom'],
+    8,
+    0.6,
+    22,
+    DEFAULT_MAX_PIN_SCALE,
+];
 
 /**
  * @ignore

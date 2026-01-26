@@ -7,7 +7,7 @@
     </head>
     <body class="sdk-example-body">
         <div id="sdk-map"></div>
-        
+
         <!-- Search Panel -->
         <div class="sdk-example-searchPanel">
             <input
@@ -23,30 +23,22 @@
         <!-- Customization Panel -->
         <div class="sdk-example-customPanel">
             <h3 class="sdk-example-heading">EV Display Customization</h3>
-            
+
             <!-- Map Style Selector -->
             <div class="sdk-example-section">
                 <label class="sdk-example-form-label">Map Style:</label>
-                <select id="mapStyleSelector" class="sdk-example-select" style="width: 100%;">
-                    <option value="standardLight" selected>Standard Light</option>
-                    <option value="standardDark">Standard Dark</option>
-                    <option value="drivingLight">Driving Light</option>
-                    <option value="drivingDark">Driving Dark</option>
-                    <option value="monoLight">Mono Light</option>
-                    <option value="monoDark">Mono Dark</option>
-                    <option value="satellite">Satellite</option>
-                </select>
+                <select id="sdk-example-mapStyles" class="sdk-example-select" style="width: 100%;"></select>
             </div>
-            
+
             <!-- Background Stations Section -->
             <div class="sdk-example-section">
                 <h4 class="sdk-example-subheading">Background Stations</h4>
                 <label class="sdk-example-checkbox-label">
-                    <input type="checkbox" id="bgAvailabilityToggle" />
+                    <input type="checkbox" id="bgAvailabilityToggle">
                     Show Availability
                 </label>
                 <label class="sdk-example-checkbox-label">
-                    <input type="checkbox" id="bgCustomIconToggle" />
+                    <input type="checkbox" id="bgCustomIconToggle">
                     Use Custom Icon
                 </label>
             </div>
@@ -55,11 +47,11 @@
             <div class="sdk-example-section">
                 <h4 class="sdk-example-subheading">Searched Stations</h4>
                 <label class="sdk-example-checkbox-label">
-                    <input type="checkbox" id="searchAvailabilityToggle" checked />
+                    <input type="checkbox" id="searchAvailabilityToggle" checked>
                     Show Availability
                 </label>
                 <label class="sdk-example-checkbox-label">
-                    <input type="checkbox" id="searchCustomIconToggle" checked />
+                    <input type="checkbox" id="searchCustomIconToggle" checked>
                     Use Custom Icon
                 </label>
             </div>
@@ -67,7 +59,7 @@
             <!-- Availability Display Section -->
             <div class="sdk-example-section">
                 <h4 class="sdk-example-subheading">Availability Display</h4>
-                
+
                 <label class="sdk-example-form-label">Format:</label>
                 <select id="availabilityFormat" class="sdk-example-select">
                     <option value="slash" selected>3/10</option>
@@ -76,28 +68,40 @@
                 </select>
 
                 <label class="sdk-example-form-label">Availability Threshold (&gt;=):</label>
-                <input type="range" id="threshold" min="0" max="100" value="30" class="sdk-example-slider" />
+                <input type="range" id="threshold" min="0" max="100" value="30" class="sdk-example-slider">
                 <span id="thresholdValue" class="sdk-example-value">30%</span>
 
-    <div class="sdk-example-color-preview">
-        <div class="sdk-example-color-box">
-            <div class="sdk-example-color-indicator" style="background: #00ff00; width: 20px; height: 20px; border-radius: 0;"></div>
-            <span>Available (green)</span>
-        </div>
-        <div class="sdk-example-color-box">
-            <div class="sdk-example-color-indicator" style="background: #ff0000; width: 20px; height: 20px; border-radius: 0;"></div>
-            <span>Occupied (red)</span>
-        </div>
-    </div>
-</div>
+                <div class="sdk-example-color-preview">
+                    <div class="sdk-example-color-box">
+                        <div
+                            class="sdk-example-color-indicator"
+                            style="background: #00ff00; width: 20px; height: 20px; border-radius: 0;"
+                        ></div>
+                        <span>Available (green)</span>
+                    </div>
+                    <div class="sdk-example-color-box">
+                        <div
+                            class="sdk-example-color-indicator"
+                            style="background: #ff0000; width: 20px; height: 20px; border-radius: 0;"
+                        ></div>
+                        <span>Occupied (red)</span>
+                    </div>
+                </div>
+            </div>
 
             <!-- Text Style Section -->
             <div class="sdk-example-section">
                 <h4 class="sdk-example-subheading">Text Style</h4>
-                
+
                 <label class="sdk-example-form-label">Text Color:</label>
                 <div class="sdk-example-color-selectors" id="textColorSelectors">
-                    <div class="sdk-example-color-selector active" data-value="default" style="background: linear-gradient(135deg, #fff 0%, #fff 49%, #000 51%, #000 100%); border: 2px solid #999;">Default</div>
+                    <div
+                        class="sdk-example-color-selector active"
+                        data-value="default"
+                        style="background: linear-gradient(135deg, #fff 0%, #fff 49%, #000 51%, #000 100%); border: 2px solid #999;"
+                    >
+                        Default
+                    </div>
                     <div class="sdk-example-color-selector" data-value="#ffffff" style="background: #ffffff"></div>
                     <div class="sdk-example-color-selector" data-value="#000000" style="background: #000000"></div>
                     <div class="sdk-example-color-selector" data-value="#FFD700" style="background: #FFD700"></div>
@@ -107,7 +111,13 @@
 
                 <label class="sdk-example-form-label">Halo Color:</label>
                 <div class="sdk-example-color-selectors" id="haloColorSelectors">
-                    <div class="sdk-example-color-selector active" data-value="default" style="background: linear-gradient(135deg, #fff 0%, #fff 49%, #000 51%, #000 100%); border: 2px solid #999;">Default</div>
+                    <div
+                        class="sdk-example-color-selector active"
+                        data-value="default"
+                        style="background: linear-gradient(135deg, #fff 0%, #fff 49%, #000 51%, #000 100%); border: 2px solid #999;"
+                    >
+                        Default
+                    </div>
                     <div class="sdk-example-color-selector" data-value="#ffffff" style="background: #ffffff"></div>
                     <div class="sdk-example-color-selector" data-value="#000000" style="background: #000000"></div>
                     <div class="sdk-example-color-selector" data-value="#FFD700" style="background: #FFD700"></div>
@@ -116,15 +126,15 @@
                 </div>
 
                 <label class="sdk-example-form-label">Halo Width:</label>
-                <input type="range" id="haloWidth" min="0" max="5" value="1" step="0.5" class="sdk-example-slider" />
+                <input type="range" id="haloWidth" min="0" max="5" value="1" step="0.5" class="sdk-example-slider">
                 <span id="haloWidthValue" class="sdk-example-value">1px</span>
 
                 <label class="sdk-example-form-label">Text Offset Y:</label>
-                <input type="range" id="textOffsetY" min="0" max="6" value="3" step="0.1" class="sdk-example-slider" />
+                <input type="range" id="textOffsetY" min="0" max="6" value="3" step="0.1" class="sdk-example-slider">
                 <span id="textOffsetYValue" class="sdk-example-value">3 em</span>
-                
+
                 <label class="sdk-example-checkbox-label">
-                    <input type="checkbox" id="useCustomOffset" />
+                    <input type="checkbox" id="useCustomOffset">
                     Override Auto Offset
                 </label>
             </div>

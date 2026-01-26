@@ -1,19 +1,11 @@
-import type {
-    ExpressionSpecification,
-    Map as MapLibreMap,
-    SymbolLayerSpecification,
-} from 'maplibre-gl';
+import type { ExpressionSpecification, Map as MapLibreMap, SymbolLayerSpecification } from 'maplibre-gl';
 import type { LayerSpecTemplate } from '../../shared';
 import { SELECTED_PIN_ICON_SIZE } from '../../shared/layers/commonLayerProps';
 import { pinLayerBaseSpec } from '../../shared/layers/symbolLayers';
 import type { LightDark } from '../../shared/types/style';
-import type { PlaceLayersConfig, PlacesModuleConfig, PlaceLayerName  } from '../types/placesModuleConfig';
-import {
-    buildLayoutConfig,
-    buildPaintConfig,
-    buildTextFieldExpression,
-} from '../utils/layerConfiguration';
+import type { PlaceLayerName, PlaceLayersConfig, PlacesModuleConfig } from '../types/placesModuleConfig';
 import { buildCustomIconScalesMap, type IconScalesMap } from '../utils/customIconScales';
+import { buildLayoutConfig, buildPaintConfig, buildTextFieldExpression } from '../utils/layerConfiguration';
 import { buildPoiLikeLayerSpec } from '../utils/layerSpecBuilders';
 
 /**
@@ -71,9 +63,7 @@ const withConfig = (
 
     const textFieldExpression = buildTextFieldExpression(config, evAvailabilityEnabled);
     const textField =
-        textConfig?.title && typeof textConfig?.title !== 'function'
-            ? textConfig.title
-            : textFieldExpression;
+        textConfig?.title && typeof textConfig?.title !== 'function' ? textConfig.title : textFieldExpression;
 
     return {
         ...layerSpec,

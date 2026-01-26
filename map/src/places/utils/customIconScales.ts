@@ -1,5 +1,5 @@
-import { parseSvg } from '../../shared/resources';
 import { suffixNumber } from '../../shared/layers/utils';
+import { parseSvg } from '../../shared/resources';
 import type { PlacesModuleConfig } from '../types/placesModuleConfig';
 
 /**
@@ -26,15 +26,13 @@ const BASE_MAP_POI_HEIGHT = 28;
  * For images, uses naturalWidth/naturalHeight.
  * @ignore
  */
-export const extractImageDimensions = (
-    image: string | HTMLImageElement,
-): { width: number; height: number } | null => {
+export const extractImageDimensions = (image: string | HTMLImageElement): { width: number; height: number } | null => {
     try {
         if (typeof image === 'string') {
             if (image.includes('<svg')) {
                 // Parse SVG to extract dimensions
                 const svgElement = parseSvg(image);
-                
+
                 // Try viewBox first (format: "minX minY width height")
                 const viewBox = svgElement.getAttribute('viewBox');
                 if (viewBox) {
@@ -46,7 +44,7 @@ export const extractImageDimensions = (
                         };
                     }
                 }
-                
+
                 // Fallback to width/height attributes
                 const width = svgElement.getAttribute('width');
                 const height = svgElement.getAttribute('height');
@@ -88,31 +86,31 @@ export const calculateIconScale = (
     if (!image) {
         return undefined;
     }
-    
+
     const dimensions = extractImageDimensions(image);
     if (!dimensions) {
         return undefined;
     }
-    
-    // For base-map theme, we need to scale relative to POI icons 
+
+    // For base-map theme, we need to scale relative to POI icons
     if (isBaseMapTheme) {
         const scale = dimensions.height / BASE_MAP_POI_HEIGHT;
-        
+
         // Return for standard-sized POI icons (within 20% tolerance)
         if (Math.abs(scale - 1) < 0.2) {
             return undefined;
         }
-        
+
         return scale;
     } else {
         // For pin theme, check if it's different from default pin
         const scale = dimensions.height / DEFAULT_PIN_HEIGHT;
-        
+
         // Return for standard pin size (within 5% tolerance)
         if (Math.abs(scale - 1) < 0.05) {
             return undefined;
         }
-        
+
         return scale;
     }
 };

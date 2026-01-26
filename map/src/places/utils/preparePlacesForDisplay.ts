@@ -5,10 +5,10 @@ import { suffixNumber } from '../../shared/layers/utils';
 import type { DisplayPlaceProps } from '../types/placeDisplayProps';
 import type { PlacesModuleConfig, PlacesTheme } from '../types/placesModuleConfig';
 import {
-    getAvailabilityRatio,
     buildAvailabilityText,
-    isEVStationWithAvailability,
+    getAvailabilityRatio,
     getEVAvailabilityIconID,
+    isEVStationWithAvailability,
 } from './evAvailabilityHelpers';
 import { toPinImageID } from './toPinImageID';
 
@@ -55,19 +55,19 @@ export const getIconIDForPlace = (place: Place, instanceIndex: number, config: P
 
     // Next, try to match any custom icon:
     const poiCategory = place.properties.poi?.classifications?.[0]?.code as POICategory;
-    
+
     // Check for EV availability-specific icon selection
     const evAvailabilityIconID = getEVAvailabilityIconID(place, poiCategory, instanceIndex, config, iconTheme);
     if (evAvailabilityIconID) {
         return evAvailabilityIconID;
     }
-    
+
     // Regular custom icon matching (no availability)
     const matchingCustomIcon = config.icon?.categoryIcons?.find((customIcon) => customIcon.id === poiCategory);
     if (matchingCustomIcon) {
         return suffixNumber(matchingCustomIcon.id, instanceIndex);
     }
-    
+
     // Else: if no custom icon matched, we map to the map style icons or default:
     const baseIconID = toImageID(poiCategory, iconTheme, defaultPlaceIconID);
     return baseIconID;
@@ -104,22 +104,21 @@ const mergeEVAvailabilityProps = (
     evAvailabilityConfig: PlacesModuleConfig['evAvailability'],
     places: Places,
 ): PlacesModuleConfig['extraFeatureProps'] => {
-    // Only merge if explicitly enabled (opt-in)
     if (evAvailabilityConfig?.enabled !== true) {
         return extraFeatureProps;
     }
 
-    // Check if any EV stations exist but lack availability data (single pass for performance)
+    // Check if any EV stations exist but lack availability data
     let hasEVStations = false;
     let hasEVStationsWithAvailability = false;
-    
+
     for (const place of places.features) {
         const isEVStation = place.properties.poi?.classifications?.[0]?.code === 'ELECTRIC_VEHICLE_STATION';
         if (isEVStation) {
             hasEVStations = true;
             if (isEVStationWithAvailability(place)) {
                 hasEVStationsWithAvailability = true;
-                break; // Found what we need, stop checking
+                break;
             }
         }
     }
@@ -127,14 +126,12 @@ const mergeEVAvailabilityProps = (
     if (hasEVStations && !hasEVStationsWithAvailability) {
         console.warn(
             'PlacesModule: evAvailability is enabled but no availability data found. ' +
-                'Did you call getPlacesWithEVAvailability() before passing the data to show()?',
+                'Did you call getPlacesWithEVAvailability()?',
         );
     }
 
-    // Merge EV availability functions into extraFeatureProps
     return {
         ...extraFeatureProps,
-        // Only compute these for EV stations with availability data
         evAvailabilityText: (place: Place) =>
             isEVStationWithAvailability(place) ? buildAvailabilityText(place, evAvailabilityConfig) : '',
         evAvailabilityRatio: (place: Place) => (isEVStationWithAvailability(place) ? getAvailabilityRatio(place) : 0),

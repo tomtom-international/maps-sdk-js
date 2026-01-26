@@ -1,16 +1,23 @@
 import { type Place, type POICategory, TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import { PlacesModule, POIsModule, TomTomMap, type AvailabilityLevel } from '@tomtom-org/maps-sdk/map';
+import {
+    type AvailabilityLevel,
+    PlacesModule,
+    POIsModule,
+    type StandardStyleID,
+    standardStyleIDs,
+    TomTomMap,
+} from '@tomtom-org/maps-sdk/map';
 import {
     getPlacesWithEVAvailability,
     getPlaceWithEVAvailability,
-    search,
     type SearchResponse,
+    search,
 } from '@tomtom-org/maps-sdk/services';
 import { Popup } from 'maplibre-gl';
+import { API_KEY } from './config';
 import customEvIconSVG from './custom-ev-icon.svg?raw';
 import customEvIconAvailable from './custom-ev-icon-available.svg?raw';
 import customEvIconUnavailable from './custom-ev-icon-unavailable.svg?raw';
-import { API_KEY } from './config';
 import { connectorsHTML } from './htmlTemplates';
 import './style.css';
 
@@ -40,7 +47,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         searchAvailability: true,
         searchCustomIcon: true,
         threshold: 0.3,
-         // undefined = use SDK defaults (adapts to dark/light mode)
+        // undefined = use SDK defaults
         textColor: undefined as string | undefined,
         haloColor: undefined as string | undefined,
         haloWidth: 1,
@@ -96,7 +103,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
             of: (a: number, t: number) => `${a} of ${t}`,
             available: (a: number) => `${a} available`,
         };
-        
+
         return {
             enabled: true,
             threshold: state.threshold,
@@ -108,12 +115,12 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         const hasCustomColors = state.textColor || state.haloColor;
         const hasCustomHaloWidth = state.haloWidth !== 1;
         const hasCustomOffset = state.useCustomOffset;
-        
+
         // If nothing is customized, return undefined to use SDK defaults
         if (!hasCustomColors && !hasCustomHaloWidth && !hasCustomOffset) {
             return undefined;
         }
-        
+
         return {
             ...(state.textColor && { color: state.textColor }),
             ...(state.haloColor && { haloColor: state.haloColor }),
@@ -125,7 +132,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     // =============================================================================
     // PLACES MODULES: Three separate layers for different use cases
     // =============================================================================
-    
+
     // Background stations: Show all stations on the map
     const bgStations = await PlacesModule.get(map, {
         theme: 'base-map',
@@ -157,7 +164,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     // =============================================================================
     // UI INTERACTIONS: Search, display, and selection logic
     // =============================================================================
-    
+
     // Update background stations based on zoom level and viewport
     const updateBackgroundStations = async () => {
         const zoom = map.mapLibreMap.getZoom();
@@ -213,7 +220,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         // Fetch availability for popup display (detailed view)
         const stationWithAvailability = (await getPlaceWithEVAvailability(station)) ?? station;
         selectedStation.show(stationWithAvailability);
-        
+
         const { address, poi, chargingPark } = stationWithAvailability.properties;
         popUp
             .setHTML(`
@@ -229,7 +236,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     // =============================================================================
     // DYNAMIC RECONFIGURATION: Apply customizations menu state changes to modules
     // =============================================================================
-    
+
     // Update background stations configuration and re-render
     const applyBackgroundConfig = async () => {
         bgStations.applyConfig({
@@ -273,42 +280,43 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         // Search controls
         document.querySelector('#searchButton')?.addEventListener('click', searchEVStations);
         document.querySelector('#clearButton')?.addEventListener('click', clear);
-        document.querySelector('#sdk-example-evBrandTextBox')?.addEventListener('keypress', (e) => {
-            if ((e as KeyboardEvent).key === 'Enter') searchEVStations();
+        document.querySelector('#sdk-example-evBrandTextBox')?.addEventListener('keypress', (event) => {
+            if ((event as KeyboardEvent).key === 'Enter') searchEVStations();
         });
 
         // Map style selector
-        document.querySelector('#mapStyleSelector')?.addEventListener('change', (e) => {
-            const styleID = (e.target as HTMLSelectElement).value;
-            map.setStyle(styleID as any);
-        });
+        const stylesSelector = document.querySelector('#sdk-example-mapStyles') as HTMLSelectElement;
+        standardStyleIDs.forEach((id) => stylesSelector.add(new Option(id)));
+        stylesSelector.addEventListener('change', (event) =>
+            map.setStyle((event.target as HTMLOptionElement).value as StandardStyleID),
+        );
 
         // Background stations toggles
-        document.querySelector('#bgAvailabilityToggle')?.addEventListener('change', async (e) => {
-            state.bgAvailability = (e.target as HTMLInputElement).checked;
+        document.querySelector('#bgAvailabilityToggle')?.addEventListener('change', async (event) => {
+            state.bgAvailability = (event.target as HTMLInputElement).checked;
             await applyBackgroundConfig();
         });
-        document.querySelector('#bgCustomIconToggle')?.addEventListener('change', async (e) => {
-            state.bgCustomIcon = (e.target as HTMLInputElement).checked;
+        document.querySelector('#bgCustomIconToggle')?.addEventListener('change', async (event) => {
+            state.bgCustomIcon = (event.target as HTMLInputElement).checked;
             bgStations.clear();
             await applyBackgroundConfig();
         });
 
         // Searched stations toggles
-        document.querySelector('#searchAvailabilityToggle')?.addEventListener('change', async (e) => {
-            state.searchAvailability = (e.target as HTMLInputElement).checked;
+        document.querySelector('#searchAvailabilityToggle')?.addEventListener('change', async (event) => {
+            state.searchAvailability = (event.target as HTMLInputElement).checked;
             await applySearchedConfig();
         });
-        document.querySelector('#searchCustomIconToggle')?.addEventListener('change', async (e) => {
-            state.searchCustomIcon = (e.target as HTMLInputElement).checked;
+        document.querySelector('#searchCustomIconToggle')?.addEventListener('change', async (event) => {
+            state.searchCustomIcon = (event.target as HTMLInputElement).checked;
             searchedStations.clear();
             selectedStation.clear();
             await applySearchedConfig();
         });
 
         // Format dropdown
-        document.querySelector('#availabilityFormat')?.addEventListener('change', async (e) => {
-            state.formatOption = (e.target as HTMLSelectElement).value as typeof state.formatOption;
+        document.querySelector('#availabilityFormat')?.addEventListener('change', async (event) => {
+            state.formatOption = (event.target as HTMLSelectElement).value as typeof state.formatOption;
             await applyBackgroundConfig();
             await applySearchedConfig();
         });
@@ -326,7 +334,9 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         // Text color selectors
         document.querySelectorAll('#textColorSelectors .sdk-example-color-selector').forEach((selector) => {
             selector.addEventListener('click', async () => {
-                document.querySelectorAll('#textColorSelectors .sdk-example-color-selector').forEach((s) => s.classList.remove('active'));
+                document
+                    .querySelectorAll('#textColorSelectors .sdk-example-color-selector')
+                    .forEach((s) => s.classList.remove('active'));
                 selector.classList.add('active');
                 const value = (selector as HTMLElement).dataset.value;
                 // 'default' means use SDK defaults (undefined), which adapts to dark/light mode
@@ -339,7 +349,9 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         // Halo color selectors
         document.querySelectorAll('#haloColorSelectors .sdk-example-color-selector').forEach((selector) => {
             selector.addEventListener('click', async () => {
-                document.querySelectorAll('#haloColorSelectors .sdk-example-color-selector').forEach((s) => s.classList.remove('active'));
+                document
+                    .querySelectorAll('#haloColorSelectors .sdk-example-color-selector')
+                    .forEach((s) => s.classList.remove('active'));
                 selector.classList.add('active');
                 const value = (selector as HTMLElement).dataset.value;
                 state.haloColor = value === 'default' ? undefined : value || '#000000';
@@ -362,7 +374,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         const offsetSlider = document.querySelector('#textOffsetY') as HTMLInputElement;
         const offsetValue = document.querySelector('#textOffsetYValue') as HTMLSpanElement;
         const useCustomOffsetCheckbox = document.querySelector('#useCustomOffset') as HTMLInputElement;
-        
+
         offsetSlider?.addEventListener('input', async () => {
             state.textOffsetY = Number.parseFloat(offsetSlider.value);
             offsetValue.textContent = `${state.textOffsetY.toFixed(1)} em`;
@@ -372,8 +384,8 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
             }
         });
 
-        useCustomOffsetCheckbox?.addEventListener('change', async (e) => {
-            state.useCustomOffset = (e.target as HTMLInputElement).checked;
+        useCustomOffsetCheckbox?.addEventListener('change', async (event) => {
+            state.useCustomOffset = (event.target as HTMLInputElement).checked;
             await applyBackgroundConfig();
             await applySearchedConfig();
         });

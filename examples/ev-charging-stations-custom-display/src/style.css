@@ -189,7 +189,9 @@
     border-radius: 4px;
     border: 2px solid #ddd;
     cursor: pointer;
-    transition: transform 0.2s, border-color 0.2s;
+    transition:
+        transform 0.2s,
+        border-color 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -216,70 +218,212 @@
         align-items: stretch;
         padding: 10px;
     }
-    .sdk-example-input { min-width: 150px; font-size: 13px; padding: 6px 10px; }
-    .sdk-example-button { font-size: 13px; padding: 6px 12px; }
-    .sdk-example-customPanel { width: 240px; padding: 12px; font-size: 12px; }
-    .sdk-example-heading { font-size: 15px; }
-    .sdk-example-subheading { font-size: 12px; }
-    .sdk-example-checkbox-label, .sdk-example-label, .sdk-example-select { font-size: 11px; }
-    .sdk-example-color-selector { width: 30px; height: 30px; }
+    .sdk-example-input {
+        min-width: 150px;
+        font-size: 13px;
+        padding: 6px 10px;
+    }
+    .sdk-example-button {
+        font-size: 13px;
+        padding: 6px 12px;
+    }
+    .sdk-example-customPanel {
+        width: 240px;
+        padding: 12px;
+        font-size: 12px;
+    }
+    .sdk-example-heading {
+        font-size: 15px;
+    }
+    .sdk-example-subheading {
+        font-size: 12px;
+    }
+    .sdk-example-checkbox-label,
+    .sdk-example-label,
+    .sdk-example-select {
+        font-size: 11px;
+    }
+    .sdk-example-color-selector {
+        width: 30px;
+        height: 30px;
+    }
 }
 
 @media (max-width: 600px) {
-    .sdk-example-searchPanel { top: 5px; left: 5px; padding: 8px; }
-    .sdk-example-input { min-width: 120px; font-size: 12px; }
-    .sdk-example-customPanel { width: 200px; top: 5px; right: 5px; padding: 8px; font-size: 11px; }
-    .sdk-example-heading { font-size: 13px; margin-bottom: 8px; padding-bottom: 4px; }
-    .sdk-example-section { margin-bottom: 10px; padding-bottom: 8px; }
-    .sdk-example-subheading { font-size: 11px; margin-bottom: 6px; }
-    .sdk-example-checkbox-label { font-size: 10px; margin-bottom: 4px; }
-    .sdk-example-label { font-size: 10px; margin: 6px 0 3px; }
-    .sdk-example-select { font-size: 10px; padding: 4px 6px; }
-    .sdk-example-slider { width: calc(100% - 45px); }
-    .sdk-example-value { min-width: 38px; font-size: 10px; }
-    .sdk-example-color-selector { width: 26px; height: 26px; }
-    .sdk-example-color-indicator { width: 14px; height: 14px; }
-    .sdk-example-color-box { font-size: 9px; }
+    .sdk-example-searchPanel {
+        top: 5px;
+        left: 5px;
+        padding: 8px;
+    }
+    .sdk-example-input {
+        min-width: 120px;
+        font-size: 12px;
+    }
+    .sdk-example-customPanel {
+        width: 200px;
+        top: 5px;
+        right: 5px;
+        padding: 8px;
+        font-size: 11px;
+    }
+    .sdk-example-heading {
+        font-size: 13px;
+        margin-bottom: 8px;
+        padding-bottom: 4px;
+    }
+    .sdk-example-section {
+        margin-bottom: 10px;
+        padding-bottom: 8px;
+    }
+    .sdk-example-subheading {
+        font-size: 11px;
+        margin-bottom: 6px;
+    }
+    .sdk-example-checkbox-label {
+        font-size: 10px;
+        margin-bottom: 4px;
+    }
+    .sdk-example-label {
+        font-size: 10px;
+        margin: 6px 0 3px;
+    }
+    .sdk-example-select {
+        font-size: 10px;
+        padding: 4px 6px;
+    }
+    .sdk-example-slider {
+        width: calc(100% - 45px);
+    }
+    .sdk-example-value {
+        min-width: 38px;
+        font-size: 10px;
+    }
+    .sdk-example-color-selector {
+        width: 26px;
+        height: 26px;
+    }
+    .sdk-example-color-indicator {
+        width: 14px;
+        height: 14px;
+    }
+    .sdk-example-color-box {
+        font-size: 9px;
+    }
 }
 
 /* Responsive - Height */
 @media (max-height: 700px) {
-    .sdk-example-customPanel { max-height: calc(100vh - 80px); padding: 12px; width: 280px; font-size: 12px; }
-    .sdk-example-heading { font-size: 16px; margin-bottom: 12px; }
-    .sdk-example-section { margin-bottom: 14px; padding-bottom: 12px; }
-    .sdk-example-subheading { font-size: 13px; margin-bottom: 8px; }
-    .sdk-example-checkbox-label, .sdk-example-label, .sdk-example-select { font-size: 12px; }
-    .sdk-example-color-selector { width: 32px; height: 32px; }
+    .sdk-example-customPanel {
+        max-height: calc(100vh - 80px);
+        padding: 12px;
+        width: 280px;
+        font-size: 12px;
+    }
+    .sdk-example-heading {
+        font-size: 16px;
+        margin-bottom: 12px;
+    }
+    .sdk-example-section {
+        margin-bottom: 14px;
+        padding-bottom: 12px;
+    }
+    .sdk-example-subheading {
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+    .sdk-example-checkbox-label,
+    .sdk-example-label,
+    .sdk-example-select {
+        font-size: 12px;
+    }
+    .sdk-example-color-selector {
+        width: 32px;
+        height: 32px;
+    }
 }
 
 @media (max-height: 550px) {
-    .sdk-example-customPanel { max-height: calc(100vh - 100px); padding: 8px; width: 260px; font-size: 11px; }
-    .sdk-example-heading { font-size: 14px; margin-bottom: 10px; padding-bottom: 6px; }
-    .sdk-example-section { margin-bottom: 10px; padding-bottom: 8px; }
-    .sdk-example-subheading { font-size: 12px; margin-bottom: 6px; }
-    .sdk-example-checkbox-label { margin-bottom: 6px; font-size: 11px; }
-    .sdk-example-label { margin: 8px 0 4px; font-size: 11px; }
-    .sdk-example-select { font-size: 11px; padding: 4px 6px; }
-    .sdk-example-color-selector { width: 28px; height: 28px; }
-    .sdk-example-color-indicator { width: 14px; height: 14px; }
+    .sdk-example-customPanel {
+        max-height: calc(100vh - 100px);
+        padding: 8px;
+        width: 260px;
+        font-size: 11px;
+    }
+    .sdk-example-heading {
+        font-size: 14px;
+        margin-bottom: 10px;
+        padding-bottom: 6px;
+    }
+    .sdk-example-section {
+        margin-bottom: 10px;
+        padding-bottom: 8px;
+    }
+    .sdk-example-subheading {
+        font-size: 12px;
+        margin-bottom: 6px;
+    }
+    .sdk-example-checkbox-label {
+        margin-bottom: 6px;
+        font-size: 11px;
+    }
+    .sdk-example-label {
+        margin: 8px 0 4px;
+        font-size: 11px;
+    }
+    .sdk-example-select {
+        font-size: 11px;
+        padding: 4px 6px;
+    }
+    .sdk-example-color-selector {
+        width: 28px;
+        height: 28px;
+    }
+    .sdk-example-color-indicator {
+        width: 14px;
+        height: 14px;
+    }
 }
 
 /* Popup Styles */
 .maplibregl-popup-content {
-    box-shadow: 0 54px 55px rgba(0,0,0,0.25), 0 -12px 30px rgba(0,0,0,0.12), 
-                0 4px 6px rgba(0,0,0,0.12), 0 12px 13px rgba(0,0,0,0.17), 
-                0 -3px 5px rgba(0,0,0,0.09);
+    box-shadow:
+        0 54px 55px rgba(0, 0, 0, 0.25),
+        0 -12px 30px rgba(0, 0, 0, 0.12),
+        0 4px 6px rgba(0, 0, 0, 0.12),
+        0 12px 13px rgba(0, 0, 0, 0.17),
+        0 -3px 5px rgba(0, 0, 0, 0.09);
     border-radius: 5px;
     padding-top: 0;
 }
 
-.maps-sdk-js-popup { min-width: 300px; }
-.sdk-example-address { color: grey; }
-.sdk-example-connector-ul { padding: 0; font-size: 14px; height: 24px; line-height: 24px; list-style-type: none; }
-.sdk-example-connector-li { height: 36px; }
-.sdk-example-connectorName { font-weight: bold; }
-.sdk-example-connectorPower { color: grey; }
-.sdk-example-connectorIcon { display: inline-block; width: 24px; height: 28px; vertical-align: middle; }
+.maps-sdk-js-popup {
+    min-width: 300px;
+}
+.sdk-example-address {
+    color: grey;
+}
+.sdk-example-connector-ul {
+    padding: 0;
+    font-size: 14px;
+    height: 24px;
+    line-height: 24px;
+    list-style-type: none;
+}
+.sdk-example-connector-li {
+    height: 36px;
+}
+.sdk-example-connectorName {
+    font-weight: bold;
+}
+.sdk-example-connectorPower {
+    color: grey;
+}
+.sdk-example-connectorIcon {
+    display: inline-block;
+    width: 24px;
+    height: 28px;
+    vertical-align: middle;
+}
 
 .sdk-example-available,
 .sdk-example-unavailable,
@@ -288,5 +432,9 @@
     float: right;
 }
 
-.sdk-example-available { color: green; }
-.sdk-example-unavailable { color: red; }
+.sdk-example-available {
+    color: green;
+}
+.sdk-example-unavailable {
+    color: red;
+}

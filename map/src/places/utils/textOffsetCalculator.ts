@@ -1,13 +1,12 @@
-import type { DataDrivenPropertyValueSpecification, ExpressionSpecification } from 'maplibre-gl';
+import type {
+    DataDrivenPropertyValueSpecification,
+    ExpressionSpecification,
+    SymbolLayerSpecification,
+} from 'maplibre-gl';
 import { DEFAULT_MAX_PIN_SCALE } from '../../shared/layers/commonLayerProps';
 import { ICON_ID, TEXT_OFFSET_BESIDE, TEXT_OFFSET_Y_BELOW } from '../../shared/layers/symbolLayers';
 
-/**
- * Type representing a text-variable-anchor-offset value.
- * Format: [anchor, offset, anchor, offset, anchor, offset]
- * @ignore
- */
-type VariableAnchorOffsetValue = [string, [number, number], string, [number, number], string, [number, number]];
+type VariableAnchorOffset = NonNullable<SymbolLayerSpecification['layout']>['text-variable-anchor-offset'];
 
 /**
  * Extracts the maximum icon scale factor from an icon-size expression.
@@ -18,18 +17,18 @@ const extractMaxIconScale = (expression: DataDrivenPropertyValueSpecification<nu
     if (!expression) {
         return DEFAULT_MAX_PIN_SCALE;
     }
-    
+
     if (typeof expression === 'number') {
         return expression;
     }
-    
+
     if (Array.isArray(expression)) {
         const lastValue = expression.at(-1);
         if (typeof lastValue === 'number') {
             return lastValue;
         }
     }
-    
+
     return DEFAULT_MAX_PIN_SCALE;
 };
 
@@ -39,12 +38,12 @@ const extractMaxIconScale = (expression: DataDrivenPropertyValueSpecification<nu
  */
 type TextOffsetResult =
     | { type: 'offset'; value: ExpressionSpecification }
-    | { type: 'variable-anchor-offset'; value: VariableAnchorOffsetValue };
+    | { type: 'variable-anchor-offset'; value: VariableAnchorOffset };
 
 /**
  * Calculates text offset configuration for place labels.
  * Returns dynamic text-offset expression when custom icon scales exist, otherwise static variable-anchor-offset.
- * 
+ *
  * @param iconSizeExpression The icon-size property from the layer specification
  * @param iconTextOffsetScales Map of icon IDs to their text offset scale factors for custom icons
  * @returns Configuration object with the MapLibre property type and value to apply

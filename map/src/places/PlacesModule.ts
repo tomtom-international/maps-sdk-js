@@ -165,7 +165,12 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
     }
 
     private buildLayerSpecs(config?: PlacesModuleConfig) {
-        const layerSpecTemplates = buildPlacesLayerSpecs(config, this.tomtomMap.mapLibreMap, this.tomtomMap.styleLightDarkTheme, this.instanceIndex);
+        const layerSpecTemplates = buildPlacesLayerSpecs(
+            config,
+            this.tomtomMap.mapLibreMap,
+            this.tomtomMap.styleLightDarkTheme,
+            this.instanceIndex,
+        );
 
         // Update each layer id with the instance-specific prefix
         return Object.fromEntries(
@@ -323,7 +328,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
                 const iconID = customIcon.availabilityLevel
                     ? `${customIcon.id}-${customIcon.availabilityLevel}`
                     : customIcon.id;
-                
+
                 addOrUpdateImage(
                     'if-not-in-sprite',
                     suffixNumber(iconID, this.instanceIndex),

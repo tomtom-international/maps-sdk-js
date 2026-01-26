@@ -1,6 +1,6 @@
 /**
  * Availability level for POI icons with availability indicators.
- * 
+ *
  */
 export type AvailabilityLevel = 'available' | 'occupied';
 
