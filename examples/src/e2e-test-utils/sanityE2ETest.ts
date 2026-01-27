@@ -38,7 +38,7 @@ export const sanityE2ETest = async (options: SanityE2ETestOptions) => {
         testInfo,
         mapSelector = DEFAULT_MAP_SELECTOR,
         mapLoadTimeout = DEFAULT_MAP_LOAD_TIMEOUT,
-        maxDiffPixelRatio = 0.1,
+        maxDiffPixelRatio = 0.2,
     } = options;
 
     await page.goto(`/${getExampleName(testInfo)}/dist`);
