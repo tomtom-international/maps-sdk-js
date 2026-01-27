@@ -1,48 +1,96 @@
 import type { DataDrivenPropertyValueSpecification, Map } from 'maplibre-gl';
 import { describe, expect, test, vi } from 'vitest';
 import { MAP_MEDIUM_FONT } from '../../../shared/layers/commonLayerProps';
-import {
-    buildPlacesLayerSpecs,
-    getTextSizeSpec,
-    hasEventState,
-    pinLayerSpec,
-    SELECTED_COLOR,
-    selectedPinLayerSpec,
-} from '../placesLayers';
+import { getTextSizeSpec } from '../../utils/layerSpecBuilders';
+import { buildPlacesLayerSpecs, hasEventState, pinLayerSpec, selectedPinLayerSpec } from '../placesLayers';
 import poiLayerSpec from './poiLayerSpec.data';
 
 describe('Get places layer spec with circle or pin icon style config', () => {
     const mapLibreMock = vi.fn() as unknown as Map;
 
     test('Get places layer spec no config', () => {
-        expect(buildPlacesLayerSpecs(undefined, mapLibreMock)).toEqual({
+        expect(buildPlacesLayerSpecs(undefined, mapLibreMock, 'light', 0)).toEqual({
             main: {
                 ...pinLayerSpec,
+                layout: {
+                    ...pinLayerSpec.layout,
+                    'text-variable-anchor-offset': ['top', [0, 0.7], 'left', [1.4, -1.4], 'right', [-1.4, -1.4]],
+                },
+                paint: {
+                    ...pinLayerSpec.paint,
+                    'text-color': '#333333',
+                    'text-halo-color': '#FFFFFF',
+                },
             },
             selected: {
                 ...selectedPinLayerSpec,
+                layout: {
+                    ...selectedPinLayerSpec.layout,
+                    'text-variable-anchor-offset': ['top', [0, 0.875], 'left', [1.75, -1.75], 'right', [-1.75, -1.75]],
+                },
+                paint: {
+                    ...selectedPinLayerSpec.paint,
+                    'text-color': '#333333',
+                    'text-halo-color': '#FFFFFF',
+                },
             },
         });
     });
 
     test('Get places layer spec with circle icon style config', () => {
-        expect(buildPlacesLayerSpecs({ theme: 'circle' }, mapLibreMock)).toEqual({
+        expect(buildPlacesLayerSpecs({ theme: 'circle' }, mapLibreMock, 'light', 0)).toEqual({
             main: {
                 ...pinLayerSpec,
+                layout: {
+                    ...pinLayerSpec.layout,
+                    'text-variable-anchor-offset': ['top', [0, 0.7], 'left', [1.4, -1.4], 'right', [-1.4, -1.4]],
+                },
+                paint: {
+                    ...pinLayerSpec.paint,
+                    'text-color': '#333333',
+                    'text-halo-color': '#FFFFFF',
+                },
             },
             selected: {
                 ...selectedPinLayerSpec,
+                layout: {
+                    ...selectedPinLayerSpec.layout,
+                    'text-variable-anchor-offset': ['top', [0, 0.875], 'left', [1.75, -1.75], 'right', [-1.75, -1.75]],
+                },
+                paint: {
+                    ...selectedPinLayerSpec.paint,
+                    'text-color': '#333333',
+                    'text-halo-color': '#FFFFFF',
+                },
             },
         });
     });
 
     test('Get places layer spec with pin icon style config', () => {
-        expect(buildPlacesLayerSpecs({ theme: 'pin' }, mapLibreMock)).toEqual({
+        expect(buildPlacesLayerSpecs({ theme: 'pin' }, mapLibreMock, 'light', 0)).toEqual({
             main: {
                 ...pinLayerSpec,
+                layout: {
+                    ...pinLayerSpec.layout,
+                    'text-variable-anchor-offset': ['top', [0, 0.7], 'left', [1.4, -1.4], 'right', [-1.4, -1.4]],
+                },
+                paint: {
+                    ...pinLayerSpec.paint,
+                    'text-color': '#333333',
+                    'text-halo-color': '#FFFFFF',
+                },
             },
             selected: {
                 ...selectedPinLayerSpec,
+                layout: {
+                    ...selectedPinLayerSpec.layout,
+                    'text-variable-anchor-offset': ['top', [0, 0.875], 'left', [1.75, -1.75], 'right', [-1.75, -1.75]],
+                },
+                paint: {
+                    ...selectedPinLayerSpec.paint,
+                    'text-color': '#333333',
+                    'text-halo-color': '#FFFFFF',
+                },
             },
         });
     });
@@ -63,16 +111,27 @@ describe('Get places layer spec with circle or pin icon style config', () => {
                     },
                 },
                 mapLibreMock,
+                'light',
+                0,
             ),
         ).toEqual({
             main: {
-                ...pinLayerSpec,
+                filter: ['!', hasEventState],
+                type: 'symbol',
                 layout: {
-                    ...pinLayerSpec.layout,
-                    'text-size': 5,
+                    'icon-image': ['get', 'iconID'],
+                    'icon-anchor': 'bottom',
+                    'icon-size': ['interpolate', ['linear'], ['zoom'], 8, 0.6, 22, 0.8],
+                    'icon-allow-overlap': true,
+                    'icon-padding': 0,
+                    'text-optional': true,
                     'text-font': [MAP_MEDIUM_FONT],
-                    'text-offset': [0, 1],
                     'text-field': ['get', 'name'],
+                    'text-justify': 'auto',
+                    'text-variable-anchor': ['top', 'left', 'right'],
+                    'text-size': 5,
+                    'text-padding': 5,
+                    'text-offset': [0, 1],
                 },
                 paint: {
                     ...pinLayerSpec.paint,
@@ -82,13 +141,23 @@ describe('Get places layer spec with circle or pin icon style config', () => {
                 },
             },
             selected: {
-                ...selectedPinLayerSpec,
+                filter: hasEventState,
+                type: 'symbol',
                 layout: {
-                    ...selectedPinLayerSpec.layout,
-                    'text-size': 5,
+                    'icon-image': ['get', 'iconID'],
+                    'icon-anchor': 'bottom',
+                    'icon-size': ['interpolate', ['linear'], ['zoom'], 8, 0.8, 22, 1],
+                    'icon-allow-overlap': true,
+                    'icon-padding': 0,
+                    'text-optional': true,
                     'text-font': [MAP_MEDIUM_FONT],
-                    'text-offset': [0, 1],
                     'text-field': ['get', 'name'],
+                    'text-justify': 'auto',
+                    'text-variable-anchor': ['top', 'left', 'right'],
+                    'text-size': 5,
+                    'text-padding': 5,
+                    'text-offset': [0, 1],
+                    'text-allow-overlap': true,
                 },
                 paint: {
                     ...selectedPinLayerSpec.paint,
@@ -110,10 +179,16 @@ describe('Get places layer spec with circle or pin icon style config', () => {
                     },
                 },
                 mapLibreMock,
+                'light',
+                0,
             ),
         ).toEqual({
             main: {
                 ...pinLayerSpec,
+                layout: {
+                    ...pinLayerSpec.layout,
+                    'text-variable-anchor-offset': ['top', [0, 0.7], 'left', [1.4, -1.4], 'right', [-1.4, -1.4]],
+                },
                 paint: {
                     ...pinLayerSpec.paint,
                     'text-color': 'green',
@@ -121,6 +196,10 @@ describe('Get places layer spec with circle or pin icon style config', () => {
             },
             selected: {
                 ...selectedPinLayerSpec,
+                layout: {
+                    ...selectedPinLayerSpec.layout,
+                    'text-variable-anchor-offset': ['top', [0, 0.875], 'left', [1.75, -1.75], 'right', [-1.75, -1.75]],
+                },
                 paint: {
                     ...selectedPinLayerSpec.paint,
                     'text-color': 'green',
@@ -150,16 +229,21 @@ describe('Get places layer spec with base-map icon style config', () => {
     } as unknown as Map;
 
     test('Get places layer spec with base-map icon style config', () => {
-        expect(buildPlacesLayerSpecs({ theme: 'base-map' }, mapLibreMock)).toEqual({
+        expect(buildPlacesLayerSpecs({ theme: 'base-map' }, mapLibreMock, 'light', 0)).toEqual({
             main: {
                 filter: ['!', ['in', ['get', 'eventState'], ['literal', ['click', 'contextmenu']]]],
                 type: 'symbol',
-                paint: { ...poiLayerSpec.paint },
+                paint: {
+                    ...poiLayerSpec.paint,
+                    'text-color': '#333333',
+                    'text-halo-color': '#FFFFFF',
+                },
                 layout: {
                     ...poiLayerSpec.layout,
                     'text-field': ['get', 'title'],
                     'icon-image': ['get', 'iconID'],
                     'text-size': placesTextSizeSpec,
+                    'text-variable-anchor-offset': ['top', [0, 0.7], 'left', [1.4, -1.4], 'right', [-1.4, -1.4]],
                 },
             },
             selected: {
@@ -167,7 +251,8 @@ describe('Get places layer spec with base-map icon style config', () => {
                 type: 'symbol',
                 paint: {
                     ...poiLayerSpec.paint,
-                    'text-color': SELECTED_COLOR,
+                    'text-color': '#333333',
+                    'text-halo-color': '#FFFFFF',
                 },
                 layout: {
                     ...poiLayerSpec.layout,
@@ -175,6 +260,7 @@ describe('Get places layer spec with base-map icon style config', () => {
                     'icon-image': ['get', 'iconID'],
                     'text-size': placesTextSizeSpec,
                     'text-allow-overlap': true,
+                    'text-variable-anchor-offset': ['top', [0, 0.7], 'left', [1.4, -1.4], 'right', [-1.4, -1.4]],
                 },
             },
         });

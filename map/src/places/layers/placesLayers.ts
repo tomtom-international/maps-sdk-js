@@ -1,8 +1,7 @@
 import type { ExpressionSpecification, Map as MapLibreMap, SymbolLayerSpecification } from 'maplibre-gl';
-import type { LayerSpecTemplate } from '../../shared';
+import type { LayerSpecTemplate, LightDark } from '../../shared';
 import { SELECTED_PIN_ICON_SIZE } from '../../shared/layers/commonLayerProps';
 import { pinLayerBaseSpec } from '../../shared/layers/symbolLayers';
-import type { LightDark } from '../../shared/types/style';
 import type { PlaceLayerName, PlaceLayersConfig, PlacesModuleConfig } from '../types/placesModuleConfig';
 import { buildCustomIconScalesMap, type IconScalesMap } from '../utils/customIconScales';
 import { buildLayoutConfig, buildPaintConfig, buildTextFieldExpression } from '../utils/layerConfiguration';
