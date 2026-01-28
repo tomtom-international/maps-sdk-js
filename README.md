@@ -93,11 +93,11 @@ The services can be integrated in **web**, [nodejs](https://nodejs.org/) and [Re
 The compatibility of both inputs and outputs with [GeoJSON](https://geojson.org/) helps with further integration with geospatial tools.
 
 ### ✨ Feature highlights
-* [Search](https://developer-staging.tomtom.com/maps-sdk-js/api-reference/search) (fuzzy search, geometry search)
-* [Geocoding](https://developer-staging.tomtom.com/maps-sdk-js/api-reference/geocoding) and [Reverse Geocoding](https://developer-staging.tomtom.com/maps-sdk-js/api-reference/reverse-geocoding)
-* [Geometry Data](https://developer-staging.tomtom.com/maps-sdk-js/api-reference/geometry-data)
-* [Routing](https://developer-staging.tomtom.com/maps-sdk-js/api-reference/calculate-route) with EV support
-* EV Charging Stations Availability
+* Consistent [GeoJSON](https://geojson.org/) services for TomTom location APIs.
+* Seamless integration with the TomTom [Map](#map).
+* Extensive support for [Places](https://docs.tomtom.com/maps-sdk-js/guides/services/places/quickstart) and [Routing](https://docs.tomtom.com/maps-sdk-js/guides/services/routing/quickstart) use cases.
+* [Customizable](https://docs.tomtom.com/maps-sdk-js/guides/services/customizing-services) requests and responses.
+* EV support for [places](https://docs.tomtom.com/maps-sdk-js/guides/services/places/ev-charging-stations-availability) and [routes](https://docs.tomtom.com/maps-sdk-js/guides/services/routing/long-distance-ev-routing)
 
 ### 🚀 Getting Started with Services
 #### Using npm
