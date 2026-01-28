@@ -5,11 +5,12 @@ import {
     type PolygonFeatures,
     TomTomConfig,
 } from '@tomtom-org/maps-sdk/core';
-import { GeometriesModule, PlacesModule, POIsModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { GeometriesModule, PlacesModule, PlacesModuleConfig, POIsModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import {
     geometryData,
     getPlacesWithEVAvailability,
     getPlaceWithEVAvailability,
+    hasChargingAvailability,
     search,
 } from '@tomtom-org/maps-sdk/services';
 import { bboxPolygon, difference } from '@turf/turf';
