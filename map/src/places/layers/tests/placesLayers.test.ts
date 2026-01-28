@@ -26,7 +26,7 @@ describe('Get places layer spec with circle or pin icon style config', () => {
                 ...selectedPinLayerSpec,
                 layout: {
                     ...selectedPinLayerSpec.layout,
-                    'text-variable-anchor-offset': ['top', [0, 0.875], 'left', [1.75, -1.75], 'right', [-1.75, -1.75]],
+                    'text-variable-anchor-offset': ['top', [0, 0.7], 'left', [1.4, -1.4], 'right', [-1.4, -1.4]],
                 },
                 paint: {
                     ...selectedPinLayerSpec.paint,
@@ -55,7 +55,7 @@ describe('Get places layer spec with circle or pin icon style config', () => {
                 ...selectedPinLayerSpec,
                 layout: {
                     ...selectedPinLayerSpec.layout,
-                    'text-variable-anchor-offset': ['top', [0, 0.875], 'left', [1.75, -1.75], 'right', [-1.75, -1.75]],
+                    'text-variable-anchor-offset': ['top', [0, 0.7], 'left', [1.4, -1.4], 'right', [-1.4, -1.4]],
                 },
                 paint: {
                     ...selectedPinLayerSpec.paint,
@@ -84,7 +84,7 @@ describe('Get places layer spec with circle or pin icon style config', () => {
                 ...selectedPinLayerSpec,
                 layout: {
                     ...selectedPinLayerSpec.layout,
-                    'text-variable-anchor-offset': ['top', [0, 0.875], 'left', [1.75, -1.75], 'right', [-1.75, -1.75]],
+                    'text-variable-anchor-offset': ['top', [0, 0.7], 'left', [1.4, -1.4], 'right', [-1.4, -1.4]],
                 },
                 paint: {
                     ...selectedPinLayerSpec.paint,
@@ -131,7 +131,7 @@ describe('Get places layer spec with circle or pin icon style config', () => {
                     'text-variable-anchor': ['top', 'left', 'right'],
                     'text-size': 5,
                     'text-padding': 5,
-                    'text-offset': [0, 1],
+                    'text-variable-anchor-offset': ['top', [0, 1], 'left', [1, -1.4], 'right', [-1, -1.4]],
                 },
                 paint: {
                     ...pinLayerSpec.paint,
@@ -156,7 +156,7 @@ describe('Get places layer spec with circle or pin icon style config', () => {
                     'text-variable-anchor': ['top', 'left', 'right'],
                     'text-size': 5,
                     'text-padding': 5,
-                    'text-offset': [0, 1],
+                    'text-variable-anchor-offset': ['top', [0, 1], 'left', [1, -1.75], 'right', [-1, -1.75]],
                     'text-allow-overlap': true,
                 },
                 paint: {
@@ -198,7 +198,7 @@ describe('Get places layer spec with circle or pin icon style config', () => {
                 ...selectedPinLayerSpec,
                 layout: {
                     ...selectedPinLayerSpec.layout,
-                    'text-variable-anchor-offset': ['top', [0, 0.875], 'left', [1.75, -1.75], 'right', [-1.75, -1.75]],
+                    'text-variable-anchor-offset': ['top', [0, 0.7], 'left', [1.4, -1.4], 'right', [-1.4, -1.4]],
                 },
                 paint: {
                     ...selectedPinLayerSpec.paint,
