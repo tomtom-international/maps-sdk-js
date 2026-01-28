@@ -1,24 +1,26 @@
 import { suffixNumber } from '../../shared/layers/utils';
 import { parseSvg } from '../../shared/resources';
-import type { PlacesModuleConfig } from '../types/placesModuleConfig';
+import type { PlacesModuleConfig, PlacesTheme } from '../types/placesModuleConfig';
 
 /**
  * Map of icon IDs to their text offset scale factors.
  * @ignore
  */
-export type IconScalesMap = Map<string, number>;
+export type IconScalesMap = Map<string, { heightScale: number; widthScale: number }>;
 
 /**
  * Default pin dimensions (from base pin.svg)
  * @ignore
  */
-const DEFAULT_PIN_HEIGHT = 140;
+const DEFAULT_PIN_HEIGHT_PX = 140;
+const DEFAULT_PIN_WIDTH_PX = 120;
 
 /**
- * Typical POI icon height in base-map theme (rough estimate based on common sprites)
+ * Default base-map POI icon dimensions (from base-theme POI icons)
  * @ignore
  */
-const BASE_MAP_POI_HEIGHT = 28;
+const DEFAULT_MAP_POI_HEIGHT_PX = 54;
+const DEFAULT_MAP_POI_WIDTH_PX = 54;
 
 /**
  * Extracts dimensions from an SVG string or HTMLImageElement.
@@ -74,15 +76,22 @@ export const extractImageDimensions = (image: string | HTMLImageElement): { widt
 };
 
 /**
- * Calculate the scale factor for a custom icon based on its dimensions relative to standard icon sizes.
+ * Calculate the scale factors for a custom icon based on its dimensions relative to standard icon sizes.
+ * 
+ * Calculates both height and width scales independently:
+ * - Height scale is used for vertical text offset 
+ * - Width scale is used for horizontal text offset 
+ * 
+ * 
  * @param image The image to extract dimensions from
- * @param useBaseMapReference If true, uses base-map POI height as reference (for theme: 'base-map')
+ * @param theme The places theme ('base-map' for circles, 'pin' for pins)
+ * @returns Object with heightScale and widthScale, or undefined if icon is standard-sized (within tolerance)
  * @ignore
  */
 export const calculateIconScale = (
     image: string | HTMLImageElement | undefined,
-    isBaseMapTheme = false,
-): number | undefined => {
+    theme?: PlacesTheme,
+): { heightScale: number; widthScale: number } | undefined => {
     if (!image) {
         return undefined;
     }
@@ -92,26 +101,20 @@ export const calculateIconScale = (
         return undefined;
     }
 
+    const isBaseMapTheme = theme === 'base-map';
+
     // For base-map theme, we need to scale relative to POI icons
     if (isBaseMapTheme) {
-        const scale = dimensions.height / BASE_MAP_POI_HEIGHT;
+        const heightScale = dimensions.height / DEFAULT_MAP_POI_HEIGHT_PX;
+        const widthScale = dimensions.width / DEFAULT_MAP_POI_WIDTH_PX;
 
-        // Return for standard-sized POI icons (within 20% tolerance)
-        if (Math.abs(scale - 1) < 0.2) {
-            return undefined;
-        }
-
-        return scale;
+        return { heightScale, widthScale };
     } else {
         // For pin theme, check if it's different from default pin
-        const scale = dimensions.height / DEFAULT_PIN_HEIGHT;
+        const heightScale = dimensions.height / DEFAULT_PIN_HEIGHT_PX;
+        const widthScale = dimensions.width / DEFAULT_PIN_WIDTH_PX;
 
-        // Return for standard pin size (within 5% tolerance)
-        if (Math.abs(scale - 1) < 0.05) {
-            return undefined;
-        }
-
-        return scale;
+        return { heightScale, widthScale };
     }
 };
 
@@ -123,23 +126,22 @@ export const buildCustomIconScalesMap = (
     config: PlacesModuleConfig | undefined,
     instanceIndex: number,
 ): IconScalesMap => {
-    const iconTextOffsetScales = new Map<string, number>();
+    const iconTextOffsetScales = new Map<string, { heightScale: number; widthScale: number }>();
     const customIcons = config?.icon?.categoryIcons ?? [];
-    const isBaseMapTheme = config?.theme === 'base-map';
 
     for (const icon of customIcons) {
         if (icon.image) {
-            const scale = calculateIconScale(icon.image, isBaseMapTheme);
-            if (scale !== undefined) {
+            const scales = calculateIconScale(icon.image, config?.theme);
+            if (scales !== undefined) {
                 // Base icon ID with instance suffix
                 const suffixedIconId = suffixNumber(icon.id, instanceIndex);
-                iconTextOffsetScales.set(suffixedIconId, scale);
+                iconTextOffsetScales.set(suffixedIconId, scales);
 
                 // If this icon has an availability level, also add the availability-suffixed version
                 // (e.g., "ELECTRIC_VEHICLE_STATION-available-0")
                 if (icon.availabilityLevel) {
                     const availabilitySuffixedId = suffixNumber(`${icon.id}-${icon.availabilityLevel}`, instanceIndex);
-                    iconTextOffsetScales.set(availabilitySuffixedId, scale);
+                    iconTextOffsetScales.set(availabilitySuffixedId, scales);
                 }
             }
         }

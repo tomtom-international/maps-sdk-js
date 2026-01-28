@@ -17,14 +17,14 @@ export const ICON_ID = 'iconID';
  * In ems, relative to icon scale.
  * @ignore
  */
-export const TEXT_OFFSET_Y_BELOW = 0.7;
+export const DEFAULT_TEXT_OFFSET_Y = 0.7;
 
 /**
- * X/Y-offset multiplier for text positioned beside icons (left/right anchors).
+ * X-offset multiplier for text positioned beside icons (left/right anchors).
  * In ems, relative to icon scale.
  * @ignore
  */
-export const TEXT_OFFSET_BESIDE = 1.4;
+export const DEFAULT_TEXT_OFFSET_X = 1.4;
 
 /**
  * @ignore
@@ -62,11 +62,11 @@ export const pinTextBaseLayout: SymbolLayerSpecification['layout'] = {
     // NOTE: make sure to text against pins and waypoints, in a way that there's enough distance from the pin so the text doesn't disappear
     'text-variable-anchor-offset': [
         'top',
-        [0, TEXT_OFFSET_Y_BELOW],
+        [0, DEFAULT_TEXT_OFFSET_Y],
         'left',
-        [TEXT_OFFSET_BESIDE, -TEXT_OFFSET_BESIDE],
+        [DEFAULT_TEXT_OFFSET_X, -DEFAULT_TEXT_OFFSET_X],
         'right',
-        [-TEXT_OFFSET_BESIDE, -TEXT_OFFSET_BESIDE],
+        [-DEFAULT_TEXT_OFFSET_X, -DEFAULT_TEXT_OFFSET_X],
     ],
     'text-size': DEFAULT_TEXT_SIZE,
     'text-padding': 5,

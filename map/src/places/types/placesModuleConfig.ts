@@ -84,7 +84,7 @@ export type EVAvailabilityConfig = {
      * - `ratio >= threshold`: Available (green)
      * - `ratio < threshold`: Occupied (red)
      *
-     * @default 0.3
+     * @default 0
      */
     threshold?: number;
 
@@ -319,20 +319,19 @@ export type PlaceTextConfig = {
     haloWidth?: DataDrivenPropertyValueSpecification<number>;
 
     /**
-     * Text offset from the icon in ems [x, y].
+     * Text offset from the icon in ems.
      *
-     * Positive x moves right, positive y moves down.
+     * Applies uniformly to all anchor positions (top, left, right).
+     * Positive values increase distance from icon.
      *
-     * @default [0, 0]
+     * @default undefined (uses automatic offset based on icon size)
      *
      * @example
      * ```typescript
-     * offset: [0, 1.5]  // Position text below icon
-     *
-     * offset: [1, 0]  // Position text to the right
+     * offset: 1.5  // Position text 1.5em away from icon in whichever direction the renderer chooses
      * ```
      */
-    offset?: DataDrivenPropertyValueSpecification<[number, number]>;
+    offset?: number;
 };
 
 /**

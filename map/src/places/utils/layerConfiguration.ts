@@ -2,15 +2,11 @@ import type { DataDrivenPropertyValueSpecification, SymbolLayerSpecification } f
 import type { LayerSpecTemplate } from '../../shared';
 import { TITLE } from '../../shared/layers/symbolLayers';
 import type { PlaceLayerName, PlacesModuleConfig } from '../types/placesModuleConfig';
+import type { IconScalesMap } from './customIconScales';
 import { getAvailabilityColorExpression } from './evAvailabilityHelpers';
 import { getTextOffset } from './textOffsetCalculator';
 import { getThemeAdaptiveTextColors } from './themeAdaptation';
-
-/**
- * Map of icon IDs to their text offset scale factors.
- * @ignore
- */
-export type IconScalesMap = Map<string, number>;
+import type { LightDark } from '../../shared/types/style';
 
 /**
  * Builds the text field expression for place labels
@@ -59,14 +55,17 @@ export const buildLayoutConfig = (
 ): SymbolLayerSpecification['layout'] => {
     const textConfig = config?.text;
     const customLayer = config?.layers?.[layerName];
-    const iconSize = layerSpec.layout?.['icon-size'];
-    const calculatedTextOffset = getTextOffset(iconSize, iconTextOffsetScales);
+    const hasCustomIcons = iconTextOffsetScales && iconTextOffsetScales.size > 0;
 
-    // Start with base layout, but remove offset properties we'll set explicitly
+    // Start with base layout
     const baseLayout = { ...layerSpec.layout };
-    delete baseLayout['text-offset'];
-    delete baseLayout['text-variable-anchor-offset'];
-    delete baseLayout['text-radial-offset'];
+
+    // Remove offset properties we'll replace
+    if (hasCustomIcons || textConfig?.offset !== undefined) {
+        delete baseLayout['text-offset'];
+        delete baseLayout['text-variable-anchor-offset'];
+        delete baseLayout['text-radial-offset'];
+    }
 
     const layout = {
         ...baseLayout,
@@ -76,13 +75,13 @@ export const buildLayoutConfig = (
         'text-field': textField,
     };
 
-    // Apply offset configuration - user config takes precedence
-    if (textConfig?.offset) {
-        layout['text-offset'] = textConfig.offset;
-    } else if (calculatedTextOffset.type === 'offset') {
-        layout['text-offset'] = calculatedTextOffset.value;
-    } else if (calculatedTextOffset.type === 'variable-anchor-offset') {
-        layout['text-variable-anchor-offset'] = calculatedTextOffset.value;
+    // Apply offset configuration
+    if (hasCustomIcons || textConfig?.offset !== undefined) {
+        // Dynamic offset calculation handles custom icons and/or custom offset
+        // For pin theme, this ensures proper vertical adjustments for left/right anchors
+        const iconSize = layerSpec.layout?.['icon-size'];
+        const scales = iconTextOffsetScales ?? new Map();
+        Object.assign(layout, getTextOffset(iconSize, scales, config?.theme, textConfig?.offset));
     }
 
     return layout;
@@ -96,12 +95,11 @@ export const buildPaintConfig = (
     layerSpec: LayerSpecTemplate<SymbolLayerSpecification>,
     config: PlacesModuleConfig | undefined,
     layerName: PlaceLayerName,
-    isDarkMode: boolean,
+    lightDark: LightDark,
 ): SymbolLayerSpecification['paint'] => {
     const textConfig = config?.text;
     const customLayer = config?.layers?.[layerName];
-    const { textColor: baseTextColor, haloColor: baseHaloColor } = getThemeAdaptiveTextColors(isDarkMode);
-
+    const { textColor: baseTextColor, haloColor: baseHaloColor } = getThemeAdaptiveTextColors(lightDark);
     return {
         ...layerSpec.paint,
         // Apply theme-adaptive colors as defaults

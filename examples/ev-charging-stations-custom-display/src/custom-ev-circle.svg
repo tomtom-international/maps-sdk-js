@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="54" height="54" viewBox="0 0 54 54">
+    <!-- Circular background station icon - Base variant -->
+    <!-- Main circle -->
+    <circle cx="27" cy="27" r="27" fill="#00D166"/>
+    <circle cx="27" cy="27" r="23" fill="#00D166" stroke="#263543" stroke-width="2" stroke-opacity="0.3"/>
+    <!-- Lightning bolt -->
+    <polygon points="32,16 22,29 27,30 25,40 35,27 30,26" fill="white"/>
+</svg>

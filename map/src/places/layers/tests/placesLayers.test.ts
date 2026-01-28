@@ -104,7 +104,7 @@ describe('Get places layer spec with circle or pin icon style config', () => {
                         size: 5,
                         title: ['get', 'name'],
                         font: [MAP_MEDIUM_FONT],
-                        offset: [0, 1],
+                        offset:  1,
                         color: 'red',
                         haloColor: 'white',
                         haloWidth: 1,
@@ -243,7 +243,6 @@ describe('Get places layer spec with base-map icon style config', () => {
                     'text-field': ['get', 'title'],
                     'icon-image': ['get', 'iconID'],
                     'text-size': placesTextSizeSpec,
-                    'text-variable-anchor-offset': ['top', [0, 0.7], 'left', [1.4, -1.4], 'right', [-1.4, -1.4]],
                 },
             },
             selected: {
@@ -260,7 +259,6 @@ describe('Get places layer spec with base-map icon style config', () => {
                     'icon-image': ['get', 'iconID'],
                     'text-size': placesTextSizeSpec,
                     'text-allow-overlap': true,
-                    'text-variable-anchor-offset': ['top', [0, 0.7], 'left', [1.4, -1.4], 'right', [-1.4, -1.4]],
                 },
             },
         });

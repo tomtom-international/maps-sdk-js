@@ -52,13 +52,12 @@ const withConfig = (
     layerSpec: LayerSpecTemplate<SymbolLayerSpecification>,
     config: PlacesModuleConfig | undefined,
     layerName: PlaceLayerName,
-    styleLightDarkTheme: LightDark,
+    lightDark: LightDark,
     iconTextOffsetScales?: IconScalesMap,
 ): LayerSpecTemplate<SymbolLayerSpecification> => {
     const textConfig = config?.text;
     const customLayer = config?.layers?.[layerName];
     const evAvailabilityEnabled = config?.evAvailability?.enabled === true;
-    const isDarkMode = styleLightDarkTheme === 'dark';
 
     const textFieldExpression = buildTextFieldExpression(config, evAvailabilityEnabled);
     const textField =
@@ -67,7 +66,7 @@ const withConfig = (
     return {
         ...layerSpec,
         layout: buildLayoutConfig(layerSpec, config, layerName, textField, iconTextOffsetScales),
-        paint: buildPaintConfig(layerSpec, config, layerName, isDarkMode),
+        paint: buildPaintConfig(layerSpec, config, layerName, lightDark),
         ...customLayer,
     };
 };

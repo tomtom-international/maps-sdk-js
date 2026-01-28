@@ -15,9 +15,12 @@ import {
 } from '@tomtom-org/maps-sdk/services';
 import { Popup } from 'maplibre-gl';
 import { API_KEY } from './config';
-import customEvIconSVG from './custom-ev-icon.svg?raw';
-import customEvIconAvailable from './custom-ev-icon-available.svg?raw';
-import customEvIconUnavailable from './custom-ev-icon-unavailable.svg?raw';
+import customEvPinSVG from './custom-ev-pin.svg?raw';
+import customEvPinAvailable from './custom-ev-pin-available.svg?raw';
+import customEvPinUnavailable from './custom-ev-pin-unavailable.svg?raw';
+import customEvCircleSVG from './custom-ev-circle.svg?raw';
+import customEvCircleAvailable from './custom-ev-circle-available.svg?raw';
+import customEvCircleUnavailable from './custom-ev-circle-unavailable.svg?raw';
 import { connectorsHTML } from './htmlTemplates';
 import './style.css';
 
@@ -47,12 +50,11 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         searchAvailability: true,
         searchCustomIcon: true,
         threshold: 0.3,
-        // undefined = use SDK defaults
         textColor: undefined as string | undefined,
         haloColor: undefined as string | undefined,
         haloWidth: 1,
         formatOption: 'slash' as 'slash' | 'of' | 'available',
-        textOffsetY: 0,
+        textOffset: 0,
         useCustomOffset: false,
     };
 
@@ -64,30 +66,64 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
             return undefined;
         }
 
-        // If availability is enabled, use the 2 availability-aware custom icons
+        // If availability is enabled, use the 2 availability-aware custom pin icons
         if (withAvailability) {
             return {
                 categoryIcons: [
                     {
                         id: 'ELECTRIC_VEHICLE_STATION' as POICategory,
-                        image: customEvIconAvailable,
+                        image: customEvPinAvailable,
                         availabilityLevel: 'available' as AvailabilityLevel,
                     },
                     {
                         id: 'ELECTRIC_VEHICLE_STATION' as POICategory,
-                        image: customEvIconUnavailable,
+                        image: customEvPinUnavailable,
                         availabilityLevel: 'occupied' as AvailabilityLevel,
                     },
                 ],
             };
         }
 
-        // Otherwise, use single custom icon without availability indicator
+        // Otherwise, use single custom pin icon without availability indicator
         return {
             categoryIcons: [
                 {
                     id: 'ELECTRIC_VEHICLE_STATION' as POICategory,
-                    image: customEvIconSVG,
+                    image: customEvPinSVG,
+                },
+            ],
+        };
+    };
+
+    const buildCircleIconConfig = (useCustom: boolean, withAvailability: boolean) => {
+        if (!useCustom) {
+            return undefined;
+        }
+
+        // If availability is enabled, use the 2 availability-aware circular icons
+        if (withAvailability) {
+            return {
+                categoryIcons: [
+                    {
+                        id: 'ELECTRIC_VEHICLE_STATION' as POICategory,
+                        image: customEvCircleAvailable,
+                        availabilityLevel: 'available' as AvailabilityLevel,
+                    },
+                    {
+                        id: 'ELECTRIC_VEHICLE_STATION' as POICategory,
+                        image: customEvCircleUnavailable,
+                        availabilityLevel: 'occupied' as AvailabilityLevel,
+                    },
+                ],
+            };
+        }
+
+        // Otherwise, use single circular icon without availability indicator
+        return {
+            categoryIcons: [
+                {
+                    id: 'ELECTRIC_VEHICLE_STATION' as POICategory,
+                    image: customEvCircleSVG,
                 },
             ],
         };
@@ -125,7 +161,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
             ...(state.textColor && { color: state.textColor }),
             ...(state.haloColor && { haloColor: state.haloColor }),
             haloWidth: state.haloWidth,
-            ...(state.useCustomOffset && { offset: [0, state.textOffsetY] as [number, number] }),
+            ...(state.useCustomOffset && { offset: state.textOffset }),
         };
     };
 
@@ -136,13 +172,14 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     // Background stations: Show all stations on the map
     const bgStations = await PlacesModule.get(map, {
         theme: 'base-map',
-        icon: buildIconConfig(state.bgCustomIcon, state.bgAvailability),
+        icon: buildCircleIconConfig(state.bgCustomIcon, state.bgAvailability),
         evAvailability: buildEVConfig(state.bgAvailability),
         text: buildTextConfig(),
     });
 
     // Searched stations: User-searched results
     const searchedStations = await PlacesModule.get(map, {
+        theme: 'pin',
         icon: buildIconConfig(state.searchCustomIcon, state.searchAvailability),
         evAvailability: buildEVConfig(state.searchAvailability),
         text: buildTextConfig(),
@@ -241,7 +278,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     const applyBackgroundConfig = async () => {
         bgStations.applyConfig({
             theme: 'base-map',
-            icon: buildIconConfig(state.bgCustomIcon, state.bgAvailability),
+            icon: buildCircleIconConfig(state.bgCustomIcon, state.bgAvailability),
             evAvailability: buildEVConfig(state.bgAvailability),
             text: buildTextConfig(),
         });
@@ -371,13 +408,13 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         });
 
         // Text offset controls
-        const offsetSlider = document.querySelector('#textOffsetY') as HTMLInputElement;
-        const offsetValue = document.querySelector('#textOffsetYValue') as HTMLSpanElement;
+        const offsetSlider = document.querySelector('#textOffset') as HTMLInputElement;
+        const offsetValue = document.querySelector('#textOffsetValue') as HTMLSpanElement;
         const useCustomOffsetCheckbox = document.querySelector('#useCustomOffset') as HTMLInputElement;
 
         offsetSlider?.addEventListener('input', async () => {
-            state.textOffsetY = Number.parseFloat(offsetSlider.value);
-            offsetValue.textContent = `${state.textOffsetY.toFixed(1)} em`;
+            state.textOffset = Number.parseFloat(offsetSlider.value);
+            offsetValue.textContent = `${state.textOffset.toFixed(1)} em`;
             if (state.useCustomOffset) {
                 await applyBackgroundConfig();
                 await applySearchedConfig();

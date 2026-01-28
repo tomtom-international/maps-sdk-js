@@ -46,7 +46,7 @@ export const getChargingPointAvailability = (
  * Default threshold for EV availability - available vs occupied.
  * @ignore
  */
-export const DEFAULT_EV_AVAILABILITY_THRESHOLD = 0.3;
+export const DEFAULT_EV_AVAILABILITY_THRESHOLD = 0;
 
 /**
  * Default formatter for EV availability text.

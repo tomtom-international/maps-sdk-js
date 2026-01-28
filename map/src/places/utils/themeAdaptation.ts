@@ -1,3 +1,4 @@
+import { LightDark } from "../../shared/types/style";
 /**
  * Calculates theme-adaptive text colors based on light/dark mode.
  * @param isDarkMode Whether the current theme is dark
@@ -8,13 +9,13 @@
  * or should they remain as fixed defaults?
  */
 export const getThemeAdaptiveTextColors = (
-    isDarkMode: boolean,
+    lightDark: LightDark,
 ): {
     textColor: string;
     haloColor: string;
 } => {
     return {
-        textColor: isDarkMode ? '#FFFFFF' : '#333333',
-        haloColor: isDarkMode ? '#333333' : '#FFFFFF',
+        textColor: lightDark === 'dark' ? '#FFFFFF' : '#333333',
+        haloColor: lightDark === 'dark' ? '#333333' : '#FFFFFF',
     };
 };
