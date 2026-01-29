@@ -12,12 +12,12 @@ const map = new TomTomMap({
 });
 
 const placesLayers = new ViewportPlaces(map);
-await placesLayers.addBaseMapPOICategories({
+await placesLayers.addPOICategories({
     minZoom: 12,
     categories: ['PARKING_GARAGE', 'OPEN_PARKING_AREA', 'ELECTRIC_VEHICLE_STATION'],
 });
 // These categories will show up on top of (higher priority) the previous ones:
-await placesLayers.addBaseMapPOICategories({
+await placesLayers.addPOICategories({
     minZoom: 10,
     categories: ['SUPERMARKETS_HYPERMARKETS'],
 });

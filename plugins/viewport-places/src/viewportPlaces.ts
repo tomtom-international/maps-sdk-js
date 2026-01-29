@@ -76,7 +76,7 @@ export class ViewportPlaces {
     }
 
     /**
-     * Performs the update logic for a place module with given options.
+     * Performs the update logic for a PlacesModule with given options.
      * @param placesModule - The PlacesModule to update.
      * @param options - The options containing search parameters and zoom constraints.
      */
@@ -96,7 +96,7 @@ export class ViewportPlaces {
     }
 
     /**
-     * Adds a place module that displays places based on fuzzy search parameters and automatically updates as the map moves.
+     * Adds a PlacesModule that displays places based on fuzzy search parameters and automatically updates as the map moves.
      *
      * @remarks
      * * Each call to "add" creates a new place module and places it above previously added modules.
@@ -126,19 +126,17 @@ export class ViewportPlaces {
     }
 
     /**
-     * Adds a place module for specific POI categories that updates automatically as the map moves.
+     * Adds a PlacesModule for specific POI categories that updates automatically as the map moves.
      * The POIs are shown in the same style as the base map.
      *
      * @remarks
-     * * This is a convenience wrapper over `add` that configures a category-based search for a place module.
+     * * This is a convenience wrapper over `add` that configures a category-based search for a PlacesModule.
      * * Each call creates a new place module that will be stacked on top of previously added modules.
      *
      * @param options - The options for the category-based place module.
      * @returns A promise that resolves to the PlacesModule instance managing the module.
      */
-    async addBaseMapPOICategories(
-        options: ViewportPlacesBaseOptions & { categories: POICategory[] },
-    ): Promise<PlacesModule> {
+    async addPOICategories(options: ViewportPlacesBaseOptions & { categories: POICategory[] }): Promise<PlacesModule> {
         return this.add({
             ...options,
             searchOptions: { query: '', poiCategories: options.categories },

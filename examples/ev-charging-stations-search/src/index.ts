@@ -220,7 +220,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         return undefined;
     };
 
-    mapEVStationsModule = await placesLayers.addBaseMapPOICategories({
+    mapEVStationsModule = await placesLayers.addPOICategories({
         id: mapEVStationsId,
         categories: ['ELECTRIC_VEHICLE_STATION'],
         minZoom: 7,
