@@ -2,6 +2,37 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.41.2](https://github.com/tomtom-international/maps-sdk-js/compare/v0.41.1...v0.41.2) (2026-01-29)
+
+
+### Features
+
+* account for vertical adjustment on anchors ([a34c746](https://github.com/tomtom-international/maps-sdk-js/commit/a34c746e078591674e33e4d1fdbb442ec1f1a8a3))
+* add availability level support to custom icon type definitions ([6728226](https://github.com/tomtom-international/maps-sdk-js/commit/6728226e00385e45608ed0a43fe768fe25df4367))
+* add availability-aware custom EV icons to example ([99a7c22](https://github.com/tomtom-international/maps-sdk-js/commit/99a7c229e1dd79fb05f0e23a62121a70649c20ae))
+* add EV availability helper utilities ([6b02133](https://github.com/tomtom-international/maps-sdk-js/commit/6b021336906a1c8a037753f363353145c9c03e4d))
+* add EV availability icon selection with custom icon support ([64340fe](https://github.com/tomtom-international/maps-sdk-js/commit/64340fed1dcb4660c71a3ee780b807601408ff42))
+* add EV charging stations custom display example ([dbcc1fd](https://github.com/tomtom-international/maps-sdk-js/commit/dbcc1fd347969851d598fc78d32c4bc496c43017))
+* add EVAvailabilityConfig type with opt-in configuration ([6a7d8b5](https://github.com/tomtom-international/maps-sdk-js/commit/6a7d8b578d6d02c355462ec6575087587aa06d05))
+* add jsdom and uni tests ([e2da3dc](https://github.com/tomtom-international/maps-sdk-js/commit/e2da3dc70c23264f5601cd84d59d6cdddc31283f))
+* add plugins workspace with first plugin to easily display search-powered layers of places on the map ([eac82a2](https://github.com/tomtom-international/maps-sdk-js/commit/eac82a2ebe731e87463564eb5e1331089ca1cc70))
+* add sanity e2e test ([fe6b0be](https://github.com/tomtom-international/maps-sdk-js/commit/fe6b0be1c7fba79aa69c7428e1f66451e181a4d9))
+* add text offset calculator with custom icon scale support ([c85a4c1](https://github.com/tomtom-international/maps-sdk-js/commit/c85a4c1a9d37e21dbf0ba3615a393a50015f14ee))
+* add theme awareness and availability-level icon image handling to PlacesModule ([62f0859](https://github.com/tomtom-international/maps-sdk-js/commit/62f0859671242f58b5ade2efc6b710944afdc720))
+* enhance EV custom display example with theme switching and improved controls ([5da5f20](https://github.com/tomtom-international/maps-sdk-js/commit/5da5f20af6634cb6ba3f16fb59c4ff0af3fd7a34))
+* implement EV availability display in layer specs ([2f737a2](https://github.com/tomtom-international/maps-sdk-js/commit/2f737a2a9cded78e1d52d8a06d0e62f4efb5d438))
+* integrate EV availability into place preparation ([1d9a2fc](https://github.com/tomtom-international/maps-sdk-js/commit/1d9a2fcea9017a752842aa42830f33535bbe67fa))
+* rename ev playground to search ([5b19771](https://github.com/tomtom-international/maps-sdk-js/commit/5b19771765584305ff900c7d0c70e30d364e9ab5))
+
+
+### Bug Fixes
+
+* address some syntax errors ([f8b7f90](https://github.com/tomtom-international/maps-sdk-js/commit/f8b7f90f8c748bfa3c8d404832b862ddab9913f9))
+* ensure  EV search example to use Gilroy font ([caea95b](https://github.com/tomtom-international/maps-sdk-js/commit/caea95b70e5e6c3e26c6fba666a94cd94515a83b))
+* fix JSDoc links to use {[@link](https://github.com/link)} syntax ([490fce2](https://github.com/tomtom-international/maps-sdk-js/commit/490fce247d1bafadde709151a8d4c2527bb76007))
+* make StyleChangeHandler callbacks optional ([35339ca](https://github.com/tomtom-international/maps-sdk-js/commit/35339ca0927474314bd2222c5dcc30d832552da7))
+* try to fail gracefully when some layers cannot be added in map modules, likely due to misconfiguration ([afa586e](https://github.com/tomtom-international/maps-sdk-js/commit/afa586e03e1a4d7c72f4b72fb1fab46bfeaa018a))
+
 ## [0.41.1](https://github.com/tomtom-international/maps-sdk-js/compare/v0.41.0...v0.41.1) (2026-01-16)
 
 
