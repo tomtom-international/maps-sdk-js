@@ -1,12 +1,12 @@
 import type { DataDrivenPropertyValueSpecification, SymbolLayerSpecification } from 'maplibre-gl';
 import type { LayerSpecTemplate } from '../../shared';
 import { TITLE } from '../../shared/layers/symbolLayers';
+import type { LightDark } from '../../shared/types/style';
 import type { PlaceLayerName, PlacesModuleConfig } from '../types/placesModuleConfig';
 import type { IconScalesMap } from './customIconScales';
 import { getAvailabilityColorExpression } from './evAvailabilityHelpers';
 import { getTextOffset } from './textOffsetCalculator';
 import { getThemeAdaptiveTextColors } from './themeAdaptation';
-import type { LightDark } from '../../shared/types/style';
 
 /**
  * Builds the text field expression for place labels

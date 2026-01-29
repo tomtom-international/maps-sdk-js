@@ -4,7 +4,7 @@ import type {
     SymbolLayerSpecification,
 } from 'maplibre-gl';
 import { DEFAULT_MAX_PIN_SCALE } from '../../shared/layers/commonLayerProps';
-import { ICON_ID, DEFAULT_TEXT_OFFSET_X, DEFAULT_TEXT_OFFSET_Y } from '../../shared/layers/symbolLayers';
+import { DEFAULT_TEXT_OFFSET_X, DEFAULT_TEXT_OFFSET_Y, ICON_ID } from '../../shared/layers/symbolLayers';
 import type { PlacesTheme } from '../types/placesModuleConfig';
 
 type VariableAnchorOffset = NonNullable<SymbolLayerSpecification['layout']>['text-variable-anchor-offset'];
@@ -35,7 +35,6 @@ const extractMaxIconScale = (expression: DataDrivenPropertyValueSpecification<nu
 
 /**
  * Layout properties for text offset - can be spread directly into layer layout.
- * @ignore
  */
 type TextOffsetLayout = {
     'text-offset'?: [number, number];
@@ -64,7 +63,7 @@ const buildAnchorOffsets = (
 
 /**
  * Calculates text offset for place labels
- * 
+ *
  * @param iconSizeExpression The icon-size property from the layer specification
  * @param iconTextOffsetScales Map of icon IDs to their scale factors (heightScale for vertical, widthScale for horizontal)
  * @param theme The places theme ('base-map' for circles, 'pin' for pins)
@@ -94,8 +93,20 @@ export const getTextOffset = (
     const fallbackTopOffset = DEFAULT_TEXT_OFFSET_Y * iconScaleMultiplier;
     const fallbackSideOffset = DEFAULT_TEXT_OFFSET_X * iconScaleMultiplier;
     const fallbackPinVerticalAdjustment = isBaseMapTheme ? 0 : -fallbackSideOffset;
-    const fallbackOffsets = buildAnchorOffsets(fallbackTopOffset, fallbackSideOffset, fallbackPinVerticalAdjustment, customTextOffset);
-    const fallbackAnchorOffset = ['top', fallbackOffsets.top, 'left', fallbackOffsets.left, 'right', fallbackOffsets.right];
+    const fallbackOffsets = buildAnchorOffsets(
+        fallbackTopOffset,
+        fallbackSideOffset,
+        fallbackPinVerticalAdjustment,
+        customTextOffset,
+    );
+    const fallbackAnchorOffset = [
+        'top',
+        fallbackOffsets.top,
+        'left',
+        fallbackOffsets.left,
+        'right',
+        fallbackOffsets.right,
+    ];
 
     // No custom icons - return literal value directly (no case expression needed)
     if (iconTextOffsetScales.size === 0) {

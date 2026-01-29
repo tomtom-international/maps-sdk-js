@@ -10,14 +10,12 @@ export type IconScalesMap = Map<string, { heightScale: number; widthScale: numbe
 
 /**
  * Default pin dimensions (from base pin.svg)
- * @ignore
  */
 const DEFAULT_PIN_HEIGHT_PX = 140;
 const DEFAULT_PIN_WIDTH_PX = 120;
 
 /**
  * Default base-map POI icon dimensions (from base-theme POI icons)
- * @ignore
  */
 const DEFAULT_MAP_POI_HEIGHT_PX = 54;
 const DEFAULT_MAP_POI_WIDTH_PX = 54;
@@ -77,12 +75,12 @@ export const extractImageDimensions = (image: string | HTMLImageElement): { widt
 
 /**
  * Calculate the scale factors for a custom icon based on its dimensions relative to standard icon sizes.
- * 
+ *
  * Calculates both height and width scales independently:
- * - Height scale is used for vertical text offset 
- * - Width scale is used for horizontal text offset 
- * 
- * 
+ * - Height scale is used for vertical text offset
+ * - Width scale is used for horizontal text offset
+ *
+ *
  * @param image The image to extract dimensions from
  * @param theme The places theme ('base-map' for circles, 'pin' for pins)
  * @returns Object with heightScale and widthScale, or undefined if icon is standard-sized (within tolerance)

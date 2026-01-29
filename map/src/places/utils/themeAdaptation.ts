@@ -1,7 +1,7 @@
-import { LightDark } from "../../shared/types/style";
+import { LightDark } from '../../shared/types/style';
 /**
  * Calculates theme-adaptive text colors based on light/dark mode.
- * @param isDarkMode Whether the current theme is dark
+ * @param lightDark Whether the current theme is light or dark
  * @returns Object with text and halo colors appropriate for the theme
  * @ignore
  *

@@ -104,7 +104,7 @@ describe('Get places layer spec with circle or pin icon style config', () => {
                         size: 5,
                         title: ['get', 'name'],
                         font: [MAP_MEDIUM_FONT],
-                        offset:  1,
+                        offset: 1,
                         color: 'red',
                         haloColor: 'white',
                         haloWidth: 1,

@@ -24,6 +24,7 @@
     "@types/geojson": "catalog:",
     "@types/lodash-es": "catalog:",
     "@vitest/coverage-v8": "catalog:",
+    "jsdom": "catalog:",
     "rimraf": "catalog:",
     "shared-configs": "workspace:*",
     "ts-node": "catalog:",

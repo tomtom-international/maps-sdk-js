@@ -324,7 +324,7 @@ export type PlaceTextConfig = {
      * Applies uniformly to all anchor positions (top, left, right).
      * Positive values increase distance from icon.
      *
-     * @default undefined (uses automatic offset based on icon size)
+     * @default undefined (uses automatic offset calculation based on icon size)
      *
      * @example
      * ```typescript

@@ -83,7 +83,6 @@ export const buildPlacesLayerSpecs = (
 ): PlaceLayersConfig => {
     const iconTextOffsetScales = buildCustomIconScalesMap(config, instanceIndex);
 
-    // Build layer spec templates based on the configured theme
     let main: LayerSpecTemplate<SymbolLayerSpecification>;
     let selected: LayerSpecTemplate<SymbolLayerSpecification>;
 
