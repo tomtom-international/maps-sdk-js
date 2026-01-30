@@ -1,0 +1,283 @@
+---
+title: Base Map Module
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.41.6"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Base Map Module in the TomTom Maps SDK provides comprehensive control over the fundamental map layers that form the visual foundation of your maps. This module encompasses essential cartographic elements including land, water, buildings, roads, borders, and various label types, enabling precise customization of map appearance and functionality.
+
+<SDKGuideLiveCodingExample exampleDirectory="layer-group-toggling" />
+
+## Overview
+
+The Base Map Module manages vector tile layers that represent the core geographic and cartographic features of TomTom maps. Unlike specialized modules that handle specific data types like traffic or POIs, the Base Map Module controls the fundamental visual elements that provide geographic context and navigation reference.
+
+**Core Layer Categories:**
+- **Geographic features** including land cover, water bodies, and political borders
+- **Built environment** with 2D and 3D building representations
+- **Transportation infrastructure** featuring road networks and navigation aids
+- **Labeling system** providing hierarchical place names and identifiers
+- **Address information** including house numbers and location markers
+
+**Key Capabilities:**
+- **Layer group management** for controlling specific map feature categories
+- **Selective visibility** enabling focused map displays for specialized applications
+- **Dynamic configuration** supporting runtime changes without map reloads
+- **Event handling** for interactive map experiences with base map elements
+
+## Layer Groups
+
+The Base Map Module organizes map content into logical layer groups that can be controlled independently and supports the [following layers](/maps-sdk-js/api-reference/types/map.BaseMapLayerGroupName.html),
+
+`land`, `water`, `borders`, `buildings2D`, `buildings3D`, `houseNumbers`, `roadLines`, `roadLabels`, `roadShields`, `placeLabels`, `smallerTownLabels`, `cityLabels`, `capitalLabels`, `stateLabels`, `countryLabels`
+
+## Basic Setup
+
+First set up your project and map following the [Map quickstart guide](../map/quickstart.mdx) and ensure you have a running [TomTomMap](/maps-sdk-js/api-reference/map-init.TomTomMap) instance.
+
+### Standard Base Map Initialization
+
+For comprehensive base map functionality, initialize the module with default settings:
+
+```javascript
+import { BaseMapModule } from '@tomtom-org/maps-sdk/map';
+
+const baseMap = await BaseMapModule.get(map);
+```
+
+### Base Map Initialization without Visibility Control
+
+Set up layer group filtering without initial visibility, which can be later set using [setVisible()](/maps-sdk-js/api-reference/classes/map.BaseMapModule.html#setvisible)
+
+```javascript
+const baseMap = await BaseMapModule.get(map, {
+    layerGroupsFilter: {
+        mode: 'include',
+        names: ['roadLines', 'roadLabels', 'buildings2D']
+    }
+});
+```
+
+### Advanced Base Map Initialization
+
+Configure the module to include only specific layer groups for specialized applications:
+
+**Layer Group Filter Behavior:**
+
+The [layerGroupsFilter](/maps-sdk-js/api-reference/types/map.BaseMapModuleInitConfig.html) configuration controls layer visibility through two modes:
+
+- **Exclude Mode**:
+  - `visible: false` - Hides all layers except those specified in `names`
+  - `visible: true` - Adds all layers back to the map except the layers mentioned in `names`.
+
+  **Note**: This will not hide the layers mentioned in `names` if they are already present.
+
+- **Include Mode**:
+  - `visible: false` - Hides only the layers specified in `names`
+  - `visible: true` - Shows only the layers specified in `names`
+
+```javascript
+// Include Mode Examples
+
+// Include mode with visible: true - Shows land, water, and borders layers
+const includeVisible = await BaseMapModule.get(map, {
+    layerGroupsFilter: {
+        mode: 'include',
+        names: ['land', 'water', 'borders']
+    },
+    visible: true
+});
+
+// Include mode with visible: false - Hides buildings layers
+const includeHidden = await BaseMapModule.get(map, {
+    layerGroupsFilter: {
+        mode: 'include',
+        names: ['buildings2D', 'buildings3D']
+    },
+    visible: false
+});
+
+// Exclude Mode Examples
+
+// Exclude mode with visible: true - Shows all layers EXCEPT the specified ones.
+// Eg., if placeLabels is already  present, it won't be hidden. It needs to be explicitly removed first.
+const excludeVisible = await BaseMapModule.get(map, {
+    layerGroupsFilter: {
+        mode: 'exclude',
+        names: ['placeLabels', 'roadLabels', 'cityLabels']
+    },
+    visible: true
+});
+
+// Exclude mode with visible: false - Hides ALL layers EXCEPT the specified ones
+const excludeHidden = await BaseMapModule.get(map, {
+    layerGroupsFilter: {
+        mode: 'exclude',
+        names: ['land', 'water']
+    },
+    visible: false
+});
+```
+
+## Dynamic Control
+
+### Changing Visibility
+
+Control base map visibility dynamically based on application state:
+
+```javascript
+// Toggle overall base map visibility
+baseMap.setVisible(false);
+
+// Check current visibility state
+if (baseMap.isVisible()) {
+    console.log('Base map is currently visible');
+}
+```
+
+### Applying Configuration Updates
+
+Apply configuration changes at runtime without map reinitialization:
+
+```javascript
+baseMap.applyConfig({
+    layerGroupsVisibility: {
+        visible: true,
+        mode: 'include',
+        names: ['land', 'water', 'cityLabels']
+    }
+});
+```
+
+## Advanced Layer Group Management
+
+Create specialized map displays for different application contexts:
+
+```javascript
+// Navigation-focused configuration
+const navigationConfig = {
+    layerGroups: {
+        mode: 'include',
+        names: ['land', 'water', 'roadLines', 'roadLabels', 'roadShields']
+    }
+};
+
+// Urban planning configuration
+const urbanConfig = {
+    layerGroups: {
+        mode: 'include',
+        names: ['land', 'buildings2D', 'buildings3D', 'roadLines']
+    }
+};
+
+// Geography education configuration
+const geoConfig = {
+    layerGroups: {
+        mode: 'include',
+        names: ['land', 'water', 'borders', 'countryLabels', 'capitalLabels']
+    }
+};
+
+// Apply based on application mode
+baseMap.setVisible(true, navigationConfig);
+```
+
+## Event Handling
+
+The Base Map Module provides [event handling](/maps-sdk-js/api-reference/classes/map.BaseMapModule.html#events) capabilities for interactive applications:
+
+```javascript
+const baseMap = await BaseMapModule.get(map);
+
+// Handle clicks on base map features
+baseMap.events.on('click', (feature, lngLat) => {
+    console.log('Base map feature clicked:', feature.properties);
+
+    if (feature.properties.building) {
+        showBuildingDetails(feature.properties);
+    } else if (feature.properties.road_name) {
+        showRoadInformation(feature.properties);
+    }
+});
+
+// Handle hover for feature identification
+baseMap.events.on('hover', (feature, lngLat) => {
+    showFeaturePreview(feature.properties, lngLat);
+});
+```
+
+## Integration Patterns
+
+### Multi-Module Coordination
+
+Coordinate the Base Map Module with other specialized modules for comprehensive applications:
+
+```javascript
+import { BaseMapModule, POIsModule, TrafficIncidentsModule } from '@tomtom-org/maps-sdk/map';
+
+// Initialize modules with complementary configurations
+const baseMap = await BaseMapModule.get(map, {
+    layerGroupsFilter: {
+        mode: 'exclude',
+        names: ['placeLabels'] // Let POIs handle place labeling
+    }
+});
+
+const poisModule = await POIsModule.get(map);
+const trafficIncidentsModule = await TrafficIncidentsModule.get(map);
+
+// Coordinate visibility for focused displays
+function showNavigationView() {
+    baseMap.setVisible(true, {
+        layerGroups: {
+            mode: 'include',
+            names: ['roadLines', 'roadLabels', 'roadShields']
+        }
+    });
+    trafficIncidentsModule.setVisible(true);
+    poisModule.setVisible(false);
+}
+```
+
+### Responsive Map Configuration
+
+Adapt base map display based on viewport size and device capabilities:
+
+```javascript
+function updateMapConfiguration() {
+    const isMobile = window.innerWidth < 768;
+    const isHighDensity = window.devicePixelRatio > 1.5;
+
+    if (isMobile) {
+        // Simplified display for mobile
+        baseMap.setVisible(true, {
+            layerGroups: {
+                mode: 'include',
+                names: ['land', 'water', 'roadLines', 'cityLabels']
+            }
+        });
+    } else if (isHighDensity) {
+        // Rich detail for high-resolution displays
+        baseMap.setVisible(true, {
+            layerGroups: {
+                mode: 'include',
+                names: ['land', 'water', 'buildings3D', 'roadLines', 'roadLabels', 'houseNumbers']
+            }
+        });
+    }
+}
+```
+
+## API Reference
+
+For complete documentation of all BaseMapModule properties, methods, and types, see the **[BaseMapModule API Reference](/maps-sdk-js/api-reference/classes/map.BaseMapModule.html)**.
+
+## Examples
+
+For complete base map implementation examples and advanced layer group management patterns, go to http://docs.tomtom.com/maps-sdk-js/examples.
