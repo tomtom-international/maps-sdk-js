@@ -3,12 +3,13 @@ import { PlacesModule, type PlacesModuleConfig, TomTomMap } from '@tomtom-org/ma
 import { type FuzzySearchParams, search } from '@tomtom-org/maps-sdk/services';
 
 /**
- * Base options for configuring places modules, including optional identifiers and zoom level constraints.
+ * Common Options when adding a viewport places module.
+ *
  * @group Viewport Places
  */
-export type ViewportPlacesBaseOptions = {
+export type ViewportPlacesAddCommonOptions = {
     /**
-     * Optional unique identifier for the places module.
+     * Optional unique identifier for the viewport places module.
      *
      * @remarks
      * * If not provided, a random ID will be generated.
@@ -26,11 +27,13 @@ export type ViewportPlacesBaseOptions = {
 };
 
 /**
+ * Full Options when adding a viewport places module.
+ *
  * @group Viewport Places
  */
-export type ViewportPlacesOptions = ViewportPlacesBaseOptions & {
+export type ViewportPlacesAddOptions = ViewportPlacesAddCommonOptions & {
     /**
-     * The fuzzy search parameters to query places for this place module.
+     * The search parameters to query places for this place module.
      */
     searchOptions: FuzzySearchParams;
     /**
@@ -40,9 +43,11 @@ export type ViewportPlacesOptions = ViewportPlacesBaseOptions & {
 };
 
 /**
+ * Options when updating a viewport places module.
+ *
  * @group Viewport Places
  */
-export type ViewportPlacesUpdateOptions = Omit<ViewportPlacesOptions, 'id'> & {
+export type ViewportPlacesOptions = Omit<ViewportPlacesAddOptions, 'id'> & {
     /**
      * The unique identifier of the place module to update.
      * @remarks
@@ -63,7 +68,7 @@ export class ViewportPlaces {
      */
     private registeredModules: Record<
         string,
-        { options: ViewportPlacesOptions; placesModule: PlacesModule; subscription: any }
+        { options: ViewportPlacesAddOptions; placesModule: PlacesModule; subscription: any }
     > = {};
     private readonly mapLibreMap;
 
@@ -80,7 +85,7 @@ export class ViewportPlaces {
      * @param placesModule - The PlacesModule to update.
      * @param options - The options containing search parameters and zoom constraints.
      */
-    private async searchAndDisplay(placesModule: PlacesModule, options: ViewportPlacesOptions): Promise<void> {
+    private async searchAndDisplay(placesModule: PlacesModule, options: ViewportPlacesAddOptions): Promise<void> {
         const zoom = this.mapLibreMap.getZoom();
         if ((options.minZoom && zoom < options.minZoom) || (options.maxZoom && zoom > options.maxZoom)) {
             await placesModule.clear();
@@ -106,7 +111,7 @@ export class ViewportPlaces {
      * @param options - The options for the place module.
      * @returns A promise that resolves to the PlacesModule instance managing the module.
      */
-    async add(options: ViewportPlacesOptions): Promise<PlacesModule> {
+    async add(options: ViewportPlacesAddOptions): Promise<PlacesModule> {
         const id = options.id ?? generateId();
         const effectiveOptions = {
             ...options,
@@ -136,7 +141,9 @@ export class ViewportPlaces {
      * @param options - The options for the category-based place module.
      * @returns A promise that resolves to the PlacesModule instance managing the module.
      */
-    async addPOICategories(options: ViewportPlacesBaseOptions & { categories: POICategory[] }): Promise<PlacesModule> {
+    async addPOICategories(
+        options: ViewportPlacesAddCommonOptions & { categories: POICategory[] },
+    ): Promise<PlacesModule> {
         return this.add({
             ...options,
             searchOptions: { query: '', poiCategories: options.categories },
@@ -174,7 +181,7 @@ export class ViewportPlaces {
      * @param newOptions - The new options to apply.
      * @throws Error if the place module with the given ID does not exist.
      */
-    async update(newOptions: ViewportPlacesUpdateOptions): Promise<void> {
+    async update(newOptions: ViewportPlacesOptions): Promise<void> {
         const entry = this.registeredModules[newOptions.id];
         if (!entry) {
             throw new Error(`Place module with id ${newOptions.id} not found`);
