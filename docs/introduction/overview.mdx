@@ -1,0 +1,72 @@
+---
+title: About Maps SDK for JavaScript
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.41.8"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+<Blockquote>
+	We have released some capabilities in the Maps SDK under [Public Preview](https://docs.tomtom.com/legal/public-preview) to collect feedback from the community.\
+	While our goal is to keep the design of the interface stable, breaking changes will occur, particularly in the earlier versions.\
+    The versions will follow a 0.MAJOR.MINOR pattern for the time being.\
+    Stay tuned with our release `CHANGELOG.md` files.
+</Blockquote>
+
+## Quickstart
+
+1. **Get your TomTom API key:**
+- Sign up or log in at [TomTom Developer Portal](https://developer.tomtom.com/).
+- Create an API key following these [instructions](https://docs.tomtom.com/platform/documentation/dashboard/api-key-management).
+
+2. **Install the SDK:**
+```sh
+npm install @tomtom-org/maps-sdk
+```
+
+3. **Start building:**
+- Follow the [Core Quickstart](../guides/core/quickstart.mdx) to set up your common configuration.
+- Follow the [Map Quickstart](../guides/map/quickstart.mdx) to display your first map.
+- Or try the [Services Quickstart](../guides/services/quickstart.mdx) to call search, geocoding, or routing APIs.
+
+For more project setup details, see the [Project Setup Guide](./project-setup.mdx).
+
+## Overview
+
+**Maps SDK JS** is a **JavaScript/TypeScript** library for building applications using **TomTom** map display and geolocation APIs.
+
+It leverages the power of [MapLibre GL JS](/maps-sdk-js/guides/map/about-maplibre) and [GeoJSON](https://geojson.org/)
+to seamlessly integrate TomTom maps and services with convenient out-of-the-box support, while staying highly customizable and extensible.
+
+<SDKGuideLiveCodingExample exampleDirectory="default-map" />
+
+## Key Features
+
+- **Interactive Maps**: MapLibre-powered library for styled, service-compatible TomTom Maps
+- **Comprehensive Services**: Easy access to TomTom's location APIs including search, routing, and geocoding
+- **GeoJSON Support**: Built-in compatibility with the widely-used geospatial data format
+- **TypeScript Ready**: Full TypeScript support with comprehensive type definitions
+- **Modular Architecture**: Use only the features you need with tree-shaking support
+
+## Where can you run it?
+
+- **Web**: Display and configure maps, search for places, plan routes, and interact with location data
+- **Node.js**: Server-side geocoding, route calculation, and data enrichment capabilities
+- **React Native**: Leverage TomTom location services from a single codebase
+
+## Bundles
+
+The Maps SDK is made up of three bundles:
+
+-   [**Core**](/maps-sdk-js/guides/core/quickstart): Shared configuration, types, and utilities used across Map and Services bundles.
+-   [**Map**](/maps-sdk-js/guides/map/quickstart): MapLibre-powered library for interactive TomTom Maps with modules for places, routes, traffic, and more.
+-   [**Services**](/maps-sdk-js/guides/services/quickstart): GeoJSON services for TomTom location APIs: search, routing, geocoding, EV charging availability, and geometry data.
+
+## Next Steps
+
+- [Project Setup Guide](./project-setup.mdx)
+- [Learn how the SDK works](../guides/how-the-sdk-works.mdx)
