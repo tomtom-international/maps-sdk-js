@@ -1,0 +1,289 @@
+---
+title: Traffic Incidents Module
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.41.5"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Traffic Incidents Module controls the [map layers](./styles.mdx) that display real-time traffic events, such as accidents, road closures, construction, and weather disruptions.
+Events are displayed across the entire map area and each incident shows its type, severity, affected road segments, and expected delay impact.
+
+<SDKGuideLiveCodingExample exampleDirectory="traffic-incidents" />
+
+**Looking for something else?**
+- For traffic **speed conditions** (color-coded congestion) across the map, see [Traffic Flow Module](./traffic-flow)
+- For traffic **incidents along a specific route**, see [Routing Module](./routes)
+
+## Initialization
+
+```javascript
+import { TomTomMap, TrafficIncidentsModule } from '@tomtom-org/maps-sdk/map';
+
+const map = new TomTomMap( { mapLibre: { container: 'map' } } );
+const trafficIncidentsModule = await TrafficIncidentsModule.get(map);
+```
+
+## Visibility
+
+Traffic incidents are hidden by default. This helps you control better when you want them to appear on the map.
+
+You can make them visible during initialization:
+```javascript
+const trafficIncidentsModule = await TrafficIncidentsModule.get(map, { visible: true });
+```
+
+You can change visibility later using the `setVisible` method.
+```javascript
+trafficIncidentsModule.setVisible(true);
+```
+
+## Icon Visibility
+
+Icons can be controlled separately from incident areas. This allows you to show only the icons, or only the lines, at any time.
+
+```javascript
+// Initialize with visibility set in the configuration
+const trafficIncidentsModule = await TrafficIncidentsModule.get(map, {
+    icons: {
+        visible: false,
+    },
+});
+
+// Show/hide incident icons but keep incident areas visible
+trafficIncidentsModule.setIconsVisible(true);
+trafficIncidentsModule.setIconsVisible(false);
+
+// Check icon visibility
+if (trafficIncidentsModule.anyIconLayersVisible()) {
+    console.log('Incident icons are visible');
+}
+```
+
+## Filtering
+
+A filter can be applied either during module initialization or later using the `filter` method.
+
+```javascript
+// Initialize with filter
+const trafficIncidentsModule = await TrafficIncidentsModule.get(map, {
+    filters: ...,
+});
+
+// Apply or update filter later
+trafficIncidentsModule.filter(...);
+```
+
+### Incident Category
+
+Display only specific types of incidents:
+
+```javascript
+// Show only accidents and road closures
+trafficIncidentsModule.filter({
+    any: [{
+        incidentCategories: {
+            show: 'only',
+            values: ['accident', 'road_closed']
+        }
+    }]
+});
+
+// Hide weather-related incidents
+incidents.filter({
+    any: [{
+        incidentCategories: {
+            show: 'all_except',
+            values: ['rain', 'fog', 'ice', 'wind']
+        }
+    }]
+});
+```
+
+**Available Incident Categories:**
+- `accident` - Traffic accidents
+- `road_closed` - Complete road closures
+- `lane_closed` - Lane closures
+- `road_works` - Construction and maintenance
+- `jam` - Traffic jams
+- `fog`, `rain`, `ice`, `wind`, `flooding` - Weather conditions
+- `dangerous_conditions` - Hazardous road conditions
+- `broken_down_vehicle` - Vehicle breakdowns
+- `unknown` - Incidents with unknown type
+
+### Severity
+
+Filter incidents based on their delay magnitude:
+
+```javascript
+// Show moderate and major delays
+incidents.filter({
+    any: [{
+        magnitudes: {
+            show: 'only',
+            values: ['major', 'moderate']
+        }
+    }]
+});
+```
+
+**Available Magnitudes:**
+- `minor` - Small delays
+- `moderate` - Moderate delays
+- `major` - Significant delays
+- `indefinite` - Road closures with no estimated delay
+- `unknown` - Unknown or no delay information
+
+### Delay Duration
+
+Filter incidents by minimum delay:
+
+```javascript
+// Show incidents with at least 5 minutes delay
+incidents.filter({
+    any: [{
+        delays: {
+            mustHaveDelay: true,
+            minDelayMinutes: 5
+        }
+    }]
+});
+```
+
+### Road Category
+
+Display incidents only on specific road types:
+
+```javascript
+// Show incidents only on highways
+incidents.filter({
+    any: [{
+        roadCategories: {
+            show: 'only',
+            values: ['motorway', 'trunk']
+        }
+    }]
+});
+
+// Show incidents only on major local roads within tertiary category
+incidents.filter({
+    any: [{
+        roadCategories: {
+            show: 'only',
+            values: ['tertiary']
+        },
+        roadSubCategories: {
+            show: 'only',
+            values: ['major_local']
+        }
+    }]
+});
+```
+
+**Available Road Categories:**
+- `motorway` - Major highways
+- `trunk` - Major roads
+- `primary` - Primary roads
+- `secondary` - Secondary roads
+- `tertiary` - Tertiary roads
+- `street` - Local streets
+
+**Available Road Subcategories:**
+- `tertiary`
+  - `connecting` - Roads connecting different areas
+  - `major_local` - Major roads within local areas
+- `street`
+  - `local` - Standard local streets
+  - `minor_local` - Minor residential streets
+
+### Multiple Filters
+
+Combine multiple filter criteria:
+
+```javascript
+// Show major accidents OR road closures
+incidents.filter({
+    any: [
+        {
+            incidentCategories: { show: 'only', values: ['accident'] },
+            magnitudes: { show: 'only', values: ['major'] }
+        },
+    ]
+});
+```
+
+### Separate Icon and Area Filters
+
+Apply different filters to icons and incident areas:
+
+```javascript
+// Show all incidents on highways
+const incidentFilter = {
+    any: [{
+        roadCategories: { show: 'only', values: ['motorway', 'trunk'] }
+    }]
+};
+
+// But only show icons for major incidents
+const iconFilter = {
+    any: [{
+        magnitudes: { show: 'only', values: ['major'] }
+    }]
+};
+
+incidents.filter(incidentFilter, iconFilter);
+```
+
+### Reset Filters
+
+Remove all filters and show all incidents:
+
+```javascript
+incidents.filter(undefined);
+```
+
+## Events
+
+Handle user interactions with traffic incidents:
+
+```javascript
+// Click events
+incidents.events.on('click', (feature) => {
+    ...
+});
+
+// Hover events
+incidents.events.on('hover', (feature) => {
+    ...
+});
+
+// Long hover events
+incidents.events.on('long-hover', (feature) => {
+    ...
+});
+
+// Remove event listeners
+incidents.events.off('click', handler);
+```
+
+## API Reference
+
+For complete documentation of all Traffic Incidents Module properties, methods, and types, see the **[TrafficIncidentsModule API Reference](/maps-sdk-js/api-reference/classes/map.TrafficIncidentsModule.html)**.
+
+## Related Guides and Examples
+
+### Traffic Overview
+- **[Traffic Overview](./traffic)** - Overview of all traffic visualization options including flow, incidents, and route-specific traffic
+
+### Related Traffic Modules
+- **[Traffic Flow Module](./traffic-flow)** - Display real-time traffic speed conditions
+- **[Routing Module](./routes)** - Display routes with traffic incidents along the path
+
+### Related Examples
+- **[Traffic Incidents](../../examples/traffic-incidents)** - Interactive traffic incidents visualization with filtering
+- **[Traffic Config Playground](../../examples/traffic-config-playground)** - Explore traffic configuration options
+
