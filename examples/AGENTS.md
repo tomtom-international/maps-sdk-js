@@ -241,6 +241,10 @@ examples/
 
 - **hillshade** - Display terrain with hillshading
 
+### Plugins
+
+- **viewport-places-plugin** - Viewport Places Plugin example
+
 ### Node.js Examples
 
 - **nodejs-geocode** - Server-side geocoding
