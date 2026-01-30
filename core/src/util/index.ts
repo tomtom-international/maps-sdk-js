@@ -1,3 +1,7 @@
+/**
+ * Core utility functions for the Maps SDK.
+ * @module
+ */
 export * from './bbox';
 export * from './generateId';
 export * from './headers';

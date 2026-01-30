@@ -58,7 +58,10 @@ export type ViewportPlacesOptions = Omit<ViewportPlacesAddOptions, 'id'> & {
 
 /**
  * A class for managing dynamic searched place modules on a TomTom map.
- * It leverages the SDK search service to maintain place modules that automatically update and stay current as the map moves.
+ *
+ * It leverages the SDK search service to maintain place modules that automatically
+ * update and stay current as the map viewport changes.
+ *
  * @group Viewport Places
  */
 export class ViewportPlaces {
