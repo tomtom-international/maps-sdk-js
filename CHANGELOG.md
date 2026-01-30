@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.41.4](https://github.com/tomtom-international/maps-sdk-js/compare/v0.41.3...v0.41.4) (2026-01-30)
+
+
+### Bug Fixes
+
+* missing [@ignore](https://github.com/ignore) for internal routing variable ([3d0651d](https://github.com/tomtom-international/maps-sdk-js/commit/3d0651d38cbba4768dbf93c76858950f10b9a51b))
+* missing tsdoc group for type ([c979606](https://github.com/tomtom-international/maps-sdk-js/commit/c9796067f7fb1dabda579ca4d086369da3f198c3))
+
 ## [0.41.3](https://github.com/tomtom-international/maps-sdk-js/compare/v0.41.2...v0.41.3) (2026-01-29)
 
 
