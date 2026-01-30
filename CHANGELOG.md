@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.41.6](https://github.com/tomtom-international/maps-sdk-js/compare/v0.41.5...v0.41.6) (2026-01-30)
+
+
+### Features
+
+* **viewport-places:** improve types ([817678e](https://github.com/tomtom-international/maps-sdk-js/commit/817678e6d280560307bfb445bf183136aca69a41))
+
 ## [0.41.5](https://github.com/tomtom-international/maps-sdk-js/compare/v0.41.4...v0.41.5) (2026-01-30)
 
 

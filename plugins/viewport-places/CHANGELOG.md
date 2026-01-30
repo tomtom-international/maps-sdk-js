@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-viewport-places-v0.1.3...maps-sdk-plugin-viewport-places-v0.1.4) (2026-01-30)
+
+
+### Features
+
+* **viewport-places:** improve types ([817678e](https://github.com/tomtom-international/maps-sdk-js/commit/817678e6d280560307bfb445bf183136aca69a41))
+
 ## [0.1.3](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-viewport-places-v0.1.2...maps-sdk-plugin-viewport-places-v0.1.3) (2026-01-30)
 
 
