@@ -1,0 +1,179 @@
+---
+title: Map Modules
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.41.4"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+Map Modules are self-contained extensions that add specialized functionality to a [TomTomMap](./tomtom-map.mdx) instance.
+
+Each module provides focused capabilities for different mapping needs — from displaying traffic information to handling user-generated content — while following a consistent pattern for initialization, configuration, and lifecycle management that makes them easy to integrate and use together.
+
+## Key Features
+
+- **Composition**: Modules can be combined to work together seamlessly. Some modules can be instantiated multiple times on the same map for the same module type.
+- **Data management**: Modules handle their own data sources and rendering
+- **Style integration**: Modules automatically integrate with map styles and themes
+- **Statefulness**: Modules maintain their own state and configuration independently. Modules restore their state when the map style changes.
+- **Smart event handling**: Modules provide their own event systems for user interactions with seamless mapping to the original typed data.
+- **Service integration**: Seamless integration with TomTom services for added data such as places, routes and geometries
+- **Lazy loading**: Modules are loaded only when needed for optimal performance
+
+## Types of Modules
+
+There are two types of modules in the TomTom Maps SDK depending on their data source:
+- **Existing data modules**: These modules do not display data by themselves, but offer some control and user events for existing map data.
+  - Example: Base Map, POIs, Traffic Incidents/Flow, Hillshade.
+- **Own data modules**: These modules display GeoJSON data obtained from TomTom services or user-provided data.
+  - Example: Places, Routing, Geometries.
+
+
+## List of Modules
+
+### Base Map Module
+
+A **BaseMapModule** provides visibility and events for layer groups of the base map.
+
+```javascript
+import { BaseMapModule } from '@tomtom-org/maps-sdk/map';
+
+// Control specific layer groups
+const baseMapModule = await BaseMapModule.get(map, {
+    layerGroupsFilter: {
+        mode: 'include',
+        names: ['borders', 'buildings2D', 'roadLines']
+    }
+});
+
+// Toggle layer group visibility
+baseMapModule.setVisible(true);
+```
+
+**[Learn more about Base Map Module →](./base-map.mdx)**
+
+### Places Module
+
+A **PlacesModule** handles search results visualization and place information display.
+
+```javascript
+import { PlacesModule } from '@tomtom-org/maps-sdk/map';
+import { search } from '@tomtom-org/maps-sdk/services';
+
+// Initialize places module
+const placesModule = await PlacesModule.get(map);
+
+// Search and display results
+const results = await search({ query: 'restaurants near me' });
+placesModule.show(results);
+
+// Handle place interactions
+placesModule.events.on('click', (place) => {
+    console.log('Selected place:', place.properties.name);
+});
+```
+
+### POIs Module
+A **POIsModule** controls the display and events for Points of Interest with category-based filtering and styling.
+
+```javascript
+import { POIsModule } from '@tomtom-org/maps-sdk/map';
+
+// Display specific POI categories
+const poisModule = await POIsModule.get(map, {
+    filters: {
+        categories: { show: 'all_except', values: ['ELECTRIC_VEHICLE_STATION'] },
+    },
+});
+```
+
+**[Learn more about POIs Module →](../map/pois.mdx)**
+
+### Routing Module
+A **RoutingModule** controls the display of routes, waypoints, and navigation instructions, and user events on such parts.
+
+```javascript
+import { RoutingModule } from '@tomtom-org/maps-sdk/map';
+import { calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+// Initialize routing module
+const routingModule = await RoutingModule.get(map);
+
+// Calculate and display route
+const route = await calculateRoute({
+    geoInputs,
+});
+routingModule.showRoutes(route);
+```
+
+**[Learn more about Routing Module →](./routes.mdx)**
+
+### Traffic Flow Module
+The **TrafficFlowModule** displays real-time traffic flow information with color-coded speed indicators.
+
+```javascript
+import { TrafficFlowModule } from '@tomtom-org/maps-sdk/map';
+
+// Add traffic flow visualization
+const trafficFlowModule = await TrafficFlowModule.get(map);
+
+// Control traffic display
+trafficFlowModule.setVisible(true);
+
+// Configure traffic styling
+trafficFlowModule.filter({
+    any: [{ showRoadClosures: 'only' }],
+});
+```
+
+**[Learn more about Traffic Flow Module →](./traffic-flow.mdx)**
+
+### Traffic Incidents Module
+The **TrafficIncidentsModule** shows traffic incidents like accidents, road closures, and construction.
+
+```javascript
+import { TrafficIncidentsModule } from '@tomtom-org/maps-sdk/map';
+
+// Display traffic incidents
+const trafficIncidentsModule = await TrafficIncidentsModule.get(map, {
+    icons: { visible: false },
+    filters: { any: [{ magnitudes: { show: 'all_except', values: ['minor'] } }] },
+});
+```
+
+**[Learn more about Traffic Incidents Module →](./traffic-incidents.mdx)**
+
+### Geometries Module
+The **GeometriesModule** displays custom geometric data like polygons, lines, and markers.
+
+```javascript
+import { GeometriesModule } from '@tomtom-org/maps-sdk/map';
+
+// Initialize geometries module
+const geometryModule = await GeometriesModule.get(map);
+
+const geometryToSearch = await geometryData({ geometries: location });
+geometryModule.show(geometryToSearch);
+```
+
+**[Learn more about Geometries Module →](./geometries.mdx)**
+
+### Hillshade Module
+The **HillshadeModule** adds terrain elevation shading for topographic visualization.
+
+```javascript
+import { HillshadeModule } from '@tomtom-org/maps-sdk/map';
+
+const hillshadeModule = await HillshadeModule.get(map, {
+    ensureAddedToStyle: true,
+});
+
+// Toggle hillshade visibility
+hillshadeModule.setVisible(true);
+```
+
+**[Learn more about Hillshade Module →](./hillshade.mdx)**

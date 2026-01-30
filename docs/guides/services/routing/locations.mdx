@@ -1,0 +1,168 @@
+---
+title: Locations
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.41.4"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The `locations` parameter defines waypoints and paths for route calculation. Routes pass through locations in the specified order, creating a multi-stop journey.
+
+You can provide two types of locations:
+- Single point waypoints
+- Path arrays
+
+*Note: The origin and destination must be single point waypoints.*
+
+<Blockquote type="announcement" hasIcon>
+
+  Maximum 150 waypoints per route.
+
+</Blockquote>
+
+## Single Point Waypoints
+
+Single point waypoints are considered exact stops along the route. Each creates an additional route leg with arrival instructions.
+
+### Coordinate Pairs
+
+Specify locations as `[longitude, latitude]` coordinate pairs:
+
+```javascript
+import { calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+const route = await calculateRoute({
+    locations: [
+        [4.897070, 52.377956],  // Amsterdam
+        [4.288788, 52.078663],  // The Hague
+        [4.462456, 51.926517]   // Rotterdam
+    ]
+});
+```
+
+### GeoJSON Points and Features
+
+Any object with coordinates (Point geometry, or Feature) can be passed as a waypoint. This allows you to use responses from our services directly as locations.
+
+Using geocoded locations as waypoints:
+
+```javascript
+import { calculateRoute, geocodeOne } from '@tomtom-org/maps-sdk/services';
+
+const waypoints = await Promise.all([
+    geocodeOne('Amsterdam, Netherlands'),
+    geocodeOne('The Hague, Netherlands'),
+    geocodeOne('Rotterdam, Netherlands')
+]);
+
+const route = await calculateRoute({ locations: waypoints });
+```
+
+Using search results as waypoints:
+
+```javascript
+import { calculateRoute, search } from '@tomtom-org/maps-sdk/services';
+
+const origin = await search({
+  query: 'Coffee shop',
+  position: [4.9041, 52.3676], // Amsterdam
+  limit: 1
+});
+const destination = await search({
+  query: 'Coffee shop',
+  position: [4.462456, 51.926517], // Rotterdam
+  limit: 1
+});
+
+const route = await calculateRoute({ locations: [
+    origin.features[0],
+    destination.features[0],
+]});
+```
+
+## Path Arrays
+
+Path arrays contain coordinate sequences for route reconstruction, forcing the route to follow a specific path.
+
+Provide coordinate sequences for route reconstruction:
+
+```javascript
+import { calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+const route = await calculateRoute({
+    locations: [
+        [4.9, 52.3],  // Origin waypoint
+        [
+            [4.85, 52.25],  // Path points
+            [4.80, 52.20],
+            [4.75, 52.15]
+        ],
+        [4.5, 51.9]   // Destination waypoint
+    ]
+});
+```
+
+Use another route as a path by extracting its geometry coordinates:
+
+```javascript
+const route1 = await calculateRoute({
+  locations: [
+    [5.1230, 52.0919],  // Utrecht
+    [4.4624, 51.9265]   // Rotterdam
+  ]
+});
+
+const route2  = await calculateRoute({
+  locations: [
+    [4.8970, 52.3779], // Amsterdam
+    route1.features[0].geometry.coordinates,
+    [2.3522, 48.8566]  // Paris
+  ]
+});
+```
+
+## Displaying Waypoints on Map
+
+Use the `showWaypoints` method of the Routing Module to display waypoints as markers on the map.
+
+- Call `showWaypoints` after route calculation to visualize waypoints.
+- Call `clearWaypoints` to clear waypoints.
+
+```javascript
+import { calculateRoute, geocodeOne } from '@tomtom-org/maps-sdk/services';
+
+const waypoints = await Promise.all([
+    geocodeOne('Amsterdam, Netherlands'),
+    geocodeOne('The Hague, Netherlands'),
+    geocodeOne('Rotterdam, Netherlands')
+]);
+
+const route = await calculateRoute({ locations: waypoints });
+await routingModule.showRoutes(route); // Display the route line
+await routingModule.showWaypoints(waypoints); // Display waypoints as markers
+```
+
+## API Reference
+
+For detailed type information, see:
+- [CalculateRouteParams](/maps-sdk-js/api-reference/types/services.CalculateRouteParams.html) - Route calculation parameters
+- [Waypoint](/maps-sdk-js/api-reference/types/core.Waypoint.html) - Waypoint feature type
+
+## Related Guides and Examples
+
+### Map Integration
+- [Routing Module](../../map/routes.mdx) - Display multi-stop routes and waypoints on the map with visual markers and route styling
+- [Places Module](../../map/places.mdx) - Show waypoints as interactive markers with popups and custom styling
+
+### Related Examples
+- [Waypoints](/maps-sdk-js/examples/waypoints) - Complete multi-stop route example with waypoint visualization and management
+- [Map Route Reconstruction](/maps-sdk-js/examples/map-route-reconstruction) - Interactive route building with custom waypoint placement
+
+### Related Services
+- [Route Planning Parameters](../../services/routing/parameters.mdx) - Comprehensive route planning with configuration options
+- [Geocoding](../../services/places/geocoding.mdx) - Convert waypoint addresses to coordinates for precise route planning
+- [Search](../../services/places/search.mdx) - Find potential waypoints and destinations along your route
