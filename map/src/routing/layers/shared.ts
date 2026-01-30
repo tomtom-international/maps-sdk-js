@@ -8,6 +8,7 @@ export const ROUTE_LINE_FOREGROUND_COLOR = '#36A8F0';
 
 /**
  * Main route outline color.
+ * @ignore
  */
 export const ROUTE_LINE_OUTLINE_COLOR = '#105287';
 
