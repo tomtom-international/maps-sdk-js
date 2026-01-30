@@ -145,6 +145,9 @@ export class ViewportPlaces {
 
     /**
      * Removes a specific place module by its ID, stopping its updates and clearing the displayed places.
+     * @remarks
+     * If the id does not exist, an error is logged into console.
+     *
      * @param id - The unique identifier of the PlacesModule to remove.
      */
     remove(id: string): void {
@@ -153,6 +156,8 @@ export class ViewportPlaces {
             entry.placesModule.clear();
             entry.subscription.unsubscribe();
             delete this.registeredModules[id];
+        } else {
+            console.error(`Viewport places module ${id} not found`);
         }
     }
 
