@@ -1,6 +1,6 @@
-import { bboxFromGeoJSON, TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { GeometriesModule, PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
-import { geocode, geometryData, search } from '@tomtom-org/maps-sdk/services';
+import { geocodeOne, geometryData, search } from '@tomtom-org/maps-sdk/services';
 import './style.css';
 import { API_KEY } from './config';
 
@@ -8,25 +8,28 @@ import { API_KEY } from './config';
 TomTomConfig.instance.put({ apiKey: API_KEY });
 
 (async () => {
-    const areaToSearch = await geocode({ query: 'paris', limit: 1 });
+    const areaToSearch = await geocodeOne('London Covent Garden');
 
     const map = new TomTomMap({
         mapLibre: {
             container: 'sdk-map',
             fitBoundsOptions: { padding: 50 },
-            bounds: bboxFromGeoJSON(areaToSearch),
+            bounds: areaToSearch.bbox,
         },
     });
 
-    const areaGeometry = await geometryData({ geometries: areaToSearch });
-    const geometryModule = await GeometriesModule.get(map);
+    const areaGeometry = await geometryData({ geometries: [areaToSearch] });
+    const geometryModule = await GeometriesModule.get(map, {
+        lineConfig: { lineColor: 'red' },
+        colorConfig: { fillOpacity: 0 },
+    });
     geometryModule.show(areaGeometry);
 
     const parkingSpots = await search({
         query: '',
-        poiCategories: ['OPEN_PARKING_AREA', 'PARKING_GARAGE', 'OPEN_CAR_PARKING_AREA', 'RENT_A_CAR_PARKING'],
+        poiCategories: ['PARKING_GARAGE', 'OPEN_CAR_PARKING_AREA', 'ELECTRIC_VEHICLE_STATION'],
         geometries: [areaGeometry],
-        limit: 100,
+        limit: 50,
     });
 
     const placesModule = await PlacesModule.get(map);

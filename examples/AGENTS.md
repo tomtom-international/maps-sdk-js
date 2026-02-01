@@ -176,7 +176,8 @@ examples/
 - **rev-geo-json** - Reverse geocode with full GeoJSON response
 - **rev-geo-playground** - Interactive reverse geocoding playground
 - **autocomplete-fuzzy-search-playground** - Search with autocomplete suggestions
-- **search-parking** - Search for parking locations
+- **search-places-in-geometry** - Search for places in the geometry of a geocoded location
+- **search-places-nearby-location** - Search for places in nearby the center of a geocoded location
 
 ### Geometry Search
 

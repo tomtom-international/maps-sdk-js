@@ -1,6 +1,6 @@
 {
-  "name": "@examples/search-parking",
-  "description": "Search nearby parking example",
+  "name": "@examples/search-places-nearby-location",
+  "description": "Search places nearby location example",
   "type": "module",
   "scripts": {
     "build": "vite build --config ../example-vite.config.ts",
