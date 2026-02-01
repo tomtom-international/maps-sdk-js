@@ -35,7 +35,7 @@ export type ViewportPlacesAddOptions = ViewportPlacesAddCommonOptions & {
     /**
      * The search parameters to query places for this place module.
      */
-    searchOptions: FuzzySearchParams;
+    searchOptions: Omit<FuzzySearchParams, 'boundingBox' | 'position'>;
     /**
      * Optional configuration for the places module, such as styling.
      */
