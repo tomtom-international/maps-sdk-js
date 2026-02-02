@@ -120,6 +120,36 @@ pnpm dev
 # Examples automatically use the built SDK from workspace
 ```
 
+### End-to-End (E2E) Testing
+
+Each example has E2E tests that verify both the regular build and the Sandpack wrapper work correctly.
+
+**Quick commands:**
+```bash
+cd examples/<example-name>
+
+pnpm test:e2e              # Test all builds
+pnpm test:e2e:prod         # Test production build only
+pnpm test:e2e:sandpack     # Test Sandpack wrapper  
+```
+
+**📚 Full E2E Testing Guide:** See [E2E_TESTING.md](./E2E_TESTING.md) for comprehensive documentation including:
+- Writing tests
+- Updating snapshots
+- Troubleshooting
+- CI/CD integration
+```
+
+**Build outputs:**
+- `dist/prod/` - Production full-screen application (port 9050)
+- `dist/sandpack/` - Sandpack interactive wrapper (port 9051)
+
+Each build type has its own snapshots:
+- `e2e-tests/snapshots/upon-load-prod.png` - Production version
+- `e2e-tests/snapshots/upon-load-sandpack.png` - Sandpack version
+
+**See [E2E_TESTING.md](./E2E_TESTING.md) for detailed testing documentation.**
+
 ### Example Structure
 
 ```
@@ -177,7 +207,7 @@ examples/
 - **rev-geo-playground** - Interactive reverse geocoding playground
 - **autocomplete-fuzzy-search-playground** - Search with autocomplete suggestions
 - **search-places-in-geometry** - Search for places in the geometry of a geocoded location
-- **search-places-nearby-location** - Search for places in nearby the center of a geocoded location
+- **search-places-nearby-location** - Search for places near the center of a geocoded location
 
 ### Geometry Search
 
