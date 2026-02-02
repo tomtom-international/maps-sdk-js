@@ -42,7 +42,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         <div id="traffic-incident-popup">
         <h3>Traffic incident</h3>
         <b id="traffic-incident-road-type">Road type</b> ${topFeature.properties.road_category}<br />
-        <b id="traffic-incident-magnitude">Magnitude</b> ${incidentSeverity[properties.magnitude]} <br />
+        <b id="traffic-incident-magnitude">Magnitude</b> ${incidentSeverity[properties.magnitude_of_delay]} <br />
         <b id="traffic-incident-delay">Delay</b> ${Math.floor(properties.delay / 60)} m ${
             properties.delay % 60
         } s</b> <br />

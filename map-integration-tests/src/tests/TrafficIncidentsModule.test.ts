@@ -288,7 +288,7 @@ test.describe('Map vector tile traffic incidents module tests', () => {
         expect(
             renderedIncidents.filter((incident) =>
                 [indexedMagnitudes.indexOf('unknown'), indexedMagnitudes.indexOf('minor')].includes(
-                    incident.properties.magnitude,
+                    incident.properties.magnitude_of_delay,
                 ),
             ),
         ).toHaveLength(0);

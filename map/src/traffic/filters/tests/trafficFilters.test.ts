@@ -40,14 +40,14 @@ describe('Traffic filter tests', () => {
         expect(
             buildMapLibreIncidentFilters({ any: [{ magnitudes: { show: 'only', values: ['major'] } }] }),
         ).toStrictEqual({
-            expression: ['==', ['get', 'magnitude'], 3],
-            legacy: ['==', 'magnitude', 3],
+            expression: ['==', ['get', 'magnitude_of_delay'], 3],
+            legacy: ['==', 'magnitude_of_delay', 3],
         });
         expect(
             buildMapLibreIncidentFilters({ any: [{ magnitudes: { show: 'only', values: ['moderate', 'major'] } }] }),
         ).toStrictEqual({
-            expression: ['in', ['get', 'magnitude'], ['literal', [2, 3]]],
-            legacy: ['in', 'magnitude', 2, 3],
+            expression: ['in', ['get', 'magnitude_of_delay'], ['literal', [2, 3]]],
+            legacy: ['in', 'magnitude_of_delay', 2, 3],
         });
         expect(buildMapLibreIncidentFilters({ any: [{ delays: { mustHaveDelay: true } }] })).toStrictEqual({
             expression: ['>', ['get', 'delay'], 0],
@@ -101,7 +101,7 @@ describe('Traffic filter tests', () => {
                     'all',
                     ['!', ['in', ['get', 'road_category'], ['literal', ['secondary', 'tertiary']]]],
                     ['in', ['get', 'icon_category_0'], ['literal', [6, 1, 3]]],
-                    ['in', ['get', 'magnitude'], ['literal', [2, 3]]],
+                    ['in', ['get', 'magnitude_of_delay'], ['literal', [2, 3]]],
                     ['any', ['!', ['has', 'delay']], ['==', ['get', 'delay'], 0], ['>=', ['get', 'delay'], 300]],
                 ],
                 ['==', ['get', 'icon_category_0'], 8],
@@ -112,7 +112,7 @@ describe('Traffic filter tests', () => {
                     'all',
                     ['!in', 'road_category', 'secondary', 'tertiary'],
                     ['in', 'icon_category_0', 6, 1, 3],
-                    ['in', 'magnitude', 2, 3],
+                    ['in', 'magnitude_of_delay', 2, 3],
                     ['any', ['!has', 'delay'], ['==', 'delay', 0], ['>=', 'delay', 300]],
                 ],
                 ['==', 'icon_category_0', 8],

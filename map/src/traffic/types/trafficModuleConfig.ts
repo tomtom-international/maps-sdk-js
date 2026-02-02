@@ -207,7 +207,7 @@ export type TrafficCommonFilter = {
      * @example
      * ```ts
      * // Show only motorways and trunk roads
-     * roadCategories: { mode: 'show', values: ['motorway', 'trunk'] }
+     * roadCategories: { show: 'only', values: ['motorway', 'trunk'] }
      * ```
      */
     roadCategories?: ValuesFilter<RoadCategory>;
@@ -222,7 +222,7 @@ export type TrafficCommonFilter = {
      * @example
      * ```ts
      * // Hide minor local streets
-     * roadSubCategories: { mode: 'hide', values: ['minor_local'] }
+     * roadSubCategories: { show: 'all_except', values: ['minor_local'] }
      * ```
      */
     roadSubCategories?: ValuesFilter<TertiaryRoadCategory | StreetRoadCategory>;
@@ -247,7 +247,7 @@ export type TrafficIncidentsFilter = TrafficCommonFilter & {
      * @example
      * ```ts
      * // Show only accidents and road closures
-     * incidentCategories: { mode: 'show', values: ['accident', 'road_closed'] }
+     * incidentCategories: { show: 'only', values: ['accident', 'road_closed'] }
      * ```
      */
     incidentCategories?: ValuesFilter<IncidentCategory>;
@@ -258,17 +258,23 @@ export type TrafficIncidentsFilter = TrafficCommonFilter & {
      * @remarks
      * Controls display based on the severity of traffic delays caused by incidents.
      *
-     * Magnitude levels:
-     * - `0` - Unknown
-     * - `1` - Minor
-     * - `2` - Moderate
-     * - `3` - Major
-     * - `4` - Undefined
+     * Available magnitude values:
+     * - `'unknown'` - Unknown delay severity
+     * - `'minor'` - Minor delays
+     * - `'moderate'` - Moderate delays
+     * - `'major'` - Major delays
+     * - `'indefinite'` - Indefinite delays (e.g., road closures)
      *
      * @example
      * ```ts
      * // Show only major incidents
-     * magnitudes: { mode: 'show', values: [3] }
+     * magnitudes: { show: 'only', values: ['major'] }
+     *
+     * // Show moderate and major incidents
+     * magnitudes: { show: 'only', values: ['moderate', 'major'] }
+     *
+     * // Hide minor incidents
+     * magnitudes: { show: 'all_except', values: ['minor'] }
      * ```
      */
     magnitudes?: ValuesFilter<DelayMagnitude>;
@@ -297,8 +303,8 @@ export type TrafficIncidentsFilter = TrafficCommonFilter & {
  * // Show major incidents OR road closures
  * filters: {
  *   any: [
- *     { magnitudes: { mode: 'show', values: [3] } },
- *     { incidentCategories: { mode: 'show', values: ['road_closed'] } }
+ *     { magnitudes: { show: 'only', values: ['major'] } },
+ *     { incidentCategories: { show: 'only', values: ['road_closed'] } }
  *   ]
  * }
  * ```
@@ -355,8 +361,8 @@ export type TrafficFlowFilter = TrafficCommonFilter & {
  * // Show flow on motorways OR show road closures on any road
  * filters: {
  *   any: [
- *     { roadCategories: { mode: 'show', values: ['motorway'] } },
- *     { showRoadClosures: 'show' }
+ *     { roadCategories: { show: 'only', values: ['motorway'] } },
+ *     { showRoadClosures: 'only' }
  *   ]
  * }
  * ```

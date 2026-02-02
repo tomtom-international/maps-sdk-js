@@ -110,7 +110,7 @@ const buildMapLibreIncidentsFilter = (sdkFilter: TrafficIncidentsFilter): MultiS
         addFilter(incidentCategoryFilter, newSyntaxExpressions, legacySyntaxExpressions);
     }
     if (sdkFilter.magnitudes) {
-        const magnitudesFilter = buildValuesFilter('magnitude', sdkFilter.magnitudes, (magnitude) =>
+        const magnitudesFilter = buildValuesFilter('magnitude_of_delay', sdkFilter.magnitudes, (magnitude) =>
             indexedMagnitudes.indexOf(magnitude),
         );
         addFilter(magnitudesFilter, newSyntaxExpressions, legacySyntaxExpressions);
