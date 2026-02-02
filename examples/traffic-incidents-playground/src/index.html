@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Traffic Incidents Playground</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body>
+        <div id="sdk-map"></div>
+        <div class="controls">
+            <h3>Magnitude Filter</h3>
+            <label>
+                <input type="checkbox" name="magnitude" value="unknown" checked> Unknown
+            </label>
+            <label>
+                <input type="checkbox" name="magnitude" value="minor" checked> Minor
+            </label>
+            <label>
+                <input type="checkbox" name="magnitude" value="moderate" checked> Moderate
+            </label>
+            <label>
+                <input type="checkbox" name="magnitude" value="major" checked> Major
+            </label>
+            <label>
+                <input type="checkbox" name="magnitude" value="indefinite" checked> Indefinite
+            </label>
+            <hr>
+            <button id="clearFilter">Show All</button>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>
