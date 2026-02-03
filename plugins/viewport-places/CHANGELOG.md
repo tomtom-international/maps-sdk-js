@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.7](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-viewport-places-v0.1.6...maps-sdk-plugin-viewport-places-v0.1.7) (2026-02-03)
+
+
+### Bug Fixes
+
+* omit bounding box and position from search options in viewport places plugin since they should be automatically set ([a2ffd50](https://github.com/tomtom-international/maps-sdk-js/commit/a2ffd503c58cbf0c17c678b54cf6f83d8074936f))
+
 ## [0.1.6](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-viewport-places-v0.1.5...maps-sdk-plugin-viewport-places-v0.1.6) (2026-01-30)
 
 

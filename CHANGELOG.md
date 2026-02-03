@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.42.1](https://github.com/tomtom-international/maps-sdk-js/compare/v0.42.0...v0.42.1) (2026-02-03)
+
+
+### Features
+
+* add traffic incident playground example ([f5dc3ea](https://github.com/tomtom-international/maps-sdk-js/commit/f5dc3eacffc13549b098838fffedc1bd8d460f5f))
+
+
+### Bug Fixes
+
+* enable documentation indexing ([0af5d75](https://github.com/tomtom-international/maps-sdk-js/commit/0af5d75c356ed4ad5cbca07454d0c182a7621954))
+* filter by incidents by magnitude_of_delay ([7e99da9](https://github.com/tomtom-international/maps-sdk-js/commit/7e99da917e1ce9caeef37f4d85b2a91d8051db9b))
+* omit bounding box and position from search options in viewport places plugin since they should be automatically set ([a2ffd50](https://github.com/tomtom-international/maps-sdk-js/commit/a2ffd503c58cbf0c17c678b54cf6f83d8074936f))
+
 ## [0.42.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.41.8...v0.42.0) (2026-01-30)
 
 
