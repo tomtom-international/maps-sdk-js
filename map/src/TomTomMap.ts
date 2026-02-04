@@ -1,6 +1,6 @@
 import { type BBox, type Language, mergeFromGlobal } from '@tomtom-org/maps-sdk/core';
 import { isEqual } from 'lodash-es';
-import { getRTLTextPluginStatus, Map, setRTLTextPlugin } from 'maplibre-gl';
+import { getRTLTextPluginStatus, Map, setRTLTextPlugin, setWorkerCount } from 'maplibre-gl';
 import { version as maplibreVersion } from 'maplibre-gl/package.json';
 import type { InternalTomTomMapParams, MapLibreOptions, StyleInput, TomTomMapParams } from './init';
 import { buildMapOptions } from './init/buildMapOptions';
@@ -291,6 +291,11 @@ export class TomTomMap {
         this.styleLightDarkTheme = getStyleLightDarkTheme(this._params.style);
         this.ensureMapLibreCSSLoaded();
 
+        // Set worker count before creating the Map instance.
+        // MapLibre defaults to 1 worker (3 on Safari). 4 workers gives smooth
+        // tile-by-tile transitions during style changes without starving the main thread.
+        setWorkerCount(4);
+
         this.mapLibreMap = new Map(buildMapOptions(this._params));
         this.mapLibreMap.once('styledata', () => {
             this.handleStyleData(false);
@@ -405,6 +410,8 @@ export class TomTomMap {
      */
     setStyle = (style: StyleInput, options: { keepState?: boolean } = { keepState: true }): void => {
         this.mapReady = false;
+
+        // Notify all modules that the style is about to change (they mark themselves as not ready).
         for (const handler of this.styleChangeHandlers) {
             try {
                 handler.onStyleAboutToChange?.();

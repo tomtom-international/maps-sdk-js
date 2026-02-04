@@ -219,9 +219,11 @@ export abstract class AbstractMapModule<
         // defensively declaring the module as not ready to prevent race conditions:
         this.moduleReady = false;
         if (this.sourceType === 'geojson') {
-            // (We use setTimeout to compensate for a MapLibre glitch where symbol layers can't get added right after
-            // a styledata event. With this setTimeout, we wait just a tiny bit more which mitigates the issue)
-            setTimeout(() => this.restoreDataAndConfigImpl(), 400);
+            // Defer GeoJSON layer restoration by one animation frame to work around a MapLibre
+            // glitch where symbol layers can't be added right after a styledata event.
+            requestAnimationFrame(() => {
+                this.restoreDataAndConfigImpl();
+            });
         } else {
             this.restoreDataAndConfigImpl();
         }
