@@ -20,6 +20,7 @@ vi.mock('maplibre-gl', () => {
         }),
         setRTLTextPlugin: vi.fn().mockResolvedValue(vi.fn()),
         getRTLTextPluginStatus: vi.fn(),
+        setWorkerCount: vi.fn(),
     };
 });
 
