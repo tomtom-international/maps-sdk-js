@@ -124,17 +124,17 @@ Code imports from the SDK Core Bundle will come from ```@tomtom-org/maps-sdk/cor
 
 This repository uses a **dual-licensing model**.
 
-### SDK Packages - Proprietary License
-The SDK packages (`@tomtom-org/maps-sdk/*` - core, services, map) are distributed under a **proprietary license**.
+### SDK Packages and plugins - Proprietary License
+The SDK packages (`@tomtom-org/maps-sdk/*` - core, services, map) and plugins (`@tomtom-org/maps-sdk-plugin-*`) are distributed under a **proprietary license**.
 
 📋 **[LICENSE.txt](./LICENSE.txt)** - Full license terms
 
 These packages require a TomTom API key and agreement to our terms of service.
 
-### Examples - MIT License  
-All example code in the `examples/` directory is **open-source** under the MIT License.
+### Examples - Apache V2.0 License  
+All example code in the `examples/` directory is **open-source** under the Apache V2.0 License.
 
-📋 **[examples/LICENSE](./examples/LICENSE)** - MIT License
+📋 **[examples/LICENSE](./examples/LICENSE)** - Apache V2.0 License
 
 The examples can be freely copied, modified, and used in your projects.
 

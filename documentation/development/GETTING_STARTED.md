@@ -51,14 +51,6 @@ The project uses pnpm workspaces. Install dependencies for all workspaces:
 ```shell
 # Install dependencies for all workspaces (recommended)
 pnpm install
-
-# Alternative: install for specific workspaces
-pnpm install -F core
-pnpm install -F map
-pnpm install -F services
-pnpm install -F map-integration-tests
-pnpm install -F shared-configs
-pnpm install -F './examples/*'
 ```
 
 The `node_modules` directory appears in each workspace as well as the root directory. This is the expected behavior with pnpm workspaces.
@@ -106,6 +98,7 @@ The project is organized into the following workspaces:
 - **core** - Core SDK functionality
 - **services** - API services (geocoding, routing, etc.)
 - **map** - Map rendering and interaction
+- **plugins/** - Optional plugins that extend SDK functionality
 - **map-integration-tests** - Integration tests for map functionality
 - **shared-configs** - Shared configuration files (TypeScript, Vite)
 - **examples/** - Example applications demonstrating SDK usage
@@ -115,8 +108,11 @@ The project is organized into the following workspaces:
 After installation, you can use these commands to get started:
 
 ```shell
-# Build all SDK workspaces
+# Build all SDK workspaces (REQUIRED before running examples)
 pnpm build
+
+# Build plugins (optional)
+pnpm build:plugins
 
 # Run tests for all SDK workspaces
 pnpm test:sdk
@@ -124,21 +120,46 @@ pnpm test:sdk
 # Run type checking
 pnpm type-check:sdk
 
-# Format code
-pnpm format:fix
-
 # Lint and fix code
 pnpm lint:fix
+
+# Format code
+pnpm format:fix
 ```
+
+> [!IMPORTANT]
+> **You must build the SDK first** (`pnpm build`) before running examples.
+> Examples depend on the built SDK packages in `core/dist`, `services/dist`, and `map/dist`.
 
 ## Development Workflow
 
 1. Install dependencies: `pnpm install`
-2. Build the project: `pnpm build`
+2. Build the SDK: `pnpm build` (required before running examples)
 3. Make your changes in the relevant workspace
 4. Run tests: `pnpm test:sdk`
 5. Format and lint: `pnpm format:fix && pnpm lint:fix`
 6. Type check: `pnpm type-check:sdk`
+
+### Running Examples Locally
+
+To run an example in development mode:
+
+```shell
+# First, ensure the SDK is built
+pnpm build:sdk
+
+# Then run an example (e.g., default-map)
+pnpm -F @examples/default-map develop
+
+# The development server will start at http://localhost:5173/
+```
+
+You can also change to an example directory and run directly:
+
+```shell
+cd examples/default-map
+pnpm develop
+```
 
 ## Next Steps
 
