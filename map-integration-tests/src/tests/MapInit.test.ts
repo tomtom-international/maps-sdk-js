@@ -10,6 +10,7 @@ import {
     getNumVisibleLayersBySource,
     getNumVisiblePOILayers,
     setStyle,
+    waitForMapIdle,
     waitForMapReady,
 } from './util/TestUtils';
 
@@ -85,7 +86,7 @@ test.describe('Loading map style parts', () => {
 
         // changing style, verifying all parts are still there:
         await setStyle(page, 'monoLight');
-        await waitForMapReady(page);
+        await waitForMapIdle(page);
         expect(await getNumVisiblePOILayers(page)).toBeGreaterThan(0);
         expect(await getNumVisibleLayersBySource(page, TRAFFIC_INCIDENTS_SOURCE_ID)).toBeGreaterThan(0);
         expect(await getNumVisibleLayersBySource(page, TRAFFIC_FLOW_SOURCE_ID)).toBeGreaterThan(0);
@@ -123,7 +124,7 @@ test.describe('Loading map style parts', () => {
 
         // changing style, verifying all parts are still there:
         await setStyle(page, 'monoLight');
-        await waitForMapReady(page);
+        await waitForMapIdle(page);
         expect(await getNumVisiblePOILayers(page)).toBeGreaterThan(0);
         expect(await getNumLayersBySource(page, HILLSHADE_SOURCE_ID)).toBeGreaterThan(0);
         expect(await getNumLayersBySource(page, TRAFFIC_INCIDENTS_SOURCE_ID)).toBeGreaterThan(0);

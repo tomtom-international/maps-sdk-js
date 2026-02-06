@@ -15,6 +15,7 @@ import {
     initTrafficIncidents,
     setStyle,
     waitForMapIdle,
+    waitForMapReady,
     waitUntilRenderedFeaturesChange,
 } from './util/TestUtils';
 
@@ -193,6 +194,7 @@ test.describe('Map vector tile traffic incidents module tests', () => {
         // changing the map style (and manually adding also poi part):
         // verifying the config is still the same (state restoration):
         await setStyle(page, 'standardDark');
+        await waitForMapReady(page);
         await waitForMapIdle(page);
         expect(await getConfig(page)).toEqual(config);
 

@@ -15,6 +15,7 @@ import {
     showPlaces,
     waitForEventState,
     waitForMapIdle,
+    waitForMapReady,
     waitForTimeout,
     waitUntilRenderedFeatures,
 } from './util/TestUtils';
@@ -188,13 +189,14 @@ test.describe('Tests with user events related to PlacesModule', () => {
 
         // Change map style to monoLight
         await setStyle(page, 'monoLight');
-        await waitForTimeout(500);
+        await waitForMapReady(page);
         await waitForMapIdle(page);
         await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 5000);
 
         // Hover on place again and verify 'cell' cursor persists
         const placePixelCoordsAfterStyleChange = await getPixelCoords(page, firstPlacePosition);
         await page.mouse.move(placePixelCoordsAfterStyleChange.x, placePixelCoordsAfterStyleChange.y);
+        /////
         await waitForTimeout(500);
         expect(await getCursor(page)).toBe('cell');
 
@@ -208,7 +210,9 @@ test.describe('Tests with user events related to PlacesModule', () => {
         // We load the places layer IDs before changing the style, to ensure they are still relevant after the style change:
 
         const placesLayerIDs = (await getPlacesSourceAndLayerIDs(page)).layerIDs;
+        await waitForMapIdle(page);
         await setStyle(page, 'standardDark');
+        await waitForMapReady(page);
 
         // We show the places after the map style has changed.
         // Now we'll test whether the events still work properly

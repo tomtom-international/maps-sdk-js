@@ -26,6 +26,7 @@ import {
     showRoutes2,
     showWaypoints,
     waitForMapIdle,
+    waitForMapReady,
     waitForTimeout,
     waitUntilRenderedFeatures,
     waitUntilRenderedFeaturesChange,
@@ -246,7 +247,9 @@ test.describe('Routing and waypoint display tests', () => {
             fitBoundsOptions: { padding: 150 },
         });
         await initRouting(page);
+        await waitForMapIdle(page);
         await setStyle(page, 'monoLight');
+        await waitForMapReady(page);
         await showRoutes(page, rotterdamToAmsterdamRoutes);
 
         await waitForMapIdle(page);
@@ -263,7 +266,9 @@ test.describe('Routing and waypoint display tests', () => {
             fitBoundsOptions: { padding: 150 },
         });
         await initRouting(page);
+        await waitForMapIdle(page);
         await setStyle(page, 'monoLight');
+        await waitForMapReady(page);
         await showWaypoints(page, [
             [4.53074, 51.95102],
             [4.88951, 52.37229],

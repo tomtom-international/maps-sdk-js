@@ -92,7 +92,9 @@ test.describe('Map vector tiles hillshade module tests', () => {
 
         // changing style at runtime, verifying hillshade is still there:
         await setStyle(page, 'monoDark');
+        await waitForMapReady(page);
         await waitForMapIdle(page);
+        
         // The config was reset above, so hillshade will be restored as invisible:
         expect(await getNumVisibleLayersBySource(page, HILLSHADE_SOURCE_ID)).toBe(0);
 

@@ -18,7 +18,6 @@ import {
     setStyle,
     showGeometry,
     waitForMapIdle,
-    waitForTimeout,
     waitUntilRenderedFeatures,
 } from './util/TestUtils';
 
@@ -82,6 +81,7 @@ test.describe('Geometry integration tests', () => {
         const sourcesAndLayers = await getGeometriesSourceAndLayerIDs(page);
         const sourceId = sourcesAndLayers?.geometry?.sourceID as string;
         await setStyle(page, 'standardDark');
+        await waitForMapIdle(page);
         await showGeometry(page, geometryData);
         await waitForMapIdle(page);
         expect(mapEnv.consoleErrors).toHaveLength(0);
@@ -173,8 +173,6 @@ test.describe('Geometry integration tests', () => {
         // changing map style and verifying again:
         await setStyle(page, 'standardDark');
         await waitForMapIdle(page);
-        // Extra defensive wait since there might be a brief idle moment between changing style and restoring geometries:
-        await waitForTimeout(1000);
         layers = await getAllLayers(page);
         geometriesLayerIndex = findGeometriesLayerIndex();
         expect(geometriesLayerIndex).toBeGreaterThan(0);

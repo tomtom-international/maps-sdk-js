@@ -411,7 +411,6 @@ test.describe('Routing and waypoint events tests', () => {
 
         // Change map style to monoLight
         await setStyle(page, 'monoLight');
-        await waitForTimeout(500);
         await waitForMapIdle(page);
 
         // Hover on waypoint again and verify 'cell' cursor persists
@@ -443,7 +442,6 @@ test.describe('Routing and waypoint events tests', () => {
 
         // Change map style to monoLight
         await setStyle(page, 'monoLight');
-        await waitForTimeout(500);
         await waitForMapIdle(page);
 
         // Hover on route line again and verify 'cell' cursor persists
