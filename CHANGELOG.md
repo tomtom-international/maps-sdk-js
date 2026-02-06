@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.42.2](https://github.com/tomtom-international/maps-sdk-js/compare/v0.42.1...v0.42.2) (2026-02-06)
+
+
+### Bug Fixes
+
+* ensure map theme switching is smooth ([f5ce208](https://github.com/tomtom-international/maps-sdk-js/commit/f5ce208d1dfbc725e68ce2b57d4f20adafac1c06))
+
 ## [0.42.1](https://github.com/tomtom-international/maps-sdk-js/compare/v0.42.0...v0.42.1) (2026-02-03)
 
 
