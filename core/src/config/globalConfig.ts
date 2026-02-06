@@ -126,7 +126,7 @@ export type GlobalConfig = {
      * TomTom API key for authentication.
      *
      * Required for all SDK features. Obtain an API key from the
-     * [TomTom Developer Portal](https://developer.tomtom.com/).
+     * [my.tomtom.com](https://my.tomtom.com/).
      *
      * @default None (required)
      */
