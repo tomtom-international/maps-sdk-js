@@ -8,6 +8,8 @@
 
 [![NPM Version](https://img.shields.io/npm/v/@tomtom-org/maps-sdk.svg)](https://www.npmjs.com/package/@tomtom-org/maps-sdk)
 
+![SDK Examples Collage](https://raw.githubusercontent.com/tomtom-international/maps-sdk-js/main/sdk-examples-collage.png)
+
 TomTom Maps SDK for JavaScript is a **JavaScript** library for building applications using [**TomTom** location maps and services](https://docs.tomtom.com/).
 
 [//]: # ([![SDK Example Thumbnails]&#40;./sdk-examples-collage.png&#41;]&#40;https://docs.tomtom.com/maps-sdk-js/examples/&#41;)
