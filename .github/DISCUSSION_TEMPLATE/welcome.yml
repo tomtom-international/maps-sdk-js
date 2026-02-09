@@ -1,0 +1,148 @@
+title: "Welcome to TomTom Maps SDK for JavaScript Discussions! 👋"
+labels: ["welcome"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # 👋 Welcome to TomTom Maps SDK for JavaScript!
+        
+        ![NPM Version](https://img.shields.io/npm/v/@tomtom-org/maps-sdk.svg)
+        
+        Thank you for joining our community! This is the place to ask questions, share ideas, and discuss everything related to the **TomTom Maps SDK for JavaScript**.
+        
+        ---
+        
+        ## 🚀 About the SDK
+        
+        TomTom Maps SDK for JavaScript is a powerful library for building applications using [TomTom location maps and services](https://docs.tomtom.com/). It leverages [MapLibre GL JS](https://github.com/maplibre/maplibre-gl-js) and [GeoJSON](https://geojson.org/) to seamlessly integrate TomTom maps and services.
+        
+        ### 📦 Three Main Packages
+        
+        - **Map** (`@tomtom-org/maps-sdk/map`) - MapLibre-powered interactive TomTom Maps (web only)
+          - Different styles: light, dark, b&w, satellite
+          - Configurable POIs and Live Traffic
+          - Seamlessly integrable with TomTom Services
+        
+        - **Services** (`@tomtom-org/maps-sdk/services`) - Location APIs for all platforms
+          - Compatible with web, Node.js, and React Native
+          - GeoJSON services for places, routing, and geocoding
+          - EV support for charging stations and long-distance routing
+        
+        - **Core** (`@tomtom-org/maps-sdk/core`) - Shared configuration, types, and utilities
+          - Common configuration across Map and Services
+          - TypeScript types for seamless integration
+          - Utility functions for distance/duration formatting
+        
+        ---
+        
+        ## ⚠️ Public Preview Notice
+        
+        We have released capabilities under [Public Preview](https://docs.tomtom.com/legal/public-preview) to collect community feedback:
+        - Breaking changes may occur, especially in earlier versions
+        - Versions follow a `0.MAJOR.MINOR` pattern
+        - Check our `CHANGELOG.md` files for updates
+        
+        ---
+        
+        ## 🚀 Quick Start
+        
+        ### Installation
+        ```bash
+        npm i @tomtom-org/maps-sdk
+        # For maps, also install:
+        npm i maplibre-gl
+        ```
+        
+        ### Where You Can Use It
+        - **Web**: Display maps, search places, plan routes, interact with your data
+        - **Node.js**: Geocode locations, calculate routes, enrich data
+        - **React Native**: Leverage TomTom services from a single codebase
+        
+        ---
+        
+        ## 📚 Essential Resources
+        
+        Before asking questions, please check these resources:
+        
+        ### 📖 Documentation
+        - [**Official Documentation**](https://docs.tomtom.com/maps-sdk-js/introduction/overview) - Complete guides and concepts
+        - [**Getting Started Guide**](https://docs.tomtom.com/maps-sdk-js/introduction/overview)
+        - [**API Reference**](https://docs.tomtom.com/maps-sdk-js/reference/overview) - Full API documentation
+        
+        ### 💡 Examples & Guides
+        - [**Live Examples**](https://docs.tomtom.com/maps-sdk-js/examples/) - Try the SDK in your browser
+        - [**Map Quick Start**](https://docs.tomtom.com/maps-sdk-js/guides/map/quickstart)
+        - [**Services Quick Start**](https://docs.tomtom.com/maps-sdk-js/guides/services/quickstart)
+        - [**Release Notes**](https://docs.tomtom.com/maps-sdk-js/introduction/release-notes) - Latest updates and breaking changes
+        
+        ---
+        
+        ## 💬 How to Use Discussions
+        
+        ### ❓ **Q&A** - Ask Questions
+        Got a question? Use the Q&A category! Please:
+        - Search existing discussions first
+        - Provide code examples when relevant
+        - Share error messages or unexpected behavior
+        - Mark helpful answers as solutions
+        
+        ### 💡 **Ideas** - Share Feature Requests
+        Have an idea for improvement? We'd love to hear it!
+        - Describe your use case
+        - Explain the problem you're trying to solve
+        - Share how it would benefit others
+        
+        ### 🎉 **Show and Tell** - Share Your Work
+        Built something cool? Show it off!
+        - Share screenshots or demos
+        - Link to your project (if public)
+        - Inspire others in the community
+        
+        ### 📢 **Announcements** - Stay Updated
+        Watch this category for:
+        - New releases and features
+        - Important updates
+        - Community highlights
+        
+        ---
+        
+        ## 🐛 Found a Bug?
+        
+        If you've encountered a bug, please [open an issue](https://github.com/tomtom-international/maps-sdk-js/issues) instead of a discussion. This helps us track and fix problems efficiently.
+        
+        ---
+        
+        ## 🤝 Contributing
+        
+        We welcome feedback from the community:
+        - 🐛 **Bug Reports** - [Open an issue](https://github.com/tomtom-international/maps-sdk-js/issues)
+        - 💡 **Feature Requests** - Start a discussion in the Ideas category
+        - ❓ **Questions** - Use the Q&A category
+        
+        > **Note**: This is a read-only mirror of our internal repository. We don't accept pull requests, but we actively monitor and value all feedback through issues and discussions.
+        
+        ---
+        
+        ## 📄 License
+        
+        This repository uses a **dual-licensing model**:
+        - **SDK Packages** (`core`, `services`, `map`) - Proprietary license ([LICENSE.txt](../LICENSE.txt))
+        - **Examples** (`examples/`) - Apache V2.0 License ([examples/LICENSE](../examples/LICENSE))
+        
+        Examples can be freely copied, modified, and used in your projects!
+        
+        ---
+        
+        ## 🌟 Community Guidelines
+        
+        - **Be respectful** - Treat everyone with kindness and respect
+        - **Be helpful** - Share your knowledge and help others
+        - **Stay on topic** - Keep discussions relevant to the SDK
+        - **Search first** - Check if your question has been answered
+        - **Provide context** - Include relevant details in your questions
+        
+        ---
+        
+        **Thank you for being part of the TomTom Maps SDK community!** 🎉
+        
+        We're excited to see what you build with the SDK. Don't hesitate to ask questions, share ideas, or show off your projects!
