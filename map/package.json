@@ -40,7 +40,7 @@
     "maplibre-gl": "catalog:"
   },
   "dependencies": {
-    "@turf/bearing": "^7.3.3",
+    "@turf/bearing": "^7.3.4",
     "core": "workspace:*",
     "lodash-es": "catalog:"
   }
