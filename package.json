@@ -75,7 +75,7 @@
       "sharp"
     ]
   },
-  "packageManager": "pnpm@10.28.2",
+  "packageManager": "pnpm@10.29.2",
   "files": [
     "core/dist",
     "core/package.json",

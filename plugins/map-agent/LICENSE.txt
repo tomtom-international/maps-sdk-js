@@ -1,0 +1,6 @@
+Copyright (c) 2024-2026 TomTom N.V. All rights reserved.
+
+This software is the proprietary copyright of TomTom N.V. and its subsidiaries and may be
+used for internal evaluation purposes or commercial use only under separate license
+agreement. If you do not have a TomTom license agreement applicable to this software,
+you are not permitted to utilize it in any manner whatsoever.

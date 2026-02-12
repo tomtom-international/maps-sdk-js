@@ -1,0 +1,47 @@
+{
+  "name": "@tomtom-org/maps-sdk-map-agent",
+  "author": "TomTom International B.V.",
+  "license": "See in LICENSE.txt",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Conversational map agent plugin for TomTom Maps SDK JS using Vercel AI SDK",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "vite build --config ../plugin-vite-config.ts",
+    "build:watch": "vite build --watch --config ../plugin-vite-config.ts",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "ai": "^6.0.78",
+    "zod": "^4.3.6"
+  },
+  "peerDependencies": {
+    "@tomtom-org/maps-sdk": "workspace:*",
+    "maplibre-gl": "catalog:"
+  },
+  "devDependencies": {
+    "@ai-sdk/openai": "^3.0.26",
+    "@microsoft/api-extractor": "catalog:",
+    "@tsconfig/recommended": "catalog:",
+    "@types/node": "catalog:",
+    "ts-node": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plugin-dts": "catalog:",
+    "vitest": "catalog:"
+  },
+  "files": [
+    "dist",
+    "package.json",
+    "README.md",
+    "LICENSE.txt"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.es.js"
+    }
+  }
+}
