@@ -25,36 +25,45 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         },
     });
 
+    const setupToggle = (id: string, onToggle: (checked: boolean) => void) => {
+        document.querySelector(id)?.addEventListener('change', (event) => {
+            onToggle((event.target as HTMLInputElement).checked);
+        });
+    };
+
+    const setChecked = (id: string, checked: boolean) => {
+        const input = document.querySelector(id) as HTMLInputElement;
+        if (input) input.checked = checked;
+    };
+
     // Traffic Incidents and Flow
     const trafficIncidentsModule = await TrafficIncidentsModule.get(map);
     const trafficFlowModule = await TrafficFlowModule.get(map);
-    document.querySelector('#sdk-example-toggleTraffic')?.addEventListener('click', () => {
-        trafficIncidentsModule.setVisible(!trafficIncidentsModule.isVisible());
-        trafficFlowModule.setVisible(!trafficFlowModule.isVisible());
-    });
-    document
-        .querySelector('#sdk-example-toggleIncidents')
-        ?.addEventListener('click', () => trafficIncidentsModule.setVisible(!trafficIncidentsModule.isVisible()));
-    document
-        .querySelector('#sdk-example-toggleIncidentIcons')
-        ?.addEventListener('click', () =>
-            trafficIncidentsModule.setIconsVisible(!trafficIncidentsModule.anyIconLayersVisible()),
-        );
-    document
-        .querySelector('#sdk-example-toggleFlow')
-        ?.addEventListener('click', () => trafficFlowModule.setVisible(!trafficFlowModule.isVisible()));
 
-    // POIs
+    // POIs - hidden by default to match toggle initial state
     const poisModule = await POIsModule.get(map);
-    document
-        .querySelector('#sdk-example-togglePOIs')
-        ?.addEventListener('click', () => poisModule.setVisible(!poisModule.isVisible()));
+    poisModule.setVisible(false);
 
     // Hillshade
     const hillshadeModule = await HillshadeModule.get(map);
-    document
-        .querySelector('#sdk-example-toggleHillshade')
-        ?.addEventListener('click', () => hillshadeModule.setVisible(!hillshadeModule.isVisible()));
+
+    setupToggle('#sdk-example-toggleTraffic', (checked) => {
+        trafficIncidentsModule.setVisible(checked);
+        trafficIncidentsModule.setIconsVisible(checked);
+        trafficFlowModule.setVisible(checked);
+        poisModule.setVisible(checked);
+        hillshadeModule.setVisible(checked);
+        setChecked('#sdk-example-toggleIncidents', checked);
+        setChecked('#sdk-example-toggleIncidentIcons', checked);
+        setChecked('#sdk-example-toggleFlow', checked);
+        setChecked('#sdk-example-togglePOIs', checked);
+        setChecked('#sdk-example-toggleHillshade', checked);
+    });
+    setupToggle('#sdk-example-toggleIncidents', (checked) => trafficIncidentsModule.setVisible(checked));
+    setupToggle('#sdk-example-toggleIncidentIcons', (checked) => trafficIncidentsModule.setIconsVisible(checked));
+    setupToggle('#sdk-example-toggleFlow', (checked) => trafficFlowModule.setVisible(checked));
+    setupToggle('#sdk-example-togglePOIs', (checked) => poisModule.setVisible(checked));
+    setupToggle('#sdk-example-toggleHillshade', (checked) => hillshadeModule.setVisible(checked));
 
     // Styles selector
     const stylesSelector = document.querySelector('#sdk-example-mapStyles') as HTMLSelectElement;
@@ -62,4 +71,13 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     stylesSelector.addEventListener('change', (event) =>
         map.setStyle((event.target as HTMLOptionElement).value as StandardStyleID),
     );
+    
+    const toggleButton = document.querySelector('.sdk-example-heading-toggle');
+    const panelContent = document.querySelector('.sdk-example-panel-content');
+    
+    toggleButton?.addEventListener('click', () => {
+        const isExpanded = toggleButton.getAttribute('aria-expanded') === 'true';
+        toggleButton.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');
+        panelContent?.classList.toggle('collapsed');
+    });
 })();

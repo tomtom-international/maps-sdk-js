@@ -1,56 +1,20 @@
-#sdk-map {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
+@import '../../src/templates/css/base/tokens.css';
+@import '../../src/templates/css/base/global.css';
+@import '../../src/templates/css/base/typography.css';
+@import '../../src/templates/css/panel/custom-panel.css';
+@import '../../src/templates/css/form/select.css';
+@import '../../src/templates/css/form/toggle.css';
+@import '../../src/templates/css/button/button.css';
+
+/* CUSTOM STYLES (example-specific) */
+
+.sdk-example-customPanel {
+    width: 280px;
 }
 
-#sdk-example-filter-section {
-    position: absolute;
-    right: 0;
-    background: white;
-    padding: 8px 16px;
-    margin: 16px;
-    font-family: Gilroy, sans-serif;
-    color: #333;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    border-radius: 20px;
-    max-height: calc(100vh - 32px);
-    overflow-y: auto;
-    box-sizing: border-box;
-}
-
-#sdk-example-mode-selector {
-    display: block;
-    padding: 7px;
-    margin-bottom: 25px;
-    margin-top: 5px;
-    border-radius: 5px;
-}
-
-#sdk-example-reset {
-    padding: 8px 16px;
-    margin-top: 10px;
-    font-family: Gilroy, sans-serif;
-    color: #fff;
-    background-color: #df1b12;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    border: 0 solid rgba(0, 0, 0, 0);
-    border-radius: 20px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.sdk-example-item {
-    margin: 5px 0;
-}
-
-.sdk-example-item input {
-    margin-right: 10px;
-    cursor: pointer;
-}
-
-.sdk-example-item label {
-    cursor: pointer;
+/* Responsive: max-width 768px */
+@media (max-width: 768px) {
+    .sdk-example-customPanel {
+        width: 220px;
+    }
 }

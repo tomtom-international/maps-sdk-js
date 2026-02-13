@@ -7,21 +7,15 @@
     </head>
     <body class="sdk-example-body">
         <div id="sdk-map"></div>
-        <div class="sdk-example-search-container">
-            <div class="sdk-example-search-area">
-                <input
-                    id="sdk-example-search-box"
-                    type="text"
-                    class="sdk-example-element sdk-example-search-box"
-                    placeholder="Search for place"
-                >
+        <div class="sdk-example-searchPanel">
+            <div class="sdk-example-search-row">
+                <input id="sdk-example-searchBox" type="text" class="sdk-example-input" placeholder="Search for place">
+                <button id="sdk-example-clearButton" class="sdk-example-button sdk-example-button-secondary">Clear</button>
             </div>
-            <div>
-                <ul id="sdk-example-autocompleteResults" class="sdk-example-element sdk-example-result-item"></ul>
-                <ul id="sdk-example-fuzzySearchResults" class="sdk-example-element sdk-example-result-item"></ul>
-            </div>
+            <ul id="sdk-example-autocompleteResults" class="sdk-example-result-list"></ul>
+            <ul id="sdk-example-fuzzySearchResults" class="sdk-example-result-list"></ul>
         </div>
-        <div id="sdk-example-search-this-area"></div>
+        <div id="sdk-example-searchThisArea"></div>
         <script type="module" src="./index.ts"></script>
     </body>
 </html>

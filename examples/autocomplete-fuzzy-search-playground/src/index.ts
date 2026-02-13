@@ -15,10 +15,10 @@ import { API_KEY } from './config';
 TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 
 (async () => {
-    const searchBox = document.getElementById('sdk-example-search-box') as HTMLInputElement;
+    const searchBox = document.getElementById('sdk-example-searchBox') as HTMLInputElement;
     const autoCompleteResultsList = document.getElementById('sdk-example-autocompleteResults') as HTMLUListElement;
     const fuzzySearchResultsList = document.getElementById('sdk-example-fuzzySearchResults') as HTMLUListElement;
-    const searchThisAreaButton = document.getElementById('sdk-example-search-this-area') as HTMLInputElement;
+    const searchThisAreaButton = document.getElementById('sdk-example-searchThisArea') as HTMLInputElement;
 
     const map = new TomTomMap({
         mapLibre: {
@@ -59,20 +59,23 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 
             if (place.properties.poi?.name) {
                 resultItem.innerHTML = `
-                    <a class="sdk-example-a">                
-                        <div class="sdk-example-result-value sdk-example-ellipsis">${place.properties.poi?.name}</div>
-                        <div class="sdk-example-result-value sdk-example-ellipsis">${place.properties.address.freeformAddress}</div>
-                    </a>`;
+                    <div class="sdk-example-result-value">${place.properties.poi?.name}</div>
+                    <div class="sdk-example-result-value">${place.properties.address.freeformAddress}</div>`;
             } else {
                 resultItem.innerHTML = `
-                    <a class="sdk-example-a">
-                        <div class="sdk-example-result-value sdk-example-ellipsis">${place.properties.address.freeformAddress}</div>
-                    </a>`;
+                    <div class="sdk-example-result-value">${place.properties.address.freeformAddress}</div>`;
             }
 
-            // Add hover event listeners for list item
             resultItem.addEventListener('mouseenter', () => {
                 placesModule.putEventState({ id: place.id, state: 'hover', mode: 'put' });
+            });
+
+            resultItem.addEventListener('click', () => {
+                placesModule.putEventState({ id: place.id, state: 'click', mode: 'put' });
+                map.mapLibreMap.flyTo({
+                    center: place.geometry.coordinates as [number, number],
+                    zoom: 15,
+                });
             });
 
             fuzzySearchResultsList.appendChild(resultItem);
@@ -80,7 +83,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         if (!places.features.length) {
             const noResults = document.createElement('li');
             noResults.classList.add('sdk-example-result-item');
-            noResults.innerHTML = `<div class="sdk-example-result-value sdk-example-ellipsis">No results found</div>`;
+            noResults.innerHTML = `<div class="sdk-example-result-value">No results found</div>`;
             fuzzySearchResultsList.appendChild(noResults);
         }
     };
@@ -112,16 +115,14 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         const resultItem = document.createElement('li');
         resultItem.classList.add('sdk-example-result-item');
         if (!result) {
-            resultItem.innerHTML = `<div class="sdk-example-result-value sdk-example-ellipsis">No results found</div>`;
+            resultItem.innerHTML = `<div class="sdk-example-result-value">No results found</div>`;
             return resultItem;
         }
         const segment = result.segments[0] as AutocompleteSearchBrandSegment | AutocompleteSearchCategorySegment;
 
         resultItem.innerHTML = `
-            <a class="sdk-example-a">
-                <div class="sdk-example-result-value sdk-example-ellipsis">${segment.value}</div>
-                <div class="sdk-example-result-type sdk-example-ellipsis">${segment.type}</div>
-            </a>
+            <div class="sdk-example-result-value">${segment.value}</div>
+            <div class="sdk-example-result-type">${segment.type}</div>
         `;
 
         resultItem.addEventListener('click', async () => {
@@ -150,6 +151,8 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     const clearSearchResults = () => {
         clearAutoCompleteResults();
         clearFuzzySearchResults();
+        searchBox.value = '';
+        selectedAutoCompleteSegment = null;
     };
 
     const autoCompleteSearch = async () => {
@@ -158,7 +161,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     };
 
     const showSearchThisAreaButton = () =>
-        (searchThisAreaButton.innerHTML = `<button class="sdk-example-search-this-area-btn">Search This Area</button>`);
+        (searchThisAreaButton.innerHTML = `<button class="sdk-example-button">Search This Area</button>`);
 
     map.mapLibreMap.on('moveend', () => {
         if (searchBox.value === selectedAutoCompleteSegment?.value) {
@@ -168,13 +171,13 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 
     searchThisAreaButton.addEventListener('click', fuzzySearch);
 
-    const unhoverListItem = () => fuzzySearchResultsList.querySelector('.hovered')?.classList.remove('hovered');
+    const unhoverListItem = () => fuzzySearchResultsList.querySelector('.sdk-example-hovered')?.classList.remove('sdk-example-hovered');
 
     placesModule.events.on('hover', (place) => {
         unhoverListItem();
 
         const listItem = fuzzySearchResultsList.querySelector(`li[data-place-id="${place.id}"]`);
-        listItem?.classList.add('hovered');
+        listItem?.classList.add('sdk-example-hovered');
     });
 
     // Clean up list item hover when hovering outside pins
@@ -182,6 +185,9 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         unhoverListItem();
         placesModule.cleanEventStates();
     });
+
+    // Clear button resets everything
+    (document.querySelector('#sdk-example-clearButton') as HTMLButtonElement).addEventListener('click', clearSearchResults);
 
     searchBox.addEventListener('keyup', async () => {
         selectedAutoCompleteSegment = null;

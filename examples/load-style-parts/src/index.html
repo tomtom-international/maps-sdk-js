@@ -1,17 +1,48 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
+<html lang="en">
     <head>
         <title>Loading map style parts as you need them</title>
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
         <link rel="icon" href="data:,">
     </head>
-    <body>
+    <body class="sdk-example-body">
         <div id="sdk-map"></div>
-        <div class="sdk-example-panel">
-            <button class="sdk-example-button" id="sdk-example-addIncidents">Load Traffic Incidents</button>
-            <button class="sdk-example-button" id="sdk-example-addFlow">Load Traffic Flow</button>
-            <button class="sdk-example-button" id="sdk-example-addHillshade">Load Hillshade</button>
-            <select class="sdk-example-button" id="sdk-example-mapStyles"></select>
+        <div class="sdk-example-customPanel">
+            <div class="sdk-example-panel-header">
+                <h3 class="sdk-example-heading">
+                    <span class="sdk-example-heading-text">Style Parts</span>
+                    <button class="sdk-example-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="sdk-example-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+            <div class="sdk-example-panel-content">
+            <div class="sdk-example-section">
+                <label class="sdk-example-form-label" for="sdk-example-mapStyles">Map Style:</label>
+                <select class="sdk-example-select" id="sdk-example-mapStyles"></select>
+            </div>
+
+            <div class="sdk-example-section">
+                <h4 class="sdk-example-subheading">Layers</h4>
+                <label class="sdk-example-toggle-label">
+                    <input type="checkbox" class="sdk-example-toggle-input" id="sdk-example-toggleIncidents">
+                    <span class="sdk-example-toggle-switch"></span>
+                    Traffic Incidents
+                </label>
+                <label class="sdk-example-toggle-label">
+                    <input type="checkbox" class="sdk-example-toggle-input" id="sdk-example-toggleFlow">
+                    <span class="sdk-example-toggle-switch"></span>
+                    Traffic Flow
+                </label>
+                <label class="sdk-example-toggle-label">
+                    <input type="checkbox" class="sdk-example-toggle-input" id="sdk-example-toggleHillshade">
+                    <span class="sdk-example-toggle-switch"></span>
+                    Hillshade
+                </label>
+            </div>
+        </div>
         </div>
         <script type="module" src="./index.ts"></script>
     </body>

@@ -31,7 +31,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     const popUp = new Popup({
         closeButton: false,
         offset: 35,
-        className: 'maps-sdk-js-popup',
+        className: 'sdk-example-maps-sdk-js-popup',
     });
 
     const map = new TomTomMap({
@@ -100,7 +100,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
             .setHTML(
                 `
                     <h3>${poi?.name}</h3>
-                    <label class="sdk-example-address sdk-example-label">${address.freeformAddress}</label>
+                    <span class="sdk-example-address">${address.freeformAddress}</span>
                     <br/><br/>
                     ${chargingPark ? connectorsHTML(chargingPark) : 'Charging park data not available.'}
                 `,
@@ -182,16 +182,16 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     };
 
     const listenToHTMLUserEvents = () => {
-        const searchButton = document.querySelector('#searchButton') as HTMLButtonElement;
+        const searchButton = document.querySelector('#sdk-example-searchButton') as HTMLButtonElement;
         searchButton.addEventListener('click', searchEVStations);
-        (document.querySelector('#clearButton') as HTMLButtonElement).addEventListener('click', clear);
+        (document.querySelector('#sdk-example-clearButton') as HTMLButtonElement).addEventListener('click', clear);
         evBrandTextBox.addEventListener('keypress', (event) => event.key === 'Enter' && searchButton.click());
         areaTextBox.addEventListener('keypress', (event) => event.key === 'Enter' && searchButton.click());
 
-        const minPowerKWMapEVStationsInput = document.querySelector('#minPowerKWMapEVStations') as HTMLInputElement;
+        const minPowerKWMapEVStationsInput = document.querySelector('#sdk-example-minPowerKWMapEVStations') as HTMLInputElement;
         minPowerKWMapEVStationsInput.value = String(minPowerKWMapEVStations);
         const minPowerKWSearchedEVStationsInput = document.querySelector(
-            '#minPowerKWSearchedEVStations',
+            '#sdk-example-minPowerKWSearchedEVStations',
         ) as HTMLInputElement;
         minPowerKWSearchedEVStationsInput.value = String(minPowerKWSearchedEVStations);
         minPowerKWMapEVStationsInput.addEventListener('keyup', async () => {

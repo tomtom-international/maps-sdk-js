@@ -43,7 +43,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     };
 
     const listenToUIEvents = async () => {
-        const placeSelector = document.getElementById('sdk-example-place-selector') as HTMLSelectElement;
+        const placeSelector = document.getElementById('sdk-example-placeSelector') as HTMLSelectElement;
         placeSelector.addEventListener('change', (event) =>
             updateMap(namedConfigs[(event.target as HTMLInputElement).value]),
         );
@@ -68,4 +68,13 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 
     await updateMap(namedConfigs.france);
     await listenToUIEvents();
+    
+    const toggleButton = document.querySelector('.sdk-example-heading-toggle');
+    const panelContent = document.querySelector('.sdk-example-panel-content');
+    
+    toggleButton?.addEventListener('click', () => {
+        const isExpanded = toggleButton.getAttribute('aria-expanded') === 'true';
+        toggleButton.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');
+        panelContent?.classList.toggle('collapsed');
+    });
 })();

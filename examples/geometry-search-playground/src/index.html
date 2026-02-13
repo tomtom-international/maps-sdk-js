@@ -7,26 +7,17 @@
     </head>
     <body class="sdk-example-body">
         <div id="sdk-map"></div>
-        <div class="sdk-example-search-container">
-            <input
-                id="sdk-example-searchTextBox"
-                type="text"
-                placeholder="Find"
-                class="sdk-example-element sdk-example-input"
-            >
-            <label for="sdk-example-inTextBox" class="sdk-example-element">in</label>
-            <input
-                id="sdk-example-inTextBox"
-                type="text"
-                placeholder="In"
-                class="sdk-example-element sdk-example-input"
-            >
-            <button id="sdk-example-searchButton" class="sdk-example-element sdk-example-button">Search</button>
+        <div class="sdk-example-searchPanel">
+            <div class="sdk-example-search-row">
+                <input id="sdk-example-searchTextBox" class="sdk-example-input" type="text" placeholder="Find">
+                <span class="sdk-example-label">in</span>
+                <input id="sdk-example-inTextBox" class="sdk-example-input" type="text" placeholder="Area">
+                <button id="sdk-example-searchButton" class="sdk-example-button">Search</button>
+                <button id="sdk-example-clearButton" class="sdk-example-button sdk-example-button-secondary">Clear</button>
+            </div>
         </div>
-        <div class="sdk-example-refit-button-container">
-            <button id="sdk-example-reCenter" class="sdk-example-element sdk-example-button">
-                Re-fit to searched geometry
-            </button>
+        <div class="sdk-example-button-container">
+            <button id="sdk-example-reCenter" class="sdk-example-button">Re-center</button>
         </div>
         <script type="module" src="./index.ts"></script>
     </body>

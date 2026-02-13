@@ -57,46 +57,38 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
             values: [],
         };
         poisModule.filterCategories(categoryFilter);
-        filterInputs.forEach((input) => (input.checked = categoryFilter.values.includes(input.value)));
+        filterInputs.forEach((input) => (input.checked = false));
         modeSelector.selectedIndex = 0;
     };
 
     const createFilterToggles = () => {
-        const container = document.getElementById('sdk-example-filters-container');
+        const container = document.getElementById('sdk-example-filtersContainer');
         for (const [key, value] of Object.entries(categories)) {
-            const item = document.createElement('div');
-            item.className = 'sdk-example-item';
+            const label = document.createElement('label');
+            label.className = 'sdk-example-toggle-label';
+
             const input = document.createElement('input');
             input.type = 'checkbox';
+            input.className = 'sdk-example-toggle-input';
             input.value = key;
             input.checked = categoryFilter.values.includes(input.value);
             input.id = key;
-            const label = document.createElement('label');
-            label.htmlFor = key;
-            label.innerText = value as string;
-            item.appendChild(input);
-            item.appendChild(label);
-            filterInputs.push(input);
-            container?.appendChild(item);
-        }
-    };
 
-    const listenToUserEvents = () => {
-        const items = document.querySelectorAll('.sdk-example-item input');
-        items.forEach((item) =>
-            item.addEventListener('change', (e) => {
+            const toggle = document.createElement('span');
+            toggle.className = 'sdk-example-toggle-switch';
+
+            label.appendChild(input);
+            label.appendChild(toggle);
+            label.appendChild(document.createTextNode(value as string));
+
+            input.addEventListener('change', (e) => {
                 const target = e.target as HTMLInputElement;
                 toggleCategoryFilter(target.value, target.checked);
-            }),
-        );
+            });
 
-        modeSelector = document.getElementById('sdk-example-mode-selector') as HTMLSelectElement;
-        modeSelector?.addEventListener('change', (e) =>
-            changeFilterMode((e.target as HTMLSelectElement).value as FilterShowMode),
-        );
-
-        const resetBtn = document.getElementById('sdk-example-reset');
-        resetBtn?.addEventListener('click', resetConfig);
+            filterInputs.push(input);
+            container?.appendChild(label);
+        }
     };
 
     const map = new TomTomMap({
@@ -108,6 +100,21 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     });
     poisModule = await POIsModule.get(map);
 
+    modeSelector = document.getElementById('sdk-example-modeSelector') as HTMLSelectElement;
+    modeSelector?.addEventListener('change', (e) =>
+        changeFilterMode((e.target as HTMLSelectElement).value as FilterShowMode),
+    );
+
+    document.getElementById('sdk-example-resetButton')?.addEventListener('click', resetConfig);
+
     createFilterToggles();
-    listenToUserEvents();
+    
+    const toggleButton = document.querySelector('.sdk-example-heading-toggle');
+    const panelContent = document.querySelector('.sdk-example-panel-content');
+    
+    toggleButton?.addEventListener('click', () => {
+        const isExpanded = toggleButton.getAttribute('aria-expanded') === 'true';
+        toggleButton.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');
+        panelContent?.classList.toggle('collapsed');
+    });
 })();

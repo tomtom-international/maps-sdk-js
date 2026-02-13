@@ -28,12 +28,12 @@ const renderConnectorsWithAvailability = (connectorAvailabilities: ConnectorAvai
 
             return `
                 <li class="sdk-example-connector-li">
-                    <div class="sdk-example-connectorIcon">${connectorIcons[connectorType] ?? genericIcon}</div>
-                    <label class="sdk-example-connectorName sdk-example-label">${connectorName ?? ''}</label>
-                    <label class="sdk-example-connectorPower sdk-example-label"> | ${connector.ratedPowerKW} KW</label>
-                    <label class="sdk-example-label ${
+                    <div class="sdk-example-connector-icon">${connectorIcons[connectorType] ?? genericIcon}</div>
+                    <span class="sdk-example-connector-name">${connectorName ?? ''}</span>
+                    <span class="sdk-example-connector-power"> | ${connector.ratedPowerKW} KW</span>
+                    <span class="${
                         availableCount ? 'sdk-example-available' : 'sdk-example-unavailable'
-                    }">${availableCount} / ${connectorAvailability.count}</label>
+                    }">${availableCount} / ${connectorAvailability.count}</span>
                 </li>`;
         })
         .join('');
@@ -49,10 +49,10 @@ const renderConnectors = (connectors: ConnectorCount[]): string => {
 
             return `
                 <li class="sdk-example-connector-li">
-                    <div class="sdk-example-connectorIcon">${connectorIcons[connectorType] ?? genericIcon}</div>
-                    <label class="sdk-example-connectorName sdk-example-label">${connectorName ?? ''}</label>
-                    <label class="sdk-example-connectorPower sdk-example-label"> | ${connector.ratedPowerKW} KW</label>
-                    <label class="sdk-example-label sdk-example-noStatus">${count}</label>
+                    <div class="sdk-example-connector-icon">${connectorIcons[connectorType] ?? genericIcon}</div>
+                    <span class="sdk-example-connector-name">${connectorName ?? ''}</span>
+                    <span class="sdk-example-connector-power"> | ${connector.ratedPowerKW} KW</span>
+                    <span class="sdk-example-no-status">${count}</span>
                 </li>`;
         })
         .join('');

@@ -7,73 +7,119 @@
     </head>
     <body class="sdk-example-body">
         <div id="sdk-map"></div>
-        <div class="sdk-example-checkbox-container">
-            <label for="sdk-example-mapStyles"></label>
-            <select class="sdk-example-selector" id="sdk-example-mapStyles"></select>
-            <label class="sdk-example-toggle">
-                Water
-                <input class="sdk-example-input" type="checkbox" id="sdk-example-toggle-water" checked>
-            </label>
-            <label class="sdk-example-toggle">
-                Land
-                <input class="sdk-example-input" type="checkbox" id="sdk-example-toggle-land" checked>
-            </label>
-            <label class="sdk-example-toggle">
-                Borders
-                <input class="sdk-example-input" type="checkbox" id="sdk-example-toggle-borders" checked>
-            </label>
-            <label class="sdk-example-toggle">
-                Buildings
-                <input class="sdk-example-input" type="checkbox" id="sdk-example-toggle-buildings2D" checked>
-            </label>
-            <label class="sdk-example-toggle">
-                3D Buildings
-                <input class="sdk-example-input" type="checkbox" id="sdk-example-toggle-buildings3D">
-            </label>
-            <label class="sdk-example-toggle">
-                House numbers
-                <input class="sdk-example-input" type="checkbox" id="sdk-example-toggle-houseNumbers" checked>
-            </label>
-            <label class="sdk-example-toggle">
-                Road lines
-                <input class="sdk-example-input" type="checkbox" id="sdk-example-toggle-roadLines" checked>
-            </label>
-            <label class="sdk-example-toggle">
-                Road labels
-                <input class="sdk-example-input" type="checkbox" id="sdk-example-toggle-roadLabels" checked>
-            </label>
-            <label class="sdk-example-toggle">
-                Road shields
-                <input class="sdk-example-input" type="checkbox" id="sdk-example-toggle-roadShields" checked>
-            </label>
-            <label class="sdk-example-toggle">
-                Place labels
-                <input class="sdk-example-input" type="checkbox" id="sdk-example-toggle-placeLabels" checked>
-            </label>
-            <label class="sdk-example-toggle">
-                Smaller towns
-                <input class="sdk-example-input" type="checkbox" id="sdk-example-toggle-smallerTownLabels" checked>
-            </label>
-            <label class="sdk-example-toggle">
-                City labels
-                <input class="sdk-example-input" type="checkbox" id="sdk-example-toggle-cityLabels" checked>
-            </label>
-            <label class="sdk-example-toggle">
-                Capital labels
-                <input class="sdk-example-input" type="checkbox" id="sdk-example-toggle-capitalLabels" checked>
-            </label>
-            <label class="sdk-example-toggle">
-                State labels
-                <input class="sdk-example-input" type="checkbox" id="sdk-example-toggle-stateLabels" checked>
-            </label>
-            <label class="sdk-example-toggle">
-                Country labels
-                <input class="sdk-example-input" type="checkbox" id="sdk-example-toggle-countryLabels" checked>
-            </label>
-            <label class="sdk-example-toggle">
-                POIs
-                <input class="sdk-example-input" type="checkbox" id="sdk-example-togglePOIs" checked>
-            </label>
+        <div class="sdk-example-customPanel">
+            <div class="sdk-example-panel-header">
+                <h3 class="sdk-example-heading">
+                    <span class="sdk-example-heading-text">Layer Groups</span>
+                    <button class="sdk-example-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="sdk-example-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+            <div class="sdk-example-panel-content">
+            <div class="sdk-example-section">
+                <label class="sdk-example-form-label" for="sdk-example-mapStyles">Map Style:</label>
+                <select class="sdk-example-select" id="sdk-example-mapStyles"></select>
+            </div>
+
+            <div class="sdk-example-section">
+                <h4 class="sdk-example-subheading">Base Map</h4>
+                <label class="sdk-example-toggle-label">
+                    <input type="checkbox" class="sdk-example-toggle-input" id="sdk-example-toggle-water" checked>
+                    <span class="sdk-example-toggle-switch"></span>
+                    Water
+                </label>
+                <label class="sdk-example-toggle-label">
+                    <input type="checkbox" class="sdk-example-toggle-input" id="sdk-example-toggle-land" checked>
+                    <span class="sdk-example-toggle-switch"></span>
+                    Land
+                </label>
+                <label class="sdk-example-toggle-label">
+                    <input type="checkbox" class="sdk-example-toggle-input" id="sdk-example-toggle-borders" checked>
+                    <span class="sdk-example-toggle-switch"></span>
+                    Borders
+                </label>
+                <label class="sdk-example-toggle-label">
+                    <input type="checkbox" class="sdk-example-toggle-input" id="sdk-example-toggle-buildings2D" checked>
+                    <span class="sdk-example-toggle-switch"></span>
+                    Buildings
+                </label>
+                <label class="sdk-example-toggle-label">
+                    <input type="checkbox" class="sdk-example-toggle-input" id="sdk-example-toggle-buildings3D">
+                    <span class="sdk-example-toggle-switch"></span>
+                    3D Buildings
+                </label>
+                <label class="sdk-example-toggle-label">
+                    <input type="checkbox" class="sdk-example-toggle-input" id="sdk-example-toggle-houseNumbers" checked>
+                    <span class="sdk-example-toggle-switch"></span>
+                    House numbers
+                </label>
+            </div>
+
+            <div class="sdk-example-section">
+                <h4 class="sdk-example-subheading">Roads</h4>
+                <label class="sdk-example-toggle-label">
+                    <input type="checkbox" class="sdk-example-toggle-input" id="sdk-example-toggle-roadLines" checked>
+                    <span class="sdk-example-toggle-switch"></span>
+                    Road lines
+                </label>
+                <label class="sdk-example-toggle-label">
+                    <input type="checkbox" class="sdk-example-toggle-input" id="sdk-example-toggle-roadLabels" checked>
+                    <span class="sdk-example-toggle-switch"></span>
+                    Road labels
+                </label>
+                <label class="sdk-example-toggle-label">
+                    <input type="checkbox" class="sdk-example-toggle-input" id="sdk-example-toggle-roadShields" checked>
+                    <span class="sdk-example-toggle-switch"></span>
+                    Road shields
+                </label>
+            </div>
+
+            <div class="sdk-example-section">
+                <h4 class="sdk-example-subheading">Labels</h4>
+                <label class="sdk-example-toggle-label">
+                    <input type="checkbox" class="sdk-example-toggle-input" id="sdk-example-toggle-placeLabels" checked>
+                    <span class="sdk-example-toggle-switch"></span>
+                    Place labels
+                </label>
+                <label class="sdk-example-toggle-label">
+                    <input type="checkbox" class="sdk-example-toggle-input" id="sdk-example-toggle-smallerTownLabels" checked>
+                    <span class="sdk-example-toggle-switch"></span>
+                    Smaller towns
+                </label>
+                <label class="sdk-example-toggle-label">
+                    <input type="checkbox" class="sdk-example-toggle-input" id="sdk-example-toggle-cityLabels" checked>
+                    <span class="sdk-example-toggle-switch"></span>
+                    City labels
+                </label>
+                <label class="sdk-example-toggle-label">
+                    <input type="checkbox" class="sdk-example-toggle-input" id="sdk-example-toggle-capitalLabels" checked>
+                    <span class="sdk-example-toggle-switch"></span>
+                    Capital labels
+                </label>
+                <label class="sdk-example-toggle-label">
+                    <input type="checkbox" class="sdk-example-toggle-input" id="sdk-example-toggle-stateLabels" checked>
+                    <span class="sdk-example-toggle-switch"></span>
+                    State labels
+                </label>
+                <label class="sdk-example-toggle-label">
+                    <input type="checkbox" class="sdk-example-toggle-input" id="sdk-example-toggle-countryLabels" checked>
+                    <span class="sdk-example-toggle-switch"></span>
+                    Country labels
+                </label>
+            </div>
+
+            <div class="sdk-example-section">
+                <h4 class="sdk-example-subheading">Other</h4>
+                <label class="sdk-example-toggle-label">
+                    <input type="checkbox" class="sdk-example-toggle-input" id="sdk-example-togglePOIs" checked>
+                    <span class="sdk-example-toggle-switch"></span>
+                    POIs
+                </label>
+            </div>
+        </div>
         </div>
         <script type="module" src="./index.ts"></script>
     </body>

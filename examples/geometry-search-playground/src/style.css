@@ -1,56 +1,59 @@
-.sdk-example-body {
-    text-decoration: none;
-    user-select: none;
-}
+@import '../../src/templates/css/base/tokens.css';
+@import '../../src/templates/css/base/global.css';
+@import '../../src/templates/css/base/typography.css';
+@import '../../src/templates/css/form/input.css';
+@import '../../src/templates/css/button/button.css';
 
-.sdk-example-element {
-    border: 0 solid rgba(0, 0, 0, 0);
-    border-radius: 20px;
-    height: 26px;
-    margin-left: 10px;
-    margin-right: 10px;
-}
+/* CUSTOM STYLES (example-specific) */
 
-.sdk-example-input {
-    text-indent: 10px;
-}
-
-.sdk-example-button {
-    padding: 8px 16px;
-    font-family: Gilroy, sans-serif;
-    color: #fff;
-    background-color: #df1b12;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    border: 0 solid rgba(0, 0, 0, 0);
-    border-radius: 20px;
-    cursor: pointer;
-}
-
-.sdk-example-search-container {
+.sdk-example-searchPanel {
     position: absolute;
-    right: 20px;
+    top: var(--sdk-panel-margin);
+    right: var(--sdk-panel-margin);
+    padding: var(--sdk-space-3);
+    background: var(--sdk-surface-0);
+    border-radius: var(--sdk-radius-20);
+    box-shadow: var(--sdk-shadow-e2);
+    z-index: var(--sdk-z-panel);
+}
+
+.sdk-example-search-row {
     display: flex;
-    flex-direction: row;
-    max-height: calc(100vh - 40px);
-    overflow-y: auto;
-    box-sizing: border-box;
+    gap: var(--sdk-space-2);
+    align-items: center;
+    flex-wrap: nowrap;
 }
 
-.sdk-example-refit-button-container {
-    position: absolute;
-    right: 20px;
-    bottom: 20px;
-    display: flex;
-    flex-direction: column;
-    max-height: calc(100vh - 40px);
-    overflow-y: auto;
-    box-sizing: border-box;
+.sdk-example-search-row .sdk-example-input {
+    flex: 1;
+    min-width: 0;
 }
 
-#sdk-map {
+.sdk-example-button-container {
     position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
+    right: var(--sdk-panel-margin);
+    bottom: var(--sdk-panel-margin);
+    z-index: var(--sdk-z-panel);
+}
+
+/* Responsive: max-width 768px */
+@media (max-width: 768px) {
+    .sdk-example-search-row {
+        flex-wrap: wrap;
+    }
+}
+
+/* Responsive: max-width 600px */
+@media (max-width: 600px) {
+    .sdk-example-searchPanel {
+        left: var(--sdk-panel-margin);
+        right: var(--sdk-panel-margin);
+    }
+}
+
+/* Responsive: max-height 550px */
+@media (max-height: 550px) {
+    .sdk-example-searchPanel {
+        padding: var(--sdk-space-2);
+    }
 }

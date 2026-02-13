@@ -5,12 +5,28 @@
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
         <link rel="icon" href="data:,">
     </head>
-    <body>
+    <body class="sdk-example-body">
         <div id="sdk-map"></div>
-        <div class="sdk-example-button-container"><button id="sdk-example-reCenter">Re-Center</button></div>
-        <div id="sdk-example-panel" class="sdk-example-panel">
-            <div>
-                <select class="sdk-example-select" id="sdk-example-place-selector">
+        <div id="sdk-example-panel" class="sdk-example-customPanel">
+            <div class="sdk-example-panel-header">
+                <h3 class="sdk-example-heading">
+                    <span class="sdk-example-heading-text">Geometries</span>
+                    <button class="sdk-example-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="sdk-example-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+            <div class="sdk-example-panel-content">
+            <div class="sdk-example-section">
+                <label class="sdk-example-form-label" for="sdk-example-mapStyles">Map Style:</label>
+                <select class="sdk-example-select" id="sdk-example-mapStyles"></select>
+            </div>
+
+            <div class="sdk-example-section">
+                <label class="sdk-example-form-label" for="sdk-example-placeSelector">Region:</label>
+                <select class="sdk-example-select" id="sdk-example-placeSelector">
                     <option value="france">Regions of France</option>
                     <option value="italy">Regions of Italy</option>
                     <option value="netherlands">Regions of NL</option>
@@ -20,39 +36,46 @@
                     <option value="chicagoPostcodes">Postcodes in Chicago</option>
                 </select>
             </div>
-            <div class="sdk-example-layers">
-                <label class="sdk-example-heading-label">Layer position: </label>
-                <label>
-                    <input type="radio" name="layerOption" value="top" checked>
-                    Top
-                </label>
-                <label>
-                    <input type="radio" name="layerOption" value="country">
-                    Below countries
-                </label>
-                <label>
-                    <input type="radio" name="layerOption" value="lowestPlaceLabel">
-                    Below place labels
-                </label>
-                <label>
-                    <input type="radio" name="layerOption" value="poi">
-                    Below Map POIs
-                </label>
-                <label>
-                    <input type="radio" name="layerOption" value="lowestLabel">
-                    Below all labels
-                </label>
-                <label>
-                    <input type="radio" name="layerOption" value="lowestRoadLine">
-                    Below roads
-                </label>
-                <label>
-                    <input type="radio" name="layerOption" value="lowestBuilding">
-                    Below buildings
-                </label>
+
+            <div class="sdk-example-section">
+                <span class="sdk-example-form-label">Layer position:</span>
+                <div class="sdk-example-radio-group">
+                    <label class="sdk-example-radio-label">
+                        <input type="radio" name="layerOption" value="top" checked>
+                        Top
+                    </label>
+                    <label class="sdk-example-radio-label">
+                        <input type="radio" name="layerOption" value="country">
+                        Below countries
+                    </label>
+                    <label class="sdk-example-radio-label">
+                        <input type="radio" name="layerOption" value="lowestPlaceLabel">
+                        Below place labels
+                    </label>
+                    <label class="sdk-example-radio-label">
+                        <input type="radio" name="layerOption" value="poi">
+                        Below Map POIs
+                    </label>
+                    <label class="sdk-example-radio-label">
+                        <input type="radio" name="layerOption" value="lowestLabel">
+                        Below all labels
+                    </label>
+                    <label class="sdk-example-radio-label">
+                        <input type="radio" name="layerOption" value="lowestRoadLine">
+                        Below roads
+                    </label>
+                    <label class="sdk-example-radio-label">
+                        <input type="radio" name="layerOption" value="lowestBuilding">
+                        Below buildings
+                    </label>
+                </div>
+            </div>
+
+            <div class="sdk-example-section">
+                <button id="sdk-example-reCenter" class="sdk-example-button">Re-Center</button>
             </div>
         </div>
-        <select class="sdk-example-select" id="sdk-example-mapStyles"></select>
+        </div>
         <script type="module" src="./index.ts"></script>
     </body>
 </html>

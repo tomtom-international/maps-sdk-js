@@ -5,17 +5,54 @@
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
         <link rel="icon" href="data:,">
     </head>
-    <body>
+    <body class="sdk-example-body">
         <div id="sdk-map"></div>
-        <div class="controls">
-            <h3>Magnitude Filter</h3>
-            <label> <input type="checkbox" name="magnitude" value="unknown" checked> Unknown </label>
-            <label> <input type="checkbox" name="magnitude" value="minor" checked> Minor </label>
-            <label> <input type="checkbox" name="magnitude" value="moderate" checked> Moderate </label>
-            <label> <input type="checkbox" name="magnitude" value="major" checked> Major </label>
-            <label> <input type="checkbox" name="magnitude" value="indefinite" checked> Indefinite </label>
-            <hr>
-            <button id="clearFilter">Show All</button>
+        <div class="sdk-example-customPanel">
+            <div class="sdk-example-panel-header">
+                <h3 class="sdk-example-heading">
+                    <span class="sdk-example-heading-text">Traffic Incidents</span>
+                    <button class="sdk-example-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="sdk-example-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+
+            <div class="sdk-example-panel-content">
+            <div class="sdk-example-section">
+                <h4 class="sdk-example-subheading">Magnitude Filter</h4>
+                <label class="sdk-example-toggle-label">
+                    <input type="checkbox" class="sdk-example-toggle-input" name="magnitude" value="unknown" checked>
+                    <span class="sdk-example-toggle-switch"></span>
+                    Unknown
+                </label>
+                <label class="sdk-example-toggle-label">
+                    <input type="checkbox" class="sdk-example-toggle-input" name="magnitude" value="minor" checked>
+                    <span class="sdk-example-toggle-switch"></span>
+                    Minor
+                </label>
+                <label class="sdk-example-toggle-label">
+                    <input type="checkbox" class="sdk-example-toggle-input" name="magnitude" value="moderate" checked>
+                    <span class="sdk-example-toggle-switch"></span>
+                    Moderate
+                </label>
+                <label class="sdk-example-toggle-label">
+                    <input type="checkbox" class="sdk-example-toggle-input" name="magnitude" value="major" checked>
+                    <span class="sdk-example-toggle-switch"></span>
+                    Major
+                </label>
+                <label class="sdk-example-toggle-label">
+                    <input type="checkbox" class="sdk-example-toggle-input" name="magnitude" value="indefinite" checked>
+                    <span class="sdk-example-toggle-switch"></span>
+                    Indefinite
+                </label>
+            </div>
+
+            <div class="sdk-example-section">
+                <button class="sdk-example-button sdk-example-button-full" id="sdk-example-clearFilter">Show All</button>
+            </div>
+            </div>
         </div>
         <script type="module" src="./index.ts"></script>
     </body>

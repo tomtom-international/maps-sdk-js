@@ -5,80 +5,100 @@
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
         <link rel="icon" href="data:,">
     </head>
-    <body>
+    <body class="sdk-example-body">
         <div id="sdk-map"></div>
-        <div class="sdk-example-panel">
-            <label class="sdk-example-heading-label" for="sdk-example-icon-style-selector">
-                Change places layer icon style:
-            </label>
-            <select id="sdk-example-icon-style-selector">
-                <option value="pin">Pin</option>
-                <option value="circle">Circle</option>
-                <option value="base-map">Base Map</option>
-                <option value="custom">Custom Icons</option>
-            </select>
-            <div>
-                <label class="sdk-example-heading-label">Change places layer label color:</label>
-                <div id="color-selector-grey" class="sdk-example-color-selector active" data-value="#333333"></div>
-                <div id="color-selector-blue" class="sdk-example-color-selector" data-value="#4C4CB2"></div>
-                <div id="color-selector-magenta" class="sdk-example-color-selector" data-value="#B24BB2"></div>
-                <div id="color-selector-moderate-red" class="sdk-example-color-selector" data-value="#B34C4B"></div>
-                <div id="color-selector-cyan" class="sdk-example-color-selector" data-value="#4BB2B2"></div>
-                <div id="color-selector-bright-orange" class="sdk-example-color-selector" data-value="#FEB24B"></div>
-                <div id="color-selector-strong-red" class="sdk-example-color-selector" data-value="#BD0026"></div>
+        <div class="sdk-example-customPanel">
+            <div class="sdk-example-panel-header">
+                <h3 class="sdk-example-heading">
+                    <span class="sdk-example-heading-text">Places Customization</span>
+                    <button class="sdk-example-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="sdk-example-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
             </div>
-            <div>
-                <label class="sdk-example-heading-label">Change places layer label font:</label>
-                <label>
-                    <input
-                        type="radio"
-                        class="sdk-example-font-selector"
-                        name="sdk-example-font-selector"
-                        value="Noto-Regular"
-                    >
-                    Regular
+            <div class="sdk-example-panel-content">
+            <div class="sdk-example-section">
+                <label class="sdk-example-form-label" for="sdk-example-icon-style-selector">
+                    Change places layer icon style:
                 </label>
-                <label>
-                    <input
-                        type="radio"
-                        class="sdk-example-font-selector"
-                        name="sdk-example-font-selector"
-                        value="Noto-Medium"
-                    >
-                    Medium
-                </label>
-                <label>
-                    <input
-                        type="radio"
-                        class="sdk-example-font-selector"
-                        name="sdk-example-font-selector"
-                        value="Noto-Bold"
-                        checked
-                    >
-                    Bold
-                </label>
+                <select class="sdk-example-select" id="sdk-example-icon-style-selector">
+                    <option value="pin">Pin</option>
+                    <option value="circle">Circle</option>
+                    <option value="base-map">Base Map</option>
+                    <option value="custom">Custom Icons</option>
+                </select>
             </div>
-            <div>
-                <label class="sdk-example-heading-label">Change places layer label content:</label>
-                <label>
-                    <input
-                        type="radio"
-                        class="sdk-example-content-selector"
-                        name="sdk-example-content-selector"
-                        value="default"
-                        checked
-                    >
-                    Default
-                </label>
-                <label>
-                    <input
-                        type="radio"
-                        class="sdk-example-content-selector"
-                        name="sdk-example-content-selector"
-                        value="multi-line"
-                    >
-                    Multi line label
-                </label>
+            <div class="sdk-example-section">
+                <label class="sdk-example-form-label">Change places layer label color:</label>
+                <div class="sdk-example-color-selectors">
+                    <div id="color-selector-grey" class="sdk-example-color-selector active" data-value="#333333" tabindex="0"></div>
+                    <div id="color-selector-blue" class="sdk-example-color-selector" data-value="#4C4CB2" tabindex="0"></div>
+                    <div id="color-selector-magenta" class="sdk-example-color-selector" data-value="#B24BB2" tabindex="0"></div>
+                    <div id="color-selector-moderate-red" class="sdk-example-color-selector" data-value="#B34C4B" tabindex="0"></div>
+                    <div id="color-selector-cyan" class="sdk-example-color-selector" data-value="#4BB2B2" tabindex="0"></div>
+                    <div id="color-selector-bright-orange" class="sdk-example-color-selector" data-value="#FEB24B" tabindex="0"></div>
+                    <div id="color-selector-strong-red" class="sdk-example-color-selector" data-value="#BD0026" tabindex="0"></div>
+                </div>
+            </div>
+            <div class="sdk-example-section">
+                <label class="sdk-example-form-label">Change places layer label font:</label>
+                <div class="sdk-example-radio-group">
+                    <label class="sdk-example-radio-label">
+                        <input
+                            type="radio"
+                            class="sdk-example-font-selector"
+                            name="sdk-example-font-selector"
+                            value="Noto-Regular"
+                        >
+                        Regular
+                    </label>
+                    <label class="sdk-example-radio-label">
+                        <input
+                            type="radio"
+                            class="sdk-example-font-selector"
+                            name="sdk-example-font-selector"
+                            value="Noto-Medium"
+                        >
+                        Medium
+                    </label>
+                    <label class="sdk-example-radio-label">
+                        <input
+                            type="radio"
+                            class="sdk-example-font-selector"
+                            name="sdk-example-font-selector"
+                            value="Noto-Bold"
+                            checked
+                        >
+                        Bold
+                    </label>
+                </div>
+            </div>
+            <div class="sdk-example-section">
+                <label class="sdk-example-form-label">Change places layer label content:</label>
+                <div class="sdk-example-radio-group">
+                    <label class="sdk-example-radio-label">
+                        <input
+                            type="radio"
+                            class="sdk-example-content-selector"
+                            name="sdk-example-content-selector"
+                            value="default"
+                            checked
+                        >
+                        Default
+                    </label>
+                    <label class="sdk-example-radio-label">
+                        <input
+                            type="radio"
+                            class="sdk-example-content-selector"
+                            name="sdk-example-content-selector"
+                            value="multi-line"
+                        >
+                        Multi line label
+                    </label>
+                </div>
+            </div>
             </div>
         </div>
         <script type="module" src="./index.ts"></script>

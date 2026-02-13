@@ -1,390 +1,18 @@
-.sdk-example-body {
-    margin: 0;
-    padding: 0;
-    font-family: Gilroy, sans-serif;
-    user-select: none;
-}
+@import '../../src/templates/css/base/tokens.css';
+@import '../../src/templates/css/base/global.css';
+@import '../../src/templates/css/base/typography.css';
+@import '../../src/templates/css/panel/custom-panel.css';
+@import '../../src/templates/css/panel/search-panel.css';
+@import '../../src/templates/css/button/button.css';
+@import '../../src/templates/css/form/field.css';
+@import '../../src/templates/css/form/input.css';
+@import '../../src/templates/css/form/select.css';
+@import '../../src/templates/css/form/checkbox.css';
+@import '../../src/templates/css/form/slider.css';
+@import '../../src/templates/css/form/color.css';
 
-#sdk-map {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-}
+/* CUSTOM STYLES (example-specific) */
 
-/* Panels */
-.sdk-example-searchPanel,
-.sdk-example-customPanel {
-    position: absolute;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    font-family: Gilroy, sans-serif;
-    z-index: 1;
-}
-
-.sdk-example-searchPanel {
-    top: 10px;
-    left: 10px;
-    padding: 12px 16px;
-    display: flex;
-    gap: 8px;
-    align-items: center;
-}
-
-.sdk-example-customPanel {
-    top: 10px;
-    right: 10px;
-    width: 320px;
-    max-height: calc(100vh - 20px);
-    padding: 16px;
-    overflow-y: auto;
-}
-
-/* Form Elements */
-.sdk-example-input,
-.sdk-example-button,
-.sdk-example-select {
-    border-radius: 4px;
-    border: 1px solid #ddd;
-}
-
-.sdk-example-input {
-    padding: 8px 12px;
-    font-size: 14px;
-    min-width: 200px;
-}
-
-.sdk-example-button {
-    padding: 8px 16px;
-    font-size: 14px;
-    color: #fff;
-    background-color: #df1b12;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.sdk-example-button:hover {
-    background-color: #c01810;
-}
-
-.sdk-example-button-secondary {
-    background-color: #666;
-}
-
-.sdk-example-button-secondary:hover {
-    background-color: #555;
-}
-
-.sdk-example-select {
-    width: 100%;
-    padding: 6px 8px;
-    font-size: 13px;
-    background: white;
-    cursor: pointer;
-}
-
-/* Panel Content */
-.sdk-example-heading {
-    margin: 0 0 16px;
-    font-size: 18px;
-    font-weight: bold;
-    color: #333;
-    border-bottom: 2px solid #df1b12;
-    padding-bottom: 8px;
-}
-
-.sdk-example-section {
-    margin-bottom: 20px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid #eee;
-}
-
-.sdk-example-section:last-child {
-    border-bottom: none;
-}
-
-.sdk-example-subheading {
-    margin: 0 0 12px;
-    font-size: 14px;
-    font-weight: bold;
-    color: #555;
-}
-
-.sdk-example-checkbox-label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 13px;
-    color: #666;
-    cursor: pointer;
-}
-
-.sdk-example-checkbox-label input[type="checkbox"] {
-    margin-right: 8px;
-    cursor: pointer;
-}
-
-/* General labels for form controls */
-.sdk-example-form-label {
-    display: block;
-    margin: 12px 0 6px;
-    font-size: 13px;
-    font-weight: 500;
-    color: #555;
-}
-
-/* Popup connector labels (inline) */
-.sdk-example-label {
-    height: 24px;
-}
-
-.sdk-example-slider {
-    width: calc(100% - 60px);
-    margin-right: 8px;
-    vertical-align: middle;
-}
-
-.sdk-example-value {
-    display: inline-block;
-    min-width: 45px;
-    font-size: 13px;
-    font-weight: bold;
-    color: #df1b12;
-}
-
-/* Color Controls */
-.sdk-example-color-preview,
-.sdk-example-color-selectors {
-    display: flex;
-    gap: 8px;
-}
-
-.sdk-example-color-preview {
-    margin-top: 12px;
-}
-
-.sdk-example-color-selectors {
-    margin-top: 8px;
-}
-
-.sdk-example-color-box {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 11px;
-    color: #666;
-}
-
-.sdk-example-color-indicator {
-    width: 16px;
-    height: 16px;
-    border: 1px solid #ddd;
-    flex-shrink: 0;
-}
-
-.sdk-example-color-selector {
-    width: 40px;
-    height: 40px;
-    border-radius: 4px;
-    border: 2px solid #ddd;
-    cursor: pointer;
-    transition:
-        transform 0.2s,
-        border-color 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 9px;
-    font-weight: bold;
-    color: #666;
-}
-
-.sdk-example-color-selector:hover {
-    transform: scale(1.1);
-    border-color: #999;
-}
-
-.sdk-example-color-selector.active {
-    border-color: #df1b12;
-    border-width: 3px;
-    transform: scale(1.05);
-}
-
-/* Responsive - Width */
-@media (max-width: 768px) {
-    .sdk-example-searchPanel {
-        flex-direction: column;
-        align-items: stretch;
-        padding: 10px;
-    }
-    .sdk-example-input {
-        min-width: 150px;
-        font-size: 13px;
-        padding: 6px 10px;
-    }
-    .sdk-example-button {
-        font-size: 13px;
-        padding: 6px 12px;
-    }
-    .sdk-example-customPanel {
-        width: 240px;
-        padding: 12px;
-        font-size: 12px;
-    }
-    .sdk-example-heading {
-        font-size: 15px;
-    }
-    .sdk-example-subheading {
-        font-size: 12px;
-    }
-    .sdk-example-checkbox-label,
-    .sdk-example-label,
-    .sdk-example-select {
-        font-size: 11px;
-    }
-    .sdk-example-color-selector {
-        width: 30px;
-        height: 30px;
-    }
-}
-
-@media (max-width: 600px) {
-    .sdk-example-searchPanel {
-        top: 5px;
-        left: 5px;
-        padding: 8px;
-    }
-    .sdk-example-input {
-        min-width: 120px;
-        font-size: 12px;
-    }
-    .sdk-example-customPanel {
-        width: 200px;
-        top: 5px;
-        right: 5px;
-        padding: 8px;
-        font-size: 11px;
-    }
-    .sdk-example-heading {
-        font-size: 13px;
-        margin-bottom: 8px;
-        padding-bottom: 4px;
-    }
-    .sdk-example-section {
-        margin-bottom: 10px;
-        padding-bottom: 8px;
-    }
-    .sdk-example-subheading {
-        font-size: 11px;
-        margin-bottom: 6px;
-    }
-    .sdk-example-checkbox-label {
-        font-size: 10px;
-        margin-bottom: 4px;
-    }
-    .sdk-example-label {
-        font-size: 10px;
-        margin: 6px 0 3px;
-    }
-    .sdk-example-select {
-        font-size: 10px;
-        padding: 4px 6px;
-    }
-    .sdk-example-slider {
-        width: calc(100% - 45px);
-    }
-    .sdk-example-value {
-        min-width: 38px;
-        font-size: 10px;
-    }
-    .sdk-example-color-selector {
-        width: 26px;
-        height: 26px;
-    }
-    .sdk-example-color-indicator {
-        width: 14px;
-        height: 14px;
-    }
-    .sdk-example-color-box {
-        font-size: 9px;
-    }
-}
-
-/* Responsive - Height */
-@media (max-height: 700px) {
-    .sdk-example-customPanel {
-        max-height: calc(100vh - 80px);
-        padding: 12px;
-        width: 280px;
-        font-size: 12px;
-    }
-    .sdk-example-heading {
-        font-size: 16px;
-        margin-bottom: 12px;
-    }
-    .sdk-example-section {
-        margin-bottom: 14px;
-        padding-bottom: 12px;
-    }
-    .sdk-example-subheading {
-        font-size: 13px;
-        margin-bottom: 8px;
-    }
-    .sdk-example-checkbox-label,
-    .sdk-example-label,
-    .sdk-example-select {
-        font-size: 12px;
-    }
-    .sdk-example-color-selector {
-        width: 32px;
-        height: 32px;
-    }
-}
-
-@media (max-height: 550px) {
-    .sdk-example-customPanel {
-        max-height: calc(100vh - 100px);
-        padding: 8px;
-        width: 260px;
-        font-size: 11px;
-    }
-    .sdk-example-heading {
-        font-size: 14px;
-        margin-bottom: 10px;
-        padding-bottom: 6px;
-    }
-    .sdk-example-section {
-        margin-bottom: 10px;
-        padding-bottom: 8px;
-    }
-    .sdk-example-subheading {
-        font-size: 12px;
-        margin-bottom: 6px;
-    }
-    .sdk-example-checkbox-label {
-        margin-bottom: 6px;
-        font-size: 11px;
-    }
-    .sdk-example-label {
-        margin: 8px 0 4px;
-        font-size: 11px;
-    }
-    .sdk-example-select {
-        font-size: 11px;
-        padding: 4px 6px;
-    }
-    .sdk-example-color-selector {
-        width: 28px;
-        height: 28px;
-    }
-    .sdk-example-color-indicator {
-        width: 14px;
-        height: 14px;
-    }
-}
-
-/* Popup Styles */
 .maplibregl-popup-content {
     box-shadow:
         0 54px 55px rgba(0, 0, 0, 0.25),
@@ -396,12 +24,14 @@
     padding-top: 0;
 }
 
-.maps-sdk-js-popup {
+.sdk-example-maps-sdk-js-popup {
     min-width: 300px;
 }
+
 .sdk-example-address {
     color: grey;
 }
+
 .sdk-example-connector-ul {
     padding: 0;
     font-size: 14px;
@@ -409,15 +39,19 @@
     line-height: 24px;
     list-style-type: none;
 }
+
 .sdk-example-connector-li {
     height: 36px;
 }
+
 .sdk-example-connectorName {
     font-weight: bold;
 }
+
 .sdk-example-connectorPower {
     color: grey;
 }
+
 .sdk-example-connectorIcon {
     display: inline-block;
     width: 24px;
@@ -435,6 +69,11 @@
 .sdk-example-available {
     color: green;
 }
+
 .sdk-example-unavailable {
     color: red;
+}
+
+.sdk-example-label {
+    height: 24px;
 }

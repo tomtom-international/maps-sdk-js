@@ -52,14 +52,23 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         map.mapLibreMap.fitBounds(placeToSearchBBox, fitBoundsOptions);
     };
 
-    const listenToUserEvents = () => {
-        const searchTextBox = document.querySelector('#sdk-example-searchTextBox') as HTMLInputElement;
-        const inTextBox = document.querySelector('#sdk-example-inTextBox') as HTMLInputElement;
-        const searchButton = document.querySelector('#sdk-example-searchButton') as HTMLButtonElement;
+    const clear = () => {
+        searchTextBox.value = '';
+        inTextBox.value = '';
+        placesModule.clear();
+        geometryModule.clear();
+    };
 
+    const searchTextBox = document.querySelector('#sdk-example-searchTextBox') as HTMLInputElement;
+    const inTextBox = document.querySelector('#sdk-example-inTextBox') as HTMLInputElement;
+    const searchButton = document.querySelector('#sdk-example-searchButton') as HTMLButtonElement;
+
+    const listenToUserEvents = () => {
         searchButton.addEventListener('click', () => searchPlacesInGeometry(searchTextBox.value, inTextBox.value));
         searchTextBox.addEventListener('keypress', (event) => event.key === 'Enter' && searchButton.click());
         inTextBox.addEventListener('keypress', (event) => event.key === 'Enter' && searchButton.click());
+
+        (document.querySelector('#sdk-example-clearButton') as HTMLButtonElement).addEventListener('click', clear);
 
         document
             .querySelector('#sdk-example-reCenter')

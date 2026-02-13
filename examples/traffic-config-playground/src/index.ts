@@ -32,7 +32,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         return fetchedPlace;
     };
 
-    const presetSelector = document.getElementById('sdk-example-preset-selector') as HTMLSelectElement;
+    const presetSelector = document.getElementById('sdk-example-presetSelector') as HTMLSelectElement;
     configPresets.forEach((preset, index) => presetSelector.add(new Option(preset.title, String(index))));
     presetSelector.addEventListener('change', (event) => {
         const config = configPresets[Number((event.target as HTMLOptionElement).value)].config;
@@ -40,15 +40,20 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         trafficFlowModule.applyConfig(config?.flow);
     });
 
-    const locationsSelector = document.getElementById('sdk-example-jump-to-location-selector') as HTMLSelectElement;
+    const locationsSelector = document.getElementById('sdk-example-jumpToSelector') as HTMLSelectElement;
     jumpToPlaces.forEach((location, index) => locationsSelector.add(new Option(location, String(index))));
     locationsSelector.addEventListener('change', async (event) => {
         const place = await geocodeWithCache(jumpToPlaces[Number((event.target as HTMLOptionElement).value)]);
-        // We clear the selected Jump-to location when the user moves the map after we have centered it there:
-        map.mapLibreMap.once('moveend', () =>
-            map.mapLibreMap.once('moveend', () => (locationsSelector.selectedIndex = -1)),
-        );
         map.mapLibreMap.fitBounds(place.bbox as LngLatBoundsLike, { duration: 0 });
     });
     locationsSelector.selectedIndex = 0;
+    
+    const toggleButton = document.querySelector('.sdk-example-heading-toggle');
+    const panelContent = document.querySelector('.sdk-example-panel-content');
+    
+    toggleButton?.addEventListener('click', () => {
+        const isExpanded = toggleButton.getAttribute('aria-expanded') === 'true';
+        toggleButton.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');
+        panelContent?.classList.toggle('collapsed');
+    });
 })();

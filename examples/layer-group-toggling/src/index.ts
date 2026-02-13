@@ -42,14 +42,15 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 
     for (const layerGroup of layerGroups) {
         const module = await BaseMapModule.get(map, { layerGroupsFilter: { mode: 'include', names: [layerGroup] } });
-        document
-            .querySelector(`#sdk-example-toggle-${layerGroup}`)
-            ?.addEventListener('click', (ev) => module.setVisible((ev.target as HTMLInputElement).checked));
+        document.querySelector(`#sdk-example-toggle-${layerGroup}`)?.addEventListener('change', (event) => {
+            module.setVisible((event.target as HTMLInputElement).checked);
+        });
     }
+
     const poisModule = await POIsModule.get(map);
-    document
-        .querySelector('#sdk-example-togglePOIs')
-        ?.addEventListener('click', (ev) => poisModule.setVisible((ev.target as HTMLInputElement).checked));
+    document.querySelector('#sdk-example-togglePOIs')?.addEventListener('change', (event) => {
+        poisModule.setVisible((event.target as HTMLInputElement).checked);
+    });
 
     const stylesSelector = document.querySelector('#sdk-example-mapStyles') as HTMLSelectElement;
     for (const id of standardStyleIDs) {
@@ -58,4 +59,13 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     stylesSelector.addEventListener('change', (event) =>
         map.setStyle((event.target as HTMLOptionElement).value as StandardStyleID),
     );
+    
+    const toggleButton = document.querySelector('.sdk-example-heading-toggle');
+    const panelContent = document.querySelector('.sdk-example-panel-content');
+    
+    toggleButton?.addEventListener('click', () => {
+        const isExpanded = toggleButton.getAttribute('aria-expanded') === 'true';
+        toggleButton.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');
+        panelContent?.classList.toggle('collapsed');
+    });
 })();

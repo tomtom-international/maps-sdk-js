@@ -33,7 +33,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         filters: { categories: { show: 'all_except', values: ['ELECTRIC_VEHICLE_STATION'] } },
     });
 
-    const popUp = new Popup({ closeButton: false, offset: 35, className: 'maps-sdk-js-popup' });
+    const popUp = new Popup({ closeButton: false, offset: 35, className: 'sdk-example-maps-sdk-js-popup' });
 
     // =============================================================================
     // CUSTOMIZATION STATE: All configurable options
@@ -323,5 +323,14 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
             applyBackgroundConfig,
             applySearchedConfig,
         },
+    });
+    
+    const toggleButton = document.querySelector('.sdk-example-heading-toggle');
+    const panelContent = document.querySelector('.sdk-example-panel-content');
+    
+    toggleButton?.addEventListener('click', () => {
+        const isExpanded = toggleButton.getAttribute('aria-expanded') === 'true';
+        toggleButton.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');
+        panelContent?.classList.toggle('collapsed');
     });
 })();

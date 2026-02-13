@@ -1,33 +1,12 @@
-#sdk-map {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-}
+@import '../../src/templates/css/base/tokens.css';
+@import '../../src/templates/css/base/global.css';
+@import '../../src/templates/css/button/button.css';
 
-.sdk-example-button-container {
+/* CUSTOM STYLES (example-specific) */
+
+.sdk-example-floating-button {
     position: absolute;
+    bottom: 20px;
     right: 20px;
-    top: 20px;
-    display: flex;
-    flex-direction: column;
-    max-height: calc(100vh - 40px);
-    overflow-y: auto;
-    box-sizing: border-box;
-}
-
-#sdk-example-reCenter {
-    padding: 8px 16px;
-    margin-bottom: 5px;
-    font-family: Gilroy, sans-serif;
-    color: #fff;
-    background-color: #df1b12;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    border: 0 solid rgba(0, 0, 0, 0);
-    border-radius: 20px;
-    text-decoration: none;
-    vertical-align: middle;
-    cursor: pointer;
-    user-select: none;
+    z-index: var(--sdk-z-panel);
 }

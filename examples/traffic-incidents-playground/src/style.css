@@ -1,40 +1,6 @@
-#sdk-map {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-}
-
-.controls {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: white;
-    padding: 15px;
-    border-radius: 8px;
-    z-index: 1000;
-    font-family: sans-serif;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-}
-
-.controls h3 {
-    margin: 0 0 10px 0;
-    font-size: 14px;
-}
-
-.controls label {
-    display: block;
-    margin: 5px 0;
-    cursor: pointer;
-}
-
-.controls hr {
-    margin: 10px 0;
-}
-
-.controls button {
-    width: 100%;
-    padding: 8px;
-    cursor: pointer;
-}
+@import '../../src/templates/css/base/tokens.css';
+@import '../../src/templates/css/base/global.css';
+@import '../../src/templates/css/base/typography.css';
+@import '../../src/templates/css/panel/custom-panel.css';
+@import '../../src/templates/css/form/toggle.css';
+@import '../../src/templates/css/button/button.css';

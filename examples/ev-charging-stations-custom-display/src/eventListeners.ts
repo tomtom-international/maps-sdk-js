@@ -54,8 +54,8 @@ export const setupEventListeners = ({
     } = operations;
 
     // Search controls
-    document.querySelector('#searchButton')?.addEventListener('click', searchEVStations);
-    document.querySelector('#clearButton')?.addEventListener('click', clear);
+    document.querySelector('#sdk-example-searchButton')?.addEventListener('click', searchEVStations);
+    document.querySelector('#sdk-example-clearButton')?.addEventListener('click', clear);
     document.querySelector('#sdk-example-evBrandTextBox')?.addEventListener('keypress', (event) => {
         if ((event as KeyboardEvent).key === 'Enter') searchEVStations();
     });
@@ -68,22 +68,22 @@ export const setupEventListeners = ({
     );
 
     // Background stations toggles
-    document.querySelector('#bgAvailabilityToggle')?.addEventListener('change', async (event) => {
+    document.querySelector('#sdk-example-bgAvailabilityToggle')?.addEventListener('change', async (event) => {
         state.bgAvailability = (event.target as HTMLInputElement).checked;
         await applyBackgroundConfig();
     });
-    document.querySelector('#bgCustomIconToggle')?.addEventListener('change', async (event) => {
+    document.querySelector('#sdk-example-bgCustomIconToggle')?.addEventListener('change', async (event) => {
         state.bgCustomIcon = (event.target as HTMLInputElement).checked;
         bgStations.clear();
         await applyBackgroundConfig();
     });
 
     // Searched stations toggles
-    document.querySelector('#searchAvailabilityToggle')?.addEventListener('change', async (event) => {
+    document.querySelector('#sdk-example-searchAvailabilityToggle')?.addEventListener('change', async (event) => {
         state.searchAvailability = (event.target as HTMLInputElement).checked;
         await applySearchedConfig();
     });
-    document.querySelector('#searchCustomIconToggle')?.addEventListener('change', async (event) => {
+    document.querySelector('#sdk-example-searchCustomIconToggle')?.addEventListener('change', async (event) => {
         state.searchCustomIcon = (event.target as HTMLInputElement).checked;
         searchedStations.clear();
         selectedStation.clear();
@@ -91,15 +91,15 @@ export const setupEventListeners = ({
     });
 
     // Format dropdown
-    document.querySelector('#availabilityFormat')?.addEventListener('change', async (event) => {
+    document.querySelector('#sdk-example-availabilityFormat')?.addEventListener('change', async (event) => {
         state.formatOption = (event.target as HTMLSelectElement).value as typeof state.formatOption;
         await applyBackgroundConfig();
         await applySearchedConfig();
     });
 
     // Threshold slider
-    const thresholdSlider = document.querySelector('#threshold') as HTMLInputElement;
-    const thresholdValue = document.querySelector('#thresholdValue') as HTMLSpanElement;
+    const thresholdSlider = document.querySelector('#sdk-example-threshold') as HTMLInputElement;
+    const thresholdValue = document.querySelector('#sdk-example-thresholdValue') as HTMLSpanElement;
     thresholdSlider?.addEventListener('input', async () => {
         state.threshold = Number.parseInt(thresholdSlider.value) / 100;
         thresholdValue.textContent = `${thresholdSlider.value}%`;
@@ -108,10 +108,10 @@ export const setupEventListeners = ({
     });
 
     // Text color selectors
-    document.querySelectorAll('#textColorSelectors .sdk-example-color-selector').forEach((selector) => {
+    document.querySelectorAll('#sdk-example-textColorSelectors .sdk-example-color-selector').forEach((selector) => {
         selector.addEventListener('click', async () => {
             document
-                .querySelectorAll('#textColorSelectors .sdk-example-color-selector')
+                .querySelectorAll('#sdk-example-textColorSelectors .sdk-example-color-selector')
                 .forEach((s) => s.classList.remove('active'));
             selector.classList.add('active');
             const value = (selector as HTMLElement).dataset.value;
@@ -123,10 +123,10 @@ export const setupEventListeners = ({
     });
 
     // Halo color selectors
-    document.querySelectorAll('#haloColorSelectors .sdk-example-color-selector').forEach((selector) => {
+    document.querySelectorAll('#sdk-example-haloColorSelectors .sdk-example-color-selector').forEach((selector) => {
         selector.addEventListener('click', async () => {
             document
-                .querySelectorAll('#haloColorSelectors .sdk-example-color-selector')
+                .querySelectorAll('#sdk-example-haloColorSelectors .sdk-example-color-selector')
                 .forEach((s) => s.classList.remove('active'));
             selector.classList.add('active');
             const value = (selector as HTMLElement).dataset.value;
@@ -137,8 +137,8 @@ export const setupEventListeners = ({
     });
 
     // Halo width slider
-    const haloSlider = document.querySelector('#haloWidth') as HTMLInputElement;
-    const haloValue = document.querySelector('#haloWidthValue') as HTMLSpanElement;
+    const haloSlider = document.querySelector('#sdk-example-haloWidth') as HTMLInputElement;
+    const haloValue = document.querySelector('#sdk-example-haloWidthValue') as HTMLSpanElement;
     haloSlider?.addEventListener('input', async () => {
         state.haloWidth = Number.parseFloat(haloSlider.value);
         haloValue.textContent = `${state.haloWidth}px`;
@@ -147,9 +147,9 @@ export const setupEventListeners = ({
     });
 
     // Text offset controls
-    const offsetSlider = document.querySelector('#textOffset') as HTMLInputElement;
-    const offsetValue = document.querySelector('#textOffsetValue') as HTMLSpanElement;
-    const useCustomOffsetCheckbox = document.querySelector('#useCustomOffset') as HTMLInputElement;
+    const offsetSlider = document.querySelector('#sdk-example-textOffset') as HTMLInputElement;
+    const offsetValue = document.querySelector('#sdk-example-textOffsetValue') as HTMLSpanElement;
+    const useCustomOffsetCheckbox = document.querySelector('#sdk-example-useCustomOffset') as HTMLInputElement;
 
     offsetSlider?.addEventListener('input', async () => {
         state.textOffset = Number.parseFloat(offsetSlider.value);

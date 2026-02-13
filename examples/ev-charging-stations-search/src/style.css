@@ -1,86 +1,62 @@
-.sdk-example-body {
-    text-decoration: none;
-    user-select: none;
-    font-family: Gilroy, sans-serif;
-}
+@import '../../src/templates/css/base/tokens.css';
+@import '../../src/templates/css/base/global.css';
+@import '../../src/templates/css/base/typography.css';
+@import '../../src/templates/css/form/input.css';
+@import '../../src/templates/css/button/button.css';
 
-#sdk-map {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-}
+/* CUSTOM STYLES (example-specific) */
 
-.sdk-example-mainPanel {
+.sdk-example-searchPanel {
     position: absolute;
-    top: 10px;
-    right: 20px;
-    max-height: calc(100vh - 20px);
-    overflow-y: auto;
-    font-family: Gilroy, sans-serif;
-    box-sizing: border-box;
+    top: var(--sdk-panel-margin);
+    right: var(--sdk-panel-margin);
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    background: rgba(255, 255, 255, 0.75);
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    gap: var(--sdk-space-3);
+    padding: var(--sdk-space-3);
+    background: var(--sdk-surface-0);
+    border-radius: var(--sdk-radius-20);
+    box-shadow: var(--sdk-shadow-e2);
+    z-index: var(--sdk-z-panel);
 }
 
-.sdk-example-mainPanel > div:first-child {
-    display: inline-block;
-}
-
-.sdk-example-minKWPanel-container {
-    margin-top: 10px;
+.sdk-example-search-row {
     display: flex;
-    flex-direction: row;
+    gap: var(--sdk-space-2);
     align-items: center;
-
-    gap: 10px;
+    flex-wrap: nowrap;
 }
 
-.sdk-example-minKWLabel {
-    font-weight: bold;
-    background: rgba(255, 255, 255, 0.3);
-    text-shadow: 0 2px 7px rgb(0 0 0 / 30%);
+.sdk-example-search-row .sdk-example-input {
+    flex: 1;
+    min-width: 0;
 }
 
-.sdk-example-kwInput {
-    width: 50px;
-    float: right;
+.sdk-example-controls-row {
+    display: flex;
+    gap: var(--sdk-space-3);
+    align-items: flex-end;
+    flex-wrap: nowrap;
 }
 
-.sdk-example-element {
-    border: 0 solid rgba(0, 0, 0, 0);
-    border-radius: 20px;
-    margin-left: 4px;
-    margin-right: 4px;
-    font-size: 14px;
-}
-
-.sdk-example-input {
-    text-indent: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.sdk-example-button {
-    padding: 8px 16px;
-    font-family: Gilroy, sans-serif;
-    color: #fff;
-    background-color: #df1b12;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    border: 0 solid rgba(0, 0, 0, 0);
-    border-radius: 20px;
-    cursor: pointer;
-    display: inline-flex;
+.sdk-example-kw-field {
+    display: flex;
     align-items: center;
-    justify-content: center;
+    gap: var(--sdk-space-2);
+    min-width: 0;
 }
 
-/* Overwriting Maplibre original CSS class */
+.sdk-example-kw-field .sdk-example-form-label {
+    margin-bottom: 0;
+    white-space: nowrap;
+}
+
+.sdk-example-kw-input {
+    width: 70px;
+    min-width: 40px;
+    flex-shrink: 1;
+}
+
 .maplibregl-popup-content {
     box-shadow:
         rgba(0, 0, 0, 0.25) 0 54px 55px,
@@ -92,22 +68,17 @@
     padding-top: 0;
 }
 
-/* Custom CSS for inner content in the popup */
-.maps-sdk-js-popup {
+.sdk-example-maps-sdk-js-popup {
     min-width: 300px;
 }
 
 .sdk-example-address {
-    color: grey;
-}
-
-.sdk-example-label {
-    height: 24px;
+    color: var(--sdk-text-medium);
 }
 
 .sdk-example-connector-ul {
     padding: 0;
-    font-size: 14px;
+    font-size: var(--sdk-font-body-m);
     height: 24px;
     line-height: 24px;
     list-style-type: none;
@@ -117,32 +88,62 @@
     height: 36px;
 }
 
-.sdk-example-connectorName {
-    font-weight: bold;
-}
-
-.sdk-example-connectorPower {
-    color: grey;
-}
-
-.sdk-example-connectorIcon {
+.sdk-example-connector-icon {
     display: inline-block;
     width: 24px;
     height: 28px;
     vertical-align: middle;
 }
 
+.sdk-example-connector-name {
+    font-weight: var(--sdk-font-weight-bold);
+}
+
+.sdk-example-connector-power {
+    color: var(--sdk-text-medium);
+}
+
 .sdk-example-available,
 .sdk-example-unavailable,
-.sdk-example-noStatus {
-    font-weight: bolder;
+.sdk-example-no-status {
+    font-weight: var(--sdk-font-weight-bold);
     float: right;
 }
 
 .sdk-example-available {
-    color: green;
+    color: var(--sdk-color-success);
 }
 
 .sdk-example-unavailable {
-    color: red;
+    color: var(--sdk-primary-color);
+}
+
+/* Responsive: max-width 768px */
+@media (max-width: 768px) {
+    .sdk-example-searchPanel {
+        gap: var(--sdk-space-2);
+    }
+
+    .sdk-example-search-row {
+        flex-wrap: wrap;
+    }
+
+    .sdk-example-search-row .sdk-example-input {
+        min-width: 80px;
+    }
+}
+
+/* Responsive: max-width 600px */
+@media (max-width: 600px) {
+    .sdk-example-searchPanel {
+        left: var(--sdk-panel-margin);
+        right: var(--sdk-panel-margin);
+    }
+}
+
+/* Responsive: max-height 550px */
+@media (max-height: 550px) {
+    .sdk-example-searchPanel {
+        padding: var(--sdk-space-2);
+    }
 }
