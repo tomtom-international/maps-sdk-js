@@ -12,7 +12,10 @@
     "build:plugins": "pnpm -F './plugins/*' build",
     "clean": "pnpm -r --no-bail clean:dist && pnpm -r --no-bail clean:cache",
     "e2e-test:examples": "pnpm -F @tomtom-org/maps-sdk-examples test:e2e",
+    "e2e-test:examples:update-all-snapshots": "pnpm -F @tomtom-org/maps-sdk-examples test:e2e:update-all-snapshots",
+    "e2e-test:examples:update-snapshot": "pnpm -F @tomtom-org/maps-sdk-examples test:e2e:update-snapshot",
     "e2e-test:sdk": "pnpm -F map-integration-tests test",
+    "generate-thumbnails:examples": "pnpm -F @tomtom-org/maps-sdk-examples generate-thumbnails",
     "format": "biome format .",
     "format:fix": "biome format . --write",
     "lint": "biome lint .",
@@ -66,6 +69,11 @@
   "engines": {
     "node": ">=24",
     "pnpm": ">=10"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "sharp"
+    ]
   },
   "packageManager": "pnpm@10.28.2",
   "files": [

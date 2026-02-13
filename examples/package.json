@@ -10,8 +10,10 @@
     "test": "vitest run",
     "test:e2e": "pnpm exec playwright install --with-deps chromium && playwright test",
     "test:e2e:ui": "pnpm exec playwright install --with-deps chromium && playwright test --ui",
-    "test:e2e:update-snapshots": "pnpm exec playwright install --with-deps chromium && playwright test --update-snapshots",
+    "test:e2e:update-all-snapshots": "pnpm exec playwright install --with-deps chromium && playwright test --update-snapshots",
+    "test:e2e:update-snapshot": "bash -c 'pnpm exec playwright install --with-deps chromium && playwright test \"$1\"/ --update-snapshots' _",
     "type-check": "pnpm --parallel -F './*' type-check",
+    "generate-thumbnails": "bash scripts/generate-thumbnails.sh",
     "start-test-server": "npx serve . -p 9050"
   },
   "dependencies": {
@@ -31,6 +33,7 @@
     "@vitejs/plugin-react": "catalog:",
     "js-yaml": "^4.1.1",
     "rollup-plugin-visualizer": "catalog:",
+    "sharp": "^0.33.5",
     "vite": "catalog:",
     "vite-plugin-dts": "catalog:",
     "vite-plugin-singlefile": "catalog:",

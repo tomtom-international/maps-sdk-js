@@ -8,7 +8,7 @@ import { viteSingleFile } from 'vite-plugin-singlefile';
  * This allows examples to work without bundling MapLibre GL, which facilitates caching.
  */
 const MAPLIBRE_IMPORT_MAP_SCRIPTS = `
-    <script src="https://unpkg.com/es-module-shims@2/dist/es-module-shims.js" integrity="sha384-o7USlJU8I1JyeAvMeiZf+GiqEE21Wqjtr+aHZ6kGgFxtp/ZhbGQvrhwSa9bQAJWf" crossorigin="anonymous" id="import-es-module-shim"></script>
+    <script src="https://unpkg.com/es-module-shims@2/dist/es-module-shims.js" integrity="sha384-bu2JOhhs+024VlJUbPyr/5SY9ReRMZ1BTeZylHd9WKeTFKd2EK1bFTfOMrYe5NPo" crossorigin="anonymous" id="import-es-module-shim"></script>
     <script type="importmap" id="import-maplibre-gl">
     {
         "imports": {

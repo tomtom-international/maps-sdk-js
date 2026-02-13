@@ -166,16 +166,16 @@
             </h3>
             <div class="sdk-example-panel-content">
             <div class="sdk-example-form-field">
-                <label class="sdk-example-form-label">Default Input</label>
-                <input type="text" class="sdk-example-input" placeholder="Enter text...">
+                <label class="sdk-example-form-label" for="showcase-default-input">Default Input</label>
+                <input type="text" id="showcase-default-input" class="sdk-example-input" placeholder="Enter text...">
             </div>
             <div class="sdk-example-form-field">
-                <label class="sdk-example-form-label">With Value</label>
-                <input type="text" class="sdk-example-input" value="Example value">
+                <label class="sdk-example-form-label" for="showcase-value-input">With Value</label>
+                <input type="text" id="showcase-value-input" class="sdk-example-input" value="Example value">
             </div>
             <div class="sdk-example-form-field">
-                <label class="sdk-example-form-label">Disabled</label>
-                <input type="text" class="sdk-example-input" disabled value="Disabled input">
+                <label class="sdk-example-form-label" for="showcase-disabled-input">Disabled</label>
+                <input type="text" id="showcase-disabled-input" class="sdk-example-input" disabled value="Disabled input">
             </div>
             </div>
         </div>
@@ -192,16 +192,16 @@
             </h3>
             <div class="sdk-example-panel-content">
             <div class="sdk-example-form-field">
-                <label class="sdk-example-form-label">Select Option</label>
-                <select class="sdk-example-select">
+                <label class="sdk-example-form-label" for="showcase-select">Select Option</label>
+                <select id="showcase-select" class="sdk-example-select">
                     <option>Option 1</option>
                     <option selected>Option 2</option>
                     <option>Option 3</option>
                 </select>
             </div>
             <div class="sdk-example-form-field">
-                <label class="sdk-example-form-label">Disabled</label>
-                <select class="sdk-example-select" disabled>
+                <label class="sdk-example-form-label" for="showcase-disabled-select">Disabled</label>
+                <select id="showcase-disabled-select" class="sdk-example-select" disabled>
                     <option>Disabled Select</option>
                 </select>
             </div>
@@ -220,23 +220,23 @@
             </h3>
             <div class="sdk-example-panel-content">
             <div class="sdk-example-form-field">
-                <label class="sdk-example-form-label">Default Slider</label>
+                <label class="sdk-example-form-label" for="showcase-default-slider">Default Slider</label>
                 <div class="sdk-example-slider-container">
-                    <input type="range" class="sdk-example-slider" value="50">
+                    <input type="range" id="showcase-default-slider" class="sdk-example-slider" value="50">
                     <span class="sdk-example-slider-value">50</span>
                 </div>
             </div>
             <div class="sdk-example-form-field">
-                <label class="sdk-example-form-label">Custom Range (10-100)</label>
+                <label class="sdk-example-form-label" for="showcase-custom-slider">Custom Range (10-100)</label>
                 <div class="sdk-example-slider-container">
-                    <input type="range" class="sdk-example-slider" min="10" max="100" value="75">
+                    <input type="range" id="showcase-custom-slider" class="sdk-example-slider" min="10" max="100" value="75">
                     <span class="sdk-example-slider-value">75</span>
                 </div>
             </div>
             <div class="sdk-example-form-field">
-                <label class="sdk-example-form-label">Disabled</label>
+                <label class="sdk-example-form-label" for="showcase-disabled-slider">Disabled</label>
                 <div class="sdk-example-slider-container">
-                    <input type="range" class="sdk-example-slider" value="30" disabled>
+                    <input type="range" id="showcase-disabled-slider" class="sdk-example-slider" value="30" disabled>
                     <span class="sdk-example-slider-value">30</span>
                 </div>
             </div>
@@ -255,15 +255,15 @@
             </h3>
             <div class="sdk-example-panel-content">
             <div class="sdk-example-form-field">
-                <label class="sdk-example-form-label">Choose Color</label>
+                <span class="sdk-example-form-label">Choose Color</span>
                 <div class="sdk-example-color-selectors">
-                    <div class="sdk-example-color-selector active" style="background: #df1b12;" data-value="#df1b12" tabindex="0"></div>
-                    <div class="sdk-example-color-selector" style="background: #007bff;" data-value="#007bff" tabindex="0"></div>
-                    <div class="sdk-example-color-selector" style="background: #00a65e;" data-value="#00a65e" tabindex="0"></div>
-                    <div class="sdk-example-color-selector" style="background: #fdc530;" data-value="#fdc530" tabindex="0"></div>
-                    <div class="sdk-example-color-selector" style="background: #6f42c1;" data-value="#6f42c1" tabindex="0"></div>
-                    <div class="sdk-example-color-selector" style="background: #000000;" data-value="#000000" tabindex="0"></div>
-                    <div class="sdk-example-color-selector" style="background: #ffffff; border: 2px solid #ddd;" data-value="#ffffff" tabindex="0"></div>
+                    <button type="button" class="sdk-example-color-selector active" style="background: #df1b12;" data-value="#df1b12" aria-label="Red"></button>
+                    <button type="button" class="sdk-example-color-selector" style="background: #007bff;" data-value="#007bff" aria-label="Blue"></button>
+                    <button type="button" class="sdk-example-color-selector" style="background: #00a65e;" data-value="#00a65e" aria-label="Green"></button>
+                    <button type="button" class="sdk-example-color-selector" style="background: #fdc530;" data-value="#fdc530" aria-label="Yellow"></button>
+                    <button type="button" class="sdk-example-color-selector" style="background: #6f42c1;" data-value="#6f42c1" aria-label="Purple"></button>
+                    <button type="button" class="sdk-example-color-selector" style="background: #000000;" data-value="#000000" aria-label="Black"></button>
+                    <button type="button" class="sdk-example-color-selector" style="background: #ffffff; border: 2px solid #ddd;" data-value="#ffffff" aria-label="White"></button>
                 </div>
             </div>
             </div>

@@ -1,88 +1,89 @@
-<div class="sdk-example-form-field">
-    <label class="sdk-example-form-label">Text Color</label>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>Color Selector - Maps SDK JS</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="body">
+    <div class="sdk-example-form-field">
+        <span class="sdk-example-form-label">Text Color</span>
 
-    <div class="sdk-example-color-selectors" id="sdk-example-textColorSelectors">
+        <div class="sdk-example-color-selectors" id="sdk-example-textColorSelectors">
         <!-- Default option (diagonal split) -->
-        <div
+        <button
+            type="button"
             class="sdk-example-color-selector active"
             data-value="default"
             style="background: linear-gradient(135deg, #fff 0%, #fff 49%, #000 51%, #000 100%); border: 2px solid #999;"
-            tabindex="0"
-            role="button"
             aria-label="Default color"
         >
             <span style="font-size: 8px; color: #666;">Default</span>
-        </div>
+        </button>
 
         <!-- White -->
-        <div
+        <button
+            type="button"
             class="sdk-example-color-selector"
             data-value="#ffffff"
             style="background: #ffffff; border: 2px solid #ddd;"
-            tabindex="0"
-            role="button"
             aria-label="White"
-        ></div>
+        ></button>
 
         <!-- Black -->
-        <div
+        <button
+            type="button"
             class="sdk-example-color-selector"
             data-value="#000000"
             style="background: #000000;"
-            tabindex="0"
-            role="button"
             aria-label="Black"
-        ></div>
+        ></button>
 
         <!-- TomTom Red -->
-        <div
+        <button
+            type="button"
             class="sdk-example-color-selector"
             data-value="#df1b12"
             style="background: #df1b12;"
-            tabindex="0"
-            role="button"
             aria-label="TomTom Red"
-        ></div>
+        ></button>
 
         <!-- Blue -->
-        <div
+        <button
+            type="button"
             class="sdk-example-color-selector"
             data-value="#007bff"
             style="background: #007bff;"
-            tabindex="0"
-            role="button"
             aria-label="Blue"
-        ></div>
+        ></button>
 
         <!-- Green -->
-        <div
+        <button
+            type="button"
             class="sdk-example-color-selector"
             data-value="#00a65e"
             style="background: #00a65e;"
-            tabindex="0"
-            role="button"
             aria-label="Green"
-        ></div>
+        ></button>
 
         <!-- Yellow -->
-        <div
+        <button
+            type="button"
             class="sdk-example-color-selector"
             data-value="#fdc530"
             style="background: #fdc530;"
-            tabindex="0"
-            role="button"
             aria-label="Yellow"
-        ></div>
+        ></button>
 
         <!-- Purple -->
-        <div
+        <button
+            type="button"
             class="sdk-example-color-selector"
             data-value="#6f42c1"
             style="background: #6f42c1;"
-            tabindex="0"
-            role="button"
             aria-label="Purple"
-        ></div>
+        ></button>
     </div>
 </div>
 
@@ -92,23 +93,23 @@
 
     <!-- Text Color -->
     <div class="sdk-example-form-field">
-        <label class="sdk-example-form-label">Text Color</label>
+        <span class="sdk-example-form-label">Text Color</span>
         <div class="sdk-example-color-selectors" id="sdk-example-textColors">
-            <div class="sdk-example-color-selector active" data-value="default" style="background: linear-gradient(135deg, #fff 49%, #000 51%);" tabindex="0"></div>
-            <div class="sdk-example-color-selector" data-value="#ffffff" style="background: #ffffff; border: 2px solid #ddd;" tabindex="0"></div>
-            <div class="sdk-example-color-selector" data-value="#000000" style="background: #000000;" tabindex="0"></div>
-            <div class="sdk-example-color-selector" data-value="#df1b12" style="background: #df1b12;" tabindex="0"></div>
+            <button type="button" class="sdk-example-color-selector active" data-value="default" style="background: linear-gradient(135deg, #fff 49%, #000 51%);" aria-label="Default color"></button>
+            <button type="button" class="sdk-example-color-selector" data-value="#ffffff" style="background: #ffffff; border: 2px solid #ddd;" aria-label="White"></button>
+            <button type="button" class="sdk-example-color-selector" data-value="#000000" style="background: #000000;" aria-label="Black"></button>
+            <button type="button" class="sdk-example-color-selector" data-value="#df1b12" style="background: #df1b12;" aria-label="Red"></button>
         </div>
     </div>
 
     <!-- Background Color -->
     <div class="sdk-example-form-field">
-        <label class="sdk-example-form-label">Background Color</label>
+        <span class="sdk-example-form-label">Background Color</span>
         <div class="sdk-example-color-selectors" id="sdk-example-bgColors">
-            <div class="sdk-example-color-selector" data-value="transparent" style="background: linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc), linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc); background-size: 8px 8px; background-position: 0 0, 4px 4px;" tabindex="0"></div>
-            <div class="sdk-example-color-selector active" data-value="#ffffff" style="background: #ffffff; border: 2px solid #ddd;" tabindex="0"></div>
-            <div class="sdk-example-color-selector" data-value="#f2f2f2" style="background: #f2f2f2;" tabindex="0"></div>
-            <div class="sdk-example-color-selector" data-value="#e0e0e0" style="background: #e0e0e0;" tabindex="0"></div>
+            <button type="button" class="sdk-example-color-selector" data-value="transparent" style="background: linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc), linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc); background-size: 8px 8px; background-position: 0 0, 4px 4px;" aria-label="Transparent"></button>
+            <button type="button" class="sdk-example-color-selector active" data-value="#ffffff" style="background: #ffffff; border: 2px solid #ddd;" aria-label="White"></button>
+            <button type="button" class="sdk-example-color-selector" data-value="#f2f2f2" style="background: #f2f2f2;" aria-label="Light Gray"></button>
+            <button type="button" class="sdk-example-color-selector" data-value="#e0e0e0" style="background: #e0e0e0;" aria-label="Gray"></button>
         </div>
     </div>
 </div>
@@ -153,14 +154,6 @@
             // Apply changes to your map or component
             await applyColorChanges();
         });
-
-        // Keyboard support
-        selector.addEventListener('keydown', (event) => {
-            if ((event as KeyboardEvent).key === 'Enter' || (event as KeyboardEvent).key === ' ') {
-                event.preventDefault();
-                selector.dispatchEvent(new Event('click'));
-            }
-        });
     });
 
     // Programmatically select a color
@@ -176,4 +169,6 @@
     };
 
     // Usage: selectColor('#007bff');
--->
+    -->
+</body>
+</html>

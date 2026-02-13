@@ -23,7 +23,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
     const fontSelectors: NodeListOf<HTMLInputElement> = document.querySelectorAll('.sdk-example-font-selector');
     const contentSelectors: NodeListOf<HTMLInputElement> = document.querySelectorAll('.sdk-example-content-selector');
-    const colorSelectors: NodeListOf<HTMLDivElement> = document.querySelectorAll('.sdk-example-color-selector');
+    const colorSelectors: NodeListOf<HTMLButtonElement> = document.querySelectorAll('.sdk-example-color-selector');
     for (const element of colorSelectors) {
         element.style.backgroundColor = element.dataset.value ?? '';
     }

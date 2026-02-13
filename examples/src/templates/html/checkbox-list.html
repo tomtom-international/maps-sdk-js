@@ -1,45 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>Checkbox List - Maps SDK JS</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="body">
+    <div class="sdk-example-form-field">
+        <span class="sdk-example-form-label">Checkbox Options</span>
 
-<div class="sdk-example-form-field">
-    <label class="sdk-example-form-label">Checkbox Options</label>
+        <div class="sdk-example-checkbox-list">
+            <!-- Option 1 -->
+            <label class="sdk-example-checkbox-label">
+                <input type="checkbox" id="sdk-example-option1" checked>
+                First option (checked by default)
+            </label>
 
-    <div class="sdk-example-checkbox-list">
-        <!-- Option 1 -->
-        <label class="sdk-example-checkbox-label">
-            <input type="checkbox" id="sdk-example-option1" checked>
-            First option (checked by default)
-        </label>
+            <!-- Option 2 -->
+            <label class="sdk-example-checkbox-label">
+                <input type="checkbox" id="sdk-example-option2">
+                Second option
+            </label>
 
-        <!-- Option 2 -->
-        <label class="sdk-example-checkbox-label">
-            <input type="checkbox" id="sdk-example-option2">
-            Second option
-        </label>
+            <!-- Option 3 -->
+            <label class="sdk-example-checkbox-label">
+                <input type="checkbox" id="sdk-example-option3">
+                Third option
+            </label>
 
-        <!-- Option 3 -->
-        <label class="sdk-example-checkbox-label">
-            <input type="checkbox" id="sdk-example-option3">
-            Third option
-        </label>
-
-        <!-- Option 4 (disabled) -->
-        <label class="sdk-example-checkbox-label">
-            <input type="checkbox" id="sdk-example-option4" disabled>
-            Fourth option (disabled)
-        </label>
+            <!-- Option 4 (disabled) -->
+            <label class="sdk-example-checkbox-label">
+                <input type="checkbox" id="sdk-example-option4" disabled>
+                Fourth option (disabled)
+            </label>
+        </div>
     </div>
-</div>
 
-<!--
-    JavaScript Event Listener Example:
+    <!--
+        JavaScript Event Listener Example:
 
-    document.querySelector('#sdk-example-option1')?.addEventListener('change', (event) => {
-        const isChecked = (event.target as HTMLInputElement).checked;
-        console.log('Option 1 is now:', isChecked);
+        document.querySelector('#sdk-example-option1')?.addEventListener('change', (event) => {
+            const isChecked = (event.target as HTMLInputElement).checked;
+            console.log('Option 1 is now:', isChecked);
 
-        // Update your application state
-        state.option1 = isChecked;
+            // Update your application state
+            state.option1 = isChecked;
 
-        // Trigger any necessary updates
-        updateMap();
-    });
--->
+            // Trigger any necessary updates
+            updateMap();
+        });
+    -->
+</body>
+</html>

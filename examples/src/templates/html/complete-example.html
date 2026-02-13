@@ -177,25 +177,25 @@
 
             <!-- Text Color -->
             <div class="form-field">
-                <label class="form-label">Label Color</label>
+                <span class="form-label">Label Color</span>
                 <div class="color-selectors" id="textColors">
-                    <div class="color-selector active" data-value="default" style="background: linear-gradient(135deg, #fff 49%, #000 51%); border: 2px solid #999;" tabindex="0" aria-label="Default"></div>
-                    <div class="color-selector" data-value="#ffffff" style="background: #ffffff; border: 2px solid #ddd;" tabindex="0" aria-label="White"></div>
-                    <div class="color-selector" data-value="#000000" style="background: #000000;" tabindex="0" aria-label="Black"></div>
-                    <div class="color-selector" data-value="#df1b12" style="background: #df1b12;" tabindex="0" aria-label="Red"></div>
-                    <div class="color-selector" data-value="#007bff" style="background: #007bff;" tabindex="0" aria-label="Blue"></div>
-                    <div class="color-selector" data-value="#00a65e" style="background: #00a65e;" tabindex="0" aria-label="Green"></div>
+                    <button type="button" class="color-selector active" data-value="default" style="background: linear-gradient(135deg, #fff 49%, #000 51%); border: 2px solid #999;" aria-label="Default"></button>
+                    <button type="button" class="color-selector" data-value="#ffffff" style="background: #ffffff; border: 2px solid #ddd;" aria-label="White"></button>
+                    <button type="button" class="color-selector" data-value="#000000" style="background: #000000;" aria-label="Black"></button>
+                    <button type="button" class="color-selector" data-value="#df1b12" style="background: #df1b12;" aria-label="Red"></button>
+                    <button type="button" class="color-selector" data-value="#007bff" style="background: #007bff;" aria-label="Blue"></button>
+                    <button type="button" class="color-selector" data-value="#00a65e" style="background: #00a65e;" aria-label="Green"></button>
                 </div>
             </div>
 
             <!-- Background Color -->
             <div class="form-field">
-                <label class="form-label">Background Color</label>
+                <span class="form-label">Background Color</span>
                 <div class="color-selectors" id="bgColors">
-                    <div class="color-selector" data-value="#f2f2f2" style="background: #f2f2f2;" tabindex="0" aria-label="Light Gray"></div>
-                    <div class="color-selector active" data-value="#ffffff" style="background: #ffffff; border: 2px solid #ddd;" tabindex="0" aria-label="White"></div>
-                    <div class="color-selector" data-value="#e0e0e0" style="background: #e0e0e0;" tabindex="0" aria-label="Gray"></div>
-                    <div class="color-selector" data-value="#cccccc" style="background: #cccccc;" tabindex="0" aria-label="Dark Gray"></div>
+                    <button type="button" class="color-selector" data-value="#f2f2f2" style="background: #f2f2f2;" aria-label="Light Gray"></button>
+                    <button type="button" class="color-selector active" data-value="#ffffff" style="background: #ffffff; border: 2px solid #ddd;" aria-label="White"></button>
+                    <button type="button" class="color-selector" data-value="#e0e0e0" style="background: #e0e0e0;" aria-label="Gray"></button>
+                    <button type="button" class="color-selector" data-value="#cccccc" style="background: #cccccc;" aria-label="Dark Gray"></button>
                 </div>
             </div>
         </div>
@@ -318,13 +318,6 @@
                     selector.classList.add('active');
                     const color = selector.dataset.value;
                     console.log(`${containerId} color:`, color);
-                });
-
-                selector.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        selector.click();
-                    }
                 });
             });
         };
