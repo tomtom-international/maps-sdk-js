@@ -3,7 +3,7 @@
  */
 
 import type { TomTomMap } from '@tomtom-org/maps-sdk/map';
-import { ToolLoopAgent } from 'ai';
+import { type dynamicTool, ToolLoopAgent } from 'ai';
 import { createState, resetState } from './state';
 import { buildSystemPrompt } from './system-prompt';
 import { createMapToolSet } from './tools';
@@ -35,6 +35,26 @@ import type { MapAgent, MapAgentOptions } from './types';
  * const mapAgent = createMapAgent(map, {
  *   model: openai('gpt-4o'),
  * });
+ * 
+ * // With custom system prompt
+ * const customAgent = createMapAgent(map, {
+ *   model: openai('gpt-4o'),
+ *   systemPrompt: 'You are a navigation assistant. Always provide turn-by-turn directions.'
+ * });
+ * 
+ * // Override specific default tools
+ * const extendedAgent = createMapAgent(map, {
+ *   model: openai('gpt-4o'),
+ *   overrideTools: { searchPlaces: createCustomSearchTool({ map, state }) },
+ *   customTools: { getWeather: createWeatherTool({ map, state }) }
+ * });
+ * 
+ * // Use only custom tools
+ * const minimalAgent = createMapAgent(map, {
+ *   model: openai('gpt-4o'),
+ *   includeDefaultTools: false,
+ *   customTools: { geocode: createGeocodeTool({ map, state }) }
+ * });
  *
  * // In React component:
  * const { messages, sendMessage } = useChat({
@@ -55,22 +75,51 @@ export function createMapAgent(map: TomTomMap, options: MapAgentOptions): MapAge
     // Create tool context
     const context = { map, state };
 
-    // Create toolset
-    const tools = createMapToolSet(context);
+    // Create toolset - always start with defaults
+    const defaultTools = createMapToolSet(context);
+    
+    // Process tools configuration
+    const finalTools: Record<string, ReturnType<typeof dynamicTool>> = {};
+    
+    // Start with default tools
+    for (const [name, tool] of Object.entries(defaultTools)) {
+        finalTools[name] = tool;
+    }
+    
+    // Apply tools configuration (exclude, override, add)
+    if (options.tools) {
+        for (const [name, toolOrFalse] of Object.entries(options.tools)) {
+            if (toolOrFalse === false) {
+                // Exclude: remove from final set
+                delete finalTools[name];
+            } else if (toolOrFalse !== undefined) {
+                // Override or add: replace or add to final set
+                finalTools[name] = toolOrFalse;
+            }
+        }
+    }
 
-    // Merge custom tools if provided
-    const finalTools = options.tools ? { ...tools, ...options.tools } : tools;
+    // Build system prompt (customPrompt takes precedence over suffix)
+    const systemPrompt = buildSystemPrompt(options.systemPrompt, options.systemPromptSuffix);
 
-    // Build system prompt
-    const systemPrompt = buildSystemPrompt(options.systemPromptSuffix);
-
-    // Create ToolLoopAgent
-    const agent = new ToolLoopAgent({
+    // Create ToolLoopAgent with optional prompt caching
+    const agentConfig: any = {
         model: options.model,
         tools: finalTools,
         instructions: systemPrompt,
         ...(options.maxSteps && { maxToolRoundtrips: options.maxSteps }),
-    });
+    };
+
+    // Enable prompt caching for Anthropic Claude (reduces token costs by ~90%)
+    if (options.promptCaching) {
+        agentConfig.experimental_providerMetadata = {
+            anthropic: {
+                cacheControl: { type: 'ephemeral' },
+            },
+        };
+    }
+
+    const agent = new ToolLoopAgent(agentConfig);
 
     // Return MapAgent interface
     return {
