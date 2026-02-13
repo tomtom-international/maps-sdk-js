@@ -3,7 +3,7 @@ import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { createMapAgent } from '@tomtom-org/maps-sdk-map-agent';
 import './style.css';
-import { API_KEY, AZURE_API_KEY, AZURE_API_VERSION, AZURE_BASE_URL, AZURE_DEPLOYMENT_ID } from './config';
+import { API_KEY, AZURE_API_KEY, AZURE_RESOURCE_NAME, AZURE_DEPLOYMENT_ID } from './config';
 
 // Configure TomTom API
 TomTomConfig.instance.put({ apiKey: API_KEY });
@@ -19,10 +19,8 @@ const map = new TomTomMap({
 
 // Create Azure OpenAI provider and map agent
 const azure = createAzure({
-    baseURL: AZURE_BASE_URL,
+    resourceName: AZURE_RESOURCE_NAME,
     apiKey: AZURE_API_KEY,
-    apiVersion: AZURE_API_VERSION,
-    useDeploymentBasedUrls: true,
 });
 
 // Simple test to verify Azure OpenAI integration works
@@ -36,10 +34,26 @@ const messagesContainer = document.getElementById('chat-messages');
 const chatInput = document.getElementById('chat-input') as HTMLInputElement | null;
 const sendButton = document.getElementById('send-button') as HTMLButtonElement | null;
 const clearButton = document.getElementById('clear-chat') as HTMLButtonElement | null;
+const inputTokensEl = document.getElementById('input-tokens');
+const outputTokensEl = document.getElementById('output-tokens');
+const totalTokensEl = document.getElementById('total-tokens');
 
 // Validate UI elements exist
-if (!messagesContainer || !chatInput || !sendButton || !clearButton) {
+if (!messagesContainer || !chatInput || !sendButton || !clearButton || !inputTokensEl || !outputTokensEl || !totalTokensEl) {
     throw new Error('Required UI elements not found');
+}
+
+// Token usage tracking
+let totalInputTokens = 0;
+let totalOutputTokens = 0;
+let totalAllTokens = 0;
+
+function updateTokenDisplay() {
+    if (inputTokensEl && outputTokensEl && totalTokensEl) {
+        inputTokensEl.textContent = totalInputTokens.toLocaleString();
+        outputTokensEl.textContent = totalOutputTokens.toLocaleString();
+        totalTokensEl.textContent = totalAllTokens.toLocaleString();
+    }
 }
 
 // Message history
@@ -60,20 +74,43 @@ function addMessage(role: 'user' | 'assistant' | 'error', content: string, isThi
 }
 
 // Add tool call message to UI
-function addToolCallMessage(toolName: string, args: any) {
+function addToolCallMessage(toolName: string, args: any, tokens?: number) {
     if (!messagesContainer) return;
     const messageDiv = document.createElement('div');
     messageDiv.className = 'message tool-call';
+    
+    // Add color coding based on token count
+    if (tokens !== undefined) {
+        if (tokens < 100) {
+            messageDiv.classList.add('token-low');
+        } else if (tokens < 500) {
+            messageDiv.classList.add('token-medium');
+        } else {
+            messageDiv.classList.add('token-high');
+        }
+    }
+    
+    const headerDiv = document.createElement('div');
+    headerDiv.className = 'tool-header';
     
     const toolNameSpan = document.createElement('div');
     toolNameSpan.className = 'tool-name';
     toolNameSpan.textContent = `🔧 ${toolName}`;
     
+    headerDiv.appendChild(toolNameSpan);
+    
+    if (tokens !== undefined) {
+        const tokenBadge = document.createElement('div');
+        tokenBadge.className = 'tool-tokens';
+        tokenBadge.textContent = `📊 +${tokens.toLocaleString()}`;
+        headerDiv.appendChild(tokenBadge);
+    }
+    
     const argsDiv = document.createElement('div');
     argsDiv.className = 'tool-args';
     argsDiv.textContent = JSON.stringify(args, null, 2);
     
-    messageDiv.appendChild(toolNameSpan);
+    messageDiv.appendChild(headerDiv);
     messageDiv.appendChild(argsDiv);
     messagesContainer.appendChild(messageDiv);
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -106,12 +143,40 @@ async function sendMessage(userMessage: string) {
             onStepFinish: (step) => {
                 console.log('\n📍 Step finished:', JSON.stringify(step, null, 2));
                 
-                // Display tool calls in the UI
+                // Track token usage
+                const stepAny = step as any;
+                let stepTokens = 0;
+                if (stepAny.usage) {
+                    const usage = stepAny.usage;
+                    if (usage.inputTokens) totalInputTokens += usage.inputTokens;
+                    if (usage.outputTokens) totalOutputTokens += usage.outputTokens;
+                    if (usage.totalTokens) {
+                        stepTokens = usage.totalTokens;
+                        totalAllTokens += usage.totalTokens;
+                    }
+                    updateTokenDisplay();
+                    
+                    console.log('📊 Token usage:', {
+                        stepInput: usage.inputTokens,
+                        stepOutput: usage.outputTokens,
+                        stepTotal: usage.totalTokens,
+                        cumulativeInput: totalInputTokens,
+                        cumulativeOutput: totalOutputTokens,
+                        cumulativeTotal: totalAllTokens,
+                    });
+                }
+                
+                // Display tool calls in the UI with token count
                 if (step.toolCalls && step.toolCalls.length > 0) {
+                    // Distribute tokens across tool calls (rough estimate)
+                    const tokensPerCall = step.toolCalls.length > 0 
+                        ? Math.floor(stepTokens / step.toolCalls.length)
+                        : 0;
+                    
                     for (const toolCall of step.toolCalls) {
                         // The property is called 'input' in the AI SDK
                         const args = (toolCall as any).input || {};
-                        addToolCallMessage(toolCall.toolName, args);
+                        addToolCallMessage(toolCall.toolName, args, tokensPerCall);
                     }
                 }
             }
@@ -181,6 +246,10 @@ clearButton.addEventListener('click', () => {
     if (!messagesContainer) return;
     messagesContainer.innerHTML = '';
     messages.length = 0;
+    totalInputTokens = 0;
+    totalOutputTokens = 0;
+    totalAllTokens = 0;
+    updateTokenDisplay();
     agent.destroy();
     addMessage('assistant', 'Conversation cleared. How can I help you?');
 });

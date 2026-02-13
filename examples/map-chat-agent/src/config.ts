@@ -1,8 +1,8 @@
 export const API_KEY = process.env.API_KEY_EXAMPLES;
 
-if (!process.env.AZURE_BASE_URL) {
+if (!process.env.AZURE_RESOURCE_NAME) {
 	throw new Error(
-		'AZURE_BASE_URL is required. Create a .env file in the examples/ directory with AZURE_BASE_URL=https://your-resource.cognitiveservices.azure.com',
+		'AZURE_RESOURCE_NAME is required. Create a .env file in the examples/ directory with AZURE_RESOURCE_NAME=your-resource-name',
 	);
 }
 
@@ -18,13 +18,6 @@ if (!process.env.AZURE_DEPLOYMENT_ID) {
 	);
 }
 
-if (!process.env.AZURE_API_VERSION) {
-	throw new Error(
-		'AZURE_API_VERSION is required. Create a .env file in the examples/ directory with AZURE_API_VERSION=2024-12-01-preview',
-	);
-}
-
-export const AZURE_BASE_URL = process.env.AZURE_BASE_URL;
+export const AZURE_RESOURCE_NAME = process.env.AZURE_RESOURCE_NAME;
 export const AZURE_API_KEY = process.env.AZURE_API_KEY;
 export const AZURE_DEPLOYMENT_ID = process.env.AZURE_DEPLOYMENT_ID;
-export const AZURE_API_VERSION = process.env.AZURE_API_VERSION;
