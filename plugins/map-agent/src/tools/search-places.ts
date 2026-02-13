@@ -2,6 +2,7 @@
  * @module map-agent-tools
  */
 
+import { POICategory } from '@tomtom-org/maps-sdk/core';
 import { search } from '@tomtom-org/maps-sdk/services';
 import { dynamicTool } from 'ai';
 import { z } from 'zod';
@@ -18,6 +19,7 @@ const searchPlacesSchema = z.object({
     radius: z.number().optional().describe('Search radius in meters'),
     limit: z.number().optional().describe('Maximum number of results (default: 10)'),
     categories: z.array(z.string()).optional().describe('POI category filters'),
+    clearPrevious: z.boolean().optional().describe('Clear previous search results before adding new ones (default: false)'),
 });
 
 /**
@@ -28,21 +30,25 @@ export function createSearchPlacesTool(context: ToolContext): ReturnType<typeof 
         description: 'Search for places, businesses, or points of interest',
         inputSchema: searchPlacesSchema,
         execute: async (params) => {
-            const { query, nearLongitude, nearLatitude, radius, limit = 10, categories } = params as z.infer<typeof searchPlacesSchema>;
+            const { query, nearLongitude, nearLatitude, radius, limit = 10, categories, clearPrevious = false } = params as z.infer<typeof searchPlacesSchema>;
             const near = nearLongitude !== undefined && nearLatitude !== undefined 
                 ? [nearLongitude, nearLatitude] as [number, number]
                 : undefined;
             try {
                 const result = await search({
                     query,
-                    ...(near && { at: near }),
-                    ...(radius && { radius }),
                     limit,
-                    poiCategories: categories as any,
+                    poiCategories: (categories as POICategory[]),
+                    position: near,
+                    radiusMeters: radius, 
                 });
 
-                context.state.lastSearchResults = result;
+                if (clearPrevious) {
+                    context.state.searchResultsHistory = [];
+                }
 
+                // Accumulate search results
+                context.state.searchResultsHistory.push(result);
                 return summarizePlaces(result);
             } catch (error) {
                 return {

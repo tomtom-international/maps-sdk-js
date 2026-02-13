@@ -32,6 +32,8 @@ export function createClearMapTool(context: ToolContext): ReturnType<typeof dyna
                     if (context.state.modules.places) {
                         await context.state.modules.places.clear();
                     }
+                    // Clear accumulated search results
+                    context.state.searchResultsHistory = [];
                 }
 
                 if (clearAll || layers.includes('routes')) {
@@ -39,6 +41,8 @@ export function createClearMapTool(context: ToolContext): ReturnType<typeof dyna
                         await context.state.modules.routing.clearRoutes();
                         await context.state.modules.routing.clearWaypoints();
                     }
+                    // Clear accumulated routes
+                    context.state.routesHistory = [];
                 }
 
                 if (clearAll || layers.includes('geometries')) {

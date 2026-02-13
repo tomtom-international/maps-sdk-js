@@ -45,6 +45,26 @@ body {
     font-size: 18px;
     font-weight: 600;
     color: #333;
+    margin-bottom: 4px;
+}
+
+.token-stats {
+    display: flex;
+    gap: 12px;
+    font-size: 11px;
+    color: #666;
+    margin-top: 4px;
+}
+
+.token-stats .stat {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.token-stats strong {
+    color: #007aff;
+    font-weight: 600;
 }
 
 #clear-chat {
@@ -107,25 +127,70 @@ body {
 
 .message.tool-call {
     align-self: flex-start;
-    background: #f0f8ff;
     color: #333;
     border: 1px solid #b0d4ff;
     max-width: 90%;
     font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
     font-size: 12px;
+    padding: 0;
+}
+
+.message.tool-call.token-low {
+    background: #f0fff4;
+    border-color: #86efac;
+}
+
+.message.tool-call.token-medium {
+    background: #fffbeb;
+    border-color: #fcd34d;
+}
+
+.message.tool-call.token-high {
+    background: #fef2f2;
+    border-color: #fca5a5;
+}
+
+.tool-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px 6px 14px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .tool-name {
     font-weight: 600;
     color: #0066cc;
-    margin-bottom: 6px;
     font-size: 13px;
+}
+
+.tool-tokens {
+    font-size: 11px;
+    font-weight: 600;
+    color: #666;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+.message.tool-call.token-low .tool-tokens {
+    color: #15803d;
+    background: #dcfce7;
+}
+
+.message.tool-call.token-medium .tool-tokens {
+    color: #92400e;
+    background: #fef3c7;
+}
+
+.message.tool-call.token-high .tool-tokens {
+    color: #991b1b;
+    background: #fee2e2;
 }
 
 .tool-args {
     background: #fff;
-    padding: 8px;
-    border-radius: 4px;
+    padding: 8px 14px 10px 14px;
     overflow-x: auto;
     white-space: pre;
     color: #555;

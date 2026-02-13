@@ -23,11 +23,11 @@ import type { LanguageModel, ToolLoopAgent } from 'ai';
  * can render it without re-fetching. Module instances are cached for reuse.
  */
 export interface MapAgentState {
-    /** Last search/geocode results — full GeoJSON retained for showPlaces(). */
-    lastSearchResults?: Places;
+    /** Accumulated search results — full GeoJSON retained for showPlaces(). */
+    searchResultsHistory: Places[];
 
-    /** Last calculated routes — full GeoJSON retained for showRoute(). */
-    lastRoutes?: Routes;
+    /** Accumulated calculated routes — full GeoJSON retained for showRoute(). */
+    routesHistory: Routes[];
 
     /** Last geocoded/resolved waypoints. */
     lastWaypoints?: Place[];

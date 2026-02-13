@@ -17,6 +17,7 @@ const calculateRouteSchema = z.object({
     to: z.string().describe('Destination location (address or place name)'),
     via: z.array(z.string()).optional().describe('Intermediate waypoints'),
     alternatives: z.number().optional().describe('Number of alternative routes (0-5)'),
+    clearPrevious: z.boolean().optional().describe('Clear previous routes before adding new ones (default: false)'),
 });
 
 /**
@@ -27,7 +28,7 @@ export function createCalculateRouteTool(context: ToolContext): ReturnType<typeo
         description: 'Calculate a driving route between locations',
         inputSchema: calculateRouteSchema,
         execute: async (params) => {
-            const { from, to, via = [], alternatives = 0 } = params as z.infer<typeof calculateRouteSchema>;
+            const { from, to, via = [], alternatives = 0, clearPrevious = false } = params as z.infer<typeof calculateRouteSchema>;
             try {
                 // Geocode all locations
                 const locations: string[] = [from, ...via, to];
@@ -50,8 +51,13 @@ export function createCalculateRouteTool(context: ToolContext): ReturnType<typeo
                     ...(alternatives > 0 && { maxAlternatives: alternatives as 1 | 2 | 3 | 4 | 5 }),
                 });
 
-                // Store in state
-                context.state.lastRoutes = routes;
+                // Clear previous routes if requested
+                if (clearPrevious) {
+                    context.state.routesHistory = [];
+                }
+
+                // Accumulate routes
+                context.state.routesHistory.push(routes);
                 context.state.lastWaypoints = geocodedPlaces;
 
                 return summarizeRoutes(routes);

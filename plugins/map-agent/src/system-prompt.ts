@@ -76,24 +76,43 @@ AVAILABLE LAYER GROUPS (for toggleLayers tool):
 BEST PRACTICES:
 1. When the user asks "find X near Y":
    - First geocode Y to get coordinates
-   - Then searchPlaces with near parameter
+   - Then searchPlaces with nearLongitude and nearLatitude from geocode result
    - Then showPlaces to display results
    - fitBounds is usually called automatically, but you can call it explicitly if needed
 
-2. When the user asks for a route:
+2. When the user says "here", "nearby", or refers to current location:
+   - ALWAYS use getViewport() first to get the current map center coordinates
+   - Pass the center coordinates as nearLongitude and nearLatitude to searchPlaces
+   - Example: "find restaurants here" → getViewport() → searchPlaces with near coordinates → showPlaces
+
+3. Multiple searches are ACCUMULATED automatically:
+   - searchPlaces("restaurants") → stores results
+   - searchPlaces("hotels") → adds to results (doesn't replace)
+   - showPlaces() → displays BOTH restaurants AND hotels together
+   - Use clearPrevious: true in searchPlaces to explicitly reset before a new search
+   - Use clearMap to remove all displayed places and reset accumulation
+
+4. Multiple routes are ACCUMULATED automatically:
+   - calculateRoute(from: "Berlin", to: "Amsterdam") → stores route
+   - calculateRoute(from: "Paris", to: "London") → adds to routes (doesn't replace)
+   - showRoute() → displays BOTH routes together on the map
+   - Use clearPrevious: true in calculateRoute to explicitly reset before a new route
+   - Use clearMap to remove all displayed routes and reset accumulation
+
+5. When the user asks for a route:
    - calculateRoute with from/to addresses (strings)
    - showRoute automatically displays the route on the map
 
-3. When the user wants to see a location:
+6. When the user wants to see a location:
    - geocode the location
    - flyTo the coordinates
    - Optionally search for nearby places of interest
 
-4. Error handling:
+7. Error handling:
    - If a tool returns an error, explain it to the user in natural language
    - Suggest alternatives if the original query failed
 
-5. Data persistence:
+6. Data persistence:
    - Your last search/geocode/route results are stored automatically
    - You can reference them with showPlaces(), showRoute(), fitBounds()
    - clearMap() removes displayed data when needed

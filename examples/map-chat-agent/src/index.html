@@ -10,7 +10,14 @@
             <div id="sdk-map"></div>
             <div id="chat-panel">
                 <div id="chat-header">
-                    <h2>Map Assistant</h2>
+                    <div>
+                        <h2>Map Assistant</h2>
+                        <div id="token-stats" class="token-stats">
+                            <span class="stat">Input: <strong id="input-tokens">0</strong></span>
+                            <span class="stat">Output: <strong id="output-tokens">0</strong></span>
+                            <span class="stat">Total: <strong id="total-tokens">0</strong></span>
+                        </div>
+                    </div>
                     <button id="clear-chat" title="Clear conversation">Clear</button>
                 </div>
                 <div id="chat-messages"></div>

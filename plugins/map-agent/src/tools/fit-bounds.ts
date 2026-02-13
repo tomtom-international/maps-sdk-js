@@ -26,8 +26,8 @@ export function createFitBoundsTool(context: ToolContext): ReturnType<typeof dyn
             try {
                 // Collect all available data
                 const bboxes = [
-                    context.state.lastSearchResults && bboxFromGeoJSON(context.state.lastSearchResults),
-                    context.state.lastRoutes && bboxFromGeoJSON(context.state.lastRoutes),
+                    context.state.searchResultsHistory.length > 0 && bboxFromGeoJSON(context.state.searchResultsHistory),
+                    context.state.routesHistory.length > 0 && bboxFromGeoJSON(context.state.routesHistory),
                 ].filter((bbox): bbox is [number, number, number, number] => bbox !== undefined);
 
                 if (bboxes.length === 0) {

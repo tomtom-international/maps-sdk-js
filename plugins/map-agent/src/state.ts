@@ -9,6 +9,8 @@ import type { MapAgentState } from './types';
  */
 export function createState(): MapAgentState {
     return {
+        searchResultsHistory: [],
+        routesHistory: [],
         modules: {},
     };
 }
@@ -18,8 +20,8 @@ export function createState(): MapAgentState {
  */
 export function resetState(state: MapAgentState): void {
     // Clear data
-    delete state.lastSearchResults;
-    delete state.lastRoutes;
+    state.searchResultsHistory = [];
+    state.routesHistory = [];
     delete state.lastWaypoints;
     delete state.lastGeocodeResult;
 
