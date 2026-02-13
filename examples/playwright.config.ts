@@ -21,7 +21,24 @@ export const buildPlaywrightConfig = (overrides: Partial<PlaywrightTestConfig> =
             trace: 'on-first-retry',
         },
 
-        projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+        projects: [
+            {
+                name: 'chromium',
+                use: {
+                    ...devices['Desktop Chrome'],
+                    launchOptions: {
+                        // Maps use WebGL, which requires GPU access. In headless mode there's no real GPU,
+                        // so we force SwiftShader (a CPU-based WebGL renderer) and disable the GPU sandbox
+                        // (which can block SwiftShader from initializing).
+                        // This became necessary after Playwright v1.57 switched from Chromium to Chrome for
+                        // Testing builds, which no longer enable SwiftShader by default in headless mode.
+                        // See: https://github.com/microsoft/playwright/releases/tag/v1.57.0
+                        // See: https://github.com/microsoft/playwright/pull/39129
+                        args: ['--enable-unsafe-swiftshader', '--disable-gpu-sandbox'],
+                    },
+                },
+            },
+        ],
 
         // Keep snapshots next to test files
         snapshotPathTemplate: '{testDir}/{testFileDir}/snapshots/{arg}{ext}',
