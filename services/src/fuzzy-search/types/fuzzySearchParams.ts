@@ -27,7 +27,7 @@ import type { FuzzySearchResponseAPI } from './fuzzySearchResponseAPI';
  * const params: FuzzySearchParams = {
  *   key: 'your-api-key',
  *   query: 'pizz',  // Will find "pizza" restaurants
- *   at: [4.9041, 52.3676]
+ *   position: [4.9041, 52.3676]
  * };
  *
  * // Fuzzy search with custom fuzziness
