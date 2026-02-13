@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>Complex Panel Example - Maps SDK JS</title>
+    <link rel="icon" href="data:,">
+
+    <!-- Import complete SDK Example styles -->
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="sdk-example-body">
+    <!-- Map container -->
+    <div id="sdk-map"></div>
+
+    <!-- Search Panel (Top-left) -->
+    <div class="sdk-example-searchPanel">
+        <input
+            type="text"
+            id="searchInput"
+            class="sdk-example-input"
+            placeholder="Search for EV stations..."
+        >
+        <button id="searchButton" class="sdk-example-button">Search</button>
+        <button id="clearButton" class="sdk-example-button sdk-example-button-secondary">Clear</button>
+    </div>
+
+    <!-- Complex Control Panel (Top-right) -->
+    <div class="sdk-example-customPanel">
+        <!-- Sticky header with title -->
+        <div class="sdk-example-panel-header">
+            <h3 class="sdk-example-heading">
+                <span class="sdk-example-heading-text">EV Station Customization</span>
+                <button class="sdk-example-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                    <svg class="sdk-example-heading-chevron" viewBox="0 0 24 24" width="16" height="16">
+                        <path d="M7 10l5 5 5-5" />
+                    </svg>
+                </button>
+            </h3>
+        </div>
+
+        <div class="sdk-example-panel-content">
+        <!-- Background Stations Section -->
+        <div class="sdk-example-section">
+            <h4 class="sdk-example-subheading">Background Stations</h4>
+
+            <label class="sdk-example-toggle-label">
+                <input type="checkbox" id="bgAvailability" class="sdk-example-toggle-input">
+                <span class="sdk-example-toggle-switch"></span>
+                Show Availability
+            </label>
+
+            <label class="sdk-example-toggle-label">
+                <input type="checkbox" id="bgCustomIcon" class="sdk-example-toggle-input">
+                <span class="sdk-example-toggle-switch"></span>
+                Use Custom Icons
+            </label>
+        </div>
+
+        <!-- Search Results Section -->
+        <div class="sdk-example-section">
+            <h4 class="sdk-example-subheading">Search Results</h4>
+
+            <label class="sdk-example-toggle-label">
+                <input type="checkbox" id="searchAvailability" class="sdk-example-toggle-input" checked>
+                <span class="sdk-example-toggle-switch"></span>
+                Show Availability
+            </label>
+
+            <label class="sdk-example-toggle-label">
+                <input type="checkbox" id="searchCustomIcon" class="sdk-example-toggle-input" checked>
+                <span class="sdk-example-toggle-switch"></span>
+                Use Custom Icons
+            </label>
+        </div>
+
+        <!-- Availability Display Section -->
+        <div class="sdk-example-section">
+            <h4 class="sdk-example-subheading">Availability Display</h4>
+
+            <!-- Threshold Slider -->
+            <div class="sdk-example-form-field">
+                <label class="sdk-example-form-label">Availability Threshold</label>
+                <div class="sdk-example-slider-container">
+                    <input
+                        type="range"
+                        id="thresholdSlider"
+                        class="sdk-example-slider"
+                        min="0"
+                        max="100"
+                        value="30"
+                    >
+                    <span id="thresholdValue" class="sdk-example-slider-value">30%</span>
+                </div>
+                <p class="sdk-example-form-helper">
+                    Stations below this threshold are marked as unavailable
+                </p>
+            </div>
+
+            <!-- Format Dropdown -->
+            <div class="sdk-example-form-field">
+                <label class="sdk-example-form-label">Display Format</label>
+                <select id="formatSelect" class="sdk-example-select">
+                    <option value="slash" selected>Slash (5/10)</option>
+                    <option value="of">Of (5 of 10)</option>
+                    <option value="available">Available (5 available)</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Text Styling Section -->
+        <div class="sdk-example-section">
+            <h4 class="sdk-example-subheading">Text Styling</h4>
+
+            <!-- Text Color -->
+            <div class="sdk-example-form-field">
+                <label class="sdk-example-form-label">Text Color</label>
+                <div class="sdk-example-color-selectors" id="textColorSelectors">
+                    <div class="sdk-example-color-selector active" data-value="default" style="background: linear-gradient(135deg, #fff 49%, #000 51%); border: 2px solid #999;" tabindex="0" aria-label="Default">
+                        <span style="font-size: 8px;">DEF</span>
+                    </div>
+                    <div class="sdk-example-color-selector" data-value="#ffffff" style="background: #ffffff; border: 2px solid #ddd;" tabindex="0" aria-label="White"></div>
+                    <div class="sdk-example-color-selector" data-value="#000000" style="background: #000000;" tabindex="0" aria-label="Black"></div>
+                    <div class="sdk-example-color-selector" data-value="#df1b12" style="background: #df1b12;" tabindex="0" aria-label="Red"></div>
+                    <div class="sdk-example-color-selector" data-value="#90D5FF" style="background: #90D5FF;" tabindex="0" aria-label="Blue"></div>
+                </div>
+            </div>
+
+            <!-- Halo Color -->
+            <div class="sdk-example-form-field">
+                <label class="sdk-example-form-label">Halo Color</label>
+                <div class="sdk-example-color-selectors" id="haloColorSelectors">
+                    <div class="sdk-example-color-selector active" data-value="default" style="background: linear-gradient(135deg, #fff 49%, #000 51%); border: 2px solid #999;" tabindex="0" aria-label="Default">
+                        <span style="font-size: 8px;">DEF</span>
+                    </div>
+                    <div class="sdk-example-color-selector" data-value="#ffffff" style="background: #ffffff; border: 2px solid #ddd;" tabindex="0" aria-label="White"></div>
+                    <div class="sdk-example-color-selector" data-value="#000000" style="background: #000000;" tabindex="0" aria-label="Black"></div>
+                    <div class="sdk-example-color-selector" data-value="#333333" style="background: #333333;" tabindex="0" aria-label="Dark Gray"></div>
+                </div>
+            </div>
+
+            <!-- Halo Width -->
+            <div class="sdk-example-form-field">
+                <label class="sdk-example-form-label">Halo Width</label>
+                <div class="sdk-example-slider-container">
+                    <input
+                        type="range"
+                        id="haloWidthSlider"
+                        class="sdk-example-slider"
+                        min="0"
+                        max="5"
+                        step="0.5"
+                        value="1"
+                    >
+                    <span id="haloWidthValue" class="sdk-example-slider-value">1px</span>
+                </div>
+            </div>
+
+            <!-- Text Offset -->
+            <div class="sdk-example-form-field">
+                <label class="sdk-example-checkbox-label">
+                    <input type="checkbox" id="useCustomOffset">
+                    Use Custom Text Offset
+                </label>
+
+                <div id="offsetControls" style="display: none; margin-top: 8px;">
+                    <div class="sdk-example-slider-container">
+                        <input
+                            type="range"
+                            id="textOffsetSlider"
+                            class="sdk-example-slider"
+                            min="-20"
+                            max="20"
+                            value="0"
+                        >
+                        <span id="textOffsetValue" class="sdk-example-slider-value">0px</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Options Section -->
+        <div class="sdk-example-section">
+            <h4 class="sdk-example-subheading">Filter Options</h4>
+
+            <div class="sdk-example-form-field">
+                <label class="sdk-example-form-label">Connector Types</label>
+                <div class="sdk-example-checkbox-list">
+                    <label class="sdk-example-checkbox-label">
+                        <input type="checkbox" id="chademo" checked>
+                        CHAdeMO
+                    </label>
+                    <label class="sdk-example-checkbox-label">
+                        <input type="checkbox" id="ccs" checked>
+                        CCS
+                    </label>
+                    <label class="sdk-example-checkbox-label">
+                        <input type="checkbox" id="type2" checked>
+                        Type 2
+                    </label>
+                    <label class="sdk-example-checkbox-label">
+                        <input type="checkbox" id="tesla">
+                        Tesla Supercharger
+                    </label>
+                </div>
+            </div>
+
+            <div class="sdk-example-form-field">
+                <label class="sdk-example-form-label">Minimum Power (kW)</label>
+                <div class="sdk-example-radio-group">
+                    <label class="sdk-example-radio-label">
+                        <input type="radio" name="minPower" value="0" checked>
+                        Any
+                    </label>
+                    <label class="sdk-example-radio-label">
+                        <input type="radio" name="minPower" value="50">
+                        50 kW+
+                    </label>
+                    <label class="sdk-example-radio-label">
+                        <input type="radio" name="minPower" value="150">
+                        150 kW+
+                    </label>
+                    <label class="sdk-example-radio-label">
+                        <input type="radio" name="minPower" value="350">
+                        350 kW+
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions Section (Sticky Footer) -->
+        <div class="sdk-example-panel-footer">
+            <div class="sdk-example-button-group">
+                <button id="applyButton" class="sdk-example-button sdk-example-button-md sdk-example-button-full">
+                    Apply
+                </button>
+                <button id="resetButton" class="sdk-example-button sdk-example-button-md sdk-example-button-secondary sdk-example-button-full">
+                    Reset
+                </button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <script type="module">
+        console.log('Complex Panel Example - Maps SDK JS');
+
+        
+        const toggleButton = document.querySelector('.sdk-example-heading-toggle');
+        const panelContent = document.querySelector('.sdk-example-panel-content');
+        
+        toggleButton?.addEventListener('click', () => {
+            const isExpanded = toggleButton.getAttribute('aria-expanded') === 'true';
+            toggleButton.setAttribute('aria-expanded', !isExpanded);
+            panelContent?.classList.toggle('collapsed');
+        });
+
+        // Toggle offset controls visibility
+        document.querySelector('#useCustomOffset')?.addEventListener('change', (e) => {
+            const offsetControls = document.querySelector('#offsetControls');
+            offsetControls.style.display = e.target.checked ? 'block' : 'none';
+        });
+
+        // Update slider values
+        const updateSlider = (sliderId, valueId, formatter = (v) => v) => {
+            const slider = document.querySelector(`#${sliderId}`);
+            const value = document.querySelector(`#${valueId}`);
+            slider?.addEventListener('input', () => {
+                value.textContent = formatter(slider.value);
+            });
+        };
+
+        updateSlider('thresholdSlider', 'thresholdValue', (v) => `${v}%`);
+        updateSlider('haloWidthSlider', 'haloWidthValue', (v) => `${v}px`);
+        updateSlider('textOffsetSlider', 'textOffsetValue', (v) => `${v}px`);
+
+        // Color selectors
+        const setupColorSelector = (containerId) => {
+            const selectors = document.querySelectorAll(`#${containerId} .sdk-example-color-selector`);
+            selectors.forEach(selector => {
+                selector.addEventListener('click', () => {
+                    selectors.forEach(s => s.classList.remove('active'));
+                    selector.classList.add('active');
+                    console.log(`${containerId}:`, selector.dataset.value);
+                });
+            });
+        };
+
+        setupColorSelector('textColorSelectors');
+        setupColorSelector('haloColorSelectors');
+
+        // Apply and Reset buttons
+        document.querySelector('#applyButton')?.addEventListener('click', () => {
+            console.log('Applying all changes...');
+        });
+
+        document.querySelector('#resetButton')?.addEventListener('click', () => {
+            console.log('Resetting to defaults...');
+        });
+    </script>
+</body>
+</html>

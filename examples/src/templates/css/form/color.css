@@ -1,0 +1,108 @@
+/* COLOR SELECTORS */
+
+.sdk-example-color-selectors {
+    display: flex;
+    gap: var(--sdk-space-2);
+    margin-top: var(--sdk-space-2);
+    flex-wrap: wrap;
+}
+
+.sdk-example-color-selector {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--sdk-radius-5);
+    border: 2px solid var(--sdk-border-medium);
+    cursor: pointer;
+    transition: transform var(--sdk-transition-normal), border-color var(--sdk-transition-normal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: var(--sdk-font-weight-bold);
+    color: var(--sdk-text-high);
+    background-color: var(--sdk-surface-0);
+    box-sizing: border-box;
+}
+
+.sdk-example-color-selector:hover {
+    transform: scale(1.1);
+    border-color: var(--sdk-border-high);
+}
+
+.sdk-example-color-selector.active {
+    border-color: var(--sdk-primary-color);
+    border-width: 3px;
+    transform: scale(1.05);
+}
+
+.sdk-example-color-selector:focus {
+    outline: 2px solid var(--sdk-primary-color);
+    outline-offset: 2px;
+}
+
+.sdk-example-color-preview {
+    display: flex;
+    gap: var(--sdk-space-2);
+    align-items: center;
+    padding: var(--sdk-space-2);
+    background: var(--sdk-surface-1);
+    border-radius: var(--sdk-radius-5);
+}
+
+.sdk-example-color-box {
+    display: flex;
+    align-items: center;
+    gap: var(--sdk-space-1);
+    font-family: var(--sdk-font-primary);
+    font-size: 11px;
+    color: var(--sdk-text-medium);
+}
+
+.sdk-example-color-indicator {
+    width: 16px;
+    height: 16px;
+    border-radius: var(--sdk-radius-5);
+    border: 1px solid var(--sdk-border-medium);
+}
+
+/* Responsive: max-width 768px */
+@media (max-width: 768px) {
+    .sdk-example-color-selector {
+        width: 30px;
+        height: 30px;
+        font-size: 8px;
+    }
+}
+
+/* Responsive: max-width 600px */
+@media (max-width: 600px) {
+    .sdk-example-color-selector {
+        width: 26px;
+        height: 26px;
+        font-size: 7px;
+    }
+}
+
+/* Responsive: max-height 700px */
+@media (max-height: 700px) {
+    .sdk-example-color-selector {
+        width: 32px;
+        height: 32px;
+    }
+}
+
+/* Responsive: max-height 550px */
+@media (max-height: 550px) {
+    .sdk-example-color-selector {
+        width: 28px;
+        height: 28px;
+    }
+}
+
+/* Responsive: min-width 1200px */
+@media (min-width: 1200px) {
+    .sdk-example-color-selector {
+        width: 44px;
+        height: 44px;
+    }
+}

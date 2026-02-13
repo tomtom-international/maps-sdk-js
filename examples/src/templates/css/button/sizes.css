@@ -1,0 +1,78 @@
+/* BUTTON SIZES */
+
+.sdk-example-button-xs {
+    height: var(--sdk-height-xs);
+    padding: 0 var(--sdk-space-2);
+    font-size: var(--sdk-font-caption-m);
+    line-height: var(--sdk-font-caption-m-lh);
+}
+
+.sdk-example-button-sm {
+    height: var(--sdk-height-sm);
+    padding: 0 var(--sdk-space-3);
+    font-size: var(--sdk-font-body-s);
+    line-height: var(--sdk-font-body-s-lh);
+}
+
+.sdk-example-button-lg {
+    height: var(--sdk-height-lg);
+    padding: 0 var(--sdk-space-5);
+    font-size: var(--sdk-font-body-l);
+    line-height: var(--sdk-font-body-l-lh);
+}
+
+.sdk-example-button-xl {
+    height: var(--sdk-height-xl);
+    padding: 0 var(--sdk-space-6);
+    font-size: var(--sdk-font-body-l);
+    line-height: var(--sdk-font-body-l-lh);
+}
+
+/* ICON BUTTONS */
+
+.sdk-example-button-icon {
+    padding: 0;
+    width: var(--sdk-height-md);
+    aspect-ratio: 1;
+}
+
+.sdk-example-button-icon.sdk-example-button-xs {
+    width: var(--sdk-height-xs);
+}
+
+.sdk-example-button-icon.sdk-example-button-sm {
+    width: var(--sdk-height-sm);
+}
+
+.sdk-example-button-icon.sdk-example-button-lg {
+    width: var(--sdk-height-lg);
+}
+
+.sdk-example-button-icon.sdk-example-button-xl {
+    width: var(--sdk-height-xl);
+}
+
+.sdk-example-button-with-icon {
+    gap: var(--sdk-space-2);
+}
+
+.sdk-example-button-with-icon svg,
+.sdk-example-button-with-icon img {
+    width: 16px;
+    height: 16px;
+}
+
+.sdk-example-button-lg.sdk-example-button-with-icon svg,
+.sdk-example-button-lg.sdk-example-button-with-icon img {
+    width: 20px;
+    height: 20px;
+}
+
+/* Responsive: max-width 600px */
+@media (max-width: 600px) {
+    .sdk-example-button-lg {
+        height: var(--sdk-height-md);
+        padding: 0 var(--sdk-space-4);
+        font-size: 13px;
+    }
+}

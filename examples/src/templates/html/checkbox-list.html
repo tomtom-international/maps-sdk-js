@@ -1,0 +1,45 @@
+
+<div class="sdk-example-form-field">
+    <label class="sdk-example-form-label">Checkbox Options</label>
+
+    <div class="sdk-example-checkbox-list">
+        <!-- Option 1 -->
+        <label class="sdk-example-checkbox-label">
+            <input type="checkbox" id="sdk-example-option1" checked>
+            First option (checked by default)
+        </label>
+
+        <!-- Option 2 -->
+        <label class="sdk-example-checkbox-label">
+            <input type="checkbox" id="sdk-example-option2">
+            Second option
+        </label>
+
+        <!-- Option 3 -->
+        <label class="sdk-example-checkbox-label">
+            <input type="checkbox" id="sdk-example-option3">
+            Third option
+        </label>
+
+        <!-- Option 4 (disabled) -->
+        <label class="sdk-example-checkbox-label">
+            <input type="checkbox" id="sdk-example-option4" disabled>
+            Fourth option (disabled)
+        </label>
+    </div>
+</div>
+
+<!--
+    JavaScript Event Listener Example:
+
+    document.querySelector('#sdk-example-option1')?.addEventListener('change', (event) => {
+        const isChecked = (event.target as HTMLInputElement).checked;
+        console.log('Option 1 is now:', isChecked);
+
+        // Update your application state
+        state.option1 = isChecked;
+
+        // Trigger any necessary updates
+        updateMap();
+    });
+-->

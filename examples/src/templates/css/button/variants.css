@@ -1,0 +1,139 @@
+/* BUTTON VARIANTS */
+
+.sdk-example-button-tertiary {
+    background-color: transparent;
+    color: var(--sdk-primary-color);
+    border: 2px solid var(--sdk-primary-color);
+    box-shadow: none;
+}
+
+.sdk-example-button-tertiary:hover {
+    background-color: rgba(223, 27, 18, 0.1);
+}
+
+.sdk-example-button-tertiary:active {
+    background-color: rgba(223, 27, 18, 0.2);
+}
+
+.sdk-example-button-tertiary:disabled {
+    background-color: transparent;
+    color: var(--sdk-text-disabled);
+    border-color: var(--sdk-text-disabled);
+}
+
+.sdk-example-button-outline {
+    background-color: transparent;
+    color: var(--sdk-text-high);
+    border: 2px solid var(--sdk-border-high);
+    box-shadow: none;
+}
+
+.sdk-example-button-outline:hover {
+    background-color: var(--sdk-surface-1);
+    border-color: var(--sdk-border-medium);
+}
+
+.sdk-example-button-outline:active {
+    background-color: var(--sdk-surface-2);
+}
+
+.sdk-example-button-outline:disabled {
+    background-color: transparent;
+    color: var(--sdk-text-disabled);
+    border-color: var(--sdk-text-disabled);
+}
+
+
+.sdk-example-button-ghost {
+    background-color: transparent;
+    color: var(--sdk-text-high);
+    box-shadow: none;
+}
+
+.sdk-example-button-ghost:hover {
+    background-color: var(--sdk-surface-1);
+}
+
+.sdk-example-button-ghost:active {
+    background-color: var(--sdk-surface-2);
+}
+
+.sdk-example-button-ghost:disabled {
+    background-color: transparent;
+    color: var(--sdk-text-disabled);
+}
+
+
+.sdk-example-button-success {
+    background-color: var(--sdk-color-success);
+}
+
+.sdk-example-button-success:hover {
+    background-color: #008f53;
+}
+
+.sdk-example-button-success:active {
+    background-color: #007844;
+}
+
+.sdk-example-button-warning {
+    background-color: var(--sdk-color-warning);
+    color: var(--sdk-text-high);
+}
+
+.sdk-example-button-warning:hover {
+    background-color: #e0a600;
+}
+
+.sdk-example-button-warning:active {
+    background-color: #c89200;
+}
+
+.sdk-example-toggle {
+    background-color: var(--sdk-surface-0);
+    color: var(--sdk-text-high);
+    border: 2px solid var(--sdk-border-high);
+    box-shadow: none;
+}
+
+.sdk-example-toggle:hover {
+    background-color: var(--sdk-surface-1);
+}
+
+.sdk-example-toggle.active {
+    background-color: var(--sdk-primary-color);
+    color: var(--sdk-text-white);
+    border-color: var(--sdk-primary-color);
+}
+
+.sdk-example-toggle.active:hover {
+    background-color: var(--sdk-primary-hover);
+    border-color: var(--sdk-primary-hover);
+}
+
+.sdk-example-button-loading {
+    position: relative;
+    color: transparent;
+    pointer-events: none;
+}
+
+.sdk-example-button-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    margin-top: -8px;
+    margin-left: -8px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: button-spin 0.6s linear infinite;
+}
+
+@keyframes button-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

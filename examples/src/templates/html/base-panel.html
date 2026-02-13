@@ -1,0 +1,53 @@
+<div class="sdk-example-panel sdk-example-panel-top-right sdk-example-panel-md">
+    <!-- Panel Header with Title and Collapse Toggle -->
+    <h3 class="sdk-example-heading">
+        <span class="sdk-example-heading-text">Panel Title</span>
+        <button class="sdk-example-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+            <svg class="sdk-example-heading-chevron" viewBox="0 0 24 24" width="16" height="16">
+                <path d="M7 10l5 5 5-5" />
+            </svg>
+        </button>
+    </h3>
+
+    <!-- Collapsible content wrapper -->
+    <div class="sdk-example-panel-content">
+        <!-- First Section -->
+        <div class="sdk-example-section">
+            <h4 class="sdk-example-subheading">Section Title</h4>
+            <p class="sdk-example-text">
+                Regular text content goes here. This is styled with the body font and appropriate line height.
+            </p>
+        </div>
+
+        <!-- Second Section -->
+        <div class="sdk-example-section">
+            <h4 class="sdk-example-subheading">Another Section</h4>
+            <p class="sdk-example-text">
+                You can add multiple sections to organize your content. Each section has a subtle bottom border.
+            </p>
+            <p class="sdk-example-text">
+                Add labels using the label class for smaller, secondary text.
+            </p>
+            <label class="sdk-example-label">This is a label with smaller text</label>
+        </div>
+
+        <!-- Third Section (no border at bottom since it's last) -->
+        <div class="sdk-example-section">
+            <h4 class="sdk-example-subheading">Final Section</h4>
+            <p class="sdk-example-text">
+                The last section automatically removes the bottom border for a cleaner look.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!--
+    Collapse Toggle (JS required):
+        const toggleButton = document.querySelector('.sdk-example-heading-toggle');
+        const panelContent = document.querySelector('.sdk-example-panel-content');
+        toggleButton?.addEventListener('click', () => {
+            const isExpanded = toggleButton.getAttribute('aria-expanded') === 'true';
+            toggleButton.setAttribute('aria-expanded', String(!isExpanded));
+            panelContent?.classList.toggle('collapsed');
+        });
+-->

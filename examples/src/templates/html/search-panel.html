@@ -1,0 +1,123 @@
+<div class="searchPanel">
+    <!-- Search input -->
+    <input
+        type="text"
+        id="searchInput"
+        class="input"
+        placeholder="Search for places..."
+    >
+
+    <!-- Search button -->
+    <button id="searchButton" class="button">
+        Search
+    </button>
+
+    <!-- Clear button (secondary style) -->
+    <button id="clearButton" class="button button-secondary">
+        Clear
+    </button>
+</div>
+
+<!-- Alternative: Search panel with icons -->
+<div class="searchPanel">
+    <input
+        type="text"
+        id="locationSearch"
+        class="input"
+        placeholder="Enter location..."
+    >
+
+    <!-- Icon button (requires SVG or icon font) -->
+    <button id="searchIconButton" class="button button-icon" aria-label="Search">
+        <!-- SVG icon example -->
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M7 13A6 6 0 1 0 7 1a6 6 0 0 0 0 12zM15 15l-3.35-3.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+    </button>
+
+    <button id="clearIconButton" class="button button-secondary button-icon" aria-label="Clear">
+        <!-- X icon example -->
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M12 4L4 12M4 4l8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+    </button>
+</div>
+
+<!-- Alternative: Search-only panel (no clear button) -->
+<div class="searchPanel">
+    <input
+        type="text"
+        id="simpleSearch"
+        class="input"
+        placeholder="Search..."
+    >
+    <button id="simpleSearchButton" class="button">
+        Search
+    </button>
+</div>
+
+<!--
+    JavaScript Event Listener Example:
+
+    const searchInput = document.querySelector('#searchInput') as HTMLInputElement;
+    const searchButton = document.querySelector('#searchButton');
+    const clearButton = document.querySelector('#clearButton');
+
+    // Search function
+    const performSearch = async () => {
+        const query = searchInput.value.trim();
+
+        if (!query) {
+            console.log('Search query is empty');
+            return;
+        }
+
+        console.log('Searching for:', query);
+
+        // Perform your search logic here
+        try {
+            const results = await searchPlaces(query);
+            displayResults(results);
+        } catch (error) {
+            console.error('Search failed:', error);
+        }
+    };
+
+    // Clear function
+    const clearSearch = () => {
+        searchInput.value = '';
+        // Clear your results
+        clearResults();
+        // Optional: reset map view
+        resetMapView();
+    };
+
+    // Button click listeners
+    searchButton?.addEventListener('click', performSearch);
+    clearButton?.addEventListener('click', clearSearch);
+
+    // Enter key support for better UX
+    searchInput?.addEventListener('keypress', (event) => {
+        if ((event as KeyboardEvent).key === 'Enter') {
+            performSearch();
+        }
+    });
+
+    // Optional: Search as user types (debounced)
+    let searchTimeout: number;
+    searchInput?.addEventListener('input', () => {
+        clearTimeout(searchTimeout);
+        searchTimeout = window.setTimeout(() => {
+            if (searchInput.value.length >= 3) {
+                performSearch();
+            }
+        }, 500); // Wait 500ms after user stops typing
+    });
+
+    // Optional: Show/hide clear button based on input
+    searchInput?.addEventListener('input', () => {
+        if (clearButton) {
+            clearButton.style.display = searchInput.value ? 'flex' : 'none';
+        }
+    });
+-->

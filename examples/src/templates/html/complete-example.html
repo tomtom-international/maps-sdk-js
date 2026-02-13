@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>Complete Component Example - Maps SDK JS</title>
+
+    <!-- Import complete SDK Example styles -->
+    <link rel="stylesheet" href="../css/styles.css">
+
+    <!-- Optional: Import MapLibre GL CSS if using the map -->
+    <!-- <link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css"> -->
+</head>
+<body class="body">
+    <!-- Map container -->
+    <div id="sdk-map"></div>
+
+    <!-- Search Panel (Top-left) -->
+    <div class="searchPanel">
+        <input
+            type="text"
+            id="searchInput"
+            class="input"
+            placeholder="Search for places..."
+        >
+        <button id="searchButton" class="button">Search</button>
+        <button id="clearButton" class="button button-secondary">Clear</button>
+    </div>
+
+    <!-- Control Panel (Top-right) -->
+    <div class="customPanel">
+        <h3 class="heading">Map Controls</h3>
+
+        <!-- Toggle Switches Section -->
+        <div class="section">
+            <h4 class="subheading">Display Options</h4>
+
+            <label class="toggle-label">
+                <input type="checkbox" id="showLabels" class="toggle-input" checked>
+                <span class="toggle-switch"></span>
+                Show Labels
+            </label>
+
+            <label class="toggle-label">
+                <input type="checkbox" id="showIcons" class="toggle-input" checked>
+                <span class="toggle-switch"></span>
+                Show Icons
+            </label>
+
+            <label class="toggle-label">
+                <input type="checkbox" id="customStyling" class="toggle-input">
+                <span class="toggle-switch"></span>
+                Custom Styling
+            </label>
+        </div>
+
+        <!-- Dropdown Section -->
+        <div class="section">
+            <h4 class="subheading">Map Style</h4>
+
+            <div class="form-field">
+                <label class="form-label" for="mapStyle">Select Style</label>
+                <select id="mapStyle" class="select">
+                    <option value="basic_street-light">Basic Street Light</option>
+                    <option value="basic_street-dark">Basic Street Dark</option>
+                    <option value="satellite">Satellite</option>
+                    <option value="hybrid" selected>Hybrid</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Checkboxes Section -->
+        <div class="section">
+            <h4 class="subheading">Layer Visibility</h4>
+
+            <div class="checkbox-list">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="showTraffic" checked>
+                    Traffic Layer
+                </label>
+
+                <label class="checkbox-label">
+                    <input type="checkbox" id="showTransit" checked>
+                    Transit Layer
+                </label>
+
+                <label class="checkbox-label">
+                    <input type="checkbox" id="showPOI">
+                    Points of Interest
+                </label>
+
+                <label class="checkbox-label">
+                    <input type="checkbox" id="showTerrain">
+                    Terrain
+                </label>
+            </div>
+        </div>
+
+        <!-- Radio Buttons Section -->
+        <div class="section">
+            <h4 class="subheading">Map Mode</h4>
+
+            <div class="radio-group">
+                <label class="radio-label">
+                    <input type="radio" name="mapMode" id="mode2D" value="2d" checked>
+                    2D View
+                </label>
+
+                <label class="radio-label">
+                    <input type="radio" name="mapMode" id="mode3D" value="3d">
+                    3D View
+                </label>
+
+                <label class="radio-label">
+                    <input type="radio" name="mapMode" id="modeSatellite" value="satellite">
+                    Satellite View
+                </label>
+            </div>
+        </div>
+
+        <!-- Sliders Section -->
+        <div class="section">
+            <h4 class="subheading">Visual Settings</h4>
+
+            <!-- Opacity Slider -->
+            <div class="form-field">
+                <label class="form-label" for="opacitySlider">Layer Opacity</label>
+                <div class="slider-container">
+                    <input
+                        type="range"
+                        id="opacitySlider"
+                        class="slider"
+                        min="0"
+                        max="100"
+                        value="80"
+                    >
+                    <span id="opacityValue" class="slider-value">80%</span>
+                </div>
+            </div>
+
+            <!-- Zoom Slider -->
+            <div class="form-field">
+                <label class="form-label" for="zoomSlider">Zoom Level</label>
+                <div class="slider-container">
+                    <input
+                        type="range"
+                        id="zoomSlider"
+                        class="slider"
+                        min="1"
+                        max="20"
+                        value="12"
+                    >
+                    <span id="zoomValue" class="slider-value">12</span>
+                </div>
+            </div>
+
+            <!-- Rotation Slider -->
+            <div class="form-field">
+                <label class="form-label" for="rotationSlider">Map Rotation</label>
+                <div class="slider-container">
+                    <input
+                        type="range"
+                        id="rotationSlider"
+                        class="slider"
+                        min="0"
+                        max="360"
+                        value="0"
+                    >
+                    <span id="rotationValue" class="slider-value">0°</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Color Selectors Section -->
+        <div class="section">
+            <h4 class="subheading">Color Customization</h4>
+
+            <!-- Text Color -->
+            <div class="form-field">
+                <label class="form-label">Label Color</label>
+                <div class="color-selectors" id="textColors">
+                    <div class="color-selector active" data-value="default" style="background: linear-gradient(135deg, #fff 49%, #000 51%); border: 2px solid #999;" tabindex="0" aria-label="Default"></div>
+                    <div class="color-selector" data-value="#ffffff" style="background: #ffffff; border: 2px solid #ddd;" tabindex="0" aria-label="White"></div>
+                    <div class="color-selector" data-value="#000000" style="background: #000000;" tabindex="0" aria-label="Black"></div>
+                    <div class="color-selector" data-value="#df1b12" style="background: #df1b12;" tabindex="0" aria-label="Red"></div>
+                    <div class="color-selector" data-value="#007bff" style="background: #007bff;" tabindex="0" aria-label="Blue"></div>
+                    <div class="color-selector" data-value="#00a65e" style="background: #00a65e;" tabindex="0" aria-label="Green"></div>
+                </div>
+            </div>
+
+            <!-- Background Color -->
+            <div class="form-field">
+                <label class="form-label">Background Color</label>
+                <div class="color-selectors" id="bgColors">
+                    <div class="color-selector" data-value="#f2f2f2" style="background: #f2f2f2;" tabindex="0" aria-label="Light Gray"></div>
+                    <div class="color-selector active" data-value="#ffffff" style="background: #ffffff; border: 2px solid #ddd;" tabindex="0" aria-label="White"></div>
+                    <div class="color-selector" data-value="#e0e0e0" style="background: #e0e0e0;" tabindex="0" aria-label="Gray"></div>
+                    <div class="color-selector" data-value="#cccccc" style="background: #cccccc;" tabindex="0" aria-label="Dark Gray"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons Section -->
+        <div class="section">
+            <h4 class="subheading">Actions</h4>
+
+            <div class="button-group">
+                <button id="applyButton" class="button button-full">
+                    Apply Changes
+                </button>
+                <button id="resetButton" class="button button-secondary button-full">
+                    Reset to Default
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script type="module">
+        console.log('Maps SDK JS - Complete Component Example');
+
+        // =================================================================
+        // SEARCH PANEL HANDLERS
+        // =================================================================
+        const searchInput = document.querySelector('#searchInput');
+        const searchButton = document.querySelector('#searchButton');
+        const clearButton = document.querySelector('#clearButton');
+
+        const performSearch = () => {
+            const query = searchInput.value.trim();
+            if (query) {
+                console.log('Searching for:', query);
+                // Implement your search logic here
+            }
+        };
+
+        const clearSearch = () => {
+            searchInput.value = '';
+            console.log('Search cleared');
+            // Implement your clear logic here
+        };
+
+        searchButton?.addEventListener('click', performSearch);
+        clearButton?.addEventListener('click', clearSearch);
+        searchInput?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') performSearch();
+        });
+
+        // =================================================================
+        // TOGGLE SWITCHES
+        // =================================================================
+        document.querySelector('#showLabels')?.addEventListener('change', (e) => {
+            console.log('Show Labels:', e.target.checked);
+        });
+
+        document.querySelector('#showIcons')?.addEventListener('change', (e) => {
+            console.log('Show Icons:', e.target.checked);
+        });
+
+        document.querySelector('#customStyling')?.addEventListener('change', (e) => {
+            console.log('Custom Styling:', e.target.checked);
+        });
+
+        // =================================================================
+        // DROPDOWN
+        // =================================================================
+        document.querySelector('#mapStyle')?.addEventListener('change', (e) => {
+            console.log('Map Style changed to:', e.target.value);
+        });
+
+        // =================================================================
+        // CHECKBOXES
+        // =================================================================
+        ['showTraffic', 'showTransit', 'showPOI', 'showTerrain'].forEach(id => {
+            document.querySelector(`#${id}`)?.addEventListener('change', (e) => {
+                console.log(`${id}:`, e.target.checked);
+            });
+        });
+
+        // =================================================================
+        // RADIO BUTTONS
+        // =================================================================
+        document.querySelectorAll('input[name="mapMode"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                console.log('Map Mode:', e.target.value);
+            });
+        });
+
+        // =================================================================
+        // SLIDERS
+        // =================================================================
+        const opacitySlider = document.querySelector('#opacitySlider');
+        const opacityValue = document.querySelector('#opacityValue');
+        opacitySlider?.addEventListener('input', () => {
+            opacityValue.textContent = `${opacitySlider.value}%`;
+        });
+
+        const zoomSlider = document.querySelector('#zoomSlider');
+        const zoomValue = document.querySelector('#zoomValue');
+        zoomSlider?.addEventListener('input', () => {
+            zoomValue.textContent = zoomSlider.value;
+        });
+
+        const rotationSlider = document.querySelector('#rotationSlider');
+        const rotationValue = document.querySelector('#rotationValue');
+        rotationSlider?.addEventListener('input', () => {
+            rotationValue.textContent = `${rotationSlider.value}°`;
+        });
+
+        // =================================================================
+        // COLOR SELECTORS
+        // =================================================================
+        const setupColorSelector = (containerId) => {
+            const selectors = document.querySelectorAll(`#${containerId} .color-selector`);
+            selectors.forEach(selector => {
+                selector.addEventListener('click', () => {
+                    selectors.forEach(s => s.classList.remove('active'));
+                    selector.classList.add('active');
+                    const color = selector.dataset.value;
+                    console.log(`${containerId} color:`, color);
+                });
+
+                selector.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        selector.click();
+                    }
+                });
+            });
+        };
+
+        setupColorSelector('textColors');
+        setupColorSelector('bgColors');
+
+        // =================================================================
+        // ACTION BUTTONS
+        // =================================================================
+        document.querySelector('#applyButton')?.addEventListener('click', () => {
+            console.log('Applying changes...');
+            // Gather all current states and apply them
+        });
+
+        document.querySelector('#resetButton')?.addEventListener('click', () => {
+            console.log('Resetting to defaults...');
+            // Reset all controls to default values
+        });
+    </script>
+</body>
+</html>

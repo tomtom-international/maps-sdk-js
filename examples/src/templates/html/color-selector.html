@@ -1,0 +1,179 @@
+<div class="sdk-example-form-field">
+    <label class="sdk-example-form-label">Text Color</label>
+
+    <div class="sdk-example-color-selectors" id="sdk-example-textColorSelectors">
+        <!-- Default option (diagonal split) -->
+        <div
+            class="sdk-example-color-selector active"
+            data-value="default"
+            style="background: linear-gradient(135deg, #fff 0%, #fff 49%, #000 51%, #000 100%); border: 2px solid #999;"
+            tabindex="0"
+            role="button"
+            aria-label="Default color"
+        >
+            <span style="font-size: 8px; color: #666;">Default</span>
+        </div>
+
+        <!-- White -->
+        <div
+            class="sdk-example-color-selector"
+            data-value="#ffffff"
+            style="background: #ffffff; border: 2px solid #ddd;"
+            tabindex="0"
+            role="button"
+            aria-label="White"
+        ></div>
+
+        <!-- Black -->
+        <div
+            class="sdk-example-color-selector"
+            data-value="#000000"
+            style="background: #000000;"
+            tabindex="0"
+            role="button"
+            aria-label="Black"
+        ></div>
+
+        <!-- TomTom Red -->
+        <div
+            class="sdk-example-color-selector"
+            data-value="#df1b12"
+            style="background: #df1b12;"
+            tabindex="0"
+            role="button"
+            aria-label="TomTom Red"
+        ></div>
+
+        <!-- Blue -->
+        <div
+            class="sdk-example-color-selector"
+            data-value="#007bff"
+            style="background: #007bff;"
+            tabindex="0"
+            role="button"
+            aria-label="Blue"
+        ></div>
+
+        <!-- Green -->
+        <div
+            class="sdk-example-color-selector"
+            data-value="#00a65e"
+            style="background: #00a65e;"
+            tabindex="0"
+            role="button"
+            aria-label="Green"
+        ></div>
+
+        <!-- Yellow -->
+        <div
+            class="sdk-example-color-selector"
+            data-value="#fdc530"
+            style="background: #fdc530;"
+            tabindex="0"
+            role="button"
+            aria-label="Yellow"
+        ></div>
+
+        <!-- Purple -->
+        <div
+            class="sdk-example-color-selector"
+            data-value="#6f42c1"
+            style="background: #6f42c1;"
+            tabindex="0"
+            role="button"
+            aria-label="Purple"
+        ></div>
+    </div>
+</div>
+
+<!-- Multiple color selectors for different properties -->
+<div class="sdk-example-section">
+    <h4 class="sdk-example-subheading">Color Options</h4>
+
+    <!-- Text Color -->
+    <div class="sdk-example-form-field">
+        <label class="sdk-example-form-label">Text Color</label>
+        <div class="sdk-example-color-selectors" id="sdk-example-textColors">
+            <div class="sdk-example-color-selector active" data-value="default" style="background: linear-gradient(135deg, #fff 49%, #000 51%);" tabindex="0"></div>
+            <div class="sdk-example-color-selector" data-value="#ffffff" style="background: #ffffff; border: 2px solid #ddd;" tabindex="0"></div>
+            <div class="sdk-example-color-selector" data-value="#000000" style="background: #000000;" tabindex="0"></div>
+            <div class="sdk-example-color-selector" data-value="#df1b12" style="background: #df1b12;" tabindex="0"></div>
+        </div>
+    </div>
+
+    <!-- Background Color -->
+    <div class="sdk-example-form-field">
+        <label class="sdk-example-form-label">Background Color</label>
+        <div class="sdk-example-color-selectors" id="sdk-example-bgColors">
+            <div class="sdk-example-color-selector" data-value="transparent" style="background: linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc), linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc); background-size: 8px 8px; background-position: 0 0, 4px 4px;" tabindex="0"></div>
+            <div class="sdk-example-color-selector active" data-value="#ffffff" style="background: #ffffff; border: 2px solid #ddd;" tabindex="0"></div>
+            <div class="sdk-example-color-selector" data-value="#f2f2f2" style="background: #f2f2f2;" tabindex="0"></div>
+            <div class="sdk-example-color-selector" data-value="#e0e0e0" style="background: #e0e0e0;" tabindex="0"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Color preview (shows currently selected color) -->
+<div class="sdk-example-color-preview">
+    <div class="sdk-example-color-box">
+        <div class="sdk-example-color-indicator" id="sdk-example-selectedColorIndicator" style="background: #df1b12;"></div>
+        <span class="sdk-example-label">Selected: <span id="sdk-example-selectedColorValue">#df1b12</span></span>
+    </div>
+</div>
+
+<!--
+    JavaScript Event Listener Example:
+
+    const colorSelectors = document.querySelectorAll('#sdk-example-textColors .sdk-example-color-selector');
+
+    colorSelectors.forEach((selector) => {
+        // Click event
+        selector.addEventListener('click', async () => {
+            // Remove active class from all selectors
+            colorSelectors.forEach((s) => s.classList.remove('active'));
+
+            // Add active class to clicked selector
+            selector.classList.add('active');
+
+            // Get the color value from data attribute
+            const colorValue = (selector as HTMLElement).dataset.value;
+            console.log('Selected color:', colorValue);
+
+            // Update state
+            state.textColor = colorValue === 'default' ? undefined : colorValue;
+
+            // Update any preview elements
+            const preview = document.querySelector('#sdk-example-selectedColorIndicator') as HTMLElement;
+            const valueDisplay = document.querySelector('#sdk-example-selectedColorValue') as HTMLElement;
+            if (preview && colorValue !== 'default') {
+                preview.style.background = colorValue;
+                valueDisplay.textContent = colorValue;
+            }
+
+            // Apply changes to your map or component
+            await applyColorChanges();
+        });
+
+        // Keyboard support
+        selector.addEventListener('keydown', (event) => {
+            if ((event as KeyboardEvent).key === 'Enter' || (event as KeyboardEvent).key === ' ') {
+                event.preventDefault();
+                selector.dispatchEvent(new Event('click'));
+            }
+        });
+    });
+
+    // Programmatically select a color
+    const selectColor = (colorValue: string) => {
+        colorSelectors.forEach((selector) => {
+            const selectorValue = (selector as HTMLElement).dataset.value;
+            if (selectorValue === colorValue) {
+                selector.classList.add('active');
+            } else {
+                selector.classList.remove('active');
+            }
+        });
+    };
+
+    // Usage: selectColor('#007bff');
+-->

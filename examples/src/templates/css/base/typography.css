@@ -1,0 +1,172 @@
+/* TYPOGRAPHY */
+
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    font-family: var(--sdk-font-primary);
+    font-weight: var(--sdk-font-weight-bold);
+    color: var(--sdk-text-high);
+}
+
+h1 { font-size: var(--sdk-font-heading); line-height: var(--sdk-font-heading-lh); }
+h2 { font-size: var(--sdk-font-heading); line-height: var(--sdk-font-heading-lh); }
+h3 { font-size: var(--sdk-font-heading); line-height: var(--sdk-font-heading-lh); }
+h4 { font-size: var(--sdk-font-subheading); line-height: var(--sdk-font-subheading-lh); }
+h5 { font-size: var(--sdk-font-body-m); line-height: var(--sdk-font-body-m-lh); }
+h6 { font-size: var(--sdk-font-body-s); line-height: var(--sdk-font-body-s-lh); }
+
+.sdk-example-heading {
+    margin: 0 0 var(--sdk-space-4);
+    font-family: var(--sdk-font-primary);
+    font-size: var(--sdk-font-heading);
+    line-height: var(--sdk-font-heading-lh);
+    font-weight: var(--sdk-font-weight-bold);
+    color: var(--sdk-text-high);
+    border-bottom: 2px solid var(--sdk-primary-color);
+    padding-bottom: var(--sdk-space-2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sdk-example-heading-text {
+    flex: 1;
+}
+
+.sdk-example-heading-toggle {
+    background: none;
+    border: none;
+    padding: var(--sdk-space-1);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: var(--sdk-space-2);
+    border-radius: var(--sdk-radius-5);
+    flex-shrink: 0;
+    transition: background var(--sdk-transition-fast);
+}
+
+.sdk-example-heading-toggle:hover {
+    background: var(--sdk-surface-1);
+}
+
+.sdk-example-heading-toggle:focus-visible {
+    outline: 2px solid var(--sdk-color-info);
+    outline-offset: 2px;
+}
+
+.sdk-example-heading-chevron {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: var(--sdk-text-high);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform var(--sdk-transition-normal);
+}
+
+.sdk-example-heading-toggle[aria-expanded="false"] .sdk-example-heading-chevron {
+    transform: rotate(-180deg);
+}
+
+.sdk-example-subheading {
+    margin: 0 0 var(--sdk-space-3);
+    font-family: var(--sdk-font-primary);
+    font-size: var(--sdk-font-subheading);
+    line-height: var(--sdk-font-subheading-lh);
+    font-weight: var(--sdk-font-weight-bold);
+    color: var(--sdk-text-medium);
+}
+
+.sdk-example-text {
+    margin: 0 0 var(--sdk-space-3);
+    font-family: var(--sdk-font-primary);
+    font-size: var(--sdk-font-body-m);
+    line-height: var(--sdk-font-body-m-lh);
+    color: var(--sdk-text-high);
+}
+
+.sdk-example-label {
+    display: block;
+    margin-bottom: var(--sdk-label-margin);
+    font-family: var(--sdk-font-primary);
+    font-size: var(--sdk-font-body-s);
+    line-height: var(--sdk-font-body-s-lh);
+    color: var(--sdk-text-medium);
+}
+
+.sdk-example-form-label {
+    display: block;
+    margin-bottom: var(--sdk-label-margin);
+    font-family: var(--sdk-font-primary);
+    font-size: var(--sdk-font-caption-m);
+    line-height: var(--sdk-font-caption-m-lh);
+    font-weight: var(--sdk-font-weight-bold);
+    color: var(--sdk-text-medium);
+}
+
+.sdk-example-value {
+    font-family: var(--sdk-font-primary);
+    font-size: var(--sdk-font-body-s);
+    line-height: var(--sdk-font-body-s-lh);
+    font-weight: var(--sdk-font-weight-bold);
+    color: var(--sdk-primary-color);
+}
+
+/* UTILITIES */
+
+.sdk-example-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+.sdk-example-visually-hidden {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+.sdk-example-section {
+    margin-bottom: var(--sdk-space-5);
+    padding-bottom: var(--sdk-space-4);
+    border-bottom: 1px solid var(--sdk-border-low);
+}
+
+.sdk-example-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.sdk-example-scrollable {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.sdk-example-scrollable::-webkit-scrollbar {
+    width: 8px;
+}
+
+.sdk-example-scrollable::-webkit-scrollbar-track {
+    background: var(--sdk-surface-1);
+    border-radius: var(--sdk-radius-5);
+}
+
+.sdk-example-scrollable::-webkit-scrollbar-thumb {
+    background: var(--sdk-border-medium);
+    border-radius: var(--sdk-radius-5);
+}
+
+.sdk-example-scrollable::-webkit-scrollbar-thumb:hover {
+    background: var(--sdk-border-high);
+}

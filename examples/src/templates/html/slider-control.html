@@ -1,0 +1,143 @@
+<div class="form-field">
+    <label class="form-label" for="sliderExample">Opacity</label>
+
+    <div class="slider-container">
+        <input
+            type="range"
+            id="sliderExample"
+            class="slider"
+            min="0"
+            max="100"
+            step="1"
+            value="75"
+        >
+        <span id="sliderValue" class="slider-value">75%</span>
+    </div>
+</div>
+
+<!-- Slider with decimal values -->
+<div class="form-field">
+    <label class="form-label" for="thresholdSlider">Threshold</label>
+
+    <div class="slider-container">
+        <input
+            type="range"
+            id="thresholdSlider"
+            class="slider"
+            min="0"
+            max="1"
+            step="0.01"
+            value="0.5"
+        >
+        <span id="thresholdValue" class="slider-value">0.50</span>
+    </div>
+</div>
+
+<!-- Slider with custom range -->
+<div class="form-field">
+    <label class="form-label" for="radiusSlider">Search Radius (km)</label>
+
+    <div class="slider-container">
+        <input
+            type="range"
+            id="radiusSlider"
+            class="slider"
+            min="1"
+            max="50"
+            step="1"
+            value="10"
+        >
+        <span id="radiusValue" class="slider-value">10 km</span>
+    </div>
+</div>
+
+<!-- Disabled slider -->
+<div class="form-field">
+    <label class="form-label" for="disabledSlider">Disabled Slider</label>
+
+    <div class="slider-container">
+        <input
+            type="range"
+            id="disabledSlider"
+            class="slider"
+            min="0"
+            max="100"
+            value="50"
+            disabled
+        >
+        <span class="slider-value">50%</span>
+    </div>
+</div>
+
+<script>
+    // Make sliders interactive by updating their value displays
+    const sliderExample = document.querySelector('#sliderExample');
+    const sliderValue = document.querySelector('#sliderValue');
+
+    sliderExample?.addEventListener('input', () => {
+        sliderValue.textContent = `${sliderExample.value}%`;
+    });
+
+    const thresholdSlider = document.querySelector('#thresholdSlider');
+    const thresholdValue = document.querySelector('#thresholdValue');
+
+    thresholdSlider?.addEventListener('input', () => {
+        const value = Number.parseFloat(thresholdSlider.value);
+        thresholdValue.textContent = value.toFixed(2);
+    });
+
+    const radiusSlider = document.querySelector('#radiusSlider');
+    const radiusValue = document.querySelector('#radiusValue');
+
+    radiusSlider?.addEventListener('input', () => {
+        radiusValue.textContent = `${radiusSlider.value} km`;
+    });
+</script>
+
+<!--
+    JavaScript Event Listener Example:
+
+    const slider = document.querySelector('#sliderExample') as HTMLInputElement;
+    const valueDisplay = document.querySelector('#sliderValue') as HTMLSpanElement;
+
+    // Update display as user drags (continuous feedback)
+    slider?.addEventListener('input', () => {
+        const value = Number.parseInt(slider.value, 10);
+        valueDisplay.textContent = `${value}%`;
+
+        // Optional: Update state immediately for live preview
+        state.opacity = value / 100;
+        updateOpacity();
+    });
+
+    // Update when user releases (final value)
+    slider?.addEventListener('change', () => {
+        const value = Number.parseInt(slider.value, 10);
+        console.log('Final value:', value);
+
+        // Update your application state
+        state.opacity = value / 100;
+
+        // Trigger any necessary updates
+        applyChanges();
+    });
+
+    // Example with decimal values
+    const thresholdSlider = document.querySelector('#thresholdSlider') as HTMLInputElement;
+    const thresholdDisplay = document.querySelector('#thresholdValue') as HTMLSpanElement;
+
+    thresholdSlider?.addEventListener('input', () => {
+        const value = Number.parseFloat(thresholdSlider.value);
+        thresholdDisplay.textContent = value.toFixed(2); // Show 2 decimal places
+
+        state.threshold = value;
+        updateThreshold();
+    });
+
+    // Programmatically set slider value
+    slider.value = '80';
+    valueDisplay.textContent = '80%';
+
+    // Trigger input event to update
+    slider.dispatchEvent(new Event('input'));
+-->

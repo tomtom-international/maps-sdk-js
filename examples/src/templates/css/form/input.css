@@ -1,0 +1,75 @@
+/* INPUT FIELD */
+
+.sdk-example-input {
+    width: 100%;
+    height: var(--sdk-height-md);
+    padding: 0 var(--sdk-space-3);
+    font-family: var(--sdk-font-primary);
+    font-size: var(--sdk-font-body-m);
+    line-height: var(--sdk-font-body-m-lh);
+    color: var(--sdk-text-high);
+    background: var(--sdk-surface-0);
+    border: 1px solid var(--sdk-border-low);
+    border-radius: var(--sdk-radius-10);
+    outline: none;
+    transition: border-color var(--sdk-transition-normal), box-shadow var(--sdk-transition-normal);
+}
+
+.sdk-example-input::placeholder {
+    color: var(--sdk-text-low);
+}
+
+.sdk-example-input:hover {
+    border-color: var(--sdk-border-medium);
+}
+
+.sdk-example-input:focus {
+    border-color: var(--sdk-primary-color);
+    box-shadow: var(--sdk-shadow-focus);
+}
+
+.sdk-example-input:disabled {
+    background: var(--sdk-surface-1);
+    color: var(--sdk-text-disabled);
+    cursor: not-allowed;
+    border-color: var(--sdk-border-base);
+}
+
+.sdk-example-input.error {
+    border-color: var(--sdk-color-error);
+}
+
+.sdk-example-input.error:focus {
+    box-shadow: var(--sdk-shadow-focus-error);
+}
+
+/* Responsive: max-width 768px */
+@media (max-width: 768px) {
+    .sdk-example-input {
+        font-size: 13px;
+    }
+}
+
+/* Responsive: max-width 600px */
+@media (max-width: 600px) {
+    .sdk-example-input {
+        height: var(--sdk-height-sm);
+        padding: 0 var(--sdk-space-2);
+        font-size: 12px;
+    }
+}
+
+/* Responsive: max-width 768px and max-height 500px */
+@media (max-width: 768px) and (max-height: 500px) {
+    .sdk-example-input {
+        height: var(--sdk-height-sm);
+        font-size: 11px;
+    }
+}
+
+/* Responsive: high contrast */
+@media (prefers-contrast: high) {
+    .sdk-example-input {
+        border-width: 2px;
+    }
+}

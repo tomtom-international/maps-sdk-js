@@ -1,0 +1,81 @@
+<div class="sdk-example-form-field">
+    <label class="sdk-example-form-label" for="sdk-example-dropdownExample">Select Style</label>
+    <select id="sdk-example-dropdownExample" class="sdk-example-select">
+        <option value="">Choose an option...</option>
+        <option value="option1">Option 1</option>
+        <option value="option2" selected>Option 2 (default)</option>
+        <option value="option3">Option 3</option>
+        <option value="option4">Option 4</option>
+        <option value="option5" disabled>Option 5 (disabled)</option>
+    </select>
+</div>
+
+<!-- Dropdown without placeholder -->
+<div class="sdk-example-form-field">
+    <label class="sdk-example-form-label" for="sdk-example-mapStyle">Map Style</label>
+    <select id="sdk-example-mapStyle" class="sdk-example-select">
+        <option value="basic_street-light">Basic Street Light</option>
+        <option value="basic_street-dark">Basic Street Dark</option>
+        <option value="satellite">Satellite</option>
+        <option value="hybrid">Hybrid</option>
+    </select>
+</div>
+
+<!-- Grouped dropdown options -->
+<div class="sdk-example-form-field">
+    <label class="sdk-example-form-label" for="sdk-example-categorySelect">Category</label>
+    <select id="sdk-example-categorySelect" class="sdk-example-select">
+        <optgroup label="Food & Drink">
+            <option value="restaurant">Restaurants</option>
+            <option value="cafe">Cafes</option>
+            <option value="bar">Bars</option>
+        </optgroup>
+        <optgroup label="Services">
+            <option value="atm">ATMs</option>
+            <option value="hospital">Hospitals</option>
+            <option value="pharmacy">Pharmacies</option>
+        </optgroup>
+        <optgroup label="Transport">
+            <option value="parking">Parking</option>
+            <option value="gas_station">Gas Stations</option>
+            <option value="ev_station">EV Charging Stations</option>
+        </optgroup>
+    </select>
+</div>
+
+<!--
+    JavaScript Event Listener Example:
+
+    const dropdown = document.querySelector('#sdk-example-dropdownExample') as HTMLSelectElement;
+
+    dropdown?.addEventListener('change', (event) => {
+        const selectedValue = (event.target as HTMLSelectElement).value;
+        const selectedText = (event.target as HTMLSelectElement).options[
+            (event.target as HTMLSelectElement).selectedIndex
+        ].text;
+
+        console.log('Selected value:', selectedValue);
+        console.log('Selected text:', selectedText);
+
+        // Update your application state
+        state.selectedStyle = selectedValue;
+
+        // Trigger any necessary updates
+        updateMapStyle(selectedValue);
+    });
+
+    // Programmatically set a value
+    dropdown.value = 'option3';
+
+    // Trigger change event programmatically
+    dropdown.dispatchEvent(new Event('change'));
+
+    // Dynamically populate options
+    const styles = ['style1', 'style2', 'style3'];
+    const select = document.querySelector('#sdk-example-mapStyle') as HTMLSelectElement;
+    select.innerHTML = ''; // Clear existing options
+    styles.forEach(style => {
+        const option = new Option(style, style);
+        select.add(option);
+    });
+-->

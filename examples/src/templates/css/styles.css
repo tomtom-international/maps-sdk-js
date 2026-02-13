@@ -1,0 +1,38 @@
+/* Base */
+@import url('base/tokens.css');
+@import url('base/global.css');
+@import url('base/typography.css');
+
+/* Panels */
+@import url('panel/custom-panel.css');
+@import url('panel/search-panel.css');
+
+/* Form */
+@import url('form/field.css');
+@import url('form/input.css');
+@import url('form/checkbox.css');
+@import url('form/radio.css');
+@import url('form/select.css');
+@import url('form/slider.css');
+@import url('form/toggle.css');
+@import url('form/color.css');
+
+/* Buttons */
+@import url('button/button.css');
+@import url('button/variants.css');
+@import url('button/sizes.css');
+@import url('button/groups.css');
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .button:active {
+        transition-duration: 0.1s !important;
+    }
+}

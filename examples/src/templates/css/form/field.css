@@ -1,0 +1,70 @@
+/* FORM FIELDS */
+
+.sdk-example-form-field {
+    margin-bottom: var(--sdk-form-field-margin);
+}
+
+.sdk-example-form-field:last-child {
+    margin-bottom: 0;
+}
+
+.sdk-example-form-field-inline {
+    display: flex;
+    align-items: center;
+    gap: var(--sdk-space-3);
+    margin-bottom: var(--sdk-form-field-margin);
+}
+
+.sdk-example-form-field-inline .sdk-example-label,
+.sdk-example-form-field-inline .sdk-example-form-label {
+    margin-bottom: 0;
+    flex-shrink: 0;
+}
+
+.sdk-example-form-field-inline .sdk-example-input,
+.sdk-example-form-field-inline .sdk-example-select {
+    flex: 1;
+}
+
+.sdk-example-form-helper {
+    margin-top: var(--sdk-label-margin);
+    font-size: var(--sdk-font-caption-s);
+    line-height: var(--sdk-font-caption-s-lh);
+    color: var(--sdk-text-low);
+}
+
+.sdk-example-form-error {
+    margin-top: var(--sdk-label-margin);
+    font-size: var(--sdk-font-caption-s);
+    line-height: var(--sdk-font-caption-s-lh);
+    color: var(--sdk-color-error);
+    font-weight: var(--sdk-font-weight-medium);
+}
+
+/* Responsive: max-width 768px */
+@media (max-width: 768px) {
+    .sdk-example-form-field {
+        margin-bottom: var(--sdk-space-5);
+    }
+}
+
+/* Responsive: max-width 600px */
+@media (max-width: 600px) {
+    .sdk-example-form-field {
+        margin-bottom: var(--sdk-space-4);
+    }
+}
+
+/* Responsive: max-height 700px */
+@media (max-height: 700px) {
+    .sdk-example-form-field {
+        margin-bottom: var(--sdk-space-4);
+    }
+}
+
+/* Responsive: max-height 550px */
+@media (max-height: 550px) {
+    .sdk-example-form-field {
+        margin-bottom: var(--sdk-space-3);
+    }
+}

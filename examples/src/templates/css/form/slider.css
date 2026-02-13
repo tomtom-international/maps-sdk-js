@@ -1,0 +1,100 @@
+/* SLIDER */
+
+.sdk-example-slider-container {
+    display: flex;
+    align-items: center;
+    gap: var(--sdk-space-2);
+    margin: var(--sdk-space-3) 0;
+}
+
+.sdk-example-slider {
+    flex: 1;
+    height: 6px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--sdk-border-low);
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+}
+
+/* Webkit */
+.sdk-example-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--sdk-primary-color);
+    border-radius: var(--sdk-radius-full);
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform var(--sdk-transition-fast), box-shadow var(--sdk-transition-fast);
+}
+
+.sdk-example-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.sdk-example-slider::-webkit-slider-thumb:active {
+    transform: scale(0.95);
+}
+
+/* Firefox */
+.sdk-example-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: var(--sdk-primary-color);
+    border: none;
+    border-radius: var(--sdk-radius-full);
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform var(--sdk-transition-fast), box-shadow var(--sdk-transition-fast);
+}
+
+.sdk-example-slider::-moz-range-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.sdk-example-slider::-moz-range-thumb:active {
+    transform: scale(0.95);
+}
+
+.sdk-example-slider::-moz-range-track {
+    background: var(--sdk-border-low);
+    border-radius: 3px;
+}
+
+.sdk-example-slider-value {
+    min-width: 50px;
+    font-family: var(--sdk-font-primary);
+    font-size: var(--sdk-font-body-s);
+    line-height: var(--sdk-font-body-s-lh);
+    font-weight: var(--sdk-font-weight-bold);
+    color: var(--sdk-primary-color);
+    text-align: right;
+}
+
+.sdk-example-slider:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.sdk-example-slider:disabled::-webkit-slider-thumb {
+    cursor: not-allowed;
+    background: var(--sdk-text-disabled);
+}
+
+.sdk-example-slider:disabled::-moz-range-thumb {
+    cursor: not-allowed;
+    background: var(--sdk-text-disabled);
+}
+
+/* Responsive: max-width 600px */
+@media (max-width: 600px) {
+    .sdk-example-slider-value {
+        min-width: 40px;
+        font-size: 11px;
+    }
+}

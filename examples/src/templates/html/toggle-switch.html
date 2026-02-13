@@ -1,0 +1,82 @@
+<div class="form-field">
+    <label class="toggle-label">
+        <input type="checkbox" id="toggleExample" class="toggle-input" checked>
+        <span class="toggle-switch"></span>
+        Enable Feature (on by default)
+    </label>
+</div>
+
+<!-- Multiple toggle switches -->
+<div class="form-field">
+    <label class="form-label">Display Options</label>
+
+    <label class="toggle-label">
+        <input type="checkbox" id="showLabels" class="toggle-input" checked>
+        <span class="toggle-switch"></span>
+        Show Labels
+    </label>
+
+    <label class="toggle-label">
+        <input type="checkbox" id="showIcons" class="toggle-input" checked>
+        <span class="toggle-switch"></span>
+        Show Icons
+    </label>
+
+    <label class="toggle-label">
+        <input type="checkbox" id="showBorders" class="toggle-input">
+        <span class="toggle-switch"></span>
+        Show Borders
+    </label>
+</div>
+
+<!-- Disabled toggle switch -->
+<div class="form-field">
+    <label class="toggle-label">
+        <input type="checkbox" id="disabledToggle" class="toggle-input" disabled checked>
+        <span class="toggle-switch"></span>
+        Disabled Toggle (checked)
+    </label>
+
+    <label class="toggle-label">
+        <input type="checkbox" id="disabledToggle2" class="toggle-input" disabled>
+        <span class="toggle-switch"></span>
+        Disabled Toggle (unchecked)
+    </label>
+</div>
+
+<!--
+    JavaScript Event Listener Example:
+
+    const toggle = document.querySelector('#toggleExample') as HTMLInputElement;
+
+    toggle?.addEventListener('change', (event) => {
+        const isEnabled = (event.target as HTMLInputElement).checked;
+        console.log('Feature is now:', isEnabled ? 'enabled' : 'disabled');
+
+        // Update your application state
+        state.featureEnabled = isEnabled;
+
+        // Trigger any necessary updates
+        if (isEnabled) {
+            enableFeature();
+        } else {
+            disableFeature();
+        }
+    });
+
+    // Programmatically toggle
+    toggle.checked = true;
+
+    // Trigger change event programmatically
+    toggle.dispatchEvent(new Event('change'));
+
+    // Listen to multiple toggles
+    const toggles = document.querySelectorAll('.toggle-input');
+    toggles.forEach((toggle) => {
+        toggle.addEventListener('change', (event) => {
+            const id = (event.target as HTMLInputElement).id;
+            const checked = (event.target as HTMLInputElement).checked;
+            console.log(`${id} is now ${checked ? 'ON' : 'OFF'}`);
+        });
+    });
+-->

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>Minimal Example - Maps SDK JS</title>
+    <link rel="icon" href="data:,">
+
+    <!-- Import complete SDK Example styles -->
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="sdk-example-body">
+    <!-- Map container -->
+    <div id="sdk-map"></div>
+
+    <!-- Simple control panel -->
+    <div class="sdk-example-panel sdk-example-panel-top-right sdk-example-panel-sm">
+        <h3 class="sdk-example-heading">
+            <span class="sdk-example-heading-text">Controls</span>
+            <button class="sdk-example-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                <svg class="sdk-example-heading-chevron" viewBox="0 0 24 24" width="16" height="16">
+                    <path d="M7 10l5 5 5-5" />
+                </svg>
+            </button>
+        </h3>
+
+        <div class="sdk-example-panel-content">
+        <div class="sdk-example-form-field">
+            <label class="sdk-example-toggle-label">
+                <input type="checkbox" id="toggleFeature" class="sdk-example-toggle-input" checked>
+                <span class="sdk-example-toggle-switch"></span>
+                Enable Feature
+            </label>
+        </div>
+
+        <div class="sdk-example-form-field">
+            <button id="actionButton" class="sdk-example-button sdk-example-button-full">
+                Take Action
+            </button>
+        </div>
+        </div>
+    </div>
+
+    <script type="module">
+        console.log('Minimal Example - Maps SDK JS');
+
+        
+        const toggleButton = document.querySelector('.sdk-example-heading-toggle');
+        const panelContent = document.querySelector('.sdk-example-panel-content');
+        
+        toggleButton?.addEventListener('click', () => {
+            const isExpanded = toggleButton.getAttribute('aria-expanded') === 'true';
+            toggleButton.setAttribute('aria-expanded', !isExpanded);
+            panelContent?.classList.toggle('collapsed');
+        });
+
+        // Add your event listeners here
+        document.querySelector('#toggleFeature')?.addEventListener('change', (e) => {
+            console.log('Feature enabled:', e.target.checked);
+        });
+
+        document.querySelector('#actionButton')?.addEventListener('click', () => {
+            console.log('Action button clicked');
+        });
+    </script>
+</body>
+</html>

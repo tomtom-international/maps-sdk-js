@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>Form Controls Showcase - Maps SDK JS</title>
+    <link rel="icon" href="data:,">
+
+    <!-- Import complete SDK Example styles -->
+    <link rel="stylesheet" href="../css/styles.css">
+
+    <style>
+        /* Custom styles for showcase grid layout */
+        .showcase-grid {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 10px;
+            max-height: calc(100vh - 20px);
+            overflow-y: auto;
+        }
+
+        .showcase-card {
+            background: var(--sdk-surface-0);
+            padding: var(--sdk-panel-padding);
+            border-radius: var(--sdk-radius-20);
+            box-shadow: var(--sdk-shadow-e2);
+        }
+
+        @media (max-width: 768px) {
+            .showcase-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="sdk-example-body">
+    <!-- Map container (background) -->
+    <div id="sdk-map" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+
+    <!-- Showcase Grid -->
+    <div class="showcase-grid">
+        <!-- Buttons Card -->
+        <div class="showcase-card">
+            <h3 class="sdk-example-heading">
+                <span class="sdk-example-heading-text">Buttons</span>
+                <button class="sdk-example-heading-toggle" aria-label="Toggle section" aria-expanded="true">
+                    <svg class="sdk-example-heading-chevron" viewBox="0 0 24 24" width="16" height="16">
+                        <path d="M7 10l5 5 5-5" />
+                    </svg>
+                </button>
+            </h3>
+            <div class="sdk-example-panel-content">
+            <div class="sdk-example-button-group-vertical">
+                <button class="sdk-example-button">Primary Button</button>
+                <button class="sdk-example-button sdk-example-button-secondary">Secondary</button>
+                <button class="sdk-example-button sdk-example-button-tertiary">Tertiary</button>
+                <button class="sdk-example-button sdk-example-button-outline">Outline</button>
+                <button class="sdk-example-button sdk-example-button-ghost">Ghost</button>
+                <button class="sdk-example-button" disabled>Disabled</button>
+            </div>
+            </div>
+        </div>
+
+        <!-- Toggle Switches Card -->
+        <div class="showcase-card">
+            <h3 class="sdk-example-heading">
+                <span class="sdk-example-heading-text">Toggle Switches</span>
+                <button class="sdk-example-heading-toggle" aria-label="Toggle section" aria-expanded="true">
+                    <svg class="sdk-example-heading-chevron" viewBox="0 0 24 24" width="16" height="16">
+                        <path d="M7 10l5 5 5-5" />
+                    </svg>
+                </button>
+            </h3>
+            <div class="sdk-example-panel-content">
+            <label class="sdk-example-toggle-label">
+                <input type="checkbox" class="sdk-example-toggle-input" checked>
+                <span class="sdk-example-toggle-switch"></span>
+                Toggle On
+            </label>
+            <label class="sdk-example-toggle-label">
+                <input type="checkbox" class="sdk-example-toggle-input">
+                <span class="sdk-example-toggle-switch"></span>
+                Toggle Off
+            </label>
+            <label class="sdk-example-toggle-label">
+                <input type="checkbox" class="sdk-example-toggle-input" disabled checked>
+                <span class="sdk-example-toggle-switch"></span>
+                Disabled (On)
+            </label>
+            </div>
+        </div>
+
+        <!-- Checkboxes Card -->
+        <div class="showcase-card">
+            <h3 class="sdk-example-heading">
+                <span class="sdk-example-heading-text">Checkboxes</span>
+                <button class="sdk-example-heading-toggle" aria-label="Toggle section" aria-expanded="true">
+                    <svg class="sdk-example-heading-chevron" viewBox="0 0 24 24" width="16" height="16">
+                        <path d="M7 10l5 5 5-5" />
+                    </svg>
+                </button>
+            </h3>
+            <div class="sdk-example-panel-content">
+            <div class="sdk-example-checkbox-list">
+                <label class="sdk-example-checkbox-label">
+                    <input type="checkbox" checked>
+                    Checked Option
+                </label>
+                <label class="sdk-example-checkbox-label">
+                    <input type="checkbox">
+                    Unchecked Option
+                </label>
+                <label class="sdk-example-checkbox-label">
+                    <input type="checkbox" disabled>
+                    Disabled Option
+                </label>
+                <label class="sdk-example-checkbox-label">
+                    <input type="checkbox" disabled checked>
+                    Disabled Checked
+                </label>
+            </div>
+            </div>
+        </div>
+
+        <!-- Radio Buttons Card -->
+        <div class="showcase-card">
+            <h3 class="sdk-example-heading">
+                <span class="sdk-example-heading-text">Radio Buttons</span>
+                <button class="sdk-example-heading-toggle" aria-label="Toggle section" aria-expanded="true">
+                    <svg class="sdk-example-heading-chevron" viewBox="0 0 24 24" width="16" height="16">
+                        <path d="M7 10l5 5 5-5" />
+                    </svg>
+                </button>
+            </h3>
+            <div class="sdk-example-panel-content">
+            <div class="sdk-example-radio-group">
+                <label class="sdk-example-radio-label">
+                    <input type="radio" name="showcase" value="1" checked>
+                    Selected Option
+                </label>
+                <label class="sdk-example-radio-label">
+                    <input type="radio" name="showcase" value="2">
+                    Unselected Option
+                </label>
+                <label class="sdk-example-radio-label">
+                    <input type="radio" name="showcase" value="3" disabled>
+                    Disabled Option
+                </label>
+            </div>
+            </div>
+        </div>
+
+        <!-- Text Inputs Card -->
+        <div class="showcase-card">
+            <h3 class="sdk-example-heading">
+                <span class="sdk-example-heading-text">Text Inputs</span>
+                <button class="sdk-example-heading-toggle" aria-label="Toggle section" aria-expanded="true">
+                    <svg class="sdk-example-heading-chevron" viewBox="0 0 24 24" width="16" height="16">
+                        <path d="M7 10l5 5 5-5" />
+                    </svg>
+                </button>
+            </h3>
+            <div class="sdk-example-panel-content">
+            <div class="sdk-example-form-field">
+                <label class="sdk-example-form-label">Default Input</label>
+                <input type="text" class="sdk-example-input" placeholder="Enter text...">
+            </div>
+            <div class="sdk-example-form-field">
+                <label class="sdk-example-form-label">With Value</label>
+                <input type="text" class="sdk-example-input" value="Example value">
+            </div>
+            <div class="sdk-example-form-field">
+                <label class="sdk-example-form-label">Disabled</label>
+                <input type="text" class="sdk-example-input" disabled value="Disabled input">
+            </div>
+            </div>
+        </div>
+
+        <!-- Dropdowns Card -->
+        <div class="showcase-card">
+            <h3 class="sdk-example-heading">
+                <span class="sdk-example-heading-text">Dropdowns</span>
+                <button class="sdk-example-heading-toggle" aria-label="Toggle section" aria-expanded="true">
+                    <svg class="sdk-example-heading-chevron" viewBox="0 0 24 24" width="16" height="16">
+                        <path d="M7 10l5 5 5-5" />
+                    </svg>
+                </button>
+            </h3>
+            <div class="sdk-example-panel-content">
+            <div class="sdk-example-form-field">
+                <label class="sdk-example-form-label">Select Option</label>
+                <select class="sdk-example-select">
+                    <option>Option 1</option>
+                    <option selected>Option 2</option>
+                    <option>Option 3</option>
+                </select>
+            </div>
+            <div class="sdk-example-form-field">
+                <label class="sdk-example-form-label">Disabled</label>
+                <select class="sdk-example-select" disabled>
+                    <option>Disabled Select</option>
+                </select>
+            </div>
+            </div>
+        </div>
+
+        <!-- Sliders Card -->
+        <div class="showcase-card">
+            <h3 class="sdk-example-heading">
+                <span class="sdk-example-heading-text">Sliders</span>
+                <button class="sdk-example-heading-toggle" aria-label="Toggle section" aria-expanded="true">
+                    <svg class="sdk-example-heading-chevron" viewBox="0 0 24 24" width="16" height="16">
+                        <path d="M7 10l5 5 5-5" />
+                    </svg>
+                </button>
+            </h3>
+            <div class="sdk-example-panel-content">
+            <div class="sdk-example-form-field">
+                <label class="sdk-example-form-label">Default Slider</label>
+                <div class="sdk-example-slider-container">
+                    <input type="range" class="sdk-example-slider" value="50">
+                    <span class="sdk-example-slider-value">50</span>
+                </div>
+            </div>
+            <div class="sdk-example-form-field">
+                <label class="sdk-example-form-label">Custom Range (10-100)</label>
+                <div class="sdk-example-slider-container">
+                    <input type="range" class="sdk-example-slider" min="10" max="100" value="75">
+                    <span class="sdk-example-slider-value">75</span>
+                </div>
+            </div>
+            <div class="sdk-example-form-field">
+                <label class="sdk-example-form-label">Disabled</label>
+                <div class="sdk-example-slider-container">
+                    <input type="range" class="sdk-example-slider" value="30" disabled>
+                    <span class="sdk-example-slider-value">30</span>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Color Selectors Card -->
+        <div class="showcase-card">
+            <h3 class="sdk-example-heading">
+                <span class="sdk-example-heading-text">Color Selectors</span>
+                <button class="sdk-example-heading-toggle" aria-label="Toggle section" aria-expanded="true">
+                    <svg class="sdk-example-heading-chevron" viewBox="0 0 24 24" width="16" height="16">
+                        <path d="M7 10l5 5 5-5" />
+                    </svg>
+                </button>
+            </h3>
+            <div class="sdk-example-panel-content">
+            <div class="sdk-example-form-field">
+                <label class="sdk-example-form-label">Choose Color</label>
+                <div class="sdk-example-color-selectors">
+                    <div class="sdk-example-color-selector active" style="background: #df1b12;" data-value="#df1b12" tabindex="0"></div>
+                    <div class="sdk-example-color-selector" style="background: #007bff;" data-value="#007bff" tabindex="0"></div>
+                    <div class="sdk-example-color-selector" style="background: #00a65e;" data-value="#00a65e" tabindex="0"></div>
+                    <div class="sdk-example-color-selector" style="background: #fdc530;" data-value="#fdc530" tabindex="0"></div>
+                    <div class="sdk-example-color-selector" style="background: #6f42c1;" data-value="#6f42c1" tabindex="0"></div>
+                    <div class="sdk-example-color-selector" style="background: #000000;" data-value="#000000" tabindex="0"></div>
+                    <div class="sdk-example-color-selector" style="background: #ffffff; border: 2px solid #ddd;" data-value="#ffffff" tabindex="0"></div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log('Form Controls Showcase');
+
+        // Collapsible sections toggle
+        const toggleButtons = document.querySelectorAll('.sdk-example-heading-toggle');
+        toggleButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const isExpanded = button.getAttribute('aria-expanded') === 'true';
+                button.setAttribute('aria-expanded', !isExpanded);
+                const card = button.closest('.showcase-card');
+                const content = card?.querySelector('.sdk-example-panel-content');
+                content?.classList.toggle('collapsed');
+            });
+        });
+
+        // Make sliders interactive
+        const sliders = document.querySelectorAll('.sdk-example-slider:not([disabled])');
+        sliders.forEach(slider => {
+            const container = slider.closest('.sdk-example-slider-container');
+            const valueDisplay = container?.querySelector('.sdk-example-slider-value');
+
+            if (valueDisplay) {
+                slider.addEventListener('input', () => {
+                    valueDisplay.textContent = slider.value;
+                });
+            }
+        });
+    </script>
+</body>
+</html>

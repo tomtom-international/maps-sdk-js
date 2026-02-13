@@ -1,0 +1,111 @@
+/* BUTTON */
+
+.sdk-example-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--sdk-space-2);
+    height: var(--sdk-height-md);
+    padding: 0 var(--sdk-space-4);
+    font-family: var(--sdk-font-primary);
+    font-size: var(--sdk-font-body-m);
+    line-height: var(--sdk-font-body-m-lh);
+    font-weight: var(--sdk-font-weight-semibold);
+    color: var(--sdk-text-white);
+    background-color: var(--sdk-primary-color);
+    border: none;
+    border-radius: var(--sdk-radius-30);
+    box-shadow: var(--sdk-shadow-e2);
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    user-select: none;
+    transition: background-color var(--sdk-transition-normal),
+                transform var(--sdk-transition-fast),
+                box-shadow var(--sdk-transition-normal);
+}
+
+.sdk-example-button:hover {
+    background-color: var(--sdk-primary-hover);
+}
+
+.sdk-example-button:active {
+    background-color: var(--sdk-primary-active);
+    transform: translateY(1px);
+    box-shadow: var(--sdk-shadow-e1);
+}
+
+.sdk-example-button:focus {
+    outline: none;
+    box-shadow: var(--sdk-shadow-focus), var(--sdk-shadow-e2);
+}
+
+.sdk-example-button:disabled {
+    background-color: var(--sdk-surface-1);
+    color: var(--sdk-text-disabled);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.sdk-example-button:disabled:hover,
+.sdk-example-button:disabled:active {
+    background-color: var(--sdk-surface-1);
+    transform: none;
+}
+
+.sdk-example-button-secondary {
+    background-color: var(--sdk-border-medium);
+    color: var(--sdk-text-high);
+}
+
+.sdk-example-button-secondary:hover {
+    background-color: #b3b3b3;
+}
+
+.sdk-example-button-secondary:active {
+    background-color: #999999;
+}
+
+a.sdk-example-button {
+    text-decoration: none;
+}
+
+a.sdk-example-button:visited {
+    color: inherit;
+}
+
+.sdk-example-button-full {
+    width: 100%;
+}
+
+/* Responsive: max-width 768px */
+@media (max-width: 768px) {
+    .sdk-example-button {
+        font-size: 13px;
+    }
+}
+
+/* Responsive: max-width 600px */
+@media (max-width: 600px) {
+    .sdk-example-button {
+        height: var(--sdk-height-sm);
+        padding: 0 var(--sdk-space-3);
+        font-size: 12px;
+    }
+}
+
+/* Responsive: max-width 768px and max-height 500px */
+@media (max-width: 768px) and (max-height: 500px) {
+    .sdk-example-button {
+        height: var(--sdk-height-sm);
+        padding: 0 var(--sdk-space-2);
+        font-size: 11px;
+    }
+}
+
+/* Responsive: high contrast */
+@media (prefers-contrast: high) {
+    .sdk-example-button {
+        border: 2px solid currentColor;
+    }
+}
