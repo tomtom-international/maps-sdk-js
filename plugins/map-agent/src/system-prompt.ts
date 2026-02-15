@@ -4,21 +4,21 @@
 
 /**
  * The base system prompt that teaches the LLM how to use the map agent tools.
- * 
+ *
  * @remarks
  * Export this constant so consumers can reference or extend it when providing
  * a custom system prompt via `MapAgentOptions.systemPrompt`.
- * 
+ *
  * @example
  * ```typescript
  * import { createMapAgent, BASE_SYSTEM_PROMPT } from '@tomtom-org/maps-sdk-map-agent';
- * 
+ *
  * const agent = createMapAgent(map, {
  *   model: openai('gpt-4o'),
  *   systemPrompt: BASE_SYSTEM_PROMPT + '\n\nAlways respond in Spanish.'
  * });
  * ```
- * 
+ *
  * @group System Prompt
  */
 export const BASE_SYSTEM_PROMPT = `You are a helpful map assistant with access to a TomTom interactive map and location services.
@@ -146,7 +146,7 @@ BEST PRACTICES:
  * @param customPrompt - Optional complete prompt that replaces the base prompt
  * @param suffix - Optional additional prompt text to append to base prompt (ignored if customPrompt provided)
  * @returns Complete system prompt string
- * 
+ *
  * @internal
  */
 export function buildSystemPrompt(customPrompt?: string, suffix?: string): string {

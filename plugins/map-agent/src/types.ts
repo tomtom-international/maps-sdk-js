@@ -51,22 +51,22 @@ export interface MapAgentState {
 
 /**
  * Names of all default tools provided by the map agent.
- * 
+ *
  * @remarks
  * Use this type to ensure type safety when overriding default tools.
  * This type is automatically derived from {@link DefaultToolSet},
  * so it stays in sync when tools are added or removed.
- * 
+ *
  * @group Tools
  */
 export type DefaultToolName = keyof DefaultToolSet;
 
 /** * Tool configuration type with autocomplete for default tools.
- * 
+ *
  * @remarks
  * - Default tool names have autocomplete and can be set to `false` (exclude) or custom tool (override)
  * - Any additional keys can be added for custom tools
- * 
+ *
  * @group Tools
  */
 export type ToolConfiguration = {
@@ -84,15 +84,15 @@ export interface MapAgentOptions {
     /**
      * Complete system prompt that replaces the default.
      * If provided, this takes precedence over systemPromptSuffix.
-     * 
+     *
      * @remarks
      * Use this when you want full control over agent instructions.
      * Import `BASE_SYSTEM_PROMPT` to reference the default as a starting point.
-     * 
+     *
      * @example
      * ```typescript
      * import { BASE_SYSTEM_PROMPT } from '@tomtom-org/maps-sdk-map-agent';
-     * 
+     *
      * systemPrompt: BASE_SYSTEM_PROMPT + '\n\nAlways respond in Spanish.'
      * ```
      */
@@ -101,7 +101,7 @@ export interface MapAgentOptions {
     /**
      * Additional system prompt text appended to built-in prompt.
      * Ignored if `systemPrompt` is provided.
-     * 
+     *
      * @example
      * ```typescript
      * systemPromptSuffix: 'Always provide distance in miles, not kilometers.'
@@ -111,15 +111,15 @@ export interface MapAgentOptions {
 
     /**
      * Configure tools: exclude defaults, override defaults, or add custom tools.
-     * 
+     *
      * @remarks
      * **Unified tool configuration with type-safe autocomplete:**
      * - Set default tool to `false` to exclude it
      * - Set default tool to custom implementation to override it
      * - Add new keys for custom tools
-     * 
+     *
      * Type completion provides autocomplete for all 15 default tool names.
-     * 
+     *
      * @example Exclude specific tools
      * ```typescript
      * const agent = createMapAgent(map, {
@@ -131,7 +131,7 @@ export interface MapAgentOptions {
      *   }
      * });
      * ```
-     * 
+     *
      * @example Override default tool
      * ```typescript
      * const agent = createMapAgent(map, {
@@ -141,7 +141,7 @@ export interface MapAgentOptions {
      *   }
      * });
      * ```
-     * 
+     *
      * @example Add custom tools
      * ```typescript
      * const agent = createMapAgent(map, {
@@ -152,7 +152,7 @@ export interface MapAgentOptions {
      *   }
      * });
      * ```
-     * 
+     *
      * @example Mix all three patterns
      * ```typescript
      * const agent = createMapAgent(map, {
@@ -164,7 +164,7 @@ export interface MapAgentOptions {
      *   }
      * });
      * ```
-     * 
+     *
      * @see {@link DefaultToolName} for list of default tool names
      * @see {@link ToolConfiguration} for the type definition
      */
@@ -175,40 +175,40 @@ export interface MapAgentOptions {
 
     /**
      * Enable prompt caching to reduce token usage and costs.
-     * 
+     *
      * @remarks
      * **Prompt caching** allows LLM providers to cache static parts of prompts
      * (like system instructions and tool definitions) across requests, dramatically
      * reducing input token costs and latency.
-     * 
+     *
      * **Provider Support:**
      * - ✅ Anthropic Claude (Sonnet 3.5, Opus 3.5): 90% cost reduction on cached tokens
      * - ⏳ OpenAI: Planned support
      * - ❌ Other providers: No effect, but safe to enable
-     * 
+     *
      * **How it works:**
      * - System prompt is marked as cacheable
      * - First request: Normal cost
      * - Subsequent requests: ~10% cost for cached content
      * - Cache expires after ~5 minutes of inactivity
-     * 
+     *
      * **When to enable:**
      * - Long system prompts (>1000 tokens)
      * - Multi-turn conversations
      * - Repeated queries with same tools
-     * 
+     *
      * @default false
-     * 
+     *
      * @example
      * ```typescript
      * import { anthropic } from '@ai-sdk/anthropic';
-     * 
+     *
      * const agent = createMapAgent(map, {
      *   model: anthropic('claude-3-5-sonnet-20241022'),
      *   promptCaching: true  // Enable caching
      * });
      * ```
-     * 
+     *
      * @see https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching
      */
     promptCaching?: boolean;

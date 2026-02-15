@@ -34,7 +34,7 @@ export function createShowPlacesTool(context: ToolContext): ReturnType<typeof dy
 
                 // Lazy-init PlacesModule
                 if (!context.state.modules.places) {
-                    context.state.modules.places = await PlacesModule.get(context.map);
+                    context.state.modules.places ??= await PlacesModule.get(context.map);
                 }
 
                 // Show all places

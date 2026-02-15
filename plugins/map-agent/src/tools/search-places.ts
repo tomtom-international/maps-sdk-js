@@ -19,7 +19,10 @@ const searchPlacesSchema = z.object({
     radius: z.number().optional().describe('Search radius in meters'),
     limit: z.number().optional().describe('Maximum number of results (default: 10)'),
     categories: z.array(z.string()).optional().describe('POI category filters'),
-    clearPrevious: z.boolean().optional().describe('Clear previous search results before adding new ones (default: false)'),
+    clearPrevious: z
+        .boolean()
+        .optional()
+        .describe('Clear previous search results before adding new ones (default: false)'),
 });
 
 /**
@@ -30,17 +33,26 @@ export function createSearchPlacesTool(context: ToolContext): ReturnType<typeof 
         description: 'Search for places, businesses, or points of interest',
         inputSchema: searchPlacesSchema,
         execute: async (params) => {
-            const { query, nearLongitude, nearLatitude, radius, limit = 10, categories, clearPrevious = false } = params as z.infer<typeof searchPlacesSchema>;
-            const near = nearLongitude !== undefined && nearLatitude !== undefined 
-                ? [nearLongitude, nearLatitude] as [number, number]
-                : undefined;
+            const {
+                query,
+                nearLongitude,
+                nearLatitude,
+                radius,
+                limit = 10,
+                categories,
+                clearPrevious = false,
+            } = params as z.infer<typeof searchPlacesSchema>;
+            const near =
+                nearLongitude !== undefined && nearLatitude !== undefined
+                    ? ([nearLongitude, nearLatitude] as [number, number])
+                    : undefined;
             try {
                 const result = await search({
                     query,
                     limit,
-                    poiCategories: (categories as POICategory[]),
+                    poiCategories: categories as POICategory[],
                     position: near,
-                    radiusMeters: radius, 
+                    radiusMeters: radius,
                 });
 
                 if (clearPrevious) {

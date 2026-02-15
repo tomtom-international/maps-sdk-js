@@ -4,6 +4,7 @@
 
 import { bboxFromGeoJSON } from '@tomtom-org/maps-sdk/core';
 import { dynamicTool } from 'ai';
+import type { LngLatBoundsLike } from 'maplibre-gl';
 import { z } from 'zod';
 import type { ToolContext } from '../types';
 
@@ -26,7 +27,8 @@ export function createFitBoundsTool(context: ToolContext): ReturnType<typeof dyn
             try {
                 // Collect all available data
                 const bboxes = [
-                    context.state.searchResultsHistory.length > 0 && bboxFromGeoJSON(context.state.searchResultsHistory),
+                    context.state.searchResultsHistory.length > 0 &&
+                        bboxFromGeoJSON(context.state.searchResultsHistory),
                     context.state.routesHistory.length > 0 && bboxFromGeoJSON(context.state.routesHistory),
                 ].filter((bbox): bbox is [number, number, number, number] => bbox !== undefined);
 

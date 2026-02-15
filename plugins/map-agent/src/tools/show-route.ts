@@ -37,9 +37,7 @@ export function createShowRouteTool(context: ToolContext): ReturnType<typeof dyn
                 };
 
                 // Lazy-init RoutingModule
-                if (!context.state.modules.routing) {
-                    context.state.modules.routing = await RoutingModule.get(context.map);
-                }
+                context.state.modules.routing ??= await RoutingModule.get(context.map);
 
                 // Show all routes
                 await context.state.modules.routing.showRoutes(mergedRoutes, { selectedIndex: routeIndex });

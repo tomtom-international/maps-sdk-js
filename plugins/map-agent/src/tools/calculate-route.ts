@@ -28,7 +28,13 @@ export function createCalculateRouteTool(context: ToolContext): ReturnType<typeo
         description: 'Calculate a driving route between locations',
         inputSchema: calculateRouteSchema,
         execute: async (params) => {
-            const { from, to, via = [], alternatives = 0, clearPrevious = false } = params as z.infer<typeof calculateRouteSchema>;
+            const {
+                from,
+                to,
+                via = [],
+                alternatives = 0,
+                clearPrevious = false,
+            } = params as z.infer<typeof calculateRouteSchema>;
             try {
                 // Geocode all locations
                 const locations: string[] = [from, ...via, to];

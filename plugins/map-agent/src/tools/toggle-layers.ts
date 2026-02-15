@@ -30,9 +30,7 @@ export function createToggleLayersTool(context: ToolContext): ReturnType<typeof 
             const { visible, layerGroups } = params as z.infer<typeof toggleLayersSchema>;
             try {
                 // Lazy-init BaseMapModule
-                if (!context.state.modules.baseMap) {
-                    context.state.modules.baseMap = await BaseMapModule.get(context.map);
-                }
+                context.state.modules.baseMap ??= await BaseMapModule.get(context.map);
 
                 context.state.modules.baseMap.setVisible(visible, {
                     layerGroups: {

@@ -25,9 +25,7 @@ export function createToggleTrafficTool(context: ToolContext): ReturnType<typeof
             const { visible } = params as z.infer<typeof toggleTrafficSchema>;
             try {
                 // Lazy-init TrafficFlowModule
-                if (!context.state.modules.trafficFlow) {
-                    context.state.modules.trafficFlow = await TrafficFlowModule.get(context.map);
-                }
+                context.state.modules.trafficFlow ??= await TrafficFlowModule.get(context.map);
 
                 context.state.modules.trafficFlow.setVisible(visible);
 

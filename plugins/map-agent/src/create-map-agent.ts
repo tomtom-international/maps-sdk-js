@@ -35,20 +35,20 @@ import type { MapAgent, MapAgentOptions } from './types';
  * const mapAgent = createMapAgent(map, {
  *   model: openai('gpt-4o'),
  * });
- * 
+ *
  * // With custom system prompt
  * const customAgent = createMapAgent(map, {
  *   model: openai('gpt-4o'),
  *   systemPrompt: 'You are a navigation assistant. Always provide turn-by-turn directions.'
  * });
- * 
+ *
  * // Override specific default tools
  * const extendedAgent = createMapAgent(map, {
  *   model: openai('gpt-4o'),
  *   overrideTools: { searchPlaces: createCustomSearchTool({ map, state }) },
  *   customTools: { getWeather: createWeatherTool({ map, state }) }
  * });
- * 
+ *
  * // Use only custom tools
  * const minimalAgent = createMapAgent(map, {
  *   model: openai('gpt-4o'),
@@ -77,15 +77,15 @@ export function createMapAgent(map: TomTomMap, options: MapAgentOptions): MapAge
 
     // Create toolset - always start with defaults
     const defaultTools = createMapToolSet(context);
-    
+
     // Process tools configuration
     const finalTools: Record<string, ReturnType<typeof dynamicTool>> = {};
-    
+
     // Start with default tools
     for (const [name, tool] of Object.entries(defaultTools)) {
         finalTools[name] = tool;
     }
-    
+
     // Apply tools configuration (exclude, override, add)
     if (options.tools) {
         for (const [name, toolOrFalse] of Object.entries(options.tools)) {
