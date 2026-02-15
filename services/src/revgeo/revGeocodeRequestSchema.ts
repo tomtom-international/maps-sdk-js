@@ -1,28 +1,26 @@
 import { views } from '@tomtom-org/maps-sdk/core';
-import { z } from 'zod/v4-mini';
+import { z } from 'zod';
 import { hasLngLatSchema } from '../shared/schema/geometriesSchema';
 
 const revGeocodeRequestMandatory = z.object({
     position: hasLngLatSchema,
 });
 
-const revGeocodeRequestOptional = z.partial(
-    z.object({
-        allowFreeformNewline: z.boolean(),
-        geographyType: z.array(z.string()),
-        heading: z.number().check(z.minimum(-360), z.maximum(360)),
-        mapcodes: z.array(z.string()),
-        number: z.string(),
-        radiusMeters: z.number(),
-        returnMatchType: z.boolean(),
-        returnRoadUse: z.boolean(),
-        returnSpeedLimit: z.boolean(),
-        roadUses: z.array(z.string()),
-        view: z.enum(views),
-    }),
-);
+const revGeocodeRequestOptional = z.object({
+    allowFreeformNewline: z.boolean().optional(),
+    geographyType: z.array(z.string()).optional(),
+    heading: z.number().min(-360).max(360).optional(),
+    mapcodes: z.array(z.string()).optional(),
+    number: z.string().optional(),
+    radiusMeters: z.number().optional(),
+    returnMatchType: z.boolean().optional(),
+    returnRoadUse: z.boolean().optional(),
+    returnSpeedLimit: z.boolean().optional(),
+    roadUses: z.array(z.string()).optional(),
+    view: z.enum(views).optional(),
+});
 
 /**
  * @ignore
  */
-export const revGeocodeRequestSchema = z.extend(revGeocodeRequestMandatory, revGeocodeRequestOptional.shape);
+export const revGeocodeRequestSchema = revGeocodeRequestMandatory.extend(revGeocodeRequestOptional.shape);

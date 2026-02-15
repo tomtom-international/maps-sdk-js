@@ -1,13 +1,11 @@
-import { z } from 'zod/v4-mini';
+import { z } from 'zod';
 
 /**
  * @ignore
  */
-export const commonServiceRequestSchema = z.partial(
-    z.object({
-        apiKey: z.string(),
-        commonBaseURL: z.string(),
-        customServiceBaseURL: z.string(),
-        language: z.string(),
-    }),
-);
+export const commonServiceRequestSchema = z.object({
+    apiKey: z.string().optional(),
+    commonBaseURL: z.string().optional(),
+    customServiceBaseURL: z.string().optional(),
+    language: z.string().optional(),
+});

@@ -28,7 +28,6 @@ describe('Geocoding schema validation', () => {
                         code: 'invalid_value',
                         values: ['Unified', 'AR', 'IN', 'PK', 'IL', 'MA', 'RU', 'TR', 'CN'],
                         path: ['view'],
-                        message: 'Invalid input',
                     }),
                 ],
             }),
@@ -51,7 +50,6 @@ describe('Geocoding schema validation', () => {
                     expect.objectContaining({
                         code: 'too_big',
                         maximum: 100,
-                        message: 'Invalid input',
                         path: ['limit'],
                     }),
                 ],
@@ -73,7 +71,6 @@ describe('Geocoding schema validation', () => {
                     expect.objectContaining({
                         code: 'too_big',
                         maximum: 1900,
-                        message: 'Invalid input',
                         path: ['offset'],
                     }),
                 ],
@@ -97,7 +94,6 @@ describe('Geocoding schema validation', () => {
                         code: 'invalid_type',
                         expected: 'array',
                         path: ['countries'],
-                        message: 'Invalid input',
                     }),
                 ],
             }),
@@ -138,7 +134,6 @@ describe('Geocoding schema validation', () => {
                     expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'string',
-                        message: 'Invalid input',
                         path: ['query'],
                     }),
                 ],
@@ -172,7 +167,6 @@ describe('Geocoding schema validation', () => {
                     expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'number',
-                        message: 'Invalid input',
                         path: ['radiusMeters'],
                     }),
                 ],
@@ -194,7 +188,6 @@ describe('Geocoding schema validation', () => {
                     expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'array',
-                        message: 'Invalid input',
                         path: ['extendedPostalCodesFor'],
                     }),
                 ],
@@ -216,7 +209,6 @@ describe('Geocoding schema validation', () => {
                     expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'array',
-                        message: 'Invalid input',
                         path: ['mapcodes'],
                     }),
                 ],
@@ -238,7 +230,6 @@ describe('Geocoding schema validation', () => {
                     expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'array',
-                        message: 'Invalid input',
                         path: ['geographyTypes'],
                     }),
                 ],
@@ -256,7 +247,6 @@ describe('Geocoding schema validation', () => {
 
         expect(() => validateRequestSchema(invalidParams, { schema: geocodingRequestSchema })).toThrow(
             expect.objectContaining({
-                message: expect.stringContaining('Invalid input'),
                 issues: expect.arrayContaining([
                     expect.objectContaining({
                         code: 'too_small',

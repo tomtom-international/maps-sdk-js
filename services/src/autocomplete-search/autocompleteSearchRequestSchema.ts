@@ -1,24 +1,21 @@
-import { z } from 'zod/v4-mini';
+import { z } from 'zod';
 import { hasLngLatSchema } from '../shared/schema/geometriesSchema';
 
 const autocompleteSearchRequestMandatory = z.object({
     query: z.string(),
 });
 
-const autocompleteSearchRequestOptional = z.partial(
-    z.object({
-        position: hasLngLatSchema,
-        limit: z.number().check(z.maximum(100)),
-        radiusMeters: z.number(),
-        countries: z.array(z.string()),
-        resultType: z.array(z.string()),
-    }),
-);
+const autocompleteSearchRequestOptional = z.object({
+    position: hasLngLatSchema.optional(),
+    limit: z.number().max(100).optional(),
+    radiusMeters: z.number().optional(),
+    countries: z.array(z.string()).optional(),
+    resultType: z.array(z.string()).optional(),
+});
 
 /**
  * @ignore
  */
-export const autocompleteSearchRequestSchema = z.extend(
-    autocompleteSearchRequestMandatory,
+export const autocompleteSearchRequestSchema = autocompleteSearchRequestMandatory.extend(
     autocompleteSearchRequestOptional.shape,
 );

@@ -9,6 +9,17 @@ This is a monorepo containing three main packages:
 - `@tomtom-org/maps-sdk/services` - Location APIs (search, routing, geocoding) for all platforms
 - `@tomtom-org/maps-sdk/map` - Interactive maps (web only, requires maplibre-gl peer dependency)
 
+**Peer Dependencies:**
+- **Main SDK**: `lodash-es` (v4), `maplibre-gl` (v5), `zod` (v4)
+- **Core bundle**: `lodash-es` (v4)
+- **Services bundle**: `lodash-es` (v4), `zod` (v4)
+- **Map bundle**: `lodash-es` (v4), `maplibre-gl` (v5)
+
+**Package Manager Notes:**
+- npm (v7+) and Yarn automatically install peer dependencies
+- pnpm can auto-install peers with `.npmrc` setting: `auto-install-peers=true`
+- Without this setting, pnpm requires manual installation of peer dependencies
+
 **Important**: This SDK is in Public Preview (0.x) - check [CHANGELOG.md](./CHANGELOG.md) for breaking changes between versions.
 
 ## For External Developers (Using the SDK)

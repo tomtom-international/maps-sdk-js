@@ -1,10 +1,10 @@
 import { describe, expect, test } from 'vitest';
 import { bestExecutionTimeMS } from '../../../../core/src/util/tests/performanceTestUtils';
-import { geometrySearchReqObjects } from '../../geometry-search/tests/requestBuilderPerf.data';
 import { validateRequestSchema } from '../../shared/schema/validation';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
 import { geometrySearchRequestSchema } from '../geometrySearchRequestSchema';
 import type { GeometrySearchParams, SearchGeometryInput } from '../types';
+import { geometrySearchReqObjects } from './requestBuilderPerf.data';
 
 describe('GeometrySearch Schema Validation', () => {
     const config = { schema: geometrySearchRequestSchema };
@@ -111,12 +111,11 @@ describe('GeometrySearch Schema Validation', () => {
         expect(() => validateRequestSchema({ geometries, apiKey, commonBaseURL: commonBaseUrl }, config)).toThrow(
             expect.objectContaining({
                 issues: [
-                    {
+                    expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'string',
                         path: ['query'],
-                        message: 'Invalid input',
-                    },
+                    }),
                 ],
             }),
         );
@@ -129,12 +128,11 @@ describe('GeometrySearch Schema Validation', () => {
         ).toThrow(
             expect.objectContaining({
                 issues: [
-                    {
+                    expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'string',
                         path: ['query'],
-                        message: 'Invalid input',
-                    },
+                    }),
                 ],
             }),
         );
@@ -149,12 +147,11 @@ describe('GeometrySearch Schema Validation', () => {
         ).toThrow(
             expect.objectContaining({
                 issues: [
-                    {
+                    expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'array',
                         path: ['mapcodes'],
-                        message: 'Invalid input',
-                    },
+                    }),
                 ],
             }),
         );
@@ -168,12 +165,11 @@ describe('GeometrySearch Schema Validation', () => {
         ).toThrow(
             expect.objectContaining({
                 issues: [
-                    {
+                    expect.objectContaining({
                         code: 'invalid_value',
                         values: ['Unified', 'AR', 'IN', 'PK', 'IL', 'MA', 'RU', 'TR', 'CN'],
                         path: ['view'],
-                        message: 'Invalid input',
-                    },
+                    }),
                 ],
             }),
         );
@@ -188,12 +184,11 @@ describe('GeometrySearch Schema Validation', () => {
         ).toThrow(
             expect.objectContaining({
                 issues: [
-                    {
+                    expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'array',
                         path: ['indexes'],
-                        message: 'Invalid input',
-                    },
+                    }),
                 ],
             }),
         );
@@ -208,12 +203,11 @@ describe('GeometrySearch Schema Validation', () => {
         ).toThrow(
             expect.objectContaining({
                 issues: [
-                    {
+                    expect.objectContaining({
                         expected: 'array',
                         code: 'invalid_type',
                         path: ['poiCategories'],
-                        message: 'Invalid input',
-                    },
+                    }),
                 ],
             }),
         );
@@ -244,12 +238,11 @@ describe('GeometrySearch Schema Validation', () => {
         ).toThrow(
             expect.objectContaining({
                 issues: [
-                    {
+                    expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'array',
                         path: ['poiBrands'],
-                        message: 'Invalid input',
-                    },
+                    }),
                 ],
             }),
         );
@@ -264,12 +257,11 @@ describe('GeometrySearch Schema Validation', () => {
         ).toThrow(
             expect.objectContaining({
                 issues: [
-                    {
+                    expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'array',
                         path: ['connectors'],
-                        message: 'Invalid input',
-                    },
+                    }),
                 ],
             }),
         );
@@ -284,12 +276,11 @@ describe('GeometrySearch Schema Validation', () => {
         ).toThrow(
             expect.objectContaining({
                 issues: [
-                    {
+                    expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'array',
                         path: ['fuelTypes'],
-                        message: 'Invalid input',
-                    },
+                    }),
                 ],
             }),
         );
@@ -304,12 +295,11 @@ describe('GeometrySearch Schema Validation', () => {
         ).toThrow(
             expect.objectContaining({
                 issues: [
-                    {
+                    expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'array',
                         path: ['geographyTypes'],
-                        message: 'Invalid input',
-                    },
+                    }),
                 ],
             }),
         );

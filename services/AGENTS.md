@@ -32,6 +32,12 @@ This package provides API clients for TomTom Location Services:
 
 **Platform Support**: All platforms (web browsers, Node.js, React Native)
 
+**Peer Dependencies:**
+- `lodash-es` (^4.17.23) - Utility functions
+- `zod` (^4.3.6) - Schema validation
+
+**Installation Note**: When using npm (v7+) or Yarn, peer dependencies are installed automatically. When using pnpm, install peer dependencies manually: `pnpm install lodash-es zod`
+
 
 ### Development Setup
 
@@ -97,6 +103,9 @@ pnpm dev
 ## Important Notes
 
 - **No map dependency** - This package has no UI dependencies and works everywhere
+- **Peer dependencies** - Requires `lodash-es` (v4) and `zod` (v4)
+  - npm (v7+) and Yarn install these automatically
+  - pnpm: Add `auto-install-peers=true` to `.npmrc` for automatic installation, or manually install: `pnpm install lodash-es zod`
 - **API key required** - All services need a TomTom API key
 - **Promise-based** - All APIs return Promises (use async/await)
 - **GeoJSON format** - Results use standard GeoJSON format where applicable

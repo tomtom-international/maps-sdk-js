@@ -1,23 +1,21 @@
 import { views } from '@tomtom-org/maps-sdk/core';
-import { z } from 'zod/v4-mini';
+import { z } from 'zod';
 import { hasLngLatSchema } from './geometriesSchema';
 
 const placesParamsMandatory = z.object({
     query: z.string(),
 });
 
-const placesParamsOptional = z.partial(
-    z.object({
-        position: hasLngLatSchema,
-        limit: z.number().check(z.maximum(100)),
-        extendedPostalCodesFor: z.array(z.string()),
-        mapcodes: z.array(z.string()),
-        view: z.enum(views),
-        geographyTypes: z.array(z.string()),
-    }),
-);
+const placesParamsOptional = z.object({
+    position: hasLngLatSchema.optional(),
+    limit: z.number().max(100).optional(),
+    extendedPostalCodesFor: z.array(z.string()).optional(),
+    mapcodes: z.array(z.string()).optional(),
+    view: z.enum(views).optional(),
+    geographyTypes: z.array(z.string()).optional(),
+});
 
 /**
  * @ignore
  */
-export const commonPlacesParamsSchema = z.extend(placesParamsMandatory, placesParamsOptional.shape);
+export const commonPlacesParamsSchema = placesParamsMandatory.extend(placesParamsOptional.shape);

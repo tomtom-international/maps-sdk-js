@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { z } from 'zod/v4-mini';
+import { z } from 'zod';
 import type { SchemaRefinement } from '../../types/validation';
 import { validateRequestSchema } from '../validation';
 
@@ -15,18 +15,16 @@ describe('Validation', () => {
         expect(() => validateRequestSchema(params as never, { schema })).toThrow(
             expect.objectContaining({
                 issues: [
-                    {
+                    expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'string',
                         path: ['apiKey'],
-                        message: 'Invalid input',
-                    },
-                    {
+                    }),
+                    expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'number',
                         path: ['position'],
-                        message: 'Invalid input',
-                    },
+                    }),
                 ],
             }),
         );
@@ -54,7 +52,7 @@ describe('Validation', () => {
 
     test('it should fail when commonBaseURL or customServiceBaseURL is not passed', () => {
         const schema = z.object({
-            position: z.array(z.number()).check(z.minLength(1)),
+            position: z.array(z.number()).min(1),
         });
 
         const params = {

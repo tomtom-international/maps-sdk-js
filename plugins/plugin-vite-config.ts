@@ -1,5 +1,6 @@
 import analyze from 'rollup-plugin-analyzer';
 import license from 'rollup-plugin-license';
+import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
@@ -18,12 +19,9 @@ export default defineConfig({
         emptyOutDir: true,
         sourcemap: true,
         rollupOptions: {
-            external: [
-                'maplibre-gl',
-                '@tomtom-org/maps-sdk/core',
-                '@tomtom-org/maps-sdk/services',
-                '@tomtom-org/maps-sdk/map',
-            ],
+            // Externalize peer dependencies automatically, plus SDK packages
+            plugins: [peerDepsExternal()],
+            external: ['@tomtom-org/maps-sdk/core', '@tomtom-org/maps-sdk/services', '@tomtom-org/maps-sdk/map'],
         },
     },
     plugins: [

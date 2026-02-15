@@ -1,15 +1,13 @@
-import { z } from 'zod/v4-mini';
+import { z } from 'zod';
 import { hasBBoxSchema } from './geometriesSchema';
 
 /**
  * @ignore
  */
-export const commonGeocodeAndFuzzySearchParamsSchema = z.partial(
-    z.object({
-        typeahead: z.boolean(),
-        offset: z.number().check(z.maximum(1900)),
-        radiusMeters: z.number(),
-        boundingBox: hasBBoxSchema,
-        countries: z.array(z.string()),
-    }),
-);
+export const commonGeocodeAndFuzzySearchParamsSchema = z.object({
+    typeahead: z.boolean().optional(),
+    offset: z.number().max(1900).optional(),
+    radiusMeters: z.number().optional(),
+    boundingBox: hasBBoxSchema.optional(),
+    countries: z.array(z.string()).optional(),
+});

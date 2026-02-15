@@ -40,12 +40,17 @@
     "nodejs"
   ],
   "devDependencies": {
-    "@biomejs/biome": "^2.3.14",
+    "@biomejs/biome": "^2.4.0",
     "@size-limit/file": "^11.2.0",
     "@size-limit/preset-app": "^11.2.0",
     "size-limit": "^11.2.0",
-    "typedoc": "^0.28.16",
+    "typedoc": "^0.28.17",
     "yaml": "^2.8.2"
+  },
+  "peerDependencies": {
+    "lodash-es": "catalog:",
+    "maplibre-gl": "catalog:",
+    "zod": "catalog:"
   },
   "size-limit": [
     {

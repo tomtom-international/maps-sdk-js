@@ -42,9 +42,9 @@ export const sanityE2ETest = async (options: SanityE2ETestOptions) => {
     } = options;
 
     await page.goto(`/${getExampleName(testInfo)}/dist`);
-    await page.waitForLoadState('networkidle', { timeout: mapLoadTimeout });
     await page.waitForSelector(mapSelector, { timeout: mapLoadTimeout });
     await page.waitForTimeout(1000); // Allow time for map tiles to load
+    await page.waitForLoadState('networkidle', { timeout: mapLoadTimeout });
 
     // Take screenshot and compare
     await expect(page).toHaveScreenshot('upon-load.png', {

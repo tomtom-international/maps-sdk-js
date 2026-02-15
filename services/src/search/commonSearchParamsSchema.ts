@@ -1,27 +1,25 @@
 import { poiCategoriesToID } from '@tomtom-org/maps-sdk/core';
-import { type ZodMiniObject, z } from 'zod/v4-mini';
+import { type ZodObject, z } from 'zod';
 import { commonPlacesParamsSchema } from '../shared/schema/commonPlacesParamsSchema';
 
-const poiCategoriesToIdZodObject = z.object(poiCategoriesToID) as unknown as ZodMiniObject;
+const poiCategoriesToIdZodObject = z.object(poiCategoriesToID) as unknown as ZodObject<any>;
 
-const searchExtraParamsOptional = z.partial(
-    z.object({
-        indexes: z.array(z.string()),
-        poiCategories: z.array(z.union([z.number(), z.keyof(poiCategoriesToIdZodObject)])),
-        poiBrands: z.array(z.string()),
-        connectors: z.array(z.string()),
-        fuelTypes: z.array(z.string()),
-        openingHours: z.string(),
-        timeZone: z.string(),
-        relatedPois: z.string(),
-        minPowerKW: z.number(),
-        maxPowerKW: z.number(),
-        minFuzzyLevel: z.number(),
-        mixFuzzyLevel: z.number(),
-    }),
-);
+const searchExtraParamsOptional = z.object({
+    indexes: z.array(z.string()).optional(),
+    poiCategories: z.array(z.union([z.number(), z.keyof(poiCategoriesToIdZodObject)])).optional(),
+    poiBrands: z.array(z.string()).optional(),
+    connectors: z.array(z.string()).optional(),
+    fuelTypes: z.array(z.string()).optional(),
+    openingHours: z.string().optional(),
+    timeZone: z.string().optional(),
+    relatedPois: z.string().optional(),
+    minPowerKW: z.number().optional(),
+    maxPowerKW: z.number().optional(),
+    minFuzzyLevel: z.number().optional(),
+    mixFuzzyLevel: z.number().optional(),
+});
 
 /**
  * @ignore
  */
-export const commonSearchParamsSchema = z.extend(commonPlacesParamsSchema, searchExtraParamsOptional.shape);
+export const commonSearchParamsSchema = commonPlacesParamsSchema.extend(searchExtraParamsOptional.shape);

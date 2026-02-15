@@ -23,7 +23,6 @@
     "@playwright/test": "catalog:",
     "@types/lodash-es": "catalog:",
     "@types/node": "catalog:",
-    "maplibre-gl": "catalog:",
     "rimraf": "catalog:",
     "rollup-plugin-visualizer": "catalog:",
     "ts-node": "catalog:",

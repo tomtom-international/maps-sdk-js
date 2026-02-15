@@ -37,11 +37,11 @@
     "entryPoint": "./index.ts"
   },
   "peerDependencies": {
-    "maplibre-gl": "catalog:"
+    "maplibre-gl": "catalog:",
+    "lodash-es": "catalog:"
   },
   "dependencies": {
     "@turf/bearing": "^7.3.4",
-    "core": "workspace:*",
-    "lodash-es": "catalog:"
+    "core": "workspace:*"
   }
 }

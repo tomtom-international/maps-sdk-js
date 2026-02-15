@@ -1,4 +1,4 @@
-import { z } from 'zod/v4-mini';
+import { z } from 'zod';
 import { commonSearchParamsSchema } from '../search/commonSearchParamsSchema';
 import { featureCollectionSchema, geometrySchema } from '../shared/schema/geometriesSchema';
 
@@ -9,4 +9,4 @@ const geometrySearchRequestMandatory = z.object({
 /**
  * @ignore
  */
-export const geometrySearchRequestSchema = z.extend(commonSearchParamsSchema, geometrySearchRequestMandatory.shape);
+export const geometrySearchRequestSchema = commonSearchParamsSchema.extend(geometrySearchRequestMandatory.shape);

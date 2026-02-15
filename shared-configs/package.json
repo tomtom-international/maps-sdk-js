@@ -2,9 +2,10 @@
   "name": "shared-configs",
   "type": "module",
   "devDependencies": {
-    "@types/node": "catalog:",
+    "@types/rollup-plugin-peer-deps-external": "catalog:",
     "rollup-plugin-analyzer": "catalog:",
     "rollup-plugin-license": "catalog:",
+    "rollup-plugin-peer-deps-external": "catalog:",
     "rollup-plugin-visualizer": "catalog:",
     "vite": "catalog:",
     "vite-plugin-dts": "catalog:",

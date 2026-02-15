@@ -19,6 +19,7 @@ catalog:
   '@types/node': ^25.2.3
   '@types/react': ^19.2.14
   '@types/react-dom': ^19.2.3
+  '@types/rollup-plugin-peer-deps-external': ^2.2.6
   '@vitejs/plugin-react': ^5.1.4
   '@vitest/coverage-v8': ^4.0.18
   jsdom: ^27.4.0
@@ -29,6 +30,7 @@ catalog:
   rimraf: ^6.1.2
   rollup-plugin-analyzer: ^4.0.0
   rollup-plugin-license: ^3.6.0
+  rollup-plugin-peer-deps-external: ^2.2.4
   rollup-plugin-visualizer: ^6.0.5
   ts-node: ^10.9.2
   typescript: ^5.9.3
@@ -36,6 +38,7 @@ catalog:
   vite-plugin-dts: 5.0.0-beta.6
   vite-plugin-singlefile: ^2.3.0
   vitest: ^4.0.18
+  zod: ^4.3.6
 
 ignoredBuiltDependencies:
   - esbuild

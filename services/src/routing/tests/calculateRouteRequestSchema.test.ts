@@ -27,28 +27,23 @@ describe('Calculate route request schema validation', () => {
 
         expect(validationCall).toThrow(
             expect.objectContaining({
-                message: expect.stringContaining('Invalid input'),
                 issues: expect.arrayContaining([
                     expect.objectContaining({
-                        origin: 'number',
                         code: 'too_big',
                         maximum: 180,
                         path: ['locations', 0, 0],
                     }),
                     expect.objectContaining({
-                        origin: 'number',
                         code: 'too_big',
                         maximum: 90,
                         path: ['locations', 0, 1],
                     }),
                     expect.objectContaining({
-                        origin: 'number',
                         code: 'too_small',
                         minimum: -180,
                         path: ['locations', 1, 0],
                     }),
                     expect.objectContaining({
-                        origin: 'number',
                         code: 'too_small',
                         minimum: -90,
                         path: ['locations', 1, 1],
@@ -67,12 +62,11 @@ describe('Calculate route request schema validation', () => {
         expect(validationCall).toThrow(
             expect.objectContaining({
                 issues: [
-                    {
+                    expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'array',
                         path: ['locations'],
-                        message: 'Invalid input',
-                    },
+                    }),
                 ],
             }),
         );
@@ -84,7 +78,7 @@ describe('Calculate route request schema validation', () => {
                 { locations: [], apiKey, commonBaseURL: commonBaseUrl },
                 routeRequestValidationConfig,
             ),
-        ).toThrow('Invalid input');
+        ).toThrow();
     });
 
     test('it should fail when there are not enough waypoints - one sent', () => {
@@ -107,12 +101,11 @@ describe('Calculate route request schema validation', () => {
         ).toThrow(
             expect.objectContaining({
                 issues: [
-                    {
+                    expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'array',
                         path: ['locations'],
-                        message: 'Invalid input',
-                    },
+                    }),
                 ],
             }),
         );
@@ -159,25 +152,21 @@ describe('Calculate route request schema validation', () => {
                         expected: 'array',
                         code: 'invalid_type',
                         path: ['costModel', 'avoid'],
-                        message: 'Invalid input',
                     }),
                     expect.objectContaining({
                         code: 'invalid_value',
                         values: ['live', 'historical'],
                         path: ['costModel', 'traffic'],
-                        message: 'Invalid input',
                     }),
                     expect.objectContaining({
                         expected: 'string',
                         code: 'invalid_type',
                         path: ['travelMode'],
-                        message: 'Invalid input',
                     }),
                     expect.objectContaining({
                         code: 'invalid_value',
                         values: ['none', 'all'],
                         path: ['computeAdditionalTravelTimeFor'],
-                        message: 'Invalid input',
                     }),
                     expect.objectContaining({
                         origin: 'number',
@@ -185,13 +174,11 @@ describe('Calculate route request schema validation', () => {
                         maximum: 5,
                         inclusive: true,
                         path: ['maxAlternatives'],
-                        message: 'Invalid input',
                     }),
                     expect.objectContaining({
                         code: 'invalid_value',
                         values: expect.arrayContaining(inputSectionTypes),
                         path: ['sectionTypes', 1],
-                        message: 'Invalid input',
                     }),
                 ]),
             }),

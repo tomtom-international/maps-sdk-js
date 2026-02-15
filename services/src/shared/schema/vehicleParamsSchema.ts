@@ -1,16 +1,16 @@
 import { currentTypes, plugTypes } from '@tomtom-org/maps-sdk/core';
-import { z } from 'zod/v4-mini';
+import { z } from 'zod';
 import { loadTypes } from '../types/vehicleRestrictionParams';
 
 // Common validation schemas
-const positiveNumber = z.number().check(z.positive());
-const nonNegativeNumber = z.number().check(z.minimum(0));
-const percentageNumber = z.number().check(z.minimum(0), z.maximum(100));
+const positiveNumber = z.number().positive();
+const nonNegativeNumber = z.number().min(0);
+const percentageNumber = z.number().min(0).max(100);
 
 // Common optional schemas
-const optionalPositiveNumber = z.optional(positiveNumber);
-const optionalNonNegativeNumber = z.optional(nonNegativeNumber);
-const optionalNormalizedNumber = z.optional(z.number().check(z.minimum(0), z.maximum(1)));
+const optionalPositiveNumber = positiveNumber.optional();
+const optionalNonNegativeNumber = nonNegativeNumber.optional();
+const optionalNormalizedNumber = z.number().min(0).max(1).optional();
 
 // Speed to consumption rate schema
 const speedToConsumptionRateSchema = z.object({
@@ -19,14 +19,14 @@ const speedToConsumptionRateSchema = z.object({
 });
 
 // Efficiency schema for consumption models
-const efficiencySchema = z.optional(
-    z.object({
+const efficiencySchema = z
+    .object({
         acceleration: optionalNormalizedNumber,
         deceleration: optionalNormalizedNumber,
         uphill: optionalNormalizedNumber,
         downhill: optionalNormalizedNumber,
-    }),
-);
+    })
+    .optional();
 
 // Base consumption model schema
 const baseConsumptionModelSchema = {
@@ -34,14 +34,14 @@ const baseConsumptionModelSchema = {
 };
 
 // Consumption array validation
-const speedConsumptionArray = z.array(speedToConsumptionRateSchema).check(z.minLength(1), z.maxLength(25));
+const speedConsumptionArray = z.array(speedToConsumptionRateSchema).min(1).max(25);
 
 // Combustion consumption model schema
 const combustionConsumptionModelSchema = z.object({
     ...baseConsumptionModelSchema,
     speedsToConsumptionsLiters: speedConsumptionArray,
     auxiliaryPowerInLitersPerHour: optionalNonNegativeNumber,
-    fuelEnergyDensityInMJoulesPerLiter: z.optional(z.number().check(z.minimum(1))),
+    fuelEnergyDensityInMJoulesPerLiter: z.number().min(1).optional(),
 });
 
 // Electric consumption model schema
@@ -49,25 +49,25 @@ const electricConsumptionModelSchema = z.object({
     ...baseConsumptionModelSchema,
     speedsToConsumptionsKWH: speedConsumptionArray,
     auxiliaryPowerInkW: optionalNonNegativeNumber,
-    consumptionInKWHPerKMAltitudeGain: z.optional(z.number().check(z.maximum(500))),
+    consumptionInKWHPerKMAltitudeGain: z.number().max(500).optional(),
     recuperationInKWHPerKMAltitudeLoss: optionalNonNegativeNumber,
 });
 
 // Charging connector schema
 const chargingConnectorSchema = z.object({
     currentType: z.enum(currentTypes),
-    plugTypes: z.array(z.enum(plugTypes)).check(z.minLength(1)),
+    plugTypes: z.array(z.enum(plugTypes)).min(1),
     efficiency: optionalNormalizedNumber,
     baseLoadInkW: optionalNonNegativeNumber,
     maxPowerInkW: optionalNonNegativeNumber,
     maxVoltageInV: optionalNonNegativeNumber,
     maxCurrentInA: optionalNonNegativeNumber,
-    voltageRange: z.optional(
-        z.object({
+    voltageRange: z
+        .object({
             minVoltageInV: optionalNonNegativeNumber,
-            maxVoltageInV: z.optional(z.number()),
-        }),
-    ),
+            maxVoltageInV: z.number().optional(),
+        })
+        .optional(),
 });
 
 // Battery curve schema
@@ -79,8 +79,8 @@ const batteryCurveSchema = z.object({
 // Charging model schema
 const chargingModelSchema = z.object({
     maxChargeKWH: positiveNumber,
-    batteryCurve: z.optional(z.array(batteryCurveSchema).check(z.maxLength(20))),
-    chargingConnectors: z.optional(z.array(chargingConnectorSchema).check(z.minLength(1))),
+    batteryCurve: z.array(batteryCurveSchema).max(20).optional(),
+    chargingConnectors: z.array(chargingConnectorSchema).min(1).optional(),
     chargingTimeOffsetInSec: optionalNonNegativeNumber,
 });
 
@@ -88,54 +88,51 @@ const chargingModelSchema = z.object({
 const combustionEngineModelSchema = z.object({ consumption: combustionConsumptionModelSchema });
 const electricEngineModelSchema = z.object({
     consumption: electricConsumptionModelSchema,
-    charging: z.optional(chargingModelSchema),
+    charging: chargingModelSchema.optional(),
 });
 
 // Vehicle dimensions schema
-const vehicleDimensionsSchema = z.optional(
-    z.object({
+const vehicleDimensionsSchema = z
+    .object({
         lengthMeters: optionalPositiveNumber,
         widthMeters: optionalPositiveNumber,
         heightMeters: optionalPositiveNumber,
         weightKG: optionalPositiveNumber,
         axleWeightKG: optionalPositiveNumber,
-    }),
-);
+    })
+    .optional();
 
 // Vehicle model schemas
 const predefinedVehicleModelSchema = z.object({ variantId: z.string() });
 const explicitVehicleModelSchema = z.object({
     dimensions: vehicleDimensionsSchema,
-    engine: z.optional(z.union([combustionEngineModelSchema, electricEngineModelSchema])),
+    engine: z.union([combustionEngineModelSchema, electricEngineModelSchema]).optional(),
 });
-const vehicleModelSchema = z.optional(z.union([predefinedVehicleModelSchema, explicitVehicleModelSchema]));
+const vehicleModelSchema = z.union([predefinedVehicleModelSchema, explicitVehicleModelSchema]).optional();
 
 // Vehicle state schemas
 const genericVehicleStateSchema = z.object({
-    heading: z.optional(z.number().check(z.minimum(0), z.maximum(360))),
+    heading: z.number().min(0).max(360).optional(),
 });
 
-const combustionVehicleStateSchema = z.extend(
-    genericVehicleStateSchema,
-    z.object({ currentFuelInLiters: nonNegativeNumber }).shape,
-);
+const combustionVehicleStateSchema = genericVehicleStateSchema.extend({
+    currentFuelInLiters: nonNegativeNumber,
+});
 
-const electricVehicleStateByPercentageSchema = z.extend(
-    genericVehicleStateSchema,
-    z.object({ currentChargePCT: percentageNumber }).shape,
-);
+const electricVehicleStateByPercentageSchema = genericVehicleStateSchema.extend({
+    currentChargePCT: percentageNumber,
+});
 
-const electricVehicleStateByKwhSchema = z.extend(
-    genericVehicleStateSchema,
-    z.object({ currentChargeInkWh: nonNegativeNumber }).shape,
-);
+const electricVehicleStateByKwhSchema = genericVehicleStateSchema.extend({
+    currentChargeInkWh: nonNegativeNumber,
+});
 
 const electricVehicleStateSchema = z.union([electricVehicleStateByPercentageSchema, electricVehicleStateByKwhSchema]);
 
 // Charging preferences schemas
 const chargingPreferencesPCTSchema = z.object({
     minChargeAtDestinationPCT: percentageNumber,
-    minChargeAtChargingStopsPCT: z.number().check(z.minimum(0), z.maximum(50)),
+    minChargeAtChargingStopsPCT: z.number().min(0).max(50),
 });
 
 const chargingPreferencesKWHSchema = z.object({
@@ -145,18 +142,18 @@ const chargingPreferencesKWHSchema = z.object({
 
 const chargingPreferencesSchema = z.union([chargingPreferencesPCTSchema, chargingPreferencesKWHSchema]);
 const electricVehiclePreferencesSchema = z.object({
-    chargingPreferences: z.optional(chargingPreferencesSchema),
+    chargingPreferences: chargingPreferencesSchema.optional(),
 });
 
 // Vehicle restrictions schema
-const vehicleRestrictionsSchema = z.optional(
-    z.object({
-        loadTypes: z.optional(z.array(z.enum(loadTypes))),
-        maxSpeedKMH: z.optional(z.number().check(z.minimum(0), z.maximum(250))),
-        adrCode: z.optional(z.enum(['B', 'C', 'D', 'E'])),
-        commercial: z.optional(z.boolean()),
-    }),
-);
+const vehicleRestrictionsSchema = z
+    .object({
+        loadTypes: z.array(z.enum(loadTypes)).optional(),
+        maxSpeedKMH: z.number().min(0).max(250).optional(),
+        adrCode: z.enum(['B', 'C', 'D', 'E']).optional(),
+        commercial: z.boolean().optional(),
+    })
+    .optional();
 
 // Base vehicle parameters schema
 const baseVehicleParamsSchema = {
@@ -168,22 +165,22 @@ const baseVehicleParamsSchema = {
 const genericVehicleParamsSchema = z.object({
     ...baseVehicleParamsSchema,
     engineType: z.undefined(),
-    state: z.optional(genericVehicleStateSchema),
-    preferences: z.optional(z.object({})),
+    state: genericVehicleStateSchema.optional(),
+    preferences: z.object({}).optional(),
 });
 
 const combustionVehicleParamsSchema = z.object({
     ...baseVehicleParamsSchema,
     engineType: z.literal('combustion'),
-    state: z.optional(combustionVehicleStateSchema),
-    preferences: z.optional(z.object({})),
+    state: combustionVehicleStateSchema.optional(),
+    preferences: z.object({}).optional(),
 });
 
 const electricVehicleParamsSchema = z.object({
     ...baseVehicleParamsSchema,
     engineType: z.literal('electric'),
-    state: z.optional(electricVehicleStateSchema),
-    preferences: z.optional(electricVehiclePreferencesSchema),
+    state: electricVehicleStateSchema.optional(),
+    preferences: electricVehiclePreferencesSchema.optional(),
 });
 
 /**

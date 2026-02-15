@@ -1,4 +1,4 @@
-import { $ZodIssue } from 'zod/v4/core';
+import type { ZodIssue } from 'zod';
 import type { ValidationError } from './schema/validation';
 import type { ParseResponseError } from './serviceTypes';
 import type { APIErrorResponse, DefaultAPIResponseErrorBody } from './types/apiResponseErrorTypes';
@@ -38,7 +38,7 @@ export class SDKError extends Error {
     constructor(
         message: string,
         readonly service: string,
-        readonly issues?: $ZodIssue[],
+        readonly issues?: ZodIssue[],
     ) {
         super(message);
 

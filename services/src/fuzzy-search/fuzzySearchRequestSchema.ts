@@ -1,18 +1,15 @@
-import { z } from 'zod/v4-mini';
+import { z } from 'zod';
 import { commonSearchParamsSchema } from '../search/commonSearchParamsSchema';
 import { commonGeocodeAndFuzzySearchParamsSchema } from '../shared/schema/commonGeocodeAndFuzzySearchParamsSchema';
 
-const fuzzySearchRequestOptional = z.partial(
-    z.object({
-        minFuzzyLevel: z.number().check(z.minimum(1), z.maximum(4)),
-        maxFuzzyLevel: z.number().check(z.minimum(1), z.maximum(4)),
-    }),
-);
+const fuzzySearchRequestOptional = z.object({
+    minFuzzyLevel: z.number().min(1).max(4).optional(),
+    maxFuzzyLevel: z.number().min(1).max(4).optional(),
+});
 
 /**
  * @ignore
  */
-export const fuzzySearchRequestSchema = z.extend(
-    commonSearchParamsSchema,
-    z.extend(commonGeocodeAndFuzzySearchParamsSchema, fuzzySearchRequestOptional.shape).shape,
+export const fuzzySearchRequestSchema = commonSearchParamsSchema.extend(
+    commonGeocodeAndFuzzySearchParamsSchema.extend(fuzzySearchRequestOptional.shape).shape,
 );

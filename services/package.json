@@ -37,8 +37,10 @@
     "entryPoint": "./index.ts"
   },
   "dependencies": {
-    "core": "workspace:*",
+    "core": "workspace:*"
+  },
+  "peerDependencies": {
     "lodash-es": "catalog:",
-    "zod": "^4.3.6"
+    "zod": "catalog:"
   }
 }

@@ -1,4 +1,4 @@
-import { z } from 'zod/v4-mini';
+import { z } from 'zod';
 
 /**
  * @ignore
@@ -63,12 +63,8 @@ export const featureCollectionSchema = z.object({
  * @ignore
  */
 export const hasLngLatSchema = z.union([
-    z.tuple([z.number().check(z.minimum(-180), z.maximum(180)), z.number().check(z.minimum(-90), z.maximum(90))]),
-    z.tuple([
-        z.number().check(z.minimum(-180), z.maximum(180)),
-        z.number().check(z.minimum(-90), z.maximum(90)),
-        z.number(),
-    ]),
+    z.tuple([z.number().min(-180).max(180), z.number().min(-90).max(90)]),
+    z.tuple([z.number().min(-180).max(180), z.number().min(-90).max(90), z.number()]),
     z.object({
         type: z.literal('Point'),
         coordinates: z.array(z.number()),
@@ -79,7 +75,10 @@ export const hasLngLatSchema = z.union([
 /**
  * @ignore
  */
-const geoJsonbBoxSchema = z.union([z.array(z.number()).check(z.length(4)), z.array(z.number()).check(z.length(6))]);
+const geoJsonbBoxSchema = z.union([
+    z.array(z.number()).refine((arr) => arr.length === 4, { message: 'BBox must have 4 elements' }),
+    z.array(z.number()).refine((arr) => arr.length === 6, { message: 'BBox must have 6 elements' }),
+]);
 
 /**
  * @ignore

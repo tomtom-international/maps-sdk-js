@@ -1,18 +1,30 @@
-import type { $ZodError, $ZodIssue } from 'zod/v4/core';
-import { z } from 'zod/v4-mini';
+import type { ZodError } from 'zod';
 import type { CommonServiceParams } from '../serviceTypes';
 import type { RequestValidationConfig } from '../types/validation';
 import { commonServiceRequestSchema } from './commonParamsSchema';
+
+/**
+ * Format a Zod error into a human-readable string
+ * @ignore
+ */
+const formatZodError = (error: ZodError): string => {
+    return error.issues
+        .map((issue) => {
+            const path = issue.path.length > 0 ? `${issue.path.join('.')}: ` : '';
+            return `${path}${issue.message}`;
+        })
+        .join('; ');
+};
 
 /**
  * Validate Error Class for validating params input, this will be used by SDKError class.
  * @ignore
  */
 export class ValidationError extends Error {
-    issues: $ZodIssue[];
+    issues: ZodError['issues'];
 
-    constructor(zodError: $ZodError) {
-        super(z.prettifyError(zodError));
+    constructor(zodError: ZodError) {
+        super(formatZodError(zodError));
         this.issues = zodError.issues;
     }
 }
@@ -27,26 +39,33 @@ export const validateRequestSchema = <T extends CommonServiceParams>(
     config?: RequestValidationConfig,
 ): T => {
     const requestSchema = config?.schema
-        ? z.extend(commonServiceRequestSchema, config.schema.shape)
+        ? commonServiceRequestSchema.extend(config.schema.shape)
         : commonServiceRequestSchema;
-    // If there's no schema provided, we still validate the common params:
-    const mergedSchema = requestSchema.check(
-        z.refine(
-            (data) => 'commonBaseURL' in data || 'customServiceBaseURL' in data,
-            'commonBaseURL or customServiceBaseURL is required',
-        ),
-    );
 
-    // Adding optional refinements:
-    let refinedMergedSchema: typeof mergedSchema | undefined;
-    if (config?.refinements?.length) {
-        refinedMergedSchema = mergedSchema;
-        for (const refinement of config.refinements) {
-            refinedMergedSchema = refinedMergedSchema.check(z.refine(refinement.check, refinement.message));
+    // Apply all refinements using superRefine for better type compatibility in Zod v4
+    const finalSchema = requestSchema.superRefine((data, ctx) => {
+        // Validate common params
+        if (!('commonBaseURL' in data) && !('customServiceBaseURL' in data)) {
+            ctx.addIssue({
+                code: 'custom',
+                message: 'commonBaseURL or customServiceBaseURL is required',
+            });
         }
-    }
 
-    const validation = (refinedMergedSchema ?? mergedSchema).safeParse(params);
+        // Apply optional refinements
+        if (config?.refinements?.length) {
+            for (const refinement of config.refinements) {
+                if (!refinement.check(data as T)) {
+                    ctx.addIssue({
+                        code: 'custom',
+                        message: refinement.message,
+                    });
+                }
+            }
+        }
+    });
+
+    const validation = finalSchema.safeParse(params);
     if (!validation.success) {
         throw new ValidationError(validation.error);
     }

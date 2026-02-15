@@ -19,12 +19,11 @@ describe('Autocomplete Schema Validation', () => {
         ).toThrow(
             expect.objectContaining({
                 issues: [
-                    {
+                    expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'string',
                         path: ['query'],
-                        message: 'Invalid input',
-                    },
+                    }),
                 ],
             }),
         );
@@ -40,12 +39,11 @@ describe('Autocomplete Schema Validation', () => {
         ).toThrow(
             expect.objectContaining({
                 issues: [
-                    {
+                    expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'string',
                         path: ['query'],
-                        message: 'Invalid input',
-                    },
+                    }),
                 ],
             }),
         );
@@ -61,12 +59,11 @@ describe('Autocomplete Schema Validation', () => {
         ).toThrow(
             expect.objectContaining({
                 issues: [
-                    {
+                    expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'array',
                         path: ['countries'],
-                        message: 'Invalid input',
-                    },
+                    }),
                 ],
             }),
         );
@@ -82,12 +79,11 @@ describe('Autocomplete Schema Validation', () => {
         ).toThrow(
             expect.objectContaining({
                 issues: [
-                    {
+                    expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'array',
                         path: ['resultType'],
-                        message: 'Invalid input',
-                    },
+                    }),
                 ],
             }),
         );
@@ -102,12 +98,11 @@ describe('Autocomplete Schema Validation', () => {
         ).toThrow(
             expect.objectContaining({
                 issues: [
-                    {
+                    expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'number',
                         path: ['radiusMeters'],
-                        message: 'Invalid input',
-                    },
+                    }),
                 ],
             }),
         );

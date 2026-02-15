@@ -1,4 +1,4 @@
-import { z } from 'zod/v4-mini';
+import { z } from 'zod';
 import { commonRoutingRequestSchema } from '../shared/schema/commonRoutingRequestSchema';
 import { hasLngLatSchema } from '../shared/schema/geometriesSchema';
 import { budgetTypes } from './types/reachableRangeParams';
@@ -9,17 +9,16 @@ const reachableRangeRequestSchemaMandatory = z.object({
     origin: hasLngLatSchema,
     budget: z.object({
         type: z.enum(budgetTypes),
-        value: z.number().check(z.minimum(0)),
+        value: z.number().min(0),
     }),
 });
 
 const reachableRangeRequestSchemaOptional = z.object({
-    maxFerryLengthMeters: z.optional(z.number().check(z.minimum(0))),
+    maxFerryLengthMeters: z.number().min(0).optional(),
 });
 
-const reachableRangeRequestSchema = z.extend(
-    commonRoutingRequestSchema,
-    z.extend(reachableRangeRequestSchemaMandatory, reachableRangeRequestSchemaOptional.shape).shape,
+const reachableRangeRequestSchema = commonRoutingRequestSchema.extend(
+    reachableRangeRequestSchemaMandatory.extend(reachableRangeRequestSchemaOptional.shape).shape,
 );
 
 // const departArriveRefinement: SchemaRefinement<ReachableRangeParams> = {

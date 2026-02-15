@@ -26,7 +26,6 @@ describe('EV Charging Stations availability schema validation', () => {
                         expected: 'string',
                         code: 'invalid_type',
                         path: ['id'],
-                        message: 'Invalid input',
                     }),
                 ],
             }),
@@ -46,7 +45,6 @@ describe('EV Charging Stations availability schema validation', () => {
                     expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'string',
-                        message: 'Invalid input',
                         path: ['id'],
                     }),
                 ],

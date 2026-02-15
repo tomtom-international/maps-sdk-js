@@ -29,6 +29,11 @@ This package provides shared infrastructure:
 - GeoJSON type definitions
 - Common helper functions used across the SDK
 
+**Peer Dependencies:**
+- `lodash-es` (v4) - Utility functions
+
+**Installation Note**: npm (v7+) and Yarn install peer dependencies automatically. For pnpm, enable automatic installation by adding `auto-install-peers=true` to `.npmrc`, or manually install with: `pnpm install lodash-es`
+
 **Note**: This is internal infrastructure - most SDK users never import it directly. Changes here affect both `map` and `services` packages.
 
 ### Development Setup

@@ -1,21 +1,19 @@
 import { views } from '@tomtom-org/maps-sdk/core';
-import { z } from 'zod/v4-mini';
+import { z } from 'zod';
 
 const placeByIdRequestMandatory = z.object({
     entityId: z.string(),
 });
 
-const placeByIdRequestOptional = z.partial(
-    z.object({
-        mapcodes: z.array(z.string()),
-        view: z.enum(views),
-        openingHours: z.string(),
-        timeZone: z.string(),
-        relatedPois: z.string(),
-    }),
-);
+const placeByIdRequestOptional = z.object({
+    mapcodes: z.array(z.string()).optional(),
+    view: z.enum(views).optional(),
+    openingHours: z.string().optional(),
+    timeZone: z.string().optional(),
+    relatedPois: z.string().optional(),
+});
 
 /**
  * @ignore
  */
-export const placeByIdRequestSchema = z.extend(placeByIdRequestMandatory, placeByIdRequestOptional.shape);
+export const placeByIdRequestSchema = placeByIdRequestMandatory.extend(placeByIdRequestOptional.shape);

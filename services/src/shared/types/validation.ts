@@ -1,4 +1,4 @@
-import type { ZodMiniObject } from 'zod/v4-mini';
+import type { ZodObject } from 'zod';
 
 /**
  * @ignore
@@ -15,7 +15,7 @@ export type RequestValidationConfig<Params = any> = {
      * This will be compiled and used for validation.
      * @see https://zod.dev/?id=basic-usage
      */
-    schema: ZodMiniObject;
+    schema: ZodObject<any>;
     /**
      * Optional refinements from Zod for schema.refine advanced calls.
      * @see ZodObject.refine

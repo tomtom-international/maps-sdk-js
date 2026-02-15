@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import analyze from 'rollup-plugin-analyzer';
 import license from 'rollup-plugin-license';
+import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import { visualizer } from 'rollup-plugin-visualizer';
 import type { UserConfig } from 'vite';
 import { defineConfig } from 'vite';
@@ -31,7 +32,9 @@ export const buildViteConfig = (bundleName: 'core' | 'services' | 'map'): UserCo
             emptyOutDir: true,
             sourcemap: true,
             rollupOptions: {
-                external: ['@tomtom-org/maps-sdk/core', 'maplibre-gl'],
+                // Externalize peer dependencies automatically, plus @tomtom-org/maps-sdk/core
+                plugins: [peerDepsExternal()],
+                external: ['@tomtom-org/maps-sdk/core'],
             },
         },
         define: {

@@ -1,8 +1,9 @@
-import { z } from 'zod/v4-mini';
+import { z } from 'zod';
+import { commonServiceRequestSchema } from '../shared/schema/commonParamsSchema';
 
 /**
  * @ignore
  */
-export const evChargingStationsAvailabilityRequestSchema = z.object({
+export const evChargingStationsAvailabilityRequestSchema = commonServiceRequestSchema.extend({
     id: z.string(),
 });

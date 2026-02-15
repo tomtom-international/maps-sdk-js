@@ -23,9 +23,13 @@ This section is for developers working on the SDK codebase itself.
 
 - **Purpose**: Interactive map visualization built on MapLibre GL JS
 - **Platform**: Web browsers only
-- **Peer Dependency**: `maplibre-gl` v4.x required
+- **Peer Dependencies**: 
+  - `maplibre-gl` (^5.18.0) - Map rendering engine (required)
+  - `lodash-es` (^4.17.23) - Utility functions (required)
 - **Entry Point**: `index.ts`
 - **Key Modules**: `base`, `geometry`, `hillshade`, `init`, `places`, `pois`, `routing`, `traffic`, `TomTomMap`
+
+**Installation Note**: When using npm (v7+) or Yarn, peer dependencies are installed automatically. When using pnpm, install peer dependencies manually: `pnpm install maplibre-gl lodash-es`
 
 ### Development Setup
 
@@ -91,9 +95,11 @@ pnpm dev
 ## Important Notes
 
 - **Web only** - This package uses MapLibre GL JS which requires a browser environment
-- **Peer dependency** - Always install `maplibre-gl` alongside this package
+- **Peer dependencies** - Always install `maplibre-gl` (v5) and `lodash-es` (v4) alongside this package
+  - npm (v7+) and Yarn install these automatically
+  - pnpm: Add `auto-install-peers=true` to `.npmrc` for automatic installation, or manually install: `pnpm install maplibre-gl lodash-es`
 - **CSS required** - Must import `maplibre-gl/dist/maplibre-gl.css`
 - **API key required** - Need TomTom API key for map tiles and services
-- **MapLibre compatibility** - Built on MapLibre GL JS v4.x
+- **MapLibre compatibility** - Built on MapLibre GL JS v5
 - **For Node.js/backend** - Use `@tomtom-org/maps-sdk/services` instead
 

@@ -1,8 +1,10 @@
-import { z } from 'zod/v4-mini';
 import { commonGeocodeAndFuzzySearchParamsSchema } from '../shared/schema/commonGeocodeAndFuzzySearchParamsSchema';
+import { commonServiceRequestSchema } from '../shared/schema/commonParamsSchema';
 import { commonPlacesParamsSchema } from '../shared/schema/commonPlacesParamsSchema';
 
 /**
  * @ignore
  */
-export const geocodingRequestSchema = z.extend(commonPlacesParamsSchema, commonGeocodeAndFuzzySearchParamsSchema.shape);
+export const geocodingRequestSchema = commonServiceRequestSchema
+    .extend(commonPlacesParamsSchema.shape)
+    .extend(commonGeocodeAndFuzzySearchParamsSchema.shape);

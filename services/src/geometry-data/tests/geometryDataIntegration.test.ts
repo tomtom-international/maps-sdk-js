@@ -19,14 +19,11 @@ describe('Geometry data errors', () => {
         ).rejects.toMatchObject({
             service: 'GeometryData',
             issues: [
-                {
-                    origin: 'array',
+                expect.objectContaining({
                     code: 'too_small',
                     minimum: 1,
-                    inclusive: true,
                     path: ['geometries'],
-                    message: 'Invalid input',
-                },
+                }),
             ],
         });
     });
