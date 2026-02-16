@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.43.1](https://github.com/tomtom-international/maps-sdk-js/compare/v0.43.0...v0.43.1) (2026-02-16)
+
+
+### Bug Fixes
+
+* add lodash-es and zod to Sandpack peer dependencies ([aad6f47](https://github.com/tomtom-international/maps-sdk-js/commit/aad6f47e97e2fcbc8ab61d3db6c8674acf93637c))
+
 ## [0.43.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.42.3...v0.43.0) (2026-02-16)
 
 
