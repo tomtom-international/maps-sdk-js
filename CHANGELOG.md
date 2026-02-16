@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.42.3](https://github.com/tomtom-international/maps-sdk-js/compare/v0.42.2...v0.42.3) (2026-02-16)
+
+
+### Features
+
+* add shared CSS design system and reusable HTML templates for examples ([5d5e77b](https://github.com/tomtom-international/maps-sdk-js/commit/5d5e77bb95ba2d47ef87533edaf894780a9c8860))
+* add template CSS inlining and local SDK dependency resolution to Sandpack ([d16d9b6](https://github.com/tomtom-international/maps-sdk-js/commit/d16d9b6f863d12b69033be350fac84ecbf5b1e2d))
+* migrate all examples to use the shared CSS design system ([76f42f9](https://github.com/tomtom-international/maps-sdk-js/commit/76f42f90304e4db4b7061f91120d1632b6c4f0f5))
+* zod and lodash are now peer dependencies, not bundled in sdk anymore ([e7dbce5](https://github.com/tomtom-international/maps-sdk-js/commit/e7dbce52d73372087fc6a38cd5a1eae499223e11))
+
+
+### Bug Fixes
+
+* update Playwright config for Chrome for Testing WebGL support and refresh snapshots ([05d644f](https://github.com/tomtom-international/maps-sdk-js/commit/05d644f82857ce6f828394a6f5bebb569d895ad4))
+
 ## [0.42.2](https://github.com/tomtom-international/maps-sdk-js/compare/v0.42.1...v0.42.2) (2026-02-06)
 
 
