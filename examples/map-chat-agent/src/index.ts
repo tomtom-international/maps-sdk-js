@@ -2,8 +2,9 @@ import { createAzure } from '@ai-sdk/azure';
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { createMapAgent } from '@tomtom-org/maps-sdk-map-agent';
-import './style.css';
 import { API_KEY, AZURE_API_KEY, AZURE_RESOURCE_NAME, AZURE_DEPLOYMENT_ID } from './config';
+import { getCustomLocationTool } from './tools/get-custom-location';
+import './style.css';
 
 // Configure TomTom API
 TomTomConfig.instance.put({ apiKey: API_KEY });
@@ -27,6 +28,11 @@ const azure = createAzure({
 const agent = createMapAgent(map, {
     model: azure.chat(AZURE_DEPLOYMENT_ID),
     maxSteps: 10,
+    tools: {
+        getCustomLocation: getCustomLocationTool,
+    },
+    systemPromptSuffix:
+        'You can use getCustomLocation for saved places such as home and office. After resolving a saved place, use flyTo or calculateRoute if the user asks.',
 });
 
 // Chat UI elements
@@ -260,6 +266,7 @@ addMessage('assistant', '• "Find coffee shops near Piccadilly Circus"');
 addMessage('assistant', '• "Show me a route from London Eye to Tower Bridge"');
 addMessage('assistant', '• "Switch to satellite view and show traffic"');
 addMessage('assistant', '• "What\'s at these coordinates: -0.1276, 51.5074?"');
+addMessage('assistant', '• "Where is home?" or "Route from home to office"');
 
 // Focus input
 chatInput.focus();

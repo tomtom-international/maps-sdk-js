@@ -1,0 +1,18 @@
+[
+  {
+    "id": "home",
+    "name": "Home",
+    "aliases": ["my home", "house"],
+    "position": [-0.1276, 51.5074],
+    "address": "Central London",
+    "description": "Primary saved location"
+  },
+  {
+    "id": "office",
+    "name": "Office",
+    "aliases": ["work", "hq"],
+    "position": [4.909747340086911, 52.377329815737745],
+    "address": "De Ruijterkade 154, 1011 AC. Amsterdam",
+    "description": "Main office location"
+  }
+]
