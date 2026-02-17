@@ -23,7 +23,7 @@ import type { MapAgent, MapAgentOptions } from './types';
  * @example
  * ```typescript
  * import { TomTomMap } from '@tomtom-org/maps-sdk/map';
- * import { createMapAgent } from '@tomtom-org/maps-sdk-ai-agent';
+ * import { createMapAgent } from '@tomtom-org/maps-sdk-plugin-ai-agent';
  * import { openai } from '@ai-sdk/openai';
  * import { useChat } from '@ai-sdk/react';
  * import { DirectChatTransport } from 'ai';

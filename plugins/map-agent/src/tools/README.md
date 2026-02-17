@@ -71,7 +71,7 @@ When adding a new tool:
 All tools are exported from the main index file:
 
 ```typescript
-import { createMapToolSet } from '@tomtom-org/maps-sdk-ai-agent';
+import { createMapToolSet } from '@tomtom-org/maps-sdk-plugin-ai-agent';
 
 const tools = createMapToolSet(context);
 

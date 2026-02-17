@@ -11,7 +11,7 @@
  *
  * @example
  * ```typescript
- * import { createMapAgent, BASE_SYSTEM_PROMPT } from '@tomtom-org/maps-sdk-ai-agent';
+ * import { createMapAgent, BASE_SYSTEM_PROMPT } from '@tomtom-org/maps-sdk-plugin-ai-agent';
  *
  * const agent = createMapAgent(map, {
  *   model: openai('gpt-4o'),

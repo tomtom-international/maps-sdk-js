@@ -25,7 +25,7 @@ TomTomConfig.instance.put({ language: 'en-GB' });
  *
  * @example Basic usage with createMapToolSet
  * ```typescript
- * import { createState, createMapToolSet } from '@tomtom-org/maps-sdk-ai-agent';
+ * import { createState, createMapToolSet } from '@tomtom-org/maps-sdk-plugin-ai-agent';
  *
  * const state = createState(map);
  * const context = { map, state };
@@ -39,7 +39,7 @@ TomTomConfig.instance.put({ language: 'en-GB' });
  * @example Setting up test fixtures
  * ```typescript
  * import { describe, it, beforeEach } from 'vitest';
- * import { createState, createMapToolSet } from '@tomtom-org/maps-sdk-ai-agent';
+ * import { createState, createMapToolSet } from '@tomtom-org/maps-sdk-plugin-ai-agent';
  *
  * describe('Map tools', () => {
  *   let state, tools;
@@ -60,7 +60,7 @@ TomTomConfig.instance.put({ language: 'en-GB' });
  *
  * @example Multiple independent agents
  * ```typescript
- * import { createState, createMapToolSet, BASE_SYSTEM_PROMPT } from '@tomtom-org/maps-sdk-ai-agent';
+ * import { createState, createMapToolSet, BASE_SYSTEM_PROMPT } from '@tomtom-org/maps-sdk-plugin-ai-agent';
  * import { ToolLoopAgent } from 'ai';
  *
  * // Agent 1: Search specialist
