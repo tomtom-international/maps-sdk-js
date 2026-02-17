@@ -29,9 +29,6 @@ We have released some capabilities in the Maps SDK under [Public Preview](https:
 ```
 npm i @tomtom-org/maps-sdk
 ```
-Additionally:
-* If you use the map: ```npm i maplibre-gl```
-<br/><br/>
 
 ## 📚 Documentation & Examples
 
