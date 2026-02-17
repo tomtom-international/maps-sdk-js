@@ -10,7 +10,7 @@ import type { ToolContext } from '../../types';
 /**
  * Tool schema for setting language.
  */
-const setLanguageSchema = z.object({
+export const setLanguageSchema = z.object({
     language: z.string().describe('Language code (e.g., "en-US", "fr-FR", "de-DE")'),
 });
 

@@ -12,7 +12,7 @@ import { summarizePlaces } from '../../utils/summarize';
 /**
  * Tool schema for searching places.
  */
-const searchPlacesSchema = z.object({
+export const searchPlacesSchema = z.object({
     query: z.string().describe('Search query for places, businesses, or POIs'),
     nearLongitude: z.number().optional().describe('Longitude coordinate to search near'),
     nearLatitude: z.number().optional().describe('Latitude coordinate to search near'),

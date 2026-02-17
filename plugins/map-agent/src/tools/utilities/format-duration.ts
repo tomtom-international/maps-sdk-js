@@ -10,7 +10,7 @@ import type { ToolContext } from '../../types';
 /**
  * Tool schema for formatting duration.
  */
-const formatDurationSchema = z.object({
+export const formatDurationSchema = z.object({
     seconds: z.number().describe('Duration in seconds to format'),
 });
 

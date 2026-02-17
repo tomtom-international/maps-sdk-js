@@ -9,7 +9,7 @@ import type { ToolContext } from '../../types';
 /**
  * Tool schema for toggling layers.
  */
-const toggleLayersSchema = z.object({
+export const toggleLayersSchema = z.object({
     visible: z.boolean().describe('Whether to show or hide the layers'),
     layerGroups: z
         .array(z.string())

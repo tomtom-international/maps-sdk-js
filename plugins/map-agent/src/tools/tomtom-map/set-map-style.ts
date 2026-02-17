@@ -9,7 +9,7 @@ import type { ToolContext } from '../../types';
 /**
  * Tool schema for setting map style.
  */
-const setMapStyleSchema = z.object({
+export const setMapStyleSchema = z.object({
     style: z
         .enum(['standardLight', 'standardDark', 'drivingLight', 'drivingDark', 'monoLight', 'monoDark', 'satellite'])
         .describe('Map visual theme'),

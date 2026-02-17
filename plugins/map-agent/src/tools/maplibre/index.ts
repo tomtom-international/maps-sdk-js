@@ -4,6 +4,6 @@
  * MapLibre tools - MapLibre-specific features like getting style details and updating layout/paint properties.
  */
 
-export { createGetStyleDetailsTool } from './get-style-details';
-export { createSetLayoutPropertyTool } from './set-layout-property';
-export { createSetPaintPropertyTool } from './set-paint-property';
+export { createGetStyleDetailsTool, getStyleSchema } from './get-style-details';
+export { createSetLayoutPropertyTool, setLayoutPropertySchema } from './set-layout-property';
+export { createSetPaintPropertyTool, setPaintPropertySchema } from './set-paint-property';

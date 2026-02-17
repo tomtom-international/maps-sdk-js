@@ -10,7 +10,7 @@ import type { ToolContext } from '../../types';
 /**
  * Tool schema for showing places on the map.
  */
-const showPlacesSchema = z.object({
+export const showPlacesSchema = z.object({
     fitBounds: z.boolean().optional().describe('Whether to fit the map bounds to show all places. Default is true.'),
 });
 

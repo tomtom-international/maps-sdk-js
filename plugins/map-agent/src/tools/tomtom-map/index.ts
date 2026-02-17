@@ -4,14 +4,20 @@
  * TomTom Map tools - operations for showing routes, places, toggling POIs, traffic, etc.
  */
 
-export { createClearMapTool } from './clear-map';
-export { createFitBoundsTool } from './fit-bounds';
-export { createFlyToTool } from './fly-to';
-export { createGetViewportTool } from './get-viewport';
-export { createSetLanguageTool } from './set-language';
-export { createSetMapStyleTool } from './set-map-style';
-export { createShowPlacesTool } from './show-places';
-export { createShowRouteTool } from './show-route';
-export { createToggleLayersTool } from './toggle-layers';
-export { createTogglePOIsTool } from './toggle-pois';
-export { createToggleTrafficFlowTool, createToggleTrafficIncidentsTool } from './toggle-traffic';
+export { clearMapSchema, createClearMapTool } from './clear-map';
+export { createFitBoundsTool, fitBoundsSchema } from './fit-bounds';
+export { createFlyToTool, flyToSchema } from './fly-to';
+export { createGetStandardMapStylesTool, getStandardMapStylesSchema } from './get-standard-map-styles';
+export { createGetViewportTool, getViewportSchema } from './get-viewport';
+export { createSetLanguageTool, setLanguageSchema } from './set-language';
+export { createSetMapStyleTool, setMapStyleSchema } from './set-map-style';
+export { createShowPlacesTool, showPlacesSchema } from './show-places';
+export { createShowRouteTool, showRouteSchema } from './show-route';
+export { createToggleLayersTool, toggleLayersSchema } from './toggle-layers';
+export { createTogglePOIsTool, togglePOIsSchema } from './toggle-pois';
+export {
+    createToggleTrafficFlowTool,
+    createToggleTrafficIncidentsTool,
+    toggleTrafficFlowSchema,
+    toggleTrafficIncidentsSchema,
+} from './toggle-traffic';

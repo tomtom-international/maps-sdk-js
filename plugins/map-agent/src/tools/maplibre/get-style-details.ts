@@ -9,7 +9,7 @@ import type { ToolContext } from '../../types';
 /**
  * Tool schema for getting style.
  */
-const getStyleSchema = z.object({
+export const getStyleSchema = z.object({
     layerIdQuery: z
         .string()
         .optional()

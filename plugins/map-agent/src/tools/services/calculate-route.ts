@@ -12,7 +12,7 @@ import { summarizeRoutes } from '../../utils/summarize';
 /**
  * Tool schema for calculating routes.
  */
-const calculateRouteSchema = z.object({
+export const calculateRouteSchema = z.object({
     from: z.string().describe('Starting location (address or place name)'),
     to: z.string().describe('Destination location (address or place name)'),
     via: z.array(z.string()).optional().describe('Intermediate waypoints'),

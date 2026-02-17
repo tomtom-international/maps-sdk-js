@@ -9,7 +9,7 @@ import type { ToolContext } from '../../types';
 /**
  * Tool schema for setting paint property.
  */
-const setPaintPropertySchema = z.object({
+export const setPaintPropertySchema = z.object({
     layerId: z.string().describe('The ID of the layer to update'),
     propertyName: z
         .string()

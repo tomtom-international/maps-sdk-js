@@ -9,7 +9,7 @@ import type { ToolContext } from '../../types';
 /**
  * Tool schema for clearing map features.
  */
-const clearMapSchema = z.object({
+export const clearMapSchema = z.object({
     layers: z
         .array(z.enum(['places', 'routes', 'geometries']))
         .optional()

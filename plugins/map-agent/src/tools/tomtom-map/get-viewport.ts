@@ -9,7 +9,7 @@ import type { ToolContext } from '../../types';
 /**
  * Tool schema for getting viewport.
  */
-const getViewportSchema = z.object({});
+export const getViewportSchema = z.object({});
 
 /**
  * Create the get viewport tool.

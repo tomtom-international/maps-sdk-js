@@ -10,7 +10,7 @@ import type { ToolContext } from '../../types';
 /**
  * Tool schema for reverse geocoding (coordinates to address).
  */
-const reverseGeocodeSchema = z.object({
+export const reverseGeocodeSchema = z.object({
     longitude: z.number().describe('Longitude coordinate'),
     latitude: z.number().describe('Latitude coordinate'),
 });

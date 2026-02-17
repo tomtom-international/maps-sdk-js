@@ -9,14 +9,14 @@ import type { ToolContext } from '../../types';
 /**
  * Tool schema for toggling traffic flow.
  */
-const toggleTrafficFlowSchema = z.object({
+export const toggleTrafficFlowSchema = z.object({
     visible: z.boolean().describe('Whether to show or hide traffic flow'),
 });
 
 /**
  * Tool schema for toggling traffic incidents.
  */
-const toggleTrafficIncidentsSchema = z.object({
+export const toggleTrafficIncidentsSchema = z.object({
     visible: z.boolean().describe('Whether to show or hide traffic incidents'),
 });
 

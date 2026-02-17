@@ -10,7 +10,7 @@ import type { ToolContext } from '../../types';
 /**
  * Tool schema for formatting distance.
  */
-const formatDistanceSchema = z.object({
+export const formatDistanceSchema = z.object({
     meters: z.number().describe('Distance in meters to format'),
     unitType: z
         .enum(['metric', 'imperial_us', 'imperial_uk'])

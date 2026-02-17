@@ -9,7 +9,7 @@ import type { ToolContext } from '../../types';
 /**
  * Tool schema for flying to a location.
  */
-const flyToSchema = z.object({
+export const flyToSchema = z.object({
     longitude: z.number().describe('Longitude coordinate'),
     latitude: z.number().describe('Latitude coordinate'),
     zoom: z.number().optional().describe('Zoom level (default: 14)'),

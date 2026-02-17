@@ -10,7 +10,7 @@ import type { ToolContext } from '../../types';
 /**
  * GeoJSON bounding box schema.
  */
-const geoJsonBBoxSchema = z
+export const geoJsonBBoxSchema = z
     .union([
         z.array(z.number()).refine((arr) => arr.length === 4, { message: 'BBox must have 4 elements' }),
         z.array(z.number()).refine((arr) => arr.length === 6, { message: 'BBox must have 6 elements' }),
@@ -27,7 +27,7 @@ const hasBBoxSchema = z.union([geoJsonBBoxSchema, z.object({ bbox: geoJsonBBoxSc
 /**
  * Tool schema for fitting bounds.
  */
-const fitBoundsSchema = z.object({
+export const fitBoundsSchema = z.object({
     hasBBox: hasBBoxSchema.describe(
         'A HasBBox object to fit the map to. Can be a BBox array [west, south, east, north], or a GeoJSON object with bbox property.',
     ),

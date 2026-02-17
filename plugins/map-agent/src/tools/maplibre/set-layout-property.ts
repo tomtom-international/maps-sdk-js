@@ -9,7 +9,7 @@ import type { ToolContext } from '../../types';
 /**
  * Tool schema for setting layout property.
  */
-const setLayoutPropertySchema = z.object({
+export const setLayoutPropertySchema = z.object({
     layerId: z.string().describe('The ID of the layer to update'),
     propertyName: z
         .string()

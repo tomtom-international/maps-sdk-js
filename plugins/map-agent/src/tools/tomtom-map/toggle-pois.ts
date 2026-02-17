@@ -9,7 +9,7 @@ import type { ToolContext } from '../../types';
 /**
  * Tool schema for toggling POIs.
  */
-const togglePOIsSchema = z.object({
+export const togglePOIsSchema = z.object({
     visible: z.boolean().describe('Whether to show or hide POI icons'),
     categories: z.array(z.string()).optional().describe('Specific POI categories to filter'),
 });

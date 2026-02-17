@@ -11,7 +11,7 @@ import type { ToolContext } from '../../types';
 /**
  * Tool schema for showing routes on the map.
  */
-const showRouteSchema = z.object({
+export const showRouteSchema = z.object({
     routeIndex: z.number().optional().describe('Index of the route to display (default: 0 for main route)'),
     fitBounds: z.boolean().optional().describe('Whether to fit the map bounds to show the route. Default is true.'),
 });

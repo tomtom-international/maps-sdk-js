@@ -2,73 +2,20 @@
  * @module map-agent-tools
  */
 
+import type { Tool } from 'ai';
 import type { ToolContext } from '../types';
-
-// MapLibre tools - MapLibre-specific features
-import { createGetStyleDetailsTool } from './maplibre/get-style-details';
-import { createSetLayoutPropertyTool } from './maplibre/set-layout-property';
-import { createSetPaintPropertyTool } from './maplibre/set-paint-property';
-
-// Service tools - SDK services without map display
-import { createCalculateRouteTool } from './services/calculate-route';
-import { createGeocodeTool } from './services/geocode';
-import { createReverseGeocodeTool } from './services/reverse-geocode';
-import { createSearchPlacesTool } from './services/search-places';
-
-// TomTom Map tools - map display operations
-import { createClearMapTool } from './tomtom-map/clear-map';
-import { createFitBoundsTool } from './tomtom-map/fit-bounds';
-import { createFlyToTool } from './tomtom-map/fly-to';
-import { createGetViewportTool } from './tomtom-map/get-viewport';
-import { createSetLanguageTool } from './tomtom-map/set-language';
-import { createSetMapStyleTool } from './tomtom-map/set-map-style';
-import { createShowPlacesTool } from './tomtom-map/show-places';
-import { createShowRouteTool } from './tomtom-map/show-route';
-import { createToggleLayersTool } from './tomtom-map/toggle-layers';
-import { createTogglePOIsTool } from './tomtom-map/toggle-pois';
-import { createToggleTrafficFlowTool, createToggleTrafficIncidentsTool } from './tomtom-map/toggle-traffic';
-
-// Utility tools - pure functions that calculate values
-import { createFormatDistanceTool } from './utilities/format-distance';
-import { createFormatDurationTool } from './utilities/format-duration';
+import { createAllToolsFromRegistry, TOOL_REGISTRY } from './tool-registry';
 
 /**
  * The complete set of default map agent tools.
  *
  * @remarks
  * This type defines the structure of the default tool set returned by createMapToolSet().
- * When adding new tools, add them here to automatically update DefaultToolName.
+ * When adding new tools, add them to the TOOL_REGISTRY in tool-registry.ts.
  */
-export interface DefaultToolSet {
-    // Service tools - SDK services without map display
-    geocode: ReturnType<typeof createGeocodeTool>;
-    reverseGeocode: ReturnType<typeof createReverseGeocodeTool>;
-    searchPlaces: ReturnType<typeof createSearchPlacesTool>;
-    calculateRoute: ReturnType<typeof createCalculateRouteTool>;
-
-    // Utility tools - pure functions that calculate values
-    formatDistance: ReturnType<typeof createFormatDistanceTool>;
-    formatDuration: ReturnType<typeof createFormatDurationTool>;
-
-    // TomTom Map tools - map display operations
-    showPlaces: ReturnType<typeof createShowPlacesTool>;
-    showRoute: ReturnType<typeof createShowRouteTool>;
-    clearMap: ReturnType<typeof createClearMapTool>;
-    flyTo: ReturnType<typeof createFlyToTool>;
-    fitBounds: ReturnType<typeof createFitBoundsTool>;
-    toggleTrafficFlow: ReturnType<typeof createToggleTrafficFlowTool>;
-    toggleTrafficIncidents: ReturnType<typeof createToggleTrafficIncidentsTool>;
-    togglePOIs: ReturnType<typeof createTogglePOIsTool>;
-    setMapStyle: ReturnType<typeof createSetMapStyleTool>;
-    setLanguage: ReturnType<typeof createSetLanguageTool>;
-    getViewport: ReturnType<typeof createGetViewportTool>;
-    toggleLayers: ReturnType<typeof createToggleLayersTool>;
-
-    // MapLibre tools - MapLibre-specific features
-    getStyleDetails: ReturnType<typeof createGetStyleDetailsTool>;
-    setLayoutProperty: ReturnType<typeof createSetLayoutPropertyTool>;
-    setPaintProperty: ReturnType<typeof createSetPaintPropertyTool>;
-}
+export type DefaultToolSet = {
+    [K in keyof typeof TOOL_REGISTRY]: Tool;
+};
 
 /**
  * Creates the complete map agent toolset.
@@ -193,34 +140,17 @@ export interface DefaultToolSet {
  * @see {@link BASE_SYSTEM_PROMPT}
  */
 export function createMapToolSet(context: ToolContext): DefaultToolSet {
-    return {
-        // Service tools - SDK services without map display
-        geocode: createGeocodeTool(context),
-        reverseGeocode: createReverseGeocodeTool(context),
-        searchPlaces: createSearchPlacesTool(context),
-        calculateRoute: createCalculateRouteTool(context),
-
-        // Utility tools - pure functions that calculate values
-        formatDistance: createFormatDistanceTool(context),
-        formatDuration: createFormatDurationTool(context),
-
-        // TomTom Map tools - map display operations
-        showPlaces: createShowPlacesTool(context),
-        showRoute: createShowRouteTool(context),
-        clearMap: createClearMapTool(context),
-        flyTo: createFlyToTool(context),
-        fitBounds: createFitBoundsTool(context),
-        toggleTrafficFlow: createToggleTrafficFlowTool(context),
-        toggleTrafficIncidents: createToggleTrafficIncidentsTool(context),
-        togglePOIs: createTogglePOIsTool(context),
-        setMapStyle: createSetMapStyleTool(context),
-        setLanguage: createSetLanguageTool(context),
-        getViewport: createGetViewportTool(context),
-        toggleLayers: createToggleLayersTool(context),
-
-        // MapLibre tools - MapLibre-specific features
-        getStyleDetails: createGetStyleDetailsTool(context),
-        setLayoutProperty: createSetLayoutPropertyTool(context),
-        setPaintProperty: createSetPaintPropertyTool(context),
-    };
+    return createAllToolsFromRegistry(context) as DefaultToolSet;
 }
+
+export type { ToolCategory, ToolMetadata } from './tool-registry';
+// Export tool registry for advanced use cases
+export {
+    createAllToolsFromRegistry,
+    createToolFromRegistry,
+    getToolMetadata,
+    getToolsByCategory,
+    searchToolsInRegistry,
+    TOOL_CATEGORIES,
+    TOOL_REGISTRY,
+} from './tool-registry';
