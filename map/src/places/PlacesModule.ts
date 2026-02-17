@@ -446,6 +446,26 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
     }
 
     /**
+     * Returns the currently shown places.
+     *
+     * @returns The places currently displayed on the map.
+     *
+     * @remarks
+     * Returns the exact data that was passed to the `show()` method.
+     *
+     * @example
+     * ```typescript
+     * const shown = placesModule.getShown();
+     * console.log(`Showing ${shown.places.features.length} places`);
+     * ```
+     */
+    getShown() {
+        return {
+            places: this.sourcesWithLayers.places.shownFeatures,
+        };
+    }
+
+    /**
      * Programmatically sets an event state on a specific place.
      *
      * @param options - Configuration for the event state to apply.

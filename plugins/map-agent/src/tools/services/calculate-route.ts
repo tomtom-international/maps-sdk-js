@@ -6,8 +6,8 @@ import type { Place } from '@tomtom-org/maps-sdk/core';
 import { calculateRoute, geocode } from '@tomtom-org/maps-sdk/services';
 import { dynamicTool, type Tool } from 'ai';
 import { z } from 'zod';
-import type { ToolContext } from '../types';
-import { summarizeRoutes } from '../utils/summarize';
+import type { ToolContext } from '../../types';
+import { summarizeRoutes } from '../../utils/summarize';
 
 /**
  * Tool schema for calculating routes.

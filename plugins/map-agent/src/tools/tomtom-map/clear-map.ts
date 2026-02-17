@@ -4,7 +4,7 @@
 
 import { dynamicTool, type Tool } from 'ai';
 import { z } from 'zod';
-import type { ToolContext } from '../types';
+import type { ToolContext } from '../../types';
 
 /**
  * Tool schema for clearing map features.

@@ -4,7 +4,7 @@
 
 import type { TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { type Tool, ToolLoopAgent } from 'ai';
-import { createState, resetState } from './state';
+import { createState } from './state';
 import { buildSystemPrompt } from './system-prompt';
 import { createMapToolSet } from './tools';
 import type { MapAgent, MapAgentOptions } from './types';
@@ -70,10 +70,10 @@ export function createMapAgent(map: TomTomMap, options: MapAgentOptions): MapAge
     }
 
     // Create agent state
-    const state = createState();
+    const state = createState(map);
 
     // Create tool context
-    const context = { map, state };
+    const context = { state };
 
     // Create toolset - always start with defaults
     const defaultTools = createMapToolSet(context);
@@ -128,7 +128,7 @@ export function createMapAgent(map: TomTomMap, options: MapAgentOptions): MapAge
         systemPrompt,
         state,
         destroy: () => {
-            resetState(state);
+            state.reset();
         },
     };
 }

@@ -457,6 +457,27 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
     }
 
     /**
+     * Returns the currently shown geometries.
+     *
+     * @returns The geometries currently displayed on the map.
+     *
+     * @remarks
+     * Returns the exact data that was passed to the `show()` method.
+     *
+     * @example
+     * ```typescript
+     * const shown = geometriesModule.getShown();
+     * console.log(`Geometries: ${shown.geometry.features.length}`);
+     * ```
+     */
+    getShown() {
+        return {
+            geometry: this.sourcesWithLayers.geometry.shownFeatures,
+            geometryLabel: this.sourcesWithLayers.geometryLabel.shownFeatures,
+        };
+    }
+
+    /**
      * Gets the events interface for handling user interactions with geometries.
      *
      * @returns An EventsModule instance for registering event handlers.

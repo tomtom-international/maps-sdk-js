@@ -2,10 +2,9 @@
  * @module map-agent-tools
  */
 
-import { TrafficFlowModule, TrafficIncidentsModule } from '@tomtom-org/maps-sdk/map';
 import { dynamicTool, type Tool } from 'ai';
 import { z } from 'zod';
-import type { ToolContext } from '../types';
+import type { ToolContext } from '../../types';
 
 /**
  * Tool schema for toggling traffic flow.
@@ -32,9 +31,9 @@ export function createToggleTrafficFlowTool(context: ToolContext): Tool {
             const { visible } = params as z.infer<typeof toggleTrafficIncidentsSchema>;
             try {
                 // Lazy-init TrafficFlowModule
-                context.state.modules.trafficFlow ??= await TrafficFlowModule.get(context.map);
+                const trafficFlowModule = await context.state.getTrafficFlowModule();
 
-                context.state.modules.trafficFlow.setVisible(visible);
+                trafficFlowModule.setVisible(visible);
 
                 return {
                     success: true,
@@ -60,9 +59,9 @@ export function createToggleTrafficIncidentsTool(context: ToolContext): Tool {
             const { visible } = params as z.infer<typeof toggleTrafficIncidentsSchema>;
             try {
                 // Lazy-init TrafficIncidentsModule
-                context.state.modules.trafficIncidents ??= await TrafficIncidentsModule.get(context.map);
+                const trafficIncidentsModule = await context.state.getTrafficIncidentsModule();
 
-                context.state.modules.trafficIncidents.setVisible(visible);
+                trafficIncidentsModule.setVisible(visible);
 
                 return {
                     success: true,

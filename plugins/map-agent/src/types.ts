@@ -3,14 +3,14 @@
  */
 
 import type { Place, Places, Routes } from '@tomtom-org/maps-sdk/core';
-import type {
+import {
     BaseMapModule,
     GeometriesModule,
     HillshadeModule,
     PlacesModule,
     POIsModule,
     RoutingModule,
-    TomTomMap,
+    type TomTomMap,
     TrafficFlowModule,
     TrafficIncidentsModule,
 } from '@tomtom-org/maps-sdk/map';
@@ -23,21 +23,13 @@ import type { DefaultToolSet } from './tools';
  * This state retains full GeoJSON data from service calls so map tools
  * can render it without re-fetching. Module instances are cached for reuse.
  */
-export interface MapAgentState {
-    /** Accumulated search results — full GeoJSON retained for showPlaces(). */
-    searchResultsHistory: Places[];
-
-    /** Accumulated calculated routes — full GeoJSON retained for showRoute(). */
-    routesHistory: Routes[];
-
-    /** Last geocoded/resolved waypoints. */
+export class TomTomMapWithModules {
+    searchResultsHistory: Places[] = [];
+    routesHistory: Routes[] = [];
     lastWaypoints?: Place[];
-
-    /** Last single geocode result. */
     lastGeocodeResult?: Place;
 
-    /** Lazily-initialized module instances (cached across tool calls). */
-    modules: {
+    private _modules: {
         places?: PlacesModule;
         routing?: RoutingModule;
         trafficFlow?: TrafficFlowModule;
@@ -46,7 +38,95 @@ export interface MapAgentState {
         geometries?: GeometriesModule;
         baseMap?: BaseMapModule;
         hillshade?: HillshadeModule;
-    };
+    } = {};
+
+    constructor(public readonly map: TomTomMap) {}
+
+    /**
+     * Get or lazily initialize the PlacesModule.
+     */
+    async getPlacesModule(): Promise<PlacesModule> {
+        this._modules.places ??= await PlacesModule.get(this.map);
+        return this._modules.places;
+    }
+
+    /**
+     * Get or lazily initialize the RoutingModule.
+     */
+    async getRoutingModule(): Promise<RoutingModule> {
+        this._modules.routing ??= await RoutingModule.get(this.map);
+        return this._modules.routing;
+    }
+
+    /**
+     * Get or lazily initialize the TrafficFlowModule.
+     */
+    async getTrafficFlowModule(): Promise<TrafficFlowModule> {
+        this._modules.trafficFlow ??= await TrafficFlowModule.get(this.map);
+        return this._modules.trafficFlow;
+    }
+
+    /**
+     * Get or lazily initialize the TrafficIncidentsModule.
+     */
+    async getTrafficIncidentsModule(): Promise<TrafficIncidentsModule> {
+        this._modules.trafficIncidents ??= await TrafficIncidentsModule.get(this.map);
+        return this._modules.trafficIncidents;
+    }
+
+    /**
+     * Get or lazily initialize the POIsModule.
+     */
+    async getPOIsModule(): Promise<POIsModule> {
+        this._modules.pois ??= await POIsModule.get(this.map);
+        return this._modules.pois;
+    }
+
+    /**
+     * Get or lazily initialize the GeometriesModule.
+     */
+    async getGeometriesModule(): Promise<GeometriesModule> {
+        this._modules.geometries ??= await GeometriesModule.get(this.map);
+        return this._modules.geometries;
+    }
+
+    /**
+     * Get or lazily initialize the BaseMapModule.
+     */
+    async getBaseMapModule(): Promise<BaseMapModule> {
+        this._modules.baseMap ??= await BaseMapModule.get(this.map);
+        return this._modules.baseMap;
+    }
+
+    /**
+     * Get or lazily initialize the HillshadeModule.
+     */
+    async getHillshadeModule(): Promise<HillshadeModule> {
+        this._modules.hillshade ??= await HillshadeModule.get(this.map);
+        return this._modules.hillshade;
+    }
+
+    /**
+     * Access to module cache for conditional checks (e.g., in clear-map tool).
+     * @internal
+     */
+    get modules() {
+        return this._modules;
+    }
+
+    /**
+     * Reset the agent state, clearing all cached data and modules.
+     */
+    reset(): void {
+        // Clear data
+        this.searchResultsHistory = [];
+        this.routesHistory = [];
+        this.lastWaypoints = undefined;
+        this.lastGeocodeResult = undefined;
+
+        // Clear module references
+        this._modules = {};
+    }
 }
 
 /**
@@ -228,7 +308,7 @@ export interface MapAgent {
     readonly systemPrompt: string;
 
     /** Live agent state (last results, module cache). Readonly externally. */
-    readonly state: Readonly<MapAgentState>;
+    readonly state: Readonly<TomTomMapWithModules>;
 
     /** Tear down: clears modules, resets state. */
     destroy(): void;
@@ -238,6 +318,5 @@ export interface MapAgent {
  * Context passed to tool execution functions.
  */
 export interface ToolContext {
-    map: TomTomMap;
-    state: MapAgentState;
+    state: TomTomMapWithModules;
 }

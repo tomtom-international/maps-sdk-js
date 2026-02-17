@@ -3,21 +3,34 @@
  */
 
 import type { ToolContext } from '../types';
-import { createCalculateRouteTool } from './calculate-route';
-import { createClearMapTool } from './clear-map';
-import { createFitBoundsTool } from './fit-bounds';
-import { createFlyToTool } from './fly-to';
-import { createGeocodeTool } from './geocode';
-import { createGetViewportTool } from './get-viewport';
-import { createReverseGeocodeTool } from './reverse-geocode';
-import { createSearchPlacesTool } from './search-places';
-import { createSetLanguageTool } from './set-language';
-import { createSetMapStyleTool } from './set-map-style';
-import { createShowPlacesTool } from './show-places';
-import { createShowRouteTool } from './show-route';
-import { createToggleLayersTool } from './toggle-layers';
-import { createTogglePOIsTool } from './toggle-pois';
-import { createToggleTrafficFlowTool, createToggleTrafficIncidentsTool } from './toggle-traffic';
+
+// MapLibre tools - MapLibre-specific features
+import { createGetStyleDetailsTool } from './maplibre/get-style-details';
+import { createSetLayoutPropertyTool } from './maplibre/set-layout-property';
+import { createSetPaintPropertyTool } from './maplibre/set-paint-property';
+
+// Service tools - SDK services without map display
+import { createCalculateRouteTool } from './services/calculate-route';
+import { createGeocodeTool } from './services/geocode';
+import { createReverseGeocodeTool } from './services/reverse-geocode';
+import { createSearchPlacesTool } from './services/search-places';
+
+// TomTom Map tools - map display operations
+import { createClearMapTool } from './tomtom-map/clear-map';
+import { createFitBoundsTool } from './tomtom-map/fit-bounds';
+import { createFlyToTool } from './tomtom-map/fly-to';
+import { createGetViewportTool } from './tomtom-map/get-viewport';
+import { createSetLanguageTool } from './tomtom-map/set-language';
+import { createSetMapStyleTool } from './tomtom-map/set-map-style';
+import { createShowPlacesTool } from './tomtom-map/show-places';
+import { createShowRouteTool } from './tomtom-map/show-route';
+import { createToggleLayersTool } from './tomtom-map/toggle-layers';
+import { createTogglePOIsTool } from './tomtom-map/toggle-pois';
+import { createToggleTrafficFlowTool, createToggleTrafficIncidentsTool } from './tomtom-map/toggle-traffic';
+
+// Utility tools - pure functions that calculate values
+import { createFormatDistanceTool } from './utilities/format-distance';
+import { createFormatDurationTool } from './utilities/format-duration';
 
 /**
  * The complete set of default map agent tools.
@@ -27,13 +40,17 @@ import { createToggleTrafficFlowTool, createToggleTrafficIncidentsTool } from '.
  * When adding new tools, add them here to automatically update DefaultToolName.
  */
 export interface DefaultToolSet {
-    // Data tools
+    // Service tools - SDK services without map display
     geocode: ReturnType<typeof createGeocodeTool>;
     reverseGeocode: ReturnType<typeof createReverseGeocodeTool>;
     searchPlaces: ReturnType<typeof createSearchPlacesTool>;
     calculateRoute: ReturnType<typeof createCalculateRouteTool>;
 
-    // Map tools
+    // Utility tools - pure functions that calculate values
+    formatDistance: ReturnType<typeof createFormatDistanceTool>;
+    formatDuration: ReturnType<typeof createFormatDurationTool>;
+
+    // TomTom Map tools - map display operations
     showPlaces: ReturnType<typeof createShowPlacesTool>;
     showRoute: ReturnType<typeof createShowRouteTool>;
     clearMap: ReturnType<typeof createClearMapTool>;
@@ -46,6 +63,11 @@ export interface DefaultToolSet {
     setLanguage: ReturnType<typeof createSetLanguageTool>;
     getViewport: ReturnType<typeof createGetViewportTool>;
     toggleLayers: ReturnType<typeof createToggleLayersTool>;
+
+    // MapLibre tools - MapLibre-specific features
+    getStyleDetails: ReturnType<typeof createGetStyleDetailsTool>;
+    setLayoutProperty: ReturnType<typeof createSetLayoutPropertyTool>;
+    setPaintProperty: ReturnType<typeof createSetPaintPropertyTool>;
 }
 
 /**
@@ -172,13 +194,17 @@ export interface DefaultToolSet {
  */
 export function createMapToolSet(context: ToolContext): DefaultToolSet {
     return {
-        // Data tools
+        // Service tools - SDK services without map display
         geocode: createGeocodeTool(context),
         reverseGeocode: createReverseGeocodeTool(context),
         searchPlaces: createSearchPlacesTool(context),
         calculateRoute: createCalculateRouteTool(context),
 
-        // Map tools
+        // Utility tools - pure functions that calculate values
+        formatDistance: createFormatDistanceTool(context),
+        formatDuration: createFormatDurationTool(context),
+
+        // TomTom Map tools - map display operations
         showPlaces: createShowPlacesTool(context),
         showRoute: createShowRouteTool(context),
         clearMap: createClearMapTool(context),
@@ -191,5 +217,10 @@ export function createMapToolSet(context: ToolContext): DefaultToolSet {
         setLanguage: createSetLanguageTool(context),
         getViewport: createGetViewportTool(context),
         toggleLayers: createToggleLayersTool(context),
+
+        // MapLibre tools - MapLibre-specific features
+        getStyleDetails: createGetStyleDetailsTool(context),
+        setLayoutProperty: createSetLayoutPropertyTool(context),
+        setPaintProperty: createSetPaintPropertyTool(context),
     };
 }

@@ -3,17 +3,17 @@
  */
 
 import { bboxFromGeoJSON } from '@tomtom-org/maps-sdk/core';
-import { RoutingModule } from '@tomtom-org/maps-sdk/map';
 import { dynamicTool, type Tool } from 'ai';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import { z } from 'zod';
-import type { ToolContext } from '../types';
+import type { ToolContext } from '../../types';
 
 /**
  * Tool schema for showing routes on the map.
  */
 const showRouteSchema = z.object({
     routeIndex: z.number().optional().describe('Index of the route to display (default: 0 for main route)'),
+    fitBounds: z.boolean().optional().describe('Whether to fit the map bounds to show the route. Default is true.'),
 });
 
 /**
@@ -24,7 +24,7 @@ export function createShowRouteTool(context: ToolContext): Tool {
         description: 'Display the most recent calculated route on the map',
         inputSchema: showRouteSchema,
         execute: async (params) => {
-            const { routeIndex = 0 } = params as z.infer<typeof showRouteSchema>;
+            const { routeIndex = 0, fitBounds = true } = params as z.infer<typeof showRouteSchema>;
             try {
                 if (!context.state.routesHistory.length) {
                     return { error: 'No routes available to display' };
@@ -36,21 +36,22 @@ export function createShowRouteTool(context: ToolContext): Tool {
                     features: context.state.routesHistory.flatMap((routes) => routes.features),
                 };
 
-                // Lazy-init RoutingModule
-                context.state.modules.routing ??= await RoutingModule.get(context.map);
+                const routingModule = await context.state.getRoutingModule();
 
                 // Show all routes
-                await context.state.modules.routing.showRoutes(mergedRoutes, { selectedIndex: routeIndex });
+                await routingModule.showRoutes(mergedRoutes, { selectedIndex: routeIndex });
 
                 // Show waypoints if available
                 if (context.state.lastWaypoints) {
-                    await context.state.modules.routing.showWaypoints(context.state.lastWaypoints);
+                    await routingModule.showWaypoints(context.state.lastWaypoints);
                 }
 
-                // Automatically fit bounds to show all routes
-                const bbox = bboxFromGeoJSON(context.state.routesHistory);
-                if (bbox) {
-                    context.map.mapLibreMap.fitBounds(bbox as LngLatBoundsLike, { padding: 50 });
+                // Fit bounds to show all routes if requested
+                if (fitBounds) {
+                    const bbox = bboxFromGeoJSON(context.state.routesHistory);
+                    if (bbox) {
+                        context.state.map.mapLibreMap.fitBounds(bbox as LngLatBoundsLike, { padding: 50 });
+                    }
                 }
 
                 return {

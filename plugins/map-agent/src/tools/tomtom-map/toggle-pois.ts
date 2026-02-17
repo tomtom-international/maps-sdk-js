@@ -2,10 +2,9 @@
  * @module map-agent-tools
  */
 
-import { POIsModule } from '@tomtom-org/maps-sdk/map';
 import { dynamicTool, type Tool } from 'ai';
 import { z } from 'zod';
-import type { ToolContext } from '../types';
+import type { ToolContext } from '../../types';
 
 /**
  * Tool schema for toggling POIs.
@@ -26,12 +25,12 @@ export function createTogglePOIsTool(context: ToolContext): Tool {
             const { visible, categories } = params as z.infer<typeof togglePOIsSchema>;
             try {
                 // Lazy-init POIsModule
-                context.state.modules.pois ??= await POIsModule.get(context.map);
+                const poisModule = await context.state.getPOIsModule();
 
-                context.state.modules.pois.setVisible(visible);
+                poisModule.setVisible(visible);
 
                 if (categories && categories.length > 0) {
-                    context.state.modules.pois.filterCategories({ show: categories } as any);
+                    poisModule.filterCategories({ show: categories } as any);
                 }
 
                 return {

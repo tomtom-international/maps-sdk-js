@@ -335,6 +335,27 @@ export class POIsModule extends AbstractMapModule<PoIsSourcesAndLayers, POIsModu
     }
 
     /**
+     * Returns features currently visible in the viewport.
+     *
+     * @returns An object containing visible POI features with properly typed properties.
+     *
+     * @example
+     * ```typescript
+     * const shown = poisModule.getShown();
+     * console.log(`Visible POIs: ${shown.poi.length}`);
+     * shown.poi.forEach(poi => {
+     *   console.log(poi.properties.name, poi.properties.category);
+     * });
+     * ```
+     */
+    getShown() {
+        const sourceId = this.sourcesWithLayers.poi.sourceAndLayerIDs.sourceID;
+        return {
+            poi: this.mapLibreMap.querySourceFeatures(sourceId) as unknown as POIsModuleFeature[],
+        };
+    }
+
+    /**
      * Gets the events interface for handling user interactions with POIs.
      *
      * @returns An EventsModule instance for registering event handlers.

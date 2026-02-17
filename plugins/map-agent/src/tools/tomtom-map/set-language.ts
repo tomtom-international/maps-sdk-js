@@ -2,9 +2,10 @@
  * @module map-agent-tools
  */
 
+import { Language, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { dynamicTool, type Tool } from 'ai';
 import { z } from 'zod';
-import type { ToolContext } from '../types';
+import type { ToolContext } from '../../types';
 
 /**
  * Tool schema for setting language.
@@ -23,7 +24,8 @@ export function createSetLanguageTool(context: ToolContext): Tool {
         execute: async (params) => {
             const { language } = params as z.infer<typeof setLanguageSchema>;
             try {
-                context.map.setLanguage(language as any);
+                TomTomConfig.instance.put({ language: language as Language });
+                context.state.map.setLanguage(language as any);
 
                 return {
                     success: true,

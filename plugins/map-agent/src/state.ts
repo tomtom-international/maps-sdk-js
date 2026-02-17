@@ -2,7 +2,11 @@
  * @module map-agent-state
  */
 
-import type { MapAgentState } from './types';
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import type { TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { TomTomMapWithModules } from './types';
+
+TomTomConfig.instance.put({ language: 'en-GB' });
 
 /**
  * Creates a new empty agent state.
@@ -10,7 +14,8 @@ import type { MapAgentState } from './types';
  * Exported for advanced scenarios where you're building tools manually.
  * **Most users don't need this** - {@link createMapAgent} handles state creation automatically.
  *
- * @returns A new empty MapAgentState instance
+ * @param map - The TomTomMap instance that the state will manage modules for
+ * @returns A new empty TomTomMapWithModules instance
  *
  * @remarks
  * Use this when:
@@ -22,7 +27,7 @@ import type { MapAgentState } from './types';
  * ```typescript
  * import { createState, createMapToolSet } from '@tomtom-org/maps-sdk-map-agent';
  *
- * const state = createState();
+ * const state = createState(map);
  * const context = { map, state };
  * const tools = createMapToolSet(context);
  *
@@ -40,7 +45,7 @@ import type { MapAgentState } from './types';
  *   let state, tools;
  *
  *   beforeEach(() => {
- *     state = createState();
+ *     state = createState(mockMap);
  *     tools = createMapToolSet({ map: mockMap, state });
  *   });
  *
@@ -59,7 +64,7 @@ import type { MapAgentState } from './types';
  * import { ToolLoopAgent } from 'ai';
  *
  * // Agent 1: Search specialist
- * const searchState = createState();
+ * const searchState = createState(map);
  * const searchTools = createMapToolSet({ map, state: searchState });
  * const searchAgent = new ToolLoopAgent({
  *   model: openai('gpt-4o'),
@@ -68,7 +73,7 @@ import type { MapAgentState } from './types';
  * });
  *
  * // Agent 2: Routing specialist
- * const routeState = createState();
+ * const routeState = createState(map);
  * const routeTools = createMapToolSet({ map, state: routeState });
  * const routeAgent = new ToolLoopAgent({
  *   model: openai('gpt-4o'),
@@ -78,27 +83,18 @@ import type { MapAgentState } from './types';
  * ```
  *
  * @see {@link createMapToolSet}
- * @see {@link MapAgentState}
+ * @see {@link TomTomMapWithModules}
  * @see {@link resetState}
  */
-export function createState(): MapAgentState {
-    return {
-        searchResultsHistory: [],
-        routesHistory: [],
-        modules: {},
-    };
+export function createState(map: TomTomMap): TomTomMapWithModules {
+    return new TomTomMapWithModules(map);
 }
 
 /**
  * Resets the agent state, clearing all cached data and modules.
+ *
+ * @deprecated Use `state.reset()` method instead
  */
-export function resetState(state: MapAgentState): void {
-    // Clear data
-    state.searchResultsHistory = [];
-    state.routesHistory = [];
-    delete state.lastWaypoints;
-    delete state.lastGeocodeResult;
-
-    // Clear module references
-    state.modules = {};
+export function resetState(state: TomTomMapWithModules): void {
+    state.reset();
 }

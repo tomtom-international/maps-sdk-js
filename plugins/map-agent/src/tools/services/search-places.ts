@@ -6,8 +6,8 @@ import { POICategory } from '@tomtom-org/maps-sdk/core';
 import { search } from '@tomtom-org/maps-sdk/services';
 import { dynamicTool, type Tool } from 'ai';
 import { z } from 'zod';
-import type { ToolContext } from '../types';
-import { summarizePlaces } from '../utils/summarize';
+import type { ToolContext } from '../../types';
+import { summarizePlaces } from '../../utils/summarize';
 
 /**
  * Tool schema for searching places.

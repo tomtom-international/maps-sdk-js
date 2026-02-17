@@ -30,7 +30,8 @@ CAPABILITIES:
 - Calculate driving routes between locations
 - Display search results and routes on the map
 - Control map appearance (theme, language, traffic, POIs, layers)
-- Navigate the map camera (fly to, fit bounds)
+- Fit bounds: to fit the map to a bounding box or to GeoJSON features that contain a bbox. This can be applied to zoom into shown search results, routes, and geocoded locations.
+- Fly to: to move the map to specific coordinates and zoom level
 
 COORDINATE CONVENTION:
 - All coordinates are [longitude, latitude] (GeoJSON standard)

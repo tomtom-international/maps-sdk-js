@@ -4,7 +4,7 @@
 
 import { dynamicTool, type Tool } from 'ai';
 import { z } from 'zod';
-import type { ToolContext } from '../types';
+import type { ToolContext } from '../../types';
 
 /**
  * Tool schema for setting map style.
@@ -25,7 +25,7 @@ export function createSetMapStyleTool(context: ToolContext): Tool {
         execute: async (params) => {
             const { style } = params as z.infer<typeof setMapStyleSchema>;
             try {
-                context.map.setStyle(style);
+                context.state.map.setStyle(style);
 
                 return {
                     success: true,

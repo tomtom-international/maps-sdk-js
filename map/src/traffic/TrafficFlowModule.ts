@@ -294,6 +294,49 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
     }
 
     /**
+     * Returns features currently visible in the viewport.
+     *
+     * @returns An object containing visible traffic flow features.
+     *
+     * @remarks
+     * Returns all traffic flow features currently rendered in the visible map area.
+     * These represent road segments with real-time traffic speed information.
+     *
+     * **Feature Properties:**
+     * Properties depend on the traffic flow vector tile schema and may include:
+     * - Current speed
+     * - Free flow speed
+     * - Road category
+     * - Congestion level
+     * - Road closure status
+     *
+     * @example
+     * ```typescript
+     * const shown = trafficFlow.getShown();
+     * console.log(`Visible flow segments: ${shown.trafficFlow.length}`);
+     * shown.trafficFlow.forEach(segment => {
+     *   console.log('Road segment:', segment.properties);
+     * });
+     * ```
+     *
+     * @example
+     * Analyze congestion in viewport:
+     * ```typescript
+     * const shown = trafficFlow.getShown();
+     * const congested = shown.trafficFlow.filter(
+     *   segment => segment.properties.speed < segment.properties.freeFlowSpeed * 0.5
+     * );
+     * console.log(`Congested segments: ${congested.length}`);
+     * ```
+     */
+    getShown() {
+        const sourceId = this.sourcesWithLayers.trafficFlow.sourceAndLayerIDs.sourceID;
+        return {
+            trafficFlow: this.mapLibreMap.querySourceFeatures(sourceId),
+        };
+    }
+
+    /**
      * Create the events on/off for this module
      * @returns An instance of EventsModule
      */

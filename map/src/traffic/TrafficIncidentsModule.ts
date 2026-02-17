@@ -435,6 +435,49 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
     }
 
     /**
+     * Returns features currently visible in the viewport.
+     *
+     * @returns An object containing visible traffic incident features.
+     *
+     * @remarks
+     * Returns all incident features currently rendered in the visible map area,
+     * including both incident areas/lines and icon markers.
+     *
+     * **Feature Properties:**
+     * Properties depend on the traffic incidents vector tile schema and may include:
+     * - Incident type/category
+     * - Severity/magnitude
+     * - Delay information
+     * - Road affected
+     * - Description
+     *
+     * @example
+     * ```typescript
+     * const shown = incidents.getShown();
+     * console.log(`Visible incidents: ${shown.trafficIncidents.length}`);
+     * shown.trafficIncidents.forEach(incident => {
+     *   console.log('Incident:', incident.properties);
+     * });
+     * ```
+     *
+     * @example
+     * Filter and analyze visible incidents:
+     * ```typescript
+     * const shown = incidents.getShown();
+     * const accidents = shown.trafficIncidents.filter(
+     *   incident => incident.properties.category === 'accident'
+     * );
+     * console.log(`Accidents in view: ${accidents.length}`);
+     * ```
+     */
+    getShown() {
+        const sourceId = this.sourcesWithLayers.trafficIncidents.sourceAndLayerIDs.sourceID;
+        return {
+            trafficIncidents: this.mapLibreMap.querySourceFeatures(sourceId),
+        };
+    }
+
+    /**
      * Create the events on/off for this module
      * @returns An instance of EventsModule
      */

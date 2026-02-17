@@ -2,10 +2,9 @@
  * @module map-agent-tools
  */
 
-import { BaseMapModule } from '@tomtom-org/maps-sdk/map';
 import { dynamicTool, type Tool } from 'ai';
 import { z } from 'zod';
-import type { ToolContext } from '../types';
+import type { ToolContext } from '../../types';
 
 /**
  * Tool schema for toggling layers.
@@ -30,9 +29,9 @@ export function createToggleLayersTool(context: ToolContext): Tool {
             const { visible, layerGroups } = params as z.infer<typeof toggleLayersSchema>;
             try {
                 // Lazy-init BaseMapModule
-                context.state.modules.baseMap ??= await BaseMapModule.get(context.map);
+                const baseMapModule = await context.state.getBaseMapModule();
 
-                context.state.modules.baseMap.setVisible(visible, {
+                baseMapModule.setVisible(visible, {
                     layerGroups: {
                         mode: 'include',
                         names: layerGroups as any,

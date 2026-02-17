@@ -3,15 +3,16 @@
  */
 
 import { bboxFromGeoJSON } from '@tomtom-org/maps-sdk/core';
-import { PlacesModule } from '@tomtom-org/maps-sdk/map';
 import { dynamicTool, type Tool } from 'ai';
 import { z } from 'zod';
-import type { ToolContext } from '../types';
+import type { ToolContext } from '../../types';
 
 /**
  * Tool schema for showing places on the map.
  */
-const showPlacesSchema = z.object({});
+const showPlacesSchema = z.object({
+    fitBounds: z.boolean().optional().describe('Whether to fit the map bounds to show all places. Default is true.'),
+});
 
 /**
  * Create the show places tool.
@@ -20,7 +21,8 @@ export function createShowPlacesTool(context: ToolContext): Tool {
     return dynamicTool({
         description: 'Display the most recent search results as markers on the map',
         inputSchema: showPlacesSchema,
-        execute: async () => {
+        execute: async (params) => {
+            const { fitBounds = true } = params as z.infer<typeof showPlacesSchema>;
             try {
                 if (!context.state.searchResultsHistory.length) {
                     return { error: 'No search results available to display' };
@@ -32,18 +34,17 @@ export function createShowPlacesTool(context: ToolContext): Tool {
                     features: context.state.searchResultsHistory.flatMap((places) => places.features),
                 };
 
-                // Lazy-init PlacesModule
-                if (!context.state.modules.places) {
-                    context.state.modules.places ??= await PlacesModule.get(context.map);
-                }
+                const placesModule = await context.state.getPlacesModule();
 
                 // Show all places
-                await context.state.modules.places.show(mergedResults);
+                await placesModule.show(mergedResults);
 
-                // Fit bounds to all results
-                const bbox = bboxFromGeoJSON(context.state.searchResultsHistory);
-                if (bbox) {
-                    context.map.mapLibreMap.fitBounds(bbox, { padding: 50 });
+                // Fit bounds to all results if requested
+                if (fitBounds) {
+                    const bbox = bboxFromGeoJSON(context.state.searchResultsHistory);
+                    if (bbox) {
+                        context.state.map.mapLibreMap.fitBounds(bbox, { padding: 50 });
+                    }
                 }
 
                 return {

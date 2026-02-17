@@ -533,6 +533,62 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
     }
 
     /**
+     * Returns the currently shown routes and waypoints.
+     *
+     * @returns An object containing all currently displayed routing data.
+     *
+     * @remarks
+     * Returns the exact data that was passed to the `showRoutes()` and `showWaypoints()` methods.
+     *
+     * **Returned Data:**
+     * - `mainLines`: Main route lines (selected and alternative)
+     * - `waypoints`: Route waypoints (start, stops, finish)
+     * - `incidents`: Traffic incidents on routes
+     * - `ferries`: Ferry sections
+     * - `chargingStops`: EV charging stations
+     * - `tollRoads`: Toll road sections
+     * - `tunnels`: Tunnel sections
+     * - `vehicleRestricted`: Vehicle-restricted sections
+     * - `instructionLines`: Turn-by-turn instruction lines
+     * - `instructionArrows`: Instruction arrow markers
+     * - `summaryBubbles`: Route summary popups
+     *
+     * @example
+     * ```typescript
+     * const shown = routingModule.getShown();
+     * console.log(`Showing ${shown.mainLines.features.length} routes`);
+     * console.log(`Showing ${shown.waypoints.features.length} waypoints`);
+     * console.log(`Showing ${shown.chargingStops.features.length} charging stops`);
+     * ```
+     *
+     * @example
+     * Check if any routes are displayed:
+     * ```typescript
+     * const shown = routingModule.getShown();
+     * if (shown.mainLines.features.length > 0) {
+     *   console.log('Routes are displayed');
+     * } else {
+     *   console.log('No routes displayed');
+     * }
+     * ```
+     */
+    getShown() {
+        return {
+            mainLines: this.sourcesWithLayers.mainLines.shownFeatures,
+            waypoints: this.sourcesWithLayers.waypoints.shownFeatures,
+            incidents: this.sourcesWithLayers.incidents.shownFeatures,
+            ferries: this.sourcesWithLayers.ferries.shownFeatures,
+            chargingStops: this.sourcesWithLayers.chargingStops.shownFeatures,
+            tollRoads: this.sourcesWithLayers.tollRoads.shownFeatures,
+            tunnels: this.sourcesWithLayers.tunnels.shownFeatures,
+            vehicleRestricted: this.sourcesWithLayers.vehicleRestricted.shownFeatures,
+            instructionLines: this.sourcesWithLayers.instructionLines.shownFeatures,
+            instructionArrows: this.sourcesWithLayers.instructionArrows.shownFeatures,
+            summaryBubbles: this.sourcesWithLayers.summaryBubbles.shownFeatures,
+        };
+    }
+
+    /**
      * Create the events on/off for this module
      * @returns An instance of EventsModule
      */

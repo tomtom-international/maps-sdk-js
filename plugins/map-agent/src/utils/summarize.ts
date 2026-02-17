@@ -7,31 +7,21 @@ import type { Place, Places, Route, Routes } from '@tomtom-org/maps-sdk/core';
 /**
  * Summarized place information — token-efficient for LLM consumption.
  */
-export interface SummarizedPlace {
-    name: string;
-    address: string;
-    category?: string;
-    position: [number, number];
-}
+export type SummarizedPlace = Place;
 
 /**
  * Summarized places collection.
  */
-export interface SummarizedPlaces {
-    count: number;
-    places: SummarizedPlace[];
-}
+export type SummarizedPlaces = Places;
 
 /**
- * Summarized route information.
+ * Summarized route information — same as Route but without coordinates.
  */
-export interface SummarizedRoute {
-    distance: string;
-    duration: string;
-    summary: string;
-    /** Strategic percent progress points along the route: [start, 25%, 50%, 75%, end] */
-    pctProgressPoints: Array<[number, number]>;
-}
+export type SummarizedRoute = Omit<Route, 'geometry'> & {
+    geometry: Omit<Route['geometry'], 'coordinates'> & {
+        coordinates: [];
+    };
+};
 
 /**
  * Summarized routes collection.
@@ -45,15 +35,7 @@ export interface SummarizedRoutes {
  * Converts a Place to a token-efficient summary for LLM consumption.
  */
 export function summarizePlace(place: Place): SummarizedPlace {
-    const coords = place.geometry.coordinates;
-    const props = place.properties;
-
-    return {
-        name: props.poi?.name || props.address.freeformAddress,
-        address: props.address.freeformAddress,
-        category: props.poi?.categories?.[0],
-        position: [coords[0], coords[1]],
-    };
+    return place;
 }
 
 /**
@@ -61,63 +43,20 @@ export function summarizePlace(place: Place): SummarizedPlace {
  * Limits to first 10 items to avoid token overflow.
  */
 export function summarizePlaces(places: Places): SummarizedPlaces {
-    const count = places.features.length;
-    const limit = Math.min(count, 10);
-
-    return {
-        count,
-        places: places.features.slice(0, limit).map(summarizePlace),
-    };
-}
-
-/**
- * Formats meters to kilometers or meters with appropriate unit.
- */
-function formatDistance(meters: number): string {
-    if (meters >= 1000) {
-        return `${(meters / 1000).toFixed(1)} km`;
-    }
-    return `${Math.round(meters)} m`;
-}
-
-/**
- * Formats seconds to hours/minutes or minutes.
- */
-function formatDuration(seconds: number): string {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-
-    if (hours > 0) {
-        return `${hours}h ${minutes}m`;
-    }
-    return `${minutes}m`;
+    return places;
 }
 
 /**
  * Converts a Route to a token-efficient summary for LLM consumption.
+ * Returns the same route but without coordinates to reduce token usage.
  */
 export function summarizeRoute(route: Route): SummarizedRoute {
-    const summary = route.properties.summary;
-    const coords = route.geometry.coordinates as Array<[number, number]>;
-
-    // TODO: is this the correct way to get these waypoints? Should they be distance or time based? Is coordinate-index even relevant?
-    // Extract strategic waypoints: start, 25%, 50%, 75%, end
-    const pctProgressPoints: Array<[number, number]> = [];
-    if (coords.length > 0) {
-        pctProgressPoints.push(coords[0]); // Start
-        if (coords.length >= 4) {
-            pctProgressPoints.push(coords[Math.floor(coords.length * 0.25)]); // 25%
-            pctProgressPoints.push(coords[Math.floor(coords.length * 0.5)]); // 50% (midpoint)
-            pctProgressPoints.push(coords[Math.floor(coords.length * 0.75)]); // 75%
-        }
-        pctProgressPoints.push(coords[coords.length - 1]); // End
-    }
-
     return {
-        distance: formatDistance(summary.lengthInMeters),
-        duration: formatDuration(summary.travelTimeInSeconds),
-        summary: `${formatDistance(summary.lengthInMeters)} in ${formatDuration(summary.travelTimeInSeconds)}`,
-        pctProgressPoints: pctProgressPoints,
+        ...route,
+        geometry: {
+            ...route.geometry,
+            coordinates: [],
+        },
     };
 }
 

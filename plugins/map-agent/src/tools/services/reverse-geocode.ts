@@ -5,7 +5,7 @@
 import { reverseGeocode } from '@tomtom-org/maps-sdk/services';
 import { dynamicTool, type Tool } from 'ai';
 import { z } from 'zod';
-import type { ToolContext } from '../types';
+import type { ToolContext } from '../../types';
 
 /**
  * Tool schema for reverse geocoding (coordinates to address).

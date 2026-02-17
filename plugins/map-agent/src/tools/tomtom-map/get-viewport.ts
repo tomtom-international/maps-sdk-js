@@ -4,7 +4,7 @@
 
 import { dynamicTool, type Tool } from 'ai';
 import { z } from 'zod';
-import type { ToolContext } from '../types';
+import type { ToolContext } from '../../types';
 
 /**
  * Tool schema for getting viewport.
@@ -20,9 +20,9 @@ export function createGetViewportTool(context: ToolContext): Tool {
         inputSchema: getViewportSchema,
         execute: async () => {
             try {
-                const center = context.map.mapLibreMap.getCenter();
-                const zoom = context.map.mapLibreMap.getZoom();
-                const bbox = context.map.getBBox();
+                const center = context.state.map.mapLibreMap.getCenter();
+                const zoom = context.state.map.mapLibreMap.getZoom();
+                const bbox = context.state.map.getBBox();
 
                 return {
                     center: [center.lng, center.lat],

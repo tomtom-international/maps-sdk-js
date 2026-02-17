@@ -5,8 +5,8 @@
 import { geocode } from '@tomtom-org/maps-sdk/services';
 import { dynamicTool, type Tool } from 'ai';
 import { z } from 'zod';
-import type { ToolContext } from '../types';
-import { summarizePlace } from '../utils/summarize';
+import type { ToolContext } from '../../types';
+import { summarizePlace } from '../../utils/summarize';
 
 /**
  * Tool schema for geocoding (address to coordinates).

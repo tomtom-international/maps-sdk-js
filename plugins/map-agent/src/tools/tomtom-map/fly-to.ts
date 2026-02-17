@@ -4,7 +4,7 @@
 
 import { dynamicTool, type Tool } from 'ai';
 import { z } from 'zod';
-import type { ToolContext } from '../types';
+import type { ToolContext } from '../../types';
 
 /**
  * Tool schema for flying to a location.
@@ -26,7 +26,7 @@ export function createFlyToTool(context: ToolContext): Tool {
             const { longitude, latitude, zoom = 14 } = params as z.infer<typeof flyToSchema>;
             const center: [number, number] = [longitude, latitude];
             try {
-                context.map.mapLibreMap.flyTo({
+                context.state.map.mapLibreMap.flyTo({
                     center,
                     zoom,
                 });
