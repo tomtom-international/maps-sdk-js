@@ -6,15 +6,17 @@ import { budgetTypes } from './types/reachableRangeParams';
 // import { SchemaRefinement } from "../shared/types/validation";
 
 const reachableRangeRequestSchemaMandatory = z.object({
-    origin: hasLngLatSchema,
-    budget: z.object({
-        type: z.enum(budgetTypes),
-        value: z.number().min(0),
-    }),
+    origin: hasLngLatSchema.describe('Starting position [longitude, latitude] for reachable range calculation'),
+    budget: z
+        .object({
+            type: z.enum(budgetTypes).describe('Budget type (time, distance, or energy/fuel)'),
+            value: z.number().min(0).describe('Budget value (depends on type: seconds, meters, liters, or kWh)'),
+        })
+        .describe('Travel budget constraints for reachable range'),
 });
 
 const reachableRangeRequestSchemaOptional = z.object({
-    maxFerryLengthMeters: z.number().min(0).optional(),
+    maxFerryLengthMeters: z.number().min(0).optional().describe('Maximum ferry distance in meters to include in range'),
 });
 
 const reachableRangeRequestSchema = commonRoutingRequestSchema.extend(

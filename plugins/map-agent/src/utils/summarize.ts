@@ -29,8 +29,8 @@ export interface SummarizedRoute {
     distance: string;
     duration: string;
     summary: string;
-    /** Strategic waypoints along the route: [start, 25%, 50%, 75%, end] */
-    waypoints: Array<[number, number]>;
+    /** Strategic percent progress points along the route: [start, 25%, 50%, 75%, end] */
+    pctProgressPoints: Array<[number, number]>;
 }
 
 /**
@@ -102,22 +102,22 @@ export function summarizeRoute(route: Route): SummarizedRoute {
 
     // TODO: is this the correct way to get these waypoints? Should they be distance or time based? Is coordinate-index even relevant?
     // Extract strategic waypoints: start, 25%, 50%, 75%, end
-    const waypoints: Array<[number, number]> = [];
+    const pctProgressPoints: Array<[number, number]> = [];
     if (coords.length > 0) {
-        waypoints.push(coords[0]); // Start
+        pctProgressPoints.push(coords[0]); // Start
         if (coords.length >= 4) {
-            waypoints.push(coords[Math.floor(coords.length * 0.25)]); // 25%
-            waypoints.push(coords[Math.floor(coords.length * 0.5)]); // 50% (midpoint)
-            waypoints.push(coords[Math.floor(coords.length * 0.75)]); // 75%
+            pctProgressPoints.push(coords[Math.floor(coords.length * 0.25)]); // 25%
+            pctProgressPoints.push(coords[Math.floor(coords.length * 0.5)]); // 50% (midpoint)
+            pctProgressPoints.push(coords[Math.floor(coords.length * 0.75)]); // 75%
         }
-        waypoints.push(coords[coords.length - 1]); // End
+        pctProgressPoints.push(coords[coords.length - 1]); // End
     }
 
     return {
         distance: formatDistance(summary.lengthInMeters),
         duration: formatDuration(summary.travelTimeInSeconds),
         summary: `${formatDistance(summary.lengthInMeters)} in ${formatDuration(summary.travelTimeInSeconds)}`,
-        waypoints,
+        pctProgressPoints: pctProgressPoints,
     };
 }
 

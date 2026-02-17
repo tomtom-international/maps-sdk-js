@@ -2,27 +2,34 @@
  * @module map-agent-tools
  */
 
-import { TrafficFlowModule } from '@tomtom-org/maps-sdk/map';
+import { TrafficFlowModule, TrafficIncidentsModule } from '@tomtom-org/maps-sdk/map';
 import { dynamicTool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../types';
 
 /**
- * Tool schema for toggling traffic.
+ * Tool schema for toggling traffic flow.
  */
-const toggleTrafficSchema = z.object({
+const toggleTrafficFlowSchema = z.object({
     visible: z.boolean().describe('Whether to show or hide traffic flow'),
 });
 
 /**
- * Create the toggle traffic tool.
+ * Tool schema for toggling traffic incidents.
  */
-export function createToggleTrafficTool(context: ToolContext): ReturnType<typeof dynamicTool> {
+const toggleTrafficIncidentsSchema = z.object({
+    visible: z.boolean().describe('Whether to show or hide traffic incidents'),
+});
+
+/**
+ * Create the toggle traffic flow tool.
+ */
+export function createToggleTrafficFlowTool(context: ToolContext): ReturnType<typeof dynamicTool> {
     return dynamicTool({
         description: 'Show or hide the real-time traffic flow layer',
-        inputSchema: toggleTrafficSchema,
+        inputSchema: toggleTrafficFlowSchema,
         execute: async (params) => {
-            const { visible } = params as z.infer<typeof toggleTrafficSchema>;
+            const { visible } = params as z.infer<typeof toggleTrafficIncidentsSchema>;
             try {
                 // Lazy-init TrafficFlowModule
                 context.state.modules.trafficFlow ??= await TrafficFlowModule.get(context.map);
@@ -31,11 +38,39 @@ export function createToggleTrafficTool(context: ToolContext): ReturnType<typeof
 
                 return {
                     success: true,
-                    trafficVisible: visible,
+                    trafficFlowVisible: visible,
                 };
             } catch (error) {
                 return {
-                    error: `Failed to toggle traffic: ${error instanceof Error ? error.message : String(error)}`,
+                    error: `Failed to toggle traffic flow: ${error instanceof Error ? error.message : String(error)}`,
+                };
+            }
+        },
+    });
+}
+
+/**
+ * Create the toggle traffic incidents tool.
+ */
+export function createToggleTrafficIncidentsTool(context: ToolContext): ReturnType<typeof dynamicTool> {
+    return dynamicTool({
+        description: 'Show or hide the real-time traffic incidents layer',
+        inputSchema: toggleTrafficIncidentsSchema,
+        execute: async (params) => {
+            const { visible } = params as z.infer<typeof toggleTrafficIncidentsSchema>;
+            try {
+                // Lazy-init TrafficIncidentsModule
+                context.state.modules.trafficIncidents ??= await TrafficIncidentsModule.get(context.map);
+
+                context.state.modules.trafficIncidents.setVisible(visible);
+
+                return {
+                    success: true,
+                    trafficIncidentsVisible: visible,
+                };
+            } catch (error) {
+                return {
+                    error: `Failed to toggle traffic incidents: ${error instanceof Error ? error.message : String(error)}`,
                 };
             }
         },

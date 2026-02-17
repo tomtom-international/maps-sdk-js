@@ -17,7 +17,7 @@ import { createShowPlacesTool } from './show-places';
 import { createShowRouteTool } from './show-route';
 import { createToggleLayersTool } from './toggle-layers';
 import { createTogglePOIsTool } from './toggle-pois';
-import { createToggleTrafficTool } from './toggle-traffic';
+import { createToggleTrafficFlowTool, createToggleTrafficIncidentsTool } from './toggle-traffic';
 
 /**
  * The complete set of default map agent tools.
@@ -39,7 +39,8 @@ export interface DefaultToolSet {
     clearMap: ReturnType<typeof createClearMapTool>;
     flyTo: ReturnType<typeof createFlyToTool>;
     fitBounds: ReturnType<typeof createFitBoundsTool>;
-    toggleTraffic: ReturnType<typeof createToggleTrafficTool>;
+    toggleTrafficFlow: ReturnType<typeof createToggleTrafficFlowTool>;
+    toggleTrafficIncidents: ReturnType<typeof createToggleTrafficIncidentsTool>;
     togglePOIs: ReturnType<typeof createTogglePOIsTool>;
     setMapStyle: ReturnType<typeof createSetMapStyleTool>;
     setLanguage: ReturnType<typeof createSetLanguageTool>;
@@ -183,7 +184,8 @@ export function createMapToolSet(context: ToolContext): DefaultToolSet {
         clearMap: createClearMapTool(context),
         flyTo: createFlyToTool(context),
         fitBounds: createFitBoundsTool(context),
-        toggleTraffic: createToggleTrafficTool(context),
+        toggleTrafficFlow: createToggleTrafficFlowTool(context),
+        toggleTrafficIncidents: createToggleTrafficIncidentsTool(context),
         togglePOIs: createTogglePOIsTool(context),
         setMapStyle: createSetMapStyleTool(context),
         setLanguage: createSetLanguageTool(context),
