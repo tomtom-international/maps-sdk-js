@@ -14,7 +14,7 @@ import type {
     TrafficFlowModule,
     TrafficIncidentsModule,
 } from '@tomtom-org/maps-sdk/map';
-import type { dynamicTool, LanguageModel, ToolLoopAgent } from 'ai';
+import type { LanguageModel, Tool, ToolLoopAgent } from 'ai';
 import type { DefaultToolSet } from './tools';
 
 /**
@@ -70,9 +70,9 @@ export type DefaultToolName = keyof DefaultToolSet;
  * @group Tools
  */
 export type ToolConfiguration = {
-    [K in DefaultToolName]?: false | ReturnType<typeof dynamicTool>;
+    [K in DefaultToolName]?: false | Tool;
 } & {
-    [customName: string]: false | ReturnType<typeof dynamicTool> | undefined;
+    [customName: string]: false | Tool | undefined;
 };
 
 /** * Options for creating a map agent.

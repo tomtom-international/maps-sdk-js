@@ -3,7 +3,7 @@
  */
 
 import { reverseGeocode } from '@tomtom-org/maps-sdk/services';
-import { dynamicTool } from 'ai';
+import { dynamicTool, type Tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../types';
 
@@ -18,7 +18,7 @@ const reverseGeocodeSchema = z.object({
 /**
  * Create the reverse geocode tool.
  */
-export function createReverseGeocodeTool(context: ToolContext): ReturnType<typeof dynamicTool> {
+export function createReverseGeocodeTool(context: ToolContext): Tool {
     return dynamicTool({
         description: 'Convert geographic coordinates to an address',
         inputSchema: reverseGeocodeSchema,

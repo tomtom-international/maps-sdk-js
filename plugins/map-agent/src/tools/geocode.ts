@@ -3,7 +3,7 @@
  */
 
 import { geocode } from '@tomtom-org/maps-sdk/services';
-import { dynamicTool } from 'ai';
+import { dynamicTool, type Tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../types';
 import { summarizePlace } from '../utils/summarize';
@@ -18,7 +18,7 @@ const geocodeSchema = z.object({
 /**
  * Create the geocode tool.
  */
-export function createGeocodeTool(context: ToolContext): ReturnType<typeof dynamicTool> {
+export function createGeocodeTool(context: ToolContext): Tool {
     return dynamicTool({
         description: 'Convert an address or place name to geographic coordinates',
         inputSchema: geocodeSchema,

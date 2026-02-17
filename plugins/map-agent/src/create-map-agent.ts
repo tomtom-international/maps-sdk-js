@@ -3,7 +3,7 @@
  */
 
 import type { TomTomMap } from '@tomtom-org/maps-sdk/map';
-import { type dynamicTool, ToolLoopAgent } from 'ai';
+import { type Tool, ToolLoopAgent } from 'ai';
 import { createState, resetState } from './state';
 import { buildSystemPrompt } from './system-prompt';
 import { createMapToolSet } from './tools';
@@ -79,7 +79,7 @@ export function createMapAgent(map: TomTomMap, options: MapAgentOptions): MapAge
     const defaultTools = createMapToolSet(context);
 
     // Process tools configuration
-    const finalTools: Record<string, ReturnType<typeof dynamicTool>> = {};
+    const finalTools: Record<string, Tool> = {};
 
     // Start with default tools
     for (const [name, tool] of Object.entries(defaultTools)) {

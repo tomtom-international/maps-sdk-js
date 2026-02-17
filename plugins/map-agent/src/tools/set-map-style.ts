@@ -2,7 +2,7 @@
  * @module map-agent-tools
  */
 
-import { dynamicTool } from 'ai';
+import { dynamicTool, type Tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../types';
 
@@ -18,7 +18,7 @@ const setMapStyleSchema = z.object({
 /**
  * Create the set map style tool.
  */
-export function createSetMapStyleTool(context: ToolContext): ReturnType<typeof dynamicTool> {
+export function createSetMapStyleTool(context: ToolContext): Tool {
     return dynamicTool({
         description: 'Change the map visual theme',
         inputSchema: setMapStyleSchema,

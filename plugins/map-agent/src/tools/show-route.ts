@@ -4,7 +4,7 @@
 
 import { bboxFromGeoJSON } from '@tomtom-org/maps-sdk/core';
 import { RoutingModule } from '@tomtom-org/maps-sdk/map';
-import { dynamicTool } from 'ai';
+import { dynamicTool, type Tool } from 'ai';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import { z } from 'zod';
 import type { ToolContext } from '../types';
@@ -19,7 +19,7 @@ const showRouteSchema = z.object({
 /**
  * Create the show route tool.
  */
-export function createShowRouteTool(context: ToolContext): ReturnType<typeof dynamicTool> {
+export function createShowRouteTool(context: ToolContext): Tool {
     return dynamicTool({
         description: 'Display the most recent calculated route on the map',
         inputSchema: showRouteSchema,

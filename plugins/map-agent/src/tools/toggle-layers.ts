@@ -3,7 +3,7 @@
  */
 
 import { BaseMapModule } from '@tomtom-org/maps-sdk/map';
-import { dynamicTool } from 'ai';
+import { dynamicTool, type Tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../types';
 
@@ -22,7 +22,7 @@ const toggleLayersSchema = z.object({
 /**
  * Create the toggle layers tool.
  */
-export function createToggleLayersTool(context: ToolContext): ReturnType<typeof dynamicTool> {
+export function createToggleLayersTool(context: ToolContext): Tool {
     return dynamicTool({
         description: 'Show or hide specific base map layer groups',
         inputSchema: toggleLayersSchema,

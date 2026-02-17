@@ -2,7 +2,7 @@
  * @module map-agent-tools
  */
 
-import { dynamicTool } from 'ai';
+import { dynamicTool, type Tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../types';
 
@@ -16,7 +16,7 @@ const setLanguageSchema = z.object({
 /**
  * Create the set language tool.
  */
-export function createSetLanguageTool(context: ToolContext): ReturnType<typeof dynamicTool> {
+export function createSetLanguageTool(context: ToolContext): Tool {
     return dynamicTool({
         description: 'Change the language of map labels',
         inputSchema: setLanguageSchema,

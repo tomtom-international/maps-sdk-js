@@ -2,7 +2,7 @@
  * @module map-agent-tools
  */
 
-import { dynamicTool } from 'ai';
+import { dynamicTool, type Tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../types';
 
@@ -14,7 +14,7 @@ const getViewportSchema = z.object({});
 /**
  * Create the get viewport tool.
  */
-export function createGetViewportTool(context: ToolContext): ReturnType<typeof dynamicTool> {
+export function createGetViewportTool(context: ToolContext): Tool {
     return dynamicTool({
         description: 'Get the current map viewport information',
         inputSchema: getViewportSchema,

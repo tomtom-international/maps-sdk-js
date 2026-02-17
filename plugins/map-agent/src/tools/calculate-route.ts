@@ -4,7 +4,7 @@
 
 import type { Place } from '@tomtom-org/maps-sdk/core';
 import { calculateRoute, geocode } from '@tomtom-org/maps-sdk/services';
-import { dynamicTool } from 'ai';
+import { dynamicTool, type Tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../types';
 import { summarizeRoutes } from '../utils/summarize';
@@ -23,7 +23,7 @@ const calculateRouteSchema = z.object({
 /**
  * Create the calculate route tool.
  */
-export function createCalculateRouteTool(context: ToolContext): ReturnType<typeof dynamicTool> {
+export function createCalculateRouteTool(context: ToolContext): Tool {
     return dynamicTool({
         description: 'Calculate a driving route between locations',
         inputSchema: calculateRouteSchema,

@@ -4,7 +4,7 @@
 
 import { bboxFromGeoJSON } from '@tomtom-org/maps-sdk/core';
 import { PlacesModule } from '@tomtom-org/maps-sdk/map';
-import { dynamicTool } from 'ai';
+import { dynamicTool, type Tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../types';
 
@@ -16,7 +16,7 @@ const showPlacesSchema = z.object({});
 /**
  * Create the show places tool.
  */
-export function createShowPlacesTool(context: ToolContext): ReturnType<typeof dynamicTool> {
+export function createShowPlacesTool(context: ToolContext): Tool {
     return dynamicTool({
         description: 'Display the most recent search results as markers on the map',
         inputSchema: showPlacesSchema,

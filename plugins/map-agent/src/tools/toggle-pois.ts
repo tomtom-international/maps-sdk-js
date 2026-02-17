@@ -3,7 +3,7 @@
  */
 
 import { POIsModule } from '@tomtom-org/maps-sdk/map';
-import { dynamicTool } from 'ai';
+import { dynamicTool, type Tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../types';
 
@@ -18,7 +18,7 @@ const togglePOIsSchema = z.object({
 /**
  * Create the toggle POIs tool.
  */
-export function createTogglePOIsTool(context: ToolContext): ReturnType<typeof dynamicTool> {
+export function createTogglePOIsTool(context: ToolContext): Tool {
     return dynamicTool({
         description: 'Show or hide built-in map POI icons',
         inputSchema: togglePOIsSchema,

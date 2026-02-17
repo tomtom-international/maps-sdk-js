@@ -3,7 +3,7 @@
  */
 
 import { bboxFromGeoJSON } from '@tomtom-org/maps-sdk/core';
-import { dynamicTool } from 'ai';
+import { dynamicTool, type Tool } from 'ai';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import { z } from 'zod';
 import type { ToolContext } from '../types';
@@ -18,7 +18,7 @@ const fitBoundsSchema = z.object({
 /**
  * Create the fit bounds tool.
  */
-export function createFitBoundsTool(context: ToolContext): ReturnType<typeof dynamicTool> {
+export function createFitBoundsTool(context: ToolContext): Tool {
     return dynamicTool({
         description: 'Fit the map camera to show all displayed data',
         inputSchema: fitBoundsSchema,

@@ -2,7 +2,7 @@
  * @module map-agent-tools
  */
 
-import { dynamicTool } from 'ai';
+import { dynamicTool, type Tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../types';
 
@@ -18,7 +18,7 @@ const flyToSchema = z.object({
 /**
  * Create the fly to tool.
  */
-export function createFlyToTool(context: ToolContext): ReturnType<typeof dynamicTool> {
+export function createFlyToTool(context: ToolContext): Tool {
     return dynamicTool({
         description: 'Move the map camera to a specific location',
         inputSchema: flyToSchema,

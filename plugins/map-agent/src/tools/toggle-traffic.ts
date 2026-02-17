@@ -3,7 +3,7 @@
  */
 
 import { TrafficFlowModule, TrafficIncidentsModule } from '@tomtom-org/maps-sdk/map';
-import { dynamicTool } from 'ai';
+import { dynamicTool, type Tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../types';
 
@@ -24,7 +24,7 @@ const toggleTrafficIncidentsSchema = z.object({
 /**
  * Create the toggle traffic flow tool.
  */
-export function createToggleTrafficFlowTool(context: ToolContext): ReturnType<typeof dynamicTool> {
+export function createToggleTrafficFlowTool(context: ToolContext): Tool {
     return dynamicTool({
         description: 'Show or hide the real-time traffic flow layer',
         inputSchema: toggleTrafficFlowSchema,
@@ -52,7 +52,7 @@ export function createToggleTrafficFlowTool(context: ToolContext): ReturnType<ty
 /**
  * Create the toggle traffic incidents tool.
  */
-export function createToggleTrafficIncidentsTool(context: ToolContext): ReturnType<typeof dynamicTool> {
+export function createToggleTrafficIncidentsTool(context: ToolContext): Tool {
     return dynamicTool({
         description: 'Show or hide the real-time traffic incidents layer',
         inputSchema: toggleTrafficIncidentsSchema,

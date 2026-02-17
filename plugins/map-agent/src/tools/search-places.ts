@@ -4,7 +4,7 @@
 
 import { POICategory } from '@tomtom-org/maps-sdk/core';
 import { search } from '@tomtom-org/maps-sdk/services';
-import { dynamicTool } from 'ai';
+import { dynamicTool, type Tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../types';
 import { summarizePlaces } from '../utils/summarize';
@@ -28,7 +28,7 @@ const searchPlacesSchema = z.object({
 /**
  * Create the search places tool.
  */
-export function createSearchPlacesTool(context: ToolContext): ReturnType<typeof dynamicTool> {
+export function createSearchPlacesTool(context: ToolContext): Tool {
     return dynamicTool({
         description: 'Search for places, businesses, or points of interest',
         inputSchema: searchPlacesSchema,
