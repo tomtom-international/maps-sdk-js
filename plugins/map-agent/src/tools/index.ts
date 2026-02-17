@@ -96,7 +96,7 @@ export interface DefaultToolSet {
  *
  * @example Basic usage with createMapAgent options
  * ```typescript
- * import { createMapAgent, createMapToolSet, createState } from '@tomtom-org/maps-sdk-map-agent';
+ * import { createMapAgent, createMapToolSet, createState } from '@tomtom-org/maps-sdk-ai-agent';
  *
  * const map = new TomTomMap({ ... });
  * const state = createState();
@@ -117,7 +117,7 @@ export interface DefaultToolSet {
  *
  * @example Wrapping default tools with custom behavior
  * ```typescript
- * import { createMapAgent, createMapToolSet, createState } from '@tomtom-org/maps-sdk-map-agent';
+ * import { createMapAgent, createMapToolSet, createState } from '@tomtom-org/maps-sdk-ai-agent';
  *
  * const state = createState();
  * const context = { map, state };
@@ -147,7 +147,7 @@ export interface DefaultToolSet {
  * ```typescript
  * import { ToolLoopAgent } from 'ai';
  * import { openai } from '@ai-sdk/openai';
- * import { createMapToolSet, createState, BASE_SYSTEM_PROMPT } from '@tomtom-org/maps-sdk-map-agent';
+ * import { createMapToolSet, createState, BASE_SYSTEM_PROMPT } from '@tomtom-org/maps-sdk-ai-agent';
  *
  * const state = createState();
  * const tools = createMapToolSet({ map, state });
@@ -170,7 +170,7 @@ export interface DefaultToolSet {
  * @example Testing tools in isolation
  * ```typescript
  * import { describe, it, expect } from 'vitest';
- * import { createMapToolSet, createState } from '@tomtom-org/maps-sdk-map-agent';
+ * import { createMapToolSet, createState } from '@tomtom-org/maps-sdk-ai-agent';
  *
  * describe('Geocode tool', () => {
  *   it('should geocode Amsterdam', async () => {

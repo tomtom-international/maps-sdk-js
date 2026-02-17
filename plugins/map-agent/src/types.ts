@@ -171,7 +171,7 @@ export interface MapAgentOptions {
      *
      * @example
      * ```typescript
-     * import { BASE_SYSTEM_PROMPT } from '@tomtom-org/maps-sdk-map-agent';
+     * import { BASE_SYSTEM_PROMPT } from '@tomtom-org/maps-sdk-ai-agent';
      *
      * systemPrompt: BASE_SYSTEM_PROMPT + '\n\nAlways respond in Spanish.'
      * ```

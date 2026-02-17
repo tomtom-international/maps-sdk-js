@@ -1,7 +1,7 @@
 import { createAzure } from '@ai-sdk/azure';
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { TomTomMap } from '@tomtom-org/maps-sdk/map';
-import { createMapAgent } from '@tomtom-org/maps-sdk-map-agent';
+import { createMapAgent } from '@tomtom-org/maps-sdk-ai-agent';
 import { API_KEY, AZURE_API_KEY, AZURE_RESOURCE_NAME, AZURE_DEPLOYMENT_ID } from './config';
 import { getCustomLocationTool } from './tools/get-custom-location';
 import './style.css';

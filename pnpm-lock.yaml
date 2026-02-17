@@ -771,7 +771,7 @@ importers:
       '@tomtom-org/maps-sdk':
         specifier: workspace:*
         version: link:../..
-      '@tomtom-org/maps-sdk-map-agent':
+      '@tomtom-org/maps-sdk-ai-agent':
         specifier: workspace:*
         version: link:../../plugins/map-agent
       ai:

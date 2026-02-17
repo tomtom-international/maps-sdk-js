@@ -88,7 +88,7 @@ plugins/map-agent/
 
 ```jsonc
 {
-  "name": "@tomtom-org/maps-sdk-map-agent",
+  "name": "@tomtom-org/maps-sdk-ai-agent",
   "version": "0.1.0",
   "type": "module",
   "dependencies": {
@@ -161,7 +161,7 @@ interface MapAgent {
 ```typescript
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { TomTomMap } from '@tomtom-org/maps-sdk/map';
-import { createMapAgent } from '@tomtom-org/maps-sdk-map-agent';
+import { createMapAgent } from '@tomtom-org/maps-sdk-ai-agent';
 import { useChat } from '@ai-sdk/react';
 import { DirectChatTransport } from 'ai';
 import { openai } from '@ai-sdk/openai';
@@ -392,7 +392,7 @@ Execute in this order. Each step should be completed and tested before moving to
 ### TODO: React integration
 - Add optional `src/react.ts` entrypoint exporting a `useMapChat(map, options)` hook
 - Thin wrapper: calls `createMapAgent`, provides `useChat` + `DirectChatTransport` in one call
-- Should be a separate package entrypoint (`@tomtom-org/maps-sdk-map-agent/react`) to avoid forcing React as a dependency
+- Should be a separate package entrypoint (`@tomtom-org/maps-sdk-ai-agent/react`) to avoid forcing React as a dependency
 - Consider also providing a `useMapAgent` hook that just returns the agent (no chat state)
 
 ### TODO: Server-side tool split

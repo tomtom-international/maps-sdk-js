@@ -115,7 +115,7 @@ export function createTool(context: ToolContext): ReturnType<typeof dynamicTool>
 
 ```typescript
 import { TomTomMap } from '@tomtom-org/maps-sdk/map';
-import { createMapAgent } from '@tomtom-org/maps-sdk-map-agent';
+import { createMapAgent } from '@tomtom-org/maps-sdk-ai-agent';
 import { openai } from '@ai-sdk/openai';
 
 const map = new TomTomMap({
@@ -140,7 +140,7 @@ See [examples/map-chat-agent](../../examples/map-chat-agent) for a complete chat
 ### Customization Options
 
 ```typescript
-import { createMapAgent } from '@tomtom-org/maps-sdk-map-agent';
+import { createMapAgent } from '@tomtom-org/maps-sdk-ai-agent';
 
 const agent = createMapAgent(map, {
   model: openai('gpt-4o'),
@@ -192,7 +192,7 @@ const agent = createMapAgent(map, {
 #### 2. Conversation History Management
 
 ```typescript
-import { truncateHistory, estimateTokenCount } from '@tomtom-org/maps-sdk-map-agent';
+import { truncateHistory, estimateTokenCount } from '@tomtom-org/maps-sdk-ai-agent';
 
 // In your chat component - keep last 10 exchanges
 const truncated = truncateHistory(messages, {
@@ -222,7 +222,7 @@ const agent = createMapAgent(map, {
 });
 
 // Or wrap specific tools manually
-import { withTokenBudget, createMapToolSet, createState } from '@tomtom-org/maps-sdk-map-agent';
+import { withTokenBudget, createMapToolSet, createState } from '@tomtom-org/maps-sdk-ai-agent';
 
 const state = createState();
 const tools = createMapToolSet({ map, state });
@@ -240,7 +240,7 @@ const limitedSearchTool = {
 #### 4. Geometry Simplification (for custom tools)
 
 ```typescript
-import { simplifyRoutes, estimateCoordinateCount } from '@tomtom-org/maps-sdk-map-agent';
+import { simplifyRoutes, estimateCoordinateCount } from '@tomtom-org/maps-sdk-ai-agent';
 
 // Default tool responses don't include geometry (only distance/duration)
 // But if you're building custom tools that send GeoJSON to the LLM:
@@ -295,7 +295,7 @@ const lockedStyleAgent = createMapAgent(map, {
 **Minimal agent (only specific tools):**
 ```typescript
 // Import all default tool names
-import type { DefaultToolName } from '@tomtom-org/maps-sdk-map-agent';
+import type { DefaultToolName } from '@tomtom-org/maps-sdk-ai-agent';
 
 const allDefaults: DefaultToolName[] = [
   'geocode', 'reverseGeocode', 'searchPlaces', 'searchGeometry',
@@ -331,7 +331,7 @@ const customAgent = createMapAgent(map, {
 Add logging, analytics, or custom behavior to default tools:
 
 ```typescript
-import { createMapAgent, createMapToolSet, createState } from '@tomtom-org/maps-sdk-map-agent';
+import { createMapAgent, createMapToolSet, createState } from '@tomtom-org/maps-sdk-ai-agent';
 
 const state = createState();
 const context = { map, state };
@@ -361,7 +361,7 @@ Build a custom agent bypassing `createMapAgent` for maximum control:
 
 ```typescript
 import { ToolLoopAgent } from 'ai';
-import { createMapToolSet, createState, BASE_SYSTEM_PROMPT } from '@tomtom-org/maps-sdk-map-agent';
+import { createMapToolSet, createState, BASE_SYSTEM_PROMPT } from '@tomtom-org/maps-sdk-ai-agent';
 
 const state = createState();
 const tools = createMapToolSet({ map, state });
@@ -386,7 +386,7 @@ Test individual tools in isolation:
 
 ```typescript
 import { describe, it, expect } from 'vitest';
-import { createMapToolSet, createState } from '@tomtom-org/maps-sdk-map-agent';
+import { createMapToolSet, createState } from '@tomtom-org/maps-sdk-ai-agent';
 
 describe('Map agent tools', () => {
   it('should geocode locations', async () => {
