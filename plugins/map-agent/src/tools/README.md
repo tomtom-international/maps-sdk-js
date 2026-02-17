@@ -33,6 +33,7 @@ Tools that control the TomTom map visualization, including showing data, togglin
 - `fly-to` - Animate map camera to a location
 - `fit-bounds` - Fit map to show specific bounds
 - `get-viewport` - Get current map viewport information
+- `get-standard-map-styles` - Get list of available standard map style IDs
 - `set-language` - Change map label language
 - `set-map-style` - Change the map style
 - `toggle-layers` - Show/hide specific map layers
