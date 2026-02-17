@@ -4,14 +4,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [0.45.3](https://github.com/tomtom-international/maps-sdk-js/compare/v0.45.2...v0.45.3) (2026-02-17)
 
-
-### Bug Fixes
-
-* update release-please config ([2efa355](https://github.com/tomtom-international/maps-sdk-js/commit/2efa3556c9eecfcc945d0dd6aea8e30ff333b4af))
-
 ## [0.45.2](https://github.com/tomtom-international/maps-sdk-js/compare/v0.45.1...v0.45.2) (2026-02-17)
-
-
 
 ### Features
 
