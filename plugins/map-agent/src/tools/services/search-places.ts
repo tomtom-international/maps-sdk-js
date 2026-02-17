@@ -14,11 +14,14 @@ import { summarizePlaces } from '../../utils/summarize';
  */
 export const searchPlacesSchema = z.object({
     query: z.string().describe('Search query for places, businesses, or POIs'),
-    nearLongitude: z.number().optional().describe('Longitude coordinate to search near'),
-    nearLatitude: z.number().optional().describe('Latitude coordinate to search near'),
-    radius: z.number().optional().describe('Search radius in meters'),
+    position: z
+        .array(z.number())
+        .length(2)
+        .optional()
+        .describe('Geographic position [longitude, latitude] to bias search results near'),
+    radiusMeters: z.number().optional().describe('Search radius in meters'),
     limit: z.number().optional().describe('Maximum number of results (default: 10)'),
-    categories: z.array(z.string()).optional().describe('POI category filters'),
+    poiCategories: z.array(z.string()).optional().describe('POI category filters'),
     clearPrevious: z
         .boolean()
         .optional()
@@ -35,24 +38,20 @@ export function createSearchPlacesTool(context: ToolContext): Tool {
         execute: async (params) => {
             const {
                 query,
-                nearLongitude,
-                nearLatitude,
-                radius,
+                position,
+                radiusMeters,
                 limit = 10,
-                categories,
+                poiCategories,
                 clearPrevious = false,
             } = params as z.infer<typeof searchPlacesSchema>;
-            const near =
-                nearLongitude !== undefined && nearLatitude !== undefined
-                    ? ([nearLongitude, nearLatitude] as [number, number])
-                    : undefined;
+
             try {
                 const result = await search({
                     query,
                     limit,
-                    poiCategories: categories as POICategory[],
-                    position: near,
-                    radiusMeters: radius,
+                    poiCategories: poiCategories as POICategory[],
+                    position,
+                    radiusMeters,
                 });
 
                 if (clearPrevious) {

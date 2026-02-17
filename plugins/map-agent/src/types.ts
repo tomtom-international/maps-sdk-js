@@ -157,7 +157,7 @@ export type ToolConfiguration = {
 
 /** * Options for creating a map agent.
  */
-export interface MapAgentOptions {
+export type MapAgentOptions = {
     /** AI SDK language model instance. REQUIRED — no default provider. */
     model: LanguageModel;
 
@@ -292,31 +292,25 @@ export interface MapAgentOptions {
      * @see https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching
      */
     promptCaching?: boolean;
-}
+};
 
 /**
  * Map agent instance returned by createMapAgent().
  */
-export interface MapAgent {
+export type MapAgent = {
     /** The ToolLoopAgent instance — pass to DirectChatTransport. */
     readonly agent: ToolLoopAgent;
-
-    /** The full tool set — useful for server-side or manual streamText usage. */
-    readonly tools: Record<string, any>;
-
-    /** The composed system prompt string. */
-    readonly systemPrompt: string;
 
     /** Live agent state (last results, module cache). Readonly externally. */
     readonly state: Readonly<TomTomMapWithModules>;
 
     /** Tear down: clears modules, resets state. */
     destroy(): void;
-}
+};
 
 /**
  * Context passed to tool execution functions.
  */
-export interface ToolContext {
+export type ToolContext = {
     state: TomTomMapWithModules;
-}
+};

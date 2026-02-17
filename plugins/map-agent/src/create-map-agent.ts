@@ -3,7 +3,7 @@
  */
 
 import type { TomTomMap } from '@tomtom-org/maps-sdk/map';
-import { type Tool, ToolLoopAgent } from 'ai';
+import { type Tool, ToolLoopAgent, ToolLoopAgentSettings } from 'ai';
 import { createState } from './state';
 import { buildSystemPrompt } from './system-prompt';
 import { createMapToolSet } from './tools';
@@ -103,7 +103,7 @@ export function createMapAgent(map: TomTomMap, options: MapAgentOptions): MapAge
     const systemPrompt = buildSystemPrompt(options.systemPrompt, options.systemPromptSuffix);
 
     // Create ToolLoopAgent with optional prompt caching
-    const agentConfig: any = {
+    const agentConfig: ToolLoopAgentSettings = {
         model: options.model,
         tools: finalTools,
         instructions: systemPrompt,
@@ -112,7 +112,7 @@ export function createMapAgent(map: TomTomMap, options: MapAgentOptions): MapAge
 
     // Enable prompt caching for Anthropic Claude (reduces token costs by ~90%)
     if (options.promptCaching) {
-        agentConfig.experimental_providerMetadata = {
+        (agentConfig as any).experimental_providerMetadata = {
             anthropic: {
                 cacheControl: { type: 'ephemeral' },
             },
@@ -124,8 +124,6 @@ export function createMapAgent(map: TomTomMap, options: MapAgentOptions): MapAge
     // Return MapAgent interface
     return {
         agent,
-        tools: finalTools,
-        systemPrompt,
         state,
         destroy: () => {
             state.reset();
