@@ -49,8 +49,8 @@ catalogs:
       specifier: ^4.0.18
       version: 4.0.18
     jsdom:
-      specifier: ^27.4.0
-      version: 27.4.0
+      specifier: ^28.0.0
+      version: 28.1.0
     lodash-es:
       specifier: ^4.17.23
       version: 4.17.23
@@ -64,14 +64,14 @@ catalogs:
       specifier: ^19.2.4
       version: 19.2.4
     rimraf:
-      specifier: ^6.1.2
-      version: 6.1.2
+      specifier: ^6.1.3
+      version: 6.1.3
     rollup-plugin-analyzer:
       specifier: ^4.0.0
       version: 4.0.0
     rollup-plugin-license:
-      specifier: ^3.6.0
-      version: 3.6.0
+      specifier: ^3.7.0
+      version: 3.7.0
     rollup-plugin-peer-deps-external:
       specifier: ^2.2.4
       version: 2.2.4
@@ -115,8 +115,8 @@ importers:
         version: 4.3.6
     devDependencies:
       '@biomejs/biome':
-        specifier: ^2.4.0
-        version: 2.4.0
+        specifier: ^2.4.1
+        version: 2.4.2
       '@size-limit/file':
         specifier: ^11.2.0
         version: 11.2.0(size-limit@11.2.0)
@@ -153,10 +153,10 @@ importers:
         version: 4.17.12
       '@vitest/coverage-v8':
         specifier: 'catalog:'
-        version: 4.0.18(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.2.3)(jiti@2.6.1)(jsdom@27.4.0)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
+        version: 4.0.18(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.2.3)(jiti@2.6.1)(jsdom@28.1.0)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       shared-configs:
         specifier: workspace:*
         version: link:../shared-configs
@@ -174,7 +174,7 @@ importers:
         version: 5.0.0-beta.6(@microsoft/api-extractor@7.56.3(@types/node@25.2.3))(esbuild@0.27.2)(rollup@4.57.1)(typescript@5.9.3)(vite@7.3.1(@types/node@25.2.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
       vitest:
         specifier: 'catalog:'
-        version: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.2.3)(jiti@2.6.1)(jsdom@27.4.0)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.2.3)(jiti@2.6.1)(jsdom@28.1.0)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples:
     dependencies:
@@ -235,7 +235,7 @@ importers:
         version: 2.3.0(rollup@4.57.1)(vite@7.3.1(@types/node@25.2.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
       vitest:
         specifier: 'catalog:'
-        version: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.2.3)(jiti@2.6.1)(jsdom@27.4.0)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.2.3)(jiti@2.6.1)(jsdom@28.1.0)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   examples/autocomplete-fuzzy-search-playground:
     dependencies:
@@ -254,7 +254,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -279,7 +279,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -307,7 +307,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -335,7 +335,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -369,7 +369,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -409,7 +409,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -437,7 +437,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -462,7 +462,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -490,7 +490,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -518,7 +518,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -543,7 +543,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -574,7 +574,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -599,7 +599,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -624,7 +624,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -649,7 +649,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -674,7 +674,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -699,7 +699,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -724,7 +724,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -749,7 +749,50 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
+      rollup-plugin-visualizer:
+        specifier: 'catalog:'
+        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+      ts-node:
+        specifier: 'catalog:'
+        version: 10.9.2(@types/node@25.2.3)(typescript@5.9.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vite:
+        specifier: 'catalog:'
+        version: 7.3.1(@types/node@25.2.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+
+  examples/map-chat-agent:
+    dependencies:
+      '@ai-sdk/azure':
+        specifier: ^3.0.27
+        version: 3.0.30(zod@4.3.6)
+      '@tomtom-org/maps-sdk':
+        specifier: workspace:*
+        version: link:../..
+      '@tomtom-org/maps-sdk-map-agent':
+        specifier: workspace:*
+        version: link:../../plugins/map-agent
+      ai:
+        specifier: 6.0.78
+        version: 6.0.78(zod@4.3.6)
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
+    devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.58.2
+      '@types/node':
+        specifier: 'catalog:'
+        version: 25.2.3
+      maplibre-gl:
+        specifier: 'catalog:'
+        version: 5.18.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -774,7 +817,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -802,7 +845,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -827,7 +870,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -852,7 +895,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -877,7 +920,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -905,7 +948,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -936,7 +979,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1004,7 +1047,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1032,7 +1075,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1057,7 +1100,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1085,7 +1128,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1113,7 +1156,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1141,7 +1184,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1166,7 +1209,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1194,7 +1237,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1219,7 +1262,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1244,7 +1287,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1269,7 +1312,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1294,7 +1337,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1322,7 +1365,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1347,7 +1390,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1375,7 +1418,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1400,7 +1443,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1431,7 +1474,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1456,7 +1499,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1481,7 +1524,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1506,7 +1549,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1531,7 +1574,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1559,7 +1602,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1584,7 +1627,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1609,7 +1652,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1634,7 +1677,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1659,7 +1702,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1684,7 +1727,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1709,7 +1752,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1734,7 +1777,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1762,7 +1805,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1787,7 +1830,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1812,7 +1855,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1843,7 +1886,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1868,7 +1911,7 @@ importers:
         version: 25.2.3
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
@@ -1908,13 +1951,13 @@ importers:
         version: 4.17.12
       '@vitest/coverage-v8':
         specifier: 'catalog:'
-        version: 4.0.18(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.2.3)(jiti@2.6.1)(jsdom@27.4.0)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
+        version: 4.0.18(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.2.3)(jiti@2.6.1)(jsdom@28.1.0)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
       jsdom:
         specifier: 'catalog:'
-        version: 27.4.0
+        version: 28.1.0
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       shared-configs:
         specifier: workspace:*
         version: link:../shared-configs
@@ -1932,7 +1975,7 @@ importers:
         version: 5.0.0-beta.6(@microsoft/api-extractor@7.56.3(@types/node@25.2.3))(esbuild@0.27.2)(rollup@4.57.1)(typescript@5.9.3)(vite@7.3.1(@types/node@25.2.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
       vitest:
         specifier: 'catalog:'
-        version: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.2.3)(jiti@2.6.1)(jsdom@27.4.0)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.2.3)(jiti@2.6.1)(jsdom@28.1.0)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   map-integration-tests:
     devDependencies:
@@ -1968,7 +2011,7 @@ importers:
         version: 5.18.0
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.2.3)(typescript@5.9.3)
@@ -2016,7 +2059,7 @@ importers:
         version: 4.0.0
       rollup-plugin-license:
         specifier: 'catalog:'
-        version: 3.6.0(picomatch@4.0.3)(rollup@4.57.1)
+        version: 3.7.0(picomatch@4.0.3)(rollup@4.57.1)
       rollup-plugin-peer-deps-external:
         specifier: 'catalog:'
         version: 2.2.4(rollup@4.57.1)
@@ -2034,7 +2077,7 @@ importers:
         version: 2.3.0(rollup@4.57.1)(vite@7.3.1(@types/node@25.2.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
       vitest:
         specifier: 'catalog:'
-        version: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.2.3)(jiti@2.6.1)(jsdom@27.4.0)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.2.3)(jiti@2.6.1)(jsdom@28.1.0)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   plugins/map-agent:
     dependencies:
@@ -2048,7 +2091,7 @@ importers:
         specifier: 'catalog:'
         version: 5.18.0
       zod:
-        specifier: ^4.3.6
+        specifier: 'catalog:'
         version: 4.3.6
     devDependencies:
       '@ai-sdk/openai':
@@ -2077,7 +2120,7 @@ importers:
         version: 5.0.0-beta.6(@microsoft/api-extractor@7.56.3(@types/node@25.2.3))(esbuild@0.27.2)(rollup@4.57.1)(typescript@5.9.3)(vite@7.3.1(@types/node@25.2.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
       vitest:
         specifier: 'catalog:'
-        version: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.2.3)(jiti@2.6.1)(jsdom@27.4.0)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.2.3)(jiti@2.6.1)(jsdom@28.1.0)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   plugins/viewport-places:
     dependencies:
@@ -2133,10 +2176,10 @@ importers:
         version: 25.2.3
       '@vitest/coverage-v8':
         specifier: 'catalog:'
-        version: 4.0.18(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.2.3)(jiti@2.6.1)(jsdom@27.4.0)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
+        version: 4.0.18(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.2.3)(jiti@2.6.1)(jsdom@28.1.0)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
       rimraf:
         specifier: 'catalog:'
-        version: 6.1.2
+        version: 6.1.3
       shared-configs:
         specifier: workspace:*
         version: link:../shared-configs
@@ -2154,7 +2197,7 @@ importers:
         version: 5.0.0-beta.6(@microsoft/api-extractor@7.56.3(@types/node@25.2.3))(esbuild@0.27.2)(rollup@4.57.1)(typescript@5.9.3)(vite@7.3.1(@types/node@25.2.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
       vitest:
         specifier: 'catalog:'
-        version: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.2.3)(jiti@2.6.1)(jsdom@27.4.0)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.2.3)(jiti@2.6.1)(jsdom@28.1.0)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   shared-configs:
     devDependencies:
@@ -2166,7 +2209,7 @@ importers:
         version: 4.0.0
       rollup-plugin-license:
         specifier: 'catalog:'
-        version: 3.6.0(picomatch@4.0.3)(rollup@4.57.1)
+        version: 3.7.0(picomatch@4.0.3)(rollup@4.57.1)
       rollup-plugin-peer-deps-external:
         specifier: 'catalog:'
         version: 2.2.4(rollup@4.57.1)
@@ -2181,7 +2224,7 @@ importers:
         version: 5.0.0-beta.6(@microsoft/api-extractor@7.56.3(@types/node@25.2.3))(esbuild@0.27.2)(rollup@4.57.1)(typescript@5.9.3)(vite@7.3.1(@types/node@25.2.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
       vitest:
         specifier: 'catalog:'
-        version: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.2.3)(jiti@2.6.1)(jsdom@27.4.0)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+        version: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.2.3)(jiti@2.6.1)(jsdom@28.1.0)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
 packages:
 
@@ -2190,6 +2233,12 @@ packages:
 
   '@adobe/css-tools@4.3.3':
     resolution: {integrity: sha512-rE0Pygv0sEZ4vBWHlAgJLGDU7Pm8xoO6p3wsEceb7GYAjScrOHpEo8KK/eVkAcnSM+slAEtXjA2JpdjLp4fJQQ==}
+
+  '@ai-sdk/azure@3.0.30':
+    resolution: {integrity: sha512-+q25oZLTVj4o7Mp0zw5A6Pns3EfgUrPa6nH75F51a9ZkvCRwl0qZFI6q7WkzBloHH6mbwez2Na15n4U3DyubyQ==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
 
   '@ai-sdk/gateway@3.0.39':
     resolution: {integrity: sha512-SeCZBAdDNbWpVUXiYgOAqis22p5MEYfrjRw0hiBa5hM+7sDGYQpMinUjkM8kbPXMkY+AhKLrHleBl+SuqpzlgA==}
@@ -2203,8 +2252,20 @@ packages:
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
+  '@ai-sdk/openai@3.0.29':
+    resolution: {integrity: sha512-ugVTIVpuSLKTjzSPe1F1DWiblJT/lwrrHx0OZEKjpMk/EYP6j6VD/F7SJqM1dsqOJryeBCJWFbUzLNqc99PrMA==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
+
   '@ai-sdk/provider-utils@4.0.14':
     resolution: {integrity: sha512-7bzKd9lgiDeXM7O4U4nQ8iTxguAOkg8LZGD9AfDVZYjO5cKYRwBPwVjboFcVrxncRHu0tYxZtXZtiLKpG4pEng==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
+
+  '@ai-sdk/provider-utils@4.0.15':
+    resolution: {integrity: sha512-8XiKWbemmCbvNN0CLR9u3PQiet4gtEVIrX4zzLxnCj06AwsEDJwJVBbKrEI4t6qE8XRSIvU2irka0dcpziKW6w==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -2213,8 +2274,8 @@ packages:
     resolution: {integrity: sha512-oGMAgGoQdBXbZqNG0Ze56CHjDZ1IDYOwGYxYjO5KLSlz5HiNQ9udIXsPZ61VWaHGZ5XW/jyjmr6t2xz2jGVwbQ==}
     engines: {node: '>=18'}
 
-  '@asamuzakjp/css-color@4.1.1':
-    resolution: {integrity: sha512-B0Hv6G3gWGMn0xKJ0txEi/jM5iFpT3MfDxmhZFb4W047GvytCf1DHQ1D69W3zHI4yWe2aTZAA0JnbMZ7Xc8DuQ==}
+  '@asamuzakjp/css-color@4.1.2':
+    resolution: {integrity: sha512-NfBUvBaYgKIuq6E/RBLY1m0IohzNHAYyaJGuTK79Z23uNwmz2jl1mPsC5ZxCCxylinKhT1Amn5oNTlx1wN8cQg==}
 
   '@asamuzakjp/dom-selector@6.8.1':
     resolution: {integrity: sha512-MvRz1nCqW0fsy8Qz4dnLIvhOlMzqDVBabZx6lH+YywFDdjXhMY37SmpV1XFX3JzG5GWHn63j6HX6QPr3lZXHvQ==}
@@ -2309,62 +2370,66 @@ packages:
     resolution: {integrity: sha512-6zABk/ECA/QYSCQ1NGiVwwbQerUCZ+TQbp64Q3AgmfNvurHH0j8TtXa1qbShXA6qqkpAj4V5W8pP6mLe1mcMqA==}
     engines: {node: '>=18'}
 
-  '@biomejs/biome@2.4.0':
-    resolution: {integrity: sha512-iluT61cORUDIC5i/y42ljyQraCemmmcgbMLLCnYO+yh+2hjTmcMFcwY8G0zTzWCsPb3t3AyKc+0t/VuhPZULUg==}
+  '@biomejs/biome@2.4.2':
+    resolution: {integrity: sha512-vVE/FqLxNLbvYnFDYg3Xfrh1UdFhmPT5i+yPT9GE2nTUgI4rkqo5krw5wK19YHBd7aE7J6r91RRmb8RWwkjy6w==}
     engines: {node: '>=14.21.3'}
     hasBin: true
 
-  '@biomejs/cli-darwin-arm64@2.4.0':
-    resolution: {integrity: sha512-L+YpOtPSuU0etomfvFTPWRsa7+8ejaJL3yaROEoT/96HDJbR6OsvZQk0C8JUYou+XFdP+JcGxqZknkp4n934RA==}
+  '@biomejs/cli-darwin-arm64@2.4.2':
+    resolution: {integrity: sha512-3pEcKCP/1POKyaZZhXcxFl3+d9njmeAihZ17k8lL/1vk+6e0Cbf0yPzKItFiT+5Yh6TQA4uKvnlqe0oVZwRxCA==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
     os: [darwin]
 
-  '@biomejs/cli-darwin-x64@2.4.0':
-    resolution: {integrity: sha512-Aq+S7ffpb5ynTyLgtnEjG+W6xuTd2F7FdC7J6ShpvRhZwJhjzwITGF9vrqoOnw0sv1XWkt2Q1Rpg+hleg/Xg7Q==}
+  '@biomejs/cli-darwin-x64@2.4.2':
+    resolution: {integrity: sha512-P7hK1jLVny+0R9UwyGcECxO6sjETxfPyBm/1dmFjnDOHgdDPjPqozByunrwh4xPKld8sxOr5eAsSqal5uKgeBg==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [darwin]
 
-  '@biomejs/cli-linux-arm64-musl@2.4.0':
-    resolution: {integrity: sha512-1rhDUq8sf7xX3tg7vbnU3WVfanKCKi40OXc4VleBMzRStmQHdeBY46aFP6VdwEomcVjyNiu+Zcr3LZtAdrZrjQ==}
+  '@biomejs/cli-linux-arm64-musl@2.4.2':
+    resolution: {integrity: sha512-/x04YK9+7erw6tYEcJv9WXoBHcULI/wMOvNdAyE9S3JStZZ9yJyV67sWAI+90UHuDo/BDhq0d96LDqGlSVv7WA==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
     os: [linux]
     libc: [musl]
 
-  '@biomejs/cli-linux-arm64@2.4.0':
-    resolution: {integrity: sha512-u2p54IhvNAWB+h7+rxCZe3reNfQYFK+ppDw+q0yegrGclFYnDPZAntv/PqgUacpC3uxTeuWFgWW7RFe3lHuxOA==}
+  '@biomejs/cli-linux-arm64@2.4.2':
+    resolution: {integrity: sha512-DI3Mi7GT2zYNgUTDEbSjl3e1KhoP76OjQdm8JpvZYZWtVDRyLd3w8llSr2TWk1z+U3P44kUBWY3X7H9MD1/DGQ==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
     os: [linux]
     libc: [glibc]
 
-  '@biomejs/cli-linux-x64-musl@2.4.0':
-    resolution: {integrity: sha512-Omo0xhl63z47X+CrE5viEWKJhejJyndl577VoXg763U/aoATrK3r5+8DPh02GokWPeODX1Hek00OtjjooGan9w==}
+  '@biomejs/cli-linux-x64-musl@2.4.2':
+    resolution: {integrity: sha512-wbBmTkeAoAYbOQ33f6sfKG7pcRSydQiF+dTYOBjJsnXO2mWEOQHllKlC2YVnedqZFERp2WZhFUoO7TNRwnwEHQ==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [linux]
     libc: [musl]
 
-  '@biomejs/cli-linux-x64@2.4.0':
-    resolution: {integrity: sha512-WVFOhsnzhrbMGOSIcB9yFdRV2oG2KkRRhIZiunI9gJqSU3ax9ErdnTxRfJUxZUI9NbzVxC60OCXNcu+mXfF/Tw==}
+  '@biomejs/cli-linux-x64@2.4.2':
+    resolution: {integrity: sha512-GK2ErnrKpWFigYP68cXiCHK4RTL4IUWhK92AFS3U28X/nuAL5+hTuy6hyobc8JZRSt+upXt1nXChK+tuHHx4mA==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [linux]
     libc: [glibc]
 
-  '@biomejs/cli-win32-arm64@2.4.0':
-    resolution: {integrity: sha512-aqRwW0LJLV1v1NzyLvLWQhdLmDSAV1vUh+OBdYJaa8f28XBn5BZavo+WTfqgEzALZxlNfBmu6NGO6Al3MbCULw==}
+  '@biomejs/cli-win32-arm64@2.4.2':
+    resolution: {integrity: sha512-k2uqwLYrNNxnaoiW3RJxoMGnbKda8FuCmtYG3cOtVljs3CzWxaTR+AoXwKGHscC9thax9R4kOrtWqWN0+KdPTw==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
     os: [win32]
 
-  '@biomejs/cli-win32-x64@2.4.0':
-    resolution: {integrity: sha512-g47s+V+OqsGxbSZN3lpav6WYOk0PIc3aCBAq+p6dwSynL3K5MA6Cg6nkzDOlu28GEHwbakW+BllzHCJCxnfK5Q==}
+  '@biomejs/cli-win32-x64@2.4.2':
+    resolution: {integrity: sha512-9ma7C4g8Sq3cBlRJD2yrsHXB1mnnEBdpy7PhvFrylQWQb4PoyCmPucdX7frvsSBQuFtIiKCrolPl/8tCZrKvgQ==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [win32]
+
+  '@bramus/specificity@2.4.2':
+    resolution: {integrity: sha512-ctxtJ/eA+t+6q2++vj5j7FYX3nRu311q1wfYH3xjlLOsczhlhxAg2FWNUXhpGvAw3BWo1xBcvOV6/YLc2r5FJw==}
+    hasBin: true
 
   '@bufbuild/protobuf@2.11.0':
     resolution: {integrity: sha512-sBXGT13cpmPR5BMgHE6UEEfEaShh5Ror6rfN3yEK5si7QVrtZg8LEPQb0VVhiLRUslD2yLnXtnRzG035J/mZXQ==}
@@ -2415,36 +2480,36 @@ packages:
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
     engines: {node: '>=12'}
 
-  '@csstools/color-helpers@5.1.0':
-    resolution: {integrity: sha512-S11EXWJyy0Mz5SYvRmY8nJYTFFd1LCNV+7cXyAgQtOOuzb4EsgfqDufL+9esx72/eLhsRdGZwaldu/h+E4t4BA==}
-    engines: {node: '>=18'}
+  '@csstools/color-helpers@6.0.1':
+    resolution: {integrity: sha512-NmXRccUJMk2AWA5A7e5a//3bCIMyOu2hAtdRYrhPPHjDxINuCwX1w6rnIZ4xjLcp0ayv6h8Pc3X0eJUGiAAXHQ==}
+    engines: {node: '>=20.19.0'}
 
-  '@csstools/css-calc@2.1.4':
-    resolution: {integrity: sha512-3N8oaj+0juUw/1H3YwmDDJXCgTB1gKU6Hc/bB502u9zR0q2vd786XJH9QfrKIEgFlZmhZiq6epXl4rHqhzsIgQ==}
-    engines: {node: '>=18'}
+  '@csstools/css-calc@3.1.1':
+    resolution: {integrity: sha512-HJ26Z/vmsZQqs/o3a6bgKslXGFAungXGbinULZO3eMsOyNJHeBBZfup5FiZInOghgoM4Hwnmw+OgbJCNg1wwUQ==}
+    engines: {node: '>=20.19.0'}
     peerDependencies:
-      '@csstools/css-parser-algorithms': ^3.0.5
-      '@csstools/css-tokenizer': ^3.0.4
+      '@csstools/css-parser-algorithms': ^4.0.0
+      '@csstools/css-tokenizer': ^4.0.0
 
-  '@csstools/css-color-parser@3.1.0':
-    resolution: {integrity: sha512-nbtKwh3a6xNVIp/VRuXV64yTKnb1IjTAEEh3irzS+HkKjAOYLTGNb9pmVNntZ8iVBHcWDA2Dof0QtPgFI1BaTA==}
-    engines: {node: '>=18'}
+  '@csstools/css-color-parser@4.0.1':
+    resolution: {integrity: sha512-vYwO15eRBEkeF6xjAno/KQ61HacNhfQuuU/eGwH67DplL0zD5ZixUa563phQvUelA07yDczIXdtmYojCphKJcw==}
+    engines: {node: '>=20.19.0'}
     peerDependencies:
-      '@csstools/css-parser-algorithms': ^3.0.5
-      '@csstools/css-tokenizer': ^3.0.4
+      '@csstools/css-parser-algorithms': ^4.0.0
+      '@csstools/css-tokenizer': ^4.0.0
 
-  '@csstools/css-parser-algorithms@3.0.5':
-    resolution: {integrity: sha512-DaDeUkXZKjdGhgYaHNJTV9pV7Y9B3b644jCLs9Upc3VeNGg6LWARAT6O+Q+/COo+2gg/bM5rhpMAtf70WqfBdQ==}
-    engines: {node: '>=18'}
+  '@csstools/css-parser-algorithms@4.0.0':
+    resolution: {integrity: sha512-+B87qS7fIG3L5h3qwJ/IFbjoVoOe/bpOdh9hAjXbvx0o8ImEmUsGXN0inFOnk2ChCFgqkkGFQ+TpM5rbhkKe4w==}
+    engines: {node: '>=20.19.0'}
     peerDependencies:
-      '@csstools/css-tokenizer': ^3.0.4
+      '@csstools/css-tokenizer': ^4.0.0
 
   '@csstools/css-syntax-patches-for-csstree@1.0.26':
     resolution: {integrity: sha512-6boXK0KkzT5u5xOgF6TKB+CLq9SOpEGmkZw0g5n9/7yg85wab3UzSxB8TxhLJ31L4SGJ6BCFRw/iftTha1CJXA==}
 
-  '@csstools/css-tokenizer@3.0.4':
-    resolution: {integrity: sha512-Vd/9EVDiu6PPJt9yAh6roZP6El1xHrdvIVGjyBsHR0RYwNHgL7FJPyIIW4fANJNG6FtyZfvlRPpFI4ZM/lubvw==}
-    engines: {node: '>=18'}
+  '@csstools/css-tokenizer@4.0.0':
+    resolution: {integrity: sha512-QxULHAm7cNu72w97JUNCBFODFaXpbDg+dP8b/oWFAZ2MTRppA3U00Y2L1HqaS4J6yBqxwa/Y3nMBaxVKbB/NsA==}
+    engines: {node: '>=20.19.0'}
 
   '@emnapi/core@1.8.1':
     resolution: {integrity: sha512-AvT9QFpxK0Zd8J0jopedNm+w/2fIzvtPKPjqyw9jwvBaReTTqPBk9Hixaz7KbjimP+QNz605/XnjFcDAL2pqBg==}
@@ -4214,8 +4279,8 @@ packages:
     resolution: {integrity: sha512-0eW44TGN5SQXU1mWSkKwFstI/22X2bG1nYzZTYMAWjylYURhse752YgbE4Cx46AC+bAvI+/dYTPRk1LqSUnu6w==}
     engines: {node: ^10 || ^12.20.0 || ^14.13.0 || >=15.0.0}
 
-  cssstyle@5.3.7:
-    resolution: {integrity: sha512-7D2EPVltRrsTkhpQmksIu+LxeWAIEk6wRDMJ1qljlv+CKHJM+cJLlfhWIzNA44eAsHXSNe3+vO6DW1yCYx8SuQ==}
+  cssstyle@6.0.1:
+    resolution: {integrity: sha512-IoJs7La+oFp/AB033wBStxNOJt4+9hHMxsXUPANcoXL2b3W4DZKghlJ2cI/eyeRZIQ9ysvYEorVhjrcYctWbog==}
     engines: {node: '>=20'}
 
   csstype@3.2.3:
@@ -4238,9 +4303,9 @@ packages:
     resolution: {integrity: sha512-7hvf7/GW8e86rW0ptuwS3OcBGDjIi6SZva7hCyWC0yYry2cOPmLIjXAUHI6DK2HsnwJd9ifmt57i8eV2n4YNpw==}
     engines: {node: '>= 14'}
 
-  data-urls@6.0.1:
-    resolution: {integrity: sha512-euIQENZg6x8mj3fO6o9+fOW8MimUI4PpD/fZBhJfeioZVy9TUpM4UY7KjQNVZFlqwJ0UdzRDzkycB997HEq1BQ==}
-    engines: {node: '>=20'}
+  data-urls@7.0.0:
+    resolution: {integrity: sha512-23XHcCF+coGYevirZceTVD7NdJOqVn+49IHyxgszm+JIiHLoB2TkmPtsYkNWT1pvRSGkc35L6NHs0yHkN2SumA==}
+    engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0}
 
   debug@4.4.3:
     resolution: {integrity: sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==}
@@ -4632,8 +4697,8 @@ packages:
     resolution: {integrity: sha512-qQKT4zQxXl8lLwBtHMWwaTcGfFOZviOJet3Oy/xmGk2gZH677CJM9EvtfdSkgWcATZhj/55JZ0rmy3myCT5lsA==}
     hasBin: true
 
-  jsdom@27.4.0:
-    resolution: {integrity: sha512-mjzqwWRD9Y1J1KUi7W97Gja1bwOOM5Ug0EZ6UDK3xS7j7mndrkwozHtSblfomlzyB4NepioNt+B2sOSzczVgtQ==}
+  jsdom@28.1.0:
+    resolution: {integrity: sha512-0+MoQNYyr2rBHqO1xilltfDjV9G7ymYGlAUazgcDLQaUf8JDHbuGwsxN6U9qWaElZ4w1B2r7yEGIL3GdeW3Rug==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0}
     peerDependencies:
       canvas: ^3.0.0
@@ -4765,10 +4830,6 @@ packages:
 
   lru-cache@10.4.3:
     resolution: {integrity: sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==}
-
-  lru-cache@11.2.5:
-    resolution: {integrity: sha512-vFrFJkWtJvJnD5hg+hJvVE8Lh/TcMzKnTgCWmtBipwI5yLX/iX+5UB2tfuyODF5E7k9xEzMdYgGqaSb1c0c5Yw==}
-    engines: {node: 20 || >=22}
 
   lru-cache@11.2.6:
     resolution: {integrity: sha512-ESL2CrkS/2wTPfuend7Zhkzo2u0daGJ/A2VucJOgQ/C48S/zB8MMeMHSGKYpXhIjbPxfuezITkaBH1wqv00DDQ==}
@@ -5103,8 +5164,8 @@ packages:
     engines: {node: '>= 0.4'}
     hasBin: true
 
-  rimraf@6.1.2:
-    resolution: {integrity: sha512-cFCkPslJv7BAXJsYlK1dZsbP8/ZNLkCAQ0bi1hf5EKX2QHegmDFEFA6QhuYJlk7UDdc+02JjO80YSOrWPpw06g==}
+  rimraf@6.1.3:
+    resolution: {integrity: sha512-LKg+Cr2ZF61fkcaK1UdkH2yEBBKnYjTyWzTJT6KNPcSPaiT7HSdhtMXQuN5wkTX0Xu72KQ1l8S42rlmexS2hSA==}
     engines: {node: 20 || >=22}
     hasBin: true
 
@@ -5122,8 +5183,8 @@ packages:
     resolution: {integrity: sha512-LL9GEt3bkXp6Wa19SNR5MWcvHNMvuTFYg+eYBZN2OIFhSWN+pEJUQXEKu5BsOeABob3x9PDaLKW7w5iOJnsESQ==}
     engines: {node: '>=8.0.0'}
 
-  rollup-plugin-license@3.6.0:
-    resolution: {integrity: sha512-1ieLxTCaigI5xokIfszVDRoy6c/Wmlot1fDEnea7Q/WXSR8AqOjYljHDLObAx7nFxHC2mbxT3QnTSPhaic2IYw==}
+  rollup-plugin-license@3.7.0:
+    resolution: {integrity: sha512-RvvOIF+GH3fBR3wffgc/vmjQn6qOn72WjppWVDp/v+CLpT0BbcRBdSkPeeIOL6U5XccdYgSIMjUyXgxlKEEFcw==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       rollup: ^1.0.0 || ^2.0.0 || ^3.0.0 || ^4.0.0
@@ -5593,6 +5654,10 @@ packages:
   undici-types@7.16.0:
     resolution: {integrity: sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw==}
 
+  undici@7.22.0:
+    resolution: {integrity: sha512-RqslV2Us5BrllB+JeiZnK4peryVTndy9Dnqq62S3yYRRTj0tFQCwEniUy2167skdGOy3vqRzEvl1Dm4sV2ReDg==}
+    engines: {node: '>=20.18.1'}
+
   universalify@2.0.1:
     resolution: {integrity: sha512-gptHNQghINnc/vTGIk0SOFGFNXw7JVrlRUtConJRlvaw6DuX0wO5Jeko9sWrMBhh+PsYAZ7oXAiOnf/UKogyiw==}
     engines: {node: '>= 10.0.0'}
@@ -5761,17 +5826,13 @@ packages:
   webpack-virtual-modules@0.6.2:
     resolution: {integrity: sha512-66/V2i5hQanC51vBQKPH4aI8NMAcBW59FVBs+rC7eGHupMyfn34q7rZIE+ETlJ+XTevqfUhVVBgSUNSW2flEUQ==}
 
-  whatwg-mimetype@4.0.0:
-    resolution: {integrity: sha512-QaKxh0eNIi2mE9p2vEdzfagOKHCcj1pJ56EEHGQOVxp8r9/iszLUUV7v89x9O1p/T+NlTM5W7jW6+cz4Fq1YVg==}
-    engines: {node: '>=18'}
-
   whatwg-mimetype@5.0.0:
     resolution: {integrity: sha512-sXcNcHOC51uPGF0P/D4NVtrkjSU2fNsm9iog4ZvZJsL3rjoDAzXZhkm2MWt1y+PUdggKAYVoMAIYcs78wJ51Cw==}
     engines: {node: '>=20'}
 
-  whatwg-url@15.1.0:
-    resolution: {integrity: sha512-2ytDk0kiEj/yu90JOAp44PVPUkO9+jVhyf+SybKlRHSDlvOOZhdPIrr7xTH64l4WixO2cP+wQIcgujkGBPPz6g==}
-    engines: {node: '>=20'}
+  whatwg-url@16.0.0:
+    resolution: {integrity: sha512-9CcxtEKsf53UFwkSUZjG+9vydAsFO4lFHBpJUtjBcoJOCJpKnSJNwCw813zrYJHpCJ7sgfbtOe0V5Ku7Pa1XMQ==}
+    engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0}
 
   which@2.0.2:
     resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==}
@@ -5856,6 +5917,13 @@ snapshots:
   '@adobe/css-tools@4.3.3':
     optional: true
 
+  '@ai-sdk/azure@3.0.30(zod@4.3.6)':
+    dependencies:
+      '@ai-sdk/openai': 3.0.29(zod@4.3.6)
+      '@ai-sdk/provider': 3.0.8
+      '@ai-sdk/provider-utils': 4.0.15(zod@4.3.6)
+      zod: 4.3.6
+
   '@ai-sdk/gateway@3.0.39(zod@4.3.6)':
     dependencies:
       '@ai-sdk/provider': 3.0.8
@@ -5869,7 +5937,20 @@ snapshots:
       '@ai-sdk/provider-utils': 4.0.14(zod@4.3.6)
       zod: 4.3.6
 
+  '@ai-sdk/openai@3.0.29(zod@4.3.6)':
+    dependencies:
+      '@ai-sdk/provider': 3.0.8
+      '@ai-sdk/provider-utils': 4.0.15(zod@4.3.6)
+      zod: 4.3.6
+
   '@ai-sdk/provider-utils@4.0.14(zod@4.3.6)':
+    dependencies:
+      '@ai-sdk/provider': 3.0.8
+      '@standard-schema/spec': 1.1.0
+      eventsource-parser: 3.0.6
+      zod: 4.3.6
+
+  '@ai-sdk/provider-utils@4.0.15(zod@4.3.6)':
     dependencies:
       '@ai-sdk/provider': 3.0.8
       '@standard-schema/spec': 1.1.0
@@ -5880,13 +5961,13 @@ snapshots:
     dependencies:
       json-schema: 0.4.0
 
-  '@asamuzakjp/css-color@4.1.1':
+  '@asamuzakjp/css-color@4.1.2':
     dependencies:
-      '@csstools/css-calc': 2.1.4(@csstools/css-parser-algorithms@3.0.5(@csstools/css-tokenizer@3.0.4))(@csstools/css-tokenizer@3.0.4)
-      '@csstools/css-color-parser': 3.1.0(@csstools/css-parser-algorithms@3.0.5(@csstools/css-tokenizer@3.0.4))(@csstools/css-tokenizer@3.0.4)
-      '@csstools/css-parser-algorithms': 3.0.5(@csstools/css-tokenizer@3.0.4)
-      '@csstools/css-tokenizer': 3.0.4
-      lru-cache: 11.2.5
+      '@csstools/css-calc': 3.1.1(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.0)
+      '@csstools/css-color-parser': 4.0.1(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.0)
+      '@csstools/css-parser-algorithms': 4.0.0(@csstools/css-tokenizer@4.0.0)
+      '@csstools/css-tokenizer': 4.0.0
+      lru-cache: 11.2.6
 
   '@asamuzakjp/dom-selector@6.8.1':
     dependencies:
@@ -6012,40 +6093,44 @@ snapshots:
 
   '@bcoe/v8-coverage@1.0.2': {}
 
-  '@biomejs/biome@2.4.0':
+  '@biomejs/biome@2.4.2':
     optionalDependencies:
-      '@biomejs/cli-darwin-arm64': 2.4.0
-      '@biomejs/cli-darwin-x64': 2.4.0
-      '@biomejs/cli-linux-arm64': 2.4.0
-      '@biomejs/cli-linux-arm64-musl': 2.4.0
-      '@biomejs/cli-linux-x64': 2.4.0
-      '@biomejs/cli-linux-x64-musl': 2.4.0
-      '@biomejs/cli-win32-arm64': 2.4.0
-      '@biomejs/cli-win32-x64': 2.4.0
+      '@biomejs/cli-darwin-arm64': 2.4.2
+      '@biomejs/cli-darwin-x64': 2.4.2
+      '@biomejs/cli-linux-arm64': 2.4.2
+      '@biomejs/cli-linux-arm64-musl': 2.4.2
+      '@biomejs/cli-linux-x64': 2.4.2
+      '@biomejs/cli-linux-x64-musl': 2.4.2
+      '@biomejs/cli-win32-arm64': 2.4.2
+      '@biomejs/cli-win32-x64': 2.4.2
 
-  '@biomejs/cli-darwin-arm64@2.4.0':
+  '@biomejs/cli-darwin-arm64@2.4.2':
     optional: true
 
-  '@biomejs/cli-darwin-x64@2.4.0':
+  '@biomejs/cli-darwin-x64@2.4.2':
     optional: true
 
-  '@biomejs/cli-linux-arm64-musl@2.4.0':
+  '@biomejs/cli-linux-arm64-musl@2.4.2':
     optional: true
 
-  '@biomejs/cli-linux-arm64@2.4.0':
+  '@biomejs/cli-linux-arm64@2.4.2':
     optional: true
 
-  '@biomejs/cli-linux-x64-musl@2.4.0':
+  '@biomejs/cli-linux-x64-musl@2.4.2':
     optional: true
 
-  '@biomejs/cli-linux-x64@2.4.0':
+  '@biomejs/cli-linux-x64@2.4.2':
     optional: true
 
-  '@biomejs/cli-win32-arm64@2.4.0':
+  '@biomejs/cli-win32-arm64@2.4.2':
     optional: true
 
-  '@biomejs/cli-win32-x64@2.4.0':
+  '@biomejs/cli-win32-x64@2.4.2':
     optional: true
+
+  '@bramus/specificity@2.4.2':
+    dependencies:
+      css-tree: 3.1.0
 
   '@bufbuild/protobuf@2.11.0':
     optional: true
@@ -6164,27 +6249,27 @@ snapshots:
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
 
-  '@csstools/color-helpers@5.1.0': {}
+  '@csstools/color-helpers@6.0.1': {}
 
-  '@csstools/css-calc@2.1.4(@csstools/css-parser-algorithms@3.0.5(@csstools/css-tokenizer@3.0.4))(@csstools/css-tokenizer@3.0.4)':
+  '@csstools/css-calc@3.1.1(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.0)':
     dependencies:
-      '@csstools/css-parser-algorithms': 3.0.5(@csstools/css-tokenizer@3.0.4)
-      '@csstools/css-tokenizer': 3.0.4
+      '@csstools/css-parser-algorithms': 4.0.0(@csstools/css-tokenizer@4.0.0)
+      '@csstools/css-tokenizer': 4.0.0
 
-  '@csstools/css-color-parser@3.1.0(@csstools/css-parser-algorithms@3.0.5(@csstools/css-tokenizer@3.0.4))(@csstools/css-tokenizer@3.0.4)':
+  '@csstools/css-color-parser@4.0.1(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.0)':
     dependencies:
-      '@csstools/color-helpers': 5.1.0
-      '@csstools/css-calc': 2.1.4(@csstools/css-parser-algorithms@3.0.5(@csstools/css-tokenizer@3.0.4))(@csstools/css-tokenizer@3.0.4)
-      '@csstools/css-parser-algorithms': 3.0.5(@csstools/css-tokenizer@3.0.4)
-      '@csstools/css-tokenizer': 3.0.4
+      '@csstools/color-helpers': 6.0.1
+      '@csstools/css-calc': 3.1.1(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.0)
+      '@csstools/css-parser-algorithms': 4.0.0(@csstools/css-tokenizer@4.0.0)
+      '@csstools/css-tokenizer': 4.0.0
 
-  '@csstools/css-parser-algorithms@3.0.5(@csstools/css-tokenizer@3.0.4)':
+  '@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0)':
     dependencies:
-      '@csstools/css-tokenizer': 3.0.4
+      '@csstools/css-tokenizer': 4.0.0
 
   '@csstools/css-syntax-patches-for-csstree@1.0.26': {}
 
-  '@csstools/css-tokenizer@3.0.4': {}
+  '@csstools/css-tokenizer@4.0.0': {}
 
   '@emnapi/core@1.8.1':
     dependencies:
@@ -8186,7 +8271,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/coverage-v8@4.0.18(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.2.3)(jiti@2.6.1)(jsdom@27.4.0)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))':
+  '@vitest/coverage-v8@4.0.18(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.2.3)(jiti@2.6.1)(jsdom@28.1.0)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))':
     dependencies:
       '@bcoe/v8-coverage': 1.0.2
       '@vitest/utils': 4.0.18
@@ -8198,7 +8283,7 @@ snapshots:
       obug: 2.1.1
       std-env: 3.10.0
       tinyrainbow: 3.0.3
-      vitest: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.2.3)(jiti@2.6.1)(jsdom@27.4.0)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
+      vitest: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.2.3)(jiti@2.6.1)(jsdom@28.1.0)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
 
   '@vitest/expect@4.0.18':
     dependencies:
@@ -8505,12 +8590,12 @@ snapshots:
       mdn-data: 2.12.2
       source-map-js: 1.2.1
 
-  cssstyle@5.3.7:
+  cssstyle@6.0.1:
     dependencies:
-      '@asamuzakjp/css-color': 4.1.1
+      '@asamuzakjp/css-color': 4.1.2
       '@csstools/css-syntax-patches-for-csstree': 1.0.26
       css-tree: 3.1.0
-      lru-cache: 11.2.5
+      lru-cache: 11.2.6
 
   csstype@3.2.3: {}
 
@@ -8529,10 +8614,12 @@ snapshots:
 
   data-uri-to-buffer@6.0.2: {}
 
-  data-urls@6.0.1:
+  data-urls@7.0.0:
     dependencies:
       whatwg-mimetype: 5.0.0
-      whatwg-url: 15.1.0
+      whatwg-url: 16.0.0
+    transitivePeerDependencies:
+      - '@noble/hashes'
 
   debug@4.4.3:
     dependencies:
@@ -8960,13 +9047,14 @@ snapshots:
     dependencies:
       argparse: 2.0.1
 
-  jsdom@27.4.0:
+  jsdom@28.1.0:
     dependencies:
       '@acemir/cssom': 0.9.31
       '@asamuzakjp/dom-selector': 6.8.1
+      '@bramus/specificity': 2.4.2
       '@exodus/bytes': 1.14.1
-      cssstyle: 5.3.7
-      data-urls: 6.0.1
+      cssstyle: 6.0.1
+      data-urls: 7.0.0
       decimal.js: 10.6.0
       html-encoding-sniffer: 6.0.0
       http-proxy-agent: 7.0.2
@@ -8976,17 +9064,15 @@ snapshots:
       saxes: 6.0.0
       symbol-tree: 3.2.4
       tough-cookie: 6.0.0
+      undici: 7.22.0
       w3c-xmlserializer: 5.0.0
       webidl-conversions: 8.0.1
-      whatwg-mimetype: 4.0.0
-      whatwg-url: 15.1.0
-      ws: 8.19.0
+      whatwg-mimetype: 5.0.0
+      whatwg-url: 16.0.0
       xml-name-validator: 5.0.0
     transitivePeerDependencies:
       - '@noble/hashes'
-      - bufferutil
       - supports-color
-      - utf-8-validate
 
   jsesc@3.1.0: {}
 
@@ -9089,8 +9175,6 @@ snapshots:
 
   lru-cache@10.4.3:
     optional: true
-
-  lru-cache@11.2.5: {}
 
   lru-cache@11.2.6: {}
 
@@ -9290,7 +9374,7 @@ snapshots:
 
   path-scurry@2.0.1:
     dependencies:
-      lru-cache: 11.2.5
+      lru-cache: 11.2.6
       minipass: 7.1.2
 
   pathe@2.0.3: {}
@@ -9447,7 +9531,7 @@ snapshots:
       path-parse: 1.0.7
       supports-preserve-symlinks-flag: 1.0.0
 
-  rimraf@6.1.2:
+  rimraf@6.1.3:
     dependencies:
       glob: 13.0.3
       package-json-from-dist: 1.0.1
@@ -9481,7 +9565,7 @@ snapshots:
 
   rollup-plugin-analyzer@4.0.0: {}
 
-  rollup-plugin-license@3.6.0(picomatch@4.0.3)(rollup@4.57.1):
+  rollup-plugin-license@3.7.0(picomatch@4.0.3)(rollup@4.57.1):
     dependencies:
       commenting: 1.1.0
       fdir: 6.5.0(picomatch@4.0.3)
@@ -10002,6 +10086,8 @@ snapshots:
 
   undici-types@7.16.0: {}
 
+  undici@7.22.0: {}
+
   universalify@2.0.1: {}
 
   unplugin-dts@1.0.0-beta.6(@microsoft/api-extractor@7.56.3(@types/node@25.2.3))(esbuild@0.27.2)(rollup@4.57.1)(typescript@5.9.3)(vite@7.3.1(@types/node@25.2.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)):
@@ -10089,7 +10175,7 @@ snapshots:
       tsx: 4.20.6
       yaml: 2.8.2
 
-  vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.2.3)(jiti@2.6.1)(jsdom@27.4.0)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2):
+  vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.2.3)(jiti@2.6.1)(jsdom@28.1.0)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2):
     dependencies:
       '@vitest/expect': 4.0.18
       '@vitest/mocker': 4.0.18(vite@7.3.1(@types/node@25.2.3)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2))
@@ -10114,7 +10200,7 @@ snapshots:
     optionalDependencies:
       '@opentelemetry/api': 1.9.0
       '@types/node': 25.2.3
-      jsdom: 27.4.0
+      jsdom: 28.1.0
     transitivePeerDependencies:
       - jiti
       - less
@@ -10142,14 +10228,15 @@ snapshots:
 
   webpack-virtual-modules@0.6.2: {}
 
-  whatwg-mimetype@4.0.0: {}
-
   whatwg-mimetype@5.0.0: {}
 
-  whatwg-url@15.1.0:
+  whatwg-url@16.0.0:
     dependencies:
+      '@exodus/bytes': 1.14.1
       tr46: 6.0.0
       webidl-conversions: 8.0.1
+    transitivePeerDependencies:
+      - '@noble/hashes'
 
   which@2.0.2:
     dependencies:
