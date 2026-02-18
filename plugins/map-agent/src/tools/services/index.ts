@@ -6,5 +6,13 @@
 
 export { calculateRouteSchema, createCalculateRouteTool } from './calculate-route';
 export { createGeocodeTool, geocodeSchema } from './geocode';
+export { createGetLastGeocodedResultTool, getLastGeocodedResultSchema } from './get-last-geocoded-result';
+export { createGetLastPlacesTool, getLastPlacesSchema } from './get-last-places';
+export {
+    createGetLastReverseGeocodedResultTool,
+    getLastReverseGeocodedResultSchema,
+} from './get-last-reverse-geocoded-result';
+export { createGetLastRoutesTool, getLastRoutesSchema } from './get-last-routes';
+export { createGetLastSearchResultsTool, getLastSearchResultsSchema } from './get-last-search-results';
 export { createReverseGeocodeTool, reverseGeocodeSchema } from './reverse-geocode';
 export { createSearchPlacesTool, searchPlacesSchema } from './search-places';

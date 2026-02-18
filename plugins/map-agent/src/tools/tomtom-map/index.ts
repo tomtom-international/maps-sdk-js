@@ -7,6 +7,10 @@
 export { clearMapSchema, createClearMapTool } from './clear-map';
 export { createFitBoundsTool, fitBoundsSchema } from './fit-bounds';
 export { createFlyToTool, flyToSchema } from './fly-to';
+export { createGetShownPlacesTool, getShownPlacesSchema } from './get-shown-places';
+export { createGetShownRouteIncidentsTool, getShownRouteIncidentsSchema } from './get-shown-route-incidents';
+export { createGetShownRoutesTool, getShownRoutesSchema } from './get-shown-routes';
+export { createGetShownWaypointsTool, getShownWaypointsSchema } from './get-shown-waypoints';
 export { createGetStandardMapStylesTool, getStandardMapStylesSchema } from './get-standard-map-styles';
 export { createGetViewportTool, getViewportSchema } from './get-viewport';
 export { createSetLanguageTool, setLanguageSchema } from './set-language';
