@@ -6,9 +6,13 @@
 
 export { clearMapSchema, createClearMapTool } from './clear-map';
 export { createFitBoundsTool, fitBoundsSchema } from './fit-bounds';
+export { createFitRouteSectionTool, fitRouteSectionSchema } from './fit-route-section';
 export { createFlyToTool, flyToSchema } from './fly-to';
 export { createGetShownPlacesTool, getShownPlacesSchema } from './get-shown-places';
-export { createGetShownRouteIncidentsTool, getShownRouteIncidentsSchema } from './get-shown-route-incidents';
+export {
+    createGetShownRouteTrafficIncidentsTool,
+    getShownRouteTrafficIncidentsSchema,
+} from './get-shown-route-traffic-incidents';
 export { createGetShownRoutesTool, getShownRoutesSchema } from './get-shown-routes';
 export { createGetShownWaypointsTool, getShownWaypointsSchema } from './get-shown-waypoints';
 export { createGetStandardMapStylesTool, getStandardMapStylesSchema } from './get-standard-map-styles';

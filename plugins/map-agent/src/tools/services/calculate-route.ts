@@ -3,7 +3,7 @@
  */
 
 import type { Place } from '@tomtom-org/maps-sdk/core';
-import { calculateRoute, geocode } from '@tomtom-org/maps-sdk/services';
+import { calculateRoute, geocode, MaxNumberOfAlternatives } from '@tomtom-org/maps-sdk/services';
 import { dynamicTool, type Tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../../types';
@@ -13,9 +13,12 @@ import { summarizeRoutes } from '../../utils/summarize';
  * Tool schema for calculating routes.
  */
 export const calculateRouteSchema = z.object({
-    from: z.string().describe('Starting location (address or place name)'),
-    to: z.string().describe('Destination location (address or place name)'),
-    via: z.array(z.string()).optional().describe('Intermediate waypoints'),
+    locations: z
+        .array(z.string())
+        .min(2)
+        .describe(
+            'Array of location strings (addresses or place names) to route through. Minimum 2 locations required (origin and destination). Additional locations act as intermediate waypoints.',
+        ),
     alternatives: z.number().optional().describe('Number of alternative routes (0-5)'),
     clearPrevious: z.boolean().optional().describe('Clear previous routes before adding new ones (default: false)'),
 });
@@ -25,19 +28,17 @@ export const calculateRouteSchema = z.object({
  */
 export function createCalculateRouteTool(context: ToolContext): Tool {
     return dynamicTool({
-        description: 'Calculate a driving route between locations',
+        description:
+            'Calculate a driving route between locations. This is useful also to get traffic information between locations.',
         inputSchema: calculateRouteSchema,
         execute: async (params) => {
             const {
-                from,
-                to,
-                via = [],
+                locations,
                 alternatives = 0,
                 clearPrevious = false,
             } = params as z.infer<typeof calculateRouteSchema>;
             try {
                 // Geocode all locations
-                const locations: string[] = [from, ...via, to];
                 const geocodedPlaces: Place[] = [];
 
                 for (const location of locations) {
@@ -54,7 +55,7 @@ export function createCalculateRouteTool(context: ToolContext): Tool {
                 // Calculate route
                 const routes = await calculateRoute({
                     locations: waypoints,
-                    ...(alternatives > 0 && { maxAlternatives: alternatives as 1 | 2 | 3 | 4 | 5 }),
+                    ...(alternatives > 0 && { maxAlternatives: alternatives as MaxNumberOfAlternatives }),
                 });
 
                 // Clear previous routes if requested

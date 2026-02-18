@@ -25,7 +25,7 @@ export const toggleTrafficIncidentsSchema = z.object({
  */
 export function createToggleTrafficFlowTool(context: ToolContext): Tool {
     return dynamicTool({
-        description: 'Show or hide the real-time traffic flow layer',
+        description: 'Show or hide the real-time traffic flow layer. This is useful for overall map traffic.',
         inputSchema: toggleTrafficFlowSchema,
         execute: async (params) => {
             const { visible } = params as z.infer<typeof toggleTrafficFlowSchema>;

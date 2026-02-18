@@ -12,7 +12,7 @@ import type { ToolContext } from '../../types';
  * Tool schema for showing routes on the map.
  */
 export const showRouteSchema = z.object({
-    routeIndex: z.number().optional().describe('Index of the route to display (default: 0 for main route)'),
+    selectedIndex: z.number().optional().describe('Index of the route to display as selected (default: 0)'),
     fitBounds: z.boolean().optional().describe('Whether to fit the map bounds to show the route. Default is true.'),
 });
 
@@ -24,7 +24,7 @@ export function createShowRouteTool(context: ToolContext): Tool {
         description: 'Display the most recent calculated route on the map',
         inputSchema: showRouteSchema,
         execute: async (params) => {
-            const { routeIndex = 0, fitBounds = true } = params as z.infer<typeof showRouteSchema>;
+            const { selectedIndex = 0, fitBounds = true } = params as z.infer<typeof showRouteSchema>;
             try {
                 if (!context.services.routesHistory.length) {
                     return { error: 'No routes available to display' };
@@ -39,7 +39,7 @@ export function createShowRouteTool(context: ToolContext): Tool {
                 const routingModule = await context.map.getRoutingModule();
 
                 // Show all routes
-                await routingModule.showRoutes(mergedRoutes, { selectedIndex: routeIndex });
+                await routingModule.showRoutes(mergedRoutes, { selectedIndex });
 
                 // Show waypoints if available
                 const waypoints = context.services.lastWaypoints;
@@ -57,7 +57,7 @@ export function createShowRouteTool(context: ToolContext): Tool {
 
                 return {
                     success: true,
-                    displayedRoute: routeIndex,
+                    displayedRoute: selectedIndex,
                     totalRoutes: mergedRoutes.features.length,
                     routeCount: context.services.routesHistory.length,
                 };

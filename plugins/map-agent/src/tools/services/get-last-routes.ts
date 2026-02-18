@@ -17,7 +17,8 @@ export const getLastRoutesSchema = z.object({});
  */
 export function createGetLastRoutesTool(context: ToolContext): Tool {
     return dynamicTool({
-        description: 'Get the most recent routes from the last route calculation service call',
+        description:
+            'Get the most recent calculated routes from calculate-route tool. Use this to prevent re-calculating the same route.',
         inputSchema: getLastRoutesSchema,
         execute: async () => {
             try {

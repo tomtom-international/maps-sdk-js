@@ -17,7 +17,8 @@ export const getShownRoutesSchema = z.object({});
  */
 export function createGetShownRoutesTool(context: ToolContext): Tool {
     return dynamicTool({
-        description: 'Get the routes currently displayed on the map (not from service, but what is actually shown)',
+        description:
+            'Get the routes currently displayed on the map (not from service, but what is actually shown from show-route tool)',
         inputSchema: getShownRoutesSchema,
         execute: async () => {
             try {
