@@ -31,7 +31,7 @@ export function createGeocodeTool(context: ToolContext): Tool {
                     return { error: `No result found for "${query}"` };
                 }
 
-                context.state.lastGeocodeResult = result;
+                context.services.addGeocodedResult(result);
 
                 return summarizePlace(result);
             } catch (error) {

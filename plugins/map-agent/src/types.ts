@@ -2,132 +2,12 @@
  * @module map-agent-types
  */
 
-import type { Place, Places, Routes } from '@tomtom-org/maps-sdk/core';
-import {
-    BaseMapModule,
-    GeometriesModule,
-    HillshadeModule,
-    PlacesModule,
-    POIsModule,
-    RoutingModule,
-    type TomTomMap,
-    TrafficFlowModule,
-    TrafficIncidentsModule,
-} from '@tomtom-org/maps-sdk/map';
 import type { LanguageModel, Tool, ToolLoopAgent } from 'ai';
+import type { TomTomMapWithModules, TomTomServiceResponses } from './state';
 import type { DefaultToolSet } from './tools';
 
-/**
- * Internal state maintained by the map agent across tool calls.
- *
- * This state retains full GeoJSON data from service calls so map tools
- * can render it without re-fetching. Module instances are cached for reuse.
- */
-export class TomTomMapWithModules {
-    searchResultsHistory: Places[] = [];
-    routesHistory: Routes[] = [];
-    lastWaypoints?: Place[];
-    lastGeocodeResult?: Place;
-
-    private _modules: {
-        places?: PlacesModule;
-        routing?: RoutingModule;
-        trafficFlow?: TrafficFlowModule;
-        trafficIncidents?: TrafficIncidentsModule;
-        pois?: POIsModule;
-        geometries?: GeometriesModule;
-        baseMap?: BaseMapModule;
-        hillshade?: HillshadeModule;
-    } = {};
-
-    constructor(public readonly map: TomTomMap) {}
-
-    /**
-     * Get or lazily initialize the PlacesModule.
-     */
-    async getPlacesModule(): Promise<PlacesModule> {
-        this._modules.places ??= await PlacesModule.get(this.map);
-        return this._modules.places;
-    }
-
-    /**
-     * Get or lazily initialize the RoutingModule.
-     */
-    async getRoutingModule(): Promise<RoutingModule> {
-        this._modules.routing ??= await RoutingModule.get(this.map);
-        return this._modules.routing;
-    }
-
-    /**
-     * Get or lazily initialize the TrafficFlowModule.
-     */
-    async getTrafficFlowModule(): Promise<TrafficFlowModule> {
-        this._modules.trafficFlow ??= await TrafficFlowModule.get(this.map);
-        return this._modules.trafficFlow;
-    }
-
-    /**
-     * Get or lazily initialize the TrafficIncidentsModule.
-     */
-    async getTrafficIncidentsModule(): Promise<TrafficIncidentsModule> {
-        this._modules.trafficIncidents ??= await TrafficIncidentsModule.get(this.map);
-        return this._modules.trafficIncidents;
-    }
-
-    /**
-     * Get or lazily initialize the POIsModule.
-     */
-    async getPOIsModule(): Promise<POIsModule> {
-        this._modules.pois ??= await POIsModule.get(this.map);
-        return this._modules.pois;
-    }
-
-    /**
-     * Get or lazily initialize the GeometriesModule.
-     */
-    async getGeometriesModule(): Promise<GeometriesModule> {
-        this._modules.geometries ??= await GeometriesModule.get(this.map);
-        return this._modules.geometries;
-    }
-
-    /**
-     * Get or lazily initialize the BaseMapModule.
-     */
-    async getBaseMapModule(): Promise<BaseMapModule> {
-        this._modules.baseMap ??= await BaseMapModule.get(this.map);
-        return this._modules.baseMap;
-    }
-
-    /**
-     * Get or lazily initialize the HillshadeModule.
-     */
-    async getHillshadeModule(): Promise<HillshadeModule> {
-        this._modules.hillshade ??= await HillshadeModule.get(this.map);
-        return this._modules.hillshade;
-    }
-
-    /**
-     * Access to module cache for conditional checks (e.g., in clear-map tool).
-     * @internal
-     */
-    get modules() {
-        return this._modules;
-    }
-
-    /**
-     * Reset the agent state, clearing all cached data and modules.
-     */
-    reset(): void {
-        // Clear data
-        this.searchResultsHistory = [];
-        this.routesHistory = [];
-        this.lastWaypoints = undefined;
-        this.lastGeocodeResult = undefined;
-
-        // Clear module references
-        this._modules = {};
-    }
-}
+// Re-export classes for backwards compatibility
+export { TomTomMapWithModules, TomTomServiceResponses } from './state';
 
 /**
  * Names of all default tools provided by the map agent.
@@ -172,7 +52,7 @@ export type MapAgentOptions = {
      * ```typescript
      * const agent = createMapAgent(map, {
      *   model: openai('gpt-4o'),
-    *   includeDefaultTools: false,
+     *   includeDefaultTools: false,
      *   tools: {
      *     geocode: createGeocodeTool(context),
      *     getWeather: createWeatherTool(context)
@@ -215,12 +95,12 @@ export type MapAgentOptions = {
      *
      * @remarks
      * **Unified tool configuration with type-safe autocomplete:**
-    * - Works together with `includeDefaultTools`
+     * - Works together with `includeDefaultTools`
      * - Set default tool to `false` to exclude it
      * - Set default tool to custom implementation to override it
      * - Add new keys for custom tools
      *
-    * Type completion provides autocomplete for all default tool names.
+     * Type completion provides autocomplete for all default tool names.
      *
      * @example Exclude specific tools
      * ```typescript
@@ -294,5 +174,6 @@ export type MapAgent = {
  * Context passed to tool execution functions.
  */
 export type ToolContext = {
-    state: TomTomMapWithModules;
+    map: TomTomMapWithModules;
+    services: TomTomServiceResponses;
 };

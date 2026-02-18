@@ -26,7 +26,7 @@ export function createFlyToTool(context: ToolContext): Tool {
             const { longitude, latitude, zoom = 14 } = params as z.infer<typeof flyToSchema>;
             const center: [number, number] = [longitude, latitude];
             try {
-                context.state.map.mapLibreMap.flyTo({
+                context.map.mapLibreMap.flyTo({
                     center,
                     zoom,
                 });

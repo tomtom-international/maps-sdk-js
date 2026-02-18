@@ -25,7 +25,7 @@ export function createSetLanguageTool(context: ToolContext): Tool {
             const { language } = params as z.infer<typeof setLanguageSchema>;
             try {
                 TomTomConfig.instance.put({ language: language as Language });
-                context.state.map.setLanguage(language as any);
+                context.map.ttMap.setLanguage(language as any);
 
                 return {
                     success: true,

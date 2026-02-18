@@ -59,12 +59,12 @@ export function createCalculateRouteTool(context: ToolContext): Tool {
 
                 // Clear previous routes if requested
                 if (clearPrevious) {
-                    context.state.routesHistory = [];
+                    context.services.clearRoutesHistory();
                 }
 
                 // Accumulate routes
-                context.state.routesHistory.push(routes);
-                context.state.lastWaypoints = geocodedPlaces;
+                context.services.addRoutes(routes);
+                context.services.addWaypoints(geocodedPlaces);
 
                 return summarizeRoutes(routes);
             } catch (error) {

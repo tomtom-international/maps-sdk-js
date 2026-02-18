@@ -19,38 +19,37 @@ export const showPlacesSchema = z.object({
  */
 export function createShowPlacesTool(context: ToolContext): Tool {
     return dynamicTool({
-        description: 'Display the most recent search results as markers on the map',
+        description: 'Display the most recent places (from search, geocode, or reverse geocode) as markers on the map',
         inputSchema: showPlacesSchema,
         execute: async (params) => {
             const { fitBounds = true } = params as z.infer<typeof showPlacesSchema>;
             try {
-                if (!context.state.searchResultsHistory.length) {
-                    return { error: 'No search results available to display' };
+                const lastPlaces = context.services.lastPlaces;
+
+                if (!lastPlaces) {
+                    return { error: 'No places available to display' };
                 }
 
-                // Merge all accumulated search results
-                const mergedResults = {
-                    type: 'FeatureCollection' as const,
-                    features: context.state.searchResultsHistory.flatMap((places) => places.features),
-                };
+                const placesModule = await context.map.getPlacesModule();
 
-                const placesModule = await context.state.getPlacesModule();
+                // Show the last places (either Place or Places)
+                await placesModule.show(lastPlaces);
 
-                // Show all places
-                await placesModule.show(mergedResults);
-
-                // Fit bounds to all results if requested
+                // Fit bounds if requested
                 if (fitBounds) {
-                    const bbox = bboxFromGeoJSON(context.state.searchResultsHistory);
+                    const bbox = bboxFromGeoJSON(lastPlaces);
                     if (bbox) {
-                        context.state.map.mapLibreMap.fitBounds(bbox, { padding: 50 });
+                        context.map.mapLibreMap.fitBounds(bbox, { padding: 50 });
                     }
                 }
 
+                // Count features
+                const count = 'features' in lastPlaces ? lastPlaces.features.length : 1;
+
                 return {
                     success: true,
-                    count: mergedResults.features.length,
-                    searchCount: context.state.searchResultsHistory.length,
+                    count,
+                    totalPlacesInHistory: context.services.placesHistory.length,
                 };
             } catch (error) {
                 return {

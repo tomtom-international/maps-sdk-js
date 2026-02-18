@@ -4,7 +4,7 @@
 
 import type { TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { type Tool, ToolLoopAgent } from 'ai';
-import { createState } from './state';
+import { createState, TomTomServiceResponses } from './state';
 import { buildSystemPrompt } from './system-prompt';
 import { createMapToolSet } from './tools';
 import type { MapAgent, MapAgentOptions } from './types';
@@ -46,8 +46,8 @@ import type { MapAgent, MapAgentOptions } from './types';
  * const extendedAgent = createMapAgent(map, {
  *   model: openai('gpt-4o'),
  *   tools: {
- *     searchPlaces: createCustomSearchTool({ state }),
- *     getWeather: createWeatherTool({ state })
+ *     searchPlaces: createCustomSearchTool(context),
+ *     getWeather: createWeatherTool(context)
  *   }
  * });
  *
@@ -56,8 +56,8 @@ import type { MapAgent, MapAgentOptions } from './types';
  *   model: openai('gpt-4o'),
  *   includeDefaultTools: false,
  *   tools: {
- *     geocode: createGeocodeTool({ state }),
- *     getWeather: createWeatherTool({ state })
+ *     geocode: createGeocodeTool(context),
+ *     getWeather: createWeatherTool(context)
  *   }
  * });
  *
@@ -76,9 +76,10 @@ export function createMapAgent(map: TomTomMap, options: MapAgentOptions): MapAge
 
     // Create agent state
     const state = createState(map);
+    const services = new TomTomServiceResponses();
 
     // Create tool context
-    const context = { state };
+    const context = { map: state, services };
 
     // Create toolset
     const defaultTools = createMapToolSet(context);
@@ -122,6 +123,7 @@ export function createMapAgent(map: TomTomMap, options: MapAgentOptions): MapAge
         state,
         destroy: () => {
             state.reset();
+            services.reset();
         },
     };
 }

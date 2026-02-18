@@ -117,19 +117,20 @@ export type DefaultToolSet = {
  * @example Testing tools in isolation
  * ```typescript
  * import { describe, it, expect } from 'vitest';
- * import { createMapToolSet, createState } from '@tomtom-org/maps-sdk-plugin-ai-agent';
+ * import { createMapToolSet, createState, TomTomServiceResponses } from '@tomtom-org/maps-sdk-plugin-ai-agent';
  *
  * describe('Geocode tool', () => {
  *   it('should geocode Amsterdam', async () => {
  *     const mockMap = createMockMap();
- *     const state = createState();
- *     const tools = createMapToolSet({ map: mockMap, state });
+ *     const state = createState(mockMap);
+ *     const services = new TomTomServiceResponses();
+ *     const tools = createMapToolSet({ map: state, services });
  *
- *     const result = await tools.geocode.execute({ query: 'Amsterdam' });
- *
- *     expect(state.lastGeocodeResult).toBeDefined();
- *     expect(state.lastGeocodeResult?.properties.name).toContain('Amsterdam');
- *   });
+     const result = await tools.geocode.execute({ query: 'Amsterdam' });
+
+     expect(services.lastGeocodedResult).toBeDefined();
+     expect(services.lastGeocodedResult?.properties.name).toContain('Amsterdam');
+   });
  * });
  * ```
  *

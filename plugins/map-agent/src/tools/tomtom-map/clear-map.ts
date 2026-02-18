@@ -29,25 +29,26 @@ export function createClearMapTool(context: ToolContext): Tool {
                 const clearAll = !layers || layers.length === 0;
 
                 if (clearAll || layers.includes('places')) {
-                    if (context.state.modules.places) {
-                        await context.state.modules.places.clear();
+                    if (context.map.modules.places) {
+                        await context.map.modules.places.clear();
                     }
                     // Clear accumulated search results
-                    context.state.searchResultsHistory = [];
+                    context.services.clearSearchResultsHistory();
                 }
 
                 if (clearAll || layers.includes('routes')) {
-                    if (context.state.modules.routing) {
-                        await context.state.modules.routing.clearRoutes();
-                        await context.state.modules.routing.clearWaypoints();
+                    if (context.map.modules.routing) {
+                        await context.map.modules.routing.clearRoutes();
+                        await context.map.modules.routing.clearWaypoints();
                     }
                     // Clear accumulated routes
-                    context.state.routesHistory = [];
+                    context.services.clearRoutesHistory();
+                    context.services.clearWaypointsHistory();
                 }
 
                 if (clearAll || layers.includes('geometries')) {
-                    if (context.state.modules.geometries) {
-                        await context.state.modules.geometries.clear();
+                    if (context.map.modules.geometries) {
+                        await context.map.modules.geometries.clear();
                     }
                 }
 

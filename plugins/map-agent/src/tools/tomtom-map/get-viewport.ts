@@ -16,18 +16,15 @@ export const getViewportSchema = z.object({});
  */
 export function createGetViewportTool(context: ToolContext): Tool {
     return dynamicTool({
-        description: 'Get the current map viewport information',
+        description:
+            'Get the current map viewport information including center coordinates, zoom level, and bounding box.',
         inputSchema: getViewportSchema,
         execute: async () => {
             try {
-                const center = context.state.map.mapLibreMap.getCenter();
-                const zoom = context.state.map.mapLibreMap.getZoom();
-                const bbox = context.state.map.getBBox();
-
                 return {
-                    center: [center.lng, center.lat],
-                    zoom,
-                    bbox,
+                    center: context.map.mapLibreMap.getCenter().toArray(),
+                    zoom: context.map.mapLibreMap.getZoom(),
+                    bbox: context.map.ttMap.getBBox(),
                 };
             } catch (error) {
                 return {

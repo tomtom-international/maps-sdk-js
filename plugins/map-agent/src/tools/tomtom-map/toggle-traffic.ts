@@ -31,7 +31,7 @@ export function createToggleTrafficFlowTool(context: ToolContext): Tool {
             const { visible } = params as z.infer<typeof toggleTrafficFlowSchema>;
             try {
                 // Lazy-init TrafficFlowModule
-                const trafficFlowModule = await context.state.getTrafficFlowModule();
+                const trafficFlowModule = await context.map.getTrafficFlowModule();
 
                 trafficFlowModule.setVisible(visible);
 
@@ -59,7 +59,7 @@ export function createToggleTrafficIncidentsTool(context: ToolContext): Tool {
             const { visible } = params as z.infer<typeof toggleTrafficIncidentsSchema>;
             try {
                 // Lazy-init TrafficIncidentsModule
-                const trafficIncidentsModule = await context.state.getTrafficIncidentsModule();
+                const trafficIncidentsModule = await context.map.getTrafficIncidentsModule();
 
                 trafficIncidentsModule.setVisible(visible);
 

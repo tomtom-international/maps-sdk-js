@@ -26,31 +26,32 @@ export function createShowRouteTool(context: ToolContext): Tool {
         execute: async (params) => {
             const { routeIndex = 0, fitBounds = true } = params as z.infer<typeof showRouteSchema>;
             try {
-                if (!context.state.routesHistory.length) {
+                if (!context.services.routesHistory.length) {
                     return { error: 'No routes available to display' };
                 }
 
                 // Merge all accumulated routes
                 const mergedRoutes = {
                     type: 'FeatureCollection' as const,
-                    features: context.state.routesHistory.flatMap((routes) => routes.features),
+                    features: context.services.routesHistory.flatMap((routes) => routes.features),
                 };
 
-                const routingModule = await context.state.getRoutingModule();
+                const routingModule = await context.map.getRoutingModule();
 
                 // Show all routes
                 await routingModule.showRoutes(mergedRoutes, { selectedIndex: routeIndex });
 
                 // Show waypoints if available
-                if (context.state.lastWaypoints) {
-                    await routingModule.showWaypoints(context.state.lastWaypoints);
+                const waypoints = context.services.lastWaypoints;
+                if (waypoints) {
+                    await routingModule.showWaypoints(waypoints);
                 }
 
                 // Fit bounds to show all routes if requested
                 if (fitBounds) {
-                    const bbox = bboxFromGeoJSON(context.state.routesHistory);
+                    const bbox = bboxFromGeoJSON(context.services.routesHistory);
                     if (bbox) {
-                        context.state.map.mapLibreMap.fitBounds(bbox as LngLatBoundsLike, { padding: 50 });
+                        context.map.mapLibreMap.fitBounds(bbox as LngLatBoundsLike, { padding: 50 });
                     }
                 }
 
@@ -58,7 +59,7 @@ export function createShowRouteTool(context: ToolContext): Tool {
                     success: true,
                     displayedRoute: routeIndex,
                     totalRoutes: mergedRoutes.features.length,
-                    routeCount: context.state.routesHistory.length,
+                    routeCount: context.services.routesHistory.length,
                 };
             } catch (error) {
                 return {

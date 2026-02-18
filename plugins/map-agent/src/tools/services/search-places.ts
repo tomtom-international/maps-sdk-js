@@ -55,11 +55,11 @@ export function createSearchPlacesTool(context: ToolContext): Tool {
                 });
 
                 if (clearPrevious) {
-                    context.state.searchResultsHistory = [];
+                    context.services.clearSearchResultsHistory();
                 }
 
                 // Accumulate search results
-                context.state.searchResultsHistory.push(result);
+                context.services.addSearchResults(result);
                 return summarizePlaces(result);
             } catch (error) {
                 return {

@@ -51,7 +51,7 @@ export function createFitBoundsTool(context: ToolContext): Tool {
                     return { error: 'Invalid HasBBox object provided. Could not extract a bounding box.' };
                 }
 
-                context.state.map.mapLibreMap.fitBounds(bbox, { padding });
+                context.map.mapLibreMap.fitBounds(bbox, { padding });
 
                 return {
                     success: true,

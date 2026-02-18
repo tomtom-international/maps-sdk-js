@@ -25,7 +25,7 @@ export function createSetMapStyleTool(context: ToolContext): Tool {
         execute: async (params) => {
             const { style } = params as z.infer<typeof setMapStyleSchema>;
             try {
-                context.state.map.setStyle(style);
+                context.map.ttMap.setStyle(style);
 
                 return {
                     success: true,

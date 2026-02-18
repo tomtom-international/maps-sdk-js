@@ -28,7 +28,7 @@ export function createSetLayoutPropertyTool(context: ToolContext): Tool {
         execute: async (params) => {
             const { layerId, propertyName, value } = params as z.infer<typeof setLayoutPropertySchema>;
             try {
-                context.state.map.mapLibreMap.setLayoutProperty(layerId, propertyName, value);
+                context.map.mapLibreMap.setLayoutProperty(layerId, propertyName, value);
 
                 return {
                     success: true,

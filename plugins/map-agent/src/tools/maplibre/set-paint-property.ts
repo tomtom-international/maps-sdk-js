@@ -28,7 +28,7 @@ export function createSetPaintPropertyTool(context: ToolContext): Tool {
         execute: async (params) => {
             const { layerId, propertyName, value } = params as z.infer<typeof setPaintPropertySchema>;
             try {
-                context.state.map.mapLibreMap.setPaintProperty(layerId, propertyName, value);
+                context.map.mapLibreMap.setPaintProperty(layerId, propertyName, value);
 
                 return {
                     success: true,

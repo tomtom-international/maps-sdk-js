@@ -5,6 +5,8 @@
 import { reverseGeocode } from '@tomtom-org/maps-sdk/services';
 import { dynamicTool, type Tool } from 'ai';
 import { z } from 'zod';
+import type { ToolContext } from '../../types';
+import { summarizePlace } from '../../utils/summarize';
 
 /**
  * Tool schema for reverse geocoding (coordinates to address).
@@ -21,7 +23,7 @@ export const reverseGeocodeSchema = z.object({
 /**
  * Create the reverse geocode tool.
  */
-export function createReverseGeocodeTool(): Tool {
+export function createReverseGeocodeTool(context: ToolContext): Tool {
     return dynamicTool({
         description: 'Convert geographic coordinates to an address',
         inputSchema: reverseGeocodeSchema,
@@ -31,7 +33,14 @@ export function createReverseGeocodeTool(): Tool {
             } = params as z.infer<typeof reverseGeocodeSchema>;
             const position: [number, number] = [longitude, latitude];
             try {
-                return await reverseGeocode({ position });
+                const result = await reverseGeocode({ position });
+
+                if (result) {
+                    context.services.addReverseGeocodedResult(result);
+                    return summarizePlace(result);
+                }
+
+                return { error: 'No result found for the given coordinates' };
             } catch (error) {
                 return {
                     error: `Reverse geocoding failed: ${error instanceof Error ? error.message : String(error)}`,

@@ -25,7 +25,7 @@ export function createTogglePOIsTool(context: ToolContext): Tool {
             const { visible, categories } = params as z.infer<typeof togglePOIsSchema>;
             try {
                 // Lazy-init POIsModule
-                const poisModule = await context.state.getPOIsModule();
+                const poisModule = await context.map.getPOIsModule();
 
                 poisModule.setVisible(visible);
 

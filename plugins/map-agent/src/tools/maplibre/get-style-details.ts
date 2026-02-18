@@ -29,7 +29,7 @@ export function createGetStyleDetailsTool(context: ToolContext): Tool {
         execute: async (input) => {
             const { layerIdQuery } = input as z.infer<typeof getStyleSchema>;
             try {
-                const style = context.state.map.mapLibreMap.getStyle();
+                const style = context.map.mapLibreMap.getStyle();
                 let layers = style.layers ?? [];
 
                 // Filter by layerIdQuery if provided (case-insensitive partial match)
