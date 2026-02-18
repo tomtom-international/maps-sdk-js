@@ -3,7 +3,7 @@
  */
 
 import type { TomTomMap } from '@tomtom-org/maps-sdk/map';
-import { type Tool, ToolLoopAgent, ToolLoopAgentSettings } from 'ai';
+import { type Tool, ToolLoopAgent } from 'ai';
 import { createState } from './state';
 import { buildSystemPrompt } from './system-prompt';
 import { createMapToolSet } from './tools';
@@ -45,15 +45,20 @@ import type { MapAgent, MapAgentOptions } from './types';
  * // Override specific default tools
  * const extendedAgent = createMapAgent(map, {
  *   model: openai('gpt-4o'),
- *   overrideTools: { searchPlaces: createCustomSearchTool({ map, state }) },
- *   customTools: { getWeather: createWeatherTool({ map, state }) }
+ *   tools: {
+ *     searchPlaces: createCustomSearchTool({ state }),
+ *     getWeather: createWeatherTool({ state })
+ *   }
  * });
  *
  * // Use only custom tools
  * const minimalAgent = createMapAgent(map, {
  *   model: openai('gpt-4o'),
  *   includeDefaultTools: false,
- *   customTools: { geocode: createGeocodeTool({ map, state }) }
+ *   tools: {
+ *     geocode: createGeocodeTool({ state }),
+ *     getWeather: createWeatherTool({ state })
+ *   }
  * });
  *
  * // In React component:
@@ -75,15 +80,17 @@ export function createMapAgent(map: TomTomMap, options: MapAgentOptions): MapAge
     // Create tool context
     const context = { state };
 
-    // Create toolset - always start with defaults
+    // Create toolset
     const defaultTools = createMapToolSet(context);
 
     // Process tools configuration
     const finalTools: Record<string, Tool> = {};
 
-    // Start with default tools
-    for (const [name, tool] of Object.entries(defaultTools)) {
-        finalTools[name] = tool;
+    // Start with default tools unless explicitly disabled
+    if (options.includeDefaultTools ?? true) {
+        for (const [name, tool] of Object.entries(defaultTools)) {
+            finalTools[name] = tool;
+        }
     }
 
     // Apply tools configuration (exclude, override, add)
@@ -102,24 +109,12 @@ export function createMapAgent(map: TomTomMap, options: MapAgentOptions): MapAge
     // Build system prompt (customPrompt takes precedence over suffix)
     const systemPrompt = buildSystemPrompt(options.systemPrompt, options.systemPromptSuffix);
 
-    // Create ToolLoopAgent with optional prompt caching
-    const agentConfig: ToolLoopAgentSettings = {
+    const agent = new ToolLoopAgent({
         model: options.model,
         tools: finalTools,
         instructions: systemPrompt,
         ...(options.maxSteps && { maxToolRoundtrips: options.maxSteps }),
-    };
-
-    // Enable prompt caching for Anthropic Claude (reduces token costs by ~90%)
-    if (options.promptCaching) {
-        (agentConfig as any).experimental_providerMetadata = {
-            anthropic: {
-                cacheControl: { type: 'ephemeral' },
-            },
-        };
-    }
-
-    const agent = new ToolLoopAgent(agentConfig);
+    });
 
     // Return MapAgent interface
     return {

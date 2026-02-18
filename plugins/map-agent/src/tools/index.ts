@@ -36,8 +36,10 @@ export type DefaultToolSet = {
  * ```typescript
  * const agent = createMapAgent(map, {
  *   model: openai('gpt-4o'),
- *   overrideTools: { searchPlaces: myCustomTool },
- *   customTools: { weatherTool: myWeatherTool }
+ *   tools: {
+ *     searchPlaces: myCustomTool,
+ *     weatherTool: myWeatherTool
+ *   }
  * });
  * ```
  *
@@ -54,9 +56,7 @@ export type DefaultToolSet = {
  * const agent = createMapAgent(map, {
  *   model: openai('gpt-4o'),
  *   includeDefaultTools: false,
- *   customTools: {
- *     geocode: defaultTools.geocode,
- *     searchPlaces: defaultTools.searchPlaces,
+ *   tools: {
  *     myCustomTool: createMyCustomTool(context)
  *   }
  * });
@@ -86,7 +86,7 @@ export type DefaultToolSet = {
  *
  * const agent = createMapAgent(map, {
  *   model: openai('gpt-4o'),
- *   overrideTools: { searchPlaces: loggingSearchTool }
+ *   tools: { searchPlaces: loggingSearchTool }
  * });
  * ```
  *
@@ -133,9 +133,7 @@ export type DefaultToolSet = {
  * });
  * ```
  *
- * @see {@link MapAgentOptions.overrideTools}
- * @see {@link MapAgentOptions.customTools}
- * @see {@link MapAgentOptions.includeDefaultTools}
+ * @see {@link MapAgentOptions.tools}
  * @see {@link createState}
  * @see {@link BASE_SYSTEM_PROMPT}
  */

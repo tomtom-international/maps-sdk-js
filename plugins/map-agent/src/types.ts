@@ -162,6 +162,27 @@ export type MapAgentOptions = {
     model: LanguageModel;
 
     /**
+     * Whether to include all built-in default tools.
+     *
+     * @remarks
+     * Defaults to `true`.
+     * Set to `false` to start with no default tools and provide only custom tools via `tools`.
+     *
+     * @example
+     * ```typescript
+     * const agent = createMapAgent(map, {
+     *   model: openai('gpt-4o'),
+    *   includeDefaultTools: false,
+     *   tools: {
+     *     geocode: createGeocodeTool(context),
+     *     getWeather: createWeatherTool(context)
+     *   }
+     * });
+     * ```
+     */
+    includeDefaultTools?: boolean;
+
+    /**
      * Complete system prompt that replaces the default.
      * If provided, this takes precedence over systemPromptSuffix.
      *
@@ -194,11 +215,12 @@ export type MapAgentOptions = {
      *
      * @remarks
      * **Unified tool configuration with type-safe autocomplete:**
+    * - Works together with `includeDefaultTools`
      * - Set default tool to `false` to exclude it
      * - Set default tool to custom implementation to override it
      * - Add new keys for custom tools
      *
-     * Type completion provides autocomplete for all 15 default tool names.
+    * Type completion provides autocomplete for all default tool names.
      *
      * @example Exclude specific tools
      * ```typescript
@@ -252,46 +274,6 @@ export type MapAgentOptions = {
 
     /** Max multi-step tool loop iterations. Default: 10. */
     maxSteps?: number;
-
-    /**
-     * Enable prompt caching to reduce token usage and costs.
-     *
-     * @remarks
-     * **Prompt caching** allows LLM providers to cache static parts of prompts
-     * (like system instructions and tool definitions) across requests, dramatically
-     * reducing input token costs and latency.
-     *
-     * **Provider Support:**
-     * - ✅ Anthropic Claude (Sonnet 3.5, Opus 3.5): 90% cost reduction on cached tokens
-     * - ⏳ OpenAI: Planned support
-     * - ❌ Other providers: No effect, but safe to enable
-     *
-     * **How it works:**
-     * - System prompt is marked as cacheable
-     * - First request: Normal cost
-     * - Subsequent requests: ~10% cost for cached content
-     * - Cache expires after ~5 minutes of inactivity
-     *
-     * **When to enable:**
-     * - Long system prompts (>1000 tokens)
-     * - Multi-turn conversations
-     * - Repeated queries with same tools
-     *
-     * @default false
-     *
-     * @example
-     * ```typescript
-     * import { anthropic } from '@ai-sdk/anthropic';
-     *
-     * const agent = createMapAgent(map, {
-     *   model: anthropic('claude-3-5-sonnet-20241022'),
-     *   promptCaching: true  // Enable caching
-     * });
-     * ```
-     *
-     * @see https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching
-     */
-    promptCaching?: boolean;
 };
 
 /**

@@ -28,7 +28,7 @@ export function createToggleTrafficFlowTool(context: ToolContext): Tool {
         description: 'Show or hide the real-time traffic flow layer',
         inputSchema: toggleTrafficFlowSchema,
         execute: async (params) => {
-            const { visible } = params as z.infer<typeof toggleTrafficIncidentsSchema>;
+            const { visible } = params as z.infer<typeof toggleTrafficFlowSchema>;
             try {
                 // Lazy-init TrafficFlowModule
                 const trafficFlowModule = await context.state.getTrafficFlowModule();
