@@ -1,0 +1,33 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/button/button.css";
+
+/* INSTRUCTIONS */
+
+.sdk-example-instructions {
+    margin: 0 0 var(--sdk-space-3);
+    font-family: var(--sdk-font-primary);
+    font-size: var(--sdk-font-body-s);
+    line-height: var(--sdk-font-body-s-lh);
+    color: var(--sdk-text-medium);
+}
+
+/* POPUPS */
+
+.stop-action-popup .maplibregl-popup-content {
+    padding: var(--sdk-space-2);
+    border-radius: var(--sdk-radius-15);
+    box-shadow: var(--sdk-shadow-e4);
+    background: var(--sdk-surface-0);
+    font-family: var(--sdk-font-primary);
+}
+
+.stop-popup-btn {
+    height: var(--sdk-height-sm);
+    font-size: var(--sdk-font-caption-m);
+    padding: 0 var(--sdk-space-3);
+    border-radius: var(--sdk-radius-30);
+    white-space: nowrap;
+}

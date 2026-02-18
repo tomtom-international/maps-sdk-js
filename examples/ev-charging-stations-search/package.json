@@ -15,9 +15,7 @@
   },
   "dependencies": {
     "@tomtom-org/maps-sdk": "workspace:*",
-    "@tomtom-org/maps-sdk-plugin-viewport-places": "workspace:*",
-    "@turf/turf": "catalog:",
-    "lodash-es": "catalog:"
+    "@tomtom-org/maps-sdk-plugin-viewport-places": "workspace:*"
   },
   "devDependencies": {
     "@playwright/test": "catalog:",

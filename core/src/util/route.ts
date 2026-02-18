@@ -1,6 +1,13 @@
 import { nearestPointOnLine } from '@turf/turf';
 import type { Feature, LineString } from 'geojson';
-import type { Route, SectionProps, WaypointLike } from '../types';
+import type {
+    Route,
+    RouteProgressAtPoint,
+    RouteProgressPoint,
+    RouteSegmentProgress,
+    SectionProps,
+    WaypointLike,
+} from '../types';
 import { bboxExpandedWithPosition } from './bbox';
 import { getPositionStrict } from './lngLat';
 
@@ -55,7 +62,7 @@ import { getPositionStrict } from './lngLat';
  * ];
  * ```
  *
- * @group Route
+ * @group Utils
  */
 export const findBestWaypointInsertionIndex = (
     route: Route,
@@ -150,7 +157,7 @@ export const findBestWaypointInsertionIndex = (
  * // Returns: [[4.9, 52.3], [4.95, 52.35], [5.0, 52.4]]
  * ```
  *
- * @group Route
+ * @group Utils
  */
 export const withInsertedWaypoint = (
     route: Route,
@@ -207,8 +214,127 @@ export const withInsertedWaypoint = (
  * // Returns: [4.9, 52.3, 5.1, 52.5] (bbox containing start, middle, and end points)
  * ```
  *
- * @group Route
+ * @group Utils
  */
+/**
+ * Interpolates the cumulative traveled distance and time at an arbitrary point on the route path.
+ *
+ * Uses the route's `progress` array to linearly interpolate between the two bracketing
+ * {@link RouteProgressPoint} entries that surround the requested `pathIndex`.
+ *
+ * @param route The route whose `properties.progress` will be used for interpolation.
+ *              The progress array must cover the requested index (i.e. the first entry's
+ *              `pointIndex` must be ≤ `pathIndex` and the last's must be ≥ `pathIndex`).
+ * @param pathIndex Zero-based index into the route's coordinate array.
+ * @returns Interpolated {@link RouteProgressAtPoint}, or `undefined` when:
+ *   - the route has no `progress` data
+ *   - `pathIndex` is outside `[0, coordinates.length - 1]`
+ *   - `pathIndex` falls outside the range covered by the progress entries
+ *   - any required distance or time value is missing from the bracketing entries
+ *
+ * @example
+ * ```typescript
+ * const progress = route.properties.progress;
+ * // progress = [
+ * //   { pointIndex: 0,  distanceInMeters: 0,    travelTimeInSeconds: 0   },
+ * //   { pointIndex: 50, distanceInMeters: 2500,  travelTimeInSeconds: 120 },
+ * //   { pointIndex: 100,distanceInMeters: 5000,  travelTimeInSeconds: 300 }
+ * // ]
+ *
+ * const result = interpolateProgressAtIndex(route, 25);
+ * // result = { distanceInMeters: 1250, travelTimeInSeconds: 60 }
+ * ```
+ *
+ * @group Utils
+ */
+export const interpolateProgressAtIndex = (route: Route, pathIndex: number): RouteProgressAtPoint | undefined => {
+    const { progress } = route.properties;
+    if (!progress || progress.length === 0) return undefined;
+
+    const coordCount = route.geometry.coordinates.length;
+    if (pathIndex < 0 || pathIndex >= coordCount) return undefined;
+
+    // Find the closest bracketing entries in the (sorted) progress array.
+    let lowerPoint: RouteProgressPoint | undefined;
+    let upperPoint: RouteProgressPoint | undefined;
+
+    for (const point of progress) {
+        if (point.pointIndex <= pathIndex) {
+            lowerPoint = point;
+        }
+        if (point.pointIndex >= pathIndex && upperPoint === undefined) {
+            upperPoint = point;
+        }
+    }
+
+    if (!lowerPoint || !upperPoint) return undefined;
+
+    const lowerDist = lowerPoint.distanceInMeters;
+    const upperDist = upperPoint.distanceInMeters;
+    const lowerTime = lowerPoint.travelTimeInSeconds;
+    const upperTime = upperPoint.travelTimeInSeconds;
+
+    if (lowerDist === undefined || upperDist === undefined || lowerTime === undefined || upperTime === undefined) {
+        return undefined;
+    }
+
+    // Exact match — no interpolation needed.
+    if (lowerPoint.pointIndex === upperPoint.pointIndex) {
+        return { distanceInMeters: lowerDist, travelTimeInSeconds: lowerTime };
+    }
+
+    const ratio = (pathIndex - lowerPoint.pointIndex) / (upperPoint.pointIndex - lowerPoint.pointIndex);
+    return {
+        distanceInMeters: lowerDist + ratio * (upperDist - lowerDist),
+        travelTimeInSeconds: lowerTime + ratio * (upperTime - lowerTime),
+    };
+};
+
+/**
+ * Calculates progress measurements for a segment between two arbitrary points on the route path.
+ *
+ * Calls {@link interpolateProgressAtIndex} for both indices and exposes the start and end
+ * measurements together with the delta (distance and time covered between them).
+ *
+ * @param route The route whose `properties.progress` will be used for interpolation.
+ * @param startPathIndex Zero-based index of the segment start in the route's coordinate array.
+ * @param endPathIndex Zero-based index of the segment end in the route's coordinate array.
+ * @returns A {@link RouteSegmentProgress} object, or `undefined` when either index cannot
+ *          be interpolated (see {@link interpolateProgressAtIndex} for the full list of conditions).
+ *
+ * @example
+ * ```typescript
+ * const result = getRouteProgressBetween(route, 10, 60);
+ * if (result) {
+ *   console.log(`Segment starts ${result.start.distanceInMeters} m from route origin`);
+ *   console.log(`Segment ends   ${result.end.distanceInMeters} m from route origin`);
+ *   console.log(`Segment length ${result.delta.distanceInMeters} m`);
+ *   console.log(`Segment takes  ${result.delta.travelTimeInSeconds} s`);
+ * }
+ * ```
+ *
+ * @group Utils
+ */
+export const getRouteProgressBetween = (
+    route: Route,
+    startPathIndex: number,
+    endPathIndex: number,
+): RouteSegmentProgress | undefined => {
+    const start = interpolateProgressAtIndex(route, startPathIndex);
+    const end = interpolateProgressAtIndex(route, endPathIndex);
+
+    if (!start || !end) return undefined;
+
+    return {
+        start,
+        end,
+        delta: {
+            distanceInMeters: end.distanceInMeters - start.distanceInMeters,
+            travelTimeInSeconds: end.travelTimeInSeconds - start.travelTimeInSeconds,
+        },
+    };
+};
+
 export const getSectionBBox = (route: Route, section: SectionProps) => {
     const routeCoords = route.geometry.coordinates;
 

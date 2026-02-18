@@ -1,6 +1,6 @@
 {
-  "name": "@examples/interactive-roads-and-numbers",
-  "description": "Interactive roads and numbers example",
+  "name": "@examples/add-stops-to-route",
+  "description": "Add stops to a route by clicking on the map",
   "type": "module",
   "scripts": {
     "build": "vite build --config ../example-vite.config.ts",
@@ -17,7 +17,6 @@
     "@tomtom-org/maps-sdk": "workspace:*"
   },
   "devDependencies": {
-    "@types/geojson": "catalog:",
     "@types/node": "catalog:",
     "rimraf": "catalog:",
     "rollup-plugin-visualizer": "catalog:",

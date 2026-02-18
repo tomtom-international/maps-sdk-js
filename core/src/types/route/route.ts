@@ -92,50 +92,76 @@ export type Avoidable = (typeof avoidableTypes)[number];
 export type TravelMode = 'car'; // TODO no longer supported | "truck" | "taxi" | "bus" | "van" | "motorcycle" | "bicycle" | "pedestrian";
 
 /**
- * Progress information for a specific point along the route.
+ * Cumulative distance and time measurements at a position along the route.
  *
- * Contains cumulative distance and time measurements from the route start to this point.
+ * Both fields are optional because a progress entry may omit either value.
+ * Use {@link RouteProgressAtPoint} for the resolved (always-present) equivalent
+ * returned by interpolation utilities.
  *
  * @group Route
  */
-export type RouteProgressPoint = {
+export type RouteProgress = {
     /**
-     * Zero-based index of this point in the route's coordinate array.
-     */
-    pointIndex: number;
-    /**
-     * Cumulative travel time in seconds from the route start to this point.
+     * Cumulative travel time in seconds from the route start.
      */
     travelTimeInSeconds?: number;
     /**
-     * Cumulative distance in meters from the route start to this point.
+     * Cumulative distance in meters from the route start.
      */
     distanceInMeters?: number;
 };
 
 /**
- * Array of progress points along the route path.
+ * Progress measurements tied to a specific coordinate on the route path.
  *
- * Provides distance and time information at key points along the route.
- * This field is included when `extendedRouteRepresentations` is requested.
+ * Extends {@link RouteProgress} with a `pointIndex` that identifies the
+ * corresponding entry in the route's coordinate array.
  *
  * @remarks
- * - Always contains entries for the first and last points in the route
- * - Progress for intermediate points can be linearly interpolated between explicitly defined points
- * - Use the Haversine formula for distance calculations between points
+ * - The `progress` array on a route always contains entries for the first and last points
+ * - Progress for intermediate points can be linearly interpolated between entries
  *
  * @example
  * ```typescript
- * const progress: RouteProgress = [
- *   { pointIndex: 0, travelTimeInSeconds: 0, distanceInMeters: 0 },
- *   { pointIndex: 50, travelTimeInSeconds: 120, distanceInMeters: 2500 },
- *   { pointIndex: 100, travelTimeInSeconds: 300, distanceInMeters: 5000 }
+ * const points: RouteProgressPoint[] = [
+ *   { pointIndex: 0,   travelTimeInSeconds: 0,   distanceInMeters: 0    },
+ *   { pointIndex: 50,  travelTimeInSeconds: 120,  distanceInMeters: 2500 },
+ *   { pointIndex: 100, travelTimeInSeconds: 300,  distanceInMeters: 5000 }
  * ];
  * ```
  *
  * @group Route
  */
-export type RouteProgress = RouteProgressPoint[];
+export type RouteProgressPoint = RouteProgress & {
+    /**
+     * Zero-based index of this point in the route's coordinate array.
+     */
+    pointIndex: number;
+};
+
+/**
+ * Resolved distance and time measurements at an interpolated position on the route path.
+ *
+ * Both fields are required because this type is only produced when interpolation
+ * can be fully resolved (i.e. the bracketing progress entries both carry valid values).
+ *
+ * @group Route
+ */
+export type RouteProgressAtPoint = Required<RouteProgress>;
+
+/**
+ * Progress measurements for a segment between two arbitrary points on the route path.
+ *
+ * @group Route
+ */
+export type RouteSegmentProgress = {
+    /** Progress at the start point. */
+    start: RouteProgressAtPoint;
+    /** Progress at the end point. */
+    end: RouteProgressAtPoint;
+    /** Difference between end and start (distance and time covered by the segment). */
+    delta: RouteProgressAtPoint;
+};
 
 /**
  * Properties object for a calculated route.
@@ -175,7 +201,7 @@ export type RouteProps = {
      * Only present when extended route representations are requested.
      * Useful for displaying progress information or calculating intermediate times.
      */
-    progress?: RouteProgress;
+    progress?: RouteProgressPoint[];
     /**
      * Index of this route in the collection of alternatives.
      *

@@ -14,8 +14,7 @@
     "start-test-server": "vite preview --port 9050"
   },
   "dependencies": {
-    "@tomtom-org/maps-sdk": "workspace:*",
-    "@turf/turf": "catalog:"
+    "@tomtom-org/maps-sdk": "workspace:*"
   },
   "devDependencies": {
     "@types/geojson": "catalog:",

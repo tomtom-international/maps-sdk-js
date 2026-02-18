@@ -51,6 +51,7 @@
     "yaml": "^2.8.2"
   },
   "peerDependencies": {
+    "@turf/turf": "catalog:",
     "lodash-es": "catalog:",
     "maplibre-gl": "catalog:",
     "zod": "catalog:"

@@ -8,7 +8,7 @@ import type {
     PossibleLaneSeparator,
     RoadShieldReference,
     RoutePathPoint,
-    RouteProgress,
+    RouteProgressPoint,
     RouteSummary,
     TrafficIncidentTEC,
     TravelMode,
@@ -175,7 +175,7 @@ export type RouteAPI = {
     sections: SectionAPI[];
     summary: SummaryAPI;
     guidance?: GuidanceAPI;
-    progress?: RouteProgress;
+    progress?: RouteProgressPoint[];
 };
 
 /**
