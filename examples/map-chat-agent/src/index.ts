@@ -45,7 +45,15 @@ const outputTokensEl = document.getElementById('output-tokens');
 const totalTokensEl = document.getElementById('total-tokens');
 
 // Validate UI elements exist
-if (!messagesContainer || !chatInput || !sendButton || !clearButton || !inputTokensEl || !outputTokensEl || !totalTokensEl) {
+if (
+    !messagesContainer ||
+    !chatInput ||
+    !sendButton ||
+    !clearButton ||
+    !inputTokensEl ||
+    !outputTokensEl ||
+    !totalTokensEl
+) {
     throw new Error('Required UI elements not found');
 }
 
@@ -84,7 +92,7 @@ function addToolCallMessage(toolName: string, args: any, tokens?: number) {
     if (!messagesContainer) return;
     const messageDiv = document.createElement('div');
     messageDiv.className = 'message tool-call';
-    
+
     // Add color coding based on token count
     if (tokens !== undefined) {
         if (tokens < 100) {
@@ -95,27 +103,27 @@ function addToolCallMessage(toolName: string, args: any, tokens?: number) {
             messageDiv.classList.add('token-high');
         }
     }
-    
+
     const headerDiv = document.createElement('div');
     headerDiv.className = 'tool-header';
-    
+
     const toolNameSpan = document.createElement('div');
     toolNameSpan.className = 'tool-name';
     toolNameSpan.textContent = `🔧 ${toolName}`;
-    
+
     headerDiv.appendChild(toolNameSpan);
-    
+
     if (tokens !== undefined) {
         const tokenBadge = document.createElement('div');
         tokenBadge.className = 'tool-tokens';
         tokenBadge.textContent = `📊 +${tokens.toLocaleString()}`;
         headerDiv.appendChild(tokenBadge);
     }
-    
+
     const argsDiv = document.createElement('div');
     argsDiv.className = 'tool-args';
     argsDiv.textContent = JSON.stringify(args, null, 2);
-    
+
     messageDiv.appendChild(headerDiv);
     messageDiv.appendChild(argsDiv);
     messagesContainer.appendChild(messageDiv);
@@ -142,13 +150,13 @@ async function sendMessage(userMessage: string) {
     try {
         // Debug: Log the conversation state
         console.log('🤖 Agent generating response with messages:', messages);
-        
+
         // Generate response from agent with step tracking
-        const result = await agent.agent.generate({ 
+        const result = await agent.agent.generate({
             messages,
             onStepFinish: (step) => {
                 console.log('\n📍 Step finished:', JSON.stringify(step, null, 2));
-                
+
                 // Track token usage
                 const stepAny = step as any;
                 let stepTokens = 0;
@@ -161,7 +169,7 @@ async function sendMessage(userMessage: string) {
                         totalAllTokens += usage.totalTokens;
                     }
                     updateTokenDisplay();
-                    
+
                     console.log('📊 Token usage:', {
                         stepInput: usage.inputTokens,
                         stepOutput: usage.outputTokens,
@@ -171,21 +179,20 @@ async function sendMessage(userMessage: string) {
                         cumulativeTotal: totalAllTokens,
                     });
                 }
-                
+
                 // Display tool calls in the UI with token count
                 if (step.toolCalls && step.toolCalls.length > 0) {
                     // Distribute tokens across tool calls (rough estimate)
-                    const tokensPerCall = step.toolCalls.length > 0 
-                        ? Math.floor(stepTokens / step.toolCalls.length)
-                        : 0;
-                    
+                    const tokensPerCall =
+                        step.toolCalls.length > 0 ? Math.floor(stepTokens / step.toolCalls.length) : 0;
+
                     for (const toolCall of step.toolCalls) {
                         // The property is called 'input' in the AI SDK
                         const args = (toolCall as any).input || {};
                         addToolCallMessage(toolCall.toolName, args, tokensPerCall);
                     }
                 }
-            }
+            },
         });
 
         // Remove thinking indicator
@@ -205,7 +212,7 @@ async function sendMessage(userMessage: string) {
         // Add assistant message to UI and history
         addMessage('assistant', assistantMessage);
         messages.push({ role: 'assistant', content: assistantMessage });
-        
+
         console.log('✅ Agent response complete:', assistantMessage);
     } catch (error) {
         // Remove thinking indicator
@@ -214,7 +221,7 @@ async function sendMessage(userMessage: string) {
         // Show error
         const errorMessage = error instanceof Error ? error.message : 'An error occurred';
         addMessage('error', `Error: ${errorMessage}`);
-        
+
         // Enhanced error logging
         console.error('❌ Agent error:', error);
         if (error instanceof Error) {

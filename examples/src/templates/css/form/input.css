@@ -12,7 +12,9 @@
     border: 1px solid var(--sdk-border-low);
     border-radius: var(--sdk-radius-10);
     outline: none;
-    transition: border-color var(--sdk-transition-normal), box-shadow var(--sdk-transition-normal);
+    transition:
+        border-color var(--sdk-transition-normal),
+        box-shadow var(--sdk-transition-normal);
 }
 
 .sdk-example-input::placeholder {

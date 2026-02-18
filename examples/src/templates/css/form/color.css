@@ -14,7 +14,9 @@
     border-radius: var(--sdk-radius-5);
     border: 2px solid var(--sdk-border-medium);
     cursor: pointer;
-    transition: transform var(--sdk-transition-normal), border-color var(--sdk-transition-normal);
+    transition:
+        transform var(--sdk-transition-normal),
+        border-color var(--sdk-transition-normal);
     display: flex;
     align-items: center;
     justify-content: center;

@@ -1,15 +1,15 @@
-@import '../../src/templates/css/base/tokens.css';
-@import '../../src/templates/css/base/global.css';
-@import '../../src/templates/css/base/typography.css';
-@import '../../src/templates/css/panel/custom-panel.css';
-@import '../../src/templates/css/panel/search-panel.css';
-@import '../../src/templates/css/button/button.css';
-@import '../../src/templates/css/form/field.css';
-@import '../../src/templates/css/form/input.css';
-@import '../../src/templates/css/form/select.css';
-@import '../../src/templates/css/form/checkbox.css';
-@import '../../src/templates/css/form/slider.css';
-@import '../../src/templates/css/form/color.css';
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/panel/search-panel.css";
+@import "../../src/templates/css/button/button.css";
+@import "../../src/templates/css/form/field.css";
+@import "../../src/templates/css/form/input.css";
+@import "../../src/templates/css/form/select.css";
+@import "../../src/templates/css/form/checkbox.css";
+@import "../../src/templates/css/form/slider.css";
+@import "../../src/templates/css/form/color.css";
 
 /* CUSTOM STYLES (example-specific) */
 

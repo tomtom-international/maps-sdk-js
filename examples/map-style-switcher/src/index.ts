@@ -19,7 +19,6 @@ stylesSelector.addEventListener('change', (event) =>
     map.setStyle((event.target as HTMLOptionElement).value as StandardStyleID),
 );
 
-
 const toggleButton = document.querySelector('.sdk-example-heading-toggle');
 const panelContent = document.querySelector('.sdk-example-panel-content');
 

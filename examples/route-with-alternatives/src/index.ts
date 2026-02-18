@@ -39,10 +39,10 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     routeSelector.addEventListener('change', (event) =>
         routingModule.selectRoute(Number((event.target as HTMLOptionElement).value)),
     );
-    
+
     const toggleButton = document.querySelector('.sdk-example-heading-toggle');
     const panelContent = document.querySelector('.sdk-example-panel-content');
-    
+
     toggleButton?.addEventListener('click', () => {
         const isExpanded = toggleButton.getAttribute('aria-expanded') === 'true';
         toggleButton.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');

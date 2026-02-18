@@ -111,13 +111,15 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
 
     const routingModule = await RoutingModule.get(map);
     initDrawMapStyle(map.mapLibreMap, routingModule);
-    document.querySelector('#sdk-example-resetButton')?.addEventListener('click', () => resetState(routingModule, waypoints));
+    document
+        .querySelector('#sdk-example-resetButton')
+        ?.addEventListener('click', () => resetState(routingModule, waypoints));
     await resetState(routingModule, waypoints);
     initDrawUserEvents(map.mapLibreMap, routingModule);
-    
+
     const toggleButton = document.querySelector('.sdk-example-heading-toggle');
     const panelContent = document.querySelector('.sdk-example-panel-content');
-    
+
     toggleButton?.addEventListener('click', () => {
         const isExpanded = toggleButton.getAttribute('aria-expanded') === 'true';
         toggleButton.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');

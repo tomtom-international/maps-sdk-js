@@ -1,8 +1,8 @@
-@import '../../src/templates/css/base/tokens.css';
-@import '../../src/templates/css/base/global.css';
-@import '../../src/templates/css/base/typography.css';
-@import '../../src/templates/css/form/input.css';
-@import '../../src/templates/css/button/button.css';
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/form/input.css";
+@import "../../src/templates/css/button/button.css";
 
 /* CUSTOM STYLES (example-specific) */
 

@@ -43,7 +43,6 @@
     border-color: var(--sdk-text-disabled);
 }
 
-
 .sdk-example-button-ghost {
     background-color: transparent;
     color: var(--sdk-text-high);
@@ -62,7 +61,6 @@
     background-color: transparent;
     color: var(--sdk-text-disabled);
 }
-
 
 .sdk-example-button-success {
     background-color: var(--sdk-color-success);
@@ -118,7 +116,7 @@
 }
 
 .sdk-example-button-loading::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 50%;
     left: 50%;

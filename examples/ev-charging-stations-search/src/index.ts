@@ -188,7 +188,9 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         evBrandTextBox.addEventListener('keypress', (event) => event.key === 'Enter' && searchButton.click());
         areaTextBox.addEventListener('keypress', (event) => event.key === 'Enter' && searchButton.click());
 
-        const minPowerKWMapEVStationsInput = document.querySelector('#sdk-example-minPowerKWMapEVStations') as HTMLInputElement;
+        const minPowerKWMapEVStationsInput = document.querySelector(
+            '#sdk-example-minPowerKWMapEVStations',
+        ) as HTMLInputElement;
         minPowerKWMapEVStationsInput.value = String(minPowerKWMapEVStations);
         const minPowerKWSearchedEVStationsInput = document.querySelector(
             '#sdk-example-minPowerKWSearchedEVStations',

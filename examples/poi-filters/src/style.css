@@ -1,10 +1,10 @@
-@import '../../src/templates/css/base/tokens.css';
-@import '../../src/templates/css/base/global.css';
-@import '../../src/templates/css/base/typography.css';
-@import '../../src/templates/css/panel/custom-panel.css';
-@import '../../src/templates/css/form/select.css';
-@import '../../src/templates/css/form/toggle.css';
-@import '../../src/templates/css/button/button.css';
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/form/select.css";
+@import "../../src/templates/css/form/toggle.css";
+@import "../../src/templates/css/button/button.css";
 
 /* CUSTOM STYLES (example-specific) */
 

@@ -1,109 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
-    <title>Slider Control - Maps SDK JS</title>
-    <link rel="stylesheet" href="../css/styles.css">
-</head>
-<body class="body">
-    <div class="form-field">
-        <label class="form-label" for="sliderExample">Opacity</label>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <title>Slider Control - Maps SDK JS</title>
+        <link rel="stylesheet" href="../css/styles.css">
+    </head>
+    <body class="body">
+        <div class="form-field">
+            <label class="form-label" for="sliderExample">Opacity</label>
 
-        <div class="slider-container">
-        <input
-            type="range"
-            id="sliderExample"
-            class="slider"
-            min="0"
-            max="100"
-            step="1"
-            value="75"
-        >
-        <span id="sliderValue" class="slider-value">75%</span>
-    </div>
-</div>
+            <div class="slider-container">
+                <input type="range" id="sliderExample" class="slider" min="0" max="100" step="1" value="75">
+                <span id="sliderValue" class="slider-value">75%</span>
+            </div>
+        </div>
 
-<!-- Slider with decimal values -->
-<div class="form-field">
-    <label class="form-label" for="thresholdSlider">Threshold</label>
+        <!-- Slider with decimal values -->
+        <div class="form-field">
+            <label class="form-label" for="thresholdSlider">Threshold</label>
 
-    <div class="slider-container">
-        <input
-            type="range"
-            id="thresholdSlider"
-            class="slider"
-            min="0"
-            max="1"
-            step="0.01"
-            value="0.5"
-        >
-        <span id="thresholdValue" class="slider-value">0.50</span>
-    </div>
-</div>
+            <div class="slider-container">
+                <input type="range" id="thresholdSlider" class="slider" min="0" max="1" step="0.01" value="0.5">
+                <span id="thresholdValue" class="slider-value">0.50</span>
+            </div>
+        </div>
 
-<!-- Slider with custom range -->
-<div class="form-field">
-    <label class="form-label" for="radiusSlider">Search Radius (km)</label>
+        <!-- Slider with custom range -->
+        <div class="form-field">
+            <label class="form-label" for="radiusSlider">Search Radius (km)</label>
 
-    <div class="slider-container">
-        <input
-            type="range"
-            id="radiusSlider"
-            class="slider"
-            min="1"
-            max="50"
-            step="1"
-            value="10"
-        >
-        <span id="radiusValue" class="slider-value">10 km</span>
-    </div>
-</div>
+            <div class="slider-container">
+                <input type="range" id="radiusSlider" class="slider" min="1" max="50" step="1" value="10">
+                <span id="radiusValue" class="slider-value">10 km</span>
+            </div>
+        </div>
 
-<!-- Disabled slider -->
-<div class="form-field">
-    <label class="form-label" for="disabledSlider">Disabled Slider</label>
+        <!-- Disabled slider -->
+        <div class="form-field">
+            <label class="form-label" for="disabledSlider">Disabled Slider</label>
 
-    <div class="slider-container">
-        <input
-            type="range"
-            id="disabledSlider"
-            class="slider"
-            min="0"
-            max="100"
-            value="50"
-            disabled
-        >
-        <span class="slider-value">50%</span>
-    </div>
-</div>
+            <div class="slider-container">
+                <input type="range" id="disabledSlider" class="slider" min="0" max="100" value="50" disabled>
+                <span class="slider-value">50%</span>
+            </div>
+        </div>
 
-<script>
-    // Make sliders interactive by updating their value displays
-    const sliderExample = document.querySelector('#sliderExample');
-    const sliderValue = document.querySelector('#sliderValue');
+        <script>
+        // Make sliders interactive by updating their value displays
+        const sliderExample = document.querySelector('#sliderExample');
+        const sliderValue = document.querySelector('#sliderValue');
 
-    sliderExample?.addEventListener('input', () => {
-        sliderValue.textContent = `${sliderExample.value}%`;
-    });
+        sliderExample?.addEventListener('input', () => {
+            sliderValue.textContent = `${sliderExample.value}%`;
+        });
 
-    const thresholdSlider = document.querySelector('#thresholdSlider');
-    const thresholdValue = document.querySelector('#thresholdValue');
+        const thresholdSlider = document.querySelector('#thresholdSlider');
+        const thresholdValue = document.querySelector('#thresholdValue');
 
-    thresholdSlider?.addEventListener('input', () => {
-        const value = Number.parseFloat(thresholdSlider.value);
-        thresholdValue.textContent = value.toFixed(2);
-    });
+        thresholdSlider?.addEventListener('input', () => {
+            const value = Number.parseFloat(thresholdSlider.value);
+            thresholdValue.textContent = value.toFixed(2);
+        });
 
-    const radiusSlider = document.querySelector('#radiusSlider');
-    const radiusValue = document.querySelector('#radiusValue');
+        const radiusSlider = document.querySelector('#radiusSlider');
+        const radiusValue = document.querySelector('#radiusValue');
 
-    radiusSlider?.addEventListener('input', () => {
-        radiusValue.textContent = `${radiusSlider.value} km`;
-    });
-</script>
+        radiusSlider?.addEventListener('input', () => {
+            radiusValue.textContent = `${radiusSlider.value} km`;
+        });
+        </script>
 
-<!--
+        <!--
     JavaScript Event Listener Example:
 
     const slider = document.querySelector('#sliderExample') as HTMLInputElement;
@@ -150,5 +118,5 @@
     // Trigger input event to update
     slider.dispatchEvent(new Event('input'));
     -->
-</body>
+    </body>
 </html>

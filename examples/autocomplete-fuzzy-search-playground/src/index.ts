@@ -171,7 +171,8 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 
     searchThisAreaButton.addEventListener('click', fuzzySearch);
 
-    const unhoverListItem = () => fuzzySearchResultsList.querySelector('.sdk-example-hovered')?.classList.remove('sdk-example-hovered');
+    const unhoverListItem = () =>
+        fuzzySearchResultsList.querySelector('.sdk-example-hovered')?.classList.remove('sdk-example-hovered');
 
     placesModule.events.on('hover', (place) => {
         unhoverListItem();
@@ -187,7 +188,10 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     });
 
     // Clear button resets everything
-    (document.querySelector('#sdk-example-clearButton') as HTMLButtonElement).addEventListener('click', clearSearchResults);
+    (document.querySelector('#sdk-example-clearButton') as HTMLButtonElement).addEventListener(
+        'click',
+        clearSearchResults,
+    );
 
     searchBox.addEventListener('keyup', async () => {
         selectedAutoCompleteSegment = null;

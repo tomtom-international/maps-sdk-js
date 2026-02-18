@@ -25,10 +25,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
     });
 
     type ModuleWithVisibility = { setVisible: (visible: boolean) => void };
-    const setupLazyToggle = (
-        id: string,
-        loadModule: () => Promise<ModuleWithVisibility>,
-    ) => {
+    const setupLazyToggle = (id: string, loadModule: () => Promise<ModuleWithVisibility>) => {
         let module: ModuleWithVisibility | null = null;
         document.querySelector(id)?.addEventListener('change', async (event) => {
             const checked = (event.target as HTMLInputElement).checked;
@@ -48,10 +45,10 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
     stylesSelector.addEventListener('change', (event) =>
         map.setStyle((event.target as HTMLOptionElement).value as StandardStyleID),
     );
-    
+
     const toggleButton = document.querySelector('.sdk-example-heading-toggle');
     const panelContent = document.querySelector('.sdk-example-panel-content');
-    
+
     toggleButton?.addEventListener('click', () => {
         const isExpanded = toggleButton.getAttribute('aria-expanded') === 'true';
         toggleButton.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');

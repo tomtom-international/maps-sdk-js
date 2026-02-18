@@ -1,18 +1,41 @@
 /* TYPOGRAPHY */
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     margin: 0;
     font-family: var(--sdk-font-primary);
     font-weight: var(--sdk-font-weight-bold);
     color: var(--sdk-text-high);
 }
 
-h1 { font-size: var(--sdk-font-heading); line-height: var(--sdk-font-heading-lh); }
-h2 { font-size: var(--sdk-font-heading); line-height: var(--sdk-font-heading-lh); }
-h3 { font-size: var(--sdk-font-heading); line-height: var(--sdk-font-heading-lh); }
-h4 { font-size: var(--sdk-font-subheading); line-height: var(--sdk-font-subheading-lh); }
-h5 { font-size: var(--sdk-font-body-m); line-height: var(--sdk-font-body-m-lh); }
-h6 { font-size: var(--sdk-font-body-s); line-height: var(--sdk-font-body-s-lh); }
+h1 {
+    font-size: var(--sdk-font-heading);
+    line-height: var(--sdk-font-heading-lh);
+}
+h2 {
+    font-size: var(--sdk-font-heading);
+    line-height: var(--sdk-font-heading-lh);
+}
+h3 {
+    font-size: var(--sdk-font-heading);
+    line-height: var(--sdk-font-heading-lh);
+}
+h4 {
+    font-size: var(--sdk-font-subheading);
+    line-height: var(--sdk-font-subheading-lh);
+}
+h5 {
+    font-size: var(--sdk-font-body-m);
+    line-height: var(--sdk-font-body-m-lh);
+}
+h6 {
+    font-size: var(--sdk-font-body-s);
+    line-height: var(--sdk-font-body-s-lh);
+}
 
 .sdk-example-heading {
     margin: 0 0 var(--sdk-space-4);

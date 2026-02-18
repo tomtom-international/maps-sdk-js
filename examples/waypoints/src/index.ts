@@ -50,10 +50,9 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         routingModule.showWaypoints(examples[(event.target as HTMLOptionElement).value].waypoints),
     );
 
-    
     const toggleButton = document.querySelector('.sdk-example-heading-toggle');
     const panelContent = document.querySelector('.sdk-example-panel-content');
-    
+
     toggleButton?.addEventListener('click', () => {
         const isExpanded = toggleButton.getAttribute('aria-expanded') === 'true';
         toggleButton.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');

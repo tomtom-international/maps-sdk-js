@@ -20,9 +20,10 @@
     text-decoration: none;
     white-space: nowrap;
     user-select: none;
-    transition: background-color var(--sdk-transition-normal),
-                transform var(--sdk-transition-fast),
-                box-shadow var(--sdk-transition-normal);
+    transition:
+        background-color var(--sdk-transition-normal),
+        transform var(--sdk-transition-fast),
+        box-shadow var(--sdk-transition-normal);
 }
 
 .sdk-example-button:hover {

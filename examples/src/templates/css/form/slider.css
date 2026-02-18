@@ -28,7 +28,9 @@
     border-radius: var(--sdk-radius-full);
     cursor: pointer;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    transition: transform var(--sdk-transition-fast), box-shadow var(--sdk-transition-fast);
+    transition:
+        transform var(--sdk-transition-fast),
+        box-shadow var(--sdk-transition-fast);
 }
 
 .sdk-example-slider::-webkit-slider-thumb:hover {
@@ -49,7 +51,9 @@
     border-radius: var(--sdk-radius-full);
     cursor: pointer;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    transition: transform var(--sdk-transition-fast), box-shadow var(--sdk-transition-fast);
+    transition:
+        transform var(--sdk-transition-fast),
+        box-shadow var(--sdk-transition-fast);
 }
 
 .sdk-example-slider::-moz-range-thumb:hover {
