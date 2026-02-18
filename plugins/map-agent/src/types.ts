@@ -164,7 +164,7 @@ export type MapAgent = {
     readonly agent: ToolLoopAgent;
 
     /** Live agent state (last results, module cache). Readonly externally. */
-    readonly state: Readonly<TomTomMapWithModules>;
+    readonly context: ToolContext;
 
     /** Tear down: clears modules, resets state. */
     destroy(): void;

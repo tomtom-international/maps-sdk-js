@@ -4,7 +4,7 @@
 
 import type { TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { type Tool, ToolLoopAgent } from 'ai';
-import { createState, TomTomServiceResponses } from './state';
+import { TomTomMapWithModules, TomTomServiceResponses } from './state';
 import { buildSystemPrompt } from './system-prompt';
 import { createMapToolSet } from './tools';
 import type { MapAgent, MapAgentOptions } from './types';
@@ -74,12 +74,8 @@ export function createMapAgent(map: TomTomMap, options: MapAgentOptions): MapAge
         throw new Error('MapAgent requires a model option. Please provide an AI SDK LanguageModel instance.');
     }
 
-    // Create agent state
-    const state = createState(map);
-    const services = new TomTomServiceResponses();
-
     // Create tool context
-    const context = { map: state, services };
+    const context = { map: new TomTomMapWithModules(map), services: new TomTomServiceResponses() };
 
     // Create toolset
     const defaultTools = createMapToolSet(context);
@@ -120,10 +116,10 @@ export function createMapAgent(map: TomTomMap, options: MapAgentOptions): MapAge
     // Return MapAgent interface
     return {
         agent,
-        state,
+        context,
         destroy: () => {
-            state.reset();
-            services.reset();
+            context.map.reset();
+            context.services.reset();
         },
     };
 }
