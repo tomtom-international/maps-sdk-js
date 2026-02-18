@@ -4,6 +4,13 @@ This directory contains all the tools available to the TomTom Map Agent, organiz
 
 ## Directory Structure
 
+### 📁 `meta/`
+**Tool discovery and help**
+
+Meta tools for discovering and learning about available tools.
+
+- `search-tools` - Search for available tools by keyword or category to discover capabilities
+
 ### 📁 `utilities/`
 **Pure functions that calculate values**
 
@@ -21,51 +28,70 @@ Tools that call TomTom SDK services to retrieve data but don't modify the map vi
 - `reverse-geocode` - Convert coordinates to addresses
 - `search-places` - Search for places and POIs
 - `calculate-route` - Calculate routes between locations
+- `add-stop-to-route` - Add a stop to an existing route and re-calculate it
+- `remove-stop-from-route` - Remove a stop from an existing route by index and re-calculate it
+- `get-last-search-results` - Get the most recent search results from the last search service call
+- `get-last-routes` - Get the most recent routes from the last route calculation service call
+- `get-last-geocoded-result` - Get the most recent geocoded location from the last geocoding service call
+- `get-last-reverse-geocoded-result` - Get the most recent reverse geocoded address from the last reverse geocoding service call
+- `get-last-places` - Get the most recent places (from search, geocode, or reverse geocode) from the last service call
 
 ### 📁 `tomtom-map/`
 **TomTom map display operations**
 
 Tools that control the TomTom map visualization, including showing data, toggling features, and managing the map state.
 
-- `show-places` - Display places on the map
-- `show-route` - Display routes on the map
-- `clear-map` - Clear all displayed data from the map
-- `fly-to` - Animate map camera to a location
-- `fit-bounds` - Fit map to show specific bounds
-- `get-viewport` - Get current map viewport information
-- `get-standard-map-styles` - Get list of available standard map style IDs
-- `set-language` - Change map label language
-- `set-map-style` - Change the map style
-- `toggle-layers` - Show/hide specific map layers
-- `toggle-pois` - Show/hide Points of Interest
-- `toggle-traffic` - Show/hide traffic flow and incidents
+- `show-places` - Display the most recent search results as markers on the map
+- `show-route` - Display the most recent calculated route on the map
+- `get-shown-places` - Get the places currently displayed on the map
+- `get-shown-routes` - Get the routes currently displayed on the map
+- `get-shown-waypoints` - Get the route waypoints currently displayed on the map
+- `get-shown-route-traffic-incidents` - Get the route traffic incidents currently displayed on the map
+- `clear-map` - Remove displayed features from the map (places, routes, geometries)
+- `fly-to` - Move the map camera to a specific location with animation
+- `fit-bounds` - Fit the map camera to show a specific bounding box or GeoJSON features
+- `fit-route-section` - Fit the map camera to show a specific section of a displayed route
+- `get-viewport` - Get the current map viewport information (center, zoom, bounds)
+- `get-standard-map-styles` - Get the list of available standard map style IDs
+- `set-language` - Change the language of map labels
+- `set-map-style` - Change the map visual theme (light, dark, satellite, etc.)
+- `toggle-layers` - Show or hide specific base map layer groups (buildings, roads, labels, etc.)
+- `toggle-pois` - Show or hide built-in map POI icons with optional category filtering
+- `toggle-traffic-flow` - Show or hide the real-time traffic flow layer
+- `toggle-traffic-incidents` - Show or hide the real-time traffic incidents layer
 
 ### 📁 `maplibre/`
 **MapLibre-specific features**
 
 Advanced tools for direct MapLibre GL manipulation, including style inspection and property updates.
 
-- `get-style-details` - Get detailed MapLibre style information
-- `set-layout-property` - Update layout properties of map layers (e.g., visibility, text-field, icon-size)
-- `set-paint-property` - Update paint properties of map layers (e.g., fill-color, line-width, text-color)
+- `get-style-details` - Get layer IDs with their layout/paint properties from MapLibre style
+- `set-layout-property` - Set a layout property for a specific layer (visibility, text-field, icon-size)
+- `set-paint-property` - Set a paint property for a specific layer (colors, widths, sizes)
 
 ## Adding New Tools
 
 When adding a new tool:
 
 1. **Choose the right category:**
+   - `meta/` - For tool discovery and help
    - `utilities/` - For pure calculations
    - `services/` - For API/service calls without map changes
    - `tomtom-map/` - For map visualization operations
    - `maplibre/` - For low-level MapLibre GL features
 
-2. **Create the tool file** in the appropriate subdirectory
+2. **Create the tool file** in the appropriate subdirectory with:
+   - A Zod schema for the tool parameters
+   - A factory function that creates the tool using `dynamicTool()`
 
 3. **Export from subdirectory index** (`<subdirectory>/index.ts`)
+   - Export both the schema and the factory function
 
-4. **Import in main index** (`tools/index.ts`)
+4. **Import in tool-registry.ts**
+   - Add imports for the schema and factory function
+   - Add an entry to the `TOOL_REGISTRY` object with complete metadata
 
-5. **Add to `DefaultToolSet` interface** and `createMapToolSet()` function
+The `DefaultToolSet` type is automatically derived from the `TOOL_REGISTRY` using mapped types, so no manual type updates are needed.
 
 ## Usage
 

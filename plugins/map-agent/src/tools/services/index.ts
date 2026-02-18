@@ -4,6 +4,8 @@
  * Service tools - SDK services like search, reverse geocoding, and routing without map display.
  */
 
+export { addStopToRouteSchema, createAddStopToRouteTool } from './add-stop-to-route';
+export { createRemoveStopFromRouteTool, removeStopFromRouteSchema } from './remove-stop-from-route';
 export { calculateRouteSchema, createCalculateRouteTool } from './calculate-route';
 export { createGeocodeTool, geocodeSchema } from './geocode';
 export { createGetLastGeocodedResultTool, getLastGeocodedResultSchema } from './get-last-geocoded-result';

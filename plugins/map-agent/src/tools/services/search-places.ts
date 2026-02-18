@@ -22,10 +22,6 @@ export const searchPlacesSchema = z.object({
     radiusMeters: z.number().optional().describe('Search radius in meters'),
     limit: z.number().optional().describe('Maximum number of results (default: 10)'),
     poiCategories: z.array(z.string()).optional().describe('POI category filters'),
-    clearPrevious: z
-        .boolean()
-        .optional()
-        .describe('Clear previous search results before adding new ones (default: false)'),
 });
 
 /**
@@ -42,7 +38,6 @@ export function createSearchPlacesTool(context: ToolContext): Tool {
                 radiusMeters,
                 limit = 10,
                 poiCategories,
-                clearPrevious = false,
             } = params as z.infer<typeof searchPlacesSchema>;
 
             try {
@@ -53,10 +48,6 @@ export function createSearchPlacesTool(context: ToolContext): Tool {
                     position,
                     radiusMeters,
                 });
-
-                if (clearPrevious) {
-                    context.services.clearSearchResultsHistory();
-                }
 
                 // Accumulate search results
                 context.services.addSearchResults(result);

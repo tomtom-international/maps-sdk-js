@@ -21,7 +21,7 @@ export const showRouteSchema = z.object({
  */
 export function createShowRouteTool(context: ToolContext): Tool {
     return dynamicTool({
-        description: 'Display the most recent calculated route on the map',
+        description: 'Display the most recent calculated routes on the map',
         inputSchema: showRouteSchema,
         execute: async (params) => {
             const { selectedIndex = 0, fitBounds = true } = params as z.infer<typeof showRouteSchema>;
@@ -30,16 +30,12 @@ export function createShowRouteTool(context: ToolContext): Tool {
                     return { error: 'No routes available to display' };
                 }
 
-                // Merge all accumulated routes
-                const mergedRoutes = {
-                    type: 'FeatureCollection' as const,
-                    features: context.services.routesHistory.flatMap((routes) => routes.features),
-                };
-
                 const routingModule = await context.map.getRoutingModule();
 
-                // Show all routes
-                await routingModule.showRoutes(mergedRoutes, { selectedIndex });
+                const routes = context.services.lastRoutes;
+                if (routes) {
+                    await routingModule.showRoutes(routes, { selectedIndex });
+                }
 
                 // Show waypoints if available
                 const waypoints = context.services.lastWaypoints;
@@ -58,8 +54,8 @@ export function createShowRouteTool(context: ToolContext): Tool {
                 return {
                     success: true,
                     displayedRoute: selectedIndex,
-                    totalRoutes: mergedRoutes.features.length,
-                    routeCount: context.services.routesHistory.length,
+                    routeCount: routes?.features.length ?? 0,
+                    totalRoutes: context.services.routesHistory.length,
                 };
             } catch (error) {
                 return {

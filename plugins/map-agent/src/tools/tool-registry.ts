@@ -16,7 +16,9 @@ import {
 import { createSearchToolsTool, searchToolsSchema } from './meta';
 // Import all tool factory functions and schemas
 import {
+    addStopToRouteSchema,
     calculateRouteSchema,
+    createAddStopToRouteTool,
     createCalculateRouteTool,
     createGeocodeTool,
     createGetLastGeocodedResultTool,
@@ -24,6 +26,7 @@ import {
     createGetLastReverseGeocodedResultTool,
     createGetLastRoutesTool,
     createGetLastSearchResultsTool,
+    createRemoveStopFromRouteTool,
     createReverseGeocodeTool,
     createSearchPlacesTool,
     geocodeSchema,
@@ -32,6 +35,7 @@ import {
     getLastReverseGeocodedResultSchema,
     getLastRoutesSchema,
     getLastSearchResultsSchema,
+    removeStopFromRouteSchema,
     reverseGeocodeSchema,
     searchPlacesSchema,
 } from './services';
@@ -193,6 +197,34 @@ export const TOOL_REGISTRY: Record<string, ToolMetadata> = {
         ],
         relatedTools: ['showRoute', 'formatDistance', 'formatDuration'],
         create: createCalculateRouteTool,
+    },
+    addStopToRoute: {
+        name: 'addStopToRoute',
+        category: 'location-services',
+        shortDescription: 'Add stop to existing route',
+        description:
+            'Add a stop to the last shown route and re-calculate it with the new waypoint inserted at the optimal position',
+        tags: ['route', 'waypoint', 'stop', 'add', 'insert', 'modify', 'update'],
+        parameters: extractParametersFromSchema(addStopToRouteSchema),
+        examples: [
+            'addStopToRoute("Starbucks")',
+            'addStopToRoute("gas station near route")',
+            'addStopToRoute("Amsterdam", 1)',
+        ],
+        relatedTools: ['calculateRoute', 'getLastRoutes', 'showRoute'],
+        create: createAddStopToRouteTool,
+    },
+    removeStopFromRoute: {
+        name: 'removeStopFromRoute',
+        category: 'location-services',
+        shortDescription: 'Remove stop from existing route',
+        description:
+            'Remove a stop from the last shown route by its index and re-calculate it. Index 0 is the origin, the last index is the destination.',
+        tags: ['route', 'waypoint', 'stop', 'remove', 'delete', 'modify', 'update'],
+        parameters: extractParametersFromSchema(removeStopFromRouteSchema),
+        examples: ['removeStopFromRoute(1)', 'removeStopFromRoute(2, 1)'],
+        relatedTools: ['addStopToRoute', 'calculateRoute', 'getLastRoutes', 'showRoute'],
+        create: createRemoveStopFromRouteTool,
     },
     getLastSearchResults: {
         name: 'getLastSearchResults',

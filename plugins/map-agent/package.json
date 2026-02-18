@@ -14,7 +14,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "ai": "^6.0.86"
+    "ai": "^6.0.90"
   },
   "peerDependencies": {
     "@tomtom-org/maps-sdk": "workspace:*",
