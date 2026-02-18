@@ -20,6 +20,7 @@
     "clean:dist": "rimraf ./dist"
   },
   "dependencies": {
+    "@turf/turf": "catalog:",
     "geojson": "^0.5.0"
   },
   "peerDependencies": {

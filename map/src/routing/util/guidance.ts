@@ -1,5 +1,5 @@
 import { generateId, Routes } from '@tomtom-org/maps-sdk/core';
-import calcBearing from '@turf/bearing';
+import { bearing } from '@turf/turf';
 import type { DisplayRouteProps } from '../types/displayRoutes';
 import type {
     DisplayInstruction,
@@ -58,7 +58,7 @@ export const toDisplayInstructionArrows = (routes: Routes<DisplayRouteProps>): D
                             id: generateId(),
                             routeIndex,
                             routeState: route.properties.routeState,
-                            lastPointBearingDegrees: calcBearing(instructionLastSegment[0], instructionLastSegment[1]),
+                            lastPointBearingDegrees: bearing(instructionLastSegment[0], instructionLastSegment[1]),
                         },
                     };
                 }) || [],

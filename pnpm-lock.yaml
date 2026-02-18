@@ -135,6 +135,9 @@ importers:
 
   core:
     dependencies:
+      '@turf/turf':
+        specifier: 'catalog:'
+        version: 7.3.4
       geojson:
         specifier: ^0.5.0
         version: 0.5.0
@@ -1929,6 +1932,9 @@ importers:
     dependencies:
       '@turf/bearing':
         specifier: ^7.3.4
+        version: 7.3.4
+      '@turf/turf':
+        specifier: 'catalog:'
         version: 7.3.4
       core:
         specifier: workspace:*

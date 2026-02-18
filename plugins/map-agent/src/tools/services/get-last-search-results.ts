@@ -17,7 +17,7 @@ export const getLastSearchResultsSchema = z.object({});
  */
 export function createGetLastSearchResultsTool(context: ToolContext): Tool {
     return dynamicTool({
-        description: 'Get the most recent search results from the last search service call',
+        description: 'Get the most recent search results from the last search-places tool call',
         inputSchema: getLastSearchResultsSchema,
         execute: async () => {
             try {

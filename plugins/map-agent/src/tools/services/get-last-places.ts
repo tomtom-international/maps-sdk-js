@@ -17,7 +17,7 @@ export const getLastPlacesSchema = z.object({});
  */
 export function createGetLastPlacesTool(context: ToolContext): Tool {
     return dynamicTool({
-        description: 'Get the most recent places (from search, geocode, or reverse geocode) from the last service call',
+        description: 'Get the most recent places from the last search-places, geocode, or reverse-geocode tool call',
         inputSchema: getLastPlacesSchema,
         execute: async () => {
             try {

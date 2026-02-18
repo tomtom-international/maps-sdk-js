@@ -17,7 +17,7 @@ export const getLastGeocodedResultSchema = z.object({});
  */
 export function createGetLastGeocodedResultTool(context: ToolContext): Tool {
     return dynamicTool({
-        description: 'Get the most recent geocoded location from the last geocoding service call',
+        description: 'Get the most recent geocoded location from the last geocode tool call',
         inputSchema: getLastGeocodedResultSchema,
         execute: async () => {
             try {

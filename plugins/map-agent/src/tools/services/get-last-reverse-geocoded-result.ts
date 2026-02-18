@@ -17,7 +17,7 @@ export const getLastReverseGeocodedResultSchema = z.object({});
  */
 export function createGetLastReverseGeocodedResultTool(context: ToolContext): Tool {
     return dynamicTool({
-        description: 'Get the most recent reverse geocoded address from the last reverse geocoding service call',
+        description: 'Get the most recent reverse geocoded address from the last reverse-geocode tool call',
         inputSchema: getLastReverseGeocodedResultSchema,
         execute: async () => {
             try {

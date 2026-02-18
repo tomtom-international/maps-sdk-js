@@ -7,6 +7,7 @@ export * from './generateId';
 export * from './headers';
 export * from './lngLat';
 export * from './poiCategoriesToID';
+export * from './route';
 export * from './routePlanningLocations';
 export * from './traffic';
 export * from './unitFormatters';
