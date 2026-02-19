@@ -111,6 +111,22 @@ export function createTool(context: ToolContext): ReturnType<typeof dynamicTool>
 
 ## Usage
 
+### Installation
+
+Install the plugin and required peers in your app:
+
+```bash
+pnpm add @tomtom-org/maps-sdk @tomtom-org/maps-sdk-plugin-ai-agent ai zod maplibre-gl
+```
+
+Then install at least one AI provider package (for example OpenAI, Azure, or Anthropic):
+
+```bash
+pnpm add @ai-sdk/openai
+```
+
+Note: `ai` is a peer dependency of this plugin, so it must be installed in the consuming project.
+
 ### Basic Usage
 
 ```typescript

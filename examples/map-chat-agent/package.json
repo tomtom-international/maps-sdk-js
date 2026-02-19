@@ -14,10 +14,10 @@
     "start-test-server": "vite preview --port 9050"
   },
   "dependencies": {
-    "@ai-sdk/azure": "^3.0.30",
+    "@ai-sdk/azure": "catalog:",
     "@tomtom-org/maps-sdk": "workspace:*",
     "@tomtom-org/maps-sdk-plugin-ai-agent": "workspace:*",
-    "ai": "6.0.78",
+    "ai": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {

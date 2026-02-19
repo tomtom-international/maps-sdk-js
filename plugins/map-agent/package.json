@@ -13,16 +13,14 @@
     "test": "vitest run",
     "test:watch": "vitest"
   },
-  "dependencies": {
-    "ai": "^6.0.90"
-  },
+  "dependencies": {},
   "peerDependencies": {
     "@tomtom-org/maps-sdk": "workspace:*",
+    "ai": "catalog:",
     "maplibre-gl": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@ai-sdk/openai": "^3.0.29",
     "@microsoft/api-extractor": "catalog:",
     "@tsconfig/recommended": "catalog:",
     "@types/node": "catalog:",
