@@ -2,7 +2,7 @@
  * @module map-agent-tools
  */
 
-import { dynamicTool, type Tool } from 'ai';
+import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../../types';
 
@@ -15,7 +15,7 @@ export const getShownPlacesSchema = z.object({});
  * Create the get shown places tool.
  */
 export function createGetShownPlacesTool(context: ToolContext): Tool {
-    return dynamicTool({
+    return tool({
         description: 'Get the places currently displayed on the map (not from service, but what is actually shown)',
         inputSchema: getShownPlacesSchema,
         execute: async () => {

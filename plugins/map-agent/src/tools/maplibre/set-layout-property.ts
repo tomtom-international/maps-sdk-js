@@ -2,7 +2,7 @@
  * @module map-agent-tools/maplibre
  */
 
-import { dynamicTool, type Tool } from 'ai';
+import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../../types';
 
@@ -21,12 +21,12 @@ export const setLayoutPropertySchema = z.object({
  * Create the set layout property tool.
  */
 export function createSetLayoutPropertyTool(context: ToolContext): Tool {
-    return dynamicTool({
+    return tool({
         description:
             'Set a layout property for a specific layer in the MapLibre style. Layout properties control how features in a layer are arranged on the map (e.g., visibility, text-field, icon-size, text-anchor).',
         inputSchema: setLayoutPropertySchema,
         execute: async (params) => {
-            const { layerId, propertyName, value } = params as z.infer<typeof setLayoutPropertySchema>;
+            const { layerId, propertyName, value } = params;
             try {
                 context.map.mapLibreMap.setLayoutProperty(layerId, propertyName, value);
 

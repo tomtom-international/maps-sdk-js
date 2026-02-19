@@ -2,7 +2,7 @@
  * @module map-agent-tools
  */
 
-import { dynamicTool, type Tool } from 'ai';
+import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../../types';
 import { summarizeRoutes } from '../../utils/summarize';
@@ -16,7 +16,7 @@ export const getLastRoutesSchema = z.object({});
  * Create the get last routes tool.
  */
 export function createGetLastRoutesTool(context: ToolContext): Tool {
-    return dynamicTool({
+    return tool({
         description:
             'Get the most recent calculated routes from calculate-route tool. Use this to prevent re-calculating the same route.',
         inputSchema: getLastRoutesSchema,

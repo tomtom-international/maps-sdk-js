@@ -3,7 +3,7 @@
  */
 
 import { formatDuration } from '@tomtom-org/maps-sdk/core';
-import { dynamicTool, type Tool } from 'ai';
+import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../../types';
 
@@ -18,11 +18,11 @@ export const formatDurationSchema = z.object({
  * Create the format duration tool.
  */
 export function createFormatDurationTool(_context: ToolContext): Tool {
-    return dynamicTool({
+    return tool({
         description: 'Format a duration in seconds into a human-readable time string (e.g., "2 hr 30 min", "45 min").',
         inputSchema: formatDurationSchema,
         execute: async (params) => {
-            const { seconds } = params as z.infer<typeof formatDurationSchema>;
+            const { seconds } = params;
             try {
                 const formatted = formatDuration(seconds);
 

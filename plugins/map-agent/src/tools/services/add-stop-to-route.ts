@@ -5,7 +5,7 @@
 import type { Place } from '@tomtom-org/maps-sdk/core';
 import { withInsertedWaypoint } from '@tomtom-org/maps-sdk/core';
 import { calculateRoute, geocode, MaxNumberOfAlternatives } from '@tomtom-org/maps-sdk/services';
-import { dynamicTool, type Tool } from 'ai';
+import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../../types';
 import { summarizeRoutes } from '../../utils/summarize';
@@ -27,12 +27,12 @@ export const addStopToRouteSchema = z.object({
  * Create the add stop to route tool.
  */
 export function createAddStopToRouteTool(context: ToolContext): Tool {
-    return dynamicTool({
+    return tool({
         description:
             'Add a stop to the last shown route and re-calculate it. The stop will be inserted at the optimal position along the route. If no location is provided, the last calculated place from context is used.',
         inputSchema: addStopToRouteSchema,
         execute: async (params) => {
-            const { location, alternatives = 0 } = params as z.infer<typeof addStopToRouteSchema>;
+            const { location, alternatives = 0 } = params;
             try {
                 // Check if there are existing routes
                 const lastRoutes = context.services.lastRoutes;

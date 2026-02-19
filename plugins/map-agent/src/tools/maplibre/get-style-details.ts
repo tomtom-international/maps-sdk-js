@@ -2,7 +2,7 @@
  * @module map-agent-tools
  */
 
-import { dynamicTool, type Tool } from 'ai';
+import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../../types';
 
@@ -22,12 +22,12 @@ export const getStyleSchema = z.object({
  * Create the get style tool.
  */
 export function createGetStyleDetailsTool(context: ToolContext): Tool {
-    return dynamicTool({
+    return tool({
         description:
             'Gets the accurate layer IDs on the map along with their corresponding layout and paint properties. This tool retrieves the layers from the MapLibre map instance. You can optionally filter by layer ID or part of it. It is useful for understanding the current styling of the map and for making informed decisions when doing custom updates on layer styles.',
         inputSchema: getStyleSchema,
         execute: async (input) => {
-            const { layerIdQuery } = input as z.infer<typeof getStyleSchema>;
+            const { layerIdQuery } = input;
             try {
                 const style = context.map.mapLibreMap.getStyle();
                 let layers = style.layers ?? [];

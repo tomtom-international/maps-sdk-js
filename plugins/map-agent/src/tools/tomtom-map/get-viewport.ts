@@ -2,7 +2,7 @@
  * @module map-agent-tools
  */
 
-import { dynamicTool, type Tool } from 'ai';
+import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../../types';
 
@@ -15,7 +15,7 @@ export const getViewportSchema = z.object({});
  * Create the get viewport tool.
  */
 export function createGetViewportTool(context: ToolContext): Tool {
-    return dynamicTool({
+    return tool({
         description:
             'Get the current map viewport information including center coordinates, zoom level, and bounding box.',
         inputSchema: getViewportSchema,

@@ -3,7 +3,7 @@
  */
 
 import { formatDistance } from '@tomtom-org/maps-sdk/core';
-import { dynamicTool, type Tool } from 'ai';
+import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../../types';
 
@@ -22,12 +22,12 @@ export const formatDistanceSchema = z.object({
  * Create the format distance tool.
  */
 export function createFormatDistanceTool(_context: ToolContext): Tool {
-    return dynamicTool({
+    return tool({
         description:
             'Format a distance in meters into a human-readable string using the appropriate units (e.g., "2.5 km", "1½ mi", "500 ft"). Supports metric, US imperial, and UK imperial unit systems.',
         inputSchema: formatDistanceSchema,
         execute: async (params) => {
-            const { meters, unitType } = params as z.infer<typeof formatDistanceSchema>;
+            const { meters, unitType } = params;
             try {
                 const formatted = formatDistance(meters, unitType ? { type: unitType } : undefined);
 

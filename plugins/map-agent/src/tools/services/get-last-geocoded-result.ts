@@ -2,7 +2,7 @@
  * @module map-agent-tools
  */
 
-import { dynamicTool, type Tool } from 'ai';
+import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../../types';
 import { summarizePlace } from '../../utils/summarize';
@@ -16,7 +16,7 @@ export const getLastGeocodedResultSchema = z.object({});
  * Create the get last geocoded result tool.
  */
 export function createGetLastGeocodedResultTool(context: ToolContext): Tool {
-    return dynamicTool({
+    return tool({
         description: 'Get the most recent geocoded location from the last geocode tool call',
         inputSchema: getLastGeocodedResultSchema,
         execute: async () => {

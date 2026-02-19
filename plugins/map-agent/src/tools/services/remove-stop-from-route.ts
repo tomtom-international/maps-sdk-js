@@ -3,7 +3,7 @@
  */
 
 import { calculateRoute, MaxNumberOfAlternatives } from '@tomtom-org/maps-sdk/services';
-import { dynamicTool, type Tool } from 'ai';
+import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../../types';
 import { summarizeRoutes } from '../../utils/summarize';
@@ -25,12 +25,12 @@ export const removeStopFromRouteSchema = z.object({
  * Create the remove stop from route tool.
  */
 export function createRemoveStopFromRouteTool(context: ToolContext): Tool {
-    return dynamicTool({
+    return tool({
         description:
             'Remove a stop from the last calculated route by its index and re-calculate it. Index 0 is the origin, the last index is the destination, and intermediate values are stops in between.',
         inputSchema: removeStopFromRouteSchema,
         execute: async (params) => {
-            const { stopIndex, alternatives = 0 } = params as z.infer<typeof removeStopFromRouteSchema>;
+            const { stopIndex, alternatives = 0 } = params;
             try {
                 const lastWaypoints = context.services.lastWaypoints;
                 if (!lastWaypoints || lastWaypoints.length < 2) {

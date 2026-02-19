@@ -2,7 +2,7 @@
  * @module map-agent-tools
  */
 
-import { dynamicTool, type Tool } from 'ai';
+import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../../types';
 
@@ -15,7 +15,7 @@ export const getShownWaypointsSchema = z.object({});
  * Create the get shown waypoints tool.
  */
 export function createGetShownWaypointsTool(context: ToolContext): Tool {
-    return dynamicTool({
+    return tool({
         description:
             'Get the route waypoints currently displayed on the map (not from service, but what is actually shown)',
         inputSchema: getShownWaypointsSchema,

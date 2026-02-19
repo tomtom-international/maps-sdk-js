@@ -3,7 +3,7 @@
  */
 
 import { bboxFromGeoJSON } from '@tomtom-org/maps-sdk/core';
-import { dynamicTool, type Tool } from 'ai';
+import { type Tool, tool } from 'ai';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import { z } from 'zod';
 import type { ToolContext } from '../../types';
@@ -20,11 +20,11 @@ export const showRouteSchema = z.object({
  * Create the show route tool.
  */
 export function createShowRouteTool(context: ToolContext): Tool {
-    return dynamicTool({
+    return tool({
         description: 'Display the most recent calculated routes on the map',
         inputSchema: showRouteSchema,
         execute: async (params) => {
-            const { selectedIndex = 0, fitBounds = true } = params as z.infer<typeof showRouteSchema>;
+            const { selectedIndex = 0, fitBounds = true } = params;
             try {
                 if (!context.services.routesHistory.length) {
                     return { error: 'No routes available to display' };

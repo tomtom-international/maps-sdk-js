@@ -3,7 +3,7 @@
  */
 
 import { geocodeOne } from '@tomtom-org/maps-sdk/services';
-import { dynamicTool, type Tool } from 'ai';
+import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../../types';
 import { summarizePlace } from '../../utils/summarize';
@@ -19,11 +19,11 @@ export const geocodeSchema = z.object({
  * Create the geocode tool.
  */
 export function createGeocodeTool(context: ToolContext): Tool {
-    return dynamicTool({
+    return tool({
         description: 'Convert an address or place name to geographic coordinates',
         inputSchema: geocodeSchema,
         execute: async (params) => {
-            const { query } = params as z.infer<typeof geocodeSchema>;
+            const { query } = params;
             try {
                 const result = await geocodeOne(query);
 

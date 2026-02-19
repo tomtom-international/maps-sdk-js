@@ -3,7 +3,7 @@
  */
 
 import { Language, TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import { dynamicTool, type Tool } from 'ai';
+import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../../types';
 
@@ -18,11 +18,11 @@ export const setLanguageSchema = z.object({
  * Create the set language tool.
  */
 export function createSetLanguageTool(context: ToolContext): Tool {
-    return dynamicTool({
+    return tool({
         description: 'Change the language of map labels',
         inputSchema: setLanguageSchema,
         execute: async (params) => {
-            const { language } = params as z.infer<typeof setLanguageSchema>;
+            const { language } = params;
             try {
                 TomTomConfig.instance.put({ language: language as Language });
                 context.map.ttMap.setLanguage(language as any);

@@ -1,16 +1,16 @@
-import { dynamicTool, type Tool } from 'ai';
+import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 
 const customLocationSchema = z.object({
     name: z.string().describe('Saved location name, id, or alias (for example: home, office, work)'),
 });
 
-export const getCustomLocationTool: Tool = dynamicTool({
+export const getCustomLocationTool: Tool = tool({
     description:
         'Get one of the user-defined saved locations from local data (e.g. home, office). Returns coordinates as [longitude, latitude].',
     inputSchema: customLocationSchema,
     execute: async (params) => {
-        const { name } = params as z.infer<typeof customLocationSchema>;
+        const { name } = params;
 
         try {
             const response = await fetch(new URL('../custom-locations.json', import.meta.url));

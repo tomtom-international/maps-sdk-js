@@ -2,7 +2,7 @@
  * @module map-agent-tools
  */
 
-import { dynamicTool, type Tool } from 'ai';
+import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../../types';
 
@@ -22,11 +22,11 @@ export const toggleLayersSchema = z.object({
  * Create the toggle layers tool.
  */
 export function createToggleLayersTool(context: ToolContext): Tool {
-    return dynamicTool({
+    return tool({
         description: 'Show or hide specific base map layer groups',
         inputSchema: toggleLayersSchema,
         execute: async (params) => {
-            const { visible, layerGroups } = params as z.infer<typeof toggleLayersSchema>;
+            const { visible, layerGroups } = params;
             try {
                 // Lazy-init BaseMapModule
                 const baseMapModule = await context.map.getBaseMapModule();

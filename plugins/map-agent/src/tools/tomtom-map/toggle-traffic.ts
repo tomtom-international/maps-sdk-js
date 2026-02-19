@@ -2,7 +2,7 @@
  * @module map-agent-tools
  */
 
-import { dynamicTool, type Tool } from 'ai';
+import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../../types';
 
@@ -24,11 +24,11 @@ export const toggleTrafficIncidentsSchema = z.object({
  * Create the toggle traffic flow tool.
  */
 export function createToggleTrafficFlowTool(context: ToolContext): Tool {
-    return dynamicTool({
+    return tool({
         description: 'Show or hide the real-time traffic flow layer. This is useful for overall map traffic.',
         inputSchema: toggleTrafficFlowSchema,
         execute: async (params) => {
-            const { visible } = params as z.infer<typeof toggleTrafficFlowSchema>;
+            const { visible } = params;
             try {
                 // Lazy-init TrafficFlowModule
                 const trafficFlowModule = await context.map.getTrafficFlowModule();
@@ -52,11 +52,11 @@ export function createToggleTrafficFlowTool(context: ToolContext): Tool {
  * Create the toggle traffic incidents tool.
  */
 export function createToggleTrafficIncidentsTool(context: ToolContext): Tool {
-    return dynamicTool({
+    return tool({
         description: 'Show or hide the real-time traffic incidents layer',
         inputSchema: toggleTrafficIncidentsSchema,
         execute: async (params) => {
-            const { visible } = params as z.infer<typeof toggleTrafficIncidentsSchema>;
+            const { visible } = params;
             try {
                 // Lazy-init TrafficIncidentsModule
                 const trafficIncidentsModule = await context.map.getTrafficIncidentsModule();

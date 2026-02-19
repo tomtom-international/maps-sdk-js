@@ -2,7 +2,7 @@
  * @module map-agent-tools
  */
 
-import { dynamicTool, type Tool } from 'ai';
+import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../../types';
 
@@ -18,11 +18,11 @@ export const togglePOIsSchema = z.object({
  * Create the toggle POIs tool.
  */
 export function createTogglePOIsTool(context: ToolContext): Tool {
-    return dynamicTool({
+    return tool({
         description: 'Show or hide built-in map POI icons',
         inputSchema: togglePOIsSchema,
         execute: async (params) => {
-            const { visible, categories } = params as z.infer<typeof togglePOIsSchema>;
+            const { visible, categories } = params;
             try {
                 // Lazy-init POIsModule
                 const poisModule = await context.map.getPOIsModule();

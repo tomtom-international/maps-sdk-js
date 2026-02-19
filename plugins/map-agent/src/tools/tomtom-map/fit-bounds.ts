@@ -3,7 +3,7 @@
  */
 
 import { bboxFromGeoJSON, type HasBBox } from '@tomtom-org/maps-sdk/core';
-import { dynamicTool, type Tool } from 'ai';
+import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../../types';
 
@@ -38,12 +38,12 @@ export const fitBoundsSchema = z.object({
  * Create the fit bounds tool.
  */
 export function createFitBoundsTool(context: ToolContext): Tool {
-    return dynamicTool({
+    return tool({
         description:
             'Fit the map camera to show a specific bounding box. Accepts a GeoJSON bounding box or a GeoJSON object with bbox property.',
         inputSchema: fitBoundsSchema,
         execute: async (params) => {
-            const { hasBBox, padding = 50 } = params as z.infer<typeof fitBoundsSchema>;
+            const { hasBBox, padding = 50 } = params;
             try {
                 const bbox = bboxFromGeoJSON(hasBBox as HasBBox);
 

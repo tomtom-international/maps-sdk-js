@@ -2,7 +2,7 @@
  * @module map-agent-tools/maplibre
  */
 
-import { dynamicTool, type Tool } from 'ai';
+import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../../types';
 
@@ -21,12 +21,12 @@ export const setPaintPropertySchema = z.object({
  * Create the set paint property tool.
  */
 export function createSetPaintPropertyTool(context: ToolContext): Tool {
-    return dynamicTool({
+    return tool({
         description:
             'Set a paint property for a specific layer in the MapLibre style. Paint properties control the visual appearance of features (e.g., fill-color, line-width, text-color, circle-radius).',
         inputSchema: setPaintPropertySchema,
         execute: async (params) => {
-            const { layerId, propertyName, value } = params as z.infer<typeof setPaintPropertySchema>;
+            const { layerId, propertyName, value } = params;
             try {
                 context.map.mapLibreMap.setPaintProperty(layerId, propertyName, value);
 

@@ -2,7 +2,7 @@
  * @module map-agent-tools
  */
 
-import { dynamicTool, type Tool } from 'ai';
+import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../../types';
 import { summarizePlaces } from '../../utils/summarize';
@@ -16,7 +16,7 @@ export const getLastSearchResultsSchema = z.object({});
  * Create the get last search results tool.
  */
 export function createGetLastSearchResultsTool(context: ToolContext): Tool {
-    return dynamicTool({
+    return tool({
         description: 'Get the most recent search results from the last search-places tool call',
         inputSchema: getLastSearchResultsSchema,
         execute: async () => {

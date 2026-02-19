@@ -9,7 +9,7 @@ import {
     type SectionType,
     sectionTypes,
 } from '@tomtom-org/maps-sdk/core';
-import { dynamicTool, type Tool } from 'ai';
+import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../../types';
 
@@ -28,12 +28,12 @@ export const fitRouteSectionSchema = z.object({
  * Create the fit route section tool.
  */
 export function createFitRouteSectionTool(context: ToolContext): Tool {
-    return dynamicTool({
+    return tool({
         description:
             'Fit the map camera to show a specific section of a displayed route. Provide the section type (e.g., "country", "traffic", "motorway") and the section ID. The section must belong to a route currently shown on the map.',
         inputSchema: fitRouteSectionSchema,
         execute: async (params) => {
-            const { sectionType, id, padding = 50 } = params as z.infer<typeof fitRouteSectionSchema>;
+            const { sectionType, id, padding = 50 } = params;
 
             try {
                 // Get the currently shown routes from the map

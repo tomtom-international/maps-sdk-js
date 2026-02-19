@@ -2,7 +2,7 @@
  * @module map-agent-tools
  */
 
-import { dynamicTool, type Tool } from 'ai';
+import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../../types';
 
@@ -19,11 +19,11 @@ export const setMapStyleSchema = z.object({
  * Create the set map style tool.
  */
 export function createSetMapStyleTool(context: ToolContext): Tool {
-    return dynamicTool({
+    return tool({
         description: 'Change the map visual theme',
         inputSchema: setMapStyleSchema,
         execute: async (params) => {
-            const { style } = params as z.infer<typeof setMapStyleSchema>;
+            const { style } = params;
             try {
                 context.map.ttMap.setStyle(style);
 

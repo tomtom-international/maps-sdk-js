@@ -2,7 +2,7 @@
  * @module map-agent-tools
  */
 
-import { dynamicTool, type Tool } from 'ai';
+import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../../types';
 import {
@@ -52,12 +52,12 @@ function formatToolSummary(tool: ToolMetadata): string {
  * This tool allows the AI to discover available tools dynamically.
  */
 export function createSearchToolsTool(_context: ToolContext): Tool {
-    return dynamicTool({
+    return tool({
         description:
             'Search and discover available tools. Use this when you need to find the right tool for a task or want to know what capabilities are available. You can search by keywords or filter by category.',
         inputSchema: searchToolsSchema,
         execute: async (params) => {
-            const { query, category } = params as z.infer<typeof searchToolsSchema>;
+            const { query, category } = params;
 
             try {
                 let tools: ToolMetadata[];

@@ -3,7 +3,7 @@
  */
 
 import { standardStyleIDs } from '@tomtom-org/maps-sdk/map';
-import { dynamicTool, type Tool } from 'ai';
+import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../../types';
 
@@ -16,7 +16,7 @@ export const getStandardMapStylesSchema = z.object({});
  * Create the get standard map styles tool.
  */
 export function createGetStandardMapStylesTool(_context: ToolContext): Tool {
-    return dynamicTool({
+    return tool({
         description: 'Get the list of available standard map style IDs',
         inputSchema: getStandardMapStylesSchema,
         execute: async () => {

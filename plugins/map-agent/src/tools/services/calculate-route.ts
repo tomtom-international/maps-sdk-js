@@ -4,7 +4,7 @@
 
 import type { Place } from '@tomtom-org/maps-sdk/core';
 import { calculateRoute, geocodeOne, MaxNumberOfAlternatives } from '@tomtom-org/maps-sdk/services';
-import { dynamicTool, type Tool } from 'ai';
+import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../../types';
 import { summarizeRoutes } from '../../utils/summarize';
@@ -27,12 +27,12 @@ export const calculateRouteSchema = z.object({
  * Create the calculate route tool.
  */
 export function createCalculateRouteTool(context: ToolContext): Tool {
-    return dynamicTool({
+    return tool({
         description:
             'Calculate a driving route between locations. This is useful also to get traffic information between locations. If no locations are provided, the last shown waypoints from context are reused.',
         inputSchema: calculateRouteSchema,
         execute: async (params) => {
-            const { locations, alternatives = 0 } = params as z.infer<typeof calculateRouteSchema>;
+            const { locations, alternatives = 0 } = params;
             try {
                 let geocodedPlaces: Place[];
                 let waypoints: [number, number][];

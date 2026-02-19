@@ -3,7 +3,7 @@
  */
 
 import { bboxFromGeoJSON } from '@tomtom-org/maps-sdk/core';
-import { dynamicTool, type Tool } from 'ai';
+import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../../types';
 
@@ -18,11 +18,11 @@ export const showPlacesSchema = z.object({
  * Create the show places tool.
  */
 export function createShowPlacesTool(context: ToolContext): Tool {
-    return dynamicTool({
+    return tool({
         description: 'Display the most recent places (from search, geocode, or reverse geocode) as markers on the map',
         inputSchema: showPlacesSchema,
         execute: async (params) => {
-            const { fitBounds = true } = params as z.infer<typeof showPlacesSchema>;
+            const { fitBounds = true } = params;
             try {
                 const lastPlaces = context.services.lastPlaces;
 

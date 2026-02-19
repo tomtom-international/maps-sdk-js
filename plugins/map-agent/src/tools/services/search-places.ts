@@ -4,7 +4,7 @@
 
 import { POICategory } from '@tomtom-org/maps-sdk/core';
 import { search } from '@tomtom-org/maps-sdk/services';
-import { dynamicTool, type Tool } from 'ai';
+import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../../types';
 import { summarizePlaces } from '../../utils/summarize';
@@ -28,17 +28,11 @@ export const searchPlacesSchema = z.object({
  * Create the search places tool.
  */
 export function createSearchPlacesTool(context: ToolContext): Tool {
-    return dynamicTool({
+    return tool({
         description: 'Search for places, businesses, or points of interest',
         inputSchema: searchPlacesSchema,
         execute: async (params) => {
-            const {
-                query,
-                position,
-                radiusMeters,
-                limit = 10,
-                poiCategories,
-            } = params as z.infer<typeof searchPlacesSchema>;
+            const { query, position, radiusMeters, limit = 10, poiCategories } = params;
 
             try {
                 const result = await search({

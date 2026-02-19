@@ -2,7 +2,7 @@
  * @module map-agent-tools
  */
 
-import { dynamicTool, type Tool } from 'ai';
+import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../../types';
 
@@ -20,11 +20,11 @@ export const clearMapSchema = z.object({
  * Create the clear map tool.
  */
 export function createClearMapTool(context: ToolContext): Tool {
-    return dynamicTool({
+    return tool({
         description: 'Remove displayed features from the map',
         inputSchema: clearMapSchema,
         execute: async (params) => {
-            const { layers } = params as z.infer<typeof clearMapSchema>;
+            const { layers } = params;
             try {
                 const clearAll = !layers || layers.length === 0;
 

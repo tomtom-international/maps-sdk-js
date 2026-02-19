@@ -2,7 +2,7 @@
  * @module map-agent-tools
  */
 
-import { dynamicTool, type Tool } from 'ai';
+import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../../types';
 import { summarizePlace, summarizePlaces } from '../../utils/summarize';
@@ -16,7 +16,7 @@ export const getLastPlacesSchema = z.object({});
  * Create the get last places tool.
  */
 export function createGetLastPlacesTool(context: ToolContext): Tool {
-    return dynamicTool({
+    return tool({
         description: 'Get the most recent places from the last search-places, geocode, or reverse-geocode tool call',
         inputSchema: getLastPlacesSchema,
         execute: async () => {

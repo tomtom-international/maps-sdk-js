@@ -2,7 +2,7 @@
  * @module map-agent-tools
  */
 
-import { dynamicTool, type Tool } from 'ai';
+import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../../types';
 import { summarizeRoutes } from '../../utils/summarize';
@@ -16,7 +16,7 @@ export const getShownRoutesSchema = z.object({});
  * Create the get shown routes tool.
  */
 export function createGetShownRoutesTool(context: ToolContext): Tool {
-    return dynamicTool({
+    return tool({
         description:
             'Get the routes currently displayed on the map (not from service, but what is actually shown from show-route tool)',
         inputSchema: getShownRoutesSchema,
