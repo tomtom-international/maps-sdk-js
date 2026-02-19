@@ -12,7 +12,10 @@ import type { ToolContext } from '../../types';
  * Tool schema for showing routes on the map.
  */
 export const showRouteSchema = z.object({
-    selectedIndex: z.number().optional().describe('Index of the route to display as selected (default: 0)'),
+    selectedIndex: z
+        .number()
+        .optional()
+        .describe('Index of the route to display as selected (default: 0, higher numbers for alternative routes)'),
     fitBounds: z.boolean().optional().describe('Whether to fit the map bounds to show the route. Default is true.'),
 });
 

@@ -66,9 +66,13 @@ test.describe('Geometry integration tests', () => {
         await waitUntilRenderedGeometry(page, 1, amsterdamSouthEast, layerIDs);
         await waitUntilRenderedGeometry(page, 0, outsideAmsterdamNorth, layerIDs);
         await waitUntilRenderedGeometry(page, 0, outsideAmsterdamSouth, layerIDs);
+        let shown = await page.evaluate(() => (globalThis as MapsSDKThis).geometries?.getShown());
+        expect(shown?.geometry.features.length).toBeGreaterThan(0);
 
         await clearGeometry(page);
         expect(await getNumVisibleLayers(page, sourceId)).toBe(0);
+        shown = await page.evaluate(() => (globalThis as MapsSDKThis).geometries?.getShown());
+        expect(shown?.geometry.features).toHaveLength(0);
         await showGeometry(page, geometryData);
         expect(await getNumVisibleLayers(page, sourceId)).toBe(2);
 

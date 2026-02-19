@@ -125,6 +125,8 @@ test.describe('Map vector tile traffic module tests', () => {
         // We only show for: "motorway", "trunk":
         expect(getByRoadCategories(renderedFlowSegments, ['motorway'])).toHaveLength(renderedFlowSegments.length);
         expect(renderedFlowSegments.filter((segment) => segment.properties['road_closure'] === true)).toHaveLength(0);
+        const shown = await page.evaluate(() => (globalThis as MapsSDKThis).trafficFlow?.getShown());
+        expect(shown?.trafficFlow.length).toBeGreaterThan(0);
 
         // Showing flow in road closures only:
         const flowFilters: TrafficFlowFilters = { any: [{ showRoadClosures: 'only' }] };

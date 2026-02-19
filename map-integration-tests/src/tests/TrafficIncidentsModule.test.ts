@@ -181,6 +181,8 @@ test.describe('Map vector tile traffic incidents module tests', () => {
         const defaultIncidents = await waitForRenderedIncidentsChange(page, 0);
         expect(defaultIncidents.length).toBeGreaterThan(4);
         expect(getByIncidentCategories(defaultIncidents, ['road_closed']).length).toBeGreaterThan(0);
+        const shown = await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.getShown());
+        expect(shown?.trafficIncidents.length).toBeGreaterThan(0);
 
         let config: IncidentsConfig = {
             visible: true,

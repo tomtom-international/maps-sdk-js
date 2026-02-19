@@ -20,7 +20,9 @@ export const fitRouteSectionSchema = z.object({
     sectionType: z
         .enum(sectionTypes as [SectionType, ...SectionType[]])
         .describe('The type of route section (e.g., "country", "traffic", "motorway", "toll")'),
-    id: z.string().describe('The unique identifier of the section to fit to'),
+    id: z
+        .string()
+        .describe('The unique identifier of the section, present on each section object in the route properties'),
     padding: z.number().optional().describe('Padding in pixels around the section (default: 50)'),
 });
 

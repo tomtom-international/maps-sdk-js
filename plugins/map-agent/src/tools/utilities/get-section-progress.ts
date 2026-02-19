@@ -20,7 +20,9 @@ export const getSectionProgressSchema = z.object({
     sectionType: z
         .enum(sectionTypes as [SectionType, ...SectionType[]])
         .describe('The type of route section (e.g., "country", "traffic", "motorway", "toll")'),
-    id: z.string().describe('The unique identifier of the section'),
+    id: z
+        .string()
+        .describe('The unique identifier of the section, present on each section object in the route properties'),
 });
 
 /**
@@ -29,7 +31,7 @@ export const getSectionProgressSchema = z.object({
 export function createGetSectionProgressTool(context: ToolContext): Tool {
     return tool({
         description:
-            'Calculate the distance and travel time for a specific section of the last calculated route. Provide the section type (e.g., "country", "traffic", "motorway") and the section ID.',
+            'Calculate the distance and travel time for a specific section of the last calculated route. Useful to know the enter-exit times and distances from start, and useful to know how much time and distance the given section takes. Provide the section type (e.g., "country", "traffic", "motorway") and the section ID.',
         inputSchema: getSectionProgressSchema,
         execute: async (params) => {
             const { sectionType, id } = params;
@@ -46,13 +48,9 @@ export function createGetSectionProgressTool(context: ToolContext): Tool {
 
                 for (const route of lastRoutes.features) {
                     const sections = route.properties.sections[sectionType as SectionType];
-                    if (sections && Array.isArray(sections)) {
+                    if (sections) {
                         const found = sections.find((s) => s.id === id);
-                        if (
-                            found &&
-                            typeof found.startPointIndex === 'number' &&
-                            typeof found.endPointIndex === 'number'
-                        ) {
+                        if (found) {
                             targetRoute = route;
                             targetSection = found as SectionProps;
                             break;

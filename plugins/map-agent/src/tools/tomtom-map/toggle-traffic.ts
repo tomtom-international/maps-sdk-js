@@ -25,7 +25,7 @@ export const toggleTrafficIncidentsSchema = z.object({
  */
 export function createToggleTrafficFlowTool(context: ToolContext): Tool {
     return tool({
-        description: 'Show or hide the real-time traffic flow layer. This is useful for overall map traffic.',
+        description: 'Show or hide the traffic flow layers. This is useful for overall map traffic flow.',
         inputSchema: toggleTrafficFlowSchema,
         execute: async (params) => {
             const { visible } = params;
@@ -53,7 +53,8 @@ export function createToggleTrafficFlowTool(context: ToolContext): Tool {
  */
 export function createToggleTrafficIncidentsTool(context: ToolContext): Tool {
     return tool({
-        description: 'Show or hide the real-time traffic incidents layer',
+        description:
+            'Show or hide the real-time traffic incidents layers. This is useful for overall map traffic incidents.',
         inputSchema: toggleTrafficIncidentsSchema,
         execute: async (params) => {
             const { visible } = params;

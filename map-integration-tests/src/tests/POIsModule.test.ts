@@ -74,6 +74,8 @@ test.describe('Map vector tile POI filtering tests', () => {
         expect(areSomeCategoriesIncluded(renderedPoIs, ['TRANSPORTATION_GROUP', 'IMPORTANT_TOURIST_ATTRACTION'])).toBe(
             true,
         );
+        const shown = await page.evaluate(() => (globalThis as MapsSDKThis).pois?.getShown());
+        expect(shown?.poi.length).toBeGreaterThan(0);
 
         // exclude TRANSPORTATION_GROUP, IMPORTANT_TOURIST_ATTRACTION, expect to not find them in rendered features
         await page.evaluate(() =>

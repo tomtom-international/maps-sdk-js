@@ -122,6 +122,9 @@ test.describe('Routing and waypoint display tests', () => {
         await waitForRenderedWaypoints(page, 2);
         expect(await getNumVisibleLayersBySource(page, ROUTE_MAIN_LINES_SOURCE_ID)).toBe(0);
         expect(await getNumVisibleLayersBySource(page, ROUTE_SUMMARY_BUBBLES_POINT_SOURCE_ID)).toBe(0);
+        const shownAfterWaypoints = await page.evaluate(() => (globalThis as MapsSDKThis).routing?.getShown());
+        expect(shownAfterWaypoints?.waypoints.features).toHaveLength(2);
+        expect(shownAfterWaypoints?.mainLines.features).toHaveLength(0);
 
         // Showing routes, keeping waypoints:
         await showRoutes(page, rotterdamToAmsterdamRoutes);
@@ -129,17 +132,26 @@ test.describe('Routing and waypoint display tests', () => {
         await waitForRenderedWaypoints(page, 2);
         expect((await queryRenderedFeatures(page, [ROUTE_LINE_LAYER_ID])).length).toBeGreaterThanOrEqual(1);
         expect((await queryRenderedFeatures(page, [ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID])).length).toBeGreaterThan(1);
+        const shownAfterRoutes = await page.evaluate(() => (globalThis as MapsSDKThis).routing?.getShown());
+        expect(shownAfterRoutes?.mainLines.features.length).toBeGreaterThan(0);
+        expect(shownAfterRoutes?.waypoints.features).toHaveLength(2);
 
         // clearing routes, but keeping waypoints:
         await clearRoutes(page);
         await waitForMapIdle(page);
         await waitForRenderedWaypoints(page, 2);
         expect(await getNumVisibleLayersBySource(page, ROUTE_MAIN_LINES_SOURCE_ID)).toBe(0);
+        const shownAfterClearRoutes = await page.evaluate(() => (globalThis as MapsSDKThis).routing?.getShown());
+        expect(shownAfterClearRoutes?.mainLines.features).toHaveLength(0);
+        expect(shownAfterClearRoutes?.waypoints.features).toHaveLength(2);
 
         // clearing waypoints
         await clearWaypoints(page);
         expect(await getNumVisibleLayersBySource(page, WAYPOINTS_SOURCE_ID)).toBe(0);
         expect(await getNumVisibleLayersBySource(page, ROUTE_MAIN_LINES_SOURCE_ID)).toBe(0);
+        const shownAfterClearWaypoints = await page.evaluate(() => (globalThis as MapsSDKThis).routing?.getShown());
+        expect(shownAfterClearWaypoints?.waypoints.features).toHaveLength(0);
+        expect(shownAfterClearWaypoints?.mainLines.features).toHaveLength(0);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });

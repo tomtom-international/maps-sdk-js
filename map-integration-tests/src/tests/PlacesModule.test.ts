@@ -46,6 +46,9 @@ test.describe('PlacesModule tests', () => {
         compareToExpectedDisplayProps(renderedPlaces, [
             { id: 'placeID', iconID: `${DEFAULT_PLACE_ICON_ID}-0`, title: 'Test Address' },
         ]);
+        const shown = await page.evaluate(() => (globalThis as MapsSDKThis).places?.getShown());
+        expect(shown?.places.features).toHaveLength(1);
+        expect(shown?.places.features[0].id).toBe('placeID');
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });

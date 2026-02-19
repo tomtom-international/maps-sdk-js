@@ -80,9 +80,11 @@ import {
 import {
     createFormatDistanceTool,
     createFormatDurationTool,
+    createGetRouteProgressTool,
     createGetSectionProgressTool,
     formatDistanceSchema,
     formatDurationSchema,
+    getRouteProgressSchema,
     getSectionProgressSchema,
 } from './utilities';
 
@@ -344,7 +346,7 @@ export const TOOL_REGISTRY: Record<string, ToolMetadata> = {
         category: 'map-display',
         shortDescription: 'Get route traffic incidents shown on map',
         description:
-            'Get the route traffic incidents currently displayed on the map (not from service, but what is actually shown)',
+            'Get the route traffic incidents currently displayed on the map (not from service, but what is actually shown). Each section has an id.',
         tags: ['get', 'shown', 'traffic', 'incidents', 'route', 'displayed', 'map', 'current', 'delay'],
         parameters: extractParametersFromSchema(getShownRouteTrafficIncidentsSchema),
         examples: ['getShownRouteTrafficIncidents()'],
@@ -548,6 +550,23 @@ export const TOOL_REGISTRY: Record<string, ToolMetadata> = {
         examples: ['getSectionProgress("country", "section-id")', 'getSectionProgress("traffic", "incident-id")'],
         relatedTools: ['calculateRoute', 'getLastRoutes', 'fitRouteSection', 'formatDistance', 'formatDuration'],
         create: createGetSectionProgressTool,
+    },
+    getRouteProgress: {
+        name: 'getRouteProgress',
+        category: 'utilities',
+        shortDescription: 'Get coordinates at a route progress point',
+        description:
+            'Return the geographic coordinates of the point along the last shown route at a given traveled time (seconds), traveled distance (meters), or absolute clock time (ISO 8601). Exactly one of these must be provided.',
+        tags: ['route', 'progress', 'coordinates', 'position', 'time', 'distance', 'clock', 'interpolate', 'utility'],
+        parameters: extractParametersFromSchema(getRouteProgressSchema),
+        examples: [
+            'getRouteProgress(traveledTimeInSeconds: 600)',
+            'getRouteProgress(traveledDistanceInMeters: 5000)',
+            'getRouteProgress(clockTime: "2025-06-01T09:30:00Z")',
+            'getRouteProgress(traveledTimeInSeconds: 300, routeIndex: 1)',
+        ],
+        relatedTools: ['calculateRoute', 'getLastRoutes', 'getSectionProgress', 'formatDistance', 'formatDuration'],
+        create: createGetRouteProgressTool,
     },
 };
 
