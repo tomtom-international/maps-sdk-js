@@ -48,7 +48,7 @@ const makeProgressRoute = (progress?: RouteProgressPoint[]): Route => ({
 
 describe('interpolateProgressAtIndex', () => {
     test('returns undefined when progress is missing', () => {
-        expect(interpolateProgressAtIndex(makeProgressRoute(undefined), 2)).toBeUndefined();
+        expect(interpolateProgressAtIndex(makeProgressRoute(), 2)).toBeUndefined();
     });
 
     test('returns undefined when progress is empty', () => {
@@ -224,7 +224,7 @@ describe('interpolateProgressAtIndex', () => {
 
 describe('getRouteProgressBetween', () => {
     test('returns undefined when progress is missing', () => {
-        expect(getRouteProgressBetween(makeProgressRoute(undefined), 0, 4)).toBeUndefined();
+        expect(getRouteProgressBetween(makeProgressRoute(), 0, 4)).toBeUndefined();
     });
 
     test('returns start, end, and delta for the full route', () => {

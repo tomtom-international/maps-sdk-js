@@ -158,7 +158,7 @@ async function sendMessage(userMessage: string) {
                 console.log('\n📍 Step finished:', JSON.stringify(step, null, 2));
 
                 // Track token usage
-                const stepAny = step as any;
+                const stepAny = step;
                 let stepTokens = 0;
                 if (stepAny.usage) {
                     const usage = stepAny.usage;
@@ -188,7 +188,7 @@ async function sendMessage(userMessage: string) {
 
                     for (const toolCall of step.toolCalls) {
                         // The property is called 'input' in the AI SDK
-                        const args = (toolCall as any).input || {};
+                        const args = (toolCall as any).input ?? {};
                         addToolCallMessage(toolCall.toolName, args, tokensPerCall);
                     }
                 }

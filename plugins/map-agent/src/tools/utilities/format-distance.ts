@@ -35,7 +35,7 @@ export function createFormatDistanceTool(_context: ToolContext): Tool {
                     formatted,
                     input: {
                         meters,
-                        unitType: unitType || 'metric',
+                        unitType: unitType ?? 'metric',
                     },
                 };
             } catch (error) {
