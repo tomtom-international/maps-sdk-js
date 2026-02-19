@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [0.45.5](https://github.com/tomtom-international/maps-sdk-js/compare/v0.45.4...v0.45.5) (2026-02-20)
+## [0.45.5](https://github.com/tomtom-international/maps-sdk-js/compare/v0.45.4...v0.45.5) (2026-02-19)
 
 
 ### Features
@@ -10,17 +10,14 @@ All notable changes to this project will be documented in this file. See [standa
 * add map-agent plugin ([89e17a1](https://github.com/tomtom-international/maps-sdk-js/commit/89e17a1a410297d74a9117200c56f2eef130fe90))
 * add map-agent plugin ([58405dd](https://github.com/tomtom-international/maps-sdk-js/commit/58405dd0d9a28b0ee106da54bcaae75f7c895ebf))
 * add new get section progress tool, and improve existing tools ([046264c](https://github.com/tomtom-international/maps-sdk-js/commit/046264cadb463ef5f1b2e856997f6d3ef5c5ad13))
-* add utilities and agent tools for route progress, with tests ([bf33734](https://github.com/tomtom-international/maps-sdk-js/commit/bf3373427c5bf9deaac3e88887947139a0d57cb2))
 * core utilities related to routes and tool description improvements ([a207053](https://github.com/tomtom-international/maps-sdk-js/commit/a207053638dbc34ffe8d440118b418b1d638a489))
 * **examples:** add custom tool example ([755ce23](https://github.com/tomtom-international/maps-sdk-js/commit/755ce238ac71eb523317e2cc529022f146958500))
 * **examples:** add map agent example ([f8f5b5a](https://github.com/tomtom-international/maps-sdk-js/commit/f8f5b5aec448e2bbc09a3838ad10d7d0d2cb8b5b))
 * **map-agent:** add search and route history ([3da94d4](https://github.com/tomtom-international/maps-sdk-js/commit/3da94d473c7977ad1a60339fa41f130b2b802e6f))
 * **map-agent:** custom tools and overrides ([2490731](https://github.com/tomtom-international/maps-sdk-js/commit/249073148fbc71b6f256e20fa1920a9cb8e22da8))
-* new hover-move event type which keeps firing as you move the pointer over the relevant features ([1ffc433](https://github.com/tomtom-international/maps-sdk-js/commit/1ffc433612b34397af242351ab1d226323ca5682))
 * new tool to fit the map into a given route section ([4b62388](https://github.com/tomtom-international/maps-sdk-js/commit/4b623885835e0f1046a6393150f10c94c81e2137))
 * new tools to add and remove waypoints ([6768049](https://github.com/tomtom-international/maps-sdk-js/commit/67680491fa29fe1a29b90c19efc328d0a4c35ca6))
 * new tools to get items from the context ([1e09d3e](https://github.com/tomtom-international/maps-sdk-js/commit/1e09d3e8112d0db6f655d6b7819d652e05113b90))
-* new utility to find route progress matching a nearby arbitrary location ([a0e3e0d](https://github.com/tomtom-international/maps-sdk-js/commit/a0e3e0d4e8ad69d874bc2d1099da65f585386772))
 * refactor core utility guides and add new example for add stops to route ([137e4d9](https://github.com/tomtom-international/maps-sdk-js/commit/137e4d9515668acaaaf996a74029c0d8c86cb099))
 * tool improvements ([2f963f6](https://github.com/tomtom-international/maps-sdk-js/commit/2f963f60efdc418e2c68cd1346cc20e4f6970f77))
 * tools search, new tools, simplify system prompt ([bdf50ba](https://github.com/tomtom-international/maps-sdk-js/commit/bdf50ba00b60ef2cd253c1b48b58463c0179789f))
@@ -30,7 +27,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Bug Fixes
 
-* getShown logic for vector-tile-based modules ([ab7c8b9](https://github.com/tomtom-international/maps-sdk-js/commit/ab7c8b900eda9d82cd779511592010f0b0eaf4a1))
 * upgrade deps ([8357a66](https://github.com/tomtom-international/maps-sdk-js/commit/8357a669a090ae0dfdb81519be05d5dfce33fcd9))
 
 ## [0.45.4](https://github.com/tomtom-international/maps-sdk-js/compare/v0.45.3...v0.45.4) (2026-02-17)
