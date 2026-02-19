@@ -6,3 +6,4 @@
 
 export { createFormatDistanceTool, formatDistanceSchema } from './format-distance';
 export { createFormatDurationTool, formatDurationSchema } from './format-duration';
+export { createGetSectionProgressTool, getSectionProgressSchema } from './get-section-progress';

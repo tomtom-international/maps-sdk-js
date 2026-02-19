@@ -2,7 +2,7 @@
  * @module map-agent-state
  */
 
-import type { Place, Places, Routes } from '@tomtom-org/maps-sdk/core';
+import type { Place, Places, Routes, WaypointLike } from '@tomtom-org/maps-sdk/core';
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import {
     BaseMapModule,
@@ -28,7 +28,7 @@ TomTomConfig.instance.put({ language: 'en-GB' });
 export class TomTomServiceResponses {
     private _searchResultsHistory: Places[] = [];
     private _routesHistory: Routes[] = [];
-    private _waypointsHistory: Place[][] = [];
+    private _waypointsHistory: WaypointLike[][] = [];
     private _geocodedResultsHistory: Place[] = [];
     private _reverseGeocodedResultsHistory: Place[] = [];
     private _placesHistory: (Place | Places)[] = [];
@@ -98,19 +98,19 @@ export class TomTomServiceResponses {
     }
 
     // Waypoints history
-    get waypointsHistory(): Place[][] {
+    get waypointsHistory(): WaypointLike[][] {
         return this._waypointsHistory;
     }
 
-    get lastWaypoints(): Place[] | undefined {
+    get lastWaypoints(): WaypointLike[] | undefined {
         return this._waypointsHistory.at(-1);
     }
 
-    get previousWaypoints(): Place[][] {
+    get previousWaypoints(): WaypointLike[][] {
         return this._waypointsHistory.slice(0, -1);
     }
 
-    addWaypoints(waypoints: Place[]): void {
+    addWaypoints(waypoints: WaypointLike[]): void {
         this._waypointsHistory.push(waypoints);
     }
 

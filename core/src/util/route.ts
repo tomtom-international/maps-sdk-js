@@ -169,54 +169,6 @@ export const withInsertedWaypoint = (
 };
 
 /**
- * Calculates the bounding box for a route section.
- *
- * This function computes a bbox by sampling coordinates from the section at three key points:
- * - Start point (startPointIndex)
- * - Middle point (midpoint between start and end)
- * - End point (endPointIndex)
- *
- * @param route The route containing the section
- * @param section The section to calculate the bbox for
- * @returns The bounding box as [minLng, minLat, maxLng, maxLat], or undefined if the section or route is invalid
- *
- * @remarks
- * - Samples three points for efficiency while maintaining good accuracy
- * - Returns undefined if the route has no coordinates or section indices are invalid
- * - Uses existing bbox utilities for consistent calculation
- *
- * @example
- * ```typescript
- * const route: Route = {
- *   type: 'Feature',
- *   id: 'route-1',
- *   geometry: {
- *     type: 'LineString',
- *     coordinates: [[4.9, 52.3], [4.95, 52.35], [5.0, 52.4], [5.1, 52.5]]
- *   },
- *   properties: {
- *     summary: { ... },
- *     sections: {
- *       countries: [{
- *         id: 'section-1',
- *         startPointIndex: 0,
- *         endPointIndex: 3,
- *         countryCodeISO3: 'NLD'
- *       }]
- *     },
- *     index: 0
- *   },
- *   bbox: [4.9, 52.3, 5.1, 52.5]
- * };
- *
- * const section = route.properties.sections.countries[0];
- * const sectionBbox = getSectionBBox(route, section);
- * // Returns: [4.9, 52.3, 5.1, 52.5] (bbox containing start, middle, and end points)
- * ```
- *
- * @group Utils
- */
-/**
  * Interpolates the cumulative traveled distance and time at an arbitrary point on the route path.
  *
  * Uses the route's `progress` array to linearly interpolate between the two bracketing
@@ -335,6 +287,63 @@ export const getRouteProgressBetween = (
     };
 };
 
+/**
+ * Calculates progress measurements for a route section.
+ *
+ * Convenience wrapper around {@link getRouteProgressBetween} that accepts a {@link SectionProps}
+ * directly, using its `startPointIndex` and `endPointIndex` as the segment bounds.
+ *
+ * @param route The route whose `properties.progress` will be used for interpolation.
+ * @param section The section whose start and end point indices define the segment.
+ * @returns A {@link RouteSegmentProgress} object, or `undefined` when either index cannot
+ *          be interpolated (see {@link interpolateProgressAtIndex} for the full list of conditions).
+ *
+ * @example
+ * ```typescript
+ * const section = route.properties.sections.countries[0];
+ * const result = getRouteProgressForSection(route, section);
+ * if (result) {
+ *   console.log(`Section starts ${result.start.distanceInMeters} m from route origin`);
+ *   console.log(`Section ends   ${result.end.distanceInMeters} m from route origin`);
+ *   console.log(`Section length ${result.delta.distanceInMeters} m`);
+ *   console.log(`Section takes  ${result.delta.travelTimeInSeconds} s`);
+ * }
+ * ```
+ *
+ * @group Utils
+ */
+export const getRouteProgressForSection = (route: Route, section: SectionProps): RouteSegmentProgress | undefined => {
+    return getRouteProgressBetween(route, section.startPointIndex, section.endPointIndex);
+};
+
+/**
+ * Calculates the bounding box for a route section.
+ *
+ * This function computes a bbox by sampling coordinates from the section at three key points:
+ * - Start point (startPointIndex)
+ * - Middle point (midpoint between start and end)
+ * - End point (endPointIndex)
+ *
+ * @param route The route containing the section
+ * @param section The section to calculate the bbox for
+ * @returns The bounding box as [minLng, minLat, maxLng, maxLat], or `undefined` if the section or route is invalid
+ *
+ * @remarks
+ * - Samples three points for efficiency while maintaining good accuracy
+ * - Returns `undefined` if the route has no coordinates or section indices are invalid
+ * - Uses existing bbox utilities for consistent calculation
+ *
+ * @example
+ * ```typescript
+ * const section = route.properties.sections.countries[0];
+ * // section = { id: 'section-1', startPointIndex: 0, endPointIndex: 3, countryCodeISO3: 'NLD' }
+ *
+ * const bbox = getSectionBBox(route, section);
+ * // Returns: [minLng, minLat, maxLng, maxLat] spanning the section, or undefined
+ * ```
+ *
+ * @group Utils
+ */
 export const getSectionBBox = (route: Route, section: SectionProps) => {
     const routeCoords = route.geometry.coordinates;
 

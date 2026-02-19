@@ -2,7 +2,7 @@
  * @module map-agent-tools
  */
 
-import { calculateRoute, MaxNumberOfAlternatives } from '@tomtom-org/maps-sdk/services';
+import { calculateRoute } from '@tomtom-org/maps-sdk/services';
 import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from '../../types';
@@ -18,7 +18,6 @@ export const removeStopFromRouteSchema = z.object({
         .describe(
             'Zero-based index of the waypoint to remove (0 = origin, last = destination, intermediate values = stops in between). At least 2 waypoints must remain after removal.',
         ),
-    alternatives: z.number().optional().describe('Number of alternative routes (0-5)'),
 });
 
 /**
@@ -30,7 +29,7 @@ export function createRemoveStopFromRouteTool(context: ToolContext): Tool {
             'Remove a stop from the last calculated route by its index and re-calculate it. Index 0 is the origin, the last index is the destination, and intermediate values are stops in between.',
         inputSchema: removeStopFromRouteSchema,
         execute: async (params) => {
-            const { stopIndex, alternatives = 0 } = params;
+            const { stopIndex } = params;
             try {
                 const lastWaypoints = context.services.lastWaypoints;
                 if (!lastWaypoints || lastWaypoints.length < 2) {
@@ -52,13 +51,9 @@ export function createRemoveStopFromRouteTool(context: ToolContext): Tool {
                 }
 
                 const updatedWaypointsPlaces = lastWaypoints.filter((_, i) => i !== stopIndex);
-                const updatedWaypoints = updatedWaypointsPlaces.map(
-                    (place) => place.geometry.coordinates as [number, number],
-                );
 
                 const routes = await calculateRoute({
-                    locations: updatedWaypoints,
-                    ...(alternatives > 0 && { maxAlternatives: alternatives as MaxNumberOfAlternatives }),
+                    locations: updatedWaypointsPlaces,
                 });
 
                 context.services.addRoutes(routes);

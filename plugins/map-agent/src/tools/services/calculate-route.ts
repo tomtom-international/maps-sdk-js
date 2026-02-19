@@ -2,7 +2,7 @@
  * @module map-agent-tools
  */
 
-import type { Place } from '@tomtom-org/maps-sdk/core';
+import { getPositionStrict, type Place, type WaypointLike } from '@tomtom-org/maps-sdk/core';
 import { calculateRoute, geocodeOne, MaxNumberOfAlternatives } from '@tomtom-org/maps-sdk/services';
 import { type Tool, tool } from 'ai';
 import { z } from 'zod';
@@ -35,7 +35,7 @@ export function createCalculateRouteTool(context: ToolContext): Tool {
             const { locations, alternatives = 0 } = params;
             try {
                 let geocodedPlaces: Place[];
-                let waypoints: [number, number][];
+                let waypoints: WaypointLike[];
 
                 if (locations) {
                     // Geocode all locations
@@ -56,8 +56,7 @@ export function createCalculateRouteTool(context: ToolContext): Tool {
                             error: 'No locations provided and no previous waypoints available in context. Provide locations or calculate a route first.',
                         };
                     }
-                    geocodedPlaces = lastWaypoints;
-                    waypoints = lastWaypoints.map((place) => place.geometry.coordinates as [number, number]);
+                    waypoints = lastWaypoints.map((waypoint) => getPositionStrict(waypoint));
                 }
 
                 // Calculate route
@@ -68,7 +67,7 @@ export function createCalculateRouteTool(context: ToolContext): Tool {
 
                 // Accumulate routes
                 context.services.addRoutes(routes);
-                context.services.addWaypoints(geocodedPlaces);
+                context.services.addWaypoints(waypoints);
 
                 return summarizeRoutes(routes);
             } catch (error) {

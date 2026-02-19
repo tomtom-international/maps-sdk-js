@@ -80,8 +80,10 @@ import {
 import {
     createFormatDistanceTool,
     createFormatDurationTool,
+    createGetSectionProgressTool,
     formatDistanceSchema,
     formatDurationSchema,
+    getSectionProgressSchema,
 } from './utilities';
 
 /**
@@ -535,6 +537,17 @@ export const TOOL_REGISTRY: Record<string, ToolMetadata> = {
         examples: ['formatDuration(3600)', 'formatDuration(9000)'],
         relatedTools: ['formatDuration', 'calculateRoute'],
         create: createFormatDurationTool,
+    },
+    getSectionProgress: {
+        name: 'getSectionProgress',
+        category: 'utilities',
+        shortDescription: 'Get distance and time for a route section',
+        description: 'Calculate the distance and travel time for a specific section of the last calculated route',
+        tags: ['section', 'progress', 'distance', 'time', 'route', 'utility'],
+        parameters: extractParametersFromSchema(getSectionProgressSchema),
+        examples: ['getSectionProgress("country", "section-id")', 'getSectionProgress("traffic", "incident-id")'],
+        relatedTools: ['calculateRoute', 'getLastRoutes', 'fitRouteSection', 'formatDistance', 'formatDuration'],
+        create: createGetSectionProgressTool,
     },
 };
 
