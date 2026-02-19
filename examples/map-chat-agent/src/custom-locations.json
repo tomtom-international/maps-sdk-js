@@ -11,7 +11,7 @@
     "id": "office",
     "name": "Office",
     "aliases": ["work", "hq"],
-    "position": [4.909747340086911, 52.377329815737745],
+    "position": [4.90974734, 52.37732981],
     "address": "De Ruijterkade 154, 1011 AC. Amsterdam",
     "description": "Main office location"
   }

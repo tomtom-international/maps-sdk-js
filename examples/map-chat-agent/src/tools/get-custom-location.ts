@@ -7,7 +7,7 @@ const customLocationSchema = z.object({
 
 export const getCustomLocationTool: Tool = tool({
     description:
-        'Get one of the user-defined saved locations from local data (e.g. home, office). Returns coordinates as [longitude, latitude].',
+        'Get one of the user-defined saved locations from local data (e.g. home, office). Returns coordinates as [longitude, latitude]. If returns nothing, then other sools like geocoding or search should be used',
     inputSchema: customLocationSchema,
     execute: async (params) => {
         const { name } = params;
