@@ -72,11 +72,14 @@
     "pnpm": ">=10"
   },
   "pnpm": {
+    "overrides": {
+      "@microsoft/api-extractor": "7.56.3"
+    },
     "onlyBuiltDependencies": [
       "sharp"
     ]
   },
-  "packageManager": "pnpm@10.29.2",
+  "packageManager": "pnpm@10.30.0",
   "files": [
     "core/dist",
     "core/package.json",
