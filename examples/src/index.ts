@@ -4,6 +4,5 @@
  * This module contains all components, utils and constants that are part of examples.
  */
 
-export * from './constants/docsPortalEnv';
 export * from './constants/tags';
 export * from './sandpack/LiveCodingExample';
