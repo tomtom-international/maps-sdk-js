@@ -500,9 +500,6 @@ importers:
       '@tomtom-org/maps-sdk':
         specifier: workspace:*
         version: link:../..
-      '@turf/turf':
-        specifier: 'catalog:'
-        version: 7.3.4
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -955,9 +952,6 @@ importers:
       '@tomtom-org/maps-sdk':
         specifier: workspace:*
         version: link:../..
-      '@turf/turf':
-        specifier: 'catalog:'
-        version: 7.3.4
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -1244,9 +1238,6 @@ importers:
       '@tomtom-org/maps-sdk':
         specifier: workspace:*
         version: link:../..
-      maplibre-gl:
-        specifier: 'catalog:'
-        version: 5.18.0
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -1478,9 +1469,6 @@ importers:
       '@tomtom-org/maps-sdk':
         specifier: workspace:*
         version: link:../..
-      '@turf/turf':
-        specifier: 'catalog:'
-        version: 7.3.4
     devDependencies:
       '@types/geojson':
         specifier: 'catalog:'
