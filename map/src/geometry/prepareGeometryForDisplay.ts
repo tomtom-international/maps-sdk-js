@@ -4,8 +4,8 @@ import { isNil } from 'lodash-es';
 import type { DataDrivenPropertyValueSpecification, SymbolLayerSpecification } from 'maplibre-gl';
 import type { SymbolLayerSpecWithoutSource } from '../shared';
 import { MAP_BOLD_FONT } from '../shared/layers/commonLayerProps';
-import type { ColorPaletteOptions } from './layers/geometryLayers';
-import { colorPalettes, geometryFillSpec, geometryOutlineSpec } from './layers/geometryLayers';
+import { type ColorPaletteOptions, colorPalettes } from './layers/colorPalettes';
+import { geometryFillSpec, geometryOutlineSpec } from './layers/geometryLayers';
 import type { GeometriesModuleConfig } from './types/geometriesModuleConfig';
 import type { DisplayGeometryProps, ExtraGeometryDisplayProps } from './types/geometryDisplayProps';
 import { GEOMETRY_TITLE_PROP } from './types/geometryDisplayProps';
@@ -111,6 +111,42 @@ export const buildGeometryTitleLayerSpec = (
             'text-halo-color': '#FFFFFF',
             'text-halo-width': ['interpolate', ['linear'], ['zoom'], 6, 1, 10, 1.5],
             'text-translate-anchor': 'viewport',
+        },
+    };
+};
+
+/**
+ * Build geometry layer specification for line labels
+ * Adds labels along the polygon border
+ * @param layerID
+ * @param config
+ * @returns
+ * @ignore
+ */
+export const buildGeometryLineLabelLayerSpec = (
+    layerId: string,
+    config?: GeometriesModuleConfig,
+): Omit<SymbolLayerSpecification, 'source'> => {
+    const lineLabelConfig = config?.lineLabelConfig;
+    const minzoom = lineLabelConfig?.minZoom ?? 3;
+
+    return {
+        type: 'symbol',
+        id: layerId,
+        minzoom,
+        layout: {
+            'text-field': ['get', GEOMETRY_TITLE_PROP],
+            'symbol-placement': 'line',
+            'text-size': lineLabelConfig?.textSize ?? 15,
+            'text-font': [MAP_BOLD_FONT],
+            'symbol-spacing': lineLabelConfig?.symbolSpacing ?? 200,
+            'text-keep-upright': true,
+            'text-offset': [0, 1],
+        },
+        paint: {
+            'text-color': lineLabelConfig?.textColor ?? '#333333',
+            'text-halo-color': lineLabelConfig?.textHaloColor ?? '#FFFFFF',
+            'text-halo-width': lineLabelConfig?.textHaloWidth ?? 2,
         },
     };
 };

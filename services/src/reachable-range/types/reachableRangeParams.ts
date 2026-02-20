@@ -1,5 +1,6 @@
 import type { HasLngLat } from '@tomtom-org/maps-sdk/core';
 import type { CommonRoutingParams, CommonServiceParams, DepartArriveParams } from '../../shared';
+import type { ReachableRangeRequestAPI } from './apiRequestTypes';
 import type { ReachableRangeResponseAPI } from './apiResponseTypes';
 
 export const budgetTypes = [
@@ -169,6 +170,19 @@ export type ReachableRangeOwnParams = {
     maxFerryLengthMeters?: number;
 
     /**
+     * Applies post-processing to smooth the polygon boundary for better visual appearance.
+     *
+     * @remarks
+     * Stronger smoothing generally results in more points.
+     *
+     * @example
+     * ```typescript
+     * smoothing: 'strong'
+     * ```
+     */
+    smoothing?: 'none' | 'weak' | 'strong';
+
+    /**
      * Specifies when to depart.
      *
      * @remarks
@@ -276,6 +290,6 @@ export type ReachableRangeOwnParams = {
  *
  * @group Reachable Range
  */
-export type ReachableRangeParams = CommonServiceParams<URL, ReachableRangeResponseAPI> &
+export type ReachableRangeParams = CommonServiceParams<ReachableRangeRequestAPI, ReachableRangeResponseAPI> &
     CommonRoutingParams &
     ReachableRangeOwnParams;

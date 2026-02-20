@@ -1,7 +1,21 @@
-#sdk-map {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/panel/search-panel.css";
+@import "../../src/templates/css/button/button.css";
+@import "../../src/templates/css/form/field.css";
+@import "../../src/templates/css/form/input.css";
+@import "../../src/templates/css/form/dropdown.css";
+@import "../../src/templates/css/feedback/loading-spinner.css";
+
+/* CUSTOM STYLES (example-specific) */
+
+#sdk-example-spinner {
+    --spinner-size: 24px;
+    visibility: hidden;
+}
+
+#sdk-example-status-section {
+    padding: var(--sdk-panel-padding) 0;
 }

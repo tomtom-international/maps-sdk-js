@@ -1,12 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Reachable ranges from multiple locations example</title>
+        <title>Reachable Range</title>
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
         <link rel="icon" href="data:,">
     </head>
-    <body>
+    <body class="sdk-example-body">
         <div id="sdk-map"></div>
+        <div class="sdk-example-search-wrapper">
+            <div class="sdk-example-searchPanel">
+                <input
+                    id="sdk-example-originSearch"
+                    class="sdk-example-input"
+                    type="text"
+                    placeholder="Search for origin..."
+                    autocomplete="off"
+                >
+                <button id="sdk-example-searchButton" class="sdk-example-button">Search</button>
+                <button id="sdk-example-clearButton" class="sdk-example-button sdk-example-button-secondary">
+                    Clear
+                </button>
+            </div>
+            <ul id="sdk-example-searchResults" class="sdk-example-result-list"></ul>
+        </div>
+        <div class="sdk-example-customPanel">
+            <div class="sdk-example-panel-header">
+                <h3 class="sdk-example-heading">
+                    <span class="sdk-example-heading-text">Options</span>
+                    <button class="sdk-example-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="sdk-example-heading-chevron" viewBox="0 0 24 24" width="16" height="16">
+                            <path d="M7 10l5 5 5-5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+            <div class="sdk-example-panel-content">
+                <div class="sdk-example-form-field">
+                    <label class="sdk-example-form-label" for="sdk-example-mapStyles">Map Style:</label>
+                    <select id="sdk-example-mapStyles" class="sdk-example-dropdown"></select>
+                </div>
+                <div class="sdk-example-form-field">
+                    <label class="sdk-example-form-label" for="sdk-example-budgetType">Budget Type:</label>
+                    <select id="sdk-example-budgetType" class="sdk-example-dropdown"></select>
+                    <p id="sdk-example-vehicleNote" class="sdk-example-note" hidden>
+                        Using sample vehicle data <code>vehicleProfiles.ts</code> - replace with real specs in your own
+                        project.
+                    </p>
+                </div>
+                <div class="sdk-example-form-field">
+                    <label class="sdk-example-form-label" for="sdk-example-maxBudget">Max Budget:</label>
+                    <select id="sdk-example-maxBudget" class="sdk-example-dropdown"></select>
+                </div>
+                <div class="sdk-example-form-field">
+                    <label class="sdk-example-form-label" for="sdk-example-palette">Color Palette:</label>
+                    <select id="sdk-example-palette" class="sdk-example-dropdown"></select>
+                </div>
+                <div class="sdk-example-form-field">
+                    <label class="sdk-example-form-label" for="sdk-example-theme">Theme:</label>
+                    <select id="sdk-example-theme" class="sdk-example-dropdown"></select>
+                </div>
+            </div>
+            <div id="sdk-example-status-section" class="sdk-example-panel-centered">
+                <span id="sdk-example-spinner" class="sdk-example-spinner" aria-hidden="true"></span>
+                <span class="sdk-example-text" id="sdk-example-statusText" hidden></span>
+            </div>
+        </div>
         <script type="module" src="./index.ts"></script>
     </body>
 </html>

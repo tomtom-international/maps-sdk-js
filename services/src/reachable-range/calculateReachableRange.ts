@@ -1,4 +1,5 @@
 import { bboxFromGeoJSON, PolygonFeature, PolygonFeatures } from '@tomtom-org/maps-sdk/core';
+import { SDKServiceError } from '../shared/errors';
 import { callService } from '../shared/serviceTemplate';
 import type { ReachableRangeTemplate } from './reachableRangeTemplate';
 import { reachableRangeTemplate } from './reachableRangeTemplate';
@@ -96,6 +97,7 @@ export const calculateReachableRange = async (
  * consider implementing your own parallel processing with appropriate throttling.
  *
  * @param paramsArray Array of reachable range parameters, one for each area to calculate
+ * @param options.signal An `AbortSignal` to cancel in-flight requests between iterations.
  * @param customTemplate Advanced customization for request/response handling
  *
  * @returns Promise resolving to a FeatureCollection of reachable area polygons
@@ -140,12 +142,24 @@ export const calculateReachableRange = async (
  */
 export const calculateReachableRanges = async (
     paramsArray: ReachableRangeParams[],
+    options?: { signal?: AbortSignal },
     customTemplate?: Partial<ReachableRangeTemplate>,
 ): Promise<PolygonFeatures<ReachableRangeParams>> => {
-    const features = [];
+    const features: PolygonFeature<ReachableRangeParams>[] = [];
     for (const params of paramsArray) {
-        // we sequentially fetch reachable ranges (less speed but better to prevent QPS limit breaches):
-        features.push(await calculateReachableRange(params, customTemplate));
+        // Throws AbortError if a newer call has cancelled this one before the next request starts
+        options?.signal?.throwIfAborted();
+        try {
+            // we sequentially fetch reachable ranges (less speed but better to prevent QPS limit breaches):
+            features.push(await calculateReachableRange(params, customTemplate));
+        } catch (error) {
+            // Re-throw non-API errors (e.g. validation/programming errors) and critical HTTP errors
+            // (403 Forbidden, 429 Too Many Requests) — only silently skip API errors that indicate
+            // no reachable range could be computed at this location (e.g. no road network).
+            if (!(error instanceof SDKServiceError) || error.status === 403 || error.status === 429) {
+                throw error;
+            }
+        }
     }
     const bbox = bboxFromGeoJSON(features);
     return { type: 'FeatureCollection', ...(bbox && { bbox }), features };

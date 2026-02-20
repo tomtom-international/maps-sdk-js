@@ -7,6 +7,7 @@ import { changeLayerProps, waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
 import {
     buildGeometryLayerSpecs,
+    buildGeometryLineLabelLayerSpec,
     buildGeometryTitleLayerSpec,
     prepareGeometryForDisplay,
     prepareTitleForDisplay,
@@ -136,10 +137,12 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
     private titleLayerSpecs!: SymbolLayerSpecWithoutSource;
     private geometryFillLayerSpecs!: SymbolLayerSpecWithoutSource;
     private geometryOutlineLayerSpecs!: SymbolLayerSpecWithoutSource;
+    private lineLabelLayerSpecs: SymbolLayerSpecWithoutSource | null = null;
 
     private sourceID!: string;
     private fillLayerID!: string;
     private outlineLayerID!: string;
+    private lineLabelLayerID!: string;
 
     private titleSourceID!: string;
     private titleLayerID!: string;
@@ -226,6 +229,7 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
             const layerIdPrefix = `geometry-${GeometriesModule.lastInstanceIndex}`;
             this.fillLayerID = `${layerIdPrefix}_Fill`;
             this.outlineLayerID = `${layerIdPrefix}_Outline`;
+            this.lineLabelLayerID = `${layerIdPrefix}_LineLabel`;
             this.titleLayerID = `${layerIdPrefix}_Title`;
         }
 
@@ -239,10 +243,17 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
         this.geometryFillLayerSpecs = geometryFillSpec;
         this.geometryOutlineLayerSpecs = geometryOutlineSpec;
 
+        const lineLabelSpec =
+            config?.lineLabelConfig === undefined
+                ? null
+                : buildGeometryLineLabelLayerSpec(this.lineLabelLayerID, config);
+        this.lineLabelLayerSpecs = lineLabelSpec as SymbolLayerSpecWithoutSource | null;
+
         return {
             geometry: new GeoJSONSourceWithLayers(this.mapLibreMap, this.sourceID, [
                 { ...geometryFillSpec },
                 { ...geometryOutlineSpec },
+                ...(lineLabelSpec ? [lineLabelSpec as ToBeAddedLayerSpec<SymbolLayerSpecification>] : []),
             ]),
             geometryLabel: new GeoJSONSourceWithLayers(this.mapLibreMap, this.titleSourceID, [
                 titleLayerSpec as ToBeAddedLayerSpec<SymbolLayerSpecification>,
@@ -354,6 +365,16 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
         this.geometryFillLayerSpecs = geometryFillSpec;
         this.geometryOutlineLayerSpecs = geometryOutlineSpec;
         this.titleLayerSpecs = newTitleLayerSpecs;
+
+        if (this.lineLabelLayerSpecs) {
+            const newLineLabelSpec = buildGeometryLineLabelLayerSpec(this.lineLabelLayerID, config);
+            changeLayerProps(
+                newLineLabelSpec as SymbolLayerSpecWithoutSource,
+                this.lineLabelLayerSpecs,
+                this.mapLibreMap,
+            );
+            this.lineLabelLayerSpecs = newLineLabelSpec as SymbolLayerSpecWithoutSource;
+        }
     }
 
     /**

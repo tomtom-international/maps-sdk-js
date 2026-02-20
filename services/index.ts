@@ -5,8 +5,6 @@
 
 export * from './src/autocomplete-search';
 export * from './src/customize';
-// TODO not supported yet in Orbis
-// export * from "./src/reachable-range";
 export * from './src/ev-charging-stations-availability';
 export * from './src/geocode';
 export * from './src/geometry-data';
@@ -15,6 +13,7 @@ export type * from './src/geometry-search';
 // TODO: deprecated and not supported in Orbis
 // export * from './src/matrix-routing';
 export * from './src/place-by-id';
+export * from './src/reachable-range';
 export * from './src/revgeo';
 export * from './src/routing';
 export * from './src/search';

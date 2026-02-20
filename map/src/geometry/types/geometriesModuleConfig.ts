@@ -191,6 +191,102 @@ export type GeometryLineConfig = {
 };
 
 /**
+ * Line label configuration for geometries.
+ *
+ * When set, a symbol layer is added to the geometry source,
+ * placing labels along the polygon border lines
+ *
+ * @example
+ * ```typescript
+ * // Defaults
+ * const lineLabelConfig: GeometryLineLabelConfig = {};
+ *
+ * // Custom appearance for dark fills
+ * const lineLabelConfig: GeometryLineLabelConfig = {
+ *   minZoom: 10,
+ *   textColor: '#FFFFFF',
+ *   textHaloColor: '#000000',
+ *   textSize: 13
+ * };
+ * ```
+ *
+ * @group Geometries
+ */
+export type GeometryLineLabelConfig = {
+    /**
+     * Minimum zoom level at which border labels are visible.
+     *
+     * @default 3
+     */
+    minZoom?: number;
+
+    /**
+     * Font size of the border labels in pixels.
+     *
+     * @default 15
+     *
+     * @example
+     * ```typescript
+     * textSize: 13
+     * // Data-driven
+     * textSize: ['interpolate', ['linear'], ['zoom'], 8, 12, 14, 16]
+     * ```
+     */
+    textSize?: DataDrivenPropertyValueSpecification<number>;
+
+    /**
+     * Color of the border label text.
+     *
+     * @default '#333333'
+     *
+     * @example
+     * ```typescript
+     * textColor: '#FFFFFF'
+     * textColor: ['get', 'labelColor']
+     * ```
+     */
+    textColor?: DataDrivenPropertyValueSpecification<string>;
+
+    /**
+     * Color of the halo drawn around the border label text.
+     *
+     * The halo improves legibility against complex or dark backgrounds.
+     *
+     * @default '#FFFFFF'
+     *
+     * @example
+     * ```typescript
+     * textHaloColor: '#000000'
+     * ```
+     */
+    textHaloColor?: DataDrivenPropertyValueSpecification<string>;
+
+    /**
+     * Width of the halo drawn around the border label text, in pixels.
+     *
+     * @default 2
+     *
+     * @example
+     * ```typescript
+     * textHaloWidth: 3
+     * ```
+     */
+    textHaloWidth?: DataDrivenPropertyValueSpecification<number>;
+
+    /**
+     * Distance between repeated labels along the border line, in pixels.
+     *
+     * @default 200
+     *
+     * @example
+     * ```typescript
+     * symbolSpacing: 350
+     * ```
+     */
+    symbolSpacing?: number;
+};
+
+/**
  * Layer positioning configuration for geometries.
  *
  * Controls where geometry layers are placed in the map's layer stack.
@@ -307,4 +403,11 @@ export type GeometriesModuleConfig = MapModuleCommonConfig & {
      * ```
      */
     beforeLayerConfig?: GeometryBeforeLayerConfig;
+
+    /**
+     * Line label configuration.
+     *
+     * When set, labels are placed along the polygon border lines.
+     */
+    lineLabelConfig?: GeometryLineLabelConfig;
 };

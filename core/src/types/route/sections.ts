@@ -429,8 +429,6 @@ export const inputSectionTypes: SectionType[] = [
     'country',
     'ferry',
     'importantRoadStretch',
-    'lanes',
-    'leg',
     'lowEmissionZone',
     'motorway',
     'pedestrian',

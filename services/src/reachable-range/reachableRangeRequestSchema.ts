@@ -17,6 +17,10 @@ const reachableRangeRequestSchemaMandatory = z.object({
 
 const reachableRangeRequestSchemaOptional = z.object({
     maxFerryLengthMeters: z.number().min(0).optional().describe('Maximum ferry distance in meters to include in range'),
+    smoothing: z
+        .enum(['none', 'weak', 'strong'])
+        .optional()
+        .describe('Post-processing smoothing level for the polygon boundary'),
 });
 
 const reachableRangeRequestSchema = commonRoutingRequestSchema.extend(

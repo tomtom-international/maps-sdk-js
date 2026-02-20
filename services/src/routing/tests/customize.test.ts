@@ -25,11 +25,12 @@ describe('Using customize obj', () => {
                     url: new URL(
                         'https://api.tomtom.com/maps/orbis/routing/calculateRoute/52.37319,4.88066:52.16109,4.49015/json?' +
                             'apiVersion=3&key=API_KEY&language=en-GB' +
-                            '&sectionType=carTrain&sectionType=ferry&sectionType=tunnel&sectionType=motorway' +
-                            '&sectionType=pedestrian&sectionType=toll&sectionType=tollVignette&sectionType=country' +
-                            '&sectionType=travelMode&sectionType=traffic&sectionType=carpool&sectionType=urban' +
-                            '&sectionType=unpaved&sectionType=lowEmissionZone' +
-                            '&sectionType=speedLimit&sectionType=roadShields&sectionType=importantRoadStretch' +
+                            '&sectionType=carpool&sectionType=carTrain&sectionType=country&sectionType=ferry' +
+                            '&sectionType=importantRoadStretch' +
+                            '&sectionType=lowEmissionZone&sectionType=motorway&sectionType=pedestrian' +
+                            '&sectionType=roadShields&sectionType=speedLimit&sectionType=toll&sectionType=tollVignette' +
+                            '&sectionType=traffic&sectionType=tunnel&sectionType=unpaved&sectionType=urban' +
+                            '&sectionType=travelMode' +
                             '&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime',
                     ),
                 }),

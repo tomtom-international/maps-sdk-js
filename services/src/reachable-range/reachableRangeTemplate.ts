@@ -1,15 +1,17 @@
 import type { PolygonFeature } from '@tomtom-org/maps-sdk/core';
+import { parseRoutingResponseError } from '../routing/routingResponseErrorParser';
 import type { ServiceTemplate } from '../shared';
-import { get } from '../shared/fetch';
+import { fetchWith } from '../shared/fetch';
 import { reachableRangeRequestValidationConfig } from './reachableRangeRequestSchema';
 import { buildReachableRangeRequest } from './requestBuilder';
 import { parseReachableRangeResponse } from './responseParser';
+import type { ReachableRangeRequestAPI } from './types/apiRequestTypes';
 import type { ReachableRangeResponseAPI } from './types/apiResponseTypes';
 import type { ReachableRangeParams } from './types/reachableRangeParams';
 
 export type ReachableRangeTemplate = ServiceTemplate<
     ReachableRangeParams,
-    URL,
+    ReachableRangeRequestAPI,
     ReachableRangeResponseAPI,
     PolygonFeature<ReachableRangeParams>
 >;
@@ -17,6 +19,8 @@ export type ReachableRangeTemplate = ServiceTemplate<
 export const reachableRangeTemplate: ReachableRangeTemplate = {
     requestValidation: reachableRangeRequestValidationConfig,
     buildRequest: buildReachableRangeRequest,
-    sendRequest: get,
+    sendRequest: fetchWith,
     parseResponse: parseReachableRangeResponse,
+    parseResponseError: parseRoutingResponseError,
+    getAPIVersion: () => 3,
 };

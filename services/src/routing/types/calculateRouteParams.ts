@@ -360,8 +360,8 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
          *
          * @example
          * ```typescript
-         * // Request specific sections
-         * sectionTypes: ['toll', 'ferry', 'traffic', 'country', 'roadShields'...]
+         * // Request specific sections (any combination of available section types)
+         * sectionTypes: ['toll', 'ferry', 'traffic', 'country', 'roadShields']
          *
          * // Request no optional sections
          * sectionTypes: []
