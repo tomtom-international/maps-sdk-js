@@ -198,8 +198,8 @@ export type RouteProps = {
     /**
      * Distance and time progress at key points along the route.
      *
-     * Only present when extended route representations are requested.
-     * Useful for displaying progress information or calculating intermediate times.
+     * * Present when extended route representations are requested, which is the default for route calculations.
+     * * Useful for displaying progress information or calculating intermediate times.
      */
     progress?: RouteProgressPoint[];
     /**

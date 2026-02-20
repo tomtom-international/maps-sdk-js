@@ -4,6 +4,7 @@ import {
     calculateProgressAtRoutePoint,
     findBestWaypointInsertionIndex,
     getCoordinateAtRouteProgress,
+    getProgressAtNearestRoutePoint,
     getRouteProgressBetween,
     getSectionBBox,
     withInsertedWaypoint,
@@ -893,5 +894,65 @@ describe('getCoordinateAtRouteProgress — by clockTime', () => {
         expect(
             getCoordinateAtRouteProgress(makeSimpleRoute(5, PROGRESS_5PT), { clockTime: DEPARTURE }),
         ).toBeUndefined();
+    });
+});
+
+// ---------------------------------------------------------------------------
+// getProgressAtNearestRoutePoint
+// ---------------------------------------------------------------------------
+// Uses the same 5-coord straight-east route as above:
+//   coords: [0,0] → [1,0] → [2,0] → [3,0] → [4,0]
+//   progress: 0 m/0 s at index 0, 400 m/40 s at index 4  (100 m / 10 s per step)
+// ---------------------------------------------------------------------------
+
+describe('getProgressAtNearestRoutePoint', () => {
+    test('returns undefined when route has no progress data', () => {
+        expect(getProgressAtNearestRoutePoint(makeSimpleRoute(5, []), [2, 0])).toBeUndefined();
+    });
+
+    test('snaps a point exactly on a vertex to that vertex', () => {
+        // Point [2, 0] lies exactly on coord index 2 → 200 m, 20 s
+        const result = getProgressAtNearestRoutePoint(makeSimpleRoute(5, PROGRESS_5PT), [2, 0]);
+        expect(result?.position[0]).toBeCloseTo(2);
+        expect(result?.position[1]).toBeCloseTo(0);
+        expect(result?.distanceInMeters).toBeCloseTo(200);
+        expect(result?.travelTimeInSeconds).toBeCloseTo(20);
+    });
+
+    test('snaps a point above the line to the nearest point on the line', () => {
+        // Point [1.5, 1] is directly above the midpoint between index 1 and index 2.
+        // Nearest point on the east-going line is [1.5, 0] → 150 m, 15 s
+        const result = getProgressAtNearestRoutePoint(makeSimpleRoute(5, PROGRESS_5PT), [1.5, 1]);
+        expect(result?.position[0]).toBeCloseTo(1.5);
+        expect(result?.position[1]).toBeCloseTo(0);
+        expect(result?.distanceInMeters).toBeCloseTo(150);
+        expect(result?.travelTimeInSeconds).toBeCloseTo(15);
+    });
+
+    test('snaps a point before the route start to the first coordinate', () => {
+        // Point [-1, 0] is behind the route; nearest is [0, 0] → 0 m, 0 s
+        const result = getProgressAtNearestRoutePoint(makeSimpleRoute(5, PROGRESS_5PT), [-1, 0]);
+        expect(result?.position[0]).toBeCloseTo(0);
+        expect(result?.distanceInMeters).toBeCloseTo(0);
+        expect(result?.travelTimeInSeconds).toBeCloseTo(0);
+    });
+
+    test('snaps a point beyond the route end to the last coordinate', () => {
+        // Point [5, 0] is past the route end; nearest is [4, 0] → 400 m, 40 s
+        const result = getProgressAtNearestRoutePoint(makeSimpleRoute(5, PROGRESS_5PT), [5, 0]);
+        expect(result?.position[0]).toBeCloseTo(4);
+        expect(result?.distanceInMeters).toBeCloseTo(400);
+        expect(result?.travelTimeInSeconds).toBeCloseTo(40);
+    });
+
+    test('accepts a GeoJSON Point Feature as the HasLngLat input', () => {
+        const pointFeature = {
+            type: 'Feature' as const,
+            geometry: { type: 'Point' as const, coordinates: [3, 0] },
+            properties: {},
+        };
+        const result = getProgressAtNearestRoutePoint(makeSimpleRoute(5, PROGRESS_5PT), pointFeature);
+        expect(result?.distanceInMeters).toBeCloseTo(300);
+        expect(result?.travelTimeInSeconds).toBeCloseTo(30);
     });
 });

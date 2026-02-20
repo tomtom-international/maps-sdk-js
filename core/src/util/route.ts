@@ -1,6 +1,7 @@
 import { nearestPointOnLine } from '@turf/turf';
-import type { Feature, LineString, Position } from 'geojson';
+import type { Position } from 'geojson';
 import type {
+    HasLngLat,
     Route,
     RouteProgressAtPoint,
     RouteProgressPoint,
@@ -75,15 +76,9 @@ export const findBestWaypointInsertionIndex = (
     if (routeCoords.length === 0) return 0;
     if (existingWaypoints.length < 2) return 0;
 
-    const routeLine: Feature<LineString> = {
-        type: 'Feature',
-        geometry: route.geometry,
-        properties: {},
-    };
-
     // Project the new waypoint onto the route line
     const newWaypointPos = getPositionStrict(newWaypoint);
-    const newWaypointProjection = nearestPointOnLine(routeLine, newWaypointPos);
+    const newWaypointProjection = nearestPointOnLine(route, newWaypointPos);
     const newWaypointLocation = newWaypointProjection.properties.location;
 
     if (newWaypointLocation === undefined) return 0;
@@ -92,7 +87,7 @@ export const findBestWaypointInsertionIndex = (
     const waypointLocations: number[] = [];
     for (const waypoint of existingWaypoints) {
         const waypointPos = getPositionStrict(waypoint);
-        const projection = nearestPointOnLine(routeLine, waypointPos);
+        const projection = nearestPointOnLine(route, waypointPos);
         waypointLocations.push(projection.properties.location ?? 0);
     }
 
@@ -399,20 +394,23 @@ const findBracketingProgressPoints = (
 };
 
 /**
- * Locates the two {@link RouteProgressPoint} entries that bracket `targetValue` and linearly
- * interpolates a fractional path index. Returns `undefined` when no bracketing pair is found.
+ * Locates the two {@link RouteProgressPoint} entries that bracket `targetValue` and returns
+ * the integer path index of the lower bounding vertex together with the fractional progress
+ * ratio toward the next vertex. Returns `undefined` when no bracketing pair is found.
  */
 const findBracketedPathIndex = (
     progress: RouteProgressPoint[],
     targetKey: 'travelTimeInSeconds' | 'distanceInMeters',
     targetValue: number,
-): number | undefined => {
+): { pathIndex: number; progressRatioTowardsNextPathPoint: number } | undefined => {
     const bracket = findBracketingProgressPoints(progress, targetKey, targetValue);
     if (!bracket) return undefined;
 
     const { lower, lowerVal, upper, upperVal } = bracket;
-    const ratio = lowerVal === upperVal ? 0 : (targetValue - lowerVal) / (upperVal - lowerVal);
-    return lower.pointIndex + ratio * (upper.pointIndex - lower.pointIndex);
+    const t = lowerVal === upperVal ? 0 : (targetValue - lowerVal) / (upperVal - lowerVal);
+    const fractionalIndex = lower.pointIndex + t * (upper.pointIndex - lower.pointIndex);
+    const pathIndex = Math.floor(fractionalIndex);
+    return { pathIndex, progressRatioTowardsNextPathPoint: fractionalIndex - pathIndex };
 };
 
 /**
@@ -427,6 +425,61 @@ export type RouteCoordinateAtProgress = {
     travelTimeInSeconds: number;
     /** Cumulative distance in meters from the route start. */
     distanceInMeters: number;
+};
+
+/**
+ * Returns the fractional progress of `middlePoint` projected onto the line segment `[segmentStart, segmentEnd]`.
+ *
+ * Uses a dot-product projection and clamps the result to `[0, 1]`, so points before
+ * `segmentStart` return `0` and points past `segmentEnd` return `1`.
+ * Returns `0` for a zero-length segment.
+ */
+const progressRatioAlongSegment = (segmentStart: Position, middlePoint: Position, segmentEnd: Position): number => {
+    const dx = segmentEnd[0] - segmentStart[0];
+    const dy = segmentEnd[1] - segmentStart[1];
+    const segLenSq = dx * dx + dy * dy;
+    if (segLenSq === 0) return 0;
+    const ratio = ((middlePoint[0] - segmentStart[0]) * dx + (middlePoint[1] - segmentStart[1]) * dy) / segLenSq;
+    return Math.max(0, Math.min(1, ratio));
+};
+
+/**
+ * Interpolates position and progress between two consecutive route vertices.
+ *
+ * @param route The route whose coordinate geometry and progress data are used.
+ * @param pathIndex Integer index of the lower bounding vertex in the coordinate array.
+ * @param progressRatioTowardsNextPathPoint Fractional progress in [0, 1] from `pathIndex` toward the next vertex.
+ *              0 returns the lower vertex exactly; 1 returns the upper vertex exactly.
+ * Returns `undefined` when progress data is unavailable for either bracketing vertex.
+ */
+const interpolateProgressAtPathIndex = (
+    route: Route,
+    pathIndex: number,
+    progressRatioTowardsNextPathPoint: number,
+): RouteCoordinateAtProgress | undefined => {
+    const coords = route.geometry.coordinates;
+
+    const upperCoordIndex = Math.min(pathIndex + 1, coords.length - 1);
+
+    const lowerCoord = coords[pathIndex];
+    const upperCoord = coords[upperCoordIndex];
+
+    const lowerProgress = calculateProgressAtRoutePoint(route, pathIndex);
+    const upperProgress = calculateProgressAtRoutePoint(route, upperCoordIndex);
+    if (!lowerProgress || !upperProgress) return undefined;
+
+    return {
+        position: [
+            lowerCoord[0] + progressRatioTowardsNextPathPoint * (upperCoord[0] - lowerCoord[0]),
+            lowerCoord[1] + progressRatioTowardsNextPathPoint * (upperCoord[1] - lowerCoord[1]),
+        ],
+        travelTimeInSeconds:
+            lowerProgress.travelTimeInSeconds +
+            progressRatioTowardsNextPathPoint * (upperProgress.travelTimeInSeconds - lowerProgress.travelTimeInSeconds),
+        distanceInMeters:
+            lowerProgress.distanceInMeters +
+            progressRatioTowardsNextPathPoint * (upperProgress.distanceInMeters - lowerProgress.distanceInMeters),
+    };
 };
 
 /**
@@ -450,41 +503,25 @@ const resolveCoordinateAtProgress = (
     if (firstValue === undefined || lastValue === undefined) return undefined;
 
     // Clamp to route endpoints
-    const clampedPoint = targetValue <= firstValue ? firstPoint : targetValue >= lastValue ? lastPoint : null;
-    if (clampedPoint) {
+    if (targetValue <= firstValue) {
         return {
-            position: coords[clampedPoint.pointIndex],
-            travelTimeInSeconds: clampedPoint.travelTimeInSeconds ?? 0,
-            distanceInMeters: clampedPoint.distanceInMeters ?? 0,
+            position: coords[firstPoint.pointIndex],
+            travelTimeInSeconds: firstPoint.travelTimeInSeconds ?? 0,
+            distanceInMeters: firstPoint.distanceInMeters ?? 0,
+        };
+    }
+    if (targetValue >= lastValue) {
+        return {
+            position: coords[lastPoint.pointIndex],
+            travelTimeInSeconds: lastPoint.travelTimeInSeconds ?? 0,
+            distanceInMeters: lastPoint.distanceInMeters ?? 0,
         };
     }
 
-    const pathIndex = findBracketedPathIndex(progress, targetKey, targetValue);
-    if (pathIndex === undefined) return undefined;
+    const result = findBracketedPathIndex(progress, targetKey, targetValue);
+    if (result === undefined) return undefined;
 
-    const lowerCoordIndex = Math.floor(pathIndex);
-    const upperCoordIndex = Math.min(Math.ceil(pathIndex), coords.length - 1);
-    const coordRatio = pathIndex - lowerCoordIndex;
-
-    const lowerCoord = coords[lowerCoordIndex];
-    const upperCoord = coords[upperCoordIndex];
-
-    const lowerProgress = calculateProgressAtRoutePoint(route, lowerCoordIndex);
-    const upperProgress = calculateProgressAtRoutePoint(route, upperCoordIndex);
-    if (!lowerProgress || !upperProgress) return undefined;
-
-    return {
-        position: [
-            lowerCoord[0] + coordRatio * (upperCoord[0] - lowerCoord[0]),
-            lowerCoord[1] + coordRatio * (upperCoord[1] - lowerCoord[1]),
-        ],
-        travelTimeInSeconds:
-            lowerProgress.travelTimeInSeconds +
-            coordRatio * (upperProgress.travelTimeInSeconds - lowerProgress.travelTimeInSeconds),
-        distanceInMeters:
-            lowerProgress.distanceInMeters +
-            coordRatio * (upperProgress.distanceInMeters - lowerProgress.distanceInMeters),
-    };
+    return interpolateProgressAtPathIndex(route, result.pathIndex, result.progressRatioTowardsNextPathPoint);
 };
 
 /**
@@ -545,4 +582,57 @@ export const getCoordinateAtRouteProgress = (
     if (elapsedSeconds < 0) return undefined;
 
     return resolveCoordinateAtProgress(route, 'travelTimeInSeconds', elapsedSeconds);
+};
+
+/**
+ * Returns the geographic coordinate and cumulative progress values at the point on a route
+ * nearest to the given location.
+ *
+ * Projects `point` onto the route line using `nearestPointOnLine`, then linearly interpolates
+ * the progress data at the snapped position between the two bracketing route vertices.
+ *
+ * @param route The route to query. Must contain `properties.progress` data.
+ * @param point The reference location to snap to the route.
+ * @returns Interpolated {@link RouteCoordinateAtProgress} at the nearest point, or `undefined` when:
+ *   - the route has no progress data
+ *   - the route has fewer than 2 coordinates
+ *   - the progress data is incomplete for the snapped position
+ *
+ * @example
+ * ```typescript
+ * const result = getProgressAtNearestRoutePoint(route, { lng: 4.92, lat: 52.32 });
+ * if (result) {
+ *   console.log(`Nearest point: [${result.position}]`);
+ *   console.log(`${result.distanceInMeters} m from route start`);
+ *   console.log(`${result.travelTimeInSeconds} s travel time from route start`);
+ * }
+ * ```
+ *
+ * @group Utils
+ */
+export const getProgressAtNearestRoutePoint = (
+    route: Route,
+    point: HasLngLat,
+): RouteCoordinateAtProgress | undefined => {
+    const { progress } = route.properties;
+    if (!progress?.length) return undefined;
+
+    const coords = route.geometry.coordinates;
+
+    const snapped = nearestPointOnLine(route, getPositionStrict(point));
+
+    // `nearestPointOnLine` sets `index` to the start-vertex index of the nearest segment,
+    // so the snapped point lies on the segment [index, index + 1].
+    const segmentStartIndex = snapped.properties.index ?? 0;
+    const segmentEndIndex = Math.min(segmentStartIndex + 1, coords.length - 1);
+
+    const segmentStart = coords[segmentStartIndex];
+    const segmentEnd = coords[segmentEndIndex];
+    const progressRatioFromSegmentStart = progressRatioAlongSegment(
+        segmentStart,
+        snapped.geometry.coordinates,
+        segmentEnd,
+    );
+
+    return interpolateProgressAtPathIndex(route, segmentStartIndex, progressRatioFromSegmentStart);
 };
