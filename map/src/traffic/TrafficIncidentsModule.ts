@@ -471,9 +471,11 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
      * ```
      */
     getShown() {
-        const sourceId = this.sourcesWithLayers.trafficIncidents.sourceAndLayerIDs.sourceID;
         return {
-            trafficIncidents: this.mapLibreMap.querySourceFeatures(sourceId),
+            trafficIncidents: this.mapLibreMap.queryRenderedFeatures({
+                layers: this.sourcesWithLayers.trafficIncidents.sourceAndLayerIDs.layerIDs,
+                validate: false,
+            }),
         };
     }
 

@@ -330,9 +330,11 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
      * ```
      */
     getShown() {
-        const sourceId = this.sourcesWithLayers.trafficFlow.sourceAndLayerIDs.sourceID;
         return {
-            trafficFlow: this.mapLibreMap.querySourceFeatures(sourceId),
+            trafficFlow: this.mapLibreMap.queryRenderedFeatures({
+                layers: this.sourcesWithLayers.trafficFlow.sourceAndLayerIDs.layerIDs,
+                validate: false,
+            }),
         };
     }
 

@@ -349,9 +349,11 @@ export class POIsModule extends AbstractMapModule<PoIsSourcesAndLayers, POIsModu
      * ```
      */
     getShown() {
-        const sourceId = this.sourcesWithLayers.poi.sourceAndLayerIDs.sourceID;
         return {
-            poi: this.mapLibreMap.querySourceFeatures(sourceId) as unknown as POIsModuleFeature[],
+            poi: this.mapLibreMap.queryRenderedFeatures({
+                layers: this.sourcesWithLayers.poi.sourceAndLayerIDs.layerIDs,
+                validate: false,
+            }) as unknown as POIsModuleFeature[],
         };
     }
 
