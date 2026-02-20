@@ -1,0 +1,83 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+
+.sdk-example-instructions {
+    margin: 0 0 var(--sdk-space-3);
+    font-family: var(--sdk-font-primary);
+    font-size: var(--sdk-font-body-s);
+    line-height: var(--sdk-font-body-s-lh);
+    color: var(--sdk-text-medium);
+}
+
+/* PROGRESS POPUP */
+
+.progress-popup {
+    pointer-events: none;
+}
+
+.progress-popup--pinned {
+    pointer-events: auto;
+}
+
+.progress-popup .maplibregl-popup-content {
+    padding: var(--sdk-space-2) var(--sdk-space-3);
+    border-radius: var(--sdk-radius-10);
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.08),
+        0 2px 12px rgba(0, 0, 0, 0.18);
+    background: var(--sdk-surface-0);
+    font-family: var(--sdk-font-primary);
+}
+
+.progress-popup-row {
+    display: flex;
+    align-items: center;
+    gap: var(--sdk-space-2);
+    font-size: var(--sdk-font-body-s);
+    line-height: var(--sdk-font-body-s-lh);
+    font-weight: var(--sdk-font-weight-semibold);
+    color: var(--sdk-text-high);
+    white-space: nowrap;
+}
+
+.progress-popup-sep {
+    color: var(--sdk-text-low);
+    font-weight: var(--sdk-font-weight-regular);
+}
+
+.progress-popup-row--sub {
+    font-size: var(--sdk-font-caption-m);
+    line-height: var(--sdk-font-caption-m-lh);
+    color: var(--sdk-text-medium);
+    margin-top: 2px;
+}
+
+.progress-popup-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    margin-left: var(--sdk-space-1);
+    padding: 0;
+    border: none;
+    border-radius: var(--sdk-radius-4);
+    background: transparent;
+    color: transparent;
+    font-size: 12px;
+    cursor: default;
+    line-height: 1;
+}
+
+button.progress-popup-close {
+    color: var(--sdk-text-low);
+    cursor: pointer;
+}
+
+button.progress-popup-close:hover {
+    background: var(--sdk-surface-2);
+    color: var(--sdk-text-high);
+}
