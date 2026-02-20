@@ -22,7 +22,7 @@
 }
 
 .sdk-example-form-field-inline .sdk-example-input,
-.sdk-example-form-field-inline .sdk-example-select {
+.sdk-example-form-field-inline .sdk-example-dropdown {
     flex: 1;
 }
 

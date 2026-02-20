@@ -137,6 +137,19 @@ h6 {
     color: var(--sdk-primary-color);
 }
 
+.sdk-example-note {
+    margin: var(--sdk-space-2) 0 0;
+    font-family: var(--sdk-font-primary);
+    font-size: var(--sdk-font-caption-m);
+    line-height: var(--sdk-font-caption-m-lh);
+    color: var(--sdk-text-low);
+}
+
+.sdk-example-note code {
+    font-family: var(--sdk-font-code);
+    font-size: var(--sdk-font-caption-s);
+}
+
 /* UTILITIES */
 
 .sdk-example-sr-only {

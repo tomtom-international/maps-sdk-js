@@ -12,10 +12,13 @@
 @import url("form/input.css");
 @import url("form/checkbox.css");
 @import url("form/radio.css");
-@import url("form/select.css");
+@import url("form/dropdown.css");
 @import url("form/slider.css");
 @import url("form/toggle.css");
 @import url("form/color.css");
+
+/* Feedback */
+@import url("feedback/loading-spinner.css");
 
 /* Buttons */
 @import url("button/button.css");

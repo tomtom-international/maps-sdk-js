@@ -204,7 +204,7 @@
                 <div class="sdk-example-panel-content">
                     <div class="sdk-example-form-field">
                         <label class="sdk-example-form-label" for="showcase-select">Select Option</label>
-                        <select id="showcase-select" class="sdk-example-select">
+                        <select id="showcase-select" class="sdk-example-dropdown">
                             <option>Option 1</option>
                             <option selected>Option 2</option>
                             <option>Option 3</option>
@@ -212,7 +212,7 @@
                     </div>
                     <div class="sdk-example-form-field">
                         <label class="sdk-example-form-label" for="showcase-disabled-select">Disabled</label>
-                        <select id="showcase-disabled-select" class="sdk-example-select" disabled>
+                        <select id="showcase-disabled-select" class="sdk-example-dropdown" disabled>
                             <option>Disabled Select</option>
                         </select>
                     </div>
@@ -332,6 +332,21 @@
                             ></button>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Feedback Card -->
+            <div class="showcase-card">
+                <h3 class="sdk-example-heading">
+                    <span class="sdk-example-heading-text">Feedback</span>
+                    <button class="sdk-example-heading-toggle" aria-label="Toggle section" aria-expanded="true">
+                        <svg class="sdk-example-heading-chevron" viewBox="0 0 24 24" width="16" height="16">
+                            <path d="M7 10l5 5 5-5" />
+                        </svg>
+                    </button>
+                </h3>
+                <div class="sdk-example-panel-content">
+                    <span class="sdk-example-spinner" aria-hidden="true"></span>
                 </div>
             </div>
         </div>

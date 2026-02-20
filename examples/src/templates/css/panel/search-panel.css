@@ -19,6 +19,56 @@
     min-width: 200px;
 }
 
+.sdk-example-search-wrapper {
+    position: absolute;
+    top: var(--sdk-panel-margin);
+    left: var(--sdk-panel-margin);
+    z-index: var(--sdk-z-panel);
+}
+
+.sdk-example-search-wrapper .sdk-example-searchPanel {
+    position: static;
+}
+
+.sdk-example-result-list {
+    position: absolute;
+    top: calc(100% + var(--sdk-space-2));
+    left: 0;
+    min-width: 100%;
+    width: max-content;
+    max-width: min(400px, calc(100vw - 2 * var(--sdk-panel-margin)));
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-family: var(--sdk-font-primary);
+    background: var(--sdk-surface-0);
+    border-radius: var(--sdk-radius-10);
+    box-shadow: var(--sdk-shadow-e2);
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 240px;
+}
+
+.sdk-example-result-list:empty {
+    display: none;
+}
+
+.sdk-example-result-item {
+    padding: var(--sdk-space-2) var(--sdk-space-3);
+    font-size: var(--sdk-font-body-m);
+    color: var(--sdk-text-high);
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: background-color var(--sdk-transition-fast);
+}
+
+.sdk-example-result-item:hover,
+.sdk-example-result-item.sdk-example-hovered {
+    background-color: var(--sdk-surface-1);
+}
+
 /* Responsive: max-width 768px */
 @media (max-width: 768px) {
     .sdk-example-searchPanel {
@@ -32,6 +82,14 @@
         min-width: 0;
         width: 100%;
     }
+
+    .sdk-example-search-wrapper {
+        max-width: calc(100vw - 20px);
+    }
+
+    .sdk-example-result-list {
+        max-width: calc(100vw - 20px);
+    }
 }
 
 /* Responsive: max-width 600px */
@@ -42,13 +100,21 @@
         width: auto;
         max-width: none;
     }
+
+    .sdk-example-search-wrapper {
+        left: 5px;
+        max-width: calc(100vw - 10px);
+    }
+
+    .sdk-example-result-list {
+        max-width: calc(100vw - 10px);
+    }
 }
 
 /* Responsive: max-width 768px and max-height 500px */
 @media (max-width: 768px) and (max-height: 500px) {
     .sdk-example-searchPanel {
         flex-direction: row;
-        padding: var(--sdk-space-1);
         gap: var(--sdk-space-1);
     }
 
@@ -67,7 +133,8 @@
 
 /* Responsive: print */
 @media print {
-    .sdk-example-searchPanel {
+    .sdk-example-searchPanel,
+    .sdk-example-search-wrapper {
         display: none;
     }
 }

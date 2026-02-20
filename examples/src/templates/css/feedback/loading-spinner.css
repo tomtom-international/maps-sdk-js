@@ -1,0 +1,26 @@
+/* SPINNER */
+
+.sdk-example-spinner {
+    --spinner-size: 32px;
+    --spinner-width: 3px;
+    --spinner-color: var(--sdk-primary-color);
+
+    width: var(--spinner-size);
+    height: var(--spinner-size);
+    border: var(--spinner-width) solid var(--sdk-border-low);
+    border-bottom-color: var(--spinner-color);
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: sdk-spinner-rotation 1s linear infinite;
+}
+
+@keyframes sdk-spinner-rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
