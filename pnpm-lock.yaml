@@ -49,8 +49,8 @@ catalogs:
       specifier: ^4.0.18
       version: 4.0.18
     ai:
-      specifier: ^6.0.91
-      version: 6.0.91
+      specifier: ^6.0.94
+      version: 6.0.94
     jsdom:
       specifier: ^28.1.0
       version: 28.1.0
@@ -79,8 +79,8 @@ catalogs:
       specifier: ^2.2.4
       version: 2.2.4
     rollup-plugin-visualizer:
-      specifier: ^6.0.5
-      version: 6.0.5
+      specifier: ^6.0.8
+      version: 6.0.8
     ts-node:
       specifier: ^10.9.2
       version: 10.9.2
@@ -124,8 +124,8 @@ importers:
         version: 4.3.6
     devDependencies:
       '@biomejs/biome':
-        specifier: ^2.4.2
-        version: 2.4.2
+        specifier: ^2.4.3
+        version: 2.4.3
       '@size-limit/file':
         specifier: ^11.2.0
         version: 11.2.0(size-limit@11.2.0)
@@ -232,7 +232,7 @@ importers:
         version: 4.1.1
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       sharp:
         specifier: ^0.33.5
         version: 0.33.5
@@ -263,7 +263,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -294,7 +294,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -319,7 +319,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -347,7 +347,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -375,7 +375,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -403,7 +403,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -437,7 +437,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -465,7 +465,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -490,7 +490,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -515,7 +515,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -543,7 +543,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -568,7 +568,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -596,7 +596,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -621,7 +621,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -646,7 +646,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -671,7 +671,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -696,7 +696,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -721,7 +721,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -746,7 +746,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -771,7 +771,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -795,7 +795,7 @@ importers:
         version: link:../../plugins/map-agent
       ai:
         specifier: 'catalog:'
-        version: 6.0.91(zod@4.3.6)
+        version: 6.0.94(zod@4.3.6)
       zod:
         specifier: 'catalog:'
         version: 4.3.6
@@ -814,7 +814,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -839,7 +839,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -867,7 +867,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -892,7 +892,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -917,7 +917,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -942,7 +942,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -967,7 +967,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -998,7 +998,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1066,7 +1066,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1094,7 +1094,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1119,7 +1119,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1147,7 +1147,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1175,7 +1175,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1203,7 +1203,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1228,7 +1228,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1253,7 +1253,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1278,7 +1278,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1303,7 +1303,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1328,7 +1328,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1353,7 +1353,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1381,7 +1381,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1406,7 +1406,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1434,7 +1434,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1459,7 +1459,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1487,7 +1487,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1512,7 +1512,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1537,7 +1537,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1562,7 +1562,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1587,7 +1587,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1612,7 +1612,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1640,7 +1640,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1665,7 +1665,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1690,7 +1690,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1715,7 +1715,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1740,7 +1740,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1765,7 +1765,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1790,7 +1790,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1815,7 +1815,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1843,7 +1843,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1868,7 +1868,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1893,7 +1893,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1924,7 +1924,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -1949,7 +1949,7 @@ importers:
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
@@ -2103,7 +2103,7 @@ importers:
         version: 2.2.4(rollup@4.57.1)
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       vite:
         specifier: 'catalog:'
         version: 7.3.1(@types/node@25.3.0)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
@@ -2124,7 +2124,7 @@ importers:
         version: link:../..
       ai:
         specifier: 'catalog:'
-        version: 6.0.91(zod@4.3.6)
+        version: 6.0.94(zod@4.3.6)
       maplibre-gl:
         specifier: 'catalog:'
         version: 5.18.0
@@ -2250,7 +2250,7 @@ importers:
         version: 2.2.4(rollup@4.57.1)
       rollup-plugin-visualizer:
         specifier: 'catalog:'
-        version: 6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1)
+        version: 6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1)
       vite:
         specifier: 'catalog:'
         version: 7.3.1(@types/node@25.3.0)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.2)
@@ -2275,8 +2275,8 @@ packages:
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
-  '@ai-sdk/gateway@3.0.50':
-    resolution: {integrity: sha512-Jdd1a8VgbD7l7r+COj0h5SuaYRfPvOJ/AO6l0OrmTPEcI2MUQPr3C4JttfpNkcheEN+gOdy0CtZWuG17bW2fjw==}
+  '@ai-sdk/gateway@3.0.52':
+    resolution: {integrity: sha512-lYCXP8T3YnIDiz8DP7loAMT27wnblc3IAYzQ7igg89RCRyTUjk6ffbxHXXQ5Pmv8jrdLF0ZIJnH54Dsr1OCKHg==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -2393,59 +2393,59 @@ packages:
     resolution: {integrity: sha512-6zABk/ECA/QYSCQ1NGiVwwbQerUCZ+TQbp64Q3AgmfNvurHH0j8TtXa1qbShXA6qqkpAj4V5W8pP6mLe1mcMqA==}
     engines: {node: '>=18'}
 
-  '@biomejs/biome@2.4.2':
-    resolution: {integrity: sha512-vVE/FqLxNLbvYnFDYg3Xfrh1UdFhmPT5i+yPT9GE2nTUgI4rkqo5krw5wK19YHBd7aE7J6r91RRmb8RWwkjy6w==}
+  '@biomejs/biome@2.4.3':
+    resolution: {integrity: sha512-cBrjf6PNF6yfL8+kcNl85AjiK2YHNsbU0EvDOwiZjBPbMbQ5QcgVGFpjD0O52p8nec5O8NYw7PKw3xUR7fPAkQ==}
     engines: {node: '>=14.21.3'}
     hasBin: true
 
-  '@biomejs/cli-darwin-arm64@2.4.2':
-    resolution: {integrity: sha512-3pEcKCP/1POKyaZZhXcxFl3+d9njmeAihZ17k8lL/1vk+6e0Cbf0yPzKItFiT+5Yh6TQA4uKvnlqe0oVZwRxCA==}
+  '@biomejs/cli-darwin-arm64@2.4.3':
+    resolution: {integrity: sha512-eOafSFlI/CF4id2tlwq9CVHgeEqvTL5SrhWff6ZORp6S3NL65zdsR3ugybItkgF8Pf4D9GSgtbB6sE3UNgOM9w==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
     os: [darwin]
 
-  '@biomejs/cli-darwin-x64@2.4.2':
-    resolution: {integrity: sha512-P7hK1jLVny+0R9UwyGcECxO6sjETxfPyBm/1dmFjnDOHgdDPjPqozByunrwh4xPKld8sxOr5eAsSqal5uKgeBg==}
+  '@biomejs/cli-darwin-x64@2.4.3':
+    resolution: {integrity: sha512-V2+av4ilbWcBMNufTtMMXVW00nPwyIjI5qf7n9wSvUaZ+tt0EvMGk46g9sAFDJBEDOzSyoRXiSP6pCvKTOEbPA==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [darwin]
 
-  '@biomejs/cli-linux-arm64-musl@2.4.2':
-    resolution: {integrity: sha512-/x04YK9+7erw6tYEcJv9WXoBHcULI/wMOvNdAyE9S3JStZZ9yJyV67sWAI+90UHuDo/BDhq0d96LDqGlSVv7WA==}
+  '@biomejs/cli-linux-arm64-musl@2.4.3':
+    resolution: {integrity: sha512-QuFzvsGo8BA4Xm7jGX5idkw6BqFblcCPySMTvq0AhGYnhUej5VJIDJbmTKfHqwjHepZiC4fA+T5i6wmiZolZNw==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
     os: [linux]
     libc: [musl]
 
-  '@biomejs/cli-linux-arm64@2.4.2':
-    resolution: {integrity: sha512-DI3Mi7GT2zYNgUTDEbSjl3e1KhoP76OjQdm8JpvZYZWtVDRyLd3w8llSr2TWk1z+U3P44kUBWY3X7H9MD1/DGQ==}
+  '@biomejs/cli-linux-arm64@2.4.3':
+    resolution: {integrity: sha512-0m+O0x9FgK99FAwDK+fiDtjs2wnqq7bvfj17KJVeCkTwT/liI+Q9njJG7lwXK0iSJVXeFNRIxukpVI3SifMYAA==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
     os: [linux]
     libc: [glibc]
 
-  '@biomejs/cli-linux-x64-musl@2.4.2':
-    resolution: {integrity: sha512-wbBmTkeAoAYbOQ33f6sfKG7pcRSydQiF+dTYOBjJsnXO2mWEOQHllKlC2YVnedqZFERp2WZhFUoO7TNRwnwEHQ==}
+  '@biomejs/cli-linux-x64-musl@2.4.3':
+    resolution: {integrity: sha512-qEc0OCpj/uytruQ4wLM0yWNJLZy0Up8H1Er5MW3SrstqM6J2d4XqdNA86xzCy8MQCHpoVZ3lFye3GBlIL4/ljw==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [linux]
     libc: [musl]
 
-  '@biomejs/cli-linux-x64@2.4.2':
-    resolution: {integrity: sha512-GK2ErnrKpWFigYP68cXiCHK4RTL4IUWhK92AFS3U28X/nuAL5+hTuy6hyobc8JZRSt+upXt1nXChK+tuHHx4mA==}
+  '@biomejs/cli-linux-x64@2.4.3':
+    resolution: {integrity: sha512-NVqh0saIU0u5OfOp/0jFdlKRE59+XyMvWmtx0f6Nm/2OpdxBl04coRIftBbY9d1gfu+23JVv4CItAqPYrjYh5w==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [linux]
     libc: [glibc]
 
-  '@biomejs/cli-win32-arm64@2.4.2':
-    resolution: {integrity: sha512-k2uqwLYrNNxnaoiW3RJxoMGnbKda8FuCmtYG3cOtVljs3CzWxaTR+AoXwKGHscC9thax9R4kOrtWqWN0+KdPTw==}
+  '@biomejs/cli-win32-arm64@2.4.3':
+    resolution: {integrity: sha512-gRO96vrIARilv/Cp2ZnmNNL5LSZg3RO75GPp13hsLO3N4YVpE7saaMDp2bcyV48y2N2Pbit1brkGVGta0yd6VQ==}
     engines: {node: '>=14.21.3'}
     cpu: [arm64]
     os: [win32]
 
-  '@biomejs/cli-win32-x64@2.4.2':
-    resolution: {integrity: sha512-9ma7C4g8Sq3cBlRJD2yrsHXB1mnnEBdpy7PhvFrylQWQb4PoyCmPucdX7frvsSBQuFtIiKCrolPl/8tCZrKvgQ==}
+  '@biomejs/cli-win32-x64@2.4.3':
+    resolution: {integrity: sha512-vSm/vOJe06pf14aGHfHl3Ar91Nlx4YYmohElDJ+17UbRwe99n987S/MhAlQOkONqf1utJor04ChkCPmKb8SWdw==}
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [win32]
@@ -2481,8 +2481,8 @@ packages:
   '@codemirror/state@6.5.4':
     resolution: {integrity: sha512-8y7xqG/hpB53l25CIoit9/ngxdfoG+fx+V3SHBrinnhOtLvKHRyAJJuHzkWrR4YXXLX8eXBsejgAAxHUOdW1yw==}
 
-  '@codemirror/view@6.39.14':
-    resolution: {integrity: sha512-WJcvgHm/6Q7dvGT0YFv/6PSkoc36QlR0VCESS6x9tGsnF1lWLmmYxOgX3HH6v8fo6AvSLgpcs+H0Olre6MKXlg==}
+  '@codemirror/view@6.39.15':
+    resolution: {integrity: sha512-aCWjgweIIXLBHh7bY6cACvXuyrZ0xGafjQ2VInjp4RM4gMfscK5uESiNdrH0pE+e1lZr2B4ONGsjchl2KsKZzg==}
 
   '@codesandbox/nodebox@0.1.8':
     resolution: {integrity: sha512-2VRS6JDSk+M+pg56GA6CryyUSGPjBEe8Pnae0QL3jJF1mJZJVMDKr93gJRtBbLkfZN6LD/DwMtf+2L0bpWrjqg==}
@@ -4022,12 +4022,12 @@ packages:
   '@volar/typescript@2.4.28':
     resolution: {integrity: sha512-Ja6yvWrbis2QtN4ClAKreeUZPVYMARDYZl9LMEv1iQ1QdepB6wn0jTRxA9MftYmYa4DQ4k/DaSZpFPUfxl8giw==}
 
-  acorn-walk@8.3.4:
-    resolution: {integrity: sha512-ueEepnujpqee2o5aIYnvHU6C0A42MNdsIDeqy5BydrkuC5R1ZuUFnm27EeFJGoEHJQgn3uleRvmTXaJgfXbt4g==}
+  acorn-walk@8.3.5:
+    resolution: {integrity: sha512-HEHNfbars9v4pgpW6SO1KSPkfoS0xVOM/9UzkJltjlsHZmJasxg8aXkuZa7SMf8vKGIBhpUsPluQSqhJFCqebw==}
     engines: {node: '>=0.4.0'}
 
-  acorn@8.15.0:
-    resolution: {integrity: sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg==}
+  acorn@8.16.0:
+    resolution: {integrity: sha512-UVJyE9MttOsBQIDKw1skb9nAwQuR5wuGD3+82K6JgJlm/Y+KI92oNsMNGZCYdDsVtRHSak0pcV5Dno5+4jh9sw==}
     engines: {node: '>=0.4.0'}
     hasBin: true
 
@@ -4035,8 +4035,8 @@ packages:
     resolution: {integrity: sha512-MnA+YT8fwfJPgBx3m60MNqakm30XOkyIoH1y6huTQvC0PwZG7ki8NacLBcrPbNoo8vEZy7Jpuk7+jMO+CUovTQ==}
     engines: {node: '>= 14'}
 
-  ai@6.0.91:
-    resolution: {integrity: sha512-k1/8BusZMhYVxxLZt0BUZzm9HVDCCh117nyWfWUx5xjR2+tWisJbXgysL7EBMq2lgyHwgpA1jDR3tVjWSdWZXw==}
+  ai@6.0.94:
+    resolution: {integrity: sha512-/F9wh262HbK05b/5vILh38JvPiheonT+kBj1L97712E7VPchqmcx7aJuZN3QSk5Pj6knxUJLm2FFpYJI1pHXUA==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -4114,8 +4114,8 @@ packages:
   ast-v8-to-istanbul@0.3.11:
     resolution: {integrity: sha512-Qya9fkoofMjCBNVdWINMjB5KZvkYfaO9/anwkWnjxibpWUxo5iHl2sOdP7/uAqaRuUYuoo8rDwnbaaKVFxoUvw==}
 
-  b4a@1.7.5:
-    resolution: {integrity: sha512-iEsKNwDh1wiWTps1/hdkNdmBgDlDVZP5U57ZVOlt+dNFqpc/lpPouCIxZw+DYBgc4P9NDfIZMPNR4CHNhzwLIA==}
+  b4a@1.8.0:
+    resolution: {integrity: sha512-qRuSmNSkGQaHwNbM7J78Wwy+ghLEYF1zNrSeMxj4Kgw6y33O3mXcQ6Ie9fRvfU/YnxWkOchPXbaLb73TkIsfdg==}
     peerDependencies:
       react-native-b4a: '*'
     peerDependenciesMeta:
@@ -4213,6 +4213,10 @@ packages:
   buffer@6.0.3:
     resolution: {integrity: sha512-FTiCpNxtwiZZHEZbcbTIcZjERVICn9yq/pDFkTl95/AxzD1naBctN7YO68riM/gLSDY7sdrMby8hofADYuuqOA==}
 
+  bundle-name@4.1.0:
+    resolution: {integrity: sha512-tjwM5exMg6BGRI+kNmTntNsvdZS1X8BFYS6tnJ2hdH0kVxM6/eVZ2xy+FqStSWvYmtfFMDLIxurorHwDKfDz5Q==}
+    engines: {node: '>=18'}
+
   bytes-iec@3.1.1:
     resolution: {integrity: sha512-fey6+4jDK7TFtFg/klGSvNKJctyU7n2aQdnM+CO0ruLPbqqMOM8Tio0Pc+deqUeVKX1tL5DQep1zQ7+37aTAsA==}
     engines: {node: '>= 0.8'}
@@ -4239,6 +4243,10 @@ packages:
   cliui@8.0.1:
     resolution: {integrity: sha512-BSeNnyus75C4//NQ9gQt1/csTXyo/8Sb+afLAkzAptFuMsod9HFokGNudZpi/oQV73hnVK+sR+5PVRMd+Dr7YQ==}
     engines: {node: '>=12'}
+
+  cliui@9.0.1:
+    resolution: {integrity: sha512-k7ndgKhwoQveBL+/1tqGJYNz097I7WOvwbmmU2AR5+magtbjPWQTS1C5vzGkBC8Ym8UWRzfKUzUUqFLypY4Q+w==}
+    engines: {node: '>=20'}
 
   color-convert@2.0.1:
     resolution: {integrity: sha512-RRECPsj7iu/xb5oKYcsFHSppFNnsj/52OVTRKb4zP5onXwVF3zVmmToNcOfGC+CRDpfK/U584fMg38ZHCaElKQ==}
@@ -4339,9 +4347,17 @@ packages:
   decimal.js@10.6.0:
     resolution: {integrity: sha512-YpgQiITW3JXGntzdUmyUR1V812Hn8T1YVXhCu+wO3OpS4eU9l4YdD3qjyiKdV6mvV29zapkMeD390UVEf2lkUg==}
 
-  define-lazy-prop@2.0.0:
-    resolution: {integrity: sha512-Ds09qNh8yw3khSjiJjiUInaGX9xlqZDY7JVryGxdxV7NPeuqQfplOpQ66yJFZut3jLa5zOwkXw1g9EI2uKh4Og==}
-    engines: {node: '>=8'}
+  default-browser-id@5.0.1:
+    resolution: {integrity: sha512-x1VCxdX4t+8wVfd1so/9w+vQ4vx7lKd2Qp5tDRutErwmR85OgmfX7RlLRMWafRMY7hbEiXIbudNrjOAPa/hL8Q==}
+    engines: {node: '>=18'}
+
+  default-browser@5.5.0:
+    resolution: {integrity: sha512-H9LMLr5zwIbSxrmvikGuI/5KGhZ8E2zH3stkMgM5LpOWDutGM2JZaj460Udnf1a+946zc7YBgrqEWwbk7zHvGw==}
+    engines: {node: '>=18'}
+
+  define-lazy-prop@3.0.0:
+    resolution: {integrity: sha512-N+MeXYoqr3pOgn8xfyRPREN7gHakLYjhsHhWGT3fWAiL4IkAt0iDw14QiiEm2bE30c5XX5q0FtAA3CK5f9/BUg==}
+    engines: {node: '>=12'}
 
   degenerator@5.0.1:
     resolution: {integrity: sha512-TllpMR/t0M5sqCXfj85i4XaAzxmS5tVA16dqvdkMwGmzI+dXLXnw3J+3Vdv7VKw+ThlTMboK6i9rnZ6Nntj5CQ==}
@@ -4379,8 +4395,11 @@ packages:
   eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
 
-  electron-to-chromium@1.5.286:
-    resolution: {integrity: sha512-9tfDXhJ4RKFNerfjdCcZfufu49vg620741MNs26a9+bhLThdB+plgMeou98CAaHu/WATj2iHOOHTp1hWtABj2A==}
+  electron-to-chromium@1.5.302:
+    resolution: {integrity: sha512-sM6HAN2LyK82IyPBpznDRqlTQAtuSaO+ShzFiWTvoMJLHyZ+Y39r8VMfHzwbU8MVBzQ4Wdn85+wlZl2TLGIlwg==}
+
+  emoji-regex@10.6.0:
+    resolution: {integrity: sha512-toUI84YS5YmxW219erniWD0CIVOo46xGKColeNQRgOzDorgBi1v4D71/OFzgD9GO2UGKIv1C3Sp8DAn0+j5w7A==}
 
   emoji-regex@8.0.0:
     resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==}
@@ -4560,6 +4579,10 @@ packages:
     resolution: {integrity: sha512-DyFP3BM/3YHTQOCUL/w0OZHR0lpKeGrxotcHWcqNEdnltqFwXVfhEBQ94eIo34AfQpo0rGki4cyIiftY06h2Fg==}
     engines: {node: 6.* || 8.* || >= 10.*}
 
+  get-east-asian-width@1.5.0:
+    resolution: {integrity: sha512-CQ+bEO+Tva/qlmw24dCejulK5pMzVnUOFOijVogd3KQs07HnRIgp8TGipvCCRT06xeYEbpbgwaCxglFyiuIcmA==}
+    engines: {node: '>=18'}
+
   get-stream@5.2.0:
     resolution: {integrity: sha512-nBF+F1rAZVCu/p7rjzgA+Yb4lfYXrpl7a6VmJrU8wF9I1CKvP/QwPNZHnOlwbTkY6dvtFIzFMSyQXbLoTQPRpA==}
     engines: {node: '>=8'}
@@ -4583,9 +4606,9 @@ packages:
     deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
     hasBin: true
 
-  glob@13.0.5:
-    resolution: {integrity: sha512-BzXxZg24Ibra1pbQ/zE7Kys4Ua1ks7Bn6pKLkVPZ9FZe4JQS6/Q7ef3LG1H+k7lUf5l4T3PLSyYyYJVYUvfgTw==}
-    engines: {node: 20 || >=22}
+  glob@13.0.6:
+    resolution: {integrity: sha512-Wjlyrolmm8uDpm/ogGyXZXb1Z+Ca2B8NbJwqBVg0axK9GbBeoS7yGV6vjXnYdGm6X53iehEuxxbyiKp8QmN4Vw==}
+    engines: {node: 18 || 20 || >=22}
 
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
@@ -4647,9 +4670,9 @@ packages:
     resolution: {integrity: sha512-UfoeMA6fIJ8wTYFEUjelnaGI67v6+N7qXJEvQuIGa99l4xsCruSYOVSQ0uPANn4dAzm8lkYPaKLrrijLq7x23w==}
     engines: {node: '>= 0.4'}
 
-  is-docker@2.2.1:
-    resolution: {integrity: sha512-F+i2BKsFrH66iaUFc0woD8sLy8getkwTwtOBjvs56Cx4CgJDeKQeqfz8wAYiSb8JOprWhHH5p77PbmYCvvUuXQ==}
-    engines: {node: '>=8'}
+  is-docker@3.0.0:
+    resolution: {integrity: sha512-eljcgEDlEns/7AXFosB5K/2nCM4P7FQPkGc/DWLy5rmFEWvZayGrik1d9/QIY5nJ4f9YsVvBkA6kJpHn9rISdQ==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
     hasBin: true
 
   is-extglob@2.1.1:
@@ -4664,6 +4687,11 @@ packages:
     resolution: {integrity: sha512-xelSayHH36ZgE7ZWhli7pW34hNbNl8Ojv5KVmkJD4hBdD3th8Tfk9vYasLM+mXWOZhFkgZfxhLSnrwRr4elSSg==}
     engines: {node: '>=0.10.0'}
 
+  is-inside-container@1.0.0:
+    resolution: {integrity: sha512-KIYLCCJghfHZxqjYBE7rEy0OBuTd5xCHS7tHVgvCLkx7StIoaxwNW3hCALgEUjFfeRk+MG/Qxmp/vtETEF3tRA==}
+    engines: {node: '>=14.16'}
+    hasBin: true
+
   is-number@7.0.0:
     resolution: {integrity: sha512-41Cifkg6e8TylSpdtTpeLVMqvSBEVzTttHvERD741+pnZ8ANv0004MRL43QKPDlK9cGvNp6NZWZUBlbGXYxxng==}
     engines: {node: '>=0.12.0'}
@@ -4674,9 +4702,9 @@ packages:
   is-what@3.14.1:
     resolution: {integrity: sha512-sNxgpk9793nzSs7bA6JQJGeIuRBQhAaNGG77kzYQgMkrID+lS6SlK07K5LaptscDlSaIgH+GPFzf+d75FVxozA==}
 
-  is-wsl@2.2.0:
-    resolution: {integrity: sha512-fKzAra0rGJUUBwGBgNkHZuToZcn+TtXHpeCgmkMJMMYx1sQDYaCSyjJBSCa2nH1DGm7s3n1oBnohoVTBaN7Lww==}
-    engines: {node: '>=8'}
+  is-wsl@3.1.1:
+    resolution: {integrity: sha512-e6rvdUCiQCAuumZslxRJWR/Doq4VpPR82kqclvcS0efgt430SlGIk05vdCN58+VrzgtIcfNODjozVielycD4Sw==}
+    engines: {node: '>=16'}
 
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
@@ -4917,9 +4945,9 @@ packages:
     resolution: {integrity: sha512-fu656aJ0n2kcXwsnwnv9g24tkU5uSmOlTjd6WyyaKm2Z+h1qmY6bAjrcaIxF/BslFqbZ8UBtbJi7KgQOZD2PTw==}
     engines: {node: 20 || >=22}
 
-  minimatch@10.2.1:
-    resolution: {integrity: sha512-MClCe8IL5nRRmawL6ib/eT4oLyeKMGCghibcDWK+J0hh0Q8kqSdia6BvbRMVk6mPa6WqUa5uR2oxt6C5jd533A==}
-    engines: {node: 20 || >=22}
+  minimatch@10.2.2:
+    resolution: {integrity: sha512-+G4CpNBxa5MprY+04MbgOw1v7So6n5JY166pFi9KfYwT78fxScCeSNQSNzp6dpPSW2rONOps6Ocam1wFhCgoVw==}
+    engines: {node: 18 || 20 || >=22}
 
   minimatch@9.0.5:
     resolution: {integrity: sha512-G6T0ZX48xgozx7587koeX9Ys2NYy6Gmv//P89sEte9V9whIapMNF4idKxnW2QtCcLiTWlb/wfCabAtAFWhhBow==}
@@ -4984,9 +5012,9 @@ packages:
   once@1.4.0:
     resolution: {integrity: sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==}
 
-  open@8.4.2:
-    resolution: {integrity: sha512-7x81NCL719oNbsq/3mh+hVrAWmFuEYUqrq/Iw3kUzH8ReypT9QQ0BLoJS7/G9k6N81XjW4qHWtjWwe/9eLy1EQ==}
-    engines: {node: '>=12'}
+  open@10.2.0:
+    resolution: {integrity: sha512-YgBpdJHPyQ2UE5x+hlSXcnejzAvD0b22U2OuAP+8OnlJT+PjWPxtgmGqKKc+RgTM63U9gN0YzrYc71R2WT/hTA==}
+    engines: {node: '>=18'}
 
   outvariant@1.4.0:
     resolution: {integrity: sha512-AlWY719RF02ujitly7Kk/0QlV+pXGFDHrHf9O2OKqyqgBieaPOIeuSkL8sRK6j2WK+/ZAURq2kZsY0d8JapUiw==}
@@ -5027,9 +5055,9 @@ packages:
     resolution: {integrity: sha512-Xa4Nw17FS9ApQFJ9umLiJS4orGjm7ZzwUrwamcGQuHSzDyth9boKDaycYdDcZDuqYATXw4HFXgaqWTctW/v1HA==}
     engines: {node: '>=16 || 14 >=14.18'}
 
-  path-scurry@2.0.1:
-    resolution: {integrity: sha512-oWyT4gICAu+kaA7QWk/jvCHWarMKNs6pXOGWKDTr7cw4IGcUbW+PeTfbaQiLGheFRpjo6O9J0PmyMfQPjH71oA==}
-    engines: {node: 20 || >=22}
+  path-scurry@2.0.2:
+    resolution: {integrity: sha512-3O/iVVsJAPsOnpwWIeD+d6z/7PmqApyQePUtCndjatj/9I5LylHvt5qluFaBT3I5h3r1ejfR056c+FCv+NnNXg==}
+    engines: {node: 18 || 20 || >=22}
 
   pathe@2.0.3:
     resolution: {integrity: sha512-WUjGcAqP1gQacoQe+OBJsFA7Ld4DyXuUIjZ5cc75cLHvJ7dtNsTugphxIADwspS+AraAUePCKrSVtPLFj/F88w==}
@@ -5210,12 +5238,12 @@ packages:
     peerDependencies:
       rollup: '*'
 
-  rollup-plugin-visualizer@6.0.5:
-    resolution: {integrity: sha512-9+HlNgKCVbJDs8tVtjQ43US12eqaiHyyiLMdBwQ7vSZPiHMysGNo2E88TAp1si5wx8NAoYriI2A5kuKfIakmJg==}
-    engines: {node: '>=18'}
+  rollup-plugin-visualizer@6.0.8:
+    resolution: {integrity: sha512-MmLbgYWDiDu8XKoePA1GtmRejl+4GWJTx156zjvycoxCbOq0PkNNwbepyB5tHCfDyRc8PKDLh2f/GLVGKNeV7w==}
+    engines: {node: '>=22'}
     hasBin: true
     peerDependencies:
-      rolldown: 1.x || ^1.0.0-beta
+      rolldown: 1.x || ^1.0.0-beta || ^1.0.0-rc
       rollup: 2.x || 3.x || 4.x
     peerDependenciesMeta:
       rolldown:
@@ -5227,6 +5255,10 @@ packages:
     resolution: {integrity: sha512-oQL6lgK3e2QZeQ7gcgIkS2YZPg5slw37hYufJ3edKlfQSGGm8ICoxswK15ntSzF/a8+h7ekRy7k7oWc3BQ7y8A==}
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
     hasBin: true
+
+  run-applescript@7.1.0:
+    resolution: {integrity: sha512-DPe5pVFaAsinSaV6QjQ6gdiedWDcRCbUuiQfQa2wmWV7+xC9bGulGI8+TdRmoFkAPaBXk8CrAbnlY2ISniJ47Q==}
+    engines: {node: '>=18'}
 
   rw@1.3.3:
     resolution: {integrity: sha512-PdhdWy89SiZogBLaw42zdeqtRJ//zFd2PgQavcICDUgJT5oW10QCRKbJ6bg4r0/UY2M6BWd5tkxuGFRvCkgfHQ==}
@@ -5498,6 +5530,10 @@ packages:
   string-width@5.1.2:
     resolution: {integrity: sha512-HnLOCR3vjcY8beoNLtcjZ5/nxn2afmME6lhrDrebokqMap+XbeW8n9TXpPDOqdGK5qcI3oT0GKTW6wC7EMiVqA==}
     engines: {node: '>=12'}
+
+  string-width@7.2.0:
+    resolution: {integrity: sha512-tsaTIkKW9b4N+AEj+SVA+WhJzV7/zMhcSu78mLKWSk7cXMOSHsBKFWUs0fWwq8QyK3MgJBQRX6Gbi4kYbdvGkQ==}
+    engines: {node: '>=18'}
 
   strip-ansi@6.0.1:
     resolution: {integrity: sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==}
@@ -5871,6 +5907,10 @@ packages:
     resolution: {integrity: sha512-si7QWI6zUMq56bESFvagtmzMdGOtoxfR+Sez11Mobfc7tm+VkUckk9bW2UeffTGVUbOksxmSw0AA2gs8g71NCQ==}
     engines: {node: '>=12'}
 
+  wrap-ansi@9.0.2:
+    resolution: {integrity: sha512-42AtmgqjV+X1VpdOfyTGOYRi0/zsoLqtXQckTmqTeybT+BDIbM/Guxo7x3pE2vtpr1ok6xRqM9OpBe+Jyoqyww==}
+    engines: {node: '>=18'}
+
   wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
 
@@ -5885,6 +5925,10 @@ packages:
         optional: true
       utf-8-validate:
         optional: true
+
+  wsl-utils@0.1.0:
+    resolution: {integrity: sha512-h3Fbisa2nKGPxCpm89Hk33lBLsnaGBvctQopaBSOW/uIs6FTe1ATyAnKFJrzVs9vpGdsTe73WF3V4lIsk4Gacw==}
+    engines: {node: '>=18'}
 
   xml-name-validator@5.0.0:
     resolution: {integrity: sha512-EvGK8EJ3DhaHfbRlETOWAS5pO9MZITeauHKJyb8wyajUfQUenkIg2MvLDTZ4T/TgIcm3HU0TFBgWWboAZ30UHg==}
@@ -5912,9 +5956,17 @@ packages:
     resolution: {integrity: sha512-tVpsJW7DdjecAiFpbIB1e3qxIQsE6NoPc5/eTdrbbIC4h0LVsWhnoa3g+m2HclBIujHzsxZ4VJVA+GUuc2/LBw==}
     engines: {node: '>=12'}
 
+  yargs-parser@22.0.0:
+    resolution: {integrity: sha512-rwu/ClNdSMpkSrUb+d6BRsSkLUq1fmfsY6TOpYzTwvwkg1/NRG85KBy3kq++A8LKQwX6lsu+aWad+2khvuXrqw==}
+    engines: {node: ^20.19.0 || ^22.12.0 || >=23}
+
   yargs@17.7.2:
     resolution: {integrity: sha512-7dSzzRQ++CKnNI/krKnYRV7JKKPUXMEh61soaHKg9mrWEhzFWhFnxPxGl+69cD1Ou63C13NUPCnmIcrvqCuM6w==}
     engines: {node: '>=12'}
+
+  yargs@18.0.0:
+    resolution: {integrity: sha512-4UEqdc2RYGHZc7Doyqkrqiln3p9X2DZVxaGbwhn2pi7MrRagKaOcIKe8L3OxYcbhXLgLFUS3zAYuQjKBQgmuNg==}
+    engines: {node: ^20.19.0 || ^22.12.0 || >=23}
 
   yauzl@2.10.0:
     resolution: {integrity: sha512-p4a9I6X6nu6IhoGmBqAcbJy1mlC4j27vEPZX9F4L4/vZT3Lyq1VkFHw/V/PUcB9Buo+DG3iHkT0x3Qya58zc3g==}
@@ -5943,7 +5995,7 @@ snapshots:
       '@ai-sdk/provider-utils': 4.0.15(zod@4.3.6)
       zod: 4.3.6
 
-  '@ai-sdk/gateway@3.0.50(zod@4.3.6)':
+  '@ai-sdk/gateway@3.0.52(zod@4.3.6)':
     dependencies:
       '@ai-sdk/provider': 3.0.8
       '@ai-sdk/provider-utils': 4.0.15(zod@4.3.6)
@@ -6099,39 +6151,39 @@ snapshots:
 
   '@bcoe/v8-coverage@1.0.2': {}
 
-  '@biomejs/biome@2.4.2':
+  '@biomejs/biome@2.4.3':
     optionalDependencies:
-      '@biomejs/cli-darwin-arm64': 2.4.2
-      '@biomejs/cli-darwin-x64': 2.4.2
-      '@biomejs/cli-linux-arm64': 2.4.2
-      '@biomejs/cli-linux-arm64-musl': 2.4.2
-      '@biomejs/cli-linux-x64': 2.4.2
-      '@biomejs/cli-linux-x64-musl': 2.4.2
-      '@biomejs/cli-win32-arm64': 2.4.2
-      '@biomejs/cli-win32-x64': 2.4.2
+      '@biomejs/cli-darwin-arm64': 2.4.3
+      '@biomejs/cli-darwin-x64': 2.4.3
+      '@biomejs/cli-linux-arm64': 2.4.3
+      '@biomejs/cli-linux-arm64-musl': 2.4.3
+      '@biomejs/cli-linux-x64': 2.4.3
+      '@biomejs/cli-linux-x64-musl': 2.4.3
+      '@biomejs/cli-win32-arm64': 2.4.3
+      '@biomejs/cli-win32-x64': 2.4.3
 
-  '@biomejs/cli-darwin-arm64@2.4.2':
+  '@biomejs/cli-darwin-arm64@2.4.3':
     optional: true
 
-  '@biomejs/cli-darwin-x64@2.4.2':
+  '@biomejs/cli-darwin-x64@2.4.3':
     optional: true
 
-  '@biomejs/cli-linux-arm64-musl@2.4.2':
+  '@biomejs/cli-linux-arm64-musl@2.4.3':
     optional: true
 
-  '@biomejs/cli-linux-arm64@2.4.2':
+  '@biomejs/cli-linux-arm64@2.4.3':
     optional: true
 
-  '@biomejs/cli-linux-x64-musl@2.4.2':
+  '@biomejs/cli-linux-x64-musl@2.4.3':
     optional: true
 
-  '@biomejs/cli-linux-x64@2.4.2':
+  '@biomejs/cli-linux-x64@2.4.3':
     optional: true
 
-  '@biomejs/cli-win32-arm64@2.4.2':
+  '@biomejs/cli-win32-arm64@2.4.3':
     optional: true
 
-  '@biomejs/cli-win32-x64@2.4.2':
+  '@biomejs/cli-win32-x64@2.4.3':
     optional: true
 
   '@bramus/specificity@2.4.2':
@@ -6145,14 +6197,14 @@ snapshots:
     dependencies:
       '@codemirror/language': 6.12.1
       '@codemirror/state': 6.5.4
-      '@codemirror/view': 6.39.14
+      '@codemirror/view': 6.39.15
       '@lezer/common': 1.5.1
 
   '@codemirror/commands@6.10.2':
     dependencies:
       '@codemirror/language': 6.12.1
       '@codemirror/state': 6.5.4
-      '@codemirror/view': 6.39.14
+      '@codemirror/view': 6.39.15
       '@lezer/common': 1.5.1
 
   '@codemirror/lang-css@6.3.1':
@@ -6170,7 +6222,7 @@ snapshots:
       '@codemirror/lang-javascript': 6.2.4
       '@codemirror/language': 6.12.1
       '@codemirror/state': 6.5.4
-      '@codemirror/view': 6.39.14
+      '@codemirror/view': 6.39.15
       '@lezer/common': 1.5.1
       '@lezer/css': 1.3.1
       '@lezer/html': 1.3.13
@@ -6181,14 +6233,14 @@ snapshots:
       '@codemirror/language': 6.12.1
       '@codemirror/lint': 6.9.4
       '@codemirror/state': 6.5.4
-      '@codemirror/view': 6.39.14
+      '@codemirror/view': 6.39.15
       '@lezer/common': 1.5.1
       '@lezer/javascript': 1.5.4
 
   '@codemirror/language@6.12.1':
     dependencies:
       '@codemirror/state': 6.5.4
-      '@codemirror/view': 6.39.14
+      '@codemirror/view': 6.39.15
       '@lezer/common': 1.5.1
       '@lezer/highlight': 1.2.3
       '@lezer/lr': 1.4.8
@@ -6197,14 +6249,14 @@ snapshots:
   '@codemirror/lint@6.9.4':
     dependencies:
       '@codemirror/state': 6.5.4
-      '@codemirror/view': 6.39.14
+      '@codemirror/view': 6.39.15
       crelt: 1.0.6
 
   '@codemirror/state@6.5.4':
     dependencies:
       '@marijn/find-cluster-break': 1.0.2
 
-  '@codemirror/view@6.39.14':
+  '@codemirror/view@6.39.15':
     dependencies:
       '@codemirror/state': 6.5.4
       crelt: 1.0.6
@@ -6234,7 +6286,7 @@ snapshots:
       '@codemirror/lang-javascript': 6.2.4
       '@codemirror/language': 6.12.1
       '@codemirror/state': 6.5.4
-      '@codemirror/view': 6.39.14
+      '@codemirror/view': 6.39.15
       '@codesandbox/sandpack-client': 2.19.8
       '@lezer/highlight': 1.2.3
       '@react-hook/intersection-observer': 3.1.2(react@19.2.4)
@@ -8340,17 +8392,17 @@ snapshots:
       path-browserify: 1.0.1
       vscode-uri: 3.1.0
 
-  acorn-walk@8.3.4:
+  acorn-walk@8.3.5:
     dependencies:
-      acorn: 8.15.0
+      acorn: 8.16.0
 
-  acorn@8.15.0: {}
+  acorn@8.16.0: {}
 
   agent-base@7.1.4: {}
 
-  ai@6.0.91(zod@4.3.6):
+  ai@6.0.94(zod@4.3.6):
     dependencies:
-      '@ai-sdk/gateway': 3.0.50(zod@4.3.6)
+      '@ai-sdk/gateway': 3.0.52(zod@4.3.6)
       '@ai-sdk/provider': 3.0.8
       '@ai-sdk/provider-utils': 4.0.15(zod@4.3.6)
       '@opentelemetry/api': 1.9.0
@@ -8382,15 +8434,13 @@ snapshots:
 
   ansi-regex@5.0.1: {}
 
-  ansi-regex@6.2.2:
-    optional: true
+  ansi-regex@6.2.2: {}
 
   ansi-styles@4.3.0:
     dependencies:
       color-convert: 2.0.1
 
-  ansi-styles@6.2.3:
-    optional: true
+  ansi-styles@6.2.3: {}
 
   ansis@4.2.0:
     optional: true
@@ -8419,7 +8469,7 @@ snapshots:
       estree-walker: 3.0.3
       js-tokens: 10.0.0
 
-  b4a@1.7.5: {}
+  b4a@1.8.0: {}
 
   balanced-match@1.0.2: {}
 
@@ -8491,7 +8541,7 @@ snapshots:
     dependencies:
       baseline-browser-mapping: 2.10.0
       caniuse-lite: 1.0.30001770
-      electron-to-chromium: 1.5.286
+      electron-to-chromium: 1.5.302
       node-releases: 2.0.27
       update-browserslist-db: 1.2.3(browserslist@4.28.1)
 
@@ -8507,6 +8557,10 @@ snapshots:
     dependencies:
       base64-js: 1.5.1
       ieee754: 1.2.1
+
+  bundle-name@4.1.0:
+    dependencies:
+      run-applescript: 7.1.0
 
   bytes-iec@3.1.1: {}
 
@@ -8531,6 +8585,12 @@ snapshots:
       string-width: 4.2.3
       strip-ansi: 6.0.1
       wrap-ansi: 7.0.0
+
+  cliui@9.0.1:
+    dependencies:
+      string-width: 7.2.0
+      strip-ansi: 7.1.2
+      wrap-ansi: 9.0.2
 
   color-convert@2.0.1:
     dependencies:
@@ -8630,7 +8690,14 @@ snapshots:
 
   decimal.js@10.6.0: {}
 
-  define-lazy-prop@2.0.0: {}
+  default-browser-id@5.0.1: {}
+
+  default-browser@5.5.0:
+    dependencies:
+      bundle-name: 4.1.0
+      default-browser-id: 5.0.1
+
+  define-lazy-prop@3.0.0: {}
 
   degenerator@5.0.1:
     dependencies:
@@ -8657,7 +8724,9 @@ snapshots:
   eastasianwidth@0.2.0:
     optional: true
 
-  electron-to-chromium@1.5.286: {}
+  electron-to-chromium@1.5.302: {}
+
+  emoji-regex@10.6.0: {}
 
   emoji-regex@8.0.0: {}
 
@@ -8896,6 +8965,8 @@ snapshots:
 
   get-caller-file@2.0.5: {}
 
+  get-east-asian-width@1.5.0: {}
+
   get-stream@5.2.0:
     dependencies:
       pump: 3.0.3
@@ -8927,11 +8998,11 @@ snapshots:
       path-scurry: 1.11.1
     optional: true
 
-  glob@13.0.5:
+  glob@13.0.6:
     dependencies:
-      minimatch: 10.2.1
+      minimatch: 10.2.2
       minipass: 7.1.3
-      path-scurry: 2.0.1
+      path-scurry: 2.0.2
 
   graceful-fs@4.2.11: {}
 
@@ -8988,7 +9059,7 @@ snapshots:
     dependencies:
       hasown: 2.0.2
 
-  is-docker@2.2.1: {}
+  is-docker@3.0.0: {}
 
   is-extglob@2.1.1:
     optional: true
@@ -9000,6 +9071,10 @@ snapshots:
       is-extglob: 2.1.1
     optional: true
 
+  is-inside-container@1.0.0:
+    dependencies:
+      is-docker: 3.0.0
+
   is-number@7.0.0: {}
 
   is-potential-custom-element-name@1.0.1: {}
@@ -9007,9 +9082,9 @@ snapshots:
   is-what@3.14.1:
     optional: true
 
-  is-wsl@2.2.0:
+  is-wsl@3.1.1:
     dependencies:
-      is-docker: 2.2.1
+      is-inside-container: 1.0.0
 
   isexe@2.0.0:
     optional: true
@@ -9265,7 +9340,7 @@ snapshots:
     dependencies:
       '@isaacs/brace-expansion': 5.0.1
 
-  minimatch@10.2.1:
+  minimatch@10.2.2:
     dependencies:
       brace-expansion: 5.0.2
 
@@ -9281,7 +9356,7 @@ snapshots:
 
   mlly@1.8.0:
     dependencies:
-      acorn: 8.15.0
+      acorn: 8.16.0
       pathe: 2.0.3
       pkg-types: 1.3.1
       ufo: 1.6.3
@@ -9321,11 +9396,12 @@ snapshots:
     dependencies:
       wrappy: 1.0.2
 
-  open@8.4.2:
+  open@10.2.0:
     dependencies:
-      define-lazy-prop: 2.0.0
-      is-docker: 2.2.1
-      is-wsl: 2.2.0
+      default-browser: 5.5.0
+      define-lazy-prop: 3.0.0
+      is-inside-container: 1.0.0
+      wsl-utils: 0.1.0
 
   outvariant@1.4.0: {}
 
@@ -9371,7 +9447,7 @@ snapshots:
       minipass: 7.1.3
     optional: true
 
-  path-scurry@2.0.1:
+  path-scurry@2.0.2:
     dependencies:
       lru-cache: 11.2.6
       minipass: 7.1.3
@@ -9532,7 +9608,7 @@ snapshots:
 
   rimraf@6.1.3:
     dependencies:
-      glob: 13.0.5
+      glob: 13.0.6
       package-json-from-dist: 1.0.1
 
   robust-predicates@2.0.4: {}
@@ -9582,12 +9658,12 @@ snapshots:
     dependencies:
       rollup: 4.57.1
 
-  rollup-plugin-visualizer@6.0.5(rolldown@1.0.0-beta.34)(rollup@4.57.1):
+  rollup-plugin-visualizer@6.0.8(rolldown@1.0.0-beta.34)(rollup@4.57.1):
     dependencies:
-      open: 8.4.2
+      open: 10.2.0
       picomatch: 4.0.3
       source-map: 0.7.6
-      yargs: 17.7.2
+      yargs: 18.0.0
     optionalDependencies:
       rolldown: 1.0.0-beta.34
       rollup: 4.57.1
@@ -9622,6 +9698,8 @@ snapshots:
       '@rollup/rollup-win32-x64-gnu': 4.57.1
       '@rollup/rollup-win32-x64-msvc': 4.57.1
       fsevents: 2.3.3
+
+  run-applescript@7.1.0: {}
 
   rw@1.3.3: {}
 
@@ -9901,6 +9979,12 @@ snapshots:
       strip-ansi: 7.1.2
     optional: true
 
+  string-width@7.2.0:
+    dependencies:
+      emoji-regex: 10.6.0
+      get-east-asian-width: 1.5.0
+      strip-ansi: 7.1.2
+
   strip-ansi@6.0.1:
     dependencies:
       ansi-regex: 5.0.1
@@ -9908,7 +9992,6 @@ snapshots:
   strip-ansi@7.1.2:
     dependencies:
       ansi-regex: 6.2.2
-    optional: true
 
   strip-json-comments@3.1.1: {}
 
@@ -9972,7 +10055,7 @@ snapshots:
 
   tar-stream@3.1.7:
     dependencies:
-      b4a: 1.7.5
+      b4a: 1.8.0
       fast-fifo: 1.3.2
       streamx: 2.23.0
     transitivePeerDependencies:
@@ -9990,14 +10073,14 @@ snapshots:
   terser@5.44.1:
     dependencies:
       '@jridgewell/source-map': 0.3.11
-      acorn: 8.15.0
+      acorn: 8.16.0
       commander: 2.20.3
       source-map-support: 0.5.21
     optional: true
 
   text-decoder@1.2.7:
     dependencies:
-      b4a: 1.7.5
+      b4a: 1.8.0
     transitivePeerDependencies:
       - react-native-b4a
 
@@ -10050,8 +10133,8 @@ snapshots:
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
       '@types/node': 25.3.0
-      acorn: 8.15.0
-      acorn-walk: 8.3.4
+      acorn: 8.16.0
+      acorn-walk: 8.3.5
       arg: 4.1.3
       create-require: 1.1.1
       diff: 4.0.4
@@ -10119,7 +10202,7 @@ snapshots:
   unplugin@2.3.11:
     dependencies:
       '@jridgewell/remapping': 2.3.5
-      acorn: 8.15.0
+      acorn: 8.16.0
       picomatch: 4.0.3
       webpack-virtual-modules: 0.6.2
 
@@ -10268,9 +10351,19 @@ snapshots:
       strip-ansi: 7.1.2
     optional: true
 
+  wrap-ansi@9.0.2:
+    dependencies:
+      ansi-styles: 6.2.3
+      string-width: 7.2.0
+      strip-ansi: 7.1.2
+
   wrappy@1.0.2: {}
 
   ws@8.19.0: {}
+
+  wsl-utils@0.1.0:
+    dependencies:
+      is-wsl: 3.1.1
 
   xml-name-validator@5.0.0: {}
 
@@ -10286,6 +10379,8 @@ snapshots:
 
   yargs-parser@21.1.1: {}
 
+  yargs-parser@22.0.0: {}
+
   yargs@17.7.2:
     dependencies:
       cliui: 8.0.1
@@ -10295,6 +10390,15 @@ snapshots:
       string-width: 4.2.3
       y18n: 5.0.8
       yargs-parser: 21.1.1
+
+  yargs@18.0.0:
+    dependencies:
+      cliui: 9.0.1
+      escalade: 3.2.0
+      get-caller-file: 2.0.5
+      string-width: 7.2.0
+      y18n: 5.0.8
+      yargs-parser: 22.0.0
 
   yauzl@2.10.0:
     dependencies:

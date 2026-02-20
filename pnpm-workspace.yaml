@@ -24,7 +24,7 @@ catalog:
   '@types/rollup-plugin-peer-deps-external': ^2.2.6
   '@vitejs/plugin-react': ^5.1.4
   '@vitest/coverage-v8': ^4.0.18
-  ai: ^6.0.91
+  ai: ^6.0.94
   jsdom: ^28.1.0
   lodash-es: ^4.17.23
   maplibre-gl: ^5.18.0
@@ -34,7 +34,7 @@ catalog:
   rollup-plugin-analyzer: ^4.0.0
   rollup-plugin-license: ^3.7.0
   rollup-plugin-peer-deps-external: ^2.2.4
-  rollup-plugin-visualizer: ^6.0.5
+  rollup-plugin-visualizer: ^6.0.8
   ts-node: ^10.9.2
   typescript: ^5.9.3
   vite: ^7.3.1
