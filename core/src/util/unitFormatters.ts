@@ -51,7 +51,7 @@ const hourUnits = (displayUnits?: TimeDisplayUnits): string => displayUnits?.hou
  *
  * // Route travel time
  * const route = await calculateRoute({ ... });
- * const travelTime = formatDuration(route.routes[0].summary.travelTimeInSeconds);
+ * const travelTime = formatDuration(route.features[0].summary.travelTimeInSeconds);
  * console.log(`Estimated time: ${travelTime}`);
  * // Output: "Estimated time: 2 hr 15 min"
  * ```

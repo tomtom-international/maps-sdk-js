@@ -152,7 +152,7 @@ export const bboxFromCoordsArray = (coordinates: Position[] | undefined): Option
  *   key: 'key',
  *   locations: [[4.9, 52.3], [4.5, 51.9]]
  * });
- * const routeBbox = bboxFromGeoJSON(route.routes[0].geometry);
+ * const routeBbox = bboxFromGeoJSON(route.features[0].geometry);
  * // Returns bbox containing the entire route
  *
  * // From an array of GeoJSON objects
