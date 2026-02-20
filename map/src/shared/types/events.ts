@@ -22,8 +22,11 @@ export type ClickEventType = 'click' | 'contextmenu';
  * Subtype for hover events with timing distinction.
  *
  * @remarks
- * - `hover`: Immediate hover when cursor enters a feature
- * - `long-hover`: Triggered after hovering for a configured duration (typically 300-800ms)
+ * - `hover`: Fires once when the cursor first enters a feature
+ * - `hover-move`: Fires on every mouse movement while the cursor remains over the same feature.
+ *   Use this when you need continuously updated coordinates as the cursor travels along the feature
+ *   (e.g. updating a tooltip position or snapping to a route line).
+ * - `long-hover`: Triggered after hovering over a feature for a configured duration (typically 300-800ms)
  *
  * Long-hover is useful for showing detailed tooltips or previews without
  * cluttering the UI during quick mouse movements.
@@ -31,12 +34,13 @@ export type ClickEventType = 'click' | 'contextmenu';
  * @example
  * ```typescript
  * const quickHover: HoverEventType = 'hover';
+ * const movingHover: HoverEventType = 'hover-move';
  * const sustainedHover: HoverEventType = 'long-hover';
  * ```
  *
  * @group User Interaction Events
  */
-export type HoverEventType = 'hover' | 'long-hover';
+export type HoverEventType = 'hover' | 'hover-move' | 'long-hover';
 
 /**
  * Type of user event supported by the SDK beyond basic MapLibre support.

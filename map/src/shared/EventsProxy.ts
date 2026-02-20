@@ -200,7 +200,7 @@ export class EventsProxy extends AbstractEventProxy {
             // We do so because basic hovering states indicate a feature is interactive.
             // (e.g. if there's a click handler, we'll still apply basic hover states, even if we don't fire hover events)
             const firstHandler = this.findHandlers(
-                ['hover', 'long-hover', 'click', 'contextmenu'],
+                ['hover', 'hover-move', 'long-hover', 'click', 'contextmenu'],
                 hoveredTopFeature?.source,
                 hoveredTopFeature?.layer.id,
             )?.[0];
@@ -227,6 +227,18 @@ export class EventsProxy extends AbstractEventProxy {
 
                 for (const handler of hoverHandlers) {
                     handler.fn(eventState.feature, ev.lngLat, this.hoveringFeatures, this.hoveringSourceWithLayers);
+                }
+            }
+
+            if (mouseInMotionOverHoveredFeature) {
+                const hoverMoveHandlers = this.findHandlers(
+                    ['hover-move'],
+                    this.hoveringFeature?.source,
+                    this.hoveringFeature?.layer.id,
+                );
+
+                for (const handler of hoverMoveHandlers) {
+                    handler.fn(this.hoveringFeature, ev.lngLat, this.hoveringFeatures, this.hoveringSourceWithLayers);
                 }
             }
 
