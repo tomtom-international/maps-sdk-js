@@ -393,25 +393,25 @@ export type RoadShieldSectionProps = SectionProps & {
  * @group Route
  */
 export type SectionsProps = {
-    leg: LegSectionProps[];
+    carpool?: SectionProps[];
     carTrain?: SectionProps[];
+    country?: CountrySectionProps[];
     ferry?: SectionProps[];
+    importantRoadStretch?: ImportantRoadStretchProps[];
+    lanes?: LaneSectionProps[];
+    leg: LegSectionProps[];
+    lowEmissionZone?: SectionProps[];
     motorway?: SectionProps[];
     pedestrian?: SectionProps[];
+    roadShields?: RoadShieldSectionProps[];
+    speedLimit?: SpeedLimitSectionProps[];
     toll?: SectionProps[];
     tollVignette?: CountrySectionProps[];
-    country?: CountrySectionProps[];
     traffic?: TrafficSectionProps[];
-    vehicleRestricted?: SectionProps[];
     tunnel?: SectionProps[];
     unpaved?: SectionProps[];
     urban?: SectionProps[];
-    carpool?: SectionProps[];
-    lowEmissionZone?: SectionProps[];
-    lanes?: LaneSectionProps[];
-    roadShields?: RoadShieldSectionProps[];
-    speedLimit?: SpeedLimitSectionProps[];
-    importantRoadStretch?: ImportantRoadStretchProps[];
+    vehicleRestricted?: SectionProps[];
 };
 
 /**
@@ -424,23 +424,25 @@ export type SectionType = keyof SectionsProps;
  * @group Route
  */
 export const inputSectionTypes: SectionType[] = [
+    'carpool',
     'carTrain',
+    'country',
     'ferry',
-    'tunnel',
+    'importantRoadStretch',
+    'lanes',
+    'leg',
+    'lowEmissionZone',
     'motorway',
     'pedestrian',
+    'roadShields',
+    'speedLimit',
     'toll',
     'tollVignette',
-    'country',
-    'vehicleRestricted',
     'traffic',
-    'carpool',
-    'urban',
+    'tunnel',
     'unpaved',
-    'lowEmissionZone',
-    'speedLimit',
-    'roadShields',
-    'importantRoadStretch',
+    'urban',
+    'vehicleRestricted',
 ] as const;
 
 /**

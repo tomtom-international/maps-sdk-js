@@ -67,8 +67,7 @@ export type InputSectionTypes = InputSectionType[];
  * const guidance: GuidanceParams = {
  *   type: 'coded',
  *   version: 2,
- *   phonetics: 'IPA',
- *   roadShieldReferences: 'all'
+ *   phonetics: 'IPA'
  * };
  * ```
  *
@@ -97,13 +96,6 @@ export type GuidanceParams = {
      * @default 'IPA'
      */
     phonetics?: 'LHP' | 'IPA';
-    /**
-     * Include road shield references for displaying road signs.
-     *
-     * When set to 'all', includes references to road shield images
-     * that can be fetched from the TomTom Road Shield API.
-     */
-    roadShieldReferences?: 'all';
 };
 
 /**
@@ -352,8 +344,7 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
          * guidance: {
          *   type: 'coded',
          *   version: 2,
-         *   phonetics: 'IPA',
-         *   roadShieldReferences: 'all'
+         *   phonetics: 'IPA'
          * }
          * ```
          */
@@ -370,7 +361,7 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
          * @example
          * ```typescript
          * // Request specific sections
-         * sectionTypes: ['toll', 'ferry', 'traffic', 'country']
+         * sectionTypes: ['toll', 'ferry', 'traffic', 'country', 'roadShields'...]
          *
          * // Request no optional sections
          * sectionTypes: []

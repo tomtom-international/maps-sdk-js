@@ -409,7 +409,6 @@ describe('Calculate route integration tests', () => {
                 type: 'coded',
                 version: 2,
                 phonetics: 'IPA',
-                roadShieldReferences: 'all',
             },
             maxAlternatives: 2,
             sectionTypes: ['traffic', 'ferry', 'toll', 'lanes', 'speedLimit', 'roadShields'],
