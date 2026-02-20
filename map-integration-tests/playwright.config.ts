@@ -36,7 +36,17 @@ export default defineConfig({
     },
 
     /* Configure projects for major browsers */
-    projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+    projects: [
+        {
+            name: 'chromium',
+            use: {
+                ...devices['Desktop Chrome'],
+                launchOptions: {
+                    args: ['--enable-unsafe-swiftshader', '--disable-gpu-sandbox'],
+                },
+            },
+        },
+    ],
 
     /* Run your local dev server before starting the tests */
     webServer: {
