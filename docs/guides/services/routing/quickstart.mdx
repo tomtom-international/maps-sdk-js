@@ -1,0 +1,125 @@
+---
+title: Routing Quickstart
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.45.3"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Routing Service calculates routes between locations with support for multiple waypoints, various vehicle types, and real-time traffic integration.
+
+<SDKGuideLiveCodingExample exampleDirectory="nodejs-routing" />
+
+## Initialization
+
+Configure the SDK with your API key:
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+TomTomConfig.instance.put({
+    apiKey: 'YOUR_API_KEY_HERE'
+});
+```
+
+## Calculating a Route
+
+Calculate a route between two locations:
+
+```javascript
+const route = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676], // Amsterdam
+        [2.3522, 48.8566]  // Paris
+    ]
+});
+```
+
+Calculate a route between two geocoded locations:
+
+```javascript
+import { geocodeOne } from '@tomtom-org/maps-sdk/services';
+
+const waypoints = await Promise.all([
+  geocodeOne('Amsterdam, Netherlands'),
+  geocodeOne('Paris, France')
+]);
+
+const route = await calculateRoute({ locations: waypoints });
+```
+
+Calculate a route with extra options:
+
+```javascript
+const routes = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    costModel: {
+        avoid: ['tollRoads'],
+    },
+    when: {
+        option: 'departAt',
+        date: new Date(Date.now() + 15 * 60 * 1000), // 15 minutes from now
+    },
+    maxAlternatives: 2
+});
+```
+
+## Accessing Route Information
+
+```javascript
+const route = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]]
+});
+
+console.log(`Distance: ${route.features[0].properties.summary.lengthInMeters}m`);
+console.log(`Duration: ${route.features[0].properties.summary.travelTimeInSeconds}s`);
+```
+
+## Showing a Route on the Map
+
+Display the calculated route using the Routing Module:
+
+```javascript
+import { TomTomMap, RoutingModule } from '@tomtom-org/maps-sdk/map';
+
+// Initialize map
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+
+// Initialize Routing Module
+const routingModule = await RoutingModule.get(map);
+
+
+// Calculate route
+const route = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]]
+});
+
+// Display on map
+await routingModule.showRoutes(route);
+```
+
+## API Reference
+
+For complete documentation of all route calculation properties and types, see the **[calculateRoute API Reference](/maps-sdk-js/api-reference/functions/services.calculateRoute.html)**.
+
+## Related Guides and Examples
+
+### Related Guides
+- [Route Planning Parameters](../../services/routing/parameters.mdx) - Comprehensive route planning with configuration options
+- [Locations](../../services/routing/locations.mdx) - Specifying route planning locations
+- [Route Object](../../core/route-object.mdx) - Understanding route structure
+- [Long Distance EV Routing](../../services/routing/long-distance-ev-routing.mdx) - Electric vehicle routing with charging stops
+
+### Map Integration
+- [Routing Module](../../map/routes.mdx) - Display and interact with routes on the map
+
+### Related Examples
+- [Route with waypoints](/maps-sdk-js/examples/route) - Basic route calculation and display
+- [Route with alternatives](/maps-sdk-js/examples/route-with-alternatives) - Multiple route options
+- [Waypoints](/maps-sdk-js/examples/waypoints) - Multi-stop routing
+- [Node.js Routing](/maps-sdk-js/examples/nodejs-routing) - Server-side routing
