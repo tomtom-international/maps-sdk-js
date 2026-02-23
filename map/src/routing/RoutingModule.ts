@@ -336,10 +336,18 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
         }
 
         // Summary bubbles have dedicated sources and contain distance-units dependent text ...
-        // ... so we need to re-show them if that config part changed:
-        if (
-            !isEqual(this.config?.displayUnits, mergedConfig.displayUnits) &&
-            this.sourcesWithLayers.summaryBubbles.shownFeatures.features.length
+        // ... so we need to re-show or clear them if relevant config parts changed:
+        const summaryBubblesVisible = mergedConfig.summaryBubbles?.visible !== false;
+        const visibilityChanged = !isEqual(this.config?.summaryBubbles?.visible, mergedConfig.summaryBubbles?.visible);
+        const displayUnitsChanged = !isEqual(this.config?.displayUnits, mergedConfig.displayUnits);
+        const hasSummaryBubbles = this.sourcesWithLayers.summaryBubbles.shownFeatures.features.length > 0;
+        const hasRoutes = this.sourcesWithLayers.mainLines.shownFeatures.features.length > 0;
+
+        if (!summaryBubblesVisible && visibilityChanged) {
+            this.sourcesWithLayers.summaryBubbles.clear();
+        } else if (
+            summaryBubblesVisible &&
+            ((visibilityChanged && hasRoutes) || (displayUnitsChanged && hasSummaryBubbles))
         ) {
             this.sourcesWithLayers.summaryBubbles.show(
                 toDisplayRouteSummaries(this.sourcesWithLayers.mainLines.shownFeatures, mergedConfig.displayUnits),
@@ -441,7 +449,11 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
         this.sourcesWithLayers.tollRoads.show(toDisplayRouteSections(displayRoutes, 'toll'));
         this.sourcesWithLayers.instructionLines.show(toDisplayInstructions(displayRoutes));
         this.sourcesWithLayers.instructionArrows.show(toDisplayInstructionArrows(displayRoutes));
-        this.sourcesWithLayers.summaryBubbles.show(toDisplayRouteSummaries(displayRoutes, this.config?.displayUnits));
+        if (this.config?.summaryBubbles?.visible !== false) {
+            this.sourcesWithLayers.summaryBubbles.show(toDisplayRouteSummaries(displayRoutes, this.config?.displayUnits));
+        } else {
+            this.sourcesWithLayers.summaryBubbles.clear();
+        }
     }
 
     /**

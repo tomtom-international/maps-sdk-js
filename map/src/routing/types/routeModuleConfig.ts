@@ -541,6 +541,22 @@ export type RoutingModuleConfig = MapModuleCommonConfig & {
     chargingStops?: ChargingStopsConfig;
 
     /**
+     * Configuration for the route summary bubbles displayed on the map.
+     *
+     * @remarks
+     * Summary bubbles show key route information (distance, duration, traffic delay)
+     * as visual overlays positioned along the route.
+     */
+    summaryBubbles?: {
+        /**
+         * Controls the visibility of route summary bubbles on the map.
+         *
+         * @defaultValue true
+         */
+        visible?: boolean;
+    };
+
+    /**
      * Custom layer styling configuration.
      *
      * @remarks

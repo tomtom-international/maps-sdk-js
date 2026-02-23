@@ -557,6 +557,23 @@ test.describe('Routing and waypoint display tests', () => {
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
+
+    test('Summary bubbles are not displayed when visible is set to false', async ({ page }) => {
+        const mapEnv = await MapTestEnv.loadPageAndMap(page, {
+            fitBoundsOptions: { padding: 150 },
+            bounds: rotterdamToAmsterdamRoutes.bbox,
+        });
+        await initRouting(page, { summaryBubbles: { visible: false } });
+        await showRoutes(page, rotterdamToAmsterdamRoutes);
+        await waitForMapIdle(page);
+
+        expect(await getNumVisibleLayersBySource(page, ROUTE_SUMMARY_BUBBLES_POINT_SOURCE_ID)).toBe(0);
+        expect(await queryRenderedFeatures(page, [ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID])).toHaveLength(0);
+        // Routes themselves are still shown:
+        expect(await getNumVisibleLayersBySource(page, ROUTE_MAIN_LINES_SOURCE_ID)).toBe(NUM_ROUTE_LAYERS);
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
 });
 
 test.describe('Multiple routing module instances', () => {
