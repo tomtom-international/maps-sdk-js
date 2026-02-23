@@ -24,10 +24,10 @@ catalog:
   '@types/rollup-plugin-peer-deps-external': ^2.2.6
   '@vitejs/plugin-react': ^5.1.4
   '@vitest/coverage-v8': ^4.0.18
-  ai: ^6.0.94
+  ai: ^6.0.97
   jsdom: ^28.1.0
   lodash-es: ^4.17.23
-  maplibre-gl: ^5.18.0
+  maplibre-gl: ^5.19.0
   react: ^19.2.4
   react-dom: ^19.2.4
   rimraf: ^6.1.3
