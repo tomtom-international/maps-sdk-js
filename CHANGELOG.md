@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.45.6](https://github.com/tomtom-international/maps-sdk-js/compare/v0.45.5...v0.45.6) (2026-02-23)
+
+
+### Features
+
+* opt-out visibility for route summary bubbles ([429c214](https://github.com/tomtom-international/maps-sdk-js/commit/429c214fa9d2416b3dc205df89d1d72b2ad781bc))
+
+
+### Bug Fixes
+
+* pois module feature mappings and type fixes ([7e59a24](https://github.com/tomtom-international/maps-sdk-js/commit/7e59a24fbdbd525e1d94c87036d05924bb28ff03))
+
 ## [0.45.5](https://github.com/tomtom-international/maps-sdk-js/compare/v0.45.4...v0.45.5) (2026-02-20)
 
 
