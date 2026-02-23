@@ -13,14 +13,6 @@
 
 /* PROGRESS POPUP */
 
-.progress-popup {
-    pointer-events: none;
-}
-
-.progress-popup--pinned {
-    pointer-events: auto;
-}
-
 .progress-popup .maplibregl-popup-content {
     padding: var(--sdk-space-2) var(--sdk-space-3);
     border-radius: var(--sdk-radius-10);
@@ -42,9 +34,9 @@
     white-space: nowrap;
 }
 
-.progress-popup-sep {
-    color: var(--sdk-text-low);
-    font-weight: var(--sdk-font-weight-regular);
+.progress-popup-row--right {
+    color: var(--sdk-text-medium);
+    font-weight: var(--sdk-font-weight-normal);
 }
 
 .progress-popup-row--sub {

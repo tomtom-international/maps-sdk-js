@@ -17,7 +17,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     });
 
     const [routingModule, restOfTheMap] = await Promise.all([
-        RoutingModule.get(map),
+        RoutingModule.get(map, { summaryBubbles: { visible: false } }),
         BaseMapModule.get(map, {
             layerGroupsFilter: { mode: 'include', names: ['land', 'water'] },
             events: { cursorOnHover: 'default' },

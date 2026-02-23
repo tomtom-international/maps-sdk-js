@@ -8,8 +8,7 @@ const BASE_POPUP_OPTIONS = {
     anchor: 'bottom' as const,
 };
 
-export const createHoverPopup = (): Popup =>
-    new Popup({ ...BASE_POPUP_OPTIONS, className: 'progress-popup' });
+export const createHoverPopup = (): Popup => new Popup({ ...BASE_POPUP_OPTIONS, className: 'progress-popup' });
 
 export const createPinnedPopup = (): Popup =>
     new Popup({ ...BASE_POPUP_OPTIONS, className: 'progress-popup progress-popup--pinned' });
@@ -39,8 +38,7 @@ export const buildPopupHTML = (
     return `
         <div class="progress-popup-row">
             <span>${formatDuration(travelTimeInSeconds) ?? '—'}</span>
-            <span class="progress-popup-sep">·</span>
-            <span>${formatDistance(distanceInMeters)}</span>
+            <span class="progress-popup-row--right">${formatDistance(distanceInMeters)}</span>
             ${closeButton}
         </div>
         ${clockTimeRow}
