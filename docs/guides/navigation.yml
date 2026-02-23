@@ -1,0 +1,102 @@
+group: maps-sdk-js
+isPrivate: false
+productName: TomTom Maps SDK for JavaScript
+isMenuOpened: false
+menu:
+  - title: How the SDK works
+    fileId: how-the-sdk-works
+  - title: Map
+    items:
+      - fileId: map/quickstart
+        title: Quickstart
+      - fileId: map/introduction
+        title: Introduction
+      - fileId: map/tomtom-map
+        title: TomTom Map object
+      - fileId: map/modules
+        title: Map Modules
+      - fileId: map/styles
+        title: Map styles
+      - fileId: map/traffic
+        title: Traffic
+      - fileId: map/user-events
+        title: User Events
+      - fileId: map/about-maplibre
+        title: About MapLibre
+      - title: Modules
+        items:
+        - fileId: map/base-map
+          title: Base Map
+        - fileId: map/pois
+          title: POIs
+        - fileId: map/places
+          title: Places
+        - fileId: map/routes
+          title: Routes
+        - fileId: map/geometries
+          title: Geometries
+        - fileId: map/traffic-incidents
+          title: Traffic Incidents
+        - fileId: map/traffic-flow
+          title: Traffic Flow
+        - fileId: map/hillshade
+          title: Hillshade
+      - fileId: map/utilities
+        title: Utilities
+
+  - title: Services
+    items:
+      - fileId: services/quickstart
+        title: Quickstart
+      - title: Places
+        items:
+          - fileId: services/places/quickstart
+            title: Overview
+          - fileId: services/places/search
+            title: Search
+          - fileId: services/places/geocoding
+            title: Geocoding
+          - fileId: services/places/reverse-geocoding
+            title: Reverse geocoding
+          - fileId: services/places/geometry-data
+            title: Geometry data
+          - fileId: services/places/ev-charging-stations-availability
+            title: EV Charging Stations Availability
+      - title: Routing
+        items:
+          - fileId: services/routing/quickstart
+            title: Quickstart
+          - fileId: services/routing/parameters
+            title: Planning a route
+          - fileId: services/routing/locations
+            title: Locations
+          - fileId: services/routing/guidance
+            title: Guidance
+          - fileId: services/routing/vehicle
+            title: Vehicle Configuration
+          - fileId: services/routing/long-distance-ev-routing
+            title: Long Distance EV Routing
+      - fileId: services/customizing-services
+        title: Customizing services
+  - title: Core
+    items:
+      - fileId: core/quickstart
+        title: Quickstart
+      - fileId: core/places
+        title: Places
+      - fileId: core/routes
+        title: Routes
+      - title: Utilities
+        items:
+          - fileId: core/utilities/coordinates
+            title: Coordinates
+          - fileId: core/utilities/bounding-boxes
+            title: Bounding Boxes
+          - fileId: core/utilities/routes
+            title: Routes
+          - fileId: core/utilities/formatting
+            title: Formatting
+  - title: Plugins
+    items:
+      - fileId: plugins/viewport-places
+        title: Viewport Places
