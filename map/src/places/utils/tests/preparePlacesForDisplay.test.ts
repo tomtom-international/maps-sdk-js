@@ -68,7 +68,7 @@ describe('Get Icon ID for a given Place tests', () => {
             getIconIDForPlace({ properties: { poi: { classifications: [{ code: 'BEACH' }] } } } as Place, 0, {
                 theme: 'base-map',
             }),
-        ).toBe('poi-beach');
+        ).toBe('poi-beach_resort');
 
         expect(
             getIconIDForPlace(

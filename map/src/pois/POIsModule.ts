@@ -10,7 +10,8 @@ import { waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
 import { poiLayerIDs } from './layers/poisLayers';
 import { poiCategoryGroups } from './poiCategoryGroups';
-import type { FilterablePOICategory, POIsModuleConfig, POIsModuleFeature } from './types/poisModuleConfig';
+import type { FilterablePOICategory, POIsModuleConfig } from './types/poisModuleConfig';
+import type { POIsModuleFeature } from './types/poisModuleFeature';
 
 /**
  * Gets the specified filtered categories icon IDs to be used in map filtering.
