@@ -3,6 +3,8 @@ import { indexedMagnitudes, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { TomTomMap, TrafficIncidentsModule } from '@tomtom-org/maps-sdk/map';
 import './style.css';
 import { API_KEY } from './config';
+import { buildPopupHTML, createIncidentPopup } from './popup';
+import { initTogglePanel } from './togglePanel';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
@@ -16,14 +18,19 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         },
     });
 
-    const incidents = await TrafficIncidentsModule.get(map, { visible: true });
+    const trafficIncidentsModule = await TrafficIncidentsModule.get(map, { visible: true });
+
+    const popup = createIncidentPopup();
+    trafficIncidentsModule.events.on('click', (feature, lngLat) => {
+        popup.setHTML(buildPopupHTML(feature)).setLngLat(lngLat).addTo(map.mapLibreMap);
+    });
 
     const applyFilter = () => {
         const selectedMagnitudes = [
             ...document.querySelectorAll<HTMLInputElement>('input[name="magnitude"]:checked'),
         ].map((checkbox) => checkbox.value as DelayMagnitude);
         const allSelected = selectedMagnitudes.length === indexedMagnitudes.length;
-        incidents.filter(
+        trafficIncidentsModule.filter(
             allSelected ? undefined : { any: [{ magnitudes: { show: 'only', values: selectedMagnitudes } }] },
         );
     };
@@ -39,12 +46,5 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         applyFilter();
     });
 
-    const toggleButton = document.querySelector('.sdk-example-heading-toggle');
-    const panelContent = document.querySelector('.sdk-example-panel-content');
-
-    toggleButton?.addEventListener('click', () => {
-        const isExpanded = toggleButton.getAttribute('aria-expanded') === 'true';
-        toggleButton.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');
-        panelContent?.classList.toggle('collapsed');
-    });
+    initTogglePanel();
 })();

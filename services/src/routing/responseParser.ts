@@ -23,7 +23,7 @@ import {
     type SectionsProps,
     type SectionType,
     type SpeedLimitSectionProps,
-    type TrafficCategory,
+    type TrafficIncidentCategory,
     type TrafficIncidentTEC,
     type TrafficSectionProps,
 } from '@tomtom-org/maps-sdk/core';
@@ -190,7 +190,7 @@ const toCountrySectionProps = (apiSection: SectionAPI): CountrySectionProps => (
 const toVehicleRestrictedSectionProps = (apiSection: SectionAPI): SectionProps | null =>
     apiSection.travelMode === 'other' ? toSectionProps(apiSection) : null;
 
-const calculateTrafficCategory = (tecMainCauseCode: number | undefined): TrafficCategory => {
+const calculateTrafficCategory = (tecMainCauseCode: number | undefined): TrafficIncidentCategory => {
     switch (tecMainCauseCode) {
         case 1:
             return 'jam';
@@ -228,7 +228,7 @@ const calculateTrafficCategory = (tecMainCauseCode: number | undefined): Traffic
 /**
  * @ignore
  */
-export const toTrafficCategories = (apiSection: SectionAPI): TrafficCategory[] => {
+export const toTrafficCategories = (apiSection: SectionAPI): TrafficIncidentCategory[] => {
     if (apiSection.tec?.causes?.length) {
         return apiSection.tec.causes.map((cause) => calculateTrafficCategory(cause.mainCauseCode));
     }

@@ -3,6 +3,8 @@ import { describe, expect, test, vi } from 'vitest';
 import type { StyleInput, StyleModule } from '../../init';
 import poiLayerSpec from '../../places/layers/tests/poiLayerSpec.data';
 import type { TomTomMap } from '../../TomTomMap';
+import { FLOW_TAGS } from '../../traffic/util/trafficFlowMapping';
+import { INCIDENT_TAGS } from '../../traffic/util/trafficIncidentMapping';
 import { HILLSHADE_SOURCE_ID } from '../layers/sourcesIDs';
 import {
     addLayers,
@@ -10,7 +12,7 @@ import {
     changeLayerProps,
     deserializeFeatures,
     ensureAddedToStyle,
-    injectTomTomHeaders,
+    transformRequest,
     updateLayersAndSource,
     updateStyleWithModule,
     waitUntilMapIsReady,
@@ -20,7 +22,7 @@ import type { ToBeAddedLayerSpec, ToBeAddedLayerSpecWithoutSource } from '../typ
 import { deserializedFeatureData, serializedFeatureData } from './featureDeserialization.test.data';
 import updateStyleData from './mapUtils.test.data';
 
-const getTomTomMapMock = async (mapReady: boolean[]) =>
+const getTomTomMapMock = (mapReady: boolean[]) =>
     ({
         mapReady: vi.fn().mockReturnValue(mapReady[0]).mockReturnValue(mapReady[1]).mockReturnValue(mapReady[2]),
         mapLibreMap: {
@@ -33,21 +35,21 @@ const getTomTomMapMock = async (mapReady: boolean[]) =>
 
 describe('Map utils - waitUntilMapIsReady', () => {
     test('waitUntilMapIsReady resolve promise when mapReady or maplibre.isStyleLoaded are true', async () => {
-        const tomtomMapMock = await getTomTomMapMock([true]);
-        await expect(waitUntilMapIsReady(tomtomMapMock)).resolves.not.toThrow();
+        const tomtomMapMock = getTomTomMapMock([true]);
+        await expect(waitUntilMapIsReady(tomtomMapMock)).resolves.toBeUndefined();
     });
 
     test('waitUntilMapIsReady resolve promise from mapLibre event once("styledata")', async () => {
-        const tomtomMapMock = await getTomTomMapMock([false, true]);
-        await expect(waitUntilMapIsReady(tomtomMapMock)).resolves.not.toThrow();
+        const tomtomMapMock = getTomTomMapMock([false, true]);
+        await expect(waitUntilMapIsReady(tomtomMapMock)).resolves.toBeUndefined();
     });
 
     test(
         'waitUntilMapIsReady resolve promise from mapLibre event once("styledata") ' +
             'while map is not ready after first event, likely due to subsequent setStyle call',
         async () => {
-            const tomtomMapMock = await getTomTomMapMock([false, false, true]);
-            await expect(waitUntilMapIsReady(tomtomMapMock)).resolves.not.toThrow();
+            const tomtomMapMock = getTomTomMapMock([false, false, true]);
+            await expect(waitUntilMapIsReady(tomtomMapMock)).resolves.toBeUndefined();
         },
     );
 });
@@ -63,22 +65,38 @@ describe('Map utils - deserializeFeatures', () => {
 describe('Map utils - injectCustomHeaders', () => {
     test('Return only url if it is not TomTom domain', () => {
         const url = 'https://test.com';
-        const transformRequestFn = injectTomTomHeaders({});
+        const transformRequestFn = transformRequest({});
         expect(transformRequestFn(url)).toEqual({ url });
     });
 
     test('Return custom headers if url if it is TomTom domain', () => {
-        const url = 'https://tomtom.com';
-        const transformRequestFn = injectTomTomHeaders({});
-        const headers = transformRequestFn(url);
-        expect(headers).toEqual({ url, headers: { 'TomTom-User-Agent': expect.any(String) } });
+        const url = 'https://tomtom.com/';
+        const transformRequestFn = transformRequest({});
+        const request = transformRequestFn(url);
+        expect(request).toEqual({ url, headers: { 'TomTom-User-Agent': expect.any(String) } });
     });
 
     test('Return only url if it is TomTom domain but an image resource', () => {
         const url = 'https://tomtom.com';
-        const transformRequestFn = injectTomTomHeaders({});
+        const transformRequestFn = transformRequest({});
 
         expect(transformRequestFn(url, 'Image' as ResourceType)).toStrictEqual({ url });
+    });
+
+    test('Append incident tags to TomTom incidents URL', () => {
+        const url = 'https://api.tomtom.com/traffic/incidents/tile';
+        const transformRequestFn = transformRequest({});
+        const result = transformRequestFn(url);
+        const resultUrl = new URL(result.url);
+        expect(resultUrl.searchParams.get('tags')).toBe(INCIDENT_TAGS.join(','));
+    });
+
+    test('Append flow tags to TomTom flow URL', () => {
+        const url = 'https://api.tomtom.com/traffic/flow/tile';
+        const transformRequestFn = transformRequest({});
+        const result = transformRequestFn(url);
+        const resultUrl = new URL(result.url);
+        expect(resultUrl.searchParams.get('tags')).toBe(FLOW_TAGS.join(','));
     });
 });
 
@@ -405,7 +423,7 @@ describe('addOrUpdateImage tests', () => {
             hasImage: vi.fn().mockReturnValue(false),
         } as unknown as Map;
 
-        await expect(async () =>
+        expect(async () =>
             addOrUpdateImage('if-not-in-sprite', 'restaurant', 'https://test.com', mapLibreMock),
         ).rejects.toMatchObject(error);
     });

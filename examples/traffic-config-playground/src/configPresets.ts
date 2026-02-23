@@ -61,7 +61,7 @@ export const configPresets: {
                 filters: {
                     any: [
                         {
-                            incidentCategories: { show: 'only', values: ['road_closed', 'road_works'] },
+                            incidentCategories: { show: 'only', values: ['road-closed', 'roadworks'] },
                         },
                     ],
                 },
@@ -128,7 +128,7 @@ export const configPresets: {
                             magnitudes: { show: 'only', values: ['major', 'moderate'] },
                         },
                         {
-                            incidentCategories: { show: 'only', values: ['road_closed'] },
+                            incidentCategories: { show: 'only', values: ['road-closed'] },
                         },
                     ],
                 },
@@ -137,7 +137,7 @@ export const configPresets: {
                         any: [
                             {
                                 magnitudes: { show: 'only', values: ['major', 'moderate'] },
-                                incidentCategories: { show: 'all_except', values: ['road_closed'] },
+                                incidentCategories: { show: 'all_except', values: ['road-closed'] },
                             },
                         ],
                     },

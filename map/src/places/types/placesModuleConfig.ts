@@ -1,6 +1,6 @@
 import type { Place } from '@tomtom-org/maps-sdk/core';
 import type { DataDrivenPropertyValueSpecification, SymbolLayerSpecification } from 'maplibre-gl';
-import type { MapStylePOICategory } from '../../pois/poiCategoryMapping';
+import type { MapStylePOICategory } from '../../pois/util/poiCategoryMapping';
 import type {
     CustomImage,
     HasAdditionalLayersConfig,

@@ -3,6 +3,7 @@ import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { TomTomMap } from '@tomtom-org/maps-sdk/map';
 import './style.css';
 import { API_KEY } from './config';
+import { initTogglePanel } from './togglePanel';
 
 const mapLanguages: { text: string; value: Language }[] = [
     { text: 'Neutral Ground Truth (Default)', value: 'ngt' },
@@ -38,12 +39,5 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         map.setLanguage((event.target as HTMLOptionElement).value as Language),
     );
 
-    const toggleButton = document.querySelector('.sdk-example-heading-toggle');
-    const panelContent = document.querySelector('.sdk-example-panel-content');
-
-    toggleButton?.addEventListener('click', () => {
-        const isExpanded = toggleButton.getAttribute('aria-expanded') === 'true';
-        toggleButton.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');
-        panelContent?.classList.toggle('collapsed');
-    });
+    initTogglePanel();
 })();

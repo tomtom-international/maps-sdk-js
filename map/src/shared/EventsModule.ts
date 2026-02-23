@@ -100,6 +100,16 @@ export class EventsModule<T = MapGeoJSONFeature> {
         private readonly eventProxy: EventsProxy,
         private readonly sourceWithLayers: SourceWithLayers,
         private readonly config: EventHandlerConfig | undefined,
+        /**
+         * Optional function that transforms a raw {@link MapGeoJSONFeature} into the
+         * feature type `T` exposed by the module. When provided, every feature passed (fired)
+         * to event handlers is first run through this function, so callers receive the
+         * module's own feature shape instead of the underlying MapLibre feature.
+         *
+         * When omitted, `T` defaults to `MapGeoJSONFeature` and features are forwarded
+         * as-is.
+         */
+        private readonly mapping?: (feature: MapGeoJSONFeature) => T,
     ) {}
 
     /**
@@ -175,7 +185,17 @@ export class EventsModule<T = MapGeoJSONFeature> {
      * ```
      */
     on(type: EventType, handler: UserEventHandler<T>) {
-        this.eventProxy.addEventHandler(this.sourceWithLayers, handler, type, this.config);
+        if (this.mapping) {
+            const mapping = this.mapping;
+            this.eventProxy.addEventHandler(
+                this.sourceWithLayers,
+                (feature, ...rest) => handler(mapping(feature), ...rest),
+                type,
+                this.config,
+            );
+        } else {
+            this.eventProxy.addEventHandler(this.sourceWithLayers, handler, type, this.config);
+        }
     }
 
     /**

@@ -12,7 +12,9 @@ import { notInTheStyle } from '../shared/errorMessages';
 import { ensureAddedToStyle, waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
 import { applyFilter, buildMapLibreIncidentFilters } from './filters/trafficFilters';
-import type { IncidentsConfig, TrafficIncidentsFilters } from './types/trafficModuleConfig';
+import type { IncidentsConfig, TrafficIncidentsFilters } from './types/trafficIncidentsConfig';
+import { TrafficIncidentsModuleFeature } from './types/trafficIncidentsFeature';
+import { trafficIncidentMapping } from './util/trafficIncidentMapping';
 
 /**
  * IDs of sources and layers for traffic incidents module.
@@ -71,7 +73,7 @@ type TrafficIncidentsSourcesWithLayers = {
  *   any: [{
  *     incidentCategories: {
  *       show: 'only',
- *       values: ['accident', 'road_closed']
+ *       values: ['accident', 'road-closed']
  *     }
  *   }]
  * });
@@ -81,7 +83,7 @@ type TrafficIncidentsSourcesWithLayers = {
  *   any: [{
  *     incidentCategories: {
  *       show: 'all_except',
- *       values: ['road_works']
+ *       values: ['roadworks']
  *     }
  *   }]
  * });
@@ -169,7 +171,7 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
      *     any: [{
      *       incidentCategories: {
      *         show: 'only',
-     *         values: ['accident', 'road_closed', 'jam']
+     *         values: ['accident', 'road-closed', 'jam']
      *       }
      *     }]
      *   }
@@ -229,13 +231,13 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
      * - `roadSubCategories`: Filter by specific road types
      *
      * **Available Incident Categories:**
-     * - `accident`, `road_closed`, `lane_closed`
-     * - `road_works` (construction)
+     * - `accident`, `road-closed`, `lane-closed`
+     * - `roadworks` (construction)
      * - `jam` (traffic jam)
-     * - `fog`, `rain`, `ice`, `wind`, `flooding`
-     * - `dangerous_conditions`
-     * - `broken_down_vehicle`
-     * - `unknown`
+     * - `fog`, `rain`, `frost`, `wind`, `flooding`
+     * - `danger`, `animals-on-road`, `narrow-lanes`
+     * - `broken-down-vehicle`
+     * - `other`
      *
      * **Delay Magnitudes:**
      * - `minor`: Small delays
@@ -250,7 +252,7 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
      *   any: [{
      *     incidentCategories: {
      *       show: 'only',
-     *       values: ['accident', 'road_closed']
+     *       values: ['accident', 'road-closed']
      *     }
      *   }]
      * });
@@ -470,12 +472,14 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
      * console.log(`Accidents in view: ${accidents.length}`);
      * ```
      */
-    getShown() {
+    getShown(): { trafficIncidents: TrafficIncidentsModuleFeature[] } {
         return {
-            trafficIncidents: this.mapLibreMap.queryRenderedFeatures({
-                layers: this.sourcesWithLayers.trafficIncidents.sourceAndLayerIDs.layerIDs,
-                validate: false,
-            }),
+            trafficIncidents: this.mapLibreMap
+                .queryRenderedFeatures({
+                    layers: this.sourcesWithLayers.trafficIncidents.sourceAndLayerIDs.layerIDs,
+                    validate: false,
+                })
+                .map(trafficIncidentMapping),
         };
     }
 
@@ -484,10 +488,11 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
      * @returns An instance of EventsModule
      */
     get events() {
-        return new EventsModule(
+        return new EventsModule<TrafficIncidentsModuleFeature>(
             this.tomtomMap._eventsProxy,
             this.sourcesWithLayers.trafficIncidents,
             this.config?.events,
+            trafficIncidentMapping,
         );
     }
 }

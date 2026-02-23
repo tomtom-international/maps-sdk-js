@@ -1,7 +1,13 @@
-import { Place, TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import { BaseMapModule, PlacesModule, TomTomMap, TrafficIncidentsModule } from '@tomtom-org/maps-sdk/map';
+import { formatDuration, Place, TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import {
+    BaseMapModule,
+    PlacesModule,
+    TomTomMap,
+    TrafficIncidentsModule,
+    TrafficIncidentsModuleFeature,
+} from '@tomtom-org/maps-sdk/map';
 import { reverseGeocode, search } from '@tomtom-org/maps-sdk/services';
-import { LngLat, MapGeoJSONFeature, Marker, NavigationControl, Popup } from 'maplibre-gl';
+import { LngLat, Marker, NavigationControl, Popup } from 'maplibre-gl';
 import './style.css';
 import { API_KEY } from './config';
 
@@ -26,7 +32,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     let isMarkerVisible = false;
     const revGeocodingMarker = new Marker({ color: '#df1b12' });
 
-    const showTrafficPopup = (topFeature: MapGeoJSONFeature, lngLat: LngLat) => {
+    const showTrafficPopup = (topFeature: TrafficIncidentsModuleFeature, lngLat: LngLat) => {
         const { properties } = topFeature;
 
         const incidentSeverity: Record<number, string> = {
@@ -41,11 +47,9 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
                 `
         <div id="traffic-incident-popup">
         <h3>Traffic incident</h3>
-        <b id="traffic-incident-road-type">Road type</b> ${topFeature.properties.road_category}<br />
-        <b id="traffic-incident-magnitude">Magnitude</b> ${incidentSeverity[properties.magnitude_of_delay]} <br />
-        <b id="traffic-incident-delay">Delay</b> ${Math.floor(properties.delay / 60)} m ${
-            properties.delay % 60
-        } s</b> <br />
+        <b id="traffic-incident-road-type">Road type</b> ${topFeature.properties.roadCategory}<br />
+        <b id="traffic-incident-magnitude">Magnitude</b> ${topFeature.properties.magnitudeOfDelay} <br />
+        <b id="traffic-incident-delay">Delay</b> ${formatDuration(properties.delayInSeconds)} <br />
         </div>
         `,
             )

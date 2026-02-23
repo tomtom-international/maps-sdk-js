@@ -1,6 +1,6 @@
 {
-  "name": "@examples/traffic-flow-and-incidents",
-  "description": "Traffic flow and incidents example",
+  "name": "@examples/traffic-flow-playground",
+  "description": "Playground to explore traffic flow data and features.",
   "type": "module",
   "scripts": {
     "build": "vite build --config ../example-vite.config.ts",
@@ -17,7 +17,6 @@
     "@tomtom-org/maps-sdk": "workspace:*"
   },
   "devDependencies": {
-    "@playwright/test": "catalog:",
     "@types/node": "catalog:",
     "rimraf": "catalog:",
     "rollup-plugin-visualizer": "catalog:",

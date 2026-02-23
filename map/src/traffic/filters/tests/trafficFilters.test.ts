@@ -24,10 +24,10 @@ describe('Traffic filter tests', () => {
             legacy: ['==', 'road_category', 'motorway'],
         });
         expect(
-            buildMapLibreIncidentFilters({ any: [{ roadSubCategories: { show: 'only', values: ['major_local'] } }] }),
+            buildMapLibreIncidentFilters({ any: [{ roadSubCategories: { show: 'only', values: ['residential'] } }] }),
         ).toStrictEqual({
-            expression: ['==', ['get', 'road_subcategory'], 'major_local'],
-            legacy: ['==', 'road_subcategory', 'major_local'],
+            expression: ['==', ['get', 'road_subcategory'], 'residential'],
+            legacy: ['==', 'road_subcategory', 'residential'],
         });
         expect(
             buildMapLibreIncidentFilters({
@@ -72,7 +72,7 @@ describe('Traffic filter tests', () => {
                     {
                         incidentCategories: {
                             show: 'only',
-                            values: ['jam', 'accident', 'dangerous_conditions'],
+                            values: ['jam', 'accident', 'danger'],
                         },
                         roadCategories: {
                             show: 'all_except',
@@ -89,7 +89,7 @@ describe('Traffic filter tests', () => {
                     {
                         incidentCategories: {
                             show: 'only',
-                            values: ['road_closed'],
+                            values: ['road-closed'],
                         },
                     },
                 ],
@@ -149,14 +149,14 @@ describe('Traffic filter tests', () => {
                     {
                         roadSubCategories: {
                             show: 'all_except',
-                            values: ['minor_local', 'connecting'],
+                            values: ['residential', 'driveway'],
                         },
                     },
                 ],
             }),
         ).toStrictEqual({
-            expression: ['!', ['in', ['get', 'road_subcategory'], ['literal', ['minor_local', 'connecting']]]],
-            legacy: ['!in', 'road_subcategory', 'minor_local', 'connecting'],
+            expression: ['!', ['in', ['get', 'road_subcategory'], ['literal', ['residential', 'driveway']]]],
+            legacy: ['!in', 'road_subcategory', 'residential', 'driveway'],
         });
         expect(
             buildMapLibreFlowFilters({
@@ -195,7 +195,7 @@ describe('Traffic filter tests', () => {
                         },
                         roadSubCategories: {
                             show: 'only',
-                            values: ['major_local'],
+                            values: ['residential'],
                         },
                     },
                     {
@@ -209,7 +209,7 @@ describe('Traffic filter tests', () => {
                 [
                     'all',
                     ['in', ['get', 'road_category'], ['literal', ['motorway', 'trunk', 'primary']]],
-                    ['==', ['get', 'road_subcategory'], 'major_local'],
+                    ['==', ['get', 'road_subcategory'], 'residential'],
                 ],
                 ['==', ['get', 'road_closure'], true],
             ],
@@ -218,7 +218,7 @@ describe('Traffic filter tests', () => {
                 [
                     'all',
                     ['in', 'road_category', 'motorway', 'trunk', 'primary'],
-                    ['==', 'road_subcategory', 'major_local'],
+                    ['==', 'road_subcategory', 'residential'],
                 ],
                 ['==', 'road_closure', true],
             ],

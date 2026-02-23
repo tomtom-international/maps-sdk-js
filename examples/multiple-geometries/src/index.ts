@@ -14,6 +14,7 @@ import type { Config } from './placeConfiguration';
 import { namedConfigs } from './placeConfiguration';
 import './style.css';
 import { API_KEY } from './config';
+import { initTogglePanel } from './togglePanel';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
@@ -69,12 +70,5 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     await updateMap(namedConfigs.france);
     await listenToUIEvents();
 
-    const toggleButton = document.querySelector('.sdk-example-heading-toggle');
-    const panelContent = document.querySelector('.sdk-example-panel-content');
-
-    toggleButton?.addEventListener('click', () => {
-        const isExpanded = toggleButton.getAttribute('aria-expanded') === 'true';
-        toggleButton.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');
-        panelContent?.classList.toggle('collapsed');
-    });
+    initTogglePanel();
 })();

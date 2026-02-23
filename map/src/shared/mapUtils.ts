@@ -10,6 +10,8 @@ import type {
 } from 'maplibre-gl';
 import { InternalTomTomMapParams, StandardStyle, StandardStyleID, StyleInput, StyleModule } from '../init';
 import type { TomTomMap } from '../TomTomMap';
+import { FLOW_TAGS } from '../traffic/util/trafficFlowMapping';
+import { INCIDENT_TAGS } from '../traffic/util/trafficIncidentMapping';
 import { cannotAddStyleModuleToCustomStyle } from './errorMessages';
 import { svgToImg } from './imageUtils';
 import { parseSvg } from './resources';
@@ -75,14 +77,20 @@ export const deserializeFeatures = (features: MapGeoJSONFeature[]): void => {
  * @ignore
  * @param params Global SDK Map configuration
  */
-export const injectTomTomHeaders =
+export const transformRequest =
     (params: Partial<GlobalConfig>) =>
     (url: string, resourceType?: ResourceType): RequestParameters => {
         if (url.includes('tomtom.com')) {
             if (resourceType === 'Image') {
                 return { url };
             }
-            return { url, headers: { ...generateTomTomHeaders(params) } };
+            const parsedUrl = new URL(url);
+            if (parsedUrl.pathname.includes('incidents')) {
+                parsedUrl.searchParams.set('tags', `${INCIDENT_TAGS.join(',')}`);
+            } else if (parsedUrl.pathname.includes('flow')) {
+                parsedUrl.searchParams.set('tags', `${FLOW_TAGS.join(',')}`);
+            }
+            return { url: parsedUrl.toString(), headers: { ...generateTomTomHeaders(params) } };
         }
         return { url };
     };

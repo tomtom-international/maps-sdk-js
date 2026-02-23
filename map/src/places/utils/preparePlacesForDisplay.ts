@@ -1,5 +1,5 @@
 import { generateId, Place, Places, POICategory, poiCategoriesToID } from '@tomtom-org/maps-sdk/core';
-import { toBaseMapPOICategory } from '../../pois/poiCategoryMapping';
+import { toBaseMapPOICategory } from '../../pois/util/poiCategoryMapping';
 import { DEFAULT_PLACE_ICON_ID } from '../../shared/layers/symbolLayers';
 import { suffixNumber } from '../../shared/layers/utils';
 import type { DisplayPlaceProps } from '../types/placeDisplayProps';

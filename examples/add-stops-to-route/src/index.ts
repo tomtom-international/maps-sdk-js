@@ -6,18 +6,19 @@ import { calculateRoute, geocodeOne } from '@tomtom-org/maps-sdk/services';
 import { LngLat, Popup } from 'maplibre-gl';
 import { API_KEY } from './config';
 import './style.css';
+import { initTogglePanel } from './togglePanel';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: API_KEY });
 
 (async () => {
-    const [origin, destination] = await Promise.all([geocodeOne('Amsterdam'), geocodeOne('Utrecht, NLD')]);
+    const [origin, destination] = await Promise.all([geocodeOne('Washington'), geocodeOne('New York')]);
 
     const map = new TomTomMap({
         mapLibre: {
             container: 'sdk-map',
             bounds: bboxFromGeoJSON([origin, destination]),
-            fitBoundsOptions: { padding: 80 },
+            fitBoundsOptions: { padding: 50 },
         },
     });
 
@@ -90,7 +91,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         const stopIndex = waypoint.properties.index - 1;
 
         const popup = new Popup({
-            offset: 24,
             closeButton: false,
             anchor: 'bottom',
             className: 'stop-action-popup',
@@ -142,13 +142,5 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
             });
     });
 
-    // --- Panel collapse toggle ---
-    const toggleButton = document.querySelector('.sdk-example-heading-toggle');
-    const panelContent = document.querySelector('.sdk-example-panel-content');
-
-    toggleButton?.addEventListener('click', () => {
-        const isExpanded = toggleButton.getAttribute('aria-expanded') === 'true';
-        toggleButton.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');
-        panelContent?.classList.toggle('collapsed');
-    });
+    initTogglePanel();
 })();

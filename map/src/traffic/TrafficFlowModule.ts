@@ -12,7 +12,9 @@ import { notInTheStyle } from '../shared/errorMessages';
 import { ensureAddedToStyle, waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
 import { applyFilter, buildMapLibreFlowFilters } from './filters/trafficFilters';
-import type { FlowConfig, TrafficFlowFilters } from './types/trafficModuleConfig';
+import type { FlowConfig, TrafficFlowFilters } from './types/trafficFlowConfig';
+import type { TrafficFlowModuleFeature } from './types/trafficFlowFeature';
+import { trafficFlowMapping } from './util/trafficFlowMapping';
 
 /**
  * IDs of sources and layers for traffic flow module.
@@ -329,12 +331,14 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
      * console.log(`Congested segments: ${congested.length}`);
      * ```
      */
-    getShown() {
+    getShown(): { trafficFlow: TrafficFlowModuleFeature[] } {
         return {
-            trafficFlow: this.mapLibreMap.queryRenderedFeatures({
-                layers: this.sourcesWithLayers.trafficFlow.sourceAndLayerIDs.layerIDs,
-                validate: false,
-            }),
+            trafficFlow: this.mapLibreMap
+                .queryRenderedFeatures({
+                    layers: this.sourcesWithLayers.trafficFlow.sourceAndLayerIDs.layerIDs,
+                    validate: false,
+                })
+                .map(trafficFlowMapping),
         };
     }
 
@@ -343,6 +347,11 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
      * @returns An instance of EventsModule
      */
     get events() {
-        return new EventsModule(this.tomtomMap._eventsProxy, this.sourcesWithLayers.trafficFlow, this.config?.events);
+        return new EventsModule<TrafficFlowModuleFeature>(
+            this.tomtomMap._eventsProxy,
+            this.sourcesWithLayers.trafficFlow,
+            this.config?.events,
+            trafficFlowMapping,
+        );
     }
 }

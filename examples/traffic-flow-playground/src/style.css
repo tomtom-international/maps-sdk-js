@@ -1,0 +1,60 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/form/toggle.css";
+@import "../../src/templates/css/form/field.css";
+@import "../../src/templates/css/button/button.css";
+
+/* FLOW POPUP */
+
+.sdk-example-flow-popup-wrapper .maplibregl-popup-content {
+    padding: 0;
+    border-radius: var(--sdk-radius-15);
+    box-shadow: var(--sdk-shadow-e4);
+    font-family: var(--sdk-font-primary);
+    overflow: hidden;
+    min-width: 200px;
+}
+
+.sdk-example-flow-popup-wrapper .maplibregl-popup-close-button {
+    font-size: 18px;
+    color: var(--sdk-text-medium);
+    padding: var(--sdk-space-1) var(--sdk-space-2);
+    line-height: 1;
+}
+
+.sdk-example-flow-popup-wrapper .maplibregl-popup-close-button:hover {
+    color: var(--sdk-text-high);
+    background: var(--sdk-surface-1);
+}
+
+.sdk-example-flow-popup {
+    padding: var(--sdk-panel-padding);
+    padding-right: calc(var(--sdk-panel-padding) + 20px);
+}
+
+.sdk-example-flow-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--sdk-space-4);
+    padding: var(--sdk-space-1) 0;
+    border-bottom: 1px solid var(--sdk-border-base);
+}
+
+.sdk-example-flow-row:last-child {
+    border-bottom: none;
+}
+
+.sdk-example-flow-row .sdk-example-form-label {
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.sdk-example-flow-value {
+    font-size: var(--sdk-font-body-s);
+    font-weight: var(--sdk-font-weight-medium);
+    color: var(--sdk-text-high);
+    text-align: right;
+}

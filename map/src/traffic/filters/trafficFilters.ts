@@ -9,15 +9,10 @@ import type {
 } from 'maplibre-gl';
 import type { MultiSyntaxFilter, ValuesFilter } from '../../shared';
 import { buildValuesFilter, getMergedAllFilter, getMergedAnyFilter } from '../../shared/mapLibreFilterUtils';
-import type {
-    DelayFilter,
-    TrafficCommonFilter,
-    TrafficFlowFilter,
-    TrafficFlowFilters,
-    TrafficIncidentsFilter,
-    TrafficIncidentsFilters,
-} from '../types/trafficModuleConfig';
-import { incidentCategoriesMapping } from '../types/trafficModuleConfig';
+import type { TrafficCommonFilter } from '../types/trafficCommonConfig';
+import type { TrafficFlowFilter, TrafficFlowFilters } from '../types/trafficFlowConfig';
+import type { DelayFilter, TrafficIncidentsFilter, TrafficIncidentsFilters } from '../types/trafficIncidentsConfig';
+import { incidentToIconCategoryMapping } from '../util/trafficIncidentMapping';
 
 const toMultiSyntaxAllFilter = (
     newSyntaxExpressions: unknown[],
@@ -105,7 +100,7 @@ const buildMapLibreIncidentsFilter = (sdkFilter: TrafficIncidentsFilter): MultiS
         const incidentCategoryFilter = buildValuesFilter(
             'icon_category_0',
             sdkFilter.incidentCategories,
-            (value) => incidentCategoriesMapping[value],
+            (value) => incidentToIconCategoryMapping[value],
         );
         addFilter(incidentCategoryFilter, newSyntaxExpressions, legacySyntaxExpressions);
     }

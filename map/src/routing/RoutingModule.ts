@@ -450,7 +450,9 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
         this.sourcesWithLayers.instructionLines.show(toDisplayInstructions(displayRoutes));
         this.sourcesWithLayers.instructionArrows.show(toDisplayInstructionArrows(displayRoutes));
         if (this.config?.summaryBubbles?.visible !== false) {
-            this.sourcesWithLayers.summaryBubbles.show(toDisplayRouteSummaries(displayRoutes, this.config?.displayUnits));
+            this.sourcesWithLayers.summaryBubbles.show(
+                toDisplayRouteSummaries(displayRoutes, this.config?.displayUnits),
+            );
         } else {
             this.sourcesWithLayers.summaryBubbles.clear();
         }

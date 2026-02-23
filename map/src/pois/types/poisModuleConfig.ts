@@ -1,6 +1,6 @@
 import type { MapStylePOICategory } from '../../places';
 import type { MapModuleCommonConfig, ValuesFilter } from '../../shared';
-import type { POICategoryGroup } from '../poiCategoryGroups';
+import type { POICategoryGroup } from './poiCategoryGroups';
 
 /**
  * A POI classification or group that can be filtered.

@@ -9,7 +9,7 @@ import { buildMappedValuesFilter, getMergedAllFilter } from '../shared/mapLibreF
 import { waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
 import { poiLayerIDs } from './layers/poisLayers';
-import { poiCategoryGroups } from './poiCategoryGroups';
+import { poiCategoryGroups } from './types/poiCategoryGroups';
 import type { FilterablePOICategory, POIsModuleConfig } from './types/poisModuleConfig';
 import type { POIsModuleFeature } from './types/poisModuleFeature';
 

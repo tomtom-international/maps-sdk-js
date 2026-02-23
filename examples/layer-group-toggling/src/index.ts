@@ -9,6 +9,7 @@ import {
 } from '@tomtom-org/maps-sdk/map';
 import './style.css';
 import { API_KEY } from './config';
+import { initTogglePanel } from './togglePanel';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
@@ -60,12 +61,5 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         map.setStyle((event.target as HTMLOptionElement).value as StandardStyleID),
     );
 
-    const toggleButton = document.querySelector('.sdk-example-heading-toggle');
-    const panelContent = document.querySelector('.sdk-example-panel-content');
-
-    toggleButton?.addEventListener('click', () => {
-        const isExpanded = toggleButton.getAttribute('aria-expanded') === 'true';
-        toggleButton.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');
-        panelContent?.classList.toggle('collapsed');
-    });
+    initTogglePanel();
 })();

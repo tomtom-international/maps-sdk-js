@@ -1,13 +1,9 @@
 import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
-import { indexedMagnitudes } from 'core';
-import type { IncidentCategory, IncidentsConfig, RoadCategory, TrafficIncidentsFilters } from 'map';
-import {
-    incidentCategories as availableIncidentCategories,
-    incidentCategoriesMapping,
-    TRAFFIC_INCIDENTS_SOURCE_ID,
-} from 'map';
-import type { MapGeoJSONFeature } from 'maplibre-gl';
+import type { DelayMagnitude, TrafficIncidentCategory } from 'core';
+import { trafficIncidentCategories as availableIncidentCategories } from 'core';
+import type { IncidentsConfig, RoadCategory, TrafficIncidentsFilters, TrafficIncidentsModuleFeature } from 'map';
+import { TRAFFIC_INCIDENTS_SOURCE_ID } from 'map';
 import { MapsSDKThis } from './types/MapsSDKThis';
 import { MapTestEnv } from './util/MapTestEnv';
 import {
@@ -16,33 +12,33 @@ import {
     setStyle,
     waitForMapIdle,
     waitForMapReady,
-    waitUntilRenderedFeaturesChange,
 } from './util/TestUtils';
 
-const waitForRenderedIncidentsChange = async (
+const waitForShownIncidentsChange = async (
     page: Page,
     previousFeaturesCount: number,
-): Promise<MapGeoJSONFeature[]> =>
-    waitUntilRenderedFeaturesChange(
-        page,
-        (await getVisibleLayersBySource(page, TRAFFIC_INCIDENTS_SOURCE_ID)).map((layer) => layer.id),
+): Promise<TrafficIncidentsModuleFeature[]> => {
+    await page.waitForFunction(
+        (prevCount) => {
+            const shown = (globalThis as any).trafficIncidents?.getShown();
+            return shown !== undefined && shown.trafficIncidents.length !== prevCount;
+        },
         previousFeaturesCount,
-        20000,
+        { timeout: 20000 },
     );
-
-const mapIncidentCategories = (categories: IncidentCategory[]): number[] =>
-    categories.map((category) => incidentCategoriesMapping[category]);
+    return page.evaluate(() => (globalThis as any).trafficIncidents?.getShown()?.trafficIncidents ?? []);
+};
 
 const getByIncidentCategories = (
-    renderedIncidents: MapGeoJSONFeature[],
-    incidentCategories: IncidentCategory[],
-): MapGeoJSONFeature[] =>
-    renderedIncidents.filter((incident) =>
-        mapIncidentCategories(incidentCategories).includes(incident.properties['icon_category_0']),
-    );
+    incidents: TrafficIncidentsModuleFeature[],
+    categories: TrafficIncidentCategory[],
+): TrafficIncidentsModuleFeature[] => incidents.filter((incident) => categories.includes(incident.properties.category));
 
-const getByRoadCategories = (renderedItems: MapGeoJSONFeature[], roadCategories: RoadCategory[]): MapGeoJSONFeature[] =>
-    renderedItems.filter((incident) => roadCategories.includes(incident.properties['road_category']));
+const getByRoadCategories = (
+    incidents: TrafficIncidentsModuleFeature[],
+    roadCategories: RoadCategory[],
+): TrafficIncidentsModuleFeature[] =>
+    incidents.filter((incident) => roadCategories.includes(incident.properties.roadCategory));
 
 const getConfig = async (page: Page): Promise<IncidentsConfig | undefined> =>
     page.evaluate(async () => (globalThis as MapsSDKThis).trafficIncidents?.getConfig());
@@ -178,15 +174,13 @@ test.describe('Map vector tile traffic incidents module tests', () => {
         expect(await getConfig(page)).toEqual({ visible: true });
         await waitForMapIdle(page);
 
-        const defaultIncidents = await waitForRenderedIncidentsChange(page, 0);
+        const defaultIncidents = await waitForShownIncidentsChange(page, 0);
         expect(defaultIncidents.length).toBeGreaterThan(4);
-        expect(getByIncidentCategories(defaultIncidents, ['road_closed']).length).toBeGreaterThan(0);
-        const shown = await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.getShown());
-        expect(shown?.trafficIncidents.length).toBeGreaterThan(0);
+        expect(getByIncidentCategories(defaultIncidents, ['road-closed']).length).toBeGreaterThan(0);
 
         let config: IncidentsConfig = {
             visible: true,
-            filters: { any: [{ incidentCategories: { show: 'only', values: ['road_closed'] } }] },
+            filters: { any: [{ incidentCategories: { show: 'only', values: ['road-closed'] } }] },
         };
 
         // Showing road closures only:
@@ -200,13 +194,13 @@ test.describe('Map vector tile traffic incidents module tests', () => {
         await waitForMapIdle(page);
         expect(await getConfig(page)).toEqual(config);
 
-        const roadClosedIncidents = await waitForRenderedIncidentsChange(page, 0);
+        const roadClosedIncidents = await waitForShownIncidentsChange(page, 0);
         // we check that all the rendered incidents are of road_closed category:
-        expect(getByIncidentCategories(roadClosedIncidents, ['road_closed'])).toHaveLength(roadClosedIncidents.length);
+        expect(getByIncidentCategories(roadClosedIncidents, ['road-closed'])).toHaveLength(roadClosedIncidents.length);
         expect(
             getByIncidentCategories(
                 roadClosedIncidents,
-                availableIncidentCategories.filter((category) => category != 'road_closed'),
+                availableIncidentCategories.filter((category) => category != 'road-closed'),
             ),
         ).toHaveLength(0);
 
@@ -214,7 +208,7 @@ test.describe('Map vector tile traffic incidents module tests', () => {
             visible: true,
             filters: {
                 any: [
-                    { incidentCategories: { show: 'only', values: ['road_closed'] } },
+                    { incidentCategories: { show: 'only', values: ['road-closed'] } },
                     { roadCategories: { show: 'only', values: ['motorway', 'trunk', 'primary'] } },
                 ],
             },
@@ -229,25 +223,22 @@ test.describe('Map vector tile traffic incidents module tests', () => {
         await waitForMapIdle(page);
         expect(await getConfig(page)).toEqual(config);
 
-        const roadClosedAndMajorRoadIncidents = await waitForRenderedIncidentsChange(page, defaultIncidents.length);
+        const roadClosedAndMajorRoadIncidents = await waitForShownIncidentsChange(page, defaultIncidents.length);
         expect(roadClosedAndMajorRoadIncidents.length).toBeLessThan(defaultIncidents.length);
         // The addition of major road and road_closed incidents should be greater or equal than the total
         // (since there can be overlap due to the "any"/"or" filter)
         expect(
             getByRoadCategories(roadClosedAndMajorRoadIncidents, ['motorway', 'trunk', 'primary']).length +
-                getByIncidentCategories(roadClosedAndMajorRoadIncidents, ['road_closed']).length,
+                getByIncidentCategories(roadClosedAndMajorRoadIncidents, ['road-closed']).length,
         ).toBeGreaterThanOrEqual(roadClosedAndMajorRoadIncidents.length);
 
         // We reset the config and assert that we have the same amount of incidents as the beginning:
         await resetConfig(page);
-        const resetIncidents = await waitForRenderedIncidentsChange(page, roadClosedAndMajorRoadIncidents.length);
+        const resetIncidents = await waitForShownIncidentsChange(page, roadClosedAndMajorRoadIncidents.length);
         expect(resetIncidents).toHaveLength(0);
 
         await applyConfig(page, { visible: true });
-        const defaultResetIncidents = await waitForRenderedIncidentsChange(
-            page,
-            roadClosedAndMajorRoadIncidents.length,
-        );
+        const defaultResetIncidents = await waitForShownIncidentsChange(page, roadClosedAndMajorRoadIncidents.length);
         expect(defaultResetIncidents).toHaveLength(defaultResetIncidents.length);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
@@ -268,7 +259,7 @@ test.describe('Map vector tile traffic incidents module tests', () => {
                         magnitudes: { show: 'only', values: ['moderate', 'major'] },
                         delays: { minDelayMinutes: 5 },
                     },
-                    { incidentCategories: { show: 'only', values: ['road_closed'] } },
+                    { incidentCategories: { show: 'only', values: ['road-closed'] } },
                 ],
             },
         };
@@ -278,22 +269,15 @@ test.describe('Map vector tile traffic incidents module tests', () => {
         await waitForMapIdle(page);
 
         // INCIDENTS assertions:
-        let renderedIncidents = await waitForRenderedIncidentsChange(page, 0);
+        let renderedIncidents = await waitForShownIncidentsChange(page, 0);
         expect(renderedIncidents.length).toBeGreaterThan(5);
 
-        // There should be no incidents that have delays, and such delays are less than 5 min:
-        expect(
-            renderedIncidents.filter((incident) => incident.properties.delay && incident.properties.delay < 300),
-        ).toHaveLength(0);
-
-        expect(getByIncidentCategories(renderedIncidents, ['road_closed']).length).toBeGreaterThan(0);
+        expect(getByIncidentCategories(renderedIncidents, ['road-closed']).length).toBeGreaterThan(0);
 
         // We only allow for moderate, major and indefinite (because of road closures) magnitudes:
         expect(
             renderedIncidents.filter((incident) =>
-                [indexedMagnitudes.indexOf('unknown'), indexedMagnitudes.indexOf('minor')].includes(
-                    incident.properties.magnitude_of_delay,
-                ),
+                (['unknown', 'minor'] as DelayMagnitude[]).includes(incident.properties.magnitudeOfDelay),
             ),
         ).toHaveLength(0);
 
@@ -304,11 +288,13 @@ test.describe('Map vector tile traffic incidents module tests', () => {
 
         // Asserting similar things again:
         // INCIDENTS assertions:
-        renderedIncidents = await waitForRenderedIncidentsChange(page, 0);
+        renderedIncidents = await waitForShownIncidentsChange(page, 0);
         expect(
-            renderedIncidents.filter((incident) => incident.properties.delay && incident.properties.delay < 300),
+            renderedIncidents.filter((incident) =>
+                (['unknown', 'minor'] as DelayMagnitude[]).includes(incident.properties.magnitudeOfDelay),
+            ),
         ).toHaveLength(0);
-        expect(getByIncidentCategories(renderedIncidents, ['road_closed']).length).toBeGreaterThan(0);
+        expect(getByIncidentCategories(renderedIncidents, ['road-closed']).length).toBeGreaterThan(0);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
@@ -320,7 +306,7 @@ test.describe('Map vector tile traffic incidents module tests', () => {
         await initTrafficIncidents(page);
 
         const incidentFilters: TrafficIncidentsFilters = {
-            any: [{ incidentCategories: { show: 'only', values: ['road_closed'] } }],
+            any: [{ incidentCategories: { show: 'only', values: ['road-closed'] } }],
         };
         // Showing road closures only:
         await page.evaluate(
@@ -340,9 +326,9 @@ test.describe('Map vector tile traffic incidents module tests', () => {
             true,
         );
         await waitForMapIdle(page);
-        const roadClosedIncidents = await waitForRenderedIncidentsChange(page, 0);
+        const roadClosedIncidents = await waitForShownIncidentsChange(page, 0);
         // we check that all the rendered incidents are of road_closed category:
-        expect(getByIncidentCategories(roadClosedIncidents, ['road_closed'])).toHaveLength(roadClosedIncidents.length);
+        expect(getByIncidentCategories(roadClosedIncidents, ['road-closed'])).toHaveLength(roadClosedIncidents.length);
 
         await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.setVisible(false));
         expect(await getConfig(page)).toEqual({

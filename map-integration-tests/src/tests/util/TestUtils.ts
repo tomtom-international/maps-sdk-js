@@ -5,6 +5,7 @@ import type { Position } from 'geojson';
 import type {
     BaseMapModuleInitConfig,
     EventType,
+    FlowConfig,
     GeometriesModuleConfig,
     HillshadeModuleConfig,
     IncidentsConfig,
@@ -248,6 +249,12 @@ export const initTrafficIncidents = async (page: Page, config?: IncidentsConfig)
             mapsSdkThis.tomtomMap,
             inputConfig,
         );
+    }, config);
+
+export const initTrafficFlow = async (page: Page, config?: FlowConfig) =>
+    page.evaluate(async (inputConfig?) => {
+        const mapsSdkThis = globalThis as MapsSDKThis;
+        mapsSdkThis.trafficFlow = await mapsSdkThis.MapsSDK.TrafficFlowModule.get(mapsSdkThis.tomtomMap, inputConfig);
     }, config);
 
 export const initPOIs = async (page: Page, config?: POIsModuleConfig) =>

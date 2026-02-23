@@ -24,7 +24,7 @@ import { MapGeoJSONFeature } from 'maplibre-gl';
  */
 export type POIsModuleFeature = Omit<MapGeoJSONFeature, 'properties'> & {
     /**
-     * POI-specific properties from the vector tile.
+     * POI-specific properties from the vector tile data.
      */
     properties: {
         /**

@@ -1,5 +1,5 @@
 import type { MapOptions } from 'maplibre-gl';
-import { injectTomTomHeaders } from '../shared/mapUtils';
+import { transformRequest } from '../shared/mapUtils';
 import { buildStyleInput } from './styleInputBuilder';
 import type { InternalTomTomMapParams } from './types/mapInit';
 
@@ -18,6 +18,6 @@ export const buildMapOptions = (tomtomMapParams: InternalTomTomMapParams): MapOp
         // SDK overrides (won't have any effect via given options):
         style: buildStyleInput(tomtomMapParams),
         attributionControl: { compact: false },
-        transformRequest: injectTomTomHeaders(tomtomMapParams),
+        transformRequest: transformRequest(tomtomMapParams),
     };
 };

@@ -1,3 +1,4 @@
+import { DelayMagnitude, TrafficIncidentCategory } from '../traffic/incidents';
 import type { RoadShieldReference } from './guidance';
 import type { LegSummary } from './summary';
 
@@ -118,64 +119,6 @@ export type ImportantRoadStretchProps = SectionProps & {
 };
 
 /**
- * All possible traffic incident categories.
- * @group Route
- */
-export const trafficCategories = [
-    'jam',
-    'accident',
-    'roadworks',
-    'road-closed',
-    'narrow-lanes',
-    'danger',
-    'animals-on-road',
-    'broken-down-vehicle',
-    'lane-closed',
-    'wind',
-    'fog',
-    'rain',
-    'frost',
-    'flooding',
-    'other',
-] as const;
-
-/**
- * Simple category classification for traffic incidents.
- *
- * @remarks
- * - `jam`: Traffic congestion or slow-moving traffic
- * - `accident`: Traffic accident or collision
- * - `roadworks`: Construction or maintenance work
- * - `road-closed`: Road is closed or blocked
- * - `danger`: Dangerous situation on the road
- * - `broken-down-vehicle`: Vehicle breakdown causing obstruction
- * - `lane-closed`: One or more lanes closed
- * - `wind`: Strong wind conditions affecting traffic
- * - `fog`: Fog reducing visibility
- * - `rain`: Heavy rain affecting driving conditions
- * - `frost`: Frost or ice on the road
- * - `flooding`: Flooded road section
- * - `other`: Other types of incidents
- *
- * @group Route
- */
-export type TrafficCategory = (typeof trafficCategories)[number];
-
-/**
- * Severity of the traffic delay.
- *
- * @remarks
- * - `unknown`: Delay magnitude cannot be determined
- * - `minor`: Small delay (few minutes)
- * - `moderate`: Noticeable delay (several minutes to ~10 minutes)
- * - `major`: Significant delay (10+ minutes)
- * - `indefinite`: Unknown or extremely long delay (e.g., road closure)
- *
- * @group Route
- */
-export type DelayMagnitude = 'unknown' | 'minor' | 'moderate' | 'major' | 'indefinite';
-
-/**
  * Traffic incident cause based on TPEG2-TEC standard.
  *
  * TPEG (Transport Protocol Experts Group) codes provide standardized
@@ -249,7 +192,7 @@ export type TrafficSectionProps = SectionProps & {
     /**
      * Categories of the incident. Based on the 'tec' cause codes.
      */
-    categories: TrafficCategory[];
+    categories: TrafficIncidentCategory[];
     /**
      * Severity level of the delay caused by this incident.
      */

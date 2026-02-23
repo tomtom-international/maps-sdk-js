@@ -1,4 +1,4 @@
-import type { MapStylePOICategory } from '../places';
+import type { MapStylePOICategory } from '../../places';
 
 /**
  * Predefined groups of related POI categories for convenient filtering.
