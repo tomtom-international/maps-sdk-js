@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.45.8](https://github.com/tomtom-international/maps-sdk-js/compare/v0.45.7...v0.45.8) (2026-02-24)
+
+
+### Bug Fixes
+
+* ensure reachable ranges is visible on docs portal ([f10675a](https://github.com/tomtom-international/maps-sdk-js/commit/f10675a170d6e7cfe8b73b29a921e210a3f0bae3))
+
 ## [0.45.7](https://github.com/tomtom-international/maps-sdk-js/compare/v0.45.6...v0.45.7) (2026-02-24)
 
 
