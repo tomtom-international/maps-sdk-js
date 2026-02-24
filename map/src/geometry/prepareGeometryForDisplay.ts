@@ -1,50 +1,17 @@
-import { bboxCenter, bboxFromCoordsArray, generateId, PolygonFeatures } from '@tomtom-org/maps-sdk/core';
+import {
+    bboxCenter,
+    bboxFromCoordsArray,
+    generateId,
+    type PolygonFeature,
+    PolygonFeatures,
+} from '@tomtom-org/maps-sdk/core';
+import { mask } from '@turf/turf';
 import type { Feature, FeatureCollection, GeoJsonProperties, MultiPolygon, Point, Polygon, Position } from 'geojson';
-import { isNil } from 'lodash-es';
-import type { DataDrivenPropertyValueSpecification, SymbolLayerSpecification } from 'maplibre-gl';
-import type { SymbolLayerSpecWithoutSource } from '../shared';
-import { MAP_BOLD_FONT } from '../shared/layers/commonLayerProps';
+import type { DataDrivenPropertyValueSpecification } from 'maplibre-gl';
 import { type ColorPaletteOptions, colorPalettes } from './layers/colorPalettes';
-import { geometryFillSpec, geometryOutlineSpec } from './layers/geometryLayers';
 import type { GeometriesModuleConfig } from './types/geometriesModuleConfig';
 import type { DisplayGeometryProps, ExtraGeometryDisplayProps } from './types/geometryDisplayProps';
-import { GEOMETRY_TITLE_PROP } from './types/geometryDisplayProps';
-
-/**
- * Builds Geometry layer specifications for fill and outline layers.
- * @ignore
- */
-export const buildGeometryLayerSpecs = (
-    fillLayerId: string,
-    outlineLayerId: string,
-    config?: GeometriesModuleConfig,
-): [SymbolLayerSpecWithoutSource, SymbolLayerSpecWithoutSource] => {
-    const colorConfig = config?.colorConfig;
-    const lineConfig = config?.lineConfig;
-
-    const fillLayerSpec = {
-        ...geometryFillSpec,
-        id: fillLayerId,
-        paint: {
-            ...geometryFillSpec.paint,
-            ...(!isNil(colorConfig?.fillOpacity) && { 'fill-opacity': colorConfig?.fillOpacity }),
-            ...(colorConfig?.fillColor && { 'fill-color': ['get', 'color'] }),
-        },
-    } as unknown as SymbolLayerSpecWithoutSource;
-
-    const outlineLayerSpec = {
-        ...geometryOutlineSpec,
-        id: outlineLayerId,
-        paint: {
-            ...geometryOutlineSpec.paint,
-            ...(!isNil(lineConfig?.lineColor) && { 'line-color': lineConfig?.lineColor }),
-            ...(!isNil(lineConfig?.lineWidth) && { 'line-width': lineConfig?.lineWidth }),
-            ...(!isNil(lineConfig?.lineOpacity) && { 'line-opacity': lineConfig?.lineOpacity }),
-        },
-    } as unknown as SymbolLayerSpecWithoutSource;
-
-    return [fillLayerSpec, outlineLayerSpec];
-};
+import type { GeometryTheme } from './types/geometryTheme';
 
 /**
  * Build geometry Title. The type can be a string or a Maplibre expression.
@@ -59,7 +26,6 @@ const buildTitle = (
     if (config.textConfig?.textField) {
         return config.textConfig.textField;
     }
-
     return feature.properties?.address?.freeformAddress;
 };
 
@@ -73,90 +39,47 @@ const buildColor = (
     index: number,
 ): DataDrivenPropertyValueSpecification<string> | string | undefined => {
     const color = config?.colorConfig?.fillColor;
-
     if (typeof color === 'string' && colorPalettes[color as ColorPaletteOptions]) {
         const palette = colorPalettes[color as ColorPaletteOptions];
         return palette[index % palette.length];
     }
-
     return color;
 };
 
-/**
- * Build geometry layer specification for title
- * @param layerID
- * @param config
- * @returns
- * @ignore
- */
-export const buildGeometryTitleLayerSpec = (
-    layerId: string,
-    config?: GeometriesModuleConfig,
-): Omit<SymbolLayerSpecification, 'source'> => {
-    const textConfig = config?.textConfig;
+/** Finds the longest coordinate array in a MultiPolygon for title placement. */
+const getLongestArray = (coordinates: Position[][][]) =>
+    coordinates.flat().reduce((result, coord) => (coord.length > result.length ? coord : result), []);
 
+/**
+ * Converts a polygon into a world-minus-polygon donut for the `'inverted'` theme.
+ *
+ * Uses `turf.mask` to punch the polygon as a hole in a world bounding box.
+ *
+ * @remarks
+ * Called automatically when a feature or config has `theme: 'inverted'`.
+ *
+ * @group Geometries
+ */
+export const invertFeature = (feature: PolygonFeature): PolygonFeature => {
+    const masked = mask(feature);
     return {
-        type: 'symbol',
-        id: layerId,
-        layout: {
-            'text-field': ['get', GEOMETRY_TITLE_PROP],
-            ...(textConfig?.textField && { 'text-field': textConfig.textField }),
-            'text-padding': 5,
-            'text-size': 12,
-            'text-font': [MAP_BOLD_FONT],
-            'symbol-placement': 'point',
-        },
-        paint: {
-            'text-color': '#333333',
-            'text-halo-color': '#FFFFFF',
-            'text-halo-width': ['interpolate', ['linear'], ['zoom'], 6, 1, 10, 1.5],
-            'text-translate-anchor': 'viewport',
-        },
-    };
+        ...feature,
+        geometry: masked.geometry,
+    } as PolygonFeature;
 };
 
-/**
- * Build geometry layer specification for line labels
- * Adds labels along the polygon border
- * @param layerID
- * @param config
- * @returns
- * @ignore
- */
-export const buildGeometryLineLabelLayerSpec = (
-    layerId: string,
-    config?: GeometriesModuleConfig,
-): Omit<SymbolLayerSpecification, 'source'> => {
-    const lineLabelConfig = config?.lineLabelConfig;
-    const minzoom = lineLabelConfig?.minZoom ?? 3;
-
-    return {
-        type: 'symbol',
-        id: layerId,
-        minzoom,
-        layout: {
-            'text-field': ['get', GEOMETRY_TITLE_PROP],
-            'symbol-placement': 'line',
-            'text-size': lineLabelConfig?.textSize ?? 15,
-            'text-font': [MAP_BOLD_FONT],
-            'symbol-spacing': lineLabelConfig?.symbolSpacing ?? 200,
-            'text-keep-upright': true,
-            'text-offset': [0, 1],
-        },
-        paint: {
-            'text-color': lineLabelConfig?.textColor ?? '#333333',
-            'text-halo-color': lineLabelConfig?.textHaloColor ?? '#FFFFFF',
-            'text-halo-width': lineLabelConfig?.textHaloWidth ?? 2,
-        },
-    };
+type InputFeatureProps = {
+    theme?: GeometryTheme;
+    title?: string;
+    color?: string;
+    id?: string;
 };
-
 /**
- * Prepare geometry for display.
- * If colorConfig is set, it will apply the property "color" to "properties" in each feature.
- * @param geometry
- * @param config
- * @returns
+ * Prepares polygon features for display by applying theme, colors, and titles.
+ *
+ * @param geometry - Polygon features to prepare.
+ * @param config - Module configuration for styling.
+ * @returns Processed features ready for MapLibre rendering.
  * @ignore
  */
 export const prepareGeometryForDisplay = (
@@ -165,28 +88,25 @@ export const prepareGeometryForDisplay = (
 ): PolygonFeatures<ExtraGeometryDisplayProps> => ({
     ...geometry,
     features: geometry.features.map((feature, index) => {
-        const title = feature.properties?.title ?? buildTitle(feature, config);
-        const color = feature.properties?.color ?? buildColor(config, index);
+        const props = (feature.properties ?? {}) as InputFeatureProps;
+        const effectiveTheme = props.theme ?? config.theme;
+        const processedFeature = effectiveTheme === 'inverted' ? invertFeature(feature as PolygonFeature) : feature;
+        const processedProps = (processedFeature.properties ?? {}) as InputFeatureProps;
+        // buildTitle/buildColor may return MapLibre expressions; cast since output type expects string
+        const title = (processedProps.title ?? buildTitle(processedFeature, config)) as string | undefined;
+        const color = (processedProps.color ?? buildColor(config, index)) as string | undefined;
         return {
-            ...feature,
+            ...processedFeature,
             properties: {
-                ...feature.properties,
+                ...processedFeature.properties,
+                ...(effectiveTheme && { theme: effectiveTheme }),
                 ...(title && { title }),
                 ...(color && { color }),
-                id: feature.properties?.id ?? generateId(),
+                id: processedProps.id ?? generateId(),
             },
         };
     }),
 });
-
-/**
- * Find the biggest array length inside an array.
- * Used to find the biggest array in a Multi-Polygon feature.
- * @param coordinates
- * @returns
- */
-const getLongestArray = (coordinates: Position[][][]) =>
-    coordinates.flat().reduce((result, coord) => (coord.length > result.length ? coord : result), []);
 
 /**
  * Create a Feature<Point> with coordinates where title will be placed.

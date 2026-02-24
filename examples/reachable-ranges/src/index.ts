@@ -2,10 +2,9 @@ import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import {
     type ColorPaletteOptions,
     GeometriesModule,
+    type GeometryTheme,
     PlacesModule,
-    prepareReachableRangesForDisplay,
-    type ReachableRangeTheme,
-    reachableRangeLayerConfig,
+    reachableRangeGeometryConfig,
     type StandardStyleID,
     TomTomMap,
 } from '@tomtom-org/maps-sdk/map';
@@ -13,14 +12,14 @@ import { type BudgetType, calculateReachableRanges } from '@tomtom-org/maps-sdk/
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import './style.css';
 import { API_KEY } from './config';
-import { BUDGET_UNITS, getBudgetsForMax, initControls, setStatus } from './controls';
+import { getBudgetsForMax, initControls, setStatus } from './controls';
 import { getVehicleForBudgetType } from './vehicleProfiles';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: API_KEY });
 
 let origin: [number, number] = [4.7641, 52.3086];
-let currentTheme: ReachableRangeTheme = 'filled';
+let currentTheme: GeometryTheme = 'filled';
 let currentPalette: ColorPaletteOptions = 'fadedRainbow';
 let currentBudgetType: BudgetType = 'timeMinutes';
 let maxBudget = 30;
@@ -32,8 +31,12 @@ const map = new TomTomMap({
 
 (async () => {
     const originPin = await PlacesModule.get(map);
+    const geometriesModule = await GeometriesModule.get(
+        map,
+        reachableRangeGeometryConfig(currentPalette, currentTheme),
+    );
 
-    let rangesModule: GeometriesModule | null = null;
+    let lastResult: Awaited<ReturnType<typeof calculateReachableRanges>> | null = null;
     let abortController = new AbortController();
 
     const updateRanges = async (fitBounds = true) => {
@@ -42,7 +45,7 @@ const map = new TomTomMap({
         setStatus('', true);
 
         try {
-            const { features } = await calculateReachableRanges(
+            const result = await calculateReachableRanges(
                 getBudgetsForMax(maxBudget, currentBudgetType).map((value) => ({
                     origin,
                     budget: { type: currentBudgetType, value },
@@ -52,33 +55,29 @@ const map = new TomTomMap({
                 { signal: abortController.signal },
             );
 
-            if (!features.length) {
-                rangesModule?.clear();
+            if (!result.features.length) {
+                geometriesModule.clear();
                 setStatus('No ranges found for this location.');
                 return;
             }
 
-            const displayRanges = prepareReachableRangesForDisplay(
-                features,
-                features.map((f) => `${f.properties.budget.value} ${BUDGET_UNITS[currentBudgetType]}`),
-                currentTheme,
-            );
+            lastResult = result;
+            geometriesModule.show(result);
 
-            if (!rangesModule) {
-                rangesModule = await GeometriesModule.get(map, reachableRangeLayerConfig(currentPalette));
-            } else {
-                rangesModule.applyConfig(reachableRangeLayerConfig(currentPalette));
-            }
-
-            rangesModule.show(displayRanges);
-
-            if (fitBounds && displayRanges.bbox) {
-                map.mapLibreMap.fitBounds(displayRanges.bbox as LngLatBoundsLike, { padding: 50 });
+            if (fitBounds && result.bbox) {
+                map.mapLibreMap.fitBounds(result.bbox as LngLatBoundsLike, { padding: 50 });
             }
 
             setStatus('');
         } catch {
             // AbortError — a newer call is already in flight
+        }
+    };
+
+    const refreshDisplay = () => {
+        if (lastResult?.features.length) {
+            geometriesModule.applyConfig(reachableRangeGeometryConfig(currentPalette, currentTheme));
+            void geometriesModule.show(lastResult);
         }
     };
 
@@ -115,11 +114,11 @@ const map = new TomTomMap({
         },
         onPaletteChange: (palette) => {
             currentPalette = palette;
-            updateRanges(false);
+            refreshDisplay();
         },
         onThemeChange: (theme) => {
             currentTheme = theme;
-            updateRanges(false);
+            refreshDisplay();
         },
         onStyleChange: (styleId: StandardStyleID) => {
             map.setStyle(styleId);

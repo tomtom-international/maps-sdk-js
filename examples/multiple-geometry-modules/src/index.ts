@@ -1,8 +1,6 @@
-import type { PolygonFeatures } from '@tomtom-org/maps-sdk/core';
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { GeometriesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { geocode, geometryData, search } from '@tomtom-org/maps-sdk/services';
-import { bboxPolygon, difference } from '@turf/turf';
 import './style.css';
 import { API_KEY } from './config';
 
@@ -10,14 +8,6 @@ import { API_KEY } from './config';
 TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
 (async () => {
-    const invert = (geometry: PolygonFeatures): PolygonFeatures => {
-        const invertedArea = difference({
-            type: 'FeatureCollection',
-            features: [bboxPolygon([-180, 90, 180, -90]), geometry?.features?.[0]],
-        });
-        return invertedArea ? ({ type: 'FeatureCollection', features: [invertedArea] } as PolygonFeatures) : geometry;
-    };
-
     const mainPlace = await geocode({ query: 'Germany', geographyTypes: ['Country'] });
     const map = new TomTomMap({
         mapLibre: {
@@ -30,10 +20,11 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
     const mainGeometry = await geometryData({ geometries: mainPlace });
 
     const restOfTheMapGeometryModule = await GeometriesModule.get(map, {
+        theme: 'inverted',
         colorConfig: { fillColor: 'black', fillOpacity: ['interpolate', ['linear'], ['zoom'], 6, 0.6, 14, 0.4] },
         lineConfig: { lineOpacity: 0 },
     });
-    restOfTheMapGeometryModule.show(invert(mainGeometry));
+    restOfTheMapGeometryModule.show(mainGeometry);
 
     const subdivisions = await search({
         query: '',

@@ -9,9 +9,8 @@ import {
     buildGeometryLayerSpecs,
     buildGeometryLineLabelLayerSpec,
     buildGeometryTitleLayerSpec,
-    prepareGeometryForDisplay,
-    prepareTitleForDisplay,
-} from './prepareGeometryForDisplay';
+} from './layers/geometryLayers';
+import { prepareGeometryForDisplay, prepareTitleForDisplay } from './prepareGeometryForDisplay';
 import type {
     GeometriesModuleConfig,
     GeometryBeforeLayerConfig,
@@ -146,6 +145,9 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
 
     private titleSourceID!: string;
     private titleLayerID!: string;
+
+    // Cached for restoreDataAndConfigImpl on style change.
+    private lastRawInput: PolygonFeatures | null = null;
 
     /**
      * Make sure the map is ready before create an instance of the module and any other interaction with the map
@@ -381,10 +383,13 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
      * @ignore
      */
     protected restoreDataAndConfigImpl() {
-        const previousShownFeatures = this.sourcesWithLayers.geometry.shownFeatures;
+        const previousInput = this.lastRawInput;
         this.initSourcesWithLayers(this.config, true);
         this.config && this._applyConfig(this.config);
-        this.show(previousShownFeatures);
+        if (previousInput) {
+            // Fire-and-forget: base class requires sync, but show() is async.
+            void this.show(previousInput);
+        }
     }
 
     /**
@@ -450,8 +455,11 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
      */
     async show(geometries: PolygonFeatures) {
         await this.waitUntilModuleReady();
+        this.lastRawInput = geometries;
+        const { transformFeaturesForDisplay } = this.config ?? {};
+        const transformed = transformFeaturesForDisplay ? transformFeaturesForDisplay(geometries) : geometries;
         const geometry = this.sourcesWithLayers.geometry;
-        geometry.show(prepareGeometryForDisplay(geometries, this.config));
+        geometry.show(prepareGeometryForDisplay(transformed, this.config));
         this.sourcesWithLayers.geometryLabel.show(prepareTitleForDisplay(geometry.shownFeatures));
     }
 

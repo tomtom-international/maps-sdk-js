@@ -1,6 +1,8 @@
+import type { PolygonFeatures } from '@tomtom-org/maps-sdk/core';
 import type { DataDrivenPropertyValueSpecification } from 'maplibre-gl';
 import type { MapModuleCommonConfig, MapStyleLayerID } from '../../shared';
-import type { ColorPaletteOptions } from '../layers/geometryLayers';
+import type { ColorPaletteOptions } from '../layers/colorPalettes';
+import type { GeometryTheme } from './geometryTheme';
 
 /**
  * Color configuration for geometry fill styling.
@@ -40,7 +42,7 @@ export type GeometryColorConfig = {
      * - Color palette name (e.g., `'red'`, `'blue'`)
      * - MapLibre expression for data-driven styling
      *
-     * @default '#0080FF'
+     * @default '#0A3653'
      *
      * @example
      * ```typescript
@@ -65,7 +67,7 @@ export type GeometryColorConfig = {
      * @remarks
      * Value between 0 (fully transparent) and 1 (fully opaque).
      *
-     * @default 0.3
+     * @default 0.15
      *
      * @example
      * ```typescript
@@ -149,7 +151,7 @@ export type GeometryLineConfig = {
     /**
      * Color of the geometry border/outline.
      *
-     * @default '#0080FF'
+     * @default '#0A3653'
      *
      * @example
      * ```typescript
@@ -410,4 +412,53 @@ export type GeometriesModuleConfig = MapModuleCommonConfig & {
      * When set, labels are placed along the polygon border lines.
      */
     lineLabelConfig?: GeometryLineLabelConfig;
+
+    /**
+     * Visual theme applied to all features shown by this module.
+     *
+     * - `'filled'` — Colored fill with thin border (default)
+     * - `'outline'` — Transparent fill with thick colored border
+     * - `'inverted'` — Colors the area **outside** the polygon (donut geometry)
+     *
+     * Individual features can override this by setting `theme` in their properties.
+     *
+     * @example
+     * ```typescript
+     * // Show the "rest of the world" outside a country
+     * const module = await GeometriesModule.get(map, {
+     *     theme: 'inverted',
+     *     colorConfig: { fillColor: 'black', fillOpacity: 0.5 }
+     * });
+     * module.show(countryGeometry);
+     * ```
+     */
+    theme?: GeometryTheme;
+
+    /**
+     * Transform applied to features before rendering.
+     *
+     * Receives the value passed to {@link GeometriesModule.show} and returns
+     * features ready for display. Useful for deriving labels or other display
+     * properties from domain data.
+     *
+     * @remarks
+     * Used internally by {@link reachableRangeGeometryConfig} to generate budget
+     * labels (e.g. `'30 min'`) from feature properties. For most use cases,
+     * the standard config fields (`colorConfig`, `textConfig`, `theme`) suffice.
+     *
+     * @example
+     * ```typescript
+     * // Derive title from a custom property
+     * const config: GeometriesModuleConfig = {
+     *     transformFeaturesForDisplay: (fc) => ({
+     *         ...fc,
+     *         features: fc.features.map((f) => ({
+     *             ...f,
+     *             properties: { ...f.properties, title: f.properties?.customLabel },
+     *         })),
+     *     }),
+     * };
+     * ```
+     */
+    transformFeaturesForDisplay?: (input: PolygonFeatures) => PolygonFeatures;
 };

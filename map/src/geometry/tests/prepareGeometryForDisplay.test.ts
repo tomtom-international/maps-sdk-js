@@ -1,12 +1,9 @@
-import type { PolygonFeatures } from '@tomtom-org/maps-sdk/core';
+import type { PolygonFeature, PolygonFeatures } from '@tomtom-org/maps-sdk/core';
 import { describe, expect, test } from 'vitest';
 import { type ColorPaletteOptions, colorPalettes } from '../layers/colorPalettes';
-import {
-    buildGeometryLayerSpecs,
-    buildGeometryTitleLayerSpec,
-    prepareGeometryForDisplay,
-    prepareTitleForDisplay,
-} from '../prepareGeometryForDisplay';
+import { TURF_MASK_WORLD_RING } from '../layers/constants';
+import { buildGeometryLayerSpecs, buildGeometryTitleLayerSpec } from '../layers/geometryLayers';
+import { prepareGeometryForDisplay, prepareTitleForDisplay } from '../prepareGeometryForDisplay';
 import type { GeometriesModuleConfig } from '../types/geometriesModuleConfig';
 
 describe('prepareGeometryForDisplay', () => {
@@ -112,6 +109,165 @@ describe('prepareGeometryForDisplay', () => {
         expect(results.features[0].properties).not.toHaveProperty('color');
         expect(results.features[0].properties).not.toHaveProperty('title');
         expect(results.features[0].properties).toHaveProperty('id');
+    });
+
+    test('auto-inverts features with theme inverted into donut polygons', () => {
+        const ring = [
+            [0, 0],
+            [1, 0],
+            [1, 1],
+            [0, 1],
+            [0, 0],
+        ];
+        const geometry: PolygonFeatures = {
+            type: 'FeatureCollection',
+            features: [
+                {
+                    type: 'Feature',
+                    bbox: [0, 0, 1, 1],
+                    properties: { theme: 'inverted', title: 'Inverted zone' },
+                    geometry: { type: 'Polygon', coordinates: [ring] },
+                } as PolygonFeature,
+            ],
+        };
+
+        const results = prepareGeometryForDisplay(geometry);
+
+        expect(results.features[0].geometry.coordinates[0]).toEqual(TURF_MASK_WORLD_RING);
+        expect(results.features[0].geometry.coordinates[1]).toEqual(ring);
+        expect(results.features[0].properties).toHaveProperty('title', 'Inverted zone');
+    });
+
+    test('leaves filled and outline features unchanged', () => {
+        const ring = [
+            [0, 0],
+            [1, 0],
+            [1, 1],
+            [0, 1],
+            [0, 0],
+        ];
+        const geometry: PolygonFeatures = {
+            type: 'FeatureCollection',
+            features: [
+                {
+                    type: 'Feature',
+                    bbox: [0, 0, 1, 1],
+                    properties: { theme: 'filled' },
+                    geometry: { type: 'Polygon', coordinates: [ring] },
+                } as PolygonFeature,
+                {
+                    type: 'Feature',
+                    bbox: [0, 0, 1, 1],
+                    properties: { theme: 'outline' },
+                    geometry: { type: 'Polygon', coordinates: [ring] },
+                } as PolygonFeature,
+                {
+                    type: 'Feature',
+                    bbox: [0, 0, 1, 1],
+                    properties: {},
+                    geometry: { type: 'Polygon', coordinates: [ring] },
+                } as PolygonFeature,
+            ],
+        };
+
+        const results = prepareGeometryForDisplay(geometry);
+
+        for (const feature of results.features) {
+            expect(feature.geometry.coordinates[0]).toEqual(ring);
+        }
+    });
+
+    test('handles mixed themes with auto-inversion', () => {
+        const ring = [
+            [0, 0],
+            [1, 0],
+            [1, 1],
+            [0, 1],
+            [0, 0],
+        ];
+        const geometry: PolygonFeatures = {
+            type: 'FeatureCollection',
+            features: [
+                {
+                    type: 'Feature',
+                    bbox: [0, 0, 1, 1],
+                    properties: { theme: 'filled', title: 'A' },
+                    geometry: { type: 'Polygon', coordinates: [ring] },
+                } as PolygonFeature,
+                {
+                    type: 'Feature',
+                    bbox: [0, 0, 1, 1],
+                    properties: { theme: 'inverted', title: 'B' },
+                    geometry: { type: 'Polygon', coordinates: [ring] },
+                } as PolygonFeature,
+                {
+                    type: 'Feature',
+                    bbox: [0, 0, 1, 1],
+                    properties: { theme: 'outline', title: 'C' },
+                    geometry: { type: 'Polygon', coordinates: [ring] },
+                } as PolygonFeature,
+            ],
+        };
+
+        const results = prepareGeometryForDisplay(geometry);
+
+        expect(results.features[0].geometry.coordinates[0]).toEqual(ring);
+        expect(results.features[1].geometry.coordinates[0]).toEqual(TURF_MASK_WORLD_RING);
+        expect(results.features[2].geometry.coordinates[0]).toEqual(ring);
+    });
+
+    test('applies config-level theme to features without theme property', () => {
+        const ring = [
+            [0, 0],
+            [1, 0],
+            [1, 1],
+            [0, 1],
+            [0, 0],
+        ];
+        const geometry: PolygonFeatures = {
+            type: 'FeatureCollection',
+            features: [
+                {
+                    type: 'Feature',
+                    bbox: [0, 0, 1, 1],
+                    properties: { title: 'Germany' },
+                    geometry: { type: 'Polygon', coordinates: [ring] },
+                } as PolygonFeature,
+            ],
+        };
+
+        const results = prepareGeometryForDisplay(geometry, { theme: 'inverted' });
+
+        expect(results.features[0].geometry.coordinates[0]).toEqual(TURF_MASK_WORLD_RING);
+        expect(results.features[0].properties).toHaveProperty('theme', 'inverted');
+        expect(results.features[0].properties).toHaveProperty('title', 'Germany');
+    });
+
+    test('feature-level theme overrides config-level theme', () => {
+        const ring = [
+            [0, 0],
+            [1, 0],
+            [1, 1],
+            [0, 1],
+            [0, 0],
+        ];
+        const geometry: PolygonFeatures = {
+            type: 'FeatureCollection',
+            features: [
+                {
+                    type: 'Feature',
+                    bbox: [0, 0, 1, 1],
+                    properties: { theme: 'filled', title: 'Keep filled' },
+                    geometry: { type: 'Polygon', coordinates: [ring] },
+                } as PolygonFeature,
+            ],
+        };
+
+        const results = prepareGeometryForDisplay(geometry, { theme: 'inverted' });
+
+        // Feature-level theme='filled' takes precedence over config theme='inverted'
+        expect(results.features[0].geometry.coordinates[0]).toEqual(ring);
+        expect(results.features[0].properties).toHaveProperty('theme', 'filled');
     });
 
     test('Prepare title for display', () => {

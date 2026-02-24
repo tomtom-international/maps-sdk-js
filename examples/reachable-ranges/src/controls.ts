@@ -1,8 +1,8 @@
 import {
     type ColorPaletteOptions,
     colorPaletteIDs,
-    type ReachableRangeTheme,
-    reachableRangeThemes,
+    type GeometryTheme,
+    geometryThemes,
     type StandardStyleID,
     standardStyleIDs,
     type TomTomMap,
@@ -15,7 +15,7 @@ export type ControlCallbacks = {
     onBudgetTypeChange: (type: BudgetType, newMax: number) => void;
     onMaxBudgetChange: (max: number) => void;
     onPaletteChange: (palette: ColorPaletteOptions) => void;
-    onThemeChange: (theme: ReachableRangeTheme) => void;
+    onThemeChange: (theme: GeometryTheme) => void;
     onStyleChange: (styleId: StandardStyleID) => void;
 };
 
@@ -123,13 +123,13 @@ export const initControls = (map: TomTomMap, callbacks: ControlCallbacks): void 
     });
 
     // Theme selector
-    for (const id of reachableRangeThemes) {
+    for (const id of geometryThemes) {
         const option = new Option(id.charAt(0).toUpperCase() + id.slice(1), id);
         option.selected = id === 'filled';
         themeSelect.add(option);
     }
     themeSelect.addEventListener('change', () => {
-        callbacks.onThemeChange(themeSelect.value as ReachableRangeTheme);
+        callbacks.onThemeChange(themeSelect.value as GeometryTheme);
     });
 
     // Panel toggle

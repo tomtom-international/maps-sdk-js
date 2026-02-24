@@ -115,13 +115,3 @@ export type ExtraGeometryDisplayProps = {
  * @group Geometries
  */
 export type DisplayGeometryProps = CommonPlaceProps & ExtraGeometryDisplayProps;
-
-/**
- * @ignore
- */
-export const GEOMETRY_TITLE_PROP = 'title';
-
-/**
- * @ignore
- */
-export const GEOMETRY_COLOR_PROP = 'color';
