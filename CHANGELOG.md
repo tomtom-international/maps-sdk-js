@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.45.7](https://github.com/tomtom-international/maps-sdk-js/compare/v0.45.6...v0.45.7) (2026-02-24)
+
+
+### Features
+
+* add themed geometry config and make reachable-ranges zero-plumbing geometry display ([75b0b2d](https://github.com/tomtom-international/maps-sdk-js/commit/75b0b2da243c0e7b51635c841301ec709e8bc4a6))
+* reinstate displayReachableRanges and reachable-ranges example, allowing custom multi-budget-type, palette, and theme support ([ff5ef71](https://github.com/tomtom-international/maps-sdk-js/commit/ff5ef716cad6a423c6df955a634b4c781fb2519e))
+* typed features for map traffic incidents and flow, with extra properties ([4c5f25d](https://github.com/tomtom-international/maps-sdk-js/commit/4c5f25d822b80df97b81ea6027c8b6e241e2c2e6))
+
+
+### Bug Fixes
+
+* remove roadShieldReferences guidance param — road shields are requested via sectionTypes, and are included by default ([dca539b](https://github.com/tomtom-international/maps-sdk-js/commit/dca539b5c04b91a79cfa47273c413edee342b6ce))
+
 ## [0.45.6](https://github.com/tomtom-international/maps-sdk-js/compare/v0.45.5...v0.45.6) (2026-02-23)
 
 
