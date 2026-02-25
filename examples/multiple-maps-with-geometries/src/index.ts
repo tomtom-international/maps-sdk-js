@@ -7,7 +7,7 @@ import type { LngLatBoundsLike } from 'maplibre-gl';
 import './style.css';
 import { API_KEY } from './config';
 
-const mapsElement = document.querySelector('#sdk-map') as HTMLElement;
+const mapsElement = document.querySelector('#sdk-example-maps-container') as HTMLElement;
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
@@ -34,7 +34,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
                 interactive: false,
             },
         });
-        (
+        await (
             await GeometriesModule.get(map, {
                 beforeLayerConfig: 'lowestPlaceLabel',
                 colorConfig: { fillColor: 'white', fillOpacity: 0.75 },

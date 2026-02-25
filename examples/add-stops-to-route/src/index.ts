@@ -3,8 +3,9 @@ import { bboxFromGeoJSON, TomTomConfig, withInsertedWaypoint } from '@tomtom-org
 import type { WaypointDisplayProps } from '@tomtom-org/maps-sdk/map';
 import { BaseMapModule, MIDDLE_INDEX, RoutingModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { calculateRoute, geocodeOne } from '@tomtom-org/maps-sdk/services';
-import { LngLat, Popup } from 'maplibre-gl';
+import { LngLat } from 'maplibre-gl';
 import { API_KEY } from './config';
+import { buildAddStopHTML, buildRemoveStopHTML, createStopPopup } from './popup';
 import './style.css';
 import { initTogglePanel } from './togglePanel';
 
@@ -18,7 +19,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         mapLibre: {
             container: 'sdk-map',
             bounds: bboxFromGeoJSON([origin, destination]),
-            fitBoundsOptions: { padding: 50 },
+            fitBoundsOptions: { padding: 80 },
         },
     });
 
@@ -27,7 +28,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     // --- State ---
     let stops: [number, number][] = [];
     let currentRoute: Route;
-    let activePopup: Popup | null = null;
+    let activePopup: ReturnType<typeof createStopPopup> | null = null;
     let isUpdating = false;
 
     // --- Helpers ---
@@ -90,16 +91,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         // so the corresponding index in the stops array is index - 1.
         const stopIndex = waypoint.properties.index - 1;
 
-        const popup = new Popup({
-            closeButton: false,
-            anchor: 'bottom',
-            className: 'stop-action-popup',
-        })
-            .setLngLat(lngLat)
-            .setHTML(
-                `<button class="sdk-example-button sdk-example-button-secondary stop-popup-btn">Remove stop</button>`,
-            )
-            .addTo(map.mapLibreMap);
+        const popup = createStopPopup().setLngLat(lngLat).setHTML(buildRemoveStopHTML()).addTo(map.mapLibreMap);
 
         activePopup = popup;
 
@@ -121,15 +113,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
             return;
         }
 
-        const popup = new Popup({
-            offset: 15,
-            closeButton: false,
-            anchor: 'bottom',
-            className: 'stop-action-popup',
-        })
-            .setLngLat(lngLat)
-            .setHTML(`<button class="sdk-example-button stop-popup-btn">Add stop</button>`)
-            .addTo(map.mapLibreMap);
+        const popup = createStopPopup().setLngLat(lngLat).setHTML(buildAddStopHTML()).addTo(map.mapLibreMap);
 
         activePopup = popup;
 
