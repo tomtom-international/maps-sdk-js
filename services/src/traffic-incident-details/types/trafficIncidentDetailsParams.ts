@@ -1,26 +1,12 @@
-import type { BBox, TrafficIncidentTimeValidity } from '@tomtom-org/maps-sdk/core';
-import type { CommonServiceParams, FetchInput } from '../../shared';
-import type { IncidentDetailsResponseAPI } from './apiTypes';
-
-/**
- * @ignore
- */
-type TrafficIncidentDetailsPostBody = { ids: string[] };
-
-/**
- * @ignore
- */
-type TrafficIncidentDetailsRequest = FetchInput<TrafficIncidentDetailsPostBody>;
+import type { BBox, TrafficIncidentCategory, TrafficIncidentTimeValidity } from '@tomtom-org/maps-sdk/core';
+import type { CommonServiceParams } from '../../shared';
 
 /**
  * Base parameters shared by all Traffic Incident Details query modes.
  *
  * @group Traffic
  */
-type TrafficIncidentDetailsBaseParams = CommonServiceParams<
-    TrafficIncidentDetailsRequest,
-    IncidentDetailsResponseAPI
-> & {
+type TrafficIncidentDetailsBaseParams = CommonServiceParams & {
     /**
      * Traffic Model ID used to obtain consistent traffic data.
      *
@@ -40,29 +26,15 @@ type TrafficIncidentDetailsBaseParams = CommonServiceParams<
      * Filter results to specific incident categories.
      *
      * @remarks
-     * Provide icon category integers to include. When omitted, all categories
-     * are returned. Category codes:
-     * - `0`: Unknown
-     * - `1`: Accident
-     * - `2`: Fog
-     * - `3`: Dangerous Conditions
-     * - `4`: Rain
-     * - `5`: Ice / Frost
-     * - `6`: Jam
-     * - `7`: Lane Closed
-     * - `8`: Road Closed
-     * - `9`: Road Works
-     * - `10`: Wind
-     * - `11`: Flooding
-     * - `14`: Broken Down Vehicle
+     * Provide {@link TrafficIncidentCategory} values to include. When omitted, all categories are returned.
      *
      * @example
      * ```typescript
      * // Only accidents and road closures
-     * categoryFilter: [1, 8]
+     * categoryFilter: ['accident', 'road-closed']
      * ```
      */
-    categoryFilter?: number[];
+    categoryFilter?: TrafficIncidentCategory[];
 
     /**
      * Filter incidents by their temporal validity.

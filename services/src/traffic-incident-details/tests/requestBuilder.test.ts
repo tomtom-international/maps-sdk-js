@@ -29,7 +29,7 @@ describe('buildTrafficIncidentDetailsRequest — bbox mode (GET)', () => {
             ...COMMON,
             bbox: [4.728, 52.278, 5.08, 52.479],
             language: 'nl-NL',
-            categoryFilter: [1, 8],
+            categoryFilter: ['accident', 'road-closed'],
             timeValidityFilter: ['present', 'future'],
             trafficModelId: 'model123',
         });

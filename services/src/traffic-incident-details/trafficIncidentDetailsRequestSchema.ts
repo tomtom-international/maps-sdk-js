@@ -1,3 +1,4 @@
+import { trafficIncidentCategories } from '@tomtom-org/maps-sdk/core';
 import { z } from 'zod';
 import { commonServiceRequestSchema } from '../shared/schema/commonParamsSchema';
 
@@ -12,7 +13,10 @@ export const trafficIncidentDetailsRequestSchema = commonServiceRequestSchema
             .describe('Bounding box [minLon, minLat, maxLon, maxLat]'),
         ids: z.array(z.string()).optional().describe('List of incident IDs'),
         trafficModelId: z.string().optional().describe('Traffic Model ID for temporal consistency'),
-        categoryFilter: z.array(z.number()).optional().describe('Incident category integer filter'),
+        categoryFilter: z
+            .array(z.enum([...trafficIncidentCategories]))
+            .optional()
+            .describe('Incident category filter'),
         timeValidityFilter: z
             .array(z.enum(['present', 'future']))
             .optional()

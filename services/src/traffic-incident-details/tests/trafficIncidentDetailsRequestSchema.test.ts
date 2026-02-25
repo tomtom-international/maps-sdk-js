@@ -135,16 +135,16 @@ describe('Traffic Incident Details schema — categoryFilter validation', () => 
         );
     });
 
-    test('fails when categoryFilter contains non-numeric elements', () => {
+    test('fails when categoryFilter contains invalid enum values', () => {
         expect(() =>
             validateRequestSchema(
                 // @ts-ignore
-                { ...COMMON, bbox: [0, 0, 1, 1], categoryFilter: ['accident', 'jam'] },
+                { ...COMMON, bbox: [0, 0, 1, 1], categoryFilter: ['invalid-category', 'unknown-type'] },
                 { schema: trafficIncidentDetailsRequestSchema },
             ),
         ).toThrow(
             expect.objectContaining({
-                issues: expect.arrayContaining([expect.objectContaining({ code: 'invalid_type', expected: 'number' })]),
+                issues: expect.arrayContaining([expect.objectContaining({ code: 'invalid_value' })]),
             }),
         );
     });

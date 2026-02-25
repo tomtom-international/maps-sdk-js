@@ -1,3 +1,4 @@
+import { trafficIncidentToIconCategory } from '@tomtom-org/maps-sdk/core';
 import type { FetchInput } from '../shared';
 import {
     appendByJoiningParamValue,
@@ -21,7 +22,7 @@ const buildUrlBasePath = (params: TrafficIncidentDetailsParams): string =>
 const appendOptionalParams = (urlParams: URLSearchParams, params: TrafficIncidentDetailsParams): void => {
     appendOptionalParam(urlParams, 'fields', DEFAULT_FIELDS);
     appendOptionalParam(urlParams, 't', params.trafficModelId);
-    appendByJoiningParamValue(urlParams, 'categoryFilter', params.categoryFilter);
+    appendByJoiningParamValue(urlParams, 'categoryFilter', params.categoryFilter?.map(trafficIncidentToIconCategory));
     appendByJoiningParamValue(urlParams, 'timeValidityFilter', params.timeValidityFilter);
 };
 

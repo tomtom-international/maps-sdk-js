@@ -8,7 +8,7 @@ packages:
   - examples/**
 
 catalog:
-  '@ai-sdk/azure': ^3.0.31
+  '@ai-sdk/azure': ^3.0.34
   '@ai-sdk/openai': ^3.0.29
   '@codesandbox/sandpack-react': ^2.20.0
   '@codesandbox/sandpack-themes': ^2.0.21
@@ -24,7 +24,7 @@ catalog:
   '@types/rollup-plugin-peer-deps-external': ^2.2.6
   '@vitejs/plugin-react': ^5.1.4
   '@vitest/coverage-v8': ^4.0.18
-  ai: ^6.0.97
+  ai: ^6.0.99
   jsdom: ^28.1.0
   lodash-es: ^4.17.23
   maplibre-gl: ^5.19.0

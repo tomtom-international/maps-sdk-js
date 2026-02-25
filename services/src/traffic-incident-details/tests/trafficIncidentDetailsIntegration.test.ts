@@ -85,7 +85,7 @@ describe('Traffic Incident Details integration tests', () => {
         // Accidents (1) and road closures (8)
         const result = await trafficIncidentDetails({
             bbox: AMSTERDAM_BBOX,
-            categoryFilter: [1, 8],
+            categoryFilter: ['accident', 'road-closed'],
         });
 
         expect(result.features).toBeInstanceOf(Array);
