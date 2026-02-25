@@ -1,8 +1,6 @@
-import type { PolygonFeatures } from '@tomtom-org/maps-sdk/core';
 import { bboxFromGeoJSON, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { GeometriesModule, PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { geocode, geometryData, search } from '@tomtom-org/maps-sdk/services';
-import { bboxPolygon, difference } from '@turf/turf';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import './style.css';
 import { API_KEY } from './config';
@@ -21,18 +19,9 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         language: 'en-GB',
     });
     const placesModule = await PlacesModule.get(map);
-    const geometryModule = await GeometriesModule.get(map);
+    const geometryModule = await GeometriesModule.get(map, { theme: 'inverted' });
 
     let placeToSearchBBox: LngLatBoundsLike;
-
-    // inverts the polygon, so it looks like a hole on the map instead
-    const invert = (geometry: PolygonFeatures): PolygonFeatures => {
-        const invertedArea = difference({
-            type: 'FeatureCollection',
-            features: [bboxPolygon([-180, 90, 180, -90]), geometry?.features?.[0]],
-        });
-        return invertedArea ? ({ type: 'FeatureCollection', features: [invertedArea] } as PolygonFeatures) : geometry;
-    };
 
     const searchPlacesInGeometry = async (placesQuery: string, geometryQuery: string) => {
         const placeToSearchInside = await geocode({ query: geometryQuery, limit: 1 });
@@ -40,7 +29,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         placeToSearchBBox = bboxFromGeoJSON(placeToSearchInside) as LngLatBoundsLike;
 
         const geometryToSearch = await geometryData({ geometries: placeToSearchInside });
-        geometryModule.show(invert(geometryToSearch));
+        geometryModule.show(geometryToSearch);
 
         // Searching within the obtained geometry:
         const places = await search({

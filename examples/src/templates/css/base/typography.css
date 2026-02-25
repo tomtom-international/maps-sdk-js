@@ -13,16 +13,16 @@ h6 {
 }
 
 h1 {
-    font-size: var(--sdk-font-heading);
-    line-height: var(--sdk-font-heading-lh);
+    font-size: var(--sdk-font-title);
+    line-height: var(--sdk-font-title-lh);
 }
 h2 {
     font-size: var(--sdk-font-heading);
     line-height: var(--sdk-font-heading-lh);
 }
 h3 {
-    font-size: var(--sdk-font-heading);
-    line-height: var(--sdk-font-heading-lh);
+    font-size: var(--sdk-font-body-l);
+    line-height: var(--sdk-font-body-l-lh);
 }
 h4 {
     font-size: var(--sdk-font-subheading);
@@ -40,8 +40,8 @@ h6 {
 .sdk-example-heading {
     margin: 0 0 var(--sdk-space-4);
     font-family: var(--sdk-font-primary);
-    font-size: var(--sdk-font-heading);
-    line-height: var(--sdk-font-heading-lh);
+    font-size: var(--sdk-font-title);
+    line-height: var(--sdk-font-title-lh);
     font-weight: var(--sdk-font-weight-bold);
     color: var(--sdk-text-high);
     border-bottom: 2px solid var(--sdk-primary-color);
@@ -148,6 +148,90 @@ h6 {
 .sdk-example-note code {
     font-family: var(--sdk-font-code);
     font-size: var(--sdk-font-caption-s);
+}
+
+/* Responsive: max-width 768px */
+@media (max-width: 768px) {
+    h1 {
+        font-size: var(--sdk-font-heading);
+        line-height: var(--sdk-font-heading-lh);
+    }
+    h2 {
+        font-size: var(--sdk-font-body-l);
+        line-height: var(--sdk-font-body-l-lh);
+    }
+    h3 {
+        font-size: var(--sdk-font-subheading);
+        line-height: var(--sdk-font-subheading-lh);
+    }
+    .sdk-example-heading {
+        font-size: var(--sdk-font-heading);
+        line-height: var(--sdk-font-heading-lh);
+    }
+}
+
+/* Responsive: max-width 600px */
+@media (max-width: 600px) {
+    h1 {
+        font-size: var(--sdk-font-body-l);
+        line-height: var(--sdk-font-body-l-lh);
+    }
+    h2 {
+        font-size: var(--sdk-font-subheading);
+        line-height: var(--sdk-font-subheading-lh);
+    }
+    h3 {
+        font-size: var(--sdk-font-body-s);
+        line-height: var(--sdk-font-body-s-lh);
+    }
+    .sdk-example-heading {
+        font-size: var(--sdk-font-body-l);
+        line-height: var(--sdk-font-body-l-lh);
+    }
+    .sdk-example-form-label {
+        font-size: var(--sdk-font-caption-s);
+        line-height: var(--sdk-font-caption-s-lh);
+    }
+}
+
+/* Responsive: max-height 700px */
+@media (max-height: 700px) {
+    h1 {
+        font-size: var(--sdk-font-heading);
+        line-height: var(--sdk-font-heading-lh);
+    }
+    h2 {
+        font-size: var(--sdk-font-body-l);
+        line-height: var(--sdk-font-body-l-lh);
+    }
+    h3 {
+        font-size: var(--sdk-font-subheading);
+        line-height: var(--sdk-font-subheading-lh);
+    }
+    .sdk-example-heading {
+        font-size: var(--sdk-font-heading);
+        line-height: var(--sdk-font-heading-lh);
+    }
+}
+
+/* Responsive: max-height 550px */
+@media (max-height: 550px) {
+    h1 {
+        font-size: var(--sdk-font-body-l);
+        line-height: var(--sdk-font-body-l-lh);
+    }
+    h2 {
+        font-size: var(--sdk-font-subheading);
+        line-height: var(--sdk-font-subheading-lh);
+    }
+    h3 {
+        font-size: var(--sdk-font-body-s);
+        line-height: var(--sdk-font-body-s-lh);
+    }
+    .sdk-example-heading {
+        font-size: var(--sdk-font-body-l);
+        line-height: var(--sdk-font-body-l-lh);
+    }
 }
 
 /* UTILITIES */

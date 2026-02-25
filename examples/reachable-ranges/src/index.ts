@@ -2,6 +2,7 @@ import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import {
     type ColorPaletteOptions,
     GeometriesModule,
+    type GeometryBeforeLayerConfig,
     type GeometryTheme,
     PlacesModule,
     reachableRangeGeometryConfig,
@@ -22,6 +23,7 @@ let origin: [number, number] = [4.7641, 52.3086];
 let currentTheme: GeometryTheme = 'filled';
 let currentPalette: ColorPaletteOptions = 'fadedRainbow';
 let currentBudgetType: BudgetType = 'timeMinutes';
+let currentBeforeLayer: GeometryBeforeLayerConfig = 'lowestLabel';
 let maxBudget = 30;
 
 const map = new TomTomMap({
@@ -33,11 +35,15 @@ const map = new TomTomMap({
     const originPin = await PlacesModule.get(map);
     const geometriesModule = await GeometriesModule.get(
         map,
-        reachableRangeGeometryConfig(currentPalette, currentTheme),
+        reachableRangeGeometryConfig(currentPalette, currentTheme, currentBeforeLayer),
     );
 
     let lastResult: Awaited<ReturnType<typeof calculateReachableRanges>> | null = null;
     let abortController = new AbortController();
+
+    const formatCoords = ([lng, lat]: [number, number]) => `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+
+    const isInvertedTheme = (theme: GeometryTheme) => theme === 'inverted';
 
     const updateRanges = async (fitBounds = true) => {
         abortController.abort();
@@ -46,7 +52,7 @@ const map = new TomTomMap({
 
         try {
             const result = await calculateReachableRanges(
-                getBudgetsForMax(maxBudget, currentBudgetType).map((value) => ({
+                getBudgetsForMax(maxBudget, currentBudgetType, isInvertedTheme(currentTheme)).map((value) => ({
                     origin,
                     budget: { type: currentBudgetType, value },
                     smoothing: 'strong',
@@ -76,7 +82,9 @@ const map = new TomTomMap({
 
     const refreshDisplay = () => {
         if (lastResult?.features.length) {
-            geometriesModule.applyConfig(reachableRangeGeometryConfig(currentPalette, currentTheme));
+            geometriesModule.applyConfig(
+                reachableRangeGeometryConfig(currentPalette, currentTheme, currentBeforeLayer),
+            );
             void geometriesModule.show(lastResult);
         }
     };
@@ -96,12 +104,7 @@ const map = new TomTomMap({
         updateRanges();
     };
 
-    // Click/touch on map to relocate origin
-    map.mapLibreMap.on('click', (e) => {
-        setOrigin(e.lngLat.toArray());
-    });
-
-    initControls(map, {
+    const controls = initControls(map, {
         onOriginSelected: (lngLat, displayName) => setOrigin(lngLat, displayName),
         onBudgetTypeChange: (type, newMax) => {
             currentBudgetType = type;
@@ -123,8 +126,20 @@ const map = new TomTomMap({
         onStyleChange: (styleId: StandardStyleID) => {
             map.setStyle(styleId);
         },
+        onBeforeLayerChange: (beforeLayer) => {
+            currentBeforeLayer = beforeLayer;
+            geometriesModule.moveBeforeLayer(beforeLayer);
+        },
+    });
+
+    // Click/touch on map to relocate origin
+    map.mapLibreMap.on('click', (e) => {
+        const lngLat = e.lngLat.toArray() as [number, number];
+        controls.setOriginInput(formatCoords(lngLat));
+        setOrigin(lngLat);
     });
 
     showPin(origin);
+    controls.setOriginInput(formatCoords(origin));
     updateRanges();
 })();

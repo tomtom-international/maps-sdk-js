@@ -15,21 +15,31 @@ const BUDGET_UNITS: Readonly<Record<string, string>> = {
 };
 
 /**
- * Transforms range polygons into donut polygons for the 'inverted' theme.
- * Each donut fills the zone between two consecutive budget boundaries.
+ * Splits each reachable-range polygon into two features for the inverted theme:
+ * - Donut fill (no `theme` prop) — pre-inverted geometry via `mask`/`difference`; no border or label.
+ * - Border polygon (`theme: 'filled'`) — original geometry; fill suppressed; carries border and line label.
+ *
+ * Separating fills and borders prevents the line-label layer from tracing inner donut holes.
+ *
+ * Donut fills intentionally have `theme` stripped. `prepareGeometryForDisplay` inverts any feature
+ * whose resolved theme is `'inverted'` (`props.theme ?? config.theme`). Since donut geometry is already
+ * pre-inverted via `mask`/`difference`, stripping `theme` prevents double inversion without the need of 
+ * a flag or marker leaking into the user-facing API.
  */
 const buildDonutFeatures = (features: PolygonFeature[]): PolygonFeature[] => {
-    const donuts: PolygonFeature[] = features.map((feature, i) => {
-        // Outermost band: world minus the largest range polygon.
-        // Inner bands: previous (larger) range minus current (smaller) range.
+    const donutFills = features.map((feature, i) => {
         const donutGeo = i === 0 ? mask(feature) : difference(featureCollection([features[i - 1], feature]));
-        return {
-            ...feature,
-            geometry: (donutGeo ?? feature).geometry,
-        } as PolygonFeature;
+        const { title: _title, theme: _theme, ...rest } = feature.properties ?? {};
+        return { ...feature, geometry: donutGeo?.geometry ?? feature.geometry, properties: rest } as PolygonFeature;
     });
 
-    return [...donuts, ...features.slice(-1)];
+    const borderPolygons = features.map((feature) => ({
+        ...feature,
+        id: undefined,
+        properties: { ...feature.properties, theme: 'filled' as GeometryTheme },
+    })) as PolygonFeature[];
+
+    return [...donutFills, ...borderPolygons];
 };
 
 /**
@@ -65,13 +75,7 @@ export const buildReachableRangeFeatures = (
         properties: { ...f.properties, title: labels[i], theme },
     }));
     if (theme === 'inverted') {
-        // buildDonutFeatures handles its own geometry transformation for multi-range donuts.
-        // Set theme to 'filled' afterward to prevent prepareGeometryForDisplay from
-        // applying invertFeature on already-transformed geometry.
-        return buildDonutFeatures(labelled).map((f) => ({
-            ...f,
-            properties: { ...f.properties, theme: 'filled' as GeometryTheme },
-        }));
+        return buildDonutFeatures(labelled);
     }
     return labelled;
 };

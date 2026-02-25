@@ -286,6 +286,30 @@ export type GeometryLineLabelConfig = {
      * ```
      */
     symbolSpacing?: number;
+
+    /**
+     * Opacity of the border label text.
+     *
+     * @default 1
+     *
+     * @example
+     * ```typescript
+     * textOpacity: 0.8
+     * ```
+     */
+    textOpacity?: DataDrivenPropertyValueSpecification<number>;
+
+    /**
+     * Offset of the border label from the line, in ems `[x, y]`.
+     *
+     * @default [0, 1]
+     *
+     * @example
+     * ```typescript
+     * textOffset: [0, 1]  // Default: 1em above the line
+     * ```
+     */
+    textOffset?: DataDrivenPropertyValueSpecification<[number, number]>;
 };
 
 /**

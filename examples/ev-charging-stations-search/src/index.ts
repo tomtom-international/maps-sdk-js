@@ -2,7 +2,6 @@ import {
     type EVChargingStationWithAvailabilityPlaceProps,
     geographyTypes,
     type Place,
-    type PolygonFeatures,
     TomTomConfig,
 } from '@tomtom-org/maps-sdk/core';
 import { GeometriesModule, PlacesModule, PlacesModuleConfig, POIsModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
@@ -13,7 +12,6 @@ import {
     hasChargingAvailability,
     search,
 } from '@tomtom-org/maps-sdk/services';
-import { bboxPolygon, difference } from '@turf/turf';
 import { without } from 'lodash-es';
 import { type LngLatBoundsLike, Popup } from 'maplibre-gl';
 import './style.css';
@@ -87,7 +85,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 
     const mapSearchedEVStationsModule = await PlacesModule.get(map, evStationPinConfig);
     const selectedEVStationModule = await PlacesModule.get(map, evStationPinConfig);
-    const mapGeometryModule = await GeometriesModule.get(map);
+    const mapGeometryModule = await GeometriesModule.get(map, { theme: 'inverted' });
 
     let minPowerKWMapEVStations = 50;
     let minPowerKWSearchedEVStations = 0;
@@ -109,20 +107,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
             .addTo(map.mapLibreMap);
     };
 
-    // inverts the polygon, so it looks like a hole on the map instead
-    const invert = (geometry: PolygonFeatures): PolygonFeatures => {
-        const invertedArea = difference({
-            type: 'FeatureCollection',
-            features: [bboxPolygon([-180, 90, 180, -90]), geometry?.features?.[0]],
-        });
-        return invertedArea
-            ? ({
-                  type: 'FeatureCollection',
-                  features: [invertedArea],
-              } as PolygonFeatures)
-            : geometry;
-    };
-
     const searchEVStations = async () => {
         popUp.remove();
         mapBasePOIs.setVisible(false);
@@ -138,7 +122,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         areaToSearch && map.mapLibreMap.fitBounds(areaToSearch.bbox as LngLatBoundsLike, fitBoundsOptions);
         const geometryToSearch = areaToSearch && (await geometryData({ geometries: areaToSearch }));
         if (geometryToSearch) {
-            mapGeometryModule.show(invert(geometryToSearch));
+            mapGeometryModule.show(geometryToSearch);
         } else {
             mapGeometryModule.clear();
         }

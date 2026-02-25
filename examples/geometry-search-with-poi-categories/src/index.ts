@@ -1,7 +1,6 @@
-import { bboxFromGeoJSON, PolygonFeatures, TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { bboxFromGeoJSON, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { GeometriesModule, PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { geocode, geometryData, search } from '@tomtom-org/maps-sdk/services';
-import { bboxPolygon, difference } from '@turf/turf';
 import './style.css';
 import { API_KEY } from './config';
 
@@ -9,15 +8,6 @@ import { API_KEY } from './config';
 TomTomConfig.instance.put({ apiKey: API_KEY });
 
 (async () => {
-    // inverts the polygon, so it looks like a hole on the map instead
-    const invert = (geometry: PolygonFeatures): PolygonFeatures => {
-        const invertedArea = difference({
-            type: 'FeatureCollection',
-            features: [bboxPolygon([-180, 90, 180, -90]), geometry?.features?.[0]],
-        });
-        return invertedArea ? ({ type: 'FeatureCollection', features: [invertedArea] } as PolygonFeatures) : geometry;
-    };
-
     const areaToSearch = await geocode({ query: 'paris', limit: 1 });
 
     const map = new TomTomMap({
@@ -29,8 +19,8 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     });
 
     const areaGeometry = await geometryData({ geometries: areaToSearch });
-    const geometryModule = await GeometriesModule.get(map);
-    geometryModule.show(invert(areaGeometry));
+    const geometryModule = await GeometriesModule.get(map, { theme: 'inverted' });
+    geometryModule.show(areaGeometry);
 
     const restaurants = await search({
         query: '',

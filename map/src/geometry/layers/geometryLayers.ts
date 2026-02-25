@@ -140,12 +140,13 @@ export const buildGeometryLineLabelLayerSpec = (
             'text-font': [MAP_BOLD_FONT],
             'symbol-spacing': lineLabelConfig?.symbolSpacing ?? BORDER_LABEL_SYMBOL_SPACING,
             'text-keep-upright': true,
-            'text-offset': [0, 1],
+            'text-offset': lineLabelConfig?.textOffset ?? [0, 1],
         },
         paint: {
             'text-color': lineLabelConfig?.textColor ?? TITLE_COLOR,
             'text-halo-color': lineLabelConfig?.textHaloColor ?? TITLE_HALO_COLOR,
             'text-halo-width': lineLabelConfig?.textHaloWidth ?? BORDER_LABEL_TEXT_HALO_WIDTH,
+            ...(!isNil(lineLabelConfig?.textOpacity) && { 'text-opacity': lineLabelConfig?.textOpacity }),
         },
     };
 };

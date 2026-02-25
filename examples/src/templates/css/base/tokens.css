@@ -30,6 +30,8 @@
     --sdk-font-secondary: "Proxima Nova", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     --sdk-font-code: "Fira Code", "Monaco", "Courier New", monospace;
 
+    --sdk-font-title: 22px;
+    --sdk-font-title-lh: 28px;
     --sdk-font-heading: 18px;
     --sdk-font-heading-lh: 24px;
     --sdk-font-subheading: 14px;
