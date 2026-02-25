@@ -1,4 +1,9 @@
-import { generateId, indexedMagnitudes, type TrafficIncidentCategory } from '@tomtom-org/maps-sdk/core';
+import {
+    generateId,
+    iconToTrafficIncidentCategory,
+    indexedMagnitudes,
+    type TrafficIncidentCategory,
+} from '@tomtom-org/maps-sdk/core';
 import type { MapGeoJSONFeature } from 'maplibre-gl';
 import type { TrafficIncidentsModuleFeature } from '../types/trafficIncidentsFeature';
 
@@ -47,11 +52,6 @@ export const incidentToIconCategoryMapping: Record<TrafficIncidentCategory, numb
     'broken-down-vehicle': 14,
 } as const;
 
-// Reverse mapping:
-const iconToIncidentCategoryMapping = Object.fromEntries(
-    Object.entries(incidentToIconCategoryMapping).map(([category, code]) => [code, category]),
-) as Record<number, TrafficIncidentCategory>;
-
 /**
  * @ignore
  */
@@ -64,7 +64,7 @@ export const trafficIncidentMapping = (feature: MapGeoJSONFeature): TrafficIncid
         properties: {
             id: properties.id ?? generateId(), // generateID is a failsafe but properties.id should always be present in the vector tile data
             description: properties?.description_0 ?? '',
-            category: iconToIncidentCategoryMapping[properties?.icon_category_0],
+            category: iconToTrafficIncidentCategory(properties?.icon_category_0),
             magnitudeOfDelay: indexedMagnitudes[properties?.magnitude_of_delay],
             roadCategory: properties?.road_category,
             roadSubcategory: properties?.road_subcategory,

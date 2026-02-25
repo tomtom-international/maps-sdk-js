@@ -1,0 +1,103 @@
+import { describe, expect, test } from 'vitest';
+import { bestExecutionTimeMS } from '../../../../core/src/util/tests/performanceTestUtils';
+import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
+import { buildTrafficIncidentDetailsRequest } from '../requestBuilder';
+
+const BASE = 'https://api-test.tomtom.com';
+const KEY = 'TEST_API_KEY';
+const COMMON = { apiKey: KEY, apiVersion: 1, commonBaseURL: BASE } as const;
+
+describe('buildTrafficIncidentDetailsRequest — bbox mode (GET)', () => {
+    test('builds a GET request with bbox', () => {
+        const result = buildTrafficIncidentDetailsRequest({
+            ...COMMON,
+            bbox: [4.728, 52.278, 5.08, 52.479],
+        });
+
+        expect(result.method).toBe('GET');
+        const url = result.url.toString();
+        expect(url).toContain(`${BASE}/maps/orbis/traffic/incidentDetails`);
+        expect(url).toContain('apiVersion=1');
+        expect(url).toContain(`key=${KEY}`);
+        expect(url).toContain('bbox=4.728%2C52.278%2C5.08%2C52.479');
+        // default fields projection should always be present
+        expect(result.url.searchParams.has('fields')).toBe(true);
+    });
+
+    test('appends optional params', () => {
+        const result = buildTrafficIncidentDetailsRequest({
+            ...COMMON,
+            bbox: [4.728, 52.278, 5.08, 52.479],
+            language: 'nl-NL',
+            categoryFilter: [1, 8],
+            timeValidityFilter: ['present', 'future'],
+            trafficModelId: 'model123',
+        });
+
+        expect(result.method).toBe('GET');
+        const url = result.url.toString();
+        expect(url).toContain('language=nl-NL');
+        expect(url).toContain('categoryFilter=1%2C8');
+        expect(url).toContain('timeValidityFilter=present%2Cfuture');
+        expect(url).toContain('t=model123');
+    });
+});
+
+describe('buildTrafficIncidentDetailsRequest — ids mode (GET, ≤5 ids)', () => {
+    test('builds a GET request with ids in query string', () => {
+        const result = buildTrafficIncidentDetailsRequest({
+            ...COMMON,
+            ids: ['id-1', 'id-2'],
+        });
+
+        expect(result.method).toBe('GET');
+        expect(result.url.toString()).toContain('ids=id-1%2Cid-2');
+    });
+
+    test('uses GET for exactly 5 ids', () => {
+        const result = buildTrafficIncidentDetailsRequest({
+            ...COMMON,
+            ids: ['id-1', 'id-2', 'id-3', 'id-4', 'id-5'],
+        });
+        expect(result.method).toBe('GET');
+    });
+});
+
+describe('buildTrafficIncidentDetailsRequest — ids mode (POST, >5 ids)', () => {
+    test('builds a POST request with ids in the body when more than 5 are given', () => {
+        const ids = ['id-1', 'id-2', 'id-3', 'id-4', 'id-5', 'id-6'];
+        const result = buildTrafficIncidentDetailsRequest({ ...COMMON, ids });
+
+        expect(result.method).toBe('POST');
+        expect((result as { data: { ids: string[] } }).data).toEqual({ ids });
+        // ids must NOT appear in the query string for POST
+        expect(result.url.searchParams.has('ids')).toBe(false);
+    });
+});
+
+describe('buildTrafficIncidentDetailsRequest — custom base URL', () => {
+    test('uses customServiceBaseURL when provided', () => {
+        const result = buildTrafficIncidentDetailsRequest({
+            ...COMMON,
+            customServiceBaseURL: 'https://custom.example.com/traffic/incidentDetails',
+            bbox: [0, 0, 1, 1],
+        });
+
+        expect(result.url.toString()).toContain('https://custom.example.com/traffic/incidentDetails');
+    });
+});
+
+describe('buildTrafficIncidentDetailsRequest — performance', () => {
+    test('bbox request builds within time budget', () => {
+        expect(
+            bestExecutionTimeMS(
+                () =>
+                    buildTrafficIncidentDetailsRequest({
+                        ...COMMON,
+                        bbox: [4.728, 52.278, 5.08, 52.479],
+                    }),
+                10,
+            ),
+        ).toBeLessThan(MAX_EXEC_TIMES_MS.trafficIncidentDetails.requestBuilding);
+    });
+});

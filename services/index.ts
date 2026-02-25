@@ -18,3 +18,4 @@ export * from './src/revgeo';
 export * from './src/routing';
 export * from './src/search';
 export * from './src/shared';
+export * from './src/traffic-incident-details';
