@@ -1,4 +1,4 @@
-import { trafficIncidentToIconCategory } from '@tomtom-org/maps-sdk/core';
+import { bboxFromGeoJSON, trafficIncidentToIconCategory } from '@tomtom-org/maps-sdk/core';
 import type { FetchInput } from '../shared';
 import {
     appendByJoiningParamValue,
@@ -39,7 +39,10 @@ export const buildTrafficIncidentDetailsRequest = (
     appendOptionalParams(urlParams, params);
 
     if ('bbox' in params && params.bbox) {
-        urlParams.append('bbox', params.bbox.join(','));
+        const resolvedBBox = bboxFromGeoJSON(params.bbox);
+        if (resolvedBBox) {
+            urlParams.append('bbox', resolvedBBox.join(','));
+        }
         return { method: 'GET', url };
     }
 

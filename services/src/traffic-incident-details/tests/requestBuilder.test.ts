@@ -1,3 +1,4 @@
+import { GeoJsonObject } from 'geojson';
 import { describe, expect, test } from 'vitest';
 import { bestExecutionTimeMS } from '../../../../core/src/util/tests/performanceTestUtils';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
@@ -40,6 +41,60 @@ describe('buildTrafficIncidentDetailsRequest — bbox mode (GET)', () => {
         expect(url).toContain('categoryFilter=1%2C8');
         expect(url).toContain('timeValidityFilter=present%2Cfuture');
         expect(url).toContain('t=model123');
+    });
+});
+
+describe('buildTrafficIncidentDetailsRequest — bbox mode (GeoJSON inputs)', () => {
+    test('resolves bbox from a GeoJSON Feature (Point geometry)', () => {
+        const result = buildTrafficIncidentDetailsRequest({
+            ...COMMON,
+            bbox: {
+                type: 'Feature',
+                geometry: { type: 'Point', coordinates: [4.9, 52.37] },
+                properties: {},
+            } as GeoJsonObject,
+        });
+
+        expect(result.method).toBe('GET');
+        // A single point produces a zero-size bbox: [lon, lat, lon, lat]
+        expect(result.url.searchParams.get('bbox')).toBe('4.9,52.37,4.9,52.37');
+    });
+
+    test('resolves bbox from an array of GeoJSON Features', () => {
+        const result = buildTrafficIncidentDetailsRequest({
+            ...COMMON,
+            bbox: [
+                {
+                    type: 'Feature',
+                    geometry: { type: 'Point', coordinates: [4.9, 52.37] },
+                    properties: {},
+                } as GeoJsonObject,
+                {
+                    type: 'Feature',
+                    geometry: { type: 'Point', coordinates: [5.0, 52.45] },
+                    properties: {},
+                } as GeoJsonObject,
+            ],
+        });
+
+        expect(result.method).toBe('GET');
+        // Combined bbox spans both points (5.0 serialises as "5" in JS)
+        expect(result.url.searchParams.get('bbox')).toBe('4.9,52.37,5,52.45');
+    });
+
+    test('uses a pre-existing bbox property on a GeoJSON Feature', () => {
+        const result = buildTrafficIncidentDetailsRequest({
+            ...COMMON,
+            bbox: {
+                type: 'Feature',
+                bbox: [4.728, 52.278, 5.08, 52.479],
+                geometry: { type: 'Point', coordinates: [4.9, 52.37] },
+                properties: {},
+            } as GeoJsonObject,
+        });
+
+        expect(result.method).toBe('GET');
+        expect(result.url.searchParams.get('bbox')).toBe('4.728,52.278,5.08,52.479');
     });
 });
 

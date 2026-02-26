@@ -1,4 +1,4 @@
-import type { BBox, TrafficIncidentCategory, TrafficIncidentTimeValidity } from '@tomtom-org/maps-sdk/core';
+import type { HasBBox, TrafficIncidentCategory, TrafficIncidentTimeValidity } from '@tomtom-org/maps-sdk/core';
 import type { CommonServiceParams } from '../../shared';
 
 /**
@@ -59,14 +59,17 @@ type TrafficIncidentDetailsBaseParams = CommonServiceParams & {
  *
  * @remarks
  * The bounding box must cover an area no larger than 10,000 km².
- * Coordinates follow GeoJSON order: `[minLon, minLat, maxLon, maxLat]`.
  *
  * @example
  * ```typescript
- * // Amsterdam area
+ * // Raw bbox tuple
  * const params: TrafficIncidentDetailsByBBoxParams = {
  *   bbox: [4.728, 52.278, 5.080, 52.479]
  * };
+ *
+ * // GeoJSON place returned by geocoding
+ * const place = await geocodeOne('Amsterdam');
+ * const params: TrafficIncidentDetailsByBBoxParams = { bbox: place };
  * ```
  *
  * @group Traffic
@@ -75,10 +78,24 @@ export type TrafficIncidentDetailsByBBoxParams = TrafficIncidentDetailsBaseParam
     /**
      * Bounding box to query for incidents.
      *
-     * Format: `[minLon, minLat, maxLon, maxLat]` (GeoJSON order).
+     * Accepts a raw `[minLon, minLat, maxLon, maxLat]` tuple, any GeoJSON object
+     * (Feature, FeatureCollection, Geometry, …), or an array of GeoJSON objects.
+     * When a GeoJSON value is provided, its bounding box is calculated automatically
+     * via {@link bboxFromGeoJSON}.
+     *
      * Maximum area: 10,000 km².
+     *
+     * @example
+     * ```typescript
+     * // Raw bbox tuple
+     * bbox: [4.728, 52.278, 5.080, 52.479]
+     *
+     * // GeoJSON Feature returned by a geocode call
+     * const place = await geocodeOne('Amsterdam');
+     * bbox: place
+     * ```
      */
-    bbox: BBox;
+    bbox: HasBBox;
     ids?: never;
 };
 

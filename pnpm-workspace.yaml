@@ -9,7 +9,7 @@ packages:
 
 catalog:
   '@ai-sdk/azure': ^3.0.34
-  '@ai-sdk/openai': ^3.0.29
+  '@ai-sdk/openai': ^3.0.33
   '@codesandbox/sandpack-react': ^2.20.0
   '@codesandbox/sandpack-themes': ^2.0.21
   '@microsoft/api-extractor': 7.56.3

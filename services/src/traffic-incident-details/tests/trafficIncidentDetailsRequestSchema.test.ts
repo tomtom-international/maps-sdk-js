@@ -31,7 +31,38 @@ describe('Traffic Incident Details schema — valid inputs', () => {
 });
 
 describe('Traffic Incident Details schema — bbox validation', () => {
-    test('fails when bbox is an object instead of a tuple', () => {
+    test('accepts a GeoJSON Feature as bbox', () => {
+        expect(() =>
+            validateRequestSchema(
+                {
+                    ...COMMON,
+                    bbox: {
+                        type: 'Feature',
+                        geometry: { type: 'Point', coordinates: [4.9, 52.37] },
+                        properties: {},
+                    },
+                },
+                { schema: trafficIncidentDetailsRequestSchema },
+            ),
+        ).not.toThrow();
+    });
+
+    test('accepts an array of GeoJSON objects as bbox', () => {
+        expect(() =>
+            validateRequestSchema(
+                {
+                    ...COMMON,
+                    bbox: [
+                        { type: 'Feature', geometry: { type: 'Point', coordinates: [4.9, 52.37] }, properties: {} },
+                        { type: 'Feature', geometry: { type: 'Point', coordinates: [5.0, 52.45] }, properties: {} },
+                    ],
+                },
+                { schema: trafficIncidentDetailsRequestSchema },
+            ),
+        ).not.toThrow();
+    });
+
+    test('fails when bbox is a plain object without a GeoJSON type field', () => {
         expect(() =>
             validateRequestSchema(
                 // @ts-ignore
@@ -80,7 +111,7 @@ describe('Traffic Incident Details schema — bbox validation', () => {
             ),
         ).toThrow(
             expect.objectContaining({
-                issues: expect.arrayContaining([expect.objectContaining({ code: 'invalid_type', expected: 'number' })]),
+                issues: expect.arrayContaining([expect.objectContaining({ code: 'invalid_union' })]),
             }),
         );
     });

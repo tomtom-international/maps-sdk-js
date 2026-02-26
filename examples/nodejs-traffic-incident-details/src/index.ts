@@ -1,14 +1,14 @@
-import { type BBox, TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { geocodeOne, trafficIncidentDetails } from '@tomtom-org/maps-sdk/services';
 import { API_KEY } from './config';
 
 TomTomConfig.instance.put({ apiKey: API_KEY });
 
 (async () => {
-    const bbox = (await geocodeOne('Amsterdam')).bbox as BBox;
+    const place = await geocodeOne('Amsterdam');
 
     const result = await trafficIncidentDetails({
-        bbox,
+        bbox: place,
         timeValidityFilter: ['present'],
     });
 

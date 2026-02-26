@@ -66,7 +66,7 @@ import type { TrafficIncidentDetailsParams } from './types/trafficIncidentDetail
  * // Filter by category and include future incidents
  * const result = await trafficIncidentDetails({
  *   bbox: [4.728, 52.278, 5.080, 52.479],
- *   categoryFilter: [1, 8],           // accidents and road closures only
+ *   categoryFilter: ['accident', 'road-closed'],
  *   timeValidityFilter: ['present', 'future']
  * });
  * ```
