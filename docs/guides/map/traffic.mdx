@@ -1,0 +1,33 @@
+---
+title: Traffic
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.45.9"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The TomTom Maps SDK provides real-time traffic visualization in different ways, each optimized for specific use cases.
+
+<SDKGuideLiveCodingExample exampleDirectory="traffic-config-playground" />
+
+## Traffic Incidents
+
+**[TrafficIncidentsModule](./traffic-incidents)** displays real-time traffic events across the entire map area, such as accidents, road closures, construction, and weather disruptions. Each incident shows its type, severity, affected road segments, and expected delay impact.
+
+**Use when:** You need to display and filter traffic events (accidents, closures, construction) across the map.
+
+## Traffic Flow
+
+**[TrafficFlowModule](./traffic-flow)** displays real-time traffic speed conditions across the entire road network using color-coded road segments. Green indicates free-flowing traffic, yellow/orange represents moderate speeds, red shows congestion, and dark gray indicates road closures.
+
+**Use when:** You need a comprehensive view of current traffic conditions across all visible roads on the map.
+
+## Traffic Along Routes
+
+**[RoutingModule](./routes)** displays traffic incidents specifically along calculated routes, showing only incidents that directly affect the planned path. This focused view helps users understand delays and hazards affecting their specific journey.
+
+**Use when:** You need to show traffic incidents relevant to a specific calculated route.
