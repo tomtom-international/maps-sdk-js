@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.45.9](https://github.com/tomtom-international/maps-sdk-js/compare/v0.45.8...v0.45.9) (2026-02-26)
+
+
+### Features
+
+* improve inverted theme support for reachable ranges, migrate examples to use theme: 'inverted' ([5bd9c93](https://github.com/tomtom-international/maps-sdk-js/commit/5bd9c93ccc8cfce5b143da3f12a09d165af2eb6b))
+* incident details service improvements and added agent tools ([9f3058d](https://github.com/tomtom-international/maps-sdk-js/commit/9f3058dd55fde278ea8d8b58ddb223c354dd9ada))
+* traffic incident details service ([202d513](https://github.com/tomtom-international/maps-sdk-js/commit/202d51337cc0a45b2dd03474f8c155a3dc3e7eb9))
+
 ## [0.45.8](https://github.com/tomtom-international/maps-sdk-js/compare/v0.45.7...v0.45.8) (2026-02-24)
 
 
