@@ -1,0 +1,264 @@
+---
+title: Incident Details
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.45.7"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Incident Details service provides real-time and scheduled traffic incident data for a geographic area or a list of known incident IDs. Each incident is a GeoJSON Feature with a `Point` or `LineString` geometry, making results easy to display on a map or process server-side.
+
+<SDKGuideLiveCodingExample exampleDirectory="nodejs-traffic-incident-details" />
+
+## Core Concepts
+
+Traffic incidents are described by:
+
+- **Category** (`category`): the type of incident — `accident`, `roadworks`, `jam`, `road-closed`, etc.
+- **Delay magnitude**: how severe the delay is — `minor`, `moderate`, `major`, or `indefinite` (road closures).
+- **Geometry**: a `Point` for localised incidents, or a `LineString` for incidents spanning a road stretch.
+- **Time validity**: whether the incident is `present` (active now) or `future` (scheduled).
+- **Events**: one or more descriptions of what is happening at the incident location.
+
+## Basic Usage
+
+### Query by Bounding Box
+
+The most common way to get incidents is to query all incidents within a geographic area:
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { trafficIncidentDetails } from '@tomtom-org/maps-sdk/services';
+
+TomTomConfig.instance.put({ apiKey: 'your-api-key' });
+
+// Amsterdam area [minLon, minLat, maxLon, maxLat]
+const result = await trafficIncidentDetails({
+    bbox: [4.728, 52.278, 5.08, 52.479]
+});
+
+result.features.forEach(incident => {
+    const { category, magnitudeOfDelay, from, to } = incident.properties;
+    console.log(`${category} — ${magnitudeOfDelay} delay: ${from} → ${to}`);
+});
+```
+
+### Query by Incident IDs
+
+When you already know the IDs of the incidents you are interested in, look them up directly:
+
+```javascript
+const result = await trafficIncidentDetails({
+    ids: ['incident-id-1', 'incident-id-2', 'incident-id-3']
+});
+```
+
+The HTTP method is chosen automatically: **GET** for up to 5 IDs, **POST** for more (maximum 100).
+
+```javascript
+// More than 5 IDs — POST is used automatically
+const result = await trafficIncidentDetails({
+    ids: largeIdArray
+});
+```
+
+## Filtering Results
+
+### By Category
+
+Use `categoryFilter` to restrict results to specific incident types:
+
+```javascript
+const result = await trafficIncidentDetails({
+    bbox: [4.728, 52.278, 5.08, 52.479],
+    // Only accidents (1) and road closures (8)
+    categoryFilter: [1, 8]
+});
+```
+
+Available category codes:
+
+| Code | Category |
+|------|----------|
+| 0 | Unknown |
+| 1 | Accident |
+| 2 | Fog |
+| 3 | Dangerous Conditions |
+| 4 | Rain |
+| 5 | Ice / Frost |
+| 6 | Jam |
+| 7 | Lane Closed |
+| 8 | Road Closed |
+| 9 | Road Works |
+| 10 | Wind |
+| 11 | Flooding |
+| 12 | Animals on Road |
+| 13 | Narrow Lanes |
+| 14 | Broken Down Vehicle |
+
+### By Time Validity
+
+By default only `'present'` (currently active) incidents are returned. Include `'future'` incidents to see planned works and scheduled events:
+
+```javascript
+const result = await trafficIncidentDetails({
+    bbox: [4.728, 52.278, 5.08, 52.479],
+    timeValidityFilter: ['present', 'future']
+});
+```
+
+## Working with Incident Data
+
+### Reading Incident Properties
+
+```javascript
+const incident = result.features[0];
+
+// Geometry — Point or LineString
+console.log(incident.geometry.type);        // 'Point' | 'LineString'
+console.log(incident.geometry.coordinates); // [lon, lat] or [[lon, lat], ...]
+
+const {
+    id,
+    category,            // 'accident' | 'jam' | 'roadworks' | 'road-closed' | …
+    magnitudeOfDelay,    // 'minor' | 'moderate' | 'major' | 'indefinite' | 'unknown'
+    events,
+    from,
+    to,
+    lengthInMeters,
+    delayInSeconds,
+    roadNumbers,
+    timeValidity,        // 'present' | 'future'
+    probabilityOfOccurrence,  // 'certain' | 'probable' | 'risk_of' | 'improbable'
+    startTime,           // Date | undefined
+    endTime,             // Date | undefined
+    tmc,                 // TMC data | undefined
+} = incident.properties;
+```
+
+### Displaying on a Map
+
+Incident results are standard GeoJSON features and integrate directly with the TomTom Maps SDK:
+
+```javascript
+import maplibregl from 'maplibre-gl';
+
+const result = await trafficIncidentDetails({
+    bbox: [4.728, 52.278, 5.08, 52.479]
+});
+
+// Add incidents as a GeoJSON source
+map.addSource('incidents', {
+    type: 'geojson',
+    data: {
+        type: 'FeatureCollection',
+        features: result.features
+    }
+});
+
+// Style Point incidents as circles
+map.addLayer({
+    id: 'incident-points',
+    type: 'circle',
+    source: 'incidents',
+    filter: ['==', ['geometry-type'], 'Point'],
+    paint: {
+        'circle-radius': 8,
+        'circle-color': [
+            'match', ['get', 'category'],
+            'accident',   '#e74c3c',
+            'jam',        '#e67e22',
+            'road-closed','#c0392b',
+            'roadworks',  '#f39c12',
+            '#3498db'  // default
+        ]
+    }
+});
+
+// Style LineString incidents as lines
+map.addLayer({
+    id: 'incident-lines',
+    type: 'line',
+    source: 'incidents',
+    filter: ['==', ['geometry-type'], 'LineString'],
+    paint: {
+        'line-width': 4,
+        'line-color': '#e74c3c'
+    }
+});
+```
+
+### Filtering by Severity
+
+Focus on the most impactful incidents by filtering client-side on `magnitudeOfDelay`:
+
+```javascript
+const severeIncidents = result.features.filter(incident =>
+    incident.properties.magnitudeOfDelay === 'major' ||
+    incident.properties.magnitudeOfDelay === 'indefinite'
+);
+```
+
+## Advanced Options
+
+### Traffic Model ID
+
+For consistency across multiple traffic API calls made at the same time, pass the same `trafficModelId`. Obtain it from the Traffic Flow API:
+
+```javascript
+const result = await trafficIncidentDetails({
+    bbox: [4.728, 52.278, 5.08, 52.479],
+    trafficModelId: '1234567890'
+});
+```
+
+### Custom Service Customization
+
+The `trafficIncidentDetails` function accepts an optional second argument for advanced request/response customization, following the same pattern as other SDK services:
+
+```javascript
+import { trafficIncidentDetails } from '@tomtom-org/maps-sdk/services';
+
+const result = await trafficIncidentDetails(
+    { bbox: [4.728, 52.278, 5.08, 52.479] },
+    {
+        // Override the request builder to add custom headers or modify the URL
+        buildRequest: (params) => {
+            const request = buildTrafficIncidentDetailsRequest(params);
+            // ... modify request
+            return request;
+        }
+    }
+);
+```
+
+## Error Handling
+
+```javascript
+try {
+    const result = await trafficIncidentDetails({
+        bbox: [4.728, 52.278, 5.08, 52.479]
+    });
+
+    if (result.features.length === 0) {
+        console.log('No incidents in this area');
+    }
+} catch (error) {
+    // SDKServiceError contains .status (HTTP code) and .service
+    console.error('Incident Details request failed:', error.message);
+}
+```
+
+## Related Guides and Examples
+
+### Related Examples
+- **[Traffic Incidents](../../../examples/traffic-incidents/)** - Visualise incidents on an interactive map
+- **[Traffic Flow](../../../examples/traffic-flow/)** - Display live traffic flow alongside incidents
+
+### Related Services
+- **[Routing with Traffic](../routing/parameters.mdx)** - Plan routes that avoid live incidents
+- **[Routing Quickstart](../routing/quickstart.mdx)** - Get started with route planning

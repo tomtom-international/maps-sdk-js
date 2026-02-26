@@ -1,0 +1,251 @@
+---
+title: TomTom Map object
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.45.8"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+## Overview
+
+**[TomTomMap](/maps-sdk-js/api-reference/classes/map.TomTomMap.html)** is a lightweight wrapper around MapLibre GL JS that simplifies initialization and integration with TomTom services. It provides a high-level interface while preserving full access to MapLibre's capabilities.
+
+## Initialization
+
+### Basic Setup
+
+```javascript
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+
+const map = new TomTomMap({
+    mapLibre: {
+        container: 'map-container',
+        center: [4.9041, 52.3676],
+        zoom: 12
+    }
+});
+```
+
+### With Configuration
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+
+// Set global configuration
+TomTomConfig.instance.put({ apiKey: 'YOUR_API_KEY' });
+
+// Create map with TomTom-specific parameters
+const map = new TomTomMap({
+    mapLibre: {
+        container: 'map-container',
+        center: [-122.4194, 37.7749],
+        zoom: 13,
+        pitch: 45,
+        bearing: -17.6
+    },
+    // TomTom parameters (optional if globally configured)
+    apiKey: 'YOUR_API_KEY', // Override global config
+    language: 'en-US',
+    style: 'standardDark'
+});
+```
+
+### Constructor Parameters
+
+TomTomMap accepts a single configuration object of type **[TomTomMapParams](/maps-sdk-js/api-reference/types/map.TomTomMapParams.html)**, which includes:
+
+1. **MapLibre options**: Standard MapLibre configuration (`container`, `center`, `zoom`, etc.) - see [MapLibreOptions](https://maplibre.org/maplibre-gl-js/docs/API/type-aliases/MapOptions/)
+2. **TomTom options**: SDK-specific configuration (`style`, `events`, etc.)
+3. **Global config properties**: Optional overrides for `apiKey`, `language`, and other global settings
+
+All properties except `mapLibre.container` are optional. Global configuration properties (`apiKey`, `language`, etc.) can be set globally via `TomTomConfig.instance.put()` and will be automatically merged. Parameters passed to the constructor override global configuration, allowing per-map customization.
+
+## Map Styles
+
+### Using Standard Styles
+
+TomTom provides several standard styles. A standard style is predefined and hosted by TomTom, making it easy to use.
+
+You can quickly specify a standard style by its string identifier:
+
+```javascript
+// Simple style reference
+const map = new TomTomMap({
+    mapLibre: {
+        container: 'map'
+    },
+    style: 'standardDark'
+});
+```
+
+Available standard styles: `standardLight` (default), `standardDark`, `drivingLight`, `drivingDark`, `monoLight`, `monoDark`, `satellite`
+
+### Advanced Style Configuration
+
+```javascript
+const map = new TomTomMap({
+    mapLibre: {
+        container: 'map'
+    },
+    style: {
+        type: 'standard',
+        id: 'standardLight',
+        include: ['trafficFlow', 'trafficIncidents', 'hillshade']
+    }
+});
+```
+
+**[Learn more about Map Styles →](../map/map-styles.mdx)**
+
+### Dynamic Style Changes
+
+Change the map style at runtime using the `setStyle` method:
+
+```javascript
+// Change style at runtime
+map.setStyle('standardDark');
+
+// With options
+map.setStyle('standardDark', { keepState: true });
+```
+
+When `keepState: true` (default), the map preserves SDK module layers, traffic, routes, and other features during the style change.
+
+## Event Configuration
+
+Configure how the map responds to user interactions:
+
+```javascript
+const map = new TomTomMap({
+    mapLibre: {
+        container: 'map'
+    },
+    events: {
+        precisionMode: 'box',
+        paddingBoxPx: 10,
+        cursorOnHover: 'pointer'
+    }
+});
+```
+
+### Precision Modes
+
+- **`point`**: Exact click location
+- **`box`**: Click area with configurable padding
+- **`point-then-box`**: Tries exact location first, then expands to box if nothing found
+
+**[Learn more about User Interaction Events →](../map/user-events.mdx)**
+
+## Accessing MapLibre
+
+Direct access to the underlying MapLibre instance:
+
+```javascript
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+
+// Access MapLibre map
+const mapLibreMap = map.mapLibreMap;
+
+// Use MapLibre API directly
+mapLibreMap.on('moveend', () => {
+    console.log('Camera:', mapLibreMap.getCenter());
+});
+
+// Add custom layers
+mapLibreMap.addLayer({
+    id: 'custom-layer',
+    type: 'circle',
+    source: 'my-data'
+});
+```
+
+**Use Cases:**
+- Add custom layers and sources
+- Listen to MapLibre-specific events
+- Access advanced camera controls
+- Integrate third-party MapLibre plugins
+
+## Map Readiness
+
+The `mapReady` property indicates when the map is fully loaded:
+
+```javascript
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+
+if (map.mapReady) {
+    // Safe to initialize modules
+    const trafficFlowModule = await TrafficFlowModule.get(map);
+}
+
+// Or wait for style to load
+map.mapLibreMap.on('load', () => {
+    console.log('Map is ready');
+});
+```
+
+**Important**: `mapReady` becomes `false` during style changes and returns to `true` when the new style loads.
+
+## Style Change Handlers
+
+Register callbacks to handle style transitions:
+
+```javascript
+map.addStyleChangeHandler({
+    onStyleAboutToChange: () => {
+        console.log('Style changing...');
+        // Prepare for style change
+    },
+    onStyleChanged: () => {
+        console.log('New style loaded');
+        // Reinitialize or update modules
+    }
+});
+```
+
+This is useful for modules or custom code that needs to react to style changes triggered by the `setStyle` method.
+
+## Language Configuration
+
+
+
+Set the display language for map labels:
+
+```javascript
+const map = new TomTomMap({
+    mapLibre: {
+        container: 'map'
+    },
+    language: 'fr-FR'
+});
+```
+
+Supported languages include standard locale codes (e.g., `en-US`, `de-DE`, `ja-JP`).
+
+If a language is not specified, the map default to `Neutral Ground Truth`. This means that each map label will be displayed in its local language.
+
+
+## API Reference
+
+For complete documentation of all properties, methods, and types:
+
+**[TomTomMap API Reference →](/maps-sdk-js/api-reference/classes/map.TomTomMap.html)**
+
+### Key Methods Summary
+
+- **`setStyle(style, options?)`**: Change map style dynamically
+- **`getStyle()`**: Retrieve current style configuration
+- **`addStyleChangeHandler(handler)`**: Register style change callbacks
+- **`mapLibreMap`**: Access underlying MapLibre instance
+- **`mapReady`**: Check if map is fully loaded
+
+## Next Steps
+
+- **[Modules Guide](../map/modules.mdx)**: Add functionality with modules
+- **[Map Styles](../map/map-styles.mdx)**: Explore styling options
+- **[User Interaction Events](../map/user-events.mdx)**: Handle interactions
+- **[Service Integration](../services/quickstart.mdx)**: Connect TomTom services
+

@@ -1,0 +1,248 @@
+---
+title: Places
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.45.8"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+A place is a GeoJSON Feature with Point geometry representing a location. The feature properties contain comprehensive information including address details, POI data, entry points, and geographic classifications.
+
+## Where Places Are Used
+
+Places are returned by various services and can be displayed on the map:
+
+**Services that return places:**
+- [Search](../services/places/search.mdx) – Find places by name, category, or query
+- [Geocoding](../services/places/geocoding.mdx) – Convert addresses to coordinates and place details
+- [Reverse Geocoding](../services/places/reverse-geocoding.mdx) – Convert coordinates to addresses and nearby places
+- [Autocomplete](../services/places/autocomplete.mdx) – Get place suggestions as users type
+- [POI Details](../services/places/poi-details.mdx) – Fetch comprehensive information for a specific POI
+- [EV Charging Availability](../services/places/ev-charging-stations-availability.mdx) – Get real-time charging station data
+
+**Displaying places on the map:**
+- [Places Module](../map/places.mdx) – Display places as markers with popups and interaction
+
+## Place Object Structure
+
+The place object contains the following properties:
+
+`geometry`
+- `coordinates` – Location coordinates as `[longitude, latitude]`
+
+`properties`
+- `type` – Place type classification (POI, Street, Geography, Point Address, Address Range, Cross Street)
+- `address` – Structured address components
+- `poi` – Point of Interest information (if applicable)
+- `geographyType` – Administrative entity types (if applicable)
+- `entryPoints` – Physical entry points/entrances (if applicable)
+- `dataSources` – References to additional data sources
+- `chargingPark` – EV charging infrastructure (if applicable)
+- `relatedPois` – Related POI references (if applicable)
+
+## Place Types
+
+Places are categorized into six main types accessible via `place.properties.type`:
+
+**Location types:**
+- `POI` – Point of Interest (business, landmark, facility)
+- `Street` – A named street
+- `Geography` – Administrative area (city, state, country, postal code area)
+
+**Address types:**
+- `Point Address` – Specific street address with building number
+- `Address Range` – Range of addresses along a street segment
+- `Cross Street` – Intersection of two streets
+
+## Address
+
+The address contains structured location information, breaking down the full address into hierarchical components. Access it via `place.properties.address`:
+
+**Complete address:**
+- `freeformAddress` – Fully formatted address string following country conventions
+
+**Building and street:**
+- `streetNumber` – Building or house number
+- `streetName` – Street name without building number
+
+**Local areas:**
+- `municipalitySubdivision` – Sub-city or super-city area
+- `municipality` – City or town name
+- `localName` – Named local area or locality
+
+**Administrative divisions:**
+- `countrySecondarySubdivision` – County or second-level subdivision
+- `countryTertiarySubdivision` – Named area or third-level subdivision
+- `countrySubdivision` – State or province (first-level subdivision)
+- `countrySubdivisionName` – Full name of the state/province
+
+**Postal codes:**
+- `postalCode` – Postal code or ZIP code
+- `extendedPostalCode` – Extended postal code (region-specific)
+
+**Country information:**
+- `countryCode` – Two-letter ISO 3166-1 alpha-2 code (e.g., 'US', 'GB', 'NL')
+- `country` – Full country name
+- `countryCodeISO3` – Three-letter ISO 3166-1 alpha-3 code (e.g., 'USA', 'GBR', 'NLD')
+
+## Point of Interest (POI)
+
+POI information enriches places with business details, categories, and operational information. Available when `type === 'POI'`. Access it via `place.properties.poi`:
+
+**Basic information:**
+- `name` – Primary display name of the POI
+- `phone` – Contact phone number (typically with country code)
+- `url` – Official website or online presence
+- `brands` – Brand names for chain locations (e.g., 'Starbucks', 'Shell')
+
+**Categories:**
+- `categoryIds` – Numeric category identifiers for programmatic filtering
+- `categories` – Human-readable localized category names
+- `classifications` – Detailed category classifications with multi-language names and codes
+
+**Operating hours:**
+- `openingHours` – Operating schedule information
+  - `mode` – Time period covered ('nextSevenDays', 'currentWeek', etc.)
+  - `timeRanges` – Daily schedules with open/close times
+  - `alwaysOpenThisPeriod` – Whether the place is always open during this period
+
+**Time zone:**
+- `timeZone` – Time zone information for the POI location
+  - `ianaId` – IANA time zone identifier (e.g., 'Europe/Amsterdam')
+
+## Related POIs
+
+References to parent or child POIs establish hierarchical relationships between places. Access them via `place.properties.relatedPois`:
+
+**Relationship types:**
+- `parent` – This POI is contained within the referenced POI (e.g., a store inside a mall)
+- `child` – The referenced POI is contained within this POI (e.g., a mall containing stores)
+
+**Properties:**
+- `relationType` – Type of relationship ('parent' or 'child')
+- `id` – Unique identifier to fetch the related POI details
+
+## Entry Points
+
+Physical access points (entrances) to buildings or facilities, useful for precise navigation and routing. Access them via `place.properties.entryPoints`:
+
+**Entry point types:**
+- `main` – Primary entrance (at most one per place)
+- `minor` – Secondary or alternative entrance (can have multiple)
+
+**Properties:**
+- `type` – Entry point type
+- `position` – Geographic coordinates `[longitude, latitude]`
+- `functions` – Functional descriptions (e.g., 'FrontDoor', 'ServiceEntrance', 'ParkingGarage')
+
+## Geography
+
+Administrative area classifications for places representing geographic entities. Available when `type === 'Geography'`. Access it via `place.properties.geographyType`:
+
+**Geographic hierarchy (largest to smallest):**
+- `Country` – Sovereign nation
+- `CountrySubdivision` – State, province, or first-level administrative division
+- `CountrySecondarySubdivision` – County or second-level administrative division
+- `CountryTertiarySubdivision` – Third-level administrative division
+- `Municipality` – City or town
+- `MunicipalitySubdivision` – District within a city
+- `Neighbourhood` – Named neighborhood or area within a city
+- `PostalCodeArea` – Area defined by postal/ZIP code
+
+Multiple types can be present when an area has multiple administrative roles.
+
+## EV Charging Stations
+
+Electric vehicle charging infrastructure information for POIs that are charging stations. Access it via `place.properties.chargingPark`:
+
+**Charging infrastructure:**
+- `connectors` – Array of available connector types and specifications
+  - `connectorType` – Physical connector type (e.g., 'IEC62196Type2', 'Tesla')
+  - `ratedPowerKW` – Power rating in kilowatts
+  - `currentType` – Current type ('AC' or 'DC')
+  - `voltageV` – Voltage in volts
+
+**Facility details:**
+- `totalConnectors` – Total number of charging connectors available
+
+## Address Ranges
+
+Range information for street segments, showing address numbers along both sides of a street. Available when `type === 'Address Range'`. Access it via `place.properties.addressRanges`:
+
+- `rangeLeft` – Address range on the left side of the street
+- `rangeRight` – Address range on the right side of the street
+- `from` – Starting coordinates of the segment `[longitude, latitude]`
+- `to` – Ending coordinates of the segment `[longitude, latitude]`
+
+## Mapcodes
+
+Alternative location codes that can be used instead of coordinates. Access them via `place.properties.mapcodes`:
+
+**Mapcode types:**
+- `Local` – Shortest code, requires territory context (e.g., 'NLD 4J.P2')
+- `International` – Worldwide unambiguous code, no territory needed
+- `Alternative` – Alternative local encoding
+
+**Properties:**
+- `type` – Mapcode type
+- `fullMapcode` – Complete mapcode including territory if applicable
+- `territory` – Territory code for local mapcodes
+- `code` – The mapcode without territory
+
+## Data Sources
+
+References to additional data services for fetching more detailed information. Access them via `place.properties.dataSources`:
+
+- `geometryId` – ID for fetching detailed geometry data
+- `poiDetailsId` – ID for fetching comprehensive POI details
+- `evAvailabilityId` – ID for fetching real-time EV charging availability
+
+## Search-Specific Properties
+
+Additional properties available when places are returned from search operations:
+
+**Search places** (`SearchPlaceProps`):
+- `score` – Relevance score for ranking (higher = better match)
+- `distance` – Distance in meters from the bias position (when geoBias is used)
+- `info` – Information about the original data source
+
+## Reverse Geocoding Properties
+
+Additional properties available when places are returned from reverse geocoding:
+
+**Reverse geocoded places** (`RevGeoAddressProps`):
+- `originalPosition` – Original coordinates used in the query `[longitude, latitude]`
+- `offsetPosition` – Interpolated position for the specific address number (when street number provided)
+- `sideOfStreet` – Which side of the street ('L' or 'R', when street number provided)
+
+## API Reference
+
+For complete type documentation, see the place feature types:
+- [Places](/maps-sdk-js/api-reference/types/core.Places.html) (FeatureCollection)
+- [CommonPlaceProps](/maps-sdk-js/api-reference/types/core.CommonPlaceProps.html)
+- [SearchPlaceProps](/maps-sdk-js/api-reference/types/core.SearchPlaceProps.html)
+- [RevGeoAddressProps](/maps-sdk-js/api-reference/types/core.RevGeoAddressProps.html)
+
+## Related Guides and Examples
+
+### Places Services
+- [Places Quickstart](../services/places/quickstart.mdx) - Get started with places services
+- [Search](../services/places/search.mdx) - Find places with search services
+- [Geocoding](../services/places/geocoding.mdx) - Convert addresses to coordinates
+- [Reverse Geocoding](../services/places/reverse-geocoding.mdx) - Convert coordinates to addresses
+- [Geometry Data](../services/places/geometry-data.mdx) - Fetch detailed place geometries
+- [EV Charging Availability](../services/places/ev-charging-stations-availability.mdx) - Real-time charging station data
+
+### Map Integration
+- [Places Module](../map/places.mdx) - Display and interact with places on the map
+
+### Related Examples
+- [Geocode](/maps-sdk-js/examples/geocode) - Geocode addresses and display locations
+- [Reverse Geocode](/maps-sdk-js/examples/reverse-geocode) - Convert coordinates to addresses
+- [Places in Geometry](/maps-sdk-js/examples/places-in-geometry) - Search places within custom boundaries
+- [Places with Custom Icons](/maps-sdk-js/examples/places-default-icon-styling) - Customize place markers
+
