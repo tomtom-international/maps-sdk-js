@@ -4,14 +4,14 @@
  */
 
 export * from './errors';
-export type * from './serviceTypes';
-export type * from './types/commonGeocodeAndFuzzySearchParams';
-export type * from './types/commonPlacesParams';
-export type * from './types/commonRoutingParams';
-export type * from './types/commonSearchParams';
-export type * from './types/fetch';
-export type * from './types/searchSummary';
-export type * from './types/servicesTypes';
+export * from './serviceTypes';
+export * from './types/commonGeocodeAndFuzzySearchParams';
+export * from './types/commonPlacesParams';
+export * from './types/commonRoutingParams';
+export * from './types/commonSearchParams';
+export * from './types/fetch';
+export * from './types/searchSummary';
+export * from './types/servicesTypes';
 export * from './types/vehicleParams';
 export * from './types/vehiclePreferences';
 export * from './types/vehicleState';
