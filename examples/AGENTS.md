@@ -310,7 +310,6 @@ examples/
 ```typescript
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { TomTomMap } from '@tomtom-org/maps-sdk/map';
-import 'maplibre-gl/dist/maplibre-gl.css';
 
 TomTomConfig.instance.put({ apiKey: 'YOUR_API_KEY' });
 
