@@ -2,8 +2,6 @@ import { formatDuration } from '@tomtom-org/maps-sdk/core';
 import type { TrafficIncidentsModuleFeature } from '@tomtom-org/maps-sdk/map';
 import { Popup } from 'maplibre-gl';
 
-const formatLabel = (value: string) => value.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
-
 const row = (label: string, value: string, className?: string) => `
     <div class="sdk-example-incident-row">
         <span class="sdk-example-form-label">${label}</span>

@@ -1,0 +1,20 @@
+/**
+ * Base MapLibre popup overrides for SDK examples.
+ * Use className: 'sdk-example-maplibre-popup [your-class]' on the Popup instance.
+ */
+
+.sdk-example-maplibre-popup .maplibregl-popup-content {
+    font-family: var(--sdk-font-primary);
+}
+
+.sdk-example-maplibre-popup .maplibregl-popup-close-button {
+    font-size: 18px;
+    color: var(--sdk-text-medium);
+    line-height: 1;
+    padding: var(--sdk-space-1) var(--sdk-space-2);
+}
+
+.sdk-example-maplibre-popup .maplibregl-popup-close-button:hover {
+    color: var(--sdk-text-high);
+    background: var(--sdk-surface-1);
+}
