@@ -1,0 +1,79 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/maplibre/popup.css";
+
+.sdk-example-poi-popup .maplibregl-popup-content {
+    padding: 0;
+    border-radius: var(--sdk-radius-10);
+    box-shadow: var(--sdk-shadow-e3);
+    overflow: hidden;
+}
+
+/* POI detail popup */
+
+.sdk-example-popup {
+    padding: var(--sdk-space-3) var(--sdk-space-4);
+    min-width: 180px;
+}
+
+.sdk-example-popup p {
+    margin: 0;
+    line-height: 1.4;
+}
+
+.sdk-example-popup-name {
+    font-size: var(--sdk-font-body-m);
+    font-weight: var(--sdk-font-weight-semibold);
+    color: var(--sdk-text-high);
+    padding-right: var(--sdk-space-4);
+}
+
+.sdk-example-popup-category {
+    font-size: var(--sdk-font-caption-m);
+    color: var(--sdk-text-medium);
+    text-transform: capitalize;
+    margin-top: 2px;
+}
+
+.sdk-example-popup-hours {
+    font-size: var(--sdk-font-caption-m);
+    font-weight: var(--sdk-font-weight-medium);
+    margin-top: var(--sdk-space-2);
+}
+
+.sdk-example-popup-hours--open {
+    color: var(--sdk-color-success);
+}
+
+.sdk-example-popup-hours--closed {
+    color: var(--sdk-color-error);
+}
+
+.sdk-example-popup-address {
+    font-size: var(--sdk-font-caption-m);
+    color: var(--sdk-text-medium);
+    margin-top: var(--sdk-space-2);
+}
+
+.sdk-example-popup-url {
+    display: block;
+    font-size: var(--sdk-font-caption-m);
+    color: var(--sdk-primary-color);
+    margin-top: var(--sdk-space-2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-decoration: none;
+    max-width: 200px;
+}
+
+.sdk-example-popup-url:hover {
+    text-decoration: underline;
+}
+
+.sdk-example-popup-phone {
+    font-size: var(--sdk-font-caption-m);
+    color: var(--sdk-text-medium);
+    margin-top: 2px;
+}

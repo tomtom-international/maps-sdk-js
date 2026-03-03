@@ -43,7 +43,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         const activeAvoidTypes = avoidOptions.activeAvoidTypes;
         const avoid = activeAvoidTypes.size > 0 ? [...activeAvoidTypes] : undefined;
         const areas = avoidedAreasManager.areas;
-        const avoidAreas = areas.length > 0 ? (areas.map((a) => a.bbox) as BBox[]) : undefined;
+        const avoidAreas = areas.length > 0 ? areas.map((a) => a.bbox) : undefined;
         const routeResult = await calculateRoute({
             locations: [paris, amsterdam],
             costModel: { avoid, avoidAreas },

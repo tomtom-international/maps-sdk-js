@@ -47,4 +47,4 @@ export const buildPopupHTML = ({ properties }: TrafficIncidentsModuleFeature): s
 };
 
 export const createIncidentPopup = () =>
-    new Popup({ closeButton: false, className: 'sdk-example-incident-popup-wrapper' });
+    new Popup({ closeButton: false, className: 'sdk-example-maplibre-popup sdk-example-incident-popup-wrapper' });

@@ -96,7 +96,6 @@
     border-radius: var(--sdk-radius-15);
     box-shadow: var(--sdk-shadow-e4);
     background: var(--sdk-surface-0);
-    font-family: var(--sdk-font-primary);
 }
 
 .avoid-popup-btn {

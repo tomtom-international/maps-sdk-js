@@ -5,6 +5,7 @@
 @import "../../src/templates/css/form/toggle.css";
 @import "../../src/templates/css/form/field.css";
 @import "../../src/templates/css/button/button.css";
+@import "../../src/templates/css/maplibre/popup.css";
 
 /* INCIDENT POPUP */
 
@@ -12,21 +13,8 @@
     padding: 0;
     border-radius: var(--sdk-radius-15);
     box-shadow: var(--sdk-shadow-e4);
-    font-family: var(--sdk-font-primary);
     overflow: hidden;
     min-width: 200px;
-}
-
-.sdk-example-incident-popup-wrapper .maplibregl-popup-close-button {
-    font-size: 18px;
-    color: var(--sdk-text-medium);
-    padding: var(--sdk-space-1) var(--sdk-space-2);
-    line-height: 1;
-}
-
-.sdk-example-incident-popup-wrapper .maplibregl-popup-close-button:hover {
-    color: var(--sdk-text-high);
-    background: var(--sdk-surface-1);
 }
 
 .sdk-example-incident-popup {

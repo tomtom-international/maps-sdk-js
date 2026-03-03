@@ -59,11 +59,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     };
 
     baseMap.events.on('click', async (feature, lngLat) => {
-        const cityName =
-            (feature.properties?.name_en as string | undefined) || (feature.properties?.name as string | undefined);
-        if (cityName) {
-            await showBoundary(cityName, lngLat.toArray());
-        }
+        await showBoundary(feature.properties.name, lngLat.toArray());
     });
 
     restOfTheMap.events.on('click', clearBoundary);

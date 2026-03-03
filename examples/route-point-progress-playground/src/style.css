@@ -2,6 +2,7 @@
 @import "../../src/templates/css/base/global.css";
 @import "../../src/templates/css/base/typography.css";
 @import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/maplibre/popup.css";
 
 .sdk-example-instructions {
     margin: 0 0 var(--sdk-space-3);
@@ -20,7 +21,6 @@
         0 0 0 1px rgba(0, 0, 0, 0.08),
         0 2px 12px rgba(0, 0, 0, 0.18);
     background: var(--sdk-surface-0);
-    font-family: var(--sdk-font-primary);
 }
 
 .progress-popup-row {

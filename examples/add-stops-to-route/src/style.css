@@ -3,6 +3,7 @@
 @import "../../src/templates/css/base/typography.css";
 @import "../../src/templates/css/panel/custom-panel.css";
 @import "../../src/templates/css/button/button.css";
+@import "../../src/templates/css/maplibre/popup.css";
 
 /* INSTRUCTIONS */
 
@@ -21,7 +22,6 @@
     border-radius: var(--sdk-radius-15);
     box-shadow: var(--sdk-shadow-e4);
     background: var(--sdk-surface-0);
-    font-family: var(--sdk-font-primary);
 }
 
 .stop-popup-btn {
