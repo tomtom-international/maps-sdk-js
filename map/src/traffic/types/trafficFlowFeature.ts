@@ -1,4 +1,4 @@
-import type { MapGeoJSONFeature } from 'maplibre-gl';
+import type { Feature, LineString } from 'geojson';
 import type { RoadCategory, RoadSubCategory } from './trafficCommonConfig';
 
 /**
@@ -7,8 +7,9 @@ import type { RoadCategory, RoadSubCategory } from './trafficCommonConfig';
  *
  * @group Traffic Flow
  */
-export type TrafficFlowModuleFeature = Omit<MapGeoJSONFeature, 'properties'> & {
-    properties: {
+export type TrafficFlowModuleFeature = Feature<
+    LineString,
+    {
         /**
          * Road hierarchy category type.
          */
@@ -53,5 +54,5 @@ export type TrafficFlowModuleFeature = Omit<MapGeoJSONFeature, 'properties'> & {
          * Positive integer ranking the importance of the road segment.
          */
         displayClass?: number;
-    };
-};
+    }
+>;

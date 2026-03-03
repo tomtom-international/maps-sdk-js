@@ -1,3 +1,4 @@
+import type { LineString } from 'geojson';
 import type { MapGeoJSONFeature } from 'maplibre-gl';
 import type { TrafficFlowModuleFeature } from '../types/trafficFlowFeature';
 
@@ -24,7 +25,7 @@ export const trafficFlowMapping = (feature: MapGeoJSONFeature): TrafficFlowModul
     return {
         id: feature.id,
         type: feature.type,
-        geometry: feature.geometry,
+        geometry: feature.geometry as LineString,
         properties: {
             roadCategory: properties?.road_category,
             leftHandTraffic: Boolean(properties?.left_hand_traffic),
@@ -36,5 +37,5 @@ export const trafficFlowMapping = (feature: MapGeoJSONFeature): TrafficFlowModul
             ...(properties?.openlr && { openlr: properties.openlr }),
             ...(properties?.display_class && { displayClass: properties.display_class }),
         },
-    } as TrafficFlowModuleFeature;
+    };
 };

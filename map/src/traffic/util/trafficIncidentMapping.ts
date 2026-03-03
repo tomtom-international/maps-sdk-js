@@ -84,5 +84,5 @@ export const trafficIncidentMapping = (feature: MapGeoJSONFeature): TrafficIncid
             ...(properties?.display_class && { displayClass: properties.display_class }),
             ...(properties?.point_type && { pointType: properties.point_type }),
         },
-    } as TrafficIncidentsModuleFeature;
+    };
 };

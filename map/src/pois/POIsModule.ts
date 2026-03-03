@@ -12,6 +12,7 @@ import { poiLayerIDs } from './layers/poisLayers';
 import { poiCategoryGroups } from './types/poiCategoryGroups';
 import type { FilterablePOICategory, POIsModuleConfig } from './types/poisModuleConfig';
 import type { POIsModuleFeature } from './types/poisModuleFeature';
+import { poisMapping } from './util/poisMapping';
 
 /**
  * Gets the specified filtered categories icon IDs to be used in map filtering.
@@ -396,6 +397,7 @@ export class POIsModule extends AbstractMapModule<PoIsSourcesAndLayers, POIsModu
             this.tomtomMap._eventsProxy,
             this.sourcesWithLayers.poi,
             this.config?.events,
+            poisMapping,
         );
     }
 }
