@@ -1,13 +1,4 @@
-import {
-    BBox,
-    bboxFromGeoJSON,
-    getSectionBBox,
-    inputSectionTypes,
-    Route,
-    SectionProps,
-    TomTomConfig,
-    Waypoint,
-} from '@tomtom-org/maps-sdk/core';
+import { BBox, bboxFromGeoJSON, getSectionBBox, Route, SectionProps, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { RoutingModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { calculateRoute, geocodeOne } from '@tomtom-org/maps-sdk/services';
 import type { LngLat } from 'maplibre-gl';
@@ -21,12 +12,12 @@ import { initTogglePanel } from './togglePanel';
 TomTomConfig.instance.put({ apiKey: API_KEY });
 
 (async () => {
-    const [paris, amsterdam]: Waypoint[] = await Promise.all([geocodeOne('London'), geocodeOne('Brussels')]);
+    const locations = await Promise.all([geocodeOne('London'), geocodeOne('Brussels')]);
 
     const map = new TomTomMap({
         mapLibre: {
             container: 'sdk-map',
-            bounds: bboxFromGeoJSON([paris, amsterdam]),
+            bounds: bboxFromGeoJSON(locations),
             fitBoundsOptions: { padding: 100 },
         },
     });
@@ -45,12 +36,11 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         const areas = avoidedAreasManager.areas;
         const avoidAreas = areas.length > 0 ? areas.map((a) => a.bbox) : undefined;
         const routeResult = await calculateRoute({
-            locations: [paris, amsterdam],
+            locations,
             costModel: { avoid, avoidAreas },
-            sectionTypes: inputSectionTypes,
         });
         currentRoute = routeResult.features[0];
-        await routingModule.showWaypoints([paris, amsterdam]);
+        await routingModule.showWaypoints(locations);
         await routingModule.showRoutes(routeResult);
     };
 
@@ -85,11 +75,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
             });
     };
 
-    const initialResult = await calculateRoute({ locations: [paris, amsterdam], sectionTypes: inputSectionTypes });
-    currentRoute = initialResult.features[0];
-    routingModule.showWaypoints([paris, amsterdam]);
-    routingModule.showRoutes(initialResult);
-
     const makeClickHandler = (typeLabel: string) => (section: { properties: SectionProps }, lngLat: LngLat) => {
         const bbox = getSectionBBox(currentRoute, section.properties);
         if (bbox) showAvoidPopup(lngLat, bbox, typeLabel);
@@ -115,5 +100,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         avoidedAreasManager.closeClearPopup();
     });
 
+    recalculate();
     initTogglePanel();
 })();
