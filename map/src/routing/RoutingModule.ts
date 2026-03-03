@@ -40,7 +40,7 @@ import type { DisplayRouteProps, DisplayRouteSummary } from './types/displayRout
 import type { DisplayInstruction } from './types/guidance';
 import type { PlanningWaypoint } from './types/planningWaypoint';
 import type { RoutingModuleConfig } from './types/routeModuleConfig';
-import type { DisplayTrafficSectionProps, RouteSection, RouteSections } from './types/routeSections';
+import type { DisplayTrafficSectionProps, RouteSection } from './types/routeSections';
 import type { RoutingLayersSpecs, RoutingSourcesWithLayers } from './types/routingSourcesAndLayers';
 import type { ShowRoutesOptions } from './types/showOptions';
 import type { WaypointDisplayProps } from './types/waypointDisplayProps';
@@ -628,7 +628,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
                 this.sourcesWithLayers.summaryBubbles,
                 this.config?.events,
             ),
-            incidents: new EventsModule<RouteSections<DisplayTrafficSectionProps>>(
+            incidents: new EventsModule<RouteSection<DisplayTrafficSectionProps>>(
                 this.tomtomMap._eventsProxy,
                 this.sourcesWithLayers.incidents,
                 this.config?.events,
