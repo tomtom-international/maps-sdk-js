@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.45.11](https://github.com/tomtom-international/maps-sdk-js/compare/v0.45.10...v0.45.11) (2026-03-03)
+
+
+### Features
+
+* add avoid areas parameter for route calculations ([301c108](https://github.com/tomtom-international/maps-sdk-js/commit/301c1084c74bd9f7c8132524cb3806589300f264))
+* add avoid areas parameter for route calculations ([92d622a](https://github.com/tomtom-international/maps-sdk-js/commit/92d622a5ae0c954039ece72bc5554539d53e3892))
+* add intent-based classification and selective tooling with tool groups and step scope ([b49f2b4](https://github.com/tomtom-international/maps-sdk-js/commit/b49f2b48c1261990e5d25c4ff0aa267e57d971d8))
+* improve pois and traffic map feature mappings ([3cc9648](https://github.com/tomtom-international/maps-sdk-js/commit/3cc96486b2f591308436e2e8e3a4cd892e3b98c1))
+* improve pois and traffic map feature mappings ([3ea4c79](https://github.com/tomtom-international/maps-sdk-js/commit/3ea4c794597fb047bec5632a3c773e6609d15a39))
+* multiple agent tool improvements ([2bc0945](https://github.com/tomtom-international/maps-sdk-js/commit/2bc09455bfaa4c50098daab246774ea2bf091e25))
+
+
+### Bug Fixes
+
+* clear geometry labels property ([5fba21b](https://github.com/tomtom-international/maps-sdk-js/commit/5fba21b833a33b341955cab3b7a80d29bb3dfa9e))
+* geometries label size ([f01c4d6](https://github.com/tomtom-international/maps-sdk-js/commit/f01c4d626506847357ade61e1a4c6b2f1e111941))
+* remove unused section props ([fd49b6e](https://github.com/tomtom-international/maps-sdk-js/commit/fd49b6e47fcb12d91a83a1c335c9824c42224e36))
+* routing module incident events type ([fe0be16](https://github.com/tomtom-international/maps-sdk-js/commit/fe0be16344c6c4e52eb00b6ef07492d8dc4ab259))
+* switch from geojsonobject to geojson types for correctness ([119816b](https://github.com/tomtom-international/maps-sdk-js/commit/119816b40ead3cf6081f319d8a6c006980c3ecf3))
+
 ## [0.45.10](https://github.com/tomtom-international/maps-sdk-js/compare/v0.45.9...v0.45.10) (2026-02-26)
 
 
