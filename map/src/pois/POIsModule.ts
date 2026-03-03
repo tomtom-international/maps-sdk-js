@@ -350,12 +350,14 @@ export class POIsModule extends AbstractMapModule<PoIsSourcesAndLayers, POIsModu
      * });
      * ```
      */
-    getShown() {
+    getShown(): { poi: POIsModuleFeature[] } {
         return {
-            poi: this.mapLibreMap.queryRenderedFeatures({
-                layers: this.sourcesWithLayers.poi.sourceAndLayerIDs.layerIDs,
-                validate: false,
-            }) as unknown as POIsModuleFeature[],
+            poi: this.mapLibreMap
+                .queryRenderedFeatures({
+                    layers: this.sourcesWithLayers.poi.sourceAndLayerIDs.layerIDs,
+                    validate: false,
+                })
+                .map(poisMapping),
         };
     }
 

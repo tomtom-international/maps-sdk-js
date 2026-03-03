@@ -1,4 +1,4 @@
-import { MapGeoJSONFeature } from 'maplibre-gl';
+import type { Feature, Point } from 'geojson';
 
 /**
  * A GeoJSON feature representing a POI from the vector tile map.
@@ -22,11 +22,9 @@ import { MapGeoJSONFeature } from 'maplibre-gl';
  * @group POIs
  * @see https://docs.tomtom.com/map-display-api/documentation/tomtom-orbis-maps/vector/content#poi for more details on the available properties from the vector tile features
  */
-export type POIsModuleFeature = Omit<MapGeoJSONFeature, 'properties'> & {
-    /**
-     * POI-specific properties from the vector tile data.
-     */
-    properties: {
+export type POIsModuleFeature = Feature<
+    Point,
+    {
         /**
          * A unique Point of Interest identifier.
          *
@@ -81,5 +79,5 @@ export type POIsModuleFeature = Omit<MapGeoJSONFeature, 'properties'> & {
          * @example 1 // High priority, 10 // Low priority
          */
         priority: number;
-    };
-};
+    }
+>;
