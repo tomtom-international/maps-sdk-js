@@ -29,34 +29,6 @@ export type SectionProps = {
      * Zero-based index into the route's LineString coordinates array.
      */
     endPointIndex: number;
-    /**
-     * Elapsed time in seconds from route start to the beginning of this section.
-     */
-    startTravelTimeInSeconds?: number;
-    /**
-     * Elapsed time in seconds from route start to the end of this section.
-     */
-    endTravelTimeInSeconds?: number;
-    /**
-     * Duration in seconds to traverse this section.
-     *
-     * Calculated as: endTravelTimeInSeconds - startTravelTimeInSeconds
-     */
-    durationInSeconds?: number;
-    /**
-     * Cumulative distance in meters from route start to the beginning of this section.
-     */
-    startLengthInMeters?: number;
-    /**
-     * Cumulative distance in meters from route start to the end of this section.
-     */
-    endLengthInMeters?: number;
-    /**
-     * Length in meters of this section.
-     *
-     * Calculated as: endLengthInMeters - startLengthInMeters
-     */
-    lengthInMeters?: number;
 };
 
 /**
@@ -74,7 +46,6 @@ export type SectionProps = {
  *   startPointIndex: 0,
  *   endPointIndex: 150,
  *   countryCodeISO3: 'NLD',  // Netherlands
- *   lengthInMeters: 25000
  * };
  * ```
  *
