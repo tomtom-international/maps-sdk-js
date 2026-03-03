@@ -1,0 +1,12 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+
+/* CUSTOM STYLES */
+
+#hint {
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    pointer-events: none;
+}

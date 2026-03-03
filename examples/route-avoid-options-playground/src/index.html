@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Route Avoid Options Playground</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="sdk-example-body">
+        <div id="sdk-map"></div>
+        <div class="sdk-example-customPanel">
+            <div class="sdk-example-panel-header">
+                <h3 class="sdk-example-heading">
+                    <span class="sdk-example-heading-text">Avoid Options</span>
+                    <button class="sdk-example-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="sdk-example-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+            <div class="sdk-example-panel-content">
+                <div class="sdk-example-section">
+                    <p class="sdk-example-instructions">
+                        Click anywhere on the route to avoid that area. Toggle road types below to avoid them globally.
+                    </p>
+                </div>
+                <div class="sdk-example-section">
+                    <p class="sdk-example-subheading">Avoid road types</p>
+                    <div class="sdk-example-checkbox-list avoid-types-list" id="avoid-types-list"></div>
+                </div>
+                <div class="sdk-example-section avoid-areas-section" id="avoid-areas-section">
+                    <p class="sdk-example-subheading">Avoided areas</p>
+                    <p class="sdk-example-instructions avoid-areas-empty" id="avoid-areas-empty">
+                        Click on a route incident, toll road, ferry crossing or tunnel to avoid it.
+                    </p>
+                    <ul class="avoid-areas-list" id="avoid-areas-list"></ul>
+                </div>
+                <div class="sdk-example-section panel-footer-section">
+                    <button class="sdk-example-button sdk-example-button-ghost reset-button" id="reset-button">
+                        Reset all
+                    </button>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

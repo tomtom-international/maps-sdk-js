@@ -1,0 +1,108 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/button/button.css";
+@import "../../src/templates/css/button/variants.css";
+@import "../../src/templates/css/form/checkbox.css";
+
+/* INSTRUCTIONS */
+
+.sdk-example-instructions {
+    margin: 0 0 var(--sdk-space-3);
+    font-family: var(--sdk-font-primary);
+    font-size: var(--sdk-font-body-s);
+    line-height: var(--sdk-font-body-s-lh);
+    color: var(--sdk-text-medium);
+}
+
+/* AVOID TYPES — 2-column checkbox grid */
+
+.avoid-types-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sdk-space-2) var(--sdk-space-3);
+}
+
+/* AVOIDED AREAS LIST */
+
+.avoid-areas-section {
+    padding-bottom: var(--sdk-panel-padding);
+}
+
+.avoid-areas-empty {
+    margin: 0;
+}
+
+.avoid-areas-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sdk-space-2);
+}
+
+.avoid-area-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sdk-space-2);
+    padding: var(--sdk-space-2) var(--sdk-space-3);
+    background: var(--sdk-surface-1);
+    border-radius: var(--sdk-radius-10);
+    font-family: var(--sdk-font-primary);
+    font-size: var(--sdk-font-body-s);
+    color: var(--sdk-text-high);
+}
+
+.avoid-area-label {
+    flex: 1;
+    font-weight: var(--sdk-font-weight-medium);
+}
+
+.avoid-area-remove {
+    width: var(--sdk-height-xs);
+    height: var(--sdk-height-xs);
+    min-height: unset;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--sdk-radius-full);
+    flex-shrink: 0;
+}
+
+.avoid-area-remove svg {
+    width: 12px;
+    height: 12px;
+}
+
+/* PANEL FOOTER */
+
+.panel-footer-section {
+    border-top: 1px solid var(--sdk-border-1);
+    padding-top: var(--sdk-panel-padding);
+}
+
+.reset-button {
+    width: 100%;
+}
+
+/* SECTION POPUP */
+
+.avoid-section-popup .maplibregl-popup-content {
+    padding: var(--sdk-space-2);
+    border-radius: var(--sdk-radius-15);
+    box-shadow: var(--sdk-shadow-e4);
+    background: var(--sdk-surface-0);
+    font-family: var(--sdk-font-primary);
+}
+
+.avoid-popup-btn {
+    height: var(--sdk-height-sm);
+    font-size: var(--sdk-font-caption-m);
+    padding: 0 var(--sdk-space-3);
+    border-radius: var(--sdk-radius-30);
+    white-space: nowrap;
+}
