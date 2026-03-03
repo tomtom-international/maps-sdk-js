@@ -23,7 +23,7 @@ const BUDGET_UNITS: Readonly<Record<string, string>> = {
  *
  * Donut fills intentionally have `theme` stripped. `prepareGeometryForDisplay` inverts any feature
  * whose resolved theme is `'inverted'` (`props.theme ?? config.theme`). Since donut geometry is already
- * pre-inverted via `mask`/`difference`, stripping `theme` prevents double inversion without the need of 
+ * pre-inverted via `mask`/`difference`, stripping `theme` prevents double inversion without the need of
  * a flag or marker leaking into the user-facing API.
  */
 const buildDonutFeatures = (features: PolygonFeature[]): PolygonFeature[] => {
