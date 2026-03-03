@@ -1,4 +1,4 @@
-import type { Avoidable, TravelMode } from '@tomtom-org/maps-sdk/core';
+import type { Avoidable, HasBBox, TravelMode } from '@tomtom-org/maps-sdk/core';
 import { VehicleParameters } from './vehicleParams';
 
 /**
@@ -178,6 +178,28 @@ export type CostModel = {
      * @default None
      */
     avoid?: Avoidable[];
+
+    /**
+     * Rectangular areas for the routing engine to bypass, each expressed as a {@link HasBBox}.
+     *
+     * Up to 10 rectangles are supported. Useful for avoiding construction zones,
+     * restricted areas, or known congestion points.
+     *
+     * @remarks
+     * Constraints per rectangle:
+     * - Maximum size: ~160×160 km
+     * - Cannot cross the 180th meridian
+     * - Latitude must be between −80° and +80°
+     *
+     * @example
+     * ```typescript
+     * // Avoid an area using a BBox array [west, south, east, north]
+     * avoidAreas: [
+     *   [2.265938, 48.81851, 2.41115, 48.90309]
+     * ]
+     * ```
+     */
+    avoidAreas?: HasBBox[];
 
     /**
      * Decides how traffic is considered for computing routes.

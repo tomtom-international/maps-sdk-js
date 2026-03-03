@@ -1,4 +1,4 @@
-import type { LegSectionProps, SectionProps, SectionsProps, SectionType, SummaryBase } from '@tomtom-org/maps-sdk/core';
+import type { BBox, LegSectionProps, SectionProps, SectionsProps, SectionType, SummaryBase } from '@tomtom-org/maps-sdk/core';
 import { inputSectionTypes } from '@tomtom-org/maps-sdk/core';
 import { beforeAll, describe, expect, test, vi } from 'vitest';
 import { putIntegrationTestsAPIKey } from '../../shared/tests/integrationTestUtils';
@@ -386,6 +386,29 @@ describe('Calculate route integration tests', () => {
         expect(lastLeg.summary.chargingInformationAtEndOfLeg).toBeUndefined();
         expect(routeProperties.progress?.length).toBeGreaterThan(0);
     }, 20000);
+
+    test('Route from Roses to Olot with avoidAreas around Figueres', async () => {
+        // Figueres sits on the direct Roses → Olot path; avoiding it should force a detour.
+        const avoidBBox: BBox = [2.93, 42.25, 3.00, 42.31];
+        const result = await calculateRoute({
+            locations: [
+                [3.1748, 42.26297], // Roses
+                [2.48819, 42.18211], // Olot
+            ],
+            costModel: { avoidAreas: [avoidBBox] },
+        });
+
+        expect(result?.features?.length).toEqual(1);
+        const routeFeature = result.features[0];
+        expect(routeFeature.geometry.coordinates.length).toBeGreaterThan(0);
+        assertSummaryBasics(routeFeature.properties.summary);
+
+        // No coordinate should fall inside the avoided bbox.
+        const [west, south, east, north] = avoidBBox;
+        for (const [lng, lat] of routeFeature.geometry.coordinates) {
+            expect(lng >= west && lng <= east && lat >= south && lat <= north).toBe(false);
+        }
+    });
 
     test('Roses to Olot thrilling route with alternatives', async () => {
         const result = await calculateRoute({

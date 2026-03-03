@@ -15,11 +15,27 @@ export type ChargingParametersAPI = Omit<ChargingModel, 'maxChargeKWH'>;
 /**
  * @ignore
  */
+export type AvoidRectangleAPI = {
+    southWestCorner: LatitudeLongitudePointAPI;
+    northEastCorner: LatitudeLongitudePointAPI;
+};
+
+/**
+ * @ignore
+ */
+export type AvoidAreasAPI = {
+    rectangles: AvoidRectangleAPI[];
+};
+
+/**
+ * @ignore
+ */
 export type CalculateRoutePOSTDataAPI = {
     supportingPoints?: LatitudeLongitudePointAPI[];
     pointWaypoints?: PointWaypointAPI[];
     // only used for LDEVR:
     chargingParameters?: ChargingParametersAPI;
+    avoidAreas?: AvoidAreasAPI;
 };
 
 /**

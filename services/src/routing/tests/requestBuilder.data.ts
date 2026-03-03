@@ -707,4 +707,43 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             },
         },
     ],
+    [
+        'A-B route with avoidAreas',
+        {
+            apiKey: 'GLOBAL_API_KEY',
+            apiVersion: 2,
+            commonBaseURL: 'https://api.tomtom.com',
+            locations: [
+                [4.89066, 52.37317],
+                [4.49015, 52.16109],
+            ],
+            costModel: {
+                avoidAreas: [[4.5, 52, 4.7, 52.2]],
+            },
+        },
+        {
+            method: 'POST',
+            url: new URL(
+                'https://api.tomtom.com/maps/orbis/routing/calculateRoute/52.37317,4.89066:52.16109,4.49015/json?' +
+                    'apiVersion=2&key=GLOBAL_API_KEY&language=en-GB' +
+                    '&sectionType=carpool&sectionType=carTrain&sectionType=country&sectionType=ferry' +
+                    '&sectionType=importantRoadStretch' +
+                    '&sectionType=lowEmissionZone&sectionType=motorway&sectionType=pedestrian' +
+                    '&sectionType=roadShields&sectionType=speedLimit&sectionType=toll&sectionType=tollVignette' +
+                    '&sectionType=traffic&sectionType=tunnel&sectionType=unpaved&sectionType=urban' +
+                    '&sectionType=travelMode' +
+                    '&extendedRouteRepresentation=distance&extendedRouteRepresentation=travelTime',
+            ),
+            data: {
+                avoidAreas: {
+                    rectangles: [
+                        {
+                            southWestCorner: { latitude: 52, longitude: 4.5 },
+                            northEastCorner: { latitude: 52.2, longitude: 4.7 },
+                        },
+                    ],
+                },
+            },
+        },
+    ],
 ];

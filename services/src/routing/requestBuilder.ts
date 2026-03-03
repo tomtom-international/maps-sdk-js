@@ -1,5 +1,6 @@
 import type {
     GetPositionEntryPointOption,
+    HasBBox,
     PathLike,
     RoutePlanningLocation,
     RoutePlanningLocationType,
@@ -8,6 +9,7 @@ import type {
     WaypointProps,
 } from '@tomtom-org/maps-sdk/core';
 import {
+    bboxFromGeoJSON,
     getPositionStrict,
     getRoutePlanningLocationType,
     inputSectionTypes,
@@ -25,7 +27,7 @@ import {
     appendOptionalParam,
 } from '../shared/request/requestBuildingUtils';
 import { ExplicitVehicleModel } from '../shared/types/vehicleModel';
-import type { CalculateRoutePOSTDataAPI, PointWaypointAPI } from './types/apiRequestTypes';
+import type { AvoidAreasAPI, CalculateRoutePOSTDataAPI, PointWaypointAPI } from './types/apiRequestTypes';
 import type { LatitudeLongitudePointAPI } from './types/apiResponseTypes';
 import type { CalculateRouteParams, GuidanceParams, InputSectionTypes } from './types/calculateRouteParams';
 
@@ -218,6 +220,20 @@ const buildlocationsPostData = (
     return { supportingPoints, ...(pointWaypoints.length && { pointWaypoints }) };
 };
 
+const buildAvoidAreasPostData = (avoidAreas: HasBBox[]): AvoidAreasAPI => ({
+    rectangles: avoidAreas.map((rect: HasBBox) => {
+        const bbox = bboxFromGeoJSON(rect);
+        if (!bbox) {
+            throw new Error('Could not derive a bounding box from an avoidAreas rectangle');
+        }
+        const [west, south, east, north] = bbox;
+        return {
+            southWestCorner: { latitude: south, longitude: west },
+            northEastCorner: { latitude: north, longitude: east },
+        };
+    }),
+});
+
 const buildPostData = (
     params: CalculateRouteParams,
     types: RoutePlanningLocationType[],
@@ -225,8 +241,9 @@ const buildPostData = (
 ): CalculateRoutePOSTDataAPI | null => {
     const pathsIncluded = types.includes('path');
     const isLdevr = !!getChargingPreferences(params);
-    if (!pathsIncluded && !isLdevr) {
-        // (if no paths in the given locations nor LDEVR, there'll be no POST data, which will trigger a GET call)
+    const avoidAreas = params.costModel?.avoidAreas;
+    if (!pathsIncluded && !isLdevr && !avoidAreas) {
+        // (if no paths in the given locations nor LDEVR nor avoidAreas, there'll be no POST data, which will trigger a GET call)
         return null;
     }
 
@@ -238,6 +255,7 @@ const buildPostData = (
             chargingModel && {
                 chargingParameters: omit(chargingModel, 'maxChargeKWH'),
             }),
+        ...(avoidAreas?.length && { avoidAreas: buildAvoidAreasPostData(avoidAreas) }),
     };
 };
 
