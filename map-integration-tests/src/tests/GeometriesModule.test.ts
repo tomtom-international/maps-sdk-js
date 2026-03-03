@@ -54,12 +54,16 @@ test.describe('Geometry integration tests', () => {
         const mapEnv = await MapTestEnv.loadPageAndMap(page, { bounds: geometryData.bbox });
         await initGeometries(page);
         const sourcesAndLayers = await getGeometriesSourceAndLayerIDs(page);
-        const sourceId = sourcesAndLayers?.geometry?.sourceID as string;
+        const geometrySourceId = sourcesAndLayers?.geometry?.sourceID as string;
+        const labelSourceId = sourcesAndLayers?.geometryLabel?.sourceID as string;
         await waitForMapIdle(page);
-        expect(await getNumVisibleLayers(page, sourceId)).toBe(0);
+        expect(await getNumVisibleLayers(page, geometrySourceId)).toBe(0);
+        expect(await getNumVisibleLayers(page, labelSourceId)).toBe(0);
 
         await showGeometry(page, geometryData);
-        expect(await getNumVisibleLayers(page, sourceId)).toBe(2);
+        expect(await getNumVisibleLayers(page, geometrySourceId)).toBe(2);
+        expect(await getNumVisibleLayers(page, labelSourceId)).toBe(1);
+
         // non-inverted polygon: fills inside but not the edges:
         const layerIDs = sourcesAndLayers?.geometry?.layerIDs as string[];
         await waitUntilRenderedGeometry(page, 1, amsterdamCenter, layerIDs);
@@ -70,11 +74,12 @@ test.describe('Geometry integration tests', () => {
         expect(shown?.geometry.features.length).toBeGreaterThan(0);
 
         await clearGeometry(page);
-        expect(await getNumVisibleLayers(page, sourceId)).toBe(0);
+        expect(await getNumVisibleLayers(page, geometrySourceId)).toBe(0);
+        expect(await getNumVisibleLayers(page, labelSourceId)).toBe(0);
         shown = await page.evaluate(() => (globalThis as MapsSDKThis).geometries?.getShown());
         expect(shown?.geometry.features).toHaveLength(0);
         await showGeometry(page, geometryData);
-        expect(await getNumVisibleLayers(page, sourceId)).toBe(2);
+        expect(await getNumVisibleLayers(page, geometrySourceId)).toBe(2);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });

@@ -483,6 +483,7 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
     async clear() {
         await this.waitUntilModuleReady();
         this.sourcesWithLayers.geometry.clear();
+        this.sourcesWithLayers.geometryLabel.clear();
     }
 
     /**
