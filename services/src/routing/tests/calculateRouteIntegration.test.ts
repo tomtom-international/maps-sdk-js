@@ -1,4 +1,11 @@
-import type { BBox, LegSectionProps, SectionProps, SectionsProps, SectionType, SummaryBase } from '@tomtom-org/maps-sdk/core';
+import type {
+    BBox,
+    LegSectionProps,
+    SectionProps,
+    SectionsProps,
+    SectionType,
+    SummaryBase,
+} from '@tomtom-org/maps-sdk/core';
 import { inputSectionTypes } from '@tomtom-org/maps-sdk/core';
 import { beforeAll, describe, expect, test, vi } from 'vitest';
 import { putIntegrationTestsAPIKey } from '../../shared/tests/integrationTestUtils';
@@ -389,7 +396,7 @@ describe('Calculate route integration tests', () => {
 
     test('Route from Roses to Olot with avoidAreas around Figueres', async () => {
         // Figueres sits on the direct Roses → Olot path; avoiding it should force a detour.
-        const avoidBBox: BBox = [2.93, 42.25, 3.00, 42.31];
+        const avoidBBox: BBox = [2.93, 42.25, 3.0, 42.31];
         const result = await calculateRoute({
             locations: [
                 [3.1748, 42.26297], // Roses
