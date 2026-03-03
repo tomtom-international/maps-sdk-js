@@ -58,7 +58,7 @@ export const TITLE_COLOR = '#333333';
 export const TITLE_HALO_COLOR = '#FFFFFF';
 
 /** Text size for geometry title (point) labels. */
-export const TITLE_SIZE = 12;
+export const TITLE_SIZE = 15;
 
 /** Text padding for geometry title (point) labels. */
 export const TITLE_PADDING = 5;
