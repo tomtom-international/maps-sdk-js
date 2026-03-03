@@ -1,7 +1,7 @@
 import type {
     Feature,
     FeatureCollection,
-    GeoJsonObject,
+    GeoJSON,
     GeometryCollection,
     LineString,
     MultiPolygon,
@@ -173,7 +173,7 @@ export const bboxFromGeoJSON = (hasBBox: HasBBox): OptionalBBox => {
         if (typeof hasBBox[0] === 'number') {
             return hasBBox.length >= 4 ? (hasBBox as OptionalBBox) : undefined;
         }
-        return bboxFromBBoxes(hasBBox.map((geoJsonItem) => bboxFromGeoJSON(geoJsonItem as GeoJsonObject)));
+        return bboxFromBBoxes(hasBBox.map((geoJsonItem) => bboxFromGeoJSON(geoJsonItem as GeoJSON)));
     }
     // Else...
     // Already containing a BBox:
@@ -217,7 +217,7 @@ export const bboxFromGeoJSON = (hasBBox: HasBBox): OptionalBBox => {
  * @param geoJson
  * @param bboxToExpand
  */
-export const bboxExpandedWithGeoJSON = (geoJson: GeoJsonObject, bboxToExpand?: BBox): OptionalBBox =>
+export const bboxExpandedWithGeoJSON = (geoJson: GeoJSON, bboxToExpand?: BBox): OptionalBBox =>
     bboxExpandedWithBBox(bboxFromGeoJSON(geoJson), bboxToExpand);
 
 /**

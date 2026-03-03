@@ -1,4 +1,4 @@
-import { GeoJsonObject } from 'geojson';
+import { GeoJSON } from 'geojson';
 import { describe, expect, test } from 'vitest';
 import { bestExecutionTimeMS } from '../../../../core/src/util/tests/performanceTestUtils';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
@@ -52,7 +52,7 @@ describe('buildTrafficIncidentDetailsRequest — bbox mode (GeoJSON inputs)', ()
                 type: 'Feature',
                 geometry: { type: 'Point', coordinates: [4.9, 52.37] },
                 properties: {},
-            } as GeoJsonObject,
+            } as GeoJSON,
         });
 
         expect(result.method).toBe('GET');
@@ -68,12 +68,12 @@ describe('buildTrafficIncidentDetailsRequest — bbox mode (GeoJSON inputs)', ()
                     type: 'Feature',
                     geometry: { type: 'Point', coordinates: [4.9, 52.37] },
                     properties: {},
-                } as GeoJsonObject,
+                } as GeoJSON,
                 {
                     type: 'Feature',
                     geometry: { type: 'Point', coordinates: [5.0, 52.45] },
                     properties: {},
-                } as GeoJsonObject,
+                } as GeoJSON,
             ],
         });
 
@@ -90,7 +90,7 @@ describe('buildTrafficIncidentDetailsRequest — bbox mode (GeoJSON inputs)', ()
                 bbox: [4.728, 52.278, 5.08, 52.479],
                 geometry: { type: 'Point', coordinates: [4.9, 52.37] },
                 properties: {},
-            } as GeoJsonObject,
+            } as GeoJSON,
         });
 
         expect(result.method).toBe('GET');

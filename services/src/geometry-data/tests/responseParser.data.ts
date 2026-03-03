@@ -1,5 +1,5 @@
 import type { PolygonFeatures } from '@tomtom-org/maps-sdk/core';
-import type { GeoJsonObject, Position } from 'geojson';
+import type { GeoJSON, Position } from 'geojson';
 import type { GeometryDataResponseAPI } from '../types/apiTypes';
 
 const data: [string, GeometryDataResponseAPI, PolygonFeatures][] = [
@@ -35,7 +35,7 @@ const data: [string, GeometryDataResponseAPI, PolygonFeatures][] = [
                                 id: '00004e4c-3100-3c00-0000-000059685013',
                             },
                         ],
-                    } as GeoJsonObject,
+                    } as GeoJSON,
                 },
             ],
         },
@@ -103,7 +103,7 @@ const data: [string, GeometryDataResponseAPI, PolygonFeatures][] = [
                                 id: 'PROVIDER_0',
                             },
                         ],
-                    } as GeoJsonObject,
+                    } as GeoJSON,
                 },
                 {
                     providerID: 'PROVIDER_1',
@@ -135,7 +135,7 @@ const data: [string, GeometryDataResponseAPI, PolygonFeatures][] = [
                                 id: 'PROVIDER_1',
                             },
                         ],
-                    } as GeoJsonObject,
+                    } as GeoJSON,
                 },
             ],
         },

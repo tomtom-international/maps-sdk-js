@@ -186,6 +186,107 @@ describe('Calculate route request schema validation', () => {
     });
 });
 
+describe('Calculate route request schema — avoidAreas validation', () => {
+    const apiKey = 'APIKEY';
+    const commonBaseUrl = 'https://api-test.tomtom.com';
+    const baseLocations = [
+        [4.89066, 52.37317],
+        [4.49015, 52.16109],
+    ];
+
+    test('it should accept avoidAreas as BBox arrays', () => {
+        expect(() =>
+            validateRequestSchema<CalculateRouteParams>(
+                {
+                    locations: baseLocations,
+                    costModel: {
+                        avoidAreas: [[2.265938, 48.81851, 2.41115, 48.90309]],
+                    },
+                    apiKey,
+                    commonBaseURL: commonBaseUrl,
+                },
+                routeRequestValidationConfig,
+            ),
+        ).not.toThrow();
+    });
+
+    test('it should accept avoidAreas as GeoJSON Feature objects', () => {
+        expect(() =>
+            validateRequestSchema<CalculateRouteParams>(
+                {
+                    locations: baseLocations,
+                    costModel: {
+                        avoidAreas: [
+                            {
+                                type: 'Feature',
+                                geometry: {
+                                    type: 'Polygon',
+                                    coordinates: [
+                                        [
+                                            [2.265938, 48.81851],
+                                            [2.41115, 48.81851],
+                                            [2.41115, 48.90309],
+                                            [2.265938, 48.90309],
+                                            [2.265938, 48.81851],
+                                        ],
+                                    ],
+                                },
+                                properties: {},
+                                bbox: [2.265938, 48.81851, 2.41115, 48.90309],
+                            },
+                        ],
+                    },
+                    apiKey,
+                    commonBaseURL: commonBaseUrl,
+                },
+                routeRequestValidationConfig,
+            ),
+        ).not.toThrow();
+    });
+
+    test('it should fail when avoidAreas exceeds 10 items', () => {
+        expect(() =>
+            validateRequestSchema<CalculateRouteParams>(
+                {
+                    locations: baseLocations,
+                    costModel: {
+                        avoidAreas: Array(11).fill([0, 0, 1, 1]),
+                    },
+                    apiKey,
+                    commonBaseURL: commonBaseUrl,
+                },
+                routeRequestValidationConfig,
+            ),
+        ).toThrow(
+            expect.objectContaining({
+                issues: expect.arrayContaining([
+                    expect.objectContaining({
+                        code: 'too_big',
+                        maximum: 10,
+                        path: ['costModel', 'avoidAreas'],
+                    }),
+                ]),
+            }),
+        );
+    });
+
+    test('it should fail when an avoidArea item is not a valid HasBBox', () => {
+        expect(() =>
+            validateRequestSchema<CalculateRouteParams>(
+                {
+                    locations: baseLocations,
+                    costModel: {
+                        avoidAreas: ['not-a-bbox' as never],
+                    },
+                    apiKey,
+                    commonBaseURL: commonBaseUrl,
+                },
+                routeRequestValidationConfig,
+            ),
+        ).toThrow();
+    });
+});
+
 describe('Calculate route request schema performance tests', () => {
     test('Calculate route request with many waypoints, mandatory & optional params', () => {
         expect(

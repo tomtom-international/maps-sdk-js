@@ -1,7 +1,7 @@
 import type {
     Feature,
     FeatureCollection,
-    GeoJsonObject,
+    GeoJSON,
     GeoJsonProperties,
     Geometry,
     MultiPolygon,
@@ -55,8 +55,8 @@ export type BBox = [number, number, number, number];
  *
  * Accepts various formats:
  * - `BBox`: Direct GeoJSON bounding box array `[west, south, east, north]`
- * - `GeoJsonObject`: Any GeoJSON object with a `bbox` property or from which bounds can be calculated
- * - `GeoJsonObject[]`: Array of GeoJSON objects (convenience extension to standard GeoJSON)
+ * - `GeoJSON`: Any GeoJSON object with a `bbox` property or from which bounds can be calculated
+ * - `GeoJSON[]`: Array of GeoJSON objects (convenience extension to standard GeoJSON)
  *
  * @remarks
  * Bounding boxes follow the format: `[minLon, minLat, maxLon, maxLat]` or `[west, south, east, north]`
@@ -80,7 +80,7 @@ export type BBox = [number, number, number, number];
  *
  * @group Shared
  */
-export type HasBBox = BBox | GeoJsonObject | GeoJsonObject[];
+export type HasBBox = BBox | GeoJSON | GeoJSON[];
 
 /**
  * Optional bounding box value.

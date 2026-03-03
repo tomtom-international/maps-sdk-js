@@ -1,4 +1,4 @@
-import type { GeoJsonObject } from 'geojson';
+import type { GeoJSON } from 'geojson';
 
 /**
  * @ignore
@@ -6,7 +6,7 @@ import type { GeoJsonObject } from 'geojson';
 export type AdditionalDataAPI = {
     providerID: string;
     error?: string;
-    geometryData: GeoJsonObject;
+    geometryData: GeoJSON;
 };
 
 /**

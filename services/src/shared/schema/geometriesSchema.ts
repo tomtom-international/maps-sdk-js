@@ -95,7 +95,7 @@ const geoJsonbBoxSchema = z
 /**
  * @ignore
  */
-export const geoJSONObjectSchema = z
+export const GeoJSONSchema = z
     .union([geometrySchema, featureSchema, featureCollectionSchema])
     .describe('Any GeoJSON object (Geometry, Feature, or FeatureCollection)');
 
@@ -103,5 +103,5 @@ export const geoJSONObjectSchema = z
  * @ignore
  */
 export const hasBBoxSchema = z
-    .union([geoJsonbBoxSchema, geoJSONObjectSchema, z.array(geoJSONObjectSchema)])
+    .union([geoJsonbBoxSchema, GeoJSONSchema, z.array(GeoJSONSchema)])
     .describe('Bounding box as array, GeoJSON object, or array of GeoJSON objects');

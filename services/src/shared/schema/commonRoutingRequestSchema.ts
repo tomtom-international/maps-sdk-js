@@ -1,6 +1,7 @@
 import { avoidableTypes } from '@tomtom-org/maps-sdk/core';
 import { z } from 'zod';
 import { routeTypes } from '../types/commonRoutingParams';
+import { hasBBoxSchema } from './geometriesSchema';
 import { vehicleParametersSchema } from './vehicleParamsSchema';
 
 /**
@@ -23,6 +24,13 @@ export const commonRoutingRequestSchema = z.object({
                 .enum(routeTypes)
                 .optional()
                 .describe('Route optimization strategy (fast, short, efficient, thrilling)'),
+            avoidAreas: z
+                .array(hasBBoxSchema)
+                .max(10)
+                .optional()
+                .describe(
+                    'Up to 10 rectangular areas for the routing engine to bypass, each as a BBox [W,S,E,N], GeoJSON object, or array of GeoJSON objects',
+                ),
             thrillingParams: z
                 .object({
                     hilliness: z

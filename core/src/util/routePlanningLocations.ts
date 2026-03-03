@@ -1,4 +1,4 @@
-import type { Feature, GeoJsonObject, Point } from 'geojson';
+import type { Feature, GeoJSON, Point } from 'geojson';
 import type { HasLngLat, RoutePlanningLocation, RoutePlanningLocationType, Waypoint } from '../types';
 import { getPositionStrict, toPointFeature } from './lngLat';
 
@@ -49,7 +49,7 @@ import { getPositionStrict, toPointFeature } from './lngLat';
  */
 export const asSoftWaypoint = (hasLngLat: HasLngLat, radiusMeters: number): Waypoint => {
     let inputAsFeature: Feature<Point>;
-    if (Array.isArray(hasLngLat) || (hasLngLat as GeoJsonObject).type !== 'Feature') {
+    if (Array.isArray(hasLngLat) || (hasLngLat as GeoJSON).type !== 'Feature') {
         inputAsFeature = toPointFeature(getPositionStrict(hasLngLat));
     } else {
         inputAsFeature = hasLngLat as Feature<Point>;
