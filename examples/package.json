@@ -6,7 +6,7 @@
   "module": "dist/examples.js",
   "types": "dist/examples.d.ts",
   "scripts": {
-    "build": "pnpm --parallel -F './*' build && vite build",
+    "build": "pnpm --workspace-concurrency=8 -F './*' build && vite build",
     "test": "vitest run",
     "test:e2e": "pnpm exec playwright install --with-deps chromium && playwright test",
     "test:e2e:ui": "pnpm exec playwright install --with-deps chromium && playwright test --ui",
