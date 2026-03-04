@@ -1,0 +1,11 @@
+group: maps-sdk-js
+isPrivate: false
+productName: TomTom Maps SDK for JavaScript
+isMenuOpened: false
+menu:
+- fileId: overview
+  title: Introduction
+- fileId: project-setup
+  title: Project setup
+- fileId: release-notes
+  title: Release notes
