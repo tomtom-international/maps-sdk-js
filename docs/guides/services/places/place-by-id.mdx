@@ -1,0 +1,164 @@
+---
+title: Place by ID
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.45.11"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Place by ID service retrieves detailed information about a specific place using its unique entity identifier. This is the recommended way to get full place details — including opening hours, categories, and entry points — once you have a place ID.
+
+## Basic Usage
+
+Pass the `entityId` to retrieve a `Place` with full details, or `undefined` if the ID is not found:
+
+```javascript
+import { placeById } from '@tomtom-org/maps-sdk/services';
+
+const place = await placeById({
+    entityId: '528009002822995'
+});
+
+if (!place) {
+    console.log('Place not found');
+    return;
+}
+
+const [lng, lat] = place.geometry.coordinates;
+console.log(place.properties.poi?.name);            // e.g. 'Rijksmuseum'
+console.log(place.properties.address.freeformAddress); // e.g. 'Museumstraat 1, Amsterdam'
+```
+
+## Opening Hours
+
+Request opening hours for the upcoming week by setting `openingHours`:
+
+```javascript
+const place = await placeById({
+    entityId: '528009002822995',
+    openingHours: 'nextSevenDays',
+});
+
+const hours = place?.properties.poi?.openingHours;
+if (hours?.alwaysOpenThisPeriod) {
+    console.log('Open 24/7');
+} else {
+    hours?.timeRanges.forEach(({ start, end }) => {
+        console.log(`Open ${start.date.toLocaleString()} – ${end.date.toLocaleString()}`);
+    });
+}
+```
+
+## Related POIs
+
+Retrieve parent or child POI relationships using `relatedPois`:
+
+```javascript
+// Retrieve child POIs (e.g. terminals inside an airport)
+const place = await placeById({
+    entityId: '528009002822995',
+    relatedPois: 'child',
+});
+
+place?.properties.relatedPois?.forEach(related => {
+    console.log(related.entityId, related.relationType);
+});
+```
+
+Available values: `'child'` | `'parent'` | `'all'` | `'off'`
+
+## Additional Options
+
+```javascript
+const place = await placeById({
+    entityId: '528009002822995',
+    openingHours: 'nextSevenDays',
+    timeZone: 'iana',       // Include IANA timezone in opening hours
+    mapcodes: ['Local', 'International'],  // Alternative location codes
+    view: 'Unified',        // Geopolitical view
+});
+```
+
+## Working with Results
+
+Place by ID returns a `Place<SearchPlaceProps>` — the same structure as search results — giving you access to the full place detail set:
+
+```javascript
+const place = await placeById({ entityId: '528009002822995' });
+if (!place) return;
+
+// Coordinates
+const [lng, lat] = place.geometry.coordinates;
+
+// Address
+const { freeformAddress, municipality, country } = place.properties.address;
+
+// POI details
+const poi = place.properties.poi;
+console.log(poi?.name);           // Business name
+console.log(poi?.categories);     // e.g. ['MUSEUM']
+console.log(poi?.phone);          // Phone number
+console.log(poi?.url);            // Website URL
+```
+
+## Displaying on the Map
+
+Use `PlacesModule.show()` to render the retrieved place as a marker on the map:
+
+```javascript
+import { TomTomMap, PlacesModule } from '@tomtom-org/maps-sdk/map';
+
+const map = new TomTomMap({ mapLibre: { container: 'sdk-map' } });
+const placesModule = await PlacesModule.get(map);
+
+const place = await placeById({ entityId: '528009002822995' });
+if (place) {
+    await placesModule.show(place);
+}
+```
+
+## Integration with POIs Module
+
+<SDKGuideLiveCodingExample exampleDirectory="interactive-map-pois" />
+
+A common pattern is to fetch full place details when the user clicks a POI on the map. The POI click event provides the `id` needed for the lookup:
+
+```javascript
+import { POIsModule } from '@tomtom-org/maps-sdk/map';
+import { placeById } from '@tomtom-org/maps-sdk/services';
+
+const poisModule = await POIsModule.get(map);
+
+poisModule.events.on('click', async (feature) => {
+    const place = await placeById({
+        entityId: feature.properties.id,
+        openingHours: 'nextSevenDays',
+    });
+
+    if (!place) return;
+    // Display place on map or show a popup with details
+});
+```
+
+See the **[POIs Module guide](../../map/pois.mdx)** for a full walkthrough of this pattern, including popups and map marker integration.
+
+## API Reference
+
+For complete documentation of all parameters and response types, see the **[placeById API Reference](/maps-sdk-js/api-reference/functions/services.placeById.html)**.
+
+## Related Guides and Examples
+
+### Map Integration
+- **[POIs Module](../../map/pois.mdx)** - Click on map POIs to get their entity IDs for use with Place by ID
+- **[Places Module](../../map/places.mdx)** - Display the retrieved place as a marker on the map
+
+### Related Examples
+- **[Interactive Map POIs](../../../examples/interactive-map-pois/)** - Click a POI on the map to fetch and display its details using Place by ID
+
+### Related Services
+- **[Search](./search.mdx)** - Find places by query; use their IDs with Place by ID for full details
+- **[Geocoding](./geocoding.mdx)** - Convert addresses to coordinates for use with routing and map display
