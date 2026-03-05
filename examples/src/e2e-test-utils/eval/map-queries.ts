@@ -5,9 +5,9 @@ const serializePattern = (pattern: RegExp) => ({ source: pattern.source, flags: 
 
 export const waitForMapIdle = async (page: Page): Promise<void> => {
     await page.evaluate(async () => {
-        const map = (globalThis as unknown as { __maplibreMap?: MapLibreMap }).__maplibreMap;
+        const map = (globalThis as unknown as { mapLibreMap?: MapLibreMap }).mapLibreMap;
         if (!map) {
-            throw new Error('window.__maplibreMap is not available. Ensure VITE_EVAL_MODE=true and eval hooks are enabled.');
+            throw new Error('window.mapLibreMap is not available. Ensure VITE_EVAL_MODE=true and eval hooks are enabled.');
         }
 
         if (map.loaded() && (typeof map.areTilesLoaded !== 'function' || map.areTilesLoaded())) {
@@ -22,9 +22,9 @@ export const waitForMapIdle = async (page: Page): Promise<void> => {
 
 export const getSourceIds = async (page: Page): Promise<string[]> => {
     return page.evaluate(() => {
-        const map = (globalThis as unknown as { __maplibreMap?: MapLibreMap }).__maplibreMap;
+        const map = (globalThis as unknown as { mapLibreMap?: MapLibreMap }).mapLibreMap;
         if (!map) {
-            throw new Error('window.__maplibreMap is not available. Ensure VITE_EVAL_MODE=true and eval hooks are enabled.');
+            throw new Error('window.mapLibreMap is not available. Ensure VITE_EVAL_MODE=true and eval hooks are enabled.');
         }
         return Object.keys(map.getStyle().sources ?? {});
     });
@@ -33,9 +33,9 @@ export const getSourceIds = async (page: Page): Promise<string[]> => {
 export const hasSourceMatching = async (page: Page, pattern: RegExp): Promise<boolean> => {
     const serialized = serializePattern(pattern);
     return page.evaluate((inputPattern) => {
-        const map = (globalThis as unknown as { __maplibreMap?: MapLibreMap }).__maplibreMap;
+        const map = (globalThis as unknown as { mapLibreMap?: MapLibreMap }).mapLibreMap;
         if (!map) {
-            throw new Error('window.__maplibreMap is not available. Ensure VITE_EVAL_MODE=true and eval hooks are enabled.');
+            throw new Error('window.mapLibreMap is not available. Ensure VITE_EVAL_MODE=true and eval hooks are enabled.');
         }
         const regex = new RegExp(inputPattern.source, inputPattern.flags);
         const sourceIds = Object.keys(map.getStyle().sources ?? {});
@@ -45,9 +45,9 @@ export const hasSourceMatching = async (page: Page, pattern: RegExp): Promise<bo
 
 export const getLayerCountBySource = async (page: Page, sourceId: string): Promise<number> => {
     return page.evaluate((inputSourceId) => {
-        const map = (globalThis as unknown as { __maplibreMap?: MapLibreMap }).__maplibreMap;
+        const map = (globalThis as unknown as { mapLibreMap?: MapLibreMap }).mapLibreMap;
         if (!map) {
-            throw new Error('window.__maplibreMap is not available. Ensure VITE_EVAL_MODE=true and eval hooks are enabled.');
+            throw new Error('window.mapLibreMap is not available. Ensure VITE_EVAL_MODE=true and eval hooks are enabled.');
         }
         const layers = map.getStyle().layers ?? [];
         return layers.filter((layer) => 'source' in layer && layer.source === inputSourceId).length;
@@ -56,9 +56,9 @@ export const getLayerCountBySource = async (page: Page, sourceId: string): Promi
 
 export const getVisibleLayerIds = async (page: Page): Promise<string[]> => {
     return page.evaluate(() => {
-        const map = (globalThis as unknown as { __maplibreMap?: MapLibreMap }).__maplibreMap;
+        const map = (globalThis as unknown as { mapLibreMap?: MapLibreMap }).mapLibreMap;
         if (!map) {
-            throw new Error('window.__maplibreMap is not available. Ensure VITE_EVAL_MODE=true and eval hooks are enabled.');
+            throw new Error('window.mapLibreMap is not available. Ensure VITE_EVAL_MODE=true and eval hooks are enabled.');
         }
         const layers = map.getStyle().layers ?? [];
         return layers.filter((layer) => layer.layout?.visibility !== 'none').map((layer) => layer.id);
@@ -68,9 +68,9 @@ export const getVisibleLayerIds = async (page: Page): Promise<string[]> => {
 export const queryRenderedFeaturesCount = async (page: Page, layerPattern?: RegExp): Promise<number> => {
     const serialized = layerPattern ? serializePattern(layerPattern) : null;
     return page.evaluate((inputPattern) => {
-        const map = (globalThis as unknown as { __maplibreMap?: MapLibreMap }).__maplibreMap;
+        const map = (globalThis as unknown as { mapLibreMap?: MapLibreMap }).mapLibreMap;
         if (!map) {
-            throw new Error('window.__maplibreMap is not available. Ensure VITE_EVAL_MODE=true and eval hooks are enabled.');
+            throw new Error('window.mapLibreMap is not available. Ensure VITE_EVAL_MODE=true and eval hooks are enabled.');
         }
         const styleLayers = map.getStyle().layers ?? [];
 
@@ -94,9 +94,9 @@ export const queryRenderedFeaturesCount = async (page: Page, layerPattern?: RegE
 
 export const getStyleName = async (page: Page): Promise<string> => {
     return page.evaluate(() => {
-        const map = (globalThis as unknown as { __maplibreMap?: MapLibreMap }).__maplibreMap;
+        const map = (globalThis as unknown as { mapLibreMap?: MapLibreMap }).mapLibreMap;
         if (!map) {
-            throw new Error('window.__maplibreMap is not available. Ensure VITE_EVAL_MODE=true and eval hooks are enabled.');
+            throw new Error('window.mapLibreMap is not available. Ensure VITE_EVAL_MODE=true and eval hooks are enabled.');
         }
         return map.getStyle().name ?? '';
     });
@@ -104,9 +104,9 @@ export const getStyleName = async (page: Page): Promise<string> => {
 
 export const getMapCenter = async (page: Page): Promise<[number, number]> => {
     return page.evaluate(() => {
-        const map = (globalThis as unknown as { __maplibreMap?: MapLibreMap }).__maplibreMap;
+        const map = (globalThis as unknown as { mapLibreMap?: MapLibreMap }).mapLibreMap;
         if (!map) {
-            throw new Error('window.__maplibreMap is not available. Ensure VITE_EVAL_MODE=true and eval hooks are enabled.');
+            throw new Error('window.mapLibreMap is not available. Ensure VITE_EVAL_MODE=true and eval hooks are enabled.');
         }
         return map.getCenter().toArray();
     });
@@ -114,9 +114,9 @@ export const getMapCenter = async (page: Page): Promise<[number, number]> => {
 
 export const getMapZoom = async (page: Page): Promise<number> => {
     return page.evaluate(() => {
-        const map = (globalThis as unknown as { __maplibreMap?: MapLibreMap }).__maplibreMap;
+        const map = (globalThis as unknown as { mapLibreMap?: MapLibreMap }).mapLibreMap;
         if (!map) {
-            throw new Error('window.__maplibreMap is not available. Ensure VITE_EVAL_MODE=true and eval hooks are enabled.');
+            throw new Error('window.mapLibreMap is not available. Ensure VITE_EVAL_MODE=true and eval hooks are enabled.');
         }
         return map.getZoom();
     });
@@ -124,9 +124,9 @@ export const getMapZoom = async (page: Page): Promise<number> => {
 
 export const isTrafficFlowVisible = async (page: Page): Promise<boolean> => {
     return page.evaluate(() => {
-        const map = (globalThis as unknown as { __maplibreMap?: MapLibreMap }).__maplibreMap;
+        const map = (globalThis as unknown as { mapLibreMap?: MapLibreMap }).mapLibreMap;
         if (!map) {
-            throw new Error('window.__maplibreMap is not available. Ensure VITE_EVAL_MODE=true and eval hooks are enabled.');
+            throw new Error('window.mapLibreMap is not available. Ensure VITE_EVAL_MODE=true and eval hooks are enabled.');
         }
         const layers = map.getStyle().layers ?? [];
 
@@ -142,9 +142,9 @@ export const isTrafficFlowVisible = async (page: Page): Promise<boolean> => {
 export const getPaintProperty = async (page: Page, layerId: string, property: string): Promise<unknown> => {
     return page.evaluate(
         ({ inputLayerId, inputProperty }) => {
-            const map = (globalThis as unknown as { __maplibreMap?: MapLibreMap }).__maplibreMap;
+            const map = (globalThis as unknown as { mapLibreMap?: MapLibreMap }).mapLibreMap;
             if (!map) {
-                throw new Error('window.__maplibreMap is not available. Ensure VITE_EVAL_MODE=true and eval hooks are enabled.');
+                throw new Error('window.mapLibreMap is not available. Ensure VITE_EVAL_MODE=true and eval hooks are enabled.');
             }
             return map.getPaintProperty(inputLayerId, inputProperty);
         },

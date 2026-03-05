@@ -14,7 +14,7 @@ export const setupEvalWindowHooks = (options: EvalWindowHooksOptions): void => {
     }
 
     const evalWindow = globalThis as unknown as Partial<EvalWindow>;
-    evalWindow.__maplibreMap = options.mapLibreMap;
+    evalWindow.mapLibreMap = options.mapLibreMap;
     evalWindow.__evalSendMessage = (query: string) => {
         options.sendMessage(query);
     };

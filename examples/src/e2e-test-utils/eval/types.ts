@@ -30,5 +30,5 @@ export type EvalWindow = {
     __evalTelemetry: EvalTelemetry;
     __evalReset: () => void;
     __evalSendMessage: (query: string) => void;
-    __maplibreMap: MapLibreMap;
+    mapLibreMap: MapLibreMap;
 };
