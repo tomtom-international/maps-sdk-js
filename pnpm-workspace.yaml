@@ -34,7 +34,7 @@ catalog:
   rollup-plugin-analyzer: ^4.0.0
   rollup-plugin-license: ^3.7.0
   rollup-plugin-peer-deps-external: ^2.2.4
-  rollup-plugin-visualizer: ^6.0.8
+  rollup-plugin-visualizer: ^7.0.1
   ts-node: ^10.9.2
   typescript: ^5.9.3
   vite: ^7.3.1

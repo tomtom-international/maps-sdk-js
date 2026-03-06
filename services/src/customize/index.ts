@@ -12,6 +12,7 @@ import placeByIdCustomize from '../place-by-id/customize';
 import reachableRangeCustomize from '../reachable-range/customize';
 import revgeoCustomize from '../revgeo/customize';
 import routingCustomize from '../routing/customize';
+import trafficAreaAnalyticsCustomize from '../traffic-area-analytics/customize';
 import trafficIncidentDetailsCustomize from '../traffic-incident-details/customize';
 
 /**
@@ -64,6 +65,7 @@ export const customizeService: {
     calculateRoute: typeof routingCustomize;
     reachableRange: typeof reachableRangeCustomize;
     evChargingStationsAvailability: typeof evChargingStationsAvailabilityCustomize;
+    trafficAreaAnalytics: typeof trafficAreaAnalyticsCustomize;
     trafficIncidentDetails: typeof trafficIncidentDetailsCustomize;
     placeByID: typeof placeByIdCustomize;
     autocompleteSearch: typeof autocompleteCustomize;
@@ -75,6 +77,7 @@ export const customizeService: {
     calculateRoute: routingCustomize,
     reachableRange: reachableRangeCustomize,
     evChargingStationsAvailability: evChargingStationsAvailabilityCustomize,
+    trafficAreaAnalytics: trafficAreaAnalyticsCustomize,
     trafficIncidentDetails: trafficIncidentDetailsCustomize,
     placeByID: placeByIdCustomize,
     autocompleteSearch: autocompleteCustomize,

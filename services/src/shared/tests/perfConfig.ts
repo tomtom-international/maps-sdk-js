@@ -2,6 +2,11 @@
  * Maximum execution times in Milliseconds for performance tests.
  */
 export const MAX_EXEC_TIMES_MS = {
+    trafficAreaAnalytics: {
+        schemaValidation: 3,
+        requestBuilding: 2,
+        responseParsing: 10,
+    },
     trafficIncidentDetails: {
         schemaValidation: 2,
         requestBuilding: 2,

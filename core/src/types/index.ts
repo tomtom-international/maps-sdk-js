@@ -21,5 +21,6 @@ export * from './route/route';
 export * from './route/sections';
 export type * from './route/summary';
 export type * from './timezone';
+export * from './traffic/areaAnalytics';
 export * from './traffic/incidents';
 export * from './view';
