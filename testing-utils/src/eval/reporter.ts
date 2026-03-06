@@ -29,9 +29,7 @@ const getStats = (values: number[]) => {
     const total = sortedValues.reduce((sum, value) => sum + value, 0);
     const middle = Math.floor(sortedValues.length / 2);
     const median =
-        sortedValues.length % 2 === 0
-            ? (sortedValues[middle - 1] + sortedValues[middle]) / 2
-            : sortedValues[middle];
+        sortedValues.length % 2 === 0 ? (sortedValues[middle - 1] + sortedValues[middle]) / 2 : sortedValues[middle];
 
     return {
         min: sortedValues[0],
@@ -60,7 +58,7 @@ const parseAttachmentBody = <T>(result: TestResult, attachmentName: string): T |
     }
 };
 
-class EvalReporter implements Reporter {
+export class EvalReporter implements Reporter {
     private readonly records: EvalRecord[] = [];
     private outputFilePath = '';
 
@@ -160,8 +158,13 @@ class EvalReporter implements Reporter {
             };
         });
 
-        const belowThresholdCases = caseSummaries.filter((summary) => summary.belowThreshold).map((summary) => summary.caseId);
-        const totalTokens = this.records.reduce((sum, record) => sum + toNumber(record.telemetry?.totalUsage.totalTokens), 0);
+        const belowThresholdCases = caseSummaries
+            .filter((summary) => summary.belowThreshold)
+            .map((summary) => summary.caseId);
+        const totalTokens = this.records.reduce(
+            (sum, record) => sum + toNumber(record.telemetry?.totalUsage.totalTokens),
+            0,
+        );
         const totalWallClockMs = this.records.reduce((sum, record) => sum + (record.telemetry?.wallClockMs ?? 0), 0);
 
         const report = {

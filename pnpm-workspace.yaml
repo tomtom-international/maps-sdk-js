@@ -1,5 +1,6 @@
 packages:
   - shared-configs
+  - testing-utils
   - core
   - services
   - map

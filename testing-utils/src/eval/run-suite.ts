@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
-import type { EvalCase } from './eval-case';
-import { waitForMapIdle } from './map-queries';
+import { waitForMapIdle } from '../map-queries';
+import type { EvalCase } from './case';
 import type { EvalTelemetry } from './types';
 
 type RunEvalSuiteOptions = {
@@ -15,6 +15,41 @@ const DEFAULT_THRESHOLD = 0.8;
 const getCalledTools = (telemetry: EvalTelemetry): string[] => {
     const tools = telemetry.steps.flatMap((step) => step.toolCalls.map((toolCall) => toolCall.name));
     return [...new Set(tools)];
+};
+
+const mergeTelemetry = (telemetries: EvalTelemetry[]): EvalTelemetry => {
+    const mergedSteps: EvalTelemetry['steps'] = [];
+
+    for (const telemetry of telemetries) {
+        for (const step of telemetry.steps) {
+            mergedSteps.push({
+                ...step,
+                index: mergedSteps.length + 1,
+            });
+        }
+    }
+
+    return {
+        completed: true,
+        error: telemetries.find((telemetry) => telemetry.error)?.error ?? null,
+        userMessages: telemetries.flatMap((telemetry) => telemetry.userMessages),
+        steps: mergedSteps,
+        totalUsage: telemetries.reduce(
+            (usage, telemetry) => ({
+                inputTokens: usage.inputTokens + telemetry.totalUsage.inputTokens,
+                outputTokens: usage.outputTokens + telemetry.totalUsage.outputTokens,
+                totalTokens: usage.totalTokens + telemetry.totalUsage.totalTokens,
+            }),
+            {
+                inputTokens: 0,
+                outputTokens: 0,
+                totalTokens: 0,
+            },
+        ),
+        classification: telemetries.at(-1)?.classification ?? null,
+        agentText: telemetries.at(-1)?.agentText ?? '',
+        wallClockMs: telemetries.reduce((sum, telemetry) => sum + telemetry.wallClockMs, 0),
+    };
 };
 
 export const runEvalSuite = (cases: EvalCase[], options: RunEvalSuiteOptions): void => {
@@ -41,34 +76,42 @@ export const runEvalSuite = (cases: EvalCase[], options: RunEvalSuiteOptions): v
                             evalWindow.__evalReset();
                         });
 
-                        await page.evaluate((query) => {
-                            const evalWindow = globalThis as unknown as {
-                                __evalSendMessage?: (input: string) => void;
-                            };
-                            if (!evalWindow.__evalSendMessage) {
-                                throw new Error('window.__evalSendMessage is not available.');
-                            }
-                            evalWindow.__evalSendMessage(query);
-                        }, evalCase.query);
+                        const turnTelemetries: EvalTelemetry[] = [];
 
-                        await page.waitForFunction(
-                            () => {
+                        for (const message of evalCase.messages) {
+                            await page.evaluate((input) => {
                                 const evalWindow = globalThis as unknown as {
-                                    __evalTelemetry?: { completed?: boolean };
+                                    __evalSendMessage?: (value: string) => void;
                                 };
-                                return evalWindow.__evalTelemetry?.completed === true;
-                            },
-                            { timeout: completionTimeout },
-                        );
+                                if (!evalWindow.__evalSendMessage) {
+                                    throw new Error('window.__evalSendMessage is not available.');
+                                }
+                                evalWindow.__evalSendMessage(input);
+                            }, message);
 
-                        const telemetry = await page.evaluate(() => {
-                            const evalWindow = globalThis as unknown as { __evalTelemetry?: EvalTelemetry };
-                            return evalWindow.__evalTelemetry;
-                        });
+                            await page.waitForFunction(
+                                () => {
+                                    const evalWindow = globalThis as unknown as {
+                                        __evalTelemetry?: { completed?: boolean };
+                                    };
+                                    return evalWindow.__evalTelemetry?.completed === true;
+                                },
+                                { timeout: completionTimeout },
+                            );
 
-                        if (!telemetry) {
-                            throw new Error('window.__evalTelemetry was not captured.');
+                            const turnTelemetry = await page.evaluate(() => {
+                                const evalWindow = globalThis as unknown as { __evalTelemetry?: EvalTelemetry };
+                                return evalWindow.__evalTelemetry;
+                            });
+
+                            if (!turnTelemetry) {
+                                throw new Error('window.__evalTelemetry was not captured.');
+                            }
+
+                            turnTelemetries.push(turnTelemetry);
                         }
+
+                        const telemetry = mergeTelemetry(turnTelemetries);
 
                         await testInfo.attach('eval-meta', {
                             body: JSON.stringify({
@@ -110,7 +153,7 @@ export const runEvalSuite = (cases: EvalCase[], options: RunEvalSuiteOptions): v
                             await page.waitForTimeout(waitAfterCompletion);
 
                             const screenshot = await page.locator(mapSelector).screenshot();
-                            if (evalCase.screenshot.goldenComparison) {
+                            if (evalCase.screenshot.assertScreenshot) {
                                 await expect(screenshot).toMatchSnapshot(`${evalCase.id}.png`, {
                                     maxDiffPixelRatio: evalCase.screenshot.maxDiffPixelRatio ?? 0.2,
                                 });

@@ -26,6 +26,7 @@
     "@microsoft/api-extractor": "catalog:",
     "@playwright/test": "catalog:",
     "@tsconfig/recommended": "catalog:",
+    "testing-utils": "workspace:*",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "catalog:",
     "@types/react": "catalog:",

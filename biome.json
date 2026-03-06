@@ -12,7 +12,8 @@
       "map/**",
       "services/**",
       "examples/**",
-      "map-integration-tests/**"
+      "map-integration-tests/**",
+      "testing-utils/**"
     ]
   },
   "assist": { "actions": { "source": { "organizeImports": "on" } } },

@@ -106,7 +106,9 @@ export class EvalTelemetryRuntime {
             return;
         }
 
-        const resultsById = new Map((step.toolResults ?? []).map((toolResult) => [toolResult.toolCallId, toolResult.output]));
+        const resultsById = new Map(
+            (step.toolResults ?? []).map((toolResult) => [toolResult.toolCallId, toolResult.output]),
+        );
 
         this.telemetry.steps.push({
             index: stepIndex,
