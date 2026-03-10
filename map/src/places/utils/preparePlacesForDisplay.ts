@@ -54,7 +54,7 @@ export const getIconIDForPlace = (place: Place, instanceIndex: number, config: P
     }
 
     // Next, try to match any custom icon:
-    const poiCategory = place.properties.poi?.classifications?.[0]?.code as POICategory;
+    const poiCategory = place.properties.poi?.categories?.[0] as POICategory;
 
     // Check for EV availability-specific icon selection
     const evAvailabilityIconID = getEVAvailabilityIconID(place, poiCategory, instanceIndex, config, iconTheme);
@@ -69,8 +69,7 @@ export const getIconIDForPlace = (place: Place, instanceIndex: number, config: P
     }
 
     // Else: if no custom icon matched, we map to the map style icons or default:
-    const baseIconID = toImageID(poiCategory, iconTheme, defaultPlaceIconID);
-    return baseIconID;
+    return toImageID(poiCategory, iconTheme, defaultPlaceIconID);
 };
 
 /**
@@ -78,7 +77,7 @@ export const getIconIDForPlace = (place: Place, instanceIndex: number, config: P
  * @ignore
  */
 export const getPOILayerCategoryForPlace = (place: Place): string | undefined => {
-    const category = place.properties.poi?.classifications?.[0]?.code;
+    const category = place.properties.poi?.categories?.[0];
     // if it's one of the different categories between search and poi layer, use poi layer category
     return category && toBaseMapPOICategory(category);
 };
@@ -113,7 +112,7 @@ const mergeEVAvailabilityProps = (
     let hasEVStationsWithAvailability = false;
 
     for (const place of places.features) {
-        const isEVStation = place.properties.poi?.classifications?.[0]?.code === 'ELECTRIC_VEHICLE_STATION';
+        const isEVStation = place.properties.poi?.categories?.[0] === 'ELECTRIC_VEHICLE_STATION';
         if (isEVStation) {
             hasEVStations = true;
             if (isEVStationWithAvailability(place)) {

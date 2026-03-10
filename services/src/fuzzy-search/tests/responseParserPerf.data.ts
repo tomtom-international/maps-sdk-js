@@ -35,21 +35,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                         ],
                         url: 'thegrasshopper.com',
                         categories: ['café', 'café/pub'],
-                        classifications: [
-                            {
-                                code: 'CAFE_PUB',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café/pub',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '16',
@@ -102,17 +87,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['café/pub'],
-                        classifications: [
-                            {
-                                code: 'CAFE_PUB',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café/pub',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '16',
@@ -166,21 +140,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['bar', 'nightlife'],
-                        classifications: [
-                            {
-                                code: 'NIGHTLIFE',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'bar',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'nightlife',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '12',
@@ -234,21 +193,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['café', 'café/pub'],
-                        classifications: [
-                            {
-                                code: 'CAFE_PUB',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café/pub',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetName: 'Oudebrugsteeg',
@@ -300,21 +244,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['café/pub', 'microbrewery/beer garden'],
-                        classifications: [
-                            {
-                                code: 'CAFE_PUB',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café/pub',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'microbrewery/beer garden',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetName: 'Beursstraat',
@@ -366,21 +295,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                         ],
                         url: 'www.nakedespresso.nl',
                         categories: ['café/pub', 'coffee shop'],
-                        classifications: [
-                            {
-                                code: 'CAFE_PUB',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'coffee shop',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café/pub',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '46',
@@ -435,21 +349,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                         ],
                         url: 'www.hill-street-blues.nl',
                         categories: ['café', 'café/pub'],
-                        classifications: [
-                            {
-                                code: 'CAFE_PUB',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café/pub',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '52-A',
@@ -503,17 +402,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['café/pub'],
-                        classifications: [
-                            {
-                                code: 'CAFE_PUB',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café/pub',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '58 H',
@@ -568,21 +456,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                         ],
                         url: 'www.heffer.nl/zalen_baantjermuseumcafe.html',
                         categories: ['bar', 'nightlife'],
-                        classifications: [
-                            {
-                                code: 'NIGHTLIFE',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'bar',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'nightlife',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '7',
@@ -636,17 +509,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['café/pub'],
-                        classifications: [
-                            {
-                                code: 'CAFE_PUB',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café/pub',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '60 H',
@@ -701,21 +563,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                         ],
                         url: 'www.amsterdamredbars.nl',
                         categories: ['café', 'café/pub'],
-                        classifications: [
-                            {
-                                code: 'CAFE_PUB',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café/pub',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '60',
@@ -768,21 +615,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['bar', 'nightlife'],
-                        classifications: [
-                            {
-                                code: 'NIGHTLIFE',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'bar',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'nightlife',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '8HS',
@@ -837,21 +669,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                         ],
                         url: 'drinknsink.com',
                         categories: ['bar', 'nightlife'],
-                        classifications: [
-                            {
-                                code: 'NIGHTLIFE',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'bar',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'nightlife',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '58HS',
@@ -904,21 +721,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['bar', 'nightlife'],
-                        classifications: [
-                            {
-                                code: 'NIGHTLIFE',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'bar',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'nightlife',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '3',
@@ -971,21 +773,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['café/pub', 'coffee shop'],
-                        classifications: [
-                            {
-                                code: 'CAFE_PUB',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'coffee shop',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café/pub',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '37',
@@ -1038,17 +825,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['café/pub'],
-                        classifications: [
-                            {
-                                code: 'CAFE_PUB',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café/pub',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '59',
@@ -1101,21 +877,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['café', 'café/pub'],
-                        classifications: [
-                            {
-                                code: 'CAFE_PUB',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café/pub',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '24',
@@ -1168,21 +929,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['café/pub', 'coffee shop'],
-                        classifications: [
-                            {
-                                code: 'CAFE_PUB',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'coffee shop',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café/pub',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '24',
@@ -1236,21 +982,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                         ],
                         url: 'www.hunters-coffeeshop.com',
                         categories: ['bar', 'nightlife'],
-                        classifications: [
-                            {
-                                code: 'NIGHTLIFE',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'bar',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'nightlife',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '35',
@@ -1304,21 +1035,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['bar', 'nightlife'],
-                        classifications: [
-                            {
-                                code: 'NIGHTLIFE',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'bar',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'nightlife',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '25HS',
@@ -1372,17 +1088,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['café/pub'],
-                        classifications: [
-                            {
-                                code: 'CAFE_PUB',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café/pub',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '70',
@@ -1435,21 +1140,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['café/pub', 'coffee shop'],
-                        classifications: [
-                            {
-                                code: 'CAFE_PUB',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'coffee shop',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café/pub',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '11',
@@ -1502,21 +1192,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['bar', 'nightlife'],
-                        classifications: [
-                            {
-                                code: 'NIGHTLIFE',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'bar',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'nightlife',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '8HS',
@@ -1570,21 +1245,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['bar', 'nightlife'],
-                        classifications: [
-                            {
-                                code: 'NIGHTLIFE',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'bar',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'nightlife',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '5',
@@ -1638,21 +1298,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['café/pub', 'coffee shop'],
-                        classifications: [
-                            {
-                                code: 'CAFE_PUB',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'coffee shop',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café/pub',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '26',
@@ -1706,21 +1351,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                         ],
                         url: 'coffeeshopdekroon.com',
                         categories: ['café', 'café/pub'],
-                        classifications: [
-                            {
-                                code: 'CAFE_PUB',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café/pub',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '26',
@@ -1774,21 +1404,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                         ],
                         url: 'prixdami.nl',
                         categories: ['café/pub', 'coffee shop'],
-                        classifications: [
-                            {
-                                code: 'CAFE_PUB',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'coffee shop',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café/pub',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '3',
@@ -1849,21 +1464,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['café', 'café/pub'],
-                        classifications: [
-                            {
-                                code: 'CAFE_PUB',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café/pub',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '9',
@@ -1917,21 +1517,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['café', 'café/pub'],
-                        classifications: [
-                            {
-                                code: 'CAFE_PUB',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café/pub',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '3',
@@ -1992,21 +1577,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['café', 'café/pub'],
-                        classifications: [
-                            {
-                                code: 'CAFE_PUB',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café/pub',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '3',
@@ -2060,21 +1630,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['café', 'café/pub'],
-                        classifications: [
-                            {
-                                code: 'CAFE_PUB',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café/pub',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '25',
@@ -2129,21 +1684,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                         ],
                         url: 'smokingbull.nl',
                         categories: ['café', 'café/pub'],
-                        classifications: [
-                            {
-                                code: 'CAFE_PUB',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café/pub',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '13',
@@ -2196,21 +1736,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['café', 'café/pub'],
-                        classifications: [
-                            {
-                                code: 'CAFE_PUB',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café/pub',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '123-125',
@@ -2264,21 +1789,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['café', 'café/pub'],
-                        classifications: [
-                            {
-                                code: 'CAFE_PUB',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café/pub',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetName: 'Warmoesstraat',
@@ -2331,21 +1841,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['café', 'café/pub'],
-                        classifications: [
-                            {
-                                code: 'CAFE_PUB',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café/pub',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '79',
@@ -2398,21 +1893,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['bar', 'nightlife'],
-                        classifications: [
-                            {
-                                code: 'NIGHTLIFE',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'bar',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'nightlife',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetName: 'Warmoesstraat',
@@ -2465,21 +1945,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['café', 'café/pub'],
-                        classifications: [
-                            {
-                                code: 'CAFE_PUB',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café/pub',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '27',
@@ -2532,21 +1997,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['café/pub', 'microbrewery/beer garden'],
-                        classifications: [
-                            {
-                                code: 'CAFE_PUB',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café/pub',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'microbrewery/beer garden',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '100',
@@ -2606,21 +2056,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['bar', 'nightlife'],
-                        classifications: [
-                            {
-                                code: 'NIGHTLIFE',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'bar',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'nightlife',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetName: 'Oudezijds Armsteeg',
@@ -2673,21 +2108,6 @@ export const apiResponses: Array<[string, FuzzySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['café', 'café/pub'],
-                        classifications: [
-                            {
-                                code: 'CAFE_PUB',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café/pub',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '7',

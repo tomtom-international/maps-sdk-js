@@ -44,6 +44,30 @@ export type GeocodingParams = Omit<
     'extendedPostalCodesFor'
 > & {
     /**
+     * Address or location query to geocode.
+     *
+     * The text to convert into geographic coordinates — typically a street address,
+     * intersection, city name, or landmark. The service is tolerant of typos and
+     * incomplete inputs.
+     *
+     * @remarks
+     * **Query Examples:**
+     * - Full street address: "1600 Pennsylvania Avenue NW, Washington, DC"
+     * - City name: "Amsterdam"
+     * - Intersection: "Broadway & 42nd St, New York"
+     * - Landmark: "Eiffel Tower, Paris"
+     * - Partial address: "Dam Square" (city context resolved via `position` or `countries`)
+     *
+     * @example
+     * ```typescript
+     * query: '1600 Pennsylvania Avenue NW, Washington, DC'
+     * query: 'Museumplein, Amsterdam'
+     * query: 'Buckingham Palace, London'
+     * ```
+     */
+    query: string;
+
+    /**
      * Indexes for which extended postal codes should be included in the results.
      *
      * @remarks

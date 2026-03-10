@@ -33,7 +33,6 @@ import type { AutocompleteSearchParams, AutocompleteSearchResponse } from './typ
  * ```typescript
  * // Autocomplete as user types "amster"
  * const suggestions = await autocompleteSearch({
- *   key: 'your-api-key',
  *   query: 'amster',
  *   limit: 5
  * });
@@ -41,18 +40,17 @@ import type { AutocompleteSearchParams, AutocompleteSearchResponse } from './typ
  *
  * // Autocomplete with position bias
  * const localSuggestions = await autocompleteSearch({
- *   key: 'your-api-key',
  *   query: 'main st',
- *   at: [4.9041, 52.3676],  // Near Amsterdam
+ *   position: [4.9041, 52.3676],  // Near Amsterdam
  *   limit: 10
  * });
  *
- * // Autocomplete with category filter
- * const restaurantSuggestions = await autocompleteSearch({
- *   key: 'your-api-key',
+ * // Autocomplete restricted to a country with radius
+ * const nlSuggestions = await autocompleteSearch({
  *   query: 'pizz',
- *   categorySet: [7315],  // Restaurant category
- *   at: [4.9041, 52.3676]
+ *   countries: ['NL'],
+ *   position: [4.9041, 52.3676],
+ *   radiusMeters: 5000
  * });
  * ```
  *
@@ -67,5 +65,3 @@ export const autocompleteSearch = async (
     customTemplate?: Partial<AutocompleteSearchTemplate>,
 ): Promise<AutocompleteSearchResponse> =>
     callService(params, { ...autocompleteSearchTemplate, ...customTemplate }, 'Autocomplete');
-
-export default autocompleteSearch;

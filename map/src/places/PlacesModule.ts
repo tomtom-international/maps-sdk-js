@@ -296,7 +296,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      * @example
      * ```typescript
      * placesModule.applyExtraFeatureProps({
-     *   category: (place) => place.properties.poi?.categories?.[0],
+     *   category: (place) => place.properties.poi?.localizedCategories?.[0],
      *   rating: (place) => place.properties.poi?.rating || 0,
      *   isOpen: true
      * });

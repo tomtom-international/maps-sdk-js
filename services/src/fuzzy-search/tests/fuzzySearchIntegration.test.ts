@@ -1,5 +1,4 @@
 import type { Fuel, Place, POICategory, SearchPlaceProps } from '@tomtom-org/maps-sdk/core';
-import { poiCategoriesToID } from '@tomtom-org/maps-sdk/core';
 import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { search } from '../../search';
 import type { SearchIndexType } from '../../shared';
@@ -43,7 +42,7 @@ describe('Fuzzy Search service', () => {
 
     test('fuzzy search with multiple option parameters', async () => {
         const query = 'restaurant';
-        const poiCategories: number[] = [];
+        const poiCategories: POICategory[] = [];
         const fuelTypes: Fuel[] = [];
         const language = 'en-GB';
         const view = 'Unified';
@@ -86,44 +85,22 @@ describe('Fuzzy Search service', () => {
         });
     });
 
-    test('fuzzy search with a combination of poi category IDs & human readable poi category names', async () => {
-        const query = 'restaurant';
-        const poiCategories: (number | POICategory)[] = ['SPANISH_RESTAURANT', 'ITALIAN_RESTAURANT', 7315017];
+    test('fuzzy search with multiple POICategory names', async () => {
+        const poiCategories: POICategory[] = ['SPANISH_RESTAURANT', 'ITALIAN_RESTAURANT', 'FRENCH_RESTAURANT'];
         const language = 'en-GB';
         const indexes: SearchIndexType[] = ['POI'];
         const res = await search({
-            query,
             poiCategories,
             language,
             indexes,
             limit: 50,
         });
 
-        expect(res.features).toEqual(
-            expect.arrayContaining<FuzzySearchResponse>([
-                expect.objectContaining({
-                    properties: expect.objectContaining({
-                        poi: expect.objectContaining({
-                            categoryIds: expect.arrayContaining([poiCategoriesToID['ITALIAN_RESTAURANT']]),
-                        }),
-                    }),
-                }),
-                expect.objectContaining({
-                    properties: expect.objectContaining({
-                        poi: expect.objectContaining({
-                            categoryIds: expect.arrayContaining([poiCategoriesToID['SPANISH_RESTAURANT']]),
-                        }),
-                    }),
-                }),
-                expect.objectContaining({
-                    properties: expect.objectContaining({
-                        poi: expect.objectContaining({
-                            categoryIds: expect.arrayContaining([7315017]),
-                        }),
-                    }),
-                }),
-            ]),
-        );
+        expect(
+            res.features.every((f) =>
+                f.properties?.poi?.categories?.every((c) => c === 'RESTAURANT' || poiCategories.includes(c)),
+            ),
+        ).toBe(true);
     });
 
     test('fuzzy search buildRequest hook modifies url', async () => {
@@ -151,7 +128,7 @@ describe('Fuzzy Search service', () => {
                     expect.objectContaining({
                         properties: expect.objectContaining({
                             poi: expect.objectContaining({
-                                categories: expect.arrayContaining([
+                                localizedCategories: expect.arrayContaining([
                                     expect.stringContaining(newQuery),
                                     expect.not.stringContaining(query),
                                 ]),

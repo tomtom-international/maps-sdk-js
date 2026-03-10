@@ -1,7 +1,7 @@
 import { omit } from 'lodash-es';
 import { afterAll, describe, expect, test } from 'vitest';
 import { mockFetchResponse } from '../../shared/tests/fetchMockUtils';
-import reverseGeocode from '../reverseGeocoding';
+import { reverseGeocode } from '../reverseGeocoding';
 import apiAndParsedResponses from './revGeoMocked.data';
 
 describe('Reverse Geocoding mock tests', () => {

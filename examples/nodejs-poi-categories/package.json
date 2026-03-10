@@ -1,0 +1,15 @@
+{
+  "name": "@examples/nodejs-poi-categories",
+  "description": "NodeJS example using the POI Categories Service.",
+  "type": "module",
+  "scripts": {
+    "develop": "node src/index.ts",
+    "develop:sandpack": "vite --config ../example-sandpack-vite.config.ts"
+  },
+  "dependencies": {
+    "@tomtom-org/maps-sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "catalog:"
+  }
+}

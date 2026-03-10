@@ -18,9 +18,7 @@ export const serializedFeatureData = [
                 '"countryCode":"GB","country":"United Kingdom","countryCodeISO3":"GBR",' +
                 '"freeformAddress":"9 Broadway, Westminster, London, SW1H 0AZ","localName":"London"}',
             entryPoints: '[{"type":"main","position":[-0.13356,51.49898]}]',
-            poi:
-                '{"name":"Dolphins Pharmacy","categories":["pharmacy"],"classifications":[{"code":"PHARMACY",' +
-                '"names":[{"nameLocale":"en-US","name":"pharmacy"}]}],"brands":[],"categoryIds":[7326]}',
+            poi: '{"name":"Dolphins Pharmacy","localizedCategories":["pharmacy"],"brands":[],"categories":["PHARMACY"]}',
             title: 'Dolphins Pharmacy',
             iconID: '254_pin',
         },
@@ -109,20 +107,9 @@ export const deserializedFeatureData = {
     ],
     poi: {
         name: 'Dolphins Pharmacy',
-        categories: ['pharmacy'],
-        classifications: [
-            {
-                code: 'PHARMACY',
-                names: [
-                    {
-                        nameLocale: 'en-US',
-                        name: 'pharmacy',
-                    },
-                ],
-            },
-        ],
+        localizedCategories: ['pharmacy'],
         brands: [],
-        categoryIds: [7326],
+        categories: ['PHARMACY'],
     },
     title: 'Dolphins Pharmacy',
     iconID: '254_pin',

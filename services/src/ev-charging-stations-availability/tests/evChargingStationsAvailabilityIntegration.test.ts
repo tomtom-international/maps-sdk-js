@@ -4,7 +4,8 @@ import { beforeAll, describe, expect, test, vi } from 'vitest';
 import { search } from '../../search';
 import { SDKServiceError } from '../../shared';
 import { putIntegrationTestsAPIKey } from '../../shared/tests/integrationTestUtils';
-import evChargingStationsAvailability, {
+import {
+    evChargingStationsAvailability,
     getPlacesWithEVAvailability,
     hasChargingAvailability,
 } from '../evChargingStationsAvailability';
@@ -70,7 +71,6 @@ describe('evChargingStationsAvailability integration tests', () => {
 
     test('search combined with getPlacesWithEVAvailability', async () => {
         const evStationsWithoutAvailability = await search({
-            query: '',
             poiCategories: ['ELECTRIC_VEHICLE_STATION'],
             position: [13.41273, 52.52308], // Berlin
             limit: 15,

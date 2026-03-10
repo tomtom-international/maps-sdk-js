@@ -10,9 +10,7 @@ export const putIntegrationTestsAPIKey = () => {
 
 const basePoiObjTestProps = {
     name: expect.any(String),
-    classifications: expect.anything(),
-    brands: expect.any(Array),
-    categoryIds: expect.arrayContaining([expect.any(Number)]),
+    categories: expect.arrayContaining([expect.any(String)]),
 };
 
 export const basePOITestProps: SearchPlaceProps = {

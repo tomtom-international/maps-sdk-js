@@ -32,20 +32,9 @@
         ],
         "poi": {
           "name": "H32 Sportfondsenbad Amsterdam-Oost",
-          "categories": ["parking garage"],
-          "classifications": [
-            {
-              "code": "PARKING_GARAGE",
-              "names": [
-                {
-                  "nameLocale": "en-US",
-                  "name": "parking garage"
-                }
-              ]
-            }
-          ],
-          "brands": [],
-          "categoryIds": [7313]
+          "categories": ["PARKING_GARAGE"],
+          "localizedCategories": ["parking garage"],
+          "brands": []
         }
       },
       "id": "528007000009400"

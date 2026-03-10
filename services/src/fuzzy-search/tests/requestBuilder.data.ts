@@ -23,7 +23,7 @@ export const fuzzySearchReqObjectsAndUrLs: Array<[string, FuzzySearchParams, str
             mapcodes: ['Local', 'Alternative', 'International'],
             view: 'Unified',
             language: 'fr-FR',
-            poiCategories: [7315148, 7315025],
+            poiCategories: ['SUSHI_RESTAURANT', 'ITALIAN_RESTAURANT'],
             openingHours: 'nextSevenDays',
             timeZone: 'iana',
         },

@@ -2,7 +2,7 @@ import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { customizeService } from '../../../index';
 import { SDKServiceError } from '../../shared';
 import { putIntegrationTestsAPIKey } from '../../shared/tests/integrationTestUtils';
-import reverseGeocode from '../reverseGeocoding';
+import { reverseGeocode } from '../reverseGeocoding';
 import type { ReverseGeocodingResponseAPI } from '../types/apiTypes';
 
 describe('Reverse Geocoding integration test without API key', () => {

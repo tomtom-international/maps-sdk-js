@@ -1,6 +1,6 @@
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
-import autocompleteSearch from '../autocompleteSearch';
+import { autocompleteSearch } from '../autocompleteSearch';
 import type {
     AutocompleteSearchResponse,
     AutocompleteSearchResponseAPI,
@@ -13,7 +13,6 @@ const expectedResults = expect.arrayContaining([
             expect.objectContaining({
                 type: expect.any(String),
                 value: expect.any(String),
-                id: expect.any(String),
             }),
         ]),
     }),

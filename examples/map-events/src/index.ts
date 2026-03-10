@@ -35,12 +35,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     const showTrafficPopup = (topFeature: TrafficIncidentsModuleFeature, lngLat: LngLat) => {
         const { properties } = topFeature;
 
-        const incidentSeverity: Record<number, string> = {
-            3: 'major',
-            2: 'moderate',
-            1: 'minor',
-        };
-
         popUp
             .setOffset(5)
             .setHTML(
@@ -83,7 +77,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
             <br />
             ${poi?.phone ? `<b> Phone: </b> ${poi?.phone}` : ''}
             <div id="sdk-example-popup-tags">
-            ${poi?.categories?.map((category) => `<span class="sdk-example-popup-tags-item">${category}</span>`)}
+            ${poi?.localizedCategories?.map((category) => `<span class="sdk-example-popup-tags-item">${category}</span>`)}
             </div>
             </div> 
             `,

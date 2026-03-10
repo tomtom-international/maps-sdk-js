@@ -19,9 +19,6 @@
     "type-check": "tsc --noEmit",
     "clean:dist": "rimraf ./dist"
   },
-  "dependencies": {
-    "geojson": "^0.5.0"
-  },
   "peerDependencies": {
     "@turf/turf": "catalog:",
     "lodash-es": "catalog:"

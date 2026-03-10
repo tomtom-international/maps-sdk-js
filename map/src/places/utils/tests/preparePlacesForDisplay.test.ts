@@ -59,32 +59,28 @@ describe('Get Icon ID for a given Place tests', () => {
 
     test('Get Icon ID for a given Place with custom config', () => {
         expect(
-            getIconIDForPlace({ properties: { poi: { classifications: [{ code: 'RESTAURANT' }] } } } as Place, 0, {
+            getIconIDForPlace({ properties: { poi: { categories: ['RESTAURANT'] } } } as Place, 0, {
                 theme: 'circle',
             }),
         ).toBe('poi-restaurant');
 
         expect(
-            getIconIDForPlace({ properties: { poi: { classifications: [{ code: 'BEACH' }] } } } as Place, 0, {
+            getIconIDForPlace({ properties: { poi: { categories: ['BEACH'] } } } as Place, 0, {
                 theme: 'base-map',
             }),
         ).toBe('poi-beach_resort');
 
         expect(
-            getIconIDForPlace(
-                { properties: { poi: { categoryIds: [35], classifications: [{ code: 'RESTAURANT' }] } } } as Place,
-                0,
-                {
-                    icon: { categoryIcons: [{ image: 'https://test.com', id: 'RESTAURANT' }] },
-                },
-            ),
+            getIconIDForPlace({ properties: { poi: { categories: ['RESTAURANT'] } } } as Place, 0, {
+                icon: { categoryIcons: [{ image: 'https://test.com', id: 'RESTAURANT' }] },
+            }),
         ).toBe('RESTAURANT-0');
     });
 
     test('Get Icon ID with imageID mapping', () => {
         const place = {
             properties: {
-                poi: { name: 'Urgent Care', classifications: [{ code: 'HOSPITAL' }] },
+                poi: { name: 'Urgent Care', categories: ['HOSPITAL'] },
             },
         } as Place;
 
@@ -115,7 +111,7 @@ describe('Get Icon ID for a given Place tests', () => {
         const place = {
             properties: {
                 customCategory: 'RESTAURANT',
-                poi: { classifications: [{ code: 'CAFE_PUB' }] },
+                poi: { categories: ['CAFE_PUB'] },
             },
         } as any;
 
@@ -132,7 +128,7 @@ describe('Get Icon ID for a given Place tests', () => {
 
         const placeWithoutCustom = {
             properties: {
-                poi: { classifications: [{ code: 'HOTEL_MOTEL' }] },
+                poi: { categories: ['HOTEL_MOTEL'] },
             },
         } as any;
 
@@ -165,22 +161,22 @@ describe('Get mapped poi layer category for a place', () => {
     test('Get mapped poi layer category for a place', () => {
         expect(
             getPOILayerCategoryForPlace({
-                properties: { poi: { classifications: [{ code: 'RESTAURANT' }] } },
+                properties: { poi: { categories: ['RESTAURANT'] } },
             } as Place),
         ).toBe('restaurant');
         expect(
             getPOILayerCategoryForPlace({
-                properties: { poi: { classifications: [{ code: 'CAFE_PUB' }] } },
+                properties: { poi: { categories: ['CAFE_PUB'] } },
             } as Place),
         ).toBe('cafe');
         expect(
             getPOILayerCategoryForPlace({
-                properties: { poi: { classifications: [{ code: 'PHARMACY' }] } },
+                properties: { poi: { categories: ['PHARMACY'] } },
             } as Place),
         ).toBe('pharmacy');
         expect(
             getPOILayerCategoryForPlace({
-                properties: { poi: { classifications: [{ code: 'HOTEL_MOTEL' }] } },
+                properties: { poi: { categories: ['HOTEL_MOTEL'] } },
             } as Place),
         ).toBe('hotel_or_motel');
         expect(getPOILayerCategoryForPlace({ properties: {} } as Place)).toBeUndefined();
@@ -203,6 +199,8 @@ describe('test prepare places for display', () => {
                     poi: {
                         name: 'test',
                         phone: '+31000099999',
+                        categories: [],
+                        localizedCategories: [],
                     },
                     address: {
                         freeformAddress: 'address test',
@@ -225,7 +223,7 @@ describe('test prepare places for display', () => {
                         iconID: 'default_place-0',
                         title: 'test',
                         type: 'POI',
-                        poi: { name: 'test', phone: '+31000099999' },
+                        poi: { name: 'test', phone: '+31000099999', categories: [], localizedCategories: [] },
                         address: { freeformAddress: 'address test' },
                     },
                 },
@@ -263,7 +261,7 @@ describe('test prepare places for display', () => {
                         phone: '+31000099999',
                         staticProp: 'Static text',
                         type: 'POI',
-                        poi: { name: 'test', phone: '+31000099999' },
+                        poi: { name: 'test', phone: '+31000099999', categories: [], localizedCategories: [] },
                         address: { freeformAddress: 'address test' },
                     },
                 },
@@ -301,6 +299,8 @@ describe('test prepare places for display', () => {
                         poi: {
                             name: 'test',
                             phone: '+31000099999',
+                            categories: [],
+                            localizedCategories: [],
                         },
                         address: {
                             freeformAddress: 'address test',

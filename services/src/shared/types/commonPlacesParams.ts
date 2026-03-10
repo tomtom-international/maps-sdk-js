@@ -56,23 +56,20 @@ export type SearchIndexType = 'Geo' | 'PAD' | 'Addr' | 'Str' | 'XStr' | 'POI';
  *
  * @example
  * ```typescript
- * // Basic search with position bias
+ * // Search with position bias
  * const searchParams: CommonPlacesParams<URL, Response> = {
- *   query: 'pizza restaurant',
  *   position: [4.9041, 52.3676],  // Near Amsterdam
  *   limit: 20
  * };
  *
  * // Search with geography type filter
  * const citySearch: CommonPlacesParams<URL, Response> = {
- *   query: 'Paris',
  *   geographyTypes: ['Municipality'],  // Only cities
  *   limit: 10
  * };
  *
  * // Search with mapcodes and specific geopolitical view
  * const detailedSearch: CommonPlacesParams<URL, Response> = {
- *   query: 'disputed location',
  *   view: 'IN',  // India's perspective
  *   mapcodes: ['Local', 'International'],
  *   extendedPostalCodesFor: ['PAD', 'POI'],
@@ -81,7 +78,6 @@ export type SearchIndexType = 'Geo' | 'PAD' | 'Addr' | 'Str' | 'XStr' | 'POI';
  *
  * // Address search with extended postal codes
  * const addressSearch: CommonPlacesParams<URL, Response> = {
- *   query: '123 Main Street',
  *   geographyTypes: ['Country', 'Municipality'],
  *   extendedPostalCodesFor: ['Geo', 'PAD', 'Addr'],
  *   limit: 15
@@ -91,31 +87,6 @@ export type SearchIndexType = 'Geo' | 'PAD' | 'Addr' | 'Str' | 'XStr' | 'POI';
  * @group Search
  */
 export type CommonPlacesParams<ApiRequest, ApiResponse> = CommonServiceParams<ApiRequest, ApiResponse> & {
-    /**
-     * Search query string.
-     *
-     * The text to search for - can be an address, place name, POI, or general location query.
-     * Must be properly URL encoded when sent to the API.
-     *
-     * @remarks
-     * **Query Examples:**
-     * - Street addresses: "123 Main Street, New York"
-     * - Place names: "Eiffel Tower", "Central Park"
-     * - POI names: "Starbucks", "McDonald's"
-     * - General queries: "pizza near me", "gas station"
-     * - Partial inputs: "Amst" (for autocomplete)
-     *
-     * The query is processed with fuzzy matching to handle typos and variations.
-     *
-     * @example
-     * ```typescript
-     * query: "1600 Pennsylvania Avenue, Washington DC"
-     * query: "Amsterdam Central Station"
-     * query: "coffee shop"
-     * ```
-     */
-    query: string;
-
     /**
      * Geographic position to bias search results.
      *

@@ -26,8 +26,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     geometryModule.show(areaGeometry);
 
     const parkingSpots = await search({
-        query: '',
-        poiCategories: ['PARKING_GARAGE', 'OPEN_CAR_PARKING_AREA', 'ELECTRIC_VEHICLE_STATION'],
+        poiCategories: ['PARKING_GARAGE', 'OPEN_PARKING_AREA', 'ELECTRIC_VEHICLE_STATION'],
         geometries: [areaGeometry],
         limit: 50,
     });

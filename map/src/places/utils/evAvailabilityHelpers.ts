@@ -1,7 +1,7 @@
 import type { ChargingPark, ChargingParkWithAvailability, Place, POICategory } from '@tomtom-org/maps-sdk/core';
 import type { ExpressionSpecification } from 'maplibre-gl';
+import type { AvailabilityLevel } from '../../shared';
 import { suffixNumber } from '../../shared/layers/utils';
-import type { AvailabilityLevel } from '../../shared/types/image';
 import type { EVAvailabilityConfig, PlacesModuleConfig, PlacesTheme } from '../types/placesModuleConfig';
 
 /**
@@ -18,7 +18,7 @@ export const hasChargingAvailability = (
  * @ignore
  */
 export const isEVStationWithAvailability = (place: Place): boolean => {
-    const category = place.properties.poi?.classifications?.[0]?.code;
+    const category = place.properties.poi?.categories?.[0];
     return category === 'ELECTRIC_VEHICLE_STATION' && hasChargingAvailability(place.properties.chargingPark);
 };
 

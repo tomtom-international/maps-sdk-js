@@ -23,7 +23,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     geometryModule.show(areaGeometry);
 
     const restaurants = await search({
-        query: '',
         poiCategories: ['ELECTRIC_VEHICLE_STATION', 'ITALIAN_RESTAURANT', 'SUSHI_RESTAURANT'],
         geometries: [areaGeometry],
         limit: 100,

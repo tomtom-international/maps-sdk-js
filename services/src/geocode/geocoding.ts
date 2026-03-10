@@ -68,9 +68,28 @@ export const geocode = async (
 ): Promise<GeocodingResponse> => callService(params, { ...geocodingTemplate, ...customTemplate }, 'Geocode');
 
 /**
+ * Geocode a query and return the single best-matching place.
  *
- * @param query
+ * Convenience wrapper around {@link geocode} that returns the top result directly.
+ *
+ * @param query - Address or place name to geocode
+ * @returns Promise resolving to the best-matching place
+ * @throws {Error} If no results are found for the query
+ *
+ * @remarks
+ * Use {@link geocode} with a `limit` parameter when you need to handle the case
+ * where no results are found without throwing.
+ *
+ * @example
+ * ```typescript
+ * const place = await geocodeOne('Amsterdam Centraal');
+ * console.log(place.geometry.coordinates); // [lng, lat]
+ * ```
+ *
  * @group Geocoding
  */
-export const geocodeOne = async (query: string): Promise<Place<GeocodingProps>> =>
-    (await geocode({ query, limit: 1 })).features[0];
+export const geocodeOne = async (query: string): Promise<Place<GeocodingProps>> => {
+    const result = await geocode({ query, limit: 1 });
+    if (!result.features[0]) throw new Error(`geocodeOne: no results found for "${query}"`);
+    return result.features[0];
+};

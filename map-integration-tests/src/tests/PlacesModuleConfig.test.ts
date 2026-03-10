@@ -22,12 +22,8 @@ test.describe('GeoJSON Places apply different configs', () => {
             address: { freeformAddress: 'Nieuwezijds Voorburgwal 67, 1012 RE Amsterdam' },
             poi: {
                 name: 'Q-Park Amsterdam Nieuwendijk',
-                classifications: [
-                    {
-                        code: 'PARKING_GARAGE',
-                        names: [{ nameLocale: 'en-US', name: 'parking garage' }],
-                    },
-                ],
+                categories: ['PARKING_GARAGE'],
+                localizedCategories: ['parking'],
             },
         },
     };

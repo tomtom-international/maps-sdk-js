@@ -1,6 +1,5 @@
 import type {
     AddressProperties,
-    Classification,
     Connector,
     ConnectorType,
     EntryPoint,
@@ -147,7 +146,6 @@ export type POIAPI = {
     // Example: Array(2) [café/pub, internet café]
     categories?: string[];
     openingHours?: OpeningHoursAPI;
-    classifications?: Classification[];
     timeZone?: TimeZone;
 };
 

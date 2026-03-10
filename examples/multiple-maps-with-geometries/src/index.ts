@@ -35,7 +35,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         ).show({ type: 'FeatureCollection', features: [geometry] } as PolygonFeatures);
     };
 
-    const places = await search({ query: '', countries: ['ESP'], geographyTypes: ['Municipality'], limit: 16 });
+    const places = await search({ countries: ['ESP'], geographyTypes: ['Municipality'], limit: 16 });
     const geometries = await geometryData({ geometries: places });
     for (let i = 0; i < geometries.features.length; i++) {
         await initMap(geometries.features[i], i);

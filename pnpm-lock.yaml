@@ -147,9 +147,6 @@ importers:
       '@turf/turf':
         specifier: 'catalog:'
         version: 7.3.4
-      geojson:
-        specifier: ^0.5.0
-        version: 0.5.0
       lodash-es:
         specifier: 'catalog:'
         version: 4.17.23
@@ -1137,6 +1134,26 @@ importers:
         version: 5.9.3
 
   examples/nodejs-geometry-search:
+    dependencies:
+      '@tomtom-org/maps-sdk':
+        specifier: workspace:*
+        version: link:../..
+    devDependencies:
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+
+  examples/nodejs-poi-categories:
+    dependencies:
+      '@tomtom-org/maps-sdk':
+        specifier: workspace:*
+        version: link:../..
+    devDependencies:
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+
+  examples/nodejs-poi-search:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: workspace:*
@@ -5289,10 +5306,6 @@ packages:
 
   geojson-polygon-self-intersections@1.2.2:
     resolution: {integrity: sha512-6XRNF4CsRHYmR9z5YuIk5f/aOototnDf0dgMqYGcS7y1l57ttt6MAIAxl3rXyas6lq1HEbTuLMh4PgvO+OV42w==}
-
-  geojson@0.5.0:
-    resolution: {integrity: sha512-/Bx5lEn+qRF4TfQ5aLu6NH+UKtvIv7Lhc487y/c8BdludrCTpiWf9wyI0RTyqg49MFefIAvFDuEi5Dfd/zgNxQ==}
-    engines: {node: '>= 0.10'}
 
   geokdbush@2.0.1:
     resolution: {integrity: sha512-0M8so1Qx6+jJ1xpirpCNrgUsWAzIcQ3LrLmh0KJPBYI3gH7vy70nY5zEEjSp9Tn0nBt6Q2Fh922oL08lfib4Zg==}
@@ -10559,8 +10572,6 @@ snapshots:
   geojson-polygon-self-intersections@1.2.2:
     dependencies:
       rbush: 2.0.2
-
-  geojson@0.5.0: {}
 
   geokdbush@2.0.1:
     dependencies:

@@ -76,15 +76,8 @@ export const appendLatLonParamsFromPosition = (urlParams: URLSearchParams, hasLn
 };
 
 /**
- * map human-readable poi categories to their ID.
+ * Map POICategory values to their numeric IDs for use in API requests.
  * @ignore
- * @param poiCategories
  */
-export const mapPOICategoriesToIDs = (poiCategories: (number | POICategory)[]): number[] => {
-    return poiCategories.map((poiCategory) => {
-        if (typeof poiCategory !== 'number') {
-            return poiCategoriesToID[poiCategory];
-        }
-        return poiCategory;
-    });
-};
+export const mapPOICategoriesToIDs = (categories: POICategory[]): number[] =>
+    categories.map((category) => poiCategoriesToID[category]);

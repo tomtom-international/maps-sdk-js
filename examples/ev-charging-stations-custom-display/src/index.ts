@@ -205,7 +205,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
             bgStationsData = null;
         } else {
             bgStationsData = await search({
-                query: '',
                 poiCategories: ['ELECTRIC_VEHICLE_STATION'],
                 minPowerKW: 50,
                 boundingBox: map.getBBox(),

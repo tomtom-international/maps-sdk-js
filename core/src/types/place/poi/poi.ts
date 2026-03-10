@@ -1,5 +1,5 @@
 import type { TimeZone } from '../../timezone';
-import type { Classification } from './classification';
+import type { POICategory } from './category';
 import type { OpeningHours } from './openingHours';
 
 /**
@@ -14,8 +14,8 @@ import type { OpeningHours } from './openingHours';
  *   name: 'Central Station Café',
  *   phone: '+31 20 123 4567',
  *   brands: ['Starbucks'],
- *   categoryIds: [7315025],
- *   categories: ['Café'],
+ *   categories: ['CAFE'],
+ *   localizedCategories: ['café'],
  *   url: 'https://example.com',
  *   openingHours: { mode: 'nextSevenDays', timeRanges: [...], alwaysOpenThisPeriod: false }
  * };
@@ -49,18 +49,20 @@ export type POI = {
      */
     url?: string;
     /**
-     * Category identifiers for the POI.
+     * Standardized category identifiers for the POI.
      *
-     * Numeric IDs corresponding to the POI category classification system.
-     * Use these for filtering or identifying POI types programmatically.
+     * Machine-readable category names from the {@link POICategory} enum (e.g., `'ITALIAN_RESTAURANT'`, `'GAS_STATION'`, `'HOTEL'`).
+     * Use these for filtering, programmatic category matching, or mapping to icons.
+     * Parsed from the numeric category IDs returned by the API.
      */
-    categoryIds?: number[];
+    categories: POICategory[];
     /**
-     * Human-readable category names for the POI.
+     * Localized human-readable category names for the POI.
      *
-     * Localized text descriptions of the POI categories (e.g., 'Restaurant', 'Gas Station', 'Hotel').
+     * Language-sensitive text descriptions of the POI categories as returned by the API
+     * (e.g., `'italian'`, `'restaurant'`, `'gas station'`, `'hotel'`). Suitable for display in the UI.
      */
-    categories?: string[];
+    localizedCategories: string[];
     /**
      * Operating hours information.
      *
@@ -68,12 +70,6 @@ export type POI = {
      * Useful for determining if a location is currently open or planning visits.
      */
     openingHours?: OpeningHours;
-    /**
-     * Detailed category classifications with localized names.
-     *
-     * Provides category information in multiple languages and includes standardized codes.
-     */
-    classifications?: Classification[];
     /**
      * Time zone of the POI location.
      *

@@ -54,4 +54,10 @@ export const MAX_EXEC_TIMES_MS = {
         requestBuilding: 1,
         responseParsing: 1,
     },
+    poiCategories: {
+        schemaValidation: 1,
+        requestBuilding: 1,
+        responseParsing: 10,
+        wordIndexBuild: 5,
+    },
 };

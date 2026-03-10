@@ -27,17 +27,6 @@ export const apiAndParsedResponses: Array<[string, GeometrySearchResponseAPI, Ge
                             },
                         ],
                         categories: ['electric vehicle station'],
-                        classifications: [
-                            {
-                                code: 'ELECTRIC_VEHICLE_STATION',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'electric vehicle station',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetName: 'Rue Saillard',
@@ -180,20 +169,8 @@ export const apiAndParsedResponses: Array<[string, GeometrySearchResponseAPI, Ge
                         ],
                         poi: {
                             name: 'Saemes 14ème Arrondissement Rue Saillard',
-                            categories: ['electric vehicle station'],
-                            classifications: [
-                                {
-                                    code: 'ELECTRIC_VEHICLE_STATION',
-                                    names: [
-                                        {
-                                            nameLocale: 'en-US',
-                                            name: 'electric vehicle station',
-                                        },
-                                    ],
-                                },
-                            ],
-                            brands: [],
-                            categoryIds: [7309],
+                            localizedCategories: ['electric vehicle station'],
+                            categories: ['ELECTRIC_VEHICLE_STATION'],
                         },
                     },
                 },
@@ -228,21 +205,6 @@ export const apiAndParsedResponses: Array<[string, GeometrySearchResponseAPI, Ge
                         ],
                         url: 'guymartinitalia.com',
                         categories: ['italian', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'italian',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '19',
@@ -391,24 +353,8 @@ export const apiAndParsedResponses: Array<[string, GeometrySearchResponseAPI, Ge
                             name: 'Guy Martin Italia',
                             phone: '+33 1 43 27 08 80',
                             url: 'guymartinitalia.com',
-                            categories: ['italian', 'restaurant'],
-                            classifications: [
-                                {
-                                    code: 'RESTAURANT',
-                                    names: [
-                                        {
-                                            nameLocale: 'en-US',
-                                            name: 'restaurant',
-                                        },
-                                        {
-                                            nameLocale: 'en-US',
-                                            name: 'italian',
-                                        },
-                                    ],
-                                },
-                            ],
-                            brands: [],
-                            categoryIds: [7315025],
+                            localizedCategories: ['italian', 'restaurant'],
+                            categories: ['ITALIAN_RESTAURANT'],
                         },
                     },
                 },
@@ -545,17 +491,6 @@ export const apiAndParsedResponses: Array<[string, GeometrySearchResponseAPI, Ge
                             },
                         ],
                         categories: ['electric vehicle station'],
-                        classifications: [
-                            {
-                                code: 'ELECTRIC_VEHICLE_STATION',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'electric vehicle station',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '18',
@@ -671,20 +606,8 @@ export const apiAndParsedResponses: Array<[string, GeometrySearchResponseAPI, Ge
                         poi: {
                             name: 'Energiedienst Unterbäch Wiispilweg',
                             phone: '+41 27 945 75 00',
-                            categories: ['electric vehicle station'],
-                            classifications: [
-                                {
-                                    code: 'ELECTRIC_VEHICLE_STATION',
-                                    names: [
-                                        {
-                                            nameLocale: 'en-US',
-                                            name: 'electric vehicle station',
-                                        },
-                                    ],
-                                },
-                            ],
-                            brands: [],
-                            categoryIds: [7309],
+                            localizedCategories: ['electric vehicle station'],
+                            categories: ['ELECTRIC_VEHICLE_STATION'],
                         },
                     },
                 },
@@ -722,17 +645,6 @@ export const apiAndParsedResponses: Array<[string, GeometrySearchResponseAPI, Ge
                             },
                         ],
                         categories: ['petrol station'],
-                        classifications: [
-                            {
-                                code: 'PETROL_STATION',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'petrol station',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetName: 'Cavan Road',
@@ -789,17 +701,6 @@ export const apiAndParsedResponses: Array<[string, GeometrySearchResponseAPI, Ge
                             },
                         ],
                         categories: ['petrol station'],
-                        classifications: [
-                            {
-                                code: 'PETROL_STATION',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'petrol station',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetName: 'Cavan Road',
@@ -867,19 +768,8 @@ export const apiAndParsedResponses: Array<[string, GeometrySearchResponseAPI, Ge
                         poi: {
                             name: 'Circle K Fuel Station',
                             brands: ['Circle K'],
-                            categories: ['petrol station'],
-                            classifications: [
-                                {
-                                    code: 'PETROL_STATION',
-                                    names: [
-                                        {
-                                            nameLocale: 'en-US',
-                                            name: 'petrol station',
-                                        },
-                                    ],
-                                },
-                            ],
-                            categoryIds: [7311],
+                            localizedCategories: ['petrol station'],
+                            categories: ['PETROL_STATION'],
                         },
                     },
                 },
@@ -910,19 +800,8 @@ export const apiAndParsedResponses: Array<[string, GeometrySearchResponseAPI, Ge
                         poi: {
                             name: 'Circle K Fuel Station',
                             brands: ['Circle K'],
-                            categories: ['petrol station'],
-                            classifications: [
-                                {
-                                    code: 'PETROL_STATION',
-                                    names: [
-                                        {
-                                            nameLocale: 'en-US',
-                                            name: 'petrol station',
-                                        },
-                                    ],
-                                },
-                            ],
-                            categoryIds: [7311],
+                            localizedCategories: ['petrol station'],
+                            categories: ['PETROL_STATION'],
                         },
                     },
                 },
@@ -979,17 +858,6 @@ export const apiAndParsedResponses: Array<[string, GeometrySearchResponseAPI, Ge
                         name: 'Saemes 14ème Arrondissement Rue Saillard',
                         categorySet: [{ id: 7309 }],
                         categories: ['electric vehicle station'],
-                        classifications: [
-                            {
-                                code: 'ELECTRIC_VEHICLE_STATION',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'electric vehicle station',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetName: 'Rue Saillard',
@@ -1065,20 +933,8 @@ export const apiAndParsedResponses: Array<[string, GeometrySearchResponseAPI, Ge
                         ],
                         poi: {
                             name: 'Saemes 14ème Arrondissement Rue Saillard',
-                            categories: ['electric vehicle station'],
-                            classifications: [
-                                {
-                                    code: 'ELECTRIC_VEHICLE_STATION',
-                                    names: [
-                                        {
-                                            nameLocale: 'en-US',
-                                            name: 'electric vehicle station',
-                                        },
-                                    ],
-                                },
-                            ],
-                            brands: [],
-                            categoryIds: [7309],
+                            localizedCategories: ['electric vehicle station'],
+                            categories: ['ELECTRIC_VEHICLE_STATION'],
                         },
                     },
                 },

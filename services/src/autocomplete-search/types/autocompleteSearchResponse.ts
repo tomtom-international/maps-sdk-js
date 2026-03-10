@@ -1,3 +1,4 @@
+import type { POICategory } from '@tomtom-org/maps-sdk/core';
 import type { Position } from 'geojson';
 import type { AutocompleteSearchSegmentType } from './autocompleteSearchParams';
 
@@ -198,12 +199,12 @@ export type AutocompleteSearchBrandSegment = AutocompleteGenericSearchSegment & 
 export type AutocompleteSearchCategorySegment = AutocompleteGenericSearchSegment & {
     type: 'category';
     /**
-     * Category identifier for filtering search results.
+     * The recognized POI category.
      *
      * Use with the poiCategories parameter in other search endpoints
      * to restrict results to POIs of this category.
      */
-    id: string;
+    category: POICategory;
     /**
      * Alternative name that matched the user query.
      *

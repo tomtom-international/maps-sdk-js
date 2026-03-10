@@ -28,7 +28,7 @@ export const callService = async <PARAMS extends CommonServiceParams, ApiRequest
         try {
             validateRequestSchema<PARAMS>(mergedParams, template.requestValidation);
         } catch (e) {
-            return Promise.reject(buildValidationError(e as ValidationError, serviceName));
+            throw buildValidationError(e as ValidationError, serviceName);
         }
     }
     const apiRequest = template.buildRequest(mergedParams);
@@ -41,6 +41,6 @@ export const callService = async <PARAMS extends CommonServiceParams, ApiRequest
         return template.parseResponse(await apiResponse.data, mergedParams);
     } catch (e) {
         params.onAPIResponse?.(apiRequest, e);
-        return Promise.reject(buildResponseError(e, serviceName, template.parseResponseError));
+        throw buildResponseError(e, serviceName, template.parseResponseError);
     }
 };

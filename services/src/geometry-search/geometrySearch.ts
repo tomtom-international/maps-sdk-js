@@ -34,7 +34,6 @@ import type { GeometrySearchParams, GeometrySearchResponse } from './types';
  * ```typescript
  * // Search within a polygon (neighborhood boundaries)
  * const inArea = await geometrySearch({
- *   key: 'your-api-key',
  *   query: 'coffee shop',
  *   geometries: [{
  *     type: 'Polygon',
@@ -48,20 +47,15 @@ import type { GeometrySearchParams, GeometrySearchResponse } from './types';
  *   }]
  * });
  *
- * // Find POIs along a route corridor
+ * // Find POIs along a route (pass the route LineString as geometry)
  * const alongRoute = await geometrySearch({
- *   key: 'your-api-key',
  *   query: 'gas station',
- *   geometries: [routeLineString],  // From calculateRoute result
- *   geometryList: [{
- *     position: 0,
- *     radius: 5000  // 5km corridor along route
- *   }]
+ *   geometries: [routeLineString],  // LineString from calculateRoute result
+ *   limit: 10
  * });
  *
  * // Search multiple areas at once
  * const multiArea = await geometrySearch({
- *   key: 'your-api-key',
  *   query: 'pharmacy',
  *   geometries: [polygonA, polygonB, polygonC],
  *   limit: 20
@@ -69,8 +63,7 @@ import type { GeometrySearchParams, GeometrySearchResponse } from './types';
  *
  * // Category search within geometry
  * const restaurants = await geometrySearch({
- *   key: 'your-api-key',
- *   categorySet: [7315],  // Restaurant category
+ *   poiCategories: ['ITALIAN_RESTAURANT'],
  *   geometries: [cityBoundary]
  * });
  * ```
@@ -86,5 +79,3 @@ export const geometrySearch = async (
     customTemplate?: Partial<GeometrySearchTemplate>,
 ): Promise<GeometrySearchResponse> =>
     callService(params, { ...geometrySearchTemplate, ...customTemplate }, 'GeometrySearch');
-
-export default geometrySearch;

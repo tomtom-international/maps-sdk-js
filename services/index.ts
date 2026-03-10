@@ -13,6 +13,7 @@ export type * from './src/geometry-search';
 // TODO: deprecated and not supported in Orbis
 // export * from './src/matrix-routing';
 export * from './src/place-by-id';
+export * from './src/poi-categories';
 export * from './src/reachable-range';
 export * from './src/revgeo';
 export * from './src/routing';

@@ -437,7 +437,7 @@ export type PlaceLayerName = keyof PlaceLayersConfig;
  *     haloWidth: 2
  *   },
  *   extraFeatureProps: {
- *     category: (place) => place.properties.poi?.categories?.[0],
+ *     category: (place) => place.properties.poi?.localizedCategories?.[0],
  *     hasParking: (place) => place.properties.poi?.name?.includes('parking')
  *   }
  * };

@@ -46,15 +46,13 @@ export type SearchResponse = Places<SearchPlaceProps, SearchFeatureCollectionPro
  * ```typescript
  * // Free-text search near a location
  * const results = await search({
- *   key: 'your-api-key',
  *   query: 'pizza restaurant',
- *   at: [4.9041, 52.3676],  // Amsterdam
+ *   position: [4.9041, 52.3676],  // Amsterdam
  *   limit: 10
  * });
  *
  * // Search within a specific area
  * const areaResults = await search({
- *   key: 'your-api-key',
  *   query: 'coffee shop',
  *   geometries: [polygon],  // Search within this polygon
  *   limit: 20
@@ -62,11 +60,9 @@ export type SearchResponse = Places<SearchPlaceProps, SearchFeatureCollectionPro
  *
  * // Category search
  * const restaurants = await search({
- *   key: 'your-api-key',
- *   query: 'restaurant',
- *   categorySet: [7315],  // Restaurant category
- *   at: [4.9041, 52.3676],
- *   radius: 5000  // Within 5km
+ *   poiCategories: ['ITALIAN_RESTAURANT'],
+ *   position: [4.9041, 52.3676],
+ *   radiusMeters: 5000  // Within 5km
  * });
  * ```
  *

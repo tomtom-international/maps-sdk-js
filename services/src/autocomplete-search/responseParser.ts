@@ -1,5 +1,26 @@
+import { poiIDsToCategories } from '@tomtom-org/maps-sdk/core';
 import { latLonAPIToPosition } from '../shared/geometry';
-import type { AutocompleteSearchResponse, AutocompleteSearchResponseAPI } from './types';
+import type {
+    AutocompleteSearchCategorySegmentAPI,
+    AutocompleteSearchResponse,
+    AutocompleteSearchResponseAPI,
+    AutocompleteSearchResultAPI,
+} from './types';
+
+const isCategorySegment = (
+    segment: AutocompleteSearchResultAPI['segments'][number],
+): segment is AutocompleteSearchCategorySegmentAPI => segment.type === 'category';
+
+const parseResults = (results: AutocompleteSearchResultAPI[]): AutocompleteSearchResponse['results'] =>
+    results.map((result) => ({
+        segments: result.segments.map((segment) => {
+            if (isCategorySegment(segment)) {
+                const { id, ...rest } = segment;
+                return { ...rest, category: poiIDsToCategories[Number(id)] };
+            }
+            return segment;
+        }),
+    }));
 
 /**
  * Default function to parse autocomplete response.
@@ -10,7 +31,6 @@ export const parseAutocompleteSearchResponse = (
 ): AutocompleteSearchResponse => {
     const { position, ...geoBias } = apiResponse.context.geoBias || {};
     return {
-        ...apiResponse,
         context: {
             ...apiResponse.context,
             geoBias: {
@@ -18,5 +38,6 @@ export const parseAutocompleteSearchResponse = (
                 radiusMeters: geoBias.radius,
             },
         },
+        results: parseResults(apiResponse.results),
     };
 };

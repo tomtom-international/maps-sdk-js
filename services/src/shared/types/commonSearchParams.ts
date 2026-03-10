@@ -84,6 +84,32 @@ export type TimeZoneRequest = 'iana';
  */
 export type CommonSearchParams<ApiRequest, ApiResponse> = CommonPlacesParams<ApiRequest, ApiResponse> & {
     /**
+     * Search query string.
+     *
+     * The text to search for — can be a place name, POI, address, or any free-form location query.
+     * When omitted, results are driven entirely by other filters such as {@link poiCategories},
+     * {@link poiBrands}, {@link fuelTypes}, or {@link geometries}.
+     *
+     * @remarks
+     * **Query Examples:**
+     * - Place/POI names: "Eiffel Tower", "Starbucks"
+     * - General queries: "pizza near me", "gas station"
+     * - Partial inputs: "Amst" (for autocomplete / typeahead)
+     *
+     * The query is processed with fuzzy matching to handle typos and variations.
+     *
+     * @example
+     * ```typescript
+     * // Text-driven search
+     * query: 'coffee shop'
+     *
+     * // Omit query to search purely by category
+     * poiCategories: ['ELECTRIC_VEHICLE_STATION']
+     * ```
+     */
+    query?: string;
+
+    /**
      * Specify which search indexes to query.
      *
      * Fine-tunes search by selecting specific data categories to include.
@@ -118,35 +144,31 @@ export type CommonSearchParams<ApiRequest, ApiResponse> = CommonPlacesParams<Api
      * Filter results to specific POI categories.
      *
      * Restricts results to Points of Interest belonging to the specified
-     * categories. Use category IDs from the POI Categories API.
+     * categories. Use values from the {@link POICategory} type.
      *
      * @remarks
-     * **Category Examples:**
-     * - 7315: Restaurant
-     * - 7311: Petrol/Gas Station
-     * - 7313: Hotel/Motel
-     * - 7832: ATM
-     * - 9361: Parking
-     *
      * **Multiple Categories:**
      * Results include POIs matching ANY of the specified categories (OR logic).
      *
-     * **Discovery:**
-     * Use the POI Categories endpoint to browse all available categories.
+     * **Discovering Categories:**
+     * Use the {@link getPOICategories} service to search and browse available
+     * categories by name or synonym, then pass the resulting `code` values here.
      *
      * @example
      * ```typescript
-     * // Restaurants only
-     * poiCategories: [7315]
+     * // Filter to specific categories
+     * poiCategories: ['RESTAURANT', 'CAFE']
      *
-     * // Restaurants and cafes
-     * poiCategories: [7315, 9376]
+     * // Category-only search (no query)
+     * poiCategories: ['ELECTRIC_VEHICLE_STATION']
      *
-     * // Gas stations and EV charging
-     * poiCategories: [7311, 7309]
+     * // Discovered via getPOICategories() service
+     * import { getPOICategoryCodes } from '@tomtom-org/maps-sdk/services';
+     * const codes = await getPOICategoryCodes({ filters: ['italian'] });
+     * const results = await search({ poiCategories: codes, position });
      * ```
      */
-    poiCategories?: (number | POICategory)[];
+    poiCategories?: POICategory[];
 
     /**
      * Filter results to specific POI brands.

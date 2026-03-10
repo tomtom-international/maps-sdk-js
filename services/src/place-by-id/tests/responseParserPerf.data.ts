@@ -24,21 +24,6 @@ export default {
                 ],
                 url: 'guymartinitalia.com',
                 categories: ['italian', 'restaurant'],
-                classifications: [
-                    {
-                        code: 'RESTAURANT',
-                        names: [
-                            {
-                                nameLocale: 'en-US',
-                                name: 'restaurant',
-                            },
-                            {
-                                nameLocale: 'en-US',
-                                name: 'italian',
-                            },
-                        ],
-                    },
-                ],
             },
             address: {
                 streetNumber: '19',

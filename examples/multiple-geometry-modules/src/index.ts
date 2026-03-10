@@ -27,7 +27,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
     restOfTheMapGeometryModule.show(mainGeometry);
 
     const subdivisions = await search({
-        query: '',
         countries: ['DEU'],
         geographyTypes: ['CountrySubdivision'],
         limit: 20,

@@ -27,17 +27,6 @@ const data: [string, PlaceByIdResponseAPI, PlaceByIdResponse][] = [
                             },
                         ],
                         categories: ['electric vehicle station'],
-                        classifications: [
-                            {
-                                code: 'ELECTRIC_VEHICLE_STATION',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'electric vehicle station',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetName: 'Rue Saillard',
@@ -168,20 +157,8 @@ const data: [string, PlaceByIdResponseAPI, PlaceByIdResponse][] = [
                 ],
                 poi: {
                     name: 'Saemes 14ème Arrondissement Rue Saillard',
-                    categories: ['electric vehicle station'],
-                    classifications: [
-                        {
-                            code: 'ELECTRIC_VEHICLE_STATION',
-                            names: [
-                                {
-                                    nameLocale: 'en-US',
-                                    name: 'electric vehicle station',
-                                },
-                            ],
-                        },
-                    ],
-                    brands: [],
-                    categoryIds: [7309],
+                    localizedCategories: ['electric vehicle station'],
+                    categories: ['ELECTRIC_VEHICLE_STATION'],
                 },
             },
         },
@@ -214,21 +191,6 @@ const data: [string, PlaceByIdResponseAPI, PlaceByIdResponse][] = [
                         ],
                         url: 'guymartinitalia.com',
                         categories: ['italian', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'italian',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '19',
@@ -365,24 +327,8 @@ const data: [string, PlaceByIdResponseAPI, PlaceByIdResponse][] = [
                     name: 'Guy Martin Italia',
                     phone: '+33 1 43 27 08 80',
                     url: 'guymartinitalia.com',
-                    categories: ['italian', 'restaurant'],
-                    classifications: [
-                        {
-                            code: 'RESTAURANT',
-                            names: [
-                                {
-                                    nameLocale: 'en-US',
-                                    name: 'restaurant',
-                                },
-                                {
-                                    nameLocale: 'en-US',
-                                    name: 'italian',
-                                },
-                            ],
-                        },
-                    ],
-                    brands: [],
-                    categoryIds: [7315025],
+                    localizedCategories: ['italian', 'restaurant'],
+                    categories: ['ITALIAN_RESTAURANT'],
                 },
             },
         },

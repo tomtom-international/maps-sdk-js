@@ -29,21 +29,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                         ],
                         url: 'www.topcafeinc.com/',
                         categories: ['chinese', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'chinese',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '2460',
@@ -100,21 +85,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                         ],
                         url: 'thelittlechihuahua.com',
                         categories: ['mexican', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'mexican',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '4123',
@@ -176,21 +146,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                         ],
                         url: 'https://ordering.roundtablepizza.com/Site/rtsf',
                         categories: ['pizza', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'pizza',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '4523',
@@ -247,21 +202,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                         ],
                         url: 'www.rinconperuanosf.com/',
                         categories: ['peruvian', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'peruvian',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '3364',
@@ -318,21 +258,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                         ],
                         url: 'cuisineofnepal.com',
                         categories: ['indian', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'indian',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '3486',
@@ -388,17 +313,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '1619',
@@ -454,17 +368,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '1000',
@@ -521,21 +424,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                         ],
                         url: 'www.thepizzahacker.com',
                         categories: ['pizza', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'pizza',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '3299',
@@ -596,21 +484,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['fast food', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'fast food',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '3801',
@@ -667,21 +540,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                         ],
                         url: 'www.laciccia.com/',
                         categories: ['italian', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'italian',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '291',
@@ -737,17 +595,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '1115',
@@ -804,21 +651,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                         ],
                         url: 'www.elpipila.com',
                         categories: ['mexican', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'mexican',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '2948',
@@ -874,21 +706,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['chinese', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'chinese',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '3801',
@@ -945,17 +762,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                         ],
                         url: 'www.sfmead.com',
                         categories: ['restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '1180',
@@ -1012,21 +818,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                         ],
                         url: 'https://www.squareup.com/market/bayshore-taqueria',
                         categories: ['mexican', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'mexican',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '300A',
@@ -1081,21 +872,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['middle eastern', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'middle eastern',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '2901',
@@ -1151,21 +927,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['international', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'international',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '4488',
@@ -1222,21 +983,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                         ],
                         url: 'www.thegoldcorner.com',
                         categories: ['chinese', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'chinese',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '2723',
@@ -1293,21 +1039,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                         ],
                         url: 'www.atarantinoandsons.com',
                         categories: ['restaurant', 'seafood'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'seafood',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '2275',
@@ -1364,21 +1095,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                         ],
                         url: 'www.vegapizzasf.com',
                         categories: ['italian', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'italian',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '419',
@@ -1435,21 +1151,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                         ],
                         url: 'www.emmysspaghettishack.com/',
                         categories: ['italian', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'italian',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '3230',
@@ -1505,21 +1206,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['restaurant', 'turkish'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'turkish',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '59',
@@ -1575,21 +1261,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['restaurant', 'vietnamese'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'vietnamese',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '2623',
@@ -1646,21 +1317,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                         ],
                         url: 'www.nulitekitchen.com/',
                         categories: ['asian (other)', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'asian (other)',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '3319',
@@ -1717,21 +1373,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                         ],
                         url: 'www.elaztecataqueria.com',
                         categories: ['mexican', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'mexican',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '5298',
@@ -1787,17 +1428,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '141',
@@ -1854,21 +1484,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                         ],
                         url: 'basaseafood.com',
                         categories: ['restaurant', 'seafood'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'seafood',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '3064',
@@ -1924,21 +1539,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['italian', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'italian',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '2025',
@@ -1994,17 +1594,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '2937',
@@ -2060,21 +1649,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['chinese', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'chinese',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '198',
@@ -2130,21 +1704,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['international', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'international',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '5001',
@@ -2199,21 +1758,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['pizza', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'pizza',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '4517',
@@ -2270,21 +1814,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                         ],
                         url: 'www.manatt.com',
                         categories: ['international', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'international',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '2950',
@@ -2340,21 +1869,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['mexican', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'mexican',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '2426',
@@ -2410,17 +1924,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '1950',
@@ -2476,21 +1979,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['restaurant', 'sandwich'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'sandwich',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '2887',
@@ -2547,17 +2035,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                         ],
                         url: 'www.threebabesbakeshop.com',
                         categories: ['restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '2501',
@@ -2613,21 +2090,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['mexican', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'mexican',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '5201',
@@ -2690,21 +2152,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['pizza', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'pizza',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '3331',
@@ -2761,21 +2208,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                         ],
                         url: 'chinaexpresstysons.com/',
                         categories: ['chinese', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'chinese',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '2732',
@@ -2830,21 +2262,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['mediterranean', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'mediterranean',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetName: '3rd Street',
@@ -2899,21 +2316,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                         ],
                         url: 'www.phat-philly.com',
                         categories: ['fast food', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'fast food',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '3388',
@@ -2969,21 +2371,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['barbecue', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'barbecue',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '2-98',
@@ -3039,21 +2426,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['restaurant', 'turkish'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'turkish',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '3915',
@@ -3110,21 +2482,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                         ],
                         url: 'www.bestbeverage.com/',
                         categories: ['international', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'international',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '540',
@@ -3181,21 +2538,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                         ],
                         url: 'manzonirestaurant.com',
                         categories: ['italian', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'italian',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '2788',
@@ -3251,21 +2593,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['restaurant', 'sushi'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'sushi',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '1740',
@@ -3321,21 +2648,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                         ],
                         url: 'www.baianopizzeria.com',
                         categories: ['pizza', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'pizza',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '59',
@@ -3392,17 +2704,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                         ],
                         url: 'www.pandaboba.com',
                         categories: ['restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '2763',
@@ -3458,21 +2759,6 @@ export const apiResponses: Array<[string, GeometrySearchResponseAPI]> = [
                             },
                         ],
                         categories: ['pizza', 'restaurant'],
-                        classifications: [
-                            {
-                                code: 'RESTAURANT',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'restaurant',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'pizza',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '3515',

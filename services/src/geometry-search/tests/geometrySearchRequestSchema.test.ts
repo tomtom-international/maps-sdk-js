@@ -30,7 +30,7 @@ describe('GeometrySearch Schema Validation', () => {
         },
     ];
 
-    test('it should pass when poi category is of type array consisting poi category IDs', () => {
+    test('it should pass when poi category is of type array consisting POICategory names', () => {
         expect(
             validateRequestSchema<GeometrySearchParams>(
                 {
@@ -38,11 +38,11 @@ describe('GeometrySearch Schema Validation', () => {
                     commonBaseURL: commonBaseUrl,
                     query: 'restaurant',
                     geometries,
-                    poiCategories: [7315, 7315081],
+                    poiCategories: ['RESTAURANT', 'AFGHAN_RESTAURANT'],
                 },
                 config,
             ),
-        ).toMatchObject({ query: 'restaurant', poiCategories: [7315, 7315081] });
+        ).toMatchObject({ query: 'restaurant', poiCategories: ['RESTAURANT', 'AFGHAN_RESTAURANT'] });
     });
 
     test('it should pass when poi category is of type array consisting human readable category names', () => {
@@ -107,22 +107,8 @@ describe('GeometrySearch Schema Validation', () => {
         ).toThrow('Invalid input');
     });
 
-    test('it should fail when query is missing', () => {
-        expect(() => validateRequestSchema({ geometries, apiKey, commonBaseURL: commonBaseUrl }, config)).toThrow(
-            expect.objectContaining({
-                issues: [
-                    expect.objectContaining({
-                        code: 'invalid_type',
-                        expected: 'string',
-                        path: ['query'],
-                    }),
-                ],
-            }),
-        );
-    });
-
     test('it should fail when query is not of type string', () => {
-        const query = undefined;
+        const query = 3;
         expect(() =>
             validateRequestSchema({ query, geometries, apiKey, commonBaseURL: commonBaseUrl }, config),
         ).toThrow(
@@ -211,22 +197,6 @@ describe('GeometrySearch Schema Validation', () => {
                 ],
             }),
         );
-    });
-
-    test('it should fail when POI categories are of type string-array', () => {
-        expect(() =>
-            validateRequestSchema(
-                {
-                    apiKey,
-                    commonBaseURL: commonBaseUrl,
-                    query: 'Restaurant',
-                    geometries,
-                    // @ts-ignore
-                    poiCategories: ['7315025'],
-                },
-                config,
-            ),
-        ).toThrow();
     });
 
     test('it should fail when POI brands is of type string', () => {

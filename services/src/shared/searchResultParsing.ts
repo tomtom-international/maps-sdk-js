@@ -1,11 +1,12 @@
-import type { Moment, OpeningHours, Place, SearchPlaceProps, TimeRange } from '@tomtom-org/maps-sdk/core';
-import { toPointGeometry } from '@tomtom-org/maps-sdk/core';
+import type { Moment, OpeningHours, Place, POICategory, SearchPlaceProps, TimeRange } from '@tomtom-org/maps-sdk/core';
+import { poiIDsToCategories, toPointGeometry } from '@tomtom-org/maps-sdk/core';
 import { omit } from 'lodash-es';
 import { toConnectorCounts } from '../ev-charging-stations-availability/connectorAvailability';
 import { toChargingSpeed } from './ev';
 import { apiToGeoJSONBBox, latLonAPIToPosition } from './geometry';
 import type {
     BrandAPI,
+    CategoryAPI,
     CommonSearchPlaceResultAPI,
     MomentAPI,
     OpeningHoursAPI,
@@ -88,10 +89,16 @@ export const parseSearchAPIResult = (result: CommonSearchPlaceResultAPI): Place<
             }),
             ...(poi && {
                 poi: {
-                    ...omit(poi, 'categorySet', 'openingHours'),
-                    brands: poi?.brands?.map((brand: BrandAPI) => brand.name) ?? [],
-                    categoryIds: poi?.categorySet?.map((category) => category.id) ?? [],
-                    ...(poi?.openingHours && { openingHours: parseOpeningHours(poi?.openingHours) }),
+                    name: poi.name,
+                    categories: (
+                        poi.categorySet?.map((c: CategoryAPI): POICategory => poiIDsToCategories[c.id]) ?? []
+                    ).filter((c: POICategory) => !!c),
+                    localizedCategories: poi.categories ?? [],
+                    ...(poi.phone && { phone: poi.phone }),
+                    ...(poi.brands && { brands: poi.brands.map((brand: BrandAPI) => brand.name) }),
+                    ...(poi.url && { url: poi.url }),
+                    ...(poi.openingHours && { openingHours: parseOpeningHours(poi.openingHours) }),
+                    ...(poi.timeZone && { timeZone: poi.timeZone }),
                 },
             }),
         },

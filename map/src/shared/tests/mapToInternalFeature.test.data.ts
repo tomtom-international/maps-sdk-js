@@ -29,24 +29,9 @@ export default [
             poi: {
                 name: 'Spaklerweg',
                 phone: '+31 900 8011',
-                categories: ['metro', 'railway station'],
-                classifications: [
-                    {
-                        code: 'RAILWAY_STATION',
-                        names: [
-                            {
-                                nameLocale: 'en-US',
-                                name: 'metro',
-                            },
-                            {
-                                nameLocale: 'en-US',
-                                name: 'railway station',
-                            },
-                        ],
-                    },
-                ],
+                localizedCategories: ['metro', 'railway station'],
                 brands: [],
-                categoryIds: [7380005],
+                categories: ['SUBWAY_STATION'],
             },
             id: '2KnXVOJDBa3TClZseCR4Fw',
             title: 'Spaklerweg',
@@ -84,24 +69,9 @@ export default [
             poi: {
                 name: 'Spaklerweg',
                 phone: '+31 900 8011',
-                categories: ['metro', 'railway station'],
-                classifications: [
-                    {
-                        code: 'RAILWAY_STATION',
-                        names: [
-                            {
-                                nameLocale: 'en-US',
-                                name: 'metro',
-                            },
-                            {
-                                nameLocale: 'en-US',
-                                name: 'railway station',
-                            },
-                        ],
-                    },
-                ],
+                localizedCategories: ['metro', 'railway station'],
                 brands: [],
-                categoryIds: [7380005],
+                categories: ['SUBWAY_STATION'],
             },
             id: '2KnXVOJDBa3TClZseCR4Fw',
             title: 'Spaklerweg',

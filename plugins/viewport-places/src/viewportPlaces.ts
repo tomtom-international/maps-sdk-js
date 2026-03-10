@@ -149,7 +149,7 @@ export class ViewportPlaces {
     ): Promise<PlacesModule> {
         return this.add({
             ...options,
-            searchOptions: { query: '', poiCategories: options.categories },
+            searchOptions: { poiCategories: options.categories },
         });
     }
 

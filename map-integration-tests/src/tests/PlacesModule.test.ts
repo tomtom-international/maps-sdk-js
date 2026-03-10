@@ -88,7 +88,7 @@ test.describe('PlacesModule tests', () => {
             geometry: { type: 'Point', coordinates },
             properties: {
                 type: 'POI',
-                poi: { name: 'Test Place', classifications: [{ code: 'RESTAURANT' }] },
+                poi: { name: 'Test Place', categories: ['RESTAURANT'] },
             },
         } as Place;
 
@@ -128,15 +128,9 @@ test.describe('PlacesModule tests', () => {
             geometry: { type: 'Point', coordinates: [4.90047, 52.37708] },
             properties: {
                 type: 'POI',
-                address: { freeformAddress: 'Nieuwezijds Voorburgwal 67, 1012 RE Amsterdam' },
                 poi: {
                     name: 'Q-Park Amsterdam Nieuwendijk',
-                    classifications: [
-                        {
-                            code: 'PARKING_GARAGE',
-                            names: [{ nameLocale: 'en-US', name: 'parking garage' }],
-                        },
-                    ],
+                    categories: ['PARKING_GARAGE'],
                 },
             },
         } as Place;
@@ -154,11 +148,10 @@ test.describe('PlacesModule tests', () => {
         expect(renderedPlaces[0].properties.iconID).toBe('7313');
         expect(await getNumVisiblePlacesLayers(page, sourceID)).toBe(2);
 
-        // Change map style to 'monoLight'
         await setStyle(page, 'monoLight');
         await waitForMapIdle(page);
 
-        // Verify that place is still shown
+        // Verify that place is still shown in the same layers:
         renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, 1, 10000);
         expect(renderedPlaces).toHaveLength(1);
         expect(renderedPlaces[0].properties.id).toBe('528009001852275');

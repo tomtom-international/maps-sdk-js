@@ -391,11 +391,15 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * @param options.selectedIndex - Index of the route to display as selected (default: 0).
      *
      * @remarks
+     * **Waypoints are NOT shown by this method.**
+     * Route lines are drawn but start/stop/destination markers are not. To display waypoint
+     * markers, call {@link showWaypoints} separately. Alternatively, use
+     * {@link PlacesModule} to display waypoints as fully customizable place markers.
+     *
      * **Behavior:**
      * - Replaces any previously shown routes
      * - Shows all route-related features: lines, sections, summaries, guidance
      * - First route is selected by default (appears more prominent)
-     * - Waypoints are NOT shown automatically (use {@link showWaypoints})
      *
      * **Route Features:**
      * - Main route lines (selected and deselected styles)
@@ -406,33 +410,25 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * - Summary bubbles with distance/time/traffic info
      *
      * @example
-     * Show single route:
+     * Show a route (no waypoint markers):
      * ```typescript
      * await routing.showRoutes(response.routes);
+     * // Waypoint markers are NOT shown — call showWaypoints() to add them
+     * ```
+     *
+     * @example
+     * Show routes and waypoint markers:
+     * ```typescript
+     * const locations = [[4.9, 52.4], [4.5, 51.9]];
+     * const response = await calculateRoute({ locations });
+     * await routing.showRoutes(response.routes);
+     * await routing.showWaypoints(locations); // Show start/destination markers separately
      * ```
      *
      * @example
      * Show multiple routes with specific selection:
      * ```typescript
      * await routing.showRoutes(response.routes, { selectedIndex: 1 });
-     * ```
-     *
-     * @example
-     * Complete routing workflow:
-     * ```typescript
-     * import { routing as routingAPI } from '@tomtom-international/maps-sdk-js/services';
-     *
-     * // Calculate route
-     * const response = await routingAPI.calculateRoute({
-     *   locations: [[4.9, 52.4], [4.5, 51.9]],
-     *   traffic: true,
-     *   travelMode: 'car'
-     * });
-     *
-     * // Display on map
-     * const routing = await RoutingModule.get(map);
-     * await routing.showRoutes(response.routes);
-     * await routing.showWaypoints(response.routes[0].legs[0].points);
      * ```
      */
     async showRoutes(routes: Route | Routes, options?: ShowRoutesOptions) {
@@ -525,8 +521,23 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
     }
 
     /**
-     * Shows the given waypoints on the map.
-     * @param waypoints The waypoint-like inputs to show.
+     * Displays waypoint markers (start, stop, and destination pins) on the map.
+     *
+     * @param waypoints - An array of planning waypoints or a `Waypoints` FeatureCollection.
+     *
+     * @remarks
+     * Waypoint markers are **not** shown by {@link showRoutes} — this method must be called
+     * separately to display them. For more control over marker appearance and behavior,
+     * consider using {@link PlacesModule} to render waypoints as place markers instead.
+     *
+     * @example
+     * Show routes and then waypoints:
+     * ```typescript
+     * const locations = [[4.9041, 52.3676], [4.4777, 51.9244]];
+     * const response = await calculateRoute({ locations });
+     * await routingModule.showRoutes(response.routes);
+     * await routingModule.showWaypoints(locations); // Must be called separately
+     * ```
      */
     async showWaypoints(waypoints: PlanningWaypoint[] | Waypoints) {
         const displayWaypoints = Array.isArray(waypoints)
@@ -539,7 +550,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
 
     /**
      * Clears any previously shown waypoints from the map.
-     * * If nothing was shown before, nothing happens.
+     * If nothing was shown before, nothing happens.
      */
     async clearWaypoints() {
         await this.waitUntilModuleReady();

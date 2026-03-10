@@ -62,7 +62,7 @@ const sdkGeometryToApiGeometries = (searchGeometry: SearchGeometryInput): Geomet
 
 const buildUrlBasePath = (mergedOptions: GeometrySearchParams): string =>
     mergedOptions.customServiceBaseURL ??
-    `${mergedOptions.commonBaseURL}${PLACES_URL_PATH}/geometrySearch/${mergedOptions.query}.json`;
+    `${mergedOptions.commonBaseURL}${PLACES_URL_PATH}/geometrySearch/${mergedOptions.query ?? ''}.json`;
 
 /**
  * Default function for building a geometry search request from {@link GeometrySearchParams}

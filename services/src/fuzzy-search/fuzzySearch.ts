@@ -33,33 +33,28 @@ import type { FuzzySearchParams, FuzzySearchResponse } from './types';
  * ```typescript
  * // Basic search with typo tolerance
  * const results = await fuzzySearch({
- *   key: 'your-api-key',
  *   query: 'amstrdam'  // Typo: missing 'e'
  * });
  * // Still finds "Amsterdam"
  *
  * // Search near a specific location
  * const nearby = await fuzzySearch({
- *   key: 'your-api-key',
  *   query: 'pizza',
- *   at: [4.9041, 52.3676],  // Amsterdam
- *   radius: 2000,  // Within 2km
+ *   position: [4.9041, 52.3676],  // Amsterdam
+ *   radiusMeters: 2000,  // Within 2km
  *   limit: 10
  * });
  *
  * // Search with category filter
  * const restaurants = await fuzzySearch({
- *   key: 'your-api-key',
- *   query: 'italian',
- *   categorySet: [7315],  // Restaurant category
- *   at: [4.9041, 52.3676]
+ *   poiCategories: ['ITALIAN_RESTAURANT'],
+ *   position: [4.9041, 52.3676]
  * });
  *
- * // Partial address search
+ * // Partial address search restricted to a country
  * const addresses = await fuzzySearch({
- *   key: 'your-api-key',
  *   query: '123 main st',
- *   countrySet: ['US'],
+ *   countries: ['US'],
  *   limit: 5
  * });
  * ```
@@ -74,5 +69,3 @@ export const fuzzySearch = async (
     params: FuzzySearchParams,
     customTemplate?: Partial<FuzzySearchTemplate>,
 ): Promise<FuzzySearchResponse> => callService(params, { ...fuzzySearchTemplate, ...customTemplate }, 'FuzzySearch');
-
-export default fuzzySearch;

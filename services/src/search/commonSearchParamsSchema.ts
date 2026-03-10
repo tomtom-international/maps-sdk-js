@@ -1,15 +1,10 @@
-import { poiCategoriesToID } from '@tomtom-org/maps-sdk/core';
-import { type ZodObject, z } from 'zod';
+import { poiCategories } from '@tomtom-org/maps-sdk/core';
+import { z } from 'zod';
 import { commonPlacesParamsSchema } from '../shared/schema/commonPlacesParamsSchema';
-
-const poiCategoriesToIdZodObject = z.object(poiCategoriesToID) as unknown as ZodObject<any>;
 
 const searchExtraParamsOptional = z.object({
     indexes: z.array(z.string()).optional().describe('Search indexes to query (Geo, PAD, Addr, Str, XStr, POI)'),
-    poiCategories: z
-        .array(z.union([z.number(), z.keyof(poiCategoriesToIdZodObject)]))
-        .optional()
-        .describe('Filter results to specific POI categories'),
+    poiCategories: z.array(z.enum(poiCategories)).optional().describe('Filter results to specific POI categories'),
     poiBrands: z.array(z.string()).optional().describe('Filter results to specific POI brands'),
     connectors: z.array(z.string()).optional().describe('Filter EV charging stations by connector types'),
     fuelTypes: z.array(z.string()).optional().describe('Filter fuel stations by available fuel types'),

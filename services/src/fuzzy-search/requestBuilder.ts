@@ -4,9 +4,8 @@ import { appendCommonSearchParams, PLACES_URL_PATH } from '../shared/request/com
 import { appendByJoiningParamValue, appendOptionalParam } from '../shared/request/requestBuildingUtils';
 import type { FuzzySearchParams } from './types';
 
-const buildUrlBasePath = (mergedOptions: FuzzySearchParams): string =>
-    mergedOptions.customServiceBaseURL ??
-    `${mergedOptions.commonBaseURL}${PLACES_URL_PATH}/search/${mergedOptions.query}.json`;
+const buildUrlBasePath = (params: FuzzySearchParams): string =>
+    params.customServiceBaseURL ?? `${params.commonBaseURL}${PLACES_URL_PATH}/search/${params.query ?? ''}.json`;
 
 /**
  * Default function for building a fuzzy search request from {@link FuzzySearchParams}

@@ -1,5 +1,5 @@
 import type { Place, PolygonFeatures, SearchPlaceProps } from '@tomtom-org/maps-sdk/core';
-import { poiCategoriesToID, TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { search } from '../../search';
 import type { SearchIndexType } from '../../shared';
@@ -92,8 +92,7 @@ describe('Geometry Search service', () => {
                 expect.objectContaining({
                     properties: expect.objectContaining({
                         poi: expect.objectContaining({
-                            categoryIds: expect.arrayContaining([poiCategoriesToID['RESTAURANT']]),
-                            classifications: expect.arrayContaining([expect.objectContaining({ code: 'RESTAURANT' })]),
+                            categories: expect.arrayContaining(['RESTAURANT']),
                         }),
                     }),
                 }),
@@ -104,7 +103,6 @@ describe('Geometry Search service', () => {
     test('geometrySearch for EV charging stations', async () => {
         const evStations = await search({
             geometries,
-            query: '',
             poiCategories: ['ELECTRIC_VEHICLE_STATION'],
             limit: 5,
         });
@@ -147,7 +145,7 @@ describe('Geometry Search service', () => {
                     expect.objectContaining({
                         properties: expect.objectContaining({
                             poi: expect.objectContaining({
-                                categories: expect.arrayContaining([
+                                localizedCategories: expect.arrayContaining([
                                     expect.stringContaining(newQuery),
                                     expect.not.stringContaining(query),
                                 ]),

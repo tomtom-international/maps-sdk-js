@@ -35,21 +35,6 @@ export const apiAndParsedResponses: Array<[string, FuzzySearchResponseAPI, Fuzzy
                         ],
                         url: 'https://www.livethejamesapartments.com',
                         categories: ['hotel', 'hotel/motel'],
-                        classifications: [
-                            {
-                                code: 'HOTEL_MOTEL',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'hotel',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'hotel/motel',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '98',
@@ -112,21 +97,6 @@ export const apiAndParsedResponses: Array<[string, FuzzySearchResponseAPI, Fuzzy
                         ],
                         url: 'www.hyatt.com/',
                         categories: ['hotel', 'hotel/motel'],
-                        classifications: [
-                            {
-                                code: 'HOTEL_MOTEL',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'hotel',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'hotel/motel',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetNumber: '40',
@@ -200,25 +170,9 @@ export const apiAndParsedResponses: Array<[string, FuzzySearchResponseAPI, Fuzzy
                         poi: {
                             name: 'The James Apartments',
                             phone: '+1 408-975-6273',
-                            categoryIds: [7314003],
+                            categories: ['HOTEL'],
                             url: 'https://www.livethejamesapartments.com',
-                            categories: ['hotel', 'hotel/motel'],
-                            brands: [],
-                            classifications: [
-                                {
-                                    code: 'HOTEL_MOTEL',
-                                    names: [
-                                        {
-                                            nameLocale: 'en-US',
-                                            name: 'hotel',
-                                        },
-                                        {
-                                            nameLocale: 'en-US',
-                                            name: 'hotel/motel',
-                                        },
-                                    ],
-                                },
-                            ],
+                            localizedCategories: ['hotel', 'hotel/motel'],
                         },
                         address: {
                             streetNumber: '98',
@@ -260,24 +214,9 @@ export const apiAndParsedResponses: Array<[string, FuzzySearchResponseAPI, Fuzzy
                             name: 'Hyatt',
                             phone: '+1 408-288-2820',
                             brands: ['Hyatt'],
-                            categoryIds: [7314003],
+                            categories: ['HOTEL'],
                             url: 'www.hyatt.com/',
-                            categories: ['hotel', 'hotel/motel'],
-                            classifications: [
-                                {
-                                    code: 'HOTEL_MOTEL',
-                                    names: [
-                                        {
-                                            nameLocale: 'en-US',
-                                            name: 'hotel',
-                                        },
-                                        {
-                                            nameLocale: 'en-US',
-                                            name: 'hotel/motel',
-                                        },
-                                    ],
-                                },
-                            ],
+                            localizedCategories: ['hotel', 'hotel/motel'],
                         },
                         address: {
                             streetNumber: '40',
@@ -349,21 +288,6 @@ export const apiAndParsedResponses: Array<[string, FuzzySearchResponseAPI, Fuzzy
                             },
                         ],
                         categories: ['café', 'café/pub'],
-                        classifications: [
-                            {
-                                code: 'CAFE_PUB',
-                                names: [
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café',
-                                    },
-                                    {
-                                        nameLocale: 'en-US',
-                                        name: 'café/pub',
-                                    },
-                                ],
-                            },
-                        ],
                     },
                     address: {
                         streetName: "Place de l'Hôtel de Ville",
@@ -454,24 +378,8 @@ export const apiAndParsedResponses: Array<[string, FuzzySearchResponseAPI, Fuzzy
                         poi: {
                             name: 'Le Penalty',
                             phone: '+33 4 95 31 03 47',
-                            categoryIds: [9376002],
-                            categories: ['café', 'café/pub'],
-                            classifications: [
-                                {
-                                    code: 'CAFE_PUB',
-                                    names: [
-                                        {
-                                            nameLocale: 'en-US',
-                                            name: 'café',
-                                        },
-                                        {
-                                            nameLocale: 'en-US',
-                                            name: 'café/pub',
-                                        },
-                                    ],
-                                },
-                            ],
-                            brands: [],
+                            categories: ['CAFE'],
+                            localizedCategories: ['café', 'café/pub'],
                         },
                         address: {
                             streetName: "Place de l'Hôtel de Ville",

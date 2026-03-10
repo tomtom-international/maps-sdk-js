@@ -33,7 +33,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
     const route = routes.features[0];
     extraWidePlacesModule.show(
         await search({
-            poiCategories: ['TRUCK_REPAIR_AND_SERVICE', 'TRUCK_STOP', 'TRUCK_WASH'],
+            poiCategories: ['TRUCK_REPAIR_AND_SERVICE', 'TRUCK_STOP'],
             geometries: [buffer(route, 10, { units: 'kilometers' })?.geometry as Polygon],
             limit: 100,
             query: 'Volvo',
@@ -45,7 +45,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
             poiCategories: ['REST_AREA', 'PICNIC_AREA'],
             geometries: [buffer(route, 100, { units: 'meters' })?.geometry as Polygon],
             limit: 100,
-            query: '',
         }),
     );
 
@@ -55,7 +54,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
             geometries: [buffer(route, 25, { units: 'meters' })?.geometry as Polygon],
             minPowerKW: 50,
             limit: 20,
-            query: '',
         }),
     );
 })();

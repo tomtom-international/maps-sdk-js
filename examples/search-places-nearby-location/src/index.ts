@@ -18,7 +18,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     });
 
     const parkingSpots = await search({
-        query: '',
         poiCategories: ['PARKING_GARAGE', 'OPEN_CAR_PARKING_AREA', 'ELECTRIC_VEHICLE_STATION'],
         position: location,
         limit: 50,

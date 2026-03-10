@@ -1,11 +1,11 @@
 import type { TrafficAreaAnalytics } from '@tomtom-org/maps-sdk/core';
-import type { AreaAnalyticsDataType, FunctionalRoadClass } from '../types/trafficAreaAnalyticsParams';
 import { beforeAll, describe, expect, test, vi } from 'vitest';
 import type { FetchInput } from '../../shared';
 import { SDKServiceError } from '../../shared';
 import { putIntegrationTestsAPIKey } from '../../shared/tests/integrationTestUtils';
 import { trafficAreaAnalytics } from '../trafficAreaAnalytics';
 import type { AreaAnalyticsRequestBody, AreaAnalyticsResponseAPI } from '../types/apiTypes';
+import type { AreaAnalyticsDataType, FunctionalRoadClass } from '../types/trafficAreaAnalyticsParams';
 
 // A small polygon covering central Amsterdam
 const AMSTERDAM_GEOMETRY = {

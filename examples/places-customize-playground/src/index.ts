@@ -53,7 +53,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
     const updatePlaces = async () => {
         await places.show(
             await search({
-                query: '',
                 poiCategories: ['ELECTRIC_VEHICLE_STATION', 'CAFE_PUB'],
                 boundingBox: calculatePaddedBBox({ map, surroundingElements: ['.sdk-example-panel'] }) as BBox,
                 limit: 100,

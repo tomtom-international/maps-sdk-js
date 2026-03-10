@@ -29,7 +29,7 @@ const buildOpeningHoursHtml = (place: Place<SearchPlaceProps>): string => {
 export const buildPopupHtml = (place: Place<SearchPlaceProps>): string => {
     const poi = place.properties.poi;
     const address = place.properties.address;
-    const category = poi?.categories?.[0];
+    const category = poi?.localizedCategories?.[0];
 
     return `
         <div class="sdk-example-popup">

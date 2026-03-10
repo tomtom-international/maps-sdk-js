@@ -91,11 +91,10 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     const fuzzySearch = async () => {
         const searchParams = selectedAutoCompleteSegment
             ? {
-                  query: '',
                   limit: 20,
                   boundingBox: map.getBBox(),
                   ...(selectedAutoCompleteSegment.type === 'category' && {
-                      poiCategories: [Number(selectedAutoCompleteSegment.id)],
+                      poiCategories: [selectedAutoCompleteSegment.category],
                   }),
                   ...(selectedAutoCompleteSegment.type === 'brand' && {
                       poiBrands: [selectedAutoCompleteSegment.value],

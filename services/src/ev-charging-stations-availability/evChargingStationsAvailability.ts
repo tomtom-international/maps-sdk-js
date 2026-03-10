@@ -204,5 +204,3 @@ export const hasChargingAvailability = (
     chargingPark: ChargingPark | ChargingParkWithAvailability | undefined,
 ): chargingPark is ChargingParkWithAvailability =>
     Boolean(chargingPark && 'availability' in chargingPark && chargingPark.availability);
-
-export default evChargingStationsAvailability;
