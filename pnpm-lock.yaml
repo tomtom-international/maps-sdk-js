@@ -899,9 +899,6 @@ importers:
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 7.0.1(rolldown@1.0.0-beta.34)(rollup@4.59.0)
-      testing-utils:
-        specifier: workspace:*
-        version: link:../../testing-utils
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.4.0)(typescript@5.9.3)
