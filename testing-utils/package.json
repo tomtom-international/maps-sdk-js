@@ -9,13 +9,28 @@
     "./eval/runtime": "./src/eval/runtime.ts",
     "./eval/reporter": "./src/eval/reporter.ts"
   },
+  "scripts": {
+    "build": "tsc --noEmit && tsc --noEmit -p ./eval-explorer/tsconfig.json && vite build --config ./eval-explorer/vite.config.ts",
+    "eval:explorer": "node ./eval-explorer/scripts/run-explorer.mjs dev",
+    "eval:explorer:build": "node ./eval-explorer/scripts/run-explorer.mjs build",
+    "eval:explorer:prepare": "node ./eval-explorer/scripts/run-explorer.mjs prepare",
+    "type-check": "tsc --noEmit && tsc --noEmit -p ./eval-explorer/tsconfig.json",
+    "test": "vitest run"
+  },
   "devDependencies": {
     "@playwright/test": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
     "@tsconfig/recommended": "catalog:",
     "@types/geojson": "catalog:",
     "@types/node": "catalog:",
     "map": "workspace:*",
     "maplibre-gl": "catalog:",
-    "typescript": "catalog:"
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:"
   }
 }

@@ -10,11 +10,6 @@ import type {
     TrafficIncidentsModule,
 } from 'map';
 
-export type EvalSourceAndLayerIDs = {
-    sourceID: string;
-    layerIDs: string[];
-};
-
 export type EvalTokenUsage = {
     inputTokens: number;
     outputTokens: number;

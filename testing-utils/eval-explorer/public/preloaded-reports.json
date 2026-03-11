@@ -1,0 +1,166 @@
+{
+  "reports": [
+    {
+      "id": "preloaded-1",
+      "label": "eval-report-20260311-154119-875",
+      "source": "examples/map-chat-agent/eval-report-20260311-154119-875.json",
+      "report": {
+        "generatedAt": "2026-03-11T14:41:57.627Z",
+        "totalCases": 1,
+        "totalRuns": 5,
+        "belowThresholdCases": ["multi-route-add-stop"],
+        "totals": {
+          "totalTokens": 172058,
+          "totalWallClockMs": 107851
+        },
+        "cases": [
+          {
+            "caseId": "multi-route-add-stop",
+            "totalRuns": 5,
+            "passCount": 0,
+            "passRate": 0,
+            "passThreshold": 0.8,
+            "belowThreshold": true,
+            "tokens": {
+              "input": {
+                "min": 28839,
+                "max": 42843,
+                "mean": 33934.2,
+                "median": 32447
+              },
+              "output": {
+                "min": 402,
+                "max": 636,
+                "mean": 477.4,
+                "median": 470
+              },
+              "total": {
+                "min": 29241,
+                "max": 43479,
+                "mean": 34411.6,
+                "median": 32917
+              }
+            },
+            "steps": {
+              "min": 8,
+              "max": 11,
+              "mean": 9.2,
+              "median": 9
+            },
+            "wallClockMs": {
+              "min": 12854,
+              "max": 26161,
+              "mean": 21570.2,
+              "median": 22858
+            },
+            "tooling": {
+              "expectedSequence": ["geocode", "calculateRoute", "showRoute", "addStopToRoute", "showRoute"],
+              "perRun": [
+                {
+                  "runIndex": 1,
+                  "passed": false,
+                  "actualSequence": [
+                    "geocode",
+                    "geocode",
+                    "calculateRoute",
+                    "showRoute",
+                    "addStopToRoute",
+                    "geocode",
+                    "geocode",
+                    "geocode",
+                    "calculateRoute",
+                    "showRoute"
+                  ],
+                  "forbiddenViolations": []
+                },
+                {
+                  "runIndex": 2,
+                  "passed": false,
+                  "actualSequence": [
+                    "geocode",
+                    "geocode",
+                    "calculateRoute",
+                    "showRoute",
+                    "addStopToRoute",
+                    "geocode",
+                    "geocode",
+                    "geocode",
+                    "calculateRoute",
+                    "showRoute"
+                  ],
+                  "forbiddenViolations": []
+                },
+                {
+                  "runIndex": 3,
+                  "passed": false,
+                  "actualSequence": [
+                    "geocode",
+                    "geocode",
+                    "geocode",
+                    "calculateRoute",
+                    "showRoute",
+                    "addStopToRoute",
+                    "geocode",
+                    "geocode",
+                    "geocode",
+                    "geocode",
+                    "geocode",
+                    "geocode",
+                    "calculateRoute",
+                    "showRoute"
+                  ],
+                  "forbiddenViolations": []
+                },
+                {
+                  "runIndex": 4,
+                  "passed": false,
+                  "actualSequence": [
+                    "geocode",
+                    "geocode",
+                    "calculateRoute",
+                    "showRoute",
+                    "geocode",
+                    "geocode",
+                    "geocode",
+                    "calculateRoute",
+                    "showRoute"
+                  ],
+                  "forbiddenViolations": []
+                },
+                {
+                  "runIndex": 5,
+                  "passed": false,
+                  "actualSequence": [
+                    "geocode",
+                    "geocode",
+                    "calculateRoute",
+                    "showRoute",
+                    "geocode",
+                    "geocode",
+                    "geocode",
+                    "calculateRoute",
+                    "showRoute"
+                  ],
+                  "forbiddenViolations": []
+                }
+              ]
+            },
+            "classification": {
+              "groups": [],
+              "timeMs": {
+                "min": 0,
+                "max": 0,
+                "mean": 0,
+                "median": 0
+              }
+            },
+            "screenshots": {
+              "failures": 0,
+              "matches": 5
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
