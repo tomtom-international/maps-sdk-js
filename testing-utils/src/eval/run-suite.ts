@@ -1,7 +1,8 @@
 import { expect, test } from '@playwright/test';
 import { waitForMapIdle } from '../map-queries';
 import type { EvalCase } from './case';
-import type { EvalTelemetry } from './types';
+import { getToolCallSequence } from './tool-calls';
+import type { EvalGlobalThis, EvalTelemetry } from './types';
 
 type RunEvalSuiteOptions = {
     baseUrl: string;
@@ -11,11 +12,6 @@ type RunEvalSuiteOptions = {
 
 const DEFAULT_RUNS = 5;
 const DEFAULT_THRESHOLD = 0.8;
-
-const getCalledTools = (telemetry: EvalTelemetry): string[] => {
-    const tools = telemetry.steps.flatMap((step) => step.toolCalls.map((toolCall) => toolCall.name));
-    return [...new Set(tools)];
-};
 
 const mergeTelemetry = (telemetries: EvalTelemetry[]): EvalTelemetry => {
     const mergedSteps: EvalTelemetry['steps'] = [];
@@ -69,7 +65,7 @@ export const runEvalSuite = (cases: EvalCase[], options: RunEvalSuiteOptions): v
                         await waitForMapIdle(page);
 
                         await page.evaluate(() => {
-                            const evalWindow = globalThis as unknown as { __evalReset?: () => void };
+                            const evalWindow = globalThis as EvalGlobalThis;
                             if (!evalWindow.__evalReset) {
                                 throw new Error('window.__evalReset is not available.');
                             }
@@ -80,9 +76,7 @@ export const runEvalSuite = (cases: EvalCase[], options: RunEvalSuiteOptions): v
 
                         for (const message of evalCase.messages) {
                             await page.evaluate((input) => {
-                                const evalWindow = globalThis as unknown as {
-                                    __evalSendMessage?: (value: string) => void;
-                                };
+                                const evalWindow = globalThis as EvalGlobalThis;
                                 if (!evalWindow.__evalSendMessage) {
                                     throw new Error('window.__evalSendMessage is not available.');
                                 }
@@ -91,16 +85,14 @@ export const runEvalSuite = (cases: EvalCase[], options: RunEvalSuiteOptions): v
 
                             await page.waitForFunction(
                                 () => {
-                                    const evalWindow = globalThis as unknown as {
-                                        __evalTelemetry?: { completed?: boolean };
-                                    };
+                                    const evalWindow = globalThis as EvalGlobalThis;
                                     return evalWindow.__evalTelemetry?.completed === true;
                                 },
                                 { timeout: completionTimeout },
                             );
 
                             const turnTelemetry = await page.evaluate(() => {
-                                const evalWindow = globalThis as unknown as { __evalTelemetry?: EvalTelemetry };
+                                const evalWindow = globalThis as EvalGlobalThis;
                                 return evalWindow.__evalTelemetry;
                             });
 
@@ -118,6 +110,8 @@ export const runEvalSuite = (cases: EvalCase[], options: RunEvalSuiteOptions): v
                                 caseId: evalCase.id,
                                 runIndex: runIndex + 1,
                                 passThreshold,
+                                expectedTools: evalCase.assertions.toolsCalled,
+                                forbiddenTools: evalCase.assertions.toolsNotCalled ?? [],
                             }),
                             contentType: 'application/json',
                         });
@@ -129,11 +123,9 @@ export const runEvalSuite = (cases: EvalCase[], options: RunEvalSuiteOptions): v
 
                         expect(telemetry.error).toBeNull();
 
-                        const calledTools = getCalledTools(telemetry);
+                        const calledTools = getToolCallSequence(telemetry);
 
-                        for (const requiredTool of evalCase.assertions.toolsCalled) {
-                            expect(calledTools).toContain(requiredTool);
-                        }
+                        expect(calledTools).toEqual(evalCase.assertions.toolsCalled);
 
                         for (const forbiddenTool of evalCase.assertions.toolsNotCalled ?? []) {
                             expect(calledTools).not.toContain(forbiddenTool);

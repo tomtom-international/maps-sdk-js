@@ -1,7 +1,8 @@
 import type { Page } from '@playwright/test';
 import type { Position } from 'geojson';
 import type { LayerSpecWithSource } from 'map';
-import type { LngLatLike, LayerSpecification, Map as MapLibreMap, MapGeoJSONFeature } from 'maplibre-gl';
+import type { LngLatLike, LayerSpecification, MapGeoJSONFeature } from 'maplibre-gl';
+import type { EvalGlobalThis } from './eval/types';
 import { tryBeforeTimeout, waitForTimeout } from './async-utils';
 
 // ---------------------------------------------------------------------------
@@ -10,7 +11,7 @@ import { tryBeforeTimeout, waitForTimeout } from './async-utils';
 
 export const waitForMapIdle = async (page: Page): Promise<void> => {
     await page.evaluate(async () => {
-        const map = (globalThis as { mapLibreMap?: MapLibreMap }).mapLibreMap;
+        const map = (globalThis as EvalGlobalThis).mapLibreMap;
         if (!map) {
             throw new Error('globalThis.mapLibreMap is not available.');
         }
@@ -29,7 +30,7 @@ export const waitForMapIdle = async (page: Page): Promise<void> => {
 
 export const getLayersBySource = async (page: Page, sourceId: string): Promise<LayerSpecWithSource[]> =>
     page.evaluate((pageSourceId) => {
-        const map = (globalThis as { mapLibreMap?: MapLibreMap }).mapLibreMap;
+        const map = (globalThis as EvalGlobalThis).mapLibreMap;
         if (!map) {
             throw new Error('globalThis.mapLibreMap is not available.');
         }
@@ -43,7 +44,7 @@ export const getNumLayersBySource = async (page: Page, sourceId: string): Promis
 
 export const getVisibleLayersBySource = async (page: Page, sourceId: string): Promise<LayerSpecWithSource[]> =>
     page.evaluate((pageSourceId) => {
-        const map = (globalThis as { mapLibreMap?: MapLibreMap }).mapLibreMap;
+        const map = (globalThis as EvalGlobalThis).mapLibreMap;
         if (!map) {
             throw new Error('globalThis.mapLibreMap is not available.');
         }
@@ -61,7 +62,7 @@ export const getNumVisibleLayersBySource = async (page: Page, sourceId: string):
 export const getLayerById = async (page: Page, layerId: string): Promise<LayerSpecWithSource> =>
     page.evaluate(
         (pageLayerId) =>
-            (globalThis as { mapLibreMap?: MapLibreMap }).mapLibreMap
+            (globalThis as EvalGlobalThis).mapLibreMap
                 ?.getStyle()
                 .layers.find((layer) => layer.id === pageLayerId) as LayerSpecWithSource,
         layerId,
@@ -70,7 +71,7 @@ export const getLayerById = async (page: Page, layerId: string): Promise<LayerSp
 export const getLayersByIds = async (page: Page, layerIds: string[]): Promise<LayerSpecWithSource[]> =>
     page.evaluate(
         (pageLayerIds) =>
-            (globalThis as { mapLibreMap?: MapLibreMap }).mapLibreMap
+            (globalThis as EvalGlobalThis).mapLibreMap
                 ?.getStyle()
                 .layers.filter((layer) => pageLayerIds.includes(layer.id)) as LayerSpecWithSource[],
         layerIds,
@@ -78,7 +79,7 @@ export const getLayersByIds = async (page: Page, layerIds: string[]): Promise<La
 
 export const getLayerByID = async (page: Page, layerId: string): Promise<LayerSpecification> =>
     page.evaluate((symbolLayerId) => {
-        const map = (globalThis as { mapLibreMap?: MapLibreMap }).mapLibreMap;
+        const map = (globalThis as EvalGlobalThis).mapLibreMap;
         if (!map) {
             throw new Error('globalThis.mapLibreMap is not available.');
         }
@@ -88,8 +89,7 @@ export const getLayerByID = async (page: Page, layerId: string): Promise<LayerSp
 export const isLayerVisible = async (page: Page, layerId: string): Promise<boolean> =>
     page.evaluate(
         (inputLayerId) =>
-            (globalThis as { mapLibreMap?: MapLibreMap }).mapLibreMap?.getLayoutProperty(inputLayerId, 'visibility') !==
-            'none',
+            (globalThis as EvalGlobalThis).mapLibreMap?.getLayoutProperty(inputLayerId, 'visibility') !== 'none',
         layerId,
     );
 
@@ -100,7 +100,7 @@ export const isLayerVisible = async (page: Page, layerId: string): Promise<boole
 export const getPaintProperty = async (page: Page, layerId: string, propertyName: string): Promise<unknown> =>
     page.evaluate(
         ({ layerID, propertyName: prop }) =>
-            (globalThis as { mapLibreMap?: MapLibreMap }).mapLibreMap?.getPaintProperty(layerID, prop),
+            (globalThis as EvalGlobalThis).mapLibreMap?.getPaintProperty(layerID, prop),
         { layerID: layerId, propertyName },
     );
 
@@ -115,7 +115,7 @@ export const queryRenderedFeatures = async (
 ): Promise<MapGeoJSONFeature[]> =>
     page.evaluate(
         ({ inputLayerIDs, inputLngLat }) => {
-            const map = (globalThis as { mapLibreMap?: MapLibreMap }).mapLibreMap;
+            const map = (globalThis as EvalGlobalThis).mapLibreMap;
             if (!map) {
                 throw new Error('globalThis.mapLibreMap is not available.');
             }
@@ -173,7 +173,7 @@ export const getPixelCoords = async (
     coordinates: [number, number] | Position,
 ): Promise<{ x: number; y: number }> =>
     page.evaluate((inputCoordinates) => {
-        const map = (globalThis as { mapLibreMap?: MapLibreMap }).mapLibreMap;
+        const map = (globalThis as EvalGlobalThis).mapLibreMap;
         if (!map) {
             throw new Error('globalThis.mapLibreMap is not available.');
         }
@@ -183,7 +183,7 @@ export const getPixelCoords = async (
 
 export const getCursor = async (page: Page): Promise<string> =>
     page.evaluate(() => {
-        const map = (globalThis as { mapLibreMap?: MapLibreMap }).mapLibreMap;
+        const map = (globalThis as EvalGlobalThis).mapLibreMap;
         if (!map) {
             throw new Error('globalThis.mapLibreMap is not available.');
         }
@@ -191,21 +191,18 @@ export const getCursor = async (page: Page): Promise<string> =>
     });
 
 export const moveAndZoomTo = async (page: Page, viewport: { center: LngLatLike; zoom: number }): Promise<void> => {
-    await page.evaluate(
-        ({ center, zoom }) => {
-            const map = (globalThis as { mapLibreMap?: MapLibreMap }).mapLibreMap;
-            if (!map) {
-                throw new Error('globalThis.mapLibreMap is not available.');
-            }
-            map.jumpTo({ center, zoom });
-        },
-        viewport,
-    );
+    await page.evaluate(({ center, zoom }) => {
+        const map = (globalThis as EvalGlobalThis).mapLibreMap;
+        if (!map) {
+            throw new Error('globalThis.mapLibreMap is not available.');
+        }
+        map.jumpTo({ center, zoom });
+    }, viewport);
 };
 
 export const zoomTo = async (page: Page, zoom: number): Promise<void> => {
     await page.evaluate((inputZoom) => {
-        const map = (globalThis as { mapLibreMap?: MapLibreMap }).mapLibreMap;
+        const map = (globalThis as EvalGlobalThis).mapLibreMap;
         if (!map) {
             throw new Error('globalThis.mapLibreMap is not available.');
         }

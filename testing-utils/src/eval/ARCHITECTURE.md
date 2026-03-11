@@ -5,7 +5,7 @@ This folder contains the reusable Playwright-based eval framework shared across 
 ## Goal
 
 Provide deterministic, multi-run evaluation for agent examples by asserting:
-- tool calls,
+- exact ordered tool-call sequences,
 - final map state,
 - optional screenshot baselines,
 - token/step/timing telemetry.
@@ -17,7 +17,7 @@ Provide deterministic, multi-run evaluation for agent examples by asserting:
 3. Example runtime pushes lifecycle events into `EvalTelemetryRuntime`.
 4. `EvalTelemetryRuntime` syncs state to `window.__evalTelemetry`.
 5. Playwright runner (`runEvalSuite`) sends one or more user messages and reads telemetry from `window`.
-6. Custom reporter aggregates runs and writes `eval-report.json`.
+6. Custom reporter aggregates runs and writes `eval-report-<timestamp>.json`.
 
 ## Main Modules
 
@@ -30,7 +30,11 @@ Provide deterministic, multi-run evaluation for agent examples by asserting:
  `run-suite.ts`
   - Generates Playwright tests from `EvalCase[]`.
 - `reporter.ts`
-  - Aggregates pass rates and metrics across runs, emits `eval-report.json`.
+  - Aggregates pass rates and metrics across runs, emits `eval-report-<timestamp>.json` with per-tool invocation counts and per-run coverage ratios.
+- `report.ts`
+  - Shared aggregated report contract and parsing helpers for `eval-report-<timestamp>.json` payloads.
+- `compare.ts`
+  - Baseline-oriented comparison helpers for multi-report analysis.
 - `config.ts`
   - Shared Playwright defaults for eval execution.
 - `runtime.ts`
@@ -63,6 +67,55 @@ These hooks are intended for eval mode only.
   - browser/runtime-safe eval helpers (`EvalTelemetryRuntime`, `setupEvalWindowHooks`).
 - `testing-utils/eval/reporter`
   - Playwright reporter entrypoint.
+
+## Eval Explorer
+
+The package now includes a small internal report explorer app at `testing-utils/eval-explorer/`.
+
+It is intended for comparing multiple aggregated `eval-report-<timestamp>.json` files from any example that uses the eval framework. The explorer supports:
+- drag-and-drop or file-picker upload for arbitrary local reports,
+- a path-based preload flow through `testing-utils/eval-explorer/scripts/run-explorer.mjs`,
+- baseline selection,
+- per-case regression/improvement deltas for pass rate, token cost, step count, and wall-clock time,
+- missing-case and below-threshold filtering.
+
+### Launching the explorer
+
+From `testing-utils/`:
+
+```bash
+pnpm eval:explorer
+```
+
+This starts the app with an empty preload manifest so reports can be uploaded manually.
+
+To preload reports from example output paths:
+
+```bash
+pnpm eval:explorer map-chat-agent
+```
+
+You can pass example names, example directories, or explicit report paths. Example names resolve to `examples/<name>` and preload every `eval-report-*.json` file in that directory. The launcher resolves workspace-relative or absolute inputs, writes `eval-explorer/public/preloaded-reports.json`, and then starts the Vite app.
+
+To prepare the manifest without starting a dev server:
+
+```bash
+pnpm eval:explorer:prepare map-chat-agent
+```
+
+To produce a static build of the explorer:
+
+```bash
+pnpm eval:explorer:build map-chat-agent
+```
+
+### Why the launcher exists
+
+The explorer itself is a browser app, so it cannot directly open arbitrary local filesystem paths. The launcher bridges that gap by reading report files in Node and materializing a local preload manifest the app can fetch.
+
+### Intended report input
+
+The explorer consumes the aggregated `eval-report-<timestamp>.json` artifacts emitted by `testing-utils/eval/reporter`. It does not currently drill into per-run telemetry or Playwright attachments.
 
 ## Non-Goals
 

@@ -1,4 +1,4 @@
-import type { EvalTelemetry, EvalTokenUsage, EvalWindow } from './types';
+import type { EvalGlobalThis, EvalTelemetry, EvalTokenUsage } from './types';
 
 type TokenUsageLike = {
     inputTokens?: number;
@@ -149,7 +149,7 @@ export class EvalTelemetryRuntime {
             return;
         }
 
-        const evalWindow = globalThis as unknown as Partial<EvalWindow>;
+        const evalWindow = globalThis as EvalGlobalThis;
         evalWindow.__evalTelemetry = this.telemetry;
     }
 }

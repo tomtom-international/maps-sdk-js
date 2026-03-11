@@ -1,18 +1,24 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import type { FullConfig, FullResult, Reporter, TestCase, TestResult } from '@playwright/test/reporter';
+import type { EvalCaseReport, EvalNumericStats, EvalReport } from './report';
+import { getForbiddenToolViolations, getToolCallSequence } from './tool-calls';
 import type { EvalTelemetry } from './types';
 
 type EvalMeta = {
     caseId: string;
     runIndex: number;
     passThreshold: number;
+    expectedTools: string[];
+    forbiddenTools: string[];
 };
 
 type EvalRecord = {
     caseId: string;
     runIndex: number;
     passThreshold: number;
+    expectedTools: string[];
+    forbiddenTools: string[];
     passed: boolean;
     telemetry: EvalTelemetry | null;
     screenshotFailed: boolean;
@@ -20,7 +26,19 @@ type EvalRecord = {
 
 const toNumber = (value: number | undefined): number => value ?? 0;
 
-const getStats = (values: number[]) => {
+const formatReportTimestamp = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    const milliseconds = String(date.getMilliseconds()).padStart(3, '0');
+
+    return `${year}${month}${day}-${hours}${minutes}${seconds}-${milliseconds}`;
+};
+
+const getStats = (values: number[]): EvalNumericStats => {
     if (values.length === 0) {
         return { min: 0, max: 0, mean: 0, median: 0 };
     }
@@ -58,6 +76,70 @@ const parseAttachmentBody = <T>(result: TestResult, attachmentName: string): T |
     }
 };
 
+const sortByRunIndex = (caseRecords: EvalRecord[]): EvalRecord[] => {
+    return [...caseRecords].sort((left, right) => left.runIndex - right.runIndex);
+};
+
+const createTooling = (caseRecords: EvalRecord[]): EvalCaseReport['tooling'] => {
+    return {
+        expectedSequence: caseRecords[0]?.expectedTools ?? [],
+        perRun: sortByRunIndex(caseRecords).map((record) => ({
+            runIndex: record.runIndex,
+            passed: record.passed,
+            actualSequence: record.telemetry ? getToolCallSequence(record.telemetry) : [],
+            forbiddenViolations: record.telemetry
+                ? getForbiddenToolViolations(record.telemetry, record.forbiddenTools)
+                : [],
+        })),
+    };
+};
+
+const createCaseSummary = (caseId: string, caseRecords: EvalRecord[]): EvalCaseReport => {
+    const passCount = caseRecords.filter((record) => record.passed).length;
+    const totalRuns = caseRecords.length;
+    const passRate = totalRuns > 0 ? passCount / totalRuns : 0;
+    const passThreshold = caseRecords[0]?.passThreshold ?? 0.8;
+
+    const tokenInputs = caseRecords.map((record) => toNumber(record.telemetry?.totalUsage.inputTokens));
+    const tokenOutputs = caseRecords.map((record) => toNumber(record.telemetry?.totalUsage.outputTokens));
+    const tokenTotals = caseRecords.map((record) => toNumber(record.telemetry?.totalUsage.totalTokens));
+    const stepCounts = caseRecords.map((record) => record.telemetry?.steps.length ?? 0);
+    const wallClockMs = caseRecords.map((record) => record.telemetry?.wallClockMs ?? 0);
+
+    const allClassifications = caseRecords
+        .map((record) => record.telemetry?.classification)
+        .filter((classification): classification is NonNullable<EvalTelemetry['classification']> =>
+            Boolean(classification),
+        );
+
+    const screenshotFailures = caseRecords.filter((record) => record.screenshotFailed).length;
+
+    return {
+        caseId,
+        totalRuns,
+        passCount,
+        passRate,
+        passThreshold,
+        belowThreshold: passRate < passThreshold,
+        tokens: {
+            input: getStats(tokenInputs),
+            output: getStats(tokenOutputs),
+            total: getStats(tokenTotals),
+        },
+        steps: getStats(stepCounts),
+        wallClockMs: getStats(wallClockMs),
+        tooling: createTooling(caseRecords),
+        classification: {
+            groups: allClassifications.map((classification) => classification.groups),
+            timeMs: getStats(allClassifications.map((classification) => classification.timeMs)),
+        },
+        screenshots: {
+            failures: screenshotFailures,
+            matches: totalRuns - screenshotFailures,
+        },
+    };
+};
+
 export class EvalReporter implements Reporter {
     private readonly records: EvalRecord[] = [];
     private outputFilePath = '';
@@ -67,8 +149,9 @@ export class EvalReporter implements Reporter {
         const outputDir = config.projects[0]?.outputDir
             ? path.resolve(config.projects[0].outputDir, '..')
             : defaultOutputDir;
+        const timestamp = formatReportTimestamp(new Date());
 
-        this.outputFilePath = path.resolve(outputDir, 'eval-report.json');
+        this.outputFilePath = path.resolve(outputDir, `eval-report-${timestamp}.json`);
     }
 
     onTestEnd(_: TestCase, result: TestResult): void {
@@ -84,6 +167,8 @@ export class EvalReporter implements Reporter {
             caseId: meta.caseId,
             runIndex: meta.runIndex,
             passThreshold: meta.passThreshold,
+            expectedTools: meta.expectedTools,
+            forbiddenTools: meta.forbiddenTools,
             passed: result.status === 'passed',
             telemetry,
             screenshotFailed,
@@ -98,65 +183,9 @@ export class EvalReporter implements Reporter {
             groupedByCase.set(record.caseId, caseRecords);
         }
 
-        const caseSummaries = Array.from(groupedByCase.entries()).map(([caseId, caseRecords]) => {
-            const passCount = caseRecords.filter((record) => record.passed).length;
-            const totalRuns = caseRecords.length;
-            const passRate = totalRuns > 0 ? passCount / totalRuns : 0;
-            const passThreshold = caseRecords[0]?.passThreshold ?? 0.8;
-
-            const tokenInputs = caseRecords.map((record) => toNumber(record.telemetry?.totalUsage.inputTokens));
-            const tokenOutputs = caseRecords.map((record) => toNumber(record.telemetry?.totalUsage.outputTokens));
-            const tokenTotals = caseRecords.map((record) => toNumber(record.telemetry?.totalUsage.totalTokens));
-            const stepCounts = caseRecords.map((record) => record.telemetry?.steps.length ?? 0);
-            const wallClockMs = caseRecords.map((record) => record.telemetry?.wallClockMs ?? 0);
-
-            const toolFrequency = new Map<string, number>();
-            for (const record of caseRecords) {
-                const toolsInRun = new Set(
-                    (record.telemetry?.steps ?? []).flatMap((step) => step.toolCalls.map((toolCall) => toolCall.name)),
-                );
-                for (const toolName of toolsInRun) {
-                    toolFrequency.set(toolName, (toolFrequency.get(toolName) ?? 0) + 1);
-                }
-            }
-
-            const allClassifications = caseRecords
-                .map((record) => record.telemetry?.classification)
-                .filter((classification): classification is NonNullable<EvalTelemetry['classification']> =>
-                    Boolean(classification),
-                );
-
-            const screenshotFailures = caseRecords.filter((record) => record.screenshotFailed).length;
-
-            return {
-                caseId,
-                totalRuns,
-                passCount,
-                passRate,
-                passThreshold,
-                belowThreshold: passRate < passThreshold,
-                tokens: {
-                    input: getStats(tokenInputs),
-                    output: getStats(tokenOutputs),
-                    total: getStats(tokenTotals),
-                },
-                steps: getStats(stepCounts),
-                wallClockMs: getStats(wallClockMs),
-                toolFrequency: Array.from(toolFrequency.entries()).map(([toolName, count]) => ({
-                    toolName,
-                    count,
-                    runsRatio: `${count}/${totalRuns}`,
-                })),
-                classification: {
-                    groups: allClassifications.map((classification) => classification.groups),
-                    timeMs: getStats(allClassifications.map((classification) => classification.timeMs)),
-                },
-                screenshots: {
-                    failures: screenshotFailures,
-                    matches: totalRuns - screenshotFailures,
-                },
-            };
-        });
+        const caseSummaries = Array.from(groupedByCase.entries()).map(([caseId, caseRecords]) =>
+            createCaseSummary(caseId, caseRecords),
+        );
 
         const belowThresholdCases = caseSummaries
             .filter((summary) => summary.belowThreshold)
@@ -167,7 +196,7 @@ export class EvalReporter implements Reporter {
         );
         const totalWallClockMs = this.records.reduce((sum, record) => sum + (record.telemetry?.wallClockMs ?? 0), 0);
 
-        const report = {
+        const report: EvalReport = {
             generatedAt: new Date().toISOString(),
             totalCases: caseSummaries.length,
             totalRuns: this.records.length,

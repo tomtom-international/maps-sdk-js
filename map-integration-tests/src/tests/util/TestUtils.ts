@@ -19,12 +19,7 @@ import type {
 } from 'map';
 import { poiLayerIDs } from 'map';
 import { MapGeoJSONFeature } from 'maplibre-gl';
-import {
-    getLayersByIds,
-    getNumVisibleLayersBySource,
-    queryRenderedFeatures,
-    tryBeforeTimeout,
-} from 'testing-utils';
+import { getLayersByIds, getNumVisibleLayersBySource, queryRenderedFeatures, tryBeforeTimeout } from 'testing-utils';
 import { MapsSDKThis } from '../types/MapsSDKThis';
 
 export {

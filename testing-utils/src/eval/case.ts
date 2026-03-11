@@ -14,7 +14,7 @@ export type EvalCase = {
     passThreshold?: number;
     /** Deterministic assertions evaluated against accumulated telemetry for the whole conversation. */
     assertions: {
-        /** Tool names that must appear at least once across all turns in the case. */
+        /** Exact ordered tool-call sequence expected across all turns in the case. */
         toolsCalled: string[];
         /** Tool names that must never appear during the case. */
         toolsNotCalled?: string[];
