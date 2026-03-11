@@ -19,3 +19,5 @@ node_modules/
 
 # Rollup visualizer stats
 **/*stats.html
+
+**/e2e-tests/reports
