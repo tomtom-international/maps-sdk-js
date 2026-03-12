@@ -11,7 +11,7 @@ import { MapsSDKThis } from './types/MapsSDKThis';
 import { MapTestEnv } from './util/MapTestEnv';
 import {
     getGeometriesSourceAndLayerIDs,
-    getLayerByID,
+    getLayerById,
     getNumVisibleLayersBySource,
     initGeometries,
     queryRenderedFeatures,
@@ -158,7 +158,7 @@ test.describe('Geometry integration tests', () => {
             expect(feature).toMatchObject({ properties: { title: 'CustomText', color: '#00ccbb' } });
         });
 
-        const geometryFillLayer = await getLayerByID(page, firstGeometryLayerId);
+        const geometryFillLayer = await getLayerById(page, firstGeometryLayerId);
         // @ts-ignore
         expect(geometryFillLayer.paint['fill-opacity']).toBe(0.6);
 

@@ -24,7 +24,6 @@ import { MapsSDKThis } from '../types/MapsSDKThis';
 
 export {
     getCursor,
-    getLayerByID,
     getLayerById,
     getLayersByIds,
     getLayersBySource,

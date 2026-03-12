@@ -77,15 +77,6 @@ export const getLayersByIds = async (page: Page, layerIds: string[]): Promise<La
         layerIds,
     );
 
-export const getLayerByID = async (page: Page, layerId: string): Promise<LayerSpecification> =>
-    page.evaluate((symbolLayerId) => {
-        const map = (globalThis as EvalGlobalThis).mapLibreMap;
-        if (!map) {
-            throw new Error('globalThis.mapLibreMap is not available.');
-        }
-        return map.getStyle().layers.find((layer) => layer.id === symbolLayerId) as LayerSpecification;
-    }, layerId);
-
 export const isLayerVisible = async (page: Page, layerId: string): Promise<boolean> =>
     page.evaluate(
         (inputLayerId) =>
