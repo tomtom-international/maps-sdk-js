@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
 import type { ChangeEvent, DragEvent } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { EvalCaseComparisonEntry, EvalCaseComparisonRow, EvalReportSummary } from '../../src/eval/compare';
 import type { EvalLoadedReport } from '../../src/eval/report';
 import {
@@ -7,8 +7,8 @@ import {
     getToolCallCountsFromSequence,
     getToolFrequencySummaryFromSequences,
 } from '../../src/eval/tool-calls';
-import { buildComparisonRows, buildReportSummaries, createLoadedReport, normalizeManifestReports } from './lib';
 import { formatDeltaPercent, formatDuration, formatInteger, formatPercent, formatSignedNumber } from './format';
+import { buildComparisonRows, buildReportSummaries, createLoadedReport, normalizeManifestReports } from './lib';
 import type { ExplorerFilterState, ExplorerManifest, ReportLoadError } from './types';
 
 const INITIAL_FILTERS: ExplorerFilterState = {

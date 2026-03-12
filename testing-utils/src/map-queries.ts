@@ -1,9 +1,9 @@
 import type { Page } from '@playwright/test';
 import type { Position } from 'geojson';
 import type { LayerSpecWithSource } from 'map';
-import type { LngLatLike, LayerSpecification, MapGeoJSONFeature } from 'maplibre-gl';
-import type { EvalGlobalThis } from './eval/types';
+import type { LayerSpecification, LngLatLike, MapGeoJSONFeature } from 'maplibre-gl';
 import { tryBeforeTimeout, waitForTimeout } from './async-utils';
+import type { EvalGlobalThis } from './eval/types';
 
 // ---------------------------------------------------------------------------
 // Map idle

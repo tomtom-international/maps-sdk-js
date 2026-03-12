@@ -23,18 +23,18 @@ import { getLayersByIds, getNumVisibleLayersBySource, queryRenderedFeatures, try
 import { MapsSDKThis } from '../types/MapsSDKThis';
 
 export {
+    getCursor,
     getLayerByID,
     getLayerById,
     getLayersByIds,
     getLayersBySource,
-    getCursor,
     getNumLayersBySource,
     getNumVisibleLayersBySource,
-    moveAndZoomTo,
     getPaintProperty,
     getPixelCoords,
     getVisibleLayersBySource,
     isLayerVisible,
+    moveAndZoomTo,
     queryRenderedFeatures,
     tryBeforeTimeout,
     waitForMapIdle,

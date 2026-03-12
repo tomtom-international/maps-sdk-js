@@ -1,5 +1,5 @@
-import { buildEvalCaseComparisonRows, summarizeEvalReport } from '../../src/eval/compare';
 import type { EvalCaseComparisonRow, EvalReportSummary } from '../../src/eval/compare';
+import { buildEvalCaseComparisonRows, summarizeEvalReport } from '../../src/eval/compare';
 import type { EvalLoadedReport } from '../../src/eval/report';
 import { parseEvalReport, parseEvalReportJson } from '../../src/eval/report';
 import type { ExplorerManifest } from './types';

@@ -1,4 +1,3 @@
-import type { Map as MapLibreMap } from 'maplibre-gl';
 import type {
     BaseMapModule,
     GeometriesModule,
@@ -9,6 +8,7 @@ import type {
     TrafficFlowModule,
     TrafficIncidentsModule,
 } from 'map';
+import type { Map as MapLibreMap } from 'maplibre-gl';
 
 export type EvalTokenUsage = {
     inputTokens: number;
