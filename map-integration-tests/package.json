@@ -19,7 +19,7 @@
     "map": "workspace:*",
     "maplibre-gl": "catalog:",
     "rimraf": "catalog:",
-    "testing-utils": "workspace:*",
+    "@testing/core-utils": "workspace:*",
     "ts-node": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:"
