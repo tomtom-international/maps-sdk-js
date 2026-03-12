@@ -59,21 +59,27 @@ export const getVisibleLayersBySource = async (page: Page, sourceId: string): Pr
 export const getNumVisibleLayersBySource = async (page: Page, sourceId: string): Promise<number> =>
     (await getVisibleLayersBySource(page, sourceId)).length;
 
-export const getLayerById = async (page: Page, layerId: string): Promise<LayerSpecWithSource> =>
-    page.evaluate(
-        (pageLayerId) =>
-            (globalThis as EvalGlobalThis).mapLibreMap
-                ?.getStyle()
-                .layers.find((layer) => layer.id === pageLayerId) as LayerSpecWithSource,
-        layerId,
-    );
+export const getLayerById = async (page: Page, layerId: string): Promise<LayerSpecification> =>
+    page.evaluate((symbolLayerId) => {
+        const map = (globalThis as EvalGlobalThis).mapLibreMap;
+        if (!map) {
+            throw new Error('globalThis.mapLibreMap is not available.');
+        }
+        return map.getStyle().layers.find((layer) => layer.id === symbolLayerId) as LayerSpecification;
+    }, layerId);
+
 
 export const getLayersByIds = async (page: Page, layerIds: string[]): Promise<LayerSpecWithSource[]> =>
     page.evaluate(
-        (pageLayerIds) =>
-            (globalThis as EvalGlobalThis).mapLibreMap
-                ?.getStyle()
-                .layers.filter((layer) => pageLayerIds.includes(layer.id)) as LayerSpecWithSource[],
+        (pageLayerIds) => {
+            const map = (globalThis as EvalGlobalThis).mapLibreMap;
+            if (!map) {
+                throw new Error('globalThis.mapLibreMap is not available.');
+            }
+            return map
+                .getStyle()
+                .layers.filter((layer) => pageLayerIds.includes(layer.id)) as LayerSpecWithSource[];
+        },
         layerIds,
     );
 
