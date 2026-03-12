@@ -1,0 +1,181 @@
+# Traffic Reference
+
+## Imports
+
+```ts
+import { TrafficFlowModule, TrafficIncidentsModule } from '@tomtom-org/maps-sdk/map';
+import { trafficIncidentDetails, trafficAreaAnalytics, geocodeOne, geometryData } from '@tomtom-org/maps-sdk/services';
+```
+
+---
+
+## Traffic flow overlay
+
+```ts
+const trafficFlow = await TrafficFlowModule.get(map, { visible: true });
+
+trafficFlow.setVisible(false);
+
+// Filter to specific road categories
+trafficFlow.filter({
+    any: [{
+        roadCategories: {
+            show: 'only',    // 'only' | 'all_except'
+            values: ['motorway', 'trunk', 'primary'],
+        },
+    }],
+});
+trafficFlow.filter(undefined);  // reset
+
+trafficFlow.events.on('click', (feature) => { showSpeedInfo(feature); });
+trafficFlow.events.on('hover', (feature) => { });
+```
+
+Road categories: `motorway`, `motorway_link`, `trunk`, `trunk_link`, `primary`, `primary_link`, `secondary`, `secondary_link`, `tertiary`, `tertiary_link`, `street`, `service`, `track`
+
+---
+
+## Traffic incidents overlay
+
+```ts
+const trafficIncidents = await TrafficIncidentsModule.get(map, {
+    visible: true,
+    icons: { visible: true },
+});
+
+// Filter by severity
+trafficIncidents.filter({
+    any: [{ magnitudes: { show: 'all_except', values: ['minor'] } }],
+});
+
+// Filter by incident type
+trafficIncidents.filter({
+    any: [{ incidentCategories: { show: 'only', values: ['accident', 'road_closed', 'jam'] } }],
+});
+
+// Filter by delay
+trafficIncidents.filter({
+    any: [{ delays: { mustHaveDelay: true, minDelayMinutes: 5 } }],
+});
+
+trafficIncidents.filter(undefined);  // reset
+trafficIncidents.setIconsVisible(false);
+trafficIncidents.setVisible(false);
+
+trafficIncidents.events.on('click', (feature) => {
+    const { category, magnitudeOfDelay, delayInSeconds } = feature.properties;
+});
+```
+
+Magnitudes: `'minor'`, `'moderate'`, `'major'`, `'indefinite'`, `'unknown'`
+
+Incident categories: `accident`, `animals-on-road`, `broken-down-vehicle`, `danger`, `flooding`, `fog`, `frost`, `jam`, `lane-closed`, `narrow-lanes`, `other`, `rain`, `road-closed`, `roadworks`, `wind`
+
+---
+
+## Map click → fetch incident details
+
+```ts
+trafficIncidents.events.on('click', async (feature) => {
+    const result = await trafficIncidentDetails({ ids: [feature.properties.id] });
+    const props = result.features[0]?.properties;
+    if (!props) return;
+
+    showIncidentPanel({
+        type:     props.category,
+        severity: props.magnitudeOfDelay,
+        delay:    props.delayInSeconds,
+        from:     props.from,
+        to:       props.to,
+        start:    props.startTime,  // Date | undefined
+        end:      props.endTime,    // Date | undefined
+    });
+});
+```
+
+---
+
+## trafficIncidentDetails service — query by area
+
+```ts
+// Current map viewport
+const incidents = await trafficIncidentDetails({ bbox: map.getBBox() });
+
+// A geocoded place (accepts Feature, FeatureCollection, or [w, s, e, n] tuple)
+const place = await geocodeOne('Amsterdam');
+const incidents = await trafficIncidentDetails({ bbox: place });
+
+// Filtered query
+const incidents = await trafficIncidentDetails({
+    bbox: map.getBBox(),
+    categoryFilter: ['accident', 'jam', 'road-closed'],
+    timeValidityFilter: ['present'],  // 'present' | 'future'
+});
+
+incidents.features.forEach(incident => {
+    const { category, magnitudeOfDelay, from, to,
+        delayInSeconds, lengthInMeters, startTime, endTime } = incident.properties;
+    const geometry = incident.geometry; // Point or LineString
+});
+```
+
+---
+
+## trafficAreaAnalytics — historical metrics for a region
+
+```ts
+// 1. Get city boundary
+const geocodeResult = await geocodeOne('Amsterdam, Netherlands');
+const boundary = await geometryData({ geometries: [geocodeResult] });
+
+// 2. Query analytics
+const analytics = await trafficAreaAnalytics({
+    startDate: '2024-08-01',
+    endDate:   '2024-08-07',          // max 31 days; use days: [] for non-consecutive
+    dataTypes: ['SPEED', 'CONGESTION_LEVEL', 'FREE_FLOW_SPEED', 'TRAVEL_TIME'],
+    functionalRoadClasses: ['MOTORWAY', 'MAJOR_ROAD', 'SECONDARY_ROAD'],  // or 'all'
+    hours: [7, 8, 9, 17, 18],         // or 'all'
+    geometry: boundary.features[0].geometry,
+});
+
+// 3. Access results
+const region = analytics.features[0].properties;
+
+const { speed, congestionLevel, freeFlowSpeed, travelTime } = region.baseData;
+
+region.timedData.daily?.forEach(entry => {
+    console.log(entry.date, entry.speed, entry.congestionLevel);
+});
+region.timedData.hourly?.forEach(entry => {
+    console.log(entry.hour, entry.speed);
+});
+
+region.tiledData?.tiles.forEach(tile => {
+    const [lon, lat] = tile.tileCentre;
+    console.log(`[${lon}, ${lat}]: congestion=${tile.congestionLevel}%`);
+});
+```
+
+Data types: `'SPEED'` (km/h), `'FREE_FLOW_SPEED'` (km/h), `'CONGESTION_LEVEL'` (%), `'TRAVEL_TIME'` (min/10km), `'NETWORK_LENGTH'` (m)
+
+Functional road classes: `'MOTORWAY'`, `'MAJOR_ROAD'`, `'OTHER_MAJOR_ROAD'`, `'SECONDARY_ROAD'`, `'LOCAL_CONNECTING_ROAD'`, `'LOCAL_ROAD_HIGH_IMPORTANCE'`, `'LOCAL_ROAD'`, `'LOCAL_ROAD_MINOR_IMPORTANCE'`, `'OTHER_ROAD'`
+
+---
+
+## When to use which option
+
+| | Data | Use case |
+|---|---|---|
+| `TrafficFlowModule` | Real-time speed overlay | Visual speed conditions on map |
+| `TrafficIncidentsModule` | Real-time incident markers | Show/filter live events on map |
+| `trafficIncidentDetails` | Structured incident data | Programmatic queries, click-to-details |
+| `trafficAreaAnalytics` | Historical aggregates | Dashboards, reports, trend analysis |
+
+---
+
+## Gotchas
+
+- `filter(undefined)` resets any active filter
+- Magnitude and category filters can be combined within the same `any: [{ ... }]` block
+- `trafficIncidentDetails` bbox accepts `[w, s, e, n]`, a GeoJSON Feature, or a FeatureCollection
+- `trafficAreaAnalytics` requires either `startDate`/`endDate` or `days` — not both; max 31 days
