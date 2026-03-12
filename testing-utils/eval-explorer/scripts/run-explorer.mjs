@@ -7,8 +7,7 @@ const reportPaths = process.argv.slice(3);
 
 const packageDir = path.resolve(import.meta.dirname, '../..');
 const workspaceRoot = path.resolve(packageDir, '..');
-const explorerDir = path.resolve(packageDir, 'eval-explorer');
-const manifestPath = path.resolve(explorerDir, 'public/preloaded-reports.json');
+const launchReportsPath = path.resolve(packageDir, 'eval-explorer/public/launch-reports.json');
 const reportFilePattern = /^eval-report-.*\.json$/;
 
 const resolveExistingPath = (inputPath) => {
@@ -70,22 +69,23 @@ const loadReport = (resolvedPath, index) => {
     const parsed = JSON.parse(text);
 
     return {
-        id: `preloaded-${index + 1}`,
+        id: `launch-${index + 1}`,
         label: toLabel(resolvedPath, index),
         source: toWorkspaceRelative(resolvedPath),
         report: parsed,
     };
 };
 
-const writeManifest = () => {
+const resolveLaunchReports = () => {
     const resolvedReportPaths = reportPaths.flatMap((reportPath) => resolveReportInputs(reportPath));
-    const manifest = {
+    return {
         reports: resolvedReportPaths.map((reportPath, index) => loadReport(reportPath, index)),
     };
-    fs.mkdirSync(path.dirname(manifestPath), { recursive: true });
-    fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), 'utf8');
+};
 
-    return manifest.reports.length;
+const writeLaunchReports = (launchReports) => {
+    fs.mkdirSync(path.dirname(launchReportsPath), { recursive: true });
+    fs.writeFileSync(launchReportsPath, JSON.stringify(launchReports, null, 2), 'utf8');
 };
 
 const runVite = (viteMode) => {
@@ -105,10 +105,11 @@ const runVite = (viteMode) => {
     });
 };
 
-let preparedReportCount = 0;
+let launchReports = { reports: [] };
 
 try {
-    preparedReportCount = writeManifest();
+    launchReports = resolveLaunchReports();
+    writeLaunchReports(launchReports);
 } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown explorer setup error.';
     console.error(`[eval-explorer] ${message}`);
@@ -117,7 +118,7 @@ try {
 
 if (mode === 'prepare') {
     console.log(
-        `[eval-explorer] prepared ${preparedReportCount} report(s) at ${path.relative(packageDir, manifestPath)}`,
+        `[eval-explorer] prepared ${launchReports.reports.length} report(s) at ${path.relative(packageDir, launchReportsPath)}`,
     );
 } else if (mode === 'build') {
     runVite('build');

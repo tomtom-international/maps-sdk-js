@@ -12,13 +12,13 @@ pnpm eval:explorer
 
 Then upload one or more `eval-report-<timestamp>.json` files.
 
-## Start With Preloaded Reports
+## Start With Example Reports
 
 ```bash
 pnpm eval:explorer map-chat-agent
 ```
 
-You can pass one or more example names, example directories, or explicit report files. Example names resolve to `examples/<name>` and preload every `eval-report-*.json` file in that directory. The launcher writes a local preload manifest and starts the explorer.
+You can pass one or more example names, example directories, or explicit report files. Example names resolve to `examples/<name>` and load every `eval-report-*.json` file in that directory when the explorer starts. The launcher writes those reports to a local JSON artifact and starts the explorer.
 
 ## Build
 

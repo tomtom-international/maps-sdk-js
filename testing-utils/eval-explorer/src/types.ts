@@ -1,6 +1,6 @@
 import type { EvalLoadedReport } from '../../src/eval/report';
 
-export type ExplorerManifest = {
+export type ExplorerReportCollection = {
     reports: EvalLoadedReport[];
 };
 

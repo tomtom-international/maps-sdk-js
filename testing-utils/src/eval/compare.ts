@@ -5,7 +5,8 @@ export type EvalCaseDelta = {
     totalTokensMean: number;
     stepsMean: number;
     wallClockMsMean: number;
-    belowThresholdChanged: boolean;
+    becameBelowThreshold: boolean;
+    becameWithinThreshold: boolean;
 };
 
 export type EvalCaseComparisonEntry = {
@@ -47,7 +48,8 @@ const createDelta = (baseline: EvalCaseReport, current: EvalCaseReport): EvalCas
         totalTokensMean: current.tokens.total.mean - baseline.tokens.total.mean,
         stepsMean: current.steps.mean - baseline.steps.mean,
         wallClockMsMean: current.wallClockMs.mean - baseline.wallClockMs.mean,
-        belowThresholdChanged: current.belowThreshold !== baseline.belowThreshold,
+        becameBelowThreshold: current.belowThreshold && !baseline.belowThreshold,
+        becameWithinThreshold: !current.belowThreshold && baseline.belowThreshold,
     };
 };
 
@@ -61,7 +63,7 @@ const isRegression = (delta: EvalCaseDelta | null): boolean => {
         delta.totalTokensMean > 0 ||
         delta.stepsMean > 0 ||
         delta.wallClockMsMean > 0 ||
-        delta.belowThresholdChanged
+        delta.becameBelowThreshold
     );
 };
 
@@ -75,7 +77,7 @@ const isImprovement = (delta: EvalCaseDelta | null): boolean => {
         delta.totalTokensMean < 0 ||
         delta.stepsMean < 0 ||
         delta.wallClockMsMean < 0 ||
-        delta.belowThresholdChanged
+        delta.becameWithinThreshold
     );
 };
 

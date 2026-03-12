@@ -74,7 +74,7 @@ The package now includes a small internal report explorer app at `testing-utils/
 
 It is intended for comparing multiple aggregated `eval-report-<timestamp>.json` files from any example that uses the eval framework. The explorer supports:
 - drag-and-drop or file-picker upload for arbitrary local reports,
-- a path-based preload flow through `testing-utils/eval-explorer/scripts/run-explorer.mjs`,
+- a path-based launch flow through `testing-utils/eval-explorer/scripts/run-explorer.mjs`,
 - baseline selection,
 - per-case regression/improvement deltas for pass rate, token cost, step count, and wall-clock time,
 - missing-case and below-threshold filtering.
@@ -87,17 +87,17 @@ From `testing-utils/`:
 pnpm eval:explorer
 ```
 
-This starts the app with an empty preload manifest so reports can be uploaded manually.
+This starts the app with no launch-time reports so reports can be uploaded manually.
 
-To preload reports from example output paths:
+To start with reports from example output paths:
 
 ```bash
 pnpm eval:explorer map-chat-agent
 ```
 
-You can pass example names, example directories, or explicit report paths. Example names resolve to `examples/<name>` and preload every `eval-report-*.json` file in that directory. The launcher resolves workspace-relative or absolute inputs, writes `eval-explorer/public/preloaded-reports.json`, and then starts the Vite app.
+You can pass example names, example directories, or explicit report paths. Example names resolve to `examples/<name>` and load every `eval-report-*.json` file in that directory. The launcher resolves workspace-relative or absolute inputs, writes `eval-explorer/public/launch-reports.json`, and then starts the app.
 
-To prepare the manifest without starting a dev server:
+To prepare the launch reports file without starting a dev server:
 
 ```bash
 pnpm eval:explorer:prepare map-chat-agent
@@ -111,7 +111,7 @@ pnpm eval:explorer:build map-chat-agent
 
 ### Why the launcher exists
 
-The explorer itself is a browser app, so it cannot directly open arbitrary local filesystem paths. The launcher bridges that gap by reading report files in Node and materializing a local preload manifest the app can fetch.
+The launcher bridges that gap by reading report files in Node and materializing a local JSON file the browser app can fetch.
 
 ### Intended report input
 

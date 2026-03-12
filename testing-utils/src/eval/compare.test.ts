@@ -145,4 +145,50 @@ describe('buildEvalCaseComparisonRows', () => {
         expect(caseA?.regressionCount).toBe(1);
         expect(caseB?.missingCount).toBe(1);
     });
+
+    it('classifies below-threshold transitions in one direction only', () => {
+        const baseline: EvalLoadedReport = {
+            id: 'baseline',
+            label: 'Baseline',
+            source: 'baseline.json',
+            report: createReport(),
+        };
+
+        const candidate: EvalLoadedReport = {
+            id: 'candidate',
+            label: 'Candidate',
+            source: 'candidate.json',
+            report: createReport({
+                belowThresholdCases: ['case-a'],
+                cases: [
+                    {
+                        ...createReport().cases[0],
+                        passRate: 0.6,
+                        passCount: 3,
+                        belowThreshold: true,
+                    },
+                    {
+                        ...createReport().cases[1],
+                        passRate: 0.8,
+                        passCount: 4,
+                        belowThreshold: false,
+                    },
+                ],
+            }),
+        };
+
+        const rows = buildEvalCaseComparisonRows([baseline, candidate], 'baseline');
+        const caseA = rows.find((row) => row.caseId === 'case-a');
+        const caseB = rows.find((row) => row.caseId === 'case-b');
+
+        expect(caseA?.entries[1]?.deltaFromBaseline?.becameBelowThreshold).toBe(true);
+        expect(caseA?.entries[1]?.deltaFromBaseline?.becameWithinThreshold).toBe(false);
+        expect(caseA?.regressionCount).toBe(1);
+        expect(caseA?.improvementCount).toBe(0);
+
+        expect(caseB?.entries[1]?.deltaFromBaseline?.becameBelowThreshold).toBe(false);
+        expect(caseB?.entries[1]?.deltaFromBaseline?.becameWithinThreshold).toBe(true);
+        expect(caseB?.regressionCount).toBe(0);
+        expect(caseB?.improvementCount).toBe(1);
+    });
 });

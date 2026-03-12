@@ -2,7 +2,7 @@ import type { EvalCaseComparisonRow, EvalReportSummary } from '../../src/eval/co
 import { buildEvalCaseComparisonRows, summarizeEvalReport } from '../../src/eval/compare';
 import type { EvalLoadedReport } from '../../src/eval/report';
 import { parseEvalReport, parseEvalReportJson } from '../../src/eval/report';
-import type { ExplorerManifest } from './types';
+import type { ExplorerReportCollection } from './types';
 
 const slugify = (value: string): string =>
     value
@@ -28,11 +28,11 @@ export const createLoadedReport = (
     };
 };
 
-export const normalizeManifestReports = (manifest: ExplorerManifest): EvalLoadedReport[] => {
-    return manifest.reports.map((loadedReport, index) => ({
+export const normalizeLaunchReports = (reportCollection: ExplorerReportCollection): EvalLoadedReport[] => {
+    return reportCollection.reports.map((loadedReport, index) => ({
         ...loadedReport,
-        id: loadedReport.id || `preloaded-${index + 1}`,
-        label: loadedReport.label || `Preloaded ${index + 1}`,
+        id: loadedReport.id || `launch-${index + 1}`,
+        label: loadedReport.label || `Launch report ${index + 1}`,
         report: parseEvalReport(loadedReport.report, loadedReport.source || loadedReport.label),
     }));
 };

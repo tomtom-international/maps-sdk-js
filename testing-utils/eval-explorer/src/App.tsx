@@ -1,5 +1,5 @@
 import type { ChangeEvent, DragEvent } from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { EvalCaseComparisonEntry, EvalCaseComparisonRow, EvalReportSummary } from '../../src/eval/compare';
 import type { EvalLoadedReport } from '../../src/eval/report';
 import {
@@ -8,8 +8,8 @@ import {
     getToolFrequencySummaryFromSequences,
 } from '../../src/eval/tool-calls';
 import { formatDeltaPercent, formatDuration, formatInteger, formatPercent, formatSignedNumber } from './format';
-import { buildComparisonRows, buildReportSummaries, createLoadedReport, normalizeManifestReports } from './lib';
-import type { ExplorerFilterState, ExplorerManifest, ReportLoadError } from './types';
+import { buildComparisonRows, buildReportSummaries, createLoadedReport, normalizeLaunchReports } from './lib';
+import type { ExplorerFilterState, ReportLoadError } from './types';
 
 const INITIAL_FILTERS: ExplorerFilterState = {
     search: '',
@@ -19,7 +19,7 @@ const INITIAL_FILTERS: ExplorerFilterState = {
     missingOnly: false,
 };
 
-const PRELOADED_REPORTS_URL = '/preloaded-reports.json';
+const LAUNCH_REPORTS_URL = '/launch-reports.json';
 
 const formatSequence = (tools: string[]): string => {
     return tools.length > 0 ? tools.join(' -> ') : 'No tool calls';
@@ -86,6 +86,47 @@ const readFiles = async (files: FileList | File[]): Promise<Array<{ name: string
     );
 };
 
+const mergeLoadedReports = ({
+    currentBaselineReportId,
+    currentReports,
+    currentVisibleReportIds,
+    reports,
+}: {
+    currentBaselineReportId: string;
+    currentReports: EvalLoadedReport[];
+    currentVisibleReportIds: string[];
+    reports: EvalLoadedReport[];
+}): {
+    baselineReportId: string;
+    reports: EvalLoadedReport[];
+    visibleReportIds: string[];
+} => {
+    const nextReports = [...currentReports];
+    const nextVisibleIds = new Set(currentVisibleReportIds);
+
+    for (const report of reports) {
+        const duplicateIndex = nextReports.findIndex((item) => item.label === report.label);
+        if (duplicateIndex >= 0) {
+            const previousId = nextReports[duplicateIndex]?.id;
+            const replacement = { ...report, id: `${report.id}-replacement` };
+            nextReports[duplicateIndex] = replacement;
+            if (previousId) {
+                nextVisibleIds.delete(previousId);
+            }
+            nextVisibleIds.add(replacement.id);
+        } else {
+            nextReports.push(report);
+            nextVisibleIds.add(report.id);
+        }
+    }
+
+    return {
+        baselineReportId: currentBaselineReportId || nextReports[0]?.id || '',
+        reports: nextReports,
+        visibleReportIds: Array.from(nextVisibleIds),
+    };
+};
+
 type ExplorerControlsProps = {
     baselineReportId: string;
     filters: ExplorerFilterState;
@@ -143,7 +184,7 @@ function ExplorerControls({
                 <input type="file" accept="application/json,.json" multiple onChange={onFileInput} />
                 <span className="dropzone-title">Drop eval-report-*.json files here</span>
                 <span className="dropzone-copy">
-                    Or browse local files. Preloaded reports from the launcher appear automatically.
+                    Or browse local files. Reports passed to the launcher appear automatically.
                 </span>
             </label>
 
@@ -690,7 +731,7 @@ function CaseDetailPanel({ baselineReportId, selectedRow }: CaseDetailPanelProps
                     ))}
                 </div>
             ) : (
-                <p className="empty-copy">Upload eval reports or launch the explorer with preloaded paths.</p>
+                <p className="empty-copy">Upload eval reports or launch the explorer with example report paths.</p>
             )}
         </aside>
     );
@@ -703,17 +744,32 @@ export function App() {
     const [visibleReportIds, setVisibleReportIds] = useState<string[]>([]);
     const [filters, setFilters] = useState<ExplorerFilterState>(INITIAL_FILTERS);
     const [selectedCaseId, setSelectedCaseId] = useState('');
+    const loadedReportsRef = useRef(loadedReports);
+    const baselineReportIdRef = useRef(baselineReportId);
+    const visibleReportIdsRef = useRef(visibleReportIds);
 
     useEffect(() => {
-        const loadManifest = async () => {
+        loadedReportsRef.current = loadedReports;
+    }, [loadedReports]);
+
+    useEffect(() => {
+        baselineReportIdRef.current = baselineReportId;
+    }, [baselineReportId]);
+
+    useEffect(() => {
+        visibleReportIdsRef.current = visibleReportIds;
+    }, [visibleReportIds]);
+
+    useEffect(() => {
+        const loadLaunchReports = async () => {
             try {
-                const response = await fetch(PRELOADED_REPORTS_URL, { cache: 'no-store' });
+                const response = await fetch(LAUNCH_REPORTS_URL, { cache: 'no-store' });
                 if (!response.ok) {
                     return;
                 }
 
-                const manifest = (await response.json()) as ExplorerManifest;
-                const reports = normalizeManifestReports(manifest);
+                const reportCollection = await response.json();
+                const reports = normalizeLaunchReports(reportCollection);
                 if (reports.length === 0) {
                     return;
                 }
@@ -723,11 +779,11 @@ export function App() {
                 setVisibleReportIds(reports.map((report) => report.id));
                 setSelectedCaseId(reports[0].report.cases[0]?.caseId ?? '');
             } catch {
-                // Ignore empty or missing preload manifests; upload mode remains available.
+                // Ignore missing launch reports; upload mode remains available.
             }
         };
 
-        void loadManifest();
+        void loadLaunchReports();
     }, []);
 
     const visibleReports = useMemo(() => {
@@ -760,33 +816,22 @@ export function App() {
     }, [selectedCaseId, selectedRow]);
 
     const appendReports = (reports: EvalLoadedReport[], nextErrors: ReportLoadError[]) => {
-        setLoadedReports((currentReports) => {
-            const nextReports = [...currentReports];
-            const nextVisibleIds = new Set(visibleReportIds);
-
-            for (const report of reports) {
-                const duplicateIndex = nextReports.findIndex((item) => item.label === report.label);
-                if (duplicateIndex >= 0) {
-                    const previousId = nextReports[duplicateIndex]?.id;
-                    const replacement = { ...report, id: `${report.id}-replacement` };
-                    nextReports[duplicateIndex] = replacement;
-                    if (previousId) {
-                        nextVisibleIds.delete(previousId);
-                    }
-                    nextVisibleIds.add(replacement.id);
-                } else {
-                    nextReports.push(report);
-                    nextVisibleIds.add(report.id);
-                }
-            }
-
-            if (!baselineReportId && nextReports[0]) {
-                setBaselineReportId(nextReports[0].id);
-            }
-
-            setVisibleReportIds(Array.from(nextVisibleIds));
-            return nextReports;
+        const mergedReports = mergeLoadedReports({
+            currentBaselineReportId: baselineReportIdRef.current,
+            currentReports: loadedReportsRef.current,
+            currentVisibleReportIds: visibleReportIdsRef.current,
+            reports,
         });
+
+        loadedReportsRef.current = mergedReports.reports;
+        visibleReportIdsRef.current = mergedReports.visibleReportIds;
+        baselineReportIdRef.current = mergedReports.baselineReportId;
+
+        setLoadedReports(mergedReports.reports);
+        setVisibleReportIds(mergedReports.visibleReportIds);
+        if (mergedReports.baselineReportId !== baselineReportId) {
+            setBaselineReportId(mergedReports.baselineReportId);
+        }
 
         setLoadErrors(nextErrors);
     };
@@ -803,7 +848,7 @@ export function App() {
                         file.name.replace(/\.json$/i, ''),
                         file.name,
                         file.text,
-                        loadedReports.length + index,
+                        loadedReportsRef.current.length + index,
                     ),
                 );
             } catch (error) {

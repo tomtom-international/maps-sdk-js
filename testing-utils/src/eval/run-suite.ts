@@ -146,7 +146,7 @@ export const runEvalSuite = (cases: EvalCase[], options: RunEvalSuiteOptions): v
 
                             const screenshot = await page.locator(mapSelector).screenshot();
                             if (evalCase.screenshot.assertScreenshot) {
-                                await expect(screenshot).toMatchSnapshot(`${evalCase.id}.png`, {
+                                expect(screenshot).toMatchSnapshot(`${evalCase.id}.png`, {
                                     maxDiffPixelRatio: evalCase.screenshot.maxDiffPixelRatio ?? 0.2,
                                 });
                             } else {
