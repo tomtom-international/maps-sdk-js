@@ -39,7 +39,7 @@ export const buildTrafficAreaAnalyticsRequest = (
           };
 
     const body: AreaAnalyticsRequestBody = {
-        ...(params.name && { name: params.name }),
+        name: params.name ?? `Maps SDK JS Area Analytics Report ${new Date().toISOString()}`,
         ...datePart,
         dataTypes: params.dataTypes,
         frcs:

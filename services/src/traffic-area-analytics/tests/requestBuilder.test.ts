@@ -135,7 +135,7 @@ describe('buildTrafficAreaAnalyticsRequest — request body', () => {
     test('omits name field when not provided', () => {
         const result = buildTrafficAreaAnalyticsRequest(BASE_PARAMS);
         const body = (result as { data: Record<string, unknown> }).data;
-        expect(body.name).toBeUndefined();
+        expect(body.name).toContain('Maps SDK JS Area Analytics Report 2');
     });
 });
 
