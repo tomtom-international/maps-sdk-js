@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.46.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.45.12...v0.46.0) (2026-03-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* improve poi categories relationship with search
+
+### Features
+
+* improve poi categories relationship with search ([52f5a26](https://github.com/tomtom-international/maps-sdk-js/commit/52f5a265dbe0ae4cbb3386de3740cb887ed1a11c))
+* traffic area analytics lite service ([e3208bb](https://github.com/tomtom-international/maps-sdk-js/commit/e3208bb3210fdb5c13a163a69ac3f397fca6d165))
+
 ## [0.45.12](https://github.com/tomtom-international/maps-sdk-js/compare/v0.45.11...v0.45.12) (2026-03-04)
 
 
