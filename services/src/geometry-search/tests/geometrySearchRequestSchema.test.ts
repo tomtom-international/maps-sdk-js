@@ -180,6 +180,24 @@ describe('GeometrySearch Schema Validation', () => {
         );
     });
 
+    test('it should fail when POI categories contain invalid enum values', () => {
+        expect(() =>
+            validateRequestSchema(
+                { query: 'restaurant', geometries, poiCategories: ['INVALID_CATEGORY'], apiKey, commonBaseURL: commonBaseUrl },
+                config,
+            ),
+        ).toThrow(
+            expect.objectContaining({
+                issues: [
+                    expect.objectContaining({
+                        code: 'invalid_value',
+                        path: ['poiCategories', 0],
+                    }),
+                ],
+            }),
+        );
+    });
+
     test('it should fail when POI categories are not of type array', () => {
         const query = 'Restaurant';
         const poiCategories = 7315025;

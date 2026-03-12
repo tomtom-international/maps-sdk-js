@@ -10,8 +10,8 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     console.log(`Total categories: ${all.length}`);
 
     // 2. Filter by keyword — served from the same cache, no extra API call
-    const { poiCategories: gyms } = await getPOICategories({ filters: ['gym'] });
-    console.log('\nGym-related categories:');
+    const { poiCategories: gyms } = await getPOICategories({ language: 'es-ES', filters: ['gimnasio'] });
+    console.log('\nLocalized categories:');
     gyms.forEach((category) => console.log(`  ${category.name} (${category.code})`));
 
     // 3. Get just the codes — useful for passing directly to search() or POIsModule.configure()

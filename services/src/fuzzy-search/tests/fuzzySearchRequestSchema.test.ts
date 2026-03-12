@@ -148,7 +148,24 @@ describe('FuzzySearch Schema Validation', () => {
             }),
         );
     });
-    //
+    test('it should fail when POI categories contain invalid enum values', () => {
+        expect(() =>
+            validateRequestSchema(
+                { apiKey, query, poiCategories: ['INVALID_CATEGORY'] },
+                { schema: fuzzySearchRequestSchema },
+            ),
+        ).toThrow(
+            expect.objectContaining({
+                issues: expect.arrayContaining([
+                    expect.objectContaining({
+                        code: 'invalid_value',
+                        path: ['poiCategories', 0],
+                    }),
+                ]),
+            }),
+        );
+    });
+
     test('it should fail when POI categories are not of type array', () => {
         const poiCategories = 7315025;
         expect(() =>

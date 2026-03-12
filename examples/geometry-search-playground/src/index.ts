@@ -1,6 +1,6 @@
 import { bboxFromGeoJSON, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { GeometriesModule, PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
-import { geocode, geometryData, search } from '@tomtom-org/maps-sdk/services';
+import { geocodeOne, geometryData, search } from '@tomtom-org/maps-sdk/services';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import './style.css';
 import { API_KEY } from './config';
@@ -24,11 +24,11 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     let placeToSearchBBox: LngLatBoundsLike;
 
     const searchPlacesInGeometry = async (placesQuery: string, geometryQuery: string) => {
-        const placeToSearchInside = await geocode({ query: geometryQuery, limit: 1 });
+        const placeToSearchInside = await geocodeOne(geometryQuery);
         // (bounding box is also available directly in placeToSearchInside.bbox)
         placeToSearchBBox = bboxFromGeoJSON(placeToSearchInside) as LngLatBoundsLike;
 
-        const geometryToSearch = await geometryData({ geometries: placeToSearchInside });
+        const geometryToSearch = await geometryData({ geometries: [placeToSearchInside] });
         geometryModule.show(geometryToSearch);
 
         // Searching within the obtained geometry:

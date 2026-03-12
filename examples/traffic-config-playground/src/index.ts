@@ -1,7 +1,7 @@
 import type { Place } from '@tomtom-org/maps-sdk/core';
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { TomTomMap, TrafficFlowModule, TrafficIncidentsModule } from '@tomtom-org/maps-sdk/map';
-import { geocode } from '@tomtom-org/maps-sdk/services';
+import { geocodeOne } from '@tomtom-org/maps-sdk/services';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import { configPresets } from './configPresets';
 import { jumpToPlaces } from './jumpToPlaces';
@@ -27,7 +27,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
     const geocodeWithCache = async (query: string): Promise<Place> => {
         let fetchedPlace = cachedPlacesByQuery[query];
         if (!fetchedPlace) {
-            fetchedPlace = (await geocode({ query, limit: 1 })).features[0];
+            fetchedPlace = await geocodeOne(query);
             cachedPlacesByQuery[query] = fetchedPlace;
         }
         return fetchedPlace;

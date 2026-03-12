@@ -1,6 +1,6 @@
 import { bboxFromGeoJSON, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { GeometriesModule, PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
-import { geocode, geometryData, search } from '@tomtom-org/maps-sdk/services';
+import { geocodeOne, geometryData, search } from '@tomtom-org/maps-sdk/services';
 import './style.css';
 import { API_KEY } from './config';
 
@@ -8,7 +8,7 @@ import { API_KEY } from './config';
 TomTomConfig.instance.put({ apiKey: API_KEY });
 
 (async () => {
-    const areaToSearch = await geocode({ query: 'paris', limit: 1 });
+    const areaToSearch = await geocodeOne('paris');
 
     const map = new TomTomMap({
         mapLibre: {
@@ -18,7 +18,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         },
     });
 
-    const areaGeometry = await geometryData({ geometries: areaToSearch });
+    const areaGeometry = await geometryData({ geometries: [areaToSearch] });
     const geometryModule = await GeometriesModule.get(map, { theme: 'inverted' });
     geometryModule.show(areaGeometry);
 
