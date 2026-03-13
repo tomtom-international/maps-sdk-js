@@ -1,5 +1,5 @@
 ---
-description: Build with the TomTom Maps SDK. Use for: TomTomMap setup, styles, modules, MapLibre integration, BaseMapModule, HillshadeModule, viewport utilities, search, geocoding, reverse geocoding, autocomplete, place-by-id, PlacesModule, POIsModule, geometry search, EV charging, ViewportPlaces plugin, calculateRoute, RoutingModule, route alternatives, guidance, EV routing, reachable ranges (isochrones), GeometriesModule, TrafficFlowModule, TrafficIncidentsModule, trafficIncidentDetails, trafficAreaAnalytics, map-agent AI chatbot, createMapAgent, conversational map, Vercel AI SDK. Usage: /maps-sdk [topic]
+description: Build with the TomTom Maps SDK. Use for: TomTomMap setup, styles, modules, MapLibre integration, BaseMapModule, HillshadeModule, viewport utilities, search, geocoding, reverse geocoding, autocomplete, place-by-id, PlacesModule, POIsModule, geometry search, EV charging, ViewportPlaces plugin, calculateRoute, RoutingModule, route alternatives, guidance, EV routing, reachable ranges (isochrones), GeometriesModule, TrafficFlowModule, TrafficIncidentsModule, trafficIncidentDetails, trafficAreaAnalytics. Usage: /maps-sdk [topic]
 ---
 
 You are helping an **application developer** build with the TomTom Maps SDK for JavaScript.
@@ -14,7 +14,6 @@ From `$ARGUMENTS` or the conversation context, match the topic to a doc filename
 | Places & search | `places.md` | search, places, poi, fuzzy, geocode, address, reverse, autocomplete, ev, charging, geometry, polygon, within |
 | Routing | `routing.md` | route, routing, directions, waypoint, guidance, reachable, isochrone, range, ev routing |
 | Traffic | `traffic.md` | traffic, incidents, flow, analytics, congestion |
-| Map agent | `map-agent.md` | agent, chat, chatbot, conversational, AI, LLM, natural language, Vercel AI SDK, createMapAgent |
 
 Use `Glob` with pattern `.claude/skills/*/docs/<filename>` to locate the file, then read it. For multi-topic tasks, glob and read multiple files.
 
