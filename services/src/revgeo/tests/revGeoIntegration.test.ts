@@ -57,14 +57,14 @@ describe('Reverse Geocoding integration tests', () => {
         expect(result).toMatchObject(exampleSdkResponse);
     });
 
-    test('Verify TomTom-User-Agent header is sent', async () => {
-        // Spy on fetch to verify the TomTom-User-Agent header is sent
+    test('Verify tomtom-user-agent header is sent', async () => {
+        // Spy on fetch to verify the tomtom-user-agent header is sent
         const fetchSpy = vi.spyOn(global, 'fetch');
         await reverseGeocode({ position: [5.72884, 52.33499] });
 
-        // Verify that fetch was called with the TomTom-User-Agent header
+        // Verify that fetch was called with the tomtom-user-agent header
         const headers = fetchSpy.mock.calls[0][1]?.headers as Record<string, string>;
-        expect(headers['TomTom-User-Agent']).toMatch(/^MapsSDKJS\/\d+\.\d+\.\d+.*$/);
+        expect(headers['tomtom-user-agent']).toMatch(/^MapsSDKJS\/\d+\.\d+\.\d+.*$/);
         fetchSpy.mockRestore();
     });
 

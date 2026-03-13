@@ -73,7 +73,7 @@ describe('Map utils - injectCustomHeaders', () => {
         const url = 'https://tomtom.com/';
         const transformRequestFn = transformRequest({});
         const request = transformRequestFn(url);
-        expect(request).toEqual({ url, headers: { 'TomTom-User-Agent': expect.any(String) } });
+        expect(request).toEqual({ url, headers: { 'tomtom-user-agent': expect.any(String) } });
     });
 
     test('Return only url if it is TomTom domain but an image resource', () => {

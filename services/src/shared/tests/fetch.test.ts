@@ -9,7 +9,7 @@ describe('Fetch utility tests', () => {
     afterAll(() => (global.fetch = unMockedFetch));
 
     describe('Get tests', () => {
-        const headers = { 'TomTom-User-Agent': 'TEST/1' };
+        const headers = { 'tomtom-user-agent': 'TEST/1' };
 
         test('OK response', async () => {
             const fetchMock = mockFetchResponse(200, { id: 'some json' });
@@ -29,7 +29,7 @@ describe('Fetch utility tests', () => {
     });
 
     describe('Post tests', () => {
-        const headers = { 'TomTom-User-Agent': 'TEST/1' };
+        const headers = { 'tomtom-user-agent': 'TEST/1' };
 
         test('OK response', async () => {
             mockFetchResponse(200, { id: 'some json' });
@@ -48,7 +48,7 @@ describe('Fetch utility tests', () => {
     });
 
     describe('Fetch-with tests', () => {
-        const headers = { 'TomTom-User-Agent': 'TEST/1' };
+        const headers = { 'tomtom-user-agent': 'TEST/1' };
 
         test('OK GET response', async () => {
             mockFetchResponse(200, { id: 'some json' });

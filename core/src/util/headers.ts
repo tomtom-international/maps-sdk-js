@@ -2,7 +2,7 @@ import type { GlobalConfig } from '../config/globalConfig';
 import type { TomTomHeaders } from '../types';
 
 /**
- * SDK name used TomTom custom header TomTom-User-Agent
+ * SDK name used TomTom custom header tomtom-user-agent
  * @ignore
  */
 export const TOMTOM_USER_AGENT_SDK_NAME = 'MapsSDKJS';
@@ -33,10 +33,13 @@ const validateTrackingId = (trackingId: string): string => {
  * @ignore
  * @param params Global SDK configuration
  */
-export const generateTomTomHeaders = (params: Partial<GlobalConfig>): TomTomHeaders => ({
-    'TomTom-User-Agent': `${TOMTOM_USER_AGENT_SDK_NAME}/${__SDK_VERSION__}`,
-    // TODO: restore if we implement oauth2 access
-    // optional oauth2 access token:
-    // ...(params.apiAccessToken && { Authorization: `Bearer ${params.apiAccessToken}` }),
-    ...(params.trackingId && { 'Tracking-ID': validateTrackingId(params.trackingId) }),
-});
+export const generateTomTomHeaders = (params: Partial<GlobalConfig>): TomTomHeaders => {
+    return {
+        // (tomtom-user-agent can be overwritten by SDK TomTom clients for custom analytics purposes)
+        'tomtom-user-agent': (params as any)['tomtom-user-agent'] ?? `${TOMTOM_USER_AGENT_SDK_NAME}/${__SDK_VERSION__}`,
+        // TODO: restore if we implement oauth2 access
+        // optional oauth2 access token:
+        // ...(params.apiAccessToken && { Authorization: `Bearer ${params.apiAccessToken}` }),
+        ...(params.trackingId && { 'Tracking-ID': validateTrackingId(params.trackingId) }),
+    };
+};
