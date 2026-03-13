@@ -175,6 +175,8 @@ export type ReachableRangeOwnParams = {
      * @remarks
      * Stronger smoothing generally results in more points.
      *
+     * @default `'strong'`
+     *
      * @example
      * ```typescript
      * smoothing: 'strong'
