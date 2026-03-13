@@ -12,9 +12,9 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
 (async () => {
     const [spainAirports, italyAirports, franceAirports] = await Promise.all([
-        search({ countries: ['ES'], poiCategories: ['AIRPORT'], limit: 100 }), // searching for locations by postcode
-        search({ countries: ['IT'], poiCategories: ['AIRPORT'], limit: 100 }),
-        search({ countries: ['FR'], poiCategories: ['AIRPORT'], limit: 100 }),
+        search({ countries: ['ES'], poiCategories: ['PUBLIC_AIRPORT'], limit: 100 }), // searching for locations by postcode
+        search({ countries: ['IT'], poiCategories: ['PUBLIC_AIRPORT'], limit: 100 }),
+        search({ countries: ['FR'], poiCategories: ['PUBLIC_AIRPORT'], limit: 100 }),
     ]);
 
     const map = new TomTomMap({
@@ -26,17 +26,17 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
     });
 
     const spainAirportsModule = await PlacesModule.get(map, {
-        icon: { categoryIcons: [{ id: 'AIRPORT', image: airportEsSVG }] },
+        icon: { categoryIcons: [{ id: 'PUBLIC_AIRPORT', image: airportEsSVG }] },
     });
     await spainAirportsModule.show(spainAirports);
 
     const italyAirportsModule = await PlacesModule.get(map, {
-        icon: { categoryIcons: [{ id: 'AIRPORT', image: airportItSVG }] },
+        icon: { categoryIcons: [{ id: 'PUBLIC_AIRPORT', image: airportItSVG }] },
     });
     await italyAirportsModule.show(italyAirports);
 
     const franceAirportsModule = await PlacesModule.get(map, {
-        icon: { categoryIcons: [{ id: 'AIRPORT', image: airportFrSVG }] },
+        icon: { categoryIcons: [{ id: 'PUBLIC_AIRPORT', image: airportFrSVG }] },
     });
     await franceAirportsModule.show(franceAirports);
 })();
