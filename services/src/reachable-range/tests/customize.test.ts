@@ -14,7 +14,7 @@ describe('Using customize obj', () => {
         ).toEqual({
             method: 'POST',
             url: new URL(
-                'https://api.tomtom.com/maps/orbis/routing/calculateReachableRange?apiVersion=3&key=GLOBAL_API_KEY&timeBudgetInSec=1800',
+                'https://api.tomtom.com/maps/orbis/routing/calculateReachableRange?apiVersion=3&key=GLOBAL_API_KEY&timeBudgetInSec=1800&smoothing=strong',
             ),
             data: { origin: { type: 'Point', coordinates: [10.123, 20.567] } },
         });
