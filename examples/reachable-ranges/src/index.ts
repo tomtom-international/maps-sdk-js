@@ -55,7 +55,6 @@ const map = new TomTomMap({
                 getBudgetsForMax(maxBudget, currentBudgetType, isInvertedTheme(currentTheme)).map((value) => ({
                     origin,
                     budget: { type: currentBudgetType, value },
-                    smoothing: 'strong',
                     vehicle: getVehicleForBudgetType(currentBudgetType),
                 })),
                 { signal: abortController.signal },

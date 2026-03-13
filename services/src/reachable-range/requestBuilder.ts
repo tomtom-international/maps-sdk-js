@@ -88,6 +88,6 @@ export const buildReachableRangeRequest = (params: ReachableRangeParams): FetchI
     appendCommonRoutingParams(urlParams, params);
     appendBudget(urlParams, params);
     appendOptionalParam(urlParams, 'maxFerryLengthInMeters', params.maxFerryLengthMeters);
-    appendOptionalParam(urlParams, 'smoothing', params.smoothing);
+    appendOptionalParam(urlParams, 'smoothing', params.smoothing ?? 'strong');
     return { method: 'POST', url, data: buildPostData(params) };
 };
