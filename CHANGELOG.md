@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.46.1](https://github.com/tomtom-international/maps-sdk-js/compare/v0.46.0...v0.46.1) (2026-03-13)
+
+
+### Features
+
+* add skills for agents to develop with the SDK ([cc30803](https://github.com/tomtom-international/maps-sdk-js/commit/cc30803e1c7e626bae2ecd6239296427687f9d58))
+* enhance documentation for map agent and setup with new examples and boilerplate ([d75af32](https://github.com/tomtom-international/maps-sdk-js/commit/d75af3225ba6331142976cc980d323881ea40240))
+* make tool-activation opt-out ([1a3f980](https://github.com/tomtom-international/maps-sdk-js/commit/1a3f9808aa252b3b9a44139712f313e5cf8a68d1))
+
+
+### Bug Fixes
+
+* ensure traffic area analytics report name ([2bb9a5b](https://github.com/tomtom-international/maps-sdk-js/commit/2bb9a5b21d1719df23ece7fcb387ca702178cb73))
+* poi category codes agent tool reliability with languages ([5bac87d](https://github.com/tomtom-international/maps-sdk-js/commit/5bac87d6e53c8089aab2bd4ee56042ab4a3023b9))
+
 ## [0.46.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.45.12...v0.46.0) (2026-03-12)
 
 
