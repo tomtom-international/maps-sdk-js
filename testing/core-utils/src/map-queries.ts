@@ -68,20 +68,14 @@ export const getLayerById = async (page: Page, layerId: string): Promise<LayerSp
         return map.getStyle().layers.find((layer) => layer.id === symbolLayerId) as LayerSpecification;
     }, layerId);
 
-
 export const getLayersByIds = async (page: Page, layerIds: string[]): Promise<LayerSpecWithSource[]> =>
-    page.evaluate(
-        (pageLayerIds) => {
-            const map = (globalThis as MapWindowLike).mapLibreMap;
-            if (!map) {
-                throw new Error('globalThis.mapLibreMap is not available.');
-            }
-            return map
-                .getStyle()
-                .layers.filter((layer) => pageLayerIds.includes(layer.id)) as LayerSpecWithSource[];
-        },
-        layerIds,
-    );
+    page.evaluate((pageLayerIds) => {
+        const map = (globalThis as MapWindowLike).mapLibreMap;
+        if (!map) {
+            throw new Error('globalThis.mapLibreMap is not available.');
+        }
+        return map.getStyle().layers.filter((layer) => pageLayerIds.includes(layer.id)) as LayerSpecWithSource[];
+    }, layerIds);
 
 export const isLayerVisible = async (page: Page, layerId: string): Promise<boolean> =>
     page.evaluate(
@@ -96,8 +90,7 @@ export const isLayerVisible = async (page: Page, layerId: string): Promise<boole
 
 export const getPaintProperty = async (page: Page, layerId: string, propertyName: string): Promise<unknown> =>
     page.evaluate(
-        ({ layerID, propertyName: prop }) =>
-            (globalThis as MapWindowLike).mapLibreMap?.getPaintProperty(layerID, prop),
+        ({ layerID, propertyName: prop }) => (globalThis as MapWindowLike).mapLibreMap?.getPaintProperty(layerID, prop),
         { layerID: layerId, propertyName },
     );
 

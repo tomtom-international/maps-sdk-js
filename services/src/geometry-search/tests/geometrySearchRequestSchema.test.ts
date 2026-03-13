@@ -183,7 +183,13 @@ describe('GeometrySearch Schema Validation', () => {
     test('it should fail when POI categories contain invalid enum values', () => {
         expect(() =>
             validateRequestSchema(
-                { query: 'restaurant', geometries, poiCategories: ['INVALID_CATEGORY'], apiKey, commonBaseURL: commonBaseUrl },
+                {
+                    query: 'restaurant',
+                    geometries,
+                    poiCategories: ['INVALID_CATEGORY'],
+                    apiKey,
+                    commonBaseURL: commonBaseUrl,
+                },
                 config,
             ),
         ).toThrow(

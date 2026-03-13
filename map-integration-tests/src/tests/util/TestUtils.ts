@@ -1,5 +1,11 @@
 import type { Page } from '@playwright/test';
 import { expect } from '@playwright/test';
+import {
+    getLayersByIds,
+    getNumVisibleLayersBySource,
+    queryRenderedFeatures,
+    tryBeforeTimeout,
+} from '@testing/core-utils';
 import type { GlobalConfig, Language, Place, Places, PolygonFeatures, Routes, WaypointLike, Waypoints } from 'core';
 import type {
     BaseMapModuleInitConfig,
@@ -19,12 +25,6 @@ import type {
 } from 'map';
 import { poiLayerIDs } from 'map';
 import { MapGeoJSONFeature } from 'maplibre-gl';
-import {
-    getLayersByIds,
-    getNumVisibleLayersBySource,
-    queryRenderedFeatures,
-    tryBeforeTimeout,
-} from '@testing/core-utils';
 import { MapsSDKThis } from '../types/MapsSDKThis';
 
 export {
