@@ -45,7 +45,7 @@
     "nodejs"
   ],
   "devDependencies": {
-    "@biomejs/biome": "^2.4.6",
+    "@biomejs/biome": "^2.4.7",
     "@size-limit/file": "^11.2.0",
     "@size-limit/preset-app": "^11.2.0",
     "size-limit": "^11.2.0",
@@ -79,7 +79,7 @@
       "ajv": "^8.18.0",
       "fsevents": "^2.3.3",
       "minimatch@10": "^10.2.4",
-      "nanoid": "^5.1.6",
+      "nanoid": "^5.1.7",
       "sax": "^1.5.0",
       "semver@7": "^7.7.4"
     },
@@ -87,7 +87,7 @@
       "sharp"
     ]
   },
-  "packageManager": "pnpm@10.30.0",
+  "packageManager": "pnpm@10.32.1",
   "files": [
     "core/dist",
     "core/package.json",
