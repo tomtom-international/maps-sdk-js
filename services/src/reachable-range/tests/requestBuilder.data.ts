@@ -15,7 +15,7 @@ export const sdkAndAPIRequests: [string, ReachableRangeParams, FetchInput<Reacha
         {
             method: 'POST',
             url: new URL(
-                'https://api.tomtom.com/maps/orbis/routing/calculateReachableRange?apiVersion=3&key=GLOBAL_API_KEY&timeBudgetInSec=1800',
+                'https://api.tomtom.com/maps/orbis/routing/calculateReachableRange?apiVersion=3&key=GLOBAL_API_KEY&timeBudgetInSec=1800&smoothing=strong',
             ),
             data: { origin: { type: 'Point', coordinates: [10.123, 20.567] } },
         },
@@ -34,7 +34,7 @@ export const sdkAndAPIRequests: [string, ReachableRangeParams, FetchInput<Reacha
             method: 'POST',
             url: new URL(
                 'https://api.tomtom.com/maps/orbis/routing/calculateReachableRange?apiVersion=3&key=GLOBAL_API_KEY' +
-                    '&departAt=2030-09-16T15%3A00%3A00.000Z&timeBudgetInSec=3600',
+                    '&departAt=2030-09-16T15%3A00%3A00.000Z&timeBudgetInSec=3600&smoothing=strong',
             ),
             data: { origin: { type: 'Point', coordinates: [10.123, 20.567] } },
         },
@@ -68,7 +68,7 @@ export const sdkAndAPIRequests: [string, ReachableRangeParams, FetchInput<Reacha
             url: new URL(
                 'https://api.tomtom.com/maps/orbis/routing/calculateReachableRange?apiVersion=3&key=GLOBAL_API_KEY' +
                     '&vehicleEngineType=electric&constantSpeedConsumptionInkWhPerHundredkm=50%2C8.2%3A130%2C21.3' +
-                    '&maxChargeInkWh=200&currentChargeInkWh=160&energyBudgetInkWh=120',
+                    '&maxChargeInkWh=200&currentChargeInkWh=160&energyBudgetInkWh=120&smoothing=strong',
             ),
             data: { origin: { type: 'Point', coordinates: [-10.123567, -20.567] } },
         },
@@ -102,7 +102,7 @@ export const sdkAndAPIRequests: [string, ReachableRangeParams, FetchInput<Reacha
             url: new URL(
                 'https://api.tomtom.com/maps/orbis/routing/calculateReachableRange?apiVersion=3&key=GLOBAL_API_KEY' +
                     '&vehicleEngineType=electric&constantSpeedConsumptionInkWhPerHundredkm=50%2C8.2%3A130%2C21.3' +
-                    '&maxChargeInkWh=85&currentChargeInkWh=68&energyBudgetInkWh=42.5',
+                    '&maxChargeInkWh=85&currentChargeInkWh=68&energyBudgetInkWh=42.5&smoothing=strong',
             ),
             data: { origin: { type: 'Point', coordinates: [-10.123567, -20.567] } },
         },
@@ -119,7 +119,7 @@ export const sdkAndAPIRequests: [string, ReachableRangeParams, FetchInput<Reacha
         {
             method: 'POST',
             url: new URL(
-                'https://api.tomtom.com/maps/orbis/routing/calculateReachableRange?apiVersion=3&key=GLOBAL_API_KEY&distanceBudgetInMeters=200000',
+                'https://api.tomtom.com/maps/orbis/routing/calculateReachableRange?apiVersion=3&key=GLOBAL_API_KEY&distanceBudgetInMeters=200000&smoothing=strong',
             ),
             data: { origin: { type: 'Point', coordinates: [-10.123567, -20.567] } },
         },

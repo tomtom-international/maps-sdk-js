@@ -1,10 +1,8 @@
 import { getPositionStrict } from '@tomtom-org/maps-sdk/core';
 import type { Position } from 'geojson';
-import type { FetchInput } from '../shared';
+import type { ElectricVehicleParams, ElectricVehicleStatePCT, FetchInput } from '../shared';
 import { appendCommonRoutingParams } from '../shared/request/commonRoutingRequestBuilder';
 import { appendCommonParams, appendOptionalParam } from '../shared/request/requestBuildingUtils';
-import type { ElectricVehicleParams } from '../shared/types/vehicleParams';
-import type { ElectricVehicleStatePCT } from '../shared/types/vehicleState';
 import type { ReachableRangePostData } from './types/apiRequestTypes';
 import type { ReachableRangeParams } from './types/reachableRangeParams';
 

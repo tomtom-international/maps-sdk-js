@@ -1,6 +1,6 @@
 import type { PolygonFeature } from '@tomtom-org/maps-sdk/core';
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import { SDKError, SDKServiceError } from '../../shared/errors';
+import { SDKError, SDKServiceError } from '../../shared';
 import { calculateReachableRanges } from '../calculateReachableRange';
 import type { ReachableRangeParams } from '../types/reachableRangeParams';
 

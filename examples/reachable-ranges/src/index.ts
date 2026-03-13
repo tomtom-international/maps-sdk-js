@@ -133,7 +133,7 @@ const map = new TomTomMap({
 
     // Click/touch on map to relocate origin
     map.mapLibreMap.on('click', (e) => {
-        const lngLat = e.lngLat.toArray() as [number, number];
+        const lngLat = e.lngLat.toArray();
         controls.setOriginInput(formatCoords(lngLat));
         setOrigin(lngLat);
     });
