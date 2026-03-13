@@ -10,14 +10,40 @@ import { calculatePaddedBBox, calculatePaddedCenter } from '@tomtom-org/maps-sdk
 
 ---
 
+## Full-screen map HTML + CSS boilerplate
+
+The map container **and its parent elements** (`html`, `body`) all need explicit height — without this the map renders with zero height, which is the most common setup issue:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <style>
+        html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+        #map { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script type="module" src="./index.ts"></script>
+</body>
+</html>
+```
+
+---
+
 ## Map initialization
 
 ```ts
+import './style.css';
+
 const map = new TomTomMap({
     style: 'standardLight',   // see styles below
     language: 'en-GB',        // affects map labels
     mapLibre: {
-        container: 'map',     // HTML element id — needs explicit CSS dimensions
+        container: 'map',     // HTML element id — must have CSS height set
         center: [4.9, 52.4],  // [longitude, latitude]
         zoom: 12,
     },
@@ -29,6 +55,8 @@ map.getBBox();               // → [west, south, east, north]
 ```
 
 **Styles:** `standardLight` (default), `standardDark`, `drivingLight`, `drivingDark`, `monoLight`, `monoDark`, `satellite`
+
+When offering style switching, prefer a `<select>` dropdown with all 7 styles over a simple toggle — it showcases the full range and gives users real control. For event handlers like background clicks, provide visible feedback (e.g. a toast notification with coordinates) rather than just `console.log`.
 
 ---
 

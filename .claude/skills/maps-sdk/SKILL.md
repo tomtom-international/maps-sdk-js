@@ -1,5 +1,5 @@
 ---
-description: Build with the TomTom Maps SDK. Use for: TomTomMap setup, styles, modules, MapLibre integration, BaseMapModule, HillshadeModule, viewport utilities, search, geocoding, reverse geocoding, autocomplete, place-by-id, PlacesModule, POIsModule, geometry search, EV charging, ViewportPlaces plugin, calculateRoute, RoutingModule, route alternatives, guidance, EV routing, reachable ranges (isochrones), GeometriesModule, TrafficFlowModule, TrafficIncidentsModule, trafficIncidentDetails, trafficAreaAnalytics. Usage: /maps-sdk [topic]
+description: Build with the TomTom Maps SDK. Use for: TomTomMap setup, styles, modules, MapLibre integration, BaseMapModule, HillshadeModule, viewport utilities, search, geocoding, reverse geocoding, autocomplete, place-by-id, PlacesModule, POIsModule, geometry search, EV charging, ViewportPlaces plugin, calculateRoute, RoutingModule, route alternatives, guidance, EV routing, reachable ranges (isochrones), GeometriesModule, TrafficFlowModule, TrafficIncidentsModule, trafficIncidentDetails, trafficAreaAnalytics, map-agent AI chatbot, createMapAgent, conversational map, Vercel AI SDK. Usage: /maps-sdk [topic]
 ---
 
 You are helping an **application developer** build with the TomTom Maps SDK for JavaScript.
@@ -14,6 +14,7 @@ From `$ARGUMENTS` or the conversation context, match the topic to a doc filename
 | Places & search | `places.md` | search, places, poi, fuzzy, geocode, address, reverse, autocomplete, ev, charging, geometry, polygon, within |
 | Routing | `routing.md` | route, routing, directions, waypoint, guidance, reachable, isochrone, range, ev routing |
 | Traffic | `traffic.md` | traffic, incidents, flow, analytics, congestion |
+| Map agent | `map-agent.md` | agent, chat, chatbot, conversational, AI, LLM, natural language, Vercel AI SDK, createMapAgent |
 
 Use `Glob` with pattern `.claude/skills/*/docs/<filename>` to locate the file, then read it. For multi-topic tasks, glob and read multiple files.
 
@@ -41,9 +42,11 @@ TomTomConfig.instance.put({ apiKey: 'YOUR_API_KEY' });
 - **`geocodeOne()` throws** if no result — use `geocode()` when uncertain
 - **`searchOne()` returns `undefined`** if no result
 - **Services work in Node.js** — no browser or map required
+- **Map container CSS**: The map div AND `html, body` all need explicit height (`height: 100%` or `100vh`) and `margin: 0` — without this the map renders with zero height. Always include a complete HTML + CSS boilerplate in your answer, not just the TypeScript.
+- **Provide visible UI feedback** for event handlers (toasts, panels, info bars) — not just `console.log`. Build real, functional UI that the user can see and interact with.
 
 ---
 
 ## Step 2: Answer
 
-State the relevant imports, apply the patterns from the doc, note any gotchas. Then write the code.
+State the relevant imports, apply the patterns from the doc, note any gotchas. Then write the code. Include complete HTML, CSS, and TypeScript — not just the TypeScript.
