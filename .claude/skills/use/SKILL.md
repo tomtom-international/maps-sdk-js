@@ -1,5 +1,7 @@
 ---
+name: use
 description: Build with the TomTom Maps SDK — TomTomMap setup, styles, modules, MapLibre integration, BaseMapModule, HillshadeModule, viewport utilities, search, geocoding, reverse geocoding, autocomplete, place-by-id, PlacesModule, POIsModule, geometry search, EV charging, ViewportPlaces plugin, calculateRoute, RoutingModule, route alternatives, guidance, EV routing, reachable ranges (isochrones), GeometriesModule, TrafficFlowModule, TrafficIncidentsModule, trafficIncidentDetails, trafficAreaAnalytics
+allowed-tools: Read, Glob
 ---
 
 You are helping an **application developer** build with the TomTom Maps SDK for JavaScript.
@@ -15,7 +17,7 @@ From `$ARGUMENTS` or the conversation context, match the topic to a doc filename
 | Routing | `routing.md` | route, routing, directions, waypoint, guidance, reachable, isochrone, range, ev routing |
 | Traffic | `traffic.md` | traffic, incidents, flow, analytics, congestion |
 
-Use `Glob` with pattern `.claude/skills/*/docs/<filename>` to locate the file, then read it. For multi-topic tasks, glob and read multiple files.
+Use `Glob` with pattern `.claude/skills/use/docs/<filename>` to locate the file, then read it. For multi-topic tasks, glob and read multiple files.
 
 ---
 
