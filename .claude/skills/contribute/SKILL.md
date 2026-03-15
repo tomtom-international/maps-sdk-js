@@ -1,5 +1,5 @@
 ---
-name: contribute
+name: tomtom-maps-sdk-js-contribution
 description: Orient to the SDK contributor context. Use when a contributor asks how to work on, build, or modify the TomTom Maps SDK — or when the current task involves editing SDK source files in core/, map/, services/, plugins/, examples/, or map-integration-tests/.
 allowed-tools: Read, Glob
 ---
