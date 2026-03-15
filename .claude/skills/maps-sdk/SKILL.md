@@ -1,5 +1,5 @@
 ---
-description: Build with the TomTom Maps SDK. Use for: TomTomMap setup, styles, modules, MapLibre integration, BaseMapModule, HillshadeModule, viewport utilities, search, geocoding, reverse geocoding, autocomplete, place-by-id, PlacesModule, POIsModule, geometry search, EV charging, ViewportPlaces plugin, calculateRoute, RoutingModule, route alternatives, guidance, EV routing, reachable ranges (isochrones), GeometriesModule, TrafficFlowModule, TrafficIncidentsModule, trafficIncidentDetails, trafficAreaAnalytics. Usage: /maps-sdk [topic]
+description: "Build with the TomTom Maps SDK. Use for: TomTomMap setup, styles, modules, MapLibre integration, BaseMapModule, HillshadeModule, viewport utilities, search, geocoding, reverse geocoding, autocomplete, place-by-id, PlacesModule, POIsModule, geometry search, EV charging, ViewportPlaces plugin, calculateRoute, RoutingModule, route alternatives, guidance, EV routing, reachable ranges (isochrones), GeometriesModule, TrafficFlowModule, TrafficIncidentsModule, trafficIncidentDetails, trafficAreaAnalytics. Usage: /maps-sdk [topic]"
 ---
 
 You are helping an **application developer** build with the TomTom Maps SDK for JavaScript.
