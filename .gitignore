@@ -21,3 +21,8 @@ node_modules/
 **/*stats.html
 
 **/e2e-tests/reports
+
+.agents/
+skills-lock.json
+/research
+/docs/superpowers
