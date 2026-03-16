@@ -105,15 +105,15 @@ For low-level request/response control — use only when standard options are in
 import { customizeService } from '@tomtom-org/maps-sdk/services';
 
 // Build a request without sending it (e.g. to proxy through your backend)
-const { buildRequest } = customizeService.geocode;
-const request = buildRequest({ key: 'YOUR_API_KEY', query: 'Amsterdam' });
-const rawResponse = await fetch(request.url);
+const { buildGeocodingRequest } = customizeService.geocode;
+const url = buildGeocodingRequest({ apiKey: 'YOUR_API_KEY', query: 'Amsterdam' });
+const rawResponse = await fetch(url);
 
 // Parse a raw API response into SDK GeoJSON
-const { parseResponse } = customizeService.geocode;
-const parsedData = parseResponse(await rawResponse.json());
+const { parseGeocodingResponse } = customizeService.geocode;
+const parsedData = parseGeocodingResponse(await rawResponse.json());
 ```
 
-Available on: `customizeService.geocode`, `customizeService.search`, `customizeService.calculateRoute`, and all other service functions.
+Available on: `customizeService.geocode`, `customizeService.reverseGeocode`, `customizeService.calculateRoute`, `customizeService.reachableRange`, `customizeService.geometrySearch`, `customizeService.geometryData`, `customizeService.placeByID`, `customizeService.autocompleteSearch`, `customizeService.evChargingStationsAvailability`, `customizeService.trafficAreaAnalytics`, `customizeService.trafficIncidentDetails`.
 
 Use cases: custom API gateways, proxies, non-standard endpoints, testing, or adapting to pre-release API versions.
