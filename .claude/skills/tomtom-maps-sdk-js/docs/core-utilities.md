@@ -1,0 +1,234 @@
+# Core Utilities Reference
+
+## Imports
+
+```ts
+import {
+    bboxFromGeoJSON, polygonFromBBox,
+    getPosition,
+    formatDistance, formatDuration,
+    findBestWaypointInsertionIndex, withInsertedWaypoint,
+    getSectionBBox,
+    calculateProgressAtRoutePoint, getRouteProgressBetween,
+    getRouteProgressForSection, getCoordinateAtRouteProgress,
+    getProgressAtNearestRoutePoint,
+} from '@tomtom-org/maps-sdk/core';
+```
+
+---
+
+## Bounding boxes
+
+### `bboxFromGeoJSON`
+
+Extracts or calculates `[west, south, east, north]` from any GeoJSON object. Prefers existing `bbox` properties when present.
+
+```ts
+// From a geocoded place (uses the place's own bbox — often a city-level area)
+const place = await geocodeOne('Amsterdam');
+const bbox = bboxFromGeoJSON(place);            // [minLng, minLat, maxLng, maxLat] | undefined
+
+// From a FeatureCollection (encompasses all features)
+const places = await search({ query: 'coffee', position: [4.9, 52.4] });
+const bbox = bboxFromGeoJSON(places);
+
+// From a route geometry
+const bbox = bboxFromGeoJSON(route.features[0].geometry);
+
+// From an array of objects
+const bbox = bboxFromGeoJSON([place1, place2, place3]);
+```
+
+Returns `[minLng, minLat, maxLng, maxLat] | undefined`.
+
+### `polygonFromBBox`
+
+Converts a bbox to a GeoJSON `Feature<Polygon>` — useful for displaying a search area on the map.
+
+```ts
+const bbox = bboxFromGeoJSON(places);
+if (bbox) {
+    const bboxPolygon = polygonFromBBox(bbox);
+    // use with GeometriesModule.show() or map.mapLibreMap.addSource(...)
+}
+```
+
+---
+
+## Coordinates
+
+### `getPosition`
+
+Extracts `[longitude, latitude]` from any of: raw array, Point geometry, or Place Feature.
+
+```ts
+getPosition([4.9, 52.3]);                          // → [4.9, 52.3]
+getPosition({ type: 'Point', coordinates: [...] }); // → [lng, lat]
+getPosition(place);                                 // → [lng, lat] from geometry
+
+// Prefer building entrance over geometry centroid
+getPosition(place, { useEntryPoint: 'main-when-available' });
+```
+
+Returns `[longitude, latitude] | null`.
+
+---
+
+## Formatting
+
+### `formatDuration`
+
+Formats seconds to a human-readable time string. Returns `undefined` if under 30 seconds.
+
+```ts
+formatDuration(0);       // undefined
+formatDuration(60);      // '1 min'
+formatDuration(1800);    // '30 min'
+formatDuration(3660);    // '1 hr 01 min'
+
+// Custom units
+formatDuration(3660, { hours: 'h', minutes: 'm' });  // '1 h 01 m'
+
+// Route travel time
+const { travelTimeInSeconds } = routes.features[0].properties.summary;
+formatDuration(travelTimeInSeconds);
+```
+
+### `formatDistance`
+
+Formats meters to a human-readable distance string. Supports metric, US imperial, UK imperial.
+
+```ts
+formatDistance(950);     // '1 km'
+formatDistance(2850);    // '2.9 km'
+
+// Imperial
+formatDistance(205.95, { type: 'imperial_us' });  // '¼ mi'
+formatDistance(150.88, { type: 'imperial_uk' });  // '170 yd'
+
+// Custom labels
+formatDistance(1500, { type: 'metric', kilometers: 'KM' });  // '1.5 KM'
+
+// Route distance
+const { lengthInMeters } = routes.features[0].properties.summary;
+formatDistance(lengthInMeters);
+```
+
+### Global default units
+
+```ts
+TomTomConfig.instance.put({
+    displayUnits: {
+        distance: { type: 'imperial_us', feet: 'ft', miles: 'mi' },
+        time: { hours: 'hr', minutes: 'min' },
+    },
+});
+// formatDistance() and formatDuration() will use these unless overridden per-call
+```
+
+---
+
+## Route waypoint utilities
+
+### `withInsertedWaypoint`
+
+Finds the optimal position and inserts a new waypoint into an existing waypoints array without modifying the original.
+
+```ts
+const waypoints = [origin, destination];
+const newStop = [4.95, 52.35];
+
+const updatedWaypoints = withInsertedWaypoint(routes.features[0], waypoints, newStop);
+// → [origin, newStop, destination]
+
+const updatedRoutes = await calculateRoute({ locations: updatedWaypoints });
+```
+
+### `findBestWaypointInsertionIndex`
+
+Returns the index at which to insert a new waypoint.
+
+```ts
+const idx = findBestWaypointInsertionIndex(routes.features[0], waypoints, newStop);
+// idx=1 → insert between waypoints[0] and waypoints[1]
+```
+
+---
+
+## Route section bbox
+
+### `getSectionBBox`
+
+Returns `[minLng, minLat, maxLng, maxLat]` for any route section (uses start, mid, end points for speed).
+
+```ts
+const route = routes.features[0];
+const countrySections = route.properties.sections.country;
+
+for (const section of countrySections ?? []) {
+    const bbox = getSectionBBox(route, section);
+    if (bbox) map.mapLibreMap.fitBounds(bbox, { padding: 40 });
+}
+```
+
+---
+
+## Route progress utilities
+
+These functions require `route.properties.progress` to be populated (included in route data by default).
+
+### `calculateProgressAtRoutePoint`
+
+Distance and time at a specific coordinate index along the route.
+
+```ts
+const progress = calculateProgressAtRoutePoint(route, 10);
+// → { distanceInMeters, travelTimeInSeconds } | undefined
+```
+
+### `getRouteProgressBetween` / `getRouteProgressForSection`
+
+Distance and time for a segment between two coordinate indices, or directly from a section object.
+
+```ts
+const segment = getRouteProgressBetween(route, 5, 20);
+// → { start, end, delta: { distanceInMeters, travelTimeInSeconds } } | undefined
+
+const section = route.properties.sections.traffic?.[0];
+if (section) {
+    const sp = getRouteProgressForSection(route, section);
+    sp && console.log(`Traffic adds ${sp.delta.travelTimeInSeconds}s`);
+}
+```
+
+### `getCoordinateAtRouteProgress`
+
+Position on the route at a given elapsed time, distance, or absolute clock time.
+
+```ts
+// By elapsed time
+const byTime = getCoordinateAtRouteProgress(route, { traveledTimeInSeconds: 600 });
+
+// By distance
+const byDist = getCoordinateAtRouteProgress(route, { traveledDistanceInMeters: 5000 });
+
+// By clock time (relative to route departure)
+const byClock = getCoordinateAtRouteProgress(route, { clockTime: new Date('2025-06-01T09:10:00Z') });
+
+byTime && console.log(`At 10 min: [${byTime.position}]`);
+// → { position: [lng, lat], distanceInMeters, travelTimeInSeconds }
+```
+
+### `getProgressAtNearestRoutePoint`
+
+Snaps an arbitrary point to the nearest position on the route — useful for hover/click interactions.
+
+```ts
+map.mapLibreMap.on('mousemove', (e) => {
+    const result = getProgressAtNearestRoutePoint(route, { lng: e.lngLat.lng, lat: e.lngLat.lat });
+    if (result) {
+        showTooltip(`${formatDistance(result.distanceInMeters)} from start`);
+    }
+});
+// → { position: [lng, lat], distanceInMeters, travelTimeInSeconds } | undefined
+```

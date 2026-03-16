@@ -4,9 +4,15 @@
 
 ```ts
 import { calculateRoute, calculateReachableRanges, geocodeOne } from '@tomtom-org/maps-sdk/services';
-import { RoutingModule, GeometriesModule, reachableRangeGeometryConfig } from '@tomtom-org/maps-sdk/map';
-import { asSoftWaypoint, bboxFromGeoJSON, formatDistance, formatDuration } from '@tomtom-org/maps-sdk/core';
-import type { PlanningWaypoint } from '@tomtom-org/maps-sdk/map';
+import {
+    RoutingModule, GeometriesModule, reachableRangeGeometryConfig,
+    defaultRoutingLayers, SELECTED_ROUTE_FILTER, MIDDLE_INDEX,
+} from '@tomtom-org/maps-sdk/map';
+import type {
+    PlanningWaypoint, ColorPaletteOptions, GeometryTheme, GeometryBeforeLayerConfig,
+} from '@tomtom-org/maps-sdk/map';
+import { asSoftWaypoint, bboxFromGeoJSON, formatDistance, formatDuration, withInsertedWaypoint } from '@tomtom-org/maps-sdk/core';
+import type { Waypoint, WaypointLike, PolygonFeatures } from '@tomtom-org/maps-sdk/core';
 ```
 
 ---
@@ -189,6 +195,33 @@ await geometriesModule.show(ranges);  // auto-labels: '30 min', '20 min', '10 mi
 
 Budget types: `'timeMinutes'`, `'distanceKM'`, `'remainingChargeCPT'`, `'spentChargePCT'`, `'spentFuelLiters'`
 
+Palette options: `'fadedRainbow'` | `'rainbow'` | ... (see `ColorPaletteOptions`)
+
+Themes: `'filled'` | `'inverted'` | `'outlined'` | ...
+
+Before-layer config: `'lowestLabel'` | `'lowestPlaceLabel'` | `'aboveRoads'` | ...
+
+### Abort in-flight requests
+
+```ts
+let abortController = new AbortController();
+
+const calculate = async () => {
+    abortController.abort();
+    abortController = new AbortController();
+    const ranges = await calculateReachableRanges(params, { signal: abortController.signal });
+    geometriesModule.show(ranges);
+};
+```
+
+### Update geometry config without re-fetching
+
+```ts
+geometriesModule.applyConfig(reachableRangeGeometryConfig('rainbow', 'inverted', 'lowestLabel'));
+// or move all geometries before a different layer
+geometriesModule.moveBeforeLayer('aboveRoads');
+```
+
 ---
 
 ## Traffic incidents on route
@@ -227,10 +260,137 @@ const path         = route.geometry.coordinates; // [lng, lat][]
 
 ---
 
+## RoutingModule — visual customization
+
+### Custom route color
+
+```ts
+const routingModule = await RoutingModule.get(map, { theme: { mainColor: '#DF1B12' } });
+```
+
+### Custom waypoint icon style
+
+```ts
+const routingModule = await RoutingModule.get(map, {
+    waypoints: {
+        icon: { style: { fillColor: 'green', outlineColor: 'orange', outlineOpacity: 0.7 } },
+    },
+});
+```
+
+### MapLibre layer overrides (advanced)
+
+Customize route line paint, add extra layers, modify section visuals:
+
+```ts
+import { defaultRoutingLayers, SELECTED_ROUTE_FILTER } from '@tomtom-org/maps-sdk/map';
+
+const routingModule = await RoutingModule.get(map, {
+    theme: { mainColor: '#DF1B12' },
+    layers: {
+        mainLines: {
+            routeOutline: {
+                paint: { 'line-color': '#555', 'line-width': 10 },
+            },
+            // add a new custom layer
+            additional: {
+                myDashLine: {
+                    type: 'line',
+                    filter: SELECTED_ROUTE_FILTER,
+                    paint: { 'line-color': 'lightgrey', 'line-dasharray': [3, 2] },
+                    beforeID: 'routeIncidentBackgroundLine',
+                },
+            },
+        },
+        sections: {
+            tollRoad: {
+                routeTollRoadSymbol: { layout: { visibility: 'none' } }, // hide toll icons
+                routeTollRoadOutline: {
+                    paint: { 'line-color': '#29A2FF', 'line-dasharray': [1, 0.2] },
+                },
+            },
+            tunnel: {
+                routeTunnelLine: {
+                    paint: {
+                        ...defaultRoutingLayers.sections.tunnel?.routeTunnelLine?.paint,
+                        'line-opacity': 1,
+                    },
+                },
+            },
+        },
+    },
+});
+```
+
+---
+
+## RoutingModule — waypoint events
+
+```ts
+import { MIDDLE_INDEX } from '@tomtom-org/maps-sdk/map';
+import type { Waypoint, WaypointDisplayProps } from '@tomtom-org/maps-sdk/map';
+
+// Click on any waypoint pin
+routingModule.events.waypoints.on('click', (waypoint: Waypoint<WaypointDisplayProps>, lngLat) => {
+    waypoint.properties.indexType; // 'ORIGIN' | 'DESTINATION' | MIDDLE_INDEX
+    waypoint.properties.index;     // position in the waypoints array
+
+    if (waypoint.properties.indexType === MIDDLE_INDEX) {
+        // intermediate stop clicked — offer to remove it
+        const stopIndex = waypoint.properties.index - 1;
+    }
+});
+```
+
+---
+
+## Dynamic stop insertion with `withInsertedWaypoint`
+
+```ts
+import { withInsertedWaypoint } from '@tomtom-org/maps-sdk/core';
+
+let waypoints: WaypointLike[] = [origin, destination];
+let currentRoute = routes.features[0];
+
+// On map click: find optimal position and insert new stop
+map.mapLibreMap.on('click', async (e) => {
+    const newStop = e.lngLat.toArray() as [number, number];
+    waypoints = withInsertedWaypoint(currentRoute, waypoints, newStop);
+
+    const updated = await calculateRoute({ locations: waypoints });
+    currentRoute = updated.features[0];
+    routingModule.showWaypoints(waypoints);
+    routingModule.showRoutes(updated);
+});
+```
+
+---
+
+## GeometriesModule — full config
+
+```ts
+import type { PolygonFeatures } from '@tomtom-org/maps-sdk/core';
+
+// Display city boundaries (inverted = shade everything outside)
+const geometriesModule = await GeometriesModule.get(map, {
+    theme: 'inverted',
+    beforeLayerConfig: 'lowestPlaceLabel',
+    colorConfig: { fillColor: 'white', fillOpacity: 0.75 },
+    lineConfig: { lineOpacity: 0 },
+});
+
+const geometry = geometryData({ geometries: [place] });
+await geometriesModule.show(geometry as PolygonFeatures);
+```
+
+---
+
 ## Gotchas
 
 - `showRoutes()` draws the line; `showWaypoints()` draws the pins — always call both
 - `maxAlternatives: 2` returns up to 3 routes; index 0 is the recommended route
 - EV charging stop insertion requires `chargingPreferences`; only `routeType: 'fast'` is supported
 - `selectRoute(index)` highlights an alternative without recalculating
+- `SELECTED_ROUTE_FILTER` is a MapLibre filter expression — use it in `additional` layers to limit them to the active route
+- `MIDDLE_INDEX` is the `indexType` value for intermediate stops (not a number — compare with `===`)
 - For map-wide traffic overlays (flow layer, incidents layer) see `docs/traffic.md`

@@ -5,7 +5,8 @@
 ```ts
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { TomTomMap, BaseMapModule, HillshadeModule, PlacesModule } from '@tomtom-org/maps-sdk/map';
-import { calculatePaddedBBox, calculatePaddedCenter } from '@tomtom-org/maps-sdk/map';
+import { calculatePaddedBBox, calculatePaddedCenter, calculateFittingBBox } from '@tomtom-org/maps-sdk/map';
+import { type StandardStyleID, standardStyleIDs } from '@tomtom-org/maps-sdk/map';
 ```
 
 ---
@@ -57,6 +58,55 @@ map.getBBox();               // → [west, south, east, north]
 **Styles:** `standardLight` (default), `standardDark`, `drivingLight`, `drivingDark`, `monoLight`, `monoDark`, `satellite`
 
 When offering style switching, prefer a `<select>` dropdown with all 7 styles over a simple toggle — it showcases the full range and gives users real control. For event handlers like background clicks, provide visible feedback (e.g. a toast notification with coordinates) rather than just `console.log`.
+
+### Init from a bounding box instead of center/zoom
+
+```ts
+import { bboxFromGeoJSON } from '@tomtom-org/maps-sdk/core';
+
+const map = new TomTomMap({
+    mapLibre: {
+        container: 'map',
+        bounds: bboxFromGeoJSON(places),          // [west, south, east, north]
+        fitBoundsOptions: { padding: 100 },
+    },
+});
+```
+
+### Style switcher with `standardStyleIDs`
+
+```ts
+// standardStyleIDs is a readonly array of all valid style IDs
+const select = document.querySelector('#style-select') as HTMLSelectElement;
+standardStyleIDs.forEach(id => select.add(new Option(id)));
+select.addEventListener('change', (e) =>
+    map.setStyle((e.target as HTMLSelectElement).value as StandardStyleID)
+);
+```
+
+### Non-interactive map (e.g. thumbnail / embed)
+
+```ts
+const map = new TomTomMap({
+    mapLibre: {
+        container: 'map',
+        bounds: geometry.bbox,
+        interactive: false,       // disables pan/zoom/click
+    },
+});
+```
+
+### Partial style loading (load only base tiles, add overlays lazily)
+
+```ts
+const map = new TomTomMap({
+    mapLibre: { container: 'map', zoom: 13, center: [2.14, 41.4] },
+    style: { type: 'standard', include: [] },  // no overlays initially
+});
+
+// Load modules on demand
+const trafficFlow = await TrafficFlowModule.get(map, { visible: true });
+```
 
 ---
 
@@ -146,21 +196,61 @@ map.mapLibreMap.on('click', (e) => { const { lng, lat } = e.lngLat; });
 
 ## Viewport utilities
 
-Calculate the visible map area when UI panels are present:
+Use these when surrounding UI panels (sidebars, search boxes, info panels) occupy part of the viewport — they account for the obscured area so the map content stays centred in the visible region.
+
+All three accept `surroundingElements` as an array of CSS selectors or `HTMLElement` references, plus an optional `paddingPX` (extra padding inside the visible area).
+
+### `calculatePaddedBBox` — visible bbox, excluding panels
+
+Returns the bounding box of the unobstructed map area. Use it as a search boundary so results only come from the area the user can actually see:
 
 ```ts
-const bbox = calculatePaddedBBox({
+const visibleBBox = calculatePaddedBBox({
     map,
-    surroundingElements: [document.getElementById('sidebar'), '#header'],
+    surroundingElements: ['#sidebar', '#search-bar'],
     paddingPX: 10,
 });
 
-map.mapLibreMap.fitBounds(bbox);
-
-const center = calculatePaddedCenter({ map, surroundingElements: ['#panel'] });
+if (visibleBBox) {
+    const places = await search({ query: 'coffee', boundingBox: visibleBBox });
+}
 ```
 
-Returns `[west, south, east, north]` or `null` if the visible area is too small.
+### `calculateFittingBBox` — fit content into the visible area
+
+Returns a bbox padded so that when you `fitBounds()` with it, the content lands inside the visible area (i.e. not hidden under panels). Use this to focus the map on a set of results or a route while keeping them fully visible:
+
+```ts
+const contentBBox = bboxFromGeoJSON(places); // the bbox of your data
+
+const fittingBBox = calculateFittingBBox({
+    map,
+    bbox: contentBBox,
+    surroundingElements: ['#sidebar'],
+    paddingPX: 40,
+});
+
+if (fittingBBox) {
+    map.mapLibreMap.fitBounds(fittingBBox);
+}
+```
+
+### `calculatePaddedCenter` — visual centre of the unobstructed area
+
+Returns the geographic centre of the visible (unobstructed) viewport. Use it to place a pin or fly-to point that appears centred to the user:
+
+```ts
+const visibleCenter = calculatePaddedCenter({
+    map,
+    surroundingElements: ['#bottom-sheet'],
+});
+
+if (visibleCenter) {
+    map.mapLibreMap.flyTo({ center: visibleCenter, zoom: 14 });
+}
+```
+
+All three return `null` if the visible area is too small to be usable.
 
 ---
 

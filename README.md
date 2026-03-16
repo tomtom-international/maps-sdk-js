@@ -2,9 +2,10 @@
 
 # TomTom Maps SDK for JavaScript
 
-[**Examples**](https://docs.tomtom.com/maps-sdk-js/examples/) |
-[**Documentation**](https://docs.tomtom.com/maps-sdk-js/introduction/overview) |
-[**API Reference**](https://docs.tomtom.com/maps-sdk-js/api-reference/index.html)
+[🎮 **Examples**](https://docs.tomtom.com/maps-sdk-js/examples/) |
+[📖 **Documentation**](https://docs.tomtom.com/maps-sdk-js/introduction/overview) |
+[📋 **API Reference**](https://docs.tomtom.com/maps-sdk-js/api-reference/index.html) |
+[🐙 **GitHub**](https://github.com/tomtom-international/maps-sdk-js)
 
 [![NPM Version](https://img.shields.io/npm/v/@tomtom-org/maps-sdk.svg)](https://www.npmjs.com/package/@tomtom-org/maps-sdk)
 
@@ -30,11 +31,18 @@ We have released some capabilities in the Maps SDK under [Public Preview](https:
 npm i @tomtom-org/maps-sdk
 ```
 
+## 🤖 AI Coding Agent Skill
+
+Install the SDK skill for AI coding agents (Claude Code, Cursor, GitHub Copilot, Windsurf, and [many more](https://www.npmjs.com/package/skills#available-agents)) to get SDK-specific assistance in your coding agent:
+```bash
+npx skills add tomtom-international/maps-sdk-js --skill tomtom-maps-sdk-js
+```
+
 ## 📚 Documentation & Examples
 
 Explore comprehensive guides and interactive examples to get the most out of Maps SDK JS:
 
-### 🚀 Interactive Examples
+### 🎮 Interactive Examples
 - **[Live Examples](https://docs.tomtom.com/maps-sdk-js/examples/)** - Try the SDK in your browser
 
 ### 📖 Documentation
@@ -70,19 +78,17 @@ You can both use the TomTom and MapLibre SDKs together at any time.
 
 ### ✨ Feature highlights
 Readily available, yet highly customizable interactive TomTom Maps:
-* in different styles: light, dark, b&w, satellite
-* with configurable POIs and Live Traffic
+* in different [styles](https://docs.tomtom.com/maps-sdk-js/guides/map/map-styles): light, dark, b&w, satellite
+* with configurable [POIs](https://docs.tomtom.com/maps-sdk-js/guides/map/pois) and [Live Traffic](https://docs.tomtom.com/maps-sdk-js/guides/map/traffic)
 * seamlessly integrable with TomTom [Services](#services)
-* with places, routes and geometries from TomTom services or your own data
+* with [places](https://docs.tomtom.com/maps-sdk-js/guides/map/places), [routes](https://docs.tomtom.com/maps-sdk-js/guides/map/routing) and [geometries](https://docs.tomtom.com/maps-sdk-js/guides/map/geometries) from TomTom services or your own data
 
 ### 🚀 Getting Started with Map
 #### Using npm
 The SDK Map uses [MapLibre GL JS](https://www.npmjs.com/package/maplibre-gl) as peer dependency.
 Therefore, you need to also have it installed in your project.\
 The TomTom SDK is tested against the latest stable [release of MapLibre GL](https://github.com/maplibre/maplibre-gl-js/blob/main/CHANGELOG.md).
-```
-npm i @tomtom-org/maps-sdk maplibre-gl
-```
+
 Code imports from the SDK Map Bundle will come from ```@tomtom-org/maps-sdk/map```
 <br/><br/>
 
@@ -115,7 +121,7 @@ is a set of utilities and TypeScript types which are common to both [Map](#map) 
 * Common types (such as outputs from Services which can be used as inputs to the Map)
 * Utilities (such as distance/duration formatting and bounding box calculations)
 
-### 🔧 Using the Core Bundle
+### 🚀 Using the Core Bundle
 If you use Map and/or Services, there is no need to install any further packages.\
 Code imports from the SDK Core Bundle will come from ```@tomtom-org/maps-sdk/core```
 
@@ -126,14 +132,14 @@ This repository uses a **dual-licensing model**.
 ### SDK Packages and plugins - Proprietary License
 The SDK packages (`@tomtom-org/maps-sdk/*` - core, services, map) and plugins (`@tomtom-org/maps-sdk-plugin-*`) are distributed under a **proprietary license**.
 
-📋 **[LICENSE.txt](./LICENSE.txt)** - Full license terms
+📜 **[LICENSE.txt](./LICENSE.txt)** - Full license terms
 
 These packages require a TomTom API key and agreement to our terms of service.
 
 ### Examples - Apache V2.0 License  
 All example code in the `examples/` directory is **open-source** under the Apache V2.0 License.
 
-📋 **[examples/LICENSE](./examples/LICENSE)** - Apache V2.0 License
+📜 **[examples/LICENSE](./examples/LICENSE)** - Apache V2.0 License
 
 The examples can be freely copied, modified, and used in your projects.
 

@@ -9,7 +9,9 @@ import {
     getPlacesWithEVAvailability, hasChargingAvailability,
     getPOICategories, getPOICategoryCodes,
 } from '@tomtom-org/maps-sdk/services';
+import type { AutocompleteSearchBrandSegment, AutocompleteSearchCategorySegment } from '@tomtom-org/maps-sdk/services';
 import { PlacesModule, POIsModule, GeometriesModule } from '@tomtom-org/maps-sdk/map';
+import type { PlaceIconConfig, PlacesTheme, MapFont } from '@tomtom-org/maps-sdk/map';
 import { bboxFromGeoJSON } from '@tomtom-org/maps-sdk/core';
 import { ViewportPlaces } from '@tomtom-org/maps-sdk-plugin-viewport-places';
 // npm i @tomtom-org/maps-sdk-plugin-viewport-places
@@ -240,10 +242,138 @@ await hotels.show(await search({ poiCategories: ['HOTEL_MOTEL'], position }));
 
 ---
 
-## Autocomplete
+## PlacesModule — themes and styling
+
+### Theme
 
 ```ts
-const suggestions = await autocompleteSearch({ query: 'amster', position: [4.9, 52.4] });
+// At init time
+const places = await PlacesModule.get(map, { theme: 'base-map' }); // 'base-map' | 'pin' | 'default'
+
+// At runtime
+places.applyTheme('pin');
+```
+
+### MapLibre layer paint overrides
+
+```ts
+const places = await PlacesModule.get(map, {
+    theme: 'base-map',
+    layers: {
+        main:     { paint: { 'text-color': '#AA0000', 'icon-opacity': 0.75 } },
+        selected: { paint: { 'text-color': 'red' } },
+        // zoom-based visibility:
+        // main: { minzoom: 15 }
+    },
+});
+```
+
+### Custom category icons
+
+```ts
+import myLogo from './myLogo.png';
+
+const iconConfig: PlaceIconConfig = {
+    categoryIcons: [
+        { id: 'ELECTRIC_VEHICLE_STATION', image: myLogo, pixelRatio: 1 },
+        { id: 'CAFE_PUB', image: 'https://example.com/icon.png', pixelRatio: 1 },
+    ],
+};
+
+places.applyIconConfig(iconConfig);
+// or: pass as icon: { ... } at get() time using the same shape
+```
+
+### Custom text and extra feature properties
+
+```ts
+// Custom title function
+places.applyTextConfig({ title: (place) => place.properties.poi?.name ?? '' });
+
+// Multi-line label using MapLibre format expression
+import type { DataDrivenPropertyValueSpecification } from 'maplibre-gl';
+const label: DataDrivenPropertyValueSpecification<string> = [
+    'format',
+    ['get', 'title'], { 'font-scale': 0.9 }, '\n', {},
+    ['get', 'phone'], { 'font-scale': 0.8, 'text-color': '#3125d1' },
+];
+places.applyTextConfig({ title: label });
+
+// Inject dynamic properties accessible in expressions via ['get', 'propName']
+places.applyExtraFeatureProps({
+    phone: (place) => `Tel: ${place.properties.poi?.phone}`,
+    staticProp: 'Some static value',
+});
+```
+
+### Programmatic hover/click state (sync list ↔ map)
+
+```ts
+// Trigger hover state on a pin from outside the map (e.g. list mouseenter)
+places.putEventState({ id: place.id, state: 'hover', mode: 'put' });
+
+// Clear all event states (e.g. list mouseleave)
+places.cleanEventStates();
+
+// Read current config
+const config = places.getConfig();
+```
+
+### BYOD — display your own GeoJSON as places
+
+```ts
+import type { Places } from '@tomtom-org/maps-sdk/core';
+
+const data: Places = await fetch('https://your-api.com/data.json').then(r => r.json());
+
+const places = await PlacesModule.get(map, {
+    theme: 'base-map',
+    icon: { mapping: { to: 'poiCategory', fn: () => 'COMPANY' } }, // map all to one icon
+    text: { title: (place) => place.properties['Name'] },
+    layers: { main: { minzoom: 15 } },
+});
+
+await places.show(data);
+```
+
+---
+
+## Search — additional options
+
+```ts
+// Brand-based search
+const places = await search({ poiBrands: ['Starbucks'], position: [4.9, 52.4] });
+
+// Typeahead (partial query)
+const places = await search({ query: 'amst', typeahead: true, position: [4.9, 52.4] });
+
+// Search for administrative geographies (e.g. to get geometry IDs for municipalities)
+const places = await search({
+    countries: ['ESP'],
+    geographyTypes: ['Municipality'],
+    limit: 16,
+});
+```
+
+---
+
+## Autocomplete with segment filtering
+
+```ts
+const response = await autocompleteSearch({ query: 'star', limit: 5 });
+
+// Segments: 'category' | 'brand' | 'plaintext'
+for (const result of response.results) {
+    const seg = result.segments[0] as AutocompleteSearchBrandSegment | AutocompleteSearchCategorySegment;
+
+    if (seg.type === 'category') {
+        // seg.category is a POICategory value — pass to search({ poiCategories: [seg.category] })
+        const places = await search({ poiCategories: [seg.category], boundingBox: map.getBBox() });
+    } else if (seg.type === 'brand') {
+        // seg.value is the brand name — pass to search({ poiBrands: [seg.value] })
+        const places = await search({ poiBrands: [seg.value], boundingBox: map.getBBox() });
+    }
+}
 ```
 
 ---
@@ -253,3 +383,5 @@ const suggestions = await autocompleteSearch({ query: 'amster', position: [4.9, 
 - `boundingBox`: `[west, south, east, north]`
 - `place.properties.poi?.categories` — `POICategory[]` (standardized enum, e.g. `'ITALIAN_RESTAURANT'`)
 - `place.properties.poi?.localizedCategories` — `string[]` (human-readable, e.g. `'restaurant'`)
+- `applyExtraFeatureProps` properties are accessible in MapLibre expressions via `['get', 'propName']`
+- `applyTextConfig` / `applyIconConfig` / `applyTheme` are runtime methods — apply after `get()`
