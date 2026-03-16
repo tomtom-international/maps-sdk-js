@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.46.2](https://github.com/tomtom-international/maps-sdk-js/compare/v0.46.1...v0.46.2) (2026-03-16)
+
+
+### Features
+
+* add context7 json to help manage ai assisted coding ([7ce7c17](https://github.com/tomtom-international/maps-sdk-js/commit/7ce7c179394471c8778828622ae8c8cec8d8ed6c))
+
 ## [0.46.1](https://github.com/tomtom-international/maps-sdk-js/compare/v0.46.0...v0.46.1) (2026-03-13)
 
 
