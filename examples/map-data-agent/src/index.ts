@@ -15,7 +15,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
 const map = new TomTomMap({
     mapLibre: {
         container: 'sdk-map',
-        center: [4.9, 52.37],  // Amsterdam
+        center: [4.9, 52.37], // Amsterdam
         zoom: 10,
     },
 });
@@ -48,10 +48,13 @@ const run = async () => {
 
     try {
         const result = await agent.stream({
-            messages: [{
-                role: 'user',
-                content: 'Load service center data from /data/service-centers.json and show the 30-minute coverage for each center.',
-            }],
+            messages: [
+                {
+                    role: 'user',
+                    content:
+                        'Load service center data from /data/service-centers.json and show the 30-minute coverage for each center.',
+                },
+            ],
         });
 
         statusEl.textContent = '';

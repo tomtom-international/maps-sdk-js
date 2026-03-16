@@ -1,6 +1,6 @@
 [
-    { "id": "ams-1", "name": "Amsterdam West", "lng": 4.8320, "lat": 52.3790 },
-    { "id": "ams-2", "name": "Amsterdam South", "lng": 4.9010, "lat": 52.3350 },
-    { "id": "ams-3", "name": "Amsterdam East",  "lng": 4.9560, "lat": 52.3600 },
-    { "id": "ams-4", "name": "Amsterdam North", "lng": 4.9110, "lat": 52.4100 }
+  { "id": "ams-1", "name": "Amsterdam West", "lng": 4.832, "lat": 52.379 },
+  { "id": "ams-2", "name": "Amsterdam South", "lng": 4.901, "lat": 52.335 },
+  { "id": "ams-3", "name": "Amsterdam East", "lng": 4.956, "lat": 52.36 },
+  { "id": "ams-4", "name": "Amsterdam North", "lng": 4.911, "lat": 52.41 }
 ]

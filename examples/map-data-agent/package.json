@@ -1,32 +1,32 @@
 {
-    "name": "@examples/map-data-agent",
-    "description": "Service center coverage analysis — doing→verifying example",
-    "type": "module",
-    "scripts": {
-        "build": "vite build --config ../example-vite.config.ts",
-        "build:eval": "VITE_EVAL_MODE=true vite build --config ../example-vite.config.ts",
-        "clean:dist": "rimraf ./dist",
-        "develop": "vite --config ../example-vite.config.ts",
-        "type-check": "tsc --noEmit",
-        "test:eval": "playwright test --config playwright.eval.config.ts",
-        "test:eval:ui": "playwright test --config playwright.eval.config.ts --ui",
-        "start-test-server": "vite preview --port 9051"
-    },
-    "dependencies": {
-        "@ai-sdk/azure": "catalog:",
-        "@tomtom-org/maps-sdk": "workspace:*",
-        "@tomtom-org/maps-sdk-plugin-ai-agent": "workspace:*",
-        "ai": "catalog:",
-        "zod": "catalog:"
-    },
-    "devDependencies": {
-        "@playwright/test": "catalog:",
-        "@types/node": "catalog:",
-        "maplibre-gl": "catalog:",
-        "rimraf": "catalog:",
-        "@testing/ai-eval": "workspace:*",
-        "ts-node": "catalog:",
-        "typescript": "catalog:",
-        "vite": "catalog:"
-    }
+  "name": "@examples/map-data-agent",
+  "description": "Service center coverage analysis — doing→verifying example",
+  "type": "module",
+  "scripts": {
+    "build": "vite build --config ../example-vite.config.ts",
+    "build:eval": "VITE_EVAL_MODE=true vite build --config ../example-vite.config.ts",
+    "clean:dist": "rimraf ./dist",
+    "develop": "vite --config ../example-vite.config.ts",
+    "type-check": "tsc --noEmit",
+    "test:eval": "playwright test --config playwright.eval.config.ts",
+    "test:eval:ui": "playwright test --config playwright.eval.config.ts --ui",
+    "start-test-server": "vite preview --port 9051"
+  },
+  "dependencies": {
+    "@ai-sdk/azure": "catalog:",
+    "@tomtom-org/maps-sdk": "workspace:*",
+    "@tomtom-org/maps-sdk-plugin-ai-agent": "workspace:*",
+    "ai": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@playwright/test": "catalog:",
+    "@types/node": "catalog:",
+    "maplibre-gl": "catalog:",
+    "rimraf": "catalog:",
+    "@testing/ai-eval": "workspace:*",
+    "ts-node": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  }
 }

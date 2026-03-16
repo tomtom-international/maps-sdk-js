@@ -46,10 +46,7 @@ export function createShowCoverageAnalysisTool(context: ToolContext<AnalysisServ
                     })),
                 );
 
-                const geometriesModule = await GeometriesModule.get(
-                    context.map.ttMap,
-                    reachableRangeGeometryConfig(),
-                );
+                const geometriesModule = await GeometriesModule.get(context.map.ttMap, reachableRangeGeometryConfig());
                 await geometriesModule.show(ranges);
 
                 const bbox = bboxFromGeoJSON(ranges) ?? null;

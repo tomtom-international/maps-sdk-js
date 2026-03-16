@@ -2613,6 +2613,9 @@ importers:
       '@testing/core-utils':
         specifier: workspace:*
         version: link:../core-utils
+      '@tomtom-org/maps-sdk-plugin-ai-agent':
+        specifier: workspace:*
+        version: link:../../plugins/map-agent
       '@tsconfig/recommended':
         specifier: 'catalog:'
         version: 1.0.13
