@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.0](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-viewport-places-v0.1.8...maps-sdk-plugin-viewport-places-v0.2.0) (2026-03-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* improve poi categories relationship with search
+
+### Features
+
+* improve poi categories relationship with search ([52f5a26](https://github.com/tomtom-international/maps-sdk-js/commit/52f5a265dbe0ae4cbb3386de3740cb887ed1a11c))
+* incident details service improvements and added agent tools ([9f3058d](https://github.com/tomtom-international/maps-sdk-js/commit/9f3058dd55fde278ea8d8b58ddb223c354dd9ada))
+
 ## [0.1.8](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-viewport-places-v0.1.7...maps-sdk-plugin-viewport-places-v0.1.8) (2026-02-16)
 
 
