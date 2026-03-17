@@ -1,3 +1,4 @@
+import type { HasLngLat } from '@tomtom-org/maps-sdk/core';
 import type { CommonGeocodeAndFuzzySearchParams, CommonSearchParams } from '../../shared';
 import type { FuzzySearchResponseAPI } from './fuzzySearchResponseAPI';
 
@@ -69,6 +70,31 @@ export type FuzzySearchParams = CommonSearchParams<URL, FuzzySearchResponseAPI> 
          * minFuzzyLevel: 2  // Require at least moderate similarity
          * ```
          */
+        /**
+         * Geographic position to bias search results toward.
+         *
+         * When provided, results closer to this position are ranked higher.
+         * Does not filter results, only creates a soft bias.
+         *
+         * Accepts any {@link HasLngLat}-compatible value:
+         * - `[longitude, latitude]` coordinate pair
+         * - GeoJSON `Point` geometry
+         * - GeoJSON `Feature<Point>` — pass a {@link Place} directly
+         *
+         * @example
+         * ```typescript
+         * // Coordinate pair
+         * position: [4.9041, 52.3676]
+         *
+         * // Place result from a previous search
+         * position: searchResults.features[0]
+         *
+         * // GeoJSON Point
+         * position: { type: 'Point', coordinates: [4.9041, 52.3676] }
+         * ```
+         */
+        position?: HasLngLat;
+
         minFuzzyLevel?: number;
 
         /**

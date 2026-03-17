@@ -1,3 +1,4 @@
+import type { HasLngLat } from '@tomtom-org/maps-sdk/core';
 import type { CommonGeocodeAndFuzzySearchParams, CommonPlacesParams, SearchIndexType } from '../../shared';
 import type { GeocodingResponseAPI } from './apiTypes';
 
@@ -66,6 +67,32 @@ export type GeocodingParams = Omit<
      * ```
      */
     query: string;
+
+    /**
+     * Geographic position to bias geocoding results toward.
+     *
+     * When provided, results closer to this position are ranked higher.
+     * Useful for resolving ambiguous queries (e.g. "Main Street") to
+     * the right city or region.
+     *
+     * Accepts any {@link HasLngLat}-compatible value:
+     * - `[longitude, latitude]` coordinate pair
+     * - GeoJSON `Point` geometry
+     * - GeoJSON `Feature<Point>` — pass a {@link Place} directly
+     *
+     * @example
+     * ```typescript
+     * // Coordinate pair
+     * position: [4.9041, 52.3676]
+     *
+     * // Place result from a previous search (e.g. user's selected location)
+     * position: selectedPlace
+     *
+     * // GeoJSON Point
+     * position: { type: 'Point', coordinates: [4.9041, 52.3676] }
+     * ```
+     */
+    position?: HasLngLat;
 
     /**
      * Indexes for which extended postal codes should be included in the results.

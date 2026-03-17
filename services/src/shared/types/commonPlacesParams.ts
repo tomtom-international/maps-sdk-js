@@ -1,4 +1,4 @@
-import type { GeographyType, HasLngLat, MapcodeType, View } from '@tomtom-org/maps-sdk/core';
+import type { GeographyType, MapcodeType, View } from '@tomtom-org/maps-sdk/core';
 import type { CommonServiceParams } from '../serviceTypes';
 
 /**
@@ -56,12 +56,6 @@ export type SearchIndexType = 'Geo' | 'PAD' | 'Addr' | 'Str' | 'XStr' | 'POI';
  *
  * @example
  * ```typescript
- * // Search with position bias
- * const searchParams: CommonPlacesParams<URL, Response> = {
- *   position: [4.9041, 52.3676],  // Near Amsterdam
- *   limit: 20
- * };
- *
  * // Search with geography type filter
  * const citySearch: CommonPlacesParams<URL, Response> = {
  *   geographyTypes: ['Municipality'],  // Only cities
@@ -87,35 +81,6 @@ export type SearchIndexType = 'Geo' | 'PAD' | 'Addr' | 'Str' | 'XStr' | 'POI';
  * @group Search
  */
 export type CommonPlacesParams<ApiRequest, ApiResponse> = CommonServiceParams<ApiRequest, ApiResponse> & {
-    /**
-     * Geographic position to bias search results.
-     *
-     * When provided, results closer to this position are ranked higher.
-     * Does not filter results, only influences ranking.
-     *
-     * @remarks
-     * **Coordinates:**
-     * - Longitude: -180 to +180 (East-West)
-     * - Latitude: -90 to +90 (North-South)
-     * - Format: [longitude, latitude]
-     *
-     * **Without Radius:**
-     * Supplying position without a radius parameter biases results toward this area
-     * but doesn't create a hard boundary.
-     *
-     * **Use Cases:**
-     * - "Find pizza near me" - bias toward user's location
-     * - "Main Street" - prioritize Main Streets in the target area
-     * - Local search within a city or region
-     *
-     * @example
-     * ```typescript
-     * position: [4.9041, 52.3676]  // Amsterdam coordinates
-     * position: [-74.0060, 40.7128]  // New York coordinates
-     * ```
-     */
-    position?: HasLngLat;
-
     /**
      * Maximum number of results to return.
      *

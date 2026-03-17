@@ -27,7 +27,7 @@ export const appendCommonSearchParams = (
     const urlParams = searchUrl.searchParams;
     appendCommonParams(urlParams, params);
     appendOptionalParam(urlParams, 'limit', params.limit);
-    appendLatLonParamsFromPosition(urlParams, params.position);
+    appendLatLonParamsFromPosition(urlParams, 'position' in params ? params.position : undefined);
 
     appendByJoiningParamValue(urlParams, 'fuelSet', params.fuelTypes);
     appendByJoiningParamValue(urlParams, 'idxSet', params.indexes);

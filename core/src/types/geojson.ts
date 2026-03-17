@@ -13,28 +13,28 @@ import type {
 /**
  * Input type representing a geographic point location.
  *
- * Accepts various formats for specifying a point location:
- * - `Position`: Raw coordinate array `[longitude, latitude]`
- * - `Point`: GeoJSON Point geometry
- * - `Feature<Point>`: GeoJSON Feature containing a Point geometry
+ * Accepted forms:
+ * - `[longitude, latitude]` — plain coordinate pair (GeoJSON `Position`)
+ * - `Point` — GeoJSON Point geometry object
+ * - `Feature<Point>` — GeoJSON Feature wrapping a Point; {@link Place} satisfies this directly
  *
  * @remarks
- * Note: Coordinates follow GeoJSON standard with longitude first, then latitude: `[lng, lat]`
+ * Coordinates always follow the GeoJSON convention: **longitude first, then latitude**.
+ *
+ * Because {@link Place} is a `Feature<Point>`, any search result can be passed
+ * wherever `HasLngLat` is accepted — for example as a `position` bias on a
+ * follow-up search, or as a route waypoint.
  *
  * @example
  * ```typescript
- * // As Position array
+ * // Plain coordinate pair
  * const pos1: HasLngLat = [4.9041, 52.3676];
  *
- * // As Point geometry
+ * // GeoJSON Point geometry
  * const pos2: HasLngLat = { type: 'Point', coordinates: [4.9041, 52.3676] };
  *
- * // As Feature
- * const pos3: HasLngLat = {
- *   type: 'Feature',
- *   geometry: { type: 'Point', coordinates: [4.9041, 52.3676] },
- *   properties: {}
- * };
+ * // GeoJSON Feature<Point> — e.g. a Place from search results
+ * const pos3: HasLngLat = searchResults.features[0];
  * ```
  *
  * @group Shared
