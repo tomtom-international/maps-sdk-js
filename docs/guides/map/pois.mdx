@@ -1,0 +1,185 @@
+---
+title: POIs Module
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.46.4"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The POIs Module controls Points of Interest displayed on the map, allowing you to show/hide POIs and filter them by category.
+
+<SDKGuideLiveCodingExample exampleDirectory="poi-filters" />
+
+## Initialization
+
+```javascript
+import { TomTomMap, POIsModule } from '@tomtom-org/maps-sdk/map';
+
+// Initialize map
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+
+// Get POIs module
+const poisModule = await POIsModule.get(map);
+```
+
+## Visibility Control
+
+Control POI layer visibility on the map:
+
+```javascript
+// Initialize with hidden POIs
+const poisModule = await POIsModule.get(map, {
+    visible: false
+});
+
+// Hide all POIs
+poisModule.setVisible(false);
+
+// Show all POIs
+poisModule.setVisible(true);
+
+// Check current visibility state
+const visible = poisModule.isVisible();
+```
+
+## Filtering
+
+Filter POIs by individual categories or category groups:
+
+```javascript
+// Filter on initialization
+const poisModule = await POIsModule.get(map, {
+    visible: true,
+    filters: {
+        categories: {
+            show: 'only',
+            values: ['RESTAURANT', 'CAFE_PUB']
+        }
+    }
+});
+
+// Show categories
+poisModule.filterCategories({
+    show: 'only',
+    values: ['RESTAURANT', 'CAFE_PUB', 'HOTEL_MOTEL']
+});
+
+// Hide categories
+poisModule.filterCategories({
+    show: 'all_except',
+    values: ['PARKING_GARAGE', 'OPEN_PARKING_AREA']
+});
+
+// Show category groups
+pois.filterCategories({
+    show: 'only',
+    values: ['FOOD_DRINKS_GROUP', 'SHOPPING_GROUP']
+});
+
+// Hide category groups
+pois.filterCategories({
+    show: 'all_except',
+    values: ['PARKING_GROUP', 'GAS_STATIONS_GROUP']
+});
+
+// Reset filter and show all categories
+pois.filterCategories(undefined);
+```
+
+### Available Category Groups
+
+The module supports predefined category groups for convenient filtering:
+
+- **FOOD_DRINKS_GROUP** - Restaurants, cafes, fast food, pubs, wineries
+- **SHOPPING_GROUP** - Stores, malls, markets, supermarkets
+- **TRANSPORTATION_GROUP** - Airports, train stations, bus stops, ferry terminals
+- **HEALTH_GROUP** - Hospitals, clinics, pharmacies, doctors, dentists
+- **PARKING_GROUP** - Parking garages and open parking areas
+- **HOLIDAY_TOURISM_GROUP** - Tourist attractions, museums, beaches, scenic views
+- **EV_CHARGING_STATIONS_GROUP** - Electric vehicle charging stations
+- **GAS_STATIONS_GROUP** - Gas and petrol stations
+- **ACCOMMODATION_GROUP** - Hotels, motels, camping grounds
+- **ENTERTAINMENT_GROUP** - Cinemas, theaters, nightlife, casinos
+- **SPORTS_LEISURE_GROUP** - Stadiums, sports centers, swimming pools, golf courses
+- **EDUCATION_GROUP** - Schools, universities, libraries, cultural centers
+- **GOVERNMENT_GROUP** - Government offices, courthouses, embassies, police, fire stations
+
+## Events
+
+<SDKGuideLiveCodingExample exampleDirectory="interactive-map-pois" />
+
+Handle user interactions with POIs:
+
+```javascript
+// Click events
+pois.events.on('click', (feature, lngLat) => {
+    console.log('POI name:', feature.properties.name);
+    console.log('Category:', feature.properties.category);
+    console.log('ID:', feature.properties.id);
+    console.log('Click coordinates:', lngLat);
+});
+
+// Hover events
+pois.events.on('hover', (feature, lngLat) => {
+    console.log('Hovering over:', feature.properties.name);
+});
+
+// Context menu (right-click)
+pois.events.on('contextmenu', (feature, lngLat) => {
+    console.log('Right-clicked POI:', feature.properties.name);
+});
+
+// Long hover
+pois.events.on('long-hover', (feature, lngLat) => {
+    console.log('Long hover on:', feature.properties.name);
+});
+
+// Remove event listeners
+pois.events.off('click', handler);
+```
+
+## POI Feature Properties
+
+POI features include the following properties in events:
+
+- `id` - Unique POI identifier
+- `name` - POI name in native language
+- `category` - POI category (e.g., 'RESTAURANT', 'HOTEL_MOTEL')
+- `iconID` - Icon sprite ID used for rendering
+- `group` - Category group the POI belongs to
+- `priority` - Importance level (lower number = more important)
+
+## Querying Visible Features
+
+Use `getShown()` to retrieve all POI features currently rendered in the visible map area:
+
+```javascript
+const shown = poisModule.getShown();
+console.log(`Visible POIs: ${shown.poi.length}`);
+shown.poi.forEach(poi => {
+    console.log(poi.properties.name, poi.properties.category);
+});
+```
+
+## API Reference
+
+For complete documentation of all POIs Module properties, methods, and types, see the **[POIsModule API Reference](/maps-sdk-js/api-reference/classes/map.POIsModule.html)**.
+
+## Related Guides and Examples
+
+### Services Integration
+- **[Place by ID](../services/places/place-by-id.mdx)** - Fetch full place details (opening hours, phone, URL) when a POI is clicked on the map
+- **[Search Services](../services/places/search.mdx)** - Find places and display them with the Places Module alongside filtered POIs
+
+### Related Examples
+- **[POI Filters](../../examples/poi-filters/)** - Interactive POI category filtering
+- **[Geometry Search with POI Categories](../../examples/geometry-search-with-poi-categories/)** - Search for POIs within specific areas
+- **[Places Customize](../../examples/places-customize/)** - Combining POIs with custom place markers
+
+### Related Map Modules
+- **[Places Module](./places.mdx)** - Display custom places and search results on the map
+- **[User Interaction Events](./user-events.mdx)** - Handle user interactions with map features including POIs
