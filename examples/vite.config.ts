@@ -14,7 +14,7 @@ export default defineConfig(({ mode }) => {
             },
             emptyOutDir: true,
             sourcemap: true,
-            rollupOptions: {
+            rolldownOptions: {
                 external: ['@codesandbox/sandpack-react', '@codesandbox/sandpack-themes'],
             },
             minify: 'terser',
