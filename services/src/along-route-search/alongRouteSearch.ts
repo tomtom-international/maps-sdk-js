@@ -28,14 +28,14 @@ import type { AlongRouteSearchParams, AlongRouteSearchResponse } from './types';
  * // Find coffee shops within a 5-minute detour
  * const results = await alongRouteSearch({
  *   route: routeResult.features[0].geometry,
- *   maxDetourTime: 300,
+ *   maxDetourTimeSeconds: 300,
  *   query: 'coffee',
  * });
  *
  * // EV chargers with a 10-minute budget, sorted by position on route
  * const chargers = await alongRouteSearch({
  *   route: routeResult.features[0].geometry,
- *   maxDetourTime: 600,
+ *   maxDetourTimeSeconds: 600,
  *   poiCategories: ['ELECTRIC_VEHICLE_STATION'],
  *   sortBy: 'detourOffset',
  * });
