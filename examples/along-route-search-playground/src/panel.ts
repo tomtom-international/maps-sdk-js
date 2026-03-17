@@ -1,4 +1,5 @@
 import { formatDuration, type POICategory } from '@tomtom-org/maps-sdk/core';
+import type { AlongRouteSearchParams } from '@tomtom-org/maps-sdk/services';
 
 const ROUTE_POI_CATEGORIES = [
     'ELECTRIC_VEHICLE_STATION',
@@ -27,25 +28,21 @@ const ROUTE_POI_CATEGORIES = [
 
 const DEFAULT_DETOUR_MINUTES = 5;
 
-export type SearchPanelParams = {
-    query: string | undefined;
-    poiCategories: POICategory[] | undefined;
-    maxDetourTimeSeconds: number;
-};
+export type SearchPanelParams = Pick<AlongRouteSearchParams, 'query' | 'poiCategories' | 'maxDetourTimeSeconds'>;
 
 export const setupPanel = (onSearch: (params: SearchPanelParams) => Promise<void>, onClear: () => void) => {
     const queryInput = document.querySelector('#sdk-example-queryInput') as HTMLInputElement;
     const searchButton = document.querySelector('#sdk-example-searchButton') as HTMLButtonElement;
     const clearButton = document.querySelector('#sdk-example-clearButton') as HTMLButtonElement;
     const categoriesContainer = document.querySelector('#sdk-example-categoriesContainer') as HTMLDivElement;
-    const detourSlider = document.querySelector('#sdk-example-detourSlider') as HTMLInputElement;
+    const detourMinutesSlider = document.querySelector('#sdk-example-detourSlider') as HTMLInputElement;
     const detourValue = document.querySelector('#sdk-example-detourValue') as HTMLSpanElement;
 
     // Sync slider to the constant so the HTML never needs to be updated manually
-    detourSlider.value = String(DEFAULT_DETOUR_MINUTES);
+    detourMinutesSlider.value = String(DEFAULT_DETOUR_MINUTES);
     detourValue.textContent = formatDuration(DEFAULT_DETOUR_MINUTES * 60) ?? `${DEFAULT_DETOUR_MINUTES} min`;
 
-    const checkedCategories = new Set<POICategory>();
+    let checkedCategories: POICategory[] = [];
     let isLoading = false;
 
     for (const category of ROUTE_POI_CATEGORIES) {
@@ -56,8 +53,12 @@ export const setupPanel = (onSearch: (params: SearchPanelParams) => Promise<void
         input.type = 'checkbox';
         input.value = category;
         input.addEventListener('change', () => {
-            if (input.checked) checkedCategories.add(category);
-            else checkedCategories.delete(category);
+            if (input.checked) {
+                checkedCategories.push(category);
+            } else {
+                checkedCategories = checkedCategories.filter((c) => c !== category);
+            }
+            console.log('checkedCategories after change: ', checkedCategories);
         });
 
         label.appendChild(input);
@@ -65,16 +66,19 @@ export const setupPanel = (onSearch: (params: SearchPanelParams) => Promise<void
         categoriesContainer.appendChild(label);
     }
 
-    detourSlider.addEventListener('input', () => {
-        const minutes = Number(detourSlider.value);
+    detourMinutesSlider.addEventListener('input', () => {
+        const minutes = Number(detourMinutesSlider.value);
         detourValue.textContent = formatDuration(minutes * 60) ?? `${minutes} min`;
     });
 
-    const getParams = (): SearchPanelParams => ({
-        query: queryInput.value.trim() || undefined,
-        poiCategories: checkedCategories.size > 0 ? [...checkedCategories] : undefined,
-        maxDetourTimeSeconds: Number(detourSlider.value) * 60,
-    });
+    const getParams = (): SearchPanelParams => {
+        console.log(checkedCategories);
+        return {
+            query: queryInput.value.trim() || undefined,
+            poiCategories: checkedCategories.length > 0 ? checkedCategories : undefined,
+            maxDetourTimeSeconds: Number(detourMinutesSlider.value) * 60,
+        };
+    };
 
     const setLoading = (loading: boolean) => {
         isLoading = loading;
@@ -94,11 +98,11 @@ export const setupPanel = (onSearch: (params: SearchPanelParams) => Promise<void
 
     const reset = () => {
         queryInput.value = '';
-        checkedCategories.clear();
+        checkedCategories = [];
         categoriesContainer.querySelectorAll<HTMLInputElement>('input[type="checkbox"]').forEach((cb) => {
             cb.checked = false;
         });
-        detourSlider.value = String(DEFAULT_DETOUR_MINUTES);
+        detourMinutesSlider.value = String(DEFAULT_DETOUR_MINUTES);
         detourValue.textContent = formatDuration(DEFAULT_DETOUR_MINUTES * 60) ?? `${DEFAULT_DETOUR_MINUTES} min`;
     };
 

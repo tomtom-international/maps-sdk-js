@@ -1,7 +1,7 @@
 import { Avoidable, avoidableTypes } from '@tomtom-org/maps-sdk/core';
 
 export const setupAvoidOptions = (onChange: () => Promise<void>, onReset: () => Promise<void>) => {
-    const activeAvoidTypes = new Set<Avoidable>();
+    let activeAvoidTypes: Avoidable[] = [];
 
     const avoidTypesList = document.getElementById('avoid-types-list') as HTMLDivElement;
     for (const type of avoidableTypes) {
@@ -12,7 +12,11 @@ export const setupAvoidOptions = (onChange: () => Promise<void>, onReset: () => 
         checkbox.value = type;
         checkbox.id = `avoid-type-${type}`;
         checkbox.addEventListener('change', async () => {
-            checkbox.checked ? activeAvoidTypes.add(type) : activeAvoidTypes.delete(type);
+            if (checkbox.checked) {
+                activeAvoidTypes.push(type);
+            } else {
+                activeAvoidTypes = activeAvoidTypes.filter((t) => t !== type);
+            }
             await onChange();
         });
         label.appendChild(checkbox);
@@ -21,7 +25,7 @@ export const setupAvoidOptions = (onChange: () => Promise<void>, onReset: () => 
     }
 
     (document.getElementById('reset-button') as HTMLButtonElement).addEventListener('click', async () => {
-        activeAvoidTypes.clear();
+        activeAvoidTypes = [];
         document.querySelectorAll<HTMLInputElement>('#avoid-types-list input[type="checkbox"]').forEach((cb) => {
             cb.checked = false;
         });
@@ -29,7 +33,7 @@ export const setupAvoidOptions = (onChange: () => Promise<void>, onReset: () => 
     });
 
     return {
-        get activeAvoidTypes(): ReadonlySet<Avoidable> {
+        get activeAvoidTypes(): Avoidable[] {
             return activeAvoidTypes;
         },
     };

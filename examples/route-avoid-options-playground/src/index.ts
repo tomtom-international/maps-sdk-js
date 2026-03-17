@@ -27,17 +27,15 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     let currentRoute: Route;
     let activePopup: ReturnType<typeof createSectionPopup> | null = null;
     let suppressNextMapClick = false;
-    let avoidedAreasManager!: ReturnType<typeof setupAvoidedAreas>;
-    let avoidOptions!: ReturnType<typeof setupAvoidOptions>;
+    let avoidedAreasManager: ReturnType<typeof setupAvoidedAreas>;
+    let avoidOptions: ReturnType<typeof setupAvoidOptions>;
 
     const recalculate = async () => {
-        const activeAvoidTypes = avoidOptions.activeAvoidTypes;
-        const avoid = activeAvoidTypes.size > 0 ? [...activeAvoidTypes] : undefined;
         const areas = avoidedAreasManager.areas;
         const avoidAreas = areas.length > 0 ? areas.map((a) => a.bbox) : undefined;
         const routeResult = await calculateRoute({
             locations,
-            costModel: { avoid, avoidAreas },
+            costModel: { avoid: avoidOptions.activeAvoidTypes, avoidAreas },
         });
         currentRoute = routeResult.features[0];
         await routingModule.showWaypoints(locations);
