@@ -27,14 +27,14 @@ export default defineConfig(({ mode }) => {
             emptyOutDir: true,
             outDir: '../dist',
             minify: 'terser',
-            rollupOptions: {
+            rolldownOptions: {
                 external: ['maplibre-gl'],
-                onwarn: (warning, warn) => {
+                onLog: (level, log, defaultHandler) => {
                     // Suppress warnings about pure annotations, which are used in the SDK codebase and have no significant impact here.
-                    if (warning.message.includes('/* @__PURE__ */')) {
+                    if (log.message.includes('/* @__PURE__ */')) {
                         return;
                     }
-                    warn(warning);
+                    defaultHandler(level, log);
                 },
                 output: {
                     globals: {

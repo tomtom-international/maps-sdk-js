@@ -205,7 +205,7 @@ describe('AlongRouteSearch request schema performance tests', () => {
         expect(
             bestExecutionTimeMS(
                 () =>
-                    validateRequestSchema(alongRouteSearchReqObject as AlongRouteSearchParams, {
+                    validateRequestSchema(alongRouteSearchReqObject, {
                         schema: alongRouteSearchRequestSchema,
                     }),
                 10,

@@ -31,7 +31,7 @@ export const buildViteConfig = (bundleName: 'core' | 'services' | 'map'): UserCo
             minify: 'terser',
             emptyOutDir: true,
             sourcemap: true,
-            rollupOptions: {
+            rolldownOptions: {
                 // Externalize peer dependencies automatically, plus @tomtom-org/maps-sdk/core
                 plugins: [peerDepsExternal()],
                 external: ['@tomtom-org/maps-sdk/core'],
