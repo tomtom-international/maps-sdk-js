@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.46.4](https://github.com/tomtom-international/maps-sdk-js/compare/v0.46.3...v0.46.4) (2026-03-17)
+
+
+### Bug Fixes
+
+* sandpack examples relying on Set logic ([ada3d81](https://github.com/tomtom-international/maps-sdk-js/commit/ada3d811407200c1e2220e5a81f4a6dfa3e00242))
+
 ## [0.46.3](https://github.com/tomtom-international/maps-sdk-js/compare/v0.46.2...v0.46.3) (2026-03-17)
 
 
