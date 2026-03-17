@@ -1,4 +1,7 @@
 import type { Place, Places, SearchPlaceProps } from '@tomtom-org/maps-sdk/core';
+import type { AlongRouteSearchParams } from '../along-route-search';
+import { alongRouteSearch } from '../along-route-search/alongRouteSearch';
+import type { AlongRouteSearchTemplate } from '../along-route-search/alongRouteSearchTemplate';
 import type { FuzzySearchParams, QueryIntent } from '../fuzzy-search';
 import { fuzzySearch } from '../fuzzy-search/fuzzySearch';
 import type { FuzzySearchTemplate } from '../fuzzy-search/fuzzySearchTemplate';
@@ -73,27 +76,28 @@ export type SearchResponse = Places<SearchPlaceProps, SearchFeatureCollectionPro
  * @group Search
  */
 export const search = async (
-    params: GeometrySearchParams | FuzzySearchParams,
-    customTemplate?: Partial<GeometrySearchTemplate | FuzzySearchTemplate>,
-): Promise<SearchResponse> =>
-    'geometries' in params
-        ? geometrySearch(params, customTemplate as GeometrySearchTemplate)
-        : fuzzySearch(params, customTemplate as FuzzySearchTemplate);
+    params: GeometrySearchParams | FuzzySearchParams | AlongRouteSearchParams,
+    customTemplate?: Partial<GeometrySearchTemplate | FuzzySearchTemplate | AlongRouteSearchTemplate>,
+): Promise<SearchResponse> => {
+    if ('route' in params) return alongRouteSearch(params, customTemplate as Partial<AlongRouteSearchTemplate>);
+    if ('geometries' in params) return geometrySearch(params, customTemplate as Partial<GeometrySearchTemplate>);
+    return fuzzySearch(params, customTemplate as Partial<FuzzySearchTemplate>);
+};
 
 /**
  * Search for a single place by text query.
  *
  * Convenience function that calls {@link search} and returns the first result.
+ * Throws an error if no results are found.
  *
  * @param query - Search query string
- * @returns Promise resolving to the first matching place, or undefined if no results
+ * @returns Promise resolving to the first matching place
+ * @throws {Error} If no results are found for the query
  *
  * @example
  * ```typescript
  * const place = await searchOne('Vondelpark Amsterdam');
- * if (place) {
- *   console.log(place.properties.name);
- * }
+ * console.log(place.properties.poi?.name);
  * ```
  *
  * @remarks
@@ -102,5 +106,8 @@ export const search = async (
  *
  * @group Search
  */
-export const searchOne = async (query: string): Promise<Place<SearchPlaceProps> | undefined> =>
-    (await search({ query, limit: 1 })).features[0];
+export const searchOne = async (query: string): Promise<Place<SearchPlaceProps>> => {
+    const result = await search({ query, limit: 1 });
+    if (!result.features[0]) throw new Error(`searchOne: no results found for "${query}"`);
+    return result.features[0];
+};

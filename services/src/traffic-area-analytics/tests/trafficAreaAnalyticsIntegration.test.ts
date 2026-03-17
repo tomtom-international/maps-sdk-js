@@ -22,7 +22,7 @@ const AMSTERDAM_GEOMETRY = {
 
 const BASE_PARAMS = {
     startDate: new Date('2024-08-06'),
-    endDate: new Date('2024-08-06'),
+    endDate: new Date('2024-08-10'),
     functionalRoadClasses: [
         'MOTORWAY',
         'MAJOR_ROAD',

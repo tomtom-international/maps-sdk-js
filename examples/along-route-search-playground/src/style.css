@@ -1,0 +1,51 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/form/input.css";
+@import "../../src/templates/css/form/checkbox.css";
+@import "../../src/templates/css/form/field.css";
+@import "../../src/templates/css/form/slider.css";
+@import "../../src/templates/css/button/button.css";
+
+/* CUSTOM STYLES (example-specific) */
+
+.sdk-example-customPanel {
+    width: 280px;
+}
+
+#sdk-example-clearButton {
+    margin-bottom: var(--sdk-space-3);
+}
+
+.sdk-example-categories-section {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.sdk-example-categories-list {
+    max-height: 240px;
+    overflow-y: auto;
+    padding-right: var(--sdk-space-1);
+}
+
+.sdk-example-footer-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sdk-space-2);
+}
+
+/* Responsive: max-height 700px */
+@media (max-height: 700px) {
+    .sdk-example-categories-list {
+        max-height: 160px;
+    }
+}
+
+/* Responsive: max-height 550px */
+@media (max-height: 550px) {
+    .sdk-example-categories-list {
+        max-height: 100px;
+    }
+}

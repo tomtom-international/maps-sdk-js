@@ -13,7 +13,7 @@ import { initTogglePanel } from './togglePanel';
 TomTomConfig.instance.put({ apiKey: API_KEY });
 
 (async () => {
-    const [origin, destination] = await Promise.all([geocodeOne('Washington'), geocodeOne('New York')]);
+    const [origin, destination] = await Promise.all(['Washington', 'New York'].map(geocodeOne));
 
     const map = new TomTomMap({
         mapLibre: {

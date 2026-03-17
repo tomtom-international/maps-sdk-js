@@ -10,7 +10,7 @@ import './style.css';
 TomTomConfig.instance.put({ apiKey: API_KEY });
 
 (async () => {
-    const locations = await Promise.all([geocodeOne('London'), geocodeOne('Paris')]);
+    const locations = await Promise.all(['London', 'Paris'].map(geocodeOne));
 
     const map = new TomTomMap({
         mapLibre: { container: 'sdk-map', bounds: bboxFromGeoJSON(locations), fitBoundsOptions: { padding: 80 } },

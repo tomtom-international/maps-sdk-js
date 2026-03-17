@@ -10,7 +10,7 @@ import { initTogglePanel } from './togglePanel';
 TomTomConfig.instance.put({ apiKey: API_KEY });
 
 (async () => {
-    const waypoints = await Promise.all([geocodeOne('London'), geocodeOne('Paris')]);
+    const waypoints = await Promise.all(['London', 'Paris'].map(geocodeOne));
     const bounds = bboxFromGeoJSON(waypoints) as LngLatBoundsLike;
     const fitBoundsOptions = { padding: 150 };
 

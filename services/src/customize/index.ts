@@ -3,6 +3,7 @@
  * @group Customization
  */
 
+import alongRouteSearchCustomize from '../along-route-search/customize';
 import autocompleteCustomize from '../autocomplete-search/customize';
 import evChargingStationsAvailabilityCustomize from '../ev-charging-stations-availability/customize';
 import geocodeCustomize from '../geocode/customize';
@@ -58,6 +59,7 @@ import trafficIncidentDetailsCustomize from '../traffic-incident-details/customi
  * @group Advanced
  */
 export const customizeService: {
+    alongRouteSearch: typeof alongRouteSearchCustomize;
     reverseGeocode: typeof revgeoCustomize;
     geocode: typeof geocodeCustomize;
     geometryData: typeof geometryDataCustomize;
@@ -70,6 +72,7 @@ export const customizeService: {
     placeByID: typeof placeByIdCustomize;
     autocompleteSearch: typeof autocompleteCustomize;
 } = {
+    alongRouteSearch: alongRouteSearchCustomize,
     reverseGeocode: revgeoCustomize,
     geocode: geocodeCustomize,
     geometryData: geometryDataCustomize,

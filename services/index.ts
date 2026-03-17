@@ -3,6 +3,7 @@
  * @module
  */
 
+export * from './src/along-route-search';
 export * from './src/autocomplete-search';
 export * from './src/customize';
 export * from './src/ev-charging-stations-availability';

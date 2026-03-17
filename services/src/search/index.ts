@@ -3,6 +3,7 @@
  * @group Search
  */
 
+export * from '../along-route-search';
 export * from '../fuzzy-search';
 export * from '../geometry-search';
 export type * from '../shared/types/commonGeocodeAndFuzzySearchParams';

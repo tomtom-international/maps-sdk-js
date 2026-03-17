@@ -8,7 +8,7 @@ import { API_KEY } from './config';
 TomTomConfig.instance.put({ apiKey: API_KEY });
 
 (async () => {
-    const waypoints = await Promise.all([geocodeOne('Paris, FR'), geocodeOne('Amsterdam, NL')]);
+    const waypoints = await Promise.all(['Paris, FR', 'Amsterdam, NL'].map(geocodeOne));
 
     const map = new TomTomMap({
         mapLibre: {
