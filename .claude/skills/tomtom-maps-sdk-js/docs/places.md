@@ -128,6 +128,67 @@ const places = await search({
 
 ---
 
+## Along-route search — find POIs along a planned route
+
+`search()` dispatches to along-route search when a `route` parameter is provided.
+
+**Route input** accepts three forms:
+- `Route` Feature from `calculateRoute` (most common)
+- `LineString` GeoJSON geometry
+- `Position[]` — plain array of `[longitude, latitude]` pairs
+
+```ts
+import { calculateRoute, geocodeOne, search } from '@tomtom-org/maps-sdk/services';
+import type { Waypoint } from '@tomtom-org/maps-sdk/core';
+
+// Most common: use a Route Feature from calculateRoute
+const waypoints: Waypoint[] = await Promise.all(['Amsterdam', 'Utrecht'].map(geocodeOne));
+const routes = await calculateRoute({ locations: waypoints });
+
+const evStations = await search({
+    route: routes.features[0],          // Route Feature
+    maxDetourTimeSeconds: 600,          // required — positive integer
+    poiCategories: ['ELECTRIC_VEHICLE_STATION'],
+    limit: 10,
+});
+
+// Or pass a LineString geometry directly
+const cafes = await search({
+    route: routes.features[0].geometry, // LineString
+    maxDetourTimeSeconds: 300,
+    query: 'cafe',
+    sortBy: 'detourOffset',             // 'detourTime' | 'detourOffset'
+});
+
+// Or pass a plain coordinate array
+const stops = await search({
+    route: [[4.9, 52.37], [4.95, 52.28], [5.1, 52.09]], // Position[]
+    maxDetourTimeSeconds: 600,
+    poiCategories: ['GAS_STATION'],
+});
+```
+
+**Display on map:**
+
+```ts
+const placesModule = await PlacesModule.get(map);
+await placesModule.show(evStations);
+```
+
+**Parameters unique to along-route search:**
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `route` | Yes | `Route \| LineString \| Position[]` — the route to search along |
+| `maxDetourTimeSeconds` | Yes | Max allowed detour in seconds (positive integer) |
+| `sortBy` | No | `'detourTime'` (default) or `'detourOffset'` (position along route) |
+
+All [common search parameters](#poi-category-search) (`query`, `poiCategories`, `limit`, `language`, etc.) also apply.
+
+**Gotcha:** `route` and `geometries` are mutually exclusive — do not pass both.
+
+---
+
 ## Place by ID — full details with opening hours
 
 ```ts

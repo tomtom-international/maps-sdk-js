@@ -93,7 +93,7 @@ try {
 }
 ```
 
-**Tip:** `geocodeOne()` throws if no result — use `geocode()` or wrap in try/catch when the address might not be found. `searchOne()` returns `undefined` instead of throwing.
+**Tip:** Both `geocodeOne()` and `searchOne()` throw if no result — use `geocode()` / `search()` or wrap in try/catch when the query might not be found.
 
 ---
 
