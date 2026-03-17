@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.46.3](https://github.com/tomtom-international/maps-sdk-js/compare/v0.46.2...v0.46.3) (2026-03-17)
+
+
+### Features
+
+* along route search service with examples, docs and minor refactorings ([bca128f](https://github.com/tomtom-international/maps-sdk-js/commit/bca128fe3e122be4dbc6a19701bacfdb8e94080b))
+* along route search service with examples, docs and minor refactorings ([fcef902](https://github.com/tomtom-international/maps-sdk-js/commit/fcef902167d51c61d26dfd104e8e929b7fe854d9))
+
+
+### Bug Fixes
+
+* ensure geometry search and along route search cannot accept position params ([b065378](https://github.com/tomtom-international/maps-sdk-js/commit/b065378f2f08a5bbbbac2e3d362e116c06263d1d))
+
 ## [0.46.2](https://github.com/tomtom-international/maps-sdk-js/compare/v0.46.1...v0.46.2) (2026-03-16)
 
 
