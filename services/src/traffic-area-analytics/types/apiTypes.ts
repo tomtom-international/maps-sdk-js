@@ -106,7 +106,7 @@ export type AreaAnalyticsRequestBodyFeature = {
  * @ignore
  */
 export type AreaAnalyticsRequestBody = {
-    name?: string;
+    name: string;
     /** Continuous range start — mutually exclusive with `days`. */
     startDate?: string;
     /** Continuous range end — mutually exclusive with `days`. */

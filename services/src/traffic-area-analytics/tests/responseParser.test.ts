@@ -205,6 +205,181 @@ describe('parseTrafficAreaAnalyticsResponse', () => {
         expect(result.features[0].properties.anomalies).toBeUndefined();
     });
 
+    test('computes date and hour for hourly entries without temporal fields', () => {
+        const result = parseTrafficAreaAnalyticsResponse({
+            type: 'FeatureCollection',
+            properties: {
+                startDate: '2024-08-06',
+                endDate: '2024-08-07',
+                dataTypes: ['SPEED'],
+                heatmap: false,
+                frcs: [0],
+            },
+            features: [
+                {
+                    type: 'Feature',
+                    id: 'hourly-test',
+                    geometry: {
+                        type: 'Polygon',
+                        coordinates: [[[4.9, 52.3], [4.91, 52.3], [4.91, 52.31], [4.9, 52.3]]],
+                    },
+                    properties: {
+                        name: 'Test',
+                        timezone: 'UTC',
+                        level: 0,
+                        baseData: {},
+                        timedData: {
+                            // 48 entries (2 days × 24 hours) with NO date/hour fields
+                            hourly: Array.from({ length: 48 }, (_, i) => ({ v: 30 + i })),
+                        },
+                    },
+                },
+            ],
+        });
+
+        const { hourly } = result.features[0].properties.timedData;
+        expect(hourly).toHaveLength(48);
+        // First entry: day 0, hour 0
+        expect(hourly![0].date).toBeInstanceOf(Date);
+        expect(hourly![0].date!.toISOString()).toBe('2024-08-06T00:00:00.000Z');
+        expect(hourly![0].hour).toBe(0);
+        // Entry 7: day 0, hour 7
+        expect(hourly![7].hour).toBe(7);
+        // Entry 24: day 1, hour 0
+        expect(hourly![24].date!.toISOString()).toBe('2024-08-07T00:00:00.000Z');
+        expect(hourly![24].hour).toBe(0);
+        // Entry 47: day 1, hour 23
+        expect(hourly![47].hour).toBe(23);
+        expect(hourly![47].speed).toBe(77);
+    });
+
+    test('computes day and hour for average entries without temporal fields', () => {
+        const result = parseTrafficAreaAnalyticsResponse({
+            type: 'FeatureCollection',
+            properties: {
+                startDate: '2024-08-06',
+                endDate: '2024-08-12',
+                dataTypes: ['CONGESTION_LEVEL'],
+                heatmap: false,
+                frcs: [0],
+            },
+            features: [
+                {
+                    type: 'Feature',
+                    id: 'average-test',
+                    geometry: {
+                        type: 'Polygon',
+                        coordinates: [[[4.9, 52.3], [4.91, 52.3], [4.91, 52.31], [4.9, 52.3]]],
+                    },
+                    properties: {
+                        name: 'Test',
+                        timezone: 'UTC',
+                        level: 0,
+                        baseData: {},
+                        timedData: {
+                            // 168 entries (7 × 24) with NO day/hour fields
+                            average: Array.from({ length: 168 }, (_, i) => ({ c: i })),
+                        },
+                    },
+                },
+            ],
+        });
+
+        const { average } = result.features[0].properties.timedData;
+        expect(average).toHaveLength(168);
+        // First entry: day 1 (Monday), hour 0
+        expect(average![0].day).toBe(1);
+        expect(average![0].hour).toBe(0);
+        // Entry 23: day 1, hour 23
+        expect(average![23].day).toBe(1);
+        expect(average![23].hour).toBe(23);
+        // Entry 24: day 2 (Tuesday), hour 0
+        expect(average![24].day).toBe(2);
+        expect(average![24].hour).toBe(0);
+        // Last entry (167): day 7 (Sunday), hour 23
+        expect(average![167].day).toBe(7);
+        expect(average![167].hour).toBe(23);
+    });
+
+    test('computes date for daily entries without date field', () => {
+        const result = parseTrafficAreaAnalyticsResponse({
+            type: 'FeatureCollection',
+            properties: {
+                startDate: '2024-08-06',
+                endDate: '2024-08-08',
+                dataTypes: ['SPEED'],
+                heatmap: false,
+                frcs: [0],
+            },
+            features: [
+                {
+                    type: 'Feature',
+                    id: 'daily-test',
+                    geometry: {
+                        type: 'Polygon',
+                        coordinates: [[[4.9, 52.3], [4.91, 52.3], [4.91, 52.31], [4.9, 52.3]]],
+                    },
+                    properties: {
+                        name: 'Test',
+                        timezone: 'UTC',
+                        level: 0,
+                        baseData: {},
+                        timedData: {
+                            daily: [{ v: 40 }, { v: 45 }, { v: 50 }],
+                        },
+                    },
+                },
+            ],
+        });
+
+        const { daily } = result.features[0].properties.timedData;
+        expect(daily).toHaveLength(3);
+        expect(daily![0].date!.toISOString()).toBe('2024-08-06T00:00:00.000Z');
+        expect(daily![1].date!.toISOString()).toBe('2024-08-07T00:00:00.000Z');
+        expect(daily![2].date!.toISOString()).toBe('2024-08-08T00:00:00.000Z');
+    });
+
+    test('preserves API-provided temporal fields when present', () => {
+        const result = parseTrafficAreaAnalyticsResponse({
+            type: 'FeatureCollection',
+            properties: {
+                startDate: '2024-08-06',
+                endDate: '2024-08-06',
+                dataTypes: ['SPEED'],
+                heatmap: false,
+                frcs: [0],
+            },
+            features: [
+                {
+                    type: 'Feature',
+                    id: 'preserve-test',
+                    geometry: {
+                        type: 'Polygon',
+                        coordinates: [[[4.9, 52.3], [4.91, 52.3], [4.91, 52.31], [4.9, 52.3]]],
+                    },
+                    properties: {
+                        name: 'Test',
+                        timezone: 'UTC',
+                        level: 0,
+                        baseData: {},
+                        timedData: {
+                            hourly: [{ date: '2024-08-06', hour: 8, v: 40 }],
+                            average: [{ day: 3, hour: 14, c: 25 }],
+                        },
+                    },
+                },
+            ],
+        });
+
+        const { hourly, average } = result.features[0].properties.timedData;
+        // Hourly: API-provided date/hour should be preserved
+        expect(hourly![0].date!.toISOString()).toBe('2024-08-06T00:00:00.000Z');
+        expect(hourly![0].hour).toBe(8);
+        // Average: API-provided day/hour should be preserved
+        expect(average![0].day).toBe(3);
+        expect(average![0].hour).toBe(14);
+    });
+
     test('preserves feature id and polygon geometry', () => {
         const coords = [
             [
