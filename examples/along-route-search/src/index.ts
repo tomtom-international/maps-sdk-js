@@ -24,11 +24,11 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
     routingModule.showRoutes(routes);
 
     const placesModule = await PlacesModule.get(map);
-    const evStations = await search({
+    const results = await search({
         poiCategories: ['BEACH', 'SCENIC_PANORAMIC_VIEW'],
         route: routes.features[0],
         maxDetourTimeSeconds: 60,
         limit: 20,
     });
-    placesModule.show(evStations);
+    placesModule.show(results);
 })();
