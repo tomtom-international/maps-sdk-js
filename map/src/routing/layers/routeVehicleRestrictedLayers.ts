@@ -1,8 +1,9 @@
 import type { LineLayerSpecification } from 'maplibre-gl';
 import type { LayerSpecTemplate } from '../../shared';
+import type { RouteWidth } from '../types/routeModuleConfig';
 import {
+    getLineForegroundWidth,
     ROUTE_LINE_FOREGROUND_COLOR,
-    ROUTE_LINE_FOREGROUND_WIDTH,
     ROUTE_LINE_OUTLINE_COLOR,
     SELECTED_ROUTE_FILTER,
 } from './shared';
@@ -10,7 +11,9 @@ import {
 /**
  * @ignore
  */
-export const routeVehicleRestrictedBackgroundLine: LayerSpecTemplate<LineLayerSpecification> = {
+export const routeVehicleRestrictedBackgroundLine = (
+    routeWidth?: RouteWidth,
+): LayerSpecTemplate<LineLayerSpecification> => ({
     filter: SELECTED_ROUTE_FILTER,
     type: 'line',
     layout: {
@@ -18,14 +21,16 @@ export const routeVehicleRestrictedBackgroundLine: LayerSpecTemplate<LineLayerSp
     },
     paint: {
         'line-color': ROUTE_LINE_OUTLINE_COLOR,
-        'line-width': ROUTE_LINE_FOREGROUND_WIDTH,
+        'line-width': getLineForegroundWidth(routeWidth),
     },
-};
+});
 
 /**
  * @ignore
  */
-export const routeVehicleRestrictedDottedLine: LayerSpecTemplate<LineLayerSpecification> = {
+export const routeVehicleRestrictedDottedLine = (
+    routeWidth?: RouteWidth,
+): LayerSpecTemplate<LineLayerSpecification> => ({
     filter: SELECTED_ROUTE_FILTER,
     type: 'line',
     layout: {
@@ -34,7 +39,7 @@ export const routeVehicleRestrictedDottedLine: LayerSpecTemplate<LineLayerSpecif
     },
     paint: {
         'line-color': ROUTE_LINE_FOREGROUND_COLOR,
-        'line-width': ['interpolate', ['linear'], ['zoom'], 1, 2, 5, 3, 10, 5, 18, 7],
+        'line-width': getLineForegroundWidth(routeWidth),
         'line-dasharray': [0, 1.5],
     },
-};
+});

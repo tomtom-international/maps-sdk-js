@@ -1,39 +1,42 @@
 import type { LineLayerSpecification, SymbolLayerSpecification } from 'maplibre-gl';
 import type { LayerSpecTemplate } from '../../shared';
-import { SELECTED_ROUTE_FILTER } from './shared';
+import type { RouteWidth } from '../types/routeModuleConfig';
+import { getInstructionLineWidth, getInstructionOutlineWidth, SELECTED_ROUTE_FILTER } from './shared';
 
 const commonProps = {
     filter: SELECTED_ROUTE_FILTER,
     minzoom: 16,
 };
 
-const commonLineProps: LayerSpecTemplate<LineLayerSpecification> = {
+const commonLineLayout: LayerSpecTemplate<LineLayerSpecification>['layout'] = {
+    'line-cap': 'round',
+};
+
+/**
+ * @ignore
+ */
+export const instructionOutline = (routeWidth?: RouteWidth): LayerSpecTemplate<LineLayerSpecification> => ({
     ...commonProps,
     type: 'line',
-    layout: { 'line-cap': 'round' },
-};
-
-/**
- * @ignore
- */
-export const instructionOutline: LayerSpecTemplate<LineLayerSpecification> = {
-    ...commonLineProps,
+    layout: commonLineLayout,
     paint: {
-        'line-width': ['interpolate', ['linear'], ['zoom'], 16, 14, 22, 20],
+        'line-width': getInstructionOutlineWidth(routeWidth),
         'line-color': 'grey',
     },
-};
+});
 
 /**
  * @ignore
  */
-export const instructionLine: LayerSpecTemplate<LineLayerSpecification> = {
-    ...commonLineProps,
+export const instructionLine = (routeWidth?: RouteWidth): LayerSpecTemplate<LineLayerSpecification> => ({
+    ...commonProps,
+    type: 'line',
+    layout: commonLineLayout,
     paint: {
-        'line-width': ['interpolate', ['linear'], ['zoom'], 16, 12, 22, 17],
+        'line-width': getInstructionLineWidth(routeWidth),
         'line-color': 'white',
     },
-};
+});
 
 /**
  * @ignore

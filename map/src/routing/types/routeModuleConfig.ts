@@ -467,6 +467,36 @@ export type WaypointsConfig = {
 };
 
 /**
+ * Route line thickness preset.
+ *
+ * @remarks
+ * Controls the thickness of the main route line and its outline at all zoom levels.
+ *
+ * Available options:
+ * - `"s"` - Thin line, suitable for dense or cluttered maps
+ * - `"m"` - Default medium thickness
+ * - `"l"` - Thick line, useful for high emphasis or accessibility
+ *
+ * @group Routing
+ */
+export type RouteWidth = 's' | 'm' | 'l';
+
+/**
+ * Route waypoint icon size preset.
+ *
+ * @remarks
+ * Controls the scale of waypoint pin icons at all zoom levels.
+ *
+ * Available options:
+ * - `"s"` - Small icons
+ * - `"m"` - Default medium icons
+ * - `"l"` - Large icons
+ *
+ * @group Routing
+ */
+export type RouteWaypointSize = 's' | 'm' | 'l';
+
+/**
  * Generic styling for route visualization.
  *
  * @remarks
@@ -477,16 +507,39 @@ export type WaypointsConfig = {
  */
 export type RouteTheme = {
     /**
-     * The overall main color for the route waypoints and main lines.
-     * * Use this to quickly theme the route appearance to match your application style.
+     * The primary color applied to the route line and waypoint icons.
      *
      * @remarks
-     * * Can be overwritten by more specific configuration options which target color of specific layers.
+     * Use this to quickly brand the route to match your application style.
+     * Affects the main selected route line foreground and the waypoint icon fill.
+     * Can be overwritten by more specific layer styling configurations.
      *
      * Available options:
      * - Any valid CSS color string (e.g., `"#FF0000"`, `"rgb(255,0,0)"`, `"red"`, etc.)
      */
     mainColor?: string;
+
+    /**
+     * Line thickness preset for the main route line and its outline.
+     *
+     * @remarks
+     * Scales the route line width at all zoom levels using predefined profiles.
+     * Can be overwritten by more specific layer styling configurations.
+     *
+     * @defaultValue `"m"`
+     */
+    routeWidth?: RouteWidth;
+
+    /**
+     * Icon size preset for route waypoint pins.
+     *
+     * @remarks
+     * Scales the waypoint icon at all zoom levels using predefined profiles.
+     * Can be overwritten by more specific layer styling configurations.
+     *
+     * @defaultValue `"m"`
+     */
+    waypointSize?: RouteWaypointSize;
 };
 
 /**

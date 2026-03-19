@@ -5,8 +5,67 @@
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
         <link rel="icon" href="data:,">
     </head>
-    <body>
+    <body class="sdk-example-body">
         <div id="sdk-map"></div>
+
+        <div class="sdk-example-customPanel">
+            <div class="sdk-example-panel-header">
+                <h3 class="sdk-example-heading">
+                    <span class="sdk-example-heading-text">Route color</span>
+                    <button class="sdk-example-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="sdk-example-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+
+            <div class="sdk-example-panel-content">
+                <div class="sdk-example-section">
+                    <div class="sdk-example-form-field">
+                        <span class="sdk-example-form-label">Route color</span>
+                        <div class="sdk-example-color-selectors" id="color-selectors">
+                            <button
+                                type="button"
+                                class="sdk-example-color-selector"
+                                data-color=""
+                                style="background: linear-gradient(135deg, #fff 49%, #36A8F0 51%); border: 2px solid #ddd;"
+                                aria-label="Default"
+                            ></button>
+                            <button
+                                type="button"
+                                class="sdk-example-color-selector active"
+                                data-color="#DF1B12"
+                                style="background:#DF1B12;"
+                                aria-label="Red"
+                            ></button>
+                            <button
+                                type="button"
+                                class="sdk-example-color-selector"
+                                data-color="#00A550"
+                                style="background:#00A550;"
+                                aria-label="Green"
+                            ></button>
+                            <button
+                                type="button"
+                                class="sdk-example-color-selector"
+                                data-color="#7B2FBE"
+                                style="background:#7B2FBE;"
+                                aria-label="Purple"
+                            ></button>
+                            <button
+                                type="button"
+                                class="sdk-example-color-selector"
+                                data-color="#FF8C00"
+                                style="background:#FF8C00;"
+                                aria-label="Orange"
+                            ></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script type="module" src="./index.ts"></script>
     </body>
 </html>

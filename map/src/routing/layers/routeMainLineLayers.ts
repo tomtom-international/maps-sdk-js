@@ -1,11 +1,13 @@
-import type { ExpressionSpecification, LineLayerSpecification, SymbolLayerSpecification } from 'maplibre-gl';
+import type { LineLayerSpecification, SymbolLayerSpecification } from 'maplibre-gl';
 import type { LayerSpecTemplate } from '../../shared';
+import type { RouteWidth } from '../types/routeModuleConfig';
 import {
     DESELECTED_FOREGROUND_COLOR,
     DESELECTED_OUTLINE_COLOR,
     DESELECTED_ROUTE_FILTER,
+    getLineForegroundWidth,
+    getLineOutlineWidth,
     ROUTE_LINE_FOREGROUND_COLOR,
-    ROUTE_LINE_FOREGROUND_WIDTH,
     ROUTE_LINE_OUTLINE_COLOR,
     SELECTED_ROUTE_FILTER,
 } from './shared';
@@ -22,53 +24,54 @@ export const routeLineBaseTemplate: LayerSpecTemplate<LineLayerSpecification> = 
     },
 };
 
-const outlineLineWidth: ExpressionSpecification = ['interpolate', ['linear'], ['zoom'], 1, 5, 5, 6, 10, 10, 18, 14];
-
 /**
  * @ignore
  */
-export const routeDeselectedOutline: LayerSpecTemplate<LineLayerSpecification> = {
+export const routeDeselectedOutline = (routeWidth?: RouteWidth): LayerSpecTemplate<LineLayerSpecification> => ({
     ...routeLineBaseTemplate,
     filter: DESELECTED_ROUTE_FILTER,
     paint: {
         'line-color': DESELECTED_OUTLINE_COLOR,
-        'line-width': outlineLineWidth,
+        'line-width': getLineOutlineWidth(routeWidth),
     },
-};
+});
 
 /**
  * @ignore
  */
-export const routeDeselectedLine: LayerSpecTemplate<LineLayerSpecification> = {
+export const routeDeselectedLine = (routeWidth?: RouteWidth): LayerSpecTemplate<LineLayerSpecification> => ({
     ...routeLineBaseTemplate,
     filter: DESELECTED_ROUTE_FILTER,
     paint: {
         'line-color': DESELECTED_FOREGROUND_COLOR,
-        'line-width': ROUTE_LINE_FOREGROUND_WIDTH,
+        'line-width': getLineForegroundWidth(routeWidth),
     },
-};
+});
 
 /**
  * @ignore
  */
-export const routeOutline: LayerSpecTemplate<LineLayerSpecification> = {
+export const routeOutline = (routeWidth?: RouteWidth): LayerSpecTemplate<LineLayerSpecification> => ({
     ...routeLineBaseTemplate,
     filter: SELECTED_ROUTE_FILTER,
     paint: {
         'line-color': ROUTE_LINE_OUTLINE_COLOR,
-        'line-width': outlineLineWidth,
+        'line-width': getLineOutlineWidth(routeWidth),
     },
-};
+});
 
 /**
  * @ignore
  */
-export const routeMainLine = (props?: { color?: string }): LayerSpecTemplate<LineLayerSpecification> => ({
+export const routeMainLine = (
+    routeWidth?: RouteWidth,
+    routeColor?: string,
+): LayerSpecTemplate<LineLayerSpecification> => ({
     ...routeLineBaseTemplate,
     filter: SELECTED_ROUTE_FILTER,
     paint: {
-        'line-color': props?.color ?? ROUTE_LINE_FOREGROUND_COLOR,
-        'line-width': ROUTE_LINE_FOREGROUND_WIDTH,
+        'line-color': routeColor ?? ROUTE_LINE_FOREGROUND_COLOR,
+        'line-width': getLineForegroundWidth(routeWidth),
     },
 });
 

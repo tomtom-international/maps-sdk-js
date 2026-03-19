@@ -1,19 +1,20 @@
 import type { LineLayerSpecification } from 'maplibre-gl';
 import type { LayerSpecTemplate } from '../../shared';
-import { ROUTE_LINE_FOREGROUND_WIDTH, SELECTED_ROUTE_FILTER } from './shared';
+import type { RouteWidth } from '../types/routeModuleConfig';
+import { getLineForegroundWidth, SELECTED_ROUTE_FILTER } from './shared';
 
 /**
  * @ignore
  */
-export const routeTunnelsLine: LayerSpecTemplate<LineLayerSpecification> = {
+export const routeTunnelsLine = (routeWidth?: RouteWidth): LayerSpecTemplate<LineLayerSpecification> => ({
     filter: SELECTED_ROUTE_FILTER,
     type: 'line',
     layout: {
         'line-join': 'round',
     },
     paint: {
-        'line-width': ROUTE_LINE_FOREGROUND_WIDTH,
+        'line-width': getLineForegroundWidth(routeWidth),
         'line-color': '#000000',
         'line-opacity': 0.3,
     },
-};
+});

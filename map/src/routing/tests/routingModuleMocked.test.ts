@@ -96,7 +96,7 @@ describe('Routing module tests', () => {
                 mainLines: {
                     additional: {
                         'a-different-id': {
-                            ...routeDeselectedOutline,
+                            ...routeDeselectedOutline(),
                             beforeID: mapStyleLayerIDs.lowestLabel,
                         },
                     },

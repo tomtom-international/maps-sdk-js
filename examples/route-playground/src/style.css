@@ -3,4 +3,7 @@
 @import "../../src/templates/css/base/typography.css";
 @import "../../src/templates/css/panel/custom-panel.css";
 @import "../../src/templates/css/form/field.css";
+@import "../../src/templates/css/form/radio.css";
 @import "../../src/templates/css/form/color.css";
+@import "../../src/templates/css/form/toggle.css";
+@import "../../src/templates/css/form/slider.css";

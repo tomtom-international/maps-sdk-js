@@ -19,6 +19,7 @@ import {
 } from './routeTrafficSectionLayers';
 import { routeTunnelsLine } from './routeTunnelSectionLayers';
 import { routeVehicleRestrictedBackgroundLine, routeVehicleRestrictedDottedLine } from './routeVehicleRestrictedLayers';
+import { getWaypointIconSize } from './shared';
 import { buildSummaryBubbleSymbolPoint, summaryBubbleSymbolPoint } from './summaryBubbleLayers';
 import { waypointLabels, waypointSymbols } from './waypointLayers';
 
@@ -58,6 +59,20 @@ const prefixBeforeIDs = (
 };
 
 /**
+ * Merges a base layer spec with a user override, deep-merging paint and layout instead of replacing them.
+ * @ignore
+ */
+const mergeLayer = <T extends Record<string, any>>(base: T, override: Record<string, any> | undefined): T => {
+    if (!override) return base;
+    return {
+        ...base,
+        ...override,
+        ...(override.paint && { paint: { ...base.paint, ...override.paint } }),
+        ...(override.layout && { layout: { ...base.layout, ...override.layout } }),
+    };
+};
+
+/**
  * Helper function to add instance suffix to image IDs for supporting multiple RoutingModule instances
  * @ignore
  */
@@ -82,164 +97,189 @@ export const buildRoutingLayers = (
 ): Required<RouteLayersConfig> => {
     const configLayers = config.layers;
     const configSectionLayers = configLayers?.sections;
-    const mainColor = config.theme?.mainColor;
+    const routeColor = config.theme?.mainColor;
+    const routeWidth = config.theme?.routeWidth;
+    const waypointSize = config.theme?.waypointSize;
+    const waypointIconSize = getWaypointIconSize(waypointSize);
 
     return {
         mainLines: {
-            routeLineArrows: {
-                ...routeLineArrows,
-                beforeID: mapStyleLayerIDs.lowestLabel,
-                ...configLayers?.mainLines?.routeLineArrows,
-            },
-            routeLine: {
-                ...routeMainLine({ color: mainColor }),
-                beforeID: prefixBeforeID('routeIncidentBackgroundLine', layerIDPrefix),
-                ...configLayers?.mainLines?.routeLine,
-            },
-            routeOutline: {
-                ...routeOutline,
-                beforeID: prefixBeforeID('routeLine', layerIDPrefix),
-                ...configLayers?.mainLines?.routeOutline,
-            },
-            routeDeselectedLine: {
-                ...routeDeselectedLine,
-                beforeID: prefixBeforeID('routeOutline', layerIDPrefix),
-                ...configLayers?.mainLines?.routeDeselectedLine,
-            },
-            routeDeselectedOutline: {
-                ...routeDeselectedOutline,
-                beforeID: prefixBeforeID('routeDeselectedLine', layerIDPrefix),
-                ...configLayers?.mainLines?.routeDeselectedOutline,
-            },
+            routeLineArrows: mergeLayer(
+                { ...routeLineArrows, beforeID: mapStyleLayerIDs.lowestLabel },
+                configLayers?.mainLines?.routeLineArrows,
+            ),
+            routeLine: mergeLayer(
+                {
+                    ...routeMainLine(routeWidth, routeColor),
+                    beforeID: prefixBeforeID('routeIncidentBackgroundLine', layerIDPrefix),
+                },
+                configLayers?.mainLines?.routeLine,
+            ),
+            routeOutline: mergeLayer(
+                { ...routeOutline(routeWidth), beforeID: prefixBeforeID('routeLine', layerIDPrefix) },
+                configLayers?.mainLines?.routeOutline,
+            ),
+            routeDeselectedLine: mergeLayer(
+                { ...routeDeselectedLine(routeWidth), beforeID: prefixBeforeID('routeOutline', layerIDPrefix) },
+                configLayers?.mainLines?.routeDeselectedLine,
+            ),
+            routeDeselectedOutline: mergeLayer(
+                {
+                    ...routeDeselectedOutline(routeWidth),
+                    beforeID: prefixBeforeID('routeDeselectedLine', layerIDPrefix),
+                },
+                configLayers?.mainLines?.routeDeselectedOutline,
+            ),
             ...prefixBeforeIDs(configLayers?.mainLines?.additional, layerIDPrefix),
         },
         waypoints: {
-            routeWaypointSymbol: {
-                ...waypointSymbols,
-                beforeID: prefixBeforeID('routeSummaryBubbleSymbol', layerIDPrefix),
-                ...configLayers?.waypoints?.routeWaypointSymbol,
-            },
-            routeWaypointLabel: {
-                ...waypointLabels,
-                beforeID: prefixBeforeID('routeWaypointSymbol', layerIDPrefix),
-                ...configLayers?.waypoints?.routeWaypointLabel,
-            },
+            routeWaypointSymbol: mergeLayer(
+                {
+                    ...waypointSymbols,
+                    layout: { ...waypointSymbols.layout, 'icon-size': waypointIconSize },
+                    beforeID: prefixBeforeID('routeSummaryBubbleSymbol', layerIDPrefix),
+                },
+                configLayers?.waypoints?.routeWaypointSymbol,
+            ),
+            routeWaypointLabel: mergeLayer(
+                { ...waypointLabels, beforeID: prefixBeforeID('routeWaypointSymbol', layerIDPrefix) },
+                configLayers?.waypoints?.routeWaypointLabel,
+            ),
             ...prefixBeforeIDs(configLayers?.waypoints?.additional, layerIDPrefix),
         },
         chargingStops: {
-            routeChargingStopSymbol: {
-                ...chargingStopSymbol(config.chargingStops),
-                beforeID: prefixBeforeID('routeWaypointSymbol', layerIDPrefix),
-                ...configLayers?.chargingStops?.routeChargingStopSymbol,
-            },
+            routeChargingStopSymbol: mergeLayer(
+                {
+                    ...chargingStopSymbol(config.chargingStops),
+                    beforeID: prefixBeforeID('routeWaypointSymbol', layerIDPrefix),
+                },
+                configLayers?.chargingStops?.routeChargingStopSymbol,
+            ),
             ...prefixBeforeIDs(configLayers?.chargingStops?.additional, layerIDPrefix),
         },
         sections: {
             incident: {
-                routeIncidentJamSymbol: {
-                    ...routeIncidentsJamSymbol,
-                    beforeID: prefixBeforeID('routeChargingStopSymbol', layerIDPrefix),
-                    ...configSectionLayers?.incident?.routeIncidentJamSymbol,
-                },
-                routeIncidentCauseSymbol: {
-                    ...routeIncidentsCauseSymbol,
-                    beforeID: prefixBeforeID('routeChargingStopSymbol', layerIDPrefix),
-                    ...configSectionLayers?.incident?.routeIncidentCauseSymbol,
-                },
-                routeIncidentBackgroundLine: {
-                    ...routeIncidentsBGLine,
-                    beforeID: prefixBeforeID('routeIncidentDashedLine', layerIDPrefix),
-                    ...configSectionLayers?.incident?.routeIncidentBackgroundLine,
-                },
-                routeIncidentDashedLine: {
-                    ...routeIncidentsDashedLine,
-                    beforeID: prefixBeforeID('routeTunnelLine', layerIDPrefix),
-                    ...configSectionLayers?.incident?.routeIncidentDashedLine,
-                },
+                routeIncidentJamSymbol: mergeLayer(
+                    {
+                        ...routeIncidentsJamSymbol,
+                        beforeID: prefixBeforeID('routeChargingStopSymbol', layerIDPrefix),
+                    },
+                    configSectionLayers?.incident?.routeIncidentJamSymbol,
+                ),
+                routeIncidentCauseSymbol: mergeLayer(
+                    {
+                        ...routeIncidentsCauseSymbol,
+                        beforeID: prefixBeforeID('routeChargingStopSymbol', layerIDPrefix),
+                    },
+                    configSectionLayers?.incident?.routeIncidentCauseSymbol,
+                ),
+                routeIncidentBackgroundLine: mergeLayer(
+                    {
+                        ...routeIncidentsBGLine(routeWidth),
+                        beforeID: prefixBeforeID('routeIncidentDashedLine', layerIDPrefix),
+                    },
+                    configSectionLayers?.incident?.routeIncidentBackgroundLine,
+                ),
+                routeIncidentDashedLine: mergeLayer(
+                    {
+                        ...routeIncidentsDashedLine(routeWidth),
+                        beforeID: prefixBeforeID('routeTunnelLine', layerIDPrefix),
+                    },
+                    configSectionLayers?.incident?.routeIncidentDashedLine,
+                ),
                 ...prefixBeforeIDs(configSectionLayers?.incident?.additional, layerIDPrefix),
             },
             ferry: {
-                routeFerryLine: {
-                    ...routeFerriesLine,
-                    beforeID: prefixBeforeID('routeLineArrows', layerIDPrefix),
-                    ...configSectionLayers?.ferry?.routeFerryLine,
-                },
-                routeFerrySymbol: {
-                    ...routeFerriesSymbol,
-                    beforeID: prefixBeforeID('routeIncidentJamSymbol', layerIDPrefix),
-                    ...configSectionLayers?.ferry?.routeFerrySymbol,
-                },
+                routeFerryLine: mergeLayer(
+                    { ...routeFerriesLine(routeWidth), beforeID: prefixBeforeID('routeLineArrows', layerIDPrefix) },
+                    configSectionLayers?.ferry?.routeFerryLine,
+                ),
+                routeFerrySymbol: mergeLayer(
+                    {
+                        ...routeFerriesSymbol,
+                        beforeID: prefixBeforeID('routeIncidentJamSymbol', layerIDPrefix),
+                    },
+                    configSectionLayers?.ferry?.routeFerrySymbol,
+                ),
                 ...prefixBeforeIDs(configSectionLayers?.ferry?.additional, layerIDPrefix),
             },
             tollRoad: {
-                routeTollRoadOutline: {
-                    ...routeTollRoadsOutline,
-                    beforeID: prefixBeforeID('routeDeselectedOutline', layerIDPrefix),
-                    ...configSectionLayers?.tollRoad?.routeTollRoadOutline,
-                },
-                routeTollRoadSymbol: {
-                    ...routeTollRoadsSymbol,
-                    beforeID: prefixBeforeID('routeChargingStopSymbol', layerIDPrefix),
-                    ...configSectionLayers?.tollRoad?.routeTollRoadSymbol,
-                },
+                routeTollRoadOutline: mergeLayer(
+                    {
+                        ...routeTollRoadsOutline(routeWidth),
+                        beforeID: prefixBeforeID('routeDeselectedOutline', layerIDPrefix),
+                    },
+                    configSectionLayers?.tollRoad?.routeTollRoadOutline,
+                ),
+                routeTollRoadSymbol: mergeLayer(
+                    {
+                        ...routeTollRoadsSymbol,
+                        beforeID: prefixBeforeID('routeChargingStopSymbol', layerIDPrefix),
+                    },
+                    configSectionLayers?.tollRoad?.routeTollRoadSymbol,
+                ),
                 ...prefixBeforeIDs(configSectionLayers?.tollRoad?.additional, layerIDPrefix),
             },
             tunnel: {
-                routeTunnelLine: {
-                    ...routeTunnelsLine,
-                    beforeID: prefixBeforeID('routeLineArrows', layerIDPrefix),
-                    ...configSectionLayers?.tunnel?.routeTunnelLine,
-                },
+                routeTunnelLine: mergeLayer(
+                    { ...routeTunnelsLine(routeWidth), beforeID: prefixBeforeID('routeLineArrows', layerIDPrefix) },
+                    configSectionLayers?.tunnel?.routeTunnelLine,
+                ),
                 ...prefixBeforeIDs(configSectionLayers?.tunnel?.additional, layerIDPrefix),
             },
             vehicleRestricted: {
-                routeVehicleRestrictedBackgroundLine: {
-                    ...routeVehicleRestrictedBackgroundLine,
-                    beforeID: prefixBeforeID('routeVehicleRestrictedForegroundLine', layerIDPrefix),
-                    ...configSectionLayers?.vehicleRestricted?.routeVehicleRestrictedBackgroundLine,
-                },
-                routeVehicleRestrictedForegroundLine: {
-                    ...routeVehicleRestrictedDottedLine,
-                    beforeID: mapStyleLayerIDs.lowestLabel,
-                    ...configSectionLayers?.vehicleRestricted?.routeVehicleRestrictedForegroundLine,
-                },
+                routeVehicleRestrictedBackgroundLine: mergeLayer(
+                    {
+                        ...routeVehicleRestrictedBackgroundLine(routeWidth),
+                        beforeID: prefixBeforeID('routeVehicleRestrictedForegroundLine', layerIDPrefix),
+                    },
+                    configSectionLayers?.vehicleRestricted?.routeVehicleRestrictedBackgroundLine,
+                ),
+                routeVehicleRestrictedForegroundLine: mergeLayer(
+                    { ...routeVehicleRestrictedDottedLine(routeWidth), beforeID: mapStyleLayerIDs.lowestLabel },
+                    configSectionLayers?.vehicleRestricted?.routeVehicleRestrictedForegroundLine,
+                ),
                 ...prefixBeforeIDs(configSectionLayers?.vehicleRestricted?.additional, layerIDPrefix),
             },
         },
         instructionLines: {
-            routeInstructionLine: {
-                ...instructionLine,
-                beforeID: mapStyleLayerIDs.lowestLabel,
-                ...configLayers?.instructionLines?.routeInstructionLine,
-            },
-            routeInstructionOutline: {
-                ...instructionOutline,
-                beforeID: prefixBeforeID('routeInstructionLine', layerIDPrefix),
-                ...configLayers?.instructionLines?.routeInstructionOutline,
-            },
+            routeInstructionLine: mergeLayer(
+                { ...instructionLine(routeWidth), beforeID: mapStyleLayerIDs.lowestLabel },
+                configLayers?.instructionLines?.routeInstructionLine,
+            ),
+            routeInstructionOutline: mergeLayer(
+                {
+                    ...instructionOutline(routeWidth),
+                    beforeID: prefixBeforeID('routeInstructionLine', layerIDPrefix),
+                },
+                configLayers?.instructionLines?.routeInstructionOutline,
+            ),
             ...prefixBeforeIDs(configLayers?.instructionLines?.additional, layerIDPrefix),
         },
         instructionArrows: {
-            routeInstructionArrowSymbol: {
-                ...instructionArrow,
-                beforeID: prefixBeforeID('routeInstructionLine', layerIDPrefix),
-                ...(instanceIndex !== undefined && {
-                    layout: {
-                        ...instructionArrow.layout,
-                        'icon-image': suffixImageID(instructionArrow.layout?.['icon-image'] as string, instanceIndex),
-                    },
-                }),
-                ...configLayers?.instructionArrows?.routeInstructionArrowSymbol,
-            },
+            routeInstructionArrowSymbol: mergeLayer(
+                {
+                    ...instructionArrow,
+                    beforeID: prefixBeforeID('routeInstructionLine', layerIDPrefix),
+                    ...(instanceIndex !== undefined && {
+                        layout: {
+                            ...instructionArrow.layout,
+                            'icon-image': suffixImageID(
+                                instructionArrow.layout?.['icon-image'] as string,
+                                instanceIndex,
+                            ),
+                        },
+                    }),
+                },
+                configLayers?.instructionArrows?.routeInstructionArrowSymbol,
+            ),
             ...prefixBeforeIDs(configLayers?.instructionArrows?.additional, layerIDPrefix),
         },
         summaryBubbles: {
-            routeSummaryBubbleSymbol: {
-                ...(instanceIndex !== undefined
-                    ? buildSummaryBubbleSymbolPoint(instanceIndex)
-                    : summaryBubbleSymbolPoint),
-                ...configLayers?.summaryBubbles?.routeSummaryBubbleSymbol,
-            },
+            routeSummaryBubbleSymbol: mergeLayer(
+                instanceIndex === undefined ? summaryBubbleSymbolPoint : buildSummaryBubbleSymbolPoint(instanceIndex),
+                configLayers?.summaryBubbles?.routeSummaryBubbleSymbol,
+            ),
             ...prefixBeforeIDs(configLayers?.summaryBubbles?.additional, layerIDPrefix),
         },
     };

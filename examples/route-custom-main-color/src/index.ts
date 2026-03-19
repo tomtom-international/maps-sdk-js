@@ -4,6 +4,7 @@ import { RoutingModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { calculateRoute, geocodeOne } from '@tomtom-org/maps-sdk/services';
 import './style.css';
 import { API_KEY } from './config';
+import { initTogglePanel } from './togglePanel';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: API_KEY });
@@ -22,4 +23,14 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     const routingModule = await RoutingModule.get(map, { theme: { mainColor: '#DF1B12' } });
     routingModule.showWaypoints(waypoints);
     routingModule.showRoutes(await calculateRoute({ locations: waypoints }));
+
+    document.querySelectorAll<HTMLButtonElement>('.sdk-example-color-selector').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            document.querySelector('.sdk-example-color-selector.active')?.classList.remove('active');
+            btn.classList.add('active');
+            routingModule.applyConfig({ theme: { mainColor: btn.dataset.color || undefined } });
+        });
+    });
+
+    initTogglePanel();
 })();

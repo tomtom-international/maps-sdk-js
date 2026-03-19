@@ -41,3 +41,53 @@
     flex-wrap: wrap;
     gap: var(--sdk-space-4);
 }
+
+/* Responsive: max-width 768px */
+@media (max-width: 768px) {
+    .sdk-example-radio-label {
+        gap: var(--sdk-space-3);
+        font-size: var(--sdk-font-caption-m);
+        line-height: var(--sdk-font-caption-m-lh);
+    }
+
+    .sdk-example-radio-label input[type="radio"] {
+        width: 14px;
+        height: 14px;
+    }
+
+    .sdk-example-radio-group-horizontal {
+        gap: var(--sdk-space-3);
+    }
+}
+
+/* Responsive: max-width 600px */
+@media (max-width: 600px) {
+    .sdk-example-radio-label {
+        gap: var(--sdk-space-2);
+        font-size: 11px;
+        line-height: 14px;
+    }
+
+    .sdk-example-radio-label input[type="radio"] {
+        width: 12px;
+        height: 12px;
+    }
+
+    .sdk-example-radio-group-horizontal {
+        gap: var(--sdk-space-2);
+    }
+}
+
+/* Responsive: max-height 550px */
+@media (max-height: 550px) {
+    .sdk-example-radio-label {
+        gap: var(--sdk-space-2);
+        font-size: 11px;
+        line-height: 14px;
+    }
+
+    .sdk-example-radio-label input[type="radio"] {
+        width: 12px;
+        height: 12px;
+    }
+}

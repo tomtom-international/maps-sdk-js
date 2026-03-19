@@ -9,6 +9,7 @@
 
 .sdk-example-slider {
     flex: 1;
+    min-width: 0;
     height: 6px;
     -webkit-appearance: none;
     appearance: none;
@@ -71,6 +72,7 @@
 }
 
 .sdk-example-slider-value {
+    flex-shrink: 0;
     min-width: 50px;
     font-family: var(--sdk-font-primary);
     font-size: var(--sdk-font-body-s);
