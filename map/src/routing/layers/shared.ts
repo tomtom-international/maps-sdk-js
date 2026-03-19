@@ -2,6 +2,18 @@ import type { ExpressionSpecification } from 'maplibre-gl';
 import type { RouteWaypointSize, RouteWidth } from '../types/routeModuleConfig';
 
 /**
+ * Darkens a hex color by a given factor (0 = unchanged, 1 = black).
+ * @ignore
+ */
+export const darkenColor = (hex: string, factor: number): string => {
+    const h = hex.replace('#', '');
+    const r = Math.round(Number.parseInt(h.substring(0, 2), 16) * (1 - factor));
+    const g = Math.round(Number.parseInt(h.substring(2, 4), 16) * (1 - factor));
+    const b = Math.round(Number.parseInt(h.substring(4, 6), 16) * (1 - factor));
+    return `#${[r, g, b].map((c) => c.toString(16).padStart(2, '0')).join('')}`;
+};
+
+/**
  * Main route line foreground color.
  * @ignore
  */

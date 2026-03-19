@@ -22,7 +22,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
 
     const state: RoutePlaygroundState = {
         mainColor: undefined,
-        outlineColor: undefined,
         routeWidth: 'm',
         waypointSize: 'm',
         centerDash: false,
@@ -37,10 +36,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
                     paint: { 'line-opacity': state.routeOpacity },
                 },
                 routeOutline: {
-                    paint: {
-                        ...(state.outlineColor && { 'line-color': state.outlineColor }),
-                        'line-opacity': state.routeOpacity,
-                    },
+                    paint: { 'line-opacity': state.routeOpacity },
                 },
                 ...(state.centerDash && {
                     additional: {

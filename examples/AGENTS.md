@@ -229,7 +229,7 @@ examples/
 ### Routing Customization
 
 - **route-custom-main-color** - Customize route line color
-- **route-playground** - Interactive route styling with theme properties and layer overrides
+- **route-styling-playground** - Interactive route styling with theme properties and layer overrides
 - **route-waypoint-icon-style** - Custom waypoint markers
 - **route-maplibre-customization** - Advanced route styling with MapLibre
 

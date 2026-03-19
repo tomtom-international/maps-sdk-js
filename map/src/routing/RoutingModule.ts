@@ -335,6 +335,37 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
             this.layersSpecs = newLayersSpecs;
         }
 
+        // Update waypoint icon images if mainColor changed
+        const mainColorChanged = config?.theme?.mainColor !== this.config?.theme?.mainColor;
+        if (mainColorChanged) {
+            const svgIconOptions: SVGIconStyleOptions = {
+                fillColor: config?.theme?.mainColor,
+                ...config?.waypoints?.icon?.style,
+            };
+            const options: Partial<StyleImageMetadata> = { pixelRatio: 2 };
+            addOrUpdateImage(
+                'add-or-update',
+                suffixNumber(WAYPOINT_START_IMAGE_ID, this.instanceIndex),
+                waypointStartIcon(svgIconOptions),
+                this.mapLibreMap,
+                options,
+            );
+            addOrUpdateImage(
+                'add-or-update',
+                suffixNumber(WAYPOINT_STOP_IMAGE_ID, this.instanceIndex),
+                waypointIcon(undefined, svgIconOptions),
+                this.mapLibreMap,
+                options,
+            );
+            addOrUpdateImage(
+                'add-or-update',
+                suffixNumber(WAYPOINT_FINISH_IMAGE_ID, this.instanceIndex),
+                waypointFinishIcon(svgIconOptions),
+                this.mapLibreMap,
+                options,
+            );
+        }
+
         // Summary bubbles have dedicated sources and contain distance-units dependent text ...
         // ... so we need to re-show or clear them if relevant config parts changed:
         const summaryBubblesVisible = mergedConfig.summaryBubbles?.visible !== false;

@@ -2,7 +2,6 @@ import type { RouteWaypointSize, RouteWidth } from '@tomtom-org/maps-sdk/map';
 
 export type RoutePlaygroundState = {
     mainColor: string | undefined;
-    outlineColor: string | undefined;
     routeWidth: RouteWidth;
     waypointSize: RouteWaypointSize;
     centerDash: boolean;
@@ -30,20 +29,6 @@ export const initControls = (state: RoutePlaygroundState, apply: () => void): vo
             apply();
         });
     });
-
-    // Outline color swatches
-    document
-        .querySelectorAll<HTMLButtonElement>('#outlineColor-selectors .sdk-example-color-selector')
-        .forEach((btn) => {
-            btn.addEventListener('click', () => {
-                document
-                    .querySelectorAll('#outlineColor-selectors .sdk-example-color-selector')
-                    .forEach((b) => b.classList.remove('active'));
-                btn.classList.add('active');
-                state.outlineColor = btn.dataset.color || undefined;
-                apply();
-            });
-        });
 
     // Route width radios
     document.querySelectorAll<HTMLInputElement>('input[name="routeWidth"]').forEach((radio) => {

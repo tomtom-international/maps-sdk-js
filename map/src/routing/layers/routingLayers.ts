@@ -19,7 +19,7 @@ import {
 } from './routeTrafficSectionLayers';
 import { routeTunnelsLine } from './routeTunnelSectionLayers';
 import { routeVehicleRestrictedBackgroundLine, routeVehicleRestrictedDottedLine } from './routeVehicleRestrictedLayers';
-import { getWaypointIconSize } from './shared';
+import { darkenColor, getWaypointIconSize } from './shared';
 import { buildSummaryBubbleSymbolPoint, summaryBubbleSymbolPoint } from './summaryBubbleLayers';
 import { waypointLabels, waypointSymbols } from './waypointLayers';
 
@@ -98,6 +98,7 @@ export const buildRoutingLayers = (
     const configLayers = config.layers;
     const configSectionLayers = configLayers?.sections;
     const routeColor = config.theme?.mainColor;
+    const outlineColor = routeColor ? darkenColor(routeColor, 0.4) : undefined;
     const routeWidth = config.theme?.routeWidth;
     const waypointSize = config.theme?.waypointSize;
     const waypointIconSize = getWaypointIconSize(waypointSize);
@@ -116,7 +117,7 @@ export const buildRoutingLayers = (
                 configLayers?.mainLines?.routeLine,
             ),
             routeOutline: mergeLayer(
-                { ...routeOutline(routeWidth), beforeID: prefixBeforeID('routeLine', layerIDPrefix) },
+                { ...routeOutline(routeWidth, outlineColor), beforeID: prefixBeforeID('routeLine', layerIDPrefix) },
                 configLayers?.mainLines?.routeOutline,
             ),
             routeDeselectedLine: mergeLayer(

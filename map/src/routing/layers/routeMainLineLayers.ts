@@ -51,11 +51,14 @@ export const routeDeselectedLine = (routeWidth?: RouteWidth): LayerSpecTemplate<
 /**
  * @ignore
  */
-export const routeOutline = (routeWidth?: RouteWidth): LayerSpecTemplate<LineLayerSpecification> => ({
+export const routeOutline = (
+    routeWidth?: RouteWidth,
+    outlineColor?: string,
+): LayerSpecTemplate<LineLayerSpecification> => ({
     ...routeLineBaseTemplate,
     filter: SELECTED_ROUTE_FILTER,
     paint: {
-        'line-color': ROUTE_LINE_OUTLINE_COLOR,
+        'line-color': outlineColor ?? ROUTE_LINE_OUTLINE_COLOR,
         'line-width': getLineOutlineWidth(routeWidth),
     },
 });

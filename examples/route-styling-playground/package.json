@@ -1,5 +1,5 @@
 {
-  "name": "@examples/route-playground",
+  "name": "@examples/route-styling-playground",
   "description": "Route theme playground — color, line size, and icon size",
   "type": "module",
   "scripts": {

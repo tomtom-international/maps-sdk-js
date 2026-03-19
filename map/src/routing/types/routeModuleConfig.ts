@@ -507,11 +507,12 @@ export type RouteWaypointSize = 's' | 'm' | 'l';
  */
 export type RouteTheme = {
     /**
-     * The primary color applied to the route line and waypoint icons.
+     * The primary color applied to the route line, outline, and waypoint icons.
      *
      * @remarks
      * Use this to quickly brand the route to match your application style.
-     * Affects the main selected route line foreground and the waypoint icon fill.
+     * Affects the main selected route line foreground, the route outline (a darker shade
+     * is derived automatically), and the waypoint icon fill.
      * Can be overwritten by more specific layer styling configurations.
      *
      * Available options:
