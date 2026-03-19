@@ -35,6 +35,24 @@ The map container **and its parent elements** (`html`, `body`) all need explicit
 
 ---
 
+## Vite projects — required build target
+
+MapLibre GL v5 uses native class fields. Vite's default esbuild target downcompiles these into a `__publicField()` helper that isn't available inside MapLibre's web workers. The result: routes, layers, and sources silently fail to render with no error in the console.
+
+```ts
+// vite.config.ts
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+    build: { target: 'esnext' },
+    optimizeDeps: { esbuildOptions: { target: 'esnext' } },
+});
+```
+
+This only applies when MapLibre is bundled by Vite (not loaded from a CDN). The SDK's own examples avoid this by loading MapLibre via CDN import maps.
+
+---
+
 ## Map initialization
 
 ```ts

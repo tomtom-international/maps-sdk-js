@@ -4,7 +4,7 @@
 
 ```ts
 import {
-    bboxFromGeoJSON, polygonFromBBox,
+    bboxFromGeoJSON, bboxFromCoordsArray, polygonFromBBox,
     getPosition,
     formatDistance, formatDuration,
     findBestWaypointInsertionIndex, withInsertedWaypoint,
@@ -40,6 +40,15 @@ const bbox = bboxFromGeoJSON([place1, place2, place3]);
 ```
 
 Returns `[minLng, minLat, maxLng, maxLat] | undefined`.
+
+### `bboxFromCoordsArray`
+
+Calculates bbox from a flat array of `[lng, lat]` coordinates — useful when you have raw coordinate pairs (e.g., multiple origins/destinations) rather than GeoJSON objects.
+
+```ts
+const bounds = bboxFromCoordsArray([[4.9, 52.4], [2.3, 48.8], [13.4, 52.5]]);
+// → [2.3, 48.8, 13.4, 52.5]
+```
 
 ### `polygonFromBBox`
 

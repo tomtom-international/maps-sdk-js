@@ -18,6 +18,10 @@ mapLibreMap.on('load', () => {
   mapLibreMap.addSource('my-data', { type: 'geojson', data: myGeoJSON });
   mapLibreMap.addLayer({ id: 'my-layer', type: 'circle', source: 'my-data' });
 });
+
+// Alternative: check if already loaded (useful in async code)
+if (!mapLibreMap.isStyleLoaded()) await mapLibreMap.once('styledata');
+mapLibreMap.addSource('my-data', { type: 'geojson', data: myGeoJSON });
 ```
 
 ---
@@ -56,6 +60,8 @@ mapLibreMap.addSource('stores', { type: 'geojson', data: '/data/stores.geojson' 
 const source = mapLibreMap.getSource('stores') as maplibre.GeoJSONSource;
 source.setData(updatedGeoJSON);
 ```
+
+Avoid `null` values in GeoJSON feature properties — MapLibre's worker logs repeated type errors (e.g., "Expected value to be of type number, but found null"). Use `0` or omit the property instead.
 
 ### Performance thresholds
 
@@ -209,7 +215,7 @@ const allFeatures = mapLibreMap.querySourceFeatures('stores', {
 
 ## Style switching with TomTom
 
-`map.setStyle()` replaces the TomTom style but **removes all custom sources and layers**. Re-add them after the new style loads:
+`map.setStyle()` replaces the TomTom style but **removes all custom sources and layers**. SDK modules (RoutingModule, PlacesModule, etc.) survive style changes automatically — only your own MapLibre sources and layers need re-adding:
 
 ```ts
 map.mapLibreMap.once('style.load', () => {

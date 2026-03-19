@@ -55,8 +55,8 @@ const places = await geocode({ query: 'Paris', limit: 5, countrySet: ['FR'] });
 ```ts
 map.mapLibreMap.on('click', async (event) => {
     const { lng, lat } = event.lngLat;
-    const result = await reverseGeocode({ position: [lng, lat] });
-    const address = result.features[0]?.properties.address?.freeformAddress;
+    const place = await reverseGeocode({ position: [lng, lat] });
+    const address = place.properties.address?.freeformAddress;
     showAddressLabel(address);
 });
 ```

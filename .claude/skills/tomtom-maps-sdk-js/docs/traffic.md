@@ -71,6 +71,15 @@ Magnitudes: `'minor'`, `'moderate'`, `'major'`, `'indefinite'`, `'unknown'`
 
 Incident categories: `accident`, `animals-on-road`, `broken-down-vehicle`, `danger`, `flooding`, `fog`, `frost`, `jam`, `lane-closed`, `narrow-lanes`, `other`, `rain`, `road-closed`, `roadworks`, `wind`
 
+### Runtime reconfiguration with `applyConfig()`
+
+Change module appearance or behavior without re-creating the module:
+
+```ts
+trafficFlow.applyConfig(newFlowConfig);
+trafficIncidents.applyConfig(newIncidentsConfig);
+```
+
 ---
 
 ## Map click → fetch incident details
@@ -179,3 +188,6 @@ Functional road classes: `'MOTORWAY'`, `'MAJOR_ROAD'`, `'OTHER_MAJOR_ROAD'`, `'S
 - Magnitude and category filters can be combined within the same `any: [{ ... }]` block
 - `trafficIncidentDetails` bbox accepts `[w, s, e, n]`, a GeoJSON Feature, or a FeatureCollection
 - `trafficAreaAnalytics` requires either `startDate`/`endDate` or `days` — not both; max 31 days
+- `trafficAreaAnalytics` `endDate` must be at least 2 days before today (e.g., if today is `2024-03-18`, latest valid `endDate` is `'2024-03-16'`)
+- `trafficAreaAnalytics` requires a **Move Portal API key** (different from standard TomTom API key). Override per-call: `trafficAreaAnalytics({ apiKey: MOVE_PORTAL_KEY, ... })` — see `docs/services-config.md` for per-call override details
+- In the browser, `trafficAreaAnalytics` may hit CORS preflight failures due to the SDK's `tomtom-user-agent` header. Workaround: route requests through a proxy (Vite: `server.proxy`) or your own backend

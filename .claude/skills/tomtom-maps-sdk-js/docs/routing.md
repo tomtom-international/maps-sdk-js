@@ -77,6 +77,41 @@ routingModule.events.mainLines.on('click', (feature) => {
 
 ---
 
+## Clearing routes and waypoints
+
+```ts
+// Remove route lines from the map (does NOT clear waypoints)
+await routingModule.clearRoutes();
+
+// Remove waypoint markers
+await routingModule.clearWaypoints();
+
+// Calling showRoutes() again replaces the previous display — no need to clear first
+await routingModule.showRoutes(newRoutes);
+```
+
+---
+
+## Multiple routes with different colors
+
+Create separate `RoutingModule` instances for each route — they manage routes, waypoints, and events independently:
+
+```ts
+const colors = ['#0066CC', '#00BBDD', '#33AA33', '#99BB00'];
+
+const modules = await Promise.all(
+    origins.map((_, i) => RoutingModule.get(map, { theme: { mainColor: colors[i % colors.length] } })),
+);
+
+for (let i = 0; i < origins.length; i++) {
+    const routes = await calculateRoute({ locations: [origins[i], destination] });
+    await modules[i].showRoutes(routes);
+    await modules[i].showWaypoints([origins[i], destination]);
+}
+```
+
+---
+
 ## Traffic and routing options
 
 ```ts
@@ -342,6 +377,17 @@ routingModule.events.waypoints.on('click', (waypoint: Waypoint<WaypointDisplayPr
 });
 ```
 
+### Route section events
+
+Beyond `mainLines` and `waypoints`, the module exposes click events for specific route section types:
+
+```ts
+routingModule.events.ferries.on('click', (section, lngLat) => { /* ferry segment */ });
+routingModule.events.tollRoads.on('click', (section, lngLat) => { /* toll segment */ });
+routingModule.events.tunnels.on('click', (section, lngLat) => { /* tunnel segment */ });
+routingModule.events.vehicleRestricted.on('click', (section, lngLat) => { /* restricted area */ });
+```
+
 ---
 
 ## Dynamic stop insertion with `withInsertedWaypoint`
@@ -393,4 +439,8 @@ await geometriesModule.show(geometry as PolygonFeatures);
 - `selectRoute(index)` highlights an alternative without recalculating
 - `SELECTED_ROUTE_FILTER` is a MapLibre filter expression — use it in `additional` layers to limit them to the active route
 - `MIDDLE_INDEX` is the `indexType` value for intermediate stops (not a number — compare with `===`)
+- `clearRoutes()` does NOT clear waypoints — call `clearWaypoints()` separately if needed
+- Only `'car'` travel mode is supported — truck, motorcycle, bicycle, pedestrian are not available in the current API
+- Event handlers on overlapping source/layer IDs (e.g., two modules sharing layers) — only the first handler fires
+- Long-hover events are suppressed on features already in "clicked" state
 - For map-wide traffic overlays (flow layer, incidents layer) see `docs/traffic.md`
