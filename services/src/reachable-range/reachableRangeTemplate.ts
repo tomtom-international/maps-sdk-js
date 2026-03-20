@@ -22,5 +22,5 @@ export const reachableRangeTemplate: ReachableRangeTemplate = {
     sendRequest: fetchWith,
     parseResponse: parseReachableRangeResponse,
     parseResponseError: parseRoutingResponseError,
-    getAPIVersion: () => 3,
+    getAPIVersion: () => 2,
 };

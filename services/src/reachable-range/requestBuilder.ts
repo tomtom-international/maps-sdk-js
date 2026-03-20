@@ -1,13 +1,11 @@
 import { getPositionStrict } from '@tomtom-org/maps-sdk/core';
-import type { Position } from 'geojson';
 import type { ElectricVehicleParams, ElectricVehicleStatePCT, FetchInput } from '../shared';
 import { appendCommonRoutingParams } from '../shared/request/commonRoutingRequestBuilder';
 import { appendCommonParams, appendOptionalParam } from '../shared/request/requestBuildingUtils';
-import type { ReachableRangePostData } from './types/apiRequestTypes';
 import type { ReachableRangeParams } from './types/reachableRangeParams';
 
-const buildUrlBasePath = (params: ReachableRangeParams): string =>
-    params.customServiceBaseURL ?? `${params.commonBaseURL}/maps/orbis/routing/calculateReachableRange`;
+const buildUrlBasePath = (params: ReachableRangeParams, latLon: string): string =>
+    params.customServiceBaseURL ?? `${params.commonBaseURL}/maps/orbis/routing/calculateReachableRange/${latLon}/json`;
 
 const getMaxChargeKWH = (params: ReachableRangeParams): number | undefined => {
     const vehicle = params.vehicle as ElectricVehicleParams | undefined;
@@ -66,26 +64,25 @@ const appendBudget = (urlParams: URLSearchParams, params: ReachableRangeParams):
     }
 };
 
-const buildPostData = (params: ReachableRangeParams): ReachableRangePostData => {
-    const position: Position = getPositionStrict(params.origin);
-    return {
-        origin: { type: 'Point', coordinates: [position[0], position[1]] },
-    };
+const buildLatLon = (params: ReachableRangeParams): string => {
+    const position = getPositionStrict(params.origin);
+    return `${position[1]},${position[0]}`;
 };
 
 /**
  * @param params
  * @returns
  */
-export const buildReachableRangeRequest = (params: ReachableRangeParams): FetchInput<ReachableRangePostData> => {
-    const url = new URL(buildUrlBasePath(params));
+export const buildReachableRangeRequest = (params: ReachableRangeParams): FetchInput => {
+    const latLon = buildLatLon(params);
+    const url = new URL(buildUrlBasePath(params, latLon));
     const urlParams = url.searchParams;
     appendCommonParams(urlParams, params);
-    // Currently reachable range API does not support language: https://developer.tomtom.com/routing-api/documentation/tomtom-orbis-maps/v3/calculate-reachable-range
+    // The reachable range API does not support language
     urlParams.delete('language');
     appendCommonRoutingParams(urlParams, params);
     appendBudget(urlParams, params);
     appendOptionalParam(urlParams, 'maxFerryLengthInMeters', params.maxFerryLengthMeters);
     appendOptionalParam(urlParams, 'smoothing', params.smoothing ?? 'strong');
-    return { method: 'POST', url, data: buildPostData(params) };
+    return { method: 'GET', url };
 };

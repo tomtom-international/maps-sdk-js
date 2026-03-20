@@ -21,11 +21,11 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         },
     });
 
-    const routingModule = await RoutingModule.get(map, { theme: { mainColor: '#DF1B12' } });
+    const routingModule = await RoutingModule.get(map);
     routingModule.showWaypoints(waypoints);
     routingModule.showRoutes(await calculateRoute({ locations: waypoints }));
 
-    const state: RouteColorState = { mainColor: '#DF1B12' };
+    const state: RouteColorState = { mainColor: undefined };
     initControls(state, () => {
         routingModule.applyConfig({ theme: { mainColor: state.mainColor } });
     });

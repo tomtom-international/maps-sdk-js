@@ -37,7 +37,6 @@
     "entryPoint": "./index.ts"
   },
   "peerDependencies": {
-    "@maplibre/maplibre-gl-style-spec": "catalog:",
     "@turf/turf": "catalog:",
     "lodash-es": "catalog:",
     "maplibre-gl": "catalog:"

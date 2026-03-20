@@ -12,11 +12,10 @@ describe('Using customize obj', () => {
                 budget: { type: 'timeMinutes', value: 30 },
             }),
         ).toEqual({
-            method: 'POST',
+            method: 'GET',
             url: new URL(
-                'https://api.tomtom.com/maps/orbis/routing/calculateReachableRange?apiVersion=3&key=GLOBAL_API_KEY&timeBudgetInSec=1800&smoothing=strong',
+                'https://api.tomtom.com/maps/orbis/routing/calculateReachableRange/20.567,10.123/json?apiVersion=3&key=GLOBAL_API_KEY&timeBudgetInSec=1800&smoothing=strong',
             ),
-            data: { origin: { type: 'Point', coordinates: [10.123, 20.567] } },
         });
     });
 });

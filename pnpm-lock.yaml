@@ -15,9 +15,6 @@ catalogs:
     '@codesandbox/sandpack-themes':
       specifier: ^2.0.21
       version: 2.0.21
-    '@maplibre/maplibre-gl-style-spec':
-      specifier: ^24.7.0
-      version: 24.7.0
     '@playwright/test':
       specifier: ^1.58.2
       version: 1.58.2
@@ -2238,9 +2235,6 @@ importers:
 
   map:
     dependencies:
-      '@maplibre/maplibre-gl-style-spec':
-        specifier: 'catalog:'
-        version: 24.7.0
       '@turf/bearing':
         specifier: ^7.3.4
         version: 7.3.4
