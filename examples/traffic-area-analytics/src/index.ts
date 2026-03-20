@@ -5,7 +5,6 @@ import { GeometriesModule, TomTomMap, TrafficAreaAnalyticsModule, renderAreaAnal
 import { geocode, geometryData, trafficAreaAnalytics } from '@tomtom-org/maps-sdk/services';
 
 import { updateLegend, updateStats, wireRadioGroup } from './controls';
-import { tilesToHexFeatures } from './hexTransform';
 import './style.css';
 
 // ── Config ───────────────────────────────────────────────────────────
@@ -128,11 +127,7 @@ const map = new TomTomMap({
             const region = analytics.features[0]?.properties;
             if (!region) { bottomPanel.classList.add('aa-hidden'); return; }
 
-            // Build hex features from tile data for hexgrid mode
-            const tiles = region.tiledData?.tiles ?? [];
-            const hexagons = tilesToHexFeatures(tiles);
-
-            await analyticsModule.show(analytics, { hexagons });
+            await analyticsModule.show(analytics);
 
             $('panel-city-name').textContent = cityName;
             updateStats(region.baseData);

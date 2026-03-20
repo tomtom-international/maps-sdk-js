@@ -14,8 +14,7 @@
     "start-test-server": "vite preview --port 9050"
   },
   "dependencies": {
-    "@tomtom-org/maps-sdk": "workspace:*",
-    "h3-js": "^4.1.0"
+    "@tomtom-org/maps-sdk": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "catalog:",
