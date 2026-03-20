@@ -221,7 +221,14 @@ describe('parseTrafficAreaAnalyticsResponse', () => {
                     id: 'hourly-test',
                     geometry: {
                         type: 'Polygon',
-                        coordinates: [[[4.9, 52.3], [4.91, 52.3], [4.91, 52.31], [4.9, 52.3]]],
+                        coordinates: [
+                            [
+                                [4.9, 52.3],
+                                [4.91, 52.3],
+                                [4.91, 52.31],
+                                [4.9, 52.3],
+                            ],
+                        ],
                     },
                     properties: {
                         name: 'Test',
@@ -240,17 +247,17 @@ describe('parseTrafficAreaAnalyticsResponse', () => {
         const { hourly } = result.features[0].properties.timedData;
         expect(hourly).toHaveLength(48);
         // First entry: day 0, hour 0
-        expect(hourly![0].date).toBeInstanceOf(Date);
-        expect(hourly![0].date!.toISOString()).toBe('2024-08-06T00:00:00.000Z');
-        expect(hourly![0].hour).toBe(0);
+        expect(hourly?.[0].date).toBeInstanceOf(Date);
+        expect(hourly?.[0].date?.toISOString()).toBe('2024-08-06T00:00:00.000Z');
+        expect(hourly?.[0].hour).toBe(0);
         // Entry 7: day 0, hour 7
-        expect(hourly![7].hour).toBe(7);
+        expect(hourly?.[7].hour).toBe(7);
         // Entry 24: day 1, hour 0
-        expect(hourly![24].date!.toISOString()).toBe('2024-08-07T00:00:00.000Z');
-        expect(hourly![24].hour).toBe(0);
+        expect(hourly?.[24].date?.toISOString()).toBe('2024-08-07T00:00:00.000Z');
+        expect(hourly?.[24].hour).toBe(0);
         // Entry 47: day 1, hour 23
-        expect(hourly![47].hour).toBe(23);
-        expect(hourly![47].speed).toBe(77);
+        expect(hourly?.[47].hour).toBe(23);
+        expect(hourly?.[47].speed).toBe(77);
     });
 
     test('computes day and hour for average entries without temporal fields', () => {
@@ -269,7 +276,14 @@ describe('parseTrafficAreaAnalyticsResponse', () => {
                     id: 'average-test',
                     geometry: {
                         type: 'Polygon',
-                        coordinates: [[[4.9, 52.3], [4.91, 52.3], [4.91, 52.31], [4.9, 52.3]]],
+                        coordinates: [
+                            [
+                                [4.9, 52.3],
+                                [4.91, 52.3],
+                                [4.91, 52.31],
+                                [4.9, 52.3],
+                            ],
+                        ],
                     },
                     properties: {
                         name: 'Test',
@@ -288,17 +302,17 @@ describe('parseTrafficAreaAnalyticsResponse', () => {
         const { average } = result.features[0].properties.timedData;
         expect(average).toHaveLength(168);
         // First entry: day 1 (Monday), hour 0
-        expect(average![0].day).toBe(1);
-        expect(average![0].hour).toBe(0);
+        expect(average?.[0].day).toBe(1);
+        expect(average?.[0].hour).toBe(0);
         // Entry 23: day 1, hour 23
-        expect(average![23].day).toBe(1);
-        expect(average![23].hour).toBe(23);
+        expect(average?.[23].day).toBe(1);
+        expect(average?.[23].hour).toBe(23);
         // Entry 24: day 2 (Tuesday), hour 0
-        expect(average![24].day).toBe(2);
-        expect(average![24].hour).toBe(0);
+        expect(average?.[24].day).toBe(2);
+        expect(average?.[24].hour).toBe(0);
         // Last entry (167): day 7 (Sunday), hour 23
-        expect(average![167].day).toBe(7);
-        expect(average![167].hour).toBe(23);
+        expect(average?.[167].day).toBe(7);
+        expect(average?.[167].hour).toBe(23);
     });
 
     test('computes date for daily entries without date field', () => {
@@ -317,7 +331,14 @@ describe('parseTrafficAreaAnalyticsResponse', () => {
                     id: 'daily-test',
                     geometry: {
                         type: 'Polygon',
-                        coordinates: [[[4.9, 52.3], [4.91, 52.3], [4.91, 52.31], [4.9, 52.3]]],
+                        coordinates: [
+                            [
+                                [4.9, 52.3],
+                                [4.91, 52.3],
+                                [4.91, 52.31],
+                                [4.9, 52.3],
+                            ],
+                        ],
                     },
                     properties: {
                         name: 'Test',
@@ -334,9 +355,9 @@ describe('parseTrafficAreaAnalyticsResponse', () => {
 
         const { daily } = result.features[0].properties.timedData;
         expect(daily).toHaveLength(3);
-        expect(daily![0].date!.toISOString()).toBe('2024-08-06T00:00:00.000Z');
-        expect(daily![1].date!.toISOString()).toBe('2024-08-07T00:00:00.000Z');
-        expect(daily![2].date!.toISOString()).toBe('2024-08-08T00:00:00.000Z');
+        expect(daily?.[0].date?.toISOString()).toBe('2024-08-06T00:00:00.000Z');
+        expect(daily?.[1].date?.toISOString()).toBe('2024-08-07T00:00:00.000Z');
+        expect(daily?.[2].date?.toISOString()).toBe('2024-08-08T00:00:00.000Z');
     });
 
     test('preserves API-provided temporal fields when present', () => {
@@ -355,7 +376,14 @@ describe('parseTrafficAreaAnalyticsResponse', () => {
                     id: 'preserve-test',
                     geometry: {
                         type: 'Polygon',
-                        coordinates: [[[4.9, 52.3], [4.91, 52.3], [4.91, 52.31], [4.9, 52.3]]],
+                        coordinates: [
+                            [
+                                [4.9, 52.3],
+                                [4.91, 52.3],
+                                [4.91, 52.31],
+                                [4.9, 52.3],
+                            ],
+                        ],
                     },
                     properties: {
                         name: 'Test',
@@ -373,11 +401,11 @@ describe('parseTrafficAreaAnalyticsResponse', () => {
 
         const { hourly, average } = result.features[0].properties.timedData;
         // Hourly: API-provided date/hour should be preserved
-        expect(hourly![0].date!.toISOString()).toBe('2024-08-06T00:00:00.000Z');
-        expect(hourly![0].hour).toBe(8);
+        expect(hourly?.[0].date?.toISOString()).toBe('2024-08-06T00:00:00.000Z');
+        expect(hourly?.[0].hour).toBe(8);
         // Average: API-provided day/hour should be preserved
-        expect(average![0].day).toBe(3);
-        expect(average![0].hour).toBe(14);
+        expect(average?.[0].day).toBe(3);
+        expect(average?.[0].hour).toBe(14);
     });
 
     test('preserves feature id and polygon geometry', () => {

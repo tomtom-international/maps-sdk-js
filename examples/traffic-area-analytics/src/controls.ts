@@ -2,7 +2,7 @@ import type { AreaAnalyticsMetrics } from '@tomtom-org/maps-sdk/core';
 import type { AreaAnalyticsColorScheme, AreaAnalyticsMetricKey } from '@tomtom-org/maps-sdk/map';
 import { COLOR_SCHEMES } from '@tomtom-org/maps-sdk/map';
 
-const $ = (id: string) => document.getElementById(id)!;
+const $ = (id: string) => document.getElementById(id) as HTMLElement;
 
 // ── Legend config ────────────────────────────────────────────────────
 const LEGEND_LABELS: Record<AreaAnalyticsMetricKey, { title: string; min: string; max: string }> = {

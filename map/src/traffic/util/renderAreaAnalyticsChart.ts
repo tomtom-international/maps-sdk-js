@@ -5,7 +5,7 @@ import type { AreaAnalyticsColorScheme } from '../types/trafficAreaAnalyticsConf
 /** Parses a hex color string (#RRGGBB) into [r, g, b]. */
 function parseHex(hex: string): [number, number, number] {
     const h = hex.replace('#', '');
-    return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+    return [Number.parseInt(h.slice(0, 2), 16), Number.parseInt(h.slice(2, 4), 16), Number.parseInt(h.slice(4, 6), 16)];
 }
 
 /** Linearly interpolates between two [r,g,b] colors at ratio t (0–1). */

@@ -14,7 +14,7 @@ const MOVE_PORTAL_KEY = process.env.MOVE_PORTAL_KEY;
 TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
 // ── DOM refs ─────────────────────────────────────────────────────────
-const $ = (id: string) => document.getElementById(id)!;
+const $ = (id: string) => document.getElementById(id) as HTMLElement;
 const cityInput = $('city-input') as HTMLInputElement;
 const suggestionsList = $('city-suggestions') as HTMLUListElement;
 const bottomPanel = $('bottom-panel');

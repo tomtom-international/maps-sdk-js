@@ -70,10 +70,10 @@ export function tilesToHexFeatures(
     }
 
     // Compute bounding box from tile centres
-    let minLon = Infinity;
-    let minLat = Infinity;
-    let maxLon = -Infinity;
-    let maxLat = -Infinity;
+    let minLon = Number.POSITIVE_INFINITY;
+    let minLat = Number.POSITIVE_INFINITY;
+    let maxLon = Number.NEGATIVE_INFINITY;
+    let maxLat = Number.NEGATIVE_INFINITY;
     for (const tile of tiles) {
         const [lon, lat] = tile.tileCentre;
         if (lon < minLon) minLon = lon;
