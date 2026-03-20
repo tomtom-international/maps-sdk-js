@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.46.7](https://github.com/tomtom-international/maps-sdk-js/compare/v0.46.6...v0.46.7) (2026-03-20)
+
+
+### Features
+
+* add area analytics module with visualization layers and utilities ([3d3c4f4](https://github.com/tomtom-international/maps-sdk-js/commit/3d3c4f49431dff0591978c59786a5eed50203979))
+* add color scheme selector and update legend functionality in TrafficAreaAnalyticsModule ([1b6aa8c](https://github.com/tomtom-international/maps-sdk-js/commit/1b6aa8ce5b89b5da2ccbf9220a7b7255b86f903c))
+* add color scheme support for TrafficAreaAnalyticsModule and related components ([12d9d84](https://github.com/tomtom-international/maps-sdk-js/commit/12d9d8484d342c554bbe3c56c7000140a8e0c3ee))
+* add integration tests and data for TrafficAreaAnalyticsModule following pr comments ([624957b](https://github.com/tomtom-international/maps-sdk-js/commit/624957ba6b36239ffeb28196f36cf4bb0e6d8ae7))
+* add layer ID properties for explicit access in TrafficAreaAnalyticsModule ([9710674](https://github.com/tomtom-international/maps-sdk-js/commit/97106747e380c2e07a586a2d82ed351cb4c8af64))
+* add theme propertie to RoutingModule and set-route-theme tool ([6c4833b](https://github.com/tomtom-international/maps-sdk-js/commit/6c4833b20f96397d5febb4da1dbe4e678625f8ab))
+* add traffic area analytics example with city search and hex grid ([cb034ab](https://github.com/tomtom-international/maps-sdk-js/commit/cb034abf36c11596820dd70c549deebd58c7ca55))
+* add TrafficAreaAnalyticsModule with hexgrid and heatmap layers ([cabe919](https://github.com/tomtom-international/maps-sdk-js/commit/cabe919a35d724ee1d0eae728600596dc5127f9e))
+* add TrafficAreaAnalyticsModule with visualization layers ([e8a1386](https://github.com/tomtom-international/maps-sdk-js/commit/e8a1386086e715cda686ea316f85d388e9e3f03d))
+* derive outline color from mainColor, update waypoint icons at runtime ([4a8e593](https://github.com/tomtom-international/maps-sdk-js/commit/4a8e593ac6d1ecf5dbeb27c819145e2b89db1589))
+* remove hexTransform module and simplify analytics display logic ([f25f224](https://github.com/tomtom-international/maps-sdk-js/commit/f25f224058b8f635a4ba2918c7cbe1a9f9247f81))
+
+
+### Bug Fixes
+
+* add type annotation for madridCenter in TrafficAreaAnalyticsModule tests ([4ae92c5](https://github.com/tomtom-international/maps-sdk-js/commit/4ae92c51e11033ac9ba15291be9001eaf13f322e))
+* migrate reachable range service from V3 to V2 API and update docs link ([6543c10](https://github.com/tomtom-international/maps-sdk-js/commit/6543c1036936876c39606c7774f0624d91b36310))
+* omit tomtom-user-agent header for area analytics requests (CORS) ([e545b59](https://github.com/tomtom-international/maps-sdk-js/commit/e545b597813d1596eb9cf6e6a50db0a24a95b758))
+* resolve lint errors and remove non-null assertions ([5dd3424](https://github.com/tomtom-international/maps-sdk-js/commit/5dd3424631a06498ba2a4b74a858b5d16a18e3d6))
+* restore .npmrc before creating pull request ([143da4c](https://github.com/tomtom-international/maps-sdk-js/commit/143da4c4de981d50e6a9e6440e9de5591b9571c9))
+* wait ForMapIdle race condition ([dd84fdc](https://github.com/tomtom-international/maps-sdk-js/commit/dd84fdcc26d7edcca8373a03a84d23efad2b2ea1))
+
 ## [0.46.6](https://github.com/tomtom-international/maps-sdk-js/compare/v0.46.5...v0.46.6) (2026-03-17)
 
 
