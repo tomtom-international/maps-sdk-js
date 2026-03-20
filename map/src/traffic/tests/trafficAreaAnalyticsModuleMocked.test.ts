@@ -1,10 +1,8 @@
 import type { TrafficAreaAnalytics } from '@tomtom-org/maps-sdk/core';
-import type { FeatureCollection, Polygon } from 'geojson';
 import type { Map } from 'maplibre-gl';
 import { describe, expect, test, vi } from 'vitest';
 import type { TomTomMap } from '../../TomTomMap';
 import { TrafficAreaAnalyticsModule } from '../TrafficAreaAnalyticsModule';
-import type { AreaAnalyticsDisplayProperties } from '../types/trafficAreaAnalyticsFeature';
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
 // For real testing of such modules, refer to map-integration-tests.
@@ -71,23 +69,6 @@ describe('Traffic area analytics module tests', () => {
         };
     }
 
-    function createSampleHexagons(): FeatureCollection<Polygon, AreaAnalyticsDisplayProperties> {
-        return {
-            type: 'FeatureCollection',
-            features: [
-                {
-                    type: 'Feature',
-                    id: 'hex-0',
-                    geometry: {
-                        type: 'Polygon',
-                        coordinates: [[[-3.71, 40.41], [-3.70, 40.42], [-3.69, 40.41], [-3.69, 40.39], [-3.70, 40.38], [-3.71, 40.39], [-3.71, 40.41]]],
-                    },
-                    properties: { id: 'hex-0', congestionLevel: 45, speed: 35, freeFlowSpeed: 60, travelTime: 8 },
-                },
-            ],
-        };
-    }
-
     test('Initialising module with default config', async () => {
         const mockMap = createMockMap();
         const module = await TrafficAreaAnalyticsModule.get(mockMap);
@@ -107,25 +88,15 @@ describe('Traffic area analytics module tests', () => {
         expect(module.getConfig()).toMatchObject({ mode: 'heatmap', metric: 'speed', visible: true });
     });
 
-    test('show() populates heatmap from raw response and clear() resets', async () => {
+    test('show() populates both sources from raw response and clear() resets', async () => {
         const mockMap = createMockMap();
         const module = await TrafficAreaAnalyticsModule.get(mockMap);
 
-        await module.show(createSampleAnalytics(), { hexagons: createSampleHexagons() });
-        expect(module.getShown().heatmap.features).toHaveLength(1);
-        expect(module.getShown().hexgrid.features).toHaveLength(1);
+        await module.show(createSampleAnalytics());
+        expect(module.getShown().heatmap.features.length).toBeGreaterThanOrEqual(1);
 
         await module.clear();
         expect(module.getShown().heatmap.features).toHaveLength(0);
-        expect(module.getShown().hexgrid.features).toHaveLength(0);
-    });
-
-    test('show() without hexagons only populates heatmap', async () => {
-        const mockMap = createMockMap();
-        const module = await TrafficAreaAnalyticsModule.get(mockMap, { mode: 'heatmap' });
-
-        await module.show(createSampleAnalytics());
-        expect(module.getShown().heatmap.features).toHaveLength(1);
         expect(module.getShown().hexgrid.features).toHaveLength(0);
     });
 

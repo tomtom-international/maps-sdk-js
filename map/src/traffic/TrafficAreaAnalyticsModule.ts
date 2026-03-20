@@ -12,21 +12,8 @@ import {
     buildHexFillLayerSpec,
 } from './layers/areaAnalyticsLayers';
 import type { AreaAnalyticsMetricKey, TrafficAreaAnalyticsConfig } from './types/trafficAreaAnalyticsConfig';
-import type {
-    AreaAnalyticsDisplayProperties,
-    AreaAnalyticsHexFeature,
-} from './types/trafficAreaAnalyticsFeature';
-import { tilesToPointFeatures } from './util/areaAnalyticsTransform';
-
-/**
- * Options for {@link TrafficAreaAnalyticsModule.show}.
- *
- * @group Traffic Area Analytics
- */
-export type ShowAreaAnalyticsOptions = {
-    /** Pre-transformed hexagonal polygon features (e.g. via H3). When omitted, hexgrid mode has no data. */
-    hexagons?: FeatureCollection<Polygon, AreaAnalyticsDisplayProperties>;
-};
+import type { AreaAnalyticsDisplayProperties, AreaAnalyticsHexFeature } from './types/trafficAreaAnalyticsFeature';
+import { tilesToHexFeatures, tilesToPointFeatures } from './util/areaAnalyticsTransform';
 
 /**
  * Sources and layers managed by this module.
@@ -64,7 +51,6 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
 
     /** Cached for style-change restoration. */
     private lastAnalytics: TrafficAreaAnalytics | null = null;
-    private lastShowOptions: ShowAreaAnalyticsOptions | undefined;
 
     // ── Factory ──────────────────────────────────────────────────────
 
@@ -146,13 +132,12 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
     /** @ignore */
     protected restoreDataAndConfigImpl(): void {
         const cachedAnalytics = this.lastAnalytics;
-        const cachedOptions = this.lastShowOptions;
         this.initSourcesWithLayers(this.config, true);
         if (this.config) {
             this._applyConfig(this.config);
         }
         if (cachedAnalytics) {
-            void this.show(cachedAnalytics, cachedOptions);
+            void this.show(cachedAnalytics);
         }
     }
 
@@ -162,11 +147,10 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
      * Displays area analytics data on the map.
      *
      * Accepts the raw response from `trafficAreaAnalytics()`. Tile data is
-     * transformed to point features internally for the heatmap mode.
-     * For hexgrid mode, supply pre-transformed hex polygons via `options.hexagons`.
+     * transformed internally to point features (heatmap) and hexagonal
+     * polygons (hexgrid) — no manual data preparation is needed.
      *
      * @param analytics - The raw `TrafficAreaAnalytics` service response.
-     * @param options - Optional hex polygon data for hexgrid visualisation.
      *
      * @example
      * ```typescript
@@ -174,21 +158,16 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
      * await module.show(analytics);
      * ```
      */
-    async show(analytics: TrafficAreaAnalytics, options?: ShowAreaAnalyticsOptions): Promise<void> {
+    async show(analytics: TrafficAreaAnalytics): Promise<void> {
         await this.waitUntilModuleReady();
 
         this.lastAnalytics = analytics;
-        this.lastShowOptions = options;
 
         const region = analytics.features[0]?.properties;
         const tiles = region?.tiledData?.tiles ?? [];
-        const points = tilesToPointFeatures(tiles);
 
-        this.sourcesWithLayers.heatmap.show(points);
-
-        if (options?.hexagons) {
-            this.sourcesWithLayers.hexgrid.show(options.hexagons);
-        }
+        this.sourcesWithLayers.heatmap.show(tilesToPointFeatures(tiles));
+        this.sourcesWithLayers.hexgrid.show(tilesToHexFeatures(tiles));
 
         this.applyModeVisibility();
     }
@@ -199,7 +178,6 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
     async clear(): Promise<void> {
         await this.waitUntilModuleReady();
         this.lastAnalytics = null;
-        this.lastShowOptions = undefined;
         this.sourcesWithLayers.heatmap.clear();
         this.sourcesWithLayers.hexgrid.clear();
     }
