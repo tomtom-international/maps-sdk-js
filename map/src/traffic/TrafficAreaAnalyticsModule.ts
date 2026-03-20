@@ -54,6 +54,11 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
 > {
     private static lastInstanceIndex = -1;
 
+    /** Named layer IDs for explicit access in paint updates. */
+    private heatmapLayerId = '';
+    private hexFillLayerId = '';
+    private hexExtrusionLayerId = '';
+
     /** Cached for style-change restoration. */
     private lastAnalytics: TrafficAreaAnalytics | null = null;
 
@@ -115,13 +120,17 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
         const heatmapSourceId = `area-analytics-heatmap-${idx}`;
         const hexgridSourceId = `area-analytics-hexgrid-${idx}`;
 
+        this.heatmapLayerId = `${heatmapSourceId}-layer`;
+        this.hexFillLayerId = `${hexgridSourceId}-fill`;
+        this.hexExtrusionLayerId = `${hexgridSourceId}-extrusion`;
+
         return {
             heatmap: new GeoJSONSourceWithLayers(this.mapLibreMap, heatmapSourceId, [
-                buildHeatmapLayerSpec(`${heatmapSourceId}-layer`),
+                buildHeatmapLayerSpec(this.heatmapLayerId),
             ]),
             hexgrid: new GeoJSONSourceWithLayers(this.mapLibreMap, hexgridSourceId, [
-                buildHexFillLayerSpec(`${hexgridSourceId}-fill`),
-                buildHexExtrusionLayerSpec(`${hexgridSourceId}-extrusion`),
+                buildHexFillLayerSpec(this.hexFillLayerId),
+                buildHexExtrusionLayerSpec(this.hexExtrusionLayerId),
             ]),
         };
     }
@@ -294,26 +303,28 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
     private applyMetricToLayers(metric: AreaAnalyticsMetricKey): void {
         const colorExpr = buildColorExpression(metric, this.colorScheme);
         const heightExpr = buildHeightExpression(metric);
-        const hexLayerIDs = this.sourcesWithLayers.hexgrid.sourceAndLayerIDs.layerIDs;
-        const heatmapLayerIDs = this.sourcesWithLayers.heatmap.sourceAndLayerIDs.layerIDs;
 
-        // Hex fill colour (first layer)
-        this.mapLibreMap.setPaintProperty(hexLayerIDs[0], 'fill-color', colorExpr, { validate: false });
+        // Hex fill colour
+        this.mapLibreMap.setPaintProperty(this.hexFillLayerId, 'fill-color', colorExpr, { validate: false });
 
-        // Hex extrusion colour + height (second layer)
-        this.mapLibreMap.setPaintProperty(hexLayerIDs[1], 'fill-extrusion-color', colorExpr, { validate: false });
-        this.mapLibreMap.setPaintProperty(hexLayerIDs[1], 'fill-extrusion-height', heightExpr, { validate: false });
+        // Hex extrusion colour + height
+        this.mapLibreMap.setPaintProperty(this.hexExtrusionLayerId, 'fill-extrusion-color', colorExpr, {
+            validate: false,
+        });
+        this.mapLibreMap.setPaintProperty(this.hexExtrusionLayerId, 'fill-extrusion-height', heightExpr, {
+            validate: false,
+        });
 
         // Heatmap weight + color
         const { min, max } = METRIC_RANGES[metric];
         this.mapLibreMap.setPaintProperty(
-            heatmapLayerIDs[0],
+            this.heatmapLayerId,
             'heatmap-weight',
             ['interpolate', ['linear'], ['get', metric], min, 0, max, 1],
             { validate: false },
         );
         this.mapLibreMap.setPaintProperty(
-            heatmapLayerIDs[0],
+            this.heatmapLayerId,
             'heatmap-color',
             buildHeatmapColorExpression(this.colorScheme),
             { validate: false },
