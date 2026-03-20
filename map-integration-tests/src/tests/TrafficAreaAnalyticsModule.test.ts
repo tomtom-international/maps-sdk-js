@@ -13,7 +13,7 @@ import {
 const analyticsFixture = analyticsFixtureJson as unknown as TrafficAreaAnalytics;
 
 test.describe('Traffic Area Analytics module integration tests', () => {
-    const madridCenter = [-3.7038, 40.4168];
+    const madridCenter: [number, number] = [-3.7038, 40.4168];
 
     test('Init module with default config — no data shown', async ({ page }) => {
         const mapEnv = await MapTestEnv.loadPageAndMap(page, { center: madridCenter, zoom: 12 });
