@@ -44,18 +44,19 @@ export function tilesToHexFeatures(
     }
 
     // Convert cells to GeoJSON polygon features
-    const features = [...cellMap.entries()].map(([cellId, agg]) => {
+    const features: GeoJSON.Feature<GeoJSON.Polygon, AreaAnalyticsDisplayProperties>[] = [];
+    for (const [cellId, agg] of cellMap) {
         const n = agg.count;
         const boundary = cellToBoundary(cellId);
         // cellToBoundary returns [lat, lng][] — convert to GeoJSON [lng, lat][]
         const coords: [number, number][] = boundary.map(([lat, lng]) => [lng, lat]);
         coords.push(coords[0]); // close the ring
 
-        return {
-            type: 'Feature' as const,
+        features.push({
+            type: 'Feature',
             id: cellId,
             geometry: {
-                type: 'Polygon' as const,
+                type: 'Polygon',
                 coordinates: [coords],
             },
             properties: {
@@ -65,8 +66,8 @@ export function tilesToHexFeatures(
                 freeFlowSpeed: Math.round(agg.freeFlowSpeed / n),
                 travelTime: Math.round((agg.travelTime / n) * 10) / 10,
             },
-        };
-    });
+        });
+    }
 
-    return { type: 'FeatureCollection', features };
+    return { type: 'FeatureCollection' as const, features };
 }

@@ -1,10 +1,10 @@
-import type { AreaAnalyticsMetrics, Place } from '@tomtom-org/maps-sdk/core';
+import type { Place } from '@tomtom-org/maps-sdk/core';
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import type { AreaAnalyticsMetricKey } from '@tomtom-org/maps-sdk/map';
-import { GeometriesModule, TomTomMap, TrafficAreaAnalyticsModule, tilesToPointFeatures } from '@tomtom-org/maps-sdk/map';
+import { GeometriesModule, TomTomMap, TrafficAreaAnalyticsModule, renderAreaAnalyticsChart } from '@tomtom-org/maps-sdk/map';
 import { geocode, geometryData, trafficAreaAnalytics } from '@tomtom-org/maps-sdk/services';
 
-import { renderDayHourHeatmap } from './canvasHeatmap';
+import { updateLegend, updateStats, wireRadioGroup } from './controls';
 import { tilesToHexFeatures } from './hexTransform';
 import './style.css';
 
@@ -22,37 +22,6 @@ const bottomPanel = $('bottom-panel');
 const loadingOverlay = $('loading-overlay');
 const tooltip = $('tile-tooltip');
 const heatmapCanvas = $('heatmap-canvas') as HTMLCanvasElement;
-
-// ── Legend config ────────────────────────────────────────────────────
-const LEGEND: Record<AreaAnalyticsMetricKey, { title: string; min: string; max: string; gradient: string }> = {
-    congestionLevel: {
-        title: 'Congestion Level', min: 'Free', max: 'Standstill',
-        gradient: 'linear-gradient(to right, #2dc653, #f5a623, #e03030, #8b0000)',
-    },
-    speed: {
-        title: 'Speed', min: 'Slow', max: 'Fast',
-        gradient: 'linear-gradient(to right, #8b0000, #e03030, #f5a623, #2dc653)',
-    },
-    travelTime: {
-        title: 'Travel Time', min: 'Short', max: 'Long',
-        gradient: 'linear-gradient(to right, #2dc653, #f5a623, #e03030, #8b0000)',
-    },
-};
-
-function updateLegend(metric: AreaAnalyticsMetricKey) {
-    const cfg = LEGEND[metric];
-    $('legend-title').textContent = cfg.title;
-    $('legend-bar').style.background = cfg.gradient;
-    $('legend-min').textContent = cfg.min;
-    $('legend-max').textContent = cfg.max;
-}
-
-function updateStats(b: AreaAnalyticsMetrics) {
-    $('stat-congestion').textContent = `${Math.round(b.congestionLevel ?? 0)}%`;
-    $('stat-speed').textContent = `${Math.round(b.speed ?? 0)} km/h`;
-    $('stat-traveltime').textContent = b.travelTime != null ? `${(Math.round(b.travelTime * 10) / 10).toFixed(1)} min/10km` : '--';
-    $('stat-freeflow').textContent = b.freeFlowSpeed != null ? `${Math.round(b.freeFlowSpeed)} km/h` : '--';
-}
 
 // ── Helpers ──────────────────────────────────────────────────────────
 function formatDate(d: Date): string {
@@ -115,7 +84,6 @@ const map = new TomTomMap({
     });
 
     async function selectCity(place: Place) {
-        const label = place.properties?.address?.freeformAddress ?? 'Unknown';
         cityInput.value = '';
         hideSuggestions();
 
@@ -134,7 +102,7 @@ const map = new TomTomMap({
             await geometriesModule.show(boundary);
 
             const geom = boundary?.features?.[0]?.geometry;
-            if (geom) await loadAnalytics(label, geom);
+            if (geom) await loadAnalytics(place.properties?.address?.freeformAddress ?? 'Unknown', geom);
             else loadingOverlay.classList.add('aa-hidden');
         } catch (err) {
             console.error('City selection failed:', err);
@@ -160,14 +128,17 @@ const map = new TomTomMap({
             const region = analytics.features[0]?.properties;
             if (!region) { bottomPanel.classList.add('aa-hidden'); return; }
 
+            // Build hex features from tile data for hexgrid mode
             const tiles = region.tiledData?.tiles ?? [];
-            await analyticsModule.show({ points: tilesToPointFeatures(tiles), hexagons: tilesToHexFeatures(tiles) });
+            const hexagons = tilesToHexFeatures(tiles);
+
+            await analyticsModule.show(analytics, { hexagons });
 
             $('panel-city-name').textContent = cityName;
             updateStats(region.baseData);
 
             const hourly = region.timedData?.hourly ?? region.timedData?.average ?? [];
-            if (hourly.length) renderDayHourHeatmap(heatmapCanvas, hourly, startDate);
+            if (hourly.length) renderAreaAnalyticsChart(heatmapCanvas, hourly, startDate);
 
             bottomPanel.classList.remove('aa-hidden');
         } catch (err) {
@@ -203,21 +174,9 @@ const map = new TomTomMap({
         tooltip.style.top = `${pt.y - 12}px`;
     });
 
-    map.mapLibreMap.on('mousemove', (e) => {
-        const onHex = map.mapLibreMap.queryRenderedFeatures(e.point).some((f) => f.source?.startsWith('area-analytics-hexgrid'));
-        if (!onHex) tooltip.classList.add('aa-hidden');
+    // Hide tooltip when mouse leaves the map
+    map.mapLibreMap.getCanvas().addEventListener('mouseleave', () => {
+        tooltip.classList.add('aa-hidden');
     });
-})();
 
-// ── Util ─────────────────────────────────────────────────────────────
-function wireRadioGroup(selector: string, onChange: (value: string) => void) {
-    const options = document.querySelectorAll<HTMLElement>(`${selector} .aa-radio-option`);
-    for (const opt of options) {
-        opt.addEventListener('click', () => {
-            for (const o of options) o.classList.remove('aa-radio-active');
-            opt.classList.add('aa-radio-active');
-            const radio = opt.querySelector('input[type="radio"]') as HTMLInputElement;
-            if (radio) { radio.checked = true; onChange(radio.value); }
-        });
-    }
-}
+})();
