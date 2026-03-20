@@ -1,4 +1,5 @@
-import type { FeatureCollection, Point, Polygon } from 'geojson';
+import type { TrafficAreaAnalytics } from '@tomtom-org/maps-sdk/core';
+import type { FeatureCollection, Polygon } from 'geojson';
 import type { Map } from 'maplibre-gl';
 import { describe, expect, test, vi } from 'vitest';
 import type { TomTomMap } from '../../TomTomMap';
@@ -30,24 +31,48 @@ describe('Traffic area analytics module tests', () => {
                 ensureAdded: vi.fn(),
             },
             addStyleChangeHandler: vi.fn(),
-            mapReady: vi.fn().mockReturnValue(false).mockReturnValue(true),
+            mapReady: vi.fn().mockReturnValueOnce(false).mockReturnValue(true),
         } as unknown as TomTomMap;
     }
 
-    function createSampleData() {
-        const points: FeatureCollection<Point, AreaAnalyticsDisplayProperties> = {
+    /** Minimal TrafficAreaAnalytics response with one tile. */
+    function createSampleAnalytics(): TrafficAreaAnalytics {
+        return {
             type: 'FeatureCollection',
+            properties: {
+                startDate: new Date('2024-08-06'),
+                endDate: new Date('2024-08-10'),
+                dataTypes: ['SPEED', 'CONGESTION_LEVEL'],
+                heatmap: false,
+                frcs: [0, 1, 2],
+            },
             features: [
                 {
                     type: 'Feature',
-                    id: 'tile-0',
-                    geometry: { type: 'Point', coordinates: [-3.7, 40.4] },
-                    properties: { id: 'tile-0', congestionLevel: 45, speed: 35, freeFlowSpeed: 60, travelTime: 8 },
+                    id: 'feat-001',
+                    geometry: {
+                        type: 'Polygon',
+                        coordinates: [[[-3.71, 40.41], [-3.70, 40.42], [-3.69, 40.41], [-3.71, 40.41]]],
+                    },
+                    properties: {
+                        name: 'Test Region',
+                        timezone: 'Europe/Madrid',
+                        level: 0,
+                        baseData: { congestionLevel: 45, speed: 35, freeFlowSpeed: 60, travelTime: 8 },
+                        timedData: {},
+                        tiledData: {
+                            tiles: [
+                                { tileCentre: [-3.7, 40.4], congestionLevel: 45, speed: 35, freeFlowSpeed: 60, travelTime: 8 },
+                            ],
+                        },
+                    },
                 },
             ],
         };
+    }
 
-        const hexagons: FeatureCollection<Polygon, AreaAnalyticsDisplayProperties> = {
+    function createSampleHexagons(): FeatureCollection<Polygon, AreaAnalyticsDisplayProperties> {
+        return {
             type: 'FeatureCollection',
             features: [
                 {
@@ -55,24 +80,12 @@ describe('Traffic area analytics module tests', () => {
                     id: 'hex-0',
                     geometry: {
                         type: 'Polygon',
-                        coordinates: [
-                            [
-                                [-3.71, 40.41],
-                                [-3.70, 40.42],
-                                [-3.69, 40.41],
-                                [-3.69, 40.39],
-                                [-3.70, 40.38],
-                                [-3.71, 40.39],
-                                [-3.71, 40.41],
-                            ],
-                        ],
+                        coordinates: [[[-3.71, 40.41], [-3.70, 40.42], [-3.69, 40.41], [-3.69, 40.39], [-3.70, 40.38], [-3.71, 40.39], [-3.71, 40.41]]],
                     },
                     properties: { id: 'hex-0', congestionLevel: 45, speed: 35, freeFlowSpeed: 60, travelTime: 8 },
                 },
             ],
         };
-
-        return { points, hexagons };
     }
 
     test('Initialising module with default config', async () => {
@@ -94,12 +107,11 @@ describe('Traffic area analytics module tests', () => {
         expect(module.getConfig()).toMatchObject({ mode: 'heatmap', metric: 'speed', visible: true });
     });
 
-    test('show() and clear() cycle', async () => {
+    test('show() populates heatmap from raw response and clear() resets', async () => {
         const mockMap = createMockMap();
         const module = await TrafficAreaAnalyticsModule.get(mockMap);
-        const data = createSampleData();
 
-        await module.show(data);
+        await module.show(createSampleAnalytics(), { hexagons: createSampleHexagons() });
         expect(module.getShown().heatmap.features).toHaveLength(1);
         expect(module.getShown().hexgrid.features).toHaveLength(1);
 
@@ -108,7 +120,27 @@ describe('Traffic area analytics module tests', () => {
         expect(module.getShown().hexgrid.features).toHaveLength(0);
     });
 
-    test('setMetric() updates paint properties', async () => {
+    test('show() without hexagons only populates heatmap', async () => {
+        const mockMap = createMockMap();
+        const module = await TrafficAreaAnalyticsModule.get(mockMap, { mode: 'heatmap' });
+
+        await module.show(createSampleAnalytics());
+        expect(module.getShown().heatmap.features).toHaveLength(1);
+        expect(module.getShown().hexgrid.features).toHaveLength(0);
+    });
+
+    test('setMetric() is a no-op when value unchanged', async () => {
+        const mockMap = createMockMap();
+        const module = await TrafficAreaAnalyticsModule.get(mockMap);
+
+        module.setMetric('speed');
+        const callCount = (mockMap.mapLibreMap.setPaintProperty as ReturnType<typeof vi.fn>).mock.calls.length;
+
+        module.setMetric('speed'); // same value — should be no-op
+        expect((mockMap.mapLibreMap.setPaintProperty as ReturnType<typeof vi.fn>).mock.calls.length).toBe(callCount);
+    });
+
+    test('setMetric() updates paint properties when value changes', async () => {
         const mockMap = createMockMap();
         const module = await TrafficAreaAnalyticsModule.get(mockMap);
 
@@ -129,6 +161,17 @@ describe('Traffic area analytics module tests', () => {
 
         module.setMode('hexgrid');
         expect(module.getConfig()?.mode).toBe('hexgrid');
+    });
+
+    test('setMode() is a no-op when value unchanged', async () => {
+        const mockMap = createMockMap();
+        const module = await TrafficAreaAnalyticsModule.get(mockMap);
+
+        module.setMode('heatmap');
+        const callCount = (mockMap.mapLibreMap.setLayoutProperty as ReturnType<typeof vi.fn>).mock.calls.length;
+
+        module.setMode('heatmap'); // same value — should be no-op
+        expect((mockMap.mapLibreMap.setLayoutProperty as ReturnType<typeof vi.fn>).mock.calls.length).toBe(callCount);
     });
 
     test('setVisible() controls all layer visibility', async () => {

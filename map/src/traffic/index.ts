@@ -5,6 +5,7 @@
 export * from './TrafficAreaAnalyticsModule';
 export * from './TrafficFlowModule';
 export { tilesToPointFeatures } from './util/areaAnalyticsTransform';
+export { renderAreaAnalyticsChart } from './util/renderAreaAnalyticsChart';
 export * from './TrafficIncidentsModule';
 export * from './types/trafficAreaAnalyticsConfig';
 export * from './types/trafficAreaAnalyticsFeature';

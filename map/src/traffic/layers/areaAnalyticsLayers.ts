@@ -8,13 +8,13 @@ import type { LayerSpecTemplate, ToBeAddedLayerSpecWithoutSource } from '../../s
 import { mapStyleLayerIDs } from '../../shared';
 import type { AreaAnalyticsMetricKey } from '../types/trafficAreaAnalyticsConfig';
 
-// ── Traffic signal colour stops ──────────────────────────────────────
-const GREEN = '#2dc653';
-const AMBER = '#f5a623';
-const RED = '#e03030';
+// ── Congestion-level colour stops ────────────────────────────────────
+const LOW_CONGESTION_COLOR = '#2dc653';
+const MODERATE_CONGESTION_COLOR = '#f5a623';
+const HIGH_CONGESTION_COLOR = '#e03030';
 
 // ── Metric ranges used for colour / height interpolation ─────────────
-const METRIC_RANGES: Record<AreaAnalyticsMetricKey, { min: number; mid: number; max: number }> = {
+export const METRIC_RANGES: Record<AreaAnalyticsMetricKey, { min: number; mid: number; max: number }> = {
     congestionLevel: { min: 0, mid: 50, max: 100 },
     speed: { min: 0, mid: 50, max: 120 },
     travelTime: { min: 0, mid: 10, max: 20 },
@@ -41,9 +41,9 @@ export function buildColorExpression(
 
     if (metric === 'speed') {
         // Inverted: high speed (green) → low speed (red)
-        return ['interpolate', ['linear'], ['get', metric], min, RED, mid, AMBER, max, GREEN];
+        return ['interpolate', ['linear'], ['get', metric], min, HIGH_CONGESTION_COLOR, mid, MODERATE_CONGESTION_COLOR, max, LOW_CONGESTION_COLOR];
     }
-    return ['interpolate', ['linear'], ['get', metric], min, GREEN, mid, AMBER, max, RED];
+    return ['interpolate', ['linear'], ['get', metric], min, LOW_CONGESTION_COLOR, mid, MODERATE_CONGESTION_COLOR, max, HIGH_CONGESTION_COLOR];
 }
 
 /**
@@ -83,11 +83,11 @@ export const areaAnalyticsHeatmapSpec: LayerSpecTemplate<HeatmapLayerSpecificati
             0,
             'rgba(45,198,83,0)',
             0.3,
-            GREEN,
+            LOW_CONGESTION_COLOR,
             0.6,
-            AMBER,
+            MODERATE_CONGESTION_COLOR,
             1.0,
-            RED,
+            HIGH_CONGESTION_COLOR,
         ],
         'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 6, 15, 12, 30],
         'heatmap-opacity': 0.8,

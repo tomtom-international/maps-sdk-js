@@ -31,26 +31,3 @@ export type AreaAnalyticsHexFeature = Feature<Polygon, AreaAnalyticsDisplayPrope
  * @group Traffic Area Analytics
  */
 export type AreaAnalyticsPointFeature = Feature<Point, AreaAnalyticsDisplayProperties>;
-
-/**
- * Pre-built GeoJSON data accepted by {@link TrafficAreaAnalyticsModule.show}.
- *
- * @remarks
- * The consumer is responsible for building both collections from
- * the `trafficAreaAnalytics` service response:
- * - `points` — one Point per tile centre (for the heatmap layer)
- * - `hexagons` — one Polygon per aggregated hex cell (for the hexgrid layers)
- *
- * @group Traffic Area Analytics
- */
-export type TrafficAreaAnalyticsDisplayData = {
-    /**
-     * Point features at each tile centre, used by the heatmap visualization.
-     */
-    points: GeoJSON.FeatureCollection<Point, AreaAnalyticsDisplayProperties>;
-
-    /**
-     * Hexagonal polygon features, used by the hexgrid (fill + fill-extrusion) visualization.
-     */
-    hexagons: GeoJSON.FeatureCollection<Polygon, AreaAnalyticsDisplayProperties>;
-};

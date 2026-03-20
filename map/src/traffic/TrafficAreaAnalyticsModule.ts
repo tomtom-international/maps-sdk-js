@@ -1,8 +1,10 @@
+import type { TrafficAreaAnalytics } from '@tomtom-org/maps-sdk/core';
 import type { FeatureCollection, Point, Polygon } from 'geojson';
-import { AbstractMapModule, EventsModule, GeoJSONSourceWithLayers, mapStyleLayerIDs } from '../shared';
+import { AbstractMapModule, EventsModule, GeoJSONSourceWithLayers } from '../shared';
 import { waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
 import {
+    METRIC_RANGES,
     buildColorExpression,
     buildHeightExpression,
     buildHeatmapLayerSpec,
@@ -13,8 +15,18 @@ import type { AreaAnalyticsMetricKey, TrafficAreaAnalyticsConfig } from './types
 import type {
     AreaAnalyticsDisplayProperties,
     AreaAnalyticsHexFeature,
-    TrafficAreaAnalyticsDisplayData,
 } from './types/trafficAreaAnalyticsFeature';
+import { tilesToPointFeatures } from './util/areaAnalyticsTransform';
+
+/**
+ * Options for {@link TrafficAreaAnalyticsModule.show}.
+ *
+ * @group Traffic Area Analytics
+ */
+export type ShowAreaAnalyticsOptions = {
+    /** Pre-transformed hexagonal polygon features (e.g. via H3). When omitted, hexgrid mode has no data. */
+    hexagons?: FeatureCollection<Polygon, AreaAnalyticsDisplayProperties>;
+};
 
 /**
  * Sources and layers managed by this module.
@@ -27,13 +39,9 @@ type AreaAnalyticsSourcesWithLayers = {
 /**
  * Traffic Area Analytics visualization module.
  *
- * Renders area-analytics tile data on the map in one of two modes:
+ * Renders area-analytics data on the map in one of two modes:
  * - **hexgrid** — 3D extruded hexagonal polygons coloured and raised by the active metric
  * - **heatmap** — a MapLibre density-heatmap layer built from tile-centre points
- *
- * The module does **not** call the `trafficAreaAnalytics` service itself. Instead
- * the consumer fetches the data, transforms tiles into GeoJSON, and passes both a
- * `points` and a `hexagons` FeatureCollection to {@link show}.
  *
  * @remarks
  * **Quick start:**
@@ -42,9 +50,8 @@ type AreaAnalyticsSourcesWithLayers = {
  * import { trafficAreaAnalytics } from '@tomtom-org/maps-sdk/services';
  *
  * const module = await TrafficAreaAnalyticsModule.get(map);
- * const result = await trafficAreaAnalytics({ ... });
- * // transform result.features[0].properties.tiledData.tiles → points & hexagons
- * await module.show({ points, hexagons });
+ * const analytics = await trafficAreaAnalytics({ ... });
+ * await module.show(analytics);
  * ```
  *
  * @group Traffic Area Analytics
@@ -55,18 +62,9 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
 > {
     private static lastInstanceIndex = -1;
 
-    private heatmapSourceId!: string;
-    private heatmapLayerId!: string;
-
-    private hexgridSourceId!: string;
-    private hexFillLayerId!: string;
-    private hexExtrusionLayerId!: string;
-
-    private currentMode: 'heatmap' | 'hexgrid' = 'hexgrid';
-    private currentMetric: AreaAnalyticsMetricKey = 'congestionLevel';
-
     /** Cached for style-change restoration. */
-    private lastDisplayData: TrafficAreaAnalyticsDisplayData | null = null;
+    private lastAnalytics: TrafficAreaAnalytics | null = null;
+    private lastShowOptions: ShowAreaAnalyticsOptions | undefined;
 
     // ── Factory ──────────────────────────────────────────────────────
 
@@ -97,6 +95,16 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
         super('geojson', map, config);
     }
 
+    // ── Config helpers ───────────────────────────────────────────────
+
+    private get mode(): 'heatmap' | 'hexgrid' {
+        return this.config?.mode ?? 'hexgrid';
+    }
+
+    private get metric(): AreaAnalyticsMetricKey {
+        return this.config?.metric ?? 'congestionLevel';
+    }
+
     // ── AbstractMapModule hooks ──────────────────────────────────────
 
     /** @ignore */
@@ -106,32 +114,26 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
     ): AreaAnalyticsSourcesWithLayers {
         if (!restore) {
             TrafficAreaAnalyticsModule.lastInstanceIndex++;
-            const idx = TrafficAreaAnalyticsModule.lastInstanceIndex;
-            this.heatmapSourceId = `area-analytics-heatmap-${idx}`;
-            this.heatmapLayerId = `area-analytics-heatmap-layer-${idx}`;
-            this.hexgridSourceId = `area-analytics-hexgrid-${idx}`;
-            this.hexFillLayerId = `area-analytics-hexFill-${idx}`;
-            this.hexExtrusionLayerId = `area-analytics-hexExtrusion-${idx}`;
         }
 
+        const idx = TrafficAreaAnalyticsModule.lastInstanceIndex;
+        const heatmapSourceId = `area-analytics-heatmap-${idx}`;
+        const hexgridSourceId = `area-analytics-hexgrid-${idx}`;
+
         return {
-            heatmap: new GeoJSONSourceWithLayers(this.mapLibreMap, this.heatmapSourceId, [
-                buildHeatmapLayerSpec(this.heatmapLayerId),
+            heatmap: new GeoJSONSourceWithLayers(this.mapLibreMap, heatmapSourceId, [
+                buildHeatmapLayerSpec(`${heatmapSourceId}-layer`),
             ]),
-            hexgrid: new GeoJSONSourceWithLayers(this.mapLibreMap, this.hexgridSourceId, [
-                buildHexFillLayerSpec(this.hexFillLayerId),
-                buildHexExtrusionLayerSpec(this.hexExtrusionLayerId),
+            hexgrid: new GeoJSONSourceWithLayers(this.mapLibreMap, hexgridSourceId, [
+                buildHexFillLayerSpec(`${hexgridSourceId}-fill`),
+                buildHexExtrusionLayerSpec(`${hexgridSourceId}-extrusion`),
             ]),
         };
     }
 
     /** @ignore */
     protected _applyConfig(config: TrafficAreaAnalyticsConfig | undefined): TrafficAreaAnalyticsConfig | undefined {
-        if (config?.mode) {
-            this.currentMode = config.mode;
-        }
         if (config?.metric) {
-            this.currentMetric = config.metric;
             this.applyMetricToLayers(config.metric);
         }
         if (config?.visible === false) {
@@ -143,13 +145,14 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
 
     /** @ignore */
     protected restoreDataAndConfigImpl(): void {
-        const cachedData = this.lastDisplayData;
+        const cachedAnalytics = this.lastAnalytics;
+        const cachedOptions = this.lastShowOptions;
         this.initSourcesWithLayers(this.config, true);
         if (this.config) {
             this._applyConfig(this.config);
         }
-        if (cachedData) {
-            void this.show(cachedData);
+        if (cachedAnalytics) {
+            void this.show(cachedAnalytics, cachedOptions);
         }
     }
 
@@ -158,18 +161,35 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
     /**
      * Displays area analytics data on the map.
      *
-     * @param data - Pre-built GeoJSON for both visualisation modes.
+     * Accepts the raw response from `trafficAreaAnalytics()`. Tile data is
+     * transformed to point features internally for the heatmap mode.
+     * For hexgrid mode, supply pre-transformed hex polygons via `options.hexagons`.
+     *
+     * @param analytics - The raw `TrafficAreaAnalytics` service response.
+     * @param options - Optional hex polygon data for hexgrid visualisation.
      *
      * @example
      * ```typescript
-     * await module.show({ points: pointFC, hexagons: hexFC });
+     * const analytics = await trafficAreaAnalytics({ ... });
+     * await module.show(analytics);
      * ```
      */
-    async show(data: TrafficAreaAnalyticsDisplayData): Promise<void> {
+    async show(analytics: TrafficAreaAnalytics, options?: ShowAreaAnalyticsOptions): Promise<void> {
         await this.waitUntilModuleReady();
-        this.lastDisplayData = data;
-        this.sourcesWithLayers.heatmap.show(data.points);
-        this.sourcesWithLayers.hexgrid.show(data.hexagons);
+
+        this.lastAnalytics = analytics;
+        this.lastShowOptions = options;
+
+        const region = analytics.features[0]?.properties;
+        const tiles = region?.tiledData?.tiles ?? [];
+        const points = tilesToPointFeatures(tiles);
+
+        this.sourcesWithLayers.heatmap.show(points);
+
+        if (options?.hexagons) {
+            this.sourcesWithLayers.hexgrid.show(options.hexagons);
+        }
+
         this.applyModeVisibility();
     }
 
@@ -178,7 +198,8 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
      */
     async clear(): Promise<void> {
         await this.waitUntilModuleReady();
-        this.lastDisplayData = null;
+        this.lastAnalytics = null;
+        this.lastShowOptions = undefined;
         this.sourcesWithLayers.heatmap.clear();
         this.sourcesWithLayers.hexgrid.clear();
     }
@@ -189,7 +210,7 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
      * @param mode - `'heatmap'` or `'hexgrid'`.
      */
     setMode(mode: 'heatmap' | 'hexgrid'): void {
-        this.currentMode = mode;
+        if (mode === this.mode) return;
         this.config = { ...this.config, mode };
         this.applyModeVisibility();
     }
@@ -200,7 +221,7 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
      * @param metric - One of `'congestionLevel'`, `'speed'`, or `'travelTime'`.
      */
     setMetric(metric: AreaAnalyticsMetricKey): void {
-        this.currentMetric = metric;
+        if (metric === this.metric) return;
         this.config = { ...this.config, metric };
         this.applyMetricToLayers(metric);
     }
@@ -268,33 +289,27 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
         const hasHeatmapData = this.sourcesWithLayers.heatmap.shownFeatures.features.length > 0;
         const hasHexData = this.sourcesWithLayers.hexgrid.shownFeatures.features.length > 0;
 
-        this.sourcesWithLayers.heatmap.setLayersVisible(this.currentMode === 'heatmap' && hasHeatmapData);
-        this.sourcesWithLayers.hexgrid.setLayersVisible(this.currentMode === 'hexgrid' && hasHexData);
+        this.sourcesWithLayers.heatmap.setLayersVisible(this.mode === 'heatmap' && hasHeatmapData);
+        this.sourcesWithLayers.hexgrid.setLayersVisible(this.mode === 'hexgrid' && hasHexData);
     }
 
     private applyMetricToLayers(metric: AreaAnalyticsMetricKey): void {
         const colorExpr = buildColorExpression(metric);
         const heightExpr = buildHeightExpression(metric);
+        const hexLayerIDs = this.sourcesWithLayers.hexgrid.sourceAndLayerIDs.layerIDs;
+        const heatmapLayerIDs = this.sourcesWithLayers.heatmap.sourceAndLayerIDs.layerIDs;
 
-        // Hex fill colour
-        this.mapLibreMap.setPaintProperty(this.hexFillLayerId, 'fill-color', colorExpr, { validate: false });
+        // Hex fill colour (first layer)
+        this.mapLibreMap.setPaintProperty(hexLayerIDs[0], 'fill-color', colorExpr, { validate: false });
 
-        // Hex extrusion colour + height
-        this.mapLibreMap.setPaintProperty(this.hexExtrusionLayerId, 'fill-extrusion-color', colorExpr, {
-            validate: false,
-        });
-        this.mapLibreMap.setPaintProperty(this.hexExtrusionLayerId, 'fill-extrusion-height', heightExpr, {
-            validate: false,
-        });
+        // Hex extrusion colour + height (second layer)
+        this.mapLibreMap.setPaintProperty(hexLayerIDs[1], 'fill-extrusion-color', colorExpr, { validate: false });
+        this.mapLibreMap.setPaintProperty(hexLayerIDs[1], 'fill-extrusion-height', heightExpr, { validate: false });
 
         // Heatmap weight
-        const { min, max } = metric === 'congestionLevel'
-            ? { min: 0, max: 100 }
-            : metric === 'speed'
-              ? { min: 0, max: 120 }
-              : { min: 0, max: 20 };
+        const { min, max } = METRIC_RANGES[metric];
         this.mapLibreMap.setPaintProperty(
-            this.heatmapLayerId,
+            heatmapLayerIDs[0],
             'heatmap-weight',
             ['interpolate', ['linear'], ['get', metric], min, 0, max, 1],
             { validate: false },
