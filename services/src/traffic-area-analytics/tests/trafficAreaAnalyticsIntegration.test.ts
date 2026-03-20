@@ -1,7 +1,8 @@
 import type { TrafficAreaAnalytics } from '@tomtom-org/maps-sdk/core';
-import { beforeAll, describe, expect, test, vi } from 'vitest';
+import { afterAll, beforeAll, describe, expect, test, vi } from 'vitest';
 import type { FetchInput } from '../../shared';
 import { SDKServiceError } from '../../shared';
+import { mockFetchResponse } from '../../shared/tests/fetchMockUtils';
 import { putIntegrationTestsAPIKey } from '../../shared/tests/integrationTestUtils';
 import { trafficAreaAnalytics } from '../trafficAreaAnalytics';
 import type { AreaAnalyticsRequestBody, AreaAnalyticsResponseAPI } from '../types/apiTypes';
@@ -155,5 +156,35 @@ describe('Traffic Area Analytics integration tests', () => {
         const expectedRequest = expect.objectContaining({ method: 'POST', url: expect.any(URL) });
         expect(onApiRequest).toHaveBeenCalledWith(expectedRequest);
         expect(onApiResponse).toHaveBeenCalledWith(expectedRequest, expect.objectContaining({ status: 403 }));
+    });
+});
+
+describe('Traffic Area Analytics CORS header handling', () => {
+    const unMockedFetch = global.fetch;
+    afterAll(() => (global.fetch = unMockedFetch));
+
+    const EMPTY_API_RESPONSE: AreaAnalyticsResponseAPI = {
+        type: 'FeatureCollection',
+        properties: {
+            startDate: '2024-08-06',
+            endDate: '2024-08-10',
+            dataTypes: ['SPEED', 'CONGESTION_LEVEL'],
+            heatmap: false,
+            frcs: [0, 1, 2],
+        },
+        features: [],
+    };
+
+    test('does not send tomtom-user-agent header', async () => {
+        const fetchMock = mockFetchResponse(200, EMPTY_API_RESPONSE);
+
+        await trafficAreaAnalytics({ ...BASE_PARAMS, apiKey: 'test-key' });
+
+        expect(fetchMock).toHaveBeenCalledWith(
+            expect.any(URL),
+            expect.objectContaining({
+                headers: expect.not.objectContaining({ 'tomtom-user-agent': expect.anything() }),
+            }),
+        );
     });
 });

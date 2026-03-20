@@ -148,7 +148,6 @@ const map = new TomTomMap({
             const { startDate, endDate } = getDateRange(7);
             const analytics = await trafficAreaAnalytics({
                 apiKey: MOVE_PORTAL_KEY,
-                customServiceBaseURL: `${window.location.origin}/areaanalytics/reports/lite`,
                 name: cityName,
                 startDate, endDate,
                 dataTypes: ['SPEED', 'CONGESTION_LEVEL', 'FREE_FLOW_SPEED', 'TRAVEL_TIME'],
