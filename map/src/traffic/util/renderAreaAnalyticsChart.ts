@@ -1,21 +1,33 @@
 import type { AreaAnalyticsTimedEntry } from '@tomtom-org/maps-sdk/core';
+import { COLOR_SCHEMES } from '../layers/areaAnalyticsLayers';
+import type { AreaAnalyticsColorScheme } from '../types/trafficAreaAnalyticsConfig';
 
-/** Interpolates 0–100 through low (green) → moderate (amber) → high (red). */
-function congestionColor(value: number): string {
+/** Parses a hex color string (#RRGGBB) into [r, g, b]. */
+function parseHex(hex: string): [number, number, number] {
+    const h = hex.replace('#', '');
+    return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+}
+
+/** Linearly interpolates between two [r,g,b] colors at ratio t (0–1). */
+function lerpColor(a: [number, number, number], b: [number, number, number], t: number): string {
+    const r = Math.round(a[0] + (b[0] - a[0]) * t);
+    const g = Math.round(a[1] + (b[1] - a[1]) * t);
+    const bl = Math.round(a[2] + (b[2] - a[2]) * t);
+    return `rgb(${r},${g},${bl})`;
+}
+
+/** Interpolates 0–100 through the three colour stops of the given scheme. */
+function metricColor(value: number, scheme: AreaAnalyticsColorScheme = 'congestion'): string {
     const c = Math.max(0, Math.min(100, value));
-    let r: number, g: number, b: number;
+    const { low, mid, high } = COLOR_SCHEMES[scheme];
+    const lowRgb = parseHex(low);
+    const midRgb = parseHex(mid);
+    const highRgb = parseHex(high);
+
     if (c <= 50) {
-        const t = c / 50;
-        r = Math.round(45 + 200 * t);
-        g = Math.round(198 - 32 * t);
-        b = Math.round(83 - 48 * t);
-    } else {
-        const t = (c - 50) / 50;
-        r = Math.round(245 - 21 * t);
-        g = Math.round(166 - 118 * t);
-        b = Math.round(35 + 13 * t);
+        return lerpColor(lowRgb, midRgb, c / 50);
     }
-    return `rgb(${r},${g},${b})`;
+    return lerpColor(midRgb, highRgb, (c - 50) / 50);
 }
 
 /** Grid cell dimensions (px). */
@@ -49,6 +61,7 @@ function formatDayLabel(isoDate: string): string {
  * @param canvas - Target canvas element.
  * @param entries - Sequential hourly entries (168 = 7 days × 24 hours).
  * @param startDate - ISO date string (YYYY-MM-DD) for the first day.
+ * @param colorScheme - Color scheme preset (default: `'congestion'`).
  *
  * @group Traffic Area Analytics
  */
@@ -56,6 +69,7 @@ export function renderAreaAnalyticsChart(
     canvas: HTMLCanvasElement,
     entries: AreaAnalyticsTimedEntry[],
     startDate: string,
+    colorScheme: AreaAnalyticsColorScheme = 'congestion',
 ): void {
     if (entries.length === 0) return;
 
@@ -118,7 +132,7 @@ export function renderAreaAnalyticsChart(
             const x = LABEL_LEFT + h * CELL_W;
             const value = grid[d][h];
 
-            ctx.fillStyle = congestionColor(value);
+            ctx.fillStyle = metricColor(value, colorScheme);
             ctx.fillRect(x, y, CELL_W - 1, CELL_H - 1);
 
             // Overlay value

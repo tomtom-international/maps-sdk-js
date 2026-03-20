@@ -156,6 +156,24 @@ describe('Traffic area analytics module tests', () => {
         expect(module.getConfig()?.visible).toBe(true);
     });
 
+    test('setColorScheme() updates config and repaints', async () => {
+        const mockMap = createMockMap();
+        const module = await TrafficAreaAnalyticsModule.get(mockMap);
+
+        module.setColorScheme('thermal');
+        expect(module.getConfig()?.colorScheme).toBe('thermal');
+        expect(mockMap.mapLibreMap.setPaintProperty).toHaveBeenCalled();
+    });
+
+    test('setColorScheme() is a no-op when value unchanged', async () => {
+        const mockMap = createMockMap();
+        const module = await TrafficAreaAnalyticsModule.get(mockMap, { colorScheme: 'thermal' });
+
+        const callCount = (mockMap.mapLibreMap.setPaintProperty as ReturnType<typeof vi.fn>).mock.calls.length;
+        module.setColorScheme('thermal');
+        expect((mockMap.mapLibreMap.setPaintProperty as ReturnType<typeof vi.fn>).mock.calls.length).toBe(callCount);
+    });
+
     test('events property is defined', async () => {
         const mockMap = createMockMap();
         const module = await TrafficAreaAnalyticsModule.get(mockMap);

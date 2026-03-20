@@ -18,6 +18,17 @@ export type AreaAnalyticsMetricKey = 'congestionLevel' | 'speed' | 'travelTime';
 export type AreaAnalyticsMode = 'heatmap' | 'hexgrid';
 
 /**
+ * Preset color scheme for area analytics visualization.
+ *
+ * - `'congestion'` — Green → amber → red (default, traffic-signal style)
+ * - `'thermal'` — Blue → orange → red (heat-map style)
+ * - `'monochrome'` — Light grey → dark grey (print-friendly)
+ *
+ * @group Traffic Area Analytics
+ */
+export type AreaAnalyticsColorScheme = 'congestion' | 'thermal' | 'monochrome';
+
+/**
  * Configuration for the Traffic Area Analytics visualization module.
  *
  * @remarks
@@ -47,4 +58,11 @@ export type TrafficAreaAnalyticsConfig = MapModuleCommonConfig & {
      * @defaultValue 'congestionLevel'
      */
     metric?: AreaAnalyticsMetricKey;
+
+    /**
+     * Preset color scheme for the visualization layers.
+     *
+     * @defaultValue 'congestion'
+     */
+    colorScheme?: AreaAnalyticsColorScheme;
 };

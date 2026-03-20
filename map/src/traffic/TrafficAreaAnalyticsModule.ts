@@ -6,12 +6,17 @@ import type { TomTomMap } from '../TomTomMap';
 import {
     METRIC_RANGES,
     buildColorExpression,
+    buildHeatmapColorExpression,
     buildHeightExpression,
     buildHeatmapLayerSpec,
     buildHexExtrusionLayerSpec,
     buildHexFillLayerSpec,
 } from './layers/areaAnalyticsLayers';
-import type { AreaAnalyticsMetricKey, TrafficAreaAnalyticsConfig } from './types/trafficAreaAnalyticsConfig';
+import type {
+    AreaAnalyticsColorScheme,
+    AreaAnalyticsMetricKey,
+    TrafficAreaAnalyticsConfig,
+} from './types/trafficAreaAnalyticsConfig';
 import type { AreaAnalyticsDisplayProperties, AreaAnalyticsHexFeature } from './types/trafficAreaAnalyticsFeature';
 import { tilesToHexFeatures, tilesToPointFeatures } from './util/areaAnalyticsTransform';
 
@@ -89,6 +94,10 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
 
     private get metric(): AreaAnalyticsMetricKey {
         return this.config?.metric ?? 'congestionLevel';
+    }
+
+    private get colorScheme(): AreaAnalyticsColorScheme {
+        return this.config?.colorScheme ?? 'congestion';
     }
 
     // ── AbstractMapModule hooks ──────────────────────────────────────
@@ -205,6 +214,17 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
     }
 
     /**
+     * Changes the color scheme preset.
+     *
+     * @param scheme - One of `'congestion'`, `'thermal'`, or `'monochrome'`.
+     */
+    setColorScheme(scheme: AreaAnalyticsColorScheme): void {
+        if (scheme === this.colorScheme) return;
+        this.config = { ...this.config, colorScheme: scheme };
+        this.applyMetricToLayers(this.metric);
+    }
+
+    /**
      * Shows or hides all area analytics layers.
      */
     setVisible(visible: boolean): void {
@@ -272,7 +292,7 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
     }
 
     private applyMetricToLayers(metric: AreaAnalyticsMetricKey): void {
-        const colorExpr = buildColorExpression(metric);
+        const colorExpr = buildColorExpression(metric, this.colorScheme);
         const heightExpr = buildHeightExpression(metric);
         const hexLayerIDs = this.sourcesWithLayers.hexgrid.sourceAndLayerIDs.layerIDs;
         const heatmapLayerIDs = this.sourcesWithLayers.heatmap.sourceAndLayerIDs.layerIDs;
@@ -284,12 +304,18 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
         this.mapLibreMap.setPaintProperty(hexLayerIDs[1], 'fill-extrusion-color', colorExpr, { validate: false });
         this.mapLibreMap.setPaintProperty(hexLayerIDs[1], 'fill-extrusion-height', heightExpr, { validate: false });
 
-        // Heatmap weight
+        // Heatmap weight + color
         const { min, max } = METRIC_RANGES[metric];
         this.mapLibreMap.setPaintProperty(
             heatmapLayerIDs[0],
             'heatmap-weight',
             ['interpolate', ['linear'], ['get', metric], min, 0, max, 1],
+            { validate: false },
+        );
+        this.mapLibreMap.setPaintProperty(
+            heatmapLayerIDs[0],
+            'heatmap-color',
+            buildHeatmapColorExpression(this.colorScheme),
             { validate: false },
         );
     }
