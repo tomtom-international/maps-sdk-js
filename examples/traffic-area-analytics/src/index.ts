@@ -35,15 +35,14 @@ function getDateRange(days: number) {
     return { startDate: formatDate(start), endDate: formatDate(end) };
 }
 
-// ── Map ──────────────────────────────────────────────────────────────
-const map = new TomTomMap({
-    style: 'standardLight',
-    language: 'en-GB',
-    mapLibre: { container: 'sdk-map', center: [-3.7038, 40.4168], zoom: 12, pitch: 45, bearing: -17 },
-});
-
 // ── Main ─────────────────────────────────────────────────────────────
 (async () => {
+    const map = new TomTomMap({
+        style: 'standardLight',
+        language: 'en-GB',
+        mapLibre: { container: 'sdk-map', center: [-3.7038, 40.4168], zoom: 12, pitch: 45, bearing: -17 },
+    });
+
     const geometriesModule = await GeometriesModule.get(map, { theme: 'inverted' });
     const analyticsModule = await TrafficAreaAnalyticsModule.get(map, { mode: 'hexgrid', metric: 'congestionLevel' });
 
