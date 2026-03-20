@@ -15,11 +15,23 @@ export const waitForMapIdle = async (page: Page): Promise<void> => {
         if (!map) {
             throw new Error('globalThis.mapLibreMap is not available.');
         }
-        if (map.loaded() && (typeof map.areTilesLoaded !== 'function' || map.areTilesLoaded())) {
+        const isIdle = () => map.loaded() && (typeof map.areTilesLoaded !== 'function' || map.areTilesLoaded());
+        if (isIdle()) {
             return;
         }
         await new Promise<void>((resolve) => {
-            map.once('idle', () => resolve());
+            let resolved = false;
+            const done = () => {
+                if (resolved) return;
+                resolved = true;
+                clearInterval(poll);
+                resolve();
+            };
+            map.once('idle', done);
+            // Poll as fallback in case idle event fired before the listener was attached
+            const poll = setInterval(() => {
+                if (isIdle()) done();
+            }, 200);
         });
     });
 };

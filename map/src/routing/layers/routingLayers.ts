@@ -1,4 +1,5 @@
 import { mapStyleLayerIDs } from '../../shared';
+import { darkenColor } from '../../utils/colorUtils';
 import type { RouteLayersConfig, RoutingModuleConfig } from '../types/routeModuleConfig';
 import { chargingStopSymbol } from './chargingStopLayers';
 import { instructionArrow, instructionLine, instructionOutline } from './guidanceLayers';
@@ -19,7 +20,7 @@ import {
 } from './routeTrafficSectionLayers';
 import { routeTunnelsLine } from './routeTunnelSectionLayers';
 import { routeVehicleRestrictedBackgroundLine, routeVehicleRestrictedDottedLine } from './routeVehicleRestrictedLayers';
-import { darkenColor, getWaypointIconSize } from './shared';
+import { getWaypointIconSize } from './shared';
 import { buildSummaryBubbleSymbolPoint, summaryBubbleSymbolPoint } from './summaryBubbleLayers';
 import { waypointLabels, waypointSymbols } from './waypointLayers';
 
