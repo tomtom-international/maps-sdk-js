@@ -4,6 +4,10 @@
 @import "../../src/templates/css/panel/custom-panel.css";
 @import "../../src/templates/css/form/input.css";
 
+.sdk-example-body {
+    overflow: hidden;
+}
+
 /* ── City search suggestions ─────────────────────────────────────── */
 
 .aa-search-wrapper {

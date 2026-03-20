@@ -1,30 +1,30 @@
 import type { AreaAnalyticsMetrics } from '@tomtom-org/maps-sdk/core';
-import type { AreaAnalyticsMetricKey } from '@tomtom-org/maps-sdk/map';
+import type { AreaAnalyticsColorScheme, AreaAnalyticsMetricKey } from '@tomtom-org/maps-sdk/map';
+import { COLOR_SCHEMES } from '@tomtom-org/maps-sdk/map';
 
 const $ = (id: string) => document.getElementById(id)!;
 
 // ── Legend config ────────────────────────────────────────────────────
-const LEGEND: Record<AreaAnalyticsMetricKey, { title: string; min: string; max: string; gradient: string }> = {
-    congestionLevel: {
-        title: 'Congestion Level', min: 'Free', max: 'Standstill',
-        gradient: 'linear-gradient(to right, #2dc653, #f5a623, #e03030, #8b0000)',
-    },
-    speed: {
-        title: 'Speed', min: 'Slow', max: 'Fast',
-        gradient: 'linear-gradient(to right, #8b0000, #e03030, #f5a623, #2dc653)',
-    },
-    travelTime: {
-        title: 'Travel Time', min: 'Short', max: 'Long',
-        gradient: 'linear-gradient(to right, #2dc653, #f5a623, #e03030, #8b0000)',
-    },
+const LEGEND_LABELS: Record<AreaAnalyticsMetricKey, { title: string; min: string; max: string }> = {
+    congestionLevel: { title: 'Congestion Level', min: 'Free', max: 'Standstill' },
+    speed: { title: 'Speed', min: 'Slow', max: 'Fast' },
+    travelTime: { title: 'Travel Time', min: 'Short', max: 'Long' },
 };
 
-export function updateLegend(metric: AreaAnalyticsMetricKey): void {
-    const cfg = LEGEND[metric];
-    $('legend-title').textContent = cfg.title;
-    $('legend-bar').style.background = cfg.gradient;
-    $('legend-min').textContent = cfg.min;
-    $('legend-max').textContent = cfg.max;
+function buildGradient(metric: AreaAnalyticsMetricKey, scheme: AreaAnalyticsColorScheme): string {
+    const { low, mid, high } = COLOR_SCHEMES[scheme];
+    if (metric === 'speed') {
+        return `linear-gradient(to right, ${high}, ${mid}, ${low})`;
+    }
+    return `linear-gradient(to right, ${low}, ${mid}, ${high})`;
+}
+
+export function updateLegend(metric: AreaAnalyticsMetricKey, scheme: AreaAnalyticsColorScheme = 'congestion'): void {
+    const labels = LEGEND_LABELS[metric];
+    $('legend-title').textContent = labels.title;
+    $('legend-bar').style.background = buildGradient(metric, scheme);
+    $('legend-min').textContent = labels.min;
+    $('legend-max').textContent = labels.max;
 }
 
 export function updateStats(b: AreaAnalyticsMetrics): void {

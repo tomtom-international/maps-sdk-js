@@ -1,6 +1,6 @@
 import type { Place } from '@tomtom-org/maps-sdk/core';
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import type { AreaAnalyticsMetricKey } from '@tomtom-org/maps-sdk/map';
+import type { AreaAnalyticsColorScheme, AreaAnalyticsMetricKey } from '@tomtom-org/maps-sdk/map';
 import { GeometriesModule, TomTomMap, TrafficAreaAnalyticsModule, renderAreaAnalyticsChart } from '@tomtom-org/maps-sdk/map';
 import { geocode, geometryData, trafficAreaAnalytics } from '@tomtom-org/maps-sdk/services';
 
@@ -37,6 +37,9 @@ function getDateRange(days: number) {
 
 // ── Main ─────────────────────────────────────────────────────────────
 (async () => {
+    // Wait one frame for Vite's CSS injection to apply before creating the map
+    await new Promise((r) => requestAnimationFrame(r));
+
     const map = new TomTomMap({
         style: 'standardLight',
         language: 'en-GB',
@@ -145,12 +148,19 @@ function getDateRange(days: number) {
     // ── Metric selector ──────────────────────────────────────────────
     wireRadioGroup('#metric-selector', (value) => {
         analyticsModule.setMetric(value as AreaAnalyticsMetricKey);
-        updateLegend(value as AreaAnalyticsMetricKey);
+        updateLegend(value as AreaAnalyticsMetricKey, analyticsModule.getConfig()?.colorScheme);
     });
 
     // ── Mode selector ────────────────────────────────────────────────
     wireRadioGroup('#mode-selector', (value) => {
         analyticsModule.setMode(value as 'heatmap' | 'hexgrid');
+    });
+
+    // ── Color scheme selector ────────────────────────────────────────
+    wireRadioGroup('#color-scheme-selector', (value) => {
+        const scheme = value as AreaAnalyticsColorScheme;
+        analyticsModule.setColorScheme(scheme);
+        updateLegend(analyticsModule.getConfig()?.metric ?? 'congestionLevel', scheme);
     });
 
     // ── Hex hover tooltip ────────────────────────────────────────────
