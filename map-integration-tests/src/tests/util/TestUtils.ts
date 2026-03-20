@@ -21,6 +21,7 @@ import type {
     RoutingModuleConfig,
     SourceWithLayerIDs,
     StyleInput,
+    TrafficAreaAnalyticsConfig,
     WaypointDisplayProps,
 } from 'map';
 import { poiLayerIDs } from 'map';
@@ -153,6 +154,24 @@ export const initTrafficFlow = async (page: Page, config?: FlowConfig) =>
         const mapsSdkThis = globalThis as MapsSDKThis;
         mapsSdkThis.trafficFlow = await mapsSdkThis.MapsSDK.TrafficFlowModule.get(mapsSdkThis.tomtomMap, inputConfig);
     }, config);
+
+export const initTrafficAreaAnalytics = async (page: Page, config?: TrafficAreaAnalyticsConfig) =>
+    page.evaluate(async (inputConfig?) => {
+        const mapsSdkThis = globalThis as MapsSDKThis;
+        mapsSdkThis.trafficAreaAnalytics = await mapsSdkThis.MapsSDK.TrafficAreaAnalyticsModule.get(
+            mapsSdkThis.tomtomMap,
+            inputConfig,
+        );
+    }, config);
+
+export const showTrafficAreaAnalytics = async (page: Page, analytics: unknown) =>
+    page.evaluate(
+        (inputAnalytics) => (globalThis as MapsSDKThis).trafficAreaAnalytics?.show(inputAnalytics as any),
+        analytics,
+    );
+
+export const clearTrafficAreaAnalytics = async (page: Page) =>
+    page.evaluate(() => (globalThis as MapsSDKThis).trafficAreaAnalytics?.clear());
 
 export const initPOIs = async (page: Page, config?: POIsModuleConfig) =>
     page.evaluate(async (inputConfig) => {

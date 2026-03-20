@@ -1,0 +1,44 @@
+{
+  "type": "FeatureCollection",
+  "properties": {
+    "startDate": "2024-08-06",
+    "endDate": "2024-08-10",
+    "dataTypes": ["SPEED", "CONGESTION_LEVEL", "FREE_FLOW_SPEED", "TRAVEL_TIME"],
+    "heatmap": false,
+    "frcs": [0, 1, 2, 3, 4, 5]
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "region-madrid",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-3.72, 40.40], [-3.68, 40.40], [-3.68, 40.43], [-3.72, 40.43], [-3.72, 40.40]]]
+      },
+      "properties": {
+        "name": "Madrid Centre",
+        "timezone": "Europe/Madrid",
+        "level": 0,
+        "baseData": {
+          "v": 38.5,
+          "fv": 52.0,
+          "c": 34.2,
+          "t": 15.5
+        },
+        "timedData": {},
+        "tiledData": {
+          "tiles": [
+            { "tileCentre": [-3.710, 40.415], "v": 35.0, "fv": 50.0, "c": 42.0, "t": 17.1 },
+            { "tileCentre": [-3.705, 40.415], "v": 38.0, "fv": 52.0, "c": 35.0, "t": 15.8 },
+            { "tileCentre": [-3.700, 40.415], "v": 40.0, "fv": 53.0, "c": 30.0, "t": 15.0 },
+            { "tileCentre": [-3.695, 40.415], "v": 42.0, "fv": 54.0, "c": 28.0, "t": 14.3 },
+            { "tileCentre": [-3.710, 40.420], "v": 33.0, "fv": 51.0, "c": 45.0, "t": 18.2 },
+            { "tileCentre": [-3.705, 40.420], "v": 36.0, "fv": 51.5, "c": 38.0, "t": 16.7 },
+            { "tileCentre": [-3.700, 40.420], "v": 39.0, "fv": 52.5, "c": 32.0, "t": 15.4 },
+            { "tileCentre": [-3.695, 40.420], "v": 41.0, "fv": 53.5, "c": 29.0, "t": 14.6 }
+          ]
+        }
+      }
+    }
+  ]
+}

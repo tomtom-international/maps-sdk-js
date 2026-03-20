@@ -7,6 +7,7 @@ import type {
     RoutingModule,
     SourceWithLayers,
     TomTomMap,
+    TrafficAreaAnalyticsModule,
     TrafficFlowModule,
     TrafficIncidentsModule,
 } from 'map';
@@ -32,6 +33,7 @@ export type MapsSDKThis = typeof globalThis & {
     places?: PlacesModule;
     places2?: PlacesModule;
     geometries?: GeometriesModule;
+    trafficAreaAnalytics?: TrafficAreaAnalyticsModule;
     routing?: RoutingModule;
     routing2?: RoutingModule;
     // These properties are used for testing events in a map
