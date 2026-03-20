@@ -1,11 +1,13 @@
 // examples/map-data-agent/src/tools/show-coverage-analysis.ts
 import { bboxFromGeoJSON } from '@tomtom-org/maps-sdk/core';
+import type { TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { GeometriesModule, reachableRangeGeometryConfig } from '@tomtom-org/maps-sdk/map';
 import { calculateReachableRanges } from '@tomtom-org/maps-sdk/services';
 import { tool } from 'ai';
 import { z } from 'zod';
-import type { ToolContext } from '@tomtom-org/maps-sdk-plugin-ai-agent';
 import type { AnalysisServices } from '../analysis-services';
+
+type CoverageContext = { map: TomTomMap; services: AnalysisServices };
 
 const showCoverageAnalysisOutputSchema = z.union([
     z.object({
@@ -22,7 +24,7 @@ const showCoverageAnalysisSchema = z.object({
     timeBudgetMinutes: z.number().default(30).describe('Drive time in minutes for coverage calculation'),
 });
 
-export function createShowCoverageAnalysisTool(context: ToolContext<AnalysisServices>) {
+export function createShowCoverageAnalysisTool(context: CoverageContext) {
     return tool({
         description:
             'Calculate and display the reachable area from each loaded service center. ' +
@@ -46,7 +48,7 @@ export function createShowCoverageAnalysisTool(context: ToolContext<AnalysisServ
                     })),
                 );
 
-                const geometriesModule = await GeometriesModule.get(context.map.ttMap, reachableRangeGeometryConfig());
+                const geometriesModule = await GeometriesModule.get(context.map, reachableRangeGeometryConfig());
                 await geometriesModule.show(ranges);
 
                 const bbox = bboxFromGeoJSON(ranges) ?? null;

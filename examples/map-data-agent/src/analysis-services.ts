@@ -1,13 +1,11 @@
 // examples/map-data-agent/src/analysis-services.ts
-import { TomTomServiceResponses } from '@tomtom-org/maps-sdk-plugin-ai-agent';
-
 export type ServiceCenter = {
     id: string;
     name: string;
     position: [number, number]; // [longitude, latitude]
 };
 
-export class AnalysisServices extends TomTomServiceResponses {
+export class AnalysisServices {
     serviceCenters: ServiceCenter[] = [];
     coverageAnalysisComplete = false;
     coverageSummary = '';
@@ -21,8 +19,7 @@ export class AnalysisServices extends TomTomServiceResponses {
         this.coverageSummary = summary;
     }
 
-    override reset(): void {
-        super.reset();
+    reset(): void {
         this.serviceCenters = [];
         this.coverageAnalysisComplete = false;
         this.coverageSummary = '';

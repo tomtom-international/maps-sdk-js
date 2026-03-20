@@ -1,7 +1,7 @@
 // examples/map-data-agent/e2e-tests/eval/eval-cases.ts
 import { expect } from '@playwright/test';
-import { defineEvalCases } from '@testing/ai-eval';
 import type { EvalGlobalThis } from '@testing/ai-eval';
+import { defineEvalCases } from '@testing/ai-eval';
 
 export const cases = defineEvalCases([
     {

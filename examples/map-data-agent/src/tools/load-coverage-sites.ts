@@ -2,8 +2,9 @@
 import { bboxFromGeoJSON } from '@tomtom-org/maps-sdk/core';
 import { tool } from 'ai';
 import { z } from 'zod';
-import type { ToolContext } from '@tomtom-org/maps-sdk-plugin-ai-agent';
 import type { AnalysisServices } from '../analysis-services';
+
+type LoadContext = { services: AnalysisServices };
 
 const loadCoverageSitesOutputSchema = z.union([
     z.object({
@@ -18,7 +19,7 @@ const loadCoverageSitesSchema = z.object({
     url: z.string().describe('URL returning a JSON array of service center objects'),
 });
 
-export function createLoadCoverageSitesTool(context: ToolContext<AnalysisServices>) {
+export function createLoadCoverageSitesTool(context: LoadContext) {
     return tool({
         description:
             'Load service center locations from a JSON URL and store them in agent state. ' +
