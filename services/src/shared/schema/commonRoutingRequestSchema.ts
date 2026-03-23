@@ -10,52 +10,24 @@ import { vehicleParametersSchema } from './vehicleParamsSchema';
 export const commonRoutingRequestSchema = z.object({
     costModel: z
         .object({
-            avoid: z
-                .array(z.enum(avoidableTypes))
-                .optional()
-                .describe('Road types and features to avoid when calculating route'),
-            traffic: z
-                .enum(['live', 'historical'])
-                .optional()
-                .describe(
-                    'Traffic consideration mode (live: real-time + historical, historical: typical patterns only)',
-                ),
-            routeType: z
-                .enum(routeTypes)
-                .optional()
-                .describe('Route optimization strategy (fast, short, efficient, thrilling)'),
-            avoidAreas: z
-                .array(hasBBoxSchema)
-                .max(10)
-                .optional()
-                .describe(
-                    'Up to 10 rectangular areas for the routing engine to bypass, each as a BBox [W,S,E,N], GeoJSON object, or array of GeoJSON objects',
-                ),
+            avoid: z.array(z.enum(avoidableTypes)).optional(),
+            traffic: z.enum(['live', 'historical']).optional(),
+            routeType: z.enum(routeTypes).optional(),
+            avoidAreas: z.array(hasBBoxSchema).max(10).optional(),
             thrillingParams: z
                 .object({
-                    hilliness: z
-                        .enum(['low', 'normal', 'high'])
-                        .optional()
-                        .describe('Level of hilliness for thrilling routes'),
-                    windingness: z
-                        .enum(['low', 'normal', 'high'])
-                        .optional()
-                        .describe('Level of windingness for thrilling routes'),
+                    hilliness: z.enum(['low', 'normal', 'high']).optional(),
+                    windingness: z.enum(['low', 'normal', 'high']).optional(),
                 })
-                .optional()
-                .describe('Optional parameters for thrilling route type'),
+                .optional(),
         })
-        .optional()
-        .describe('Cost model criteria for route optimization'),
-    travelMode: z.string().optional().describe('Travel mode (car, truck, pedestrian, bicycle)'),
-    vehicle: vehicleParametersSchema
-        .optional()
-        .describe('Vehicle-specific parameters including dimensions, engine type, and consumption model'),
+        .optional(),
+    travelMode: z.string().optional(),
+    vehicle: vehicleParametersSchema.optional(),
     when: z
         .object({
-            option: z.enum(['departAt', 'arriveBy']).describe('Whether to specify a departure or arrival time'),
-            date: z.date().describe('The date and time to depart or arrive'),
+            option: z.enum(['departAt', 'arriveBy']),
+            date: z.date(),
         })
-        .optional()
-        .describe('Departure or arrival time specification for route planning'),
+        .optional(),
 });

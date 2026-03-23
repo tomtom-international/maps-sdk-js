@@ -3,9 +3,7 @@ import { commonSearchParamsSchema } from '../search/commonSearchParamsSchema';
 import { featureCollectionSchema, geometrySchema } from '../shared/schema/geometriesSchema';
 
 const geometrySearchRequestMandatory = z.object({
-    geometries: z
-        .array(z.union([featureCollectionSchema, geometrySchema]))
-        .describe('Array of GeoJSON geometries or FeatureCollections to search within'),
+    geometries: z.array(z.union([featureCollectionSchema, geometrySchema])),
 });
 
 /**

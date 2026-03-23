@@ -11,41 +11,20 @@ import {
 import type { SchemaRefinement } from '../shared/types/validation';
 import type { CalculateRouteParams } from './types/calculateRouteParams';
 
-const waypointLikeSchema = z.union([hasLngLatSchema, geometrySchema]).describe('Waypoint as position or geometry');
-const pathLikeSchema = z
-    .union([lineStringCoordsSchema, featureSchema])
-    .describe('Path as line string coordinates or feature');
+const waypointLikeSchema = z.union([hasLngLatSchema, geometrySchema]);
+const pathLikeSchema = z.union([lineStringCoordsSchema, featureSchema]);
 
 const mandatorySchema = z.object({
-    locations: z
-        .array(z.union([waypointLikeSchema, pathLikeSchema]))
-        .min(1)
-        .describe('Array of route locations (waypoints or paths) - minimum 2 waypoints or 1 path required'), // see calculateRouteLocationsRefinement
+    locations: z.array(z.union([waypointLikeSchema, pathLikeSchema])).min(1), // see calculateRouteLocationsRefinement
 });
 
 const optionalSchema = z.object({
-    computeAdditionalTravelTimeFor: z
-        .enum(['none', 'all'])
-        .optional()
-        .describe('Calculate additional travel time estimates for different traffic scenarios (none or all)'),
-    vehicleHeading: z
-        .number()
-        .min(0)
-        .max(359.5)
-        .optional()
-        .describe('Vehicle heading in degrees (0-359.5) at departure'),
+    computeAdditionalTravelTimeFor: z.enum(['none', 'all']).optional(),
+    vehicleHeading: z.number().min(0).max(359.5).optional(),
     // TODO add proper instructionsInfo check
     // instructionsType: z.enum(instructionsTypes),
-    maxAlternatives: z
-        .number()
-        .min(0)
-        .max(5)
-        .optional()
-        .describe('Maximum number of alternative routes to calculate (0-5)'),
-    sectionTypes: z
-        .array(z.enum(inputSectionTypesWithGuidance as [SectionType, ...SectionType[]]))
-        .optional()
-        .describe('Types of route sections to include in response (toll, ferry, traffic, etc.)'),
+    maxAlternatives: z.number().min(0).max(5).optional(),
+    sectionTypes: z.array(z.enum(inputSectionTypesWithGuidance as [SectionType, ...SectionType[]])).optional(),
 });
 
 const schema = commonRoutingRequestSchema.extend(mandatorySchema.extend(optionalSchema.shape).shape);

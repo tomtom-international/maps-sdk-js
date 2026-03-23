@@ -9,4 +9,4 @@ import { commonPlacesParamsSchema } from '../shared/schema/commonPlacesParamsSch
 export const geocodingRequestSchema = commonServiceRequestSchema
     .extend(commonPlacesParamsSchema.shape)
     .extend(commonGeocodeAndFuzzySearchParamsSchema.shape)
-    .extend({ query: z.string().describe('Search query for places, addresses, or locations') });
+    .extend({ query: z.string() });

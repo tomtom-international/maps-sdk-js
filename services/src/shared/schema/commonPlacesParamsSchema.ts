@@ -6,20 +6,11 @@ import { hasLngLatSchema } from './geometriesSchema';
  * @ignore
  */
 export const commonPlacesParamsSchema = z.object({
-    query: z.string().optional().describe('Search query for places, addresses, or locations'),
-    position: hasLngLatSchema.optional().describe('Geographic position [longitude, latitude] to bias search results'),
-    limit: z.number().max(100).optional().describe('Maximum number of results to return (1-100)'),
-    extendedPostalCodesFor: z
-        .array(z.string())
-        .optional()
-        .describe('Indexes for which to include extended postal codes in results'),
-    mapcodes: z
-        .array(z.string())
-        .optional()
-        .describe('Request mapcode representations for locations (Local, International, Alternative)'),
-    view: z.enum(views).optional().describe('Geopolitical view for disputed territories'),
-    geographyTypes: z
-        .array(z.string())
-        .optional()
-        .describe('Filter results to specific geography types (Country, Municipality, etc.)'),
+    query: z.string().optional(),
+    position: hasLngLatSchema.optional(),
+    limit: z.number().max(100).optional(),
+    extendedPostalCodesFor: z.array(z.string()).optional(),
+    mapcodes: z.array(z.string()).optional(),
+    view: z.enum(views).optional(),
+    geographyTypes: z.array(z.string()).optional(),
 });

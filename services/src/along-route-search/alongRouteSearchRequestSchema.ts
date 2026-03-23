@@ -17,15 +17,12 @@ const positionsArraySchema = lineStringCoordsSchema;
 const routeSchema = z.union([lineStringSchema, routeFeatureSchema, positionsArraySchema]);
 
 const alongRouteSearchRequestMandatory = z.object({
-    route: routeSchema.describe('GeoJSON LineString or Route Feature to search along'),
-    maxDetourTimeSeconds: z.number().int().positive().describe('Maximum allowed detour time in seconds'),
+    route: routeSchema,
+    maxDetourTimeSeconds: z.number().int().positive(),
 });
 
 const alongRouteSearchRequestOptional = z.object({
-    sortBy: z
-        .enum(['detourTime', 'detourOffset'])
-        .optional()
-        .describe('Sort results by detour time or position along the route'),
+    sortBy: z.enum(['detourTime', 'detourOffset']).optional(),
 });
 
 /**
