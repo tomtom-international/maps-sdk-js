@@ -22,9 +22,4 @@ node_modules/
 
 **/e2e-tests/reports
 
-.agents/
-skills-lock.json
-/research
-/docs/superpowers
-
 eval-report-*

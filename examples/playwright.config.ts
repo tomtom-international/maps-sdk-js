@@ -3,7 +3,7 @@ import { defineConfig, devices, PlaywrightTestConfig } from '@playwright/test';
 export const buildPlaywrightConfig = (overrides: Partial<PlaywrightTestConfig> = {}): PlaywrightTestConfig => {
     return defineConfig({
         timeout: 60 * 1000,
-        testMatch: '**/e2e-tests/**',
+        testMatch: '**/e2e-tests/**/*.test.ts',
         testIgnore: ['**/node_modules/**'],
 
         /* Fail the build on CI if you accidentally left test.only in the source code. */

@@ -1,8 +1,0 @@
-{
-  "extends": "../tsconfig.json",
-  "include": ["src/**/*.ts", "src/**/*.tsx", "e2e-tests/**/*.ts", "playwright*.ts", "sandpack.ts"],
-  "compilerOptions": {
-    "outDir": "dist",
-    "moduleResolution": "bundler"
-  }
-}
