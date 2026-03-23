@@ -4,7 +4,8 @@ export const buildPlaywrightConfig = (overrides: Partial<PlaywrightTestConfig> =
     return defineConfig({
         timeout: 60 * 1000,
         testMatch: '**/e2e-tests/**/*.test.ts',
-        testIgnore: ['**/node_modules/**'],
+        // Disable eval tests by default (not mature enough for CI)
+        testIgnore: ['**/node_modules/**', '**/eval/**'],
 
         /* Fail the build on CI if you accidentally left test.only in the source code. */
         forbidOnly: !!process.env.CI,
