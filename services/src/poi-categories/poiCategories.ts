@@ -20,7 +20,7 @@ const filterCategories = (language: Language | undefined, filters: string[]): PO
         const normalizedFilterInput = normalizeText(filterTerm);
         for (const [text, category] of Object.entries(cachedTextEntries)) {
             // if the category text includes the filter input, add the category to the results:
-            if (text.includes(normalizedFilterInput)) {
+            if (text.includes(normalizedFilterInput) && category) {
                 resultsByCode.set(category.code, category);
             }
         }

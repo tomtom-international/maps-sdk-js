@@ -63,6 +63,27 @@ describe('POI categories caching and filtering', () => {
         expect(results[0].name).toBe('Restaurant');
     });
 
+    test('filters strip dashes before matching', async () => {
+        // 'bed-and-breakfast' normalizes to 'bedandbreakfast', matching synonym 'Bed and Breakfast'
+        const { poiCategories: results } = await getPOICategories({ filters: ['bed-and-breakfast'] });
+        expect(results).toHaveLength(1);
+        expect(results[0].name).toBe('Hotel');
+    });
+
+    test('filters strip underscores before matching', async () => {
+        // 'bed_and_breakfast' normalizes to 'bedandbreakfast', matching synonym 'Bed and Breakfast'
+        const { poiCategories: results } = await getPOICategories({ filters: ['bed_and_breakfast'] });
+        expect(results).toHaveLength(1);
+        expect(results[0].name).toBe('Hotel');
+    });
+
+    test('filters strip commas before matching', async () => {
+        // 'fitness,center' normalizes to 'fitnesscenter', matching synonym 'Fitness Center'
+        const { poiCategories: results } = await getPOICategories({ filters: ['fitness,center'] });
+        expect(results).toHaveLength(1);
+        expect(results[0].name).toBe('Sports Center');
+    });
+
     test('filters do not match when normalized input spans words from different names or synonyms', async () => {
         // 'gym center' normalizes to 'gymcenter', which is neither a substring of 'gym' nor 'fitnesscenter' nor 'sportscenter'
         const { poiCategories: results } = await getPOICategories({ filters: ['gym center'] });

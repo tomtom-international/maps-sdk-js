@@ -158,7 +158,9 @@
     box-shadow: var(--sdk-shadow-e4);
     z-index: var(--sdk-z-panel);
     width: 580px;
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease;
     margin-bottom: 16px;
 }
 
@@ -262,7 +264,9 @@
 }
 
 @keyframes aa-spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* ── Tooltip ─────────────────────────────────────────────────────── */

@@ -8,7 +8,7 @@ const DEFAULT_LANGUAGE: Language = 'en-GB';
 
 const getWithDefault = (language: Language | undefined): Language => language ?? DEFAULT_LANGUAGE;
 
-export const normalizeText = (text: string): string => text.toLowerCase().replaceAll(' ', '');
+export const normalizeText = (text: string): string => text.toLowerCase().replaceAll(/[\s\-_,]+/g, '');
 
 /** @ignore */
 export const getCachedCategories = (language: Language | undefined): POICategoryResult[] | undefined => {

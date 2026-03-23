@@ -1,7 +1,12 @@
 import type { Place } from '@tomtom-org/maps-sdk/core';
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import type { AreaAnalyticsColorScheme, AreaAnalyticsMetricKey } from '@tomtom-org/maps-sdk/map';
-import { GeometriesModule, TomTomMap, TrafficAreaAnalyticsModule, renderAreaAnalyticsChart } from '@tomtom-org/maps-sdk/map';
+import {
+    GeometriesModule,
+    renderAreaAnalyticsChart,
+    TomTomMap,
+    TrafficAreaAnalyticsModule,
+} from '@tomtom-org/maps-sdk/map';
 import { geocode, geometryData, trafficAreaAnalytics } from '@tomtom-org/maps-sdk/services';
 
 import { updateLegend, updateStats, wireRadioGroup } from './controls';
@@ -55,17 +60,25 @@ function getDateRange(days: number) {
     cityInput.addEventListener('input', () => {
         clearTimeout(timer);
         const q = cityInput.value.trim();
-        if (q.length < 2) { hideSuggestions(); return; }
+        if (q.length < 2) {
+            hideSuggestions();
+            return;
+        }
         timer = setTimeout(async () => {
             try {
                 showSuggestions((await geocode({ query: q, limit: 5 })).features ?? []);
-            } catch { hideSuggestions(); }
+            } catch {
+                hideSuggestions();
+            }
         }, 300);
     });
 
     function showSuggestions(places: Place[]) {
         suggestionsList.innerHTML = '';
-        if (!places.length) { hideSuggestions(); return; }
+        if (!places.length) {
+            hideSuggestions();
+            return;
+        }
         for (const p of places) {
             const li = document.createElement('li');
             li.textContent = p.properties?.address?.freeformAddress ?? 'Unknown';
@@ -94,10 +107,16 @@ function getDateRange(days: number) {
             const bbox = boundary?.bbox;
 
             if (bbox && bbox.length >= 4) {
-                map.mapLibreMap.fitBounds([bbox[0], bbox[1], bbox[2], bbox[3]] as [number, number, number, number],
-                    { padding: { top: 60, bottom: 80, left: 60, right: 60 }, duration: 1500 });
+                map.mapLibreMap.fitBounds([bbox[0], bbox[1], bbox[2], bbox[3]] as [number, number, number, number], {
+                    padding: { top: 60, bottom: 80, left: 60, right: 60 },
+                    duration: 1500,
+                });
             } else {
-                map.mapLibreMap.flyTo({ center: place.geometry.coordinates as [number, number], zoom: 12, duration: 1500 });
+                map.mapLibreMap.flyTo({
+                    center: place.geometry.coordinates as [number, number],
+                    zoom: 12,
+                    duration: 1500,
+                });
             }
 
             await geometriesModule.show(boundary);
@@ -118,7 +137,8 @@ function getDateRange(days: number) {
             const analytics = await trafficAreaAnalytics({
                 apiKey: MOVE_PORTAL_KEY,
                 name: cityName,
-                startDate, endDate,
+                startDate,
+                endDate,
                 dataTypes: ['SPEED', 'CONGESTION_LEVEL', 'FREE_FLOW_SPEED', 'TRAVEL_TIME'],
                 functionalRoadClasses: 'all',
                 hours: 'all',
@@ -127,7 +147,10 @@ function getDateRange(days: number) {
 
             loadingOverlay.classList.add('aa-hidden');
             const region = analytics.features[0]?.properties;
-            if (!region) { bottomPanel.classList.add('aa-hidden'); return; }
+            if (!region) {
+                bottomPanel.classList.add('aa-hidden');
+                return;
+            }
 
             await analyticsModule.show(analytics);
 
@@ -182,5 +205,4 @@ function getDateRange(days: number) {
     map.mapLibreMap.getCanvas().addEventListener('mouseleave', () => {
         tooltip.classList.add('aa-hidden');
     });
-
 })();

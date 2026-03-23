@@ -4,13 +4,13 @@ import { AbstractMapModule, EventsModule, GeoJSONSourceWithLayers } from '../sha
 import { waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
 import {
-    METRIC_RANGES,
     buildColorExpression,
     buildHeatmapColorExpression,
-    buildHeightExpression,
     buildHeatmapLayerSpec,
+    buildHeightExpression,
     buildHexExtrusionLayerSpec,
     buildHexFillLayerSpec,
+    METRIC_RANGES,
 } from './layers/areaAnalyticsLayers';
 import type {
     AreaAnalyticsColorScheme,
@@ -79,10 +79,7 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
      * });
      * ```
      */
-    static async get(
-        tomtomMap: TomTomMap,
-        config?: TrafficAreaAnalyticsConfig,
-    ): Promise<TrafficAreaAnalyticsModule> {
+    static async get(tomtomMap: TomTomMap, config?: TrafficAreaAnalyticsConfig): Promise<TrafficAreaAnalyticsModule> {
         await waitUntilMapIsReady(tomtomMap);
         return new TrafficAreaAnalyticsModule(tomtomMap, config);
     }
@@ -250,10 +247,7 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
      * Whether any area analytics layer is currently visible.
      */
     isVisible(): boolean {
-        return (
-            this.sourcesWithLayers.heatmap.isAnyLayerVisible() ||
-            this.sourcesWithLayers.hexgrid.isAnyLayerVisible()
-        );
+        return this.sourcesWithLayers.heatmap.isAnyLayerVisible() || this.sourcesWithLayers.hexgrid.isAnyLayerVisible();
     }
 
     /**

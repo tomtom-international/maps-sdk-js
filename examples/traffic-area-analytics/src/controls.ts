@@ -30,7 +30,8 @@ export function updateLegend(metric: AreaAnalyticsMetricKey, scheme: AreaAnalyti
 export function updateStats(b: AreaAnalyticsMetrics): void {
     $('stat-congestion').textContent = `${Math.round(b.congestionLevel ?? 0)}%`;
     $('stat-speed').textContent = `${Math.round(b.speed ?? 0)} km/h`;
-    $('stat-traveltime').textContent = b.travelTime != null ? `${(Math.round(b.travelTime * 10) / 10).toFixed(1)} min/10km` : '--';
+    $('stat-traveltime').textContent =
+        b.travelTime != null ? `${(Math.round(b.travelTime * 10) / 10).toFixed(1)} min/10km` : '--';
     $('stat-freeflow').textContent = b.freeFlowSpeed != null ? `${Math.round(b.freeFlowSpeed)} km/h` : '--';
 }
 
@@ -41,7 +42,10 @@ export function wireRadioGroup(selector: string, onChange: (value: string) => vo
             for (const o of options) o.classList.remove('aa-radio-active');
             opt.classList.add('aa-radio-active');
             const radio = opt.querySelector('input[type="radio"]') as HTMLInputElement;
-            if (radio) { radio.checked = true; onChange(radio.value); }
+            if (radio) {
+                radio.checked = true;
+                onChange(radio.value);
+            }
         });
     }
 }

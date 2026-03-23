@@ -72,18 +72,12 @@ export function buildHeatmapColorExpression(
  * Builds a MapLibre expression for fill-extrusion height driven by the active metric.
  * @ignore
  */
-export function buildHeightExpression(
-    metric: AreaAnalyticsMetricKey,
-): ExpressionSpecification {
+export function buildHeightExpression(metric: AreaAnalyticsMetricKey): ExpressionSpecification {
     const scale = HEIGHT_SCALE[metric];
 
     if (metric === 'speed') {
         // Inverted: low speed → tall extrusion
-        return [
-            'max',
-            10,
-            ['*', ['-', METRIC_RANGES.speed.max, ['coalesce', ['get', 'speed'], 0]], scale],
-        ];
+        return ['max', 10, ['*', ['-', METRIC_RANGES.speed.max, ['coalesce', ['get', 'speed'], 0]], scale]];
     }
     return ['max', 10, ['*', ['coalesce', ['get', metric], 0], scale]];
 }

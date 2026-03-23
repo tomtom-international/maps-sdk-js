@@ -105,6 +105,85 @@ const data: [string, PoiCategoriesResponseAPI, POICategoriesResponse][] = [
             ],
         },
     ],
+    [
+        'category with unknown top-level ID is skipped entirely',
+        {
+            poiCategories: [
+                {
+                    id: 99999,
+                    name: 'Unknown Category',
+                    synonyms: [],
+                    childCategoryIds: [],
+                },
+            ],
+        },
+        {
+            poiCategories: [],
+        },
+    ],
+    [
+        'unknown top-level category is skipped while known categories are preserved',
+        {
+            poiCategories: [
+                {
+                    id: 7383,
+                    name: 'Airport',
+                    synonyms: [],
+                    childCategoryIds: [],
+                },
+                {
+                    id: 99999,
+                    name: 'Unknown Category',
+                    synonyms: [],
+                    childCategoryIds: [],
+                },
+                {
+                    id: 7315,
+                    name: 'Restaurant',
+                    synonyms: [],
+                    childCategoryIds: [],
+                },
+            ],
+        },
+        {
+            poiCategories: [
+                {
+                    code: 'AIRPORT',
+                    name: 'Airport',
+                    synonyms: [],
+                    childCategoryCodes: [],
+                },
+                {
+                    code: 'RESTAURANT',
+                    name: 'Restaurant',
+                    synonyms: [],
+                    childCategoryCodes: [],
+                },
+            ],
+        },
+    ],
+    [
+        'all unknown top-level IDs results in empty list',
+        {
+            poiCategories: [
+                {
+                    id: 99997,
+                    name: 'Unknown A',
+                    synonyms: [],
+                    childCategoryIds: [],
+                },
+                {
+                    id: 99998,
+                    name: 'Unknown B',
+                    synonyms: [],
+                    childCategoryIds: [],
+                },
+            ],
+        },
+        {
+            poiCategories: [],
+        },
+    ],
 ];
 
 export default data;

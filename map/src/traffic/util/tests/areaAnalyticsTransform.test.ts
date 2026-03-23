@@ -36,14 +36,14 @@ describe('tilesToPointFeatures', () => {
     test('handles multiple tiles', () => {
         const tiles: AreaAnalyticsTileEntry[] = [
             { tileCentre: [4.89, 52.37], congestionLevel: 10, speed: 50 },
-            { tileCentre: [4.90, 52.38], congestionLevel: 80, speed: 20 },
+            { tileCentre: [4.9, 52.38], congestionLevel: 80, speed: 20 },
             { tileCentre: [4.91, 52.39], congestionLevel: 55, speed: 30 },
         ];
 
         const result = tilesToPointFeatures(tiles);
         expect(result.features).toHaveLength(3);
         expect(result.features[0].geometry.coordinates).toEqual([4.89, 52.37]);
-        expect(result.features[1].geometry.coordinates).toEqual([4.90, 52.38]);
+        expect(result.features[1].geometry.coordinates).toEqual([4.9, 52.38]);
         expect(result.features[2].geometry.coordinates).toEqual([4.91, 52.39]);
     });
 

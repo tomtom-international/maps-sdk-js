@@ -123,10 +123,7 @@ const parseAnomalies = (
     return result;
 };
 
-const parseFeatureProperties = (
-    api: FeaturePropertiesAPI,
-    startDate: Date,
-): AreaAnalyticsFeatureProperties => ({
+const parseFeatureProperties = (api: FeaturePropertiesAPI, startDate: Date): AreaAnalyticsFeatureProperties => ({
     name: api.name,
     timezone: api.timezone,
     level: api.level,

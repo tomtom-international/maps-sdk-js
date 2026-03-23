@@ -50,7 +50,14 @@ describe('Traffic area analytics module tests', () => {
                     id: 'feat-001',
                     geometry: {
                         type: 'Polygon',
-                        coordinates: [[[-3.71, 40.41], [-3.70, 40.42], [-3.69, 40.41], [-3.71, 40.41]]],
+                        coordinates: [
+                            [
+                                [-3.71, 40.41],
+                                [-3.7, 40.42],
+                                [-3.69, 40.41],
+                                [-3.71, 40.41],
+                            ],
+                        ],
                     },
                     properties: {
                         name: 'Test Region',
@@ -60,7 +67,13 @@ describe('Traffic area analytics module tests', () => {
                         timedData: {},
                         tiledData: {
                             tiles: [
-                                { tileCentre: [-3.7, 40.4], congestionLevel: 45, speed: 35, freeFlowSpeed: 60, travelTime: 8 },
+                                {
+                                    tileCentre: [-3.7, 40.4],
+                                    congestionLevel: 45,
+                                    speed: 35,
+                                    freeFlowSpeed: 60,
+                                    travelTime: 8,
+                                },
                             ],
                         },
                     },

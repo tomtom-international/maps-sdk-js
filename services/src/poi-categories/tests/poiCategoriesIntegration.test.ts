@@ -61,11 +61,14 @@ describe('POI categories integration tests', () => {
             expect(filtered.length).toBeLessThan(all.length);
 
             // Every returned category must have at least one name or synonym whose normalized form contains the normalized filter term
-            const normalizedFilter = filterTerm.toLowerCase().replaceAll(' ', '');
+            const normalizedFilter = filterTerm.toLowerCase().replaceAll(/[\s\-_,]+/g, '');
             for (const filteredCategory of filtered) {
                 const texts = [filteredCategory.name, ...filteredCategory.synonyms];
                 const hasMatch = texts.some((text) =>
-                    text.toLowerCase().replaceAll(' ', '').includes(normalizedFilter),
+                    text
+                        .toLowerCase()
+                        .replaceAll(/[\s\-_,]+/g, '')
+                        .includes(normalizedFilter),
                 );
                 expect(hasMatch).toBe(true);
             }

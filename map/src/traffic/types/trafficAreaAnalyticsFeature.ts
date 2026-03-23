@@ -1,5 +1,5 @@
-import type { Feature, Point, Polygon } from 'geojson';
 import type { AreaAnalyticsMetrics } from '@tomtom-org/maps-sdk/core';
+import type { Feature, Point, Polygon } from 'geojson';
 
 /**
  * Properties attached to each area analytics display feature.
