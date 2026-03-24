@@ -101,6 +101,7 @@ test.describe('Traffic Area Analytics module integration tests', () => {
         expect(isVisible).toBe(false);
 
         await page.evaluate(() => (globalThis as MapsSDKThis).trafficAreaAnalytics?.setVisible(true));
+        await waitForMapIdle(page);
         const isVisibleAfter = await page.evaluate(() => (globalThis as MapsSDKThis).trafficAreaAnalytics?.isVisible());
         expect(isVisibleAfter).toBe(true);
 

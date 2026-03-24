@@ -63,8 +63,7 @@ export const buildLayoutConfig = (
     // Remove and recalculate offset properties when custom icons, custom offset, or circle theme
     // are present. The circle theme inherits pin-style offsets from pinLayerBaseSpec which must
     // be replaced with centered offsets.
-    const needsOffsetRecalculation =
-        hasCustomIcons || textConfig?.offset !== undefined || config?.theme === 'circle';
+    const needsOffsetRecalculation = hasCustomIcons || textConfig?.offset !== undefined || config?.theme === 'circle';
 
     if (needsOffsetRecalculation) {
         delete baseLayout['text-offset'];

@@ -3,12 +3,7 @@ import { describe, expect, test, vi } from 'vitest';
 import { MAP_MEDIUM_FONT } from '../../../shared/layers/commonLayerProps';
 import { pinLayerBaseSpec } from '../../../shared/layers/symbolLayers';
 import { getTextSizeSpec } from '../../utils/layerSpecBuilders';
-import {
-    buildPlacesLayerSpecs,
-    hasEventState,
-    pinLayerSpec,
-    selectedPinLayerSpec,
-} from '../placesLayers';
+import { buildPlacesLayerSpecs, hasEventState, pinLayerSpec, selectedPinLayerSpec } from '../placesLayers';
 import poiLayerSpec from './poiLayerSpec.data';
 
 describe('Get places layer spec with circle or pin icon style config', () => {

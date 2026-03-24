@@ -235,12 +235,7 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
      */
     setVisible(visible: boolean): void {
         this.config = { ...this.config, visible };
-        if (visible) {
-            this.applyModeVisibility();
-        } else {
-            this.sourcesWithLayers.heatmap.setLayersVisible(false);
-            this.sourcesWithLayers.hexgrid.setLayersVisible(false);
-        }
+        this.applyModeVisibility();
     }
 
     /**

@@ -28,6 +28,7 @@ catalog:
   "@vitest/coverage-v8": ^4.1.1
   ai: ^6.0.137
   jsdom: ^29.0.1
+  jszip: ^3.10.1
   lodash-es: ^4.17.23
   maplibre-gl: ^5.21.0
   marked: ^17.0.5
