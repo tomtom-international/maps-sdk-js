@@ -1,7 +1,7 @@
 import type { DataDrivenPropertyValueSpecification, Map as MapLibreMap, SymbolLayerSpecification } from 'maplibre-gl';
 import type { LayerSpecTemplate } from '../../shared';
 import { isClickEventState } from '../../shared/layers/eventState';
-import { ICON_ID, TITLE } from '../../shared/layers/symbolLayers';
+import { ICON_ID, TITLE, pinLayerBaseSpec } from '../../shared/layers/symbolLayers';
 
 /**
  * Replaces placeholders in text size spec with the actual title property.
@@ -18,7 +18,7 @@ export const getTextSizeSpec = (
  * @ignore
  */
 export const buildPoiLikeLayerSpec = (map: MapLibreMap): LayerSpecTemplate<SymbolLayerSpecification> => {
-    const poiLayer = (map.getStyle().layers.find((layer) => layer.id === 'POI') as SymbolLayerSpecification) || {};
+    const poiLayer = (map.getStyle().layers.find((layer) => layer.id === 'POI') as SymbolLayerSpecification) ?? {};
     const textSize = poiLayer.layout?.['text-size'];
     return {
         filter: ['!', isClickEventState],
@@ -29,6 +29,28 @@ export const buildPoiLikeLayerSpec = (map: MapLibreMap): LayerSpecTemplate<Symbo
             'text-field': ['get', TITLE],
             'icon-image': ['get', ICON_ID],
             ...(textSize && { 'text-size': getTextSizeSpec(textSize) }),
+        },
+    };
+};
+
+/**
+ * Builds a base layer spec for the 'circle' theme.
+ * @ignore
+ */
+export const buildCircleBaseLayerSpec = (map: MapLibreMap): LayerSpecTemplate<SymbolLayerSpecification> => {
+    const poiLayer = (map.getStyle().layers.find((layer) => layer.id === 'POI') as SymbolLayerSpecification) ?? {};
+    const poiLayout = poiLayer.layout ?? {};
+    return {
+        ...pinLayerBaseSpec,
+        layout: {
+            ...pinLayerBaseSpec.layout,
+            'icon-anchor': 'center',
+            ...(poiLayout['icon-size'] !== undefined && { 'icon-size': poiLayout['icon-size'] }),
+            ...(poiLayout['icon-padding'] !== undefined && { 'icon-padding': poiLayout['icon-padding'] }),
+        },
+        paint: {
+            ...pinLayerBaseSpec.paint,
+            'icon-translate': [0, 0],
         },
     };
 };

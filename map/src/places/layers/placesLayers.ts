@@ -5,7 +5,7 @@ import { pinLayerBaseSpec } from '../../shared/layers/symbolLayers';
 import type { PlaceLayerName, PlaceLayersConfig, PlacesModuleConfig } from '../types/placesModuleConfig';
 import { buildCustomIconScalesMap, type IconScalesMap } from '../utils/customIconScales';
 import { buildLayoutConfig, buildPaintConfig, buildTextFieldExpression } from '../utils/layerConfiguration';
-import { buildPoiLikeLayerSpec } from '../utils/layerSpecBuilders';
+import { buildCircleBaseLayerSpec, buildPoiLikeLayerSpec } from '../utils/layerSpecBuilders';
 
 /**
  * @ignore
@@ -65,9 +65,9 @@ const withConfig = (
 
     return {
         ...layerSpec,
+        ...customLayer,
         layout: buildLayoutConfig(layerSpec, config, layerName, textField, iconTextOffsetScales),
         paint: buildPaintConfig(layerSpec, config, layerName, lightDark),
-        ...customLayer,
     };
 };
 
@@ -101,8 +101,26 @@ export const buildPlacesLayerSpecs = (
                 'text-color': SELECTED_COLOR,
             },
         };
+    } else if (config?.theme === 'circle') {
+        const circleBase = buildCircleBaseLayerSpec(mapLibreMap);
+        main = {
+            ...circleBase,
+            filter: ['!', hasEventState],
+        };
+        selected = {
+            ...circleBase,
+            filter: hasEventState,
+            layout: {
+                ...circleBase.layout,
+                'text-allow-overlap': true,
+            },
+            paint: {
+                ...circleBase.paint,
+                'text-color': SELECTED_COLOR,
+            },
+        };
     } else {
-        // pin / circle
+        // pin (default)
         main = pinLayerSpec;
         selected = selectedPinLayerSpec;
     }

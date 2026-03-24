@@ -60,8 +60,13 @@ export const buildLayoutConfig = (
     // Start with base layout
     const baseLayout = { ...layerSpec.layout };
 
-    // Remove offset properties we'll replace
-    if (hasCustomIcons || textConfig?.offset !== undefined) {
+    // Remove and recalculate offset properties when custom icons, custom offset, or circle theme
+    // are present. The circle theme inherits pin-style offsets from pinLayerBaseSpec which must
+    // be replaced with centered offsets.
+    const needsOffsetRecalculation =
+        hasCustomIcons || textConfig?.offset !== undefined || config?.theme === 'circle';
+
+    if (needsOffsetRecalculation) {
         delete baseLayout['text-offset'];
         delete baseLayout['text-variable-anchor-offset'];
         delete baseLayout['text-radial-offset'];
@@ -76,12 +81,11 @@ export const buildLayoutConfig = (
     };
 
     // Apply offset configuration
-    if (hasCustomIcons || textConfig?.offset !== undefined) {
-        // Dynamic offset calculation handles custom icons and/or custom offset
-        // For pin theme, this ensures proper vertical adjustments for left/right anchors
-        const iconSize = layerSpec.layout?.['icon-size'];
+    if (needsOffsetRecalculation) {
+        // Dynamic offset calculation handles custom icons, custom offset, and circle theme centering
+        const iconSize = layout['icon-size'];
         const scales = iconTextOffsetScales ?? new Map();
-        Object.assign(layout, getTextOffset(iconSize, scales, config?.theme, textConfig?.offset));
+        return { ...layout, ...getTextOffset(iconSize, scales, config?.theme, textConfig?.offset) };
     }
 
     return layout;

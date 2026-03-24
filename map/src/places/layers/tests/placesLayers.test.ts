@@ -1,8 +1,14 @@
 import type { DataDrivenPropertyValueSpecification, Map } from 'maplibre-gl';
 import { describe, expect, test, vi } from 'vitest';
 import { MAP_MEDIUM_FONT } from '../../../shared/layers/commonLayerProps';
+import { pinLayerBaseSpec } from '../../../shared/layers/symbolLayers';
 import { getTextSizeSpec } from '../../utils/layerSpecBuilders';
-import { buildPlacesLayerSpecs, hasEventState, pinLayerSpec, selectedPinLayerSpec } from '../placesLayers';
+import {
+    buildPlacesLayerSpecs,
+    hasEventState,
+    pinLayerSpec,
+    selectedPinLayerSpec,
+} from '../placesLayers';
 import poiLayerSpec from './poiLayerSpec.data';
 
 describe('Get places layer spec with circle or pin icon style config', () => {
@@ -38,30 +44,43 @@ describe('Get places layer spec with circle or pin icon style config', () => {
     });
 
     test('Get places layer spec with circle icon style config', () => {
-        expect(buildPlacesLayerSpecs({ theme: 'circle' }, mapLibreMock, 'light', 0)).toEqual({
+        // Circle theme reads icon properties from the live POI layer in the map style
+        const circleMapMock = {
+            getStyle: vi.fn().mockReturnValue({ layers: [poiLayerSpec] }),
+        } as unknown as Map;
+
+        // Expected layout: pinLayerBaseSpec overridden with POI icon props and forced center anchor
+        // extractMaxIconScale({ stops: [[10, 0.7], [18, 1]] }) → 1.0
+        // iconScaleMultiplier = 1.0 / 0.8 = 1.25; centered theme → vertical adjustment = 0
+        const expectedLayout = {
+            ...pinLayerBaseSpec.layout,
+            'icon-anchor': 'center',
+            'icon-size': poiLayerSpec.layout['icon-size'],
+            'icon-padding': poiLayerSpec.layout['icon-padding'],
+            'text-variable-anchor-offset': ['top', [0, 0.875], 'left', [1.75, 0], 'right', [-1.75, 0]],
+        };
+        const expectedPaint = {
+            ...pinLayerBaseSpec.paint,
+            'icon-translate': [0, 0],
+            'text-color': '#333333',
+            'text-halo-color': '#FFFFFF',
+        };
+
+        expect(buildPlacesLayerSpecs({ theme: 'circle' }, circleMapMock, 'light', 0)).toEqual({
             main: {
-                ...pinLayerSpec,
-                layout: {
-                    ...pinLayerSpec.layout,
-                    'text-variable-anchor-offset': ['top', [0, 0.7], 'left', [1.4, -1.4], 'right', [-1.4, -1.4]],
-                },
-                paint: {
-                    ...pinLayerSpec.paint,
-                    'text-color': '#333333',
-                    'text-halo-color': '#FFFFFF',
-                },
+                type: 'symbol',
+                filter: ['!', hasEventState],
+                layout: expectedLayout,
+                paint: expectedPaint,
             },
             selected: {
-                ...selectedPinLayerSpec,
+                type: 'symbol',
+                filter: hasEventState,
                 layout: {
-                    ...selectedPinLayerSpec.layout,
-                    'text-variable-anchor-offset': ['top', [0, 0.7], 'left', [1.4, -1.4], 'right', [-1.4, -1.4]],
+                    ...expectedLayout,
+                    'text-allow-overlap': true,
                 },
-                paint: {
-                    ...selectedPinLayerSpec.paint,
-                    'text-color': '#333333',
-                    'text-halo-color': '#FFFFFF',
-                },
+                paint: expectedPaint,
             },
         });
     });

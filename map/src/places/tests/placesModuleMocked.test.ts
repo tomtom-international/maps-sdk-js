@@ -49,7 +49,8 @@ describe('GeoJSON Places module tests', () => {
         const placesAny: any = places;
         vi.spyOn(placesAny, 'updateLayersAndData');
         vi.spyOn(placesAny, 'updateData');
-        vi.spyOn(tomtomMapMock.mapLibreMap, 'getStyle');
+        // Reset accumulated getStyle calls from module initialization (circle theme reads POI layer)
+        vi.spyOn(tomtomMapMock.mapLibreMap, 'getStyle').mockClear();
         places.applyConfig({ theme: 'base-map' });
         expect(tomtomMapMock.mapLibreMap.getStyle).toHaveBeenCalledTimes(1);
         expect(placesAny.updateData).toHaveBeenCalledTimes(1);

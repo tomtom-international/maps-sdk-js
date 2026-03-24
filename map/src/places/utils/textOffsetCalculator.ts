@@ -19,14 +19,27 @@ const extractMaxIconScale = (expression: DataDrivenPropertyValueSpecification<nu
         return DEFAULT_MAX_PIN_SCALE;
     }
 
+    // Literal: 0.8
     if (typeof expression === 'number') {
         return expression;
     }
 
+    // Interpolate expression: ['interpolate', ['linear'], ['zoom'], 8, 0.6, 22, **0.8**]
     if (Array.isArray(expression)) {
         const lastValue = expression.at(-1);
         if (typeof lastValue === 'number') {
             return lastValue;
+        }
+    }
+
+    // Legacy stops object: { stops: [[10, 0.7], [18, **1**]] }
+    if (typeof expression === 'object' && 'stops' in expression) {
+        const stops = (expression as { stops: [number, number][] }).stops;
+        if (Array.isArray(stops) && stops.length > 0) {
+            const lastStop = stops.at(-1);
+            if (Array.isArray(lastStop) && typeof lastStop[1] === 'number') {
+                return lastStop[1];
+            }
         }
     }
 
@@ -42,6 +55,13 @@ type TextOffsetLayout = {
 };
 
 /**
+ * Rounds to 4 decimal places — prevents float noise (e.g. 0.7*2*1.5 = 2.0999…)
+ * from leaking into style JSON when custom icon scales produce non-exact products.
+ * @ignore
+ */
+const round4 = (n: number): number => Math.round(n * 10000) / 10000;
+
+/**
  * Builds anchor offsets for variable-anchor-offset property.
  * @ignore
  */
@@ -55,9 +75,13 @@ const buildAnchorOffsets = (
     // For pin theme with custom offset, override only the primary direction for each anchor
     // top anchor → custom offset applies to vertical, left/right → custom offset applies to horizontal
     return {
-        top: hasCustomOffset ? [0, customTextOffset] : [0, topOffset],
-        left: hasCustomOffset ? [customTextOffset, pinVerticalAdjustment] : [sideOffset, pinVerticalAdjustment],
-        right: hasCustomOffset ? [-customTextOffset, pinVerticalAdjustment] : [-sideOffset, pinVerticalAdjustment],
+        top: hasCustomOffset ? [0, customTextOffset] : [0, round4(topOffset)],
+        left: hasCustomOffset
+            ? [customTextOffset, round4(pinVerticalAdjustment)]
+            : [round4(sideOffset), round4(pinVerticalAdjustment)],
+        right: hasCustomOffset
+            ? [-customTextOffset, round4(pinVerticalAdjustment)]
+            : [-round4(sideOffset), round4(pinVerticalAdjustment)],
     };
 };
 
@@ -66,7 +90,7 @@ const buildAnchorOffsets = (
  *
  * @param iconSizeExpression The icon-size property from the layer specification
  * @param iconTextOffsetScales Map of icon IDs to their scale factors (heightScale for vertical, widthScale for horizontal)
- * @param theme The places theme ('base-map' for circles, 'pin' for pins)
+ * @param theme The places theme ('base-map'/'circle' for centered icons, 'pin' for bottom-anchored pins)
  * @param customTextOffset Custom text offset multiplier (overrides default TEXT_OFFSET constants)
  * @returns Configuration object with the MapLibre property type and value to apply
  * @ignore
@@ -79,11 +103,12 @@ export const getTextOffset = (
 ): TextOffsetLayout => {
     const maxIconScale = extractMaxIconScale(iconSizeExpression);
     const iconScaleMultiplier = maxIconScale / DEFAULT_MAX_PIN_SCALE;
-    const isBaseMapTheme = theme === 'base-map';
+    // Both 'circle' and 'base-map' use centered icons; 'pin' is bottom-anchored.
+    const isCenteredTheme = theme === 'base-map' || theme === 'circle';
     const hasCustomOffset = customTextOffset !== undefined;
 
-    // For base-map theme with custom offset, use simple text-offset (circles are centered)
-    if (isBaseMapTheme && hasCustomOffset) {
+    // For centered themes with a custom offset, use simple text-offset
+    if (isCenteredTheme && hasCustomOffset) {
         return {
             'text-offset': [customTextOffset, customTextOffset],
         };
@@ -92,11 +117,11 @@ export const getTextOffset = (
     // Calculate fallback offsets (used when no custom icons or as default case)
     const fallbackTopOffset = DEFAULT_TEXT_OFFSET_Y * iconScaleMultiplier;
     const fallbackSideOffset = DEFAULT_TEXT_OFFSET_X * iconScaleMultiplier;
-    const fallbackPinVerticalAdjustment = isBaseMapTheme ? 0 : -fallbackSideOffset;
+    const fallbackVerticalAdjustment = isCenteredTheme ? 0 : -fallbackSideOffset;
     const fallbackOffsets = buildAnchorOffsets(
         fallbackTopOffset,
         fallbackSideOffset,
-        fallbackPinVerticalAdjustment,
+        fallbackVerticalAdjustment,
         customTextOffset,
     );
     const fallbackAnchorOffset = [
@@ -119,14 +144,14 @@ export const getTextOffset = (
     const offsetCaseExpression: (string | number | ExpressionSpecification)[] = ['case'];
 
     for (const [iconId, scales] of iconTextOffsetScales.entries()) {
-        // Base-map POI layer uses larger vertical offsets than pin theme to match native map styling
-        const baseTopOffset = isBaseMapTheme ? DEFAULT_TEXT_OFFSET_Y * 2 : DEFAULT_TEXT_OFFSET_Y;
+        // Centered themes (base-map/circle) use larger vertical offsets to match native map styling
+        const baseTopOffset = isCenteredTheme ? DEFAULT_TEXT_OFFSET_Y * 2 : DEFAULT_TEXT_OFFSET_Y;
         const topOffset = baseTopOffset * scales.heightScale;
         const sideOffset = DEFAULT_TEXT_OFFSET_X * scales.widthScale;
 
-        // Base-map theme uses circles (centered) → no vertical adjustment for side anchors
+        // Centered themes (centered icon anchor) → no vertical adjustment for side anchors
         // Pin theme uses pins (bottom-anchored) → shift labels upward to align with visual center
-        const pinVerticalAdjustment = isBaseMapTheme ? 0 : -sideOffset;
+        const pinVerticalAdjustment = isCenteredTheme ? 0 : -sideOffset;
 
         const offsets = buildAnchorOffsets(topOffset, sideOffset, pinVerticalAdjustment, customTextOffset);
         offsetCaseExpression.push(
