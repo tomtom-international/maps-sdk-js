@@ -50,19 +50,174 @@ pnpm develop:sandpack
 
 See [../CONTRIBUTING.md](../CONTRIBUTING.md) for detailed setup.
 
+### Minimum Ingredients — Web Example
+
+A web example (browser, renders a map) requires exactly:
+
+```
+my-example/
+├── src/
+│   ├── index.html      # HTML shell with #sdk-map div
+│   ├── index.ts        # SDK code: TomTomConfig + TomTomMap (imports config + style.css)
+│   ├── style.css       # Full-screen #sdk-map positioning
+│   └── config.ts       # export const API_KEY = process.env.API_KEY_EXAMPLES;
+├── content/
+│   ├── page.mdx        # Frontmatter: title, description, thumbnail, tags
+│   └── thumbnail.png   # Screenshot of the example
+├── e2e-tests/
+│   ├── sanity.test.ts  # Calls sanityE2ETest({ page, testInfo })
+│   └── snapshots/
+│       └── upon-load.png  # Playwright snapshot (commit after generating)
+├── sandpack.ts         # Required (can be empty: export const sandpackOptions = {})
+├── package.json        # See required scripts below
+├── playwright.config.ts  # One line: export default buildPlaywrightConfig();
+└── tsconfig.json       # One line: { "extends": "../tsconfig.json" }
+```
+
+**`src/index.html`** — minimal shell:
+```html
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>My Example</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body>
+        <div id="sdk-map"></div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>
+```
+
+**`src/index.ts`** — minimal entry point:
+```typescript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+import './style.css';
+import { API_KEY } from './config';
+
+// (Set your own API key when working in your own environment)
+TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
+
+new TomTomMap({
+    mapLibre: {
+        container: 'sdk-map',
+        center: [4.8156, 52.4414],
+        zoom: 8,
+    },
+});
+```
+
+**`src/style.css`** — required for full-screen map:
+```css
+#sdk-map {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+```
+
+**`package.json`** — required scripts for web example:
+```json
+{
+  "name": "@examples/my-example",
+  "description": "Short description",
+  "type": "module",
+  "scripts": {
+    "build": "vite build --config ../example-vite.config.ts",
+    "clean:dist": "rimraf ./dist",
+    "develop": "vite --config ../example-vite.config.ts",
+    "develop:sandpack": "vite --config ../example-sandpack-vite.config.ts",
+    "type-check": "tsc --noEmit",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:update-snapshots": "playwright test --update-snapshots",
+    "start-test-server": "vite preview --port 9050"
+  },
+  "dependencies": {
+    "@tomtom-org/maps-sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@playwright/test": "catalog:",
+    "@types/node": "catalog:",
+    "rimraf": "catalog:",
+    "rollup-plugin-visualizer": "catalog:",
+    "ts-node": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  }
+}
+```
+
+---
+
+### Minimum Ingredients — Node.js Example
+
+A Node.js example (server-side, no map rendering) requires exactly:
+
+```
+my-nodejs-example/
+├── src/
+│   ├── index.ts        # SDK code: TomTomConfig + service call + console.log (imports config)
+│   └── config.ts       # export const API_KEY = process.env.API_KEY_EXAMPLES;
+├── content/
+│   ├── page.mdx        # Frontmatter: title, description, thumbnail, tags (include tag: nodejs)
+│   └── thumbnail.png   # Screenshot or representative image
+├── sandpack.ts         # Required (can be empty: export const sandpackOptions = {})
+├── package.json        # See required scripts below
+└── tsconfig.json       # One line: { "extends": "../tsconfig.json" }
+```
+
+No `index.html`, no `style.css`, no e2e tests.
+
+**`src/index.ts`** — minimal entry point:
+```typescript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { geocode } from '@tomtom-org/maps-sdk/services';
+import { API_KEY } from './config';
+
+TomTomConfig.instance.put({ apiKey: API_KEY });
+
+(async () => {
+    const result = await geocode({ query: 'Amsterdam', limit: 3 });
+    console.log(JSON.stringify(result, null, 4));
+})();
+```
+
+**`package.json`** — required scripts for Node.js example:
+```json
+{
+  "name": "@examples/nodejs-my-example",
+  "description": "Short description",
+  "type": "module",
+  "scripts": {
+    "develop": "node src/index.ts",
+    "develop:sandpack": "vite --config ../example-sandpack-vite.config.ts"
+  },
+  "dependencies": {
+    "@tomtom-org/maps-sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "catalog:"
+  }
+}
+```
+
+---
+
 ### Creating a New Example
 
 ```bash
 # Copy an existing example as template
-cp -r default-map my-new-example
+cp -r default-map my-new-example      # web
+cp -r nodejs-geocode nodejs-my-example  # Node.js
 
-# Edit the files in my-new-example/
-# - index.html - HTML structure
-# - index.ts - TypeScript code
-# - style.css - Custom styles (if needed)
-
+# Edit files in my-new-example/src/
 # Test your example
-pnpm dev
+pnpm develop
 # Navigate to http://localhost:5173/my-new-example
 ```
 
@@ -82,9 +237,7 @@ pnpm develop:sandpack
 # Opens a React app with Sandpack editor showing your example
 ```
 
-**Customize Sandpack behavior:**
-
-Create a `sandpack.ts` file in your example directory to customize the Sandpack editor:
+`sandpack.ts` is **required** in every example (web and Node.js). The default empty export is fine unless you need to customize the editor:
 
 ```typescript
 // my-example/sandpack.ts
@@ -94,7 +247,6 @@ export const sandpackOptions: Partial<SandpackOptions> = {
   editorHeight: '600px',
   layout: 'preview',  // or 'console'
   showLineNumbers: true,
-  // ... other Sandpack options
 };
 ```
 
@@ -122,31 +274,19 @@ pnpm dev
 
 ### End-to-End (E2E) Testing
 
-Each example has E2E tests that verify both the regular build and the Sandpack wrapper work correctly.
+Web examples have E2E tests (Node.js examples do not).
 
 **Quick commands:**
 ```bash
 cd examples/<example-name>
 
-pnpm test:e2e              # Test all builds
-pnpm test:e2e:prod         # Test production build only
-pnpm test:e2e:sandpack     # Test Sandpack wrapper  
+pnpm test:e2e                    # Run tests
+pnpm test:e2e:update-snapshots   # Regenerate upon-load.png snapshot
+pnpm test:e2e:ui                 # Interactive UI mode
 ```
 
-**📚 Full E2E Testing Guide:** See [E2E_TESTING.md](./E2E_TESTING.md) for comprehensive documentation including:
-- Writing tests
-- Updating snapshots
-- Troubleshooting
-- CI/CD integration
-```
-
-**Build outputs:**
-- `dist/prod/` - Production full-screen application (port 9050)
-- `dist/sandpack/` - Sandpack interactive wrapper (port 9051)
-
-Each build type has its own snapshots:
-- `e2e-tests/snapshots/upon-load-prod.png` - Production version
-- `e2e-tests/snapshots/upon-load-sandpack.png` - Sandpack version
+Each web example has one snapshot:
+- `e2e-tests/snapshots/upon-load.png` — screenshot taken on page load (commit this file)
 
 **See [E2E_TESTING.md](./E2E_TESTING.md) for detailed testing documentation.**
 
@@ -154,21 +294,39 @@ Each build type has its own snapshots:
 
 ```
 examples/
-├── vite.config.ts          # Vite configuration for all examples
-├── example-vite.config.ts  # Individual example config
+├── vite.config.ts                   # Vite configuration for all examples
+├── example-vite.config.ts           # Individual example config
 ├── example-sandpack-vite.config.ts  # Sandpack preview config
 ├── src/
 │   └── sandpack/
 │       ├── LiveCodingExample.tsx    # Sandpack component
-│       └── localPreview/            # Local preview app
-├── default-map/            # Example: Basic map
-│   ├── index.html
-│   ├── index.ts
-│   ├── style.css (optional)
-│   └── sandpack.ts (optional)  # Sandpack customization
-└── route/                  # Example: Routing
-    ├── index.html
-    └── index.ts
+│       └── localPreview/           # Local preview app
+├── default-map/                    # Web example
+│   ├── src/
+│   │   ├── index.html
+│   │   ├── index.ts
+│   │   ├── style.css
+│   │   └── config.ts
+│   ├── content/
+│   │   ├── page.mdx
+│   │   └── thumbnail.png
+│   ├── e2e-tests/
+│   │   ├── sanity.test.ts
+│   │   └── snapshots/upon-load.png
+│   ├── sandpack.ts
+│   ├── package.json
+│   ├── playwright.config.ts
+│   └── tsconfig.json
+└── nodejs-geocode/                 # Node.js example (no HTML, no CSS, no e2e)
+    ├── src/
+    │   ├── index.ts
+    │   └── config.ts
+    ├── content/
+    │   ├── page.mdx
+    │   └── thumbnail.png
+    ├── sandpack.ts
+    ├── package.json
+    └── tsconfig.json
 ```
 
 ## Contributor Workflows
@@ -286,48 +444,12 @@ examples/
 
 ## Common Example Patterns
 
-### Typical HTML Structure
+See "Minimum Ingredients" sections above for the canonical file contents. The key patterns are:
 
-```html
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8" />
-  <title>Example Title</title>
-  <link rel="stylesheet" href="maplibre-gl.css" />
-  <style>
-    #map { width: 100%; height: 100vh; }
-  </style>
-</head>
-<body>
-  <div id="map"></div>
-  <script type="module" src="./index.ts"></script>
-</body>
-</html>
-```
-
-### Typical TypeScript Structure
-
-```typescript
-import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import { TomTomMap } from '@tomtom-org/maps-sdk/map';
-
-TomTomConfig.instance.put({ apiKey: 'YOUR_API_KEY' });
-
-async function main() {
-  const map = new TomTomMap({
-    mapLibre: {
-      container: 'map',
-      center: [0, 0],
-      zoom: 2
-    }
-  });
-  
-  // Add example-specific logic here
-}
-
-main();
-```
+- `config.ts` exports `API_KEY` from `process.env.API_KEY_EXAMPLES` — never hardcode keys
+- `TomTomConfig.instance.put({ apiKey: API_KEY })` is always the first SDK call
+- Map container div id is `sdk-map` (not `map`)
+- All source files live under `src/` inside each example directory
 
 ## Important Notes
 
