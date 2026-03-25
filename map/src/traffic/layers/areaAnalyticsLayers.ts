@@ -23,6 +23,9 @@ export const COLOR_SCHEMES: Record<AreaAnalyticsColorScheme, ColorStops> = {
 const DEFAULT_SCHEME: AreaAnalyticsColorScheme = 'congestion';
 
 // ── Metric ranges used for colour / height interpolation ─────────────
+/**
+ * @ignore
+ */
 export const METRIC_RANGES: Record<AreaAnalyticsMetricKey, { min: number; mid: number; max: number }> = {
     congestionLevel: { min: 0, mid: 50, max: 100 },
     speed: { min: 0, mid: 50, max: 120 },
@@ -43,10 +46,10 @@ const HEIGHT_SCALE: Record<AreaAnalyticsMetricKey, number> = {
  * For `speed` the scale is inverted (high speed = low colour, low speed = high colour).
  * @ignore
  */
-export function buildColorExpression(
+export const buildColorExpression = (
     metric: AreaAnalyticsMetricKey,
     scheme: AreaAnalyticsColorScheme = DEFAULT_SCHEME,
-): ExpressionSpecification {
+): ExpressionSpecification => {
     const { min, mid, max } = METRIC_RANGES[metric];
     const { low, mid: midColor, high } = COLOR_SCHEMES[scheme];
 
@@ -55,24 +58,24 @@ export function buildColorExpression(
         return ['interpolate', ['linear'], ['get', metric], min, high, mid, midColor, max, low];
     }
     return ['interpolate', ['linear'], ['get', metric], min, low, mid, midColor, max, high];
-}
+};
 
 /**
  * Builds a MapLibre `heatmap-color` expression using the given colour scheme.
  * @ignore
  */
-export function buildHeatmapColorExpression(
+export const buildHeatmapColorExpression = (
     scheme: AreaAnalyticsColorScheme = DEFAULT_SCHEME,
-): ExpressionSpecification {
+): ExpressionSpecification => {
     const { low, mid, high } = COLOR_SCHEMES[scheme];
-    return ['interpolate', ['linear'], ['heatmap-density'], 0, 'rgba(0,0,0,0)', 0.3, low, 0.6, mid, 1.0, high];
-}
+    return ['interpolate', ['linear'], ['heatmap-density'], 0, 'rgba(0,0,0,0)', 0.3, low, 0.6, mid, 1, high];
+};
 
 /**
  * Builds a MapLibre expression for fill-extrusion height driven by the active metric.
  * @ignore
  */
-export function buildHeightExpression(metric: AreaAnalyticsMetricKey): ExpressionSpecification {
+export const buildHeightExpression = (metric: AreaAnalyticsMetricKey): ExpressionSpecification => {
     const scale = HEIGHT_SCALE[metric];
 
     if (metric === 'speed') {
@@ -80,7 +83,7 @@ export function buildHeightExpression(metric: AreaAnalyticsMetricKey): Expressio
         return ['max', 10, ['*', ['-', METRIC_RANGES.speed.max, ['coalesce', ['get', 'speed'], 0]], scale]];
     }
     return ['max', 10, ['*', ['coalesce', ['get', metric], 0], scale]];
-}
+};
 
 // ── Heatmap layer template ───────────────────────────────────────────
 
@@ -102,7 +105,7 @@ export const areaAnalyticsHeatmapSpec: LayerSpecTemplate<HeatmapLayerSpecificati
             COLOR_SCHEMES.congestion.low,
             0.6,
             COLOR_SCHEMES.congestion.mid,
-            1.0,
+            1,
             COLOR_SCHEMES.congestion.high,
         ],
         'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 6, 15, 12, 30],
@@ -144,35 +147,29 @@ export const areaAnalyticsHexExtrusionSpec: LayerSpecTemplate<FillExtrusionLayer
  * Builds the heatmap layer spec for a given source.
  * @ignore
  */
-export function buildHeatmapLayerSpec(layerId: string): ToBeAddedLayerSpecWithoutSource<HeatmapLayerSpecification> {
-    return {
-        ...areaAnalyticsHeatmapSpec,
-        id: layerId,
-        beforeID: mapStyleLayerIDs.lowestLabel,
-    } as ToBeAddedLayerSpecWithoutSource<HeatmapLayerSpecification>;
-}
+export const buildHeatmapLayerSpec = (layerId: string): ToBeAddedLayerSpecWithoutSource<HeatmapLayerSpecification> => ({
+    ...areaAnalyticsHeatmapSpec,
+    id: layerId,
+    beforeID: mapStyleLayerIDs.lowestLabel,
+});
 
 /**
  * Builds the flat hex fill layer spec.
  * @ignore
  */
-export function buildHexFillLayerSpec(layerId: string): ToBeAddedLayerSpecWithoutSource<FillLayerSpecification> {
-    return {
-        ...areaAnalyticsHexFillSpec,
-        id: layerId,
-        beforeID: mapStyleLayerIDs.lowestLabel,
-    } as ToBeAddedLayerSpecWithoutSource<FillLayerSpecification>;
-}
+export const buildHexFillLayerSpec = (layerId: string): ToBeAddedLayerSpecWithoutSource<FillLayerSpecification> => ({
+    ...areaAnalyticsHexFillSpec,
+    id: layerId,
+    beforeID: mapStyleLayerIDs.lowestLabel,
+});
 
 /**
  * Builds the extruded hex layer spec.
  * @ignore
  */
-export function buildHexExtrusionLayerSpec(
+export const buildHexExtrusionLayerSpec = (
     layerId: string,
-): ToBeAddedLayerSpecWithoutSource<FillExtrusionLayerSpecification> {
-    return {
-        ...areaAnalyticsHexExtrusionSpec,
-        id: layerId,
-    } as ToBeAddedLayerSpecWithoutSource<FillExtrusionLayerSpecification>;
-}
+): ToBeAddedLayerSpecWithoutSource<FillExtrusionLayerSpecification> => ({
+    ...areaAnalyticsHexExtrusionSpec,
+    id: layerId,
+});
