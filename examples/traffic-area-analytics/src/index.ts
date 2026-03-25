@@ -9,12 +9,9 @@ import {
 } from '@tomtom-org/maps-sdk/map';
 import { geocode, geometryData, trafficAreaAnalytics } from '@tomtom-org/maps-sdk/services';
 
+import { API_KEY, MOVE_PORTAL_KEY } from './config';
 import { updateLegend, updateStats, wireRadioGroup } from './controls';
 import './style.css';
-
-// ── Config ───────────────────────────────────────────────────────────
-const API_KEY = process.env.API_KEY_EXAMPLES;
-const MOVE_PORTAL_KEY = process.env.MOVE_PORTAL_KEY;
 
 TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 

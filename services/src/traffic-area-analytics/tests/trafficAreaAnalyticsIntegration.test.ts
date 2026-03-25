@@ -175,7 +175,7 @@ describe('Traffic Area Analytics CORS header handling', () => {
         features: [],
     };
 
-    test('does not send tomtom-user-agent header', async () => {
+    test('sends tomtom-user-agent header', async () => {
         const fetchMock = mockFetchResponse(200, EMPTY_API_RESPONSE);
 
         await trafficAreaAnalytics({ ...BASE_PARAMS, apiKey: 'test-key' });
@@ -183,7 +183,7 @@ describe('Traffic Area Analytics CORS header handling', () => {
         expect(fetchMock).toHaveBeenCalledWith(
             expect.any(URL),
             expect.objectContaining({
-                headers: expect.not.objectContaining({ 'tomtom-user-agent': expect.anything() }),
+                headers: expect.objectContaining({ 'tomtom-user-agent': expect.any(String) }),
             }),
         );
     });

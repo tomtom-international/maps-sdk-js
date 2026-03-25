@@ -8,15 +8,6 @@ import type { TomTomHeaders } from '../types';
 export const TOMTOM_USER_AGENT_SDK_NAME = 'MapsSDKJS';
 
 /**
- * Options for {@link generateTomTomHeaders}.
- * @ignore
- */
-export type GenerateHeadersOptions = {
-    /** When true, the `tomtom-user-agent` header is omitted from the request. */
-    omitUserAgent?: boolean;
-};
-
-/**
  * Validate if the string to be used in the Tracking-ID header is valid.
  * The value must match the regular expression '^[a-zA-Z0-9-]{1,100}$'.
  * @see Tracking-ID: https://docs.tomtom.com/search-api/documentation/search-service/fuzzy-search#trackingid-request
@@ -43,16 +34,11 @@ const validateTrackingId = (trackingId: string): string => {
  * @param params Global SDK configuration
  * @param options Optional flags to control header generation
  */
-export const generateTomTomHeaders = (
-    params: Partial<GlobalConfig>,
-    options?: GenerateHeadersOptions,
-): TomTomHeaders => {
+export const generateTomTomHeaders = (params: Partial<GlobalConfig>): TomTomHeaders => {
     return {
         // (tomtom-user-agent can be overwritten by SDK TomTom clients for custom analytics purposes)
-        ...(!options?.omitUserAgent && {
-            'tomtom-user-agent':
-                (params as any)['tomtom-user-agent'] ?? `${TOMTOM_USER_AGENT_SDK_NAME}/${__SDK_VERSION__}`,
-        }),
+        'tomtom-user-agent':
+            (params as any)['tomtom-user-agent'] ?? `${TOMTOM_USER_AGENT_SDK_NAME}/${__SDK_VERSION__}`,
         // TODO: restore if we implement oauth2 access
         // optional oauth2 access token:
         // ...(params.apiAccessToken && { Authorization: `Bearer ${params.apiAccessToken}` }),

@@ -27,7 +27,4 @@ export const trafficAreaAnalyticsTemplate: TrafficAreaAnalyticsTemplate = {
     buildRequest: buildTrafficAreaAnalyticsRequest,
     sendRequest: fetchWith,
     parseResponse: parseTrafficAreaAnalyticsResponse,
-    // The Area Analytics API does not include 'tomtom-user-agent' in its
-    // CORS Access-Control-Allow-Headers, causing preflight failures in browsers.
-    omitUserAgentHeader: true,
 };

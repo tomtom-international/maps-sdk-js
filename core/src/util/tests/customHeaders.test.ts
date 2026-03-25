@@ -36,14 +36,4 @@ describe('CustomHeaders', () => {
         expect(headers['tomtom-user-agent']).toBe('CustomAgent/1.0');
     });
 
-    test('Omit tomtom-user-agent when omitUserAgent option is true', () => {
-        const headers = generateTomTomHeaders({}, { omitUserAgent: true });
-        expect(headers['tomtom-user-agent']).toBeUndefined();
-    });
-
-    test('Omit tomtom-user-agent but keep Tracking-ID', () => {
-        const headers = generateTomTomHeaders({ trackingId: 'track-123' }, { omitUserAgent: true });
-        expect(headers['tomtom-user-agent']).toBeUndefined();
-        expect(headers['Tracking-ID']).toBe('track-123');
-    });
 });

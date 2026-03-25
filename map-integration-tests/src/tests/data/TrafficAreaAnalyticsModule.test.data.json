@@ -13,29 +13,29 @@
       "id": "region-madrid",
       "geometry": {
         "type": "Polygon",
-        "coordinates": [[[-3.72, 40.4], [-3.68, 40.4], [-3.68, 40.43], [-3.72, 40.43], [-3.72, 40.4]]]
+        "coordinates": [[[-3.74, 40.39], [-3.67, 40.39], [-3.67, 40.45], [-3.74, 40.45], [-3.74, 40.39]]]
       },
       "properties": {
         "name": "Madrid Centre",
         "timezone": "Europe/Madrid",
         "level": 0,
         "baseData": {
-          "v": 38.5,
-          "fv": 52.0,
-          "c": 34.2,
-          "t": 15.5
+          "speed": 38.5,
+          "freeFlowSpeed": 52.0,
+          "congestionLevel": 34.2,
+          "travelTime": 15.5
         },
         "timedData": {},
         "tiledData": {
           "tiles": [
-            { "tileCentre": [-3.71, 40.415], "v": 35.0, "fv": 50.0, "c": 42.0, "t": 17.1 },
-            { "tileCentre": [-3.705, 40.415], "v": 38.0, "fv": 52.0, "c": 35.0, "t": 15.8 },
-            { "tileCentre": [-3.7, 40.415], "v": 40.0, "fv": 53.0, "c": 30.0, "t": 15.0 },
-            { "tileCentre": [-3.695, 40.415], "v": 42.0, "fv": 54.0, "c": 28.0, "t": 14.3 },
-            { "tileCentre": [-3.71, 40.42], "v": 33.0, "fv": 51.0, "c": 45.0, "t": 18.2 },
-            { "tileCentre": [-3.705, 40.42], "v": 36.0, "fv": 51.5, "c": 38.0, "t": 16.7 },
-            { "tileCentre": [-3.7, 40.42], "v": 39.0, "fv": 52.5, "c": 32.0, "t": 15.4 },
-            { "tileCentre": [-3.695, 40.42], "v": 41.0, "fv": 53.5, "c": 29.0, "t": 14.6 }
+            { "tileCentre": [-3.73, 40.40], "speed": 35.0, "freeFlowSpeed": 50.0, "congestionLevel": 42.0, "travelTime": 17.1 },
+            { "tileCentre": [-3.72, 40.41], "speed": 38.0, "freeFlowSpeed": 52.0, "congestionLevel": 35.0, "travelTime": 15.8 },
+            { "tileCentre": [-3.71, 40.42], "speed": 40.0, "freeFlowSpeed": 53.0, "congestionLevel": 30.0, "travelTime": 15.0 },
+            { "tileCentre": [-3.70, 40.43], "speed": 42.0, "freeFlowSpeed": 54.0, "congestionLevel": 28.0, "travelTime": 14.3 },
+            { "tileCentre": [-3.69, 40.40], "speed": 33.0, "freeFlowSpeed": 51.0, "congestionLevel": 45.0, "travelTime": 18.2 },
+            { "tileCentre": [-3.68, 40.41], "speed": 36.0, "freeFlowSpeed": 51.5, "congestionLevel": 38.0, "travelTime": 16.7 },
+            { "tileCentre": [-3.69, 40.43], "speed": 39.0, "freeFlowSpeed": 52.5, "congestionLevel": 32.0, "travelTime": 15.4 },
+            { "tileCentre": [-3.70, 40.44], "speed": 41.0, "freeFlowSpeed": 53.5, "congestionLevel": 29.0, "travelTime": 14.6 }
           ]
         }
       }

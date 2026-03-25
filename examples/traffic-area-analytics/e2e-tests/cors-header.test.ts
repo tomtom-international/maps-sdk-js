@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/test';
 
 /**
- * Verifies that the trafficAreaAnalytics service does NOT send
- * the 'tomtom-user-agent' header, which would cause a CORS preflight failure.
+ * Verifies that the trafficAreaAnalytics service sends the 'tomtom-user-agent'
+ * header and no CORS errors occur (the server now allows this header).
  */
 test.describe('CORS header handling', () => {
-    test('trafficAreaAnalytics request does not include tomtom-user-agent header', async ({ page }) => {
+    test('trafficAreaAnalytics request includes tomtom-user-agent header without CORS errors', async ({ page }) => {
         const consoleErrors: string[] = [];
         page.on('console', (msg) => {
             if (msg.type() === 'error') consoleErrors.push(msg.text());
@@ -26,9 +26,9 @@ test.describe('CORS header handling', () => {
             { timeout: 30000 },
         );
 
-        // Verify the header is absent (case-insensitive check)
+        // Verify the header is present (case-insensitive check)
         const headerKeys = Object.keys(areaAnalyticsRequest.headers()).map((k) => k.toLowerCase());
-        expect(headerKeys).not.toContain('tomtom-user-agent');
+        expect(headerKeys).toContain('tomtom-user-agent');
 
         // No CORS errors in console
         const corsErrors = consoleErrors.filter((e) => e.toLowerCase().includes('cors'));

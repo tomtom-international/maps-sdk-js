@@ -420,6 +420,7 @@ examples/
 
 - **traffic-flow** - Display traffic flow on roads
 - **traffic-incidents** - Show traffic incidents and alerts
+- **traffic-area-analytics** - Visualize traffic area analytics with hexgrid and heatmap modes
 - **traffic-config-playground** - Configure traffic display options
 
 ### Map Configuration

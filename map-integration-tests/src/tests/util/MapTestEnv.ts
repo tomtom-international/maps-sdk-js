@@ -22,6 +22,7 @@ const resetMapModules = async (page: Page) =>
         mapSdkThis.places = undefined;
         mapSdkThis.places2 = undefined;
         mapSdkThis.geometries = undefined;
+        mapSdkThis.trafficAreaAnalytics = undefined;
         mapSdkThis.routing = undefined;
         mapSdkThis.routing2 = undefined;
     });

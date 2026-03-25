@@ -164,11 +164,4 @@ export type ServiceTemplate<
      */
     parseResponseError?: ParseResponseError<any>;
 
-    /**
-     * When true, the `tomtom-user-agent` header is omitted from requests.
-     *
-     * @remarks
-     * Required for APIs whose CORS policy does not allow this custom header.
-     */
-    omitUserAgentHeader?: boolean;
 };

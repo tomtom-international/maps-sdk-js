@@ -32,7 +32,7 @@ export const callService = async <PARAMS extends CommonServiceParams, ApiRequest
         }
     }
     const apiRequest = template.buildRequest(mergedParams);
-    const headers = generateTomTomHeaders(mergedParams, { omitUserAgent: template.omitUserAgentHeader });
+    const headers = generateTomTomHeaders(mergedParams);
     params.onAPIRequest?.(apiRequest);
 
     try {
