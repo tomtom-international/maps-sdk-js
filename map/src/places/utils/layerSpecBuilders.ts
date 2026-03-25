@@ -1,7 +1,7 @@
 import type { DataDrivenPropertyValueSpecification, Map as MapLibreMap, SymbolLayerSpecification } from 'maplibre-gl';
 import type { LayerSpecTemplate } from '../../shared';
 import { isClickEventState } from '../../shared/layers/eventState';
-import { ICON_ID, TITLE, pinLayerBaseSpec } from '../../shared/layers/symbolLayers';
+import { ICON_ID, pinLayerBaseSpec, TITLE } from '../../shared/layers/symbolLayers';
 
 /**
  * Replaces placeholders in text size spec with the actual title property.
