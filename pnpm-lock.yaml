@@ -61,8 +61,8 @@ catalogs:
       specifier: ^4.17.23
       version: 4.17.23
     maplibre-gl:
-      specifier: ^5.21.1
-      version: 5.21.1
+      specifier: ^5.21.0
+      version: 5.21.0
     marked:
       specifier: ^17.0.5
       version: 17.0.5
@@ -130,7 +130,7 @@ importers:
         version: 4.17.23
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.21.1
+        version: 5.21.0
       zod:
         specifier: 'catalog:'
         version: 4.3.6
@@ -932,7 +932,7 @@ importers:
         version: 25.5.0
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.21.1
+        version: 5.21.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.3
@@ -1002,7 +1002,7 @@ importers:
         version: 19.2.3(@types/react@19.2.14)
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.21.1
+        version: 5.21.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.3
@@ -1378,7 +1378,7 @@ importers:
         version: link:../..
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.21.1
+        version: 5.21.0
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -1406,7 +1406,7 @@ importers:
         version: link:../..
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.21.1
+        version: 5.21.0
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -2286,7 +2286,7 @@ importers:
         version: 4.17.23
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.21.1
+        version: 5.21.0
     devDependencies:
       '@microsoft/api-extractor':
         specifier: 7.56.3
@@ -2359,7 +2359,7 @@ importers:
         version: link:../map
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.21.1
+        version: 5.21.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.3
@@ -2440,7 +2440,7 @@ importers:
         version: 6.0.137(zod@4.3.6)
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.21.1
+        version: 5.21.0
       zod:
         specifier: 'catalog:'
         version: 4.3.6
@@ -2599,7 +2599,7 @@ importers:
         version: link:../../map
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.21.1
+        version: 5.21.0
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -2659,7 +2659,7 @@ importers:
         version: link:../../map
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.21.1
+        version: 5.21.0
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -5830,8 +5830,8 @@ packages:
   make-error@1.3.6:
     resolution: {integrity: sha512-s8UhlNe7vPKomQhC1qFelMokr/Sc3AgNbso3n74mVPA5LTZwkB9NlXf4XPamLxJE8h0gh73rM94xvwRT2CVInw==}
 
-  maplibre-gl@5.21.1:
-    resolution: {integrity: sha512-zto1RTnFkOpOO1bm93ElCXF1huey2N4LvXaGLMFcYAu9txh0OhGIdX1q3LZLkrMKgMxMeYduaQo+DVNzg098fg==}
+  maplibre-gl@5.21.0:
+    resolution: {integrity: sha512-n0v4J/Ge0EG8ix/z3TY3ragtJYMqzbtSnj1riOC0OwQbzwp0lUF2maS1ve1z8HhitQCKtZZiZJhb8to36aMMfQ==}
     engines: {node: '>=16.14.0', npm: '>=8.1.0'}
 
   markdown-it@14.1.1:
@@ -10910,7 +10910,7 @@ snapshots:
 
   make-error@1.3.6: {}
 
-  maplibre-gl@5.21.1:
+  maplibre-gl@5.21.0:
     dependencies:
       '@mapbox/jsonlint-lines-primitives': 2.0.2
       '@mapbox/point-geometry': 1.1.0
