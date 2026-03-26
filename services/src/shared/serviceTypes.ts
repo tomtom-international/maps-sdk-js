@@ -163,5 +163,4 @@ export type ServiceTemplate<
      * Allows custom error handling and transformation of API errors into SDK-specific error types.
      */
     parseResponseError?: ParseResponseError<any>;
-
 };

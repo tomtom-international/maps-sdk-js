@@ -35,5 +35,4 @@ describe('CustomHeaders', () => {
         const headers = generateTomTomHeaders({ 'tomtom-user-agent': 'CustomAgent/1.0' } as unknown as GlobalConfig);
         expect(headers['tomtom-user-agent']).toBe('CustomAgent/1.0');
     });
-
 });
