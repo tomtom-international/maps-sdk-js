@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.46.8](https://github.com/tomtom-international/maps-sdk-js/compare/v0.46.7...v0.46.8) (2026-03-27)
+
+
+### Features
+
+* add traffic area analytics example with configuration and visualization options ([#1632](https://github.com/tomtom-international/maps-sdk-js/issues/1632)) ([61e50f9](https://github.com/tomtom-international/maps-sdk-js/commit/61e50f9898f7c75c2a9c97aef81e4ffdd4ed4741))
+* **ai-eval, map-chat-agent:** extend eval harness and update eval cases ([f06cf91](https://github.com/tomtom-international/maps-sdk-js/commit/f06cf91cae4daf8aad9394cdc2dcc632bc0eb297))
+* ensure area analytics dates start at least 2 days before the current day ([99b98b0](https://github.com/tomtom-international/maps-sdk-js/commit/99b98b0ba12f17e0958493fd486e1c3a43b7e11b))
+* improve circle theme visuals with dynamic POI sizing and unified centered-icon offset logic ([ae3700b](https://github.com/tomtom-international/maps-sdk-js/commit/ae3700bf2fc51b40dc273d8787dcec7bc476f75d))
+* **map-agent:** add extension tools and map-data-agent example ([b6bbb24](https://github.com/tomtom-international/maps-sdk-js/commit/b6bbb241d004ab50a554c3c9d98299957de03ffc))
+* **map-agent:** redesign core tool layer ([9b341cc](https://github.com/tomtom-international/maps-sdk-js/commit/9b341cc4137b5b4124f3f070c45f11f3363b3c44))
+* **map-agent:** switch focusOnPlace from geocode to search, add biasPosition ([218f964](https://github.com/tomtom-international/maps-sdk-js/commit/218f9643e3c103389511565f7add9f0094a6b3dd))
+* show area analytics hexagons below place labels ([005c568](https://github.com/tomtom-international/maps-sdk-js/commit/005c568b2508f8ff42f7ab4698056601751fba7b))
+
+
+### Bug Fixes
+
+* **map-agent:** fix P0/P1/P2 tool bugs and design weaknesses ([51274db](https://github.com/tomtom-international/maps-sdk-js/commit/51274db17207911b30eb2445a63b1f6bc733c87e))
+* maplibre version reliability in SDK built examples ([15752e4](https://github.com/tomtom-international/maps-sdk-js/commit/15752e4e38e8ccebffd9f51e5e8768cc642907cb))
+* poi category codes and mappings, and formatting ([a052455](https://github.com/tomtom-international/maps-sdk-js/commit/a05245559bec8c698441288a15c02bec95c45d57))
+* traffic area analytics layer id inits ([c5909cc](https://github.com/tomtom-international/maps-sdk-js/commit/c5909ccec7d4dd0408c65ba72eb8c0531b1a767d))
+
 ## [0.46.7](https://github.com/tomtom-international/maps-sdk-js/compare/v0.46.6...v0.46.7) (2026-03-20)
 
 
