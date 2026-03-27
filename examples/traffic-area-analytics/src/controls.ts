@@ -27,12 +27,12 @@ export function updateLegend(metric: AreaAnalyticsMetricKey, scheme: AreaAnalyti
     $('legend-max').textContent = labels.max;
 }
 
-export function updateStats(b: AreaAnalyticsMetrics): void {
-    $('stat-congestion').textContent = `${Math.round(b.congestionLevel ?? 0)}%`;
-    $('stat-speed').textContent = `${Math.round(b.speed ?? 0)} km/h`;
+export function updateStats(metrics: AreaAnalyticsMetrics): void {
+    $('stat-congestion').textContent = `${Math.round(metrics.congestionLevel ?? 0)}%`;
+    $('stat-speed').textContent = `${Math.round(metrics.speed ?? 0)} km/h`;
     $('stat-traveltime').textContent =
-        b.travelTime != null ? `${(Math.round(b.travelTime * 10) / 10).toFixed(1)} min/10km` : '--';
-    $('stat-freeflow').textContent = b.freeFlowSpeed != null ? `${Math.round(b.freeFlowSpeed)} km/h` : '--';
+        metrics.travelTime != null ? `${(Math.round(metrics.travelTime * 10) / 10).toFixed(1)} min/10km` : '--';
+    $('stat-freeflow').textContent = metrics.freeFlowSpeed != null ? `${Math.round(metrics.freeFlowSpeed)} km/h` : '--';
 }
 
 export function wireRadioGroup(selector: string, onChange: (value: string) => void): void {

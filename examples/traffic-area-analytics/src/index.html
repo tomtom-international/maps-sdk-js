@@ -13,6 +13,11 @@
             <div class="sdk-example-panel-header">
                 <h3 class="sdk-example-heading">
                     <span class="sdk-example-heading-text">Traffic Area Analytics</span>
+                    <button class="sdk-example-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="sdk-example-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
                 </h3>
             </div>
             <div class="sdk-example-panel-content">
@@ -79,10 +84,17 @@
             </div>
         </div>
 
-        <!-- Stats + heatmap panel (bottom-right) -->
+        <!-- Stats + heatmap panel (bottom-left) -->
         <div id="bottom-panel" class="aa-bottom-panel aa-hidden">
-            <div class="aa-bottom-header">
+            <div class="aa-bottom-panel-header">
                 <span id="panel-city-name" class="aa-city-name"></span>
+                <button class="aa-bottom-panel-toggle" aria-label="Toggle data panel" aria-expanded="false">
+                    <svg class="aa-bottom-panel-chevron" viewBox="0 0 16 10">
+                        <path d="M3 1.5L8 6.5L13 1.5" />
+                    </svg>
+                </button>
+            </div>
+            <div class="aa-bottom-panel-content collapsed">
                 <div class="aa-stats">
                     <div class="aa-stat-chip">
                         <span class="aa-stat-label">Avg Congestion</span>
@@ -101,10 +113,10 @@
                         <span id="stat-freeflow" class="aa-stat-value">--</span>
                     </div>
                 </div>
-            </div>
-            <div class="aa-heatmap-section">
-                <label class="sdk-example-form-label">Congestion by Day &amp; Hour (last 7 days)</label>
-                <canvas id="heatmap-canvas"></canvas>
+                <div class="aa-heatmap-section">
+                    <label class="sdk-example-form-label">Congestion by Day &amp; Hour (last 7 days)</label>
+                    <canvas id="heatmap-canvas"></canvas>
+                </div>
             </div>
         </div>
 
@@ -120,12 +132,9 @@
 
         <!-- Loading overlay -->
         <div id="loading-overlay" class="aa-loading aa-hidden">
-            <div class="aa-spinner"></div>
+            <div class="sdk-example-spinner"></div>
             <span>Loading analytics...</span>
         </div>
-
-        <!-- Tooltip -->
-        <div id="tile-tooltip" class="aa-tooltip aa-hidden"></div>
 
         <script type="module" src="./index.ts"></script>
     </body>

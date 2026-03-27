@@ -3,6 +3,8 @@
 @import "../../src/templates/css/base/typography.css";
 @import "../../src/templates/css/panel/custom-panel.css";
 @import "../../src/templates/css/form/input.css";
+@import "../../src/templates/css/feedback/loading-spinner.css";
+@import "../../src/templates/css/maplibre/popup.css";
 
 .sdk-example-body {
     overflow: hidden;
@@ -65,11 +67,15 @@
 
 .aa-radio-option {
     flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 6px 8px;
     border-radius: var(--sdk-radius-5);
+    font-family: var(--sdk-font-primary);
     font-size: var(--sdk-font-caption-m);
+    line-height: var(--sdk-font-caption-m-lh);
     font-weight: var(--sdk-font-weight-medium);
-    text-align: center;
     cursor: pointer;
     transition: var(--sdk-transition-fast);
     color: var(--sdk-text-medium);
@@ -103,13 +109,12 @@
     color: var(--sdk-text-white);
 }
 
-/* ── Floating legend (bottom center) ─────────────────────────────── */
+/* ── Floating legend (top-left) ───────────────────────────────────── */
 
 .aa-floating-legend {
     position: fixed;
-    bottom: 16px;
-    left: 50%;
-    transform: translateX(-50%);
+    top: var(--sdk-panel-margin);
+    left: var(--sdk-panel-margin);
     background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(12px);
     border: 1px solid var(--sdk-border-medium);
@@ -118,6 +123,7 @@
     box-shadow: var(--sdk-shadow-e3);
     z-index: var(--sdk-z-panel);
     min-width: 200px;
+    font-family: var(--sdk-font-primary);
 }
 
 .aa-legend-title {
@@ -144,12 +150,20 @@
     color: var(--sdk-text-low);
 }
 
-/* ── Stats + heatmap panel (bottom-right) ─────────────────────────── */
+/* ── Right controls panel width override ──────────────────────────── */
+
+@media (min-width: 769px) {
+    .sdk-example-customPanel {
+        width: 260px;
+    }
+}
+
+/* ── Stats + heatmap panel (bottom-left) ──────────────────────────── */
 
 .aa-bottom-panel {
     position: absolute;
     bottom: var(--sdk-panel-margin);
-    right: var(--sdk-panel-margin);
+    left: var(--sdk-panel-margin);
     background: var(--sdk-surface-0);
     border: 1px solid var(--sdk-border-medium);
     border-top: 2px solid var(--sdk-primary-color);
@@ -158,6 +172,7 @@
     box-shadow: var(--sdk-shadow-e4);
     z-index: var(--sdk-z-panel);
     width: 580px;
+    font-family: var(--sdk-font-primary);
     transition:
         opacity 0.3s ease,
         transform 0.3s ease;
@@ -170,12 +185,56 @@
     pointer-events: none;
 }
 
-.aa-bottom-header {
+.aa-bottom-panel-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: var(--sdk-space-3);
-    margin-bottom: 8px;
+    padding-bottom: var(--sdk-space-2);
+    margin-bottom: var(--sdk-space-2);
+    border-bottom: 1px solid var(--sdk-border-low);
+}
+
+.aa-bottom-panel:has(.aa-bottom-panel-content.collapsed) .aa-bottom-panel-header {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.aa-bottom-panel-toggle {
+    background: none;
+    border: none;
+    padding: var(--sdk-space-1);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--sdk-radius-5);
+    flex-shrink: 0;
+    transition: background var(--sdk-transition-fast);
+}
+
+.aa-bottom-panel-toggle:hover {
+    background: var(--sdk-surface-1);
+}
+
+.aa-bottom-panel-chevron {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: var(--sdk-text-high);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform var(--sdk-transition-normal);
+}
+
+.aa-bottom-panel-toggle[aria-expanded="false"] .aa-bottom-panel-chevron {
+    transform: rotate(-180deg);
+}
+
+.aa-bottom-panel-content.collapsed {
+    display: none;
 }
 
 .aa-city-name {
@@ -201,7 +260,7 @@
 }
 
 .aa-stat-label {
-    font-size: 9px;
+    font-size: var(--sdk-font-caption-s);
     font-weight: var(--sdk-font-weight-medium);
     text-transform: uppercase;
     letter-spacing: 0.04em;
@@ -238,7 +297,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.45);
     backdrop-filter: blur(4px);
     display: flex;
     flex-direction: column;
@@ -246,6 +305,7 @@
     justify-content: center;
     gap: var(--sdk-space-3);
     z-index: var(--sdk-z-modal);
+    font-family: var(--sdk-font-primary);
     font-size: var(--sdk-font-body-m);
     color: var(--sdk-text-medium);
 }
@@ -254,40 +314,19 @@
     display: none;
 }
 
-.aa-spinner {
-    width: 36px;
-    height: 36px;
-    border: 2px solid var(--sdk-border-medium);
-    border-top-color: var(--sdk-primary-color);
-    border-radius: 50%;
-    animation: aa-spin 0.8s linear infinite;
-}
+/* ── Tile hover popup ────────────────────────────────────────────── */
 
-@keyframes aa-spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-/* ── Tooltip ─────────────────────────────────────────────────────── */
-
-.aa-tooltip {
-    position: fixed;
-    background: var(--sdk-surface-0);
-    border: 1px solid var(--sdk-border-medium);
-    border-left: 3px solid var(--sdk-primary-color);
-    color: var(--sdk-text-high);
+.aa-tile-popup .maplibregl-popup-content {
     padding: var(--sdk-space-2) var(--sdk-space-3);
+    border-left: 3px solid var(--sdk-primary-color);
     border-radius: var(--sdk-radius-10);
     font-size: var(--sdk-font-caption-m);
-    pointer-events: none;
-    z-index: var(--sdk-z-tooltip);
-    max-width: 220px;
     line-height: 1.5;
+    color: var(--sdk-text-high);
     box-shadow: var(--sdk-shadow-e3);
 }
 
-.aa-tooltip.aa-hidden {
+.aa-tile-popup .maplibregl-popup-tip {
     display: none;
 }
 
@@ -311,17 +350,12 @@
 
 @media (max-width: 768px) {
     .aa-bottom-panel {
-        left: var(--sdk-panel-margin);
+        right: var(--sdk-panel-margin);
         width: auto;
         margin-bottom: 16px;
     }
 
     .aa-stats {
         grid-template-columns: 1fr 1fr;
-    }
-
-    .aa-bottom-header {
-        flex-direction: column;
-        align-items: flex-start;
     }
 }

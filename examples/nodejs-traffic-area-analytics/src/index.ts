@@ -1,7 +1,7 @@
 import type { AreaAnalyticsDataType } from '@tomtom-org/maps-sdk/core';
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { geocodeOne, geometryData, trafficAreaAnalytics } from '@tomtom-org/maps-sdk/services';
-import { API_KEY } from './config';
+import { API_KEY, MOVE_PORTAL_KEY } from './config';
 
 TomTomConfig.instance.put({ apiKey: API_KEY });
 
@@ -19,6 +19,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
 
     const dataTypes: AreaAnalyticsDataType[] = ['SPEED', 'CONGESTION_LEVEL'];
     const result = await trafficAreaAnalytics({
+        apiKey: MOVE_PORTAL_KEY,
         startDate,
         dataTypes,
         functionalRoadClasses: [
@@ -28,7 +29,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
             'SECONDARY_ROAD',
             'LOCAL_CONNECTING_ROAD',
             'LOCAL_ROAD_HIGH_IMPORTANCE',
-        ],
+        ], // you can also just use 'all' to include all FRCs
         hours: 'all',
         geometry: boundary.geometry,
     });

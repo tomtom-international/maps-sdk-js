@@ -31,11 +31,17 @@ export const buildTrafficAreaAnalyticsRequest = (
     const url = new URL(buildUrlBasePath(params));
     appendCommonParams(url.searchParams, params);
 
+    const daysAgo = (numDays: number): Date => {
+        const date = new Date();
+        date.setDate(date.getDate() - numDays);
+        return date;
+    };
+
     const datePart = Array.isArray(params.days)
         ? { days: params.days.map(toDateString) }
         : {
-              startDate: toDateString(params.startDate ?? new Date()),
-              endDate: toDateString(params.endDate ?? new Date()),
+              startDate: toDateString(params.startDate ?? daysAgo(3)),
+              endDate: toDateString(params.endDate ?? daysAgo(2)),
           };
 
     const body: AreaAnalyticsRequestBody = {

@@ -108,8 +108,10 @@ export function renderAreaAnalyticsChart(
     ctx.fillStyle = '#f7f8fa';
     ctx.fillRect(0, 0, width, height);
 
+    const fontStack = 'Gilroy, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+
     // Hour labels (every 3h)
-    ctx.font = '10px system-ui, sans-serif';
+    ctx.font = `10px ${fontStack}`;
     ctx.fillStyle = '#6b7280';
     ctx.textAlign = 'center';
     for (let h = 0; h < numHours; h += 3) {
@@ -121,7 +123,7 @@ export function renderAreaAnalyticsChart(
         const y = LABEL_TOP + d * CELL_H;
 
         // Day label
-        ctx.font = '9px system-ui, sans-serif';
+        ctx.font = `9px ${fontStack}`;
         ctx.fillStyle = '#6b7280';
         ctx.textAlign = 'right';
         ctx.textBaseline = 'middle';
@@ -137,7 +139,7 @@ export function renderAreaAnalyticsChart(
 
             // Overlay value
             if (value > 0) {
-                ctx.font = '8px system-ui, monospace';
+                ctx.font = `8px ${fontStack}`;
                 ctx.fillStyle = value > 60 ? 'rgba(255,255,255,0.9)' : 'rgba(0,0,0,0.5)';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';

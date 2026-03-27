@@ -86,8 +86,10 @@ describe('buildTrafficAreaAnalyticsRequest — request body', () => {
         expect(body.endDate).toBe('2024-08-07');
     });
 
-    test('defaults endDate to today when omitted', () => {
-        const today = new Date().toISOString().slice(0, 10);
+    test('defaults endDate to 2 days ago when omitted', () => {
+        const twoDaysAgo = new Date();
+        twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+        const expectedEndDate = twoDaysAgo.toISOString().slice(0, 10);
         const result = buildTrafficAreaAnalyticsRequest({
             ...BASE_PARAMS,
             startDate: '2024-08-01',
@@ -96,7 +98,7 @@ describe('buildTrafficAreaAnalyticsRequest — request body', () => {
         const body = (result as { data: Record<string, unknown> }).data;
 
         expect(body.startDate).toBe('2024-08-01');
-        expect(body.endDate).toBe(today);
+        expect(body.endDate).toBe(expectedEndDate);
     });
 
     test('includes required fields in body', () => {
