@@ -1,6 +1,6 @@
-# AGENTS.md - Map Integration Tests
+# AGENTS.md — Map Integration Tests
 
-**Integration tests for the map package** - End-to-end tests validating map functionality.
+**Integration tests for the map package** — End-to-end tests validating map functionality in a real browser against a local HTTPS server at `https://localhost:9001`.
 
 ## Context
 
@@ -60,9 +60,7 @@ map-integration-tests/
 
 ## Important Notes
 
-- **Browser environment required** - Tests need a browser or headless browser
-- **Map package dependency** - Tests import from `../map`
-- **Build first** - Build map package before running tests
-- **Slower than unit tests** - Integration tests take longer to run
-- **For CI/CD** - These tests run in the continuous integration pipeline
-
+- **API key** — Set `API_KEY_TESTS` in the environment before running; tests read it via `process.env.API_KEY_TESTS`
+- **Browser auto-installed** — `pnpm test` runs `playwright install --with-deps chromium` automatically
+- **Build first** — Build the `map` package before running tests (`pnpm -F map build`)
+- **Slower than unit tests** — Integration tests take longer to run

@@ -1,6 +1,6 @@
-# AGENTS.md - Core Package
+# AGENTS.md — Core Package
 
-**@tomtom-org/maps-sdk/core** - Shared core functionality, types, and utilities used by both map and services packages.
+**@tomtom-org/maps-sdk/core** — Shared core functionality, types, and utilities used by both map and services packages.
 
 ## For External Developers (Using the SDK)
 
@@ -29,8 +29,8 @@ This package provides shared infrastructure:
 - GeoJSON type definitions
 - Common helper functions used across the SDK
 
-**Peer Dependencies:**
-- `lodash-es` (v4) - Utility functions
+**Peer Dependencies** (versions from `catalog:` in `pnpm-workspace.yaml`):
+- `lodash-es` — Utility functions
 
 **Installation Note**: npm (v7+) and Yarn install peer dependencies automatically. For pnpm, enable automatic installation by adding `auto-install-peers=true` to `.npmrc`, or manually install with: `pnpm install lodash-es`
 
@@ -57,7 +57,6 @@ See [../CONTRIBUTING.md](../CONTRIBUTING.md) and [../documentation/development/]
 ### Common Tasks
 
 **Building:**
-
 ```bash
 pnpm build             # Build the package
 pnpm build:full        # Type check + build
@@ -65,7 +64,6 @@ pnpm type-check        # Type checking only
 ```
 
 **Testing:**
-
 ```bash
 pnpm test              # Run tests
 pnpm test:coverage     # Run with coverage
@@ -75,28 +73,23 @@ pnpm test:dist         # Validate built distribution
 ### Contributor Workflows
 
 **Adding a new shared type:**
-
 1. Add type definition in `src/`
 2. Export from `index.ts`
 3. Run `pnpm build` to regenerate type definitions
 4. Update dependent packages (`map` or `services`) as needed
 
 **Making changes:**
-
 1. Edit source files in `src/`
 2. Run `pnpm type-check` to verify TypeScript
 3. Run `pnpm build` to create distribution
 4. Test changes in dependent packages
 
 **Understanding architecture:**
-
 - See [../documentation/development/](../documentation/development/)
-- This package is shared infrastructure
-- Changes affect both `map` and `services` packages
+- This package is shared infrastructure — changes affect both `map` and `services` packages
 
 ## Important Notes
 
-- Keep dependencies minimal - this is shared code used across packages
+- Keep dependencies minimal — this is shared code used across packages
 - Changes here have wide-reaching impact on `map` and `services`
 - Always test in dependent packages after changes
-

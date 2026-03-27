@@ -21,16 +21,30 @@ Optional plugins live in `plugins/` (e.g. `viewport-places`, `map-agent`) and de
 | Workspace | Purpose |
 |---|---|
 | `shared-configs/` | Shared Vite, TypeScript, and Vitest configs extended by all packages |
-| `testing/core-utils` | Shared test utilities for unit tests across core/services/map |
+| `testing/core-utils` | `@testing/core-utils` — Playwright/async helpers shared by `map-integration-tests` and `ai-eval` (not unit tests) |
 | `testing/ai-eval` | AI agent evaluation harness (LLM judge + eval cases for map-agent) |
 | `testing/ai-eval-explorer` | Dev UI for browsing and running eval results |
 | `examples/` | 50+ runnable examples, each a standalone Vite app |
-| `map-integration-tests/` | Playwright browser tests against the built map package |
+| `map-integration-tests/` | Playwright browser tests against the built map package; runs a local HTTPS server at `https://localhost:9001` |
 
 ### Data flow
-`TomTomConfig.instance.put({ apiKey })` → Services return typed GeoJSON (`FeatureCollection`) → Map modules (`PlacesModule`, `RoutingModule`, etc.) consume that GeoJSON directly.
+`TomTomConfig.instance.put({ apiKey })` → Services return typed GeoJSON (`FeatureCollection`) → Map modules consume that GeoJSON directly.
 
 All map modules extend `AbstractMapModule` (`map/src/shared/AbstractMapModule.ts`), which manages MapLibre sources/layers and auto-restores them after style changes.
+
+**Concrete map modules** (all in `map/src/`):
+
+| Module | Source type | Key methods |
+|---|---|---|
+| `BaseMapModule` | `style` | `setVisible`, `setLayerGroupVisible` |
+| `PlacesModule` | `geojson` | `show`, `clear`, `applyTheme`, `applyIconConfig` |
+| `POIsModule` | `style` | `setVisible` |
+| `RoutingModule` | `geojson` | `showRoutes`, `showWaypoints`, `clear` |
+| `GeometriesModule` | `geojson` | `show`, `clear` |
+| `HillshadeModule` | `style` | `setVisible` |
+| `TrafficFlowModule` | `style` | `setVisible`, `applyConfig` |
+| `TrafficIncidentsModule` | `style` | `setVisible`, `applyConfig` |
+| `TrafficAreaAnalyticsModule` | `geojson` | `show`, `clear`, `setMode`, `setMetric`, `setVisible` |
 
 ## Essential Dev Commands
 
@@ -64,6 +78,7 @@ pnpm type-check:examples   # examples workspace
 # E2E tests
 pnpm e2e-test:sdk       # map integration tests (Playwright, browser required)
 pnpm e2e-test:examples  # each example's Playwright smoke tests
+pnpm e2e-test:examples:update-all-snapshots  # regenerate all upon-load.png snapshots
 
 # Linting / formatting (Biome, not ESLint/Prettier)
 pnpm lint
@@ -80,6 +95,7 @@ pnpm eval:explorer      # start dev server for eval UI
 API keys are required for examples and integration tests:
 ```bash
 cp examples/.env.example examples/.env   # add API_KEY_EXAMPLES=…
+# map-integration-tests reads API_KEY_TESTS from the environment
 ```
 
 ## Conventions & Patterns
@@ -109,6 +125,10 @@ cp examples/.env.example examples/.env   # add API_KEY_EXAMPLES=…
 | `plugins/plugin-vite-config.ts` | Shared Vite library-mode config for all plugins |
 | `shared-configs/` | Shared Vite, TypeScript, Vitest configs for all packages |
 | `testing/ai-eval/` | Map-agent eval harness: LLM judge, eval cases, scoring |
+| `testing/core-utils/src/` | `@testing/core-utils` — `waitForMapIdle`, `queryRenderedFeatures`, map-query helpers used in integration tests |
+| `map-integration-tests/src/tests/util/MapTestEnv.ts` | Integration test helper: `MapTestEnv.loadPageAndMap()` sets up the HTTPS test page and a fresh map |
+| `map-integration-tests/src/tests/util/TestUtils.ts` | Per-module init/show/clear helpers used in all integration tests (`initTrafficAreaAnalytics`, `initPlaces`, etc.) |
+| `map-integration-tests/src/tests/types/MapsSDKThis.ts` | `MapsSDKThis` — `typeof globalThis` extension exposing all module instances to Playwright via `page.evaluate` |
 | `pnpm-workspace.yaml` | Workspace list + dependency version catalog |
 | `documentation/development/` | BUILD.md, TESTING.md, GETTING_STARTED.md, DEPENDENCIES.md |
 

@@ -1,6 +1,6 @@
-# AGENTS.md - Shared Configs
+# AGENTS.md — Shared Configs
 
-**Shared configuration files for the monorepo** - Reusable configs for TypeScript, build tools, and linters.
+**Shared configuration files for the monorepo** — Reusable configs for TypeScript, build tools, and linters.
 
 ## Context
 
@@ -74,11 +74,11 @@ export default defineConfig({
 
 ## Important Notes
 
-- **Monorepo consistency** - Ensures all packages use same tooling versions and settings
-- **Breaking changes** - Config changes can break builds across packages
-- **Test thoroughly** - Run builds for all packages after config changes
-- **Documentation** - Keep configs well-commented for maintainability
-- **Extends pattern** - Packages extend these configs, can override as needed
+- **Monorepo consistency** — Ensures all packages use same tooling versions and settings
+- **Breaking changes** — Config changes can break builds across packages
+- **Test thoroughly** — Run builds for all packages after config changes
+- **Documentation** — Keep configs well-commented for maintainability
+- **Extends pattern** — Packages extend these configs, can override as needed
 
 ## Testing Config Changes
 
@@ -87,11 +87,10 @@ export default defineConfig({
 pnpm build
 
 # Test specific package
-cd core && pnpm build
-cd ../map && pnpm build
-cd ../services && pnpm build
+pnpm -F core build
+pnpm -F map build
+pnpm -F services build
 
 # Run all tests
-pnpm test
+pnpm test:sdk
 ```
-

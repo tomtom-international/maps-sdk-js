@@ -1,6 +1,6 @@
 # AGENTS.md — Plugins
 
-**TomTom Maps SDK Plugins** - Optional add-ons extending the core SDK with higher-level features. Web browsers only.
+**TomTom Maps SDK Plugins** — Optional add-ons extending the core SDK with higher-level features. Web browsers only.
 
 ## For External Developers (Using Plugins)
 

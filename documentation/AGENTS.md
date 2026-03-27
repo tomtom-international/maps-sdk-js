@@ -1,6 +1,6 @@
-# AGENTS.md - Documentation
+# AGENTS.md — Documentation
 
-**Internal documentation for SDK development** - Architecture, patterns, and contributor guidelines.
+**Internal documentation for SDK development** — Architecture, patterns, and contributor guidelines.
 
 ## Context
 
@@ -67,8 +67,7 @@ This `documentation/` directory is for SDK contributors, not SDK users.
 
 ## Important Notes
 
-- **Internal focus** - This is for people working ON the SDK, not WITH it
-- **Architecture decisions** - Documents why things are built certain ways
-- **Living documentation** - Should be updated as the SDK evolves
-- **Complement to code** - Explains concepts not obvious from code alone
-
+- **Internal focus** — This is for people working ON the SDK, not WITH it
+- **Architecture decisions** — Documents why things are built certain ways
+- **Living documentation** — Should be updated as the SDK evolves
+- **Complement to code** — Explains concepts not obvious from code alone
