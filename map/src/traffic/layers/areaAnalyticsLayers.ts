@@ -172,4 +172,5 @@ export const buildHexExtrusionLayerSpec = (
 ): ToBeAddedLayerSpecWithoutSource<FillExtrusionLayerSpecification> => ({
     ...areaAnalyticsHexExtrusionSpec,
     id: layerId,
+    beforeID: mapStyleLayerIDs.lowestPlaceLabel,
 });
