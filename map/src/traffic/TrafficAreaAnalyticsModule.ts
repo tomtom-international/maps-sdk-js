@@ -15,6 +15,7 @@ import {
 import type {
     AreaAnalyticsColorScheme,
     AreaAnalyticsMetricKey,
+    AreaAnalyticsMode,
     TrafficAreaAnalyticsConfig,
 } from './types/trafficAreaAnalyticsConfig';
 import type { AreaAnalyticsDisplayProperties, AreaAnalyticsHexFeature } from './types/trafficAreaAnalyticsFeature';
@@ -55,9 +56,9 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
     private static lastInstanceIndex = -1;
 
     /** Named layer IDs for explicit access in paint updates. */
-    private heatmapLayerId = '';
-    private hexFillLayerId = '';
-    private hexExtrusionLayerId = '';
+    private heatmapLayerId!: string;
+    private hexFillLayerId!: string;
+    private hexExtrusionLayerId!: string;
 
     /** Cached for style-change restoration. */
     private lastAnalytics: TrafficAreaAnalytics | null = null;
@@ -118,6 +119,7 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
         const hexgridSourceId = `area-analytics-hexgrid-${idx}`;
 
         this.heatmapLayerId = `${heatmapSourceId}-layer`;
+
         this.hexFillLayerId = `${hexgridSourceId}-fill`;
         this.hexExtrusionLayerId = `${hexgridSourceId}-extrusion`;
 
@@ -202,7 +204,7 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
      *
      * @param mode - `'heatmap'` or `'hexgrid'`.
      */
-    setMode(mode: 'heatmap' | 'hexgrid'): void {
+    setMode(mode: AreaAnalyticsMode): void {
         if (mode === this.mode) return;
         this.config = { ...this.config, mode };
         this.applyModeVisibility();

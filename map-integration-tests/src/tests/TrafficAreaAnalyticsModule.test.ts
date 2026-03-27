@@ -60,7 +60,6 @@ test.describe('Traffic Area Analytics module integration tests', () => {
         const mapEnv = await MapTestEnv.loadPageAndMap(page, { center: madridCenter, zoom: 13 });
         await initTrafficAreaAnalytics(page, { mode: 'hexgrid', metric: 'congestionLevel' });
         await showTrafficAreaAnalytics(page, analyticsFixture);
-        await waitForMapIdle(page);
 
         // Switch to heatmap
         await page.evaluate(() => (globalThis as MapsSDKThis).trafficAreaAnalytics?.setMode('heatmap'));
