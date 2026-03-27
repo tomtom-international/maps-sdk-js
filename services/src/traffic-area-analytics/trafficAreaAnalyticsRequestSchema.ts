@@ -20,6 +20,19 @@ const geometrySchema = z.union([
 
 const toDateObj = (d: Date | string): Date => (d instanceof Date ? d : new Date(d));
 
+const startOfDayUTC = (d: Date | string): number => {
+    const date = toDateObj(d);
+    return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+};
+
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
+const isAtLeastTwoDaysBeforeToday = (d: Date | string): boolean => {
+    const now = new Date();
+    const todayUTC = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+    return startOfDayUTC(d) <= todayUTC - 2 * ONE_DAY_MS;
+};
+
 /**
  * @ignore
  */
@@ -43,16 +56,30 @@ export const trafficAreaAnalyticsRequestSchema = commonServiceRequestSchema
             if (hasDays && hasStart) return false;
             if (!hasDays && !hasStart) return false;
 
-            // Validate 31-day constraint for continuous range
+            // Validate range for continuous range: startDate must be at least 1 day before endDate, within 31 days
             if (data.startDate !== undefined) {
                 const effectiveEnd = data.endDate !== undefined ? toDateObj(data.endDate) : new Date();
                 const diffDays = (effectiveEnd.getTime() - toDateObj(data.startDate).getTime()) / (1000 * 60 * 60 * 24);
-                return diffDays >= 0 && diffDays <= 31;
+                return diffDays >= 1 && diffDays <= 31;
             }
 
             return true;
         },
         {
-            message: 'Provide either startDate (with optional endDate, within 31 days) or days — but not both',
+            message:
+                'Provide either startDate (with optional endDate, at least 1 day apart and within 31 days) or days — but not both',
+        },
+    )
+    .refine(
+        (data) => {
+            if (data.days !== undefined) {
+                return data.days.every(isAtLeastTwoDaysBeforeToday);
+            }
+
+            const effectiveEnd = data.endDate ?? new Date();
+            return isAtLeastTwoDaysBeforeToday(effectiveEnd);
+        },
+        {
+            message: 'Dates must be at least 2 days before today',
         },
     );

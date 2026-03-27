@@ -38,7 +38,7 @@ const MULTI_POLYGON_GEOMETRY = {
 
 const VALID_PARAMS = {
     ...COMMON,
-    startDate: new Date('2024-08-06'),
+    startDate: new Date('2024-08-05'),
     endDate: new Date('2024-08-06'),
     dataTypes: ['SPEED', 'CONGESTION_LEVEL'] as const,
     functionalRoadClasses: ['MOTORWAY', 'MAJOR_ROAD', 'OTHER_MAJOR_ROAD'] as const,
@@ -142,7 +142,7 @@ describe('Traffic Area Analytics schema — date string inputs', () => {
     test('accepts YYYY-MM-DD string for startDate', () => {
         expect(() =>
             validateRequestSchema(
-                { ...VALID_PARAMS, startDate: '2024-08-06' },
+                { ...VALID_PARAMS, startDate: '2024-08-05' },
                 { schema: trafficAreaAnalyticsRequestSchema },
             ),
         ).not.toThrow();
@@ -280,6 +280,49 @@ describe('Traffic Area Analytics schema — date validation', () => {
         expect(result.success).toBe(false);
         if (!result.success) {
             expect(result.error.issues[0].message).toContain('31 days');
+        }
+    });
+
+    test('fails when startDate equals endDate', () => {
+        const result = trafficAreaAnalyticsRequestSchema.safeParse({
+            ...VALID_PARAMS,
+            startDate: new Date('2024-08-06'),
+            endDate: new Date('2024-08-06'),
+        });
+        expect(result.success).toBe(false);
+        if (!result.success) {
+            expect(result.error.issues[0].message).toContain('31 days');
+        }
+    });
+
+    test('fails when endDate is less than 2 days before today', () => {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        const twoDaysAgo = new Date();
+        twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+        const result = trafficAreaAnalyticsRequestSchema.safeParse({
+            ...VALID_PARAMS,
+            startDate: twoDaysAgo,
+            endDate: yesterday,
+        });
+        expect(result.success).toBe(false);
+        if (!result.success) {
+            expect(result.error.issues[0].message).toContain('2 days before today');
+        }
+    });
+
+    test('fails when a day in the days array is less than 2 days before today', () => {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        const result = trafficAreaAnalyticsRequestSchema.safeParse({
+            ...VALID_PARAMS,
+            startDate: undefined,
+            endDate: undefined,
+            days: [yesterday],
+        });
+        expect(result.success).toBe(false);
+        if (!result.success) {
+            expect(result.error.issues[0].message).toContain('2 days before today');
         }
     });
 });
