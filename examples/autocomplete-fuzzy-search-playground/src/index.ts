@@ -176,7 +176,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     placesModule.events.on('hover', (place) => {
         unhoverListItem();
 
-        const listItem = fuzzySearchResultsList.querySelector(`li[data-place-id="${place.id}"]`);
+        const listItem = fuzzySearchResultsList.querySelector(`li[data-place-id="${place?.id}"]`);
         listItem?.classList.add('sdk-example-hovered');
     });
 
