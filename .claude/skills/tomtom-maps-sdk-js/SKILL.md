@@ -10,16 +10,16 @@ You are helping an **application developer** build with the TomTom Maps SDK for 
 
 From `$ARGUMENTS` or the conversation context, match the topic to a doc filename:
 
-| Topic | Filename | Keywords |
-|-------|----------|----------|
-| Map setup | `map-setup.md` | map, display, style, language, module, maplibre, baseMap, hillshade, viewport, layer, event, click, hover |
-| Places & search | `places.md` | search, places, poi, fuzzy, geocode, address, reverse, autocomplete, ev, charging, geometry, polygon, within, along route, route search, detour, viewportplaces |
-| Routing | `routing.md` | route, routing, directions, waypoint, guidance, reachable, isochrone, range, ev routing, alternatives, vehicle |
-| Traffic | `traffic.md` | traffic, incidents, flow, analytics, congestion, speed, incident details |
-| Core types | `core-types.md` | place type, route type, properties, summary, sections, address, poi, entry points, traffic types, delaymagnitude, typescript types |
-| Core utilities | `core-utilities.md` | bbox, bboxFromGeoJSON, polygonFromBBox, getPosition, formatDistance, formatDuration, progress, waypoint insertion, route progress, snap |
-| Services config | `services-config.md` | config, api key, language, timeout, validation, validateRequest, error, customizeService, hooks, onAPIRequest, onAPIResponse |
-| MapLibre direct access | `maplibre.md` | mapLibreMap, addSource, addLayer, removeLayer, geojson, vector tiles, raster, pmtiles, tile source, paint, layout, queryRenderedFeatures, querySourceFeatures, z-order, symbol layer |
+| Topic                  | Filename             | Keywords                                                                                                                                                                             |
+|------------------------|----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Map setup              | `map-setup.md`       | map, display, style, language, module, maplibre, baseMap, hillshade, viewport, layer, event, click, hover                                                                            |
+| Places & search        | `places.md`          | search, places, poi, fuzzy, geocode, address, reverse, autocomplete, ev, charging, geometry, polygon, within, along route, route search, detour, viewportplaces                      |
+| Routing                | `routing.md`         | route, routing, directions, waypoint, guidance, reachable, isochrone, range, ev routing, alternatives, vehicle                                                                       |
+| Traffic                | `traffic.md`         | traffic, incidents, flow, analytics, congestion, speed, incident details                                                                                                             |
+| Core types             | `core-types.md`      | place type, route type, properties, summary, sections, address, poi, entry points, traffic types, delaymagnitude, typescript types                                                   |
+| Core utilities         | `core-utilities.md`  | bbox, bboxFromGeoJSON, polygonFromBBox, getPosition, formatDistance, formatDuration, progress, waypoint insertion, route progress, snap                                              |
+| Services config        | `services-config.md` | config, api key, language, timeout, validation, validateRequest, error, customizeService, hooks, onAPIRequest, onAPIResponse                                                         |
+| MapLibre direct access | `maplibre.md`        | mapLibreMap, addSource, addLayer, removeLayer, geojson, vector tiles, raster, pmtiles, tile source, paint, layout, queryRenderedFeatures, querySourceFeatures, z-order, symbol layer |
 
 Use `Glob` with pattern `.claude/skills/tomtom-maps-sdk-js/docs/<filename>` to locate the file, then read it. For multi-topic tasks, glob and read multiple files.
 
