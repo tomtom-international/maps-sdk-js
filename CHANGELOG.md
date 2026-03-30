@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.46.9](https://github.com/tomtom-international/maps-sdk-js/compare/v0.46.8...v0.46.9) (2026-03-30)
+
+
+### Features
+
+* add internal optional metadata header ([cc1d522](https://github.com/tomtom-international/maps-sdk-js/commit/cc1d522448cd3dcaabd810f8732bbf414744c71e))
+
 ## [0.46.8](https://github.com/tomtom-international/maps-sdk-js/compare/v0.46.7...v0.46.8) (2026-03-27)
 
 
