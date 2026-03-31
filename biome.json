@@ -26,6 +26,14 @@
   "linter": {
     "enabled": true,
     "rules": {
+      "complexity": {
+        "noExcessiveCognitiveComplexity": {
+          "level": "warn",
+          "options": {
+            "maxAllowedComplexity": 25
+          }
+        }
+      },
       "recommended": false,
       "style": {
         "useNamingConvention": "off",

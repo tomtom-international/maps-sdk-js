@@ -42,7 +42,6 @@
     "maplibre-gl": "catalog:"
   },
   "dependencies": {
-    "@turf/bearing": "^7.3.4",
     "core": "workspace:*"
   }
 }

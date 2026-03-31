@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "pnpm format:fix"
+            "command": "pnpm format:fix && pnpm lint:fix"
           }
         ]
       }

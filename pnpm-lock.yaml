@@ -2275,9 +2275,6 @@ importers:
 
   map:
     dependencies:
-      '@turf/bearing':
-        specifier: ^7.3.4
-        version: 7.3.4
       '@turf/turf':
         specifier: 'catalog:'
         version: 7.3.4
