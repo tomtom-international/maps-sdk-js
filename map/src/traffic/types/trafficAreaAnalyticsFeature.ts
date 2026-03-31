@@ -19,18 +19,11 @@ export type AreaAnalyticsDisplayProperties = AreaAnalyticsMetrics & {
 };
 
 /**
- * A single hex polygon feature for the hexgrid visualization.
+ * A single area analytics tile feature (point, hexagon, or square cell).
  *
  * @group Traffic Area Analytics
  */
-export type AreaAnalyticsHexFeature = Feature<Polygon, AreaAnalyticsDisplayProperties>;
-
-/**
- * A single point feature for the heatmap visualization.
- *
- * @group Traffic Area Analytics
- */
-export type AreaAnalyticsPointFeature = Feature<Point, AreaAnalyticsDisplayProperties>;
+export type AreaAnalyticsTileFeature = Feature<Point | Polygon, AreaAnalyticsDisplayProperties>;
 
 /**
  * A single square polygon feature for the raw tile visualization.

@@ -155,6 +155,22 @@ export class AddedSourceWithLayers<
 const emptyFeatureCollection: FeatureCollection = { type: 'FeatureCollection', features: [] };
 
 /**
+ * Options for the {@link GeoJSONSourceWithLayers.show} method.
+ * @ignore
+ */
+export type ShowOptions = {
+    /**
+     * When `true` (default), layer visibility is automatically set based on whether
+     * the feature collection is non-empty. Pass `false` from state-update calls
+     * (e.g. `putEventState`, `cleanEventState`) to avoid unintentionally hiding or
+     * showing layers when only feature state changes.
+     *
+     * @defaultValue true
+     */
+    automaticVisibility?: boolean;
+};
+
+/**
  * @ignore
  */
 export class GeoJSONSourceWithLayers<T extends FeatureCollection = FeatureCollection> extends AddedSourceWithLayers<
@@ -170,10 +186,12 @@ export class GeoJSONSourceWithLayers<T extends FeatureCollection = FeatureCollec
         this.ensureAddedToMapWithVisibility(false, addLayersToMap);
     }
 
-    show(featureCollection: T): void {
+    show(featureCollection: T, { automaticVisibility = true }: ShowOptions = {}): void {
         this.shownFeatures = featureCollection;
         asDefined(this.source.runtimeSource).setData(featureCollection);
-        this.setLayersVisible(!!featureCollection.features.length);
+        if (automaticVisibility) {
+            this.setLayersVisible(!!featureCollection.features.length);
+        }
     }
 
     clear(): void {
@@ -205,7 +223,7 @@ export class GeoJSONSourceWithLayers<T extends FeatureCollection = FeatureCollec
         }
 
         if (options.show !== false) {
-            this.show(this.shownFeatures);
+            this.show(this.shownFeatures, { automaticVisibility: false });
         }
     }
 
@@ -215,7 +233,7 @@ export class GeoJSONSourceWithLayers<T extends FeatureCollection = FeatureCollec
         if (feature?.properties?.eventState) {
             delete feature?.properties?.eventState;
             if (options?.show !== false) {
-                this.show(this.shownFeatures);
+                this.show(this.shownFeatures, { automaticVisibility: false });
             }
         }
     }
@@ -230,7 +248,7 @@ export class GeoJSONSourceWithLayers<T extends FeatureCollection = FeatureCollec
         }
 
         if (options?.show !== false && changed) {
-            this.show(this.shownFeatures);
+            this.show(this.shownFeatures, { automaticVisibility: false });
         }
     }
 }

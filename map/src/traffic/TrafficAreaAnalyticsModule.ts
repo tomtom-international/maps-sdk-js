@@ -1,26 +1,22 @@
 import type { AreaAnalyticsTileEntry, TrafficAreaAnalytics } from '@tomtom-org/maps-sdk/core';
 import type { FeatureCollection, Point, Polygon } from 'geojson';
-import { type ExpressionSpecification, Popup } from 'maplibre-gl';
-import { AbstractMapModule, EventsModule, GeoJSONSourceWithLayers } from '../shared';
-import { waitUntilMapIsReady } from '../shared/mapUtils';
+import { AbstractMapModule, EventsModule, GeoJSONSourceWithLayers, mapStyleLayerIDs } from '../shared';
+import { changeLayerProps, waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
 import {
-    buildColorExpression,
-    buildHeatmapColorExpression,
     buildHeatmapLayerSpec,
-    buildHeightExpression,
     buildHexExtrusionLayerSpec,
     buildHexFillLayerSpec,
-    buildTileExtrusionLayerSpec,
-    buildTileFillLayerSpec,
-    METRIC_RANGES,
-    resolveColorStops,
+    buildRegionFillLayerSpec,
+    buildRegionLineLayerSpec,
+    buildSquareExtrusionLayerSpec,
+    buildSquareFillLayerSpec,
 } from './layers/areaAnalyticsLayers';
+import type { BeforeLayerConfig } from '../shared';
 import type {
-    AreaAnalyticsColorConfig,
-    AreaAnalyticsColorScheme,
-    AreaAnalyticsFilters,
-    AreaAnalyticsHeightConfig,
+    AreaAnalyticsBeforeLayerConfig,
+    AreaAnalyticsColorStop,
+    AreaAnalyticsColorTheme,
     AreaAnalyticsMetricKey,
     AreaAnalyticsMode,
     AreaAnalyticsRangeConfig,
@@ -28,16 +24,18 @@ import type {
     MetricRange,
     TrafficAreaAnalyticsConfig,
 } from './types/trafficAreaAnalyticsConfig';
-import type { AreaAnalyticsDisplayProperties, AreaAnalyticsHexFeature } from './types/trafficAreaAnalyticsFeature';
+import type { AreaAnalyticsDisplayProperties, AreaAnalyticsTileFeature } from './types/trafficAreaAnalyticsFeature';
 import { tilesToHexFeatures, tilesToPointFeatures, tilesToSquareFeatures } from './util/areaAnalyticsTransform';
 
 /**
  * Sources and layers managed by this module.
+ * @ignore
  */
 type AreaAnalyticsSourcesWithLayers = {
     heatmap: GeoJSONSourceWithLayers<FeatureCollection<Point, AreaAnalyticsDisplayProperties>>;
     hexgrid: GeoJSONSourceWithLayers<FeatureCollection<Polygon, AreaAnalyticsDisplayProperties>>;
-    tiles: GeoJSONSourceWithLayers<FeatureCollection<Polygon, AreaAnalyticsDisplayProperties>>;
+    square: GeoJSONSourceWithLayers<FeatureCollection<Polygon, AreaAnalyticsDisplayProperties>>;
+    region: GeoJSONSourceWithLayers;
 };
 
 /** Handler type for config change listeners. */
@@ -46,10 +44,15 @@ type ConfigChangeHandler = (config: TrafficAreaAnalyticsConfig | undefined) => v
 /**
  * Traffic Area Analytics visualization module.
  *
- * Renders area-analytics data on the map in one of three modes:
- * - **hexgrid** — 3D extruded hexagonal polygons coloured and raised by the active metric
+ * Renders area-analytics data on the map in one of five modes:
+ * - **hexgrid-3d** — 3D extruded hexagonal cells coloured and raised by the active metric (default)
+ * - **hexgrid-2d** — Flat hexagonal cells coloured by the active metric
+ * - **square-3d** — 3D extruded square cells coloured and raised by the active metric
+ * - **square-2d** — Flat square cells coloured by the active metric
  * - **heatmap** — a MapLibre density-heatmap layer built from tile-centre points
  * - **tiles** — raw API tile centres as square polygons with original per-tile metric values
+ *
+ * The actual region boundary is always rendered alongside the analytics cells.
  *
  * @remarks
  * **Quick start:**
@@ -70,12 +73,15 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
 > {
     private static lastInstanceIndex = -1;
 
-    /** Named layer IDs for explicit access in paint updates. */
-    private heatmapLayerId!: string;
-    private hexFillLayerId!: string;
-    private hexExtrusionLayerId!: string;
-    private tileFillLayerId!: string;
-    private tileExtrusionLayerId!: string;
+    // ── Cached layer specs (used by changeLayerProps for config updates) ──
+
+    private heatmapLayerSpec!: ReturnType<typeof buildHeatmapLayerSpec>;
+    private hexFillLayerSpec!: ReturnType<typeof buildHexFillLayerSpec>;
+    private hexExtrusionLayerSpec!: ReturnType<typeof buildHexExtrusionLayerSpec>;
+    private squareFillLayerSpec!: ReturnType<typeof buildSquareFillLayerSpec>;
+    private squareExtrusionLayerSpec!: ReturnType<typeof buildSquareExtrusionLayerSpec>;
+    private regionFillLayerSpec!: ReturnType<typeof buildRegionFillLayerSpec>;
+    private regionLineLayerSpec!: ReturnType<typeof buildRegionLineLayerSpec>;
 
     /** Cached for style-change restoration. */
     private lastAnalytics: TrafficAreaAnalytics | null = null;
@@ -102,7 +108,8 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
      * @example
      * ```typescript
      * const module = await TrafficAreaAnalyticsModule.get(map, {
-     *   mode: 'hexgrid',
+     *   displayMode: 'hexgrid-3d',
+     *   color: 'thermal',
      *   metric: 'congestionLevel',
      *   tooltip: { enabled: true },
      * });
@@ -135,31 +142,48 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
 
     /** @ignore */
     protected _initSourcesWithLayers(
-        _config?: TrafficAreaAnalyticsConfig,
+        config?: TrafficAreaAnalyticsConfig,
         restore?: boolean,
     ): AreaAnalyticsSourcesWithLayers {
         if (!restore) {
             TrafficAreaAnalyticsModule.lastInstanceIndex++;
         }
 
-        const idx = TrafficAreaAnalyticsModule.lastInstanceIndex;
-        const heatmapSourceId = `area-analytics-heatmap-${idx}`;
-        const hexgridSourceId = `area-analytics-hexgrid-${idx}`;
-        const tilesSourceId = `area-analytics-tiles-${idx}`;
+        const index = TrafficAreaAnalyticsModule.lastInstanceIndex;
+        const heatmapSourceId = `area-analytics-heatmap-${index}`;
+        const hexgridSourceId = `area-analytics-hexgrid-${index}`;
+        const squareSourceId = `area-analytics-square-${index}`;
+        const regionSourceId = `area-analytics-region-${index}`;
 
-        this.heatmapLayerId = `${heatmapSourceId}-layer`;
-        this.hexFillLayerId = `${hexgridSourceId}-fill`;
-        this.hexExtrusionLayerId = `${hexgridSourceId}-extrusion`;
-        this.tileFillLayerId = `${tilesSourceId}-fill`;
-        this.tileExtrusionLayerId = `${tilesSourceId}-extrusion`;
+        const heatmapLayerId = `${heatmapSourceId}-layer`;
+        const hexFillLayerId = `${hexgridSourceId}-fill`;
+        const hexExtrusionLayerId = `${hexgridSourceId}-extrusion`;
+        const squareFillLayerId = `${squareSourceId}-fill`;
+        const squareExtrusionLayerId = `${squareSourceId}-extrusion`;
+        const regionFillLayerId = `${regionSourceId}-fill`;
+        const regionLineLayerId = `${regionSourceId}-line`;
+
+        this.heatmapLayerSpec = buildHeatmapLayerSpec(heatmapLayerId, config);
+        this.hexFillLayerSpec = buildHexFillLayerSpec(hexFillLayerId, config);
+        this.hexExtrusionLayerSpec = buildHexExtrusionLayerSpec(hexExtrusionLayerId, config);
+        this.squareFillLayerSpec = buildSquareFillLayerSpec(squareFillLayerId, config);
+        this.squareExtrusionLayerSpec = buildSquareExtrusionLayerSpec(squareExtrusionLayerId, config);
+        this.regionFillLayerSpec = buildRegionFillLayerSpec(regionFillLayerId, config);
+        this.regionLineLayerSpec = buildRegionLineLayerSpec(regionLineLayerId, config);
 
         return {
-            heatmap: new GeoJSONSourceWithLayers(this.mapLibreMap, heatmapSourceId, [
-                buildHeatmapLayerSpec(this.heatmapLayerId),
-            ]),
+            heatmap: new GeoJSONSourceWithLayers(this.mapLibreMap, heatmapSourceId, [this.heatmapLayerSpec]),
             hexgrid: new GeoJSONSourceWithLayers(this.mapLibreMap, hexgridSourceId, [
-                buildHexFillLayerSpec(this.hexFillLayerId),
-                buildHexExtrusionLayerSpec(this.hexExtrusionLayerId),
+                this.hexFillLayerSpec,
+                this.hexExtrusionLayerSpec,
+            ]),
+            square: new GeoJSONSourceWithLayers(this.mapLibreMap, squareSourceId, [
+                this.squareFillLayerSpec,
+                this.squareExtrusionLayerSpec,
+            ]),
+            region: new GeoJSONSourceWithLayers(this.mapLibreMap, regionSourceId, [
+                this.regionFillLayerSpec,
+                this.regionLineLayerSpec,
             ]),
             tiles: new GeoJSONSourceWithLayers(this.mapLibreMap, tilesSourceId, [
                 buildTileFillLayerSpec(this.tileFillLayerId),
@@ -170,17 +194,26 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
 
     /** @ignore */
     protected _applyConfig(config: TrafficAreaAnalyticsConfig | undefined): TrafficAreaAnalyticsConfig | undefined {
-        if (config?.metric) {
-            this.applyMetricToLayers(config.metric);
+        const merged = config !== undefined ? { ...this.config, ...config } : undefined;
+
+        if (merged?.metric || merged?.displayMode || merged?.color) {
+            this.applyLayerConfig(merged);
         }
-        if (config?.visible === false) {
+
+        if (merged?.regionPolygon) {
+            this.applyRegionConfig(merged);
+        }
+
+        if (merged?.beforeLayerConfig) {
+            this.moveBeforeLayer(merged.beforeLayerConfig);
+        }
+
+        if (merged?.visible === false) {
             this.setVisible(false);
         }
-        if (config?.tooltip?.enabled) {
-            this.enableTooltip();
-        }
+
         this.applyModeVisibility();
-        return config;
+        return merged;
     }
 
     /** @ignore */
@@ -207,8 +240,9 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
      * Displays area analytics data on the map.
      *
      * Accepts the raw response from `trafficAreaAnalytics()`. Tile data is
-     * transformed internally to point features (heatmap), hexagonal
-     * polygons (hexgrid), and square polygons (tiles) — no manual data preparation is needed.
+     * transformed internally to point features (heatmap), hexagonal polygons
+     * (hexgrid / hexgrid-flat), and square polygons (square-3d / square-flat).
+     * The region boundary geometry is also displayed.
      *
      * @param analytics - The raw `TrafficAreaAnalytics` service response.
      *
@@ -223,15 +257,23 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
 
         this.lastAnalytics = analytics;
 
-        const region = analytics.features[0]?.properties;
-        const tiles = region?.tiledData?.tiles ?? [];
+        const tiles = analytics.features.flatMap((f) => f.properties?.tiledData?.tiles ?? []);
 
         // Compute data-driven ranges for color/height scaling
         this.computedRanges = this.computeRangesFromTiles(tiles);
 
         this.sourcesWithLayers.heatmap.show(tilesToPointFeatures(tiles));
         this.sourcesWithLayers.hexgrid.show(tilesToHexFeatures(tiles));
-        this.sourcesWithLayers.tiles.show(tilesToSquareFeatures(tiles));
+        this.sourcesWithLayers.square.show(tilesToSquareFeatures(tiles));
+
+        this.sourcesWithLayers.region.show({
+            type: 'FeatureCollection',
+            features: analytics.features.map((feature, i) => ({
+                ...feature,
+                id: `traffic-area-analytics-region-${i}`,
+                properties: { id: `traffic-area-analytics-region-${i}` },
+            })),
+        });
 
         this.applyMetricToLayers(this.metric);
         this.applyModeVisibility();
@@ -250,19 +292,19 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
         this.lastAnalytics = null;
         this.sourcesWithLayers.heatmap.clear();
         this.sourcesWithLayers.hexgrid.clear();
-        this.sourcesWithLayers.tiles.clear();
+        this.sourcesWithLayers.square.clear();
+        this.sourcesWithLayers.region.clear();
     }
 
     /**
      * Switches the visualisation mode.
      *
-     * @param mode - `'heatmap'`, `'hexgrid'`, or `'tiles'`.
+     * @param mode - One of `'heatmap'`, `'hexgrid-3d'`, `'hexgrid-2d'`, `'square-3d'`, `'square-2d'`.
      */
     setMode(mode: AreaAnalyticsMode): void {
         if (mode === this.mode) return;
-        this.config = { ...this.config, mode };
+        this.config = { ...this.config, displayMode: mode };
         this.applyModeVisibility();
-        this.emitConfigChange();
     }
 
     /**
@@ -273,14 +315,26 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
     setMetric(metric: AreaAnalyticsMetricKey): void {
         if (metric === this.metric) return;
         this.config = { ...this.config, metric };
-        this.applyMetricToLayers(metric);
-        this.emitConfigChange();
+        this.applyLayerConfig(this.config);
     }
 
     /**
-     * Changes the color scheme preset.
+     * Sets the color for the analytics layers. Accepts either a preset theme name or
+     * per-metric custom color stops. Pass `undefined` to revert to the default preset (`'congestion'`).
      *
-     * @param scheme - One of `'congestion'`, `'thermal'`, or `'monochrome'`.
+     * @param color - A preset theme name, a partial record of metric → color stops, or `undefined`.
+     *
+     * @example
+     * ```typescript
+     * module.setColor('thermal');
+     * module.setColor({
+     *   congestionLevel: [
+     *     { value: 0,   color: '#2dc653' },
+     *     { value: 0.5, color: '#f5a623' },
+     *     { value: 1,   color: '#e03030' },
+     *   ],
+     * });
+     * ```
      */
     setColorScheme(scheme: AreaAnalyticsColorScheme): void {
         if (scheme === this.colorScheme) return;
@@ -388,6 +442,11 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
             this.disableTooltip();
         }
         this.emitConfigChange();
+    setColor(
+        color: AreaAnalyticsColorTheme | Partial<Record<AreaAnalyticsMetricKey, AreaAnalyticsColorStop[]>> | undefined,
+    ): void {
+        this.config = { ...this.config, color };
+        this.applyLayerConfig(this.config);
     }
 
     /**
@@ -400,13 +459,13 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
     }
 
     /**
-     * Whether any area analytics layer is currently visible.
+     * Whether any area analytics (data) layer is currently visible.
      */
     isVisible(): boolean {
         return (
             this.sourcesWithLayers.heatmap.isAnyLayerVisible() ||
             this.sourcesWithLayers.hexgrid.isAnyLayerVisible() ||
-            this.sourcesWithLayers.tiles.isAnyLayerVisible()
+            this.sourcesWithLayers.square.isAnyLayerVisible()
         );
     }
 
@@ -417,12 +476,41 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
         return {
             heatmap: this.sourcesWithLayers.heatmap.shownFeatures,
             hexgrid: this.sourcesWithLayers.hexgrid.shownFeatures,
-            tiles: this.sourcesWithLayers.tiles.shownFeatures,
+            square: this.sourcesWithLayers.square.shownFeatures,
         };
     }
 
     /**
-     * Event interface for the hexgrid/tile layers (hover / click on cells).
+     * Repositions analytics layers independently by layer type.
+     *
+     * Only the properties present in `layerConfig` are repositioned; omitted layer types are left in place.
+     *
+     * @param layerConfig - Per-layer-type positioning config. Each value is `'top'` or a `MapStyleLayerID`.
+     */
+    moveBeforeLayer(layerConfig: AreaAnalyticsBeforeLayerConfig): void {
+        this.config = { ...this.config, beforeLayerConfig: layerConfig };
+        const toId = (v: BeforeLayerConfig) => (v === 'top' ? undefined : mapStyleLayerIDs[v]);
+
+        if (layerConfig.heatmap !== undefined) {
+            this.mapLibreMap.moveLayer(this.heatmapLayerSpec.id, toId(layerConfig.heatmap));
+        }
+        if (layerConfig.hexgrid?.flat2D !== undefined) {
+            this.mapLibreMap.moveLayer(this.hexFillLayerSpec.id, toId(layerConfig.hexgrid.flat2D));
+        }
+        if (layerConfig.hexgrid?.extrusion3D !== undefined) {
+            this.mapLibreMap.moveLayer(this.hexExtrusionLayerSpec.id, toId(layerConfig.hexgrid.extrusion3D));
+        }
+        if (layerConfig.square?.flat2D !== undefined) {
+            this.mapLibreMap.moveLayer(this.squareFillLayerSpec.id, toId(layerConfig.square.flat2D));
+        }
+        if (layerConfig.square?.extrusion3D !== undefined) {
+            this.mapLibreMap.moveLayer(this.squareExtrusionLayerSpec.id, toId(layerConfig.square.extrusion3D));
+        }
+    }
+
+    /**
+     * Event interface for the hexgrid and square layers (hover / click on cells).
+     * Registers handlers on both sources so events fire regardless of the active mode.
      *
      * @example
      * ```typescript
@@ -432,10 +520,9 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
      * ```
      */
     get events() {
-        const activeSource = this.mode === 'tiles' ? this.sourcesWithLayers.tiles : this.sourcesWithLayers.hexgrid;
-        return new EventsModule<AreaAnalyticsHexFeature>(
+        return new EventsModule<AreaAnalyticsTileFeature>(
             this.tomtomMap._eventsProxy,
-            activeSource,
+            [this.sourcesWithLayers.hexgrid, this.sourcesWithLayers.square, this.sourcesWithLayers.heatmap],
             this.config?.events,
         );
     }
@@ -466,24 +553,56 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
 
     // ── Private helpers ──────────────────────────────────────────────
 
-    private emitConfigChange(): void {
-        for (const handler of this.configChangeHandlers) {
-            handler(this.config);
-        }
+    private get mode(): AreaAnalyticsMode {
+        return this.config?.displayMode ?? 'hexgrid-3d';
+    }
+
+    private get metric(): AreaAnalyticsMetricKey {
+        return this.config?.metric ?? 'congestionLevel';
     }
 
     private applyModeVisibility(): void {
         if (this.config?.visible === false) {
-            this.sourcesWithLayers.heatmap.setLayersVisible(false);
-            this.sourcesWithLayers.hexgrid.setLayersVisible(false);
-            this.sourcesWithLayers.tiles.setLayersVisible(false);
+            this.hideAllDataLayers();
             return;
         }
 
+        const mode = this.mode;
         const hasHeatmapData = this.sourcesWithLayers.heatmap.shownFeatures.features.length > 0;
         const hasHexData = this.sourcesWithLayers.hexgrid.shownFeatures.features.length > 0;
-        const hasTileData = this.sourcesWithLayers.tiles.shownFeatures.features.length > 0;
+        const hasSquareData = this.sourcesWithLayers.square.shownFeatures.features.length > 0;
+        const hasRegionData = this.sourcesWithLayers.region.shownFeatures.features.length > 0;
 
+        this.sourcesWithLayers.heatmap.setLayersVisible(mode === 'heatmap' && hasHeatmapData);
+
+        // Hexgrid: show extrusion in 3d mode, fill in flat mode
+        this.sourcesWithLayers.hexgrid.setLayersVisible(
+            mode === 'hexgrid-3d' && hasHexData,
+            (layerSpec) => layerSpec.type === 'fill-extrusion',
+        );
+        this.sourcesWithLayers.hexgrid.setLayersVisible(
+            mode === 'hexgrid-2d' && hasHexData,
+            (layerSpec) => layerSpec.type === 'fill',
+        );
+
+        // Square: show extrusion in 3d mode, fill in flat mode
+        this.sourcesWithLayers.square.setLayersVisible(
+            mode === 'square-3d' && hasSquareData,
+            (layerSpec) => layerSpec.type === 'fill-extrusion',
+        );
+        this.sourcesWithLayers.square.setLayersVisible(
+            mode === 'square-2d' && hasSquareData,
+            (layerSpec) => layerSpec.type === 'fill',
+        );
+
+        this.sourcesWithLayers.region.setLayersVisible(hasRegionData);
+    }
+
+    private hideAllDataLayers(): void {
+        this.sourcesWithLayers.heatmap.setLayersVisible(false);
+        this.sourcesWithLayers.hexgrid.setLayersVisible(false);
+        this.sourcesWithLayers.square.setLayersVisible(false);
+        this.sourcesWithLayers.region.setLayersVisible(false);
         this.sourcesWithLayers.heatmap.setLayersVisible(this.mode === 'heatmap' && hasHeatmapData);
         this.sourcesWithLayers.hexgrid.setLayersVisible(this.mode === 'hexgrid' && hasHexData);
         this.sourcesWithLayers.tiles.setLayersVisible(this.mode === 'tiles' && hasTileData);
@@ -511,45 +630,35 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
         };
     }
 
-    private applyMetricToLayers(metric: AreaAnalyticsMetricKey): void {
-        const range = this.resolveRange(metric);
-        const colors = resolveColorStops(this.config?.colors, this.colorScheme);
-        const colorExpr = buildColorExpression(metric, colors, range);
-        const heightExpr = buildHeightExpression(metric, range, this.config?.height);
+    private applyLayerConfig(config: TrafficAreaAnalyticsConfig | undefined): void {
+        const newHeatmapSpec = buildHeatmapLayerSpec(this.heatmapLayerSpec.id, config);
+        const newHexFillSpec = buildHexFillLayerSpec(this.hexFillLayerSpec.id, config);
+        const newHexExtrusionSpec = buildHexExtrusionLayerSpec(this.hexExtrusionLayerSpec.id, config);
+        const newSquareFillSpec = buildSquareFillLayerSpec(this.squareFillLayerSpec.id, config);
+        const newSquareExtrusionSpec = buildSquareExtrusionLayerSpec(this.squareExtrusionLayerSpec.id, config);
 
-        // Hex fill colour
-        this.mapLibreMap.setPaintProperty(this.hexFillLayerId, 'fill-color', colorExpr, { validate: false });
+        changeLayerProps(newHeatmapSpec, this.heatmapLayerSpec, this.mapLibreMap);
+        changeLayerProps(newHexFillSpec, this.hexFillLayerSpec, this.mapLibreMap);
+        changeLayerProps(newHexExtrusionSpec, this.hexExtrusionLayerSpec, this.mapLibreMap);
+        changeLayerProps(newSquareFillSpec, this.squareFillLayerSpec, this.mapLibreMap);
+        changeLayerProps(newSquareExtrusionSpec, this.squareExtrusionLayerSpec, this.mapLibreMap);
 
-        // Hex extrusion colour + height
-        this.mapLibreMap.setPaintProperty(this.hexExtrusionLayerId, 'fill-extrusion-color', colorExpr, {
-            validate: false,
-        });
-        this.mapLibreMap.setPaintProperty(this.hexExtrusionLayerId, 'fill-extrusion-height', heightExpr, {
-            validate: false,
-        });
+        this.heatmapLayerSpec = newHeatmapSpec;
+        this.hexFillLayerSpec = newHexFillSpec;
+        this.hexExtrusionLayerSpec = newHexExtrusionSpec;
+        this.squareFillLayerSpec = newSquareFillSpec;
+        this.squareExtrusionLayerSpec = newSquareExtrusionSpec;
+    }
 
-        // Tile fill colour
-        this.mapLibreMap.setPaintProperty(this.tileFillLayerId, 'fill-color', colorExpr, { validate: false });
+    private applyRegionConfig(config: TrafficAreaAnalyticsConfig | undefined): void {
+        const newRegionFillSpec = buildRegionFillLayerSpec(this.regionFillLayerSpec.id, config);
+        const newRegionLineSpec = buildRegionLineLayerSpec(this.regionLineLayerSpec.id, config);
 
-        // Tile extrusion colour + height
-        this.mapLibreMap.setPaintProperty(this.tileExtrusionLayerId, 'fill-extrusion-color', colorExpr, {
-            validate: false,
-        });
-        this.mapLibreMap.setPaintProperty(this.tileExtrusionLayerId, 'fill-extrusion-height', heightExpr, {
-            validate: false,
-        });
+        changeLayerProps(newRegionFillSpec, this.regionFillLayerSpec, this.mapLibreMap);
+        changeLayerProps(newRegionLineSpec, this.regionLineLayerSpec, this.mapLibreMap);
 
-        // Heatmap weight + color
-        const { min, max } = range;
-        this.mapLibreMap.setPaintProperty(
-            this.heatmapLayerId,
-            'heatmap-weight',
-            ['interpolate', ['linear'], ['get', metric], min, 0, max, 1],
-            { validate: false },
-        );
-        this.mapLibreMap.setPaintProperty(this.heatmapLayerId, 'heatmap-color', buildHeatmapColorExpression(colors), {
-            validate: false,
-        });
+        this.regionFillLayerSpec = newRegionFillSpec;
+        this.regionLineLayerSpec = newRegionLineSpec;
     }
 
     private applyFiltersToLayers(filters?: AreaAnalyticsFilters): void {
@@ -582,7 +691,7 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
         const filterExpr = conditions.length === 1 ? conditions[0] : ['any', ...conditions];
 
         for (const layerId of layerIds) {
-            this.mapLibreMap.setFilter(layerId, filterExpr as ExpressionSpecification);
+            this.mapLibreMap.setFilter(layerId, filterExpr);
         }
     }
 

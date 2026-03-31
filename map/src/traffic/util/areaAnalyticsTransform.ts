@@ -1,5 +1,5 @@
 import type { AreaAnalyticsTileEntry } from '@tomtom-org/maps-sdk/core';
-import { booleanPointInPolygon, hexGrid, point as turfPoint } from '@turf/turf';
+import { booleanPointInPolygon, hexGrid, point as turfPoint, squareGrid } from '@turf/turf';
 import type { BBox, FeatureCollection, Point, Polygon } from 'geojson';
 import type { AreaAnalyticsDisplayProperties } from '../types/trafficAreaAnalyticsFeature';
 
@@ -208,6 +208,89 @@ export function tilesToHexFeatures(
             type: 'Feature',
             id,
             geometry: hex.geometry,
+            properties: {
+                id,
+                congestionLevel: Math.round(congestionSum / count),
+                speed: Math.round(speedSum / count),
+                freeFlowSpeed: Math.round(freeFlowSum / count),
+                travelTime: Math.round((travelTimeSum / count) * 10) / 10,
+            },
+        });
+    }
+
+    return { type: 'FeatureCollection', features };
+}
+
+/** Default square cell side length in kilometres. */
+const DEFAULT_SQUARE_CELL_SIDE_KM = 0.5;
+
+/**
+ * Converts area-analytics tile entries into a square polygon grid
+ * using Turf's `squareGrid` and spatial-join aggregation.
+ *
+ * Tiles that fall within the same square cell are averaged. Empty cells
+ * (containing no tiles) are excluded from the result.
+ *
+ * @param tiles - Tile entries from the area analytics response.
+ * @param cellSideKm - Square cell side length in kilometres (default 0.5).
+ * @returns A Polygon FeatureCollection with averaged metric properties.
+ *
+ * @group Traffic Area Analytics
+ */
+export function tilesToSquareFeatures(
+    tiles: ReadonlyArray<AreaAnalyticsTileEntry>,
+    cellSideKm = DEFAULT_SQUARE_CELL_SIDE_KM,
+): FeatureCollection<Polygon, AreaAnalyticsDisplayProperties> {
+    if (tiles.length === 0) {
+        return { type: 'FeatureCollection', features: [] };
+    }
+
+    // Compute bounding box from tile centres
+    let minLon = Number.POSITIVE_INFINITY;
+    let minLat = Number.POSITIVE_INFINITY;
+    let maxLon = Number.NEGATIVE_INFINITY;
+    let maxLat = Number.NEGATIVE_INFINITY;
+    for (const tile of tiles) {
+        const [lon, lat] = tile.tileCentre;
+        if (lon < minLon) minLon = lon;
+        if (lat < minLat) minLat = lat;
+        if (lon > maxLon) maxLon = lon;
+        if (lat > maxLat) maxLat = lat;
+    }
+    const bbox: BBox = [minLon, minLat, maxLon, maxLat];
+
+    // Generate square grid covering the tile extent
+    const grid = squareGrid(bbox, cellSideKm, { units: 'kilometers' });
+
+    // Spatial-join: for each square, find tiles inside and aggregate metrics
+    const features: FeatureCollection<Polygon, AreaAnalyticsDisplayProperties>['features'] = [];
+
+    for (let index = 0; index < grid.features.length; index++) {
+        const square = grid.features[index];
+        let congestionSum = 0;
+        let speedSum = 0;
+        let freeFlowSum = 0;
+        let travelTimeSum = 0;
+        let count = 0;
+
+        for (const tile of tiles) {
+            const [lon, lat] = tile.tileCentre;
+            if (booleanPointInPolygon(turfPoint([lon, lat]), square)) {
+                congestionSum += tile.congestionLevel ?? 0;
+                speedSum += tile.speed ?? 0;
+                freeFlowSum += tile.freeFlowSpeed ?? 0;
+                travelTimeSum += tile.travelTime ?? 0;
+                count++;
+            }
+        }
+
+        if (count === 0) continue;
+
+        const id = `square-${index}`;
+        features.push({
+            type: 'Feature',
+            id,
+            geometry: square.geometry,
             properties: {
                 id,
                 congestionLevel: Math.round(congestionSum / count),

@@ -171,6 +171,71 @@ Functional road classes: `'MOTORWAY'`, `'MAJOR_ROAD'`, `'OTHER_MAJOR_ROAD'`, `'S
 
 ---
 
+## TrafficAreaAnalyticsModule — map visualization
+
+Renders the `trafficAreaAnalytics` response on the map. Five modes: `'hexgrid'` (3D, default), `'hexgrid-flat'`, `'square-3d'`, `'square-flat'`, `'heatmap'`. `show()` renders **all** features in the analytics response.
+
+```ts
+import { TrafficAreaAnalyticsModule } from '@tomtom-org/maps-sdk/map';
+import { trafficAreaAnalytics, geocodeOne, geometryData } from '@tomtom-org/maps-sdk/services';
+
+// 1. Get region boundary
+const place = await geocodeOne('Amsterdam, Netherlands');
+const boundary = await geometryData({ geometries: [place] });
+
+// 2. Create module — mode and color preset both live inside `theme`
+const analyticsModule = await TrafficAreaAnalyticsModule.get(map, {
+    theme: { mode: 'hexgrid', color: 'congestion' }, // mode + color preset inside theme
+    metric: 'congestionLevel',
+});
+
+// 3. Fetch and display
+const analytics = await trafficAreaAnalytics({ ... });
+await analyticsModule.show(analytics);
+
+// Dynamic updates
+analyticsModule.setMode('hexgrid-flat');              // switch visualization mode
+analyticsModule.setMetric('speed');                   // switch metric
+analyticsModule.setTheme({ color: 'thermal' });       // switch color preset (merges with existing theme)
+analyticsModule.setColorStops([                       // custom stops — override color preset
+    { value: 0, color: '#00ff00' },
+    { value: 0.5, color: '#ffff00' },
+    { value: 1, color: '#ff0000' },
+]);
+analyticsModule.setColorStops(undefined);             // clear custom stops, revert to theme.color
+analyticsModule.setVisible(false);
+analyticsModule.isVisible();               // boolean
+await analyticsModule.clear();
+
+// Region boundary appearance (always shown alongside analytics cells)
+const analyticsModule = await TrafficAreaAnalyticsModule.get(map, {
+    region: { color: '#0052a5', fillOpacity: 0.08, outlineOpacity: 1, outlineWidth: 3 },
+});
+
+// Layer ordering (same pattern as GeometriesModule)
+const analyticsModule = await TrafficAreaAnalyticsModule.get(map, {
+    beforeLayerConfig: 'lowestLabel', // 'top' | MapStyleLayerID
+});
+analyticsModule.moveBeforeLayer('top');
+
+// Events — fire for both hexgrid and square cells (whichever mode is active)
+analyticsModule.events.on('click', (feature, lngLat) => {
+    console.log(feature.properties.congestionLevel, feature.properties.speed);
+});
+analyticsModule.events.on('hover', (feature) => { });
+analyticsModule.events.off('click');
+
+// Query shown data
+const { heatmap, hexgrid, square } = analyticsModule.getShown();
+```
+
+Metrics: `'congestionLevel'`, `'speed'`, `'travelTime'`
+Modes: `'hexgrid'`, `'hexgrid-flat'`, `'square-3d'`, `'square-flat'`, `'heatmap'`
+Color themes (`theme.color`): `'congestion'` (default), `'thermal'`, `'monochrome'`
+Color stops: `ColorStop[] = Array<{ value: number; color: string }>` — value is 0–1 normalized; takes precedence over `theme.color`
+
+---
+
 ## When to use which option
 
 | | Data | Use case |
@@ -179,6 +244,7 @@ Functional road classes: `'MOTORWAY'`, `'MAJOR_ROAD'`, `'OTHER_MAJOR_ROAD'`, `'S
 | `TrafficIncidentsModule` | Real-time incident markers | Show/filter live events on map |
 | `trafficIncidentDetails` | Structured incident data | Programmatic queries, click-to-details |
 | `trafficAreaAnalytics` | Historical aggregates | Dashboards, reports, trend analysis |
+| `TrafficAreaAnalyticsModule` | Historical aggregates on map | Visualize region analytics with hex/square/heatmap |
 
 ---
 

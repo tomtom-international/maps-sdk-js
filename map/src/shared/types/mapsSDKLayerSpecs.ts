@@ -192,6 +192,16 @@ export type SourceWithLayerIDs = {
 export type MapStyleLayerID = keyof typeof mapStyleLayerIDs;
 
 /**
+ * Controls where a module's layers are placed in the map's layer stack.
+ *
+ * - `'top'` — renders above all other layers
+ * - A {@link MapStyleLayerID} — renders below the named style layer
+ *
+ * @group Shared
+ */
+export type BeforeLayerConfig = 'top' | MapStyleLayerID;
+
+/**
  * Configuration for adding custom layers to a map module based on its controlled source data.
  *
  * @group Shared

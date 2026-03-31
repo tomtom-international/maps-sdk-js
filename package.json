@@ -76,6 +76,7 @@
   "pnpm": {
     "overrides": {
       "@microsoft/api-extractor": "catalog:",
+      "typescript": "catalog:",
       "ajv": "^8.18.0",
       "fsevents": "^2.3.3",
       "minimatch@10": "^10.2.4",

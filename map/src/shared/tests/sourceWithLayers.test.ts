@@ -378,7 +378,7 @@ describe('GeoJSONSourceWithLayers', () => {
                 { properties: {} },
             ],
         });
-        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(6);
+        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(4);
 
         sourceWithLayers.putEventState({ index: 2, state: 'click', mode: 'put' });
         expect(sourceWithLayers.shownFeatures).toEqual({
@@ -429,13 +429,13 @@ describe('GeoJSONSourceWithLayers', () => {
         expect(sourceWithLayers.shownFeatures).toEqual({
             features: [{ properties: {} }, { properties: {} }, { properties: { eventState: 'click' } }],
         });
-        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(6);
+        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(4);
 
         sourceWithLayers.cleanEventState({ index: 0, show: false });
         expect(sourceWithLayers.shownFeatures).toEqual({
             features: [{ properties: {} }, { properties: {} }, { properties: { eventState: 'click' } }],
         });
-        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(6);
+        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(4);
 
         sourceWithLayers.cleanEventState({ index: 2 });
         expect(sourceWithLayers.shownFeatures).toEqual({
@@ -477,6 +477,6 @@ describe('GeoJSONSourceWithLayers', () => {
         expect(sourceWithLayers.shownFeatures).toEqual({
             features: [{ properties: {} }, { properties: {} }, { properties: {} }],
         });
-        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(6);
+        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(4);
     });
 });

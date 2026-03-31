@@ -1,22 +1,18 @@
 import type { Place } from '@tomtom-org/maps-sdk/core';
-import { bboxFromGeoJSON } from '@tomtom-org/maps-sdk/core';
 import type { TomTomMap, TrafficAreaAnalyticsModule } from '@tomtom-org/maps-sdk/map';
 import { calculateFittingBBox, renderAreaAnalyticsChart } from '@tomtom-org/maps-sdk/map';
 import { geocode, geometryData, trafficAreaAnalytics } from '@tomtom-org/maps-sdk/services';
-import type { MultiPolygon, Polygon } from 'geojson';
+import type { MultiPolygon, Polygon, Position } from 'geojson';
 import { MOVE_PORTAL_KEY } from './config';
 import { updateStats } from './controls';
 
-function formatDate(date: Date): string {
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-}
-
-function getDateRange(days: number): { startDate: string; endDate: string } {
+function pastDateRange(days: number): { startDate: string; endDate: string } {
     const end = new Date();
     end.setDate(end.getDate() - 2); // API requires ≥2 days ago
     const start = new Date(end);
     start.setDate(start.getDate() - (days - 1));
-    return { startDate: formatDate(start), endDate: formatDate(end) };
+    const fmt = (d: Date) => d.toISOString().slice(0, 10);
+    return { startDate: fmt(start), endDate: fmt(end) };
 }
 
 type CitySearchParams = {
@@ -38,7 +34,7 @@ async function loadAnalytics(
     heatmapCanvas: HTMLCanvasElement,
 ): Promise<void> {
     try {
-        const { startDate, endDate } = getDateRange(7);
+        const { startDate, endDate } = pastDateRange(7);
         const analytics = await trafficAreaAnalytics({
             apiKey: MOVE_PORTAL_KEY,
             name: cityName,
@@ -78,7 +74,7 @@ async function loadAnalytics(
 }
 
 type CitySearchControls = {
-    selectCityByName: (name: string, position: [number, number]) => Promise<void>;
+    selectCityByName: (name: string, position: Position) => Promise<void>;
 };
 
 export function initCitySearch({
@@ -119,30 +115,20 @@ export function initCitySearch({
 
         try {
             loadingOverlay.classList.remove('aa-hidden');
-            const boundary = await geometryData({ geometries: [place] });
-            const contentBBox = bboxFromGeoJSON(boundary);
-
             if (moveMap) {
-                if (contentBBox) {
-                    const fittingBBox = calculateFittingBBox({
-                        map,
-                        toBeContainedBBox: contentBBox,
-                        surroundingElements: ['.sdk-example-customPanel', '#bottom-panel'],
-                        paddingPX: 60,
-                    });
+                const fittingBBox = calculateFittingBBox({
+                    map,
+                    toBeContainedBBox: place.bbox!,
+                    surroundingElements: ['.sdk-example-customPanel', '#bottom-panel'],
+                    paddingPX: 60,
+                });
 
-                    if (fittingBBox) {
-                        map.mapLibreMap.fitBounds(fittingBBox, { duration: 1500 });
-                    }
-                } else {
-                    map.mapLibreMap.flyTo({
-                        center: place.geometry.coordinates as [number, number],
-                        zoom: 12,
-                        duration: 1500,
-                    });
+                if (fittingBBox) {
+                    map.mapLibreMap.fitBounds(fittingBBox, { duration: 1500 });
                 }
             }
 
+            const boundary = await geometryData({ geometries: [place] });
             const geometry = boundary?.features?.[0]?.geometry;
 
             if (geometry) {
@@ -176,11 +162,18 @@ export function initCitySearch({
 
         debounceTimer = setTimeout(async () => {
             try {
-                showSuggestions((await geocode({ query, limit: 5 })).features ?? []);
+                showSuggestions((await geocode({ query, limit: 3, geographyTypes: ['Municipality'] })).features ?? []);
             } catch {
                 hideSuggestions();
             }
         }, 300);
+    });
+
+    cityInput.addEventListener('keydown', (event) => {
+        if (event.key !== 'Enter') return;
+        event.preventDefault();
+        const first = suggestionsList.querySelector('li');
+        if (first) first.click();
     });
 
     document.addEventListener('click', (event) => {
@@ -189,11 +182,11 @@ export function initCitySearch({
         }
     });
 
-    async function selectCityByName(name: string, position: [number, number]): Promise<void> {
+    async function selectCityByName(name: string, position: Position): Promise<void> {
         cityInput.value = name;
 
         try {
-            const results = await geocode({ query: name, position, limit: 1 });
+            const results = await geocode({ query: name, position, limit: 1, geographyTypes: ['Municipality'] });
             const place = results.features[0];
 
             if (place) {

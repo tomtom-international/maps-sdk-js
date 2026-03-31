@@ -93,12 +93,12 @@ describe('Traffic area analytics module tests', () => {
     test('Initialising module with explicit config', async () => {
         const mockMap = createMockMap();
         const module = await TrafficAreaAnalyticsModule.get(mockMap, {
-            mode: 'heatmap',
+            displayMode: 'heatmap',
             metric: 'speed',
             visible: true,
         });
         expect(module).toBeDefined();
-        expect(module.getConfig()).toMatchObject({ mode: 'heatmap', metric: 'speed', visible: true });
+        expect(module.getConfig()).toMatchObject({ displayMode: 'heatmap', metric: 'speed', visible: true });
     });
 
     test('show() populates both sources from raw response and clear() resets', async () => {
@@ -141,10 +141,10 @@ describe('Traffic area analytics module tests', () => {
         const module = await TrafficAreaAnalyticsModule.get(mockMap);
 
         module.setMode('heatmap');
-        expect(module.getConfig()?.mode).toBe('heatmap');
+        expect(module.getConfig()?.displayMode).toBe('heatmap');
 
-        module.setMode('hexgrid');
-        expect(module.getConfig()?.mode).toBe('hexgrid');
+        module.setMode('hexgrid-3d');
+        expect(module.getConfig()?.displayMode).toBe('hexgrid-3d');
     });
 
     test('setMode() is a no-op when value unchanged', async () => {
@@ -169,22 +169,32 @@ describe('Traffic area analytics module tests', () => {
         expect(module.getConfig()?.visible).toBe(true);
     });
 
-    test('setColorScheme() updates config and repaints', async () => {
+    test('setColor() with preset updates config and repaints', async () => {
         const mockMap = createMockMap();
         const module = await TrafficAreaAnalyticsModule.get(mockMap);
 
-        module.setColorScheme('thermal');
-        expect(module.getConfig()?.colorScheme).toBe('thermal');
+        module.setColor('thermal');
+        expect(module.getConfig()?.color).toBe('thermal');
         expect(mockMap.mapLibreMap.setPaintProperty).toHaveBeenCalled();
     });
 
-    test('setColorScheme() is a no-op when value unchanged', async () => {
+    test('setColor() with custom color stops updates config and repaints', async () => {
         const mockMap = createMockMap();
-        const module = await TrafficAreaAnalyticsModule.get(mockMap, { colorScheme: 'thermal' });
+        const module = await TrafficAreaAnalyticsModule.get(mockMap, { color: 'thermal' });
 
         const callCount = (mockMap.mapLibreMap.setPaintProperty as ReturnType<typeof vi.fn>).mock.calls.length;
-        module.setColorScheme('thermal');
-        expect((mockMap.mapLibreMap.setPaintProperty as ReturnType<typeof vi.fn>).mock.calls.length).toBe(callCount);
+        module.applyConfig({
+            color: {
+                congestionLevel: [
+                    { value: 0, color: '#aaaaaa' },
+                    { value: 0.5, color: '#555555' },
+                    { value: 1, color: '#000000' },
+                ],
+            },
+        });
+        expect((mockMap.mapLibreMap.setPaintProperty as ReturnType<typeof vi.fn>).mock.calls.length).toBeGreaterThan(
+            callCount,
+        );
     });
 
     test('events property is defined', async () => {
@@ -195,7 +205,7 @@ describe('Traffic area analytics module tests', () => {
 
     test('applyConfig with undefined resets', async () => {
         const mockMap = createMockMap();
-        const module = await TrafficAreaAnalyticsModule.get(mockMap, { mode: 'heatmap' });
+        const module = await TrafficAreaAnalyticsModule.get(mockMap, { displayMode: 'heatmap' });
         module.applyConfig(undefined);
         expect(module.getConfig()).toBeUndefined();
     });

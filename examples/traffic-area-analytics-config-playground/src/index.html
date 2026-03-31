@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Area Analytics Config Playground</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="sdk-example-body">
+        <div id="sdk-map"></div>
+
+        <!-- Map controls (top-left) -->
+        <div class="aa-map-controls">
+            <button class="sdk-example-button sdk-example-button-sm sdk-example-toggle active" id="toggle-3d">
+                3D
+            </button>
+            <select class="sdk-example-dropdown aa-style-select" id="style-switcher"></select>
+        </div>
+
+        <!-- Controls panel (top-right) -->
+        <div class="sdk-example-customPanel">
+            <div class="sdk-example-panel-header">
+                <h3 class="sdk-example-heading">
+                    <span class="sdk-example-heading-text">Area Analytics Config</span>
+                    <button class="sdk-example-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="sdk-example-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+            <div class="sdk-example-panel-content">
+                <!-- Metric -->
+                <div class="sdk-example-section">
+                    <label class="sdk-example-form-label">Metric</label>
+                    <div class="sdk-example-button-group-segmented" id="metric-selector">
+                        <button class="sdk-example-button sdk-example-toggle active" data-value="congestionLevel">
+                            Congestion
+                        </button>
+                        <button class="sdk-example-button sdk-example-toggle" data-value="speed">Speed</button>
+                        <button class="sdk-example-button sdk-example-toggle" data-value="travelTime">
+                            Travel Time
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Visualization Mode -->
+                <div class="sdk-example-section">
+                    <label class="sdk-example-form-label" for="mode-selector">Visualization</label>
+                    <select class="sdk-example-dropdown" id="mode-selector">
+                        <option value="hexgrid-3d" selected>3D Hex Grid</option>
+                        <option value="hexgrid-2d">Flat Hex Grid</option>
+                        <option value="square-3d">3D Square Grid</option>
+                        <option value="square-2d">Flat Square Grid</option>
+                        <option value="heatmap">Heatmap</option>
+                    </select>
+                </div>
+
+                <!-- Color Theme -->
+                <div class="sdk-example-section">
+                    <label class="sdk-example-form-label">Color Theme</label>
+                    <div class="sdk-example-button-group-segmented" id="color-theme-selector">
+                        <button class="sdk-example-button sdk-example-toggle active" data-value="congestion">
+                            Congestion
+                        </button>
+                        <button class="sdk-example-button sdk-example-toggle" data-value="thermal">Thermal</button>
+                        <button class="sdk-example-button sdk-example-toggle" data-value="monochrome">Mono</button>
+                    </div>
+                </div>
+
+                <!-- Color Stops -->
+                <div class="sdk-example-section">
+                    <label class="sdk-example-form-label">Color Stops</label>
+                    <div id="color-stops-list" style="display: flex; flex-direction: column; gap: 6px;"></div>
+                    <button
+                        class="sdk-example-button sdk-example-button-sm sdk-example-button-outline sdk-example-button-full aa-add-stop"
+                        id="add-stop-btn"
+                        type="button"
+                    >
+                        + Add Stop
+                    </button>
+                </div>
+
+                <!-- Layer order -->
+                <div class="sdk-example-section">
+                    <label class="sdk-example-form-label" for="before-layer-selector">Layer Order</label>
+                    <select class="sdk-example-dropdown" id="before-layer-selector"></select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading overlay -->
+        <div id="loading-overlay" class="aa-loading aa-hidden">
+            <div class="sdk-example-spinner"></div>
+            <span>Loading analytics…</span>
+        </div>
+
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

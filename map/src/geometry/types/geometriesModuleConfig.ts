@@ -1,6 +1,6 @@
 import type { PolygonFeatures } from '@tomtom-org/maps-sdk/core';
 import type { DataDrivenPropertyValueSpecification } from 'maplibre-gl';
-import type { MapModuleCommonConfig, MapStyleLayerID } from '../../shared';
+import type { BeforeLayerConfig, MapModuleCommonConfig } from '../../shared';
 import type { ColorPaletteOptions } from '../layers/colorPalettes';
 import type { GeometryTheme } from './geometryTheme';
 
@@ -332,7 +332,7 @@ export type GeometryLineLabelConfig = {
  *
  * @group Geometries
  */
-export type GeometryBeforeLayerConfig = 'top' | MapStyleLayerID;
+export type GeometryBeforeLayerConfig = BeforeLayerConfig;
 
 /**
  * Configuration options for the GeometriesModule.

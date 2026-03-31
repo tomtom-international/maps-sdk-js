@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Area Analytics Explorer</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="sdk-example-body">
+        <div id="sdk-map"></div>
+
+        <!-- Controls panel (top-right) -->
+        <div class="sdk-example-customPanel">
+            <div class="sdk-example-panel-header">
+                <h3 class="sdk-example-heading">
+                    <span class="sdk-example-heading-text">Traffic Area Analytics</span>
+                    <button class="sdk-example-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="sdk-example-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+            <div class="sdk-example-panel-content">
+                <div class="sdk-example-section">
+                    <label class="sdk-example-form-label" for="city-input">City</label>
+                    <div class="aa-search-wrapper">
+                        <input
+                            type="text"
+                            class="sdk-example-input"
+                            id="city-input"
+                            placeholder="Search for a city..."
+                            autocomplete="off"
+                        >
+                        <ul id="city-suggestions" class="aa-suggestions" role="listbox"></ul>
+                    </div>
+                </div>
+                <div class="sdk-example-section">
+                    <label class="sdk-example-form-label">Metric</label>
+                    <div class="sdk-example-button-group-segmented" id="metric-selector">
+                        <button class="sdk-example-button sdk-example-toggle active" data-value="congestionLevel">
+                            Congestion
+                        </button>
+                        <button class="sdk-example-button sdk-example-toggle" data-value="speed">Speed</button>
+                        <button class="sdk-example-button sdk-example-toggle" data-value="travelTime">
+                            Travel Time
+                        </button>
+                    </div>
+                </div>
+                <div class="sdk-example-section">
+                    <label class="sdk-example-form-label" for="mode-selector">Visualization</label>
+                    <select class="sdk-example-dropdown" id="mode-selector">
+                        <option value="hexgrid-3d" selected>3D Hex Grid</option>
+                        <option value="hexgrid-2d">Flat Hex Grid</option>
+                        <option value="square-3d">3D Square Grid</option>
+                        <option value="square-2d">Flat Square Grid</option>
+                        <option value="heatmap">Heatmap</option>
+                    </select>
+                </div>
+                <div class="sdk-example-section">
+                    <label class="sdk-example-form-label">Color Theme</label>
+                    <div class="sdk-example-button-group-segmented" id="color-scheme-selector">
+                        <button class="sdk-example-button sdk-example-toggle active" data-value="congestion">
+                            Congestion
+                        </button>
+                        <button class="sdk-example-button sdk-example-toggle" data-value="thermal">Thermal</button>
+                        <button class="sdk-example-button sdk-example-toggle" data-value="monochrome">Mono</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats + heatmap panel (bottom-left) -->
+        <div id="bottom-panel" class="aa-bottom-panel aa-hidden">
+            <div class="aa-bottom-panel-header">
+                <span id="panel-city-name" class="aa-city-name"></span>
+                <button class="aa-bottom-panel-toggle" aria-label="Toggle data panel" aria-expanded="false">
+                    <svg class="aa-bottom-panel-chevron" viewBox="0 0 16 10">
+                        <path d="M3 1.5L8 6.5L13 1.5" />
+                    </svg>
+                </button>
+            </div>
+            <div class="aa-bottom-panel-content collapsed">
+                <div class="aa-stats">
+                    <div class="aa-stat-chip">
+                        <span class="aa-stat-label">Avg Congestion</span>
+                        <span id="stat-congestion" class="aa-stat-value">--</span>
+                    </div>
+                    <div class="aa-stat-chip">
+                        <span class="aa-stat-label">Avg Speed</span>
+                        <span id="stat-speed" class="aa-stat-value">--</span>
+                    </div>
+                    <div class="aa-stat-chip">
+                        <span class="aa-stat-label">Avg Travel Time</span>
+                        <span id="stat-traveltime" class="aa-stat-value">--</span>
+                    </div>
+                    <div class="aa-stat-chip">
+                        <span class="aa-stat-label">Free Flow</span>
+                        <span id="stat-freeflow" class="aa-stat-value">--</span>
+                    </div>
+                </div>
+                <div class="aa-heatmap-section">
+                    <label class="sdk-example-form-label">Congestion by Day &amp; Hour (last 7 days)</label>
+                    <canvas id="heatmap-canvas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating legend -->
+        <div class="aa-floating-legend">
+            <label class="aa-legend-title" id="legend-title">Congestion Level</label>
+            <div class="aa-legend-bar" id="legend-bar"></div>
+            <div class="aa-legend-labels">
+                <span id="legend-min">Free</span>
+                <span id="legend-max">Standstill</span>
+            </div>
+        </div>
+
+        <!-- Loading overlay -->
+        <div id="loading-overlay" class="aa-loading aa-hidden">
+            <div class="sdk-example-spinner"></div>
+            <span>Loading analytics...</span>
+        </div>
+
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

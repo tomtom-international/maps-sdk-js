@@ -1,6 +1,6 @@
 {
-  "name": "@examples/traffic-area-analytics",
-  "description": "Display traffic area analytics for a geocoded city using hexgrid mode",
+  "name": "@examples/traffic-area-analytics-playgorund",
+  "description": "Explore traffic area analytics for different locations",
   "type": "module",
   "scripts": {
     "build": "vite build --config ../example-vite.config.ts",
@@ -9,7 +9,7 @@
     "develop:sandpack": "vite --config ../example-sandpack-vite.config.ts",
     "type-check": "tsc --noEmit",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:ui": "playwright test  --ui",
     "test:e2e:update-snapshots": "playwright test --update-snapshots",
     "start-test-server": "vite preview --port 9050"
   },
@@ -17,6 +17,7 @@
     "@tomtom-org/maps-sdk": "workspace:*"
   },
   "devDependencies": {
+    "@types/geojson": "catalog:",
     "@types/node": "catalog:",
     "rimraf": "catalog:",
     "rollup-plugin-visualizer": "catalog:",

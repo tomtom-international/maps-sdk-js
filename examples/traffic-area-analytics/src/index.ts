@@ -1,75 +1,43 @@
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import type { AreaAnalyticsColorScheme, AreaAnalyticsMetricKey, AreaAnalyticsMode } from '@tomtom-org/maps-sdk/map';
-import { BaseMapModule, TomTomMap, TrafficAreaAnalyticsModule } from '@tomtom-org/maps-sdk/map';
-import { initCitySearch } from './citySearch';
-import { API_KEY } from './config';
-import { updateLegend, wireRadioGroup } from './controls';
-import { initTogglePanel } from './togglePanel';
-import { initTooltip } from './tooltip';
+import { TomTomMap, TrafficAreaAnalyticsModule } from '@tomtom-org/maps-sdk/map';
+import { geocodeOne, geometryData, trafficAreaAnalytics } from '@tomtom-org/maps-sdk/services';
 import './style.css';
+import { API_KEY, MOVE_PORTAL_KEY } from './config';
 
 // (Set your own API key when working in your own environment)
-TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
+TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
+
+function pastDateRange(): { startDate: string } {
+    const start = new Date();
+    start.setDate(start.getDate() - 9);
+    return { startDate: start.toISOString().slice(0, 10) };
+}
 
 (async () => {
-    // Wait one frame for Vite's CSS injection to apply before creating the map
-    await new Promise((resolve) => requestAnimationFrame(resolve));
+    const cityName = 'Amsterdam, Netherlands';
+    const place = await geocodeOne(cityName);
 
+    // Init map immediately so it loads while analytics are being fetched
     const map = new TomTomMap({
-        mapLibre: { container: 'sdk-map', center: [-3.7038, 40.4168], zoom: 12, pitch: 45, bearing: -17 },
+        mapLibre: { container: 'sdk-map', bounds: place.bbox, fitBoundsOptions: { padding: 40, pitch: 45 } },
     });
 
-    const analyticsModule = await TrafficAreaAnalyticsModule.get(map, { mode: 'hexgrid', metric: 'congestionLevel' });
+    // Fetch geometry then kick off analytics — runs in parallel with map initialization
+    const analyticsPromise = geometryData({ geometries: [place] })
+        .then(({ features }) => features[0]?.geometry)
+        .then((geometry) =>
+            trafficAreaAnalytics({
+                apiKey: MOVE_PORTAL_KEY,
+                name: cityName,
+                ...pastDateRange(),
+                dataTypes: ['SPEED', 'CONGESTION_LEVEL', 'FREE_FLOW_SPEED', 'TRAVEL_TIME'],
+                functionalRoadClasses: 'all',
+                hours: 'all',
+                geometry,
+            }),
+        );
 
-    const $ = (id: string) => document.getElementById(id) as HTMLElement;
+    const [analyticsModule, analytics] = await Promise.all([TrafficAreaAnalyticsModule.get(map), analyticsPromise]);
 
-    const { selectCityByName } = initCitySearch({
-        map,
-        analyticsModule,
-        cityInput: $('city-input') as HTMLInputElement,
-        suggestionsList: $('city-suggestions') as HTMLUListElement,
-        bottomPanel: $('bottom-panel'),
-        loadingOverlay: $('loading-overlay'),
-        heatmapCanvas: $('heatmap-canvas') as HTMLCanvasElement,
-    });
-
-    const cityLabelsMap = await BaseMapModule.get(map, {
-        layerGroupsFilter: { mode: 'include', names: ['cityLabels', 'capitalLabels'] },
-    });
-
-    cityLabelsMap.events.on('click', async (feature, lngLat) => {
-        const cityName = feature.properties.name as string | undefined;
-
-        if (cityName) {
-            await selectCityByName(cityName, lngLat.toArray());
-        }
-    });
-
-    const restOfTheMap = await BaseMapModule.get(map, {
-        layerGroupsFilter: { mode: 'exclude', names: ['cityLabels', 'capitalLabels'] },
-        events: { cursorOnHover: 'default' },
-    });
-
-    restOfTheMap.events.on('click', () => {
-        analyticsModule.clear();
-        $('bottom-panel').classList.add('aa-hidden');
-    });
-
-    wireRadioGroup('#metric-selector', (value) => {
-        analyticsModule.setMetric(value as AreaAnalyticsMetricKey);
-        updateLegend(value as AreaAnalyticsMetricKey, analyticsModule.getConfig()?.colorScheme);
-    });
-
-    wireRadioGroup('#mode-selector', (value) => {
-        analyticsModule.setMode(value as AreaAnalyticsMode);
-    });
-
-    wireRadioGroup('#color-scheme-selector', (value) => {
-        const scheme = value as AreaAnalyticsColorScheme;
-        analyticsModule.setColorScheme(scheme);
-        updateLegend(analyticsModule.getConfig()?.metric ?? 'congestionLevel', scheme);
-    });
-
-    initTooltip(map, analyticsModule);
-    initTogglePanel();
+    await analyticsModule.show(analytics);
 })();

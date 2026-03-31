@@ -96,9 +96,17 @@ import type { EventHandlerConfig, EventType, SourceWithLayers, UserEventHandler 
  * @group User Interaction Events
  */
 export class EventsModule<T = MapGeoJSONFeature> {
+    private readonly sources: SourceWithLayers[];
+
     constructor(
         private readonly eventProxy: EventsProxy,
-        private readonly sourceWithLayers: SourceWithLayers,
+        /**
+         * The source(s) whose features this module handles events for.
+         * Pass an array to register handlers across multiple sources representing similar data in different display modes (e.g. hexgrid + square
+         * in {@link TrafficAreaAnalyticsModule}). A single value is also accepted for
+         * backwards compatibility.
+         */
+        sourcesWithLayers: SourceWithLayers | SourceWithLayers[],
         private readonly config: EventHandlerConfig | undefined,
         /**
          * Optional function that transforms a raw {@link MapGeoJSONFeature} into the
@@ -110,7 +118,9 @@ export class EventsModule<T = MapGeoJSONFeature> {
          * as-is.
          */
         private readonly mapping?: (feature: MapGeoJSONFeature) => T,
-    ) {}
+    ) {
+        this.sources = Array.isArray(sourcesWithLayers) ? sourcesWithLayers : [sourcesWithLayers];
+    }
 
     /**
      * Register an event handler for user interactions with map features.
@@ -187,14 +197,18 @@ export class EventsModule<T = MapGeoJSONFeature> {
     on(type: EventType, handler: UserEventHandler<T>) {
         if (this.mapping) {
             const mapping = this.mapping;
-            this.eventProxy.addEventHandler(
-                this.sourceWithLayers,
-                (feature, ...rest) => handler(mapping(feature), ...rest),
-                type,
-                this.config,
-            );
+            for (const source of this.sources) {
+                this.eventProxy.addEventHandler(
+                    source,
+                    (feature, ...rest) => handler(mapping(feature), ...rest),
+                    type,
+                    this.config,
+                );
+            }
         } else {
-            this.eventProxy.addEventHandler(this.sourceWithLayers, handler, type, this.config);
+            for (const source of this.sources) {
+                this.eventProxy.addEventHandler(source, handler, type, this.config);
+            }
         }
     }
 
@@ -268,6 +282,8 @@ export class EventsModule<T = MapGeoJSONFeature> {
      * ```
      */
     off(type: EventType) {
-        this.eventProxy.remove(this.sourceWithLayers, type);
+        for (const source of this.sources) {
+            this.eventProxy.remove(source, type);
+        }
     }
 }

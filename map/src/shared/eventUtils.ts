@@ -57,7 +57,10 @@ const removeEventStateAndShow = (
     const prevFeaturesToUpdate = [...sourceWithLayers.shownFeatures.features];
     const updatedIndex = putEventState(newEventType, rawFeature.id, prevFeaturesToUpdate, 'removeFromProps');
     if (!isNil(updatedIndex)) {
-        sourceWithLayers.show({ ...sourceWithLayers.shownFeatures, features: prevFeaturesToUpdate });
+        sourceWithLayers.show(
+            { ...sourceWithLayers.shownFeatures, features: prevFeaturesToUpdate },
+            { automaticVisibility: false },
+        );
     }
 };
 
@@ -93,7 +96,10 @@ export const updateEventState = (
             }
         }
 
-        sourceWithLayers.show({ ...sourceWithLayers.shownFeatures, features: featuresToUpdate });
+        sourceWithLayers.show(
+            { ...sourceWithLayers.shownFeatures, features: featuresToUpdate },
+            { automaticVisibility: false },
+        );
 
         return { feature: featuresToUpdate[updatedIndex], index: updatedIndex };
     }

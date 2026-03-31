@@ -24,7 +24,6 @@ export default defineConfig(({ mode }) => {
                 outDirs: 'dist',
                 include: ['index.ts', 'src/**/*'],
                 exclude: ['**/*.test.ts'],
-                bundleTypes: true,
             }),
             ...(process.env.CI
                 ? []
