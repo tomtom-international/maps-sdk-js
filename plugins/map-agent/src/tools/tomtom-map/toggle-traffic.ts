@@ -1,0 +1,104 @@
+/**
+ * @module map-agent-tools
+ */
+
+import { type Tool, tool } from 'ai';
+import { z } from 'zod';
+import type { ToolState } from '../../types';
+import { toolErrorSchema } from '../shared-output-schemas';
+
+/**
+ * Tool schema for toggling traffic flow.
+ */
+export const toggleTrafficFlowSchema = z.object({
+    visible: z.boolean(),
+});
+
+/** Output schema for the toggle-traffic-flow tool. */
+export const toggleTrafficFlowOutputSchema = z.union([
+    z.object({
+        success: z.literal(true),
+        trafficFlowVisible: z.boolean(),
+    }),
+    toolErrorSchema,
+]);
+
+/**
+ * Tool schema for toggling traffic incidents.
+ */
+export const toggleTrafficIncidentsSchema = z.object({
+    visible: z.boolean(),
+});
+
+/** Output schema for the toggle-traffic-incidents tool. */
+export const toggleTrafficIncidentsOutputSchema = z.union([
+    z.object({
+        success: z.literal(true),
+        trafficIncidentsVisible: z.boolean(),
+    }),
+    toolErrorSchema,
+]);
+
+export const toggleTrafficFlowDescription =
+    'Show or hide the real-time traffic flow on the map (congestion visualization). Use to monitor traffic conditions or before route calculations with live traffic. Show if asked for explicitly or about speeds.';
+
+export const toggleTrafficIncidentsDescription =
+    'Show or hide the real-time traffic incidents on the map (jams, accidents, road closures, roadworks, weather-related, etc). Use with getShownIncidents and getTrafficIncidents for further incident details. This is the default traffic on the map.';
+
+/**
+ * Create the toggle traffic flow tool.
+ */
+export function createToggleTrafficFlowTool(state: ToolState): Tool {
+    return tool({
+        description: toggleTrafficFlowDescription,
+        inputSchema: toggleTrafficFlowSchema,
+        outputSchema: toggleTrafficFlowOutputSchema,
+        execute: async (params) => {
+            const { visible } = params;
+            try {
+                // Lazy-init TrafficFlowModule
+                const trafficFlowModule = await state.traffic.getTrafficFlowModule();
+
+                trafficFlowModule.setVisible(visible);
+
+                return {
+                    success: true,
+                    trafficFlowVisible: visible,
+                };
+            } catch (error) {
+                return {
+                    error: `Failed to toggle traffic flow: ${error instanceof Error ? error.message : String(error)}`,
+                };
+            }
+        },
+    });
+}
+
+/**
+ * Create the toggle traffic incidents tool.
+ */
+export function createToggleTrafficIncidentsTool(state: ToolState): Tool {
+    return tool({
+        description: toggleTrafficIncidentsDescription,
+        inputSchema: toggleTrafficIncidentsSchema,
+        outputSchema: toggleTrafficIncidentsOutputSchema,
+        execute: async (params) => {
+            const { visible } = params;
+            try {
+                // Lazy-init TrafficIncidentsModule
+                const trafficIncidentsModule = await state.traffic.getTrafficIncidentsModule();
+
+                trafficIncidentsModule.setVisible(visible);
+
+                return {
+                    success: true,
+                    trafficIncidentsVisible: visible,
+                };
+            } catch (error) {
+                return {
+                    error: `Failed to toggle traffic incidents: ${error instanceof Error ? error.message : String(error)}`,
+                };
+            }
+        },
+    });
+}

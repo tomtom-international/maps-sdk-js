@@ -1,0 +1,10 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "noImplicitAny": false,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*", "index.ts"],
+  "exclude": ["node_modules", "dist", "tests"]
+}
