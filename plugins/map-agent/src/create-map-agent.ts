@@ -8,7 +8,7 @@ import { createToolState } from './state';
 import { buildSystemPrompt } from './system-prompt';
 import { setupTools } from './tool-setup';
 import { createStepScope } from './tool-step-scope';
-import type { MapAgent, MapAgentOptions, MapAgentStreamOptions } from './types';
+import type { MapAgent, MapAgentOptions, MapAgentStreamOptions, ToolState } from './types';
 import { type ClassificationResult, runAutoClassification } from './utils/intent-classifier';
 
 /**
@@ -58,10 +58,11 @@ export function createMapAgent(map: TomTomMap, options: MapAgentOptions): MapAge
         throw new Error('MapAgent requires a model option. Please provide an AI SDK LanguageModel instance.');
     }
 
-    const state = createToolState(map);
+    const state: ToolState = createToolState(map);
     const stepScope = createStepScope();
 
-    const tools = setupTools(state, options);
+    const { tools, toolsMetadata } = setupTools(state, options);
+    state.toolsMetadata = toolsMetadata;
 
     // Strip outputSchema from all tools if disabled
     if (options.outputSchemas === false) {
@@ -87,11 +88,10 @@ export function createMapAgent(map: TomTomMap, options: MapAgentOptions): MapAge
         let classification: ClassificationResult | null = null;
 
         if (options.autoClassify !== false) {
-            const loadedToolNames = new Set(Object.keys(tools));
             classification = await runAutoClassification(
                 agentOptions.messages,
                 options.autoClassify?.model ?? options.model,
-                loadedToolNames,
+                toolsMetadata,
                 stepScope,
                 options.autoClassify?.onResult,
                 options.autoClassify?.maxClassifierHistoryMessages,

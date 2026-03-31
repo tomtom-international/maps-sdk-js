@@ -52,22 +52,19 @@ export const helpDescription =
 /**
  * Create the help tool.
  */
-export function createHelpTool(_state: ToolState): Tool {
+export function createHelpTool(state: ToolState): Tool {
     return tool({
         description: helpDescription,
         inputSchema: helpSchema,
         outputSchema: helpOutputSchema,
-        // Dynamic import avoids a circular dependency:
-        // tool-registry → utilities/index → help → tool-registry
         execute: async (params): Promise<z.infer<typeof helpOutputSchema>> => {
             const { mode, query, tag } = params;
 
             try {
-                const { TOOL_REGISTRY } = await import('../tool-registry');
-                const allTools = Object.values(TOOL_REGISTRY);
+                const allTools = Object.values(state.toolsMetadata ?? {});
 
                 if (mode === 'summary') {
-                    const examplePrompts = allTools.flatMap((toolMetadata) => toolMetadata.examplePrompts);
+                    const examplePrompts = allTools.flatMap((toolMetadata) => toolMetadata.examplePrompts ?? []);
                     return { mode: 'summary', examplePrompts };
                 }
 
@@ -75,7 +72,9 @@ export function createHelpTool(_state: ToolState): Tool {
                 let tools = allTools;
 
                 if (tag) {
-                    tools = tools.filter((toolMetadata) => (toolMetadata.tags as readonly ToolTag[]).includes(tag));
+                    tools = tools.filter(
+                        (toolMetadata) => (toolMetadata.tags as readonly ToolTag[] | undefined)?.includes(tag) ?? false,
+                    );
                 }
 
                 if (query) {
@@ -84,8 +83,10 @@ export function createHelpTool(_state: ToolState): Tool {
                         (toolMetadata) =>
                             toolMetadata.name.toLowerCase().includes(lowerQuery) ||
                             toolMetadata.description.toLowerCase().includes(lowerQuery) ||
-                            toolMetadata.tags.some((toolTag) => toolTag.toLowerCase().includes(lowerQuery)) ||
-                            toolMetadata.examplePrompts.some((prompt) => prompt.toLowerCase().includes(lowerQuery)),
+                            (toolMetadata.tags ?? []).some((toolTag) => toolTag.toLowerCase().includes(lowerQuery)) ||
+                            (toolMetadata.examplePrompts ?? []).some((prompt) =>
+                                prompt.toLowerCase().includes(lowerQuery),
+                            ),
                     );
                 }
 
@@ -96,8 +97,8 @@ export function createHelpTool(_state: ToolState): Tool {
                     matchedTools: tools.map((toolMetadata) => ({
                         name: toolMetadata.name,
                         description: toolMetadata.description,
-                        examplePrompts: toolMetadata.examplePrompts,
-                        relatedTools: toolMetadata.relatedTools,
+                        examplePrompts: toolMetadata.examplePrompts ?? [],
+                        relatedTools: toolMetadata.relatedTools ?? [],
                     })),
                     totalMatched: tools.length,
                 };

@@ -2,7 +2,8 @@
  * @module map-agent-types
  */
 
-import type { LanguageModel, Tool, ToolLoopAgent } from 'ai';
+import type { LanguageModel, ToolLoopAgent } from 'ai';
+import type { z } from 'zod';
 import type { BaseMapState, MapPOIsState, PlacesState, RangeState, RoutingState, TrafficState } from './state';
 import type { DefaultToolSet } from './tools';
 import type { ClassificationResult } from './utils/intent-classifier';
@@ -19,19 +20,75 @@ import type { ClassificationResult } from './utils/intent-classifier';
  */
 export type DefaultToolName = keyof DefaultToolSet;
 
-/** * Tool configuration type with autocomplete for default tools.
+/**
+ * Metadata for a map agent tool.
  *
- * @remarks
- * - Default tool names have autocomplete and can be set to `false` (exclude) or custom tool (override)
- * - Any additional keys can be added for custom tools
+ * @group Tools
+ */
+export type ToolMetadata = {
+    /** Tool identifier, derived from the config key. */
+    name: string;
+    /** Description of the tool's purpose. Used by the SDK's system prompt. */
+    description: string;
+    /** Compact one-liner for the intent classifier prompt. */
+    classificationPrompt?: string;
+    /** Category tags used by the help tool for filtering (e.g. 'location', 'routing'). */
+    tags?: string[];
+    /** Usage examples (e.g. 'geocode("Amsterdam")'). */
+    examples?: string[];
+    /** Natural language prompts shown by the help tool (e.g. 'Where is the Louvre?'). */
+    examplePrompts?: string[];
+    /** Tool names that are often used together with this tool. */
+    relatedTools?: string[];
+    /** Tool names that must run before this one. */
+    dependsOn?: string[];
+};
+
+/**
+ * A custom map agent tool. Users define tools with this type instead of the AI SDK `tool()` directly.
+ * Combines execution (inputSchema + execute) with classifier metadata in a single object.
+ *
+ * @example
+ * ```typescript
+ * const getWeather: MapAgentTool = {
+ *     description: 'Get weather forecast for a city',
+ *     inputSchema: z.object({ city: z.string() }),
+ *     execute: async ({ city }) => fetchWeather(city),
+ *     classificationPrompt: 'weather forecast',
+ *     dependsOn: ['geocode'],
+ * };
+ * ```
+ *
+ * @group Tools
+ */
+// `name` is omitted because it's derived from the config key in setupTools
+export type MapAgentTool = Omit<ToolMetadata, 'name'> & {
+    /** Zod schema defining the tool's input parameters. */
+    inputSchema: z.ZodType;
+    /** Optional Zod schema describing the tool's structured output. */
+    outputSchema?: z.ZodType;
+    /** Function that executes the tool. Receives the parsed input from the schema. */
+    execute: (input: any) => Promise<any>;
+};
+
+/**
+ * A tool registry entry. Can be:
+ * - `false` to exclude a built-in tool
+ * - Metadata only (to tweak a built-in without replacing it)
+ * - A {@link MapAgentTool} (to add or override)
+ *
+ * @group Tools
+ */
+export type ToolRegistryEntry = false | Partial<ToolMetadata> | MapAgentTool;
+
+/**
+ * Tool configuration: keyed by tool name, with autocomplete for built-in defaults.
  *
  * @group Tools
  */
 export type ToolConfiguration = {
-    [K in DefaultToolName]?: false | Tool;
-} & {
-    [customName: string]: false | Tool | undefined;
-};
+    [K in DefaultToolName]?: ToolRegistryEntry;
+} & Record<string, ToolRegistryEntry>;
 
 /** * Options for creating a map agent.
  */
@@ -89,16 +146,16 @@ export type MapAgentOptions = {
     systemPromptSuffix?: string;
 
     /**
-     * Configure tools: exclude defaults, override defaults, or add custom tools.
+     * Configure tools: exclude defaults, override defaults, add custom tools, or tweak tool metadata.
      *
      * @remarks
      * **Unified tool configuration with type-safe autocomplete:**
      * - Works together with `includeDefaultTools`
-     * - Set default tool to `false` to exclude it
-     * - Set default tool to custom implementation to override it
-     * - Add new keys for custom tools
      *
-     * Type completion provides autocomplete for all default tool names.
+     * Each entry can be:
+     * - `false` — exclude a built-in tool
+     * - Metadata only — tweak a built-in tool's metadata without replacing it
+     * - A {@link MapAgentTool} — add a custom tool or override a built-in
      *
      * @example Exclude specific tools
      * ```typescript
@@ -127,26 +184,37 @@ export type MapAgentOptions = {
      * const agent = createMapAgent(map, {
      *   model: openai('gpt-4o'),
      *   tools: {
-     *     getWeather: createWeatherTool(context),  // New tool
-     *     findParking: createParkingTool(context)  // New tool
+     *     getWeather: {
+     *       ...weatherTool,
+     *       classificationPrompt: 'weather forecast',   // Helps the classifier know when to select this tool
+     *       dependsOn: ['geocode'],                     // Tells the classifier this tool needs geocode first
+     *     },
      *   }
      * });
      * ```
      *
-     * @example Mix all three patterns
+     * @example Tweak built-in tool metadata
      * ```typescript
      * const agent = createMapAgent(map, {
      *   model: openai('gpt-4o'),
      *   tools: {
-     *     setMapStandardStyle: false,                        // Exclude
-     *     discoverPlaces: createCustomSearchTool(ctx), // Override
-     *     getWeather: createWeatherTool(ctx)         // Add custom
+     *     geocode: { dependsOn: ['myAuthTool'] },
      *   }
      * });
      * ```
      *
-     * @see {@link DefaultToolName} for list of default tool names
-     * @see {@link ToolConfiguration} for the type definition
+     * @example Mix all patterns
+     * ```typescript
+     * const agent = createMapAgent(map, {
+     *   model: openai('gpt-4o'),
+     *   tools: {
+     *     setMapStandardStyle: false,                             // Exclude
+     *     discoverPlaces: createCustomSearchTool(ctx),            // Override
+     *     geocode: { dependsOn: ['myAuthTool'] },                 // Tweak metadata
+     *     getWeather: { ...weatherTool, dependsOn: ['geocode'] }, // Add custom
+     *   }
+     * });
+     * ```
      */
     tools?: ToolConfiguration;
 
@@ -236,7 +304,7 @@ export type MapAgent = {
      *
      * @example
      * ```typescript
-     * const classification = await classifyUserIntent(conversation, { chatModel: model });
+     * const classification = await classifyUserIntent(conversation, { chatModel: model, toolsMetadata });
      * agent.setActiveTools(classification.activeToolNames);
      * const result = await agent.agent.generate({ messages });
      * ```

@@ -7,14 +7,14 @@
  * minimal set of tool names needed to answer it.
  *
  * The classifier prompt is built dynamically from each tool's `relatedTools`
- * in the tool registry, so it stays in sync automatically when tools are
+ * in the tool metadata, so it stays in sync automatically when tools are
  * added or renamed.
  */
 
 import { generateText, type LanguageModel, type ModelMessage, Output, type TextPart } from 'ai';
 import { z } from 'zod';
 import type { StepScope } from '../tool-step-scope';
-import { TOOL_NAMES, TOOL_REGISTRY } from '../tools';
+import type { ToolMetadata } from '../types';
 
 /** A single turn in the conversation passed to {@link classifyUserIntent}. */
 export type ConversationMessage = { role: 'user' | 'assistant'; content: string };
@@ -36,6 +36,8 @@ export type ClassifierOptions = {
      * Ideally should be a fast, low-cost model (e.g. gpt-4o-mini).
      */
     chatModel: LanguageModel;
+    /** Per-tool metadata used to build the classifier prompt. */
+    toolsMetadata: Record<string, ToolMetadata>;
 };
 
 /** Max character length for each history message when compacting for the classifier. */
@@ -44,14 +46,17 @@ const MAX_HISTORY_MESSAGE_LENGTH = 300;
 /** Number of most-recent history messages (excluding the last user message) passed to the classifier. */
 const MAX_CLASSIFIER_HISTORY_MESSAGES = 8;
 
-/** Builds the system prompt listing all tools with their related tools. */
-function buildClassifySystemPrompt(): string {
-    const toolMetadata = TOOL_NAMES.map((name) => {
-        const { relatedTools, dependsOn } = TOOL_REGISTRY[name];
-        const related = relatedTools?.length ? ` Related: ${relatedTools.join(', ')}.` : '';
-        const depends = dependsOn?.length ? ` Requires: ${dependsOn.join(', ')}.` : '';
-        return `${name}${related}${depends}`;
-    });
+/** Formats a single tool's metadata into a compact classifier prompt entry. */
+function formatToolEntry(name: string, entry: ToolMetadata): string {
+    const classificationPrompt = entry.classificationPrompt ? ` ${entry.classificationPrompt}.` : '';
+    const related = entry.relatedTools?.length ? ` Related: ${entry.relatedTools.join(', ')}.` : '';
+    const depends = entry.dependsOn?.length ? ` Requires: ${entry.dependsOn.join(', ')}.` : '';
+    return `${name}${classificationPrompt}${related}${depends}`;
+}
+
+/** Builds the system prompt listing available tools for the classifier. */
+export function buildClassifySystemPrompt(toolsMetadata: Record<string, ToolMetadata>): string {
+    const toolEntries = Object.entries(toolsMetadata).map(([name, entry]) => formatToolEntry(name, entry));
 
     return [
         'You are a tool selector for a map assistant.',
@@ -62,7 +67,7 @@ function buildClassifySystemPrompt(): string {
             - If getCurrentLocation fails due to permission denial, fall back to getViewport as the reference point`,
         '',
         'Available tools:',
-        ...toolMetadata,
+        ...toolEntries,
     ].join('\n');
 }
 
@@ -77,11 +82,12 @@ const classifySchema = z.object({
 async function classifyQueryToTools(
     conversation: ConversationMessage[],
     model: LanguageModel,
+    toolsMetadata: Record<string, ToolMetadata>,
 ): Promise<{ tools: string[]; usage: ClassificationResult['usage'] }> {
     const generated = await generateText({
         model,
         output: Output.object({ schema: classifySchema }),
-        system: buildClassifySystemPrompt(),
+        system: buildClassifySystemPrompt(toolsMetadata),
         messages: conversation,
         maxOutputTokens: 200,
     });
@@ -106,8 +112,8 @@ async function classifyQueryToTools(
  * ```typescript
  * const result = await classifyUserIntent(conversation, {
  *   chatModel: openai('gpt-4o-mini'),
+ *   toolsMetadata,
  * });
- * // result.activeToolNames → ['geocode', 'calculateRoute', 'showRoute', 'formatDistance', ...]
  *
  * agent.setActiveTools(result.activeToolNames);
  * ```
@@ -116,10 +122,10 @@ export async function classifyUserIntent(
     conversation: ConversationMessage[],
     options: ClassifierOptions,
 ): Promise<ClassificationResult> {
-    const { chatModel } = options;
+    const { chatModel, toolsMetadata } = options;
     const startTime = performance.now();
 
-    const { tools, usage } = await classifyQueryToTools(conversation, chatModel);
+    const { tools, usage } = await classifyQueryToTools(conversation, chatModel, toolsMetadata);
 
     const activeToolNames = tools;
 
@@ -155,7 +161,7 @@ function extractMessageText(content: string | Array<{ type: string }>): string |
 export async function runAutoClassification(
     messages: ReadonlyArray<ModelMessage> | undefined,
     classifyModel: LanguageModel,
-    loadedToolNames: ReadonlySet<string>,
+    toolsMetadata: Record<string, ToolMetadata>,
     stepScope: StepScope,
     onResult?: (result: ClassificationResult) => void,
     maxHistoryMessages?: number,
@@ -199,9 +205,8 @@ export async function runAutoClassification(
     conversation.push({ role: 'user', content: lastUserText });
 
     try {
-        const classification = await classifyUserIntent(conversation, { chatModel: classifyModel });
-        // Classifier uses TOOL_REGISTRY (all known), agent may have fewer.
-        stepScope.set(classification.activeToolNames.filter((name) => loadedToolNames.has(name)));
+        const classification = await classifyUserIntent(conversation, { chatModel: classifyModel, toolsMetadata });
+        stepScope.set(classification.activeToolNames);
         onResult?.(classification);
         return classification;
     } catch {

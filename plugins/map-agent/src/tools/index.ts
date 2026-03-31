@@ -142,7 +142,7 @@ export function createMapToolSet(state: ToolState): DefaultToolSet {
     return createAllToolsFromRegistry(state) as DefaultToolSet;
 }
 
-export type { ToolMetadata, ToolName } from './tool-registry';
+export type { ToolName } from './tool-registry';
 // Export tool registry for advanced use cases
 export {
     createAllToolsFromRegistry,

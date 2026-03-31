@@ -4,7 +4,7 @@
 
 import { sectionTypes } from '@tomtom-org/maps-sdk/core';
 import type { Tool } from 'ai';
-import type { ToolState } from '../types';
+import type { ToolMetadata, ToolState } from '../types';
 import { extractParametersFromSchema } from './extract-schema-params';
 import {
     createFlyToTool,
@@ -135,7 +135,6 @@ import {
     toggleTrafficIncidentsDescription,
     toggleTrafficIncidentsSchema,
 } from './tomtom-map';
-import { type ToolTag } from './tool-tags';
 import {
     calculateBBoxDescription,
     calculateBBoxSchema,
@@ -162,30 +161,6 @@ import {
     helpDescription,
     helpSchema,
 } from './utilities';
-
-/**
- * Metadata for a single tool in the registry.
- */
-export type ToolMetadata = {
-    name: ToolName;
-    description: string;
-    /** Compact one-liner. */
-    shortDescription: string;
-    tags: ToolTag[];
-    parameters: Array<{
-        name: string;
-        type: string;
-        required: boolean;
-        description: string;
-    }>;
-    examples: string[];
-    examplePrompts: string[];
-    relatedTools?: ToolName[];
-    /** Tools whose output this tool directly consumes as input. */
-    dependsOn?: ToolName[];
-    /** Factory function to create the tool instance */
-    create: (state: ToolState) => Tool;
-};
 
 /**
  * All valid tool names. Single source of truth — {@link ToolName} and {@link TOOL_REGISTRY}
@@ -249,11 +224,11 @@ export type ToolName = (typeof TOOL_NAMES)[number];
 /**
  * Complete tool registry with metadata and factory functions for all available tools.
  */
-export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
+export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: ToolState) => Tool }> = {
     locatePlace: {
         name: 'locatePlace',
         description: locatePlaceDescription,
-        shortDescription:
+        classificationPrompt:
             'Resolve a single location string (landmark, city, address) to a place without showing it; optionally stages a waypoint slot.',
         tags: ['locate', 'place', 'location', 'waypoint'],
         parameters: extractParametersFromSchema(locatePlaceSchema),
@@ -270,7 +245,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     reverseGeocode: {
         name: 'reverseGeocode',
         description: reverseGeocodeDescription,
-        shortDescription:
+        classificationPrompt:
             'Convert [lng, lat] coordinates to an address; use after map clicks or any tool that returns a position.',
         tags: ['location', 'place'],
         parameters: extractParametersFromSchema(reverseGeocodeSchema),
@@ -282,7 +257,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     discoverPlaces: {
         name: 'discoverPlaces',
         description: discoverPlacesDescription,
-        shortDescription:
+        classificationPrompt:
             'Search for multiple places by text query or POI category within an area; call showPlaces to display results.',
         tags: ['discover', 'place', 'location'],
         parameters: extractParametersFromSchema(discoverPlacesSchema),
@@ -305,7 +280,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     setRouteLocations: {
         name: 'setRouteLocations',
         description: setRouteLocationsDescription,
-        shortDescription:
+        classificationPrompt:
             'Set route waypoints by resolving location queries and trigger a recalculation (minimum: origin + destination).',
         tags: ['route', 'waypoint', 'location'],
         parameters: extractParametersFromSchema(setRouteLocationsSchema),
@@ -325,7 +300,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     setRouteParameters: {
         name: 'setRouteParameters',
         description: setRouteParametersDescription,
-        shortDescription:
+        classificationPrompt:
             'Configure route options (alternatives, type, avoidances, departure/arrival time) and trigger recalculation if locations are set.',
         tags: ['route'],
         parameters: extractParametersFromSchema(setRouteParametersSchema),
@@ -341,7 +316,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     addStopToRoute: {
         name: 'addStopToRoute',
         description: addStopToRouteDescription,
-        shortDescription: 'Insert a stop at the optimal position in the current route and recalculate.',
+        classificationPrompt: 'Insert a stop at the optimal position in the current route and recalculate.',
         tags: ['route', 'waypoint'],
         parameters: extractParametersFromSchema(addStopToRouteSchema),
         examples: [
@@ -357,7 +332,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     removeStopFromRoute: {
         name: 'removeStopFromRoute',
         description: removeStopFromRouteDescription,
-        shortDescription: 'Remove a stop by index from the current route and recalculate.',
+        classificationPrompt: 'Remove a stop by index from the current route and recalculate.',
         tags: ['route', 'waypoint'],
         parameters: extractParametersFromSchema(removeStopFromRouteSchema),
         examples: ['removeStopFromRoute(1)', 'removeStopFromRoute(2, 1)'],
@@ -369,7 +344,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     getPOICategoryCodes: {
         name: 'getPOICategoryCodes',
         description: getPoiCategoryCodesDescription,
-        shortDescription:
+        classificationPrompt:
             'Resolve natural-language category names (e.g. "gym", "italian food") to POICategory codes for discoverPlaces.',
         tags: ['discover', 'place'],
         parameters: extractParametersFromSchema(getPoiCategoryCodesSchema),
@@ -386,7 +361,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     getTrafficIncidents: {
         name: 'getTrafficIncidents',
         description: getTrafficIncidentsDescription,
-        shortDescription:
+        classificationPrompt:
             'Fetch traffic incidents by bbox or IDs without showing them; returns category, severity, and delay details.',
         tags: ['traffic', 'location'],
         parameters: extractParametersFromSchema(getTrafficIncidentsSchema),
@@ -403,7 +378,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     showPlaces: {
         name: 'showPlaces',
         description: showPlacesDescription,
-        shortDescription: 'Display the most recent discoverPlaces/locatePlace results as markers on the map.',
+        classificationPrompt: 'Display the most recent discoverPlaces/locatePlace results as markers on the map.',
         tags: ['place', 'location'],
         parameters: extractParametersFromSchema(showPlacesSchema),
         examples: ['showPlaces()', 'showPlaces(false)'],
@@ -415,7 +390,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     showRoute: {
         name: 'showRoute',
         description: showRouteDescription,
-        shortDescription: 'Render the most recently calculated route on the map and fit the camera to it.',
+        classificationPrompt: 'Render the most recently calculated route on the map and fit the camera to it.',
         tags: ['route', 'waypoint'],
         parameters: extractParametersFromSchema(showRouteSchema),
         examples: ['showRoute()', 'showRoute({ selectedIndex: 1 })', 'showRoute({ fitBounds: false })'],
@@ -427,7 +402,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     showWaypoints: {
         name: 'showWaypoints',
         description: showWaypointsDescription,
-        shortDescription: 'Display staged origin/stop/destination markers without drawing the route line.',
+        classificationPrompt: 'Display staged origin/stop/destination markers without drawing the route line.',
         tags: ['waypoint', 'route'],
         parameters: extractParametersFromSchema(showWaypointsSchema),
         examples: ['showWaypoints()'],
@@ -439,7 +414,8 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     getShownPlaces: {
         name: 'getShownPlaces',
         description: getShownPlacesDescription,
-        shortDescription: 'Return places currently displayed on the map (available after showPlaces or locatePlace).',
+        classificationPrompt:
+            'Return places currently displayed on the map (available after showPlaces or locatePlace).',
         tags: ['place', 'location'],
         parameters: extractParametersFromSchema(getShownPlacesSchema),
         examples: ['getShownPlaces()'],
@@ -451,7 +427,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     getShownRoutes: {
         name: 'getShownRoutes',
         description: getShownRoutesDescription,
-        shortDescription: 'Return routes currently rendered on the map (available after showRoute).',
+        classificationPrompt: 'Return routes currently rendered on the map (available after showRoute).',
         tags: ['route'],
         parameters: extractParametersFromSchema(getShownRoutesSchema),
         examples: ['getShownRoutes()'],
@@ -463,7 +439,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     getShownWaypoints: {
         name: 'getShownWaypoints',
         description: getShownWaypointsDescription,
-        shortDescription:
+        classificationPrompt:
             'Return waypoint markers currently shown on the map (available after showRoute or showWaypoints).',
         tags: ['waypoint', 'route'],
         parameters: extractParametersFromSchema(getShownWaypointsSchema),
@@ -476,7 +452,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     getShownRouteTrafficIncidents: {
         name: 'getShownRouteTrafficIncidents',
         description: getShownRouteTrafficIncidentsDescription,
-        shortDescription: 'Return traffic incidents overlaid on the shown route.',
+        classificationPrompt: 'Return traffic incidents overlaid on the shown route.',
         tags: ['traffic', 'route'],
         parameters: extractParametersFromSchema(getShownRouteTrafficIncidentsSchema),
         examples: ['getShownRouteTrafficIncidents()'],
@@ -488,7 +464,8 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     getShownRouteSections: {
         name: 'getShownRouteSections',
         description: getShownRouteSectionsDescription,
-        shortDescription: 'Return sections of a given type (toll, country, motorway, traffic) from the shown route.',
+        classificationPrompt:
+            'Return sections of a given type (toll, country, motorway, traffic) from the shown route.',
         tags: ['route', 'location', ...sectionTypes],
         parameters: extractParametersFromSchema(getShownRouteSectionsSchema),
         examples: [
@@ -509,7 +486,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     getShownIncidents: {
         name: 'getShownIncidents',
         description: getShownIncidentsDescription,
-        shortDescription:
+        classificationPrompt:
             'Return real-time incidents currently visible in the map viewport (rendered on map, not fetched from service).',
         tags: ['traffic', 'location'],
         parameters: extractParametersFromSchema(getShownIncidentsSchema),
@@ -522,7 +499,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     clearMap: {
         name: 'clearMap',
         description: clearMapDescription,
-        shortDescription: 'Remove displayed places, routes, or all features from the map.',
+        classificationPrompt: 'Remove displayed places, routes, or all features from the map.',
         tags: ['place', 'route', 'map style'],
         parameters: extractParametersFromSchema(clearMapSchema),
         examples: ['clearMap()', 'clearMap(["places"])', 'clearMap(["places", "routes"])'],
@@ -533,7 +510,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     flyTo: {
         name: 'flyTo',
         description: flyToDescription,
-        shortDescription:
+        classificationPrompt:
             'Move the camera to a bounding box or specific position; use after locating places or computing bounds.',
         tags: ['location', 'map style'],
         parameters: extractParametersFromSchema(flyToSchema),
@@ -549,7 +526,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     fitRouteSection: {
         name: 'fitRouteSection',
         description: fitRouteSectionDescription,
-        shortDescription:
+        classificationPrompt:
             'Fit the camera to a specific route section by type and ID; use getShownRouteSections for valid IDs.',
         tags: ['route', 'map style', ...sectionTypes],
         parameters: extractParametersFromSchema(fitRouteSectionSchema),
@@ -562,7 +539,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     getViewport: {
         name: 'getViewport',
         description: getViewportDescription,
-        shortDescription:
+        classificationPrompt:
             'Return the map center, zoom, and bounding box; use for area-relative queries like "in this area" or "near the map center".',
         tags: ['location', 'map style'],
         parameters: extractParametersFromSchema(getViewportSchema),
@@ -578,7 +555,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     recallPlaces: {
         name: 'recallPlaces',
         description: recallPlacesDescription,
-        shortDescription: 'Return the history of locatePlace/discoverPlaces calls made in this session.',
+        classificationPrompt: 'Return the history of locatePlace/discoverPlaces calls made in this session.',
         tags: ['place', 'location'],
         parameters: extractParametersFromSchema(recallPlacesSchema),
         examples: ['recallPlaces()', 'recallPlaces({ id: "places-0" })'],
@@ -594,7 +571,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     recallRoutes: {
         name: 'recallRoutes',
         description: recallRoutesDescription,
-        shortDescription: 'Return previously calculated routes from this session.',
+        classificationPrompt: 'Return previously calculated routes from this session.',
         tags: ['route'],
         parameters: extractParametersFromSchema(recallRoutesSchema),
         examples: ['recallRoutes()', 'recallRoutes({ id: "routes-0" })'],
@@ -610,7 +587,8 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     getCurrentWaypoints: {
         name: 'getCurrentWaypoints',
         description: getCurrentWaypointsDescription,
-        shortDescription: 'Return the staged waypoint slots (origin, stops, destination) not yet committed to a route.',
+        classificationPrompt:
+            'Return the staged waypoint slots (origin, stops, destination) not yet committed to a route.',
         tags: ['waypoint', 'route'],
         parameters: extractParametersFromSchema(getCurrentWaypointsSchema),
         examples: [
@@ -626,7 +604,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     getStandardMapStyles: {
         name: 'getStandardMapStyles',
         description: getStandardMapStylesDescription,
-        shortDescription: 'List available standard map style IDs for use with setMapStandardStyle.',
+        classificationPrompt: 'List available standard map style IDs for use with setMapStandardStyle.',
         tags: ['map style'],
         parameters: extractParametersFromSchema(getStandardMapStylesSchema),
         examples: ['getStandardMapStyles()'],
@@ -637,7 +615,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     setMapStandardStyle: {
         name: 'setMapStandardStyle',
         description: setMapStandardStyleDescription,
-        shortDescription: 'Switch the map to a standard style preset (light, dark, satellite, driving, etc.).',
+        classificationPrompt: 'Switch the map to a standard style preset (light, dark, satellite, driving, etc.).',
         tags: ['map style'],
         parameters: extractParametersFromSchema(setMapStandardStyleSchema),
         examples: ['setMapStandardStyle("standardDark")', 'setMapStandardStyle("satellite")'],
@@ -648,7 +626,8 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     setRouteTheme: {
         name: 'setRouteTheme',
         description: setRouteThemeDescription,
-        shortDescription: 'Color the route line and waypoint icons; prefer over setPaintProperties for route styling.',
+        classificationPrompt:
+            'Color the route line and waypoint icons; prefer over setPaintProperties for route styling.',
         tags: ['route', 'map style'],
         parameters: extractParametersFromSchema(setRouteThemeSchema),
         examples: [
@@ -664,7 +643,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     setLanguage: {
         name: 'setLanguage',
         description: setLanguageDescription,
-        shortDescription: 'Change the language for map labels and all subsequent service API responses.',
+        classificationPrompt: 'Change the language for map labels and all subsequent service API responses.',
         tags: ['map style'],
         parameters: extractParametersFromSchema(setLanguageSchema),
         examples: ['setLanguage("fr-FR")', 'setLanguage("de-DE")'],
@@ -675,7 +654,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     toggleBaseMapLayerGroups: {
         name: 'toggleBaseMapLayerGroups',
         description: toggleBaseMapLayerGroupsDescription,
-        shortDescription:
+        classificationPrompt:
             'Show or hide named base map layer groups (buildings3D, roadLabels, water, placeLabels, etc.).',
         tags: ['map style'],
         parameters: extractParametersFromSchema(toggleBaseMapLayerGroupsSchema),
@@ -690,7 +669,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     togglePOIs: {
         name: 'togglePOIs',
         description: togglePOIsDescription,
-        shortDescription: 'Show or hide built-in map POI icons with optional category filtering.',
+        classificationPrompt: 'Show or hide built-in map POI icons with optional category filtering.',
         tags: ['place', 'map style'],
         parameters: extractParametersFromSchema(togglePOIsSchema),
         examples: [
@@ -706,7 +685,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     toggleTrafficFlow: {
         name: 'toggleTrafficFlow',
         description: toggleTrafficFlowDescription,
-        shortDescription: 'Show or hide the real-time traffic flow overlay (congestion color bands) on the map.',
+        classificationPrompt: 'Show or hide the real-time traffic flow overlay (congestion color bands) on the map.',
         tags: ['traffic', 'map style'],
         parameters: extractParametersFromSchema(toggleTrafficFlowSchema),
         examples: ['toggleTrafficFlow(true)', 'toggleTrafficFlow(false)'],
@@ -717,7 +696,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     toggleTrafficIncidents: {
         name: 'toggleTrafficIncidents',
         description: toggleTrafficIncidentsDescription,
-        shortDescription:
+        classificationPrompt:
             'Show or hide real-time traffic incident icons (accidents, jams, road closures, roadworks) on the map.',
         tags: ['traffic', 'map style'],
         parameters: extractParametersFromSchema(toggleTrafficIncidentsSchema),
@@ -729,7 +708,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     getMapStyleLayers: {
         name: 'getMapStyleLayers',
         description: getMapStyleLayersDescription,
-        shortDescription: 'List MapLibre layer IDs with their paint/layout properties for custom styling.',
+        classificationPrompt: 'List MapLibre layer IDs with their paint/layout properties for custom styling.',
         tags: ['map style'],
         parameters: extractParametersFromSchema(getMapStyleLayersSchema),
         examples: ['getMapStyleLayers()', 'getMapStyleLayers("road")', 'getMapStyleLayers("water")'],
@@ -740,7 +719,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     setLayoutProperties: {
         name: 'setLayoutProperties',
         description: setLayoutPropertiesDescription,
-        shortDescription: 'Set MapLibre layout properties (visibility, text-field, icon-size) on named layers.',
+        classificationPrompt: 'Set MapLibre layout properties (visibility, text-field, icon-size) on named layers.',
         tags: ['map style'],
         parameters: extractParametersFromSchema(setLayoutPropertiesSchema),
         examples: [
@@ -759,7 +738,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     setPaintProperties: {
         name: 'setPaintProperties',
         description: setPaintPropertiesDescription,
-        shortDescription: 'Set MapLibre paint properties (colors, widths, opacity) on named layers.',
+        classificationPrompt: 'Set MapLibre paint properties (colors, widths, opacity) on named layers.',
         tags: ['map style'],
         parameters: extractParametersFromSchema(setPaintPropertiesSchema),
         examples: [
@@ -779,7 +758,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     setPitchBearing: {
         name: 'setPitchBearing',
         description: setPitchBearingDescription,
-        shortDescription: 'Tilt (pitch) and/or rotate (bearing) the map camera for a 3D perspective.',
+        classificationPrompt: 'Tilt (pitch) and/or rotate (bearing) the map camera for a 3D perspective.',
         tags: ['map style'],
         parameters: extractParametersFromSchema(setPitchBearingSchema),
         examples: [
@@ -794,7 +773,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     zoomInOrOut: {
         name: 'zoomInOrOut',
         description: zoomInOrOutDescription,
-        shortDescription: 'Adjust the map zoom level by a delta; positive zooms in, negative zooms out.',
+        classificationPrompt: 'Adjust the map zoom level by a delta; positive zooms in, negative zooms out.',
         tags: ['map style'],
         parameters: extractParametersFromSchema(zoomInOrOutSchema),
         examples: ['zoomInOrOut({ delta: 2 })', 'zoomInOrOut({ delta: -1 })'],
@@ -805,7 +784,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     calculateBBox: {
         name: 'calculateBBox',
         description: calculateBBoxDescription,
-        shortDescription:
+        classificationPrompt:
             'Compute a [minLng, minLat, maxLng, maxLat] bounding box from GeoJSON features or tool results.',
         tags: ['utilities', 'location'],
         parameters: extractParametersFromSchema(calculateBBoxSchema),
@@ -817,7 +796,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     formatDistance: {
         name: 'formatDistance',
         description: formatDistanceDescription,
-        shortDescription:
+        classificationPrompt:
             'Format meters into a human-readable string (e.g. "2.5 km"); use after tools that return distances.',
         tags: ['utilities', 'route'],
         parameters: extractParametersFromSchema(formatDistanceSchema),
@@ -829,7 +808,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     formatDuration: {
         name: 'formatDuration',
         description: formatDurationDescription,
-        shortDescription:
+        classificationPrompt:
             'Format seconds into a human-readable string (e.g. "1 h 30 min"); use after tools that return durations.',
         tags: ['utilities', 'route'],
         parameters: extractParametersFromSchema(formatDurationSchema),
@@ -841,7 +820,8 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     getSectionProgress: {
         name: 'getSectionProgress',
         description: getSectionProgressDescription,
-        shortDescription: 'Return the distance and travel time for one or more sections of the shown route by type.',
+        classificationPrompt:
+            'Return the distance and travel time for one or more sections of the shown route by type.',
         tags: ['utilities', 'route', ...sectionTypes],
         parameters: extractParametersFromSchema(getSectionProgressSchema),
         examples: [
@@ -857,7 +837,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     getSectionBBox: {
         name: 'getSectionBBox',
         description: getSectionBBoxDescription,
-        shortDescription: 'Return the bounding box of a specific route section; use with flyTo to frame it.',
+        classificationPrompt: 'Return the bounding box of a specific route section; use with flyTo to frame it.',
         tags: ['utilities', 'route', 'location', ...sectionTypes],
         parameters: extractParametersFromSchema(getSectionBBoxSchema),
         examples: [
@@ -873,7 +853,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     getRouteProgress: {
         name: 'getRouteProgress',
         description: getRouteProgressDescription,
-        shortDescription:
+        classificationPrompt:
             'Return the position along the shown route at a given traveled time, distance, or clock time.',
         tags: ['utilities', 'route', 'location'],
         parameters: extractParametersFromSchema(getRouteProgressSchema),
@@ -891,7 +871,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     getCurrentLocation: {
         name: 'getCurrentLocation',
         description: getCurrentLocationDescription,
-        shortDescription:
+        classificationPrompt:
             'Get the user\'s physical GPS location from the browser; use for "near me" queries, not map center.',
         tags: ['utilities', 'location'],
         parameters: extractParametersFromSchema(getCurrentLocationSchema),
@@ -903,7 +883,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata> = {
     help: {
         name: 'help',
         description: helpDescription,
-        shortDescription:
+        classificationPrompt:
             'Return available capabilities in summary or searchable detail mode; call when the user asks what you can do.',
         tags: ['utilities'],
         parameters: extractParametersFromSchema(helpSchema),
