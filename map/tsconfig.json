@@ -1,6 +1,9 @@
 {
   "extends": "../shared-configs/tsconfig.json",
   "compilerOptions": {
-    "outDir": "./dist"
-  }
+    "outDir": "./dist",
+    "rootDir": "..",
+    "types": ["node"]
+  },
+  "exclude": ["node_modules", "dist", "vite.config.ts", "vitest.config.ts", "dist-validation.test.ts"]
 }

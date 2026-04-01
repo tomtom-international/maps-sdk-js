@@ -1,5 +1,6 @@
 import type { AreaAnalyticsTileEntry, TrafficAreaAnalytics } from '@tomtom-org/maps-sdk/core';
 import type { FeatureCollection, Point, Polygon } from 'geojson';
+import type { BeforeLayerConfig } from '../shared';
 import { AbstractMapModule, EventsModule, GeoJSONSourceWithLayers, mapStyleLayerIDs } from '../shared';
 import { changeLayerProps, waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
@@ -12,7 +13,6 @@ import {
     buildSquareExtrusionLayerSpec,
     buildSquareFillLayerSpec,
 } from './layers/areaAnalyticsLayers';
-import type { BeforeLayerConfig } from '../shared';
 import type {
     AreaAnalyticsBeforeLayerConfig,
     AreaAnalyticsColorStop,

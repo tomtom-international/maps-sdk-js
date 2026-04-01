@@ -15,7 +15,7 @@
     "@tomtom-org/maps-sdk": "workspace:*"
   },
   "devDependencies": {
-    "@microsoft/api-extractor": "7.56.3",
+    "@microsoft/api-extractor": "catalog:",
     "@tsconfig/recommended": "catalog:",
     "@types/node": "catalog:",
     "ts-node": "catalog:",

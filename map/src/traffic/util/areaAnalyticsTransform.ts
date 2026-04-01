@@ -1,5 +1,5 @@
 import type { AreaAnalyticsTileEntry } from '@tomtom-org/maps-sdk/core';
-import { booleanPointInPolygon, hexGrid, point as turfPoint, squareGrid } from '@turf/turf';
+import { booleanPointInPolygon, hexGrid, squareGrid, point as turfPoint } from '@turf/turf';
 import type { BBox, FeatureCollection, Point, Polygon } from 'geojson';
 import type { AreaAnalyticsDisplayProperties } from '../types/trafficAreaAnalyticsFeature';
 

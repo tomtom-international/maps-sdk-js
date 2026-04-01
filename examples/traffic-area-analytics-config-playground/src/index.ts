@@ -5,7 +5,7 @@ import type {
     AreaAnalyticsMetricKey,
     AreaAnalyticsMode,
 } from '@tomtom-org/maps-sdk/map';
-import { COLOR_SCHEMES, TomTomMap, TrafficAreaAnalyticsModule, mapStyleLayerIDs } from '@tomtom-org/maps-sdk/map';
+import { COLOR_SCHEMES, mapStyleLayerIDs, TomTomMap, TrafficAreaAnalyticsModule } from '@tomtom-org/maps-sdk/map';
 import { geocodeOne, geometryData, trafficAreaAnalytics } from '@tomtom-org/maps-sdk/services';
 import { initColorStops } from './colorStops';
 import { API_KEY, MOVE_PORTAL_KEY } from './config';
