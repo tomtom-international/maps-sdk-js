@@ -83,7 +83,7 @@ export function createMapAgent(map: TomTomMap, options: MapAgentOptions): MapAge
     });
 
     const stream = async (streamOptions: MapAgentStreamOptions): ReturnType<ToolLoopAgent['stream']> => {
-        const { onClassify, onError, ...agentOptions } = streamOptions;
+        const { onClassify, ...agentOptions } = streamOptions;
 
         let classification: ClassificationResult | null = null;
 
@@ -100,26 +100,7 @@ export function createMapAgent(map: TomTomMap, options: MapAgentOptions): MapAge
         }
 
         onClassify?.(classification);
-        const result = await agent.stream(agentOptions as Parameters<ToolLoopAgent['stream']>[0]);
-
-        // TODO: we need another look at error handling. This seems awkward, perhaps it's because we're wrapping the stream
-        if (onError) {
-            // Consume fullStream in the background to surface API errors (e.g. 429)
-            // that the AI SDK otherwise swallows into a generic NoOutputGeneratedError.
-            void (async () => {
-                try {
-                    for await (const part of result.fullStream) {
-                        if (part.type === 'error') {
-                            onError(part.error);
-                        }
-                    }
-                } catch {
-                    // Stream already consumed by textStream — errors will surface there.
-                }
-            })();
-        }
-
-        return result;
+        return agent.stream(agentOptions as Parameters<ToolLoopAgent['stream']>[0]);
     };
 
     return {
