@@ -285,6 +285,9 @@ export type MapAgentOptions = {
 export type MapAgentStreamOptions = Parameters<ToolLoopAgent['stream']>[0] & {
     /** Called once after classification resolves, or with `null` if classification was skipped. */
     onClassify?: (result: ClassificationResult | null) => void;
+    // TODO: we need another look at error handling. This seems awkward, perhaps it's because we're wrapping the stream
+    /** Called when the underlying LLM API emits an error (e.g. 429 rate limit). */
+    onError?: (error: unknown) => void;
 };
 
 /**
