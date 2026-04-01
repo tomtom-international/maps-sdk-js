@@ -242,18 +242,55 @@
     font-variant-numeric: tabular-nums;
 }
 
-/* ── Canvas heatmap ──────────────────────────────────────────────── */
+/* ── HTML heatmap chart ──────────────────────────────────────────── */
 
 .aa-heatmap-section {
     border-top: 1px solid var(--sdk-border-low);
     padding-top: var(--sdk-space-2);
 }
 
-#heatmap-canvas {
-    display: block;
-    width: 100%;
-    border-radius: var(--sdk-radius-5);
+.aa-chart {
+    display: grid;
+    grid-template-columns: auto repeat(24, 1fr);
+    gap: 1px;
     margin-top: 4px;
+    width: 100%;
+    overflow-x: auto;
+}
+
+.aa-chart-corner {
+    /* spacer aligning day labels with the hour-label row */
+}
+
+.aa-chart-hour-label {
+    font-size: 8px;
+    color: var(--sdk-text-low, #6b7280);
+    text-align: center;
+    line-height: 16px;
+    min-width: 16px;
+}
+
+.aa-chart-day-label {
+    font-size: 9px;
+    color: var(--sdk-text-low, #6b7280);
+    text-align: right;
+    padding-right: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    white-space: nowrap;
+    min-height: 18px;
+}
+
+.aa-chart-cell {
+    min-height: 18px;
+    border-radius: 1px;
+    font-size: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-variant-numeric: tabular-nums;
+    cursor: default;
 }
 
 /* ── Loading overlay ─────────────────────────────────────────────── */

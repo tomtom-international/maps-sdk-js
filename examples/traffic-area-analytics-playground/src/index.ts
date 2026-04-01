@@ -33,7 +33,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         suggestionsList: $('city-suggestions') as HTMLUListElement,
         bottomPanel: $('bottom-panel'),
         loadingOverlay: $('loading-overlay'),
-        heatmapCanvas: $('heatmap-canvas') as HTMLCanvasElement,
+        heatmapContainer: $('heatmap-chart'),
     });
 
     const cityLabelsMap = await BaseMapModule.get(map, {

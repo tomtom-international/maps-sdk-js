@@ -74,12 +74,12 @@ export const resolveColorStops = (
     config?: { color?: TrafficAreaAnalyticsConfig['color'] },
 ): AreaAnalyticsColorStop[] => {
     if (config?.color !== null && typeof config?.color === 'object') {
-        const metricStops = (config.color as Partial<Record<AreaAnalyticsMetricKey, AreaAnalyticsColorStop[]>>)[metric];
+        const metricStops = config.color[metric];
         if (metricStops) return metricStops;
         return COLOR_SCHEMES[DEFAULT_THEME];
     }
 
-    return COLOR_SCHEMES[(config?.color as AreaAnalyticsColorTheme | undefined) ?? DEFAULT_THEME];
+    return COLOR_SCHEMES[config?.color ?? DEFAULT_THEME];
 };
 
 /**

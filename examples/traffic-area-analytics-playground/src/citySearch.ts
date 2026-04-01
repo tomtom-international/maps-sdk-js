@@ -1,8 +1,9 @@
 import type { Place } from '@tomtom-org/maps-sdk/core';
 import type { TomTomMap, TrafficAreaAnalyticsModule } from '@tomtom-org/maps-sdk/map';
-import { calculateFittingBBox, renderAreaAnalyticsChart } from '@tomtom-org/maps-sdk/map';
+import { calculateFittingBBox } from '@tomtom-org/maps-sdk/map';
 import { geocode, geometryData, trafficAreaAnalytics } from '@tomtom-org/maps-sdk/services';
 import type { MultiPolygon, Polygon, Position } from 'geojson';
+import { renderAreaAnalyticsChart } from './areaAnalyticsChart';
 import { MOVE_PORTAL_KEY } from './config';
 import { updateStats } from './controls';
 
@@ -22,7 +23,7 @@ type CitySearchParams = {
     suggestionsList: HTMLUListElement;
     bottomPanel: HTMLElement;
     loadingOverlay: HTMLElement;
-    heatmapCanvas: HTMLCanvasElement;
+    heatmapContainer: HTMLElement;
 };
 
 async function loadAnalytics(
@@ -31,7 +32,7 @@ async function loadAnalytics(
     analyticsModule: TrafficAreaAnalyticsModule,
     bottomPanel: HTMLElement,
     loadingOverlay: HTMLElement,
-    heatmapCanvas: HTMLCanvasElement,
+    heatmapContainer: HTMLElement,
 ): Promise<void> {
     try {
         const { startDate, endDate } = pastDateRange(7);
@@ -62,7 +63,7 @@ async function loadAnalytics(
         const hourly = region.timedData?.hourly ?? region.timedData?.average ?? [];
 
         if (hourly.length) {
-            renderAreaAnalyticsChart(heatmapCanvas, hourly, startDate);
+            renderAreaAnalyticsChart(heatmapContainer, hourly, startDate);
         }
 
         bottomPanel.classList.remove('aa-hidden');
@@ -84,7 +85,7 @@ export function initCitySearch({
     suggestionsList,
     bottomPanel,
     loadingOverlay,
-    heatmapCanvas,
+    heatmapContainer,
 }: CitySearchParams): CitySearchControls {
     function showSuggestions(places: Place[]): void {
         suggestionsList.innerHTML = '';
@@ -138,7 +139,7 @@ export function initCitySearch({
                     analyticsModule,
                     bottomPanel,
                     loadingOverlay,
-                    heatmapCanvas,
+                    heatmapContainer,
                 );
             } else {
                 loadingOverlay.classList.add('aa-hidden');
