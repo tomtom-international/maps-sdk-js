@@ -5,7 +5,6 @@
 import { sectionTypes } from '@tomtom-org/maps-sdk/core';
 import type { Tool } from 'ai';
 import type { ToolMetadata, ToolState } from '../types';
-import { extractParametersFromSchema } from './extract-schema-params';
 import {
     createFlyToTool,
     createGetMapStyleLayersTool,
@@ -15,23 +14,15 @@ import {
     createSetPitchBearingTool,
     createZoomInOrOutTool,
     flyToDescription,
-    flyToSchema,
     getMapStyleLayersDescription,
-    getMapStyleLayersSchema,
     getViewportDescription,
-    getViewportSchema,
     setLayoutPropertiesDescription,
-    setLayoutPropertiesSchema,
     setPaintPropertiesDescription,
-    setPaintPropertiesSchema,
     setPitchBearingDescription,
-    setPitchBearingSchema,
     zoomInOrOutDescription,
-    zoomInOrOutSchema,
 } from './maplibre';
 import {
     addStopToRouteDescription,
-    addStopToRouteSchema,
     createAddStopToRouteTool,
     createDiscoverPlacesTool,
     createFindReachableAreaTool,
@@ -44,29 +35,18 @@ import {
     createSetRouteLocationsTool,
     createSetRouteParametersTool,
     discoverPlacesDescription,
-    discoverPlacesSchema,
     findReachableAreaDescription,
-    findReachableAreaSchema,
     getPoiCategoryCodesDescription,
-    getPoiCategoryCodesSchema,
     getTrafficIncidentsDescription,
-    getTrafficIncidentsSchema,
     locatePlaceDescription,
-    locatePlaceSchema,
     removeStopFromRouteDescription,
-    removeStopFromRouteSchema,
     reverseGeocodeDescription,
-    reverseGeocodeSchema,
     searchAlongRouteDescription,
-    searchAlongRouteSchema,
     setRouteLocationsDescription,
-    setRouteLocationsSchema,
     setRouteParametersDescription,
-    setRouteParametersSchema,
 } from './services';
 import {
     clearMapDescription,
-    clearMapSchema,
     createClearMapTool,
     createFitRouteSectionTool,
     createGetCurrentWaypointsTool,
@@ -91,53 +71,30 @@ import {
     createToggleTrafficFlowTool,
     createToggleTrafficIncidentsTool,
     fitRouteSectionDescription,
-    fitRouteSectionSchema,
     getCurrentWaypointsDescription,
-    getCurrentWaypointsSchema,
     getShownIncidentsDescription,
-    getShownIncidentsSchema,
     getShownPlacesDescription,
-    getShownPlacesSchema,
     getShownRouteSectionsDescription,
-    getShownRouteSectionsSchema,
     getShownRoutesDescription,
-    getShownRoutesSchema,
     getShownRouteTrafficIncidentsDescription,
-    getShownRouteTrafficIncidentsSchema,
     getShownWaypointsDescription,
-    getShownWaypointsSchema,
     getStandardMapStylesDescription,
-    getStandardMapStylesSchema,
     recallPlacesDescription,
-    recallPlacesSchema,
     recallRangesDescription,
-    recallRangesSchema,
     recallRoutesDescription,
-    recallRoutesSchema,
     setLanguageDescription,
-    setLanguageSchema,
     setMapStandardStyleDescription,
-    setMapStandardStyleSchema,
     setRouteThemeDescription,
-    setRouteThemeSchema,
     showPlacesDescription,
-    showPlacesSchema,
     showRouteDescription,
-    showRouteSchema,
     showWaypointsDescription,
-    showWaypointsSchema,
     toggleBaseMapLayerGroupsDescription,
-    toggleBaseMapLayerGroupsSchema,
     togglePOIsDescription,
-    togglePOIsSchema,
     toggleTrafficFlowDescription,
-    toggleTrafficFlowSchema,
     toggleTrafficIncidentsDescription,
-    toggleTrafficIncidentsSchema,
 } from './tomtom-map';
 import {
     calculateBBoxDescription,
-    calculateBBoxSchema,
     createCalculateBBoxTool,
     createFormatDistanceTool,
     createFormatDurationTool,
@@ -147,19 +104,12 @@ import {
     createGetSectionProgressTool,
     createHelpTool,
     formatDistanceDescription,
-    formatDistanceSchema,
     formatDurationDescription,
-    formatDurationSchema,
     getCurrentLocationDescription,
-    getCurrentLocationSchema,
     getRouteProgressDescription,
-    getRouteProgressSchema,
     getSectionBBoxDescription,
-    getSectionBBoxSchema,
     getSectionProgressDescription,
-    getSectionProgressSchema,
     helpDescription,
-    helpSchema,
 } from './utilities';
 
 /**
@@ -231,7 +181,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         classificationPrompt:
             'Resolve a single location string (landmark, city, address) to a place without showing it; optionally stages a waypoint slot.',
         tags: ['locate', 'place', 'location', 'waypoint'],
-        parameters: extractParametersFromSchema(locatePlaceSchema),
         examples: [
             'locatePlace("Buckingham Palace", where: "within-map-bounds", waypointIndex: 0)',
             'locatePlace("Tower Bridge", where: "nearby-map-center", waypointIndex: 1)',
@@ -248,7 +197,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         classificationPrompt:
             'Convert [lng, lat] coordinates to an address; use after map clicks or any tool that returns a position.',
         tags: ['location', 'place'],
-        parameters: extractParametersFromSchema(reverseGeocodeSchema),
         examples: ['reverseGeocode({ position: [4.9, 52.4] })'],
         examplePrompts: ["What's the address at this point?", 'What street is at these coordinates?'],
         relatedTools: ['getViewport', 'getCurrentLocation', 'showPlaces', 'locatePlace'],
@@ -260,7 +208,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         classificationPrompt:
             'Search for multiple places by text query or POI category within an area; call showPlaces to display results.',
         tags: ['discover', 'place', 'location'],
-        parameters: extractParametersFromSchema(discoverPlacesSchema),
         examples: [
             'discoverPlaces(query: "coffee", position: [4.9, 52.4])',
             'discoverPlaces(poiCategories: ["ITALIAN_RESTAURANT"])  // category-only, no query needed',
@@ -283,7 +230,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         classificationPrompt:
             'Set route waypoints by resolving location queries and trigger a recalculation (minimum: origin + destination).',
         tags: ['route', 'waypoint', 'location'],
-        parameters: extractParametersFromSchema(setRouteLocationsSchema),
         examples: [
             'setRouteLocations({ locations: [{ query: "Amsterdam" }, { query: "Brussels" }] })',
             'setRouteLocations({ locations: [{ query: "Eiffel Tower" }, { query: "Louvre Museum" }, { query: "Notre Dame" }] })',
@@ -303,7 +249,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         classificationPrompt:
             'Configure route options (alternatives, type, avoidances, departure/arrival time) and trigger recalculation if locations are set.',
         tags: ['route'],
-        parameters: extractParametersFromSchema(setRouteParametersSchema),
         examples: [
             'setRouteParameters({ maxAlternatives: 2 })',
             'setRouteParameters({ costModel: { routeType: "fast", avoid: ["tollRoads"] } })',
@@ -318,7 +263,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         description: addStopToRouteDescription,
         classificationPrompt: 'Insert a stop at the optimal position in the current route and recalculate.',
         tags: ['route', 'waypoint'],
-        parameters: extractParametersFromSchema(addStopToRouteSchema),
         examples: [
             'addStopToRoute(location: "Westminster Abbey")',
             'addStopToRoute(location: "gas station near route")',
@@ -334,7 +278,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         description: removeStopFromRouteDescription,
         classificationPrompt: 'Remove a stop by index from the current route and recalculate.',
         tags: ['route', 'waypoint'],
-        parameters: extractParametersFromSchema(removeStopFromRouteSchema),
         examples: ['removeStopFromRoute(1)', 'removeStopFromRoute(2, 1)'],
         examplePrompts: ['Remove the second stop from my route', 'Delete the Utrecht stop'],
         relatedTools: ['addStopToRoute', 'setRouteLocations', 'showRoute'],
@@ -347,7 +290,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         classificationPrompt:
             'Resolve natural-language category names (e.g. "gym", "italian food") to POICategory codes for discoverPlaces.',
         tags: ['discover', 'place'],
-        parameters: extractParametersFromSchema(getPoiCategoryCodesSchema),
         examples: [
             'getPOICategoryCodes()',
             'getPOICategoryCodes(filters: ["gym"])',
@@ -364,7 +306,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         classificationPrompt:
             'Fetch traffic incidents by bbox or IDs without showing them; returns category, severity, and delay details.',
         tags: ['traffic', 'location'],
-        parameters: extractParametersFromSchema(getTrafficIncidentsSchema),
         examples: [
             'getTrafficIncidents({ bbox: [4.728, 52.278, 5.080, 52.479] })',
             'getTrafficIncidents({ ids: ["incident-id-1", "incident-id-2"] })',
@@ -380,7 +321,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         description: showPlacesDescription,
         classificationPrompt: 'Display the most recent discoverPlaces/locatePlace results as markers on the map.',
         tags: ['place', 'location'],
-        parameters: extractParametersFromSchema(showPlacesSchema),
         examples: ['showPlaces()', 'showPlaces(false)'],
         examplePrompts: ['Show the results on the map', 'Pin the search results', 'Display these places'],
         relatedTools: ['discoverPlaces', 'locatePlace', 'reverseGeocode', 'clearMap', 'flyTo'],
@@ -392,7 +332,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         description: showRouteDescription,
         classificationPrompt: 'Render the most recently calculated route on the map and fit the camera to it.',
         tags: ['route', 'waypoint'],
-        parameters: extractParametersFromSchema(showRouteSchema),
         examples: ['showRoute()', 'showRoute({ selectedIndex: 1 })', 'showRoute({ fitBounds: false })'],
         examplePrompts: ['Draw the route on the map', 'Show the directions', 'Display the calculated route'],
         relatedTools: ['setRouteLocations', 'getShownRouteSections', 'clearMap'],
@@ -404,7 +343,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         description: showWaypointsDescription,
         classificationPrompt: 'Display staged origin/stop/destination markers without drawing the route line.',
         tags: ['waypoint', 'route'],
-        parameters: extractParametersFromSchema(showWaypointsSchema),
         examples: ['showWaypoints()'],
         examplePrompts: ['Show the waypoints on the map', 'Mark my route stops'],
         relatedTools: ['setRouteLocations', 'showRoute', 'getShownWaypoints', 'clearMap'],
@@ -417,7 +355,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         classificationPrompt:
             'Return places currently displayed on the map (available after showPlaces or locatePlace).',
         tags: ['place', 'location'],
-        parameters: extractParametersFromSchema(getShownPlacesSchema),
         examples: ['getShownPlaces()'],
         examplePrompts: ['What places are on the map?', 'List the pinned locations'],
         relatedTools: ['showPlaces', 'clearMap', 'locatePlace', 'reverseGeocode'],
@@ -429,7 +366,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         description: getShownRoutesDescription,
         classificationPrompt: 'Return routes currently rendered on the map (available after showRoute).',
         tags: ['route'],
-        parameters: extractParametersFromSchema(getShownRoutesSchema),
         examples: ['getShownRoutes()'],
         examplePrompts: ['What routes are displayed?', 'Is there a route on the map?'],
         relatedTools: ['showRoute', 'clearMap'],
@@ -442,7 +378,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         classificationPrompt:
             'Return waypoint markers currently shown on the map (available after showRoute or showWaypoints).',
         tags: ['waypoint', 'route'],
-        parameters: extractParametersFromSchema(getShownWaypointsSchema),
         examples: ['getShownWaypoints()'],
         examplePrompts: ['What waypoints are shown?', 'List the stops on the map'],
         relatedTools: ['showRoute', 'clearMap'],
@@ -454,7 +389,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         description: getShownRouteTrafficIncidentsDescription,
         classificationPrompt: 'Return traffic incidents overlaid on the shown route.',
         tags: ['traffic', 'route'],
-        parameters: extractParametersFromSchema(getShownRouteTrafficIncidentsSchema),
         examples: ['getShownRouteTrafficIncidents()'],
         examplePrompts: ['What traffic incidents are on my route?', 'Any delays along the route?'],
         relatedTools: ['showRoute', 'clearMap', 'setRouteLocations'],
@@ -467,7 +401,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         classificationPrompt:
             'Return sections of a given type (toll, country, motorway, traffic) from the shown route.',
         tags: ['route', 'location', ...sectionTypes],
-        parameters: extractParametersFromSchema(getShownRouteSectionsSchema),
         examples: [
             'getShownRouteSections("toll")',
             'getShownRouteSections("country")',
@@ -489,7 +422,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         classificationPrompt:
             'Return real-time incidents currently visible in the map viewport (rendered on map, not fetched from service).',
         tags: ['traffic', 'location'],
-        parameters: extractParametersFromSchema(getShownIncidentsSchema),
         examples: ['getShownIncidents()'],
         examplePrompts: ['What traffic incidents are visible?', 'Any incidents in the current view?'],
         relatedTools: ['toggleTrafficIncidents', 'flyTo', 'getViewport'],
@@ -501,7 +433,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         description: clearMapDescription,
         classificationPrompt: 'Remove displayed places, routes, or all features from the map.',
         tags: ['place', 'route', 'map style'],
-        parameters: extractParametersFromSchema(clearMapSchema),
         examples: ['clearMap()', 'clearMap(["places"])', 'clearMap(["places", "routes"])'],
         examplePrompts: ['Clear the map', 'Remove all markers', 'Start fresh'],
         relatedTools: ['showPlaces', 'showRoute'],
@@ -513,7 +444,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         classificationPrompt:
             'Move the camera to a bounding box or specific position; use after locating places or computing bounds.',
         tags: ['location', 'map style'],
-        parameters: extractParametersFromSchema(flyToSchema),
         examples: [
             'flyTo({ where: { boundingBox: [4.8, 52.3, 5.0, 52.5] } })',
             'flyTo({ where: { boundingBox: [4.8, 52.3, 5.0, 52.5], padding: 100 } })',
@@ -529,7 +459,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         classificationPrompt:
             'Fit the camera to a specific route section by type and ID; use getShownRouteSections for valid IDs.',
         tags: ['route', 'map style', ...sectionTypes],
-        parameters: extractParametersFromSchema(fitRouteSectionSchema),
         examples: ['fitRouteSection("country", "NLD-section-1")', 'fitRouteSection("traffic", "traffic-1", 100)'],
         examplePrompts: ['Zoom to the toll section', 'Fit the Netherlands part of the route in view'],
         relatedTools: ['flyTo', 'showRoute', 'getShownRoutes', 'getShownRouteTrafficIncidents'],
@@ -542,7 +471,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         classificationPrompt:
             'Return the map center, zoom, and bounding box; use for area-relative queries like "in this area" or "near the map center".',
         tags: ['location', 'map style'],
-        parameters: extractParametersFromSchema(getViewportSchema),
         examples: ['getViewport()'],
         examplePrompts: [
             'Where is the map centered?',
@@ -557,7 +485,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         description: recallPlacesDescription,
         classificationPrompt: 'Return the history of locatePlace/discoverPlaces calls made in this session.',
         tags: ['place', 'location'],
-        parameters: extractParametersFromSchema(recallPlacesSchema),
         examples: ['recallPlaces()', 'recallPlaces({ id: "places-0" })'],
         examplePrompts: [
             'What places did I search for?',
@@ -573,7 +500,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         description: recallRoutesDescription,
         classificationPrompt: 'Return previously calculated routes from this session.',
         tags: ['route'],
-        parameters: extractParametersFromSchema(recallRoutesSchema),
         examples: ['recallRoutes()', 'recallRoutes({ id: "routes-0" })'],
         examplePrompts: [
             'What routes have I calculated?',
@@ -590,7 +516,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         classificationPrompt:
             'Return the staged waypoint slots (origin, stops, destination) not yet committed to a route.',
         tags: ['waypoint', 'route'],
-        parameters: extractParametersFromSchema(getCurrentWaypointsSchema),
         examples: [
             'getCurrentWaypoints()',
             'getCurrentWaypoints({ slotIndex: 1 })',
@@ -606,7 +531,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         description: getStandardMapStylesDescription,
         classificationPrompt: 'List available standard map style IDs for use with setMapStandardStyle.',
         tags: ['map style'],
-        parameters: extractParametersFromSchema(getStandardMapStylesSchema),
         examples: ['getStandardMapStyles()'],
         examplePrompts: ['What map styles are available?', 'List the map themes'],
         relatedTools: ['setMapStandardStyle'],
@@ -617,7 +541,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         description: setMapStandardStyleDescription,
         classificationPrompt: 'Switch the map to a standard style preset (light, dark, satellite, driving, etc.).',
         tags: ['map style'],
-        parameters: extractParametersFromSchema(setMapStandardStyleSchema),
         examples: ['setMapStandardStyle("standardDark")', 'setMapStandardStyle("satellite")'],
         examplePrompts: ['Switch to dark mode', 'Use the satellite view', 'Change to the light theme'],
         relatedTools: ['getStandardMapStyles', 'setLanguage', 'toggleBaseMapLayerGroups', 'getMapStyleLayers'],
@@ -629,7 +552,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         classificationPrompt:
             'Color the route line and waypoint icons; prefer over setPaintProperties for route styling.',
         tags: ['route', 'map style'],
-        parameters: extractParametersFromSchema(setRouteThemeSchema),
         examples: [
             'setRouteTheme({ mainColor: "#FF0000" })  // red route',
             'setRouteTheme({ mainColor: "coral" })',
@@ -645,7 +567,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         description: setLanguageDescription,
         classificationPrompt: 'Change the language for map labels and all subsequent service API responses.',
         tags: ['map style'],
-        parameters: extractParametersFromSchema(setLanguageSchema),
         examples: ['setLanguage("fr-FR")', 'setLanguage("de-DE")'],
         examplePrompts: ['Show map labels in French', 'Switch the map to German', 'Use Spanish for place names'],
         relatedTools: ['setMapStandardStyle'],
@@ -657,7 +578,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         classificationPrompt:
             'Show or hide named base map layer groups (buildings3D, roadLabels, water, placeLabels, etc.).',
         tags: ['map style'],
-        parameters: extractParametersFromSchema(toggleBaseMapLayerGroupsSchema),
         examples: [
             'toggleBaseMapLayerGroups(false, ["buildings3D"])',
             'toggleBaseMapLayerGroups(true, ["roadLabels"])',
@@ -671,7 +591,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         description: togglePOIsDescription,
         classificationPrompt: 'Show or hide built-in map POI icons with optional category filtering.',
         tags: ['place', 'map style'],
-        parameters: extractParametersFromSchema(togglePOIsSchema),
         examples: [
             'togglePOIs({ allMapPOIsVisible: false })',
             'togglePOIs({ allMapPOIsVisible: true, filterCategories: { show: "only", values: ["RESTAURANT", "CAFE"] } })',
@@ -687,7 +606,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         description: toggleTrafficFlowDescription,
         classificationPrompt: 'Show or hide the real-time traffic flow overlay (congestion color bands) on the map.',
         tags: ['traffic', 'map style'],
-        parameters: extractParametersFromSchema(toggleTrafficFlowSchema),
         examples: ['toggleTrafficFlow(true)', 'toggleTrafficFlow(false)'],
         examplePrompts: ['Show traffic flow', 'Turn off traffic colors', 'Enable the congestion overlay'],
         relatedTools: ['toggleTrafficIncidents', 'setRouteLocations', 'getTrafficIncidents'],
@@ -699,7 +617,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         classificationPrompt:
             'Show or hide real-time traffic incident icons (accidents, jams, road closures, roadworks) on the map.',
         tags: ['traffic', 'map style'],
-        parameters: extractParametersFromSchema(toggleTrafficIncidentsSchema),
         examples: ['toggleTrafficIncidents(true)', 'toggleTrafficIncidents(false)'],
         examplePrompts: ['Show traffic incidents', 'Hide accident icons', 'Enable incident markers'],
         relatedTools: ['toggleTrafficFlow', 'getTrafficIncidents', 'getShownIncidents', 'setRouteLocations'],
@@ -710,7 +627,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         description: getMapStyleLayersDescription,
         classificationPrompt: 'List MapLibre layer IDs with their paint/layout properties for custom styling.',
         tags: ['map style'],
-        parameters: extractParametersFromSchema(getMapStyleLayersSchema),
         examples: ['getMapStyleLayers()', 'getMapStyleLayers("road")', 'getMapStyleLayers("water")'],
         examplePrompts: ['What are the paint properties of the water layer?', 'Show me the road layer layout'],
         relatedTools: ['setLayoutProperties', 'setPaintProperties'],
@@ -721,7 +637,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         description: setLayoutPropertiesDescription,
         classificationPrompt: 'Set MapLibre layout properties (visibility, text-field, icon-size) on named layers.',
         tags: ['map style'],
-        parameters: extractParametersFromSchema(setLayoutPropertiesSchema),
         examples: [
             'setLayoutProperties([{ layerId: "road-label", propertyName: "visibility", value: "none" }])',
             'setLayoutProperties([{ layerId: "poi-label", propertyName: "text-field", value: "{name}" }, { layerId: "poi-label", propertyName: "icon-size", value: 1.2 }])',
@@ -740,7 +655,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         description: setPaintPropertiesDescription,
         classificationPrompt: 'Set MapLibre paint properties (colors, widths, opacity) on named layers.',
         tags: ['map style'],
-        parameters: extractParametersFromSchema(setPaintPropertiesSchema),
         examples: [
             'setPaintProperties([{ layerId: "water", propertyName: "fill-color", value: "#0000ff" }])',
             'setPaintProperties([{ layerId: "road", propertyName: "line-color", value: "#ff0000" }, { layerId: "road", propertyName: "line-width", value: 3 }])',
@@ -760,7 +674,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         description: setPitchBearingDescription,
         classificationPrompt: 'Tilt (pitch) and/or rotate (bearing) the map camera for a 3D perspective.',
         tags: ['map style'],
-        parameters: extractParametersFromSchema(setPitchBearingSchema),
         examples: [
             'setPitchBearing({ pitch: 45 })',
             'setPitchBearing({ bearing: 90 })',
@@ -775,7 +688,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         description: zoomInOrOutDescription,
         classificationPrompt: 'Adjust the map zoom level by a delta; positive zooms in, negative zooms out.',
         tags: ['map style'],
-        parameters: extractParametersFromSchema(zoomInOrOutSchema),
         examples: ['zoomInOrOut({ delta: 2 })', 'zoomInOrOut({ delta: -1 })'],
         examplePrompts: ['Zoom in', 'Zoom out 2 levels', 'Get a wider view'],
         relatedTools: ['getViewport', 'flyTo'],
@@ -787,7 +699,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         classificationPrompt:
             'Compute a [minLng, minLat, maxLng, maxLat] bounding box from GeoJSON features or tool results.',
         tags: ['utilities', 'location'],
-        parameters: extractParametersFromSchema(calculateBBoxSchema),
         examples: ['calculateBBox(place)', 'calculateBBox(routes)', 'calculateBBox([place1, place2])'],
         examplePrompts: ["What's the bounding box of these places?", 'Calculate the extent of this route'],
         relatedTools: ['flyTo', 'getViewport', 'showPlaces', 'showRoute'],
@@ -799,7 +710,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         classificationPrompt:
             'Format meters into a human-readable string (e.g. "2.5 km"); use after tools that return distances.',
         tags: ['utilities', 'route'],
-        parameters: extractParametersFromSchema(formatDistanceSchema),
         examples: ['formatDistance(2500)', 'formatDistance(5000, "imperial_us")'],
         examplePrompts: ['Format 5000 meters as a distance', 'Convert meters to a readable string'],
         relatedTools: ['formatDuration', 'setRouteLocations', 'getSectionProgress', 'getRouteProgress'],
@@ -811,7 +721,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         classificationPrompt:
             'Format seconds into a human-readable string (e.g. "1 h 30 min"); use after tools that return durations.',
         tags: ['utilities', 'route'],
-        parameters: extractParametersFromSchema(formatDurationSchema),
         examples: ['formatDuration(3600)', 'formatDuration(9000)'],
         examplePrompts: ['Format 3600 seconds as a duration', 'Convert seconds to hours and minutes'],
         relatedTools: ['formatDistance', 'setRouteLocations', 'getSectionProgress', 'getRouteProgress'],
@@ -823,7 +732,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         classificationPrompt:
             'Return the distance and travel time for one or more sections of the shown route by type.',
         tags: ['utilities', 'route', ...sectionTypes],
-        parameters: extractParametersFromSchema(getSectionProgressSchema),
         examples: [
             'getSectionProgress({ sectionType: "country" })  // all country sections',
             'getSectionProgress({ sectionType: "traffic", ids: ["incident-id-1"] })',
@@ -839,7 +747,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         description: getSectionBBoxDescription,
         classificationPrompt: 'Return the bounding box of a specific route section; use with flyTo to frame it.',
         tags: ['utilities', 'route', 'location', ...sectionTypes],
-        parameters: extractParametersFromSchema(getSectionBBoxSchema),
         examples: [
             'getSectionBBox({ sectionType: "country", id: "NLD-section-1" })',
             'getSectionBBox({ sectionType: "traffic", id: "traffic-1" })',
@@ -856,7 +763,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         classificationPrompt:
             'Return the position along the shown route at a given traveled time, distance, or clock time.',
         tags: ['utilities', 'route', 'location'],
-        parameters: extractParametersFromSchema(getRouteProgressSchema),
         examples: [
             'getRouteProgress(traveledTimeInSeconds: 600)',
             'getRouteProgress(traveledDistanceInMeters: 5000)',
@@ -874,7 +780,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         classificationPrompt:
             'Get the user\'s physical GPS location from the browser; use for "near me" queries, not map center.',
         tags: ['utilities', 'location'],
-        parameters: extractParametersFromSchema(getCurrentLocationSchema),
         examples: ['getCurrentLocation()'],
         examplePrompts: ['Where am I?', 'Get my GPS location', 'Use my current position'],
         relatedTools: ['discoverPlaces', 'reverseGeocode', 'locatePlace'],
@@ -886,7 +791,6 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         classificationPrompt:
             'Return available capabilities in summary or searchable detail mode; call when the user asks what you can do.',
         tags: ['utilities'],
-        parameters: extractParametersFromSchema(helpSchema),
         examples: [
             'help({ mode: "summary" })',
             'help({ mode: "detail", query: "traffic" })',
@@ -899,9 +803,8 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
     searchAlongRoute: {
         name: 'searchAlongRoute',
         description: searchAlongRouteDescription,
-        shortDescription: 'Search for POIs along a calculated route ranked by detour cost.',
+        classificationPrompt: 'Search for POIs along a calculated route ranked by detour cost.',
         tags: ['search', 'route', 'place', 'detour', 'along-route'],
-        parameters: extractParametersFromSchema(searchAlongRouteSchema),
         examples: [
             'searchAlongRoute({ maxDetourTimeSeconds: 300, query: "coffee" })',
             'searchAlongRoute({ maxDetourTimeSeconds: 600, poiCategories: ["ELECTRIC_VEHICLE_STATION"], sortBy: "detourOffset" })',
@@ -921,9 +824,8 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
     findReachableArea: {
         name: 'findReachableArea',
         description: findReachableAreaDescription,
-        shortDescription: 'Calculate isochrone/isodistance polygons showing how far you can travel from a point.',
+        classificationPrompt: 'Calculate isochrone/isodistance polygons showing how far you can travel from a point.',
         tags: ['reachable-range', 'isochrone', 'range', 'EV', 'coverage'],
-        parameters: extractParametersFromSchema(findReachableAreaSchema),
         examples: [
             'findReachableArea({ origin: { query: "Amsterdam", locationType: "default" }, budgets: [{ type: "timeMinutes", value: 30 }], showOnMap: true })',
             'findReachableArea({ origin: { position: { lng: 4.9, lat: 52.3 } }, budgets: [{ type: "timeMinutes", value: 10 }, { type: "timeMinutes", value: 30 }], showOnMap: true, theme: "inverted" })',
@@ -940,9 +842,8 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
     recallRanges: {
         name: 'recallRanges',
         description: recallRangesDescription,
-        shortDescription: 'Retrieve stored reachable range results from session history.',
+        classificationPrompt: 'Retrieve stored reachable range results from session history.',
         tags: ['recall', 'reachable-range', 'state'],
-        parameters: extractParametersFromSchema(recallRangesSchema),
         examples: ['recallRanges()', 'recallRanges({ id: "ranges-0" })'],
         examplePrompts: ['What range did I calculate earlier?', 'Recall the isochrone from Amsterdam'],
         relatedTools: ['findReachableArea'],

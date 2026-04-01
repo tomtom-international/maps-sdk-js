@@ -364,4 +364,6 @@ export type ToolState = {
     traffic: TrafficState;
     /** Reachable range results: origin, budgets, and bbox summaries. */
     ranges: RangeState;
+    /** Parameterized tool metadata — populated in createMapAgent after setupTools. */
+    toolsMetadata?: Record<string, ToolMetadata>;
 };
