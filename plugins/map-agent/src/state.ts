@@ -2,7 +2,9 @@
  * @module map-agent-state
  */
 
-import type { Place, Places, PolygonFeatures, Routes, WaypointLike } from '@tomtom-org/maps-sdk/core';
+import type { Place, Places, Routes, TrafficAreaAnalytics, WaypointLike } from '@tomtom-org/maps-sdk/core';
+import type { TrafficAreaAnalyticsConfig } from '@tomtom-org/maps-sdk/map';
+import { AnalyticsControlPanel } from './ui/analytics-control-panel';
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import {
     BaseMapModule,
@@ -15,6 +17,7 @@ import {
     RoutingModule,
     reachableRangeGeometryConfig,
     type TomTomMap,
+    TrafficAreaAnalyticsModule,
     TrafficFlowModule,
     TrafficIncidentsModule,
 } from '@tomtom-org/maps-sdk/map';
@@ -255,11 +258,15 @@ export class BaseMapState {
 }
 
 /**
- * State for traffic: flow layer and incident overlay modules.
+ * State for traffic: flow layer, incident overlay, and area analytics modules.
  */
 export class TrafficState {
     private _trafficFlowModule?: TrafficFlowModule;
     private _trafficIncidentsModule?: TrafficIncidentsModule;
+    private _trafficAreaAnalyticsModule?: TrafficAreaAnalyticsModule;
+    private _lastAreaAnalytics?: TrafficAreaAnalytics;
+    private _currentAnalyticsConfig?: TrafficAreaAnalyticsConfig;
+    private _configChangeUnsub?: () => void;
 
     constructor(private readonly _ttMap: TomTomMap) {}
 
@@ -275,9 +282,56 @@ export class TrafficState {
         return this._trafficIncidentsModule;
     }
 
+    async getTrafficAreaAnalyticsModule(): Promise<TrafficAreaAnalyticsModule> {
+        if (!this._trafficAreaAnalyticsModule) {
+            this._trafficAreaAnalyticsModule = await TrafficAreaAnalyticsModule.get(this._ttMap);
+            // Wire config change events so agent state stays in sync with module
+            this._configChangeUnsub = this._trafficAreaAnalyticsModule.on('configChange', (config) => {
+                this._currentAnalyticsConfig = config;
+            });
+        }
+        return this._trafficAreaAnalyticsModule;
+    }
+
+    // Area analytics result caching
+
+    get lastAreaAnalytics(): TrafficAreaAnalytics | undefined {
+        return this._lastAreaAnalytics;
+    }
+
+    setLastAreaAnalytics(result: TrafficAreaAnalytics): void {
+        this._lastAreaAnalytics = result;
+    }
+
+    /** Current visualization config, updated by module configChange events. */
+    get currentAnalyticsConfig(): TrafficAreaAnalyticsConfig | undefined {
+        return this._currentAnalyticsConfig;
+    }
+
+    // Control panel
+
+    private _controlPanel?: AnalyticsControlPanel;
+
+    get controlPanel(): AnalyticsControlPanel | undefined {
+        return this._controlPanel;
+    }
+
+    /** Get or create the analytics control panel for the given map container. */
+    initControlPanel(mapContainer: HTMLElement, module: TrafficAreaAnalyticsModule): AnalyticsControlPanel {
+        this._controlPanel ??= new AnalyticsControlPanel(mapContainer, module);
+        return this._controlPanel;
+    }
+
     reset(): void {
+        this._configChangeUnsub?.();
+        this._controlPanel?.destroy();
         this._trafficFlowModule = undefined;
         this._trafficIncidentsModule = undefined;
+        this._trafficAreaAnalyticsModule = undefined;
+        this._lastAreaAnalytics = undefined;
+        this._currentAnalyticsConfig = undefined;
+        this._configChangeUnsub = undefined;
+        this._controlPanel = undefined;
     }
 }
 

@@ -19,10 +19,20 @@ export {
     getPoiCategoryCodesSchema,
 } from './get-poi-category-codes';
 export {
+    createGetTrafficAreaAnalyticsTool,
+    getTrafficAreaAnalyticsDescription,
+    getTrafficAreaAnalyticsSchema,
+} from './get-traffic-area-analytics';
+export {
     createGetTrafficIncidentsTool,
     getTrafficIncidentsDescription,
     getTrafficIncidentsSchema,
 } from './get-traffic-incidents';
+export {
+    createQueryTrafficAnalyticsTool,
+    queryTrafficAnalyticsDescription,
+    queryTrafficAnalyticsSchema,
+} from './query-traffic-analytics';
 export {
     createLocatePlaceTool,
     locatePlace,
