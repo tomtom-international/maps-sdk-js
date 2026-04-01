@@ -13,5 +13,4 @@ export * from './types/trafficFlowConfig';
 export * from './types/trafficFlowFeature';
 export * from './types/trafficIncidentsConfig';
 export * from './types/trafficIncidentsFeature';
-export { tilesToHexFeatures, tilesToPointFeatures, tilesToSquareFeatures } from './util/areaAnalyticsTransform';
-export { renderAreaAnalyticsChart } from './util/renderAreaAnalyticsChart';
+export { tilesToHexFeatures, tilesToPointFeatures, tilesToSquareFeatures } from './util/areaAnalyticsGeoJSONTiles';

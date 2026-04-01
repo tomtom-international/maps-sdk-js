@@ -25,7 +25,7 @@ import type {
     TrafficAreaAnalyticsConfig,
 } from './types/trafficAreaAnalyticsConfig';
 import type { AreaAnalyticsDisplayProperties, AreaAnalyticsTileFeature } from './types/trafficAreaAnalyticsFeature';
-import { tilesToHexFeatures, tilesToPointFeatures, tilesToSquareFeatures } from './util/areaAnalyticsTransform';
+import { tilesToHexFeatures, tilesToPointFeatures, tilesToSquareFeatures } from './util/areaAnalyticsGeoJSONTiles';
 
 /**
  * Sources and layers managed by this module.

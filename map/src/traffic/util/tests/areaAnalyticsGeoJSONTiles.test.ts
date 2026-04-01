@@ -1,6 +1,6 @@
 import type { AreaAnalyticsTileEntry } from '@tomtom-org/maps-sdk/core';
 import { describe, expect, test } from 'vitest';
-import { tilesToPointFeatures } from '../areaAnalyticsTransform';
+import { tilesToPointFeatures } from '../areaAnalyticsGeoJSONTiles';
 
 describe('tilesToPointFeatures', () => {
     test('returns empty FeatureCollection for empty input', () => {
