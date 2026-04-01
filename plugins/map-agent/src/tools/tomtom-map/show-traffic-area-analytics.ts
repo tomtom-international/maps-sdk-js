@@ -84,8 +84,9 @@ export const showTrafficAreaAnalyticsOutputSchema = z.union([
 ]);
 
 export const showTrafficAreaAnalyticsDescription =
-    'Show traffic area analytics on the map. Supports hexgrid, heatmap, or raw tiles mode. ' +
-    'Configure metric, color scheme (or custom colors), height, tile filtering, and hover tooltip. ' +
+    'Show HISTORICAL traffic area analytics on the map (hexgrid/heatmap/tiles). ' +
+    'Not real-time — use toggleTrafficFlow for live traffic. ' +
+    'Configure metric, colors, height, tile filtering, and hover tooltip. ' +
     'Use after getTrafficAreaAnalytics. Defaults to first fetched metric with tooltip enabled.';
 
 // ---------------------------------------------------------------------------

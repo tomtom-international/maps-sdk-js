@@ -690,7 +690,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
     toggleTrafficFlow: {
         name: 'toggleTrafficFlow',
         description: toggleTrafficFlowDescription,
-        classificationPrompt: 'Show or hide the real-time traffic flow overlay (congestion color bands) on the map.',
+        classificationPrompt: 'Toggle REAL-TIME traffic flow (colored road segments for live speeds). Not historical analytics.',
         tags: ['traffic', 'map style'],
         examples: ['toggleTrafficFlow(true)', 'toggleTrafficFlow(false)'],
         examplePrompts: ['Show traffic flow', 'Turn off traffic colors', 'Enable the congestion overlay'],
@@ -701,7 +701,7 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         name: 'toggleTrafficIncidents',
         description: toggleTrafficIncidentsDescription,
         classificationPrompt:
-            'Show or hide real-time traffic incident icons (accidents, jams, road closures, roadworks) on the map.',
+            'Toggle REAL-TIME traffic incident markers and lines (accidents, jams, closures). Not historical analytics.',
         tags: ['traffic', 'map style'],
         examples: ['toggleTrafficIncidents(true)', 'toggleTrafficIncidents(false)'],
         examplePrompts: ['Show traffic incidents', 'Hide accident icons', 'Enable incident markers'],

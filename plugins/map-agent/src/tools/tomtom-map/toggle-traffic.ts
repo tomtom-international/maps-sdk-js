@@ -40,10 +40,12 @@ export const toggleTrafficIncidentsOutputSchema = z.union([
 ]);
 
 export const toggleTrafficFlowDescription =
-    'Show or hide the real-time traffic flow on the map (congestion visualization). Use to monitor traffic conditions or before route calculations with live traffic. Show if asked for explicitly or about speeds.';
+    'Toggle the REAL-TIME traffic flow layer — colored road segments showing live speed conditions. ' +
+    'This is NOT historical analytics; use showTrafficAreaAnalytics for historical data.';
 
 export const toggleTrafficIncidentsDescription =
-    'Show or hide the real-time traffic incidents on the map (jams, accidents, road closures, roadworks, weather-related, etc). Use with getShownIncidents and getTrafficIncidents for further incident details. This is the default traffic on the map.';
+    'Toggle REAL-TIME traffic incident markers on the map (jams, accidents, closures, roadworks). ' +
+    'This is NOT historical analytics. Use getTrafficIncidents for incident details.';
 
 /**
  * Create the toggle traffic flow tool.

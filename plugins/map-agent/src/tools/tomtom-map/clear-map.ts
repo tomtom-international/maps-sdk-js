@@ -21,13 +21,13 @@ export const clearMapOutputSchema = z.union([
  */
 export const clearMapSchema = z.object({
     layers: z
-        .array(z.enum(['places', 'routes', 'geometries']))
+        .array(z.enum(['places', 'routes', 'geometries', 'analytics']))
         .optional()
-        .describe('Layers to clear (default: all)'),
+        .describe('Layers to clear (default: all). Includes traffic area analytics visualization.'),
 });
 
 export const clearMapDescription =
-    'Remove displayed features from the map (places, routes, geometries). Use to clean up before showing new results or to reset the map.';
+    'Remove displayed features from the map (places, routes, geometries, analytics). Use to clean up before showing new results or to reset the map.';
 
 /**
  * Create the clear map tool.
@@ -61,9 +61,21 @@ export function createClearMapTool(state: ToolState): Tool {
                     }
                 }
 
+                if (clearAll || layers.includes('analytics')) {
+                    const analyticsModule = state.traffic.controlPanel
+                        ? await state.traffic.getTrafficAreaAnalyticsModule()
+                        : undefined;
+
+                    if (analyticsModule) {
+                        analyticsModule.clear();
+                    }
+
+                    state.traffic.controlPanel?.hide();
+                }
+
                 return {
                     success: true,
-                    cleared: layers || ['places', 'routes', 'geometries'],
+                    cleared: layers || ['places', 'routes', 'geometries', 'analytics'],
                 };
             } catch (error) {
                 return {

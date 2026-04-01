@@ -187,11 +187,17 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
     protected restoreDataAndConfigImpl(): void {
         const cachedAnalytics = this.lastAnalytics;
         this.initSourcesWithLayers(this.config, true);
-        if (this.config) {
-            this._applyConfig(this.config);
-        }
+
         if (cachedAnalytics) {
+            // Skip _applyConfig — show() will apply metrics + visibility after data is loaded.
+            // Applying paint properties to empty sources causes a race condition.
+            if (this.config?.visible === false) {
+                this.setVisible(false);
+            }
+
             void this.show(cachedAnalytics);
+        } else if (this.config) {
+            this._applyConfig(this.config);
         }
     }
 
