@@ -6,7 +6,13 @@ import type {
 } from 'maplibre-gl';
 import type { LayerSpecTemplate, ToBeAddedLayerSpecWithoutSource } from '../../shared';
 import { mapStyleLayerIDs } from '../../shared';
-import type { AreaAnalyticsColorScheme, AreaAnalyticsMetricKey } from '../types/trafficAreaAnalyticsConfig';
+import type {
+    AreaAnalyticsColorConfig,
+    AreaAnalyticsColorScheme,
+    AreaAnalyticsHeightConfig,
+    AreaAnalyticsMetricKey,
+    MetricRange,
+} from '../types/trafficAreaAnalyticsConfig';
 
 // ── Colour scheme presets ────────────────────────────────────────────
 
@@ -23,35 +29,60 @@ export const COLOR_SCHEMES: Record<AreaAnalyticsColorScheme, ColorStops> = {
 const DEFAULT_SCHEME: AreaAnalyticsColorScheme = 'congestion';
 
 // ── Metric ranges used for colour / height interpolation ─────────────
+
 /**
  * @ignore
  */
-export const METRIC_RANGES: Record<AreaAnalyticsMetricKey, { min: number; mid: number; max: number }> = {
+export const METRIC_RANGES: Record<AreaAnalyticsMetricKey, MetricRange> = {
     congestionLevel: { min: 0, mid: 50, max: 100 },
     speed: { min: 0, mid: 50, max: 120 },
     travelTime: { min: 0, mid: 10, max: 20 },
 };
 
 // ── Height multipliers per metric ────────────────────────────────────
-const HEIGHT_SCALE: Record<AreaAnalyticsMetricKey, number> = {
+
+/** @ignore */
+export const DEFAULT_HEIGHT_SCALE: Record<AreaAnalyticsMetricKey, number> = {
     congestionLevel: 50,
     speed: 40,
     travelTime: 200,
 };
 
+/** @ignore */
+export const DEFAULT_MIN_HEIGHT = 10;
+
+// ── Color resolution ────────────────────────────────────────────────
+
+/**
+ * Resolve color stops from config, falling back to preset or default scheme.
+ * @ignore
+ */
+export function resolveColorStops(
+    colorConfig?: AreaAnalyticsColorConfig,
+    schemeFallback?: AreaAnalyticsColorScheme,
+): ColorStops {
+    if (colorConfig?.stops) {
+        return { low: colorConfig.stops[0], mid: colorConfig.stops[1], high: colorConfig.stops[2] };
+    }
+    return COLOR_SCHEMES[colorConfig?.preset ?? schemeFallback ?? DEFAULT_SCHEME];
+}
+
+// ── Expression builders ─────────────────────────────────────────────
+
 /**
  * Builds a MapLibre interpolation expression that maps a metric property
- * to a three-stop colour scale from the given colour scheme.
+ * to a three-stop colour scale.
  *
  * For `speed` the scale is inverted (high speed = low colour, low speed = high colour).
  * @ignore
  */
 export const buildColorExpression = (
     metric: AreaAnalyticsMetricKey,
-    scheme: AreaAnalyticsColorScheme = DEFAULT_SCHEME,
+    colors: ColorStops,
+    range?: MetricRange,
 ): ExpressionSpecification => {
-    const { min, mid, max } = METRIC_RANGES[metric];
-    const { low, mid: midColor, high } = COLOR_SCHEMES[scheme];
+    const { min, mid, max } = range ?? METRIC_RANGES[metric];
+    const { low, mid: midColor, high } = colors;
 
     if (metric === 'speed') {
         // Inverted: high speed (low colour) → low speed (high colour)
@@ -61,28 +92,35 @@ export const buildColorExpression = (
 };
 
 /**
- * Builds a MapLibre `heatmap-color` expression using the given colour scheme.
+ * Builds a MapLibre `heatmap-color` expression using the given color stops.
  * @ignore
  */
-export const buildHeatmapColorExpression = (
-    scheme: AreaAnalyticsColorScheme = DEFAULT_SCHEME,
-): ExpressionSpecification => {
-    const { low, mid, high } = COLOR_SCHEMES[scheme];
-    return ['interpolate', ['linear'], ['heatmap-density'], 0, 'rgba(0,0,0,0)', 0.3, low, 0.6, mid, 1, high];
+export const buildHeatmapColorExpression = (colors: ColorStops): ExpressionSpecification => {
+    return ['interpolate', ['linear'], ['heatmap-density'], 0, 'rgba(0,0,0,0)', 0.3, colors.low, 0.6, colors.mid, 1, colors.high];
 };
 
 /**
  * Builds a MapLibre expression for fill-extrusion height driven by the active metric.
  * @ignore
  */
-export const buildHeightExpression = (metric: AreaAnalyticsMetricKey): ExpressionSpecification => {
-    const scale = HEIGHT_SCALE[metric];
+export const buildHeightExpression = (
+    metric: AreaAnalyticsMetricKey,
+    range?: MetricRange,
+    heightConfig?: AreaAnalyticsHeightConfig,
+): ExpressionSpecification => {
+    if (heightConfig?.flat) {
+        return ['literal', 0];
+    }
+
+    const scale = heightConfig?.scale ?? DEFAULT_HEIGHT_SCALE[metric];
+    const minHeight = heightConfig?.minHeight ?? DEFAULT_MIN_HEIGHT;
+    const { max } = range ?? METRIC_RANGES[metric];
 
     if (metric === 'speed') {
         // Inverted: low speed → tall extrusion
-        return ['max', 10, ['*', ['-', METRIC_RANGES.speed.max, ['coalesce', ['get', 'speed'], 0]], scale]];
+        return ['max', minHeight, ['*', ['-', max, ['coalesce', ['get', 'speed'], 0]], scale]];
     }
-    return ['max', 10, ['*', ['coalesce', ['get', metric], 0], scale]];
+    return ['max', minHeight, ['*', ['coalesce', ['get', metric], 0], scale]];
 };
 
 // ── Heatmap layer template ───────────────────────────────────────────
@@ -121,7 +159,7 @@ export const areaAnalyticsHeatmapSpec: LayerSpecTemplate<HeatmapLayerSpecificati
 export const areaAnalyticsHexFillSpec: LayerSpecTemplate<FillLayerSpecification> = {
     type: 'fill',
     paint: {
-        'fill-color': buildColorExpression('congestionLevel'),
+        'fill-color': buildColorExpression('congestionLevel', COLOR_SCHEMES.congestion),
         'fill-opacity': 0.6,
     },
 };
@@ -134,7 +172,33 @@ export const areaAnalyticsHexFillSpec: LayerSpecTemplate<FillLayerSpecification>
 export const areaAnalyticsHexExtrusionSpec: LayerSpecTemplate<FillExtrusionLayerSpecification> = {
     type: 'fill-extrusion',
     paint: {
-        'fill-extrusion-color': buildColorExpression('congestionLevel'),
+        'fill-extrusion-color': buildColorExpression('congestionLevel', COLOR_SCHEMES.congestion),
+        'fill-extrusion-height': buildHeightExpression('congestionLevel'),
+        'fill-extrusion-base': 0,
+        'fill-extrusion-opacity': 0.75,
+    },
+};
+
+// ── Tile fill layer template ─────────────────────────────────────────
+
+/**
+ * @ignore
+ */
+export const areaAnalyticsTileFillSpec: LayerSpecTemplate<FillLayerSpecification> = {
+    type: 'fill',
+    paint: {
+        'fill-color': buildColorExpression('congestionLevel', COLOR_SCHEMES.congestion),
+        'fill-opacity': 0.6,
+    },
+};
+
+/**
+ * @ignore
+ */
+export const areaAnalyticsTileExtrusionSpec: LayerSpecTemplate<FillExtrusionLayerSpecification> = {
+    type: 'fill-extrusion',
+    paint: {
+        'fill-extrusion-color': buildColorExpression('congestionLevel', COLOR_SCHEMES.congestion),
         'fill-extrusion-height': buildHeightExpression('congestionLevel'),
         'fill-extrusion-base': 0,
         'fill-extrusion-opacity': 0.75,
@@ -171,6 +235,28 @@ export const buildHexExtrusionLayerSpec = (
     layerId: string,
 ): ToBeAddedLayerSpecWithoutSource<FillExtrusionLayerSpecification> => ({
     ...areaAnalyticsHexExtrusionSpec,
+    id: layerId,
+    beforeID: mapStyleLayerIDs.lowestPlaceLabel,
+});
+
+/**
+ * Builds the flat tile fill layer spec.
+ * @ignore
+ */
+export const buildTileFillLayerSpec = (layerId: string): ToBeAddedLayerSpecWithoutSource<FillLayerSpecification> => ({
+    ...areaAnalyticsTileFillSpec,
+    id: layerId,
+    beforeID: mapStyleLayerIDs.lowestLabel,
+});
+
+/**
+ * Builds the extruded tile layer spec.
+ * @ignore
+ */
+export const buildTileExtrusionLayerSpec = (
+    layerId: string,
+): ToBeAddedLayerSpecWithoutSource<FillExtrusionLayerSpecification> => ({
+    ...areaAnalyticsTileExtrusionSpec,
     id: layerId,
     beforeID: mapStyleLayerIDs.lowestPlaceLabel,
 });

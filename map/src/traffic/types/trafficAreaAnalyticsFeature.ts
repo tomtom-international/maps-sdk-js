@@ -31,3 +31,10 @@ export type AreaAnalyticsHexFeature = Feature<Polygon, AreaAnalyticsDisplayPrope
  * @group Traffic Area Analytics
  */
 export type AreaAnalyticsPointFeature = Feature<Point, AreaAnalyticsDisplayProperties>;
+
+/**
+ * A single square polygon feature for the raw tile visualization.
+ *
+ * @group Traffic Area Analytics
+ */
+export type AreaAnalyticsTileFeature = Feature<Polygon, AreaAnalyticsDisplayProperties>;
