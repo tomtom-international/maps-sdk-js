@@ -34,12 +34,6 @@ const MODE_OPTIONS: RadioOption<AreaAnalyticsMode>[] = [
     { value: 'tiles', label: 'Tiles' },
 ];
 
-const COLOR_OPTIONS: RadioOption<AreaAnalyticsColorScheme>[] = [
-    { value: 'congestion', label: 'Congestion' },
-    { value: 'thermal', label: 'Thermal' },
-    { value: 'monochrome', label: 'Mono' },
-];
-
 const LEGEND_LABELS: Record<AreaAnalyticsMetricKey, { min: string; max: string }> = {
     congestionLevel: { min: 'Free', max: 'Standstill' },
     speed: { min: 'Slow', max: 'Fast' },
@@ -391,7 +385,11 @@ export class AnalyticsControlPanel {
 
         const region = analytics.features[0]?.properties;
         const entries = region?.timedData?.average ?? region?.timedData?.hourly ?? [];
-        if (entries.length === 0) return;
+        if (entries.length === 0) {
+            const context = this.chartCanvas.getContext('2d');
+            if (context) context.clearRect(0, 0, this.chartCanvas.width, this.chartCanvas.height);
+            return;
+        }
 
         const hourlyAverages = this.computeHourlyAverages(entries);
         this.renderBarChart(hourlyAverages);

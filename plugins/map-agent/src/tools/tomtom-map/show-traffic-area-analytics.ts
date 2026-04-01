@@ -49,6 +49,9 @@ export const showTrafficAreaAnalyticsSchema = z.object({
             min: z.number().optional(),
             max: z.number().optional(),
         })
+        .refine((f) => f.min !== undefined || f.max !== undefined, {
+            message: 'Filter must have at least one of min or max',
+        })
         .optional()
         .describe("Filter visible tiles by metric threshold. E.g. { metric: 'congestionLevel', min: 50 } shows only congested areas."),
     rangeStrategy: z
@@ -143,13 +146,13 @@ export function createShowTrafficAreaAnalyticsTool(state: ToolState): Tool {
                 const analyticsModule = await state.traffic.getTrafficAreaAnalyticsModule();
 
                 if (!visible) {
-                    analyticsModule.clear();
+                    await analyticsModule.clear();
                     state.traffic.controlPanel?.hide();
                     return { success: true, mode, metric, colorScheme, visible: false, filtered: false, tooltipEnabled: false };
                 }
 
                 // Clear previous visualization before showing new data
-                analyticsModule.clear();
+                await analyticsModule.clear();
                 await analyticsModule.show(analyticsResult);
 
                 // Apply mode and metric

@@ -570,12 +570,15 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
         }
 
         // Build OR filter expression: ['any', condition1, condition2, ...]
-        const conditions = filters.any.map((f) => {
-            const parts: unknown[] = [];
-            if (f.min !== undefined) parts.push(['>=', ['get', f.metric], f.min]);
-            if (f.max !== undefined) parts.push(['<=', ['get', f.metric], f.max]);
-            return parts.length === 1 ? parts[0] : ['all', ...parts];
-        });
+        const conditions = filters.any
+            .map((f) => {
+                const parts: unknown[] = [];
+                if (f.min !== undefined) parts.push(['>=', ['get', f.metric], f.min]);
+                if (f.max !== undefined) parts.push(['<=', ['get', f.metric], f.max]);
+                if (parts.length === 0) return null;
+                return parts.length === 1 ? parts[0] : ['all', ...parts];
+            })
+            .filter(Boolean);
 
         const filterExpr = conditions.length === 1 ? conditions[0] : ['any', ...conditions];
 
@@ -628,6 +631,12 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
 
         this.events.on('hover', (feature, lngLat) => {
             if (!this.tooltipPopup) return;
+
+            if (!feature) {
+                this.tooltipPopup.remove();
+                return;
+            }
+
             const p = feature.properties as AreaAnalyticsDisplayProperties;
             const tooltipConfig = this.config?.tooltip;
 

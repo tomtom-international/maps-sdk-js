@@ -54,7 +54,6 @@ export function tilesToPointFeatures(
  * contain every metric value returned by the API — no aggregation is applied.
  *
  * @param tiles - Tile entries from the area analytics response.
- * @param halfSideKm - Half the side length of each square in kilometres (default 0.15).
  * @returns A Polygon FeatureCollection ready for the tile source.
  *
  * @group Traffic Area Analytics
