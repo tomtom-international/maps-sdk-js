@@ -49,9 +49,9 @@ const MAX_CLASSIFIER_HISTORY_MESSAGES = 8;
 /** Formats a single tool's metadata into a compact classifier prompt entry. */
 function formatToolEntry(name: string, entry: ToolMetadata): string {
     const classificationPrompt = entry.classificationPrompt ? ` ${entry.classificationPrompt}.` : '';
-    const related = entry.relatedTools?.length ? ` Related: ${entry.relatedTools.join(', ')}.` : '';
-    const depends = entry.dependsOn?.length ? ` Requires: ${entry.dependsOn.join(', ')}.` : '';
-    return `${name}${classificationPrompt}${related}${depends}`;
+    // const related = entry.relatedTools?.length ? ` Related: ${entry.relatedTools.join(', ')}.` : '';
+    const depends = entry.dependsOn?.length ? ` Depends on: ${entry.dependsOn.join(', ')}.` : '';
+    return `${name}${classificationPrompt}${depends}`;
 }
 
 /** Builds the system prompt listing available tools for the classifier. */

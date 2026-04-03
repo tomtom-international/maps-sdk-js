@@ -6,6 +6,7 @@ import { sectionTypes } from '@tomtom-org/maps-sdk/core';
 import type { Tool } from 'ai';
 import type { ToolMetadata, ToolState } from '../types';
 import {
+    createExecuteMaplibreCodeTool,
     createFlyToTool,
     createGetMapStyleLayersTool,
     createGetViewportTool,
@@ -13,6 +14,7 @@ import {
     createSetPaintPropertiesTool,
     createSetPitchBearingTool,
     createZoomInOrOutTool,
+    executeMaplibreCodeDescription,
     flyToDescription,
     getMapStyleLayersDescription,
     getViewportDescription,
@@ -175,6 +177,7 @@ export const TOOL_NAMES = [
     'findReachableArea',
     'searchAlongRoute',
     'recallRanges',
+    'executeMaplibreCode',
 ] as const;
 
 /** Union of all valid tool names, derived from {@link TOOL_NAMES}. */
@@ -770,6 +773,29 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
         examplePrompts: ['Zoom in', 'Zoom out 2 levels', 'Get a wider view'],
         relatedTools: ['getViewport', 'flyTo'],
         create: createZoomInOrOutTool,
+    },
+    executeMaplibreCode: {
+        name: 'executeMaplibreCode',
+        description: executeMaplibreCodeDescription,
+        classificationPrompt:
+            'Execute any MapLibre JS code against the live map for maximum flexibility — use when no other tool covers the required operation.',
+        tags: ['map style', 'maplibre', 'layers', 'sources', 'animation'],
+        examples: [
+            "executeMaplibreCode({ code: \"map.addSource('pts', { type: 'geojson', data: fc }); map.addLayer({ id: 'pts', type: 'circle', source: 'pts', paint: { 'circle-color': '#f00' } })\" })",
+            'executeMaplibreCode({ code: "map.easeTo({ center: [4.9, 52.37], zoom: 14, duration: 2000 })" })',
+            "executeMaplibreCode({ code: \"for (let i = 0; i <= 20; i++) { map.setPaintProperty('fill', 'fill-opacity', i / 20); await new Promise(r => setTimeout(r, 50)); }\" })",
+            "executeMaplibreCode({ code: \"map.setFog({ color: 'white', 'horizon-blend': 0.1 })\" })",
+        ],
+        examplePrompts: [
+            'Add a GeoJSON layer to the map',
+            'Animate the map camera',
+            'Fade in a layer gradually',
+            'Set map fog or atmosphere',
+            'Add a raster tile overlay',
+        ],
+        relatedTools: ['getMapStyleLayers', 'setLayoutProperties', 'setPaintProperties', 'flyTo'],
+        dependsOn: ['getMapStyleLayers'],
+        create: createExecuteMaplibreCodeTool,
     },
     calculateBBox: {
         name: 'calculateBBox',

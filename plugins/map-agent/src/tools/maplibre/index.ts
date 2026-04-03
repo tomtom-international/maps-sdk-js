@@ -4,6 +4,11 @@
  * MapLibre tools - MapLibre-specific features like getting style details and updating layout/paint properties.
  */
 
+export {
+    createExecuteMaplibreCodeTool,
+    executeMaplibreCodeDescription,
+    executeMaplibreCodeSchema,
+} from './execute-maplibre-code';
 export { createFlyToTool, flyToDescription, flyToSchema } from './fly-to';
 export {
     createGetMapStyleLayersTool,
