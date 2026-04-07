@@ -165,7 +165,7 @@ export function createShowTrafficAreaAnalyticsTool(state: ToolState): Tool {
 
                 // Apply colors (custom stops take precedence over preset)
                 if (customColors) {
-                    analyticsModule.setColors({ stops: customColors });
+                    analyticsModule.setColors({ stops: customColors as [string, string, string] });
                 } else {
                     analyticsModule.setColorScheme(colorScheme);
                 }

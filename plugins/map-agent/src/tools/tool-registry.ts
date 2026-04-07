@@ -40,11 +40,9 @@ import {
     findReachableAreaDescription,
     getPoiCategoryCodesDescription,
     getTrafficAreaAnalyticsDescription,
-    getTrafficAreaAnalyticsSchema,
     getTrafficIncidentsDescription,
     locatePlaceDescription,
     queryTrafficAnalyticsDescription,
-    queryTrafficAnalyticsSchema,
     removeStopFromRouteDescription,
     reverseGeocodeDescription,
     searchAlongRouteDescription,
@@ -95,7 +93,6 @@ import {
     showPlacesDescription,
     showRouteDescription,
     showTrafficAreaAnalyticsDescription,
-    showTrafficAreaAnalyticsSchema,
     showWaypointsDescription,
     toggleBaseMapLayerGroupsDescription,
     togglePOIsDescription,
@@ -331,10 +328,9 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
     getTrafficAreaAnalytics: {
         name: 'getTrafficAreaAnalytics',
         description: getTrafficAreaAnalyticsDescription,
-        shortDescription:
+        classificationPrompt:
             'Fetch historical traffic analytics (speed, congestion, travel time) for an area; use queryTrafficAnalytics to drill down.',
         tags: ['traffic', 'location'],
-        parameters: extractParametersFromSchema(getTrafficAreaAnalyticsSchema),
         examples: [
             "getTrafficAreaAnalytics({ bbox: [4.728, 52.278, 5.080, 52.479], dataTypes: ['SPEED', 'CONGESTION_LEVEL'], startDate: '2025-03-01', endDate: '2025-03-07' })",
             "getTrafficAreaAnalytics({ bbox: [...], dataTypes: ['CONGESTION_LEVEL'], hours: [7,8,9,17,18] })",
@@ -351,10 +347,9 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
     queryTrafficAnalytics: {
         name: 'queryTrafficAnalytics',
         description: queryTrafficAnalyticsDescription,
-        shortDescription:
+        classificationPrompt:
             'Query cached traffic analytics data or check what metric/mode is currently displayed on the map.',
         tags: ['traffic', 'location'],
-        parameters: extractParametersFromSchema(queryTrafficAnalyticsSchema),
         examples: [
             "queryTrafficAnalytics({ granularity: 'daily' })",
             "queryTrafficAnalytics({ granularity: 'hourly', hourStart: 7, hourEnd: 9, metric: 'congestionLevel' })",
@@ -399,10 +394,9 @@ export const TOOL_REGISTRY: Record<ToolName, ToolMetadata & { create: (state: To
     showTrafficAreaAnalytics: {
         name: 'showTrafficAreaAnalytics',
         description: showTrafficAreaAnalyticsDescription,
-        shortDescription:
+        classificationPrompt:
             'Render traffic analytics as hexgrid, heatmap, or tiles with custom colors, filtering, height, and tooltip.',
         tags: ['traffic', 'map style'],
-        parameters: extractParametersFromSchema(showTrafficAreaAnalyticsSchema),
         examples: [
             'showTrafficAreaAnalytics()',
             "showTrafficAreaAnalytics({ mode: 'tiles', metric: 'speed', colorScheme: 'thermal' })",

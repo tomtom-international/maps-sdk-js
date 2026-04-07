@@ -2,7 +2,7 @@
  * @module map-agent-state
  */
 
-import type { Place, Places, Routes, TrafficAreaAnalytics, WaypointLike } from '@tomtom-org/maps-sdk/core';
+import type { Place, Places, PolygonFeatures, Routes, TrafficAreaAnalytics, WaypointLike } from '@tomtom-org/maps-sdk/core';
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import type { TrafficAreaAnalyticsConfig } from '@tomtom-org/maps-sdk/map';
 import {
