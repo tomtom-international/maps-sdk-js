@@ -1,6 +1,6 @@
 import type { AreaAnalyticsTileEntry, TrafficAreaAnalytics } from '@tomtom-org/maps-sdk/core';
 import type { FeatureCollection, Point, Polygon } from 'geojson';
-import { Popup } from 'maplibre-gl';
+import { type ExpressionSpecification, Popup } from 'maplibre-gl';
 import { AbstractMapModule, EventsModule, GeoJSONSourceWithLayers } from '../shared';
 import { waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
@@ -582,7 +582,7 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
         const filterExpr = conditions.length === 1 ? conditions[0] : ['any', ...conditions];
 
         for (const layerId of layerIds) {
-            this.mapLibreMap.setFilter(layerId, filterExpr);
+            this.mapLibreMap.setFilter(layerId, filterExpr as ExpressionSpecification);
         }
     }
 
