@@ -1,29 +1,37 @@
-import type { AreaAnalyticsTileEntry, TrafficAreaAnalytics } from '@tomtom-org/maps-sdk/core';
+import type { AreaAnalyticsMetricKey, TrafficAreaAnalytics } from '@tomtom-org/maps-sdk/core';
+import { mask } from '@turf/turf';
 import type { FeatureCollection, Point, Polygon } from 'geojson';
-import type { BeforeLayerConfig } from '../shared';
-import { AbstractMapModule, EventsModule, GeoJSONSourceWithLayers, mapStyleLayerIDs } from '../shared';
+import { ExpressionSpecification } from 'maplibre-gl';
+import type { BeforeLayerConfig, EventHandlerConfig, EventType, SourceWithLayers, UserEventHandler } from '../shared';
+import { AbstractMapModule, EventsModule, EventsProxy, GeoJSONSourceWithLayers, mapStyleLayerIDs } from '../shared';
 import { changeLayerProps, waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
 import {
     buildHeatmapLayerSpec,
+    buildHexExtrusionHighlightLayerSpec,
     buildHexExtrusionLayerSpec,
     buildHexFillLayerSpec,
+    buildHexOutlineLayerSpec,
     buildRegionFillLayerSpec,
     buildRegionLineLayerSpec,
+    buildSquareExtrusionHighlightLayerSpec,
     buildSquareExtrusionLayerSpec,
     buildSquareFillLayerSpec,
+    buildSquareOutlineLayerSpec,
+    expandThemeToAllMetrics,
+    getActiveMetric,
 } from './layers/areaAnalyticsLayers';
 import type {
     AreaAnalyticsBeforeLayerConfig,
-    AreaAnalyticsColorStop,
+    AreaAnalyticsColorStopsConfig,
     AreaAnalyticsColorTheme,
-    AreaAnalyticsMetricKey,
-    AreaAnalyticsMode,
-    AreaAnalyticsRangeConfig,
-    AreaAnalyticsTooltipConfig,
-    MetricRange,
+    AreaAnalyticsDisplayMode,
+    AreaAnalyticsHeightConfig,
+    AreaAnalyticsMetricConfig,
+    AreaAnalyticsMetricFilter,
     TrafficAreaAnalyticsConfig,
 } from './types/trafficAreaAnalyticsConfig';
+import { AREA_ANALYTICS_DEFAULTS } from './types/trafficAreaAnalyticsConfig';
 import type { AreaAnalyticsDisplayProperties, AreaAnalyticsTileFeature } from './types/trafficAreaAnalyticsFeature';
 import { tilesToHexFeatures, tilesToPointFeatures, tilesToSquareFeatures } from './util/areaAnalyticsGeoJSONTiles';
 
@@ -38,8 +46,49 @@ type AreaAnalyticsSourcesWithLayers = {
     region: GeoJSONSourceWithLayers;
 };
 
-/** Handler type for config change listeners. */
-type ConfigChangeHandler = (config: TrafficAreaAnalyticsConfig | undefined) => void;
+/**
+ * Handler called whenever any setter on {@link TrafficAreaAnalyticsModule} is invoked.
+ *
+ * @param config - The updated module configuration, or `undefined` if the module was cleared.
+ * @group Traffic Area Analytics
+ */
+export type ConfigChangeHandler = (config: TrafficAreaAnalyticsConfig | undefined) => void;
+
+/**
+ * Events interface for {@link TrafficAreaAnalyticsModule}.
+ *
+ * Extends the standard feature-interaction events (click, hover, contextmenu, long-hover)
+ * with a `configChange` event that fires whenever a setter on the module is called.
+ *
+ * @group Traffic Area Analytics
+ */
+export class AreaAnalyticsEventsModule extends EventsModule<AreaAnalyticsTileFeature> {
+    constructor(
+        eventProxy: EventsProxy,
+        sources: SourceWithLayers[],
+        config: EventHandlerConfig | undefined,
+        private readonly configChangeHandlers: ConfigChangeHandler[],
+    ) {
+        super(eventProxy, sources, config);
+    }
+
+    on(type: 'configChange', handler: ConfigChangeHandler): () => void;
+    on(type: EventType, handler: UserEventHandler<AreaAnalyticsTileFeature>): void;
+    on(
+        type: EventType | 'configChange',
+        handler: ConfigChangeHandler | UserEventHandler<AreaAnalyticsTileFeature>,
+    ): (() => void) | void {
+        if (type === 'configChange') {
+            const configChangeHandler = handler as ConfigChangeHandler;
+            this.configChangeHandlers.push(configChangeHandler);
+            return () => {
+                const index = this.configChangeHandlers.indexOf(configChangeHandler);
+                if (index !== -1) this.configChangeHandlers.splice(index, 1);
+            };
+        }
+        super.on(type, handler as UserEventHandler<AreaAnalyticsTileFeature>);
+    }
+}
 
 /**
  * Traffic Area Analytics visualization module.
@@ -50,7 +99,6 @@ type ConfigChangeHandler = (config: TrafficAreaAnalyticsConfig | undefined) => v
  * - **square-3d** — 3D extruded square cells coloured and raised by the active metric
  * - **square-2d** — Flat square cells coloured by the active metric
  * - **heatmap** — a MapLibre density-heatmap layer built from tile-centre points
- * - **tiles** — raw API tile centres as square polygons with original per-tile metric values
  *
  * The actual region boundary is always rendered alongside the analytics cells.
  *
@@ -60,7 +108,10 @@ type ConfigChangeHandler = (config: TrafficAreaAnalyticsConfig | undefined) => v
  * import { TrafficAreaAnalyticsModule } from '@tomtom-org/maps-sdk/map';
  * import { trafficAreaAnalytics } from '@tomtom-org/maps-sdk/services';
  *
- * const module = await TrafficAreaAnalyticsModule.get(map);
+ * const module = await TrafficAreaAnalyticsModule.get(map, {
+ *   displayMode: 'hexgrid-3d',
+ *   metric: { active: 'congestionLevel' },
+ * });
  * const analytics = await trafficAreaAnalytics({ ... });
  * await module.show(analytics);
  * ```
@@ -78,64 +129,60 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
     private heatmapLayerSpec!: ReturnType<typeof buildHeatmapLayerSpec>;
     private hexFillLayerSpec!: ReturnType<typeof buildHexFillLayerSpec>;
     private hexExtrusionLayerSpec!: ReturnType<typeof buildHexExtrusionLayerSpec>;
+    private hexOutlineLayerSpec!: ReturnType<typeof buildHexOutlineLayerSpec>;
+    private hexExtrusionHighlightLayerSpec!: ReturnType<typeof buildHexExtrusionHighlightLayerSpec>;
     private squareFillLayerSpec!: ReturnType<typeof buildSquareFillLayerSpec>;
     private squareExtrusionLayerSpec!: ReturnType<typeof buildSquareExtrusionLayerSpec>;
+    private squareOutlineLayerSpec!: ReturnType<typeof buildSquareOutlineLayerSpec>;
+    private squareExtrusionHighlightLayerSpec!: ReturnType<typeof buildSquareExtrusionHighlightLayerSpec>;
     private regionFillLayerSpec!: ReturnType<typeof buildRegionFillLayerSpec>;
     private regionLineLayerSpec!: ReturnType<typeof buildRegionLineLayerSpec>;
 
-    /** Cached for style-change restoration. */
+    // Cached for style-change restoration.
     private lastAnalytics: TrafficAreaAnalytics | null = null;
 
-    /** Data-driven metric ranges computed from actual tile values. */
-    private computedRanges: Partial<Record<AreaAnalyticsMetricKey, MetricRange>> = {};
-
-    /** Config change listeners. */
+    // Config change listeners.
     private configChangeHandlers: ConfigChangeHandler[] = [];
-
-    /** Tooltip popup instance (created lazily when tooltip is enabled). */
-    private tooltipPopup: Popup | null = null;
-    private tooltipBound = false;
 
     // ── Factory ──────────────────────────────────────────────────────
 
     /**
-     * Creates a new Traffic Area Analytics module.
+     * Creates and initialises a new Traffic Area Analytics module.
+     *
+     * All configuration properties are optional. When `config` is omitted (or only
+     * partially supplied), built-in defaults are applied for every missing field.
+     * After `get()` resolves, {@link TrafficAreaAnalyticsModule.getConfig} always returns a
+     * fully-populated configuration — there is no need to reference any default
+     * values yourself.
      *
      * @param tomtomMap - The TomTomMap instance.
-     * @param config - Optional initial configuration.
+     * @param config - Optional initial configuration. Omit to use all defaults.
      * @returns A promise that resolves with the initialised module.
      *
      * @example
      * ```typescript
+     * // No config needed — defaults are applied automatically.
+     * const module = await TrafficAreaAnalyticsModule.get(map);
+     * await module.show(analytics);
+     *
+     * // Or override specific properties while keeping everything else at default:
      * const module = await TrafficAreaAnalyticsModule.get(map, {
-     *   displayMode: 'hexgrid-3d',
-     *   color: 'thermal',
-     *   metric: 'congestionLevel',
-     *   tooltip: { enabled: true },
+     *   displayMode: 'heatmap',
+     *   metricConfig: {
+     *     congestionLevel: { color: 'heat' },
+     *   },
      * });
      * ```
      */
     static async get(tomtomMap: TomTomMap, config?: TrafficAreaAnalyticsConfig): Promise<TrafficAreaAnalyticsModule> {
         await waitUntilMapIsReady(tomtomMap);
-        return new TrafficAreaAnalyticsModule(tomtomMap, config);
+        // Always pass a config object (even if empty) so _applyConfig fills in all
+        // defaults and getConfig() returns a fully-populated result from the start.
+        return new TrafficAreaAnalyticsModule(tomtomMap, config ?? {});
     }
 
     private constructor(map: TomTomMap, config?: TrafficAreaAnalyticsConfig) {
         super('geojson', map, config);
-    }
-
-    // ── Config helpers ───────────────────────────────────────────────
-
-    private get mode(): AreaAnalyticsMode {
-        return this.config?.mode ?? 'hexgrid';
-    }
-
-    private get metric(): AreaAnalyticsMetricKey {
-        return this.config?.metric ?? 'congestionLevel';
-    }
-
-    private get colorScheme(): AreaAnalyticsColorScheme {
-        return this.config?.colorScheme ?? 'congestion';
     }
 
     // ── AbstractMapModule hooks ──────────────────────────────────────
@@ -158,11 +205,16 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
         const heatmapLayerId = `${heatmapSourceId}-layer`;
         const hexFillLayerId = `${hexgridSourceId}-fill`;
         const hexExtrusionLayerId = `${hexgridSourceId}-extrusion`;
+        const hexOutlineLayerId = `${hexgridSourceId}-outline`;
+        const hexExtrusionHighlightLayerId = `${hexgridSourceId}-extrusion-highlight`;
         const squareFillLayerId = `${squareSourceId}-fill`;
         const squareExtrusionLayerId = `${squareSourceId}-extrusion`;
+        const squareOutlineLayerId = `${squareSourceId}-outline`;
+        const squareExtrusionHighlightLayerId = `${squareSourceId}-extrusion-highlight`;
         const regionFillLayerId = `${regionSourceId}-fill`;
         const regionLineLayerId = `${regionSourceId}-line`;
 
+        // No computed ranges available at init time — pass undefined
         this.heatmapLayerSpec = buildHeatmapLayerSpec(heatmapLayerId, config);
         this.hexFillLayerSpec = buildHexFillLayerSpec(hexFillLayerId, config);
         this.hexExtrusionLayerSpec = buildHexExtrusionLayerSpec(hexExtrusionLayerId, config);
@@ -171,44 +223,87 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
         this.regionFillLayerSpec = buildRegionFillLayerSpec(regionFillLayerId, config);
         this.regionLineLayerSpec = buildRegionLineLayerSpec(regionLineLayerId, config);
 
-        return {
-            heatmap: new GeoJSONSourceWithLayers(this.mapLibreMap, heatmapSourceId, [this.heatmapLayerSpec]),
-            hexgrid: new GeoJSONSourceWithLayers(this.mapLibreMap, hexgridSourceId, [
-                this.hexFillLayerSpec,
-                this.hexExtrusionLayerSpec,
-            ]),
-            square: new GeoJSONSourceWithLayers(this.mapLibreMap, squareSourceId, [
-                this.squareFillLayerSpec,
-                this.squareExtrusionLayerSpec,
-            ]),
+        // Highlight/outline specs — added directly to MapLibre (not through GeoJSONSourceWithLayers)
+        // so they are never included in interactiveLayerIDs and won't break queryRenderedFeatures.
+        this.hexOutlineLayerSpec = buildHexOutlineLayerSpec(hexOutlineLayerId, config);
+        this.hexExtrusionHighlightLayerSpec = buildHexExtrusionHighlightLayerSpec(hexExtrusionHighlightLayerId, config);
+        this.squareOutlineLayerSpec = buildSquareOutlineLayerSpec(squareOutlineLayerId, config);
+        this.squareExtrusionHighlightLayerSpec = buildSquareExtrusionHighlightLayerSpec(
+            squareExtrusionHighlightLayerId,
+            config,
+        );
+
+        // Create sources with only the interactive data layers. Highlight layers share the same
+        // MapLibre source but are added separately below to stay out of interactiveLayerIDs.
+        const result: AreaAnalyticsSourcesWithLayers = {
+            heatmap: new GeoJSONSourceWithLayers<FeatureCollection<Point, AreaAnalyticsDisplayProperties>>(
+                this.mapLibreMap,
+                heatmapSourceId,
+                [this.heatmapLayerSpec],
+            ),
+            hexgrid: new GeoJSONSourceWithLayers<FeatureCollection<Polygon, AreaAnalyticsDisplayProperties>>(
+                this.mapLibreMap,
+                hexgridSourceId,
+                [this.hexFillLayerSpec, this.hexExtrusionLayerSpec],
+            ),
+            square: new GeoJSONSourceWithLayers<FeatureCollection<Polygon, AreaAnalyticsDisplayProperties>>(
+                this.mapLibreMap,
+                squareSourceId,
+                [this.squareFillLayerSpec, this.squareExtrusionLayerSpec],
+            ),
             region: new GeoJSONSourceWithLayers(this.mapLibreMap, regionSourceId, [
                 this.regionFillLayerSpec,
                 this.regionLineLayerSpec,
             ]),
-            tiles: new GeoJSONSourceWithLayers(this.mapLibreMap, tilesSourceId, [
-                buildTileFillLayerSpec(this.tileFillLayerId),
-                buildTileExtrusionLayerSpec(this.tileExtrusionLayerId),
-            ]),
         };
+
+        // Sources are now in the map — safe to add highlight layers on top.
+        this.addHighlightLayersToMap(hexgridSourceId, squareSourceId);
+
+        return result;
     }
 
     /** @ignore */
     protected _applyConfig(config: TrafficAreaAnalyticsConfig | undefined): TrafficAreaAnalyticsConfig | undefined {
-        const merged = config !== undefined ? { ...this.config, ...config } : undefined;
+        if (config === undefined) return;
 
-        if (merged?.metric || merged?.displayMode || merged?.color) {
-            this.applyLayerConfig(merged);
-        }
+        // Deep-merge the metricConfig record at the per-metric-key level so that
+        // passing { metricConfig: { congestionLevel: { color: 'heat' } } } does
+        // not wipe out configs for other metrics.
+        const mergedMetricConfig: TrafficAreaAnalyticsConfig['metricConfig'] =
+            config.metricConfig && this.config?.metricConfig
+                ? { ...this.config.metricConfig, ...config.metricConfig }
+                : (config.metricConfig ?? this.config?.metricConfig);
 
-        if (merged?.regionPolygon) {
+        // Ensure every metric has an explicit config entry so getConfig() always
+        // returns fully-populated stops (callers never need to fall back to defaults).
+        const defaultKeys = Object.keys(AREA_ANALYTICS_DEFAULTS.metricConfig) as AreaAnalyticsMetricKey[];
+        const filledMetricConfig = Object.fromEntries(
+            defaultKeys.map((metric) => [
+                metric,
+                mergedMetricConfig?.[metric] ?? AREA_ANALYTICS_DEFAULTS.metricConfig[metric],
+            ]),
+        ) as Record<AreaAnalyticsMetricKey, AreaAnalyticsMetricConfig>;
+
+        const merged: TrafficAreaAnalyticsConfig = {
+            activeMetric: AREA_ANALYTICS_DEFAULTS.activeMetric,
+            displayMode: AREA_ANALYTICS_DEFAULTS.displayMode,
+            ...this.config,
+            ...config,
+            metricConfig: filledMetricConfig,
+        };
+
+        this.applyLayerConfig(merged);
+
+        if (merged.regionPolygon) {
             this.applyRegionConfig(merged);
         }
 
-        if (merged?.beforeLayerConfig) {
+        if (merged.beforeLayerConfig) {
             this.moveBeforeLayer(merged.beforeLayerConfig);
         }
 
-        if (merged?.visible === false) {
+        if (merged.visible === false) {
             this.setVisible(false);
         }
 
@@ -223,11 +318,9 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
 
         if (cachedAnalytics) {
             // Skip _applyConfig — show() will apply metrics + visibility after data is loaded.
-            // Applying paint properties to empty sources causes a race condition.
             if (this.config?.visible === false) {
                 this.setVisible(false);
             }
-
             void this.show(cachedAnalytics);
         } else if (this.config) {
             this._applyConfig(this.config);
@@ -241,7 +334,7 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
      *
      * Accepts the raw response from `trafficAreaAnalytics()`. Tile data is
      * transformed internally to point features (heatmap), hexagonal polygons
-     * (hexgrid / hexgrid-flat), and square polygons (square-3d / square-flat).
+     * (hexgrid modes), and square polygons (square modes).
      * The region boundary geometry is also displayed.
      *
      * @param analytics - The raw `TrafficAreaAnalytics` service response.
@@ -257,31 +350,15 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
 
         this.lastAnalytics = analytics;
 
-        const tiles = analytics.features.flatMap((f) => f.properties?.tiledData?.tiles ?? []);
+        this.sourcesWithLayers.heatmap.show(tilesToPointFeatures(analytics));
+        this.sourcesWithLayers.hexgrid.show(tilesToHexFeatures(analytics));
+        this.sourcesWithLayers.square.show(tilesToSquareFeatures(analytics));
 
-        // Compute data-driven ranges for color/height scaling
-        this.computedRanges = this.computeRangesFromTiles(tiles);
+        const inverted = this.config?.regionPolygon?.inverted ?? AREA_ANALYTICS_DEFAULTS.regionPolygon.inverted;
+        this.sourcesWithLayers.region.show(this.buildRegionFC(analytics.features, inverted));
 
-        this.sourcesWithLayers.heatmap.show(tilesToPointFeatures(tiles));
-        this.sourcesWithLayers.hexgrid.show(tilesToHexFeatures(tiles));
-        this.sourcesWithLayers.square.show(tilesToSquareFeatures(tiles));
-
-        this.sourcesWithLayers.region.show({
-            type: 'FeatureCollection',
-            features: analytics.features.map((feature, i) => ({
-                ...feature,
-                id: `traffic-area-analytics-region-${i}`,
-                properties: { id: `traffic-area-analytics-region-${i}` },
-            })),
-        });
-
-        this.applyMetricToLayers(this.metric);
+        this.applyLayerConfig(this.config);
         this.applyModeVisibility();
-
-        // Enable tooltip if configured
-        if (this.config?.tooltip?.enabled) {
-            this.enableTooltip();
-        }
     }
 
     /**
@@ -301,152 +378,173 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
      *
      * @param mode - One of `'heatmap'`, `'hexgrid-3d'`, `'hexgrid-2d'`, `'square-3d'`, `'square-2d'`.
      */
-    setMode(mode: AreaAnalyticsMode): void {
+    setMode(mode: AreaAnalyticsDisplayMode): void {
         if (mode === this.mode) return;
         this.config = { ...this.config, displayMode: mode };
         this.applyModeVisibility();
+        this.emitConfigChange();
     }
 
     /**
      * Changes the active metric that drives colour and height.
      *
-     * @param metric - One of `'congestionLevel'`, `'speed'`, or `'travelTime'`.
+     * Updates `activeMetric` in the config to the given metric key.
+     *
+     * @param metric - One of `'congestionLevel'`, `'speed'`, `'travelTime'`, `'freeFlowSpeed'`, or `'networkLength'`.
      */
     setMetric(metric: AreaAnalyticsMetricKey): void {
-        if (metric === this.metric) return;
-        this.config = { ...this.config, metric };
+        if (metric === this.activeMetric) return;
+        this.config = { ...this.config, activeMetric: metric };
         this.applyLayerConfig(this.config);
-    }
-
-    /**
-     * Sets the color for the analytics layers. Accepts either a preset theme name or
-     * per-metric custom color stops. Pass `undefined` to revert to the default preset (`'congestion'`).
-     *
-     * @param color - A preset theme name, a partial record of metric → color stops, or `undefined`.
-     *
-     * @example
-     * ```typescript
-     * module.setColor('thermal');
-     * module.setColor({
-     *   congestionLevel: [
-     *     { value: 0,   color: '#2dc653' },
-     *     { value: 0.5, color: '#f5a623' },
-     *     { value: 1,   color: '#e03030' },
-     *   ],
-     * });
-     * ```
-     */
-    setColorScheme(scheme: AreaAnalyticsColorScheme): void {
-        if (scheme === this.colorScheme) return;
-        this.config = { ...this.config, colorScheme: scheme, colors: undefined };
-        this.applyMetricToLayers(this.metric);
         this.emitConfigChange();
     }
 
     /**
-     * Sets custom colors for the visualization.
+     * Sets the color for one or more metrics.
      *
-     * @param colorConfig - Custom color config with three-stop `stops` or a `preset`.
+     * Pass a preset theme name or a custom color-stops configuration.
+     * Pass `undefined` to clear the color override for the targeted metrics.
+     *
+     * @param color - A preset theme, an `AreaAnalyticsColorStopsConfig`, or `undefined` to clear.
+     * @param metrics - Optional list of metrics to target.
+     *   When omitted, the color is applied to **all** metrics.
      *
      * @example
      * ```typescript
-     * module.setColors({ stops: ['#00ff00', '#ffff00', '#ff0000'] });
-     * module.setColors({ preset: 'thermal' });
+     * // Apply a theme to all metrics
+     * module.setColor('heat');
+     *
+     * // Apply a theme to specific metrics only
+     * module.setColor('heat', ['speed', 'freeFlowSpeed']);
+     *
+     * // Apply custom stops to a single metric
+     * module.setColor(
+     *   { valueType: 'raw', stops: [{ value: 0, color: '#2dc653' }, { value: 100, color: '#e03030' }] },
+     *   ['congestionLevel'],
+     * );
+     *
+     * // Clear color override for all metrics
+     * module.setColor(undefined);
+     *
+     * // Clear color override for a specific metric
+     * module.setColor(undefined, ['speed']);
      * ```
      */
-    setColors(colorConfig: AreaAnalyticsColorConfig): void {
-        this.config = { ...this.config, colors: colorConfig };
-        this.applyMetricToLayers(this.metric);
-        this.emitConfigChange();
-    }
+    setColor(
+        color: AreaAnalyticsColorTheme | AreaAnalyticsColorStopsConfig | undefined,
+        metrics?: AreaAnalyticsMetricKey[],
+    ): void {
+        const ALL_METRICS = Object.keys(AREA_ANALYTICS_DEFAULTS.metricConfig) as AreaAnalyticsMetricKey[];
+        const targetMetrics = metrics ?? ALL_METRICS;
+        const updatedMetricConfig = { ...this.config?.metricConfig };
 
-    /**
-     * Configures metric range strategy for a specific metric.
-     *
-     * @param metric - Metric to configure.
-     * @param rangeConfig - Range configuration.
-     *
-     * @example
-     * ```typescript
-     * module.setRanges('travelTime', { strategy: 'auto' });
-     * module.setRanges('congestionLevel', { fixed: { min: 0, mid: 30, max: 60 } });
-     * ```
-     */
-    setRanges(metric: AreaAnalyticsMetricKey, rangeConfig: AreaAnalyticsRangeConfig): void {
+        if (color === undefined) {
+            // Clear color override for targeted metrics.
+            for (const metric of targetMetrics) {
+                const { color: _c, ...rest } = updatedMetricConfig[metric] ?? {};
+                updatedMetricConfig[metric] = rest as AreaAnalyticsMetricConfig;
+            }
+        } else if (typeof color === 'string') {
+            // Theme preset: expand to per-metric explicit stops respecting display ordering
+            // (speed-like metrics are inverted so "slow" maps to the bad end of the ramp).
+            const expanded = expandThemeToAllMetrics(color);
+            for (const metric of targetMetrics) {
+                updatedMetricConfig[metric] = {
+                    ...updatedMetricConfig[metric],
+                    ...expanded[metric],
+                };
+            }
+        } else {
+            // Custom stops: apply same config to all targeted metrics.
+            for (const metric of targetMetrics) {
+                updatedMetricConfig[metric] = { ...updatedMetricConfig[metric], color };
+            }
+        }
+
         this.config = {
             ...this.config,
-            ranges: { ...this.config?.ranges, [metric]: rangeConfig },
+            metricConfig: updatedMetricConfig as Record<AreaAnalyticsMetricKey, AreaAnalyticsMetricConfig>,
         };
-        this.applyMetricToLayers(this.metric);
+        this.applyLayerConfig(this.config);
         this.emitConfigChange();
     }
 
     /**
-     * Configures extrusion height behaviour.
+     * Configures extrusion height behaviour for one or more metrics.
      *
      * @param heightConfig - Height configuration.
+     * @param metrics - Optional list of metrics to target.
+     *   When omitted, the height config is applied to **all** metrics.
      *
      * @example
      * ```typescript
-     * module.setHeight({ scale: 100, minHeight: 5 });
-     * module.setHeight({ flat: true });
+     * // Apply to all metrics
+     * module.setHeight({ maxHeightMeters: 100, minHeightMeters: 5 });
+     *
+     * // Apply only to specific metrics
+     * module.setHeight({ scaleMode: 'currentRange', maxHeightMeters: 500 }, ['speed', 'freeFlowSpeed']);
      * ```
      */
-    setHeight(heightConfig: AreaAnalyticsHeightConfig): void {
-        this.config = { ...this.config, height: heightConfig };
-        this.applyMetricToLayers(this.metric);
-        this.emitConfigChange();
-    }
+    setHeight(heightConfig: AreaAnalyticsHeightConfig, metrics?: AreaAnalyticsMetricKey[]): void {
+        const ALL_METRICS = Object.keys(AREA_ANALYTICS_DEFAULTS.metricConfig) as AreaAnalyticsMetricKey[];
+        const targetMetrics = metrics ?? ALL_METRICS;
+        const updatedMetricConfig = { ...this.config?.metricConfig };
 
-    /**
-     * Filters visible tiles by metric thresholds.
-     *
-     * @param filters - Filter config with OR logic. Pass `undefined` to clear.
-     *
-     * @example
-     * ```typescript
-     * module.filter({ any: [{ metric: 'congestionLevel', min: 50 }] });
-     * module.filter(undefined); // clear filter
-     * ```
-     */
-    filter(filters?: AreaAnalyticsFilters): void {
-        this.config = { ...this.config, filters };
-        this.applyFiltersToLayers(filters);
-        this.emitConfigChange();
-    }
-
-    /**
-     * Clears any active tile filter.
-     */
-    clearFilter(): void {
-        this.filter(undefined);
-    }
-
-    /**
-     * Configures the built-in hover tooltip.
-     *
-     * @param tooltipConfig - Tooltip configuration.
-     *
-     * @example
-     * ```typescript
-     * module.setTooltip({ enabled: true });
-     * module.setTooltip({ enabled: true, metrics: ['congestionLevel', 'speed'] });
-     * module.setTooltip({ enabled: false }); // disable
-     * ```
-     */
-    setTooltip(tooltipConfig: AreaAnalyticsTooltipConfig): void {
-        this.config = { ...this.config, tooltip: tooltipConfig };
-        if (tooltipConfig.enabled) {
-            this.enableTooltip();
-        } else {
-            this.disableTooltip();
+        for (const metric of targetMetrics) {
+            updatedMetricConfig[metric] = { ...updatedMetricConfig[metric], height: heightConfig };
         }
-        this.emitConfigChange();
-    setColor(
-        color: AreaAnalyticsColorTheme | Partial<Record<AreaAnalyticsMetricKey, AreaAnalyticsColorStop[]>> | undefined,
-    ): void {
-        this.config = { ...this.config, color };
+
+        this.config = {
+            ...this.config,
+            metricConfig: updatedMetricConfig as Record<AreaAnalyticsMetricKey, AreaAnalyticsMetricConfig>,
+        };
         this.applyLayerConfig(this.config);
+        this.emitConfigChange();
+    }
+
+    /**
+     * Filters visible tiles by value range for one or more metrics.
+     *
+     * @param filter - Filter config. Pass `undefined` to clear.
+     * @param metrics - Optional list of metrics to target.
+     *   When omitted, the filter is applied to **all** metrics.
+     *
+     * @example
+     * ```typescript
+     * // Filter all metrics
+     * module.filter({ min: 20, max: 80 });
+     *
+     * // Filter only a specific metric
+     * module.filter({ min: 50 }, ['congestionLevel']);
+     *
+     * // Clear filter for all metrics
+     * module.filter(undefined);
+     * ```
+     */
+    filter(filter?: AreaAnalyticsMetricFilter, metrics?: AreaAnalyticsMetricKey[]): void {
+        const ALL_METRICS = Object.keys(AREA_ANALYTICS_DEFAULTS.metricConfig) as AreaAnalyticsMetricKey[];
+        const targetMetrics = metrics ?? ALL_METRICS;
+        const updatedMetricConfig = { ...this.config?.metricConfig };
+
+        for (const metric of targetMetrics) {
+            updatedMetricConfig[metric] = { ...updatedMetricConfig[metric], filters: filter };
+        }
+
+        this.config = {
+            ...this.config,
+            metricConfig: updatedMetricConfig as Record<AreaAnalyticsMetricKey, AreaAnalyticsMetricConfig>,
+        };
+        this.applyFiltersToLayers();
+        this.emitConfigChange();
+    }
+
+    /**
+     * Clears any active tile filter for one or more metrics.
+     *
+     * @param metrics - Optional list of metrics to clear. When omitted, clears filters for **all** metrics.
+     */
+    clearFilter(metrics?: AreaAnalyticsMetricKey[]): void {
+        this.filter(undefined, metrics);
     }
 
     /**
@@ -489,76 +587,64 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
      */
     moveBeforeLayer(layerConfig: AreaAnalyticsBeforeLayerConfig): void {
         this.config = { ...this.config, beforeLayerConfig: layerConfig };
-        const toId = (v: BeforeLayerConfig) => (v === 'top' ? undefined : mapStyleLayerIDs[v]);
+        const toId = (value: BeforeLayerConfig) => (value === 'top' ? undefined : mapStyleLayerIDs[value]);
 
         if (layerConfig.heatmap !== undefined) {
             this.mapLibreMap.moveLayer(this.heatmapLayerSpec.id, toId(layerConfig.heatmap));
         }
+
         if (layerConfig.hexgrid?.flat2D !== undefined) {
             this.mapLibreMap.moveLayer(this.hexFillLayerSpec.id, toId(layerConfig.hexgrid.flat2D));
         }
+
         if (layerConfig.hexgrid?.extrusion3D !== undefined) {
             this.mapLibreMap.moveLayer(this.hexExtrusionLayerSpec.id, toId(layerConfig.hexgrid.extrusion3D));
         }
+
         if (layerConfig.square?.flat2D !== undefined) {
             this.mapLibreMap.moveLayer(this.squareFillLayerSpec.id, toId(layerConfig.square.flat2D));
         }
+
         if (layerConfig.square?.extrusion3D !== undefined) {
             this.mapLibreMap.moveLayer(this.squareExtrusionLayerSpec.id, toId(layerConfig.square.extrusion3D));
         }
     }
 
     /**
-     * Event interface for the hexgrid and square layers (hover / click on cells).
-     * Registers handlers on both sources so events fire regardless of the active mode.
+     * Event interface for the hexgrid and square layers.
+     *
+     * Supports feature-interaction events (hover, click, contextmenu, long-hover) as well as
+     * a `configChange` event that fires whenever any setter is called on this module.
      *
      * @example
      * ```typescript
      * module.events.on('hover', (feature, lngLat) => {
      *   console.log(feature.properties.congestionLevel);
      * });
-     * ```
-     */
-    get events() {
-        return new EventsModule<AreaAnalyticsTileFeature>(
-            this.tomtomMap._eventsProxy,
-            [this.sourcesWithLayers.hexgrid, this.sourcesWithLayers.square, this.sourcesWithLayers.heatmap],
-            this.config?.events,
-        );
-    }
-
-    /**
-     * Register a listener for config changes.
-     * Fires whenever any setter is called (setMode, setMetric, setColors, filter, etc.).
      *
-     * @returns An unsubscribe function.
-     *
-     * @example
-     * ```typescript
-     * const unsub = module.on('configChange', (config) => {
-     *   console.log('Metric changed to:', config?.metric);
+     * const unsub = module.events.on('configChange', (config) => {
+     *   console.log('Active metric:', config?.activeMetric);
      * });
      * // Later: unsub();
      * ```
      */
-    on(event: 'configChange', handler: ConfigChangeHandler): () => void {
-        if (event === 'configChange') {
-            this.configChangeHandlers.push(handler);
-            return () => {
-                this.configChangeHandlers = this.configChangeHandlers.filter((h) => h !== handler);
-            };
-        }
-        return () => {};
+    get events(): AreaAnalyticsEventsModule {
+        return new AreaAnalyticsEventsModule(
+            this.tomtomMap._eventsProxy,
+            [this.sourcesWithLayers.hexgrid, this.sourcesWithLayers.square, this.sourcesWithLayers.heatmap],
+            this.config?.events,
+            this.configChangeHandlers,
+        );
     }
 
     // ── Private helpers ──────────────────────────────────────────────
 
-    private get mode(): AreaAnalyticsMode {
-        return this.config?.displayMode ?? 'hexgrid-3d';
+    private get mode(): AreaAnalyticsDisplayMode {
+        return this.config?.displayMode ?? AREA_ANALYTICS_DEFAULTS.displayMode;
     }
 
-    private get metric(): AreaAnalyticsMetricKey {
-        return this.config?.metric ?? 'congestionLevel';
+    private get activeMetric(): AreaAnalyticsMetricKey {
+        return getActiveMetric(this.config);
     }
 
     private applyModeVisibility(): void {
@@ -573,29 +659,33 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
         const hasSquareData = this.sourcesWithLayers.square.shownFeatures.features.length > 0;
         const hasRegionData = this.sourcesWithLayers.region.shownFeatures.features.length > 0;
 
+        // Data layers (managed by GeoJSONSourceWithLayers)
         this.sourcesWithLayers.heatmap.setLayersVisible(mode === 'heatmap' && hasHeatmapData);
-
-        // Hexgrid: show extrusion in 3d mode, fill in flat mode
         this.sourcesWithLayers.hexgrid.setLayersVisible(
             mode === 'hexgrid-3d' && hasHexData,
-            (layerSpec) => layerSpec.type === 'fill-extrusion',
+            (layerSpec) => layerSpec.id === this.hexExtrusionLayerSpec.id,
         );
         this.sourcesWithLayers.hexgrid.setLayersVisible(
             mode === 'hexgrid-2d' && hasHexData,
-            (layerSpec) => layerSpec.type === 'fill',
+            (layerSpec) => layerSpec.id === this.hexFillLayerSpec.id,
         );
-
-        // Square: show extrusion in 3d mode, fill in flat mode
         this.sourcesWithLayers.square.setLayersVisible(
             mode === 'square-3d' && hasSquareData,
-            (layerSpec) => layerSpec.type === 'fill-extrusion',
+            (layerSpec) => layerSpec.id === this.squareExtrusionLayerSpec.id,
         );
         this.sourcesWithLayers.square.setLayersVisible(
             mode === 'square-2d' && hasSquareData,
-            (layerSpec) => layerSpec.type === 'fill',
+            (layerSpec) => layerSpec.id === this.squareFillLayerSpec.id,
         );
-
         this.sourcesWithLayers.region.setLayersVisible(hasRegionData);
+
+        // Highlight layers (added directly to MapLibre, not tracked by GeoJSONSourceWithLayers).
+        // Outlines are 2D-only — line layers render in the 2D pass and appear behind fill-extrusion prisms.
+        // Extrusion highlights are 3D-only.
+        this.setHighlightLayerVisible(this.hexOutlineLayerSpec.id, mode === 'hexgrid-2d' && hasHexData);
+        this.setHighlightLayerVisible(this.hexExtrusionHighlightLayerSpec.id, mode === 'hexgrid-3d' && hasHexData);
+        this.setHighlightLayerVisible(this.squareOutlineLayerSpec.id, mode === 'square-2d' && hasSquareData);
+        this.setHighlightLayerVisible(this.squareExtrusionHighlightLayerSpec.id, mode === 'square-3d' && hasSquareData);
     }
 
     private hideAllDataLayers(): void {
@@ -603,51 +693,73 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
         this.sourcesWithLayers.hexgrid.setLayersVisible(false);
         this.sourcesWithLayers.square.setLayersVisible(false);
         this.sourcesWithLayers.region.setLayersVisible(false);
-        this.sourcesWithLayers.heatmap.setLayersVisible(this.mode === 'heatmap' && hasHeatmapData);
-        this.sourcesWithLayers.hexgrid.setLayersVisible(this.mode === 'hexgrid' && hasHexData);
-        this.sourcesWithLayers.tiles.setLayersVisible(this.mode === 'tiles' && hasTileData);
+        this.setHighlightLayerVisible(this.hexOutlineLayerSpec.id, false);
+        this.setHighlightLayerVisible(this.hexExtrusionHighlightLayerSpec.id, false);
+        this.setHighlightLayerVisible(this.squareOutlineLayerSpec.id, false);
+        this.setHighlightLayerVisible(this.squareExtrusionHighlightLayerSpec.id, false);
     }
 
-    private resolveRange(metric: AreaAnalyticsMetricKey): MetricRange {
-        const rangeConfig = this.config?.ranges?.[metric];
-        const hardcoded = METRIC_RANGES[metric];
-        const computed = this.computedRanges?.[metric];
-
-        // Explicit fixed range takes priority
-        if (rangeConfig?.fixed) return rangeConfig.fixed;
-
-        const strategy = rangeConfig?.strategy ?? 'union';
-
-        if (strategy === 'fixed' || !computed) return hardcoded;
-
-        if (strategy === 'auto') return computed;
-
-        // 'union': expand hardcoded range to include actual data
-        return {
-            min: Math.min(hardcoded.min, computed.min),
-            mid: (Math.min(hardcoded.min, computed.min) + Math.max(hardcoded.max, computed.max)) / 2,
-            max: Math.max(hardcoded.max, computed.max),
+    private addHighlightLayersToMap(hexgridSourceId: string, squareSourceId: string): void {
+        const addHidden = (spec: { id: string; beforeID?: string; [key: string]: unknown }, sourceId: string) => {
+            if (!this.mapLibreMap.getLayer(spec.id)) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                this.mapLibreMap.addLayer({ ...spec, source: sourceId } as any, spec.beforeID);
+            }
+            this.mapLibreMap.setLayoutProperty(spec.id, 'visibility', 'none');
         };
+
+        addHidden(this.hexOutlineLayerSpec, hexgridSourceId);
+        addHidden(this.hexExtrusionHighlightLayerSpec, hexgridSourceId);
+        addHidden(this.squareOutlineLayerSpec, squareSourceId);
+        addHidden(this.squareExtrusionHighlightLayerSpec, squareSourceId);
+    }
+
+    private setHighlightLayerVisible(layerId: string, visible: boolean): void {
+        if (this.mapLibreMap.getLayer(layerId)) {
+            this.mapLibreMap.setLayoutProperty(layerId, 'visibility', visible ? 'visible' : 'none');
+        }
     }
 
     private applyLayerConfig(config: TrafficAreaAnalyticsConfig | undefined): void {
-        const newHeatmapSpec = buildHeatmapLayerSpec(this.heatmapLayerSpec.id, config);
-        const newHexFillSpec = buildHexFillLayerSpec(this.hexFillLayerSpec.id, config);
-        const newHexExtrusionSpec = buildHexExtrusionLayerSpec(this.hexExtrusionLayerSpec.id, config);
-        const newSquareFillSpec = buildSquareFillLayerSpec(this.squareFillLayerSpec.id, config);
-        const newSquareExtrusionSpec = buildSquareExtrusionLayerSpec(this.squareExtrusionLayerSpec.id, config);
+        const computedRange = this.lastAnalytics?.properties.ranges?.[this.activeMetric];
+
+        const newHeatmapSpec = buildHeatmapLayerSpec(this.heatmapLayerSpec.id, config, computedRange);
+        const newHexFillSpec = buildHexFillLayerSpec(this.hexFillLayerSpec.id, config, computedRange);
+        const newHexExtrusionSpec = buildHexExtrusionLayerSpec(this.hexExtrusionLayerSpec.id, config, computedRange);
+        const newHexExtrusionHighlightSpec = buildHexExtrusionHighlightLayerSpec(
+            this.hexExtrusionHighlightLayerSpec.id,
+            config,
+            computedRange,
+        );
+        const newSquareFillSpec = buildSquareFillLayerSpec(this.squareFillLayerSpec.id, config, computedRange);
+        const newSquareExtrusionSpec = buildSquareExtrusionLayerSpec(
+            this.squareExtrusionLayerSpec.id,
+            config,
+            computedRange,
+        );
+        const newSquareExtrusionHighlightSpec = buildSquareExtrusionHighlightLayerSpec(
+            this.squareExtrusionHighlightLayerSpec.id,
+            config,
+            computedRange,
+        );
 
         changeLayerProps(newHeatmapSpec, this.heatmapLayerSpec, this.mapLibreMap);
         changeLayerProps(newHexFillSpec, this.hexFillLayerSpec, this.mapLibreMap);
         changeLayerProps(newHexExtrusionSpec, this.hexExtrusionLayerSpec, this.mapLibreMap);
+        changeLayerProps(newHexExtrusionHighlightSpec, this.hexExtrusionHighlightLayerSpec, this.mapLibreMap);
         changeLayerProps(newSquareFillSpec, this.squareFillLayerSpec, this.mapLibreMap);
         changeLayerProps(newSquareExtrusionSpec, this.squareExtrusionLayerSpec, this.mapLibreMap);
+        changeLayerProps(newSquareExtrusionHighlightSpec, this.squareExtrusionHighlightLayerSpec, this.mapLibreMap);
 
         this.heatmapLayerSpec = newHeatmapSpec;
         this.hexFillLayerSpec = newHexFillSpec;
         this.hexExtrusionLayerSpec = newHexExtrusionSpec;
+        this.hexExtrusionHighlightLayerSpec = newHexExtrusionHighlightSpec;
         this.squareFillLayerSpec = newSquareFillSpec;
         this.squareExtrusionLayerSpec = newSquareExtrusionSpec;
+        this.squareExtrusionHighlightLayerSpec = newSquareExtrusionHighlightSpec;
+
+        this.applyFiltersToLayers();
     }
 
     private applyRegionConfig(config: TrafficAreaAnalyticsConfig | undefined): void {
@@ -659,127 +771,57 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
 
         this.regionFillLayerSpec = newRegionFillSpec;
         this.regionLineLayerSpec = newRegionLineSpec;
+
+        // Re-apply region geometry in case `inverted` changed after data was already shown.
+        if (this.lastAnalytics) {
+            const inverted = config?.regionPolygon?.inverted ?? AREA_ANALYTICS_DEFAULTS.regionPolygon.inverted;
+            this.sourcesWithLayers.region.show(this.buildRegionFC(this.lastAnalytics.features, inverted));
+        }
     }
 
-    private applyFiltersToLayers(filters?: AreaAnalyticsFilters): void {
+    private applyFiltersToLayers(): void {
+        const metric = this.activeMetric;
+        const filter = this.config?.metricConfig?.[metric]?.filters;
+
         const layerIds = [
-            this.hexFillLayerId,
-            this.hexExtrusionLayerId,
-            this.tileFillLayerId,
-            this.tileExtrusionLayerId,
+            this.hexFillLayerSpec.id,
+            this.hexExtrusionLayerSpec.id,
+            this.squareFillLayerSpec.id,
+            this.squareExtrusionLayerSpec.id,
         ];
 
-        if (!filters || filters.any.length === 0) {
-            // Clear filters
+        if (!filter || (filter.min === undefined && filter.max === undefined)) {
             for (const layerId of layerIds) {
                 this.mapLibreMap.setFilter(layerId, null);
             }
             return;
         }
 
-        // Build OR filter expression: ['any', condition1, condition2, ...]
-        const conditions = filters.any
-            .map((f) => {
-                const parts: unknown[] = [];
-                if (f.min !== undefined) parts.push(['>=', ['get', f.metric], f.min]);
-                if (f.max !== undefined) parts.push(['<=', ['get', f.metric], f.max]);
-                if (parts.length === 0) return null;
-                return parts.length === 1 ? parts[0] : ['all', ...parts];
-            })
-            .filter(Boolean);
+        const conditions: ExpressionSpecification[] = [];
+        if (filter.min !== undefined) conditions.push(['>=', ['get', metric], filter.min]);
+        if (filter.max !== undefined) conditions.push(['<=', ['get', metric], filter.max]);
 
-        const filterExpr = conditions.length === 1 ? conditions[0] : ['any', ...conditions];
+        const filterExpr: ExpressionSpecification = conditions.length === 1 ? conditions[0] : ['any', ...conditions];
 
         for (const layerId of layerIds) {
             this.mapLibreMap.setFilter(layerId, filterExpr);
         }
     }
 
-    /**
-     * Compute data-driven metric ranges from actual tile values.
-     * Uses min/median/max so the color gradient spans the real data distribution.
-     */
-    private computeRangesFromTiles(
-        tiles: ReadonlyArray<AreaAnalyticsTileEntry>,
-    ): Partial<Record<AreaAnalyticsMetricKey, MetricRange>> {
-        const compute = (values: number[]): MetricRange | undefined => {
-            if (values.length === 0) return undefined;
-            const sorted = [...values].sort((a, b) => a - b);
-            return {
-                min: sorted[0],
-                mid: sorted[Math.floor(sorted.length / 2)],
-                max: sorted[sorted.length - 1],
-            };
-        };
-
-        const extract = (key: keyof AreaAnalyticsTileEntry) =>
-            tiles.map((t) => t[key]).filter((v): v is number => v != null);
-
+    private buildRegionFC(features: TrafficAreaAnalytics['features'], inverted: boolean): FeatureCollection {
         return {
-            congestionLevel: compute(extract('congestionLevel')),
-            speed: compute(extract('speed')),
-            travelTime: compute(extract('travelTime')),
+            type: 'FeatureCollection',
+            features: features.map((feature, i) => {
+                const id = `traffic-area-analytics-region-${i}`;
+                const geometry = inverted ? mask(feature as any).geometry : feature.geometry;
+                return { ...feature, id, geometry, properties: { id } };
+            }),
         };
     }
 
-    // ── Tooltip ─────────────────────────────────────────────────────
-
-    private enableTooltip(): void {
-        if (this.tooltipBound) return;
-
-        this.tooltipBound = true;
-
-        this.tooltipPopup = new Popup({
-            closeButton: false,
-            closeOnClick: true,
-            anchor: 'left',
-            offset: 12,
-            maxWidth: '220px',
-        });
-
-        this.events.on('hover', (feature, lngLat) => {
-            if (!this.tooltipPopup) return;
-
-            if (!feature) {
-                this.tooltipPopup.remove();
-                return;
-            }
-
-            const p = feature.properties as AreaAnalyticsDisplayProperties;
-            const tooltipConfig = this.config?.tooltip;
-
-            let html: string;
-            if (tooltipConfig?.formatter) {
-                html = tooltipConfig.formatter(p);
-            } else {
-                const metrics = tooltipConfig?.metrics ?? (['congestionLevel', 'speed', 'travelTime'] as const);
-                const rows = metrics
-                    .filter((m) => p[m] != null && p[m] !== 0)
-                    .map((m) => {
-                        const label = m === 'congestionLevel' ? 'Congestion' : m === 'speed' ? 'Speed' : 'Travel Time';
-                        const unit = m === 'congestionLevel' ? '%' : m === 'speed' ? ' km/h' : ' min/10km';
-                        return `<div style="display:flex;justify-content:space-between;gap:12px"><span>${label}</span><strong>${p[m]}${unit}</strong></div>`;
-                    });
-                html = rows.join('');
-                if (!html) return; // No non-zero metrics to show
-            }
-
-            this.tooltipPopup.setLngLat(lngLat).setHTML(html).addTo(this.mapLibreMap);
-        });
-
-        this.mapLibreMap.getCanvas().addEventListener('mouseleave', this.handleMouseLeave);
+    private emitConfigChange(): void {
+        for (const handler of this.configChangeHandlers) {
+            handler(this.config);
+        }
     }
-
-    private disableTooltip(): void {
-        if (!this.tooltipBound) return;
-
-        this.tooltipBound = false;
-        this.tooltipPopup?.remove();
-        this.tooltipPopup = null;
-        this.mapLibreMap.getCanvas().removeEventListener('mouseleave', this.handleMouseLeave);
-    }
-
-    private handleMouseLeave = (): void => {
-        this.tooltipPopup?.remove();
-    };
 }

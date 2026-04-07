@@ -1,12 +1,16 @@
-import type {
+import {
     AreaAnalyticsAnomaly,
-    AreaAnalyticsDataType,
     AreaAnalyticsFeature,
     AreaAnalyticsFeatureProperties,
+    AreaAnalyticsMetricKey,
+    AreaAnalyticsMetricRange,
     AreaAnalyticsMetrics,
     AreaAnalyticsTileEntry,
     AreaAnalyticsTimedData,
     AreaAnalyticsTimedEntry,
+    areaAnalyticsMetricKeys,
+    BBox,
+    bboxFromGeoJSON,
     TrafficAreaAnalytics,
 } from '@tomtom-org/maps-sdk/core';
 import type {
@@ -113,12 +117,21 @@ const parseTimedData = (api: FeaturePropertiesAPI['timedData'], startDate: Date)
     ...(api.average && { average: parseAverageEntries(api.average) }),
 });
 
+const API_DATA_TYPE_TO_METRIC_KEY: Record<string, AreaAnalyticsMetricKey> = {
+    SPEED: 'speed',
+    FREE_FLOW_SPEED: 'freeFlowSpeed',
+    CONGESTION_LEVEL: 'congestionLevel',
+    TRAVEL_TIME: 'travelTime',
+    NETWORK_LENGTH: 'networkLength',
+};
+
 const parseAnomalies = (
     api: Record<string, AnomalyAPI[]>,
-): Partial<Record<AreaAnalyticsDataType, AreaAnalyticsAnomaly[]>> => {
-    const result: Partial<Record<AreaAnalyticsDataType, AreaAnalyticsAnomaly[]>> = {};
+): Partial<Record<AreaAnalyticsMetricKey, AreaAnalyticsAnomaly[]>> => {
+    const result: Partial<Record<AreaAnalyticsMetricKey, AreaAnalyticsAnomaly[]>> = {};
     for (const [key, anomalies] of Object.entries(api)) {
-        result[key as AreaAnalyticsDataType] = anomalies.map(parseAnomaly);
+        const metricKey = API_DATA_TYPE_TO_METRIC_KEY[key];
+        if (metricKey) result[metricKey] = anomalies.map(parseAnomaly);
     }
     return result;
 };
@@ -142,24 +155,49 @@ const parseFeature = (apiFeature: AreaAnalyticsFeatureAPI, startDate: Date): Are
     id: apiFeature.id,
     geometry: apiFeature.geometry,
     properties: parseFeatureProperties(apiFeature.properties, startDate),
+    bbox: bboxFromGeoJSON(apiFeature.geometry) as BBox,
 });
 
+const computeTileRanges = (
+    features: AreaAnalyticsFeature[],
+): Partial<Record<AreaAnalyticsMetricKey, AreaAnalyticsMetricRange>> => {
+    const tiles = features.flatMap((f) => f.properties.tiledData?.tiles ?? []);
+    const ranges: Partial<Record<AreaAnalyticsMetricKey, AreaAnalyticsMetricRange>> = {};
+    for (const key of areaAnalyticsMetricKeys) {
+        const values = tiles.map((t) => t[key]).filter((v): v is number => v != null);
+        if (values.length > 0) {
+            ranges[key] = { min: Math.min(...values), max: Math.max(...values) };
+        }
+    }
+    return ranges;
+};
+
 /**
- * Default method for parsing a Traffic Area Analytics API response.
- * @param apiResponse The raw Area Analytics API response.
+ * Parses a raw Traffic Area Analytics API response into the SDK representation.
+ *
+ * In addition to renaming abbreviated metric fields and converting date strings
+ * to `Date` objects, this function computes data-driven min/max ranges from
+ * all tile entries across every feature and attaches them to
+ * `result.properties.ranges`.
+ *
+ * @param apiResponse - The raw Area Analytics API response.
  */
 export const parseTrafficAreaAnalyticsResponse = (apiResponse: AreaAnalyticsResponseAPI): TrafficAreaAnalytics => {
     const startDate = new Date(apiResponse.properties.startDate);
+    const features = apiResponse.features.map((f) => parseFeature(f, startDate));
 
     return {
         type: 'FeatureCollection',
         properties: {
             startDate,
             endDate: new Date(apiResponse.properties.endDate),
-            dataTypes: apiResponse.properties.dataTypes as AreaAnalyticsDataType[],
+            metrics: apiResponse.properties.dataTypes
+                .map((dt) => API_DATA_TYPE_TO_METRIC_KEY[dt])
+                .filter((key): key is AreaAnalyticsMetricKey => key !== undefined),
             heatmap: apiResponse.properties.heatmap,
             frcs: apiResponse.properties.frcs,
+            ranges: computeTileRanges(features),
         },
-        features: apiResponse.features.map((f) => parseFeature(f, startDate)),
+        features,
     };
 };

@@ -115,7 +115,7 @@ describe('parseTrafficAreaAnalyticsResponse', () => {
             ],
         });
 
-        const anomalies = result.features[0].properties.anomalies?.SPEED;
+        const anomalies = result.features[0].properties.anomalies?.speed;
         expect(anomalies?.[0].startDate).toBeInstanceOf(Date);
         expect(anomalies?.[0].endDate).toBeInstanceOf(Date);
     });
@@ -444,6 +444,136 @@ describe('parseTrafficAreaAnalyticsResponse', () => {
 
         expect(result.features[0].id).toBe('my-region-uuid');
         expect(result.features[0].geometry).toEqual({ type: 'Polygon', coordinates: coords });
+        // bbox is derived from the polygon coordinates
+        expect(result.features[0].bbox).toEqual([4.875701, 52.36341, 4.923611, 52.382402]);
+    });
+
+    test('computes tile ranges across all features', () => {
+        const result = parseTrafficAreaAnalyticsResponse({
+            type: 'FeatureCollection',
+            properties: {
+                startDate: '2024-08-06',
+                endDate: '2024-08-06',
+                dataTypes: ['SPEED', 'CONGESTION_LEVEL'],
+                heatmap: true,
+                frcs: [0],
+            },
+            features: [
+                {
+                    type: 'Feature',
+                    id: 'feat-a',
+                    geometry: {
+                        type: 'Polygon',
+                        coordinates: [
+                            [
+                                [4.9, 52.3],
+                                [4.91, 52.3],
+                                [4.91, 52.31],
+                                [4.9, 52.3],
+                            ],
+                        ],
+                    },
+                    properties: {
+                        name: 'A',
+                        timezone: 'UTC',
+                        level: 0,
+                        baseData: {},
+                        timedData: {},
+                        tiledData: {
+                            tiles: [
+                                { lat: 52.3, lon: 4.9, v: 40, c: 5 },
+                                { lat: 52.31, lon: 4.91, v: 80, c: 15 },
+                            ],
+                        },
+                    },
+                },
+                {
+                    type: 'Feature',
+                    id: 'feat-b',
+                    geometry: {
+                        type: 'Polygon',
+                        coordinates: [
+                            [
+                                [4.9, 52.3],
+                                [4.91, 52.3],
+                                [4.91, 52.31],
+                                [4.9, 52.3],
+                            ],
+                        ],
+                    },
+                    properties: {
+                        name: 'B',
+                        timezone: 'UTC',
+                        level: 0,
+                        baseData: {},
+                        timedData: {},
+                        tiledData: {
+                            tiles: [{ lat: 52.32, lon: 4.92, v: 60, c: 20 }],
+                        },
+                    },
+                },
+            ],
+        });
+
+        expect(result.properties.ranges.speed).toEqual({ min: 40, max: 80 });
+        expect(result.properties.ranges.congestionLevel).toEqual({ min: 5, max: 20 });
+        expect(result.properties.ranges.travelTime).toBeUndefined();
+    });
+
+    test('returns empty ranges when no tile data is present', () => {
+        const result = parseTrafficAreaAnalyticsResponse({
+            type: 'FeatureCollection',
+            properties: {
+                startDate: '2024-08-06',
+                endDate: '2024-08-06',
+                dataTypes: ['SPEED'],
+                heatmap: false,
+                frcs: [0],
+            },
+            features: [],
+        });
+
+        expect(result.properties.ranges).toEqual({});
+    });
+
+    test('computes bbox from feature geometry', () => {
+        const result = parseTrafficAreaAnalyticsResponse({
+            type: 'FeatureCollection',
+            properties: {
+                startDate: '2024-08-06',
+                endDate: '2024-08-06',
+                dataTypes: ['SPEED'],
+                heatmap: false,
+                frcs: [0],
+            },
+            features: [
+                {
+                    type: 'Feature',
+                    id: 'bbox-test',
+                    geometry: {
+                        type: 'Polygon',
+                        coordinates: [
+                            [
+                                [4.9, 52.3],
+                                [4.91, 52.3],
+                                [4.91, 52.31],
+                                [4.9, 52.31],
+                                [4.9, 52.3],
+                            ],
+                        ],
+                    },
+                    properties: {
+                        name: 'Test',
+                        timezone: 'UTC',
+                        level: 0,
+                        baseData: {},
+                        timedData: {},
+                    },
+                },
+            ],
+        });
+
+        expect(result.features[0].bbox).toEqual([4.9, 52.3, 4.91, 52.31]);
     });
 });
 

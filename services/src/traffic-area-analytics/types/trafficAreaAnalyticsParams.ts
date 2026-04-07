@@ -1,3 +1,4 @@
+import type { AreaAnalyticsMetricKey } from '@tomtom-org/maps-sdk/core';
 import type { MultiPolygon, Polygon } from 'geojson';
 import type { CommonServiceParams } from '../../shared';
 
@@ -48,28 +49,21 @@ export const functionalRoadClasses = [
 export type FunctionalRoadClass = (typeof functionalRoadClasses)[number];
 
 // ---------------------------------------------------------------------------
-// Data types
+// Metric keys
 // ---------------------------------------------------------------------------
 
 /**
- * Valid data-type identifiers for area analytics requests.
+ * Maps a camelCase {@link AreaAnalyticsMetricKey} to the UPPER_CASE string expected by the API.
  *
- * @group Traffic
+ * @internal
  */
-export const areaAnalyticsDataTypes = [
-    'NETWORK_LENGTH',
-    'CONGESTION_LEVEL',
-    'FREE_FLOW_SPEED',
-    'TRAVEL_TIME',
-    'SPEED',
-] as const;
-
-/**
- * A traffic metric that can be requested in an area analytics report.
- *
- * @group Traffic
- */
-export type AreaAnalyticsDataType = (typeof areaAnalyticsDataTypes)[number];
+export const metricKeyToApiDataType: Record<AreaAnalyticsMetricKey, string> = {
+    speed: 'SPEED',
+    freeFlowSpeed: 'FREE_FLOW_SPEED',
+    congestionLevel: 'CONGESTION_LEVEL',
+    travelTime: 'TRAVEL_TIME',
+    networkLength: 'NETWORK_LENGTH',
+};
 
 // ---------------------------------------------------------------------------
 // Date input
@@ -166,7 +160,7 @@ export type TrafficAreaAnalyticsDays = {
  *   startDate: '2024-08-01',
  *   functionalRoadClasses: ['MOTORWAY', 'MAJOR_ROAD', 'OTHER_MAJOR_ROAD', 'SECONDARY_ROAD', 'LOCAL_CONNECTING_ROAD', 'LOCAL_ROAD_HIGH_IMPORTANCE'],
  *   hours: [7, 8, 9, 17, 18],
- *   dataTypes: ['SPEED', 'CONGESTION_LEVEL'],
+ *   metrics: ['speed', 'congestionLevel'],
  *   geometry: {
  *     type: 'Polygon',
  *     coordinates: [[[4.896128, 52.382402], [4.875701, 52.368459], [4.923611, 52.36341], [4.896128, 52.382402]]]
@@ -181,7 +175,7 @@ export type TrafficAreaAnalyticsDays = {
  *   days: ['2024-08-05', '2024-08-12', '2024-08-19', '2024-08-26'],
  *   functionalRoadClasses: ['MOTORWAY', 'MAJOR_ROAD', 'OTHER_MAJOR_ROAD'],
  *   hours: [8, 9, 17, 18],
- *   dataTypes: ['SPEED'],
+ *   metrics: ['speed'],
  *   geometry: polygon
  * });
  * ```
@@ -202,14 +196,15 @@ type TrafficAreaAnalyticsBaseParams = {
     name?: string;
 
     /**
-     * Traffic metrics to include in the analysis.
+     * Traffic metrics to include in the analysis, or `'all'` to include every metric.
      *
      * @remarks
-     * At least one data type must be provided.
+     * At least one metric must be provided, or pass `'all'` as a shorthand for all five metrics.
      *
-     * @example ['SPEED', 'CONGESTION_LEVEL', 'FREE_FLOW_SPEED']
+     * @example ['speed', 'congestionLevel', 'freeFlowSpeed']
+     * @example 'all'
      */
-    dataTypes: AreaAnalyticsDataType[];
+    metrics: AreaAnalyticsMetricKey[] | 'all';
 
     /**
      * Functional road classes to include in the analysis, or `'all'` to include every class.

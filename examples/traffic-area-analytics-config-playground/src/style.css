@@ -22,24 +22,6 @@
     }
 }
 
-/* ── Segmented button groups within panel ────────────────────────── */
-
-.sdk-example-customPanel .sdk-example-button-group-segmented {
-    display: flex;
-    width: 100%;
-}
-
-.sdk-example-customPanel .sdk-example-button-group-segmented .sdk-example-button {
-    flex: 1;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding: 0 var(--sdk-space-3);
-    font-size: var(--sdk-font-caption-m);
-    line-height: var(--sdk-font-caption-m-lh);
-    height: var(--sdk-height-sm);
-}
-
 /* ── Map controls (top-left overlay) ────────────────────────────── */
 
 .aa-map-controls {
@@ -139,6 +121,36 @@
 
 #add-stop-btn {
     margin-top: var(--sdk-space-2);
+}
+
+/* ── Generic label-value field rows ─────────────────────────────── */
+
+.aa-field-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sdk-space-2);
+    margin-bottom: var(--sdk-space-2);
+}
+
+.aa-field-label {
+    font-size: var(--sdk-font-caption-m);
+    line-height: var(--sdk-font-caption-m-lh);
+    color: var(--sdk-text-medium);
+    white-space: nowrap;
+}
+
+.aa-field-input-sm {
+    width: 90px;
+    height: var(--sdk-height-sm);
+    flex-shrink: 0;
+}
+
+.aa-field-select-sm {
+    height: var(--sdk-height-sm);
+    font-size: var(--sdk-font-caption-m);
+    flex-shrink: 0;
+    max-width: 145px;
 }
 
 /* ── Loading overlay ─────────────────────────────────────────────── */

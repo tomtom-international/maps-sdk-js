@@ -111,6 +111,8 @@ cp examples/.env.example examples/.env   # add API_KEY_EXAMPLES=…
 - **Variable naming**: always use full, descriptive names — never abbreviate. Use `response` not `res`, `request` not `req`, `error` not `err`, `parameters` not `params`, `configuration` not `config`, `index` not `idx`, `element` not `el`, `reference` not `ref`, `argument` not `arg`, `destination` not `dest`, `source` not `src`, `message` not `msg`, `previous` not `prev`, `current` not `curr`.
 - **No spaghetti code**: a function is spaghetti if it is both longer than one screen (~50 lines) and has complex nested logic (deeply nested conditions, loops within loops, etc.). If both conditions are met, extract the nested blocks into named functions whose names make the intent self-evident.
 - **Blank line after single-line `if`**: always add a blank line after a single-line `if` (i.e. an `if` with no `else` whose body is a single statement or early-exit) when it is followed by more code. This makes it visually distinct from the code that follows. Biome does not enforce this — apply it manually.
+- **Arrow functions**: prefer arrow function syntax (`const fn = () => ...`) over `function` declarations. One-liner arrows that return a single expression omit the curly braces and `return` keyword (e.g. `const double = (x: number) => x * 2`).
+- **No re-exports**: do not re-export types or values that originate elsewhere — always import directly from the canonical source. Barrel re-exports that just forward a symbol from another module add indirection without value.
 
 ## Key Files & Directories
 

@@ -65,9 +65,8 @@ export const queryTrafficAnalyticsOutputSchema = z.union([
         entries: z.array(timedEntrySchema),
         currentVisualization: z
             .object({
-                metric: z.string().optional(),
-                mode: z.string().optional(),
-                colorScheme: z.string().optional(),
+                activeMetric: z.string().optional(),
+                displayMode: z.string().optional(),
             })
             .optional(),
     }),
@@ -95,7 +94,7 @@ function resolveDateStr(
     if (direct) return direct;
     if (startDateStr && index >= 0) {
         const d = new Date(startDateStr);
-        if (!isNaN(d.getTime())) {
+        if (!Number.isNaN(d.getTime())) {
             const dayOffset = granularity === 'hourly' ? Math.floor(index / 24) : index;
             d.setDate(d.getDate() + dayOffset);
             return toDateString(d);
@@ -190,9 +189,8 @@ export async function executeQueryTrafficAnalytics(
     const vizConfig = state.traffic.currentAnalyticsConfig;
     const currentVisualization = vizConfig
         ? {
-              metric: vizConfig.metric,
-              mode: vizConfig.mode,
-              colorScheme: vizConfig.colorScheme,
+              activeMetric: vizConfig.activeMetric,
+              displayMode: vizConfig.displayMode,
           }
         : undefined;
 

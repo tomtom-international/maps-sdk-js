@@ -40,7 +40,7 @@ const VALID_PARAMS = {
     ...COMMON,
     startDate: new Date('2024-08-05'),
     endDate: new Date('2024-08-06'),
-    dataTypes: ['SPEED', 'CONGESTION_LEVEL'] as const,
+    metrics: ['speed', 'congestionLevel'] as const,
     functionalRoadClasses: ['MOTORWAY', 'MAJOR_ROAD', 'OTHER_MAJOR_ROAD'] as const,
     hours: [7, 8],
     geometry: POLYGON_GEOMETRY,
@@ -51,12 +51,12 @@ describe('Traffic Area Analytics schema — valid inputs', () => {
         expect(() => validateRequestSchema(VALID_PARAMS, { schema: trafficAreaAnalyticsRequestSchema })).not.toThrow();
     });
 
-    test('accepts params with all dataTypes', () => {
+    test('accepts params with all metrics', () => {
         expect(() =>
             validateRequestSchema(
                 {
                     ...VALID_PARAMS,
-                    dataTypes: ['SPEED', 'FREE_FLOW_SPEED', 'CONGESTION_LEVEL', 'TRAVEL_TIME', 'NETWORK_LENGTH'],
+                    metrics: ['speed', 'freeFlowSpeed', 'congestionLevel', 'travelTime', 'networkLength'],
                 },
                 { schema: trafficAreaAnalyticsRequestSchema },
             ),
@@ -191,7 +191,7 @@ describe('Traffic Area Analytics schema — days field', () => {
     const DAYS_PARAMS = {
         ...COMMON,
         days: ['2024-08-05', '2024-08-12', '2024-08-19', '2024-08-26'],
-        dataTypes: ['SPEED'] as const,
+        metrics: ['speed'] as const,
         functionalRoadClasses: ['MOTORWAY', 'MAJOR_ROAD', 'OTHER_MAJOR_ROAD'] as const,
         hours: [8, 9],
         geometry: POLYGON_GEOMETRY,
@@ -327,29 +327,31 @@ describe('Traffic Area Analytics schema — date validation', () => {
     });
 });
 
-describe('Traffic Area Analytics schema — dataTypes validation', () => {
-    test('fails when dataTypes is empty', () => {
+describe('Traffic Area Analytics schema — metrics validation', () => {
+    test("accepts metrics: 'all'", () => {
+        expect(() =>
+            validateRequestSchema({ ...VALID_PARAMS, metrics: 'all' }, { schema: trafficAreaAnalyticsRequestSchema }),
+        ).not.toThrow();
+    });
+
+    test('fails when metrics is empty', () => {
         expect(() =>
             validateRequestSchema(
                 // @ts-ignore
-                { ...VALID_PARAMS, dataTypes: [] },
+                { ...VALID_PARAMS, metrics: [] },
                 { schema: trafficAreaAnalyticsRequestSchema },
             ),
         ).toThrow();
     });
 
-    test('fails when dataTypes contains invalid enum values', () => {
+    test('fails when metrics contains invalid enum values', () => {
         expect(() =>
             validateRequestSchema(
                 // @ts-ignore
-                { ...VALID_PARAMS, dataTypes: ['INVALID_TYPE'] },
+                { ...VALID_PARAMS, metrics: ['INVALID_TYPE'] },
                 { schema: trafficAreaAnalyticsRequestSchema },
             ),
-        ).toThrow(
-            expect.objectContaining({
-                issues: expect.arrayContaining([expect.objectContaining({ code: 'invalid_value' })]),
-            }),
-        );
+        ).toThrow();
     });
 });
 

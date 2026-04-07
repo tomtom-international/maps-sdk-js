@@ -1,17 +1,41 @@
+import type { BBox } from '@tomtom-org/maps-sdk/core';
 import type { Feature, Polygon, Position } from 'geojson';
 
 /**
- * Available traffic analytical metrics for area analytics reports.
+ * Min/max value range for a single traffic metric across all tiles.
  *
  * @group Traffic
  */
-export type AreaAnalyticsDataType = 'NETWORK_LENGTH' | 'CONGESTION_LEVEL' | 'FREE_FLOW_SPEED' | 'TRAVEL_TIME' | 'SPEED';
+export type AreaAnalyticsMetricRange = {
+    min: number;
+    max: number;
+};
+
+/**
+ * All traffic metric identifiers, ordered consistently across the SDK.
+ *
+ * @group Traffic
+ */
+export const areaAnalyticsMetricKeys = [
+    'speed',
+    'freeFlowSpeed',
+    'congestionLevel',
+    'travelTime',
+    'networkLength',
+] as const;
+
+/**
+ * Identifies a single traffic metric — a key of {@link AreaAnalyticsMetrics}.
+ *
+ * @group Traffic
+ */
+export type AreaAnalyticsMetricKey = (typeof areaAnalyticsMetricKeys)[number];
 
 /**
  * Traffic metric values for an area or time period.
  *
  * @remarks
- * All fields are optional — only metrics included in the requested `dataTypes` will be present.
+ * All fields are optional — only metrics included in the requested `metrics` will be present.
  *
  * @group Traffic
  */
@@ -120,6 +144,11 @@ export type AreaAnalyticsTimedData = {
 /**
  * Traffic metrics for a single geographic tile within the analysis region.
  *
+ * @remarks
+ * All fields are optional — only metrics included in the requested `metrics` will be present.
+ * `networkLength` here represents the total length of road segments **within that tile** (meters),
+ * not the region aggregate.
+ *
  * @group Traffic
  */
 export type AreaAnalyticsTileEntry = AreaAnalyticsMetrics & {
@@ -182,9 +211,9 @@ export type AreaAnalyticsFeatureProperties = {
         tiles: AreaAnalyticsTileEntry[];
     };
     /**
-     * Detected anomalies keyed by data type, if anomaly detection was performed.
+     * Detected anomalies keyed by metric, if anomaly detection was performed.
      */
-    anomalies?: Partial<Record<AreaAnalyticsDataType, AreaAnalyticsAnomaly[]>>;
+    anomalies?: Partial<Record<AreaAnalyticsMetricKey, AreaAnalyticsAnomaly[]>>;
 };
 
 /**
@@ -197,6 +226,11 @@ export type AreaAnalyticsFeature = Omit<Feature<Polygon, AreaAnalyticsFeaturePro
      * Unique identifier for this feature.
      */
     id: string;
+
+    /**
+     * Bounding box for this area analytics feature.
+     */
+    bbox: BBox;
 };
 
 /**
@@ -216,7 +250,7 @@ export type AreaAnalyticsCollectionProperties = {
     /**
      * Traffic metrics included in the report.
      */
-    dataTypes: AreaAnalyticsDataType[];
+    metrics: AreaAnalyticsMetricKey[];
     /**
      * Whether tile-level heatmap data is included.
      */
@@ -225,6 +259,11 @@ export type AreaAnalyticsCollectionProperties = {
      * Functional road classes included in the analysis (0–8).
      */
     frcs: number[];
+    /**
+     * Data-driven min/max value ranges computed from all tile entries.
+     * Only metrics present in the tile data will have a range entry.
+     */
+    ranges: Partial<Record<AreaAnalyticsMetricKey, AreaAnalyticsMetricRange>>;
 };
 
 /**
@@ -240,7 +279,7 @@ export type AreaAnalyticsCollectionProperties = {
  *   endDate: new Date('2024-08-06'),
  *   frcs: [0, 1, 2, 3],
  *   hours: [7, 8, 9],
- *   dataTypes: ['SPEED', 'CONGESTION_LEVEL'],
+ *   metrics: ['speed', 'congestionLevel'],
  *   feature: {
  *     type: 'Feature',
  *     geometry: {
@@ -253,6 +292,7 @@ export type AreaAnalyticsCollectionProperties = {
  *
  * console.log(result.properties.startDate); // Date object: 2024-08-06T00:00:00.000Z
  * result.features[0].properties.baseData.speed; // avg speed in km/h
+ * result.properties.ranges.congestionLevel; // { min: 3, max: 42 } — data-driven range across all tiles
  * ```
  *
  * @group Traffic

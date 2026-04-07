@@ -58,24 +58,6 @@
     background: var(--sdk-surface-1);
 }
 
-/* ── Segmented button groups within panel ────────────────────────── */
-
-.sdk-example-customPanel .sdk-example-button-group-segmented {
-    display: flex;
-    width: 100%;
-}
-
-.sdk-example-customPanel .sdk-example-button-group-segmented .sdk-example-button {
-    flex: 1;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding: 0 var(--sdk-space-2);
-    font-size: var(--sdk-font-caption-m);
-    line-height: var(--sdk-font-caption-m-lh);
-    height: var(--sdk-height-sm);
-}
-
 /* ── Floating legend (top-left) ───────────────────────────────────── */
 
 .aa-floating-legend {

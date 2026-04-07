@@ -8,296 +8,228 @@ import type { ToolEntry, ToolState } from '../types';
 // --- MapLibre tools ---
 import {
     executeExecuteMaplibreCode,
+    executeFlyTo,
+    executeGetMapStyleLayers,
+    executeGetViewport,
     executeMaplibreCodeDescription,
     executeMaplibreCodeOutputSchema,
     executeMaplibreCodeSchema,
-} from './maplibre/execute-maplibre-code';
-import { executeFlyTo, flyToDescription, flyToOutputSchema, flyToSchema } from './maplibre/fly-to';
-import {
-    executeGetMapStyleLayers,
+    executeSetLayoutProperties,
+    executeSetPaintProperties,
+    executeSetPitchBearing,
+    executeZoomInOrOut,
+    flyToDescription,
+    flyToOutputSchema,
+    flyToSchema,
     getMapStyleLayersDescription,
     getMapStyleLayersOutputSchema,
     getMapStyleLayersSchema,
-} from './maplibre/get-map-style-layers';
-import {
-    executeGetViewport,
     getViewportDescription,
     getViewportOutputSchema,
     getViewportSchema,
-} from './maplibre/get-viewport';
-import {
-    executeSetLayoutProperties,
     setLayoutPropertiesDescription,
     setLayoutPropertiesOutputSchema,
     setLayoutPropertiesSchema,
-} from './maplibre/set-layout-properties';
-import {
-    executeSetPaintProperties,
     setPaintPropertiesDescription,
     setPaintPropertiesOutputSchema,
     setPaintPropertiesSchema,
-} from './maplibre/set-paint-properties';
-import {
-    executeSetPitchBearing,
     setPitchBearingDescription,
     setPitchBearingOutputSchema,
     setPitchBearingSchema,
-} from './maplibre/set-pitch-bearing';
-import {
-    executeZoomInOrOut,
     zoomInOrOutDescription,
     zoomInOrOutOutputSchema,
     zoomInOrOutSchema,
-} from './maplibre/zoom-in-or-out';
+} from './maplibre';
 
 // --- Service tools ---
 import {
     addStopToRouteDescription,
     addStopToRouteOutputSchema,
     addStopToRouteSchema,
-    executeAddStopToRoute,
-} from './services/add-stop-to-route';
-import {
     discoverPlacesDescription,
     discoverPlacesOutputSchema,
     discoverPlacesSchema,
+    executeAddStopToRoute,
     executeDiscoverPlaces,
-} from './services/discover-places';
-import {
     executeFindReachableArea,
+    executeGetPoiCategoryCodes,
+    executeGetTrafficAreaAnalytics,
+    executeGetTrafficIncidents,
+    executeLocatePlace,
+    executeQueryTrafficAnalytics,
+    executeRemoveStopFromRoute,
+    executeReverseGeocode,
+    executeSearchAlongRoute,
+    executeSetRouteLocations,
+    executeSetRouteParameters,
     findReachableAreaDescription,
     findReachableAreaOutputSchema,
     findReachableAreaSchema,
-} from './services/find-reachable-area';
-import {
-    executeGetPoiCategoryCodes,
     getPoiCategoryCodesDescription,
     getPoiCategoryCodesOutputSchema,
     getPoiCategoryCodesSchema,
-} from './services/get-poi-category-codes';
-import {
-    executeGetTrafficAreaAnalytics,
     getTrafficAreaAnalyticsDescription,
     getTrafficAreaAnalyticsOutputSchema,
     getTrafficAreaAnalyticsSchema,
-} from './services/get-traffic-area-analytics';
-import {
-    executeGetTrafficIncidents,
     getTrafficIncidentsDescription,
     getTrafficIncidentsOutputSchema,
     getTrafficIncidentsSchema,
-} from './services/get-traffic-incidents';
-import {
-    executeLocatePlace,
     locatePlaceDescription,
     locatePlaceOutputSchema,
     locatePlaceSchema,
-} from './services/locate-place';
-import {
-    executeQueryTrafficAnalytics,
     queryTrafficAnalyticsDescription,
     queryTrafficAnalyticsOutputSchema,
     queryTrafficAnalyticsSchema,
-} from './services/query-traffic-analytics';
-import {
-    executeRemoveStopFromRoute,
     removeStopFromRouteDescription,
     removeStopFromRouteOutputSchema,
     removeStopFromRouteSchema,
-} from './services/remove-stop-from-route';
-import {
-    executeReverseGeocode,
     reverseGeocodeDescription,
     reverseGeocodeOutputSchema,
     reverseGeocodeSchema,
-} from './services/reverse-geocode';
-import {
-    executeSearchAlongRoute,
     searchAlongRouteDescription,
     searchAlongRouteOutputSchema,
     searchAlongRouteSchema,
-} from './services/search-along-route';
-import {
-    executeSetRouteLocations,
     setRouteLocationsDescription,
     setRouteLocationsOutputSchema,
     setRouteLocationsSchema,
-} from './services/set-route-locations';
-import {
-    executeSetRouteParameters,
     setRouteParametersDescription,
     setRouteParametersOutputSchema,
     setRouteParametersSchema,
-} from './services/set-route-parameters';
+} from './services';
 
 // --- State tools ---
 import {
     executeGetCurrentWaypoints,
+    executeRecallPlaces,
+    executeRecallRanges,
+    executeRecallRoutes,
     getCurrentWaypointsDescription,
     getCurrentWaypointsOutputSchema,
     getCurrentWaypointsSchema,
-} from './state/get-current-waypoints';
-import {
-    executeRecallPlaces,
     recallPlacesDescription,
     recallPlacesOutputSchema,
     recallPlacesSchema,
-} from './state/recall-places';
-import {
-    executeRecallRanges,
     recallRangesDescription,
     recallRangesOutputSchema,
     recallRangesSchema,
-} from './state/recall-ranges';
-import {
-    executeRecallRoutes,
     recallRoutesDescription,
     recallRoutesOutputSchema,
     recallRoutesSchema,
-} from './state/recall-routes';
+} from './state';
 
 // --- TomTom Map tools ---
-import { clearMapDescription, clearMapOutputSchema, clearMapSchema, executeClearMap } from './tomtom-map/clear-map';
 import {
+    clearMapDescription,
+    clearMapOutputSchema,
+    clearMapSchema,
+    executeClearMap,
     executeFitRouteSection,
+    executeGetShownIncidents,
+    executeGetShownPlaces,
+    executeGetShownRouteSections,
+    executeGetShownRoutes,
+    executeGetShownRouteTrafficIncidents,
+    executeGetShownWaypoints,
+    executeGetStandardMapStyles,
+    executeSetLanguage,
+    executeSetMapStandardStyle,
+    executeSetRouteTheme,
+    executeShowPlaces,
+    executeShowRoutes,
+    executeShowTrafficAreaAnalytics,
+    executeShowWaypoints,
+    executeToggleBaseMapLayerGroups,
+    executeTogglePOIs,
+    executeToggleTrafficFlow,
+    executeToggleTrafficIncidents,
     fitRouteSectionDescription,
     fitRouteSectionOutputSchema,
     fitRouteSectionSchema,
-} from './tomtom-map/fit-route-section';
-import {
-    executeGetShownIncidents,
     getShownIncidentsDescription,
     getShownIncidentsOutputSchema,
     getShownIncidentsSchema,
-} from './tomtom-map/get-shown-incidents';
-import {
-    executeGetShownPlaces,
     getShownPlacesDescription,
     getShownPlacesOutputSchema,
     getShownPlacesSchema,
-} from './tomtom-map/get-shown-places';
-import {
-    executeGetShownRouteSections,
     getShownRouteSectionsDescription,
     getShownRouteSectionsOutputSchema,
     getShownRouteSectionsSchema,
-} from './tomtom-map/get-shown-route-sections';
-import {
-    executeGetShownRouteTrafficIncidents,
-    getShownRouteTrafficIncidentsDescription,
-    getShownRouteTrafficIncidentsOutputSchema,
-    getShownRouteTrafficIncidentsSchema,
-} from './tomtom-map/get-shown-route-traffic-incidents';
-import {
-    executeGetShownRoutes,
     getShownRoutesDescription,
     getShownRoutesOutputSchema,
     getShownRoutesSchema,
-} from './tomtom-map/get-shown-routes';
-import {
-    executeGetShownWaypoints,
+    getShownRouteTrafficIncidentsDescription,
+    getShownRouteTrafficIncidentsOutputSchema,
+    getShownRouteTrafficIncidentsSchema,
     getShownWaypointsDescription,
     getShownWaypointsOutputSchema,
     getShownWaypointsSchema,
-} from './tomtom-map/get-shown-waypoints';
-import {
-    executeGetStandardMapStyles,
     getStandardMapStylesDescription,
     getStandardMapStylesOutputSchema,
     getStandardMapStylesSchema,
-} from './tomtom-map/get-standard-map-styles';
-import {
-    executeSetLanguage,
     setLanguageDescription,
     setLanguageOutputSchema,
     setLanguageSchema,
-} from './tomtom-map/set-language';
-import {
-    executeSetMapStandardStyle,
     setMapStandardStyleDescription,
     setMapStandardStyleOutputSchema,
     setMapStandardStyleSchema,
-} from './tomtom-map/set-map-standard-style';
-import {
-    executeSetRouteTheme,
     setRouteThemeDescription,
     setRouteThemeOutputSchema,
     setRouteThemeSchema,
-} from './tomtom-map/set-route-theme';
-import {
-    executeShowPlaces,
     showPlacesDescription,
     showPlacesOutputSchema,
     showPlacesSchema,
-} from './tomtom-map/show-places';
-import {
-    executeShowRoutes,
     showRouteDescription,
     showRouteOutputSchema,
     showRouteSchema,
-} from './tomtom-map/show-routes';
-import {
-    executeShowTrafficAreaAnalytics,
     showTrafficAreaAnalyticsDescription,
     showTrafficAreaAnalyticsOutputSchema,
     showTrafficAreaAnalyticsSchema,
-} from './tomtom-map/show-traffic-area-analytics';
-import {
-    executeShowWaypoints,
     showWaypointsDescription,
     showWaypointsOutputSchema,
     showWaypointsSchema,
-} from './tomtom-map/show-waypoints';
-import {
-    executeToggleBaseMapLayerGroups,
     toggleBaseMapLayerGroupsDescription,
     toggleBaseMapLayerGroupsOutputSchema,
     toggleBaseMapLayerGroupsSchema,
-} from './tomtom-map/toggle-base-map-layer-groups';
-import {
-    executeTogglePOIs,
     togglePOIsDescription,
     togglePOIsOutputSchema,
     togglePOIsSchema,
-} from './tomtom-map/toggle-pois';
-import {
-    executeToggleTrafficFlow,
-    executeToggleTrafficIncidents,
     toggleTrafficFlowDescription,
     toggleTrafficFlowOutputSchema,
     toggleTrafficFlowSchema,
     toggleTrafficIncidentsDescription,
     toggleTrafficIncidentsOutputSchema,
     toggleTrafficIncidentsSchema,
-} from './tomtom-map/toggle-traffic';
+} from './tomtom-map';
 
 // --- Utility tools ---
-import { calculateBBoxDescription, calculateBBoxSchema, executeCalculateBBox } from './utilities/calculate-bbox';
-import { executeFormatDistance, formatDistanceDescription, formatDistanceSchema } from './utilities/format-distance';
-import { executeFormatDuration, formatDurationDescription, formatDurationSchema } from './utilities/format-duration';
 import {
+    calculateBBoxDescription,
+    calculateBBoxSchema,
+    executeCalculateBBox,
+    executeFormatDistance,
+    executeFormatDuration,
     executeGetCurrentLocation,
+    executeGetRouteProgress,
+    executeGetSectionBBox,
+    executeGetSectionProgress,
+    formatDistanceDescription,
+    formatDistanceSchema,
+    formatDurationDescription,
+    formatDurationSchema,
     getCurrentLocationDescription,
     getCurrentLocationOutputSchema,
     getCurrentLocationSchema,
-} from './utilities/get-current-location';
-import {
-    executeGetRouteProgress,
     getRouteProgressDescription,
     getRouteProgressSchema,
-} from './utilities/get-route-progress';
-import {
-    executeGetSectionBBox,
     getSectionBBoxDescription,
     getSectionBBoxOutputSchema,
     getSectionBBoxSchema,
-} from './utilities/get-section-bbox';
-import {
-    executeGetSectionProgress,
     getSectionProgressDescription,
     getSectionProgressSchema,
-} from './utilities/get-section-progress';
-import { helpDescription, helpOutputSchema, helpSchema } from './utilities/help';
+    helpDescription,
+    helpOutputSchema,
+    helpSchema,
+} from './utilities';
 
 /**
  * Default tool set for the map agent.
@@ -464,8 +396,8 @@ export const DEFAULT_TOOLS = {
         execute: executeGetTrafficAreaAnalytics,
         tags: ['traffic', 'location'],
         examples: [
-            "getTrafficAreaAnalytics({ bbox: [4.728, 52.278, 5.080, 52.479], dataTypes: ['SPEED', 'CONGESTION_LEVEL'], startDate: '2025-03-01', endDate: '2025-03-07' })",
-            "getTrafficAreaAnalytics({ bbox: [...], dataTypes: ['CONGESTION_LEVEL'], hours: [7,8,9,17,18] })",
+            "getTrafficAreaAnalytics({ bbox: [4.728, 52.278, 5.080, 52.479], metrics: ['speed', 'congestionLevel'], startDate: '2025-03-01', endDate: '2025-03-07' })",
+            "getTrafficAreaAnalytics({ bbox: [...], metrics: ['congestionLevel'], hours: [7,8,9,17,18] })",
         ],
         examplePrompts: [
             'What was the average congestion in Amsterdam last week?',
@@ -488,7 +420,7 @@ export const DEFAULT_TOOLS = {
             "queryTrafficAnalytics({ granularity: 'hourly', hourStart: 7, hourEnd: 9, metric: 'congestionLevel' })",
             "queryTrafficAnalytics({ granularity: 'average', dayOfWeek: [6, 7] })",
         ],
-        // TODO: "What am I looking at?" awareness should be handled at a higher level
+        // NOTE: "What am I looking at?" awareness should be handled at a higher level
         // (e.g. system prompt or state summary injected into context), not per-tool examplePrompts.
         // Current approach works but doesn't scale — every stateful tool would need similar hints.
         examplePrompts: [
@@ -535,17 +467,17 @@ export const DEFAULT_TOOLS = {
         tags: ['traffic', 'map style'],
         examples: [
             'showTrafficAreaAnalytics()',
-            "showTrafficAreaAnalytics({ mode: 'tiles', metric: 'speed', colorScheme: 'thermal' })",
-            "showTrafficAreaAnalytics({ filter: { metric: 'congestionLevel', min: 50 } })",
-            "showTrafficAreaAnalytics({ flat: true, customColors: ['#0000ff', '#ffff00', '#ff0000'] })",
+            "showTrafficAreaAnalytics({ mode: 'hexgrid-2d', metric: 'speed', colorTheme: 'heat' })",
+            'showTrafficAreaAnalytics({ filter: { min: 50 } })',
+            "showTrafficAreaAnalytics({ scaleMode: 'currentRange', heightScale: 200 })",
             'showTrafficAreaAnalytics({ visible: false })',
         ],
         examplePrompts: [
             'Show it on the map',
             'Visualize the congestion',
             'Only show areas with congestion above 50%',
-            'Use flat tiles with thermal colors',
-            'Switch to tile view',
+            'Normalize height to the current data range',
+            'Switch to heatmap view',
         ],
         relatedTools: ['getTrafficAreaAnalytics', 'queryTrafficAnalytics', 'toggleTrafficFlow', 'clearMap'],
         dependsOn: ['getTrafficAreaAnalytics'],

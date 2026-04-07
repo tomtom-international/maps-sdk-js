@@ -4,7 +4,7 @@ import { standardStyleIDs } from '@tomtom-org/maps-sdk/map';
 const PITCH_3D = 45;
 const PITCH_2D = 0;
 
-export function initMapControls(map: TomTomMap): void {
+export const initMapControls = (map: TomTomMap): void => {
     const toggle = document.getElementById('toggle-3d') as HTMLButtonElement;
     let is3d = true;
 
@@ -20,4 +20,4 @@ export function initMapControls(map: TomTomMap): void {
     styleSelect.addEventListener('change', () => {
         map.setStyle(styleSelect.value as StandardStyleID);
     });
-}
+};

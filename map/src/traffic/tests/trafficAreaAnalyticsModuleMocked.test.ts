@@ -40,9 +40,15 @@ describe('Traffic area analytics module tests', () => {
             properties: {
                 startDate: new Date('2024-08-06'),
                 endDate: new Date('2024-08-10'),
-                dataTypes: ['SPEED', 'CONGESTION_LEVEL'],
+                metrics: ['speed', 'congestionLevel'],
                 heatmap: false,
                 frcs: [0, 1, 2],
+                ranges: {
+                    congestionLevel: { min: 45, max: 45 },
+                    speed: { min: 35, max: 35 },
+                    freeFlowSpeed: { min: 60, max: 60 },
+                    travelTime: { min: 8, max: 8 },
+                },
             },
             features: [
                 {
@@ -59,6 +65,7 @@ describe('Traffic area analytics module tests', () => {
                             ],
                         ],
                     },
+                    bbox: [-3.71, 40.41, -3.69, 40.42],
                     properties: {
                         name: 'Test Region',
                         timezone: 'Europe/Madrid',
@@ -94,11 +101,15 @@ describe('Traffic area analytics module tests', () => {
         const mockMap = createMockMap();
         const module = await TrafficAreaAnalyticsModule.get(mockMap, {
             displayMode: 'heatmap',
-            metric: 'speed',
+            activeMetric: 'speed',
             visible: true,
         });
         expect(module).toBeDefined();
-        expect(module.getConfig()).toMatchObject({ displayMode: 'heatmap', metric: 'speed', visible: true });
+        expect(module.getConfig()).toMatchObject({
+            displayMode: 'heatmap',
+            activeMetric: 'speed',
+            visible: true,
+        });
     });
 
     test('show() populates both sources from raw response and clear() resets', async () => {
@@ -130,10 +141,10 @@ describe('Traffic area analytics module tests', () => {
 
         module.setMetric('speed');
         expect(mockMap.mapLibreMap.setPaintProperty).toHaveBeenCalled();
-        expect(module.getConfig()?.metric).toBe('speed');
+        expect(module.getConfig()?.activeMetric).toBe('speed');
 
         module.setMetric('travelTime');
-        expect(module.getConfig()?.metric).toBe('travelTime');
+        expect(module.getConfig()?.activeMetric).toBe('travelTime');
     });
 
     test('setMode() toggles layer visibility', async () => {
@@ -169,32 +180,67 @@ describe('Traffic area analytics module tests', () => {
         expect(module.getConfig()?.visible).toBe(true);
     });
 
-    test('setColor() with preset updates config and repaints', async () => {
+    test('setColor() with preset theme updates active metric config and repaints', async () => {
         const mockMap = createMockMap();
         const module = await TrafficAreaAnalyticsModule.get(mockMap);
 
-        module.setColor('thermal');
-        expect(module.getConfig()?.color).toBe('thermal');
+        module.setColor('heat');
+        // Theme is expanded to explicit raw stops for each metric (not stored as the theme string).
+        const color = module.getConfig()?.metricConfig?.congestionLevel?.color;
+        expect(color).toMatchObject({
+            valueType: 'raw',
+            stops: expect.arrayContaining([expect.objectContaining({ color: expect.any(String) })]),
+        });
         expect(mockMap.mapLibreMap.setPaintProperty).toHaveBeenCalled();
     });
 
-    test('setColor() with custom color stops updates config and repaints', async () => {
+    test('setColor() with custom color stops updates active metric config and repaints', async () => {
         const mockMap = createMockMap();
-        const module = await TrafficAreaAnalyticsModule.get(mockMap, { color: 'thermal' });
+        const module = await TrafficAreaAnalyticsModule.get(mockMap, {
+            activeMetric: 'congestionLevel',
+            metricConfig: { congestionLevel: { color: 'heat' } },
+        });
 
-        const callCount = (mockMap.mapLibreMap.setPaintProperty as ReturnType<typeof vi.fn>).mock.calls.length;
-        module.applyConfig({
-            color: {
-                congestionLevel: [
-                    { value: 0, color: '#aaaaaa' },
-                    { value: 0.5, color: '#555555' },
-                    { value: 1, color: '#000000' },
-                ],
-            },
+        const callCountBefore = (mockMap.mapLibreMap.setPaintProperty as ReturnType<typeof vi.fn>).mock.calls.length;
+        module.setColor({
+            valueType: 'raw',
+            stops: [
+                { value: 0, color: '#aaaaaa' },
+                { value: 50, color: '#555555' },
+                { value: 100, color: '#000000' },
+            ],
         });
         expect((mockMap.mapLibreMap.setPaintProperty as ReturnType<typeof vi.fn>).mock.calls.length).toBeGreaterThan(
-            callCount,
+            callCountBefore,
         );
+    });
+
+    test('applyConfig() deep-merges metricConfig record', async () => {
+        const mockMap = createMockMap();
+        const module = await TrafficAreaAnalyticsModule.get(mockMap, {
+            activeMetric: 'congestionLevel',
+            metricConfig: { congestionLevel: { color: 'heat' } },
+        });
+
+        module.applyConfig({
+            metricConfig: {
+                speed: {
+                    color: {
+                        valueType: 'raw',
+                        stops: [
+                            { value: 0, color: '#aaaaaa' },
+                            { value: 60, color: '#555555' },
+                            { value: 120, color: '#000000' },
+                        ],
+                    },
+                },
+            },
+        });
+
+        // congestionLevel config should still be present after deep merge
+        expect(module.getConfig()?.metricConfig?.congestionLevel?.color).toBe('heat');
+        // speed config should now be set
+        expect(module.getConfig()?.metricConfig?.speed?.color).toBeDefined();
     });
 
     test('events property is defined', async () => {

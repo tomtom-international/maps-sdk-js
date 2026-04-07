@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <title>Area Analytics Explorer</title>
-        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <meta name="viewport" content="initial-scale=1">
         <link rel="icon" href="data:,">
     </head>
     <body class="sdk-example-body">
@@ -31,20 +31,18 @@
                             placeholder="Search for a city..."
                             autocomplete="off"
                         >
-                        <ul id="city-suggestions" class="aa-suggestions" role="listbox"></ul>
+                        <ul id="city-suggestions" class="aa-suggestions" aria-label="City suggestions"></ul>
                     </div>
                 </div>
                 <div class="sdk-example-section">
-                    <label class="sdk-example-form-label">Metric</label>
-                    <div class="sdk-example-button-group-segmented" id="metric-selector">
-                        <button class="sdk-example-button sdk-example-toggle active" data-value="congestionLevel">
-                            Congestion
-                        </button>
-                        <button class="sdk-example-button sdk-example-toggle" data-value="speed">Speed</button>
-                        <button class="sdk-example-button sdk-example-toggle" data-value="travelTime">
-                            Travel Time
-                        </button>
-                    </div>
+                    <label class="sdk-example-form-label" for="metric-selector">Metric</label>
+                    <select class="sdk-example-dropdown" id="metric-selector">
+                        <option value="congestionLevel" selected>Congestion Level</option>
+                        <option value="speed">Speed</option>
+                        <option value="travelTime">Travel Time</option>
+                        <option value="freeFlowSpeed">Free Flow Speed</option>
+                        <option value="networkLength">Network Length (road density)</option>
+                    </select>
                 </div>
                 <div class="sdk-example-section">
                     <label class="sdk-example-form-label" for="mode-selector">Visualization</label>
@@ -57,14 +55,14 @@
                     </select>
                 </div>
                 <div class="sdk-example-section">
-                    <label class="sdk-example-form-label">Color Theme</label>
-                    <div class="sdk-example-button-group-segmented" id="color-scheme-selector">
-                        <button class="sdk-example-button sdk-example-toggle active" data-value="congestion">
-                            Congestion
-                        </button>
-                        <button class="sdk-example-button sdk-example-toggle" data-value="thermal">Thermal</button>
-                        <button class="sdk-example-button sdk-example-toggle" data-value="monochrome">Mono</button>
-                    </div>
+                    <label class="sdk-example-form-label" for="color-scheme-selector">Color Theme</label>
+                    <select class="sdk-example-dropdown" id="color-scheme-selector">
+                        <option value="trafficLight" selected>Traffic Light</option>
+                        <option value="heat">Heat</option>
+                        <option value="monochrome">Monochrome</option>
+                        <option value="viridis">Viridis</option>
+                        <option value="plasma">Plasma</option>
+                    </select>
                 </div>
             </div>
         </div>
@@ -99,7 +97,7 @@
                     </div>
                 </div>
                 <div class="aa-heatmap-section">
-                    <label class="sdk-example-form-label">Congestion by Day &amp; Hour (last 7 days)</label>
+                    <span class="sdk-example-form-label">Congestion by Day &amp; Hour (last 7 days)</span>
                     <div id="heatmap-chart"></div>
                 </div>
             </div>
@@ -107,7 +105,7 @@
 
         <!-- Floating legend -->
         <div class="aa-floating-legend">
-            <label class="aa-legend-title" id="legend-title">Congestion Level</label>
+            <span class="aa-legend-title" id="legend-title">Congestion Level</span>
             <div class="aa-legend-bar" id="legend-bar"></div>
             <div class="aa-legend-labels">
                 <span id="legend-min">Free</span>

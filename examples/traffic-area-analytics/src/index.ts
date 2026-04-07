@@ -7,11 +7,11 @@ import { API_KEY, MOVE_PORTAL_KEY } from './config';
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 
-function pastDateRange(): { startDate: string } {
+const pastDateRange = (): { startDate: string } => {
     const start = new Date();
     start.setDate(start.getDate() - 9);
     return { startDate: start.toISOString().slice(0, 10) };
-}
+};
 
 (async () => {
     const cityName = 'Amsterdam, Netherlands';
@@ -30,7 +30,7 @@ function pastDateRange(): { startDate: string } {
                 apiKey: MOVE_PORTAL_KEY,
                 name: cityName,
                 ...pastDateRange(),
-                dataTypes: ['SPEED', 'CONGESTION_LEVEL', 'FREE_FLOW_SPEED', 'TRAVEL_TIME'],
+                metrics: ['speed', 'congestionLevel', 'freeFlowSpeed', 'travelTime'],
                 functionalRoadClasses: 'all',
                 hours: 'all',
                 geometry,

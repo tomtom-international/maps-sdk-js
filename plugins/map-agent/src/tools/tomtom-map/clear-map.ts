@@ -56,15 +56,9 @@ export async function executeClearMap(params: z.infer<typeof clearMapSchema>, st
         }
 
         if (clearAll || layers.includes('analytics')) {
-            const analyticsModule = state.traffic.controlPanel
-                ? await state.traffic.getTrafficAreaAnalyticsModule()
-                : undefined;
-
-            if (analyticsModule) {
-                analyticsModule.clear();
+            if (state.traffic.trafficAreaAnalyticsModule) {
+                await state.traffic.trafficAreaAnalyticsModule.clear();
             }
-
-            state.traffic.controlPanel?.hide();
         }
 
         return {

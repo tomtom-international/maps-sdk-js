@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <title>Area Analytics Config Playground</title>
-        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <meta name="viewport" content="initial-scale=1">
         <link rel="icon" href="data:,">
     </head>
     <body class="sdk-example-body">
@@ -31,16 +31,14 @@
             <div class="sdk-example-panel-content">
                 <!-- Metric -->
                 <div class="sdk-example-section">
-                    <label class="sdk-example-form-label">Metric</label>
-                    <div class="sdk-example-button-group-segmented" id="metric-selector">
-                        <button class="sdk-example-button sdk-example-toggle active" data-value="congestionLevel">
-                            Congestion
-                        </button>
-                        <button class="sdk-example-button sdk-example-toggle" data-value="speed">Speed</button>
-                        <button class="sdk-example-button sdk-example-toggle" data-value="travelTime">
-                            Travel Time
-                        </button>
-                    </div>
+                    <label class="sdk-example-form-label" for="metric-selector">Metric</label>
+                    <select class="sdk-example-dropdown" id="metric-selector">
+                        <option value="congestionLevel" selected>Congestion Level</option>
+                        <option value="speed">Speed</option>
+                        <option value="travelTime">Travel Time</option>
+                        <option value="freeFlowSpeed">Free Flow Speed</option>
+                        <option value="networkLength">Network Length (road density)</option>
+                    </select>
                 </div>
 
                 <!-- Visualization Mode -->
@@ -57,19 +55,28 @@
 
                 <!-- Color Theme -->
                 <div class="sdk-example-section">
-                    <label class="sdk-example-form-label">Color Theme</label>
-                    <div class="sdk-example-button-group-segmented" id="color-theme-selector">
-                        <button class="sdk-example-button sdk-example-toggle active" data-value="congestion">
-                            Congestion
-                        </button>
-                        <button class="sdk-example-button sdk-example-toggle" data-value="thermal">Thermal</button>
-                        <button class="sdk-example-button sdk-example-toggle" data-value="monochrome">Mono</button>
-                    </div>
+                    <label class="sdk-example-form-label" for="color-theme-selector">Color Theme</label>
+                    <select class="sdk-example-dropdown" id="color-theme-selector">
+                        <option value="trafficLight" selected>Traffic Light</option>
+                        <option value="heat">Heat</option>
+                        <option value="monochrome">Monochrome</option>
+                        <option value="viridis">Viridis</option>
+                        <option value="plasma">Plasma</option>
+                        <option value="custom" disabled>Custom</option>
+                    </select>
                 </div>
 
                 <!-- Color Stops -->
                 <div class="sdk-example-section">
-                    <label class="sdk-example-form-label">Color Stops</label>
+                    <span class="sdk-example-form-label">Color Stops</span>
+                    <div class="aa-field-row">
+                        <span class="aa-field-label">Value type</span>
+                        <select class="sdk-example-dropdown aa-field-select-sm" id="value-type-selector">
+                            <option value="raw">Raw</option>
+                            <option value="relativeToPredefinedRangePCT">Predefined %</option>
+                            <option value="relativeToActualRangePCT">Actual %</option>
+                        </select>
+                    </div>
                     <div id="color-stops-list" style="display: flex; flex-direction: column; gap: 6px;"></div>
                     <button
                         class="sdk-example-button sdk-example-button-sm sdk-example-button-outline sdk-example-button-full aa-add-stop"
@@ -78,6 +85,52 @@
                     >
                         + Add Stop
                     </button>
+                </div>
+
+                <!-- Height -->
+                <div class="sdk-example-section">
+                    <span class="sdk-example-form-label">Height</span>
+                    <div class="aa-field-row">
+                        <span class="aa-field-label">Max height (m)</span>
+                        <input
+                            type="number"
+                            id="height-max-height"
+                            class="sdk-example-input aa-field-input-sm"
+                            placeholder="auto"
+                            min="0"
+                            step="10"
+                        >
+                    </div>
+                    <div class="aa-field-row" style="display: none;">
+                        <span class="aa-field-label">Scale factor</span>
+                        <input
+                            type="number"
+                            id="height-scale-factor"
+                            class="sdk-example-input aa-field-input-sm"
+                            placeholder="1"
+                            min="0"
+                            step="0.1"
+                        >
+                    </div>
+                    <div class="aa-field-row">
+                        <span class="aa-field-label">Min height (m)</span>
+                        <input
+                            type="number"
+                            id="height-min-height"
+                            class="sdk-example-input aa-field-input-sm"
+                            placeholder="0"
+                            min="0"
+                            step="1"
+                        >
+                    </div>
+                    <div class="aa-field-row">
+                        <span class="aa-field-label">Scale mode</span>
+                        <select class="sdk-example-dropdown aa-field-select-sm" id="height-scale-mode">
+                            <option value="raw">Raw</option>
+                            <option value="predefinedRange" selected>Predefined range</option>
+                            <option value="currentRange">Current range</option>
+                        </select>
+                    </div>
                 </div>
 
                 <!-- Layer order -->
@@ -91,7 +144,7 @@
         <!-- Loading overlay -->
         <div id="loading-overlay" class="aa-loading aa-hidden">
             <div class="sdk-example-spinner"></div>
-            <span>Loading analytics…</span>
+            <span>Loading analytics...</span>
         </div>
 
         <script type="module" src="./index.ts"></script>

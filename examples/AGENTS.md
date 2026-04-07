@@ -290,6 +290,41 @@ Each web example has one snapshot:
 
 **See [E2E_TESTING.md](./E2E_TESTING.md) for detailed testing documentation.**
 
+### Snapshot & Thumbnail Workflow
+
+Each browser example has two image artifacts that must be kept in sync when example output changes:
+
+| File | Purpose | How generated |
+|---|---|---|
+| `e2e-tests/snapshots/upon-load.png` | Playwright visual regression baseline | `pnpm test:e2e:update-snapshots` (per-example) or root scripts below |
+| `content/thumbnail.png` | Shown in docs portal example gallery | `generate-thumbnails.sh` — resizes the snapshot to 1000×500 |
+
+**Update snapshots for specific examples** (from repo root):
+```bash
+pnpm e2e-test:examples:update-snapshot <example-name>
+
+# Then regenerate the thumbnail from the fresh snapshot:
+pnpm generate-thumbnails:examples <example-name>
+```
+
+**Update all snapshots at once** (from repo root):
+```bash
+pnpm e2e-test:examples:update-all-snapshots
+
+# Then regenerate all thumbnails:
+pnpm generate-thumbnails:examples
+```
+
+**Prerequisites:**
+- The map package and the affected examples must be built before running snapshot/thumbnail commands:
+  ```bash
+  pnpm -F map build
+  pnpm -F @examples/<example-name> build
+  ```
+- The Playwright test server (`pnpm start-test-server`) serves from `dist/` — examples must be built first.
+- CORS-header tests in some examples require a live API key and will fail in offline/CI environments — this is expected and does not block snapshot updates.
+- Commit both `upon-load.png` and `thumbnail.png` after updating.
+
 ### Example Structure
 
 ```

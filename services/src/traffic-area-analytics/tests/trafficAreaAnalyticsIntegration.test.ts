@@ -1,4 +1,4 @@
-import type { TrafficAreaAnalytics } from '@tomtom-org/maps-sdk/core';
+import { AreaAnalyticsMetricKey, areaAnalyticsMetricKeys, TrafficAreaAnalytics } from '@tomtom-org/maps-sdk/core';
 import { afterAll, beforeAll, describe, expect, test, vi } from 'vitest';
 import type { FetchInput } from '../../shared';
 import { SDKServiceError } from '../../shared';
@@ -6,7 +6,7 @@ import { mockFetchResponse } from '../../shared/tests/fetchMockUtils';
 import { putIntegrationTestsAPIKey } from '../../shared/tests/integrationTestUtils';
 import { trafficAreaAnalytics } from '../trafficAreaAnalytics';
 import type { AreaAnalyticsRequestBody, AreaAnalyticsResponseAPI } from '../types/apiTypes';
-import type { AreaAnalyticsDataType, FunctionalRoadClass } from '../types/trafficAreaAnalyticsParams';
+import type { FunctionalRoadClass } from '../types/trafficAreaAnalyticsParams';
 
 // A small polygon covering central Amsterdam
 const AMSTERDAM_GEOMETRY = {
@@ -33,7 +33,7 @@ const BASE_PARAMS = {
         'LOCAL_ROAD_HIGH_IMPORTANCE',
     ] as FunctionalRoadClass[],
     hours: [7, 8, 9, 17, 18],
-    dataTypes: ['SPEED', 'CONGESTION_LEVEL'] as AreaAnalyticsDataType[],
+    metrics: ['speed', 'congestionLevel'] as AreaAnalyticsMetricKey[],
     geometry: AMSTERDAM_GEOMETRY,
 };
 
@@ -66,7 +66,7 @@ describe('Traffic Area Analytics integration tests', () => {
         expect(result.properties).toMatchObject({
             startDate: BASE_PARAMS.startDate,
             endDate: BASE_PARAMS.endDate,
-            dataTypes: expect.arrayContaining(['SPEED', 'CONGESTION_LEVEL']),
+            metrics: expect.arrayContaining(['speed', 'congestionLevel']),
             heatmap: expect.any(Boolean),
             frcs: expect.any(Array),
         });
@@ -92,6 +92,17 @@ describe('Traffic Area Analytics integration tests', () => {
         });
     });
 
+    test('tiledData has at least one tile with a value for each requested metric', () => {
+        if (!result) return;
+        const { tiledData } = result.features[0].properties;
+        if (!tiledData) return; // tiledData is optional — skip if API didn't return it
+        expect(tiledData.tiles.length).toBeGreaterThan(0);
+        for (const metric of BASE_PARAMS.metrics) {
+            const hasTileWithValue = tiledData.tiles.some((tile) => (tile[metric] as number) > 0);
+            expect(hasTileWithValue, `expected at least one tile with a value for metric "${metric}"`).toBe(true);
+        }
+    });
+
     test('baseData contains SDK-named metric fields', () => {
         if (!result) return;
         const { baseData } = result.features[0].properties;
@@ -103,6 +114,21 @@ describe('Traffic Area Analytics integration tests', () => {
             baseData.travelTime !== undefined ||
             baseData.networkLength !== undefined;
         expect(hasAnyMetric).toBe(true);
+    });
+
+    test('fetches all metrics and each has a numeric value in baseData', async () => {
+        let allMetricsResult: TrafficAreaAnalytics | undefined;
+        try {
+            allMetricsResult = await trafficAreaAnalytics({ ...BASE_PARAMS, metrics: 'all' });
+        } catch {
+            return;
+        }
+        if (!allMetricsResult) return;
+
+        const { baseData } = allMetricsResult.features[0].properties;
+        for (const metric of areaAnalyticsMetricKeys) {
+            expect(baseData[metric], `expected ${metric} to be a number`).toBeTypeOf('number');
+        }
     });
 
     test('custom template can override the response parser', async () => {

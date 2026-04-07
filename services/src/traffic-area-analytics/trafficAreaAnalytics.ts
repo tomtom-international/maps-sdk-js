@@ -19,14 +19,14 @@ import type { TrafficAreaAnalyticsParams } from './types/trafficAreaAnalyticsPar
  * - `baseData`: overall aggregated metrics for the full analysis period
  * - `timedData`: time-series breakdown at yearly / monthly / weekly / daily / hourly granularity
  * - `tiledData`: per-tile heatmap metrics (when available)
- * - `anomalies`: detected traffic anomalies keyed by data type
+ * - `anomalies`: detected traffic anomalies keyed by camelCase metric key (e.g. `anomalies.speed`)
  *
- * **Available metrics (`dataTypes`):**
- * - `SPEED` — average speed on the road network (km/h)
- * - `FREE_FLOW_SPEED` — average speed under uncongested conditions (km/h)
- * - `CONGESTION_LEVEL` — percentage increase in travel time above free-flow
- * - `TRAVEL_TIME` — average travel time per 10 km (minutes)
- * - `NETWORK_LENGTH` — total length of road segments with data (meters)
+ * **Available metrics (`metrics`):**
+ * - `speed` — average speed on the road network (km/h)
+ * - `freeFlowSpeed` — average speed under uncongested conditions (km/h)
+ * - `congestionLevel` — percentage increase in travel time above free-flow
+ * - `travelTime` — average travel time per 10 km (minutes)
+ * - `networkLength` — total length of road segments with data (meters)
  *
  * @param params - Traffic Area Analytics parameters
  * @param customTemplate - Advanced customization for request/response handling
@@ -41,7 +41,7 @@ import type { TrafficAreaAnalyticsParams } from './types/trafficAreaAnalyticsPar
  *   endDate: new Date('2024-08-06'),
  *   functionalRoadClasses: ['MOTORWAY', 'MAJOR_ROAD', 'OTHER_MAJOR_ROAD', 'SECONDARY_ROAD', 'LOCAL_CONNECTING_ROAD', 'LOCAL_ROAD_HIGH_IMPORTANCE'],
  *   hours: [7, 8, 9, 17, 18],
- *   dataTypes: ['SPEED', 'CONGESTION_LEVEL'],
+ *   metrics: ['speed', 'congestionLevel'],
  *   geometry: {
  *     type: 'Polygon',
  *     coordinates: [
@@ -64,7 +64,7 @@ import type { TrafficAreaAnalyticsParams } from './types/trafficAreaAnalyticsPar
  *   endDate: new Date('2024-08-07'),
  *   functionalRoadClasses: 'all',
  *   hours: 'all',
- *   dataTypes: ['SPEED', 'FREE_FLOW_SPEED', 'CONGESTION_LEVEL', 'TRAVEL_TIME', 'NETWORK_LENGTH'],
+ *   metrics: ['speed', 'freeFlowSpeed', 'congestionLevel', 'travelTime', 'networkLength'],
  *   geometry: {
  *     type: 'Polygon',
  *     coordinates: [[[4.89, 52.37], [4.91, 52.37], [4.91, 52.39], [4.89, 52.39], [4.89, 52.37]]]

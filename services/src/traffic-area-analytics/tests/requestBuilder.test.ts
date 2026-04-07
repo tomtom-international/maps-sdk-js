@@ -1,8 +1,9 @@
+import type { AreaAnalyticsMetricKey } from '@tomtom-org/maps-sdk/core';
 import { describe, expect, test } from 'vitest';
 import { bestExecutionTimeMS } from '../../../../core/src/util/tests/performanceTestUtils';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
 import { buildTrafficAreaAnalyticsRequest } from '../requestBuilder';
-import type { AreaAnalyticsDataType, FunctionalRoadClass } from '../types/trafficAreaAnalyticsParams';
+import type { FunctionalRoadClass } from '../types/trafficAreaAnalyticsParams';
 
 const BASE = 'https://api-test.tomtom.com';
 const KEY = 'TEST_API_KEY';
@@ -38,7 +39,7 @@ const BASE_PARAMS = {
     ...COMMON,
     startDate: new Date('2024-08-06'),
     endDate: new Date('2024-08-06'),
-    dataTypes: ['SPEED', 'CONGESTION_LEVEL'] as AreaAnalyticsDataType[],
+    metrics: ['speed', 'congestionLevel'] as AreaAnalyticsMetricKey[],
     functionalRoadClasses: ['MOTORWAY', 'MAJOR_ROAD', 'OTHER_MAJOR_ROAD'] as FunctionalRoadClass[],
     hours: [7, 8, 17, 18],
     geometry: AMSTERDAM_POLYGON,
@@ -118,6 +119,14 @@ describe('buildTrafficAreaAnalyticsRequest — request body', () => {
         expect(body.hours).toEqual(Array.from({ length: 24 }, (_, i) => i));
     });
 
+    test("expands metrics 'all' to all five UPPER_CASE API identifiers", () => {
+        const result = buildTrafficAreaAnalyticsRequest({ ...BASE_PARAMS, metrics: 'all' });
+        const body = (result as { data: Record<string, unknown> }).data;
+        expect(body.dataTypes).toEqual(
+            expect.arrayContaining(['NETWORK_LENGTH', 'CONGESTION_LEVEL', 'FREE_FLOW_SPEED', 'TRAVEL_TIME', 'SPEED']),
+        );
+    });
+
     test('wraps geometry into a single-element features array', () => {
         const result = buildTrafficAreaAnalyticsRequest(BASE_PARAMS);
         const body = (result as { data: Record<string, unknown> }).data;
@@ -177,7 +186,7 @@ describe('buildTrafficAreaAnalyticsRequest — days field', () => {
     const DAYS_PARAMS = {
         ...COMMON,
         days: ['2024-08-05', '2024-08-12', '2024-08-19', '2024-08-26'],
-        dataTypes: ['SPEED'] as AreaAnalyticsDataType[],
+        metrics: ['speed'] as AreaAnalyticsMetricKey[],
         functionalRoadClasses: ['MOTORWAY', 'MAJOR_ROAD', 'OTHER_MAJOR_ROAD'] as FunctionalRoadClass[],
         hours: [8, 9],
         geometry: AMSTERDAM_POLYGON,

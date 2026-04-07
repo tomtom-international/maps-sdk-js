@@ -2,19 +2,21 @@
  * @module map-agent-tools
  */
 
-import type { TrafficAreaAnalytics } from '@tomtom-org/maps-sdk/core';
+import { bboxFromGeoJSON, type Place, type TrafficAreaAnalytics } from '@tomtom-org/maps-sdk/core';
 import type { TrafficAreaAnalyticsParams } from '@tomtom-org/maps-sdk/services';
-import { trafficAreaAnalytics } from '@tomtom-org/maps-sdk/services';
+import { geometryData, trafficAreaAnalytics } from '@tomtom-org/maps-sdk/services';
 import type { MultiPolygon, Polygon } from 'geojson';
+import type { LngLatBoundsLike } from 'maplibre-gl';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
+import { locationInputSchema, resolveLocationInput } from '../shared/location-input';
 import { toolErrorSchema } from '../shared-output-schemas';
 
 // ---------------------------------------------------------------------------
 // Constants (inline — the SDK only type-exports these)
 // ---------------------------------------------------------------------------
 
-const DATA_TYPES = ['SPEED', 'CONGESTION_LEVEL', 'FREE_FLOW_SPEED', 'TRAVEL_TIME', 'NETWORK_LENGTH'] as const;
+const METRICS = ['speed', 'congestionLevel', 'freeFlowSpeed', 'travelTime', 'networkLength'] as const;
 
 const FUNCTIONAL_ROAD_CLASSES = [
     'MOTORWAY',
@@ -47,7 +49,7 @@ export const getTrafficAreaAnalyticsOutputSchema = z.union([
         timezone: z.string().optional(),
         dateRange: z.object({ start: z.string(), end: z.string() }),
         baseData: metricsSchema,
-        dataTypes: z.array(z.string()),
+        metrics: z.array(z.string()),
         tileCount: z.number(),
         availableGranularities: z.array(z.string()),
     }),
@@ -58,22 +60,22 @@ export const getTrafficAreaAnalyticsOutputSchema = z.union([
  * Tool schema for fetching traffic area analytics.
  */
 export const getTrafficAreaAnalyticsSchema = z.object({
+    location: locationInputSchema
+        .optional()
+        .describe(
+            'Named location (city, region, country) to fetch the boundary for. Resolved via geocoding + geometryData. Mutually exclusive with bbox and geometry.',
+        ),
     bbox: z
         .array(z.number())
         .length(4)
         .optional()
         .describe(
-            '[minLng, minLat, maxLng, maxLat] — use a wide area (at least 5-10km across, city-level) for meaningful results. Too-small areas produce sparse, hard-to-read visualizations.',
+            '[minLng, minLat, maxLng, maxLat] — use a wide area (at least 5-10km across, city-level) for meaningful results. Mutually exclusive with location.',
         ),
-    geometry: z
-        .object({
-            type: z.enum(['Polygon', 'MultiPolygon']),
-            coordinates: z.any(),
-        })
+    showOnMap: z
+        .boolean()
         .optional()
-        .describe(
-            'GeoJSON Polygon or MultiPolygon geometry. Use for precise boundaries. Mutually exclusive with bbox.',
-        ),
+        .describe('Visualize the result immediately with default settings. Use showTrafficAreaAnalytics to customize.'),
     startDate: z
         .string()
         .optional()
@@ -85,10 +87,10 @@ export const getTrafficAreaAnalyticsSchema = z.object({
         .describe(
             "Specific dates 'YYYY-MM-DD' for non-consecutive analysis. Mutually exclusive with startDate/endDate.",
         ),
-    dataTypes: z
-        .array(z.enum([...DATA_TYPES]))
+    metrics: z
+        .union([z.literal('all'), z.array(z.enum([...METRICS])).min(1)])
         .describe(
-            "Traffic metrics to analyze. Prefer fetching all: ['SPEED', 'CONGESTION_LEVEL', 'FREE_FLOW_SPEED', 'TRAVEL_TIME', 'NETWORK_LENGTH'] unless the user asks for specific ones.",
+            "Traffic metrics to analyze. Use 'all' (preferred) or an explicit array like ['speed', 'congestionLevel', 'freeFlowSpeed', 'travelTime', 'networkLength'].",
         ),
     functionalRoadClasses: z
         .union([z.literal('all'), z.array(z.enum([...FUNCTIONAL_ROAD_CLASSES]))])
@@ -102,15 +104,16 @@ export const getTrafficAreaAnalyticsSchema = z.object({
 
 export const getTrafficAreaAnalyticsDescription =
     'Fetch historical traffic analytics for a geographic area (max 31 days). ' +
-    'Fetch all data types in a single call — visualization requires all metrics in one result. ' +
-    'Use a wide bounding box (city-level, ~10km+) for meaningful data. ' +
-    'Returns period averages. Use queryTrafficAnalytics for breakdowns, showTrafficAreaAnalytics to visualize.';
+    'Provide area via location (named city/region, resolved to boundary polygon) or bbox. ' +
+    'Fetch all metrics in a single call — visualization requires all metrics in one result. ' +
+    'Use city-level areas (~10km+) for meaningful data. ' +
+    'Returns period averages. Use showOnMap to visualize immediately, queryTrafficAnalytics for breakdowns.';
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
-/** Convert [minLng, minLat, maxLng, maxLat] to a GeoJSON Polygon. */
+// Convert [minLng, minLat, maxLng, maxLat] to a GeoJSON Polygon.
 function bboxToPolygon(bbox: number[]): Polygon {
     const [minLng, minLat, maxLng, maxLat] = bbox;
     return {
@@ -127,6 +130,56 @@ function bboxToPolygon(bbox: number[]): Polygon {
     };
 }
 
+// Resolve the analytics area geometry from a location query or bbox.
+async function resolveGeometry(
+    location: z.infer<typeof locationInputSchema> | undefined,
+    bbox: number[] | undefined,
+): Promise<Polygon | MultiPolygon | { error: string }> {
+    if (location) {
+        const resolved = await resolveLocationInput(location);
+        if (!resolved) return { error: 'Could not resolve the provided location.' };
+        if (Array.isArray(resolved.place)) {
+            return {
+                error: 'A bare position cannot define an analytics area. Provide a named location query instead.',
+            };
+        }
+        // resolved.place is a Place at runtime (locatePlace always returns Place | null)
+        const boundary = await geometryData({ geometries: [resolved.place as unknown as Place] });
+        const boundaryGeometry = boundary?.features?.[0]?.geometry as Polygon | MultiPolygon | undefined;
+        if (!boundaryGeometry) {
+            return { error: `No boundary polygon found for "${resolved.name}". Try a bbox instead.` };
+        }
+        return boundaryGeometry;
+    }
+    if (!bbox) return { error: 'No area provided.' };
+    return bboxToPolygon(bbox);
+}
+
+// Resolve which date parameters to forward to the SDK from the tool inputs.
+function resolveDateParams(
+    days: string[] | undefined,
+    startDate: string | undefined,
+    endDate: string | undefined,
+): { startDate?: string; endDate?: string; days?: string[] } {
+    if (days && days.length > 0) return { days };
+    if (startDate) return endDate ? { startDate, endDate } : { startDate };
+    return {};
+}
+
+// Show analytics on the map with default settings, fitting the viewport.
+async function showAnalyticsOnMap(state: ToolState, result: TrafficAreaAnalytics): Promise<void> {
+    const analyticsModule = await state.traffic.getTrafficAreaAnalyticsModule();
+    await analyticsModule.clear();
+    await analyticsModule.show(result);
+    const defaultMetric = result.properties?.metrics?.[0] ?? 'congestionLevel';
+    analyticsModule.setMetric(defaultMetric);
+    const bbox = bboxFromGeoJSON(result.features);
+    if (bbox) {
+        state.baseMap.mapLibreMap.fitBounds(bbox as LngLatBoundsLike, { padding: 50, pitch: 45 });
+    }
+    state.traffic.onAnalyticsShown?.(result, analyticsModule);
+}
+
 /** Format a Date to 'YYYY-MM-DD'. */
 export function toDateString(d: Date): string {
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -135,7 +188,7 @@ export function toDateString(d: Date): string {
 /** Safely format a date value (Date object or string) to 'YYYY-MM-DD', or undefined if invalid. */
 export function formatDate(value: unknown): string | undefined {
     if (value instanceof Date) {
-        return isNaN(value.getTime()) ? undefined : toDateString(value);
+        return Number.isNaN(value.getTime()) ? undefined : toDateString(value);
     }
     if (typeof value === 'string') return value.slice(0, 10);
     return undefined;
@@ -163,7 +216,7 @@ function summarize(
         return {
             dateRange: { start: '', end: '' },
             baseData: {},
-            dataTypes: [],
+            metrics: [],
             tileCount: 0,
             availableGranularities: [],
         };
@@ -197,7 +250,7 @@ function summarize(
         ...(region.timezone && { timezone: region.timezone }),
         dateRange: { start, end },
         baseData: region.baseData,
-        dataTypes: result.properties?.dataTypes ?? [],
+        metrics: result.properties?.metrics ?? [],
         tileCount: region.tiledData?.tiles?.length ?? 0,
         availableGranularities,
     };
@@ -215,29 +268,10 @@ export async function executeGetTrafficAreaAnalytics(
     params: z.infer<typeof getTrafficAreaAnalyticsSchema>,
     state: ToolState,
 ): Promise<z.infer<typeof getTrafficAreaAnalyticsOutputSchema>> {
-    const { bbox, geometry, startDate, endDate, days, dataTypes, functionalRoadClasses, hours } = params;
+    const { location, bbox, showOnMap, startDate, endDate, days, metrics, functionalRoadClasses, hours } = params;
 
-    // Validate geometry input
-    if (!bbox && !geometry) {
-        return { error: 'Provide either a bbox or a geometry' };
-    }
-
-    if (!dataTypes || dataTypes.length === 0) {
-        return { error: 'At least one dataType is required' };
-    }
-
-    // Resolve geometry
-    const resolvedGeometry: Polygon | MultiPolygon = geometry
-        ? (geometry as Polygon | MultiPolygon)
-        : bboxToPolygon(bbox!);
-
-    // Resolve dates — SDK defaults to startDate=3 days ago, endDate=2 days ago when omitted
-    const dateParams: Pick<TrafficAreaAnalyticsParams, 'startDate' | 'endDate' | 'days'> = {};
-    if (days && days.length > 0) {
-        dateParams.days = days;
-    } else if (startDate) {
-        dateParams.startDate = startDate;
-        if (endDate) dateParams.endDate = endDate;
+    if (!location && !bbox) {
+        return { error: 'Provide a location or bbox to define the analytics area.' };
     }
 
     // Move Portal API key (different from standard TomTom key)
@@ -247,23 +281,28 @@ export async function executeGetTrafficAreaAnalytics(
     }
 
     try {
+        const resolvedGeometry = await resolveGeometry(location, bbox);
+        if ('error' in resolvedGeometry) return resolvedGeometry;
+
+        // Resolve dates — SDK defaults to startDate=3 days ago, endDate=2 days ago when omitted
+        const dateParams = resolveDateParams(days, startDate, endDate);
+
         const result = await trafficAreaAnalytics({
             apiKey,
             ...dateParams,
-            dataTypes,
+            metrics,
             functionalRoadClasses: functionalRoadClasses ?? 'all',
             hours: hours ?? 'all',
             geometry: resolvedGeometry,
         } as TrafficAreaAnalyticsParams);
 
-        // Store full result for showTrafficAreaAnalytics to use
         state.traffic.setLastAreaAnalytics(result);
 
-        return summarize(
-            result,
-            typeof dateParams.startDate === 'string' ? dateParams.startDate : undefined,
-            typeof dateParams.endDate === 'string' ? dateParams.endDate : undefined,
-        );
+        if (showOnMap) {
+            await showAnalyticsOnMap(state, result);
+        }
+
+        return summarize(result, dateParams.startDate, dateParams.endDate);
     } catch (error) {
         return {
             error: `Failed to get traffic area analytics: ${error instanceof Error ? error.message : String(error)}`,

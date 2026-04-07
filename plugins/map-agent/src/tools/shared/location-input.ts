@@ -5,7 +5,7 @@
 import { getPosition, type WaypointLike } from '@tomtom-org/maps-sdk/core';
 import type { Position } from 'geojson';
 import { z } from 'zod';
-import { locatePlace } from '../services/locate-place';
+import { locatePlace } from '../services';
 
 export const locationInputSchema = z.union([
     z.object({

@@ -1,4 +1,4 @@
-import type { AreaAnalyticsDataType } from '@tomtom-org/maps-sdk/core';
+import type { AreaAnalyticsMetricKey } from '@tomtom-org/maps-sdk/core';
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { geocodeOne, geometryData, trafficAreaAnalytics } from '@tomtom-org/maps-sdk/services';
 import { API_KEY, MOVE_PORTAL_KEY } from './config';
@@ -17,11 +17,11 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
 
     console.log(`Analysis period: ${startDate.toDateString()} → ${today.toDateString()}`);
 
-    const dataTypes: AreaAnalyticsDataType[] = ['SPEED', 'CONGESTION_LEVEL'];
+    const metrics: AreaAnalyticsMetricKey[] = ['speed', 'congestionLevel'];
     const result = await trafficAreaAnalytics({
         apiKey: MOVE_PORTAL_KEY,
         startDate,
-        dataTypes,
+        metrics,
         functionalRoadClasses: [
             'MOTORWAY',
             'MAJOR_ROAD',

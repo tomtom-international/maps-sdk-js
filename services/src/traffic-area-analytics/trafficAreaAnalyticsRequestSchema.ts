@@ -1,6 +1,7 @@
+import { areaAnalyticsMetricKeys } from '@tomtom-org/maps-sdk/core';
 import { z } from 'zod';
 import { commonServiceRequestSchema } from '../shared/schema/commonParamsSchema';
-import { areaAnalyticsDataTypes, functionalRoadClasses } from './types/trafficAreaAnalyticsParams';
+import { functionalRoadClasses } from './types/trafficAreaAnalyticsParams';
 
 const dateInputSchema = z.union([
     z.date(),
@@ -42,7 +43,7 @@ export const trafficAreaAnalyticsRequestSchema = commonServiceRequestSchema
         startDate: dateInputSchema.optional(),
         endDate: dateInputSchema.optional(),
         days: z.array(dateInputSchema).min(1).optional(),
-        dataTypes: z.array(z.enum([...areaAnalyticsDataTypes])).min(1),
+        metrics: z.union([z.array(z.enum([...areaAnalyticsMetricKeys])).min(1), z.literal('all')]),
         functionalRoadClasses: z.union([z.array(z.enum([...functionalRoadClasses])).min(1), z.literal('all')]),
         hours: z.union([z.array(z.number().int().min(0).max(23)).min(1), z.literal('all')]),
         geometry: geometrySchema,

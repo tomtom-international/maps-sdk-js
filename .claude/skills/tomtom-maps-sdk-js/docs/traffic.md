@@ -141,7 +141,7 @@ const boundary = await geometryData({ geometries: [geocodeResult] });
 const analytics = await trafficAreaAnalytics({
     startDate: '2024-08-01',
     endDate:   '2024-08-07',          // max 31 days; use days: [] for non-consecutive
-    dataTypes: ['SPEED', 'CONGESTION_LEVEL', 'FREE_FLOW_SPEED', 'TRAVEL_TIME'],
+    metrics: ['speed', 'congestionLevel', 'freeFlowSpeed', 'travelTime'],  // or 'all'
     functionalRoadClasses: ['MOTORWAY', 'MAJOR_ROAD', 'SECONDARY_ROAD'],  // or 'all'
     hours: [7, 8, 9, 17, 18],         // or 'all'
     geometry: boundary.features[0].geometry,
@@ -165,7 +165,7 @@ region.tiledData?.tiles.forEach(tile => {
 });
 ```
 
-Data types: `'SPEED'` (km/h), `'FREE_FLOW_SPEED'` (km/h), `'CONGESTION_LEVEL'` (%), `'TRAVEL_TIME'` (min/10km), `'NETWORK_LENGTH'` (m)
+Metrics (`metrics`): `'speed'` (km/h), `'freeFlowSpeed'` (km/h), `'congestionLevel'` (%), `'travelTime'` (min/10km), `'networkLength'` (m), or `'all'` for all five
 
 Functional road classes: `'MOTORWAY'`, `'MAJOR_ROAD'`, `'OTHER_MAJOR_ROAD'`, `'SECONDARY_ROAD'`, `'LOCAL_CONNECTING_ROAD'`, `'LOCAL_ROAD_HIGH_IMPORTANCE'`, `'LOCAL_ROAD'`, `'LOCAL_ROAD_MINOR_IMPORTANCE'`, `'OTHER_ROAD'`
 
@@ -173,7 +173,7 @@ Functional road classes: `'MOTORWAY'`, `'MAJOR_ROAD'`, `'OTHER_MAJOR_ROAD'`, `'S
 
 ## TrafficAreaAnalyticsModule — map visualization
 
-Renders the `trafficAreaAnalytics` response on the map. Five modes: `'hexgrid'` (3D, default), `'hexgrid-flat'`, `'square-3d'`, `'square-flat'`, `'heatmap'`. `show()` renders **all** features in the analytics response.
+Renders the `trafficAreaAnalytics` response on the map. Five modes: `'hexgrid-3d'` (default), `'hexgrid-2d'`, `'square-3d'`, `'square-2d'`, `'heatmap'`. `show()` renders **all** features in the analytics response.
 
 ```ts
 import { TrafficAreaAnalyticsModule } from '@tomtom-org/maps-sdk/map';
@@ -183,10 +183,14 @@ import { trafficAreaAnalytics, geocodeOne, geometryData } from '@tomtom-org/maps
 const place = await geocodeOne('Amsterdam, Netherlands');
 const boundary = await geometryData({ geometries: [place] });
 
-// 2. Create module — mode and color preset both live inside `theme`
+// 2. Create module
 const analyticsModule = await TrafficAreaAnalyticsModule.get(map, {
-    theme: { mode: 'hexgrid', color: 'congestion' }, // mode + color preset inside theme
-    metric: 'congestionLevel',
+    displayMode: 'hexgrid-3d',        // 'hexgrid-3d' | 'hexgrid-2d' | 'square-3d' | 'square-2d' | 'heatmap'
+    activeMetric: 'congestionLevel',  // which metric drives color + height
+    metricConfig: {
+        congestionLevel: { color: 'trafficLight' },
+        speed: { color: 'heat' },
+    },
 });
 
 // 3. Fetch and display
@@ -194,45 +198,58 @@ const analytics = await trafficAreaAnalytics({ ... });
 await analyticsModule.show(analytics);
 
 // Dynamic updates
-analyticsModule.setMode('hexgrid-flat');              // switch visualization mode
-analyticsModule.setMetric('speed');                   // switch metric
-analyticsModule.setTheme({ color: 'thermal' });       // switch color preset (merges with existing theme)
-analyticsModule.setColorStops([                       // custom stops — override color preset
-    { value: 0, color: '#00ff00' },
-    { value: 0.5, color: '#ffff00' },
-    { value: 1, color: '#ff0000' },
-]);
-analyticsModule.setColorStops(undefined);             // clear custom stops, revert to theme.color
+analyticsModule.setMode('hexgrid-2d');                // switch visualization mode
+analyticsModule.setMetric('speed');                   // switch active metric
+analyticsModule.setColor('heat');                     // color preset for all metrics
+analyticsModule.setColor('heat', ['speed', 'freeFlowSpeed']); // color preset for specific metrics
+analyticsModule.setColor(                             // custom stops for all metrics
+    { valueType: 'raw', stops: [{ value: 0, color: '#00ff00' }, { value: 100, color: '#ff0000' }] },
+);
+analyticsModule.setColor(undefined);                  // clear color override (reverts to defaults)
+analyticsModule.setHeight({ maxHeightMeters: 200 });  // height for all metrics (predefinedRange default)
+analyticsModule.setHeight({ scaleMode: 'currentRange', maxHeightMeters: 500 }, ['speed']); // specific metrics
+analyticsModule.setHeight({ scaleMode: 'raw', scaleFactor: 10 });  // raw: scaleFactor × metric value
+analyticsModule.filter({ min: 20, max: 80 });         // filter tiles by value range (all metrics)
+analyticsModule.filter({ min: 50 }, ['congestionLevel']); // filter specific metric
+analyticsModule.clearFilter();                        // clear all filters
 analyticsModule.setVisible(false);
 analyticsModule.isVisible();               // boolean
 await analyticsModule.clear();
 
 // Region boundary appearance (always shown alongside analytics cells)
 const analyticsModule = await TrafficAreaAnalyticsModule.get(map, {
-    region: { color: '#0052a5', fillOpacity: 0.08, outlineOpacity: 1, outlineWidth: 3 },
+    regionPolygon: { color: '#0052a5', fillOpacity: 0.08, outlineOpacity: 1, outlineWidth: 3 },
 });
 
-// Layer ordering (same pattern as GeometriesModule)
+// Layer ordering — per-layer-type positioning
 const analyticsModule = await TrafficAreaAnalyticsModule.get(map, {
-    beforeLayerConfig: 'lowestLabel', // 'top' | MapStyleLayerID
+    beforeLayerConfig: {
+        heatmap: 'lowestLabel',
+        hexgrid: { flat2D: 'lowestLabel', extrusion3D: 'lowestPlaceLabel' },
+        square:  { flat2D: 'lowestLabel', extrusion3D: 'lowestPlaceLabel' },
+    },
 });
-analyticsModule.moveBeforeLayer('top');
+analyticsModule.moveBeforeLayer({ hexgrid: { flat2D: 'top', extrusion3D: 'top' } });
 
-// Events — fire for both hexgrid and square cells (whichever mode is active)
+// Events — fire for hexgrid and square cells (whichever mode is active)
 analyticsModule.events.on('click', (feature, lngLat) => {
     console.log(feature.properties.congestionLevel, feature.properties.speed);
 });
 analyticsModule.events.on('hover', (feature) => { });
+analyticsModule.events.on('configChange', (config) => {
+    console.log('Active metric:', config?.activeMetric);
+});
 analyticsModule.events.off('click');
 
 // Query shown data
 const { heatmap, hexgrid, square } = analyticsModule.getShown();
 ```
 
-Metrics: `'congestionLevel'`, `'speed'`, `'travelTime'`
-Modes: `'hexgrid'`, `'hexgrid-flat'`, `'square-3d'`, `'square-flat'`, `'heatmap'`
-Color themes (`theme.color`): `'congestion'` (default), `'thermal'`, `'monochrome'`
-Color stops: `ColorStop[] = Array<{ value: number; color: string }>` — value is 0–1 normalized; takes precedence over `theme.color`
+Metrics: `'congestionLevel'`, `'speed'`, `'travelTime'`, `'freeFlowSpeed'`, `'networkLength'` (road length per tile in metres — road density indicator; defaults to `relativeToActualRangePCT` color scaling)
+Modes: `'hexgrid-3d'` (default), `'hexgrid-2d'`, `'square-3d'`, `'square-2d'`, `'heatmap'`
+Color themes: `'trafficLight'` (default), `'heat'`, `'monochrome'`, `'viridis'`, `'plasma'`
+Color stops valueType: `'raw'` (default) — actual metric values; `'relativeToPredefinedRangePCT'` — 0–100% of SDK predefined range; `'relativeToActualRangePCT'` — 0–100% of live data range
+Height scaleMode: `'predefinedRange'` (default) / `'currentRange'` — use `maxHeightMeters`; `'raw'` — use `scaleFactor`
 
 ---
 

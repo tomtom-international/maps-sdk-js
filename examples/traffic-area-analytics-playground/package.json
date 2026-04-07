@@ -1,5 +1,5 @@
 {
-  "name": "@examples/traffic-area-analytics-playgorund",
+  "name": "@examples/traffic-area-analytics-playground",
   "description": "Explore traffic area analytics for different locations",
   "type": "module",
   "scripts": {

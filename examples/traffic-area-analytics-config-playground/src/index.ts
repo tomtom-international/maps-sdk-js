@@ -1,14 +1,17 @@
+import type { AreaAnalyticsMetricKey } from '@tomtom-org/maps-sdk/core';
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import type {
     AreaAnalyticsColorStop,
     AreaAnalyticsColorTheme,
-    AreaAnalyticsMetricKey,
-    AreaAnalyticsMode,
+    AreaAnalyticsDisplayMode,
+    AreaAnalyticsHeightConfig,
+    AreaAnalyticsValueType,
 } from '@tomtom-org/maps-sdk/map';
-import { COLOR_SCHEMES, mapStyleLayerIDs, TomTomMap, TrafficAreaAnalyticsModule } from '@tomtom-org/maps-sdk/map';
+import { mapStyleLayerIDs, resolveColorStops, TomTomMap, TrafficAreaAnalyticsModule } from '@tomtom-org/maps-sdk/map';
 import { geocodeOne, geometryData, trafficAreaAnalytics } from '@tomtom-org/maps-sdk/services';
 import { initColorStops } from './colorStops';
 import { API_KEY, MOVE_PORTAL_KEY } from './config';
+import { initHeightControls } from './height';
 import { initMapControls } from './mapControls';
 import { initTogglePanel } from './togglePanel';
 import './style.css';
@@ -16,48 +19,72 @@ import './style.css';
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 
-let currentMetric: AreaAnalyticsMetricKey = 'congestionLevel';
-
-// Per-metric initial color stops with breakpoints tuned for urban traffic.
-// congestionLevel: 0–100 %, speed: 0–120 km/h (auto-inverted), travelTime: 0–20 s/km.
-const INITIAL_COLOR: Partial<Record<AreaAnalyticsMetricKey, AreaAnalyticsColorStop[]>> = {
-    congestionLevel: [
-        { value: 0, color: '#2dc653' }, // 0 %   — free flow
-        { value: 0.3, color: '#f5a623' }, // 30 %  — moderate congestion
-        { value: 1, color: '#e03030' }, // 100 % — severe congestion
-    ],
-    speed: [
-        { value: 0, color: '#2dc653' }, // 0 km/h   — auto-inverted in rendering → red
-        { value: 0.33, color: '#f5a623' }, // ~40 km/h — urban speed threshold
-        { value: 1, color: '#e03030' }, // 120 km/h — auto-inverted in rendering → green
-    ],
-    travelTime: [
-        { value: 0, color: '#2dc653' }, // 0 s/km  — fast
-        { value: 0.6, color: '#f5a623' }, // 12 s/km — moderate delay
-        { value: 1, color: '#e03030' }, // 20 s/km — heavy delay
-    ],
+// Predefined SDK metric ranges: used for 'raw' value bounds and PCT conversion.
+const PREDEFINED_RANGES: Record<AreaAnalyticsMetricKey, { min: number; max: number }> = {
+    congestionLevel: { min: 0, max: 100 },
+    speed: { min: 0, max: 120 },
+    travelTime: { min: 0, max: 20 },
+    freeFlowSpeed: { min: 0, max: 120 },
+    networkLength: { min: 0, max: 5_000 },
 };
 
-let currentColorConfig: Partial<Record<AreaAnalyticsMetricKey, AreaAnalyticsColorStop[]>> = { ...INITIAL_COLOR };
+const getValueRange = (
+    metric: AreaAnalyticsMetricKey,
+    valueType: AreaAnalyticsValueType,
+): { min: number; max: number } => (valueType === 'raw' ? PREDEFINED_RANGES[metric] : { min: 0, max: 100 });
 
-function pastDateRange(): { startDate: string } {
+// Converts stop values between value types, using PREDEFINED_RANGES as the anchor for 'raw'.
+const convertStops = (
+    stops: AreaAnalyticsColorStop[],
+    fromType: AreaAnalyticsValueType,
+    toType: AreaAnalyticsValueType,
+    metric: AreaAnalyticsMetricKey,
+): AreaAnalyticsColorStop[] => {
+    if (fromType === toType) return stops;
+
+    const { min, max } = PREDEFINED_RANGES[metric];
+    const span = max - min || 1;
+
+    // Normalize each value to 0–1 relative to its source range.
+    const normalized = stops.map((s) => (fromType === 'raw' ? (s.value - min) / span : s.value / 100));
+
+    if (toType === 'raw') {
+        const precision = span < 50 ? 1 : 0;
+        return stops.map((s, i) => ({
+            ...s,
+            value: Number.parseFloat((min + normalized[i] * span).toFixed(precision)),
+        }));
+    }
+    return stops.map((s, i) => ({ ...s, value: Math.round(normalized[i] * 100) }));
+};
+
+// Derives full-range stops from a preset theme scaled to the given metric + value type.
+// resolveColorStops() returns 0–1 normalized stops; this converts them to the display range.
+const themeToStops = (
+    theme: AreaAnalyticsColorTheme,
+    metric: AreaAnalyticsMetricKey,
+    valueType: AreaAnalyticsValueType,
+): AreaAnalyticsColorStop[] => {
+    const normalizedStops = resolveColorStops(theme);
+    if (valueType === 'raw') {
+        const { min, max } = PREDEFINED_RANGES[metric];
+        const span = max - min;
+        const precision = span < 50 ? 1 : 0;
+        return normalizedStops.map((s) => ({
+            ...s,
+            value: Number.parseFloat((min + s.value * span).toFixed(precision)),
+        }));
+    }
+    return normalizedStops.map((s) => ({ ...s, value: Math.round(s.value * 100) }));
+};
+
+const pastDateRange = (): { startDate: string } => {
     const start = new Date();
     start.setDate(start.getDate() - 9);
     return { startDate: start.toISOString().slice(0, 10) };
-}
+};
 
-function wireSegmentedGroup(selector: string, onChange: (value: string) => void): void {
-    const buttons = document.querySelectorAll<HTMLButtonElement>(`${selector} .sdk-example-toggle`);
-    for (const btn of buttons) {
-        btn.addEventListener('click', () => {
-            for (const b of buttons) b.classList.remove('active');
-            btn.classList.add('active');
-            if (btn.dataset.value) onChange(btn.dataset.value);
-        });
-    }
-}
-
-function initBeforeLayerSelect(analyticsModule: TrafficAreaAnalyticsModule): void {
+const initBeforeLayerSelect = (analyticsModule: TrafficAreaAnalyticsModule): void => {
     const select = document.getElementById('before-layer-selector') as HTMLSelectElement;
     select.add(new Option('Above all layers', 'top'));
     for (const key of Object.keys(mapStyleLayerIDs) as (keyof typeof mapStyleLayerIDs)[]) {
@@ -72,7 +99,7 @@ function initBeforeLayerSelect(analyticsModule: TrafficAreaAnalyticsModule): voi
             square: { flat2D: value, extrusion3D: value },
         });
     });
-}
+};
 
 (async () => {
     await new Promise((resolve) => requestAnimationFrame(resolve));
@@ -96,7 +123,7 @@ function initBeforeLayerSelect(analyticsModule: TrafficAreaAnalyticsModule): voi
                 apiKey: MOVE_PORTAL_KEY,
                 name: cityName,
                 ...pastDateRange(),
-                dataTypes: ['SPEED', 'CONGESTION_LEVEL', 'FREE_FLOW_SPEED', 'TRAVEL_TIME'],
+                metrics: 'all',
                 functionalRoadClasses: 'all',
                 hours: 'all',
                 geometry,
@@ -104,11 +131,7 @@ function initBeforeLayerSelect(analyticsModule: TrafficAreaAnalyticsModule): voi
         );
 
     const [analyticsModule, analytics] = await Promise.all([
-        TrafficAreaAnalyticsModule.get(map, {
-            displayMode: 'hexgrid-3d',
-            metric: 'congestionLevel',
-            color: INITIAL_COLOR,
-        }),
+        TrafficAreaAnalyticsModule.get(map),
         analyticsPromise,
     ]).finally(() => loadingOverlay.classList.add('aa-hidden'));
 
@@ -117,31 +140,123 @@ function initBeforeLayerSelect(analyticsModule: TrafficAreaAnalyticsModule): voi
     initMapControls(map);
     initTogglePanel();
 
+    // Bootstrap UI state from the module's fully-applied config — no need to reference defaults separately.
+    const moduleConfig = analyticsModule.getConfig()!;
+    const METRICS: AreaAnalyticsMetricKey[] = [
+        'congestionLevel',
+        'speed',
+        'travelTime',
+        'freeFlowSpeed',
+        'networkLength',
+    ];
+
+    let currentMetric = moduleConfig.activeMetric as AreaAnalyticsMetricKey;
+
+    // Per-metric mutable state tracked as the user edits — seeded from the module's applied config.
+    let currentValueTypes = Object.fromEntries(
+        METRICS.map((m) => {
+            const color = moduleConfig.metricConfig?.[m]?.color;
+            const valueType = typeof color === 'object' && color !== null ? (color.valueType ?? 'raw') : 'raw';
+            return [m, valueType as AreaAnalyticsValueType];
+        }),
+    ) as Record<AreaAnalyticsMetricKey, AreaAnalyticsValueType>;
+
+    let currentThemes = Object.fromEntries(
+        METRICS.map((m) => {
+            const color = moduleConfig.metricConfig?.[m]?.color;
+            return [m, typeof color === 'string' ? color : ('custom' as AreaAnalyticsColorTheme | 'custom')];
+        }),
+    ) as Record<AreaAnalyticsMetricKey, AreaAnalyticsColorTheme | 'custom'>;
+
+    let currentColorStops = Object.fromEntries(
+        METRICS.map((m) => {
+            const color = moduleConfig.metricConfig?.[m]?.color;
+            return [m, color !== undefined ? resolveColorStops(color).slice() : []];
+        }),
+    ) as Record<AreaAnalyticsMetricKey, AreaAnalyticsColorStop[]>;
+
+    let currentHeightConfigs = Object.fromEntries(
+        METRICS.map((m) => [m, { ...moduleConfig.metricConfig?.[m]?.height } as AreaAnalyticsHeightConfig]),
+    ) as Partial<Record<AreaAnalyticsMetricKey, AreaAnalyticsHeightConfig>>;
+
+    const valueTypeSelect = document.getElementById('value-type-selector') as HTMLSelectElement;
+    const themeSelect = document.getElementById('color-theme-selector') as HTMLSelectElement;
+    const modeSelect = document.getElementById('mode-selector') as HTMLSelectElement;
+    const metricSelect = document.getElementById('metric-selector') as HTMLSelectElement;
+
+    // Sync all selectors to their initial values from the module config.
+    metricSelect.value = currentMetric;
+    modeSelect.value = moduleConfig.displayMode as string;
+    valueTypeSelect.value = currentValueTypes[currentMetric];
+    themeSelect.value = currentThemes[currentMetric];
+
     const colorStopsControls = initColorStops(
         'color-stops-list',
         'add-stop-btn',
-        INITIAL_COLOR.congestionLevel!,
+        currentColorStops[currentMetric],
+        getValueRange(currentMetric, currentValueTypes[currentMetric]),
         (stops) => {
-            currentColorConfig = { ...currentColorConfig, [currentMetric]: stops };
-            analyticsModule.setColor(currentColorConfig);
+            currentColorStops[currentMetric] = stops;
+            currentThemes[currentMetric] = 'custom';
+            themeSelect.value = 'custom';
+            analyticsModule.setColor({ valueType: currentValueTypes[currentMetric], stops }, [currentMetric]);
         },
     );
 
-    wireSegmentedGroup('#metric-selector', (value) => {
-        currentMetric = value as AreaAnalyticsMetricKey;
-        analyticsModule.setMetric(currentMetric);
-        colorStopsControls.update(currentColorConfig[currentMetric] ?? COLOR_SCHEMES['congestion']);
+    const heightControls = initHeightControls(
+        'height-max-height',
+        'height-scale-factor',
+        'height-min-height',
+        'height-scale-mode',
+        currentMetric,
+        (heightConfig) => {
+            currentHeightConfigs[currentMetric] = heightConfig;
+            analyticsModule.setHeight(heightConfig, [currentMetric]);
+        },
+    );
+    heightControls.update(currentMetric, currentHeightConfigs[currentMetric]);
+
+    // Value type change: convert current stops to the new range and re-apply.
+    valueTypeSelect.addEventListener('change', () => {
+        const newType = valueTypeSelect.value as AreaAnalyticsValueType;
+        const oldType = currentValueTypes[currentMetric];
+        if (newType === oldType) return;
+        const converted = convertStops(currentColorStops[currentMetric], oldType, newType, currentMetric);
+        currentColorStops[currentMetric] = converted;
+        currentValueTypes[currentMetric] = newType;
+        currentThemes[currentMetric] = 'custom';
+        themeSelect.value = 'custom';
+        const range = getValueRange(currentMetric, newType);
+        colorStopsControls.update(converted, range);
+        analyticsModule.setColor({ valueType: newType, stops: converted }, [currentMetric]);
     });
 
-    (document.getElementById('mode-selector') as HTMLSelectElement).addEventListener('change', (e) =>
-        analyticsModule.setMode((e.target as HTMLSelectElement).value as AreaAnalyticsMode),
-    );
+    // Metric change: restore that metric's value type, stops, theme, and height config in all controls.
+    (document.getElementById('metric-selector') as HTMLSelectElement).addEventListener('change', (event) => {
+        currentMetric = (event.target as HTMLSelectElement).value as AreaAnalyticsMetricKey;
+        analyticsModule.setMetric(currentMetric);
+        const vt = currentValueTypes[currentMetric];
+        valueTypeSelect.value = vt;
+        themeSelect.value = currentThemes[currentMetric];
+        const range = getValueRange(currentMetric, vt);
+        colorStopsControls.update(currentColorStops[currentMetric], range);
+        heightControls.update(currentMetric, currentHeightConfigs[currentMetric]);
+    });
 
-    wireSegmentedGroup('#color-theme-selector', (value) => {
-        const presetStops = COLOR_SCHEMES[value as AreaAnalyticsColorTheme];
-        currentColorConfig = { ...currentColorConfig, [currentMetric]: presetStops };
-        colorStopsControls.update(presetStops);
-        analyticsModule.setColor(currentColorConfig);
+    modeSelect.addEventListener('change', () => analyticsModule.setMode(modeSelect.value as AreaAnalyticsDisplayMode));
+
+    // Color theme: apply preset theme and update the stops editor to match (at current value type).
+    themeSelect.addEventListener('change', () => {
+        const value = themeSelect.value;
+        if (value === 'custom') return;
+        const theme = value as AreaAnalyticsColorTheme;
+        const vt = currentValueTypes[currentMetric];
+        const stops = themeToStops(theme, currentMetric, vt);
+        currentColorStops[currentMetric] = stops;
+        currentThemes[currentMetric] = theme;
+        const range = getValueRange(currentMetric, vt);
+        colorStopsControls.update(stops, range);
+        analyticsModule.setColor(theme, [currentMetric]);
     });
 
     initBeforeLayerSelect(analyticsModule);

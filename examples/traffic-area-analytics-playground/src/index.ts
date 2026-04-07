@@ -1,9 +1,14 @@
+import type { AreaAnalyticsMetricKey } from '@tomtom-org/maps-sdk/core';
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import type { AreaAnalyticsColorTheme, AreaAnalyticsMetricKey, AreaAnalyticsMode } from '@tomtom-org/maps-sdk/map';
+import type {
+    AreaAnalyticsColorStopsConfig,
+    AreaAnalyticsColorTheme,
+    AreaAnalyticsDisplayMode,
+} from '@tomtom-org/maps-sdk/map';
 import { BaseMapModule, TomTomMap, TrafficAreaAnalyticsModule } from '@tomtom-org/maps-sdk/map';
-import { initCitySearch } from './citySearch';
 import { API_KEY } from './config';
-import { updateLegend, wireRadioGroup } from './controls';
+import { updateLegend } from './controls';
+import { initCitySearch } from './loadAnalytics';
 import { initTogglePanel } from './togglePanel';
 import { initTooltip } from './tooltip';
 import './style.css';
@@ -21,12 +26,12 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
     const analyticsModule = await TrafficAreaAnalyticsModule.get(map, {
         displayMode: 'hexgrid-3d',
-        metric: 'congestionLevel',
+        activeMetric: 'congestionLevel',
     });
 
     const $ = (id: string) => document.getElementById(id) as HTMLElement;
 
-    const { selectCityByName } = initCitySearch({
+    const { selectCityByName, rerenderChart } = initCitySearch({
         map,
         analyticsModule,
         cityInput: $('city-input') as HTMLInputElement,
@@ -58,20 +63,28 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         $('bottom-panel').classList.add('aa-hidden');
     });
 
-    wireRadioGroup('#metric-selector', (value) => {
-        analyticsModule.setMetric(value as AreaAnalyticsMetricKey);
-        const color = analyticsModule.getConfig()?.color;
-        updateLegend(value as AreaAnalyticsMetricKey, typeof color === 'string' ? color : undefined);
+    (document.getElementById('metric-selector') as HTMLSelectElement).addEventListener('change', (event) => {
+        const metricKey = (event.target as HTMLSelectElement).value as AreaAnalyticsMetricKey;
+        analyticsModule.setMetric(metricKey);
+        const metricColor = analyticsModule.getConfig()?.metricConfig?.[metricKey]?.color as
+            | AreaAnalyticsColorStopsConfig
+            | undefined;
+        updateLegend(metricKey, metricColor);
     });
 
-    (document.getElementById('mode-selector') as HTMLSelectElement).addEventListener('change', (e) => {
-        analyticsModule.setMode((e.target as HTMLSelectElement).value as AreaAnalyticsMode);
+    (document.getElementById('mode-selector') as HTMLSelectElement).addEventListener('change', (event) => {
+        analyticsModule.setMode((event.target as HTMLSelectElement).value as AreaAnalyticsDisplayMode);
     });
 
-    wireRadioGroup('#color-scheme-selector', (value) => {
-        const color = value as AreaAnalyticsColorTheme;
+    (document.getElementById('color-scheme-selector') as HTMLSelectElement).addEventListener('change', (event) => {
+        const color = (event.target as HTMLSelectElement).value as AreaAnalyticsColorTheme;
         analyticsModule.setColor(color);
-        updateLegend(analyticsModule.getConfig()?.metric ?? 'congestionLevel', color);
+        const metricKey = analyticsModule.getConfig()?.activeMetric ?? 'congestionLevel';
+        const metricColor = analyticsModule.getConfig()?.metricConfig?.[metricKey]?.color as
+            | AreaAnalyticsColorStopsConfig
+            | undefined;
+        updateLegend(metricKey, metricColor);
+        rerenderChart();
     });
 
     initTooltip(map, analyticsModule);

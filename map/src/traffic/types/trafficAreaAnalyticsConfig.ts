@@ -1,17 +1,10 @@
+import type { AreaAnalyticsMetricKey } from '@tomtom-org/maps-sdk/core';
 import type { BeforeLayerConfig, MapModuleCommonConfig } from '../../shared';
-
-/**
- * Available metrics for area analytics visualization.
- *
- * @group Traffic Area Analytics
- */
-export type AreaAnalyticsMetricKey = 'congestionLevel' | 'speed' | 'travelTime';
 
 /**
  * A single stop in an analytics color ramp.
  *
- * `value` is a normalized 0–1 number representing a position within the active
- * metric's range (e.g. 0 = minimum, 1 = maximum for the given metric).
+ * How `value` is interpreted depends on the surrounding `AreaAnalyticsColorStopsConfig.valueType`.
  * `color` is any valid CSS color string.
  *
  * @group Traffic Area Analytics
@@ -26,22 +19,186 @@ export type AreaAnalyticsColorStop = { value: number; color: string };
  * - `'square-3d'` — 3D extruded square cells colored and raised by metric value
  * - `'square-2d'` — Flat square cells colored by metric value (no extrusion)
  * - `'heatmap'` — MapLibre density heatmap layer from tile centre points
- * - `'tiles'` — Raw API tile centres rendered as square polygons with original per-tile metric values
  *
  * @group Traffic Area Analytics
  */
-export type AreaAnalyticsMode = 'heatmap' | 'hexgrid-3d' | 'hexgrid-2d' | 'square-3d' | 'square-2d';
+export type AreaAnalyticsDisplayMode = 'heatmap' | 'hexgrid-3d' | 'hexgrid-2d' | 'square-3d' | 'square-2d';
 
 /**
  * Preset color theme for area analytics visualization.
  *
- * - `'congestion'` — Green → amber → red (default, traffic-signal style)
- * - `'thermal'` — Blue → orange → red (heat-map style)
+ * - `'trafficLight'` — Green → amber → red (default, traffic-signal style)
+ * - `'heat'` — Blue → orange → red (heat-map style)
  * - `'monochrome'` — Light grey → dark grey (print-friendly)
+ * - `'viridis'` — Purple → blue → green → yellow (perceptually uniform, colorblind-safe)
+ * - `'plasma'` — Purple → magenta → orange → yellow (vivid, perceptually uniform)
  *
  * @group Traffic Area Analytics
  */
-export type AreaAnalyticsColorTheme = 'congestion' | 'thermal' | 'monochrome';
+export type AreaAnalyticsColorTheme = 'trafficLight' | 'heat' | 'monochrome' | 'viridis' | 'plasma';
+
+/**
+ * Determines how numeric `value` fields in color stops are interpreted.
+ *
+ * - `'raw'` — stop values are actual metric values used directly
+ *   (e.g. congestion: 0–100, speed: 0–120 km/h, travelTime: 0–20 s/km).
+ * - `'relativeToPredefinedRangePCT'` — stop values are 0–100 percentages relative to the SDK's predefined
+ *   metric ranges (congestion 0–100, speed 0–120 km/h, travelTime 0–20 s/km).
+ *   Useful for consistent coloring regardless of the current dataset.
+ * - `'relativeToActualRangePCT'` — stop values are 0–100 percentages relative to the live data
+ *   range actually present in the loaded tiles (0 % = loaded minimum, 100 % = loaded maximum).
+ *   Useful for maximum contrast when exact values are unknown.
+ *
+ * Defaults to `'raw'`.
+ *
+ * @group Traffic Area Analytics
+ */
+export type AreaAnalyticsValueType = 'raw' | 'relativeToPredefinedRangePCT' | 'relativeToActualRangePCT';
+
+/**
+ * Custom color stops configuration with an explicit value-type hint.
+ *
+ * @example
+ * ```typescript
+ * // Stops whose values are actual congestion-level values (0–100)
+ * const color: AreaAnalyticsColorStopsConfig = {
+ *   valueType: 'raw',
+ *   stops: [
+ *     { value: 0,   color: '#2dc653' },
+ *     { value: 30,  color: '#f5a623' },
+ *     { value: 100, color: '#e03030' },
+ *   ],
+ * };
+ *
+ * // Stops as 0–100 % of the predefined metric range (speed: 0–120 km/h)
+ * const color: AreaAnalyticsColorStopsConfig = {
+ *   valueType: 'relativeToPredefinedRangePCT',
+ *   stops: [
+ *     { value: 0,   color: '#e03030' },  // 0 km/h
+ *     { value: 50,  color: '#f5a623' },  // 60 km/h
+ *     { value: 100, color: '#2dc653' },  // 120 km/h
+ *   ],
+ * };
+ *
+ * // Stops as 0–100 % of the live data range (maximum contrast regardless of absolute values)
+ * const color: AreaAnalyticsColorStopsConfig = {
+ *   valueType: 'relativeToActualRangePCT',
+ *   stops: [
+ *     { value: 0,   color: '#2dc653' },  // 0% = loaded minimum
+ *     { value: 50,  color: '#f5a623' },  // 50% = mid
+ *     { value: 100, color: '#e03030' },  // 100% = loaded maximum
+ *   ],
+ * };
+ * ```
+ *
+ * @group Traffic Area Analytics
+ */
+export type AreaAnalyticsColorStopsConfig = {
+    /**
+     * How stop values are interpreted. Defaults to `'raw'`.
+     */
+    valueType?: AreaAnalyticsValueType;
+
+    /**
+     * The color stops array.
+     */
+    stops: AreaAnalyticsColorStop[];
+};
+
+/**
+ * Filter for visible tiles based on a metric's value range.
+ * Both `min` and `max` are optional; at least one should be provided to have effect.
+ *
+ * @group Traffic Area Analytics
+ */
+export type AreaAnalyticsMetricFilter = {
+    /** Show only tiles where the metric is ≥ this value. */
+    min?: number;
+    /** Show only tiles where the metric is ≤ this value. */
+    max?: number;
+};
+
+/**
+ * Height (extrusion) configuration for a metric.
+ *
+ * The shape depends on `scaleMode`:
+ * - `'predefinedRange'` / `'currentRange'` (default): use `maxHeightMeters` to set a true visual ceiling.
+ * - `'raw'`: use `scaleFactor` to multiply the raw metric value directly.
+ *
+ * @group Traffic Area Analytics
+ */
+export type AreaAnalyticsHeightConfig =
+    | {
+          /**
+           * Normalised scale mode. The metric is mapped to a known range before computing height,
+           * so `maxHeightMeters` equals the actual maximum visual height in meters.
+           *
+           * @defaultValue 'predefinedRange'
+           */
+          scaleMode?: 'predefinedRange' | 'currentRange';
+
+          /**
+           * True visual maximum extrusion height in meters.
+           * The tallest cell reaches exactly this height.
+           *
+           * @defaultValue 1000
+           */
+          maxHeightMeters?: number;
+
+          /**
+           * Minimum extrusion height in meters.
+           *
+           * @defaultValue 0
+           */
+          minHeightMeters?: number;
+      }
+    | {
+          /** Raw scale mode: `scaleFactor` is multiplied directly with the raw metric value. */
+          scaleMode: 'raw';
+
+          /**
+           * Multiplier applied to the raw metric value to obtain extrusion height in meters.
+           *
+           * @defaultValue 1
+           */
+          scaleFactor?: number;
+
+          /**
+           * Minimum extrusion height in meters.
+           *
+           * @defaultValue 0
+           */
+          minHeightMeters?: number;
+      };
+
+/**
+ * Per-metric visualization configuration.
+ *
+ * @group Traffic Area Analytics
+ */
+export type AreaAnalyticsMetricConfig = {
+    /**
+     * Color for this metric's visualization.
+     *
+     * Pass a preset theme name (`AreaAnalyticsColorTheme`) or a custom
+     * `AreaAnalyticsColorStopsConfig` object with explicit stop values and a
+     * value-type hint. For `speed`, the color order is automatically inverted
+     * so that slow speeds render as "bad" (red) and fast speeds as "good" (green).
+     *
+     * @defaultValue `'trafficLight'` theme
+     */
+    color?: AreaAnalyticsColorTheme | AreaAnalyticsColorStopsConfig;
+
+    /**
+     * Extrusion height configuration for this metric.
+     */
+    height?: AreaAnalyticsHeightConfig;
+
+    /**
+     * Filter visible tiles to only those within the given value range for this metric.
+     */
+    filters?: AreaAnalyticsMetricFilter;
+};
 
 /**
  * Per-layer-type positioning configuration for area analytics layers.
@@ -106,14 +263,14 @@ export type AreaAnalyticsRegionPolygonConfig = {
     /**
      * Opacity of the region fill.
      *
-     * @defaultValue 0.05
+     * @defaultValue 0
      */
     fillOpacity?: number;
 
     /**
      * Opacity of the region outline.
      *
-     * @defaultValue 0.8
+     * @defaultValue 0.5
      */
     outlineOpacity?: number;
 
@@ -123,144 +280,106 @@ export type AreaAnalyticsRegionPolygonConfig = {
      * @defaultValue 2
      */
     outlineWidth?: number;
-};
 
-// ── New config building blocks ──────────────────────────────────────
-
-/**
- * Custom color configuration for area analytics layers.
- *
- * Provide either a named `preset` or custom three-stop `stops` gradient.
- * When both are specified, `stops` takes precedence.
- *
- * @group Traffic Area Analytics
- */
-export type AreaAnalyticsColorConfig = {
     /**
-     * Three-stop color gradient: `[low, mid, high]`. CSS color strings.
+     * When `true`, renders the region as an overlay covering everything *outside* the polygon
+     * boundary, effectively tinting the area outside the analytics region.
      *
-     * @example `['#00ff00', '#ffff00', '#ff0000']`
-     */
-    stops?: [string, string, string];
-    /**
-     * Use a named preset instead of custom stops.
-     */
-    preset?: AreaAnalyticsColorScheme;
-};
-
-/**
- * Metric range used for color and height interpolation.
- *
- * @group Traffic Area Analytics
- */
-export type MetricRange = { min: number; mid: number; max: number };
-
-/**
- * Strategy for resolving metric ranges.
- *
- * - `'auto'` — scale to actual data (min/median/max from tile values)
- * - `'fixed'` — use hardcoded defaults (congestion: 0-100, speed: 0-120, travelTime: 0-20)
- * - `'union'` — use hardcoded range but expand when data exceeds it
- *
- * @group Traffic Area Analytics
- */
-export type AreaAnalyticsRangeStrategy = 'auto' | 'fixed' | 'union';
-
-/**
- * Range configuration for a metric.
- *
- * @group Traffic Area Analytics
- */
-export type AreaAnalyticsRangeConfig = {
-    /**
-     * Explicit fixed range. Overrides strategy when set.
-     */
-    fixed?: MetricRange;
-    /**
-     * Strategy for resolving the range from data.
-     *
-     * @defaultValue 'union'
-     */
-    strategy?: AreaAnalyticsRangeStrategy;
-};
-
-/**
- * Height (extrusion) configuration for hexgrid and tile modes.
- *
- * @group Traffic Area Analytics
- */
-export type AreaAnalyticsHeightConfig = {
-    /**
-     * Base multiplier for extrusion height.
-     * Default is metric-dependent: congestion=50, speed=40, travelTime=200.
-     */
-    scale?: number;
-    /**
-     * Minimum extrusion height in meters.
-     *
-     * @defaultValue 10
-     */
-    minHeight?: number;
-    /**
-     * Disable 3D extrusion entirely — render flat polygons only.
+     * Uses a world-minus-polygon donut geometry (same technique as the `GeometriesModule`
+     * `'inverted'` theme).
      *
      * @defaultValue false
      */
-    flat?: boolean;
+    inverted?: boolean;
 };
 
+// ── Default values ───────────────────────────────────────────────────
+
 /**
- * A filter condition on a single metric.
+ * Default values for all {@link TrafficAreaAnalyticsConfig} options.
+ *
+ * Use these as a reference for what the module applies when a property is omitted,
+ * or spread them as a base when constructing a config programmatically.
  *
  * @group Traffic Area Analytics
  */
-export type AreaAnalyticsTileFilter = {
-    /** Metric to filter on. */
-    metric: AreaAnalyticsMetricKey;
-    /** Show only tiles where metric ≥ this value. */
-    min?: number;
-    /** Show only tiles where metric ≤ this value. */
-    max?: number;
-};
-
-/**
- * Tile filter configuration using OR logic.
- *
- * A tile is shown if it matches **any** of the filters in the `any` array.
- *
- * @group Traffic Area Analytics
- */
-export type AreaAnalyticsFilters = {
-    any: AreaAnalyticsTileFilter[];
-};
-
-/**
- * Tooltip configuration for the built-in hover popup.
- *
- * @remarks
- * When enabled, the module creates and manages a MapLibre Popup that
- * appears on hexgrid/tile hover. Developers who need custom tooltips
- * can disable this and use `module.events.on('hover', ...)` instead.
- *
- * @group Traffic Area Analytics
- */
-export type AreaAnalyticsTooltipConfig = {
-    /**
-     * Enable the built-in hover tooltip.
-     *
-     * @defaultValue false
-     */
-    enabled: boolean;
-    /**
-     * Which metrics to display in the tooltip. Defaults to all available.
-     */
-    metrics?: AreaAnalyticsMetricKey[];
-    /**
-     * Custom HTML formatter. Receives feature properties, returns an HTML string.
-     * When provided, overrides the default metric table.
-     */
-    formatter?: (properties: AreaAnalyticsDisplayProperties) => string;
-};
+export const AREA_ANALYTICS_DEFAULTS = {
+    /** @see {@link TrafficAreaAnalyticsConfig.visible} */
+    visible: true,
+    /** @see {@link TrafficAreaAnalyticsConfig.displayMode} */
+    displayMode: 'hexgrid-3d',
+    /** @see {@link TrafficAreaAnalyticsConfig.activeMetric} */
+    activeMetric: 'congestionLevel',
+    /** @see {@link TrafficAreaAnalyticsConfig.metricConfig} */
+    metricConfig: {
+        congestionLevel: {
+            color: {
+                valueType: 'raw',
+                stops: [
+                    { value: 0, color: '#2dc653' }, // free flow — green
+                    { value: 50, color: '#f5a623' }, // moderate  — amber
+                    { value: 100, color: '#e03030' }, // severe    — red
+                ],
+            },
+            height: { maxHeightMeters: 1000, minHeightMeters: 0, scaleMode: 'predefinedRange' },
+        },
+        speed: {
+            color: {
+                valueType: 'relativeToPredefinedRangePCT',
+                stops: [
+                    { value: 0, color: '#e03030' }, // slow — red
+                    { value: 50, color: '#f5a623' }, // medium — amber
+                    { value: 100, color: '#2dc653' }, // fast  — green
+                ],
+            },
+            height: { maxHeightMeters: 1000, minHeightMeters: 0, scaleMode: 'predefinedRange' },
+        },
+        travelTime: {
+            color: {
+                valueType: 'relativeToPredefinedRangePCT',
+                stops: [
+                    { value: 0, color: '#2dc653' }, // fast travel — green
+                    { value: 50, color: '#f5a623' }, // moderate   — amber
+                    { value: 100, color: '#e03030' }, // slow travel — red
+                ],
+            },
+            height: { maxHeightMeters: 1000, minHeightMeters: 0, scaleMode: 'predefinedRange' },
+        },
+        freeFlowSpeed: {
+            color: {
+                valueType: 'relativeToPredefinedRangePCT',
+                stops: [
+                    { value: 0, color: '#e03030' }, // slow — red
+                    { value: 50, color: '#f5a623' }, // medium — amber
+                    { value: 100, color: '#2dc653' }, // fast  — green
+                ],
+            },
+            height: { maxHeightMeters: 1000, minHeightMeters: 0, scaleMode: 'predefinedRange' },
+        },
+        // networkLength is the total road length within each tile — per-tile values vary widely
+        // and are unpredictable, so relativeToActualRangePCT is used as the default to ensure
+        // the visualization always scales to the live data range.
+        networkLength: {
+            color: {
+                valueType: 'relativeToActualRangePCT',
+                stops: [
+                    { value: 0, color: '#2dc653' }, // low coverage  — green
+                    { value: 50, color: '#f5a623' }, // mid coverage  — amber
+                    { value: 100, color: '#e03030' }, // high coverage — red
+                ],
+            },
+            height: { maxHeightMeters: 1000, minHeightMeters: 0, scaleMode: 'currentRange' },
+        },
+    },
+    /** @see {@link AreaAnalyticsRegionPolygonConfig} */
+    regionPolygon: {
+        color: '#000000',
+        fillOpacity: 0,
+        outlineOpacity: 0.5,
+        outlineWidth: 2,
+        inverted: false,
+    },
+} satisfies TrafficAreaAnalyticsConfig;
 
 // ── Main config type ────────────────────────────────────────────────
 
@@ -268,9 +387,35 @@ export type AreaAnalyticsTooltipConfig = {
  * Configuration for the Traffic Area Analytics visualization module.
  *
  * @remarks
- * Controls which visualization mode is active, which metric drives
- * the color/height, color theming, custom color stops, layer positioning,
- * and overall visibility.
+ * The active metric is set via `activeMetric` (defaults to `'congestionLevel'`).
+ * Per-metric style settings (color, height, filters) are nested under `metricConfig` keyed by
+ * `AreaAnalyticsMetricKey`, making it easy to pre-configure multiple metrics independently and switch
+ * between them at runtime via `setMetric()`.
+ *
+ * @example
+ * ```typescript
+ * const config: TrafficAreaAnalyticsConfig = {
+ *   displayMode: 'hexgrid-3d',
+ *   activeMetric: 'congestionLevel',
+ *   metricConfig: {
+ *     congestionLevel: {
+ *       color: 'heat',
+ *       height: { maxHeightMeters: 80, scaleMode: 'predefinedRange' },
+ *       filters: { min: 10 },
+ *     },
+ *     speed: {
+ *       color: {
+ *         valueType: 'raw',
+ *         stops: [
+ *           { value: 0,   color: '#e03030' },
+ *           { value: 60,  color: '#f5a623' },
+ *           { value: 120, color: '#2dc653' },
+ *         ],
+ *       },
+ *     },
+ *   },
+ * };
+ * ```
  *
  * @group Traffic Area Analytics
  */
@@ -287,51 +432,21 @@ export type TrafficAreaAnalyticsConfig = MapModuleCommonConfig & {
      *
      * @defaultValue 'hexgrid-3d'
      */
-    displayMode?: AreaAnalyticsMode;
+    displayMode?: AreaAnalyticsDisplayMode;
 
     /**
-     * The traffic metric that drives color and height.
+     * The metric that drives color and extrusion height.
      *
      * @defaultValue 'congestionLevel'
      */
-    metric?: AreaAnalyticsMetricKey;
+    activeMetric?: AreaAnalyticsMetricKey;
 
     /**
-     * Color for the analytics layers. Either a preset theme name or per-metric custom color stops.
+     * Per-metric visualization configuration (color, height, filters).
      *
-     * When using custom stops, provide a partial record mapping each metric to its own color ramp.
-     *
-     * All metrics use the same color convention — `value: 0` gets the "good" color (green) and
-     * `value: 1` gets the "bad" color (red). For `speed` the library automatically inverts the
-     * mapping so that slow speeds render red and fast speeds render green.
-     * Metrics absent from the record fall back to the default `'congestion'` preset.
-     *
-     * @example
-     * ```typescript
-     * // Preset theme for all metrics
-     * color: 'thermal'
-     *
-     * // Custom stops per metric — breakpoints tuned for urban traffic
-     * color: {
-     *   congestionLevel: [
-     *     { value: 0,    color: '#2dc653' },  // 0 %   — free flow
-     *     { value: 0.3,  color: '#f5a623' },  // 30 %  — moderate congestion
-     *     { value: 1,    color: '#e03030' },  // 100 % — severe congestion
-     *   ],
-     *   speed: [
-     *     { value: 0,    color: '#2dc653' },  // 0 km/h   — auto-inverted → renders red
-     *     { value: 0.33, color: '#f5a623' },  // ~40 km/h — urban speed threshold
-     *     { value: 1,    color: '#e03030' },  // 120 km/h — auto-inverted → renders green
-     *   ],
-     *   travelTime: [
-     *     { value: 0,   color: '#2dc653' },   // 0 s/km  — fast
-     *     { value: 0.6, color: '#f5a623' },   // 12 s/km — moderate delay
-     *     { value: 1,   color: '#e03030' },   // 20 s/km — heavy delay
-     *   ],
-     * }
-     * ```
+     * Metrics not listed here fall back to defaults (congestion color theme, metric-dependent height scale).
      */
-    color?: AreaAnalyticsColorTheme | Partial<Record<AreaAnalyticsMetricKey, AreaAnalyticsColorStop[]>>;
+    metricConfig?: Partial<Record<AreaAnalyticsMetricKey, AreaAnalyticsMetricConfig>>;
 
     /**
      * Per-layer-type positioning — controls where each analytics layer type sits in the map layer stack.
@@ -343,28 +458,4 @@ export type TrafficAreaAnalyticsConfig = MapModuleCommonConfig & {
      * Display options for the region polygon boundary drawn alongside the analytics data.
      */
     regionPolygon?: AreaAnalyticsRegionPolygonConfig;
-
-    /**
-     * Metric range configuration per metric. Controls color/height interpolation boundaries.
-     *
-     * @defaultValue union strategy (expand hardcoded range when data exceeds)
-     */
-    ranges?: Partial<Record<AreaAnalyticsMetricKey, AreaAnalyticsRangeConfig>>;
-
-    /**
-     * Height (extrusion) configuration for hexgrid and tile modes.
-     */
-    height?: AreaAnalyticsHeightConfig;
-
-    /**
-     * Tile filter — only show tiles matching metric thresholds.
-     */
-    filters?: AreaAnalyticsFilters;
-
-    /**
-     * Built-in hover tooltip configuration.
-     *
-     * @defaultValue disabled
-     */
-    tooltip?: AreaAnalyticsTooltipConfig;
 };

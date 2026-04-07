@@ -1,3 +1,4 @@
+import { areaAnalyticsMetricKeys } from '@tomtom-org/maps-sdk/core';
 import type { FetchInput } from '../shared';
 import { appendCommonParams } from '../shared/request/requestBuildingUtils';
 import type { AreaAnalyticsRequestBody } from './types/apiTypes';
@@ -6,7 +7,7 @@ import type {
     FunctionalRoadClass,
     TrafficAreaAnalyticsParams,
 } from './types/trafficAreaAnalyticsParams';
-import { functionalRoadClasses } from './types/trafficAreaAnalyticsParams';
+import { functionalRoadClasses, metricKeyToApiDataType } from './types/trafficAreaAnalyticsParams';
 
 const AREA_ANALYTICS_URL_PATH = '/areaanalytics/reports/lite';
 
@@ -47,7 +48,10 @@ export const buildTrafficAreaAnalyticsRequest = (
     const body: AreaAnalyticsRequestBody = {
         name: params.name ?? `Maps SDK JS Area Analytics Report ${new Date().toISOString()}`,
         ...datePart,
-        dataTypes: params.dataTypes,
+        dataTypes:
+            params.metrics === 'all'
+                ? areaAnalyticsMetricKeys.map((k) => metricKeyToApiDataType[k])
+                : params.metrics.map((k) => metricKeyToApiDataType[k]),
         frcs:
             params.functionalRoadClasses === 'all'
                 ? functionalRoadClasses.map((_, i) => i)

@@ -11,7 +11,6 @@ import type {
     WaypointLike,
 } from '@tomtom-org/maps-sdk/core';
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import type { TrafficAreaAnalyticsConfig } from '@tomtom-org/maps-sdk/map';
 import {
     BaseMapModule,
     GeometriesModule,
@@ -23,6 +22,7 @@ import {
     RoutingModule,
     reachableRangeGeometryConfig,
     type TomTomMap,
+    type TrafficAreaAnalyticsConfig,
     TrafficAreaAnalyticsModule,
     TrafficFlowModule,
     TrafficIncidentsModule,
@@ -43,7 +43,6 @@ export interface StateSlice {
 import { Position } from 'geojson';
 import { Map } from 'maplibre-gl';
 import type { ToolState } from './types';
-import { AnalyticsControlPanel } from './ui/analytics-control-panel';
 
 TomTomConfig.instance.put({ language: 'en-GB' });
 
@@ -306,10 +305,16 @@ export class TrafficState implements StateSlice {
         if (!this._trafficAreaAnalyticsModule) {
             this._trafficAreaAnalyticsModule = await TrafficAreaAnalyticsModule.get(this._ttMap);
             // Wire config change events so agent state stays in sync with module
-            this._configChangeUnsub = this._trafficAreaAnalyticsModule.on('configChange', (config) => {
+            this._configChangeUnsub = this._trafficAreaAnalyticsModule.events.on('configChange', (config) => {
                 this._currentAnalyticsConfig = config;
             });
         }
+        return this._trafficAreaAnalyticsModule;
+    }
+
+    // Cached module access (for reading without triggering initialization)
+
+    get trafficAreaAnalyticsModule(): TrafficAreaAnalyticsModule | undefined {
         return this._trafficAreaAnalyticsModule;
     }
 
@@ -328,30 +333,20 @@ export class TrafficState implements StateSlice {
         return this._currentAnalyticsConfig;
     }
 
-    // Control panel
-
-    private _controlPanel?: AnalyticsControlPanel;
-
-    get controlPanel(): AnalyticsControlPanel | undefined {
-        return this._controlPanel;
-    }
-
-    /** Get or create the analytics control panel for the given map container. */
-    initControlPanel(mapContainer: HTMLElement, module: TrafficAreaAnalyticsModule): AnalyticsControlPanel {
-        this._controlPanel ??= new AnalyticsControlPanel(mapContainer, module);
-        return this._controlPanel;
-    }
+    // Optional hooks for the host application to show/hide its own analytics UI.
+    // The plugin does not manage any UI panel — wire these up in the consuming app.
+    onAnalyticsShown?: (analytics: TrafficAreaAnalytics, module: TrafficAreaAnalyticsModule) => void;
+    onAnalyticsCleared?: () => void;
 
     reset(): void {
         this._configChangeUnsub?.();
-        this._controlPanel?.destroy();
+        this.onAnalyticsCleared?.();
         this._trafficFlowModule = undefined;
         this._trafficIncidentsModule = undefined;
         this._trafficAreaAnalyticsModule = undefined;
         this._lastAreaAnalytics = undefined;
         this._currentAnalyticsConfig = undefined;
         this._configChangeUnsub = undefined;
-        this._controlPanel = undefined;
     }
 }
 
