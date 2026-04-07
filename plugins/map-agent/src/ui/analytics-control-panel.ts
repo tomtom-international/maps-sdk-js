@@ -276,18 +276,22 @@ export class AnalyticsControlPanel {
         body.appendChild(legend);
 
         // Metric selector
-        body.appendChild(this.buildRadioSection('Metric', METRIC_OPTIONS, this.currentMetric, (value) => {
-            this.currentMetric = value as AreaAnalyticsMetricKey;
-            this.module.setMetric(this.currentMetric);
-            this.updateLegend();
-            if (this.analytics) this.updateChart(this.analytics);
-        }));
+        body.appendChild(
+            this.buildRadioSection('Metric', METRIC_OPTIONS, this.currentMetric, (value) => {
+                this.currentMetric = value as AreaAnalyticsMetricKey;
+                this.module.setMetric(this.currentMetric);
+                this.updateLegend();
+                if (this.analytics) this.updateChart(this.analytics);
+            }),
+        );
 
         // Mode selector
-        body.appendChild(this.buildRadioSection('Mode', MODE_OPTIONS, this.currentMode, (value) => {
-            this.currentMode = value as AreaAnalyticsMode;
-            this.module.setMode(this.currentMode);
-        }));
+        body.appendChild(
+            this.buildRadioSection('Mode', MODE_OPTIONS, this.currentMode, (value) => {
+                this.currentMode = value as AreaAnalyticsMode;
+                this.module.setMode(this.currentMode);
+            }),
+        );
 
         // Hourly chart
         const chartSection = document.createElement('div');
@@ -349,16 +353,24 @@ export class AnalyticsControlPanel {
         if (!stats) return;
 
         const base = analytics.features[0]?.properties?.baseData;
-        if (!base) { stats.innerHTML = ''; return; }
+        if (!base) {
+            stats.innerHTML = '';
+            return;
+        }
 
         const items: { label: string; value: string }[] = [];
-        if (base.congestionLevel != null) items.push({ label: 'Congestion', value: `${Math.round(base.congestionLevel)}%` });
+        if (base.congestionLevel != null)
+            items.push({ label: 'Congestion', value: `${Math.round(base.congestionLevel)}%` });
         if (base.speed != null) items.push({ label: 'Speed', value: `${Math.round(base.speed)} km/h` });
         if (base.travelTime != null) items.push({ label: 'Travel Time', value: `${base.travelTime.toFixed(1)} min` });
-        if (base.freeFlowSpeed != null) items.push({ label: 'Free Flow', value: `${Math.round(base.freeFlowSpeed)} km/h` });
+        if (base.freeFlowSpeed != null)
+            items.push({ label: 'Free Flow', value: `${Math.round(base.freeFlowSpeed)} km/h` });
 
         stats.innerHTML = items
-            .map((i) => `<div class="aa-stat"><div class="aa-stat-label">${i.label}</div><div class="aa-stat-value">${i.value}</div></div>`)
+            .map(
+                (i) =>
+                    `<div class="aa-stat"><div class="aa-stat-label">${i.label}</div><div class="aa-stat-value">${i.value}</div></div>`,
+            )
             .join('');
     }
 
@@ -396,9 +408,7 @@ export class AnalyticsControlPanel {
     }
 
     /** Average timed entries by hour (0-23) for the current metric. */
-    private computeHourlyAverages(
-        entries: ReadonlyArray<Record<string, unknown>>,
-    ): number[] {
+    private computeHourlyAverages(entries: ReadonlyArray<Record<string, unknown>>): number[] {
         const sums = new Array(24).fill(0);
         const counts = new Array(24).fill(0);
 
@@ -443,9 +453,10 @@ export class AnalyticsControlPanel {
             const ratio = hourlyValues[hour] / maximumValue;
             const barHeight = ratio * chartHeight;
 
-            context.fillStyle = ratio < 0.5
-                ? this.interpolateColor(low, mid, ratio * 2)
-                : this.interpolateColor(mid, high, (ratio - 0.5) * 2);
+            context.fillStyle =
+                ratio < 0.5
+                    ? this.interpolateColor(low, mid, ratio * 2)
+                    : this.interpolateColor(mid, high, (ratio - 0.5) * 2);
             context.fillRect(20 + hour * barWidth, chartHeight - barHeight, barWidth - 1, barHeight);
         }
 
@@ -461,8 +472,12 @@ export class AnalyticsControlPanel {
         context.fillStyle = '#666';
         context.font = '9px -apple-system, sans-serif';
         context.textAlign = 'left';
-        const metricLabel = this.currentMetric === 'congestionLevel' ? 'Congestion %'
-            : this.currentMetric === 'speed' ? 'Speed km/h' : 'Travel min';
+        const metricLabel =
+            this.currentMetric === 'congestionLevel'
+                ? 'Congestion %'
+                : this.currentMetric === 'speed'
+                  ? 'Speed km/h'
+                  : 'Travel min';
         context.fillText(metricLabel, 2, 10);
     }
 
@@ -470,7 +485,11 @@ export class AnalyticsControlPanel {
     private interpolateColor(hex1: string, hex2: string, ratio: number): string {
         const parse = (hexColor: string) => {
             const cleaned = hexColor.replace('#', '');
-            return [parseInt(cleaned.slice(0, 2), 16), parseInt(cleaned.slice(2, 4), 16), parseInt(cleaned.slice(4, 6), 16)];
+            return [
+                Number.parseInt(cleaned.slice(0, 2), 16),
+                Number.parseInt(cleaned.slice(2, 4), 16),
+                Number.parseInt(cleaned.slice(4, 6), 16),
+            ];
         };
         const [r1, g1, b1] = parse(hex1);
         const [r2, g2, b2] = parse(hex2);

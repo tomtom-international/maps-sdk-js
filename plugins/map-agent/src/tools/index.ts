@@ -123,13 +123,13 @@ export type DefaultToolSet = {
  *   it('should geocode Amsterdam', async () => {
  *     const mockMap = createMockMap();
  *     const state = createToolState(mockMap);
- *     
+ *
  *     const tools = createMapToolSet(state);
  *
      const result = await tools.geocode.execute({ query: 'Amsterdam' });
 
          expect(state.places.currentPlace).toBeDefined();
-         
+
    });
  * });
  * ```

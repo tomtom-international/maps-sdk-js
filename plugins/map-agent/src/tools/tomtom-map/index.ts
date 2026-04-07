@@ -55,12 +55,12 @@ export {
 } from './set-map-standard-style';
 export { createSetRouteThemeTool, setRouteThemeDescription, setRouteThemeSchema } from './set-route-theme';
 export { createShowPlacesTool, showPlacesDescription, showPlacesSchema } from './show-places';
+export { createShowRoutesTool, showRouteDescription, showRouteSchema } from './show-routes';
 export {
     createShowTrafficAreaAnalyticsTool,
     showTrafficAreaAnalyticsDescription,
     showTrafficAreaAnalyticsSchema,
 } from './show-traffic-area-analytics';
-export { createShowRoutesTool, showRouteDescription, showRouteSchema } from './show-routes';
 export { createShowWaypointsTool, showWaypointsDescription, showWaypointsSchema } from './show-waypoints';
 export {
     createToggleBaseMapLayerGroupsTool,

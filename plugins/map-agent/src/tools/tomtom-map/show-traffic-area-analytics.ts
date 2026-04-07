@@ -3,7 +3,7 @@
  */
 
 import { bboxFromGeoJSON } from '@tomtom-org/maps-sdk/core';
-import type { AreaAnalyticsMetricKey, AreaAnalyticsMode } from '@tomtom-org/maps-sdk/map';
+import type { AreaAnalyticsMetricKey } from '@tomtom-org/maps-sdk/map';
 import { type Tool, tool } from 'ai';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import { z } from 'zod';
@@ -21,7 +21,9 @@ export const showTrafficAreaAnalyticsSchema = z.object({
     mode: z
         .enum(['hexgrid', 'heatmap', 'tiles'])
         .optional()
-        .describe("Visualization mode. 'hexgrid' (default): 3D hexagons. 'heatmap': density layer. 'tiles': raw API squares (no aggregation)."),
+        .describe(
+            "Visualization mode. 'hexgrid' (default): 3D hexagons. 'heatmap': density layer. 'tiles': raw API squares (no aggregation).",
+        ),
     metric: z
         .enum(['congestionLevel', 'speed', 'travelTime'])
         .optional()
@@ -34,11 +36,10 @@ export const showTrafficAreaAnalyticsSchema = z.object({
         .array(z.string())
         .length(3)
         .optional()
-        .describe("Custom 3-stop gradient [low, mid, high] as CSS colors. Overrides colorScheme. E.g. ['#00ff00', '#ffff00', '#ff0000']."),
-    flat: z
-        .boolean()
-        .optional()
-        .describe('Disable 3D extrusion, render flat polygons. Default: false.'),
+        .describe(
+            "Custom 3-stop gradient [low, mid, high] as CSS colors. Overrides colorScheme. E.g. ['#00ff00', '#ffff00', '#ff0000'].",
+        ),
+    flat: z.boolean().optional().describe('Disable 3D extrusion, render flat polygons. Default: false.'),
     heightScale: z
         .number()
         .optional()
@@ -53,23 +54,18 @@ export const showTrafficAreaAnalyticsSchema = z.object({
             message: 'Filter must have at least one of min or max',
         })
         .optional()
-        .describe("Filter visible tiles by metric threshold. E.g. { metric: 'congestionLevel', min: 50 } shows only congested areas."),
+        .describe(
+            "Filter visible tiles by metric threshold. E.g. { metric: 'congestionLevel', min: 50 } shows only congested areas.",
+        ),
     rangeStrategy: z
         .enum(['auto', 'fixed', 'union'])
         .optional()
-        .describe("Color/height range strategy. 'union' (default): expand hardcoded when data exceeds. 'auto': scale to data. 'fixed': use hardcoded ranges."),
-    tooltip: z
-        .boolean()
-        .optional()
-        .describe('Enable hover tooltip showing metric values. Default: true.'),
-    visible: z
-        .boolean()
-        .optional()
-        .describe('Set to false to clear the visualization. Default: true.'),
-    fitBounds: z
-        .boolean()
-        .optional()
-        .describe('Fit map viewport to the analytics area. Default: true.'),
+        .describe(
+            "Color/height range strategy. 'union' (default): expand hardcoded when data exceeds. 'auto': scale to data. 'fixed': use hardcoded ranges.",
+        ),
+    tooltip: z.boolean().optional().describe('Enable hover tooltip showing metric values. Default: true.'),
+    visible: z.boolean().optional().describe('Set to false to clear the visualization. Default: true.'),
+    fitBounds: z.boolean().optional().describe('Fit map viewport to the analytics area. Default: true.'),
 });
 
 /** Output schema for the show-traffic-area-analytics tool. */
@@ -125,7 +121,7 @@ export function createShowTrafficAreaAnalyticsTool(state: ToolState): Tool {
                 // Default metric to first fetched dataType
                 const firstFetchedType = analyticsResult.properties?.dataTypes?.[0];
                 const defaultMetric = firstFetchedType
-                    ? DATA_TYPE_TO_METRIC[firstFetchedType] ?? 'congestionLevel'
+                    ? (DATA_TYPE_TO_METRIC[firstFetchedType] ?? 'congestionLevel')
                     : 'congestionLevel';
 
                 const {
@@ -148,7 +144,15 @@ export function createShowTrafficAreaAnalyticsTool(state: ToolState): Tool {
                 if (!visible) {
                     await analyticsModule.clear();
                     state.traffic.controlPanel?.hide();
-                    return { success: true, mode, metric, colorScheme, visible: false, filtered: false, tooltipEnabled: false };
+                    return {
+                        success: true,
+                        mode,
+                        metric,
+                        colorScheme,
+                        visible: false,
+                        filtered: false,
+                        tooltipEnabled: false,
+                    };
                 }
 
                 // Clear previous visualization before showing new data
@@ -199,10 +203,7 @@ export function createShowTrafficAreaAnalyticsTool(state: ToolState): Tool {
                 }
 
                 // Show control panel with metric/mode/color toggles + chart
-                const panel = state.traffic.initControlPanel(
-                    state.baseMap.mapLibreMap.getContainer(),
-                    analyticsModule,
-                );
+                const panel = state.traffic.initControlPanel(state.baseMap.mapLibreMap.getContainer(), analyticsModule);
                 panel.show(analyticsResult);
 
                 return {

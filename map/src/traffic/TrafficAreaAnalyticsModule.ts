@@ -432,8 +432,7 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
      * ```
      */
     get events() {
-        const activeSource =
-            this.mode === 'tiles' ? this.sourcesWithLayers.tiles : this.sourcesWithLayers.hexgrid;
+        const activeSource = this.mode === 'tiles' ? this.sourcesWithLayers.tiles : this.sourcesWithLayers.hexgrid;
         return new EventsModule<AreaAnalyticsHexFeature>(
             this.tomtomMap._eventsProxy,
             activeSource,

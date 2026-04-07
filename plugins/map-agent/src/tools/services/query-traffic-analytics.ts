@@ -30,10 +30,28 @@ export const queryTrafficAnalyticsSchema = z.object({
         .enum(['speed', 'congestionLevel', 'freeFlowSpeed', 'travelTime', 'networkLength'])
         .optional()
         .describe('Filter to a single metric. Default: all requested metrics.'),
-    startDate: z.string().optional().describe("Filter entries from this date (YYYY-MM-DD). Works with 'daily' and 'hourly'."),
-    endDate: z.string().optional().describe("Filter entries up to this date (YYYY-MM-DD). Works with 'daily' and 'hourly'."),
-    hourStart: z.number().int().min(0).max(23).optional().describe("Filter hourly/average entries from this hour (0-23)."),
-    hourEnd: z.number().int().min(0).max(23).optional().describe("Filter hourly/average entries up to this hour (0-23)."),
+    startDate: z
+        .string()
+        .optional()
+        .describe("Filter entries from this date (YYYY-MM-DD). Works with 'daily' and 'hourly'."),
+    endDate: z
+        .string()
+        .optional()
+        .describe("Filter entries up to this date (YYYY-MM-DD). Works with 'daily' and 'hourly'."),
+    hourStart: z
+        .number()
+        .int()
+        .min(0)
+        .max(23)
+        .optional()
+        .describe('Filter hourly/average entries from this hour (0-23).'),
+    hourEnd: z
+        .number()
+        .int()
+        .min(0)
+        .max(23)
+        .optional()
+        .describe('Filter hourly/average entries up to this hour (0-23).'),
     dayOfWeek: z
         .array(z.number().int().min(1).max(7))
         .optional()
@@ -68,7 +86,12 @@ export const queryTrafficAnalyticsDescription =
 // ---------------------------------------------------------------------------
 
 /** Derive a date string for a daily/hourly entry using index fallback. */
-function resolveDateStr(entryDate: unknown, index: number, granularity: string, startDateStr?: string): string | undefined {
+function resolveDateStr(
+    entryDate: unknown,
+    index: number,
+    granularity: string,
+    startDateStr?: string,
+): string | undefined {
     const direct = formatDate(entryDate);
     if (direct) return direct;
     if (startDateStr && index >= 0) {
@@ -110,12 +133,13 @@ export function createQueryTrafficAnalyticsTool(state: ToolState): Tool {
             const timedData = region.timedData;
             const rawEntries = timedData?.[granularity as keyof typeof timedData];
             if (!rawEntries || !Array.isArray(rawEntries) || rawEntries.length === 0) {
-                return { error: `No '${granularity}' data available. Available: ${Object.keys(timedData ?? {}).join(', ')}` };
+                return {
+                    error: `No '${granularity}' data available. Available: ${Object.keys(timedData ?? {}).join(', ')}`,
+                };
             }
 
             // Resolve start date for index-based date derivation
-            const collectionStartDate =
-                formatDate(analytics.properties?.startDate);
+            const collectionStartDate = formatDate(analytics.properties?.startDate);
 
             // Map and filter entries
             let entries = rawEntries.map((entry, index) => {
@@ -123,12 +147,7 @@ export function createQueryTrafficAnalyticsTool(state: ToolState): Tool {
 
                 // Temporal fields
                 if (granularity === 'daily' || granularity === 'hourly') {
-                    const dateStr = resolveDateStr(
-                        entry.date,
-                        index,
-                        granularity,
-                        collectionStartDate,
-                    );
+                    const dateStr = resolveDateStr(entry.date, index, granularity, collectionStartDate);
                     if (dateStr) mapped.date = dateStr;
                 }
                 if (entry.hour !== undefined) mapped.hour = entry.hour;

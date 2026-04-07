@@ -29,16 +29,16 @@ export {
     getTrafficIncidentsSchema,
 } from './get-traffic-incidents';
 export {
-    createQueryTrafficAnalyticsTool,
-    queryTrafficAnalyticsDescription,
-    queryTrafficAnalyticsSchema,
-} from './query-traffic-analytics';
-export {
     createLocatePlaceTool,
     locatePlace,
     locatePlaceDescription,
     locatePlaceSchema,
 } from './locate-place';
+export {
+    createQueryTrafficAnalyticsTool,
+    queryTrafficAnalyticsDescription,
+    queryTrafficAnalyticsSchema,
+} from './query-traffic-analytics';
 export {
     createRemoveStopFromRouteTool,
     removeStopFromRouteDescription,

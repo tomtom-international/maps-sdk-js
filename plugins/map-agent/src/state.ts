@@ -3,9 +3,8 @@
  */
 
 import type { Place, Places, Routes, TrafficAreaAnalytics, WaypointLike } from '@tomtom-org/maps-sdk/core';
-import type { TrafficAreaAnalyticsConfig } from '@tomtom-org/maps-sdk/map';
-import { AnalyticsControlPanel } from './ui/analytics-control-panel';
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import type { TrafficAreaAnalyticsConfig } from '@tomtom-org/maps-sdk/map';
 import {
     BaseMapModule,
     GeometriesModule,
@@ -24,6 +23,7 @@ import {
 import { ReachableRangeBudget } from '@tomtom-org/maps-sdk/services';
 import { Position } from 'geojson';
 import { Map } from 'maplibre-gl';
+import { AnalyticsControlPanel } from './ui/analytics-control-panel';
 
 TomTomConfig.instance.put({ language: 'en-GB' });
 

@@ -3,10 +3,10 @@
  */
 
 import type { TrafficAreaAnalytics } from '@tomtom-org/maps-sdk/core';
-import { trafficAreaAnalytics } from '@tomtom-org/maps-sdk/services';
 import type { TrafficAreaAnalyticsParams } from '@tomtom-org/maps-sdk/services';
+import { trafficAreaAnalytics } from '@tomtom-org/maps-sdk/services';
 import { type Tool, tool } from 'ai';
-import type { Polygon, MultiPolygon } from 'geojson';
+import type { MultiPolygon, Polygon } from 'geojson';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
@@ -63,18 +63,34 @@ export const getTrafficAreaAnalyticsSchema = z.object({
         .array(z.number())
         .length(4)
         .optional()
-        .describe('[minLng, minLat, maxLng, maxLat] — use a wide area (at least 5-10km across, city-level) for meaningful results. Too-small areas produce sparse, hard-to-read visualizations.'),
+        .describe(
+            '[minLng, minLat, maxLng, maxLat] — use a wide area (at least 5-10km across, city-level) for meaningful results. Too-small areas produce sparse, hard-to-read visualizations.',
+        ),
     geometry: z
         .object({
             type: z.enum(['Polygon', 'MultiPolygon']),
             coordinates: z.any(),
         })
         .optional()
-        .describe('GeoJSON Polygon or MultiPolygon geometry. Use for precise boundaries. Mutually exclusive with bbox.'),
-    startDate: z.string().optional().describe("Start date 'YYYY-MM-DD'. Use with endDate for a continuous range (max 31 days)."),
+        .describe(
+            'GeoJSON Polygon or MultiPolygon geometry. Use for precise boundaries. Mutually exclusive with bbox.',
+        ),
+    startDate: z
+        .string()
+        .optional()
+        .describe("Start date 'YYYY-MM-DD'. Use with endDate for a continuous range (max 31 days)."),
     endDate: z.string().optional().describe("End date 'YYYY-MM-DD' (inclusive). Defaults to today if omitted."),
-    days: z.array(z.string()).optional().describe("Specific dates 'YYYY-MM-DD' for non-consecutive analysis. Mutually exclusive with startDate/endDate."),
-    dataTypes: z.array(z.enum([...DATA_TYPES])).describe("Traffic metrics to analyze. Prefer fetching all: ['SPEED', 'CONGESTION_LEVEL', 'FREE_FLOW_SPEED', 'TRAVEL_TIME', 'NETWORK_LENGTH'] unless the user asks for specific ones."),
+    days: z
+        .array(z.string())
+        .optional()
+        .describe(
+            "Specific dates 'YYYY-MM-DD' for non-consecutive analysis. Mutually exclusive with startDate/endDate.",
+        ),
+    dataTypes: z
+        .array(z.enum([...DATA_TYPES]))
+        .describe(
+            "Traffic metrics to analyze. Prefer fetching all: ['SPEED', 'CONGESTION_LEVEL', 'FREE_FLOW_SPEED', 'TRAVEL_TIME', 'NETWORK_LENGTH'] unless the user asks for specific ones.",
+        ),
     functionalRoadClasses: z
         .union([z.literal('all'), z.array(z.enum([...FUNCTIONAL_ROAD_CLASSES]))])
         .optional()
@@ -138,15 +154,33 @@ export function extractMetrics(entry: Record<string, unknown>) {
 }
 
 /** Compact summary of the analytics result — just headline numbers + what's available for drill-down. */
-function summarize(result: TrafficAreaAnalytics, inputStartDate?: string, inputEndDate?: string): z.infer<typeof getTrafficAreaAnalyticsOutputSchema> {
+function summarize(
+    result: TrafficAreaAnalytics,
+    inputStartDate?: string,
+    inputEndDate?: string,
+): z.infer<typeof getTrafficAreaAnalyticsOutputSchema> {
     const region = result.features[0]?.properties;
     if (!region) {
-        return { dateRange: { start: '', end: '' }, baseData: {}, dataTypes: [], tileCount: 0, availableGranularities: [] };
+        return {
+            dateRange: { start: '', end: '' },
+            baseData: {},
+            dataTypes: [],
+            tileCount: 0,
+            availableGranularities: [],
+        };
     }
 
     // SDK defaults to startDate=3 days ago, endDate=2 days ago when omitted
-    const defaultStart = () => { const d = new Date(); d.setDate(d.getDate() - 3); return toDateString(d); };
-    const defaultEnd = () => { const d = new Date(); d.setDate(d.getDate() - 2); return toDateString(d); };
+    const defaultStart = () => {
+        const d = new Date();
+        d.setDate(d.getDate() - 3);
+        return toDateString(d);
+    };
+    const defaultEnd = () => {
+        const d = new Date();
+        d.setDate(d.getDate() - 2);
+        return toDateString(d);
+    };
 
     const start = inputStartDate ?? formatDate(result.properties?.startDate) ?? defaultStart();
     const end = inputEndDate ?? formatDate(result.properties?.endDate) ?? defaultEnd();

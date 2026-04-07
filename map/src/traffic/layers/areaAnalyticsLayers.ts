@@ -96,7 +96,19 @@ export const buildColorExpression = (
  * @ignore
  */
 export const buildHeatmapColorExpression = (colors: ColorStops): ExpressionSpecification => {
-    return ['interpolate', ['linear'], ['heatmap-density'], 0, 'rgba(0,0,0,0)', 0.3, colors.low, 0.6, colors.mid, 1, colors.high];
+    return [
+        'interpolate',
+        ['linear'],
+        ['heatmap-density'],
+        0,
+        'rgba(0,0,0,0)',
+        0.3,
+        colors.low,
+        0.6,
+        colors.mid,
+        1,
+        colors.high,
+    ];
 };
 
 /**
