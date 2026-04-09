@@ -2,7 +2,7 @@
   "name": "@tomtom-org/maps-sdk-plugin-ai-agent",
   "author": "TomTom International B.V.",
   "license": "See in LICENSE.txt",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "description": "Conversational map agent plugin for TomTom Maps SDK JS using Vercel AI SDK",
   "types": "dist/index.d.ts",
