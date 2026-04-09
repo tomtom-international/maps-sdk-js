@@ -68,6 +68,11 @@ describe('resolveTools', () => {
         expect(result.gamma).toBe(toolC);
     });
 
+    it('removes a default tool with undefined', () => {
+        const result = resolveTools(defaults, { beta: undefined });
+        expect(Object.keys(result)).toEqual(['alpha']);
+    });
+
     it('does not mutate the defaults object', () => {
         const defaultsCopy = { ...defaults };
         resolveTools(defaults, { alpha: false, gamma: toolC });

@@ -1,4 +1,4 @@
-import type { ToolEntry, ToolState } from './types';
+import type { ToolEntry, ToolNameHint, ToolState } from './types';
 
 /**
  * Merges default tools with user overrides.
@@ -13,17 +13,17 @@ import type { ToolEntry, ToolState } from './types';
  */
 export function resolveTools<S extends ToolState>(
     defaults: Record<string, ToolEntry<S>>,
-    overrides?: Record<string, ToolEntry<S> | false>,
+    overrides?: { [K in ToolNameHint]?: ToolEntry<S> | false | undefined },
 ): Record<string, ToolEntry<S>> {
     const result = { ...defaults };
 
     if (!overrides) return result;
 
     for (const [name, entry] of Object.entries(overrides)) {
-        if (entry === false) {
-            delete result[name];
-        } else {
+        if (entry) {
             result[name] = entry;
+        } else {
+            delete result[name];
         }
     }
 

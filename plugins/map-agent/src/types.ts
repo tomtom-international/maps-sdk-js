@@ -153,7 +153,7 @@ export type MapAgentOptions<CS extends ToolState = ToolState> = {
      * });
      * ```
      */
-    tools?: Record<string, ToolEntry<CS> | false>;
+    tools?: { [K in ToolNameHint]?: ToolEntry<CS> | false | undefined };
 
     /**
      * Custom state slices merged alongside built-in state.
