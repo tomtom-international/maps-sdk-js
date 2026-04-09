@@ -2,7 +2,6 @@
  * @module map-agent-tools
  */
 
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
@@ -53,47 +52,41 @@ export const getCurrentLocationDescription =
     'Does NOT return the map viewport center — use getViewport for map-based reference. ' +
     'Returns: position [longitude, latitude].';
 
-/**
- * Create the get current location tool.
- */
-export function createGetCurrentLocationTool(_state: ToolState): Tool {
-    return tool({
-        description: getCurrentLocationDescription,
-        inputSchema: getCurrentLocationSchema,
-        outputSchema: getCurrentLocationOutputSchema,
-        execute: async () => {
-            if (globalThis.window === undefined || globalThis.navigator === undefined) {
-                return { error: 'Current location is only available in a browser environment' };
-            }
+/** Execute function for getCurrentLocation — usable with ToolEntry format. */
+export async function executeGetCurrentLocation(
+    _params: z.infer<typeof getCurrentLocationSchema>,
+    _state: ToolState,
+): Promise<z.infer<typeof getCurrentLocationOutputSchema>> {
+    if (globalThis.window === undefined || globalThis.navigator === undefined) {
+        return { error: 'Current location is only available in a browser environment' };
+    }
 
-            if (!('geolocation' in globalThis.navigator)) {
-                return { error: 'Geolocation is not supported by this browser' };
-            }
+    if (!('geolocation' in globalThis.navigator)) {
+        return { error: 'Geolocation is not supported by this browser' };
+    }
 
-            try {
-                const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-                    globalThis.navigator.geolocation.getCurrentPosition(resolve, reject, {
-                        enableHighAccuracy: true,
-                        timeout: 15000,
-                        maximumAge: 0,
-                    });
-                });
+    try {
+        const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+            globalThis.navigator.geolocation.getCurrentPosition(resolve, reject, {
+                enableHighAccuracy: true,
+                timeout: 15000,
+                maximumAge: 0,
+            });
+        });
 
-                return {
-                    position: [position.coords.longitude, position.coords.latitude],
-                    accuracy: position.coords.accuracy,
-                    timestamp: position.timestamp,
-                };
-            } catch (error) {
-                const locationErrorMessage = getLocationErrorMessage(error);
-                if (locationErrorMessage) {
-                    return { error: locationErrorMessage };
-                }
+        return {
+            position: [position.coords.longitude, position.coords.latitude],
+            accuracy: position.coords.accuracy,
+            timestamp: position.timestamp,
+        };
+    } catch (error) {
+        const locationErrorMessage = getLocationErrorMessage(error);
+        if (locationErrorMessage) {
+            return { error: locationErrorMessage };
+        }
 
-                return {
-                    error: `Failed to get current location: ${error instanceof Error ? error.message : String(error)}`,
-                };
-            }
-        },
-    });
+        return {
+            error: `Failed to get current location: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

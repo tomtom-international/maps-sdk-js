@@ -9,7 +9,6 @@ import {
     type SectionType,
     sectionTypes,
 } from '@tomtom-org/maps-sdk/core';
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
@@ -37,82 +36,75 @@ export const fitRouteSectionDescription =
     'Requires a route to be shown on the map.';
 
 /**
- * Create the fit route section tool.
+ * Execute fit route section.
  */
-export function createFitRouteSectionTool(state: ToolState): Tool {
-    return tool({
-        description: fitRouteSectionDescription,
-        inputSchema: fitRouteSectionSchema,
-        outputSchema: fitRouteSectionOutputSchema,
-        execute: async (params) => {
-            const { sectionType, id, padding = 50 } = params;
+export async function executeFitRouteSection(params: z.infer<typeof fitRouteSectionSchema>, state: ToolState) {
+    const { sectionType, id, padding = 50 } = params;
 
-            try {
-                // Get the currently shown routes from the map
-                if (!state.routing.routingModule) {
-                    return {
-                        error: 'No routing module initialized - no routes shown on map',
+    try {
+        // Get the currently shown routes from the map
+        if (!state.routing.routingModule) {
+            return {
+                error: 'No routing module initialized - no routes shown on map',
+            };
+        }
+
+        const shown = state.routing.routingModule.getShown();
+
+        if (!shown.mainLines || shown.mainLines.features.length === 0) {
+            return {
+                error: 'No routes are currently displayed on the map. Please show a route first before fitting to a section.',
+            };
+        }
+
+        const shownRoutes = shown.mainLines.features;
+
+        // Find the section in the shown routes
+        let targetRoute: Route | undefined;
+        let targetSection: { id: string; startPointIndex: number; endPointIndex: number } | undefined;
+
+        for (const route of shownRoutes) {
+            const sections = route.properties.sections[sectionType as SectionType];
+            if (sections && Array.isArray(sections)) {
+                const foundSection = sections.find((s) => s.id === id);
+                if (
+                    foundSection &&
+                    typeof foundSection.startPointIndex === 'number' &&
+                    typeof foundSection.endPointIndex === 'number'
+                ) {
+                    targetSection = foundSection as {
+                        id: string;
+                        startPointIndex: number;
+                        endPointIndex: number;
                     };
+                    targetRoute = route;
+                    break;
                 }
-
-                const shown = state.routing.routingModule.getShown();
-
-                if (!shown.mainLines || shown.mainLines.features.length === 0) {
-                    return {
-                        error: 'No routes are currently displayed on the map. Please show a route first before fitting to a section.',
-                    };
-                }
-
-                const shownRoutes = shown.mainLines.features;
-
-                // Find the section in the shown routes
-                let targetRoute: Route | undefined;
-                let targetSection: { id: string; startPointIndex: number; endPointIndex: number } | undefined;
-
-                for (const route of shownRoutes) {
-                    const sections = route.properties.sections[sectionType as SectionType];
-                    if (sections && Array.isArray(sections)) {
-                        const foundSection = sections.find((s) => s.id === id);
-                        if (
-                            foundSection &&
-                            typeof foundSection.startPointIndex === 'number' &&
-                            typeof foundSection.endPointIndex === 'number'
-                        ) {
-                            targetSection = foundSection as {
-                                id: string;
-                                startPointIndex: number;
-                                endPointIndex: number;
-                            };
-                            targetRoute = route;
-                            break;
-                        }
-                    }
-                }
-
-                if (!targetRoute || !targetSection) {
-                    return {
-                        error: `Could not find a section with type "${sectionType}" and id "${id}" in any displayed route. Check the section type and id are correct.`,
-                    };
-                }
-
-                // Calculate the bbox for the section
-                const bbox = getSectionBBox(targetRoute, targetSection as SectionProps);
-
-                if (!bbox) {
-                    return {
-                        error: 'Could not calculate bounding box for the section. The section may have invalid indices.',
-                    };
-                }
-
-                // Fit the map to the section bbox
-                state.baseMap.mapLibreMap.fitBounds(bbox, { padding });
-
-                return { success: true };
-            } catch (error) {
-                return {
-                    error: `Failed to fit route section: ${error instanceof Error ? error.message : String(error)}`,
-                };
             }
-        },
-    });
+        }
+
+        if (!targetRoute || !targetSection) {
+            return {
+                error: `Could not find a section with type "${sectionType}" and id "${id}" in any displayed route. Check the section type and id are correct.`,
+            };
+        }
+
+        // Calculate the bbox for the section
+        const bbox = getSectionBBox(targetRoute, targetSection as SectionProps);
+
+        if (!bbox) {
+            return {
+                error: 'Could not calculate bounding box for the section. The section may have invalid indices.',
+            };
+        }
+
+        // Fit the map to the section bbox
+        state.baseMap.mapLibreMap.fitBounds(bbox, { padding });
+
+        return { success: true };
+    } catch (error) {
+        return {
+            error: `Failed to fit route section: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

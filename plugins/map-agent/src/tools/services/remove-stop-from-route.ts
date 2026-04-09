@@ -3,7 +3,6 @@
  */
 
 import { calculateRoute } from '@tomtom-org/maps-sdk/services';
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { makeRoutesLabel } from '../../utils/state-labels';
@@ -43,41 +42,38 @@ function validateRemoveStop<T>(waypoints: T[] | null | undefined, stopIndex: num
 /**
  * Create the remove stop from route tool.
  */
-export function createRemoveStopFromRouteTool(state: ToolState): Tool {
-    return tool({
-        description: removeStopFromRouteDescription,
-        inputSchema: removeStopFromRouteSchema,
-        outputSchema: removeStopFromRouteOutputSchema,
-        execute: async (params): Promise<z.infer<typeof removeStopFromRouteOutputSchema>> => {
-            const { stopIndex, showOnMap } = params;
-            try {
-                const validated = validateRemoveStop(state.routing.currentWaypoints, stopIndex);
-                if (typeof validated === 'string') return { error: validated };
+/** Standalone execute for ToolEntry format. */
+export async function executeRemoveStopFromRoute(
+    params: z.infer<typeof removeStopFromRouteSchema>,
+    state: ToolState,
+): Promise<z.infer<typeof removeStopFromRouteOutputSchema>> {
+    const { stopIndex, showOnMap } = params;
+    try {
+        const validated = validateRemoveStop(state.routing.currentWaypoints, stopIndex);
+        if (typeof validated === 'string') return { error: validated };
 
-                const updatedWaypointsPlaces = validated.filter((_, i) => i !== stopIndex);
+        const updatedWaypointsPlaces = validated.filter((_, i) => i !== stopIndex);
 
-                const waypoints = resolveRouteWaypoints(updatedWaypointsPlaces);
-                if (!waypoints) {
-                    return { error: 'Not enough valid waypoints to calculate a route (minimum 2).' };
-                }
+        const waypoints = resolveRouteWaypoints(updatedWaypointsPlaces);
+        if (!waypoints) {
+            return { error: 'Not enough valid waypoints to calculate a route (minimum 2).' };
+        }
 
-                const routes = await calculateRoute({
-                    locations: waypoints,
-                    ...buildCalculateRouteParams(state.routing.params),
-                });
+        const routes = await calculateRoute({
+            locations: waypoints,
+            ...buildCalculateRouteParams(state.routing.params),
+        });
 
-                state.routing.addRoutes(routes, waypoints, makeRoutesLabel(routes, waypoints));
+        state.routing.addRoutes(routes, waypoints, makeRoutesLabel(routes, waypoints));
 
-                if (showOnMap) {
-                    await showRouteOnMap(state, routes, waypoints);
-                }
+        if (showOnMap) {
+            await showRouteOnMap(state, routes, waypoints);
+        }
 
-                return summarizeRoutes(routes);
-            } catch (error) {
-                return {
-                    error: `Failed to remove stop from route: ${error instanceof Error ? error.message : String(error)}`,
-                };
-            }
-        },
-    });
+        return summarizeRoutes(routes);
+    } catch (error) {
+        return {
+            error: `Failed to remove stop from route: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

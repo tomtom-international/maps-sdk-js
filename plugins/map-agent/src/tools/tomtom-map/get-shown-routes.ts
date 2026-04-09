@@ -2,7 +2,6 @@
  * @module map-agent-tools
  */
 
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { summarizeRoutes } from '../../utils/summarize';
@@ -21,31 +20,27 @@ export const getShownRoutesDescription =
     'Reads rendered map state (not plugin service history). Returns routes currently visible on map — use after showRoute.';
 
 /**
- * Create the get shown routes tool.
+ * Execute get shown routes.
  */
-export function createGetShownRoutesTool(state: ToolState): Tool {
-    return tool({
-        description: getShownRoutesDescription,
-        inputSchema: getShownRoutesSchema,
-        outputSchema: getShownRoutesOutputSchema,
-        execute: async (): Promise<z.infer<typeof getShownRoutesOutputSchema>> => {
-            try {
-                if (!state.routing.routingModule) {
-                    return { count: 0, routes: [] };
-                }
+export async function executeGetShownRoutes(
+    _params: z.infer<typeof getShownRoutesSchema>,
+    state: ToolState,
+): Promise<z.infer<typeof getShownRoutesOutputSchema>> {
+    try {
+        if (!state.routing.routingModule) {
+            return { count: 0, routes: [] };
+        }
 
-                const shown = state.routing.routingModule.getShown();
+        const shown = state.routing.routingModule.getShown();
 
-                if (!shown.mainLines || shown.mainLines.features.length === 0) {
-                    return { count: 0, routes: [] };
-                }
+        if (!shown.mainLines || shown.mainLines.features.length === 0) {
+            return { count: 0, routes: [] };
+        }
 
-                return summarizeRoutes(shown.mainLines);
-            } catch (error) {
-                return {
-                    error: `Failed to get shown routes: ${error instanceof Error ? error.message : String(error)}`,
-                };
-            }
-        },
-    });
+        return summarizeRoutes(shown.mainLines);
+    } catch (error) {
+        return {
+            error: `Failed to get shown routes: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

@@ -3,7 +3,6 @@
  */
 
 import { formatDistance } from '@tomtom-org/maps-sdk/core';
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 
@@ -19,30 +18,21 @@ export const formatDistanceDescription =
     'Format a distance in meters into a human-readable string (e.g. "2.5 km", "1.5 mi"). ' +
     'Use after getSectionProgress, recallRoutes, or any tool that returns distances in meters.';
 
-/**
- * Create the format distance tool.
- */
-export function createFormatDistanceTool(_state: ToolState): Tool {
-    return tool({
-        description: formatDistanceDescription,
-        inputSchema: formatDistanceSchema,
-        execute: async (params) => {
-            const { meters, unitType } = params;
-            try {
-                const formatted = formatDistance(meters, unitType ? { type: unitType } : undefined);
-
-                return {
-                    formatted,
-                    input: {
-                        meters,
-                        unitType: unitType ?? 'metric',
-                    },
-                };
-            } catch (error) {
-                return {
-                    error: `Failed to format distance: ${error instanceof Error ? error.message : String(error)}`,
-                };
-            }
-        },
-    });
+/** Execute function for formatDistance — usable with ToolEntry format. */
+export async function executeFormatDistance(params: z.infer<typeof formatDistanceSchema>, _state: ToolState) {
+    const { meters, unitType } = params;
+    try {
+        const formatted = formatDistance(meters, unitType ? { type: unitType } : undefined);
+        return {
+            formatted,
+            input: {
+                meters,
+                unitType: unitType ?? 'metric',
+            },
+        };
+    } catch (error) {
+        return {
+            error: `Failed to format distance: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

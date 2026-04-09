@@ -5,7 +5,6 @@
 import type { Place } from '@tomtom-org/maps-sdk/core';
 import { withInsertedWaypoint } from '@tomtom-org/maps-sdk/core';
 import { calculateRoute } from '@tomtom-org/maps-sdk/services';
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { makeRoutesLabel } from '../../utils/state-labels';
@@ -67,50 +66,47 @@ async function resolveNewWaypoint(
 /**
  * Create the add stop to route tool.
  */
-export function createAddStopToRouteTool(state: ToolState): Tool {
-    return tool({
-        description: addStopToRouteDescription,
-        inputSchema: addStopToRouteSchema,
-        outputSchema: addStopToRouteOutputSchema,
-        execute: async (params): Promise<z.infer<typeof addStopToRouteOutputSchema>> => {
-            const { location, showOnMap } = params;
-            try {
-                const routeResult = await validateExistingRoute(state);
-                if (typeof routeResult === 'string') return { error: routeResult };
-                const { shownRouteLines, shownWaypoints } = routeResult;
+/** Standalone execute for ToolEntry format. */
+export async function executeAddStopToRoute(
+    params: z.infer<typeof addStopToRouteSchema>,
+    state: ToolState,
+): Promise<z.infer<typeof addStopToRouteOutputSchema>> {
+    const { location, showOnMap } = params;
+    try {
+        const routeResult = await validateExistingRoute(state);
+        if (typeof routeResult === 'string') return { error: routeResult };
+        const { shownRouteLines, shownWaypoints } = routeResult;
 
-                const waypointResult = await resolveNewWaypoint(location, state);
-                if ('error' in waypointResult) return waypointResult;
-                const newWaypoint = waypointResult.place;
+        const waypointResult = await resolveNewWaypoint(location, state);
+        if ('error' in waypointResult) return waypointResult;
+        const newWaypoint = waypointResult.place;
 
-                const routeToUse = shownRouteLines.features[0];
+        const routeToUse = shownRouteLines.features[0];
 
-                // Use withInsertedWaypoint to find the best position and get updated waypoints
-                const updatedWaypoints = withInsertedWaypoint(routeToUse, shownWaypoints.features, newWaypoint);
+        // Use withInsertedWaypoint to find the best position and get updated waypoints
+        const updatedWaypoints = withInsertedWaypoint(routeToUse, shownWaypoints.features, newWaypoint);
 
-                const waypoints = resolveRouteWaypoints(updatedWaypoints);
-                if (!waypoints) {
-                    return { error: 'Not enough valid waypoints to calculate a route (minimum 2).' };
-                }
+        const waypoints = resolveRouteWaypoints(updatedWaypoints);
+        if (!waypoints) {
+            return { error: 'Not enough valid waypoints to calculate a route (minimum 2).' };
+        }
 
-                // Calculate new route with the updated waypoints and current route params
-                const routes = await calculateRoute({
-                    locations: waypoints,
-                    ...buildCalculateRouteParams(state.routing.params),
-                });
+        // Calculate new route with the updated waypoints and current route params
+        const routes = await calculateRoute({
+            locations: waypoints,
+            ...buildCalculateRouteParams(state.routing.params),
+        });
 
-                state.routing.addRoutes(routes, waypoints, makeRoutesLabel(routes, waypoints));
+        state.routing.addRoutes(routes, waypoints, makeRoutesLabel(routes, waypoints));
 
-                if (showOnMap) {
-                    await showRouteOnMap(state, routes, waypoints);
-                }
+        if (showOnMap) {
+            await showRouteOnMap(state, routes, waypoints);
+        }
 
-                return summarizeRoutes(routes);
-            } catch (error) {
-                return {
-                    error: `Failed to add stop to route: ${error instanceof Error ? error.message : String(error)}`,
-                };
-            }
-        },
-    });
+        return summarizeRoutes(routes);
+    } catch (error) {
+        return {
+            error: `Failed to add stop to route: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

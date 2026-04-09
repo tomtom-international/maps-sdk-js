@@ -4,7 +4,7 @@
 
 import { type Tool, tool } from 'ai';
 import { z } from 'zod';
-import type { ToolState } from '../../types';
+import type { ToolMetadata } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
 import { TOOL_TAGS, type ToolTag } from '../tool-tags';
 
@@ -51,8 +51,12 @@ export const helpDescription =
 
 /**
  * Create the help tool.
+ *
+ * @param getToolsMetadata - Lazy getter for resolved tool metadata.
+ *   Called at execution time, not at creation time, so metadata can be
+ *   populated after all tools are set up.
  */
-export function createHelpTool(state: ToolState): Tool {
+export function createHelpTool(getToolsMetadata: () => Record<string, ToolMetadata>): Tool {
     return tool({
         description: helpDescription,
         inputSchema: helpSchema,
@@ -61,7 +65,7 @@ export function createHelpTool(state: ToolState): Tool {
             const { mode, query, tag } = params;
 
             try {
-                const allTools = Object.values(state.toolsMetadata ?? {});
+                const allTools = Object.values(getToolsMetadata());
 
                 if (mode === 'summary') {
                     const examplePrompts = allTools.flatMap((toolMetadata) => toolMetadata.examplePrompts ?? []);

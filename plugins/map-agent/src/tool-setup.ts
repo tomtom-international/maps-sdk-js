@@ -1,104 +1,57 @@
 import type { Tool } from 'ai';
-import { createMapToolSet, TOOL_REGISTRY } from './tools';
-import type { MapAgentOptions, MapAgentTool, ToolMetadata, ToolRegistryEntry, ToolState } from './types';
+import { createHelpTool } from './tools/utilities/help';
+import type { ToolEntry, ToolMetadata, ToolState } from './types';
 
-/** Checks if the entry is a full tool (has inputSchema + execute) vs metadata-only or false. */
-function isMapAgentTool(entry: ToolRegistryEntry): entry is MapAgentTool {
-    return entry !== false && 'inputSchema' in entry && 'execute' in entry;
-}
-
-/** Converts a MapAgentTool to an AI SDK Tool. */
-function toAiTool(customTool: MapAgentTool): Tool {
+/** Converts a ToolEntry to an AI SDK Tool, binding state to execute. */
+function toAiTool<S extends ToolState>(entry: ToolEntry<S>, state: S, includeOutputSchema: boolean): Tool {
     return {
-        description: customTool.description,
-        inputSchema: customTool.inputSchema,
-        outputSchema: customTool.outputSchema,
-        execute: customTool.execute,
+        description: entry.description,
+        inputSchema: entry.inputSchema,
+        outputSchema: includeOutputSchema ? entry.outputSchema : undefined,
+        execute: (input: any) => entry.execute(input, state),
     } as Tool;
 }
 
-/** Copies a built-in tool's metadata, stripping the `create` factory. */
-function cloneBuiltInMetadata(name: string, entry: (typeof TOOL_REGISTRY)[keyof typeof TOOL_REGISTRY]): ToolMetadata {
-    const { create, ...rest } = entry;
-
-    return structuredClone({ ...rest, name }) as ToolMetadata;
+/** Extracts ToolMetadata from a ToolEntry, adding the name. */
+function toMetadata<S extends ToolState>(name: string, entry: ToolEntry<S>): ToolMetadata {
+    return {
+        name,
+        description: entry.description,
+        classificationPrompt: entry.classificationPrompt,
+        tags: entry.tags,
+        examples: entry.examples,
+        examplePrompts: entry.examplePrompts,
+        relatedTools: entry.relatedTools,
+        dependsOn: entry.dependsOn,
+    };
 }
 
-/** Extracts metadata fields, stripping `name` (derived from key) and execution properties. */
-function extractMetadata(entry: ToolRegistryEntry): Partial<ToolMetadata> {
-    if (entry === false) return {};
-
-    const { name, inputSchema, outputSchema, execute, ...metadata } = entry as Record<string, unknown>;
-
-    return metadata as Partial<ToolMetadata>;
-}
-
-/** Resolves tool instances and metadata from built-ins + user overrides. */
-function resolveToolsAndMetadata(
-    state: ToolState,
-    options: MapAgentOptions,
+/**
+ * Converts a composed tool record into AI SDK tools and metadata.
+ * Rebinds the help tool with resolved metadata.
+ */
+export function setupTools<S extends ToolState>(
+    toolEntries: Record<string, ToolEntry<S>>,
+    state: S,
+    options?: { outputSchemas?: boolean },
 ): { tools: Record<string, Tool>; toolsMetadata: Record<string, ToolMetadata> } {
-    const defaultToolSet = createMapToolSet(state);
+    const includeOutputSchema = options?.outputSchemas !== false;
     const tools: Record<string, Tool> = {};
     const toolsMetadata: Record<string, ToolMetadata> = {};
 
-    // Start with defaults unless disabled
-    if (options.includeDefaultTools ?? true) {
-        for (const [name, tool] of Object.entries(defaultToolSet)) {
-            tools[name] = tool;
-            toolsMetadata[name] = cloneBuiltInMetadata(name, TOOL_REGISTRY[name as keyof typeof TOOL_REGISTRY]);
-        }
+    for (const [name, entry] of Object.entries(toolEntries)) {
+        tools[name] = toAiTool(entry, state, includeOutputSchema);
+        toolsMetadata[name] = toMetadata(name, entry);
     }
 
-    // Apply tools configuration (exclude, override/add, tweak metadata)
-    const toolOverrides = options.tools ?? {};
-    for (const name of Object.keys(toolOverrides)) {
-        const override = toolOverrides[name];
-
-        if (override === false) {
-            delete tools[name];
-            delete toolsMetadata[name];
-            continue;
-        }
-
-        if (isMapAgentTool(override)) {
-            // MapAgentTool — convert to AI SDK Tool and merge metadata
-            tools[name] = toAiTool(override);
-            const base = toolsMetadata[name] ?? { name, description: override.description ?? '' };
-            toolsMetadata[name] = { ...base, ...extractMetadata(override) };
-        } else if (toolsMetadata[name]) {
-            // Metadata-only override
-            toolsMetadata[name] = { ...toolsMetadata[name], ...extractMetadata(override) };
-        }
+    // Rebind help tool with resolved metadata
+    if (tools.help) {
+        tools.help = createHelpTool(() => toolsMetadata);
     }
 
-    return { tools, toolsMetadata };
-}
-
-/** Validates the resolved tool set and ensures every tool has metadata. */
-function validateTools(tools: Record<string, Tool>, toolsMetadata: Record<string, ToolMetadata>): void {
     if (Object.keys(tools).length === 0) {
         throw new Error('MapAgent requires at least one tool.');
     }
-
-    for (const name of Object.keys(tools)) {
-        const metadata = toolsMetadata[name];
-        if (!metadata.classificationPrompt && !metadata.relatedTools?.length && !metadata.dependsOn?.length) {
-            console.warn(
-                `Tool '${name}' has no classificationPrompt, relatedTools, or dependsOn — the classifier will only see its name, potentially reducing its effectiveness.`,
-            );
-        }
-    }
-}
-
-/** Builds the tools set and metadata from the unified tools option. */
-export function setupTools(
-    state: ToolState,
-    options: MapAgentOptions,
-): { tools: Record<string, Tool>; toolsMetadata: Record<string, ToolMetadata> } {
-    const { tools, toolsMetadata } = resolveToolsAndMetadata(state, options);
-
-    validateTools(tools, toolsMetadata);
 
     return { tools, toolsMetadata };
 }

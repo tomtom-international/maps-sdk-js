@@ -4,7 +4,6 @@
 
 import type { WaypointLike } from '@tomtom-org/maps-sdk/core';
 import { geocodeOne } from '@tomtom-org/maps-sdk/services';
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { makePlacesLabel } from '../../utils/state-labels';
@@ -40,33 +39,30 @@ export const geocodeDescription =
 /**
  * Create the geocode tool.
  */
-export function createGeocodeTool(state: ToolState): Tool {
-    return tool({
-        description: geocodeDescription,
-        inputSchema: geocodeSchema,
-        outputSchema: geocodeOutputSchema,
-        execute: async (params): Promise<z.infer<typeof geocodeOutputSchema>> => {
-            const { query, waypointIndex } = params;
-            try {
-                const result = await geocodeOne(query);
+/** Standalone execute for ToolEntry format. */
+export async function executeGeocode(
+    params: z.infer<typeof geocodeSchema>,
+    state: ToolState,
+): Promise<z.infer<typeof geocodeOutputSchema>> {
+    const { query, waypointIndex } = params;
+    try {
+        const result = await geocodeOne(query);
 
-                if (!result) {
-                    return { error: `No result found for "${query}"` };
-                }
+        if (!result) {
+            return { error: `No result found for "${query}"` };
+        }
 
-                state.places.addPlaceResult(result, makePlacesLabel(result, { query }));
+        state.places.addPlaceResult(result, makePlacesLabel(result, { query }));
 
-                if (waypointIndex !== undefined) {
-                    state.routing.setWaypointAt(waypointIndex, result as unknown as WaypointLike);
-                }
+        if (waypointIndex !== undefined) {
+            state.routing.setWaypointAt(waypointIndex, result as unknown as WaypointLike);
+        }
 
-                return {
-                    ...summarizePlace(result),
-                    ...(waypointIndex !== undefined && { waypointIndex }),
-                };
-            } catch (error) {
-                return { error: `Geocoding failed: ${error instanceof Error ? error.message : String(error)}` };
-            }
-        },
-    });
+        return {
+            ...summarizePlace(result),
+            ...(waypointIndex !== undefined && { waypointIndex }),
+        };
+    } catch (error) {
+        return { error: `Geocoding failed: ${error instanceof Error ? error.message : String(error)}` };
+    }
 }

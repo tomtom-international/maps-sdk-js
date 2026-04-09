@@ -5,7 +5,6 @@
 import type { TrafficAreaAnalytics } from '@tomtom-org/maps-sdk/core';
 import type { TrafficAreaAnalyticsParams } from '@tomtom-org/maps-sdk/services';
 import { trafficAreaAnalytics } from '@tomtom-org/maps-sdk/services';
-import { type Tool, tool } from 'ai';
 import type { MultiPolygon, Polygon } from 'geojson';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
@@ -211,66 +210,63 @@ function summarize(
 /**
  * Create the get traffic area analytics tool.
  */
-export function createGetTrafficAreaAnalyticsTool(state: ToolState): Tool {
-    return tool({
-        description: getTrafficAreaAnalyticsDescription,
-        inputSchema: getTrafficAreaAnalyticsSchema,
-        outputSchema: getTrafficAreaAnalyticsOutputSchema,
-        execute: async (params): Promise<z.infer<typeof getTrafficAreaAnalyticsOutputSchema>> => {
-            const { bbox, geometry, startDate, endDate, days, dataTypes, functionalRoadClasses, hours } = params;
+/** Standalone execute for ToolEntry format. */
+export async function executeGetTrafficAreaAnalytics(
+    params: z.infer<typeof getTrafficAreaAnalyticsSchema>,
+    state: ToolState,
+): Promise<z.infer<typeof getTrafficAreaAnalyticsOutputSchema>> {
+    const { bbox, geometry, startDate, endDate, days, dataTypes, functionalRoadClasses, hours } = params;
 
-            // Validate geometry input
-            if (!bbox && !geometry) {
-                return { error: 'Provide either a bbox or a geometry' };
-            }
+    // Validate geometry input
+    if (!bbox && !geometry) {
+        return { error: 'Provide either a bbox or a geometry' };
+    }
 
-            if (!dataTypes || dataTypes.length === 0) {
-                return { error: 'At least one dataType is required' };
-            }
+    if (!dataTypes || dataTypes.length === 0) {
+        return { error: 'At least one dataType is required' };
+    }
 
-            // Resolve geometry
-            const resolvedGeometry: Polygon | MultiPolygon = geometry
-                ? (geometry as Polygon | MultiPolygon)
-                : bboxToPolygon(bbox!);
+    // Resolve geometry
+    const resolvedGeometry: Polygon | MultiPolygon = geometry
+        ? (geometry as Polygon | MultiPolygon)
+        : bboxToPolygon(bbox!);
 
-            // Resolve dates — SDK defaults to startDate=3 days ago, endDate=2 days ago when omitted
-            const dateParams: Pick<TrafficAreaAnalyticsParams, 'startDate' | 'endDate' | 'days'> = {};
-            if (days && days.length > 0) {
-                dateParams.days = days;
-            } else if (startDate) {
-                dateParams.startDate = startDate;
-                if (endDate) dateParams.endDate = endDate;
-            }
+    // Resolve dates — SDK defaults to startDate=3 days ago, endDate=2 days ago when omitted
+    const dateParams: Pick<TrafficAreaAnalyticsParams, 'startDate' | 'endDate' | 'days'> = {};
+    if (days && days.length > 0) {
+        dateParams.days = days;
+    } else if (startDate) {
+        dateParams.startDate = startDate;
+        if (endDate) dateParams.endDate = endDate;
+    }
 
-            // Move Portal API key (different from standard TomTom key)
-            const apiKey = process.env.MOVE_PORTAL_KEY;
-            if (!apiKey) {
-                return { error: 'MOVE_PORTAL_KEY environment variable is not set.' };
-            }
+    // Move Portal API key (different from standard TomTom key)
+    const apiKey = process.env.MOVE_PORTAL_KEY;
+    if (!apiKey) {
+        return { error: 'MOVE_PORTAL_KEY environment variable is not set.' };
+    }
 
-            try {
-                const result = await trafficAreaAnalytics({
-                    apiKey,
-                    ...dateParams,
-                    dataTypes,
-                    functionalRoadClasses: functionalRoadClasses ?? 'all',
-                    hours: hours ?? 'all',
-                    geometry: resolvedGeometry,
-                } as TrafficAreaAnalyticsParams);
+    try {
+        const result = await trafficAreaAnalytics({
+            apiKey,
+            ...dateParams,
+            dataTypes,
+            functionalRoadClasses: functionalRoadClasses ?? 'all',
+            hours: hours ?? 'all',
+            geometry: resolvedGeometry,
+        } as TrafficAreaAnalyticsParams);
 
-                // Store full result for showTrafficAreaAnalytics to use
-                state.traffic.setLastAreaAnalytics(result);
+        // Store full result for showTrafficAreaAnalytics to use
+        state.traffic.setLastAreaAnalytics(result);
 
-                return summarize(
-                    result,
-                    typeof dateParams.startDate === 'string' ? dateParams.startDate : undefined,
-                    typeof dateParams.endDate === 'string' ? dateParams.endDate : undefined,
-                );
-            } catch (error) {
-                return {
-                    error: `Failed to get traffic area analytics: ${error instanceof Error ? error.message : String(error)}`,
-                };
-            }
-        },
-    });
+        return summarize(
+            result,
+            typeof dateParams.startDate === 'string' ? dateParams.startDate : undefined,
+            typeof dateParams.endDate === 'string' ? dateParams.endDate : undefined,
+        );
+    } catch (error) {
+        return {
+            error: `Failed to get traffic area analytics: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

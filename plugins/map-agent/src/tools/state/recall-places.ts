@@ -1,4 +1,3 @@
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { summarizePlaces } from '../../utils/summarize';
@@ -35,34 +34,30 @@ export const recallPlacesDescription =
     'Step 2: call with id to retrieve a specific entry with coordinates. ' +
     'Does not call any service.';
 
-export function createRecallPlacesTool(state: ToolState): Tool {
-    return tool({
-        description: recallPlacesDescription,
-        inputSchema: recallPlacesSchema,
-        outputSchema: recallPlacesOutputSchema,
-        execute: async (params): Promise<z.infer<typeof recallPlacesOutputSchema>> => {
-            const { id } = params;
+export async function executeRecallPlaces(
+    params: z.infer<typeof recallPlacesSchema>,
+    state: ToolState,
+): Promise<z.infer<typeof recallPlacesOutputSchema>> {
+    const { id } = params;
 
-            if (!id) {
-                const entries = [...state.places.entries]
-                    .reverse()
-                    .map(({ id, label, timestamp }) => ({ id, label, timestamp }));
-                return { entries };
-            }
+    if (!id) {
+        const entries = [...state.places.entries]
+            .reverse()
+            .map(({ id, label, timestamp }) => ({ id, label, timestamp }));
+        return { entries };
+    }
 
-            const entry = state.places.entries.find((e) => e.id === id);
-            if (!entry) {
-                return { error: `No entry found with id "${id}"` };
-            }
+    const entry = state.places.entries.find((e) => e.id === id);
+    if (!entry) {
+        return { error: `No entry found with id "${id}"` };
+    }
 
-            const places = summarizePlaces(entry.data);
+    const places = summarizePlaces(entry.data);
 
-            return {
-                id: entry.id,
-                label: entry.label,
-                timestamp: entry.timestamp,
-                places,
-            };
-        },
-    });
+    return {
+        id: entry.id,
+        label: entry.label,
+        timestamp: entry.timestamp,
+        places,
+    };
 }

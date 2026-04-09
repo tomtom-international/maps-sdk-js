@@ -2,23 +2,39 @@
  * @module map-agent-types
  */
 
-import type { LanguageModel, ToolLoopAgent } from 'ai';
+import type { LanguageModel, ModelMessage, PrepareStepFunction, ToolLoopAgent } from 'ai';
 import type { z } from 'zod';
 import type { BaseMapState, MapPOIsState, PlacesState, RangeState, RoutingState, TrafficState } from './state';
-import type { DefaultToolSet } from './tools';
+import type { ToolName } from './tools';
 import type { ClassificationResult } from './utils/intent-classifier';
 
 /**
- * Names of all default tools provided by the map agent.
- *
- * @remarks
- * Use this type to ensure type safety when overriding default tools.
- * This type is automatically derived from {@link DefaultToolSet},
- * so it stays in sync when tools are added or removed.
+ * Autocomplete hint for tool names. Suggests known default tool names
+ * while allowing arbitrary custom names via `string & {}`.
  *
  * @group Tools
  */
-export type DefaultToolName = keyof DefaultToolSet;
+export type ToolNameHint = ToolName | (string & {});
+
+/**
+ * Context passed to a classifier function.
+ *
+ * @group Classifier
+ */
+export type ClassifierContext = {
+    /** Full message history for the current conversation. */
+    messages: ReadonlyArray<ModelMessage>;
+    /** Metadata for all registered tools. */
+    toolsMetadata: Record<string, ToolMetadata>;
+};
+
+/**
+ * A classifier function that selects which tools to activate for a user message.
+ * Return `null` to activate all tools (fail-open).
+ *
+ * @group Classifier
+ */
+export type Classifier = (context: ClassifierContext) => Promise<ClassificationResult | null>;
 
 /**
  * Metadata for a map agent tool.
@@ -39,297 +55,150 @@ export type ToolMetadata = {
     /** Natural language prompts shown by the help tool (e.g. 'Where is the Louvre?'). */
     examplePrompts?: string[];
     /** Tool names that are often used together with this tool. */
+    relatedTools?: ToolNameHint[];
+    /** Tool names that must run before this one. */
+    dependsOn?: ToolNameHint[];
+};
+
+/**
+ * A tool definition — the universal format for both built-in and third-party tools.
+ * Combines execution (inputSchema + execute) with classifier metadata.
+ *
+ * @typeParam S - The ToolState shape this tool requires. Default: base `ToolState`.
+ *
+ * @group Tools
+ */
+export type ToolEntry<S extends ToolState = ToolState> = {
+    /** Description of the tool's purpose. */
+    description: string;
+    /** Zod schema defining the tool's input parameters. */
+    inputSchema: z.ZodType;
+    /** Optional Zod schema describing the tool's structured output. */
+    outputSchema?: z.ZodType;
+    /** Function that executes the tool. Receives parsed input and the agent's state. */
+    execute: (input: any, state: S) => Promise<any>;
+    /** Compact one-liner for the intent classifier prompt. */
+    classificationPrompt?: string;
+    /** Category tags (e.g. 'location', 'routing'). */
+    tags?: string[];
+    /** Usage examples (e.g. 'geocode("Amsterdam")'). */
+    examples?: string[];
+    /** Natural language prompts (e.g. 'Where is the Louvre?'). */
+    examplePrompts?: string[];
+    /** Tool names that are often used together with this tool. */
     relatedTools?: string[];
     /** Tool names that must run before this one. */
     dependsOn?: string[];
 };
 
 /**
- * A custom map agent tool. Users define tools with this type instead of the AI SDK `tool()` directly.
- * Combines execution (inputSchema + execute) with classifier metadata in a single object.
+ * Options for creating a map agent.
  *
- * @example
+ * @typeParam CS - Full state type. Must extend `ToolState`. Defaults to base `ToolState` (no custom slices).
+ *
+ * @example Custom state
  * ```typescript
- * const getWeather: MapAgentTool = {
- *     description: 'Get weather forecast for a city',
- *     inputSchema: z.object({ city: z.string() }),
- *     execute: async ({ city }) => fetchWeather(city),
- *     classificationPrompt: 'weather forecast',
- *     dependsOn: ['geocode'],
- * };
+ * interface MyState extends ToolState {
+ *     fleet: FleetState;
+ * }
+ *
+ * createMapAgent<MyState>(map, {
+ *     model,
+ *     state: { fleet: new FleetState() },
+ * });
  * ```
- *
- * @group Tools
  */
-// `name` is omitted because it's derived from the config key in setupTools
-export type MapAgentTool = Omit<ToolMetadata, 'name'> & {
-    /** Zod schema defining the tool's input parameters. */
-    inputSchema: z.ZodType;
-    /** Optional Zod schema describing the tool's structured output. */
-    outputSchema?: z.ZodType;
-    /** Function that executes the tool. Receives the parsed input from the schema. */
-    execute: (input: any) => Promise<any>;
-};
-
-/**
- * A tool registry entry. Can be:
- * - `false` to exclude a built-in tool
- * - Metadata only (to tweak a built-in without replacing it)
- * - A {@link MapAgentTool} (to add or override)
- *
- * @group Tools
- */
-export type ToolRegistryEntry = false | Partial<ToolMetadata> | MapAgentTool;
-
-/**
- * Tool configuration: keyed by tool name, with autocomplete for built-in defaults.
- *
- * @group Tools
- */
-export type ToolConfiguration = {
-    [K in DefaultToolName]?: ToolRegistryEntry;
-} & Record<string, ToolRegistryEntry>;
-
-/** * Options for creating a map agent.
- */
-export type MapAgentOptions = {
+export type MapAgentOptions<CS extends ToolState = ToolState> = {
     /** AI SDK language model instance. REQUIRED — no default provider. */
     model: LanguageModel;
 
     /**
-     * Whether to include all built-in default tools.
-     *
-     * @remarks
-     * Defaults to `true`.
-     * Set to `false` to start with no default tools and provide only custom tools via `tools`.
-     *
-     * @example
-     * ```typescript
-     * const agent = createMapAgent(map, {
-     *   model: openai('gpt-4o'),
-     *   includeDefaultTools: false,
-     *   tools: {
-     *     geocode: createGeocodeTool(context),
-     *     getWeather: createWeatherTool(context)
-     *   }
-     * });
-     * ```
-     */
-    includeDefaultTools?: boolean;
-
-    /**
      * Complete system prompt that replaces the default.
-     * If provided, this takes precedence over systemPromptSuffix.
-     *
-     * @remarks
-     * Use this when you want full control over agent instructions.
-     * Import `BASE_SYSTEM_PROMPT` to reference the default as a starting point.
-     *
-     * @example
-     * ```typescript
-     * import { BASE_SYSTEM_PROMPT } from '@tomtom-org/maps-sdk-plugin-ai-agent';
-     *
-     * systemPrompt: BASE_SYSTEM_PROMPT + '\n\nAlways respond in Spanish.'
-     * ```
+     * If provided, `systemPromptSuffix` is ignored.
      */
     systemPrompt?: string;
 
     /**
-     * Additional system prompt text appended to built-in prompt.
+     * Additional text appended to the built-in prompt.
      * Ignored if `systemPrompt` is provided.
-     *
-     * @example
-     * ```typescript
-     * systemPromptSuffix: 'Always provide distance in miles, not kilometers.'
-     * ```
      */
     systemPromptSuffix?: string;
 
     /**
-     * Configure tools: exclude defaults, override defaults, add custom tools, or tweak tool metadata.
-     *
-     * @remarks
-     * **Unified tool configuration with type-safe autocomplete:**
-     * - Works together with `includeDefaultTools`
-     *
-     * Each entry can be:
-     * - `false` — exclude a built-in tool
-     * - Metadata only — tweak a built-in tool's metadata without replacing it
-     * - A {@link MapAgentTool} — add a custom tool or override a built-in
-     *
-     * @example Exclude specific tools
-     * ```typescript
-     * const agent = createMapAgent(map, {
-     *   model: openai('gpt-4o'),
-     *   tools: {
-     *     setMapStandardStyle: false,  // Exclude: prevent style changes
-     *     setLanguage: false,  // Exclude: lock language
-     *     toggleLayers: false  // Exclude: prevent layer toggling
-     *   }
-     * });
-     * ```
-     *
-     * @example Override default tool
-     * ```typescript
-     * const agent = createMapAgent(map, {
-     *   model: openai('gpt-4o'),
-     *   tools: {
-     *     discoverPlaces: createCustomSearchTool(context)  // Override with custom logic
-     *   }
-     * });
-     * ```
-     *
-     * @example Add custom tools
-     * ```typescript
-     * const agent = createMapAgent(map, {
-     *   model: openai('gpt-4o'),
-     *   tools: {
-     *     getWeather: {
-     *       ...weatherTool,
-     *       classificationPrompt: 'weather forecast',   // Helps the classifier know when to select this tool
-     *       dependsOn: ['geocode'],                     // Tells the classifier this tool needs geocode first
-     *     },
-     *   }
-     * });
-     * ```
-     *
-     * @example Tweak built-in tool metadata
-     * ```typescript
-     * const agent = createMapAgent(map, {
-     *   model: openai('gpt-4o'),
-     *   tools: {
-     *     geocode: { dependsOn: ['myAuthTool'] },
-     *   }
-     * });
-     * ```
-     *
-     * @example Mix all patterns
-     * ```typescript
-     * const agent = createMapAgent(map, {
-     *   model: openai('gpt-4o'),
-     *   tools: {
-     *     setMapStandardStyle: false,                             // Exclude
-     *     discoverPlaces: createCustomSearchTool(ctx),            // Override
-     *     geocode: { dependsOn: ['myAuthTool'] },                 // Tweak metadata
-     *     getWeather: { ...weatherTool, dependsOn: ['geocode'] }, // Add custom
-     *   }
-     * });
-     * ```
+     * Whether to include all built-in default tools.
+     * Defaults to `true`. Set to `false` to start with no defaults
+     * and provide only custom tools via `tools`.
      */
-    tools?: ToolConfiguration;
+    includeDefaultTools?: boolean;
 
     /**
-     * Whether to include output schemas on tools for structured outputs.
+     * Tool overrides merged with default tools.
+     * - `ToolEntry` values add a new tool or replace a default.
+     * - `false` values exclude a default tool.
      *
-     * @remarks
-     * Defaults to `true`. Set to `false` for providers that do not support
-     * structured tool outputs (e.g. some OpenAI-compatible APIs).
+     * When omitted, all default tools are used as-is.
      *
      * @example
      * ```typescript
-     * const agent = createMapAgent(map, {
-     *   model: openai('gpt-4o'),
-     *   outputSchemas: false,
+     * // Add a custom tool (defaults included automatically)
+     * createMapAgent(map, {
+     *     model,
+     *     tools: { getCustomLocation: myTool },
+     * });
+     *
+     * // Remove a default tool
+     * createMapAgent(map, {
+     *     model,
+     *     tools: { setLanguage: false },
      * });
      * ```
+     */
+    tools?: Record<string, ToolEntry<CS> | false>;
+
+    /**
+     * Custom state slices merged alongside built-in state.
+     * Only custom slices need to be provided — built-in slices are created automatically.
+     * Accessible in custom tool `execute` via the state parameter.
+     */
+    state?: Omit<CS, keyof ToolState>;
+
+    /**
+     * Pluggable classifier for automatic tool selection.
+     * - Omit to use the default LLM-based classifier (uses main model)
+     * - Pass a `Classifier` function for custom logic
+     * - Pass `false` to disable classification entirely
+     */
+    classifier?: Classifier | false;
+
+    /**
+     * Called after each classification. Use to observe selected tools or log.
+     */
+    onClassify?: (result: ClassificationResult | null) => void;
+
+    /**
+     * Custom prepareStep hook, composed with internal classification step.
+     * Your `activeTools` are intersected with the classifier's selection.
+     */
+    prepareStep?: PrepareStepFunction;
+
+    /**
+     * Whether to include output schemas on tools.
+     * Defaults to `true`. Set to `false` for providers that don't support structured tool outputs.
      */
     outputSchemas?: boolean;
 
     /** Max multi-step tool loop iterations. Default: 10. */
     maxSteps?: number;
-
-    /**
-     * Controls automatic intent classification before each agent call, which selects the minimal
-     * tool set to reduce token usage. Classification runs by default using the main model unless
-     * this option is explicitly set to `false`.
-     *
-     *  Set to `false` to disable all classification. When not `false`, you can pass an object to
-     * customise behaviour — e.g. use a cheaper/faster model for classification.
-     * @example Disable classification
-     * ```typescript
-     * const agent = createMapAgent(map, {
-     *   model: openai('gpt-4o'),
-     *   autoClassify: false,
-     * });
-     * ```
-     *
-     * @example Use a dedicated cheaper model for classification
-     * ```typescript
-     * const agent = createMapAgent(map, {
-     *   model: openai('gpt-4o'),
-     *   autoClassify: {
-     *     model: openai('gpt-4o-mini'),
-     *     onResult: (classification) => console.log('Tools:', classification.activeToolNames),
-     *   },
-     * });
-     * ```
-     */
-    autoClassify?:
-        | false
-        | {
-              /** Language model for intent classification. Defaults to the main model if omitted. */
-              model?: LanguageModel;
-              /** Called after each classification. Use to observe selected tools or update UI. */
-              onResult?: (result: ClassificationResult) => void;
-              /** Max number of previous turns (user + assistant) included as context. Defaults to 6. */
-              maxClassifierHistoryMessages?: number;
-              /** Max character length per history message before truncation. Defaults to 300. */
-              maxClassifierHistoryMessageLength?: number;
-          };
 };
 
 /**
- * Options for {@link MapAgent.stream}. Extends `ToolLoopAgent.stream()` options
- * with an optional per-call classification callback.
+ * The return type of createMapAgent().
+ * A real ToolLoopAgent instance with state access and cleanup.
  */
-export type MapAgentStreamOptions = Parameters<ToolLoopAgent['stream']>[0] & {
-    /** Called once after classification resolves, or with `null` if classification was skipped. */
-    onClassify?: (result: ClassificationResult | null) => void;
-};
-
-/**
- * Map agent instance returned by createMapAgent().
- */
-export type MapAgent = {
-    /** The ToolLoopAgent instance — pass to DirectChatTransport. */
-    readonly agent: ToolLoopAgent;
-
-    /** Live agent state (current results, module cache). Readonly externally. */
-    readonly state: ToolState;
-
-    /**
-     * Restricts which tools the model sees for the next agent call.
-     *
-     * @param names - Tool names to activate, or `null` to reset to all loaded tools.
-     *
-     * @example
-     * ```typescript
-     * const classification = await classifyUserIntent(conversation, { chatModel: model, toolsMetadata });
-     * agent.setActiveTools(classification.activeToolNames);
-     * const result = await agent.agent.generate({ messages });
-     * ```
-     */
-    setActiveTools(names: string[] | null): void;
-
-    /**
-     * Stream a chat response, automatically classifying the last user message
-     * if `autoClassify` is configured and enabled.
-     *
-     * Prefer this over calling `agent.stream()` directly when using `autoClassify`.
-     *
-     * @example
-     * ```typescript
-     * const result = await mapAgent.stream({
-     *   messages,
-     *   onStepFinish: (step) => console.log(step.usage),
-     *   onClassify: (classification) => console.log('Active tools:', classification?.activeToolNames),
-     * });
-     * for await (const delta of result.textStream) { ... }
-     * ```
-     */
-    stream(options: MapAgentStreamOptions): ReturnType<ToolLoopAgent['stream']>;
-
-    /** Tear down: clears modules, resets state. */
+export type MapAgentInstance<CS extends ToolState = ToolState> = ToolLoopAgent & {
+    /** Live agent state (built-in + custom slices). */
+    readonly state: CS;
+    /** Tear down: resets all state slices that have a reset() method. */
     destroy(): void;
 };
 
@@ -364,6 +233,4 @@ export type ToolState = {
     traffic: TrafficState;
     /** Reachable range results: origin, budgets, and bbox summaries. */
     ranges: RangeState;
-    /** Parameterized tool metadata — populated in createMapAgent after setupTools. */
-    toolsMetadata?: Record<string, ToolMetadata>;
 };

@@ -2,7 +2,14 @@
  * @module map-agent-state
  */
 
-import type { Place, Places, PolygonFeatures, Routes, TrafficAreaAnalytics, WaypointLike } from '@tomtom-org/maps-sdk/core';
+import type {
+    Place,
+    Places,
+    PolygonFeatures,
+    Routes,
+    TrafficAreaAnalytics,
+    WaypointLike,
+} from '@tomtom-org/maps-sdk/core';
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import type { TrafficAreaAnalyticsConfig } from '@tomtom-org/maps-sdk/map';
 import {
@@ -21,8 +28,21 @@ import {
     TrafficIncidentsModule,
 } from '@tomtom-org/maps-sdk/map';
 import { ReachableRangeBudget } from '@tomtom-org/maps-sdk/services';
+
+/**
+ * Common interface for state slices. Implement `reset()` to participate
+ * in cleanup when `destroy()` is called on the agent.
+ *
+ * All built-in state classes implement this. Custom slices can optionally
+ * implement it to get automatic cleanup.
+ */
+export interface StateSlice {
+    reset(): void;
+}
+
 import { Position } from 'geojson';
 import { Map } from 'maplibre-gl';
+import type { ToolState } from './types';
 import { AnalyticsControlPanel } from './ui/analytics-control-panel';
 
 TomTomConfig.instance.put({ language: 'en-GB' });
@@ -64,7 +84,7 @@ export interface RouteParams {
  * Holds lazy-initialized PlacesModule and GeometriesModule alongside an
  * append-only history of place and search results produced during the session.
  */
-export class PlacesState {
+export class PlacesState implements StateSlice {
     private _placesModule?: PlacesModule;
 
     private _entries: PlacesEntry[] = [];
@@ -121,7 +141,7 @@ export class PlacesState {
  * Holds the lazy-initialized POIsModule for showing, hiding, and filtering
  * the built-in POI categories rendered on the base map.
  */
-export class MapPOIsState {
+export class MapPOIsState implements StateSlice {
     private _poisModule?: POIsModule;
 
     constructor(private readonly _ttMap: TomTomMap) {}
@@ -151,7 +171,7 @@ export class MapPOIsState {
  * calculated routes, sparse planning slots (being assembled before a calculation),
  * and current route parameters.
  */
-export class RoutingState {
+export class RoutingState implements StateSlice {
     private _routingModule?: RoutingModule;
     private _entries: RoutesEntry[] = [];
     private _planningSlots: PlanningWaypoint[] = [];
@@ -229,7 +249,7 @@ export class RoutingState {
  * Provides direct access to the TomTomMap and MapLibre instances alongside
  * lazy-initialized BaseMapModule and HillshadeModule.
  */
-export class BaseMapState {
+export class BaseMapState implements StateSlice {
     private _baseMapModule?: BaseMapModule;
     private _hillshadeModule?: HillshadeModule;
 
@@ -260,7 +280,7 @@ export class BaseMapState {
 /**
  * State for traffic: flow layer, incident overlay, and area analytics modules.
  */
-export class TrafficState {
+export class TrafficState implements StateSlice {
     private _trafficFlowModule?: TrafficFlowModule;
     private _trafficIncidentsModule?: TrafficIncidentsModule;
     private _trafficAreaAnalyticsModule?: TrafficAreaAnalyticsModule;
@@ -352,7 +372,7 @@ export interface RangeEntry {
  * Also retains raw polygon geometry internally for use in geometry searches
  * (e.g. discoverPlaces withinRange). Displayed on the map via GeometriesModule.
  */
-export class RangeState {
+export class RangeState implements StateSlice {
     private _entries: RangeEntry[] = [];
     private _placesModule?: PlacesModule;
     private _geometriesModule?: GeometriesModule;
@@ -410,10 +430,16 @@ export class RangeState {
 
 /**
  * Factory that creates a fully initialized ToolState from a TomTomMap instance.
- * Used internally by createMapAgent and in tests via createTestContext.
+ * Optionally merges custom state slices alongside built-in state.
+ *
+ * @param map - TomTomMap instance for module initialization
+ * @param customSlices - Additional state slices accessible by custom tools
  */
-export function createToolState(map: TomTomMap) {
-    return {
+export function createToolState<T extends Record<string, unknown> = Record<string, never>>(
+    map: TomTomMap,
+    customSlices?: T,
+): ToolState & T {
+    const base: ToolState = {
         places: new PlacesState(map),
         mapPOIs: new MapPOIsState(map),
         routing: new RoutingState(map),
@@ -421,4 +447,8 @@ export function createToolState(map: TomTomMap) {
         traffic: new TrafficState(map),
         ranges: new RangeState(map),
     };
+    if (customSlices) {
+        Object.assign(base, customSlices);
+    }
+    return base as ToolState & T;
 }

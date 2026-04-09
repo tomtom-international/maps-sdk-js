@@ -1,4 +1,3 @@
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { summarizeRoutes, summarizeWaypoint, waypointSummarySchema } from '../../utils/summarize';
@@ -48,40 +47,36 @@ export const recallRoutesDescription =
     'Step 2: call with id to retrieve a specific entry with route details and params. ' +
     'Does not call any service.';
 
-export function createRecallRoutesTool(state: ToolState): Tool {
-    return tool({
-        description: recallRoutesDescription,
-        inputSchema: recallRoutesSchema,
-        outputSchema: recallRoutesOutputSchema,
-        execute: async (params): Promise<z.infer<typeof recallRoutesOutputSchema>> => {
-            const { id } = params;
+export async function executeRecallRoutes(
+    params: z.infer<typeof recallRoutesSchema>,
+    state: ToolState,
+): Promise<z.infer<typeof recallRoutesOutputSchema>> {
+    const { id } = params;
 
-            if (!id) {
-                const entries = [...state.routing.entries]
-                    .reverse()
-                    .map(({ id, label, timestamp }) => ({ id, label, timestamp }));
-                return { entries };
-            }
+    if (!id) {
+        const entries = [...state.routing.entries]
+            .reverse()
+            .map(({ id, label, timestamp }) => ({ id, label, timestamp }));
+        return { entries };
+    }
 
-            const entry = state.routing.entries.find((e) => e.id === id);
-            if (!entry) {
-                return { error: `No entry found with id "${id}"` };
-            }
+    const entry = state.routing.entries.find((e) => e.id === id);
+    if (!entry) {
+        return { error: `No entry found with id "${id}"` };
+    }
 
-            const summarized = summarizeRoutes(entry.data);
-            const waypoints = entry.waypoints
-                .map((wp) => summarizeWaypoint(wp))
-                .filter((wp): wp is z.infer<typeof waypointSummarySchema> => wp !== null)
-                .map((wp) => ({ position: wp.position ?? [0, 0] }));
+    const summarized = summarizeRoutes(entry.data);
+    const waypoints = entry.waypoints
+        .map((wp) => summarizeWaypoint(wp))
+        .filter((wp): wp is z.infer<typeof waypointSummarySchema> => wp !== null)
+        .map((wp) => ({ position: wp.position ?? [0, 0] }));
 
-            return {
-                id: entry.id,
-                label: entry.label,
-                timestamp: entry.timestamp,
-                routes: summarized,
-                waypoints,
-                params: entry.params as z.infer<typeof routeParamsSchema>,
-            };
-        },
-    });
+    return {
+        id: entry.id,
+        label: entry.label,
+        timestamp: entry.timestamp,
+        routes: summarized,
+        waypoints,
+        params: entry.params as z.infer<typeof routeParamsSchema>,
+    };
 }

@@ -3,7 +3,6 @@
  */
 
 import type { Place } from '@tomtom-org/maps-sdk/core';
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
@@ -34,38 +33,31 @@ export const getShownPlacesDescription =
     'Reads rendered map state (not plugin service history). Returns places currently visible on map — use after showPlaces or locatePlace.';
 
 /**
- * Create the get shown places tool.
+ * Execute get shown places.
  */
-export function createGetShownPlacesTool(state: ToolState): Tool {
-    return tool({
-        description: getShownPlacesDescription,
-        inputSchema: getShownPlacesSchema,
-        outputSchema: getShownPlacesOutputSchema,
-        execute: async () => {
-            try {
-                if (!state.places.placesModule) {
-                    return { count: 0, features: [] };
-                }
+export async function executeGetShownPlaces(_params: z.infer<typeof getShownPlacesSchema>, state: ToolState) {
+    try {
+        if (!state.places.placesModule) {
+            return { count: 0, features: [] };
+        }
 
-                const shown = state.places.placesModule.getShown();
+        const shown = state.places.placesModule.getShown();
 
-                if (!shown.places || shown.places.features.length === 0) {
-                    return { count: 0, features: [] };
-                }
+        if (!shown.places || shown.places.features.length === 0) {
+            return { count: 0, features: [] };
+        }
 
-                return {
-                    count: shown.places.features.length,
-                    features: shown.places.features.map((f: Place) => ({
-                        name: f.properties.poi?.name,
-                        address: f.properties.address?.freeformAddress,
-                        position: f.geometry.coordinates,
-                    })),
-                };
-            } catch (error) {
-                return {
-                    error: `Failed to get shown places: ${error instanceof Error ? error.message : String(error)}`,
-                };
-            }
-        },
-    });
+        return {
+            count: shown.places.features.length,
+            features: shown.places.features.map((f: Place) => ({
+                name: f.properties.poi?.name,
+                address: f.properties.address?.freeformAddress,
+                position: f.geometry.coordinates,
+            })),
+        };
+    } catch (error) {
+        return {
+            error: `Failed to get shown places: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

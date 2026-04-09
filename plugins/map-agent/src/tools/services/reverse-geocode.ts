@@ -3,7 +3,6 @@
  */
 
 import { reverseGeocode } from '@tomtom-org/maps-sdk/services';
-import { type Tool, tool } from 'ai';
 import type { Position } from 'geojson';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
@@ -29,28 +28,25 @@ export const reverseGeocodeDescription =
 /**
  * Create the reverse geocode tool.
  */
-export function createReverseGeocodeTool(state: ToolState): Tool {
-    return tool({
-        description: reverseGeocodeDescription,
-        inputSchema: reverseGeocodeSchema,
-        outputSchema: reverseGeocodeOutputSchema,
-        execute: async (params): Promise<z.infer<typeof reverseGeocodeOutputSchema>> => {
-            const { position } = params;
-            const pos: Position = position as Position;
-            try {
-                const result = await reverseGeocode({ position: pos });
+/** Standalone execute for ToolEntry format. */
+export async function executeReverseGeocode(
+    params: z.infer<typeof reverseGeocodeSchema>,
+    state: ToolState,
+): Promise<z.infer<typeof reverseGeocodeOutputSchema>> {
+    const { position } = params;
+    const pos: Position = position as Position;
+    try {
+        const result = await reverseGeocode({ position: pos });
 
-                if (result) {
-                    state.places.addPlaceResult(result, makePlacesLabel(result));
-                    return summarizePlace(result);
-                }
+        if (result) {
+            state.places.addPlaceResult(result, makePlacesLabel(result));
+            return summarizePlace(result);
+        }
 
-                return { error: 'No result found for the given coordinates' };
-            } catch (error) {
-                return {
-                    error: `Reverse geocoding failed: ${error instanceof Error ? error.message : String(error)}`,
-                };
-            }
-        },
-    });
+        return { error: 'No result found for the given coordinates' };
+    } catch (error) {
+        return {
+            error: `Reverse geocoding failed: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

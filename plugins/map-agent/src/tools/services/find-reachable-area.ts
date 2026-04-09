@@ -6,7 +6,6 @@ import type { Place, PolygonFeatures } from '@tomtom-org/maps-sdk/core';
 import type { GeometryTheme } from '@tomtom-org/maps-sdk/map';
 import type { BudgetType, ReachableRangeParams } from '@tomtom-org/maps-sdk/services';
 import { calculateReachableRanges } from '@tomtom-org/maps-sdk/services';
-import { type Tool, tool } from 'ai';
 import { Position } from 'geojson';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
@@ -100,42 +99,39 @@ async function displayRangeResults(
     }
 }
 
-export function createFindReachableAreaTool(state: ToolState): Tool {
-    return tool({
-        description: findReachableAreaDescription,
-        inputSchema: findReachableAreaSchema,
-        outputSchema: findReachableAreaOutputSchema,
-        execute: async (params): Promise<z.infer<typeof findReachableAreaOutputSchema>> => {
-            const { origin, budgets, theme, showOnMap, showOriginPin = true } = params;
+/** Standalone execute for ToolEntry format. */
+export async function executeFindReachableArea(
+    params: z.infer<typeof findReachableAreaSchema>,
+    state: ToolState,
+): Promise<z.infer<typeof findReachableAreaOutputSchema>> {
+    const { origin, budgets, theme, showOnMap, showOriginPin = true } = params;
 
-            try {
-                const resolved = await resolveLocationInput(origin);
-                if (!resolved) return { status: 'not_found' };
-                const { position, name: originName, query: originQuery } = resolved;
+    try {
+        const resolved = await resolveLocationInput(origin);
+        if (!resolved) return { status: 'not_found' };
+        const { position, name: originName, query: originQuery } = resolved;
 
-                const sortedBudgets = [...budgets].sort((a, b) => b.value - a.value);
+        const sortedBudgets = [...budgets].sort((a, b) => b.value - a.value);
 
-                const result = await computeReachableRanges(sortedBudgets, position);
-                if (!result) return { status: 'no_results' };
+        const result = await computeReachableRanges(sortedBudgets, position);
+        if (!result) return { status: 'no_results' };
 
-                const resolvedTheme = theme ?? 'outline';
+        const resolvedTheme = theme ?? 'outline';
 
-                const originEntry = originQuery ? { query: originQuery, position } : { position };
-                const rangeId = state.ranges.addEntry({
-                    label: makeRangeLabel(sortedBudgets, originName),
-                    origin: originEntry,
-                    budgets: sortedBudgets,
-                    polygon: result,
-                });
+        const originEntry = originQuery ? { query: originQuery, position } : { position };
+        const rangeId = state.ranges.addEntry({
+            label: makeRangeLabel(sortedBudgets, originName),
+            origin: originEntry,
+            budgets: sortedBudgets,
+            polygon: result,
+        });
 
-                await displayRangeResults(state, result, resolvedTheme, position, originName, showOnMap, showOriginPin);
+        await displayRangeResults(state, result, resolvedTheme, position, originName, showOnMap, showOriginPin);
 
-                return { rangeId, originName, budgets: sortedBudgets };
-            } catch (error) {
-                return {
-                    error: `Reachable area calculation failed: ${error instanceof Error ? error.message : String(error)}`,
-                };
-            }
-        },
-    });
+        return { rangeId, originName, budgets: sortedBudgets };
+    } catch (error) {
+        return {
+            error: `Reachable area calculation failed: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

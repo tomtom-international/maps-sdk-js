@@ -5,26 +5,45 @@
  */
 
 export {
-    createExecuteMaplibreCodeTool,
+    executeExecuteMaplibreCode,
     executeMaplibreCodeDescription,
+    executeMaplibreCodeOutputSchema,
     executeMaplibreCodeSchema,
 } from './execute-maplibre-code';
-export { createFlyToTool, flyToDescription, flyToSchema } from './fly-to';
+export { executeFlyTo, flyToDescription, flyToOutputSchema, flyToSchema } from './fly-to';
 export {
-    createGetMapStyleLayersTool,
+    executeGetMapStyleLayers,
     getMapStyleLayersDescription,
+    getMapStyleLayersOutputSchema,
     getMapStyleLayersSchema,
 } from './get-map-style-layers';
-export { createGetViewportTool, getViewportDescription, getViewportSchema } from './get-viewport';
 export {
-    createSetLayoutPropertiesTool,
+    executeGetViewport,
+    getViewportDescription,
+    getViewportOutputSchema,
+    getViewportSchema,
+} from './get-viewport';
+export {
+    executeSetLayoutProperties,
     setLayoutPropertiesDescription,
+    setLayoutPropertiesOutputSchema,
     setLayoutPropertiesSchema,
 } from './set-layout-properties';
 export {
-    createSetPaintPropertiesTool,
+    executeSetPaintProperties,
     setPaintPropertiesDescription,
+    setPaintPropertiesOutputSchema,
     setPaintPropertiesSchema,
 } from './set-paint-properties';
-export { createSetPitchBearingTool, setPitchBearingDescription, setPitchBearingSchema } from './set-pitch-bearing';
-export { createZoomInOrOutTool, zoomInOrOutDescription, zoomInOrOutSchema } from './zoom-in-or-out';
+export {
+    executeSetPitchBearing,
+    setPitchBearingDescription,
+    setPitchBearingOutputSchema,
+    setPitchBearingSchema,
+} from './set-pitch-bearing';
+export {
+    executeZoomInOrOut,
+    zoomInOrOutDescription,
+    zoomInOrOutOutputSchema,
+    zoomInOrOutSchema,
+} from './zoom-in-or-out';

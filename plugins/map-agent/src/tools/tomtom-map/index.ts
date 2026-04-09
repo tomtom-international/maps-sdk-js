@@ -5,74 +5,120 @@
  */
 
 export {
-    createGetCurrentWaypointsTool,
-    createRecallPlacesTool,
-    createRecallRangesTool,
-    createRecallRoutesTool,
-    getCurrentWaypointsDescription,
-    getCurrentWaypointsSchema,
-    recallPlacesDescription,
-    recallPlacesSchema,
-    recallRangesDescription,
-    recallRangesSchema,
-    recallRoutesDescription,
-    recallRoutesSchema,
-} from '../state';
-export { clearMapDescription, clearMapSchema, createClearMapTool } from './clear-map';
-export { createFitRouteSectionTool, fitRouteSectionDescription, fitRouteSectionSchema } from './fit-route-section';
+    clearMapDescription,
+    clearMapOutputSchema,
+    clearMapSchema,
+    executeClearMap,
+} from './clear-map';
 export {
-    createGetShownIncidentsTool,
+    executeFitRouteSection,
+    fitRouteSectionDescription,
+    fitRouteSectionOutputSchema,
+    fitRouteSectionSchema,
+} from './fit-route-section';
+export {
+    executeGetShownIncidents,
     getShownIncidentsDescription,
+    getShownIncidentsOutputSchema,
     getShownIncidentsSchema,
 } from './get-shown-incidents';
-export { createGetShownPlacesTool, getShownPlacesDescription, getShownPlacesSchema } from './get-shown-places';
 export {
-    createGetShownRouteSectionsTool,
+    executeGetShownPlaces,
+    getShownPlacesDescription,
+    getShownPlacesOutputSchema,
+    getShownPlacesSchema,
+} from './get-shown-places';
+export {
+    executeGetShownRouteSections,
     getShownRouteSectionsDescription,
+    getShownRouteSectionsOutputSchema,
     getShownRouteSectionsSchema,
 } from './get-shown-route-sections';
 export {
-    createGetShownRouteTrafficIncidentsTool,
+    executeGetShownRouteTrafficIncidents,
     getShownRouteTrafficIncidentsDescription,
+    getShownRouteTrafficIncidentsOutputSchema,
     getShownRouteTrafficIncidentsSchema,
 } from './get-shown-route-traffic-incidents';
-export { createGetShownRoutesTool, getShownRoutesDescription, getShownRoutesSchema } from './get-shown-routes';
 export {
-    createGetShownWaypointsTool,
+    executeGetShownRoutes,
+    getShownRoutesDescription,
+    getShownRoutesOutputSchema,
+    getShownRoutesSchema,
+} from './get-shown-routes';
+export {
+    executeGetShownWaypoints,
     getShownWaypointsDescription,
+    getShownWaypointsOutputSchema,
     getShownWaypointsSchema,
 } from './get-shown-waypoints';
 export {
-    createGetStandardMapStylesTool,
+    executeGetStandardMapStyles,
     getStandardMapStylesDescription,
+    getStandardMapStylesOutputSchema,
     getStandardMapStylesSchema,
 } from './get-standard-map-styles';
-export { createSetLanguageTool, setLanguageDescription, setLanguageSchema } from './set-language';
 export {
-    createSetMapStandardStyleTool,
+    executeSetLanguage,
+    setLanguageDescription,
+    setLanguageOutputSchema,
+    setLanguageSchema,
+} from './set-language';
+export {
+    executeSetMapStandardStyle,
     setMapStandardStyleDescription,
+    setMapStandardStyleOutputSchema,
     setMapStandardStyleSchema,
 } from './set-map-standard-style';
-export { createSetRouteThemeTool, setRouteThemeDescription, setRouteThemeSchema } from './set-route-theme';
-export { createShowPlacesTool, showPlacesDescription, showPlacesSchema } from './show-places';
-export { createShowRoutesTool, showRouteDescription, showRouteSchema } from './show-routes';
 export {
-    createShowTrafficAreaAnalyticsTool,
+    executeSetRouteTheme,
+    setRouteThemeDescription,
+    setRouteThemeOutputSchema,
+    setRouteThemeSchema,
+} from './set-route-theme';
+export {
+    executeShowPlaces,
+    showPlacesDescription,
+    showPlacesOutputSchema,
+    showPlacesSchema,
+} from './show-places';
+export {
+    executeShowRoutes,
+    showRouteDescription,
+    showRouteOutputSchema,
+    showRouteSchema,
+} from './show-routes';
+export {
+    executeShowTrafficAreaAnalytics,
     showTrafficAreaAnalyticsDescription,
+    showTrafficAreaAnalyticsOutputSchema,
     showTrafficAreaAnalyticsSchema,
 } from './show-traffic-area-analytics';
-export { createShowWaypointsTool, showWaypointsDescription, showWaypointsSchema } from './show-waypoints';
 export {
-    createToggleBaseMapLayerGroupsTool,
+    executeShowWaypoints,
+    showWaypointsDescription,
+    showWaypointsOutputSchema,
+    showWaypointsSchema,
+} from './show-waypoints';
+export {
+    executeToggleBaseMapLayerGroups,
     toggleBaseMapLayerGroupsDescription,
+    toggleBaseMapLayerGroupsOutputSchema,
     toggleBaseMapLayerGroupsSchema,
 } from './toggle-base-map-layer-groups';
-export { createTogglePOIsTool, togglePOIsDescription, togglePOIsSchema } from './toggle-pois';
 export {
-    createToggleTrafficFlowTool,
-    createToggleTrafficIncidentsTool,
+    executeTogglePOIs,
+    togglePOIsDescription,
+    togglePOIsOutputSchema,
+    togglePOIsSchema,
+} from './toggle-pois';
+export {
+    executeToggleTrafficFlow,
+    executeToggleTrafficIncidents,
     toggleTrafficFlowDescription,
+    toggleTrafficFlowOutputSchema,
     toggleTrafficFlowSchema,
     toggleTrafficIncidentsDescription,
+    toggleTrafficIncidentsOutputSchema,
     toggleTrafficIncidentsSchema,
 } from './toggle-traffic';

@@ -2,7 +2,6 @@
  * @module map-agent-tools/maplibre
  */
 
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
@@ -48,35 +47,27 @@ export const setPaintPropertiesDescription =
     'Paint properties control visual appearance — use setLayoutProperties for visibility and structural properties. ' +
     'For route styling, prefer setRouteTheme.';
 
-/**
- * Create the setPaintProperties tool.
- */
-export function createSetPaintPropertiesTool(state: ToolState): Tool {
-    return tool({
-        description: setPaintPropertiesDescription,
-        inputSchema: setPaintPropertiesSchema,
-        outputSchema: setPaintPropertiesOutputSchema,
-        execute: async ({ changes }): Promise<z.infer<typeof setPaintPropertiesOutputSchema>> => {
+/** Execute function for setPaintProperties — usable with ToolEntry format. */
+export async function executeSetPaintProperties(params: z.infer<typeof setPaintPropertiesSchema>, state: ToolState) {
+    const { changes } = params;
+    try {
+        const results = changes.map(({ layerId, propertyName, value }) => {
             try {
-                const results = changes.map(({ layerId, propertyName, value }) => {
-                    try {
-                        state.baseMap.mapLibreMap.setPaintProperty(layerId, propertyName, value);
-                        return { layerId, propertyName, value, success: true as const };
-                    } catch (error) {
-                        return {
-                            layerId,
-                            propertyName,
-                            error: `Failed to set paint property: ${error instanceof Error ? error.message : String(error)}`,
-                        };
-                    }
-                });
-
-                return { results };
+                state.baseMap.mapLibreMap.setPaintProperty(layerId, propertyName, value);
+                return { layerId, propertyName, value, success: true as const };
             } catch (error) {
                 return {
-                    error: `Failed to set paint properties: ${error instanceof Error ? error.message : String(error)}`,
+                    layerId,
+                    propertyName,
+                    error: `Failed to set paint property: ${error instanceof Error ? error.message : String(error)}`,
                 };
             }
-        },
-    });
+        });
+
+        return { results };
+    } catch (error) {
+        return {
+            error: `Failed to set paint properties: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

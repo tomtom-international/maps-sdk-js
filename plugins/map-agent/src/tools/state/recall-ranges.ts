@@ -2,7 +2,6 @@
  * @module map-agent-tools
  */
 
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
@@ -40,33 +39,29 @@ export const recallRangesDescription =
     'Step 2: call with id to retrieve origin and budgets. ' +
     'Does not call any service.';
 
-export function createRecallRangesTool(state: ToolState): Tool {
-    return tool({
-        description: recallRangesDescription,
-        inputSchema: recallRangesSchema,
-        outputSchema: recallRangesOutputSchema,
-        execute: async (params): Promise<z.infer<typeof recallRangesOutputSchema>> => {
-            const { id } = params;
+export async function executeRecallRanges(
+    params: z.infer<typeof recallRangesSchema>,
+    state: ToolState,
+): Promise<z.infer<typeof recallRangesOutputSchema>> {
+    const { id } = params;
 
-            if (!id) {
-                const entries = [...state.ranges.entries]
-                    .reverse()
-                    .map(({ id, label, timestamp }) => ({ id, label, timestamp }));
-                return { entries };
-            }
+    if (!id) {
+        const entries = [...state.ranges.entries]
+            .reverse()
+            .map(({ id, label, timestamp }) => ({ id, label, timestamp }));
+        return { entries };
+    }
 
-            const entry = state.ranges.entries.find((e) => e.id === id);
-            if (!entry) {
-                return { error: `No entry found with id "${id}"` };
-            }
+    const entry = state.ranges.entries.find((e) => e.id === id);
+    if (!entry) {
+        return { error: `No entry found with id "${id}"` };
+    }
 
-            return {
-                id: entry.id,
-                label: entry.label,
-                timestamp: entry.timestamp,
-                origin: { ...entry.origin, position: entry.origin.position as [number, number] },
-                budgets: entry.budgets,
-            };
-        },
-    });
+    return {
+        id: entry.id,
+        label: entry.label,
+        timestamp: entry.timestamp,
+        origin: { ...entry.origin, position: entry.origin.position as [number, number] },
+        budgets: entry.budgets,
+    };
 }

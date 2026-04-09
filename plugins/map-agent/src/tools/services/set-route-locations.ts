@@ -4,7 +4,6 @@
 
 import { bboxFromGeoJSON, type HasBBox, type Routes, type WaypointLike } from '@tomtom-org/maps-sdk/core';
 import { type CostModel, calculateRoute, type MaxNumberOfAlternatives } from '@tomtom-org/maps-sdk/services';
-import { type Tool, tool } from 'ai';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import { z } from 'zod';
 import type { RouteParams } from '../../state';
@@ -71,45 +70,42 @@ export async function showRouteOnMap(state: ToolState, routes: Routes, waypoints
 /**
  * Create the set-route-locations tool.
  */
-export function createSetRouteLocationsTool(state: ToolState): Tool {
-    return tool({
-        description: setRouteLocationsDescription,
-        inputSchema: setRouteLocationsSchema,
-        outputSchema: setRouteLocationsOutputSchema,
-        execute: async (params): Promise<z.infer<typeof setRouteLocationsOutputSchema>> => {
-            const { locations, showOnMap } = params;
-            try {
-                const resolved = await Promise.all(locations.map(resolveLocationInput));
+/** Standalone execute for ToolEntry format. */
+export async function executeSetRouteLocations(
+    params: z.infer<typeof setRouteLocationsSchema>,
+    state: ToolState,
+): Promise<z.infer<typeof setRouteLocationsOutputSchema>> {
+    const { locations, showOnMap } = params;
+    try {
+        const resolved = await Promise.all(locations.map(resolveLocationInput));
 
-                const unresolved = locations.filter((loc, i) => resolved[i] === null && 'query' in loc) as Array<{
-                    query: string;
-                }>;
-                if (unresolved.length > 0) {
-                    return { error: `Could not resolve: ${unresolved.map((l) => `"${l.query}"`).join(', ')}` };
-                }
+        const unresolved = locations.filter((loc, i) => resolved[i] === null && 'query' in loc) as Array<{
+            query: string;
+        }>;
+        if (unresolved.length > 0) {
+            return { error: `Could not resolve: ${unresolved.map((l) => `"${l.query}"`).join(', ')}` };
+        }
 
-                const waypoints = resolveRouteWaypoints(resolved.map((r) => r?.place ?? null));
-                if (!waypoints) {
-                    return { error: 'Not enough valid waypoints to calculate a route (minimum 2).' };
-                }
+        const waypoints = resolveRouteWaypoints(resolved.map((r) => r?.place ?? null));
+        if (!waypoints) {
+            return { error: 'Not enough valid waypoints to calculate a route (minimum 2).' };
+        }
 
-                const routes = await calculateRoute({
-                    locations: waypoints,
-                    ...buildCalculateRouteParams(state.routing.params),
-                });
+        const routes = await calculateRoute({
+            locations: waypoints,
+            ...buildCalculateRouteParams(state.routing.params),
+        });
 
-                state.routing.addRoutes(routes, waypoints, makeRoutesLabel(routes, waypoints));
+        state.routing.addRoutes(routes, waypoints, makeRoutesLabel(routes, waypoints));
 
-                if (showOnMap) {
-                    await showRouteOnMap(state, routes, waypoints);
-                }
+        if (showOnMap) {
+            await showRouteOnMap(state, routes, waypoints);
+        }
 
-                return summarizeRoutes(routes);
-            } catch (error) {
-                return {
-                    error: `Route calculation failed: ${error instanceof Error ? error.message : String(error)}`,
-                };
-            }
-        },
-    });
+        return summarizeRoutes(routes);
+    } catch (error) {
+        return {
+            error: `Route calculation failed: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

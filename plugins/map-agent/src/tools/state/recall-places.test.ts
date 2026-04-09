@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createRecallPlacesTool } from './recall-places';
+import { executeRecallPlaces } from './recall-places';
 
 const mockState = () => {
     const places = {
@@ -11,8 +11,7 @@ const mockState = () => {
 describe('recallPlaces', () => {
     it('returns empty index when no entries', async () => {
         const state = mockState();
-        const tool = createRecallPlacesTool(state);
-        const result = await tool.execute?.({}, { toolCallId: '1', messages: [], abortSignal: undefined as any });
+        const result = await executeRecallPlaces({}, state);
         expect(result).toEqual({ entries: [] });
     });
 
@@ -22,8 +21,7 @@ describe('recallPlaces', () => {
             { id: 'places-0', timestamp: 1000, label: 'Cafe', data: {} },
             { id: 'places-1', timestamp: 2000, label: '5 places', data: {} },
         ];
-        const tool = createRecallPlacesTool(state);
-        const result = await tool.execute?.({}, { toolCallId: '1', messages: [], abortSignal: undefined as any });
+        const result = await executeRecallPlaces({}, state);
         expect(result).toEqual({
             entries: [
                 { id: 'places-1', label: '5 places', timestamp: 2000 },
@@ -50,11 +48,7 @@ describe('recallPlaces', () => {
                 ],
             },
         ];
-        const tool = createRecallPlacesTool(state);
-        const result = await tool.execute?.(
-            { id: 'places-0' },
-            { toolCallId: '1', messages: [], abortSignal: undefined as any },
-        );
+        const result = await executeRecallPlaces({ id: 'places-0' }, state);
         expect(result).toMatchObject({
             id: 'places-0',
             label: 'Cafe de Jaren',
@@ -68,11 +62,7 @@ describe('recallPlaces', () => {
     it('returns error for unknown id', async () => {
         const state = mockState();
         state.places.entries = [];
-        const tool = createRecallPlacesTool(state);
-        const result = await tool.execute?.(
-            { id: 'places-99' },
-            { toolCallId: '1', messages: [], abortSignal: undefined as any },
-        );
+        const result = await executeRecallPlaces({ id: 'places-99' }, state);
         expect(result).toEqual({ error: 'No entry found with id "places-99"' });
     });
 
@@ -95,11 +85,7 @@ describe('recallPlaces', () => {
                 ],
             },
         ];
-        const tool = createRecallPlacesTool(state);
-        const result = await tool.execute?.(
-            { id: 'places-0' },
-            { toolCallId: '1', messages: [], abortSignal: undefined as any },
-        );
+        const result = await executeRecallPlaces({ id: 'places-0' }, state);
         expect(result).toMatchObject({
             id: 'places-0',
             places: {

@@ -2,7 +2,6 @@
  * @module map-agent-tools/maplibre
  */
 
-import { type Tool, tool } from 'ai';
 import type { Map as MapLibreMap } from 'maplibre-gl';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
@@ -110,36 +109,28 @@ function diffSnapshots(before: Snapshot, after: Snapshot): { added: string[]; re
 // Tool factory
 // ---------------------------------------------------------------------------
 
-/**
- * Create the executeMaplibreCode tool.
- */
-export function createExecuteMaplibreCodeTool(state: ToolState): Tool {
-    return tool({
-        description: executeMaplibreCodeDescription,
-        inputSchema: executeMaplibreCodeSchema,
-        outputSchema: executeMaplibreCodeOutputSchema,
-        execute: async ({ code }): Promise<z.infer<typeof executeMaplibreCodeOutputSchema>> => {
-            try {
-                const mapLibreMap = state.baseMap.mapLibreMap;
-                const beforeSources = snapshotSources(mapLibreMap);
-                const beforeLayers = snapshotLayers(mapLibreMap);
+/** Execute function for executeMaplibreCode — usable with ToolEntry format. */
+export async function executeExecuteMaplibreCode(params: z.infer<typeof executeMaplibreCodeSchema>, state: ToolState) {
+    const { code } = params;
+    try {
+        const mapLibreMap = state.baseMap.mapLibreMap;
+        const beforeSources = snapshotSources(mapLibreMap);
+        const beforeLayers = snapshotLayers(mapLibreMap);
 
-                // eslint-disable-next-line no-new-func
-                const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor as new (
-                    ...args: string[]
-                ) => (map: MapLibreMap) => Promise<unknown>;
-                const userFunction = new AsyncFunction('map', code);
-                const result = await userFunction(mapLibreMap);
+        // eslint-disable-next-line no-new-func
+        const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor as new (
+            ...args: string[]
+        ) => (map: MapLibreMap) => Promise<unknown>;
+        const userFunction = new AsyncFunction('map', code);
+        const result = await userFunction(mapLibreMap);
 
-                const sources = diffSnapshots(beforeSources, snapshotSources(mapLibreMap));
-                const layers = diffSnapshots(beforeLayers, snapshotLayers(mapLibreMap));
+        const sources = diffSnapshots(beforeSources, snapshotSources(mapLibreMap));
+        const layers = diffSnapshots(beforeLayers, snapshotLayers(mapLibreMap));
 
-                return { success: true, result: result ?? undefined, sources, layers };
-            } catch (error) {
-                return {
-                    error: `Code execution failed: ${error instanceof Error ? error.message : String(error)}`,
-                };
-            }
-        },
-    });
+        return { success: true, result: result ?? undefined, sources, layers };
+    } catch (error) {
+        return {
+            error: `Code execution failed: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

@@ -2,7 +2,6 @@
  * @module map-agent-tools
  */
 
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
@@ -29,26 +28,17 @@ export const zoomInOrOutDescription =
     'Positive delta zooms in (closer), negative delta zooms out (further away). ' +
     'Returns the resulting zoom level.';
 
-/**
- * Create the zoom-in-or-out tool.
- */
-export function createZoomInOrOutTool(state: ToolState): Tool {
-    return tool({
-        description: zoomInOrOutDescription,
-        inputSchema: zoomInOrOutSchema,
-        outputSchema: zoomInOrOutOutputSchema,
-        execute: async (params): Promise<z.infer<typeof zoomInOrOutOutputSchema>> => {
-            const { delta } = params;
-            try {
-                const map = state.baseMap.mapLibreMap;
-                const targetZoom = map.getZoom() + delta;
-                map.zoomTo(targetZoom);
-                return { zoom: targetZoom };
-            } catch (error) {
-                return {
-                    error: `Zoom failed: ${error instanceof Error ? error.message : String(error)}`,
-                };
-            }
-        },
-    });
+/** Execute function for zoomInOrOut — usable with ToolEntry format. */
+export async function executeZoomInOrOut(params: z.infer<typeof zoomInOrOutSchema>, state: ToolState) {
+    const { delta } = params;
+    try {
+        const map = state.baseMap.mapLibreMap;
+        const targetZoom = map.getZoom() + delta;
+        map.zoomTo(targetZoom);
+        return { zoom: targetZoom };
+    } catch (error) {
+        return {
+            error: `Zoom failed: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

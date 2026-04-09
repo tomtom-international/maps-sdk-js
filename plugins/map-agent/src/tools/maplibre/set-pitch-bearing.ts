@@ -2,7 +2,6 @@
  * @module map-agent-tools
  */
 
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
@@ -27,34 +26,25 @@ export const setPitchBearingDescription =
     'Tilt and/or rotate the map camera. Pitch 0 = top-down view, 85 = near-horizontal (3D effect). ' +
     'Bearing 0 = north up, 90 = east up. Provide at least one of pitch or bearing.';
 
-/**
- * Create the set pitch and bearing tool.
- */
-export function createSetPitchBearingTool(state: ToolState): Tool {
-    return tool({
-        description: setPitchBearingDescription,
-        inputSchema: setPitchBearingSchema,
-        outputSchema: setPitchBearingOutputSchema,
-        execute: async (params) => {
-            const { pitch, bearing } = params;
+/** Execute function for setPitchBearing — usable with ToolEntry format. */
+export async function executeSetPitchBearing(params: z.infer<typeof setPitchBearingSchema>, state: ToolState) {
+    const { pitch, bearing } = params;
 
-            if (pitch === undefined && bearing === undefined) {
-                return { error: 'Provide at least one of pitch or bearing' };
-            }
+    if (pitch === undefined && bearing === undefined) {
+        return { error: 'Provide at least one of pitch or bearing' };
+    }
 
-            try {
-                const map = state.baseMap.mapLibreMap;
-                map.easeTo({
-                    ...(pitch !== undefined && { pitch }),
-                    ...(bearing !== undefined && { bearing }),
-                });
+    try {
+        const map = state.baseMap.mapLibreMap;
+        map.easeTo({
+            ...(pitch !== undefined && { pitch }),
+            ...(bearing !== undefined && { bearing }),
+        });
 
-                return { success: true };
-            } catch (error) {
-                return {
-                    error: `Failed to set pitch/bearing: ${error instanceof Error ? error.message : String(error)}`,
-                };
-            }
-        },
-    });
+        return { success: true };
+    } catch (error) {
+        return {
+            error: `Failed to set pitch/bearing: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

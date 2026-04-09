@@ -5,25 +5,25 @@
  */
 
 export {
-    createGetCurrentWaypointsTool,
+    executeGetCurrentWaypoints,
     getCurrentWaypointsDescription,
     getCurrentWaypointsOutputSchema,
     getCurrentWaypointsSchema,
 } from './get-current-waypoints';
 export {
-    createRecallPlacesTool,
+    executeRecallPlaces,
     recallPlacesDescription,
     recallPlacesOutputSchema,
     recallPlacesSchema,
 } from './recall-places';
 export {
-    createRecallRangesTool,
+    executeRecallRanges,
     recallRangesDescription,
     recallRangesOutputSchema,
     recallRangesSchema,
 } from './recall-ranges';
 export {
-    createRecallRoutesTool,
+    executeRecallRoutes,
     recallRoutesDescription,
     recallRoutesOutputSchema,
     recallRoutesSchema,

@@ -2,7 +2,6 @@
  * @module map-agent-tools
  */
 
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
@@ -30,58 +29,51 @@ export const clearMapDescription =
     'Remove displayed features from the map (places, routes, geometries, analytics). Use to clean up before showing new results or to reset the map.';
 
 /**
- * Create the clear map tool.
+ * Execute clear map.
  */
-export function createClearMapTool(state: ToolState): Tool {
-    return tool({
-        description: clearMapDescription,
-        inputSchema: clearMapSchema,
-        outputSchema: clearMapOutputSchema,
-        execute: async (params) => {
-            const { layers } = params;
-            try {
-                const clearAll = !layers || layers.length === 0;
+export async function executeClearMap(params: z.infer<typeof clearMapSchema>, state: ToolState) {
+    const { layers } = params;
+    try {
+        const clearAll = !layers || layers.length === 0;
 
-                if (clearAll || layers.includes('places')) {
-                    if (state.places.placesModule) {
-                        await state.places.placesModule.clear();
-                    }
-                }
-
-                if (clearAll || layers.includes('routes')) {
-                    if (state.routing.routingModule) {
-                        await state.routing.routingModule.clearRoutes();
-                        await state.routing.routingModule.clearWaypoints();
-                    }
-                }
-
-                if (clearAll || layers.includes('geometries')) {
-                    if (state.ranges.geometriesModule) {
-                        await state.ranges.geometriesModule.clear();
-                    }
-                }
-
-                if (clearAll || layers.includes('analytics')) {
-                    const analyticsModule = state.traffic.controlPanel
-                        ? await state.traffic.getTrafficAreaAnalyticsModule()
-                        : undefined;
-
-                    if (analyticsModule) {
-                        analyticsModule.clear();
-                    }
-
-                    state.traffic.controlPanel?.hide();
-                }
-
-                return {
-                    success: true,
-                    cleared: layers || ['places', 'routes', 'geometries', 'analytics'],
-                };
-            } catch (error) {
-                return {
-                    error: `Failed to clear map: ${error instanceof Error ? error.message : String(error)}`,
-                };
+        if (clearAll || layers.includes('places')) {
+            if (state.places.placesModule) {
+                await state.places.placesModule.clear();
             }
-        },
-    });
+        }
+
+        if (clearAll || layers.includes('routes')) {
+            if (state.routing.routingModule) {
+                await state.routing.routingModule.clearRoutes();
+                await state.routing.routingModule.clearWaypoints();
+            }
+        }
+
+        if (clearAll || layers.includes('geometries')) {
+            if (state.ranges.geometriesModule) {
+                await state.ranges.geometriesModule.clear();
+            }
+        }
+
+        if (clearAll || layers.includes('analytics')) {
+            const analyticsModule = state.traffic.controlPanel
+                ? await state.traffic.getTrafficAreaAnalyticsModule()
+                : undefined;
+
+            if (analyticsModule) {
+                analyticsModule.clear();
+            }
+
+            state.traffic.controlPanel?.hide();
+        }
+
+        return {
+            success: true,
+            cleared: layers || ['places', 'routes', 'geometries', 'analytics'],
+        };
+    } catch (error) {
+        return {
+            error: `Failed to clear map: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

@@ -2,7 +2,6 @@
  * @module map-agent-tools
  */
 
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { summarizeWaypoint, waypointSummarySchema } from '../../utils/summarize';
@@ -50,34 +49,30 @@ export const getCurrentWaypointsDescription =
     'Highly specific rules: slotIndex returns one known slot; otherwise results are paged, default to 5 slots, and empty slots are omitted unless includeEmptySlots=true to keep payloads compact. ' +
     'Does not call any service.';
 
-export function createGetCurrentWaypointsTool(state: ToolState): Tool {
-    return tool({
-        description: getCurrentWaypointsDescription,
-        inputSchema: getCurrentWaypointsSchema,
-        outputSchema: getCurrentWaypointsOutputSchema,
-        execute: async (params): Promise<z.infer<typeof getCurrentWaypointsOutputSchema>> => {
-            const { slotIndex, includeEmptySlots = false, offset = 0, limit = 5 } = params;
-            const slots = state.routing.planningSlots.map((waypoint, index) => {
-                const normalized = summarizeWaypoint(waypoint);
-                return normalized ? { ...normalized, slotIndex: index } : { slotIndex: index, isFilled: false };
-            });
-            const filteredSlots = includeEmptySlots ? slots : slots.filter((slot) => slot.isFilled);
-            const hasExactSlot = slotIndex !== undefined;
-            const selected = hasExactSlot
-                ? filteredSlots.filter((slot) => slot.slotIndex === slotIndex)
-                : filteredSlots.slice(offset, offset + limit);
-            const nextOffset = offset + selected.length;
-
-            return {
-                totalSlots: slots.length,
-                filledSlots: slots.filter((slot) => slot.isFilled).length,
-                matchedCount: hasExactSlot ? selected.length : filteredSlots.length,
-                returnedCount: selected.length,
-                offset: hasExactSlot ? 0 : offset,
-                hasMore: !hasExactSlot && nextOffset < filteredSlots.length,
-                ...(!hasExactSlot && nextOffset < filteredSlots.length && { nextOffset }),
-                waypoints: selected,
-            };
-        },
+export async function executeGetCurrentWaypoints(
+    params: z.infer<typeof getCurrentWaypointsSchema>,
+    state: ToolState,
+): Promise<z.infer<typeof getCurrentWaypointsOutputSchema>> {
+    const { slotIndex, includeEmptySlots = false, offset = 0, limit = 5 } = params;
+    const slots = state.routing.planningSlots.map((waypoint, index) => {
+        const normalized = summarizeWaypoint(waypoint);
+        return normalized ? { ...normalized, slotIndex: index } : { slotIndex: index, isFilled: false };
     });
+    const filteredSlots = includeEmptySlots ? slots : slots.filter((slot) => slot.isFilled);
+    const hasExactSlot = slotIndex !== undefined;
+    const selected = hasExactSlot
+        ? filteredSlots.filter((slot) => slot.slotIndex === slotIndex)
+        : filteredSlots.slice(offset, offset + limit);
+    const nextOffset = offset + selected.length;
+
+    return {
+        totalSlots: slots.length,
+        filledSlots: slots.filter((slot) => slot.isFilled).length,
+        matchedCount: hasExactSlot ? selected.length : filteredSlots.length,
+        returnedCount: selected.length,
+        offset: hasExactSlot ? 0 : offset,
+        hasMore: !hasExactSlot && nextOffset < filteredSlots.length,
+        ...(!hasExactSlot && nextOffset < filteredSlots.length && { nextOffset }),
+        waypoints: selected,
+    };
 }

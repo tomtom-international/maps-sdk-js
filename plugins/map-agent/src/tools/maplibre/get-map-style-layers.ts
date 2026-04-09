@@ -2,7 +2,6 @@
  * @module map-agent-tools
  */
 
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
@@ -39,42 +38,33 @@ export const getMapStyleLayersSchema = z.object({
 export const getMapStyleLayersDescription =
     'Get map layer IDs with their paint/layout properties from MapLibre style for advanced runtime manipulation. Use before setLayoutProperty/setPaintProperty for custom styling.';
 
-/**
- * Create the get map style layers tool.
- */
-export function createGetMapStyleLayersTool(state: ToolState): Tool {
-    return tool({
-        description: getMapStyleLayersDescription,
-        inputSchema: getMapStyleLayersSchema,
-        outputSchema: getMapStyleLayersOutputSchema,
-        execute: async (input): Promise<z.infer<typeof getMapStyleLayersOutputSchema>> => {
-            const { layerIdQuery, include } = input;
-            try {
-                const style = state.baseMap.mapLibreMap.getStyle();
-                let layers = style.layers ?? [];
+/** Execute function for getMapStyleLayers — usable with ToolEntry format. */
+export async function executeGetMapStyleLayers(params: z.infer<typeof getMapStyleLayersSchema>, state: ToolState) {
+    const { layerIdQuery, include } = params;
+    try {
+        const style = state.baseMap.mapLibreMap.getStyle();
+        let layers = style.layers ?? [];
 
-                // Filter by layerIdQuery if provided (case-insensitive partial match)
-                if (layerIdQuery) {
-                    layers = layers.filter((layer) => layer.id.toLowerCase().includes(layerIdQuery.toLowerCase()));
-                    if (layers.length === 0) {
-                        return {
-                            error: `No layers found matching query: "${layerIdQuery}"`,
-                        };
-                    }
-                }
-
+        // Filter by layerIdQuery if provided (case-insensitive partial match)
+        if (layerIdQuery) {
+            layers = layers.filter((layer) => layer.id.toLowerCase().includes(layerIdQuery.toLowerCase()));
+            if (layers.length === 0) {
                 return {
-                    layers: layers.map((layer) => ({
-                        id: layer.id,
-                        ...(include.includes('paint') && { paint: layer.paint }),
-                        ...(include.includes('layout') && { layout: layer.layout }),
-                    })),
-                };
-            } catch (error) {
-                return {
-                    error: `Failed to get style: ${error instanceof Error ? error.message : String(error)}`,
+                    error: `No layers found matching query: "${layerIdQuery}"`,
                 };
             }
-        },
-    });
+        }
+
+        return {
+            layers: layers.map((layer) => ({
+                id: layer.id,
+                ...(include.includes('paint') && { paint: layer.paint }),
+                ...(include.includes('layout') && { layout: layer.layout }),
+            })),
+        };
+    } catch (error) {
+        return {
+            error: `Failed to get style: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

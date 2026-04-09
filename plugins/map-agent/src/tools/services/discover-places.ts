@@ -4,7 +4,6 @@
 
 import { bboxFromGeoJSON, getPosition, type HasBBox } from '@tomtom-org/maps-sdk/core';
 import { search, searchOne } from '@tomtom-org/maps-sdk/services';
-import { type Tool, tool } from 'ai';
 import type { Position } from 'geojson';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
@@ -151,41 +150,38 @@ async function searchWithBias(
 /**
  * Create the discover places tool.
  */
-export function createDiscoverPlacesTool(state: ToolState): Tool {
-    return tool({
-        description: discoverPlacesDescription,
-        inputSchema: discoverPlacesSchema,
-        outputSchema: discoverPlacesOutputSchema,
-        execute: async (params): Promise<z.infer<typeof discoverPlacesOutputSchema>> => {
-            const { query, where, radiusMeters, limit, poiCategories, show, withinRange } = params;
+/** Standalone execute for ToolEntry format. */
+export async function executeDiscoverPlaces(
+    params: z.infer<typeof discoverPlacesSchema>,
+    state: ToolState,
+): Promise<z.infer<typeof discoverPlacesOutputSchema>> {
+    const { query, where, radiusMeters, limit, poiCategories, show, withinRange } = params;
 
-            try {
-                let result: Awaited<ReturnType<typeof search>>;
-                let placeResultIndex: string | undefined;
+    try {
+        let result: Awaited<ReturnType<typeof search>>;
+        let placeResultIndex: string | undefined;
 
-                if (withinRange) {
-                    const rangeResult = await searchInRange(state, withinRange, query, limit, poiCategories);
-                    if ('error' in rangeResult) return rangeResult;
-                    result = rangeResult.result;
-                    placeResultIndex = rangeResult.placeResultIndex;
-                } else {
-                    const biasResult = await searchWithBias(state, query, where, limit, poiCategories, radiusMeters);
-                    result = biasResult.result;
-                    placeResultIndex = biasResult.placeResultIndex;
-                }
+        if (withinRange) {
+            const rangeResult = await searchInRange(state, withinRange, query, limit, poiCategories);
+            if ('error' in rangeResult) return rangeResult;
+            result = rangeResult.result;
+            placeResultIndex = rangeResult.placeResultIndex;
+        } else {
+            const biasResult = await searchWithBias(state, query, where, limit, poiCategories, radiusMeters);
+            result = biasResult.result;
+            placeResultIndex = biasResult.placeResultIndex;
+        }
 
-                const shown = show ? await showResultsOnMap(state, result, show) : undefined;
+        const shown = show ? await showResultsOnMap(state, result, show) : undefined;
 
-                return {
-                    ...summarizePlaces(result),
-                    placeResultIndex,
-                    ...(shown && { shown }),
-                };
-            } catch (error) {
-                return {
-                    error: `Search failed: ${error instanceof Error ? error.message : String(error)}`,
-                };
-            }
-        },
-    });
+        return {
+            ...summarizePlaces(result),
+            placeResultIndex,
+            ...(shown && { shown }),
+        };
+    } catch (error) {
+        return {
+            error: `Search failed: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

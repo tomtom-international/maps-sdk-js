@@ -3,7 +3,6 @@
  */
 
 import { alongRouteSearch } from '@tomtom-org/maps-sdk/services';
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { makePlacesLabel } from '../../utils/state-labels';
@@ -84,40 +83,37 @@ async function executeAlongRouteSearch(
     });
 }
 
-export function createSearchAlongRouteTool(state: ToolState): Tool {
-    return tool({
-        description: searchAlongRouteDescription,
-        inputSchema: searchAlongRouteSchema,
-        outputSchema: searchAlongRouteOutputSchema,
-        execute: async (params): Promise<z.infer<typeof searchAlongRouteOutputSchema>> => {
-            const { query, poiCategories, routeId, maxDetourTimeSeconds, sortBy, limit, show } = params;
+/** Standalone execute for ToolEntry format. */
+export async function executeSearchAlongRoute(
+    params: z.infer<typeof searchAlongRouteSchema>,
+    state: ToolState,
+): Promise<z.infer<typeof searchAlongRouteOutputSchema>> {
+    const { query, poiCategories, routeId, maxDetourTimeSeconds, sortBy, limit, show } = params;
 
-            const resolved = resolveRouteEntry(state, routeId);
-            if (resolved === null) return { status: 'no_route' };
-            if (typeof resolved === 'string') return { error: resolved };
-            const { entry, routeFeature } = resolved;
+    const resolved = resolveRouteEntry(state, routeId);
+    if (resolved === null) return { status: 'no_route' };
+    if (typeof resolved === 'string') return { error: resolved };
+    const { entry, routeFeature } = resolved;
 
-            try {
-                const result = await executeAlongRouteSearch(
-                    { query, poiCategories, maxDetourTimeSeconds, sortBy, limit },
-                    routeFeature,
-                );
+    try {
+        const result = await executeAlongRouteSearch(
+            { query, poiCategories, maxDetourTimeSeconds, sortBy, limit },
+            routeFeature,
+        );
 
-                const label = makePlacesLabel(result, { query, poiCategories, routeLabel: entry.label });
-                const placeResultIndex = state.places.addPlaceResult(result, label);
+        const label = makePlacesLabel(result, { query, poiCategories, routeLabel: entry.label });
+        const placeResultIndex = state.places.addPlaceResult(result, label);
 
-                const shown = show ? await showResultsOnMap(state, result, show) : undefined;
+        const shown = show ? await showResultsOnMap(state, result, show) : undefined;
 
-                return {
-                    ...summarizePlaces(result),
-                    placeResultIndex,
-                    ...(shown && { shown }),
-                };
-            } catch (error) {
-                return {
-                    error: `Along-route search failed: ${error instanceof Error ? error.message : String(error)}`,
-                };
-            }
-        },
-    });
+        return {
+            ...summarizePlaces(result),
+            placeResultIndex,
+            ...(shown && { shown }),
+        };
+    } catch (error) {
+        return {
+            error: `Along-route search failed: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

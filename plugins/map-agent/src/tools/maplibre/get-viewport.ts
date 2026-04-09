@@ -2,7 +2,6 @@
  * @module map-agent-tools
  */
 
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
@@ -30,29 +29,20 @@ export const getViewportDescription =
     'Does NOT return the user\'s physical location — use getCurrentLocation for "near me" queries. ' +
     'Reads map state. Does not call any service.';
 
-/**
- * Create the get viewport tool.
- */
-export function createGetViewportTool(state: ToolState): Tool {
-    return tool({
-        description: getViewportDescription,
-        inputSchema: getViewportSchema,
-        outputSchema: getViewportOutputSchema,
-        execute: async () => {
-            try {
-                const mapLibreMap = state.baseMap.mapLibreMap;
-                return {
-                    center: mapLibreMap.getCenter().toArray(),
-                    zoom: mapLibreMap.getZoom(),
-                    bbox: state.baseMap.ttMap.getBBox(),
-                    pitch: mapLibreMap.getPitch(),
-                    bearing: mapLibreMap.getBearing(),
-                };
-            } catch (error) {
-                return {
-                    error: `Failed to get viewport: ${error instanceof Error ? error.message : String(error)}`,
-                };
-            }
-        },
-    });
+/** Execute function for getViewport — usable with ToolEntry format. */
+export async function executeGetViewport(_params: z.infer<typeof getViewportSchema>, state: ToolState) {
+    try {
+        const mapLibreMap = state.baseMap.mapLibreMap;
+        return {
+            center: mapLibreMap.getCenter().toArray(),
+            zoom: mapLibreMap.getZoom(),
+            bbox: state.baseMap.ttMap.getBBox(),
+            pitch: mapLibreMap.getPitch(),
+            bearing: mapLibreMap.getBearing(),
+        };
+    } catch (error) {
+        return {
+            error: `Failed to get viewport: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

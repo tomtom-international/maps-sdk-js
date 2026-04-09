@@ -2,7 +2,6 @@
  * @module map-agent-tools
  */
 
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
@@ -112,98 +111,95 @@ function resolveDateStr(
 /**
  * Create the query traffic analytics tool.
  */
-export function createQueryTrafficAnalyticsTool(state: ToolState): Tool {
-    return tool({
-        description: queryTrafficAnalyticsDescription,
-        inputSchema: queryTrafficAnalyticsSchema,
-        outputSchema: queryTrafficAnalyticsOutputSchema,
-        execute: async (params): Promise<z.infer<typeof queryTrafficAnalyticsOutputSchema>> => {
-            const { granularity = 'daily', metric, startDate, endDate, hourStart, hourEnd, dayOfWeek } = params;
+/** Standalone execute for ToolEntry format. */
+export async function executeQueryTrafficAnalytics(
+    params: z.infer<typeof queryTrafficAnalyticsSchema>,
+    state: ToolState,
+): Promise<z.infer<typeof queryTrafficAnalyticsOutputSchema>> {
+    const { granularity = 'daily', metric, startDate, endDate, hourStart, hourEnd, dayOfWeek } = params;
 
-            const analytics = state.traffic.lastAreaAnalytics;
-            if (!analytics) {
-                return { error: 'No analytics data cached. Call getTrafficAreaAnalytics first.' };
-            }
+    const analytics = state.traffic.lastAreaAnalytics;
+    if (!analytics) {
+        return { error: 'No analytics data cached. Call getTrafficAreaAnalytics first.' };
+    }
 
-            const region = analytics.features[0]?.properties;
-            if (!region) {
-                return { error: 'Analytics result has no region data.' };
-            }
+    const region = analytics.features[0]?.properties;
+    if (!region) {
+        return { error: 'Analytics result has no region data.' };
+    }
 
-            const timedData = region.timedData;
-            const rawEntries = timedData?.[granularity as keyof typeof timedData];
-            if (!rawEntries || !Array.isArray(rawEntries) || rawEntries.length === 0) {
-                return {
-                    error: `No '${granularity}' data available. Available: ${Object.keys(timedData ?? {}).join(', ')}`,
-                };
-            }
+    const timedData = region.timedData;
+    const rawEntries = timedData?.[granularity as keyof typeof timedData];
+    if (!rawEntries || !Array.isArray(rawEntries) || rawEntries.length === 0) {
+        return {
+            error: `No '${granularity}' data available. Available: ${Object.keys(timedData ?? {}).join(', ')}`,
+        };
+    }
 
-            // Resolve start date for index-based date derivation
-            const collectionStartDate = formatDate(analytics.properties?.startDate);
+    // Resolve start date for index-based date derivation
+    const collectionStartDate = formatDate(analytics.properties?.startDate);
 
-            // Map and filter entries
-            let entries = rawEntries.map((entry, index) => {
-                const mapped: Record<string, unknown> = {};
+    // Map and filter entries
+    let entries = rawEntries.map((entry, index) => {
+        const mapped: Record<string, unknown> = {};
 
-                // Temporal fields
-                if (granularity === 'daily' || granularity === 'hourly') {
-                    const dateStr = resolveDateStr(entry.date, index, granularity, collectionStartDate);
-                    if (dateStr) mapped.date = dateStr;
-                }
-                if (entry.hour !== undefined) mapped.hour = entry.hour;
-                if (entry.year !== undefined) mapped.year = entry.year;
-                if (entry.month !== undefined) mapped.month = entry.month;
-                if (entry.week !== undefined) mapped.week = entry.week;
-                if (entry.day !== undefined) mapped.day = entry.day;
+        // Temporal fields
+        if (granularity === 'daily' || granularity === 'hourly') {
+            const dateStr = resolveDateStr(entry.date, index, granularity, collectionStartDate);
+            if (dateStr) mapped.date = dateStr;
+        }
+        if (entry.hour !== undefined) mapped.hour = entry.hour;
+        if (entry.year !== undefined) mapped.year = entry.year;
+        if (entry.month !== undefined) mapped.month = entry.month;
+        if (entry.week !== undefined) mapped.week = entry.week;
+        if (entry.day !== undefined) mapped.day = entry.day;
 
-                // Metrics
-                if (metric) {
-                    const val = (entry as Record<string, unknown>)[metric];
-                    if (val !== undefined) mapped[metric] = val;
-                } else {
-                    Object.assign(mapped, extractMetrics(entry));
-                }
+        // Metrics
+        if (metric) {
+            const val = (entry as Record<string, unknown>)[metric];
+            if (val !== undefined) mapped[metric] = val;
+        } else {
+            Object.assign(mapped, extractMetrics(entry));
+        }
 
-                return mapped;
-            });
-
-            // Apply date range filter (daily/hourly)
-            if (startDate) {
-                entries = entries.filter((e) => !e.date || (e.date as string) >= startDate);
-            }
-            if (endDate) {
-                entries = entries.filter((e) => !e.date || (e.date as string) <= endDate);
-            }
-
-            // Apply hour range filter (hourly/average)
-            if (hourStart !== undefined) {
-                entries = entries.filter((e) => e.hour === undefined || (e.hour as number) >= hourStart);
-            }
-            if (hourEnd !== undefined) {
-                entries = entries.filter((e) => e.hour === undefined || (e.hour as number) <= hourEnd);
-            }
-
-            // Apply day-of-week filter (average)
-            if (dayOfWeek && dayOfWeek.length > 0) {
-                entries = entries.filter((e) => e.day === undefined || dayOfWeek.includes(e.day as number));
-            }
-
-            // Include current visualization state so LLM knows what's displayed
-            const vizConfig = state.traffic.currentAnalyticsConfig;
-            const currentVisualization = vizConfig
-                ? {
-                      metric: vizConfig.metric,
-                      mode: vizConfig.mode,
-                      colorScheme: vizConfig.colorScheme,
-                  }
-                : undefined;
-
-            return {
-                granularity,
-                count: entries.length,
-                entries: entries as z.infer<typeof timedEntrySchema>[],
-                ...(currentVisualization && { currentVisualization }),
-            };
-        },
+        return mapped;
     });
+
+    // Apply date range filter (daily/hourly)
+    if (startDate) {
+        entries = entries.filter((e) => !e.date || (e.date as string) >= startDate);
+    }
+    if (endDate) {
+        entries = entries.filter((e) => !e.date || (e.date as string) <= endDate);
+    }
+
+    // Apply hour range filter (hourly/average)
+    if (hourStart !== undefined) {
+        entries = entries.filter((e) => e.hour === undefined || (e.hour as number) >= hourStart);
+    }
+    if (hourEnd !== undefined) {
+        entries = entries.filter((e) => e.hour === undefined || (e.hour as number) <= hourEnd);
+    }
+
+    // Apply day-of-week filter (average)
+    if (dayOfWeek && dayOfWeek.length > 0) {
+        entries = entries.filter((e) => e.day === undefined || dayOfWeek.includes(e.day as number));
+    }
+
+    // Include current visualization state so LLM knows what's displayed
+    const vizConfig = state.traffic.currentAnalyticsConfig;
+    const currentVisualization = vizConfig
+        ? {
+              metric: vizConfig.metric,
+              mode: vizConfig.mode,
+              colorScheme: vizConfig.colorScheme,
+          }
+        : undefined;
+
+    return {
+        granularity,
+        count: entries.length,
+        entries: entries as z.infer<typeof timedEntrySchema>[],
+        ...(currentVisualization && { currentVisualization }),
+    };
 }

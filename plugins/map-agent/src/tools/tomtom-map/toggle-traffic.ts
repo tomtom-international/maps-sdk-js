@@ -2,7 +2,6 @@
  * @module map-agent-tools
  */
 
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
@@ -48,59 +47,48 @@ export const toggleTrafficIncidentsDescription =
     'This is NOT historical analytics. Use getTrafficIncidents for incident details.';
 
 /**
- * Create the toggle traffic flow tool.
+ * Execute toggle traffic flow.
  */
-export function createToggleTrafficFlowTool(state: ToolState): Tool {
-    return tool({
-        description: toggleTrafficFlowDescription,
-        inputSchema: toggleTrafficFlowSchema,
-        outputSchema: toggleTrafficFlowOutputSchema,
-        execute: async (params) => {
-            const { visible } = params;
-            try {
-                // Lazy-init TrafficFlowModule
-                const trafficFlowModule = await state.traffic.getTrafficFlowModule();
+export async function executeToggleTrafficFlow(params: z.infer<typeof toggleTrafficFlowSchema>, state: ToolState) {
+    const { visible } = params;
+    try {
+        // Lazy-init TrafficFlowModule
+        const trafficFlowModule = await state.traffic.getTrafficFlowModule();
 
-                trafficFlowModule.setVisible(visible);
+        trafficFlowModule.setVisible(visible);
 
-                return {
-                    success: true,
-                    trafficFlowVisible: visible,
-                };
-            } catch (error) {
-                return {
-                    error: `Failed to toggle traffic flow: ${error instanceof Error ? error.message : String(error)}`,
-                };
-            }
-        },
-    });
+        return {
+            success: true,
+            trafficFlowVisible: visible,
+        };
+    } catch (error) {
+        return {
+            error: `Failed to toggle traffic flow: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }
 
 /**
- * Create the toggle traffic incidents tool.
+ * Execute toggle traffic incidents.
  */
-export function createToggleTrafficIncidentsTool(state: ToolState): Tool {
-    return tool({
-        description: toggleTrafficIncidentsDescription,
-        inputSchema: toggleTrafficIncidentsSchema,
-        outputSchema: toggleTrafficIncidentsOutputSchema,
-        execute: async (params) => {
-            const { visible } = params;
-            try {
-                // Lazy-init TrafficIncidentsModule
-                const trafficIncidentsModule = await state.traffic.getTrafficIncidentsModule();
+export async function executeToggleTrafficIncidents(
+    params: z.infer<typeof toggleTrafficIncidentsSchema>,
+    state: ToolState,
+) {
+    const { visible } = params;
+    try {
+        // Lazy-init TrafficIncidentsModule
+        const trafficIncidentsModule = await state.traffic.getTrafficIncidentsModule();
 
-                trafficIncidentsModule.setVisible(visible);
+        trafficIncidentsModule.setVisible(visible);
 
-                return {
-                    success: true,
-                    trafficIncidentsVisible: visible,
-                };
-            } catch (error) {
-                return {
-                    error: `Failed to toggle traffic incidents: ${error instanceof Error ? error.message : String(error)}`,
-                };
-            }
-        },
-    });
+        return {
+            success: true,
+            trafficIncidentsVisible: visible,
+        };
+    } catch (error) {
+        return {
+            error: `Failed to toggle traffic incidents: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

@@ -2,7 +2,6 @@
  * @module map-agent-tools
  */
 
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
@@ -35,36 +34,29 @@ export const setRouteThemeDescription =
     'Prefer this over setPaintProperties for route styling — it applies the color consistently across all route and waypoint layers. ' +
     'Requires a route to be shown on the map.';
 
+const currentTheme: { mainColor?: string } = {};
+
 /**
- * Create the setRouteTheme tool.
+ * Execute set route theme.
  */
-export function createSetRouteThemeTool(state: ToolState): Tool {
-    const currentTheme: { mainColor?: string } = {};
+export async function executeSetRouteTheme(params: z.infer<typeof setRouteThemeSchema>, state: ToolState) {
+    try {
+        if (params.mainColor !== undefined) currentTheme.mainColor = params.mainColor;
 
-    return tool({
-        description: setRouteThemeDescription,
-        inputSchema: setRouteThemeSchema,
-        outputSchema: setRouteThemeOutputSchema,
-        execute: async (params) => {
-            try {
-                if (params.mainColor !== undefined) currentTheme.mainColor = params.mainColor;
+        const routingModule = await state.routing.getRoutingModule();
+        routingModule.applyConfig({
+            theme: {
+                mainColor: currentTheme.mainColor,
+            },
+        });
 
-                const routingModule = await state.routing.getRoutingModule();
-                routingModule.applyConfig({
-                    theme: {
-                        mainColor: currentTheme.mainColor,
-                    },
-                });
-
-                return {
-                    success: true as const,
-                    theme: { ...currentTheme },
-                };
-            } catch (error) {
-                return {
-                    error: `Failed to set route theme: ${error instanceof Error ? error.message : String(error)}`,
-                };
-            }
-        },
-    });
+        return {
+            success: true as const,
+            theme: { ...currentTheme },
+        };
+    } catch (error) {
+        return {
+            error: `Failed to set route theme: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

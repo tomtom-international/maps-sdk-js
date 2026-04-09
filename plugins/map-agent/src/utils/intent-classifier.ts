@@ -13,15 +13,14 @@
 
 import { generateText, type LanguageModel, type ModelMessage, Output, type TextPart } from 'ai';
 import { z } from 'zod';
-import type { StepScope } from '../tool-step-scope';
-import type { ToolMetadata } from '../types';
+import type { Classifier, ClassifierContext, ToolMetadata } from '../types';
 
 /** A single turn in the conversation passed to {@link classifyUserIntent}. */
 export type ConversationMessage = { role: 'user' | 'assistant'; content: string };
 
 /** Result returned by {@link classifyUserIntent}. */
 export type ClassificationResult = {
-    /** Tool names selected by the classifier. Pass to {@link MapAgent.setActiveTools}. */
+    /** Tool names selected by the classifier. */
     activeToolNames: string[];
     /** Wall-clock time in ms for the classification step only (not the agent response). */
     timeMs: number;
@@ -114,8 +113,7 @@ async function classifyQueryToTools(
  *   chatModel: openai('gpt-4o-mini'),
  *   toolsMetadata,
  * });
- *
- * agent.setActiveTools(result.activeToolNames);
+ * // result.activeToolNames contains the selected tools
  * ```
  */
 export async function classifyUserIntent(
@@ -144,74 +142,83 @@ function isTextPart(part: { type: string }): part is TextPart {
 }
 
 /** Extracts plain text from a message's content (string or structured content array). */
-function extractMessageText(content: string | Array<{ type: string }>): string | null {
+export function extractMessageText(content: string | Array<{ type: string }>): string | null {
     if (typeof content === 'string') return content;
 
     const textParts = content.filter(isTextPart);
-    if (textParts.length > 0) return textParts.map((part) => part.text).join(' ');
+    if (textParts.length > 0) return textParts.map((part) => part.text).join('');
 
     return null;
 }
 
 /**
- * Runs auto-classification for the given messages: builds the classifier conversation,
- * selects active tools, updates step scope, and invokes the optional result callback.
- * Returns null and fails open if classification errors or no user message is found.
+ * Extracts the text content of the last user message in a message array.
+ * Returns null if no user message is found or if content has no text.
  */
-export async function runAutoClassification(
-    messages: ReadonlyArray<ModelMessage> | undefined,
-    classifyModel: LanguageModel,
-    toolsMetadata: Record<string, ToolMetadata>,
-    stepScope: StepScope,
-    onResult?: (result: ClassificationResult) => void,
-    maxHistoryMessages?: number,
-    maxHistoryMessageLength?: number,
-): Promise<ClassificationResult | null> {
-    if (!messages?.length) return null;
-
-    let lastUserIndex = -1;
+export function extractLastUserText(messages: ReadonlyArray<ModelMessage>): string | null {
     for (let i = messages.length - 1; i >= 0; i--) {
         if (messages[i].role === 'user') {
-            lastUserIndex = i;
-            break;
+            return extractMessageText(messages[i].content);
         }
     }
-    if (lastUserIndex === -1) return null;
+    return null;
+}
 
-    const lastMessage = messages[lastUserIndex];
-    if (lastMessage.role !== 'user') return null;
+/**
+ * Creates the default LLM-based classifier. Uses structured generation to select
+ * the minimal tool set for each user message.
+ *
+ * @param options.model - Language model for classification (ideally fast/cheap like gpt-4o-mini)
+ * @param options.maxHistoryMessages - Max prior turns for context. Default: 8
+ * @param options.maxHistoryMessageLength - Max chars per history message. Default: 300
+ */
+export function createDefaultClassifier(options: {
+    model: LanguageModel;
+    maxHistoryMessages?: number;
+    maxHistoryMessageLength?: number;
+}): Classifier {
+    const { model, maxHistoryMessages, maxHistoryMessageLength } = options;
 
-    const lastUserText = extractMessageText(lastMessage.content);
-    if (!lastUserText) return null;
+    return async (context: ClassifierContext): Promise<ClassificationResult | null> => {
+        const { messages, toolsMetadata } = context;
+        if (!messages?.length) return null;
 
-    const conversation: ConversationMessage[] = [];
+        const historyLimit = maxHistoryMessages ?? MAX_CLASSIFIER_HISTORY_MESSAGES;
+        const messageCharLimit = maxHistoryMessageLength ?? MAX_HISTORY_MESSAGE_LENGTH;
 
-    const historyLimit = maxHistoryMessages ?? MAX_CLASSIFIER_HISTORY_MESSAGES;
-    const messageCharLimit = maxHistoryMessageLength ?? MAX_HISTORY_MESSAGE_LENGTH;
+        // Find last user message index and extract text in one pass
+        let lastUserIndex = -1;
+        let lastUserText: string | null = null;
+        for (let i = messages.length - 1; i >= 0; i--) {
+            if (messages[i].role === 'user') {
+                lastUserIndex = i;
+                lastUserText = extractMessageText(messages[i].content);
+                break;
+            }
+        }
+        if (!lastUserText) return null;
 
-    const historyStartIndex = Math.max(0, lastUserIndex - historyLimit);
+        // Compact history
+        const conversation: ConversationMessage[] = [];
+        const historyStartIndex = Math.max(0, lastUserIndex - historyLimit);
 
-    for (let i = historyStartIndex; i < lastUserIndex; i++) {
-        const message = messages[i];
-        if (message.role !== 'user' && message.role !== 'assistant') continue;
+        for (let i = historyStartIndex; i < lastUserIndex; i++) {
+            const message = messages[i];
+            if (message.role !== 'user' && message.role !== 'assistant') continue;
 
-        const text = extractMessageText(message.content);
-        if (!text) continue;
+            const text = extractMessageText(message.content);
+            if (!text) continue;
 
-        const compacted = text.length > messageCharLimit ? text.slice(0, messageCharLimit) + '…' : text;
-        conversation.push({ role: message.role, content: compacted });
-    }
+            const compacted = text.length > messageCharLimit ? text.slice(0, messageCharLimit) + '…' : text;
+            conversation.push({ role: message.role, content: compacted });
+        }
 
-    conversation.push({ role: 'user', content: lastUserText });
+        conversation.push({ role: 'user', content: lastUserText });
 
-    try {
-        const classification = await classifyUserIntent(conversation, { chatModel: classifyModel, toolsMetadata });
-        stepScope.set(classification.activeToolNames);
-        onResult?.(classification);
-        return classification;
-    } catch {
-        // Classifier failed (network/provider/schema error) — fail open with all tools
-        stepScope.set(null);
-        return null;
-    }
+        try {
+            return await classifyUserIntent(conversation, { chatModel: model, toolsMetadata });
+        } catch {
+            return null;
+        }
+    };
 }

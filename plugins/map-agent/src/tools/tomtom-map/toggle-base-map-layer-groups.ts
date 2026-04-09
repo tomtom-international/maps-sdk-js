@@ -3,7 +3,6 @@
  */
 
 import { baseMapLayerGroupNames } from '@tomtom-org/maps-sdk/map';
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
@@ -30,36 +29,32 @@ export const toggleBaseMapLayerGroupsDescription =
     'Show or hide specific base map layer groups (water, buildings3D, roadLines, placeLabels, capitalLabels, etc.)';
 
 /**
- * Create the toggle base map layer groups tool.
+ * Execute toggle base map layer groups.
  */
-export function createToggleBaseMapLayerGroupsTool(state: ToolState): Tool {
-    return tool({
-        description: toggleBaseMapLayerGroupsDescription,
-        inputSchema: toggleBaseMapLayerGroupsSchema,
-        outputSchema: toggleBaseMapLayerGroupsOutputSchema,
-        execute: async (params) => {
-            const { visible, layerGroups } = params;
-            try {
-                // Lazy-init BaseMapModule
-                const baseMapModule = await state.baseMap.getBaseMapModule();
+export async function executeToggleBaseMapLayerGroups(
+    params: z.infer<typeof toggleBaseMapLayerGroupsSchema>,
+    state: ToolState,
+) {
+    const { visible, layerGroups } = params;
+    try {
+        // Lazy-init BaseMapModule
+        const baseMapModule = await state.baseMap.getBaseMapModule();
 
-                baseMapModule.setVisible(visible, {
-                    layerGroups: {
-                        mode: 'include',
-                        names: layerGroups,
-                    },
-                });
+        baseMapModule.setVisible(visible, {
+            layerGroups: {
+                mode: 'include',
+                names: layerGroups,
+            },
+        });
 
-                return {
-                    success: true,
-                    visible,
-                    layerGroups,
-                };
-            } catch (error) {
-                return {
-                    error: `Failed to toggle layer groups: ${error instanceof Error ? error.message : String(error)}`,
-                };
-            }
-        },
-    });
+        return {
+            success: true,
+            visible,
+            layerGroups,
+        };
+    } catch (error) {
+        return {
+            error: `Failed to toggle layer groups: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

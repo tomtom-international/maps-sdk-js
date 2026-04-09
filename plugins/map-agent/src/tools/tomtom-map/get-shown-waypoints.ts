@@ -2,7 +2,6 @@
  * @module map-agent-tools
  */
 
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
@@ -31,33 +30,29 @@ export const getShownWaypointsDescription =
     'Returns positions as [longitude, latitude].';
 
 /**
- * Create the get shown waypoints tool.
+ * Execute get shown waypoints.
  */
-export function createGetShownWaypointsTool(state: ToolState): Tool {
-    return tool({
-        description: getShownWaypointsDescription,
-        inputSchema: getShownWaypointsSchema,
-        outputSchema: getShownWaypointsOutputSchema,
-        execute: async (): Promise<z.infer<typeof getShownWaypointsOutputSchema>> => {
-            try {
-                const shown = (await state.routing.getRoutingModule()).getShown();
+export async function executeGetShownWaypoints(
+    _params: z.infer<typeof getShownWaypointsSchema>,
+    state: ToolState,
+): Promise<z.infer<typeof getShownWaypointsOutputSchema>> {
+    try {
+        const shown = (await state.routing.getRoutingModule()).getShown();
 
-                if (!shown.waypoints || shown.waypoints.features.length === 0) {
-                    return { error: 'No waypoints currently shown on the map' };
-                }
+        if (!shown.waypoints || shown.waypoints.features.length === 0) {
+            return { error: 'No waypoints currently shown on the map' };
+        }
 
-                return {
-                    count: shown.waypoints.features.length,
-                    waypoints: shown.waypoints.features.map((w) => ({
-                        name: w.properties.name,
-                        position: w.geometry.coordinates,
-                    })),
-                };
-            } catch (error) {
-                return {
-                    error: `Failed to get shown waypoints: ${error instanceof Error ? error.message : String(error)}`,
-                };
-            }
-        },
-    });
+        return {
+            count: shown.waypoints.features.length,
+            waypoints: shown.waypoints.features.map((w) => ({
+                name: w.properties.name,
+                position: w.geometry.coordinates,
+            })),
+        };
+    } catch (error) {
+        return {
+            error: `Failed to get shown waypoints: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

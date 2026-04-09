@@ -4,7 +4,6 @@
 
 import { type Avoidable, avoidableTypes } from '@tomtom-org/maps-sdk/core';
 import { calculateRoute, routeTypes } from '@tomtom-org/maps-sdk/services';
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { makeRoutesLabel } from '../../utils/state-labels';
@@ -57,35 +56,32 @@ export const setRouteParametersDescription =
 /**
  * Create the set-route-parameters tool.
  */
-export function createSetRouteParametersTool(state: ToolState): Tool {
-    return tool({
-        description: setRouteParametersDescription,
-        inputSchema: setRouteParametersSchema,
-        outputSchema: setRouteParametersOutputSchema,
-        execute: async (params): Promise<z.infer<typeof setRouteParametersOutputSchema>> => {
-            const { showOnMap, ...routeParams } = params;
-            try {
-                state.routing.setParams(routeParams);
+/** Standalone execute for ToolEntry format. */
+export async function executeSetRouteParameters(
+    params: z.infer<typeof setRouteParametersSchema>,
+    state: ToolState,
+): Promise<z.infer<typeof setRouteParametersOutputSchema>> {
+    const { showOnMap, ...routeParams } = params;
+    try {
+        state.routing.setParams(routeParams);
 
-                const waypoints = resolveRouteWaypoints(state.routing.planningSlots);
-                if (waypoints) {
-                    const routes = await calculateRoute({
-                        locations: waypoints,
-                        ...buildCalculateRouteParams(state.routing.params),
-                    });
-                    state.routing.addRoutes(routes, waypoints, makeRoutesLabel(routes, waypoints));
-                    if (showOnMap) {
-                        await showRouteOnMap(state, routes, waypoints);
-                    }
-                    return summarizeRoutes(routes);
-                }
-
-                return { success: true };
-            } catch (error) {
-                return {
-                    error: `Failed to set route parameters: ${error instanceof Error ? error.message : String(error)}`,
-                };
+        const waypoints = resolveRouteWaypoints(state.routing.planningSlots);
+        if (waypoints) {
+            const routes = await calculateRoute({
+                locations: waypoints,
+                ...buildCalculateRouteParams(state.routing.params),
+            });
+            state.routing.addRoutes(routes, waypoints, makeRoutesLabel(routes, waypoints));
+            if (showOnMap) {
+                await showRouteOnMap(state, routes, waypoints);
             }
-        },
-    });
+            return summarizeRoutes(routes);
+        }
+
+        return { success: true };
+    } catch (error) {
+        return {
+            error: `Failed to set route parameters: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

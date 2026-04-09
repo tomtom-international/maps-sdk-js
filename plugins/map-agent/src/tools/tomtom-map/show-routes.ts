@@ -3,7 +3,6 @@
  */
 
 import { bboxFromGeoJSON, type Routes, type WaypointLike } from '@tomtom-org/maps-sdk/core';
-import { type Tool, tool } from 'ai';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
@@ -37,60 +36,53 @@ export const showRouteDescription =
     'Mutates map display. Does not call any service.';
 
 /**
- * Create the show route tool.
+ * Execute show routes.
  */
-export function createShowRoutesTool(state: ToolState): Tool {
-    return tool({
-        description: showRouteDescription,
-        inputSchema: showRouteSchema,
-        outputSchema: showRouteOutputSchema,
-        execute: async (params) => {
-            const { id, selectedIndex = 0, fitBounds = true } = params;
-            try {
-                let routes: Routes | undefined;
-                let waypoints: WaypointLike[] | undefined;
+export async function executeShowRoutes(params: z.infer<typeof showRouteSchema>, state: ToolState) {
+    const { id, selectedIndex = 0, fitBounds = true } = params;
+    try {
+        let routes: Routes | undefined;
+        let waypoints: WaypointLike[] | undefined;
 
-                if (id) {
-                    const entry = state.routing.entries.find((e) => e.id === id);
-                    if (!entry) {
-                        return { error: `No route entry found with id "${id}"` };
-                    }
-                    routes = entry.data;
-                    waypoints = entry.waypoints;
-                } else {
-                    routes = state.routing.currentRoutes;
-                    waypoints = state.routing.planningSlots.filter((w): w is WaypointLike => w !== null);
-                }
-
-                if (!routes) {
-                    return { error: 'No routes available to display' };
-                }
-
-                const routingModule = await state.routing.getRoutingModule();
-                await routingModule.showRoutes(routes, { selectedIndex });
-
-                if (waypoints) {
-                    await routingModule.showWaypoints(waypoints);
-                }
-
-                // Fit bounds to show all routes if requested
-                if (fitBounds) {
-                    const bbox = bboxFromGeoJSON(routes);
-                    if (bbox) {
-                        state.baseMap.mapLibreMap.fitBounds(bbox as LngLatBoundsLike, { padding: 50 });
-                    }
-                }
-
-                return {
-                    success: true,
-                    displayedRoute: selectedIndex,
-                    routeCount: routes.features.length,
-                };
-            } catch (error) {
-                return {
-                    error: `Failed to show route: ${error instanceof Error ? error.message : String(error)}`,
-                };
+        if (id) {
+            const entry = state.routing.entries.find((e) => e.id === id);
+            if (!entry) {
+                return { error: `No route entry found with id "${id}"` };
             }
-        },
-    });
+            routes = entry.data;
+            waypoints = entry.waypoints;
+        } else {
+            routes = state.routing.currentRoutes;
+            waypoints = state.routing.planningSlots.filter((w): w is WaypointLike => w !== null);
+        }
+
+        if (!routes) {
+            return { error: 'No routes available to display' };
+        }
+
+        const routingModule = await state.routing.getRoutingModule();
+        await routingModule.showRoutes(routes, { selectedIndex });
+
+        if (waypoints) {
+            await routingModule.showWaypoints(waypoints);
+        }
+
+        // Fit bounds to show all routes if requested
+        if (fitBounds) {
+            const bbox = bboxFromGeoJSON(routes);
+            if (bbox) {
+                state.baseMap.mapLibreMap.fitBounds(bbox as LngLatBoundsLike, { padding: 50 });
+            }
+        }
+
+        return {
+            success: true,
+            displayedRoute: selectedIndex,
+            routeCount: routes.features.length,
+        };
+    } catch (error) {
+        return {
+            error: `Failed to show route: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

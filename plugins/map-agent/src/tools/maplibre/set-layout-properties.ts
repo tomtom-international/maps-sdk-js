@@ -2,7 +2,6 @@
  * @module map-agent-tools/maplibre
  */
 
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
@@ -47,35 +46,27 @@ export const setLayoutPropertiesDescription =
     'Use getMapStyleLayers to discover valid layer IDs first. ' +
     'Layout properties control structure and visibility — use setPaintProperties for colors and widths.';
 
-/**
- * Create the setLayoutProperties tool.
- */
-export function createSetLayoutPropertiesTool(state: ToolState): Tool {
-    return tool({
-        description: setLayoutPropertiesDescription,
-        inputSchema: setLayoutPropertiesSchema,
-        outputSchema: setLayoutPropertiesOutputSchema,
-        execute: async ({ changes }): Promise<z.infer<typeof setLayoutPropertiesOutputSchema>> => {
+/** Execute function for setLayoutProperties — usable with ToolEntry format. */
+export async function executeSetLayoutProperties(params: z.infer<typeof setLayoutPropertiesSchema>, state: ToolState) {
+    const { changes } = params;
+    try {
+        const results = changes.map(({ layerId, propertyName, value }) => {
             try {
-                const results = changes.map(({ layerId, propertyName, value }) => {
-                    try {
-                        state.baseMap.mapLibreMap.setLayoutProperty(layerId, propertyName, value);
-                        return { layerId, propertyName, value, success: true as const };
-                    } catch (error) {
-                        return {
-                            layerId,
-                            propertyName,
-                            error: `Failed to set layout property: ${error instanceof Error ? error.message : String(error)}`,
-                        };
-                    }
-                });
-
-                return { results };
+                state.baseMap.mapLibreMap.setLayoutProperty(layerId, propertyName, value);
+                return { layerId, propertyName, value, success: true as const };
             } catch (error) {
                 return {
-                    error: `Failed to set layout properties: ${error instanceof Error ? error.message : String(error)}`,
+                    layerId,
+                    propertyName,
+                    error: `Failed to set layout property: ${error instanceof Error ? error.message : String(error)}`,
                 };
             }
-        },
-    });
+        });
+
+        return { results };
+    } catch (error) {
+        return {
+            error: `Failed to set layout properties: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

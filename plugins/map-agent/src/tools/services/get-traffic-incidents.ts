@@ -5,7 +5,6 @@
 import type { BBox } from '@tomtom-org/maps-sdk/core';
 import { trafficIncidentCategories } from '@tomtom-org/maps-sdk/core';
 import { trafficIncidentDetails } from '@tomtom-org/maps-sdk/services';
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
@@ -61,56 +60,53 @@ export const getTrafficIncidentsDescription =
 /**
  * Create the get traffic incidents tool.
  */
-export function createGetTrafficIncidentsTool(_state: ToolState): Tool {
-    return tool({
-        description: getTrafficIncidentsDescription,
-        inputSchema: getTrafficIncidentsSchema,
-        outputSchema: getTrafficIncidentsOutputSchema,
-        execute: async (params): Promise<z.infer<typeof getTrafficIncidentsOutputSchema>> => {
-            const { bbox, ids, categoryFilter, timeValidityFilter } = params;
+/** Standalone execute for ToolEntry format. */
+export async function executeGetTrafficIncidents(
+    params: z.infer<typeof getTrafficIncidentsSchema>,
+    _state: ToolState,
+): Promise<z.infer<typeof getTrafficIncidentsOutputSchema>> {
+    const { bbox, ids, categoryFilter, timeValidityFilter } = params;
 
-            if (!bbox && !ids) {
-                return { error: 'Provide either a bbox or a list of ids' };
-            }
+    if (!bbox && !ids) {
+        return { error: 'Provide either a bbox or a list of ids' };
+    }
 
-            try {
-                const filters = {
-                    ...(categoryFilter && { categoryFilter }),
-                    ...(timeValidityFilter && { timeValidityFilter }),
-                };
-                const result = await trafficIncidentDetails(
-                    bbox ? { ...filters, bbox: bbox as BBox } : { ...filters, ids: ids as string[] },
-                );
+    try {
+        const filters = {
+            ...(categoryFilter && { categoryFilter }),
+            ...(timeValidityFilter && { timeValidityFilter }),
+        };
+        const result = await trafficIncidentDetails(
+            bbox ? { ...filters, bbox: bbox as BBox } : { ...filters, ids: ids as string[] },
+        );
 
-                if (!result.features.length) {
-                    return { count: 0, incidents: [] };
-                }
+        if (!result.features.length) {
+            return { count: 0, incidents: [] };
+        }
 
+        return {
+            count: result.features.length,
+            incidents: result.features.map((feature) => {
+                const p = feature.properties;
                 return {
-                    count: result.features.length,
-                    incidents: result.features.map((feature) => {
-                        const p = feature.properties;
-                        return {
-                            id: p.id,
-                            category: p.category,
-                            magnitudeOfDelay: p.magnitudeOfDelay,
-                            timeValidity: p.timeValidity,
-                            events: p.events.map((e) => ({ description: e.description, category: e.category })),
-                            from: p.from,
-                            to: p.to,
-                            roadNumbers: p.roadNumbers,
-                            lengthInMeters: p.lengthInMeters,
-                            delayInSeconds: p.delayInSeconds,
-                            startTime: p.startTime,
-                            endTime: p.endTime,
-                        };
-                    }),
+                    id: p.id,
+                    category: p.category,
+                    magnitudeOfDelay: p.magnitudeOfDelay,
+                    timeValidity: p.timeValidity,
+                    events: p.events.map((e) => ({ description: e.description, category: e.category })),
+                    from: p.from,
+                    to: p.to,
+                    roadNumbers: p.roadNumbers,
+                    lengthInMeters: p.lengthInMeters,
+                    delayInSeconds: p.delayInSeconds,
+                    startTime: p.startTime,
+                    endTime: p.endTime,
                 };
-            } catch (error) {
-                return {
-                    error: `Failed to get traffic incidents: ${error instanceof Error ? error.message : String(error)}`,
-                };
-            }
-        },
-    });
+            }),
+        };
+    } catch (error) {
+        return {
+            error: `Failed to get traffic incidents: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

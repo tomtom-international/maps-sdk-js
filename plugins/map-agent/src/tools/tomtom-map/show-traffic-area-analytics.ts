@@ -4,7 +4,6 @@
 
 import { bboxFromGeoJSON } from '@tomtom-org/maps-sdk/core';
 import type { AreaAnalyticsMetricKey } from '@tomtom-org/maps-sdk/map';
-import { type Tool, tool } from 'ai';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
@@ -103,123 +102,119 @@ const DATA_TYPE_TO_METRIC: Record<string, AreaAnalyticsMetricKey> = {
 // ---------------------------------------------------------------------------
 
 /**
- * Create the show traffic area analytics tool.
+ * Execute show traffic area analytics.
  */
-export function createShowTrafficAreaAnalyticsTool(state: ToolState): Tool {
-    return tool({
-        description: showTrafficAreaAnalyticsDescription,
-        inputSchema: showTrafficAreaAnalyticsSchema,
-        outputSchema: showTrafficAreaAnalyticsOutputSchema,
-        execute: async (params): Promise<z.infer<typeof showTrafficAreaAnalyticsOutputSchema>> => {
-            try {
-                // Get stored analytics result
-                const analyticsResult = state.traffic.lastAreaAnalytics;
-                if (!analyticsResult) {
-                    return { error: 'No analytics data available. Call getTrafficAreaAnalytics first to fetch data.' };
-                }
+export async function executeShowTrafficAreaAnalytics(
+    params: z.infer<typeof showTrafficAreaAnalyticsSchema>,
+    state: ToolState,
+): Promise<z.infer<typeof showTrafficAreaAnalyticsOutputSchema>> {
+    try {
+        // Get stored analytics result
+        const analyticsResult = state.traffic.lastAreaAnalytics;
+        if (!analyticsResult) {
+            return { error: 'No analytics data available. Call getTrafficAreaAnalytics first to fetch data.' };
+        }
 
-                // Default metric to first fetched dataType
-                const firstFetchedType = analyticsResult.properties?.dataTypes?.[0];
-                const defaultMetric = firstFetchedType
-                    ? (DATA_TYPE_TO_METRIC[firstFetchedType] ?? 'congestionLevel')
-                    : 'congestionLevel';
+        // Default metric to first fetched dataType
+        const firstFetchedType = analyticsResult.properties?.dataTypes?.[0];
+        const defaultMetric = firstFetchedType
+            ? (DATA_TYPE_TO_METRIC[firstFetchedType] ?? 'congestionLevel')
+            : 'congestionLevel';
 
-                const {
-                    mode = 'hexgrid',
-                    metric = defaultMetric,
-                    colorScheme = 'congestion',
-                    customColors,
-                    flat,
-                    heightScale,
-                    filter,
-                    rangeStrategy,
-                    tooltip = true,
-                    visible = true,
-                    fitBounds: shouldFitBounds = true,
-                } = params;
+        const {
+            mode = 'hexgrid',
+            metric = defaultMetric,
+            colorScheme = 'congestion',
+            customColors,
+            flat,
+            heightScale,
+            filter,
+            rangeStrategy,
+            tooltip = true,
+            visible = true,
+            fitBounds: shouldFitBounds = true,
+        } = params;
 
-                // Lazy-init TrafficAreaAnalyticsModule
-                const analyticsModule = await state.traffic.getTrafficAreaAnalyticsModule();
+        // Lazy-init TrafficAreaAnalyticsModule
+        const analyticsModule = await state.traffic.getTrafficAreaAnalyticsModule();
 
-                if (!visible) {
-                    await analyticsModule.clear();
-                    state.traffic.controlPanel?.hide();
-                    return {
-                        success: true,
-                        mode,
-                        metric,
-                        colorScheme,
-                        visible: false,
-                        filtered: false,
-                        tooltipEnabled: false,
-                    };
-                }
+        if (!visible) {
+            await analyticsModule.clear();
+            state.traffic.controlPanel?.hide();
+            return {
+                success: true,
+                mode,
+                metric,
+                colorScheme,
+                visible: false,
+                filtered: false,
+                tooltipEnabled: false,
+            };
+        }
 
-                // Clear previous visualization before showing new data
-                await analyticsModule.clear();
-                await analyticsModule.show(analyticsResult);
+        // Clear previous visualization before showing new data
+        await analyticsModule.clear();
+        await analyticsModule.show(analyticsResult);
 
-                // Apply mode and metric
-                analyticsModule.setMode(mode);
-                analyticsModule.setMetric(metric);
+        // Apply mode and metric
+        analyticsModule.setMode(mode);
+        analyticsModule.setMetric(metric);
 
-                // Apply colors (custom stops take precedence over preset)
-                if (customColors) {
-                    analyticsModule.setColors({ stops: customColors as [string, string, string] });
-                } else {
-                    analyticsModule.setColorScheme(colorScheme);
-                }
+        // Apply colors (custom stops take precedence over preset)
+        if (customColors) {
+            analyticsModule.setColors({ stops: customColors as [string, string, string] });
+        } else {
+            analyticsModule.setColorScheme(colorScheme);
+        }
 
-                // Apply height config
-                if (flat !== undefined || heightScale !== undefined) {
-                    analyticsModule.setHeight({
-                        ...(flat !== undefined && { flat }),
-                        ...(heightScale !== undefined && { scale: heightScale }),
-                    });
-                }
+        // Apply height config
+        if (flat !== undefined || heightScale !== undefined) {
+            analyticsModule.setHeight({
+                ...(flat !== undefined && { flat }),
+                ...(heightScale !== undefined && { scale: heightScale }),
+            });
+        }
 
-                // Apply range strategy
-                if (rangeStrategy) {
-                    analyticsModule.setRanges(metric as AreaAnalyticsMetricKey, { strategy: rangeStrategy });
-                }
+        // Apply range strategy
+        if (rangeStrategy) {
+            analyticsModule.setRanges(metric as AreaAnalyticsMetricKey, { strategy: rangeStrategy });
+        }
 
-                // Apply tile filter
-                const isFiltered = !!filter;
-                if (filter) {
-                    analyticsModule.filter({ any: [{ metric: filter.metric, min: filter.min, max: filter.max }] });
-                } else {
-                    analyticsModule.clearFilter();
-                }
+        // Apply tile filter
+        const isFiltered = !!filter;
+        if (filter) {
+            analyticsModule.filter({ any: [{ metric: filter.metric, min: filter.min, max: filter.max }] });
+        } else {
+            analyticsModule.clearFilter();
+        }
 
-                // Enable tooltip
-                analyticsModule.setTooltip({ enabled: tooltip });
+        // Enable tooltip
+        analyticsModule.setTooltip({ enabled: tooltip });
 
-                // Fit map to analytics area
-                if (shouldFitBounds) {
-                    const bbox = bboxFromGeoJSON(analyticsResult.features);
-                    if (bbox) {
-                        state.baseMap.mapLibreMap.fitBounds(bbox as LngLatBoundsLike, { padding: 50, pitch: 45 });
-                    }
-                }
-
-                // Show control panel with metric/mode/color toggles + chart
-                const panel = state.traffic.initControlPanel(state.baseMap.mapLibreMap.getContainer(), analyticsModule);
-                panel.show(analyticsResult);
-
-                return {
-                    success: true,
-                    mode,
-                    metric,
-                    colorScheme: customColors ? 'custom' : colorScheme,
-                    visible: true,
-                    filtered: isFiltered,
-                    tooltipEnabled: tooltip,
-                };
-            } catch (error) {
-                return {
-                    error: `Failed to show traffic area analytics: ${error instanceof Error ? error.message : String(error)}`,
-                };
+        // Fit map to analytics area
+        if (shouldFitBounds) {
+            const bbox = bboxFromGeoJSON(analyticsResult.features);
+            if (bbox) {
+                state.baseMap.mapLibreMap.fitBounds(bbox as LngLatBoundsLike, { padding: 50, pitch: 45 });
             }
-        },
-    });
+        }
+
+        // Show control panel with metric/mode/color toggles + chart
+        const panel = state.traffic.initControlPanel(state.baseMap.mapLibreMap.getContainer(), analyticsModule);
+        panel.show(analyticsResult);
+
+        return {
+            success: true,
+            mode,
+            metric,
+            colorScheme: customColors ? 'custom' : colorScheme,
+            visible: true,
+            filtered: isFiltered,
+            tooltipEnabled: tooltip,
+        };
+    } catch (error) {
+        return {
+            error: `Failed to show traffic area analytics: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

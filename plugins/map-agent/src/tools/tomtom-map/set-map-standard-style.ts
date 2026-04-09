@@ -3,7 +3,6 @@
  */
 
 import { standardStyleIDs } from '@tomtom-org/maps-sdk/map';
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
@@ -28,27 +27,20 @@ export const setMapStandardStyleDescription =
     'Set the map style to a standard preset (light, dark, mono, driving, satellite, etc). For detailed or incremental style tweaking use getMapStyleLayers, setLayoutProperties, and setPaintProperties.';
 
 /**
- * Create the setMapStandardStyle tool.
+ * Execute set map standard style.
  */
-export function createSetMapStandardStyleTool(state: ToolState): Tool {
-    return tool({
-        description: setMapStandardStyleDescription,
-        inputSchema: setMapStandardStyleSchema,
-        outputSchema: setMapStandardStyleOutputSchema,
-        execute: async (params) => {
-            const { style } = params;
-            try {
-                state.baseMap.ttMap.setStyle(style);
+export async function executeSetMapStandardStyle(params: z.infer<typeof setMapStandardStyleSchema>, state: ToolState) {
+    const { style } = params;
+    try {
+        state.baseMap.ttMap.setStyle(style);
 
-                return {
-                    success: true,
-                    style,
-                };
-            } catch (error) {
-                return {
-                    error: `Failed to set map style: ${error instanceof Error ? error.message : String(error)}`,
-                };
-            }
-        },
-    });
+        return {
+            success: true,
+            style,
+        };
+    } catch (error) {
+        return {
+            error: `Failed to set map style: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

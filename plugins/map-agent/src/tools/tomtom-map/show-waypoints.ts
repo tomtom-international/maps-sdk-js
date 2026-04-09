@@ -2,7 +2,6 @@
  * @module map-agent-tools
  */
 
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
@@ -27,28 +26,24 @@ export const showWaypointsDescription =
     'Does not recalculate the route. Prefer showRoute when you also need the route line drawn.';
 
 /**
- * Create the show waypoints tool.
+ * Execute show waypoints.
  */
-export function createShowWaypointsTool(state: ToolState): Tool {
-    return tool({
-        description: showWaypointsDescription,
-        inputSchema: showWaypointsSchema,
-        outputSchema: showWaypointsOutputSchema,
-        execute: async (): Promise<z.infer<typeof showWaypointsOutputSchema>> => {
-            try {
-                // Prefer the current (possibly sparse) waypoints being assembled;
-                // fall back to the last finalized waypoints from route history.
-                const current = state.routing.planningSlots;
+export async function executeShowWaypoints(
+    _params: z.infer<typeof showWaypointsSchema>,
+    state: ToolState,
+): Promise<z.infer<typeof showWaypointsOutputSchema>> {
+    try {
+        // Prefer the current (possibly sparse) waypoints being assembled;
+        // fall back to the last finalized waypoints from route history.
+        const current = state.routing.planningSlots;
 
-                const routingModule = await state.routing.getRoutingModule();
-                await routingModule.showWaypoints(current);
+        const routingModule = await state.routing.getRoutingModule();
+        await routingModule.showWaypoints(current);
 
-                return { success: true, count: current.length };
-            } catch (error) {
-                return {
-                    error: `Failed to show waypoints: ${error instanceof Error ? error.message : String(error)}`,
-                };
-            }
-        },
-    });
+        return { success: true, count: current.length };
+    } catch (error) {
+        return {
+            error: `Failed to show waypoints: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

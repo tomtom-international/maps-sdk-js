@@ -3,117 +3,152 @@
  */
 
 import type { TomTomMap } from '@tomtom-org/maps-sdk/map';
+import type { PrepareStepFunction, PrepareStepResult } from 'ai';
 import { stepCountIs, ToolLoopAgent } from 'ai';
-import { createToolState } from './state';
+import { resolveTools } from './resolve-tools';
+import { createToolState, type StateSlice } from './state';
 import { buildSystemPrompt } from './system-prompt';
 import { setupTools } from './tool-setup';
-import { createStepScope } from './tool-step-scope';
-import type { MapAgent, MapAgentOptions, MapAgentStreamOptions, ToolState } from './types';
-import { type ClassificationResult, runAutoClassification } from './utils/intent-classifier';
+import { DEFAULT_TOOLS } from './tools';
+import type { Classifier, MapAgentInstance, MapAgentOptions, ToolEntry, ToolState } from './types';
+import type { ClassificationResult } from './utils/intent-classifier';
+import { createDefaultClassifier } from './utils/intent-classifier';
+
+/** Intersects two activeTools lists. Returns undefined if neither is set. */
+function intersectActiveTools(
+    a: string[] | undefined,
+    b: readonly (string | number | symbol)[] | undefined,
+): string[] | undefined {
+    if (!a) return b as string[] | undefined;
+    if (!b) return a;
+    const setB = new Set(b);
+    return a.filter((name) => setB.has(name));
+}
+
+/** Type guard for StateSlice — checks for reset() method. */
+function isStateSlice(value: unknown): value is StateSlice {
+    return (
+        typeof value === 'object' && value !== null && 'reset' in value && typeof (value as any).reset === 'function'
+    );
+}
+
+/** Resets all state slices that implement StateSlice. */
+function destroyState(state: ToolState): void {
+    for (const slice of Object.values(state)) {
+        if (isStateSlice(slice)) {
+            slice.reset();
+        }
+    }
+}
 
 /**
  * Creates a conversational map agent that gives an LLM control over a TomTom map.
  *
- * This factory function sets up a complete AI agent with tools for searching places,
- * calculating routes, and manipulating the map display. The agent uses Vercel AI SDK's
- * ToolLoopAgent to handle multi-step tool execution.
+ * Returns a ToolLoopAgent instance (compatible with DirectChatTransport) with
+ * `state` and `destroy` attached. Classification runs transparently inside
+ * `prepareStep` — no wrapper type needed.
  *
  * @param map - The TomTomMap instance to control
  * @param options - Agent configuration options
- * @returns A map agent instance ready to be used with AI SDK's chat interfaces
+ * @returns A ToolLoopAgent with state access and cleanup
  *
- * @example
+ * @example Basic usage
  * ```typescript
- * import { TomTomMap } from '@tomtom-org/maps-sdk/map';
  * import { createMapAgent } from '@tomtom-org/maps-sdk-plugin-ai-agent';
  * import { openai } from '@ai-sdk/openai';
+ * import { DirectChatTransport } from 'ai/react';
  *
- * const map = new TomTomMap({
- *   mapLibre: { container: 'map', center: [4.9, 52.4], zoom: 10 }
- * });
+ * const agent = createMapAgent(map, { model: openai('gpt-4o') });
  *
- * const mapAgent = createMapAgent(map, { model: openai('gpt-4o') });
- *
- * // Auto-classify + stream in one call
- * const result = await mapAgent.stream({ messages });
- * for await (const delta of result.textStream) { ... }
- *
- * // Custom tools
- * const agentWithCustomTools = createMapAgent(map, {
- *   model: openai('gpt-4o'),
- *   tools: { getCustomLocation: myTool },
- * });
- *
- * // In React component:
+ * // Works directly with DirectChatTransport — no .agent property needed
  * const { messages, sendMessage } = useChat({
- *   transport: new DirectChatTransport({ agent: mapAgent.agent }),
+ *   transport: new DirectChatTransport({ agent }),
  * });
-
  * ```
  *
- * @throws {Error} If model is not provided
+ * @example Custom tools + removal
+ * ```typescript
+ * const agent = createMapAgent(map, {
+ *   model: openai('gpt-4o'),
+ *   tools: {
+ *     getCustomLocation: myLocationTool,  // add custom
+ *     setLanguage: false,                 // remove default
+ *   },
+ * });
+ * ```
  */
-export function createMapAgent(map: TomTomMap, options: MapAgentOptions): MapAgent {
+export function createMapAgent<CS extends ToolState = ToolState>(
+    map: TomTomMap,
+    options: MapAgentOptions<CS>,
+): MapAgentInstance<CS> {
     if (!options.model) {
         throw new Error('MapAgent requires a model option. Please provide an AI SDK LanguageModel instance.');
     }
 
-    const state: ToolState = createToolState(map);
-    const stepScope = createStepScope();
+    const state = createToolState(map, options.state) as CS;
 
-    const { tools, toolsMetadata } = setupTools(state, options);
-    state.toolsMetadata = toolsMetadata;
+    // Safe: default tools only access base ToolState properties; CS extends ToolState.
+    const defaults = options.includeDefaultTools === false ? {} : (DEFAULT_TOOLS as Record<string, ToolEntry<CS>>);
+    const toolEntries = resolveTools(defaults, options.tools);
 
-    // Strip outputSchema from all tools if disabled
-    if (options.outputSchemas === false) {
-        for (const t of Object.values(tools)) {
-            delete (t as Record<string, unknown>).outputSchema;
-        }
-    }
+    const { tools, toolsMetadata } = setupTools(toolEntries, state, {
+        outputSchemas: options.outputSchemas,
+    });
 
-    // Build system prompt (customPrompt takes precedence over suffix)
+    // Resolve classifier
+    const classifier: Classifier | null =
+        options.classifier === false ? null : (options.classifier ?? createDefaultClassifier({ model: options.model }));
+
     const systemPrompt = buildSystemPrompt(options.systemPrompt, options.systemPromptSuffix);
+
+    // Classification state — cached per turn (reset on step 0)
+    let lastClassification: ClassificationResult | null = null;
+
+    const prepareStep: PrepareStepFunction = async (stepInfo) => {
+        let activeTools: string[] | undefined;
+
+        if (stepInfo.stepNumber === 0) {
+            lastClassification = null;
+            if (classifier) {
+                try {
+                    lastClassification = await classifier({
+                        messages: stepInfo.messages,
+                        toolsMetadata,
+                    });
+                } catch {
+                    lastClassification = null;
+                }
+            }
+            options.onClassify?.(lastClassification);
+        }
+
+        if (lastClassification) {
+            activeTools = lastClassification.activeToolNames;
+        }
+
+        // Compose with developer's prepareStep
+        const userResult: PrepareStepResult | undefined = await options.prepareStep?.(stepInfo);
+
+        if (userResult) {
+            return {
+                ...userResult,
+                activeTools: intersectActiveTools(activeTools, userResult.activeTools),
+            };
+        }
+
+        return activeTools ? { activeTools } : {};
+    };
 
     const agent = new ToolLoopAgent({
         model: options.model,
         tools,
         instructions: systemPrompt,
         stopWhen: stepCountIs(options.maxSteps ?? 10),
-        prepareStep: () => stepScope.prepareStep(),
+        prepareStep,
     });
 
-    const stream = async (streamOptions: MapAgentStreamOptions): ReturnType<ToolLoopAgent['stream']> => {
-        const { onClassify, ...agentOptions } = streamOptions;
-
-        let classification: ClassificationResult | null = null;
-
-        if (options.autoClassify !== false) {
-            classification = await runAutoClassification(
-                agentOptions.messages,
-                options.autoClassify?.model ?? options.model,
-                toolsMetadata,
-                stepScope,
-                options.autoClassify?.onResult,
-                options.autoClassify?.maxClassifierHistoryMessages,
-                options.autoClassify?.maxClassifierHistoryMessageLength,
-            );
-        }
-
-        onClassify?.(classification);
-        return agent.stream(agentOptions as Parameters<ToolLoopAgent['stream']>[0]);
-    };
-
-    return {
-        agent,
+    return Object.assign(agent, {
         state,
-        setActiveTools: (names) => stepScope.set(names),
-        stream,
-        destroy: () => {
-            state.places.reset();
-            state.mapPOIs.reset();
-            state.routing.reset();
-            state.baseMap.reset();
-            state.traffic.reset();
-        },
-    };
+        destroy: () => destroyState(state),
+    });
 }

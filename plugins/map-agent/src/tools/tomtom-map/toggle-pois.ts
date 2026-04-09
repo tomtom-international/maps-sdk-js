@@ -2,7 +2,6 @@
  * @module map-agent-tools
  */
 
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
@@ -62,35 +61,31 @@ export const togglePOIsDescription =
     'or reset: true to restore all POI defaults.';
 
 /**
- * Create the toggle POIs tool.
+ * Execute toggle POIs.
  */
-export function createTogglePOIsTool(state: ToolState): Tool {
-    return tool({
-        description: togglePOIsDescription,
-        inputSchema: togglePOIsSchema,
-        outputSchema: togglePOIsOutputSchema,
-        execute: async (params): Promise<z.infer<typeof togglePOIsOutputSchema>> => {
-            try {
-                const poisModule = await state.mapPOIs.getPOIsModule();
+export async function executeTogglePOIs(
+    params: z.infer<typeof togglePOIsSchema>,
+    state: ToolState,
+): Promise<z.infer<typeof togglePOIsOutputSchema>> {
+    try {
+        const poisModule = await state.mapPOIs.getPOIsModule();
 
-                if (params.reset) {
-                    poisModule.resetConfig();
-                    return { success: true, reset: true };
-                }
+        if (params.reset) {
+            poisModule.resetConfig();
+            return { success: true, reset: true };
+        }
 
-                const { allMapPOIsVisible, filterCategories } = params;
+        const { allMapPOIsVisible, filterCategories } = params;
 
-                if (allMapPOIsVisible !== undefined) poisModule.setVisible(allMapPOIsVisible);
-                if (filterCategories) {
-                    poisModule.filterCategories({ show: filterCategories.show, values: filterCategories.values });
-                }
+        if (allMapPOIsVisible !== undefined) poisModule.setVisible(allMapPOIsVisible);
+        if (filterCategories) {
+            poisModule.filterCategories({ show: filterCategories.show, values: filterCategories.values });
+        }
 
-                return { success: true, allMapPOIsVisible, filterCategories };
-            } catch (error) {
-                return {
-                    error: `Failed to toggle POIs: ${error instanceof Error ? error.message : String(error)}`,
-                };
-            }
-        },
-    });
+        return { success: true, allMapPOIsVisible, filterCategories };
+    } catch (error) {
+        return {
+            error: `Failed to toggle POIs: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

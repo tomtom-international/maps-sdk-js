@@ -4,7 +4,6 @@
 
 import { type BBox, getPosition, type Place, type WaypointLike } from '@tomtom-org/maps-sdk/core';
 import { geocode, geocodeOne, search, searchOne } from '@tomtom-org/maps-sdk/services';
-import { type Tool, tool } from 'ai';
 import type { Position } from 'geojson';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
@@ -124,40 +123,37 @@ async function showLocateResult(
     return shown;
 }
 
-export function createLocatePlaceTool(state: ToolState): Tool {
-    return tool({
-        description: locatePlaceDescription,
-        inputSchema: locatePlaceSchema,
-        outputSchema: locatePlaceOutputSchema,
-        execute: async (params): Promise<z.infer<typeof locatePlaceOutputSchema>> => {
-            const { query, locationType, waypointIndex, where, show } = params;
+/** Standalone execute for ToolEntry format. */
+export async function executeLocatePlace(
+    params: z.infer<typeof locatePlaceSchema>,
+    state: ToolState,
+): Promise<z.infer<typeof locatePlaceOutputSchema>> {
+    const { query, locationType, waypointIndex, where, show } = params;
 
-            try {
-                const bias = await resolveLocateBias(where, state);
-                const result = await locatePlace(query, locationType, bias);
+    try {
+        const bias = await resolveLocateBias(where, state);
+        const result = await locatePlace(query, locationType, bias);
 
-                if (!result) {
-                    return { error: `No result found for "${query}"` };
-                }
+        if (!result) {
+            return { error: `No result found for "${query}"` };
+        }
 
-                state.places.addPlaceResult(result, makePlacesLabel(result, { query }));
+        state.places.addPlaceResult(result, makePlacesLabel(result, { query }));
 
-                if (waypointIndex !== undefined) {
-                    state.routing.setWaypointAt(waypointIndex, result as unknown as WaypointLike);
-                }
+        if (waypointIndex !== undefined) {
+            state.routing.setWaypointAt(waypointIndex, result as unknown as WaypointLike);
+        }
 
-                const shown = show ? await showLocateResult(state, result, show) : undefined;
+        const shown = show ? await showLocateResult(state, result, show) : undefined;
 
-                return {
-                    ...summarizePlace(result),
-                    ...(waypointIndex !== undefined && { waypointIndex }),
-                    ...(shown && { shown }),
-                };
-            } catch (error) {
-                return {
-                    error: `Location resolution failed: ${error instanceof Error ? error.message : String(error)}`,
-                };
-            }
-        },
-    });
+        return {
+            ...summarizePlace(result),
+            ...(waypointIndex !== undefined && { waypointIndex }),
+            ...(shown && { shown }),
+        };
+    } catch (error) {
+        return {
+            error: `Location resolution failed: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

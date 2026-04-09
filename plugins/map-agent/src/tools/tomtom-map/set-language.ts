@@ -3,7 +3,6 @@
  */
 
 import { Language, TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
@@ -29,28 +28,21 @@ export const setLanguageDescription =
     'Both the rendered map text and future service responses will use the new language.';
 
 /**
- * Create the set language tool.
+ * Execute set language.
  */
-export function createSetLanguageTool(state: ToolState): Tool {
-    return tool({
-        description: setLanguageDescription,
-        inputSchema: setLanguageSchema,
-        outputSchema: setLanguageOutputSchema,
-        execute: async (params) => {
-            const { language } = params;
-            try {
-                TomTomConfig.instance.put({ language: language as Language });
-                state.baseMap.ttMap.setLanguage(language as Language);
+export async function executeSetLanguage(params: z.infer<typeof setLanguageSchema>, state: ToolState) {
+    const { language } = params;
+    try {
+        TomTomConfig.instance.put({ language: language as Language });
+        state.baseMap.ttMap.setLanguage(language as Language);
 
-                return {
-                    success: true,
-                    language,
-                };
-            } catch (error) {
-                return {
-                    error: `Failed to set language: ${error instanceof Error ? error.message : String(error)}`,
-                };
-            }
-        },
-    });
+        return {
+            success: true,
+            language,
+        };
+    } catch (error) {
+        return {
+            error: `Failed to set language: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

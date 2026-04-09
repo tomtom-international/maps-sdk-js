@@ -2,7 +2,6 @@
  * @module map-agent-tools
  */
 
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
@@ -35,39 +34,35 @@ export const getShownIncidentsDescription =
     'Get the real-time traffic incidents currently visible in the map viewport (not from service, but what is actually rendered on the map).';
 
 /**
- * Create the get shown incidents tool.
+ * Execute get shown incidents.
  */
-export function createGetShownIncidentsTool(state: ToolState): Tool {
-    return tool({
-        description: getShownIncidentsDescription,
-        inputSchema: getShownIncidentsSchema,
-        outputSchema: getShownIncidentsOutputSchema,
-        execute: async (): Promise<z.infer<typeof getShownIncidentsOutputSchema>> => {
-            try {
-                const trafficIncidentsModule = await state.traffic.getTrafficIncidentsModule();
-                const shown = trafficIncidentsModule.getShown();
+export async function executeGetShownIncidents(
+    _params: z.infer<typeof getShownIncidentsSchema>,
+    state: ToolState,
+): Promise<z.infer<typeof getShownIncidentsOutputSchema>> {
+    try {
+        const trafficIncidentsModule = await state.traffic.getTrafficIncidentsModule();
+        const shown = trafficIncidentsModule.getShown();
 
-                if (shown.trafficIncidents.length === 0) {
-                    return { error: 'No traffic incidents currently shown on the map' };
-                }
+        if (shown.trafficIncidents.length === 0) {
+            return { error: 'No traffic incidents currently shown on the map' };
+        }
 
-                return {
-                    count: shown.trafficIncidents.length,
-                    trafficIncidents: shown.trafficIncidents.map((incident) => ({
-                        id: incident.properties.id,
-                        category: incident.properties.category,
-                        magnitudeOfDelay: incident.properties.magnitudeOfDelay,
-                        description: incident.properties.description,
-                        delayInSeconds: incident.properties.delayInSeconds,
-                        roadCategory: incident.properties.roadCategory,
-                        averageSpeedKmph: incident.properties.averageSpeedKmph,
-                    })),
-                };
-            } catch (error) {
-                return {
-                    error: `Failed to get shown incidents: ${error instanceof Error ? error.message : String(error)}`,
-                };
-            }
-        },
-    });
+        return {
+            count: shown.trafficIncidents.length,
+            trafficIncidents: shown.trafficIncidents.map((incident) => ({
+                id: incident.properties.id,
+                category: incident.properties.category,
+                magnitudeOfDelay: incident.properties.magnitudeOfDelay,
+                description: incident.properties.description,
+                delayInSeconds: incident.properties.delayInSeconds,
+                roadCategory: incident.properties.roadCategory,
+                averageSpeedKmph: incident.properties.averageSpeedKmph,
+            })),
+        };
+    } catch (error) {
+        return {
+            error: `Failed to get shown incidents: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

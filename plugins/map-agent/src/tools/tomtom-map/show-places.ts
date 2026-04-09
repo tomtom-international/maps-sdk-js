@@ -3,7 +3,6 @@
  */
 
 import { bboxFromGeoJSON, type Place } from '@tomtom-org/maps-sdk/core';
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
@@ -34,51 +33,44 @@ export const showPlacesDescription =
     'Only invoke if places were not shown before.';
 
 /**
- * Create the show places tool.
+ * Execute show places.
  */
-export function createShowPlacesTool(state: ToolState): Tool {
-    return tool({
-        description: showPlacesDescription,
-        inputSchema: showPlacesSchema,
-        outputSchema: showPlacesOutputSchema,
-        execute: async (params) => {
-            const { id, fitBounds = true } = params;
-            try {
-                let placesToShow: Place[] | undefined;
+export async function executeShowPlaces(params: z.infer<typeof showPlacesSchema>, state: ToolState) {
+    const { id, fitBounds = true } = params;
+    try {
+        let placesToShow: Place[] | undefined;
 
-                if (id) {
-                    const entry = state.places.entries.find((e) => e.id === id);
-                    if (!entry) {
-                        return { error: `No places entry found with id "${id}"` };
-                    }
-                    placesToShow = entry.data;
-                } else {
-                    placesToShow = state.places.latestPlace;
-                }
-
-                if (!placesToShow) {
-                    return {
-                        error: 'No places available to display. Resolve a place or run a search first (e.g. discoverPlaces).',
-                    };
-                }
-
-                const placesModule = await state.places.getPlacesModule();
-
-                await placesModule.show(placesToShow);
-
-                if (fitBounds) {
-                    const bbox = bboxFromGeoJSON(placesToShow);
-                    if (bbox) {
-                        state.baseMap.mapLibreMap.fitBounds(bbox, { padding: 50 });
-                    }
-                }
-
-                return { success: true, count: placesToShow.length };
-            } catch (error) {
-                return {
-                    error: `Failed to show places: ${error instanceof Error ? error.message : String(error)}`,
-                };
+        if (id) {
+            const entry = state.places.entries.find((e) => e.id === id);
+            if (!entry) {
+                return { error: `No places entry found with id "${id}"` };
             }
-        },
-    });
+            placesToShow = entry.data;
+        } else {
+            placesToShow = state.places.latestPlace;
+        }
+
+        if (!placesToShow) {
+            return {
+                error: 'No places available to display. Resolve a place or run a search first (e.g. discoverPlaces).',
+            };
+        }
+
+        const placesModule = await state.places.getPlacesModule();
+
+        await placesModule.show(placesToShow);
+
+        if (fitBounds) {
+            const bbox = bboxFromGeoJSON(placesToShow);
+            if (bbox) {
+                state.baseMap.mapLibreMap.fitBounds(bbox, { padding: 50 });
+            }
+        }
+
+        return { success: true, count: placesToShow.length };
+    } catch (error) {
+        return {
+            error: `Failed to show places: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }

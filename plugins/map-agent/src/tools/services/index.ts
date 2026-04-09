@@ -4,59 +4,83 @@
  * Service tools - SDK services like search, reverse geocoding, and routing without map display.
  */
 
-export { addStopToRouteDescription, addStopToRouteSchema, createAddStopToRouteTool } from './add-stop-to-route';
-export { createDiscoverPlacesTool, discoverPlacesDescription, discoverPlacesSchema } from './discover-places';
 export {
-    createFindReachableAreaTool,
+    addStopToRouteDescription,
+    addStopToRouteOutputSchema,
+    addStopToRouteSchema,
+    executeAddStopToRoute,
+} from './add-stop-to-route';
+export {
+    discoverPlacesDescription,
+    discoverPlacesOutputSchema,
+    discoverPlacesSchema,
+    executeDiscoverPlaces,
+} from './discover-places';
+export {
+    executeFindReachableArea,
     findReachableAreaDescription,
     findReachableAreaOutputSchema,
     findReachableAreaSchema,
 } from './find-reachable-area';
-export { createGeocodeTool, geocodeDescription, geocodeSchema } from './geocode';
+export { executeGeocode, geocodeDescription, geocodeOutputSchema, geocodeSchema } from './geocode';
 export {
-    createGetPoiCategoryCodesTool,
+    executeGetPoiCategoryCodes,
     getPoiCategoryCodesDescription,
+    getPoiCategoryCodesOutputSchema,
     getPoiCategoryCodesSchema,
 } from './get-poi-category-codes';
 export {
-    createGetTrafficAreaAnalyticsTool,
+    executeGetTrafficAreaAnalytics,
     getTrafficAreaAnalyticsDescription,
+    getTrafficAreaAnalyticsOutputSchema,
     getTrafficAreaAnalyticsSchema,
 } from './get-traffic-area-analytics';
 export {
-    createGetTrafficIncidentsTool,
+    executeGetTrafficIncidents,
     getTrafficIncidentsDescription,
+    getTrafficIncidentsOutputSchema,
     getTrafficIncidentsSchema,
 } from './get-traffic-incidents';
 export {
-    createLocatePlaceTool,
+    executeLocatePlace,
     locatePlace,
     locatePlaceDescription,
+    locatePlaceOutputSchema,
     locatePlaceSchema,
 } from './locate-place';
 export {
-    createQueryTrafficAnalyticsTool,
+    executeQueryTrafficAnalytics,
     queryTrafficAnalyticsDescription,
+    queryTrafficAnalyticsOutputSchema,
     queryTrafficAnalyticsSchema,
 } from './query-traffic-analytics';
 export {
-    createRemoveStopFromRouteTool,
+    executeRemoveStopFromRoute,
     removeStopFromRouteDescription,
+    removeStopFromRouteOutputSchema,
     removeStopFromRouteSchema,
 } from './remove-stop-from-route';
-export { createReverseGeocodeTool, reverseGeocodeDescription, reverseGeocodeSchema } from './reverse-geocode';
 export {
-    createSearchAlongRouteTool,
+    executeReverseGeocode,
+    reverseGeocodeDescription,
+    reverseGeocodeOutputSchema,
+    reverseGeocodeSchema,
+} from './reverse-geocode';
+export {
+    executeSearchAlongRoute,
     searchAlongRouteDescription,
+    searchAlongRouteOutputSchema,
     searchAlongRouteSchema,
 } from './search-along-route';
 export {
-    createSetRouteLocationsTool,
+    executeSetRouteLocations,
     setRouteLocationsDescription,
+    setRouteLocationsOutputSchema,
     setRouteLocationsSchema,
 } from './set-route-locations';
 export {
-    createSetRouteParametersTool,
+    executeSetRouteParameters,
     setRouteParametersDescription,
+    setRouteParametersOutputSchema,
     setRouteParametersSchema,
 } from './set-route-parameters';

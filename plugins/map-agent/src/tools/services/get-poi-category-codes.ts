@@ -4,8 +4,8 @@
 
 import { type Language } from '@tomtom-org/maps-sdk/core';
 import { getPOICategoryCodes } from '@tomtom-org/maps-sdk/services';
-import { type Tool, tool } from 'ai';
 import { z } from 'zod';
+import type { ToolState } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
 
 /** Output schema for the get-poi-category-codes tool. */
@@ -40,27 +40,24 @@ export const getPoiCategoryCodesDescription =
 /**
  * Create the get-poi-category-codes tool.
  */
-export function createGetPoiCategoryCodesTool(_context: unknown): Tool {
-    return tool({
-        description: getPoiCategoryCodesDescription,
-        inputSchema: getPoiCategoryCodesSchema,
-        outputSchema: getPoiCategoryCodesOutputSchema,
-        execute: async (params): Promise<z.infer<typeof getPoiCategoryCodesOutputSchema>> => {
-            const { filters, language } = params;
-            try {
-                const codes = await getPOICategoryCodes({
-                    filters,
-                    language: language as Language,
-                });
-                return {
-                    count: codes.length,
-                    codes,
-                };
-            } catch (error) {
-                return {
-                    error: `Failed to fetch POI category codes: ${error instanceof Error ? error.message : String(error)}`,
-                };
-            }
-        },
-    });
+/** Standalone execute for ToolEntry format. */
+export async function executeGetPoiCategoryCodes(
+    params: z.infer<typeof getPoiCategoryCodesSchema>,
+    _state: ToolState,
+): Promise<z.infer<typeof getPoiCategoryCodesOutputSchema>> {
+    const { filters, language } = params;
+    try {
+        const codes = await getPOICategoryCodes({
+            filters,
+            language: language as Language,
+        });
+        return {
+            count: codes.length,
+            codes,
+        };
+    } catch (error) {
+        return {
+            error: `Failed to fetch POI category codes: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 }
