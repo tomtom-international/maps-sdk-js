@@ -31,6 +31,10 @@ export const TAG_GROUPS: TagGroup[] = [
         label: 'Feature',
         tags: [
             {
+                id: 'ai',
+                label: 'AI',
+            },
+            {
                 id: 'base-map',
                 label: 'Base Map',
             },
