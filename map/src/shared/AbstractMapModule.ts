@@ -71,6 +71,13 @@ export abstract class AbstractMapModule<
     protected _initializing = true;
 
     /**
+     * Handlers registered via events.on('config-change', …).
+     * Stored here so the array reference stays stable across multiple events getter calls.
+     * @ignore
+     */
+    protected readonly configChangeHandlers: ((config: CFG | undefined) => void)[] = [];
+
+    /**
      * Indicates that this module is currently adding its sources and layers to the map, so during this time it might not function properly.
      * @see waitUntilModuleReady
      * @private
@@ -176,6 +183,20 @@ export abstract class AbstractMapModule<
      */
     applyConfig(config: CFG | undefined) {
         this.config = this._applyConfig(config);
+        this.emitConfigChange();
+    }
+
+    /**
+     * Emits a `config-change` event to all registered handlers.
+     * Skipped during module initialisation to avoid spurious events.
+     * @ignore
+     */
+    protected emitConfigChange(): void {
+        if (this._initializing) return;
+
+        for (const handler of this.configChangeHandlers) {
+            handler(this.config);
+        }
     }
 
     /**

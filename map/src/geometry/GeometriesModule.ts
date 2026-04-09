@@ -2,7 +2,14 @@ import type { PolygonFeatures } from '@tomtom-org/maps-sdk/core';
 import type { FeatureCollection, Point } from 'geojson';
 import type { SymbolLayerSpecification } from 'maplibre-gl';
 import type { SymbolLayerSpecWithoutSource, ToBeAddedLayerSpec } from '../shared';
-import { AbstractMapModule, EventsModule, GeoJSONSourceWithLayers, mapStyleLayerIDs } from '../shared';
+import {
+    AbstractMapModule,
+    CombinedEvents,
+    GeoJSONSourceWithLayers,
+    ModuleEvents,
+    mapStyleLayerIDs,
+    UserEvents,
+} from '../shared';
 import { changeLayerProps, waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
 import {
@@ -148,6 +155,7 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
 
     // Cached for restoreDataAndConfigImpl on style change.
     private lastRawInput: PolygonFeatures | null = null;
+    private readonly shownFeaturesHandlers: ((features: PolygonFeatures) => void)[] = [];
 
     /**
      * Make sure the map is ready before create an instance of the module and any other interaction with the map
@@ -311,6 +319,7 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
     moveBeforeLayer(layerConfig: GeometryBeforeLayerConfig) {
         this.config = { ...this.config, beforeLayerConfig: layerConfig };
         this.moveBeforeLayerID(layerConfig === 'top' ? this.titleLayerID : mapStyleLayerIDs[layerConfig]);
+        this.emitConfigChange();
     }
 
     /**
@@ -350,6 +359,7 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
             prepareTitleForDisplay(this.sourcesWithLayers.geometry.shownFeatures),
         );
         this.config = config;
+        this.emitConfigChange();
     }
 
     private updateLayerAndData(config: GeometriesModuleConfig) {
@@ -461,6 +471,9 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
         const geometry = this.sourcesWithLayers.geometry;
         geometry.show(prepareGeometryForDisplay(transformed, this.config));
         this.sourcesWithLayers.geometryLabel.show(prepareTitleForDisplay(geometry.shownFeatures));
+        for (const handler of this.shownFeaturesHandlers) {
+            handler(geometries);
+        }
     }
 
     /**
@@ -510,7 +523,7 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
     /**
      * Gets the events interface for handling user interactions with geometries.
      *
-     * @returns An EventsModule instance for registering event handlers.
+     * @returns A `UserEvents` instance for registering event handlers.
      *
      * @remarks
      * **Supported Events:**
@@ -552,7 +565,10 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
      * });
      * ```
      */
-    get events() {
-        return new EventsModule(this.tomtomMap._eventsProxy, this.sourcesWithLayers.geometry, this.config?.events);
+    get events(): CombinedEvents<import('maplibre-gl').MapGeoJSONFeature, GeometriesModuleConfig, PolygonFeatures> {
+        return new CombinedEvents(
+            new UserEvents(this.tomtomMap._eventsProxy, this.sourcesWithLayers.geometry, this.config?.events),
+            new ModuleEvents(this.configChangeHandlers, this.shownFeaturesHandlers),
+        );
     }
 }

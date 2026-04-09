@@ -7,7 +7,7 @@ import type { EventHandlerConfig, EventType, SourceWithLayers, UserEventHandler 
  *
  * Provides a simple API for attaching and removing event handlers for user interactions
  * with map features such as clicks, hovers, and context menus. Each map module (POIs, Routing,
- * Places, etc.) exposes an `events` property that returns an EventsModule instance.
+ * Places, etc.) exposes an `events` property that returns a `UserEvents` instance.
  *
  * @typeParam T - The feature type returned in event handlers (extends MapGeoJSONFeature)
  *
@@ -93,9 +93,9 @@ import type { EventHandlerConfig, EventType, SourceWithLayers, UserEventHandler 
  * });
  * ```
  *
- * @group User Interaction Events
+ * @group Events
  */
-export class EventsModule<T = MapGeoJSONFeature> {
+export class UserEvents<T = MapGeoJSONFeature> {
     private readonly sources: SourceWithLayers[];
 
     constructor(
@@ -194,22 +194,28 @@ export class EventsModule<T = MapGeoJSONFeature> {
      * });
      * ```
      */
-    on(type: EventType, handler: UserEventHandler<T>) {
+    on(type: EventType, handler: UserEventHandler<T>): () => void {
+        const entries: Array<{ source: SourceWithLayers; registeredHandler: UserEventHandler<any> }> = [];
+
         if (this.mapping) {
             const mapping = this.mapping;
             for (const source of this.sources) {
-                this.eventProxy.addEventHandler(
-                    source,
-                    (feature, ...rest) => handler(mapping(feature), ...rest),
-                    type,
-                    this.config,
-                );
+                const wrappedHandler: UserEventHandler<any> = (feature, ...rest) => handler(mapping(feature), ...rest);
+                this.eventProxy.addEventHandler(source, wrappedHandler, type, this.config);
+                entries.push({ source, registeredHandler: wrappedHandler });
             }
         } else {
             for (const source of this.sources) {
                 this.eventProxy.addEventHandler(source, handler, type, this.config);
+                entries.push({ source, registeredHandler: handler });
             }
         }
+
+        return () => {
+            for (const { source, registeredHandler } of entries) {
+                this.eventProxy.removeHandler(source, type, registeredHandler);
+            }
+        };
     }
 
     /**

@@ -348,7 +348,7 @@ test.describe('Traffic Area Analytics module integration tests', () => {
 
         await page.evaluate(() => {
             (globalThis as any)._configChangeCount = 0;
-            (globalThis as MapsSDKThis).trafficAreaAnalytics?.events.on('configChange', () => {
+            (globalThis as MapsSDKThis).trafficAreaAnalytics?.events.on('config-change', () => {
                 (globalThis as any)._configChangeCount++;
             });
         });
@@ -370,7 +370,7 @@ test.describe('Traffic Area Analytics module integration tests', () => {
         await page.evaluate(() => {
             (globalThis as any)._configChangeCount = 0;
             (globalThis as any)._unsubscribeConfigChange = (globalThis as MapsSDKThis).trafficAreaAnalytics?.events.on(
-                'configChange',
+                'config-change',
                 () => {
                     (globalThis as any)._configChangeCount++;
                 },
@@ -702,7 +702,7 @@ test.describe('Traffic Area Analytics module integration tests', () => {
         await page.evaluate(() => {
             (globalThis as any)._configChangeCount = 0;
             const eventsModule = (globalThis as MapsSDKThis).trafficAreaAnalytics?.events;
-            eventsModule?.on('configChange', () => {
+            eventsModule?.on('config-change', () => {
                 (globalThis as any)._configChangeCount++;
             });
             eventsModule?.on('hover', () => {

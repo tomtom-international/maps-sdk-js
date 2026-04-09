@@ -82,7 +82,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     routingModule.showRoutes(initialResult);
 
     // --- Waypoint click: show "Remove stop" popup for intermediate stops ---
-    routingModule.events.waypoints.on('click', (waypoint: Waypoint<WaypointDisplayProps>, lngLat: LngLat) => {
+    routingModule.events.user.waypoints.on('click', (waypoint: Waypoint<WaypointDisplayProps>, lngLat: LngLat) => {
         if (waypoint.properties.indexType !== MIDDLE_INDEX || isUpdating) return;
 
         closeActivePopup();

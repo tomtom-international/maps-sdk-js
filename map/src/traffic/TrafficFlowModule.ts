@@ -3,10 +3,12 @@ import type { FilterSpecification } from 'maplibre-gl';
 import type { LayerSpecWithSource } from '../shared';
 import {
     AbstractMapModule,
-    EventsModule,
+    CombinedEvents,
     filterLayersBySources,
+    ModuleEvents,
     StyleSourceWithLayers,
     TRAFFIC_FLOW_SOURCE_ID,
+    UserEvents,
 } from '../shared';
 import { notInTheStyle } from '../shared/errorMessages';
 import { ensureAddedToStyle, waitUntilMapIsReady } from '../shared/mapUtils';
@@ -267,6 +269,7 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
 
         if (updateConfig) {
             this.config = omitBy({ ...this.config, filters }, isNil);
+            this.emitConfigChange();
         }
     }
 
@@ -286,6 +289,7 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
         if (this.tomtomMap.mapReady) {
             this.sourcesWithLayers.trafficFlow.setLayersVisible(visible);
         }
+        this.emitConfigChange();
     }
 
     /**
@@ -342,16 +346,15 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
         };
     }
 
-    /**
-     * Create the events on/off for this module
-     * @returns An instance of EventsModule
-     */
-    get events() {
-        return new EventsModule<TrafficFlowModuleFeature>(
-            this.tomtomMap._eventsProxy,
-            this.sourcesWithLayers.trafficFlow,
-            this.config?.events,
-            trafficFlowMapping,
+    get events(): CombinedEvents<TrafficFlowModuleFeature, FlowConfig, never> {
+        return new CombinedEvents(
+            new UserEvents<TrafficFlowModuleFeature>(
+                this.tomtomMap._eventsProxy,
+                this.sourcesWithLayers.trafficFlow,
+                this.config?.events,
+                trafficFlowMapping,
+            ),
+            new ModuleEvents(this.configChangeHandlers, []),
         );
     }
 }

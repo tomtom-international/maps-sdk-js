@@ -91,6 +91,28 @@ export abstract class AbstractEventProxy {
     }
 
     /**
+     * Removes a single handler function for the given source and event type.
+     * Other handlers registered for the same source and type are not affected.
+     * Unlike {@link remove}, this does not remove the source from the interactive layer list —
+     * other handlers may still depend on it.
+     * @param sourceWithLayers The source whose handler should be removed.
+     * @param type The event type.
+     * @param handlerFn The exact function reference to remove.
+     */
+    removeHandler(sourceWithLayers: SourceWithLayers, type: EventType, handlerFn: UserEventHandler<any>) {
+        const sourceEventTypeHandlers = this.handlers[sourceWithLayers.source.id]?.[type];
+        if (sourceEventTypeHandlers) {
+            remove(sourceEventTypeHandlers, (handler) => handler.fn === handlerFn);
+            if (!sourceEventTypeHandlers.length) {
+                delete this.handlers[sourceWithLayers.source.id]?.[type];
+                if (isEmpty(this.handlers[sourceWithLayers.source.id])) {
+                    delete this.handlers[sourceWithLayers.source.id];
+                }
+            }
+        }
+    }
+
+    /**
      * Removes the given sources and layers from the interactive list. When not present, nothing happens.
      * @param type The event type to be removed.
      * @param sourceWithLayers The sources and layers to remove, matched by source and layer IDs.

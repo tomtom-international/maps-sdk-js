@@ -40,8 +40,8 @@ describe('AbstractMapModule tests', () => {
         }
 
         // Implement events, however it is not tested here.
-        // get events(): EventsModule {
-        //     return vi.fn() as unknown as EventsModule;
+        // get events(): UserEvents {
+        //     return vi.fn() as unknown as UserEvents;
         // }
     }
 

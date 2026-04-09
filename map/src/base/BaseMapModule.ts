@@ -1,6 +1,13 @@
 import { isNil } from 'lodash-es';
 
-import { AbstractMapModule, BASE_MAP_SOURCE_ID, EventsModule, StyleSourceWithLayers } from '../shared';
+import {
+    AbstractMapModule,
+    BASE_MAP_SOURCE_ID,
+    CombinedEvents,
+    ModuleEvents,
+    StyleSourceWithLayers,
+    UserEvents,
+} from '../shared';
 import { notInTheStyle } from '../shared/errorMessages';
 import { waitUntilMapIsReady } from '../shared/mapUtils';
 import { TomTomMap } from '../TomTomMap';
@@ -292,53 +299,34 @@ export class BaseMapModule extends AbstractMapModule<BaseSourceAndLayers, BaseMa
                 options?.layerGroups && buildLayerGroupFilter(options.layerGroups),
             );
         }
+
+        this.emitConfigChange();
     }
 
     /**
-     * Gets the events interface for this module to handle user interactions.
+     * Gets the unified events interface for this module, covering both user interactions
+     * and module lifecycle events.
      *
-     * @returns An EventsModule instance for registering event handlers.
-     *
-     * @remarks
-     * **Supported Events:**
-     * - `click`: User clicks on a base map feature
-     * - `contextmenu`: User right-clicks on a feature
-     * - `hover`: Mouse enters a feature
-     * - `long-hover`: Mouse hovers over a feature for extended time
-     *
-     * **Event Handler Signature:**
+     * **User interaction events** (`click`, `contextmenu`, `hover`, `long-hover`):
      * ```typescript
-     * (feature: MapGeoJSONFeature, lngLat: LngLat, allFeatures: MapGeoJSONFeature[]) => void
-     * ```
-     *
-     * @example
-     * Register click handler:
-     * ```typescript
-     * baseMap.events.on('click', (feature, lngLat) => {
+     * const unsub = baseMap.events.on('click', (feature, lngLat) => {
      *   console.log('Clicked on:', feature.properties);
-     *   console.log('At coordinates:', lngLat);
      * });
+     * baseMap.events.off('hover'); // remove by type
      * ```
      *
-     * @example
-     * Multiple event types:
+     * **Module lifecycle events** (`config-change`):
      * ```typescript
-     * // Show tooltip on hover
-     * baseMap.events.on('hover', (feature) => {
-     *   showTooltip(feature.properties.name);
+     * const unsub = baseMap.events.on('config-change', (config) => {
+     *   console.log('Config changed:', config);
      * });
-     *
-     * // Handle clicks
-     * baseMap.events.on('click', (feature) => {
-     *   selectFeature(feature.id);
-     * });
-     *
-     * // Clean up
-     * baseMap.events.off('hover');
-     * baseMap.events.off('click');
+     * unsub(); // remove by returned function
      * ```
      */
-    get events() {
-        return new EventsModule(this.tomtomMap._eventsProxy, this.sourcesWithLayers.vectorTiles, this.config?.events);
+    get events(): CombinedEvents<import('maplibre-gl').MapGeoJSONFeature, BaseMapModuleConfig, never> {
+        return new CombinedEvents(
+            new UserEvents(this.tomtomMap._eventsProxy, this.sourcesWithLayers.vectorTiles, this.config?.events),
+            new ModuleEvents(this.configChangeHandlers, []),
+        );
     }
 }

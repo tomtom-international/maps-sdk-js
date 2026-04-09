@@ -61,7 +61,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
             ?.addEventListener('click', () => pinnedPopup.remove());
     };
 
-    routingModule.events.mainLines.on('hover-move', (_, lngLat) => {
+    routingModule.events.user.mainLines.on('hover-move', (_, lngLat) => {
         showHoverAt(lngLat.toArray());
     });
 
@@ -73,7 +73,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         hoverPopup.remove();
     });
 
-    routingModule.events.mainLines.on('click', (_, lngLat) => {
+    routingModule.events.user.mainLines.on('click', (_, lngLat) => {
         pinProgressAt(lngLat.toArray());
     });
 })();

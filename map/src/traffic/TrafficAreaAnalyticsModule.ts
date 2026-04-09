@@ -2,8 +2,15 @@ import type { AreaAnalyticsMetricKey, TrafficAreaAnalytics } from '@tomtom-org/m
 import { mask } from '@turf/turf';
 import type { FeatureCollection, Point, Polygon } from 'geojson';
 import { ExpressionSpecification } from 'maplibre-gl';
-import type { BeforeLayerConfig, EventHandlerConfig, EventType, SourceWithLayers, UserEventHandler } from '../shared';
-import { AbstractMapModule, EventsModule, EventsProxy, GeoJSONSourceWithLayers, mapStyleLayerIDs } from '../shared';
+import type { BeforeLayerConfig } from '../shared';
+import {
+    AbstractMapModule,
+    CombinedEvents,
+    GeoJSONSourceWithLayers,
+    ModuleEvents,
+    mapStyleLayerIDs,
+    UserEvents,
+} from '../shared';
 import { changeLayerProps, waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
 import {
@@ -45,50 +52,6 @@ type AreaAnalyticsSourcesWithLayers = {
     square: GeoJSONSourceWithLayers<FeatureCollection<Polygon, AreaAnalyticsDisplayProperties>>;
     region: GeoJSONSourceWithLayers;
 };
-
-/**
- * Handler called whenever any setter on {@link TrafficAreaAnalyticsModule} is invoked.
- *
- * @param config - The updated module configuration, or `undefined` if the module was cleared.
- * @group Traffic Area Analytics
- */
-export type ConfigChangeHandler = (config: TrafficAreaAnalyticsConfig | undefined) => void;
-
-/**
- * Events interface for {@link TrafficAreaAnalyticsModule}.
- *
- * Extends the standard feature-interaction events (click, hover, contextmenu, long-hover)
- * with a `configChange` event that fires whenever a setter on the module is called.
- *
- * @group Traffic Area Analytics
- */
-export class AreaAnalyticsEventsModule extends EventsModule<AreaAnalyticsTileFeature> {
-    constructor(
-        eventProxy: EventsProxy,
-        sources: SourceWithLayers[],
-        config: EventHandlerConfig | undefined,
-        private readonly configChangeHandlers: ConfigChangeHandler[],
-    ) {
-        super(eventProxy, sources, config);
-    }
-
-    on(type: 'configChange', handler: ConfigChangeHandler): () => void;
-    on(type: EventType, handler: UserEventHandler<AreaAnalyticsTileFeature>): void;
-    on(
-        type: EventType | 'configChange',
-        handler: ConfigChangeHandler | UserEventHandler<AreaAnalyticsTileFeature>,
-    ): (() => void) | void {
-        if (type === 'configChange') {
-            const configChangeHandler = handler as ConfigChangeHandler;
-            this.configChangeHandlers.push(configChangeHandler);
-            return () => {
-                const index = this.configChangeHandlers.indexOf(configChangeHandler);
-                if (index !== -1) this.configChangeHandlers.splice(index, 1);
-            };
-        }
-        super.on(type, handler as UserEventHandler<AreaAnalyticsTileFeature>);
-    }
-}
 
 /**
  * Traffic Area Analytics visualization module.
@@ -140,9 +103,7 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
 
     // Cached for style-change restoration.
     private lastAnalytics: TrafficAreaAnalytics | null = null;
-
-    // Config change listeners.
-    private configChangeHandlers: ConfigChangeHandler[] = [];
+    private readonly shownFeaturesHandlers: ((features: TrafficAreaAnalytics) => void)[] = [];
 
     // ── Factory ──────────────────────────────────────────────────────
 
@@ -359,6 +320,9 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
 
         this.applyLayerConfig(this.config);
         this.applyModeVisibility();
+        for (const handler of this.shownFeaturesHandlers) {
+            handler(analytics);
+        }
     }
 
     /**
@@ -613,8 +577,9 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
     /**
      * Event interface for the hexgrid and square layers.
      *
-     * Supports feature-interaction events (hover, click, contextmenu, long-hover) as well as
-     * a `configChange` event that fires whenever any setter is called on this module.
+     * Supports feature-interaction events (`hover`, `click`, `contextmenu`, `long-hover`) as well
+     * as module lifecycle events (`config-change`, `shown-features`) — all through the same
+     * `events.on(type, handler)` surface.
      *
      * @example
      * ```typescript
@@ -622,18 +587,23 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
      *   console.log(feature.properties.congestionLevel);
      * });
      *
-     * const unsub = module.events.on('configChange', (config) => {
-     *   console.log('Active metric:', config?.activeMetric);
+     * const unsub = module.events.on('config-change', (config) => {
+     *   console.log('Config updated:', config);
      * });
-     * // Later: unsub();
+     *
+     * module.events.on('shown-features', (data) => {
+     *   console.log('Analytics data shown:', data);
+     * });
      * ```
      */
-    get events(): AreaAnalyticsEventsModule {
-        return new AreaAnalyticsEventsModule(
-            this.tomtomMap._eventsProxy,
-            [this.sourcesWithLayers.hexgrid, this.sourcesWithLayers.square, this.sourcesWithLayers.heatmap],
-            this.config?.events,
-            this.configChangeHandlers,
+    get events(): CombinedEvents<AreaAnalyticsTileFeature, TrafficAreaAnalyticsConfig, TrafficAreaAnalytics> {
+        return new CombinedEvents(
+            new UserEvents(
+                this.tomtomMap._eventsProxy,
+                [this.sourcesWithLayers.hexgrid, this.sourcesWithLayers.square, this.sourcesWithLayers.heatmap],
+                this.config?.events,
+            ),
+            new ModuleEvents(this.configChangeHandlers, this.shownFeaturesHandlers),
         );
     }
 
@@ -817,11 +787,5 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
                 return { ...feature, id, geometry, properties: { id } };
             }),
         };
-    }
-
-    private emitConfigChange(): void {
-        for (const handler of this.configChangeHandlers) {
-            handler(this.config);
-        }
     }
 }

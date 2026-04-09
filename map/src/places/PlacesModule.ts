@@ -5,7 +5,7 @@ import type {
     PutEventStateOptions,
     SymbolLayerSpecWithoutSource,
 } from '../shared';
-import { AbstractMapModule, EventsModule, GeoJSONSourceWithLayers } from '../shared';
+import { AbstractMapModule, CombinedEvents, GeoJSONSourceWithLayers, ModuleEvents, UserEvents } from '../shared';
 import { DEFAULT_PLACE_ICON_ID } from '../shared/layers/symbolLayers';
 import { suffixNumber } from '../shared/layers/utils';
 import { addOrUpdateImage, changeLayersProps, waitUntilMapIsReady } from '../shared/mapUtils';
@@ -124,6 +124,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      */
     private instanceIndex!: number;
     private defaultPlaceIconID!: string;
+    private readonly shownFeaturesHandlers: ((features: Place | Place[] | Places) => void)[] = [];
 
     /**
      * Make sure the map is ready before create an instance of the module and any other interaction with the map
@@ -283,6 +284,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
         const config = { ...this.config, ...partialConfig };
         this.updateLayersAndData(config);
         this.config = config;
+        this.emitConfigChange();
     }
 
     /**
@@ -306,6 +308,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
         const config = { ...this.config, extraFeatureProps };
         this.updateData(config);
         this.config = config;
+        this.emitConfigChange();
     }
 
     private updateLayersAndData(config: PlacesModuleConfig | undefined): void {
@@ -425,6 +428,9 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
     async show(places: Place | Place[] | Places) {
         await this.waitUntilModuleReady();
         this.sourcesWithLayers.places.show(preparePlacesForDisplay(places, this.instanceIndex, this.config));
+        for (const handler of this.shownFeaturesHandlers) {
+            handler(places);
+        }
     }
 
     /**
@@ -519,15 +525,14 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
         this.sourcesWithLayers.places.cleanEventStates(options);
     }
 
-    /**
-     * Create the events on/off for this module
-     * @returns An instance of EventsModule
-     */
-    get events() {
-        return new EventsModule<Place<DisplayPlaceProps>>(
-            this.eventsProxy,
-            this.sourcesWithLayers.places,
-            this.config?.events,
+    get events(): CombinedEvents<Place<DisplayPlaceProps>, PlacesModuleConfig, Place | Place[] | Places> {
+        return new CombinedEvents(
+            new UserEvents<Place<DisplayPlaceProps>>(
+                this.eventsProxy,
+                this.sourcesWithLayers.places,
+                this.config?.events,
+            ),
+            new ModuleEvents(this.configChangeHandlers, this.shownFeaturesHandlers),
         );
     }
 }

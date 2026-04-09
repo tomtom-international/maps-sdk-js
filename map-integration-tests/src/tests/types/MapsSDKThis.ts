@@ -53,4 +53,11 @@ export type MapsSDKThis = typeof globalThis & {
     _clickedTopFeature?: unknown;
     _clickedFeatures?: MapGeoJSONFeature[];
     _clickedSourceWithLayers?: SourceWithLayers;
+    // These properties are used for testing module events (config-change, shown-features)
+    _configChangeResult: unknown;
+    _configChangeCount: number;
+    _configChangeUnsub?: () => void;
+    _shownFeaturesResult: unknown;
+    _shownFeaturesCount: number;
+    _shownFeaturesUnsub?: () => void;
 };

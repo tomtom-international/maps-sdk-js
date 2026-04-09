@@ -305,7 +305,7 @@ export class TrafficState implements StateSlice {
         if (!this._trafficAreaAnalyticsModule) {
             this._trafficAreaAnalyticsModule = await TrafficAreaAnalyticsModule.get(this._ttMap);
             // Wire config change events so agent state stays in sync with module
-            this._configChangeUnsub = this._trafficAreaAnalyticsModule.events.on('configChange', (config) => {
+            this._configChangeUnsub = this._trafficAreaAnalyticsModule.events.on('config-change', (config) => {
                 this._currentAnalyticsConfig = config;
             });
         }

@@ -78,11 +78,11 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         if (bbox) showAvoidPopup(lngLat, bbox, typeLabel);
     };
 
-    routingModule.events.ferries.on('click', makeClickHandler('Ferry'));
-    routingModule.events.tollRoads.on('click', makeClickHandler('Toll Road'));
-    routingModule.events.tunnels.on('click', makeClickHandler('Tunnel'));
-    routingModule.events.vehicleRestricted.on('click', makeClickHandler('Restricted'));
-    routingModule.events.incidents.on('click', (section, lngLat) => {
+    routingModule.events.user.ferries.on('click', makeClickHandler('Ferry'));
+    routingModule.events.user.tollRoads.on('click', makeClickHandler('Toll Road'));
+    routingModule.events.user.tunnels.on('click', makeClickHandler('Tunnel'));
+    routingModule.events.user.vehicleRestricted.on('click', makeClickHandler('Restricted'));
+    routingModule.events.user.incidents.on('click', (section, lngLat) => {
         const bbox = getSectionBBox(currentRoute, section.properties);
         if (bbox) showAvoidPopup(lngLat, bbox, section.properties.categories.join(', '));
     });

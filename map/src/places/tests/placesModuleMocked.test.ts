@@ -1,7 +1,7 @@
 import { Place, Places } from '@tomtom-org/maps-sdk/core';
 import type { GeoJSONSource, Map } from 'maplibre-gl';
 import { describe, expect, test, vi } from 'vitest';
-import { EventsModule } from '../../shared';
+import { CombinedEvents } from '../../shared';
 import type { TomTomMap } from '../../TomTomMap';
 import { PlacesModule } from '../PlacesModule';
 
@@ -68,6 +68,6 @@ describe('GeoJSON Places module tests', () => {
         expect(placesAny.updateData).toHaveBeenCalledTimes(4);
 
         places.clear();
-        expect(places.events).toBeInstanceOf(EventsModule);
+        expect(places.events).toBeInstanceOf(CombinedEvents);
     });
 });

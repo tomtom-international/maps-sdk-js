@@ -353,7 +353,7 @@ export type SupportsEvents = {
  * });
  * ```
  *
- * @see {@link EventsModule.on} - For registering event handlers
+ * @see {@link UserEvents.on} - For registering event handlers
  *
  * @group User Interaction Events
  */

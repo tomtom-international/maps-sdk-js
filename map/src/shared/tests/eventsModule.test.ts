@@ -1,14 +1,14 @@
 import type { MapGeoJSONFeature } from 'maplibre-gl';
 import { afterAll, describe, expect, test, vi } from 'vitest';
-import { EventsModule } from '../EventsModule';
 import type { EventsProxy } from '../EventsProxy';
 import type { StyleSourceWithLayers } from '../SourceWithLayers';
 import { EventHandlerConfig } from '../types';
+import { UserEvents } from '../UserEvents';
 
 const mockedMapModule = { source: { id: 'testModule' } } as StyleSourceWithLayers;
 const mockConsoleError = vi.spyOn(global.console, 'error').mockImplementation(vi.fn());
 
-describe('EventsModule tests', () => {
+describe('UserEvents tests', () => {
     const MockEventProxy = {
         addEventHandler: vi.fn(),
         remove: vi.fn(),
@@ -20,7 +20,7 @@ describe('EventsModule tests', () => {
 
     test('Add an event', () => {
         const config: EventHandlerConfig = { cursorOnHover: 'none' };
-        const event = new EventsModule(MockEventProxy, mockedMapModule, config);
+        const event = new UserEvents(MockEventProxy, mockedMapModule, config);
         const callback = vi.fn();
 
         event.on('click', callback);
@@ -34,7 +34,7 @@ describe('EventsModule tests', () => {
     });
 
     test('Remove an event', () => {
-        const event = new EventsModule(MockEventProxy, mockedMapModule, undefined);
+        const event = new UserEvents(MockEventProxy, mockedMapModule, undefined);
 
         event.off('click');
 
@@ -46,7 +46,7 @@ describe('EventsModule tests', () => {
         const mappedFeature = { properties: { mapped: true } };
         const mapping = vi.fn().mockReturnValue(mappedFeature);
 
-        const event = new EventsModule(MockEventProxy, mockedMapModule, undefined, mapping);
+        const event = new UserEvents(MockEventProxy, mockedMapModule, undefined, mapping);
         const callback = vi.fn();
 
         event.on('click', callback);

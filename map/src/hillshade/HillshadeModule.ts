@@ -1,4 +1,11 @@
-import { AbstractMapModule, EventsModule, HILLSHADE_SOURCE_ID, StyleSourceWithLayers } from '../shared';
+import {
+    AbstractMapModule,
+    CombinedEvents,
+    HILLSHADE_SOURCE_ID,
+    ModuleEvents,
+    StyleSourceWithLayers,
+    UserEvents,
+} from '../shared';
 import { notInTheStyle } from '../shared/errorMessages';
 import { ensureAddedToStyle, waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
@@ -146,6 +153,8 @@ export class HillshadeModule extends AbstractMapModule<HillshadeSourcesWithLayer
         if (this.tomtomMap.mapReady) {
             this.sourcesWithLayers.hillshade.setLayersVisible(visible);
         }
+
+        this.emitConfigChange();
     }
 
     /**
@@ -165,25 +174,28 @@ export class HillshadeModule extends AbstractMapModule<HillshadeSourcesWithLayer
     }
 
     /**
-     * Gets the events interface for handling user interactions with hillshade.
+     * Gets the unified events interface for this module, covering both user interactions
+     * and module lifecycle events.
      *
-     * @returns An EventsModule instance for registering event handlers.
-     *
-     * @remarks
-     * **Supported Events:**
-     * - `click`: User clicks on the hillshade layer
-     * - `contextmenu`: User right-clicks
-     * - `hover`: Mouse enters hillshade area
-     * - `long-hover`: Extended hover
-     *
-     * @example
+     * **User interaction events** (`click`, `contextmenu`, `hover`, `long-hover`):
      * ```typescript
      * hillshade.events.on('click', (feature, lngLat) => {
      *   console.log('Clicked terrain at:', lngLat);
      * });
      * ```
+     *
+     * **Module lifecycle events** (`config-change`):
+     * ```typescript
+     * const unsub = hillshade.events.on('config-change', (config) => {
+     *   console.log('Hillshade config changed:', config);
+     * });
+     * unsub();
+     * ```
      */
-    get events() {
-        return new EventsModule(this.tomtomMap._eventsProxy, this.sourcesWithLayers.hillshade, this.config?.events);
+    get events(): CombinedEvents<import('maplibre-gl').MapGeoJSONFeature, HillshadeModuleConfig, never> {
+        return new CombinedEvents(
+            new UserEvents(this.tomtomMap._eventsProxy, this.sourcesWithLayers.hillshade, this.config?.events),
+            new ModuleEvents(this.configChangeHandlers, []),
+        );
     }
 }

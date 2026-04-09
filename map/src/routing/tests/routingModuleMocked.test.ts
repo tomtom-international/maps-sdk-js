@@ -1,6 +1,6 @@
 import type { Map } from 'maplibre-gl';
 import { describe, expect, test, vi } from 'vitest';
-import { EventsModule, mapStyleLayerIDs } from '../../shared';
+import { mapStyleLayerIDs, UserEvents } from '../../shared';
 import type { TomTomMap } from '../../TomTomMap';
 import { routeDeselectedOutline } from '../layers/routeMainLineLayers';
 import { RoutingModule } from '../RoutingModule';
@@ -104,14 +104,14 @@ describe('Routing module tests', () => {
             },
         });
 
-        expect(routing.events.mainLines).toBeInstanceOf(EventsModule);
-        expect(routing.events.waypoints).toBeInstanceOf(EventsModule);
-        expect(routing.events.vehicleRestricted).toBeInstanceOf(EventsModule);
-        expect(routing.events.incidents).toBeInstanceOf(EventsModule);
-        expect(routing.events.ferries).toBeInstanceOf(EventsModule);
-        expect(routing.events.tollRoads).toBeInstanceOf(EventsModule);
-        expect(routing.events.tunnels).toBeInstanceOf(EventsModule);
-        expect(routing.events.instructionLines).toBeInstanceOf(EventsModule);
-        expect(routing.events.summaryBubbles).toBeInstanceOf(EventsModule);
+        expect(routing.events.user.mainLines).toBeInstanceOf(UserEvents);
+        expect(routing.events.user.waypoints).toBeInstanceOf(UserEvents);
+        expect(routing.events.user.vehicleRestricted).toBeInstanceOf(UserEvents);
+        expect(routing.events.user.incidents).toBeInstanceOf(UserEvents);
+        expect(routing.events.user.ferries).toBeInstanceOf(UserEvents);
+        expect(routing.events.user.tollRoads).toBeInstanceOf(UserEvents);
+        expect(routing.events.user.tunnels).toBeInstanceOf(UserEvents);
+        expect(routing.events.user.instructionLines).toBeInstanceOf(UserEvents);
+        expect(routing.events.user.summaryBubbles).toBeInstanceOf(UserEvents);
     });
 });

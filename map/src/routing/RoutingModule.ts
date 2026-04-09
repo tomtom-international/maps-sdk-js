@@ -3,10 +3,11 @@ import { isEqual } from 'lodash-es';
 import type { StyleImageMetadata } from 'maplibre-gl';
 import {
     AbstractMapModule,
-    EventsModule,
     GeoJSONSourceWithLayers,
+    ModuleEvents,
     mapStyleLayerIDs,
     SVGIconStyleOptions,
+    UserEvents,
 } from '../shared';
 import { suffixNumber } from '../shared/layers/utils';
 import { addLayers, addOrUpdateImage, updateLayersAndSource, waitUntilMapIsReady } from '../shared/mapUtils';
@@ -116,6 +117,9 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * @private
      */
     private instanceIndex!: number;
+    private readonly shownFeaturesHandlers: ((
+        features: { routes: Route | Routes } | { waypoints: PlanningWaypoint[] | Waypoints },
+    ) => void)[] = [];
 
     /**
      * Make sure the map is ready before create an instance of the module and any other interaction with the map
@@ -483,6 +487,9 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
         } else {
             this.sourcesWithLayers.summaryBubbles.clear();
         }
+        for (const handler of this.shownFeaturesHandlers) {
+            handler({ routes });
+        }
     }
 
     /**
@@ -577,6 +584,9 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
               toDisplayWaypoints(waypoints.features as PlanningWaypoint[], this.config?.waypoints, this.instanceIndex);
         await this.waitUntilModuleReady();
         this.sourcesWithLayers.waypoints.show(displayWaypoints);
+        for (const handler of this.shownFeaturesHandlers) {
+            handler({ waypoints });
+        }
     }
 
     /**
@@ -645,61 +655,95 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
     }
 
     /**
-     * Create the events on/off for this module
-     * @returns An instance of EventsModule
+     * Unified events interface for the routing module, split into two namespaces:
+     *
+     * **`events.user`** — user interaction events, keyed by source:
+     * ```typescript
+     * routing.events.user.mainLines.on('click', (route) => { ... });
+     * routing.events.user.waypoints.on('hover', (waypoint) => { ... });
+     * ```
+     *
+     * **`events.module`** — module lifecycle events:
+     * ```typescript
+     * const unsub = routing.events.module.on('config-change', (config) => { ... });
+     * const unsub = routing.events.module.on('shown-features', (features) => {
+     *   if ('routes' in features) { ... }
+     * });
+     * unsub();
+     * ```
      */
-    get events() {
+    get events(): {
+        user: {
+            mainLines: UserEvents<Route<DisplayRouteProps>>;
+            waypoints: UserEvents<Waypoint<WaypointDisplayProps>>;
+            chargingStops: UserEvents<RouteSection>;
+            summaryBubbles: UserEvents<DisplayRouteSummary>;
+            incidents: UserEvents<RouteSection<DisplayTrafficSectionProps>>;
+            vehicleRestricted: UserEvents<RouteSection>;
+            ferries: UserEvents<RouteSection>;
+            tollRoads: UserEvents<RouteSection>;
+            tunnels: UserEvents<RouteSection>;
+            instructionLines: UserEvents<DisplayInstruction>;
+        };
+        module: ModuleEvents<
+            RoutingModuleConfig,
+            { routes: Route | Routes } | { waypoints: PlanningWaypoint[] | Waypoints }
+        >;
+    } {
         return {
-            mainLines: new EventsModule<Route<DisplayRouteProps>>(
-                this.tomtomMap._eventsProxy,
-                this.sourcesWithLayers.mainLines,
-                this.config?.events,
-            ),
-            waypoints: new EventsModule<Waypoint<WaypointDisplayProps>>(
-                this.tomtomMap._eventsProxy,
-                this.sourcesWithLayers.waypoints,
-                this.config?.events,
-            ),
-            chargingStops: new EventsModule<RouteSection>(
-                this.tomtomMap._eventsProxy,
-                this.sourcesWithLayers.chargingStops,
-                this.config?.events,
-            ),
-            summaryBubbles: new EventsModule<DisplayRouteSummary>(
-                this.tomtomMap._eventsProxy,
-                this.sourcesWithLayers.summaryBubbles,
-                this.config?.events,
-            ),
-            incidents: new EventsModule<RouteSection<DisplayTrafficSectionProps>>(
-                this.tomtomMap._eventsProxy,
-                this.sourcesWithLayers.incidents,
-                this.config?.events,
-            ),
-            vehicleRestricted: new EventsModule<RouteSection>(
-                this.tomtomMap._eventsProxy,
-                this.sourcesWithLayers.vehicleRestricted,
-                this.config?.events,
-            ),
-            ferries: new EventsModule<RouteSection>(
-                this.tomtomMap._eventsProxy,
-                this.sourcesWithLayers.ferries,
-                this.config?.events,
-            ),
-            tollRoads: new EventsModule<RouteSection>(
-                this.tomtomMap._eventsProxy,
-                this.sourcesWithLayers.tollRoads,
-                this.config?.events,
-            ),
-            tunnels: new EventsModule<RouteSection>(
-                this.tomtomMap._eventsProxy,
-                this.sourcesWithLayers.tunnels,
-                this.config?.events,
-            ),
-            instructionLines: new EventsModule<DisplayInstruction>(
-                this.tomtomMap._eventsProxy,
-                this.sourcesWithLayers.instructionLines,
-                this.config?.events,
-            ),
+            user: {
+                mainLines: new UserEvents<Route<DisplayRouteProps>>(
+                    this.tomtomMap._eventsProxy,
+                    this.sourcesWithLayers.mainLines,
+                    this.config?.events,
+                ),
+                waypoints: new UserEvents<Waypoint<WaypointDisplayProps>>(
+                    this.tomtomMap._eventsProxy,
+                    this.sourcesWithLayers.waypoints,
+                    this.config?.events,
+                ),
+                chargingStops: new UserEvents<RouteSection>(
+                    this.tomtomMap._eventsProxy,
+                    this.sourcesWithLayers.chargingStops,
+                    this.config?.events,
+                ),
+                summaryBubbles: new UserEvents<DisplayRouteSummary>(
+                    this.tomtomMap._eventsProxy,
+                    this.sourcesWithLayers.summaryBubbles,
+                    this.config?.events,
+                ),
+                incidents: new UserEvents<RouteSection<DisplayTrafficSectionProps>>(
+                    this.tomtomMap._eventsProxy,
+                    this.sourcesWithLayers.incidents,
+                    this.config?.events,
+                ),
+                vehicleRestricted: new UserEvents<RouteSection>(
+                    this.tomtomMap._eventsProxy,
+                    this.sourcesWithLayers.vehicleRestricted,
+                    this.config?.events,
+                ),
+                ferries: new UserEvents<RouteSection>(
+                    this.tomtomMap._eventsProxy,
+                    this.sourcesWithLayers.ferries,
+                    this.config?.events,
+                ),
+                tollRoads: new UserEvents<RouteSection>(
+                    this.tomtomMap._eventsProxy,
+                    this.sourcesWithLayers.tollRoads,
+                    this.config?.events,
+                ),
+                tunnels: new UserEvents<RouteSection>(
+                    this.tomtomMap._eventsProxy,
+                    this.sourcesWithLayers.tunnels,
+                    this.config?.events,
+                ),
+                instructionLines: new UserEvents<DisplayInstruction>(
+                    this.tomtomMap._eventsProxy,
+                    this.sourcesWithLayers.instructionLines,
+                    this.config?.events,
+                ),
+            },
+            module: new ModuleEvents(this.configChangeHandlers, this.shownFeaturesHandlers),
         };
     }
 

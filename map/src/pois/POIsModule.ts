@@ -3,7 +3,14 @@ import { isNil } from 'lodash-es';
 import type { FilterSpecification } from 'maplibre-gl';
 import { toBaseMapPOICategory } from '../places';
 import type { ValuesFilter } from '../shared';
-import { AbstractMapModule, EventsModule, POI_SOURCE_ID, StyleSourceWithLayers } from '../shared';
+import {
+    AbstractMapModule,
+    CombinedEvents,
+    ModuleEvents,
+    POI_SOURCE_ID,
+    StyleSourceWithLayers,
+    UserEvents,
+} from '../shared';
 import { notInTheStyle } from '../shared/errorMessages';
 import { buildMappedValuesFilter, getMergedAllFilter } from '../shared/mapLibreFilterUtils';
 import { waitUntilMapIsReady } from '../shared/mapUtils';
@@ -243,6 +250,8 @@ export class POIsModule extends AbstractMapModule<PoIsSourcesAndLayers, POIsModu
         if (this.tomtomMap.mapReady) {
             this.sourcesWithLayers.poi.setLayersVisible(visible);
         }
+
+        this.emitConfigChange();
     }
 
     /**
@@ -334,6 +343,7 @@ export class POIsModule extends AbstractMapModule<PoIsSourcesAndLayers, POIsModu
         }
 
         this.categoriesFilter = categoriesFilter;
+        this.emitConfigChange();
     }
 
     /**
@@ -364,7 +374,7 @@ export class POIsModule extends AbstractMapModule<PoIsSourcesAndLayers, POIsModu
     /**
      * Gets the events interface for handling user interactions with POIs.
      *
-     * @returns An EventsModule instance for registering event handlers.
+     * @returns A `UserEvents` instance for registering event handlers.
      *
      * @remarks
      * **Supported Events:**
@@ -394,12 +404,15 @@ export class POIsModule extends AbstractMapModule<PoIsSourcesAndLayers, POIsModu
      * });
      * ```
      */
-    get events() {
-        return new EventsModule<POIsModuleFeature>(
-            this.tomtomMap._eventsProxy,
-            this.sourcesWithLayers.poi,
-            this.config?.events,
-            poisMapping,
+    get events(): CombinedEvents<POIsModuleFeature, POIsModuleConfig, never> {
+        return new CombinedEvents(
+            new UserEvents<POIsModuleFeature>(
+                this.tomtomMap._eventsProxy,
+                this.sourcesWithLayers.poi,
+                this.config?.events,
+                poisMapping,
+            ),
+            new ModuleEvents(this.configChangeHandlers, []),
         );
     }
 }

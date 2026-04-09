@@ -3,10 +3,12 @@ import type { FilterSpecification } from 'maplibre-gl';
 import type { LayerSpecWithSource } from '../shared';
 import {
     AbstractMapModule,
-    EventsModule,
+    CombinedEvents,
     filterLayersBySources,
+    ModuleEvents,
     StyleSourceWithLayers,
     TRAFFIC_INCIDENTS_SOURCE_ID,
+    UserEvents,
 } from '../shared';
 import { notInTheStyle } from '../shared/errorMessages';
 import { ensureAddedToStyle, waitUntilMapIsReady } from '../shared/mapUtils';
@@ -329,6 +331,7 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
                 },
                 isNil,
             );
+            this.emitConfigChange();
         }
     }
 
@@ -371,6 +374,8 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
                 (layerSpec) => layerSpec.type === 'symbol',
             );
         }
+
+        this.emitConfigChange();
     }
 
     /**
@@ -398,6 +403,7 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
             delete this.config?.icons?.visible;
             // we remove empty values from config to avoid confusion (in case icons part is just empty after deleting visible)
             this.config = { ...omitBy({ ...this.config }, isEmpty), visible };
+            this.emitConfigChange();
         }
         if (this.tomtomMap.mapReady) {
             this.sourcesWithLayers.trafficIncidents.setLayersVisible(visible);
@@ -483,16 +489,15 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
         };
     }
 
-    /**
-     * Create the events on/off for this module
-     * @returns An instance of EventsModule
-     */
-    get events() {
-        return new EventsModule<TrafficIncidentsModuleFeature>(
-            this.tomtomMap._eventsProxy,
-            this.sourcesWithLayers.trafficIncidents,
-            this.config?.events,
-            trafficIncidentMapping,
+    get events(): CombinedEvents<TrafficIncidentsModuleFeature, IncidentsConfig, never> {
+        return new CombinedEvents(
+            new UserEvents<TrafficIncidentsModuleFeature>(
+                this.tomtomMap._eventsProxy,
+                this.sourcesWithLayers.trafficIncidents,
+                this.config?.events,
+                trafficIncidentMapping,
+            ),
+            new ModuleEvents(this.configChangeHandlers, []),
         );
     }
 }
