@@ -1,0 +1,270 @@
+---
+title: Routes
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.46.11"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+## Working with Routes
+
+### findBestWaypointInsertionIndex
+
+Finds the optimal index to insert a new waypoint into an existing route. The algorithm projects each waypoint onto the route line to determine where the new waypoint fits most naturally along the route's progression.
+
+```javascript
+import { findBestWaypointInsertionIndex } from '@tomtom-org/maps-sdk/core';
+
+const route = await calculateRoute({
+  key: 'your-api-key',
+  locations: [[4.9, 52.3], [5.0, 52.4]]
+});
+
+const waypoints = [
+  [4.9, 52.3],  // origin
+  [5.0, 52.4]   // destination
+];
+
+const newWaypoint = [4.95, 52.35];
+
+const insertIndex = findBestWaypointInsertionIndex(
+  route.features[0],
+  waypoints,
+  newWaypoint
+);
+// Returns: 1 (insert between origin and destination)
+
+const updatedWaypoints = [
+  ...waypoints.slice(0, insertIndex),
+  newWaypoint,
+  ...waypoints.slice(insertIndex)
+];
+// Result: [[4.9, 52.3], [4.95, 52.35], [5.0, 52.4]]
+```
+
+**Parameters:**
+- `route` – The existing calculated route Feature with LineString geometry
+- `existingWaypoints` – Array of existing waypoints in order (origin, intermediates, destination)
+- `newWaypoint` – The new waypoint to insert
+
+**Returns:** `number` – The index where the new waypoint should be inserted. `0` means insert at the beginning; `existingWaypoints.length` means append at the end. Returns `0` if the route has no coordinates or there are fewer than 2 existing waypoints.
+
+### withInsertedWaypoint
+
+Convenience function that combines finding the best insertion index and inserting the waypoint in one step. Returns a new array without modifying the original.
+
+```javascript
+import { withInsertedWaypoint } from '@tomtom-org/maps-sdk/core';
+
+const route = await calculateRoute({
+  key: 'your-api-key',
+  locations: [[4.9, 52.3], [5.0, 52.4]]
+});
+
+const waypoints = [
+  [4.9, 52.3],  // origin
+  [5.0, 52.4]   // destination
+];
+
+const newWaypoint = [4.95, 52.35];
+
+const updatedWaypoints = withInsertedWaypoint(route.features[0], waypoints, newWaypoint);
+// Returns: [[4.9, 52.3], [4.95, 52.35], [5.0, 52.4]]
+
+// Recalculate route with the updated waypoints
+const updatedRoute = await calculateRoute({
+  key: 'your-api-key',
+  locations: updatedWaypoints
+});
+```
+
+**Parameters:**
+- `route` – The existing calculated route Feature with LineString geometry
+- `existingWaypoints` – Array of existing waypoints in order (origin, intermediates, destination)
+- `newWaypoint` – The new waypoint to insert
+
+**Returns:** `WaypointLike[]` – A new array with the waypoint inserted at the optimal position.
+
+### getSectionBBox
+
+Calculates a bounding box for a specific section of a route. The function samples three key points along the section — start, midpoint, and end — for an efficient yet accurate result.
+
+```javascript
+import { getSectionBBox } from '@tomtom-org/maps-sdk/core';
+
+const route = await calculateRoute({
+  key: 'your-api-key',
+  locations: [[4.9, 52.3], [5.1, 52.5]]
+});
+
+const routeFeature = route.features[0];
+const countrySections = routeFeature.properties.sections.countries;
+
+for (const section of countrySections) {
+  const bbox = getSectionBBox(routeFeature, section);
+
+  if (bbox) {
+    // Fit the map to this section
+    map.fitBounds(bbox, { padding: 40 });
+  }
+}
+```
+
+**Parameters:**
+- `route` – The route containing the section
+- `section` – The section to calculate the bbox for, with `startPointIndex` and `endPointIndex` referencing coordinates in the route geometry
+
+**Returns:** `[minLng, minLat, maxLng, maxLat] | undefined` – The bounding box, or `undefined` if the route has no coordinates or the section indices are invalid.
+
+### calculateProgressAtRoutePoint
+
+Interpolates the cumulative traveled distance and time at an arbitrary coordinate index along a route. Uses the route's `progress` array to linearly interpolate between bracketing entries.
+
+```javascript
+import { calculateProgressAtRoutePoint } from '@tomtom-org/maps-sdk/core';
+
+const route = await calculateRoute({
+  key: 'your-api-key',
+  locations: [[4.9, 52.3], [5.1, 52.5]]
+});
+
+const routeFeature = route.features[0];
+
+// Get the cumulative distance and time at coordinate index 10
+const progress = calculateProgressAtRoutePoint(routeFeature, 10);
+
+if (progress) {
+  console.log(`${progress.distanceInMeters} m from start`);
+  console.log(`${progress.travelTimeInSeconds} s from start`);
+}
+```
+
+**Parameters:**
+- `route` – The route whose `properties.progress` will be used for interpolation
+- `pathIndex` – Zero-based index into the route's coordinate array
+
+**Returns:** `RouteProgressAtPoint | undefined` – Interpolated `{ distanceInMeters, travelTimeInSeconds }`, or `undefined` if the index is out of range or progress data is missing.
+
+### getRouteProgressBetween
+
+Calculates distance and travel time for a segment between two arbitrary coordinate indices on a route.
+
+```javascript
+import { getRouteProgressBetween } from '@tomtom-org/maps-sdk/core';
+
+const routeFeature = route.features[0];
+
+const segmentProgress = getRouteProgressBetween(routeFeature, 5, 20);
+
+if (segmentProgress) {
+  console.log(`Segment starts ${segmentProgress.start.distanceInMeters} m from route origin`);
+  console.log(`Segment ends   ${segmentProgress.end.distanceInMeters} m from route origin`);
+  console.log(`Segment length ${segmentProgress.delta.distanceInMeters} m`);
+  console.log(`Segment takes  ${segmentProgress.delta.travelTimeInSeconds} s`);
+}
+```
+
+**Parameters:**
+- `route` – The route whose `properties.progress` will be used for interpolation
+- `startPathIndex` – Zero-based index of the segment start in the route's coordinate array
+- `endPathIndex` – Zero-based index of the segment end in the route's coordinate array
+
+**Returns:** `RouteSegmentProgress | undefined` – Object with `start`, `end`, and `delta` progress values, or `undefined` if either index cannot be interpolated.
+
+### getRouteProgressForSection
+
+Convenience wrapper around `getRouteProgressBetween` that accepts a section object directly, using its `startPointIndex` and `endPointIndex` as the segment bounds.
+
+```javascript
+import { getRouteProgressForSection } from '@tomtom-org/maps-sdk/core';
+
+const routeFeature = route.features[0];
+const trafficSections = routeFeature.properties.sections.traffic ?? [];
+
+for (const section of trafficSections) {
+  const progress = getRouteProgressForSection(routeFeature, section);
+
+  if (progress) {
+    console.log(`Traffic section starts at ${progress.start.distanceInMeters} m`);
+    console.log(`Traffic section takes    ${progress.delta.travelTimeInSeconds} s extra`);
+  }
+}
+```
+
+**Parameters:**
+- `route` – The route whose `properties.progress` will be used for interpolation
+- `section` – A section object with `startPointIndex` and `endPointIndex`
+
+**Returns:** `RouteSegmentProgress | undefined` – Same as `getRouteProgressBetween`.
+
+### getCoordinateAtRouteProgress
+
+Returns the geographic position and cumulative progress values at the point along a route identified by elapsed time, traveled distance, or an absolute clock time. Accepts a `RouteProgressQuery` discriminated union — provide exactly one of the three variants.
+
+```javascript
+import { getCoordinateAtRouteProgress } from '@tomtom-org/maps-sdk/core';
+
+const routeFeature = route.features[0];
+
+// By elapsed travel time
+const byTime = getCoordinateAtRouteProgress(routeFeature, {
+  traveledTimeInSeconds: 600
+});
+
+// By traveled distance
+const byDistance = getCoordinateAtRouteProgress(routeFeature, {
+  traveledDistanceInMeters: 5000
+});
+
+// By absolute clock time — elapsed seconds are derived from the route departure time
+const byClockTime = getCoordinateAtRouteProgress(routeFeature, {
+  clockTime: new Date('2025-06-01T09:10:00Z')
+});
+
+if (byTime) {
+  const [lng, lat] = byTime.position;
+  console.log(`Position after 10 min: [${lng}, ${lat}]`);
+  console.log(`Distance covered: ${byTime.distanceInMeters} m`);
+}
+```
+
+Values beyond the route's total range are clamped to the start or end point.
+
+**Parameters:**
+- `route` – The route to query. Must contain `properties.progress` data
+- `query` – A `RouteProgressQuery` — exactly one of:
+  - `{ traveledTimeInSeconds: number }` – elapsed seconds from route start
+  - `{ traveledDistanceInMeters: number }` – meters traveled from route start
+  - `{ clockTime: Date }` – absolute point in time; elapsed seconds are derived using `route.properties.summary.departureTime`
+
+**Returns:** `RouteCoordinateAtProgress | undefined` – Object with `position` (`[longitude, latitude]`), `travelTimeInSeconds`, and `distanceInMeters`, or `undefined` if the route has no progress data, the clock time precedes the departure time, or the progress data is incomplete.
+
+### getProgressAtNearestRoutePoint
+
+Snaps an arbitrary geographic point to the nearest position on a route and returns the interpolated coordinate and cumulative progress values at that snapped position. Useful for showing progress info when the user hovers or clicks near a route line.
+
+```javascript
+import { getProgressAtNearestRoutePoint } from '@tomtom-org/maps-sdk/core';
+
+const routeFeature = routeResult.features[0];
+
+// Pass any HasLngLat value — [lng, lat] tuple, { lng, lat } object, a GeoJSON Point, etc.
+const result = getProgressAtNearestRoutePoint(routeFeature, { lng: 4.92, lat: 52.32 });
+
+if (result) {
+  const [lng, lat] = result.position;
+  console.log(`Snapped to: [${lng}, ${lat}]`);
+  console.log(`${result.distanceInMeters} m from route start`);
+  console.log(`${result.travelTimeInSeconds} s travel time from route start`);
+}
+```
+
+**Parameters:**
+- `route` – The route to query. Must contain `properties.progress` data
+- `point` – The reference location to snap to the route. Accepts any `HasLngLat` value: a `[longitude, latitude]` tuple, a `{ lng, lat }` object, a GeoJSON `Point` feature, etc.
+
+**Returns:** `RouteCoordinateAtProgress | undefined` – Object with `position` (`[longitude, latitude]`), `travelTimeInSeconds`, and `distanceInMeters` at the nearest point on the route, or `undefined` if the route has no progress data, fewer than 2 coordinates, or the progress data is incomplete for the snapped position.
