@@ -1,0 +1,521 @@
+---
+title: AI Map Agent Plugin
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.46.10"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The AI Map Agent plugin gives a language model conversational control over a TomTom map and its services.
+You bring the LLM and optionally a chat UI — the plugin handles the tool loop, agent state, and map coordination.
+
+<SDKGuideLiveCodingExample exampleDirectory="map-chat-agent-react" />
+
+## What it is
+
+`@tomtom-org/maps-sdk-plugin-ai-agent` is a **headless** plugin built on [Vercel AI SDK](https://ai-sdk.dev/).
+It wires a `TomTomMap` instance and TomTom services to a curated set of LLM-callable tools, and manages the
+multi-step tool loop via `ToolLoopAgent`.
+
+**You bring:**
+- An LLM model instance — any [Vercel AI SDK provider](https://ai-sdk.dev/providers/ai-sdk-providers) (OpenAI, Anthropic, Azure, Google, etc.)
+- A chat UI, or programmatic calls to the agent
+
+**The plugin provides:**
+- 30+ built-in tools covering map control, search, routing, traffic, and utilities
+- An intent classifier that selects the right tool subset per message
+- Plugin state that persists places, routes, and waypoints across tool calls
+- A composable API to add, remove, or replace any tool
+
+## How it works
+
+```d2
+direction: right
+App: Your Application {
+  style: {
+    stroke: "#f87171"
+    stroke-width: 3
+    border-radius: 8
+    font-size: 24
+  }
+
+  Chat: Chat UI (BYO) {
+    style: {
+      fill: "#fef2f2"
+      stroke: "#f87171"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 16
+    }
+  }
+
+  Model: LLM Provider (BYO) {
+    style: {
+      fill: "#fef2f2"
+      stroke: "#f87171"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 16
+    }
+  }
+}
+
+  Agent: AI Map Agent Plugin {
+    direction: down
+    style: {
+      stroke: "#333"
+      stroke-width: 3
+      fill: "#f5f5f5"
+      border-radius: 8
+      font-size: 24
+      font-color: "#333"
+    }
+
+    Classifier: Intent Classifier {
+      style: {
+        fill: "#e8f5e9"
+        stroke: "#1b5e20"
+        stroke-width: 2
+        font-color: "#333"
+        border-radius: 6
+        font-size: 16
+      }
+      width: 150
+      height: 50
+    }
+
+    Tools: Tools {
+      style: {
+        fill: "#fffde7"
+        stroke: "#ff6f00"
+        stroke-width: 2
+        font-color: "#333"
+        border-radius: 6
+        font-size: 16
+      }
+      width: 150
+      height: 50
+    }
+
+    State: State {
+      style: {
+        fill: "#f3e5f5"
+        stroke: "#4a148c"
+        stroke-width: 2
+        font-color: "#333"
+        border-radius: 6
+        font-size: 16
+      }
+      width: 150
+      height: 50
+    }
+
+    Classifier -> Tools: {
+      style: {
+        stroke-dash: 3
+        stroke-width: 2
+        animated: true
+      }
+    }
+
+    Tools -> State: {
+      style: {
+        stroke-dash: 3
+        stroke-width: 2
+        animated: true
+      }
+    }
+  }
+
+  SDK: Maps SDK for JavaScript {
+    style: {
+      stroke: "#333"
+      stroke-width: 3
+      fill: "#e8e8e8"
+      border-radius: 8
+      font-size: 16
+      font-color: "#333"
+    }
+  }
+
+  Agent.Tools -> SDK: {
+    style: {
+      stroke-dash: 3
+      stroke-width: 2
+      animated: true
+    }
+  }
+
+App -> Agent: {
+  style: {
+    stroke: "#f87171"
+    stroke-width: 2
+  }
+}
+```
+
+Every user message goes through two phases before a response is sent:
+
+### 1. Intent classification
+
+Before the model sees the full tool list, a lightweight pre-pass selects only the tools relevant
+to this turn. Fewer tools in the prompt means fewer wrong choices and lower token usage.
+
+The classifier is built from each tool's `classificationPrompt` — a one-liner that describes when
+to activate that tool. When you add a custom tool, it participates in classification automatically
+as long as it has a `classificationPrompt`.
+
+The default classifier reuses your main model. For cost-sensitive deployments, swap it for a
+smaller model:
+
+```typescript
+import { createMapAgent, createDefaultClassifier } from '@tomtom-org/maps-sdk-plugin-ai-agent';
+import { openai } from '@ai-sdk/openai';
+
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    classifier: createDefaultClassifier({ model: openai('gpt-4o-mini') }),
+});
+```
+
+Or disable classification entirely (all tools always visible):
+
+```typescript
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    classifier: false,
+});
+```
+
+### 2. Tool loop
+
+The model calls tools — geocode, search, route, show on map — in sequence or in parallel until it can
+form a complete answer. Tools never return raw GeoJSON to the model; they return compact summaries
+(counts, names, labels, status). Full geospatial data is kept in plugin state for follow-up use.
+
+State persists across turns, so the user can say *"add a stop after the first one"* or *"what were
+those restaurants again?"* without repeating context. The agent retrieves prior results from its
+internal stores via dedicated recall tools.
+
+## The tool registry
+
+The plugin ships a `DEFAULT_TOOLS` registry — a flat record of named `ToolEntry` objects. Each entry
+defines what the tool does and how the agent should use it:
+
+```typescript
+{
+    description: string;          // Full tool description for the model
+    inputSchema: ZodType;         // Validated input parameters
+    outputSchema?: ZodType;       // Structured output (improves reliability)
+    execute: (input, state) => Promise<any>;
+
+    // Classifier metadata
+    classificationPrompt?: string; // One-liner: when to activate this tool
+    tags?: string[];               // Category labels (e.g. 'route', 'traffic')
+    examples?: string[];           // Usage examples shown in the help tool
+    examplePrompts?: string[];     // Natural-language prompts shown in the help tool
+    relatedTools?: string[];       // Tools often used together
+    dependsOn?: string[];          // Tools that must run first
+}
+```
+
+Tools are grouped by what they do, not which API they wrap:
+
+| Category | Representative tools |
+|---|---|
+| **Location** | `locatePlace`, `reverseGeocode`, `getCurrentLocation`, `getViewport` |
+| **Routing** | `setRouteLocations`, `setRouteParameters`, `addStopToRoute`, `removeStopFromRoute` |
+| **Places** | `discoverPlaces`, `getPOICategoryCodes`, `searchAlongRoute` |
+| **Traffic** | `getTrafficIncidents`, `getTrafficAreaAnalytics`, `queryTrafficAnalytics` |
+| **Map display** | `showPlaces`, `showRoute`, `showWaypoints`, `showTrafficAreaAnalytics`, `clearMap` |
+| **Map control** | `flyTo`, `zoomInOrOut`, `setMapStandardStyle`, `setLanguage`, `toggleTraffic*`, `togglePOIs` |
+| **MapLibre direct** | `executeMaplibreCode`, `setLayoutProperties`, `setPaintProperties`, `getMapStyleLayers` |
+| **State / recall** | `recallPlaces`, `recallRoutes`, `recallRanges`, `getCurrentWaypoints` |
+| **Utilities** | `formatDistance`, `formatDuration`, `calculateBBox`, `getRouteProgress`, `help` |
+
+### The `help` tool
+
+The built-in `help` tool is available to the model at runtime. When a user asks *"what can you do?"*
+or *"show me routing examples"*, the model calls `help` to surface tool descriptions, usage examples,
+and example prompts filtered by tag. Users discover capabilities through natural conversation — no
+documentation browsing required.
+
+### Tools that read state vs. fetch data
+
+A key design distinction: some tools fetch fresh data from TomTom services; others read from plugin
+state. The recall tools (`recallPlaces`, `recallRoutes`, `recallRanges`) exist because tool results
+are not retained in conversation history. If a user asks *"what were those places?"* an hour into a
+session, the model calls a recall tool — it does not guess or hallucinate prior results.
+
+## Plugin state
+
+The plugin maintains structured state across the full conversation, organized by feature area:
+
+| State slice | What it holds |
+|---|---|
+| `places` | Place search results, geocoded locations, PlacesModule access |
+| `routing` | Current routes, waypoints, route parameters, RoutingModule access |
+| `baseMap` | Viewport, style, language, MapLibre map instance |
+| `traffic` | Traffic flow/incident visibility, area analytics results |
+| `mapPOIs` | POI category visibility and filters |
+| `ranges` | Reachable range (isochrone) results and bounding boxes |
+
+State is shared across all tools. A place resolved by `locatePlace` is immediately available to
+`addStopToRoute` without the model having to pass it along — tools read directly from shared stores.
+This prevents the hallucination-prone "read then pass" pattern.
+
+You can inspect live state at any time from your application:
+
+```typescript
+agent.state.routing.currentRoutes;   // most recent route results
+agent.state.places.currentPlaces;    // most recent place results
+agent.state.baseMap.mapLibreMap;     // raw MapLibre Map instance
+```
+
+## Installation
+
+<Blockquote>
+    All plugins use `@tomtom-org/maps-sdk` as a peer dependency — ensure the SDK is installed first.
+    See the [Project Setup guide](../../introduction/project-setup.mdx) if needed.
+</Blockquote>
+
+```bash
+npm install @tomtom-org/maps-sdk-plugin-ai-agent
+```
+
+Add a Vercel AI SDK provider for your chosen model:
+
+```bash
+npm install ai @ai-sdk/openai   # or @ai-sdk/anthropic, @ai-sdk/azure, etc.
+```
+
+## Quick start
+
+```typescript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { createMapAgent } from '@tomtom-org/maps-sdk-plugin-ai-agent';
+import { openai } from '@ai-sdk/openai';
+import { DirectChatTransport } from 'ai';
+import { useChat } from 'ai/react';
+
+TomTomConfig.instance.put({ apiKey: 'YOUR_API_KEY' });
+
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+
+const agent = createMapAgent(map, { model: openai('gpt-4o') });
+
+// Wire to any Vercel AI SDK chat interface
+const { messages, sendMessage } = useChat({
+    transport: new DirectChatTransport({ agent }),
+});
+```
+
+Once wired, users can interact naturally:
+
+- *"Route from Berlin to Munich avoiding tolls"*
+- *"Show coffee shops near the map center"*
+- *"What traffic incidents are on this route?"*
+- *"Switch to dark mode"*
+- *"How far is the second stop?"*
+
+## Customizing tools
+
+Tools are resolved by merging the `DEFAULT_TOOLS` registry with your `tools` option.
+You can add, replace, or remove individual entries — the rest remain untouched.
+
+### Remove a default tool
+
+```typescript
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    tools: { setLanguage: false },
+});
+```
+
+### Replace a default tool
+
+Pass a `ToolEntry` with the same key to swap the built-in implementation with yours:
+
+```typescript
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    tools: {
+        getCurrentLocation: {
+            description: 'Returns the user position from the company fleet system.',
+            inputSchema: z.object({}),
+            execute: async (_input, state) => {
+                const position = await fleetApi.getDriverPosition();
+                state.baseMap.userPosition = position;
+                return { position };
+            },
+            classificationPrompt: 'Get the driver\'s current GPS position from the fleet system.',
+            tags: ['location'],
+        },
+    },
+});
+```
+
+### Add a custom tool (BYOD blending)
+
+Bring your own data sources alongside the built-in TomTom tools. Custom tools receive the same
+`state` object, so they can display results using SDK modules without any extra wiring:
+
+```typescript
+import { z } from 'zod';
+import type { ToolEntry, ToolState } from '@tomtom-org/maps-sdk-plugin-ai-agent';
+
+const getFleetVehicle: ToolEntry = {
+    description: 'Get the current map position of a fleet vehicle by ID and show it as a place marker.',
+    classificationPrompt: 'Locate or display a fleet vehicle on the map by its ID.',
+    inputSchema: z.object({ vehicleId: z.string().describe('The fleet vehicle identifier') }),
+    execute: async ({ vehicleId }, state) => {
+        const position = await fleetApi.getPosition(vehicleId);
+        const placesModule = await state.places.getPlacesModule();
+        placesModule.show({ type: 'FeatureCollection', features: [toFeature(position)] });
+        return { vehicleId, position, status: 'shown' };
+    },
+    tags: ['location'],
+    examplePrompts: ['Where is vehicle TT-001?', 'Show fleet vehicle on the map'],
+};
+
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    tools: { getFleetVehicle },
+});
+```
+
+The custom tool participates in intent classification automatically. If the user says
+*"Where is vehicle TT-001?"*, the classifier activates `getFleetVehicle` alongside any
+other tools needed to answer the question.
+
+### Start from a blank slate
+
+Set `includeDefaultTools: false` to begin with no built-in tools. Useful when building a
+narrowly scoped agent that should not stray into general map control:
+
+```typescript
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    includeDefaultTools: false,
+    tools: {
+        getFleetVehicle,
+        locatePlace,    // selectively re-add built-in tools you do want
+    },
+});
+```
+
+## Extending the system prompt
+
+### Append to the built-in prompt
+
+```typescript
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    systemPromptSuffix: 'Always respond in Spanish. Never show more than 5 places at once.',
+});
+```
+
+### Full replacement
+
+Import `BASE_SYSTEM_PROMPT` as a baseline to extend rather than starting from scratch.
+The base prompt contains coordinate order rules, tool-usage guidance, and response formatting
+instructions that are important for reliability:
+
+```typescript
+import { createMapAgent, BASE_SYSTEM_PROMPT } from '@tomtom-org/maps-sdk-plugin-ai-agent';
+
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    systemPrompt: BASE_SYSTEM_PROMPT + `
+
+ADDITIONAL INSTRUCTIONS:
+- This is a logistics application. Prioritize route efficiency over scenery.
+- Always show estimated arrival times in responses.
+- When a vehicle ID is mentioned, call getFleetVehicle before anything else.
+`,
+});
+```
+
+### Per-tool classification prompts
+
+If your custom tool is being activated too broadly or not activated when it should be,
+tune its `classificationPrompt`. This is the one-liner the classifier uses to decide
+whether a user message needs this tool:
+
+```typescript
+// Too broad — activates for any location question
+classificationPrompt: 'Get fleet vehicle data.'
+
+// Precise — activates only for explicit vehicle ID references
+classificationPrompt: 'Locate a fleet vehicle by its ID (e.g. "TT-001"); not for general location queries.'
+```
+
+## Custom state slices
+
+If your custom tools need to share data across calls, extend `ToolState` with your own slice.
+Implement `reset()` to participate in `agent.destroy()` cleanup:
+
+```typescript
+import type { ToolState, StateSlice } from '@tomtom-org/maps-sdk-plugin-ai-agent';
+
+class FleetState implements StateSlice {
+    vehicles: Map<string, VehiclePosition> = new Map();
+    reset() { this.vehicles.clear(); }
+}
+
+interface MyState extends ToolState {
+    fleet: FleetState;
+}
+
+const agent = createMapAgent<MyState>(map, {
+    model: openai('gpt-4o'),
+    state: { fleet: new FleetState() },
+    tools: { getFleetVehicle: myFleetTool },
+});
+
+// Access live state from your application
+agent.state.fleet.vehicles;
+agent.state.routing.currentRoutes;
+```
+
+## Observing classification
+
+Use `onClassify` to inspect which tools were selected for each turn — useful for debugging
+classification behaviour or building a dev panel:
+
+```typescript
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    onClassify: (result) => {
+        if (result) {
+            console.log('Selected tools:', result.activeToolNames);
+            console.log('Classification took:', result.timeMs, 'ms');
+        }
+    },
+});
+```
+
+## Cleanup
+
+```typescript
+agent.destroy();  // resets all built-in and custom state slices that implement reset()
+```
+
+## API Reference
+
+[Map Agent Plugin API Reference](https://docs.tomtom.com/maps-sdk-js/api-reference/modules/plugins_map_agent.html)
+
+## Related guides
+
+- [How the SDK works](../how-the-sdk-works.mdx) — the Map and Services bundles the agent builds on
+- [Places module](../map/places.mdx) — module used internally for displaying search results
+- [Routing module](../map/routes.mdx) — module used internally for rendering routes
+- [Traffic](../map/traffic.mdx) — traffic tools used by the agent
+- [AI in the SDK](../../introduction/ai.mdx) — overview of AI capabilities in and around the SDK
