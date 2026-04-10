@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.46.10](https://github.com/tomtom-international/maps-sdk-js/compare/v0.46.9...v0.46.10) (2026-04-10)
+
+
+### Features
+
+* add traffic area analytics tools to map agent ([f9a6fd0](https://github.com/tomtom-international/maps-sdk-js/commit/f9a6fd0fe7fcaa68ab000eb073ee08367324214d))
+* enable ai-agent plugin for release ([00a69c8](https://github.com/tomtom-international/maps-sdk-js/commit/00a69c84f4393b1a3736344d2784e761f54335c3))
+* enhance traffic area analytics with improved filter handling and validation ([b8c9780](https://github.com/tomtom-international/maps-sdk-js/commit/b8c97801b5fec43e32d302369dfb8ba68573afd1))
+* expand TrafficAreaAnalyticsModule API with tiles mode, filtering, custom styling, and tooltip ([85fac97](https://github.com/tomtom-international/maps-sdk-js/commit/85fac97a3bbd734b15db0a3bec3380e04e8dd563))
+* improve mobile view for chat ([e8ea74b](https://github.com/tomtom-international/maps-sdk-js/commit/e8ea74b6764f0b014ccb5664c2c69283697d7519))
+* new module events to react to config changes and shown features ([28e295e](https://github.com/tomtom-international/maps-sdk-js/commit/28e295ea1a36cf85361469a1210434684e6d7689))
+* parameterize tool registry with unified ToolMetadata and MapAgentTool types ([5d599a8](https://github.com/tomtom-international/maps-sdk-js/commit/5d599a83aa819b44ea7f586af56fff9ce67b1a96))
+* remove canvas area analytics chart from main sdk, ported to example using html elements instead of canvas ([2fd5513](https://github.com/tomtom-international/maps-sdk-js/commit/2fd55130856bb5a505a1bd04618b23c94deb0df8))
+* traffic area analytics configuration improvements ([80cef2f](https://github.com/tomtom-international/maps-sdk-js/commit/80cef2f7c69896c4299bf528d85e08402d028f23))
+* traffic area analytics configuration improvements ([50f6d44](https://github.com/tomtom-international/maps-sdk-js/commit/50f6d4427b51a461d88bebb99e83cedd6aa664dd))
+
+
+### Bug Fixes
+
+* ai plugin docs diagrams ([bbbf011](https://github.com/tomtom-international/maps-sdk-js/commit/bbbf011fd39ec0b82e455891fe6b3f601f8a0a72))
+* disambiguate traffic tools, add analytics to clearMap, fix restoration race ([ca528b7](https://github.com/tomtom-international/maps-sdk-js/commit/ca528b73671c3a0cdffb8aa32c982f4a2fe53b9a))
+* mobile speech input continuous ([d1da271](https://github.com/tomtom-international/maps-sdk-js/commit/d1da2710c558bd0187a7088d1c26816dca6d79da))
+* serialize dates as ISO strings for safe LLM parsing. Example transport cleanup ([dab7d79](https://github.com/tomtom-international/maps-sdk-js/commit/dab7d7912892f76e256d677c9ed416c1f1bc447c))
+
 ## [0.46.9](https://github.com/tomtom-international/maps-sdk-js/compare/v0.46.8...v0.46.9) (2026-03-30)
 
 
