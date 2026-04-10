@@ -4,7 +4,7 @@
   "type": "module",
   "description": "JavaScript library for examples of TomTom maps and location services",
   "module": "dist/examples.js",
-  "types": "dist/examples.d.ts",
+  "types": "dist/src/index.d.ts",
   "scripts": {
     "build": "pnpm --workspace-concurrency=8 -F './*' build && vite build",
     "test": "vitest run",
