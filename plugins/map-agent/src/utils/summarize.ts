@@ -34,14 +34,18 @@ export type PlacesSummary = {
 type RouteSummary = Route['properties']['summary'];
 type LegSummary = Route['properties']['sections']['leg'][number]['summary'];
 
+// Maps Date fields to string for LLM-safe serialization (distributive so Date | undefined → string | undefined).
+type StringDateValue<T> = T extends Date ? string : T;
+type StringDates<T> = { [K in keyof T]: StringDateValue<T[K]> };
+
 /**
  * Summarized route — just the route summary and optional per-leg summaries.
  */
 export type SummarizedRoute = {
     index: number;
-    summary: RouteSummary;
+    summary: StringDates<RouteSummary>;
     /** Per-leg summaries; only present when the route has more than one leg. */
-    legSummaries?: LegSummary[];
+    legSummaries?: StringDates<LegSummary>[];
 };
 
 /**
@@ -83,10 +87,17 @@ export function summarizeRoute(route: Route): SummarizedRoute {
     const { summary, sections, index } = route.properties;
     const legs = sections.leg;
 
+    const stringifyDates = <T extends { arrivalTime: Date; departureTime: Date }>(summary: T): StringDates<T> =>
+        ({
+            ...summary,
+            arrivalTime: summary.arrivalTime.toISOString(),
+            departureTime: summary.departureTime.toISOString(),
+        }) as StringDates<T>;
+
     return {
         index,
-        summary,
-        ...(legs.length > 1 && { legSummaries: legs.map((leg) => leg.summary) }),
+        summary: stringifyDates(summary),
+        ...(legs.length > 1 && { legSummaries: legs.map((leg) => stringifyDates(leg.summary)) }),
     };
 }
 
