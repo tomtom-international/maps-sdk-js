@@ -45,7 +45,7 @@
   ],
   "exports": {
     ".": {
-      "types": "./dist/examples.d.ts",
+      "types": "./dist/src/index.d.ts",
       "import": "./dist/examples.js"
     }
   }
