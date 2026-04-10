@@ -4,75 +4,7 @@ A headless conversational agent that gives Large Language Models tool-based cont
 
 No UI is included — bring your own chat interface. No LLM provider is bundled — supply any AI SDK-compatible model.
 
-## Architecture
-
-```mermaid
-graph TD
-    subgraph Consumer["Consumer Application"]
-        UI["Chat UI (BYO)"]
-        Provider["LLM Provider<br/><small>e.g. @ai-sdk/openai, @ai-sdk/anthropic</small>"]
-    end
-
-    subgraph Plugin["@tomtom-org/maps-sdk-plugin-ai-agent"]
-        Agent["createMapAgent()"]
-
-        subgraph Core["Agent Core"]
-            TLA["ToolLoopAgent<br/><small>AI SDK v6</small>"]
-            SP["System Prompt"]
-            Classifier["Intent Classifier<br/><small>optional, per-turn tool selection</small>"]
-        end
-
-        subgraph Tools["Tool Set (53 tools)"]
-            direction LR
-            ServiceTools["Service Tools<br/><small>locatePlace, discoverPlaces,<br/>setRouteLocations, reverseGeocode,<br/>findReachableArea, ...</small>"]
-            MapTools["TomTom Map Tools<br/><small>showPlaces, showRoute,<br/>toggleTraffic, setMapStyle,<br/>clearMap, ...</small>"]
-            MLTools["MapLibre Tools<br/><small>flyTo, getViewport,<br/>setPaintProperties,<br/>executeMaplibreCode, ...</small>"]
-            StateTools["State Tools<br/><small>recallPlaces, recallRoutes,<br/>getCurrentWaypoints, ...</small>"]
-            UtilTools["Utility Tools<br/><small>formatDistance, calculateBBox,<br/>getCurrentLocation, help, ...</small>"]
-        end
-
-        subgraph State["ToolState"]
-            direction LR
-            PS["PlacesState"]
-            RS["RoutingState"]
-            BMS["BaseMapState"]
-            TS["TrafficState"]
-            RanS["RangeState"]
-            POIS["MapPOIsState"]
-        end
-    end
-
-    subgraph SDK["@tomtom-org/maps-sdk"]
-        TTMap["TomTomMap"]
-        Modules["Map Modules<br/><small>PlacesModule, RoutingModule,<br/>TrafficFlowModule, ...</small>"]
-        Services["Services<br/><small>search, geocode, routing,<br/>traffic, reachableRange</small>"]
-    end
-
-    ML["MapLibre GL JS"]
-
-    UI -->|messages| TLA
-    Provider -->|model| Agent
-    Agent --> TLA
-    Agent --> SP
-    Agent --> Classifier
-    TLA --> Tools
-    Tools --> State
-    ServiceTools --> Services
-    MapTools --> Modules
-    MLTools --> ML
-    StateTools --> State
-    TTMap --> ML
-    Modules --> TTMap
-```
-
-### Data flow
-
-1. User message enters the `ToolLoopAgent` via AI SDK's `DirectChatTransport` (or `generate` directly).
-2. The optional **intent classifier** selects which tools are relevant for this turn (reduces noise for the LLM).
-3. The LLM picks one or more tools and calls them with Zod-validated parameters.
-4. **Service tools** call TomTom APIs, store full GeoJSON in `ToolState`, and return token-efficient summaries to the LLM.
-5. **Map tools** read from state and render on the `TomTomMap` via SDK modules.
-6. The `ToolLoopAgent` loops until the LLM produces a text response or `maxSteps` is reached.
+> **Full documentation** — guides, architecture diagrams, and tutorials are available at [docs.tomtom.com](https://docs.tomtom.com/maps-sdk-js/guides/plugins/ai-agent).
 
 ## Installation
 
@@ -347,19 +279,7 @@ type ToolEntry<S extends ToolState = ToolState> = {
 
 ## State management
 
-`ToolState` is organized by feature area. Each slice manages lazy-initialized map modules and an append-only history of results produced during the session.
-
-```mermaid
-graph LR
-    subgraph ToolState
-        places["PlacesState<br/><small>PlacesModule, place history</small>"]
-        routing["RoutingState<br/><small>RoutingModule, route history,<br/>planning slots, route params</small>"]
-        baseMap["BaseMapState<br/><small>TomTomMap, MapLibre,<br/>BaseMapModule, HillshadeModule</small>"]
-        traffic["TrafficState<br/><small>TrafficFlowModule,<br/>TrafficIncidentsModule,<br/>TrafficAreaAnalyticsModule</small>"]
-        ranges["RangeState<br/><small>GeometriesModule,<br/>range history, polygons</small>"]
-        mapPOIs["MapPOIsState<br/><small>POIsModule</small>"]
-    end
-```
+`ToolState` is organized by feature area. Each slice manages lazy-initialized map modules and an append-only history of results produced during the session. Built-in slices: `PlacesState`, `RoutingState`, `BaseMapState`, `TrafficState`, `RangeState`, `MapPOIsState`.
 
 Create state manually for advanced scenarios:
 
