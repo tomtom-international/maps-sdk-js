@@ -61,8 +61,8 @@ catalogs:
       specifier: ^4.18.1
       version: 4.18.1
     maplibre-gl:
-      specifier: ^5.22.0
-      version: 5.22.0
+      specifier: ^5.23.0
+      version: 5.23.0
     marked:
       specifier: ^17.0.6
       version: 17.0.6
@@ -128,7 +128,7 @@ importers:
         version: 4.18.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.22.0
+        version: 5.23.0
       zod:
         specifier: 'catalog:'
         version: 4.3.6
@@ -933,7 +933,7 @@ importers:
         version: 25.5.2
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.22.0
+        version: 5.23.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.3
@@ -1009,7 +1009,7 @@ importers:
         version: 19.2.3(@types/react@19.2.14)
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.22.0
+        version: 5.23.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.3
@@ -1385,7 +1385,7 @@ importers:
         version: link:../..
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.22.0
+        version: 5.23.0
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -1413,7 +1413,7 @@ importers:
         version: link:../..
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.22.0
+        version: 5.23.0
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -2343,7 +2343,7 @@ importers:
         version: 4.18.1
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.22.0
+        version: 5.23.0
     devDependencies:
       '@microsoft/api-extractor':
         specifier: 7.56.3
@@ -2419,7 +2419,7 @@ importers:
         version: link:../map
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.22.0
+        version: 5.23.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.3
@@ -2500,7 +2500,7 @@ importers:
         version: 6.0.154(zod@4.3.6)
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.22.0
+        version: 5.23.0
       zod:
         specifier: 'catalog:'
         version: 4.3.6
@@ -2659,7 +2659,7 @@ importers:
         version: link:../../map
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.22.0
+        version: 5.23.0
       typescript:
         specifier: ^6.0.2
         version: 6.0.2
@@ -2719,7 +2719,7 @@ importers:
         version: link:../../map
       maplibre-gl:
         specifier: 'catalog:'
-        version: 5.22.0
+        version: 5.23.0
       typescript:
         specifier: ^6.0.2
         version: 6.0.2
@@ -3574,8 +3574,8 @@ packages:
   '@maplibre/geojson-vt@5.0.4':
     resolution: {integrity: sha512-KGg9sma45S+stfH9vPCJk1J0lSDLWZgCT9Y8u8qWZJyjFlP8MNP1WGTxIMYJZjDvVT3PDn05kN1C95Sut1HpgQ==}
 
-  '@maplibre/geojson-vt@6.0.4':
-    resolution: {integrity: sha512-HYv3POhMRCdhP3UPPATM/hfcy6/WuVIf5FKboH8u/ZuFMTnAIcSVlq5nfOqroLokd925w2QtE7YwquFOIacwVQ==}
+  '@maplibre/geojson-vt@6.1.0':
+    resolution: {integrity: sha512-2eIY4gZxeKIVOZVNkAMb+5NgXhgsMQpOveTQAvnp53LYqHGJZDidk7Ew0Tged9PThidpbS+NFTh0g4zivhPDzQ==}
 
   '@maplibre/maplibre-gl-style-spec@24.8.1':
     resolution: {integrity: sha512-zxa92qF96ZNojLxeAjnaRpjVCy+swoUNJvDhtpC90k7u5F0TMr4GmvNqMKvYrMoPB8d7gRSXbMG1hBbmgESIsw==}
@@ -6317,8 +6317,8 @@ packages:
   make-error@1.3.6:
     resolution: {integrity: sha512-s8UhlNe7vPKomQhC1qFelMokr/Sc3AgNbso3n74mVPA5LTZwkB9NlXf4XPamLxJE8h0gh73rM94xvwRT2CVInw==}
 
-  maplibre-gl@5.22.0:
-    resolution: {integrity: sha512-nc8YA+YSEioMZg5W0cb6Cf3wQ8aJge66dsttyBgpOArOnlmFJO1Kc5G32kYVPeUYhLpBja83T99uanmJvYAIyQ==}
+  maplibre-gl@5.23.0:
+    resolution: {integrity: sha512-aou8YBNFS8uVtDWFWt0W/6oorfl18wt+oIA8fnXk1kivjkbtXi9gGrQvflTpwrR3hG13aWdIdbYWeN0NFMV7ag==}
     engines: {node: '>=16.14.0', npm: '>=8.1.0'}
 
   markdown-it@14.1.1:
@@ -8395,7 +8395,7 @@ snapshots:
 
   '@maplibre/geojson-vt@5.0.4': {}
 
-  '@maplibre/geojson-vt@6.0.4':
+  '@maplibre/geojson-vt@6.1.0':
     dependencies:
       kdbush: 4.0.2
 
@@ -11934,7 +11934,7 @@ snapshots:
 
   make-error@1.3.6: {}
 
-  maplibre-gl@5.22.0:
+  maplibre-gl@5.23.0:
     dependencies:
       '@mapbox/jsonlint-lines-primitives': 2.0.2
       '@mapbox/point-geometry': 1.1.0
@@ -11942,7 +11942,7 @@ snapshots:
       '@mapbox/unitbezier': 0.0.1
       '@mapbox/vector-tile': 2.0.4
       '@mapbox/whoots-js': 3.1.0
-      '@maplibre/geojson-vt': 6.0.4
+      '@maplibre/geojson-vt': 6.1.0
       '@maplibre/maplibre-gl-style-spec': 24.8.1
       '@maplibre/mlt': 1.1.8
       '@maplibre/vt-pbf': 4.3.0
