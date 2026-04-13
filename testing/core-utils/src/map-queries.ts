@@ -122,10 +122,16 @@ export const queryRenderedFeatures = async (
                 throw new Error('globalThis.mapLibreMap is not available.');
             }
             const options = { layers: inputLayerIDs, validate: false };
-            if (inputLngLat) {
-                return map.queryRenderedFeatures(map.project(inputLngLat as [number, number]), options);
+            try {
+                if (inputLngLat) {
+                    return map.queryRenderedFeatures(map.project(inputLngLat as [number, number]), options);
+                }
+                return map.queryRenderedFeatures(options);
+            } catch (error) {
+                // MapLibre can throw when decoding symbol tile features (e.g. empty string table in newer tile formats).
+                // Return an empty array so callers can retry.
+                return [];
             }
-            return map.queryRenderedFeatures(options);
         },
         { inputLayerIDs: layerIDs, inputLngLat: lngLat },
     );
