@@ -3,4 +3,6 @@
  * IMPORTANT: make sure each plugin you want to see in API reference is exported here.
  * @ignore
  */
+
+export * from './map-agent';
 export * from './viewport-places';
