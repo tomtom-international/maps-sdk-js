@@ -296,9 +296,10 @@ describe('Traffic Area Analytics schema — date validation', () => {
     });
 
     test('fails when endDate is less than 2 days before today', () => {
-        const yesterday = new Date();
+        const now = new Date();
+        const yesterday = new Date(now);
         yesterday.setDate(yesterday.getDate() - 1);
-        const twoDaysAgo = new Date();
+        const twoDaysAgo = new Date(now);
         twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
         const result = trafficAreaAnalyticsRequestSchema.safeParse({
             ...VALID_PARAMS,
