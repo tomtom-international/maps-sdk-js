@@ -127,7 +127,7 @@ export const queryRenderedFeatures = async (
                     return map.queryRenderedFeatures(map.project(inputLngLat as [number, number]), options);
                 }
                 return map.queryRenderedFeatures(options);
-            } catch (error) {
+            } catch {
                 // MapLibre can throw when decoding symbol tile features (e.g. empty string table in newer tile formats).
                 // Return an empty array so callers can retry.
                 return [];
