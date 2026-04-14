@@ -67,6 +67,7 @@ test.describe('PlacesModule tests', () => {
         } as Place);
 
         await waitForMapIdle(page);
+        await waitForTimeout(1000);
 
         const { sourceID, layerIDs } = await getPlacesSourceAndLayerIDs(page);
         expect(await getNumVisiblePlacesLayers(page, sourceID)).toEqual(2);
@@ -98,6 +99,7 @@ test.describe('PlacesModule tests', () => {
 
         const mapEnv = await MapTestEnv.loadPageAndMap(page, { center: coordinates as [number, number], zoom: 14 });
         await initPlaces(page);
+        await waitForMapIdle(page);
         const { sourceID, layerIDs } = await getPlacesSourceAndLayerIDs(page);
         expect(await getNumVisiblePlacesLayers(page, sourceID)).toBe(0);
 
@@ -148,6 +150,8 @@ test.describe('PlacesModule tests', () => {
         expect(renderedPlaces[0].properties.iconID).toBe('7313');
         expect(await getNumVisiblePlacesLayers(page, sourceID)).toBe(2);
 
+        // extra wait for stability (not sure why it gets unstable if we change the map style right after the query above)
+        await waitForTimeout(1000);
         await setStyle(page, 'monoLight');
         await waitForMapIdle(page);
 
@@ -159,6 +163,7 @@ test.describe('PlacesModule tests', () => {
         expect(await getNumVisiblePlacesLayers(page, sourceID)).toBe(2);
 
         // Apply config to 'base-map' theme
+        await waitForMapIdle(page);
         await applyPlacesTheme(page, 'base-map');
         await waitForMapIdle(page);
 

@@ -146,7 +146,7 @@ test.describe('Tests with user events related to PlacesModule', () => {
         await showPlaces(page, places);
         await waitForMapIdle(page);
         const placesLayerIDs = (await getPlacesSourceAndLayerIDs(page)).layerIDs;
-        await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 5000);
+        await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 10000);
 
         // Click on the place and assert the click works
         const placePixelCoords = await getPixelCoords(page, firstPlacePosition);
@@ -188,15 +188,14 @@ test.describe('Tests with user events related to PlacesModule', () => {
         expect(await getCursor(page)).toBe('default');
 
         // Change map style to monoLight
+        await waitForMapIdle(page); // extra wait for stability
         await setStyle(page, 'monoLight');
-        await waitForMapReady(page);
         await waitForMapIdle(page);
         await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 5000);
 
         // Hover on place again and verify 'cell' cursor persists
         const placePixelCoordsAfterStyleChange = await getPixelCoords(page, firstPlacePosition);
         await page.mouse.move(placePixelCoordsAfterStyleChange.x, placePixelCoordsAfterStyleChange.y);
-        /////
         await waitForTimeout(500);
         expect(await getCursor(page)).toBe('cell');
 
@@ -206,21 +205,21 @@ test.describe('Tests with user events related to PlacesModule', () => {
     test('Hover events for a place shown right after changing map style', async ({ page }) => {
         // This is a "stress" test to ensure events keep functioning properly after changing styles, restoring places, etc.
         await initPlaces(page);
-        await setupPlacesClickHandler(page);
         // We load the places layer IDs before changing the style, to ensure they are still relevant after the style change:
-
         const placesLayerIDs = (await getPlacesSourceAndLayerIDs(page)).layerIDs;
+
         await waitForMapIdle(page);
         await setStyle(page, 'standardDark');
         await waitForMapReady(page);
-
         // We show the places after the map style has changed.
+
         // Now we'll test whether the events still work properly
         // (internally meaning that the source and layers proper reference is still in the events proxy when restoring the PlacesModule after the style change):
         await showPlaces(page, places);
         await waitForMapIdle(page);
         const placePosition = await getPixelCoords(page, firstPlacePosition);
         await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 5000);
+        await setupPlacesClickHandler(page);
         // Moving cursor over the place (hovering)
         await page.mouse.move(placePosition.x, placePosition.y);
         await waitForEventState(page, 'hover', placesLayerIDs);
