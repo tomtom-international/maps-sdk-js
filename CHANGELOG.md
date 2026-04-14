@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.46.13](https://github.com/tomtom-international/maps-sdk-js/compare/v0.46.12...v0.46.13) (2026-04-14)
+
+
+### Features
+
+* upgrade maplibre dependency ([6a419c6](https://github.com/tomtom-international/maps-sdk-js/commit/6a419c6b70bff10588b11c4b3ea0fbefd5e20e18))
+
+
+### Bug Fixes
+
+* exporting map agent from plugins so it's included in API reference ([90a7bf9](https://github.com/tomtom-international/maps-sdk-js/commit/90a7bf971a62190f36a35df6b2198e19c3dcba3e))
+* rename map-agent plugin to agent-toolkit ([535b0f5](https://github.com/tomtom-international/maps-sdk-js/commit/535b0f57c1b3ec2fedae70a351b52463594ebebe))
+* update agent toolkit link in readme ([8659362](https://github.com/tomtom-international/maps-sdk-js/commit/86593623e7e790fdc7c2a89b70d7292076b53aa5))
+* update mobile breakpoint for chat agent demos ([#1697](https://github.com/tomtom-international/maps-sdk-js/issues/1697)) ([7514420](https://github.com/tomtom-international/maps-sdk-js/commit/751442031e9b1e3a2b7a25f8192c1db5c9b5e763))
+
 ## [0.46.12](https://github.com/tomtom-international/maps-sdk-js/compare/v0.46.11...v0.46.12) (2026-04-10)
 
 
