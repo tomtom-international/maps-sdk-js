@@ -4,7 +4,7 @@ A headless conversational agent that gives Large Language Models tool-based cont
 
 No UI is included — bring your own chat interface. No LLM provider is bundled — supply any AI SDK-compatible model.
 
-> **Full documentation** — guides, architecture diagrams, and tutorials are available at [docs.tomtom.com](https://docs.tomtom.com/maps-sdk-js/guides/plugins/ai-agent).
+> **Full documentation** — guides, architecture diagrams, and tutorials are available at [docs.tomtom.com](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit).
 
 ## Installation
 
