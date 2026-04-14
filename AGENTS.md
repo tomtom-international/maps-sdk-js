@@ -14,7 +14,7 @@ The SDK ships as **one npm package** (`@tomtom-org/maps-sdk`) with three sub-pat
 
 **Build order is strict**: `core` → `services` + `map` in parallel. Never import `map` from `services` or vice versa.
 
-Optional plugins live in `plugins/` (e.g. `viewport-places`, `map-agent`) and declare `@tomtom-org/maps-sdk` as a **peer dependency** — they never bundle it.
+Optional plugins live in `plugins/` (e.g. `viewport-places`, `agent-toolkit`) and declare `@tomtom-org/maps-sdk` as a **peer dependency** — they never bundle it.
 
 ### Other workspaces
 
@@ -22,7 +22,7 @@ Optional plugins live in `plugins/` (e.g. `viewport-places`, `map-agent`) and de
 |---|---|
 | `shared-configs/` | Shared Vite, TypeScript, and Vitest configs extended by all packages |
 | `testing/core-utils` | `@testing/core-utils` — Playwright/async helpers shared by `map-integration-tests` and `ai-eval` (not unit tests) |
-| `testing/ai-eval` | AI agent evaluation harness (LLM judge + eval cases for map-agent) |
+| `testing/ai-eval` | AI agent evaluation harness (LLM judge + eval cases for agent-toolkit) |
 | `testing/ai-eval-explorer` | Dev UI for browsing and running eval results |
 | `examples/` | 50+ runnable examples, each a standalone Vite app |
 | `map-integration-tests/` | Playwright browser tests against the built map package; runs a local HTTPS server at `https://localhost:9001` |
@@ -88,7 +88,7 @@ pnpm format:fix
 # Clean all build artifacts
 pnpm clean
 
-# AI eval explorer (for map-agent eval results)
+# AI eval explorer (for agent-toolkit eval results)
 pnpm eval:explorer      # start dev server for eval UI
 ```
 
@@ -102,7 +102,7 @@ cp examples/.env.example examples/.env   # add API_KEY_EXAMPLES=…
 
 - **Tooling**: Biome (not ESLint/Prettier). 4-space indentation, single quotes, 120-char line width. Run `pnpm lint` from root.
 - **Package manager**: pnpm workspaces. Add deps with `pnpm -F <workspace> add <pkg>`. Shared version pins live in `pnpm-workspace.yaml` under `catalog:`.
-- **Coordinates**: always `[longitude, latitude]` (GeoJSON standard) — enforced throughout services and the map-agent plugin.
+- **Coordinates**: always `[longitude, latitude]` (GeoJSON standard) — enforced throughout services and the agent-toolkit plugin.
 - **Map modules**: get instances via `await SomeModule.get(map)`, never `new SomeModule()` directly.
 - **Error handling in tools/plugins**: every tool `execute` must catch and return `{ error: string }`, never throw.
 - **Test placement**: unit tests co-located (`src/feature/index.test.ts`); integration tests in `src/tests/`.
@@ -122,7 +122,7 @@ cp examples/.env.example examples/.env   # add API_KEY_EXAMPLES=…
 | `map/src/TomTomMap.ts` | Central map class wrapping MapLibre GL JS |
 | `map/src/shared/AbstractMapModule.ts` | Base for all map modules; handles style-change restoration |
 | `services/index.ts` | All service exports (search, geocode, routing, traffic, EV, …) |
-| `plugins/map-agent/` | AI agent plugin; see its `AGENTS.md` + `ENGINEERING-GUIDELINES.md` |
+| `plugins/agent-toolkit/` | AI agent plugin; see its `AGENTS.md` + `ENGINEERING-GUIDELINES.md` |
 | `plugins/viewport-places/` | Plugin: continuously shows POIs in the visible map viewport |
 | `plugins/plugin-vite-config.ts` | Shared Vite library-mode config for all plugins |
 | `shared-configs/` | Shared Vite, TypeScript, Vitest configs for all packages |

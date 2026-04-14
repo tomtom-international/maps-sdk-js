@@ -4,5 +4,5 @@
  * @ignore
  */
 
-export * from './map-agent';
+export * from './agent-toolkit';
 export * from './viewport-places';

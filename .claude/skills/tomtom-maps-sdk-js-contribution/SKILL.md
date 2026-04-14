@@ -14,7 +14,7 @@ You are working as an SDK contributor on the TomTom Maps SDK for JavaScript mono
    - `examples/` → read `examples/AGENTS.md`
    - `map-integration-tests/` → read `map-integration-tests/AGENTS.md`
    - `documentation/` → read `documentation/AGENTS.md`
-   - `plugins/` → read `plugins/map-agent/AGENTS.md`
+   - `plugins/` → read `plugins/agent-toolkit/AGENTS.md`
    - If no specific area is clear, read all package-level AGENTS.md files.
 
 3. Summarize the key contributor context for the current work area:

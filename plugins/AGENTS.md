@@ -21,11 +21,11 @@
 | Plugin | Package | Description |
 |--------|---------|-------------|
 | `viewport-places` | `@tomtom-org/maps-sdk-plugin-viewport-places` | Continuously shows POIs in the visible map viewport, refreshing as the map moves |
-| `map-agent` | `@tomtom-org/maps-sdk-plugin-ai-agent` | Headless conversational map agent — gives an LLM tool-based control over a `TomTomMap` via [Vercel AI SDK v6](https://ai-sdk.dev/) |
+| `agent-toolkit` | `@tomtom-org/maps-sdk-plugin-agent-toolkit` | Headless conversational agent toolkit — gives an LLM tool-based control over a `TomTomMap` via [Vercel AI SDK v6](https://ai-sdk.dev/) |
 
 Each plugin has its own `AGENTS.md` with detailed architecture and implementation notes:
 - [viewport-places/](./viewport-places/) — no AGENTS.md yet; see `src/viewportPlaces.ts`
-- [map-agent/AGENTS.md](./map-agent/AGENTS.md) — full architecture, tools, state, system prompt
+- [agent-toolkit/AGENTS.md](./agent-toolkit/AGENTS.md) — full architecture, tools, state, system prompt
 
 ### Shared Build Infrastructure
 
@@ -52,8 +52,8 @@ pnpm type-check        # Type-check all plugins in parallel
 
 # Or target a single plugin from repo root
 pnpm -F viewport-places build
-pnpm -F map-agent build
-pnpm -F map-agent build:watch   # Auto-rebuild on changes
+pnpm -F agent-toolkit build
+pnpm -F agent-toolkit build:watch   # Auto-rebuild on changes
 ```
 
 **Testing:**

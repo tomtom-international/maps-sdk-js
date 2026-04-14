@@ -906,9 +906,9 @@ importers:
       '@tomtom-org/maps-sdk':
         specifier: workspace:*
         version: link:../..
-      '@tomtom-org/maps-sdk-plugin-ai-agent':
+      '@tomtom-org/maps-sdk-plugin-agent-toolkit':
         specifier: workspace:*
-        version: link:../../plugins/map-agent
+        version: link:../../plugins/agent-toolkit
       ai:
         specifier: 'catalog:'
         version: 6.0.154(zod@4.3.6)
@@ -976,9 +976,9 @@ importers:
       '@tomtom-org/maps-sdk':
         specifier: workspace:*
         version: link:../..
-      '@tomtom-org/maps-sdk-plugin-ai-agent':
+      '@tomtom-org/maps-sdk-plugin-agent-toolkit':
         specifier: workspace:*
-        version: link:../../plugins/map-agent
+        version: link:../../plugins/agent-toolkit
       ai:
         specifier: 'catalog:'
         version: 6.0.154(zod@4.3.6)
@@ -2490,7 +2490,7 @@ importers:
         specifier: 'catalog:'
         version: 4.1.4(@opentelemetry/api@1.9.0)(@types/node@25.5.2)(@vitest/coverage-v8@4.1.4)(jsdom@29.0.2)(vite@8.0.8(@types/node@25.5.2)(esbuild@0.27.3)(jiti@2.6.1)(less@4.4.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.9))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.3))
 
-  plugins/map-agent:
+  plugins/agent-toolkit:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: workspace:*
@@ -2645,9 +2645,9 @@ importers:
       '@testing/core-utils':
         specifier: workspace:*
         version: link:../core-utils
-      '@tomtom-org/maps-sdk-plugin-ai-agent':
+      '@tomtom-org/maps-sdk-plugin-agent-toolkit':
         specifier: workspace:*
-        version: link:../../plugins/map-agent
+        version: link:../../plugins/agent-toolkit
       '@tsconfig/recommended':
         specifier: 'catalog:'
         version: 1.0.13
