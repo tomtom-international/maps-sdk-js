@@ -29,7 +29,7 @@ export const zoomInOrOutDescription =
     'Returns the resulting zoom level.';
 
 /** Execute function for zoomInOrOut — usable with ToolEntry format. */
-export async function executeZoomInOrOut(params: z.infer<typeof zoomInOrOutSchema>, state: ToolState) {
+export const executeZoomInOrOut = async (params: z.infer<typeof zoomInOrOutSchema>, state: ToolState) => {
     const { delta } = params;
     try {
         const map = state.baseMap.mapLibreMap;
@@ -41,4 +41,4 @@ export async function executeZoomInOrOut(params: z.infer<typeof zoomInOrOutSchem
             error: `Zoom failed: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

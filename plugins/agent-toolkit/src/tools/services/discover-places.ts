@@ -7,12 +7,16 @@ import { search, searchOne } from '@tomtom-org/maps-sdk/services';
 import type { Position } from 'geojson';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
-import { makePlacesLabel } from '../../utils/state-labels';
-import { summarizePlaces } from '../../utils/summarize';
-import { resolvePoiCategories } from '../shared/resolve-poi-categories';
-import { shownSchema, showPlacesSchema, whereSchema } from '../shared/schema';
-import { showResultsOnMap } from '../shared/show-places-on-map';
-import { getViewportBias, getViewportBoundingBox } from '../shared/viewport-bias';
+import { makePlacesLabel, summarizePlaces } from '../../utils';
+import {
+    getViewportBias,
+    getViewportBoundingBox,
+    resolvePoiCategories,
+    shownSchema,
+    showPlacesSchema,
+    showResultsOnMap,
+    whereSchema,
+} from '../shared';
 import { placesOutputSchema, toolErrorSchema } from '../shared-output-schemas';
 
 /** Output schema for the discover-places tool. */
@@ -64,13 +68,13 @@ export const discoverPlacesDescription =
 
 type WhereBias = { boundingBox?: HasBBox; position?: Position };
 
-async function searchInRange(
+const searchInRange = async (
     state: ToolState,
     withinRange: string,
     query: string | undefined,
     limit: number | undefined,
     poiCategories: string[] | undefined,
-): Promise<{ result: Awaited<ReturnType<typeof search>>; placeResultIndex: string } | { error: string }> {
+): Promise<{ result: Awaited<ReturnType<typeof search>>; placeResultIndex: string } | { error: string }> => {
     const rangeEntry = state.ranges.entries.find((e) => e.id === withinRange);
     if (!rangeEntry?.polygon) {
         return { error: `Range "${withinRange}" not found. Use recallRanges to list available ranges.` };
@@ -84,9 +88,12 @@ async function searchInRange(
     });
     const placeResultIndex = state.places.addPlaceResult(result, makePlacesLabel(result, { query, poiCategories }));
     return { result, placeResultIndex };
-}
+};
 
-async function resolveWhereBias(where: z.infer<typeof whereSchema> | undefined, state: ToolState): Promise<WhereBias> {
+const resolveWhereBias = async (
+    where: z.infer<typeof whereSchema> | undefined,
+    state: ToolState,
+): Promise<WhereBias> => {
     const resolvedWhere = where ?? 'within-map-bounds';
 
     if (resolvedWhere === 'within-map-bounds') {
@@ -112,25 +119,21 @@ async function resolveWhereBias(where: z.infer<typeof whereSchema> | undefined, 
         return { position: resolvedWhere.position as Position };
     }
     return { boundingBox: bboxFromGeoJSON(resolvedWhere.boundingBox as HasBBox) as HasBBox };
-}
+};
 
-function resolveWhereLabel(where: z.infer<typeof whereSchema> | undefined): string | undefined {
-    return typeof where === 'string' &&
-        where !== 'within-map-bounds' &&
-        where !== 'nearby-map-center' &&
-        where !== 'global'
+const resolveWhereLabel = (where: z.infer<typeof whereSchema> | undefined): string | undefined =>
+    typeof where === 'string' && where !== 'within-map-bounds' && where !== 'nearby-map-center' && where !== 'global'
         ? where
         : undefined;
-}
 
-async function searchWithBias(
+const searchWithBias = async (
     state: ToolState,
     query: string | undefined,
     where: z.infer<typeof whereSchema> | undefined,
     limit: number | undefined,
     poiCategories: string[] | undefined,
     radiusMeters: number | undefined,
-): Promise<{ result: Awaited<ReturnType<typeof search>>; placeResultIndex: string }> {
+): Promise<{ result: Awaited<ReturnType<typeof search>>; placeResultIndex: string }> => {
     const biasParams = await resolveWhereBias(where, state);
     const resolvedPoiCategories = await resolvePoiCategories(poiCategories);
     const result = await search({
@@ -145,16 +148,16 @@ async function searchWithBias(
         makePlacesLabel(result, { query, poiCategories, where: resolveWhereLabel(where) }),
     );
     return { result, placeResultIndex };
-}
+};
 
 /**
  * Create the discover places tool.
  */
 /** Standalone execute for ToolEntry format. */
-export async function executeDiscoverPlaces(
+export const executeDiscoverPlaces = async (
     params: z.infer<typeof discoverPlacesSchema>,
     state: ToolState,
-): Promise<z.infer<typeof discoverPlacesOutputSchema>> {
+): Promise<z.infer<typeof discoverPlacesOutputSchema>> => {
     const { query, where, radiusMeters, limit, poiCategories, show, withinRange } = params;
 
     try {
@@ -184,4 +187,4 @@ export async function executeDiscoverPlaces(
             error: `Search failed: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

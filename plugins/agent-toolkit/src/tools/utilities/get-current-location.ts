@@ -23,7 +23,7 @@ export const getCurrentLocationOutputSchema = z.union([
     toolErrorSchema,
 ]);
 
-function getLocationErrorMessage(error: unknown): string | undefined {
+const getLocationErrorMessage = (error: unknown): string | undefined => {
     if (typeof error !== 'object' || error === null || !('code' in error)) {
         return undefined;
     }
@@ -43,7 +43,7 @@ function getLocationErrorMessage(error: unknown): string | undefined {
     }
 
     return undefined;
-}
+};
 
 export const getCurrentLocationDescription =
     "Get the user's physical location from the browser geolocation API. " +
@@ -53,10 +53,10 @@ export const getCurrentLocationDescription =
     'Returns: position [longitude, latitude].';
 
 /** Execute function for getCurrentLocation — usable with ToolEntry format. */
-export async function executeGetCurrentLocation(
+export const executeGetCurrentLocation = async (
     _params: z.infer<typeof getCurrentLocationSchema>,
     _state: ToolState,
-): Promise<z.infer<typeof getCurrentLocationOutputSchema>> {
+): Promise<z.infer<typeof getCurrentLocationOutputSchema>> => {
     if (globalThis.window === undefined || globalThis.navigator === undefined) {
         return { error: 'Current location is only available in a browser environment' };
     }
@@ -89,4 +89,4 @@ export async function executeGetCurrentLocation(
             error: `Failed to get current location: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

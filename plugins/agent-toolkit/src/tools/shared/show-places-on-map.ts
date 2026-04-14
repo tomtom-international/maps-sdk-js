@@ -7,11 +7,12 @@ import type { z } from 'zod';
 import type { ToolState } from '../../types';
 import { shownSchema, showPlacesSchema } from './schema';
 
-export async function showResultsOnMap(
+/** @ignore */
+export const showResultsOnMap = async (
     state: ToolState,
     result: Place | Places,
     show: z.infer<typeof showPlacesSchema>,
-): Promise<z.infer<typeof shownSchema>> {
+): Promise<z.infer<typeof shownSchema>> => {
     const shown: z.infer<typeof shownSchema> = { markerType: false, zoomMode: false };
     if (show.markerType === 'pin') {
         const placesModule = await state.places.getPlacesModule();
@@ -24,4 +25,4 @@ export async function showResultsOnMap(
         shown.zoomMode = true;
     }
     return shown;
-}
+};

@@ -3,7 +3,7 @@
  */
 
 import { sectionTypes } from '@tomtom-org/maps-sdk/core';
-import type { ToolEntry, ToolState } from '../types';
+import type { ToolEntry } from '../types';
 
 // --- MapLibre tools ---
 import {
@@ -231,12 +231,7 @@ import {
     helpSchema,
 } from './utilities';
 
-/**
- * Default tool set for the agent toolkit.
- * Included automatically by createMapAgent unless includeDefaultTools is false.
- * Use resolveTools() for manual composition outside createMapAgent.
- */
-export const DEFAULT_TOOLS = {
+const defaultTools = {
     locatePlace: {
         description: locatePlaceDescription,
         classificationPrompt:
@@ -1053,10 +1048,33 @@ export const DEFAULT_TOOLS = {
         examplePrompts: ['What range did I calculate earlier?', 'Recall the isochrone from Amsterdam'],
         relatedTools: ['findReachableArea'],
     },
-} satisfies Record<string, ToolEntry<ToolState>>;
+} satisfies Record<string, ToolEntry>;
 
-/** All valid default tool names, derived from {@link DEFAULT_TOOLS}. */
-export const TOOL_NAMES = Object.keys(DEFAULT_TOOLS) as ToolName[];
+// Narrow the value type so the emitted d.ts captures only the keys, not the
+// inlined `z.infer<...>` signatures from each `execute` (which the d.ts bundler
+// flattens to invalid `infer<typeof X>` syntax). Must go through an intermediate
+// const so TypeScript resolves the mapped type before re-exporting.
+const DEFAULT_TOOLS_TYPED: { [K in keyof typeof defaultTools]: ToolEntry } = defaultTools;
 
-/** Union of all default tool names. */
+/**
+ * Default tool set for the agent toolkit.
+ * Included automatically by createMapAgent unless includeDefaultTools is false.
+ * Use resolveTools() for manual composition outside createMapAgent.
+ *
+ * @group Agent Toolkit
+ */
+export const DEFAULT_TOOLS = DEFAULT_TOOLS_TYPED;
+
+/**
+ * Union of all default tool names.
+ *
+ * @group Agent Toolkit
+ */
 export type ToolName = keyof typeof DEFAULT_TOOLS;
+
+/**
+ * All valid default tool names, derived from {@link DEFAULT_TOOLS}.
+ *
+ * @group Agent Toolkit
+ */
+export const TOOL_NAMES = Object.keys(DEFAULT_TOOLS) as ToolName[];

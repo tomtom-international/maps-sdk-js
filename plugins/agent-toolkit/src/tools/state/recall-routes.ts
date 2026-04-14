@@ -47,10 +47,10 @@ export const recallRoutesDescription =
     'Step 2: call with id to retrieve a specific entry with route details and params. ' +
     'Does not call any service.';
 
-export async function executeRecallRoutes(
+export const executeRecallRoutes = async (
     params: z.infer<typeof recallRoutesSchema>,
     state: ToolState,
-): Promise<z.infer<typeof recallRoutesOutputSchema>> {
+): Promise<z.infer<typeof recallRoutesOutputSchema>> => {
     const { id } = params;
 
     if (!id) {
@@ -79,4 +79,4 @@ export async function executeRecallRoutes(
         waypoints,
         params: entry.params as z.infer<typeof routeParamsSchema>,
     };
-}
+};

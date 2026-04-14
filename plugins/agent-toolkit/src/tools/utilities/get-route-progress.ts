@@ -33,7 +33,9 @@ export const getRouteProgressSchema = z
  * Maps the tool params to a {@link RouteProgressQuery} for the core utility.
  * Returns an error string when the clockTime string is invalid.
  */
-function toRouteProgressQuery(params: z.infer<typeof getRouteProgressSchema>): RouteProgressQuery | { error: string } {
+const toRouteProgressQuery = (
+    params: z.infer<typeof getRouteProgressSchema>,
+): RouteProgressQuery | { error: string } => {
     if (params.traveledTimeInSeconds !== undefined) {
         return { traveledTimeInSeconds: params.traveledTimeInSeconds };
     }
@@ -48,13 +50,13 @@ function toRouteProgressQuery(params: z.infer<typeof getRouteProgressSchema>): R
     }
 
     return { clockTime: new Date(params.clockTime as string) };
-}
+};
 
 export const getRouteProgressDescription =
     'Return the geographic coordinates of the point along the last shown route at a given traveled time (seconds), traveled distance (meters), or absolute clock time (ISO 8601). Use for route progress tracking (e.g. route-point-progress-playground example).';
 
 /** Execute function for getRouteProgress — usable with ToolEntry format. */
-export async function executeGetRouteProgress(params: z.infer<typeof getRouteProgressSchema>, state: ToolState) {
+export const executeGetRouteProgress = async (params: z.infer<typeof getRouteProgressSchema>, state: ToolState) => {
     const routeIndex = params.routeIndex ?? 0;
 
     try {
@@ -98,4 +100,4 @@ export async function executeGetRouteProgress(params: z.infer<typeof getRoutePro
             error: `Failed to get route progress: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

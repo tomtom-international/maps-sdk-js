@@ -6,40 +6,37 @@ import type { TomTomMap } from '@tomtom-org/maps-sdk/map';
 import type { PrepareStepFunction, PrepareStepResult } from 'ai';
 import { stepCountIs, ToolLoopAgent } from 'ai';
 import { resolveTools } from './resolve-tools';
-import { createToolState, type StateSlice } from './state';
+import { createToolState } from './state';
 import { buildSystemPrompt } from './system-prompt';
 import { setupTools } from './tool-setup';
 import { DEFAULT_TOOLS } from './tools';
-import type { Classifier, MapAgentInstance, MapAgentOptions, ToolEntry, ToolState } from './types';
-import type { ClassificationResult } from './utils/intent-classifier';
-import { createDefaultClassifier } from './utils/intent-classifier';
+import type { Classifier, MapAgentInstance, MapAgentOptions, StateSlice, ToolEntry, ToolState } from './types';
+import type { ClassificationResult } from './utils';
+import { createDefaultClassifier } from './utils';
 
 /** Intersects two activeTools lists. Returns undefined if neither is set. */
-function intersectActiveTools(
+const intersectActiveTools = (
     a: string[] | undefined,
     b: readonly (string | number | symbol)[] | undefined,
-): string[] | undefined {
+): string[] | undefined => {
     if (!a) return b as string[] | undefined;
     if (!b) return a;
     const setB = new Set(b);
     return a.filter((name) => setB.has(name));
-}
+};
 
 /** Type guard for StateSlice — checks for reset() method. */
-function isStateSlice(value: unknown): value is StateSlice {
-    return (
-        typeof value === 'object' && value !== null && 'reset' in value && typeof (value as any).reset === 'function'
-    );
-}
+const isStateSlice = (value: unknown): value is StateSlice =>
+    typeof value === 'object' && value !== null && 'reset' in value && typeof (value as any).reset === 'function';
 
 /** Resets all state slices that implement StateSlice. */
-function destroyState(state: ToolState): void {
+const destroyState = (state: ToolState): void => {
     for (const slice of Object.values(state)) {
         if (isStateSlice(slice)) {
             slice.reset();
         }
     }
-}
+};
 
 /**
  * Creates a conversational agent toolkit that gives an LLM control over a TomTom map.
@@ -76,11 +73,12 @@ function destroyState(state: ToolState): void {
  *   },
  * });
  * ```
+ * @group Agent Toolkit
  */
-export function createMapAgent<CS extends ToolState = ToolState>(
+export const createMapAgent = <CS extends ToolState = ToolState>(
     map: TomTomMap,
     options: MapAgentOptions<CS>,
-): MapAgentInstance<CS> {
+): MapAgentInstance<CS> => {
     if (!options.model) {
         throw new Error('MapAgent requires a model option. Please provide an AI SDK LanguageModel instance.');
     }
@@ -151,4 +149,4 @@ export function createMapAgent<CS extends ToolState = ToolState>(
         state,
         destroy: () => destroyState(state),
     });
-}
+};

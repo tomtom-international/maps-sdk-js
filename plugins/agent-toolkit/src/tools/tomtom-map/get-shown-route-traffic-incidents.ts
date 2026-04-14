@@ -35,10 +35,10 @@ export const getShownRouteTrafficIncidentsDescription =
 /**
  * Execute get shown route traffic incidents.
  */
-export async function executeGetShownRouteTrafficIncidents(
+export const executeGetShownRouteTrafficIncidents = async (
     _params: z.infer<typeof getShownRouteTrafficIncidentsSchema>,
     state: ToolState,
-): Promise<z.infer<typeof getShownRouteTrafficIncidentsOutputSchema>> {
+): Promise<z.infer<typeof getShownRouteTrafficIncidentsOutputSchema>> => {
     try {
         if (!state.routing.routingModule) {
             return { error: 'No routing module initialized - no route traffic incidents shown on map' };
@@ -66,4 +66,4 @@ export async function executeGetShownRouteTrafficIncidents(
             error: `Failed to get shown route traffic incidents: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

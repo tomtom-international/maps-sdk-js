@@ -31,7 +31,7 @@ export const clearMapDescription =
 /**
  * Execute clear map.
  */
-export async function executeClearMap(params: z.infer<typeof clearMapSchema>, state: ToolState) {
+export const executeClearMap = async (params: z.infer<typeof clearMapSchema>, state: ToolState) => {
     const { layers } = params;
     try {
         const clearAll = !layers || layers.length === 0;
@@ -70,4 +70,4 @@ export async function executeClearMap(params: z.infer<typeof clearMapSchema>, st
             error: `Failed to clear map: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

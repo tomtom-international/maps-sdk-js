@@ -31,10 +31,10 @@ export const toggleBaseMapLayerGroupsDescription =
 /**
  * Execute toggle base map layer groups.
  */
-export async function executeToggleBaseMapLayerGroups(
+export const executeToggleBaseMapLayerGroups = async (
     params: z.infer<typeof toggleBaseMapLayerGroupsSchema>,
     state: ToolState,
-) {
+) => {
     const { visible, layerGroups } = params;
     try {
         // Lazy-init BaseMapModule
@@ -57,4 +57,4 @@ export async function executeToggleBaseMapLayerGroups(
             error: `Failed to toggle layer groups: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

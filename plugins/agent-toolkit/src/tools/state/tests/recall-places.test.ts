@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { executeRecallPlaces } from './recall-places';
+import { executeRecallPlaces } from '../recall-places';
 
 const mockState = () => {
     const places = {

@@ -49,10 +49,10 @@ export const getCurrentWaypointsDescription =
     'Highly specific rules: slotIndex returns one known slot; otherwise results are paged, default to 5 slots, and empty slots are omitted unless includeEmptySlots=true to keep payloads compact. ' +
     'Does not call any service.';
 
-export async function executeGetCurrentWaypoints(
+export const executeGetCurrentWaypoints = async (
     params: z.infer<typeof getCurrentWaypointsSchema>,
     state: ToolState,
-): Promise<z.infer<typeof getCurrentWaypointsOutputSchema>> {
+): Promise<z.infer<typeof getCurrentWaypointsOutputSchema>> => {
     const { slotIndex, includeEmptySlots = false, offset = 0, limit = 5 } = params;
     const slots = state.routing.planningSlots.map((waypoint, index) => {
         const normalized = summarizeWaypoint(waypoint);
@@ -75,4 +75,4 @@ export async function executeGetCurrentWaypoints(
         ...(!hasExactSlot && nextOffset < filteredSlots.length && { nextOffset }),
         waypoints: selected,
     };
-}
+};

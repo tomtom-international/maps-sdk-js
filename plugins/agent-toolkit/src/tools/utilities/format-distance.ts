@@ -19,7 +19,7 @@ export const formatDistanceDescription =
     'Use after getSectionProgress, recallRoutes, or any tool that returns distances in meters.';
 
 /** Execute function for formatDistance — usable with ToolEntry format. */
-export async function executeFormatDistance(params: z.infer<typeof formatDistanceSchema>, _state: ToolState) {
+export const executeFormatDistance = async (params: z.infer<typeof formatDistanceSchema>, _state: ToolState) => {
     const { meters, unitType } = params;
     try {
         const formatted = formatDistance(meters, unitType ? { type: unitType } : undefined);
@@ -35,4 +35,4 @@ export async function executeFormatDistance(params: z.infer<typeof formatDistanc
             error: `Failed to format distance: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

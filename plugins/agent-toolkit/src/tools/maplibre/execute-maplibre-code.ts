@@ -59,7 +59,7 @@ export const executeMaplibreCodeDescription =
 
 type Snapshot = Map<string, string>;
 
-function snapshotSources(mapLibreMap: MapLibreMap): Snapshot {
+const snapshotSources = (mapLibreMap: MapLibreMap): Snapshot => {
     const sources = mapLibreMap.getStyle()?.sources ?? {};
     const snapshot: Snapshot = new Map();
 
@@ -68,9 +68,9 @@ function snapshotSources(mapLibreMap: MapLibreMap): Snapshot {
     }
 
     return snapshot;
-}
+};
 
-function snapshotLayers(mapLibreMap: MapLibreMap): Snapshot {
+const snapshotLayers = (mapLibreMap: MapLibreMap): Snapshot => {
     const layers = mapLibreMap.getStyle()?.layers ?? [];
     const snapshot: Snapshot = new Map();
 
@@ -79,9 +79,12 @@ function snapshotLayers(mapLibreMap: MapLibreMap): Snapshot {
     }
 
     return snapshot;
-}
+};
 
-function diffSnapshots(before: Snapshot, after: Snapshot): { added: string[]; removed: string[]; updated: string[] } {
+const diffSnapshots = (
+    before: Snapshot,
+    after: Snapshot,
+): { added: string[]; removed: string[]; updated: string[] } => {
     const added: string[] = [];
     const removed: string[] = [];
     const updated: string[] = [];
@@ -103,14 +106,17 @@ function diffSnapshots(before: Snapshot, after: Snapshot): { added: string[]; re
     }
 
     return { added, removed, updated };
-}
+};
 
 // ---------------------------------------------------------------------------
 // Tool factory
 // ---------------------------------------------------------------------------
 
 /** Execute function for executeMaplibreCode — usable with ToolEntry format. */
-export async function executeExecuteMaplibreCode(params: z.infer<typeof executeMaplibreCodeSchema>, state: ToolState) {
+export const executeExecuteMaplibreCode = async (
+    params: z.infer<typeof executeMaplibreCodeSchema>,
+    state: ToolState,
+) => {
     const { code } = params;
     try {
         const mapLibreMap = state.baseMap.mapLibreMap;
@@ -133,4 +139,4 @@ export async function executeExecuteMaplibreCode(params: z.infer<typeof executeM
             error: `Code execution failed: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

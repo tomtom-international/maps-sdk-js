@@ -7,9 +7,7 @@ import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { makePlacesLabel } from '../../utils/state-labels';
 import { summarizePlaces } from '../../utils/summarize';
-import { resolvePoiCategories } from '../shared/resolve-poi-categories';
-import { shownSchema, showPlacesSchema } from '../shared/schema';
-import { showResultsOnMap } from '../shared/show-places-on-map';
+import { resolvePoiCategories, shownSchema, showPlacesSchema, showResultsOnMap } from '../shared';
 import { placesOutputSchema, toolErrorSchema } from '../shared-output-schemas';
 
 const noRouteSchema = z.object({ status: z.literal('no_route') });
@@ -48,7 +46,7 @@ export const searchAlongRouteDescription =
     'Stores results in places history; use placeResultIndex with showPlaces to display them. ' +
     'status: no_route if no route exists in state.';
 
-function resolveRouteEntry(state: ToolState, routeId: string | undefined) {
+const resolveRouteEntry = (state: ToolState, routeId: string | undefined) => {
     const entries = state.routing.entries;
     if (entries.length === 0) return null;
 
@@ -59,9 +57,9 @@ function resolveRouteEntry(state: ToolState, routeId: string | undefined) {
     if (!routeFeature) return 'Route entry has no geometry.';
 
     return { entry, routeFeature };
-}
+};
 
-async function executeAlongRouteSearch(
+const executeAlongRouteSearch = async (
     params: {
         query?: string;
         poiCategories?: string[];
@@ -70,7 +68,7 @@ async function executeAlongRouteSearch(
         limit?: number;
     },
     routeFeature: Parameters<typeof alongRouteSearch>[0]['route'],
-) {
+) => {
     const { query, poiCategories, maxDetourTimeSeconds, sortBy, limit } = params;
     const resolvedPoiCategories = await resolvePoiCategories(poiCategories);
     return alongRouteSearch({
@@ -81,13 +79,13 @@ async function executeAlongRouteSearch(
         ...(sortBy && { sortBy }),
         ...(limit !== undefined && { limit }),
     });
-}
+};
 
 /** Standalone execute for ToolEntry format. */
-export async function executeSearchAlongRoute(
+export const executeSearchAlongRoute = async (
     params: z.infer<typeof searchAlongRouteSchema>,
     state: ToolState,
-): Promise<z.infer<typeof searchAlongRouteOutputSchema>> {
+): Promise<z.infer<typeof searchAlongRouteOutputSchema>> => {
     const { query, poiCategories, routeId, maxDetourTimeSeconds, sortBy, limit, show } = params;
 
     const resolved = resolveRouteEntry(state, routeId);
@@ -116,4 +114,4 @@ export async function executeSearchAlongRoute(
             error: `Along-route search failed: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

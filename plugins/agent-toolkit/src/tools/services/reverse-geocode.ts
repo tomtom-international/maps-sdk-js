@@ -29,10 +29,10 @@ export const reverseGeocodeDescription =
  * Create the reverse geocode tool.
  */
 /** Standalone execute for ToolEntry format. */
-export async function executeReverseGeocode(
+export const executeReverseGeocode = async (
     params: z.infer<typeof reverseGeocodeSchema>,
     state: ToolState,
-): Promise<z.infer<typeof reverseGeocodeOutputSchema>> {
+): Promise<z.infer<typeof reverseGeocodeOutputSchema>> => {
     const { position } = params;
     const pos: Position = position as Position;
     try {
@@ -49,4 +49,4 @@ export async function executeReverseGeocode(
             error: `Reverse geocoding failed: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

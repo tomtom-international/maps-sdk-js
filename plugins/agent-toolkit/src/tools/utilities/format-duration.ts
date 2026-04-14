@@ -18,7 +18,7 @@ export const formatDurationDescription =
     'Use after getSectionProgress, recallRoutes, or any tool that returns durations in seconds.';
 
 /** Execute function for formatDuration — usable with ToolEntry format. */
-export async function executeFormatDuration(params: z.infer<typeof formatDurationSchema>, _state: ToolState) {
+export const executeFormatDuration = async (params: z.infer<typeof formatDurationSchema>, _state: ToolState) => {
     const { seconds } = params;
     try {
         const formatted = formatDuration(seconds);
@@ -40,4 +40,4 @@ export async function executeFormatDuration(params: z.infer<typeof formatDuratio
             error: `Failed to format duration: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

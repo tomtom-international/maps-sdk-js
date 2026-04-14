@@ -39,10 +39,10 @@ export const recallRangesDescription =
     'Step 2: call with id to retrieve origin and budgets. ' +
     'Does not call any service.';
 
-export async function executeRecallRanges(
+export const executeRecallRanges = async (
     params: z.infer<typeof recallRangesSchema>,
     state: ToolState,
-): Promise<z.infer<typeof recallRangesOutputSchema>> {
+): Promise<z.infer<typeof recallRangesOutputSchema>> => {
     const { id } = params;
 
     if (!id) {
@@ -64,4 +64,4 @@ export async function executeRecallRanges(
         origin: { ...entry.origin, position: entry.origin.position as [number, number] },
         budgets: entry.budgets,
     };
-}
+};

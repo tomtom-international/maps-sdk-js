@@ -35,7 +35,7 @@ export const getShownPlacesDescription =
 /**
  * Execute get shown places.
  */
-export async function executeGetShownPlaces(_params: z.infer<typeof getShownPlacesSchema>, state: ToolState) {
+export const executeGetShownPlaces = async (_params: z.infer<typeof getShownPlacesSchema>, state: ToolState) => {
     try {
         if (!state.places.placesModule) {
             return { count: 0, features: [] };
@@ -60,4 +60,4 @@ export async function executeGetShownPlaces(_params: z.infer<typeof getShownPlac
             error: `Failed to get shown places: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

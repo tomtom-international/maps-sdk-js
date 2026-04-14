@@ -39,7 +39,7 @@ const currentTheme: { mainColor?: string } = {};
 /**
  * Execute set route theme.
  */
-export async function executeSetRouteTheme(params: z.infer<typeof setRouteThemeSchema>, state: ToolState) {
+export const executeSetRouteTheme = async (params: z.infer<typeof setRouteThemeSchema>, state: ToolState) => {
     try {
         if (params.mainColor !== undefined) currentTheme.mainColor = params.mainColor;
 
@@ -59,4 +59,4 @@ export async function executeSetRouteTheme(params: z.infer<typeof setRouteThemeS
             error: `Failed to set route theme: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

@@ -9,17 +9,16 @@ import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { makePlacesLabel } from '../../utils/state-labels';
 import { summarizePlace } from '../../utils/summarize';
-import { shownSchema, showPlacesSchema, whereSchema } from '../shared/schema';
-import { getViewportBias, getViewportBoundingBox } from '../shared/viewport-bias';
+import { getViewportBias, getViewportBoundingBox, shownSchema, showPlacesSchema, whereSchema } from '../shared';
 import { placeOutputSchema, toolErrorSchema } from '../shared-output-schemas';
 
 type LocateBias = { position: Position } | { boundingBox: BBox };
 
-export async function locatePlace(
+export const locatePlace = async (
     query: string,
     locationType: 'poi' | 'default',
     bias?: LocateBias,
-): Promise<Place | null> {
+): Promise<Place | null> => {
     const [searchFn, searchOneFn] = locationType === 'poi' ? [search, searchOne] : [geocode, geocodeOne];
 
     if (bias && 'position' in bias) {
@@ -31,7 +30,7 @@ export async function locatePlace(
         return results.features[0] ?? null;
     }
     return (await searchOneFn(query)) ?? null;
-}
+};
 
 export const locatePlaceSchema = z.object({
     query: z
@@ -71,10 +70,10 @@ export const locatePlaceDescription =
     'Search-first: accepts landmarks, stations, venues, cities, neighborhoods, and full addresses. ' +
     'Can optionally stage a waypoint slot.';
 
-async function resolveLocateBias(
+const resolveLocateBias = async (
     where: z.infer<typeof whereSchema>,
     state: ToolState,
-): Promise<LocateBias | undefined> {
+): Promise<LocateBias | undefined> => {
     if (where === 'nearby-map-center') {
         const position = getViewportBias(state.baseMap);
         return position ? { position } : undefined;
@@ -98,13 +97,13 @@ async function resolveLocateBias(
         return { position: where.position as Position };
     }
     return { boundingBox: where.boundingBox as BBox };
-}
+};
 
-async function showLocateResult(
+const showLocateResult = async (
     state: ToolState,
     result: Place,
     show: z.infer<typeof showPlacesSchema>,
-): Promise<z.infer<typeof shownSchema>> {
+): Promise<z.infer<typeof shownSchema>> => {
     const shown: z.infer<typeof shownSchema> = { markerType: false, zoomMode: false };
     if (show.markerType === 'pin') {
         const placesModule = await state.places.getPlacesModule();
@@ -121,13 +120,13 @@ async function showLocateResult(
         shown.zoomMode = true;
     }
     return shown;
-}
+};
 
 /** Standalone execute for ToolEntry format. */
-export async function executeLocatePlace(
+export const executeLocatePlace = async (
     params: z.infer<typeof locatePlaceSchema>,
     state: ToolState,
-): Promise<z.infer<typeof locatePlaceOutputSchema>> {
+): Promise<z.infer<typeof locatePlaceOutputSchema>> => {
     const { query, locationType, waypointIndex, where, show } = params;
 
     try {
@@ -156,4 +155,4 @@ export async function executeLocatePlace(
             error: `Location resolution failed: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

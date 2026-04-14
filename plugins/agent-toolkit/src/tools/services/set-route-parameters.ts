@@ -57,10 +57,10 @@ export const setRouteParametersDescription =
  * Create the set-route-parameters tool.
  */
 /** Standalone execute for ToolEntry format. */
-export async function executeSetRouteParameters(
+export const executeSetRouteParameters = async (
     params: z.infer<typeof setRouteParametersSchema>,
     state: ToolState,
-): Promise<z.infer<typeof setRouteParametersOutputSchema>> {
+): Promise<z.infer<typeof setRouteParametersOutputSchema>> => {
     const { showOnMap, ...routeParams } = params;
     try {
         state.routing.setParams(routeParams);
@@ -84,4 +84,4 @@ export async function executeSetRouteParameters(
             error: `Failed to set route parameters: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

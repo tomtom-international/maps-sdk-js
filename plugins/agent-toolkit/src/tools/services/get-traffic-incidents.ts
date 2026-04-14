@@ -61,10 +61,10 @@ export const getTrafficIncidentsDescription =
  * Create the get traffic incidents tool.
  */
 /** Standalone execute for ToolEntry format. */
-export async function executeGetTrafficIncidents(
+export const executeGetTrafficIncidents = async (
     params: z.infer<typeof getTrafficIncidentsSchema>,
     _state: ToolState,
-): Promise<z.infer<typeof getTrafficIncidentsOutputSchema>> {
+): Promise<z.infer<typeof getTrafficIncidentsOutputSchema>> => {
     const { bbox, ids, categoryFilter, timeValidityFilter } = params;
 
     if (!bbox && !ids) {
@@ -109,4 +109,4 @@ export async function executeGetTrafficIncidents(
             error: `Failed to get traffic incidents: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

@@ -49,7 +49,7 @@ export const toggleTrafficIncidentsDescription =
 /**
  * Execute toggle traffic flow.
  */
-export async function executeToggleTrafficFlow(params: z.infer<typeof toggleTrafficFlowSchema>, state: ToolState) {
+export const executeToggleTrafficFlow = async (params: z.infer<typeof toggleTrafficFlowSchema>, state: ToolState) => {
     const { visible } = params;
     try {
         // Lazy-init TrafficFlowModule
@@ -66,15 +66,15 @@ export async function executeToggleTrafficFlow(params: z.infer<typeof toggleTraf
             error: `Failed to toggle traffic flow: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};
 
 /**
  * Execute toggle traffic incidents.
  */
-export async function executeToggleTrafficIncidents(
+export const executeToggleTrafficIncidents = async (
     params: z.infer<typeof toggleTrafficIncidentsSchema>,
     state: ToolState,
-) {
+) => {
     const { visible } = params;
     try {
         // Lazy-init TrafficIncidentsModule
@@ -91,4 +91,4 @@ export async function executeToggleTrafficIncidents(
             error: `Failed to toggle traffic incidents: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

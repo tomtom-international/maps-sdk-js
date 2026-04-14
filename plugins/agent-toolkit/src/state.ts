@@ -2,14 +2,7 @@
  * @module agent-toolkit-state
  */
 
-import type {
-    Place,
-    Places,
-    PolygonFeatures,
-    Routes,
-    TrafficAreaAnalytics,
-    WaypointLike,
-} from '@tomtom-org/maps-sdk/core';
+import type { Place, Places, Routes, TrafficAreaAnalytics, WaypointLike } from '@tomtom-org/maps-sdk/core';
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import {
     BaseMapModule,
@@ -27,61 +20,19 @@ import {
     TrafficFlowModule,
     TrafficIncidentsModule,
 } from '@tomtom-org/maps-sdk/map';
-import { ReachableRangeBudget } from '@tomtom-org/maps-sdk/services';
-
-/**
- * Common interface for state slices. Implement `reset()` to participate
- * in cleanup when `destroy()` is called on the agent.
- *
- * All built-in state classes implement this. Custom slices can optionally
- * implement it to get automatic cleanup.
- */
-export interface StateSlice {
-    reset(): void;
-}
-
-import { Position } from 'geojson';
 import { Map } from 'maplibre-gl';
 import type { ToolState } from './types';
+import type { PlacesEntry, RangeEntry, RouteParams, RoutesEntry, StateSlice } from './types/state';
 
 TomTomConfig.instance.put({ language: 'en-GB' });
-
-export interface PlacesEntry {
-    id: string;
-    timestamp: number;
-    label: string;
-    data: Place[];
-}
-
-export interface RoutesEntry {
-    id: string;
-    timestamp: number;
-    label: string;
-    data: Routes;
-    waypoints: WaypointLike[];
-    params: RouteParams;
-}
-
-/**
- * Route planning parameters stored in routing state.
- * Consumed by setRouteLocations, addStopToRoute, and removeStopFromRoute.
- */
-export interface RouteParams {
-    maxAlternatives?: number;
-    costModel?: {
-        routeType?: string;
-        traffic?: 'live' | 'historical';
-        avoid?: string[];
-        avoidAreas?: Array<number[]>;
-    };
-    when?: { option: 'departAt' | 'arriveBy'; date: string };
-}
 
 /**
  * State for place search, geocoding, and geometries.
  *
  * Holds lazy-initialized PlacesModule and GeometriesModule alongside an
  * append-only history of place and search results produced during the session.
+ *
+ * @group Agent Toolkit
  */
 export class PlacesState implements StateSlice {
     private _placesModule?: PlacesModule;
@@ -139,6 +90,8 @@ export class PlacesState implements StateSlice {
  *
  * Holds the lazy-initialized POIsModule for showing, hiding, and filtering
  * the built-in POI categories rendered on the base map.
+ *
+ * @group Agent Toolkit
  */
 export class MapPOIsState implements StateSlice {
     private _poisModule?: POIsModule;
@@ -169,6 +122,8 @@ export class MapPOIsState implements StateSlice {
  * Holds the lazy-initialized RoutingModule alongside an append-only history of
  * calculated routes, sparse planning slots (being assembled before a calculation),
  * and current route parameters.
+ *
+ * @group Agent Toolkit
  */
 export class RoutingState implements StateSlice {
     private _routingModule?: RoutingModule;
@@ -247,6 +202,8 @@ export class RoutingState implements StateSlice {
  *
  * Provides direct access to the TomTomMap and MapLibre instances alongside
  * lazy-initialized BaseMapModule and HillshadeModule.
+ *
+ * @group Agent Toolkit
  */
 export class BaseMapState implements StateSlice {
     private _baseMapModule?: BaseMapModule;
@@ -278,6 +235,8 @@ export class BaseMapState implements StateSlice {
 
 /**
  * State for traffic: flow layer, incident overlay, and area analytics modules.
+ *
+ * @group Agent Toolkit
  */
 export class TrafficState implements StateSlice {
     private _trafficFlowModule?: TrafficFlowModule;
@@ -350,22 +309,14 @@ export class TrafficState implements StateSlice {
     }
 }
 
-export interface RangeEntry {
-    id: string;
-    timestamp: number;
-    label: string;
-    origin: { query?: string; position: Position };
-    budgets: ReachableRangeBudget[];
-    /** Raw polygon result for use in subsequent geometry searches. Not exposed to the agent. */
-    polygon?: PolygonFeatures;
-}
-
 /**
  * State for reachable range results.
  *
  * Stores semantic summaries of calculated ranges (origin, budgets).
  * Also retains raw polygon geometry internally for use in geometry searches
  * (e.g. discoverPlaces withinRange). Displayed on the map via GeometriesModule.
+ *
+ * @group Agent Toolkit
  */
 export class RangeState implements StateSlice {
     private _entries: RangeEntry[] = [];
@@ -429,11 +380,13 @@ export class RangeState implements StateSlice {
  *
  * @param map - TomTomMap instance for module initialization
  * @param customSlices - Additional state slices accessible by custom tools
+ *
+ * @group Agent Toolkit
  */
-export function createToolState<T extends Record<string, unknown> = Record<string, never>>(
+export const createToolState = <T extends Record<string, unknown> = Record<string, never>>(
     map: TomTomMap,
     customSlices?: T,
-): ToolState & T {
+): ToolState & T => {
     const base: ToolState = {
         places: new PlacesState(map),
         mapPOIs: new MapPOIsState(map),
@@ -446,4 +399,4 @@ export function createToolState<T extends Record<string, unknown> = Record<strin
         Object.assign(base, customSlices);
     }
     return base as ToolState & T;
-}
+};

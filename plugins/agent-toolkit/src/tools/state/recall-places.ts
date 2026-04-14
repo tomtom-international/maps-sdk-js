@@ -34,10 +34,10 @@ export const recallPlacesDescription =
     'Step 2: call with id to retrieve a specific entry with coordinates. ' +
     'Does not call any service.';
 
-export async function executeRecallPlaces(
+export const executeRecallPlaces = async (
     params: z.infer<typeof recallPlacesSchema>,
     state: ToolState,
-): Promise<z.infer<typeof recallPlacesOutputSchema>> {
+): Promise<z.infer<typeof recallPlacesOutputSchema>> => {
     const { id } = params;
 
     if (!id) {
@@ -60,4 +60,4 @@ export async function executeRecallPlaces(
         timestamp: entry.timestamp,
         places,
     };
-}
+};

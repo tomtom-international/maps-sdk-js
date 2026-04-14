@@ -30,7 +30,7 @@ export const setLanguageDescription =
 /**
  * Execute set language.
  */
-export async function executeSetLanguage(params: z.infer<typeof setLanguageSchema>, state: ToolState) {
+export const executeSetLanguage = async (params: z.infer<typeof setLanguageSchema>, state: ToolState) => {
     const { language } = params;
     try {
         TomTomConfig.instance.put({ language: language as Language });
@@ -45,4 +45,4 @@ export async function executeSetLanguage(params: z.infer<typeof setLanguageSchem
             error: `Failed to set language: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

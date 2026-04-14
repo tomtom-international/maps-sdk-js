@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
-import { setupTools } from './tool-setup';
-import type { ToolEntry, ToolState } from './types';
+import { setupTools } from '../tool-setup';
+import type { ToolEntry, ToolState } from '../types';
 
 const mockState = {
     places: { entries: [] },

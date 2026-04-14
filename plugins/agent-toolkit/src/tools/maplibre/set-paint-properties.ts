@@ -48,7 +48,7 @@ export const setPaintPropertiesDescription =
     'For route styling, prefer setRouteTheme.';
 
 /** Execute function for setPaintProperties — usable with ToolEntry format. */
-export async function executeSetPaintProperties(params: z.infer<typeof setPaintPropertiesSchema>, state: ToolState) {
+export const executeSetPaintProperties = async (params: z.infer<typeof setPaintPropertiesSchema>, state: ToolState) => {
     const { changes } = params;
     try {
         const results = changes.map(({ layerId, propertyName, value }) => {
@@ -70,4 +70,4 @@ export async function executeSetPaintProperties(params: z.infer<typeof setPaintP
             error: `Failed to set paint properties: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

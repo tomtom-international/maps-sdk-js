@@ -38,7 +38,7 @@ export const fitRouteSectionDescription =
 /**
  * Execute fit route section.
  */
-export async function executeFitRouteSection(params: z.infer<typeof fitRouteSectionSchema>, state: ToolState) {
+export const executeFitRouteSection = async (params: z.infer<typeof fitRouteSectionSchema>, state: ToolState) => {
     const { sectionType, id, padding = 50 } = params;
 
     try {
@@ -107,4 +107,4 @@ export async function executeFitRouteSection(params: z.infer<typeof fitRouteSect
             error: `Failed to fit route section: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

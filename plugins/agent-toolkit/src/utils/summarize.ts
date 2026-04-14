@@ -14,33 +14,22 @@ import {
 } from '@tomtom-org/maps-sdk/core';
 import { z } from 'zod';
 
-/**
- * Token-efficient summary of a single place for LLM consumption.
- */
-export type PlaceSummary = {
-    name?: string;
-    address?: string;
-    position: [number, number];
-};
+/** @ignore */
+export type PlaceSummary = { name?: string; address?: string; position: [number, number] };
 
-/**
- * Token-efficient summary of a places collection for LLM consumption.
- */
-export type PlacesSummary = {
-    count: number;
-    features: PlaceSummary[];
-};
+/** @ignore */
+export type PlacesSummary = { count: number; features: PlaceSummary[] };
 
 type RouteSummary = Route['properties']['summary'];
 type LegSummary = Route['properties']['sections']['leg'][number]['summary'];
 
 // Maps Date fields to string for LLM-safe serialization (distributive so Date | undefined → string | undefined).
 type StringDateValue<T> = T extends Date ? string : T;
-type StringDates<T> = { [K in keyof T]: StringDateValue<T[K]> };
 
-/**
- * Summarized route — just the route summary and optional per-leg summaries.
- */
+/** @ignore */
+export type StringDates<T> = { [K in keyof T]: StringDateValue<T[K]> };
+
+/** @ignore */
 export type SummarizedRoute = {
     index: number;
     summary: StringDates<RouteSummary>;
@@ -48,42 +37,43 @@ export type SummarizedRoute = {
     legSummaries?: StringDates<LegSummary>[];
 };
 
-/**
- * Summarized routes collection.
- */
-export interface SummarizedRoutes {
-    count: number;
-    routes: SummarizedRoute[];
-}
+/** @ignore */
+export type SummarizedRoutes = { count: number; routes: SummarizedRoute[] };
 
 /**
  * Converts a Place to a token-efficient summary for LLM consumption.
+ *
+ * @ignore
  */
-export function summarizePlace(place: Place): PlaceSummary {
+export const summarizePlace = (place: Place): PlaceSummary => {
     const coordinates = place.geometry?.coordinates as [number, number] | undefined;
     return {
         name: place.properties?.poi?.name,
         address: place.properties?.address?.freeformAddress,
         position: coordinates ?? [0, 0],
     };
-}
+};
 
 /**
  * Converts Places to a token-efficient summary for LLM consumption.
+ *
+ * @ignore
  */
-export function summarizePlaces(places: Places | Place[]): PlacesSummary {
+export const summarizePlaces = (places: Places | Place[]): PlacesSummary => {
     const features = Array.isArray(places) ? places : places.features;
     return {
         count: features.length,
         features: features.map((feature) => summarizePlace(feature)),
     };
-}
+};
 
 /**
  * Converts a Route to a token-efficient summary for LLM consumption.
  * Returns only the route summary and per-leg summaries (when more than one leg).
+ *
+ * @ignore
  */
-export function summarizeRoute(route: Route): SummarizedRoute {
+export const summarizeRoute = (route: Route): SummarizedRoute => {
     const { summary, sections, index } = route.properties;
     const legs = sections.leg;
 
@@ -99,20 +89,23 @@ export function summarizeRoute(route: Route): SummarizedRoute {
         summary: stringifyDates(summary),
         ...(legs.length > 1 && { legSummaries: legs.map((leg) => stringifyDates(leg.summary)) }),
     };
-}
+};
 
 /**
  * Converts Routes to a token-efficient summary for LLM consumption.
+ *
+ * @ignore
  */
-export function summarizeRoutes(routes: Routes): SummarizedRoutes {
+export const summarizeRoutes = (routes: Routes): SummarizedRoutes => {
     const count = routes.features.length;
 
     return {
         count,
         routes: routes.features.map(summarizeRoute),
     };
-}
+};
 
+/** @ignore */
 export const waypointSummarySchema = z.object({
     slotIndex: z.number(),
     isFilled: z.boolean(),
@@ -122,10 +115,12 @@ export const waypointSummarySchema = z.object({
 
 /**
  * Token-efficient summary of a waypoint for LLM consumption.
+ *
+ * @ignore
  */
-export function summarizeWaypoint(
+export const summarizeWaypoint = (
     waypoint: WaypointLike | null | undefined,
-): z.infer<typeof waypointSummarySchema> | null {
+): z.infer<typeof waypointSummarySchema> | null => {
     if (waypoint === null || waypoint === undefined) {
         return null;
     }
@@ -142,4 +137,4 @@ export function summarizeWaypoint(
         ...(address && { address }),
         ...(position && { position }),
     };
-}
+};

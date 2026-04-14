@@ -6,21 +6,15 @@
 
 import { z } from 'zod';
 
-/**
- * GeoJSON bounding box schema.
- */
+/** @ignore */
 export const geoJsonBBoxSchema = z
     .union([z.array(z.number()).refine((arr) => arr.length === 4, { message: 'BBox must have 4 elements' })])
     .describe('[minLng, minLat, maxLng, maxLat] or [W,S,E,N]');
 
-/**
- * HasBBox schema — either a BBox array or a GeoJSON object with a bbox property.
- */
+/** @ignore */
 export const hasBBoxSchema = z.union([geoJsonBBoxSchema, z.object({ bbox: geoJsonBBoxSchema })]);
 
-/**
- * Optional map display actions after resolving a place or places.
- */
+/** @ignore */
 export const showPlacesSchema = z.object({
     markerType: z
         .enum(['pin', 'none'])
@@ -32,16 +26,13 @@ export const showPlacesSchema = z.object({
         .describe('How to zoom the map into the places. Use "none" to keep the map still.'),
 });
 
-/** Output fields reporting which display actions were applied. */
+/** @ignore */
 export const shownSchema = z.object({
     markerType: z.boolean(),
     zoomMode: z.boolean(),
 });
 
-/**
- * Geographic scope for a search — explicit coordinates, an explicit bounding box,
- * or a map-relative shorthand.
- */
+/** @ignore */
 export const whereSchema = z.union([
     z.object({ position: z.array(z.number()).length(2) }).describe('Bias toward a specific [lng, lat] point.'),
     z.object({ boundingBox: hasBBoxSchema }).describe('Consider only within a BBox [W,S,E,N] or GeoJSON with bbox.'),

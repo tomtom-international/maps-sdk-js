@@ -56,7 +56,7 @@ export const helpDescription =
  *   Called at execution time, not at creation time, so metadata can be
  *   populated after all tools are set up.
  */
-export function createHelpTool(getToolsMetadata: () => Record<string, ToolMetadata>): Tool {
+export const createHelpTool = (getToolsMetadata: () => Record<string, ToolMetadata>): Tool => {
     return tool({
         description: helpDescription,
         inputSchema: helpSchema,
@@ -113,4 +113,4 @@ export function createHelpTool(getToolsMetadata: () => Record<string, ToolMetada
             }
         },
     });
-}
+};

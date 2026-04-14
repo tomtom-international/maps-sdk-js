@@ -5,7 +5,7 @@
 import { bboxFromGeoJSON, type HasBBox } from '@tomtom-org/maps-sdk/core';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
-import { hasBBoxSchema } from '../shared/schema';
+import { hasBBoxSchema } from '../shared';
 import { toolErrorSchema } from '../shared-output-schemas';
 
 /** Output schema for the fly-to tool. */
@@ -39,7 +39,7 @@ export const flyToDescription =
     'Use with boundingBox to frame a region or set of results. Use with position to center on a point.';
 
 /** Execute function for flyTo — usable with ToolEntry format. */
-export async function executeFlyTo(params: z.infer<typeof flyToSchema>, state: ToolState) {
+export const executeFlyTo = async (params: z.infer<typeof flyToSchema>, state: ToolState) => {
     const { where } = params;
     try {
         if ('boundingBox' in where) {
@@ -60,4 +60,4 @@ export async function executeFlyTo(params: z.infer<typeof flyToSchema>, state: T
             error: `flyTo failed: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

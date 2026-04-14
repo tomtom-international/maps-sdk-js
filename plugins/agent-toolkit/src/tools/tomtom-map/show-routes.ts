@@ -38,7 +38,7 @@ export const showRouteDescription =
 /**
  * Execute show routes.
  */
-export async function executeShowRoutes(params: z.infer<typeof showRouteSchema>, state: ToolState) {
+export const executeShowRoutes = async (params: z.infer<typeof showRouteSchema>, state: ToolState) => {
     const { id, selectedIndex = 0, fitBounds = true } = params;
     try {
         let routes: Routes | undefined;
@@ -85,4 +85,4 @@ export async function executeShowRoutes(params: z.infer<typeof showRouteSchema>,
             error: `Failed to show route: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

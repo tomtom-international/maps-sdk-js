@@ -13,7 +13,7 @@ export default defineConfig({
         lib: {
             entry: './index.ts',
             formats: ['es'],
-            fileName: 'index.es.js',
+            fileName: 'index.es',
         },
         minify: 'terser',
         emptyOutDir: true,

@@ -14,30 +14,14 @@
 import { generateText, type LanguageModel, type ModelMessage, Output, type TextPart } from 'ai';
 import { z } from 'zod';
 import type { Classifier, ClassifierContext, ToolMetadata } from '../types';
+import type { ClassificationResult, ClassifierOptions } from './types';
 
-/** A single turn in the conversation passed to {@link classifyUserIntent}. */
+/**
+ * A single turn in the conversation passed to {@link classifyUserIntent}.
+ *
+ * @ignore
+ */
 export type ConversationMessage = { role: 'user' | 'assistant'; content: string };
-
-/** Result returned by {@link classifyUserIntent}. */
-export type ClassificationResult = {
-    /** Tool names selected by the classifier. */
-    activeToolNames: string[];
-    /** Wall-clock time in ms for the classification step only (not the agent response). */
-    timeMs: number;
-    /** Token usage for the classification LLM call. */
-    usage: { inputTokens: number; outputTokens: number; totalTokens: number };
-};
-
-/** Options passed to {@link classifyUserIntent}. */
-export type ClassifierOptions = {
-    /**
-     * Language model to use for structured generation.
-     * Ideally should be a fast, low-cost model (e.g. gpt-4o-mini).
-     */
-    chatModel: LanguageModel;
-    /** Per-tool metadata used to build the classifier prompt. */
-    toolsMetadata: Record<string, ToolMetadata>;
-};
 
 /** Max character length for each history message when compacting for the classifier. */
 const MAX_HISTORY_MESSAGE_LENGTH = 300;
@@ -46,15 +30,19 @@ const MAX_HISTORY_MESSAGE_LENGTH = 300;
 const MAX_CLASSIFIER_HISTORY_MESSAGES = 8;
 
 /** Formats a single tool's metadata into a compact classifier prompt entry. */
-function formatToolEntry(name: string, entry: ToolMetadata): string {
+const formatToolEntry = (name: string, entry: ToolMetadata): string => {
     const classificationPrompt = entry.classificationPrompt ? ` ${entry.classificationPrompt}.` : '';
     // const related = entry.relatedTools?.length ? ` Related: ${entry.relatedTools.join(', ')}.` : '';
     const depends = entry.dependsOn?.length ? ` Depends on: ${entry.dependsOn.join(', ')}.` : '';
     return `${name}${classificationPrompt}${depends}`;
-}
+};
 
-/** Builds the system prompt listing available tools for the classifier. */
-export function buildClassifySystemPrompt(toolsMetadata: Record<string, ToolMetadata>): string {
+/**
+ * Builds the system prompt listing available tools for the classifier.
+ *
+ * @ignore
+ */
+export const buildClassifySystemPrompt = (toolsMetadata: Record<string, ToolMetadata>): string => {
     const toolEntries = Object.entries(toolsMetadata).map(([name, entry]) => formatToolEntry(name, entry));
 
     return [
@@ -68,7 +56,7 @@ export function buildClassifySystemPrompt(toolsMetadata: Record<string, ToolMeta
         'Available tools:',
         ...toolEntries,
     ].join('\n');
-}
+};
 
 const classifySchema = z.object({
     tools: z
@@ -78,11 +66,11 @@ const classifySchema = z.object({
 });
 
 /** Calls the LLM with structured output to select tools for the conversation. */
-async function classifyQueryToTools(
+const classifyQueryToTools = async (
     conversation: ConversationMessage[],
     model: LanguageModel,
     toolsMetadata: Record<string, ToolMetadata>,
-): Promise<{ tools: string[]; usage: ClassificationResult['usage'] }> {
+): Promise<{ tools: string[]; usage: ClassificationResult['usage'] }> => {
     const generated = await generateText({
         model,
         output: Output.object({ schema: classifySchema }),
@@ -99,7 +87,7 @@ async function classifyQueryToTools(
             totalTokens: generated.usage?.totalTokens ?? 0,
         },
     };
-}
+};
 
 /**
  * Classify a user conversation to determine which tools to activate.
@@ -115,11 +103,13 @@ async function classifyQueryToTools(
  * });
  * // result.activeToolNames contains the selected tools
  * ```
+ *
+ * @group Agent Toolkit
  */
-export async function classifyUserIntent(
+export const classifyUserIntent = async (
     conversation: ConversationMessage[],
     options: ClassifierOptions,
-): Promise<ClassificationResult> {
+): Promise<ClassificationResult> => {
     const { chatModel, toolsMetadata } = options;
     const startTime = performance.now();
 
@@ -134,35 +124,39 @@ export async function classifyUserIntent(
         timeMs,
         usage,
     };
-}
+};
 
 /** Type predicate that narrows a message content part to a TextPart. */
-function isTextPart(part: { type: string }): part is TextPart {
-    return part.type === 'text';
-}
+const isTextPart = (part: { type: string }): part is TextPart => part.type === 'text';
 
-/** Extracts plain text from a message's content (string or structured content array). */
-export function extractMessageText(content: string | Array<{ type: string }>): string | null {
+/**
+ * Extracts plain text from a message's content (string or structured content array).
+ *
+ * @ignore
+ */
+export const extractMessageText = (content: string | Array<{ type: string }>): string | null => {
     if (typeof content === 'string') return content;
 
     const textParts = content.filter(isTextPart);
     if (textParts.length > 0) return textParts.map((part) => part.text).join('');
 
     return null;
-}
+};
 
 /**
  * Extracts the text content of the last user message in a message array.
  * Returns null if no user message is found or if content has no text.
+ *
+ * @group Agent Toolkit
  */
-export function extractLastUserText(messages: ReadonlyArray<ModelMessage>): string | null {
+export const extractLastUserText = (messages: ReadonlyArray<ModelMessage>): string | null => {
     for (let i = messages.length - 1; i >= 0; i--) {
         if (messages[i].role === 'user') {
             return extractMessageText(messages[i].content);
         }
     }
     return null;
-}
+};
 
 /**
  * Creates the default LLM-based classifier. Uses structured generation to select
@@ -171,12 +165,14 @@ export function extractLastUserText(messages: ReadonlyArray<ModelMessage>): stri
  * @param options.model - Language model for classification (ideally fast/cheap like gpt-4o-mini)
  * @param options.maxHistoryMessages - Max prior turns for context. Default: 8
  * @param options.maxHistoryMessageLength - Max chars per history message. Default: 300
+ *
+ * @group Agent Toolkit
  */
-export function createDefaultClassifier(options: {
+export const createDefaultClassifier = (options: {
     model: LanguageModel;
     maxHistoryMessages?: number;
     maxHistoryMessageLength?: number;
-}): Classifier {
+}): Classifier => {
     const { model, maxHistoryMessages, maxHistoryMessageLength } = options;
 
     return async (context: ClassifierContext): Promise<ClassificationResult | null> => {
@@ -221,4 +217,4 @@ export function createDefaultClassifier(options: {
             return null;
         }
     };
-}
+};

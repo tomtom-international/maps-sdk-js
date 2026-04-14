@@ -41,3 +41,51 @@ Consumer App
 - **No provider bundled**: `model` is required. Fail fast if not provided.
 - **Monorepo imports**: Use `@tomtom-org/maps-sdk/core`, `/map`, `/services`.
 - **Linting**: Biome, not ESLint/Prettier. Run `pnpm lint` from root.
+
+---
+
+## Source Structure Conventions
+
+### Barrel files (`index.ts`)
+
+The package entry point (`plugins/agent-toolkit/index.ts`) uses **explicit named exports**, not `export *`:
+
+```typescript
+export { createMapAgent } from './src/create-map-agent';
+export { DEFAULT_TOOLS, TOOL_NAMES, type ToolName } from './src/tools';
+export * from './src/types/index';  // types/ only contains public types
+// ...
+```
+
+Because the root is explicit, **directory barrels** (`src/*/index.ts`) can export everything in their directory for convenient internal cross-directory imports. Nothing leaks to the public surface unless the root explicitly re-exports it.
+
+```typescript
+// Use the barrel for internal cross-directory imports
+import { makePlacesLabel, summarizePlaces } from '../../utils';
+import { whereSchema, showResultsOnMap } from '../shared';
+
+// Exception: when a symbol is intentionally absent from the barrel,
+// import directly from the source file
+import { costModelSchema } from '../services/set-route-parameters';
+```
+
+**`@ignore`** controls TypeDoc visibility independently of barrel inclusion. An `@ignore` symbol can appear in the bundle and in a directory barrel while still being excluded from the API reference.
+
+### `types/` subdirectories — public API types only
+
+`types/` subdirectories hold types annotated with `@group Agent Toolkit`. Internal types (`@ignore`) live in their source file, not in `types/`.
+
+```
+src/types/index.ts          ← public plugin types (ToolState, MapAgentOptions, …)
+src/utils/types/index.ts    ← public utility types (ClassificationResult, ClassifierOptions)
+```
+
+### `tests/` subdirectories
+
+Test files live in a `tests/` subdirectory alongside their source files:
+
+```
+src/tests/                      ← tests for top-level src/ files
+src/utils/tests/                ← tests for src/utils/
+src/tools/state/tests/          ← tests for src/tools/state/
+```

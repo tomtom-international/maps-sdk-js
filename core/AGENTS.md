@@ -88,6 +88,41 @@ pnpm test:dist         # Validate built distribution
 - See [../documentation/development/](../documentation/development/)
 - This package is shared infrastructure — changes affect both `map` and `services` packages
 
+## Source Structure Conventions
+
+### Barrel files (`index.ts`)
+
+Each directory exposes its public surface through an `index.ts` barrel. Because the package entry point re-exports these barrels wholesale, anything in a directory barrel becomes part of the public API — so keep them selective.
+
+Internal symbols are not added to `index.ts` and are imported directly from their source file:
+
+```typescript
+// Internal cross-directory import — go directly to the source file
+import { internalHelper } from './util/internalHelper';
+```
+
+### `types/` subdirectories — public API types only
+
+`types/` subdirectories contain only types that are part of the public API reference. Internal helpers belong in the source file that uses them.
+
+```
+src/types/          ← public SDK types (Place, Route, BBox, …)
+src/types/place/    ← place-specific type groupings
+src/types/route/    ← route-specific type groupings
+src/types/traffic/  ← traffic-specific type groupings
+```
+
+### `tests/` subdirectories
+
+Test files live in a `tests/` subdirectory alongside the source files they cover:
+
+```
+src/config/tests/    ← tests for src/config/
+src/util/tests/      ← tests for src/util/
+```
+
+---
+
 ## Important Notes
 
 - Keep dependencies minimal — this is shared code used across packages

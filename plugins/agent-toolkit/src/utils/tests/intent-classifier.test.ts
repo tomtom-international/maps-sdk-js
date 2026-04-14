@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { extractLastUserText } from './intent-classifier';
+import { extractLastUserText } from '../intent-classifier';
 
 describe('extractLastUserText', () => {
     it('extracts text from last user message', () => {

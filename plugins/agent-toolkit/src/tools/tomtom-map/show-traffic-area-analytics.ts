@@ -86,10 +86,10 @@ export const showTrafficAreaAnalyticsDescription =
 /**
  * Execute show traffic area analytics.
  */
-export async function executeShowTrafficAreaAnalytics(
+export const executeShowTrafficAreaAnalytics = async (
     params: z.infer<typeof showTrafficAreaAnalyticsSchema>,
     state: ToolState,
-): Promise<z.infer<typeof showTrafficAreaAnalyticsOutputSchema>> {
+): Promise<z.infer<typeof showTrafficAreaAnalyticsOutputSchema>> => {
     try {
         // Get stored analytics result
         const analyticsResult = state.traffic.lastAreaAnalytics;
@@ -170,4 +170,4 @@ export async function executeShowTrafficAreaAnalytics(
             error: `Failed to show traffic area analytics: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

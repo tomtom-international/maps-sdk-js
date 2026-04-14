@@ -28,10 +28,10 @@ export const showWaypointsDescription =
 /**
  * Execute show waypoints.
  */
-export async function executeShowWaypoints(
+export const executeShowWaypoints = async (
     _params: z.infer<typeof showWaypointsSchema>,
     state: ToolState,
-): Promise<z.infer<typeof showWaypointsOutputSchema>> {
+): Promise<z.infer<typeof showWaypointsOutputSchema>> => {
     try {
         // Prefer the current (possibly sparse) waypoints being assembled;
         // fall back to the last finalized waypoints from route history.
@@ -46,4 +46,4 @@ export async function executeShowWaypoints(
             error: `Failed to show waypoints: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

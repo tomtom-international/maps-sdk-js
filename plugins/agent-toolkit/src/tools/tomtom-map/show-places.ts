@@ -35,7 +35,7 @@ export const showPlacesDescription =
 /**
  * Execute show places.
  */
-export async function executeShowPlaces(params: z.infer<typeof showPlacesSchema>, state: ToolState) {
+export const executeShowPlaces = async (params: z.infer<typeof showPlacesSchema>, state: ToolState) => {
     const { id, fitBounds = true } = params;
     try {
         let placesToShow: Place[] | undefined;
@@ -73,4 +73,4 @@ export async function executeShowPlaces(params: z.infer<typeof showPlacesSchema>
             error: `Failed to show places: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

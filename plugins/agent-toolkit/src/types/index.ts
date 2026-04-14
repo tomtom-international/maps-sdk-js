@@ -2,24 +2,26 @@
  * @module agent-toolkit-types
  */
 
+export * from './state';
+
 import type { LanguageModel, ModelMessage, PrepareStepFunction, ToolLoopAgent } from 'ai';
 import type { z } from 'zod';
-import type { BaseMapState, MapPOIsState, PlacesState, RangeState, RoutingState, TrafficState } from './state';
-import type { ToolName } from './tools';
-import type { ClassificationResult } from './utils/intent-classifier';
+import type { BaseMapState, MapPOIsState, PlacesState, RangeState, RoutingState, TrafficState } from '../state';
+import type { ToolName } from '../tools';
+import type { ClassificationResult } from '../utils';
 
 /**
  * Autocomplete hint for tool names. Suggests known default tool names
  * while allowing arbitrary custom names via `string & {}`.
  *
- * @group Tools
+ * @group Agent Toolkit
  */
 export type ToolNameHint = ToolName | (string & {});
 
 /**
  * Context passed to a classifier function.
  *
- * @group Classifier
+ * @group Agent Toolkit
  */
 export type ClassifierContext = {
     /** Full message history for the current conversation. */
@@ -32,14 +34,14 @@ export type ClassifierContext = {
  * A classifier function that selects which tools to activate for a user message.
  * Return `null` to activate all tools (fail-open).
  *
- * @group Classifier
+ * @group Agent Toolkit
  */
 export type Classifier = (context: ClassifierContext) => Promise<ClassificationResult | null>;
 
 /**
  * Metadata for an agent toolkit tool.
  *
- * @group Tools
+ * @group Agent Toolkit
  */
 export type ToolMetadata = {
     /** Tool identifier, derived from the config key. */
@@ -66,7 +68,7 @@ export type ToolMetadata = {
  *
  * @typeParam S - The ToolState shape this tool requires. Default: base `ToolState`.
  *
- * @group Tools
+ * @group Agent Toolkit
  */
 export type ToolEntry<S extends ToolState = ToolState> = {
     /** Description of the tool's purpose. */
@@ -95,6 +97,8 @@ export type ToolEntry<S extends ToolState = ToolState> = {
  * Options for creating an agent toolkit.
  *
  * @typeParam CS - Full state type. Must extend `ToolState`. Defaults to base `ToolState` (no custom slices).
+ *
+ * @group Agent Toolkit
  *
  * @example Custom state
  * ```typescript
@@ -194,6 +198,8 @@ export type MapAgentOptions<CS extends ToolState = ToolState> = {
 /**
  * The return type of createMapAgent().
  * A real ToolLoopAgent instance with state access and cleanup.
+ *
+ * @group Agent Toolkit
  */
 export type MapAgentInstance<CS extends ToolState = ToolState> = ToolLoopAgent & {
     /** Live agent state (built-in + custom slices). */
@@ -206,6 +212,8 @@ export type MapAgentInstance<CS extends ToolState = ToolState> = ToolLoopAgent &
  * State passed to tool factory functions. Organized by feature area,
  * each sub-state mixes lazy module access with the current service data
  * produced during the session.
+ *
+ * @group Agent Toolkit
  *
  * @example
  * ```typescript

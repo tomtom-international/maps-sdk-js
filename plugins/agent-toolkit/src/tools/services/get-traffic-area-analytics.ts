@@ -9,8 +9,9 @@ import type { MultiPolygon, Polygon } from 'geojson';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
-import { locationInputSchema, resolveLocationInput } from '../shared/location-input';
+import { locationInputSchema } from '../shared';
 import { toolErrorSchema } from '../shared-output-schemas';
+import { resolveLocationInput } from './resolve-location-input';
 
 // ---------------------------------------------------------------------------
 // Constants (inline — the SDK only type-exports these)
@@ -114,7 +115,7 @@ export const getTrafficAreaAnalyticsDescription =
 // ---------------------------------------------------------------------------
 
 // Convert [minLng, minLat, maxLng, maxLat] to a GeoJSON Polygon.
-function bboxToPolygon(bbox: number[]): Polygon {
+const bboxToPolygon = (bbox: number[]): Polygon => {
     const [minLng, minLat, maxLng, maxLat] = bbox;
     return {
         type: 'Polygon',
@@ -128,13 +129,13 @@ function bboxToPolygon(bbox: number[]): Polygon {
             ],
         ],
     };
-}
+};
 
 // Resolve the analytics area geometry from a location query or bbox.
-async function resolveGeometry(
+const resolveGeometry = async (
     location: z.infer<typeof locationInputSchema> | undefined,
     bbox: number[] | undefined,
-): Promise<Polygon | MultiPolygon | { error: string }> {
+): Promise<Polygon | MultiPolygon | { error: string }> => {
     if (location) {
         const resolved = await resolveLocationInput(location);
         if (!resolved) return { error: 'Could not resolve the provided location.' };
@@ -153,21 +154,21 @@ async function resolveGeometry(
     }
     if (!bbox) return { error: 'No area provided.' };
     return bboxToPolygon(bbox);
-}
+};
 
 // Resolve which date parameters to forward to the SDK from the tool inputs.
-function resolveDateParams(
+const resolveDateParams = (
     days: string[] | undefined,
     startDate: string | undefined,
     endDate: string | undefined,
-): { startDate?: string; endDate?: string; days?: string[] } {
+): { startDate?: string; endDate?: string; days?: string[] } => {
     if (days && days.length > 0) return { days };
     if (startDate) return endDate ? { startDate, endDate } : { startDate };
     return {};
-}
+};
 
 // Show analytics on the map with default settings, fitting the viewport.
-async function showAnalyticsOnMap(state: ToolState, result: TrafficAreaAnalytics): Promise<void> {
+const showAnalyticsOnMap = async (state: ToolState, result: TrafficAreaAnalytics): Promise<void> => {
     const analyticsModule = await state.traffic.getTrafficAreaAnalyticsModule();
     await analyticsModule.clear();
     await analyticsModule.show(result);
@@ -178,39 +179,36 @@ async function showAnalyticsOnMap(state: ToolState, result: TrafficAreaAnalytics
         state.baseMap.mapLibreMap.fitBounds(bbox as LngLatBoundsLike, { padding: 50, pitch: 45 });
     }
     state.traffic.onAnalyticsShown?.(result, analyticsModule);
-}
+};
 
 /** Format a Date to 'YYYY-MM-DD'. */
-export function toDateString(d: Date): string {
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-}
+export const toDateString = (d: Date): string =>
+    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
 /** Safely format a date value (Date object or string) to 'YYYY-MM-DD', or undefined if invalid. */
-export function formatDate(value: unknown): string | undefined {
+export const formatDate = (value: unknown): string | undefined => {
     if (value instanceof Date) {
         return Number.isNaN(value.getTime()) ? undefined : toDateString(value);
     }
     if (typeof value === 'string') return value.slice(0, 10);
     return undefined;
-}
+};
 
 /** Extract metrics from a timed entry, omitting undefined values. */
-export function extractMetrics(entry: Record<string, unknown>) {
-    return {
-        ...(entry.speed !== undefined && { speed: entry.speed as number }),
-        ...(entry.freeFlowSpeed !== undefined && { freeFlowSpeed: entry.freeFlowSpeed as number }),
-        ...(entry.congestionLevel !== undefined && { congestionLevel: entry.congestionLevel as number }),
-        ...(entry.travelTime !== undefined && { travelTime: entry.travelTime as number }),
-        ...(entry.networkLength !== undefined && { networkLength: entry.networkLength as number }),
-    };
-}
+export const extractMetrics = (entry: Record<string, unknown>) => ({
+    ...(entry.speed !== undefined && { speed: entry.speed as number }),
+    ...(entry.freeFlowSpeed !== undefined && { freeFlowSpeed: entry.freeFlowSpeed as number }),
+    ...(entry.congestionLevel !== undefined && { congestionLevel: entry.congestionLevel as number }),
+    ...(entry.travelTime !== undefined && { travelTime: entry.travelTime as number }),
+    ...(entry.networkLength !== undefined && { networkLength: entry.networkLength as number }),
+});
 
 /** Compact summary of the analytics result — just headline numbers + what's available for drill-down. */
-function summarize(
+const summarize = (
     result: TrafficAreaAnalytics,
     inputStartDate?: string,
     inputEndDate?: string,
-): z.infer<typeof getTrafficAreaAnalyticsOutputSchema> {
+): z.infer<typeof getTrafficAreaAnalyticsOutputSchema> => {
     const region = result.features[0]?.properties;
     if (!region) {
         return {
@@ -254,7 +252,7 @@ function summarize(
         tileCount: region.tiledData?.tiles?.length ?? 0,
         availableGranularities,
     };
-}
+};
 
 // ---------------------------------------------------------------------------
 // Tool factory
@@ -264,10 +262,10 @@ function summarize(
  * Create the get traffic area analytics tool.
  */
 /** Standalone execute for ToolEntry format. */
-export async function executeGetTrafficAreaAnalytics(
+export const executeGetTrafficAreaAnalytics = async (
     params: z.infer<typeof getTrafficAreaAnalyticsSchema>,
     state: ToolState,
-): Promise<z.infer<typeof getTrafficAreaAnalyticsOutputSchema>> {
+): Promise<z.infer<typeof getTrafficAreaAnalyticsOutputSchema>> => {
     const { location, bbox, showOnMap, startDate, endDate, days, metrics, functionalRoadClasses, hours } = params;
 
     if (!location && !bbox) {
@@ -308,4 +306,4 @@ export async function executeGetTrafficAreaAnalytics(
             error: `Failed to get traffic area analytics: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

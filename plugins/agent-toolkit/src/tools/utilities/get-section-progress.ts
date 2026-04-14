@@ -26,7 +26,7 @@ export const getSectionProgressDescription =
     'Calculate the distance and travel time for one or more sections of the shown route. If ids is omitted, all sections of the given type are returned.';
 
 /** Execute function for getSectionProgress — usable with ToolEntry format. */
-export async function executeGetSectionProgress(params: z.infer<typeof getSectionProgressSchema>, state: ToolState) {
+export const executeGetSectionProgress = async (params: z.infer<typeof getSectionProgressSchema>, state: ToolState) => {
     const { sectionType, ids } = params;
 
     try {
@@ -88,4 +88,4 @@ export async function executeGetSectionProgress(params: z.infer<typeof getSectio
             error: `Failed to get section progress: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

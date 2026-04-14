@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { makePlacesLabel, makeRoutesLabel } from './state-labels';
+import { makePlacesLabel, makeRoutesLabel } from '../state-labels';
 
 describe('makePlacesLabel', () => {
     it('labels a single locate result', () => {

@@ -47,7 +47,10 @@ export const setLayoutPropertiesDescription =
     'Layout properties control structure and visibility — use setPaintProperties for colors and widths.';
 
 /** Execute function for setLayoutProperties — usable with ToolEntry format. */
-export async function executeSetLayoutProperties(params: z.infer<typeof setLayoutPropertiesSchema>, state: ToolState) {
+export const executeSetLayoutProperties = async (
+    params: z.infer<typeof setLayoutPropertiesSchema>,
+    state: ToolState,
+) => {
     const { changes } = params;
     try {
         const results = changes.map(({ layerId, propertyName, value }) => {
@@ -69,4 +72,4 @@ export async function executeSetLayoutProperties(params: z.infer<typeof setLayou
             error: `Failed to set layout properties: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

@@ -39,7 +39,7 @@ export const getMapStyleLayersDescription =
     'Get map layer IDs with their paint/layout properties from MapLibre style for advanced runtime manipulation. Use before setLayoutProperty/setPaintProperty for custom styling.';
 
 /** Execute function for getMapStyleLayers — usable with ToolEntry format. */
-export async function executeGetMapStyleLayers(params: z.infer<typeof getMapStyleLayersSchema>, state: ToolState) {
+export const executeGetMapStyleLayers = async (params: z.infer<typeof getMapStyleLayersSchema>, state: ToolState) => {
     const { layerIdQuery, include } = params;
     try {
         const style = state.baseMap.mapLibreMap.getStyle();
@@ -67,4 +67,4 @@ export async function executeGetMapStyleLayers(params: z.infer<typeof getMapStyl
             error: `Failed to get style: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

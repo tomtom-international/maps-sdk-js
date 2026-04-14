@@ -7,10 +7,10 @@ import { withInsertedWaypoint } from '@tomtom-org/maps-sdk/core';
 import { calculateRoute } from '@tomtom-org/maps-sdk/services';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
-import { makeRoutesLabel } from '../../utils/state-labels';
-import { summarizeRoutes } from '../../utils/summarize';
-import { locationInputSchema, resolveLocationInput } from '../shared/location-input';
+import { makeRoutesLabel, summarizeRoutes } from '../../utils';
+import { locationInputSchema } from '../shared';
 import { routesOutputSchema, toolErrorSchema } from '../shared-output-schemas';
+import { resolveLocationInput } from './resolve-location-input';
 import { buildCalculateRouteParams, resolveRouteWaypoints, showRouteOnMap } from './set-route-locations';
 
 /** Output schema for the add-stop-to-route tool. */
@@ -29,7 +29,7 @@ export const addStopToRouteDescription =
     'If location is provided, it is resolved search-first. ' +
     'Requires an existing route (call setRouteLocations first).';
 
-async function validateExistingRoute(state: ToolState) {
+const validateExistingRoute = async (state: ToolState) => {
     const shownRoutes = (await state.routing.getRoutingModule()).getShown();
     const shownRouteLines = shownRoutes?.mainLines;
     const shownWaypoints = shownRoutes?.waypoints;
@@ -40,12 +40,12 @@ async function validateExistingRoute(state: ToolState) {
         return 'No existing waypoints available. Use calculate-route first to create a route with waypoints.';
     }
     return { shownRouteLines, shownWaypoints };
-}
+};
 
-async function resolveNewWaypoint(
+const resolveNewWaypoint = async (
     location: z.infer<typeof locationInputSchema> | undefined,
     state: ToolState,
-): Promise<{ place: Place | [number, number] } | { error: string }> {
+): Promise<{ place: Place | [number, number] } | { error: string }> => {
     if (location) {
         const resolved = await resolveLocationInput(location);
         if (!resolved) {
@@ -61,16 +61,16 @@ async function resolveNewWaypoint(
         };
     }
     return { place: fallback };
-}
+};
 
 /**
  * Create the add stop to route tool.
  */
 /** Standalone execute for ToolEntry format. */
-export async function executeAddStopToRoute(
+export const executeAddStopToRoute = async (
     params: z.infer<typeof addStopToRouteSchema>,
     state: ToolState,
-): Promise<z.infer<typeof addStopToRouteOutputSchema>> {
+): Promise<z.infer<typeof addStopToRouteOutputSchema>> => {
     const { location, showOnMap } = params;
     try {
         const routeResult = await validateExistingRoute(state);
@@ -109,4 +109,4 @@ export async function executeAddStopToRoute(
             error: `Failed to add stop to route: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

@@ -40,10 +40,10 @@ export const geocodeDescription =
  * Create the geocode tool.
  */
 /** Standalone execute for ToolEntry format. */
-export async function executeGeocode(
+export const executeGeocode = async (
     params: z.infer<typeof geocodeSchema>,
     state: ToolState,
-): Promise<z.infer<typeof geocodeOutputSchema>> {
+): Promise<z.infer<typeof geocodeOutputSchema>> => {
     const { query, waypointIndex } = params;
     try {
         const result = await geocodeOne(query);
@@ -65,4 +65,4 @@ export async function executeGeocode(
     } catch (error) {
         return { error: `Geocoding failed: ${error instanceof Error ? error.message : String(error)}` };
     }
-}
+};

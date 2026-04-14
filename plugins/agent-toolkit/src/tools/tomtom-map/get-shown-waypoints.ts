@@ -32,10 +32,10 @@ export const getShownWaypointsDescription =
 /**
  * Execute get shown waypoints.
  */
-export async function executeGetShownWaypoints(
+export const executeGetShownWaypoints = async (
     _params: z.infer<typeof getShownWaypointsSchema>,
     state: ToolState,
-): Promise<z.infer<typeof getShownWaypointsOutputSchema>> {
+): Promise<z.infer<typeof getShownWaypointsOutputSchema>> => {
     try {
         const shown = (await state.routing.getRoutingModule()).getShown();
 
@@ -55,4 +55,4 @@ export async function executeGetShownWaypoints(
             error: `Failed to get shown waypoints: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

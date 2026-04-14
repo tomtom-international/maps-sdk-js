@@ -6,12 +6,11 @@ import { bboxFromGeoJSON, type HasBBox, type Routes, type WaypointLike } from '@
 import { type CostModel, calculateRoute, type MaxNumberOfAlternatives } from '@tomtom-org/maps-sdk/services';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import { z } from 'zod';
-import type { RouteParams } from '../../state';
-import type { ToolState } from '../../types';
-import { makeRoutesLabel } from '../../utils/state-labels';
-import { summarizeRoutes } from '../../utils/summarize';
-import { locationInputSchema, resolveLocationInput } from '../shared/location-input';
+import type { RouteParams, ToolState } from '../../types';
+import { makeRoutesLabel, summarizeRoutes } from '../../utils';
+import { locationInputSchema } from '../shared';
 import { routesOutputSchema, toolErrorSchema } from '../shared-output-schemas';
+import { resolveLocationInput } from './resolve-location-input';
 
 /** Output schema for the set-route-locations tool. */
 export const setRouteLocationsOutputSchema = z.union([routesOutputSchema, toolErrorSchema]);
@@ -36,12 +35,12 @@ export const setRouteLocationsDescription =
  * Filters out null waypoints and returns the array only if there are at least 2 valid entries.
  * Returns null if the condition is not met, preventing a route calculation call.
  */
-export function resolveRouteWaypoints(waypoints: (WaypointLike | null)[]): WaypointLike[] | null {
+export const resolveRouteWaypoints = (waypoints: (WaypointLike | null)[]): WaypointLike[] | null => {
     const valid = waypoints.filter((w): w is WaypointLike => w !== null);
     return valid.length >= 2 ? valid : null;
-}
+};
 
-export function buildCalculateRouteParams(routeParams: RouteParams) {
+export const buildCalculateRouteParams = (routeParams: RouteParams) => {
     const { maxAlternatives = 0, costModel, when } = routeParams;
     return {
         ...(maxAlternatives > 0 && { maxAlternatives: maxAlternatives as MaxNumberOfAlternatives }),
@@ -55,9 +54,9 @@ export function buildCalculateRouteParams(routeParams: RouteParams) {
         }),
         ...(when && { when: { option: when.option, date: new Date(when.date) } }),
     };
-}
+};
 
-export async function showRouteOnMap(state: ToolState, routes: Routes, waypoints: WaypointLike[]): Promise<void> {
+export const showRouteOnMap = async (state: ToolState, routes: Routes, waypoints: WaypointLike[]): Promise<void> => {
     const routingModule = await state.routing.getRoutingModule();
     await routingModule.showRoutes(routes);
     await routingModule.showWaypoints(waypoints);
@@ -65,16 +64,16 @@ export async function showRouteOnMap(state: ToolState, routes: Routes, waypoints
     if (bbox) {
         state.baseMap.mapLibreMap.fitBounds(bbox as LngLatBoundsLike, { padding: 50 });
     }
-}
+};
 
 /**
  * Create the set-route-locations tool.
  */
 /** Standalone execute for ToolEntry format. */
-export async function executeSetRouteLocations(
+export const executeSetRouteLocations = async (
     params: z.infer<typeof setRouteLocationsSchema>,
     state: ToolState,
-): Promise<z.infer<typeof setRouteLocationsOutputSchema>> {
+): Promise<z.infer<typeof setRouteLocationsOutputSchema>> => {
     const { locations, showOnMap } = params;
     try {
         const resolved = await Promise.all(locations.map(resolveLocationInput));
@@ -108,4 +107,4 @@ export async function executeSetRouteLocations(
             error: `Route calculation failed: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

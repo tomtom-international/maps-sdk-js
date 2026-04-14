@@ -29,7 +29,10 @@ export const setMapStandardStyleDescription =
 /**
  * Execute set map standard style.
  */
-export async function executeSetMapStandardStyle(params: z.infer<typeof setMapStandardStyleSchema>, state: ToolState) {
+export const executeSetMapStandardStyle = async (
+    params: z.infer<typeof setMapStandardStyleSchema>,
+    state: ToolState,
+) => {
     const { style } = params;
     try {
         state.baseMap.ttMap.setStyle(style);
@@ -43,4 +46,4 @@ export async function executeSetMapStandardStyle(params: z.infer<typeof setMapSt
             error: `Failed to set map style: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

@@ -10,11 +10,13 @@ import type { ToolEntry, ToolNameHint, ToolState } from './types';
  * @param defaults - Base tool record (typically DEFAULT_TOOLS or empty).
  * @param overrides - User-provided additions, replacements, and exclusions.
  * @returns Resolved tool record ready for setupTools.
+ *
+ * @group Agent Toolkit
  */
-export function resolveTools<S extends ToolState>(
+export const resolveTools = <S extends ToolState>(
     defaults: Record<string, ToolEntry<S>>,
     overrides?: { [K in ToolNameHint]?: ToolEntry<S> | false | undefined },
-): Record<string, ToolEntry<S>> {
+): Record<string, ToolEntry<S>> => {
     const result = { ...defaults };
 
     if (!overrides) return result;
@@ -28,4 +30,4 @@ export function resolveTools<S extends ToolState>(
     }
 
     return result;
-}
+};

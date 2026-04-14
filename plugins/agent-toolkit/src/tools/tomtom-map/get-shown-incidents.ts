@@ -36,10 +36,10 @@ export const getShownIncidentsDescription =
 /**
  * Execute get shown incidents.
  */
-export async function executeGetShownIncidents(
+export const executeGetShownIncidents = async (
     _params: z.infer<typeof getShownIncidentsSchema>,
     state: ToolState,
-): Promise<z.infer<typeof getShownIncidentsOutputSchema>> {
+): Promise<z.infer<typeof getShownIncidentsOutputSchema>> => {
     try {
         const trafficIncidentsModule = await state.traffic.getTrafficIncidentsModule();
         const shown = trafficIncidentsModule.getShown();
@@ -65,4 +65,4 @@ export async function executeGetShownIncidents(
             error: `Failed to get shown incidents: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

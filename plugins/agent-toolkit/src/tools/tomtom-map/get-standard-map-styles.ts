@@ -26,10 +26,10 @@ export const getStandardMapStylesDescription =
 /**
  * Execute get standard map styles.
  */
-export async function executeGetStandardMapStyles(
+export const executeGetStandardMapStyles = async (
     _params: z.infer<typeof getStandardMapStylesSchema>,
     _state: ToolState,
-): Promise<z.infer<typeof getStandardMapStylesOutputSchema>> {
+): Promise<z.infer<typeof getStandardMapStylesOutputSchema>> => {
     try {
         return {
             styles: standardStyleIDs,
@@ -39,4 +39,4 @@ export async function executeGetStandardMapStyles(
             error: `Failed to get standard map styles: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

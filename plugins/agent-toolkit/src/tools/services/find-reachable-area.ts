@@ -9,9 +9,10 @@ import { calculateReachableRanges } from '@tomtom-org/maps-sdk/services';
 import { Position } from 'geojson';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
-import { makeRangeLabel } from '../../utils/state-labels';
-import { locationInputSchema, resolveLocationInput } from '../shared/location-input';
+import { makeRangeLabel } from '../../utils';
+import { locationInputSchema } from '../shared';
 import { toolErrorSchema } from '../shared-output-schemas';
+import { resolveLocationInput } from './resolve-location-input';
 
 export const budgetSchema = z.object({
     type: z
@@ -57,16 +58,16 @@ export const findReachableAreaDescription =
     'showOnMap renders the polygons on the map. ' +
     'status: not_found if origin cannot be resolved; no_results if API returns empty geometry.';
 
-async function computeReachableRanges(budgets: z.infer<typeof budgetSchema>[], origin: Position) {
+const computeReachableRanges = async (budgets: z.infer<typeof budgetSchema>[], origin: Position) => {
     const paramsArray: ReachableRangeParams[] = budgets.map((b) => ({
         origin,
         budget: { type: b.type as BudgetType, value: b.value },
     }));
     const result = await calculateReachableRanges(paramsArray);
     return result.features.length === 0 ? null : result;
-}
+};
 
-async function displayRangeResults(
+const displayRangeResults = async (
     state: ToolState,
     result: PolygonFeatures,
     theme: GeometryTheme,
@@ -74,7 +75,7 @@ async function displayRangeResults(
     originName: string,
     showOnMap: boolean,
     showOriginPin: boolean,
-) {
+) => {
     if (showOnMap) {
         const geomModule = await state.ranges.getGeometriesModule(theme);
         await geomModule.show(result);
@@ -97,13 +98,13 @@ async function displayRangeResults(
         const placesModule = await state.ranges.getPlacesModule();
         await placesModule.show(originPlace);
     }
-}
+};
 
 /** Standalone execute for ToolEntry format. */
-export async function executeFindReachableArea(
+export const executeFindReachableArea = async (
     params: z.infer<typeof findReachableAreaSchema>,
     state: ToolState,
-): Promise<z.infer<typeof findReachableAreaOutputSchema>> {
+): Promise<z.infer<typeof findReachableAreaOutputSchema>> => {
     const { origin, budgets, theme, showOnMap, showOriginPin = true } = params;
 
     try {
@@ -134,4 +135,4 @@ export async function executeFindReachableArea(
             error: `Reachable area calculation failed: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

@@ -41,10 +41,10 @@ export const getPoiCategoryCodesDescription =
  * Create the get-poi-category-codes tool.
  */
 /** Standalone execute for ToolEntry format. */
-export async function executeGetPoiCategoryCodes(
+export const executeGetPoiCategoryCodes = async (
     params: z.infer<typeof getPoiCategoryCodesSchema>,
     _state: ToolState,
-): Promise<z.infer<typeof getPoiCategoryCodesOutputSchema>> {
+): Promise<z.infer<typeof getPoiCategoryCodesOutputSchema>> => {
     const { filters, language } = params;
     try {
         const codes = await getPOICategoryCodes({
@@ -60,4 +60,4 @@ export async function executeGetPoiCategoryCodes(
             error: `Failed to fetch POI category codes: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

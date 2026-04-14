@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { resolveTools } from './resolve-tools';
-import type { ToolEntry } from './types';
+import { resolveTools } from '../resolve-tools';
+import type { ToolEntry } from '../types';
 
 /** Minimal ToolEntry stub for testing. */
 function stubTool(description: string): ToolEntry {

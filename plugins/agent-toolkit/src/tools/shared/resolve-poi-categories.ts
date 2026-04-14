@@ -3,7 +3,8 @@ import { getPOICategoryCodes } from '@tomtom-org/maps-sdk/services';
 
 const knownPoiCategoriesSet = new Set<string>(knownPoiCategories);
 
-export async function resolvePoiCategories(poiCategories: string[] | undefined): Promise<POICategory[] | undefined> {
+/** @ignore */
+export const resolvePoiCategories = async (poiCategories: string[] | undefined): Promise<POICategory[] | undefined> => {
     if (!poiCategories) {
         return undefined;
     }
@@ -17,4 +18,4 @@ export async function resolvePoiCategories(poiCategories: string[] | undefined):
 
     const merged = [...new Set([...known, ...resolvedUnrecognized])];
     return merged.length ? merged : undefined;
-}
+};

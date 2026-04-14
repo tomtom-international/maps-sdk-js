@@ -26,7 +26,7 @@ export const removeStopFromRouteDescription =
     'Index 0 is the origin, last index is the destination — both must remain. ' +
     'Requires an existing route (call setRouteLocations first).';
 
-function validateRemoveStop<T>(waypoints: T[] | null | undefined, stopIndex: number): string | T[] {
+const validateRemoveStop = <T>(waypoints: T[] | null | undefined, stopIndex: number): string | T[] => {
     if (!waypoints || waypoints.length < 2) {
         return 'No existing waypoints available. Use calculate-route first to create a route with waypoints.';
     }
@@ -37,16 +37,16 @@ function validateRemoveStop<T>(waypoints: T[] | null | undefined, stopIndex: num
         return 'Cannot remove a stop: at least 2 waypoints (origin and destination) must remain.';
     }
     return waypoints;
-}
+};
 
 /**
  * Create the remove stop from route tool.
  */
 /** Standalone execute for ToolEntry format. */
-export async function executeRemoveStopFromRoute(
+export const executeRemoveStopFromRoute = async (
     params: z.infer<typeof removeStopFromRouteSchema>,
     state: ToolState,
-): Promise<z.infer<typeof removeStopFromRouteOutputSchema>> {
+): Promise<z.infer<typeof removeStopFromRouteOutputSchema>> => {
     const { stopIndex, showOnMap } = params;
     try {
         const validated = validateRemoveStop(state.routing.currentWaypoints, stopIndex);
@@ -76,4 +76,4 @@ export async function executeRemoveStopFromRoute(
             error: `Failed to remove stop from route: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

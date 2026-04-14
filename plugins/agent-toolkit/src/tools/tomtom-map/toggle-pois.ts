@@ -63,10 +63,10 @@ export const togglePOIsDescription =
 /**
  * Execute toggle POIs.
  */
-export async function executeTogglePOIs(
+export const executeTogglePOIs = async (
     params: z.infer<typeof togglePOIsSchema>,
     state: ToolState,
-): Promise<z.infer<typeof togglePOIsOutputSchema>> {
+): Promise<z.infer<typeof togglePOIsOutputSchema>> => {
     try {
         const poisModule = await state.mapPOIs.getPOIsModule();
 
@@ -88,4 +88,4 @@ export async function executeTogglePOIs(
             error: `Failed to toggle POIs: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

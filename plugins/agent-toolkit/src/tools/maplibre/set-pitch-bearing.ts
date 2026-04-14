@@ -27,7 +27,7 @@ export const setPitchBearingDescription =
     'Bearing 0 = north up, 90 = east up. Provide at least one of pitch or bearing.';
 
 /** Execute function for setPitchBearing — usable with ToolEntry format. */
-export async function executeSetPitchBearing(params: z.infer<typeof setPitchBearingSchema>, state: ToolState) {
+export const executeSetPitchBearing = async (params: z.infer<typeof setPitchBearingSchema>, state: ToolState) => {
     const { pitch, bearing } = params;
 
     if (pitch === undefined && bearing === undefined) {
@@ -47,4 +47,4 @@ export async function executeSetPitchBearing(params: z.infer<typeof setPitchBear
             error: `Failed to set pitch/bearing: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

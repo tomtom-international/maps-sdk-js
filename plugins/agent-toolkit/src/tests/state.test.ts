@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { createToolState, PlacesState, RoutingState } from './state';
+import { createToolState, PlacesState, RoutingState } from '../state';
 
 const mockMap = {} as any;
 

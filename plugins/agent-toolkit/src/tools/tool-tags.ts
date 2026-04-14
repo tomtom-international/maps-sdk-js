@@ -4,6 +4,8 @@
 
 /**
  * All valid tool tags for categorizing tools.
+ *
+ * @ignore
  */
 export const TOOL_TAGS = [
     'location',
@@ -46,5 +48,9 @@ export const TOOL_TAGS = [
     'vehicleRestricted',
 ] as const;
 
-/** Union of all valid tool tags, derived from {@link TOOL_TAGS}. */
+/**
+ * Union of all valid tool tags, derived from {@link TOOL_TAGS}.
+ *
+ * @ignore
+ */
 export type ToolTag = (typeof TOOL_TAGS)[number];

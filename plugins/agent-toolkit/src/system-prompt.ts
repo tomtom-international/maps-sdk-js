@@ -19,7 +19,7 @@
  * });
  * ```
  *
- * @group System Prompt
+ * @group Agent Toolkit
  */
 export const BASE_SYSTEM_PROMPT = `You are a helpful map assistant with access to a TomTom interactive map and location services.
 
@@ -53,8 +53,9 @@ RESPONSE FORMATTING:
  * @returns Complete system prompt string
  *
  * @internal
+ * @ignore
  */
-export function buildSystemPrompt(customPrompt?: string, suffix?: string): string {
+export const buildSystemPrompt = (customPrompt?: string, suffix?: string): string => {
     if (customPrompt) {
         return customPrompt;
     }
@@ -62,4 +63,4 @@ export function buildSystemPrompt(customPrompt?: string, suffix?: string): strin
         return `${BASE_SYSTEM_PROMPT}\n\nADDITIONAL INSTRUCTIONS:\n${suffix}`;
     }
     return BASE_SYSTEM_PROMPT;
-}
+};

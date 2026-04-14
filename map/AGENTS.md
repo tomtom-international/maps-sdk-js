@@ -92,6 +92,44 @@ pnpm dev
 - Check existing modules in `src/` for patterns
 - Review MapLibre GL JS documentation for underlying library
 
+## Source Structure Conventions
+
+### Barrel files (`index.ts`)
+
+Each module exposes its public surface through an `index.ts` barrel. Because the package entry point re-exports these barrels wholesale, anything in a module barrel becomes part of the public API — so keep them selective.
+
+Internal symbols are not added to `index.ts` and are imported directly from their source file:
+
+```typescript
+// Internal cross-module import — go directly to the source file
+import { internalLayerHelper } from '../places/layers/internalLayerHelper';
+```
+
+### `types/` subdirectories — public API types only
+
+Each module places its public-facing types in a `types/` subdirectory. Internal types stay in the source file that uses them.
+
+```
+src/places/
+├── index.ts          ← barrel
+├── PlacesModule.ts   ← implementation
+└── types/
+    └── ...           ← public option/config types
+```
+
+### `tests/` subdirectories
+
+Test files live in a `tests/` subdirectory alongside the module they cover:
+
+```
+src/places/
+├── PlacesModule.ts
+└── tests/
+    └── PlacesModule.test.ts
+```
+
+---
+
 ## Important Notes
 
 - **Web only** — This package uses MapLibre GL JS which requires a browser environment

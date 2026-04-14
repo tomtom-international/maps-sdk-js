@@ -22,10 +22,10 @@ export const getShownRoutesDescription =
 /**
  * Execute get shown routes.
  */
-export async function executeGetShownRoutes(
+export const executeGetShownRoutes = async (
     _params: z.infer<typeof getShownRoutesSchema>,
     state: ToolState,
-): Promise<z.infer<typeof getShownRoutesOutputSchema>> {
+): Promise<z.infer<typeof getShownRoutesOutputSchema>> => {
     try {
         if (!state.routing.routingModule) {
             return { count: 0, routes: [] };
@@ -43,4 +43,4 @@ export async function executeGetShownRoutes(
             error: `Failed to get shown routes: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

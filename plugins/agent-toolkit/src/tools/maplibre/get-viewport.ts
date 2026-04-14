@@ -30,7 +30,7 @@ export const getViewportDescription =
     'Reads map state. Does not call any service.';
 
 /** Execute function for getViewport — usable with ToolEntry format. */
-export async function executeGetViewport(_params: z.infer<typeof getViewportSchema>, state: ToolState) {
+export const executeGetViewport = async (_params: z.infer<typeof getViewportSchema>, state: ToolState) => {
     try {
         const mapLibreMap = state.baseMap.mapLibreMap;
         return {
@@ -45,4 +45,4 @@ export async function executeGetViewport(_params: z.infer<typeof getViewportSche
             error: `Failed to get viewport: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

@@ -99,6 +99,46 @@ pnpm dev
 - Check existing service modules in `src/` for patterns
 - All services work on web, Node.js, and React Native
 
+## Source Structure Conventions
+
+### Barrel files (`index.ts`)
+
+Each service module exposes its public surface through an `index.ts` barrel. Because the package entry point re-exports these barrels wholesale, anything in a module barrel becomes part of the public API — so keep them selective.
+
+Internal symbols (e.g. raw API request/response adapter types) are not added to `index.ts` and are imported directly from their source file:
+
+```typescript
+// Internal cross-module import — go directly to the source file
+import { CalculateRouteApiResponse } from '../routing/types/apiResponseTypes';
+```
+
+### `types/` subdirectories — public API types only
+
+Each service module places its public-facing parameter and response types in a `types/` subdirectory. Internal adapter types stay in the source file that uses them.
+
+```
+src/routing/
+├── index.ts                      ← barrel
+├── calculateRoute.ts             ← implementation
+└── types/
+    ├── calculateRouteParams.ts   ← public input/output types
+    ├── apiRequestTypes.ts        ← internal
+    └── apiResponseTypes.ts       ← internal
+```
+
+### `tests/` subdirectories
+
+Test files live in a `tests/` subdirectory alongside the service module they cover:
+
+```
+src/routing/
+├── calculateRoute.ts
+└── tests/
+    └── calculateRoute.test.ts
+```
+
+---
+
 ## Important Notes
 
 - **No map dependency** — This package has no UI dependencies and works everywhere

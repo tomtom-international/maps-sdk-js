@@ -25,10 +25,10 @@ export const getSectionBBoxDescription =
     'Calculate the bounding box [minLng, minLat, maxLng, maxLat] for a specific section of the shown route. Use with flyTo to frame the section, or to query traffic incidents within it.';
 
 /** Execute function for getSectionBBox — usable with ToolEntry format. */
-export async function executeGetSectionBBox(
+export const executeGetSectionBBox = async (
     params: z.infer<typeof getSectionBBoxSchema>,
     state: ToolState,
-): Promise<z.infer<typeof getSectionBBoxOutputSchema>> {
+): Promise<z.infer<typeof getSectionBBoxOutputSchema>> => {
     const { sectionType, id } = params;
     try {
         const lastRoutes = state.routing.currentRoutes;
@@ -63,4 +63,4 @@ export async function executeGetSectionBBox(
             error: `Failed to get section bbox: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
-}
+};

@@ -84,12 +84,12 @@ export const queryTrafficAnalyticsDescription =
 // ---------------------------------------------------------------------------
 
 /** Derive a date string for a daily/hourly entry using index fallback. */
-function resolveDateStr(
+const resolveDateStr = (
     entryDate: unknown,
     index: number,
     granularity: string,
     startDateStr?: string,
-): string | undefined {
+): string | undefined => {
     const direct = formatDate(entryDate);
     if (direct) return direct;
     if (startDateStr && index >= 0) {
@@ -101,7 +101,7 @@ function resolveDateStr(
         }
     }
     return undefined;
-}
+};
 
 // ---------------------------------------------------------------------------
 // Tool factory
@@ -111,10 +111,10 @@ function resolveDateStr(
  * Create the query traffic analytics tool.
  */
 /** Standalone execute for ToolEntry format. */
-export async function executeQueryTrafficAnalytics(
+export const executeQueryTrafficAnalytics = async (
     params: z.infer<typeof queryTrafficAnalyticsSchema>,
     state: ToolState,
-): Promise<z.infer<typeof queryTrafficAnalyticsOutputSchema>> {
+): Promise<z.infer<typeof queryTrafficAnalyticsOutputSchema>> => {
     const { granularity = 'daily', metric, startDate, endDate, hourStart, hourEnd, dayOfWeek } = params;
 
     const analytics = state.traffic.lastAreaAnalytics;
@@ -200,4 +200,4 @@ export async function executeQueryTrafficAnalytics(
         entries: entries as z.infer<typeof timedEntrySchema>[],
         ...(currentVisualization && { currentVisualization }),
     };
-}
+};
