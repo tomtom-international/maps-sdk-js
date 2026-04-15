@@ -35,11 +35,9 @@ const validateTrackingId = (trackingId: string): string => {
  */
 export const generateTomTomHeaders = (params: Partial<GlobalConfig>): TomTomHeaders => {
     const userAgentHeader = (params as any)['tomtom-user-agent'];
-    const metadataHeader = (params as any)['tomtom-sdk-metadata'];
     return {
         // (tomtom-user-agent can be overwritten by SDK TomTom clients for custom analytics purposes)
         'tomtom-user-agent': userAgentHeader ?? `${TOMTOM_USER_AGENT_SDK_NAME}/${__SDK_VERSION__}`,
-        ...(metadataHeader && { 'tomtom-sdk-metadata': metadataHeader }),
         // TODO: restore if we implement oauth2 access
         // optional oauth2 access token:
         // ...(params.apiAccessToken && { Authorization: `Bearer ${params.apiAccessToken}` }),
