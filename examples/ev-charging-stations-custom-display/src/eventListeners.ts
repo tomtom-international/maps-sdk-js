@@ -107,33 +107,20 @@ export const setupEventListeners = ({
         await applySearchedConfig();
     });
 
-    // Text color selectors
-    document.querySelectorAll('#sdk-example-textColorSelectors .sdk-example-color-selector').forEach((selector) => {
-        selector.addEventListener('click', async () => {
-            document
-                .querySelectorAll('#sdk-example-textColorSelectors .sdk-example-color-selector')
-                .forEach((s) => s.classList.remove('active'));
-            selector.classList.add('active');
-            const value = (selector as HTMLElement).dataset.value;
-            // 'default' means use SDK defaults (undefined), which adapts to dark/light mode
-            state.textColor = value === 'default' ? undefined : value || '#ffffff';
-            await applyBackgroundConfig();
-            await applySearchedConfig();
-        });
+    // Text color picker
+    const textColorPicker = document.querySelector('#sdk-example-textColorPicker') as HTMLInputElement;
+    textColorPicker?.addEventListener('input', async () => {
+        state.textColor = textColorPicker.value;
+        await applyBackgroundConfig();
+        await applySearchedConfig();
     });
 
-    // Halo color selectors
-    document.querySelectorAll('#sdk-example-haloColorSelectors .sdk-example-color-selector').forEach((selector) => {
-        selector.addEventListener('click', async () => {
-            document
-                .querySelectorAll('#sdk-example-haloColorSelectors .sdk-example-color-selector')
-                .forEach((s) => s.classList.remove('active'));
-            selector.classList.add('active');
-            const value = (selector as HTMLElement).dataset.value;
-            state.haloColor = value === 'default' ? undefined : value || '#000000';
-            await applyBackgroundConfig();
-            await applySearchedConfig();
-        });
+    // Halo color picker
+    const haloColorPicker = document.querySelector('#sdk-example-haloColorPicker') as HTMLInputElement;
+    haloColorPicker?.addEventListener('input', async () => {
+        state.haloColor = haloColorPicker.value;
+        await applyBackgroundConfig();
+        await applySearchedConfig();
     });
 
     // Halo width slider

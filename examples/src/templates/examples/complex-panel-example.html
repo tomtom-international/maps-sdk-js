@@ -107,83 +107,18 @@
 
                     <!-- Text Color -->
                     <div class="sdk-example-form-field">
-                        <span class="sdk-example-form-label">Text Color</span>
-                        <div class="sdk-example-color-selectors" id="textColorSelectors">
-                            <button
-                                type="button"
-                                class="sdk-example-color-selector active"
-                                data-value="default"
-                                style="background: linear-gradient(135deg, #fff 49%, #000 51%); border: 2px solid #999;"
-                                aria-label="Default"
-                            >
-                                <span style="font-size: 8px;">DEF</span>
-                            </button>
-                            <button
-                                type="button"
-                                class="sdk-example-color-selector"
-                                data-value="#ffffff"
-                                style="background: #ffffff; border: 2px solid #ddd;"
-                                aria-label="White"
-                            ></button>
-                            <button
-                                type="button"
-                                class="sdk-example-color-selector"
-                                data-value="#000000"
-                                style="background: #000000;"
-                                aria-label="Black"
-                            ></button>
-                            <button
-                                type="button"
-                                class="sdk-example-color-selector"
-                                data-value="#df1b12"
-                                style="background: #df1b12;"
-                                aria-label="Red"
-                            ></button>
-                            <button
-                                type="button"
-                                class="sdk-example-color-selector"
-                                data-value="#90D5FF"
-                                style="background: #90D5FF;"
-                                aria-label="Blue"
-                            ></button>
-                        </div>
+                        <label class="sdk-example-form-label" for="textColor-picker">Text Color</label>
+                        <span class="sdk-example-color-swatch">
+                            <input type="color" id="textColor-picker" value="#ffffff">
+                        </span>
                     </div>
 
                     <!-- Halo Color -->
                     <div class="sdk-example-form-field">
-                        <span class="sdk-example-form-label">Halo Color</span>
-                        <div class="sdk-example-color-selectors" id="haloColorSelectors">
-                            <button
-                                type="button"
-                                class="sdk-example-color-selector active"
-                                data-value="default"
-                                style="background: linear-gradient(135deg, #fff 49%, #000 51%); border: 2px solid #999;"
-                                aria-label="Default"
-                            >
-                                <span style="font-size: 8px;">DEF</span>
-                            </button>
-                            <button
-                                type="button"
-                                class="sdk-example-color-selector"
-                                data-value="#ffffff"
-                                style="background: #ffffff; border: 2px solid #ddd;"
-                                aria-label="White"
-                            ></button>
-                            <button
-                                type="button"
-                                class="sdk-example-color-selector"
-                                data-value="#000000"
-                                style="background: #000000;"
-                                aria-label="Black"
-                            ></button>
-                            <button
-                                type="button"
-                                class="sdk-example-color-selector"
-                                data-value="#333333"
-                                style="background: #333333;"
-                                aria-label="Dark Gray"
-                            ></button>
-                        </div>
+                        <label class="sdk-example-form-label" for="haloColor-picker">Halo Color</label>
+                        <span class="sdk-example-color-swatch">
+                            <input type="color" id="haloColor-picker" value="#000000">
+                        </span>
                     </div>
 
                     <!-- Halo Width -->
@@ -326,20 +261,16 @@
         updateSlider('haloWidthSlider', 'haloWidthValue', (v) => `${v}px`);
         updateSlider('textOffsetSlider', 'textOffsetValue', (v) => `${v}px`);
 
-        // Color selectors
-        const setupColorSelector = (containerId) => {
-            const selectors = document.querySelectorAll(`#${containerId} .sdk-example-color-selector`);
-            selectors.forEach((selector) => {
-                selector.addEventListener('click', () => {
-                    selectors.forEach((s) => s.classList.remove('active'));
-                    selector.classList.add('active');
-                    console.log(`${containerId}:`, selector.dataset.value);
-                });
+        // Color pickers
+        const setupColorPicker = (prefix) => {
+            const picker = document.getElementById(`${prefix}-picker`);
+            picker?.addEventListener('input', () => {
+                console.log(`${prefix}:`, picker.value);
             });
         };
 
-        setupColorSelector('textColorSelectors');
-        setupColorSelector('haloColorSelectors');
+        setupColorPicker('textColor');
+        setupColorPicker('haloColor');
 
         // Apply and Reset buttons
         document.querySelector('#applyButton')?.addEventListener('click', () => {

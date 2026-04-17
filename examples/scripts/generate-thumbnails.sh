@@ -25,7 +25,7 @@ generate_thumbnail() {
   node --input-type=module -e "
     import sharp from 'sharp';
     await sharp('$snapshot')
-      .resize($THUMBNAIL_WIDTH, $THUMBNAIL_HEIGHT)
+      .resize($THUMBNAIL_WIDTH, $THUMBNAIL_HEIGHT, { fit: 'cover', position: 'right top' })
       .png({ palette: true, quality: 80, effort: 10 })
       .toFile('$thumbnail');
   "

@@ -15,7 +15,7 @@
 @import url("form/dropdown.css");
 @import url("form/slider.css");
 @import url("form/toggle.css");
-@import url("form/color.css");
+@import url("form/color-picker.css");
 
 /* Feedback */
 @import url("feedback/loading-spinner.css");

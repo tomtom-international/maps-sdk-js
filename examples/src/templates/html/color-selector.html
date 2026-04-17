@@ -3,162 +3,36 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
-        <title>Color Selector - Maps SDK JS</title>
+        <title>Color Picker - Maps SDK JS</title>
         <link rel="stylesheet" href="../css/styles.css">
     </head>
     <body class="body">
+        <!-- Simple color picker -->
         <div class="sdk-example-form-field">
-            <span class="sdk-example-form-label">Text Color</span>
-
-            <div class="sdk-example-color-selectors" id="sdk-example-textColorSelectors">
-                <!-- Default option (diagonal split) -->
-                <button
-                    type="button"
-                    class="sdk-example-color-selector active"
-                    data-value="default"
-                    style="background: linear-gradient(135deg, #fff 0%, #fff 49%, #000 51%, #000 100%); border: 2px solid #999;"
-                    aria-label="Default color"
-                >
-                    <span style="font-size: 8px; color: #666;">Default</span>
-                </button>
-
-                <!-- White -->
-                <button
-                    type="button"
-                    class="sdk-example-color-selector"
-                    data-value="#ffffff"
-                    style="background: #ffffff; border: 2px solid #ddd;"
-                    aria-label="White"
-                ></button>
-
-                <!-- Black -->
-                <button
-                    type="button"
-                    class="sdk-example-color-selector"
-                    data-value="#000000"
-                    style="background: #000000;"
-                    aria-label="Black"
-                ></button>
-
-                <!-- TomTom Red -->
-                <button
-                    type="button"
-                    class="sdk-example-color-selector"
-                    data-value="#df1b12"
-                    style="background: #df1b12;"
-                    aria-label="TomTom Red"
-                ></button>
-
-                <!-- Blue -->
-                <button
-                    type="button"
-                    class="sdk-example-color-selector"
-                    data-value="#007bff"
-                    style="background: #007bff;"
-                    aria-label="Blue"
-                ></button>
-
-                <!-- Green -->
-                <button
-                    type="button"
-                    class="sdk-example-color-selector"
-                    data-value="#00a65e"
-                    style="background: #00a65e;"
-                    aria-label="Green"
-                ></button>
-
-                <!-- Yellow -->
-                <button
-                    type="button"
-                    class="sdk-example-color-selector"
-                    data-value="#fdc530"
-                    style="background: #fdc530;"
-                    aria-label="Yellow"
-                ></button>
-
-                <!-- Purple -->
-                <button
-                    type="button"
-                    class="sdk-example-color-selector"
-                    data-value="#6f42c1"
-                    style="background: #6f42c1;"
-                    aria-label="Purple"
-                ></button>
-            </div>
+            <label class="sdk-example-form-label" for="sdk-example-textColorPicker">Text Color</label>
+            <span class="sdk-example-color-swatch">
+                <input type="color" id="sdk-example-textColorPicker" value="#df1b12">
+            </span>
         </div>
 
-        <!-- Multiple color selectors for different properties -->
+        <!-- Multiple color pickers for different properties -->
         <div class="sdk-example-section">
             <h4 class="sdk-example-subheading">Color Options</h4>
 
             <!-- Text Color -->
             <div class="sdk-example-form-field">
-                <span class="sdk-example-form-label">Text Color</span>
-                <div class="sdk-example-color-selectors" id="sdk-example-textColors">
-                    <button
-                        type="button"
-                        class="sdk-example-color-selector active"
-                        data-value="default"
-                        style="background: linear-gradient(135deg, #fff 49%, #000 51%);"
-                        aria-label="Default color"
-                    ></button>
-                    <button
-                        type="button"
-                        class="sdk-example-color-selector"
-                        data-value="#ffffff"
-                        style="background: #ffffff; border: 2px solid #ddd;"
-                        aria-label="White"
-                    ></button>
-                    <button
-                        type="button"
-                        class="sdk-example-color-selector"
-                        data-value="#000000"
-                        style="background: #000000;"
-                        aria-label="Black"
-                    ></button>
-                    <button
-                        type="button"
-                        class="sdk-example-color-selector"
-                        data-value="#df1b12"
-                        style="background: #df1b12;"
-                        aria-label="Red"
-                    ></button>
-                </div>
+                <label class="sdk-example-form-label" for="sdk-example-textColorPicker2">Text Color</label>
+                <span class="sdk-example-color-swatch">
+                    <input type="color" id="sdk-example-textColorPicker2" value="#ffffff">
+                </span>
             </div>
 
             <!-- Background Color -->
             <div class="sdk-example-form-field">
-                <span class="sdk-example-form-label">Background Color</span>
-                <div class="sdk-example-color-selectors" id="sdk-example-bgColors">
-                    <button
-                        type="button"
-                        class="sdk-example-color-selector"
-                        data-value="transparent"
-                        style="background: linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc), linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc); background-size: 8px 8px; background-position: 0 0, 4px 4px;"
-                        aria-label="Transparent"
-                    ></button>
-                    <button
-                        type="button"
-                        class="sdk-example-color-selector active"
-                        data-value="#ffffff"
-                        style="background: #ffffff; border: 2px solid #ddd;"
-                        aria-label="White"
-                    ></button>
-                    <button
-                        type="button"
-                        class="sdk-example-color-selector"
-                        data-value="#f2f2f2"
-                        style="background: #f2f2f2;"
-                        aria-label="Light Gray"
-                    ></button>
-                    <button
-                        type="button"
-                        class="sdk-example-color-selector"
-                        data-value="#e0e0e0"
-                        style="background: #e0e0e0;"
-                        aria-label="Gray"
-                    ></button>
-                </div>
+                <label class="sdk-example-form-label" for="sdk-example-bgColorPicker">Background Color</label>
+                <span class="sdk-example-color-swatch">
+                    <input type="color" id="sdk-example-bgColorPicker" value="#ffffff">
+                </span>
             </div>
         </div>
 
@@ -179,50 +53,11 @@
         <!--
     JavaScript Event Listener Example:
 
-    const colorSelectors = document.querySelectorAll('#sdk-example-textColors .sdk-example-color-selector');
+    const colorPicker = document.getElementById('sdk-example-textColorPicker') as HTMLInputElement;
 
-    colorSelectors.forEach((selector) => {
-        // Click event
-        selector.addEventListener('click', async () => {
-            // Remove active class from all selectors
-            colorSelectors.forEach((s) => s.classList.remove('active'));
-
-            // Add active class to clicked selector
-            selector.classList.add('active');
-
-            // Get the color value from data attribute
-            const colorValue = (selector as HTMLElement).dataset.value;
-            console.log('Selected color:', colorValue);
-
-            // Update state
-            state.textColor = colorValue === 'default' ? undefined : colorValue;
-
-            // Update any preview elements
-            const preview = document.querySelector('#sdk-example-selectedColorIndicator') as HTMLElement;
-            const valueDisplay = document.querySelector('#sdk-example-selectedColorValue') as HTMLElement;
-            if (preview && colorValue !== 'default') {
-                preview.style.background = colorValue;
-                valueDisplay.textContent = colorValue;
-            }
-
-            // Apply changes to your map or component
-            await applyColorChanges();
-        });
+    colorPicker.addEventListener('input', () => {
+        console.log('Selected color:', colorPicker.value);
     });
-
-    // Programmatically select a color
-    const selectColor = (colorValue: string) => {
-        colorSelectors.forEach((selector) => {
-            const selectorValue = (selector as HTMLElement).dataset.value;
-            if (selectorValue === colorValue) {
-                selector.classList.add('active');
-            } else {
-                selector.classList.remove('active');
-            }
-        });
-    };
-
-    // Usage: selectColor('#007bff');
     -->
     </body>
 </html>

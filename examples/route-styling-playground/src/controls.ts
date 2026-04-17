@@ -18,16 +18,11 @@ export const initControls = (state: RoutePlaygroundState, apply: () => void): vo
         panelContent.classList.toggle('collapsed');
     });
 
-    // Route color swatches
-    document.querySelectorAll<HTMLButtonElement>('#routeColor-selectors .sdk-example-color-selector').forEach((btn) => {
-        btn.addEventListener('click', () => {
-            document
-                .querySelectorAll('#routeColor-selectors .sdk-example-color-selector')
-                .forEach((b) => b.classList.remove('active'));
-            btn.classList.add('active');
-            state.mainColor = btn.dataset.color || undefined;
-            apply();
-        });
+    // Route color picker
+    const colorPicker = document.getElementById('routeColor-picker') as HTMLInputElement;
+    colorPicker?.addEventListener('input', () => {
+        state.mainColor = colorPicker.value;
+        apply();
     });
 
     // Route width radios

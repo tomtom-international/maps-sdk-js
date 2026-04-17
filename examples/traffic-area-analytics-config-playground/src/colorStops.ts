@@ -48,22 +48,17 @@ export const initColorStops = (
             });
 
             const swatchLabel = document.createElement('label');
-            swatchLabel.className = 'aa-color-swatch';
-
-            const swatchInner = document.createElement('span');
-            swatchInner.className = 'aa-color-swatch-inner';
-            swatchInner.style.background = stop.color;
+            swatchLabel.className = 'sdk-example-color-swatch';
 
             const colorInput = document.createElement('input');
             colorInput.type = 'color';
             colorInput.value = stop.color;
             colorInput.addEventListener('input', () => {
                 stops[i] = { ...stops[i], color: colorInput.value };
-                swatchInner.style.background = colorInput.value;
                 onChange(stops.slice());
             });
 
-            swatchLabel.append(swatchInner, colorInput);
+            swatchLabel.append(colorInput);
 
             const removeBtn = document.createElement('button');
             removeBtn.className = 'aa-stop-remove';

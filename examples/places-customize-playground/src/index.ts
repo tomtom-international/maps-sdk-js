@@ -24,10 +24,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
     const fontSelectors: NodeListOf<HTMLInputElement> = document.querySelectorAll('.sdk-example-font-selector');
     const contentSelectors: NodeListOf<HTMLInputElement> = document.querySelectorAll('.sdk-example-content-selector');
-    const colorSelectors: NodeListOf<HTMLButtonElement> = document.querySelectorAll('.sdk-example-color-selector');
-    for (const element of colorSelectors) {
-        element.style.backgroundColor = element.dataset.value ?? '';
-    }
+    const labelColorPicker = document.getElementById('sdk-example-labelColorPicker') as HTMLInputElement;
 
     const customIconsConfig: PlaceIconConfig = {
         categoryIcons: [
@@ -62,15 +59,9 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
     const listenToUIEvents = () => {
         const iconStyleSelector = document.getElementById('sdk-example-icon-style-selector') as HTMLSelectElement;
-        for (const element of colorSelectors) {
-            element.addEventListener('click', () => {
-                for (const element1 of colorSelectors) {
-                    element1.classList.remove('active');
-                }
-                element.classList.add('active');
-                places.applyTextConfig({ ...places.getConfig()?.text, color: element.dataset.value });
-            });
-        }
+        labelColorPicker.addEventListener('input', () => {
+            places.applyTextConfig({ ...places.getConfig()?.text, color: labelColorPicker.value });
+        });
 
         for (const element of fontSelectors) {
             element.addEventListener('change', () => {
