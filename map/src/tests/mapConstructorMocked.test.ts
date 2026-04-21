@@ -16,7 +16,10 @@ vi.mock('maplibre-gl', () => {
         getZoom = vi.fn();
     }
     return {
-        Map: vi.fn().mockImplementation(() => new MapMock()),
+        // biome-ignore lint/complexity/useArrowFunction: arrow functions cannot be invoked with `new`
+        Map: vi.fn().mockImplementation(function () {
+            return new MapMock();
+        }),
         setRTLTextPlugin: vi.fn().mockResolvedValue(vi.fn()),
         getRTLTextPluginStatus: vi.fn(),
         setWorkerCount: vi.fn(),
