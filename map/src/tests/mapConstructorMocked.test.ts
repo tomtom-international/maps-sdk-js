@@ -16,9 +16,7 @@ vi.mock('maplibre-gl', () => {
         getZoom = vi.fn();
     }
     return {
-        Map: vi.fn().mockImplementation(function () {
-            return new MapMock();
-        }),
+        Map: vi.fn().mockImplementation(() => new MapMock()),
         setRTLTextPlugin: vi.fn().mockResolvedValue(vi.fn()),
         getRTLTextPluginStatus: vi.fn(),
         setWorkerCount: vi.fn(),

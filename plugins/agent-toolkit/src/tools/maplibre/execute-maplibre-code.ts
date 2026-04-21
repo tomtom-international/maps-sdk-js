@@ -124,7 +124,7 @@ export const executeExecuteMaplibreCode = async (
         const beforeLayers = snapshotLayers(mapLibreMap);
 
         // eslint-disable-next-line no-new-func
-        const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor as new (
+        const AsyncFunction = Object.getPrototypeOf(async () => {}).constructor as new (
             ...args: string[]
         ) => (map: MapLibreMap) => Promise<unknown>;
         const userFunction = new AsyncFunction('map', code);

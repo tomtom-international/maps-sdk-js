@@ -32,7 +32,8 @@
           "options": {
             "maxAllowedComplexity": 25
           }
-        }
+        },
+        "useArrowFunction": "error"
       },
       "recommended": false,
       "style": {
