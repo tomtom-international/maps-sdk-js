@@ -29,7 +29,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
     const customIconsConfig: PlaceIconConfig = {
         categoryIcons: [
             { id: 'ELECTRIC_VEHICLE_STATION', image: tomtomLogo, pixelRatio: 1 },
-            { id: 'CAFE_PUB', image: 'https://dummyimage.com/30x20/4137ce/fff', pixelRatio: 1 },
+            { id: 'CAFE', image: 'https://dummyimage.com/30x20/4137ce/fff', pixelRatio: 1 },
         ],
     };
 
@@ -87,12 +87,12 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         }
 
         iconStyleSelector?.addEventListener('change', (e) => {
-            const value = (e.target as HTMLSelectElement).value;
-            if (value === 'custom') {
-                places.applyIconConfig(customIconsConfig);
-            } else {
-                places.applyTheme(value as PlacesTheme);
-            }
+            places.applyTheme((e.target as HTMLSelectElement).value as PlacesTheme);
+        });
+
+        const customIconsToggle = document.getElementById('sdk-example-custom-icons-toggle') as HTMLInputElement;
+        customIconsToggle?.addEventListener('change', () => {
+            places.applyIconConfig(customIconsToggle.checked ? customIconsConfig : {});
         });
     };
 

@@ -311,9 +311,9 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
 
         this.lastAnalytics = analytics;
 
-        this.sourcesWithLayers.heatmap.show(tilesToPointFeatures(analytics));
-        this.sourcesWithLayers.hexgrid.show(tilesToHexFeatures(analytics));
-        this.sourcesWithLayers.square.show(tilesToSquareFeatures(analytics));
+        this.sourcesWithLayers.heatmap.show(tilesToPointFeatures(analytics), { automaticVisibility: false });
+        this.sourcesWithLayers.hexgrid.show(tilesToHexFeatures(analytics), { automaticVisibility: false });
+        this.sourcesWithLayers.square.show(tilesToSquareFeatures(analytics), { automaticVisibility: false });
 
         const inverted = this.config?.regionPolygon?.inverted ?? AREA_ANALYTICS_DEFAULTS.regionPolygon.inverted;
         this.sourcesWithLayers.region.show(this.buildRegionFC(analytics.features, inverted));

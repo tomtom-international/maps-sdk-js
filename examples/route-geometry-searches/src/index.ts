@@ -28,7 +28,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
     const extraWidePlacesModule = await PlacesModule.get(map, { theme: 'base-map' });
     const widePlacesModule = await PlacesModule.get(map, { theme: 'base-map' });
-    const onRoadPlacesModule = await PlacesModule.get(map, { theme: 'circle' });
+    const onRoadPlacesModule = await PlacesModule.get(map, { theme: 'circle-icon' });
 
     const route = routes.features[0];
     extraWidePlacesModule.show(

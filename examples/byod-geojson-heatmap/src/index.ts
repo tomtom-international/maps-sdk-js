@@ -26,7 +26,7 @@ const DATA_URL = 'https://dataworks.calderdale.gov.uk/download/2kyp8/hcj/listed%
         theme: 'base-map',
         icon: { mapping: { to: 'poiCategory', fn: () => 'COMPANY' } },
         text: { title: (place: any) => place.properties.Name },
-        layers: { main: { minzoom: 15 } },
+        layers: { main: { minzoom: 15 }, micro: { minzoom: 14 } },
     });
 
     await placesModule.show(data);

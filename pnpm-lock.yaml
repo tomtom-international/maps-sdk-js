@@ -262,6 +262,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -374,6 +377,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -399,6 +405,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/geojson':
         specifier: 'catalog:'
         version: 7946.0.16
@@ -545,6 +554,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -570,6 +582,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -595,6 +610,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -620,6 +638,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -673,6 +694,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -698,6 +722,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/geojson':
         specifier: 'catalog:'
         version: 7946.0.16
@@ -726,6 +753,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -751,6 +781,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -776,6 +809,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -801,6 +837,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -826,6 +865,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -851,6 +893,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -876,6 +921,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -1032,6 +1080,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -1085,6 +1136,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -1110,6 +1164,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -1135,6 +1192,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -1160,6 +1220,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -1185,6 +1248,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/geojson':
         specifier: 'catalog:'
         version: 7946.0.16
@@ -1213,6 +1279,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       typescript:
         specifier: ^6.0.2
         version: 6.0.2
@@ -1223,6 +1292,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       typescript:
         specifier: ^6.0.2
         version: 6.0.2
@@ -1233,6 +1305,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       typescript:
         specifier: ^6.0.2
         version: 6.0.2
@@ -1243,6 +1318,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       typescript:
         specifier: ^6.0.2
         version: 6.0.2
@@ -1253,6 +1331,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       typescript:
         specifier: ^6.0.2
         version: 6.0.2
@@ -1263,6 +1344,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       typescript:
         specifier: ^6.0.2
         version: 6.0.2
@@ -1273,6 +1357,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       typescript:
         specifier: ^6.0.2
         version: 6.0.2
@@ -1283,6 +1370,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       typescript:
         specifier: ^6.0.2
         version: 6.0.2
@@ -1293,6 +1383,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       typescript:
         specifier: ^6.0.2
         version: 6.0.2
@@ -1303,6 +1396,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/geojson':
         specifier: 'catalog:'
         version: 7946.0.16
@@ -1331,6 +1427,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/geojson':
         specifier: 'catalog:'
         version: 7946.0.16
@@ -1359,6 +1458,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -1383,10 +1485,10 @@ importers:
       '@tomtom-org/maps-sdk':
         specifier: workspace:*
         version: link:../..
-      maplibre-gl:
-        specifier: 'catalog:'
-        version: 5.23.0
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -1411,10 +1513,10 @@ importers:
       '@tomtom-org/maps-sdk':
         specifier: workspace:*
         version: link:../..
-      maplibre-gl:
-        specifier: 'catalog:'
-        version: 5.23.0
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -1440,6 +1542,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -1465,6 +1570,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -1490,6 +1598,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -1515,6 +1626,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -1540,6 +1654,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -1565,6 +1682,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -1590,6 +1710,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -1615,6 +1738,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/geojson':
         specifier: 'catalog:'
         version: 7946.0.16
@@ -1643,6 +1769,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -1696,6 +1825,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -1721,6 +1853,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -1746,6 +1881,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/geojson':
         specifier: 'catalog:'
         version: 7946.0.16
@@ -1774,6 +1912,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -1799,6 +1940,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -1824,6 +1968,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -1849,6 +1996,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -1874,6 +2024,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -1899,6 +2052,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/geojson':
         specifier: 'catalog:'
         version: 7946.0.16
@@ -1927,6 +2083,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -1952,6 +2111,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -1977,6 +2139,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -2002,6 +2167,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -2027,6 +2195,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -2052,6 +2223,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -2077,6 +2251,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -2102,6 +2279,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -2127,6 +2307,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/geojson':
         specifier: 'catalog:'
         version: 7946.0.16
@@ -2155,6 +2338,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -2180,6 +2366,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -2205,6 +2394,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -2230,6 +2422,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -2255,6 +2450,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
@@ -2311,6 +2509,9 @@ importers:
         specifier: workspace:*
         version: link:../..
     devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2

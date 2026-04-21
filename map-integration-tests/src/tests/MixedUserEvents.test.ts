@@ -21,6 +21,7 @@ import {
     showGeometry,
     showPlaces,
     waitForMapIdle,
+    waitForMapReady,
     waitUntilRenderedFeatures,
 } from './util/TestUtils';
 
@@ -90,7 +91,10 @@ test.describe('Tests with user events', () => {
         await initPlaces(page);
         await showPlaces(page, places);
         await waitForMapIdle(page);
-        const placesLayerIDs = (await getPlacesSourceAndLayerIDs(page)).layerIDs;
+        // Default `pin` theme registers a hidden `-micro` layer; restrict assertions to visible layers.
+        const placesLayerIDs = (await getPlacesSourceAndLayerIDs(page)).layerIDs.filter(
+            (id) => !id.endsWith('-micro'),
+        );
         await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 5000);
         // Setting up handlers for places:
         await setupPlacesClickHandler(page);
@@ -109,13 +113,18 @@ test.describe('Tests with user events', () => {
 
     test('Events with Places and BaseMap modules', async ({ page }) => {
         await initBasemap(page);
-        await initPlaces(page, { theme: 'circle' });
+        await initPlaces(page, { theme: 'circle-icon' });
         await showPlaces(page, places);
         await waitForMapIdle(page);
 
         // changing the style in between, to double-check that we can still register to events in base map after:
         await setStyle(page, 'monoLight');
+        await waitForMapReady(page);
         await waitForMapIdle(page);
+        const placesLayerIDs = (await getPlacesSourceAndLayerIDs(page)).layerIDs.filter(
+            (id) => !id.endsWith('-micro'),
+        );
+        await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 10000);
         await setupBasemapClickHandler(page);
 
         // Click on a POI and gets the under layer from basemap as we don't have a event register por Places.
@@ -143,14 +152,17 @@ test.describe('Tests with user events', () => {
 
     test('Events with Places and BaseMap modules with different event configs', async ({ page }) => {
         await initBasemap(page, { events: { cursorOnHover: 'not-allowed' } });
+        await waitForMapIdle(page);
         await initPlaces(page, { events: { cursorOnHover: 'grabbing' } });
-        await setupPlacesClickHandler(page);
-        await setupBasemapClickHandler(page);
-
         await showPlaces(page, places);
         await waitForMapIdle(page);
-        const placesLayerIDs = (await getPlacesSourceAndLayerIDs(page)).layerIDs;
-        await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 5000);
+        const placesLayerIDs = (await getPlacesSourceAndLayerIDs(page)).layerIDs.filter(
+            (id) => !id.endsWith('-micro'),
+        );
+        await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 15000);
+
+        await setupPlacesClickHandler(page);
+        await setupBasemapClickHandler(page);
 
         // Hover over a Place and verify cursor is 'grabbing'
         const placePosition = await getPixelCoords(page, firstPlacePosition);

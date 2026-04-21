@@ -20,6 +20,9 @@ describe('GeoJSON Places module tests', () => {
                 setLayoutProperty: vi.fn(),
                 setPaintProperty: vi.fn(),
                 setFilter: vi.fn(),
+                setLayerZoomRange: vi.fn(),
+                getMinZoom: vi.fn().mockReturnValue(0),
+                getMaxZoom: vi.fn().mockReturnValue(22),
                 once: vi.fn().mockReturnValue(Promise.resolve()),
                 setSprite: vi.fn(),
                 hasImage: vi.fn(),
@@ -38,7 +41,7 @@ describe('GeoJSON Places module tests', () => {
             features: [{ properties: { address: { freeformAddress: 'TEST_ADDRESS' } } }],
         } as Places;
         const places = await PlacesModule.get(tomtomMapMock, {
-            theme: 'circle',
+            theme: 'circle-icon',
             text: {
                 color: 'green',
             },
@@ -49,10 +52,12 @@ describe('GeoJSON Places module tests', () => {
         const placesAny: any = places;
         vi.spyOn(placesAny, 'updateLayersAndData');
         vi.spyOn(placesAny, 'updateData');
-        // Reset accumulated getStyle calls from module initialization (circle theme reads POI layer)
+        // Reset accumulated getStyle calls from module initialization (circle-icon theme reads POI layer)
         vi.spyOn(tomtomMapMock.mapLibreMap, 'getStyle').mockClear();
         places.applyConfig({ theme: 'base-map' });
-        expect(tomtomMapMock.mapLibreMap.getStyle).toHaveBeenCalledTimes(1);
+        // base-map reads the POI style layer for both main and selected (2 reads) and
+        // POI - Micro for the micro layer (1 read).
+        expect(tomtomMapMock.mapLibreMap.getStyle).toHaveBeenCalledTimes(3);
         expect(placesAny.updateData).toHaveBeenCalledTimes(1);
         expect(placesAny.updateLayersAndData).toHaveBeenCalledTimes(1);
 

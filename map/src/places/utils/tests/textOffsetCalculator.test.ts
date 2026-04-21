@@ -130,9 +130,9 @@ describe('getTextOffset', () => {
         });
     });
 
-    describe('with circle theme (centered icons, no vertical adjustment)', () => {
+    describe('with circle-icon theme (centered icons, no vertical adjustment)', () => {
         test('returns simple text-offset when custom offset is provided', () => {
-            const result = getTextOffset(undefined, new Map(), 'circle', 2.5);
+            const result = getTextOffset(undefined, new Map(), 'circle-icon', 2.5);
 
             expect(result).toEqual({
                 'text-offset': [2.5, 2.5],
@@ -140,7 +140,7 @@ describe('getTextOffset', () => {
         });
 
         test('returns centered offsets with no vertical adjustment for side anchors', () => {
-            const result = getTextOffset(undefined, new Map(), 'circle');
+            const result = getTextOffset(undefined, new Map(), 'circle-icon');
 
             // iconScaleMultiplier = 1.0 (no iconSizeExpression → DEFAULT_MAX_PIN_SCALE / DEFAULT_MAX_PIN_SCALE)
             expect(result).toEqual({
@@ -160,7 +160,7 @@ describe('getTextOffset', () => {
             const widthScale = 1.2;
             const customIcons = new Map([['custom-icon', { heightScale, widthScale }]]);
 
-            const result = getTextOffset(undefined, customIcons, 'circle');
+            const result = getTextOffset(undefined, customIcons, 'circle-icon');
 
             const variableAnchorOffset = result['text-variable-anchor-offset'] as unknown[];
             expect(variableAnchorOffset[0]).toBe('case');

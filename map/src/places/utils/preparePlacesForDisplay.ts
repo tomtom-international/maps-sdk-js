@@ -1,5 +1,5 @@
 import { generateId, Place, Places, POICategory, poiCategoriesToID } from '@tomtom-org/maps-sdk/core';
-import { toBaseMapPOICategory } from '../../pois/util/poiCategoryMapping';
+import { toBaseMapPOICategory, toBaseMapPOIGroup } from '../../pois/util/poiCategoryMapping';
 import { DEFAULT_PLACE_ICON_ID } from '../../shared/layers/symbolLayers';
 import { suffixNumber } from '../../shared/layers/utils';
 import type { DisplayPlaceProps } from '../types/placeDisplayProps';
@@ -72,14 +72,38 @@ export const getIconIDForPlace = (place: Place, instanceIndex: number, config: P
     return toImageID(poiCategory, iconTheme, defaultPlaceIconID);
 };
 
+// When a user provides `icon.mapping.to === 'poiCategory'`, that function becomes the
+// authoritative source of the place's category — the original `poi.categories[0]` may be
+// missing or unrelated (e.g., user data that isn't a search-API Place). For base-map
+// themes the style's `icon-image` / `text-color` expressions read `category` / `group`,
+// so without honoring the mapping here those expressions resolve to `poi-` and icons
+// fail to load.
+const getEffectivePOICategory = (place: Place, config?: PlacesModuleConfig): POICategory | undefined => {
+    const mapping = config?.icon?.mapping;
+    if (mapping?.to === 'poiCategory') {
+        return mapping.fn(place);
+    }
+    return place.properties.poi?.categories?.[0];
+};
+
 /**
  * Maps a Place category to the poi layer one, so the latter's style can apply it.
  * @ignore
  */
-export const getPOILayerCategoryForPlace = (place: Place): string | undefined => {
-    const category = place.properties.poi?.categories?.[0];
+export const getPOILayerCategoryForPlace = (place: Place, config?: PlacesModuleConfig): string | undefined => {
+    const category = getEffectivePOICategory(place, config);
     // if it's one of the different categories between search and poi layer, use poi layer category
     return category && toBaseMapPOICategory(category);
+};
+
+/**
+ * Maps a Place to the base map POI group used by the style's `text-color` and
+ * `POI - Micro` icon expressions (e.g., `eat_and_drink`, `lodging`, `driving`).
+ * @ignore
+ */
+export const getPOIGroupForPlace = (place: Place, config?: PlacesModuleConfig): string | undefined => {
+    const category = getEffectivePOICategory(place, config);
+    return category && toBaseMapPOIGroup(category);
 };
 
 /**
@@ -180,7 +204,10 @@ export const preparePlacesForDisplay = (
                     id, // we need id in properties due to promoteId feature
                     title,
                     iconID: getIconIDForPlace(place, instanceIndex, config),
-                    ...(config?.theme === 'base-map' && { category: getPOILayerCategoryForPlace(place) }),
+                    ...(config?.theme === 'base-map' && {
+                        category: getPOILayerCategoryForPlace(place, config),
+                        group: getPOIGroupForPlace(place, config),
+                    }),
                     ...extraFeatureProps,
                 },
             };

@@ -2,29 +2,38 @@ import type { Anything, CommonPlaceProps } from '@tomtom-org/maps-sdk/core';
 import type { SupportsEvents } from '../../shared';
 
 /**
- * Properties to display a place on the map.
- *
- * Extends basic place information with display-specific properties needed
- * for rendering markers, icons, and labels on the map.
+ * Properties attached to a place feature for rendering on the map.
  *
  * @remarks
- * **Use Cases:**
- * - Search result markers
- * - POI markers
- * - Custom location pins
- * - EV charging station markers
+ * Extends the source place with display-only fields consumed by the places
+ * layer stack. Which fields are populated depends on the active
+ * {@link PlacesTheme | theme}:
  *
- * These properties control how the place appears visually on the map,
- * including its icon, label, and interactive states.
+ * - Every theme uses {@link PlaceDisplayProps.iconID | iconID} — the sprite name
+ *   the main layer's `icon-image` expression binds to via `['get', 'iconID']`.
+ *   The base map's POI-Micro-like layer inherits the style's `['get','group']`
+ *   expression verbatim, so custom `PlaceIconConfig.categoryIcons` sprites only
+ *   apply to the `main` layer.
+ * - The `base-map` theme additionally populates
+ *   {@link PlaceDisplayProps.category | category} and
+ *   {@link PlaceDisplayProps.group | group} so the base map style's own
+ *   `text-color` expression — and the POI-Micro layer's `icon-image` expression
+ *   — resolve against the place feature just as they do for native POIs.
  *
  * @example
  * ```typescript
- * const locationProps: LocationDisplayProps = {
+ * const pinPlaceProps: PlaceDisplayProps = {
  *   id: 'place-123',
  *   title: 'Central Station',
  *   iconID: 'poi-transit',
- *   category: 'RAILWAY_STATION',
- *   eventState: 'hover'
+ * };
+ *
+ * const baseMapPlaceProps: PlaceDisplayProps = {
+ *   id: 'place-123',
+ *   title: 'Central Station',
+ *   iconID: 'poi-railway_station',
+ *   category: 'railway_station',
+ *   group: 'transport',
  * };
  * ```
  *
@@ -35,125 +44,111 @@ export type PlaceDisplayProps = {
      * Unique identifier for the place feature.
      *
      * @remarks
-     * MapLibre does not reuse the feature IDs. Either we generate it on the fly
-     * or use the one from properties via promotedId value.
-     *
-     * Used for:
-     * - Feature identification in events
-     * - State management
-     * - Data updates
+     * MapLibre does not reuse the feature IDs, so we either generate one on the
+     * fly or promote the one from `properties.id` via the source's `promoteId`
+     * option. Used for feature identification in events, hit-testing, and data
+     * updates.
      *
      * @example
      * ```typescript
      * id: 'place-123'
-     * id: 'poi-456'
      * ```
      */
     id: string;
 
     /**
-     * Display title for the place on the map.
+     * Text label rendered next to the place marker.
      *
      * @remarks
-     * Optional text label shown near the place marker. If not provided,
-     * no text label will be displayed.
-     *
-     * **Common Sources:**
-     * - POI name (e.g., "Starbucks")
-     * - Address (e.g., "123 Main Street")
-     * - Custom label (e.g., "Meeting Point")
+     * Optional — when absent no label is drawn. Typically sourced from the POI
+     * name or free-form address, but can be any custom string (e.g., configured
+     * via `PlacesModuleConfig.text.title`).
      *
      * @example
      * ```typescript
      * title: 'Amsterdam Central Station'
-     * title: 'Starbucks'
-     * title: '123 Main Street'
-     * title: undefined  // No label
      * ```
      */
     title?: string;
 
     /**
-     * Icon ID referencing the map style sprite.
+     * Sprite image ID used to draw the place marker.
      *
      * @remarks
-     * References an icon image in the map's sprite sheet. The icon must exist
-     * in the map style or be added programmatically.
-     *
-     * **Icon Types:**
-     * - Built-in POI icons (e.g., 'poi-restaurant', 'poi-hotel')
-     * - Custom icons added to the sprite
-     * - Pin/marker icons (e.g., 'pin-red', 'pin-blue')
+     * The main layer binds `icon-image` to `['get', 'iconID']`, so the sprite
+     * named here is what renders. The base map's POI-Micro-like layer inherits
+     * the style's group-driven expression verbatim and ignores this value. The
+     * sprite name is resolved per theme: `pin` / `circle-icon` pick a built-in
+     * sprite; `base-map` picks the base map's `poi-<category>` sprite; a custom
+     * `PlaceIconConfig.categoryIcons` entry overrides the default for the main
+     * layer on any theme.
      *
      * @example
      * ```typescript
-     * iconID: 'poi-restaurant'
-     * iconID: 'pin-red'
-     * iconID: 'custom-marker'
+     * iconID: '7315'              // pin theme sprite
+     * iconID: 'poi-restaurant'    // circle-icon / base-map theme sprite
+     * iconID: 'custom-marker-0'   // user-provided custom icon
      * ```
      */
     iconID: string;
 
     /**
-     * Map-style-compatible display category, mostly applicable for base-map places.
+     * Base map style POI category the place should be rendered as.
      *
      * @remarks
-     * Used to match the place with a POI category in the map style, enabling
-     * category-specific styling and filtering.
-     *
-     * **Common Categories:**
-     * - RESTAURANT
-     * - HOTEL_MOTEL
-     * - GAS_STATION
-     * - PARKING_GARAGE
-     * - SHOPPING
-     *
-     * Optional - only needed when using base-map styling or category-based filtering.
+     * Populated only for the `base-map` theme. Values are the lowercased
+     * identifiers used by the base map style (derived via
+     * {@link toBaseMapPOICategory}). Drives the inherited `text-color`
+     * expression on the main/selected POI-like layers.
      *
      * @example
      * ```typescript
-     * category: 'RESTAURANT'
-     * category: 'HOTEL_MOTEL'
-     * category: 'EV_CHARGING_STATION'
-     * category: undefined  // No category association
+     * category: 'restaurant'
+     * category: 'hotel_or_motel'
+     * category: 'charging_location'
      * ```
      */
     category?: string;
+
+    /**
+     * Base map style POI group the place belongs to.
+     *
+     * @remarks
+     * Populated only for the `base-map` theme. Drives the inherited
+     * `text-color` expression on the base map's POI layers.
+     * Valid values are those produced by {@link toBaseMapPOIGroup} — e.g.,
+     * `eat_and_drink`, `lodging`, `driving`, `transport`, `shopping`,
+     * `healthcare`, `finance`, `cultural`, `leisure`, `sport`, `outdoor`,
+     * `protected`, `public`, `religion`, `military`, `business`, `education`,
+     * `parking`.
+     */
+    group?: string;
 } & SupportsEvents &
     Anything;
 
 /**
- * Place base and display properties combined.
- *
- * Merges complete place information from the core API with display-specific
- * properties for rendering on the map.
- *
- * @remarks
- * This is the full type used by the PlacesModule for rendering search results,
- * POIs, and other location markers on the map. It combines:
- * - Geographic data (coordinates, address)
- * - Place metadata (POI info, opening hours, etc.)
- * - Display properties (icon, title, category)
- * - Interactive state (event handling)
+ * Full property shape used by the PlacesModule when rendering a place: the
+ * core place data ({@link CommonPlaceProps}) merged with the display-only
+ * fields the module attaches ({@link PlaceDisplayProps}).
  *
  * @example
  * ```typescript
  * const place: DisplayPlaceProps = {
- *   type: 'Point',
- *   position: { lon: 4.9, lat: 52.3 },
+ *   type: 'POI',
+ *   poi: {
+ *     name: 'Central Station',
+ *     categories: ['RAILWAY_STATION'],
+ *   },
  *   address: {
  *     streetName: 'Damrak',
  *     municipalitySubdivision: 'Amsterdam',
- *     countryCode: 'NL'
- *   },
- *   poi: {
- *     name: 'Central Station',
- *     categories: ['RAILWAY_STATION']
+ *     countryCode: 'NL',
  *   },
  *   id: 'place-123',
  *   title: 'Amsterdam Central Station',
- *   iconID: 'poi-transit',
- *   category: 'RAILWAY_STATION'
+ *   iconID: 'poi-railway_station',
+ *   category: 'railway_station',
+ *   group: 'transport',
  * };
  * ```
  *

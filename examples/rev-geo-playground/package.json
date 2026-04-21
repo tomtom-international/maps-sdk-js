@@ -17,6 +17,7 @@
     "@tomtom-org/maps-sdk": "workspace:*"
   },
   "devDependencies": {
+    "@playwright/test": "catalog:",
     "@types/geojson": "catalog:",
     "@types/node": "catalog:",
     "rimraf": "catalog:",

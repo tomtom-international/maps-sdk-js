@@ -40,6 +40,9 @@ test.describe('PlacesModule tests', () => {
         } as Place);
 
         const { sourceID, layerIDs } = await getPlacesSourceAndLayerIDs(page);
+        // 2 = main + selected. The `micro` layer is registered but hidden via
+        // `layout.visibility = 'none'` for the 'pin' theme (it's only used by the
+        // `base-map` theme), so it doesn't count as visible.
         expect(await getNumVisiblePlacesLayers(page, sourceID)).toEqual(2);
 
         const renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, 1, 10000);
@@ -49,6 +52,13 @@ test.describe('PlacesModule tests', () => {
         const shown = await page.evaluate(() => (globalThis as MapsSDKThis).places?.getShown());
         expect(shown?.places.features).toHaveLength(1);
         expect(shown?.places.features[0].id).toBe('placeID');
+
+        // Default theme is 'pin' — the always-present `micro` layer is hidden via
+        // `visibility: 'none'` and renders nothing. Short timeout since we expect zero matches.
+        const microLayerID = layerIDs.find((id) => id.endsWith('-micro')) as string;
+        expect(microLayerID).toBeDefined();
+        const microFeatures = await waitUntilRenderedFeatures(page, [microLayerID], 0, 2000);
+        expect(microFeatures).toHaveLength(0);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
@@ -139,6 +149,7 @@ test.describe('PlacesModule tests', () => {
 
         const mapEnv = await MapTestEnv.loadPageAndMap(page, { center: [4.90047, 52.37708], zoom: 14 });
         await initPlaces(page);
+        await waitForMapIdle(page);
         const { sourceID, layerIDs } = await getPlacesSourceAndLayerIDs(page);
 
         // Show the test place
@@ -171,13 +182,28 @@ test.describe('PlacesModule tests', () => {
         await setStyle(page, 'standardLight');
         await waitForMapIdle(page);
 
-        // Verify the place is still rendered with the right category for the applied theme
-        renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, 1, 10000);
-        expect(renderedPlaces).toHaveLength(1);
-        expect(renderedPlaces[0].properties.id).toBe('528009001852275');
-        expect(renderedPlaces[0].properties.title).toBe('Q-Park Amsterdam Nieuwendijk');
-        expect(renderedPlaces[0].properties.category).toBe('parking_facility');
-        expect(await getNumVisiblePlacesLayers(page, sourceID)).toBe(2);
+        // Verify the place is still rendered with the right category for the applied theme.
+        // The `micro` layer is registered for all themes but hidden via `visibility: 'none'`
+        // outside the `base-map` theme — after switching to `base-map` it becomes visible
+        // and renders the place alongside `main` (`selected` stays empty unless an event
+        // state is set), so we expect 2 rendered features.
+        const { layerIDs: placesLayerIDs } = await getPlacesSourceAndLayerIDs(page);
+        renderedPlaces = await waitUntilRenderedFeatures(page, placesLayerIDs, 2, 10000);
+        expect(renderedPlaces).toHaveLength(2);
+        for (const feature of renderedPlaces) {
+            expect(feature.properties.id).toBe('528009001852275');
+            expect(feature.properties.title).toBe('Q-Park Amsterdam Nieuwendijk');
+            expect(feature.properties.category).toBe('parking_facility');
+        }
+        expect(await getNumVisiblePlacesLayers(page, sourceID)).toBe(3);
+
+        // Ensure the 'micro' layer itself is rendering the place — guards against the
+        // regression where the style's zoom-gated icon-opacity / minzoom made it invisible.
+        const microLayerID = placesLayerIDs.find((id) => id.includes('micro')) as string;
+        expect(microLayerID).toBeDefined();
+        const microFeatures = await waitUntilRenderedFeatures(page, [microLayerID], 1, 10000);
+        expect(microFeatures).toHaveLength(1);
+        expect(microFeatures[0].properties.id).toBe('528009001852275');
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });

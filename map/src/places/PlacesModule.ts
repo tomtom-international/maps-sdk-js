@@ -1,14 +1,15 @@
 import type { Place, Places } from '@tomtom-org/maps-sdk/core';
+import type { SymbolLayerSpecification } from 'maplibre-gl';
 import type {
     CleanEventStateOptions,
     CleanEventStatesOptions,
     PutEventStateOptions,
-    SymbolLayerSpecWithoutSource,
+    ToBeAddedLayerSpecWithoutSource,
 } from '../shared';
 import { AbstractMapModule, CombinedEvents, GeoJSONSourceWithLayers, ModuleEvents, UserEvents } from '../shared';
 import { DEFAULT_PLACE_ICON_ID } from '../shared/layers/symbolLayers';
 import { suffixNumber } from '../shared/layers/utils';
-import { addOrUpdateImage, changeLayersProps, waitUntilMapIsReady } from '../shared/mapUtils';
+import { addLayers, addOrUpdateImage, updateLayersAndSource, waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
 import { buildPlacesLayerSpecs } from './layers/placesLayers';
 import { defaultPin } from './resources';
@@ -38,7 +39,7 @@ type PlacesSourcesAndLayers = {
  *
  * @remarks
  * **Features:**
- * - Multiple marker styles (pin, circle, POI-like)
+ * - Multiple marker styles (pin, circle-icon, base-map POI-like)
  * - Custom icons per POI category
  * - Text labels with styling options
  * - Data-driven styling via MapLibre expressions
@@ -48,8 +49,8 @@ type PlacesSourcesAndLayers = {
  *
  * **Marker Styles:**
  * - `pin`: Traditional teardrop-shaped map pins
- * - `circle`: Simple circular markers
- * - `base-map`: Mimics built-in POI layer styling
+ * - `circle-icon`: Simple circular markers (previously named `circle`)
+ * - `base-map`: Mimics the map's built-in POI layer styling (combines `main`, `selected`, and `micro` layers). For micro-only rendering, hide the `main` layer via `layers.main.layout.visibility = 'none'`.
  *
  * **EV Charging Station Availability:**
  * When displaying EV charging stations with availability data from
@@ -114,7 +115,7 @@ type PlacesSourcesAndLayers = {
  */
 export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, PlacesModuleConfig> {
     private static lastInstanceIndex = -1;
-    private layerSpecs!: Record<PlaceLayerName, SymbolLayerSpecWithoutSource>;
+    private layerSpecs!: Record<PlaceLayerName, ToBeAddedLayerSpecWithoutSource<SymbolLayerSpecification>>;
     private sourceID!: string;
     private layerIDPrefix!: string;
     /**
@@ -157,29 +158,48 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
         // Update each layer id with the instance-specific prefix
         this.layerSpecs = this.buildLayerSpecs(config);
 
-        return {
-            places: new GeoJSONSourceWithLayers(this.mapLibreMap, this.sourceID, [
-                this.layerSpecs.main,
-                this.layerSpecs.selected,
-            ]),
-        };
+        // Defer the built-in layer add (`false`) — our specs use `beforeID` stacking
+        // (`micro` → `main` → `selected`) which `ensureLayersAddedToMap` can't resolve
+        // topologically. `addLayers` walks the dependency order instead; running it at
+        // init keeps the layers on the map before `updateLayersAndSource` touches them.
+        const places = new GeoJSONSourceWithLayers<Places<DisplayPlaceProps>>(
+            this.mapLibreMap,
+            this.sourceID,
+            Object.values(this.layerSpecs),
+            false,
+        );
+        addLayers(places._layerSpecs, this.mapLibreMap);
+        return { places };
     }
 
-    private buildLayerSpecs(config?: PlacesModuleConfig) {
+    private buildLayerSpecs(
+        config?: PlacesModuleConfig,
+    ): Record<PlaceLayerName, ToBeAddedLayerSpecWithoutSource<SymbolLayerSpecification>> {
         const layerSpecTemplates = buildPlacesLayerSpecs(
             config,
             this.tomtomMap.mapLibreMap,
             this.tomtomMap.styleLightDarkTheme,
             this.instanceIndex,
         );
+        const internalNames = new Set(Object.keys(layerSpecTemplates));
 
-        // Update each layer id with the instance-specific prefix
+        // Rewrite internal layer IDs and any `beforeID` that refers to another
+        // internal layer (e.g., `main`, `selected`) into instance-scoped IDs.
         return Object.fromEntries(
-            Object.entries(layerSpecTemplates).map(([key, spec]) => [
-                key,
-                { ...spec, id: `${this.layerIDPrefix}-${key}` },
-            ]),
-        ) as Record<PlaceLayerName, SymbolLayerSpecWithoutSource>;
+            Object.entries(layerSpecTemplates).map(([key, spec]) => {
+                const beforeID = (spec as { beforeID?: string }).beforeID;
+                return [
+                    key,
+                    {
+                        ...spec,
+                        id: `${this.layerIDPrefix}-${key}`,
+                        ...(beforeID && internalNames.has(beforeID)
+                            ? { beforeID: `${this.layerIDPrefix}-${beforeID}` }
+                            : {}),
+                    },
+                ];
+            }),
+        ) as Record<PlaceLayerName, ToBeAddedLayerSpecWithoutSource<SymbolLayerSpecification>>;
     }
 
     /**
@@ -208,8 +228,8 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      * @remarks
      * **Available Themes:**
      * - `pin`: Traditional teardrop-shaped map pins
-     * - `circle`: Simple circular markers
-     * - `base-map`: Mimics the map's built-in POI layer style with category icons
+     * - `circle-icon`: Simple circular markers (previously named `circle`)
+     * - `base-map`: Mimics the map's built-in POI layer style with category icons (combines `main`, `selected`, and `micro`). For micro-only rendering, hide the `main` layer via `layers.main.layout.visibility = 'none'`.
      *
      * Changes apply immediately to all currently shown places. Other configuration
      * properties (icon config, text config) remain unchanged.
@@ -220,7 +240,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      * placesModule.applyTheme('pin');
      *
      * // Use simple circles
-     * placesModule.applyTheme('circle');
+     * placesModule.applyTheme('circle-icon');
      *
      * // Match map's POI style (ideal to blend in)
      * placesModule.applyTheme('base-map');
@@ -314,12 +334,32 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
     private updateLayersAndData(config: PlacesModuleConfig | undefined): void {
         this.setupImages(config);
         const newLayerSpecs = this.buildLayerSpecs(config);
-        // Convert layerSpecs objects to arrays for changeLayersProps
-        const newLayerSpecsArray = [newLayerSpecs.main, newLayerSpecs.selected];
-        const oldLayerSpecsArray = [this.layerSpecs.main, this.layerSpecs.selected];
-        changeLayersProps(newLayerSpecsArray, oldLayerSpecsArray, this.mapLibreMap);
+        const placesSource = this.sourcesWithLayers.places;
+        updateLayersAndSource(
+            Object.values(newLayerSpecs),
+            Object.values(this.layerSpecs),
+            placesSource,
+            this.mapLibreMap,
+        );
         this.layerSpecs = newLayerSpecs;
+        this.applyPlacesVisibility();
         this.updateData(config);
+    }
+
+    // Data-driven "visible iff any features" — but skip specs carrying
+    // `visibility: 'none'` so theme-hidden slots (e.g., `micro` on pin/circle-icon) and
+    // caller-hidden layers (via `layers.*`) stay hidden. We iterate `this.layerSpecs`
+    // rather than `placesSource._layerSpecs` because the latter is stale for updated
+    // layers after a theme switch.
+    private applyPlacesVisibility(): void {
+        const hasData = !!this.sourcesWithLayers.places.shownFeatures.features.length;
+        const visibility = hasData ? 'visible' : 'none';
+        for (const spec of Object.values(this.layerSpecs)) {
+            if (spec.layout?.visibility === 'none') {
+                continue;
+            }
+            this.mapLibreMap.setLayoutProperty(spec.id, 'visibility', visibility, { validate: false });
+        }
     }
 
     private setupImages(config: PlacesModuleConfig | undefined): void {
@@ -427,7 +467,12 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      */
     async show(places: Place | Place[] | Places) {
         await this.waitUntilModuleReady();
-        this.sourcesWithLayers.places.show(preparePlacesForDisplay(places, this.instanceIndex, this.config));
+        // Opt out of the blanket visibility flip — `applyPlacesVisibility` honors
+        // spec-level `visibility: 'none'` so theme-hidden layers stay hidden.
+        this.sourcesWithLayers.places.show(preparePlacesForDisplay(places, this.instanceIndex, this.config), {
+            automaticVisibility: false,
+        });
+        this.applyPlacesVisibility();
         for (const handler of this.shownFeaturesHandlers) {
             handler(places);
         }

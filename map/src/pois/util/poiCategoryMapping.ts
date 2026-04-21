@@ -577,3 +577,148 @@ export type MapStylePOICategory = keyof typeof mapDisplayPoiCategoryMappings;
  * @ignore
  */
 export const toBaseMapPOICategory = (category: POICategory): string => completeMapDisplayPoiCategoryMappings[category];
+
+/**
+ * Maps the base map POI category (see {@link toBaseMapPOICategory}) to the
+ * group used by the base map style's `POI`/`POI - Micro` layers for color and
+ * micro-icon selection. Groups mirror the match arms in the style's
+ * `text-color` expression (e.g., `eat_and_drink`, `lodging`, `driving`).
+ * @ignore
+ */
+const baseMapCategoryToGroup: Record<string, string> = {
+    // eat_and_drink
+    bar: 'eat_and_drink',
+    cafe: 'eat_and_drink',
+    cafeteria: 'eat_and_drink',
+    coffee_shop: 'eat_and_drink',
+    fast_food: 'eat_and_drink',
+    ice_cream_shop: 'eat_and_drink',
+    juice_bar: 'eat_and_drink',
+    pub: 'eat_and_drink',
+    restaurant: 'eat_and_drink',
+    tea_house: 'eat_and_drink',
+    // shopping
+    clothing_shop: 'shopping',
+    department_store: 'shopping',
+    food_and_drinks_shop: 'shopping',
+    mall: 'shopping',
+    marketplace: 'shopping',
+    shop_or_store: 'shopping',
+    supermarket: 'shopping',
+    // finance
+    atm: 'finance',
+    bank: 'finance',
+    foreign_exchange: 'finance',
+    gold_exchange: 'finance',
+    stock_exchange: 'finance',
+    // lodging
+    camping_ground: 'lodging',
+    holiday_home: 'lodging',
+    hotel_or_motel: 'lodging',
+    // transport
+    airport: 'transport',
+    bus_station: 'transport',
+    ferry_terminal: 'transport',
+    heliport_or_helipad: 'transport',
+    marina: 'transport',
+    public_transport_stop: 'transport',
+    railway_station: 'transport',
+    taxi_stand: 'transport',
+    transport_access: 'transport',
+    // driving
+    border_control: 'driving',
+    car_rental: 'driving',
+    charging_location: 'driving',
+    fuel_station: 'driving',
+    rest_and_service_area: 'driving',
+    toll_booth: 'driving',
+    truck_stop: 'driving',
+    vehicle_dealer: 'driving',
+    vehicle_inspection: 'driving',
+    vehicle_repair: 'driving',
+    vehicle_wash: 'driving',
+    weighbridge: 'driving',
+    // parking
+    parking_facility: 'parking',
+    rental_car_parking: 'parking',
+    // healthcare
+    clinic: 'healthcare',
+    dentist: 'healthcare',
+    doctor: 'healthcare',
+    emergency_ward_entrance: 'healthcare',
+    hospital: 'healthcare',
+    pharmacy: 'healthcare',
+    veterinary: 'healthcare',
+    // education
+    childcare: 'education',
+    college_or_university: 'education',
+    research_facility: 'education',
+    school_or_kindergarten: 'education',
+    // cultural
+    cultural_center: 'cultural',
+    historic_site: 'cultural',
+    museum: 'cultural',
+    planetarium: 'cultural',
+    theater: 'cultural',
+    // leisure
+    amusement_park: 'leisure',
+    beach_resort: 'leisure',
+    casino_and_gambling: 'leisure',
+    cinema: 'leisure',
+    comedy_club: 'leisure',
+    nightlife: 'leisure',
+    park_and_recreation_facility: 'leisure',
+    tourist_attraction: 'leisure',
+    tourist_information: 'leisure',
+    zoo_or_aquarium: 'leisure',
+    // sport
+    fitness_center: 'sport',
+    golf_course: 'sport',
+    horse_riding: 'sport',
+    ice_rink: 'sport',
+    sport_facility: 'sport',
+    stadium: 'sport',
+    swimming_pool: 'sport',
+    winter_sports: 'sport',
+    // outdoor
+    aboriginal_land: 'outdoor',
+    landmark: 'outdoor',
+    mountain_pass: 'outdoor',
+    park_and_recreation_area: 'outdoor',
+    viewpoint: 'outdoor',
+    // protected
+    protected_land: 'protected',
+    // public
+    cemetery: 'public',
+    courthouse: 'public',
+    fire_station: 'public',
+    government_office: 'public',
+    police_station: 'public',
+    post_depot: 'public',
+    post_office: 'public',
+    prison: 'public',
+    public_library: 'public',
+    // military
+    military_airfield: 'military',
+    // religion
+    religious_site: 'religion',
+    // business
+    animal_shelter: 'business',
+    commercial_area: 'business',
+    conference_center: 'business',
+    consumer_service: 'business',
+    industrial_area: 'business',
+    manufacturing_facility: 'business',
+    media_facility: 'business',
+    mourning_facility: 'business',
+    ngo_office: 'business',
+    personal_care_service: 'business',
+};
+
+/**
+ * @ignore
+ */
+export const toBaseMapPOIGroup = (category: POICategory): string | undefined => {
+    const baseMapCategory = toBaseMapPOICategory(category);
+    return baseMapCategory ? baseMapCategoryToGroup[baseMapCategory] : undefined;
+};

@@ -14,10 +14,10 @@
     "start-test-server": "vite preview --port 9050"
   },
   "dependencies": {
-    "@tomtom-org/maps-sdk": "workspace:*",
-    "maplibre-gl": "catalog:"
+    "@tomtom-org/maps-sdk": "workspace:*"
   },
   "devDependencies": {
+    "@playwright/test": "catalog:",
     "@types/node": "catalog:",
     "rimraf": "catalog:",
     "rollup-plugin-visualizer": "catalog:",

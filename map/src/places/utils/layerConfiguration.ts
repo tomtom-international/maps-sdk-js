@@ -1,7 +1,6 @@
 import type { DataDrivenPropertyValueSpecification, SymbolLayerSpecification } from 'maplibre-gl';
-import type { LayerSpecTemplate } from '../../shared';
+import type { LayerSpecTemplate, LightDark } from '../../shared';
 import { TITLE } from '../../shared/layers/symbolLayers';
-import type { LightDark } from '../../shared/types/style';
 import type { PlaceLayerName, PlacesModuleConfig } from '../types/placesModuleConfig';
 import type { IconScalesMap } from './customIconScales';
 import { getAvailabilityColorExpression } from './evAvailabilityHelpers';
@@ -13,6 +12,7 @@ import { getThemeAdaptiveTextColors } from './themeAdaptation';
  * Supports EV availability text when enabled.
  * @ignore
  */
+
 export const buildTextFieldExpression = (
     config: PlacesModuleConfig | undefined,
     evAvailabilityEnabled: boolean,
@@ -50,7 +50,7 @@ export const buildLayoutConfig = (
     layerSpec: LayerSpecTemplate<SymbolLayerSpecification>,
     config: PlacesModuleConfig | undefined,
     layerName: PlaceLayerName,
-    textField: DataDrivenPropertyValueSpecification<string>,
+    textField: DataDrivenPropertyValueSpecification<string> | undefined,
     iconTextOffsetScales?: IconScalesMap,
 ): SymbolLayerSpecification['layout'] => {
     const textConfig = config?.text;
@@ -60,10 +60,11 @@ export const buildLayoutConfig = (
     // Start with base layout
     const baseLayout = { ...layerSpec.layout };
 
-    // Remove and recalculate offset properties when custom icons, custom offset, or circle theme
-    // are present. The circle theme inherits pin-style offsets from pinLayerBaseSpec which must
+    // Remove and recalculate offset properties when custom icons, custom offset, or the circle-icon
+    // theme is present. `circle-icon` inherits pin-style offsets from pinLayerBaseSpec which must
     // be replaced with centered offsets.
-    const needsOffsetRecalculation = hasCustomIcons || textConfig?.offset !== undefined || config?.theme === 'circle';
+    const needsOffsetRecalculation =
+        hasCustomIcons || textConfig?.offset !== undefined || config?.theme === 'circle-icon';
 
     if (needsOffsetRecalculation) {
         delete baseLayout['text-offset'];
@@ -76,12 +77,12 @@ export const buildLayoutConfig = (
         ...customLayer?.layout,
         ...(textConfig?.size && { 'text-size': textConfig.size }),
         ...(textConfig?.font && { 'text-font': textConfig.font }),
-        'text-field': textField,
+        ...(textField !== undefined && { 'text-field': textField }),
     };
 
     // Apply offset configuration
     if (needsOffsetRecalculation) {
-        // Dynamic offset calculation handles custom icons, custom offset, and circle theme centering
+        // Dynamic offset calculation handles custom icons, custom offset, and circle-icon theme centering
         const iconSize = layout['icon-size'];
         const scales = iconTextOffsetScales ?? new Map();
         return { ...layout, ...getTextOffset(iconSize, scales, config?.theme, textConfig?.offset) };
@@ -103,12 +104,15 @@ export const buildPaintConfig = (
     const textConfig = config?.text;
     const customLayer = config?.layers?.[layerName];
     const { textColor: baseTextColor, haloColor: baseHaloColor } = getThemeAdaptiveTextColors(lightDark);
+    const basePaint = layerSpec.paint ?? {};
+    // Theme-adaptive defaults only fill in when the base layer doesn't already
+    // define a color — that way layers carrying their own `text-color` (e.g., the
+    // base-map style's category/group-driven expression, or `SELECTED_COLOR` on
+    // the selected layer) are preserved. User `text.*` config still wins.
     return {
-        ...layerSpec.paint,
-        // Apply theme-adaptive colors as defaults
-        ...(!textConfig?.color && { 'text-color': baseTextColor }),
-        ...(!textConfig?.haloColor && { 'text-halo-color': baseHaloColor }),
-        // User config takes precedence
+        ...basePaint,
+        ...(basePaint['text-color'] === undefined && { 'text-color': baseTextColor }),
+        ...(basePaint['text-halo-color'] === undefined && { 'text-halo-color': baseHaloColor }),
         ...(textConfig?.color && { 'text-color': textConfig.color }),
         ...(textConfig?.haloColor && { 'text-halo-color': textConfig.haloColor }),
         ...(textConfig?.haloWidth && { 'text-halo-width': textConfig.haloWidth }),

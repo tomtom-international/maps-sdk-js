@@ -309,10 +309,17 @@ await hotels.show(await search({ poiCategories: ['HOTEL_MOTEL'], position }));
 
 ```ts
 // At init time
-const places = await PlacesModule.get(map, { theme: 'base-map' }); // 'base-map' | 'pin' | 'default'
+const places = await PlacesModule.get(map, { theme: 'base-map' });
+// Available themes: 'pin' | 'circle-icon' | 'base-map' (default: 'pin')
+// - 'pin': classic teardrop pin markers
+// - 'circle-icon': centered circular POI icons (same sprites as base-map's POI layer)
+// - 'base-map': full base-map POI styling (POI + POI - Micro at the respective zooms).
+//   To render micro-only, hide `main` via `layers.main.layout.visibility = 'none'`.
 
 // At runtime
 places.applyTheme('pin');
+places.applyTheme('circle-icon');
+places.applyTheme('base-map');
 ```
 
 ### MapLibre layer paint overrides

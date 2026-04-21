@@ -90,7 +90,7 @@ const buildAnchorOffsets = (
  *
  * @param iconSizeExpression The icon-size property from the layer specification
  * @param iconTextOffsetScales Map of icon IDs to their scale factors (heightScale for vertical, widthScale for horizontal)
- * @param theme The places theme ('base-map'/'circle' for centered icons, 'pin' for bottom-anchored pins)
+ * @param theme The places theme ('base-map'/'circle-icon' for centered icons, 'pin' for bottom-anchored pins)
  * @param customTextOffset Custom text offset multiplier (overrides default TEXT_OFFSET constants)
  * @returns Configuration object with the MapLibre property type and value to apply
  * @ignore
@@ -103,8 +103,8 @@ export const getTextOffset = (
 ): TextOffsetLayout => {
     const maxIconScale = extractMaxIconScale(iconSizeExpression);
     const iconScaleMultiplier = maxIconScale / DEFAULT_MAX_PIN_SCALE;
-    // Both 'circle' and 'base-map' use centered icons; 'pin' is bottom-anchored.
-    const isCenteredTheme = theme === 'base-map' || theme === 'circle';
+    // 'base-map' and 'circle-icon' both use centered icons; 'pin' is bottom-anchored.
+    const isCenteredTheme = theme === 'base-map' || theme === 'circle-icon';
     const hasCustomOffset = customTextOffset !== undefined;
 
     // For centered themes with a custom offset, use simple text-offset
@@ -144,7 +144,7 @@ export const getTextOffset = (
     const offsetCaseExpression: (string | number | ExpressionSpecification)[] = ['case'];
 
     for (const [iconId, scales] of iconTextOffsetScales.entries()) {
-        // Centered themes (base-map/circle) use larger vertical offsets to match native map styling
+        // Centered themes (base-map / circle-icon) use larger vertical offsets to match native map styling
         const baseTopOffset = isCenteredTheme ? DEFAULT_TEXT_OFFSET_Y * 2 : DEFAULT_TEXT_OFFSET_Y;
         const topOffset = baseTopOffset * scales.heightScale;
         const sideOffset = DEFAULT_TEXT_OFFSET_X * scales.widthScale;

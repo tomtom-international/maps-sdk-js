@@ -46,6 +46,12 @@ const setupPlacesClickHandler = async (page: Page) =>
 const places = placesJson as Places;
 const firstPlacePosition = places.features[0].geometry.coordinates as [number, number];
 
+// These tests use the default `pin` theme, where the `micro` layer is registered
+// but hidden via `layout.visibility: 'none'`. Exclude it so event-state and
+// rendered-feature assertions reason only about the visible layers.
+const getVisiblePlacesLayerIDs = async (page: Page): Promise<string[]> =>
+    (await getPlacesSourceAndLayerIDs(page)).layerIDs.filter((id) => !id.endsWith('-micro'));
+
 test.describe('Tests with user events related to PlacesModule', () => {
     const mapEnv = new MapTestEnv();
 
@@ -65,7 +71,7 @@ test.describe('Tests with user events related to PlacesModule', () => {
         await initPlaces(page);
         await showPlaces(page, places);
         await waitForMapIdle(page);
-        const placesLayerIDs = (await getPlacesSourceAndLayerIDs(page)).layerIDs;
+        const placesLayerIDs = await getVisiblePlacesLayerIDs(page);
         await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 5000);
 
         const placePixelCoords = await getPixelCoords(page, firstPlacePosition);
@@ -104,7 +110,7 @@ test.describe('Tests with user events related to PlacesModule', () => {
         await initPlaces(page);
         await waitForMapIdle(page);
         const placePosition = await getPixelCoords(page, firstPlacePosition);
-        const placesLayerIDs = (await getPlacesSourceAndLayerIDs(page)).layerIDs;
+        const placesLayerIDs = await getVisiblePlacesLayerIDs(page);
         await showPlaces(page, places);
         await waitForMapIdle(page);
         await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 5000);
@@ -145,7 +151,7 @@ test.describe('Tests with user events related to PlacesModule', () => {
         await setupPlacesClickHandler(page);
         await showPlaces(page, places);
         await waitForMapIdle(page);
-        const placesLayerIDs = (await getPlacesSourceAndLayerIDs(page)).layerIDs;
+        const placesLayerIDs = await getVisiblePlacesLayerIDs(page);
         await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 10000);
 
         // Click on the place and assert the click works
@@ -173,7 +179,7 @@ test.describe('Tests with user events related to PlacesModule', () => {
         await setupPlacesClickHandler(page);
         await showPlaces(page, places);
         await waitForMapIdle(page);
-        const placesLayerIDs = (await getPlacesSourceAndLayerIDs(page)).layerIDs;
+        const placesLayerIDs = await getVisiblePlacesLayerIDs(page);
         await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 5000);
 
         // Hover on place and verify 'cell' cursor
@@ -206,7 +212,7 @@ test.describe('Tests with user events related to PlacesModule', () => {
         // This is a "stress" test to ensure events keep functioning properly after changing styles, restoring places, etc.
         await initPlaces(page);
         // We load the places layer IDs before changing the style, to ensure they are still relevant after the style change:
-        const placesLayerIDs = (await getPlacesSourceAndLayerIDs(page)).layerIDs;
+        const placesLayerIDs = await getVisiblePlacesLayerIDs(page);
 
         await waitForMapIdle(page);
         await setStyle(page, 'standardDark');
@@ -231,7 +237,7 @@ test.describe('Tests with user events related to PlacesModule', () => {
         await initPlaces(page);
         await showPlaces(page, places);
         await waitForMapIdle(page);
-        const placesLayerIDs = (await getPlacesSourceAndLayerIDs(page)).layerIDs;
+        const placesLayerIDs = await getVisiblePlacesLayerIDs(page);
         await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 5000);
 
         await setupPlacesClickHandler(page);
@@ -246,11 +252,15 @@ test.describe('Tests with user events related to PlacesModule', () => {
         expect(lngLat).toMatchObject({ lng: expect.any(Number), lat: expect.any(Number) });
         expect(features).toHaveLength(1);
         expect(features).toContainEqual(expect.objectContaining({ type: 'Feature' }));
-        expect(layerSpecs).toHaveLength(2);
+        // PlacesModule registers 3 layers (micro, main, selected). `micro` is hidden via
+        // `layout.visibility: 'none'` for the default `pin` theme but still belongs to the
+        // source, so the callback receives all three specs.
+        expect(layerSpecs).toHaveLength(3);
         const { sourceID, layerIDs } = await getPlacesSourceAndLayerIDs(page);
         expect(layerSpecs).toEqual([
             expect.objectContaining({ source: sourceID, id: layerIDs[0] }),
             expect.objectContaining({ source: sourceID, id: layerIDs[1] }),
+            expect.objectContaining({ source: sourceID, id: layerIDs[2] }),
         ]);
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
@@ -345,7 +355,7 @@ test.describe('Events custom configuration', () => {
         await setupPlacesHoverHandlers(page);
         await showPlaces(page, places);
         await waitForMapIdle(page);
-        const placesLayerIDs = (await getPlacesSourceAndLayerIDs(page)).layerIDs;
+        const placesLayerIDs = await getVisiblePlacesLayerIDs(page);
         await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 5000);
 
         // Hover over a Place:

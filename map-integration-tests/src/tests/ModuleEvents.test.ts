@@ -97,7 +97,7 @@ test.describe('ModuleEvents — config-change events', () => {
         await waitForMapIdle(page);
 
         await page.evaluate(setupConfigChangeHandler('places'));
-        await page.evaluate(() => (globalThis as MapsSDKThis).places?.applyTheme('circle'));
+        await page.evaluate(() => (globalThis as MapsSDKThis).places?.applyTheme('circle-icon'));
 
         await page.waitForFunction(() => (globalThis as any)._configChangeCount > 0, undefined, { timeout: 5000 });
         const config = await page.evaluate(() => (globalThis as any)._configChangeResult);

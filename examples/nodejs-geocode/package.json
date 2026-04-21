@@ -10,6 +10,7 @@
     "@tomtom-org/maps-sdk": "workspace:*"
   },
   "devDependencies": {
+    "@playwright/test": "catalog:",
     "typescript": "catalog:"
   }
 }

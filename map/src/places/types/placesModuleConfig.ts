@@ -16,12 +16,12 @@ import type {
  * @remarks
  * **Available Styles:**
  * - `pin`: Traditional map pin markers (teardrop shape)
- * - `circle`: Simple circular markers
- * - `base-map`: Mimics the map's built-in POI layer style with category icons
+ * - `circle-icon`: Simple circular markers (previously named `circle`)
+ * - `base-map`: Mimics the map's built-in POI layer style with category icons (combines `main`, `selected`, and `micro` layers). For micro-only rendering, hide the `main` layer via `layers.main.layout.visibility = 'none'`.
  *
  * @group Places
  */
-export type PlacesTheme = 'pin' | 'circle' | 'base-map';
+export type PlacesTheme = 'pin' | 'circle-icon' | 'base-map';
 
 /**
  * Configuration for EV charging station availability display.
@@ -384,6 +384,19 @@ export type PlaceLayersConfig = {
      * This layer renders places that are not in a highlighted/selected state.
      */
     main?: Partial<ToBeAddedLayerSpecTemplate<SymbolLayerSpecification>>;
+
+    /**
+     * Micro place marker layer specification.
+     *
+     * @remarks
+     * Always registered and stacked below the `main` layer, but only renders features
+     * when the `base-map` theme is active — in that mode it mirrors the map style's
+     * `POI - Micro` layer so place markers blend with the base map's lower-density
+     * POI rendering. For other themes the layer is hidden via
+     * `layout.visibility = 'none'` and acts as a no-op, making theme switches cheap
+     * (no add/remove layer churn).
+     */
+    micro?: Partial<ToBeAddedLayerSpecTemplate<SymbolLayerSpecification>>;
 
     /**
      * Selected place marker layer specification.

@@ -82,7 +82,7 @@ export const extractImageDimensions = (image: string | HTMLImageElement): { widt
  *
  *
  * @param image The image to extract dimensions from
- * @param theme The places theme ('base-map'/'circle' for centered icons, 'pin' for bottom-anchored pins)
+ * @param theme The places theme ('base-map'/'circle-icon' for centered icons, 'pin' for bottom-anchored pins)
  * @returns Object with heightScale and widthScale, or undefined if icon is standard-sized (within tolerance)
  * @ignore
  */
@@ -99,9 +99,9 @@ export const calculateIconScale = (
         return undefined;
     }
 
-    const isCenteredTheme = theme === 'base-map' || theme === 'circle';
+    const isCenteredTheme = theme === 'base-map' || theme === 'circle-icon';
 
-    // Centered themes (base-map/circle) scale relative to POI icon dimensions.
+    // Centered themes (base-map / circle-icon) scale relative to POI icon dimensions.
     // Pin theme scales relative to default pin dimensions.
     const refHeight = isCenteredTheme ? DEFAULT_MAP_POI_HEIGHT_PX : DEFAULT_PIN_HEIGHT_PX;
     const refWidth = isCenteredTheme ? DEFAULT_MAP_POI_WIDTH_PX : DEFAULT_PIN_WIDTH_PX;

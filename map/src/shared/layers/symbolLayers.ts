@@ -73,11 +73,13 @@ export const pinTextBaseLayout: SymbolLayerSpecification['layout'] = {
 };
 
 /**
+ * Note: `text-color` and `text-halo-color` are intentionally omitted so
+ * {@link buildPaintConfig} can inject theme-adaptive defaults on layers that
+ * don't supply their own. Layers that bring a category/group-driven expression
+ * (e.g., the base-map POI layer) keep their own colors untouched.
  * @ignore
  */
 export const pinTextBasePaint: SymbolLayerSpecification['paint'] = {
-    'text-color': '#333333',
-    'text-halo-color': '#FFFFFF',
     'text-halo-width': ['interpolate', ['linear'], ['zoom'], 6, 1, 10, 1.5],
     'text-translate-anchor': 'viewport',
 };

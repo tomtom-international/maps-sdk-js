@@ -1,18 +1,17 @@
 import { expect, test } from '@playwright/test';
-import { bboxFromGeoJSON, type Place } from '@tomtom-org/maps-sdk/core';
+import { type Place } from '@tomtom-org/maps-sdk/core';
+import type { MapsSDKThis } from './types/MapsSDKThis';
 import { MapTestEnv } from './util/MapTestEnv';
 import {
-    applyPlacesIconConfig,
-    applyPlacesTheme,
+    getPaintProperty,
     getPlacesSourceAndLayerIDs,
     initPlaces,
-    queryRenderedFeatures,
     showPlaces,
     waitForMapIdle,
     waitUntilRenderedFeatures,
 } from './util/TestUtils';
 
-test.describe('GeoJSON Places apply different configs', () => {
+test.describe('PlacesModule config API tests', () => {
     const testPlace: Place = {
         type: 'Feature',
         id: '528009001852275',
@@ -28,56 +27,77 @@ test.describe('GeoJSON Places apply different configs', () => {
         },
     };
 
-    test('GeoJSON Places with init config tests', async ({ page }) => {
-        const bounds = bboxFromGeoJSON(testPlace);
-        const mapEnv = await MapTestEnv.loadPageAndMap(page, { bounds });
-        await initPlaces(page, { theme: 'circle' });
-        const { layerIDs } = await getPlacesSourceAndLayerIDs(page);
+    test('applyTextConfig updates text-color on the visible places layers', async ({ page }) => {
+        const mapEnv = await MapTestEnv.loadPageAndMap(page, { center: [4.90047, 52.37708], zoom: 14 });
+        await initPlaces(page);
+        await waitForMapIdle(page);
         await showPlaces(page, testPlace);
 
-        const renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, 1, 10000);
+        const { layerIDs } = await getPlacesSourceAndLayerIDs(page);
+        await waitUntilRenderedFeatures(page, layerIDs, 1, 10000);
 
-        expect(renderedPlaces).toHaveLength(1);
-        expect(renderedPlaces[0].properties.title).toBe('Q-Park Amsterdam Nieuwendijk');
-        expect(renderedPlaces[0].properties.iconID).toBe('poi-parking_facility');
-        expect(renderedPlaces[0].properties.id).toBe('528009001852275');
+        // Apply a distinctive color so we can assert it was propagated to every
+        // visible layer's `text-color` paint property.
+        const customColor = '#FF00FF';
+        await page.evaluate((color) => (globalThis as MapsSDKThis).places?.applyTextConfig({ color }), customColor);
+        await waitForMapIdle(page);
+
+        const mainLayerID = layerIDs.find((id) => id.endsWith('-main')) as string;
+        const selectedLayerID = layerIDs.find((id) => id.endsWith('-selected')) as string;
+        expect(mainLayerID).toBeDefined();
+        expect(selectedLayerID).toBeDefined();
+
+        expect(await getPaintProperty(page, mainLayerID, 'text-color')).toBe(customColor);
+        // `selected` defines its own text-color for the highlight style, so config-provided
+        // color overrides it on that layer as well.
+        expect(await getPaintProperty(page, selectedLayerID, 'text-color')).toBe(customColor);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test('Apply different themes and icon configs to a place', async ({ page }) => {
+    test('applyTextConfig with a data-driven field updates the rendered title', async ({ page }) => {
         const mapEnv = await MapTestEnv.loadPageAndMap(page, { center: [4.90047, 52.37708], zoom: 14 });
         await initPlaces(page);
-        const { layerIDs } = await getPlacesSourceAndLayerIDs(page);
+        await waitForMapIdle(page);
         await showPlaces(page, testPlace);
 
+        const { layerIDs } = await getPlacesSourceAndLayerIDs(page);
         let renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, 1, 10000);
-        expect(renderedPlaces[0].properties.iconID).toBe('7313');
+        expect(renderedPlaces[0].properties.title).toBe('Q-Park Amsterdam Nieuwendijk');
 
-        // Apply circle theme
-        await applyPlacesTheme(page, 'circle');
+        // Swap the title to the freeform address via a function-based field.
+        await page.evaluate(() =>
+            (globalThis as MapsSDKThis).places?.applyTextConfig({
+                title: (place) => place.properties.address?.freeformAddress,
+            }),
+        );
         await waitForMapIdle(page);
         renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, 1, 10000);
-        expect(renderedPlaces[0].properties.title).toBe('Q-Park Amsterdam Nieuwendijk');
-        expect(renderedPlaces[0].properties.iconID).toBe('poi-parking_facility');
+        expect(renderedPlaces[0].properties.title).toBe('Nieuwezijds Voorburgwal 67, 1012 RE Amsterdam');
 
-        // Apply custom icon config
-        await applyPlacesIconConfig(page, {
-            categoryIcons: [{ id: 'PARKING_GARAGE', image: 'https://dummyimage.com/30x20/4137ce/fff' }],
-        });
-        await waitForMapIdle(page);
-        renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, 1, 10000);
-        expect(renderedPlaces[0].properties.title).toBe('Q-Park Amsterdam Nieuwendijk');
-        expect(renderedPlaces[0].properties.iconID).toBe('PARKING_GARAGE-0');
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
 
-        // Apply base-map theme
-        await applyPlacesTheme(page, 'base-map');
+    test('applyExtraFeatureProps adds computed and static properties to rendered features', async ({ page }) => {
+        const mapEnv = await MapTestEnv.loadPageAndMap(page, { center: [4.90047, 52.37708], zoom: 14 });
+        await initPlaces(page);
         await waitForMapIdle(page);
-        renderedPlaces = await queryRenderedFeatures(page, layerIDs);
-        expect(renderedPlaces[0].properties.title).toBe('Q-Park Amsterdam Nieuwendijk');
-        expect(renderedPlaces[0].properties.category).toBe('parking_facility');
-        // We still have a custom icon applied:
-        expect(renderedPlaces[0].properties.iconID).toBe('PARKING_GARAGE-0');
+        await showPlaces(page, testPlace);
+
+        const { layerIDs } = await getPlacesSourceAndLayerIDs(page);
+        await waitUntilRenderedFeatures(page, layerIDs, 1, 10000);
+
+        await page.evaluate(() =>
+            (globalThis as MapsSDKThis).places?.applyExtraFeatureProps({
+                firstCategory: (place: Place) => place.properties.poi?.categories?.[0],
+                isOpen: true,
+            }),
+        );
+        await waitForMapIdle(page);
+
+        const renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, 1, 10000);
+        expect(renderedPlaces[0].properties.firstCategory).toBe('PARKING_GARAGE');
+        expect(renderedPlaces[0].properties.isOpen).toBe(true);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
