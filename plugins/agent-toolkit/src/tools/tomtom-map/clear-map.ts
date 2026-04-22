@@ -37,9 +37,7 @@ export const executeClearMap = async (params: z.infer<typeof clearMapSchema>, st
         const clearAll = !layers || layers.length === 0;
 
         if (clearAll || layers.includes('places')) {
-            if (state.places.placesModule) {
-                await state.places.placesModule.clear();
-            }
+            await state.places.clearShownEntries();
         }
 
         if (clearAll || layers.includes('routes')) {

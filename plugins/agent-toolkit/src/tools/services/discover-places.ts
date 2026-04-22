@@ -21,7 +21,14 @@ import { placesOutputSchema, toolErrorSchema } from '../shared-output-schemas';
 
 /** Output schema for the discover-places tool. */
 export const discoverPlacesOutputSchema = z.union([
-    placesOutputSchema.extend({ shown: shownSchema.optional(), placeResultIndex: z.string().optional() }),
+    placesOutputSchema.extend({
+        shown: shownSchema.optional(),
+        placesEntryId: z.string().optional(),
+        label: z
+            .string()
+            .optional()
+            .describe('Human-readable label stored with the entry (e.g. "cafe", "CINEMA (50 places)").'),
+    }),
     toolErrorSchema,
 ]);
 
@@ -45,7 +52,7 @@ export const discoverPlacesSchema = z
             .describe(
                 'POI category codes for filtering in CONSTANT_CASE. Call getPoiCategoryCodes first to resolve natural language (e.g. "gym", "restaurant", "aparcamiento") into codes.',
             ),
-        show: showPlacesSchema.optional().describe('Options to display the results on the map.'),
+        show: showPlacesSchema.optional().describe('Options to render the results on the map.'),
         withinRange: z
             .string()
             .optional()
@@ -60,11 +67,12 @@ export const discoverPlacesSchema = z
     });
 
 export const discoverPlacesDescription =
-    'Search for discovery and multi-result workflows such as nearby, category, list, and comparison queries. ' +
-    'Returns multiple places without changing the map until showPlaces is called. ' +
-    'Defaults to searching within the current map viewport bounds. ' +
-    'Pass where explicitly to override the geographic scope. Query is optional — omit it to search by categories only. ' +
-    'If searching for a specific place, use locatePlace instead.';
+    'Search for multiple places by text query or POI category. ' +
+    'Stores results as a new places entry and returns its `placesEntryId`. ' +
+    'Pass `show` to render on the map — set `show.mode: "add"` when stacking on top of an existing display ("also show cinemas"), default `"replace"` for a fresh view. ' +
+    'Defaults to searching within the current map viewport; pass `where` to override. ' +
+    'Query is optional — omit it to search by categories only. ' +
+    'For a single specific place, use locatePlace instead.';
 
 type WhereBias = { boundingBox?: HasBBox; position?: Position };
 
@@ -74,7 +82,7 @@ const searchInRange = async (
     query: string | undefined,
     limit: number | undefined,
     poiCategories: string[] | undefined,
-): Promise<{ result: Awaited<ReturnType<typeof search>>; placeResultIndex: string } | { error: string }> => {
+): Promise<{ result: Awaited<ReturnType<typeof search>>; placesEntryId: string } | { error: string }> => {
     const rangeEntry = state.ranges.entries.find((e) => e.id === withinRange);
     if (!rangeEntry?.polygon) {
         return { error: `Range "${withinRange}" not found. Use recallRanges to list available ranges.` };
@@ -86,8 +94,8 @@ const searchInRange = async (
         poiCategories: resolvedPoiCategories,
         geometries: [rangeEntry.polygon],
     });
-    const placeResultIndex = state.places.addPlaceResult(result, makePlacesLabel(result, { query, poiCategories }));
-    return { result, placeResultIndex };
+    const placesEntryId = state.places.addPlaceResult(result, makePlacesLabel(result, { query, poiCategories }));
+    return { result, placesEntryId };
 };
 
 const resolveWhereBias = async (
@@ -133,7 +141,7 @@ const searchWithBias = async (
     limit: number | undefined,
     poiCategories: string[] | undefined,
     radiusMeters: number | undefined,
-): Promise<{ result: Awaited<ReturnType<typeof search>>; placeResultIndex: string }> => {
+): Promise<{ result: Awaited<ReturnType<typeof search>>; placesEntryId: string }> => {
     const biasParams = await resolveWhereBias(where, state);
     const resolvedPoiCategories = await resolvePoiCategories(poiCategories);
     const result = await search({
@@ -143,11 +151,11 @@ const searchWithBias = async (
         ...biasParams,
         radiusMeters,
     });
-    const placeResultIndex = state.places.addPlaceResult(
+    const placesEntryId = state.places.addPlaceResult(
         result,
         makePlacesLabel(result, { query, poiCategories, where: resolveWhereLabel(where) }),
     );
-    return { result, placeResultIndex };
+    return { result, placesEntryId };
 };
 
 /**
@@ -162,24 +170,26 @@ export const executeDiscoverPlaces = async (
 
     try {
         let result: Awaited<ReturnType<typeof search>>;
-        let placeResultIndex: string | undefined;
+        let placesEntryId: string;
 
         if (withinRange) {
             const rangeResult = await searchInRange(state, withinRange, query, limit, poiCategories);
             if ('error' in rangeResult) return rangeResult;
             result = rangeResult.result;
-            placeResultIndex = rangeResult.placeResultIndex;
+            placesEntryId = rangeResult.placesEntryId;
         } else {
             const biasResult = await searchWithBias(state, query, where, limit, poiCategories, radiusMeters);
             result = biasResult.result;
-            placeResultIndex = biasResult.placeResultIndex;
+            placesEntryId = biasResult.placesEntryId;
         }
 
-        const shown = show ? await showResultsOnMap(state, result, show) : undefined;
+        const shown = show ? await showResultsOnMap(state, result, placesEntryId, show) : undefined;
+        const label = state.places.entries.find((entry) => entry.id === placesEntryId)?.label;
 
         return {
             ...summarizePlaces(result),
-            placeResultIndex,
+            placesEntryId,
+            ...(label && { label }),
             ...(shown && { shown }),
         };
     } catch (error) {

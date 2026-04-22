@@ -39,6 +39,9 @@ export class PlacesState implements StateSlice {
 
     private _entries: PlacesEntry[] = [];
 
+    /** IDs of entries currently rendered on the map. */
+    private _shownEntryIds: Set<PlacesEntry['id']> = new Set();
+
     constructor(private readonly _ttMap: TomTomMap) {}
 
     // Module getters (lazy initialization)
@@ -79,9 +82,70 @@ export class PlacesState implements StateSlice {
         return id;
     }
 
+    /** IDs of entries currently shown on the map. */
+    get shownEntryIds(): ReadonlySet<PlacesEntry['id']> {
+        return this._shownEntryIds;
+    }
+
+    /** Return the union of all features belonging to currently-shown entries. */
+    getShownFeatures(): Place[] {
+        const out: Place[] = [];
+        for (const entry of this._entries) {
+            if (this._shownEntryIds.has(entry.id)) {
+                out.push(...entry.data);
+            }
+        }
+        return out;
+    }
+
+    /** Replace the shown set with exactly these ids and re-render. */
+    async setShownEntries(ids: readonly PlacesEntry['id'][]): Promise<Place[]> {
+        const entryIds = new Set(this._entries.map((entry) => entry.id));
+        this._shownEntryIds = new Set(ids.filter((id) => entryIds.has(id)));
+        return this._renderShown();
+    }
+
+    /** Add ids to the shown set and re-render. */
+    async addShownEntries(ids: readonly PlacesEntry['id'][]): Promise<Place[]> {
+        const entryIds = new Set(this._entries.map((entry) => entry.id));
+        let changed = false;
+        for (const id of ids) {
+            if (entryIds.has(id) && !this._shownEntryIds.has(id)) {
+                this._shownEntryIds.add(id);
+                changed = true;
+            }
+        }
+        return changed ? this._renderShown() : this.getShownFeatures();
+    }
+
+    /** Remove ids from the shown set and re-render. */
+    async removeShownEntries(ids: readonly PlacesEntry['id'][]): Promise<Place[]> {
+        let changed = false;
+        for (const id of ids) {
+            if (this._shownEntryIds.delete(id)) changed = true;
+        }
+        return changed ? this._renderShown() : this.getShownFeatures();
+    }
+
+    /** Clear everything from the map (does not touch entries history). */
+    async clearShownEntries(): Promise<void> {
+        if (this._shownEntryIds.size === 0) return;
+        this._shownEntryIds.clear();
+        const placesModule = await this.getPlacesModule();
+        await placesModule.clear();
+    }
+
+    private async _renderShown(): Promise<Place[]> {
+        const features = this.getShownFeatures();
+        const placesModule = await this.getPlacesModule();
+        await placesModule.show({ type: 'FeatureCollection', features } as Places);
+        return features;
+    }
+
     reset(): void {
         this._placesModule = undefined;
         this._entries = [];
+        this._shownEntryIds.clear();
     }
 }
 

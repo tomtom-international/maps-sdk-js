@@ -24,6 +24,13 @@ export const showPlacesSchema = z.object({
     zoomMode: z
         .enum(['auto', 'none'])
         .describe('How to zoom the map into the places. Use "none" to keep the map still.'),
+    mode: z
+        .enum(['add', 'replace'])
+        .optional()
+        .describe(
+            'Display mode. Default: "replace" (clears existing pins, shows only these). ' +
+                'Use "add" when the user wants to STACK these results on top of what is already shown ("also show", "additionally", "and X").',
+        ),
 });
 
 /** @ignore */

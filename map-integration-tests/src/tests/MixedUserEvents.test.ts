@@ -92,9 +92,7 @@ test.describe('Tests with user events', () => {
         await showPlaces(page, places);
         await waitForMapIdle(page);
         // Default `pin` theme registers a hidden `-micro` layer; restrict assertions to visible layers.
-        const placesLayerIDs = (await getPlacesSourceAndLayerIDs(page)).layerIDs.filter(
-            (id) => !id.endsWith('-micro'),
-        );
+        const placesLayerIDs = (await getPlacesSourceAndLayerIDs(page)).layerIDs.filter((id) => !id.endsWith('-micro'));
         await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 5000);
         // Setting up handlers for places:
         await setupPlacesClickHandler(page);
@@ -121,9 +119,7 @@ test.describe('Tests with user events', () => {
         await setStyle(page, 'monoLight');
         await waitForMapReady(page);
         await waitForMapIdle(page);
-        const placesLayerIDs = (await getPlacesSourceAndLayerIDs(page)).layerIDs.filter(
-            (id) => !id.endsWith('-micro'),
-        );
+        const placesLayerIDs = (await getPlacesSourceAndLayerIDs(page)).layerIDs.filter((id) => !id.endsWith('-micro'));
         await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 10000);
         await setupBasemapClickHandler(page);
 
@@ -156,9 +152,7 @@ test.describe('Tests with user events', () => {
         await initPlaces(page, { events: { cursorOnHover: 'grabbing' } });
         await showPlaces(page, places);
         await waitForMapIdle(page);
-        const placesLayerIDs = (await getPlacesSourceAndLayerIDs(page)).layerIDs.filter(
-            (id) => !id.endsWith('-micro'),
-        );
+        const placesLayerIDs = (await getPlacesSourceAndLayerIDs(page)).layerIDs.filter((id) => !id.endsWith('-micro'));
         await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 15000);
 
         await setupPlacesClickHandler(page);

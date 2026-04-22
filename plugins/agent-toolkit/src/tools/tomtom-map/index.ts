@@ -59,6 +59,12 @@ export {
     getStandardMapStylesSchema,
 } from './get-standard-map-styles';
 export {
+    executeManagePlaces,
+    managePlacesDescription,
+    managePlacesOutputSchema,
+    managePlacesSchema,
+} from './manage-places';
+export {
     executeSetLanguage,
     setLanguageDescription,
     setLanguageOutputSchema,

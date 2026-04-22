@@ -1,9 +1,9 @@
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createToolState, PlacesState, RoutingState } from '../state';
 
 const mockMap = {} as any;
 
-describe('PlacesState', () => {
+describe('PlacesState — history', () => {
     it('starts with empty entries', () => {
         const state = new PlacesState(mockMap);
         expect(state.entries).toEqual([]);
@@ -52,12 +52,114 @@ describe('PlacesState', () => {
         expect(state.latestPlace).toBeUndefined();
     });
 
-    it('reset clears entries', () => {
+    it('reset clears entries and shown set', async () => {
         const state = new PlacesState(mockMap);
+        (state as any).getPlacesModule = async () => ({ show: async () => undefined, clear: async () => undefined });
         state.addPlaceResult({} as any, 'test');
+        await state.addShownEntries(['places-0']);
         state.reset();
         expect(state.entries).toEqual([]);
         expect(state.latestPlace).toBeUndefined();
+        expect(state.shownEntryIds.size).toBe(0);
+    });
+});
+
+describe('PlacesState — shown-entries display', () => {
+    let state: PlacesState;
+    let showCalls: Array<{ count: number }>;
+
+    beforeEach(() => {
+        showCalls = [];
+        const stubModule = {
+            show: async (collection: { features: unknown[] }) => {
+                showCalls.push({ count: collection.features.length });
+            },
+            clear: async () => {
+                showCalls.push({ count: 0 });
+            },
+        };
+        state = new PlacesState(mockMap);
+        (state as any).getPlacesModule = async () => stubModule;
+    });
+
+    /** Seed N entries with the given feature counts;  */
+    const seedPlaces = (perEntry: number[]): string[] => {
+        const ids: string[] = [];
+        for (const count of perEntry) {
+            const features = Array.from({ length: count }, (_, i) => ({
+                type: 'Feature',
+                id: `f-${ids.length}-${i}`,
+                geometry: { type: 'Point', coordinates: [0, 0] },
+                properties: {},
+            }));
+            ids.push(state.addPlaceResult({ type: 'FeatureCollection', features } as never, `entry-${ids.length}`));
+        }
+        return ids;
+    };
+
+    it('setShownEntries replaces the current set', async () => {
+        const [id0, id1] = seedPlaces([3, 2]);
+        await state.setShownEntries([id0]);
+        expect([...state.shownEntryIds]).toEqual([id0]);
+        expect(showCalls.at(-1)).toEqual({ count: 3 });
+
+        await state.setShownEntries([id1]);
+        expect([...state.shownEntryIds]).toEqual([id1]);
+        expect(showCalls.at(-1)).toEqual({ count: 2 });
+    });
+
+    it('addShownEntries appends to the current set', async () => {
+        const [id0, id1, id2] = seedPlaces([3, 2, 4]);
+        await state.setShownEntries([id0]);
+        const renderCount = showCalls.length;
+
+        // id0 is already shown (no-op for it), id1 + id2 are new — should trigger one re-render.
+        await state.addShownEntries([id0, id1, id2]);
+
+        const sortById = (a: string, b: string) => a.localeCompare(b);
+        expect([...state.shownEntryIds].sort(sortById)).toEqual([id0, id1, id2].sort(sortById));
+        expect(showCalls.length).toBe(renderCount + 1);
+        expect(showCalls.at(-1)).toEqual({ count: 9 }); // 3 + 2 + 4
+    });
+
+    it('addShownEntries ignores unknown ids', async () => {
+        const [id0] = seedPlaces([3]);
+        await state.addShownEntries([id0, 'nope']);
+        expect([...state.shownEntryIds]).toEqual([id0]);
+        expect(showCalls.at(-1)).toEqual({ count: 3 });
+    });
+
+    it('addShownEntries is a no-op when nothing changes', async () => {
+        const [id0] = seedPlaces([3]);
+        await state.setShownEntries([id0]);
+        const renderCount = showCalls.length;
+        await state.addShownEntries([id0]);
+        expect(showCalls.length).toBe(renderCount);
+    });
+
+    it('removeShownEntries removes by id', async () => {
+        const [id0, id1] = seedPlaces([3, 2]);
+        await state.setShownEntries([id0, id1]);
+        expect(showCalls.at(-1)).toEqual({ count: 5 });
+
+        await state.removeShownEntries([id1]);
+        expect([...state.shownEntryIds]).toEqual([id0]);
+        expect(showCalls.at(-1)).toEqual({ count: 3 });
+    });
+
+    it('clearShownEntries empties the set', async () => {
+        const [id0, id1] = seedPlaces([3, 2]);
+        await state.setShownEntries([id0, id1]);
+        await state.clearShownEntries();
+        expect(state.shownEntryIds.size).toBe(0);
+        expect(showCalls.at(-1)).toEqual({ count: 0 });
+    });
+
+    it('clearShownEntries is a no-op when set is empty', async () => {
+        seedPlaces([3]);
+        const renderCount = showCalls.length;
+        await state.clearShownEntries();
+        expect(showCalls.length).toBe(renderCount); // no call to show or clear
     });
 });
 

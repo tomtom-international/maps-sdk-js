@@ -2,7 +2,6 @@
  * @module agent-toolkit-tools
  */
 
-import type { Place } from '@tomtom-org/maps-sdk/core';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
@@ -10,14 +9,23 @@ import { toolErrorSchema } from '../shared-output-schemas';
 /** Output schema for the get-shown-places tool. */
 export const getShownPlacesOutputSchema = z.union([
     z.object({
-        count: z.number(),
-        features: z.array(
-            z.object({
-                name: z.string().optional(),
-                address: z.string().optional(),
-                position: z.array(z.number()).describe('[lng, lat]'),
-            }),
-        ),
+        count: z.number().describe('Total feature count across all shown entries.'),
+        entries: z
+            .array(
+                z.object({
+                    id: z.string(),
+                    label: z.string(),
+                    featureCount: z.number(),
+                    features: z
+                        .array(
+                            z.object({
+                                name: z.string().optional(),
+                                address: z.string().optional(),
+                                position: z.array(z.number()).describe('[lng, lat]'),
+                            }),
+                        )
+                }),
+            )
     }),
     toolErrorSchema,
 ]);
@@ -28,32 +36,38 @@ export const getShownPlacesOutputSchema = z.union([
 export const getShownPlacesSchema = z.object({});
 
 export const getShownPlacesDescription =
-    'Get place markers currently shown on the map. Context-dependent: requires places shown on the map. ' +
-    'Positions are [longitude, latitude]. ' +
-    'Reads rendered map state (not plugin service history). Returns places currently visible on map — use after showPlaces or locatePlace.';
+    'List the place entries currently shown on the map, grouped by `placesEntryId` with labels and a feature preview. ' +
+    'Use to check which categories are visible before calling `managePlaces`, or when the user asks "what is on the map". ' +
+    'Positions are [longitude, latitude].';
+
+const FEATURE_PREVIEW_SIZE = 5;
 
 /**
  * Execute get shown places.
  */
 export const executeGetShownPlaces = async (_params: z.infer<typeof getShownPlacesSchema>, state: ToolState) => {
     try {
-        if (!state.places.placesModule) {
-            return { count: 0, features: [] };
+        const shownIds = state.places.shownEntryIds;
+        if (shownIds.size === 0) {
+            return { count: 0, entries: [] };
         }
 
-        const shown = state.places.placesModule.getShown();
-
-        if (!shown.places || shown.places.features.length === 0) {
-            return { count: 0, features: [] };
-        }
+        const entries = state.places.entries
+            .filter((entry) => shownIds.has(entry.id))
+            .map((entry) => ({
+                id: entry.id,
+                label: entry.label,
+                featureCount: entry.data.length,
+                features: entry.data.slice(0, FEATURE_PREVIEW_SIZE).map((feature) => ({
+                    name: feature.properties.poi?.name,
+                    address: feature.properties.address?.freeformAddress,
+                    position: feature.geometry.coordinates,
+                })),
+            }));
 
         return {
-            count: shown.places.features.length,
-            features: shown.places.features.map((f: Place) => ({
-                name: f.properties.poi?.name,
-                address: f.properties.address?.freeformAddress,
-                position: f.geometry.coordinates,
-            })),
+            count: entries.reduce((total, entry) => total + entry.featureCount, 0),
+            entries,
         };
     } catch (error) {
         return {

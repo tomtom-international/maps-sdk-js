@@ -11,12 +11,16 @@ import { shownSchema, showPlacesSchema } from './schema';
 export const showResultsOnMap = async (
     state: ToolState,
     result: Place | Places,
+    placesEntryId: string,
     show: z.infer<typeof showPlacesSchema>,
 ): Promise<z.infer<typeof shownSchema>> => {
     const shown: z.infer<typeof shownSchema> = { markerType: false, zoomMode: false };
     if (show.markerType === 'pin') {
-        const placesModule = await state.places.getPlacesModule();
-        await placesModule.show(result);
+        if (show.mode === 'add') {
+            await state.places.addShownEntries([placesEntryId]);
+        } else {
+            await state.places.setShownEntries([placesEntryId]);
+        }
         shown.markerType = true;
     }
     if (show.zoomMode === 'auto') {

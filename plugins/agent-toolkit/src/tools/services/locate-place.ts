@@ -102,12 +102,16 @@ const resolveLocateBias = async (
 const showLocateResult = async (
     state: ToolState,
     result: Place,
+    placesEntryId: string,
     show: z.infer<typeof showPlacesSchema>,
 ): Promise<z.infer<typeof shownSchema>> => {
     const shown: z.infer<typeof shownSchema> = { markerType: false, zoomMode: false };
     if (show.markerType === 'pin') {
-        const placesModule = await state.places.getPlacesModule();
-        await placesModule.show(result);
+        if (show.mode === 'add') {
+            await state.places.addShownEntries([placesEntryId]);
+        } else {
+            await state.places.setShownEntries([placesEntryId]);
+        }
         shown.markerType = true;
     }
     if (show.zoomMode === 'auto') {
@@ -137,13 +141,13 @@ export const executeLocatePlace = async (
             return { error: `No result found for "${query}"` };
         }
 
-        state.places.addPlaceResult(result, makePlacesLabel(result, { query }));
+        const placesEntryId = state.places.addPlaceResult(result, makePlacesLabel(result, { query }));
 
         if (waypointIndex !== undefined) {
             state.routing.setWaypointAt(waypointIndex, result as unknown as WaypointLike);
         }
 
-        const shown = show ? await showLocateResult(state, result, show) : undefined;
+        const shown = show ? await showLocateResult(state, result, placesEntryId, show) : undefined;
 
         return {
             ...summarizePlace(result),

@@ -14,7 +14,7 @@ const noRouteSchema = z.object({ status: z.literal('no_route') });
 
 export const searchAlongRouteOutputSchema = z.union([
     placesOutputSchema.extend({
-        placeResultIndex: z.string(),
+        placesEntryId: z.string(),
         shown: shownSchema.optional(),
     }),
     noRouteSchema,
@@ -43,7 +43,7 @@ export const searchAlongRouteDescription =
     'Search for POIs along a calculated route, ranked by detour cost. ' +
     'Reads the route from state — call setRouteLocations first. ' +
     'Use recallRoutes to find the ID of a specific route; defaults to the most recent. ' +
-    'Stores results in places history; use placeResultIndex with showPlaces to display them. ' +
+    'Stores results in places history; pass the returned placesEntryId to showPlaces({ id }) to display them. ' +
     'status: no_route if no route exists in state.';
 
 const resolveRouteEntry = (state: ToolState, routeId: string | undefined) => {
@@ -100,13 +100,13 @@ export const executeSearchAlongRoute = async (
         );
 
         const label = makePlacesLabel(result, { query, poiCategories, routeLabel: entry.label });
-        const placeResultIndex = state.places.addPlaceResult(result, label);
+        const placesEntryId = state.places.addPlaceResult(result, label);
 
-        const shown = show ? await showResultsOnMap(state, result, show) : undefined;
+        const shown = show ? await showResultsOnMap(state, result, placesEntryId, show) : undefined;
 
         return {
             ...summarizePlaces(result),
-            placeResultIndex,
+            placesEntryId,
             ...(shown && { shown }),
         };
     } catch (error) {
