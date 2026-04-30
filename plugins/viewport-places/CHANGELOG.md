@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-viewport-places-v0.2.0...maps-sdk-plugin-viewport-places-v0.2.1) (2026-04-30)
+
+
+### Features
+
+* improve api reference types, adjust syntax for agent toolkit plugin, and improve agents.md ([9428902](https://github.com/tomtom-international/maps-sdk-js/commit/9428902605299302fdbb206f22a514e6761d0716))
+
 ## [0.2.0](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-viewport-places-v0.1.8...maps-sdk-plugin-viewport-places-v0.2.0) (2026-03-16)
 
 
