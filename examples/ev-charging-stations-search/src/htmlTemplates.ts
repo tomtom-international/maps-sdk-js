@@ -9,6 +9,19 @@ import { connectorIcons } from './connectorIcons';
 import { connectorNames } from './connectorNames';
 import genericIcon from './ic-generic-24.svg?raw';
 
+export const escapeHtml = (value: string): string =>
+    value.replaceAll(
+        /[&<>"']/g,
+        (ch) =>
+            ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;',
+            })[ch] as string,
+    );
+
 export const connectorsHTML = (chargingPark: ChargingPark | ChargingParkWithAvailability): string => {
     const hasAvailability = hasChargingAvailability(chargingPark);
     const connectorsListHTML = hasAvailability
@@ -18,42 +31,59 @@ export const connectorsHTML = (chargingPark: ChargingPark | ChargingParkWithAvai
     return `<ul class="sdk-example-connector-ul">${connectorsListHTML}</ul>`;
 };
 
-const renderConnectorsWithAvailability = (connectorAvailabilities: ConnectorAvailability[]): string => {
-    return connectorAvailabilities
+const connectorRow = ({
+    icon,
+    name,
+    power,
+    count,
+    statusClass,
+}: {
+    icon: string;
+    name: string;
+    power: string;
+    count: string;
+    statusClass: 'available' | 'unavailable' | 'unknown';
+}): string => `
+    <li class="sdk-example-connector-li">
+        <span class="sdk-example-connector-icon">${icon}</span>
+        <span class="sdk-example-connector-name">${escapeHtml(name)}</span>
+        <span class="sdk-example-connector-sublabel">
+            <span class="sdk-example-connector-power">${escapeHtml(power)}</span>
+            <span class="sdk-example-connector-availability-cell">
+                <span class="sdk-example-connector-availability sdk-example-availability-${statusClass}">${escapeHtml(count)}</span>
+                <span class="sdk-example-status-dot sdk-example-status-dot-${statusClass}"></span>
+            </span>
+        </span>
+    </li>`;
+
+const renderConnectorsWithAvailability = (connectorAvailabilities: ConnectorAvailability[]): string =>
+    connectorAvailabilities
         .map((connectorAvailability) => {
             const connector = connectorAvailability.connector;
             const connectorType = connector.type;
-            const connectorName = connectorNames[connectorType] ?? connectorType;
             const availableCount = connectorAvailability.statusCounts.Available ?? 0;
-
-            return `
-                <li class="sdk-example-connector-li">
-                    <div class="sdk-example-connector-icon">${connectorIcons[connectorType] ?? genericIcon}</div>
-                    <span class="sdk-example-connector-name">${connectorName ?? ''}</span>
-                    <span class="sdk-example-connector-power"> | ${connector.ratedPowerKW} KW</span>
-                    <span class="${
-                        availableCount ? 'sdk-example-available' : 'sdk-example-unavailable'
-                    }">${availableCount} / ${connectorAvailability.count}</span>
-                </li>`;
+            const totalCount = connectorAvailability.count;
+            return connectorRow({
+                icon: connectorIcons[connectorType] ?? genericIcon,
+                name: connectorNames[connectorType] ?? connectorType,
+                power: `${connector.ratedPowerKW} kW`,
+                count: `${availableCount}/${totalCount}`,
+                statusClass: availableCount > 0 ? 'available' : 'unavailable',
+            });
         })
         .join('');
-};
 
-const renderConnectors = (connectors: ConnectorCount[]): string => {
-    return connectors
+const renderConnectors = (connectors: ConnectorCount[]): string =>
+    connectors
         .map((item) => {
             const connector = item.connector;
-            const count = item.count;
             const connectorType = connector.type;
-            const connectorName = connectorNames[connectorType] ?? connectorType;
-
-            return `
-                <li class="sdk-example-connector-li">
-                    <div class="sdk-example-connector-icon">${connectorIcons[connectorType] ?? genericIcon}</div>
-                    <span class="sdk-example-connector-name">${connectorName ?? ''}</span>
-                    <span class="sdk-example-connector-power"> | ${connector.ratedPowerKW} KW</span>
-                    <span class="sdk-example-no-status">${count}</span>
-                </li>`;
+            return connectorRow({
+                icon: connectorIcons[connectorType] ?? genericIcon,
+                name: connectorNames[connectorType] ?? connectorType,
+                power: `${connector.ratedPowerKW} kW`,
+                count: `${item.count}`,
+                statusClass: 'unknown',
+            });
         })
         .join('');
-};

@@ -57,65 +57,158 @@
     flex-shrink: 1;
 }
 
-.maplibregl-popup-content {
-    box-shadow:
-        rgba(0, 0, 0, 0.25) 0 54px 55px,
-        rgba(0, 0, 0, 0.12) 0 -12px 30px,
-        rgba(0, 0, 0, 0.12) 0 4px 6px,
-        rgba(0, 0, 0, 0.17) 0 12px 13px,
-        rgba(0, 0, 0, 0.09) 0 -3px 5px;
-    border-radius: 5px;
-    padding-top: 0;
+/* EV popup — matches Figma "Tooltip - EV charging station" */
+
+.sdk-example-maps-sdk-js-popup .maplibregl-popup-content {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sdk-space-4);
+    width: 304px;
+    padding: var(--sdk-space-4);
+    background: var(--sdk-surface-0);
+    border: 4px solid var(--sdk-surface-0);
+    border-radius: var(--sdk-radius-20);
+    box-shadow: var(--sdk-shadow-e4);
+    font-family: var(--sdk-font-primary);
 }
 
-.sdk-example-maps-sdk-js-popup {
-    min-width: 300px;
+.sdk-example-maps-sdk-js-popup .maplibregl-popup-tip {
+    border-top-color: var(--sdk-surface-0);
+}
+
+.sdk-example-popup-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sdk-space-1);
+    padding-bottom: var(--sdk-space-4);
+    border-bottom: 1px solid var(--sdk-border-base);
+}
+
+.sdk-example-popup-title {
+    margin: 0;
+    font-size: var(--sdk-font-body-l);
+    line-height: var(--sdk-font-body-l-lh);
+    font-weight: var(--sdk-font-weight-bold);
+    color: var(--sdk-text-high);
 }
 
 .sdk-example-address {
+    font-size: var(--sdk-font-body-m);
+    line-height: var(--sdk-font-body-m-lh);
+    font-weight: var(--sdk-font-weight-bold);
     color: var(--sdk-text-medium);
 }
 
 .sdk-example-connector-ul {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sdk-space-4);
+    margin: 0;
     padding: 0;
-    font-size: var(--sdk-font-body-m);
-    height: 24px;
-    line-height: 24px;
-    list-style-type: none;
+    list-style: none;
+    max-height: 128px;
+    overflow-y: auto;
 }
 
 .sdk-example-connector-li {
-    height: 36px;
-}
-
-.sdk-example-connector-icon {
-    display: inline-block;
-    width: 24px;
-    height: 28px;
-    vertical-align: middle;
-}
-
-.sdk-example-connector-name {
-    font-weight: var(--sdk-font-weight-bold);
-}
-
-.sdk-example-connector-power {
+    display: flex;
+    align-items: center;
+    gap: var(--sdk-space-2);
+    height: 20px;
+    font-size: var(--sdk-font-body-m);
+    line-height: var(--sdk-font-body-m-lh);
     color: var(--sdk-text-medium);
 }
 
-.sdk-example-available,
-.sdk-example-unavailable,
-.sdk-example-no-status {
-    font-weight: var(--sdk-font-weight-bold);
-    float: right;
+.sdk-example-connector-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
 }
 
-.sdk-example-available {
+.sdk-example-connector-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.sdk-example-connector-name {
+    flex: 1;
+    min-width: 0;
+    font-weight: var(--sdk-font-weight-bold);
+    color: var(--sdk-text-medium);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sdk-example-connector-sublabel {
+    display: flex;
+    align-items: center;
+    gap: var(--sdk-space-4);
+    flex: none;
+    width: 136px;
+    justify-content: flex-end;
+}
+
+.sdk-example-connector-power {
+    width: 60px;
+    flex-shrink: 0;
+    font-weight: var(--sdk-font-weight-bold);
+    color: var(--sdk-text-medium);
+    text-align: right;
+    white-space: nowrap;
+}
+
+.sdk-example-connector-availability-cell {
+    display: flex;
+    align-items: center;
+    gap: var(--sdk-space-2);
+    justify-content: flex-end;
+    width: 60px;
+    flex-shrink: 0;
+}
+
+.sdk-example-connector-availability {
+    width: 40px;
+    flex-shrink: 0;
+    font-weight: var(--sdk-font-weight-bold);
+    text-align: right;
+    white-space: nowrap;
+}
+
+.sdk-example-availability-available {
     color: var(--sdk-color-success);
 }
 
-.sdk-example-unavailable {
-    color: var(--sdk-primary-color);
+.sdk-example-availability-unavailable,
+.sdk-example-availability-unknown {
+    color: var(--sdk-text-disabled);
+}
+
+.sdk-example-status-dot {
+    box-sizing: border-box;
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+    border: 2.5px solid var(--sdk-surface-0);
+    border-radius: var(--sdk-radius-full);
+    background: var(--sdk-border-medium);
+    box-shadow: var(--sdk-shadow-e1);
+}
+
+.sdk-example-status-dot-available {
+    background: var(--sdk-color-success);
+}
+
+.sdk-example-popup-empty {
+    margin: 0;
+    font-size: var(--sdk-font-body-m);
+    line-height: var(--sdk-font-body-m-lh);
+    color: var(--sdk-text-medium);
 }
 
 /* Responsive: max-width 768px */

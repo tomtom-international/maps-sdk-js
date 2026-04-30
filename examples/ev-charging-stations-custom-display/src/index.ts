@@ -15,7 +15,7 @@ import customEvPinSVG from './custom-ev-pin.svg?raw';
 import customEvPinAvailable from './custom-ev-pin-available.svg?raw';
 import customEvPinUnavailable from './custom-ev-pin-unavailable.svg?raw';
 import { setupEventListeners } from './eventListeners';
-import { connectorsHTML } from './htmlTemplates';
+import { connectorsHTML, escapeHtml } from './htmlTemplates';
 import './style.css';
 import { initTogglePanel } from './togglePanel';
 
@@ -255,10 +255,15 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         const { address, poi, chargingPark } = stationWithAvailability.properties;
         popUp
             .setHTML(`
-                <h3>${poi?.name}</h3>
-                <label class="sdk-example-address sdk-example-label">${address.freeformAddress}</label>
-                <br/><br/>
-                ${chargingPark ? connectorsHTML(chargingPark) : 'Charging park data not available.'}
+                <div class="sdk-example-popup-header">
+                    <h3 class="sdk-example-popup-title">${escapeHtml(poi?.name ?? '')}</h3>
+                    <span class="sdk-example-address">${escapeHtml(address.freeformAddress)}</span>
+                </div>
+                ${
+                    chargingPark
+                        ? connectorsHTML(chargingPark)
+                        : '<p class="sdk-example-popup-empty">Charging park data not available.</p>'
+                }
             `)
             .setLngLat(stationWithAvailability.geometry.coordinates as [number, number])
             .addTo(map.mapLibreMap);

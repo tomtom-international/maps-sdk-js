@@ -17,7 +17,7 @@ import { type LngLatBoundsLike, Popup } from 'maplibre-gl';
 import './style.css';
 import { ViewportPlaces } from '@tomtom-org/maps-sdk-plugin-viewport-places';
 import { API_KEY } from './config';
-import { connectorsHTML } from './htmlTemplates';
+import { connectorsHTML, escapeHtml } from './htmlTemplates';
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
@@ -97,10 +97,15 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         popUp
             .setHTML(
                 `
-                    <h3>${poi?.name}</h3>
-                    <span class="sdk-example-address">${address.freeformAddress}</span>
-                    <br/><br/>
-                    ${chargingPark ? connectorsHTML(chargingPark) : 'Charging park data not available.'}
+                    <div class="sdk-example-popup-header">
+                        <h3 class="sdk-example-popup-title">${escapeHtml(poi?.name ?? '')}</h3>
+                        <span class="sdk-example-address">${escapeHtml(address.freeformAddress)}</span>
+                    </div>
+                    ${
+                        chargingPark
+                            ? connectorsHTML(chargingPark)
+                            : '<p class="sdk-example-popup-empty">Charging park data not available.</p>'
+                    }
                 `,
             )
             .setLngLat(evStation.geometry.coordinates as [number, number])
