@@ -10,22 +10,20 @@ import { toolErrorSchema } from '../shared-output-schemas';
 export const getShownPlacesOutputSchema = z.union([
     z.object({
         count: z.number().describe('Total feature count across all shown entries.'),
-        entries: z
-            .array(
-                z.object({
-                    id: z.string(),
-                    label: z.string(),
-                    featureCount: z.number(),
-                    features: z
-                        .array(
-                            z.object({
-                                name: z.string().optional(),
-                                address: z.string().optional(),
-                                position: z.array(z.number()).describe('[lng, lat]'),
-                            }),
-                        )
-                }),
-            )
+        entries: z.array(
+            z.object({
+                id: z.string(),
+                label: z.string(),
+                featureCount: z.number(),
+                features: z.array(
+                    z.object({
+                        name: z.string().optional(),
+                        address: z.string().optional(),
+                        position: z.array(z.number()).describe('[lng, lat]'),
+                    }),
+                ),
+            }),
+        ),
     }),
     toolErrorSchema,
 ]);

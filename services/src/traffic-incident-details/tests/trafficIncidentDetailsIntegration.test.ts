@@ -34,7 +34,7 @@ describe('Traffic Incident Details errors', () => {
         expect(trafficIncidentDetails({ bbox: AMSTERDAM_BBOX })).rejects.toBeInstanceOf(SDKServiceError);
         expect(trafficIncidentDetails({ bbox: AMSTERDAM_BBOX })).rejects.toMatchObject({
             service: 'TrafficIncidentDetails',
-            status: 403,
+            status: 401,
         });
     });
 });
@@ -200,9 +200,9 @@ describe('Traffic Incident Details integration tests', () => {
             onAPIResponse: onApiResponse,
         }).catch((e: unknown) => e);
 
-        expect(error).toMatchObject({ status: 403 });
+        expect(error).toMatchObject({ status: 401 });
         const expectedRequest = { method: 'GET', url: expect.any(URL) };
         expect(onApiRequest).toHaveBeenCalledWith(expectedRequest);
-        expect(onApiResponse).toHaveBeenCalledWith(expectedRequest, expect.objectContaining({ status: 403 }));
+        expect(onApiResponse).toHaveBeenCalledWith(expectedRequest, expect.objectContaining({ status: 401 }));
     });
 });

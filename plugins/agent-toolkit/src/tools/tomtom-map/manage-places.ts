@@ -32,14 +32,8 @@ export const managePlacesSchema = z
     .object({
         add: z.array(z.string()).optional().describe('Entry ids to show (e.g. ["places-1"]).'),
         remove: z.array(z.string()).optional().describe('Entry ids to hide.'),
-        addMatching: z
-            .array(z.string())
-            .optional()
-            .describe('Category labels to show.'),
-        removeMatching: z
-            .array(z.string())
-            .optional()
-            .describe('Category labels to hide.'),
+        addMatching: z.array(z.string()).optional().describe('Category labels to show.'),
+        removeMatching: z.array(z.string()).optional().describe('Category labels to hide.'),
         clear: z.boolean().optional().describe('Hide every displayed entry.'),
         fitBounds: z.boolean().optional().describe('Pan/zoom to fit the resulting display. Default: false.'),
     })

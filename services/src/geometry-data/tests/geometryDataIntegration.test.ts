@@ -9,7 +9,7 @@ describe('Geometry data errors', () => {
     test('Geometry data test without API key', async () => {
         await expect(geometryData({ geometries: ['GEOMETRY_ID'] })).rejects.toMatchObject({
             service: 'GeometryData',
-            status: 403,
+            status: 401,
         });
     });
 

@@ -42,7 +42,7 @@ describe('Traffic Area Analytics errors', () => {
         await expect(trafficAreaAnalytics(BASE_PARAMS)).rejects.toBeInstanceOf(SDKServiceError);
         await expect(trafficAreaAnalytics(BASE_PARAMS)).rejects.toMatchObject({
             service: 'TrafficAreaAnalytics',
-            status: 403,
+            status: 401,
         });
     });
 });
@@ -178,10 +178,10 @@ describe('Traffic Area Analytics integration tests', () => {
             onAPIResponse: onApiResponse,
         }).catch((e: unknown) => e);
 
-        expect(error).toMatchObject({ status: 403 });
+        expect(error).toMatchObject({ status: 401 });
         const expectedRequest = expect.objectContaining({ method: 'POST', url: expect.any(URL) });
         expect(onApiRequest).toHaveBeenCalledWith(expectedRequest);
-        expect(onApiResponse).toHaveBeenCalledWith(expectedRequest, expect.objectContaining({ status: 403 }));
+        expect(onApiResponse).toHaveBeenCalledWith(expectedRequest, expect.objectContaining({ status: 401 }));
     });
 });
 

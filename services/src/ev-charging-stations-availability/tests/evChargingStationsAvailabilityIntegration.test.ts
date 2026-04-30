@@ -16,7 +16,7 @@ describe('charging availability errors', () => {
         await expect(evChargingStationsAvailability({ id: '1234' })).rejects.toBeInstanceOf(SDKServiceError);
         await expect(evChargingStationsAvailability({ id: '1234' })).rejects.toMatchObject({
             service: 'EVChargingStationsAvailability',
-            status: 403,
+            status: 401,
         });
     });
 });
@@ -119,8 +119,8 @@ describe('evChargingStationsAvailability integration tests', () => {
                 onAPIRequest: onApiRequest,
                 onAPIResponse: onApiResponse,
             }),
-        ).rejects.toThrow(expect.objectContaining({ status: 403 }));
+        ).rejects.toThrow(expect.objectContaining({ status: 401 }));
         expect(onApiRequest).toHaveBeenCalledWith(expect.any(URL));
-        expect(onApiResponse).toHaveBeenCalledWith(expect.any(URL), expect.objectContaining({ status: 403 }));
+        expect(onApiResponse).toHaveBeenCalledWith(expect.any(URL), expect.objectContaining({ status: 401 }));
     });
 });

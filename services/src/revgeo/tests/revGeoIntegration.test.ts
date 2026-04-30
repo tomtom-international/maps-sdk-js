@@ -12,7 +12,7 @@ describe('Reverse Geocoding integration test without API key', () => {
         await expect(reverseGeocode(coordinates)).rejects.toBeInstanceOf(SDKServiceError);
         await expect(reverseGeocode(coordinates)).rejects.toMatchObject({
             service: 'ReverseGeocode',
-            status: 403,
+            status: 401,
         });
     });
 });
@@ -198,8 +198,8 @@ describe('Reverse Geocoding integration tests', () => {
                 onAPIRequest: onApiRequest,
                 onAPIResponse: onApiResponse,
             }),
-        ).rejects.toThrow(expect.objectContaining({ status: 403 }));
+        ).rejects.toThrow(expect.objectContaining({ status: 401 }));
         expect(onApiRequest).toHaveBeenCalledWith(expect.any(URL));
-        expect(onApiResponse).toHaveBeenCalledWith(expect.any(URL), expect.objectContaining({ status: 403 }));
+        expect(onApiResponse).toHaveBeenCalledWith(expect.any(URL), expect.objectContaining({ status: 401 }));
     });
 });

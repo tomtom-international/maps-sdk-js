@@ -11,5 +11,17 @@
         ]
       }
     ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(pnpm test:sdk *)",
+      "Bash(pnpm test:sdk:coverage *)",
+      "Bash(pnpm test:examples *)",
+      "Bash(pnpm e2e-test:sdk *)",
+      "Bash(pnpm e2e-test:examples *)",
+      "Bash(pnpm e2e-test:examples:update-snapshot *)",
+      "Bash(pnpm e2e-test:examples:update-all-snapshots *)"
+    ],
+    "deny": ["Read(**/.env)", "Read(**/.env.*)"]
   }
 }
