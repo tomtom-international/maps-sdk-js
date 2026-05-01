@@ -1,0 +1,156 @@
+---
+title: Traffic
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.46.13"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The `@tomtom-org/maps-sdk/core` package exports a set of shared traffic types used consistently across the SDK — in the Incident Details service, the Traffic Incidents map module, and route sections. Using the same types across all three ensures that incident data is interoperable regardless of how it was obtained.
+
+## Where Traffic Types Are Used
+
+| Context | Type | Description |
+|---------|------|-------------|
+| Incident Details service | `TrafficIncident` / `TrafficIncidentDetails` | Parsed API response from the Incident Details service |
+| Traffic Incidents map module | `TrafficIncidentsModuleFeature` | Vector-tile feature from the live incidents layer |
+| Routing | `TrafficSectionProps` | Route section affected by a traffic incident |
+
+## Shared Types
+
+### `TrafficIncidentCategory`
+
+The human-readable category string used across the Incident Details service and the Traffic Incidents map module:
+
+```typescript
+import type { TrafficIncidentCategory } from '@tomtom-org/maps-sdk/core';
+
+// 'accident' | 'animals-on-road' | 'broken-down-vehicle' | 'danger' |
+// 'flooding' | 'fog' | 'frost' | 'jam' | 'lane-closed' | 'narrow-lanes' |
+// 'other' | 'rain' | 'road-closed' | 'roadworks' | 'wind'
+const category: TrafficIncidentCategory = incident.properties.category;
+```
+
+The `trafficIncidentCategories` constant exports the full list as an array, useful for building UI filters or validation:
+
+```typescript
+import { trafficIncidentCategories } from '@tomtom-org/maps-sdk/core';
+
+// ['accident', 'animals-on-road', 'broken-down-vehicle', ...]
+console.log(trafficIncidentCategories);
+```
+
+### `DelayMagnitude`
+
+Describes how severe a traffic delay is. Used by both the Incident Details service (`TrafficIncidentProperties.magnitudeOfDelay`) and routing sections (`TrafficSectionProps.magnitudeOfDelay`):
+
+```typescript
+import type { DelayMagnitude } from '@tomtom-org/maps-sdk/core';
+
+// 'unknown' | 'minor' | 'moderate' | 'major' | 'indefinite'
+const severity: DelayMagnitude = incident.properties.magnitudeOfDelay;
+```
+
+| Value | Meaning |
+|-------|---------|
+| `unknown` | Severity cannot be determined |
+| `minor` | Small delay (a few minutes) |
+| `moderate` | Noticeable delay (several minutes) |
+| `major` | Significant delay (10+ minutes) |
+| `indefinite` | Unknown or extremely long delay (e.g. road closure) |
+
+### `TrafficIncidentTimeValidity`
+
+Whether an incident is currently active or anticipated in the future. Used by both the Incident Details service and the Traffic Incidents map module:
+
+```typescript
+import type { TrafficIncidentTimeValidity } from '@tomtom-org/maps-sdk/core';
+
+// 'present' | 'future'
+const validity: TrafficIncidentTimeValidity = incident.properties.timeValidity;
+```
+
+## Incident Types
+
+### `TrafficIncidentBaseProperties`
+
+The nine properties shared between the Incident Details service response and the Traffic Incidents map module vector-tile feature. This is the intersection between the two data sources:
+
+```typescript
+import type { TrafficIncidentBaseProperties } from '@tomtom-org/maps-sdk/core';
+
+type TrafficIncidentBaseProperties = {
+    id: string;
+    category: TrafficIncidentCategory;
+    magnitudeOfDelay: DelayMagnitude;
+    delayInSeconds?: number;
+    startTime?: Date;
+    endTime?: Date;
+    probabilityOfOccurrence?: TrafficIncidentProbability;
+    numberOfReports?: number;
+    lastReportTime?: Date;
+};
+```
+
+### `TrafficIncidentProperties`
+
+Extends `TrafficIncidentBaseProperties` with fields available only in the Incident Details API response (not in map vector tiles):
+
+```typescript
+import type { TrafficIncidentProperties } from '@tomtom-org/maps-sdk/core';
+```
+
+Additional fields over the base:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `events` | `TrafficIncidentEvent[]` | One or more event descriptions |
+| `from` | `string?` | Start of the affected road stretch |
+| `to` | `string?` | End of the affected road stretch |
+| `lengthInMeters` | `number?` | Length of the affected road section |
+| `roadNumbers` | `string[]?` | Highway designations (e.g. `['A10']`) |
+| `timeValidity` | `TrafficIncidentTimeValidity` | Always present in the service response |
+| `tmc` | `TrafficIncidentTMC?` | TMC location data |
+
+### `TrafficIncident` and `TrafficIncidentDetails`
+
+```typescript
+import type { TrafficIncident, TrafficIncidentDetails } from '@tomtom-org/maps-sdk/core';
+
+// TrafficIncident — a single GeoJSON Feature<Point | LineString, TrafficIncidentProperties>
+// TrafficIncidentDetails — a GeoJSON FeatureCollection of TrafficIncident features
+```
+
+`TrafficIncidentDetails` is the return type of the `trafficIncidentDetails` service function.
+
+## Routing Traffic Types
+
+### `TrafficSectionProps`
+
+Route sections flagged by the routing engine as traffic-affected share `TrafficIncidentCategory` and `DelayMagnitude` with the incident types above:
+
+```typescript
+import type { TrafficSectionProps } from '@tomtom-org/maps-sdk/core';
+
+const trafficSections = route.properties.sections?.traffic ?? [];
+
+for (const section of trafficSections) {
+    // categories uses TrafficIncidentCategory — same values as incident.properties.category
+    console.log(section.categories);        // e.g. ['jam']
+    // magnitudeOfDelay uses DelayMagnitude — same values as incident.properties.magnitudeOfDelay
+    console.log(section.magnitudeOfDelay);  // e.g. 'moderate'
+    console.log(section.delayInSeconds);    // e.g. 420
+}
+```
+
+The `tec` field on `TrafficSectionProps` contains TPEG2-TEC standardized codes. These are separate from the `tmc` field on incident details and relate to international traffic message classification.
+
+## Related
+
+- [Incident Details service](../services/traffic/traffic-incident-details.mdx) — Fetch real-time incident data
+- [Traffic Incidents map module](../map/traffic-incidents.mdx) — Display the live incident layer
+- [Routing with Traffic](../services/routing/parameters.mdx) — Plan routes that account for traffic
