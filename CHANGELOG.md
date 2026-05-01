@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.47.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.46.13...v0.47.0) (2026-05-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* improvements in places module themes
+
+### Features
+
+* add managePlaces tool and centralize places display state ([0cc5005](https://github.com/tomtom-international/maps-sdk-js/commit/0cc50050469f5ae8fa3450afc572c9491346f2e1))
+* add model name to header ([a7c518b](https://github.com/tomtom-international/maps-sdk-js/commit/a7c518bfd785f0994212e037a7971914fa032956))
+* expand deployment workflow to support multiple SDK demos ([25aa8c2](https://github.com/tomtom-international/maps-sdk-js/commit/25aa8c2361a233f8f85d803d43c41febe7f0866d))
+* improve api reference types, adjust syntax for agent toolkit plugin, and improve agents.md ([9428902](https://github.com/tomtom-international/maps-sdk-js/commit/9428902605299302fdbb206f22a514e6761d0716))
+* improvements in places module themes ([c287856](https://github.com/tomtom-international/maps-sdk-js/commit/c2878560f453e71a66f039cfe22f9e4b7322a577))
+
+
+### Bug Fixes
+
+* dynamic import ApplicationInsights to avoid adblocker crash ([#1709](https://github.com/tomtom-international/maps-sdk-js/issues/1709)) ([98cc8bc](https://github.com/tomtom-international/maps-sdk-js/commit/98cc8bc0ccf4221134a61d8ef2719c9f381bc6df))
+* escape $web variable reference in upload step echo ([92ec7f1](https://github.com/tomtom-international/maps-sdk-js/commit/92ec7f13366e02d0eef9bdd758ffd3f4e104888b))
+* LSI-259 Fix tests that were failing because API changed response from 403 to 401 ([#1729](https://github.com/tomtom-international/maps-sdk-js/issues/1729)) ([6c5c3ec](https://github.com/tomtom-international/maps-sdk-js/commit/6c5c3ecd3e6c7212266f5d9c63da3d0b0d52b8c3))
+* LSI-265 Fix branch name sanitation in 'Publish Examples' step ([#1732](https://github.com/tomtom-international/maps-sdk-js/issues/1732)) ([d9cfddd](https://github.com/tomtom-international/maps-sdk-js/commit/d9cfddd49e38537da3197fc4d341e39c5927d39d))
+
 ## [0.46.13](https://github.com/tomtom-international/maps-sdk-js/compare/v0.46.12...v0.46.13) (2026-04-14)
 
 
