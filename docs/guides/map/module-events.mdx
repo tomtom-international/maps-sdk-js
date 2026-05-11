@@ -1,0 +1,188 @@
+---
+title: Module Lifecycle Events
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.47.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+Module lifecycle events let you react to internal state changes within a map module — independent of any user interaction. Two event types are available:
+
+- **`config-change`** — fired whenever the module's configuration is mutated (by any setter or `applyConfig` call).
+- **`shown-features`** — fired by modules that have a `show` method, immediately after new features are rendered on the map.
+
+Both use the same subscription model: `events.on(type, handler)` returns an unsubscribe function.
+
+## `config-change`
+
+Every module emits `config-change` when its configuration is updated, regardless of how the change was triggered. This is useful for keeping external UI in sync with module state without coupling UI logic to individual setters.
+
+```javascript
+import { TrafficFlowModule } from '@tomtom-org/maps-sdk/map';
+
+const trafficFlow = await TrafficFlowModule.get(map, { visible: false });
+
+const unsub = trafficFlow.events.on('config-change', (config) => {
+    console.log('TrafficFlow config updated:', config);
+    // config reflects the module's full current configuration
+});
+
+// Each of these triggers a config-change event:
+trafficFlow.setVisible(true);
+trafficFlow.applyConfig({ visible: false });
+```
+
+### What triggers `config-change`
+
+Any method that mutates the module's configuration fires the event. Common examples:
+
+| Method | Module |
+|--------|--------|
+| `setVisible(visible)` | All modules |
+| `applyConfig(config)` | All modules |
+| `applyTheme(theme)` | PlacesModule |
+| `moveBeforeLayer(layer)` | GeometriesModule, PlacesModule |
+| `setMode(mode)` | TrafficAreaAnalyticsModule |
+| `setMetric(metric)` | TrafficAreaAnalyticsModule |
+| `filterCategories(filter)` | POIsModule |
+| `setLayerGroupsVisibility(...)` | BaseMapModule |
+
+The received `config` argument reflects the module's complete current configuration after the change.
+
+### Practical example: syncing a toggle button
+
+```javascript
+import { HillshadeModule } from '@tomtom-org/maps-sdk/map';
+
+const hillshade = await HillshadeModule.get(map, { visible: false });
+const toggle = document.querySelector('#hillshade-toggle') as HTMLInputElement;
+
+hillshade.events.on('config-change', (config) => {
+    // Keep the toggle in sync regardless of who changed visibility
+    toggle.checked = config?.visible ?? false;
+});
+
+toggle.addEventListener('change', () => hillshade.setVisible(toggle.checked));
+```
+
+## `shown-features`
+
+The `shown-features` event fires immediately after a module renders new data on the map. It is only available on modules that have an explicit `show` method.
+
+```javascript
+import { PlacesModule } from '@tomtom-org/maps-sdk/map';
+import { search } from '@tomtom-org/maps-sdk/services';
+
+const places = await PlacesModule.get(map);
+
+const unsub = places.events.on('shown-features', (features) => {
+    console.log('Places rendered on map:', features);
+    // features: Place | Place[] | Places
+    updateResultsPanel(features);
+});
+
+const results = await search({ query: 'coffee' });
+places.show(results); // triggers shown-features
+```
+
+### Which modules support `shown-features`
+
+| Module | Triggered by | Feature type |
+|--------|-------------|--------------|
+| `PlacesModule` | `show(places)` | `Place \| Place[] \| Places` |
+| `GeometriesModule` | `show(features)` | `PolygonFeatures` |
+| `RoutingModule` | `showRoutes(routes)` / `showWaypoints(waypoints)` | `{ routes }` or `{ waypoints }` |
+| `TrafficAreaAnalyticsModule` | `show(data)` | `TrafficAreaAnalytics` |
+
+Modules that only control existing map data — `TrafficFlowModule`, `TrafficIncidentsModule`, `HillshadeModule`, `BaseMapModule`, `POIsModule` — do not emit `shown-features`.
+
+### Practical example: fit map to shown results
+
+```javascript
+import { GeometriesModule } from '@tomtom-org/maps-sdk/map';
+import { bboxFromGeoJSON } from '@tomtom-org/maps-sdk/core';
+
+const geometries = await GeometriesModule.get(map);
+
+geometries.events.on('shown-features', (features) => {
+    const bbox = bboxFromGeoJSON(features);
+    if (bbox) {
+        map.mapLibreMap.fitBounds(bbox, { padding: 40 });
+    }
+});
+```
+
+## Cleanup
+
+### Unsubscribe — remove a single handler
+
+Each `events.on()` call returns an unsubscribe function. Call it to stop receiving events from that specific handler without affecting any others:
+
+```javascript
+const unsubA = places.events.on('config-change', handlerA);
+const unsubB = places.events.on('config-change', handlerB);
+
+unsubA(); // removes only handlerA — handlerB keeps firing
+```
+
+### `off()` — remove all handlers for a type
+
+`events.off(type)` clears every handler registered for that event type in one call. Useful during component teardown when you don't want to track individual unsubscribes:
+
+```javascript
+// Clear all config-change listeners at once
+trafficFlow.events.off('config-change');
+
+// Clear all shown-features listeners at once
+places.events.off('shown-features');
+```
+
+`off` accepts all event types — user interaction types (`click`, `hover`, etc.) and module lifecycle types (`config-change`, `shown-features`) — so the same teardown pattern works uniformly:
+
+```javascript
+// Full cleanup for a component that registered multiple event types
+function onUnmount() {
+    places.events.off('click');
+    places.events.off('hover');
+    places.events.off('config-change');
+    places.events.off('shown-features');
+}
+```
+
+## RoutingModule — split events interface
+
+RoutingModule exposes user and module events under separate namespaces rather than a single `events.on()` surface. Use `events.module` for lifecycle events:
+
+```javascript
+import { RoutingModule } from '@tomtom-org/maps-sdk/map';
+
+const routing = await RoutingModule.get(map);
+
+// Module lifecycle events — via events.module
+const unsubConfig = routing.events.module.on('config-change', (config) => {
+    console.log('Routing config changed:', config);
+});
+
+const unsubShown = routing.events.module.on('shown-features', (features) => {
+    if ('routes' in features) {
+        console.log('Routes shown:', features.routes);
+    } else {
+        console.log('Waypoints shown:', features.waypoints);
+    }
+});
+
+// User interaction events — via events.user.*
+routing.events.user.mainLines.on('click', (route) => { /* ... */ });
+routing.events.user.waypoints.on('hover', (waypoint) => { /* ... */ });
+```
+
+## Related Guides
+
+- **[Events Overview](./events.mdx)** — All three event categories at a glance
+- **[User Interaction Events](./user-events.mdx)** — Click, hover, long-hover, and contextmenu events
+- **[Map Styles](./styles.mdx#listening-to-style-changes)** — React to style transitions with `addStyleChangeHandler`
+- **[Map Modules](./modules.mdx)** — Module initialization and configuration

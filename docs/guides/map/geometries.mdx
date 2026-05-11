@@ -1,0 +1,265 @@
+---
+title: Geometry Module
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.47.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Geometry Module in the TomTom Maps SDK enables displaying and visualizing geographic shapes and polygons on maps. This module provides comprehensive functionality for rendering complex geometries, administrative boundaries, and custom geographic data with customizable styling.
+
+<SDKGuideLiveCodingExample exampleDirectory="multiple-geometries" />
+
+## Purpose and Functionality
+
+The Geometry Module serves as the primary interface for:
+- **Displaying polygon geometries** from TomTom services and custom data
+- **Visualizing administrative boundaries** such as countries, states, and cities
+- **Rendering custom geographic shapes** with configurable styling options
+- **Managing geometry layers** with visibility controls and interaction handling
+- **Integrating geometry data** from search results and external sources
+
+## Core Concepts
+
+### Geometry Data Types
+The module supports various types of geographic geometries:
+
+**Supported Geometry Types:**
+- **Polygons**: Closed shapes representing areas like administrative boundaries
+- **MultiPolygons**: Complex shapes with multiple disconnected areas
+- **Administrative boundaries**: Country, state, city, and district boundaries
+- **Custom shapes**: User-defined geographic areas and regions
+
+### Data Sources
+Geometries can come from multiple sources:
+- **TomTom Geometry Data Service**: Official administrative boundaries and places
+- **Search results**: Geographic data from place searches
+- **Custom GeoJSON**: User-provided geometric data
+- **External APIs**: Third-party geographic data sources
+
+## Basic Geometry Display
+
+### Initializing Geometry Module
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { TomTomMap, GeometriesModule } from '@tomtom-org/maps-sdk/map';
+
+// Configure SDK and create map
+TomTomConfig.instance.put({ apiKey: 'YOUR_API_KEY' });
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+
+// Initialize geometry module with default styling
+const geometryModule = await GeometriesModule.get(map);
+```
+
+### Displaying Administrative Boundaries
+
+```javascript
+import { geocode, geometryData } from '@tomtom-org/maps-sdk/services';
+
+// Get geometry for a specific place
+const place = (await geocode({ query: 'Amsterdam, Netherlands' })).features[0];
+const geometryResponse = await geometryData({ geometries: [place] });
+
+// Display the geometry on the map
+geometryModule.show(geometryResponse);
+```
+
+### Custom Styling Configuration
+
+```javascript
+// Initialize with custom styling
+const geometryModule = await GeometriesModule.get(map, {
+    colorConfig: {
+        fillColor: '#007cbf',      // Fill color for polygons
+        fillOpacity: 0.3           // Fill transparency
+    },
+    lineConfig: {
+        lineColor: '#005a8b',      // Border color
+        lineWidth: 2,              // Border width
+        lineOpacity: 0.8           // Border transparency
+    },
+    beforeLayerConfig: 'road-labels' // Layer positioning
+});
+```
+
+## Advanced Geometry Features
+
+### Multiple Geometry Layers
+
+```javascript
+// Create multiple geometry modules for different data sets
+const countryGeometryModule = await GeometriesModule.get(map, {
+    colorConfig: { fillColor: '#ff6b6b', fillOpacity: 0.2 },
+    lineConfig: { lineColor: '#ff0000', lineWidth: 3 }
+});
+
+const cityGeometryModule = await GeometriesModule.get(map, {
+    colorConfig: { fillColor: '#4ecdc4', fillOpacity: 0.4 },
+    lineConfig: { lineColor: '#00a896', lineWidth: 2 }
+});
+
+// Display different geometry types
+countryGeometryModule.show(countryBoundaries);
+cityGeometryModule.show(cityBoundaries);
+```
+
+### Dynamic Geometry Management
+
+```javascript
+// Add and remove geometries dynamically
+const geometryModule = await GeometriesModule.get(map);
+
+// Show new geometry data
+function displayGeometry(newGeometryData) {
+    geometryModule.clear(); // Clear existing geometries
+    geometryModule.show(newGeometryData);
+}
+
+// Toggle geometry visibility
+let geometryVisible = true;
+function toggleGeometry() {
+    if (geometryVisible) {
+        geometryModule.clear();
+    } else {
+        geometryModule.show(currentGeometryData);
+    }
+    geometryVisible = !geometryVisible;
+}
+```
+
+### Layer Positioning and Styling
+
+```javascript
+// Advanced styling with layer control
+const geometryModule = await GeometriesModule.get(map, {
+    beforeLayerConfig: 'road-labels',  // Position below road labels
+    colorConfig: {
+        fillColor: '#87CEEB',
+        fillOpacity: 0.5
+    },
+    lineConfig: {
+        lineColor: '#4682B4',
+        lineWidth: 1.5,
+        lineOpacity: 1
+    }
+});
+```
+
+## Themed Geometry Display
+
+The SDK supports three visual themes for polygon display:
+
+| Theme | Effect |
+|---|---|
+| `'filled'` | Semi-transparent fill (default) |
+| `'outline'` | Transparent fill with a thick border |
+| `'inverted'` | Semi-transparent area **outside** the polygon |
+
+### Setting theme at config level
+
+The simplest way to apply a theme is via the `theme` option in `GeometriesModuleConfig`:
+
+```typescript
+import { GeometriesModule } from '@tomtom-org/maps-sdk/map';
+
+// Highlight "rest of the world" outside a country
+const module = await GeometriesModule.get(map, {
+    theme: 'inverted',
+    colorConfig: { fillColor: 'black', fillOpacity: 0.5 },
+});
+module.show(countryGeometry);
+```
+
+Individual features can override the config-level theme by setting `theme` in their own properties.
+
+### Using `themedGeometryConfig` for mixed themes
+
+When features in the same layer need **different** themes, use `themedGeometryConfig(palette?)`. It returns a config with MapLibre expressions that read each feature's `theme` property and apply the appropriate style:
+
+```typescript
+import { GeometriesModule, themedGeometryConfig } from '@tomtom-org/maps-sdk/map';
+
+const module = await GeometriesModule.get(map, themedGeometryConfig('blues'));
+
+// Features carry their own theme — styling adapts per feature
+module.show({
+    type: 'FeatureCollection',
+    features: [
+        { ...featureA, properties: { theme: 'filled', title: 'Zone A' } },
+        { ...featureB, properties: { theme: 'outline', title: 'Zone B' } },
+    ],
+});
+```
+
+A center label is shown for each polygon whenever the feature carries a `title` property.
+
+### Color palettes
+
+Both `themedGeometryConfig` and `reachableRangeGeometryConfig` accept a named palette as their first argument (defaulting to `'fadedRainbow'`). The palette controls the fill colors assigned to successive polygon rings.
+
+Available palettes: `warm`, `browns`, `cold`, `fadedBlues`, `blues`, `greens`, `fadedGreenToBlue`, `blueToRed`, `greenToYellow`, `pastel`, `retro`, `contrastRetro`, `fadedRainbow`, `pastelRainbow`.
+
+```typescript
+import { themedGeometryConfig } from '@tomtom-org/maps-sdk/map';
+
+// Use the 'retro' palette with filled theme (default)
+const config = themedGeometryConfig('retro');
+
+// Palette names are typed as ColorPaletteOptions
+```
+
+For reachable ranges specifically, use `reachableRangeGeometryConfig` which builds on `themedGeometryConfig` and additionally wires up label generation and the `inverted`-theme donut transform automatically. See [Reachable Ranges](../services/routing/reachable-ranges.mdx).
+
+## Multiple Module Instances
+
+You can create multiple independent instances of the Geometry module, each with its own configuration and styling. This is useful for displaying different geometry layers with distinct visual styles.
+
+```javascript
+// Create separate instances for different geometry types
+const countryBorders = await GeometriesModule.get(map, {
+    colorConfig: { fillColor: '#E74C3C', fillOpacity: 0.2 },
+    lineConfig: { lineColor: '#C0392B', lineWidth: 3 }
+});
+
+const cityBounds = await GeometriesModule.get(map, {
+    colorConfig: { fillColor: '#3498DB', fillOpacity: 0.3 },
+    lineConfig: { lineColor: '#2980B9', lineWidth: 2 }
+});
+
+// Each instance manages its own geometries independently
+countryBorders.show(countryData);
+cityBounds.show(cityData);
+```
+
+## Reading Shown Data
+
+Use `getShown()` to retrieve the geometries currently displayed on the map. This returns the exact data previously passed to `show()`:
+
+```javascript
+const shown = geometriesModule.getShown();
+console.log(`Geometries: ${shown.geometry.features.length}`);
+```
+
+## Related Guides and Examples
+
+### Services Integration
+- **[Geometry Data Service](../services/places/geometry-data.mdx)** - Fetch detailed boundary and shape data for administrative areas and places
+- **[Search Services](../services/places/search.mdx)** - Find places and administrative areas that have associated geometry data
+
+### Related Examples
+- **[Basic Geometry](../../examples/basic-geometry/)** - Simple geometry display and styling examples
+- **[Multiple Geometries](../../examples/multiple-geometries/)** - Working with multiple geometry layers and data sets
+- **[Multiple Geometry Modules](../../examples/multiple-geometry-modules/)** - Advanced geometry module management and organization
+- **[Places in Geometry](../../examples/places-in-geometry/)** - Combining geometry boundaries with place markers
+- **[Geometry Search Playground](../../examples/geometry-search-playground/)** - Interactive geometry-based search and discovery
+
+### Related Map Modules
+- **[Places Module](./places.mdx)** - Display places and POIs within or related to geometric boundaries
+- **[Routing Module](./routes.mdx)** - Show routes that intersect or travel through geometric areas
+- **[User Interaction Events](./user-events.mdx)** - Handle user interactions with geometric shapes and boundaries
