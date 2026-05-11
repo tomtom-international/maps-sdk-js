@@ -422,6 +422,7 @@ export class TomTomMap {
         const effectiveStyle = options.keepState ? withPreviousStyleParts(style, this._params.style) : style;
         this._params = { ...this._params, style: effectiveStyle };
         this.styleLightDarkTheme = getStyleLightDarkTheme(effectiveStyle);
+        this.mapLibreMap.setStyle(buildStyleInput(this._params), { validate: false });
         this.mapLibreMap.once('styledata', () => {
             // We only handle the style data change if the applied style is still the same as the one we set,
             // to prevent race conditions when handling stale styles applied quickly in succession.
@@ -430,7 +431,6 @@ export class TomTomMap {
                 this.handleStyleData(options.keepState || true);
             }
         });
-        this.mapLibreMap.setStyle(buildStyleInput(this._params), { validate: false });
     };
 
     /**

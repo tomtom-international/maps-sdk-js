@@ -121,6 +121,7 @@ describe('AbstractSourceWithLayers tests', () => {
 
     test('setAllLayersVisible true', () => {
         const mapLibreMock = {
+            getLayer: vi.fn().mockReturnValue(layer0),
             setLayoutProperty: vi.fn(),
         } as unknown as Map;
 
@@ -136,6 +137,7 @@ describe('AbstractSourceWithLayers tests', () => {
 
     test('setAllLayersVisible true with filter', () => {
         const mapLibreMock = {
+            getLayer: vi.fn().mockReturnValue(layer1),
             setLayoutProperty: vi.fn(),
         } as unknown as Map;
 
@@ -149,6 +151,7 @@ describe('AbstractSourceWithLayers tests', () => {
 
     test('setVisible false', () => {
         const mapLibreMock = {
+            getLayer: vi.fn().mockReturnValue(layer0),
             setLayoutProperty: vi.fn(),
         } as unknown as Map;
 
@@ -164,6 +167,7 @@ describe('AbstractSourceWithLayers tests', () => {
 
     test('setVisible false with filter', () => {
         const mapLibreMock = {
+            getLayer: vi.fn().mockReturnValue(layer1),
             setLayoutProperty: vi.fn(),
         } as unknown as Map;
 
@@ -214,7 +218,8 @@ describe('AddedSourceWithLayers tests', () => {
             getLayer: vi
                 .fn()
                 .mockReturnValueOnce(undefined) // layer0 isn't yet there so it will be added
-                .mockReturnValueOnce(layer1),
+                .mockReturnValueOnce(layer1)
+                .mockReturnValue(layer0), // setLayersVisible: layers exist after addLayer
             getSource: vi.fn().mockReturnValue({ id: testSourceId }),
             addLayer: vi.fn(),
             setLayoutProperty: vi.fn(),
@@ -351,7 +356,7 @@ describe('GeoJSONSourceWithLayers', () => {
 
         const mapLibreMock = {
             getSource: vi.fn().mockReturnValue({ id: testSourceId, setData: vi.fn() }),
-            getLayer: vi.fn(),
+            getLayer: vi.fn().mockReturnValue(layer0),
             addLayer: vi.fn(),
             setLayoutProperty: vi.fn(),
         } as unknown as Map;
@@ -416,7 +421,7 @@ describe('GeoJSONSourceWithLayers', () => {
 
         const mapLibreMock = {
             getSource: vi.fn().mockReturnValue({ id: testSourceId, setData: vi.fn() }),
-            getLayer: vi.fn(),
+            getLayer: vi.fn().mockReturnValue(layer0),
             addLayer: vi.fn(),
             setLayoutProperty: vi.fn(),
         } as unknown as Map;
@@ -454,7 +459,7 @@ describe('GeoJSONSourceWithLayers', () => {
 
         const mapLibreMock = {
             getSource: vi.fn().mockReturnValue({ id: testSourceId, setData: vi.fn() }),
-            getLayer: vi.fn(),
+            getLayer: vi.fn().mockReturnValue(layer0),
             addLayer: vi.fn(),
             setLayoutProperty: vi.fn(),
         } as unknown as Map;

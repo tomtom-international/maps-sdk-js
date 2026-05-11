@@ -179,6 +179,39 @@ describe('Traffic Incident Details schema — categoryFilter validation', () => 
             }),
         );
     });
+
+    test("fails when categoryFilter contains response-only categories ('animals-on-road' or 'narrow-lanes')", () => {
+        // The Incident Details API documents these two categories as response-only — they are
+        // returned in features but rejected as filter inputs. The schema must reject them at
+        // the boundary so callers get a useful error instead of an upstream 4xx.
+        expect(() =>
+            validateRequestSchema(
+                // @ts-ignore
+                { ...COMMON, bbox: [0, 0, 1, 1], categoryFilter: ['accident', 'animals-on-road'] },
+                { schema: trafficIncidentDetailsRequestSchema },
+            ),
+        ).toThrow(
+            expect.objectContaining({
+                issues: expect.arrayContaining([
+                    expect.objectContaining({ code: 'invalid_value', path: ['categoryFilter', 1] }),
+                ]),
+            }),
+        );
+
+        expect(() =>
+            validateRequestSchema(
+                // @ts-ignore
+                { ...COMMON, bbox: [0, 0, 1, 1], categoryFilter: ['narrow-lanes'] },
+                { schema: trafficIncidentDetailsRequestSchema },
+            ),
+        ).toThrow(
+            expect.objectContaining({
+                issues: expect.arrayContaining([
+                    expect.objectContaining({ code: 'invalid_value', path: ['categoryFilter', 0] }),
+                ]),
+            }),
+        );
+    });
 });
 
 describe('Traffic Incident Details schema — timeValidityFilter validation', () => {

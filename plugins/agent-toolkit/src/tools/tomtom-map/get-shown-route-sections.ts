@@ -43,11 +43,11 @@ export const executeGetShownRouteSections = async (
 ): Promise<z.infer<typeof getShownRouteSectionsOutputSchema>> => {
     const { sectionType } = params;
     try {
-        if (!state.routing.routingModule) {
+        if (!state.routing.currentEntryModule) {
             return { error: 'No routing module initialized - no routes shown on map' };
         }
 
-        const shown = state.routing.routingModule.getShown();
+        const shown = state.routing.currentEntryModule.getShown();
 
         if (!shown.mainLines || shown.mainLines.features.length === 0) {
             return { error: 'No routes currently shown on the map' };

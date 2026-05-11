@@ -15,6 +15,7 @@ export const getShownPlacesOutputSchema = z.union([
                 id: z.string(),
                 label: z.string(),
                 featureCount: z.number(),
+                markerType: z.enum(['pin', 'base-map']).describe('How the entry is rendered on the map.'),
                 features: z.array(
                     z.object({
                         name: z.string().optional(),
@@ -35,7 +36,7 @@ export const getShownPlacesSchema = z.object({});
 
 export const getShownPlacesDescription =
     'List the place entries currently shown on the map, grouped by `placesEntryId` with labels and a feature preview. ' +
-    'Use to check which categories are visible before calling `managePlaces`, or when the user asks "what is on the map". ' +
+    'Use to check which categories are visible before calling `updatePlacesDisplay`, or when the user asks "what is on the map". ' +
     'Positions are [longitude, latitude].';
 
 const FEATURE_PREVIEW_SIZE = 5;
@@ -55,8 +56,9 @@ export const executeGetShownPlaces = async (_params: z.infer<typeof getShownPlac
             .map((entry) => ({
                 id: entry.id,
                 label: entry.label,
-                featureCount: entry.data.length,
-                features: entry.data.slice(0, FEATURE_PREVIEW_SIZE).map((feature) => ({
+                featureCount: entry.places.length,
+                markerType: state.places.getShownMarkerType(entry.id) ?? 'pin',
+                features: entry.places.slice(0, FEATURE_PREVIEW_SIZE).map((feature) => ({
                     name: feature.properties.poi?.name,
                     address: feature.properties.address?.freeformAddress,
                     position: feature.geometry.coordinates,

@@ -195,14 +195,18 @@ export class BaseMapModule extends AbstractMapModule<BaseSourceAndLayers, BaseMa
      */
     protected _applyConfig(config: BaseMapModuleConfig | undefined) {
         if (config && !isNil(config.visible)) {
-            this.setVisible(config.visible);
+            this._setVisible(config.visible, undefined, false);
         } else if (!this._initializing && !this.isVisible()) {
             // applying default:
-            this.setVisible(true);
+            this._setVisible(true, undefined, false);
         }
 
         if (config?.layerGroupsVisibility) {
-            this.setVisible(config.layerGroupsVisibility.visible, { layerGroups: config.layerGroupsVisibility });
+            this._setVisible(
+                config.layerGroupsVisibility.visible,
+                { layerGroups: config.layerGroupsVisibility },
+                false,
+            );
         }
 
         // We merge the given config with the previous one to ensure init config parameters are kept:
@@ -285,12 +289,18 @@ export class BaseMapModule extends AbstractMapModule<BaseSourceAndLayers, BaseMa
      * ```
      */
     setVisible(visible: boolean, options?: { layerGroups?: BaseMapLayerGroups }): void {
-        if (!options?.layerGroups) {
-            // We remove the layer groups visibility from the config if it was there:
-            delete this.config?.layerGroupsVisibility;
-            this.config = { ...this.config, visible };
-        } else {
-            this.config = { ...this.config, layerGroupsVisibility: { ...options.layerGroups, visible } };
+        this._setVisible(visible, options);
+    }
+
+    private _setVisible(visible: boolean, options?: { layerGroups?: BaseMapLayerGroups }, updateConfig = true): void {
+        if (updateConfig) {
+            if (!options?.layerGroups) {
+                // We remove the layer groups visibility from the config if it was there:
+                delete this.config?.layerGroupsVisibility;
+                this.config = { ...this.config, visible };
+            } else {
+                this.config = { ...this.config, layerGroupsVisibility: { ...options.layerGroups, visible } };
+            }
         }
 
         if (this.tomtomMap.mapReady) {
@@ -300,7 +310,9 @@ export class BaseMapModule extends AbstractMapModule<BaseSourceAndLayers, BaseMa
             );
         }
 
-        this.emitConfigChange();
+        if (updateConfig) {
+            this.emitConfigChange();
+        }
     }
 
     /**

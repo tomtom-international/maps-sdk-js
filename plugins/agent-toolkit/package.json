@@ -2,7 +2,7 @@
   "name": "@tomtom-org/maps-sdk-plugin-agent-toolkit",
   "author": "TomTom International B.V.",
   "license": "See in LICENSE.txt",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "type": "module",
   "description": "Agent toolkit plugin for TomTom Maps SDK JS using Vercel AI SDK",
   "types": "dist/index.d.ts",
@@ -16,7 +16,10 @@
   "dependencies": {},
   "peerDependencies": {
     "@tomtom-org/maps-sdk": "workspace:*",
+    "@turf/turf": "catalog:",
     "ai": "catalog:",
+    "chart.js": "^4.5.1",
+    "h3-js": "^4.4.0",
     "maplibre-gl": "catalog:",
     "zod": "catalog:"
   },

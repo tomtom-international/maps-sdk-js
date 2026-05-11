@@ -180,8 +180,26 @@ export const MODERATE_DELAY_COLOR = '#FB2D09';
 /**
  * @ignore
  */
+export const MINOR_DELAY_COLOR = '#FFC105';
+/**
+ * @ignore
+ */
 export const MINOR_DELAY_LABEL_COLOR = '#f58240';
 /**
  * @ignore
  */
 export const UNKNOWN_DELAY_COLOR = '#000000';
+/**
+ * @ignore
+ */
+export const UNKNOWN_DELAY_BG_COLOR = '#C7D2D8';
+/**
+ * Dashed-line color for `magnitudeOfDelay === 'unknown'` (rendered as a red dashed overlay).
+ * @ignore
+ */
+export const UNKNOWN_DELAY_DASH_COLOR = 'rgba(190, 39, 27, 1)';
+/**
+ * Dashed-line color for `magnitudeOfDelay === 'indefinite'` (rendered as a gray dashed overlay).
+ * @ignore
+ */
+export const INDEFINITE_DELAY_DASH_COLOR = 'rgba(137, 150, 168, 1)';

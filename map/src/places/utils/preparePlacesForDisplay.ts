@@ -1,7 +1,8 @@
 import { generateId, Place, Places, POICategory, poiCategoriesToID } from '@tomtom-org/maps-sdk/core';
 import { toBaseMapPOICategory, toBaseMapPOIGroup } from '../../pois/util/poiCategoryMapping';
-import { DEFAULT_PLACE_ICON_ID } from '../../shared/layers/symbolLayers';
+import { DEFAULT_BASE_MAP_PLACE_ICON_ID, DEFAULT_PLACE_ICON_ID } from '../../shared/layers/symbolLayers';
 import { suffixNumber } from '../../shared/layers/utils';
+import { FEATURE_PROPERTY_BASE_MAP_ICON_ID } from '../layers/clusterLayers';
 import type { DisplayPlaceProps } from '../types/placeDisplayProps';
 import type { PlacesModuleConfig, PlacesTheme } from '../types/placesModuleConfig';
 import {
@@ -24,7 +25,10 @@ export const buildPlaceTitle = (place: Place): string =>
  * Resolves the image ID to use for the given POI category and icon theme.
  */
 const toImageID = (poiCategory: POICategory, iconTheme: PlacesTheme, defaultPlaceIconID: string): string => {
-    if (iconTheme === 'pin') {
+    // `pin-clustered` uses the same per-category sprites as `pin` for individual
+    // (un-clustered) features — only the cluster pin layer renders the default
+    // sprite, regardless of the leaves' categories.
+    if (iconTheme === 'pin' || iconTheme === 'pin-clustered') {
         const imageID = toPinImageID(poiCategoriesToID[poiCategory]);
         return imageID ?? defaultPlaceIconID;
     } else {
@@ -33,13 +37,25 @@ const toImageID = (poiCategory: POICategory, iconTheme: PlacesTheme, defaultPlac
     }
 };
 
+// When the caller hasn't registered a custom default image for this module
+// instance, the `base-map` theme should fall back to a built-in micro sprite
+// (small dot next to native POI labels) rather than the large `default_place`
+// pin sprite used by the `pin` theme.
+const resolveDefaultPlaceIconID = (config: PlacesModuleConfig, instanceIndex: number): string => {
+    const hasCustomDefault = !!config.icon?.default;
+    if (!hasCustomDefault && (config.theme ?? 'pin') === 'base-map') {
+        return DEFAULT_BASE_MAP_PLACE_ICON_ID;
+    }
+    return suffixNumber(DEFAULT_PLACE_ICON_ID, instanceIndex);
+};
+
 /**
  * Gets the map style sprite image ID to display on the map for the give place.
  * @ignore
  */
 export const getIconIDForPlace = (place: Place, instanceIndex: number, config: PlacesModuleConfig = {}): string => {
     const iconTheme = config.theme ?? 'pin';
-    const defaultPlaceIconID = suffixNumber(DEFAULT_PLACE_ICON_ID, instanceIndex);
+    const defaultPlaceIconID = resolveDefaultPlaceIconID(config, instanceIndex);
 
     const imageMapping = config.icon?.mapping;
     // First, try custom mapping if provided:
@@ -161,6 +177,18 @@ const mergeEVAvailabilityProps = (
     };
 };
 
+// Resolves the per-leaf base-map sprite id consumed by the `pin-clustered`
+// theme's cluster pin (single-category case). It's the same
+// `poi-<category>` sprite the `base-map` theme renders for individual
+// places, which lets the cluster icon match the surrounding base-map style
+// when only one category is present. Falls back to the parking-micro
+// sprite when the place has no recognisable category — same fallback the
+// `base-map` theme uses for unmatched places.
+const getBaseMapIconIDForPlace = (place: Place, config: PlacesModuleConfig | undefined): string => {
+    const category = getPOILayerCategoryForPlace(place, config);
+    return category ? `poi-${category}` : DEFAULT_BASE_MAP_PLACE_ICON_ID;
+};
+
 /**
  * prepare places features to be displayed on map by adding needed  properties for title, icon and style
  * @ignore
@@ -204,9 +232,23 @@ export const preparePlacesForDisplay = (
                     id, // we need id in properties due to promoteId feature
                     title,
                     iconID: getIconIDForPlace(place, instanceIndex, config),
-                    ...(config?.theme === 'base-map' && {
+                    // The base-map style's POI / POI - Micro layer expressions key off
+                    // `category` and `group` for icon-image and text-color. Both the
+                    // `base-map` theme and the `pin-clustered` theme's micro layer
+                    // (registered for un-clustered singletons) reuse those expressions,
+                    // so the leaf needs `category`/`group` populated under either theme.
+                    ...((config?.theme === 'base-map' || config?.theme === 'pin-clustered') && {
                         category: getPOILayerCategoryForPlace(place, config),
                         group: getPOIGroupForPlace(place, config),
+                    }),
+                    // For the `pin-clustered` theme we promote the per-place
+                    // base-map sprite ID to a top-level feature property so the
+                    // source's `clusterProperties` aggregator can read it via
+                    // `['get', ...]` from each leaf feature. `baseMapIconID`
+                    // resolves to a `poi-<category>` sprite and feeds the cluster pin's
+                    // single-vs-mixed `match` expression.
+                    ...(config?.theme === 'pin-clustered' && {
+                        [FEATURE_PROPERTY_BASE_MAP_ICON_ID]: getBaseMapIconIDForPlace(place, config),
                     }),
                     ...extraFeatureProps,
                 },

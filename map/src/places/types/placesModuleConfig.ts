@@ -1,5 +1,10 @@
 import type { Place } from '@tomtom-org/maps-sdk/core';
-import type { DataDrivenPropertyValueSpecification, SymbolLayerSpecification } from 'maplibre-gl';
+import type {
+    CircleLayerSpecification,
+    DataDrivenPropertyValueSpecification,
+    LineLayerSpecification,
+    SymbolLayerSpecification,
+} from 'maplibre-gl';
 import type { MapStylePOICategory } from '../../pois/util/poiCategoryMapping';
 import type {
     CustomImage,
@@ -18,10 +23,15 @@ import type {
  * - `pin`: Traditional map pin markers (teardrop shape)
  * - `circle-icon`: Simple circular markers (previously named `circle`)
  * - `base-map`: Mimics the map's built-in POI layer style with category icons (combines `main`, `selected`, and `micro` layers). For micro-only rendering, hide the `main` layer via `layers.main.layout.visibility = 'none'`.
+ * - `pin-clustered`: Same teardrop pins as `pin` for un-clustered places, with nearby
+ *   places aggregated into a single icon. Single-category clusters render the matching
+ *   base-map POI sprite with a small black count badge in the top-right; mixed-category
+ *   clusters render a larger centred count circle in place of the icon. Cluster features
+ *   expose `clusterBaseMapIconIDs` (comma-separated, deduplicated) on their properties.
  *
  * @group Places
  */
-export type PlacesTheme = 'pin' | 'circle-icon' | 'base-map';
+export type PlacesTheme = 'pin' | 'circle-icon' | 'base-map' | 'pin-clustered';
 
 /**
  * Configuration for EV charging station availability display.
@@ -409,12 +419,183 @@ export type PlaceLayersConfig = {
      * This layer reacts to 'hover' and 'click' event states.
      */
     selected?: Partial<ToBeAddedLayerSpecTemplate<SymbolLayerSpecification>>;
+
+    /**
+     * Cluster pin layer specification.
+     *
+     * @remarks
+     * Always registered and stacked above `selected`, but only renders under the
+     * `pin-clustered` theme and only for single-category clusters — every leaf in
+     * the cluster shares the same base-map sprite, picked via a `match` over the
+     * aggregated `clusterBaseMapIconIDs` property. Mixed-category clusters fall
+     * through to {@link clusterMixedBadge} + {@link clusterMixedCount} instead.
+     * For other themes the layer is hidden via `layout.visibility = 'none'`.
+     */
+    cluster?: Partial<ToBeAddedLayerSpecTemplate<SymbolLayerSpecification>>;
+
+    /**
+     * Cluster count badge background layer specification.
+     *
+     * @remarks
+     * Black circle drawn at the top-right of each single-category cluster pin.
+     * Acts as the background for {@link clusterCount}. Only visible under the
+     * `pin-clustered` theme and gated to single-category clusters; mixed
+     * clusters use {@link clusterMixedBadge} instead.
+     */
+    clusterBadge?: Partial<ToBeAddedLayerSpecTemplate<CircleLayerSpecification>>;
+
+    /**
+     * Cluster count text layer specification.
+     *
+     * @remarks
+     * White count rendered on top of {@link clusterBadge} for single-category
+     * clusters. Reads the `point_count_abbreviated` property MapLibre sets on
+     * every cluster feature. Only visible under the `pin-clustered` theme;
+     * mixed clusters use {@link clusterMixedCount} instead.
+     */
+    clusterCount?: Partial<ToBeAddedLayerSpecTemplate<SymbolLayerSpecification>>;
+
+    /**
+     * Centred count badge for mixed-category clusters under the
+     * `pin-clustered` theme.
+     *
+     * @remarks
+     * Replaces the cluster icon entirely when a cluster spans multiple POI
+     * categories — the count circle takes the centre with
+     * {@link clusterMixedCount} rendered on top. Filter is an "all clusters
+     * with a mixed dedup-concat" check so single-category clusters fall
+     * through to {@link cluster} + {@link clusterBadge} instead.
+     */
+    clusterMixedBadge?: Partial<ToBeAddedLayerSpecTemplate<CircleLayerSpecification>>;
+
+    /**
+     * Cluster count text on top of {@link clusterMixedBadge}.
+     *
+     * @remarks
+     * Centred count for mixed-category clusters; mirrors
+     * {@link clusterCount} but with no translate so it lands inside the
+     * centred badge.
+     */
+    clusterMixedCount?: Partial<ToBeAddedLayerSpecTemplate<SymbolLayerSpecification>>;
 } & HasAdditionalLayersConfig;
 
 /**
  * @group Places
  */
 export type PlaceLayerName = keyof PlaceLayersConfig;
+
+/**
+ * Describes a single connection between two places, to be rendered as a line on the map.
+ *
+ * @remarks
+ * Each endpoint can be given either as a full {@link Place} object or as the `id` of a
+ * place that is currently displayed by the {@link PlacesModule} (via `show()`). When an
+ * id is given, the module resolves it against its currently shown places to obtain the
+ * coordinates; connections referencing unknown ids are silently skipped.
+ *
+ * Extra arbitrary properties are preserved on the connection and passed to the optional
+ * label function, making it easy to render metadata such as distance or travel time
+ * along the line.
+ *
+ * @example
+ * ```typescript
+ * const connection: PlaceConnectionDisplay = {
+ *   from: stationPlace,        // full Place object
+ *   to: 'cafe-id-123',         // or a shown place's id
+ *   distanceMeters: 420        // extra metadata available to the label function
+ * };
+ * ```
+ *
+ * @group Places
+ */
+export type PlaceConnectionDisplay = {
+    /**
+     * The first endpoint of the connection. Either a Place object or the id of a
+     * place currently shown by the module.
+     */
+    from: Place | string;
+
+    /**
+     * The second endpoint of the connection. Either a Place object or the id of a
+     * place currently shown by the module.
+     */
+    to: Place | string;
+
+    /**
+     * Optional stable id for this connection. When omitted, an id is generated.
+     */
+    id?: string;
+
+    /**
+     * Arbitrary extra metadata, preserved on the connection and passed to the label
+     * function.
+     */
+    [key: string]: unknown;
+};
+
+/**
+ * MapLibre layer customization for connection lines and labels.
+ *
+ * @remarks
+ * The layer IDs are derived from the PlacesModule instance prefix plus the key suffix:
+ * - `line`: the connection line (default: dashed)
+ * - `label`: the text label placed along the line
+ *
+ * @group Places
+ */
+export type PlaceConnectionsLayersConfig = {
+    /**
+     * Connection line layer specification.
+     */
+    line?: Partial<ToBeAddedLayerSpecTemplate<LineLayerSpecification>>;
+
+    /**
+     * Connection label layer specification.
+     */
+    label?: Partial<ToBeAddedLayerSpecTemplate<SymbolLayerSpecification>>;
+};
+
+/**
+ * @group Places
+ */
+export type PlaceConnectionLayerName = keyof PlaceConnectionsLayersConfig;
+
+/**
+ * Configuration for rendering connection lines between places.
+ *
+ * @remarks
+ * Controls the appearance of connection lines, the optional label drawn along each
+ * line, and MapLibre layer overrides.
+ *
+ * @example
+ * ```typescript
+ * const config: PlacesModuleConfig = {
+ *   connections: {
+ *     label: (connection) => `${connection.distanceMeters} m`,
+ *     layers: {
+ *       line: { paint: { 'line-color': '#3f9cd9' } }
+ *     }
+ *   }
+ * };
+ * ```
+ *
+ * @group Places
+ */
+export type PlaceConnectionsConfig = {
+    /**
+     * Function returning the text to display along the connection line.
+     *
+     * @remarks
+     * Receives the original {@link PlaceConnectionDisplay} (including any custom
+     * metadata). When omitted, no label is rendered.
+     */
+    label?: (connection: PlaceConnectionDisplay) => string;
+
+    /**
+     * Custom MapLibre layer specifications for connection line and label.
+     */
+    layers?: PlaceConnectionsLayersConfig;
+};
 
 /**
  * Configuration options for the PlacesModule.
@@ -505,6 +686,16 @@ export type PlacesModuleConfig = MapModuleCommonConfig & {
      * @default undefined (disabled)
      */
     evAvailability?: EVAvailabilityConfig;
+
+    /**
+     * Configuration for connection lines drawn between places via
+     * {@link PlacesModule.showConnections}.
+     *
+     * @remarks
+     * When omitted, connections rendered via `showConnections` use default styling
+     * (a dashed line) and no label.
+     */
+    connections?: PlaceConnectionsConfig;
 
     /**
      * Additional properties to compute for each place feature.

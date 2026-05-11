@@ -35,7 +35,7 @@ export const getPoiCategoryCodesSchema = z.object({
 });
 
 export const getPoiCategoryCodesDescription =
-    'Resolve natural language (e.g. "gym", "italian food", "parking") into POICategory codes for use in the discoverPlaces poiCategories parameter. Returns all codes when no filter is given.';
+    'Resolve natural language (e.g. "gym", "italian food", "bookstore") into POICategory codes for use in the discoverPlaces poiCategories parameter. Returns all codes when no filter is given.';
 
 /**
  * Create the get-poi-category-codes tool.

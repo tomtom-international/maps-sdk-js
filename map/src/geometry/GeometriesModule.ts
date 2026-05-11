@@ -279,7 +279,7 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
             this.updateLayerAndData(config);
         }
         if (config?.beforeLayerConfig) {
-            this.moveBeforeLayer(config.beforeLayerConfig);
+            this._moveBeforeLayer(config.beforeLayerConfig, false);
         }
         return config;
     }
@@ -317,9 +317,15 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
      * ```
      */
     moveBeforeLayer(layerConfig: GeometryBeforeLayerConfig) {
-        this.config = { ...this.config, beforeLayerConfig: layerConfig };
+        this._moveBeforeLayer(layerConfig);
+    }
+
+    private _moveBeforeLayer(layerConfig: GeometryBeforeLayerConfig, updateConfig = true) {
         this.moveBeforeLayerID(layerConfig === 'top' ? this.titleLayerID : mapStyleLayerIDs[layerConfig]);
-        this.emitConfigChange();
+        if (updateConfig) {
+            this.config = { ...this.config, beforeLayerConfig: layerConfig };
+            this.emitConfigChange();
+        }
     }
 
     /**

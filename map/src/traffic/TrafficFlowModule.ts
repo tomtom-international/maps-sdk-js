@@ -172,7 +172,7 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
      * @ignore
      */
     protected _applyConfig(config: FlowConfig | undefined) {
-        this.setVisible(config?.visible ?? false);
+        this._setVisible(config?.visible ?? false, false);
         this._filter(config?.filters, false);
         return config;
     }
@@ -285,11 +285,17 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
      * ```
      */
     setVisible(visible: boolean): void {
-        this.config = { ...this.config, visible };
+        this._setVisible(visible);
+    }
+
+    private _setVisible(visible: boolean, updateConfig = true): void {
         if (this.tomtomMap.mapReady) {
             this.sourcesWithLayers.trafficFlow.setLayersVisible(visible);
         }
-        this.emitConfigChange();
+        if (updateConfig) {
+            this.config = { ...this.config, visible };
+            this.emitConfigChange();
+        }
     }
 
     /**

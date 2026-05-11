@@ -24,8 +24,7 @@ export const setLanguageSchema = z.object({
 });
 
 export const setLanguageDescription =
-    'Set the language used for map labels (place names, road names, POI labels) and for all subsequent service API calls (search results, geocoding, routing instructions, etc.). ' +
-    'Both the rendered map text and future service responses will use the new language.';
+    'Set the language for map labels and all subsequent service API responses (search, geocoding, routing instructions).';
 
 /**
  * Execute set language.

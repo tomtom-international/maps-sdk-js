@@ -112,7 +112,7 @@ describe('makeRoutesLabel', () => {
                 },
             ],
         } as any;
-        expect(makeRoutesLabel(routes, waypoints)).toBe('Amsterdam Centraal to Schiphol Airport (23 min, 18.0 km)');
+        expect(makeRoutesLabel(routes, waypoints)).toBe('Amsterdam Centraal to Schiphol Airport (23 min, 18 km)');
     });
 
     it('labels a route with 3 waypoints', () => {
@@ -130,7 +130,7 @@ describe('makeRoutesLabel', () => {
                 },
             ],
         } as any;
-        expect(makeRoutesLabel(routes, waypoints)).toBe('A via B to C (60 min, 50.0 km)');
+        expect(makeRoutesLabel(routes, waypoints)).toBe('A via B to C (1 hr 00 min, 50 km)');
     });
 
     it('falls back when waypoints have no addresses', () => {
@@ -144,6 +144,6 @@ describe('makeRoutesLabel', () => {
                 },
             ],
         } as any;
-        expect(makeRoutesLabel(routes, waypoints)).toBe('Route (10 min, 5.0 km)');
+        expect(makeRoutesLabel(routes, waypoints)).toBe('Route (10 min, 5 km)');
     });
 });

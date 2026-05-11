@@ -44,6 +44,7 @@ All map modules extend `AbstractMapModule` (`map/src/shared/AbstractMapModule.ts
 | `HillshadeModule` | `style` | `setVisible` |
 | `TrafficFlowModule` | `style` | `setVisible`, `applyConfig` |
 | `TrafficIncidentsModule` | `style` | `setVisible`, `applyConfig` |
+| `TrafficIncidentOverlayModule` | `geojson` | `show`, `clear`, `setFocus`, `setVisible`, `moveBeforeLayer` |
 | `TrafficAreaAnalyticsModule` | `geojson` | `show`, `clear`, `setMode`, `setMetric`, `setVisible` |
 
 ## Essential Dev Commands
@@ -113,6 +114,7 @@ cp examples/.env.example examples/.env   # add API_KEY_EXAMPLES=…
 - **Blank line after single-line `if`**: always add a blank line after a single-line `if` (i.e. an `if` with no `else` whose body is a single statement or early-exit) when it is followed by more code. This makes it visually distinct from the code that follows. Biome does not enforce this — apply it manually.
 - **Arrow functions**: prefer arrow function syntax (`const fn = () => ...`) over `function` declarations. One-liner arrows that return a single expression omit the curly braces and `return` keyword (e.g. `const double = (x: number) => x * 2`).
 - **No re-exports**: do not re-export types or values that originate elsewhere — always import directly from the canonical source. Barrel re-exports that just forward a symbol from another module add indirection without value.
+- **Reuse core utilities**: before writing a local helper for geometry, bbox, distance, formatting, or any other generic operation, check `core/src/util/` (exported via `@tomtom-org/maps-sdk/core`). The same applies to `services/` helpers when working in higher layers. Only add a new local helper when nothing in the canonical location fits.
 
 ## Key Files & Directories
 

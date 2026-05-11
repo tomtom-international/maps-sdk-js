@@ -133,6 +133,10 @@ type TrafficIncidentsSourcesWithLayers = {
  *
  * @see [Traffic Incidents Guide](https://docs.tomtom.com/maps-sdk-js/guides/map/traffic-incidents)
  * @see [Traffic Guide](https://docs.tomtom.com/maps-sdk-js/guides/map/traffic)
+ * @see {@link TrafficIncidentOverlayModule} — for rendering incidents fetched via the
+ *   `trafficIncidentDetails()` REST service as a developer-controlled overlay (use the
+ *   overlay when you need typed incident objects in app code; this vector-tile module
+ *   remains the recommended default for visual fidelity).
  *
  * @group Traffic Incidents
  */
@@ -212,7 +216,7 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
         // We do not update config in setVisible since it could override icons visibility setting:
         this._setVisible(config?.visible ?? false, { updateConfig: false });
         if (!isNil(config?.icons?.visible)) {
-            this.setIconsVisible(config.icons.visible);
+            this._setIconsVisible(config.icons.visible, false);
         }
         this._filter(config?.filters, config?.icons?.filters, false);
         return config;
@@ -365,17 +369,20 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
      * ```
      */
     setIconsVisible(visible: boolean): void {
-        // We adjust the config for this change (but it might be overwritten if it's part of an "applyConfig" call)
-        this.config = { ...this.config, icons: { ...this.config?.icons, visible } };
+        this._setIconsVisible(visible);
+    }
 
+    private _setIconsVisible(visible: boolean, updateConfig = true): void {
         if (this.tomtomMap.mapReady) {
             this.sourcesWithLayers.trafficIncidents.setLayersVisible(
                 visible,
                 (layerSpec) => layerSpec.type === 'symbol',
             );
         }
-
-        this.emitConfigChange();
+        if (updateConfig) {
+            this.config = { ...this.config, icons: { ...this.config?.icons, visible } };
+            this.emitConfigChange();
+        }
     }
 
     /**
@@ -439,7 +446,7 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
      * ```
      */
     anyIconLayersVisible(): boolean {
-        return !!this.sourcesWithLayers.trafficIncidents?.isAnyLayerVisible((layerSpec) => layerSpec.type === 'symbol');
+        return this.sourcesWithLayers.trafficIncidents?.isAnyLayerVisible((layerSpec) => layerSpec.type === 'symbol');
     }
 
     /**

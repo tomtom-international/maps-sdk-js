@@ -6,8 +6,7 @@ import { reverseGeocode } from '@tomtom-org/maps-sdk/services';
 import type { Position } from 'geojson';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
-import { makePlacesLabel } from '../../utils/state-labels';
-import { summarizePlace } from '../../utils/summarize';
+import { makePlacesLabel, summarizePlace } from '../../utils';
 import { placeOutputSchema, toolErrorSchema } from '../shared-output-schemas';
 
 /** Output schema for the reverse-geocode tool. */
@@ -21,9 +20,8 @@ export const reverseGeocodeSchema = z.object({
 });
 
 export const reverseGeocodeDescription =
-    'Convert a [longitude, latitude] position to an address and normalized place summary. ' +
-    'Use after a map click, getViewport, getCurrentLocation, or any tool that returns coordinates. ' +
-    'Does NOT search by name — use locatePlace or discoverPlaces for text queries.';
+    'Convert [lng, lat] to an address and place summary. Use after a click / getViewport / getCurrentLocation. ' +
+    'Coordinates only — for text queries use locatePlace or discoverPlaces.';
 
 /**
  * Create the reverse geocode tool.

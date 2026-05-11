@@ -1,4 +1,5 @@
 import { formatDuration, type TrafficSectionProps } from '@tomtom-org/maps-sdk/core';
+import { incidentIconID } from '../../traffic/util/trafficIncidentStyle';
 import type { DisplayTrafficSectionProps } from '../types/routeSections';
 
 const hasJam = (sectionProps: TrafficSectionProps): boolean => sectionProps.categories.includes('jam');
@@ -36,34 +37,7 @@ const toJamIconID = (sectionProps: TrafficSectionProps, title: string | undefine
 
 const toCauseIconID = (sectionProps: TrafficSectionProps): string | null => {
     const firstNonJamCategory = sectionProps.categories.find((category) => category !== 'jam');
-    switch (firstNonJamCategory) {
-        case 'accident':
-            return 'traffic-incidents-accident';
-        case 'roadworks':
-            return 'traffic-incidents-roadworks';
-        case 'road-closed':
-            return 'traffic-incidents-road_closed';
-        case 'danger':
-        case 'animals-on-road':
-            return 'traffic-incidents-danger';
-        case 'broken-down-vehicle':
-            return 'traffic-incidents-broken_down_vehicle';
-        case 'lane-closed':
-        case 'narrow-lanes':
-            return 'traffic-incidents-lane_closed';
-        case 'wind':
-            return 'traffic-incidents-wind';
-        case 'fog':
-            return 'traffic-incidents-fog';
-        case 'rain':
-            return 'traffic-incidents-rain';
-        case 'frost':
-            return 'traffic-incidents-frost';
-        case 'flooding':
-            return 'traffic-incidents-flooding';
-        default:
-            return null;
-    }
+    return firstNonJamCategory ? incidentIconID(firstNonJamCategory) : null;
 };
 
 /**

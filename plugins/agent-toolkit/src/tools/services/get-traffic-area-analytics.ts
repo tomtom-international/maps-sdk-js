@@ -104,11 +104,9 @@ export const getTrafficAreaAnalyticsSchema = z.object({
 });
 
 export const getTrafficAreaAnalyticsDescription =
-    'Fetch historical traffic analytics for a geographic area (max 31 days). ' +
-    'Provide area via location (named city/region, resolved to boundary polygon) or bbox. ' +
-    'Fetch all metrics in a single call — visualization requires all metrics in one result. ' +
-    'Use city-level areas (~10km+) for meaningful data. ' +
-    'Returns period averages. Use showOnMap to visualize immediately, queryTrafficAnalytics for breakdowns.';
+    'Fetch historical traffic analytics for an area (≤31 days) via location (named city/region) or bbox. ' +
+    'Fetch ALL metrics in ONE call (visualization needs them together); use city-scale areas (~10 km+) for meaningful data. ' +
+    'Returns period averages — `showOnMap` visualizes immediately; queryTrafficAnalytics for breakdowns.';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -135,9 +133,10 @@ const bboxToPolygon = (bbox: number[]): Polygon => {
 const resolveGeometry = async (
     location: z.infer<typeof locationInputSchema> | undefined,
     bbox: number[] | undefined,
+    state: ToolState,
 ): Promise<Polygon | MultiPolygon | { error: string }> => {
     if (location) {
-        const resolved = await resolveLocationInput(location);
+        const resolved = await resolveLocationInput(location, state);
         if (!resolved) return { error: 'Could not resolve the provided location.' };
         if (Array.isArray(resolved.place)) {
             return {
@@ -169,7 +168,7 @@ const resolveDateParams = (
 
 // Show analytics on the map with default settings, fitting the viewport.
 const showAnalyticsOnMap = async (state: ToolState, result: TrafficAreaAnalytics): Promise<void> => {
-    const analyticsModule = await state.traffic.getTrafficAreaAnalyticsModule();
+    const analyticsModule = await state.trafficAreaAnalytics.getTrafficAreaAnalyticsModule();
     await analyticsModule.clear();
     await analyticsModule.show(result);
     const defaultMetric = result.properties?.metrics?.[0] ?? 'congestionLevel';
@@ -178,7 +177,7 @@ const showAnalyticsOnMap = async (state: ToolState, result: TrafficAreaAnalytics
     if (bbox) {
         state.baseMap.mapLibreMap.fitBounds(bbox as LngLatBoundsLike, { padding: 50, pitch: 45 });
     }
-    state.traffic.onAnalyticsShown?.(result, analyticsModule);
+    state.trafficAreaAnalytics.notifyAnalyticsShown(result, analyticsModule);
 };
 
 /** Format a Date to 'YYYY-MM-DD'. */
@@ -279,7 +278,7 @@ export const executeGetTrafficAreaAnalytics = async (
     }
 
     try {
-        const resolvedGeometry = await resolveGeometry(location, bbox);
+        const resolvedGeometry = await resolveGeometry(location, bbox, state);
         if ('error' in resolvedGeometry) return resolvedGeometry;
 
         // Resolve dates — SDK defaults to startDate=3 days ago, endDate=2 days ago when omitted
@@ -294,7 +293,7 @@ export const executeGetTrafficAreaAnalytics = async (
             geometry: resolvedGeometry,
         } as TrafficAreaAnalyticsParams);
 
-        state.traffic.setLastAreaAnalytics(result);
+        state.trafficAreaAnalytics.setLastAreaAnalytics(result);
 
         if (showOnMap) {
             await showAnalyticsOnMap(state, result);

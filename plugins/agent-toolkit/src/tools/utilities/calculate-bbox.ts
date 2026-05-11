@@ -16,8 +16,7 @@ export const calculateBBoxSchema = z.object({
 });
 
 export const calculateBBoxDescription =
-    'Calculate a [minLng, minLat, maxLng, maxLat] bbox from GeoJSON. Context-independent. ' +
-    'Returns bounding box as [minLng, minLat, maxLng, maxLat] — longitude before latitude.';
+    'Compute a `[minLng, minLat, maxLng, maxLat]` bbox from GeoJSON (longitude before latitude).';
 
 /** Execute function for calculateBBox — usable with ToolEntry format. */
 export const executeCalculateBBox = async (params: z.infer<typeof calculateBBoxSchema>, _state: ToolState) => {

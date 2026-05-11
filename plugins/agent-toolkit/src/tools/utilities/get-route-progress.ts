@@ -60,7 +60,12 @@ export const executeGetRouteProgress = async (params: z.infer<typeof getRoutePro
     const routeIndex = params.routeIndex ?? 0;
 
     try {
-        const lastRoutes = (await state.routing.getRoutingModule()).getShown().mainLines;
+        // Read from the currently-shown entry's RoutingModule (per-entry now).
+        const module = state.routing.currentEntryModule;
+        if (!module) {
+            return { error: 'No routes available. Use calculate-route first.' };
+        }
+        const lastRoutes = module.getShown().mainLines;
         if (!lastRoutes || lastRoutes.features.length === 0) {
             return { error: 'No routes available. Use calculate-route first.' };
         }

@@ -579,6 +579,20 @@ export type MapStylePOICategory = keyof typeof mapDisplayPoiCategoryMappings;
 export const toBaseMapPOICategory = (category: POICategory): string => completeMapDisplayPoiCategoryMappings[category];
 
 /**
+ * The deduplicated set of base-map POI categories — the right-hand side of
+ * {@link completeMapDisplayPoiCategoryMappings}. Each value names the
+ * `poi-<value>` sprite the base-map style ships, so this set is what callers
+ * (e.g., the `pin-clustered` cluster pin's `match` expression) statically
+ * enumerate when they need MapLibre to pre-load every possible sprite into
+ * the atlas.
+ *
+ * @ignore
+ */
+export const baseMapPOICategoryValues: readonly string[] = Array.from(
+    new Set(Object.values(completeMapDisplayPoiCategoryMappings)),
+);
+
+/**
  * Maps the base map POI category (see {@link toBaseMapPOICategory}) to the
  * group used by the base map style's `POI`/`POI - Micro` layers for color and
  * micro-icon selection. Groups mirror the match arms in the style's

@@ -22,7 +22,7 @@ Consumer App
 │   │     ├── System Prompt
 │   │     └── Map ToolSet (Zod-validated tools)
 │   │           ├── Data tools: geocode, search, route, reverseGeocode
-│   │           └── Map tools: showPlaces, showRoute, flyTo, toggleTraffic, ...
+│   │           └── Map tools: updatePlacesDisplay, updateRoutesDisplay, flyTo, toggleTraffic, ...
 │   ├── MapAgentState (retains full GeoJSON between tool calls)
 │   └── Module cache (lazy PlacesModule, RoutingModule, etc.)
 │
@@ -66,7 +66,7 @@ import { whereSchema, showResultsOnMap } from '../shared';
 
 // Exception: when a symbol is intentionally absent from the barrel,
 // import directly from the source file
-import { costModelSchema } from '../services/set-route-parameters';
+import { costModelSchema } from '../services/set-route';
 ```
 
 **`@ignore`** controls TypeDoc visibility independently of barrel inclusion. An `@ignore` symbol can appear in the bundle and in a directory barrel while still being excluded from the API reference.
@@ -86,6 +86,7 @@ Test files live in a `tests/` subdirectory alongside their source files:
 
 ```
 src/tests/                      ← tests for top-level src/ files
+src/state/tests/                ← tests for src/state/
 src/utils/tests/                ← tests for src/utils/
 src/tools/state/tests/          ← tests for src/tools/state/
 ```

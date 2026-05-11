@@ -15,10 +15,13 @@ import {
 import { z } from 'zod';
 
 /** @ignore */
-export type PlaceSummary = { name?: string; address?: string; position: [number, number] };
+export type PlaceSummary = { id: string; name?: string; address?: string; position: [number, number] };
 
 /** @ignore */
 export type PlacesSummary = { count: number; features: PlaceSummary[] };
+
+/** Max number of place summaries echoed back to the LLM by summarizePlaces. */
+const PLACES_SUMMARY_LIMIT = 5;
 
 type RouteSummary = Route['properties']['summary'];
 type LegSummary = Route['properties']['sections']['leg'][number]['summary'];
@@ -45,17 +48,17 @@ export type SummarizedRoutes = { count: number; routes: SummarizedRoute[] };
  *
  * @ignore
  */
-export const summarizePlace = (place: Place): PlaceSummary => {
-    const coordinates = place.geometry?.coordinates as [number, number] | undefined;
-    return {
-        name: place.properties?.poi?.name,
-        address: place.properties?.address?.freeformAddress,
-        position: coordinates ?? [0, 0],
-    };
-};
+export const summarizePlace = (place: Place): PlaceSummary => ({
+    id: place.id,
+    name: place.properties?.poi?.name,
+    address: place.properties?.address?.freeformAddress,
+    position: (place.geometry?.coordinates ?? [0, 0]) as [number, number],
+});
 
 /**
  * Converts Places to a token-efficient summary for LLM consumption.
+ * Returns the total count plus the first {@link PLACES_SUMMARY_LIMIT} summaries
+ * to keep the tool output bounded regardless of result size.
  *
  * @ignore
  */
@@ -63,7 +66,7 @@ export const summarizePlaces = (places: Places | Place[]): PlacesSummary => {
     const features = Array.isArray(places) ? places : places.features;
     return {
         count: features.length,
-        features: features.map((feature) => summarizePlace(feature)),
+        features: features.slice(0, PLACES_SUMMARY_LIMIT).map((feature) => summarizePlace(feature)),
     };
 };
 

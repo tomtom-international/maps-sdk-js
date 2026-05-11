@@ -15,12 +15,22 @@ import type { Feature, FeatureCollection, LineString, Point } from 'geojson';
 export type DelayMagnitude = 'unknown' | 'minor' | 'moderate' | 'major' | 'indefinite';
 
 /**
- * All possible traffic incident categories.
+ * Traffic incident categories accepted as `categoryFilter` inputs by the Incident
+ * Details API.
+ *
+ * @remarks
+ * Strict subset of {@link fullTrafficIncidentCategories} — every value here is also
+ * a valid response category. The two values omitted (`'animals-on-road'` and
+ * `'narrow-lanes'`) are documented as response-only: the upstream's default-values
+ * list is `0,1,2,3,4,5,6,7,8,9,10,11,14`, intentionally excluding iconCategory 12
+ * and 13. Including either makes the upstream reject the whole filter with
+ * `Unsupported categoryFilter parameter value`.
+ *
+ * @see https://docs.tomtom.com/traffic-api/documentation/tomtom-orbis-maps/traffic-incidents/incident-details
  * @group Traffic
  */
-export const trafficIncidentCategories = [
+export const trafficIncidentRequestCategories = [
     'accident',
-    'animals-on-road',
     'broken-down-vehicle',
     'danger',
     'flooding',
@@ -28,12 +38,31 @@ export const trafficIncidentCategories = [
     'frost',
     'jam',
     'lane-closed',
-    'narrow-lanes',
     'other',
     'rain',
     'road-closed',
     'roadworks',
     'wind',
+] as const;
+
+/**
+ * All possible traffic incident categories.
+ *
+ * @remarks
+ * Composed of {@link trafficIncidentRequestCategories} (categories that can be both
+ * sent as filter inputs and received in responses) plus the response-only categories
+ * `'animals-on-road'` and `'narrow-lanes'`, which appear in API responses and on
+ * vector-tile features but are rejected as `categoryFilter` inputs. Use this list
+ * when a category can be *received*; use {@link trafficIncidentRequestCategories}
+ * when a category must be *sent* to the Incident Details API as a `categoryFilter`
+ * input.
+ *
+ * @group Traffic
+ */
+export const fullTrafficIncidentCategories = [
+    ...trafficIncidentRequestCategories,
+    'animals-on-road',
+    'narrow-lanes',
 ] as const;
 
 /**
@@ -58,7 +87,18 @@ export const trafficIncidentCategories = [
  *
  * @group Traffic
  */
-export type TrafficIncidentCategory = (typeof trafficIncidentCategories)[number];
+export type TrafficIncidentCategory = (typeof fullTrafficIncidentCategories)[number];
+
+/**
+ * Categories accepted as `categoryFilter` input to the Incident Details API.
+ *
+ * @remarks
+ * Strict subset of {@link TrafficIncidentCategory} — see
+ * {@link trafficIncidentRequestCategories} for the rationale.
+ *
+ * @group Traffic
+ */
+export type TrafficIncidentRequestCategory = (typeof trafficIncidentRequestCategories)[number];
 
 /**
  * Likelihood that an incident will actually occur.

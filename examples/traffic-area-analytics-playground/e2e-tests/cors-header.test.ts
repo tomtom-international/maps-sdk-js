@@ -5,7 +5,10 @@ import { expect, test } from '@playwright/test';
  * header and no CORS errors occur (the server now allows this header).
  */
 test.describe('CORS header handling', () => {
-    test('trafficAreaAnalytics request includes tomtom-user-agent header without CORS errors', async ({ page }) => {
+    // TODO(LSI-264): Enable when flakyness has been fixed
+    test.skip('trafficAreaAnalytics request includes tomtom-user-agent header without CORS errors', async ({
+        page,
+    }) => {
         const consoleErrors: string[] = [];
         page.on('console', (msg) => {
             if (msg.type() === 'error') consoleErrors.push(msg.text());

@@ -7,7 +7,8 @@ import {
     bboxFromGeoJSON, bboxFromCoordsArray, polygonFromBBox,
     getPosition,
     formatDistance, formatDuration,
-    findBestWaypointInsertionIndex, withInsertedWaypoint,
+    findBestWaypointInsertionIndex, findBestWaypointInsertionIndices,
+    withInsertedWaypoint, withInsertedWaypoints,
     getSectionBBox,
     calculateProgressAtRoutePoint, getRouteProgressBetween,
     getRouteProgressForSection, getCoordinateAtRouteProgress,
@@ -153,6 +154,23 @@ const updatedWaypoints = withInsertedWaypoint(routes.features[0], waypoints, new
 const updatedRoutes = await calculateRoute({ locations: updatedWaypoints });
 ```
 
+### `withInsertedWaypoints`
+
+Multi-waypoint variant. All projections are computed in a single pass against the original route, then new waypoints are bucketed into slots and sorted within each slot by their along-route location (with stable input-order tie-breaking). The result is independent of input order.
+
+```ts
+const waypoints = [origin, destination];
+// stops can be passed in any order — the result settles into along-route order
+const stops = [pointFurther, pointCloser];
+
+const updated = withInsertedWaypoints(routes.features[0], waypoints, stops);
+// → [origin, pointCloser, pointFurther, destination]
+
+const updatedRoutes = await calculateRoute({ locations: updated });
+```
+
+Use this whenever you have N new stops (e.g. POIs from `alongRouteSearch`) and want to merge them into the route in one shot. Don't call `withInsertedWaypoint` in a loop — the plural variant is O(n+m) on projections and produces correctly ordered output regardless of input order.
+
 ### `findBestWaypointInsertionIndex`
 
 Returns the index at which to insert a new waypoint.
@@ -160,6 +178,15 @@ Returns the index at which to insert a new waypoint.
 ```ts
 const idx = findBestWaypointInsertionIndex(routes.features[0], waypoints, newStop);
 // idx=1 → insert between waypoints[0] and waypoints[1]
+```
+
+### `findBestWaypointInsertionIndices`
+
+Multi-waypoint variant. Returns one slot index per new waypoint, computed in a single pass against the original existing waypoints. Multiple new waypoints may share the same slot. When you also need them merged in correct along-route order, use `withInsertedWaypoints` (which adds within-slot ranking on top of these slot indices).
+
+```ts
+const slots = findBestWaypointInsertionIndices(route, existing, [stopA, stopB, stopC]);
+// e.g. [1, 2, 1] → A and C both fall between existing[0] and existing[1]; B between [1] and [2]
 ```
 
 ---

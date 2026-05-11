@@ -12,6 +12,25 @@ import type {
 import { bboxExpandedWithPosition } from './bbox';
 import { getPositionStrict } from './lngLat';
 
+// Projects a waypoint onto the route's LineString and returns its cumulative
+// along-route location, or undefined when the projection has no resolvable location.
+const projectAlongRouteLocation = (route: Route, waypoint: WaypointLike): number | undefined => {
+    return nearestPointOnLine(route, getPositionStrict(waypoint)).properties.location;
+};
+
+// Given the along-route locations of existing waypoints (in order) and the location
+// of a single new waypoint, returns the slot index in `existingLocations` to insert at.
+// 0 = before origin, existingLocations.length = after destination.
+const findInsertionSlot = (existingLocations: number[], newLocation: number): number => {
+    for (let i = 0; i < existingLocations.length - 1; i++) {
+        if (newLocation >= existingLocations[i] && newLocation <= existingLocations[i + 1]) {
+            return i + 1;
+        }
+    }
+    if (newLocation < existingLocations[0]) return 0;
+    return existingLocations.length;
+};
+
 /**
  * Finds the best index to insert a new waypoint into an existing route.
  *
@@ -70,45 +89,52 @@ export const findBestWaypointInsertionIndex = (
     existingWaypoints: WaypointLike[],
     newWaypoint: WaypointLike,
 ): number => {
-    const routeCoords = route.geometry.coordinates;
+    return findBestWaypointInsertionIndices(route, existingWaypoints, [newWaypoint])[0];
+};
 
-    // Edge cases
-    if (routeCoords.length === 0) return 0;
-    if (existingWaypoints.length < 2) return 0;
-
-    // Project the new waypoint onto the route line
-    const newWaypointPos = getPositionStrict(newWaypoint);
-    const newWaypointProjection = nearestPointOnLine(route, newWaypointPos);
-    const newWaypointLocation = newWaypointProjection.properties.location;
-
-    if (newWaypointLocation === undefined) return 0;
-
-    // Project each existing waypoint onto the route line and get their locations
-    const waypointLocations: number[] = [];
-    for (const waypoint of existingWaypoints) {
-        const waypointPos = getPositionStrict(waypoint);
-        const projection = nearestPointOnLine(route, waypointPos);
-        waypointLocations.push(projection.properties.location ?? 0);
+/**
+ * Multi-waypoint variant of {@link findBestWaypointInsertionIndex}.
+ *
+ * Projects every existing and new waypoint onto the route exactly once, then returns one
+ * insertion slot per new waypoint. The i-th returned index is the slot in `existingWaypoints`
+ * (0 = before origin, `existingWaypoints.length` = after destination) where the i-th new
+ * waypoint falls based on its along-route location.
+ *
+ * Multiple new waypoints may share the same slot. Use {@link withInsertedWaypoints} when you
+ * also need them merged into the existing array in correct along-route order — that helper
+ * handles within-slot ranking on top of these slot indices.
+ *
+ * @param route The existing calculated route Feature with LineString geometry
+ * @param existingWaypoints Array of existing waypoints in order (origin, intermediate waypoints, destination)
+ * @param newWaypoints The waypoints whose insertion slots to compute
+ * @returns An array of insertion slot indices, one per new waypoint, in input order
+ *
+ * @remarks
+ * - Empty `newWaypoints` returns an empty array.
+ * - Edge cases (empty route geometry, fewer than 2 existing waypoints) return `0` for every
+ *   new waypoint — i.e. they would all prepend.
+ * - A new waypoint whose projection has no resolvable along-route location also returns `0`,
+ *   matching the singular {@link findBestWaypointInsertionIndex} behavior.
+ *
+ * @group Utils
+ */
+export const findBestWaypointInsertionIndices = (
+    route: Route,
+    existingWaypoints: WaypointLike[],
+    newWaypoints: WaypointLike[],
+): number[] => {
+    if (newWaypoints.length === 0) return [];
+    if (route.geometry.coordinates.length === 0 || existingWaypoints.length < 2) {
+        return newWaypoints.map(() => 0);
     }
 
-    // Find the insertion index where the new waypoint's location fits
-    // between existing waypoint locations
-    for (let i = 0; i < waypointLocations.length - 1; i++) {
-        const currentLocation = waypointLocations[i];
-        const nextLocation = waypointLocations[i + 1];
+    const existingLocations = existingWaypoints.map((w) => projectAlongRouteLocation(route, w) ?? 0);
 
-        if (newWaypointLocation >= currentLocation && newWaypointLocation <= nextLocation) {
-            return i + 1;
-        }
-    }
-
-    // If the new waypoint is before all existing waypoints, insert at the beginning
-    if (newWaypointLocation < waypointLocations[0]) {
-        return 0;
-    }
-
-    // If the new waypoint is beyond all existing waypoints, append at the end
-    return existingWaypoints.length;
+    return newWaypoints.map((w) => {
+        const loc = projectAlongRouteLocation(route, w);
+        if (loc === undefined) return 0;
+        return findInsertionSlot(existingLocations, loc);
+    });
 };
 
 /**
@@ -158,9 +184,79 @@ export const withInsertedWaypoint = (
     route: Route,
     existingWaypoints: WaypointLike[],
     newWaypoint: WaypointLike,
+): WaypointLike[] => withInsertedWaypoints(route, existingWaypoints, [newWaypoint]);
+
+/**
+ * Returns a new array of waypoints with each new waypoint inserted at its optimal position.
+ *
+ * Multi-waypoint variant of {@link withInsertedWaypoint}. Unlike a sequential one-at-a-time
+ * insertion, this function projects every existing and new waypoint onto the route exactly
+ * once, then merges them by:
+ *
+ * 1. Computing each new waypoint's insertion slot via {@link findBestWaypointInsertionIndices}.
+ * 2. Within each slot, ranking the new waypoints by their along-route location (with a stable
+ *    tie-break on input order when multiple waypoints project to the same location).
+ *
+ * The result is the existing waypoints with newcomers spliced in at the right positions and in
+ * natural along-route order — accurate regardless of input order.
+ *
+ * @param route The existing calculated route Feature with LineString geometry
+ * @param existingWaypoints Array of existing waypoints in order (origin, intermediate waypoints, destination)
+ * @param newWaypoints The waypoints to insert
+ * @returns A new array with the waypoints inserted at their optimal positions
+ *
+ * @remarks
+ * - Returns a new array; does not modify the original `existingWaypoints` array.
+ * - Passing an empty `newWaypoints` array returns a shallow copy of `existingWaypoints`.
+ * - When the route has no geometry or fewer than 2 existing waypoints, all new waypoints are
+ *   prepended in input order.
+ *
+ * @example
+ * ```typescript
+ * const waypoints: WaypointLike[] = [
+ *   [4.9, 52.3],   // origin
+ *   [5.0, 52.4]    // destination
+ * ];
+ *
+ * const updated = withInsertedWaypoints(route, waypoints, [[4.97, 52.37], [4.93, 52.33]]);
+ * // → [[4.9, 52.3], [4.93, 52.33], [4.97, 52.37], [5.0, 52.4]]
+ * ```
+ *
+ * @group Utils
+ */
+export const withInsertedWaypoints = (
+    route: Route,
+    existingWaypoints: WaypointLike[],
+    newWaypoints: WaypointLike[],
 ): WaypointLike[] => {
-    const insertIndex = findBestWaypointInsertionIndex(route, existingWaypoints, newWaypoint);
-    return [...existingWaypoints.slice(0, insertIndex), newWaypoint, ...existingWaypoints.slice(insertIndex)];
+    if (newWaypoints.length === 0) return existingWaypoints.slice();
+    if (route.geometry.coordinates.length === 0 || existingWaypoints.length < 2) {
+        return [...newWaypoints, ...existingWaypoints];
+    }
+
+    const existingLocations = existingWaypoints.map((w) => projectAlongRouteLocation(route, w) ?? 0);
+
+    type Annotated = { waypoint: WaypointLike; location: number; inputIndex: number };
+    const slots: Annotated[][] = Array.from({ length: existingWaypoints.length + 1 }, () => []);
+
+    for (let inputIndex = 0; inputIndex < newWaypoints.length; inputIndex++) {
+        const waypoint = newWaypoints[inputIndex];
+        const projected = projectAlongRouteLocation(route, waypoint);
+        const slotIndex = projected === undefined ? 0 : findInsertionSlot(existingLocations, projected);
+        slots[slotIndex].push({ waypoint, location: projected ?? 0, inputIndex });
+    }
+
+    for (const slot of slots) {
+        slot.sort((a, b) => a.location - b.location || a.inputIndex - b.inputIndex);
+    }
+
+    const result: WaypointLike[] = [];
+    for (let i = 0; i < existingWaypoints.length; i++) {
+        for (const item of slots[i]) result.push(item.waypoint);
+        result.push(existingWaypoints[i]);
+    }
+    for (const item of slots[existingWaypoints.length]) result.push(item.waypoint);
+    return result;
 };
 
 /**

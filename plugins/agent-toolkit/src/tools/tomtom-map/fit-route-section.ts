@@ -31,9 +31,7 @@ export const fitRouteSectionSchema = z.object({
 });
 
 export const fitRouteSectionDescription =
-    'Fit the map camera to show a specific route section by type and ID. ' +
-    'Use getShownRouteSections to obtain valid section IDs. ' +
-    'Requires a route to be shown on the map.';
+    'Fit the camera to a specific route section by type + ID (from getShownRouteSections). Requires a route on the map.';
 
 /**
  * Execute fit route section.
@@ -43,13 +41,13 @@ export const executeFitRouteSection = async (params: z.infer<typeof fitRouteSect
 
     try {
         // Get the currently shown routes from the map
-        if (!state.routing.routingModule) {
+        if (!state.routing.currentEntryModule) {
             return {
                 error: 'No routing module initialized - no routes shown on map',
             };
         }
 
-        const shown = state.routing.routingModule.getShown();
+        const shown = state.routing.currentEntryModule.getShown();
 
         if (!shown.mainLines || shown.mainLines.features.length === 0) {
             return {

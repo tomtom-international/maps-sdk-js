@@ -1,4 +1,4 @@
-import type { HasBBox, TrafficIncidentCategory, TrafficIncidentTimeValidity } from '@tomtom-org/maps-sdk/core';
+import type { HasBBox, TrafficIncidentRequestCategory, TrafficIncidentTimeValidity } from '@tomtom-org/maps-sdk/core';
 import type { CommonServiceParams } from '../../shared';
 
 /**
@@ -26,7 +26,10 @@ type TrafficIncidentDetailsBaseParams = CommonServiceParams & {
      * Filter results to specific incident categories.
      *
      * @remarks
-     * Provide {@link TrafficIncidentCategory} values to include. When omitted, all categories are returned.
+     * Provide {@link TrafficIncidentRequestCategory} values to include. When omitted,
+     * all filterable categories are returned. `'animals-on-road'` and `'narrow-lanes'`
+     * are intentionally not accepted here — the upstream API documents them as
+     * response-only and rejects the whole filter when they appear.
      *
      * @example
      * ```typescript
@@ -34,7 +37,7 @@ type TrafficIncidentDetailsBaseParams = CommonServiceParams & {
      * categoryFilter: ['accident', 'road-closed']
      * ```
      */
-    categoryFilter?: TrafficIncidentCategory[];
+    categoryFilter?: TrafficIncidentRequestCategory[];
 
     /**
      * Filter incidents by their temporal validity.

@@ -58,6 +58,24 @@ describe('Get Icon ID for a given Place tests', () => {
         ).toBe('default_place-0');
     });
 
+    test('Get Icon ID falls back to micro sprite for base-map theme without custom default', () => {
+        expect(getIconIDForPlace({ properties: {} } as Place, 0, { theme: 'base-map' })).toBe('poi-parking-micro');
+        expect(
+            getIconIDForPlace({ properties: { poi: { categories: ['UNMAPPED_CATEGORY'] } } } as unknown as Place, 0, {
+                theme: 'base-map',
+            }),
+        ).toBe('poi-parking-micro');
+    });
+
+    test('Get Icon ID respects a custom default icon even under base-map theme', () => {
+        expect(
+            getIconIDForPlace({ properties: {} } as Place, 0, {
+                theme: 'base-map',
+                icon: { default: { style: { fillColor: '#007AFF' } } },
+            }),
+        ).toBe('default_place-0');
+    });
+
     test('Get Icon ID for a given Place with custom config', () => {
         expect(
             getIconIDForPlace({ properties: { poi: { categories: ['RESTAURANT'] } } } as Place, 0, {
@@ -360,7 +378,7 @@ describe('test prepare places for display', () => {
                     },
                     properties: {
                         id: '123',
-                        iconID: 'default_place-0',
+                        iconID: 'poi-parking-micro',
                         title: 'No url found',
                         category: undefined,
                         group: undefined,

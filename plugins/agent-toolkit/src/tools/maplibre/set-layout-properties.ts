@@ -42,9 +42,8 @@ export const setLayoutPropertiesSchema = z
     .describe('List of layout property changes to apply in one go.');
 
 export const setLayoutPropertiesDescription =
-    'Set one or more layout properties on MapLibre layers (visibility, text-field, icon-size). ' +
-    'Use getMapStyleLayers to discover valid layer IDs first. ' +
-    'Layout properties control structure and visibility — use setPaintProperties for colors and widths.';
+    'Set MapLibre layout properties (visibility, text-field, icon-size) on named layers — use getMapStyleLayers for valid IDs. ' +
+    'For colors/widths use setPaintProperties.';
 
 /** Execute function for setLayoutProperties — usable with ToolEntry format. */
 export const executeSetLayoutProperties = async (

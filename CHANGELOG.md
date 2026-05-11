@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.47.2](https://github.com/tomtom-international/maps-sdk-js/compare/v0.47.1...v0.47.2) (2026-05-11)
+
+
+### Bug Fixes
+
+* example thumbnail reference ([68144d2](https://github.com/tomtom-international/maps-sdk-js/commit/68144d29034fea86fe2040308b69f150a1628a6c))
+
+## [0.47.1](https://github.com/tomtom-international/maps-sdk-js/compare/v0.47.0...v0.47.1) (2026-05-11)
+
+
+### Features
+
+* **agent-toolkit:** live traffic agent ([f16863c](https://github.com/tomtom-international/maps-sdk-js/commit/f16863c85f99dbebe167c7afe8adc6c8d81fbdb4))
+* **map:** TrafficIncidentOverlayModule ([b5c8099](https://github.com/tomtom-international/maps-sdk-js/commit/b5c80991f0f0c92f3df19422b941fd2d374f3456))
+
+
+### Bug Fixes
+
+* **traffic-incident-details:** drop non-filterable iconCategory codes ([61d2eb3](https://github.com/tomtom-international/maps-sdk-js/commit/61d2eb3abadc6d7190a7a69fb55be09761d1f427))
+
 ## [0.47.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.46.13...v0.47.0) (2026-05-01)
 
 

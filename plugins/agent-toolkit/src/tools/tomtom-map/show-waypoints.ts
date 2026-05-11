@@ -21,9 +21,8 @@ export const showWaypointsOutputSchema = z.union([
 export const showWaypointsSchema = z.object({});
 
 export const showWaypointsDescription =
-    'Display origin, stop, and destination waypoints as markers on the map. ' +
-    'Context-dependent: requires setRouteLocations or locatePlace with waypointIndex to have been called first. ' +
-    'Does not recalculate the route. Prefer showRoute when you also need the route line drawn.';
+    'Display origin/stop/destination markers (no route line; no recalculation). Requires staged waypoints from setRoute or locatePlace. ' +
+    'Use updateRoutesDisplay when you also need the route line drawn.';
 
 /**
  * Execute show waypoints.
@@ -37,7 +36,16 @@ export const executeShowWaypoints = async (
         // fall back to the last finalized waypoints from route history.
         const current = state.routing.planningSlots;
 
-        const routingModule = await state.routing.getRoutingModule();
+        // RoutingModules are per-entry now. Render planning waypoints on the
+        // first currently-shown entry, or fall back to the latest entry in
+        // history. If there's no history at all, surface a clear error.
+        const firstShownId = [...state.routing.shownEntryIds][0];
+        const latestEntry = state.routing.entries.at(-1);
+        const targetEntryId = firstShownId ?? latestEntry?.id;
+        if (!targetEntryId) {
+            return { error: 'No route history yet — calculate a route via setRoute first.' };
+        }
+        const routingModule = await state.routing.getEntryRoutingModule(targetEntryId);
         await routingModule.showWaypoints(current);
 
         return { success: true, count: current.length };

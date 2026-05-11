@@ -9,6 +9,8 @@ import {
     getNumVisibleLayersBySource,
     initBasemap,
     initBasemap2,
+    setStyle,
+    waitForMapIdle,
     waitForMapReady,
 } from './util/TestUtils';
 
@@ -231,6 +233,24 @@ test.describe('BaseMap module tests', () => {
             // (there might be some layers which are hidden by default in the style so here we might end up with more visible layers than before)
             expect(visibleLayersAfterModuleVisible).toBeGreaterThanOrEqual(visibleLayers);
         }
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test.skip('BaseMap is restored visible when style changes immediately after resetConfig', async ({ page }) => {
+        await initBasemap(page);
+        await setBaseMapVisible(page, false);
+        await waitForMapIdle(page);
+        expect(await isBaseMapVisible(page)).toBe(false);
+        expect(await getBaseMapConfig(page)).toEqual({ visible: false });
+
+        // Reset config and change style without waiting in between:
+        await page.evaluate(() => (globalThis as MapsSDKThis).baseMap?.resetConfig());
+        await setStyle(page, 'standardDark');
+        await waitForMapIdle(page);
+
+        expect(await getBaseMapConfig(page)).toBeUndefined();
+        expect(await isBaseMapVisible(page)).toBe(true);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });

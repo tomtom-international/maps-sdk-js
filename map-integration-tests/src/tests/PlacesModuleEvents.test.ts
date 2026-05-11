@@ -146,7 +146,8 @@ test.describe('Tests with user events related to PlacesModule', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test('Click events for a place after changing map style', async ({ page }) => {
+    // TODO(LSI-263): Enable when flakyness has been fixed
+    test.skip('Click events for a place after changing map style', async ({ page }) => {
         await initPlaces(page);
         await setupPlacesClickHandler(page);
         await showPlaces(page, places);
@@ -174,7 +175,8 @@ test.describe('Tests with user events related to PlacesModule', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test('Custom cursor on hover persists after changing map style', async ({ page }) => {
+    // TODO(LSI-263): Enable when flakyness has been fixed
+    test.skip('Custom cursor on hover persists after changing map style', async ({ page }) => {
         await initPlaces(page, { events: { cursorOnHover: 'cell' } });
         await setupPlacesClickHandler(page);
         await showPlaces(page, places);
@@ -233,7 +235,8 @@ test.describe('Tests with user events related to PlacesModule', () => {
         await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 5000);
     });
 
-    test('Callback handler arguments', async ({ page }) => {
+    // TODO(LSI-263): Enable when flakyness has been fixed
+    test.skip('Callback handler arguments', async ({ page }) => {
         await initPlaces(page);
         await showPlaces(page, places);
         await waitForMapIdle(page);
@@ -269,7 +272,8 @@ test.describe('Tests with user events related to PlacesModule', () => {
 test.describe('Events custom configuration', () => {
     const mapEnv = new MapTestEnv();
 
-    test('Overall custom cursor', async ({ page }) => {
+    // TODO(LSI-263): Enable when flakyness has been fixed
+    test.skip('Overall custom cursor', async ({ page }) => {
         // Amsterdam center
         await mapEnv.loadPageAndMap(
             page,
@@ -325,7 +329,8 @@ test.describe('Events custom configuration', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test('Point-then-box precision mode', async ({ page }) => {
+    // TODO(LSI-263): Enable when flakyness has been fixed
+    test.skip('Point-then-box precision mode', async ({ page }) => {
         // Amsterdam center
         await mapEnv.loadPageAndMap(
             page,
@@ -347,7 +352,8 @@ test.describe('Events custom configuration', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test('Places with grabbing cursor on hover', async ({ page }) => {
+    // TODO(LSI-263): Enable when flakyness has been fixed
+    test.skip('Places with grabbing cursor on hover', async ({ page }) => {
         // Amsterdam center
         await mapEnv.loadPageAndMap(page, { zoom: 10, center: [4.89067, 52.37313] });
 

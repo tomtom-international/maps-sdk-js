@@ -53,7 +53,7 @@ export const executeToggleTrafficFlow = async (params: z.infer<typeof toggleTraf
     const { visible } = params;
     try {
         // Lazy-init TrafficFlowModule
-        const trafficFlowModule = await state.traffic.getTrafficFlowModule();
+        const trafficFlowModule = await state.trafficTiles.getTrafficFlowModule();
 
         trafficFlowModule.setVisible(visible);
 
@@ -78,7 +78,7 @@ export const executeToggleTrafficIncidents = async (
     const { visible } = params;
     try {
         // Lazy-init TrafficIncidentsModule
-        const trafficIncidentsModule = await state.traffic.getTrafficIncidentsModule();
+        const trafficIncidentsModule = await state.trafficTiles.getTrafficIncidentsModule();
 
         trafficIncidentsModule.setVisible(visible);
 

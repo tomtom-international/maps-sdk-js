@@ -9,6 +9,7 @@ import type {
     TomTomMap,
     TrafficAreaAnalyticsModule,
     TrafficFlowModule,
+    TrafficIncidentOverlayModule,
     TrafficIncidentsModule,
 } from 'map';
 import type { LngLatLike, Map, MapGeoJSONFeature } from 'maplibre-gl';
@@ -27,6 +28,7 @@ export type MapsSDKThis = typeof globalThis & {
     // extra base map instance that can coexist with the main one:
     baseMap2?: BaseMapModule;
     trafficIncidents?: TrafficIncidentsModule;
+    trafficIncidentOverlay?: TrafficIncidentOverlayModule;
     trafficFlow?: TrafficFlowModule;
     pois?: POIsModule;
     hillshade?: HillshadeModule;

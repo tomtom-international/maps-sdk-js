@@ -22,6 +22,7 @@ import type {
     SourceWithLayerIDs,
     StyleInput,
     TrafficAreaAnalyticsConfig,
+    TrafficIncidentOverlayConfig,
     WaypointDisplayProps,
 } from 'map';
 import { poiLayerIDs } from 'map';
@@ -172,6 +173,24 @@ export const showTrafficAreaAnalytics = async (page: Page, analytics: unknown) =
 
 export const clearTrafficAreaAnalytics = async (page: Page) =>
     page.evaluate(() => (globalThis as MapsSDKThis).trafficAreaAnalytics?.clear());
+
+export const initTrafficIncidentOverlay = async (page: Page, config?: TrafficIncidentOverlayConfig) =>
+    page.evaluate(async (inputConfig?) => {
+        const mapsSdkThis = globalThis as MapsSDKThis;
+        mapsSdkThis.trafficIncidentOverlay = await mapsSdkThis.MapsSDK.TrafficIncidentOverlayModule.get(
+            mapsSdkThis.tomtomMap,
+            inputConfig,
+        );
+    }, config);
+
+export const showTrafficIncidentOverlay = async (page: Page, result: unknown) =>
+    page.evaluate(
+        (inputResult) => (globalThis as MapsSDKThis).trafficIncidentOverlay?.show(inputResult as any),
+        result,
+    );
+
+export const clearTrafficIncidentOverlay = async (page: Page) =>
+    page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidentOverlay?.clear());
 
 export const initPOIs = async (page: Page, config?: POIsModuleConfig) =>
     page.evaluate(async (inputConfig) => {

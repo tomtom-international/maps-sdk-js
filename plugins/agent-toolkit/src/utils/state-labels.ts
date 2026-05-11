@@ -1,4 +1,5 @@
 import type { Place, Places, Routes, WaypointLike } from '@tomtom-org/maps-sdk/core';
+import { formatDistance, formatDuration } from '@tomtom-org/maps-sdk/core';
 
 /**
  * Optional search context used to enrich a places history label.
@@ -21,10 +22,6 @@ const waypointAddress = (wp: WaypointLike): string | undefined => {
     if (Array.isArray(wp)) return undefined;
     return (wp as any).properties?.address?.freeformAddress;
 };
-
-const formatDuration = (seconds: number): string => `${Math.round(seconds / 60)} min`;
-
-const formatDistance = (meters: number): string => `${(meters / 1000).toFixed(1)} km`;
 
 /** Builds a label for a Places FeatureCollection from its count and search context. */
 const makeCollectionLabel = (count: number, context?: PlacesLabelContext): string => {
@@ -70,9 +67,10 @@ export const makePlacesLabel = (data: Place | Places, context?: PlacesLabelConte
  */
 export const makeRoutesLabel = (routes: Routes, waypoints: WaypointLike[]): string => {
     const summary = routes.features[0]?.properties?.summary;
-    const timeDist = summary
-        ? ` (${formatDuration(summary.travelTimeInSeconds)}, ${formatDistance(summary.lengthInMeters)})`
-        : '';
+    const duration = summary ? formatDuration(summary.travelTimeInSeconds) : undefined;
+    const distance = summary ? formatDistance(summary.lengthInMeters) : undefined;
+    const timeDistParts = [duration, distance].filter(Boolean);
+    const timeDist = timeDistParts.length ? ` (${timeDistParts.join(', ')})` : '';
 
     const addresses = waypoints.map(waypointAddress).filter(Boolean) as string[];
 
@@ -98,13 +96,21 @@ const RANGE_BUDGET_UNITS: Record<string, string> = {
 };
 
 /**
- * Generate a human-readable label for a range history entry.
- * e.g. "10/20/30 min from Amsterdam" or "50 km from [4.9, 52.3]"
+ * Generate a human-readable label for a ranges history entry.
+ * e.g. "10/20/30 min from Amsterdam" (one origin),
+ *      "30 min from Amsterdam, Rotterdam" (two origins),
+ *      "30 min from 3 origins" (more than two).
  *
  * @ignore
  */
-export const makeRangeLabel = (budgets: Array<{ type: string; value: number }>, originName: string): string => {
+export const makeRangesLabel = (budgets: Array<{ type: string; value: number }>, originNames: string[]): string => {
     const sorted = [...budgets].sort((a, b) => a.value - b.value);
     const budgetStr = sorted.map((b) => `${b.value} ${RANGE_BUDGET_UNITS[b.type] ?? b.type}`).join('/');
-    return `${budgetStr} from ${originName}`;
+    const originStr =
+        originNames.length === 1
+            ? originNames[0]
+            : originNames.length === 2
+              ? originNames.join(', ')
+              : `${originNames.length} origins`;
+    return `${budgetStr} from ${originStr}`;
 };

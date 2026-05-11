@@ -59,12 +59,6 @@ export {
     getStandardMapStylesSchema,
 } from './get-standard-map-styles';
 export {
-    executeManagePlaces,
-    managePlacesDescription,
-    managePlacesOutputSchema,
-    managePlacesSchema,
-} from './manage-places';
-export {
     executeSetLanguage,
     setLanguageDescription,
     setLanguageOutputSchema,
@@ -82,18 +76,6 @@ export {
     setRouteThemeOutputSchema,
     setRouteThemeSchema,
 } from './set-route-theme';
-export {
-    executeShowPlaces,
-    showPlacesDescription,
-    showPlacesOutputSchema,
-    showPlacesSchema,
-} from './show-places';
-export {
-    executeShowRoutes,
-    showRouteDescription,
-    showRouteOutputSchema,
-    showRouteSchema,
-} from './show-routes';
 export {
     executeShowTrafficAreaAnalytics,
     showTrafficAreaAnalyticsDescription,
@@ -128,3 +110,15 @@ export {
     toggleTrafficIncidentsOutputSchema,
     toggleTrafficIncidentsSchema,
 } from './toggle-traffic';
+export {
+    executeUpdatePlacesDisplay,
+    updatePlacesDisplayDescription,
+    updatePlacesDisplayOutputSchema,
+    updatePlacesDisplaySchema,
+} from './update-places-display';
+export {
+    executeUpdateRoutesDisplay,
+    updateRoutesDisplayDescription,
+    updateRoutesDisplayOutputSchema,
+    updateRoutesDisplaySchema,
+} from './update-routes-display';

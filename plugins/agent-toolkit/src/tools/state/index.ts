@@ -1,15 +1,76 @@
 /**
  * @module agent-toolkit-tools/state
  *
- * State tools - read session state (places history, route history, staged waypoints) without calling any service.
+ * State tools - operate purely on session state (places history, route history,
+ * traffic-incidents history, staged waypoints, cached analytics) without calling any service.
  */
 
+export {
+    analyseGeometriesDescription,
+    analyseGeometriesOutputSchema,
+    analyseGeometriesSchema,
+    executeAnalyseGeometries,
+} from './analyse-geometries';
+export {
+    analyseIncidentsDescription,
+    analyseIncidentsOutputSchema,
+    analyseIncidentsSchema,
+    executeAnalyseIncidents,
+} from './analyse-incidents';
+export {
+    analysePlacesDescription,
+    analysePlacesOutputSchema,
+    analysePlacesSchema,
+    executeAnalysePlaces,
+} from './analyse-places';
+export {
+    analyseRoutesDescription,
+    analyseRoutesOutputSchema,
+    analyseRoutesSchema,
+    executeAnalyseRoutes,
+} from './analyse-routes';
+export {
+    executeFocusIncidents,
+    focusIncidentsDescription,
+    focusIncidentsOutputSchema,
+    focusIncidentsSchema,
+} from './focus-incidents';
 export {
     executeGetCurrentWaypoints,
     getCurrentWaypointsDescription,
     getCurrentWaypointsOutputSchema,
     getCurrentWaypointsSchema,
 } from './get-current-waypoints';
+export {
+    executeProcessGeometries,
+    processGeometriesDescription,
+    processGeometriesOutputSchema,
+    processGeometriesSchema,
+} from './process-geometries';
+export {
+    executeProcessPlaces,
+    processPlacesDescription,
+    processPlacesOutputSchema,
+    processPlacesSchema,
+} from './process-places';
+export {
+    executeProcessRoutes,
+    processRoutesDescription,
+    processRoutesOutputSchema,
+    processRoutesSchema,
+} from './process-routes';
+export {
+    executeQueryTrafficAnalytics,
+    queryTrafficAnalyticsDescription,
+    queryTrafficAnalyticsOutputSchema,
+    queryTrafficAnalyticsSchema,
+} from './query-traffic-analytics';
+export {
+    executeRecallGeometries,
+    recallGeometriesDescription,
+    recallGeometriesOutputSchema,
+    recallGeometriesSchema,
+} from './recall-geometries';
 export {
     executeRecallPlaces,
     recallPlacesDescription,
@@ -28,3 +89,33 @@ export {
     recallRoutesOutputSchema,
     recallRoutesSchema,
 } from './recall-routes';
+export {
+    executeRecallState,
+    recallStateDescription,
+    recallStateOutputSchema,
+    recallStateSchema,
+} from './recall-state';
+export {
+    executeResetState,
+    resetStateDescription,
+    resetStateOutputSchema,
+    resetStateSchema,
+} from './reset-state';
+export {
+    executeSetEntryMode,
+    setEntryModeDescription,
+    setEntryModeOutputSchema,
+    setEntryModeSchema,
+} from './set-entry-mode';
+export {
+    executeStartTrafficIncidentsMonitor,
+    startTrafficIncidentsMonitorDescription,
+    startTrafficIncidentsMonitorOutputSchema,
+    startTrafficIncidentsMonitorSchema,
+} from './start-traffic-incidents-monitor';
+export {
+    executeStopTrafficIncidentsMonitor,
+    stopTrafficIncidentsMonitorDescription,
+    stopTrafficIncidentsMonitorOutputSchema,
+    stopTrafficIncidentsMonitorSchema,
+} from './stop-traffic-incidents-monitor';

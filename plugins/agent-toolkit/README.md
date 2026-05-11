@@ -74,7 +74,7 @@ See [`examples/map-chat-agent`](../../examples/map-chat-agent) for a full workin
 
 ## Tools reference
 
-The plugin ships 53 tools organized into five categories. All tools are included by default and can be individually removed or replaced via the [`tools` option](#composing-tool-sets).
+The plugin ships 52 tools organized into five categories. All tools are included by default and can be individually removed or replaced via the [`tools` option](#composing-tool-sets).
 
 ### Service tools — fetch data from TomTom APIs
 
@@ -83,12 +83,16 @@ The plugin ships 53 tools organized into five categories. All tools are included
 | `locatePlace` | Resolve a location string (landmark, city, address) to a place; optionally stage as a waypoint |
 | `reverseGeocode` | Convert `[longitude, latitude]` coordinates to an address |
 | `discoverPlaces` | Search for places by text query or POI category within an area |
-| `setRouteLocations` | Set waypoints by resolving location queries and calculate a route |
-| `setRouteParameters` | Configure route options (alternatives, avoidances, departure time) and recalculate |
-| `addStopToRoute` | Insert a stop at the optimal position in the current route |
-| `removeStopFromRoute` | Remove a stop by index from the current route |
+| `setRoute` | Calculate or recalculate a route — provide `locations` (waypoints), `parameters` (route options), or both |
+| `addWaypointsToRoute` | Extend the current route — prepend a new origin, append a new destination, and/or insert intermediate stops |
+| `removeWaypointsFromRoute` | Remove one or more waypoints by index from the current route |
+| `replaceWaypointInRoute` | Overwrite a single waypoint of the current route in place — origin, destination, or by index |
 | `getPOICategoryCodes` | Look up TomTom POI category codes from natural-language names |
-| `getTrafficIncidents` | Fetch traffic incidents by bounding box or IDs |
+| `getTrafficIncidents` | Fetch traffic incidents by bounding box or IDs (one-shot) |
+| `startTrafficIncidentsMonitor` | Start the live incident monitor — pairs with `getTrafficIncidents`, refreshes incident state on a configurable cadence so subsequent reads stay fresh |
+| `stopTrafficIncidentsMonitor` | Stop the live incident monitor |
+| `analyseIncidents` | Aggregate / count / chart incidents already in state via dynamic JS (categories, top delays, clusters, …) |
+| `focusIncidents` | Highlight a subset of incidents (by id / category / severity) on the map and dim the rest |
 | `getTrafficAreaAnalytics` | Fetch historical traffic analytics (speed, congestion, travel time) for an area |
 | `queryTrafficAnalytics` | Query cached analytics data or check what is currently displayed |
 | `searchAlongRoute` | Search for POIs along a calculated route, ranked by detour cost |
@@ -139,6 +143,7 @@ The plugin ships 53 tools organized into five categories. All tools are included
 | `recallPlaces` | Retrieve the history of place lookups from this session |
 | `recallRoutes` | Retrieve previously calculated routes from this session |
 | `recallRanges` | Retrieve stored reachable range results |
+| `recallGeometries` | List/inspect every polygon source in state (place footprints, isochrones, custom-geometries) — call before passing IDs to `processGeometries` / `analyseGeometries` |
 | `getCurrentWaypoints` | Get the staged waypoint slots (origin, stops, destination) |
 
 ### Utility tools — pure computation helpers
@@ -279,7 +284,17 @@ type ToolEntry<S extends ToolState = ToolState> = {
 
 ## State management
 
-`ToolState` is organized by feature area. Each slice manages lazy-initialized map modules and an append-only history of results produced during the session. Built-in slices: `PlacesState`, `RoutingState`, `BaseMapState`, `TrafficState`, `RangeState`, `MapPOIsState`.
+`ToolState` is organized by feature area. Each slice manages lazy-initialized map modules and an append-only history of results produced during the session. Built-in slices:
+
+- `PlacesState` — place / geometry entry history
+- `RoutingState` — route history, planning waypoint slots, route parameters
+- `RangeState` — reachable-range entries
+- `CustomGeometriesState` — derived polygon entries produced by `processGeometries` (union, difference, h3-coverage, …)
+- `BaseMapState` — viewport, style, language, raw `mapLibreMap`
+- `TrafficTilesState` — real-time traffic flow + incident tile-overlay visibility
+- `TrafficAreaAnalyticsState` — cached traffic-area-analytics result + current visualisation config
+- `TrafficIncidentsState` — fetched incident entries, per-entry analyses, focused subsets, and the live `IncidentsMonitor`
+- `MapPOIsState` — POI category visibility and filters
 
 Create state manually for advanced scenarios:
 
@@ -309,7 +324,7 @@ const agent = createMapAgent<MyState>(map, {
 });
 
 agent.state.fleet;   // FleetState — custom slice
-agent.state.places;  // PlacesState — built-in slice
+agent.state.places;  // PlacesStates — registry of named place-display buckets
 ```
 
 ## Intent classifier
@@ -419,11 +434,11 @@ createMapAgent(map, { model, tools: { discoverPlaces: wrappedDiscover } });
 const agent = createMapAgent(map, {
     model,
     tools: {
-        setRouteLocations: false,
-        setRouteParameters: false,
-        addStopToRoute: false,
-        removeStopFromRoute: false,
-        showRoute: false,
+        setRoute: false,
+        addWaypointsToRoute: false,
+        removeWaypointsFromRoute: false,
+        replaceWaypointInRoute: false,
+        updateRoutesDisplay: false,
         searchAlongRoute: false,
     },
 });

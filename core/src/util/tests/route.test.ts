@@ -3,11 +3,13 @@ import type { Route, RouteProgressPoint, SectionProps, WaypointLike } from '../.
 import {
     calculateProgressAtRoutePoint,
     findBestWaypointInsertionIndex,
+    findBestWaypointInsertionIndices,
     getCoordinateAtRouteProgress,
     getProgressAtNearestRoutePoint,
     getRouteProgressBetween,
     getSectionBBox,
     withInsertedWaypoint,
+    withInsertedWaypoints,
 } from '../route';
 
 // Factory that builds a straight east-going path with pointCount stops:
@@ -595,6 +597,266 @@ describe('route utility tests', () => {
         expect(result[0]).toEqual([4.9, 52.3]);
         expect(result[1]).toEqual([5.0, 52.4]);
         expect(result[2]).toEqual([5.1, 52.5]);
+    });
+
+    test('withInsertedWaypoints - inserts multiple waypoints in along-route order', () => {
+        const route: Route = {
+            type: 'Feature',
+            id: 'route-1',
+            geometry: {
+                type: 'LineString',
+                coordinates: [
+                    [0, 0],
+                    [1, 0],
+                    [2, 0],
+                    [3, 0],
+                    [4, 0],
+                ],
+            },
+            properties: { summary: {} as any, sections: {} as any, index: 0 },
+            bbox: [0, 0, 4, 0],
+        };
+
+        const existingWaypoints: WaypointLike[] = [
+            [0, 0],
+            [4, 0],
+        ];
+
+        // Out-of-order along the route: 3 then 1.
+        const newWaypoints: WaypointLike[] = [
+            [3, 0],
+            [1, 0],
+        ];
+
+        const result = withInsertedWaypoints(route, existingWaypoints, newWaypoints);
+
+        expect(result).toEqual([
+            [0, 0],
+            [1, 0],
+            [3, 0],
+            [4, 0],
+        ]);
+        expect(existingWaypoints).toHaveLength(2); // original unchanged
+    });
+
+    test('withInsertedWaypoints - empty newWaypoints returns a copy of existing', () => {
+        const route: Route = {
+            type: 'Feature',
+            id: 'route-1',
+            geometry: {
+                type: 'LineString',
+                coordinates: [
+                    [0, 0],
+                    [1, 0],
+                ],
+            },
+            properties: { summary: {} as any, sections: {} as any, index: 0 },
+            bbox: [0, 0, 1, 0],
+        };
+
+        const existingWaypoints: WaypointLike[] = [
+            [0, 0],
+            [1, 0],
+        ];
+
+        const result = withInsertedWaypoints(route, existingWaypoints, []);
+
+        expect(result).toEqual(existingWaypoints);
+        expect(result).not.toBe(existingWaypoints); // new array
+    });
+
+    test('withInsertedWaypoints - sorts within a slot by along-route location, not input order', () => {
+        const route: Route = {
+            type: 'Feature',
+            id: 'route-1',
+            geometry: {
+                type: 'LineString',
+                coordinates: [
+                    [0, 0],
+                    [10, 0],
+                ],
+            },
+            properties: { summary: {} as any, sections: {} as any, index: 0 },
+            bbox: [0, 0, 10, 0],
+        };
+
+        const existingWaypoints: WaypointLike[] = [
+            [0, 0],
+            [10, 0],
+        ];
+
+        // All three fall in the single intermediate slot. Input order is shuffled relative
+        // to along-route order (7, 3, 5). Expected output is along-route order (3, 5, 7).
+        const newWaypoints: WaypointLike[] = [
+            [7, 0],
+            [3, 0],
+            [5, 0],
+        ];
+
+        const result = withInsertedWaypoints(route, existingWaypoints, newWaypoints);
+
+        expect(result).toEqual([
+            [0, 0],
+            [3, 0],
+            [5, 0],
+            [7, 0],
+            [10, 0],
+        ]);
+    });
+
+    test('findBestWaypointInsertionIndices - returns slot index per new waypoint', () => {
+        // Route extends beyond origin and destination so projections can fall in
+        // the "before origin" and "after destination" slots.
+        const route: Route = {
+            type: 'Feature',
+            id: 'route-1',
+            geometry: {
+                type: 'LineString',
+                coordinates: [
+                    [-2, 0],
+                    [0, 0],
+                    [5, 0],
+                    [10, 0],
+                    [12, 0],
+                ],
+            },
+            properties: { summary: {} as any, sections: {} as any, index: 0 },
+            bbox: [-2, 0, 12, 0],
+        };
+
+        const existingWaypoints: WaypointLike[] = [
+            [0, 0], // location 2
+            [5, 0], // location 7
+            [10, 0], // location 12
+        ];
+
+        // Locations relative to existing [2, 7, 12]:
+        //   3 (loc 5)  → between origin and middle → slot 1
+        //   8 (loc 10) → between middle and dest   → slot 2
+        //  11 (loc 13) → past destination          → slot 3 (append)
+        //  -1 (loc 1)  → before origin             → slot 0 (prepend)
+        const newWaypoints: WaypointLike[] = [
+            [3, 0],
+            [8, 0],
+            [11, 0],
+            [-1, 0],
+        ];
+
+        expect(findBestWaypointInsertionIndices(route, existingWaypoints, newWaypoints)).toEqual([1, 2, 3, 0]);
+    });
+
+    test('findBestWaypointInsertionIndices - empty new waypoints returns empty array', () => {
+        const route: Route = {
+            type: 'Feature',
+            id: 'route-1',
+            geometry: {
+                type: 'LineString',
+                coordinates: [
+                    [0, 0],
+                    [1, 0],
+                ],
+            },
+            properties: { summary: {} as any, sections: {} as any, index: 0 },
+            bbox: [0, 0, 1, 0],
+        };
+
+        expect(
+            findBestWaypointInsertionIndices(
+                route,
+                [
+                    [0, 0],
+                    [1, 0],
+                ],
+                [],
+            ),
+        ).toEqual([]);
+    });
+
+    test('withInsertedWaypoints - input order does not affect output along-route order', () => {
+        const route: Route = {
+            type: 'Feature',
+            id: 'route-1',
+            geometry: {
+                type: 'LineString',
+                coordinates: [
+                    [0, 0],
+                    [10, 0],
+                ],
+            },
+            properties: { summary: {} as any, sections: {} as any, index: 0 },
+            bbox: [0, 0, 10, 0],
+        };
+
+        const existingWaypoints: WaypointLike[] = [
+            [0, 0],
+            [10, 0],
+        ];
+
+        // A, B, C, D are positioned so along-route order is A < B < C < D between origin and destination.
+        const A: WaypointLike = [2, 0];
+        const B: WaypointLike = [4, 0];
+        const C: WaypointLike = [6, 0];
+        const D: WaypointLike = [8, 0];
+
+        const expected: WaypointLike[] = [[0, 0], A, B, C, D, [10, 0]];
+
+        // Try several scrambled input orders — every one should produce the same along-route order.
+        const inputs: WaypointLike[][] = [
+            [B, A], // pair: pass B,A and expect ...A,B...
+            [D, C, B, A], // fully reversed
+            [B, D, A, C], // arbitrary
+            [C, A, D, B], // arbitrary
+            [A, B, C, D], // already in order — must remain stable
+        ];
+
+        // Pair: assert the small case explicitly so the property is obvious from the test.
+        expect(withInsertedWaypoints(route, existingWaypoints, [B, A])).toEqual([[0, 0], A, B, [10, 0]]);
+
+        // Full set: every permutation of {A, B, C, D} must produce the canonical along-route order.
+        for (const inputOrder of inputs.slice(1)) {
+            expect(withInsertedWaypoints(route, existingWaypoints, inputOrder)).toEqual(expected);
+        }
+    });
+
+    test('withInsertedWaypoints - mixes prepend, mid-insert, and append', () => {
+        const route: Route = {
+            type: 'Feature',
+            id: 'route-1',
+            geometry: {
+                type: 'LineString',
+                coordinates: [
+                    [0, 0],
+                    [1, 0],
+                    [2, 0],
+                    [3, 0],
+                    [4, 0],
+                    [5, 0],
+                ],
+            },
+            properties: { summary: {} as any, sections: {} as any, index: 0 },
+            bbox: [0, 0, 5, 0],
+        };
+
+        const existingWaypoints: WaypointLike[] = [
+            [1, 0],
+            [4, 0],
+        ];
+
+        const newWaypoints: WaypointLike[] = [
+            [5, 0], // append
+            [0, 0], // prepend
+            [3, 0], // mid-insert
+        ];
+
+        const result = withInsertedWaypoints(route, existingWaypoints, newWaypoints);
+
+        expect(result).toEqual([
+            [0, 0],
+            [1, 0],
+            [3, 0],
+            [4, 0],
+            [5, 0],
+        ]);
     });
 
     test('getSectionBBox - calculates bbox for section', () => {

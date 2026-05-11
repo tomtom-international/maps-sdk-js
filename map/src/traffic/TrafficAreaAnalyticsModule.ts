@@ -261,13 +261,13 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
         }
 
         if (merged.beforeLayerConfig) {
-            this.moveBeforeLayer(merged.beforeLayerConfig);
+            this._moveBeforeLayer(merged.beforeLayerConfig, false);
         }
 
-        if (merged.visible === false) {
-            this.setVisible(false);
-        }
-
+        // Set config before applyModeVisibility, which reads `this.config.visible` and
+        // `this.config.displayMode`. The parent's applyConfig will overwrite this.config
+        // with the same value after we return, and emit config-change exactly once.
+        this.config = merged;
         this.applyModeVisibility();
         return merged;
     }
@@ -550,7 +550,10 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
      * @param layerConfig - Per-layer-type positioning config. Each value is `'top'` or a `MapStyleLayerID`.
      */
     moveBeforeLayer(layerConfig: AreaAnalyticsBeforeLayerConfig): void {
-        this.config = { ...this.config, beforeLayerConfig: layerConfig };
+        this._moveBeforeLayer(layerConfig);
+    }
+
+    private _moveBeforeLayer(layerConfig: AreaAnalyticsBeforeLayerConfig, updateConfig = true): void {
         const toId = (value: BeforeLayerConfig) => (value === 'top' ? undefined : mapStyleLayerIDs[value]);
 
         if (layerConfig.heatmap !== undefined) {
@@ -571,6 +574,10 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
 
         if (layerConfig.square?.extrusion3D !== undefined) {
             this.mapLibreMap.moveLayer(this.squareExtrusionLayerSpec.id, toId(layerConfig.square.extrusion3D));
+        }
+
+        if (updateConfig) {
+            this.config = { ...this.config, beforeLayerConfig: layerConfig };
         }
     }
 

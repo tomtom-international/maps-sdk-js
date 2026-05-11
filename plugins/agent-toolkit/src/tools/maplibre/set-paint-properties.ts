@@ -42,10 +42,8 @@ export const setPaintPropertiesSchema = z.object({
 });
 
 export const setPaintPropertiesDescription =
-    'Set one or more paint properties on MapLibre layers (colors, widths, opacity). ' +
-    'Use getMapStyleLayers to discover valid layer IDs first. ' +
-    'Paint properties control visual appearance — use setLayoutProperties for visibility and structural properties. ' +
-    'For route styling, prefer setRouteTheme.';
+    'Set MapLibre paint properties (colors, widths, opacity) on named layers — use getMapStyleLayers for valid IDs. ' +
+    'For visibility/structure use setLayoutProperties; for route styling prefer setRouteTheme.';
 
 /** Execute function for setPaintProperties — usable with ToolEntry format. */
 export const executeSetPaintProperties = async (params: z.infer<typeof setPaintPropertiesSchema>, state: ToolState) => {

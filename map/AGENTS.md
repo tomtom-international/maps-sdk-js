@@ -117,6 +117,10 @@ src/places/
     └── ...           ← public option/config types
 ```
 
+### Layer ID constants
+
+Before hardcoding a TomTom map-style layer ID (e.g. `'Borders - Treaty label'`, `'POI'`), check `mapStyleLayerIDs` in `src/shared/layers/layerIDs.ts`. Reuse an existing constant, or add a new named entry there so all modules anchor against a single source of truth.
+
 ### `tests/` subdirectories
 
 Test files live in a `tests/` subdirectory alongside the module they cover:

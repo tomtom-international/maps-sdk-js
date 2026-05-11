@@ -70,10 +70,9 @@ export const showTrafficAreaAnalyticsOutputSchema = z.union([
 ]);
 
 export const showTrafficAreaAnalyticsDescription =
-    'Show HISTORICAL traffic area analytics on the map (hexgrid/heatmap). ' +
-    'Not real-time — use toggleTrafficFlow for live traffic. ' +
-    'Configure metric, color theme, height, and tile filtering. ' +
-    'Use after getTrafficAreaAnalytics. Defaults to first fetched metric.';
+    'Render HISTORICAL traffic analytics (hexgrid/heatmap) on the map after getTrafficAreaAnalytics. ' +
+    'Configure metric, color theme, height, and tile filtering; defaults to the first fetched metric. ' +
+    'Not real-time — use toggleTrafficFlow for live traffic.';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -92,7 +91,7 @@ export const executeShowTrafficAreaAnalytics = async (
 ): Promise<z.infer<typeof showTrafficAreaAnalyticsOutputSchema>> => {
     try {
         // Get stored analytics result
-        const analyticsResult = state.traffic.lastAreaAnalytics;
+        const analyticsResult = state.trafficAreaAnalytics.lastAreaAnalytics;
         if (!analyticsResult) {
             return { error: 'No analytics data available. Call getTrafficAreaAnalytics first to fetch data.' };
         }
@@ -112,11 +111,11 @@ export const executeShowTrafficAreaAnalytics = async (
         } = params;
 
         // Lazy-init TrafficAreaAnalyticsModule
-        const analyticsModule = await state.traffic.getTrafficAreaAnalyticsModule();
+        const analyticsModule = await state.trafficAreaAnalytics.getTrafficAreaAnalyticsModule();
 
         if (!visible) {
             await analyticsModule.clear();
-            state.traffic.onAnalyticsCleared?.();
+            state.trafficAreaAnalytics.notifyAnalyticsCleared();
             return { success: true, mode, metric, colorTheme, visible: false, filtered: false };
         }
 
@@ -155,7 +154,7 @@ export const executeShowTrafficAreaAnalytics = async (
             }
         }
 
-        state.traffic.onAnalyticsShown?.(analyticsResult, analyticsModule);
+        state.trafficAreaAnalytics.notifyAnalyticsShown(analyticsResult, analyticsModule);
 
         return {
             success: true,

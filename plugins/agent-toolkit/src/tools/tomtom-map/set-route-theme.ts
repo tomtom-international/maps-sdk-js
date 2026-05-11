@@ -30,9 +30,7 @@ export const setRouteThemeSchema = z.object({
 });
 
 export const setRouteThemeDescription =
-    'Style the route line and waypoint icons with a color. ' +
-    'Prefer this over setPaintProperties for route styling — it applies the color consistently across all route and waypoint layers. ' +
-    'Requires a route to be shown on the map.';
+    'Color the route line + waypoint icons consistently across all route layers (preferred over setPaintProperties for route styling). Requires a route on the map.';
 
 const currentTheme: { mainColor?: string } = {};
 
@@ -43,7 +41,14 @@ export const executeSetRouteTheme = async (params: z.infer<typeof setRouteThemeS
     try {
         if (params.mainColor !== undefined) currentTheme.mainColor = params.mainColor;
 
-        const routingModule = await state.routing.getRoutingModule();
+        // RoutingModules are now per-entry. Apply the theme to whichever
+        // entry is currently rendering — that's the one the user sees. If
+        // nothing is on the map, surface a clear error so the LLM knows to
+        // call updateRoutesDisplay first.
+        const routingModule = state.routing.currentEntryModule;
+        if (!routingModule) {
+            return { error: 'No route currently shown — call updateRoutesDisplay or setRoute first.' };
+        }
         routingModule.applyConfig({
             theme: {
                 mainColor: currentTheme.mainColor,

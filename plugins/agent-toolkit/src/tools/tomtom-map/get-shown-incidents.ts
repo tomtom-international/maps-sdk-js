@@ -41,7 +41,7 @@ export const executeGetShownIncidents = async (
     state: ToolState,
 ): Promise<z.infer<typeof getShownIncidentsOutputSchema>> => {
     try {
-        const trafficIncidentsModule = await state.traffic.getTrafficIncidentsModule();
+        const trafficIncidentsModule = await state.trafficTiles.getTrafficIncidentsModule();
         const shown = trafficIncidentsModule.getShown();
 
         if (shown.trafficIncidents.length === 0) {

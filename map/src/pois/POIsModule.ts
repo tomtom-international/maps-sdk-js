@@ -201,13 +201,13 @@ export class POIsModule extends AbstractMapModule<PoIsSourcesAndLayers, POIsModu
      */
     protected _applyConfig(config: POIsModuleConfig | undefined) {
         if (config && !isNil(config.visible)) {
-            this.setVisible(config.visible);
+            this._setVisible(config.visible, false);
         } else if (!this._initializing && !this.isVisible()) {
             // applying default:
-            this.setVisible(true);
+            this._setVisible(true, false);
         }
 
-        this.filterCategories(config?.filters?.categories);
+        this._filterCategories(config?.filters?.categories, false);
         return config;
     }
 
@@ -242,16 +242,17 @@ export class POIsModule extends AbstractMapModule<PoIsSourcesAndLayers, POIsModu
      * ```
      */
     setVisible(visible: boolean): void {
-        this.config = {
-            ...this.config,
-            visible,
-        };
+        this._setVisible(visible);
+    }
 
+    private _setVisible(visible: boolean, updateConfig = true): void {
         if (this.tomtomMap.mapReady) {
             this.sourcesWithLayers.poi.setLayersVisible(visible);
         }
-
-        this.emitConfigChange();
+        if (updateConfig) {
+            this.config = { ...this.config, visible };
+            this.emitConfigChange();
+        }
     }
 
     /**
@@ -309,6 +310,13 @@ export class POIsModule extends AbstractMapModule<PoIsSourcesAndLayers, POIsModu
      * ```
      */
     filterCategories(categoriesFilter?: ValuesFilter<FilterablePOICategory> | undefined): void {
+        this._filterCategories(categoriesFilter);
+    }
+
+    private _filterCategories(
+        categoriesFilter: ValuesFilter<FilterablePOICategory> | undefined,
+        updateConfig = true,
+    ): void {
         if (categoriesFilter) {
             if (this.tomtomMap.mapReady) {
                 const poiFilter = buildMappedValuesFilter(
@@ -319,23 +327,27 @@ export class POIsModule extends AbstractMapModule<PoIsSourcesAndLayers, POIsModu
 
                 this.mapLibreMap.setFilter('POI', getMergedAllFilter(poiFilter, this.originalFilter));
             }
-            this.config = {
-                ...this.config,
-                filters: {
-                    categories: categoriesFilter,
-                },
-            };
-        } else if (this.categoriesFilter) {
-            // reset categories config to default
-            this.config = {
-                ...this.config,
-                filters: {
-                    categories: {
-                        show: 'all_except',
-                        values: [],
+            if (updateConfig) {
+                this.config = {
+                    ...this.config,
+                    filters: {
+                        categories: categoriesFilter,
                     },
-                },
-            };
+                };
+            }
+        } else if (this.categoriesFilter) {
+            if (updateConfig) {
+                // reset categories config to default
+                this.config = {
+                    ...this.config,
+                    filters: {
+                        categories: {
+                            show: 'all_except',
+                            values: [],
+                        },
+                    },
+                };
+            }
             if (this.tomtomMap.mapReady) {
                 // Applies default:
                 this.mapLibreMap.setFilter('POI', this.originalFilter);
@@ -343,7 +355,9 @@ export class POIsModule extends AbstractMapModule<PoIsSourcesAndLayers, POIsModu
         }
 
         this.categoriesFilter = categoriesFilter;
-        this.emitConfigChange();
+        if (updateConfig) {
+            this.emitConfigChange();
+        }
     }
 
     /**

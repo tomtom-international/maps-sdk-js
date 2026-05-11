@@ -53,7 +53,7 @@ describe('resolveTools', () => {
         const replacement = stubTool('Replaced A');
         const result = resolveTools(defaults, { alpha: replacement });
         expect(result.alpha).toBe(replacement);
-        expect(result.alpha.description).toBe('Replaced A');
+        expect((result.alpha as ToolEntry).description).toBe('Replaced A');
     });
 
     it('handles add + remove + replace in one call', () => {

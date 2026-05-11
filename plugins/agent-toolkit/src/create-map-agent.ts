@@ -10,7 +10,7 @@ import { createToolState } from './state';
 import { buildSystemPrompt } from './system-prompt';
 import { setupTools } from './tool-setup';
 import { DEFAULT_TOOLS } from './tools';
-import type { Classifier, MapAgentInstance, MapAgentOptions, StateSlice, ToolEntry, ToolState } from './types';
+import type { Classifier, MapAgentInstance, MapAgentOptions, StateSlice, ToolDefinition, ToolState } from './types';
 import type { ClassificationResult } from './utils';
 import { createDefaultClassifier } from './utils';
 
@@ -86,11 +86,12 @@ export const createMapAgent = <CS extends ToolState = ToolState>(
     const state = createToolState(map, options.state) as CS;
 
     // Safe: default tools only access base ToolState properties; CS extends ToolState.
-    const defaults = options.includeDefaultTools === false ? {} : (DEFAULT_TOOLS as Record<string, ToolEntry<CS>>);
+    const defaults = options.includeDefaultTools === false ? {} : (DEFAULT_TOOLS as Record<string, ToolDefinition<CS>>);
     const toolEntries = resolveTools(defaults, options.tools);
 
     const { tools, toolsMetadata } = setupTools(toolEntries, state, {
         outputSchemas: options.outputSchemas,
+        featureFlags: options.featureFlags,
     });
 
     // Resolve classifier
@@ -127,14 +128,32 @@ export const createMapAgent = <CS extends ToolState = ToolState>(
         // Compose with developer's prepareStep
         const userResult: PrepareStepResult | undefined = await options.prepareStep?.(stepInfo);
 
+        // Per-step providerOptions override — the AI SDK merges this onto the
+        // agent-level providerOptions, so we only need to return the diff.
+        const stepProviderOptions = options.stepProviderOptions?.({
+            activeTools,
+            stepNumber: stepInfo.stepNumber,
+        });
+
         if (userResult) {
+            // Shallow-merge per-provider keys so a user-supplied prepareStep doesn't
+            // silently drop the per-step provider override (and vice versa). User
+            // values win on collision.
+            const mergedProviderOptions =
+                stepProviderOptions || userResult.providerOptions
+                    ? { ...stepProviderOptions, ...userResult.providerOptions }
+                    : undefined;
             return {
                 ...userResult,
                 activeTools: intersectActiveTools(activeTools, userResult.activeTools),
+                providerOptions: mergedProviderOptions,
             };
         }
 
-        return activeTools ? { activeTools } : {};
+        return {
+            ...(activeTools ? { activeTools } : {}),
+            ...(stepProviderOptions ? { providerOptions: stepProviderOptions } : {}),
+        };
     };
 
     const agent = new ToolLoopAgent({
@@ -143,6 +162,7 @@ export const createMapAgent = <CS extends ToolState = ToolState>(
         instructions: systemPrompt,
         stopWhen: stepCountIs(options.maxSteps ?? 10),
         prepareStep,
+        providerOptions: options.providerOptions,
     });
 
     return Object.assign(agent, {

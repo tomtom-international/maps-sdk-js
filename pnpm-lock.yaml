@@ -51,6 +51,12 @@ catalogs:
     ai:
       specifier: ^6.0.154
       version: 6.0.154
+    chart.js:
+      specifier: ^4.5.1
+      version: 4.5.1
+    chartjs-plugin-zoom:
+      specifier: ^2.2.0
+      version: 2.2.0
     jsdom:
       specifier: ^29.0.2
       version: 29.0.2
@@ -69,6 +75,9 @@ catalogs:
     react:
       specifier: ^19.2.5
       version: 19.2.5
+    react-chartjs-2:
+      specifier: ^5.3.1
+      version: 5.3.1
     react-dom:
       specifier: ^19.2.5
       version: 19.2.5
@@ -257,6 +266,34 @@ importers:
         version: 4.1.4(@opentelemetry/api@1.9.0)(@types/node@25.5.2)(@vitest/coverage-v8@4.1.4)(jsdom@29.0.2)(vite@8.0.8(@types/node@25.5.2)(esbuild@0.27.3)(jiti@2.6.1)(less@4.4.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.9))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.3))
 
   examples/add-stops-to-route:
+    dependencies:
+      '@tomtom-org/maps-sdk':
+        specifier: workspace:*
+        version: link:../..
+    devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
+      '@types/node':
+        specifier: 'catalog:'
+        version: 25.5.2
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.1.3
+      rollup-plugin-visualizer:
+        specifier: 'catalog:'
+        version: 7.0.1(rolldown@1.0.0-rc.15)(rollup@4.59.0)
+      ts-node:
+        specifier: 'catalog:'
+        version: 10.9.2(@types/node@25.5.2)(typescript@6.0.2)
+      typescript:
+        specifier: ^6.0.2
+        version: 6.0.2
+      vite:
+        specifier: 'catalog:'
+        version: 8.0.8(@types/node@25.5.2)(esbuild@0.27.3)(jiti@2.6.1)(less@4.4.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.9))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.3)
+
+  examples/add-stops-to-route-playground:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: workspace:*
@@ -979,9 +1016,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
-      maplibre-gl:
-        specifier: 'catalog:'
-        version: 5.23.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.3
@@ -1030,12 +1064,21 @@ importers:
       ai:
         specifier: 'catalog:'
         version: 6.0.154(zod@4.3.6)
+      chart.js:
+        specifier: 'catalog:'
+        version: 4.5.1
+      chartjs-plugin-zoom:
+        specifier: 'catalog:'
+        version: 2.2.0(chart.js@4.5.1)
       marked:
         specifier: 'catalog:'
         version: 17.0.6
       react:
         specifier: 'catalog:'
         version: 19.2.5
+      react-chartjs-2:
+        specifier: 'catalog:'
+        version: 5.3.1(chart.js@4.5.1)(react@19.2.5)
       react-dom:
         specifier: 'catalog:'
         version: 19.2.5(react@19.2.5)
@@ -1055,15 +1098,100 @@ importers:
       '@types/react-dom':
         specifier: 'catalog:'
         version: 19.2.3(@types/react@19.2.14)
-      maplibre-gl:
-        specifier: 'catalog:'
-        version: 5.23.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.3
       rollup-plugin-visualizer:
         specifier: 'catalog:'
         version: 7.0.1(rolldown@1.0.0-rc.15)(rollup@4.59.0)
+      ts-node:
+        specifier: 'catalog:'
+        version: 10.9.2(@types/node@25.5.2)(typescript@6.0.2)
+      typescript:
+        specifier: ^6.0.2
+        version: 6.0.2
+      vite:
+        specifier: 'catalog:'
+        version: 8.0.8(@types/node@25.5.2)(esbuild@0.27.3)(jiti@2.6.1)(less@4.4.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.9))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.3)
+
+  examples/map-chat-agent-state-playground:
+    dependencies:
+      '@ai-sdk/azure':
+        specifier: 'catalog:'
+        version: 3.0.53(zod@4.3.6)
+      '@ai-sdk/react':
+        specifier: ^3.0.158
+        version: 3.0.158(react@19.2.5)(zod@4.3.6)
+      '@assistant-ui/react':
+        specifier: ^0.12.24
+        version: 0.12.24(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(use-sync-external-store@1.6.0(react@19.2.5))
+      '@assistant-ui/react-ai-sdk':
+        specifier: ^1.3.18
+        version: 1.3.18(@assistant-ui/tap@0.5.7(@types/react@19.2.14)(react@19.2.5))(@types/react@19.2.14)(react@19.2.5)(zod@4.3.6)(zustand@5.0.12(@types/react@19.2.14)(react@19.2.5)(use-sync-external-store@1.6.0(react@19.2.5)))
+      '@assistant-ui/react-markdown':
+        specifier: ^0.12.8
+        version: 0.12.8(@assistant-ui/react@0.12.24(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(use-sync-external-store@1.6.0(react@19.2.5)))(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@assistant-ui/react-ui':
+        specifier: ^0.2.1
+        version: 0.2.1(@assistant-ui/react-markdown@0.12.8(@assistant-ui/react@0.12.24(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(use-sync-external-store@1.6.0(react@19.2.5)))(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@assistant-ui/react@0.12.24(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(use-sync-external-store@1.6.0(react@19.2.5)))(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(use-sync-external-store@1.6.0(react@19.2.5))
+      '@microsoft/applicationinsights-web':
+        specifier: ^3.4.1
+        version: 3.4.1(tslib@2.8.1)
+      '@tomtom-org/maps-sdk':
+        specifier: workspace:*
+        version: link:../..
+      '@tomtom-org/maps-sdk-plugin-agent-toolkit':
+        specifier: workspace:*
+        version: link:../../plugins/agent-toolkit
+      ai:
+        specifier: 'catalog:'
+        version: 6.0.154(zod@4.3.6)
+      chart.js:
+        specifier: 'catalog:'
+        version: 4.5.1
+      chartjs-plugin-zoom:
+        specifier: 'catalog:'
+        version: 2.2.0(chart.js@4.5.1)
+      marked:
+        specifier: 'catalog:'
+        version: 17.0.6
+      react:
+        specifier: 'catalog:'
+        version: 19.2.5
+      react-chartjs-2:
+        specifier: 'catalog:'
+        version: 5.3.1(chart.js@4.5.1)(react@19.2.5)
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.2.5(react@19.2.5)
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
+    devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
+      '@tailwindcss/vite':
+        specifier: ^4.2.4
+        version: 4.2.4(vite@8.0.8(@types/node@25.5.2)(esbuild@0.27.3)(jiti@2.6.1)(less@4.4.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.9))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.3))
+      '@types/node':
+        specifier: 'catalog:'
+        version: 25.5.2
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.2.14
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 19.2.3(@types/react@19.2.14)
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.1.3
+      rollup-plugin-visualizer:
+        specifier: 'catalog:'
+        version: 7.0.1(rolldown@1.0.0-rc.15)(rollup@4.59.0)
+      tailwindcss:
+        specifier: ^4.2.4
+        version: 4.2.4
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@types/node@25.5.2)(typescript@6.0.2)
@@ -1170,6 +1298,94 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.2
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.1.3
+      rollup-plugin-visualizer:
+        specifier: 'catalog:'
+        version: 7.0.1(rolldown@1.0.0-rc.15)(rollup@4.59.0)
+      ts-node:
+        specifier: 'catalog:'
+        version: 10.9.2(@types/node@25.5.2)(typescript@6.0.2)
+      typescript:
+        specifier: ^6.0.2
+        version: 6.0.2
+      vite:
+        specifier: 'catalog:'
+        version: 8.0.8(@types/node@25.5.2)(esbuild@0.27.3)(jiti@2.6.1)(less@4.4.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.9))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.3)
+
+  examples/map-traffic-agent-react:
+    dependencies:
+      '@ai-sdk/azure':
+        specifier: 'catalog:'
+        version: 3.0.53(zod@4.3.6)
+      '@ai-sdk/react':
+        specifier: ^3.0.158
+        version: 3.0.158(react@19.2.5)(zod@4.3.6)
+      '@assistant-ui/react':
+        specifier: ^0.12.24
+        version: 0.12.24(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(use-sync-external-store@1.6.0(react@19.2.5))
+      '@assistant-ui/react-ai-sdk':
+        specifier: ^1.3.18
+        version: 1.3.18(@assistant-ui/tap@0.5.7(@types/react@19.2.14)(react@19.2.5))(@types/react@19.2.14)(react@19.2.5)(zod@4.3.6)(zustand@5.0.12(@types/react@19.2.14)(react@19.2.5)(use-sync-external-store@1.6.0(react@19.2.5)))
+      '@assistant-ui/react-markdown':
+        specifier: ^0.12.8
+        version: 0.12.8(@assistant-ui/react@0.12.24(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(use-sync-external-store@1.6.0(react@19.2.5)))(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@assistant-ui/react-ui':
+        specifier: ^0.2.1
+        version: 0.2.1(@assistant-ui/react-markdown@0.12.8(@assistant-ui/react@0.12.24(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(use-sync-external-store@1.6.0(react@19.2.5)))(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@assistant-ui/react@0.12.24(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(use-sync-external-store@1.6.0(react@19.2.5)))(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(use-sync-external-store@1.6.0(react@19.2.5))
+      '@microsoft/applicationinsights-web':
+        specifier: ^3.4.1
+        version: 3.4.1(tslib@2.8.1)
+      '@tomtom-org/maps-sdk':
+        specifier: workspace:*
+        version: link:../..
+      '@tomtom-org/maps-sdk-plugin-agent-toolkit':
+        specifier: workspace:*
+        version: link:../../plugins/agent-toolkit
+      ai:
+        specifier: 'catalog:'
+        version: 6.0.154(zod@4.3.6)
+      chart.js:
+        specifier: ^4.5.1
+        version: 4.5.1
+      chartjs-plugin-zoom:
+        specifier: ^2.2.0
+        version: 2.2.0(chart.js@4.5.1)
+      h3-js:
+        specifier: ^4.4.0
+        version: 4.4.0
+      marked:
+        specifier: 'catalog:'
+        version: 17.0.6
+      react:
+        specifier: 'catalog:'
+        version: 19.2.5
+      react-chartjs-2:
+        specifier: ^5.3.1
+        version: 5.3.1(chart.js@4.5.1)(react@19.2.5)
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.2.5(react@19.2.5)
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
+    devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
+      '@types/node':
+        specifier: 'catalog:'
+        version: 25.5.2
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.2.14
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 19.2.3(@types/react@19.2.14)
+      maplibre-gl:
+        specifier: 'catalog:'
+        version: 5.23.0
       rimraf:
         specifier: 'catalog:'
         version: 6.1.3
@@ -1453,6 +1669,34 @@ importers:
         version: 8.0.8(@types/node@25.5.2)(esbuild@0.27.3)(jiti@2.6.1)(less@4.4.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.9))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.3)
 
   examples/pin-interaction:
+    dependencies:
+      '@tomtom-org/maps-sdk':
+        specifier: workspace:*
+        version: link:../..
+    devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
+      '@types/node':
+        specifier: 'catalog:'
+        version: 25.5.2
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.1.3
+      rollup-plugin-visualizer:
+        specifier: 'catalog:'
+        version: 7.0.1(rolldown@1.0.0-rc.15)(rollup@4.59.0)
+      ts-node:
+        specifier: 'catalog:'
+        version: 10.9.2(@types/node@25.5.2)(typescript@6.0.2)
+      typescript:
+        specifier: ^6.0.2
+        version: 6.0.2
+      vite:
+        specifier: 'catalog:'
+        version: 8.0.8(@types/node@25.5.2)(esbuild@0.27.3)(jiti@2.6.1)(less@4.4.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.9))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.3)
+
+  examples/place-connection-lines:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: workspace:*
@@ -2416,6 +2660,34 @@ importers:
         specifier: 'catalog:'
         version: 8.0.8(@types/node@25.5.2)(esbuild@0.27.3)(jiti@2.6.1)(less@4.4.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.9))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.3)
 
+  examples/traffic-incident-overlay:
+    dependencies:
+      '@tomtom-org/maps-sdk':
+        specifier: workspace:*
+        version: link:../..
+    devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
+      '@types/node':
+        specifier: 'catalog:'
+        version: 25.5.2
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.1.3
+      rollup-plugin-visualizer:
+        specifier: 'catalog:'
+        version: 7.0.1(rolldown@1.0.0-rc.15)(rollup@4.59.0)
+      ts-node:
+        specifier: 'catalog:'
+        version: 10.9.2(@types/node@25.5.2)(typescript@6.0.2)
+      typescript:
+        specifier: ^6.0.2
+        version: 6.0.2
+      vite:
+        specifier: 'catalog:'
+        version: 8.0.8(@types/node@25.5.2)(esbuild@0.27.3)(jiti@2.6.1)(less@4.4.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.9))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.3)
+
   examples/traffic-incidents:
     dependencies:
       '@tomtom-org/maps-sdk':
@@ -2696,9 +2968,18 @@ importers:
       '@tomtom-org/maps-sdk':
         specifier: workspace:*
         version: link:../..
+      '@turf/turf':
+        specifier: 'catalog:'
+        version: 7.3.4
       ai:
         specifier: 'catalog:'
         version: 6.0.154(zod@4.3.6)
+      chart.js:
+        specifier: ^4.5.1
+        version: 4.5.1
+      h3-js:
+        specifier: ^4.4.0
+        version: 4.4.0
       maplibre-gl:
         specifier: 'catalog:'
         version: 5.23.0
@@ -3733,6 +4014,9 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.9':
     resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
+
+  '@kurkle/color@0.3.4':
+    resolution: {integrity: sha512-M5UknZPHRu3DEDWoipU6sE8PdkZ6Z/S+v4dD+Ke8IaNlpdSQah50lz1KtcFBa2vsdOnwbbnxJwVM4wty6udA5w==}
 
   '@lezer/common@1.5.2':
     resolution: {integrity: sha512-sxQE460fPZyU3sdc8lafxiPwJHBzZRy/udNFynGQky1SePYBdhkBl1kOagA9uT3pxR8K09bOrmTUqA9wb/PjSQ==}
@@ -5033,6 +5317,100 @@ packages:
   '@stitches/core@1.2.8':
     resolution: {integrity: sha512-Gfkvwk9o9kE9r9XNBmJRfV8zONvXThnm1tcuojL04Uy5uRyqg93DC83lDebl0rocZCfKSjUv+fWYtMQmEDJldg==}
 
+  '@tailwindcss/node@4.2.4':
+    resolution: {integrity: sha512-Ai7+yQPxz3ddrDQzFfBKdHEVBg0w3Zl83jnjuwxnZOsnH9pGn93QHQtpU0p/8rYWxvbFZHneni6p1BSLK4DkGA==}
+
+  '@tailwindcss/oxide-android-arm64@4.2.4':
+    resolution: {integrity: sha512-e7MOr1SAn9U8KlZzPi1ZXGZHeC5anY36qjNwmZv9pOJ8E4Q6jmD1vyEHkQFmNOIN7twGPEMXRHmitN4zCMN03g==}
+    engines: {node: '>= 20'}
+    cpu: [arm64]
+    os: [android]
+
+  '@tailwindcss/oxide-darwin-arm64@4.2.4':
+    resolution: {integrity: sha512-tSC/Kbqpz/5/o/C2sG7QvOxAKqyd10bq+ypZNf+9Fi2TvbVbv1zNpcEptcsU7DPROaSbVgUXmrzKhurFvo5eDg==}
+    engines: {node: '>= 20'}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@tailwindcss/oxide-darwin-x64@4.2.4':
+    resolution: {integrity: sha512-yPyUXn3yO/ufR6+Kzv0t4fCg2qNr90jxXc5QqBpjlPNd0NqyDXcmQb/6weunH/MEDXW5dhyEi+agTDiqa3WsGg==}
+    engines: {node: '>= 20'}
+    cpu: [x64]
+    os: [darwin]
+
+  '@tailwindcss/oxide-freebsd-x64@4.2.4':
+    resolution: {integrity: sha512-BoMIB4vMQtZsXdGLVc2z+P9DbETkiopogfWZKbWwM8b/1Vinbs4YcUwo+kM/KeLkX3Ygrf4/PsRndKaYhS8Eiw==}
+    engines: {node: '>= 20'}
+    cpu: [x64]
+    os: [freebsd]
+
+  '@tailwindcss/oxide-linux-arm-gnueabihf@4.2.4':
+    resolution: {integrity: sha512-7pIHBLTHYRAlS7V22JNuTh33yLH4VElwKtB3bwchK/UaKUPpQ0lPQiOWcbm4V3WP2I6fNIJ23vABIvoy2izdwA==}
+    engines: {node: '>= 20'}
+    cpu: [arm]
+    os: [linux]
+
+  '@tailwindcss/oxide-linux-arm64-gnu@4.2.4':
+    resolution: {integrity: sha512-+E4wxJ0ZGOzSH325reXTWB48l42i93kQqMvDyz5gqfRzRZ7faNhnmvlV4EPGJU3QJM/3Ab5jhJ5pCRUsKn6OQw==}
+    engines: {node: '>= 20'}
+    cpu: [arm64]
+    os: [linux]
+    libc: [glibc]
+
+  '@tailwindcss/oxide-linux-arm64-musl@4.2.4':
+    resolution: {integrity: sha512-bBADEGAbo4ASnppIziaQJelekCxdMaxisrk+fB7Thit72IBnALp9K6ffA2G4ruj90G9XRS2VQ6q2bCKbfFV82g==}
+    engines: {node: '>= 20'}
+    cpu: [arm64]
+    os: [linux]
+    libc: [musl]
+
+  '@tailwindcss/oxide-linux-x64-gnu@4.2.4':
+    resolution: {integrity: sha512-7Mx25E4WTfnht0TVRTyC00j3i0M+EeFe7wguMDTlX4mRxafznw0CA8WJkFjWYH5BlgELd1kSjuU2JiPnNZbJDA==}
+    engines: {node: '>= 20'}
+    cpu: [x64]
+    os: [linux]
+    libc: [glibc]
+
+  '@tailwindcss/oxide-linux-x64-musl@4.2.4':
+    resolution: {integrity: sha512-2wwJRF7nyhOR0hhHoChc04xngV3iS+akccHTGtz965FwF0up4b2lOdo6kI1EbDaEXKgvcrFBYcYQQ/rrnWFVfA==}
+    engines: {node: '>= 20'}
+    cpu: [x64]
+    os: [linux]
+    libc: [musl]
+
+  '@tailwindcss/oxide-wasm32-wasi@4.2.4':
+    resolution: {integrity: sha512-FQsqApeor8Fo6gUEklzmaa9994orJZZDBAlQpK2Mq+DslRKFJeD6AjHpBQ0kZFQohVr8o85PPh8eOy86VlSCmw==}
+    engines: {node: '>=14.0.0'}
+    cpu: [wasm32]
+    bundledDependencies:
+      - '@napi-rs/wasm-runtime'
+      - '@emnapi/core'
+      - '@emnapi/runtime'
+      - '@tybys/wasm-util'
+      - '@emnapi/wasi-threads'
+      - tslib
+
+  '@tailwindcss/oxide-win32-arm64-msvc@4.2.4':
+    resolution: {integrity: sha512-L9BXqxC4ToVgwMFqj3pmZRqyHEztulpUJzCxUtLjobMCzTPsGt1Fa9enKbOpY2iIyVtaHNeNvAK8ERP/64sqGQ==}
+    engines: {node: '>= 20'}
+    cpu: [arm64]
+    os: [win32]
+
+  '@tailwindcss/oxide-win32-x64-msvc@4.2.4':
+    resolution: {integrity: sha512-ESlKG0EpVJQwRjXDDa9rLvhEAh0mhP1sF7sap9dNZT0yyl9SAG6T7gdP09EH0vIv0UNTlo6jPWyujD6559fZvw==}
+    engines: {node: '>= 20'}
+    cpu: [x64]
+    os: [win32]
+
+  '@tailwindcss/oxide@4.2.4':
+    resolution: {integrity: sha512-9El/iI069DKDSXwTvB9J4BwdO5JhRrOweGaK25taBAvBXyXqJAX+Jqdvs8r8gKpsI/1m0LeJLyQYTf/WLrBT1Q==}
+    engines: {node: '>= 20'}
+
+  '@tailwindcss/vite@4.2.4':
+    resolution: {integrity: sha512-pCvohwOCspk3ZFn6eJzrrX3g4n2JY73H6MmYC87XfGPyTty4YsCjYTMArRZm/zOI8dIt3+EcrLHAFPe5A4bgtw==}
+    peerDependencies:
+      vite: ^5.2.0 || ^6 || ^7 || ^8
+
   '@tootallnate/quickjs-emscripten@0.23.0':
     resolution: {integrity: sha512-C5Mc6rdnsaJDjO3UpGW/CQTHtCKaYlScZTly4JIu97Jxo/odCiH0ITnDXSJPTOrEKk/ycSZ0AOgTmkDtkOsvIA==}
 
@@ -5426,6 +5804,9 @@ packages:
   '@types/geokdbush@1.1.5':
     resolution: {integrity: sha512-jIsYnXY+RQ/YCyBqeEHxYN9mh+7PqKJUJUp84wLfZ7T2kqyVPNaXwZuvf1A2uQUkrvVqEbsG94ff8jH32AlLvA==}
 
+  '@types/hammerjs@2.0.46':
+    resolution: {integrity: sha512-ynRvcq6wvqexJ9brDMS4BnBLzmr0e14d6ZJTEShTBWKymQiHwlAyGu0ZPEFI2Fh1U53F7tN9ufClWM5KvqkKOw==}
+
   '@types/hast@3.0.4':
     resolution: {integrity: sha512-WPs+bbQw5aCj+x6laNGWLH3wviHtoCv/P3+otBhbOhJgG8qtpdAMlTCxLtsTWA7LH1Oh/bFCHsBn0TPS5m30EQ==}
 
@@ -5774,6 +6155,15 @@ packages:
   character-reference-invalid@2.0.1:
     resolution: {integrity: sha512-iBZ4F4wRbyORVsu0jPV7gXkOsGYjGHPmAyv+HiHG8gi5PtC9KI2j1+v8/tlibRvjoWX027ypmG/n0HtO5t7unw==}
 
+  chart.js@4.5.1:
+    resolution: {integrity: sha512-GIjfiT9dbmHRiYi6Nl2yFCq7kkwdkp1W/lp2J99rX0yo9tgJGn3lKQATztIjb5tVtevcBtIdICNWqlq5+E8/Pw==}
+    engines: {pnpm: '>=8'}
+
+  chartjs-plugin-zoom@2.2.0:
+    resolution: {integrity: sha512-in6kcdiTlP6npIVLMd4zXZ08PDUXC52gZ4FAy5oyjk1zX3gKarXMAof7B9eFiisf9WOC3bh2saHg+J5WtLXZeA==}
+    peerDependencies:
+      chart.js: '>=3.2.0'
+
   chokidar@4.0.3:
     resolution: {integrity: sha512-Qgzu8kfBvo+cA4962jnP1KkS6Dop5NS6g7R5LFYJr4b8Ub94PPQXUksCw9PvXoeXPRRddRNC5C1JQUR2SMGtnA==}
     engines: {node: '>= 14.16.0'}
@@ -5974,6 +6364,10 @@ packages:
   end-of-stream@1.4.5:
     resolution: {integrity: sha512-ooEGc6HP26xXq/N+GCGOT0JKCLDGrq2bQUZrQ7gyrJiZANJ/8YDTxTpQBXGMn+WbIQXNVpyWymm7KYVICQnyOg==}
 
+  enhanced-resolve@5.21.0:
+    resolution: {integrity: sha512-otxSQPw4lkOZWkHpB3zaEQs6gWYEsmX4xQF68ElXC/TWvGxGMSGOvoNbaLXm6/cS/fSfHtsEdw90y20PCd+sCA==}
+    engines: {node: '>=10.13.0'}
+
   entities@4.5.0:
     resolution: {integrity: sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw==}
     engines: {node: '>=0.12'}
@@ -6172,6 +6566,14 @@ packages:
 
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
+
+  h3-js@4.4.0:
+    resolution: {integrity: sha512-DvJh07MhGgY2KcC4OeZc8SSyA+ZXpdvoh6uCzGpoKvWtZxJB+g6VXXC1+eWYkaMIsLz7J/ErhOalHCpcs1KYog==}
+    engines: {node: '>=4', npm: '>=3', yarn: '>=1.3.0'}
+
+  hammerjs@2.0.8:
+    resolution: {integrity: sha512-tSQXBXS/MWQOn/RKckawJ61vvsDpCom87JgxiYdGwHdOa0ht0vzUWDlfioofFCRU0L+6NGDt6XzbgoJvZkMeRQ==}
+    engines: {node: '>=0.8.0'}
 
   has-flag@4.0.0:
     resolution: {integrity: sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ==}
@@ -6879,6 +7281,12 @@ packages:
   rbush@3.0.1:
     resolution: {integrity: sha512-XRaVO0YecOpEuIvbhbpTrZgoiI6xBlz6hnlr6EHhd+0x9ase6EmeN+hdwwUaJvLcsFFQ8iWVF1GAK1yB0BWi0w==}
 
+  react-chartjs-2@5.3.1:
+    resolution: {integrity: sha512-h5IPXKg9EXpjoBzUfyWJvllMjG2mQ4EiuHQFhms/AjUm0XSZHhyRy2xVmLXHKrtcdrPO4mnGqRtYoD0vp95A0A==}
+    peerDependencies:
+      chart.js: ^4.1.1
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
   react-devtools-inline@4.4.0:
     resolution: {integrity: sha512-ES0GolSrKO8wsKbsEkVeiR/ZAaHQTY4zDh1UW8DImVmm8oaGLl3ijJDvSGe+qDRKPZdPRnDtWWnSvvrgxXdThQ==}
 
@@ -7370,6 +7778,13 @@ packages:
   sync-message-port@1.2.0:
     resolution: {integrity: sha512-gAQ9qrUN/UCypHtGFbbe7Rc/f9bzO88IwrG8TDo/aMKAApKyD6E3W4Cm0EfhfBb6Z6SKt59tTCTfD+n1xmAvMg==}
     engines: {node: '>=16.0.0'}
+
+  tailwindcss@4.2.4:
+    resolution: {integrity: sha512-HhKppgO81FQof5m6TEnuBWCZGgfRAWbaeOaGT00KOy/Pf/j6oUihdvBpA7ltCeAvZpFhW3j0PTclkxsd4IXYDA==}
+
+  tapable@2.3.3:
+    resolution: {integrity: sha512-uxc/zpqFg6x7C8vOE7lh6Lbda8eEL9zmVm/PLeTPBRhh1xCgdWaQ+J1CUieGpIfm2HdtsUpRv+HshiasBMcc6A==}
+    engines: {node: '>=6'}
 
   tar-fs@3.1.2:
     resolution: {integrity: sha512-QGxxTxxyleAdyM3kpFs14ymbYmNFrfY+pHj7Z8FgtbZ7w2//VAgLMac7sT6nRpIHjppXO2AwwEOg0bPFVRcmXw==}
@@ -8549,6 +8964,8 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
+
+  '@kurkle/color@0.3.4': {}
 
   '@lezer/common@1.5.2': {}
 
@@ -9863,6 +10280,74 @@ snapshots:
 
   '@stitches/core@1.2.8': {}
 
+  '@tailwindcss/node@4.2.4':
+    dependencies:
+      '@jridgewell/remapping': 2.3.5
+      enhanced-resolve: 5.21.0
+      jiti: 2.6.1
+      lightningcss: 1.32.0
+      magic-string: 0.30.21
+      source-map-js: 1.2.1
+      tailwindcss: 4.2.4
+
+  '@tailwindcss/oxide-android-arm64@4.2.4':
+    optional: true
+
+  '@tailwindcss/oxide-darwin-arm64@4.2.4':
+    optional: true
+
+  '@tailwindcss/oxide-darwin-x64@4.2.4':
+    optional: true
+
+  '@tailwindcss/oxide-freebsd-x64@4.2.4':
+    optional: true
+
+  '@tailwindcss/oxide-linux-arm-gnueabihf@4.2.4':
+    optional: true
+
+  '@tailwindcss/oxide-linux-arm64-gnu@4.2.4':
+    optional: true
+
+  '@tailwindcss/oxide-linux-arm64-musl@4.2.4':
+    optional: true
+
+  '@tailwindcss/oxide-linux-x64-gnu@4.2.4':
+    optional: true
+
+  '@tailwindcss/oxide-linux-x64-musl@4.2.4':
+    optional: true
+
+  '@tailwindcss/oxide-wasm32-wasi@4.2.4':
+    optional: true
+
+  '@tailwindcss/oxide-win32-arm64-msvc@4.2.4':
+    optional: true
+
+  '@tailwindcss/oxide-win32-x64-msvc@4.2.4':
+    optional: true
+
+  '@tailwindcss/oxide@4.2.4':
+    optionalDependencies:
+      '@tailwindcss/oxide-android-arm64': 4.2.4
+      '@tailwindcss/oxide-darwin-arm64': 4.2.4
+      '@tailwindcss/oxide-darwin-x64': 4.2.4
+      '@tailwindcss/oxide-freebsd-x64': 4.2.4
+      '@tailwindcss/oxide-linux-arm-gnueabihf': 4.2.4
+      '@tailwindcss/oxide-linux-arm64-gnu': 4.2.4
+      '@tailwindcss/oxide-linux-arm64-musl': 4.2.4
+      '@tailwindcss/oxide-linux-x64-gnu': 4.2.4
+      '@tailwindcss/oxide-linux-x64-musl': 4.2.4
+      '@tailwindcss/oxide-wasm32-wasi': 4.2.4
+      '@tailwindcss/oxide-win32-arm64-msvc': 4.2.4
+      '@tailwindcss/oxide-win32-x64-msvc': 4.2.4
+
+  '@tailwindcss/vite@4.2.4(vite@8.0.8(@types/node@25.5.2)(esbuild@0.27.3)(jiti@2.6.1)(less@4.4.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.9))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.3))':
+    dependencies:
+      '@tailwindcss/node': 4.2.4
+      '@tailwindcss/oxide': 4.2.4
+      tailwindcss: 4.2.4
+      vite: 8.0.8(@types/node@25.5.2)(esbuild@0.27.3)(jiti@2.6.1)(less@4.4.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.9))(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.3)
+
   '@tootallnate/quickjs-emscripten@0.23.0': {}
 
   '@tsconfig/node10@1.0.12': {}
@@ -11031,6 +11516,8 @@ snapshots:
     dependencies:
       '@types/kdbush': 1.0.7
 
+  '@types/hammerjs@2.0.46': {}
+
   '@types/hast@3.0.4':
     dependencies:
       '@types/unist': 3.0.3
@@ -11346,6 +11833,16 @@ snapshots:
 
   character-reference-invalid@2.0.1: {}
 
+  chart.js@4.5.1:
+    dependencies:
+      '@kurkle/color': 0.3.4
+
+  chartjs-plugin-zoom@2.2.0(chart.js@4.5.1):
+    dependencies:
+      '@types/hammerjs': 2.0.46
+      chart.js: 4.5.1
+      hammerjs: 2.0.8
+
   chokidar@4.0.3:
     dependencies:
       readdirp: 4.1.2
@@ -11527,6 +12024,11 @@ snapshots:
   end-of-stream@1.4.5:
     dependencies:
       once: 1.4.0
+
+  enhanced-resolve@5.21.0:
+    dependencies:
+      graceful-fs: 4.2.11
+      tapable: 2.3.3
 
   entities@4.5.0: {}
 
@@ -11796,6 +12298,10 @@ snapshots:
       path-scurry: 2.0.2
 
   graceful-fs@4.2.11: {}
+
+  h3-js@4.4.0: {}
+
+  hammerjs@2.0.8: {}
 
   has-flag@4.0.0: {}
 
@@ -12716,6 +13222,11 @@ snapshots:
     dependencies:
       quickselect: 2.0.0
 
+  react-chartjs-2@5.3.1(chart.js@4.5.1)(react@19.2.5):
+    dependencies:
+      chart.js: 4.5.1
+      react: 19.2.5
+
   react-devtools-inline@4.4.0:
     dependencies:
       es6-symbol: 3.1.4
@@ -13286,6 +13797,10 @@ snapshots:
 
   sync-message-port@1.2.0:
     optional: true
+
+  tailwindcss@4.2.4: {}
+
+  tapable@2.3.3: {}
 
   tar-fs@3.1.2:
     dependencies:

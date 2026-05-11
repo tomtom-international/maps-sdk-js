@@ -40,11 +40,11 @@ export const executeGetShownRouteTrafficIncidents = async (
     state: ToolState,
 ): Promise<z.infer<typeof getShownRouteTrafficIncidentsOutputSchema>> => {
     try {
-        if (!state.routing.routingModule) {
+        if (!state.routing.currentEntryModule) {
             return { error: 'No routing module initialized - no route traffic incidents shown on map' };
         }
 
-        const shown = state.routing.routingModule.getShown();
+        const shown = state.routing.currentEntryModule.getShown();
 
         if (!shown.incidents || shown.incidents.features.length === 0) {
             return { error: 'No route traffic incidents currently shown on the map' };

@@ -56,9 +56,8 @@ export const togglePOIsSchema = z.object({
 });
 
 export const togglePOIsDescription =
-    'Show or hide all built-in map POI icons (restaurants, hotels, gas stations, etc.) and optionally filter by category. ' +
-    'Use allMapPOIsVisible to control overall POI visibility, filterCategories to restrict which categories are shown or hidden, ' +
-    'or reset: true to restore all POI defaults.';
+    'Show/hide built-in map POI icons (restaurants, hotels, gas stations, etc.). ' +
+    '`allMapPOIsVisible` toggles overall visibility; `filterCategories` restricts which categories show; `reset: true` restores defaults.';
 
 /**
  * Execute toggle POIs.

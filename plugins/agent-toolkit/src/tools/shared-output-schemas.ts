@@ -23,6 +23,9 @@ export const toolErrorSchema = z.object({
 /** Token-efficient summary of a single place. */
 export const placeOutputSchema = z
     .object({
+        id: z
+            .string()
+            .describe('Stable place feature ID; pass as `{ placeId }` to setRoute / addWaypointsToRoute / etc.'),
         name: z.string().optional().describe('POI name if available'),
         address: z.string().optional().describe('Human-readable address'),
         position: z.array(z.number()).length(2).describe('[longitude, latitude]'),

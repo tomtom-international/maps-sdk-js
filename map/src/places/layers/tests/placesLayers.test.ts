@@ -1,8 +1,18 @@
 import type { DataDrivenPropertyValueSpecification, Map } from 'maplibre-gl';
 import { describe, expect, test, vi } from 'vitest';
+import { mapStyleLayerIDs } from '../../../shared';
 import { MAP_MEDIUM_FONT } from '../../../shared/layers/commonLayerProps';
 import { pinLayerBaseSpec } from '../../../shared/layers/symbolLayers';
 import { getTextSizeSpec } from '../../utils/layerSpecBuilders';
+import {
+    buildClusterBadgeCircleLayerSpec,
+    buildClusterCountTextLayerSpec,
+    buildClusterMixedBadgeCircleLayerSpec,
+    buildClusterMixedCountTextLayerSpec,
+    buildClusterPinLayerSpec,
+    CLUSTER_PROPERTY_BASE_MAP_ICON_IDS,
+    isNotClusterFilter,
+} from '../clusterLayers';
 import {
     buildPlacesLayerSpecs,
     hasEventState,
@@ -21,10 +31,40 @@ const hiddenMicroLayer = (
     layout: Record<string, unknown> = {},
 ) => ({
     type: 'symbol',
-    beforeID: 'main',
+    beforeID: mapStyleLayerIDs.lowestPlaceLabel,
     layout: { visibility: 'none', ...layout },
     paint,
 });
+
+// Cluster layer placeholders for themes that do not opt into clustering. They
+// stay registered but hidden — same "toggle visibility, never add/remove"
+// pattern as `hiddenMicroLayer`.
+const hiddenClusterLayers = {
+    cluster: {
+        type: 'symbol',
+        layout: { visibility: 'none' },
+        beforeID: 'clusterBadge',
+    },
+    clusterBadge: {
+        type: 'circle',
+        layout: { visibility: 'none' },
+        beforeID: 'clusterCount',
+    },
+    clusterCount: {
+        type: 'symbol',
+        layout: { visibility: 'none' },
+        beforeID: 'clusterMixedBadge',
+    },
+    clusterMixedBadge: {
+        type: 'circle',
+        layout: { visibility: 'none' },
+        beforeID: 'clusterMixedCount',
+    },
+    clusterMixedCount: {
+        type: 'symbol',
+        layout: { visibility: 'none' },
+    },
+};
 
 describe('Get places layer spec with circle-icon or pin icon style config', () => {
     const mapLibreMock = vi.fn() as unknown as Map;
@@ -56,6 +96,7 @@ describe('Get places layer spec with circle-icon or pin icon style config', () =
                     'text-halo-color': '#FFFFFF',
                 },
             },
+            ...hiddenClusterLayers,
         });
     });
 
@@ -111,6 +152,7 @@ describe('Get places layer spec with circle-icon or pin icon style config', () =
                 },
                 paint: expectedSelectedPaint,
             },
+            ...hiddenClusterLayers,
         });
     });
 
@@ -141,6 +183,7 @@ describe('Get places layer spec with circle-icon or pin icon style config', () =
                     'text-halo-color': '#FFFFFF',
                 },
             },
+            ...hiddenClusterLayers,
         });
     });
 
@@ -227,7 +270,97 @@ describe('Get places layer spec with circle-icon or pin icon style config', () =
                     'text-halo-width': 1,
                 },
             },
+            ...hiddenClusterLayers,
         });
+    });
+
+    test('Get places layer spec with pin-clustered icon style config', () => {
+        // pin-clustered now populates the `micro` slot too — same builder the
+        // base-map theme uses — so the test needs a map that exposes both `POI`
+        // (read by other base-map helpers via the same getStyle path) and
+        // `POI - Micro` style layers.
+        const poiMicroLayerSpec = {
+            id: 'POI - Micro',
+            type: 'symbol',
+            layout: { 'icon-image': '{icon}' },
+            paint: { 'icon-opacity': 0.9 },
+        };
+        const styleAwareMapMock = {
+            getStyle: vi.fn().mockReturnValue({ layers: [poiLayerSpec, poiMicroLayerSpec] }),
+        } as unknown as Map;
+        const result = buildPlacesLayerSpecs({ theme: 'pin-clustered' }, styleAwareMapMock, 'light', 0);
+
+        // Non-cluster pin layers stay close to the regular `pin` theme but their filters
+        // are extended with `isNotClusterFilter` so a clustered point is never rendered as
+        // both an aggregated cluster pin and a singleton pin.
+        expect(result.main).toMatchObject({
+            type: 'symbol',
+            beforeID: 'selected',
+            filter: ['all', isNotClusterFilter, ['!', hasEventState]],
+        });
+        expect(result.selected).toMatchObject({
+            type: 'symbol',
+            filter: ['all', isNotClusterFilter, hasEventState],
+        });
+
+        // Cluster pin: only renders for single-category clusters, drawing that
+        // category's base-map sprite. Mixed clusters fall through to
+        // `clusterMixedBadge` + `clusterMixedCount` (the centred count circle)
+        // and skip the cluster icon entirely.
+        expect(result.cluster).toEqual({
+            ...buildClusterPinLayerSpec(),
+            beforeID: 'clusterBadge',
+        });
+        expect(result.cluster?.filter).toEqual([
+            'all',
+            ['has', 'point_count'],
+            ['==', ['index-of', ',', ['get', CLUSTER_PROPERTY_BASE_MAP_ICON_IDS]], -1],
+        ]);
+        // The cluster pin's icon-image is a `match` whose first arg is the
+        // dynamic `get(clusterBaseMapIconIDs)` and whose arms statically
+        // enumerate every known base-map sprite, so MapLibre pre-loads them
+        // into the atlas. We don't pin every arm here; instead spot-check
+        // the head and confirm the shape ends in a default `image(...)` arm.
+        const clusterIconImage = result.cluster?.layout?.['icon-image'] as unknown[];
+        expect(clusterIconImage[0]).toBe('match');
+        expect(clusterIconImage[1]).toEqual(['get', CLUSTER_PROPERTY_BASE_MAP_ICON_IDS]);
+        // Default arm is the last element; it's an `image(literal)` expression.
+        const defaultArm = clusterIconImage.at(-1) as unknown[];
+        expect(defaultArm[0]).toBe('image');
+        // Cluster pin holds a stable on-screen size across zooms — fixed `1`,
+        // not the zoom-interpolated PIN_ICON_SIZE used by per-place pins.
+        expect(result.cluster?.layout?.['icon-size']).toBe(1);
+
+        // Single-category badge / count: top-right of the cluster sprite.
+        expect(result.clusterBadge).toEqual({
+            ...buildClusterBadgeCircleLayerSpec(),
+            beforeID: 'clusterCount',
+        });
+        expect(result.clusterCount).toEqual({
+            ...buildClusterCountTextLayerSpec(),
+            beforeID: 'clusterMixedBadge',
+        });
+
+        // Mixed-category badge / count: centred — these replace the cluster
+        // icon for mixed clusters, no default-circle fallback.
+        expect(result.clusterMixedBadge).toEqual({
+            ...buildClusterMixedBadgeCircleLayerSpec(),
+            beforeID: 'clusterMixedCount',
+        });
+        expect(result.clusterMixedBadge?.filter).toEqual([
+            'all',
+            ['has', 'point_count'],
+            ['>=', ['index-of', ',', ['get', CLUSTER_PROPERTY_BASE_MAP_ICON_IDS]], 0],
+        ]);
+        expect(result.clusterMixedCount).toEqual(buildClusterMixedCountTextLayerSpec());
+
+        // Micro slot is populated under pin-clustered too — same builder as the
+        // `base-map` theme — but its filter prepends `isNotClusterFilter` so the
+        // micro sprite renders only on un-clustered singletons.
+        const microFilter = result.micro?.filter as unknown[];
+        expect(microFilter[0]).toBe('all');
+        expect(microFilter[1]).toEqual(isNotClusterFilter);
+        expect(result.micro?.layout?.visibility).not.toBe('none');
     });
 
     test('Get places layer spec with function text field config', () => {
@@ -270,6 +403,7 @@ describe('Get places layer spec with circle-icon or pin icon style config', () =
                     'text-color': 'green',
                 },
             },
+            ...hiddenClusterLayers,
         });
     });
 });
@@ -324,7 +458,7 @@ describe('Get places layer spec with base-map icon style config', () => {
             micro: {
                 filter: ['!', ['in', ['get', 'eventState'], ['literal', ['click', 'contextmenu']]]],
                 type: 'symbol',
-                beforeID: 'main',
+                beforeID: mapStyleLayerIDs.lowestPlaceLabel,
                 minzoom: 0,
                 paint: { ...poiMicroLayerSpec.paint, 'icon-opacity': 1 },
                 layout: {
@@ -338,6 +472,7 @@ describe('Get places layer spec with base-map icon style config', () => {
                 filter: ['!', ['in', ['get', 'eventState'], ['literal', ['click', 'contextmenu']]]],
                 type: 'symbol',
                 beforeID: 'selected',
+                minzoom: 10,
                 paint: poiLayerSpec.paint,
                 layout: {
                     ...poiLayerSpec.layout,
@@ -361,6 +496,7 @@ describe('Get places layer spec with base-map icon style config', () => {
                     'text-allow-overlap': true,
                 },
             },
+            ...hiddenClusterLayers,
         });
     });
 });

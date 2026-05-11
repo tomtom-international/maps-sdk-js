@@ -5,6 +5,7 @@
 import type { Map as MapLibreMap } from 'maplibre-gl';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
+import { formatSandboxExecutionError } from '../shared';
 import { toolErrorSchema } from '../shared-output-schemas';
 
 // ---------------------------------------------------------------------------
@@ -47,11 +48,8 @@ export const executeMaplibreCodeOutputSchema = z.union([
 ]);
 
 export const executeMaplibreCodeDescription =
-    'Execute any MapLibre JS code for maximum flexibility. ' +
-    '`map` is the live MapLibre Map instance — the full API is available. ' +
-    'Use for anything: custom sources and layers, camera control, style mutations, event-driven sequences, animations, or any operation not covered by other tools. ' +
-    'Full JS is supported: loops, conditionals, helper functions, top-level `await`, event listeners. ' +
-    'Returns which sources and layers were added, removed, or updated.';
+    'Run arbitrary MapLibre JS against the live `map` for anything no other tool covers — custom sources/layers, camera, style mutations, animations, event sequences. ' +
+    'Full JS (loops, helpers, top-level `await`). Returns added/removed/updated sources & layers.';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -135,8 +133,6 @@ export const executeExecuteMaplibreCode = async (
 
         return { success: true, result: result ?? undefined, sources, layers };
     } catch (error) {
-        return {
-            error: `Code execution failed: ${error instanceof Error ? error.message : String(error)}`,
-        };
+        return { error: formatSandboxExecutionError('Code', error) };
     }
 };

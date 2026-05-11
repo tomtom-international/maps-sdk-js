@@ -1,13 +1,16 @@
 import type { ExpressionSpecification, LineLayerSpecification, SymbolLayerSpecification } from 'maplibre-gl';
 import type { LayerSpecTemplate } from '../../shared';
 import { MAP_BOLD_FONT } from '../../shared/layers/commonLayerProps';
+import { severityDashedFilter, severityLineDashColor } from '../../traffic/util/trafficIncidentStyle';
 import type { RouteWidth } from '../types/routeModuleConfig';
 import {
     getLineForegroundWidth,
     MAJOR_DELAY_COLOR,
+    MINOR_DELAY_COLOR,
     MINOR_DELAY_LABEL_COLOR,
     MODERATE_DELAY_COLOR,
     SELECTED_ROUTE_FILTER,
+    UNKNOWN_DELAY_BG_COLOR,
     UNKNOWN_DELAY_COLOR,
 } from './shared';
 
@@ -41,13 +44,13 @@ export const routeIncidentsBGLine = (routeWidth?: RouteWidth): LayerSpecTemplate
             'match',
             ['get', 'magnitudeOfDelay'],
             'minor',
-            '#FFC105',
+            MINOR_DELAY_COLOR,
             'moderate',
             MODERATE_DELAY_COLOR,
             'major',
             MAJOR_DELAY_COLOR,
             // other
-            '#C7D2D8',
+            UNKNOWN_DELAY_BG_COLOR,
         ],
     },
 });
@@ -57,18 +60,11 @@ export const routeIncidentsBGLine = (routeWidth?: RouteWidth): LayerSpecTemplate
  */
 export const routeIncidentsDashedLine = (routeWidth?: RouteWidth): LayerSpecTemplate<LineLayerSpecification> => ({
     type: 'line',
-    filter: ['in', ['get', 'magnitudeOfDelay'], ['literal', ['unknown', 'indefinite']]],
+    filter: severityDashedFilter,
     layout: { 'line-join': 'round' },
     paint: {
         'line-width': getLineForegroundWidth(routeWidth),
-        'line-color': [
-            'match',
-            ['get', 'magnitudeOfDelay'],
-            'unknown',
-            'rgba(190, 39, 27, 1)',
-            // other (undefined):
-            'rgba(137, 150, 168, 1)',
-        ],
+        'line-color': severityLineDashColor,
         'line-dasharray': [1.5, 1],
     },
 });

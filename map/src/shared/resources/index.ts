@@ -8,12 +8,9 @@ import pinSvgRaw from './pin.svg?raw';
 export const parseSvg = (svgString: string): SVGElement =>
     new DOMParser().parseFromString(svgString, 'image/svg+xml').documentElement as unknown as SVGElement;
 
-/**
- * @ignore
- */
-export const pinSvg = (options: SVGIconStyleOptions | undefined): SVGElement => {
-    const element = parseSvg(pinSvgRaw);
-    // see pin.svg structure
+// Applies `fillColor` / `outlineColor` / `outlineOpacity` overrides to an SVG
+// that follows the `#background` / `#outline` id convention.
+const applySvgStyleOptions = (element: SVGElement, options: SVGIconStyleOptions | undefined): SVGElement => {
     if (options?.fillColor) {
         element.querySelector('#background')?.setAttribute('fill', options.fillColor);
     }
@@ -25,3 +22,9 @@ export const pinSvg = (options: SVGIconStyleOptions | undefined): SVGElement => 
     }
     return element;
 };
+
+/**
+ * @ignore
+ */
+export const pinSvg = (options: SVGIconStyleOptions | undefined): SVGElement =>
+    applySvgStyleOptions(parseSvg(pinSvgRaw), options);

@@ -4,7 +4,7 @@
 
 import { z } from 'zod';
 import type { ToolState } from '../../types';
-import { summarizeWaypoint, waypointSummarySchema } from '../../utils/summarize';
+import { summarizeWaypoint, waypointSummarySchema } from '../../utils';
 
 export const getCurrentWaypointsSchema = z.object({
     slotIndex: z
@@ -44,10 +44,8 @@ export const getCurrentWaypointsOutputSchema = z.object({
 });
 
 export const getCurrentWaypointsDescription =
-    'Read the waypoint slots currently staged for the next route calculation without recalculating anything. ' +
-    'Use for follow-up questions like "what coordinates are staged now?", "which slots are filled?", or "what is destination slot 1?". ' +
-    'Highly specific rules: slotIndex returns one known slot; otherwise results are paged, default to 5 slots, and empty slots are omitted unless includeEmptySlots=true to keep payloads compact. ' +
-    'Does not call any service.';
+    'Read staged waypoint slots for the next route calc, without recalculating. ' +
+    '`slotIndex` for one slot; otherwise paged (default 5), empty slots omitted unless `includeEmptySlots: true`. No service call.';
 
 export const executeGetCurrentWaypoints = async (
     params: z.infer<typeof getCurrentWaypointsSchema>,

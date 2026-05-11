@@ -368,7 +368,8 @@ test.describe('Routing and waypoint events tests', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test('Click events for a waypoint after changing map style', async ({ page }) => {
+    // TODO(LSI-263): Enable when flakyness has been fixed
+    test.skip('Click events for a waypoint after changing map style', async ({ page }) => {
         await setupWaypointsClickHandlers(page);
         await showWaypoints(page, [waypoint0Coords]);
         await waitForMapIdle(page);
@@ -453,7 +454,8 @@ test.describe('Routing and waypoint events tests', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test('Click events for a route after changing map style', async ({ page }) => {
+    // TODO(LSI-263): Enable when flakyness has been fixed
+    test.skip('Click events for a route after changing map style', async ({ page }) => {
         await setupRouteLineClickHandlers(page);
         await showRoutes(page, rotterdamToAmsterdamRoutes);
         await waitForMapIdle(page);

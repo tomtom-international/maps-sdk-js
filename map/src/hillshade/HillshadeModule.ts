@@ -126,7 +126,7 @@ export class HillshadeModule extends AbstractMapModule<HillshadeSourcesWithLayer
      * @ignore
      */
     protected _applyConfig(config: HillshadeModuleConfig | undefined) {
-        this.setVisible(config?.visible ?? false);
+        this._setVisible(config?.visible ?? false, false);
         return config;
     }
 
@@ -145,16 +145,17 @@ export class HillshadeModule extends AbstractMapModule<HillshadeSourcesWithLayer
      * ```
      */
     setVisible(visible: boolean): void {
-        this.config = {
-            ...this.config,
-            visible,
-        };
+        this._setVisible(visible);
+    }
 
+    private _setVisible(visible: boolean, updateConfig = true): void {
         if (this.tomtomMap.mapReady) {
             this.sourcesWithLayers.hillshade.setLayersVisible(visible);
         }
-
-        this.emitConfigChange();
+        if (updateConfig) {
+            this.config = { ...this.config, visible };
+            this.emitConfigChange();
+        }
     }
 
     /**

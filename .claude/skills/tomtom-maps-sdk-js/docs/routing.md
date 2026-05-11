@@ -390,7 +390,9 @@ routingModule.events.vehicleRestricted.on('click', (section, lngLat) => { /* res
 
 ---
 
-## Dynamic stop insertion with `withInsertedWaypoint`
+## Dynamic stop insertion with `withInsertedWaypoint` / `withInsertedWaypoints`
+
+For a single new stop (e.g. a map click), use `withInsertedWaypoint`:
 
 ```ts
 import { withInsertedWaypoint } from '@tomtom-org/maps-sdk/core';
@@ -409,6 +411,30 @@ map.mapLibreMap.on('click', async (e) => {
     routingModule.showRoutes(updated);
 });
 ```
+
+For multiple new stops at once (e.g. results from `alongRouteSearch`), use `withInsertedWaypoints` — projections are computed once and the result is in along-route order regardless of input order:
+
+```ts
+import { withInsertedWaypoints } from '@tomtom-org/maps-sdk/core';
+import { search, calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+const stops = await search({
+    poiCategories: ['ELECTRIC_VEHICLE_STATION'],
+    route: routes.features[0],
+    maxDetourTimeSeconds: 300,
+    limit: 5,
+});
+
+const updatedWaypoints = withInsertedWaypoints(
+    routes.features[0],
+    waypoints,
+    stops.features.map((f) => f.geometry.coordinates as [number, number]),
+);
+
+const updatedRoutes = await calculateRoute({ locations: updatedWaypoints });
+```
+
+**Don't loop `withInsertedWaypoint` to insert N stops** — the plural variant projects everything once (O(n+m) instead of O(n·m)) and gives a deterministic along-route order independent of input order.
 
 ---
 

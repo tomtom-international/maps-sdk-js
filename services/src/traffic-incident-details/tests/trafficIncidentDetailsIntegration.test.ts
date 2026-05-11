@@ -1,5 +1,9 @@
 import type { BBox, TrafficIncidentDetails } from '@tomtom-org/maps-sdk/core';
-import { indexedMagnitudes, trafficIncidentCategories } from '@tomtom-org/maps-sdk/core';
+import {
+    fullTrafficIncidentCategories,
+    indexedMagnitudes,
+    trafficIncidentRequestCategories,
+} from '@tomtom-org/maps-sdk/core';
 import { beforeAll, describe, expect, test, vi } from 'vitest';
 import type { FetchInput } from '../../shared';
 import { SDKServiceError } from '../../shared';
@@ -11,7 +15,7 @@ import type { IncidentDetailsResponseAPI } from '../types/apiTypes';
 const AMSTERDAM_BBOX: BBox = [4.728, 52.278, 5.08, 52.479];
 
 // Reusable shape matchers
-const categoryRegex = new RegExp(trafficIncidentCategories.join('|'));
+const categoryRegex = new RegExp(fullTrafficIncidentCategories.join('|'));
 const magnitudeRegex = new RegExp(indexedMagnitudes.join('|'));
 
 const expectedIncident = expect.objectContaining({
@@ -92,6 +96,19 @@ describe('Traffic Incident Details integration tests', () => {
         for (const incident of result.features) {
             expect(['accident', 'road-closed']).toContain(incident.properties.category);
         }
+    });
+
+    test('bbox query accepts every value in trafficIncidentRequestCategories', async () => {
+        // Pins the contract that every category exposed by the SDK as a filter input is
+        // actually accepted by the upstream. A new entry in trafficIncidentRequestCategories
+        // that the API rejects ("Unsupported categoryFilter parameter value") would surface
+        // here as an SDKServiceError instead of silently breaking real-world callers.
+        const result = await trafficIncidentDetails({
+            bbox: AMSTERDAM_BBOX,
+            categoryFilter: [...trafficIncidentRequestCategories],
+        });
+
+        expect(result).toMatchObject({ type: 'FeatureCollection', features: expect.any(Array) });
     });
 
     test('ids query (GET) looks up specific incidents found via bbox', async () => {

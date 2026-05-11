@@ -2,7 +2,7 @@
  * @module agent-toolkit-tools
  */
 
-import { type Tool, tool } from 'ai';
+import { type Tool } from 'ai';
 import { z } from 'zod';
 import type { ToolMetadata } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
@@ -45,9 +45,7 @@ export const helpSchema = z.object({
 });
 
 export const helpDescription =
-    'Discover what this agent can do. Returns all capability example prompts mixed together (summary mode) ' +
-    'or searchable per-tool details with descriptions and examples (detail mode). ' +
-    'Call this when the user asks what you can do, or when you need to find the right tool for a task.';
+    'List capabilities. `mode: "summary"` returns mixed example prompts; `mode: "detail"` returns searchable per-tool descriptions and examples. Call when the user asks what the agent can do, or to find the right tool.';
 
 /**
  * Create the help tool.
@@ -56,12 +54,12 @@ export const helpDescription =
  *   Called at execution time, not at creation time, so metadata can be
  *   populated after all tools are set up.
  */
-export const createHelpTool = (getToolsMetadata: () => Record<string, ToolMetadata>): Tool => {
-    return tool({
+export const createHelpTool = (getToolsMetadata: () => Record<string, ToolMetadata>): Tool =>
+    ({
         description: helpDescription,
         inputSchema: helpSchema,
         outputSchema: helpOutputSchema,
-        execute: async (params): Promise<z.infer<typeof helpOutputSchema>> => {
+        execute: async (params: z.infer<typeof helpSchema>): Promise<z.infer<typeof helpOutputSchema>> => {
             const { mode, query, tag } = params;
 
             try {
@@ -112,5 +110,4 @@ export const createHelpTool = (getToolsMetadata: () => Record<string, ToolMetada
                 };
             }
         },
-    });
-};
+    }) as Tool;

@@ -2,10 +2,9 @@
  * @module agent-toolkit-tools
  */
 
-import { bboxFromGeoJSON, type HasBBox } from '@tomtom-org/maps-sdk/core';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
-import { hasBBoxSchema } from '../shared';
+import { geoJsonBBoxSchema } from '../shared';
 import { toolErrorSchema } from '../shared-output-schemas';
 
 /** Output schema for the fly-to tool. */
@@ -21,7 +20,7 @@ export const flyToSchema = z.object({
     where: z.union([
         z
             .object({
-                boundingBox: hasBBoxSchema.describe('BBox [W,S,E,N] or GeoJSON object with bbox.'),
+                boundingBox: geoJsonBBoxSchema.describe('BBox [W,S,E,N].'),
                 padding: z.number().optional().describe('Padding in pixels. Default: 50.'),
             })
             .describe('Fit the camera to a bounding box.'),
@@ -43,11 +42,9 @@ export const executeFlyTo = async (params: z.infer<typeof flyToSchema>, state: T
     const { where } = params;
     try {
         if ('boundingBox' in where) {
-            const bbox = bboxFromGeoJSON(where.boundingBox as HasBBox);
-            if (!bbox) {
-                return { error: 'Invalid boundingBox — could not extract a bounding box.' };
-            }
-            state.baseMap.mapLibreMap.fitBounds(bbox, { padding: where.padding ?? 50 });
+            state.baseMap.mapLibreMap.fitBounds(where.boundingBox as [number, number, number, number], {
+                padding: where.padding ?? 50,
+            });
         } else {
             state.baseMap.mapLibreMap.flyTo({
                 center: where.position as [number, number],

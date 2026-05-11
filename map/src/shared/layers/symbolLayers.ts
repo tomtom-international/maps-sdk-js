@@ -31,6 +31,16 @@ export const DEFAULT_TEXT_OFFSET_X = 1.4;
  */
 export const DEFAULT_PLACE_ICON_ID = 'default_place';
 
+// Fallback sprite for `base-map` theme places that don't match any category. The
+// style ships `poi-<group>-micro` sprites (e.g. `poi-parking-micro`) for the
+// `POI - Micro` layer — reusing one of those keeps uncategorized places visually
+// consistent with the native base-map POI labels (small dot) instead of showing
+// the large `default_place` pin.
+/**
+ * @ignore
+ */
+export const DEFAULT_BASE_MAP_PLACE_ICON_ID = 'poi-parking-micro';
+
 /**
  * @ignore
  */

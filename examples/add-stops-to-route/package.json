@@ -1,6 +1,6 @@
 {
   "name": "@examples/add-stops-to-route",
-  "description": "Add stops to a route by clicking on the map",
+  "description": "Find stops along a route within a 5-minute detour and insert them all at optimal positions in a single call.",
   "type": "module",
   "scripts": {
     "build": "vite build --config ../example-vite.config.ts",

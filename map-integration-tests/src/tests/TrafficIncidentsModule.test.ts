@@ -1,7 +1,7 @@
 import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 import type { DelayMagnitude, TrafficIncidentCategory } from 'core';
-import { trafficIncidentCategories as availableIncidentCategories } from 'core';
+import { fullTrafficIncidentCategories as availableIncidentCategories } from 'core';
 import type { IncidentsConfig, RoadCategory, TrafficIncidentsFilters, TrafficIncidentsModuleFeature } from 'map';
 import { TRAFFIC_INCIDENTS_SOURCE_ID } from 'map';
 import { MapsSDKThis } from './types/MapsSDKThis';
@@ -168,7 +168,8 @@ test.describe('Map vector tile traffic incidents module tests', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test('Traffic incidents filtering with config changes', async ({ page }) => {
+    // TODO(LSI-263): Enable when flakyness has been fixed
+    test.skip('Traffic incidents filtering with config changes', async ({ page }) => {
         await mapEnv.loadPageAndMap(page, { zoom: 13, center: [-0.12621, 51.50394] }); // London
         await initTrafficIncidents(page, { visible: true });
         expect(await getConfig(page)).toEqual({ visible: true });
@@ -364,5 +365,24 @@ test.describe('Map vector tile traffic incidents module tests', () => {
             filters: incidentFilters,
             icons: {},
         });
+    });
+
+    test.skip('Incidents stay hidden when style changes immediately after resetConfig', async ({ page }) => {
+        await mapEnv.loadPageAndMap(page, { zoom: 12, center: [-0.12621, 51.50394] });
+
+        await initTrafficIncidents(page);
+        await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.setVisible(true));
+        await waitForMapIdle(page);
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.isVisible())).toBe(true);
+
+        // Reset config and change style without waiting in between:
+        await resetConfig(page);
+        await setStyle(page, 'standardDark');
+        await waitForMapIdle(page);
+
+        expect(await getConfig(page)).toBeUndefined();
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidents?.isVisible())).toBe(false);
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 });

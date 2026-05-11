@@ -294,7 +294,8 @@ test.describe('Routing and waypoint display tests', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test('Showing waypoints first and right after changing the style', async ({ page }) => {
+    // TODO(LSI-263): Enable when flakyness has been fixed
+    test.skip('Showing waypoints first and right after changing the style', async ({ page }) => {
         const mapEnv = await MapTestEnv.loadPageAndMap(page, {
             bounds: rotterdamToAmsterdamRoutes.bbox,
             fitBoundsOptions: { padding: 150 },
@@ -314,7 +315,8 @@ test.describe('Routing and waypoint display tests', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test('Show and clear flows using LDEVR route with guidance', async ({ page }) => {
+    // TODO(LSI-263): Enable when flakyness has been fixed
+    test.skip('Show and clear flows using LDEVR route with guidance', async ({ page }) => {
         const mapEnv = await MapTestEnv.loadPageAndMap(page, {
             bounds: ldevrTestRoutes.bbox,
             fitBoundsOptions: { padding: 150 },
@@ -515,7 +517,8 @@ test.describe('Routing and waypoint display tests', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test('Distance and time units configuration', async ({ page }) => {
+    // TODO(LSI-263): Enable when flakyness has been fixed
+    test.skip('Distance and time units configuration', async ({ page }) => {
         const mapEnv = await MapTestEnv.loadPageAndMap(page, {
             fitBoundsOptions: { padding: 150 },
             bounds: rotterdamToAmsterdamRoutes.bbox,

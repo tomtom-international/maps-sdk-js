@@ -33,16 +33,16 @@ describe('BaseMap module tests', () => {
             visible: false,
             layerGroupsFilter: { mode: 'include', names: ['borders', 'water', 'land'] },
         });
-        const spySetVisible = vi.spyOn(basemap, 'setVisible');
         expect(basemap).toBeDefined();
         expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
 
         basemap.applyConfig({ visible: true });
-        expect(spySetVisible).toHaveBeenCalledWith(true);
+        expect(basemap.getConfig()).toMatchObject({ visible: true });
 
         basemap.setVisible(false);
         expect(basemap.isVisible()).toBe(false);
+        expect(basemap.getConfig()).toMatchObject({ visible: false });
     });
 
     test('Initializing module with no config', async () => {

@@ -100,4 +100,25 @@ test.describe('Map vector tiles hillshade module tests', () => {
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
+
+    test.skip('Hillshade stays hidden when style changes immediately after resetConfig', async ({ page }) => {
+        await mapEnv.loadPageAndMap(page, { zoom: 14, center: [-0.12621, 51.50394] });
+
+        await initHillshade(page);
+        await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.setVisible(true));
+        await waitForMapIdle(page);
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.isVisible())).toBe(true);
+        expect(await getNumVisibleLayersBySource(page, HILLSHADE_SOURCE_ID)).toBe(1);
+
+        // Reset config and change style without waiting in between:
+        await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.resetConfig());
+        await setStyle(page, 'standardDark');
+        await waitForMapIdle(page);
+
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.getConfig())).toBeUndefined();
+        expect(await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.isVisible())).toBe(false);
+        expect(await getNumVisibleLayersBySource(page, HILLSHADE_SOURCE_ID)).toBe(0);
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
 });

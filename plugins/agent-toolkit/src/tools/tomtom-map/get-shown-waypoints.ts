@@ -37,7 +37,11 @@ export const executeGetShownWaypoints = async (
     state: ToolState,
 ): Promise<z.infer<typeof getShownWaypointsOutputSchema>> => {
     try {
-        const shown = (await state.routing.getRoutingModule()).getShown();
+        // Read off the currently-shown entry's RoutingModule (per-entry now).
+        // No shown entry → no waypoints, no need to lazy-init anything.
+        const module = state.routing.currentEntryModule;
+        if (!module) return { error: 'No waypoints currently shown on the map' };
+        const shown = module.getShown();
 
         if (!shown.waypoints || shown.waypoints.features.length === 0) {
             return { error: 'No waypoints currently shown on the map' };

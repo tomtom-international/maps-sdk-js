@@ -5,24 +5,28 @@
  */
 
 export {
-    addStopToRouteDescription,
-    addStopToRouteOutputSchema,
-    addStopToRouteSchema,
-    executeAddStopToRoute,
-} from './add-stop-to-route';
+    addWaypointsToRouteDescription,
+    addWaypointsToRouteOutputSchema,
+    addWaypointsToRouteSchema,
+    executeAddWaypointsToRoute,
+} from './add-waypoints-to-route';
 export {
+    buildDiscoverPlacesDescription,
+    buildDiscoverPlacesEntry,
+    buildDiscoverPlacesSchema,
+    buildExecuteDiscoverPlaces,
+    discoverPlacesBuilder,
     discoverPlacesDescription,
     discoverPlacesOutputSchema,
     discoverPlacesSchema,
     executeDiscoverPlaces,
 } from './discover-places';
 export {
-    executeFindReachableArea,
-    findReachableAreaDescription,
-    findReachableAreaOutputSchema,
-    findReachableAreaSchema,
-} from './find-reachable-area';
-export { executeGeocode, geocodeDescription, geocodeOutputSchema, geocodeSchema } from './geocode';
+    executeFindReachableAreas,
+    findReachableAreasDescription,
+    findReachableAreasOutputSchema,
+    findReachableAreasSchema,
+} from './find-reachable-areas';
 export {
     executeGetPoiCategoryCodes,
     getPoiCategoryCodesDescription,
@@ -49,17 +53,17 @@ export {
     locatePlaceSchema,
 } from './locate-place';
 export {
-    executeQueryTrafficAnalytics,
-    queryTrafficAnalyticsDescription,
-    queryTrafficAnalyticsOutputSchema,
-    queryTrafficAnalyticsSchema,
-} from './query-traffic-analytics';
+    executeRemoveWaypointsFromRoute,
+    removeWaypointsFromRouteDescription,
+    removeWaypointsFromRouteOutputSchema,
+    removeWaypointsFromRouteSchema,
+} from './remove-waypoints-from-route';
 export {
-    executeRemoveStopFromRoute,
-    removeStopFromRouteDescription,
-    removeStopFromRouteOutputSchema,
-    removeStopFromRouteSchema,
-} from './remove-stop-from-route';
+    executeReplaceWaypointInRoute,
+    replaceWaypointInRouteDescription,
+    replaceWaypointInRouteOutputSchema,
+    replaceWaypointInRouteSchema,
+} from './replace-waypoint-in-route';
 export {
     executeReverseGeocode,
     reverseGeocodeDescription,
@@ -67,20 +71,11 @@ export {
     reverseGeocodeSchema,
 } from './reverse-geocode';
 export {
-    executeSearchAlongRoute,
-    searchAlongRouteDescription,
-    searchAlongRouteOutputSchema,
-    searchAlongRouteSchema,
-} from './search-along-route';
-export {
-    executeSetRouteLocations,
-    setRouteLocationsDescription,
-    setRouteLocationsOutputSchema,
-    setRouteLocationsSchema,
-} from './set-route-locations';
-export {
-    executeSetRouteParameters,
-    setRouteParametersDescription,
-    setRouteParametersOutputSchema,
-    setRouteParametersSchema,
-} from './set-route-parameters';
+    costModelSchema,
+    executeSetRoute,
+    routeParametersSchema,
+    setRouteDescription,
+    setRouteOutputSchema,
+    setRouteSchema,
+    whenSchema,
+} from './set-route';

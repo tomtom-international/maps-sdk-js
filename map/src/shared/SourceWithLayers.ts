@@ -65,6 +65,11 @@ export abstract class AbstractSourceWithLayers<
 
     setLayersVisible(visible: boolean, filter?: LayerSpecFilter): void {
         for (const layerSpec of this.getLayerSpecs(filter)) {
+            // The layer may have been removed by an out-of-band style swap
+            // (e.g. `setStyle()` between calls) — `setLayoutProperty` on a
+            // missing id throws inside MapLibre. Skip silently; the next
+            // `show()` will re-add the layer via `ensureAddedToMap`.
+            if (!this.map.getLayer(layerSpec.id)) continue;
             this.map.setLayoutProperty(layerSpec.id, 'visibility', visible ? 'visible' : 'none', { validate: false });
         }
     }
@@ -171,6 +176,16 @@ export type ShowOptions = {
 };
 
 /**
+ * Subset of {@link GeoJSONSourceSpecification} fields that {@link GeoJSONSourceWithLayers}
+ * can be configured with at construction time. Forwarded verbatim to MapLibre.
+ * @ignore
+ */
+export type GeoJSONSourceClusterOptions = Pick<
+    GeoJSONSourceSpecification,
+    'cluster' | 'clusterRadius' | 'clusterMaxZoom' | 'clusterMinPoints' | 'clusterProperties'
+>;
+
+/**
  * @ignore
  */
 export class GeoJSONSourceWithLayers<T extends FeatureCollection = FeatureCollection> extends AddedSourceWithLayers<
@@ -179,10 +194,21 @@ export class GeoJSONSourceWithLayers<T extends FeatureCollection = FeatureCollec
 > {
     shownFeatures: T = emptyFeatureCollection as T;
 
-    constructor(map: Map, sourceId: string, layerSpecs: ToBeAddedLayerSpecWithoutSource[], addLayersToMap = true) {
+    constructor(
+        map: Map,
+        sourceId: string,
+        layerSpecs: ToBeAddedLayerSpecWithoutSource[],
+        addLayersToMap = true,
+        clusterOptions?: GeoJSONSourceClusterOptions,
+    ) {
         // MapLibre does not reuse the given feature ID. Either we generate it on the fly or use the one from properties via promotedId value.
         // We must generate "id" property based on the feature id on the fly on "prepareForDisplay" functions.
-        super(map, sourceId, { type: 'geojson', data: emptyFeatureCollection, promoteId: 'id' }, layerSpecs);
+        // `promoteId` is incompatible with `cluster: true` (MapLibre validates cluster sources without it),
+        // so we omit it whenever clustering is enabled.
+        const sourceSpec: GeoJSONSourceSpecification = clusterOptions?.cluster
+            ? { type: 'geojson', data: emptyFeatureCollection, ...clusterOptions }
+            : { type: 'geojson', data: emptyFeatureCollection, promoteId: 'id', ...(clusterOptions ?? {}) };
+        super(map, sourceId, sourceSpec, layerSpecs);
         this.ensureAddedToMapWithVisibility(false, addLayersToMap);
     }
 

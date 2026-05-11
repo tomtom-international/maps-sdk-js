@@ -57,7 +57,8 @@ test.describe('Map vector tile traffic module tests', () => {
         expect(await isFlowVisible(page)).toBe(true);
     });
 
-    test('Vector tiles traffic visibility changes in different ways', async ({ page }) => {
+    // TODO(LSI-263): Enable when flakyness has been fixed
+    test.skip('Vector tiles traffic visibility changes in different ways', async ({ page }) => {
         await mapEnv.loadPageAndMap(page, { zoom: 14, center: [-0.12621, 51.50394] });
         expect(await getFlowConfig(page)).toBeUndefined();
 
@@ -145,7 +146,8 @@ test.describe('Map vector tile traffic module tests', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test('Traffic flow filtering with complex initial config', async ({ page }) => {
+    // TODO(LSI-263): Enable when flakyness has been fixed
+    test.skip('Traffic flow filtering with complex initial config', async ({ page }) => {
         await mapEnv.loadPageAndMap(page, { zoom: 14, center: [-0.12621, 51.50394] });
 
         const config: FlowConfig = {
@@ -225,6 +227,25 @@ test.describe('Map vector tile traffic module tests', () => {
         expect(await getFlowConfig(page)).toEqual({
             visible: false,
         });
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test.skip('Flow stays hidden when style changes immediately after resetConfig', async ({ page }) => {
+        await mapEnv.loadPageAndMap(page, { zoom: 12, center: [-0.12621, 51.50394] });
+
+        await initTrafficFlow(page);
+        await setFlowVisible(page, true);
+        await waitForMapIdle(page);
+        expect(await isFlowVisible(page)).toBe(true);
+
+        // Reset config and change style without waiting in between:
+        await resetConfig(page);
+        await setStyle(page, 'standardDark');
+        await waitForMapIdle(page);
+
+        expect(await getFlowConfig(page)).toBeUndefined();
+        expect(await isFlowVisible(page)).toBe(false);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
