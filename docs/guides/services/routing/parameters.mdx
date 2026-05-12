@@ -1,0 +1,308 @@
+---
+title: Route Planning Parameters
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.47.3"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+Route planning involves configuring parameters to calculate optimal routes between locations. This guide covers all available options for customizing route calculation.
+
+## Locations
+
+*For comprehensive guide on specifying route planning locations, see [Locations](../../services/routing/locations.mdx).*
+
+Ordered list of locations for route calculation. Locations can be specified as single point waypoints or path arrays.
+
+Calculate a route between two locations:
+
+```javascript
+import { calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+const route = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676], // Amsterdam coordinates
+        [2.3522, 48.8566]  // Paris coordinates
+    ]
+});
+```
+
+Calculate a route following a specific path using path arrays:
+
+```javascript
+const route = await calculateRoute({
+    locations: [
+        [4.9, 52.3],  // Origin waypoint
+        [
+            [4.85, 52.25],  // Path points
+            [4.80, 52.20],
+            [4.75, 52.15]
+        ],
+        [4.5, 51.9]   // Destination waypoint
+    ]
+});
+```
+
+Calculate a route between two geocoded locations:
+
+```javascript
+import { geocodeOne } from '@tomtom-org/maps-sdk/services';
+
+const waypoints = await Promise.all([
+    geocodeOne('Amsterdam, Netherlands'),
+    geocodeOne('Paris, France')
+]);
+
+const route = await calculateRoute({ locations: waypoints });
+```
+
+## Alternative Routes
+
+Request multiple route options with `maxAlternatives`.
+
+Alternative routes provide different travel options between the same origin and destination. Each alternative is optimized differently (e.g., avoiding highways, minimizing tolls). The best route is always returned as the first option.
+
+*Note: May return fewer alternatives than requested if not enough viable routes found.*
+
+*Note: Increasing alternatives amount also increases response time.*
+
+```javascript
+const routes = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+
+    // Returns up to 3 routes total (best + 2 alternatives)
+    maxAlternatives: 2
+});
+```
+
+## Cost model
+
+Configure route type, traffic consideration, and avoidances using `costModel`.
+
+`routeType` – Type of route optimization
+- `fast` - Optimized by travel time (default)
+- `short` - Optimized by travel distance
+- `efficient` - Balance between time and fuel/energy consumption
+- `thrilling` - Scenic routes with fewer motorways (max 900km)
+
+`traffic` – What traffic data to consider for route planning
+- `live` - Real-time traffic + historical patterns (default)
+- `historical` - Typical traffic patterns only
+
+`avoid` – Route features to try to avoid (none by default)
+- `tollRoads` – roads requiring toll payments
+- `motorways` – high-speed limited-access highways (useful for scenic routes or vehicle restrictions)
+- `ferries` – water crossings requiring ferry transport
+- `unpavedRoads` – unpaved/dirt roads (recommended for standard vehicles)
+- `carpools` – carpool/HOV (High Occupancy Vehicle) lanes
+- `alreadyUsedRoads` – prevents using the same road segment multiple times (useful for delivery routes)
+- `borderCrossings` – crossing international borders (useful for customs/visa considerations)
+- `tunnels` – underground tunnels (useful for vehicles carrying hazardous materials)
+- `carTrains` – car train transport segments
+- `lowEmissionZones` – zones with vehicle emission restrictions
+
+`avoidAreas` – Rectangular geographic areas for the routing engine to bypass, expressed as GeoJSON bounding boxes `[west, south, east, north]` (up to 10)
+- Each rectangle is limited to ~160×160 km
+- Cannot cross the 180th meridian
+- Latitude must be between −80° and +80°
+
+```javascript
+// Fast route considering live traffic
+const route = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    costModel: {
+        routeType: 'fast', // default
+        traffic: 'live' // default
+    }
+});
+
+// Short route avoiding tolls
+const route = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    costModel: {
+        routeType: 'short',
+        avoid: ['tollRoads']
+    }
+});
+
+// Efficient route avoiding highways and ferries
+const route = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    costModel: {
+        routeType: 'efficient',
+        traffic: 'historical',
+        avoid: ['motorways', 'ferries']
+    }
+});
+
+// Route bypassing a specific geographic area (e.g., a construction zone)
+const route = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    costModel: {
+        avoidAreas: [
+            [2.265938, 48.81851, 2.41115, 48.90309] // [west, south, east, north]
+        ]
+    }
+});
+```
+
+## Departure and Arrival Time
+
+Control when to depart or arrive using `when`.
+
+The response will contain estimated departure and arrival times based on the provided parameters at `summary.departureTime` and `summary.arrivalTime`.
+
+```javascript
+// Depart at specific time
+const route = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    when: {
+        option: 'departAt',
+        date: new Date('2025-12-25T09:00:00Z')
+    }
+});
+
+// Arrive by specific time
+const route = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    when: {
+        option: 'arriveBy',
+        date: new Date('2025-12-25T17:00:00Z')
+    }
+});
+```
+
+## Vehicle Configuration
+
+*For comprehensive guide on specifying vehicle configuration, see [Vehicle Configuration](../../services/routing/vehicle.mdx).*
+
+Configure vehicle-specific routing with the `vehicle` parameter.
+
+`model` – vehicle dimensions and engine details
+
+`state` – current vehicle state (fuel/charge levels)
+
+`restrictions` – cargo and usage restrictions
+
+`preferences` – charging preferences (electric vehicles only)
+
+```javascript
+// Generic vehicle
+const route = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    vehicle: {
+        model: {
+            dimensions: {
+                heightMeters: 2.5,
+                weightKG: 3500
+            }
+        }
+    }
+});
+```
+
+## Turn-by-Turn Guidance
+
+*For comprehensive guide on navigation guidance, see [Guidance](../../services/routing/guidance.mdx).*
+
+Request navigation instructions:
+
+```javascript
+const route = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    guidance: {
+        type: 'coded',
+        version: 2,
+        phonetics: 'IPA'
+    }
+});
+```
+
+## Route Sections
+
+Request specific section to be included in the route response. Leg sections are always included.
+
+Route section types:
+`carpool`, `carTrain`, `country`, `ferry`, `importantRoadStretch`, `lanes`, `leg`, `lowEmissionZone`, `motorway`, `pedestrian`, `roadShields`, `speedLimit`, `toll`, `tollVignette`, `traffic`, `tunnel`, `unpaved`, `urban`, `vehicleRestricted`,
+Includes all available section types by default.
+
+```javascript
+const route = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    sectionTypes: ['toll', 'ferry', 'traffic', 'motorway', 'country']
+});
+```
+
+*See the full list of available section types in the [Route Object Guide](../../core/route-object.mdx#sections).*
+
+## Extended Route Information
+
+Include progress data at route polyline points (enabled by default). The resulting route object will contain an additional property "progress" containing arrays of cumulative values for each point of the route.
+
+Useful for displaying progress during navigation.
+
+```javascript
+const route = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    extendedRouteRepresentations: ['distance', 'travelTime'] // default
+});
+```
+
+## Traffic-Based Travel Times
+
+Compare travel times across different traffic scenarios.
+
+`none` – only current traffic travel time is returned (default)
+
+`all` – the returned route summary will contain extra fields:
+  - `noTrafficTravelTimeInSeconds` – Free-flow (no traffic)
+  - `historicTrafficTravelTimeInSeconds` – Historic traffic patterns
+  - `liveTrafficIncidentsTravelTimeInSeconds` – Current live traffic
+
+Useful for comparing traffic impact and displaying "X minutes saved by leaving now".
+
+```javascript
+const route = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    computeAdditionalTravelTimeFor: 'all'
+});
+```
+
+## Entry Points
+
+Control how building entry points are used:
+
+`main-when-available` – routes to main entrance when available (default)
+`ignore` – use place center position
+
+```javascript
+const route = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    useEntryPoints: 'ignore'
+});
+```
+
+## API Reference
+
+For complete documentation of all route calculation parameters and types, see the [CalculateRouteParams API Reference](/maps-sdk-js/api-reference/types/services.CalculateRouteParams.html).
+
+## Related Guides and Examples
+
+### Related Guides
+
+- [Route Object](../../core/route-object.mdx) - Understanding route structure
+- [Routing Quickstart](../../services/routing/quickstart.mdx) - Getting started with route calculation
+- [Locations](../../services/routing/locations.mdx) - Specifying route planning locations
+- [Guidance](../../services/routing/guidance.mdx) - Navigation instructions
+- [Vehicle Configuration](../../services/routing/vehicle.mdx) - In-depth vehicle configuration
+
+### Map Integration
+- [Routing Module](../../map/routes.mdx) - Display calculated routes on map
+
+### Related Services
+- [Geocoding](../../places/geocoding.mdx) - Convert addresses to coordinates for route planning
+- [Search](../../places/search.mdx) - Find destinations and points of interest along routes
