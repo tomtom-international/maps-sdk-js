@@ -1,0 +1,184 @@
+---
+title: POI Categories
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.47.5"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The POI categories service returns the complete list of Point of Interest category types supported by the TomTom Search API. Use it to discover which `POICategory` values are available, to search categories by name or synonym, or to build category pickers in your UI.
+
+<SDKGuideLiveCodingExample exampleDirectory="nodejs-poi-categories" />
+
+The returned `code` values serve two purposes:
+- **Search filtering** — pass to `search({ poiCategories })` to filter results by category.
+- **Map POI icon filtering** — pass generic parent codes (e.g. `'RESTAURANT'`) to `POIsModule.filterCategories()` to show or hide the map's built-in POI icons. Overly specific child codes (e.g. `'ITALIAN_RESTAURANT'`) are not supported at the map display layer; use a parent code or a `POICategoryGroup` instead.
+
+Results are **cached in memory per language** — the first call for a given language fetches from the API; all subsequent calls are served from the cache without a network request.
+
+## Basic Usage
+
+```javascript
+import { getPOICategories } from '@tomtom-org/maps-sdk/services';
+
+const { poiCategories: categories } = await getPOICategories();
+
+categories.forEach(category => {
+    console.log(category.name);               // e.g. "Sports Center"
+    console.log(category.code);               // e.g. "SPORTS_CENTER"
+    console.log(category.synonyms);           // e.g. ["Fitness Center", "Gym", "Health Club"]
+    console.log(category.childCategoryCodes); // e.g. ["FITNESS_CENTER", "GYM"]
+});
+```
+
+## Getting Codes Directly — `getPOICategoryCodes`
+
+Use `getPOICategoryCodes` when you only need the code values without the full category objects. It accepts the same parameters as `getPOICategories`.
+
+```javascript
+import { getPOICategoryCodes } from '@tomtom-org/maps-sdk/services';
+
+// All codes
+const all = await getPOICategoryCodes();
+
+// Codes matching a keyword
+const restaurantCodes = await getPOICategoryCodes({ filters: ['restaurant'] });
+// e.g. ['RESTAURANT', 'FAST_FOOD', 'CAFE_PUB', ...]
+
+// Pass directly to search
+const results = await search({
+    poiCategories: restaurantCodes,
+    position: [4.9041, 52.3676],
+});
+```
+
+## Fetching in a Specific Language
+
+Pass `language` to receive localized category names and synonyms. The result is cached separately per language tag.
+
+```javascript
+const { poiCategories: categories } = await getPOICategories({ language: 'fr-FR' });
+
+categories.forEach(category => {
+    console.log(category.name);     // Localized name, e.g. "Centre sportif"
+    console.log(category.synonyms); // Localized synonyms
+});
+```
+
+## Filtering Categories
+
+Use the `filters` parameter to narrow results client-side. Each filter string is normalized (lowercased, spaces removed) and matched against the normalized form of every `name` and synonym. A category matches when any of its normalized texts contains the normalized filter as a **substring**.
+
+For example, `'eat'` matches a synonym like `'Eating Out'` (normalized: `'eatingout'`), and `'italian restaurant'` (normalized: `'italianrestaurant'`) matches `'Italian Restaurant'` but not `'Mexican Restaurant'`.
+
+No additional API call is made: the filter runs against the in-memory text index built when the cache is first populated. When a parent category matches, its child categories are omitted from the results — the parent already implies them.
+
+```javascript
+// Find categories matching "gym"
+const { poiCategories: gymCategories } = await getPOICategories({ filters: ['gym'] });
+
+// Multiple filters — results are merged and deduplicated
+const { poiCategories: combined } = await getPOICategories({ filters: ['gym', 'parking'] });
+
+// Combine with language
+const { poiCategories: restaurants } = await getPOICategories({
+    language: 'en-GB',
+    filters: ['restaurant'],
+});
+```
+
+## Using Categories in Search
+
+Pass `code` values directly to the `search` service to filter results by category:
+
+```javascript
+import { getPOICategories, search } from '@tomtom-org/maps-sdk/services';
+
+// 1. Fetch categories to populate a UI dropdown
+const { poiCategories: allCategories } = await getPOICategories();
+const options = allCategories
+    .map(category => ({ label: category.name, value: category.code }));
+
+// 2. Search using the selected category
+const results = await search({
+    poiCategories: ['SPORTS_CENTER'],
+    position: [4.9041, 52.3676],
+    limit: 20,
+});
+```
+
+## Filtering the Map's Built-in POI Icons
+
+Generic parent codes returned by this service can also be passed to `POIsModule.filterCategories()` to control which built-in POI icons appear on the map. `POICategoryGroup` values (e.g. `'FOOD_DRINKS_GROUP'`) work too.
+
+> **Note:** Overly specific child codes like `'ITALIAN_RESTAURANT'` are not supported at the map display layer. Use the parent code `'RESTAURANT'` or a group like `'FOOD_DRINKS_GROUP'` instead.
+
+```javascript
+import { getPOICategoryCodes } from '@tomtom-org/maps-sdk/services';
+import { TomTomMap, POIsModule } from '@tomtom-org/maps-sdk/map';
+
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+const poisModule = await POIsModule.get(map);
+
+// Show only restaurants and sports centres on the map
+const codes = await getPOICategoryCodes({ filters: ['restaurant', 'sport'] });
+poisModule.filterCategories({ show: 'only', values: codes });
+
+// Or use a group to show all food & drink icons
+poisModule.filterCategories({ show: 'only', values: ['FOOD_DRINKS_GROUP'] });
+```
+
+## Exploring Sub-categories
+
+`childCategoryCodes` lists sub-categories, useful for building drill-down category navigation:
+
+```javascript
+const { poiCategories: categories } = await getPOICategories();
+
+const restaurant = categories.find(category => category.code === 'RESTAURANT');
+console.log(restaurant?.childCategoryCodes);
+// e.g. ['ITALIAN_RESTAURANT', 'FRENCH_RESTAURANT', 'AMERICAN_RESTAURANT', ...]
+
+// Search specifically for the sub-category
+const results = await search({
+    poiCategories: ['ITALIAN_RESTAURANT'],
+    position: [4.9041, 52.3676],
+});
+```
+
+## Cache Management
+
+The cache is populated automatically on first use and persists for the lifetime of the page or process. To fetch categories in a different language, pass `language` explicitly — each language tag has its own independent cache entry.
+
+```javascript
+// Fetches once per language; subsequent calls are served from cache
+const { poiCategories: english } = await getPOICategories({ language: 'en-GB' });
+const { poiCategories: french } = await getPOICategories({ language: 'fr-FR' });
+```
+
+## Parameter Reference
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `language` | `string` | IETF language tag for localized names and synonyms (e.g. `'en-GB'`, `'fr-FR'`). Falls back to the global `TomTomConfig` language if not set. |
+| `filters` | `string[]` | Filter strings applied client-side. Each string is normalized (lowercased, spaces removed) and matched as a substring against the normalized form of every `name` and synonym. Results from all strings are merged and deduplicated. Omit to return all categories. |
+
+## Response Reference
+
+Each entry in the returned `poiCategories` array has the following shape:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `code` | `POICategory` | Category enum value. Use in `search({ poiCategories })` or, for generic parent codes, in `POIsModule.filterCategories()`. |
+| `name` | `string` | Human-readable category name in the requested language. |
+| `childCategoryCodes` | `POICategory[]` | Sub-category enum values. |
+| `synonyms` | `string[]` | Alternative names in the requested language. |
+
+## Related Guides
+
+- **[Search](./search.mdx)** — Use `POICategory` codes from `getPOICategories` in the `poiCategories` search parameter to filter search results.
+- **[POIs Module](../../map/pois.mdx)** — Filter the map's built-in POI icons using generic `POICategory` codes or `POICategoryGroup` values.
