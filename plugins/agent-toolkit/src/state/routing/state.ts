@@ -4,10 +4,10 @@
 
 import type { Routes, WaypointLike } from '@tomtom-org/maps-sdk/core';
 import { PlanningWaypoint, RoutingModule, type TomTomMap } from '@tomtom-org/maps-sdk/map';
-import type { RouteParams, RoutesEntry } from '../../types';
 import { StateEvents } from '../events';
 import type { EntryMode, ShownEntriesSlice } from '../state';
 import type { RoutesAnalysis } from './analysis';
+import type { RouteParams, RoutesEntry } from './entry';
 
 /**
  * Events fired by {@link RoutingState}. Subscribe via `state.routing.events.on(type, handler)`.

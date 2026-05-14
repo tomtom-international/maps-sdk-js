@@ -1,6 +1,6 @@
 {
   "name": "@tomtom-org/maps-sdk-examples",
-  "version": "0.47.2",
+  "version": "0.47.5",
   "type": "module",
   "description": "JavaScript library for examples of TomTom maps and location services",
   "module": "dist/examples.js",
@@ -25,6 +25,8 @@
   "devDependencies": {
     "@microsoft/api-extractor": "catalog:",
     "@playwright/test": "catalog:",
+    "@tailwindcss/node": "catalog:",
+    "@tailwindcss/oxide": "catalog:",
     "@tsconfig/recommended": "catalog:",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "catalog:",

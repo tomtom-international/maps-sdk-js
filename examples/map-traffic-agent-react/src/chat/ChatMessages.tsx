@@ -1,23 +1,20 @@
 import { AuiIf, ThreadPrimitive } from '@assistant-ui/react';
 import { MessageComponent, ThinkingMessage } from './ChatMessage';
 
-export const WELCOME_TEXT = [
-    "I'm your **live traffic operations** partner — ask me what's happening on the network right now, where the biggest slowdowns are, or to triage a specific work zone or zone.",
+export const DEFAULT_WELCOME_TEXT = [
+    "Hi! I'm your **map agent** — I can search places, plan routes, find stops along the way, calculate reachable areas, analyze traffic, and style the map.",
+    'Not sure where to start? Ask **"What can you do?"**',
     '&nbsp;',
-    '🧪 *Experimental feature.*',
+    '🧪 *This is an experimental feature.*',
 ].join('\n\n');
-
-const SUGGESTED_PROMPTS = [
-    "What incidents are happening on London's roads right now?",
-    'Summarise the 3 biggest slowdown clusters in central London',
-    'Focus on the worst delays inside the M25',
-];
 
 type ChatMessagesProps = {
     errors?: string[];
+    /** Optional starter prompts. Rendered only while the thread has no user messages. */
+    suggestedPrompts?: readonly string[];
 };
 
-export function ChatMessages({ errors = [] }: ChatMessagesProps) {
+export function ChatMessages({ errors = [], suggestedPrompts }: ChatMessagesProps) {
     return (
         <>
             <ThreadPrimitive.Messages>
@@ -27,15 +24,22 @@ export function ChatMessages({ errors = [] }: ChatMessagesProps) {
                 }}
             </ThreadPrimitive.Messages>
 
-            <AuiIf condition={(s) => !s.thread.messages.some((m) => m.role === 'user')}>
-                <div className="chat-suggestions">
-                    {SUGGESTED_PROMPTS.map((prompt) => (
-                        <ThreadPrimitive.Suggestion key={prompt} prompt={prompt} send className="chat-suggestion">
-                            {prompt}
-                        </ThreadPrimitive.Suggestion>
-                    ))}
-                </div>
-            </AuiIf>
+            {suggestedPrompts && suggestedPrompts.length > 0 && (
+                <AuiIf condition={(s) => !s.thread.messages.some((m) => m.role === 'user')}>
+                    <div className="flex flex-col items-start gap-1.5 px-3 py-2">
+                        {suggestedPrompts.map((prompt) => (
+                            <ThreadPrimitive.Suggestion
+                                key={prompt}
+                                prompt={prompt}
+                                send
+                                className="max-w-full cursor-pointer rounded-(--sdk-radius-10) border border-(--sdk-border-low) bg-(--sdk-surface-1) px-3 py-2 text-left text-(--sdk-font-caption-m) leading-snug text-(--sdk-text-medium) transition-colors hover:border-(--sdk-border-high) hover:bg-(--sdk-surface-2) hover:text-(--sdk-text-high) focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--sdk-primary-color)"
+                            >
+                                {prompt}
+                            </ThreadPrimitive.Suggestion>
+                        ))}
+                    </div>
+                </AuiIf>
+            )}
 
             <AuiIf condition={(s) => s.thread.isRunning}>
                 <ThinkingMessage />

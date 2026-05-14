@@ -20,6 +20,7 @@ describe('Vector tiles traffic flow module tests', () => {
             _eventsProxy: {
                 add: vi.fn(),
                 ensureAdded: vi.fn(),
+                updateIfRegistered: vi.fn(),
             },
             addStyleChangeHandler: vi.fn(),
             mapReady: vi.fn().mockReturnValue(false).mockReturnValue(true),
@@ -58,5 +59,20 @@ describe('Vector tiles traffic flow module tests', () => {
         expect(trafficFlowModule).toBeDefined();
         expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
+    });
+
+    test('restoreDataAndConfigImpl re-runs init and re-applies config after a style change', async () => {
+        const flowSource = { id: TRAFFIC_FLOW_SOURCE_ID };
+        const tomtomMapMock = createMockMap(flowSource);
+        const trafficFlowModule = await TrafficFlowModule.get(tomtomMapMock, { visible: true });
+        const getSourceCallsBefore = (tomtomMapMock.mapLibreMap.getSource as ReturnType<typeof vi.fn>).mock.calls
+            .length;
+
+        (trafficFlowModule as unknown as { restoreDataAndConfigImpl(): void }).restoreDataAndConfigImpl();
+
+        expect((tomtomMapMock.mapLibreMap.getSource as ReturnType<typeof vi.fn>).mock.calls.length).toBeGreaterThan(
+            getSourceCallsBefore,
+        );
+        expect(trafficFlowModule.getConfig()).toMatchObject({ visible: true });
     });
 });

@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.6](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-agent-toolkit-v0.2.5...maps-sdk-plugin-agent-toolkit-v0.2.6) (2026-05-12)
+
+
+### Features
+
+* agent evaluation testing [LSI-285] ([#1747](https://github.com/tomtom-international/maps-sdk-js/issues/1747)) ([dd02bec](https://github.com/tomtom-international/maps-sdk-js/commit/dd02bec020e08b517c2908d2690d8bf0f9ae0aa3))
+
+
+### Bug Fixes
+
+* upgrade and fix deps ([#1762](https://github.com/tomtom-international/maps-sdk-js/issues/1762)) ([f5f1f8e](https://github.com/tomtom-international/maps-sdk-js/commit/f5f1f8ed8d6168f24fdee900f580587fcc434422))
+
 ## [0.2.5](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-agent-toolkit-v0.2.4...maps-sdk-plugin-agent-toolkit-v0.2.5) (2026-05-11)
 
 

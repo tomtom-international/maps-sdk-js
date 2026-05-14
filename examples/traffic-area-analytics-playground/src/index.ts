@@ -8,6 +8,7 @@ import type {
 import { BaseMapModule, TomTomMap, TrafficAreaAnalyticsModule } from '@tomtom-org/maps-sdk/map';
 import { API_KEY } from './config';
 import { updateLegend } from './controls';
+import { defaultFilters, initFilters } from './filters';
 import { initCitySearch } from './loadAnalytics';
 import { initTogglePanel } from './togglePanel';
 import { initTooltip } from './tooltip';
@@ -31,7 +32,10 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
     const $ = (id: string) => document.getElementById(id) as HTMLElement;
 
-    const { selectCityByName, rerenderChart } = initCitySearch({
+    const filters = defaultFilters();
+    const applyButton = $('filter-apply') as HTMLButtonElement;
+
+    const { selectCityByName, rerenderChart, reloadCurrent, hasCurrent } = initCitySearch({
         map,
         analyticsModule,
         cityInput: $('city-input') as HTMLInputElement,
@@ -39,6 +43,17 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         bottomPanel: $('bottom-panel'),
         loadingOverlay: $('loading-overlay'),
         heatmapContainer: $('heatmap-chart'),
+        filters,
+    });
+
+    const filterControls = initFilters(filters, () => {
+        applyButton.disabled = !hasCurrent() || !filterControls.isValid();
+    });
+
+    applyButton.addEventListener('click', async () => {
+        if (!hasCurrent() || !filterControls.isValid()) return;
+        applyButton.disabled = true;
+        await reloadCurrent();
     });
 
     const cityLabelsMap = await BaseMapModule.get(map, {

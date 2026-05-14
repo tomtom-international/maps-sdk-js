@@ -24,6 +24,7 @@ describe('Vector tiles POI module tests', () => {
             _eventsProxy: {
                 add: vi.fn(),
                 ensureAdded: vi.fn(),
+                updateIfRegistered: vi.fn(),
             },
             addStyleChangeHandler: vi.fn(),
             mapReady: vi.fn().mockReturnValue(false).mockReturnValue(true),
@@ -48,6 +49,20 @@ describe('Vector tiles POI module tests', () => {
         expect(pois).toBeDefined();
         expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
+    });
+
+    test('restoreDataAndConfigImpl re-runs init and re-applies config after a style change', async () => {
+        const pois = await POIsModule.get(tomtomMapMock, { visible: false });
+        (tomtomMapMock.mapLibreMap.getSource as ReturnType<typeof vi.fn>).mockReturnValue({ id: POI_SOURCE_ID });
+        const getSourceCallsBefore = (tomtomMapMock.mapLibreMap.getSource as ReturnType<typeof vi.fn>).mock.calls
+            .length;
+
+        (pois as unknown as { restoreDataAndConfigImpl(): void }).restoreDataAndConfigImpl();
+
+        expect((tomtomMapMock.mapLibreMap.getSource as ReturnType<typeof vi.fn>).mock.calls.length).toBeGreaterThan(
+            getSourceCallsBefore,
+        );
+        expect(pois.getConfig()).toMatchObject({ visible: false });
     });
 
     test('filter methods while initializing module with filter config', async () => {

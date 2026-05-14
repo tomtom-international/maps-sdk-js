@@ -1,6 +1,6 @@
 import type { PolygonFeatures } from '@tomtom-org/maps-sdk/core';
 import type { DataDrivenPropertyValueSpecification, Map } from 'maplibre-gl';
-import { describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { mapStyleLayerIDs } from '../../shared';
 import type { TomTomMap } from '../../TomTomMap';
 import { GeometriesModule } from '../GeometriesModule';
@@ -10,9 +10,11 @@ import amsterdamGeometryData from './geometriesModuleMocked.test.data';
 // For real testing of such modules, refer to map-integration-tests.
 // Any forced coverage from tests here must be truly covered in map integration tests.
 describe('Geometry module tests', () => {
-    test('Basic flows', async () => {
+    let tomtomMapMock: TomTomMap;
+
+    beforeEach(() => {
         const geometrySource = { id: 'sourceID', setData: vi.fn() };
-        const tomtomMapMock = {
+        tomtomMapMock = {
             mapLibreMap: {
                 once: vi.fn().mockReturnValue(Promise.resolve()),
                 getSource: vi.fn().mockReturnValue(geometrySource),
@@ -28,11 +30,14 @@ describe('Geometry module tests', () => {
             _eventsProxy: {
                 add: vi.fn(),
                 ensureAdded: vi.fn(),
+                updateIfRegistered: vi.fn(),
             },
             addStyleChangeHandler: vi.fn(),
-            mapReady: vi.fn().mockReturnValue(false).mockReturnValue(true),
+            mapReady: vi.fn().mockReturnValue(true),
         } as unknown as TomTomMap;
+    });
 
+    test('Basic flows', async () => {
         const geometryConfig = { colorConfig: { fillColor: 'warm' }, textConfig: { textField: 'title' } };
 
         const textField: DataDrivenPropertyValueSpecification<string> = ['get', 'country'];
@@ -52,7 +57,7 @@ describe('Geometry module tests', () => {
         expect(geometry.getConfig()).toEqual({ ...geometryConfig, textConfig: { textField } });
 
         geometry.moveBeforeLayer('top');
-        expect(geometryAny.moveBeforeLayerID).toHaveBeenCalledWith('geometry-0_Title');
+        expect(geometryAny.moveBeforeLayerID).toHaveBeenCalledWith(expect.stringMatching(/^geometry-\d+_Title$/));
         geometry.moveBeforeLayer('country');
         expect(geometryAny.moveBeforeLayerID).toHaveBeenCalledWith(mapStyleLayerIDs.country);
         geometry.moveBeforeLayer('lowestPlaceLabel');
@@ -72,5 +77,14 @@ describe('Geometry module tests', () => {
         geometry.show(testGeometryData);
         geometry.clear();
         expect(geometry.events).toBeDefined();
+    });
+
+    test('restoreDataAndConfigImpl keeps source and layer IDs stable across a style change', async () => {
+        const geometry = await GeometriesModule.get(tomtomMapMock);
+        const before = structuredClone(geometry.sourceAndLayerIDs);
+
+        (geometry as unknown as { restoreDataAndConfigImpl(): void }).restoreDataAndConfigImpl();
+
+        expect(geometry.sourceAndLayerIDs).toEqual(before);
     });
 });

@@ -12,10 +12,11 @@ import {
     themedGeometryConfig,
 } from '@tomtom-org/maps-sdk/map';
 import { geometryData } from '@tomtom-org/maps-sdk/services';
-import type { PlacesEntry, StateSlice } from '../../types';
+import type { StateSlice } from '../../types';
 import { StateEvents } from '../events';
 import type { EntryMode } from '../state';
 import type { PlacesAnalysis } from './analysis';
+import type { PlacesEntry } from './entry';
 
 // Geometry Data service accepts up to 20 ids per request; we intentionally cap our batches
 // at 5 to keep individual requests small (lower per-call latency, easier to fan out in

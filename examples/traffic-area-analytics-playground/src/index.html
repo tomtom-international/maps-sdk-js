@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <meta charset="UTF-8">
         <title>Area Analytics Explorer</title>
         <meta name="viewport" content="initial-scale=1">
         <link rel="icon" href="data:,">
@@ -64,6 +65,49 @@
                         <option value="plasma">Plasma</option>
                     </select>
                 </div>
+
+                <details class="aa-filters" open>
+                    <summary class="aa-filters-summary">Query filters</summary>
+
+                    <div class="sdk-example-section aa-date-row">
+                        <div>
+                            <label class="sdk-example-form-label" for="filter-start-date">Start date</label>
+                            <input type="date" class="sdk-example-input" id="filter-start-date">
+                        </div>
+                        <div>
+                            <label class="sdk-example-form-label" for="filter-end-date">End date</label>
+                            <input type="date" class="sdk-example-input" id="filter-end-date">
+                        </div>
+                    </div>
+                    <p class="aa-filters-hint">End date must be ≥ 2 days ago; max 31-day window.</p>
+                    <p id="filter-date-error" class="aa-filters-error aa-hidden" role="alert"></p>
+
+                    <fieldset class="sdk-example-section aa-fieldset">
+                        <legend class="sdk-example-form-label">Hours of day</legend>
+                        <div id="filter-hour-presets" class="aa-preset-row"></div>
+                        <div id="filter-hour-grid" class="aa-hour-grid"></div>
+                    </fieldset>
+
+                    <fieldset class="sdk-example-section aa-fieldset">
+                        <legend class="sdk-example-form-label">Functional road classes</legend>
+                        <div class="aa-preset-row">
+                            <button type="button" id="filter-frc-all" class="aa-preset-button">All</button>
+                            <button type="button" id="filter-frc-none" class="aa-preset-button">None</button>
+                        </div>
+                        <div id="filter-frc-list" class="sdk-example-checkbox-list aa-frc-list"></div>
+                    </fieldset>
+
+                    <div class="sdk-example-section">
+                        <button
+                            type="button"
+                            id="filter-apply"
+                            class="sdk-example-button sdk-example-button-full"
+                            disabled
+                        >
+                            Apply filters
+                        </button>
+                    </div>
+                </details>
             </div>
         </div>
 
@@ -97,7 +141,7 @@
                     </div>
                 </div>
                 <div class="aa-heatmap-section">
-                    <span class="sdk-example-form-label">Congestion by Day &amp; Hour (last 7 days)</span>
+                    <span class="sdk-example-form-label" id="heatmap-label">Congestion by Day &amp; Hour</span>
                     <div id="heatmap-chart"></div>
                 </div>
             </div>

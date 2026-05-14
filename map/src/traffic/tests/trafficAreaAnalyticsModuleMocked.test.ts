@@ -27,6 +27,7 @@ describe('Traffic area analytics module tests', () => {
             _eventsProxy: {
                 add: vi.fn(),
                 ensureAdded: vi.fn(),
+                updateIfRegistered: vi.fn(),
             },
             addStyleChangeHandler: vi.fn(),
             mapReady: vi.fn().mockReturnValueOnce(false).mockReturnValue(true),
@@ -254,5 +255,17 @@ describe('Traffic area analytics module tests', () => {
         const module = await TrafficAreaAnalyticsModule.get(mockMap, { displayMode: 'heatmap' });
         module.applyConfig(undefined);
         expect(module.getConfig()).toBeUndefined();
+    });
+
+    test('restoreDataAndConfigImpl keeps source and layer IDs stable across a style change', async () => {
+        const mockMap = createMockMap();
+        const mod = await TrafficAreaAnalyticsModule.get(mockMap);
+        await mod.show(createSampleAnalytics());
+
+        const before = structuredClone(mod.sourceAndLayerIDs);
+
+        (mod as unknown as { restoreDataAndConfigImpl(): void }).restoreDataAndConfigImpl();
+
+        expect(mod.sourceAndLayerIDs).toEqual(before);
     });
 });

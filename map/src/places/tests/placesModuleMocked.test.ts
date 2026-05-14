@@ -1,6 +1,6 @@
 import { Place, Places } from '@tomtom-org/maps-sdk/core';
 import type { GeoJSONSource, Map } from 'maplibre-gl';
-import { describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { CombinedEvents } from '../../shared';
 import type { TomTomMap } from '../../TomTomMap';
 import { PlacesModule } from '../PlacesModule';
@@ -9,9 +9,11 @@ import { PlacesModule } from '../PlacesModule';
 // For real testing of such modules, refer to map-integration-tests.
 // Any forced coverage from tests here must be truly covered in map integration tests.
 describe('GeoJSON Places module tests', () => {
-    test('Basic flows', async () => {
+    let tomtomMapMock: TomTomMap;
+
+    beforeEach(() => {
         const placesSource: Partial<GeoJSONSource> = { id: 'dummy', setData: vi.fn() };
-        const tomtomMapMock = {
+        tomtomMapMock = {
             mapLibreMap: {
                 getSource: vi.fn().mockReturnValue(placesSource),
                 getLayer: vi.fn(),
@@ -30,12 +32,15 @@ describe('GeoJSON Places module tests', () => {
             _eventsProxy: {
                 add: vi.fn(),
                 ensureAdded: vi.fn(),
+                updateIfRegistered: vi.fn(),
             },
             _params: { commonBaseURL: 'TEST_URL', apiKey: 'TEST' },
             addStyleChangeHandler: vi.fn(),
-            mapReady: vi.fn().mockReturnValue(false).mockReturnValue(true),
+            mapReady: vi.fn().mockReturnValue(true),
         } as unknown as TomTomMap;
+    });
 
+    test('Basic flows', async () => {
         const testPlaces = {
             type: 'FeatureCollection',
             features: [{ properties: { address: { freeformAddress: 'TEST_ADDRESS' } } }],
@@ -74,5 +79,21 @@ describe('GeoJSON Places module tests', () => {
 
         places.clear();
         expect(places.events).toBeInstanceOf(CombinedEvents);
+    });
+
+    test('restoreDataAndConfigImpl keeps source and layer IDs stable across a style change', async () => {
+        const testPlaces = {
+            type: 'FeatureCollection',
+            features: [{ properties: { address: { freeformAddress: 'TEST_ADDRESS' } } }],
+        } as Places;
+
+        const places = await PlacesModule.get(tomtomMapMock, { theme: 'circle-icon' });
+        places.show(testPlaces);
+
+        const before = structuredClone(places.sourceAndLayerIDs);
+
+        (places as unknown as { restoreDataAndConfigImpl(): void }).restoreDataAndConfigImpl();
+
+        expect(places.sourceAndLayerIDs).toEqual(before);
     });
 });

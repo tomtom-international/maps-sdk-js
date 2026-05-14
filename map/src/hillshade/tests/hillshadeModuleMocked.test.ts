@@ -1,5 +1,5 @@
 import type { Map } from 'maplibre-gl';
-import { describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { HILLSHADE_SOURCE_ID } from '../../shared';
 import type { TomTomMap } from '../../TomTomMap';
 import { HillshadeModule } from '../HillshadeModule';
@@ -8,9 +8,11 @@ import { HillshadeModule } from '../HillshadeModule';
 // For real testing of such modules, refer to map-integration-tests.
 // Any forced coverage from tests here must be truly covered in map integration tests.
 describe('Vector tiles Hillshade module tests', () => {
-    test('Initializing module with config', async () => {
+    let tomtomMapMock: TomTomMap;
+
+    beforeEach(() => {
         const hillshadeSource = { id: HILLSHADE_SOURCE_ID };
-        const tomtomMapMock = {
+        tomtomMapMock = {
             mapLibreMap: {
                 once: vi.fn().mockReturnValue(Promise.resolve()),
                 getSource: vi.fn().mockReturnValue(hillshadeSource),
@@ -19,14 +21,15 @@ describe('Vector tiles Hillshade module tests', () => {
             _eventsProxy: {
                 add: vi.fn(),
                 ensureAdded: vi.fn(),
+                updateIfRegistered: vi.fn(),
             },
             addStyleChangeHandler: vi.fn(),
-            mapReady: vi.fn().mockReturnValue(false).mockReturnValue(true),
+            mapReady: vi.fn().mockReturnValue(true),
         } as unknown as TomTomMap;
+    });
 
-        const hillshade = await HillshadeModule.get(tomtomMapMock, {
-            visible: false,
-        });
+    test('Initializing module with config', async () => {
+        const hillshade = await HillshadeModule.get(tomtomMapMock, { visible: false });
         expect(hillshade).toBeDefined();
         expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
@@ -37,23 +40,24 @@ describe('Vector tiles Hillshade module tests', () => {
     });
 
     test('Initializing module with no config', async () => {
-        const hillshadeSource = { id: HILLSHADE_SOURCE_ID };
-        const tomtomMapMock = {
-            mapLibreMap: {
-                getSource: vi.fn().mockReturnValue(hillshadeSource),
-                getStyle: vi.fn().mockReturnValue({ layers: [{}], sources: { hillshadeSourceID: {} } }),
-            } as unknown as Map,
-            _eventsProxy: {
-                add: vi.fn(),
-                ensureAdded: vi.fn(),
-            },
-            addStyleChangeHandler: vi.fn(),
-            mapReady: vi.fn().mockReturnValue(false).mockReturnValue(true),
-        } as unknown as TomTomMap;
-
         const hillshade = await HillshadeModule.get(tomtomMapMock);
         expect(hillshade).toBeDefined();
         expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
+    });
+
+    test('restoreDataAndConfigImpl re-runs init and re-applies config after a style change', async () => {
+        const hillshade = await HillshadeModule.get(tomtomMapMock, { visible: false });
+        const getSourceCallsBefore = (tomtomMapMock.mapLibreMap.getSource as ReturnType<typeof vi.fn>).mock.calls
+            .length;
+
+        expect(() =>
+            (hillshade as unknown as { restoreDataAndConfigImpl(): void }).restoreDataAndConfigImpl(),
+        ).not.toThrow();
+
+        expect((tomtomMapMock.mapLibreMap.getSource as ReturnType<typeof vi.fn>).mock.calls.length).toBeGreaterThan(
+            getSourceCallsBefore,
+        );
+        expect(hillshade.getConfig()).toMatchObject({ visible: false });
     });
 });

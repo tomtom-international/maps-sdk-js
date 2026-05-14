@@ -1,5 +1,5 @@
 import type { Map } from 'maplibre-gl';
-import { describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { TRAFFIC_INCIDENTS_SOURCE_ID } from '../../shared';
 import type { TomTomMap } from '../../TomTomMap';
 import { TrafficIncidentsModule } from '../TrafficIncidentsModule';
@@ -8,9 +8,11 @@ import { TrafficIncidentsModule } from '../TrafficIncidentsModule';
 // For real testing of such modules, refer to map-integration-tests.
 // Any forced coverage from tests here must be truly covered in map integration tests.
 describe('Vector tiles traffic module tests', () => {
-    test('Initializing module with config', async () => {
+    let tomtomMapMock: TomTomMap;
+
+    beforeEach(() => {
         const incidentsSource = { id: TRAFFIC_INCIDENTS_SOURCE_ID };
-        const tomtomMapMock = {
+        tomtomMapMock = {
             mapLibreMap: {
                 getSource: vi.fn().mockReturnValue(incidentsSource),
                 getStyle: vi
@@ -22,11 +24,14 @@ describe('Vector tiles traffic module tests', () => {
             _eventsProxy: {
                 add: vi.fn(),
                 ensureAdded: vi.fn(),
+                updateIfRegistered: vi.fn(),
             },
             addStyleChangeHandler: vi.fn(),
-            mapReady: vi.fn().mockReturnValue(false).mockReturnValue(true),
+            mapReady: vi.fn().mockReturnValue(true),
         } as unknown as TomTomMap;
+    });
 
+    test('Initializing module with config', async () => {
         const trafficIncidentsModule = await TrafficIncidentsModule.get(tomtomMapMock, {
             visible: true,
             filters: { any: [{ roadCategories: { show: 'only', values: ['motorway', 'trunk'] } }] },
@@ -53,5 +58,18 @@ describe('Vector tiles traffic module tests', () => {
         trafficIncidentsModule.applyConfig({ visible: true });
         trafficIncidentsModule.applyConfig({ visible: false });
         trafficIncidentsModule.applyConfig({ visible: false, icons: { visible: true } });
+    });
+
+    test('restoreDataAndConfigImpl re-runs init and re-applies config after a style change', async () => {
+        const mod = await TrafficIncidentsModule.get(tomtomMapMock, { visible: true });
+        const getSourceCallsBefore = (tomtomMapMock.mapLibreMap.getSource as ReturnType<typeof vi.fn>).mock.calls
+            .length;
+
+        expect(() => (mod as unknown as { restoreDataAndConfigImpl(): void }).restoreDataAndConfigImpl()).not.toThrow();
+
+        expect((tomtomMapMock.mapLibreMap.getSource as ReturnType<typeof vi.fn>).mock.calls.length).toBeGreaterThan(
+            getSourceCallsBefore,
+        );
+        expect(mod.getConfig()).toMatchObject({ visible: true });
     });
 });

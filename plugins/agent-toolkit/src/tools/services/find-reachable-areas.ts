@@ -6,7 +6,7 @@ import type { Place, PolygonFeatures } from '@tomtom-org/maps-sdk/core';
 import type { GeometryTheme } from '@tomtom-org/maps-sdk/map';
 import type { BudgetType, ReachableRangeParams } from '@tomtom-org/maps-sdk/services';
 import { calculateReachableRanges } from '@tomtom-org/maps-sdk/services';
-import { Position } from 'geojson';
+import type { Position } from 'geojson';
 import { z } from 'zod';
 import type { ReachableRange, ToolState } from '../../types';
 import { makeRangesLabel } from '../../utils';

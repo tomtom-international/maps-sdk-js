@@ -2,6 +2,39 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.47.5](https://github.com/tomtom-international/maps-sdk-js/compare/v0.47.4...v0.47.5) (2026-05-13)
+
+
+### Features
+
+* migrate all map chat agent demos to tailwind ([#1764](https://github.com/tomtom-international/maps-sdk-js/issues/1764)) ([b3b0f92](https://github.com/tomtom-international/maps-sdk-js/commit/b3b0f927750b0fe78de724e5e919d2a082a63429))
+
+
+### Bug Fixes
+
+* restore incident module on style change ([ade0673](https://github.com/tomtom-international/maps-sdk-js/commit/ade0673a26a62d72a7374c903ed90aa66e1bd80b))
+* updated a couple of schemas and bumped zod dependencies to ^4.4.3 ([#1757](https://github.com/tomtom-international/maps-sdk-js/issues/1757)) ([cfddcf7](https://github.com/tomtom-international/maps-sdk-js/commit/cfddcf7b311dacc39e9075441060cfa543864960))
+
+## [0.47.4](https://github.com/tomtom-international/maps-sdk-js/compare/v0.47.3...v0.47.4) (2026-05-12)
+
+
+### Features
+
+* agent evaluation testing [LSI-285] ([#1747](https://github.com/tomtom-international/maps-sdk-js/issues/1747)) ([dd02bec](https://github.com/tomtom-international/maps-sdk-js/commit/dd02bec020e08b517c2908d2690d8bf0f9ae0aa3))
+
+
+### Bug Fixes
+
+* add missing traffic incidents geojson module into agent coding skills ([0095e09](https://github.com/tomtom-international/maps-sdk-js/commit/0095e09212794b0f0eb6d5edaffc214fdb38006a))
+* upgrade and fix deps ([#1762](https://github.com/tomtom-international/maps-sdk-js/issues/1762)) ([f5f1f8e](https://github.com/tomtom-international/maps-sdk-js/commit/f5f1f8ed8d6168f24fdee900f580587fcc434422))
+
+## [0.47.3](https://github.com/tomtom-international/maps-sdk-js/compare/v0.47.2...v0.47.3) (2026-05-11)
+
+
+### Bug Fixes
+
+* example thumbnail reference ([3f22535](https://github.com/tomtom-international/maps-sdk-js/commit/3f22535a9bde9d7c1740256a5db1b3713c5fd02a))
+
 ## [0.47.2](https://github.com/tomtom-international/maps-sdk-js/compare/v0.47.1...v0.47.2) (2026-05-11)
 
 

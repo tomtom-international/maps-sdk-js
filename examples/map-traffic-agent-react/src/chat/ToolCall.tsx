@@ -13,7 +13,10 @@ function stringifyToolValue(value: unknown) {
     return serialized || '-';
 }
 
-const CHART_PRODUCING_TOOLS = new Set(['analyseIncidents']);
+// Agent-toolkit `analyse*` tools return a Chart.js configuration alongside the structured
+// analysis when invoked with `outputFormat: "chart"`. Surface it inline so the user sees a
+// chart instead of a JSON blob; fall back to the raw output otherwise.
+const CHART_PRODUCING_TOOLS = new Set(['analysePlaces', 'analyseRoutes', 'analyseIncidents']);
 function extractChartConfig(toolName: string, output: unknown): unknown | null {
     if (!CHART_PRODUCING_TOOLS.has(toolName) || !output || typeof output !== 'object') return null;
     const o = output as { outputFormat?: unknown; analysis?: unknown };
@@ -44,22 +47,35 @@ export function ToolCall({ toolName, input, output, errorText }: ToolCallProps) 
     return (
         <>
             {chartConfig && (
-                <div className="message tool-chart">
+                <div className="message assistant tool-chart">
                     <AnalysisChart config={chartConfig} />
                 </div>
             )}
-            <details className="tool-call">
-                <summary className="tool-call-tag">
-                    <span className="tool-call-name">{toolName}</span>
-                    <svg className="tool-call-chevron" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+            <details className="tool-call max-w-[90%] self-start mx-3 my-1">
+                <summary className="inline-flex h-5 w-fit cursor-pointer list-none items-center justify-center gap-1 rounded-[5px] bg-[rgba(0,0,0,0.04)] px-1 font-(family-name:--sdk-font-code) text-[12px] leading-5 font-semibold text-(--sdk-text-high) [&::-webkit-details-marker]:hidden">
+                    <span>{toolName}</span>
+                    <svg
+                        className="shrink-0 transition-transform [details[open]_&]:rotate-90"
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        aria-hidden="true"
+                    >
                         <path d="M4 3l4 3-4 3z" fill="currentColor" />
                     </svg>
                 </summary>
-                <div className="tool-content">
-                    <button type="button" className="tool-copy-button" onClick={handleCopy}>
+                <div className="flex flex-col items-start gap-2 pt-2 text-(--sdk-text-medium)">
+                    <button
+                        type="button"
+                        onClick={handleCopy}
+                        className="cursor-pointer rounded-(--sdk-radius-5) border border-(--sdk-border-medium) bg-(--sdk-surface-1) px-1.5 py-0.5 font-(family-name:--sdk-font-code) text-[11px] leading-snug text-(--sdk-text-medium) transition-colors hover:bg-(--sdk-surface-2) hover:text-(--sdk-text-high)"
+                    >
                         {copyLabel}
                     </button>
-                    <pre ref={preRef} className="tool-content-text">
+                    <pre
+                        ref={preRef}
+                        className="m-0 max-h-[300px] w-full overflow-y-auto font-(family-name:--sdk-font-code) text-[12px] whitespace-pre-wrap"
+                    >
                         {contentText}
                     </pre>
                 </div>

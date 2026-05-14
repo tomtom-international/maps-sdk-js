@@ -1,5 +1,5 @@
 import type { TrafficIncident } from '@tomtom-org/maps-sdk/core';
-import { mapStyleLayerIDs } from '@tomtom-org/maps-sdk/map';
+import { mapStyleLayerIDs, type StyleChangeHandler, type TomTomMap } from '@tomtom-org/maps-sdk/map';
 import type { GeoJSONSource, HeatmapLayerSpecification, Map as MapLibreMap } from 'maplibre-gl';
 import type { VizMode } from './types';
 
@@ -39,9 +39,21 @@ export class HeatmapOverlay {
     private mode: VizMode = 'off';
     private removed = false;
     private features: GeoJSON.Feature<GeoJSON.Point, SampleProps>[] = [];
+    private readonly map: MapLibreMap;
 
-    constructor(private readonly map: MapLibreMap) {
+    constructor(ttMap: TomTomMap) {
+        this.map = ttMap.mapLibreMap;
         this.ensureSourceAndLayer();
+        // MapLibre wipes all sources/layers on `setStyle`. Re-attach + re-push cached
+        // features so the overlay survives the agent's style-switch tool.
+        const handler: StyleChangeHandler = {
+            onStyleChanged: () => {
+                if (this.removed) return;
+                this.ensureSourceAndLayer();
+                this.pushData();
+            },
+        };
+        ttMap.addStyleChangeHandler(handler);
     }
 
     setIncidents(incidents: readonly TrafficIncident[]): void {
@@ -118,7 +130,7 @@ const buildHeatmapLayerSpec = (): HeatmapLayerSpecification => ({
             ['heatmap-density'],
             ...HEAT_COLOR_RAMP.flatMap(([d, c]) => [d, c] as const),
         ],
-        'heatmap-opacity': 0.75,
+        'heatmap-opacity': 0.55,
     },
 });
 

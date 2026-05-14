@@ -26,6 +26,10 @@ import zoomPlugin from 'chartjs-plugin-zoom';
 import { useMemo, useRef } from 'react';
 import { Chart } from 'react-chartjs-2';
 
+// Register every controller + element + scale we expose via `CHART_TYPES`.
+// Missing a controller produced a runtime "bar is not a registered controller"
+// error — explicitly listing them keeps the registration honest as new types
+// get added.
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -51,23 +55,29 @@ ChartJS.register(
 
 const CHART_TYPES = new Set<ChartType>(['bar', 'line', 'pie', 'doughnut', 'radar', 'polarArea', 'scatter', 'bubble']);
 
+// Chart types that use cartesian scales — the zoom plugin only makes sense on these.
+// pie/doughnut/radar/polarArea have no x/y zoom semantics.
 const ZOOMABLE_CHART_TYPES = new Set<ChartType>(['bar', 'line', 'scatter', 'bubble']);
 
+// Categorical chart types where a single dataset spans many labels, so each
+// slice/segment needs its own color rather than the whole dataset sharing one.
 const CATEGORICAL_CHART_TYPES = new Set<ChartType>(['pie', 'doughnut', 'polarArea']);
 
+// Curated 10-color palette (Tailwind 500s) — balanced hues, readable on light & dark backgrounds.
 const PALETTE = [
-    '#3b82f6',
-    '#ef4444',
-    '#10b981',
-    '#f59e0b',
-    '#8b5cf6',
-    '#ec4899',
-    '#14b8a6',
-    '#f97316',
-    '#6366f1',
-    '#84cc16',
+    '#3b82f6', // blue
+    '#ef4444', // red
+    '#10b981', // emerald
+    '#f59e0b', // amber
+    '#8b5cf6', // violet
+    '#ec4899', // pink
+    '#14b8a6', // teal
+    '#f97316', // orange
+    '#6366f1', // indigo
+    '#84cc16', // lime
 ] as const;
 
+// Convert a hex color to rgba with the given alpha — used for translucent fills (bar background, line area fill).
 const withAlpha = (hex: string, alpha: number): string => {
     const n = Number.parseInt(hex.slice(1), 16);
     const r = (n >> 16) & 0xff;
@@ -80,6 +90,9 @@ type Dataset = Record<string, unknown>;
 
 const pickColor = (index: number) => PALETTE[index % PALETTE.length];
 
+// Layer a default palette onto dataset colors without overwriting anything the
+// LLM's code explicitly set. Categorical types (pie/doughnut/polarArea) get an
+// array of colors sized to the label count; other types get one color per dataset.
 const withPaletteDefaults = (config: ChartConfiguration): ChartConfiguration => {
     const data = config.data as unknown as { labels?: unknown[]; datasets?: Dataset[] } | undefined;
     const datasets = data?.datasets;
@@ -93,6 +106,7 @@ const withPaletteDefaults = (config: ChartConfiguration): ChartConfiguration => 
         const color = pickColor(i);
 
         if (isCategorical) {
+            // One dataset, many segments — color each segment.
             if (ds.backgroundColor === undefined) {
                 const count = Math.max(labelCount, (ds.data as unknown[] | undefined)?.length ?? 0);
                 ds.backgroundColor = Array.from({ length: count }, (_, j) => pickColor(j));
@@ -102,6 +116,8 @@ const withPaletteDefaults = (config: ChartConfiguration): ChartConfiguration => 
             continue;
         }
 
+        // Cartesian / radar: one color per dataset. Fills use a translucent variant
+        // so overlapping datasets stay readable.
         if (ds.borderColor === undefined) ds.borderColor = color;
         if (ds.backgroundColor === undefined) {
             ds.backgroundColor = config.type === 'line' || config.type === 'radar' ? withAlpha(color, 0.2) : color;
@@ -126,6 +142,8 @@ const isChartConfiguration = (value: unknown): value is ChartConfiguration => {
     );
 };
 
+// Shallow-merge sensible interactivity defaults into the LLM-provided options
+// without clobbering anything the code explicitly set.
 const withInteractivityDefaults = (config: ChartConfiguration): ChartConfiguration => {
     const isZoomable = ZOOMABLE_CHART_TYPES.has(config.type);
     const userOptions = (config.options ?? {}) as Record<string, unknown>;
@@ -172,6 +190,8 @@ type AnalysisChartProps = {
 export function AnalysisChart({ config }: AnalysisChartProps) {
     const chartRef = useRef<ChartJS>(null);
 
+    // Deep-clone so react-chartjs-2 can mutate without corrupting the value we read
+    // from the assistant-ui state store, and layer defaults on top.
     const prepared = useMemo(
         () =>
             isChartConfiguration(config)
@@ -181,7 +201,9 @@ export function AnalysisChart({ config }: AnalysisChartProps) {
     );
 
     if (!prepared) {
-        return <div className="analysis-chart-error">Invalid chart configuration.</div>;
+        return (
+            <div className="p-2 font-mono text-[12px] text-(--sdk-text-medium)">Invalid chart configuration.</div>
+        );
     }
 
     const isZoomable = ZOOMABLE_CHART_TYPES.has(prepared.type);
@@ -191,16 +213,22 @@ export function AnalysisChart({ config }: AnalysisChartProps) {
     };
 
     return (
-        <div className="analysis-chart">
+        <div className="flex w-full flex-col gap-2">
             {isZoomable && (
-                <div className="analysis-chart-toolbar">
-                    <span className="analysis-chart-hint">scroll / pinch to zoom · drag to pan</span>
-                    <button type="button" onClick={handleResetZoom} className="analysis-chart-reset">
+                <div className="flex items-center justify-between gap-2">
+                    <span className="font-mono text-[11px] text-(--sdk-text-low)">
+                        scroll / pinch to zoom · drag to pan
+                    </span>
+                    <button
+                        type="button"
+                        onClick={handleResetZoom}
+                        className="cursor-pointer rounded-(--sdk-radius-5) border border-(--sdk-border-medium) bg-(--sdk-surface-1) px-1.5 py-0.5 font-mono text-[11px] leading-snug text-(--sdk-text-medium) transition-colors hover:bg-(--sdk-surface-2) hover:text-(--sdk-text-high)"
+                    >
                         Reset zoom
                     </button>
                 </div>
             )}
-            <div className="analysis-chart-canvas">
+            <div className="relative max-h-[320px] min-h-[220px] w-full cursor-grab active:cursor-grabbing">
                 <Chart ref={chartRef} type={prepared.type} data={prepared.data} options={prepared.options} />
             </div>
         </div>

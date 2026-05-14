@@ -44,7 +44,7 @@ export const featureSchema = z.object({
     type: z.literal('Feature'),
     geometry: geometrySchema,
     id: z.optional(z.union([z.string(), z.number()])),
-    properties: z.any(),
+    properties: z.unknown().optional(),
     bbox: z.optional(z.array(z.number())),
 });
 
@@ -55,7 +55,7 @@ export const featureCollectionSchema = z.object({
     type: z.literal('FeatureCollection'),
     features: z.array(featureSchema),
     id: z.optional(z.union([z.string(), z.number()])),
-    properties: z.any(),
+    properties: z.unknown().optional(),
     bbox: z.optional(z.array(z.number())),
 });
 

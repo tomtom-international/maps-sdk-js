@@ -9,9 +9,9 @@ import {
     reachableRangeGeometryConfig,
     type TomTomMap,
 } from '@tomtom-org/maps-sdk/map';
-import type { RangesEntry } from '../../types';
 import { StateEvents } from '../events';
 import type { EntryMode, ShownEntriesSlice } from '../state';
+import type { RangesEntry } from './entry';
 
 /**
  * Events fired by {@link RangeState}. Subscribe via `state.ranges.events.on(type, handler)`.

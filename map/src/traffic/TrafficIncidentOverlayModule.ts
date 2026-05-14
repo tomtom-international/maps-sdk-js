@@ -128,6 +128,7 @@ const resolveBeforeID = (beforeLayerConfig?: BeforeLayerConfig): string | undefi
  */
 export class TrafficIncidentOverlayModule extends AbstractMapModule<Sources, TrafficIncidentOverlayConfig> {
     private static lastInstanceIndex = -1;
+    private instanceIndex!: number;
 
     private lastResult: TrafficIncidentDetails | null = null;
     private lastFeatureIds: string[] = [];
@@ -147,10 +148,12 @@ export class TrafficIncidentOverlayModule extends AbstractMapModule<Sources, Tra
     }
 
     /** @ignore */
-    protected _initSourcesWithLayers(config?: TrafficIncidentOverlayConfig): Sources {
-        TrafficIncidentOverlayModule.lastInstanceIndex++;
-        const index = TrafficIncidentOverlayModule.lastInstanceIndex;
-        const sourceId = `traffic-incident-overlay-${index}`;
+    protected _initSourcesWithLayers(config?: TrafficIncidentOverlayConfig, restore?: boolean): Sources {
+        if (!restore) {
+            TrafficIncidentOverlayModule.lastInstanceIndex++;
+            this.instanceIndex = TrafficIncidentOverlayModule.lastInstanceIndex;
+        }
+        const sourceId = `traffic-incident-overlay-${this.instanceIndex}`;
 
         // Skipped in non-DOM envs — the image getter returns undefined there.
         const chevronImg = getIncidentDirectionChevronImage();

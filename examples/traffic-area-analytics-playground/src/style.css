@@ -4,6 +4,7 @@
 @import "../../src/templates/css/panel/custom-panel.css";
 @import "../../src/templates/css/form/input.css";
 @import "../../src/templates/css/form/dropdown.css";
+@import "../../src/templates/css/form/checkbox.css";
 @import "../../src/templates/css/button/button.css";
 @import "../../src/templates/css/button/variants.css";
 @import "../../src/templates/css/button/groups.css";
@@ -103,8 +104,143 @@
 
 @media (min-width: 769px) {
     .sdk-example-customPanel {
-        width: 260px;
+        width: 300px;
+        max-height: calc(100vh - 2 * var(--sdk-panel-margin));
+        overflow-y: auto;
     }
+}
+
+/* ── Query filters ────────────────────────────────────────────────── */
+
+.aa-filters {
+    border-top: 1px solid var(--sdk-border-low);
+    margin-top: var(--sdk-space-3);
+    padding-top: var(--sdk-space-3);
+}
+
+.aa-filters-summary {
+    cursor: pointer;
+    font-size: var(--sdk-font-caption-s);
+    font-weight: var(--sdk-font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--sdk-text-low);
+    margin-bottom: var(--sdk-space-3);
+    user-select: none;
+}
+
+.aa-filters-summary:focus-visible {
+    outline: 2px solid var(--sdk-primary-color);
+    outline-offset: 2px;
+    border-radius: var(--sdk-radius-5);
+}
+
+.aa-filters-hint {
+    font-size: var(--sdk-font-caption-s);
+    color: var(--sdk-text-low);
+    margin: 0 0 var(--sdk-space-3);
+}
+
+.aa-filters-error {
+    font-size: var(--sdk-font-caption-s);
+    color: #c0392b;
+    margin: 0 0 var(--sdk-space-3);
+}
+
+.aa-input-invalid {
+    border-color: #c0392b !important;
+    outline: 1px solid rgba(192, 57, 43, 0.2);
+}
+
+.aa-date-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sdk-space-2);
+}
+
+.aa-date-row input[type="date"] {
+    width: 100%;
+}
+
+.aa-preset-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: var(--sdk-space-2);
+}
+
+.aa-preset-button {
+    font-family: var(--sdk-font-primary);
+    font-size: var(--sdk-font-caption-s);
+    padding: 4px 8px;
+    background: var(--sdk-surface-1);
+    color: var(--sdk-text-high);
+    border: 1px solid var(--sdk-border-medium);
+    border-radius: var(--sdk-radius-30);
+    cursor: pointer;
+    transition:
+        background var(--sdk-transition-fast),
+        border-color var(--sdk-transition-fast);
+}
+
+.aa-preset-button:hover {
+    background: var(--sdk-surface-2, #e5e7eb);
+    border-color: var(--sdk-primary-color);
+}
+
+/* fieldset is used over <div role="group"> so AT exposes a real group with a
+   legend; reset the browser's built-in border/padding/inline-size so the
+   section keeps the same layout as the surrounding sdk-example-sections. */
+.aa-fieldset {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    min-inline-size: 0;
+}
+
+.aa-fieldset > legend {
+    padding: 0;
+}
+
+.aa-hour-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 2px;
+}
+
+.aa-hour-cell {
+    font-family: var(--sdk-font-primary);
+    font-size: 10px;
+    line-height: 1;
+    padding: 4px 0;
+    background: var(--sdk-surface-1);
+    color: var(--sdk-text-low);
+    border: 1px solid var(--sdk-border-low);
+    border-radius: var(--sdk-radius-5);
+    cursor: pointer;
+    transition:
+        background var(--sdk-transition-fast),
+        color var(--sdk-transition-fast);
+    font-variant-numeric: tabular-nums;
+}
+
+.aa-hour-cell:hover {
+    border-color: var(--sdk-primary-color);
+}
+
+.aa-hour-cell.selected {
+    background: var(--sdk-primary-color);
+    color: var(--sdk-text-white);
+    border-color: var(--sdk-primary-color);
+}
+
+.aa-frc-list {
+    /* No inner scroll — the outer panel handles overflow */
+}
+
+.aa-frc-row {
+    margin-bottom: 4px;
+    font-size: var(--sdk-font-caption-m);
 }
 
 /* ── Stats + heatmap panel (bottom-left) ──────────────────────────── */

@@ -168,7 +168,7 @@ const baseVehicleParamsSchema = {
 // Vehicle parameters schemas
 const genericVehicleParamsSchema = z.object({
     ...baseVehicleParamsSchema,
-    engineType: z.undefined(),
+    engineType: z.undefined().optional(),
     state: genericVehicleStateSchema.optional(),
     preferences: z.object({}).optional(),
 });

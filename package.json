@@ -2,7 +2,7 @@
   "name": "@tomtom-org/maps-sdk",
   "author": "TomTom International B.V.",
   "license": "See in LICENSE.txt",
-  "version": "0.47.2",
+  "version": "0.47.5",
   "description": "TomTom Maps for JavaScript",
   "scripts": {
     "build": "pnpm build:sdk",
@@ -45,12 +45,12 @@
     "nodejs"
   ],
   "devDependencies": {
-    "@biomejs/biome": "^2.4.10",
+    "@biomejs/biome": "^2.4.15",
     "@size-limit/file": "^11.2.0",
     "@size-limit/preset-app": "^11.2.0",
     "size-limit": "^11.2.0",
-    "typedoc": "^0.28.18",
-    "yaml": "^2.8.3"
+    "typedoc": "^0.28.19",
+    "yaml": "^2.9.0"
   },
   "peerDependencies": {
     "@turf/turf": "catalog:",

@@ -36,11 +36,14 @@ export function NetworkKPIStrip({ incidents, label }: NetworkKPIStripProps) {
     const majorPlusIndef = (severity.major ?? 0) + (severity.indefinite ?? 0);
 
     return (
-        <div className="kpi-strip">
-            <div className="kpi-strip-label" title={label ?? ''}>
+        <div className="flex flex-col gap-2 rounded-(--sdk-radius-10) border border-(--sdk-border-low) bg-(--sdk-surface-0) px-3 py-2 text-(--sdk-text-high) shadow-(--sdk-shadow-e4) backdrop-blur-md">
+            <div
+                className="truncate text-(--sdk-font-caption-s) font-semibold uppercase tracking-wider text-(--sdk-text-low)"
+                title={label ?? ''}
+            >
                 {total > 0 ? (label ?? 'Network snapshot') : 'No incidents loaded'}
             </div>
-            <div className="kpi-strip-grid">
+            <div className="grid grid-cols-7 gap-2">
                 <Kpi label="Incidents" value={total.toString()} />
                 <Kpi
                     label="Delay Σ"
@@ -57,7 +60,11 @@ export function NetworkKPIStrip({ incidents, label }: NetworkKPIStripProps) {
                 <Kpi label="Roadworks" value={roadworks.toString()} />
                 <Kpi label="Roads" value={roads.size.toString()} />
             </div>
-            <div className="kpi-strip-severity" role="img" aria-label="severity distribution">
+            <div
+                className="flex h-1 gap-px overflow-hidden rounded-sm bg-(--sdk-surface-1)"
+                role="img"
+                aria-label="severity distribution"
+            >
                 {['indefinite', 'major', 'moderate', 'minor', 'unknown'].map((k) => {
                     const v = severity[k] ?? 0;
                     if (v === 0) return null;
@@ -65,7 +72,7 @@ export function NetworkKPIStrip({ incidents, label }: NetworkKPIStripProps) {
                     return (
                         <span
                             key={k}
-                            className="kpi-strip-severity-segment"
+                            className="block h-full"
                             title={`${k}: ${v}`}
                             style={{ width: `${width}%`, background: SEVERITY_COLOR[k] }}
                         />
@@ -77,11 +84,16 @@ export function NetworkKPIStrip({ incidents, label }: NetworkKPIStripProps) {
 }
 
 function Kpi({ label, value, emphasis, warn }: { label: string; value: string; emphasis?: boolean; warn?: boolean }) {
-    const cls = ['kpi-strip-cell', emphasis ? 'is-emphasis' : '', warn ? 'is-warn' : ''].filter(Boolean).join(' ');
+    // Static classNames so Tailwind's scanner picks every combination up.
+    const stateClass = warn
+        ? 'bg-[color-mix(in_srgb,hsl(0,100%,34%)_10%,var(--sdk-surface-0))] border-[color-mix(in_srgb,hsl(0,100%,34%)_35%,var(--sdk-border-low))] text-[hsl(0,80%,30%)]'
+        : emphasis
+          ? 'bg-[color-mix(in_srgb,var(--sdk-primary-color)_12%,var(--sdk-surface-0))] border-[color-mix(in_srgb,var(--sdk-primary-color)_40%,var(--sdk-border-low))]'
+          : 'bg-(--sdk-surface-1) border-(--sdk-border-low)';
     return (
-        <div className={cls}>
-            <div className="kpi-strip-value">{value}</div>
-            <div className="kpi-strip-label-sm">{label}</div>
+        <div className={`rounded-(--sdk-radius-5) border px-2 py-1.5 text-center transition-colors ${stateClass}`}>
+            <div className="text-(--sdk-font-body-l) font-semibold leading-tight">{value}</div>
+            <div className="mt-0.5 text-[10px] uppercase tracking-wider text-(--sdk-text-low)">{label}</div>
         </div>
     );
 }

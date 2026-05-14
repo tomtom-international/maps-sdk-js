@@ -3,17 +3,33 @@ import type { CommonServiceParams } from '../serviceTypes';
 import type { RequestValidationConfig } from '../types/validation';
 import { commonServiceRequestSchema } from './commonParamsSchema';
 
+type ZodIssue = ZodError['issues'][number];
+
 /**
  * Format a Zod error into a human-readable string
  * @ignore
  */
+const formatZodIssue = (issue: ZodIssue, depth = 0): string => {
+    const path = issue.path.length > 0 ? `${issue.path.join('.')}: ` : '';
+    if (issue.code === 'invalid_union') {
+        const unionErrors = (issue as ZodIssue & { unionErrors?: ZodError[] }).unionErrors;
+        if (unionErrors?.length) {
+            const branches = unionErrors
+                .map((unionError, i) => {
+                    const branchIssues = unionError.issues
+                        .map((nested) => formatZodIssue(nested, depth + 1))
+                        .join(', ');
+                    return `option[${i}]: { ${branchIssues} }`;
+                })
+                .join(' | ');
+            return `${path}no matching union member (${branches})`;
+        }
+    }
+    return `${path}${issue.message}`;
+};
+
 const formatZodError = (error: ZodError): string => {
-    return error.issues
-        .map((issue) => {
-            const path = issue.path.length > 0 ? `${issue.path.join('.')}: ` : '';
-            return `${path}${issue.message}`;
-        })
-        .join('; ');
+    return error.issues.map((issue) => formatZodIssue(issue)).join('; ');
 };
 
 /**
@@ -24,7 +40,9 @@ export class ValidationError extends Error {
     issues: ZodError['issues'];
 
     constructor(zodError: ZodError) {
-        super(formatZodError(zodError));
+        const message = formatZodError(zodError);
+        const issuesSummary = JSON.stringify(zodError.issues, null, 2);
+        super(`${message}\nIssues: ${issuesSummary}`);
         this.issues = zodError.issues;
     }
 }

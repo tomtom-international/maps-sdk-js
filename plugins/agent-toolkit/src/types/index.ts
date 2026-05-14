@@ -2,6 +2,13 @@
  * @module agent-toolkit-types
  */
 
+export type { CustomGeometriesAnalysis } from '../state/custom-geometries/analysis';
+export type { CustomGeometriesEntry, GeometryProvenance } from '../state/custom-geometries/entry';
+export type { PlacesAnalysis } from '../state/places/analysis';
+export type { PlacesEntry } from '../state/places/entry';
+export type { RangesEntry, ReachableRange } from '../state/range/entry';
+export type { RoutesAnalysis } from '../state/routing/analysis';
+export type { RouteParams, RoutesEntry } from '../state/routing/entry';
 export { type GeometriesId, type GeometriesIdKind, geometriesIdSchema } from '../tools/shared';
 export * from './state';
 

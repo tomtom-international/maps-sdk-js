@@ -1,4 +1,4 @@
-import { MapAgentChat } from './chat/MapAgentChat';
+import { MapAgentChat } from './chat';
 import { useAgentSettings } from './hooks/useAgentSettings';
 import { AnalyticsControlPanel } from './ui/AnalyticsControlPanel';
 import { ClusterPanel } from './ui/ClusterPanel';
@@ -9,6 +9,18 @@ import { NetworkKPIStrip } from './ui/NetworkKPIStrip';
 import { TriagePanel } from './ui/TriagePanel';
 import { VizToggle } from './ui/VizToggle';
 import { useMapAgent } from './useMapAgent';
+
+const WELCOME_TEXT = [
+    "I'm your **live traffic operations** partner — ask me what's happening on the network right now, where the biggest slowdowns are, or to triage a specific work zone or zone.",
+    '&nbsp;',
+    '🧪 *Experimental feature.*',
+].join('\n\n');
+
+const SUGGESTED_PROMPTS = [
+    "What incidents are happening on London's roads right now?",
+    'Summarise the 3 biggest slowdown clusters in central London',
+    'Focus on the worst delays inside the M25',
+] as const;
 
 export function App() {
     const { settings, setDeploymentId, availableDeployments } = useAgentSettings();
@@ -43,16 +55,23 @@ export function App() {
     const focusedIdSet = new Set(focus?.ids ?? []);
 
     return (
-        <div id="app">
-            <div id="sdk-map">
-                {/* MapLibre mounts into this inner element. Keeping it separate from the
-                 * panel tree below preserves React-managed children — MapLibre wipes every
-                 * child of its container, so panels rendered inside #sdk-map directly are
-                 * silently removed on init. */}
-                <div id="map-container" />
-                <div className="map-overlays">
-                    <div className="map-overlays__top-left">
-                        <div className="map-overlays__top-left-row">
+        <div className="absolute inset-0 flex flex-row-reverse gap-2 bg-(--sdk-surface-0) p-2 max-sm:flex-col max-sm:gap-0 max-sm:p-0">
+            {/* `id="sdk-map"` is required — MapLibre attaches to the DOM node by ID. */}
+            <div
+                id="sdk-map"
+                className="relative flex-1 overflow-hidden rounded-[20px] bg-(--sdk-surface-1) max-sm:min-h-0 max-sm:basis-1/2 max-sm:rounded-none"
+            >
+                {/* MapLibre mounts into this inner element. Keeping it separate from the panel
+                 * tree below preserves React-managed children — MapLibre wipes every child of
+                 * its container, so panels rendered inside #sdk-map directly are silently
+                 * removed on init. */}
+                <div id="map-container" className="absolute inset-0" />
+                {/* Grid container that owns every overlay panel above the map. Cols: fluid left
+                 * / fixed 320px right rail. Rows: top auto / middle fluid / bottom auto. Children
+                 * get pointer-events:auto via the `*:` variant; the grid itself is transparent. */}
+                <div className="pointer-events-none absolute inset-0 z-(--sdk-z-dropdown) grid grid-cols-[minmax(0,1fr)_320px] grid-rows-[auto_minmax(0,1fr)_auto] gap-x-3 gap-y-2 p-3 *:pointer-events-auto *:min-w-0">
+                    <div className="col-start-1 row-start-1 flex min-w-0 flex-col items-start gap-2">
+                        <div className="flex w-full min-w-0 items-stretch gap-2">
                             <NetworkKPIStrip incidents={incidents.items} label={incidents.label} />
                             <VizToggle mode={vizMode} onChange={setVizMode} />
                         </div>
@@ -72,7 +91,7 @@ export function App() {
                         />
                     )}
 
-                    <div className="map-overlays__right">
+                    <div className="col-start-2 row-start-1 row-end-[-1] flex min-h-0 flex-col gap-2">
                         <ClusterPanel
                             clusters={clusters}
                             focusedIds={focusedIdSet}
@@ -91,7 +110,7 @@ export function App() {
                         )}
                     </div>
 
-                    <div className="map-overlays__bottom-left">
+                    <div className="col-start-1 row-start-3 flex min-w-0 flex-col items-start gap-2">
                         {focus && (
                             <FocusChip
                                 count={focus.ids.length}
@@ -114,13 +133,16 @@ export function App() {
             {transport ? (
                 <MapAgentChat
                     transport={transport}
+                    label="Live Traffic Agent"
+                    welcomeText={WELCOME_TEXT}
+                    suggestedPrompts={SUGGESTED_PROMPTS}
                     deploymentId={settings.deploymentId}
                     availableDeployments={availableDeployments}
                     onDeploymentChange={setDeploymentId}
                 />
             ) : (
-                <div id="chat-panel">
-                    <div id="chat-loading">Initializing assistant...</div>
+                <div className="flex w-[380px] flex-col bg-(--sdk-surface-0) max-sm:w-full">
+                    <div className="p-4 text-(--sdk-text-medium)">Initializing assistant...</div>
                 </div>
             )}
         </div>

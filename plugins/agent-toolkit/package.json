@@ -2,7 +2,7 @@
   "name": "@tomtom-org/maps-sdk-plugin-agent-toolkit",
   "author": "TomTom International B.V.",
   "license": "See in LICENSE.txt",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "type": "module",
   "description": "Agent toolkit plugin for TomTom Maps SDK JS using Vercel AI SDK",
   "types": "dist/index.d.ts",
@@ -11,19 +11,22 @@
     "build:watch": "vite build --watch --config ../plugin-vite-config.ts",
     "type-check": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:scenarios": "vitest run src/tests/scenarios --no-file-parallelism",
+    "test:scenarios:watch": "vitest src/tests/scenarios --no-file-parallelism"
   },
-  "dependencies": {},
   "peerDependencies": {
     "@tomtom-org/maps-sdk": "workspace:*",
     "@turf/turf": "catalog:",
     "ai": "catalog:",
-    "chart.js": "^4.5.1",
-    "h3-js": "^4.4.0",
+    "chart.js": "catalog:",
+    "h3-js": "catalog:",
     "maplibre-gl": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@ai-sdk/azure": "catalog:",
+    "@langwatch/scenario": "^0.4.11",
     "@microsoft/api-extractor": "catalog:",
     "@tsconfig/recommended": "catalog:",
     "@types/geojson": "catalog:",

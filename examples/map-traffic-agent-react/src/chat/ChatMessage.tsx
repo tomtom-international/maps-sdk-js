@@ -1,6 +1,5 @@
 import {
     MessagePrimitive,
-    type ReasoningMessagePartComponent,
     TextMessagePartComponent,
     type ToolCallMessagePartComponent,
     useAuiState,
@@ -16,32 +15,30 @@ const AssistantText: TextMessagePartComponent = ({ text }) => (
     <div className="message assistant" dangerouslySetInnerHTML={{ __html: marked(text) as string }} />
 );
 
-// A successful tool result of `{ error: string }` is our convention for in-band failures
-// (e.g. "No incidents loaded. Call getTrafficIncidents first"). Treat those as errors in
-// the UI so the message isn't hidden inside a successful-looking "output" blob.
-function inBandError(result: unknown): boolean {
-    return !!result && typeof result === 'object' && 'error' in (result as Record<string, unknown>);
-}
-
-function stringifyError(raw: unknown): string {
-    if (typeof raw === 'string') return raw;
-    try {
-        return JSON.stringify(raw, null, 2);
-    } catch {
-        return String(raw);
+// AI SDK error results can be primitives, Error instances, Zod issues, or plain
+// objects. `String(obj)` collapses to "[object Object]"; preserve detail by JSON-
+// stringifying objects and reading `.message` off Errors.
+const formatToolError = (result: unknown): string => {
+    if (result === null || result === undefined) return 'Tool call failed';
+    if (typeof result === 'string') return result;
+    if (result instanceof Error) return result.message || String(result);
+    if (typeof result === 'object' && 'error' in (result as Record<string, unknown>)) {
+        const err = (result as Record<string, unknown>).error;
+        if (typeof err === 'string') return err;
     }
-}
-
-const ReasoningContent: ReasoningMessagePartComponent = ({ text, status }) => {
-    const streaming = status?.type === 'running';
-    if (!text && !streaming) return null;
-    return (
-        <details className="message assistant reasoning" open={streaming}>
-            <summary>{streaming ? 'Thinking…' : 'Thought process'}</summary>
-            <div className="reasoning-body">{text}</div>
-        </details>
-    );
+    try {
+        return JSON.stringify(result, null, 2);
+    } catch {
+        return String(result);
+    }
 };
+
+// Agent-toolkit tools often surface failures *in-band* via the shared `toolErrorSchema`
+// (a `{ error: string }` shape) rather than by throwing. The AI SDK then resolves the call
+// as a success with `isError=false`, so checking only `isError` would hide the failure
+// inside what looks like a normal output blob.
+const inBandError = (result: unknown): boolean =>
+    !!result && typeof result === 'object' && 'error' in (result as Record<string, unknown>);
 
 const ToolCallContent: ToolCallMessagePartComponent = ({ toolName, args, result, isError }) => {
     const errored = isError || inBandError(result);
@@ -50,7 +47,7 @@ const ToolCallContent: ToolCallMessagePartComponent = ({ toolName, args, result,
             toolName={toolName}
             input={args}
             output={errored ? undefined : result}
-            errorText={errored ? stringifyError(result) : undefined}
+            errorText={errored ? formatToolError(result) : undefined}
         />
     );
 };
@@ -72,7 +69,6 @@ export function MessageComponent() {
             <MessagePrimitive.Content
                 components={{
                     Text: AssistantText,
-                    Reasoning: ReasoningContent,
                     tools: { Fallback: ToolCallContent },
                 }}
             />

@@ -96,6 +96,57 @@ export type DisplayUnits = {
 };
 
 /**
+ * Configuration for automatic retry behavior on rate-limited (429) responses.
+ *
+ * When a service request receives a 429 status code, the SDK will automatically
+ * retry the request using exponential backoff. The `Retry-After` header from the
+ * API response is respected when present.
+ *
+ * @example
+ * ```typescript
+ * TomTomConfig.instance.put({
+ *   retry: {
+ *     initialWaitMs: 0.447,
+ *     backoffFactor: 1.618,
+ *     timeoutMs: 60000,
+ *   }
+ * });
+ * ```
+ *
+ * @group Configuration
+ */
+export type RetryConfig = {
+    /**
+     * Initial wait time in milliseconds before the first retry.
+     *
+     * Used as the base delay when no `Retry-After` header is present.
+     *
+     * @defaultValue 0.447
+     */
+    initialWaitMs?: number;
+
+    /**
+     * Multiplier applied to the wait time after each subsequent retry.
+     *
+     * For example, with `initialWaitMs: 0.447` and `backoffFactor: 1.618`,
+     * wait times would be: 0.447ms, 0.723ms, 1.170ms, etc.
+     *
+     * @defaultValue 1.618
+     */
+    backoffFactor?: number;
+
+    /**
+     * Maximum total time in milliseconds to spend retrying before giving up.
+     *
+     * If the next retry wait would exceed this timeout (measured from the
+     * first request), the SDK returns the 429 error to the caller.
+     *
+     * @defaultValue 60000
+     */
+    timeoutMs?: number;
+};
+
+/**
  * Global configuration for the TomTom Maps SDK.
  *
  * Contains essential parameters like API keys, language settings, and display preferences
@@ -194,6 +245,16 @@ export type GlobalConfig = {
      * If not provided, default unit labels are used.
      */
     displayUnits?: DisplayUnits;
+
+    /**
+     * Configuration for automatic retry on rate-limited (429) responses.
+     *
+     * When set, the SDK automatically retries requests that receive a 429 status code
+     * using exponential backoff. All fields have sensible defaults.
+     *
+     * @see {@link RetryConfig}
+     */
+    retry?: RetryConfig;
 };
 
 /**
@@ -208,6 +269,11 @@ export const defaultConfig: GlobalConfig = {
     commonBaseURL: 'https://api.tomtom.com',
     apiKey: '',
     apiVersion: 1,
+    retry: {
+        initialWaitMs: 0.447,
+        backoffFactor: 1.618,
+        timeoutMs: 40_000,
+    },
 };
 
 /**

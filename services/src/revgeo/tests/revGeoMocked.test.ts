@@ -1,12 +1,14 @@
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { omit } from 'lodash-es';
-import { afterAll, describe, expect, test } from 'vitest';
+import { afterAll, afterEach, describe, expect, test } from 'vitest';
 import { mockFetchResponse } from '../../shared/tests/fetchMockUtils';
 import { reverseGeocode } from '../reverseGeocoding';
 import apiAndParsedResponses from './revGeoMocked.data';
 
 describe('Reverse Geocoding mock tests', () => {
-    const unMockedFetch = global.fetch;
-    afterAll(() => (global.fetch = unMockedFetch));
+    const unMockedFetch = globalThis.fetch;
+    afterAll(() => (globalThis.fetch = unMockedFetch));
+    afterEach(() => TomTomConfig.instance.reset());
 
     test.each(apiAndParsedResponses)(`'%s`, async (_name, params, apiResponse, expectedParsedResponse) => {
         mockFetchResponse(200, apiResponse);
@@ -17,6 +19,7 @@ describe('Reverse Geocoding mock tests', () => {
     });
 
     test('Server response with 429.', async () => {
+        TomTomConfig.instance.put({ retry: undefined });
         mockFetchResponse(429);
         await expect(reverseGeocode({ position: [180, 90] })).rejects.toMatchObject({
             service: 'ReverseGeocode',

@@ -6,15 +6,7 @@ import type { MultiPolygon, Polygon, Position } from 'geojson';
 import { renderAreaAnalyticsChart } from './areaAnalyticsChart';
 import { MOVE_PORTAL_KEY } from './config';
 import { updateStats } from './controls';
-
-const pastDateRange = (days: number): { startDate: string; endDate: string } => {
-    const end = new Date();
-    end.setDate(end.getDate() - 2); // API requires ≥2 days ago
-    const start = new Date(end);
-    start.setDate(start.getDate() - (days - 1));
-    const fmt = (d: Date) => d.toISOString().slice(0, 10);
-    return { startDate: fmt(start), endDate: fmt(end) };
-};
+import type { AnalyticsFilters } from './filters';
 
 // Extracts ordered CSS color strings from a congestion metric config for use in the chart.
 const congestionColorStops = (analyticsModule: TrafficAreaAnalyticsModule): string[] => {
@@ -32,6 +24,7 @@ type CitySearchParams = {
     bottomPanel: HTMLElement;
     loadingOverlay: HTMLElement;
     heatmapContainer: HTMLElement;
+    filters: AnalyticsFilters;
 };
 
 const loadAnalytics = async (
@@ -40,19 +33,20 @@ const loadAnalytics = async (
     analyticsModule: TrafficAreaAnalyticsModule,
     bottomPanel: HTMLElement,
     loadingOverlay: HTMLElement,
-    heatmapContainer: HTMLElement,
+    filters: AnalyticsFilters,
     onChartData: (entries: AreaAnalyticsTimedEntry[], startDate: string) => void,
 ): Promise<void> => {
     try {
-        const { startDate, endDate } = pastDateRange(7);
         const analytics = await trafficAreaAnalytics({
             apiKey: MOVE_PORTAL_KEY,
             name: cityName,
-            startDate,
-            endDate,
+            startDate: filters.startDate,
+            endDate: filters.endDate,
+            // Keep metrics: 'all' so the active-metric viz selector can switch freely
+            // between metrics without re-fetching.
             metrics: 'all',
-            functionalRoadClasses: 'all',
-            hours: 'all',
+            functionalRoadClasses: filters.functionalRoadClasses.length > 0 ? filters.functionalRoadClasses : 'all',
+            hours: filters.hours.length > 0 ? filters.hours : 'all',
             geometry,
         });
 
@@ -72,7 +66,7 @@ const loadAnalytics = async (
         const hourly = region.timedData?.hourly ?? region.timedData?.average ?? [];
 
         if (hourly.length) {
-            onChartData(hourly, startDate);
+            onChartData(hourly, filters.startDate);
         }
 
         bottomPanel.classList.remove('aa-hidden');
@@ -86,6 +80,8 @@ const loadAnalytics = async (
 type CitySearchControls = {
     selectCityByName: (name: string, position: Position) => Promise<void>;
     rerenderChart: () => void;
+    reloadCurrent: () => Promise<void>;
+    hasCurrent: () => boolean;
 };
 
 export const initCitySearch = ({
@@ -96,9 +92,12 @@ export const initCitySearch = ({
     bottomPanel,
     loadingOverlay,
     heatmapContainer,
+    filters,
 }: CitySearchParams): CitySearchControls => {
     let lastEntries: AreaAnalyticsTimedEntry[] = [];
     let lastStartDate = '';
+    let currentCityName: string | null = null;
+    let currentGeometry: Polygon | MultiPolygon | null = null;
 
     const showSuggestions = (places: Place[]): void => {
         suggestionsList.innerHTML = '';
@@ -121,6 +120,25 @@ export const initCitySearch = ({
     const hideSuggestions = (): void => {
         suggestionsList.classList.remove('visible');
         suggestionsList.innerHTML = '';
+    };
+
+    const runAnalyticsFor = async (cityName: string, geometry: Polygon | MultiPolygon): Promise<void> => {
+        currentCityName = cityName;
+        currentGeometry = geometry;
+        loadingOverlay.classList.remove('aa-hidden');
+        await loadAnalytics(
+            cityName,
+            geometry,
+            analyticsModule,
+            bottomPanel,
+            loadingOverlay,
+            filters,
+            (entries, startDate) => {
+                lastEntries = entries;
+                lastStartDate = startDate;
+                renderAreaAnalyticsChart(heatmapContainer, entries, startDate, congestionColorStops(analyticsModule));
+            },
+        );
     };
 
     const selectCity = async (place: Place, moveMap = true): Promise<void> => {
@@ -146,24 +164,7 @@ export const initCitySearch = ({
             const geometry = boundary?.features?.[0]?.geometry;
 
             if (geometry) {
-                await loadAnalytics(
-                    place.properties?.address?.freeformAddress ?? 'Unknown',
-                    geometry,
-                    analyticsModule,
-                    bottomPanel,
-                    loadingOverlay,
-                    heatmapContainer,
-                    (entries, startDate) => {
-                        lastEntries = entries;
-                        lastStartDate = startDate;
-                        renderAreaAnalyticsChart(
-                            heatmapContainer,
-                            entries,
-                            startDate,
-                            congestionColorStops(analyticsModule),
-                        );
-                    },
-                );
+                await runAnalyticsFor(place.properties?.address?.freeformAddress ?? 'Unknown', geometry);
             } else {
                 loadingOverlay.classList.add('aa-hidden');
             }
@@ -232,5 +233,13 @@ export const initCitySearch = ({
         }
     };
 
-    return { selectCityByName, rerenderChart };
+    const reloadCurrent = async (): Promise<void> => {
+        if (currentCityName && currentGeometry) {
+            await runAnalyticsFor(currentCityName, currentGeometry);
+        }
+    };
+
+    const hasCurrent = (): boolean => currentCityName !== null && currentGeometry !== null;
+
+    return { selectCityByName, rerenderChart, reloadCurrent, hasCurrent };
 };

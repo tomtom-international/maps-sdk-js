@@ -22,6 +22,7 @@ describe('BaseMap module tests', () => {
             _eventsProxy: {
                 add: vi.fn(),
                 ensureAdded: vi.fn(),
+                updateIfRegistered: vi.fn(),
             },
             addStyleChangeHandler: vi.fn(),
             mapReady: vi.fn().mockReturnValue(false).mockReturnValue(true),
@@ -56,5 +57,26 @@ describe('BaseMap module tests', () => {
         tomtomMapMock.mapLibreMap.getSource = vi.fn().mockReturnValueOnce(undefined);
 
         await expect(() => BaseMapModule.get(tomtomMapMock)).rejects.toThrow();
+    });
+
+    test('restoreDataAndConfigImpl re-runs init and re-applies config after a style change', async () => {
+        const basemap = await BaseMapModule.get(tomtomMapMock, {
+            visible: false,
+            layerGroupsFilter: { mode: 'include', names: ['borders', 'water', 'land'] },
+        });
+        // After init, the once-mock is exhausted; restore needs getSource to keep returning the source.
+        (tomtomMapMock.mapLibreMap.getSource as ReturnType<typeof vi.fn>).mockReturnValue({ id: BASE_MAP_SOURCE_ID });
+        const getSourceCallsBefore = (tomtomMapMock.mapLibreMap.getSource as ReturnType<typeof vi.fn>).mock.calls
+            .length;
+
+        (basemap as unknown as { restoreDataAndConfigImpl(): void }).restoreDataAndConfigImpl();
+
+        expect((tomtomMapMock.mapLibreMap.getSource as ReturnType<typeof vi.fn>).mock.calls.length).toBeGreaterThan(
+            getSourceCallsBefore,
+        );
+        expect(basemap.getConfig()).toMatchObject({
+            visible: false,
+            layerGroupsFilter: { mode: 'include', names: ['borders', 'water', 'land'] },
+        });
     });
 });

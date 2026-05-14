@@ -1,5 +1,5 @@
 import type { Map } from 'maplibre-gl';
-import { describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { mapStyleLayerIDs, UserEvents } from '../../shared';
 import type { TomTomMap } from '../../TomTomMap';
 import { routeDeselectedOutline } from '../layers/routeMainLineLayers';
@@ -9,61 +9,14 @@ import { RoutingModule } from '../RoutingModule';
 // For real testing of such modules, refer to map-integration-tests.
 // Any forced coverage from tests here must be truly covered in map integration tests.
 describe('Routing module tests', () => {
-    test('Basic flows', async () => {
-        const waypointsSource = { id: 'routeWaypoints', setData: vi.fn() };
-        const routesSource = { id: 'routeMainLines', setData: vi.fn() };
-        const vehicleRestrictedSource = { id: 'routeVehicleRestricted', setData: vi.fn() };
-        const incidentsSource = { id: 'routeIncidents', setData: vi.fn() };
-        const ferriesSource = { id: 'routeFerries', setData: vi.fn() };
-        const tollRoadsSource = { id: 'routeTollRoads', setData: vi.fn() };
-        const tunnelsSource = { id: 'routeTunnels', setData: vi.fn() };
-        const instructionLinesSource = { id: 'routeInstructionLines', setData: vi.fn() };
-        const instructionArrowsSource = { id: 'routeInstructionArrows', setData: vi.fn() };
-        const summaryBubblesSource = { id: 'routeSummaryBubbles', setData: vi.fn() };
-        const tomtomMapMock = {
+    let tomtomMapMock: TomTomMap;
+
+    beforeEach(() => {
+        // getSource returns a fresh stub for any requested id — works for both the per-source
+        // lookups during init and the universal lookups during the restore path.
+        tomtomMapMock = {
             mapLibreMap: {
-                getSource: vi
-                    .fn()
-                    .mockReturnValueOnce(waypointsSource)
-                    .mockReturnValueOnce(waypointsSource)
-                    .mockReturnValueOnce(waypointsSource)
-                    .mockReturnValueOnce(waypointsSource)
-                    .mockReturnValueOnce(routesSource)
-                    .mockReturnValueOnce(routesSource)
-                    .mockReturnValueOnce(routesSource)
-                    .mockReturnValueOnce(routesSource)
-                    .mockReturnValueOnce(vehicleRestrictedSource)
-                    .mockReturnValueOnce(vehicleRestrictedSource)
-                    .mockReturnValueOnce(vehicleRestrictedSource)
-                    .mockReturnValueOnce(vehicleRestrictedSource)
-                    .mockReturnValueOnce(incidentsSource)
-                    .mockReturnValueOnce(incidentsSource)
-                    .mockReturnValueOnce(incidentsSource)
-                    .mockReturnValueOnce(incidentsSource)
-                    .mockReturnValueOnce(ferriesSource)
-                    .mockReturnValueOnce(ferriesSource)
-                    .mockReturnValueOnce(ferriesSource)
-                    .mockReturnValueOnce(ferriesSource)
-                    .mockReturnValueOnce(tollRoadsSource)
-                    .mockReturnValueOnce(tollRoadsSource)
-                    .mockReturnValueOnce(tollRoadsSource)
-                    .mockReturnValueOnce(tollRoadsSource)
-                    .mockReturnValueOnce(tunnelsSource)
-                    .mockReturnValueOnce(tunnelsSource)
-                    .mockReturnValueOnce(tunnelsSource)
-                    .mockReturnValueOnce(tunnelsSource)
-                    .mockReturnValueOnce(instructionLinesSource)
-                    .mockReturnValueOnce(instructionLinesSource)
-                    .mockReturnValueOnce(instructionLinesSource)
-                    .mockReturnValueOnce(instructionLinesSource)
-                    .mockReturnValueOnce(instructionArrowsSource)
-                    .mockReturnValueOnce(instructionArrowsSource)
-                    .mockReturnValueOnce(instructionArrowsSource)
-                    .mockReturnValueOnce(instructionArrowsSource)
-                    .mockReturnValueOnce(summaryBubblesSource)
-                    .mockReturnValueOnce(summaryBubblesSource)
-                    .mockReturnValueOnce(summaryBubblesSource)
-                    .mockReturnValueOnce(summaryBubblesSource),
+                getSource: vi.fn().mockImplementation((id: string) => ({ id, setData: vi.fn() })),
                 getLayer: vi.fn().mockReturnValue({}),
                 addLayer: vi.fn(),
                 removeLayer: vi.fn(),
@@ -77,12 +30,15 @@ describe('Routing module tests', () => {
             _eventsProxy: {
                 add: vi.fn(),
                 ensureAdded: vi.fn(),
+                updateIfRegistered: vi.fn(),
             },
             addStyleChangeHandler: vi.fn(),
             once: vi.fn().mockReturnValue(Promise.resolve()),
-            mapReady: vi.fn().mockReturnValue(false).mockReturnValue(true),
+            mapReady: vi.fn().mockReturnValue(true),
         } as unknown as TomTomMap;
+    });
 
+    test('Basic flows', async () => {
         const routing = await RoutingModule.get(tomtomMapMock);
         routing.showRoutes({ type: 'FeatureCollection', features: [] });
         routing.selectRoute(0);
@@ -113,5 +69,14 @@ describe('Routing module tests', () => {
         expect(routing.events.user.tunnels).toBeInstanceOf(UserEvents);
         expect(routing.events.user.instructionLines).toBeInstanceOf(UserEvents);
         expect(routing.events.user.summaryBubbles).toBeInstanceOf(UserEvents);
+    });
+
+    test('restoreDataAndConfigImpl keeps source and layer IDs stable across a style change', async () => {
+        const routing = await RoutingModule.get(tomtomMapMock);
+        const before = structuredClone(routing.sourceAndLayerIDs);
+
+        (routing as unknown as { restoreDataAndConfigImpl(): void }).restoreDataAndConfigImpl();
+
+        expect(routing.sourceAndLayerIDs).toEqual(before);
     });
 });

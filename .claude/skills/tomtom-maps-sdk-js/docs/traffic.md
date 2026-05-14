@@ -3,9 +3,16 @@
 ## Imports
 
 ```ts
-import { TrafficFlowModule, TrafficIncidentsModule } from '@tomtom-org/maps-sdk/map';
+import {
+    TrafficFlowModule,
+    TrafficIncidentsModule,
+    TrafficIncidentOverlayModule,
+    TrafficAreaAnalyticsModule,
+} from '@tomtom-org/maps-sdk/map';
 import { trafficIncidentDetails, trafficAreaAnalytics, geocodeOne, geometryData } from '@tomtom-org/maps-sdk/services';
 ```
+
+> **Two incident modules, two different jobs.** `TrafficIncidentsModule` is the **vector-tile overlay** — live data baked into the map style, no fetch needed; you toggle visibility and filter. `TrafficIncidentOverlayModule` is the **GeoJSON renderer for the `trafficIncidentDetails()` service** — *you* fetch a snapshot, *you* hand it to `show()`, and you can highlight a subset via `setFocus()`. Use the tile module when you just want "show me live traffic." Use the overlay module when you need the structured data (ids, delays, geometry) in your app *and* want to render exactly what you fetched.
 
 ---
 
@@ -79,6 +86,86 @@ Change module appearance or behavior without re-creating the module:
 trafficFlow.applyConfig(newFlowConfig);
 trafficIncidents.applyConfig(newIncidentsConfig);
 ```
+
+---
+
+## TrafficIncidentOverlayModule — render `trafficIncidentDetails()` results
+
+GeoJSON-source companion to the tile module. You fetch incidents yourself via the `trafficIncidentDetails()` service, hand the result to `show()`, and the module renders the same per-magnitude line + symbol style as the tile overlay — but driven by *your* snapshot, with ids, delays, and click access to the full typed feature.
+
+```ts
+const overlay = await TrafficIncidentOverlayModule.get(map);
+
+// Fetch a snapshot and render it.
+const result = await trafficIncidentDetails({
+    bbox: map.getBBox(),
+    timeValidityFilter: ['present'],
+});
+await overlay.show(result);
+
+// Highlight a subset — wider stripe + black outline on the matched ids,
+// unfocused features unchanged.
+overlay.setFocus([result.features[0].id as string]);
+
+// Click handler receives the **typed** TrafficIncident (preserves Date / array / object
+// properties that MapLibre would otherwise flatten to JSON strings on render).
+overlay.events.on('click', (incident, lngLat) => {
+    const { id, category, magnitudeOfDelay, delayInSeconds } = incident.properties;
+    overlay.setFocus(typeof id === 'string' ? [id] : null);
+});
+
+// De-duplicate hit-test results when one click lands on multiple stacked incidents
+// (each incident renders across outline + inner + symbol layers — `allFeatures`
+// contains every layer hit).
+overlay.events.on('click', (_incident, _lngLat, allFeatures) => {
+    const distinct = overlay.distinctIncidents(allFeatures);
+    console.log(`${distinct.length} incidents at this point`);
+});
+
+overlay.setFocus(null);     // clear focus
+overlay.setVisible(false);  // hide all layers
+await overlay.clear();      // drop rendered data (source kept, can show() again)
+
+overlay.moveBeforeLayer('top');         // pin above every layer
+overlay.moveBeforeLayer('lowestLabel'); // default — below labels
+```
+
+### Focus styling — override or take over
+
+```ts
+// Override the default treatment (outline color + width multiplier).
+const overlay = await TrafficIncidentOverlayModule.get(map, {
+    focus: { outlineColor: '#0052a5', widthScale: 2 },
+});
+
+// Disable the built-in visual treatment but keep feature-state writing —
+// drive your own styling off `feature-state.focused`.
+const overlay = await TrafficIncidentOverlayModule.get(map, { focus: false });
+```
+
+### When to hide the tile module first
+
+The vector-tile `TrafficIncidentsModule` is hidden in the default style, so the overlay renders on its own. If you've explicitly enabled the tile module elsewhere in the app, hide it before showing the overlay to avoid double-rendering:
+
+```ts
+const tileIncidents = await TrafficIncidentsModule.get(map);
+tileIncidents.setVisible(false);
+
+const overlay = await TrafficIncidentOverlayModule.get(map);
+await overlay.show(await trafficIncidentDetails({ bbox: map.getBBox() }));
+```
+
+### Differences vs. `TrafficIncidentsModule` (the tile module)
+
+| Aspect | `TrafficIncidentsModule` | `TrafficIncidentOverlayModule` |
+|---|---|---|
+| Source type | Vector tiles (`style`) | GeoJSON you fetch (`geojson`) |
+| Data acquisition | Built into the map style | `await trafficIncidentDetails(...)` then `overlay.show(result)` |
+| Click payload | Tile feature (properties only) | Typed `TrafficIncident` with `Date` / array / object fields preserved |
+| Filtering | `filter({ magnitudes, incidentCategories, delays })` | Filter the service request (`categoryFilter`, `timeValidityFilter`) before `show()` |
+| Highlight subset | — | `setFocus(ids)` — wider stripe + outline, MapLibre `feature-state.focused` |
+| Per-road-class width / offset | Yes (road-classification tags in tiles) | No — uniform stripe (REST API has no `road_category`) |
+| Use when | "Just show me live traffic" | App needs the structured data (ids, delays, geometry) and renders exactly that |
 
 ---
 
@@ -255,11 +342,12 @@ Height scaleMode: `'predefinedRange'` (default) / `'currentRange'` — use `maxH
 
 ## When to use which option
 
-| | Data | Use case |
+| API | Data | Use case |
 |---|---|---|
-| `TrafficFlowModule` | Real-time speed overlay | Visual speed conditions on map |
-| `TrafficIncidentsModule` | Real-time incident markers | Show/filter live events on map |
-| `trafficIncidentDetails` | Structured incident data | Programmatic queries, click-to-details |
+| `TrafficFlowModule` | Real-time speed overlay (vector tiles) | Visual speed conditions on map |
+| `TrafficIncidentsModule` | Real-time incident markers (vector tiles) | Toggle / filter live events; no fetch needed |
+| `trafficIncidentDetails` | Structured incident data (REST) | Programmatic queries; full typed feature in your app |
+| `TrafficIncidentOverlayModule` | Renders a `trafficIncidentDetails()` result | Render exactly what you fetched, with `setFocus()` highlight and typed click payloads |
 | `trafficAreaAnalytics` | Historical aggregates | Dashboards, reports, trend analysis |
 | `TrafficAreaAnalyticsModule` | Historical aggregates on map | Visualize region analytics with hex/square/heatmap |
 
@@ -267,9 +355,13 @@ Height scaleMode: `'predefinedRange'` (default) / `'currentRange'` — use `maxH
 
 ## Gotchas
 
-- `filter(undefined)` resets any active filter
+- `filter(undefined)` resets any active filter (tile `TrafficIncidentsModule` only — the overlay has no `filter()`; filter the service request instead)
 - Magnitude and category filters can be combined within the same `any: [{ ... }]` block
 - `trafficIncidentDetails` bbox accepts `[w, s, e, n]`, a GeoJSON Feature, or a FeatureCollection
+- `TrafficIncidentOverlayModule` and `TrafficIncidentsModule` both draw incidents. The tile module is hidden in the default style, so they don't collide by default — but if you've enabled the tile module explicitly, hide it (`tileIncidents.setVisible(false)`) before showing the overlay
+- `TrafficIncidentOverlayModule.setFocus(null)` clears the focused subset; `setFocus([])` does the same
+- `TrafficIncidentOverlayModule` click handlers receive the *typed* `TrafficIncident` (Date / array / object properties preserved) — not the flattened MapLibre feature
+- Stacked incidents on the overlay: MapLibre's symbol collision keeps only the highest-sort-key feature visible, so hover/click can't reach the others. Query the `FeatureCollection` you passed to `show()` directly when you need every incident at a point
 - `trafficAreaAnalytics` requires either `startDate`/`endDate` or `days` — not both; max 31 days
 - `trafficAreaAnalytics` `endDate` must be at least 2 days before today (e.g., if today is `2024-03-18`, latest valid `endDate` is `'2024-03-16'`)
 - `trafficAreaAnalytics` requires a **Move Portal API key** (different from standard TomTom API key). Override per-call: `trafficAreaAnalytics({ apiKey: MOVE_PORTAL_KEY, ... })` — see `docs/services-config.md` for per-call override details

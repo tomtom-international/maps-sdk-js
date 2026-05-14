@@ -387,6 +387,18 @@ describe('TrafficIncidentOverlayModule', () => {
         expect(setData).toHaveBeenCalledWith(result);
     });
 
+    test('restore keeps source and layer IDs stable', async () => {
+        const tomtomMap = makeMockMap();
+        const mod = await TrafficIncidentOverlayModule.get(tomtomMap);
+        const before = { ...mod.sourceAndLayerIDs.incidents };
+
+        (mod as unknown as { restoreDataAndConfigImpl: () => void }).restoreDataAndConfigImpl();
+        const after = mod.sourceAndLayerIDs.incidents;
+
+        expect(after.sourceID).toBe(before.sourceID);
+        expect(after.layerIDs).toEqual(before.layerIDs);
+    });
+
     describe('setFocus', () => {
         const fixture: TrafficIncidentDetails = {
             type: 'FeatureCollection',

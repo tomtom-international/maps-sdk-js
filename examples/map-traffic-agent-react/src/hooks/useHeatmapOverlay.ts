@@ -17,10 +17,11 @@ export function useHeatmapOverlay(agent: AgentInstance | undefined, incidents: I
 
     useEffect(() => {
         if (!agent) return;
-        const map = agent.state.baseMap.mapLibreMap;
+        const ttMap = agent.state.baseMap.ttMap;
+        const map = ttMap.mapLibreMap;
 
         const onLoad = () => {
-            const overlay = new HeatmapOverlay(map);
+            const overlay = new HeatmapOverlay(ttMap);
             overlay.setMode(vizModeRef.current);
             overlayRef.current = overlay;
             // If incidents already arrived before style load, render them now.

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import type { GlobalConfig } from '../globalConfig';
-import { mergeFromGlobal, TomTomConfig } from '../globalConfig';
+import { defaultConfig, mergeFromGlobal, TomTomConfig } from '../globalConfig';
 
 describe('GlobalConfig', () => {
     afterEach(() => TomTomConfig.instance.reset());
@@ -45,7 +45,7 @@ describe('GlobalConfig', () => {
 
         TomTomConfig.instance.put(cfg);
 
-        expect(TomTomConfig.instance.get()).toEqual(cfg);
+        expect(TomTomConfig.instance.get()).toEqual({ ...cfg, retry: defaultConfig.retry });
     });
 });
 
@@ -53,11 +53,17 @@ describe('mergeFromGlobal tests', () => {
     beforeEach(() => TomTomConfig.instance.reset());
 
     test('mergeFromGlobal with default global config', () => {
-        expect(mergeFromGlobal()).toEqual({ commonBaseURL: 'https://api.tomtom.com', apiKey: '', apiVersion: 1 });
+        expect(mergeFromGlobal()).toEqual({
+            commonBaseURL: 'https://api.tomtom.com',
+            apiKey: '',
+            apiVersion: 1,
+            retry: defaultConfig.retry,
+        });
         expect(mergeFromGlobal({ randomProp: 'blah', apiKey: 'CUSTOM_API_KEY' })).toEqual({
             apiKey: 'CUSTOM_API_KEY',
             apiVersion: 1,
             commonBaseURL: 'https://api.tomtom.com',
+            retry: defaultConfig.retry,
             randomProp: 'blah',
         });
     });
@@ -72,12 +78,14 @@ describe('mergeFromGlobal tests', () => {
             apiKey: 'GLOBAL_API_KEY',
             apiVersion: 2,
             commonBaseURL: 'https://api.tomtom.com',
+            retry: defaultConfig.retry,
             language: 'it-IT',
         });
         expect(mergeFromGlobal({})).toEqual({
             apiKey: 'GLOBAL_API_KEY',
             apiVersion: 2,
             commonBaseURL: 'https://api.tomtom.com',
+            retry: defaultConfig.retry,
             language: 'it-IT',
         });
         expect(mergeFromGlobal<Partial<GlobalConfig> & { randomProp: string }>({ randomProp: 'blah' })).toEqual({
@@ -85,6 +93,7 @@ describe('mergeFromGlobal tests', () => {
             apiKey: 'GLOBAL_API_KEY',
             apiVersion: 2,
             commonBaseURL: 'https://api.tomtom.com',
+            retry: defaultConfig.retry,
             language: 'it-IT',
         });
         expect(
@@ -103,6 +112,7 @@ describe('mergeFromGlobal tests', () => {
             // TODO: restore if we implement oauth2 access:
             // apiAccessToken: 'OAUTH2_ACCESS_TOKEN',
             commonBaseURL: 'CUSTOM',
+            retry: defaultConfig.retry,
             language: 'es-ES',
         });
     });

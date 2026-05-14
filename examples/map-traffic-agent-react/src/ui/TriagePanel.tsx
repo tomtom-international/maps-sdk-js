@@ -29,6 +29,15 @@ const SEVERITY_COLOR: Record<string, string> = {
     indefinite: 'hsl(0, 90%, 26%)',
 };
 
+const SHELL_CLASS =
+    'flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded-(--sdk-radius-10) border border-(--sdk-border-low) bg-(--sdk-surface-0) shadow-(--sdk-shadow-e4) backdrop-blur-md transition-[width] duration-200';
+const COLLAPSED_CLASS = 'w-[42px] flex-[0_0_42px]';
+const HEADER_CLASS =
+    'flex shrink-0 items-center gap-2 border-b border-(--sdk-border-low) bg-(--sdk-surface-1) px-3 py-2';
+const HEADER_COLLAPSED_CLASS = 'border-b-0 justify-center p-2';
+const COLLAPSE_BTN_CLASS =
+    'h-6 w-6 shrink-0 cursor-pointer rounded-(--sdk-radius-5) border border-(--sdk-border-low) bg-transparent text-[14px] leading-none text-(--sdk-text-medium) hover:border-(--sdk-border-high) hover:text-(--sdk-text-high)';
+
 export function TriagePanel({
     incidents,
     focusedIds,
@@ -71,20 +80,20 @@ export function TriagePanel({
 
     if (incidents.length === 0) {
         return (
-            <aside className={`triage triage-empty ${open ? '' : 'is-collapsed'}`}>
-                <header className="triage-header">
+            <aside className={`${SHELL_CLASS} ${open ? 'w-[320px]' : COLLAPSED_CLASS}`}>
+                <header className={`${HEADER_CLASS} ${open ? '' : HEADER_COLLAPSED_CLASS}`}>
                     <button
                         type="button"
-                        className="triage-collapse"
+                        className={COLLAPSE_BTN_CLASS}
                         onClick={() => setOpen((v) => !v)}
                         aria-label={open ? 'Collapse panel' : 'Expand panel'}
                     >
                         {open ? '›' : '‹'}
                     </button>
-                    <h3>Triage</h3>
+                    {open && <h3 className="m-0 flex-1 text-(--sdk-font-body-m) font-semibold">Triage</h3>}
                 </header>
                 {open && (
-                    <div className="triage-empty-body">
+                    <div className="p-3 text-(--sdk-font-caption-m) leading-relaxed text-(--sdk-text-medium)">
                         Ask the agent for incidents (e.g. "Show me incidents in Amsterdam"). Data will appear here
                         sorted by delay.
                     </div>
@@ -94,60 +103,62 @@ export function TriagePanel({
     }
 
     return (
-        <aside className={`triage ${open ? '' : 'is-collapsed'}`}>
-            <header className="triage-header">
+        <aside className={`${SHELL_CLASS} ${open ? '' : COLLAPSED_CLASS}`}>
+            <header className={`${HEADER_CLASS} ${open ? '' : HEADER_COLLAPSED_CLASS}`}>
                 <button
                     type="button"
-                    className="triage-collapse"
+                    className={COLLAPSE_BTN_CLASS}
                     onClick={() => setOpen((v) => !v)}
                     aria-label={open ? 'Collapse panel' : 'Expand panel'}
                 >
                     {open ? '›' : '‹'}
                 </button>
-                <h3>Triage</h3>
-                <span className="triage-count">{incidents.length}</span>
+                {open && (
+                    <>
+                        <h3 className="m-0 flex-1 text-(--sdk-font-body-m) font-semibold">Triage</h3>
+                        <span className="rounded-[10px] bg-(--sdk-surface-2) px-2 py-0.5 text-(--sdk-font-caption-m) text-(--sdk-text-medium) [font-variant-numeric:tabular-nums]">
+                            {incidents.length}
+                        </span>
+                    </>
+                )}
             </header>
 
             {open && (
                 <>
-                    <div className="triage-tabs" role="tablist">
-                        <button
-                            type="button"
-                            role="tab"
-                            aria-selected={tab === 'incidents'}
-                            className={tab === 'incidents' ? 'is-active' : ''}
-                            onClick={() => setTab('incidents')}
-                        >
+                    <div
+                        className="flex shrink-0 gap-0.5 border-b border-(--sdk-border-low) bg-(--sdk-surface-1) p-1"
+                        role="tablist"
+                    >
+                        <TabButton active={tab === 'incidents'} onClick={() => setTab('incidents')}>
                             Incidents
-                        </button>
-                        <button
-                            type="button"
-                            role="tab"
-                            aria-selected={tab === 'roads'}
-                            className={tab === 'roads' ? 'is-active' : ''}
-                            onClick={() => setTab('roads')}
-                        >
+                        </TabButton>
+                        <TabButton active={tab === 'roads'} onClick={() => setTab('roads')}>
                             Roads
-                            <span className="triage-count-sm">{topRoads.length}</span>
-                        </button>
+                            <span className="rounded-[8px] bg-(--sdk-surface-2) px-1.5 py-px text-[10px] font-normal text-(--sdk-text-low)">
+                                {topRoads.length}
+                            </span>
+                        </TabButton>
                     </div>
 
                     {tab === 'incidents' && (
                         <>
-                            <div className="triage-toolbar">
-                                <label className="triage-select">
-                                    <span>Sort</span>
-                                    <select value={sortKey} onChange={(e) => setSortKey(e.target.value as SortKey)}>
+                            <div className="flex flex-wrap items-center gap-1 border-b border-(--sdk-border-low) px-3 py-2">
+                                <SelectLabel label="Sort">
+                                    <select
+                                        value={sortKey}
+                                        onChange={(e) => setSortKey(e.target.value as SortKey)}
+                                        className="rounded-(--sdk-radius-5) border border-(--sdk-border-low) bg-(--sdk-surface-1) px-1.5 py-1 font-(family-name:--sdk-font-primary) text-(--sdk-font-caption-m) font-normal normal-case tracking-normal text-(--sdk-text-high)"
+                                    >
                                         <option value="delay">Delay</option>
                                         <option value="severity">Severity</option>
                                         <option value="recent">Recency</option>
                                     </select>
-                                </label>
-                                <label className="triage-select">
-                                    <span>Category</span>
+                                </SelectLabel>
+                                <SelectLabel label="Category">
                                     <select
                                         value={categoryFilter}
                                         onChange={(e) => setCategoryFilter(e.target.value as string | 'all')}
+                                        className="rounded-(--sdk-radius-5) border border-(--sdk-border-low) bg-(--sdk-surface-1) px-1.5 py-1 font-(family-name:--sdk-font-primary) text-(--sdk-font-caption-m) font-normal normal-case tracking-normal text-(--sdk-text-high)"
                                     >
                                         {categories.map((c) => (
                                             <option key={c} value={c}>
@@ -155,13 +166,13 @@ export function TriagePanel({
                                             </option>
                                         ))}
                                     </select>
-                                </label>
+                                </SelectLabel>
                                 {focusedIds.size > 0 ? (
                                     <button
                                         type="button"
-                                        className="triage-clear"
-                                        onClick={onClearFocus}
                                         title="Clear focus"
+                                        onClick={onClearFocus}
+                                        className="ml-auto cursor-pointer self-end rounded-(--sdk-radius-5) border border-(--sdk-border-low) bg-(--sdk-surface-1) px-2.5 py-1.5 text-(--sdk-font-caption-m) font-semibold text-(--sdk-text-medium) hover:border-(--sdk-border-high) hover:text-(--sdk-text-high)"
                                     >
                                         Clear focus
                                     </button>
@@ -169,21 +180,21 @@ export function TriagePanel({
                                     sorted.length >= 3 && (
                                         <button
                                             type="button"
-                                            className="triage-top3"
+                                            title="Focus top 3"
                                             onClick={() =>
                                                 onFocusMany(
                                                     sorted.slice(0, 3).map((f) => f.properties.id),
                                                     'Top 3 by delay',
                                                 )
                                             }
-                                            title="Focus top 3"
+                                            className="ml-auto cursor-pointer self-end rounded-(--sdk-radius-5) border-0 bg-(--sdk-primary-color) px-2.5 py-1.5 text-(--sdk-font-caption-m) font-semibold text-(--sdk-text-white) hover:brightness-110"
                                         >
                                             Focus top 3
                                         </button>
                                     )
                                 )}
                             </div>
-                            <ol className="triage-list">
+                            <ol className="m-0 flex-1 list-none overflow-y-auto p-0">
                                 {sorted.map((f) => {
                                     const p = f.properties;
                                     const isFocused = focusedIds.has(p.id);
@@ -191,7 +202,8 @@ export function TriagePanel({
                                     return (
                                         <li
                                             key={p.id}
-                                            className={`triage-row ${isFocused ? 'is-focused' : ''}`}
+                                            role="button"
+                                            tabIndex={0}
                                             onClick={() => {
                                                 onFocusIncident(p.id);
                                                 onSelectIncident(p.id);
@@ -203,27 +215,32 @@ export function TriagePanel({
                                                     onSelectIncident(p.id);
                                                 }
                                             }}
-                                            role="button"
-                                            tabIndex={0}
+                                            className={`grid cursor-pointer grid-cols-[10px_1fr_auto] items-center gap-2 border-b border-(--sdk-border-low) py-2 transition-colors hover:bg-(--sdk-surface-1) focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-(--sdk-primary-color) ${isFocused ? 'border-l-[3px] border-l-(--sdk-primary-color) bg-[color-mix(in_srgb,var(--sdk-primary-color)_10%,var(--sdk-surface-0))] pl-[calc(var(--sdk-space-3)-3px)] pr-3' : 'px-3'}`}
                                         >
                                             <span
-                                                className="triage-severity-dot"
+                                                className="h-2.5 w-2.5 shrink-0 rounded-full"
                                                 style={{ background: SEVERITY_COLOR[p.magnitudeOfDelay] }}
                                                 title={p.magnitudeOfDelay}
                                             />
-                                            <div className="triage-main">
-                                                <div className="triage-title">
-                                                    <span className="triage-cat">{p.category}</span>
+                                            <div className="min-w-0">
+                                                <div className="flex items-baseline gap-1.5 text-(--sdk-font-body-s) font-semibold">
+                                                    <span className="capitalize text-(--sdk-text-high)">
+                                                        {p.category}
+                                                    </span>
                                                     {p.roadNumbers?.[0] && (
-                                                        <span className="triage-road">{p.roadNumbers[0]}</span>
+                                                        <span className="rounded-[3px] bg-(--sdk-surface-2) px-1.5 py-px text-[10px] uppercase tracking-wider text-(--sdk-text-medium)">
+                                                            {p.roadNumbers[0]}
+                                                        </span>
                                                     )}
                                                 </div>
-                                                <div className="triage-sub">
+                                                <div className="mt-0.5 truncate text-(--sdk-font-caption-s) text-(--sdk-text-low)">
                                                     {p.from ? p.from : '—'}
                                                     {p.to ? ` → ${p.to}` : ''}
                                                 </div>
                                             </div>
-                                            <div className="triage-delay">{delay > 0 ? formatDelay(delay) : '—'}</div>
+                                            <div className="whitespace-nowrap text-right text-(--sdk-font-body-s) font-semibold text-(--sdk-text-high) [font-variant-numeric:tabular-nums]">
+                                                {delay > 0 ? formatDelay(delay) : '—'}
+                                            </div>
                                         </li>
                                     );
                                 })}
@@ -232,14 +249,17 @@ export function TriagePanel({
                     )}
 
                     {tab === 'roads' && (
-                        <ol className="triage-roads">
+                        <ol className="m-0 flex-1 list-none overflow-y-auto p-0">
                             {topRoads.length === 0 ? (
-                                <li className="triage-empty-row">No road numbers on current incidents.</li>
+                                <li className="p-3 text-center text-(--sdk-font-caption-m) text-(--sdk-text-low)">
+                                    No road numbers on current incidents.
+                                </li>
                             ) : (
                                 topRoads.map((r) => (
                                     <li
                                         key={r.road}
-                                        className="triage-road-row"
+                                        role="button"
+                                        tabIndex={0}
                                         onClick={() => onFocusMany(r.ids, `On ${r.road}`)}
                                         onKeyDown={(e) => {
                                             if (e.key === 'Enter' || e.key === ' ') {
@@ -247,17 +267,25 @@ export function TriagePanel({
                                                 onFocusMany(r.ids, `On ${r.road}`);
                                             }
                                         }}
-                                        role="button"
-                                        tabIndex={0}
                                         title={`Focus ${r.ids.length} incidents on ${r.road}`}
+                                        className="grid cursor-pointer grid-cols-[60px_1fr_auto] items-center gap-2 border-b border-(--sdk-border-low) px-3 py-2 transition-colors hover:bg-(--sdk-surface-1) focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-(--sdk-primary-color)"
                                     >
-                                        <span className="triage-road-name">{r.road}</span>
-                                        <span className="triage-road-bars">
-                                            <span className="triage-road-bar" style={{ width: `${r.barPct}%` }} />
+                                        <span className="text-(--sdk-font-body-s) font-semibold uppercase tracking-wider text-(--sdk-text-high)">
+                                            {r.road}
                                         </span>
-                                        <span className="triage-road-stat">
-                                            <strong>{formatDelay(r.totalDelay)}</strong>
-                                            <span className="triage-road-count">· {r.ids.length}</span>
+                                        <span className="relative min-w-[30px] h-2.5 overflow-hidden rounded-[3px] bg-(--sdk-surface-2)">
+                                            <span
+                                                className="block h-full rounded-[3px] bg-gradient-to-r from-[hsl(45,100%,51%)] via-[hsl(9,97%,51%)] to-[hsl(0,100%,34%)]"
+                                                style={{ width: `${r.barPct}%` }}
+                                            />
+                                        </span>
+                                        <span className="flex flex-col items-end [font-variant-numeric:tabular-nums]">
+                                            <strong className="text-(--sdk-font-body-s) text-(--sdk-text-high)">
+                                                {formatDelay(r.totalDelay)}
+                                            </strong>
+                                            <span className="text-[10px] text-(--sdk-text-low)">
+                                                · {r.ids.length}
+                                            </span>
                                         </span>
                                     </li>
                                 ))
@@ -267,6 +295,32 @@ export function TriagePanel({
                 </>
             )}
         </aside>
+    );
+}
+
+function TabButton({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+    const activeClass = active
+        ? 'bg-(--sdk-surface-0) text-(--sdk-text-high) shadow-(--sdk-shadow-e1)'
+        : 'bg-transparent text-(--sdk-text-medium) hover:text-(--sdk-text-high)';
+    return (
+        <button
+            type="button"
+            role="tab"
+            aria-selected={active}
+            onClick={onClick}
+            className={`inline-flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-(--sdk-radius-5) border-0 px-2 py-1.5 text-(--sdk-font-caption-m) font-semibold ${activeClass}`}
+        >
+            {children}
+        </button>
+    );
+}
+
+function SelectLabel({ label, children }: { label: string; children: React.ReactNode }) {
+    return (
+        <label className="inline-flex min-w-0 flex-1 flex-col gap-0.5 text-[10px] font-semibold uppercase tracking-wider text-(--sdk-text-low)">
+            <span>{label}</span>
+            {children}
+        </label>
     );
 }
 

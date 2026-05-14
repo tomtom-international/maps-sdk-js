@@ -4,10 +4,11 @@
 
 import type { CommonPlaceProps, PolygonFeature } from '@tomtom-org/maps-sdk/core';
 import { GeometriesModule, type GeometryTheme, type TomTomMap, themedGeometryConfig } from '@tomtom-org/maps-sdk/map';
-import type { CustomGeometriesEntry, StateSlice } from '../../types';
+import type { StateSlice } from '../../types';
 import { StateEvents } from '../events';
 import type { EntryMode, ShownEntriesSlice } from '../state';
 import type { CustomGeometriesAnalysis } from './analysis';
+import type { CustomGeometriesEntry } from './entry';
 
 /**
  * Events fired by {@link CustomGeometriesState}. Subscribe via
