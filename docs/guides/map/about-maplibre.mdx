@@ -1,0 +1,174 @@
+---
+title: About MapLibre
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.47.6"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+This guide explains how the TomTom Maps SDK for JavaScript integrates with MapLibre GL JS and when to use each library directly.
+
+## MapLibre GL JS Overview
+
+[MapLibre GL JS](https://maplibre.org/maplibre-gl-js/docs/) is an open-source TypeScript library for publishing interactive maps on websites. It provides powerful capabilities for displaying beautiful maps, adding data, and creating user interactions.
+
+## TomTom's MapLibre Strategy
+
+TomTom officially supports MapLibre as part of our commitment to open-source mapping technologies and OpenStreetMap data integration.
+
+MapLibre GL JS is used as a **peer dependency**. This means developers must install MapLibre separately to use it alongside the TomTom Maps SDK.
+
+To learn how you can leverage MapLibre, check its [live examples](https://maplibre.org/maplibre-gl-js/docs/examples/).
+
+The TomTom Maps SDK builds on MapLibre to provide:
+- **TomTom-specific functionality**: Seamless integration with TomTom services
+- **Simplified APIs**: Easier access to complex mapping features
+- **Consistent styling**: Pre-built TomTom map styles and themes
+- **Service integration**: Direct connection to TomTom's routing, search, and traffic services
+
+### Direct MapLibre Access
+Every TomTom map instance provides direct access to the underlying MapLibre map:
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+import mapLibre from 'maplibre-gl';
+
+TomTomConfig.instance.put({ apiKey: 'YOUR_API_KEY' });
+
+const tomtomMap = new TomTomMap({ mapLibre: { container: 'map' /* pass other maplibre config */ }});
+
+const maplibreMap = tomtomMap.mapLibreMap;
+
+// Add maplibre event listener
+maplibreMap.on('click', (event) => {
+    console.log('Map clicked at:', event.lngLat);
+});
+
+// Add MapLibre controls
+maplibreMap.addControl(new mapLibre.NavigationControl(), 'top-right');
+```
+
+## When to Use TomTom SDK vs Direct MapLibre
+
+### Use TomTom SDK For:
+
+**TomTom Service Integration:**
+```javascript
+import { PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { search } from '@tomtom-org/maps-sdk/services';
+
+const results = await search({ query: 'restaurants' });
+const placesModule = await PlacesModule.get(tomtomMap);
+placesModule.show(results);
+```
+
+### Use Direct MapLibre For:
+
+**Custom Map Layers:**
+```javascript
+// Custom data layers
+maplibreMap.addSource('custom-data', {
+    type: 'geojson',
+    data: customGeoJSON
+});
+
+maplibreMap.addLayer({
+    id: 'custom-layer',
+    type: 'circle',
+    source: 'custom-data',
+    paint: { 'circle-radius': 8, 'circle-color': '#ff0000' }
+});
+
+// Custom style modifications
+maplibreMap.setPaintProperty('building-layer', 'fill-color', '#00ff00');
+
+// Detailed event control
+maplibreMap.on('sourcedata', (event) => {
+    if (event.sourceId === 'my-source' && event.isSourceLoaded) {
+        console.log('Source loaded');
+    }
+});
+```
+
+## Hybrid Development Approach
+
+The most effective approach combines both libraries:
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { search } from '@tomtom-org/maps-sdk/services';
+import { Marker, Popup } from 'maplibre-gl';
+
+// Initialize with TomTom SDK
+TomTomConfig.instance.put({ apiKey: 'YOUR_API_KEY' });
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+
+// Use TomTom services for business logic
+const restaurants = await search({ query: 'restaurants' });
+const placesModule = await PlacesModule.get(map);
+placesModule.show(restaurants);
+
+// Use MapLibre for custom features
+const customMarker = new Marker({ color: '#ff0000' });
+
+customMarker.setLngLat([4.9, 52.3]).setPopup(new Popup().setText('Custom Location')).addTo(map.mapLibreMap);
+
+// Combine event handling
+placesModule.events.on('click', (feature) => {
+    console.log('TomTom place clicked:', feature.properties.name);
+});
+
+map.mapLibreMap.on('click', (event) => {
+    console.log('Map clicked at:', event.lngLat);
+});
+```
+
+## Benefits of This Integration
+
+### For Developers
+- **Flexibility**: Choose the right tool for each task
+- **Future-proof**: Direct access to MapLibre ensures compatibility
+- **Learning curve**: Familiar MapLibre APIs remain available
+- **Community**: Access to both TomTom and MapLibre communities
+
+### For Applications
+- **Performance**: Leverage MapLibre's optimized rendering
+- **Functionality**: Access TomTom's comprehensive service ecosystem
+- **Customization**: Full control over map appearance and behavior
+- **Scalability**: Build from simple to complex mapping applications
+
+
+## MapLibre CSS
+
+**The SDK will automatically download the CSS for the MapLibre version you installed unless you import it yourself.**
+
+If you want to leverage MapLibre CSS as they come, you do not need to do anything.
+
+Otherwise, you can optionally import the MapLibre CSS in your project if you want to override some maplibre styles with predictable results, or if you need to ensure a different version is used.
+
+If you want to include a specific MapLibre CSS you can do it in two ways:
+
+Import in your JavaScript/TypeScript files (preferred):
+
+```javascript
+import 'maplibre-gl/dist/maplibre-gl.css';
+```
+
+Or directly in your HTML file (replace `@VERSION` with the desired version or omit for latest):
+
+```html
+<!-- Include in your HTML head -->
+<link href="https://unpkg.com/maplibre-gl@VERSION/dist/maplibre-gl.css" rel="stylesheet" />
+```
+
+## Related Resources
+
+- [MapLibre GL JS Documentation](https://maplibre.org/maplibre-gl-js-docs/api/)
+- [TomTom Map Quickstart](../map/quickstart.mdx)
+- [TomTom Map Introduction](../map/introduction.mdx)

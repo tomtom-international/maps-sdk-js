@@ -1,0 +1,135 @@
+group: maps-sdk-js
+isPrivate: false
+productName: TomTom Maps SDK for JavaScript
+isMenuOpened: false
+menu:
+  - title: How the SDK works
+    fileId: how-the-sdk-works
+  - title: AI Coding with the SDK
+    fileId: ai-coding
+  - title: Map
+    items:
+      - fileId: map/quickstart
+        title: Quickstart
+      - fileId: map/introduction
+        title: Introduction
+      - fileId: map/tomtom-map
+        title: TomTom Map object
+      - fileId: map/modules
+        title: Map Modules
+      - fileId: map/styles
+        title: Map styles
+      - fileId: map/traffic
+        title: Traffic
+      - fileId: map/about-maplibre
+        title: About MapLibre
+      - title: Modules
+        items:
+          - fileId: map/base-map
+            title: Base Map
+          - fileId: map/pois
+            title: POIs
+          - fileId: map/places
+            title: Places
+          - fileId: map/routes
+            title: Routes
+          - fileId: map/geometries
+            title: Geometries
+          - fileId: map/custom
+            title: Custom GeoJSON
+          - fileId: map/traffic-incidents
+            title: Traffic Incidents
+          - fileId: map/traffic-incident-overlay
+            title: Traffic Incident Overlay
+          - fileId: map/traffic-flow
+            title: Traffic Flow
+          - fileId: map/hillshade
+            title: Hillshade
+      - title: Events
+        items:
+          - fileId: map/events
+            title: Overview
+          - fileId: map/user-events
+            title: User Events
+          - fileId: map/module-events
+            title: Module Events
+      - fileId: map/utilities
+        title: Utilities
+
+  - title: Services
+    items:
+      - fileId: services/quickstart
+        title: Quickstart
+      - title: Places
+        items:
+          - fileId: services/places/quickstart
+            title: Overview
+          - fileId: services/places/search
+            title: Search
+          - fileId: services/places/geocoding
+            title: Geocoding
+          - fileId: services/places/reverse-geocoding
+            title: Reverse geocoding
+          - fileId: services/places/geometry-data
+            title: Geometry data
+          - fileId: services/places/ev-charging-stations-availability
+            title: EV Charging Stations Availability
+          - fileId: services/places/place-by-id
+            title: Place by ID
+          - fileId: services/places/poi-categories
+            title: POI Categories
+      - title: Routing
+        items:
+          - fileId: services/routing/quickstart
+            title: Quickstart
+          - fileId: services/routing/parameters
+            title: Planning a route
+          - fileId: services/routing/locations
+            title: Locations
+          - fileId: services/routing/guidance
+            title: Guidance
+          - fileId: services/routing/vehicle
+            title: Vehicle Configuration
+          - fileId: services/routing/long-distance-ev-routing
+            title: Long Distance EV Routing
+          - fileId: services/routing/reachable-ranges
+            title: Reachable Ranges
+      - title: Traffic
+        items:
+          - fileId: services/traffic/traffic-incident-details
+            title: Incident Details
+          - fileId: services/traffic/traffic-area-analytics
+            title: Area Analytics
+      - fileId: services/customizing-services
+        title: Customizing services
+  - title: Core
+    items:
+      - fileId: core/quickstart
+        title: Quickstart
+      - fileId: core/places
+        title: Places
+      - fileId: core/routes
+        title: Routes
+      - fileId: core/traffic
+        title: Traffic
+      - title: Utilities
+        items:
+          - fileId: core/utilities/coordinates
+            title: Coordinates
+          - fileId: core/utilities/bounding-boxes
+            title: Bounding Boxes
+          - fileId: core/utilities/routes
+            title: Routes
+          - fileId: core/utilities/formatting
+            title: Formatting
+  - title: Plugins
+    items:
+      - fileId: plugins/viewport-places
+        title: Viewport Places
+      - fileId: plugins/agent-toolkit
+        title: Agent Toolkit
+
+  - title: Migration
+    items:
+      - fileId: migration/v6-to-new-sdk
+        title: Migrating from V6
