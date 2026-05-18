@@ -18,6 +18,24 @@
 
 This section is for developers working on the SDK examples codebase.
 
+### Orientation: examples are SDK consumers
+
+Each example is a small **app built on top of the SDK** — examples import from
+`@tomtom-org/maps-sdk/{core,services,map}` exactly as a customer would. When
+you're adding or editing an example, you're writing consumer code, not editing
+SDK source.
+
+If you have access to skills, **invoke the `tomtom-maps-sdk-js` skill** before
+writing example code. It is the canonical reference for the consumer-facing API
+(`TomTomMap`, modules, `setStyle`, `standardStyleIDs`, events, services, etc.)
+and will steer you away from internal helpers that aren't part of the public
+surface. The contributor-mode skill (`tomtom-maps-sdk-js-contribution`) is for
+editing `core/`, `services/`, `map/`, or plugins — not for example apps.
+
+When an example needs an SDK constant or type (style IDs, layer IDs, config
+types, etc.), import it from `@tomtom-org/maps-sdk/...` rather than hardcoding
+or re-deriving it locally.
+
 ### Overview
 
 This directory contains 50+ runnable examples demonstrating SDK features:
@@ -276,14 +294,32 @@ pnpm dev
 
 Web examples have E2E tests (Node.js examples do not).
 
+> **Build first.** The sanity E2E test loads the example from its `dist/`
+> output, not from the dev server. Run `pnpm -F map build` and
+> `pnpm -F @examples/<example-name> build` **before** any
+> `test:e2e` / `test:e2e:update-snapshots` invocation, otherwise the run will
+> serve stale or missing assets. The same applies to the root-level
+> `pnpm e2e-test:examples:update-snapshot` and `pnpm generate-thumbnails:examples`
+> commands further down.
+
 **Quick commands:**
 ```bash
-cd examples/<example-name>
+# 1. Build the SDK and the example you're targeting
+pnpm -F map build
+pnpm -F @examples/<example-name> build
 
+# 2. Then run E2E from inside the example
+cd examples/<example-name>
 pnpm test:e2e                    # Run tests
 pnpm test:e2e:update-snapshots   # Regenerate upon-load.png snapshot
 pnpm test:e2e:ui                 # Interactive UI mode
 ```
+
+**New example checklist.** When you add a brand-new example, the snapshot and
+thumbnail don't exist yet — the first `pnpm test:e2e:update-snapshots` writes
+`e2e-tests/snapshots/upon-load.png`, and `pnpm generate-thumbnails:examples
+<example-name>` then derives `content/thumbnail.png` from it. Commit both
+files alongside the example source.
 
 Each web example has one snapshot:
 - `e2e-tests/snapshots/upon-load.png` — screenshot taken on page load (commit this file)

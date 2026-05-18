@@ -6,12 +6,12 @@ import type { Places } from '@tomtom-org/maps-sdk/core';
 import * as turf from '@turf/turf';
 import * as h3 from 'h3-js';
 import { z } from 'zod';
-import type { ToolState } from '../../types';
+import type { FeatureFlags, ToolEntry, ToolEntryBuilder, ToolState } from '../../types';
 import {
     ANALYSE_OUTPUT_FORMAT_DESCRIPTION,
     buildAnalyseReturnPrompt,
+    buildPlacesSchemaDoc,
     buildSandboxCodePrompt,
-    PLACES_SCHEMA_DOC,
     placesEntryIDsSchema,
     runSandboxedFn,
     validateAnalysisResult,
@@ -41,32 +41,36 @@ export const analysePlacesOutputSchema = z.union([
 ]);
 
 /**
- * Tool schema for analyse-places.
+ * Build the flag-aware tool schema for analyse-places.
  */
-export const analysePlacesSchema = z.object({
-    placesEntryIDs: placesEntryIDsSchema({
-        verb: 'analyse',
-        extra: 'Multiple IDs are merged into a single `places` input. The analysis is attached to EACH source entry under `_analysis` with the given name.',
-    }),
-    name: z
-        .string()
-        .describe(
-            'Unique name within the entry (e.g. "by-category", "hex-density-8"). Reusing a name replaces the previous analysis.',
-        ),
-    description: z.string().optional().describe('Optional short description of what the analysis computes.'),
-    outputFormat: z.enum(['json', 'chart']).optional().describe(ANALYSE_OUTPUT_FORMAT_DESCRIPTION),
-    code: z
-        .string()
-        .describe(
-            'Async JS that aggregates the injected `places` FeatureCollection and returns the result. ' +
-                '`places` is the merged set of every entry in `placesEntryIDs`; `placesByEntry[entryId]` exposes ' +
-                'each one separately for per-entry totals or set ops — list every needed id in `placesEntryIDs` ' +
-                'rather than trying to call `recallPlaces` (sandbox cannot call other tools).\n\n' +
-                `${buildSandboxCodePrompt(['places', 'placesByEntry', 'h3', 'turf'])}\n\n` +
-                `${buildAnalyseReturnPrompt('counts, groupings, hex bins, centroids, bboxes', '`labels: hexIds.map(h => [\\`Hex ${h}\\`, \\`${counts[h]} items\\`, ...names[h].slice(0, 5)])`')}\n\n` +
-                `${PLACES_SCHEMA_DOC}\n\n`,
-        ),
-});
+export const buildAnalysePlacesSchema = (flags: FeatureFlags) =>
+    z.object({
+        placesEntryIDs: placesEntryIDsSchema({
+            verb: 'analyse',
+            extra: 'Multiple IDs are merged into a single `places` input. The analysis is attached to EACH source entry under `_analysis` with the given name.',
+        }),
+        name: z
+            .string()
+            .describe(
+                'Unique name within the entry (e.g. "by-category", "hex-density-8"). Reusing a name replaces the previous analysis.',
+            ),
+        description: z.string().optional().describe('Optional short description of what the analysis computes.'),
+        outputFormat: z.enum(['json', 'chart']).optional().describe(ANALYSE_OUTPUT_FORMAT_DESCRIPTION),
+        code: z
+            .string()
+            .describe(
+                'Async JS that aggregates the injected `places` FeatureCollection and returns the result. ' +
+                    '`places` is the merged set of every entry in `placesEntryIDs`; `placesByEntry[entryId]` exposes ' +
+                    'each one separately for per-entry totals or set ops — list every needed id in `placesEntryIDs` ' +
+                    'rather than trying to call `recallPlaces` (sandbox cannot call other tools).\n\n' +
+                    `${buildSandboxCodePrompt(['places', 'placesByEntry', 'h3', 'turf'])}\n\n` +
+                    `${buildAnalyseReturnPrompt('counts, groupings, hex bins, centroids, bboxes', '`labels: hexIds.map(h => [\\`Hex ${h}\\`, \\`${counts[h]} items\\`, ...names[h].slice(0, 5)])`')}\n\n` +
+                    `${buildPlacesSchemaDoc(flags)}\n\n`,
+            ),
+    });
+
+/** Default-flag (`experimentalSearch: false`) tool schema. */
+export const analysePlacesSchema = buildAnalysePlacesSchema({});
 
 export const analysePlacesDescription =
     'Aggregate existing places entries via dynamic JS: counts, groupings, densities, summaries, charts. ' +
@@ -74,7 +78,7 @@ export const analysePlacesDescription =
     'Result is returned and attached as `_analysis[name]` on each source entry. Does NOT create a new entry or touch the map (use processPlaces for that).';
 
 export const executeAnalysePlaces = async (
-    params: z.infer<typeof analysePlacesSchema>,
+    params: z.infer<ReturnType<typeof buildAnalysePlacesSchema>>,
     state: ToolState,
 ): Promise<z.infer<typeof analysePlacesOutputSchema>> => {
     const { placesEntryIDs, name, description, code, outputFormat = 'json' } = params;
@@ -138,3 +142,52 @@ export const executeAnalysePlaces = async (
         analysis,
     };
 };
+
+/**
+ * Build a complete {@link ToolEntry} for `analysePlaces` for the given
+ * {@link FeatureFlags}. Only the schema doc embedded in the `code` field
+ * description varies between flag sets — the executor is shared because
+ * analyse-places does not echo place summaries in its output.
+ */
+export const buildAnalysePlacesEntry = <S extends ToolState = ToolState>(
+    flags: FeatureFlags,
+    metadata: Omit<ToolEntry<S>, 'description' | 'inputSchema' | 'outputSchema' | 'execute'>,
+): ToolEntry<S> => ({
+    ...metadata,
+    description: analysePlacesDescription,
+    inputSchema: buildAnalysePlacesSchema(flags),
+    outputSchema: analysePlacesOutputSchema,
+    execute: executeAnalysePlaces as ToolEntry<S>['execute'],
+});
+
+// Static metadata for the analysePlaces tool — registry binds this to the schema/executor.
+const analysePlacesMetadata = {
+    classificationPrompt:
+        'Aggregate / summarise / chart existing places via dynamic JS (h3, turf available). `outputFormat`: `json` (text) or `chart` (Chart.js).',
+    tags: ['place', 'location', 'utilities'],
+    examples: [
+        'analysePlaces({ placesEntryIDs: ["places-2"], name: "by-category", code: "const counts = {}; for (const p of places.features) for (const c of (p.properties.poi?.categories ?? [])) counts[c] = (counts[c] ?? 0) + 1; return { total: places.features.length, byCategory: counts };" })',
+        'analysePlaces({ placesEntryIDs: ["places-1"], name: "hex-density-8", description: "h3 resolution 8 density", code: "const bins = {}; for (const p of places.features) { const [lng,lat] = p.geometry.coordinates; const cell = h3.latLngToCell(lat, lng, 8); bins[cell] = (bins[cell] ?? 0) + 1; } return { resolution: 8, bins };" })',
+        'analysePlaces({ placesEntryIDs: ["places-0", "places-1"], name: "extent", code: "return { bbox: turf.bbox(places), centroid: turf.centroid(places).geometry.coordinates };" })',
+        'analysePlaces({ name: "top-categories-bar", outputFormat: "chart", code: "const counts = {}; for (const p of places.features) for (const c of (p.properties.poi?.categories ?? [])) counts[c] = (counts[c] ?? 0) + 1; const entries = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0,10); return { type: \'bar\', data: { labels: entries.map(e => e[0]), datasets: [{ label: \'Places\', data: entries.map(e => e[1]) }] }, options: { plugins: { title: { display: true, text: \'Top categories\' } } } };" })',
+        'analysePlaces({ name: "brand-share", outputFormat: "chart", code: "const counts = {}; for (const p of places.features) { const n = p.properties.poi?.brands?.[0]?.name ?? \'other\'; counts[n] = (counts[n] ?? 0) + 1; } return { type: \'doughnut\', data: { labels: Object.keys(counts), datasets: [{ data: Object.values(counts) }] } };" })',
+    ],
+    examplePrompts: [
+        'How many of each POI category are in these results?',
+        'h3 hex density of these places at resolution 8',
+        'Bounding box and centroid of these places',
+        'Bar chart of the top POI categories',
+        'Pie chart of the brand distribution',
+        'Which municipality has the most of these places?',
+    ],
+    relatedTools: ['discoverPlaces', 'recallPlaces', 'processPlaces'],
+    dependsOn: ['discoverPlaces', 'recallPlaces'],
+} satisfies Omit<ToolEntry, 'description' | 'inputSchema' | 'outputSchema' | 'execute'>;
+
+/**
+ * Builder for the analysePlaces default tool entry. Reads
+ * {@link FeatureFlags} from the build options so the embedded Place schema
+ * doc stays aligned with whatever the LLM sees from other tools.
+ */
+export const analysePlacesBuilder: ToolEntryBuilder = (options) =>
+    buildAnalysePlacesEntry(options.featureFlags ?? {}, analysePlacesMetadata);

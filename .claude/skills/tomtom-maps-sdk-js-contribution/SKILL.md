@@ -44,6 +44,8 @@ You are working as an SDK contributor on the TomTom Maps SDK for JavaScript mono
    - **Map modules**: get instances via `await SomeModule.get(map)`, never `new SomeModule()`.
    - **Tool `execute`** in plugins must catch and return `{ error: string }`, never throw.
    - **Build order is strict**: `core` → `services` + `map`. Never import `map` from `services` or vice versa.
+   - **Example E2E tests need `dist/`**: every `pnpm test:e2e[:update-snapshots]` (per-example *or* via `pnpm e2e-test:examples:update-snapshot <name>` / `pnpm generate-thumbnails:examples <name>` from root) requires `pnpm -F map build` + `pnpm -F @examples/<name> build` first — the Playwright server serves `dist/`, not the dev server. Skipping the build silently uses stale assets.
+   - **New examples** must ship both `e2e-tests/snapshots/upon-load.png` (from `pnpm test:e2e:update-snapshots`) and `content/thumbnail.png` (derived via `pnpm generate-thumbnails:examples <name>`). Commit both.
 
 ## After every change
 

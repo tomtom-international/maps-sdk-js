@@ -85,8 +85,6 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
     AreaAnalyticsSourcesWithLayers,
     TrafficAreaAnalyticsConfig
 > {
-    private static lastInstanceIndex = -1;
-
     // ── Cached layer specs (used by changeLayerProps for config updates) ──
 
     private heatmapLayerSpec!: ReturnType<typeof buildHeatmapLayerSpec>;
@@ -151,13 +149,9 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
     /** @ignore */
     protected _initSourcesWithLayers(
         config?: TrafficAreaAnalyticsConfig,
-        restore?: boolean,
+        _restore?: boolean,
     ): AreaAnalyticsSourcesWithLayers {
-        if (!restore) {
-            TrafficAreaAnalyticsModule.lastInstanceIndex++;
-        }
-
-        const index = TrafficAreaAnalyticsModule.lastInstanceIndex;
+        const index = this.instanceIndex;
         const heatmapSourceId = `area-analytics-heatmap-${index}`;
         const hexgridSourceId = `area-analytics-hexgrid-${index}`;
         const squareSourceId = `area-analytics-square-${index}`;

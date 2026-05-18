@@ -138,8 +138,6 @@ type GeometrySourcesWithLayers = {
  * @group Geometries
  */
 export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayers, GeometriesModuleConfig> {
-    private static lastInstanceIndex = -1;
-
     private titleLayerSpecs!: SymbolLayerSpecWithoutSource;
     private geometryFillLayerSpecs!: SymbolLayerSpecWithoutSource;
     private geometryOutlineLayerSpecs!: SymbolLayerSpecWithoutSource;
@@ -233,10 +231,9 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
      */
     protected _initSourcesWithLayers(config?: GeometriesModuleConfig, restore?: boolean): GeometrySourcesWithLayers {
         if (!restore) {
-            GeometriesModule.lastInstanceIndex++;
-            this.sourceID = `geometry-${GeometriesModule.lastInstanceIndex}`;
-            this.titleSourceID = `geometryTitle-${GeometriesModule.lastInstanceIndex}`;
-            const layerIdPrefix = `geometry-${GeometriesModule.lastInstanceIndex}`;
+            this.sourceID = `geometry-${this.instanceIndex}`;
+            this.titleSourceID = `geometryTitle-${this.instanceIndex}`;
+            const layerIdPrefix = `geometry-${this.instanceIndex}`;
             this.fillLayerID = `${layerIdPrefix}_Fill`;
             this.outlineLayerID = `${layerIdPrefix}_Outline`;
             this.lineLabelLayerID = `${layerIdPrefix}_LineLabel`;

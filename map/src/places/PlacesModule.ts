@@ -153,7 +153,6 @@ type ConnectionLayerSpecMap = {
 const DEFAULT_CLUSTER_RADIUS_PX = 60;
 
 export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, PlacesModuleConfig> {
-    private static lastInstanceIndex = -1;
     // Cluster layers (`clusterBadge` in particular) aren't symbol layers, so the
     // record value is widened to the full layer-spec union.
     private layerSpecs!: Record<PlaceLayerName, ToBeAddedLayerSpecWithoutSource<LayerSpecification>>;
@@ -169,12 +168,6 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
     private unclusteredSourceID!: string;
     private connectionSourceID!: string;
     private layerIDPrefix!: string;
-    /**
-     * The index of this instance, to generate unique source and layer IDs.
-     * * Starts with 0 and each instance increments it by one.
-     * @private
-     */
-    private instanceIndex!: number;
     private defaultPlaceIconID!: string;
     // Assigned in `_initSourcesWithLayers` (which runs before `_applyConfig` during the
     // base-class constructor). A class-field initializer would be too late: it runs
@@ -201,10 +194,9 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      * @ignore
      */
     protected _initSourcesWithLayers(config?: PlacesModuleConfig, restore?: boolean): PlacesSourcesAndLayers {
-        // Only increment the instance index for new instances, not for restore operations
+        // `instanceIndex` is auto-assigned by AbstractMapModule on construction; nothing
+        // to bump on restore (we keep the same IDs across style changes).
         if (!restore) {
-            PlacesModule.lastInstanceIndex++;
-            this.instanceIndex = PlacesModule.lastInstanceIndex;
             this.sourceID = `places-${this.instanceIndex}`;
             this.unclusteredSourceID = `places-${this.instanceIndex}-unclustered`;
             this.connectionSourceID = `places-connections-${this.instanceIndex}`;

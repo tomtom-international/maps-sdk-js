@@ -283,9 +283,7 @@ export function TriagePanel({
                                             <strong className="text-(--sdk-font-body-s) text-(--sdk-text-high)">
                                                 {formatDelay(r.totalDelay)}
                                             </strong>
-                                            <span className="text-[10px] text-(--sdk-text-low)">
-                                                · {r.ids.length}
-                                            </span>
+                                            <span className="text-[10px] text-(--sdk-text-low)">· {r.ids.length}</span>
                                         </span>
                                     </li>
                                 ))

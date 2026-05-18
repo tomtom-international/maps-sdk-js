@@ -44,21 +44,6 @@ export type PlacesStateEvents = {
     'mode-change': EntryMode;
 };
 
-// Maps the public `PlacesMarkerType` to the property name on `entry._modules`
-// where the corresponding PlacesModule lives. Centralised so the public string
-// values can include hyphens (`pin-clustered`) while the internal slot uses
-// camelCase (`pinClustered`).
-const markerTypeSlot = (markerType: PlacesMarkerType): 'pin' | 'baseMap' | 'pinClustered' => {
-    switch (markerType) {
-        case 'pin':
-            return 'pin';
-        case 'base-map':
-            return 'baseMap';
-        case 'pin-clustered':
-            return 'pinClustered';
-    }
-};
-
 // Dedupe features by their string `id`. Features without a string id are kept as-is.
 const dedupeById = (features: PolygonFeature<CommonPlaceProps>[]): PolygonFeature<CommonPlaceProps>[] => {
     const seen = new Set<string>();
@@ -97,10 +82,10 @@ const renderMerged = async (module: GeometriesModule, features: PolygonFeature<C
  * State for the places layer: an append-only history of place results plus per-entry display
  * modules.
  *
- * Each entry owns its own PlacesModule (per marker theme: pin / base-map / pin-clustered) and
- * a dedicated GeometriesModule, lazy-initialised on first show. The slice no longer holds
- * shared modules — display state lives on the entry, so two entries can be rendered side by
- * side under different themes without sharing a single source.
+ * Each entry owns a single PlacesModule (rethemed in-place via `applyTheme` when the marker
+ * type changes — an entry only renders under one theme at a time) and a dedicated
+ * GeometriesModule, lazy-initialised on first show. Display state lives on the entry, so two
+ * entries can be rendered side by side under different themes without sharing a single source.
  *
  * @group Agent Toolkit
  */
@@ -142,20 +127,19 @@ export class PlacesState implements StateSlice {
     }
 
     /**
-     * Lazy-init and return the entry's PlacesModule for the given marker theme. Each entry
-     * keeps a separate module per theme so flipping themes for one entry doesn't disturb
-     * another. Throws when the entry id is unknown.
+     * Lazy-init and return the entry's PlacesModule, rethemed to `markerType`. An entry only
+     * ever renders under one theme at a time, so the same module is reused — flipping themes
+     * calls `applyTheme` in place. Throws when the entry id is unknown.
      */
     async getEntryPlacesModule(entryId: string, markerType: PlacesMarkerType): Promise<PlacesModule> {
         const entry = this._requireEntry(entryId);
         entry._modules ??= {};
-        const slot = markerTypeSlot(markerType);
-        let module = entry._modules[slot];
-        if (!module) {
-            module = await PlacesModule.get(this._ttMap, { theme: markerType });
-            entry._modules[slot] = module;
+        if (!entry._modules.places) {
+            entry._modules.places = await PlacesModule.get(this._ttMap, { theme: markerType });
+        } else if (entry._shownAs !== markerType) {
+            entry._modules.places.applyTheme(markerType);
         }
-        return module;
+        return entry._modules.places;
     }
 
     /**
@@ -565,9 +549,7 @@ export class PlacesState implements StateSlice {
         const entry = this._entries[idx];
         const wasShown = !!entry._shownAs;
         if (entry._modules) {
-            await entry._modules.pin?.clear();
-            await entry._modules.baseMap?.clear();
-            await entry._modules.pinClustered?.clear();
+            await entry._modules.places?.clear();
             await entry._modules.geometries?.clear();
         }
         this._entries.splice(idx, 1);
@@ -575,30 +557,22 @@ export class PlacesState implements StateSlice {
         if (wasShown) this.events.emit('shown-change', this.shownEntryIds);
     }
 
-    // Brings an entry up under `markerType`: clears the previous theme's module
-    // (if any), lazy-inits the target theme's module, and pushes the entry's
-    // places onto it. Idempotent — calling twice with the same theme just
-    // re-pushes the same data.
+    // Brings an entry up under `markerType`: lazy-inits or rethemes the entry's single
+    // PlacesModule, then pushes its places onto it. Idempotent — calling twice with the same
+    // theme just re-pushes the same data; switching themes rethemes the existing module in place.
     private async _showEntryAs(entry: PlacesEntry, markerType: PlacesMarkerType): Promise<void> {
-        if (entry._shownAs && entry._shownAs !== markerType) {
-            const prev = entry._modules?.[markerTypeSlot(entry._shownAs)];
-            if (prev) await prev.clear();
-        }
         const module = await this.getEntryPlacesModule(entry.id, markerType);
         await module.show({ type: 'FeatureCollection', features: entry.places } as Places);
-        // Connections (when stored on the entry) re-render with the places.
         if (entry.connections?.length) {
             await module.showConnections(entry.connections);
         }
         entry._shownAs = markerType;
     }
 
-    // Hides whichever theme is currently rendering this entry. No-op if
-    // already hidden.
+    // Hides the entry by clearing its PlacesModule. No-op if already hidden.
     private async _hideEntry(entry: PlacesEntry): Promise<void> {
         if (!entry._shownAs) return;
-        const module = entry._modules?.[markerTypeSlot(entry._shownAs)];
-        if (module) await module.clear();
+        if (entry._modules?.places) await entry._modules.places.clear();
         entry._shownAs = undefined;
     }
 
@@ -609,9 +583,7 @@ export class PlacesState implements StateSlice {
         // on the style — same trade-off the previous shared-module reset had.
         for (const entry of this._entries) {
             if (entry._modules) {
-                entry._modules.pin?.clear();
-                entry._modules.baseMap?.clear();
-                entry._modules.pinClustered?.clear();
+                entry._modules.places?.clear();
                 entry._modules.geometries?.clear();
             }
         }

@@ -26,7 +26,7 @@ import {
     showResultsOnMap,
     withinSharedFields,
 } from '../shared';
-import { placesOutputSchema, toolErrorSchema } from '../shared-output-schemas';
+import { buildPlacesOutputSchema, toolErrorSchema } from '../shared-output-schemas';
 import { locatePlace, locatePlaces, type QueryAs } from './locate-place';
 
 // Number of candidate places to consider when resolving `where.query` — a precise polygon often
@@ -59,23 +59,27 @@ const resolveQueryToWithinArea = async (
     return { place: places[0] };
 };
 
-/** Output schema for the discover-places tool. */
-export const discoverPlacesOutputSchema = z.union([
-    placesOutputSchema.extend({
-        shown: shownSchema.optional(),
-        placesEntryId: z.string().optional(),
-        label: z
-            .string()
-            .optional()
-            .describe('Human-readable label stored with the entry (e.g. "cafe", "CINEMA (50 places)").'),
-        geometriesFetched: z
-            .number()
-            .optional()
-            .describe('Count of boundary polygons fetched and cached on the entry (when `geometries` was set).'),
-        geometriesShown: z.boolean().optional().describe('Whether the fetched polygons were rendered on the map.'),
-    }),
-    toolErrorSchema,
-]);
+/** Build the flag-aware output schema for the discover-places tool. */
+export const buildDiscoverPlacesOutputSchema = (flags: FeatureFlags) =>
+    z.union([
+        buildPlacesOutputSchema(flags).extend({
+            shown: shownSchema.optional(),
+            placesEntryId: z.string().optional(),
+            label: z
+                .string()
+                .optional()
+                .describe('Human-readable label stored with the entry (e.g. "cafe", "CINEMA (50 places)").'),
+            geometriesFetched: z
+                .number()
+                .optional()
+                .describe('Count of boundary polygons fetched and cached on the entry (when `geometries` was set).'),
+            geometriesShown: z.boolean().optional().describe('Whether the fetched polygons were rendered on the map.'),
+        }),
+        toolErrorSchema,
+    ]);
+
+/** Default-flag (`experimentalSearch: false`) output schema. */
+export const discoverPlacesOutputSchema = buildDiscoverPlacesOutputSchema({});
 
 // --- schema builders ---
 //
@@ -175,6 +179,14 @@ const experimentalWithinFields = {
             'Exact, case-sensitive municipality names (e.g. ["Amsterdam", "Utrecht"]). ' +
                 'EXCLUSIVE with viewport; composes with other multi-region fields.',
         ),
+    areaId: z
+        .string()
+        .optional()
+        .describe(
+            'Id of a municipality polygon — restricts results to that single municipality. ' +
+                'Typically chained from a previous hit\'s `areaId` ("what else is in this same area?"). ' +
+                'EXCLUSIVE with viewport; composes with other multi-region fields.',
+        ),
 };
 
 // `within` mode for discoverPlaces — plural-form fields. Either `viewport` alone, or any
@@ -185,6 +197,11 @@ const buildDiscoverWithinWhereSchema = (flags: FeatureFlags) =>
         .refine(
             (data) => {
                 const hasViewport = !!data.viewport;
+                const experimentalData = data as {
+                    municipalities?: string[];
+                    boundingBoxes?: unknown[];
+                    areaId?: string;
+                };
                 const hasMulti =
                     !!data.queries?.length ||
                     !!data.placeIds?.length ||
@@ -193,8 +210,9 @@ const buildDiscoverWithinWhereSchema = (flags: FeatureFlags) =>
                     !!data.route ||
                     // Experimental-only fields — `data` is loosely typed because of the optional
                     // intersection. Treat absent fields as empty.
-                    !!(data as { municipalities?: string[] }).municipalities?.length ||
-                    !!(data as { boundingBoxes?: unknown[] }).boundingBoxes?.length;
+                    !!experimentalData.municipalities?.length ||
+                    !!experimentalData.boundingBoxes?.length ||
+                    !!experimentalData.areaId;
                 if (hasViewport && hasMulti) return false;
                 return hasViewport || hasMulti;
             },
@@ -202,7 +220,7 @@ const buildDiscoverWithinWhereSchema = (flags: FeatureFlags) =>
                 message:
                     '`within` requires EITHER `viewport: true` OR one or more multi-region fields ' +
                     '(queries / placeIds / geometries / range / route' +
-                    (flags.experimentalSearch ? ' / boundingBoxes / municipalities' : '') +
+                    (flags.experimentalSearch ? ' / boundingBoxes / municipalities / areaId' : '') +
                     '), not both.',
             },
         );
@@ -231,7 +249,7 @@ const maxDetourWhereSchema = z.object({
 
 const buildDiscoverPlacesWhereSchema = (flags: FeatureFlags) => {
     const withinFieldList = flags.experimentalSearch
-        ? 'boundingBoxes/queries/placeIds/municipalities/geometries/range/route'
+        ? 'boundingBoxes/queries/placeIds/municipalities/areaId/geometries/range/route'
         : 'queries/placeIds/geometries/range/route';
     return z
         .union([buildDiscoverWithinWhereSchema(flags), nearbyWhereSchema, maxDetourWhereSchema, globalWhereSchema])
@@ -254,7 +272,10 @@ export const buildDiscoverPlacesSchema = (flags: FeatureFlags) => {
             .string()
             .optional()
             .describe(
-                'Free-text filter (name/address). Omit when searching by category — use `poiCategories` instead.',
+                'Free-text filter on POI name/address. ' +
+                    'NEVER a city/region/area name (e.g. "Paris", "Amsterdam") — those go in `where`. ' +
+                    'For "restaurants in Paris": `query` is empty (or a name filter like "pizza"), `where.queries: [{query: "Paris"}]`. ' +
+                    'Omit when filtering by category — use `poiCategories` instead.',
             ),
         where: buildDiscoverPlacesWhereSchema(flags).optional(),
         poiCategories: z
@@ -267,7 +288,12 @@ export const buildDiscoverPlacesSchema = (flags: FeatureFlags) => {
                     '"SUPERMARKETS_HYPERMARKETS", "PHARMACY", "ATM". ' +
                     'For anything else, call getPoiCategoryCodes first to resolve natural-language terms (e.g. "italian food", "gym").',
             ),
-        show: showPlacesSchema.optional().describe('Display the places and/or geometries on the map.'),
+        show: showPlacesSchema
+            .optional()
+            .describe(
+                'Display places/geometries on the map. ' +
+                    'Skip for intermediate results — let the follow-up (processPlaces / analysePlaces / processGeometries) render the final entry.',
+            ),
         entryId: placesEntryIdHintSchema,
         geometries: showPlaceGeometriesSchema,
     };
@@ -282,6 +308,16 @@ export const buildDiscoverPlacesSchema = (flags: FeatureFlags) => {
                       'Restrict to record types (default: all). ' +
                           'POI = businesses/landmarks/amenities; PointAddress = numbered addresses; Street = unnumbered streets.',
                   ),
+              areaTags: z
+                  .array(z.string())
+                  .optional()
+                  .describe(
+                      'Area-character tokens describing the surrounding municipality ' +
+                          '(e.g. "coastal", "walkable", "alpine", "transit_connected"). ' +
+                          'OR semantics — matches places in municipalities tagged with ANY of the tokens. ' +
+                          'Populated only for DE / NL / FR; supplying these in other countries returns zero hits. ' +
+                          'Filter, not a geo-bias — pair with a `where` mode that supplies one.',
+                  ),
           }
         : baseShape;
 
@@ -294,11 +330,14 @@ export const buildDiscoverPlacesSchema = (flags: FeatureFlags) => {
 
 export const buildDiscoverPlacesDescription = (flags: FeatureFlags): string => {
     const withinFieldList = flags.experimentalSearch
-        ? 'boundingBoxes/queries/placeIds/municipalities/geometries/range/route'
+        ? 'boundingBoxes/queries/placeIds/municipalities/areaId/geometries/range/route'
         : 'queries/placeIds/geometries/range/route';
     const preferLine = flags.experimentalSearch
-        ? 'Prefer `municipalities` / `queries` / `placeIds` (precise) over `boundingBoxes` (coarse). '
+        ? 'Prefer `municipalities` / `areaId` / `queries` / `placeIds` (precise) over `boundingBoxes` (coarse). '
         : 'Prefer `queries` / `placeIds` (resolve to precise polygons) over raw `geometries`. ';
+    const areaTagsLine = flags.experimentalSearch
+        ? 'Top-level `areaTags` (DE/NL/FR only) narrows hits by municipality character ("coastal", "walkable", …). '
+        : '';
     return (
         'Search for MULTIPLE places in a region — REQUIRES a search subject (`query` and/or `poiCategories`). ' +
         'NOT for a single named place — use locatePlace for that (including its polygon/boundary via `geometry`). ' +
@@ -307,6 +346,7 @@ export const buildDiscoverPlacesDescription = (flags: FeatureFlags): string => {
         `\`where.mode\`: \`within\` (\`viewport\` OR any combo of ${withinFieldList}), ` +
         '`nearby` (position/viewport/query + optional radiusMeters), `maxDetour` (≤100 ranked detours off a route), `global`. ' +
         preferLine +
+        areaTagsLine +
         'Route: `within.route` = bulk corridor (≤10000); `maxDetour` = short ranked list (≤100). ' +
         'Default: `{ mode: "within", viewport: true }`. ' +
         'Never call this with empty `query` AND empty `poiCategories` — that is locatePlace territory.'
@@ -332,9 +372,14 @@ type MultiFilters = {
     municipalities?: string[];
     boundingBoxes?: HasBBox[];
     geometries?: (Polygon | MultiPolygon)[];
+    // `areaId` is a single-municipality geo-bias on the underlying explorationSearch — like
+    // `municipalities` but matches by polygon id instead of name (faster + unambiguous).
+    areaId?: string;
     // Not a geographic restriction — deliberately excluded from `hasMultiFilters`
     // so passing it alone still triggers the viewport-bounds default.
     placeTypes?: ('POI' | 'PointAddress' | 'Street')[];
+    // Filter (not a geo-bias). Composes with any `where` scope.
+    areaTags?: string[];
 };
 
 type DiscoverPlacesWhere = z.infer<ReturnType<typeof buildDiscoverPlacesWhereSchema>>;
@@ -414,8 +459,9 @@ const searchByDetour = async (
     return { result, placesEntryId };
 };
 
-// Some `MultiFilters` keys (`municipalities`, `boundingBoxes`, `placeTypes`) only exist on
-// the experimental exploration-search backend. Strip them when calling the default `search`.
+// Some `MultiFilters` keys (`municipalities`, `boundingBoxes`, `placeTypes`, `areaId`,
+// `areaTags`) only exist on the experimental exploration-search backend. Strip them when
+// calling the default `search`.
 const stripExperimentalFilters = (filters: MultiFilters): { geometries?: (Polygon | MultiPolygon)[] } => {
     const { geometries } = filters;
     return geometries?.length ? { geometries } : {};
@@ -554,10 +600,8 @@ const resolvePlaceIdsToGeometries = async (
 const resolveDiscoverWithin = async (
     where: DiscoverWithinWhere,
     state: ToolState,
-    placeTypes: ('POI' | 'PointAddress' | 'Street')[] | undefined,
+    baseFilters: MultiFilters,
 ): Promise<WithinResolution | { error: string }> => {
-    const baseFilters: MultiFilters = placeTypes?.length ? { placeTypes } : {};
-
     if (where.viewport) {
         return {
             bias: { boundingBox: getViewportBoundingBox(state.baseMap) },
@@ -581,11 +625,12 @@ const resolveDiscoverWithin = async (
         resolvedGeometries.push(...resolved.geometries);
     }
 
-    // `boundingBoxes` and `municipalities` only exist on the experimental schema; treat them
-    // as absent on the default schema.
+    // `boundingBoxes`, `municipalities`, and `areaId` only exist on the experimental schema;
+    // treat them as absent on the default schema.
     const experimentalWhere = where as DiscoverWithinWhere & {
         boundingBoxes?: HasBBox[];
         municipalities?: string[];
+        areaId?: string;
     };
 
     const mergedBoundingBoxes: HasBBox[] = [
@@ -600,6 +645,7 @@ const resolveDiscoverWithin = async (
     const multiFilters: MultiFilters = {
         ...baseFilters,
         ...(experimentalWhere.municipalities?.length && { municipalities: experimentalWhere.municipalities }),
+        ...(experimentalWhere.areaId && { areaId: experimentalWhere.areaId }),
         ...(mergedBoundingBoxes.length && { boundingBoxes: mergedBoundingBoxes }),
         ...(mergedGeometries.length && { geometries: mergedGeometries }),
     };
@@ -656,7 +702,6 @@ type ResolvedDiscoverBias = {
 const resolveDiscoverBias = async (
     effectiveWhere: DiscoverPlacesWhere,
     state: ToolState,
-    placeTypes: ('POI' | 'PointAddress' | 'Street')[] | undefined,
     baseMultiFilters: MultiFilters,
 ): Promise<ResolvedDiscoverBias | { error: string }> => {
     if (effectiveWhere.mode === 'nearby') {
@@ -664,7 +709,7 @@ const resolveDiscoverBias = async (
         return { bias: nearby.bias, multiFilters: baseMultiFilters, radiusMeters: nearby.radiusMeters };
     }
     if (effectiveWhere.mode === 'within') {
-        const resolved = await resolveDiscoverWithin(effectiveWhere, state, placeTypes);
+        const resolved = await resolveDiscoverWithin(effectiveWhere, state, baseMultiFilters);
         if ('error' in resolved) return resolved;
         return {
             bias: resolved.bias,
@@ -724,6 +769,7 @@ const finalizeDiscoverResult = async (
     placesEntryId: string,
     show: z.infer<ReturnType<typeof buildDiscoverPlacesSchema>>['show'],
     geometries: z.infer<ReturnType<typeof buildDiscoverPlacesSchema>>['geometries'],
+    flags: FeatureFlags,
 ) => {
     const shown = show ? await showResultsOnMap(state, [placesEntryId], show) : undefined;
 
@@ -738,7 +784,7 @@ const finalizeDiscoverResult = async (
     const label = state.places.entries.find((entry) => entry.id === placesEntryId)?.label;
 
     return {
-        ...summarizePlaces(result),
+        ...summarizePlaces(result, flags),
         placesEntryId,
         ...(label && { label }),
         ...(shown && { shown }),
@@ -760,8 +806,13 @@ export const buildExecuteDiscoverPlaces = (flags: FeatureFlags) => {
         state: ToolState,
     ): Promise<z.infer<typeof discoverPlacesOutputSchema>> => {
         const { query, where, poiCategories, show, entryId, geometries } = params;
-        // `placeTypes` only exists on the experimental schema.
-        const placeTypes = (params as { placeTypes?: ('POI' | 'PointAddress' | 'Street')[] }).placeTypes;
+        // `placeTypes` and `areaTags` only exist on the experimental schema.
+        const experimentalParams = params as {
+            placeTypes?: ('POI' | 'PointAddress' | 'Street')[];
+            areaTags?: string[];
+        };
+        const placeTypes = experimentalParams.placeTypes;
+        const areaTags = experimentalParams.areaTags;
 
         // Resolve once upstream — exact catalog codes pass through, natural-language terms are
         // synonym-resolved via getPoiCategoryCodes. We only error when the LLM passed inputs and
@@ -781,17 +832,28 @@ export const buildExecuteDiscoverPlaces = (flags: FeatureFlags) => {
 
         // Default to viewport-bounded when no `where` was supplied.
         const effectiveWhere: DiscoverPlacesWhere = where ?? { mode: 'within', viewport: true };
-        const baseMultiFilters: MultiFilters = placeTypes?.length ? { placeTypes } : {};
+        // Top-level filters that compose with any `where` scope (not geo-biases on their own).
+        const baseMultiFilters: MultiFilters = {
+            ...(placeTypes?.length && { placeTypes }),
+            ...(areaTags?.length && { areaTags }),
+        };
 
         try {
             // maxDetour dispatches to a different SDK endpoint and shares no params with the rest.
             if (effectiveWhere.mode === 'maxDetour') {
                 const detourResult = await searchByDetour(state, effectiveWhere, query, resolvedPoiCategories, entryId);
                 if ('error' in detourResult) return detourResult;
-                return finalizeDiscoverResult(state, detourResult.result, detourResult.placesEntryId, show, geometries);
+                return finalizeDiscoverResult(
+                    state,
+                    detourResult.result,
+                    detourResult.placesEntryId,
+                    show,
+                    geometries,
+                    flags,
+                );
             }
 
-            const resolved = await resolveDiscoverBias(effectiveWhere, state, placeTypes, baseMultiFilters);
+            const resolved = await resolveDiscoverBias(effectiveWhere, state, baseMultiFilters);
             if ('error' in resolved) return resolved;
             const { bias, multiFilters, radiusMeters, range, routeLabel } = resolved;
 
@@ -807,7 +869,14 @@ export const buildExecuteDiscoverPlaces = (flags: FeatureFlags) => {
                     useExperimental,
                 );
                 if ('error' in rangeResult) return rangeResult;
-                return finalizeDiscoverResult(state, rangeResult.result, rangeResult.placesEntryId, show, geometries);
+                return finalizeDiscoverResult(
+                    state,
+                    rangeResult.result,
+                    rangeResult.placesEntryId,
+                    show,
+                    geometries,
+                    flags,
+                );
             }
 
             const biasResult = await searchWithBias(
@@ -822,7 +891,7 @@ export const buildExecuteDiscoverPlaces = (flags: FeatureFlags) => {
                 routeLabel,
                 useExperimental,
             );
-            return finalizeDiscoverResult(state, biasResult.result, biasResult.placesEntryId, show, geometries);
+            return finalizeDiscoverResult(state, biasResult.result, biasResult.placesEntryId, show, geometries, flags);
         } catch (error) {
             return { error: `Search failed: ${error instanceof Error ? error.message : String(error)}` };
         }
@@ -846,7 +915,7 @@ export const buildDiscoverPlacesEntry = <S extends ToolState = ToolState>(
     ...metadata,
     description: buildDiscoverPlacesDescription(flags),
     inputSchema: buildDiscoverPlacesSchema(flags),
-    outputSchema: discoverPlacesOutputSchema,
+    outputSchema: buildDiscoverPlacesOutputSchema(flags),
     execute: buildExecuteDiscoverPlaces(flags) as ToolEntry<S>['execute'],
 });
 
@@ -855,24 +924,25 @@ export const buildDiscoverPlacesEntry = <S extends ToolState = ToolState>(
 const discoverPlacesMetadata = {
     classificationPrompt:
         'Search multiple places by query/category in a region. BATCH categories+areas in one call. ' +
+        '`query` filters POI names ONLY — area names go in `where`. ' +
         '`where.mode`: within (area) / nearby (point bias) / maxDetour (route-relative ranked) / global. ' +
-        'For "X in [named area]", use `where.query` directly — it geocodes and prefers polygon geometry over bbox in one step, no precursor locatePlace needed. ' +
-        'Within-mode: route → corridor. Prefer geometries/municipalities/placeId over bbox. ' +
+        'For "X in [named area]", put X in top-level `query`/`poiCategories` and the area in `where.queries: [{query: "..."}]` — geocoded in one step, no precursor locatePlace. ' +
+        'Within-mode: route → corridor. Prefer geometries/municipalities/placeIds over bbox. ' +
         'Skip for already-stored places — use recallPlaces/processPlaces.',
     tags: ['discover', 'place', 'location'],
     examples: [
         'discoverPlaces({ poiCategories: ["RESTAURANT", "CAFE", "BAR"], entryId: "amsterdam-food-spots" })  // batch many categories + semantic id',
         'discoverPlaces({ query: "coffee", where: { mode: "nearby", position: [4.9, 52.4], radiusMeters: 500 } })',
-        'discoverPlaces({ query: "parking", where: { mode: "within", query: "De Jordaan, Amsterdam", queryAs: "place" } })  // resolves to neighbourhood polygon',
+        'discoverPlaces({ query: "parking", where: { mode: "within", queries: [{ query: "De Jordaan, Amsterdam", queryAs: "place" }] } })  // area name goes in `where.queries`, NOT top-level `query`',
         'discoverPlaces({ query: "coffee", where: { mode: "nearby", query: "Schiphol Airport", queryAs: "poi", radiusMeters: 2000 } })  // POI-resolved bias point',
         'discoverPlaces({ poiCategories: ["HOTEL"], where: { mode: "within", municipalities: ["Amsterdam", "Utrecht"] }, entryId: "ams-utrecht-hotels" })',
         'discoverPlaces({ query: "bakery", where: { mode: "within", range: "ranges-0" } })',
         'discoverPlaces({ poiCategories: ["CAFE"], show: { markerType: "pin", zoomMode: "auto" } })  // omit `where` → defaults to viewport',
-        'discoverPlaces({ query: "Amsterdam neighbourhood", placeTypes: ["Geography"], geometries: { show: true, theme: "outline" } })  // outline boundaries',
+        'discoverPlaces({ poiCategories: ["RESTAURANT"], where: { mode: "within", queries: [{ query: "Paris" }] } })  // "restaurants in Paris" — subject in `poiCategories`, area in `where.queries`',
         'discoverPlaces({ poiCategories: ["ELECTRIC_VEHICLE_STATION"], where: { mode: "within", route: { routeId: "routes-0", widthMeters: 1000 } } })  // bulk corridor scan along the route',
         'discoverPlaces({ query: "coffee", where: { mode: "maxDetour", maxDetourTimeSeconds: 300, limit: 5 } })  // top 5 coffee detours within 5 min off the latest route',
         'discoverPlaces({ poiCategories: ["ELECTRIC_VEHICLE_STATION"], where: { mode: "maxDetour", routeId: "routes-1", maxDetourTimeSeconds: 600, sortBy: "detourOffset" } })  // ranked EV detours on a specific route',
-        'discoverPlaces({ query: "bakery", where: { mode: "within", placeId: "G55fc4abe-..." } })  // search inside a state place\'s polygon (auto-fetched if needed)',
+        'discoverPlaces({ query: "bakery", where: { mode: "within", placeIds: ["G55fc4abe-..."] } })  // search inside stored place polygons (auto-fetched if needed)',
         'discoverPlaces({ query: "vegan", where: { mode: "global" } })',
     ],
     examplePrompts: [

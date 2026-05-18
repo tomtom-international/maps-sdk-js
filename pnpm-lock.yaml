@@ -466,7 +466,69 @@ importers:
         specifier: 'catalog:'
         version: 8.0.12(@types/node@25.7.0)(esbuild@0.27.3)(jiti@2.6.1)(less@4.4.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.14))(terser@5.44.1)(tsx@4.20.6)(yaml@2.9.0)
 
+  examples/byod-custom-module-mock-data:
+    dependencies:
+      '@tomtom-org/maps-sdk':
+        specifier: workspace:*
+        version: link:../..
+    devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.60.0
+      '@types/geojson':
+        specifier: 'catalog:'
+        version: 7946.0.16
+      '@types/node':
+        specifier: 'catalog:'
+        version: 25.7.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.1.3
+      rollup-plugin-visualizer:
+        specifier: 'catalog:'
+        version: 7.0.1(rolldown@1.0.0)(rollup@4.59.0)
+      ts-node:
+        specifier: 'catalog:'
+        version: 10.9.2(@types/node@25.7.0)(typescript@6.0.3)
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      vite:
+        specifier: 'catalog:'
+        version: 8.0.12(@types/node@25.7.0)(esbuild@0.27.3)(jiti@2.6.1)(less@4.4.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.14))(terser@5.44.1)(tsx@4.20.6)(yaml@2.9.0)
+
   examples/byod-geojson-heatmap:
+    dependencies:
+      '@tomtom-org/maps-sdk':
+        specifier: workspace:*
+        version: link:../..
+    devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.60.0
+      '@types/geojson':
+        specifier: 'catalog:'
+        version: 7946.0.16
+      '@types/node':
+        specifier: 'catalog:'
+        version: 25.7.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.1.3
+      rollup-plugin-visualizer:
+        specifier: 'catalog:'
+        version: 7.0.1(rolldown@1.0.0)(rollup@4.59.0)
+      ts-node:
+        specifier: 'catalog:'
+        version: 10.9.2(@types/node@25.7.0)(typescript@6.0.3)
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      vite:
+        specifier: 'catalog:'
+        version: 8.0.12(@types/node@25.7.0)(esbuild@0.27.3)(jiti@2.6.1)(less@4.4.1)(sass-embedded@1.92.0)(sass@1.92.0)(stylus@0.64.0)(sugarss@5.0.1(postcss@8.5.14))(terser@5.44.1)(tsx@4.20.6)(yaml@2.9.0)
+
+  examples/byod-geojson-heatmap-custom-module:
     dependencies:
       '@tomtom-org/maps-sdk':
         specifier: workspace:*
@@ -6312,9 +6374,6 @@ packages:
   '@types/ms@2.1.0':
     resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
 
-  '@types/node@25.5.2':
-    resolution: {integrity: sha512-tO4ZIRKNC+MDWV4qKVZe3Ql/woTnmHDr5JD8UI5hn2pwBrHEwOEMZK7WlNb5RKB6EoJ02gwmQS9OrjuFnZYdpg==}
-
   '@types/node@25.7.0':
     resolution: {integrity: sha512-z+pdZyxE+RTQE9AcboAZCb4otwcrvgHD+GlBpPgn0emDVt0ohrTMhAwlr2Wd9nZ+nihhYFxO2pThz3C5qSu2Eg==}
 
@@ -8966,9 +9025,6 @@ packages:
 
   ufo@1.6.3:
     resolution: {integrity: sha512-yDJTmhydvl5lJzBmy/hyOAA0d+aqCBuwl818haVdYCRrWV84o7YyeVm4QlVHStqNrrJSTb6jKuFAVqAFsr+K3Q==}
-
-  undici-types@7.18.2:
-    resolution: {integrity: sha512-AsuCzffGHJybSaRrmr5eHr81mwJU3kjw6M+uprWvCXiNeN9SOGwQ3Jn8jb8m3Z6izVgknn1R0FTCEAP2QrLY/w==}
 
   undici-types@7.21.0:
     resolution: {integrity: sha512-w9IMgQrz4O0YN1LtB7K5P63vhlIOvC7opSmouCJ+ZywlPAlO9gIkJ+otk6LvGpAs2wg4econaCz3TvQ9xPoyuQ==}
@@ -13264,11 +13320,6 @@ snapshots:
 
   '@types/ms@2.1.0': {}
 
-  '@types/node@25.5.2':
-    dependencies:
-      undici-types: 7.18.2
-    optional: true
-
   '@types/node@25.7.0':
     dependencies:
       undici-types: 7.21.0
@@ -13308,7 +13359,7 @@ snapshots:
 
   '@types/yauzl@2.10.3':
     dependencies:
-      '@types/node': 25.5.2
+      '@types/node': 25.7.0
     optional: true
 
   '@ungap/structured-clone@1.3.0': {}
@@ -16324,9 +16375,6 @@ snapshots:
   uc.micro@2.1.0: {}
 
   ufo@1.6.3: {}
-
-  undici-types@7.18.2:
-    optional: true
 
   undici-types@7.21.0: {}
 

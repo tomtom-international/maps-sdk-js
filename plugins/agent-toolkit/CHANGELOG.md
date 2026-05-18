@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.7](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-agent-toolkit-v0.2.6...maps-sdk-plugin-agent-toolkit-v0.2.7) (2026-05-15)
+
+
+### Features
+
+* exploration search with area tags ([#1763](https://github.com/tomtom-international/maps-sdk-js/issues/1763)) ([65327e6](https://github.com/tomtom-international/maps-sdk-js/commit/65327e66eca351db365b5453e3801b420cee32e4))
+
+
+### Bug Fixes
+
+* agent toolkit place prompt fixes and clearing unnecessary modules ([#1773](https://github.com/tomtom-international/maps-sdk-js/issues/1773)) ([1aa1873](https://github.com/tomtom-international/maps-sdk-js/commit/1aa1873811705077d40af1942d38c4c5bf3d9568))
+
 ## [0.2.6](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-agent-toolkit-v0.2.5...maps-sdk-plugin-agent-toolkit-v0.2.6) (2026-05-12)
 
 

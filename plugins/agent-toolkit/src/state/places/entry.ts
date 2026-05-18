@@ -32,14 +32,13 @@ export type PlacesEntry = {
     /** Lazy place-id → boundary polygon index, built on first lookup through PlacesState.getGeometryForPlace. */
     _geometryByPlaceId?: Record<string, PolygonFeature<CommonPlaceProps>>;
     /**
-     * Per-entry display modules. Each entry owns its own PlacesModule per marker theme and a
-     * dedicated GeometriesModule, so display state lives on the entry rather than on a shared
-     * slice-level module. Lazy-initialised via PlacesState helpers — undefined until first show.
+     * Per-entry display modules. An entry is rendered under at most one marker theme at a time,
+     * so a single PlacesModule covers all themes — `_showEntryAs` rethemes it via `applyTheme`.
+     * A dedicated GeometriesModule renders the entry's boundary polygons.
+     * Lazy-initialised via PlacesState helpers — undefined until first show.
      */
     _modules?: {
-        pin?: PlacesModule;
-        baseMap?: PlacesModule;
-        pinClustered?: PlacesModule;
+        places?: PlacesModule;
         geometries?: GeometriesModule;
     };
     /** The marker theme currently rendering this entry, or undefined when hidden. */

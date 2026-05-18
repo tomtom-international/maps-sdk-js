@@ -2,7 +2,7 @@
   "name": "@tomtom-org/maps-sdk-plugin-agent-toolkit",
   "author": "TomTom International B.V.",
   "license": "See in LICENSE.txt",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "type": "module",
   "description": "Agent toolkit plugin for TomTom Maps SDK JS using Vercel AI SDK",
   "types": "dist/index.d.ts",

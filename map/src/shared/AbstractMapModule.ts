@@ -78,6 +78,22 @@ export abstract class AbstractMapModule<
     protected readonly configChangeHandlers: ((config: CFG | undefined) => void)[] = [];
 
     /**
+     * Monotonically increasing index unique to this instance within its concrete module
+     * class. Auto-assigned in the constructor based on `new.target`, so each subclass
+     * has its own counter without per-subclass boilerplate. Use as a suffix on
+     * auto-generated source and layer IDs to keep them stable across style changes and
+     * unique across module instances.
+     * @ignore
+     */
+    protected readonly instanceIndex: number;
+
+    /**
+     * Per-concrete-class instance counter. WeakMap-keyed so unloaded classes can be GC'd.
+     * @ignore
+     */
+    private static readonly instanceCounters = new WeakMap<Function, number>();
+
+    /**
      * Indicates that this module is currently adding its sources and layers to the map, so during this time it might not function properly.
      * @see waitUntilModuleReady
      * @private
@@ -92,6 +108,11 @@ export abstract class AbstractMapModule<
      * @param config Optional configuration to initialize directly as soon as the map is ready.
      */
     protected constructor(sourceType: MapModuleSource, tomtomMap: TomTomMap, config?: CFG) {
+        const concreteClass = new.target;
+        const previousIndex = AbstractMapModule.instanceCounters.get(concreteClass) ?? -1;
+        this.instanceIndex = previousIndex + 1;
+        AbstractMapModule.instanceCounters.set(concreteClass, this.instanceIndex);
+
         this.sourceType = sourceType;
         this.tomtomMap = tomtomMap;
         this.eventsProxy = tomtomMap._eventsProxy;

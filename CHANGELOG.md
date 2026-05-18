@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.47.6](https://github.com/tomtom-international/maps-sdk-js/compare/v0.47.5...v0.47.6) (2026-05-15)
+
+
+### Features
+
+* exploration search with area tags ([#1763](https://github.com/tomtom-international/maps-sdk-js/issues/1763)) ([65327e6](https://github.com/tomtom-international/maps-sdk-js/commit/65327e66eca351db365b5453e3801b420cee32e4))
+* new custom geojson module in SDK ([#1771](https://github.com/tomtom-international/maps-sdk-js/issues/1771)) ([63e5909](https://github.com/tomtom-international/maps-sdk-js/commit/63e5909f6083d79467dcf917ba3f7a9853eca96d))
+
+
+### Bug Fixes
+
+* agent toolkit place prompt fixes and clearing unnecessary modules ([#1773](https://github.com/tomtom-international/maps-sdk-js/issues/1773)) ([1aa1873](https://github.com/tomtom-international/maps-sdk-js/commit/1aa1873811705077d40af1942d38c4c5bf3d9568))
+
 ## [0.47.5](https://github.com/tomtom-international/maps-sdk-js/compare/v0.47.4...v0.47.5) (2026-05-13)
 
 

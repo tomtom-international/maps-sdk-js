@@ -1,4 +1,4 @@
-import type { BBox, Place, PlaceType, POI, POICategory, SearchPlaceProps } from '@tomtom-org/maps-sdk/core';
+import type { BBox, Place, PlaceType, POI, POICategory } from '@tomtom-org/maps-sdk/core';
 import {
     bboxFromGeoJSON,
     bboxOnlyIfWithArea,
@@ -8,6 +8,7 @@ import {
 } from '@tomtom-org/maps-sdk/core';
 import type { SearchSummary } from '../shared';
 import type {
+    ExplorationPlaceProps,
     ExplorationPOIAPI,
     ExplorationRecordType,
     ExplorationSearchParams,
@@ -83,7 +84,7 @@ const parsePoi = (poiAPI: ExplorationPOIAPI | undefined): POI | undefined => {
     };
 };
 
-const parseResult = (result: ExplorationSearchResultAPI): Place<SearchPlaceProps> => {
+const parseResult = (result: ExplorationSearchResultAPI): Place<ExplorationPlaceProps> => {
     const { id, position, address, score, distance_m, type, viewport } = result;
     const placeType = API_TYPE_TO_PLACE_TYPE[type ?? 'POI'];
     const poi = parsePoi(result.poi);
@@ -99,7 +100,10 @@ const parseResult = (result: ExplorationSearchResultAPI): Place<SearchPlaceProps
             ...(poi && { poi }),
             ...(score !== undefined && { score }),
             ...(distance_m !== undefined && { distance: distance_m }),
-        } as SearchPlaceProps,
+            ...(result.area_id && { areaId: result.area_id }),
+            ...(result.area_country && { areaCountry: result.area_country }),
+            ...(result.area_tags?.length && { areaTags: result.area_tags }),
+        } as ExplorationPlaceProps,
     };
 };
 

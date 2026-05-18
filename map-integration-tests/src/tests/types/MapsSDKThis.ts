@@ -1,5 +1,7 @@
+import type { FeatureCollection, Point } from 'geojson';
 import type {
     BaseMapModule,
+    CustomGeoJSONModule,
     GeometriesModule,
     HillshadeModule,
     PlacesModule,
@@ -35,6 +37,8 @@ export type MapsSDKThis = typeof globalThis & {
     places?: PlacesModule;
     places2?: PlacesModule;
     geometries?: GeometriesModule;
+    customGeoJSON?: CustomGeoJSONModule<{ points: FeatureCollection<Point> }>;
+    makeIcon: (color: string) => ImageData;
     trafficAreaAnalytics?: TrafficAreaAnalyticsModule;
     routing?: RoutingModule;
     routing2?: RoutingModule;

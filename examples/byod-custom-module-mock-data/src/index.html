@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Custom GeoJSON Module: Clusters and Polygons</title>
+        <meta name="viewport" content="initial-scale=1">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="sdk-example-body">
+        <div id="sdk-map"></div>
+        <div class="sdk-example-customPanel">
+            <div class="sdk-example-panel-header">
+                <h3 class="sdk-example-heading">
+                    <span class="sdk-example-heading-text">Clusters and polygons</span>
+                    <button class="sdk-example-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="sdk-example-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+            <div class="sdk-example-panel-content">
+                <div class="sdk-example-section">
+                    <p class="sdk-example-description">
+                        20&thinsp;000 random points clustered by <code>CustomGeoJSONModule</code>, plus a handful of
+                        random polygons. Click a cluster, a point, or a polygon to inspect.
+                    </p>
+                </div>
+                <div class="sdk-example-section">
+                    <label class="sdk-example-form-label" for="sdk-example-selection">Selection</label>
+                    <div id="sdk-example-selection" class="sdk-example-selection">Click a feature.</div>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

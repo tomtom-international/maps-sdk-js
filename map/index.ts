@@ -4,6 +4,7 @@
  */
 
 export * from './src/base';
+export * from './src/custom';
 export * from './src/geometry';
 export * from './src/hillshade';
 export * from './src/init';

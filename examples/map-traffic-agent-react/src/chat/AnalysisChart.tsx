@@ -201,9 +201,7 @@ export function AnalysisChart({ config }: AnalysisChartProps) {
     );
 
     if (!prepared) {
-        return (
-            <div className="p-2 font-mono text-[12px] text-(--sdk-text-medium)">Invalid chart configuration.</div>
-        );
+        return <div className="p-2 font-mono text-[12px] text-(--sdk-text-medium)">Invalid chart configuration.</div>;
     }
 
     const isZoomable = ZOOMABLE_CHART_TYPES.has(prepared.type);

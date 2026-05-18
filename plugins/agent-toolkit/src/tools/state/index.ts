@@ -18,9 +18,12 @@ export {
     executeAnalyseIncidents,
 } from './analyse-incidents';
 export {
+    analysePlacesBuilder,
     analysePlacesDescription,
     analysePlacesOutputSchema,
     analysePlacesSchema,
+    buildAnalysePlacesEntry,
+    buildAnalysePlacesSchema,
     executeAnalysePlaces,
 } from './analyse-places';
 export {
@@ -48,7 +51,12 @@ export {
     processGeometriesSchema,
 } from './process-geometries';
 export {
+    buildExecuteProcessPlaces,
+    buildProcessPlacesEntry,
+    buildProcessPlacesOutputSchema,
+    buildProcessPlacesSchema,
     executeProcessPlaces,
+    processPlacesBuilder,
     processPlacesDescription,
     processPlacesOutputSchema,
     processPlacesSchema,
@@ -72,7 +80,11 @@ export {
     recallGeometriesSchema,
 } from './recall-geometries';
 export {
+    buildExecuteRecallPlaces,
+    buildRecallPlacesEntry,
+    buildRecallPlacesOutputSchema,
     executeRecallPlaces,
+    recallPlacesBuilder,
     recallPlacesDescription,
     recallPlacesOutputSchema,
     recallPlacesSchema,

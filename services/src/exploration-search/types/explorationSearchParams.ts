@@ -1,6 +1,7 @@
 import type { HasBBox, HasLngLat } from '@tomtom-org/maps-sdk/core';
 import type { SearchGeometryInput } from '../../geometry-search';
 import type { CommonGeocodeAndFuzzySearchParams, CommonSearchParams } from '../../shared';
+import type { AreaTag } from './areaTags';
 import type { ExplorationSearchRequestAPI } from './explorationSearchRequestAPI';
 import type { ExplorationSearchResponseAPI } from './explorationSearchResponseAPI';
 
@@ -31,6 +32,8 @@ export type ExplorationRecordType = 'POI' | 'PointAddress' | 'Street';
  * - `geometries` → `geometries` (Polygon/MultiPolygon passed through; Circle
  *   buffered to a Polygon; FeatureCollection flattened to its features)
  * - `municipalities` → `municipalities`
+ * - `areaId` → `area_id`
+ * - `areaTags` → `area_tags`
  * - `offset` → `from`
  * - `limit` → `size`
  *
@@ -80,4 +83,25 @@ export type ExplorationSearchParams = CommonSearchParams<ExplorationSearchReques
          * Example: `placeTypes: ['POI', 'PointAddress']` to exclude Street records.
          */
         placeTypes?: ExplorationRecordType[];
+
+        /**
+         * Exact id of a municipality polygon — restricts results to places that
+         * sit inside that municipality. Typically populated from the `areaId`
+         * of a previous hit ("what else is in this same area?"). Efficient
+         * terms-only lookup, no spatial query required.
+         */
+        areaId?: string;
+
+        /**
+         * Area-character tokens describing the surrounding municipality
+         * (`coastal`, `walkable`, `alpine`, `transit_connected`, …). Matches
+         * places in any municipality tagged with ANY of the supplied tokens
+         * (OR semantics). Populated for `DE` / `NL` / `FR` only — supplying
+         * tags in other countries will return zero hits.
+         *
+         * Typed against {@link AreaTag} — autocompletes on the canonical
+         * vocabulary but tolerates new tokens added in a future pipeline
+         * run without a wire-protocol change.
+         */
+        areaTags?: AreaTag[];
     };

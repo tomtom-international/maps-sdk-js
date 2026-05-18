@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Custom GeoJSON Module: West Yorkshire Listed Buildings</title>
+        <meta name="viewport" content="initial-scale=1">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="sdk-example-body">
+        <div id="sdk-map"></div>
+        <div class="sdk-example-customPanel">
+            <div class="sdk-example-panel-header">
+                <h3 class="sdk-example-heading">
+                    <span class="sdk-example-heading-text">Custom GeoJSON Module</span>
+                    <button class="sdk-example-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="sdk-example-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+            <div class="sdk-example-panel-content">
+                <div class="sdk-example-section">
+                    <p class="sdk-example-description">
+                        Heatmap and circle markers are rendered from two sources managed by the same
+                        <code>CustomGeoJSONModule</code>. Hover or click a marker to inspect, and use the selector to
+                        swap the base map style — the data restores itself automatically.
+                    </p>
+                </div>
+                <div class="sdk-example-section">
+                    <label class="sdk-example-form-label" for="sdk-example-mapStyles">Map Style:</label>
+                    <select class="sdk-example-dropdown" id="sdk-example-mapStyles"></select>
+                </div>
+                <div class="sdk-example-section">
+                    <label class="sdk-example-form-label" for="sdk-example-selection">Selection</label>
+                    <div id="sdk-example-selection" class="sdk-example-selection">Hover or click a marker.</div>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

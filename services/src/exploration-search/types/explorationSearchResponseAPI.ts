@@ -20,12 +20,28 @@ export type ExplorationBrandAPI = {
 
 /**
  * @ignore
- * Raw TomTom opening-hours payload. The API exposes the compact string form
- * (`raw`) plus the 24h flag; no parsed time ranges yet.
+ * A single open interval inside {@link ExplorationOpeningHoursAPI.intervals}.
+ *
+ * - `days` — ISO day-of-week numbers `1` (Monday) through `7` (Sunday) the
+ *   interval applies to.
+ * - `open` / `close` — `HH:MM` strings. `"24:00"` denotes end-of-day so that
+ *   round-the-clock intervals can be expressed as `00:00` → `24:00`.
+ */
+export type ExplorationOpeningIntervalAPI = {
+    days: number[];
+    open: string;
+    close: string;
+};
+
+/**
+ * @ignore
+ * Opening-hours payload as returned by the places-api. The compact raw
+ * TomTom hours string is parsed upstream into structured `intervals`; the
+ * source string is not exposed in the API response.
  */
 export type ExplorationOpeningHoursAPI = {
-    raw: string;
     is24h?: boolean;
+    intervals?: ExplorationOpeningIntervalAPI[];
 };
 
 /**
@@ -98,6 +114,12 @@ export type ExplorationSearchResultAPI = {
     placeId?: string;
     adminChainId?: string;
     poi?: ExplorationPOIAPI;
+    /** Id of the municipality polygon the hit sits in. Populated for DE / NL / FR only. */
+    area_id?: string;
+    /** ISO2 country of the municipality polygon the hit sits in. Populated for DE / NL / FR only. */
+    area_country?: string;
+    /** Area-character tokens propagated from the hit's municipality polygon. Populated for DE / NL / FR only. */
+    area_tags?: string[];
 };
 
 /**

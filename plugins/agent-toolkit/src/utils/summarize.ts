@@ -13,9 +13,20 @@ import {
     type WaypointLike,
 } from '@tomtom-org/maps-sdk/core';
 import { z } from 'zod';
+import type { FeatureFlags } from '../types';
 
 /** @ignore */
-export type PlaceSummary = { id: string; name?: string; address?: string; position: [number, number] };
+export type PlaceSummary = {
+    id: string;
+    name?: string;
+    address?: string;
+    position: [number, number];
+    // Populated only when `experimentalSearch` is on and the underlying place came from the
+    // exploration-search backend (DE / NL / FR municipality pipeline).
+    areaId?: string;
+    areaCountry?: string;
+    areaTags?: string[];
+};
 
 /** @ignore */
 export type PlacesSummary = { count: number; features: PlaceSummary[] };
@@ -46,14 +57,34 @@ export type SummarizedRoutes = { count: number; routes: SummarizedRoute[] };
 /**
  * Converts a Place to a token-efficient summary for LLM consumption.
  *
+ * When `flags.experimentalSearch` is `true`, the exploration-search-only
+ * `areaId` / `areaCountry` / `areaTags` fields (when present on the source
+ * place) are also copied into the summary. When the flag is off they are
+ * always omitted, regardless of what the source place carries.
+ *
  * @ignore
  */
-export const summarizePlace = (place: Place): PlaceSummary => ({
-    id: place.id,
-    name: place.properties?.poi?.name,
-    address: place.properties?.address?.freeformAddress,
-    position: (place.geometry?.coordinates ?? [0, 0]) as [number, number],
-});
+export const summarizePlace = (place: Place, flags: FeatureFlags = {}): PlaceSummary => {
+    const summary: PlaceSummary = {
+        id: place.id,
+        name: place.properties?.poi?.name,
+        address: place.properties?.address?.freeformAddress,
+        position: (place.geometry?.coordinates ?? [0, 0]) as [number, number],
+    };
+    if (flags.experimentalSearch) {
+        const props = place.properties as
+            | {
+                  areaId?: string;
+                  areaCountry?: string;
+                  areaTags?: string[];
+              }
+            | undefined;
+        if (props?.areaId) summary.areaId = props.areaId;
+        if (props?.areaCountry) summary.areaCountry = props.areaCountry;
+        if (props?.areaTags?.length) summary.areaTags = props.areaTags;
+    }
+    return summary;
+};
 
 /**
  * Converts Places to a token-efficient summary for LLM consumption.
@@ -62,11 +93,11 @@ export const summarizePlace = (place: Place): PlaceSummary => ({
  *
  * @ignore
  */
-export const summarizePlaces = (places: Places | Place[]): PlacesSummary => {
+export const summarizePlaces = (places: Places | Place[], flags: FeatureFlags = {}): PlacesSummary => {
     const features = Array.isArray(places) ? places : places.features;
     return {
         count: features.length,
-        features: features.slice(0, PLACES_SUMMARY_LIMIT).map((feature) => summarizePlace(feature)),
+        features: features.slice(0, PLACES_SUMMARY_LIMIT).map((feature) => summarizePlace(feature, flags)),
     };
 };
 

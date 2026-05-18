@@ -171,9 +171,10 @@ export type FeatureFlags = {
     /**
      * Route `discoverPlaces` through the experimental exploration search
      * backend (and expose its richer input surface — `municipalities`,
-     * multiple `boundingBoxes`, `placeTypes`). When `false`/unset,
-     * `discoverPlaces` uses the stable default search service and a
-     * reduced input schema that matches what the default service supports.
+     * multiple `boundingBoxes`, `placeTypes`, `areaId`, `areaTags`). When
+     * `false`/unset, `discoverPlaces` uses the stable default search
+     * service and a reduced input schema that matches what the default
+     * service supports.
      *
      * **Internal experiment.** Not part of the public agent-toolkit
      * contract; subject to removal at any time.

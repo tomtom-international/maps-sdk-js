@@ -58,14 +58,13 @@ describe('PlacesState — history', () => {
     it('reset clears entries and shown set', async () => {
         const state = new PlacesState(mockMap);
         const stub = { show: async () => undefined, clear: async () => undefined };
-        // Per-entry modules — same caching shape the real impl uses so the
+        // Per-entry single PlacesModule — same caching shape the real impl uses so the
         // hide/clear paths can find what they cached on `_showEntryAs`.
-        (state as any).getEntryPlacesModule = async (id: string, marker: 'pin' | 'base-map' | 'pin-clustered') => {
+        (state as any).getEntryPlacesModule = async (id: string) => {
             const entry = state.entries.find((e) => e.id === id) as any;
             entry._modules ??= {};
-            const slot = marker === 'base-map' ? 'baseMap' : marker === 'pin-clustered' ? 'pinClustered' : 'pin';
-            entry._modules[slot] ??= stub;
-            return entry._modules[slot];
+            entry._modules.places ??= stub;
+            return entry._modules.places;
         };
         state.addPlaceResult({} as any, 'test');
         await state.addShownEntries(['places-0'], 'pin');
@@ -147,21 +146,15 @@ describe('PlacesState — shown-entries display', () => {
             showConnections: async () => undefined,
         });
         state = new PlacesState(mockMap);
-        // Per-entry modules now — stub the new helper. The real method caches
-        // the module on `entry._modules` so subsequent `_hideEntry` calls find
-        // the same instance to clear; the stub does the same so the
-        // hide-path's `clear()` actually runs.
-        const SLOT: Record<'pin' | 'base-map' | 'pin-clustered', 'pin' | 'baseMap' | 'pinClustered'> = {
-            pin: 'pin',
-            'base-map': 'baseMap',
-            'pin-clustered': 'pinClustered',
-        };
+        // Per-entry single PlacesModule — cache on `entry._modules.places` so subsequent
+        // `_hideEntry` calls find the same instance to clear. The stub tracks the marker
+        // passed in so theme assertions stay accurate even though one stub serves all themes.
         (state as any).getEntryPlacesModule = async (id: string, marker: 'pin' | 'base-map' | 'pin-clustered') => {
             const entry = state.entries.find((e) => e.id === id) as any;
             entry._modules ??= {};
-            const slot = SLOT[marker];
-            entry._modules[slot] ??= makeStub(marker);
-            return entry._modules[slot];
+            entry._modules.places ??= makeStub(marker);
+            entry._modules.places._marker = marker;
+            return entry._modules.places;
         };
     });
 
@@ -285,14 +278,13 @@ describe('PlacesState events', () => {
     let state: PlacesState;
     beforeEach(() => {
         state = new PlacesState(mockMap);
-        // Per-entry stubs now: cache the module on `entry._modules` like the
+        // Per-entry single PlacesModule — cache on `entry._modules.places` like the
         // real implementation so the `_hideEntry` path can find it to clear.
-        const SLOT = { pin: 'pin', 'base-map': 'baseMap', 'pin-clustered': 'pinClustered' } as const;
-        (state as any).getEntryPlacesModule = async (id: string, marker: keyof typeof SLOT) => {
+        (state as any).getEntryPlacesModule = async (id: string) => {
             const entry = state.entries.find((e) => e.id === id) as any;
             entry._modules ??= {};
-            entry._modules[SLOT[marker]] ??= stubModule;
-            return entry._modules[SLOT[marker]];
+            entry._modules.places ??= stubModule;
+            return entry._modules.places;
         };
     });
 

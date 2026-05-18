@@ -1,6 +1,6 @@
 import { type BBox, bboxFromGeoJSON, getPosition, poiCategoriesToID } from '@tomtom-org/maps-sdk/core';
 import type { MultiPolygon, Polygon, Position } from 'geojson';
-import type { Circle, SearchGeometryInput } from '../geometry-search/types';
+import type { Circle, SearchGeometryInput } from '../geometry-search';
 import type { ExplorationSearchParams, ExplorationSearchPayloadAPI, ExplorationSearchRequestAPI } from './types';
 
 const DEFAULT_NEAR_RADIUS_KM = 2;
@@ -113,6 +113,8 @@ export const buildExplorationSearchRequest = (params: ExplorationSearchParams): 
         ...(params.poiBrands?.[0] && { brand: params.poiBrands[0] }),
         ...(categories && { categories }),
         ...(params.placeTypes?.length && { types: params.placeTypes }),
+        ...(params.areaId && { area_id: params.areaId }),
+        ...(params.areaTags?.length && { area_tags: params.areaTags }),
         ...(near && { near }),
         ...(bboxes && { bboxes }),
         ...(geometries && { geometries }),

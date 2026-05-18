@@ -83,14 +83,10 @@ export function IncidentDetailsPanel({ incident, overlapCount, onClose }: Incide
                 {(props.from || props.to) && (
                     <Section>
                         {props.from && (
-                            <div className="text-(--sdk-font-body-s) text-(--sdk-text-high)">
-                                From {props.from}
-                            </div>
+                            <div className="text-(--sdk-font-body-s) text-(--sdk-text-high)">From {props.from}</div>
                         )}
                         {props.to && (
-                            <div className="text-(--sdk-font-body-s) text-(--sdk-text-high)">
-                                To {props.to}
-                            </div>
+                            <div className="text-(--sdk-font-body-s) text-(--sdk-text-high)">To {props.to}</div>
                         )}
                     </Section>
                 )}
@@ -117,15 +113,9 @@ export function IncidentDetailsPanel({ incident, overlapCount, onClose }: Incide
                     <Section>
                         <div className={LABEL_CLASS}>When</div>
                         {start && (
-                            <div className="text-(--sdk-font-caption-m) text-(--sdk-text-medium)">
-                                Start: {start}
-                            </div>
+                            <div className="text-(--sdk-font-caption-m) text-(--sdk-text-medium)">Start: {start}</div>
                         )}
-                        {end && (
-                            <div className="text-(--sdk-font-caption-m) text-(--sdk-text-medium)">
-                                End: {end}
-                            </div>
-                        )}
+                        {end && <div className="text-(--sdk-font-caption-m) text-(--sdk-text-medium)">End: {end}</div>}
                     </Section>
                 )}
 
@@ -143,9 +133,7 @@ export function IncidentDetailsPanel({ incident, overlapCount, onClose }: Incide
                 {props.roadNumbers && props.roadNumbers.length > 0 && (
                     <Section>
                         <div className={LABEL_CLASS}>Road</div>
-                        <div className="text-(--sdk-font-body-s) font-semibold">
-                            {props.roadNumbers.join(', ')}
-                        </div>
+                        <div className="text-(--sdk-font-body-s) font-semibold">{props.roadNumbers.join(', ')}</div>
                     </Section>
                 )}
 

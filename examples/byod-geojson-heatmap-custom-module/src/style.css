@@ -1,0 +1,47 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/form/dropdown.css";
+
+/* CUSTOM STYLES (example-specific) */
+
+.sdk-example-customPanel {
+    width: 320px;
+}
+
+.sdk-example-description {
+    margin: 0;
+    font-size: var(--sdk-font-body-s);
+    line-height: var(--sdk-font-body-s-lh);
+    color: var(--sdk-text-medium);
+}
+
+.sdk-example-description code {
+    background: var(--sdk-surface-1);
+    padding: 1px 4px;
+    border-radius: var(--sdk-radius-5);
+    font-size: 12px;
+}
+
+.sdk-example-selection {
+    font-size: var(--sdk-font-body-s);
+    line-height: var(--sdk-font-body-s-lh);
+    color: var(--sdk-text-high);
+    background: var(--sdk-surface-1);
+    padding: var(--sdk-space-3) var(--sdk-space-3);
+    border-radius: var(--sdk-radius-10);
+    min-height: 20px;
+}
+
+.sdk-example-selection strong {
+    display: block;
+    margin-bottom: var(--sdk-space-1);
+}
+
+/* Responsive: max-width 768px */
+@media (max-width: 768px) {
+    .sdk-example-customPanel {
+        width: 260px;
+    }
+}

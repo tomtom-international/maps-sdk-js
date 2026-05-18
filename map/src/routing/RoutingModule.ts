@@ -108,15 +108,8 @@ import { toDisplayRouteSummaries, toDisplayRoutes } from './util/routes';
  * @group Routing
  */
 export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, RoutingModuleConfig> {
-    private static lastInstanceIndex = -1;
     private layersSpecs!: RoutingLayersSpecs;
     private layerIDPrefix!: string;
-    /**
-     * The index of this instance, to generate unique source and layer IDs.
-     * * Starts with 0 and each instance increments it by one.
-     * @private
-     */
-    private instanceIndex!: number;
     private readonly shownFeaturesHandlers: ((
         features: { routes: Route | Routes } | { waypoints: PlanningWaypoint[] | Waypoints },
     ) => void)[] = [];
@@ -238,10 +231,9 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * @ignore
      */
     protected _initSourcesWithLayers(config?: RoutingModuleConfig, restore?: boolean): RoutingSourcesWithLayers {
-        // Only increment the instance index for new instances, not for restore operations
+        // `instanceIndex` is auto-assigned by AbstractMapModule; only the layerIDPrefix
+        // needs to be (re)computed on first init.
         if (!restore) {
-            RoutingModule.lastInstanceIndex++;
-            this.instanceIndex = RoutingModule.lastInstanceIndex;
             this.layerIDPrefix = suffixNumber('routes', this.instanceIndex);
         }
 
