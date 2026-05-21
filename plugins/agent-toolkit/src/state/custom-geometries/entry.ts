@@ -13,7 +13,7 @@ import type { CustomGeometriesAnalysis } from './analysis';
  * ids in the same form `geometriesEntryIDs` accepts: `{ kind: 'place' }` for
  * a single place footprint, `{ kind: 'places' }` for every footprint in a
  * places entry, `{ kind: 'ranges' }` for an isochrone entry,
- * `{ kind: 'custom' }` for a derived entry. `operation` is a short label for
+ * `{ kind: 'customGeometries' }` for a derived entry. `operation` is a short label for
  * the kind of computation that produced the entry (e.g. `'union'`, `'buffer'`,
  * `'h3-coverage'`).
  *
@@ -27,9 +27,9 @@ export type GeometryProvenance = {
 };
 
 /**
- * A single entry in the custom-geometries history — output of
- * processGeometries (and any future polygon-producing tool that doesn't
- * naturally belong to places or ranges).
+ * A single entry in the custom-geometries history — output of `processData`
+ * (and any future polygon-producing tool that doesn't naturally belong to
+ * places or ranges).
  *
  * @group Agent Toolkit
  */

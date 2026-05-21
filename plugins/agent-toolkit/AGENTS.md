@@ -20,11 +20,14 @@ Consumer App
 ├── MapAgent  (this package)
 │   ├── AI SDK ToolLoopAgent
 │   │     ├── System Prompt
+│   │     ├── Intent classifier (picks tools + per-tool scope per turn)
 │   │     └── Map ToolSet (Zod-validated tools)
-│   │           ├── Data tools: geocode, search, route, reverseGeocode
-│   │           └── Map tools: updatePlacesDisplay, updateRoutesDisplay, flyTo, toggleTraffic, ...
-│   ├── MapAgentState (retains full GeoJSON between tool calls)
-│   └── Module cache (lazy PlacesModule, RoutingModule, etc.)
+│   │           ├── Data tools: locatePlace, reverseGeocode, discoverPlaces, setRoute, findReachableAreas, getTrafficIncidents, …
+│   │           ├── Scope-aware unified tools: analyseData, processData (per-turn scope narrows description + schema)
+│   │           ├── BYOD tools: addByodLayer, recallByod, updateByodDisplay
+│   │           └── Map tools: updatePlacesDisplay, updateRoutesDisplay, updateWaypointsDisplay, flyTo, toggleTilesTrafficFlow, toggleTilesTrafficIncidents, …
+│   ├── MapAgentState (per-entry histories: places, routing, ranges, customGeometries, byod, trafficIncidents, trafficAreaAnalytics)
+│   └── Per-entry modules (lazy PlacesModule, RoutingModule, CustomGeoJSONModule, TrafficAreaAnalyticsModule, …)
 │
 ├── TomTomMap instance + maplibre-gl
 └── LLM Provider (consumer-supplied, e.g. @ai-sdk/openai)
@@ -90,3 +93,27 @@ src/state/tests/                ← tests for src/state/
 src/utils/tests/                ← tests for src/utils/
 src/tools/state/tests/          ← tests for src/tools/state/
 ```
+
+## Cross-surface consistency for this plugin
+
+The toolkit's "tool" + "state slice" abstractions appear in many places that aren't enforced by the compiler. After changes in those areas, walk these checks before pushing.
+
+**Added a new tool to `DEFAULT_TOOLS`**:
+- exported the entry from its directory's barrel (`tools/services/index.ts`, `tools/state/index.ts`, …)
+- imported and registered in `tools/tool-registry.ts` so the name is in `TOOL_NAMES`
+- if it's referenced by another tool's `description` ("call `xTool` first"), confirm `xTool` exists and is registered too — dead pointers in descriptions mislead the model
+- if it's scope-aware, supplied a `scopeSchema` + `scopePrompt` and verified `prepareStep` rebuilds it correctly
+- added eval coverage in `examples/map-chat-agent/e2e-tests/eval/eval-cases.ts` (or marked why no eval is needed)
+
+**Added a new entry-owning state slice** — walk every "every slice" code path and wire the new slice in:
+- `tools/state/reset-state.ts` calls both the pre-reset module-clear loop AND `state.<slice>.reset()`
+- `tools/state/recall-state.ts` includes the new slice in its summary
+- `state/digest.ts` (`getStateDigest` + `formatStateDigestDiff`) reports the new slice's `shown` / `entryMode` / `entryCount`
+- `system-prompt.ts` mentions the slice if the model needs to know about it
+- the slice's barrel re-exports its public types and the package root re-exports the slice type
+- there are tests in `state/<slice>/tests/state.test.ts` covering ID generation/collisions, `single` mode, show/hide/clear, and reset
+
+**Removed or renamed a public tool / type / slice** — in addition to the root-level surfaces in `.claude/skills/tomtom-maps-sdk-js-contribution`, also sweep:
+- `system-prompt.ts` and every per-tool `description` / `classificationPrompt` for stale name references
+- `documentation/docs-portal/guides/plugins/agent-toolkit/*.mdx` and the `navigation.yml` entry that exposes the affected page
+- decide on a deprecated alias or a major-version bump in `.release-please-manifest.json` — silently dropping a public export is a breaking release

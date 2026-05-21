@@ -2,6 +2,7 @@
  * @module agent-toolkit-types
  */
 
+export type { BYODEntry, BYODSource } from '../state/byod/entry';
 export type { CustomGeometriesAnalysis } from '../state/custom-geometries/analysis';
 export type { CustomGeometriesEntry, GeometryProvenance } from '../state/custom-geometries/entry';
 export type { PlacesAnalysis } from '../state/places/analysis';
@@ -9,6 +10,9 @@ export type { PlacesEntry } from '../state/places/entry';
 export type { RangesEntry, ReachableRange } from '../state/range/entry';
 export type { RoutesAnalysis } from '../state/routing/analysis';
 export type { RouteParams, RoutesEntry } from '../state/routing/entry';
+export type { TrafficAreaAnalyticsAnalysis } from '../state/traffic-area-analytics/analysis';
+export type { TrafficAreaAnalyticsEntry, TrafficAreaAnalyticsParams } from '../state/traffic-area-analytics/entry';
+export type { IncidentsAnalysis, TrafficIncidentsEntry } from '../state/traffic-incidents/state';
 export { type GeometriesId, type GeometriesIdKind, geometriesIdSchema } from '../tools/shared';
 export * from './state';
 
@@ -20,7 +24,10 @@ type ProviderOptions = Record<string, Record<string, JSONValue | undefined>>;
 import type { z } from 'zod';
 import type {
     BaseMapState,
+    BYODState,
     CustomGeometriesState,
+    DataEntryConfig,
+    DataEntryKind,
     MapPOIsState,
     PlacesState,
     RangeState,
@@ -39,6 +46,22 @@ import type { ClassificationResult } from '../utils';
  * @group Agent Toolkit
  */
 export type ToolNameHint = ToolName | (string & {});
+
+/**
+ * Tool-facing union of state slices that own analysable entries — the
+ * vocabulary used by tools that read from multiple slices (`analyseData`,
+ * `processData`) and by the classifier when proposing per-call scope.
+ *
+ * Distinct from {@link EntryModeSliceName}, which uses the literal state-slice
+ * keys (`routing`, `trafficIncidents`, …) for state-level operations.
+ *
+ * `ranges` is intentionally excluded: it feeds the analysis/processing tools
+ * only via `geometriesEntryIDs` (its isochrone polygons), not as a direct
+ * top-level input.
+ *
+ * @group Agent Toolkit
+ */
+export type EntryDataKind = 'places' | 'routes' | 'incidents' | 'customGeometries' | 'trafficAreaAnalytics' | 'byod';
 
 /**
  * State passed to tool factory functions. Organized by feature area,
@@ -77,8 +100,10 @@ export type ToolState = {
     trafficIncidents: TrafficIncidentsState;
     /** Reachable range results: origin, budgets, and bbox summaries. */
     ranges: RangeState;
-    /** Derived/custom polygon entries — output of processGeometries. */
+    /** Derived/custom polygon entries — output of `processData`. */
     customGeometries: CustomGeometriesState;
+    /** Bring-your-own-data GeoJSON layers — customer-authored data the agent can read and render. */
+    byod: BYODState;
 };
 
 /**
@@ -86,10 +111,15 @@ export type ToolState = {
  * Combines execution (inputSchema + execute) with classifier metadata.
  *
  * @typeParam S - The ToolState shape this tool requires. Default: base `ToolState`.
+ * @typeParam Scope - Optional per-tool scope shape. When set via `scopeSchema`, the
+ *   classifier may emit a value of this shape per turn so the tool's `description`
+ *   and `inputSchema` can be rebuilt narrower for that step. Tools without scope
+ *   leave this at the default `unknown`; `scopeSchema` is then absent and no rebuild
+ *   ever runs for the tool.
  *
  * @group Agent Toolkit
  */
-export type ToolEntry<S extends ToolState = ToolState> = {
+export type ToolEntry<S extends ToolState = ToolState, Scope = unknown> = {
     /** Description of the tool's purpose. */
     description: string;
     /** Zod schema defining the tool's input parameters. */
@@ -110,6 +140,21 @@ export type ToolEntry<S extends ToolState = ToolState> = {
     relatedTools?: string[];
     /** Tool names that must run before this one. */
     dependsOn?: string[];
+    /**
+     * Optional per-tool scope schema. When set, the classifier may emit a
+     * scope value (validated against this schema) and `prepareStep` will
+     * rebuild this tool's `description` + `inputSchema` by re-invoking its
+     * {@link ToolEntryBuilder} with the parsed scope. Tools without a builder
+     * cannot be scoped — `scopeSchema` is only meaningful on builder-produced
+     * entries.
+     */
+    scopeSchema?: z.ZodType<Scope>;
+    /**
+     * Compact one-line hint for the classifier explaining when and how to scope
+     * this tool (e.g. "Emit `{ kinds: ['places'] }` when only places entries
+     * are relevant"). Appended to the tool's classifier-prompt entry.
+     */
+    scopePrompt?: string;
 };
 
 /**
@@ -134,6 +179,8 @@ export type ToolMetadata = {
     relatedTools?: ToolNameHint[];
     /** Tool names that must run before this one. */
     dependsOn?: ToolNameHint[];
+    /** When set, the classifier may emit `toolScopes[name]` for this tool to narrow per-turn. */
+    scopePrompt?: string;
 };
 
 /**
@@ -188,26 +235,50 @@ export type FeatureFlags = {
 
 /**
  * Build-time options passed to a {@link ToolEntryBuilder}. Lets each tool
- * tailor its description, schema, or executor to flags or other config that
- * are only known at agent-creation time.
+ * tailor its description, schema, or executor to flags or per-turn scope
+ * resolved by the classifier.
+ *
+ * @typeParam Scope - The per-tool scope shape. Defaults to `unknown` for the
+ *   generic builder signature; individual builders narrow this via their own
+ *   `Scope` generic so the `scope` argument is well-typed within the tool.
  *
  * @group Agent Toolkit
  */
-export type ToolBuildOptions = {
+export type ToolBuildOptions<Scope = unknown> = {
     /** Active feature flags. */
     featureFlags?: FeatureFlags;
+    /**
+     * Per-turn scope emitted by the classifier (already validated against the
+     * tool's {@link ToolEntry.scopeSchema}). `undefined` at agent-creation time
+     * or when the classifier omits a scope for this tool — builders should
+     * treat `undefined` as "produce the full surface".
+     */
+    scope?: Scope;
+    /**
+     * Subset of {@link EntryDataKind} the agent is configured to expose, derived
+     * from `createMapAgent`'s `dataEntries` option. Builders for `analyseData`
+     * and `processData` use this to narrow their static (unscoped) input surface
+     * to the agent's enabled kinds. `undefined` means "no agent-level filtering —
+     * every kind stays available".
+     */
+    enabledDataKinds?: readonly EntryDataKind[];
 };
 
 /**
  * A builder that produces a {@link ToolEntry} from {@link ToolBuildOptions}.
  * Use this when a tool's metadata, schema, or executor depends on options
- * resolved at agent-creation time (e.g. feature flags).
+ * resolved at agent-creation time (e.g. feature flags) or per turn
+ * (classifier-emitted scope).
  *
  * @typeParam S - The ToolState shape this tool requires. Default: base `ToolState`.
+ * @typeParam Scope - The per-tool scope shape, propagated to the produced
+ *   {@link ToolEntry} so the `scopeSchema` and runtime `scope` stay in lockstep.
  *
  * @group Agent Toolkit
  */
-export type ToolEntryBuilder<S extends ToolState = ToolState> = (options: ToolBuildOptions) => ToolEntry<S>;
+export type ToolEntryBuilder<S extends ToolState = ToolState, Scope = unknown> = (
+    options: ToolBuildOptions<Scope>,
+) => ToolEntry<S, Scope>;
 
 /**
  * A registered tool definition: either a static {@link ToolEntry} or a
@@ -216,10 +287,18 @@ export type ToolEntryBuilder<S extends ToolState = ToolState> = (options: ToolBu
  * setup pipeline accept either form interchangeably.
  *
  * @typeParam S - The ToolState shape this tool requires. Default: base `ToolState`.
+ * @typeParam Scope - Optional per-tool scope shape (only relevant for builder
+ *   form). Defaults to `never` for non-scopable tools.
  *
  * @group Agent Toolkit
  */
-export type ToolDefinition<S extends ToolState = ToolState> = ToolEntry<S> | ToolEntryBuilder<S>;
+// `Scope` defaults to `any` here (not `unknown`) so the registry's `satisfies Record<string,
+// ToolDefinition>` clause accepts builders parameterised by narrower scope types (e.g.
+// `ToolEntryBuilder<ToolState, AnalyseDataScope>`). Tool-author-facing types
+// ({@link ToolEntry}, {@link ToolEntryBuilder}) still default to `unknown`.
+export type ToolDefinition<S extends ToolState = ToolState, Scope = any> =
+    | ToolEntry<S, Scope>
+    | ToolEntryBuilder<S, Scope>;
 
 /**
  * Options for creating an agent toolkit.
@@ -293,6 +372,32 @@ export type MapAgentOptions<CS extends ToolState = ToolState> = {
      * Accessible in custom tool `execute` via the state parameter.
      */
     state?: Omit<CS, keyof ToolState>;
+
+    /**
+     * Per-kind data-entry configuration. Each {@link DataEntryKind} accepts
+     * `{ enabled?, entryMode? }`. Setting `enabled: false` removes the kind from the
+     * agent's tool surface entirely — it disappears from `analyseData` / `processData`
+     * scope and input fields, and the slice-specific recall / display / fetch tools
+     * are dropped from the registry. `entryMode` is applied to the underlying slice
+     * right after the agent state is built — before any tool runs.
+     *
+     * Keys are LLM-facing kind names (`routes`, `incidents`) — not slice names
+     * (`routing`, `trafficIncidents`). The slice mapping is internal.
+     *
+     * @example
+     * ```typescript
+     * createMapAgent(map, {
+     *     model: openai('gpt-4o'),
+     *     dataEntries: {
+     *         routes: { entryMode: 'single' },
+     *         incidents: { entryMode: 'single' },
+     *         byod: { enabled: false }, // disables recallByod, addByodLayer, updateByodDisplay + byod scope on analyse/process
+     *         ranges: { enabled: false }, // disables findReachableAreas + recallRanges
+     *     },
+     * });
+     * ```
+     */
+    dataEntries?: Partial<Record<DataEntryKind, DataEntryConfig>>;
 
     /**
      * Pluggable classifier for automatic tool selection.

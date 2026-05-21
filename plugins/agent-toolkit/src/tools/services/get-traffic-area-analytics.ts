@@ -46,6 +46,11 @@ export const metricsSchema = z.object({
 /** Output schema for the get-traffic-area-analytics tool. */
 export const getTrafficAreaAnalyticsOutputSchema = z.union([
     z.object({
+        entryId: z
+            .string()
+            .describe(
+                'Id of the new traffic-area-analytics entry — use with updateTrafficAreaAnalyticsDisplay / analyseData / processData.',
+            ),
         name: z.string().optional(),
         timezone: z.string().optional(),
         dateRange: z.object({ start: z.string(), end: z.string() }),
@@ -76,7 +81,9 @@ export const getTrafficAreaAnalyticsSchema = z.object({
     showOnMap: z
         .boolean()
         .optional()
-        .describe('Visualize the result immediately with default settings. Use showTrafficAreaAnalytics to customize.'),
+        .describe(
+            'Visualize the result immediately with default settings. Use `updateTrafficAreaAnalyticsDisplay` to customize.',
+        ),
     startDate: z
         .string()
         .optional()
@@ -166,18 +173,18 @@ const resolveDateParams = (
     return {};
 };
 
-// Show analytics on the map with default settings, fitting the viewport.
-const showAnalyticsOnMap = async (state: ToolState, result: TrafficAreaAnalytics): Promise<void> => {
-    const analyticsModule = await state.trafficAreaAnalytics.getTrafficAreaAnalyticsModule();
-    await analyticsModule.clear();
-    await analyticsModule.show(result);
-    const defaultMetric = result.properties?.metrics?.[0] ?? 'congestionLevel';
+// Show the given entry on its per-entry module with default settings, fitting the viewport.
+const showAnalyticsOnMap = async (state: ToolState, entryId: string): Promise<void> => {
+    await state.trafficAreaAnalytics.showEntry(entryId);
+    const entry = state.trafficAreaAnalytics.findById(entryId);
+    if (!entry) return;
+    const analyticsModule = await state.trafficAreaAnalytics.getEntryModule(entryId);
+    const defaultMetric = entry.data.properties?.metrics?.[0] ?? 'congestionLevel';
     analyticsModule.setMetric(defaultMetric);
-    const bbox = bboxFromGeoJSON(result.features);
+    const bbox = bboxFromGeoJSON(entry.data.features);
     if (bbox) {
         state.baseMap.mapLibreMap.fitBounds(bbox as LngLatBoundsLike, { padding: 50, pitch: 45 });
     }
-    state.trafficAreaAnalytics.notifyAnalyticsShown(result, analyticsModule);
 };
 
 /** Format a Date to 'YYYY-MM-DD'. */
@@ -204,6 +211,7 @@ export const extractMetrics = (entry: Record<string, unknown>) => ({
 
 /** Compact summary of the analytics result — just headline numbers + what's available for drill-down. */
 const summarize = (
+    entryId: string,
     result: TrafficAreaAnalytics,
     inputStartDate?: string,
     inputEndDate?: string,
@@ -211,6 +219,7 @@ const summarize = (
     const region = result.features[0]?.properties;
     if (!region) {
         return {
+            entryId,
             dateRange: { start: '', end: '' },
             baseData: {},
             metrics: [],
@@ -243,6 +252,7 @@ const summarize = (
     if (region.timedData?.average?.length) availableGranularities.push('average');
 
     return {
+        entryId,
         ...(region.name && { name: region.name }),
         ...(region.timezone && { timezone: region.timezone }),
         dateRange: { start, end },
@@ -293,13 +303,22 @@ export const executeGetTrafficAreaAnalytics = async (
             geometry: resolvedGeometry,
         } as TrafficAreaAnalyticsParams);
 
-        state.trafficAreaAnalytics.setLastAreaAnalytics(result);
+        const regionName = result.features[0]?.properties?.name;
+        const label = regionName
+            ? `${regionName} (${dateParams.startDate ?? '…'} → ${dateParams.endDate ?? '…'})`
+            : `analytics (${dateParams.startDate ?? '…'} → ${dateParams.endDate ?? '…'})`;
+        const entryId = await state.trafficAreaAnalytics.addEntry(result, label, {
+            ...dateParams,
+            metrics,
+            functionalRoadClasses: functionalRoadClasses ?? 'all',
+            hours: hours ?? 'all',
+        });
 
         if (showOnMap) {
-            await showAnalyticsOnMap(state, result);
+            await showAnalyticsOnMap(state, entryId);
         }
 
-        return summarize(result, dateParams.startDate, dateParams.endDate);
+        return summarize(entryId, result, dateParams.startDate, dateParams.endDate);
     } catch (error) {
         return {
             error: `Failed to get traffic area analytics: ${error instanceof Error ? error.message : String(error)}`,

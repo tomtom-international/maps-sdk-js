@@ -1,7 +1,7 @@
 import { createAzure } from '@ai-sdk/azure';
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { TomTomMap } from '@tomtom-org/maps-sdk/map';
-import { createMapAgent } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+import { type ClassificationResult, createMapAgent } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import type { ChatTransport } from 'ai';
 import { useEffect, useState } from 'react';
 import { TRAFFIC_MANAGER_SYSTEM_PROMPT } from '../agent/system-prompt';
@@ -11,7 +11,7 @@ import { AgentUIMessage, createInstrumentedTransport } from '../telemetry';
 // Tools whose execution involves writing or running code (turf/h3 cluster
 // snippets, MapLibre code). Bumping reasoning effort on these turns helps the
 // model plan; the default `low` is enough for fetch/toggle/focus.
-const CODE_EXEC_TOOLS = new Set(['analyseIncidents', 'executeMaplibreCode']);
+const CODE_EXEC_TOOLS = new Set(['analyseData', 'executeMaplibreCode']);
 
 /**
  * Azure Foundry's Responses API validator rejects message items that lack a
@@ -59,6 +59,10 @@ export function useAgentBootstrap({ deploymentId }: BootstrapOptions) {
     const [map, setMap] = useState<TomTomMap | undefined>(undefined);
     const [agent, setAgent] = useState<AgentInstance | undefined>(undefined);
     const [transport, setTransport] = useState<ChatTransport<AgentUIMessage> | undefined>(undefined);
+    // Per-turn classifier outputs in arrival order. The chat panel zips this list with the
+    // assistant messages in `thread.messages` so each turn's chip can render above its own
+    // tool calls instead of one global "latest" chip stuck at the top.
+    const [classifications, setClassifications] = useState<readonly (ClassificationResult | null)[]>([]);
 
     useEffect(() => {
         TomTomConfig.instance.put({ apiKey: API_KEY });
@@ -118,6 +122,7 @@ export function useAgentBootstrap({ deploymentId }: BootstrapOptions) {
                 activeTools?.some((name) => CODE_EXEC_TOOLS.has(name))
                     ? { openai: { reasoningEffort: 'low' } }
                     : undefined,
+            onClassify: (result) => setClassifications((prev) => [...prev, result]),
         });
 
         setAgent(created);
@@ -126,9 +131,10 @@ export function useAgentBootstrap({ deploymentId }: BootstrapOptions) {
         return () => {
             setAgent(undefined);
             setTransport(undefined);
+            setClassifications([]);
             created.destroy();
         };
     }, [map, deploymentId]);
 
-    return { agent, transport, isReady: transport !== undefined };
+    return { agent, transport, classifications, isReady: transport !== undefined };
 }

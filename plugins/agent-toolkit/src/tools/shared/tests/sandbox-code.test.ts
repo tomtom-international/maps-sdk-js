@@ -16,6 +16,27 @@ describe('stripInjectedRedeclarations', () => {
         expect(stripInjectedRedeclarations(code, IDS)).toBe('return turf.bbox(places);');
     });
 
+    it('removes `const turf = await import("@turf/turf")` prepended by the LLM', () => {
+        const code = `const turf = await import('@turf/turf');\nreturn turf.bbox(places);`;
+        expect(stripInjectedRedeclarations(code, IDS)).toBe('return turf.bbox(places);');
+    });
+
+    it('removes `const turf = arguments[0].turf` (reaching for the injected param off `arguments`)', () => {
+        const code = 'const turf = arguments[0].turf;\nreturn turf.bbox(places);';
+        expect(stripInjectedRedeclarations(code, IDS)).toBe('return turf.bbox(places);');
+    });
+
+    it('removes the bracket-notation variant `const h3 = arguments[0]["h3"]`', () => {
+        const code = `const h3 = arguments[0]["h3"];\nreturn h3.latLngToCell(52, 4, 8);`;
+        expect(stripInjectedRedeclarations(code, IDS)).toBe('return h3.latLngToCell(52, 4, 8);');
+    });
+
+    it('does not strip an unrelated `arguments`-reading declaration', () => {
+        // `arguments[0].foo` for a non-injected name is genuine user code — keep it.
+        const code = 'const foo = arguments[0].foo;\nreturn foo;';
+        expect(stripInjectedRedeclarations(code, IDS)).toBe(code);
+    });
+
     it('removes redeclarations of every injected identifier', () => {
         const code = [
             "const places = require('whatever');",
@@ -70,6 +91,17 @@ describe('formatSandboxExecutionError', () => {
     it('hints on `is not a function`', () => {
         const result = formatSandboxExecutionError('Analysis', new TypeError('foo.bar is not a function'));
         expect(result).toMatch(/Hint:.*type/);
+    });
+
+    it('hints on `coordinates must be an Array` (raw-coordinate handoff to turf)', () => {
+        const result = formatSandboxExecutionError('Analysis', new Error('coordinates must be an Array'));
+        expect(result).toMatch(/Hint:.*Feature/);
+        expect(result).toMatch(/\.geometry\.coordinates/);
+    });
+
+    it('hints on `Unknown Geometry Type` (bare Array passed to turf)', () => {
+        const result = formatSandboxExecutionError('Process', new Error('Unknown Geometry Type'));
+        expect(result).toMatch(/Hint:.*Feature/);
     });
 
     it('hints on `is not iterable`', () => {

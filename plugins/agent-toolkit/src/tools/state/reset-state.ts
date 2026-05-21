@@ -8,13 +8,26 @@ import { toolErrorSchema } from '../shared-output-schemas';
 
 const DEFAULT_STYLE_ID = 'standardLight';
 
+// Slices wiped by `executeResetState`. Kept as a single source of truth so the
+// output schema's enum and the returned `cleared` array can't drift apart.
+const CLEARED_SLICES = [
+    'places',
+    'routes',
+    'ranges',
+    'customGeometries',
+    'trafficAreaAnalytics',
+    'trafficIncidents',
+    'byod',
+    'mapPOIs',
+    'trafficFlow',
+    'mapStyle',
+] as const;
+
 /** Output schema for reset-state. */
 export const resetStateOutputSchema = z.union([
     z.object({
         success: z.literal(true),
-        cleared: z
-            .array(z.enum(['places', 'routes', 'ranges', 'mapPOIs', 'traffic', 'mapStyle']))
-            .describe('Slices that were wiped / reset to defaults.'),
+        cleared: z.array(z.enum(CLEARED_SLICES)).describe('Slices that were wiped / reset to defaults.'),
     }),
     toolErrorSchema,
 ]);
@@ -54,7 +67,9 @@ export const executeResetState = async (
             await entry._modules?.places?.clear();
         }
 
-        await state.trafficAreaAnalytics.trafficAreaAnalyticsModule?.clear();
+        for (const entry of state.trafficAreaAnalytics.entries) {
+            await entry._module?.clear();
+        }
 
         // 2. POIs / traffic-flow / traffic-incidents — revert visualization
         //    configs to defaults via the SDK base's `resetConfig()`. Only
@@ -65,10 +80,16 @@ export const executeResetState = async (
         state.trafficTiles.trafficIncidentsModule?.resetConfig();
 
         // 3. Drop history + module references and re-emit change events so
-        //    the UI lights up empty.
+        //    the UI lights up empty. Every entry-owning slice with a `reset()`
+        //    needs to be wiped — missing one leaves stale entries that show up
+        //    in subsequent `recallState` / `recall*` calls even after a reset.
         state.places.reset();
         state.routing.reset();
         state.ranges.reset();
+        state.customGeometries.reset();
+        state.trafficAreaAnalytics.reset();
+        state.trafficIncidents.reset();
+        state.byod.reset();
 
         // 4. Map style: revert to the canonical default. `keepState: false`
         //    so any sources/layers added after the last `setStyle` call are
@@ -77,7 +98,7 @@ export const executeResetState = async (
 
         return {
             success: true,
-            cleared: ['places', 'routes', 'ranges', 'mapPOIs', 'traffic', 'mapStyle'],
+            cleared: [...CLEARED_SLICES],
         };
     } catch (error) {
         return {

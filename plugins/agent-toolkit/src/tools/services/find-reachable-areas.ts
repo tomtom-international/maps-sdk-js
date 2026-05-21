@@ -179,7 +179,7 @@ export const executeFindReachableAreas = async (
 
         const resolvedTheme = theme ?? 'outline';
         const originNames = ranges.map(formatOriginName);
-        const rangesId = state.ranges.addEntry({
+        const rangesId = await state.ranges.addEntry({
             label: makeRangesLabel(sortedBudgets, originNames),
             ranges,
         });

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { summarizeRoutes, summarizeWaypoint, waypointSummarySchema } from '../../utils';
-import { costModelSchema, whenSchema } from '../services/set-route';
+import { costModelSchema, whenSchema } from '../services';
 import { routesOutputSchema, toolErrorSchema } from '../shared-output-schemas';
 
 export const recallRoutesSchema = z.object({
@@ -12,6 +12,7 @@ const indexEntrySchema = z.object({
     id: z.string(),
     label: z.string(),
     timestamp: z.number(),
+    shown: z.boolean().describe('Whether this entry is currently rendered on the map.'),
 });
 
 const routeParamsSchema = z.object({
@@ -56,11 +57,12 @@ export const executeRecallRoutes = async (
 ): Promise<z.infer<typeof recallRoutesOutputSchema>> => {
     const { id } = params;
     const entryMode = state.routing.entryMode;
+    const shownEntryIds = state.routing.shownEntryIds;
 
     if (!id) {
         const entries = [...state.routing.entries]
             .reverse()
-            .map(({ id, label, timestamp }) => ({ id, label, timestamp }));
+            .map(({ id, label, timestamp }) => ({ id, label, timestamp, shown: shownEntryIds.has(id) }));
         return { entries, entryMode };
     }
 

@@ -9,7 +9,7 @@ import { AnalysisOutputFormat, runSandboxedFn, validateAnalysisResult } from '..
 
 /**
  * A single aggregation/analysis result attached to a traffic-incidents entry.
- * Produced by the `analyseIncidents` tool; `data` is whatever the dynamic code returned.
+ * Produced by `analyseData` (one-shot or `monitor`-rerun); `data` is whatever the dynamic code returned.
  *
  * @group Agent Toolkit
  */
@@ -26,8 +26,8 @@ export type IncidentsAnalysis = {
 };
 
 /**
- * A registered, re-executing analysis. Produced by `analyseIncidents`; replayed by
- * an entry's {@link IncidentsAnalyses} on every monitor-tick of its source.
+ * A registered, re-executing analysis. Produced by `analyseData` with `monitor: { entryId }`;
+ * replayed by an entry's {@link IncidentsAnalyses} on every monitor-tick of its source.
  *
  * @group Agent Toolkit
  */
@@ -42,7 +42,7 @@ export type IncidentsAnalysisSpec = {
 
 /**
  * Run a one-shot incidents analysis spec against an incidents snapshot. Used by
- * `analyseIncidents` for the initial result and by {@link IncidentsAnalyses}
+ * `analyseData`'s `monitor` path for the initial result and by {@link IncidentsAnalyses}
  * for each replay tick.
  *
  * `sampledAt` is the canonical moment the data is from — it becomes the sandbox's

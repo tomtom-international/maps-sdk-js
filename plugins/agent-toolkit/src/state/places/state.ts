@@ -13,6 +13,7 @@ import {
 } from '@tomtom-org/maps-sdk/map';
 import { geometryData } from '@tomtom-org/maps-sdk/services';
 import type { StateSlice } from '../../types';
+import { collapseHistoryToLatest, hideAllEntries, pickUniqueEntryId } from '../entry-helpers';
 import { StateEvents } from '../events';
 import type { EntryMode } from '../state';
 import type { PlacesAnalysis } from './analysis';
@@ -116,10 +117,7 @@ export class PlacesState implements StateSlice {
         if (this._entryMode === mode) return;
         this._entryMode = mode;
         if (mode === 'single' && this._entries.length > 1) {
-            const latest = this._entries.at(-1);
-            const dropped = this._entries.slice(0, -1);
-            for (const entry of dropped) await this._hideEntry(entry);
-            this._entries = latest ? [latest] : [];
+            this._entries = await collapseHistoryToLatest(this._entries, (entry) => this._hideEntry(entry));
             this.events.emit('entries-change', this._entries);
             this.events.emit('shown-change', this.shownEntryIds);
         }
@@ -178,24 +176,27 @@ export class PlacesState implements StateSlice {
         return this._entries.at(-1)?.places;
     }
 
-    addPlaceResult(
+    async addPlaceResult(
         place: Place | Places,
         label: string,
         explicitId?: string,
         connections?: PlaceConnectionDisplay[],
         geometries?: PolygonFeature<CommonPlaceProps>[],
-    ): string {
-        // Under `single` mode the new entry replaces everything older. Hide
-        // those entries' modules synchronously where we can — the await is
-        // done lazily inside `_hideEntry` (it returns a promise we can't
-        // await here without making the whole API async). Listeners only see
-        // the new entry in `entries-change`.
+    ): Promise<string> {
+        // Under `single` mode the new entry replaces everything older. Hide and await each
+        // older entry's modules before pushing the new one — otherwise the caller's render
+        // can race with the in-flight teardown and the previous markers flicker.
         if (this._entryMode === 'single' && this._entries.length > 0) {
-            for (const entry of this._entries) void this._hideEntry(entry);
+            await hideAllEntries(this._entries, (entry) => this._hideEntry(entry));
             this._entries = [];
         }
         const fallback = `places-${this._entries.length}`;
-        const entryId = explicitId ? this._uniqueEntryId(explicitId) : fallback;
+        const entryId = explicitId
+            ? pickUniqueEntryId(
+                  explicitId,
+                  this._entries.map((entry) => entry.id),
+              )
+            : fallback;
         this._entries.push({
             id: entryId,
             timestamp: Date.now(),
@@ -212,17 +213,6 @@ export class PlacesState implements StateSlice {
             this.events.emit('geometries-change', { entryId, count: geometries.length });
         }
         return entryId;
-    }
-
-    // Returns `requested` unchanged when free, otherwise appends `-2`, `-3`, ... until a free id
-    // is found. Lets the LLM hand us a semantic id without worrying about collisions across calls.
-    private _uniqueEntryId(requested: string): string {
-        const taken = new Set(this._entries.map((entry) => entry.id));
-        if (!taken.has(requested)) return requested;
-        for (let i = 2; ; i++) {
-            const candidate = `${requested}-${i}`;
-            if (!taken.has(candidate)) return candidate;
-        }
     }
 
     /**
@@ -519,6 +509,15 @@ export class PlacesState implements StateSlice {
         if (shown.length === 0) return;
         for (const entry of shown) await this._hideEntry(entry);
         this.events.emit('shown-change', this.shownEntryIds);
+    }
+
+    /**
+     * Hide every PlacesState rendering — pins AND attached boundary polygons. Map-only:
+     * history (`entries`) is untouched. Implements {@link ClearableMapSlice}.
+     */
+    async clearShown(): Promise<void> {
+        await this.clearShownEntries();
+        await this.clearShownGeometries();
     }
 
     // Clears the rendered boundary polygons for the given entries (or every entry when `ids`

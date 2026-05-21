@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.47.7](https://github.com/tomtom-international/maps-sdk-js/compare/v0.47.6...v0.47.7) (2026-05-21)
+
+
+### Features
+
+* code generation tools with updated docs ([ef1a7fa](https://github.com/tomtom-international/maps-sdk-js/commit/ef1a7fac2120e093564afeabd8def3ab7e93dc94))
+* upgrade SDK agent toolkit and fix release process ([#1782](https://github.com/tomtom-international/maps-sdk-js/issues/1782)) ([6e09446](https://github.com/tomtom-international/maps-sdk-js/commit/6e094469c689dd824a29bfaea9cc67cbe931390d))
+
+
+### Bug Fixes
+
+* **agent-toolkit:** point README docs link at overview page ([b2aba55](https://github.com/tomtom-international/maps-sdk-js/commit/b2aba55dccab4109b12a9358bc5003a066926e9b))
+* engineering guideline updates for agent toolkit ([dd24926](https://github.com/tomtom-international/maps-sdk-js/commit/dd2492643fc67fc8e7dd3f6247f21569227b5912))
+* tool doc updates for agent toolkit ([ac0076c](https://github.com/tomtom-international/maps-sdk-js/commit/ac0076c45b3d747fb1c6baae64f90b01fb85bb4d))
+
 ## [0.47.6](https://github.com/tomtom-international/maps-sdk-js/compare/v0.47.5...v0.47.6) (2026-05-15)
 
 

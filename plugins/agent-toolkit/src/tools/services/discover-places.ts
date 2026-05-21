@@ -3,7 +3,14 @@
  */
 
 import { getPosition, type HasBBox, type Place, type POICategory } from '@tomtom-org/maps-sdk/core';
-import { alongRouteSearch, explorationSearch, geometryData, search } from '@tomtom-org/maps-sdk/services';
+import {
+    alongRouteSearch,
+    explorationSearch,
+    geometryData,
+    POPULATED_AREA_TAGS,
+    type PopulatedAreaTag,
+    search,
+} from '@tomtom-org/maps-sdk/services';
 import * as turf from '@turf/turf';
 import type { Feature, MultiPolygon, Polygon, Position } from 'geojson';
 import { z } from 'zod';
@@ -183,7 +190,7 @@ const experimentalWithinFields = {
         .string()
         .optional()
         .describe(
-            'Id of a municipality polygon — restricts results to that single municipality. ' +
+            'Id of a small area polygon (few km², not a whole municipality) — restricts results to that single area. ' +
                 'Typically chained from a previous hit\'s `areaId` ("what else is in this same area?"). ' +
                 'EXCLUSIVE with viewport; composes with other multi-region fields.',
         ),
@@ -292,7 +299,7 @@ export const buildDiscoverPlacesSchema = (flags: FeatureFlags) => {
             .optional()
             .describe(
                 'Display places/geometries on the map. ' +
-                    'Skip for intermediate results — let the follow-up (processPlaces / analysePlaces / processGeometries) render the final entry.',
+                    'Skip for intermediate results — let the follow-up (processData / analyseData) render the final entry.',
             ),
         entryId: placesEntryIdHintSchema,
         geometries: showPlaceGeometriesSchema,
@@ -309,13 +316,15 @@ export const buildDiscoverPlacesSchema = (flags: FeatureFlags) => {
                           'POI = businesses/landmarks/amenities; PointAddress = numbered addresses; Street = unnumbered streets.',
                   ),
               areaTags: z
-                  .array(z.string())
+                  .array(z.enum(POPULATED_AREA_TAGS))
                   .optional()
                   .describe(
-                      'Area-character tokens describing the surrounding municipality ' +
-                          '(e.g. "coastal", "walkable", "alpine", "transit_connected"). ' +
-                          'OR semantics — matches places in municipalities tagged with ANY of the tokens. ' +
-                          'Populated only for DE / NL / FR; supplying these in other countries returns zero hits. ' +
+                      'Tokens describing a small surrounding area (few km², not a whole municipality). ' +
+                          'Enum drawn from the SDK canonical vocabulary — e.g. "coastal", "walkable", "alpine", ' +
+                          '"transit_connected", "village", "tourism_economy". ' +
+                          'OR semantics — matches places in areas tagged with ANY token. ' +
+                          'Filter works on any `where` scope (including global), but area data is currently ' +
+                          'populated only for DE / NL / FR — zero hits where data is absent. ' +
                           'Filter, not a geo-bias — pair with a `where` mode that supplies one.',
                   ),
           }
@@ -336,7 +345,7 @@ export const buildDiscoverPlacesDescription = (flags: FeatureFlags): string => {
         ? 'Prefer `municipalities` / `areaId` / `queries` / `placeIds` (precise) over `boundingBoxes` (coarse). '
         : 'Prefer `queries` / `placeIds` (resolve to precise polygons) over raw `geometries`. ';
     const areaTagsLine = flags.experimentalSearch
-        ? 'Top-level `areaTags` (DE/NL/FR only) narrows hits by municipality character ("coastal", "walkable", …). '
+        ? 'Top-level `areaTags` narrows hits by small-area character ("coastal", "walkable", …) — area data currently populated only in DE/NL/FR. '
         : '';
     return (
         'Search for MULTIPLE places in a region — REQUIRES a search subject (`query` and/or `poiCategories`). ' +
@@ -379,7 +388,7 @@ type MultiFilters = {
     // so passing it alone still triggers the viewport-bounds default.
     placeTypes?: ('POI' | 'PointAddress' | 'Street')[];
     // Filter (not a geo-bias). Composes with any `where` scope.
-    areaTags?: string[];
+    areaTags?: PopulatedAreaTag[];
 };
 
 type DiscoverPlacesWhere = z.infer<ReturnType<typeof buildDiscoverPlacesWhereSchema>>;
@@ -451,7 +460,7 @@ const searchByDetour = async (
         ...(detour.sortBy && { sortBy: detour.sortBy }),
         ...(detour.limit !== undefined && { limit: detour.limit }),
     });
-    const placesEntryId = state.places.addPlaceResult(
+    const placesEntryId = await state.places.addPlaceResult(
         result,
         makePlacesLabel(result, { query, poiCategories: resolvedPoiCategories, routeLabel: routeEntry.label }),
         entryId,
@@ -522,7 +531,7 @@ const searchInRange = async (
         poiCategories: resolvedPoiCategories,
         multiFilters: { ...multiFilters, geometries: combinedGeometries },
     });
-    const placesEntryId = state.places.addPlaceResult(
+    const placesEntryId = await state.places.addPlaceResult(
         result,
         makePlacesLabel(result, {
             query,
@@ -749,7 +758,7 @@ const searchWithBias = async (
         radiusMeters,
         multiFilters,
     });
-    const placesEntryId = state.places.addPlaceResult(
+    const placesEntryId = await state.places.addPlaceResult(
         result,
         makePlacesLabel(result, {
             query,
@@ -809,7 +818,7 @@ export const buildExecuteDiscoverPlaces = (flags: FeatureFlags) => {
         // `placeTypes` and `areaTags` only exist on the experimental schema.
         const experimentalParams = params as {
             placeTypes?: ('POI' | 'PointAddress' | 'Street')[];
-            areaTags?: string[];
+            areaTags?: PopulatedAreaTag[];
         };
         const placeTypes = experimentalParams.placeTypes;
         const areaTags = experimentalParams.areaTags;
@@ -928,7 +937,7 @@ const discoverPlacesMetadata = {
         '`where.mode`: within (area) / nearby (point bias) / maxDetour (route-relative ranked) / global. ' +
         'For "X in [named area]", put X in top-level `query`/`poiCategories` and the area in `where.queries: [{query: "..."}]` — geocoded in one step, no precursor locatePlace. ' +
         'Within-mode: route → corridor. Prefer geometries/municipalities/placeIds over bbox. ' +
-        'Skip for already-stored places — use recallPlaces/processPlaces.',
+        'Skip for already-stored places — use recallPlaces/processData.',
     tags: ['discover', 'place', 'location'],
     examples: [
         'discoverPlaces({ poiCategories: ["RESTAURANT", "CAFE", "BAR"], entryId: "amsterdam-food-spots" })  // batch many categories + semantic id',
@@ -965,8 +974,8 @@ const discoverPlacesMetadata = {
         'locatePlace',
         'getViewport',
         'findReachableAreas',
-        'processPlaces',
-        'analysePlaces',
+        'processData',
+        'analyseData',
     ],
     dependsOn: ['getPOICategoryCodes', 'setRoute'],
 } satisfies Omit<ToolEntry, 'description' | 'inputSchema' | 'outputSchema' | 'execute'>;

@@ -19,10 +19,15 @@ const indexEntrySchema = z.object({
     label: z.string(),
     timestamp: z.number(),
     featureCount: z.number().describe('Number of Place features stored in this entry.'),
+    shown: z.boolean().describe('Whether this entry is currently rendered on the map.'),
+    markerType: z
+        .enum(['pin', 'base-map', 'pin-clustered'])
+        .optional()
+        .describe('Which marker theme is rendering this entry (undefined when `shown` is false).'),
     analyses: z
         .array(analysisIndexSchema)
         .optional()
-        .describe('Analyses already attached to this entry via analysePlaces (name + output format).'),
+        .describe('Analyses already attached to this entry via analyseData (name + output format).'),
 });
 
 const entryModeSchema = z
@@ -51,7 +56,7 @@ export const buildRecallPlacesOutputSchema = (flags: FeatureFlags) => {
 export const recallPlacesOutputSchema = buildRecallPlacesOutputSchema({});
 
 export const recallPlacesDescription =
-    'List / inspect places entries already in session state (from discoverPlaces / locatePlace / processPlaces) ' +
+    'List / inspect places entries already in session state (from discoverPlaces / locatePlace / processData) ' +
     '— the same entries every `placesEntryIDs` parameter accepts. ALWAYS call this before referencing past ' +
     'places; never guess IDs. No args = index (id, label, timestamp, featureCount, analyses) + `entryMode`; ' +
     'pass `id` for full Place coordinates. No service call.';
@@ -70,24 +75,31 @@ export const buildExecuteRecallPlaces =
         const { id } = params;
         const allEntries = state.places.entries;
         const entryMode = state.places.entryMode;
+        const shownEntryIds = state.places.shownEntryIds;
 
         if (!id) {
             const entries = [...allEntries]
                 .sort((a, b) => b.timestamp - a.timestamp)
-                .map(({ id, label, timestamp, places, _analysis }) => ({
-                    id,
-                    label,
-                    timestamp,
-                    featureCount: places.length,
-                    ...(_analysis?.length && {
-                        analyses: _analysis.map(({ name, outputFormat, timestamp, description }) => ({
-                            name,
-                            outputFormat,
-                            timestamp,
-                            ...(description && { description }),
-                        })),
-                    }),
-                }));
+                .map(({ id, label, timestamp, places, _analysis }) => {
+                    const shown = shownEntryIds.has(id);
+                    const markerType = shown ? state.places.getShownMarkerType(id) : undefined;
+                    return {
+                        id,
+                        label,
+                        timestamp,
+                        featureCount: places.length,
+                        shown,
+                        ...(markerType && { markerType }),
+                        ...(_analysis?.length && {
+                            analyses: _analysis.map(({ name, outputFormat, timestamp, description }) => ({
+                                name,
+                                outputFormat,
+                                timestamp,
+                                ...(description && { description }),
+                            })),
+                        }),
+                    };
+                });
             return { entries, entryMode };
         }
 
@@ -127,13 +139,13 @@ export const buildRecallPlacesEntry = <S extends ToolState = ToolState>(
 
 const recallPlacesMetadata = {
     classificationPrompt:
-        'List/inspect places entries in state — pick valid IDs before any `placesEntryIDs` tool (processPlaces, analysePlaces, updatePlacesDisplay).',
+        'List/inspect places entries in state — pick valid IDs before any `placesEntryIDs` tool (processData, analyseData, updatePlacesDisplay).',
     tags: ['place', 'location'],
     examples: ['recallPlaces()', 'recallPlaces({ id: "places-0" })'],
     examplePrompts: [
         'What places did I search for?',
         'List every places entry with its ID',
-        'Which IDs can I pass to processPlaces or updatePlacesDisplay?',
+        'Which IDs can I pass to processData or updatePlacesDisplay?',
         'Recall the bakeries I discovered earlier',
         'What is in entry places-2?',
     ],

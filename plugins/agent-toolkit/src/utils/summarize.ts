@@ -22,7 +22,7 @@ export type PlaceSummary = {
     address?: string;
     position: [number, number];
     // Populated only when `experimentalSearch` is on and the underlying place came from the
-    // exploration-search backend (DE / NL / FR municipality pipeline).
+    // exploration-search backend (DE / NL / FR area-tag pipeline; areas are small, few km²).
     areaId?: string;
     areaCountry?: string;
     areaTags?: string[];

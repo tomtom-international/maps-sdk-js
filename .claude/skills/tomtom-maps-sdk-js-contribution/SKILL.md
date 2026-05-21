@@ -58,6 +58,26 @@ pnpm format:fix
 
 `lint:fix` runs Biome's check+lint with `--write`; `format:fix` runs Biome's formatter with `--write`. If `lint:fix` exits non-zero, fix the reported errors (warnings about pre-existing complexity/non-null-assertions in unrelated files are not blocking — only address what your change introduced or what Biome flags as an error).
 
+## Cross-file consistency check (before pushing)
+
+Most automated review nags come from references that drift between code, exports, tests, and docs. Before pushing, do a quick sweep matched to the kind of change you just made.
+
+**Renamed or removed a public symbol** — start with `git grep -l '<oldName>'` from the repo root, then walk the hits across:
+- the package's own `src/**` (registries, barrels, schemas, tests, mocks, fixtures)
+- `examples/**` (entry points, hooks, eval cases, tests, snapshots)
+- `documentation/docs-portal/guides/**` — both `navigation.yml` and every `.mdx` under the affected guide
+- `.claude/skills/**` — skill descriptions list trigger keywords by symbol name and go stale silently
+
+Replace every hit. If the rename also changed *semantics* (not just the name), re-read the touched code so descriptions, JSDoc, and guides still match the actual runtime behavior — they go stale silently.
+
+**Changed a public type shape (default generic, exported interface, output schema)** — also:
+- update the JSDoc `@typeParam` / property docs to match the actual default and shape (a common review nag is "JSDoc says X but signature says Y")
+- decide whether downstream consumers need a deprecated alias or a major-version bump (see `.release-please-manifest.json`)
+
+**Added external-resource fetching** — confirm bounded handling: explicit protocol allowlist, `AbortController` timeout, streamed size cap. Don't trust `new URL` alone.
+
+**Package-specific extras** — when a package's own `AGENTS.md` lists "after adding X, also touch Y" rules (e.g. `plugins/agent-toolkit/AGENTS.md` for new state slices or registered tools), follow those as well. The root-level checks above don't replace them.
+
 ## When to branch off this skill
 
 - Building an SDK *consumer* app (not editing SDK source) → use the `tomtom-maps-sdk-js` skill instead.

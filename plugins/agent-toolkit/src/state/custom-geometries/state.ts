@@ -5,6 +5,7 @@
 import type { CommonPlaceProps, PolygonFeature } from '@tomtom-org/maps-sdk/core';
 import { GeometriesModule, type GeometryTheme, type TomTomMap, themedGeometryConfig } from '@tomtom-org/maps-sdk/map';
 import type { StateSlice } from '../../types';
+import { collapseHistoryToLatest, hideAllEntries, pickUniqueEntryId } from '../entry-helpers';
 import { StateEvents } from '../events';
 import type { EntryMode, ShownEntriesSlice } from '../state';
 import type { CustomGeometriesAnalysis } from './analysis';
@@ -63,7 +64,7 @@ const renderMerged = async (module: GeometriesModule, features: PolygonFeature<C
 };
 
 /**
- * State for derived / custom geometries — output of `processGeometries` and any future
+ * State for derived / custom geometries — output of `processData` and any future
  * polygon-producing tool whose result doesn't belong to a place or a reachable-range entry.
  *
  * Each entry owns a dedicated GeometriesModule, lazy-initialised on first show, mirroring
@@ -109,10 +110,7 @@ export class CustomGeometriesState implements ShownEntriesSlice, StateSlice {
         if (this._entryMode === mode) return;
         this._entryMode = mode;
         if (mode === 'single' && this._entries.length > 1) {
-            const latest = this._entries.at(-1);
-            const dropped = this._entries.slice(0, -1);
-            for (const entry of dropped) await this.hideEntry(entry.id);
-            this._entries = latest ? [latest] : [];
+            this._entries = await collapseHistoryToLatest(this._entries, (entry) => this.hideEntry(entry.id));
             this.events.emit('entries-change', this._entries);
         }
         this.events.emit('mode-change', mode);
@@ -126,18 +124,23 @@ export class CustomGeometriesState implements ShownEntriesSlice, StateSlice {
      * Append a new entry. If `explicitId` collides, the slice auto-suffixes (`-2`, `-3`, ...).
      * Returns the assigned id. Under `single` mode the new entry replaces every older one.
      */
-    addEntry(
+    async addEntry(
         features: PolygonFeature<CommonPlaceProps>[],
         provenance: CustomGeometriesEntry['provenance'],
         label: string,
         explicitId?: string,
-    ): string {
+    ): Promise<string> {
         if (this._entryMode === 'single' && this._entries.length > 0) {
-            for (const entry of this._entries) void this.hideEntry(entry.id);
+            await hideAllEntries(this._entries, (entry) => this.hideEntry(entry.id));
             this._entries = [];
         }
         const fallback = `geometries-${this._entries.length}`;
-        const entryId = explicitId ? this._uniqueEntryId(explicitId) : fallback;
+        const entryId = explicitId
+            ? pickUniqueEntryId(
+                  explicitId,
+                  this._entries.map((entry) => entry.id),
+              )
+            : fallback;
         this._entries.push({
             id: entryId,
             timestamp: Date.now(),
@@ -219,7 +222,7 @@ export class CustomGeometriesState implements ShownEntriesSlice, StateSlice {
 
     async hideEntry(entryId: string): Promise<void> {
         const entry = this._entries.find((e) => e.id === entryId);
-        if (!entry || !entry._shown) return;
+        if (!entry?._shown) return;
         if (entry._module) await entry._module.clear();
         entry._shown = false;
         this.events.emit('shown-change', this.shownEntryIds);
@@ -240,13 +243,12 @@ export class CustomGeometriesState implements ShownEntriesSlice, StateSlice {
         return entry;
     }
 
-    private _uniqueEntryId(requested: string): string {
-        const taken = new Set(this._entries.map((entry) => entry.id));
-        if (!taken.has(requested)) return requested;
-        for (let i = 2; ; i++) {
-            const candidate = `${requested}-${i}`;
-            if (!taken.has(candidate)) return candidate;
-        }
+    /**
+     * Hide every custom-geometries entry currently on the map. Map-only — history is kept.
+     * Implements {@link ClearableMapSlice}.
+     */
+    async clearShown(): Promise<void> {
+        for (const id of this.shownEntryIds) await this.hideEntry(id);
     }
 
     reset(): void {

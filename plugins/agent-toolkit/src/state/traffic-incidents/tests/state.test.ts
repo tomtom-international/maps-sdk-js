@@ -5,17 +5,17 @@ const mockMap = {} as any;
 const mockTrafficMap = { mapLibreMap: { getSource: () => undefined, getLayer: () => undefined } } as any;
 
 describe('TrafficIncidentsState', () => {
-    it('starts with empty entries and multiple mode', () => {
+    it('starts with empty entries and multiple mode', async () => {
         const state = new TrafficIncidentsState(mockTrafficMap);
         expect(state.entries).toEqual([]);
         expect(state.entryMode).toBe('multiple');
     });
 
-    it('appends entries with addIncidentsEntry and returns the id', () => {
+    it('appends entries with addIncidentsEntry and returns the id', async () => {
         const state = new TrafficIncidentsState(mockTrafficMap);
         const feature = { type: 'Feature', properties: { id: 'i1' } } as any;
 
-        const id = state.addIncidentsEntry([feature], { bbox: [0, 0, 1, 1] as any }, 'Amsterdam', 0);
+        const id = await state.addIncidentsEntry([feature], { bbox: [0, 0, 1, 1] as any }, 'Amsterdam', 0);
 
         expect(id).toBe('incidents-0');
         expect(state.entries).toHaveLength(1);
@@ -28,19 +28,19 @@ describe('TrafficIncidentsState', () => {
         expect(state.entries[0].timestamp).toBeTypeOf('number');
     });
 
-    it('auto-increments IDs across entries', () => {
+    it('auto-increments IDs across entries', async () => {
         const state = new TrafficIncidentsState(mockTrafficMap);
-        state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
-        state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'b', 0);
+        await state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
+        await state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'b', 0);
 
         expect(state.entries[0].id).toBe('incidents-0');
         expect(state.entries[1].id).toBe('incidents-1');
     });
 
-    it('accepts an explicit semantic id and de-duplicates on collision', () => {
+    it('accepts an explicit semantic id and de-duplicates on collision', async () => {
         const state = new TrafficIncidentsState(mockTrafficMap);
-        const a = state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'a', 0, 'live-london');
-        const b = state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'a-again', 0, 'live-london');
+        const a = await state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'a', 0, 'live-london');
+        const b = await state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'a-again', 0, 'live-london');
         expect(a).toBe('live-london');
         expect(b).toBe('live-london-2');
     });
@@ -50,27 +50,27 @@ describe('TrafficIncidentsState', () => {
         // then add a third → length is 1, so the naive `incidents-${length}` fallback
         // would collide with the surviving `incidents-1`. The slice must dedupe.
         const state = new TrafficIncidentsState(mockTrafficMap);
-        state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
-        state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'b', 0);
+        await state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
+        await state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'b', 0);
         await state.removeEntry('incidents-0');
-        const c = state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'c', 0);
+        const c = await state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'c', 0);
         expect(c).not.toBe('incidents-1');
         expect(state.entries.map((e) => e.id)).toEqual(['incidents-1', c]);
     });
 
-    it('emits entries-change on add and reset', () => {
+    it('emits entries-change on add and reset', async () => {
         const state = new TrafficIncidentsState(mockTrafficMap);
         const seen: number[] = [];
         const unsub = state.events.on('entries-change', (entries) => seen.push(entries.length));
-        state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
+        await state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
         state.reset();
         unsub();
         expect(seen).toEqual([1, 0]);
     });
 
-    it('reset clears entries', () => {
+    it('reset clears entries', async () => {
         const state = new TrafficIncidentsState(mockTrafficMap);
-        state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
+        await state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
         state.reset();
         expect(state.entries).toEqual([]);
     });
@@ -78,15 +78,15 @@ describe('TrafficIncidentsState', () => {
     it('single mode trims older entries on add', async () => {
         const state = new TrafficIncidentsState(mockTrafficMap);
         await state.setEntryMode('single');
-        state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
-        state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'b', 0);
+        await state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
+        await state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'b', 0);
         expect(state.entries).toHaveLength(1);
         expect(state.entries[0].label).toBe('b');
     });
 
-    it('addAnalysisToEntry attaches analysis and emits analysis-change', () => {
+    it('addAnalysisToEntry attaches analysis and emits analysis-change', async () => {
         const state = new TrafficIncidentsState(mockTrafficMap);
-        const id = state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
+        const id = await state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
         const seen: any[] = [];
         state.events.on('analysis-change', (e) => seen.push(e));
         const ok = state.addAnalysisToEntry(id, {
@@ -101,19 +101,19 @@ describe('TrafficIncidentsState', () => {
         expect(state.entries[0]._analyses?.history('by-cat')).toHaveLength(1);
     });
 
-    it('addAnalysisToEntry appends to the timeline; getResult returns the latest', () => {
+    it('addAnalysisToEntry appends to the timeline; getResult returns the latest', async () => {
         const state = new TrafficIncidentsState(mockTrafficMap);
-        const id = state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
+        const id = await state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
         state.addAnalysisToEntry(id, { name: 'k', timestamp: 1, outputFormat: 'json', data: 1 });
         state.addAnalysisToEntry(id, { name: 'k', timestamp: 2, outputFormat: 'json', data: 2 });
         expect(state.entries[0]._analyses?.history('k')).toHaveLength(2);
         expect(state.entries[0]._analyses?.getResult('k')).toMatchObject({ name: 'k', data: 2, timestamp: 2 });
     });
 
-    it('setAnalysisSpec stores the spec on every named source entry', () => {
+    it('setAnalysisSpec stores the spec on every named source entry', async () => {
         const state = new TrafficIncidentsState(mockTrafficMap);
-        const a = state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
-        const b = state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'b', 0);
+        const a = await state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
+        const b = await state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'b', 0);
         state.setAnalysisSpec({
             name: 'count',
             outputFormat: 'json',
@@ -126,9 +126,9 @@ describe('TrafficIncidentsState', () => {
         expect(eb._analyses?.specs ?? []).toHaveLength(0);
     });
 
-    it('setAnalysisSpec replaces an existing spec by name on the same entry', () => {
+    it('setAnalysisSpec replaces an existing spec by name on the same entry', async () => {
         const state = new TrafficIncidentsState(mockTrafficMap);
-        const a = state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
+        const a = await state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
         state.setAnalysisSpec({ name: 'x', outputFormat: 'json', code: 'return 1;', source: a });
         state.setAnalysisSpec({ name: 'x', outputFormat: 'json', code: 'return 2;', source: a });
         const e = state.entries.find((e) => e.id === a)!;
@@ -136,9 +136,9 @@ describe('TrafficIncidentsState', () => {
         expect(e._analyses!.specs[0].code).toBe('return 2;');
     });
 
-    it('removeAnalysisSpec drops the spec from its source entry', () => {
+    it('removeAnalysisSpec drops the spec from its source entry', async () => {
         const state = new TrafficIncidentsState(mockTrafficMap);
-        const a = state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
+        const a = await state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
         state.setAnalysisSpec({ name: 'x', outputFormat: 'json', code: 'return 1;', source: a });
         state.removeAnalysisSpec('x');
         expect(state.entries.find((e) => e.id === a)!._analyses?.specs ?? []).toHaveLength(0);
@@ -152,7 +152,7 @@ describe('TrafficIncidentsState', () => {
             properties: { id },
             geometry: { type: 'Point', coordinates: [0, 0] },
         });
-        const a = state.addIncidentsEntry([f('1')], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
+        const a = await state.addIncidentsEntry([f('1')], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
         state.setAnalysisSpec({
             name: 'count',
             outputFormat: 'json',
@@ -176,7 +176,7 @@ describe('TrafficIncidentsState', () => {
             properties: { id },
             geometry: { type: 'Point', coordinates: [0, 0] },
         });
-        const a = state.addIncidentsEntry([f('1')], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
+        const a = await state.addIncidentsEntry([f('1')], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
         state.setAnalysisSpec({
             name: 'count',
             outputFormat: 'json',
@@ -200,7 +200,7 @@ describe('TrafficIncidentsState', () => {
             properties: { id },
             geometry: { type: 'Point', coordinates: [0, 0] },
         });
-        const a = state.addIncidentsEntry([f('1')], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
+        const a = await state.addIncidentsEntry([f('1')], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
         state.setAnalysisSpec({
             name: 'echo',
             outputFormat: 'json',
@@ -222,29 +222,29 @@ describe('TrafficIncidentsState', () => {
 
     it('removed entries lose their specs', async () => {
         const state = new TrafficIncidentsState(mockTrafficMap);
-        const a = state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
+        const a = await state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
         state.setAnalysisSpec({ name: 'x', outputFormat: 'json', code: 'return 1;', source: a });
         await state.removeEntry(a);
         expect(state.entries.find((e) => e.id === a)).toBeUndefined();
     });
 
-    it('findEntryWithIncident scans newest-first', () => {
+    it('findEntryWithIncident scans newest-first', async () => {
         const state = new TrafficIncidentsState(mockTrafficMap);
         const f = (id: string): any => ({
             type: 'Feature',
             properties: { id },
             geometry: { type: 'Point', coordinates: [0, 0] },
         });
-        const a = state.addIncidentsEntry([f('x')], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
-        const b = state.addIncidentsEntry([f('y')], { bbox: [0, 0, 1, 1] as any }, 'b', 0);
+        const a = await state.addIncidentsEntry([f('x')], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
+        const b = await state.addIncidentsEntry([f('y')], { bbox: [0, 0, 1, 1] as any }, 'b', 0);
         expect(state.findEntryWithIncident('x')?.id).toBe(a);
         expect(state.findEntryWithIncident('y')?.id).toBe(b);
         expect(state.findEntryWithIncident('z')).toBeUndefined();
     });
 
-    it('emits monitor-start once on idle → running and skips the idempotent re-call', () => {
+    it('emits monitor-start once on idle → running and skips the idempotent re-call', async () => {
         const state = new TrafficIncidentsState(mockTrafficMap);
-        const entryId = state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'fake', 0);
+        const entryId = await state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'fake', 0);
         const seen: string[] = [];
         state.events.on('monitor-start', (p) => seen.push(p.entryId));
         const deps = {
@@ -259,9 +259,9 @@ describe('TrafficIncidentsState', () => {
         state.stopMonitoring(entryId);
     });
 
-    it('emits monitor-stop with reason: manual on stopMonitoring; no-op when idle', () => {
+    it('emits monitor-stop with reason: manual on stopMonitoring; no-op when idle', async () => {
         const state = new TrafficIncidentsState(mockTrafficMap);
-        const entryId = state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'fake', 0);
+        const entryId = await state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'fake', 0);
         const seen: Array<{ entryId: string; reason: 'manual' | 'error' }> = [];
         state.events.on('monitor-stop', (p) => seen.push(p));
         // Stop on an idle monitor must not emit — there's nothing to stop.
@@ -282,7 +282,7 @@ describe('TrafficIncidentsState', () => {
 
     it('emits monitor-stop with reason: error alongside monitor-error when a poll throws', async () => {
         const state = new TrafficIncidentsState(mockTrafficMap);
-        const entryId = state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'fake', 0);
+        const entryId = await state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'fake', 0);
         const stops: Array<{ entryId: string; reason: 'manual' | 'error' }> = [];
         const errors: Array<{ entryId: string; error: string }> = [];
         state.events.on('monitor-stop', (p) => stops.push(p));
@@ -305,7 +305,7 @@ describe('TrafficIncidentsState', () => {
 
     it('emits monitor-error and stops the timer when fetchSnapshot throws', async () => {
         const state = new TrafficIncidentsState(mockTrafficMap);
-        const entryId = state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'fake', 0);
+        const entryId = await state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'fake', 0);
         let received: { entryId: string; error: string } | null = null;
         state.events.on('monitor-error', (p) => {
             received = p as { entryId: string; error: string };
@@ -347,9 +347,9 @@ describe('TrafficIncidentsState — focus', () => {
         return { setFocus: setFocusSpy };
     };
 
-    it('setFocus filters to IDs in the entry and reports dropped', () => {
+    it('setFocus filters to IDs in the entry and reports dropped', async () => {
         const state = new TrafficIncidentsState(mockMap);
-        const id = state.addIncidentsEntry([feat('a'), feat('b')], { bbox: [0, 0, 1, 1] as any }, 'test', 0);
+        const id = await state.addIncidentsEntry([feat('a'), feat('b')], { bbox: [0, 0, 1, 1] as any }, 'test', 0);
 
         const result = state.setFocus(id, ['a', 'missing'], 'top 1');
 
@@ -357,9 +357,9 @@ describe('TrafficIncidentsState — focus', () => {
         expect(state.getFocus(id)).toEqual({ ids: new Set(['a']), reason: 'top 1' });
     });
 
-    it('setFocus with empty array clears focus', () => {
+    it('setFocus with empty array clears focus', async () => {
         const state = new TrafficIncidentsState(mockMap);
-        const id = state.addIncidentsEntry([feat('a')], { bbox: [0, 0, 1, 1] as any }, 'test', 0);
+        const id = await state.addIncidentsEntry([feat('a')], { bbox: [0, 0, 1, 1] as any }, 'test', 0);
         state.setFocus(id, ['a'], 'x');
 
         const result = state.setFocus(id, [], undefined);
@@ -368,9 +368,9 @@ describe('TrafficIncidentsState — focus', () => {
         expect(state.getFocus(id)).toBeNull();
     });
 
-    it('setFocus emits focus-change once per transition', () => {
+    it('setFocus emits focus-change once per transition', async () => {
         const state = new TrafficIncidentsState(mockMap);
-        const id = state.addIncidentsEntry([feat('a')], { bbox: [0, 0, 1, 1] as any }, 'test', 0);
+        const id = await state.addIncidentsEntry([feat('a')], { bbox: [0, 0, 1, 1] as any }, 'test', 0);
         const fired: any[] = [];
         state.events.on('focus-change', (e) => fired.push(e));
 
@@ -382,9 +382,9 @@ describe('TrafficIncidentsState — focus', () => {
         expect(fired[1]).toEqual({ entryId: id, focus: null });
     });
 
-    it('setFocus with all-dropped is a no-op — no state change, no event', () => {
+    it('setFocus with all-dropped is a no-op — no state change, no event', async () => {
         const state = new TrafficIncidentsState(mockMap);
-        const id = state.addIncidentsEntry([feat('a')], { bbox: [0, 0, 1, 1] as any }, 'test', 0);
+        const id = await state.addIncidentsEntry([feat('a')], { bbox: [0, 0, 1, 1] as any }, 'test', 0);
         const fired: any[] = [];
         state.events.on('focus-change', (e) => fired.push(e));
 
@@ -395,10 +395,10 @@ describe('TrafficIncidentsState — focus', () => {
         expect(fired).toHaveLength(0);
     });
 
-    it('setFocus keeps every id present on the entry without an internal cap', () => {
+    it('setFocus keeps every id present on the entry without an internal cap', async () => {
         const state = new TrafficIncidentsState(mockMap);
         const lots = Array.from({ length: 60 }, (_, i) => feat(`x${i}`));
-        const id = state.addIncidentsEntry(lots, { bbox: [0, 0, 1, 1] as any }, 'test', 0);
+        const id = await state.addIncidentsEntry(lots, { bbox: [0, 0, 1, 1] as any }, 'test', 0);
 
         const result = state.setFocus(
             id,
@@ -410,9 +410,9 @@ describe('TrafficIncidentsState — focus', () => {
         expect(result.droppedIds).toHaveLength(0);
     });
 
-    it('forwards setFocus(keep) and setFocus(null) to the entry module', () => {
+    it('forwards setFocus(keep) and setFocus(null) to the entry module', async () => {
         const state = new TrafficIncidentsState(mockMap);
-        const id = state.addIncidentsEntry([feat('a'), feat('b')], { bbox: [0, 0, 1, 1] as any }, 'test', 0);
+        const id = await state.addIncidentsEntry([feat('a'), feat('b')], { bbox: [0, 0, 1, 1] as any }, 'test', 0);
         const stub = stubEntryModule(state, id);
 
         state.setFocus(id, ['a'], 'x');
@@ -447,29 +447,29 @@ describe('TrafficIncidentsState — focus', () => {
             };
         };
 
-        it('focusedFeatures returns features in focus-order, skipping missing ids', () => {
+        it('focusedFeatures returns features in focus-order, skipping missing ids', async () => {
             const { ttMap } = makeMap();
             const state = new TrafficIncidentsState(ttMap);
             const a = point('a', [1, 1]);
             const b = point('b', [2, 2]);
-            const id = state.addIncidentsEntry([a, b], { bbox: [0, 0, 3, 3] as any }, 'test', 0);
+            const id = await state.addIncidentsEntry([a, b], { bbox: [0, 0, 3, 3] as any }, 'test', 0);
             state.setFocus(id, ['b', 'a'], 'x');
 
             const features = state.focusedFeatures(id);
             expect(features.map((f) => f.properties.id)).toEqual(['b', 'a']);
         });
 
-        it('focusedFeatures returns empty when no focus is active', () => {
+        it('focusedFeatures returns empty when no focus is active', async () => {
             const { ttMap } = makeMap();
             const state = new TrafficIncidentsState(ttMap);
-            const id = state.addIncidentsEntry([point('a', [1, 1])], { bbox: [0, 0, 1, 1] as any }, 'test', 0);
+            const id = await state.addIncidentsEntry([point('a', [1, 1])], { bbox: [0, 0, 1, 1] as any }, 'test', 0);
             expect(state.focusedFeatures(id)).toEqual([]);
         });
 
-        it('navigateFocus(entryId, i) flies to the i-th focused Point incident', () => {
+        it('navigateFocus(entryId, i) flies to the i-th focused Point incident', async () => {
             const { ttMap, flyTo, fitBounds } = makeMap();
             const state = new TrafficIncidentsState(ttMap);
-            const id = state.addIncidentsEntry(
+            const id = await state.addIncidentsEntry(
                 [point('a', [4.9, 52.37]), point('b', [4.95, 52.4])],
                 { bbox: [0, 0, 5, 53] as any },
                 'test',
@@ -483,10 +483,10 @@ describe('TrafficIncidentsState — focus', () => {
             expect(fitBounds).not.toHaveBeenCalled();
         });
 
-        it('navigateFocus(entryId, i) fits bounds for a LineString incident', () => {
+        it('navigateFocus(entryId, i) fits bounds for a LineString incident', async () => {
             const { ttMap, fitBounds, flyTo } = makeMap();
             const state = new TrafficIncidentsState(ttMap);
-            const id = state.addIncidentsEntry(
+            const id = await state.addIncidentsEntry(
                 [
                     line('a', [
                         [4.88, 52.36],
@@ -505,10 +505,10 @@ describe('TrafficIncidentsState — focus', () => {
             expect(flyTo).not.toHaveBeenCalled();
         });
 
-        it('navigateFocus wraps out-of-range indices so raw counters keep working', () => {
+        it('navigateFocus wraps out-of-range indices so raw counters keep working', async () => {
             const { ttMap, flyTo } = makeMap();
             const state = new TrafficIncidentsState(ttMap);
-            const id = state.addIncidentsEntry(
+            const id = await state.addIncidentsEntry(
                 [point('a', [1, 1]), point('b', [2, 2]), point('c', [3, 3])],
                 { bbox: [0, 0, 3, 3] as any },
                 'test',
@@ -523,10 +523,10 @@ describe('TrafficIncidentsState — focus', () => {
             expect(flyTo).toHaveBeenLastCalledWith(expect.objectContaining({ center: [2, 2] }));
         });
 
-        it('navigateFocus is a no-op when no focus is active', () => {
+        it('navigateFocus is a no-op when no focus is active', async () => {
             const { ttMap, flyTo, fitBounds } = makeMap();
             const state = new TrafficIncidentsState(ttMap);
-            const id = state.addIncidentsEntry([point('a', [1, 1])], { bbox: [0, 0, 1, 1] as any }, 'test', 0);
+            const id = await state.addIncidentsEntry([point('a', [1, 1])], { bbox: [0, 0, 1, 1] as any }, 'test', 0);
 
             state.navigateFocus(id, 0);
 

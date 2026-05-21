@@ -2,11 +2,11 @@ import { defineConfig } from "@langwatch/scenario";
 import { createAzure } from "@ai-sdk/azure";
 
 
-const gatewayBaseUrl = import.meta.env.VITE_AZURE_GATEWAY_BASE_URL;
-const resourceName = import.meta.env.VITE_AZURE_RESOURCE_NAME;   
-const apiKey = import.meta.env.VITE_AZURE_API_KEY;
-const deploymentId = import.meta.env.VITE_AZURE_DEPLOYMENT_ID;
-const apiVersion = import.meta.env.VITE_AZURE_API_VERSION;
+const gatewayBaseUrl = process.env.VITE_AZURE_GATEWAY_BASE_URL;
+const resourceName = process.env.VITE_AZURE_RESOURCE_NAME;
+const apiKey = process.env.VITE_AZURE_API_KEY;
+const deploymentId = process.env.VITE_AZURE_DEPLOYMENT_ID;
+const apiVersion = process.env.VITE_AZURE_API_VERSION;
 
 if (!deploymentId) {
   throw new Error(
@@ -22,7 +22,7 @@ const azure = gatewayBaseUrl
   : (() => {
       if (!resourceName) {
         throw new Error(
-          "Either AZURE_GATEWAY_BASE_URL (APIM) or AZURE_RESOURCE_NAME (direct) is required.",
+          "Either AZURE_RESOURCE_NAME is required.",
         );
       }
       return createAzure({ resourceName, apiKey, apiVersion });

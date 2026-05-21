@@ -24,7 +24,7 @@ export type AffectedEntry = {
     /** Unqualified entry id within the owning slice. */
     id: string;
     /** Which slice the entry lives in (only kinds that carry analyses are tracked). */
-    kind: 'places' | 'custom';
+    kind: 'places' | 'customGeometries';
 };
 
 /** @ignore */
@@ -43,11 +43,11 @@ type ParsedByKind = {
     place: GeometriesId[];
     places: GeometriesId[];
     ranges: GeometriesId[];
-    custom: GeometriesId[];
+    customGeometries: GeometriesId[];
 };
 
 const groupByKind = (sources: readonly GeometriesId[]): ParsedByKind => {
-    const out: ParsedByKind = { place: [], places: [], ranges: [], custom: [] };
+    const out: ParsedByKind = { place: [], places: [], ranges: [], customGeometries: [] };
     for (const source of sources) out[source.kind].push(source);
     return out;
 };
@@ -221,7 +221,7 @@ export const collectInputGeometries = async (
             error:
                 '`geometriesEntryIDs` must contain one or more tagged ids ' +
                 "(e.g. `{ kind: 'places', id: <entryId> }`, `{ kind: 'place', id: <placeId> }`, " +
-                "`{ kind: 'ranges', id: <entryId> }`, `{ kind: 'custom', id: <entryId> }`). " +
+                "`{ kind: 'ranges', id: <entryId> }`, `{ kind: 'customGeometries', id: <entryId> }`). " +
                 'Use `recallGeometries` to list available ids.',
         };
     }
@@ -284,7 +284,7 @@ export const collectInputGeometries = async (
     geometries.push(...ranges.features);
     skipped.push(...ranges.skipped);
 
-    const custom = collectCustomGeometries(grouped.custom, state);
+    const custom = collectCustomGeometries(grouped.customGeometries, state);
     geometries.push(...custom.features);
     skipped.push(...custom.skipped);
     const affectedCustomEntries = custom.contributingIds;
@@ -297,7 +297,7 @@ export const collectInputGeometries = async (
 
     const affectedEntries: AffectedEntry[] = [
         ...[...affectedPlacesEntries].map((id): AffectedEntry => ({ id, kind: 'places' })),
-        ...[...affectedCustomEntries].map((id): AffectedEntry => ({ id, kind: 'custom' })),
+        ...[...affectedCustomEntries].map((id): AffectedEntry => ({ id, kind: 'customGeometries' })),
     ];
 
     // Preserve the caller's input order in `contributingSourceIds`.
@@ -309,7 +309,7 @@ export const collectInputGeometries = async (
                 return contributingPlacesEntries.has(source.id);
             case 'ranges':
                 return ranges.contributingIds.has(source.id);
-            case 'custom':
+            case 'customGeometries':
                 return affectedCustomEntries.has(source.id);
         }
     });

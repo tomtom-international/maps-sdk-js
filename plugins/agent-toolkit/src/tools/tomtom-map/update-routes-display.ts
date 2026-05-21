@@ -28,6 +28,10 @@ export const updateRoutesDisplayOutputSchema = z.union([
         actuallyRemoved: z
             .array(z.string())
             .describe('Ids from `remove` / `removeMatching` that were actually on the map. Empty if no-op.'),
+        mainColor: z
+            .string()
+            .optional()
+            .describe('Sticky main colour now applied to every shown route, when set by this or a previous call.'),
     }),
     toolErrorSchema,
 ]);
@@ -61,6 +65,14 @@ export const updateRoutesDisplaySchema = z
             .describe(
                 'Pan/zoom to fit the resulting display. Defaults to true when entries are being added, false otherwise.',
             ),
+        mainColor: z
+            .string()
+            .optional()
+            .describe(
+                'Recolor the route line + waypoint icons. CSS named colour ("coral", "steelblue") or hex ("#FF0000"). ' +
+                    'Sticky — applied to every currently-shown entry AND remembered so subsequent shows pick it up automatically. ' +
+                    'Can be set by itself (no add/remove/clear) to recolor without changing visibility.',
+            ),
     })
     .refine(
         (data) =>
@@ -69,19 +81,22 @@ export const updateRoutesDisplaySchema = z
             data.addMatching !== undefined ||
             data.removeMatching !== undefined ||
             data.clear === true ||
-            data.selectedIndex !== undefined,
+            data.selectedIndex !== undefined ||
+            data.mainColor !== undefined,
         {
             message:
-                'updateRoutesDisplay requires at least one of: add, remove, addMatching, removeMatching, clear, selectedIndex.',
+                'updateRoutesDisplay requires at least one of: add, remove, addMatching, removeMatching, clear, selectedIndex, mainColor.',
         },
     );
 
 export const updateRoutesDisplayDescription =
-    'Show, hide, and swap which routes entries are displayed on the map in one atomic call. ' +
+    'Show, hide, swap, and recolor which routes entries are displayed on the map in one atomic call. ' +
     'Target entries by id (`add` / `remove`) or by label substring (`addMatching` / `removeMatching`). ' +
     '`clear` hides every currently-shown entry; combine with `add` to swap the display ("hide everything, show this"). ' +
-    '`selectedIndex` re-highlights an alternative variant on the newly-added entries. ' +
-    'Omit `add`/`addMatching` while still setting `selectedIndex` to target the most recently stored entry. ' +
+    '`selectedIndex` re-highlights an alternative variant on the newly-added entries; with no ' +
+    '`add`/`addMatching` it implicitly targets the most recently stored entry. ' +
+    '`mainColor` recolors the route line + waypoint icons (sticky across entry swaps — applied to current shows AND remembered); ' +
+    'it does NOT auto-show a hidden entry, so set `add`/`addMatching` too if nothing is on the map yet. ' +
     'Does not delete from history. Does not call any service.';
 
 const resolveMatchingIds = (state: ToolState, terms: readonly string[]): string[] => {
@@ -107,6 +122,9 @@ const resolveSelectors = (state: ToolState, params: z.infer<typeof updateRoutesD
     let resolvedAdd = [...(add ?? []), ...resolveMatchingIds(state, addMatching ?? [])];
     const resolvedRemove = [...(remove ?? []), ...resolveMatchingIds(state, removeMatching ?? [])];
 
+    // `selectedIndex` implicitly targets "the most recently stored entry" when no
+    // `add` / `addMatching` is supplied. `mainColor` is handled separately by the executor
+    // (sticky, applies to whatever is shown — no implicit-latest add needed).
     const implicitLatest = add === undefined && addMatching === undefined && selectedIndex !== undefined;
     if (implicitLatest) {
         const latestId = state.routing.entries.at(-1)?.id;
@@ -144,49 +162,73 @@ const applySelectedIndex = async (
     }
 };
 
+// Apply the requested add / remove / clear / selectedIndex sequence and return the
+// before/after shown sets so the response layer can compute deltas. Sequential awaits — concurrent
+// show/hide on the routing slice races MapLibre's style mutation.
+const applyAddRemove = async (
+    state: ToolState,
+    plan: { add: readonly string[]; remove: readonly string[]; clear: boolean; selectedIndex: number | undefined },
+): Promise<{ beforeShown: Set<string>; afterShown: ReadonlySet<string> }> => {
+    const beforeShown = new Set(state.routing.shownEntryIds);
+    if (plan.clear) {
+        for (const id of state.routing.shownEntryIds) {
+            await state.routing.hideEntry(id);
+        }
+    }
+    for (const id of plan.remove) {
+        await state.routing.hideEntry(id);
+    }
+    for (const id of plan.add) {
+        await state.routing.showEntry(id);
+    }
+    if (plan.selectedIndex !== undefined) {
+        await applySelectedIndex(state, plan.add, plan.selectedIndex);
+    }
+    return { beforeShown, afterShown: state.routing.shownEntryIds };
+};
+
+// Fit the camera around every currently-shown route. No-op when nothing is shown or the joined
+// feature collection has no computable bbox.
+const fitCameraToShown = (state: ToolState, shownIds: ReadonlySet<string>): void => {
+    const features: Routes['features'] = [];
+    for (const entry of state.routing.entries) {
+        if (shownIds.has(entry.id)) features.push(...entry.data.features);
+    }
+    if (features.length === 0) return;
+    const bbox = bboxFromGeoJSON({ type: 'FeatureCollection', features });
+    if (bbox) {
+        state.baseMap.mapLibreMap.fitBounds(bbox as LngLatBoundsLike, { padding: 50 });
+    }
+};
+
 export const executeUpdateRoutesDisplay = async (
     params: z.infer<typeof updateRoutesDisplaySchema>,
     state: ToolState,
 ): Promise<z.infer<typeof updateRoutesDisplayOutputSchema>> => {
-    const { clear, selectedIndex, fitBounds } = params;
+    const { clear, selectedIndex, fitBounds, mainColor } = params;
     try {
         const selectors = resolveSelectors(state, params);
         if ('error' in selectors) return selectors;
         const { add: resolvedAdd, remove: resolvedRemove } = selectors;
 
-        const beforeShown = new Set(state.routing.shownEntryIds);
-
-        if (clear) {
-            for (const id of [...state.routing.shownEntryIds]) {
-                await state.routing.hideEntry(id);
-            }
-        }
-        for (const id of resolvedRemove) {
-            await state.routing.hideEntry(id);
-        }
-        for (const id of resolvedAdd) {
-            await state.routing.showEntry(id);
-        }
-        if (selectedIndex !== undefined) {
-            await applySelectedIndex(state, resolvedAdd, selectedIndex);
+        // Persist mainColor BEFORE add/remove so newly-shown entries pick it up on first paint,
+        // and apply to whatever is already on the map. Sticky for the lifetime of the slice.
+        if (mainColor !== undefined) {
+            state.routing.setMainColor(mainColor);
         }
 
-        const afterShown = state.routing.shownEntryIds;
+        const { beforeShown, afterShown } = await applyAddRemove(state, {
+            add: resolvedAdd,
+            remove: resolvedRemove,
+            clear: !!clear,
+            selectedIndex,
+        });
+
         const actuallyAdded = resolvedAdd.filter((id) => !beforeShown.has(id) && afterShown.has(id));
         const actuallyRemoved = resolvedRemove.filter((id) => beforeShown.has(id) && !afterShown.has(id));
 
-        const shouldFit = fitBounds ?? resolvedAdd.length > 0;
-        if (shouldFit) {
-            const features: Routes['features'] = [];
-            for (const entry of state.routing.entries) {
-                if (afterShown.has(entry.id)) features.push(...entry.data.features);
-            }
-            if (features.length > 0) {
-                const bbox = bboxFromGeoJSON({ type: 'FeatureCollection', features });
-                if (bbox) {
-                    state.baseMap.mapLibreMap.fitBounds(bbox as LngLatBoundsLike, { padding: 50 });
-                }
-            }
+        if (fitBounds ?? resolvedAdd.length > 0) {
+            fitCameraToShown(state, afterShown);
         }
 
         const shownWithLabels = state.routing.entries
@@ -198,12 +240,14 @@ export const executeUpdateRoutesDisplay = async (
                 selectedIndex: actuallyAdded.includes(entry.id) ? (selectedIndex ?? 0) : 0,
             }));
 
+        const currentMainColor = state.routing.mainColor;
         return {
             success: true as const,
             totalShown: afterShown.size,
             shown: shownWithLabels,
             actuallyAdded,
             actuallyRemoved,
+            ...(currentMainColor !== undefined && { mainColor: currentMainColor }),
         };
     } catch (error) {
         return {

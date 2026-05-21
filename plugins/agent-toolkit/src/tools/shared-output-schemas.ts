@@ -29,25 +29,23 @@ const basePlaceShape = {
 };
 
 // Experimental-only fields propagated from the exploration-search backend's area-tag
-// pipeline (DE / NL / FR only). Gated by `experimentalSearch` so the LLM doesn't see
-// them on tool runs that can't produce them.
+// pipeline. Area data currently populated only in DE / NL / FR. Gated by `experimentalSearch`
+// so the LLM doesn't see them on tool runs that can't produce them.
 const experimentalPlaceShape = {
     areaId: z
         .string()
         .optional()
         .describe(
-            'Id of the municipality polygon this place sits in. Round-trip into `discoverPlaces.where.areaId` ' +
-                'for "what else is in this same municipality?". Only set on explorationSearch results in DE / NL / FR.',
+            'Id of the small area polygon this place sits in (few km², not a whole municipality). ' +
+                'Round-trip into `discoverPlaces.where.areaId` for "what else is in this same area?". ' +
+                'Only set on explorationSearch results in DE / NL / FR.',
         ),
-    areaCountry: z
-        .string()
-        .optional()
-        .describe('ISO 3166-1 alpha-2 country code of the surrounding municipality polygon.'),
+    areaCountry: z.string().optional().describe('ISO 3166-1 alpha-2 country code of the surrounding area polygon.'),
     areaTags: z
         .array(z.string())
         .optional()
         .describe(
-            'Area-character tokens describing the surrounding municipality ' +
+            'Tokens describing the surrounding small area (few km², not a whole municipality) ' +
                 '(e.g. "coastal", "walkable", "transit_connected"). Useful for downstream `areaTags` filters.',
         ),
 };
@@ -55,7 +53,7 @@ const experimentalPlaceShape = {
 /**
  * Build a flag-aware compact place summary schema. When `experimentalSearch`
  * is true, the schema also documents the exploration-search-only `areaId` /
- * `areaCountry` / `areaTags` fields propagated from the municipality polygon.
+ * `areaCountry` / `areaTags` fields propagated from the surrounding small-area polygon.
  */
 export const buildPlaceOutputSchema = (flags: FeatureFlags) =>
     z

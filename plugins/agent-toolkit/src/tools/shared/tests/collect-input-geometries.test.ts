@@ -13,7 +13,7 @@ const mkPolygon = (id: string) => ({
 const place = (id: string): GeometriesId => ({ kind: 'place', id });
 const places = (id: string): GeometriesId => ({ kind: 'places', id });
 const ranges = (id: string): GeometriesId => ({ kind: 'ranges', id });
-const custom = (id: string): GeometriesId => ({ kind: 'custom', id });
+const custom = (id: string): GeometriesId => ({ kind: 'customGeometries', id });
 
 // Wraps a fixture polygon with the `_source` tag that `collectInputGeometries` stamps on every
 // returned feature so the sandbox can identify which entry each polygon came from.
@@ -211,20 +211,20 @@ describe('collectInputGeometries', () => {
         });
         const value = expectValue(await collectInputGeometries([custom('bakery-zone')], state));
         expect(value.geometries).toEqual([tagged(polyA, custom('bakery-zone')), tagged(polyB, custom('bakery-zone'))]);
-        expect(value.affectedEntries).toEqual([{ id: 'bakery-zone', kind: 'custom' }]);
+        expect(value.affectedEntries).toEqual([{ id: 'bakery-zone', kind: 'customGeometries' }]);
         expect(value.contributingSourceIds).toEqual([custom('bakery-zone')]);
     });
 
     it('skips an unknown `custom` id', async () => {
         const state = mockState({});
         const result = await collectInputGeometries([custom('nope')], state);
-        expect(expectError(result).error).toMatch(/custom:nope: No custom-geometries entry/);
+        expect(expectError(result).error).toMatch(/customGeometries:nope: No custom-geometries entry/);
     });
 
     it('skips an empty `custom` entry', async () => {
         const state = mockState({ customEntries: [{ id: 'empty', features: [] }] });
         const result = await collectInputGeometries([custom('empty')], state);
-        expect(expectError(result).error).toMatch(/custom:empty.*Custom-geometries entry is empty/);
+        expect(expectError(result).error).toMatch(/customGeometries:empty.*Custom-geometries entry is empty/);
     });
 
     it('mixes places, ranges, and custom inputs in a single call', async () => {
@@ -250,7 +250,7 @@ describe('collectInputGeometries', () => {
         expect(value.contributingSourceIds).toEqual([place('a'), ranges('ranges-0'), custom('zone')]);
         expect(value.affectedEntries).toEqual([
             { id: 'places-1', kind: 'places' },
-            { id: 'zone', kind: 'custom' },
+            { id: 'zone', kind: 'customGeometries' },
         ]);
     });
 });

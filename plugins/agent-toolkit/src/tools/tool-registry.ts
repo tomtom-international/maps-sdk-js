@@ -87,24 +87,15 @@ import {
 
 // --- State tools ---
 import {
-    analyseGeometriesDescription,
-    analyseGeometriesOutputSchema,
-    analyseGeometriesSchema,
-    analyseIncidentsDescription,
-    analyseIncidentsOutputSchema,
-    analyseIncidentsSchema,
-    analysePlacesBuilder,
-    analyseRoutesDescription,
-    analyseRoutesOutputSchema,
-    analyseRoutesSchema,
-    executeAnalyseGeometries,
-    executeAnalyseIncidents,
-    executeAnalyseRoutes,
+    addByodLayerDescription,
+    addByodLayerOutputSchema,
+    addByodLayerSchema,
+    analyseDataBuilder,
+    executeAddByodLayer,
     executeFocusIncidents,
     executeGetCurrentWaypoints,
-    executeProcessGeometries,
-    executeProcessRoutes,
     executeQueryTrafficAnalytics,
+    executeRecallByod,
     executeRecallGeometries,
     executeRecallRanges,
     executeRecallRoutes,
@@ -119,16 +110,13 @@ import {
     getCurrentWaypointsDescription,
     getCurrentWaypointsOutputSchema,
     getCurrentWaypointsSchema,
-    processGeometriesDescription,
-    processGeometriesOutputSchema,
-    processGeometriesSchema,
-    processPlacesBuilder,
-    processRoutesDescription,
-    processRoutesOutputSchema,
-    processRoutesSchema,
+    processDataBuilder,
     queryTrafficAnalyticsDescription,
     queryTrafficAnalyticsOutputSchema,
     queryTrafficAnalyticsSchema,
+    recallByodDescription,
+    recallByodOutputSchema,
+    recallByodSchema,
     recallGeometriesDescription,
     recallGeometriesOutputSchema,
     recallGeometriesSchema,
@@ -162,38 +150,22 @@ import {
     clearMapOutputSchema,
     clearMapSchema,
     executeClearMap,
-    executeGetShownIncidents,
-    executeGetShownPlaces,
-    executeGetShownRoutes,
-    executeGetShownRouteTrafficIncidents,
-    executeGetShownWaypoints,
+    executeGetShownTileIncidents,
     executeGetStandardMapStyles,
     executeSetLanguage,
     executeSetMapStandardStyle,
-    executeSetRouteTheme,
-    executeShowTrafficAreaAnalytics,
-    executeShowWaypoints,
-    executeToggleBaseMapLayerGroups,
-    executeTogglePOIs,
-    executeToggleTrafficFlow,
-    executeToggleTrafficIncidents,
+    executeToggleTilesBaseMapLayerGroups,
+    executeToggleTilesPOIs,
+    executeToggleTilesTrafficFlow,
+    executeToggleTilesTrafficIncidents,
+    executeUpdateByodDisplay,
     executeUpdatePlacesDisplay,
     executeUpdateRoutesDisplay,
-    getShownIncidentsDescription,
-    getShownIncidentsOutputSchema,
-    getShownIncidentsSchema,
-    getShownPlacesDescription,
-    getShownPlacesOutputSchema,
-    getShownPlacesSchema,
-    getShownRoutesDescription,
-    getShownRoutesOutputSchema,
-    getShownRoutesSchema,
-    getShownRouteTrafficIncidentsDescription,
-    getShownRouteTrafficIncidentsOutputSchema,
-    getShownRouteTrafficIncidentsSchema,
-    getShownWaypointsDescription,
-    getShownWaypointsOutputSchema,
-    getShownWaypointsSchema,
+    executeUpdateTrafficAreaAnalyticsDisplay,
+    executeUpdateWaypointsDisplay,
+    getShownTileIncidentsDescription,
+    getShownTileIncidentsOutputSchema,
+    getShownTileIncidentsSchema,
     getStandardMapStylesDescription,
     getStandardMapStylesOutputSchema,
     getStandardMapStylesSchema,
@@ -203,33 +175,33 @@ import {
     setMapStandardStyleDescription,
     setMapStandardStyleOutputSchema,
     setMapStandardStyleSchema,
-    setRouteThemeDescription,
-    setRouteThemeOutputSchema,
-    setRouteThemeSchema,
-    showTrafficAreaAnalyticsDescription,
-    showTrafficAreaAnalyticsOutputSchema,
-    showTrafficAreaAnalyticsSchema,
-    showWaypointsDescription,
-    showWaypointsOutputSchema,
-    showWaypointsSchema,
-    toggleBaseMapLayerGroupsDescription,
-    toggleBaseMapLayerGroupsOutputSchema,
-    toggleBaseMapLayerGroupsSchema,
-    togglePOIsDescription,
-    togglePOIsOutputSchema,
-    togglePOIsSchema,
-    toggleTrafficFlowDescription,
-    toggleTrafficFlowOutputSchema,
-    toggleTrafficFlowSchema,
-    toggleTrafficIncidentsDescription,
-    toggleTrafficIncidentsOutputSchema,
-    toggleTrafficIncidentsSchema,
+    toggleTilesBaseMapLayerGroupsDescription,
+    toggleTilesBaseMapLayerGroupsOutputSchema,
+    toggleTilesBaseMapLayerGroupsSchema,
+    toggleTilesPOIsDescription,
+    toggleTilesPOIsOutputSchema,
+    toggleTilesPOIsSchema,
+    toggleTilesTrafficFlowDescription,
+    toggleTilesTrafficFlowOutputSchema,
+    toggleTilesTrafficFlowSchema,
+    toggleTilesTrafficIncidentsDescription,
+    toggleTilesTrafficIncidentsOutputSchema,
+    toggleTilesTrafficIncidentsSchema,
+    updateByodDisplayDescription,
+    updateByodDisplayOutputSchema,
+    updateByodDisplaySchema,
     updatePlacesDisplayDescription,
     updatePlacesDisplayOutputSchema,
     updatePlacesDisplaySchema,
     updateRoutesDisplayDescription,
     updateRoutesDisplayOutputSchema,
     updateRoutesDisplaySchema,
+    updateTrafficAreaAnalyticsDisplayDescription,
+    updateTrafficAreaAnalyticsDisplayOutputSchema,
+    updateTrafficAreaAnalyticsDisplaySchema,
+    updateWaypointsDisplayDescription,
+    updateWaypointsDisplayOutputSchema,
+    updateWaypointsDisplaySchema,
 } from './tomtom-map';
 
 // --- Utility tools ---
@@ -251,6 +223,17 @@ import {
     helpOutputSchema,
     helpSchema,
 } from './utilities';
+
+// Shared classifier-prompt framing for the two dynamic-JS data tools (`analyseData`,
+// `processData`). Both run user-authored code against the same set of injected inputs
+// (`places` / `routes` / `incidents` / `geometries` / `trafficAreaAnalytics`); only the *contract*
+// of what the code returns differs. Lifting the common framing here keeps the two
+// `classificationPrompt`s short — the per-tool prompt then only carries the verb (transforms vs
+// aggregates) plus disambiguating triggers.
+const DATA_TOOL_INPUTS = 'places / routes / incidents / geometries / trafficAreaAnalytics / byod';
+const DATA_TOOL_SHARED_FRAMING =
+    `Dynamic-JS sandbox over any combination of ${DATA_TOOL_INPUTS} entries. ` +
+    'Each input arg is `undefined` when its `*EntryIDs` was omitted.';
 
 const defaultTools = {
     locatePlace: {
@@ -297,112 +280,173 @@ const defaultTools = {
         relatedTools: ['getViewport', 'getCurrentLocation', 'updatePlacesDisplay', 'locatePlace'],
     },
     discoverPlaces: discoverPlacesBuilder,
-    processPlaces: processPlacesBuilder,
-    processGeometries: {
-        description: processGeometriesDescription,
+    processData: processDataBuilder({
         classificationPrompt:
-            'Aggregate polygons (place footprints, isochrones, custom-entries) via dynamic JS (h3, turf) — union/intersect/buffer/h3 coverage. Output writes a NEW custom-geometries entry.',
-        inputSchema: processGeometriesSchema,
-        outputSchema: processGeometriesOutputSchema,
-        execute: executeProcessGeometries,
-        tags: ['geometry', 'boundary', 'aggregation', 'turf', 'h3'],
+            `${DATA_TOOL_SHARED_FRAMING} ` +
+            'WRITES NEW renderable map entries — returns `{ places?, placeConnections?, geometries?, fitOnMap?, byod? }` ' +
+            'to write a places, custom-geometries, or BYOD entry, move the camera, or any combination. ' +
+            'NOT for digests/charts/counts — those are `analyseData` (metadata only, never renders). ' +
+            'Use for: filter/merge places (set ops), connect places (hub-spoke), compute polygons ' +
+            '(union/buffer/h3-coverage/difference), focus camera on route sections via `routeUtils.getSectionBBox`, ' +
+            'cross-reference (POIs near route, places-within-reachable, places-inside-high-congestion-tile).',
+        tags: ['turf', 'h3', 'geometry', 'place', 'route', 'aggregation', 'connections'],
         examples: [
-            'processGeometries({ geometriesEntryIDs: [{ kind: "place", id: "amsterdam-id" }, { kind: "place", id: "rotterdam-id" }], code: "return [turf.union(turf.featureCollection(geometries))].filter(Boolean);", label: "ams ∪ rdam", operation: "union" })',
-            'processGeometries({ geometriesEntryIDs: [{ kind: "place", id: "paris-id" }], code: "return [turf.buffer(geometries[0], 5, { units: \'kilometers\' })];", label: "paris +5km", operation: "buffer" })',
-            'processGeometries({ geometriesEntryIDs: [{ kind: "places", id: "cities" }], code: "const out = []; for (let i=0;i<geometries.length;i++) for (let j=i+1;j<geometries.length;j++) { const x = turf.intersect(turf.featureCollection([geometries[i], geometries[j]])); if (x) out.push({ ...x, id: `x-${i}-${j}` }); } return out;", label: "pairwise overlaps" })',
-            'processGeometries({ geometriesEntryIDs: [{ kind: "ranges", id: "ranges-0" }, { kind: "places", id: "ev-stations" }], code: "const u = geometries.length ? turf.union(turf.featureCollection(geometries)) : null; return u ? [u] : [];", label: "isochrone ∪ ev coverage" })',
-            'processGeometries({ geometriesEntryIDs: [{ kind: "place", id: "amsterdam-id" }, { kind: "ranges", id: "ranges-0" }], code: "const outer = geometries.filter(g => g.properties._source.kind === \'place\'); const inner = geometries.filter(g => g.properties._source.kind === \'ranges\'); const env = turf.union(turf.featureCollection(outer)); const u = turf.union(turf.featureCollection(inner)); const inv = (env && u) ? turf.difference(turf.featureCollection([env, u])) : env; return inv ? [{ ...inv, id: \'unreachable\' }] : [];", label: "amsterdam minus reachable", operation: "difference", show: { theme: "inverted", hidePreviousEntries: "all" } })  // areas in Amsterdam NOT reachable from the hospitals — fetch Amsterdam via locatePlace first, then filter by `_source` in code',
+            // places-only: filter
+            'processData({ placesEntryIDs: ["places-2"], code: "return { places: { type: \'FeatureCollection\', features: places.features.filter(p => (p.properties.poi?.name ?? \'\').toLowerCase().includes(\'vegan\')) } };", label: "vegan only", show: { places: { markerType: "pin", zoomMode: "auto", hidePreviousEntries: "all" } } })',
+            // places-only: hub-spoke connections
+            'processData({ placesEntryIDs: ["places-1"], code: "const [hub, ...rest] = places.features; return { places, placeConnections: rest.map(p => ({ from: hub, to: p })) };" })',
+            // places + geometries (attached polygons): h3 hex coverage of result places
+            'processData({ placesEntryIDs: ["places-1"], code: "const cells = new Set(); for (const p of places.features) cells.add(h3.latLngToCell(p.geometry.coordinates[1], p.geometry.coordinates[0], 8)); return { places, geometries: [...cells].map(c => turf.polygon([h3.cellToBoundary(c, true)], { cell: c })) };", show: { places: { markerType: "pin", zoomMode: "auto" }, placesGeometries: { theme: "outline" } } })',
+            // routes-only: fit to worst traffic section
+            'processData({ routesEntryIDs: ["routes-0"], code: "const r = routes.features[0]; const sec = (r.properties.sections.traffic ?? []).slice().sort((a,b) => (b.delayInSeconds ?? 0) - (a.delayInSeconds ?? 0))[0]; const bbox = sec ? routeUtils.getSectionBBox(r, sec) : turf.bbox(r); return { fitOnMap: { bbox, padding: 80 } };" })',
+            // routes-only: fit to first toll section
+            'processData({ routesEntryIDs: ["routes-0"], code: "const r = routes.features[0]; const sec = r.properties.sections.toll?.[0]; if (!sec) return { fitOnMap: turf.bbox(r) }; return { fitOnMap: routeUtils.getSectionBBox(r, sec) };" })',
+            // routes + places: corridor filter into new places entry
+            'processData({ placesEntryIDs: ["ev-stations"], routesEntryIDs: ["routes-0"], code: "const r = routes.features[0]; const buf = turf.buffer(r, 0.5, { units: \'kilometers\' }); const near = places.features.filter(p => turf.booleanPointInPolygon(p, buf)); return { places: { type: \'FeatureCollection\', features: near }, fitOnMap: turf.bbox(turf.featureCollection([...near, r])) };", label: "ev near route", entryId: "ev-near-routes-0", show: { places: { markerType: "pin", zoomMode: "none", hidePreviousEntries: "all" } } })',
+            // geometries-only: union → new custom-geometries entry
+            'processData({ geometriesEntryIDs: [{ kind: "place", id: "amsterdam-id" }, { kind: "place", id: "rotterdam-id" }], code: "return { geometries: [turf.union(turf.featureCollection(geometries))].filter(Boolean) };", label: "ams ∪ rdam", operation: "union" })',
+            // geometries-only: buffer each
+            'processData({ geometriesEntryIDs: [{ kind: "place", id: "paris-id" }], code: "return { geometries: geometries.map(f => ({ ...turf.buffer(f, 5, { units: \'kilometers\' }), id: `${f.id}-buf` })) };", label: "paris +5km", operation: "buffer" })',
+            // geometries + places: inverse (areas in X NOT reachable from Y)
+            'processData({ geometriesEntryIDs: [{ kind: "place", id: "amsterdam-id" }, { kind: "ranges", id: "ranges-0" }], code: "const outer = geometries.filter(g => g.properties._source.kind === \'place\'); const inner = geometries.filter(g => g.properties._source.kind === \'ranges\'); const env = turf.union(turf.featureCollection(outer)); const u = turf.union(turf.featureCollection(inner)); const inv = (env && u) ? turf.difference(turf.featureCollection([env, u])) : env; return { geometries: inv ? [{ ...inv, id: \'unreachable\' }] : [] };", label: "amsterdam minus reachable", operation: "difference", show: { customGeometries: { theme: "inverted", hidePreviousEntries: "all" } } })',
+            // geometries (ranges) + places cross-ref: keep places inside the reachable area
+            'processData({ geometriesEntryIDs: [{ kind: "ranges", id: "ranges-0" }, { kind: "places", id: "ev-stations" }], code: "const ranges = geometries.filter(g => g.properties._source.kind === \'ranges\'); const env = ranges.length ? turf.union(turf.featureCollection(ranges)) : null; const ev = (placesByEntry?.[\'ev-stations\']?.features ?? []); const kept = env ? ev.filter(p => turf.booleanPointInPolygon(p, env)) : ev; return { places: { type: \'FeatureCollection\', features: kept } };", label: "ev within reachable" })',
+            // trafficAreaAnalytics + places cross-ref: keep places inside high-congestion tiles
+            'processData({ placesEntryIDs: ["ev-stations"], trafficAreaAnalyticsEntryIDs: ["tta-0"], code: "const hot = trafficAreaAnalytics.features.filter(t => (t.properties.congestionLevel ?? 0) >= 75); const kept = places.features.filter(p => hot.some(t => turf.booleanPointInPolygon(p, t))); return { places: { type: \'FeatureCollection\', features: kept } };", label: "ev in high-congestion tiles" })',
+            // trafficAreaAnalytics → derived geometry entry: hot-tiles polygon
+            'processData({ trafficAreaAnalyticsEntryIDs: ["tta-0"], code: "const hot = trafficAreaAnalytics.features.filter(t => (t.properties.congestionLevel ?? 0) >= 75).map((t, i) => ({ ...t, id: `hot-${i}` })); const u = hot.length ? turf.union(turf.featureCollection(hot)) : null; return { geometries: u ? [{ ...u, id: \'congestion-hot-zone\' }] : [] };", label: "congestion hot zone", operation: "union", show: { customGeometries: { theme: "filled" } } })',
         ],
         examplePrompts: [
+            'Keep only the vegan restaurants',
+            'Draw lines from this hub to every nearby cafe',
+            'Show the h3 hex coverage of these places',
+            'Zoom to the worst traffic on the route',
+            'Focus on the first toll section',
+            'Show EV stations within 500 m of this route',
             'Union the boundaries of these cities',
-            'Buffer each neighbourhood by 500 m',
-            'Find the overlapping areas of these districts',
-            'Compute the h3 hex coverage of these places combined',
-            'Combine the reachable area with the EV stations into one zone',
-            'Show the areas of Amsterdam not reachable from the hospitals',
+            'Buffer this neighbourhood by 500 m',
+            'Areas of Amsterdam not reachable from the hospitals',
+            'Places inside the reachable area',
+            'Filter EV stations to those inside high-congestion tiles',
+            'Outline the congestion hot zone as a polygon',
         ],
-        relatedTools: ['recallGeometries', 'discoverPlaces', 'recallPlaces', 'analyseGeometries'],
-        dependsOn: ['discoverPlaces', 'locatePlace', 'findReachableAreas', 'recallGeometries'],
-    },
-    processRoutes: {
-        description: processRoutesDescription,
+        relatedTools: ['analyseData', 'recallPlaces', 'recallRoutes', 'recallGeometries', 'recallState'],
+        dependsOn: [
+            'discoverPlaces',
+            'locatePlace',
+            'setRoute',
+            'getTrafficIncidents',
+            'getTrafficAreaAnalytics',
+            'findReachableAreas',
+            'recallPlaces',
+            'recallRoutes',
+            'recallGeometries',
+        ],
+    }),
+    analyseData: analyseDataBuilder({
         classificationPrompt:
-            'Dynamic JS over routes → bbox via `routeUtils` → fit camera. Read-only, returns `{ fitOnMap }`. Use when the user wants to focus on a specific PART of a route (worst traffic, toll section, km-10-to-20 segment).',
-        inputSchema: processRoutesSchema,
-        outputSchema: processRoutesOutputSchema,
-        execute: executeProcessRoutes,
-        tags: ['route', 'utilities'],
+            `${DATA_TOOL_SHARED_FRAMING} ` +
+            'WRITES metadata only — returns JSON or a Chart.js config (`outputFormat: "chart"`), attached as ' +
+            '`_analysis[name]` on every contributing entry. Never renders or creates new map entries (that is ' +
+            '`processData`). ' +
+            'Use for: counts / groupings / charts (by-category, hex density); route summaries (per-leg / per-country / ' +
+            'alternative compare); route TRAFFIC analysis from `route.properties.sections.traffic[]` — pick THIS for ' +
+            '"distribution / count / chart of <something> along the route", NOT `getTrafficIncidents`; geometry stats ' +
+            '(areas, h3 coverage); historical traffic-area-analytics breakdowns (congestion / speed / travel-time per ' +
+            'tile); cross-kind correlations (incidents-per-cluster, places-near-route, distance-to-route bins, ' +
+            'route-segments-by-tile-metric). ' +
+            'For recurring monitor-tick reruns with `previous` / `now` / `log` and optional `focusIds` side-effect, ' +
+            'set `monitor: { entryId }` (only `incidentsEntryIDs: [monitor.entryId]` allowed alongside).',
+        tags: ['analysis', 'turf', 'h3', 'place', 'route', 'geometry'],
         examples: [
-            'processRoutes({ code: "const r = routes.features[0]; const sec = (r.properties.sections.traffic ?? []).slice().sort((a,b) => (b.delayInSeconds ?? 0) - (a.delayInSeconds ?? 0))[0]; const bbox = sec ? routeUtils.getSectionBBox(r, sec) : turf.bbox(r); return { fitOnMap: { bbox, padding: 80 } };" })',
-            'processRoutes({ code: "const r = routes.features[0]; const sec = r.properties.sections.toll?.[0]; if (!sec) return { fitOnMap: turf.bbox(r) }; return { fitOnMap: routeUtils.getSectionBBox(r, sec) };" })',
-            'processRoutes({ code: "const r = routes.features[0]; const a = routeUtils.getCoordinateAtRouteProgress(r, { traveledDistanceInMeters: 10000 }); const b = routeUtils.getCoordinateAtRouteProgress(r, { traveledDistanceInMeters: 20000 }); if (!a || !b) return { fitOnMap: turf.bbox(r) }; const fc = { type: \'FeatureCollection\', features: [turf.point(a.position), turf.point(b.position)] }; return { fitOnMap: { bbox: turf.bbox(fc), padding: 100 } };" })',
-            "processRoutes({ placesEntryIDs: [\"ev-stations\"], code: \"const r = routes.features[0]; const ev = (placesByEntry?.['ev-stations']?.features ?? []).filter(p => turf.pointToLineDistance(p, r, { units: 'meters' }) <= 1000); if (ev.length === 0) return { fitOnMap: turf.bbox(r) }; return { fitOnMap: { bbox: turf.bbox({ type: 'FeatureCollection', features: [...ev, r] }), padding: 80 } };\" })",
+            // places-only: counts
+            'analyseData({ placesEntryIDs: ["places-2"], name: "by-category", code: "const counts = {}; for (const p of places.features) for (const c of (p.properties.poi?.categories ?? [])) counts[c] = (counts[c] ?? 0) + 1; return { total: places.features.length, byCategory: counts };" })',
+            // places-only: h3 density
+            'analyseData({ placesEntryIDs: ["places-1"], name: "hex-density-8", code: "const bins = {}; for (const p of places.features) { const [lng,lat] = p.geometry.coordinates; const cell = h3.latLngToCell(lat, lng, 8); bins[cell] = (bins[cell] ?? 0) + 1; } return { resolution: 8, bins };" })',
+            // places-only: chart
+            'analyseData({ placesEntryIDs: ["places-2"], name: "top-categories-bar", outputFormat: "chart", code: "const counts = {}; for (const p of places.features) for (const c of (p.properties.poi?.categories ?? [])) counts[c] = (counts[c] ?? 0) + 1; const entries = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0,10); return { type: \'bar\', data: { labels: entries.map(e => e[0]), datasets: [{ label: \'Places\', data: entries.map(e => e[1]) }] } };" })',
+            // routes-only: per-route summary
+            'analyseData({ routesEntryIDs: ["routes-0"], name: "summary", code: "return routes.features.map(r => ({ index: r.properties.index, distanceKm: r.properties.summary.lengthInMeters / 1000, durationMin: r.properties.summary.travelTimeInSeconds / 60, trafficDelaySec: r.properties.summary.trafficDelayInSeconds }));" })',
+            // routes-only: alternative-comparison chart
+            'analyseData({ routesEntryIDs: ["routes-0"], name: "alternative-comparison", outputFormat: "chart", code: "const r = routes.features; return { type: \'bar\', data: { labels: r.map(x => `Route ${x.properties.index}`), datasets: [{ label: \'Travel time (min)\', data: r.map(x => Math.round(x.properties.summary.travelTimeInSeconds / 60)) }, { label: \'Distance (km)\', data: r.map(x => Math.round(x.properties.summary.lengthInMeters / 1000)) }] } };" })',
+            // routes-only: distribution of traffic incidents ALONG the route (reads route.properties.sections.traffic[])
+            'analyseData({ routesEntryIDs: ["routes-0"], name: "on-route-incidents-by-category", outputFormat: "chart", code: "const sections = (routes.features[0].properties.sections.traffic ?? []); const counts = {}; for (const s of sections) for (const c of (s.categories ?? [])) counts[c] = (counts[c] ?? 0) + 1; const entries = Object.entries(counts).sort((a,b) => b[1]-a[1]); return { type: \'bar\', data: { labels: entries.map(e => e[0]), datasets: [{ label: \'Incidents on route\', data: entries.map(e => e[1]) }] }, options: { plugins: { title: { display: true, text: \'Traffic incidents along the route\' } } } };" })',
+            // routes-only: total delay per country section
+            'analyseData({ routesEntryIDs: ["routes-0"], name: "delay-by-country", code: "const r = routes.features[0]; const byCountry = {}; for (const c of (r.properties.sections.country ?? [])) byCountry[c.countryCodeISO3] = (byCountry[c.countryCodeISO3] ?? 0) + (r.properties.sections.traffic ?? []).filter(t => t.startPointIndex >= c.startPointIndex && t.endPointIndex <= c.endPointIndex).reduce((s, t) => s + (t.delayInSeconds ?? 0), 0); return byCountry;" })',
+            // routes + places cross-ref (count within distance)
+            'analyseData({ routesEntryIDs: ["routes-0"], placesEntryIDs: ["ev-stations"], name: "ev-near-route-500m", code: "const route = routes.features[0]; const out = {}; for (const [id, fc] of Object.entries(placesByEntry)) out[id] = fc.features.filter(p => turf.pointToLineDistance(p, route, { units: \'meters\' }) <= 500).length; return { withinMeters: 500, byEntry: out };" })',
+            // routes + places cross-ref (distance-to-route histogram, binned in km)
+            'analyseData({ routesEntryIDs: ["routes-0"], placesEntryIDs: ["cafes"], name: "cafe-distance-bins-km", outputFormat: "chart", code: "const route = routes.features[0]; const distances = places.features.map(p => turf.pointToLineDistance(p, route, { units: \'kilometers\' })); const max = Math.max(0, ...distances); const binWidth = 1; const binCount = Math.max(1, Math.ceil(max / binWidth)); const bins = new Array(binCount).fill(0); for (const d of distances) bins[Math.min(binCount - 1, Math.floor(d / binWidth))]++; const labels = bins.map((_, i) => `${i}-${i + binWidth} km`); return { type: \'bar\', data: { labels, datasets: [{ label: \'cafes\', data: bins }] }, options: { plugins: { title: { display: true, text: \'Cafe distance to route\' } } } };" })',
+            // geometries-only: areas
+            'analyseData({ geometriesEntryIDs: [{ kind: "places", id: "cities" }], name: "areas", code: "return geometries.map(f => ({ id: f.id, km2: +(turf.area(f)/1e6).toFixed(2) }));" })',
+            // geometries-only: chart
+            'analyseData({ geometriesEntryIDs: [{ kind: "places", id: "cities" }], name: "area-bar", outputFormat: "chart", code: "return { type: \'bar\', data: { labels: geometries.map(f => f.id), datasets: [{ label: \'km²\', data: geometries.map(f => +(turf.area(f)/1e6).toFixed(2)) }] } };" })',
+            // cross-kind: incidents per place cluster
+            'analyseData({ placesEntryIDs: ["clusters"], incidentsEntryIDs: ["incidents-0"], name: "incidents-per-cluster", code: "const out = {}; for (const c of places.features) { const inCluster = incidents.filter(i => { const coord = i.geometry.type === \'Point\' ? i.geometry.coordinates : turf.centroid(i).geometry.coordinates; return turf.distance(coord, c.geometry.coordinates, { units: \'kilometers\' }) <= 0.5; }); out[c.id] = inCluster.length; } return out;" })',
+            // cross-kind: incidents inside custom corridors
+            'analyseData({ geometriesEntryIDs: [{ kind: "customGeometries", id: "buffered-routes" }], incidentsEntryIDs: ["incidents-0"], name: "incidents-in-corridors", code: "const out = []; for (const g of geometries) { const hits = incidents.filter(i => { const coord = i.geometry.type === \'Point\' ? i.geometry.coordinates : turf.centroid(i).geometry.coordinates; return turf.booleanPointInPolygon(coord, g); }); out.push({ id: g.id, count: hits.length, totalDelaySec: hits.reduce((s, i) => s + (i.properties.delayInSeconds ?? 0), 0) }); } return out;" })',
+            // trafficAreaAnalytics-only: congestion distribution chart
+            "analyseData({ trafficAreaAnalyticsEntryIDs: [\"tta-0\"], name: \"congestion-distribution\", outputFormat: \"chart\", code: \"const bins = [0, 25, 50, 75, 100]; const counts = new Array(bins.length).fill(0); for (const t of trafficAreaAnalytics.features) { const c = t.properties.congestionLevel ?? 0; const idx = Math.min(bins.length - 1, Math.floor(c / 25)); counts[idx]++; } return { type: 'bar', data: { labels: ['0–24', '25–49', '50–74', '75+'], datasets: [{ label: 'Tiles', data: counts.slice(0, 4) }] } };\" })",
+            // cross-kind: places by congestion tile
+            'analyseData({ placesEntryIDs: ["ev-stations"], trafficAreaAnalyticsEntryIDs: ["tta-0"], name: "ev-stations-by-congestion", code: "const buckets = { low: 0, mid: 0, high: 0 }; for (const p of places.features) { const tile = trafficAreaAnalytics.features.find(t => turf.booleanPointInPolygon(p, t)); if (!tile) continue; const c = tile.properties.congestionLevel ?? 0; if (c < 25) buckets.low++; else if (c < 75) buckets.mid++; else buckets.high++; } return buckets;" })',
+            // cross-kind: route segments by tile metric
+            'analyseData({ routesEntryIDs: ["routes-0"], trafficAreaAnalyticsEntryIDs: ["tta-0"], name: "route-tile-coverage", code: "const r = routes.features[0]; const hits = trafficAreaAnalytics.features.filter(t => turf.lineIntersect(r, t).features.length > 0); return { tilesCrossed: hits.length, avgCongestion: hits.length ? +(hits.reduce((s, t) => s + (t.properties.congestionLevel ?? 0), 0) / hits.length).toFixed(1) : null };" })',
+            // incidents-only: counts by category (one-shot)
+            'analyseData({ incidentsEntryIDs: ["incidents-0"], name: "by-category", code: "const c = {}; for (const i of incidents) c[i.properties.category] = (c[i.properties.category] ?? 0) + 1; return { total: incidents.length, byCategory: c };" })',
+            // incidents-only: top-N by delay (one-shot)
+            'analyseData({ incidentsEntryIDs: ["incidents-0"], name: "top-delays", code: "return [...incidents].sort((a,b) => (b.properties.delayInSeconds ?? 0) - (a.properties.delayInSeconds ?? 0)).slice(0,5).map(i => ({ id: i.properties.id, delay: i.properties.delayInSeconds, road: i.properties.roadNumbers?.[0] }));" })',
+            // incidents-only with monitor: recurring counts that survive ticks
+            'analyseData({ incidentsEntryIDs: ["incidents-0"], monitor: { entryId: "incidents-0" }, name: "rolling-count", code: "const trend = previous ? (incidents.length > previous.count ? \'growing\' : incidents.length < previous.count ? \'fading\' : \'steady\') : \'new\'; return { count: incidents.length, trend, at: now.toISOString() };" })',
+            // incidents-only with monitor + focus: surface top-3 worst delays as the focus subset
+            'analyseData({ incidentsEntryIDs: ["incidents-0"], monitor: { entryId: "incidents-0" }, name: "top-3-focus", code: "const top = [...incidents].sort((a,b) => (b.properties.delayInSeconds ?? 0) - (a.properties.delayInSeconds ?? 0)).slice(0,3); return { count: top.length, focusIds: top.map(i => i.properties.id), focusReason: \'top 3 by delay\' };" })',
         ],
         examplePrompts: [
-            'Zoom into the worst traffic on the route',
-            'Show me the toll section',
-            'Focus on the segment between km 10 and 20',
-            'Frame the part of the route inside France',
-            'Zoom to the first leg only',
-            'Focus on the route plus every EV station within 1 km of it',
-        ],
-        relatedTools: ['recallRoutes', 'analyseRoutes'],
-        dependsOn: ['setRoute', 'recallRoutes', 'recallPlaces'],
-    },
-    analyseGeometries: {
-        description: analyseGeometriesDescription,
-        classificationPrompt:
-            'Compute aggregate stats / charts over polygons (place footprints, isochrones, custom-entries) via dynamic JS (h3, turf). Result attaches to each contributing places-entry / custom-entry as `_analysis[name]`. `outputFormat`: `json` or `chart`.',
-        inputSchema: analyseGeometriesSchema,
-        outputSchema: analyseGeometriesOutputSchema,
-        execute: executeAnalyseGeometries,
-        tags: ['geometry', 'boundary', 'analysis', 'turf', 'h3'],
-        examples: [
-            'analyseGeometries({ geometriesEntryIDs: [{ kind: "places", id: "cities" }], name: "areas", code: "return geometries.map(f => ({ id: f.id, km2: +(turf.area(f)/1e6).toFixed(2) }));" })',
-            'analyseGeometries({ geometriesEntryIDs: [{ kind: "place", id: "amsterdam" }], name: "h3-coverage-8", code: "const cells = new Set(); for (const f of geometries) for (const c of h3.polygonToCells(f.geometry.coordinates, 8)) cells.add(c); return { resolution: 8, cellCount: cells.size };" })',
-            'analyseGeometries({ geometriesEntryIDs: [{ kind: "custom", id: "bakery-candidates-gap-oost" }], name: "candidate-area", code: "return { totalKm2: +(geometries.reduce((a,f)=>a+turf.area(f),0)/1e6).toFixed(2) };" })',
-            'analyseGeometries({ geometriesEntryIDs: [{ kind: "places", id: "cities" }], name: "area-bar", outputFormat: "chart", code: "return { type: \'bar\', data: { labels: geometries.map(f => f.id), datasets: [{ label: \'km²\', data: geometries.map(f => +(turf.area(f)/1e6).toFixed(2)) }] } };" })',
-        ],
-        examplePrompts: [
-            'How big are these areas?',
-            'h3 hex coverage of this neighbourhood',
-            'Bar chart of city areas',
-            'Combined bbox of these places',
-            'How big is the candidate zone we just produced?',
-        ],
-        relatedTools: ['recallGeometries', 'discoverPlaces', 'recallPlaces', 'processGeometries'],
-        dependsOn: ['discoverPlaces', 'locatePlace', 'findReachableAreas', 'recallGeometries'],
-    },
-    analysePlaces: analysePlacesBuilder,
-    analyseRoutes: {
-        description: analyseRoutesDescription,
-        classificationPrompt:
-            'Aggregate / summarise / chart existing routes via dynamic JS (h3, turf). Optionally pass `placesEntryIDs` to cross-reference routes with places (POIs near route, per leg/country). `outputFormat`: `json` or `chart`.',
-        inputSchema: analyseRoutesSchema,
-        outputSchema: analyseRoutesOutputSchema,
-        execute: executeAnalyseRoutes,
-        tags: ['route', 'utilities'],
-        examples: [
-            'analyseRoutes({ name: "summary", code: "return routes.features.map(r => ({ index: r.properties.index, distanceKm: r.properties.summary.lengthInMeters / 1000, durationMin: r.properties.summary.travelTimeInSeconds / 60, trafficDelaySec: r.properties.summary.trafficDelayInSeconds }));" })',
-            'analyseRoutes({ name: "delay-by-country", code: "const byCountry = {}; for (const r of routes.features) for (const c of (r.properties.sections.country ?? [])) byCountry[c.countryCodeISO3] = (byCountry[c.countryCodeISO3] ?? 0) + (r.properties.sections.traffic ?? []).filter(t => t.startPointIndex >= c.startPointIndex && t.endPointIndex <= c.endPointIndex).reduce((s, t) => s + (t.delayInSeconds ?? 0), 0); return byCountry;" })',
-            'analyseRoutes({ name: "alternative-comparison", outputFormat: "chart", code: "const r = routes.features; return { type: \'bar\', data: { labels: r.map(x => `Route ${x.properties.index}`), datasets: [{ label: \'Travel time (min)\', data: r.map(x => Math.round(x.properties.summary.travelTimeInSeconds / 60)) }, { label: \'Distance (km)\', data: r.map(x => Math.round(x.properties.summary.lengthInMeters / 1000)) }] } };" })',
-            'analyseRoutes({ routesEntryIDs: ["routes-0"], name: "hex-coverage-7", code: "const cells = new Set(); for (const r of routes.features) for (const [lng, lat] of r.geometry.coordinates) cells.add(h3.latLngToCell(lat, lng, 7)); return { resolution: 7, cellCount: cells.size, cells: [...cells] };" })',
-            'analyseRoutes({ placesEntryIDs: ["ev-stations"], name: "ev-near-route-500m", code: "const route = routes.features[0]; const out = {}; for (const [id, places] of Object.entries(placesByEntry)) out[id] = places.features.filter(p => turf.pointToLineDistance(p, route, { units: \'meters\' }) <= 500).length; return { withinMeters: 500, byEntry: out };" })',
-            'analyseRoutes({ placesEntryIDs: ["cafes", "hotels"], name: "stops-per-leg", code: "const route = routes.features[0]; const corridor = turf.buffer(route, 0.3, { units: \'kilometers\' }); const legs = route.properties.sections.leg; return Object.fromEntries(Object.entries(placesByEntry).map(([id, fc]) => [id, legs.map((leg, i) => ({ leg: i, count: fc.features.filter(p => leg.startPointIndex != null && turf.booleanPointInPolygon(p, corridor)).length }))])); " })',
-        ],
-        examplePrompts: [
+            'How many of each POI category are in these results?',
+            'h3 hex density of these places',
+            'Bar chart of the top POI categories',
             'How long is each route alternative?',
-            'Compare the travel times of these route options',
-            'Bar chart of distance and time per alternative',
-            'Total traffic delay grouped by country',
-            'h3 hex coverage of the route at resolution 7',
+            'Compare travel times across alternatives',
             'How many EV stations are within 500 m of the route?',
-            'Count cafes and hotels per leg of the route',
-            'Which POIs from the search are close to the route?',
+            'Chart the distance from each cafe to the route, binned in km',
+            'Histogram of place-to-route distances',
+            'Distribution of traffic incidents along the drive from Paris to Brussels',
+            'Chart the incidents on the route by category',
+            'Total delay per country on this route',
+            'How big are these areas?',
+            'Bar chart of city areas',
+            'Incidents per place cluster',
+            'Total delay per traffic corridor',
+            'Congestion distribution across the analytics tiles',
+            'Average historical speed per tile, as a chart',
+            'Group these EV stations by the congestion level of the tile they fall in',
+            'For the route, which tiles does it cross and what is their average congestion?',
+            'How many incidents of each category?',
+            'Top 5 incidents by delay',
+            'Total delay grouped by road',
+            'Keep counting the incidents and tell me when it grows or fades',
+            'Highlight the 3 worst incidents by delay on the map',
+            'Bar chart of incidents per category',
+            'Which jams are growing vs fading on this monitored area?',
         ],
-        relatedTools: ['recallRoutes', 'recallPlaces', 'setRoute', 'processRoutes', 'discoverPlaces'],
-        dependsOn: ['setRoute', 'recallRoutes', 'recallPlaces'],
-    },
+        relatedTools: [
+            'processData',
+            'focusIncidents',
+            'recallPlaces',
+            'recallRoutes',
+            'recallGeometries',
+            'recallState',
+        ],
+        dependsOn: [
+            'discoverPlaces',
+            'setRoute',
+            'getTrafficIncidents',
+            'getTrafficAreaAnalytics',
+            'findReachableAreas',
+            'recallPlaces',
+            'recallRoutes',
+            'recallGeometries',
+        ],
+    }),
     setRoute: {
         description: setRouteDescription,
         classificationPrompt:
@@ -524,62 +568,42 @@ const defaultTools = {
             'getPOICategoryCodes(filters: ["restaurant"], language: "fr-FR")',
         ],
         examplePrompts: ['What POI categories are available?', "What's the code for gym?"],
-        relatedTools: ['discoverPlaces', 'togglePOIs'],
+        relatedTools: ['discoverPlaces', 'toggleTilesPOIs'],
     },
     getTrafficIncidents: {
         description: getTrafficIncidentsDescription,
         classificationPrompt:
-            'Loader for traffic incidents — caches features in state, renders on the map, returns `{count, entryId}` only. ' +
-            'MANDATORY: always also pick startTrafficIncidentsMonitor (no exceptions — they are a pair, data goes stale without it). ' +
-            'Also co-pick analyseIncidents (counts / charts / top-N / clusters) and focusIncidents (highlight a subset) when the query implies them.',
+            'AREA-BOUND incident loader — bbox / viewport / "incidents around here" / "accidents in <city>". ' +
+            'DO NOT pick for route-bound queries ("incidents ALONG / ON the route", "delays on the drive from X to Y"): ' +
+            'a calculated route already carries its incidents in `route.properties.sections.traffic[]` (category, ' +
+            'magnitudeOfDelay, delayInSeconds, effectiveSpeedInKmh) — call `analyseData` with `routesEntryIDs` for those. ' +
+            'When this tool IS the right pick: MANDATORY co-pick startTrafficIncidentsMonitor (they are a pair — data goes stale without it). ' +
+            'Also co-pick analyseData (one-shot aggregations / charts / clusters; pass `monitor: { entryId }` for the recurring spec + focus side-effect) and focusIncidents (highlight a subset) when the query implies them.',
         inputSchema: getTrafficIncidentsSchema,
         outputSchema: getTrafficIncidentsOutputSchema,
         execute: executeGetTrafficIncidents,
         tags: ['traffic', 'location'],
         examples: [
-            'getTrafficIncidents({ bbox: [4.728, 52.278, 5.080, 52.479] })',
-            'getTrafficIncidents({ bbox: [...], categoryFilter: ["accident", "jam"] })',
-            'getTrafficIncidents({ bbox: [...], categoryFilter: ["roadworks"], timeValidityFilter: ["future"] })',
-        ],
-        examplePrompts: ['Fetch traffic incidents in Amsterdam', 'Any accidents in this area?'],
-        relatedTools: [
-            'calculateBBox',
-            'getViewport',
-            'analyseIncidents',
-            'focusIncidents',
-            'startTrafficIncidentsMonitor',
-        ],
-    },
-    analyseIncidents: {
-        description: analyseIncidentsDescription,
-        classificationPrompt:
-            'Aggregate / chart / cluster an incidents entry via dynamic JS (h3, turf). Re-runs on every monitor-tick; ' +
-            '`previous` carries the prior result for trend reads. Pick for counts, group-bys, top-N, charts, density, clusters.',
-        inputSchema: analyseIncidentsSchema,
-        outputSchema: analyseIncidentsOutputSchema,
-        execute: executeAnalyseIncidents,
-        tags: ['traffic', 'incident', 'analytics', 'state'],
-        examples: [
-            'analyseIncidents({ name: \'by-category\', code: "const c = {}; for (const i of incidents) c[i.properties.category] = (c[i.properties.category] ?? 0) + 1; return { total: incidents.length, byCategory: c };" })',
-            'analyseIncidents({ name: \'top-delays\', code: "return [...incidents].sort((a,b) => (b.properties.delayInSeconds ?? 0) - (a.properties.delayInSeconds ?? 0)).slice(0,5).map(i => ({ id: i.properties.id, delay: i.properties.delayInSeconds, road: i.properties.roadNumbers?.[0] }));" })',
-            "analyseIncidents({ name: 'category-bar', outputFormat: 'chart', code: \"const c = {}; for (const i of incidents) c[i.properties.category] = (c[i.properties.category] ?? 0) + 1; const e = Object.entries(c).sort((a,b) => b[1]-a[1]); return { type: 'bar', data: { labels: e.map(x => x[0]), datasets: [{ label: 'Incidents', data: e.map(x => x[1]) }] } };\" })",
+            'getTrafficIncidents({})  // omit `where` → current viewport',
+            'getTrafficIncidents({ where: { mode: "within", boundingBox: [4.728, 52.278, 5.080, 52.479] } })',
+            'getTrafficIncidents({ where: { mode: "within", queries: [{ query: "Amsterdam" }] } })  // named area',
+            'getTrafficIncidents({ where: { mode: "within", queries: [{ query: "Amsterdam" }] }, categoryFilter: ["accident", "jam"] })',
+            'getTrafficIncidents({ where: { mode: "within", route: { widthMeters: 1000 } }, categoryFilter: ["roadworks"], timeValidityFilter: ["future"] })  // corridor around latest route',
+            'getTrafficIncidents({ where: { mode: "within", range: "ranges-0" } })  // inside a reachable area',
         ],
         examplePrompts: [
-            'How many incidents of each category?',
-            'Top 5 incidents by delay',
-            'Total delay grouped by road',
-            'Which jams are growing vs fading on this monitored area?',
-            'Bar chart of incidents per category',
-            'Hex density of incidents at resolution 8',
+            'Fetch traffic incidents in Amsterdam',
+            'Any accidents in this area?',
+            'Show roadworks across the city',
+            // Counter-examples: NOT this tool — route-bound queries use analyseData over routes.
         ],
-        relatedTools: ['getTrafficIncidents', 'focusIncidents'],
-        dependsOn: ['getTrafficIncidents'],
+        relatedTools: ['calculateBBox', 'getViewport', 'analyseData', 'focusIncidents', 'startTrafficIncidentsMonitor'],
     },
     focusIncidents: {
         description: focusIncidentsDescription,
         classificationPrompt:
             'Highlight a subset of incidents on an existing entry (drives map dim/highlight + FocusChip). ' +
-            'Pick for "focus on…", "show only…", "highlight the…". Compose with analyseIncidents to compute the ids.',
+            'Pick for "focus on…", "show only…", "highlight the…". Compose with analyseData to compute the ids.',
         inputSchema: focusIncidentsSchema,
         outputSchema: focusIncidentsOutputSchema,
         execute: executeFocusIncidents,
@@ -592,7 +616,7 @@ const defaultTools = {
             'Highlight the closures',
             'Show only the incidents on the A4',
         ],
-        relatedTools: ['analyseIncidents', 'getTrafficIncidents'],
+        relatedTools: ['analyseData', 'getTrafficIncidents'],
         dependsOn: ['getTrafficIncidents'],
     },
     startTrafficIncidentsMonitor: {
@@ -615,7 +639,7 @@ const defaultTools = {
             'Refresh the incidents every 30 seconds',
             'Watch this area for new accidents',
         ],
-        relatedTools: ['getTrafficIncidents', 'stopTrafficIncidentsMonitor', 'analyseIncidents'],
+        relatedTools: ['getTrafficIncidents', 'stopTrafficIncidentsMonitor', 'analyseData'],
         dependsOn: ['getTrafficIncidents'],
     },
     stopTrafficIncidentsMonitor: {
@@ -649,7 +673,7 @@ const defaultTools = {
             'Analyze traffic patterns during rush hour in this area',
             'Show me historical speed data for the city center',
         ],
-        relatedTools: ['queryTrafficAnalytics', 'showTrafficAreaAnalytics', 'calculateBBox', 'getViewport'],
+        relatedTools: ['queryTrafficAnalytics', 'updateTrafficAreaAnalyticsDisplay', 'calculateBBox', 'getViewport'],
         dependsOn: ['locatePlace'],
     },
     queryTrafficAnalytics: {
@@ -675,7 +699,7 @@ const defaultTools = {
             'What metric am I looking at?',
             'What is currently shown on the map?',
         ],
-        relatedTools: ['getTrafficAreaAnalytics', 'showTrafficAreaAnalytics'],
+        relatedTools: ['getTrafficAreaAnalytics', 'updateTrafficAreaAnalyticsDisplay'],
         dependsOn: ['getTrafficAreaAnalytics'],
     },
     updatePlacesDisplay: {
@@ -719,16 +743,16 @@ const defaultTools = {
             'Add the neighbourhood boundaries on top of the pins',
         ],
         relatedTools: ['discoverPlaces', 'locatePlace', 'reverseGeocode', 'recallPlaces', 'clearMap', 'flyTo'],
-        dependsOn: ['discoverPlaces', 'locatePlace', 'processPlaces'],
+        dependsOn: ['discoverPlaces', 'locatePlace', 'processData'],
     },
     updateRoutesDisplay: {
         description: updateRoutesDisplayDescription,
         classificationPrompt:
-            'Show, hide, and swap routes entries on the map — add some, remove others, swap atomically, or switch the highlighted alternative.',
+            'Show, hide, swap, and recolor routes entries on the map — add some, remove others, swap atomically, switch the highlighted alternative, or set `mainColor` (CSS color / hex; sticky across entry swaps).',
         inputSchema: updateRoutesDisplaySchema,
         outputSchema: updateRoutesDisplayOutputSchema,
         execute: executeUpdateRoutesDisplay,
-        tags: ['route', 'waypoint'],
+        tags: ['route', 'waypoint', 'map style'],
         examples: [
             'updateRoutesDisplay({ add: ["routes-1"] })',
             'updateRoutesDisplay({ add: ["routes-0", "routes-2"] })',
@@ -739,6 +763,8 @@ const defaultTools = {
             'updateRoutesDisplay({ clear: true, add: ["routes-2"] })  // atomic swap: hide everything, show this',
             'updateRoutesDisplay({ selectedIndex: 1 })  // re-highlight alternative #1 on the most recent route',
             'updateRoutesDisplay({ add: ["routes-0"], selectedIndex: 2, fitBounds: false })',
+            'updateRoutesDisplay({ mainColor: "coral" })  // recolor every currently-shown route (and future shows)',
+            'updateRoutesDisplay({ add: ["routes-1"], mainColor: "#FF0000" })  // show in red',
         ],
         examplePrompts: [
             'Draw the route on the map',
@@ -750,124 +776,110 @@ const defaultTools = {
             'Switch to the second alternative',
             'Highlight alternative 2',
             'Replace what is shown with this route',
+            'Make the route line red',
+            'Change the route color to coral',
+            'Style the route in steelblue',
         ],
-        relatedTools: ['setRoute', 'processRoutes', 'recallRoutes', 'clearMap'],
+        relatedTools: ['setRoute', 'processData', 'recallRoutes', 'clearMap'],
         dependsOn: ['setRoute'],
     },
-    showTrafficAreaAnalytics: {
-        description: showTrafficAreaAnalyticsDescription,
+    updateTrafficAreaAnalyticsDisplay: {
+        description: updateTrafficAreaAnalyticsDisplayDescription,
         classificationPrompt:
-            'Render traffic analytics as hexgrid, heatmap, or tiles with custom colors, filtering, height, and tooltip.',
-        inputSchema: showTrafficAreaAnalyticsSchema,
-        outputSchema: showTrafficAreaAnalyticsOutputSchema,
-        execute: executeShowTrafficAreaAnalytics,
+            'Show / hide / swap / restyle historical traffic-area-analytics entries on the map. `add` / `remove` / `addMatching` / `removeMatching` / `clear` for visibility; `mode` / `metric` / `colorTheme` / `heightScale` / `scaleMode` / `filter` for the rendering. Render knobs alone implicitly target the most recent entry.',
+        inputSchema: updateTrafficAreaAnalyticsDisplaySchema,
+        outputSchema: updateTrafficAreaAnalyticsDisplayOutputSchema,
+        execute: executeUpdateTrafficAreaAnalyticsDisplay,
         tags: ['traffic', 'map style'],
         examples: [
-            'showTrafficAreaAnalytics()',
-            "showTrafficAreaAnalytics({ mode: 'hexgrid-2d', metric: 'speed', colorTheme: 'heat' })",
-            'showTrafficAreaAnalytics({ filter: { min: 50 } })',
-            "showTrafficAreaAnalytics({ scaleMode: 'currentRange', heightScale: 200 })",
-            'showTrafficAreaAnalytics({ visible: false })',
+            'updateTrafficAreaAnalyticsDisplay({ add: ["tta-0"] })',
+            "updateTrafficAreaAnalyticsDisplay({ mode: 'hexgrid-2d', metric: 'speed', colorTheme: 'heat' })  // re-style the latest (implicit)",
+            'updateTrafficAreaAnalyticsDisplay({ filter: { min: 50 } })',
+            "updateTrafficAreaAnalyticsDisplay({ scaleMode: 'currentRange', heightScale: 200 })",
+            'updateTrafficAreaAnalyticsDisplay({ clear: true })',
+            'updateTrafficAreaAnalyticsDisplay({ clear: true, add: ["tta-1"] })  // atomic swap',
+            'updateTrafficAreaAnalyticsDisplay({ remove: ["tta-0"] })',
+            'updateTrafficAreaAnalyticsDisplay({ addMatching: ["Amsterdam"] })',
         ],
         examplePrompts: [
-            'Show it on the map',
+            'Show the analytics on the map',
             'Visualize the congestion',
             'Only show areas with congestion above 50%',
             'Normalize height to the current data range',
             'Switch to heatmap view',
+            'Also show the Amsterdam analytics',
+            'Hide the Rotterdam analytics',
+            'Replace what is on the map with this analytics',
         ],
-        relatedTools: ['getTrafficAreaAnalytics', 'queryTrafficAnalytics', 'toggleTrafficFlow', 'clearMap'],
+        relatedTools: [
+            'getTrafficAreaAnalytics',
+            'queryTrafficAnalytics',
+            'toggleTilesTrafficFlow',
+            'clearMap',
+            'analyseData',
+            'processData',
+        ],
         dependsOn: ['getTrafficAreaAnalytics'],
     },
-    showWaypoints: {
-        description: showWaypointsDescription,
-        classificationPrompt: 'Display staged origin/stop/destination markers without drawing the route line.',
-        inputSchema: showWaypointsSchema,
-        outputSchema: showWaypointsOutputSchema,
-        execute: executeShowWaypoints,
+    updateWaypointsDisplay: {
+        description: updateWaypointsDisplayDescription,
+        classificationPrompt:
+            'Show or hide the STAGED origin/stop/destination markers (`state.routing.planningSlots` — what is queued for the NEXT `setRoute`). No route line is drawn; for that use `updateRoutesDisplay`. Single-collection toggle: `visible: true` (default) renders the staged set, `visible: false` clears it.',
+        inputSchema: updateWaypointsDisplaySchema,
+        outputSchema: updateWaypointsDisplayOutputSchema,
+        execute: executeUpdateWaypointsDisplay,
         tags: ['waypoint', 'route'],
-        examples: ['showWaypoints()'],
-        examplePrompts: ['Show the waypoints on the map', 'Mark my route stops'],
-        relatedTools: ['setRoute', 'updateRoutesDisplay', 'getShownWaypoints', 'clearMap'],
+        examples: [
+            'updateWaypointsDisplay()',
+            'updateWaypointsDisplay({ visible: true })',
+            'updateWaypointsDisplay({ visible: false })',
+        ],
+        examplePrompts: [
+            'Show the staged waypoints on the map',
+            'Mark my pending route stops',
+            'Hide the staged waypoints',
+        ],
+        relatedTools: ['setRoute', 'updateRoutesDisplay', 'getCurrentWaypoints', 'clearMap'],
         dependsOn: ['setRoute', 'locatePlace'],
     },
-    getShownPlaces: {
-        description: getShownPlacesDescription,
+    getShownTileIncidents: {
+        description: getShownTileIncidentsDescription,
         classificationPrompt:
-            'Return places currently displayed on the map (available after updatePlacesDisplay or locatePlace).',
-        inputSchema: getShownPlacesSchema,
-        outputSchema: getShownPlacesOutputSchema,
-        execute: executeGetShownPlaces,
-        tags: ['place', 'location'],
-        examples: ['getShownPlaces()'],
+            'Read traffic incidents currently rendered by the TomTom TRAFFIC-TILE OVERLAY (the rasterised live tiles ' +
+            "toggled via `toggleTilesTrafficIncidents`). DO NOT confuse with `getTrafficIncidents` — that's the GeoJSON " +
+            'service that returns full structured incidents with start/end times, road numbers, lanes, etc. ' +
+            'Pick this ONLY for "what\'s on the tile overlay right now"; for richer per-incident data use ' +
+            '`getTrafficIncidents`, and for "incidents along the route" use `analyseData` over routes ' +
+            '(`route.properties.sections.traffic[]`).',
+        inputSchema: getShownTileIncidentsSchema,
+        outputSchema: getShownTileIncidentsOutputSchema,
+        execute: executeGetShownTileIncidents,
+        tags: ['traffic', 'location', 'map style'],
+        examples: ['getShownTileIncidents()'],
         examplePrompts: [
-            'What places are on the map?',
-            'Which of my search results are currently displayed?',
-            'How many places are visible right now?',
+            'What incidents does the traffic tile overlay show right now?',
+            "What's rendered on the traffic incidents layer?",
         ],
-        relatedTools: ['updatePlacesDisplay', 'clearMap', 'locatePlace', 'reverseGeocode'],
-        dependsOn: ['updatePlacesDisplay'],
-    },
-    getShownRoutes: {
-        description: getShownRoutesDescription,
-        classificationPrompt: 'Return routes currently rendered on the map (available after updateRoutesDisplay).',
-        inputSchema: getShownRoutesSchema,
-        outputSchema: getShownRoutesOutputSchema,
-        execute: executeGetShownRoutes,
-        tags: ['route'],
-        examples: ['getShownRoutes()'],
-        examplePrompts: ['What routes are displayed?', 'Is there a route on the map?'],
-        relatedTools: ['updateRoutesDisplay', 'clearMap'],
-        dependsOn: ['updateRoutesDisplay'],
-    },
-    getShownWaypoints: {
-        description: getShownWaypointsDescription,
-        classificationPrompt:
-            'Return waypoint markers currently shown on the map (available after updateRoutesDisplay or showWaypoints).',
-        inputSchema: getShownWaypointsSchema,
-        outputSchema: getShownWaypointsOutputSchema,
-        execute: executeGetShownWaypoints,
-        tags: ['waypoint', 'route'],
-        examples: ['getShownWaypoints()'],
-        examplePrompts: ['What waypoints are shown?', 'List the stops on the map'],
-        relatedTools: ['updateRoutesDisplay', 'clearMap'],
-        dependsOn: ['updateRoutesDisplay', 'showWaypoints'],
-    },
-    getShownRouteTrafficIncidents: {
-        description: getShownRouteTrafficIncidentsDescription,
-        classificationPrompt: 'Return traffic incidents overlaid on the shown route.',
-        inputSchema: getShownRouteTrafficIncidentsSchema,
-        outputSchema: getShownRouteTrafficIncidentsOutputSchema,
-        execute: executeGetShownRouteTrafficIncidents,
-        tags: ['traffic', 'route'],
-        examples: ['getShownRouteTrafficIncidents()'],
-        examplePrompts: ['What traffic incidents are on my route?', 'Any delays along the route?'],
-        relatedTools: ['updateRoutesDisplay', 'clearMap', 'setRoute'],
-        dependsOn: ['updateRoutesDisplay'],
-    },
-    getShownIncidents: {
-        description: getShownIncidentsDescription,
-        classificationPrompt:
-            'Return real-time incidents currently visible in the map viewport (rendered on map, not fetched from service).',
-        inputSchema: getShownIncidentsSchema,
-        outputSchema: getShownIncidentsOutputSchema,
-        execute: executeGetShownIncidents,
-        tags: ['traffic', 'location'],
-        examples: ['getShownIncidents()'],
-        examplePrompts: ['What traffic incidents are visible?', 'Any incidents in the current view?'],
-        relatedTools: ['toggleTrafficIncidents', 'flyTo', 'getViewport'],
-        dependsOn: ['toggleTrafficIncidents'],
+        relatedTools: ['toggleTilesTrafficIncidents', 'getTrafficIncidents', 'flyTo', 'getViewport'],
+        dependsOn: ['toggleTilesTrafficIncidents'],
     },
     clearMap: {
         description: clearMapDescription,
-        classificationPrompt: 'Remove displayed places, routes, or all features from the map.',
+        classificationPrompt:
+            'Hide what the chosen state slices are rendering on the map. `layers` are SLICE KEYS: `places`, `routing`, `ranges`, `customGeometries`, `byod`, `trafficAreaAnalytics`, `trafficIncidents`. Omit to clear every slice. Map-only — slice history is kept.',
         inputSchema: clearMapSchema,
         outputSchema: clearMapOutputSchema,
         execute: executeClearMap,
         tags: ['place', 'route', 'map style'],
-        examples: ['clearMap()', 'clearMap(["places"])', 'clearMap(["places", "routes"])'],
-        examplePrompts: ['Clear the map', 'Remove all markers', 'Start fresh'],
-        relatedTools: ['updatePlacesDisplay', 'updateRoutesDisplay'],
+        examples: [
+            'clearMap()',
+            'clearMap({ layers: ["places"] })',
+            'clearMap({ layers: ["places", "routing"] })',
+            'clearMap({ layers: ["trafficAreaAnalytics", "trafficIncidents"] })',
+            'clearMap({ layers: ["byod"] })',
+        ],
+        examplePrompts: ['Clear the map', 'Remove all markers', 'Start fresh', 'Hide the analytics overlay'],
+        relatedTools: ['updatePlacesDisplay', 'updateRoutesDisplay', 'updateTrafficAreaAnalyticsDisplay'],
     },
     flyTo: {
         description: flyToDescription,
@@ -912,17 +924,76 @@ const defaultTools = {
         examples: [
             'recallGeometries()',
             'recallGeometries({ id: { kind: "places", id: "ev-stations-oost" } })',
-            'recallGeometries({ id: { kind: "custom", id: "bakery-candidates-gap-oost" } })',
+            'recallGeometries({ id: { kind: "customGeometries", id: "bakery-candidates-gap-oost" } })',
         ],
         examplePrompts: [
             'What polygons are in state right now?',
-            'Which IDs can I pass to processGeometries?',
+            'Which IDs can I pass to processData (geometriesEntryIDs)?',
             'Recall the custom zone we just produced',
             'What does the bakery-candidates entry contain?',
         ],
-        relatedTools: ['processGeometries', 'analyseGeometries', 'recallPlaces', 'recallRanges'],
+        relatedTools: ['processData', 'analyseData', 'recallPlaces', 'recallRanges'],
     },
     recallPlaces: recallPlacesBuilder,
+    recallByod: {
+        description: recallByodDescription,
+        classificationPrompt:
+            'List/inspect BYOD (bring-your-own-data) layers in session state. Returns ids the model can pass to `byodEntryIDs` (analyseData / processData) or to `updateByodDisplay` for visibility control.',
+        inputSchema: recallByodSchema,
+        outputSchema: recallByodOutputSchema,
+        execute: executeRecallByod,
+        tags: ['recall', 'byod', 'state'],
+        examples: ['recallByod()', 'recallByod({ id: "byod-0" })'],
+        examplePrompts: [
+            'What customer-uploaded layers do we have?',
+            'List BYOD entries',
+            'Show details of the sales-territories BYOD layer',
+        ],
+        relatedTools: ['addByodLayer', 'updateByodDisplay', 'analyseData', 'processData'],
+    },
+    addByodLayer: {
+        description: addByodLayerDescription,
+        classificationPrompt:
+            'Add a customer-owned GeoJSON layer (URL fetch or inline) as a new BYOD entry. Use when the user wants to import / load / overlay a customer-supplied dataset. Returns the new entry id (use with `byodEntryIDs` on analyseData / processData).',
+        inputSchema: addByodLayerSchema,
+        outputSchema: addByodLayerOutputSchema,
+        execute: executeAddByodLayer,
+        tags: ['byod', 'state', 'import'],
+        examples: [
+            'addByodLayer({ label: "Sales territories", url: "https://example.com/territories.geojson", show: true })',
+            'addByodLayer({ label: "Inline pins", data: { type: "FeatureCollection", features: [/* … */] } })',
+        ],
+        examplePrompts: [
+            'Load my territories layer from https://...',
+            'Import this GeoJSON as a BYOD layer',
+            'Add a customer-pins layer from this URL',
+        ],
+        relatedTools: ['recallByod', 'updateByodDisplay', 'analyseData', 'processData'],
+    },
+    updateByodDisplay: {
+        description: updateByodDisplayDescription,
+        classificationPrompt:
+            'Toggle visibility (or drop) of BYOD entries already in session state. Use after `addByodLayer` or after `recallByod` exposes the ids. Three actions: show / hide / remove. Pair with `clearAll` or `hideOthers` for bulk swaps.',
+        inputSchema: updateByodDisplaySchema,
+        outputSchema: updateByodDisplayOutputSchema,
+        execute: executeUpdateByodDisplay,
+        tags: ['byod', 'display', 'visibility'],
+        examples: [
+            'updateByodDisplay({ entryIds: ["byod-0"], action: "show" })',
+            'updateByodDisplay({ entryIds: ["byod-0", "byod-1"], action: "show", hideOthers: true })',
+            'updateByodDisplay({ entryIds: ["byod-0"], action: "hide" })',
+            'updateByodDisplay({ action: "hide", clearAll: true })',
+            'updateByodDisplay({ entryIds: ["byod-0"], action: "remove" })',
+        ],
+        examplePrompts: [
+            'Hide the customer pins layer',
+            'Show only the territories BYOD layer',
+            'Hide all BYOD layers',
+            'Drop the imported file from the session',
+        ],
+        relatedTools: ['recallByod', 'addByodLayer'],
+        dependsOn: ['addByodLayer'],
+    },
     recallRoutes: {
         description: recallRoutesDescription,
         classificationPrompt: 'Return previously calculated routes from this session.',
@@ -942,7 +1013,9 @@ const defaultTools = {
     getCurrentWaypoints: {
         description: getCurrentWaypointsDescription,
         classificationPrompt:
-            'Return the staged waypoint slots (origin, stops, destination) not yet committed to a route.',
+            'STAGED waypoint slots only — the origin/stops/destination being built up for the NEXT `setRoute` call ' +
+            '(read off `state.routing.planningSlots`, NOT off any calculated route entry). ' +
+            "For waypoints of an EXISTING calculated route, use `recallRoutes({ id })` — its detail mode returns the entry's own waypoints.",
         inputSchema: getCurrentWaypointsSchema,
         outputSchema: getCurrentWaypointsOutputSchema,
         execute: executeGetCurrentWaypoints,
@@ -953,8 +1026,12 @@ const defaultTools = {
             'getCurrentWaypoints({ includeEmptySlots: true })',
             'getCurrentWaypoints({ offset: 2, limit: 4 })',
         ],
-        examplePrompts: ['What are my current route waypoints?', "What's my destination?", 'Show my staged stops'],
-        relatedTools: ['locatePlace', 'setRoute', 'showWaypoints', 'recallRoutes'],
+        examplePrompts: [
+            "What's currently staged for the next route?",
+            "What's my pending destination before I hit go?",
+            'Show the stops I have queued up',
+        ],
+        relatedTools: ['locatePlace', 'setRoute', 'updateWaypointsDisplay', 'recallRoutes'],
     },
     getStandardMapStyles: {
         description: getStandardMapStylesDescription,
@@ -976,24 +1053,7 @@ const defaultTools = {
         tags: ['map style'],
         examples: ['setMapStandardStyle("standardDark")', 'setMapStandardStyle("satellite")'],
         examplePrompts: ['Switch to dark mode', 'Use the satellite view', 'Change to the light theme'],
-        relatedTools: ['getStandardMapStyles', 'setLanguage', 'toggleBaseMapLayerGroups', 'getMapStyleLayers'],
-    },
-    setRouteTheme: {
-        description: setRouteThemeDescription,
-        classificationPrompt:
-            'Color the route line and waypoint icons; prefer over setPaintProperties for route styling.',
-        inputSchema: setRouteThemeSchema,
-        outputSchema: setRouteThemeOutputSchema,
-        execute: executeSetRouteTheme,
-        tags: ['route', 'map style'],
-        examples: [
-            'setRouteTheme({ mainColor: "#FF0000" })  // red route',
-            'setRouteTheme({ mainColor: "coral" })',
-            'setRouteTheme({ mainColor: "steelblue" })',
-        ],
-        examplePrompts: ['Make the route line red', 'Change the route color to blue', 'Style the route in coral'],
-        relatedTools: ['updateRoutesDisplay', 'setRoute', 'setPaintProperties'],
-        dependsOn: ['updateRoutesDisplay'],
+        relatedTools: ['getStandardMapStyles', 'setLanguage', 'toggleTilesBaseMapLayerGroups', 'getMapStyleLayers'],
     },
     setLanguage: {
         description: setLanguageDescription,
@@ -1006,60 +1066,65 @@ const defaultTools = {
         examplePrompts: ['Show map labels in French', 'Switch the map to German', 'Use Spanish for place names'],
         relatedTools: ['setMapStandardStyle'],
     },
-    toggleBaseMapLayerGroups: {
-        description: toggleBaseMapLayerGroupsDescription,
+    toggleTilesBaseMapLayerGroups: {
+        description: toggleTilesBaseMapLayerGroupsDescription,
         classificationPrompt:
-            'Show or hide named base map layer groups (buildings3D, roadLabels, water, placeLabels, etc.).',
-        inputSchema: toggleBaseMapLayerGroupsSchema,
-        outputSchema: toggleBaseMapLayerGroupsOutputSchema,
-        execute: executeToggleBaseMapLayerGroups,
+            'Show / hide vector-tile base-map layer groups (buildings3D, roadLabels, water, placeLabels, …). Style-layer only — does NOT touch places / routes / custom-geometries rendered by the agent.',
+        inputSchema: toggleTilesBaseMapLayerGroupsSchema,
+        outputSchema: toggleTilesBaseMapLayerGroupsOutputSchema,
+        execute: executeToggleTilesBaseMapLayerGroups,
         tags: ['map style'],
         examples: [
-            'toggleBaseMapLayerGroups(false, ["buildings3D"])',
-            'toggleBaseMapLayerGroups(true, ["roadLabels"])',
+            'toggleTilesBaseMapLayerGroups({ visible: false, layerGroups: ["buildings3D"] })',
+            'toggleTilesBaseMapLayerGroups({ visible: true, layerGroups: ["roadLabels"] })',
         ],
         examplePrompts: ['Hide 3D buildings', 'Show road labels', 'Toggle the building layer'],
-        relatedTools: ['togglePOIs', 'getMapStyleLayers', 'setMapStandardStyle'],
+        relatedTools: ['toggleTilesPOIs', 'getMapStyleLayers', 'setMapStandardStyle'],
     },
-    togglePOIs: {
-        description: togglePOIsDescription,
-        classificationPrompt: 'Show or hide built-in map POI icons with optional category filtering.',
-        inputSchema: togglePOIsSchema,
-        outputSchema: togglePOIsOutputSchema,
-        execute: executeTogglePOIs,
+    toggleTilesPOIs: {
+        description: toggleTilesPOIsDescription,
+        classificationPrompt:
+            'Show / hide vector-tile POI icons baked into the base-map style (restaurants/hotels/gas stations etc. shipped with the map). NOT places shown via `discoverPlaces` / `updatePlacesDisplay` (those are PlacesModule pins, untouched).',
+        inputSchema: toggleTilesPOIsSchema,
+        outputSchema: toggleTilesPOIsOutputSchema,
+        execute: executeToggleTilesPOIs,
         tags: ['place', 'map style'],
         examples: [
-            'togglePOIs({ allMapPOIsVisible: false })',
-            'togglePOIs({ allMapPOIsVisible: true, filterCategories: { show: "only", values: ["RESTAURANT", "CAFE"] } })',
-            'togglePOIs({ filterCategories: { show: "all_except", values: ["PARKING_GARAGE"] } })',
-            'togglePOIs({ reset: true })',
+            'toggleTilesPOIs({ allMapPOIsVisible: false })',
+            'toggleTilesPOIs({ allMapPOIsVisible: true, filterCategories: { show: "only", values: ["RESTAURANT", "CAFE"] } })',
+            'toggleTilesPOIs({ filterCategories: { show: "all_except", values: ["PARKING_GARAGE"] } })',
+            'toggleTilesPOIs({ reset: true })',
         ],
-        examplePrompts: ['Hide all POI icons', 'Show only restaurant POIs', 'Turn off parking icons'],
-        relatedTools: ['toggleBaseMapLayerGroups', 'discoverPlaces', 'setMapStandardStyle'],
+        examplePrompts: [
+            'Hide all map POI icons',
+            'Show only restaurant icons on the map style',
+            'Turn off parking icons in the base map',
+        ],
+        relatedTools: ['toggleTilesBaseMapLayerGroups', 'discoverPlaces', 'setMapStandardStyle'],
     },
-    toggleTrafficFlow: {
-        description: toggleTrafficFlowDescription,
+    toggleTilesTrafficFlow: {
+        description: toggleTilesTrafficFlowDescription,
         classificationPrompt:
-            'Toggle REAL-TIME traffic flow (colored road segments for live speeds). Not historical analytics.',
-        inputSchema: toggleTrafficFlowSchema,
-        outputSchema: toggleTrafficFlowOutputSchema,
-        execute: executeToggleTrafficFlow,
+            'Toggle the vector-tile traffic-flow overlay (live coloured road segments). NOT the same as `updateTrafficAreaAnalyticsDisplay` (historical) or route-section traffic (read via `analyseData`).',
+        inputSchema: toggleTilesTrafficFlowSchema,
+        outputSchema: toggleTilesTrafficFlowOutputSchema,
+        execute: executeToggleTilesTrafficFlow,
         tags: ['traffic', 'map style'],
-        examples: ['toggleTrafficFlow(true)', 'toggleTrafficFlow(false)'],
+        examples: ['toggleTilesTrafficFlow({ visible: true })', 'toggleTilesTrafficFlow({ visible: false })'],
         examplePrompts: ['Show traffic flow', 'Turn off traffic colors', 'Enable the congestion overlay'],
-        relatedTools: ['toggleTrafficIncidents', 'setRoute', 'getTrafficIncidents'],
+        relatedTools: ['toggleTilesTrafficIncidents', 'setRoute', 'getTrafficIncidents'],
     },
-    toggleTrafficIncidents: {
-        description: toggleTrafficIncidentsDescription,
+    toggleTilesTrafficIncidents: {
+        description: toggleTilesTrafficIncidentsDescription,
         classificationPrompt:
-            'Toggle REAL-TIME traffic incident markers and lines (accidents, jams, closures). Not historical analytics.',
-        inputSchema: toggleTrafficIncidentsSchema,
-        outputSchema: toggleTrafficIncidentsOutputSchema,
-        execute: executeToggleTrafficIncidents,
+            'Toggle the vector-tile traffic-incidents overlay (live jam/accident/closure markers). NOT the GeoJSON `getTrafficIncidents` service and NOT `analyseData` (which aggregates fetched entries). Use `getShownTileIncidents` to read what this overlay currently renders.',
+        inputSchema: toggleTilesTrafficIncidentsSchema,
+        outputSchema: toggleTilesTrafficIncidentsOutputSchema,
+        execute: executeToggleTilesTrafficIncidents,
         tags: ['traffic', 'map style'],
-        examples: ['toggleTrafficIncidents(true)', 'toggleTrafficIncidents(false)'],
-        examplePrompts: ['Show traffic incidents', 'Hide accident icons', 'Enable incident markers'],
-        relatedTools: ['toggleTrafficFlow', 'getTrafficIncidents', 'getShownIncidents', 'setRoute'],
+        examples: ['toggleTilesTrafficIncidents({ visible: true })', 'toggleTilesTrafficIncidents({ visible: false })'],
+        examplePrompts: ['Show traffic incidents overlay', 'Hide accident icons', 'Enable incident markers on the map'],
+        relatedTools: ['toggleTilesTrafficFlow', 'getTrafficIncidents', 'getShownTileIncidents', 'setRoute'],
     },
     getMapStyleLayers: {
         description: getMapStyleLayersDescription,
@@ -1108,7 +1173,7 @@ const defaultTools = {
             'Make buildings semi-transparent',
             'Make the country borders pink',
         ],
-        relatedTools: ['getMapStyleLayers', 'setLayoutProperties', 'setRouteTheme'],
+        relatedTools: ['getMapStyleLayers', 'setLayoutProperties', 'updateRoutesDisplay'],
         dependsOn: ['getMapStyleLayers'],
     },
     setPitchBearing: {
@@ -1288,19 +1353,21 @@ const defaultTools = {
     setEntryMode: {
         description: setEntryModeDescription,
         classificationPrompt:
-            'Switch a slice (places/routes/ranges) between `multiple` (overlay several entries) and `single` (latest only). `single` drops older entries.',
+            'Switch any entry-owning slice (places, routing, ranges, customGeometries, byod, trafficAreaAnalytics, trafficIncidents) between `multiple` (overlay several entries) and `single` (latest only). `single` drops older entries.',
         inputSchema: setEntryModeSchema,
         outputSchema: setEntryModeOutputSchema,
         execute: executeSetEntryMode,
         tags: ['state', 'mode', 'display'],
         examples: [
             'setEntryMode({ slice: "places", mode: "single" })',
-            'setEntryMode({ slice: "routes", mode: "multiple" })',
+            'setEntryMode({ slice: "routing", mode: "multiple" })',
+            'setEntryMode({ slice: "trafficIncidents", mode: "single" })',
         ],
         examplePrompts: [
             'Only show one route at a time',
             'Let me overlay multiple places searches',
             'Switch ranges back to single mode',
+            'Only keep the latest traffic incidents snapshot',
         ],
         relatedTools: ['recallState', 'recallPlaces', 'recallRoutes', 'recallRanges'],
     },
@@ -1337,3 +1404,23 @@ export type ToolName = keyof typeof DEFAULT_TOOLS;
  * @group Agent Toolkit
  */
 export const TOOL_NAMES = Object.keys(DEFAULT_TOOLS) as ToolName[];
+
+/**
+ * Returns each default tool's `examplePrompts` keyed by tool name. Builders are
+ * materialised with empty {@link ToolBuildOptions} so the prompts reflect the
+ * tool's default (full-surface) shape. Tools without prompts map to `[]`.
+ *
+ * Surface these in chat UIs to keep starter suggestions in sync with what the
+ * tools can actually do — the registry stays the single source of truth.
+ *
+ * @group Agent Toolkit
+ */
+export const getDefaultToolPrompts = (): Record<ToolName, readonly string[]> => {
+    const result = {} as Record<ToolName, readonly string[]>;
+    for (const name of TOOL_NAMES) {
+        const entry = DEFAULT_TOOLS[name];
+        const materialized = typeof entry === 'function' ? entry({}) : entry;
+        result[name] = materialized.examplePrompts ?? [];
+    }
+    return result;
+};

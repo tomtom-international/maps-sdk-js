@@ -37,7 +37,7 @@ export const executeReverseGeocode = async (
         const result = await reverseGeocode({ position: pos });
 
         if (result) {
-            state.places.addPlaceResult(result, makePlacesLabel(result));
+            await state.places.addPlaceResult(result, makePlacesLabel(result));
             return summarizePlace(result);
         }
 

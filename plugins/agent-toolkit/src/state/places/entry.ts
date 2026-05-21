@@ -21,7 +21,7 @@ export type PlacesEntry = {
     /**
      * Boundary polygons attached to this entry. One feature per place that has a geometry data
      * source (populated lazily via PlacesState.fetchPlaceGeometry), or a standalone result list
-     * produced by tools like processGeometries. Each feature's `id` is the geometry-data-source id
+     * produced by tools like `processData`. Each feature's `id` is the geometry-data-source id
      * (`place.properties.dataSources.geometry.id`), matching the response shape of `geometryData`.
      */
     geometries?: PolygonFeature<CommonPlaceProps>[];

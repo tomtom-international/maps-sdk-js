@@ -80,16 +80,9 @@ const SPECIFIC_MOCKS: Record<string, (...args: any[]) => Promise<any>> = {
     }),
 
     getTrafficIncidents: async () => ({
-        incidents: [
-            {
-                id: 'inc-1',
-                type: 'ACCIDENT',
-                severity: 2,
-                description: 'Minor accident',
-                position: MOCK_POSITION,
-            },
-        ],
-        message: 'Found 1 traffic incident',
+        count: 1,
+        entryId: 'incidents-0',
+        entries: [{ id: 'incidents-0', label: 'Amsterdam incidents', count: 1, timestamp: Date.now() }],
     }),
 
     findReachableAreas: async () => ({
@@ -118,10 +111,22 @@ const SPECIFIC_MOCKS: Record<string, (...args: any[]) => Promise<any>> = {
         entries: [{ id: 'ranges-0', label: `30-min from ${MOCK_PLACE.properties.address.municipality}`, count: 1 }],
     }),
 
+    recallByod: async () => ({
+        entries: [],
+    }),
+
+    recallGeometries: async () => ({
+        entries: [],
+    }),
+
     recallState: async () => ({
         places: [{ id: 'places-0', label: MOCK_PLACE.properties.address.freeformAddress }],
         routes: [],
         ranges: [],
+        incidents: [],
+        trafficAreaAnalytics: [],
+        customGeometries: [],
+        byod: [],
         mapStyle: 'standardLight',
     }),
 
@@ -129,6 +134,69 @@ const SPECIFIC_MOCKS: Record<string, (...args: any[]) => Promise<any>> = {
         position: MOCK_POSITION,
         accuracy: 10,
         message: 'GPS location retrieved',
+    }),
+
+    // Merged analyse / process surface — every kind opt-in via *EntryIDs. Mocks return minimal
+    // shapes that satisfy the structured output schemas without claiming to have run real code.
+    analyseData: async ({ name }: { name: string }) => ({
+        affectedEntries: [{ kind: 'places' as const, id: 'places-0' }],
+        name,
+        outputFormat: 'json' as const,
+        analysis: { mocked: true },
+    }),
+
+    processData: async () => ({
+        placesEntryId: 'places-2',
+        count: 0,
+        features: [],
+    }),
+
+    // BYOD surface (added by the unification PR). `addByodLayer` writes a new entry; the
+    // visibility tool toggles it on the map.
+    addByodLayer: async ({ label }: { label: string }) => ({
+        byodEntryId: 'byod-0',
+        byodFeatureCount: 0,
+        label,
+        geometryTypes: ['Point'],
+    }),
+
+    updateByodDisplay: async ({ action }: { action: 'show' | 'hide' | 'remove' }) => ({
+        action,
+        affectedIds: ['byod-0'],
+        shown: action === 'show' ? ['byod-0'] : [],
+    }),
+
+    // Traffic-area-analytics + incidents-focus / monitor — new since the merge.
+    getTrafficAreaAnalytics: async () => ({
+        entryId: 'tta-0',
+        regionCount: 1,
+        metrics: ['congestionLevel'],
+    }),
+
+    queryTrafficAnalytics: async () => ({
+        entries: [{ id: 'tta-0', label: 'Amsterdam analytics', timestamp: Date.now() }],
+    }),
+
+    updateTrafficAreaAnalyticsDisplay: async () => ({
+        success: true,
+        shown: ['tta-0'],
+    }),
+
+    focusIncidents: async () => ({
+        incidentsEntryID: 'incidents-0',
+        focusedCount: 1,
+        droppedIds: [],
+    }),
+
+    startTrafficIncidentsMonitor: async () => ({
+        success: true,
+        entryId: 'incidents-0',
+        intervalMs: 30_000,
+    }),
+
+    stopTrafficIncidentsMonitor: async () => ({
+        success: true,
+        entryId: 'incidents-0',
     }),
 };
 

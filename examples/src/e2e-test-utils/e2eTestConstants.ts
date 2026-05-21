@@ -7,3 +7,10 @@ export const DEFAULT_MAP_LOAD_TIMEOUT = 60000;
  * Default selector for the map container element
  */
 export const DEFAULT_MAP_SELECTOR = '#sdk-map';
+
+/**
+ * Test tag constants for filtering tests
+ */
+export const TAG_PROD = '@prod';
+export const TAG_SANDPACK = '@sandpack';
+export const TAG_NO_MAP = '@nomap';

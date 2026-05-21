@@ -15,7 +15,7 @@ const fakeIncident = (id: string): any => ({
 describe('focusIncidents', () => {
     it('focuses the requested ids on the named entry', async () => {
         const state = createToolState(mockTrafficMap) as ToolStateType;
-        const id = state.trafficIncidents.addIncidentsEntry(
+        const id = await state.trafficIncidents.addIncidentsEntry(
             [fakeIncident('a'), fakeIncident('b'), fakeIncident('c')],
             { bbox: [0, 0, 1, 1] as any },
             'london',
@@ -36,7 +36,7 @@ describe('focusIncidents', () => {
 
     it('drops unknown ids silently in partial-success', async () => {
         const state = createToolState(mockTrafficMap) as ToolStateType;
-        const id = state.trafficIncidents.addIncidentsEntry(
+        const id = await state.trafficIncidents.addIncidentsEntry(
             [fakeIncident('a'), fakeIncident('b')],
             { bbox: [0, 0, 1, 1] as any },
             'london',
@@ -57,7 +57,7 @@ describe('focusIncidents', () => {
 
     it('errors when ALL ids are unknown', async () => {
         const state = createToolState(mockTrafficMap) as ToolStateType;
-        const id = state.trafficIncidents.addIncidentsEntry(
+        const id = await state.trafficIncidents.addIncidentsEntry(
             [fakeIncident('a')],
             { bbox: [0, 0, 1, 1] as any },
             'london',

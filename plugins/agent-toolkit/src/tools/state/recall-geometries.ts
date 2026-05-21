@@ -12,7 +12,7 @@ export const recallGeometriesSchema = z.object({
         .optional()
         .describe(
             'Tagged id to inspect in detail (e.g. `{ kind: "places", id: "ev-stations-oost" }`, ' +
-                '`{ kind: "ranges", id: "ranges-0" }`, `{ kind: "custom", id: "bakery-candidates-gap-oost" }`). ' +
+                '`{ kind: "ranges", id: "ranges-0" }`, `{ kind: "customGeometries", id: "bakery-candidates-gap-oost" }`). ' +
                 'Omit to list every available id across all slices.',
         ),
 });
@@ -57,8 +57,8 @@ export const recallGeometriesOutputSchema = z.union([
 export const recallGeometriesDescription =
     'List or inspect every polygon source in session state — place footprints (cached on places ' +
     'entries via `withGeometries: true`), reachable-area isochrones, and custom-geometries entries ' +
-    'produced by `processGeometries`. ALWAYS call this before passing ids to `processGeometries` or ' +
-    '`analyseGeometries`; never guess. ' +
+    'produced by `processData`. ALWAYS call this before passing ids to `processData` or `analyseData` ' +
+    '(`geometriesEntryIDs`); never guess. ' +
     'No args = index across all three slices; pass `id` to retrieve features and provenance for one entry. ' +
     'No service call.';
 
@@ -103,7 +103,7 @@ const indexEntries = (state: ToolState): z.infer<typeof refSchema>[] => {
     for (const entry of state.customGeometries.entries) {
         const analyses = summariseAnalyses(entry._analysis);
         refs.push({
-            id: { kind: 'custom', id: entry.id },
+            id: { kind: 'customGeometries', id: entry.id },
             label: entry.label,
             timestamp: entry.timestamp,
             featureCount: entry.features.length,
@@ -116,54 +116,70 @@ const indexEntries = (state: ToolState): z.infer<typeof refSchema>[] => {
     return refs.sort((a, b) => b.timestamp - a.timestamp);
 };
 
-const detailFor = (id: GeometriesId, state: ToolState): z.infer<typeof detailSchema> | { error: string } => {
-    if (id.kind === 'places') {
-        const entry = state.places.entries.find((e) => e.id === id.id);
-        if (!entry) return { error: `No places entry with id "${id.id}"` };
-        if (!entry.geometries?.length) {
-            return {
-                error: `Places entry "${id.id}" has no cached footprints. Call discoverPlaces / locatePlace with \`withGeometries: true\` first.`,
-            };
-        }
+type Detail = z.infer<typeof detailSchema>;
+
+const detailForPlaces = (id: GeometriesId, state: ToolState): Detail | { error: string } => {
+    const entry = state.places.entries.find((e) => e.id === id.id);
+    if (!entry) return { error: `No places entry with id "${id.id}"` };
+    if (!entry.geometries?.length) {
         return {
-            id,
-            label: entry.label,
-            timestamp: entry.timestamp,
-            featureCount: entry.geometries.length,
-            features: { type: 'FeatureCollection', features: entry.geometries },
-            ...(summariseAnalyses(entry._analysis) && { analyses: summariseAnalyses(entry._analysis) }),
+            error: `Places entry "${id.id}" has no cached footprints. Call discoverPlaces / locatePlace with \`withGeometries: true\` first.`,
         };
     }
-    if (id.kind === 'ranges') {
-        const entry = state.ranges.entries.find((e) => e.id === id.id);
-        if (!entry) return { error: `No ranges entry with id "${id.id}"` };
-        const features = entry.ranges.flatMap((r) => r.polygon?.features ?? []);
-        if (features.length === 0) return { error: `Ranges entry "${id.id}" has no polygons.` };
-        return {
-            id,
-            label: entry.label,
-            timestamp: entry.timestamp,
-            featureCount: features.length,
-            features: { type: 'FeatureCollection', features },
-        };
-    }
-    if (id.kind === 'custom') {
-        const entry = state.customGeometries.findById(id.id);
-        if (!entry) return { error: `No custom-geometries entry with id "${id.id}"` };
-        return {
-            id,
-            label: entry.label,
-            timestamp: entry.timestamp,
-            featureCount: entry.features.length,
-            features: { type: 'FeatureCollection', features: entry.features },
-            ...(entry.provenance.operation && { operation: entry.provenance.operation }),
-            ...(entry.provenance.sourceIds.length && { sourceIds: [...entry.provenance.sourceIds] }),
-            ...(summariseAnalyses(entry._analysis) && { analyses: summariseAnalyses(entry._analysis) }),
-        };
-    }
+    const analyses = summariseAnalyses(entry._analysis);
     return {
-        error: '`{ kind: "place" }` is not a recallable detail target. Pass a places-entry id (`{ kind: "places", id }`) or use `recallPlaces` to inspect a single place.',
+        id,
+        label: entry.label,
+        timestamp: entry.timestamp,
+        featureCount: entry.geometries.length,
+        features: { type: 'FeatureCollection', features: entry.geometries },
+        ...(analyses && { analyses }),
     };
+};
+
+const detailForRanges = (id: GeometriesId, state: ToolState): Detail | { error: string } => {
+    const entry = state.ranges.entries.find((e) => e.id === id.id);
+    if (!entry) return { error: `No ranges entry with id "${id.id}"` };
+    const features = entry.ranges.flatMap((range) => range.polygon?.features ?? []);
+    if (features.length === 0) return { error: `Ranges entry "${id.id}" has no polygons.` };
+    return {
+        id,
+        label: entry.label,
+        timestamp: entry.timestamp,
+        featureCount: features.length,
+        features: { type: 'FeatureCollection', features },
+    };
+};
+
+const detailForCustomGeometries = (id: GeometriesId, state: ToolState): Detail | { error: string } => {
+    const entry = state.customGeometries.findById(id.id);
+    if (!entry) return { error: `No custom-geometries entry with id "${id.id}"` };
+    const analyses = summariseAnalyses(entry._analysis);
+    return {
+        id,
+        label: entry.label,
+        timestamp: entry.timestamp,
+        featureCount: entry.features.length,
+        features: { type: 'FeatureCollection', features: entry.features },
+        ...(entry.provenance.operation && { operation: entry.provenance.operation }),
+        ...(entry.provenance.sourceIds.length && { sourceIds: [...entry.provenance.sourceIds] }),
+        ...(analyses && { analyses }),
+    };
+};
+
+const detailFor = (id: GeometriesId, state: ToolState): Detail | { error: string } => {
+    switch (id.kind) {
+        case 'places':
+            return detailForPlaces(id, state);
+        case 'ranges':
+            return detailForRanges(id, state);
+        case 'customGeometries':
+            return detailForCustomGeometries(id, state);
+        default:
+            return {
+                error: '`{ kind: "place" }` is not a recallable detail target. Pass a places-entry id (`{ kind: "places", id }`) or use `recallPlaces` to inspect a single place.',
+            };
+    }
 };
 
 export const executeRecallGeometries = async (

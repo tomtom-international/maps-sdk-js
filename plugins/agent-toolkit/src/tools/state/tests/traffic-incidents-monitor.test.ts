@@ -37,7 +37,7 @@ const makeState = () => {
     } as any;
 };
 
-const seedEntry = (state: any, opts: Partial<{ filters: any; bbox: any; label: string }> = {}) =>
+const seedEntry = (state: any, opts: Partial<{ filters: any; bbox: any; label: string }> = {}): Promise<string> =>
     state.trafficIncidents.addIncidentsEntry(
         [feat('seed-1')],
         { bbox: opts.bbox ?? [0, 0, 1, 1], ...opts.filters },
@@ -68,7 +68,7 @@ describe('executeStartTrafficIncidentsMonitor', () => {
     it('starts polling and is idempotent on a second call', async () => {
         mockFetch.mockResolvedValue({ type: 'FeatureCollection', features: [feat('a')] });
         const state = makeState();
-        const id = seedEntry(state);
+        const id = await seedEntry(state);
         entryIdsToStop.push({ state, id });
 
         const first = await executeStartTrafficIncidentsMonitor({ incidentsEntryID: id, intervalMs: 30_000 }, state);
@@ -82,7 +82,7 @@ describe('executeStartTrafficIncidentsMonitor', () => {
     it('forwards the entry filters to the polling fetcher (eager tick uses entry.filters)', async () => {
         mockFetch.mockResolvedValue({ type: 'FeatureCollection', features: [feat('a')] });
         const state = makeState();
-        const id = seedEntry(state, {
+        const id = await seedEntry(state, {
             filters: { categoryFilter: ['jam'], timeValidityFilter: ['present'] },
         });
         entryIdsToStop.push({ state, id });
@@ -107,7 +107,7 @@ describe('executeStartTrafficIncidentsMonitor', () => {
         // The agent would then trust an unchanged interval and a recovered fetcher would
         // be silently dropped.
         const state = makeState();
-        const id = seedEntry(state);
+        const id = await seedEntry(state);
         entryIdsToStop.push({ state, id });
         const monitor = state.trafficIncidents.entries.find((e: any) => e.id === id);
         // Drive the monitor's status into `stopped-error` directly — the public API
@@ -130,7 +130,7 @@ describe('executeStartTrafficIncidentsMonitor', () => {
         // thinking a new interval took effect on the second call.
         mockFetch.mockResolvedValue({ type: 'FeatureCollection', features: [feat('a')] });
         const state = makeState();
-        const id = seedEntry(state);
+        const id = await seedEntry(state);
         entryIdsToStop.push({ state, id });
 
         const result = (await executeStartTrafficIncidentsMonitor(
@@ -154,7 +154,7 @@ describe('executeStopTrafficIncidentsMonitor', () => {
 
     it('reports wasRunning: false when no monitor was active', async () => {
         const state = makeState();
-        const id = seedEntry(state);
+        const id = await seedEntry(state);
         const result = await executeStopTrafficIncidentsMonitor({ incidentsEntryID: id }, state);
         expect(result).toMatchObject({ incidentsEntryID: id, wasRunning: false });
     });
@@ -162,7 +162,7 @@ describe('executeStopTrafficIncidentsMonitor', () => {
     it('stops a running monitor and reports wasRunning: true', async () => {
         mockFetch.mockResolvedValue({ type: 'FeatureCollection', features: [feat('a')] });
         const state = makeState();
-        const id = seedEntry(state);
+        const id = await seedEntry(state);
 
         await executeStartTrafficIncidentsMonitor({ incidentsEntryID: id }, state);
         expect(state.trafficIncidents.isMonitored(id)).toBe(true);
@@ -175,7 +175,7 @@ describe('executeStopTrafficIncidentsMonitor', () => {
     it('leaves the entry intact — only the polling stops', async () => {
         mockFetch.mockResolvedValue({ type: 'FeatureCollection', features: [feat('a')] });
         const state = makeState();
-        const id = seedEntry(state);
+        const id = await seedEntry(state);
 
         await executeStartTrafficIncidentsMonitor({ incidentsEntryID: id }, state);
         await executeStopTrafficIncidentsMonitor({ incidentsEntryID: id }, state);

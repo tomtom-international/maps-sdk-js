@@ -22,7 +22,7 @@ function resolveAzureConfig(): AzureConfig | null {
         throw new Error('AZURE_API_KEY is required. Add it to plugins/agent-toolkit/.env.');
     }
     if (!resourceName) {
-        throw new Error('Either AZURE_GATEWAY_BASE_URL (APIM) or AZURE_RESOURCE_NAME (direct) is required.');
+        throw new Error('Either AZURE_RESOURCE_NAME is required.');
     }
     return { mode: 'direct', resourceName, apiKey, deploymentId, apiVersion };
 }

@@ -1,6 +1,7 @@
 import type { Tool } from 'ai';
+import type { z } from 'zod';
 import { createHelpTool } from './tools/utilities';
-import type { ToolBuildOptions, ToolDefinition, ToolEntry, ToolMetadata, ToolState } from './types';
+import type { EntryDataKind, ToolBuildOptions, ToolDefinition, ToolEntry, ToolMetadata, ToolState } from './types';
 
 /** Converts a ToolEntry to an AI SDK Tool, binding state to execute. */
 const toAiTool = <S extends ToolState>(entry: ToolEntry<S>, state: S, includeOutputSchema: boolean): Tool =>
@@ -21,6 +22,7 @@ const toMetadata = <S extends ToolState>(name: string, entry: ToolEntry<S>): Too
     examplePrompts: entry.examplePrompts,
     relatedTools: entry.relatedTools,
     dependsOn: entry.dependsOn,
+    scopePrompt: entry.scopePrompt,
 });
 
 // Materializes a builder entry with the given build options, or returns a static entry as-is.
@@ -30,12 +32,37 @@ const materializeEntry = <S extends ToolState>(
 ): ToolEntry<S> => (typeof entry === 'function' ? entry(buildOptions) : entry);
 
 /**
+ * Registry entry for a scopable tool — captured at setup time so {@link prepareStep}
+ * can rebuild the tool's description + inputSchema per turn from the classifier's
+ * `toolScopes` output.
+ *
+ * @ignore
+ */
+export type ScopableToolInfo = {
+    /**
+     * Validate `rawScope` against the tool's scopeSchema and re-invoke its builder.
+     * Returns `null` when either the parse or the rebuild fails (fail-open — callers
+     * leave the default surface in place rather than crashing the step). The original
+     * builder, scope schema, and any other build options are captured in the closure
+     * so callers stay decoupled from the underlying validation/build mechanics.
+     */
+    applyScope: (rawScope: unknown) => { description: string; inputSchema: z.ZodType } | null;
+    /** Default (full-surface) values, used to restore between turns. */
+    defaultDescription: string;
+    defaultInputSchema: z.ZodType;
+};
+
+/**
  * Converts a composed tool record into AI SDK tools and metadata.
  *
  * Each input value may be a {@link ToolEntry} or a {@link ToolEntryBuilder};
  * builders are materialized with {@link ToolBuildOptions} built from
  * `featureFlags` (and any future build-time config) so each tool can decide
  * how its description, schema, or executor are shaped per agent instance.
+ *
+ * When a builder produces a {@link ToolEntry} carrying a `scopeSchema`, the
+ * builder reference is retained in `scopableTools` so {@link prepareStep} can
+ * re-invoke it with a per-turn scope and mutate the live tool object.
  *
  * Rebinds the help tool with resolved metadata.
  *
@@ -44,17 +71,51 @@ const materializeEntry = <S extends ToolState>(
 export const setupTools = <S extends ToolState>(
     toolEntries: Record<string, ToolDefinition<S>>,
     state: S,
-    options?: { outputSchemas?: boolean; featureFlags?: ToolBuildOptions['featureFlags'] },
-): { tools: Record<string, Tool>; toolsMetadata: Record<string, ToolMetadata> } => {
+    options?: {
+        outputSchemas?: boolean;
+        featureFlags?: ToolBuildOptions['featureFlags'];
+        enabledDataKinds?: readonly EntryDataKind[];
+    },
+): {
+    tools: Record<string, Tool>;
+    toolsMetadata: Record<string, ToolMetadata>;
+    scopableTools: Record<string, ScopableToolInfo>;
+} => {
     const includeOutputSchema = options?.outputSchemas !== false;
-    const buildOptions: ToolBuildOptions = { featureFlags: options?.featureFlags };
+    const buildOptions: ToolBuildOptions = {
+        featureFlags: options?.featureFlags,
+        enabledDataKinds: options?.enabledDataKinds,
+    };
     const tools: Record<string, Tool> = {};
     const toolsMetadata: Record<string, ToolMetadata> = {};
+    const scopableTools: Record<string, ScopableToolInfo> = {};
 
     for (const [name, entryOrBuilder] of Object.entries(toolEntries)) {
         const entry = materializeEntry(entryOrBuilder, buildOptions);
         tools[name] = toAiTool(entry, state, includeOutputSchema);
         toolsMetadata[name] = toMetadata(name, entry);
+
+        // Builder + scopeSchema is the precondition for per-turn rebuilding. A static
+        // ToolEntry with a scopeSchema isn't rebuildable because there's no factory to
+        // re-invoke; we silently treat it as a non-scopable tool to keep the contract simple.
+        if (typeof entryOrBuilder === 'function' && entry.scopeSchema) {
+            const builder = entryOrBuilder;
+            const scopeSchema = entry.scopeSchema;
+            scopableTools[name] = {
+                applyScope: (rawScope) => {
+                    const parsed = scopeSchema.safeParse(rawScope);
+                    if (!parsed.success) return null;
+                    try {
+                        const rebuilt = builder({ ...buildOptions, scope: parsed.data });
+                        return { description: rebuilt.description, inputSchema: rebuilt.inputSchema };
+                    } catch {
+                        return null;
+                    }
+                },
+                defaultDescription: entry.description,
+                defaultInputSchema: entry.inputSchema,
+            };
+        }
     }
 
     // Rebind help tool with resolved metadata
@@ -66,5 +127,5 @@ export const setupTools = <S extends ToolState>(
         throw new Error('MapAgent requires at least one tool.');
     }
 
-    return { tools, toolsMetadata };
+    return { tools, toolsMetadata, scopableTools };
 };

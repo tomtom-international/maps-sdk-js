@@ -4,7 +4,7 @@ A headless conversational agent that gives Large Language Models tool-based cont
 
 No UI is included — bring your own chat interface. No LLM provider is bundled — supply any AI SDK-compatible model.
 
-> **Full documentation** — guides, architecture diagrams, and tutorials are available at [docs.tomtom.com](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit).
+> **Full documentation** — guides, architecture diagrams, and tutorials are available at [docs.tomtom.com](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/overview).
 
 ## Installation
 
@@ -49,8 +49,7 @@ console.log(result.text);
 ### With React (`useChat`)
 
 ```typescript
-import { DirectChatTransport } from 'ai/react';
-import { useChat } from 'ai/react';
+import { DirectChatTransport, useChat } from 'ai/react';
 
 const agent = createMapAgent(map, { model: openai('gpt-4o') });
 
@@ -74,89 +73,113 @@ See [`examples/map-chat-agent`](../../examples/map-chat-agent) for a full workin
 
 ## Tools reference
 
-The plugin ships 52 tools organized into five categories. All tools are included by default and can be individually removed or replaced via the [`tools` option](#composing-tool-sets).
+The plugin ships a `DEFAULT_TOOLS` registry covering search, routing, traffic, reachable areas, BYOD GeoJSON, base-map control, MapLibre access, and code-generated analysis. All tools are included by default and can be individually removed or replaced via the [`tools` option](#composing-tool-sets). The full per-tool reference lives in the [Agent Toolkit guide](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/tools).
 
-### Service tools — fetch data from TomTom APIs
+### Location & search
 
 | Tool | Description |
 |---|---|
 | `locatePlace` | Resolve a location string (landmark, city, address) to a place; optionally stage as a waypoint |
 | `reverseGeocode` | Convert `[longitude, latitude]` coordinates to an address |
 | `discoverPlaces` | Search for places by text query or POI category within an area |
+| `getPOICategoryCodes` | Look up TomTom POI category codes from natural-language names |
+| `getCurrentLocation` | Get the user's physical GPS location from the browser |
+| `getViewport` | Get current map center, zoom, and bounding box |
+
+### Routing & reachable areas
+
+| Tool | Description |
+|---|---|
 | `setRoute` | Calculate or recalculate a route — provide `locations` (waypoints), `parameters` (route options), or both |
 | `addWaypointsToRoute` | Extend the current route — prepend a new origin, append a new destination, and/or insert intermediate stops |
 | `removeWaypointsFromRoute` | Remove one or more waypoints by index from the current route |
 | `replaceWaypointInRoute` | Overwrite a single waypoint of the current route in place — origin, destination, or by index |
-| `getPOICategoryCodes` | Look up TomTom POI category codes from natural-language names |
-| `getTrafficIncidents` | Fetch traffic incidents by bounding box or IDs (one-shot) |
-| `startTrafficIncidentsMonitor` | Start the live incident monitor — pairs with `getTrafficIncidents`, refreshes incident state on a configurable cadence so subsequent reads stay fresh |
-| `stopTrafficIncidentsMonitor` | Stop the live incident monitor |
-| `analyseIncidents` | Aggregate / count / chart incidents already in state via dynamic JS (categories, top delays, clusters, …) |
-| `focusIncidents` | Highlight a subset of incidents (by id / category / severity) on the map and dim the rest |
-| `getTrafficAreaAnalytics` | Fetch historical traffic analytics (speed, congestion, travel time) for an area |
-| `queryTrafficAnalytics` | Query cached analytics data or check what is currently displayed |
-| `searchAlongRoute` | Search for POIs along a calculated route, ranked by detour cost |
-| `findReachableArea` | Calculate isochrone/isodistance polygons from a point |
+| `getCurrentWaypoints` | Get the staged waypoint slots (origin, stops, destination) |
+| `findReachableAreas` | Calculate isochrone/isodistance polygons from one or more origins |
 
-### TomTom Map tools — render and inspect map state
+### Traffic
 
 | Tool | Description |
 |---|---|
-| `showPlaces` | Display the most recent place results as markers on the map |
-| `showRoute` | Render the most recently calculated route and fit the camera |
-| `showTrafficAreaAnalytics` | Visualize traffic analytics as hexgrid, heatmap, or tiles |
-| `showWaypoints` | Display staged waypoint markers without the route line |
-| `clearMap` | Remove displayed places, routes, or all features |
-| `getShownPlaces` | List places currently displayed on the map |
-| `getShownRoutes` | List routes currently rendered on the map |
-| `getShownWaypoints` | List waypoint markers currently shown |
-| `getShownRouteSections` | List sections (toll, country, motorway, etc.) of the shown route |
-| `getShownRouteTrafficIncidents` | List traffic incidents overlaid on the shown route |
-| `getShownIncidents` | List real-time incidents visible in the current viewport |
-| `getStandardMapStyles` | List available standard map style presets |
-| `setMapStandardStyle` | Switch map style (light, dark, satellite, driving, etc.) |
-| `setRouteTheme` | Color the route line and waypoint icons |
-| `setLanguage` | Change the language for map labels and API responses |
-| `toggleBaseMapLayerGroups` | Show/hide named layer groups (buildings3D, roadLabels, water, etc.) |
-| `togglePOIs` | Show/hide built-in map POI icons with optional category filtering |
-| `toggleTrafficFlow` | Toggle real-time traffic flow overlay |
-| `toggleTrafficIncidents` | Toggle real-time traffic incident markers |
-| `fitRouteSection` | Fit the camera to a specific route section by type and ID |
+| `getTrafficIncidents` | Fetch traffic incidents within an area (viewport, named place, route corridor, polygon, IDs) |
+| `startTrafficIncidentsMonitor` | Start a live monitor that refreshes incident state on a configurable cadence |
+| `stopTrafficIncidentsMonitor` | Stop the live incident monitor |
+| `focusIncidents` | Highlight a subset of incidents (by id / category / severity) on the map and dim the rest |
+| `getTrafficAreaAnalytics` | Fetch historical traffic analytics (speed, congestion, travel time) for an area |
+| `queryTrafficAnalytics` | Query cached analytics data or check what is currently displayed |
+| `toggleTilesTrafficFlow` | Toggle the real-time traffic-flow tile overlay |
+| `toggleTilesTrafficIncidents` | Toggle the real-time traffic-incidents tile overlay |
+| `getShownTileIncidents` | List real-time incidents visible in the current viewport |
 
-### MapLibre tools — direct map engine access
+### Bring-your-own-data (BYOD)
+
+| Tool | Description |
+|---|---|
+| `addByodLayer` | Ingest a customer-authored GeoJSON layer from a URL or inline `FeatureCollection` |
+| `recallByod` | List BYOD entries, or retrieve a single entry's full `FeatureCollection` by id |
+| `updateByodDisplay` | Show, hide, or clear BYOD layers on the map |
+
+### Unified data tools — scope-aware code generation
+
+| Tool | Description |
+|---|---|
+| `analyseData` | Aggregate / chart entries (`places`, `routes`, `incidents`, `geometries`, `trafficAreaAnalytics`, `byod`) via dynamic JS; classifier-emitted scope narrows the schema per turn |
+| `processData` | Transform entries into new `places`, `placeConnections`, `geometries`, `byod`, or a `fitOnMap` camera move via dynamic JS |
+| `executeMaplibreCode` | Execute arbitrary MapLibre JS against the live `Map` instance — escape hatch for custom layers, animations, raster overlays |
+
+> See the [Code generation](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/tools#code-generation) section of the guide for the threat model — these tools have no sandbox.
+
+### Map display
+
+| Tool | Description |
+|---|---|
+| `updatePlacesDisplay` | Show, hide, or restyle place entries on the map |
+| `updateRoutesDisplay` | Show, hide, or restyle route entries (line color, waypoint icons, fit camera) |
+| `updateWaypointsDisplay` | Show staged waypoint markers without the route line |
+| `updateTrafficAreaAnalyticsDisplay` | Visualize traffic-area-analytics as hexgrid, heatmap, or tiles |
+| `clearMap` | Remove displayed places, routes, BYOD layers, or all features |
+
+### Map control
 
 | Tool | Description |
 |---|---|
 | `flyTo` | Move the camera to a position or bounding box |
-| `getViewport` | Get current map center, zoom, and bounding box |
+| `zoomInOrOut` | Adjust the zoom level by a delta |
+| `setPitchBearing` | Tilt (pitch) and/or rotate (bearing) the camera |
+| `getStandardMapStyles` | List available standard map style presets |
+| `setMapStandardStyle` | Switch map style (light, dark, satellite, driving, etc.) |
+| `setLanguage` | Change the language for map labels and API responses |
+| `toggleTilesBaseMapLayerGroups` | Show/hide named layer groups (buildings3D, roadLabels, water, etc.) |
+| `toggleTilesPOIs` | Show/hide built-in map POI icons with optional category filtering |
+
+### MapLibre direct access
+
+| Tool | Description |
+|---|---|
 | `getMapStyleLayers` | List MapLibre layer IDs with their paint/layout properties |
 | `setLayoutProperties` | Set MapLibre layout properties on named layers |
 | `setPaintProperties` | Set MapLibre paint properties (colors, widths, opacity) on named layers |
-| `setPitchBearing` | Tilt (pitch) and/or rotate (bearing) the camera |
-| `zoomInOrOut` | Adjust the zoom level by a delta |
-| `executeMaplibreCode` | Execute arbitrary MapLibre JS code for maximum flexibility |
 
-### State tools — recall session history
+### State & recall
 
 | Tool | Description |
 |---|---|
 | `recallPlaces` | Retrieve the history of place lookups from this session |
 | `recallRoutes` | Retrieve previously calculated routes from this session |
-| `recallRanges` | Retrieve stored reachable range results |
-| `recallGeometries` | List/inspect every polygon source in state (place footprints, isochrones, custom-geometries) — call before passing IDs to `processGeometries` / `analyseGeometries` |
-| `getCurrentWaypoints` | Get the staged waypoint slots (origin, stops, destination) |
+| `recallRanges` | Retrieve stored reachable-range results |
+| `recallGeometries` | Look up polygon sources by `{ kind, id }` across place footprints, isochrones, and `customGeometries` entries |
+| `recallByod` | Retrieve BYOD entries (see [BYOD](#bring-your-own-data-byod)) |
+| `recallState` | Summarize the current contents of every state slice |
+| `setEntryMode` | Switch a slice between `multiple` (default) and `single` entry modes |
+| `resetState` | Reset one or all state slices |
 
-### Utility tools — pure computation helpers
+### Utilities
 
 | Tool | Description |
 |---|---|
 | `calculateBBox` | Compute a bounding box from GeoJSON features or tool results |
 | `formatDistance` | Format meters into a human-readable string (e.g. "2.5 km") |
 | `formatDuration` | Format seconds into a human-readable string (e.g. "1 h 30 min") |
-| `getCurrentLocation` | Get the user's physical GPS location from the browser |
-| `getRouteProgress` | Get the position along the route at a given time or distance |
-| `getSectionProgress` | Get the distance and travel time for route sections by type |
-| `getSectionBBox` | Get the bounding box of a specific route section |
 | `help` | List available capabilities in summary or searchable detail mode |
 
 ## Customization
@@ -188,6 +211,14 @@ const agent = createMapAgent<MyState>(map, {
     // Custom state slices — only custom fields needed, built-in slices are created automatically
     state: { fleet: new FleetState() },
 
+    // Per-kind data-entry config. `enabled: false` removes the kind from the tool surface
+    // (drops its recall/display/fetch tools and the kind from analyseData/processData scope).
+    // `entryMode` switches the slice between 'multiple' (default) and 'single' (latest only).
+    dataEntries: {
+        routes: { entryMode: 'single' },
+        byod: { enabled: false },
+    },
+
     // Intent classifier: omit for default LLM-based, false to disable
     classifier: createDefaultClassifier({ model: openai('gpt-4o-mini') }),
 
@@ -202,6 +233,20 @@ const agent = createMapAgent<MyState>(map, {
 
     // Max tool-loop iterations (default: 10)
     maxSteps: 15,
+
+    // Opt into experimental features (subject to change without notice)
+    featureFlags: { experimentalSearch: true },
+
+    // Provider-specific options forwarded to the AI SDK on every step
+    providerOptions: {
+        openai: { reasoningEffort: 'low', reasoningSummary: 'auto' },
+    },
+
+    // Per-step providerOptions override — e.g. bump reasoning only on code-exec turns
+    stepProviderOptions: ({ activeTools }) =>
+        activeTools?.includes('processData')
+            ? { openai: { reasoningEffort: 'medium' } }
+            : undefined,
 });
 ```
 
@@ -253,7 +298,7 @@ const fleetTools = {
             return { vehicleId, position };
         },
         tags: ['fleet'],
-        relatedTools: ['showPlaces'],
+        relatedTools: ['updatePlacesDisplay'],
     },
 } satisfies Record<string, ToolEntry>;
 
@@ -289,29 +334,15 @@ type ToolEntry<S extends ToolState = ToolState> = {
 - `PlacesState` — place / geometry entry history
 - `RoutingState` — route history, planning waypoint slots, route parameters
 - `RangeState` — reachable-range entries
-- `CustomGeometriesState` — derived polygon entries produced by `processGeometries` (union, difference, h3-coverage, …)
+- `CustomGeometriesState` — derived polygon entries produced by `processData` (union, difference, h3-coverage, …)
+- `BYODState` — bring-your-own-data GeoJSON layer entries
 - `BaseMapState` — viewport, style, language, raw `mapLibreMap`
 - `TrafficTilesState` — real-time traffic flow + incident tile-overlay visibility
-- `TrafficAreaAnalyticsState` — cached traffic-area-analytics result + current visualisation config
-- `TrafficIncidentsState` — fetched incident entries, per-entry analyses, focused subsets, and the live `IncidentsMonitor`
+- `TrafficAreaAnalyticsState` — historical traffic-area-analytics entries and per-entry visualisation
+- `TrafficIncidentsState` — fetched incident entries, registered analyses, focused subsets, and the optional polling monitor
 - `MapPOIsState` — POI category visibility and filters
 
-Create state manually for advanced scenarios:
-
-```typescript
-import { createToolState, type ToolState } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
-
-// Base state
-const state = createToolState(map);
-
-// With custom slices
-const state = createToolState(map, {
-    fleet: new FleetState(),
-    weather: new WeatherCache(),
-});
-```
-
-Custom slices are merged alongside built-in state. When using `createMapAgent`, define an interface extending `ToolState` and pass the type parameter — only custom slices need to be provided:
+Built-in slices are constructed automatically by `createMapAgent`. To add custom slices, define an interface extending `ToolState` and pass the type parameter — only the custom fields need to be provided:
 
 ```typescript
 interface MyState extends ToolState {
@@ -324,7 +355,7 @@ const agent = createMapAgent<MyState>(map, {
 });
 
 agent.state.fleet;   // FleetState — custom slice
-agent.state.places;  // PlacesStates — registry of named place-display buckets
+agent.state.places;  // PlacesState — append-only history of place entries
 ```
 
 ## Intent classifier
@@ -374,38 +405,6 @@ const agent = createMapAgent(map, {
 
 ## Advanced usage
 
-### Manual agent setup
-
-Bypass `createMapAgent` for maximum control:
-
-```typescript
-import { ToolLoopAgent, stepCountIs, tool } from 'ai';
-import { createToolState, DEFAULT_TOOLS, BASE_SYSTEM_PROMPT } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
-
-const state = createToolState(map);
-const { help, ...toolEntries } = DEFAULT_TOOLS; // customize as needed
-
-// Convert ToolEntry records to AI SDK tools (bind state)
-const tools = Object.fromEntries(
-    Object.entries(toolEntries).map(([name, entry]) => [
-        name,
-        tool({
-            description: entry.description,
-            inputSchema: entry.inputSchema,
-            outputSchema: entry.outputSchema,
-            execute: async (input) => entry.execute(input, state),
-        }),
-    ]),
-);
-
-const agent = new ToolLoopAgent({
-    model: openai('gpt-4o'),
-    tools,
-    instructions: BASE_SYSTEM_PROMPT + '\n\nCustom instructions...',
-    stopWhen: stepCountIs(15),
-});
-```
-
 ### Wrapping default tools
 
 Add logging, analytics, or custom behavior around existing tools:
@@ -439,7 +438,6 @@ const agent = createMapAgent(map, {
         removeWaypointsFromRoute: false,
         replaceWaypointInRoute: false,
         updateRoutesDisplay: false,
-        searchAlongRoute: false,
     },
 });
 ```
@@ -454,7 +452,7 @@ const agent = createMapAgent(map, {
         setLanguage: false,
         setLayoutProperties: false,
         setPaintProperties: false,
-        toggleBaseMapLayerGroups: false,
+        toggleTilesBaseMapLayerGroups: false,
     },
 });
 ```
@@ -474,39 +472,75 @@ agent.destroy(); // Reset all state slices (call on unmount)
 
 ```typescript
 // Main factory
-export { createMapAgent } from './create-map-agent';
+export { createMapAgent } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 
-// State
-export { createToolState, type StateSlice } from './state';
+// Tool registry and composition
+export {
+    DEFAULT_TOOLS,
+    getDefaultToolPrompts,
+    resolveTools,
+    TOOL_NAMES,
+    type ToolName,
+} from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 
 // System prompt
-export { BASE_SYSTEM_PROMPT, buildSystemPrompt } from './system-prompt';
+export { BASE_SYSTEM_PROMPT } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 
-// Tool registry
-export { DEFAULT_TOOLS, TOOL_NAMES, type ToolName } from './tools';
+// Data-entry & entry-mode introspection
+export {
+    DATA_ENTRY_KIND_TO_SLICE,
+    ENTRY_MODE_SLICE_NAMES,
+    TOOLS_BY_DATA_ENTRY_KIND,
+    type DataEntryConfig,
+    type DataEntryKind,
+    type EntryDataKind,
+    type EntryMode,
+    type EntryModeSlice,
+    type EntryModeSliceName,
+} from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 
-// Tool composition
-export { resolveTools } from './resolve-tools';
+// Geometries id schema (tagged `{ kind, id }` accepted by analyseData/processData)
+export {
+    geometriesIdSchema,
+    type GeometriesId,
+    type GeometriesIdKind,
+} from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+
+// State digest (for dev panels / debug UIs)
+export {
+    formatStateDigestDiff,
+    getStateDigest,
+    type StateDigest,
+} from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 
 // Classifier
 export {
-    type ClassificationResult,
     classifyUserIntent,
     createDefaultClassifier,
     extractLastUserText,
-} from './utils/intent-classifier';
+    type ClassificationResult,
+    type Classifier,
+    type ClassifierContext,
+    type ClassifierOptions,
+} from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 
-// Types
+// Traffic-incidents monitor types
 export type {
-    Classifier,
-    ClassifierContext,
-    MapAgentInstance,
-    MapAgentOptions,
-    ToolEntry,
-    ToolMetadata,
-    ToolNameHint,
-    ToolState,
-} from './types';
+    IncidentSnapshot,
+    MonitoredArea,
+    PollingStatus,
+} from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+
+// Core types — `StateSlice`, `ToolState`, `MapAgentOptions`, `MapAgentInstance`,
+// `ToolEntry`, `ToolEntryBuilder`, `ToolDefinition`, `ToolBuildOptions`,
+// `ToolMetadata`, `ToolName`, `ToolNameHint`, `FeatureFlags`, entry/analysis
+// types (`PlacesEntry`, `PlacesAnalysis`, `RoutesEntry`, `RoutesAnalysis`,
+// `BYODEntry`, `BYODSource`, `CustomGeometriesEntry`, `CustomGeometriesAnalysis`,
+// `GeometryProvenance`, `RangesEntry`, `ReachableRange`, `RouteParams`,
+// `TrafficAreaAnalyticsEntry`, `TrafficAreaAnalyticsAnalysis`,
+// `TrafficAreaAnalyticsParams`, `TrafficIncidentsEntry`, `IncidentsAnalysis`),
+// and more.
+export type * from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 ```
 
 ## Dependencies

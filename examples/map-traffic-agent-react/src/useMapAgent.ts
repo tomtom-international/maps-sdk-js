@@ -20,7 +20,7 @@ type UseMapAgentOptions = {
  * tree mirrors the panel tree in App.tsx.
  */
 export function useMapAgent(options: UseMapAgentOptions) {
-    const { agent, transport, isReady } = useAgentBootstrap(options);
+    const { agent, transport, classifications, isReady } = useAgentBootstrap(options);
 
     const { analyticsState } = useTrafficAnalytics(agent);
     const { selectedIncident, selectIncident, clearSelectedIncident } = useSelectedIncident(agent);
@@ -35,6 +35,7 @@ export function useMapAgent(options: UseMapAgentOptions) {
     return {
         agent,
         transport,
+        classifications,
         isReady,
         analyticsState,
         selectedIncident,

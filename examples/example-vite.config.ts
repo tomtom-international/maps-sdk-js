@@ -11,6 +11,19 @@ if (!maplibreVersion) {
 }
 
 /**
+ * Vite configuration for building production example applications.
+ *
+ * This builds standalone, minified, single-file HTML applications for each
+ * example in dist/prod/. These are:
+ * - Deployable demo applications
+ * - Used for E2E testing of production-like builds
+ * - Available in TT npm in case they can be used directly as demos elsewhere in TT.
+ *
+ * These builds are fully optimized with minification for production use.
+ * They use import maps to externalize MapLibre GL for better caching.
+ */
+
+/**
  * Scripts to inject into HTML pages to provide MapLibre GL via import map.
  * This allows examples to work without bundling MapLibre GL, which facilitates caching.
  */
@@ -25,14 +38,17 @@ const MAPLIBRE_IMPORT_MAP_SCRIPTS = `
     </script>
 `;
 
-// NOTE: This config is meant to be reused by each example. Thus, any configured paths are likely relatively to each example folder.
+/**
+ * NOTE: This config is meant to be reused by each example.
+ * All configured paths are relative to each example folder.
+ */
 export default defineConfig(({ mode }) => {
     return {
         root: './src',
         base: './',
         build: {
             emptyOutDir: true,
-            outDir: '../dist',
+            outDir: '../dist/prod',
             minify: 'terser',
             rolldownOptions: {
                 external: ['maplibre-gl'],
@@ -62,7 +78,7 @@ export default defineConfig(({ mode }) => {
                 ? []
                 : [
                       visualizer({
-                          filename: 'bundle-stats.html',
+                          filename: 'bundle-stats-prod.html',
                           open: false,
                           gzipSize: true,
                       }),

@@ -6,7 +6,7 @@ import type { AnalysisOutputFormat } from '../../tools/shared';
 
 /**
  * A single aggregation/analysis result attached to a routes entry.
- * Produced by the `analyseRoutes` tool; `data` is whatever the dynamic code returned.
+ * Produced by `analyseData`; `data` is whatever the dynamic code returned.
  *
  * @group Agent Toolkit
  */

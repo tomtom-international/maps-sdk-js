@@ -8,10 +8,12 @@ type FakeEntry = {
     places: any[];
 };
 
-const mockState = (entries: FakeEntry[] = []) =>
+const mockState = (entries: FakeEntry[] = [], shownIds: readonly string[] = []) =>
     ({
         places: {
             entries,
+            shownEntryIds: new Set(shownIds),
+            getShownMarkerType: () => undefined,
         },
     }) as any;
 
@@ -30,8 +32,8 @@ describe('recallPlaces', () => {
         const result = await executeRecallPlaces({}, state);
         expect(result).toEqual({
             entries: [
-                { id: 'places-1', label: '5 places', timestamp: 2000, featureCount: 5 },
-                { id: 'places-0', label: 'Cafe', timestamp: 1000, featureCount: 1 },
+                { id: 'places-1', label: '5 places', timestamp: 2000, featureCount: 5, shown: false },
+                { id: 'places-0', label: 'Cafe', timestamp: 1000, featureCount: 1, shown: false },
             ],
         });
     });
@@ -63,6 +65,7 @@ describe('recallPlaces', () => {
                     label: '3 places',
                     timestamp: 1000,
                     featureCount: 3,
+                    shown: false,
                     analyses: [
                         {
                             name: 'by-category',

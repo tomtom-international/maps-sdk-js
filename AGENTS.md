@@ -115,6 +115,7 @@ cp examples/.env.example examples/.env   # add API_KEY_EXAMPLES=…
 - **Arrow functions**: prefer arrow function syntax (`const fn = () => ...`) over `function` declarations. One-liner arrows that return a single expression omit the curly braces and `return` keyword (e.g. `const double = (x: number) => x * 2`).
 - **No re-exports**: do not re-export types or values that originate elsewhere — always import directly from the canonical source. Barrel re-exports that just forward a symbol from another module add indirection without value.
 - **Reuse core utilities**: before writing a local helper for geometry, bbox, distance, formatting, or any other generic operation, check `core/src/util/` (exported via `@tomtom-org/maps-sdk/core`). The same applies to `services/` helpers when working in higher layers. Only add a new local helper when nothing in the canonical location fits.
+- **Cross-file consistency**: when renaming or removing a public symbol (tool, type, slice, helper, schema), sweep `git grep -l '<oldName>'` across `plugins/`, `examples/`, `documentation/docs-portal/`, and `.claude/skills/` — descriptions, JSDoc, navigation entries, and skill trigger keywords all go stale silently. The `tomtom-maps-sdk-js-contribution` skill keeps a fuller checklist of the surfaces to walk before pushing.
 
 ## Key Files & Directories
 

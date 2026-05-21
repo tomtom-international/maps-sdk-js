@@ -150,7 +150,7 @@ export const calculateAndAddRoute = async (
         ...buildCalculateRouteParams(state.routing.params),
     });
 
-    const entryId = state.routing.addRoutes(routes, waypoints, makeRoutesLabel(routes, waypoints));
+    const entryId = await state.routing.addRoutes(routes, waypoints, makeRoutesLabel(routes, waypoints));
 
     if (showOnMap) {
         await showRouteOnMap(state, entryId, routes, waypoints, hidePreviousEntries);

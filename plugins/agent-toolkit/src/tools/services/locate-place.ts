@@ -208,7 +208,7 @@ export const executeLocatePlace = async (
             return { error: `No result found for "${query}"` };
         }
 
-        const placesEntryId = state.places.addPlaceResult(result, makePlacesLabel(result, { query }), entryId);
+        const placesEntryId = await state.places.addPlaceResult(result, makePlacesLabel(result, { query }), entryId);
 
         if (waypointIndex !== undefined) {
             state.routing.setWaypointAt(waypointIndex, result as unknown as WaypointLike);

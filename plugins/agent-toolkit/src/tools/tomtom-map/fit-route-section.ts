@@ -31,7 +31,7 @@ export const fitRouteSectionSchema = z.object({
 });
 
 export const fitRouteSectionDescription =
-    'Fit the camera to a specific route section by type + ID (from getShownRouteSections). Requires a route on the map.';
+    'Fit the camera to a specific route section by type + ID (obtain ids from `recallRoutes({ id })` detail mode or via `analyseData` over routes). Requires a route on the map.';
 
 /**
  * Execute fit route section.

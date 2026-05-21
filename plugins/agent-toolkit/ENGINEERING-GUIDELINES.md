@@ -53,7 +53,31 @@ Every word in a tool description must fight for its spot. Descriptions are opera
 
 Prefer `routeIndex`, waypoint indexes, semantic layer names, human-readable style IDs over opaque identifiers. The plugin spans service history, rendered state, and MapLibre layers — cryptic references cause confusion.
 
-## 4. Keep Heavy Data in State, Return Summaries
+**Entry IDs are the cross-tool currency.** Every entry-owning slice (`places`, `routing`, `ranges`, `customGeometries`, `byod`, `trafficAreaAnalytics`, `trafficIncidents`) issues stable, prefixed ids like `places-3`, `routes-1`, `byod-0`. Every recall / display / `analyseData` / `processData` tool accepts those ids via the matching `*EntryIDs` field. New entry-owning slices and new tools that read from existing slices should follow the same convention — a new naming scheme forces the model to learn a special case.
+
+## 4. Tool Outputs: Structured Errors, Never Throws
+
+Every tool `execute` must catch its own failures and return a structured error shape — typically `{ error: string }`, or a discriminated `{ status: 'not_found' | 'unauthorized' | … }` when the model needs to branch. Throwing escapes the AI SDK boundary and surfaces as an opaque step failure that the model cannot reason about or recover from.
+
+**Error messages are part of the contract.** Name the missing entity and the next valid action: `"No routes available — call setRoute first."` beats `"Not found."` Vague errors are the single biggest driver of retry loops.
+
+**Distinguish input errors from external errors.** A missing precondition (no route yet, unknown entry id) is an input error — the model needs to call something else first. A 5xx from a service is external — the model can sensibly retry once. The error string should make the difference obvious; if it doesn't, the model will pick the wrong recovery.
+
+## 5. Scale Tools With Builders, Not Branching
+
+Use a static `ToolEntry` when the description and input shape are constant. Use a `ToolEntryBuilder<Scope>` when either changes per agent (e.g. behind a feature flag, narrowed by `dataEntries`) or per turn (per-tool scope emitted by the classifier).
+
+A scopable tool declares a `scopeSchema` + `scopePrompt`. The classifier emits a value per turn; `prepareStep` validates it and re-invokes the builder so the model sees only the relevant subset of the schema. This is how `analyseData` and `processData` cover six entry kinds without paying the full surface cost every turn.
+
+Builders are the **only** mechanism for per-turn rebuilding — a static `ToolEntry` carrying a `scopeSchema` is silently never rebuilt because there is no factory to call. When adding scope-aware behavior, the entry must come from a builder; otherwise the schema you put in front of the model is the full surface, regardless of the scope the classifier emitted.
+
+## 6. Map Mutations Are Sequential
+
+Map state — `show()`, `hide()`, `clear()` on per-entry modules and the slice-level shown sets — has hidden ordering constraints with MapLibre. Awaiting these in parallel via `Promise.all` causes races: a freshly added layer can be removed before its source registers, an entry can be hidden mid-show, MapLibre style mutations can land out of order. Drive every map change one after another with `await`, even when the entries belong to different slices.
+
+Pure data work — geocoding, routing, search, place-by-id lookups — can still parallelise freely. The serial-only surface is the map-mutation surface (`PlacesModule`, `RoutingModule`, `GeometriesModule`, `CustomGeoJSONModule`, …). When in doubt, sequentialise: the cost of a few extra ms is trivial next to the cost of a non-deterministic render.
+
+## 7. Keep Heavy Data in State, Return Summaries
 
 Geospatial payloads destroy reasoning quality. Full geometries, GeoJSON collections, incident sets, and style dumps stay in plugin state.
 
@@ -61,7 +85,7 @@ Return to the model: counts, names, indexes, labels, status, summaries. Keep ful
 
 **Tool results are not retained in conversation history.** The agent cannot recall previous tool outputs from its context window. Any follow-up question about prior data — "what was that place?", "how long was the route?" — must trigger a state retrieval tool. This is the primary reason state retrieval tools exist and why they must be reliable, easy to select, and unambiguous.
 
-## 5. Plugin State Design
+## 8. Plugin State Design
 
 Maintain structured internal state for: service response history, last place/route results, waypoint history, currently shown entities, and any data omitted from tool responses.
 
@@ -70,23 +94,23 @@ Maintain structured internal state for: service response history, last place/rou
 - Shared place store across tools that yield places
 - Shared route store across tools that yield routes
 - Separate stores only when distinct behavior depends on the distinction
-- Stable references (`placeIndex`, `routeHistoryIndex`) point into aggregated stores
+- Stable references are entry IDs (`places-3`, `routes-1`, `byod-0`, `ranges-0`) that name the entry the slice produced — every recall / display / `analyseData` / `processData` tool accepts them via the matching `*EntryIDs` field
 
 The model should retrieve prior results from state via inspection tools, not reconstruct them from chat history.
 
 **No read-then-pass.** Tools must never require the agent to read data from one tool and pass it as input to another. This pattern invites hallucination. Tools that need prior results should read directly from shared plugin state.
 
-## 6. System Prompt Design
+## 9. System Prompt Design
 
 The system prompt is the agent's operating specification, not a style guide.
 
 - Structure with clear headers and sections: role, context, tool-usage logic, constraints, fallback policy
-- Frame instructions positively ("call `recallSessionState` first") over negatively ("do not call the service tool when...")
+- Frame instructions positively ("call `recallState` first") over negatively ("do not call the service tool when...")
 - Include an explicit "when unsure" policy: ask for clarification, use the safest tool, or surface a structured limitation response
 - Use concrete examples for behaviors that rules can't capture cleanly
 - Keep it lean — anything derivable from tool schemas or state at runtime should not be in the prompt
 
-## 7. Prevent Tool-Call Loops
+## 10. Prevent Tool-Call Loops
 
 Loops happen when a tool fails ambiguously and the model retries indefinitely. Mitigate at the contract level:
 
@@ -95,9 +119,9 @@ Loops happen when a tool fails ambiguously and the model retries indefinitely. M
 - Return unambiguous status signals (`"status": "not_found"`)
 - Recovery policy: after two failed attempts, surface the issue to the user
 
-## 8. Evals
+## 11. Evals
 
-Develop against realistic evals, not happy-path demos. The eval suite is at [`eval-cases.ts`](examples/map-chat-agent/e2e-tests/eval/eval-cases.ts).
+Develop against realistic evals, not happy-path demos. The eval suite is at [`eval-cases.ts`](../../examples/map-chat-agent/e2e-tests/eval/eval-cases.ts).
 
 **Eval prompts should sound like real users:**
 - Good: "Find the central station." / "Route from Amsterdam to Utrecht and show traffic."
@@ -114,5 +138,9 @@ When adding or changing tools:
 - Summarized over raw
 - Discoverable and composable over hidden and coupled
 - Schema-constrained over guess-driven
+- Structured errors over thrown exceptions
+- Builder + scope over a static megaschema (when the surface varies per turn)
+- Sequential `await` over `Promise.all` for map mutations
+- Entry-id references (`places-3`, `routes-1`) over invented names
 - Terminal-state-legible over loop-prone
-- Evaluable over clever
+- Eval-verified over plausible-looking

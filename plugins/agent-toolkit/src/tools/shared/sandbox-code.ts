@@ -28,14 +28,30 @@ export type AnalysisOutputFormat = 'json' | 'chart';
  *
  * @ignore
  */
-export const buildSandboxCodePrompt = (injected: readonly string[]): string =>
-    `In scope: ${injected.map((n) => `\`${n}\``).join(', ')}. Already injected as function parameters — use directly. ` +
-    'Do NOT `require()` / `import` / redeclare them; the body is a sandboxed async function (no Node module system). ' +
-    '`h3` is h3-js (hex-grid math: `latLngToCell`, `polygonToCells`, `gridDisk`, `cellToBoundary`, …). ' +
-    '`turf` is @turf/turf (GeoJSON: `area`, `bbox`, `centroid`, `union`, `intersect`, `buffer`, `distance`, ' +
-    '`booleanPointInPolygon`, `pointsWithinPolygon`, `clustersDbscan`, `convex`, …; verify names at https://turfjs.org/docs/). ' +
-    'Neither library searches places or fetches data — call `discoverPlaces` BEFORE this tool to bring in new places. ' +
-    'Top-level `await`, locals, and helper consts are fine. End with `return …;`.';
+export const buildSandboxCodePrompt = (injected: readonly string[]): string => {
+    const injectedList = injected.map((name) => `\`${name}\``).join(', ');
+    return (
+        `In scope: ${injectedList} — injected as parameters; use directly. ` +
+        'No `require` / `import` / `await import` (body is an AsyncFunction, not a module — such lines are stripped silently). ' +
+        '`h3` = h3-js (hex math). `turf` = @turf/turf v7 (verify names at https://turfjs.org/docs/). ' +
+        'TURF INPUTS: pass a Feature or FeatureCollection — never a bare Array (throws "Unknown Geometry Type"). ' +
+        'FC-shaped inputs (`places`, `routes`, `trafficAreaAnalytics`, `byod`) → pass directly: `turf.bbox(places)`. ' +
+        'Array inputs (`incidents`, `geometries`, `places.features`, …) → iterate per-feature ' +
+        '(`for (const f of places.features) turf.X(f)`) or wrap with `turf.featureCollection([...])`. ' +
+        'Never `.map(f => f.geometry.coordinates)` / `.flatMap(f => f.geometry.coordinates)` to feed turf — ' +
+        'that strips the feature wrapper turf reads and throws "coordinates must be an Array" (or worse, mixes ' +
+        'Point/LineString shapes silently). Pass the whole feature and let turf read the geometry: ' +
+        '`turf.pointToLineDistance(point, lineFeature, { units: "meters" })`. `incidents` mixes Point + LineString ' +
+        'features — guard with `if (inc.geometry.type === "LineString")` before line-only ops. ' +
+        'TURF v7 SET OPS: `union`/`intersect`/`difference` take ONE FeatureCollection — ' +
+        '`turf.difference(turf.featureCollection([outer, inner]))`. The v6 two-arg form throws. ' +
+        'PERF: for large-N nearest/within queries, pre-bucket points with ' +
+        '`h3.latLngToCell(lat, lng, res)` + `h3.gridDisk(cell, k)` and only run turf on same-/neighbour-cell ' +
+        'pairs — turns O(N·M) into ~O(N+M). Pick `res` so each cell ≈ your query radius. ' +
+        'No spatial search or HTTP — call `discoverPlaces` BEFORE this tool for new places. ' +
+        'Top-level `await`/locals/consts fine. End with `return …;`.'
+    );
+};
 
 /** Chart.js chart types accepted by the analyse-* tools when `outputFormat: "chart"`. */
 export const CHART_TYPES = new Set(['bar', 'line', 'pie', 'doughnut', 'radar', 'polarArea', 'scatter', 'bubble']);
@@ -187,15 +203,16 @@ export const runSandboxedFn = async <Result = unknown>(
 /** @ignore */
 export const stripInjectedRedeclarations = (code: string, identifiers: readonly string[]): string => {
     const names = identifiers.join('|');
-    // ^                         line start (m flag)
-    // [ \t]*(const|let|var)     declarator
-    // [ \t]+(name)              one of the injected identifiers
-    // [ \t]*=                   assignment
-    // [ \t]*(?:await\s+)?       optional `await` (covers `await import(...)`)
-    // (?:require|import)\s*\(   require(... or import(...
-    // [^\n]*\n?                 swallow rest of the line
+    // RHS forms we recognise as redeclarations of injected identifiers:
+    //   require('…') / import('…') / await import('…')   — module-system reaches
+    //   arguments[N].turf / arguments[N]['turf']          — reaching for the same param off `arguments`
+    // Anything else (e.g. `const turf = computeTurf()`) stays untouched so we never corrupt
+    // genuine user code that happens to shadow an injected name.
+    const rhs =
+        String.raw`(?:(?:await\s+)?(?:require|import)\s*\(` +
+        String.raw`|arguments\s*\[\s*\d+\s*\]\s*(?:\.\w+|\[\s*['"]\w+['"]\s*\]))`;
     const pattern = new RegExp(
-        String.raw`^[ \t]*(?:const|let|var)[ \t]+(?:${names})[ \t]*=[ \t]*(?:await\s+)?(?:require|import)\s*\([^\n]*\n?`,
+        String.raw`^[ \t]*(?:const|let|var)[ \t]+(?:${names})[ \t]*=[ \t]*${rhs}[^\n]*\n?`,
         'gm',
     );
     return code.replace(pattern, '');
@@ -228,6 +245,10 @@ const SANDBOX_ERROR_HINTS: ReadonlyArray<{ pattern: RegExp; hint: string }> = [
         hint: '`turf` is [@turf/turf](https://turfjs.org/) — GeoJSON geometry only. NO spatial search / place lookup / HTTP. Common: `area`, `length`, `bbox`, `centroid`, `union`, `intersect`, `buffer`, `distance`, `booleanPointInPolygon`, `pointsWithinPolygon`, `clustersDbscan`, `convex`. Verify names at https://turfjs.org/docs/. For nearby places call `discoverPlaces` BEFORE this tool.',
     },
     {
+        pattern: /coordinates must be an Array|Unknown Geometry Type/i,
+        hint: 'turf was handed a raw coordinate (or a bare Array of features) instead of a Feature / FeatureCollection. Do NOT extract `.geometry.coordinates` with `.map` / `.flatMap` and feed the result to turf — pass the WHOLE feature: `turf.pointToLineDistance(pointFeature, lineFeature, { units: "meters" })`. `incidents` is an Array of mixed Point + LineString features; guard with `if (inc.geometry.type === "LineString")` before line-only ops. For FC-shaped inputs (`places`, `routes`, `trafficAreaAnalytics`, `byod`), pass the value directly (`turf.bbox(places)`); never `turf.bbox(places.features)`.',
+    },
+    {
         pattern: /is not a function/i,
         hint: 'A method was called on a value that does not have it (typo, or the value is not the expected type). Verify the type before calling, e.g. `Array.isArray(x) ? x.map(...) : []`.',
     },
@@ -237,7 +258,7 @@ const SANDBOX_ERROR_HINTS: ReadonlyArray<{ pattern: RegExp; hint: string }> = [
     },
     {
         pattern: /Identifier ['"]?\w+['"]? has already been declared/i,
-        hint: 'A variable was declared twice — typically because the code prepends `const turf = require(...)` / `const h3 = require(...)` / `const places = ...`. Those names are already injected as parameters; remove the redeclaration line and use them directly.',
+        hint: 'A variable was declared twice — typically because the code prepends `const turf = require(...)` / `const turf = await import(...)` / `const turf = arguments[0].turf` / `const places = ...`. Those names are already in scope as function parameters; drop the redeclaration line and use them directly (`turf.bbox(places)`).',
     },
     {
         pattern: /Unexpected (?:token|identifier|end of input)/i,
@@ -250,7 +271,7 @@ const SANDBOX_ERROR_HINTS: ReadonlyArray<{ pattern: RegExp; hint: string }> = [
     {
         pattern:
             /\b(?:functions|tools|agent|recallPlaces|recallRoutes|recallRanges|discoverPlaces|locatePlace) is not defined\b/i,
-        hint: 'The sandbox cannot call other tools — `functions.recallPlaces(...)`, `tools.discoverPlaces(...)`, etc. are NOT available. To use additional entries, list every needed id in `placesEntryIDs` (or `routesEntryIDs`/`rangesIds` for the analyse-* tools): each is exposed via the injected inputs. To bring in NEW places call `discoverPlaces` BEFORE this tool and pass the resulting entry id back in.',
+        hint: 'The sandbox cannot call other tools — `functions.recallPlaces(...)`, `tools.discoverPlaces(...)`, etc. are NOT available. To use additional entries, list every needed id in the tool inputs (`placesEntryIDs`, `routesEntryIDs`, `incidentsEntryIDs`, `geometriesEntryIDs`): each is exposed via the injected sandbox args (`places`, `routes`, `incidents`, `geometries`, plus their `*ByEntry` per-entry views). To bring in NEW places call `discoverPlaces` BEFORE this tool and pass the resulting entry id back in.',
     },
     {
         pattern: /is not iterable/i,

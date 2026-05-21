@@ -11,7 +11,7 @@
 import { z } from 'zod';
 
 /** Possible kinds in a geometries id. */
-export type GeometriesIdKind = 'place' | 'places' | 'ranges' | 'custom';
+export type GeometriesIdKind = 'place' | 'places' | 'ranges' | 'customGeometries';
 
 /**
  * Tagged geometries id. The Zod schema is exposed so tools can plug it
@@ -45,16 +45,16 @@ export const geometriesIdSchema = z
             .describe('Every isochrone polygon in a ranges entry.'),
         z
             .object({
-                kind: z.literal('custom').describe('Use the exact literal "custom".'),
+                kind: z.literal('customGeometries').describe('Use the exact literal "customGeometries".'),
                 id: z
                     .string()
                     .min(1)
-                    .describe('Id of a custom-geometries entry produced by a previous processGeometries.'),
+                    .describe('Id of a custom-geometries entry produced by a previous `processData` call.'),
             })
-            .describe('A derived entry produced by a previous processGeometries.'),
+            .describe('A derived entry produced by a previous `processData` call.'),
     ])
     .describe(
-        'Tagged id `{ kind, id }`. `kind` must be exactly one of: "place" | "places" | "ranges" | "custom" ' +
+        'Tagged id `{ kind, id }`. `kind` must be exactly one of: "place" | "places" | "ranges" | "customGeometries" ' +
             '(do NOT use variants like "ranges-entry", "place-footprints", etc.). ' +
             'Use `recallGeometries` to list every available `{kind, id}` pair.',
     );
@@ -75,7 +75,7 @@ export const geometriesEntryIDsSchema = z
     .min(1)
     .describe(
         'Tagged ids `{ kind, id }` of polygon sources to feed the run. `kind` must be exactly one of ' +
-            '`"place"` | `"places"` | `"ranges"` | `"custom"` (no variants). Mix kinds freely (e.g. union ' +
+            '`"place"` | `"places"` | `"ranges"` | `"customGeometries"` (no variants). Mix kinds freely (e.g. union ' +
             'place footprints with isochrones). Use `recallGeometries` to list available ids.',
     );
 

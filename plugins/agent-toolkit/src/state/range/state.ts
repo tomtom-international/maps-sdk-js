@@ -9,6 +9,7 @@ import {
     reachableRangeGeometryConfig,
     type TomTomMap,
 } from '@tomtom-org/maps-sdk/map';
+import { collapseHistoryToLatest, hideAllEntries } from '../entry-helpers';
 import { StateEvents } from '../events';
 import type { EntryMode, ShownEntriesSlice } from '../state';
 import type { RangesEntry } from './entry';
@@ -70,10 +71,7 @@ export class RangeState implements ShownEntriesSlice {
         if (this._entryMode === mode) return;
         this._entryMode = mode;
         if (mode === 'single' && this._entries.length > 1) {
-            const latest = this._entries.at(-1);
-            const dropped = this._entries.slice(0, -1);
-            for (const entry of dropped) await this.hideEntry(entry.id);
-            this._entries = latest ? [latest] : [];
+            this._entries = await collapseHistoryToLatest(this._entries, (entry) => this.hideEntry(entry.id));
             this.events.emit('entries-change', this._entries);
         }
         this.events.emit('mode-change', mode);
@@ -135,7 +133,7 @@ export class RangeState implements ShownEntriesSlice {
     /** Hide every module on the entry (clear). No-op when the entry is unknown. */
     async hideEntry(entryId: string): Promise<void> {
         const entry = this._entries.find((e) => e.id === entryId);
-        if (!entry || !entry._shown) return;
+        if (!entry?._shown) return;
         if (entry._modules?.geometries) await entry._modules.geometries.clear();
         if (entry._modules?.places) await entry._modules.places.clear();
         entry._shown = false;
@@ -169,9 +167,9 @@ export class RangeState implements ShownEntriesSlice {
         return this._entries.at(-1);
     }
 
-    addEntry(entry: Omit<RangesEntry, 'id' | 'timestamp'>): string {
+    async addEntry(entry: Omit<RangesEntry, 'id' | 'timestamp'>): Promise<string> {
         if (this._entryMode === 'single' && this._entries.length > 0) {
-            for (const existing of this._entries) void this.hideEntry(existing.id);
+            await hideAllEntries(this._entries, (existing) => this.hideEntry(existing.id));
             this._entries = [];
         }
         const id = `ranges-${this._entries.length}`;
@@ -182,6 +180,14 @@ export class RangeState implements ShownEntriesSlice {
         });
         this.events.emit('entries-change', this._entries);
         return id;
+    }
+
+    /**
+     * Hide every reachable-range entry currently on the map. Map-only — history is kept.
+     * Implements {@link ClearableMapSlice}.
+     */
+    async clearShown(): Promise<void> {
+        for (const id of this.shownEntryIds) await this.hideEntry(id);
     }
 
     reset(): void {

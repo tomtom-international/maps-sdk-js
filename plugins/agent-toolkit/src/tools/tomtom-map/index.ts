@@ -17,41 +17,11 @@ export {
     fitRouteSectionSchema,
 } from './fit-route-section';
 export {
-    executeGetShownIncidents,
-    getShownIncidentsDescription,
-    getShownIncidentsOutputSchema,
-    getShownIncidentsSchema,
-} from './get-shown-incidents';
-export {
-    executeGetShownPlaces,
-    getShownPlacesDescription,
-    getShownPlacesOutputSchema,
-    getShownPlacesSchema,
-} from './get-shown-places';
-export {
-    executeGetShownRouteSections,
-    getShownRouteSectionsDescription,
-    getShownRouteSectionsOutputSchema,
-    getShownRouteSectionsSchema,
-} from './get-shown-route-sections';
-export {
-    executeGetShownRouteTrafficIncidents,
-    getShownRouteTrafficIncidentsDescription,
-    getShownRouteTrafficIncidentsOutputSchema,
-    getShownRouteTrafficIncidentsSchema,
-} from './get-shown-route-traffic-incidents';
-export {
-    executeGetShownRoutes,
-    getShownRoutesDescription,
-    getShownRoutesOutputSchema,
-    getShownRoutesSchema,
-} from './get-shown-routes';
-export {
-    executeGetShownWaypoints,
-    getShownWaypointsDescription,
-    getShownWaypointsOutputSchema,
-    getShownWaypointsSchema,
-} from './get-shown-waypoints';
+    executeGetShownTileIncidents,
+    getShownTileIncidentsDescription,
+    getShownTileIncidentsOutputSchema,
+    getShownTileIncidentsSchema,
+} from './get-shown-tile-incidents';
 export {
     executeGetStandardMapStyles,
     getStandardMapStylesDescription,
@@ -71,45 +41,33 @@ export {
     setMapStandardStyleSchema,
 } from './set-map-standard-style';
 export {
-    executeSetRouteTheme,
-    setRouteThemeDescription,
-    setRouteThemeOutputSchema,
-    setRouteThemeSchema,
-} from './set-route-theme';
+    executeToggleTilesBaseMapLayerGroups,
+    toggleTilesBaseMapLayerGroupsDescription,
+    toggleTilesBaseMapLayerGroupsOutputSchema,
+    toggleTilesBaseMapLayerGroupsSchema,
+} from './toggle-tiles-base-map-layer-groups';
 export {
-    executeShowTrafficAreaAnalytics,
-    showTrafficAreaAnalyticsDescription,
-    showTrafficAreaAnalyticsOutputSchema,
-    showTrafficAreaAnalyticsSchema,
-} from './show-traffic-area-analytics';
+    executeToggleTilesPOIs,
+    toggleTilesPOIsDescription,
+    toggleTilesPOIsOutputSchema,
+    toggleTilesPOIsSchema,
+} from './toggle-tiles-pois';
 export {
-    executeShowWaypoints,
-    showWaypointsDescription,
-    showWaypointsOutputSchema,
-    showWaypointsSchema,
-} from './show-waypoints';
+    executeToggleTilesTrafficFlow,
+    executeToggleTilesTrafficIncidents,
+    toggleTilesTrafficFlowDescription,
+    toggleTilesTrafficFlowOutputSchema,
+    toggleTilesTrafficFlowSchema,
+    toggleTilesTrafficIncidentsDescription,
+    toggleTilesTrafficIncidentsOutputSchema,
+    toggleTilesTrafficIncidentsSchema,
+} from './toggle-tiles-traffic';
 export {
-    executeToggleBaseMapLayerGroups,
-    toggleBaseMapLayerGroupsDescription,
-    toggleBaseMapLayerGroupsOutputSchema,
-    toggleBaseMapLayerGroupsSchema,
-} from './toggle-base-map-layer-groups';
-export {
-    executeTogglePOIs,
-    togglePOIsDescription,
-    togglePOIsOutputSchema,
-    togglePOIsSchema,
-} from './toggle-pois';
-export {
-    executeToggleTrafficFlow,
-    executeToggleTrafficIncidents,
-    toggleTrafficFlowDescription,
-    toggleTrafficFlowOutputSchema,
-    toggleTrafficFlowSchema,
-    toggleTrafficIncidentsDescription,
-    toggleTrafficIncidentsOutputSchema,
-    toggleTrafficIncidentsSchema,
-} from './toggle-traffic';
+    executeUpdateByodDisplay,
+    updateByodDisplayDescription,
+    updateByodDisplayOutputSchema,
+    updateByodDisplaySchema,
+} from './update-byod-display';
 export {
     executeUpdatePlacesDisplay,
     updatePlacesDisplayDescription,
@@ -122,3 +80,15 @@ export {
     updateRoutesDisplayOutputSchema,
     updateRoutesDisplaySchema,
 } from './update-routes-display';
+export {
+    executeUpdateTrafficAreaAnalyticsDisplay,
+    updateTrafficAreaAnalyticsDisplayDescription,
+    updateTrafficAreaAnalyticsDisplayOutputSchema,
+    updateTrafficAreaAnalyticsDisplaySchema,
+} from './update-traffic-area-analytics-display';
+export {
+    executeUpdateWaypointsDisplay,
+    updateWaypointsDisplayDescription,
+    updateWaypointsDisplayOutputSchema,
+    updateWaypointsDisplaySchema,
+} from './update-waypoints-display';

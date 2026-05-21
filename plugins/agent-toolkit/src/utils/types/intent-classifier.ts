@@ -9,6 +9,14 @@ import type { ToolMetadata } from '../../types';
 export type ClassificationResult = {
     /** Tool names selected by the classifier. */
     activeToolNames: string[];
+    /**
+     * Optional per-tool scope. Keyed by tool name, value is the raw classifier
+     * output for that tool — validated against the tool's `scopeSchema` in
+     * `prepareStep` before any narrowing is applied. Tools without
+     * `scopeSchema`, or for which the classifier omitted a scope, retain
+     * their full description and inputSchema for the turn.
+     */
+    toolScopes?: Record<string, unknown>;
     /** Wall-clock time in ms for the classification step only (not the agent response). */
     timeMs: number;
     /** Token usage for the classification LLM call. */

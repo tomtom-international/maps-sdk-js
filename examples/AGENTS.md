@@ -290,6 +290,7 @@ pnpm dev
 # Examples automatically use the built SDK from workspace
 ```
 
+
 ### End-to-End (E2E) Testing
 
 Web examples have E2E tests (Node.js examples do not).
@@ -436,7 +437,7 @@ examples/
 - **rev-geo-playground** - Interactive reverse geocoding playground
 - **autocomplete-fuzzy-search-playground** - Search with autocomplete suggestions
 - **search-places-in-geometry** - Search for places in the geometry of a geocoded location
-- **search-places-nearby-location** - Search for places near the center of a geocoded location
+- **search-places-nearby-location** - Search for places in nearby the center of a geocoded location
 
 ### Geometry Search
 

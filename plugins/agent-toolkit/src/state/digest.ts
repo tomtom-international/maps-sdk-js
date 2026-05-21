@@ -18,6 +18,12 @@
 import type { ToolState } from '../types';
 import type { EntryMode } from './state';
 
+// `Array.prototype.sort` without a comparator falls back to UTF-16 code-unit order — fine for
+// ASCII-only ids but unreliable once a localised label leaks in. Centralise the locale-aware
+// comparator so every digest field gets the same predictable order.
+const compareIds = (a: string, b: string): number => a.localeCompare(b);
+const sortIds = (ids: Iterable<string>): string[] => [...ids].sort(compareIds);
+
 /**
  * Compact snapshot of the user-visible parts of `ToolState`. Designed to be diffable: every field
  * is serialisable to JSON and stable for `===` comparison when the underlying state hasn't changed.
@@ -46,8 +52,12 @@ export type StateDigest = {
         entryMode: EntryMode;
     };
     traffic: {
-        /** Whether a TrafficAreaAnalytics visualization is active. */
-        analyticsActive: boolean;
+        /** Traffic-area-analytics entry ids currently rendered on the map, sorted ascending. */
+        shown: string[];
+        /** Display policy in force on the slice — `multiple` (default) or `single`. */
+        entryMode: EntryMode;
+        /** Total traffic-area-analytics entries in history (shown + hidden). */
+        entryCount: number;
     };
     incidents: {
         /** Traffic-incidents entry ids currently rendered on the map, sorted ascending. */
@@ -56,6 +66,22 @@ export type StateDigest = {
         monitored: string[];
         /** Display policy in force on the slice — `multiple` (default) or `single`. */
         entryMode: EntryMode;
+    };
+    customGeometries: {
+        /** Custom-geometries entry ids currently rendered on the map, sorted ascending. */
+        shown: string[];
+        /** Display policy in force on the slice — `multiple` (default) or `single`. */
+        entryMode: EntryMode;
+        /** Total custom-geometries entries in history (shown + hidden). */
+        entryCount: number;
+    };
+    byod: {
+        /** BYOD entry ids currently rendered on the map, sorted ascending. */
+        shown: string[];
+        /** Display policy in force on the slice — `multiple` (default) or `single`. */
+        entryMode: EntryMode;
+        /** Total BYOD entries in history (shown + hidden). */
+        entryCount: number;
     };
 };
 
@@ -67,20 +93,35 @@ export type StateDigest = {
  */
 export const getStateDigest = (state: ToolState): StateDigest => ({
     places: {
-        shownAsPin: [...state.places.shownAsPinIds].sort(),
-        shownAsBaseMap: [...state.places.shownAsBaseMapIds].sort(),
+        shownAsPin: sortIds(state.places.shownAsPinIds),
+        shownAsBaseMap: sortIds(state.places.shownAsBaseMapIds),
         entryMode: state.places.entryMode,
     },
-    routes: { shown: [...state.routing.shownEntryIds].sort(), entryMode: state.routing.entryMode },
-    ranges: { shown: [...state.ranges.shownEntryIds].sort(), entryMode: state.ranges.entryMode },
-    traffic: { analyticsActive: state.trafficAreaAnalytics.lastAreaAnalytics !== undefined },
+    routes: { shown: sortIds(state.routing.shownEntryIds), entryMode: state.routing.entryMode },
+    ranges: { shown: sortIds(state.ranges.shownEntryIds), entryMode: state.ranges.entryMode },
+    traffic: {
+        shown: sortIds(state.trafficAreaAnalytics.shownEntryIds),
+        entryMode: state.trafficAreaAnalytics.entryMode,
+        entryCount: state.trafficAreaAnalytics.entries.length,
+    },
     incidents: {
-        shown: [...state.trafficIncidents.shownEntryIds].sort(),
-        monitored: state.trafficIncidents.entries
-            .filter((e) => e._monitor?.status === 'running')
-            .map((e) => e.id)
-            .sort(),
+        shown: sortIds(state.trafficIncidents.shownEntryIds),
+        monitored: sortIds(
+            state.trafficIncidents.entries
+                .filter((entry) => entry._monitor?.status === 'running')
+                .map((entry) => entry.id),
+        ),
         entryMode: state.trafficIncidents.entryMode,
+    },
+    customGeometries: {
+        shown: sortIds(state.customGeometries.shownEntryIds),
+        entryMode: state.customGeometries.entryMode,
+        entryCount: state.customGeometries.entries.length,
+    },
+    byod: {
+        shown: sortIds(state.byod.shownEntryIds),
+        entryMode: state.byod.entryMode,
+        entryCount: state.byod.entries.length,
     },
 });
 
@@ -145,9 +186,8 @@ export const formatStateDigestDiff = (prev: StateDigest, next: StateDigest): str
     const rangeFragment = formatShownSetDiff('ranges', prev.ranges.shown, next.ranges.shown);
     if (rangeFragment) fragments.push(rangeFragment);
 
-    if (prev.traffic.analyticsActive !== next.traffic.analyticsActive) {
-        fragments.push(next.traffic.analyticsActive ? 'traffic analytics now active' : 'traffic analytics cleared');
-    }
+    const trafficAnalyticsFragment = formatShownSetDiff('traffic analytics', prev.traffic.shown, next.traffic.shown);
+    if (trafficAnalyticsFragment) fragments.push(trafficAnalyticsFragment);
 
     const incidentsShownFragment = formatShownSetDiff('incidents', prev.incidents.shown, next.incidents.shown);
     if (incidentsShownFragment) fragments.push(incidentsShownFragment);
@@ -158,6 +198,16 @@ export const formatStateDigestDiff = (prev: StateDigest, next: StateDigest): str
         next.incidents.monitored,
     );
     if (monitoredFragment) fragments.push(monitoredFragment);
+
+    const customGeometriesFragment = formatShownSetDiff(
+        'custom geometries',
+        prev.customGeometries.shown,
+        next.customGeometries.shown,
+    );
+    if (customGeometriesFragment) fragments.push(customGeometriesFragment);
+
+    const byodFragment = formatShownSetDiff('byod', prev.byod.shown, next.byod.shown);
+    if (byodFragment) fragments.push(byodFragment);
 
     // Entry-mode flips are surfaced last so the LLM sees them as policy
     // changes, separate from "what's on the map right now".
@@ -172,6 +222,12 @@ export const formatStateDigestDiff = (prev: StateDigest, next: StateDigest): str
     }
     if (prev.incidents.entryMode !== next.incidents.entryMode) {
         fragments.push(`incidents entryMode → ${next.incidents.entryMode}`);
+    }
+    if (prev.customGeometries.entryMode !== next.customGeometries.entryMode) {
+        fragments.push(`custom geometries entryMode → ${next.customGeometries.entryMode}`);
+    }
+    if (prev.byod.entryMode !== next.byod.entryMode) {
+        fragments.push(`byod entryMode → ${next.byod.entryMode}`);
     }
 
     if (fragments.length === 0) return null;

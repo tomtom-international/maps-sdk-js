@@ -9,9 +9,13 @@ describe('createToolState', () => {
         expect(state.places).toBeInstanceOf(PlacesState);
         expect(state.routing).toBeInstanceOf(RoutingState);
         expect(state.baseMap).toBeDefined();
-        expect(state.traffic).toBeDefined();
+        expect(state.trafficTiles).toBeDefined();
+        expect(state.trafficAreaAnalytics).toBeDefined();
+        expect(state.trafficIncidents).toBeDefined();
         expect(state.ranges).toBeDefined();
         expect(state.mapPOIs).toBeDefined();
+        expect(state.customGeometries).toBeDefined();
+        expect(state.byod).toBeDefined();
     });
 
     it('merges custom slices alongside built-in state', () => {

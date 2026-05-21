@@ -36,7 +36,7 @@ export const focusIncidentsSchema = z.object({
 
 export const focusIncidentsDescription =
     'Highlight a subset of incidents on an existing entry. Drives the dim/highlight on the map ' +
-    'and the FocusChip in the UI. Compose with `analyseIncidents` to compute the ids first ' +
+    'and the FocusChip in the UI. Compose with `analyseData` to compute the ids first ' +
     '(e.g. top-N by delay, members of a cluster). Unknown ids are dropped silently and ' +
     'returned in `droppedIds`. Errors only when the entry is unknown or NONE of the ids resolve.';
 

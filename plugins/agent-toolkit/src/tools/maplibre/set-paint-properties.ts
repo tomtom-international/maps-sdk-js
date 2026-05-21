@@ -43,7 +43,7 @@ export const setPaintPropertiesSchema = z.object({
 
 export const setPaintPropertiesDescription =
     'Set MapLibre paint properties (colors, widths, opacity) on named layers — use getMapStyleLayers for valid IDs. ' +
-    'For visibility/structure use setLayoutProperties; for route styling prefer setRouteTheme.';
+    'For visibility/structure use setLayoutProperties; for route styling prefer `updateRoutesDisplay({ mainColor })`.';
 
 /** Execute function for setPaintProperties — usable with ToolEntry format. */
 export const executeSetPaintProperties = async (params: z.infer<typeof setPaintPropertiesSchema>, state: ToolState) => {

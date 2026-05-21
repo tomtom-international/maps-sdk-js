@@ -4,6 +4,7 @@
 
 import type { Routes, WaypointLike } from '@tomtom-org/maps-sdk/core';
 import { PlanningWaypoint, RoutingModule, type TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { collapseHistoryToLatest, hideAllEntries } from '../entry-helpers';
 import { StateEvents } from '../events';
 import type { EntryMode, ShownEntriesSlice } from '../state';
 import type { RoutesAnalysis } from './analysis';
@@ -45,10 +46,15 @@ export class RoutingState implements ShownEntriesSlice {
     private _params: RouteParams = {};
     private _entryMode: EntryMode = 'multiple';
     /**
+     * Slice-level "main color" applied to every RoutingModule on first show / re-show. Sticky
+     * across entry swaps so the rendered route always uses the most recently requested color.
+     * Set via {@link setMainColor}; persists for the lifetime of the slice (cleared on `reset`).
+     */
+    private _mainColor?: string;
+    /**
      * The most recently `.showEntry`-ed id. Tracks "who was last brought up" so tools that
-     * operate on the focused module (`set-route-theme`, `get-shown-routes`, …) have a single
-     * pointer to read; the authoritative shown set is `shownEntryIds` (derived from each
-     * entry's `_shown` flag).
+     * operate on the focused module have a single pointer to read; the authoritative shown
+     * set is `shownEntryIds` (derived from each entry's `_shown` flag).
      */
     private _lastShownEntryId?: string;
 
@@ -82,10 +88,7 @@ export class RoutingState implements ShownEntriesSlice {
         if (this._entryMode === mode) return;
         this._entryMode = mode;
         if (mode === 'single' && this._entries.length > 1) {
-            const latest = this._entries.at(-1);
-            const dropped = this._entries.slice(0, -1);
-            for (const entry of dropped) await this.hideEntry(entry.id);
-            this._entries = latest ? [latest] : [];
+            this._entries = await collapseHistoryToLatest(this._entries, (entry) => this.hideEntry(entry.id));
             this.events.emit('entries-change', this._entries);
         }
         this.events.emit('mode-change', mode);
@@ -119,6 +122,11 @@ export class RoutingState implements ShownEntriesSlice {
             for (const other of others) await this.hideEntry(other.id);
         }
         const module = await this.getEntryRoutingModule(entryId);
+        // Apply the sticky main color BEFORE showing so the first paint already has the theme,
+        // avoiding a flash of the default style on newly-shown entries.
+        if (this._mainColor !== undefined) {
+            module.applyConfig({ theme: { mainColor: this._mainColor } });
+        }
         await module.showRoutes(entry.data);
         if (entry.waypoints.length) await module.showWaypoints(entry.waypoints);
         const wasShown = entry._shown;
@@ -127,13 +135,34 @@ export class RoutingState implements ShownEntriesSlice {
         if (!wasShown) this.events.emit('shown-change', this.shownEntryIds);
     }
 
+    /** Slice-level main color persisted across entry swaps. Undefined when no theme has been set. */
+    get mainColor(): string | undefined {
+        return this._mainColor;
+    }
+
+    /**
+     * Set the slice-level main color. The colour is applied immediately to every currently-shown
+     * entry's RoutingModule and remembered so that subsequent {@link showEntry} calls apply it
+     * automatically. Pass `undefined` to clear the sticky theme — currently-shown modules keep
+     * their last paint until they're re-shown (MapLibre style restore handles full revert).
+     */
+    setMainColor(color: string | undefined): void {
+        this._mainColor = color;
+        if (color === undefined) return;
+        for (const entry of this._entries) {
+            if (entry._shown && entry._module) {
+                entry._module.applyConfig({ theme: { mainColor: color } });
+            }
+        }
+    }
+
     /**
      * Hide the entry's routes + waypoints on its module (clear; the module stays cached).
      * No-op when the entry is unknown or already hidden.
      */
     async hideEntry(entryId: string): Promise<void> {
         const entry = this._entries.find((e) => e.id === entryId);
-        if (!entry || !entry._shown) return;
+        if (!entry?._shown) return;
         if (entry._module) {
             await entry._module.clearRoutes();
             await entry._module.clearWaypoints();
@@ -166,9 +195,8 @@ export class RoutingState implements ShownEntriesSlice {
     }
 
     /**
-     * RoutingModule of the most-recently-shown entry, if any. Tools that operate on the
-     * "focused route" (e.g. setRouteTheme, getShownRoutes) read off it. Returns undefined
-     * when no entry is currently shown.
+     * RoutingModule of the most-recently-shown entry, if any. Returns undefined when no
+     * entry is currently shown.
      */
     get currentEntryModule(): RoutingModule | undefined {
         if (!this._lastShownEntryId) return undefined;
@@ -199,11 +227,11 @@ export class RoutingState implements ShownEntriesSlice {
         return this._params;
     }
 
-    addRoutes(routes: Routes, waypoints: WaypointLike[], label: string): string {
+    async addRoutes(routes: Routes, waypoints: WaypointLike[], label: string): Promise<string> {
         if (this._entryMode === 'single' && this._entries.length > 0) {
             // Hide each existing entry's module so the map doesn't keep
             // showing the previous routes; we then drop them from history.
-            for (const entry of this._entries) void this.hideEntry(entry.id);
+            await hideAllEntries(this._entries, (entry) => this.hideEntry(entry.id));
             this._entries = [];
         }
         const id = `routes-${this._entries.length}`;
@@ -257,6 +285,14 @@ export class RoutingState implements ShownEntriesSlice {
         this.events.emit('params-change', this._params);
     }
 
+    /**
+     * Hide every route + waypoint set currently on the map. Map-only — history (`entries`)
+     * stays intact. Implements {@link ClearableMapSlice}.
+     */
+    async clearShown(): Promise<void> {
+        for (const id of this.shownEntryIds) await this.hideEntry(id);
+    }
+
     reset(): void {
         // Clear every entry's module so the map looks empty before the
         // references go away. Layers persist on the style — same trade-off the
@@ -269,6 +305,7 @@ export class RoutingState implements ShownEntriesSlice {
         this._planningSlots = [];
         this._params = {};
         this._lastShownEntryId = undefined;
+        this._mainColor = undefined;
         this.events.emit('entries-change', this._entries);
         this.events.emit('planning-change', this._planningSlots);
         this.events.emit('params-change', this._params);

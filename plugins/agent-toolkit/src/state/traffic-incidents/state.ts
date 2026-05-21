@@ -6,6 +6,7 @@ import { type BBox, bboxFromGeoJSON, type TrafficIncident } from '@tomtom-org/ma
 import { type TomTomMap, TrafficIncidentOverlayModule } from '@tomtom-org/maps-sdk/map';
 import type { TrafficIncidentDetailsByBBoxParams } from '@tomtom-org/maps-sdk/services';
 import type { StateSlice } from '../../types';
+import { collapseHistoryToLatest, hideAllEntries, pickUniqueEntryId } from '../entry-helpers';
 import { StateEvents } from '../events';
 import type { EntryMode } from '../state';
 import { IncidentsAnalyses, type IncidentsAnalysis, type IncidentsAnalysisSpec } from './analysis';
@@ -148,10 +149,9 @@ export class TrafficIncidentsState implements StateSlice {
         if (this._entryMode === mode) return;
         this._entryMode = mode;
         if (mode === 'single' && this._entries.length > 1) {
-            const latest = this._entries.at(-1);
-            const dropped = this._entries.slice(0, -1);
-            await Promise.all(dropped.map((entry) => this._teardownEntry(entry)));
-            this._entries = latest ? [latest] : [];
+            this._entries = await collapseHistoryToLatest(this._entries, (entry) => this._teardownEntry(entry), {
+                parallel: true,
+            });
             this.events.emit('entries-change', this._entries);
             this.events.emit('shown-change', this.shownEntryIds);
         }
@@ -171,20 +171,25 @@ export class TrafficIncidentsState implements StateSlice {
      * data was captured — pass one canonical value per "moment" so future joins (entry
      * data ↔ derived analyses) are byte-equal. Returns the assigned id.
      */
-    addIncidentsEntry(
+    async addIncidentsEntry(
         data: TrafficIncident[],
         params: TrafficIncidentDetailsByBBoxParams & { bbox: BBox },
         label: string,
         sampledAt: number,
         explicitId?: string,
-    ): string {
+    ): Promise<string> {
         if (this._entryMode === 'single' && this._entries.length > 0) {
-            for (const entry of this._entries) void this._teardownEntry(entry);
+            // `_teardownEntry` tears down a per-entry monitor + module — each instance is
+            // independent, so `parallel: true` is race-safe and faster than serial.
+            await hideAllEntries(this._entries, (entry) => this._teardownEntry(entry), { parallel: true });
             this._entries = [];
         }
         // Always dedupe — `incidents-${length}` is not collision-free across removes
         // (e.g. add a, add b, remove a → length=1, fallback `incidents-1` collides with surviving `b`).
-        const id = this._uniqueEntryId(explicitId ?? `incidents-${this._entries.length}`);
+        const id = pickUniqueEntryId(
+            explicitId ?? `incidents-${this._entries.length}`,
+            this._entries.map((entry) => entry.id),
+        );
         this._entries.push({ id, timestamp: sampledAt, label, data, params });
         this.events.emit('entries-change', this._entries);
         return id;
@@ -269,7 +274,7 @@ export class TrafficIncidentsState implements StateSlice {
      */
     async hideEntry(entryId: TrafficIncidentsEntry['id']): Promise<void> {
         const entry = this._entries.find((e) => e.id === entryId);
-        if (!entry || !entry._shown) return;
+        if (!entry?._shown) return;
         if (entry._focus) {
             entry._focus = undefined;
             this.events.emit('focus-change', { entryId: entry.id, focus: null });
@@ -489,17 +494,6 @@ export class TrafficIncidentsState implements StateSlice {
         return entry;
     }
 
-    // Returns `requested` unchanged when free, otherwise appends `-2`, `-3`, ... until a free id
-    // is found. Lets the LLM hand us a semantic id without worrying about collisions across calls.
-    private _uniqueEntryId(requested: string): string {
-        const taken = new Set(this._entries.map((entry) => entry.id));
-        if (!taken.has(requested)) return requested;
-        for (let i = 2; ; i++) {
-            const candidate = `${requested}-${i}`;
-            if (!taken.has(candidate)) return candidate;
-        }
-    }
-
     // Replay all analysis specs registered on this entry. The registry stores each fresh
     // result internally; the slice's job is to surface the events so external subscribers
     // re-render. `sampledAt` propagates from the caller's tick so every fresh analysis
@@ -529,6 +523,14 @@ export class TrafficIncidentsState implements StateSlice {
             await entry._module.clear();
         }
         entry._module = undefined;
+    }
+
+    /**
+     * Hide every traffic-incidents entry currently on the map. Map-only — history is kept.
+     * Implements {@link ClearableMapSlice}.
+     */
+    async clearShown(): Promise<void> {
+        for (const id of this.shownEntryIds) await this.hideEntry(id);
     }
 
     reset(): void {

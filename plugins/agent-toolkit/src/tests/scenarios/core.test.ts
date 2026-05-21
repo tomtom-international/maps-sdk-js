@@ -45,7 +45,7 @@ describe.skipIf(!MODEL)('Core agent scenarios', { timeout: 180_000, retry: 2 }, 
             script: [
                 user('Are there any traffic incidents in Amsterdam?'),
                 agent(),
-                expectToolCalled('getTrafficIncidents', 'toggleTrafficIncidents'),
+                expectToolCalled('getTrafficIncidents', 'toggleTilesTrafficIncidents'),
             ],
         });
         expect(result.success).toBe(true);
@@ -70,6 +70,62 @@ describe.skipIf(!MODEL)('Core agent scenarios', { timeout: 180_000, retry: 2 }, 
                 user('What data do you have so far in this session? Give me an overview.'),
                 agent(),
                 expectToolCalled('recallState'),
+            ],
+        });
+        expect(result.success).toBe(true);
+    });
+
+    it('aggregates historical traffic for an area', async () => {
+        const result = await run({
+            name: 'Historical traffic analytics',
+            description: 'User asks for last-week traffic patterns.',
+            agents: [agentAdapter(), userSimulatorAgent()],
+            script: [
+                user('Show me traffic patterns in Amsterdam last week'),
+                agent(),
+                expectToolCalled('getTrafficAreaAnalytics'),
+            ],
+        });
+        expect(result.success).toBe(true);
+    });
+
+    it('runs a dynamic analysis over stored places', async () => {
+        const result = await run({
+            name: 'Analyse places',
+            description: 'User asks for a count or breakdown across already-loaded places.',
+            agents: [agentAdapter(), userSimulatorAgent()],
+            script: [
+                user('I already loaded restaurants in Amsterdam — how are they distributed by category?'),
+                agent(),
+                expectToolCalled('analyseData'),
+            ],
+        });
+        expect(result.success).toBe(true);
+    });
+
+    it('derives a new polygon from existing places via processData', async () => {
+        const result = await run({
+            name: 'Process geometries',
+            description: 'User asks for a derived polygon (union/buffer/etc.) over existing entries.',
+            agents: [agentAdapter(), userSimulatorAgent()],
+            script: [
+                user('Compute a 300m-buffer union around the chinese restaurants I loaded earlier'),
+                agent(),
+                expectToolCalled('processData'),
+            ],
+        });
+        expect(result.success).toBe(true);
+    });
+
+    it('ingests a customer GeoJSON URL as a BYOD layer', async () => {
+        const result = await run({
+            name: 'BYOD ingest',
+            description: 'User asks the agent to load their own GeoJSON data onto the map.',
+            agents: [agentAdapter(), userSimulatorAgent()],
+            script: [
+                user('Load my sales-territories layer from https://example.com/territories.geojson'),
+                agent(),
+                expectToolCalled('addByodLayer'),
             ],
         });
         expect(result.success).toBe(true);

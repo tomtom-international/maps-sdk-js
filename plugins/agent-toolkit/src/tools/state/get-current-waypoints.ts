@@ -44,7 +44,8 @@ export const getCurrentWaypointsOutputSchema = z.object({
 });
 
 export const getCurrentWaypointsDescription =
-    'Read staged waypoint slots for the next route calc, without recalculating. ' +
+    'Read STAGED waypoint slots queued for the NEXT setRoute call (origin / stops / destination not yet committed to a route). ' +
+    'Distinct from `recallRoutes({ id })`, which returns the waypoints of an existing calculated route entry. ' +
     '`slotIndex` for one slot; otherwise paged (default 5), empty slots omitted unless `includeEmptySlots: true`. No service call.';
 
 export const executeGetCurrentWaypoints = async (

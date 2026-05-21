@@ -5,6 +5,8 @@ import {
     useAuiState,
 } from '@assistant-ui/react';
 import { marked } from 'marked';
+import { ClassificationChip } from './ClassificationChip';
+import { useMessageClassification } from './ClassificationsContext';
 import { ToolCall } from './ToolCall';
 
 const MarkdownText: TextMessagePartComponent = ({ text }) => (
@@ -17,14 +19,18 @@ const AssistantText: TextMessagePartComponent = ({ text }) => (
 
 // AI SDK error results can be primitives, Error instances, Zod issues, or plain
 // objects. `String(obj)` collapses to "[object Object]"; preserve detail by JSON-
-// stringifying objects and reading `.message` off Errors.
+// stringifying objects and reading `.message` off Errors. When the toolErrorSchema
+// shape (`{ error: "..." }`) is the only meaningful field, return the bare message;
+// otherwise keep the full payload so structured detail (issues, request ids, …) survives.
 const formatToolError = (result: unknown): string => {
     if (result === null || result === undefined) return 'Tool call failed';
     if (typeof result === 'string') return result;
     if (result instanceof Error) return result.message || String(result);
-    if (typeof result === 'object' && 'error' in (result as Record<string, unknown>)) {
-        const err = (result as Record<string, unknown>).error;
-        if (typeof err === 'string') return err;
+    if (typeof result === 'object') {
+        const obj = result as Record<string, unknown>;
+        const err = typeof obj.error === 'string' ? obj.error : undefined;
+        const otherKeys = Object.keys(obj).filter((k) => k !== 'error');
+        if (err !== undefined && otherKeys.length === 0) return err;
     }
     try {
         return JSON.stringify(result, null, 2);
@@ -53,7 +59,8 @@ const ToolCallContent: ToolCallMessagePartComponent = ({ toolName, args, result,
 };
 
 export function MessageComponent() {
-    const { role, content } = useAuiState((s) => s.message);
+    const { id, role, content } = useAuiState((s) => s.message);
+    const classification = useMessageClassification(id);
     const hasContent = content?.length > 0;
 
     if (role === 'user') {
@@ -66,6 +73,10 @@ export function MessageComponent() {
 
     return (
         <MessagePrimitive.Root>
+            {/* Per-turn classifier picks rendered right above this assistant turn's tool calls.
+                `undefined` means either the welcome message or an in-flight turn whose message
+                hasn't been zipped with the classifications array yet — skip in both cases. */}
+            {classification !== undefined ? <ClassificationChip classification={classification} /> : null}
             <MessagePrimitive.Content
                 components={{
                     Text: AssistantText,

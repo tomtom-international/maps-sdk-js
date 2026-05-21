@@ -1,7 +1,8 @@
 import type { Page, TestInfo } from '@playwright/test';
 import { expect } from '@playwright/test';
 import path from 'path';
-import { DEFAULT_MAP_LOAD_TIMEOUT, DEFAULT_MAP_SELECTOR } from './e2eTestConstants';
+import { PROD_TEST_SERVER_PORT, SANDPACK_TEST_SERVER_PORT } from '../../playwright.config';
+import { DEFAULT_MAP_LOAD_TIMEOUT, DEFAULT_MAP_SELECTOR, TAG_NO_MAP, TAG_PROD, TAG_SANDPACK } from './e2eTestConstants';
 
 const getExampleName = (testInfo: TestInfo): string => {
     const testFilePath = testInfo.file;
@@ -25,11 +26,11 @@ export type SanityE2ETestOptions = {
  *
  * @example
  * ```ts
- * // In examples/default-map/e2e-tests/sanity.spec.ts
- * import { sanityE2ETest } from '../../src/e2e-test-utils/sanityE2ETest';
+ * // Test production build
+ * sanityE2ETest({ page, testType: 'prod' });
  *
- * // No hard-coded name: the helper will infer the example directory from the test file path
- * sanityE2ETest({});
+ * // Test via Sandpack (shared test harness)
+ * sanityE2ETest({ page, testType: 'sandpack', exampleDirectory: 'default-map' });
  * ```
  */
 export const sanityE2ETest = async (options: SanityE2ETestOptions) => {
@@ -41,14 +42,50 @@ export const sanityE2ETest = async (options: SanityE2ETestOptions) => {
         maxDiffPixelRatio = 0.2,
     } = options;
 
-    await page.goto(`/${getExampleName(testInfo)}/dist`);
-    await page.waitForSelector(mapSelector, { timeout: mapLoadTimeout });
-    await page.waitForTimeout(1000); // Allow time for map tiles to load
-    await page.waitForLoadState('networkidle', { timeout: mapLoadTimeout });
+    const tags = testInfo.tags;
 
-    // Take screenshot and compare
-    await expect(page).toHaveScreenshot('upon-load.png', {
-        maxDiffPixelRatio,
-        timeout: mapLoadTimeout,
-    });
+    if (tags.includes(TAG_SANDPACK)) {
+        const consoleErrors: string[] = [];
+        page.on('console', (msg) => {
+            if (msg.type() === 'error') consoleErrors.push(msg.text());
+        });
+
+        const url = `http://localhost:${SANDPACK_TEST_SERVER_PORT}/${getExampleName(testInfo)}/dist/sandpack/`;
+        await page.goto(url);
+        // Log any console errors for debugging
+        await page.waitForTimeout(2000);
+
+        await page.waitForSelector('.cm-editor', { timeout: mapLoadTimeout });
+        await page.waitForTimeout(2000);
+        await page.waitForSelector('.sp-loading', { state: 'hidden', timeout: mapLoadTimeout });
+        await page.waitForTimeout(2000);
+
+        await expect(page).toHaveScreenshot('upon-load-sandpack.png', {
+            maxDiffPixelRatio,
+            timeout: mapLoadTimeout,
+        });
+    }
+
+    if (tags.includes(TAG_PROD)) {
+        await page.goto(`http://localhost:${PROD_TEST_SERVER_PORT}/${getExampleName(testInfo)}/dist/prod`);
+        await page.waitForSelector(mapSelector, { timeout: mapLoadTimeout });
+        await page.waitForTimeout(1000);
+        await page.waitForLoadState('networkidle', { timeout: mapLoadTimeout });
+
+        await expect(page).toHaveScreenshot('upon-load.png', {
+            maxDiffPixelRatio,
+            timeout: mapLoadTimeout,
+        });
+    }
+
+    if (tags.includes(TAG_NO_MAP)) {
+        const url = `http://localhost:${SANDPACK_TEST_SERVER_PORT}/${getExampleName(testInfo)}/dist/prod`;
+        await page.goto(url);
+        await page.waitForLoadState('networkidle', { timeout: mapLoadTimeout });
+
+        await expect(page).toHaveScreenshot('upon-load.png', {
+            maxDiffPixelRatio,
+            timeout: mapLoadTimeout,
+        });
+    }
 };

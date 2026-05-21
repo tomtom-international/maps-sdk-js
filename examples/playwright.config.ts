@@ -1,5 +1,15 @@
 import { defineConfig, devices, PlaywrightTestConfig } from '@playwright/test';
 
+export const PROD_TEST_SERVER_PORT = 9050;
+export const SANDPACK_TEST_SERVER_PORT = 9051;
+
+/**
+ * Builds the Playwright test configuration with optional overrides.
+ *
+ * @param overrides Partial configuration to override defaults
+ * @returns Complete PlaywrightTestConfig object
+ */
+
 export const buildPlaywrightConfig = (overrides: Partial<PlaywrightTestConfig> = {}): PlaywrightTestConfig => {
     return defineConfig({
         timeout: 60 * 1000,
@@ -44,12 +54,20 @@ export const buildPlaywrightConfig = (overrides: Partial<PlaywrightTestConfig> =
         // Keep snapshots next to test files
         snapshotPathTemplate: '{testDir}/{testFileDir}/snapshots/{arg}{ext}',
 
-        webServer: {
-            ignoreHTTPSErrors: true,
-            command: 'pnpm start-test-server',
-            port: 9050,
-            reuseExistingServer: true,
-        },
+        webServer: [
+            {
+                command: 'pnpm start-test-server:prod',
+                port: PROD_TEST_SERVER_PORT,
+                reuseExistingServer: true,
+                ignoreHTTPSErrors: true,
+            },
+            {
+                command: 'pnpm start-test-server:sandpack',
+                port: SANDPACK_TEST_SERVER_PORT,
+                reuseExistingServer: true,
+                ignoreHTTPSErrors: true,
+            },
+        ],
 
         ...overrides,
     });

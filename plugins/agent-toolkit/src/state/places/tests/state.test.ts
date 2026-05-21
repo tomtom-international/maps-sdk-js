@@ -159,7 +159,7 @@ describe('PlacesState — shown-entries display', () => {
     });
 
     /** Seed N entries with the given feature counts;  */
-    const seedPlaces = (perEntry: number[]): string[] => {
+    const seedPlaces = async (perEntry: number[]): Promise<string[]> => {
         const ids: string[] = [];
         for (const count of perEntry) {
             const features = Array.from({ length: count }, (_, i) => ({
@@ -168,13 +168,15 @@ describe('PlacesState — shown-entries display', () => {
                 geometry: { type: 'Point', coordinates: [0, 0] },
                 properties: {},
             }));
-            ids.push(state.addPlaceResult({ type: 'FeatureCollection', features } as never, `entry-${ids.length}`));
+            ids.push(
+                await state.addPlaceResult({ type: 'FeatureCollection', features } as never, `entry-${ids.length}`),
+            );
         }
         return ids;
     };
 
     it('setShownEntries replaces the current set', async () => {
-        const [id0, id1] = seedPlaces([3, 2]);
+        const [id0, id1] = await seedPlaces([3, 2]);
         await state.setShownEntries([id0], 'pin');
         expect([...state.shownEntryIds]).toEqual([id0]);
         expect(showCalls.at(-1)).toEqual({ marker: 'pin', count: 3 });
@@ -185,7 +187,7 @@ describe('PlacesState — shown-entries display', () => {
     });
 
     it('addShownEntries appends to the current set', async () => {
-        const [id0, id1, id2] = seedPlaces([3, 2, 4]);
+        const [id0, id1, id2] = await seedPlaces([3, 2, 4]);
         await state.setShownEntries([id0], 'pin');
         const renderCount = showCalls.length;
 
@@ -202,14 +204,14 @@ describe('PlacesState — shown-entries display', () => {
     });
 
     it('addShownEntries ignores unknown ids', async () => {
-        const [id0] = seedPlaces([3]);
+        const [id0] = await seedPlaces([3]);
         await state.addShownEntries([id0, 'nope'], 'pin');
         expect([...state.shownEntryIds]).toEqual([id0]);
         expect(showCalls.at(-1)).toEqual({ marker: 'pin', count: 3 });
     });
 
     it('addShownEntries is a no-op when nothing changes', async () => {
-        const [id0] = seedPlaces([3]);
+        const [id0] = await seedPlaces([3]);
         await state.setShownEntries([id0], 'pin');
         const renderCount = showCalls.length;
         await state.addShownEntries([id0], 'pin');
@@ -217,7 +219,7 @@ describe('PlacesState — shown-entries display', () => {
     });
 
     it('removeShownEntries removes by id', async () => {
-        const [id0, id1] = seedPlaces([3, 2]);
+        const [id0, id1] = await seedPlaces([3, 2]);
         await state.setShownEntries([id0, id1], 'pin');
         // Per-entry: two separate shows, one per entry.
         expect(
@@ -234,7 +236,7 @@ describe('PlacesState — shown-entries display', () => {
     });
 
     it('clearShownEntries empties the set', async () => {
-        const [id0, id1] = seedPlaces([3, 2]);
+        const [id0, id1] = await seedPlaces([3, 2]);
         await state.setShownEntries([id0, id1], 'pin');
         const beforeClear = showCalls.length;
         await state.clearShownEntries();
@@ -248,7 +250,7 @@ describe('PlacesState — shown-entries display', () => {
     });
 
     it('addShownEntries with a different markerType moves the entry', async () => {
-        const [id0] = seedPlaces([3]);
+        const [id0] = await seedPlaces([3]);
         await state.setShownEntries([id0], 'pin');
         expect(state.getShownMarkerType(id0)).toBe('pin');
 
@@ -259,7 +261,7 @@ describe('PlacesState — shown-entries display', () => {
     });
 
     it('setShownEntries does not disturb entries in the other marker set', async () => {
-        const [id0, id1] = seedPlaces([3, 2]);
+        const [id0, id1] = await seedPlaces([3, 2]);
         await state.setShownEntries([id0], 'pin');
         await state.setShownEntries([id1], 'base-map');
         expect([...state.shownAsPinIds]).toEqual([id0]);
@@ -267,7 +269,7 @@ describe('PlacesState — shown-entries display', () => {
     });
 
     it('clearShownEntries is a no-op when set is empty', async () => {
-        seedPlaces([3]);
+        await seedPlaces([3]);
         const renderCount = showCalls.length;
         await state.clearShownEntries();
         expect(showCalls.length).toBe(renderCount); // no call to show or clear
@@ -296,8 +298,8 @@ describe('PlacesState events', () => {
         expect(handler.mock.calls[0][0]).toHaveLength(1);
     });
 
-    it('emits analysis-added and entries-change on addAnalysisToEntry', () => {
-        const id = state.addPlaceResult({} as any, 'entry');
+    it('emits analysis-added and entries-change on addAnalysisToEntry', async () => {
+        const id = await state.addPlaceResult({} as any, 'entry');
         const analysisHandler = vi.fn();
         const entriesHandler = vi.fn();
         state.events.on('analysis-added', analysisHandler);
@@ -329,7 +331,7 @@ describe('PlacesState events', () => {
     });
 
     it('emits shown-change on set/add/remove/clear', async () => {
-        const id = state.addPlaceResult(
+        const id = await state.addPlaceResult(
             { type: 'FeatureCollection', features: [{ type: 'Feature', id: 'p1', properties: {} }] } as any,
             'e',
         );
@@ -347,7 +349,7 @@ describe('PlacesState events', () => {
     });
 
     it('addShownEntries that changes nothing does not emit', async () => {
-        const id = state.addPlaceResult({} as any, 'e');
+        const id = await state.addPlaceResult({} as any, 'e');
         await state.setShownEntries([id], 'pin');
         const handler = vi.fn();
         state.events.on('shown-change', handler);

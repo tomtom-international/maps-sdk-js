@@ -15,7 +15,7 @@ export const getPoiCategoryCodesOutputSchema = z.union([
         codes: z
             .array(z.string())
             .describe(
-                'POICategory enum values for discoverPlaces poiCategories. Generic codes (e.g. "RESTAURANT") also accepted by togglePOIs categories.',
+                'POICategory enum values for discoverPlaces poiCategories. Generic codes (e.g. "RESTAURANT") also accepted by toggleTilesPOIs categories.',
             ),
     }),
     toolErrorSchema,

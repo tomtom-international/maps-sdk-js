@@ -21,6 +21,13 @@ const timedEntrySchema = metricsSchema.extend({
 });
 
 export const queryTrafficAnalyticsSchema = z.object({
+    entryId: z
+        .string()
+        .optional()
+        .describe(
+            'Traffic-area-analytics entry id to query (e.g. "tta-0"). Omit to query the most recently added entry. ' +
+                'Use `recallState` to list available ids.',
+        ),
     granularity: z
         .enum(['daily', 'hourly', 'weekly', 'monthly', 'yearly', 'average'])
         .optional()
@@ -113,12 +120,17 @@ export const executeQueryTrafficAnalytics = async (
     params: z.infer<typeof queryTrafficAnalyticsSchema>,
     state: ToolState,
 ): Promise<z.infer<typeof queryTrafficAnalyticsOutputSchema>> => {
-    const { granularity = 'daily', metric, startDate, endDate, hourStart, hourEnd, dayOfWeek } = params;
+    const { entryId, granularity = 'daily', metric, startDate, endDate, hourStart, hourEnd, dayOfWeek } = params;
 
-    const analytics = state.trafficAreaAnalytics.lastAreaAnalytics;
-    if (!analytics) {
-        return { error: 'No analytics data cached. Call getTrafficAreaAnalytics first.' };
+    const entry = entryId ? state.trafficAreaAnalytics.findById(entryId) : state.trafficAreaAnalytics.latestEntry;
+    if (!entry) {
+        return {
+            error: entryId
+                ? `No traffic-area-analytics entry with id "${entryId}". Use recallState to list available ids.`
+                : 'No analytics entries available. Call getTrafficAreaAnalytics first.',
+        };
     }
+    const analytics = entry.data;
 
     const region = analytics.features[0]?.properties;
     if (!region) {
@@ -183,8 +195,8 @@ export const executeQueryTrafficAnalytics = async (
         entries = entries.filter((e) => e.day === undefined || dayOfWeek.includes(e.day as number));
     }
 
-    // Include current visualization state so LLM knows what's displayed
-    const vizConfig = state.trafficAreaAnalytics.currentAnalyticsConfig;
+    // Include the source entry's visualization state so the LLM knows what's displayed (if anything).
+    const vizConfig = entry._config;
     const currentVisualization = vizConfig
         ? {
               activeMetric: vizConfig.activeMetric,

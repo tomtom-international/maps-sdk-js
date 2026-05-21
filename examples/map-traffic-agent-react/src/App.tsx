@@ -27,6 +27,7 @@ export function App() {
 
     const {
         transport,
+        classifications,
         analyticsState,
         selectedIncident,
         selectIncident,
@@ -139,6 +140,7 @@ export function App() {
                     deploymentId={settings.deploymentId}
                     availableDeployments={availableDeployments}
                     onDeploymentChange={setDeploymentId}
+                    classifications={classifications}
                 />
             ) : (
                 <div className="flex w-[380px] flex-col bg-(--sdk-surface-0) max-sm:w-full">

@@ -1,11 +1,12 @@
 import { type AssistantRuntime, AssistantRuntimeProvider, ThreadPrimitive } from '@assistant-ui/react';
 import { useChatRuntime } from '@assistant-ui/react-ai-sdk';
-import type { createMapAgent } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+import type { ClassificationResult, createMapAgent } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import type { ChatTransport, InferAgentUIMessage } from 'ai';
 import { useState } from 'react';
 import { ChatHeader } from './ChatHeader';
 import { ChatInput } from './ChatInput';
 import { ChatMessages, DEFAULT_WELCOME_TEXT } from './ChatMessages';
+import { ClassificationsProvider } from './ClassificationsContext';
 
 type MapAgentChatProps = {
     transport: ChatTransport<InferAgentUIMessage<ReturnType<typeof createMapAgent>>>;
@@ -21,6 +22,10 @@ type MapAgentChatProps = {
     deploymentId?: string;
     availableDeployments?: readonly string[];
     onDeploymentChange?: (deploymentId: string) => void;
+    /** Per-turn classifier results, in the order the classifier produced them. The Nth entry is
+     * paired with the Nth non-welcome assistant message so each turn's chip can render above its
+     * own tool calls. */
+    classifications?: readonly (ClassificationResult | null)[];
 };
 
 function formatError(error: unknown): string {
@@ -44,6 +49,7 @@ export function MapAgentChat({
     deploymentId,
     availableDeployments,
     onDeploymentChange,
+    classifications = [],
 }: MapAgentChatProps) {
     const [errors, setErrors] = useState<string[]>([]);
 
@@ -67,24 +73,26 @@ export function MapAgentChat({
     const collapsedClass = isCollapsed ? 'max-sm:max-h-12' : 'max-sm:max-h-[50dvh]';
     return (
         <AssistantRuntimeProvider runtime={runtime as unknown as AssistantRuntime}>
-            <ThreadPrimitive.Root
-                className={`flex w-[380px] flex-col gap-4 bg-(--sdk-surface-0) p-2 transition-[max-height] max-sm:w-full max-sm:overflow-hidden ${collapsedClass}`}
-            >
-                <ChatHeader
-                    isCollapsed={isCollapsed}
-                    onToggle={() => setIsCollapsed((c) => !c)}
-                    label={label}
-                    deploymentId={deploymentId}
-                    availableDeployments={availableDeployments}
-                    onDeploymentChange={onDeploymentChange}
-                />
-                <ThreadPrimitive.Viewport id="chat-messages" className="flex flex-1 flex-col overflow-y-auto">
-                    <ChatMessages errors={errors} suggestedPrompts={suggestedPrompts} />
-                    <ThreadPrimitive.ViewportFooter className="sticky bottom-0 mt-auto bg-(--sdk-surface-0)">
-                        <ChatInput />
-                    </ThreadPrimitive.ViewportFooter>
-                </ThreadPrimitive.Viewport>
-            </ThreadPrimitive.Root>
+            <ClassificationsProvider classifications={classifications}>
+                <ThreadPrimitive.Root
+                    className={`flex w-[380px] flex-col gap-4 bg-(--sdk-surface-0) p-2 transition-[max-height] max-sm:w-full max-sm:overflow-hidden ${collapsedClass}`}
+                >
+                    <ChatHeader
+                        isCollapsed={isCollapsed}
+                        onToggle={() => setIsCollapsed((c) => !c)}
+                        label={label}
+                        deploymentId={deploymentId}
+                        availableDeployments={availableDeployments}
+                        onDeploymentChange={onDeploymentChange}
+                    />
+                    <ThreadPrimitive.Viewport id="chat-messages" className="flex flex-1 flex-col overflow-y-auto">
+                        <ChatMessages errors={errors} suggestedPrompts={suggestedPrompts} />
+                        <ThreadPrimitive.ViewportFooter className="sticky bottom-0 mt-auto bg-(--sdk-surface-0)">
+                            <ChatInput />
+                        </ThreadPrimitive.ViewportFooter>
+                    </ThreadPrimitive.Viewport>
+                </ThreadPrimitive.Root>
+            </ClassificationsProvider>
         </AssistantRuntimeProvider>
     );
 }

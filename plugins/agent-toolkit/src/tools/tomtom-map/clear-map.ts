@@ -3,94 +3,56 @@
  */
 
 import { z } from 'zod';
+import { CLEARABLE_SLICE_NAMES, type ClearableMapSlice, type ClearableSliceName } from '../../state';
 import type { ToolState } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
+
+// Zod's z.enum needs a non-empty literal tuple; CLEARABLE_SLICE_NAMES is typed as readonly so
+// the cast just narrows it to the tuple-of-literals shape Zod expects. Order is irrelevant.
+const layerEnum = z.enum(CLEARABLE_SLICE_NAMES as unknown as readonly [ClearableSliceName, ...ClearableSliceName[]]);
 
 /** Output schema for the clear-map tool. */
 export const clearMapOutputSchema = z.union([
     z.object({
         success: z.literal(true),
-        cleared: z.array(z.string()),
+        cleared: z.array(layerEnum),
     }),
     toolErrorSchema,
 ]);
 
-const CLEAR_LAYERS = ['places', 'routes', 'geometries', 'analytics', 'incidents'] as const;
-type ClearLayer = (typeof CLEAR_LAYERS)[number];
-
-/**
- * Tool schema for clearing map features.
- */
+/** Tool schema for clear-map. */
 export const clearMapSchema = z.object({
     layers: z
-        .array(z.enum(CLEAR_LAYERS))
+        .array(layerEnum)
         .optional()
         .describe(
-            'Layers to clear (default: all). `analytics` covers traffic area analytics; `incidents` covers fetched traffic incidents.',
+            'Slice keys to clear (default: all). One per `ToolState` slice that renders on the map: ' +
+                CLEARABLE_SLICE_NAMES.map((n) => `\`${n}\``).join(', ') +
+                '. Map-only — slice histories (`entries`) are kept.',
         ),
 });
 
 export const clearMapDescription =
-    'Remove displayed features from the map (places, routes, geometries, analytics, incidents). Use to clean up before showing new results or to reset the map.';
-
-const clearPlaces = (state: ToolState): Promise<void> => state.places.clearShownEntries();
-
-// Each routing entry owns its own RoutingModule; walk them all so we don't leave stale
-// routes from a previously-shown entry.
-const clearRoutes = async (state: ToolState): Promise<void> => {
-    for (const entry of state.routing.entries) {
-        if (entry._module) {
-            await entry._module.clearRoutes();
-            await entry._module.clearWaypoints();
-        }
-    }
-};
-
-// Polygon overlays come from three slices: cached place-footprint polygons on places entries,
-// isochrone polygons + origin pins on ranges entries (hideEntry clears both modules and resets
-// `_shown`), and derived custom-geometries entries. Sequential awaits — Promise.all here can
-// race the SDK/MapLibre.
-const clearGeometries = async (state: ToolState): Promise<void> => {
-    await state.places.clearShownGeometries();
-    for (const entryId of state.ranges.shownEntryIds) {
-        await state.ranges.hideEntry(entryId);
-    }
-    for (const entryId of state.customGeometries.shownEntryIds) {
-        await state.customGeometries.hideEntry(entryId);
-    }
-};
-
-const clearAnalytics = async (state: ToolState): Promise<void> => {
-    const module = state.trafficAreaAnalytics.trafficAreaAnalyticsModule;
-    if (module) await module.clear();
-};
-
-// Per-entry modules now — hide every entry that's currently rendered. Each entry's module
-// clears itself on hide. Entries stay in history; this is a map-only clear. Sequential
-// awaits — concurrent hide/clear calls race the SDK/MapLibre state machine.
-const clearIncidents = async (state: ToolState): Promise<void> => {
-    for (const id of state.trafficIncidents.shownEntryIds) {
-        await state.trafficIncidents.hideEntry(id);
-    }
-};
+    'Hide everything a chosen set of state slices is rendering on the map (places, routing, ranges, ' +
+    'customGeometries, byod, trafficAreaAnalytics, trafficIncidents). Map-only — slice `entries` history ' +
+    'is untouched. Use to clean up before showing new results.';
 
 /**
  * Execute clear map.
  */
 export const executeClearMap = async (params: z.infer<typeof clearMapSchema>, state: ToolState) => {
     const { layers } = params;
+    const targets = layers && layers.length > 0 ? layers : CLEARABLE_SLICE_NAMES;
     try {
-        const shouldClear = (layer: ClearLayer): boolean => !layers || layers.length === 0 || layers.includes(layer);
-
-        if (shouldClear('places')) await clearPlaces(state);
-        if (shouldClear('routes')) await clearRoutes(state);
-        if (shouldClear('geometries')) await clearGeometries(state);
-        if (shouldClear('analytics')) await clearAnalytics(state);
-        if (shouldClear('incidents')) await clearIncidents(state);
-
+        for (const name of targets) {
+            // Cast widens the slice instance to the ClearableMapSlice interface — the
+            // CLEARABLE_SLICE_NAMES list is `satisfies`-guarded so every name reaches a
+            // slice that actually implements `clearShown`.
+            await (state[name] as unknown as ClearableMapSlice).clearShown();
+        }
         return {
-            success: true,
-            cleared: layers || [...CLEAR_LAYERS],
+            success: true as const,
+            cleared: [...targets] as ClearableSliceName[],
         };
     } catch (error) {
         return {
