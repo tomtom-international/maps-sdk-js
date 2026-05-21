@@ -1,0 +1,417 @@
+---
+title: Agent Toolkit tools
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.47.7"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+Tools are the unit of action the agent works with. Each turn, the [intent classifier](./how-it-works.mdx#1-intent-classification) selects a subset, and the [tool loop](./how-it-works.mdx#2-tool-loop) lets the model call them until it can answer. This page covers the built-in registry, how to customize it, the per-turn scope mechanism for unified data tools, and the experimental code-generation pattern.
+
+## The tool registry
+
+The plugin ships a `DEFAULT_TOOLS` registry — a flat record of named `ToolEntry` objects. Each entry
+defines what the tool does and how the agent should use it:
+
+```typescript
+{
+    description: string;          // Full tool description for the model
+    inputSchema: ZodType;         // Validated input parameters
+    outputSchema?: ZodType;       // Structured output (improves reliability)
+    execute: (input, state) => Promise<any>;
+
+    // Classifier metadata
+    classificationPrompt?: string; // One-liner: when to activate this tool
+    tags?: string[];               // Category labels (e.g. 'route', 'traffic')
+    examples?: string[];           // Usage examples shown in the help tool
+    examplePrompts?: string[];     // Natural-language prompts shown in the help tool
+    relatedTools?: string[];       // Tools often used together
+    dependsOn?: string[];          // Tools that must run first
+
+    // Optional: per-turn scope (see "Scope-aware tools" below)
+    scopeSchema?: ZodType;         // Shape of `toolScopes[<name>]` the classifier emits
+    scopePrompt?: string;          // Hint for the classifier describing the scope shape
+}
+```
+
+Tools are grouped by what they do, not which API they wrap:
+
+| Category | Representative tools |
+|---|---|
+| **Location** | `locatePlace`, `reverseGeocode`, `getCurrentLocation`, `getViewport` |
+| **Places & search** | `discoverPlaces`, `getPOICategoryCodes` |
+| **Routing** | `setRoute`, `addWaypointsToRoute`, `removeWaypointsFromRoute`, `replaceWaypointInRoute`, `getCurrentWaypoints` |
+| **Reachable areas** | `findReachableAreas` (isochrones / isodistances), `recallRanges` |
+| **Geometries (polygon namespace)** | `recallGeometries` — tagged `{ kind, id }` lookups across `place` / `places` / `ranges` / `customGeometries` entries |
+| **BYOD (bring-your-own-data)** | `addByodLayer`, `recallByod`, `updateByodDisplay` — customer-authored GeoJSON layers registered as `byod` entries |
+| **Traffic — tiles** | `toggleTilesTrafficFlow`, `toggleTilesTrafficIncidents`, `getShownTileIncidents` |
+| **Traffic — incidents (fetch / monitor / focus)** | `getTrafficIncidents`, `startTrafficIncidentsMonitor`, `stopTrafficIncidentsMonitor`, `focusIncidents` |
+| **Traffic — area analytics** | `getTrafficAreaAnalytics`, `queryTrafficAnalytics`, `updateTrafficAreaAnalyticsDisplay` |
+| **Unified data tools** *(scope-aware)* | `analyseData`, `processData` — see [Scope-aware data tools](#scope-aware-data-tools) |
+| **Map display** | `updatePlacesDisplay`, `updateRoutesDisplay`, `updateWaypointsDisplay`, `updateTrafficAreaAnalyticsDisplay`, `updateByodDisplay`, `clearMap` |
+| **Map control** | `flyTo`, `zoomInOrOut`, `setMapStandardStyle`, `setLanguage`, `toggleTilesPOIs`, `toggleTilesBaseMapLayerGroups`, `setPitchBearing`, `getStandardMapStyles` |
+| **MapLibre direct** | `executeMaplibreCode`, `setLayoutProperties`, `setPaintProperties`, `getMapStyleLayers` |
+| **State / recall** | `recallPlaces`, `recallRoutes`, `recallRanges`, `recallGeometries`, `recallByod`, `recallState`, `setEntryMode`, `resetState` |
+| **Utilities** | `formatDistance`, `formatDuration`, `calculateBBox`, `help` |
+
+The `analyseData` and `processData` tools take **JavaScript** as a parameter instead of a fixed argument list — see [Code generation](#code-generation).
+
+### The `help` tool
+
+The built-in `help` tool is available to the model at runtime. When a user asks *"what can you do?"*
+or *"show me routing examples"*, the model calls `help` to surface tool descriptions, usage examples,
+and example prompts filtered by tag. Users discover capabilities through natural conversation — no
+documentation browsing required.
+
+### Tools that read state vs. fetch data
+
+A key design distinction: some tools fetch fresh data from TomTom services; others read from plugin
+state. The recall tools (`recallPlaces`, `recallRoutes`, `recallRanges`, `recallByod`, `recallGeometries`,
+`recallState`) exist because tool results are not retained in conversation history. If a user asks
+*"what were those places?"* an hour into a session, the model calls a recall tool — it does not guess
+or hallucinate prior results.
+
+See [State](./state.mdx) for the shape of what these tools read from.
+
+## `getTrafficIncidents` `where` schema
+
+Traffic-incident loading uses a `where` schema (`within` mode) instead of a top-level bbox.
+The same multi-region inputs that `discoverPlaces.where.within` accepts (`viewport`, `boundingBox`,
+`queries`, `placeIds`, `geometries`, `range`, `route`) all resolve to bboxes and are unioned into one
+bbox for the underlying SDK call (≤ 10,000 km²). Default when `where` is omitted:
+`{ mode: 'within', viewport: true }`.
+
+```typescript
+// Current viewport
+getTrafficIncidents({});
+
+// Named area (geocoded → polygon bbox)
+getTrafficIncidents({ where: { mode: 'within', queries: [{ query: 'Paris', queryAs: 'place' }] } });
+
+// Buffered corridor around the latest route
+getTrafficIncidents({ where: { mode: 'within', route: { widthMeters: 1000 } } });
+
+// Multi-source union
+getTrafficIncidents({
+    where: { mode: 'within', queries: [{ query: 'Amsterdam' }], placeIds: ['G55fc4abe-...'] },
+});
+```
+
+When the classifier picks `getTrafficIncidents` with both a meaningful multi-region field *and*
+`viewport: true` (which strict-mode LLM providers like Azure / OpenAI emit by default), the executor
+prefers the multi-region intent — the tool never silently answers with the viewport when the user
+named a specific area.
+
+## Customizing tools
+
+Tools are resolved by merging the `DEFAULT_TOOLS` registry with your `tools` option.
+You can add, replace, or remove individual entries — the rest remain untouched.
+
+### Remove a default tool
+
+```typescript
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    tools: { setLanguage: false },
+});
+```
+
+### Replace a default tool
+
+Pass a `ToolEntry` with the same key to swap the built-in implementation with yours:
+
+```typescript
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    tools: {
+        getCurrentLocation: {
+            description: 'Returns the user position from the company fleet system.',
+            inputSchema: z.object({}),
+            execute: async (_input, state) => {
+                const position = await fleetApi.getDriverPosition();
+                state.baseMap.userPosition = position;
+                return { position };
+            },
+            classificationPrompt: 'Get the driver\'s current GPS position from the fleet system.',
+            tags: ['location'],
+        },
+    },
+});
+```
+
+### Add a custom tool
+
+Bring your own data sources alongside the built-in TomTom tools. Custom tools receive the same
+`state` object, so they can hand results to the built-in display flow:
+
+```typescript
+import { z } from 'zod';
+import type { Place } from '@tomtom-org/maps-sdk/core';
+import type { ToolEntry } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+
+const getFleetVehicle: ToolEntry = {
+    description: 'Get the current map position of a fleet vehicle by ID and add it to the places history.',
+    classificationPrompt: 'Locate or display a fleet vehicle on the map by its ID.',
+    inputSchema: z.object({ vehicleId: z.string().describe('The fleet vehicle identifier') }),
+    execute: async ({ vehicleId }, state) => {
+        const position = await fleetApi.getPosition(vehicleId);
+        const place: Place = {
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: position },
+            properties: { name: `Vehicle ${vehicleId}` },
+        };
+        // Append to the places history; the model can then show it via updatePlacesDisplay,
+        // route to it via setRoute, or recall it later through recallPlaces.
+        const entryId = state.places.addPlaceResult(place, `Vehicle ${vehicleId}`);
+        return { vehicleId, entryId, position };
+    },
+    tags: ['location'],
+    examplePrompts: ['Where is vehicle TT-001?', 'Show fleet vehicle on the map'],
+};
+
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    tools: { getFleetVehicle },
+});
+```
+
+The custom tool participates in intent classification automatically. If the user says
+*"Where is vehicle TT-001?"*, the classifier activates `getFleetVehicle` alongside any
+other tools needed to answer the question.
+
+### Start from a blank slate
+
+Set `includeDefaultTools: false` to begin with no built-in tools. Useful when building a
+narrowly scoped agent that should not stray into general map control. Re-add specific
+defaults from the `DEFAULT_TOOLS` registry:
+
+```typescript
+import { createMapAgent, DEFAULT_TOOLS } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    includeDefaultTools: false,
+    tools: {
+        getFleetVehicle,
+        locatePlace: DEFAULT_TOOLS.locatePlace,    // selectively re-add a built-in
+        flyTo: DEFAULT_TOOLS.flyTo,
+    },
+});
+```
+
+## Bring-your-own-data (BYOD) layers
+
+BYOD lets the agent read and render customer-authored GeoJSON alongside the built-in stack. Each
+layer is stored as a `byod` entry — addressable via `byodEntryIDs` on `analyseData` / `processData`
+(read) and `processData`'s `byod` output (write), with visibility managed by `updateByodDisplay`.
+
+```typescript
+// Ingest a URL-hosted layer (subject to 25 MB cap + 15s timeout + http/https only)
+addByodLayer({ label: 'Sales territories', url: 'https://example.com/territories.geojson', show: true });
+
+// Or inline a FeatureCollection
+addByodLayer({ label: 'Customer pins 2026-Q1', data: { type: 'FeatureCollection', features: [/* … */] } });
+
+// Inspect what's loaded
+recallByod();                          // list every BYOD entry
+recallByod({ id: 'byod-0' });          // full FeatureCollection of one entry
+
+// Toggle visibility
+updateByodDisplay({ entryIds: ['byod-0'], action: 'show' });
+updateByodDisplay({ action: 'hide', clearAll: true });
+```
+
+For programmatic ingest (no agent turn), bypass the URL-fetch policy entirely:
+
+```typescript
+agent.state.byod.addEntry(featureCollection, 'Sales territories', { source: { kind: 'integrator' } });
+```
+
+## Scope-aware data tools
+
+`analyseData` and `processData` are the **two unified data tools** that replaced the per-kind
+splits (`analysePlaces` / `analyseRoutes` / `analyseGeometries` / `analyseIncidents` and
+`processPlaces` / `processRoutes` / `processGeometries`). Each accepts any combination of
+`placesEntryIDs` / `routesEntryIDs` / `incidentsEntryIDs` / `geometriesEntryIDs` /
+`trafficAreaAnalyticsEntryIDs` / `byodEntryIDs` and exposes the matching entries as sandbox inputs
+(`places`, `routes`, `incidents`, `geometries`, `trafficAreaAnalytics`, `byod`, plus their `byEntry`
+partition views).
+
+A tool that documents all six input kinds + per-kind schema docs + cross-kind ops cheat-sheet is
+large (≈ 5–8 K tokens unscoped). To keep cost in check, both tools are **scopable**: when the
+classifier selects one, it must also emit a `toolScopes[<name>]` value listing the kinds the turn
+actually touches. `prepareStep` validates the scope against the tool's `scopeSchema` and rebuilds
+its `description` + `inputSchema` for that step to mention *only* those kinds.
+
+The scope shape both tools use:
+
+```typescript
+import type { EntryDataKind } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+
+// EntryDataKind = 'places' | 'routes' | 'incidents'
+//               | 'customGeometries' | 'trafficAreaAnalytics' | 'byod'
+
+type DataToolScope = { kinds: readonly EntryDataKind[] };
+```
+
+`analyseData` and `processData` both expose a `scopeSchema` of this shape (the in-source aliases
+`AnalyseDataScope` / `ProcessDataScope` are internal — the public-facing union is `EntryDataKind`).
+
+`EntryDataKind` covers every entry-owning slice that can appear as a data-tool input. It's
+distinct from `EntryModeSliceName` (state-slice keys: `routing` vs `routes`, `customGeometries`
+vs `geometries`, …) — the data-tool kinds are tool-facing, while `EntryModeSliceName` is
+state-facing.
+
+### Mandatory scope
+
+Picking a scopable tool without emitting its scope is rejected by the classifier's output schema
+(`superRefine`). The structured-output mode retries up to twice with the validation error pointing
+at the missing entry; on persistent failure the tool falls back to a terse unscoped surface
+(functional but with shorter per-kind hints). When `classifier: false` the scope mutation never
+engages and the terse fallback is used permanently — a deliberate opt-out.
+
+### Observing scopes
+
+```typescript
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    onClassify: (result) => {
+        console.log('tools:', result?.activeToolNames);
+        console.log('scopes:', result?.toolScopes);
+        // e.g. { analyseData: { kinds: ['places', 'routes'] } }
+    },
+});
+```
+
+### Add a scopable custom tool
+
+Declare a `scopeSchema` + `scopePrompt` and produce the entry from a `ToolEntryBuilder` that reads
+`options.scope`:
+
+```typescript
+import { z } from 'zod';
+import type { ToolEntryBuilder } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+
+type FleetScope = { kinds: ('vehicles' | 'jobs')[] };
+const fleetScopeSchema = z.object({ kinds: z.array(z.enum(['vehicles', 'jobs'])).min(1) });
+
+const fleetAnalyseBuilder: ToolEntryBuilder<MyState, FleetScope> = ({ scope }) => ({
+    description: scope ? `Analyse ${scope.kinds.join(' + ')} entries via dynamic JS.` : 'Analyse fleet data.',
+    inputSchema: buildFleetSchema(scope),    // narrowed when scope is set
+    execute: executeFleetAnalyse,
+    scopeSchema: fleetScopeSchema,
+    scopePrompt: 'Emit `{ kinds: ["vehicles" | "jobs"] }` listing only the kinds the user query touches.',
+});
+
+createMapAgent<MyState>(map, {
+    model: openai('gpt-4o'),
+    tools: { fleetAnalyse: fleetAnalyseBuilder },
+});
+```
+
+The classifier automatically picks up the new tool's `scopePrompt` and requires the corresponding
+scope to be emitted whenever the tool is selected.
+
+## Code generation
+
+<Blockquote type="warning">
+    **Experimental.** `analyseData`, `processData`, and `executeMaplibreCode` let the model run JavaScript inside your application's JS realm. The shape of their inputs, the injected identifiers, and the output contracts may change without notice. **They have no sandbox** — code runs with the same privileges as the rest of your app (DOM, globals, `fetch`, dynamic `import()`). Don't enable them in deployments where you can't trust the model's output, and review the threat model below before shipping.
+</Blockquote>
+
+A handful of tools take **JavaScript** as a parameter instead of a fixed argument list. The model writes the code; the plugin compiles it via `new AsyncFunction(...paramNames, code)` and invokes it with state and a few injected helpers.
+
+This is what lets the agent answer open-ended questions — *"bar chart of POI categories"*, *"union the boundaries of these cities"*, *"focus the camera on the worst traffic on the route"* — without the toolkit needing a dedicated parameter for every variation. The tool surface stays flat: one tool per *intent*, arbitrary computation inside.
+
+### Where it shows up
+
+| Family | Tools | What the code does |
+|---|---|---|
+| **Analyse** | `analyseData` | Aggregate state into a result — counts, group-bys, top-N, hex bins, Chart.js configs, cross-kind correlations. Read-only — the result is attached to every contributing entry as `_analysis[name]` and returned to the model. Picks a subset of input kinds via scope (see [Scope-aware data tools](#scope-aware-data-tools)). |
+| **Process** | `processData` | Transform state. Returns any combination of: `places` (new places entry), `placeConnections` (lines on the new entry), `geometries` (Polygon/MultiPolygon — attached to the new places entry, or written as a new `customGeometries` entry when no `places` is returned), `byod` (new BYOD entry), `fitOnMap` (camera move). Same scope mechanism as `analyseData`. |
+| **MapLibre** | `executeMaplibreCode` | Run arbitrary JS against the live `map` for anything no other tool covers — custom layers, animations, fog, raster overlays. Returns a diff of added / removed / updated sources and layers. |
+
+### Execution model
+
+Each tool that accepts `code` builds an `AsyncFunction` whose parameters are a fixed set of injected identifiers, then calls it with state. There is **no isolation** — the function runs synchronously in the host realm. In a browser app that means the code has access to `window`, `document`, `fetch`, dynamic `import()`, and every global your bundle ships with. The only thing the plugin actively does to the supplied string is strip lines like `const turf = require('@turf/turf')` that LLMs frequently prepend out of habit (they would otherwise collide with the injected parameter and throw at parse time).
+
+The body works like any other async function body: top-level `await` is fine, locals and helper consts are fine, and the body must end with `return …;`. Each tool injects a different set of identifiers:
+
+| Tool | Injected identifiers |
+|---|---|
+| `analyseData` | `places`, `placesByEntry`, `routes`, `routesByEntry`, `incidents`, `incidentsByEntry`, `geometries`, `trafficAreaAnalytics`, `trafficAreaAnalyticsByEntry`, `byod`, `byodByEntry`, `h3`, `turf` *(plus `previous`, `now`, `log` when `monitor: { entryId }` is set)* |
+| `processData` | same as `analyseData` (minus monitor extras) + `routeUtils` |
+| `executeMaplibreCode` | `map` (live MapLibre `Map` instance) |
+
+Each input identifier is `undefined` when its `*EntryIDs` argument was omitted from the tool call — code must guard before reading (`if (places) ...`, `routes?.features.length`, etc.). Scope narrowing trims which kinds the tool *documents* in its prompt, but the runtime sandbox always carries the full set of names; out-of-scope kinds simply arrive as `undefined`.
+
+Two helpers are shared by every code-generation tool:
+
+- **`turf`** — [@turf/turf](https://turfjs.org/): `area`, `bbox`, `centroid`, `union`, `intersect`, `buffer`, `distance`, `booleanPointInPolygon`, `pointsWithinPolygon`, `clustersDbscan`, `convex`, etc.
+- **`h3`** — [h3-js](https://github.com/uber/h3-js): hex-grid math (`latLngToCell`, `polygonToCells`, `gridDisk`, `cellToBoundary`).
+
+The plugin does not pass anything else in. To bring in new data, the agent calls a separate tool first (`discoverPlaces`, `setRoute`, `findReachableAreas`, `getTrafficIncidents`, `addByodLayer`, …) and passes the resulting entry id into the next code call.
+
+### Threat model
+
+Because the code is not isolated, the security boundary is the **language model and the prompt path you let users drive**, not the runtime. Treat model-emitted code the same way you would treat a `<script>` tag controlled by your LLM provider:
+
+- A jailbroken or compromised model can call `fetch(...)`, read cookies, write to `localStorage`, exfiltrate user data, or mutate the page DOM via `executeMaplibreCode` (which holds a live `map` reference).
+- Prompt injection from a tool result (e.g. a place description containing adversarial text) can steer the model into generating malicious code that the model then asks to execute via these tools.
+
+If your deployment context does not tolerate this (e.g. you're embedding the agent in a page with privileged session cookies), remove the code-generation tools at agent creation:
+
+```typescript
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    tools: {
+        analyseData: false,
+        processData: false,
+        executeMaplibreCode: false,
+    },
+});
+```
+
+### Output contract
+
+`analyseData` accepts an `outputFormat`:
+
+- `"json"` (default) — any JSON-serializable value. Rendered as text in the chat.
+- `"chart"` — a [Chart.js](https://www.chartjs.org/) `ChartConfiguration` (`{ type, data, options? }`). The chat UI passes the config straight to `new Chart(ctx, analysis)`.
+
+`processData` returns a structured envelope: `{ places?, placeConnections?, geometries?, fitOnMap?, byod? }`. The side effects (new entry written, connections drawn, polygons rendered or attached, camera moved, BYOD layer created) are derived from which keys the code set.
+
+Return values must be **pure JSON** — no functions, classes, circular references, or DOM/Map references. The result crosses a JSON boundary before the model sees it, so `undefined`, `NaN`, and sparse arrays are normalized via `JSON.parse(JSON.stringify(...))` to keep subsequent turns valid.
+
+### Example
+
+A user asks *"Bar chart of how many places of each category we have."* The classifier picks
+`analyseData` with `toolScopes.analyseData = { kinds: ['places'] }` (scope narrows the schema and
+sandbox docs to places only). The model emits:
+
+```typescript
+analyseData({
+    placesEntryIDs: ['places-2'],
+    name: 'category-bar',
+    outputFormat: 'chart',
+    code: `
+        const counts = {};
+        for (const p of places.features)
+            for (const c of (p.properties.poi?.categories ?? []))
+                counts[c] = (counts[c] ?? 0) + 1;
+        const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+        return {
+            type: 'bar',
+            data: {
+                labels: entries.map((e) => e[0]),
+                datasets: [{ label: 'Places', data: entries.map((e) => e[1]) }],
+            },
+        };
+    `,
+});
+```
+
+`places` is a merged GeoJSON `FeatureCollection` over every entry in `placesEntryIDs`; `placesByEntry[id]` keeps them separate when needed. The plugin runs the body, validates that the return value is a Chart.js config, stores it on each source entry as `_analysis['category-bar']`, and returns it to the model. The chat UI receives the same config and renders the chart inline.
