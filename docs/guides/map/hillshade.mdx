@@ -1,0 +1,81 @@
+---
+title: Hillshade Module
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.47.8"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Hillshade Module controls the [map layers](./styles.mdx) that display terrain elevation through semi-transparent shading that reveals hills, valleys, mountains, and other terrain features.
+
+<SDKGuideLiveCodingExample exampleDirectory="hillshade" />
+
+## Initialization
+
+```javascript
+import { TomTomMap, HillshadeModule } from '@tomtom-org/maps-sdk/map';
+
+const map = new TomTomMap( { mapLibre: { container: 'map' } } );
+const hillshadeModule = await HillshadeModule.get(map);
+```
+
+## Visibility
+
+Hillshade is hidden by default. This helps you control better when you want it to appear on the map.
+
+You can make it visible during initialization:
+```javascript
+const hillshadeModule = await HillshadeModule.get(map, { visible: true });
+```
+
+You can change visibility later using the `setVisible` method.
+```javascript
+hillshadeModule.setVisible(true);
+```
+
+## Events
+
+Handle user interactions with hillshade:
+
+```javascript
+// Click events
+hillshadeModule.events.on('click', (feature, lngLat) => {
+    console.log('Terrain clicked at:', lngLat);
+});
+
+// Hover events
+hillshadeModule.events.on('hover', (feature, lngLat) => {
+    console.log('Hovering over terrain at:', lngLat);
+});
+
+// Long hover events
+hillshade.events.on('long-hover', (feature, lngLat) => {
+    console.log('Long hovering over terrain at:', lngLat);
+});
+
+// Context menu events
+hillshade.events.on('contextmenu', (feature, lngLat) => {
+    console.log('Right-clicked terrain at:', lngLat);
+});
+
+// Remove event listeners
+hillshade.events.off('click', handler);
+```
+
+## API Reference
+
+For complete documentation of all Hillshade Module properties, methods, and types, see the **[HillshadeModule API Reference](/maps-sdk-js/api-reference/classes/map.HillshadeModule.html)**.
+
+## Related Guides and Examples
+
+### Related Examples
+- **[Hillshade](../../examples/hillshade/)** - Basic hillshade visualization and visibility control
+
+### Related Map Modules
+- **[POIs Module](./pois)** - Display points of interest alongside terrain visualization
+- **[User Interaction Events](./user-events)** - Handle user interactions with map features
+
