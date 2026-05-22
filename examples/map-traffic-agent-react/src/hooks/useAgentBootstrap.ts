@@ -8,41 +8,6 @@ import { TRAFFIC_MANAGER_SYSTEM_PROMPT } from '../agent/system-prompt';
 import { API_KEY, azureConfig } from '../config';
 import { AgentUIMessage, createInstrumentedTransport } from '../telemetry';
 
-// Tools whose execution involves writing or running code (turf/h3 cluster
-// snippets, MapLibre code). Bumping reasoning effort on these turns helps the
-// model plan; the default `low` is enough for fetch/toggle/focus.
-const CODE_EXEC_TOOLS = new Set(['analyseData', 'executeMaplibreCode']);
-
-/**
- * Azure Foundry's Responses API validator rejects message items that lack a
- * top-level `type: "message"` field. `@ai-sdk/openai` emits the OpenAI-spec
- * shorthand (`{role, content}` only), which OpenAI accepts but Foundry does
- * not. Wrap fetch and inject the field on outbound requests.
- */
-const foundryCompatFetch: typeof fetch = async (input, init) => {
-    if (init?.body && typeof init.body === 'string') {
-        try {
-            const body = JSON.parse(init.body);
-            if (Array.isArray(body.input)) {
-                body.input = body.input.map((item: unknown) => {
-                    if (
-                        item &&
-                        typeof item === 'object' &&
-                        'role' in item &&
-                        !('type' in (item as Record<string, unknown>))
-                    ) {
-                        return { type: 'message', ...item };
-                    }
-                    return item;
-                });
-                return fetch(input, { ...init, body: JSON.stringify(body) });
-            }
-        } catch {
-            // Body wasn't JSON — leave it alone.
-        }
-    }
-    return fetch(input, init);
-};
 
 export type AgentInstance = ReturnType<typeof createMapAgent>;
 
@@ -93,16 +58,14 @@ export function useAgentBootstrap({ deploymentId }: BootstrapOptions) {
                 ? createAzure({
                       baseURL: azureConfig.gatewayBaseUrl,
                       apiKey: 'placeholder',
-                      fetch: foundryCompatFetch,
                   })
                 : createAzure({
                       resourceName: azureConfig.resourceName,
                       apiKey: azureConfig.apiKey,
-                      fetch: foundryCompatFetch,
                   });
 
         const created = createMapAgent(map, {
-            model: azure.responses(deploymentId),
+            model: azure.chat(deploymentId),
             maxSteps: 10,
             systemPrompt: TRAFFIC_MANAGER_SYSTEM_PROMPT,
             tools: {
@@ -112,16 +75,6 @@ export function useAgentBootstrap({ deploymentId }: BootstrapOptions) {
                 // double-renders incidents on the map.
                 toggleTrafficIncidents: false,
             },
-            // Stream reasoning summaries from gpt-5.x. Without
-            // `reasoningSummary` the model thinks but the API returns no
-            // reasoning text — so the UI has nothing to render.
-            providerOptions: {
-                openai: { reasoningEffort: 'low', reasoningSummary: 'auto' },
-            },
-            stepProviderOptions: ({ activeTools }) =>
-                activeTools?.some((name) => CODE_EXEC_TOOLS.has(name))
-                    ? { openai: { reasoningEffort: 'low' } }
-                    : undefined,
             onClassify: (result) => setClassifications((prev) => [...prev, result]),
         });
 

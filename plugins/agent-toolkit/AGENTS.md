@@ -104,6 +104,7 @@ The toolkit's "tool" + "state slice" abstractions appear in many places that are
 - if it's referenced by another tool's `description` ("call `xTool` first"), confirm `xTool` exists and is registered too — dead pointers in descriptions mislead the model
 - if it's scope-aware, supplied a `scopeSchema` + `scopePrompt` and verified `prepareStep` rebuilds it correctly
 - added eval coverage in `examples/map-chat-agent/e2e-tests/eval/eval-cases.ts` (or marked why no eval is needed)
+- if the tool warrants scenario-level coverage, added a per-tool scenario file `src/tests/scenarios/<tool-name>.test.ts` that exercises `examplePrompts` from the registry via `getExamplePrompts('<toolName>')` (coverage is a curated subset, not every tool) — see [Scenario tests](#scenario-tests) below
 
 **Added a new entry-owning state slice** — walk every "every slice" code path and wire the new slice in:
 - `tools/state/reset-state.ts` calls both the pre-reset module-clear loop AND `state.<slice>.reset()`
@@ -117,3 +118,66 @@ The toolkit's "tool" + "state slice" abstractions appear in many places that are
 - `system-prompt.ts` and every per-tool `description` / `classificationPrompt` for stale name references
 - `documentation/docs-portal/guides/plugins/agent-toolkit/*.mdx` and the `navigation.yml` entry that exposes the affected page
 - decide on a deprecated alias or a major-version bump in `.release-please-manifest.json` — silently dropping a public export is a breaking release
+- `src/tests/scenarios/<tool-name>.test.ts` — rename the per-tool scenario file (and the `getExamplePrompts('<oldName>')` argument inside it) or delete it if the tool is gone
+
+## Scenario tests
+
+`src/tests/scenarios/` holds one `<tool-name>.test.ts` file per **covered** tool — a curated subset of `DEFAULT_TOOLS`, not every tool. New tools are not auto-covered; expand the suite intentionally when a tool needs scenario-level assertion. Each file has:
+- a small set of **canonical `it()` scenarios** — hand-picked, hand-stabilised prompts that always run.
+- one **`it.skipIf(!FULL_SCENARIOS).each(REGISTRY_PROMPTS)` block** that fans out across every entry in the tool's `examplePrompts` array from the registry (via `getExamplePrompts('<toolName>')` in `helpers.ts`).
+
+Two suites, two cost profiles:
+
+| Command | Gate | Tests | Wall-clock | Use |
+|---|---|---|---|---|
+| `pnpm test:scenarios` | `SCENARIOS_FULL` unset | ~23 (canonical only) | ~40s (parallel) | CI on every PR, fast pre-push check |
+| `pnpm test:scenarios:full` | `SCENARIOS_FULL=1` | ~121 (canonical + registry fanout) | ~5–15 min | Nightly job, before touching tool descriptions/classifier prompts |
+
+Editing `examplePrompts` in `tool-registry.ts` automatically reshapes the **full** suite's coverage on its next run — **no parallel list to maintain, but also no buffer when an examplePrompt is removed or reworded**. The sanity suite is unaffected by registry changes.
+
+Walk these checks whenever you touch a tool's registry surface:
+- changed a tool's `examplePrompts` → run `pnpm test:scenarios:full` locally; the new list is now under test in the full suite.
+- changed a tool's `description` / `classificationPrompt` → run `pnpm test:scenarios:full` for at least the affected tool and any thematically-adjacent sibling (e.g. tweaking `processData.classificationPrompt` can pull `analyseData`'s prompts off-target).
+- renamed or removed a tool → rename / delete the per-tool scenario file alongside the registry edit; an orphan file calling `getExamplePrompts('<oldName>')` is a type error.
+- added a tool → create the per-tool scenario file as per the checklist above; seed it with one canonical `it()` scenario and the standard `it.skipIf(!FULL_SCENARIOS).each(REGISTRY_PROMPTS)` block.
+
+## Keeping docs and the SDK skill in sync (REQUIRED for every public-surface change)
+
+The toolkit has three public surfaces that documentation lives on. **All three must move together** with any public-surface change — a new tool, a renamed tool, a new public type, a changed scope shape, a new state slice, a new option on `createMapAgent`, a changed sandbox-runtime guardrail, a new error hint. Updating only one or two is a partial change that drifts the others into wrong territory until the next reviewer notices.
+
+The three surfaces, in the order to walk:
+
+1. **`.claude/skills/tomtom-maps-sdk-js/docs/agent-toolkit.md`** — the LLM-facing reference loaded by the `tomtom-maps-sdk-js` Claude Code skill. Trigger keywords also live in `.claude/skills/tomtom-maps-sdk-js/SKILL.md`'s `description` and the `Topic → Filename` table. **Add new public API names to the SKILL.md `description` keyword list AND to the `agent-toolkit` row's keyword column** — without that, the skill won't auto-load when a developer mentions the new name.
+2. **`documentation/docs-portal/guides/plugins/agent-toolkit/*.mdx`** — the customer-facing guides. The full set (current as of this entry):
+   - `overview.mdx` — quickstart + "Where to next" links; touch when adding a new page so the index stays correct.
+   - `how-it-works.mdx` — turn flow + classifier; touch when changing classifier/scope semantics.
+   - `state.mdx` — slices, entries, `dataEntries`; touch on any slice / entry-mode change.
+   - `tools.mdx` — tool registry reference; touch on any registry change or category move.
+   - `customizing-tools.mdx` — remove/replace/add patterns.
+   - `byod.mdx` — BYOD layer ingest and usage.
+   - `scope-aware-data-tools.mdx` — `analyseData`/`processData` scope mechanism.
+   - `code-generation.mdx` — sandbox runtime, injected identifiers, guardrails, threat model.
+3. **`documentation/docs-portal/guides/navigation.yml`** — must list any new MDX file under the `Agent Toolkit` items array. A new page that isn't in `navigation.yml` won't appear in the sidebar.
+
+### What to change for which kind of code change
+
+| Code change | Update SKILL.md keywords | Update agent-toolkit.md | Update guides | Update navigation.yml |
+|---|---|---|---|---|
+| New tool added to `DEFAULT_TOOLS` | ✅ (add tool name) | ✅ (tool category section) | ✅ `tools.mdx` registry table | — |
+| Tool renamed or removed | ✅ (remove old name) | ✅ | ✅ everywhere it's mentioned | — |
+| New public exported type | ✅ (add type name) | ✅ (relevant section) | ✅ where the type is referenced | — |
+| New `createMapAgent` option | ✅ | ✅ (`MapAgentOptions` section) | ✅ `overview.mdx` + relevant guide | — |
+| New entry-owning state slice | ✅ | ✅ | ✅ `state.mdx` + `customizing-tools.mdx` + `byod.mdx` if it's BYOD-adjacent | — |
+| Sandbox guardrail / injected identifier change | ✅ (if name-bearing) | ✅ (sandbox section) | ✅ `code-generation.mdx` | — |
+| New scope shape / scopable tool | ✅ | ✅ (scope section) | ✅ `scope-aware-data-tools.mdx` | — |
+| New top-level guide page | — | — | ✅ create + cross-link | ✅ add `fileId` entry |
+
+### Verification before pushing
+
+Quick read-through:
+
+- `grep -l '<changed-name>' .claude/skills/tomtom-maps-sdk-js/ documentation/docs-portal/guides/plugins/agent-toolkit/` should hit every place that previously referenced the symbol; confirm each has been updated.
+- For a new public API name, also `grep` for it in the same trees — every place it deserves a mention should now have one.
+- If you renamed a guide file, `grep -rn "<old-filename>" documentation/docs-portal/` to catch cross-page links.
+
+These checks are part of the same PR as the code change. Don't push a renamed tool with a "docs follow-up next PR" — every consumer of the docs (humans reading guides, Claude Code through the skill, agent toolkit users grepping the API reference) will be looking at stale instructions until the follow-up lands.

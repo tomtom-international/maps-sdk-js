@@ -136,6 +136,14 @@ export const queryRenderedFeatures = async (
         { inputLayerIDs: layerIDs, inputLngLat: lngLat },
     );
 
+const allLayersPresent = async (page: Page, layerIDs: string[]): Promise<boolean> =>
+    page.evaluate((ids) => {
+        const map = (globalThis as MapWindowLike).mapLibreMap;
+        if (!map) return false;
+        const existing = new Set(map.getStyle().layers.map((l) => l.id));
+        return ids.every((id) => existing.has(id));
+    }, layerIDs);
+
 export const waitUntilRenderedFeatures = async (
     page: Page,
     layerIDs: string[],
@@ -148,6 +156,12 @@ export const waitUntilRenderedFeatures = async (
             let currentFeatures: MapGeoJSONFeature[] = [];
             do {
                 await waitForTimeout(500);
+                // After `setStyle`, GeoJSON-source modules defer re-registering their layers by
+                // one animation frame. Querying before the layer is back has MapLibre log a
+                // `console.error` that fails tests asserting on empty `consoleErrors`. Skip the
+                // query until all requested layers exist; the outer `tryBeforeTimeout` still
+                // bounds the wait, so a permanently-missing layer still fails the test.
+                if (!(await allLayersPresent(page, layerIDs))) continue;
                 currentFeatures = await queryRenderedFeatures(page, layerIDs, lngLat);
             } while (currentFeatures.length !== expectNumFeatures);
             return currentFeatures;
@@ -168,6 +182,7 @@ export const waitUntilRenderedFeaturesChange = async (
             let currentFeatures: MapGeoJSONFeature[] = [];
             do {
                 await waitForTimeout(500);
+                if (!(await allLayersPresent(page, layerIDs))) continue;
                 currentFeatures = await queryRenderedFeatures(page, layerIDs, lngLat);
             } while (currentFeatures.length === previousNumFeatures);
             return currentFeatures;

@@ -13,7 +13,7 @@
     "test:e2e:ui": "playwright test  --ui",
     "test:e2e:update-snapshots": "playwright test --update-snapshots",
     "start-test-server": "vite preview --port 9050",
-    "start-test-server:sandpack": "vite preview --outDir dist/sandpack --port 9051"
+    "start-test-server:sandpack": "vite preview --config ../example-sandpack-vite.config.ts --port 9051"
   },
   "dependencies": {
     "@ai-sdk/azure": "catalog:",

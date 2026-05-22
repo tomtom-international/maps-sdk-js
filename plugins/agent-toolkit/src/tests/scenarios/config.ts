@@ -6,10 +6,10 @@ export type AzureConfig =
     | { mode: 'direct'; resourceName: string; apiKey: string; deploymentId: string; apiVersion?: string };
 
 function resolveAzureConfig(): AzureConfig | null {
-    const resourceName = import.meta.env.VITE_AZURE_RESOURCE_NAME;
-    const apiKey = import.meta.env.VITE_AZURE_API_KEY;
-    const deploymentId = import.meta.env.VITE_AZURE_DEPLOYMENT_ID;
-    const apiVersion = import.meta.env.VITE_AZURE_API_VERSION;
+    const resourceName = process.env.AZURE_RESOURCE_NAME;
+    const apiKey = process.env.AZURE_API_KEY;
+    const deploymentId = process.env.AZURE_DEPLOYMENT_ID;
+    const apiVersion = process.env.AZURE_API_VERSION;
 
     if (!resourceName && !apiKey && !deploymentId) return null;
 

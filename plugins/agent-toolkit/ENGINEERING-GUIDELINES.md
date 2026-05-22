@@ -131,6 +131,29 @@ Develop against realistic evals, not happy-path demos. The eval suite is at [`ev
 
 **Use eval failures to improve contracts:** when a pattern recurs (wrong coordinate order, wrong index, calling low-level tools when high-level ones exist), fix the schema/description/validation — don't just adjust prompts.
 
+## 12. Scenario tests
+
+Alongside the eval suite, the plugin runs `@langwatch/scenario` per-tool tests under `src/tests/scenarios/<tool-name>.test.ts`. Coverage is a curated subset of `DEFAULT_TOOLS` — new tools are not auto-covered; expand the suite when a tool needs scenario-level assertion. Each covered file has two parts:
+
+- **Canonical scenarios** (`it()` calls) — hand-picked, hand-stabilised prompts. Always run. CI default.
+- **Registry fanout** (`it.skipIf(!FULL_SCENARIOS).each(REGISTRY_PROMPTS)`) — every entry in the tool's `examplePrompts` from `tool-registry.ts`, via `getExamplePrompts('<toolName>')`. Gated on `SCENARIOS_FULL=1`.
+
+Two commands:
+
+- `pnpm test:scenarios` — canonical only, ~23 tests, ~40s (parallel), ~$0.50 in LLM cost. **CI default.**
+- `pnpm test:scenarios:full` — canonical + registry fanout, ~121 tests, ~5–15 min, ~$5. Run before merging tool description / classifier-prompt changes; otherwise nightly.
+
+**Single source of truth.** The `examplePrompts` array in the registry IS the broad-coverage test corpus — no parallel list. Edit the registry, the full suite's coverage updates on the next run.
+
+**Therefore: keep registry and tests in lockstep.** When you:
+- add a tool → create `src/tests/scenarios/<tool-name>.test.ts` with one canonical `it()` + the standard `it.skipIf(!FULL_SCENARIOS).each(REGISTRY_PROMPTS)` block, and seed `examplePrompts` in the registry.
+- rename a tool → rename the scenario file AND update its `getExamplePrompts('<newName>')` argument (it's a type error otherwise).
+- remove a tool → delete the scenario file.
+- change a tool's `examplePrompts` → run `pnpm test:scenarios:full` locally before pushing.
+- change a tool's `description` / `classificationPrompt` → run `pnpm test:scenarios:full` for at least the affected tool and any sibling tool whose `examplePrompts` overlap thematically (e.g. tweaking `discoverPlaces.description` can pull the classifier away from `locatePlace`).
+
+See [`AGENTS.md` § "Scenario tests"](./AGENTS.md#scenario-tests) for the full checklist.
+
 ## Design Checklist
 
 When adding or changing tools:

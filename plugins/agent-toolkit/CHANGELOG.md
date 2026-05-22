@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.2.12](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-agent-toolkit-v0.2.11...maps-sdk-plugin-agent-toolkit-v0.2.12) (2026-05-22)
+
+
+### Features
+
+* **agent-toolkit:** expand plugin documentation ([#1793](https://github.com/tomtom-international/maps-sdk-js/issues/1793)) ([3f55084](https://github.com/tomtom-international/maps-sdk-js/commit/3f550843ca92b2f08460759b200794e94178e87d))
+
+
+### Bug Fixes
+
+* **agent-toolkit:** split scenario tests into sanity / full suites ([#1798](https://github.com/tomtom-international/maps-sdk-js/issues/1798)) ([b9b1fe8](https://github.com/tomtom-international/maps-sdk-js/commit/b9b1fe8a6dcdf8f6e6fb156a2f251351b04851c9))
+* **agent-toolkit:** stabilize locate-place scenario prompt ([#1795](https://github.com/tomtom-international/maps-sdk-js/issues/1795)) ([6883269](https://github.com/tomtom-international/maps-sdk-js/commit/6883269ccfd261c66067de6f8290d28a9dd83b91))
+
 ## [0.2.11](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-agent-toolkit-v0.2.10...maps-sdk-plugin-agent-toolkit-v0.2.11) (2026-05-21)
 
 

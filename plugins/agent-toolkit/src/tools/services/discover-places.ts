@@ -962,7 +962,7 @@ const discoverPlacesMetadata = {
         'Bakeries within the reachable range',
         'Outline the Amsterdam neighbourhoods',
         'Show the boundaries of these municipalities',
-        'Find all EV stations within 1 km of my route',
+        'Search for new EV stations along my route',
         'Cafes in a 500 m corridor around the planned route',
         'Best 5 coffee stops without losing more than 5 min off my route',
         'EV chargers I can reach with under 10 min detour',

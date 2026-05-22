@@ -1,10 +1,28 @@
 import { type ScenarioExecutionLike, type ScenarioExecutionStateLike, type ScriptStep } from '@langwatch/scenario';
+import { getDefaultToolPrompts, type ToolName } from '../../tools';
 import { MODEL } from './config';
 import { MapAgentScenarioAdapter } from './map-agent-adapter';
 
 export { type AzureConfig, azureConfig, MODEL } from './config';
 
 export const agentAdapter = () => new MapAgentScenarioAdapter(MODEL!);
+
+// Gates the `it.each(REGISTRY_PROMPTS)` blocks in every per-tool file. Default = off, so
+// `pnpm test:scenarios` runs only the canonical hand-picked scenarios (~23 tests, ~40s
+// in parallel, ~$0.50). Set to `'1'` for the broad-coverage suite that fans out across
+// every `examplePrompts` array in the registry (~121 tests, ~5–15 min, ~$5).
+export const FULL_SCENARIOS = process.env.SCENARIOS_FULL === '1';
+
+// Materialize all default-tool prompts once at import time. Reuses the registry's own
+// `getDefaultToolPrompts()` so this helper stays in lockstep with how `chat-ui` and other
+// consumers see the same prompt set — single source of truth.
+const ALL_REGISTRY_PROMPTS = getDefaultToolPrompts();
+
+// Read the `examplePrompts` array for a single tool. Per-tool scenario files use this so a
+// registry edit propagates to the tests on the next run.
+export function getExamplePrompts(toolName: ToolName): readonly string[] {
+    return ALL_REGISTRY_PROMPTS[toolName] ?? [];
+}
 
 export function expectToolCalled(...toolNames: string[]): ScriptStep {
     return async (state: ScenarioExecutionStateLike, executor: ScenarioExecutionLike) => {

@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.47.9](https://github.com/tomtom-international/maps-sdk-js/compare/v0.47.8...v0.47.9) (2026-05-22)
+
+
+### Bug Fixes
+
+* d2 diagram in documentation ([b071702](https://github.com/tomtom-international/maps-sdk-js/commit/b07170262abae749bdec2288eac405b26588de68))
+* d2 diagram in documentation ([36a2991](https://github.com/tomtom-international/maps-sdk-js/commit/36a299110af550f11b467a471932da20b74c505e))
+
+## [0.47.8](https://github.com/tomtom-international/maps-sdk-js/compare/v0.47.7...v0.47.8) (2026-05-22)
+
+
+### Features
+
+* **agent-toolkit:** expand plugin documentation ([#1793](https://github.com/tomtom-international/maps-sdk-js/issues/1793)) ([3f55084](https://github.com/tomtom-international/maps-sdk-js/commit/3f550843ca92b2f08460759b200794e94178e87d))
+
+
+### Bug Fixes
+
+* **agent-toolkit:** split scenario tests into sanity / full suites ([#1798](https://github.com/tomtom-international/maps-sdk-js/issues/1798)) ([b9b1fe8](https://github.com/tomtom-international/maps-sdk-js/commit/b9b1fe8a6dcdf8f6e6fb156a2f251351b04851c9))
+* **agent-toolkit:** stabilize locate-place scenario prompt ([#1795](https://github.com/tomtom-international/maps-sdk-js/issues/1795)) ([6883269](https://github.com/tomtom-international/maps-sdk-js/commit/6883269ccfd261c66067de6f8290d28a9dd83b91))
+
 ## [0.47.7](https://github.com/tomtom-international/maps-sdk-js/compare/v0.47.6...v0.47.7) (2026-05-21)
 
 

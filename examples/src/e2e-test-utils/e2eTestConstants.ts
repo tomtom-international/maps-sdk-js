@@ -13,4 +13,4 @@ export const DEFAULT_MAP_SELECTOR = '#sdk-map';
  */
 export const TAG_PROD = '@prod';
 export const TAG_SANDPACK = '@sandpack';
-export const TAG_NO_MAP = '@nomap';
+export const TAG_AGENT = '@agent';

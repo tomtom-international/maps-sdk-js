@@ -1,8 +1,11 @@
 /// <reference types="vitest" />
 import path from 'node:path';
 import { withScenario } from '@langwatch/scenario/integrations/vitest/config';
+import { loadEnv } from 'vite';
 import { defineConfig, mergeConfig } from 'vitest/config';
 import commonVitestConfig from '../../shared-configs/vitest.config';
+
+Object.assign(process.env, loadEnv('', path.resolve(__dirname), ''));
 
 export default withScenario(
     mergeConfig(

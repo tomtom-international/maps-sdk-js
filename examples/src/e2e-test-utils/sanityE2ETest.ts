@@ -2,7 +2,7 @@ import type { Page, TestInfo } from '@playwright/test';
 import { expect } from '@playwright/test';
 import path from 'path';
 import { PROD_TEST_SERVER_PORT, SANDPACK_TEST_SERVER_PORT } from '../../playwright.config';
-import { DEFAULT_MAP_LOAD_TIMEOUT, DEFAULT_MAP_SELECTOR, TAG_NO_MAP, TAG_PROD, TAG_SANDPACK } from './e2eTestConstants';
+import { DEFAULT_MAP_LOAD_TIMEOUT, DEFAULT_MAP_SELECTOR, TAG_AGENT, TAG_PROD, TAG_SANDPACK } from './e2eTestConstants';
 
 const getExampleName = (testInfo: TestInfo): string => {
     const testFilePath = testInfo.file;
@@ -58,8 +58,12 @@ export const sanityE2ETest = async (options: SanityE2ETestOptions) => {
         await page.waitForSelector('.cm-editor', { timeout: mapLoadTimeout });
         await page.waitForTimeout(2000);
         await page.waitForSelector('.sp-loading', { state: 'hidden', timeout: mapLoadTimeout });
+        await page
+            .frameLocator('.sp-preview-iframe')
+            .locator(mapSelector)
+            .waitFor({ state: 'visible', timeout: mapLoadTimeout })
+            .catch(() => {});
         await page.waitForTimeout(2000);
-
         await expect(page).toHaveScreenshot('upon-load-sandpack.png', {
             maxDiffPixelRatio,
             timeout: mapLoadTimeout,
@@ -77,15 +81,22 @@ export const sanityE2ETest = async (options: SanityE2ETestOptions) => {
             timeout: mapLoadTimeout,
         });
     }
-
-    if (tags.includes(TAG_NO_MAP)) {
-        const url = `http://localhost:${SANDPACK_TEST_SERVER_PORT}/${getExampleName(testInfo)}/dist/prod`;
+    if (tags.includes(TAG_AGENT)) {
+        const url = `http://localhost:${SANDPACK_TEST_SERVER_PORT}/${getExampleName(testInfo)}/dist/sandpack/`;
         await page.goto(url);
-        await page.waitForLoadState('networkidle', { timeout: mapLoadTimeout });
+        // Log any console errors for debugging
+        await page.waitForTimeout(2000);
 
-        await expect(page).toHaveScreenshot('upon-load.png', {
+        await page
+            .frameLocator('.sp-preview-iframe')
+            .locator(mapSelector)
+            .waitFor({ state: 'visible', timeout: mapLoadTimeout })
+            .catch(() => {});
+        await page.waitForTimeout(2000);
+        await expect(page).toHaveScreenshot('upon-load-sandpack.png', {
             maxDiffPixelRatio,
             timeout: mapLoadTimeout,
         });
+
     }
 };

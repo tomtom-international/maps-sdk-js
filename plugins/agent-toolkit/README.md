@@ -119,6 +119,8 @@ The plugin ships a `DEFAULT_TOOLS` registry covering search, routing, traffic, r
 | `recallByod` | List BYOD entries, or retrieve a single entry's full `FeatureCollection` by id |
 | `updateByodDisplay` | Show, hide, or clear BYOD layers on the map |
 
+> See the [Bring your own data](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/byod) guide for ingestion patterns, visibility lifecycle, and how BYOD entries feed into `analyseData` / `processData`.
+
 ### Unified data tools — scope-aware code generation
 
 | Tool | Description |
@@ -127,7 +129,7 @@ The plugin ships a `DEFAULT_TOOLS` registry covering search, routing, traffic, r
 | `processData` | Transform entries into new `places`, `placeConnections`, `geometries`, `byod`, or a `fitOnMap` camera move via dynamic JS |
 | `executeMaplibreCode` | Execute arbitrary MapLibre JS against the live `Map` instance — escape hatch for custom layers, animations, raster overlays |
 
-> See the [Code generation](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/tools#code-generation) section of the guide for the threat model — these tools have no sandbox.
+> See [Code generation](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/code-generation) for the injected identifiers, output contracts, and threat model (these tools have no sandbox), and [Scope-aware data tools](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/scope-aware-data-tools) for how the per-turn classifier scope keeps the prompt small.
 
 ### Map display
 
@@ -183,6 +185,8 @@ The plugin ships a `DEFAULT_TOOLS` registry covering search, routing, traffic, r
 | `help` | List available capabilities in summary or searchable detail mode |
 
 ## Customization
+
+> See [Customizing tools](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/customizing-tools) for the full walkthrough — registry resolution, removing or replacing defaults, adding scopable custom tools, and starting from a blank slate.
 
 ### `createMapAgent` options
 
@@ -329,6 +333,8 @@ type ToolEntry<S extends ToolState = ToolState> = {
 
 ## State management
 
+> See the [State](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/state) guide for a per-slice deep dive, `entryMode` semantics (`multiple` vs `single`), inspecting state from your application, and adding custom slices.
+
 `ToolState` is organized by feature area. Each slice manages lazy-initialized map modules and an append-only history of results produced during the session. Built-in slices:
 
 - `PlacesState` — place / geometry entry history
@@ -360,7 +366,7 @@ agent.state.places;  // PlacesState — append-only history of place entries
 
 ## Intent classifier
 
-The intent classifier is an optional per-turn optimization that selects which tools the LLM sees, reducing noise and improving accuracy.
+The intent classifier is an optional per-turn optimization that selects which tools the LLM sees, reducing noise and improving accuracy. See the [How it works](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/how-it-works) guide for the full two-phase pipeline (classification → tool loop), prompt assembly, and observability hooks.
 
 ```typescript
 import { createMapAgent, createDefaultClassifier } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
@@ -563,6 +569,14 @@ export type * from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 
 ## References
 
+- [Agent Toolkit guides](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/overview) — full documentation set:
+    - [How it works](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/how-it-works) — two-phase pipeline (classifier + tool loop), prompt assembly, observability
+    - [Tools](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/tools) — per-tool reference
+    - [State](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/state) — per-slice reference, entry modes, custom slices
+    - [Customizing tools](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/customizing-tools) — add, replace, remove, or start from a blank slate
+    - [Code generation](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/code-generation) — `analyseData` / `processData` / `executeMaplibreCode` (threat model included)
+    - [Scope-aware data tools](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/scope-aware-data-tools) — per-turn scope mechanism
+    - [Bring your own data](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/byod) — ingest customer GeoJSON layers
 - [AI SDK v6 documentation](https://ai-sdk.dev/)
 - [TomTom Maps SDK documentation](https://developer.tomtom.com/)
 - [Engineering guidelines](./ENGINEERING-GUIDELINES.md) — tool design standards, state management, system prompt structure

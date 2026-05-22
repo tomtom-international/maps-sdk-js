@@ -8,7 +8,6 @@ export * from './multi-input';
 export * from './places-schema-doc';
 export * from './resolve-poi-categories';
 export * from './routes-schema-doc';
-export * from './run-analysis';
 export * from './sandbox-code';
 export * from './schema';
 export * from './show-entry-geometries';

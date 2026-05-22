@@ -32,7 +32,7 @@ import type { EntryDataKind, ToolBuildOptions, ToolEntryBuilder, ToolState } fro
 import {
     ALL_ENTRY_DATA_KINDS,
     ANALYSE_OUTPUT_FORMAT_DESCRIPTION,
-    attachAnalysisToEntries,
+    type AnalysisOutputFormat,
     buildAnalyseReturnPrompt,
     buildAtLeastOneEntryIdMessage,
     buildEntryFieldList,
@@ -308,6 +308,45 @@ const buildAnalyseDataScopePrompt = (enabled: readonly EntryDataKind[]): string 
         `Emit \`{ kinds: [${list}] }\` ` +
         'listing only the entry kinds the user query touches. Omit when truly cross-kind (covers all).'
     );
+};
+
+// Every state slice's `addAnalysisToEntry` matches this shape — the per-slice `Analysis`
+// type is structurally identical across places/routes/incidents/trafficAreaAnalytics/custom.
+type AnalysisSink<E extends { id: string }> = {
+    addAnalysisToEntry: (entryId: E['id'], analysis: AnalysisRecord) => boolean;
+};
+
+type AnalysisRecord = {
+    name: string;
+    timestamp: number;
+    description?: string;
+    outputFormat: AnalysisOutputFormat;
+    data: unknown;
+};
+
+// Attach an analysis to every entry in `entries` on `slice`. Shares the timestamp across the
+// batch so the agent UI can correlate per-slice updates that originated from the same call.
+const attachAnalysisToEntries = <E extends { id: string }>(
+    slice: AnalysisSink<E>,
+    entries: readonly E[],
+    payload: {
+        name: string;
+        description?: string;
+        outputFormat: AnalysisOutputFormat;
+        analysis: unknown;
+        timestamp?: number;
+    },
+): void => {
+    const timestamp = payload.timestamp ?? Date.now();
+    for (const entry of entries) {
+        slice.addAnalysisToEntry(entry.id, {
+            name: payload.name,
+            timestamp,
+            ...(payload.description && { description: payload.description }),
+            outputFormat: payload.outputFormat,
+            data: payload.analysis,
+        });
+    }
 };
 
 type AnalyseDataInput = {

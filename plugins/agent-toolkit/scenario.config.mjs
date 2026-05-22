@@ -2,11 +2,11 @@ import { defineConfig } from "@langwatch/scenario";
 import { createAzure } from "@ai-sdk/azure";
 
 
-const gatewayBaseUrl = process.env.VITE_AZURE_GATEWAY_BASE_URL;
-const resourceName = process.env.VITE_AZURE_RESOURCE_NAME;
-const apiKey = process.env.VITE_AZURE_API_KEY;
-const deploymentId = process.env.VITE_AZURE_DEPLOYMENT_ID;
-const apiVersion = process.env.VITE_AZURE_API_VERSION;
+const gatewayBaseUrl = process.env.AZURE_GATEWAY_BASE_URL;
+const resourceName = process.env.AZURE_RESOURCE_NAME;
+const apiKey = process.env.AZURE_API_KEY;
+const deploymentId = process.env.AZURE_DEPLOYMENT_ID;
+const apiVersion = process.env.AZURE_API_VERSION;
 
 if (!deploymentId) {
   throw new Error(
