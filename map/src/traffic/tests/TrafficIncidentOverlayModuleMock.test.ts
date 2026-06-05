@@ -234,24 +234,28 @@ describe('TrafficIncidentOverlayModule', () => {
         expect(setLayoutProperty).toHaveBeenCalledWith(expect.any(String), 'visibility', 'visible', expect.anything());
     });
 
-    test('getShown() queries rendered features from both layers', async () => {
+    test('getShown() returns the cached shownFeatures without hit-testing the viewport', async () => {
         const tomtomMap = makeMockMap();
         const queryRenderedFeatures = tomtomMap.mapLibreMap.queryRenderedFeatures as ReturnType<typeof vi.fn>;
-        const fakeFeature = {
-            type: 'Feature',
-            properties: { id: 'a', category: 'accident' },
-            geometry: { type: 'Point', coordinates: [0, 0] },
+        const result: TrafficIncidentDetails = {
+            type: 'FeatureCollection',
+            features: [
+                {
+                    type: 'Feature',
+                    properties: { id: 'a', category: 'accident' },
+                    geometry: { type: 'Point', coordinates: [0, 0] },
+                } as unknown as TrafficIncidentDetails['features'][number],
+            ],
         };
-        queryRenderedFeatures.mockReturnValue([fakeFeature]);
 
         const mod = await TrafficIncidentOverlayModule.get(tomtomMap);
+        await mod.show(result);
+        queryRenderedFeatures.mockClear();
         const shown = mod.getShown();
 
-        expect(queryRenderedFeatures).toHaveBeenCalledWith({
-            layers: expect.arrayContaining([expect.stringContaining('traffic-incident-overlay-')]),
-            validate: false,
-        });
-        expect(shown.incidents).toEqual([fakeFeature]);
+        // Reads the GeoJSON cache (the exact data passed to show()), like the other GeoJSON modules.
+        expect(shown.incidents).toBe(result);
+        expect(queryRenderedFeatures).not.toHaveBeenCalled();
     });
 
     test('defaults all layers to sit below `lowestLabel` so labels stay readable', async () => {

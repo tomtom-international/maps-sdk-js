@@ -31,6 +31,16 @@ describe('stripInjectedRedeclarations', () => {
         expect(stripInjectedRedeclarations(code, IDS)).toBe('return h3.latLngToCell(52, 4, 8);');
     });
 
+    it('removes the un-indexed form `const turf = arguments.turf` (the exact reported failure)', () => {
+        const code = 'const turf = arguments.turf;\nreturn turf.bbox(places);';
+        expect(stripInjectedRedeclarations(code, IDS)).toBe('return turf.bbox(places);');
+    });
+
+    it('removes the un-indexed bracket form `const h3 = arguments["h3"]`', () => {
+        const code = `const h3 = arguments["h3"];\nreturn h3.latLngToCell(52, 4, 8);`;
+        expect(stripInjectedRedeclarations(code, IDS)).toBe('return h3.latLngToCell(52, 4, 8);');
+    });
+
     it('does not strip an unrelated `arguments`-reading declaration', () => {
         // `arguments[0].foo` for a non-injected name is genuine user code — keep it.
         const code = 'const foo = arguments[0].foo;\nreturn foo;';
@@ -117,9 +127,27 @@ describe('formatSandboxExecutionError', () => {
         expect(result).toMatch(/Hint:.*temporal dead zone/);
     });
 
-    it('hints on syntax errors', () => {
+    it('hints on `Unexpected token` syntax errors with the async-body-specific hint', () => {
+        // A specific pattern matches this SyntaxError, so the targeted hint wins
+        // over the generic "not valid JavaScript" catch-all.
         const result = formatSandboxExecutionError('Analysis', new SyntaxError('Unexpected token }'));
+        expect(result).toMatch(/Hint:.*async-function body/);
+    });
+
+    it('falls back to the generic hint for a SyntaxError matching no specific pattern', () => {
+        const result = formatSandboxExecutionError('Analysis', new SyntaxError('Invalid regular expression flags'));
         expect(result).toMatch(/Hint:.*valid JavaScript/);
+    });
+
+    it('gives the specific redeclaration hint for a "has already been declared" SyntaxError', () => {
+        // This is a SyntaxError, but the targeted hint must win over the generic
+        // "not valid JavaScript" catch-all so the model knows to drop the line.
+        const result = formatSandboxExecutionError(
+            'Analysis',
+            new SyntaxError("Identifier 'turf' has already been declared"),
+        );
+        expect(result).toMatch(/Hint:.*declared twice/);
+        expect(result).not.toMatch(/valid JavaScript/);
     });
 
     it('returns the bare message when no pattern matches', () => {

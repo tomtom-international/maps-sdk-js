@@ -62,7 +62,7 @@ export const updateByodDisplayOutputSchema = z.union([
 ]);
 
 export const updateByodDisplayDescription =
-    'Toggle visibility (or drop) for one or more BYOD entries. Use after `addByodLayer` or after seeing entries ' +
+    'Toggle visibility (or drop) for one or more BYOD entries. Use after `addByodSource` or after seeing entries ' +
     'via `recallByod`. Three actions: `show` renders listed entries, `hide` removes them from the map but keeps ' +
     'them in state, `remove` hides AND drops them from history. Pair `action: "hide"` with `clearAll: true` to ' +
     'hide every shown BYOD entry in one call. Pair `action: "show"` with `hideOthers: true` to swap to a single ' +

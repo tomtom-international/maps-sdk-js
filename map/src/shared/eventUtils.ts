@@ -1,20 +1,40 @@
 import type { Feature } from 'geojson';
 import { isNil, omit } from 'lodash-es';
 import type { MapGeoJSONFeature, Point2D } from 'maplibre-gl';
+import { findFeatureByRefId, renderedRefId } from './featureId';
 import { areBothDefinedAndEqual } from './mapUtils';
 import { GeoJSONSourceWithLayers } from './SourceWithLayers';
 import type { EventType, SourceWithLayers } from './types';
 
-type IndexedFeature<F extends Feature = Feature> = { feature: F; index: number };
+/**
+ * Keep only the hits from `source`; pass everything through when `source` is undefined.
+ * Runs on raw `MapGeoJSONFeature`s, before substitution strips `.source`.
+ * @ignore
+ */
+export const scopeToSource = (features: MapGeoJSONFeature[], source: string | undefined): MapGeoJSONFeature[] =>
+    source ? features.filter((f) => f.source === source) : features;
 
-const findFeatureById = (features: Feature[], id: string | number | undefined): IndexedFeature | undefined => {
-    for (let i = 0; i < features.length; i++) {
-        const feature = features[i];
-        if (feature.id === id) {
-            return { feature, index: i };
+/**
+ * Collapse duplicate hits keyed on `(source, {@link renderedRefId})`, keeping the first
+ * (topmost) occurrence. Features with no recoverable id can't be keyed, so they're all kept.
+ * @ignore
+ */
+export const dedupeRenderedFeatures = (features: MapGeoJSONFeature[]): MapGeoJSONFeature[] => {
+    const seen = new Set<string>();
+    const out: MapGeoJSONFeature[] = [];
+    for (const f of features) {
+        const refId = renderedRefId(f);
+        if (refId === undefined) {
+            out.push(f);
+            continue;
+        }
+        const key = `${f.source} ${refId}`;
+        if (!seen.has(key)) {
+            seen.add(key);
+            out.push(f);
         }
     }
-    return undefined;
+    return out;
 };
 
 const isHighPriority = (eventType: EventType): boolean => eventType === 'click' || eventType === 'contextmenu';
@@ -34,7 +54,7 @@ export const putEventState = (
     featuresToUpdate: Feature[], // "featuresToUpdate" will be mutated
     mode: 'updateInProps' | 'removeFromProps' = 'updateInProps',
 ): number | undefined => {
-    const { feature, index } = findFeatureById(featuresToUpdate, featureId) || {};
+    const { feature, index } = findFeatureByRefId(featuresToUpdate, featureId) || {};
     if (feature && (!isHighPriority(feature.properties?.eventState) || isHighPriority(eventState))) {
         const updatedFeature = {
             ...feature,
@@ -55,7 +75,14 @@ const removeEventStateAndShow = (
     sourceWithLayers: GeoJSONSourceWithLayers,
 ): void => {
     const prevFeaturesToUpdate = [...sourceWithLayers.shownFeatures.features];
-    const updatedIndex = putEventState(newEventType, rawFeature.id, prevFeaturesToUpdate, 'removeFromProps');
+    // renderedRefId, not rawFeature.id: clustered sources give the rendered feature a synthetic
+    // top-level id, so we must key the cache lookup on the real properties.id.
+    const updatedIndex = putEventState(
+        newEventType,
+        renderedRefId(rawFeature),
+        prevFeaturesToUpdate,
+        'removeFromProps',
+    );
     if (!isNil(updatedIndex)) {
         sourceWithLayers.show(
             { ...sourceWithLayers.shownFeatures, features: prevFeaturesToUpdate },
@@ -65,13 +92,10 @@ const removeEventStateAndShow = (
 };
 
 /**
- * Updates the event state props of the given features.
- * @param eventState The type of event that is being done or undone.
- * @param eventFeature The current MapLibre feature affected by the event, if any.
- * If undefined, it means the event is being undone from prevRawFeature without going to any other one.
- * @param prevEventFeature The previous MapLibre feature affected by the event type, if any (e.g. previous one clicked or hovered).
- * @param sourceWithLayers The source with layers of eventFeature, if any.
- * @param prevSourceWithLayers The source with layers of prevEventFeature, if any.
+ * Mutates the `eventState` marker on the cached `shownFeatures` so MapLibre paint
+ * expressions can react to hover/click. Mutates `prevSourceWithLayers` too when the
+ * event moved to a different source. Does not produce a caller-facing feature —
+ * the dispatch site resolves that from the post-mutation cache.
  * @ignore
  */
 export const updateEventState = (
@@ -80,16 +104,16 @@ export const updateEventState = (
     prevEventFeature: MapGeoJSONFeature | undefined,
     sourceWithLayers: SourceWithLayers | undefined,
     prevSourceWithLayers: SourceWithLayers | undefined,
-): Partial<IndexedFeature> => {
+): void => {
     if (eventFeature && sourceWithLayers instanceof GeoJSONSourceWithLayers) {
         const featuresToUpdate = [...sourceWithLayers.shownFeatures.features];
-        const updatedIndex = putEventState(eventState, eventFeature.id, featuresToUpdate) as number;
+        putEventState(eventState, renderedRefId(eventFeature), featuresToUpdate);
 
         if (prevEventFeature && !areBothDefinedAndEqual(prevEventFeature, eventFeature)) {
             // (we have both current and prev features for this event type)
             if (prevSourceWithLayers === sourceWithLayers) {
                 // we undo the event state from prev feature next to the new one (they will be shown below):
-                putEventState(eventState, prevEventFeature.id, featuresToUpdate, 'removeFromProps');
+                putEventState(eventState, renderedRefId(prevEventFeature), featuresToUpdate, 'removeFromProps');
             } else if (prevSourceWithLayers instanceof GeoJSONSourceWithLayers) {
                 // the prev feature is in other source/layers, so we update and show them:
                 removeEventStateAndShow(eventState, prevEventFeature, prevSourceWithLayers);
@@ -100,13 +124,11 @@ export const updateEventState = (
             { ...sourceWithLayers.shownFeatures, features: featuresToUpdate },
             { automaticVisibility: false },
         );
-
-        return { feature: featuresToUpdate[updatedIndex], index: updatedIndex };
+        return;
     }
     if (prevEventFeature && prevSourceWithLayers instanceof GeoJSONSourceWithLayers) {
         removeEventStateAndShow(eventState, prevEventFeature, prevSourceWithLayers);
     }
-    return { feature: eventFeature };
 };
 
 /**

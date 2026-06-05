@@ -32,8 +32,8 @@ const parseIncident = (apiIncident: IncidentAPI): TrafficIncident => {
     return {
         type: 'Feature',
         // Top-level id is what the SDK's event-state machinery uses to track per-feature
-        // click/hover state (see eventUtils.findFeatureById). promoteId: 'id' on the source
-        // keeps rendered features pointing at the same identifier.
+        // click/hover state (see `renderedRefId` in map's featureId.ts). promoteId: 'id' on the
+        // source keeps rendered features pointing at the same identifier.
         id: p.id,
         geometry: apiIncident.geometry,
         properties: {

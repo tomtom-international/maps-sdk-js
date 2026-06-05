@@ -1,13 +1,12 @@
+import { createAzure } from '@ai-sdk/azure';
+
 export const API_KEY = process.env.API_KEY_EXAMPLES;
 export const APPLICATIONINSIGHTS_CONNECTION_STRING = process.env.APPLICATIONINSIGHTS_CONNECTION_STRING;
 
-// APIM proxy mode: set AZURE_GATEWAY_BASE_URL to route through Azure API Management.
-// Direct mode (default for local dev): set AZURE_RESOURCE_NAME + AZURE_API_KEY.
-
+const demoBffUrl = process.env.DEMO_BFF_URL;
 const gatewayBaseUrl = process.env.AZURE_GATEWAY_BASE_URL;
-
 const resourceName = process.env.AZURE_RESOURCE_NAME;
-const apiKey = process.env.AZURE_API_KEY;
+const azureApiKey = process.env.AZURE_API_KEY;
 
 // AZURE_MODEL_IDS is the leading source — when set, its comma-separated list
 // IS the picker (AZURE_DEPLOYMENT_ID is ignored). When unset, fall back to a
@@ -32,22 +31,31 @@ if (resolved.length === 0) {
 export const availableDeployments: readonly string[] = resolved;
 export const defaultDeploymentId = resolved[0];
 
-export type AzureConfig =
-    | { mode: 'apim'; gatewayBaseUrl: string }
-    | { mode: 'direct'; resourceName: string; apiKey: string };
+const fetchWithCredentials: typeof fetch = (input, init) =>
+    fetch(input, { ...init, credentials: 'include' });
 
-export const azureConfig: AzureConfig = gatewayBaseUrl
-    ? { mode: 'apim' as const, gatewayBaseUrl }
-    : (() => {
-          if (!resourceName) {
-              throw new Error(
-                  'AZURE_RESOURCE_NAME is required. Create a .env file in the examples/ directory with AZURE_RESOURCE_NAME=your-resource-name',
-              );
-          }
-          if (!apiKey) {
-              throw new Error(
-                  'AZURE_API_KEY is required. Create a .env file in the examples/ directory with AZURE_API_KEY=your-api-key',
-              );
-          }
-          return { mode: 'direct' as const, resourceName, apiKey };
-      })();
+/**
+ * Build an Azure OpenAI client appropriate for the runtime:
+ *  - Demo-BFF proxy mode: route through `<bff>/llm`, BFF holds the real key
+ *  - APIM gateway mode: route through the configured gateway base URL
+ *  - Direct mode (local dev): talk to api.openai.azure.com with the user's key
+ */
+export const createDemoAzure = () => {
+    if (demoBffUrl) {
+        return createAzure({
+            baseURL: `${demoBffUrl}/llm`,
+            apiKey: 'placeholder',
+            fetch: fetchWithCredentials,
+        });
+    }
+    if (gatewayBaseUrl) {
+        return createAzure({ baseURL: gatewayBaseUrl, apiKey: azureApiKey ?? 'placeholder' });
+    }
+    if (!resourceName) {
+        throw new Error('AZURE_RESOURCE_NAME is required (or set DEMO_BFF_URL for proxy mode).');
+    }
+    if (!azureApiKey) {
+        throw new Error('AZURE_API_KEY is required (or set DEMO_BFF_URL for proxy mode).');
+    }
+    return createAzure({ resourceName, apiKey: azureApiKey });
+};

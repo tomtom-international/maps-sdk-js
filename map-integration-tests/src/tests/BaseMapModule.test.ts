@@ -237,7 +237,9 @@ test.describe('BaseMap module tests', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test.skip('BaseMap is restored visible when style changes immediately after resetConfig', async ({ page }) => {
+    test('BaseMap is restored visible when style changes immediately after resetConfig', {
+        tag: '@flaky',
+    }, async ({ page }) => {
         await initBasemap(page);
         await setBaseMapVisible(page, false);
         await waitForMapIdle(page);

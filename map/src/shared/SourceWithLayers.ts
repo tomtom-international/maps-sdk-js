@@ -8,6 +8,7 @@ import type {
     SourceSpecification,
 } from 'maplibre-gl';
 import { asDefined } from './assertionUtils';
+import { findFeatureByRefId, type IndexedFeature } from './featureId';
 import { TomTomMapSource } from './TomTomMapSource';
 import type {
     ByIdOrIndex,
@@ -60,6 +61,11 @@ export abstract class AbstractSourceWithLayers<
     }
 
     private isLayerVisible(layer: LayerSpecification): boolean {
+        // If the layer is no longer attached to the map (e.g. an out-of-band style swap removed
+        // it before this snapshot got refreshed), `getLayoutProperty` returns `undefined` and
+        // also fires a MapLibre error. Treat a missing layer as hidden, mirroring
+        // `setLayersVisible` which skips missing layers silently.
+        if (!this.map.getLayer(layer.id)) return false;
         return this.map.getLayoutProperty(layer.id, 'visibility') !== 'none';
     }
 
@@ -220,16 +226,21 @@ export class GeoJSONSourceWithLayers<T extends FeatureCollection = FeatureCollec
         }
     }
 
+    /**
+     * Canonical id-based lookup into `shownFeatures.features` via {@link findFeatureByRefId}
+     * (first match wins on duplicate ids). Returns `undefined` for a nullish or absent id.
+     */
+    findById(id: string | number | undefined): IndexedFeature<T['features'][number]> | undefined {
+        return findFeatureByRefId(this.shownFeatures.features, id);
+    }
+
     clear(): void {
         this.show(emptyFeatureCollection as T);
     }
 
     private findFeature(options: ByIdOrIndex) {
-        if ('index' in options) {
-            return this.shownFeatures.features[options.index];
-        } else if ('id' in options) {
-            return this.shownFeatures.features.find((f) => f.id === options.id);
-        }
+        if ('index' in options) return this.shownFeatures.features[options.index];
+        if ('id' in options) return this.findById(options.id)?.feature;
         return undefined;
     }
 

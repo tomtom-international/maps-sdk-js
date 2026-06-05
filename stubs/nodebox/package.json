@@ -1,0 +1,17 @@
+{
+  "name": "@codesandbox/nodebox",
+  "version": "0.1.8",
+  "description": "Empty stub for @codesandbox/nodebox. The real package ships under CodeSandbox's Sustainable Use License (non-commercial), which conflicts with our EXTERNAL distribution policy. Sandpack only loads its node-mode client via dynamic import, and the SDK examples only use static templates (vanilla-ts, react-ts), so the nodebox code path is never executed. pnpm.overrides points the real package at this stub so it stays out of pnpm-lock.yaml, node_modules, and any built bundle.",
+  "license": "MIT",
+  "private": true,
+  "main": "index.cjs",
+  "module": "index.mjs",
+  "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.mjs",
+      "require": "./index.cjs"
+    }
+  }
+}

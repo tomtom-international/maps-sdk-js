@@ -58,7 +58,7 @@ test.describe('Map vector tile traffic module tests', () => {
     });
 
     // TODO(LSI-263): Enable when flakyness has been fixed
-    test.skip('Vector tiles traffic visibility changes in different ways', async ({ page }) => {
+    test('Vector tiles traffic visibility changes in different ways', { tag: '@flaky' }, async ({ page }) => {
         await mapEnv.loadPageAndMap(page, { zoom: 14, center: [-0.12621, 51.50394] });
         expect(await getFlowConfig(page)).toBeUndefined();
 
@@ -147,7 +147,7 @@ test.describe('Map vector tile traffic module tests', () => {
     });
 
     // TODO(LSI-263): Enable when flakyness has been fixed
-    test.skip('Traffic flow filtering with complex initial config', async ({ page }) => {
+    test('Traffic flow filtering with complex initial config', { tag: '@flaky' }, async ({ page }) => {
         await mapEnv.loadPageAndMap(page, { zoom: 14, center: [-0.12621, 51.50394] });
 
         const config: FlowConfig = {
@@ -231,7 +231,7 @@ test.describe('Map vector tile traffic module tests', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test.skip('Flow stays hidden when style changes immediately after resetConfig', async ({ page }) => {
+    test('Flow stays hidden when style changes immediately after resetConfig', async ({ page }) => {
         await mapEnv.loadPageAndMap(page, { zoom: 12, center: [-0.12621, 51.50394] });
 
         await initTrafficFlow(page);

@@ -13,7 +13,8 @@
       "services/**",
       "examples/**",
       "map-integration-tests/**",
-      "testing/**"
+      "testing/**",
+      "!**/.release-please-manifest.json"
     ]
   },
   "assist": { "actions": { "source": { "organizeImports": "on" } } },

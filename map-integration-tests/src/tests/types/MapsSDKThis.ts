@@ -1,4 +1,4 @@
-import type { FeatureCollection, Point } from 'geojson';
+import type { Feature, FeatureCollection, Point } from 'geojson';
 import type {
     BaseMapModule,
     CustomGeoJSONModule,
@@ -14,7 +14,7 @@ import type {
     TrafficIncidentOverlayModule,
     TrafficIncidentsModule,
 } from 'map';
-import type { LngLatLike, Map, MapGeoJSONFeature } from 'maplibre-gl';
+import type { LngLatLike, Map } from 'maplibre-gl';
 
 /**
  * Extension of globalThis with convenient SDK properties for testing.
@@ -57,7 +57,7 @@ export type MapsSDKThis = typeof globalThis & {
     // to the callback handler
     _clickedLngLat?: LngLatLike;
     _clickedTopFeature?: unknown;
-    _clickedFeatures?: MapGeoJSONFeature[];
+    _clickedFeatures?: Feature[];
     _clickedSourceWithLayers?: SourceWithLayers;
     // These properties are used for testing module events (config-change, shown-features)
     _configChangeResult: unknown;

@@ -118,42 +118,6 @@ export const DATA_ENTRY_KIND_TO_SLICE = {
 } as const satisfies Record<DataEntryKind, EntryModeSliceName>;
 
 /**
- * Default tool names that should be dropped from the registry when a {@link DataEntryKind}
- * is disabled. Only default-tool names are listed here — user-supplied custom tools are
- * never filtered automatically; integrators that want to gate their own tools on enabled
- * kinds can read `dataEntries` themselves.
- *
- * Tools that span multiple kinds (`clearMap`, `recallState`, `setEntryMode`, …) are
- * intentionally absent — they keep working regardless of which kinds are disabled.
- *
- * @group Agent Toolkit
- */
-export const TOOLS_BY_DATA_ENTRY_KIND: Record<DataEntryKind, readonly string[]> = {
-    places: ['recallPlaces', 'updatePlacesDisplay', 'locatePlace', 'discoverPlaces'],
-    routes: [
-        'recallRoutes',
-        'updateRoutesDisplay',
-        'setRoute',
-        'addWaypointsToRoute',
-        'removeWaypointsFromRoute',
-        'replaceWaypointInRoute',
-        'getCurrentWaypoints',
-        'updateWaypointsDisplay',
-    ],
-    incidents: [
-        'getTrafficIncidents',
-        'focusIncidents',
-        'startTrafficIncidentsMonitor',
-        'stopTrafficIncidentsMonitor',
-        'getShownTileIncidents',
-    ],
-    customGeometries: ['recallGeometries'],
-    trafficAreaAnalytics: ['getTrafficAreaAnalytics', 'queryTrafficAnalytics', 'updateTrafficAreaAnalyticsDisplay'],
-    byod: ['recallByod', 'addByodLayer', 'updateByodDisplay'],
-    ranges: ['findReachableAreas', 'recallRanges'],
-};
-
-/**
  * Compile-time union of {@link ToolState} keys whose slice supports {@link EntryMode}.
  * Names match the {@link ToolState} keys exactly — `routing` (not `routes`),
  * `customGeometries` (not `geometries`) — so the slice name in the tool API never drifts

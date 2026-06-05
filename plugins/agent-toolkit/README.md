@@ -1,6 +1,6 @@
 # TomTom Maps SDK - Agent Toolkit Plugin
 
-A headless conversational agent that gives Large Language Models tool-based control over a [TomTom Map](https://developer.tomtom.com/) and TomTom location services, powered by [Vercel AI SDK v6](https://ai-sdk.dev/).
+A headless conversational agent that gives Large Language Models tool-based control over a [TomTom Map](https://docs.tomtom.com/maps-sdk-js/guides/map/tomtom-map) and TomTom location services, powered by [Vercel AI SDK v6](https://ai-sdk.dev/).
 
 No UI is included — bring your own chat interface. No LLM provider is bundled — supply any AI SDK-compatible model.
 
@@ -69,7 +69,7 @@ function ChatPanel() {
 }
 ```
 
-See [`examples/map-chat-agent`](../../examples/map-chat-agent) for a full working example.
+See [`examples/map-chat-agent-react`](../../examples/map-chat-agent-react) for a full working example.
 
 ## Tools reference
 
@@ -115,8 +115,9 @@ The plugin ships a `DEFAULT_TOOLS` registry covering search, routing, traffic, r
 
 | Tool | Description |
 |---|---|
-| `addByodLayer` | Ingest a customer-authored GeoJSON layer from a URL or inline `FeatureCollection` |
+| `addByodSource` | Ingest a customer-authored GeoJSON source (URL or inline `FeatureCollection`) and profile its shape; the entry has no layers and renders nothing until the agent sets them via `setByodLayers` |
 | `recallByod` | List BYOD entries, or retrieve a single entry's full `FeatureCollection` by id |
+| `setByodLayers` | Restyle a BYOD entry — replace its MapLibre layers (type + data-driven paint) using the entry's data `profile` |
 | `updateByodDisplay` | Show, hide, or clear BYOD layers on the map |
 
 > See the [Bring your own data](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/byod) guide for ingestion patterns, visibility lifecycle, and how BYOD entries feed into `analyseData` / `processData`.
@@ -580,4 +581,4 @@ export type * from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 - [AI SDK v6 documentation](https://ai-sdk.dev/)
 - [TomTom Maps SDK documentation](https://developer.tomtom.com/)
 - [Engineering guidelines](./ENGINEERING-GUIDELINES.md) — tool design standards, state management, system prompt structure
-- [Example application](../../examples/map-chat-agent) — full chat interface implementation
+- [Example application](../../examples/map-chat-agent-react) — full chat interface implementation

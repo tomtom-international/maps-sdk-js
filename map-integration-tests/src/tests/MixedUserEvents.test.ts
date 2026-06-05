@@ -101,8 +101,11 @@ test.describe('Tests with user events', () => {
         const placePixelCoords = await getPixelCoords(page, firstPlacePosition);
         await page.mouse.click(placePixelCoords.x, placePixelCoords.y);
         const features = await page.evaluate(() => (globalThis as MapsSDKThis)._clickedFeatures);
+        // Scoped to the firing (Places) module: exactly one feature, and it is a place (its id is one
+        // of the shown places) rather than the overlapping geometry polygon. `allEventFeatures` holds
+        // the typed original (no `.layer`/`.source`), so assert it is a Places feature by id.
         expect(features).toHaveLength(1);
-        expect(features?.[0].layer.id).toEqual(placesLayerIDs[0]);
+        expect(places.features.map((place) => place.id)).toContain(features?.[0]?.id);
 
         // we register a hover handler for geometries
         await setupGeometryHoverHandlers(page);

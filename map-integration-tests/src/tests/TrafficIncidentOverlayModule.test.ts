@@ -104,13 +104,13 @@ test.describe('Traffic Incident Overlay module integration tests', () => {
 
         // Sanity: rendering happened before clear — at least one incident rendered at this zoom
         const shownBefore = await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidentOverlay?.getShown());
-        expect(shownBefore?.incidents.length).toBeGreaterThan(0);
+        expect(shownBefore?.incidents.features.length).toBeGreaterThan(0);
 
         await clearTrafficIncidentOverlay(page);
         await waitForMapIdle(page);
 
         const shown = await page.evaluate(() => (globalThis as MapsSDKThis).trafficIncidentOverlay?.getShown());
-        expect(shown?.incidents).toHaveLength(0);
+        expect(shown?.incidents.features).toHaveLength(0);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });

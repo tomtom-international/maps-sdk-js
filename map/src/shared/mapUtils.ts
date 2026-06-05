@@ -43,57 +43,126 @@ export const waitUntilSourceIsLoaded = async (tomtomMap: TomTomMap, sourceId: st
     }
 };
 
-/**
- * Deserializes the properties from MapLibre features.
- * * Maplibre has a bug where all properties from a feature are stringified.
- * See: {@link} https://github.com/maplibre/maplibre-gl-js/issues/1325
- *
- * @param features An Array with MapGeoJSONFeatures objects
- *
- * @ignore
- */
-export const deserializeFeatures = (features: MapGeoJSONFeature[]): void => {
-    for (const feature of features) {
-        if (!feature || !Object.keys(feature.properties).length) {
-            continue;
-        }
+const TOMTOM_DEFAULT_URL = 'https://api.tomtom.com';
 
-        for (const key in feature.properties) {
-            if (typeof feature.properties[key] === 'string') {
-                try {
-                    feature.properties[key] = JSON.parse(feature.properties[key]);
-                } catch (_e) {
-                    // We ignore the error if the object can't be parsed and continue.
-                    // console.debug('Cannot deserialize feature property', key, 'with value', feature.properties[key], e);
-                }
-            }
+const isTomTomHostname = (hostname: string): boolean =>
+    hostname === 'api.tomtom.com' || hostname.endsWith('.api.tomtom.com');
+
+/**
+ * Vector tiles are served from prefixed-subdomain CDN hosts
+ * (a./b./c./d.api.tomtom.com) for browser-parallelism. Rewrite all of those
+ * plus the bare `api.tomtom.com` host to the proxy. In demo-BFF mode
+ * (`isDemoBffMode`) drop any inbound `key` param too: TomTom's edge bakes
+ * the request's key into tile URLs returned in the style JSON, and the
+ * proxy injects its own server-side — leaving the client-visible key would
+ * just leak it to the browser console.
+ *
+ * Returns the original URL unchanged when it isn't a TomTom host or when
+ * we're not in proxy mode.
+ */
+const rewriteForProxy = (url: string, baseURL: string, isProxyMode: boolean, isDemoBffMode: boolean): string => {
+    if (!isProxyMode) return url;
+    try {
+        const parsed = new URL(url);
+        if (!isTomTomHostname(parsed.hostname)) return url;
+        if (isDemoBffMode) {
+            parsed.searchParams.delete('key');
         }
+        return baseURL + parsed.pathname + parsed.search + parsed.hash;
+    } catch {
+        return url;
     }
 };
 
 /**
- * Inject TomTom custom headers to requests to TomTom.
+ * For traffic-incident / traffic-flow tile endpoints, override the
+ * server-side `tags` filter to the SDK's tracked-incident set so MapLibre
+ * gets the data the SDK actually knows how to render.
+ */
+const injectTrafficTags = (url: URL): void => {
+    if (url.pathname.includes('incidents')) {
+        url.searchParams.set('tags', INCIDENT_TAGS.join(','));
+    } else if (url.pathname.includes('flow')) {
+        url.searchParams.set('tags', FLOW_TAGS.join(','));
+    }
+};
+
+/**
+ * Inject TomTom custom headers (and, when a proxy `commonBaseURL` is
+ * configured, rewrite tile URLs + attach credentials) on requests issued
+ * by MapLibre.
+ *
+ * In "proxy mode" (commonBaseURL points away from api.tomtom.com), tile
+ * URLs baked into the style JSON still arrive here as `api.tomtom.com/...`
+ * because MapLibre fetches them directly. We rewrite them to flow through
+ * the configured base URL, and — in demo-BFF mode — set
+ * `credentials: 'include'` so the session cookie travels with each tile.
  *
  * @ignore
  * @param params Global SDK Map configuration
  */
-export const transformRequest =
-    (params: Partial<GlobalConfig>) =>
-    (url: string, resourceType?: ResourceType): RequestParameters => {
-        if (url.includes('tomtom.com')) {
-            if (resourceType === 'Image') {
-                return { url };
-            }
-            const parsedUrl = new URL(url);
-            if (parsedUrl.pathname.includes('incidents')) {
-                parsedUrl.searchParams.set('tags', `${INCIDENT_TAGS.join(',')}`);
-            } else if (parsedUrl.pathname.includes('flow')) {
-                parsedUrl.searchParams.set('tags', `${FLOW_TAGS.join(',')}`);
-            }
-            return { url: parsedUrl.toString(), headers: { ...generateTomTomHeaders(params) } };
+export const transformRequest = (params: Partial<GlobalConfig>) => {
+    const baseURL = params.commonBaseURL ?? TOMTOM_DEFAULT_URL;
+    // commonBaseURL points at something other than TomTom — could be a
+    // demo-BFF or a customer's own customServiceBaseURL. We always rewrite
+    // tile hostnames to flow through it.
+    const isProxyMode = baseURL !== TOMTOM_DEFAULT_URL;
+    // Demo-BFF-style mode: no apiKey signals the proxy will inject the real
+    // key server-side from a cookie-gated session. Customers using
+    // customServiceBaseURL keep apiKey set so their backend can use it.
+    // We only strip key= and attach `credentials: 'include'` in this mode;
+    // doing it for customServiceBaseURL would break consumers whose backend
+    // serves CORS as `Access-Control-Allow-Origin: *`.
+    //
+    // Falsy check (not `=== ''`) on purpose: an example may overwrite the
+    // proxy bootstrap's `apiKey: ''` with `apiKey: undefined` via
+    // `put({ apiKey: process.env.API_KEY_EXAMPLES })` when that env is unset
+    // in a proxy build. Both empty and undefined mean "no key"; this matches
+    // the URL builders' `if (apiKey)` key-append decision.
+    const isDemoBffMode = isProxyMode && !params.apiKey;
+
+    return (url: string, resourceType?: ResourceType): RequestParameters => {
+        const rewrittenUrl = rewriteForProxy(url, baseURL, isProxyMode, isDemoBffMode);
+        const isProxyUrl = isProxyMode && rewrittenUrl.startsWith(baseURL);
+        const useCredentials = isDemoBffMode && isProxyUrl;
+
+        // Hostname-based TomTom detection — a substring check like
+        // `url.includes('tomtom.com')` would also match lookalikes
+        // (`tomtom.com.evil.example`) or a `tomtom.com` in the query string,
+        // and then run TomTom header/tag injection on unintended hosts. Match
+        // the registrable domain (tomtom.com or any *.tomtom.com subdomain) by
+        // hostname — broader than the api-only `isTomTomHostname` used for the
+        // rewrite, since headers apply to all genuine TomTom hosts. The
+        // try/catch guards against invalid/relative URLs.
+        let isTomTomUrl = false;
+        try {
+            const host = new URL(url).hostname;
+            isTomTomUrl = host === 'tomtom.com' || host.endsWith('.tomtom.com');
+        } catch {
+            isTomTomUrl = false;
         }
-        return { url };
+
+        if (!isTomTomUrl && !isProxyUrl) {
+            return { url: rewrittenUrl };
+        }
+
+        if (resourceType === 'Image') {
+            return useCredentials ? { url: rewrittenUrl, credentials: 'include' } : { url: rewrittenUrl };
+        }
+
+        const parsedUrl = new URL(rewrittenUrl);
+        injectTrafficTags(parsedUrl);
+
+        const result: RequestParameters = {
+            url: parsedUrl.toString(),
+            headers: { ...generateTomTomHeaders(params) },
+        };
+        if (useCredentials) {
+            result.credentials = 'include';
+        }
+        return result;
     };
+};
 
 /**
  * Compares two MapLibre features by ID.
@@ -434,8 +503,16 @@ export const getStyleLightDarkTheme = (styleInput?: StyleInput): LightDark => {
  * @ignore
  */
 export const addPinCategoriesSpriteToStyle = async (mapParams: InternalTomTomMapParams, mapLibreMap: Map) => {
-    mapLibreMap.setSprite(
-        `${mapParams.commonBaseURL}/maps/orbis/assets/sprites/2.*/sprite?key=${mapParams.apiKey}&poi=poi_${getStyleLightDarkTheme(mapParams.style)}&apiVersion=1&apiChannel=preview`,
-        { validate: false },
-    );
+    const params = new URLSearchParams();
+    // Proxy deployments leave apiKey empty and let the proxy inject the real
+    // key server-side. Skip the param entirely rather than emitting `key=`.
+    if (mapParams.apiKey) {
+        params.set('key', mapParams.apiKey);
+    }
+    params.set('poi', `poi_${getStyleLightDarkTheme(mapParams.style)}`);
+    params.set('apiVersion', '1');
+    params.set('apiChannel', 'preview');
+    mapLibreMap.setSprite(`${mapParams.commonBaseURL}/maps/orbis/assets/sprites/2.*/sprite?${params}`, {
+        validate: false,
+    });
 };

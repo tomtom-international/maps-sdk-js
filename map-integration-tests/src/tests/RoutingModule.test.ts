@@ -1,4 +1,5 @@
 import { expect, type Page, test } from '@playwright/test';
+import { nextMapIdleEvent } from '@testing/core-utils';
 import type { Routes, WaypointLike } from 'core';
 import {
     DisplayRouteSummaryProps,
@@ -295,7 +296,7 @@ test.describe('Routing and waypoint display tests', () => {
     });
 
     // TODO(LSI-263): Enable when flakyness has been fixed
-    test.skip('Showing waypoints first and right after changing the style', async ({ page }) => {
+    test('Showing waypoints first and right after changing the style', { tag: '@flaky' }, async ({ page }) => {
         const mapEnv = await MapTestEnv.loadPageAndMap(page, {
             bounds: rotterdamToAmsterdamRoutes.bbox,
             fitBoundsOptions: { padding: 150 },
@@ -316,7 +317,7 @@ test.describe('Routing and waypoint display tests', () => {
     });
 
     // TODO(LSI-263): Enable when flakyness has been fixed
-    test.skip('Show and clear flows using LDEVR route with guidance', async ({ page }) => {
+    test('Show and clear flows using LDEVR route with guidance', { tag: '@flaky' }, async ({ page }) => {
         const mapEnv = await MapTestEnv.loadPageAndMap(page, {
             bounds: ldevrTestRoutes.bbox,
             fitBoundsOptions: { padding: 150 },
@@ -518,7 +519,7 @@ test.describe('Routing and waypoint display tests', () => {
     });
 
     // TODO(LSI-263): Enable when flakyness has been fixed
-    test.skip('Distance and time units configuration', async ({ page }) => {
+    test('Distance and time units configuration', { tag: '@flaky' }, async ({ page }) => {
         const mapEnv = await MapTestEnv.loadPageAndMap(page, {
             fitBoundsOptions: { padding: 150 },
             bounds: rotterdamToAmsterdamRoutes.bbox,
@@ -528,7 +529,10 @@ test.describe('Routing and waypoint display tests', () => {
         // routing hours override global config:
         await initRouting(page, { displayUnits: { distance: { type: 'imperial_us' }, time: { hours: 'hours' } } });
         await showRoutes(page, rotterdamToAmsterdamRoutes);
-        await waitForMapIdle(page);
+        // Use `nextMapIdleEvent` instead of `waitForMapIdle` because the latter attempts to check whether the map is
+        // currently idle, but that check can return true even though the mutations performed here are still in
+        // progress.
+        await nextMapIdleEvent(page);
         expect(await getSelectedSummaryBubbleProps(page)).toMatchObject({
             formattedDistance: '48 mi',
             formattedDuration: '1 hours 04 GLOBAL_MINUTES',
@@ -537,7 +541,7 @@ test.describe('Routing and waypoint display tests', () => {
 
         // We apply distance-only config, which means time config sticks back to global:
         await applyConfig(page, { displayUnits: { distance: { type: 'metric', kilometers: 'kilometers' } } });
-        await waitForMapIdle(page);
+        await nextMapIdleEvent(page);
         expect(await getSelectedSummaryBubbleProps(page)).toMatchObject({
             formattedDistance: '77 kilometers',
             formattedDuration: '1 GLOBAL_HOURS 04 GLOBAL_MINUTES',
@@ -551,7 +555,7 @@ test.describe('Routing and waypoint display tests', () => {
                 time: { hours: 'HR', minutes: 'MIN' },
             },
         });
-        await waitForMapIdle(page);
+        await nextMapIdleEvent(page);
         expect(await getSelectedSummaryBubbleProps(page)).toMatchObject({
             formattedDistance: '48 miles',
             formattedDuration: '1 HR 04 MIN',

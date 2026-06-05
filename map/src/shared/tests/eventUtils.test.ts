@@ -1,7 +1,7 @@
 import type { Feature } from 'geojson';
 import type { MapGeoJSONFeature } from 'maplibre-gl';
 import { describe, expect, test } from 'vitest';
-import { detectHoverState, putEventState } from '../eventUtils';
+import { dedupeRenderedFeatures, detectHoverState, putEventState, scopeToSource } from '../eventUtils';
 import { BASE_MAP_SOURCE_ID, POI_SOURCE_ID } from '../layers/sourcesIDs';
 import type { EventType } from '../types';
 
@@ -90,6 +90,79 @@ describe('updateEventState related tests', () => {
             { id: 'A', properties: { eventState: 'contextmenu' } },
             { id: 'B', properties: { eventState: 'hover' } },
         ]);
+    });
+});
+
+describe('scopeToSource', () => {
+    // Minimal raw-hit shape: scopeToSource only reads `.source` (+ `.id` for identity checks).
+    const hit = (source: string, id: string): MapGeoJSONFeature => ({ source, id }) as unknown as MapGeoJSONFeature;
+
+    test('keeps only entries from the firing source, preserving order', () => {
+        const rendered = [hit('places', 'p1'), hit('routes', 'r1'), hit('places', 'p2')];
+        expect(scopeToSource(rendered, 'places')).toEqual([hit('places', 'p1'), hit('places', 'p2')]);
+    });
+
+    test('keeps the topmost hit first so allEventFeatures[0] stays topFeature', () => {
+        const rendered = [hit('places', 'top'), hit('routes', 'foreign'), hit('places', 'other')];
+        expect(scopeToSource(rendered, 'places')[0]).toBe(rendered[0]);
+    });
+
+    test('drops every foreign source', () => {
+        const rendered = [hit('places', 'p1'), hit('routes', 'r1'), hit('traffic', 't1')];
+        expect(scopeToSource(rendered, 'places')).toEqual([hit('places', 'p1')]);
+    });
+
+    test('undefined firing source (nothing hit) passes through unchanged', () => {
+        const rendered = [hit('places', 'p1'), hit('routes', 'r1')];
+        expect(scopeToSource(rendered, undefined)).toBe(rendered);
+    });
+
+    test('empty input → empty output', () => {
+        expect(scopeToSource([], 'places')).toEqual([]);
+    });
+});
+
+describe('dedupeRenderedFeatures', () => {
+    // renderedRefId reads top-level `.id`, falling back to `properties.id`.
+    const hit = (source: string, id: string | undefined, layer: string): MapGeoJSONFeature =>
+        ({ source, id, layer: { id: layer }, properties: {} }) as unknown as MapGeoJSONFeature;
+    const propIdHit = (source: string, propId: string, layer: string): MapGeoJSONFeature =>
+        ({ source, layer: { id: layer }, properties: { id: propId } }) as unknown as MapGeoJSONFeature;
+
+    test('same id across two layers collapses to one (keeps the topmost)', () => {
+        const outline = hit('routes', 'r1', 'route-casing');
+        const inner = hit('routes', 'r1', 'route-inner');
+        expect(dedupeRenderedFeatures([outline, inner])).toEqual([outline]);
+    });
+
+    test('same id across tile boundaries collapses to one', () => {
+        const tileA = hit('traffic', 'i1', 'traffic-flow');
+        const tileB = hit('traffic', 'i1', 'traffic-flow');
+        expect(dedupeRenderedFeatures([tileA, tileB])).toEqual([tileA]);
+    });
+
+    test('two distinct ids are both kept, in order', () => {
+        const a = hit('places', 'p1', 'places');
+        const b = hit('places', 'p2', 'places');
+        expect(dedupeRenderedFeatures([a, b])).toEqual([a, b]);
+    });
+
+    test('id-less features (e.g. base-map fills) are all kept — cannot be keyed', () => {
+        const a = hit('basemap', undefined, 'land');
+        const b = hit('basemap', undefined, 'water');
+        expect(dedupeRenderedFeatures([a, b])).toEqual([a, b]);
+    });
+
+    test('same id under different sources is kept (source is part of the key)', () => {
+        const places = hit('places', 'shared', 'places');
+        const routes = hit('routes', 'shared', 'routes');
+        expect(dedupeRenderedFeatures([places, routes])).toEqual([places, routes]);
+    });
+
+    test('falls back to properties.id when no top-level id', () => {
+        const first = propIdHit('geometries', 'g1', 'fill');
+        const dupe = propIdHit('geometries', 'g1', 'outline');
+        expect(dedupeRenderedFeatures([first, dupe])).toEqual([first]);
     });
 });
 

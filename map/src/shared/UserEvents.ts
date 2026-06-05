@@ -131,14 +131,20 @@ export class UserEvents<T = MapGeoJSONFeature> {
      * @param type The type of event to listen for (click, contextmenu, hover, long-hover)
      * @param handler Callback function invoked when the event occurs
      *
+     * @returns An unsubscribe function that removes the handler registered by this call.
+     *
      * @remarks
      * **Handler Parameters:**
      * - `feature`: The primary feature that triggered the event
      * - `lngLat`: Geographic coordinates [longitude, latitude] of the event
-     * - `features`: Array of all features at the event location (for overlapping features)
+     * - `features`: The features from this module at the event location, de-duplicated (for
+     *   overlapping features within the module). To inspect features across all modules, query
+     *   `map.mapLibreMap.queryRenderedFeatures(...)` directly — see {@link UserEventHandler}.
      *
      * **Behavior:**
-     * - Only one handler per event type (calling `on()` again replaces the previous handler)
+     * - Multiple handlers per event type are supported — each `on()` adds a handler (it does
+     *   **not** replace existing ones) and all of them fire. To remove one, call the unsubscribe
+     *   this returns; to clear them all, use `off(type)`.
      * - Handlers are preserved across map style changes
      * - Cursor automatically changes to pointer on hover
      * - Events respect module visibility (hidden features don't trigger events)
@@ -229,7 +235,9 @@ export class UserEvents<T = MapGeoJSONFeature> {
      *
      * @remarks
      * **Cleanup Behavior:**
-     * - Removes only the specified event type (other types remain active)
+     * - Removes **all** handlers for the specified event type — to remove a single handler, call
+     *   the unsubscribe function returned by {@link on}
+     * - Other event types remain active
      * - Resets cursor behavior for this module
      * - Safe to call multiple times (no error if no handler exists)
      * - Does not affect other modules' event handlers

@@ -2,6 +2,7 @@
  * @module agent-toolkit-tools
  */
 
+import type { DataEntryKind } from '../state';
 import type { ToolDefinition } from '../types';
 
 // --- MapLibre tools ---
@@ -87,11 +88,11 @@ import {
 
 // --- State tools ---
 import {
-    addByodLayerDescription,
-    addByodLayerOutputSchema,
-    addByodLayerSchema,
+    addByodSourceDescription,
+    addByodSourceOutputSchema,
+    addByodSourceSchema,
     analyseDataBuilder,
-    executeAddByodLayer,
+    executeAddByodSource,
     executeFocusIncidents,
     executeGetCurrentWaypoints,
     executeQueryTrafficAnalytics,
@@ -101,6 +102,7 @@ import {
     executeRecallRoutes,
     executeRecallState,
     executeResetState,
+    executeSetByodLayers,
     executeSetEntryMode,
     executeStartTrafficIncidentsMonitor,
     executeStopTrafficIncidentsMonitor,
@@ -133,6 +135,9 @@ import {
     resetStateDescription,
     resetStateOutputSchema,
     resetStateSchema,
+    setByodLayersDescription,
+    setByodLayersOutputSchema,
+    setByodLayersSchema,
     setEntryModeDescription,
     setEntryModeOutputSchema,
     setEntryModeSchema,
@@ -949,31 +954,61 @@ const defaultTools = {
             'List BYOD entries',
             'Show details of the sales-territories BYOD layer',
         ],
-        relatedTools: ['addByodLayer', 'updateByodDisplay', 'analyseData', 'processData'],
+        relatedTools: ['addByodSource', 'updateByodDisplay', 'analyseData', 'processData'],
     },
-    addByodLayer: {
-        description: addByodLayerDescription,
+    addByodSource: {
+        description: addByodSourceDescription,
         classificationPrompt:
-            'Add a customer-owned GeoJSON layer (URL fetch or inline) as a new BYOD entry. Use when the user wants to import / load / overlay a customer-supplied dataset. Returns the new entry id (use with `byodEntryIDs` on analyseData / processData).',
-        inputSchema: addByodLayerSchema,
-        outputSchema: addByodLayerOutputSchema,
-        execute: executeAddByodLayer,
+            'Add a customer-owned GeoJSON FeatureCollection (URL fetch or inline) as a new BYOD source. Use when the user wants to import / load / overlay a customer-supplied dataset. Returns the new entry id plus a profile of the data shape (use the id with `byodEntryIDs` on analyseData / processData). The entry starts with NO layers and renders nothing — deciding the layers from that profile is a required follow-up `setByodLayers` step, so co-pick it on every ingest turn.',
+        inputSchema: addByodSourceSchema,
+        outputSchema: addByodSourceOutputSchema,
+        execute: executeAddByodSource,
         tags: ['byod', 'state', 'import'],
         examples: [
-            'addByodLayer({ label: "Sales territories", url: "https://example.com/territories.geojson", show: true })',
-            'addByodLayer({ label: "Inline pins", data: { type: "FeatureCollection", features: [/* … */] } })',
+            'addByodSource({ label: "Sales territories", url: "https://example.com/territories.geojson" })  // then setByodLayers to render',
+            'addByodSource({ label: "Inline pins", data: { type: "FeatureCollection", features: [/* … */] } })',
+            'addByodSource({ label: "Q2 pins", data: { type: "FeatureCollection", features: [/* … */] } })',
         ],
         examplePrompts: [
             'Load my territories layer from https://...',
             'Import this GeoJSON as a BYOD layer',
             'Add a customer-pins layer from this URL',
         ],
-        relatedTools: ['recallByod', 'updateByodDisplay', 'analyseData', 'processData'],
+        relatedTools: ['recallByod', 'setByodLayers', 'updateByodDisplay', 'analyseData', 'processData'],
+    },
+    setByodLayers: {
+        description: setByodLayersDescription,
+        classificationPrompt:
+            'Restyle a BYOD entry by replacing the MapLibre layers it renders under — pick layer types and ' +
+            'data-driven paint informed by the data `profile` (graduate point size by a numeric field, colour a ' +
+            'fill by category, switch points to symbols). Use when the user wants to change how a loaded BYOD layer ' +
+            'LOOKS. ALWAYS co-pick this alongside addByodSource on EVERY BYOD ingest turn — deciding the layers from ' +
+            "the detected schema is the agent's job in all cases, whether or not the user mentioned styling (e.g. " +
+            '"load X" or "import these" just as much as "load X and colour it by region"). addByodSource creates the ' +
+            'entry with no layers, so this is the only way it becomes visible. NOT for visibility (show/hide/remove → ' +
+            'updateByodDisplay) nor for importing new data (→ addByodSource).',
+        inputSchema: setByodLayersSchema,
+        outputSchema: setByodLayersOutputSchema,
+        execute: executeSetByodLayers,
+        tags: ['byod', 'map style', 'display'],
+        examples: [
+            'setByodLayers({ byodEntryId: "byod-0", layers: [{ type: "fill", paint: { "fill-color": ["match", ["get", "region"], "north", "#1f77b4", "south", "#ff7f0e", "#cccccc"], "fill-opacity": 0.5 } }] })  // colour polygons by category',
+            'setByodLayers({ byodEntryId: "byod-1", layers: [{ type: "circle", paint: { "circle-radius": ["interpolate", ["linear"], ["get", "revenue"], 0, 3, 100000, 20], "circle-color": "#d62728" } }] })  // size points by a numeric field',
+            'setByodLayers({ byodEntryId: "byod-2", layers: [{ type: "line", paint: { "line-color": "#2ca02c", "line-width": 3 } }], show: { zoomMode: "none" } })  // restyle a hidden entry and render it',
+        ],
+        examplePrompts: [
+            'Colour the territories by region',
+            'Make the point size reflect revenue',
+            'Style this layer with thicker green lines',
+            'Shade the polygons by their value',
+        ],
+        relatedTools: ['recallByod', 'addByodSource', 'updateByodDisplay'],
+        dependsOn: ['addByodSource'],
     },
     updateByodDisplay: {
         description: updateByodDisplayDescription,
         classificationPrompt:
-            'Toggle visibility (or drop) of BYOD entries already in session state. Use after `addByodLayer` or after `recallByod` exposes the ids. Three actions: show / hide / remove. Pair with `clearAll` or `hideOthers` for bulk swaps.',
+            'Toggle visibility (or drop) of BYOD entries already in session state. Use after `addByodSource` or after `recallByod` exposes the ids. Three actions: show / hide / remove. Pair with `clearAll` or `hideOthers` for bulk swaps.',
         inputSchema: updateByodDisplaySchema,
         outputSchema: updateByodDisplayOutputSchema,
         execute: executeUpdateByodDisplay,
@@ -991,8 +1026,8 @@ const defaultTools = {
             'Hide all BYOD layers',
             'Drop the imported file from the session',
         ],
-        relatedTools: ['recallByod', 'addByodLayer'],
-        dependsOn: ['addByodLayer'],
+        relatedTools: ['recallByod', 'addByodSource'],
+        dependsOn: ['addByodSource'],
     },
     recallRoutes: {
         description: recallRoutesDescription,
@@ -1404,6 +1439,42 @@ export type ToolName = keyof typeof DEFAULT_TOOLS;
  * @group Agent Toolkit
  */
 export const TOOL_NAMES = Object.keys(DEFAULT_TOOLS) as ToolName[];
+
+/**
+ * Default tool names that should be dropped from the registry when a {@link DataEntryKind}
+ * is disabled. Only default-tool names are listed here — user-supplied custom tools are
+ * never filtered automatically; integrators that want to gate their own tools on enabled
+ * kinds can read `dataEntries` themselves.
+ *
+ * Tools that span multiple kinds (`clearMap`, `recallState`, `setEntryMode`, …) are
+ * intentionally absent — they keep working regardless of which kinds are disabled.
+ *
+ * @group Agent Toolkit
+ */
+export const TOOLS_BY_DATA_ENTRY_KIND: Record<DataEntryKind, readonly ToolName[]> = {
+    places: ['recallPlaces', 'updatePlacesDisplay', 'locatePlace', 'discoverPlaces'],
+    routes: [
+        'recallRoutes',
+        'updateRoutesDisplay',
+        'setRoute',
+        'addWaypointsToRoute',
+        'removeWaypointsFromRoute',
+        'replaceWaypointInRoute',
+        'getCurrentWaypoints',
+        'updateWaypointsDisplay',
+    ],
+    incidents: [
+        'getTrafficIncidents',
+        'focusIncidents',
+        'startTrafficIncidentsMonitor',
+        'stopTrafficIncidentsMonitor',
+        'getShownTileIncidents',
+    ],
+    customGeometries: ['recallGeometries'],
+    trafficAreaAnalytics: ['getTrafficAreaAnalytics', 'queryTrafficAnalytics', 'updateTrafficAreaAnalyticsDisplay'],
+    byod: ['recallByod', 'addByodSource', 'setByodLayers', 'updateByodDisplay'],
+    ranges: ['findReachableAreas', 'recallRanges'],
+};
 
 /**
  * Returns each default tool's `examplePrompts` keyed by tool name. Builders are

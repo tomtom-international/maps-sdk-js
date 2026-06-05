@@ -369,7 +369,7 @@ test.describe('Routing and waypoint events tests', () => {
     });
 
     // TODO(LSI-263): Enable when flakyness has been fixed
-    test.skip('Click events for a waypoint after changing map style', async ({ page }) => {
+    test('Click events for a waypoint after changing map style', { tag: '@flaky' }, async ({ page }) => {
         await setupWaypointsClickHandlers(page);
         await showWaypoints(page, [waypoint0Coords]);
         await waitForMapIdle(page);
@@ -393,7 +393,7 @@ test.describe('Routing and waypoint events tests', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test('Custom cursor on hover persists after changing map style', async ({ page }) => {
+    test('Custom cursor on hover persists after changing map style', { tag: '@flaky' }, async ({ page }) => {
         await initRouting(page, { events: { cursorOnHover: 'cell' } });
         await setupWaypointsClickHandlers(page);
         await showWaypoints(page, [waypoint0Coords]);
@@ -424,7 +424,7 @@ test.describe('Routing and waypoint events tests', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test('Custom cursor on route hover persists after changing map style', async ({ page }) => {
+    test('Custom cursor on route hover persists after changing map style', { tag: '@flaky' }, async ({ page }) => {
         await initRouting(page, { events: { cursorOnHover: 'cell' } });
         await setupRouteLineHoverHandlers(page);
         await showRoutes(page, rotterdamToAmsterdamRoutes);
@@ -457,7 +457,7 @@ test.describe('Routing and waypoint events tests', () => {
     });
 
     // TODO(LSI-263): Enable when flakyness has been fixed
-    test.skip('Click events for a route after changing map style', async ({ page }) => {
+    test('Click events for a route after changing map style', { tag: '@flaky' }, async ({ page }) => {
         await setupRouteLineClickHandlers(page);
         await showRoutes(page, rotterdamToAmsterdamRoutes);
         await waitForMapIdle(page);

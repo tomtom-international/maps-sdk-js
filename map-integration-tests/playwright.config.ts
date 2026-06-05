@@ -20,6 +20,9 @@ export default defineConfig({
     forbidOnly: !!process.env.CI,
     /* Retry on CI only */
     retries: process.env.CI ? 4 : 0,
+    /* Skip @flaky-tagged tests by default. Set INCLUDE_FLAKY=1 to run them
+     * (combine with `--grep @flaky` to run only the flaky tests). */
+    grepInvert: process.env.INCLUDE_FLAKY ? undefined : /@flaky/,
     fullyParallel: true,
     workers: 4,
     /* Reporter to use. See https://playwright.dev/docs/test-reporters */

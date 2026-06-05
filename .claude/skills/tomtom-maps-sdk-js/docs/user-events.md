@@ -34,24 +34,39 @@ placesModule.events.on('long-hover', (feature, lngLat) => { });
 (
   feature: T,                      // typed to the module's feature type
   lngLat: LngLat,                  // precise event coordinates
-  allFeatures: MapGeoJSONFeature[], // every feature at the event point
+  allFeatures: Feature[],          // this module's features at the point, de-duplicated; [0] === feature
   source: SourceWithLayers,        // source/layer configuration
 ) => void
 ```
 
 `lngLat`, `allFeatures`, and `source` are optional — omit trailing args you don't need.
 
----
-
-## Unsubscribe — `events.off()`
+`allFeatures` is scoped to the firing module and de-duplicated (a feature drawn across several
+layers/tiles appears once). To inspect **every** feature at the point across all modules — base
+map included, with `.source`/`.layer` intact — query MapLibre directly (project `lngLat` first):
 
 ```ts
-// Remove all handlers for a type
+const p = map.mapLibreMap.project(lngLat);
+const all = map.mapLibreMap.queryRenderedFeatures([[p.x - 5, p.y + 5], [p.x + 5, p.y - 5]]);
+```
+
+---
+
+## Unsubscribe
+
+```ts
+// on(type, handler) returns an unsubscribe that removes THAT handler:
+const unsub = placesModule.events.on('click', handler);
+unsub();
+
+// off(type) removes ALL handlers registered for that type:
 placesModule.events.off('click');
 placesModule.events.off('hover');
 ```
 
-Unlike module lifecycle events, user events do not return an individual unsubscribe function — `off(type)` removes all handlers registered for that type.
+`on()` returns a per-handler unsubscribe; `off(type)` clears every handler for that type. Registering
+multiple handlers for the same type is supported — they all fire (calling `on()` again does **not**
+replace the previous handler).
 
 ---
 
@@ -137,6 +152,6 @@ routing.events.user.incidents.on('click', (section, lngLat) => { });
 
 ## Gotchas
 
-- `events.off(type)` removes **all** handlers for that type — there is no per-handler removal for user events. For individual removal, use module lifecycle events (`config-change`, `shown-features`) which do return unsubscribe functions.
+- `events.off(type)` removes **all** handlers for that type; to remove a single handler, call the unsubscribe function returned by `on(type, handler)`. Registering multiple handlers for one type is supported — they all fire (calling `on()` again does **not** replace the previous one).
 - `'hover'` fires each time the cursor moves to a different feature of the same module — not once per enter/leave cycle.
 - `'long-hover'` will not fire if the map is moving; use `longHoverDelayAfterMapMoveMS` to tune the grace period.

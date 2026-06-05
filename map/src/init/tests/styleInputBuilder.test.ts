@@ -1,6 +1,6 @@
-import { mergeFromGlobal } from '@tomtom-org/maps-sdk/core';
+import { mergeFromGlobal, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import type { StyleSpecification } from 'maplibre-gl';
-import { describe, expect, test } from 'vitest';
+import { afterEach, describe, expect, test } from 'vitest';
 import { buildStyleInput, withPreviousStyleParts } from '../styleInputBuilder';
 import type { TomTomMapParams } from '../types/mapInit';
 import mapsSdkInitParamsAndMapStyles from './styleInputBuilder.data';
@@ -10,6 +10,30 @@ describe('Map style input builder tests', () => {
         | StyleSpecification
         | string) => {
         expect(buildStyleInput(mergeFromGlobal(tomtomMapParams))).toEqual(rendererStyle);
+    });
+
+    describe('proxy mode (empty apiKey)', () => {
+        afterEach(() => {
+            TomTomConfig.instance.put({ apiKey: '', commonBaseURL: 'https://api.tomtom.com' });
+        });
+
+        test('omits key= from standard-style URL when apiKey is empty', () => {
+            const styleUrl = buildStyleInput(mergeFromGlobal({ apiKey: '' } as TomTomMapParams)) as string;
+            const parsed = new URL(styleUrl);
+            expect(parsed.searchParams.has('key')).toBe(false);
+            expect(parsed.searchParams.get('apiVersion')).toBe('1');
+            expect(parsed.searchParams.get('map')).toBe('basic_street-light');
+        });
+
+        test('omits key= from custom-style URL when apiKey is empty', () => {
+            const styleUrl = buildStyleInput(
+                mergeFromGlobal({
+                    apiKey: '',
+                    style: { type: 'custom', url: 'https://example.com/custom-style.json' },
+                } as TomTomMapParams),
+            ) as string;
+            expect(new URL(styleUrl).searchParams.has('key')).toBe(false);
+        });
     });
 
     test('With previous style parts test', () => {

@@ -38,7 +38,9 @@ export const buildGeometryDataRequest = (params: GeometryParams): URL => {
     const urlParams = url.searchParams;
     // (no language in this service)
     urlParams.append('apiVersion', String(params.apiVersion));
-    urlParams.append('key', params.apiKey as string);
+    if (params.apiKey) {
+        urlParams.append('key', params.apiKey);
+    }
     appendGeometries(urlParams, params.geometries);
     appendOptionalParam(urlParams, 'geometriesZoom', params.zoom);
     return url;

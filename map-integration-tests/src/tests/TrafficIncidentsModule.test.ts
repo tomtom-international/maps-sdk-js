@@ -169,7 +169,7 @@ test.describe('Map vector tile traffic incidents module tests', () => {
     });
 
     // TODO(LSI-263): Enable when flakyness has been fixed
-    test.skip('Traffic incidents filtering with config changes', async ({ page }) => {
+    test('Traffic incidents filtering with config changes', { tag: '@flaky' }, async ({ page }) => {
         await mapEnv.loadPageAndMap(page, { zoom: 13, center: [-0.12621, 51.50394] }); // London
         await initTrafficIncidents(page, { visible: true });
         expect(await getConfig(page)).toEqual({ visible: true });
@@ -367,7 +367,7 @@ test.describe('Map vector tile traffic incidents module tests', () => {
         });
     });
 
-    test.skip('Incidents stay hidden when style changes immediately after resetConfig', async ({ page }) => {
+    test('Incidents stay hidden when style changes immediately after resetConfig', async ({ page }) => {
         await mapEnv.loadPageAndMap(page, { zoom: 12, center: [-0.12621, 51.50394] });
 
         await initTrafficIncidents(page);

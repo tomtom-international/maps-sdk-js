@@ -1,5 +1,4 @@
 import type { TrafficIncident, TrafficIncidentDetails } from '@tomtom-org/maps-sdk/core';
-import type { MapGeoJSONFeature } from 'maplibre-gl';
 import type { BeforeLayerConfig } from '../shared';
 import {
     AbstractMapModule,
@@ -115,7 +114,7 @@ const resolveBeforeID = (beforeLayerConfig?: BeforeLayerConfig): string | undefi
  * await overlay.show(result);
  *
  * // Highlight a subset.
- * overlay.setFocus([result.features[0].id as string]);
+ * overlay.setFocus([result.features[0].properties.id as string]);
  * ```
  *
  * @see {@link TrafficIncidentsModule} — the vector-tile alternative. Hidden in the
@@ -213,7 +212,9 @@ export class TrafficIncidentOverlayModule extends AbstractMapModule<Sources, Tra
         this.clearFeatureState();
         this.lastFocusIds = null;
         this.lastResult = result;
-        this.lastFeatureIds = result.features.map((f) => f.id).filter((id): id is string => typeof id === 'string');
+        this.lastFeatureIds = result.features
+            .map((f) => f.properties.id)
+            .filter((id): id is string => typeof id === 'string');
         this.sourcesWithLayers.incidents.show(result);
         for (const handler of this.shownFeaturesHandlers) {
             handler(result);
@@ -258,31 +259,16 @@ export class TrafficIncidentOverlayModule extends AbstractMapModule<Sources, Tra
     }
 
     /**
-     * Incidents currently rendered in the viewport.
+     * Returns the currently shown incidents — the exact data that was passed to {@link show}.
+     *
+     * Reads the module's client-side cache (`shownFeatures`), mirroring the other GeoJSON
+     * modules (`PlacesModule`, `TrafficAreaAnalyticsModule`, `GeometriesModule`). It does
+     * **not** hit-test the viewport: the proxy already scopes and de-duplicates the
+     * `allEventFeatures` it dispatches to click handlers, so no caller needs viewport-level
+     * de-duplication here.
      */
-    getShown(): { incidents: TrafficIncident[] } {
-        const ids = this.sourcesWithLayers.incidents.sourceAndLayerIDs.layerIDs;
-        const features = this.mapLibreMap.queryRenderedFeatures({
-            layers: ids,
-            validate: false,
-        });
-        return { incidents: this.distinctIncidents(features) };
-    }
-
-    /**
-     * Reduce a hit-test result (typically the `features` argument in a click handler) to the
-     * distinct incidents drawn at that point. Each incident renders across multiple layers
-     * (outline + inner + symbol), so `queryRenderedFeatures` returns several entries per
-     * incident — this de-duplicates by feature id.
-     */
-    distinctIncidents(features: readonly MapGeoJSONFeature[]): TrafficIncident[] {
-        const seen = new Map<string | number, MapGeoJSONFeature>();
-        for (const f of features) {
-            const key = f.id ?? (f.properties as { id?: string } | null)?.id;
-            if (key !== undefined && !seen.has(key)) seen.set(key, f);
-        }
-        // Cast: queryRenderedFeatures returns MapGeoJSONFeature; our source feeds TrafficIncident shapes.
-        return [...seen.values()] as unknown as TrafficIncident[];
+    getShown(): { incidents: TrafficIncidentDetails } {
+        return { incidents: this.sourcesWithLayers.incidents.shownFeatures };
     }
 
     get events(): CombinedEvents<TrafficIncident, TrafficIncidentOverlayConfig, TrafficIncidentDetails> {
@@ -291,11 +277,6 @@ export class TrafficIncidentOverlayModule extends AbstractMapModule<Sources, Tra
                 this.tomtomMap._eventsProxy,
                 this.sourcesWithLayers.incidents,
                 this.config?.events,
-                // MapLibre flattens non-primitive feature properties to JSON strings when they
-                // round-trip through the render pipeline (Date → ISO string, arrays/objects →
-                // JSON). Look the feature up in our cached FeatureCollection by id to return
-                // the original typed shape instead of the serialised form.
-                (rendered) => this.findSourceFeature(rendered) ?? (rendered as unknown as TrafficIncident),
             ),
             new ModuleEvents(this.configChangeHandlers, this.shownFeaturesHandlers),
         );
@@ -331,11 +312,5 @@ export class TrafficIncidentOverlayModule extends AbstractMapModule<Sources, Tra
         for (const featId of this.lastFeatureIds) {
             this.mapLibreMap.removeFeatureState({ source: sourceId, id: featId });
         }
-    }
-
-    private findSourceFeature(rendered: { properties?: { id?: unknown } | null }): TrafficIncident | undefined {
-        const id = rendered.properties?.id;
-        if (typeof id !== 'string' || !this.lastResult) return undefined;
-        return this.lastResult.features.find((f) => f.properties.id === id);
     }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@tomtom-org/maps-sdk-examples",
-  "version": "0.47.9",
+  "version": "0.48.0",
   "type": "module",
   "description": "JavaScript library for examples of TomTom maps and location services",
   "module": "dist/examples.js",
@@ -23,6 +23,7 @@
   "dependencies": {
     "@codesandbox/sandpack-react": "catalog:",
     "@codesandbox/sandpack-themes": "catalog:",
+    "@tomtom-org/maps-sdk": "workspace:*",
     "react": "catalog:",
     "react-dom": "catalog:"
   },

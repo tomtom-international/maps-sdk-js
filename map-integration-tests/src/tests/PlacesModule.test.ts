@@ -211,7 +211,7 @@ test.describe('PlacesModule tests', () => {
 
 test.describe('Places module programmatic event state tests', () => {
     // TODO(LSI-263): Enable when flakyness has been fixed
-    test.skip('putEventState and cleanEventStates', async ({ page }) => {
+    test('putEventState and cleanEventStates', { tag: '@flaky' }, async ({ page }) => {
         const mapEnv = await MapTestEnv.loadPageAndMap(page, { center: [-75.43974, 39.82295], zoom: 14 });
         await initPlaces(page);
         await showPlaces(page, [

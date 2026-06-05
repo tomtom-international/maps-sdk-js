@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.48.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.47.9...v0.48.0) (2026-06-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* **events:** scope + dedupe allEventFeatures, typed substitution
+* **agent-toolkit:** byod improvements ([#1816](https://github.com/tomtom-international/maps-sdk-js/issues/1816))
+
+### Features
+
+* **agent-toolkit:** byod improvements ([#1816](https://github.com/tomtom-international/maps-sdk-js/issues/1816)) ([4aeddca](https://github.com/tomtom-international/maps-sdk-js/commit/4aeddca52a1da30cde36f6dbb18ddad689f47f27))
+* **ci:** wire up Docs Portal PR preview environments ([#1812](https://github.com/tomtom-international/maps-sdk-js/issues/1812)) ([49829eb](https://github.com/tomtom-international/maps-sdk-js/commit/49829ebad00416fc88684f039f81239f6ac761d4))
+* **events:** scope + dedupe allEventFeatures, typed substitution ([036c9c4](https://github.com/tomtom-international/maps-sdk-js/commit/036c9c41be660b92ed80b74cae4b998ce595f94d))
+* sdk proxy mode for demo-BFF ([#1810](https://github.com/tomtom-international/maps-sdk-js/issues/1810)) ([da0f932](https://github.com/tomtom-international/maps-sdk-js/commit/da0f9326c31665608cee1a2790129ff60be0ad29))
+
+
+### Bug Fixes
+
+* **agent-toolkit:** add missing [@group](https://github.com/group) tags on exported types ([#1803](https://github.com/tomtom-international/maps-sdk-js/issues/1803)) ([67f1cf3](https://github.com/tomtom-international/maps-sdk-js/commit/67f1cf3c383d2e0db544cead55d16a66342ec4c2))
+* **agent-toolkit:** public docs cleanup — links, system-prompt guidance, internal refs ([#1804](https://github.com/tomtom-international/maps-sdk-js/issues/1804)) ([283fbc9](https://github.com/tomtom-international/maps-sdk-js/commit/283fbc9f588e261baf1112805f77102b88ce7f5a))
+* proxy mode sdk ([#1815](https://github.com/tomtom-international/maps-sdk-js/issues/1815)) ([d6b7327](https://github.com/tomtom-international/maps-sdk-js/commit/d6b73278f38d1e9b6ef43be46e4eff540a888640))
+
 ## [0.47.9](https://github.com/tomtom-international/maps-sdk-js/compare/v0.47.8...v0.47.9) (2026-05-22)
 
 

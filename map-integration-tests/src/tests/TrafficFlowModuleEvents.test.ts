@@ -44,9 +44,9 @@ test.describe('Traffic flow module events', () => {
     test.afterEach(async ({ page }) => unsetFlow(page));
 
     // TODO(LSI-263): Enable when flakyness has been fixed
-    test.skip('Click on a traffic flow segment fires the click event with roadCategory and relativeSpeed on the feature', async ({
-        page,
-    }) => {
+    test('Click on a traffic flow segment fires the click event with roadCategory and relativeSpeed on the feature', {
+        tag: '@flaky',
+    }, async ({ page }) => {
         // Central London — consistently high traffic flow data density
         await mapEnv.loadPageAndMap(page, { zoom: 14, center: [-0.12621, 51.50394] });
 

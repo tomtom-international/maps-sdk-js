@@ -3,7 +3,6 @@ import type { InternalTomTomMapParams, StandardStyle, StandardStyleID, StyleInpu
 import { styleModules } from './types/mapInit';
 
 export const DEFAULT_STANDARD_STYLE_ID: StandardStyleID = 'standardLight';
-const URL_PREFIX = '${baseURL}/maps/orbis/assets/styles/${version}/style.json?&apiVersion=1&key=${apiKey}';
 
 const standardStyleModulesValues: Record<StandardStyleID, Record<StyleModule, string>> = {
     standardLight: {
@@ -43,27 +42,30 @@ const standardStyleModulesValues: Record<StandardStyleID, Record<StyleModule, st
     },
 };
 
-const baseMapStyleUrlTemplate = (suffix: string): string => `${URL_PREFIX}&map=${suffix}`;
-
-const baseMapStyleUrlTemplates: Record<StandardStyleID, string> = {
-    standardLight: baseMapStyleUrlTemplate('basic_street-light'),
-    standardDark: baseMapStyleUrlTemplate('basic_street-dark'),
-    drivingLight: baseMapStyleUrlTemplate('basic_street-light-driving'),
-    drivingDark: baseMapStyleUrlTemplate('basic_street-dark-driving'),
-    monoLight: baseMapStyleUrlTemplate('basic_mono-light'),
-    monoDark: baseMapStyleUrlTemplate('basic_mono-dark'),
-    satellite: baseMapStyleUrlTemplate('basic_street-satellite'),
+const mapSuffixes: Record<StandardStyleID, string> = {
+    standardLight: 'basic_street-light',
+    standardDark: 'basic_street-dark',
+    drivingLight: 'basic_street-light-driving',
+    drivingDark: 'basic_street-dark-driving',
+    monoLight: 'basic_mono-light',
+    monoDark: 'basic_mono-dark',
+    satellite: 'basic_street-satellite',
 };
 
 const buildStandardStyleUrl = (standardStyle: StandardStyle, baseUrl: string, apiKey: string): string => {
     const standardStyleID = standardStyle.id ?? DEFAULT_STANDARD_STYLE_ID;
+    const version = standardStyle.version ?? '0.6.0-0';
 
-    const styleURL = new URL(
-        baseMapStyleUrlTemplates[standardStyleID]
-            .replace('${baseURL}', baseUrl)
-            .replace('${version}', standardStyle.version ?? '0.6.0-0')
-            .replace('${apiKey}', apiKey),
-    );
+    const styleURL = new URL(`${baseUrl}/maps/orbis/assets/styles/${version}/style.json`);
+    // Param order is asserted by tests and matches the order historically
+    // baked into URL_PREFIX: apiVersion, key, map, then modules.
+    styleURL.searchParams.set('apiVersion', '1');
+    // Proxy mode passes apiKey='' and lets the proxy inject the real key
+    // server-side — skip the param so the proxy key never reaches the browser.
+    if (apiKey) {
+        styleURL.searchParams.set('key', apiKey);
+    }
+    styleURL.searchParams.set('map', mapSuffixes[standardStyleID]);
 
     for (const module of standardStyle.include ?? styleModules) {
         styleURL.searchParams.append(module, standardStyleModulesValues[standardStyleID][module]);
@@ -75,7 +77,11 @@ const buildStandardStyleUrl = (standardStyle: StandardStyle, baseUrl: string, ap
 const withApiKey = (givenUrl: string, apiKey: string): string => {
     const url = new URL(givenUrl);
     if (!url.searchParams.has('key')) {
-        url.searchParams.set('key', apiKey);
+        // In proxy mode the apiKey is intentionally empty; the proxy adds
+        // the real key server-side. Don't write an empty `key=` param.
+        if (apiKey) {
+            url.searchParams.set('key', apiKey);
+        }
     } else {
         console.warn(
             'The style URL is coming with an API key parameter which takes priority. ' +

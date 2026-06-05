@@ -1,4 +1,4 @@
-import type { LngLat, MapGeoJSONFeature } from 'maplibre-gl';
+import type { LngLat } from 'maplibre-gl';
 import type { SourceWithLayers } from './mapsSDKLayerSpecs';
 
 /**
@@ -322,7 +322,7 @@ export type SupportsEvents = {
  *
  * @param topFeature - The primary target feature for the event, positioned on top of any overlapping features
  * @param lngLat - The geographic coordinates where the event occurred
- * @param allEventFeatures - All features matching the event coordinates across all map modules, as raw MapLibre GeoJSON features. The first feature corresponds to `topFeature`
+ * @param allEventFeatures - The features at the event coordinates, scoped to the module whose handler fired and de-duplicated (a feature drawn across multiple layers or tiles appears once). Entries from GeoJSON-backed modules (places, routes, geometries) are the original typed `Feature` you passed to `show()`, with un-stringified properties (nested objects, Dates, arrays); entries from vector-tile modules (POIs, traffic) are the underlying `MapGeoJSONFeature` (which extends `Feature`). The first entry is the same feature as `topFeature` — though for modules with a mapping callback, `topFeature` is the mapped shape while this entry stays raw. To inspect **every** feature at the point across all modules — including the base map, with `.source`/`.layer` intact — query MapLibre directly (note `lngLat` is geographic, so project it to a pixel first): `const p = map.mapLibreMap.project(lngLat); const all = map.mapLibreMap.queryRenderedFeatures([[p.x - 5, p.y + 5], [p.x + 5, p.y - 5]]);`
  * @param sourceWithLayers - The source and layer configuration to which the `topFeature` belongs
  *
  * @example
@@ -360,7 +360,7 @@ export type SupportsEvents = {
 export type UserEventHandler<T> = (
     topFeature: T,
     lngLat: LngLat,
-    allEventFeatures: MapGeoJSONFeature[],
+    allEventFeatures: T[],
     sourceWithLayers: SourceWithLayers,
 ) => void;
 

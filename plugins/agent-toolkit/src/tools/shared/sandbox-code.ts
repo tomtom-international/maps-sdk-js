@@ -31,7 +31,10 @@ export type AnalysisOutputFormat = 'json' | 'chart';
 export const buildSandboxCodePrompt = (injected: readonly string[]): string => {
     const injectedList = injected.map((name) => `\`${name}\``).join(', ');
     return (
-        `In scope: ${injectedList} — injected as parameters; use directly. ` +
+        `In scope: ${injectedList} — injected as named parameters; use them directly. ` +
+        'Do NOT redeclare them or read them off `arguments`: lines like `const turf = arguments.turf` / ' +
+        '`const turf = arguments[0].turf` / `const places = arguments.places` throw ' +
+        '"Identifier \'…\' has already been declared". The body has no `arguments`-based access — reference each name as-is. ' +
         'No `require` / `import` / `await import` (body is an AsyncFunction, not a module — such lines are stripped silently). ' +
         '`h3` = h3-js (hex math). `turf` = @turf/turf v7 (verify names at https://turfjs.org/docs/). ' +
         'TURF INPUTS: pass a Feature or FeatureCollection — never a bare Array (throws "Unknown Geometry Type"). ' +
@@ -204,13 +207,15 @@ export const runSandboxedFn = async <Result = unknown>(
 export const stripInjectedRedeclarations = (code: string, identifiers: readonly string[]): string => {
     const names = identifiers.join('|');
     // RHS forms we recognise as redeclarations of injected identifiers:
-    //   require('…') / import('…') / await import('…')   — module-system reaches
-    //   arguments[N].turf / arguments[N]['turf']          — reaching for the same param off `arguments`
+    //   require('…') / import('…') / await import('…')         — module-system reaches
+    //   arguments.turf / arguments['turf']                      — reaching for the same param off `arguments`
+    //   arguments[N].turf / arguments[N]['turf']                — same, with a (pointless) index first
+    // The `[N]` index is optional so both the bare and indexed forms are stripped.
     // Anything else (e.g. `const turf = computeTurf()`) stays untouched so we never corrupt
     // genuine user code that happens to shadow an injected name.
     const rhs =
         String.raw`(?:(?:await\s+)?(?:require|import)\s*\(` +
-        String.raw`|arguments\s*\[\s*\d+\s*\]\s*(?:\.\w+|\[\s*['"]\w+['"]\s*\]))`;
+        String.raw`|arguments\s*(?:\[\s*\d+\s*\])?\s*(?:\.\w+|\[\s*['"]\w+['"]\s*\]))`;
     const pattern = new RegExp(
         String.raw`^[ \t]*(?:const|let|var)[ \t]+(?:${names})[ \t]*=[ \t]*${rhs}[^\n]*\n?`,
         'gm',
@@ -258,7 +263,7 @@ const SANDBOX_ERROR_HINTS: ReadonlyArray<{ pattern: RegExp; hint: string }> = [
     },
     {
         pattern: /Identifier ['"]?\w+['"]? has already been declared/i,
-        hint: 'A variable was declared twice — typically because the code prepends `const turf = require(...)` / `const turf = await import(...)` / `const turf = arguments[0].turf` / `const places = ...`. Those names are already in scope as function parameters; drop the redeclaration line and use them directly (`turf.bbox(places)`).',
+        hint: 'A variable was declared twice — typically because the code prepends `const turf = require(...)` / `const turf = await import(...)` / `const turf = arguments.turf` / `const turf = arguments[0].turf` / `const places = ...`. Those names are already in scope as function parameters; drop the redeclaration line and use them directly (`turf.bbox(places)`).',
     },
     {
         pattern: /Unexpected (?:token|identifier|end of input)/i,
@@ -301,9 +306,14 @@ const SANDBOX_ERROR_HINTS: ReadonlyArray<{ pattern: RegExp; hint: string }> = [
 export const formatSandboxExecutionError = (verb: string, error: unknown): string => {
     const message = error instanceof Error ? error.message : String(error);
     const base = `${verb} code execution failed: ${message}`;
+    // Specific hints win over the generic SyntaxError catch-all: several syntax
+    // errors (e.g. "Identifier '…' has already been declared", "Illegal return
+    // statement", "Unexpected token") have targeted, actionable hints below, and
+    // the generic "not valid JavaScript" line would otherwise preempt them.
+    const match = SANDBOX_ERROR_HINTS.find(({ pattern }) => pattern.test(message));
+    if (match) return `${base} Hint: ${match.hint}`;
     if (error instanceof Error && error.name === 'SyntaxError') {
         return `${base} Hint: the provided \`code\` is not valid JavaScript — ensure it parses as an async function body and \`return\`s a value.`;
     }
-    const match = SANDBOX_ERROR_HINTS.find(({ pattern }) => pattern.test(message));
-    return match ? `${base} Hint: ${match.hint}` : base;
+    return base;
 };

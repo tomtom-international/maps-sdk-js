@@ -15,6 +15,12 @@ import type { IncidentSnapshot, MonitoredArea } from './monitor/types';
 
 export type { IncidentsAnalysis, IncidentsAnalysisSpec } from './analysis';
 
+/**
+ * A single traffic-incidents history entry: the captured query, its incidents, and the
+ * per-entry rendering / monitoring / analysis state owned by {@link TrafficIncidentsState}.
+ *
+ * @group Agent Toolkit
+ */
 export type TrafficIncidentsEntry = {
     id: string;
     timestamp: number;
@@ -237,9 +243,8 @@ export class TrafficIncidentsState implements StateSlice {
 
     /**
      * Lazy-init and return the entry's TrafficIncidentOverlayModule. Consumers subscribe to
-     * clicks directly on the returned module via `module.events.on('click', ...)`; use
-     * `module.distinctIncidents(features)` inside the handler if a stacked-click count is
-     * needed. Throws on unknown entry id.
+     * clicks directly on the returned module via `module.events.on('click', ...)`;
+     * Throws on unknown entry id.
      */
     async getEntryModule(entryId: TrafficIncidentsEntry['id']): Promise<TrafficIncidentOverlayModule> {
         const entry = this._requireEntry(entryId);

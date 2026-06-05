@@ -24,7 +24,7 @@ Consumer App
 │   │     └── Map ToolSet (Zod-validated tools)
 │   │           ├── Data tools: locatePlace, reverseGeocode, discoverPlaces, setRoute, findReachableAreas, getTrafficIncidents, …
 │   │           ├── Scope-aware unified tools: analyseData, processData (per-turn scope narrows description + schema)
-│   │           ├── BYOD tools: addByodLayer, recallByod, updateByodDisplay
+│   │           ├── BYOD tools: addByodSource, recallByod, setByodLayers, updateByodDisplay
 │   │           └── Map tools: updatePlacesDisplay, updateRoutesDisplay, updateWaypointsDisplay, flyTo, toggleTilesTrafficFlow, toggleTilesTrafficIncidents, …
 │   ├── MapAgentState (per-entry histories: places, routing, ranges, customGeometries, byod, trafficIncidents, trafficAreaAnalytics)
 │   └── Per-entry modules (lazy PlacesModule, RoutingModule, CustomGeoJSONModule, TrafficAreaAnalyticsModule, …)
@@ -103,7 +103,7 @@ The toolkit's "tool" + "state slice" abstractions appear in many places that are
 - imported and registered in `tools/tool-registry.ts` so the name is in `TOOL_NAMES`
 - if it's referenced by another tool's `description` ("call `xTool` first"), confirm `xTool` exists and is registered too — dead pointers in descriptions mislead the model
 - if it's scope-aware, supplied a `scopeSchema` + `scopePrompt` and verified `prepareStep` rebuilds it correctly
-- added eval coverage in `examples/map-chat-agent/e2e-tests/eval/eval-cases.ts` (or marked why no eval is needed)
+- added eval coverage in the relevant example's eval cases file (or marked why no eval is needed)
 - if the tool warrants scenario-level coverage, added a per-tool scenario file `src/tests/scenarios/<tool-name>.test.ts` that exercises `examplePrompts` from the registry via `getExamplePrompts('<toolName>')` (coverage is a curated subset, not every tool) — see [Scenario tests](#scenario-tests) below
 
 **Added a new entry-owning state slice** — walk every "every slice" code path and wire the new slice in:

@@ -2,8 +2,10 @@ import { isEmpty, remove } from 'lodash-es';
 import type { LayerSpecification, MapGeoJSONFeature } from 'maplibre-gl';
 import type { EventHandlerConfig, EventType, SourcesWithLayers, SourceWithLayers, UserEventHandler } from './types';
 
-// TODO: add support for multiple handlers per source, layers, and event type?
-//  ... (this means multiple handlers for the same module, or repeated "on" calls for the same module)
+// Handlers for a (source, event-type) are stored as an array: repeated `on()` calls append and
+// ALL of them fire; `on()` returns a per-handler unsubscribe (see `removeHandler`), while `remove`
+// clears every handler for that (source, type). Note a handler fires for any layer of its source —
+// per-layer-subset handlers within a single source are not distinguished.
 type SourceEventTypeHandler = {
     sourceWithLayers: SourceWithLayers;
     layerIDs: string[];
@@ -150,6 +152,27 @@ export abstract class AbstractEventProxy {
      */
     hasSourceID(sourceId: string): boolean {
         return !!this.handlers[sourceId];
+    }
+
+    /**
+     * Look up the {@link SourceWithLayers} registered for the given source ID, if any.
+     *
+     * The SDK assumes at most one `SourceWithLayers` per MapLibre source ID — each
+     * module creates its own source — so any non-empty handler bucket gives us the
+     * right reference. We iterate event-type buckets defensively to skip transient
+     * empty arrays left mid-`removeHandler` before the bucket itself is deleted.
+     *
+     * NOTE: if two modules ever register against the same source ID with overlapping
+     * layers, this returns the first one we encounter.
+     */
+    protected sourceWithLayersFor(sourceId: string | undefined): SourceWithLayers | undefined {
+        if (!sourceId) return undefined;
+        const sourceHandlers = this.handlers[sourceId];
+        if (!sourceHandlers) return undefined;
+        for (const typeHandlers of Object.values(sourceHandlers)) {
+            if (typeHandlers?.length) return typeHandlers[0].sourceWithLayers;
+        }
+        return undefined;
     }
 
     /**

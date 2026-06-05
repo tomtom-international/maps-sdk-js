@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.3.0](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-agent-toolkit-v0.2.12...maps-sdk-plugin-agent-toolkit-v0.3.0) (2026-06-04)
+
+
+### ⚠ BREAKING CHANGES
+
+* **events:** scope + dedupe allEventFeatures, typed substitution
+* **agent-toolkit:** byod improvements ([#1816](https://github.com/tomtom-international/maps-sdk-js/issues/1816))
+
+### Features
+
+* **agent-toolkit:** byod improvements ([#1816](https://github.com/tomtom-international/maps-sdk-js/issues/1816)) ([4aeddca](https://github.com/tomtom-international/maps-sdk-js/commit/4aeddca52a1da30cde36f6dbb18ddad689f47f27))
+* **events:** scope + dedupe allEventFeatures, typed substitution ([036c9c4](https://github.com/tomtom-international/maps-sdk-js/commit/036c9c41be660b92ed80b74cae4b998ce595f94d))
+
+
+### Bug Fixes
+
+* **agent-toolkit:** add missing [@group](https://github.com/group) tags on exported types ([#1803](https://github.com/tomtom-international/maps-sdk-js/issues/1803)) ([67f1cf3](https://github.com/tomtom-international/maps-sdk-js/commit/67f1cf3c383d2e0db544cead55d16a66342ec4c2))
+* **agent-toolkit:** public docs cleanup — links, system-prompt guidance, internal refs ([#1804](https://github.com/tomtom-international/maps-sdk-js/issues/1804)) ([283fbc9](https://github.com/tomtom-international/maps-sdk-js/commit/283fbc9f588e261baf1112805f77102b88ce7f5a))
+
 ## [0.2.12](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-agent-toolkit-v0.2.11...maps-sdk-plugin-agent-toolkit-v0.2.12) (2026-05-22)
 
 

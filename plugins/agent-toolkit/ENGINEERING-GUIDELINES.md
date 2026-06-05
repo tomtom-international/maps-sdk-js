@@ -121,7 +121,7 @@ Loops happen when a tool fails ambiguously and the model retries indefinitely. M
 
 ## 11. Evals
 
-Develop against realistic evals, not happy-path demos. The eval suite is at [`eval-cases.ts`](../../examples/map-chat-agent/e2e-tests/eval/eval-cases.ts).
+Develop against realistic evals, not happy-path demos. Eval cases live in each example's `e2e-tests/eval/eval-cases.ts`.
 
 **Eval prompts should sound like real users:**
 - Good: "Find the central station." / "Route from Amsterdam to Utrecht and show traffic."

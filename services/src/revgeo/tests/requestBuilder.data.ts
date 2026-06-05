@@ -7,7 +7,7 @@ const reverseGeocodeReqObjectsAndUrls: [string, ReverseGeocodingParams, string][
             commonBaseURL: 'https://api.tomtom.com',
             position: [1.12345, 23.45678],
         },
-        'https://api.tomtom.com/maps/orbis/places/reverseGeocode/23.45678,1.12345.json?apiVersion=undefined&key=undefined',
+        'https://api.tomtom.com/maps/orbis/places/reverseGeocode/23.45678,1.12345.json?apiVersion=undefined',
     ],
     [
         'Reverse geocoding using custom URL',

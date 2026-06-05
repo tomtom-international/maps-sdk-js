@@ -52,6 +52,30 @@ export function expectToolNotCalled(...toolNames: string[]): ScriptStep {
     };
 }
 
+// Asserts the named tools were called in order, each in a SEPARATE assistant step (the first
+// occurrence of tool N+1 must be in a later assistant message than tool N). Used to prove a
+// genuinely sequential flow — e.g. addByodSource → (observe `profile`) → setByodLayers —
+// rather than both tools being batched in parallel in a single step. Inspecting assistant messages
+// (the tool-CALL messages) rather than tool-result messages is what makes "separate step" strict.
+export function expectToolCalledInOrder(...toolNames: string[]): ScriptStep {
+    return async (state: ScenarioExecutionStateLike, executor: ScenarioExecutionLike) => {
+        const assistantMessages = state.messages.filter((m) => m.role === 'assistant').map((m) => JSON.stringify(m));
+        let cursor = -1;
+        for (const name of toolNames) {
+            const idx = assistantMessages.findIndex((serialized, i) => i > cursor && serialized.includes(`"${name}"`));
+            if (idx === -1) {
+                await executor.fail(
+                    `Expected tool-call order [${toolNames.join(' → ')}], but "${name}" was not found in an ` +
+                        `assistant step after position ${cursor} (${assistantMessages.length} assistant steps total).`,
+                );
+                return;
+            }
+            cursor = idx;
+        }
+        await executor.succeed(`Tools called in order across separate steps: ${toolNames.join(' → ')}`);
+    };
+}
+
 export function expectToolCallCount(toolName: string, expectedCount: number): ScriptStep {
     return async (state: ScenarioExecutionStateLike, executor: ScenarioExecutionLike) => {
         // Count tool-result messages referencing this tool — one result = one invocation.

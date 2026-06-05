@@ -112,7 +112,19 @@ const SPECIFIC_MOCKS: Record<string, (...args: any[]) => Promise<any>> = {
     }),
 
     recallByod: async () => ({
-        entries: [],
+        entries: [
+            {
+                id: 'byod-0',
+                label: 'Sales territories',
+                timestamp: Date.now(),
+                featureCount: 12,
+                geometryTypes: ['Polygon'],
+                propertyNames: ['region', 'revenue'],
+                source: { kind: 'url', url: 'https://example.com/territories.geojson' },
+                shown: true,
+            },
+        ],
+        entryMode: 'multiple',
     }),
 
     recallGeometries: async () => ({
@@ -151,13 +163,29 @@ const SPECIFIC_MOCKS: Record<string, (...args: any[]) => Promise<any>> = {
         features: [],
     }),
 
-    // BYOD surface (added by the unification PR). `addByodLayer` writes a new entry; the
-    // visibility tool toggles it on the map.
-    addByodLayer: async ({ label }: { label: string }) => ({
+    // BYOD surface (added by the unification PR). `addByodSource` writes a new entry;
+    // the visibility tool toggles it on the map, `setByodLayers` restyles it. The profile carries
+    // a categorical (`region`) and a numeric (`revenue`) property so a follow-up restyle has fields
+    // to encode (colour-by-category / graduated size).
+    addByodSource: async ({ label }: { label: string }) => ({
         byodEntryId: 'byod-0',
-        byodFeatureCount: 0,
         label,
-        geometryTypes: ['Point'],
+        source: { kind: 'url', url: 'https://example.com/territories.geojson' },
+        profile: {
+            featureCount: 12,
+            geometryTypes: ['Polygon'],
+            properties: [
+                { name: 'region', types: ['string'], coverage: 1, examples: ['North', 'South', 'East'] },
+                { name: 'revenue', types: ['number'], coverage: 1, examples: [12000, 48000] },
+            ],
+        },
+    }),
+
+    setByodLayers: async ({ byodEntryId, layers }: { byodEntryId?: string; layers?: { type?: string }[] }) => ({
+        byodEntryId: byodEntryId ?? 'byod-0',
+        label: 'Sales territories',
+        layerCount: Array.isArray(layers) ? layers.length : 1,
+        layerTypes: Array.isArray(layers) ? layers.map((layer) => layer?.type ?? 'fill') : ['fill'],
     }),
 
     updateByodDisplay: async ({ action }: { action: 'show' | 'hide' | 'remove' }) => ({

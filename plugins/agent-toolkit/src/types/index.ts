@@ -2,7 +2,9 @@
  * @module agent-toolkit-types
  */
 
+export type { BYODAnalysis } from '../state/byod/analysis';
 export type { BYODEntry, BYODSource } from '../state/byod/entry';
+export type { BYODDataProfile, BYODPropertyProfile } from '../state/byod/profile';
 export type { CustomGeometriesAnalysis } from '../state/custom-geometries/analysis';
 export type { CustomGeometriesEntry, GeometryProvenance } from '../state/custom-geometries/entry';
 export type { PlacesAnalysis } from '../state/places/analysis';
@@ -391,7 +393,7 @@ export type MapAgentOptions<CS extends ToolState = ToolState> = {
      *     dataEntries: {
      *         routes: { entryMode: 'single' },
      *         incidents: { entryMode: 'single' },
-     *         byod: { enabled: false }, // disables recallByod, addByodLayer, updateByodDisplay + byod scope on analyse/process
+     *         byod: { enabled: false }, // disables recallByod, addByodSource, setByodLayers, updateByodDisplay + byod scope on analyse/process
      *         ranges: { enabled: false }, // disables findReachableAreas + recallRanges
      *     },
      * });

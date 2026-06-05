@@ -66,7 +66,7 @@ test.describe('Map vector tile POI filtering tests', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test.skip('POIs are restored visible when style changes immediately after resetConfig', async ({ page }) => {
+    test('POIs are restored visible when style changes immediately after resetConfig', async ({ page }) => {
         const mapEnv = await MapTestEnv.loadPageAndMap(page, { zoom: 14, center: [-0.12621, 51.50394] });
 
         await initPOIs(page);
@@ -125,7 +125,7 @@ test.describe('Map vector tile POI filtering tests', () => {
     });
 
     // TODO(LSI-263): Enable when flakyness has been fixed
-    test.skip('Vector tiles pois filter while initializing with config', async ({ page }) => {
+    test('Vector tiles pois filter while initializing with config', { tag: '@flaky' }, async ({ page }) => {
         const mapEnv = await MapTestEnv.loadPageAndMap(page, { zoom: 16, center: [-0.12621, 51.50154] });
         // config poi layer to only include TRANSPORTATION_GROUP categories and expect all features to be from TRANSPORTATION_GROUP
         await initPOIs(page, { filters: { categories: { show: 'only', values: ['TRANSPORTATION_GROUP'] } } });
@@ -222,7 +222,7 @@ test.describe('Map vector tile POI filtering tests', () => {
 
 test.describe('Map vector tile POI feature tests', () => {
     // TODO(LSI-263): Enable when flakyness has been fixed
-    test.skip('Ensure required feature properties are defined', async ({ page }) => {
+    test('Ensure required feature properties are defined', { tag: '@flaky' }, async ({ page }) => {
         const mapEnv = await MapTestEnv.loadPageAndMap(page, { zoom: 14, center: [-0.12621, 51.50394] });
 
         await initPOIs(page);

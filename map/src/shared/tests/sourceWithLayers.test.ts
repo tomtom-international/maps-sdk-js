@@ -30,6 +30,7 @@ describe('AbstractSourceWithLayers tests', () => {
 
     test('isAnyLayerVisible true', () => {
         const mapLibreMock = {
+            getLayer: vi.fn().mockReturnValue({}),
             getLayoutProperty: vi.fn().mockReturnValueOnce('visible').mockReturnValueOnce('none'),
         } as unknown as Map;
         expect(new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs).isAnyLayerVisible()).toBe(
@@ -45,6 +46,7 @@ describe('AbstractSourceWithLayers tests', () => {
 
     test('isAnyLayerVisible with filter', () => {
         const mapLibreMock = {
+            getLayer: vi.fn().mockReturnValue({}),
             getLayoutProperty: vi.fn().mockReturnValueOnce('visible'),
         } as unknown as Map;
 
@@ -55,6 +57,7 @@ describe('AbstractSourceWithLayers tests', () => {
 
     test('isAnyLayerVisible false', () => {
         const mapLibreMock = {
+            getLayer: vi.fn().mockReturnValue({}),
             getLayoutProperty: vi.fn().mockReturnValueOnce('none').mockReturnValueOnce('none'),
         } as unknown as Map;
 
@@ -64,6 +67,7 @@ describe('AbstractSourceWithLayers tests', () => {
 
     test('isAnyLayerVisible false with filter', () => {
         const mapLibreMock = {
+            getLayer: vi.fn().mockReturnValue({}),
             getLayoutProperty: vi.fn().mockReturnValueOnce('none'),
         } as unknown as Map;
 
@@ -71,8 +75,21 @@ describe('AbstractSourceWithLayers tests', () => {
         expect(sourceWithLayers.isAnyLayerVisible((layer) => layer.id === layer1.id)).toBe(false);
     });
 
+    test('isAnyLayerVisible treats a missing layer as not visible', () => {
+        // Regression: if a layer was removed from the map out-of-band (e.g. style swap),
+        // `getLayoutProperty` returns undefined which used to be treated as visible.
+        const mapLibreMock = {
+            getLayer: vi.fn().mockReturnValue(undefined),
+            getLayoutProperty: vi.fn().mockReturnValue(undefined),
+        } as unknown as Map;
+        expect(new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs).isAnyLayerVisible()).toBe(
+            false,
+        );
+    });
+
     test('areAllLayersVisible true', () => {
         const mapLibreMock = {
+            getLayer: vi.fn().mockReturnValue({}),
             getLayoutProperty: vi.fn().mockReturnValueOnce('visible').mockReturnValueOnce('visible'),
         } as unknown as Map;
         expect(new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs).areAllLayersVisible()).toBe(
@@ -88,6 +105,7 @@ describe('AbstractSourceWithLayers tests', () => {
 
     test('areAllLayersVisible false', () => {
         const mapLibreMock = {
+            getLayer: vi.fn().mockReturnValue({}),
             getLayoutProperty: vi.fn().mockReturnValueOnce('none').mockReturnValueOnce('none'),
         } as unknown as Map;
         expect(new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs).areAllLayersVisible()).toBe(
@@ -103,6 +121,7 @@ describe('AbstractSourceWithLayers tests', () => {
 
     test('areAllLayersVisible with filter', () => {
         const mapLibreMock = {
+            getLayer: vi.fn().mockReturnValue({}),
             // layer0 visible, layer1 hidden:
             getLayoutProperty: vi.fn().mockReturnValueOnce(undefined).mockReturnValueOnce('none'),
         } as unknown as Map;
@@ -483,5 +502,63 @@ describe('GeoJSONSourceWithLayers', () => {
             features: [{ properties: {} }, { properties: {} }, { properties: {} }],
         });
         expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(4);
+    });
+});
+
+describe('GeoJSONSourceWithLayers findById', () => {
+    const makeSWL = () => {
+        const mapLibreMock = {
+            getSource: vi.fn().mockReturnValue({ id: testSourceId, setData: vi.fn() }),
+            getLayer: vi.fn().mockReturnValue(layer0),
+            addLayer: vi.fn(),
+            setLayoutProperty: vi.fn(),
+        } as unknown as Map;
+        return new GeoJSONSourceWithLayers(mapLibreMock, testSourceId, testToBeAddedLayerSpecs);
+    };
+    const fc = (...features: unknown[]) => ({ type: 'FeatureCollection', features }) as unknown as FeatureCollection;
+
+    test('finds by top-level id, returning the feature and its index', () => {
+        const swl = makeSWL();
+        const feat = { id: 'b', properties: { id: 'b' } };
+        swl.show(fc({ id: 'a', properties: { id: 'a' } }, feat));
+        expect(swl.findById('b')).toEqual({ feature: feat, index: 1 });
+    });
+
+    test('falls back to properties.id', () => {
+        const swl = makeSWL();
+        const feat = { properties: { id: 'only-props' } };
+        swl.show(fc({ properties: { id: 'x' } }, feat));
+        expect(swl.findById('only-props')).toEqual({ feature: feat, index: 1 });
+    });
+
+    test('returns the first occurrence on duplicate ids', () => {
+        const swl = makeSWL();
+        const first = { id: 'dup', properties: { id: 'dup', n: 1 } };
+        swl.show(fc(first, { id: 'dup', properties: { id: 'dup', n: 2 } }));
+        expect(swl.findById('dup')).toEqual({ feature: first, index: 0 });
+    });
+
+    test('returns undefined for missing or nullish ids', () => {
+        const swl = makeSWL();
+        swl.show(fc({ id: 'a', properties: { id: 'a' } }));
+        expect(swl.findById('nope')).toBeUndefined();
+        expect(swl.findById(undefined)).toBeUndefined();
+        expect(swl.findById(null as unknown as string)).toBeUndefined();
+    });
+
+    test('reflects the latest show() data — never returns stale entries', () => {
+        const swl = makeSWL();
+        const v1 = { id: 'x', properties: { id: 'x', v: 1 } };
+        swl.show(fc({ id: 'a', properties: { id: 'a' } }, v1));
+        expect(swl.findById('x')).toEqual({ feature: v1, index: 1 });
+
+        // re-show without 'x' → must not return the stale entry
+        swl.show(fc({ id: 'a', properties: { id: 'a' } }));
+        expect(swl.findById('x')).toBeUndefined();
+
+        // re-show with 'x' at a new position → must reflect the new index + object
+        const v2 = { id: 'x', properties: { id: 'x', v: 2 } };
+        swl.show(fc(v2, { id: 'a', properties: { id: 'a' } }));
+        expect(swl.findById('x')).toEqual({ feature: v2, index: 0 });
     });
 });

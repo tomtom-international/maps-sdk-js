@@ -4,12 +4,14 @@
 
 import type { CustomGeoJSONLayerSpec, CustomGeoJSONModule } from '@tomtom-org/maps-sdk/map';
 import type { FeatureCollection } from 'geojson';
+import type { BYODAnalysis } from './analysis';
+import type { BYODDataProfile } from './profile';
 
 /**
  * Where a BYOD entry came from.
  * - `integrator`: seeded programmatically by the embedding app (e.g. user-uploaded file).
- * - `url`: fetched from a URL via `addByodLayer`.
- * - `inline`: passed as inline GeoJSON via `addByodLayer`.
+ * - `url`: fetched from a URL via `addByodSource`.
+ * - `inline`: passed as inline GeoJSON via `addByodSource`.
  *
  * @group Agent Toolkit
  */
@@ -33,9 +35,16 @@ export type BYODEntry = {
     /** Provenance for the data — used by recall tools and the UI. */
     source: BYODSource;
     /**
-     * MapLibre layer specs the slice will render this entry under. When omitted
-     * at `addEntry` time the slice fills this in with sensible defaults based
-     * on the entry's geometry types (Point → circle, Line → line, Polygon → fill).
+     * Runtime-inferred shape of `data` — geometry types and a per-property
+     * profile. Derived once at `addEntry` time (see `profileFeatureCollection`)
+     * so recall / ingest tools can describe the data to the model without
+     * shipping the full FeatureCollection.
+     */
+    profile: BYODDataProfile;
+    /**
+     * MapLibre layer specs the slice renders this entry under. Always explicit —
+     * empty until set via `setByodLayers` (the agent path) or by passing `layers`
+     * to `addEntry`. An entry with no layers renders nothing.
      */
     layers: CustomGeoJSONLayerSpec[];
     /**
@@ -46,4 +55,9 @@ export type BYODEntry = {
     _module?: CustomGeoJSONModule;
     /** True while this entry's `_module` is rendering on the map. */
     _shown?: boolean;
+    /**
+     * Analyses attached by `analyseData` (keyed by `name` — re-running an analysis with the
+     * same name replaces it). Empty / absent until the first analysis runs against this entry.
+     */
+    _analysis?: BYODAnalysis[];
 };

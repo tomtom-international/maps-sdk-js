@@ -78,6 +78,29 @@ const fetchWithRetry = async (fetchFn: () => Promise<Response>): Promise<Respons
     return response;
 };
 
+const TOMTOM_DEFAULT_URL = 'https://api.tomtom.com';
+
+/**
+ * Return `'include'` only when the SDK is wired into a Demo-BFF-style proxy
+ * (no `apiKey` + non-default `commonBaseURL`). In all other cases — direct
+ * TomTom usage and customer-owned `customServiceBaseURL` integrations — we
+ * leave credentials at the browser default so we don't break consumers
+ * whose backend responds with `Access-Control-Allow-Origin: *` (the browser
+ * rejects credentialed responses against a wildcard origin).
+ *
+ * The `apiKey` test is a falsy check (not `=== ''`) on purpose: an example
+ * may overwrite the proxy bootstrap's `apiKey: ''` with `apiKey: undefined`
+ * (e.g. `put({ apiKey: process.env.API_KEY_EXAMPLES })` when that env var is
+ * unset in a proxy build). Both empty string and undefined mean "no key,
+ * the proxy injects it" — and this matches how the URL builders decide
+ * whether to append `key=` (`if (params.apiKey)`). A customer using
+ * `customServiceBaseURL` keeps a real key, so this stays falsy-false for them.
+ */
+const proxyModeCredentials = (): RequestCredentials | undefined => {
+    const cfg = TomTomConfig.instance.get();
+    return !cfg.apiKey && cfg.commonBaseURL !== TOMTOM_DEFAULT_URL ? 'include' : undefined;
+};
+
 /**
  * Fetches the given HTTP JSON resource with an HTTP GET request and returns a promise with the response as a JSON object.
  * If the response isn't successful, it returns a rejected promise with the http error code.
@@ -86,7 +109,12 @@ const fetchWithRetry = async (fetchFn: () => Promise<Response>): Promise<Respons
  * @param headers The headers to be sent with the request.
  */
 export const get = async <T>(url: URL, headers: TomTomHeaders): ParsedFetchResponse<T> =>
-    returnOrThrow(await fetchWithRetry(() => fetch(url, { headers })));
+    returnOrThrow(
+        await fetchWithRetry(() => {
+            const credentials = proxyModeCredentials();
+            return fetch(url, credentials ? { headers, credentials } : { headers });
+        }),
+    );
 
 /**
  * Fetches the given HTTP JSON resource with an HTTP POST request and returns a promise with the response as a JSON object.
@@ -97,13 +125,16 @@ export const get = async <T>(url: URL, headers: TomTomHeaders): ParsedFetchRespo
  */
 export const post = async <T, D>(input: PostObject<D>, headers: TomTomHeaders): ParsedFetchResponse<T> =>
     returnOrThrow(
-        await fetchWithRetry(() =>
-            fetch(input.url, {
+        await fetchWithRetry(() => {
+            const credentials = proxyModeCredentials();
+            const init: RequestInit = {
                 method: 'POST',
                 body: JSON.stringify(input.data),
                 headers: { ...headers, 'Content-Type': 'application/json' },
-            }),
-        ),
+            };
+            if (credentials) init.credentials = credentials;
+            return fetch(input.url, init);
+        }),
     );
 
 /**

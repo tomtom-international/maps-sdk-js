@@ -8,8 +8,9 @@ import type { StateSlice } from '../../types';
 import { collapseHistoryToLatest, hideAllEntries, pickUniqueEntryId } from '../entry-helpers';
 import { StateEvents } from '../events';
 import type { EntryMode, ShownEntriesSlice } from '../state';
+import type { BYODAnalysis } from './analysis';
 import type { BYODEntry, BYODSource } from './entry';
-import { defaultLayersFor } from './layer-defaults';
+import { profileFeatureCollection } from './profile';
 
 /**
  * Events fired by {@link BYODState}. Subscribe via `state.byod.events.on(type, handler)`.
@@ -23,6 +24,8 @@ export type BYODStateEvents = {
     'shown-change': ReadonlySet<string>;
     /** Display policy switched between `single` and `multiple`. */
     'mode-change': EntryMode;
+    /** An analysis was attached to (or replaced on) an entry by `analyseData`. */
+    'analysis-added': { entryId: string; analysis: BYODAnalysis };
 };
 
 /**
@@ -32,10 +35,9 @@ export type BYODStateEvents = {
  */
 export type AddBYODEntryOptions = {
     /**
-     * Explicit MapLibre layer specs. When omitted, the slice inspects the
-     * FeatureCollection and picks defaults by geometry type
-     * (Point → circle, Line → line, Polygon → fill). Mixed-kind entries get
-     * one layer per kind present.
+     * Explicit MapLibre layer specs. Layers are never derived automatically:
+     * when omitted the entry is created with no layers and renders nothing until
+     * they are set — by the agent via `setByodLayers`, or by passing them here.
      */
     layers?: CustomGeoJSONLayerSpec[];
     /** Provenance for the data. Defaults to `{ kind: 'integrator' }`. */
@@ -124,17 +126,52 @@ export class BYODState implements ShownEntriesSlice, StateSlice {
             label,
             data,
             source: options.source ?? { kind: 'integrator' },
-            layers: options.layers ?? defaultLayersFor(data),
+            layers: options.layers ?? [],
+            profile: profileFeatureCollection(data),
         });
         this.events.emit('entries-change', this._entries);
         return entryId;
     }
 
     /**
+     * Replace the MapLibre layer specs an entry renders under. When the entry already owns a
+     * module (it has been shown at least once) the new specs are pushed live via the module's
+     * `applyConfig` runtime layer diff — no tear-down, no flicker. When no module exists yet the
+     * specs are stored and the next {@link showEntry} picks them up. Throws on an unknown id.
+     */
+    setEntryLayers(entryId: string, layers: CustomGeoJSONLayerSpec[]): void {
+        const entry = this._requireEntry(entryId);
+        entry.layers = layers;
+        entry._module?.applyConfig({ sources: { data: { layers } } });
+        this.events.emit('entries-change', this._entries);
+    }
+
+    /**
+     * Attach an analysis to an existing entry (replace if a result of the same name exists).
+     * Mirrors {@link CustomGeometriesState.addAnalysisToEntry} so the shared `analyseData`
+     * attach helper treats BYOD like every other analysable slice. No-op (returns `false`)
+     * when the entry is unknown.
+     */
+    addAnalysisToEntry(entryId: string, analysis: BYODAnalysis): boolean {
+        const entry = this._entries.find((e) => e.id === entryId);
+        if (!entry) return false;
+        entry._analysis ??= [];
+        const existingIdx = entry._analysis.findIndex((a) => a.name === analysis.name);
+        if (existingIdx >= 0) {
+            entry._analysis[existingIdx] = analysis;
+        } else {
+            entry._analysis.push(analysis);
+        }
+        this.events.emit('analysis-added', { entryId, analysis });
+        this.events.emit('entries-change', this._entries);
+        return true;
+    }
+
+    /**
      * Lazy-init the entry's CustomGeoJSONModule. The module is created with a
-     * single source named `data`, configured with this entry's `layers`. Layer
-     * changes after creation are not supported — drop the entry and add it back
-     * to swap layers.
+     * single source named `data`, configured with this entry's `layers`. To swap
+     * layers after creation, call {@link setEntryLayers} — it pushes the new specs
+     * into this module via `applyConfig` rather than recreating it.
      */
     async getEntryModule(entryId: string): Promise<CustomGeoJSONModule> {
         const entry = this._requireEntry(entryId);
@@ -147,6 +184,10 @@ export class BYODState implements ShownEntriesSlice, StateSlice {
     /** Render this entry on the map. */
     async showEntry(entryId: string): Promise<void> {
         const entry = this._requireEntry(entryId);
+        // An entry has no layers until they are set explicitly (via setByodLayers or addEntry).
+        // CustomGeoJSONModule requires at least one layer, so a layer-less entry simply isn't
+        // rendered yet — no-op rather than throw. It becomes visible once setByodLayers adds layers.
+        if (entry.layers.length === 0) return;
         await this._hideOthersUnderSingleMode(entryId);
         const module = await this.getEntryModule(entryId);
         await module.show(entry.data, 'data');

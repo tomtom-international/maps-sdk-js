@@ -297,7 +297,9 @@ export class TomTomMap {
         setWorkerCount(4);
 
         this.mapLibreMap = new Map(buildMapOptions(this._params));
-        this.mapLibreMap.once('styledata', () => {
+        // Use `style.load` (fires once after style is fully parsed and all layers are created)
+        // rather than `styledata` (fires repeatedly mid-load) — see setStyle for the reasoning.
+        this.mapLibreMap.once('style.load', () => {
             this.handleStyleData(false);
         });
         this._eventsProxy = new EventsProxy(this.mapLibreMap, this._params?.events);
@@ -423,10 +425,14 @@ export class TomTomMap {
         this._params = { ...this._params, style: effectiveStyle };
         this.styleLightDarkTheme = getStyleLightDarkTheme(effectiveStyle);
         this.mapLibreMap.setStyle(buildStyleInput(this._params), { validate: false });
-        this.mapLibreMap.once('styledata', () => {
+        // `style.load` fires once after MapLibre finishes applying all diff operations from the
+        // new style — at that point every new layer exists in `map.getStyle().layers`, which is
+        // what the module-restoration snapshot needs. Using `styledata` here would race because
+        // it fires repeatedly during the diff and may run `handleStyleData` before all layers
+        // are present.
+        this.mapLibreMap.once('style.load', () => {
             // We only handle the style data change if the applied style is still the same as the one we set,
             // to prevent race conditions when handling stale styles applied quickly in succession.
-            // (If the current style parameters are different, there's likely a new style being set, which will trigger the handler soon after)
             if (!this.mapReady && isEqual(effectiveStyle, this._params.style)) {
                 this.handleStyleData(options.keepState || true);
             }

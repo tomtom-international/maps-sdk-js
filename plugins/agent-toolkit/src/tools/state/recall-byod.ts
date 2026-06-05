@@ -4,7 +4,7 @@
 
 import { z } from 'zod';
 import type { ToolState } from '../../types';
-import { toolErrorSchema } from '../shared-output-schemas';
+import { byodDataProfileSchema, toolErrorSchema } from '../shared-output-schemas';
 
 const sourceSchema = z.union([
     z.object({ kind: z.literal('integrator'), description: z.string().optional() }),
@@ -18,11 +18,21 @@ const refSchema = z.object({
     timestamp: z.number(),
     featureCount: z.number(),
     geometryTypes: z.array(z.string()),
+    propertyNames: z
+        .array(z.string())
+        .describe(
+            'Feature-property keys seen in the data, highest-coverage first and capped — wide datasets may omit ' +
+                'low-coverage keys. Pass `id` for the full per-property profile (types/coverage/examples) plus any ' +
+                '`propertiesOmitted` count.',
+        ),
     source: sourceSchema,
     shown: z.boolean(),
 });
 
 const detailSchema = refSchema.extend({
+    profile: byodDataProfileSchema.describe(
+        'Full runtime-inferred shape of the data (per-property types/coverage/examples).',
+    ),
     features: z.unknown().describe("GeoJSON FeatureCollection of the entry's features."),
 });
 
@@ -41,18 +51,10 @@ export const recallByodSchema = z.object({
 
 export const recallByodDescription =
     'List or inspect BYOD (bring-your-own-data) GeoJSON layers in session state. These come from either ' +
-    'programmatic seeding by the embedding app OR from `addByodLayer` calls. Call this BEFORE passing ids ' +
+    'programmatic seeding by the embedding app OR from `addByodSource` calls. Call this BEFORE passing ids ' +
     'to `byodEntryIDs` on `analyseData` / `processData` / `updateByodDisplay` — never guess. ' +
-    'No args → index (id, label, featureCount, geometryTypes, source, shown); pass `id` → full FeatureCollection.';
-
-const collectGeometryTypes = (data: { features: Array<{ geometry?: { type?: string } | null }> }): string[] => {
-    const types = new Set<string>();
-    for (const feature of data.features) {
-        const t = feature.geometry?.type;
-        if (t) types.add(t);
-    }
-    return [...types];
-};
+    'No args → index (id, label, featureCount, geometryTypes, propertyNames, source, shown); ' +
+    'pass `id` → full data profile + FeatureCollection.';
 
 export const executeRecallByod = async (
     params: z.infer<typeof recallByodSchema>,
@@ -63,8 +65,9 @@ export const executeRecallByod = async (
             id: entry.id,
             label: entry.label,
             timestamp: entry.timestamp,
-            featureCount: entry.data.features.length,
-            geometryTypes: collectGeometryTypes(entry.data),
+            featureCount: entry.profile.featureCount,
+            geometryTypes: entry.profile.geometryTypes,
+            propertyNames: entry.profile.properties.map((property) => property.name),
             source: entry.source,
             shown: !!entry._shown,
         }));
@@ -78,8 +81,10 @@ export const executeRecallByod = async (
         id: entry.id,
         label: entry.label,
         timestamp: entry.timestamp,
-        featureCount: entry.data.features.length,
-        geometryTypes: collectGeometryTypes(entry.data),
+        featureCount: entry.profile.featureCount,
+        geometryTypes: entry.profile.geometryTypes,
+        propertyNames: entry.profile.properties.map((property) => property.name),
+        profile: entry.profile,
         source: entry.source,
         shown: !!entry._shown,
         features: entry.data,

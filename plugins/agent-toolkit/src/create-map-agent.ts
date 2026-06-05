@@ -13,16 +13,10 @@ import {
     restoreScopableTools,
 } from './prepare-step-helpers';
 import { resolveTools } from './resolve-tools';
-import {
-    createToolState,
-    DATA_ENTRY_KIND_TO_SLICE,
-    type DataEntryKind,
-    type EntryModeSlice,
-    TOOLS_BY_DATA_ENTRY_KIND,
-} from './state';
+import { createToolState, DATA_ENTRY_KIND_TO_SLICE, type DataEntryKind, type EntryModeSlice } from './state';
 import { buildSystemPrompt } from './system-prompt';
 import { type ScopableToolInfo, setupTools } from './tool-setup';
-import { DEFAULT_TOOLS } from './tools';
+import { DEFAULT_TOOLS, TOOLS_BY_DATA_ENTRY_KIND } from './tools';
 import { ALL_ENTRY_DATA_KINDS } from './tools/shared';
 import type {
     Classifier,

@@ -101,7 +101,7 @@ const agent = createMapAgent(map, {
     dataEntries: {
         routes: { entryMode: 'single' },       // only one route at a time
         incidents: { entryMode: 'single' },
-        byod: { enabled: false },              // drop byod from analyseData/processData scope + recallByod/addByodLayer/updateByodDisplay
+        byod: { enabled: false },              // drop byod from analyseData/processData scope + recallByod/addByodSource/setByodLayers/updateByodDisplay
     },
 
     // Classifier (optional)
@@ -148,12 +148,12 @@ Flat record of named `ToolEntry` objects. Categories (representative names — s
 - **Routing**: `setRoute`, `addWaypointsToRoute`, `removeWaypointsFromRoute`, `replaceWaypointInRoute`, `getCurrentWaypoints`
 - **Reachable areas**: `findReachableAreas` (isochrones / isodistances)
 - **Geometries (polygon namespace)**: `recallGeometries` — tagged `{ kind, id }` lookups across `place` / `places` / `ranges` / `customGeometries` entries
-- **BYOD (bring-your-own-data)**: `addByodLayer`, `recallByod`, `updateByodDisplay` — customer-authored GeoJSON layers (URL fetch or inline) registered as `byod` entries
+- **BYOD (bring-your-own-data)**: `addByodSource`, `setByodLayers`, `recallByod`, `updateByodDisplay` — customer-authored GeoJSON layers (URL fetch or inline) registered as `byod` entries. On ingest (every path — URL, inline, programmatic `state.byod.addEntry`) the slice auto-detects a `BYODDataProfile`: `featureCount`, `geometryTypes`, and a per-property profile (`name`, JSON `types`, `coverage`, capped `examples`), inferred locally in one pass — no extra service call. `addByodSource` returns it; `recallByod` exposes `propertyNames` in the list and the full `profile` when given an `id`. The model uses it to pick fields for `analyseData` / `processData` without re-fetching raw GeoJSON. A new entry has **no layers** and renders nothing — there are no automatic geometry defaults; `addByodSource.show` (`{ zoomMode, hidePreviousEntries }`, optional) only fits the camera and clears earlier BYOD layers. Deciding the layers that fit the data is the agent's job on EVERY ingest via `setByodLayers` — also the only way a BYOD entry becomes visible — which replaces an entry's MapLibre layers wholesale (raw layer `type` + `paint`/`layout`/`filter`) so the model can graduate `circle-radius` by a numeric field, colour a `fill`/`line` by category, switch points to `symbol`, etc. — informed by the `profile`. It applies live in place on a shown entry (via the module's `applyConfig` runtime layer diff), or `show` renders a hidden one; invalid specs are rejected with a semantic error and leave the entry's previous layers intact
 - **Traffic — tiles**: `toggleTilesTrafficFlow`, `toggleTilesTrafficIncidents`, `getShownTileIncidents`
 - **Traffic — incidents (fetch / monitor / focus)**: `getTrafficIncidents`, `startTrafficIncidentsMonitor`, `stopTrafficIncidentsMonitor`, `focusIncidents`
 - **Traffic — area analytics**: `getTrafficAreaAnalytics`, `queryTrafficAnalytics`, `updateTrafficAreaAnalyticsDisplay`
 - **Unified data tools (scope-aware)**: `analyseData`, `processData` — see [Scope-aware tools](#scope-aware-tools) below
-- **Map display**: `updatePlacesDisplay`, `updateRoutesDisplay` (replaces the old `setRouteTheme`), `updateWaypointsDisplay`, `updateTrafficAreaAnalyticsDisplay`, `updateByodDisplay`, `clearMap`
+- **Map display**: `updatePlacesDisplay`, `updateRoutesDisplay` (replaces the old `setRouteTheme`), `updateWaypointsDisplay`, `updateTrafficAreaAnalyticsDisplay`, `updateByodDisplay`, `setByodLayers` (BYOD restyle), `clearMap`
 - **Map control**: `flyTo`, `zoomInOrOut`, `setMapStandardStyle`, `setLanguage`, `toggleTilesPOIs`, `toggleTilesBaseMapLayerGroups`, `setPitchBearing`, `getStandardMapStyles`
 - **MapLibre direct**: `executeMaplibreCode`, `setLayoutProperties`, `setPaintProperties`, `getMapStyleLayers`
 - **State / recall**: `recallPlaces`, `recallRoutes`, `recallRanges`, `recallGeometries`, `recallByod`, `recallState`, `setEntryMode`, `resetState`
@@ -328,7 +328,7 @@ Live state, accessible from custom tools and from your app via `agent.state`:
 | `routing` | Append-only history of route entries; planning waypoint slots; route parameters; per-entry `RoutingModule` |
 | `ranges` | Reachable range entries — origin(s), budgets, polygons, per-entry display modules |
 | `customGeometries` | Derived polygon entries produced by `processData` (union, difference, h3-coverage, …); per-entry analyses + lazy `GeometriesModule` |
-| `byod` | Customer-authored GeoJSON layer entries (URL fetch or inline) with per-entry lazy `CustomGeoJSONModule`. Produced by `addByodLayer` or programmatic `state.byod.addEntry(...)` |
+| `byod` | Customer-authored GeoJSON layer entries (URL fetch or inline) with per-entry lazy `CustomGeoJSONModule` and a runtime-inferred `BYODDataProfile`. Produced by `addByodSource` or programmatic `state.byod.addEntry(...)` |
 | `baseMap` | Viewport, style, language, MapLibre map instance (`mapLibreMap`) |
 | `trafficTiles` | Real-time traffic flow + incident tile-overlay visibility |
 | `trafficAreaAnalytics` | Per-entry traffic-area-analytics history; per-entry visualisation config + lazy `TrafficAreaAnalyticsModule` |

@@ -36,6 +36,23 @@ export const waitForMapIdle = async (page: Page): Promise<void> => {
     });
 };
 
+export const nextMapIdleEvent = async (page: Page, timeoutMs = 10_000): Promise<void> => {
+    await tryBeforeTimeout(
+        () =>
+            page.evaluate(async () => {
+                const map = (globalThis as MapWindowLike).mapLibreMap;
+                if (!map) {
+                    throw new Error('globalThis.mapLibreMap is not available.');
+                }
+                await new Promise<void>((resolve) => {
+                    map.once('idle', () => resolve());
+                });
+            }),
+        `nextMapIdleEvent: no 'idle' event within ${timeoutMs}ms.`,
+        timeoutMs,
+    );
+};
+
 // ---------------------------------------------------------------------------
 // Layers
 // ---------------------------------------------------------------------------

@@ -47,7 +47,7 @@ test.describe('PlacesModule theme tests', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test('Apply different themes and icon configs to a place', async ({ page }) => {
+    test('Apply different themes and icon configs to a place', { tag: '@flaky' }, async ({ page }) => {
         const mapEnv = await MapTestEnv.loadPageAndMap(page, { center: [4.90047, 52.37708], zoom: 14 });
         await initPlaces(page);
         // Wait for map idle so the pin-categories sprite (loaded async by
@@ -175,7 +175,9 @@ test.describe('PlacesModule theme tests', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test("'base-map' with 'main' hidden renders the place only through the 'micro' layer", async ({ page }) => {
+    test("'base-map' with 'main' hidden renders the place only through the 'micro' layer", { tag: '@flaky' }, async ({
+        page,
+    }) => {
         const mapEnv = await MapTestEnv.loadPageAndMap(page, { center: [4.90047, 52.37708], zoom: 14 });
         // Hide the `main` layer so only the `micro` layer renders.
         await initPlaces(page, { theme: 'base-map', layers: { main: { layout: { visibility: 'none' } } } });

@@ -13,7 +13,12 @@ export const appendCommonParams = (urlParams: URLSearchParams, params: CommonSer
 
     // TODO: restore apiAccessToken if we implement oauth2 access:
     // if (!params.apiAccessToken) {
-    urlParams.append('key', params.apiKey as string);
+    // Omit `key=` entirely when apiKey is empty so proxy deployments don't
+    // surface their own key (or a placeholder) to the browser. The proxy
+    // injects the real key server-side before forwarding upstream.
+    if (params.apiKey) {
+        urlParams.append('key', params.apiKey);
+    }
     // }
 
     params.language && urlParams.append('language', params.language);

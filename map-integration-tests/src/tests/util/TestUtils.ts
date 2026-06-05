@@ -56,11 +56,16 @@ export const waitForMapReady = async (page: Page) =>
             page.evaluate((): Promise<boolean> => {
                 return new Promise((resolve) => {
                     const mapsSdkThis = globalThis as MapsSDKThis;
-                    if (mapsSdkThis.tomtomMap.mapReady) {
-                        resolve(true);
-                    } else {
-                        mapsSdkThis.mapLibreMap.once('styledata', () => resolve(true));
-                    }
+                    // Poll `tomtomMap.mapReady` directly. The previous implementation resolved
+                    // on the first `styledata` event without re-checking — but `styledata` fires
+                    // repeatedly during a style load, and the first one fires before MapLibre
+                    // has applied the full diff (and well before the SDK's `handleStyleData`
+                    // sets `mapReady = true`).
+                    const check = () => {
+                        if (mapsSdkThis.tomtomMap.mapReady) resolve(true);
+                        else setTimeout(check, 50);
+                    };
+                    check();
                 });
             }),
         'Map style did not load',

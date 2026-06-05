@@ -108,7 +108,7 @@ export const geocodingReqObjectsAndUrLs: Array<[string, GeocodingParams, string]
             commonBaseURL: 'https://api.tomtom.com',
             query: '4 north 2nd street san jose',
         },
-        'https://api.tomtom.com/maps/orbis/places/geocode/4%20north%202nd%20street%20san%20jose.json?apiVersion=undefined&key=undefined',
+        'https://api.tomtom.com/maps/orbis/places/geocode/4%20north%202nd%20street%20san%20jose.json?apiVersion=undefined',
     ],
     [
         'Geocoding Request with optional params',

@@ -59,6 +59,20 @@ This directory contains documentation for building and testing the TomTom Maps S
 
 ---
 
+### Architecture
+
+#### **[EVENTS.md](./EVENTS.md)**
+*User-event subsystem internals*
+- How click / hover / long-hover flow from MapLibre to a module handler
+- The single shared `EventsProxy`, the interactive-layer pool, and the source-keyed registry
+- Hover state machine and `eventState` data-driven styling
+- Feature substitution and the `allEventFeatures` contract (scoped + de-duplicated)
+- Design decisions, invariants, and gotchas
+
+**Reference when working on map events, modules, or interaction**
+
+---
+
 ### Code Quality
 
 #### **[QUALITY.md](./QUALITY.md)**

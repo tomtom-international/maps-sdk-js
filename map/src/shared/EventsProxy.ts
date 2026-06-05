@@ -1,8 +1,10 @@
+import type { Feature } from 'geojson';
 import type { LngLat, Map, MapGeoJSONFeature, MapMouseEvent, Point2D, PointLike } from 'maplibre-gl';
 import type { MapEventsConfig } from '../init';
 import { AbstractEventProxy } from './AbstractEventProxy';
-import { detectHoverState, updateEventState } from './eventUtils';
-import { deserializeFeatures } from './mapUtils';
+import { dedupeRenderedFeatures, detectHoverState, scopeToSource, updateEventState } from './eventUtils';
+import { renderedRefId } from './featureId';
+import { GeoJSONSourceWithLayers } from './SourceWithLayers';
 import type { ClickEventType, EventHandlerConfig, SourceWithLayers } from './types';
 
 // Default values for events
@@ -87,6 +89,25 @@ export class EventsProxy extends AbstractEventProxy {
         return this.enabled && !this.map.isMoving();
     }
 
+    /**
+     * Build the consumer-facing `allEventFeatures`: scope to the firing source, dedupe, then
+     * substitute cached typed originals. Scope and dedupe run on the raw features, since
+     * `.source` and the rendered id survive only before substitution; the top hit stays first.
+     *
+     * Scoping leaves only `firingSource`'s hits, so its {@link SourceWithLayers} is resolved once
+     * here rather than per feature. For GeoJSON-backed sources we substitute the cached typed
+     * original (un-stringified properties, real Dates, nested objects); for everything else — vector
+     * tiles, unregistered sources — the MapLibre-rendered feature passes through (`MapGeoJSONFeature
+     * extends Feature`).
+     */
+    private toCallerFeatures(rendered: MapGeoJSONFeature[], firingSource: string | undefined): Feature[] {
+        const scoped = dedupeRenderedFeatures(scopeToSource(rendered, firingSource));
+        const sourceWithLayers = this.sourceWithLayersFor(firingSource);
+        return sourceWithLayers instanceof GeoJSONSourceWithLayers
+            ? scoped.map((feature) => sourceWithLayers.findById(renderedRefId(feature))?.feature ?? feature)
+            : scoped;
+    }
+
     private getRenderedFeatures(point: Point2D): MapGeoJSONFeature[] {
         if (!this.interactiveLayerIDs.length) {
             return [];
@@ -123,23 +144,26 @@ export class EventsProxy extends AbstractEventProxy {
         this.firstDelayedHoverSinceMapMove = false;
 
         if (this.hoveringSourceWithLayers) {
-            const eventState = updateEventState(
-                'long-hover',
-                this.hoveringFeature,
-                undefined,
-                this.hoveringSourceWithLayers,
-                undefined,
+            updateEventState('long-hover', this.hoveringFeature, undefined, this.hoveringSourceWithLayers, undefined);
+
+            const longHoverHandlers = this.findHandlers(
+                ['long-hover'],
+                this.hoveringFeature?.source,
+                this.hoveringFeature?.layer.id,
             );
 
-            this.findHandlers(['long-hover'], this.hoveringFeature?.source, this.hoveringFeature?.layer.id).forEach(
-                (handler) =>
+            // Only build `allEventFeatures` when a handler will read it (see onMouseMove).
+            if (longHoverHandlers.length) {
+                const callerFeatures = this.toCallerFeatures(this.hoveringFeatures ?? [], this.hoveringFeature?.source);
+                for (const handler of longHoverHandlers) {
                     handler.fn(
-                        eventState.feature,
+                        callerFeatures[0],
                         this.hoveringLngLat as LngLat,
-                        this.hoveringFeatures as MapGeoJSONFeature[],
-                        this.hoveringSourceWithLayers as SourceWithLayers,
-                    ),
-            );
+                        callerFeatures,
+                        handler.sourceWithLayers,
+                    );
+                }
+            }
         }
     }
 
@@ -170,7 +194,6 @@ export class EventsProxy extends AbstractEventProxy {
         }
 
         this.hoveringFeatures = this.getRenderedFeatures(ev.point);
-        deserializeFeatures(this.hoveringFeatures);
         const [hoveredTopFeature] = this.hoveringFeatures;
 
         // Check if the layer has any handlers registered.
@@ -205,13 +228,17 @@ export class EventsProxy extends AbstractEventProxy {
                 hoveredTopFeature?.layer.id,
             )?.[0];
 
-            // NOTE: handlers overlapping in source and layer IDs won't be supported properly:
-            this.hoveringSourceWithLayers = firstHandler?.sourceWithLayers;
+            this.hoveringSourceWithLayers = this.sourceWithLayersFor(hoveredTopFeature?.source);
+
+            // Resolved lazily so the `hover` branch picks up the marker-added spread that
+            // `updateEventState` writes back to `shownFeatures` (matches the click path's
+            // dispatch order).
+            let callerFeatures: Feature[] | undefined;
 
             if (hoverChanged) {
                 this.updateHoverCursor(firstHandler?.config);
 
-                const eventState = updateEventState(
+                updateEventState(
                     'hover',
                     this.hoveringFeature,
                     prevHoveredFeature,
@@ -225,8 +252,14 @@ export class EventsProxy extends AbstractEventProxy {
                     hoveredTopFeature?.layer.id,
                 );
 
-                for (const handler of hoverHandlers) {
-                    handler.fn(eventState.feature, ev.lngLat, this.hoveringFeatures, this.hoveringSourceWithLayers);
+                // Only build `allEventFeatures` (scope + dedupe + substitute) when a handler
+                // will read it — hover state above is tracked for the cursor/eventState even
+                // without hover handlers, so a click-only module pays nothing here.
+                if (hoverHandlers.length) {
+                    callerFeatures = this.toCallerFeatures(this.hoveringFeatures, hoveredTopFeature?.source);
+                    for (const handler of hoverHandlers) {
+                        handler.fn(callerFeatures[0], ev.lngLat, callerFeatures, handler.sourceWithLayers);
+                    }
                 }
             }
 
@@ -237,8 +270,11 @@ export class EventsProxy extends AbstractEventProxy {
                     this.hoveringFeature?.layer.id,
                 );
 
-                for (const handler of hoverMoveHandlers) {
-                    handler.fn(this.hoveringFeature, ev.lngLat, this.hoveringFeatures, this.hoveringSourceWithLayers);
+                if (hoverMoveHandlers.length) {
+                    callerFeatures ??= this.toCallerFeatures(this.hoveringFeatures, this.hoveringFeature?.source);
+                    for (const handler of hoverMoveHandlers) {
+                        handler.fn(callerFeatures[0], ev.lngLat, callerFeatures, handler.sourceWithLayers);
+                    }
                 }
             }
 
@@ -261,8 +297,6 @@ export class EventsProxy extends AbstractEventProxy {
         }
 
         const clickedFeatures = this.getRenderedFeatures(ev.point);
-        // Deserialize Features from maplibre queryRenderedFeatures response
-        deserializeFeatures(clickedFeatures);
 
         const prevClickedFeature = this.lastClickedFeature;
         this.lastClickedFeature = clickedFeatures[0];
@@ -273,10 +307,13 @@ export class EventsProxy extends AbstractEventProxy {
             this.lastClickedFeature?.layer.id,
         );
 
-        // NOTE: handlers overlapping in source and layer IDs won't be supported properly:
-        this.lastClickedSourceWithLayers = clickHandlers?.[0]?.sourceWithLayers;
+        // Resolve from the firing click handler, NOT sourceWithLayersFor(source): the high-priority
+        // `click` eventState must only be written when this module actually handles clicks. Otherwise
+        // clicking a feature of a hover-only module would stick a `click` marker that later hovers
+        // (lower priority) can't clear, freezing its highlight.
+        this.lastClickedSourceWithLayers = clickHandlers[0]?.sourceWithLayers;
 
-        const eventState = updateEventState(
+        updateEventState(
             clickType,
             this.lastClickedFeature,
             prevClickedFeature,
@@ -284,8 +321,14 @@ export class EventsProxy extends AbstractEventProxy {
             prevClickedSourceWithLayers,
         );
 
-        for (const handler of clickHandlers) {
-            handler.fn(eventState.feature, ev.lngLat, clickedFeatures, this.lastClickedSourceWithLayers);
+        // Only build `allEventFeatures` when a handler will read it. onMapClick fires on every
+        // map click (no source pre-filter), so a click on empty map or a feature whose module
+        // has no click handler does no scope/dedupe/substitution work.
+        if (clickHandlers.length) {
+            const callerFeatures = this.toCallerFeatures(clickedFeatures, this.lastClickedFeature?.source);
+            for (const handler of clickHandlers) {
+                handler.fn(callerFeatures[0], ev.lngLat, callerFeatures, handler.sourceWithLayers);
+            }
         }
     }
 }

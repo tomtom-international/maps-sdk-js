@@ -6,11 +6,11 @@
  */
 
 export {
-    addByodLayerDescription,
-    addByodLayerOutputSchema,
-    addByodLayerSchema,
-    executeAddByodLayer,
-} from './add-byod-layer';
+    addByodSourceDescription,
+    addByodSourceOutputSchema,
+    addByodSourceSchema,
+    executeAddByodSource,
+} from './add-byod-source';
 export {
     type AnalyseDataKind,
     type AnalyseDataScope,
@@ -103,6 +103,12 @@ export {
     resetStateOutputSchema,
     resetStateSchema,
 } from './reset-state';
+export {
+    executeSetByodLayers,
+    setByodLayersDescription,
+    setByodLayersOutputSchema,
+    setByodLayersSchema,
+} from './set-byod-layers';
 export {
     executeSetEntryMode,
     setEntryModeDescription,

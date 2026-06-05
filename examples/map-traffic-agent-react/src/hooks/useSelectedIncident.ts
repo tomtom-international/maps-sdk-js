@@ -24,7 +24,7 @@ export function useSelectedIncident(agent: AgentInstance | undefined) {
             if (moduleUnsubs.has(entryId)) return;
             const overlay = await agent.state.trafficIncidents.getEntryModule(entryId);
             const onClick: UserEventHandler<TrafficIncident> = (incident, _lngLat, all) => {
-                setSelectedIncident({ incident, overlapCount: overlay.distinctIncidents(all).length });
+                setSelectedIncident({ incident, overlapCount: all.length });
             };
             const unsub = overlay.events.on('click', onClick);
             moduleUnsubs.set(entryId, unsub);

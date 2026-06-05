@@ -98,11 +98,12 @@ export const analyseDataOutputSchema = z.union([
                     z.object({ kind: z.literal('incidents'), id: z.string() }),
                     z.object({ kind: z.literal('customGeometries'), id: z.string() }),
                     z.object({ kind: z.literal('trafficAreaAnalytics'), id: z.string() }),
+                    z.object({ kind: z.literal('byod'), id: z.string() }),
                 ]),
             )
             .describe(
                 'Entries the analysis was attached to: every contributing places / routes / incidents / ' +
-                    'customGeometries / trafficAreaAnalytics entry. Ranges entries feed the aggregation but do not carry analyses.',
+                    'customGeometries / trafficAreaAnalytics / byod entry. Ranges entries feed the aggregation but do not carry analyses.',
             ),
         sourceIds: z
             .array(z.unknown())
@@ -293,7 +294,7 @@ export const buildAnalyseDataDescription = (
         'Each input is exposed as a merged collection and a per-entry record; fields are `undefined` when their ' +
         '`*EntryIDs` argument is omitted (guard with `?.` / `if (places) …`). ' +
         'Result is attached as `_analysis[name]` on every contributing entry (ranges feed in but do not carry ' +
-        'analyses; BYOD entries are read-only). `outputFormat: "json"` (default) or `"chart"` (Chart.js config). ' +
+        'analyses). `outputFormat: "json"` (default) or `"chart"` (Chart.js config). ' +
         incidentsUnscopedTail
     );
 };
@@ -425,6 +426,7 @@ export const executeAnalyseData = async (
     attachAnalysisToEntries(state.routing, resolved.routes, payload);
     attachAnalysisToEntries(state.trafficIncidents, resolved.incidents, payload);
     attachAnalysisToEntries(state.trafficAreaAnalytics, resolved.trafficAreaAnalytics, payload);
+    attachAnalysisToEntries(state.byod, resolved.byod, payload);
     // Geometries pull in places + custom entries indirectly via `collectInputGeometries`.
     attachAnalysisToEntries(
         state.places,
@@ -438,13 +440,14 @@ export const executeAnalyseData = async (
     );
 
     const affectedEntries: Array<{
-        kind: 'places' | 'routes' | 'incidents' | 'customGeometries' | 'trafficAreaAnalytics';
+        kind: 'places' | 'routes' | 'incidents' | 'customGeometries' | 'trafficAreaAnalytics' | 'byod';
         id: string;
     }> = [
         ...resolved.places.map((e) => ({ kind: 'places' as const, id: e.id })),
         ...resolved.routes.map((e) => ({ kind: 'routes' as const, id: e.id })),
         ...resolved.incidents.map((e) => ({ kind: 'incidents' as const, id: e.id })),
         ...resolved.trafficAreaAnalytics.map((e) => ({ kind: 'trafficAreaAnalytics' as const, id: e.id })),
+        ...resolved.byod.map((e) => ({ kind: 'byod' as const, id: e.id })),
         ...geometriesMeta.affectedEntries
             .filter((e) => e.kind === 'places' && !resolved.places.some((p) => p.id === e.id))
             .map((e) => ({ kind: 'places' as const, id: e.id })),

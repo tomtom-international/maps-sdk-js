@@ -18,6 +18,39 @@ export const toolErrorSchema = z.object({
 });
 
 // ---------------------------------------------------------------------------
+// BYOD data profile — runtime "schema" of a customer FeatureCollection
+// ---------------------------------------------------------------------------
+
+/**
+ * Compact, runtime-derived description of a BYOD entry's shape: geometry types
+ * and a per-property profile (type, coverage, examples). Lets the model learn
+ * what it can filter / analyse without ever receiving the raw FeatureCollection.
+ * Mirrors `BYODDataProfile` from the byod state slice.
+ */
+export const byodDataProfileSchema = z.object({
+    featureCount: z.number(),
+    geometryTypes: z.array(z.string()).describe('Geometry types present (Point / LineString / Polygon / …).'),
+    properties: z
+        .array(
+            z.object({
+                name: z.string(),
+                types: z
+                    .array(z.string())
+                    .describe('Distinct JSON value types seen for this key (e.g. ["string"], ["number","null"]).'),
+                coverage: z.number().describe('Fraction of features carrying this key (1 = every feature).'),
+                examples: z
+                    .array(z.union([z.string(), z.number(), z.boolean()]))
+                    .describe('A few short example values for inferring semantics.'),
+            }),
+        )
+        .describe('Per-property profile, highest-coverage first.'),
+    propertiesOmitted: z
+        .number()
+        .optional()
+        .describe('Count of property keys omitted when the data has more distinct keys than the cap.'),
+});
+
+// ---------------------------------------------------------------------------
 // Place (compact summary) — used by geocode, reverse-geocode, search, etc.
 // ---------------------------------------------------------------------------
 

@@ -9,11 +9,16 @@ export {
     type EntryMode,
     type EntryModeSlice,
     type EntryModeSliceName,
-    TOOLS_BY_DATA_ENTRY_KIND,
 } from './src/state/state';
 export type { IncidentSnapshot, MonitoredArea, PollingStatus } from './src/state/traffic-incidents/monitor/types';
 export { BASE_SYSTEM_PROMPT, buildSystemPrompt } from './src/system-prompt';
-export { DEFAULT_TOOLS, getDefaultToolPrompts, TOOL_NAMES, type ToolName } from './src/tools';
+export {
+    DEFAULT_TOOLS,
+    getDefaultToolPrompts,
+    TOOL_NAMES,
+    TOOLS_BY_DATA_ENTRY_KIND,
+    type ToolName,
+} from './src/tools';
 export * from './src/types/index';
 export {
     type ClassificationResult,

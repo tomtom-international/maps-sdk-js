@@ -65,12 +65,19 @@ describe('BYODState', () => {
         expect([...state.shownEntryIds]).toEqual([id]);
     });
 
-    it('default layers are derived from the FeatureCollection geometry when none supplied', async () => {
+    it('creates an entry with no layers when none are supplied (layers are explicit)', async () => {
         const state = new BYODState(mockMap);
         const id = await state.addEntry(pointFC, 'points');
         const entry = state.entries.find((e) => e.id === id);
-        expect(entry?.layers.length).toBeGreaterThan(0);
-        expect(entry?.layers.some((layer) => layer.type === 'circle')).toBe(true);
+        expect(entry?.layers).toEqual([]);
+    });
+
+    it('showEntry is a no-op for a layer-less entry (CustomGeoJSONModule requires >=1 layer)', async () => {
+        const state = new BYODState(mockMap);
+        const id = await state.addEntry(pointFC, 'points');
+        // No layers yet → must not attempt to build a module (which would throw); stays hidden.
+        await expect(state.showEntry(id)).resolves.toBeUndefined();
+        expect(state.shownEntryIds.has(id)).toBe(false);
     });
 
     it('addEntry respects an explicit `layers` override', async () => {
@@ -78,6 +85,37 @@ describe('BYODState', () => {
         const overrides = [{ type: 'fill' as const, paint: { 'fill-color': '#abc' } }];
         const id = await state.addEntry(emptyFC, 'override', { layers: overrides });
         expect(state.entries.find((e) => e.id === id)?.layers).toEqual(overrides);
+    });
+
+    it('setEntryLayers replaces the entry layers and emits entries-change', async () => {
+        const state = new BYODState(mockMap);
+        const id = await state.addEntry(pointFC, 'points');
+        const handler = vi.fn();
+        state.events.on('entries-change', handler);
+
+        const next = [{ type: 'circle' as const, paint: { 'circle-radius': 9 } }];
+        state.setEntryLayers(id, next);
+
+        expect(state.entries.find((e) => e.id === id)?.layers).toEqual(next);
+        expect(handler).toHaveBeenCalledTimes(1);
+    });
+
+    it('setEntryLayers pushes new specs into a live module via applyConfig', async () => {
+        const state = new BYODState(mockMap);
+        const id = await state.addEntry(pointFC, 'points');
+        // Simulate a shown entry: stub the per-entry module so we can assert applyConfig is called.
+        const applyConfig = vi.fn();
+        (state.entries.find((e) => e.id === id) as any)._module = { applyConfig };
+
+        const next = [{ type: 'fill' as const, paint: { 'fill-color': '#123' } }];
+        state.setEntryLayers(id, next);
+
+        expect(applyConfig).toHaveBeenCalledWith({ sources: { data: { layers: next } } });
+    });
+
+    it('setEntryLayers throws for an unknown entry', () => {
+        const state = new BYODState(mockMap);
+        expect(() => state.setEntryLayers('nope', [{ type: 'circle' }])).toThrow(/unknown entry/);
     });
 
     it('setEntryMode("single") trims older entries and emits entries-change', async () => {
@@ -91,6 +129,41 @@ describe('BYODState', () => {
 
         expect(state.entries.map((entry) => entry.id)).toEqual([latestId]);
         expect(handler).toHaveBeenCalledTimes(1);
+    });
+
+    it('addAnalysisToEntry attaches an analysis and emits analysis-added', async () => {
+        const state = new BYODState(mockMap);
+        const id = await state.addEntry(pointFC, 'territories');
+        const handler = vi.fn();
+        state.events.on('analysis-added', handler);
+
+        const ok = state.addAnalysisToEntry(id, {
+            name: 'admin-distribution',
+            timestamp: 1,
+            outputFormat: 'chart',
+            data: { type: 'bar' },
+        });
+
+        expect(ok).toBe(true);
+        expect(state.entries.find((e) => e.id === id)?._analysis).toHaveLength(1);
+        expect(handler).toHaveBeenCalledTimes(1);
+    });
+
+    it('addAnalysisToEntry replaces an existing analysis of the same name', async () => {
+        const state = new BYODState(mockMap);
+        const id = await state.addEntry(pointFC, 'territories');
+        state.addAnalysisToEntry(id, { name: 'dist', timestamp: 1, outputFormat: 'json', data: 1 });
+        state.addAnalysisToEntry(id, { name: 'dist', timestamp: 2, outputFormat: 'json', data: 2 });
+
+        const analyses = state.entries.find((e) => e.id === id)?._analysis;
+        expect(analyses).toHaveLength(1);
+        expect(analyses?.[0]).toMatchObject({ name: 'dist', timestamp: 2, data: 2 });
+    });
+
+    it('addAnalysisToEntry returns false for an unknown entry', () => {
+        const state = new BYODState(mockMap);
+        const ok = state.addAnalysisToEntry('nope', { name: 'x', timestamp: 1, outputFormat: 'json', data: null });
+        expect(ok).toBe(false);
     });
 
     it('reset empties history and emits entries-change + shown-change', async () => {

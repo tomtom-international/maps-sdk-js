@@ -196,6 +196,27 @@ export const shownSchema = z.object({
     zoomMode: z.boolean(),
 });
 
+/**
+ * BYOD `show` options. Mirrors {@link showPlacesSchema} but WITHOUT `markerType`
+ * — BYOD entries render through their own geometry-typed MapLibre layers, so
+ * there is no marker style to pick. Presence of this object means "render now";
+ * omit it to store the entry hidden. `zoomMode` drives the camera and
+ * `hidePreviousEntries` controls which already-shown BYOD entries to clear first.
+ *
+ * @ignore
+ */
+export const showByodSchema = z.object({
+    zoomMode: z
+        .enum(['auto', 'none'])
+        .describe('Camera behaviour. "auto" fits the map to the shown BYOD entries; "none" keeps the map still.'),
+    hidePreviousEntries: hidePreviousEntriesSchema('BYOD'),
+});
+
+/** @ignore */
+export const shownByodSchema = z.object({
+    zoomMode: z.boolean().describe('Whether the camera was moved to fit the shown entries.'),
+});
+
 // --- where schema (geographic scope) ---
 //
 // Discriminated by `mode`. Three modes are shared between locatePlace and discoverPlaces:

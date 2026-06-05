@@ -10,7 +10,11 @@
 
 import { z } from 'zod';
 
-/** Possible kinds in a geometries id. */
+/**
+ * Possible kinds in a geometries id.
+ *
+ * @group Agent Toolkit
+ */
 export type GeometriesIdKind = 'place' | 'places' | 'ranges' | 'customGeometries';
 
 /**
@@ -59,7 +63,11 @@ export const geometriesIdSchema = z
             'Use `recallGeometries` to list every available `{kind, id}` pair.',
     );
 
-/** Tagged id for any polygon source in session state. */
+/**
+ * Tagged id for any polygon source in session state.
+ *
+ * @group Agent Toolkit
+ */
 export type GeometriesId = z.infer<typeof geometriesIdSchema>;
 
 /**

@@ -10,6 +10,7 @@ export * from './resolve-poi-categories';
 export * from './routes-schema-doc';
 export * from './sandbox-code';
 export * from './schema';
+export * from './show-byod-on-map';
 export * from './show-entry-geometries';
 export * from './show-places-on-map';
 export * from './state-inputs';
