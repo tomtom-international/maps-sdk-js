@@ -1,0 +1,101 @@
+---
+title: Bounding Boxes
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.48.2"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+## Working with Bounding Boxes
+
+### bboxFromGeoJSON
+
+Calculates or extracts bounding boxes from GeoJSON objects. The function intelligently handles various GeoJSON types and optimizes performance:
+
+- Uses existing `bbox` properties when available (fastest)
+- Calculates from geometry coordinates when needed
+- Aggregates bounding boxes from collections
+- Optimizes large geometries by sampling points
+
+**Key behavior:** The function prioritizes existing bbox fields over geometry calculations, which is important for Point features from TomTom services that may have a bbox representing a broader area than just the point location.
+
+```javascript
+import { bboxFromGeoJSON } from '@tomtom-org/maps-sdk/core';
+
+// From a Place with existing bbox
+const place = await geocode({ key: 'your-api-key', query: 'Amsterdam' });
+const bbox1 = bboxFromGeoJSON(place);
+// Returns the bbox that came with the place
+
+// From a Polygon geometry (calculates bbox)
+const polygon = {
+  type: 'Polygon',
+  coordinates: [[
+    [4.88, 52.36],
+    [4.90, 52.36],
+    [4.90, 52.38],
+    [4.88, 52.38],
+    [4.88, 52.36]
+  ]]
+};
+const bbox2 = bboxFromGeoJSON(polygon);
+// Returns: [4.88, 52.36, 4.90, 52.38]
+
+// From a FeatureCollection (aggregates all features)
+const places = await search({ key: 'your-api-key', query: 'coffee' });
+const bbox3 = bboxFromGeoJSON(places);
+// Returns bbox encompassing all search results
+
+// From a LineString (calculates from coordinates)
+const route = await calculateRoute({
+  key: 'your-api-key',
+  locations: [[4.9, 52.3], [4.5, 51.9]]
+});
+const bbox4 = bboxFromGeoJSON(route.features[0].geometry);
+// Returns bbox containing the entire route
+
+// From an array of GeoJSON objects
+const bbox5 = bboxFromGeoJSON([place1, place2, place3]);
+// Returns bbox encompassing all three places
+```
+
+**Returns:** `[minLng, minLat, maxLng, maxLat] | undefined` – The bounding box, or `undefined` if input is invalid.
+
+### polygonFromBBox
+
+Converts a bounding box into a GeoJSON Polygon Feature, useful for visualizing bounding box areas on a map.
+
+```javascript
+import { polygonFromBBox } from '@tomtom-org/maps-sdk/core';
+
+// Create a polygon from a bbox
+const bbox = [4.88, 52.36, 4.90, 52.38];
+const polygon = polygonFromBBox(bbox);
+// Returns a GeoJSON Feature with Polygon geometry
+
+// Visualize a bbox on a map
+const places = await search({ key: 'your-api-key', query: 'coffee' });
+const bbox = bboxFromGeoJSON(places);
+if (bbox) {
+  const bboxPolygon = polygonFromBBox(bbox);
+  map.addSource('bbox-area', {
+    type: 'geojson',
+    data: bboxPolygon
+  });
+  map.addLayer({
+    id: 'bbox-outline',
+    type: 'line',
+    source: 'bbox-area',
+    paint: { 'line-color': '#3887be', 'line-width': 2 }
+  });
+}
+```
+
+**Parameters:**
+- `bbox` – Bounding box as `[west, south, east, north]`
+
+**Returns:** `Feature<Polygon>` – A GeoJSON Feature with a closed Polygon geometry representing the bbox area.

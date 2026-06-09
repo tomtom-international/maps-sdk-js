@@ -1,0 +1,216 @@
+---
+title: Code generation
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.48.2"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+<Blockquote type="warning">
+    **Experimental.** `analyseData`, `processData`, and `executeMaplibreCode` let the model run JavaScript inside your application's JS realm. The shape of their inputs, the injected identifiers, and the output contracts may change without notice. **They have no sandbox** — code runs with the same privileges as the rest of your app (DOM, globals, `fetch`, dynamic `import()`). Don't enable them in deployments where you can't trust the model's output, and read the [threat model](#threat-model) below before shipping.
+</Blockquote>
+
+A small set of tools take **JavaScript as a parameter** instead of a fixed argument list. The model writes the code; the plugin compiles it via `new AsyncFunction(...paramNames, code)` and invokes it against state with a few injected helpers.
+
+This is what lets the agent answer open-ended questions — *"bar chart of POI categories"*, *"union the boundaries of these cities"*, *"focus the camera on the worst traffic on the route"* — without the toolkit needing a dedicated parameter for every variation. The tool surface stays flat: one tool per *intent*, arbitrary computation inside.
+
+## Where it shows up
+
+| Family | Tools | What the code does |
+|---|---|---|
+| **Analyse** | `analyseData` | Aggregate state into a result — counts, group-bys, top-N, hex bins, Chart.js configs, cross-kind correlations. Read-only — the result is attached to every contributing entry as `_analysis[name]` and returned to the model. Picks a subset of input kinds via scope (see [Scope-aware data tools](./scope-aware-data-tools.mdx)). |
+| **Process** | `processData` | Transform state. Returns any combination of: `places` (new places entry), `placeConnections` (lines on the new entry), `geometries` (Polygon/MultiPolygon — attached to the new places entry, or written as a new `customGeometries` entry when no `places` is returned), `byod` (new BYOD entry), `fitOnMap` (camera move). Same scope mechanism as `analyseData`. |
+| **MapLibre** | `executeMaplibreCode` | Run arbitrary JS against the live `map` for anything no other tool covers — custom layers, animations, fog, raster overlays. Returns a diff of added / removed / updated sources and layers. |
+
+## Execution model
+
+Each tool that accepts `code` builds an `AsyncFunction` whose parameters are a fixed set of injected identifiers, then calls it with state.
+
+There is **no isolation** — the function runs synchronously in the host realm. In a browser app that means the code has access to `window`, `document`, `fetch`, dynamic `import()`, and every global your bundle ships with.
+
+The body works like any other async function body: top-level `await` is fine, locals and helper consts are fine, and the body must end with `return …;`. Importantly:
+
+- `code` is the function **body**, not a function expression. Writing `(args) => { return result; }` as the whole code creates an arrow and discards it — drop the wrapper and have the body itself end with `return result;`.
+- The sandbox is **not a Node module**: `require` is undefined and ES `import` / `export` statements don't parse inside the function body. Dynamic `import()` is a regular JS expression so it parses, but you don't need it — the libraries you'd reach for (`turf`, `h3`, `routeUtils`) are already injected, and the sanitiser strips `const x = await import(…)` redeclarations of those names.
+- The sandbox **cannot call other tools** (no `functions.discoverPlaces(...)`, no `tools.X`). To bring in new data, call the relevant tool BEFORE the code-generation tool and pass the resulting entry id in.
+
+### Pre-flight sanitisation
+
+LLMs regularly prepend `const turf = require('@turf/turf')`, `const h3 = await import('h3-js')`, or `const places = arguments[0].places` out of habit. These collide with the injected parameters and would throw at parse time ("Identifier 'X' has already been declared") before the body even runs.
+
+`stripInjectedRedeclarations` defensively removes those lines — but **only** when the RHS is one of:
+
+- `require(…)`
+- `import(…)` (with or without `await`)
+- `arguments[N].name` or `arguments[N]['name']`
+
+A `const places = …` that genuinely shadows an injected name (e.g. `const geometries = places.features.map(...)`) is left untouched. This is deliberate — a naive name-only filter would silently corrupt legitimate user code.
+
+### Injected identifiers
+
+| Tool | Injected identifiers |
+|---|---|
+| `analyseData` | `places`, `placesByEntry`, `routes`, `routesByEntry`, `incidents`, `incidentsByEntry`, `geometries`, `trafficAreaAnalytics`, `trafficAreaAnalyticsByEntry`, `byod`, `byodByEntry`, `h3`, `turf` *(plus `previous`, `now`, `log` when `monitor: { entryId }` is set)* |
+| `processData` | same as `analyseData` (minus monitor extras) + `routeUtils` |
+| `executeMaplibreCode` | `map` (live MapLibre `Map` instance) |
+
+Each input identifier is `undefined` when its `*EntryIDs` argument was omitted from the tool call — code must guard before reading (`if (places) ...`, `routes?.features.length`, etc.). Scope narrowing trims which kinds the tool *documents* in its prompt, but the runtime sandbox always carries the full set of names; out-of-scope kinds simply arrive as `undefined`.
+
+### Shared libraries
+
+Two helpers are shared by every code-generation tool:
+
+- **`turf`** — [@turf/turf](https://turfjs.org/) v7: `area`, `length`, `bbox`, `centroid`, `union`, `intersect`, `difference`, `buffer`, `distance`, `booleanPointInPolygon`, `pointsWithinPolygon`, `clustersDbscan`, `convex`, etc.
+- **`h3`** — [h3-js](https://github.com/uber/h3-js): hex-grid math only (`latLngToCell`, `cellToLatLng`, `cellToBoundary`, `polygonToCells`, `gridDisk`, `cellArea`).
+
+Both libraries are pure-geometry. **Neither does spatial search, place lookup, or HTTP.** To fetch new places, the agent must call `discoverPlaces` (or `locatePlace`) BEFORE the code-generation tool and pass the resulting entry id in.
+
+## Turf input gotchas
+
+Turf is fussy about input shape. The runtime hints at the right pattern when it throws, but knowing the rules up front avoids the retry loop:
+
+- **FC-shaped inputs** (`places`, `routes`, `trafficAreaAnalytics`, `byod`) — pass directly: `turf.bbox(places)`. Never `turf.bbox(places.features)`.
+- **Array inputs** (`incidents`, `geometries`, `places.features`) — iterate per-feature (`for (const f of places.features) turf.X(f)`) or wrap with `turf.featureCollection([...])`.
+- **Never** `.map(f => f.geometry.coordinates).flatMap(...)` to feed turf — that strips the feature wrapper turf reads and throws `"coordinates must be an Array"` or mixes Point/LineString shapes silently.
+- **`incidents` is mixed Point + LineString** — guard with `if (inc.geometry.type === "LineString")` before line-only ops.
+- **Turf v7 set ops** — `union` / `intersect` / `difference` take **one** `FeatureCollection`:
+  ```typescript
+  turf.difference(turf.featureCollection([outer, inner]))   // v7 ✓
+  turf.difference(outer, inner)                             // v6 — throws in v7
+  ```
+
+## Performance hints
+
+For large-N nearest/within queries, pre-bucket points with h3 before running turf:
+
+```typescript
+const cells = points.map((p) => h3.latLngToCell(p.geometry.coordinates[1], p.geometry.coordinates[0], 8));
+// Only run turf on same- or neighbour-cell pairs — O(N+M) instead of O(N·M).
+```
+
+Pick `res` so each cell is approximately your query radius (h3 res 8 ≈ 460 m edge; res 9 ≈ 175 m).
+
+## Output contract
+
+### `analyseData` — `outputFormat`
+
+- `"json"` (default) — any JSON-serializable value. Rendered as text in the chat.
+- `"chart"` — a [Chart.js](https://www.chartjs.org/) `ChartConfiguration` (`{ type, data, options? }`). The chat UI passes the config straight to `new Chart(ctx, analysis)`.
+
+The accepted chart types are: `bar`, `line`, `pie`, `doughnut`, `radar`, `polarArea`, `scatter`, `bubble`. Returning a config with any other `type` is rejected before the result reaches the model.
+
+For per-point detail you'd normally put in a Chart.js `tooltip.callbacks` function, use a `string[]` label — Chart.js renders it multi-line on the axis tick AND in the tooltip title. Functions don't survive the JSON boundary.
+
+### `processData` envelope
+
+`processData` returns a structured envelope: `{ places?, placeConnections?, geometries?, fitOnMap?, byod? }`. The side effects (new entry written, connections drawn, polygons rendered or attached, camera moved, BYOD layer created) are derived from which keys the code set.
+
+### Return-value validation
+
+Every code-generation tool runs its return value through three checks before handing it to the model:
+
+1. **Not `undefined`.** If the body doesn't `return` (e.g. the code was written as `(args) => { return … }` so the arrow is created and discarded), the tool surfaces a targeted error telling the model to drop the arrow wrapper.
+2. **`JSON.parse(JSON.stringify(value))`.** This normalizes `NaN`, `Infinity`, `undefined` object values, and sparse arrays to `null` / drops them — silent-poison values that would otherwise break the next turn's `ModelMessage` validation. Circular references throw and surface as a clear LLM-facing error.
+3. **Chart shape check** (for `outputFormat: "chart"` only). The `type` must be in the whitelist above and `data` must be a non-null object.
+
+The net effect: anything that comes out of the sandbox is safe to round-trip through the model's next prompt, or surfaces a precise diagnostic that the model can act on.
+
+## Self-correcting error hints
+
+When sandbox code throws, the runtime matches the message against a curated list of common pitfalls and appends a targeted `Hint:` to the error returned to the model. The model usually corrects on the next attempt.
+
+Patterns recognised include:
+
+| Pattern | What the hint redirects toward |
+|---|---|
+| `Cannot read property of undefined/null` | Missing `?.` / `??`, or a `reduce` callback without `return acc` / initial value. |
+| `h3.X is not a function` / `turf.X is not a function` | Library purpose (hex math / GeoJSON geometry); rejects spatial-search / HTTP use; suggests `discoverPlaces` as the right escape hatch. |
+| `coordinates must be an Array` / `Unknown Geometry Type` | Pass the feature, not bare coordinates; guard mixed-kind arrays like `incidents`. |
+| `Illegal return statement` | Mismatched braces in a multi-line `.map((item) => { ... })`. |
+| `Identifier 'X' has already been declared` | Dropped redeclaration (rare after the sanitiser). |
+| `Unexpected token / identifier / end of input` | Body didn't parse as an async-function body; unbalanced braces or stray `import`/`export`. |
+| `require is not defined` / `import outside a module` | Sandbox is not a Node module — inputs and libraries are already injected. |
+| `functions / tools / discoverPlaces / recallPlaces is not defined` | Sandbox can't call other tools — list entry ids in the tool input, or call the tool BEFORE this one. |
+| `is not iterable` | Default with `?? []` before `for..of` / spread / destructuring. |
+| `Cannot access 'X' before initialization` | Temporal dead zone — move the declaration above the first use. |
+| `Assignment to constant variable` | Use `let` or mutate in place. |
+| `structuredClone / DataCloneError / could not be cloned` | Return value isn't pure JSON — no functions, no classes, no DOM/Map refs; use `string[]` labels instead of tooltip callbacks. |
+
+These hints are part of why scope narrowing is cheap: the model rarely needs every guardrail spelled out in the description, because the runtime corrects it in-band when it actually trips.
+
+## Threat model
+
+Because the code is not isolated, the security boundary is **the language model and the prompt path you let users drive**, not the runtime. Treat model-emitted code the same way you would treat a `<script>` tag controlled by your LLM provider:
+
+- A jailbroken or compromised model can call `fetch(...)`, read cookies, write to `localStorage`, exfiltrate user data, or mutate the page DOM via `executeMaplibreCode` (which holds a live `map` reference).
+- Prompt injection from a tool result (e.g. a place description containing adversarial text) can steer the model into generating malicious code that the model then asks to execute via these tools.
+
+If your deployment context does not tolerate this — e.g. you're embedding the agent in a page with privileged session cookies or sensitive in-browser state — remove the code-generation tools at agent creation:
+
+```typescript
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    tools: {
+        analyseData: false,
+        processData: false,
+        executeMaplibreCode: false,
+    },
+});
+```
+
+The fixed-schema tools (`locatePlace`, `setRoute`, `findReachableAreas`, the recall family, the display family, …) all stay usable without the code-generation surface. You lose open-ended analysis but keep the predictable conversational map control.
+
+## Example
+
+A user asks *"Bar chart of how many places of each category we have."* The classifier picks `analyseData` with `toolScopes.analyseData = { kinds: ['places'] }` — scope narrows the schema and sandbox docs to places only. The model emits:
+
+```typescript
+analyseData({
+    placesEntryIDs: ['places-2'],
+    name: 'category-bar',
+    outputFormat: 'chart',
+    code: `
+        const counts = {};
+        for (const p of places.features)
+            for (const c of (p.properties.poi?.categories ?? []))
+                counts[c] = (counts[c] ?? 0) + 1;
+        const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+        return {
+            type: 'bar',
+            data: {
+                labels: entries.map((e) => e[0]),
+                datasets: [{ label: 'Places', data: entries.map((e) => e[1]) }],
+            },
+        };
+    `,
+});
+```
+
+`places` is a merged GeoJSON `FeatureCollection` over every entry in `placesEntryIDs`; `placesByEntry[id]` keeps them separate when needed. The plugin runs the body, validates that the return value is a Chart.js config, stores it on each source entry as `_analysis['category-bar']`, and returns it to the model. The chat UI receives the same config and renders the chart inline.
+
+## Cross-kind composition
+
+The real power of the unified data tools is that `turf` and `h3` operate on **every feature regardless of which input slot it came from**. You can freely combine `places` (Points), `routes` (LineStrings), `incidents` (Point or LineString), `geometries` (Polygon / MultiPolygon), `trafficAreaAnalytics` (Polygon tiles with metrics), and `byod` (mixed-kind GeoJSON) in the same call.
+
+A few common bridges:
+
+- **Point ↔ LineString** — `turf.pointToLineDistance(point, lineFeature, { units: "meters" })`, `turf.nearestPointOnLine(line, point)`.
+- **Point ↔ Polygon** — `turf.booleanPointInPolygon(point, poly)`, `turf.pointsWithinPolygon(turf.featureCollection(points), poly)`.
+- **LineString ↔ Polygon** — `turf.lineIntersect(line, poly)`, `turf.booleanCrosses(line, poly)`, `turf.lineSplit(line, poly)`.
+- **Polygon ↔ Polygon** — `turf.union/intersect/difference(turf.featureCollection([a, b]))` (Turf v7 takes a single collection).
+- **Point/LineString ↔ trafficAreaAnalytics tile** — iterate `trafficAreaAnalytics.features` to find which tile a place/route segment falls into and read its metric (`tile.properties.congestionLevel`, etc.).
+- **Buffer to bridge kinds** — `turf.buffer(anyFeature, meters/1000, { units: "kilometers" })` turns a point or line into a polygon you can then filter against.
+- **h3** — `h3.latLngToCell(lat, lng, res)` for any Point; `h3.polygonToCells(poly.geometry.coordinates, res)` for any Polygon.
+
+The arguments are GeoJSON Features — pass the whole feature (`places.features[i]`, `routes.features[0]`, `geometries[i]`, …), not the bare `geometry.coordinates`. A few helpers accept coords directly but most expect Features.
+
+## Related
+
+- **[Scope-aware data tools](./scope-aware-data-tools.mdx)** — how the per-turn scope mechanism keeps the prompt small.
+- **[Bring your own data](./byod.mdx)** — feeding BYOD layers into the sandbox via `byodEntryIDs`.
+- **[Customizing tools](./customizing-tools.mdx)** — removing the code-generation tools, or wrapping them with policy.
+- **[State](./state.mdx)** — how `processData` outputs land as new entries.
