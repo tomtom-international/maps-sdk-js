@@ -1,0 +1,181 @@
+---
+title: Agent Toolkit Plugin
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.48.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Agent Toolkit turns a TomTom map into something a user can talk to. Drop in your favourite LLM,
+wire up a chat box, and your users can plan routes, search for places, inspect traffic, and reshape
+the map with sentences instead of clicks.
+
+<SDKGuideLiveCodingExample exampleDirectory="map-chat-agent-react" />
+
+## Why it exists
+
+LLMs are great at *understanding what someone wants*. Maps are great at *showing them where things are*.
+The gap between the two is plumbing — a tool registry the model can call, agent state that survives
+multiple turns, an intent classifier that keeps the prompt small, and a sandbox for the heavy lifts.
+The Agent Toolkit owns that plumbing so you can focus on the experience.
+
+You bring an LLM and (optionally) a chat UI. The plugin handles the rest.
+
+## What you can power with it
+
+A few common shapes the toolkit is good at:
+
+- **Conversational route planning.** *"Drive me from Berlin to Munich avoiding tolls, stop for coffee
+  halfway, and add a charger near the third hour of driving."* — the agent fans out across geocoding,
+  routing, place search, and route mutation tools and renders the full picture on the map.
+- **Operational dashboards.** *"Show me where congestion is worst right now, and chart how many of
+  our delivery vehicles are stuck in it."* — combine the agent's traffic-area-analytics tools with
+  custom tools that read your own fleet state.
+- **Field tools that explain themselves.** *"Outline every neighbourhood that's unreachable from
+  the hospital in 20 minutes."* — the toolkit composes geocoding, isochrones, and a code-execution
+  tool to produce a derived polygon, then renders it.
+- **Bring-your-own-data exploration.** Drop a customer-authored GeoJSON file onto the map and ask
+  *"Filter this to only the points inside the high-congestion tiles"* — the agent loads it as a
+  BYOD layer and slices it in the sandbox.
+- **Map-aware copilots.** A chat panel that lives next to a logistics, real-estate, or operations
+  app — using your custom domain tools alongside the built-in geographic stack.
+
+## What's in the box
+
+`@tomtom-org/maps-sdk-plugin-agent-toolkit` is a **headless** plugin built on
+[Vercel AI SDK](https://ai-sdk.dev/). It wires a `TomTomMap` instance and TomTom services to a
+curated set of LLM-callable tools and runs the multi-step tool loop via `ToolLoopAgent`.
+
+**You bring:**
+- An LLM model — any [Vercel AI SDK provider](https://ai-sdk.dev/providers/ai-sdk-providers)
+  (OpenAI, Anthropic, Azure, Google, …).
+- A chat UI, or programmatic `agent.respond()` calls.
+
+**The plugin provides:**
+- A built-in tool registry covering search, routing, traffic, isochrones, BYOD GeoJSON layers,
+  base-map control, MapLibre access, and code-generated analysis. See [Tools](./tools.mdx).
+- An **intent classifier** that picks the right tools per turn AND emits per-tool scopes so the
+  heavyweight `analyseData` / `processData` schemas narrow to just the kinds of state the turn
+  touches. See [How it works](./how-it-works.mdx) and
+  [Scope-aware data tools](./scope-aware-data-tools.mdx).
+- **Shared agent state** — places, routes, waypoints, reachable ranges, traffic incidents, derived
+  polygons, BYOD layers — that persists across turns so the user can say *"add a stop after the
+  second one"* without repeating context. See [State](./state.mdx).
+- **`analyseData` / `processData`** — two code-execution tools that take user-authored JavaScript
+  and run it in a sandbox against the agent's collected entries (`places`, `routes`, `incidents`,
+  `geometries`, `trafficAreaAnalytics`, `byod`). Lets the LLM compute aggregations, charts, hex bins,
+  intersections, filters, and derived polygons without you predefining every operation.
+- A **composable API** to add, remove, replace, or gate tools — including the ability to disable an
+  entire data-entry kind (e.g. `byod: { enabled: false }`) and have all the related tools drop out
+  of the registry automatically.
+
+## Quickstart
+
+<Blockquote>
+    All plugins use `@tomtom-org/maps-sdk` as a peer dependency — ensure the SDK is installed first.
+    See the [Project Setup guide](../../../introduction/project-setup.mdx) if needed.
+</Blockquote>
+
+### Install
+
+```bash
+npm install @tomtom-org/maps-sdk-plugin-agent-toolkit
+npm install ai @ai-sdk/openai   # or @ai-sdk/anthropic, @ai-sdk/azure, etc.
+```
+
+### Wire it up
+
+```typescript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { createMapAgent } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+import { openai } from '@ai-sdk/openai';
+import { DirectChatTransport, useChat } from 'ai/react';
+
+TomTomConfig.instance.put({ apiKey: 'YOUR_API_KEY' });
+
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+
+    // Optional: tailor which data-entry kinds the agent can touch. Disabling
+    // a kind removes it from analyseData / processData scope AND drops the
+    // related recall / display tools from the registry.
+    dataEntries: {
+        routes: { entryMode: 'single' },          // one route at a time
+        byod: { enabled: false },                 // no BYOD tools in this deployment
+    },
+});
+
+// Wire to any Vercel AI SDK chat interface
+const { messages, sendMessage } = useChat({
+    transport: new DirectChatTransport({ agent }),
+});
+```
+
+### Try it out
+
+Once wired, users can interact naturally:
+
+- *"Route from Berlin to Munich avoiding tolls."*
+- *"Show coffee shops near the map centre."*
+- *"What traffic incidents are on this route?"*
+- *"Switch to dark mode."*
+- *"How far is the second stop?"*
+- *"Chart the distribution of incidents along the route by category."*
+
+### Clean up
+
+```typescript
+agent.destroy();   // resets every built-in and custom state slice that implements reset()
+```
+
+### Working with Claude Code
+
+If you're using [Claude Code](https://claude.com/claude-code) to build against this plugin, the
+repo ships a skill that auto-loads focused context when you ask about the toolkit. Trigger keywords
+include `createMapAgent`, `ToolLoopAgent`, `analyseData`, `processData`, `scopeSchema`,
+`scopePrompt`, `dataEntries`, `addByodSource`, and most other public API names. Drop one into your
+question (or just open a file under `plugins/agent-toolkit/`) and the skill picks it up:
+
+- **`tomtom-maps-sdk-js`** — orientation for *building with* the SDK and the agent-toolkit.
+- **`tomtom-maps-sdk-js-contribution`** — orientation for *contributing to* the SDK itself
+  (workspace layout, build commands, internal architecture).
+
+Both skills sit in `.claude/skills/` in the repo. Nothing else is required — Claude will load them
+on demand when the conversation matches.
+
+## Where to next
+
+The rest of this section breaks the plugin's surface area into focused topics. Roughly in
+"learn enough to ship something" order:
+
+- **[How it works](./how-it-works.mdx)** — the two-phase turn (intent classification, tool loop),
+  system-prompt extension, and classifier observability.
+- **[State](./state.mdx)** — what the plugin remembers across turns, entry mode, the `dataEntries`
+  option, and how to add your own slice.
+- **[Tool registry](./tools.mdx)** — every built-in tool, grouped by what it does.
+- **[Customizing tools](./customizing-tools.mdx)** — remove, replace, add — and how the registry
+  is resolved.
+- **[Bring your own data](./byod.mdx)** — feeding customer-authored GeoJSON into the agent.
+- **[Scope-aware data tools](./scope-aware-data-tools.mdx)** — how `analyseData` and `processData`
+  narrow their per-turn schemas, and how to add your own scopable tools.
+- **[Code generation](./code-generation.mdx)** — the JavaScript-as-parameter pattern, what gets
+  injected into the sandbox, and the threat model worth understanding before you ship.
+
+## API Reference
+
+[Agent Toolkit Plugin API Reference](https://docs.tomtom.com/maps-sdk-js/api-reference/variables/plugins.createMapAgent.html)
+
+## Related guides
+
+- [How the SDK works](../../how-the-sdk-works.mdx) — the Map and Services bundles the agent builds on
+- [Places module](../../map/places.mdx) — module used internally for displaying search results
+- [Routing module](../../map/routes.mdx) — module used internally for rendering routes
+- [Traffic](../../map/traffic.mdx) — traffic tools used by the agent
+- [AI in the SDK](../../../introduction/ai.mdx) — overview of AI capabilities in and around the SDK
