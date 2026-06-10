@@ -1,8 +1,9 @@
-/** Cluster as rendered by the persona UI — parsed from `_analyses.getResult('clusters').data.groups`. */
+export type ClusterTrend = 'growing' | 'fading' | 'steady' | 'new' | 'unknown';
+
+/** Cluster as rendered by the persona UI — built from the `clusters` analysis `data.groups`. */
 export type Cluster = {
     id: string;
     headline: string;
-    body: string;
     centroid: [number, number];
     incidentIds: readonly string[];
     /** Optional evidence the agent computed; UI shows what's present. */
@@ -11,4 +12,6 @@ export type Cluster = {
     peakDelaySeconds?: number;
     diameterKm?: number;
     primaryRoads?: readonly string[];
+    primaryCategory?: string;
+    trend?: ClusterTrend;
 };

@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.48.2](https://github.com/tomtom-international/maps-sdk-js/compare/v0.48.1...v0.48.2) (2026-06-09)
+
+
+### Bug Fixes
+
+* remove sdk dep in examples ([#1832](https://github.com/tomtom-international/maps-sdk-js/issues/1832)) ([077b603](https://github.com/tomtom-international/maps-sdk-js/commit/077b6034c4d6ae51801c6d86037d243cb9ccc398))
+
+## [0.48.1](https://github.com/tomtom-international/maps-sdk-js/compare/v0.48.0...v0.48.1) (2026-06-09)
+
+
+### Features
+
+* **agent-toolkit:** deterministic DBSCAN clustering tool ([c1d31b4](https://github.com/tomtom-international/maps-sdk-js/commit/c1d31b4ddb1e71bf8bcbae5bdc57b3400d9cedcd))
+
+
+### Bug Fixes
+
+* pin assistant-ui ([#1828](https://github.com/tomtom-international/maps-sdk-js/issues/1828)) ([e80b0a1](https://github.com/tomtom-international/maps-sdk-js/commit/e80b0a1ff32b045cce707de27c3f7a7b15bd4e44))
+
 ## [0.48.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.47.9...v0.48.0) (2026-06-05)
 
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createToolState, type TrafficIncidentsEntry } from '../../../state';
+import { createToolState, type IncidentsAnalysisSpec, type TrafficIncidentsEntry } from '../../../state';
 import type { ToolState } from '../../../types';
 import { executeAnalyseData } from '../analyse-data';
 
@@ -54,7 +54,7 @@ describe('analyseData (monitor path — incidents spec rerun)', () => {
         );
         const entry = state.trafficIncidents.entries.find((e: TrafficIncidentsEntry) => e.id === id)!;
         expect(entry._analyses?.specs).toHaveLength(1);
-        expect(entry._analyses!.specs[0].code).toBe('return 2;');
+        expect((entry._analyses!.specs[0] as IncidentsAnalysisSpec).code).toBe('return 2;');
     });
 
     it('reports the affected entry in the response', async () => {

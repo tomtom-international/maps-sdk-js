@@ -1,4 +1,5 @@
 import type { TrafficIncident } from '@tomtom-org/maps-sdk/core';
+import { formatDelay } from '../utils/format';
 
 const MAGNITUDE_COLOR: Record<string, string> = {
     unknown: 'hsl(198, 20%, 54%)',
@@ -15,16 +16,6 @@ const MAGNITUDE_LABEL: Record<string, string> = {
     major: 'Major',
     indefinite: 'Road closed',
 };
-
-function formatDelay(seconds: number | undefined): string | null {
-    if (seconds === undefined) return null;
-    if (seconds < 60) return '< 1 min';
-    const minutes = Math.round(seconds / 60);
-    if (minutes < 60) return `${minutes} min`;
-    const hours = Math.floor(minutes / 60);
-    const remainder = minutes % 60;
-    return remainder === 0 ? `${hours} hr` : `${hours} hr ${remainder} min`;
-}
 
 function formatTime(date: Date | undefined): string | null {
     if (!date) return null;
@@ -59,7 +50,7 @@ const LABEL_CLASS = 'text-(--sdk-font-caption-s) font-semibold uppercase text-(-
 
 export function IncidentDetailsPanel({ incident, overlapCount, onClose }: IncidentDetailsPanelProps) {
     const props = incident.properties;
-    const delay = formatDelay(props.delayInSeconds);
+    const delay = props.delayInSeconds != null ? formatDelay(props.delayInSeconds) : null;
     const start = formatTime(props.startTime);
     const end = formatTime(props.endTime);
     const magnitudeColor = MAGNITUDE_COLOR[props.magnitudeOfDelay] ?? MAGNITUDE_COLOR.unknown;

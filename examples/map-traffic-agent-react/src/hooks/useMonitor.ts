@@ -34,12 +34,10 @@ export function useMonitor(agent: AgentInstance | undefined) {
                 return;
             }
             setMonitoredLabel(entry.label ?? null);
-            // Freshness signal — use the analysis driving the cluster pins
-            // (or the first json one). Cluster parsing itself lives in
-            // useClusters.
-            const jsonAnalyses = entry._analyses?.results.filter((a) => a.outputFormat === 'json') ?? [];
-            const analysis = jsonAnalyses.find((a) => a.name === 'clusters') ?? jsonAnalyses[0];
-            setLastAnalysisAt(analysis?.timestamp ?? null);
+            // Freshness = the entry's latest snapshot moment, set on load and every
+            // monitor tick. Analyses re-run per snapshot and are stamped with the same
+            // moment, so this is the "last analysis" time — no registry reach-in needed.
+            setLastAnalysisAt(entry.timestamp);
         };
 
         unsubs.push(

@@ -21,38 +21,57 @@ This directory contains documentation for SDK development and maintenance:
 
 ```
 documentation/
-├── development/        # Internal development guides
-│   ├── architecture/   # System design and patterns
-│   ├── testing/        # Testing approaches
-│   └── workflows/      # Common development tasks
-└── docs-portal/        # Documentation site source
-    ├── AGENTS.md       # Guide writing instructions
-    ├── guides/         # Customer-facing guides
-    ├── introduction/   # Getting started content
-    └── examples/       # Example code references
+├── development/                # Internal development guides
+│   ├── README.md               # Index of development docs
+│   ├── GETTING_STARTED.md      # Local environment setup
+│   ├── BUILD.md                # Building the SDK workspaces
+│   ├── TESTING.md              # Testing philosophy and commands
+│   ├── QUALITY.md              # Linting/formatting with Biome
+│   ├── DEPENDENCIES.md         # Managing dependencies (pnpm catalog)
+│   ├── DOCUMENTATION.md        # Generating/maintaining docs
+│   ├── DESIGN_PRINCIPLES.md    # SDK design principles & strategy
+│   └── internal/               # TomTom-internal-only docs
+│       ├── CI_CD.md
+│       ├── CREATING_EXAMPLES.md
+│       ├── INTERNAL_DEMOS.md
+│       └── releasing.md
+├── docs-portal/                # Documentation site source
+│   ├── AGENTS.md               # Guide writing instructions
+│   ├── introduction/           # Getting started content
+│   ├── guides/                 # Customer-facing guides (core, map, services, plugins, migration)
+│   ├── examples/               # Example code references
+│   ├── reference/              # API reference landing page
+│   └── api-reference/          # Generated TypeDoc output
+└── scripts/                    # Doc maintenance scripts
 ```
 
 ## For Internal Contributors
 
 ### Getting Started
 1. Read [../CONTRIBUTING.md](../CONTRIBUTING.md) first
-2. Review `development/` directory for technical details
-3. Check architecture docs before making significant changes
+2. Start with [development/GETTING_STARTED.md](development/GETTING_STARTED.md) to set up your environment
+3. Read [development/DESIGN_PRINCIPLES.md](development/DESIGN_PRINCIPLES.md) before making significant changes
 
 ### Key Documents
-- **development/architecture/** - System design, package structure
-- **development/testing/** - How to write and run tests
-- **development/workflows/** - Common development patterns
-- **CONTRIBUTING.md** (at root) - Contribution process and guidelines
+- **[development/README.md](development/README.md)** - Index of all development docs
+- **[development/GETTING_STARTED.md](development/GETTING_STARTED.md)** - Local environment setup
+- **[development/BUILD.md](development/BUILD.md)** - Building the SDK workspaces
+- **[development/TESTING.md](development/TESTING.md)** - Testing philosophy and commands
+- **[development/QUALITY.md](development/QUALITY.md)** - Linting and formatting with Biome
+- **[development/DESIGN_PRINCIPLES.md](development/DESIGN_PRINCIPLES.md)** - The "why" behind the conventions
+- **[../CONTRIBUTING.md](../CONTRIBUTING.md)** (at root) - Contribution process and guidelines
 
 ### Common Workflows
 
 **Contributor wants to:**
-- **Understand SDK architecture** → Read `development/architecture/`
-- **Add a new feature** → Review architecture docs, follow patterns
-- **Write tests** → See `development/testing/`
-- **Release process** → Check release documentation
-- **Write or update guides** → See [docs-portal/AGENTS.md](docs-portal/AGENTS.md) for guide writing instructions
+- **Set up the environment** → [development/GETTING_STARTED.md](development/GETTING_STARTED.md)
+- **Build the SDK** → [development/BUILD.md](development/BUILD.md)
+- **Understand design rationale** → [development/DESIGN_PRINCIPLES.md](development/DESIGN_PRINCIPLES.md)
+- **Write or run tests** → [development/TESTING.md](development/TESTING.md)
+- **Check code quality before committing** → [development/QUALITY.md](development/QUALITY.md)
+- **Manage dependencies** → [development/DEPENDENCIES.md](development/DEPENDENCIES.md)
+- **Release process** → [development/internal/releasing.md](development/internal/releasing.md)
+- **Write or update guides** → [docs-portal/AGENTS.md](docs-portal/AGENTS.md) for guide writing instructions
 
 ## For External Customers
 

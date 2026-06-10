@@ -26,6 +26,13 @@ export {
     executeAnalyseData,
 } from './analyse-data';
 export {
+    CLUSTER_ANALYSIS_NAME,
+    clusterIncidentsDescription,
+    clusterIncidentsOutputSchema,
+    clusterIncidentsSchema,
+    executeClusterIncidents,
+} from './cluster-incidents';
+export {
     executeFocusIncidents,
     focusIncidentsDescription,
     focusIncidentsOutputSchema,

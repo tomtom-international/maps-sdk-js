@@ -1,5 +1,6 @@
 import type { TrafficIncident } from '@tomtom-org/maps-sdk/core';
 import { useMemo, useState } from 'react';
+import { formatDelay } from '../utils/format';
 
 export type TriagePanelProps = {
     incidents: readonly TrafficIncident[];
@@ -320,15 +321,6 @@ function SelectLabel({ label, children }: { label: string; children: React.React
             {children}
         </label>
     );
-}
-
-function formatDelay(seconds: number): string {
-    if (seconds < 60) return '<1m';
-    const min = Math.round(seconds / 60);
-    if (min < 60) return `${min}m`;
-    const h = Math.floor(min / 60);
-    const rm = min % 60;
-    return rm === 0 ? `${h}h` : `${h}h${rm}m`;
 }
 
 function aggregateByRoad(

@@ -9,7 +9,12 @@ import type { StateSlice } from '../../types';
 import { collapseHistoryToLatest, hideAllEntries, pickUniqueEntryId } from '../entry-helpers';
 import { StateEvents } from '../events';
 import type { EntryMode } from '../state';
-import { IncidentsAnalyses, type IncidentsAnalysis, type IncidentsAnalysisSpec } from './analysis';
+import {
+    type DeterministicSpec,
+    IncidentsAnalyses,
+    type IncidentsAnalysis,
+    type IncidentsAnalysisSpec,
+} from './analysis';
 import { IncidentMonitor, type IncidentMonitorDeps } from './monitor/monitor';
 import type { IncidentSnapshot, MonitoredArea } from './monitor/types';
 
@@ -330,6 +335,49 @@ export class TrafficIncidentsState implements StateSlice {
         const entry = this._entries.find((e) => e.id === spec.source);
         if (!entry) return;
         (entry._analyses ??= new IncidentsAnalyses()).register(spec);
+    }
+
+    /**
+     * Register (or replace) a deterministic analysis spec on its source entry — the generic
+     * seam personas build typed analyses on (e.g. incident clustering in the traffic example).
+     * Names are unique per entry; re-registering under an existing name replaces it.
+     * Lazy-creates the entry's {@link IncidentsAnalyses}. With `runNow`, runs the spec once
+     * immediately, attaches the result, and **returns it** so the caller uses the freshly
+     * computed value directly (no read-back, no cast). Returns `undefined` when the source
+     * entry is unknown, `runNow` is not set, or the run threw — so a falsy return is an
+     * unambiguous "no fresh result", never a stale one.
+     */
+    async setDeterministicSpec(spec: DeterministicSpec, opts?: { runNow?: boolean }): Promise<unknown> {
+        const entry = this._entries.find((e) => e.id === spec.source);
+        if (!entry) return undefined;
+        const analyses = (entry._analyses ??= new IncidentsAnalyses());
+        analyses.registerDeterministic(spec);
+        if (!opts?.runNow) return undefined;
+        // Mirror replay's contract: a throwing spec must not propagate a raw exception
+        // out of registration. Swallow it, leave the last good result untouched, and
+        // return undefined so the caller can tell a fresh run from a stale leftover.
+        try {
+            const prev = analyses.getResult(spec.name);
+            const data = await spec.run(entry.data, {
+                previous: prev?.data,
+                sampledAt: entry.timestamp,
+                previousSampledAt: prev?.timestamp,
+            });
+            this.addAnalysisToEntry(entry.id, {
+                name: spec.name,
+                timestamp: entry.timestamp,
+                outputFormat: 'json',
+                data,
+            });
+            return data;
+        } catch {
+            return undefined;
+        }
+    }
+
+    /** Latest result data for a named analysis on an entry, or undefined when absent. */
+    getAnalysisResult(entryId: TrafficIncidentsEntry['id'], name: string): unknown {
+        return this._entries.find((e) => e.id === entryId)?._analyses?.getResult(name)?.data;
     }
 
     /** Remove a spec by name from every entry that carries it. */

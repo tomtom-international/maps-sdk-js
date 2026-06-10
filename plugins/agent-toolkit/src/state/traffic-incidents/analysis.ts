@@ -41,6 +41,51 @@ export type IncidentsAnalysisSpec = {
 };
 
 /**
+ * A deterministic analysis spec — a re-executing analysis whose logic is a
+ * caller-supplied {@link run} callback rather than sandboxed user code. The
+ * generic seam any persona/customer registers against (e.g. the traffic
+ * example's incident clustering); the toolkit stays agnostic about what `run`
+ * computes. Replayed by {@link IncidentsAnalyses} on every monitor-tick of its
+ * source, with the previous result threaded back in for trend continuity.
+ *
+ * @group Agent Toolkit
+ */
+export type DeterministicSpec = {
+    name: string;
+    /** Source entry id the spec reads from. */
+    source: string;
+    /**
+     * Stable key of the registrant's parameters. When it changes on
+     * re-register, the spec's result history is dropped (the new parameters
+     * describe a different analysis); when it is unchanged, history is
+     * preserved so the callback's trend window survives.
+     */
+    signature?: string;
+    /**
+     * Compute a result from the current incidents. `previous` is this spec's
+     * last result (undefined on first run); `sampledAt` is the canonical moment
+     * the data is from; `previousSampledAt` is the moment `previous` was sampled
+     * (undefined on first run). A `run` advancing a rolling window keys it on the
+     * moment, not the call: append when `sampledAt > previousSampledAt`, replace
+     * otherwise — so a re-run of an unchanged snapshot (ID-stability re-read)
+     * doesn't double-count. Sync or async.
+     */
+    run: (
+        data: TrafficIncident[],
+        ctx: { previous: unknown; sampledAt: number; previousSampledAt?: number },
+    ) => unknown | Promise<unknown>;
+};
+
+/**
+ * Union of all supported analysis spec types. Code specs run sandboxed
+ * JavaScript; deterministic specs run a caller-supplied {@link DeterministicSpec.run}
+ * callback.
+ *
+ * @group Agent Toolkit
+ */
+export type AnyAnalysisSpec = IncidentsAnalysisSpec | DeterministicSpec;
+
+/**
  * Run a one-shot incidents analysis spec against an incidents snapshot. Used by
  * `analyseData`'s `monitor` path for the initial result and by {@link IncidentsAnalyses}
  * for each replay tick.
@@ -92,10 +137,10 @@ export const MAX_HISTORY_PER_ANALYSIS = 240;
  * @group Agent Toolkit
  */
 export class IncidentsAnalyses {
-    private _specs: IncidentsAnalysisSpec[] = [];
+    private _specs: AnyAnalysisSpec[] = [];
     private readonly _historyByName = new Map<string, IncidentsAnalysis[]>();
 
-    get specs(): readonly IncidentsAnalysisSpec[] {
+    get specs(): readonly AnyAnalysisSpec[] {
         return this._specs;
     }
 
@@ -136,10 +181,12 @@ export class IncidentsAnalyses {
         const idx = this._specs.findIndex((s) => s.name === spec.name);
         if (idx >= 0) {
             const existing = this._specs[idx];
+            const isCodeSpec = !('run' in existing);
             const materiallyChanged =
-                existing.code !== spec.code ||
-                existing.outputFormat !== spec.outputFormat ||
-                existing.description !== spec.description;
+                !isCodeSpec ||
+                (existing as IncidentsAnalysisSpec).code !== spec.code ||
+                (existing as IncidentsAnalysisSpec).outputFormat !== spec.outputFormat ||
+                (existing as IncidentsAnalysisSpec).description !== spec.description;
             this._specs[idx] = spec;
             if (materiallyChanged) this._historyByName.delete(spec.name);
         } else {
@@ -147,9 +194,38 @@ export class IncidentsAnalyses {
         }
     }
 
-    /** Drop a spec by name. No-op when unknown. Result history is preserved. */
+    /**
+     * Register a deterministic spec, or replace an existing one with the same name.
+     * Drops history when the new spec differs materially — replacing a code spec, or
+     * a changed {@link DeterministicSpec.signature} (its parameters describe a
+     * different analysis). An unchanged signature preserves history so the
+     * callback's trend window survives idempotent re-registers.
+     */
+    registerDeterministic(spec: DeterministicSpec): void {
+        const idx = this._specs.findIndex((s) => s.name === spec.name);
+        if (idx >= 0) {
+            const existing = this._specs[idx];
+            // A missing signature can't certify "same analysis", so treat it as
+            // materially changed — never let a new unsigned spec inherit a prior
+            // (possibly wrong-shaped) result as its `previous`.
+            const materiallyChanged =
+                !('run' in existing) || spec.signature == null || existing.signature !== spec.signature;
+            this._specs[idx] = spec;
+            if (materiallyChanged) this._historyByName.delete(spec.name);
+        } else {
+            this._specs.push(spec);
+        }
+    }
+
+    /**
+     * Forget a spec by name — drops both the spec *and* its result history. No-op
+     * when unknown. History must go too: consumers read latest results via the
+     * history-backed `getResult`, so a preserved history would resurrect a
+     * "removed" analysis on the next read.
+     */
     unregister(name: string): void {
         this._specs = this._specs.filter((s) => s.name !== name);
+        this._historyByName.delete(name);
     }
 
     /**
@@ -162,6 +238,13 @@ export class IncidentsAnalyses {
         if (!history) {
             history = [];
             this._historyByName.set(result.name, history);
+        }
+        // One result per moment: a same-timestamp re-run (e.g. an ID-stability
+        // re-cluster of an unchanged snapshot) overwrites rather than duplicating.
+        const last = history[history.length - 1];
+        if (last && last.timestamp === result.timestamp) {
+            history[history.length - 1] = result;
+            return;
         }
         history.push(result);
         if (history.length > MAX_HISTORY_PER_ANALYSIS) history.shift();
@@ -177,17 +260,43 @@ export class IncidentsAnalyses {
     async replay(data: TrafficIncident[], sampledAt: number): Promise<IncidentsAnalysis[]> {
         const out: IncidentsAnalysis[] = [];
         for (const spec of this._specs) {
-            const result = await runIncidentSpec(spec, data, this.getResult(spec.name)?.data, sampledAt);
-            if ('error' in result) continue;
-            const fresh: IncidentsAnalysis = {
-                name: spec.name,
-                timestamp: sampledAt,
-                ...(spec.description && { description: spec.description }),
-                outputFormat: spec.outputFormat,
-                data: result.value,
-            };
-            this.attach(fresh);
-            out.push(fresh);
+            if ('run' in spec) {
+                // Deterministic spec — run the caller-supplied callback, threading
+                // the previous result. A throwing callback is skipped so one bad
+                // spec never breaks the tick that triggered the replay.
+                try {
+                    const prev = this.getResult(spec.name);
+                    const data2 = await spec.run(data, {
+                        previous: prev?.data,
+                        sampledAt,
+                        previousSampledAt: prev?.timestamp,
+                    });
+                    const fresh: IncidentsAnalysis = {
+                        name: spec.name,
+                        timestamp: sampledAt,
+                        outputFormat: 'json',
+                        data: data2,
+                    };
+                    this.attach(fresh);
+                    out.push(fresh);
+                } catch {
+                    // skip — replay must never break the monitor tick
+                }
+            } else {
+                // Code spec — run sandboxed code
+                const codeSpec = spec as IncidentsAnalysisSpec;
+                const result = await runIncidentSpec(codeSpec, data, this.getResult(codeSpec.name)?.data, sampledAt);
+                if ('error' in result) continue;
+                const fresh: IncidentsAnalysis = {
+                    name: codeSpec.name,
+                    timestamp: sampledAt,
+                    ...(codeSpec.description && { description: codeSpec.description }),
+                    outputFormat: codeSpec.outputFormat,
+                    data: result.value,
+                };
+                this.attach(fresh);
+                out.push(fresh);
+            }
         }
         return out;
     }

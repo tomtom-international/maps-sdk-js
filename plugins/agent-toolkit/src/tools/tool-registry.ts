@@ -2,6 +2,7 @@
  * @module agent-toolkit-tools
  */
 
+import { trafficIncidentRequestCategories } from '@tomtom-org/maps-sdk/core';
 import type { DataEntryKind } from '../state';
 import type { ToolDefinition } from '../types';
 
@@ -92,7 +93,11 @@ import {
     addByodSourceOutputSchema,
     addByodSourceSchema,
     analyseDataBuilder,
+    clusterIncidentsDescription,
+    clusterIncidentsOutputSchema,
+    clusterIncidentsSchema,
     executeAddByodSource,
+    executeClusterIncidents,
     executeFocusIncidents,
     executeGetCurrentWaypoints,
     executeQueryTrafficAnalytics,
@@ -579,6 +584,8 @@ const defaultTools = {
         description: getTrafficIncidentsDescription,
         classificationPrompt:
             'AREA-BOUND incident loader — bbox / viewport / "incidents around here" / "accidents in <city>". ' +
+            // Built from the canonical category list so the classifier hint can't drift from the schema.
+            `Covers every incident category: ${trafficIncidentRequestCategories.join(', ')}. ` +
             'DO NOT pick for route-bound queries ("incidents ALONG / ON the route", "delays on the drive from X to Y"): ' +
             'a calculated route already carries its incidents in `route.properties.sections.traffic[]` (category, ' +
             'magnitudeOfDelay, delayInSeconds, effectiveSpeedInKmh) — call `analyseData` with `routesEntryIDs` for those. ' +
@@ -622,6 +629,29 @@ const defaultTools = {
             'Show only the incidents on the A4',
         ],
         relatedTools: ['analyseData', 'getTrafficIncidents'],
+        dependsOn: ['getTrafficIncidents'],
+    },
+    clusterIncidents: {
+        description: clusterIncidentsDescription,
+        classificationPrompt:
+            'Deterministic DBSCAN clustering of loaded traffic incidents — "clusters / hotspots / dense pockets / worst areas". ' +
+            'Produces stable IDs, road/category labels, delay aggregates, trend detection. Auto-reruns on monitor ticks. ' +
+            'ALWAYS co-pick with getTrafficIncidents + startTrafficIncidentsMonitor.',
+        inputSchema: clusterIncidentsSchema,
+        outputSchema: clusterIncidentsOutputSchema,
+        execute: executeClusterIncidents,
+        tags: ['traffic', 'incident', 'analysis', 'clustering'],
+        examples: [
+            "clusterIncidents({ incidentsEntryID: 'incidents-0' })",
+            "clusterIncidents({ incidentsEntryID: 'incidents-0', eps: 0.3, minMembers: 4, maxClusters: 8 })",
+        ],
+        examplePrompts: [
+            'Cluster the incidents',
+            'Show me the hotspots',
+            'Where are the worst congestion pockets?',
+            'Group the incidents into clusters',
+        ],
+        relatedTools: ['getTrafficIncidents', 'startTrafficIncidentsMonitor', 'analyseData', 'focusIncidents'],
         dependsOn: ['getTrafficIncidents'],
     },
     startTrafficIncidentsMonitor: {
@@ -1469,6 +1499,7 @@ export const TOOLS_BY_DATA_ENTRY_KIND: Record<DataEntryKind, readonly ToolName[]
         'startTrafficIncidentsMonitor',
         'stopTrafficIncidentsMonitor',
         'getShownTileIncidents',
+        'clusterIncidents',
     ],
     customGeometries: ['recallGeometries'],
     trafficAreaAnalytics: ['getTrafficAreaAnalytics', 'queryTrafficAnalytics', 'updateTrafficAreaAnalyticsDisplay'],

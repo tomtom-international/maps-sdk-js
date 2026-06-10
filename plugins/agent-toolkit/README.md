@@ -6,10 +6,19 @@ No UI is included — bring your own chat interface. No LLM provider is bundled 
 
 > **Full documentation** — guides, architecture diagrams, and tutorials are available at [docs.tomtom.com](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/overview).
 
+## Design principles
+
+1. **Client-side only** — uses AI SDK's `DirectChatTransport` + `ToolLoopAgent`. The consumer provides the model; no server infrastructure is required.
+2. **No bundled LLM provider** — supply any AI SDK-compatible `LanguageModel`. Keeps the package provider-agnostic.
+3. **Token-efficient** — all service responses are summarized before reaching the LLM. Full GeoJSON stays in `ToolState`.
+4. **Lazy module initialization** — map modules are instantiated on first use and cached in state.
+5. **Coordinate convention** — always `[longitude, latitude]` per GeoJSON standard, enforced throughout.
+6. **Task-oriented tools** — tool boundaries follow user tasks, not SDK API surface, so a single prompt maps to a single tool call.
+
 ## Installation
 
 ```bash
-pnpm add @tomtom-org/maps-sdk @tomtom-org/maps-sdk-plugin-agent-toolkit ai zod maplibre-gl
+pnpm add @tomtom-org/maps-sdk @tomtom-org/maps-sdk-plugin-agent-toolkit ai zod maplibre-gl @turf/turf chart.js h3-js
 ```
 
 Install at least one AI SDK provider:
@@ -49,7 +58,8 @@ console.log(result.text);
 ### With React (`useChat`)
 
 ```typescript
-import { DirectChatTransport, useChat } from 'ai/react';
+import { DirectChatTransport } from 'ai';
+import { useChat } from '@ai-sdk/react';
 
 const agent = createMapAgent(map, { model: openai('gpt-4o') });
 
@@ -477,96 +487,21 @@ agent.destroy(); // Reset all state slices (call on unmount)
 
 ## Public API exports
 
-```typescript
-// Main factory
-export { createMapAgent } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+The main entry point is `createMapAgent`; `DEFAULT_TOOLS` and `BASE_SYSTEM_PROMPT` cover the most common customizations (see the examples above).
 
-// Tool registry and composition
-export {
-    DEFAULT_TOOLS,
-    getDefaultToolPrompts,
-    resolveTools,
-    TOOL_NAMES,
-    type ToolName,
-} from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
-
-// System prompt
-export { BASE_SYSTEM_PROMPT } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
-
-// Data-entry & entry-mode introspection
-export {
-    DATA_ENTRY_KIND_TO_SLICE,
-    ENTRY_MODE_SLICE_NAMES,
-    TOOLS_BY_DATA_ENTRY_KIND,
-    type DataEntryConfig,
-    type DataEntryKind,
-    type EntryDataKind,
-    type EntryMode,
-    type EntryModeSlice,
-    type EntryModeSliceName,
-} from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
-
-// Geometries id schema (tagged `{ kind, id }` accepted by analyseData/processData)
-export {
-    geometriesIdSchema,
-    type GeometriesId,
-    type GeometriesIdKind,
-} from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
-
-// State digest (for dev panels / debug UIs)
-export {
-    formatStateDigestDiff,
-    getStateDigest,
-    type StateDigest,
-} from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
-
-// Classifier
-export {
-    classifyUserIntent,
-    createDefaultClassifier,
-    extractLastUserText,
-    type ClassificationResult,
-    type Classifier,
-    type ClassifierContext,
-    type ClassifierOptions,
-} from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
-
-// Traffic-incidents monitor types
-export type {
-    IncidentSnapshot,
-    MonitoredArea,
-    PollingStatus,
-} from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
-
-// Core types — `StateSlice`, `ToolState`, `MapAgentOptions`, `MapAgentInstance`,
-// `ToolEntry`, `ToolEntryBuilder`, `ToolDefinition`, `ToolBuildOptions`,
-// `ToolMetadata`, `ToolName`, `ToolNameHint`, `FeatureFlags`, entry/analysis
-// types (`PlacesEntry`, `PlacesAnalysis`, `RoutesEntry`, `RoutesAnalysis`,
-// `BYODEntry`, `BYODSource`, `CustomGeometriesEntry`, `CustomGeometriesAnalysis`,
-// `GeometryProvenance`, `RangesEntry`, `ReachableRange`, `RouteParams`,
-// `TrafficAreaAnalyticsEntry`, `TrafficAreaAnalyticsAnalysis`,
-// `TrafficAreaAnalyticsParams`, `TrafficIncidentsEntry`, `IncidentsAnalysis`),
-// and more.
-export type * from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
-```
+For the complete, always-current list of exports — factories, tool-registry helpers, state introspection, the classifier, and all types — see the [API reference](https://docs.tomtom.com/maps-sdk-js/reference).
 
 ## Dependencies
 
 | Type | Package | Purpose |
 |---|---|---|
 | Peer | `@tomtom-org/maps-sdk` | TomTom Maps SDK (types, services, map modules) |
-| Peer | `ai@^6.0.0` | Vercel AI SDK (ToolLoopAgent, tool types) |
-| Peer | `zod@^3.23.0` | Schema validation |
-| Peer | `maplibre-gl@^5.0.0` | Map rendering engine |
-
-## Design principles
-
-1. **Client-side only** — uses AI SDK's `DirectChatTransport` + `ToolLoopAgent`. The consumer provides the model; no server infrastructure is required.
-2. **No bundled LLM provider** — supply any AI SDK-compatible `LanguageModel`. Keeps the package provider-agnostic.
-3. **Token-efficient** — all service responses are summarized before reaching the LLM. Full GeoJSON stays in `ToolState`.
-4. **Lazy module initialization** — map modules are instantiated on first use and cached in state.
-5. **Coordinate convention** — always `[longitude, latitude]` per GeoJSON standard, enforced throughout.
-6. **Task-oriented tools** — tool boundaries follow user tasks, not SDK API surface. See [ENGINEERING-GUIDELINES.md](./ENGINEERING-GUIDELINES.md).
+| Peer | `ai@^6` | Vercel AI SDK (ToolLoopAgent, tool types) |
+| Peer | `zod@^4` | Schema validation |
+| Peer | `maplibre-gl@^5` | Map rendering engine |
+| Peer | `@turf/turf@^7` | Geospatial math (distance, bbox, bearing) used by the data tools |
+| Peer | `chart.js@^4` | Chart rendering for `analyseData` outputs |
+| Peer | `h3-js@^4` | H3 hexagonal grid for `processData` coverage / hexgrid visualizations |
 
 ## References
 
@@ -579,6 +514,5 @@ export type * from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
     - [Scope-aware data tools](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/scope-aware-data-tools) — per-turn scope mechanism
     - [Bring your own data](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/byod) — ingest customer GeoJSON layers
 - [AI SDK v6 documentation](https://ai-sdk.dev/)
-- [TomTom Maps SDK documentation](https://developer.tomtom.com/)
-- [Engineering guidelines](./ENGINEERING-GUIDELINES.md) — tool design standards, state management, system prompt structure
+- [TomTom Maps SDK documentation](https://docs.tomtom.com/maps-sdk-js)
 - [Example application](../../examples/map-chat-agent-react) — full chat interface implementation

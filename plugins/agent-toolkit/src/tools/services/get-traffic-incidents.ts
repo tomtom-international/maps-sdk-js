@@ -179,6 +179,13 @@ const trafficIncidentsWhereSchema = z
             'the union is sent to the SDK (≤10,000 km²).',
     );
 
+// The canonical category values listed inline so the agent maps the user's wording to the closest
+// one (e.g. "roadblock" → `road-closed`) instead of giving up when their term isn't a literal enum.
+// Built from `trafficIncidentRequestCategories` — single source of truth, can't drift.
+const categoryFilterDescription = `Filter by incident category (server-side). Canonical values: ${trafficIncidentRequestCategories.join(
+    ', ',
+)}. Map the user's wording to the closest value. If omitted, all categories are returned.`;
+
 /**
  * Tool schema for fetching traffic incident details.
  */
@@ -189,7 +196,7 @@ export const getTrafficIncidentsSchema = z.object({
     categoryFilter: z
         .array(z.enum([...trafficIncidentRequestCategories]))
         .optional()
-        .describe('Filter by incident category. If omitted, all categories are returned.'),
+        .describe(categoryFilterDescription),
     timeValidityFilter: z
         .array(z.enum(['present', 'future']))
         .optional()

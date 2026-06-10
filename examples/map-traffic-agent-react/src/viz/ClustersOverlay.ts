@@ -1,5 +1,14 @@
 import { type Map as MapLibreMap, Marker } from 'maplibre-gl';
 import type { Cluster } from '../agent/types';
+import { formatDelay } from '../utils/format';
+
+const TREND_ICONS: Record<string, string> = {
+    growing: '↑',
+    fading: '↓',
+    steady: '→',
+    new: '★',
+    unknown: '',
+};
 
 export type ClustersOverlayOptions = {
     onClick?: (cluster: Cluster) => void;
@@ -20,13 +29,29 @@ export class ClustersOverlay {
         this.markers = [];
 
         clusters.forEach((c, idx) => {
-            if (!c.centroid || c.centroid[0] === 0) return;
+            // Skip only a null-island centroid (0,0); a real lng of 0 (London/Spain) is valid.
+            if (!c.centroid || (c.centroid[0] === 0 && c.centroid[1] === 0)) return;
             const el = document.createElement('button');
             el.type = 'button';
             el.className = 'cluster-pin';
+            el.dataset.trend = c.trend ?? 'unknown';
             el.title = `${c.headline} — ${c.incidentIds.length} incidents`;
-            el.setAttribute('aria-label', `Cluster ${idx + 1}: ${c.headline}`);
-            el.innerHTML = `<span class="cluster-pin-ring"></span><span class="cluster-pin-num">${idx + 1}</span>`;
+            el.setAttribute('aria-label', `Cluster ${idx + 1}: ${c.headline} — ${c.incidentIds.length} incidents`);
+
+            const delay =
+                c.totalDelaySeconds != null && c.totalDelaySeconds > 0 ? formatDelay(c.totalDelaySeconds) : null;
+            const trendIcon = TREND_ICONS[c.trend ?? 'unknown'] ?? '';
+
+            el.innerHTML = [
+                '<span class="cluster-pin-bg"></span>',
+                `<span class="cluster-pin-number">${idx + 1}</span>`,
+                '<span class="cluster-pin-body">',
+                delay ? `<span class="cluster-pin-delay">${delay}</span>` : '',
+                `<span class="cluster-pin-count">${c.incidentIds.length} inc</span>`,
+                '</span>',
+                trendIcon ? `<span class="cluster-pin-trend">${trendIcon}</span>` : '',
+            ].join('');
+
             el.addEventListener('click', (e) => {
                 e.stopPropagation();
                 this.options.onClick?.(c);

@@ -1,4 +1,12 @@
 import type { Cluster } from '../agent/types';
+import { formatDelay } from '../utils/format';
+
+const TREND_BADGE: Record<string, { label: string; color: string }> = {
+    growing: { label: '↑ Growing', color: 'bg-red-500/15 text-red-400' },
+    fading: { label: '↓ Fading', color: 'bg-green-500/15 text-green-400' },
+    steady: { label: '→ Steady', color: 'bg-blue-500/15 text-blue-400' },
+    new: { label: '★ New', color: 'bg-purple-500/15 text-purple-400' },
+};
 
 export type ClusterPanelProps = {
     clusters: readonly Cluster[];
@@ -60,12 +68,21 @@ export function ClusterPanel({ clusters, focusedIds, onFocusCluster, onClearClus
                                 <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-(--sdk-border-low) bg-(--sdk-surface-1) text-[11px] font-semibold text-(--sdk-text-high)">
                                     {idx + 1}
                                 </span>
+                                {c.trend && TREND_BADGE[c.trend] && (
+                                    <span
+                                        className={`rounded px-1.5 py-0.5 text-[9px] font-semibold ${TREND_BADGE[c.trend].color}`}
+                                    >
+                                        {TREND_BADGE[c.trend].label}
+                                    </span>
+                                )}
                             </div>
                             <h4 className="m-0 text-[13px] font-semibold leading-snug text-(--sdk-text-high)">
                                 {c.headline}
                             </h4>
-                            <p className="m-0 text-[12px] leading-relaxed text-(--sdk-text-medium)">{c.body}</p>
-                            {(c.size != null || c.peakDelaySeconds != null || c.diameterKm != null) && (
+                            {(c.size != null ||
+                                c.totalDelaySeconds != null ||
+                                c.peakDelaySeconds != null ||
+                                c.diameterKm != null) && (
                                 <p
                                     aria-label="Evidence"
                                     className="m-0 flex flex-wrap items-center gap-1 text-[11px] leading-snug text-(--sdk-text-low) [font-variant-numeric:tabular-nums]"
@@ -75,13 +92,23 @@ export function ClusterPanel({ clusters, focusedIds, onFocusCluster, onClearClus
                                             {c.size} incidents
                                         </span>
                                     )}
+                                    {c.totalDelaySeconds != null && c.totalDelaySeconds > 0 && (
+                                        <>
+                                            <span aria-hidden className="text-(--sdk-text-low)">
+                                                ·
+                                            </span>
+                                            <span className="text-(--sdk-text-medium)">
+                                                {formatDelay(c.totalDelaySeconds)} total
+                                            </span>
+                                        </>
+                                    )}
                                     {c.peakDelaySeconds != null && c.peakDelaySeconds > 0 && (
                                         <>
                                             <span aria-hidden className="text-(--sdk-text-low)">
                                                 ·
                                             </span>
                                             <span className="text-(--sdk-text-medium)">
-                                                peak +{Math.round(c.peakDelaySeconds / 60)} min
+                                                peak {formatDelay(c.peakDelaySeconds)}
                                             </span>
                                         </>
                                     )}

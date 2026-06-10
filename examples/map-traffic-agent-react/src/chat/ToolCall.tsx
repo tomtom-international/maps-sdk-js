@@ -156,7 +156,7 @@ function ToolCallSection({ label, children }: { label: string; children: React.R
 // Agent-toolkit `analyse*` tools return a Chart.js configuration alongside the structured
 // analysis when invoked with `outputFormat: "chart"`. Surface it inline so the user sees a
 // chart instead of a JSON blob; fall back to the raw output otherwise.
-const CHART_PRODUCING_TOOLS = new Set(['analysePlaces', 'analyseRoutes', 'analyseIncidents']);
+const CHART_PRODUCING_TOOLS = new Set(['analyseData']);
 function extractChartConfig(toolName: string, output: unknown): unknown | null {
     if (!CHART_PRODUCING_TOOLS.has(toolName) || !output || typeof output !== 'object') return null;
     const o = output as { outputFormat?: unknown; analysis?: unknown };

@@ -196,68 +196,123 @@ body {
     }
 }
 
-/* ─── Cluster map pins (MapLibre HTML markers) ─────────────────────────── */
-/* These are DOM elements injected by MapLibre outside of React's tree, so they can't carry
-   Tailwind utility classes from JSX. The pin's container is `.cluster-pin`, with a `.cluster-pin-ring`
-   absolutely-positioned background and a `.cluster-pin-num` label on top. The pulse keyframes
-   animate focused clusters. */
-
+/* ── Cluster pins ────────────────────────────────────────── */
 .cluster-pin {
     position: relative;
-    width: 36px;
-    height: 36px;
     border: 0;
     background: transparent;
     padding: 0;
     cursor: pointer;
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
+    gap: 2px;
+    height: 32px;
+    white-space: nowrap;
+    animation: cluster-pin-enter 200ms ease-out;
 }
-
 .cluster-pin:focus-visible {
     outline: 2px solid #fff;
     outline-offset: 2px;
-    border-radius: 999px;
+    border-radius: 4px;
 }
-
-.cluster-pin-ring {
+.cluster-pin-bg {
     position: absolute;
     inset: 0;
-    border-radius: 999px;
+    border-radius: 16px;
     background: var(--_cluster-color, hsl(210, 40%, 55%));
     box-shadow:
-        0 0 0 3px hsla(0, 0%, 100%, 0.9),
-        0 2px 8px hsla(0, 0%, 0%, 0.4);
+        0 0 0 2px hsla(0, 0%, 100%, 0.9),
+        0 2px 6px hsla(0, 0%, 0%, 0.35);
 }
-
-.cluster-pin-num {
+.cluster-pin[data-trend="growing"] {
+    --_cluster-color: hsl(0, 72%, 50%);
+}
+.cluster-pin[data-trend="fading"] {
+    --_cluster-color: hsl(145, 55%, 42%);
+}
+.cluster-pin[data-trend="steady"] {
+    --_cluster-color: hsl(210, 40%, 55%);
+}
+.cluster-pin[data-trend="new"] {
+    --_cluster-color: hsl(270, 60%, 55%);
+}
+.cluster-pin[data-trend="unknown"] {
+    --_cluster-color: hsl(210, 40%, 55%);
+}
+.cluster-pin[data-trend="growing"] .cluster-pin-bg {
+    animation: cluster-pin-pulse 2s ease-out infinite;
+}
+.cluster-pin-number {
     position: relative;
     z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    margin-left: 5px;
+    border-radius: 50%;
+    background: hsla(0, 0%, 100%, 0.25);
     color: #fff;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 700;
-    text-shadow: 0 1px 2px hsla(0, 0%, 0%, 0.4);
+    font-family: var(--sdk-font-family, system-ui, sans-serif);
+    text-shadow: 0 1px 2px hsla(0, 0%, 0%, 0.3);
+}
+.cluster-pin-body {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 2px 0;
+    line-height: 1.1;
+}
+.cluster-pin-delay {
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: var(--sdk-font-family, system-ui, sans-serif);
+    text-shadow: 0 1px 2px hsla(0, 0%, 0%, 0.3);
+}
+.cluster-pin-count {
+    color: hsla(0, 0%, 100%, 0.8);
+    font-size: 9px;
+    font-weight: 600;
     font-family: var(--sdk-font-family, system-ui, sans-serif);
 }
-
+.cluster-pin-trend {
+    position: relative;
+    z-index: 1;
+    margin-right: 6px;
+    color: #fff;
+    font-size: 11px;
+    text-shadow: 0 1px 2px hsla(0, 0%, 0%, 0.3);
+}
+@keyframes cluster-pin-enter {
+    from {
+        opacity: 0;
+        transform: scale(0.7);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
 @keyframes cluster-pin-pulse {
     0% {
         box-shadow:
-            0 0 0 3px hsla(0, 0%, 100%, 0.9),
-            0 0 0 0 hsla(18, 75%, 48%, 0.55),
-            0 2px 8px hsla(0, 0%, 0%, 0.4);
+            0 0 0 2px hsla(0, 0%, 100%, 0.9),
+            0 2px 6px hsla(0, 0%, 0%, 0.35);
     }
-    70% {
+    50% {
         box-shadow:
-            0 0 0 3px hsla(0, 0%, 100%, 0.9),
-            0 0 0 14px hsla(18, 75%, 48%, 0),
-            0 2px 8px hsla(0, 0%, 0%, 0.4);
+            0 0 0 2px hsla(0, 0%, 100%, 0.9),
+            0 0 0 8px hsla(0, 72%, 50%, 0.3),
+            0 2px 6px hsla(0, 0%, 0%, 0.35);
     }
     100% {
         box-shadow:
-            0 0 0 3px hsla(0, 0%, 100%, 0.9),
-            0 0 0 0 hsla(18, 75%, 48%, 0),
-            0 2px 8px hsla(0, 0%, 0%, 0.4);
+            0 0 0 2px hsla(0, 0%, 100%, 0.9),
+            0 2px 6px hsla(0, 0%, 0%, 0.35);
     }
 }

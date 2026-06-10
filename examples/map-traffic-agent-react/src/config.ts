@@ -31,8 +31,7 @@ if (resolved.length === 0) {
 export const availableDeployments: readonly string[] = resolved;
 export const defaultDeploymentId = resolved[0];
 
-const fetchWithCredentials: typeof fetch = (input, init) =>
-    fetch(input, { ...init, credentials: 'include' });
+const fetchWithCredentials: typeof fetch = (input, init) => fetch(input, { ...init, credentials: 'include' });
 
 /**
  * Build an Azure OpenAI client appropriate for the runtime:

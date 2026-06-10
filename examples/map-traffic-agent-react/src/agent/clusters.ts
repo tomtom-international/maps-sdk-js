@@ -1,11 +1,14 @@
 import type { TrafficIncident } from '@tomtom-org/maps-sdk/core';
-import type { Cluster } from './types';
+import type { Cluster, ClusterTrend } from './types';
 
+/**
+ * Structured cluster payload as stored by the clustering analysis spec
+ * (`runClustering` output). Display strings are composed here in the UI, not
+ * carried on the payload.
+ */
 type ClustersAnalysisData = {
     groups: ReadonlyArray<{
         id: string;
-        headline: string;
-        body: string;
         memberIds: readonly string[];
         centroid: [number, number];
         size?: number;
@@ -13,10 +16,37 @@ type ClustersAnalysisData = {
         peakDelaySeconds?: number;
         diameterKm?: number;
         primaryRoads?: readonly string[];
+        primaryCategory?: string;
+        trend?: ClusterTrend;
     }>;
 };
 
 type RawGroup = Partial<ClustersAnalysisData['groups'][number]>;
+
+const TRENDS: ReadonlySet<ClusterTrend> = new Set(['growing', 'fading', 'steady', 'new', 'unknown']);
+
+/** Materialise UI Clusters from the canonical `{ groups: [...] }` analysis payload. */
+export function clustersFromAnalysis(data: unknown, incidents: readonly TrafficIncident[]): Cluster[] {
+    if (!data || typeof data !== 'object') return [];
+    if (!('groups' in data) || !Array.isArray((data as ClustersAnalysisData).groups)) return [];
+    const groups = (data as ClustersAnalysisData).groups as readonly RawGroup[];
+
+    const knownIds = new Set<string>();
+    for (const f of incidents) {
+        const id = f.properties.id;
+        if (typeof id === 'string') knownIds.add(id);
+    }
+    return groups.map((g) => normaliseGroup(g, incidents, knownIds)).filter((c): c is Cluster => c !== null);
+}
+
+/** Headline for a cluster: top roads when present, else its category. */
+export function clusterHeadline(g: { primaryRoads?: readonly string[]; primaryCategory?: string }): string {
+    if (g.primaryRoads && g.primaryRoads.length > 0) {
+        return `${g.primaryRoads.slice(0, 2).join(' / ')} area`;
+    }
+    const cat = g.primaryCategory ?? 'incident';
+    return `${cat.charAt(0).toUpperCase()}${cat.slice(1)} cluster`;
+}
 
 function normaliseGroup(g: RawGroup, incidents: readonly TrafficIncident[], knownIds: Set<string>): Cluster | null {
     if (typeof g.id !== 'string') return null;
@@ -39,8 +69,7 @@ function normaliseGroup(g: RawGroup, incidents: readonly TrafficIncident[], know
 
     return {
         id: g.id,
-        headline: typeof g.headline === 'string' ? g.headline : '',
-        body: typeof g.body === 'string' ? g.body : '',
+        headline: clusterHeadline(g),
         centroid,
         incidentIds: memberIds,
         size: g.size,
@@ -48,19 +77,7 @@ function normaliseGroup(g: RawGroup, incidents: readonly TrafficIncident[], know
         peakDelaySeconds: g.peakDelaySeconds,
         diameterKm: g.diameterKm,
         primaryRoads: g.primaryRoads,
+        primaryCategory: g.primaryCategory,
+        trend: g.trend && TRENDS.has(g.trend) ? g.trend : 'unknown',
     };
-}
-
-/** Materialise UI Clusters from the canonical `{ groups: [...] }` analysis payload. */
-export function clustersFromAnalysis(data: unknown, incidents: readonly TrafficIncident[]): Cluster[] {
-    if (!data || typeof data !== 'object') return [];
-    if (!('groups' in data) || !Array.isArray((data as ClustersAnalysisData).groups)) return [];
-    const groups = (data as ClustersAnalysisData).groups as readonly RawGroup[];
-
-    const knownIds = new Set<string>();
-    for (const f of incidents) {
-        const id = f.properties.id;
-        if (typeof id === 'string') knownIds.add(id);
-    }
-    return groups.map((g) => normaliseGroup(g, incidents, knownIds)).filter((c): c is Cluster => c !== null);
 }
