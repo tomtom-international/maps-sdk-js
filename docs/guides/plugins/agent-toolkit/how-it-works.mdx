@@ -1,0 +1,414 @@
+---
+title: How the Agent Toolkit works
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.48.3"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Agent Toolkit sits between your application (chat UI and LLM provider) and the TomTom Maps SDK.
+Each user message goes through two phases — intent classification, then a tool loop — and shared
+plugin state carries context across turns.
+
+```d2
+direction: right
+App: Your Application {
+  style: {
+    stroke: "#f87171"
+    stroke-width: 3
+    border-radius: 8
+    font-size: 24
+  }
+
+  Chat: Chat UI (BYO) {
+    style: {
+      fill: "#fef2f2"
+      stroke: "#f87171"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 16
+    }
+  }
+
+  Model: LLM Provider (BYO) {
+    style: {
+      fill: "#fef2f2"
+      stroke: "#f87171"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 16
+    }
+  }
+}
+
+  Agent: Agent Toolkit Plugin {
+    direction: down
+    style: {
+      stroke: "#333"
+      stroke-width: 3
+      fill: "#f5f5f5"
+      border-radius: 8
+      font-size: 24
+      font-color: "#333"
+    }
+
+    Classifier: Intent Classifier {
+      style: {
+        fill: "#e8f5e9"
+        stroke: "#1b5e20"
+        stroke-width: 2
+        font-color: "#333"
+        border-radius: 6
+        font-size: 16
+      }
+      width: 150
+      height: 50
+    }
+
+    Tools: Tools {
+      style: {
+        fill: "#fffde7"
+        stroke: "#ff6f00"
+        stroke-width: 2
+        font-color: "#333"
+        border-radius: 6
+        font-size: 16
+      }
+      width: 150
+      height: 50
+    }
+
+    State: State {
+      style: {
+        fill: "#f3e5f5"
+        stroke: "#4a148c"
+        stroke-width: 2
+        font-color: "#333"
+        border-radius: 6
+        font-size: 16
+      }
+      width: 150
+      height: 50
+    }
+
+    Classifier -> Tools: {
+      style: {
+        stroke-dash: 3
+        stroke-width: 2
+        animated: true
+      }
+    }
+
+    Tools -> State: {
+      style: {
+        stroke-dash: 3
+        stroke-width: 2
+        animated: true
+      }
+    }
+  }
+
+  SDK: Maps SDK for JavaScript {
+    style: {
+      stroke: "#333"
+      stroke-width: 3
+      fill: "#e8e8e8"
+      border-radius: 8
+      font-size: 16
+      font-color: "#333"
+    }
+  }
+
+  Agent.Tools -> SDK: {
+    style: {
+      stroke-dash: 3
+      stroke-width: 2
+      animated: true
+    }
+  }
+
+App -> Agent: {
+  style: {
+    stroke: "#f87171"
+    stroke-width: 2
+  }
+}
+```
+
+## 1. Intent classification
+
+Before the model sees the full tool list, a lightweight pre-pass selects only the tools relevant
+to this turn. Fewer tools in the prompt means fewer wrong choices and lower token usage.
+
+The classifier is built from each tool's `classificationPrompt` — a one-liner that describes when
+to activate that tool. When you add a custom tool, it participates in classification automatically
+as long as it has a `classificationPrompt`.
+
+For *scopable* tools (`analyseData`, `processData`, and any custom tool that declares a
+`scopeSchema` + `scopePrompt`), the classifier also emits a `toolScopes[<name>]` value naming the
+narrower input kinds the turn touches — mandatory whenever a scopable tool is selected. `prepareStep`
+validates the scope against the tool's `scopeSchema` and rebuilds that tool's `description` +
+`inputSchema` for the upcoming step into a per-kind narrowed surface. The narrowing is invisible to
+the model — it just sees a smaller, more focused prompt. See
+[Scope-aware data tools](./scope-aware-data-tools.mdx) for the contract and how to add scopable
+custom tools.
+
+The default classifier reuses your main model. For cost-sensitive deployments, swap it for a
+smaller model:
+
+```typescript
+import { createMapAgent, createDefaultClassifier } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+import { openai } from '@ai-sdk/openai';
+
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    classifier: createDefaultClassifier({ model: openai('gpt-4o-mini') }),
+});
+```
+
+Or disable classification entirely (all tools always visible; scopable tools fall back to their
+terse unscoped surface, which is cheaper than their full per-kind doc but less detailed):
+
+```typescript
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    classifier: false,
+});
+```
+
+## 2. Tool loop
+
+The model calls tools — geocode, search, route, show on map — in sequence or in parallel until it can
+form a complete answer. By default tools return compact summaries (counts, names, labels, status)
+instead of raw GeoJSON, and the full geospatial data is kept in plugin state for follow-up use. The
+opt-in recall tools (`recallByod`, `recallGeometries`, …) can return full feature collections when
+the model asks for a specific entry, but they are the exception, not the rule.
+
+State persists across turns, so the user can say *"add a stop after the first one"* or *"what were
+those restaurants again?"* without repeating context. The agent retrieves prior results from its
+internal stores via dedicated recall tools.
+
+See [State](./state.mdx) for what is kept across turns, and [Tool registry](./tools.mdx) for the
+registry itself.
+
+### Per-turn sequence
+
+The end-to-end picture of one user message:
+
+```d2
+direction: down
+
+User: User message {
+  style: {
+    fill: "#fef2f2"
+    stroke: "#f87171"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 16
+  }
+  width: 220
+  height: 50
+}
+
+Classifier: Intent classifier {
+  style: {
+    fill: "#e8f5e9"
+    stroke: "#1b5e20"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 16
+  }
+
+  Pick: Picks active tools {
+    style: {
+      fill: "#e8f5e9"
+      stroke: "#1b5e20"
+      stroke-width: 1
+      font-color: "#333"
+      border-radius: 4
+      font-size: 13
+    }
+  }
+
+  Scope: "Emits per-tool scopes { analyseData: { kinds: [...] } }" {
+    style: {
+      fill: "#e8f5e9"
+      stroke: "#1b5e20"
+      stroke-width: 1
+      font-color: "#333"
+      border-radius: 4
+      font-size: 13
+    }
+  }
+}
+
+PrepareStep: prepareStep rebuilds narrowed inputSchema for scopable tools {
+  style: {
+    fill: "#fffde7"
+    stroke: "#ff6f00"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 13
+  }
+}
+
+Loop: Tool loop {
+  style: {
+    fill: "#fffde7"
+    stroke: "#ff6f00"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 16
+  }
+
+  Call: Model picks a tool, calls it {
+    style: {
+      fill: "#fffde7"
+      stroke: "#ff6f00"
+      stroke-width: 1
+      font-color: "#333"
+      border-radius: 4
+      font-size: 13
+    }
+  }
+
+  Exec: Tool execute returns summary {
+    style: {
+      fill: "#fffde7"
+      stroke: "#ff6f00"
+      stroke-width: 1
+      font-color: "#333"
+      border-radius: 4
+      font-size: 13
+    }
+  }
+
+  State: Heavy data lands in state {
+    style: {
+      fill: "#f3e5f5"
+      stroke: "#4a148c"
+      stroke-width: 1
+      font-color: "#333"
+      border-radius: 4
+      font-size: 13
+    }
+  }
+}
+
+Reply: Final assistant reply {
+  style: {
+    fill: "#fef2f2"
+    stroke: "#f87171"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 16
+  }
+  width: 220
+  height: 50
+}
+
+User -> Classifier: "1. classify"
+Classifier -> PrepareStep: "2. activeToolNames + toolScopes"
+PrepareStep -> Loop: "3. rebuilt schemas"
+Loop.Call -> Loop.Exec: "4. call"
+Loop.Exec -> Loop.State: "5. persist"
+Loop.State -> Loop.Call: "6. next step reads state" {
+  style: {
+    stroke-dash: 3
+    stroke-width: 1
+    animated: true
+  }
+}
+Loop -> Reply: "7. done — compose answer"
+```
+
+## Extending the system prompt
+
+There are two options: `systemPromptSuffix` (append) and `systemPrompt` (full replacement).
+Prefer the suffix unless you genuinely need to override base behaviour:
+
+- **`systemPromptSuffix`** keeps `BASE_SYSTEM_PROMPT` live — future SDK releases can ship new
+  coordinate rules, tool-usage guidance, and session-state instructions, and your agent picks
+  them up automatically on upgrade. Your suffix is wrapped under a standard
+  `ADDITIONAL INSTRUCTIONS:` header so structure stays consistent.
+- **`systemPrompt`** is the escape hatch: use it when you need to change or remove base
+  behaviour (different persona, different coordinate convention, domain-locked assistant).
+  Even the `BASE_SYSTEM_PROMPT + ...` form pins your prompt to whatever was exported at
+  install time — you become responsible for re-checking the base on each SDK upgrade.
+
+Rule of thumb: add instructions with the suffix; override instructions with a full
+replacement.
+
+### Append to the built-in prompt
+
+```typescript
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    systemPromptSuffix: 'Always respond in Spanish. Never show more than 5 places at once.',
+});
+```
+
+### Full replacement
+
+Import `BASE_SYSTEM_PROMPT` as a baseline to extend rather than starting from scratch.
+The base prompt contains coordinate order rules, tool-usage guidance, and response formatting
+instructions that are important for reliability:
+
+```typescript
+import { createMapAgent, BASE_SYSTEM_PROMPT } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    systemPrompt: BASE_SYSTEM_PROMPT + `
+
+ADDITIONAL INSTRUCTIONS:
+- This is a logistics application. Prioritize route efficiency over scenery.
+- Always show estimated arrival times in responses.
+- When a vehicle ID is mentioned, call getFleetVehicle before anything else.
+`,
+});
+```
+
+### Per-tool classification prompts
+
+If your custom tool is being activated too broadly or not activated when it should be,
+tune its `classificationPrompt`. This is the one-liner the classifier uses to decide
+whether a user message needs this tool:
+
+```typescript
+// Too broad — activates for any location question
+classificationPrompt: 'Get fleet vehicle data.'
+
+// Precise — activates only for explicit vehicle ID references
+classificationPrompt: 'Locate a fleet vehicle by its ID (e.g. "TT-001"); not for general location queries.'
+```
+
+## Observing classification
+
+Use `onClassify` to inspect which tools were selected and which per-tool scopes the classifier
+emitted — useful for debugging classification behaviour, watching scope narrowing in action, or
+building a dev panel:
+
+```typescript
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    onClassify: (result) => {
+        if (result) {
+            console.log('Selected tools:', result.activeToolNames);
+            console.log('Per-tool scopes:', result.toolScopes);   // e.g. { analyseData: { kinds: ['places', 'routes'] } }
+            console.log('Classification took:', result.timeMs, 'ms');
+        }
+    },
+});
+```

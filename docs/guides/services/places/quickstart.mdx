@@ -1,0 +1,85 @@
+---
+title: Places quickstart
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.48.3"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The TomTom Places Services provide comprehensive location-based functionality including search, geocoding, and reverse geocoding capabilities.
+
+## Basic Setup
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { search, geocode, reverseGeocode } from '@tomtom-org/maps-sdk/services';
+
+TomTomConfig.instance.put({
+    apiKey: 'YOUR_API_KEY_HERE'
+});
+```
+
+## Quick Examples
+
+### Search for Places
+
+```javascript
+const results = await search({
+    query: 'coffee shops',
+    position: [4.9041, 52.3676] // Amsterdam
+});
+
+console.log(results.features[0].poi.name);
+```
+
+### Geocode an Address
+
+```javascript
+const result = await geocode({
+    query: 'Dam Square, Amsterdam'
+});
+
+const coordinates = result.features[0].geometry.coordinates; // [lng, lat]
+```
+
+### Reverse Geocode Coordinates
+
+```javascript
+const result = await reverseGeocode({
+    position: [4.9041, 52.3676]
+});
+
+console.log(result.features[0].properties.address.freeformAddress);
+```
+
+## Next Steps
+
+- [Search Services](../../services/places/search.mdx) - Autocomplete, fuzzy, and geometry search
+- [Geocoding](../../services/places/geocoding.mdx) - Address to coordinates
+- [Reverse Geocoding](../../services/places/reverse-geocoding.mdx) - Coordinates to address
+
+
+## Related Guides and Examples
+
+### Related Guides
+- **[Places Search](./search.mdx)** - Advanced search capabilities including autocomplete and fuzzy search
+- **[Geocoding](./geocoding.mdx)** - Comprehensive address to coordinates conversion
+- **[Reverse Geocoding](./reverse-geocoding.mdx)** - Coordinates to address with detailed options
+- **[Geometry Data](./geometry-data.mdx)** - Retrieve boundary data for places
+- **[EV Charging Stations](./ev-charging-stations-availability.mdx)** - Real-time charging station availability
+
+### Related Examples
+- **[Geocode](../../../../examples/geocode/)** - Basic geocoding implementation
+- **[Reverse Geocode](../../../../examples/reverse-geocode/)** - Basic reverse geocoding
+- **[Fuzzy Search Playground](../../../../examples/fuzzy-search-playground/)** - Interactive search exploration
+- **[Autocomplete Fuzzy Search](../../../../examples/autocomplete-fuzzy-search-playground/)** - Search-as-you-type functionality
+- **[Geometry Search Playground](../../../../examples/geometry-search-playground/)** - Search within boundaries
+
+### Map Integration
+- **[Map Places](../../map/places.mdx)** - Display search results on interactive maps
+- **[Map Geometries](../../map/geometries.mdx)** - Visualize place boundaries from geometry data
+- **[Base Map](../../../../examples/base-map/)** - Foundation for places-powered applications

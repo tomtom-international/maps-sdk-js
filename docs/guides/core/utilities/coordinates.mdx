@@ -1,0 +1,54 @@
+---
+title: Coordinates
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.48.3"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+## Working with Coordinates
+
+### getPosition
+
+Extracts lng-lat coordinates from various input formats into a standard GeoJSON Position array `[longitude, latitude]`.
+
+**Supported input formats:**
+- Raw coordinate arrays: `[lng, lat]`
+- GeoJSON Point geometries
+- GeoJSON Point Features (including Places)
+
+```javascript
+import { getPosition } from '@tomtom-org/maps-sdk/core';
+
+// From coordinate array
+const pos1 = getPosition([4.9, 52.3]);
+// Returns: [4.9, 52.3]
+
+// From Point geometry
+const pos2 = getPosition({
+  type: 'Point',
+  coordinates: [4.9, 52.3]
+});
+// Returns: [4.9, 52.3]
+
+// From a Place Feature
+const place = await geocode({ key: 'your-api-key', query: 'Amsterdam' });
+const pos3 = getPosition(place);
+// Returns: [longitude, latitude]
+
+// From a Place with entry point preference
+const pos4 = getPosition(place, { useEntryPoint: 'main-when-available' });
+// Returns entry point coordinates if available, otherwise geometry coordinates
+```
+
+**Entry point options:**
+
+When working with Places that have entry points (building entrances), you can specify which position to extract:
+
+- `useEntryPoint: 'main-when-available'` – Use the main entry point coordinates if available, otherwise fall back to the geometry coordinates
+
+**Returns:** `Position | null` – The coordinates as `[longitude, latitude]`, or `null` if input is invalid.
