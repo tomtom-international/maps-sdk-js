@@ -12,3 +12,16 @@ export type TomTomHeaders = {
     Authorization?: string;
     'Tracking-ID'?: string;
 };
+
+/**
+ * Service-specific TomTom API headers, declared per-request by a service's
+ * request builder (not added globally). Widen this type when a new service
+ * needs a header outside the existing set.
+ * @ignore
+ */
+export type TomTomAPIHeaders = {
+    'TomTom-Api-Key'?: string;
+    'TomTom-Api-Version'?: string;
+    'Accept-Language'?: string;
+    Attributes?: string;
+};

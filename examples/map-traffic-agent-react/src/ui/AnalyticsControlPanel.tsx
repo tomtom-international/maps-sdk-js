@@ -98,7 +98,7 @@ function Legend({ metric, module }: { metric: AreaAnalyticsMetricKey; module: Tr
     if (colors.length >= 2) {
         const low = colors[0];
         const mid = colors[Math.floor(colors.length / 2)];
-        const high = colors.at(-1)!;
+        const high = colors.at(-1) ?? '';
         gradient = `linear-gradient(to right, ${low}, ${mid}, ${high})`;
     } else {
         gradient = 'linear-gradient(to right, hsl(0,80%,45%), hsl(60,80%,50%), hsl(120,70%,45%))';
@@ -273,7 +273,7 @@ function renderBarChart(
     const hasStops = colors.length >= 2;
     const low = colors[0];
     const mid = colors[Math.floor(colors.length / 2)];
-    const high = colors.at(-1)!;
+    const high = colors.at(-1) ?? '';
 
     for (let hour = 0; hour < 24; hour++) {
         const ratio = hourlyValues[hour] / maximumValue;

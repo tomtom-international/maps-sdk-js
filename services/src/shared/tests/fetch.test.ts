@@ -16,7 +16,7 @@ describe('Fetch utility tests', () => {
     describe('Get tests', () => {
         const headers = { 'tomtom-user-agent': 'TEST/1' };
 
-        test('OK response', async () => {
+        test('OK response (URL input)', async () => {
             const fetchMock = mockFetchResponse(200, { id: 'some json' });
             expect(await get(new URL('https://blah1234.com'), headers)).toEqual({
                 data: {
@@ -25,6 +25,33 @@ describe('Fetch utility tests', () => {
                 status: 200,
             });
             expect(fetchMock).toHaveBeenCalledWith(new URL('https://blah1234.com'), { headers });
+        });
+
+        test('OK response (GetObject input)', async () => {
+            const fetchMock = mockFetchResponse(200, { id: 'some json' });
+            expect(await get({ url: new URL('https://blah1234.com') }, headers)).toEqual({
+                data: { id: 'some json' },
+                status: 200,
+            });
+            expect(fetchMock).toHaveBeenCalledWith(new URL('https://blah1234.com'), { headers });
+        });
+
+        test('GetObject service-specific headers are merged with SDK headers', async () => {
+            const fetchMock = mockFetchResponse(200, { id: 'ok' });
+            await get(
+                {
+                    url: new URL('https://blah1234.com'),
+                    headers: { 'TomTom-Api-Key': 'KEY', 'TomTom-Api-Version': '3' },
+                },
+                headers,
+            );
+            expect(fetchMock).toHaveBeenCalledWith(new URL('https://blah1234.com'), {
+                headers: {
+                    'tomtom-user-agent': 'TEST/1',
+                    'TomTom-Api-Key': 'KEY',
+                    'TomTom-Api-Version': '3',
+                },
+            });
         });
 
         test('Failed response from rejected promise', async () => {
@@ -44,6 +71,30 @@ describe('Fetch utility tests', () => {
                 },
                 status: 200,
             });
+        });
+
+        test('PostObject service-specific headers are merged with SDK headers', async () => {
+            const fetchMock = mockFetchResponse(200, { id: 'ok' });
+            await post(
+                {
+                    url: new URL('https://blah1234.com'),
+                    data: { foo: 'bar' },
+                    headers: { 'TomTom-Api-Key': 'KEY', Attributes: 'routes(summary)' },
+                },
+                headers,
+            );
+            expect(fetchMock).toHaveBeenCalledWith(
+                new URL('https://blah1234.com'),
+                expect.objectContaining({
+                    method: 'POST',
+                    headers: {
+                        'tomtom-user-agent': 'TEST/1',
+                        'TomTom-Api-Key': 'KEY',
+                        Attributes: 'routes(summary)',
+                        'Content-Type': 'application/json',
+                    },
+                }),
+            );
         });
 
         test('Failed response from rejected promise', async () => {

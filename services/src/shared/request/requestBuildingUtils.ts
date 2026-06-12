@@ -1,7 +1,19 @@
-import type { HasLngLat, POICategory } from '@tomtom-org/maps-sdk/core';
+import type { HasLngLat, POICategory, TomTomAPIHeaders } from '@tomtom-org/maps-sdk/core';
 import { getPosition, poiCategoriesToID } from '@tomtom-org/maps-sdk/core';
 import { isNil } from 'lodash-es';
 import type { CommonServiceParams } from '../serviceTypes';
+
+/**
+ * Builds the TomTom API request headers common to every service: the API key,
+ * API version, and language. Service request builders spread the result and add
+ * any service-specific headers (e.g. `Attributes`) on top.
+ * @ignore
+ */
+export const buildCommonServiceRequestHeaders = (params: CommonServiceParams): TomTomAPIHeaders => ({
+    ...(params.apiKey && { 'TomTom-Api-Key': params.apiKey }),
+    ...(!isNil(params.apiVersion) && { 'TomTom-Api-Version': String(params.apiVersion) }),
+    ...(params.language && { 'Accept-Language': params.language }),
+});
 
 /**
  * @ignore
@@ -10,17 +22,9 @@ import type { CommonServiceParams } from '../serviceTypes';
  */
 export const appendCommonParams = (urlParams: URLSearchParams, params: CommonServiceParams): void => {
     urlParams.append('apiVersion', String(params.apiVersion));
-
-    // TODO: restore apiAccessToken if we implement oauth2 access:
-    // if (!params.apiAccessToken) {
-    // Omit `key=` entirely when apiKey is empty so proxy deployments don't
-    // surface their own key (or a placeholder) to the browser. The proxy
-    // injects the real key server-side before forwarding upstream.
     if (params.apiKey) {
         urlParams.append('key', params.apiKey);
     }
-    // }
-
     params.language && urlParams.append('language', params.language);
 };
 

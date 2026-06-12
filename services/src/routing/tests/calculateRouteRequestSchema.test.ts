@@ -87,9 +87,27 @@ describe('Calculate route request schema validation', () => {
                 { locations: [[4.89066, 52.37317]], apiKey, commonBaseURL: commonBaseUrl },
                 routeRequestValidationConfig,
             ),
-        ).toThrow(
-            'When passing waypoints only: at least 2 must be defined. If passing also paths, at least one path must be defined',
-        );
+        ).toThrow('At least 2 waypoints or 1 path (route reconstruction) is required.');
+    });
+
+    test('it should pass when path locations are mixed with waypoints', () => {
+        expect(() =>
+            validateRequestSchema(
+                {
+                    locations: [
+                        [4.89066, 52.37317],
+                        [
+                            [4.8, 52.3],
+                            [4.7, 52.2],
+                        ],
+                        [4.49015, 52.16109],
+                    ] as never,
+                    apiKey,
+                    commonBaseURL: commonBaseUrl,
+                },
+                routeRequestValidationConfig,
+            ),
+        ).not.toThrow();
     });
 
     test('it should fail when locations param is missing', () => {

@@ -6,7 +6,6 @@ import type {
     SectionType,
     SummaryBase,
 } from '@tomtom-org/maps-sdk/core';
-import { inputSectionTypes } from '@tomtom-org/maps-sdk/core';
 import { beforeAll, describe, expect, test, vi } from 'vitest';
 import { putIntegrationTestsAPIKey } from '../../shared/tests/integrationTestUtils';
 import { calculateRoute } from '../calculateRoute';
@@ -35,10 +34,32 @@ const assertSectionBasics = (section: SectionProps): void => {
     expect(section.endPointIndex).toBeDefined();
 };
 
+// When no sectionTypes param is passed, the SDK requests every section type and applies no
+// client-side filtering (default behaviour), so the response carries all section types the route
+// traverses rather than a filtered subset. Beyond the always-present `leg`, two types show up on
+// every live route regardless of geography, proving the default returned the full, unfiltered set:
+//  - `leg`: every route has at least one leg (also checked with an exact count at each call site).
+//  - `country`: you always drive through at least one country, so a single section spanning the
+//    route is returned even for same-country trips.
+//  - `urban`: any A-B route between populated places crosses urban roads.
+//  - `speedLimit`: every drivable road has a known speed limit, so car routes always carry these.
+// Other types — `motorway`, `traffic`, `tunnel`, `ferry`, `pedestrian`, `toll`, etc. — are
+// route-dependent and only appear when the route actually traverses them, so they are intentionally
+// not asserted here. The EXPLICIT types (`tollVignette`, `roadShields`, `importantRoadStretch`,
+// `lanes`) require opt-in via `sectionTypes` and so are never present in a default request.
+const assertDefaultSectionsReturnsAll = (sections: SectionsProps): void => {
+    expect(Object.keys(sections).length).toBeGreaterThan(1);
+    expect(sections.leg.length).toBeGreaterThan(0);
+    expect(sections.country?.length).toBeGreaterThan(0);
+    expect(sections.urban?.length).toBeGreaterThan(0);
+    expect(sections.speedLimit?.length).toBeGreaterThan(0);
+};
+
 describe('Calculate route integration tests', () => {
     beforeAll(putIntegrationTestsAPIKey);
 
     test('Default A-B route', async () => {
+        const beforeRequest = Date.now();
         const result = await calculateRoute({
             locations: [
                 [3.1748, 42.26297],
@@ -52,17 +73,43 @@ describe('Calculate route integration tests', () => {
             expect(routeFeature.geometry.coordinates.length).toBeGreaterThan(1000);
             const routeProperties = routeFeature.properties;
             assertSummaryBasics(routeProperties.summary);
+            // No `when` passed: the route departs ~now. Allow for request latency and clock skew.
+            expect(Math.abs(routeProperties.summary.departureTime.getTime() - beforeRequest)).toBeLessThan(10_000);
             expect(routeProperties.guidance).toBeUndefined();
             expect(routeProperties.progress?.length).toBeGreaterThan(0);
             const sections: SectionsProps = routeProperties.sections;
             expect(sections.leg).toHaveLength(1);
             assertLegSectionBasics(sections.leg[0]);
+            // No sectionTypes passed: default behaviour returns all available section types.
+            assertDefaultSectionsReturnsAll(sections);
+            // No guidance requested: the guidance-gated `lanes` section is never returned.
+            expect(sections.lanes).toBeUndefined();
             for (const sectionArray of Object.values(sections)) {
                 for (const section of sectionArray) {
                     assertSectionBasics(section as SectionProps);
                 }
             }
         }
+    });
+
+    test('Route with departAt returns a departure time matching the input', async () => {
+        // Realistic departAt: tomorrow at the current time of day.
+        const departAt = new Date();
+        departAt.setDate(departAt.getDate() + 1);
+        const result = await calculateRoute({
+            locations: [
+                [4.89066, 52.37317],
+                [4.49015, 52.16109],
+            ],
+            when: { option: 'departAt', date: departAt },
+        });
+
+        const summary = result.features[0].properties.summary;
+        assertSummaryBasics(summary);
+        // departAt was requested: the returned departure time is the requested time. The response
+        // carries second precision, so the only possible difference is the dropped sub-second
+        // fraction of the input — i.e. strictly under 1s.
+        expect(Math.abs(summary.departureTime.getTime() - departAt.getTime())).toBeLessThan(1_000);
     });
 
     test('Route from Kandersteg to Dover with minimal vehicle dimensions', async () => {
@@ -86,6 +133,8 @@ describe('Calculate route integration tests', () => {
         const sections = routeProperties.sections;
         expect(sections.leg).toHaveLength(1);
         assertLegSectionBasics(sections.leg[0]);
+        // No sectionTypes passed: default behaviour returns all available section types.
+        assertDefaultSectionsReturnsAll(sections);
         expect(routeProperties.progress?.length).toBeGreaterThan(0);
     });
 
@@ -150,12 +199,12 @@ describe('Calculate route integration tests', () => {
                     assertSectionBasics(section as SectionProps);
                 }
             }
-            // Asserting the lack of unrequested sections in the response:
-            for (const inputSectionType of inputSectionTypes.filter(
-                (sectionType) => !['leg', ...testInputSectionTypes].includes(sectionType),
-            )) {
-                expect(routeProperties.sections[inputSectionType]).toBeUndefined();
-            }
+            // Note: OrbisV3 returns all non-EXPLICIT section types when sections is requested.
+            // EXPLICIT types (tollVignette, roadShields, importantRoadStretch, lanes) require
+            // explicit opt-in via sectionTypes; client-side filtering is applied after parsing.
+            // sectionTypes was specified without 'lanes' and no guidance was requested, so the
+            // guidance-gated `lanes` section must be absent.
+            expect(sections.lanes).toBeUndefined();
             expect(routeProperties.progress?.length).toBeGreaterThan(0);
         },
     );
@@ -221,6 +270,8 @@ describe('Calculate route integration tests', () => {
         expect(sections.leg[1].summary.batteryConsumptionInkWh).toBeGreaterThan(0);
         // Expected PCT available because we defined maxChargeKWH in vehicle model:
         expect(sections.leg[0].summary.batteryConsumptionInPCT).toBeGreaterThan(0);
+        // No sectionTypes passed: default behaviour returns all available section types.
+        assertDefaultSectionsReturnsAll(sections);
         expect(routeProperties.progress?.length).toBeGreaterThan(0);
     });
 
@@ -335,6 +386,10 @@ describe('Calculate route integration tests', () => {
         expect(lastLeg.summary.remainingChargeAtArrivalInPCT).toEqual(routeSummary.remainingChargeAtArrivalInPCT);
         // arriving at destination, not a charging stop:
         expect(lastLeg.summary.chargingInformationAtEndOfLeg).toBeUndefined();
+        // No sectionTypes passed: default behaviour returns all available section types.
+        assertDefaultSectionsReturnsAll(routeProperties.sections);
+        // Guidance requested with default sectionTypes: the guidance-gated `lanes` section is present.
+        expect(routeProperties.sections.lanes?.length).toBeGreaterThan(0);
         expect(routeProperties.progress?.length).toBeGreaterThan(0);
     }, 20000);
 
@@ -391,12 +446,16 @@ describe('Calculate route integration tests', () => {
         expect(lastLeg.summary.remainingChargeAtArrivalInkWh).toEqual(routeSummary.remainingChargeAtArrivalInkWh);
         // arriving at destination, not a charging stop:
         expect(lastLeg.summary.chargingInformationAtEndOfLeg).toBeUndefined();
+        // No sectionTypes passed: default behaviour returns all available section types.
+        assertDefaultSectionsReturnsAll(routeProperties.sections);
+        // Guidance requested with default sectionTypes: the guidance-gated `lanes` section is present.
+        expect(routeProperties.sections.lanes?.length).toBeGreaterThan(0);
         expect(routeProperties.progress?.length).toBeGreaterThan(0);
     }, 20000);
 
     test('Route from Roses to Olot with avoidAreas around Figueres', async () => {
         // Figueres sits on the direct Roses → Olot path; avoiding it should force a detour.
-        const avoidBBox: BBox = [2.93, 42.25, 3.0, 42.31];
+        const avoidBBox: BBox = [2.93, 42.25, 3, 42.31];
         const result = await calculateRoute({
             locations: [
                 [3.1748, 42.26297], // Roses
@@ -409,6 +468,8 @@ describe('Calculate route integration tests', () => {
         const routeFeature = result.features[0];
         expect(routeFeature.geometry.coordinates.length).toBeGreaterThan(0);
         assertSummaryBasics(routeFeature.properties.summary);
+        // No sectionTypes passed: default behaviour returns all available section types.
+        assertDefaultSectionsReturnsAll(routeFeature.properties.sections);
 
         // No coordinate should fall inside the avoided bbox.
         const [west, south, east, north] = avoidBBox;
@@ -418,6 +479,9 @@ describe('Calculate route integration tests', () => {
     });
 
     test('Roses to Olot thrilling route with alternatives', async () => {
+        // Realistic arriveBy: tomorrow at the current time of day.
+        const arriveBy = new Date();
+        arriveBy.setDate(arriveBy.getDate() + 1);
         const result = await calculateRoute({
             language: 'es-ES',
             locations: [
@@ -447,7 +511,7 @@ describe('Calculate route integration tests', () => {
             // travelMode: 'motorcycle',
             when: {
                 option: 'arriveBy',
-                date: new Date(),
+                date: arriveBy,
             },
         });
 
@@ -457,6 +521,9 @@ describe('Calculate route integration tests', () => {
             expect(routeFeature.geometry.coordinates.length).toBeGreaterThan(1000);
             const routeProperties = routeFeature.properties;
             assertSummaryBasics(routeProperties.summary);
+            // arriveBy was requested: the returned arrival time is the requested time, differing only
+            // by the response's dropped sub-second fraction — i.e. strictly under 1s.
+            expect(Math.abs(routeProperties.summary.arrivalTime.getTime() - arriveBy.getTime())).toBeLessThan(1_000);
             expect(routeProperties.guidance).toBeDefined();
             expect(routeProperties.progress?.length).toBeGreaterThan(0);
             const sections: SectionsProps = routeProperties.sections;
@@ -468,6 +535,9 @@ describe('Calculate route integration tests', () => {
                 }
             }
         }
+        // Guidance was requested (and `lanes` listed in sectionTypes): the guidance-specific `lanes`
+        // section is gated on guidance in the request builder, so it must be present in the response.
+        expect(result.features[0].properties.sections.lanes?.length).toBeGreaterThan(0);
     });
 
     test('Route reconstruction flows', async () => {
@@ -501,6 +571,8 @@ describe('Calculate route integration tests', () => {
 
         // comparing sections (the amount of sections for each type should be the same):
         const firstRouteSections = firstRoute.properties.sections;
+        // No sectionTypes passed: default behaviour returns all available section types.
+        assertDefaultSectionsReturnsAll(firstRouteSections);
         const reconstructedRouteSections = reconstructedRoute.properties.sections;
         expect(reconstructedRouteSections.leg).toHaveLength(firstRouteSections.leg.length);
         expect(reconstructedRouteSections.urban).toHaveLength(firstRouteSections.urban?.length || 0);
@@ -543,7 +615,7 @@ describe('Calculate route integration tests', () => {
         ) => void;
         const result = await calculateRoute({ locations, onAPIRequest: onApiRequest, onAPIResponse: onApiResponse });
         expect(result).toBeDefined();
-        const expectedApiRequest = { method: 'GET', url: expect.any(URL) };
+        const expectedApiRequest = expect.objectContaining({ method: 'POST', url: expect.any(URL) });
         expect(onApiRequest).toHaveBeenCalledWith(expectedApiRequest);
         expect(onApiResponse).toHaveBeenCalledWith(expectedApiRequest, expect.anything());
     });
@@ -561,7 +633,7 @@ describe('Calculate route integration tests', () => {
         await expect(() =>
             calculateRoute({ locations, onAPIRequest: onApiRequest, onAPIResponse: onApiResponse }),
         ).rejects.toThrow(expect.objectContaining({ status: 400 }));
-        const expectedApiRequest = { method: 'GET', url: expect.any(URL) };
+        const expectedApiRequest = expect.objectContaining({ method: 'POST', url: expect.any(URL) });
         expect(onApiRequest).toHaveBeenCalledWith(expectedApiRequest);
         expect(onApiResponse).toHaveBeenCalledWith(expectedApiRequest, expect.objectContaining({ status: 400 }));
     });

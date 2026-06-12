@@ -12,6 +12,11 @@ import {
 import type { MapGeoJSONFeature } from 'maplibre-gl';
 import ldevrTestRoutesJson from './data/RoutingModuleLDEVR.test.data.json';
 import rotterdamToAmsterdamRoutesJson from './data/RoutingModuleRotterdamToAmsterdamNoInstructions.test.data.json';
+import {
+    accidentOnlyRoutes,
+    jamAndAccidentRoutes,
+    jamOnlyRoutes,
+} from './data/RoutingModuleTrafficIncidents.test.data';
 import { MapsSDKThis } from './types/MapsSDKThis';
 import { MapTestEnv } from './util/MapTestEnv';
 import {
@@ -105,7 +110,8 @@ test.describe('Routing and waypoint display tests', () => {
     const NUM_INSTRUCTION_LINE_LAYERS = 2;
     const NUM_INSTRUCTION_ARROW_LAYERS = 1;
     const NUM_SUMMARY_BUBBLE_LAYERS = 1;
-    // TODO: assert traffic incident visuals where more than one incident cause is to be shown (jam + accident, etc.)
+    // Traffic incident category rendering (jam-only, accident-only, jam+accident) is covered in the
+    // 'Traffic incident category rendering' describe block below, using mocked route data.
 
     test('Basic routes and waypoints show and clear flows', async ({ page }) => {
         const mapEnv = await MapTestEnv.loadPageAndMap(page, {
@@ -578,6 +584,75 @@ test.describe('Routing and waypoint display tests', () => {
         expect(await queryRenderedFeatures(page, [ROUTE_SUMMARY_BUBBLES_POINT_LAYER_ID])).toHaveLength(0);
         // Routes themselves are still shown:
         expect(await getNumVisibleLayersBySource(page, ROUTE_MAIN_LINES_SOURCE_ID)).toBe(NUM_ROUTE_LAYERS);
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+});
+
+test.describe('Traffic incident category rendering', () => {
+    const ID_PREFIX = 'routes-0';
+    const ROUTE_INCIDENTS_JAM_SYMBOL_LAYER_ID = `${ID_PREFIX}-routeIncidentJamSymbol`;
+    const ROUTE_INCIDENTS_CAUSE_SYMBOL_LAYER_ID = `${ID_PREFIX}-routeIncidentCauseSymbol`;
+    const ROUTE_INCIDENTS_SOURCE_ID = `${ID_PREFIX}-incidents`;
+    const NUM_INCIDENT_LAYERS = 4;
+
+    const showRoutes = async (page: Page, routes: Routes) =>
+        page.evaluate((inputRoutes: Routes) => (globalThis as MapsSDKThis).routing?.showRoutes(inputRoutes), routes);
+
+    test('Jam-only section renders jam symbol but not cause symbol', async ({ page }) => {
+        const mapEnv = await MapTestEnv.loadPageAndMap(page, {
+            bounds: jamOnlyRoutes.bbox,
+            fitBoundsOptions: { padding: 50 },
+        });
+        await initRouting(page);
+        await showRoutes(page, jamOnlyRoutes);
+        await waitForMapIdle(page);
+
+        expect(await getNumVisibleLayersBySource(page, ROUTE_INCIDENTS_SOURCE_ID)).toBe(NUM_INCIDENT_LAYERS);
+
+        const jamFeatures = await waitUntilRenderedFeatures(page, [ROUTE_INCIDENTS_JAM_SYMBOL_LAYER_ID], 1, 5000);
+        expect(jamFeatures[0].properties?.jamIconID).toMatch(/^traffic-jam-minor-/);
+
+        expect(await queryRenderedFeatures(page, [ROUTE_INCIDENTS_CAUSE_SYMBOL_LAYER_ID])).toHaveLength(0);
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test('Accident-only section renders cause symbol but not jam symbol', async ({ page }) => {
+        const mapEnv = await MapTestEnv.loadPageAndMap(page, {
+            bounds: accidentOnlyRoutes.bbox,
+            fitBoundsOptions: { padding: 50 },
+        });
+        await initRouting(page);
+        await showRoutes(page, accidentOnlyRoutes);
+        await waitForMapIdle(page);
+
+        expect(await getNumVisibleLayersBySource(page, ROUTE_INCIDENTS_SOURCE_ID)).toBe(NUM_INCIDENT_LAYERS);
+
+        const causeFeatures = await waitUntilRenderedFeatures(page, [ROUTE_INCIDENTS_CAUSE_SYMBOL_LAYER_ID], 1, 5000);
+        expect(causeFeatures[0].properties?.causeIconID).toBe('traffic-incidents-accident');
+
+        expect(await queryRenderedFeatures(page, [ROUTE_INCIDENTS_JAM_SYMBOL_LAYER_ID])).toHaveLength(0);
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test('Section with jam and accident renders both jam and cause symbols', async ({ page }) => {
+        const mapEnv = await MapTestEnv.loadPageAndMap(page, {
+            bounds: jamAndAccidentRoutes.bbox,
+            fitBoundsOptions: { padding: 50 },
+        });
+        await initRouting(page);
+        await showRoutes(page, jamAndAccidentRoutes);
+        await waitForMapIdle(page);
+
+        expect(await getNumVisibleLayersBySource(page, ROUTE_INCIDENTS_SOURCE_ID)).toBe(NUM_INCIDENT_LAYERS);
+
+        const jamFeatures = await waitUntilRenderedFeatures(page, [ROUTE_INCIDENTS_JAM_SYMBOL_LAYER_ID], 1, 5000);
+        expect(jamFeatures[0].properties?.jamIconID).toMatch(/^traffic-jam-moderate-/);
+
+        const causeFeatures = await waitUntilRenderedFeatures(page, [ROUTE_INCIDENTS_CAUSE_SYMBOL_LAYER_ID], 1, 5000);
+        expect(causeFeatures[0].properties?.causeIconID).toBe('traffic-incidents-accident');
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });

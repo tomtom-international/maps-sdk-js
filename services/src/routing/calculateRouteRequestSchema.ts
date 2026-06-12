@@ -31,15 +31,13 @@ const schema = commonRoutingRequestSchema.extend(mandatorySchema.extend(optional
 
 const locationsRefinement: SchemaRefinement<CalculateRouteParams> = {
     check: (data: CalculateRouteParams): boolean => {
-        const routePlanningLocationTypes = data.locations.map(getRoutePlanningLocationType);
-        if (!routePlanningLocationTypes.includes('path')) {
-            return data.locations.length >= 2;
-        }
-        return true; // see calculateRouteRequestSchemaMandatory
+        const types = data.locations.map(getRoutePlanningLocationType);
+        const waypointCount = types.filter((type) => type === 'waypoint').length;
+        const pathCount = types.filter((type) => type === 'path').length;
+        // At least 2 waypoints, OR at least 1 path (reconstruction)
+        return waypointCount >= 2 || pathCount >= 1;
     },
-    message:
-        'When passing waypoints only: at least 2 must be defined. ' +
-        'If passing also paths, at least one path must be defined',
+    message: 'At least 2 waypoints or 1 path (route reconstruction) is required.',
 };
 
 /**

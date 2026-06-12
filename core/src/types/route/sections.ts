@@ -369,6 +369,7 @@ export type SectionsProps = {
     country?: CountrySectionProps[];
     ferry?: SectionProps[];
     importantRoadStretch?: ImportantRoadStretchProps[];
+    /** Lane configuration sections. Guidance-only: present solely when `guidance` was requested. */
     lanes?: LaneSectionProps[];
     leg: LegSectionProps[];
     lowEmissionZone?: SectionProps[];

@@ -1,5 +1,5 @@
 import { RetryConfig, TomTomConfig, type TomTomHeaders } from '@tomtom-org/maps-sdk/core';
-import type { FetchInput, ParsedFetchResponse, PostObject } from './types/fetch';
+import type { FetchInput, GetObject, ParsedFetchResponse, PostObject } from './types/fetch';
 
 /**
  * Custom error class for HTTP fetch errors.
@@ -105,13 +105,15 @@ const proxyModeCredentials = (): RequestCredentials | undefined => {
  * Fetches the given HTTP JSON resource with an HTTP GET request and returns a promise with the response as a JSON object.
  * If the response isn't successful, it returns a rejected promise with the http error code.
  * @ignore
- * @param url The URL to fetch.
- * @param headers The headers to be sent with the request.
+ * @param input A URL or a GET object with URL and optional service-specific headers.
+ * @param sdkHeaders SDK-wide TomTom headers to be sent with the request.
  */
-export const get = async <T>(url: URL, headers: TomTomHeaders): ParsedFetchResponse<T> =>
+export const get = async <T>(input: URL | GetObject, sdkHeaders: TomTomHeaders): ParsedFetchResponse<T> =>
     returnOrThrow(
         await fetchWithRetry(() => {
             const credentials = proxyModeCredentials();
+            const { url, headers: inputHeaders } = input instanceof URL ? { url: input, headers: undefined } : input;
+            const headers = { ...sdkHeaders, ...inputHeaders };
             return fetch(url, credentials ? { headers, credentials } : { headers });
         }),
     );
@@ -120,19 +122,20 @@ export const get = async <T>(url: URL, headers: TomTomHeaders): ParsedFetchRespo
  * Fetches the given HTTP JSON resource with an HTTP POST request and returns a promise with the response as a JSON object.
  * If the response isn't successful, it returns a rejected promise with the http error code.
  * @ignore
- * @param input The POST object with URL and optional payload.
- * @param headers The headers to be sent with the request.
+ * @param input The POST object with URL, optional payload, and optional service-specific headers.
+ * @param sdkHeaders SDK-wide TomTom headers to be sent with the request.
  */
-export const post = async <T, D>(input: PostObject<D>, headers: TomTomHeaders): ParsedFetchResponse<T> =>
+export const post = async <T, D>(input: PostObject<D>, sdkHeaders: TomTomHeaders): ParsedFetchResponse<T> =>
     returnOrThrow(
         await fetchWithRetry(() => {
             const credentials = proxyModeCredentials();
             const init: RequestInit = {
                 method: 'POST',
                 body: JSON.stringify(input.data),
-                headers: { ...headers, 'Content-Type': 'application/json' },
+                headers: { ...sdkHeaders, ...input.headers, 'Content-Type': 'application/json' },
             };
             if (credentials) init.credentials = credentials;
+
             return fetch(input.url, init);
         }),
     );
@@ -141,16 +144,14 @@ export const post = async <T, D>(input: PostObject<D>, headers: TomTomHeaders): 
  * Fetches the given HTTP JSON resource with the given HTTP operation and URL/Payload as applicable.
  * * Useful for services which can use different HTTP methods depending on the parameters.
  * @param input The input object (e.g. containing either GET or POST data)
- * @param headers The headers to be sent with the request.
+ * @param sdkHeaders SDK-wide TomTom headers to be sent with the request.
  * @ignore
  */
-export const fetchWith = async <T, D = void>(input: FetchInput<D>, headers: TomTomHeaders): ParsedFetchResponse<T> => {
-    const method = input.method;
-    if (method === 'GET') {
-        return get<T>(input.url, headers);
-    }
-    if (method === 'POST') {
-        return post<T, D>(input, headers);
-    }
-    throw new Error(`Unsupported HTTP method received: ${method}`);
+export const fetchWith = async <T, D = void>(
+    input: FetchInput<D>,
+    sdkHeaders: TomTomHeaders,
+): ParsedFetchResponse<T> => {
+    if (input.method === 'GET') return get<T>(input, sdkHeaders);
+    if (input.method === 'POST') return post<T, D>(input, sdkHeaders);
+    throw new Error(`Unsupported HTTP method received: ${(input as { method: string }).method}`);
 };

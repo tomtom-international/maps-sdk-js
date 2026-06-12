@@ -93,6 +93,7 @@ const pickColor = (index: number) => PALETTE[index % PALETTE.length];
 // Layer a default palette onto dataset colors without overwriting anything the
 // LLM's code explicitly set. Categorical types (pie/doughnut/polarArea) get an
 // array of colors sized to the label count; other types get one color per dataset.
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: chart palette logic requires multiple type-specific branches
 const withPaletteDefaults = (config: ChartConfiguration): ChartConfiguration => {
     const data = config.data as unknown as { labels?: unknown[]; datasets?: Dataset[] } | undefined;
     const datasets = data?.datasets;

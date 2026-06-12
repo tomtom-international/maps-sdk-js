@@ -37,6 +37,7 @@ export type InputSectionType = (typeof inputSectionTypes)[number];
  * - `lowEmissionZone`: Low emission zones
  * - `speedLimit`: Speed limit changes
  * - `roadShields`: Road shield information
+ * - `importantRoadStretch`: Named important road stretches along the route
  *
  * @example
  * ```typescript
@@ -50,7 +51,13 @@ export type InputSectionType = (typeof inputSectionTypes)[number];
  * const sectionTypes: InputSectionTypes = [];
  * ```
  *
- * @default All available section types
+ * @remarks
+ * A requested section type is only present in the response if the route actually traverses it
+ * (e.g. `ferry` is omitted on a route with no water crossing). The `lanes` section is guidance-only:
+ * it is returned solely when {@link GuidanceParams | `guidance`} is also requested, and is therefore
+ * not part of this input list.
+ *
+ * @default When omitted, all section types are requested (equivalent to `inputSectionTypes`).
  *
  * @group Routing
  */
@@ -354,9 +361,12 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
          * Route section types to include in the response.
          *
          * Sections help you display route characteristics like tolls, ferries, or traffic.
-         * Leg sections are always included regardless of this parameter.
+         * Leg sections are always included regardless of this parameter. A section type is only
+         * present in the response if the route actually traverses it. The `lanes` section is
+         * guidance-only and is returned solely when {@link GuidanceParams | `guidance`} is also
+         * requested.
          *
-         * @default All available section types
+         * @default When omitted, all section types are requested.
          *
          * @example
          * ```typescript

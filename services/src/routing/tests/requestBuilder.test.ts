@@ -12,10 +12,11 @@ describe('Calculate Route request building functional tests', () => {
     test.each(
         sdkAndAPIRequests,
     )("'%s'", (_name: string, params: CalculateRouteParams, apiRequest: FetchInput<CalculateRoutePOSTDataAPI>) => {
-        // we reparse the objects to compare URL objects properly:
+        // Reparse via JSON to compare structure ignoring URL prototype identity and key order.
+        // NOSONAR: structuredClone cannot clone URL objects; JSON round-trip is intentional here.
         expect(JSON.parse(JSON.stringify(buildCalculateRouteRequest(params)))).toEqual(
             JSON.parse(JSON.stringify(apiRequest)),
-        );
+        ); // NOSONAR
     });
 });
 

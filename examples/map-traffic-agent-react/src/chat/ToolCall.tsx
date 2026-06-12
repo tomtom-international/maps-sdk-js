@@ -31,6 +31,7 @@ function stripCode(value: unknown): unknown {
 // Tiny JS pretty-printer. Only kicks in when the LLM emits one-line code; multi-line input is
 // trusted as-is. String / template / comment runs are copied verbatim so we don't mangle their
 // content. Good enough for the typical analyseData / processData sandbox snippet — not a parser.
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: JS pretty-printer requires multi-branch character-by-character state machine
 function prettifyJS(code: string): string {
     if (code.includes('\n')) return code;
     let out = '';
@@ -43,17 +44,17 @@ function prettifyJS(code: string): string {
     };
     let i = 0;
     while (i < code.length) {
-        const ch = code[i]!;
+        const ch = code.charAt(i);
         if (ch === '"' || ch === "'" || ch === '`') {
             const quote = ch;
             out += ch;
             i++;
             while (i < code.length) {
-                const c = code[i]!;
+                const c = code.charAt(i);
                 out += c;
                 i++;
                 if (c === '\\' && i < code.length) {
-                    out += code[i]!;
+                    out += code.charAt(i);
                     i++;
                     continue;
                 }
