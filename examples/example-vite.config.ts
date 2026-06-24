@@ -1,8 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { visualizer } from 'rollup-plugin-visualizer';
-import { defineConfig, loadEnv } from 'vite';
+import { defineConfig } from 'vite';
 import { viteSingleFile } from 'vite-plugin-singlefile';
+import { resolveExampleEnv } from './exampleBuildEnv';
 
 const workspaceYaml = fs.readFileSync(path.resolve(__dirname, '../pnpm-workspace.yaml'), 'utf-8');
 const maplibreVersion = new RegExp(/maplibre-gl:\s*\^?([\d.]+)/).exec(workspaceYaml)?.[1];
@@ -16,8 +17,8 @@ if (!maplibreVersion) {
  * This builds standalone, minified, single-file HTML applications for each
  * example in dist/prod/. These are:
  * - Deployable demo applications
+ * - The bundles the docs portal renders for each example page
  * - Used for E2E testing of production-like builds
- * - Available in TT npm in case they can be used directly as demos elsewhere in TT.
  *
  * These builds are fully optimized with minification for production use.
  * They use import maps to externalize MapLibre GL for better caching.
@@ -38,11 +39,25 @@ const MAPLIBRE_IMPORT_MAP_SCRIPTS = `
     </script>
 `;
 
+// Absolute path to the Demo-BFF proxy bootstrap — the SAME file Sandpack injects
+// as raw text (see sandpackUtils.ts). In proxy mode it's bundled into each standalone
+// example via the inject-proxy-bootstrap plugin below.
+const PROXY_BOOTSTRAP_PATH = path.resolve(__dirname, 'src/proxy/proxyBootstrap.ts');
+
 /**
  * NOTE: This config is meant to be reused by each example.
  * All configured paths are relative to each example folder.
  */
 export default defineConfig(({ mode }) => {
+    // Allowlisted, proxy-redacted env shared with the Sandpack build (see
+    // exampleBuildEnv.ts). Without it these standalone bundles baked the ENTIRE
+    // CI environment. `proxyMode` (both DEMO_BFF_URL + HCAPTCHA_SITEKEY set)
+    // also gates whether the session bootstrap is injected.
+    const { define: exposedEnv, proxyMode } = resolveExampleEnv(mode, path.resolve('..'));
+    // Resolved build root (= the example's ./src), captured in configResolved
+    // and used to identify the entry module for the bootstrap injection below.
+    let entryRoot = '';
+
     return {
         root: './src',
         base: './',
@@ -74,6 +89,31 @@ export default defineConfig(({ mode }) => {
                     return html.replace('</head>', `${MAPLIBRE_IMPORT_MAP_SCRIPTS}</head>`);
                 },
             },
+            {
+                // Proxy mode: prepend an import of the Demo-BFF session bootstrap
+                // to the example's entry module so it's bundled and runs before
+                // any SDK call — establishing the session + wrapping fetch, the
+                // same behaviour Sandpack gets. Reuses proxyBootstrap.ts verbatim.
+                // NOTE: a transformIndexHtml-injected inline <script> is NOT
+                // processed by the bundler (its imports never resolve), so we
+                // prepend a real import into the module graph instead. Not
+                // injected outside proxy mode.
+                name: 'inject-proxy-bootstrap',
+                enforce: 'pre',
+                configResolved(resolved) {
+                    entryRoot = resolved.root;
+                },
+                transform(code, id) {
+                    if (!proxyMode || !entryRoot) return null;
+                    const file = id.split('?')[0];
+                    const isEntry =
+                        path.resolve(path.dirname(file)) === path.resolve(entryRoot) &&
+                        /^index\.(ts|tsx)$/.test(path.basename(file));
+                    return isEntry
+                        ? { code: `import ${JSON.stringify(PROXY_BOOTSTRAP_PATH)};\n${code}`, map: null }
+                        : null;
+                },
+            },
             ...(process.env.CI
                 ? []
                 : [
@@ -92,7 +132,7 @@ export default defineConfig(({ mode }) => {
             },
         },
         define: {
-            'process.env': JSON.stringify(loadEnv(mode, path.resolve('..'), '')),
+            'process.env': JSON.stringify(exposedEnv),
         },
     };
 });

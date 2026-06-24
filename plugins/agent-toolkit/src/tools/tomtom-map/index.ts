@@ -17,12 +17,6 @@ export {
     fitRouteSectionSchema,
 } from './fit-route-section';
 export {
-    executeGetShownTileIncidents,
-    getShownTileIncidentsDescription,
-    getShownTileIncidentsOutputSchema,
-    getShownTileIncidentsSchema,
-} from './get-shown-tile-incidents';
-export {
     executeGetStandardMapStyles,
     getStandardMapStylesDescription,
     getStandardMapStylesOutputSchema,

@@ -1,31 +1,16 @@
-import { agent, run, user, userSimulatorAgent } from '@langwatch/scenario';
 import { describe, expect, it } from 'vitest';
-import { agentAdapter, expectToolCalled, FULL_SCENARIOS, getExamplePrompts, MODEL } from './helpers';
-
-const REGISTRY_PROMPTS = getExamplePrompts('getTrafficIncidents');
+import { FULL_SCENARIOS, getExamplePrompts, MODEL, runToolScenario } from './helpers';
 
 describe.skipIf(!MODEL)('getTrafficIncidents scenarios', { timeout: 180_000, retry: 3 }, () => {
-    it('shows traffic incidents in an area', async () => {
-        const result = await run({
-            name: 'Traffic incidents',
-            description: 'User asks about live traffic incidents.',
-            agents: [agentAdapter(), userSimulatorAgent()],
-            script: [
-                user('Are there any traffic incidents in Amsterdam?'),
-                agent(),
-                expectToolCalled('getTrafficIncidents'),
-            ],
-        });
-        expect(result.success).toBe(true);
+    // Canonical = the first registry examplePrompt (single source of truth); the rest fan out under
+    // SCENARIOS_FULL.
+    const [canonical, ...rest] = getExamplePrompts('getTrafficIncidents');
+    it(`classifies the canonical prompt: ${canonical}`, async () => {
+        const outcome = await runToolScenario({ expectedTool: 'getTrafficIncidents', prompt: canonical });
+        expect(outcome.success, outcome.failureReason).toBe(true);
     });
-
-    it.skipIf(!FULL_SCENARIOS).each(REGISTRY_PROMPTS)('handles registry examplePrompt: %s', async (prompt) => {
-        const result = await run({
-            name: `getTrafficIncidents — ${prompt}`,
-            description: prompt,
-            agents: [agentAdapter(), userSimulatorAgent()],
-            script: [user(prompt), agent(), expectToolCalled('getTrafficIncidents')],
-        });
-        expect(result.success).toBe(true);
+    it.skipIf(!FULL_SCENARIOS).each(rest)('handles registry examplePrompt: %s', async (prompt) => {
+        const outcome = await runToolScenario({ expectedTool: 'getTrafficIncidents', prompt });
+        expect(outcome.success, outcome.failureReason).toBe(true);
     });
 });

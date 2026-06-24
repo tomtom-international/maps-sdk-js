@@ -373,3 +373,64 @@ export function runClustering(
 
     return { groups };
 }
+
+// ---------------------------------------------------------------------------
+// Sandbox primitive
+// ---------------------------------------------------------------------------
+
+/**
+ * {@link runClustering} output plus the moment it was computed. The extra `sampledAt` lets the sandbox
+ * `cluster()` primitive thread the trend window forward without the caller juggling timestamps: it is
+ * stamped onto the result and read back off `previous` on the next call.
+ *
+ * @group Agent Toolkit
+ */
+export type SandboxClusteringOutput = ClusteringOutput & { sampledAt?: number };
+
+/**
+ * The `cluster(...)` primitive injected into `analyseData` / `processData` sandbox code — DBSCAN
+ * incident clustering with stable IDs + trend detection, exposed as a callable so dynamic code can
+ * filter/combine incidents across entries however it likes and then cluster the result in one pass.
+ *
+ * Ergonomic shape for generated code: `cluster(incidents, params?, previous?, now?)`.
+ * - `incidents` — the (already-filtered) incident features to cluster.
+ * - `params` — {@link ClusteringParams} (eps / minMembers / maxClusters / preFilter); all optional.
+ * - `previous` — last call's return value, for stable IDs + trend continuity. In a monitored analysis
+ *   pass the injected `previous`; omit for a one-shot.
+ * - `now` — the injected `now` (a `Date`) or epoch ms. Used only to key the trend window per moment;
+ *   omit for a one-shot (every call then counts as a fresh sample).
+ *
+ * Trend threading is self-contained: the moment is stamped onto the output as `sampledAt`, so passing
+ * the prior output back as `previous` is all that's needed — the primitive reads `previous.sampledAt`
+ * as the prior moment internally. Pure (turf + local code only), so it bundles into the iframe-worker
+ * sandbox realm exactly like `routeUtils` — see `tools/shared/sandbox/sdk-utils-worker-entry.ts`.
+ *
+ * @group Agent Toolkit
+ */
+// Normalize the optional `now` (epoch ms or a Date) to epoch ms, or undefined when unset.
+const toSampledAt = (now?: number | Date): number | undefined => {
+    if (now == null) return undefined;
+    return now instanceof Date ? now.getTime() : now;
+};
+
+export const clusterIncidents = (
+    incidents: TrafficIncident[],
+    params: ClusteringParams = {},
+    previous?: SandboxClusteringOutput,
+    now?: number | Date,
+): SandboxClusteringOutput => {
+    const sampledAt = toSampledAt(now);
+    const { groups } = runClustering(incidents, params, previous?.groups, sampledAt, previous?.sampledAt);
+    return sampledAt === undefined ? { groups } : { groups, sampledAt };
+};
+
+/**
+ * Guard that a value is a {@link SandboxClusteringOutput} (a `{ groups: [...] }` shape). The clustering
+ * tool runs LLM-authored `code`, so its result is arbitrary JSON until proven otherwise — this is the
+ * boundary that keeps the typed clusters store and the cluster-pin UI sound. Mirrors the consumer-side
+ * narrowing the example's `clustersFromAnalysis` does.
+ *
+ * @group Agent Toolkit
+ */
+export const isClusteringOutput = (value: unknown): value is SandboxClusteringOutput =>
+    !!value && typeof value === 'object' && Array.isArray((value as { groups?: unknown }).groups);

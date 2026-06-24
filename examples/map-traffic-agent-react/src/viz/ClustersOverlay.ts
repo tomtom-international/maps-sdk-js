@@ -1,4 +1,5 @@
 import { type Map as MapLibreMap, Marker } from 'maplibre-gl';
+import './clusterPins.css';
 import type { Cluster } from '../agent/types';
 import { formatDelay } from '../utils/format';
 

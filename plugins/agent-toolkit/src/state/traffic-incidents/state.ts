@@ -9,20 +9,29 @@ import type { StateSlice } from '../../types';
 import { collapseHistoryToLatest, hideAllEntries, pickUniqueEntryId } from '../entry-helpers';
 import { StateEvents } from '../events';
 import type { EntryMode } from '../state';
-import {
-    type DeterministicSpec,
-    IncidentsAnalyses,
-    type IncidentsAnalysis,
-    type IncidentsAnalysisSpec,
-} from './analysis';
+import type { SandboxClusteringOutput } from './clustering';
 import { IncidentMonitor, type IncidentMonitorDeps } from './monitor/monitor';
 import type { IncidentSnapshot, MonitoredArea } from './monitor/types';
 
-export type { IncidentsAnalysis, IncidentsAnalysisSpec } from './analysis';
+export type { IncidentsAnalysis } from './analysis';
+
+/**
+ * Dedicated per-entry clustering state. Incident clustering is NOT a generic analysis — it is typed,
+ * first-class incidents state with its own home here. `output` is the latest {@link SandboxClusteringOutput}
+ * (the DBSCAN groups + the moment it was computed); `recipe` is how to recompute it (re-used by
+ * `tools/state/clusters-runtime.ts` to re-run on each monitor tick so clusters stay live). `recipe`
+ * is opaque here (a tools-layer `ClusterRecipe`) — the slice never interprets it, keeping the state layer
+ * tools-agnostic.
+ *
+ * @group Agent Toolkit
+ */
+export type ClustersRecord = { recipe: unknown; output: SandboxClusteringOutput };
 
 /**
  * A single traffic-incidents history entry: the captured query, its incidents, and the
- * per-entry rendering / monitoring / analysis state owned by {@link TrafficIncidentsState}.
+ * per-entry rendering / monitoring state owned by {@link TrafficIncidentsState}. `analyseData` analyses
+ * are NOT held here — they live in the session-level `state.analyses` registry. Clustering IS dedicated
+ * incidents state, kept in the slice's `clusters` map keyed by entry id (see {@link ClustersRecord}).
  *
  * @group Agent Toolkit
  */
@@ -38,12 +47,6 @@ export type TrafficIncidentsEntry = {
      * normalises any GeoJSON value before handing the params off).
      */
     params: TrafficIncidentDetailsByBBoxParams & { bbox: BBox };
-    /**
-     * Per-entry analysis registry: owns re-executing specs *and* their results.
-     * Lazy-created on first {@link TrafficIncidentsState.setAnalysisSpec} or
-     * {@link TrafficIncidentsState.addAnalysisToEntry}.
-     */
-    _analyses?: IncidentsAnalyses;
     /**
      * Per-entry incident-details module. Each entry owns its own module so two areas can be
      * rendered on the map at the same time without sharing a single source. Lazy-initialised
@@ -67,7 +70,7 @@ export type TrafficIncidentsEntry = {
      * Monotonic counter incremented on every {@link TrafficIncidentsState.replaceEntryData}
      * call. Used to detect out-of-order ticks: if a slow `module.show()` from an earlier
      * tick resolves after a newer tick has already overwritten `data`, the late path bails
-     * before reapplying focus / replaying analyses.
+     * before reapplying focus.
      */
     _tick?: number;
 };
@@ -86,17 +89,15 @@ export type IncidentFocus = { ids: Set<string>; reason?: string };
  * @group Agent Toolkit
  */
 export type TrafficIncidentsStateEvents = {
-    /** History changed — entry added, replaced, removed, or cleared via `reset()`. Payload: full entries snapshot. */
-    'entries-change': readonly TrafficIncidentsEntry[];
+    /**
+     * History changed — entry added, replaced, removed, or cleared via `reset()`. `entries` is the
+     * full snapshot after the change; `changedIds` lists the ids of the entries this specific change
+     * added, replaced in place, or removed. The standing-analysis sweep and the clustering re-run
+     * match these against the entries they depend on.
+     */
+    'entries-change': { entries: readonly TrafficIncidentsEntry[]; changedIds: readonly string[] };
     /** Set of entries currently rendered on the map changed. */
     'shown-change': ReadonlySet<TrafficIncidentsEntry['id']>;
-    /**
-     * A fresh analysis result landed on an entry. Fires when a spec is first
-     * registered, when it is replaced under the same name, AND on every monitor-tick
-     * replay — the event is intentionally agnostic about whether the spec is new
-     * or recomputed; subscribers re-render off the latest result either way.
-     */
-    'analysis-change': { entryId: TrafficIncidentsEntry['id']; analysis: IncidentsAnalysis };
     /** Focus subset for an entry changed (or cleared, when `focus === null`). */
     'focus-change': { entryId: TrafficIncidentsEntry['id']; focus: IncidentFocus | null };
     /** Display policy switched between `single` and `multiple`. */
@@ -117,6 +118,12 @@ export type TrafficIncidentsStateEvents = {
      * keep using `monitor-error`; lifecycle listeners can rely on this alone.
      */
     'monitor-stop': { entryId: TrafficIncidentsEntry['id']; reason: 'manual' | 'error' };
+    /**
+     * An entry's clustering result changed — set, recomputed on a tick, or cleared (`clusters === null`).
+     * UI that renders cluster pins re-derives off this (not `entries-change`): the clustering re-run is
+     * async to the monitor tick, so the fresh result lands here a step later.
+     */
+    'clusters-change': { entryId: TrafficIncidentsEntry['id']; clusters: SandboxClusteringOutput | null };
 };
 
 /**
@@ -132,6 +139,9 @@ export type TrafficIncidentsStateEvents = {
 export class TrafficIncidentsState implements StateSlice {
     private _entries: TrafficIncidentsEntry[] = [];
     private _entryMode: EntryMode = 'multiple';
+    // Dedicated clustering state, keyed by entry id — clustering is typed first-class incidents state,
+    // not a generic analysis. Written by `clusterIncidents` / its monitor-tick re-run; GC'd with the entry.
+    private readonly _clusters = new Map<string, ClustersRecord>();
 
     /** Subscribe to state changes — see {@link TrafficIncidentsStateEvents}. */
     readonly events = new StateEvents<TrafficIncidentsStateEvents>();
@@ -160,10 +170,11 @@ export class TrafficIncidentsState implements StateSlice {
         if (this._entryMode === mode) return;
         this._entryMode = mode;
         if (mode === 'single' && this._entries.length > 1) {
+            const droppedIds = this._entries.slice(0, -1).map((entry) => entry.id);
             this._entries = await collapseHistoryToLatest(this._entries, (entry) => this._teardownEntry(entry), {
                 parallel: true,
             });
-            this.events.emit('entries-change', this._entries);
+            this.events.emit('entries-change', { entries: this._entries, changedIds: droppedIds });
             this.events.emit('shown-change', this.shownEntryIds);
         }
         this.events.emit('mode-change', mode);
@@ -202,7 +213,7 @@ export class TrafficIncidentsState implements StateSlice {
             this._entries.map((entry) => entry.id),
         );
         this._entries.push({ id, timestamp: sampledAt, label, data, params });
-        this.events.emit('entries-change', this._entries);
+        this.events.emit('entries-change', { entries: this._entries, changedIds: [id] });
         return id;
     }
 
@@ -210,9 +221,11 @@ export class TrafficIncidentsState implements StateSlice {
      * Replace an entry's data in place and repaint its module without moving the camera.
      * Used by the per-entry monitor tick so incident geometries and any open detail
      * panel stay in sync with the freshest snapshot. `sampledAt` is the canonical moment
-     * for this update — propagated to the entry timestamp and to every analysis the
-     * registry replays, so all derived data shares one tick. Returns true on success,
-     * false when the entry is unknown.
+     * for this update — propagated to the entry timestamp before the `entries-change` emit.
+     * That emit is what drives analysis replay: the session-level standing sweep
+     * (`tools/state/analyses-runtime.ts`) re-runs every analysis bound to this entry off the
+     * change, ASYNCHRONOUSLY (a microtask later) — the slice itself owns no analysis logic.
+     * Returns true on success, false when the entry is unknown.
      */
     async replaceEntryData(
         entryId: TrafficIncidentsEntry['id'],
@@ -225,7 +238,7 @@ export class TrafficIncidentsState implements StateSlice {
         entry._tick = tick;
         entry.data = data;
         entry.timestamp = sampledAt;
-        this.events.emit('entries-change', this._entries);
+        this.events.emit('entries-change', { entries: this._entries, changedIds: [entryId] });
         if (entry._module) {
             await entry._module.show({ type: 'FeatureCollection', features: data });
             // A newer tick beat us across the await — its own pass will reconcile
@@ -241,8 +254,6 @@ export class TrafficIncidentsState implements StateSlice {
                 }
             }
         }
-        if (entry._tick !== tick) return true;
-        await this._rerunRegisteredSpecs(entryId, sampledAt);
         return true;
     }
 
@@ -268,7 +279,7 @@ export class TrafficIncidentsState implements StateSlice {
         await module.show({ type: 'FeatureCollection', features: entry.data });
         module.setVisible(true);
         if (fitBounds) {
-            this._ttMap.mapLibreMap.fitBounds(entry.params.bbox as [number, number, number, number], {
+            this._ttMap.mapLibreMap.fitBounds(entry.params.bbox, {
                 padding: 50,
                 maxZoom: 14,
             });
@@ -307,82 +318,37 @@ export class TrafficIncidentsState implements StateSlice {
         const wasShown = !!entry._shown;
         await this._teardownEntry(entry);
         this._entries.splice(idx, 1);
-        this.events.emit('entries-change', this._entries);
+        this.events.emit('entries-change', { entries: this._entries, changedIds: [entryId] });
         if (wasShown) this.events.emit('shown-change', this.shownEntryIds);
     }
 
-    /**
-     * Attach an analysis result to an existing entry. Names are unique within a single
-     * entry — adding one with an existing name replaces it. Returns true on success, false
-     * if the entry doesn't exist. Lazy-creates the entry's {@link IncidentsAnalyses}.
-     */
-    addAnalysisToEntry(entryId: TrafficIncidentsEntry['id'], analysis: IncidentsAnalysis): boolean {
-        const entry = this._entries.find((e) => e.id === entryId);
-        if (!entry) return false;
-        (entry._analyses ??= new IncidentsAnalyses()).attach(analysis);
-        this.events.emit('analysis-change', { entryId: entry.id, analysis });
-        // Re-emit entries-change so subscribers re-render — analyses mutate the entry in place.
-        this.events.emit('entries-change', this._entries);
-        return true;
-    }
+    // ---- Clustering (dedicated typed state) ----
 
     /**
-     * Register (or replace) a re-executing analysis spec on its source entry. Names are unique
-     * per entry — adding one with an existing name replaces it. Lazy-creates the entry's
-     * {@link IncidentsAnalyses} on first call.
+     * Store (or replace) an entry's clustering record and emit `clusters-change`. No-op when the entry is
+     * unknown — clusters are entry-scoped, so an orphan record is meaningless. Called by `clusterIncidents`
+     * and its monitor-tick re-run (`tools/state/clusters-runtime.ts`).
      */
-    setAnalysisSpec(spec: IncidentsAnalysisSpec): void {
-        const entry = this._entries.find((e) => e.id === spec.source);
-        if (!entry) return;
-        (entry._analyses ??= new IncidentsAnalyses()).register(spec);
+    setClusters(entryId: TrafficIncidentsEntry['id'], record: ClustersRecord): void {
+        if (!this._entries.some((e) => e.id === entryId)) return;
+        this._clusters.set(entryId, record);
+        this.events.emit('clusters-change', { entryId, clusters: record.output });
     }
 
-    /**
-     * Register (or replace) a deterministic analysis spec on its source entry — the generic
-     * seam personas build typed analyses on (e.g. incident clustering in the traffic example).
-     * Names are unique per entry; re-registering under an existing name replaces it.
-     * Lazy-creates the entry's {@link IncidentsAnalyses}. With `runNow`, runs the spec once
-     * immediately, attaches the result, and **returns it** so the caller uses the freshly
-     * computed value directly (no read-back, no cast). Returns `undefined` when the source
-     * entry is unknown, `runNow` is not set, or the run threw — so a falsy return is an
-     * unambiguous "no fresh result", never a stale one.
-     */
-    async setDeterministicSpec(spec: DeterministicSpec, opts?: { runNow?: boolean }): Promise<unknown> {
-        const entry = this._entries.find((e) => e.id === spec.source);
-        if (!entry) return undefined;
-        const analyses = (entry._analyses ??= new IncidentsAnalyses());
-        analyses.registerDeterministic(spec);
-        if (!opts?.runNow) return undefined;
-        // Mirror replay's contract: a throwing spec must not propagate a raw exception
-        // out of registration. Swallow it, leave the last good result untouched, and
-        // return undefined so the caller can tell a fresh run from a stale leftover.
-        try {
-            const prev = analyses.getResult(spec.name);
-            const data = await spec.run(entry.data, {
-                previous: prev?.data,
-                sampledAt: entry.timestamp,
-                previousSampledAt: prev?.timestamp,
-            });
-            this.addAnalysisToEntry(entry.id, {
-                name: spec.name,
-                timestamp: entry.timestamp,
-                outputFormat: 'json',
-                data,
-            });
-            return data;
-        } catch {
-            return undefined;
-        }
+    /** Latest clustering output for an entry, or undefined when none has been computed. */
+    getClusters(entryId: TrafficIncidentsEntry['id']): SandboxClusteringOutput | undefined {
+        return this._clusters.get(entryId)?.output;
     }
 
-    /** Latest result data for a named analysis on an entry, or undefined when absent. */
-    getAnalysisResult(entryId: TrafficIncidentsEntry['id'], name: string): unknown {
-        return this._entries.find((e) => e.id === entryId)?._analyses?.getResult(name)?.data;
+    /** Full clustering record (recipe + output) for an entry — the re-run reads this back. */
+    getClustersRecord(entryId: TrafficIncidentsEntry['id']): ClustersRecord | undefined {
+        return this._clusters.get(entryId);
     }
 
-    /** Remove a spec by name from every entry that carries it. */
-    removeAnalysisSpec(name: string): void {
-        for (const entry of this._entries) entry._analyses?.unregister(name);
+    /** Drop an entry's clustering. Emits `clusters-change` with `null`. No-op when nothing is stored. */
+    clearClusters(entryId: TrafficIncidentsEntry['id']): void {
+        if (!this._clusters.delete(entryId)) return;
+        this.events.emit('clusters-change', { entryId, clusters: null });
     }
 
     /** Snapshot of an entry's focus subset, or null when no focus is active or the entry is unknown. */
@@ -408,7 +374,7 @@ export class TrafficIncidentsState implements StateSlice {
             this.clearFocus(entryId);
             return { focusedCount: 0, droppedIds: [] };
         }
-        const present = new Set(entry.data.map((f) => f.properties.id as string));
+        const present = new Set(entry.data.map((f) => f.properties.id));
         const keep: string[] = [];
         const dropped: string[] = [];
         for (const id of ids) {
@@ -496,7 +462,7 @@ export class TrafficIncidentsState implements StateSlice {
         entryId: TrafficIncidentsEntry['id'],
         area: MonitoredArea,
         deps: IncidentMonitorDeps,
-        opts?: { intervalMs?: number },
+        opts?: { intervalMs?: number; skipInitialTick?: boolean },
     ): void {
         const entry = this._requireEntry(entryId);
         const monitor = (entry._monitor ??= this._createMonitorForEntry(entry));
@@ -504,7 +470,7 @@ export class TrafficIncidentsState implements StateSlice {
         // *into* running — that includes recovery from `stopped-error`, not just from
         // idle. `monitor.start` is itself idempotent on running.
         const wasRunning = monitor.isRunning;
-        monitor.start(area, deps, opts?.intervalMs);
+        monitor.start(area, deps, opts?.intervalMs, opts?.skipInitialTick);
         if (!wasRunning) this.events.emit('monitor-start', { entryId });
     }
 
@@ -547,24 +513,17 @@ export class TrafficIncidentsState implements StateSlice {
         return entry;
     }
 
-    // Replay all analysis specs registered on this entry. The registry stores each fresh
-    // result internally; the slice's job is to surface the events so external subscribers
-    // re-render. `sampledAt` propagates from the caller's tick so every fresh analysis
-    // shares the entry's new timestamp.
-    private async _rerunRegisteredSpecs(entryId: TrafficIncidentsEntry['id'], sampledAt: number): Promise<void> {
-        const entry = this._entries.find((e) => e.id === entryId);
-        if (!entry?._analyses?.specs.length) return;
-        const fresh = await entry._analyses.replay(entry.data, sampledAt);
-        for (const analysis of fresh) this.events.emit('analysis-change', { entryId: entry.id, analysis });
-        if (fresh.length > 0) this.events.emit('entries-change', this._entries);
-    }
-
-    // Tear an entry down: stop its monitor and clear its module. Idempotent.
+    // Tear an entry down: stop its monitor, clear its module, drop its clustering. Idempotent.
     // Used by removeEntry, single-mode trimming, and reset.
+    //
+    // `analyseData` analyses bound to this entry are NOT dropped here — the standing-sweep wiring GCs
+    // them off the `entries-change` every teardown caller emits (`pruneToLiveEntries`). Clustering IS
+    // dropped here: it's dedicated state this slice owns.
     //
     // Synchronous emits run before any await so callers that fire-and-forget
     // (notably `reset`, which calls `events.clear()` right after) still see them.
     private async _teardownEntry(entry: TrafficIncidentsEntry): Promise<void> {
+        this.clearClusters(entry.id);
         this.stopMonitoring(entry.id);
         if (entry._focus) {
             entry._focus = undefined;
@@ -589,11 +548,12 @@ export class TrafficIncidentsState implements StateSlice {
     reset(): void {
         // Tear every entry down synchronously where we can — the awaits inside _teardownEntry
         // are just module.clear()s; we run them concurrently and don't block reset() itself.
+        const clearedIds = this._entries.map((entry) => entry.id);
         for (const entry of this._entries) void this._teardownEntry(entry);
         const hadEntries = this._entries.length > 0;
         this._entries = [];
         if (hadEntries) {
-            this.events.emit('entries-change', this._entries);
+            this.events.emit('entries-change', { entries: this._entries, changedIds: clearedIds });
             this.events.emit('shown-change', this.shownEntryIds);
         }
         this.events.clear();

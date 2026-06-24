@@ -8,7 +8,6 @@ import type { StateSlice } from '../../types';
 import { collapseHistoryToLatest, hideAllEntries, pickUniqueEntryId } from '../entry-helpers';
 import { StateEvents } from '../events';
 import type { EntryMode, ShownEntriesSlice } from '../state';
-import type { BYODAnalysis } from './analysis';
 import type { BYODEntry, BYODSource } from './entry';
 import { profileFeatureCollection } from './profile';
 
@@ -18,14 +17,17 @@ import { profileFeatureCollection } from './profile';
  * @group Agent Toolkit
  */
 export type BYODStateEvents = {
-    /** History changed — entry added, removed, or cleared via `reset()`. */
-    'entries-change': readonly BYODEntry[];
+    /**
+     * History changed — entry added, removed, or cleared via `reset()`. `entries` is the full
+     * snapshot after the change; `changedIds` lists the ids of the entries this specific change
+     * added, replaced in place, or removed.
+     */
+    'entries-change': { entries: readonly BYODEntry[]; changedIds: readonly string[] };
     /** Set of entries currently rendered on the map changed. */
     'shown-change': ReadonlySet<string>;
     /** Display policy switched between `single` and `multiple`. */
     'mode-change': EntryMode;
     /** An analysis was attached to (or replaced on) an entry by `analyseData`. */
-    'analysis-added': { entryId: string; analysis: BYODAnalysis };
 };
 
 /**
@@ -50,6 +52,33 @@ export type AddBYODEntryOptions = {
 };
 
 /**
+ * Verdict returned by a {@link ByodSourceUrlValidator}: explicitly allow the fetch with
+ * `{ valid: true }`, or block it with `{ valid: false, reason }` — the `reason` is surfaced
+ * to the model as the tool error.
+ *
+ * @group Agent Toolkit
+ */
+export type ByodSourceUrlValidation = { valid: true } | { valid: false; reason: string };
+
+/**
+ * App-supplied authorization hook for BYOD source URLs. Runs inside
+ * `addByodSource` AFTER the built-in scheme / size / timeout policy and BEFORE
+ * the network fetch. Return `{ valid: true }` to allow the fetch or
+ * `{ valid: false, reason }` to block it (see {@link ByodSourceUrlValidation}).
+ * May be sync or async — e.g. an allowlist lookup.
+ *
+ * The toolkit can't enforce SSRF guarantees the host itself can't, so it leaves
+ * the URL surface open by default; this hook lets a deployment add its own
+ * policy — refuse cloud-metadata endpoints (`169.254.169.254`), restrict to
+ * known hosts, etc. — without the SDK prescribing one for everyone. Configure
+ * via the `byod.validateSourceUrl` option on `createMapAgent`, or assign
+ * `state.byod.sourceUrlValidator` directly.
+ *
+ * @group Agent Toolkit
+ */
+export type ByodSourceUrlValidator = (url: URL) => ByodSourceUrlValidation | Promise<ByodSourceUrlValidation>;
+
+/**
  * State slice for BYOD (bring-your-own-data) GeoJSON layers — customer-owned
  * data that doesn't fit places / routes / ranges / custom-geometries. Each
  * entry wraps a {@link CustomGeoJSONModule} so the agent can render, query,
@@ -66,6 +95,13 @@ export class BYODState implements ShownEntriesSlice, StateSlice {
 
     /** Subscribe to state changes — see {@link BYODStateEvents}. */
     readonly events = new StateEvents<BYODStateEvents>();
+
+    /**
+     * Optional authorization hook for `addByodSource` URL fetches — see
+     * {@link ByodSourceUrlValidator}. Unset = no restriction beyond the built-in
+     * scheme / size / timeout policy.
+     */
+    sourceUrlValidator?: ByodSourceUrlValidator;
 
     constructor(private readonly _ttMap: TomTomMap) {}
 
@@ -92,8 +128,9 @@ export class BYODState implements ShownEntriesSlice, StateSlice {
         if (this._entryMode === mode) return;
         this._entryMode = mode;
         if (mode === 'single' && this._entries.length > 1) {
+            const droppedIds = this._entries.slice(0, -1).map((entry) => entry.id);
             this._entries = await collapseHistoryToLatest(this._entries, (entry) => this.hideEntry(entry.id));
-            this.events.emit('entries-change', this._entries);
+            this.events.emit('entries-change', { entries: this._entries, changedIds: droppedIds });
         }
         this.events.emit('mode-change', mode);
     }
@@ -108,6 +145,7 @@ export class BYODState implements ShownEntriesSlice, StateSlice {
      * rendered on top of a still-visible old one). Returns the assigned id.
      */
     async addEntry(data: FeatureCollection, label: string, options: AddBYODEntryOptions = {}): Promise<string> {
+        const droppedIds = this._entryMode === 'single' ? this._entries.map((entry) => entry.id) : [];
         if (this._entryMode === 'single' && this._entries.length > 0) {
             await hideAllEntries(this._entries, (entry) => this.hideEntry(entry.id));
             this._entries = [];
@@ -129,7 +167,7 @@ export class BYODState implements ShownEntriesSlice, StateSlice {
             layers: options.layers ?? [],
             profile: profileFeatureCollection(data),
         });
-        this.events.emit('entries-change', this._entries);
+        this.events.emit('entries-change', { entries: this._entries, changedIds: [...droppedIds, entryId] });
         return entryId;
     }
 
@@ -143,28 +181,7 @@ export class BYODState implements ShownEntriesSlice, StateSlice {
         const entry = this._requireEntry(entryId);
         entry.layers = layers;
         entry._module?.applyConfig({ sources: { data: { layers } } });
-        this.events.emit('entries-change', this._entries);
-    }
-
-    /**
-     * Attach an analysis to an existing entry (replace if a result of the same name exists).
-     * Mirrors {@link CustomGeometriesState.addAnalysisToEntry} so the shared `analyseData`
-     * attach helper treats BYOD like every other analysable slice. No-op (returns `false`)
-     * when the entry is unknown.
-     */
-    addAnalysisToEntry(entryId: string, analysis: BYODAnalysis): boolean {
-        const entry = this._entries.find((e) => e.id === entryId);
-        if (!entry) return false;
-        entry._analysis ??= [];
-        const existingIdx = entry._analysis.findIndex((a) => a.name === analysis.name);
-        if (existingIdx >= 0) {
-            entry._analysis[existingIdx] = analysis;
-        } else {
-            entry._analysis.push(analysis);
-        }
-        this.events.emit('analysis-added', { entryId, analysis });
-        this.events.emit('entries-change', this._entries);
-        return true;
+        this.events.emit('entries-change', { entries: this._entries, changedIds: [entryId] });
     }
 
     /**
@@ -216,7 +233,7 @@ export class BYODState implements ShownEntriesSlice, StateSlice {
         if (idx === -1) return;
         await this.hideEntry(entryId);
         this._entries.splice(idx, 1);
-        this.events.emit('entries-change', this._entries);
+        this.events.emit('entries-change', { entries: this._entries, changedIds: [entryId] });
     }
 
     private _requireEntry(entryId: string): BYODEntry {
@@ -234,9 +251,10 @@ export class BYODState implements ShownEntriesSlice, StateSlice {
     }
 
     reset(): void {
+        const clearedIds = this._entries.map((entry) => entry.id);
         for (const entry of this._entries) entry._module?.clear().catch(() => undefined);
         this._entries = [];
-        this.events.emit('entries-change', this._entries);
+        this.events.emit('entries-change', { entries: this._entries, changedIds: clearedIds });
         this.events.emit('shown-change', this.shownEntryIds);
     }
 }

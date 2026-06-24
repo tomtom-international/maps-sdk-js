@@ -4,7 +4,7 @@
 
 import { trafficIncidentRequestCategories } from '@tomtom-org/maps-sdk/core';
 import type { DataEntryKind } from '../state';
-import type { ToolDefinition } from '../types';
+import type { ToolDefinition, ToolState } from '../types';
 
 // --- MapLibre tools ---
 import {
@@ -93,50 +93,44 @@ import {
     addByodSourceOutputSchema,
     addByodSourceSchema,
     analyseDataBuilder,
-    clusterIncidentsDescription,
-    clusterIncidentsOutputSchema,
-    clusterIncidentsSchema,
+    clearTrackerDescription,
+    clearTrackerOutputSchema,
+    clearTrackerSchema,
+    clusterIncidentsBuilder,
+    createTrackerDescription,
+    createTrackerOutputSchema,
+    createTrackerSchema,
     executeAddByodSource,
-    executeClusterIncidents,
+    executeClearTracker,
+    executeCreateTracker,
     executeFocusIncidents,
     executeGetCurrentWaypoints,
-    executeQueryTrafficAnalytics,
-    executeRecallByod,
-    executeRecallGeometries,
-    executeRecallRanges,
-    executeRecallRoutes,
-    executeRecallState,
+    executeGetTrackerHistory,
+    executeGetTrackers,
+    executeMonitorAnalysis,
     executeResetState,
     executeSetByodLayers,
     executeSetEntryMode,
-    executeStartTrafficIncidentsMonitor,
-    executeStopTrafficIncidentsMonitor,
+    executeSetTrafficIncidentsMonitor,
+    executeStartRouteMonitor,
+    executeStopRouteMonitor,
     focusIncidentsDescription,
     focusIncidentsOutputSchema,
     focusIncidentsSchema,
     getCurrentWaypointsDescription,
     getCurrentWaypointsOutputSchema,
     getCurrentWaypointsSchema,
+    getTrackerHistoryDescription,
+    getTrackerHistoryOutputSchema,
+    getTrackerHistorySchema,
+    getTrackersDescription,
+    getTrackersOutputSchema,
+    getTrackersSchema,
+    monitorAnalysisDescription,
+    monitorAnalysisOutputSchema,
+    monitorAnalysisSchema,
     processDataBuilder,
-    queryTrafficAnalyticsDescription,
-    queryTrafficAnalyticsOutputSchema,
-    queryTrafficAnalyticsSchema,
-    recallByodDescription,
-    recallByodOutputSchema,
-    recallByodSchema,
-    recallGeometriesDescription,
-    recallGeometriesOutputSchema,
-    recallGeometriesSchema,
-    recallPlacesBuilder,
-    recallRangesDescription,
-    recallRangesOutputSchema,
-    recallRangesSchema,
-    recallRoutesDescription,
-    recallRoutesOutputSchema,
-    recallRoutesSchema,
-    recallStateDescription,
-    recallStateOutputSchema,
-    recallStateSchema,
+    recallStateBuilder,
     resetStateDescription,
     resetStateOutputSchema,
     resetStateSchema,
@@ -146,12 +140,15 @@ import {
     setEntryModeDescription,
     setEntryModeOutputSchema,
     setEntryModeSchema,
-    startTrafficIncidentsMonitorDescription,
-    startTrafficIncidentsMonitorOutputSchema,
-    startTrafficIncidentsMonitorSchema,
-    stopTrafficIncidentsMonitorDescription,
-    stopTrafficIncidentsMonitorOutputSchema,
-    stopTrafficIncidentsMonitorSchema,
+    setTrafficIncidentsMonitorDescription,
+    setTrafficIncidentsMonitorOutputSchema,
+    setTrafficIncidentsMonitorSchema,
+    startRouteMonitorDescription,
+    startRouteMonitorOutputSchema,
+    startRouteMonitorSchema,
+    stopRouteMonitorDescription,
+    stopRouteMonitorOutputSchema,
+    stopRouteMonitorSchema,
 } from './state';
 
 // --- TomTom Map tools ---
@@ -160,7 +157,6 @@ import {
     clearMapOutputSchema,
     clearMapSchema,
     executeClearMap,
-    executeGetShownTileIncidents,
     executeGetStandardMapStyles,
     executeSetLanguage,
     executeSetMapStandardStyle,
@@ -173,9 +169,6 @@ import {
     executeUpdateRoutesDisplay,
     executeUpdateTrafficAreaAnalyticsDisplay,
     executeUpdateWaypointsDisplay,
-    getShownTileIncidentsDescription,
-    getShownTileIncidentsOutputSchema,
-    getShownTileIncidentsSchema,
     getStandardMapStylesDescription,
     getStandardMapStylesOutputSchema,
     getStandardMapStylesSchema,
@@ -219,13 +212,7 @@ import {
     calculateBBoxDescription,
     calculateBBoxSchema,
     executeCalculateBBox,
-    executeFormatDistance,
-    executeFormatDuration,
     executeGetCurrentLocation,
-    formatDistanceDescription,
-    formatDistanceSchema,
-    formatDurationDescription,
-    formatDurationSchema,
     getCurrentLocationDescription,
     getCurrentLocationOutputSchema,
     getCurrentLocationSchema,
@@ -256,7 +243,7 @@ const defaultTools = {
         execute: executeLocatePlace,
         tags: ['locate', 'place', 'location', 'waypoint'],
         examples: [
-            'locatePlace("Buckingham Palace", queryAs: "poi", where: { mode: "within", viewport: true }, waypointIndex: 0)',
+            'locatePlace("Buckingham Palace", queryAs: "poi", waypointIndex: 0)  // omit `where` to resolve the name anywhere (global)',
             'locatePlace("Tower Bridge", queryAs: "poi", where: { mode: "nearby", viewport: true }, waypointIndex: 1)',
             'locatePlace("Westminster Abbey", queryAs: "poi", where: { mode: "global" })',
             'locatePlace("10 Downing Street", queryAs: "place", where: { mode: "nearby", position: [4.9, 52.37] })',
@@ -270,8 +257,14 @@ const defaultTools = {
             'Pin Schiphol Airport on the map',
             'Outline Amsterdam on the map',
             'Show the boundary of Berlin',
+            // Two WHOLE named cities outlined via repeated `geometry: { mode: "add" }` (see examples
+            // above) — moved here from discoverPlaces, which the classifier routes past to locatePlace.
+            'Show the boundaries of Amsterdam and Utrecht',
+            // Tourist / traveller persona: single named landmark, pin or locate.
+            'Pin the Eiffel Tower on the map',
+            'Where is the Sydney Opera House?',
         ],
-        relatedTools: ['setRoute', 'addWaypointsToRoute', 'getCurrentWaypoints', 'recallPlaces'],
+        relatedTools: ['setRoute', 'addWaypointsToRoute', 'getCurrentWaypoints', 'recallState'],
     },
     reverseGeocode: {
         description: reverseGeocodeDescription,
@@ -282,9 +275,11 @@ const defaultTools = {
         execute: executeReverseGeocode,
         tags: ['location', 'place'],
         examples: ['reverseGeocode({ position: [4.9, 52.4] })'],
+        // Self-contained coordinate prompt first: it doubles as the canonical scenario (which needs
+        // no prior map-click context) and as a concrete first UI suggestion.
         examplePrompts: [
-            "What's the address at this point?",
             'Which city is [4.9, 52.4] in?',
+            "What's the address at this point?",
             'Name the place where I clicked',
         ],
         relatedTools: ['getViewport', 'getCurrentLocation', 'updatePlacesDisplay', 'locatePlace'],
@@ -333,14 +328,14 @@ const defaultTools = {
             'Fit the map to the worst traffic section of the route',
             'Fit the map to the first toll section of the route',
             'Filter my loaded EV stations to those within 500 m of the route',
-            'Create a custom polygon by unioning these city boundaries',
-            'Compute a 500 m buffer around this neighbourhood',
+            'Union the city boundaries I loaded into one custom polygon',
+            'Compute a 500 m buffer around the neighbourhood I loaded',
             'Areas of Amsterdam not reachable from the hospitals',
             'Filter loaded places to those inside the reachable area',
             'Keep only the EV stations that fall inside high-congestion tiles',
-            'Create a custom polygon layer outlining the congestion hot zone',
+            'Create a custom polygon outlining the congestion hot zone in my loaded analytics',
         ],
-        relatedTools: ['analyseData', 'recallPlaces', 'recallRoutes', 'recallGeometries', 'recallState'],
+        relatedTools: ['analyseData', 'recallState'],
         dependsOn: [
             'discoverPlaces',
             'locatePlace',
@@ -348,9 +343,8 @@ const defaultTools = {
             'getTrafficIncidents',
             'getTrafficAreaAnalytics',
             'findReachableAreas',
-            'recallPlaces',
-            'recallRoutes',
-            'recallGeometries',
+            'addByodSource',
+            'recallState',
         ],
     }),
     analyseData: analyseDataBuilder({
@@ -365,8 +359,8 @@ const defaultTools = {
             '(areas, h3 coverage); historical traffic-area-analytics breakdowns (congestion / speed / travel-time per ' +
             'tile); cross-kind correlations (incidents-per-cluster, places-near-route, distance-to-route bins, ' +
             'route-segments-by-tile-metric). ' +
-            'For recurring monitor-tick reruns with `previous` / `now` / `log` and optional `focusIds` side-effect, ' +
-            'set `monitor: { entryId }` (only `incidentsEntryIDs: [monitor.entryId]` allowed alongside).',
+            'One-shot by default — it returns an `analysisId`; pass that to `monitorAnalysis` to keep the analysis ' +
+            'recomputing whenever its source entries change (the recurring sandbox then also sees `previous` / `now`).',
         tags: ['analysis', 'turf', 'h3', 'place', 'route', 'geometry'],
         examples: [
             // places-only: counts
@@ -405,66 +399,53 @@ const defaultTools = {
             'analyseData({ incidentsEntryIDs: ["incidents-0"], name: "by-category", code: "const c = {}; for (const i of incidents) c[i.properties.category] = (c[i.properties.category] ?? 0) + 1; return { total: incidents.length, byCategory: c };" })',
             // incidents-only: top-N by delay (one-shot)
             'analyseData({ incidentsEntryIDs: ["incidents-0"], name: "top-delays", code: "return [...incidents].sort((a,b) => (b.properties.delayInSeconds ?? 0) - (a.properties.delayInSeconds ?? 0)).slice(0,5).map(i => ({ id: i.properties.id, delay: i.properties.delayInSeconds, road: i.properties.roadNumbers?.[0] }));" })',
-            // incidents-only with monitor: recurring counts that survive ticks
-            'analyseData({ incidentsEntryIDs: ["incidents-0"], monitor: { entryId: "incidents-0" }, name: "rolling-count", code: "const trend = previous ? (incidents.length > previous.count ? \'growing\' : incidents.length < previous.count ? \'fading\' : \'steady\') : \'new\'; return { count: incidents.length, trend, at: now.toISOString() };" })',
-            // incidents-only with monitor + focus: surface top-3 worst delays as the focus subset
-            'analyseData({ incidentsEntryIDs: ["incidents-0"], monitor: { entryId: "incidents-0" }, name: "top-3-focus", code: "const top = [...incidents].sort((a,b) => (b.properties.delayInSeconds ?? 0) - (a.properties.delayInSeconds ?? 0)).slice(0,3); return { count: top.length, focusIds: top.map(i => i.properties.id), focusReason: \'top 3 by delay\' };" })',
         ],
         examplePrompts: [
             'How many of each POI category are in these results?',
             'h3 hex density of these places',
             'Bar chart of the top POI categories',
-            'How long is each route alternative?',
-            'Compare travel times across alternatives',
-            'How many EV stations are within 500 m of the route?',
+            'Bar chart of the lengths of my route alternatives',
+            'Bar chart of travel times across my route alternatives',
+            'Of my loaded EV stations, how many are within 500 m of my route?',
             'Chart the distance from each cafe to the route, binned in km',
             'Histogram of place-to-route distances',
-            'Distribution of traffic incidents along the drive from Paris to Brussels',
+            'Distribution by category of the traffic incidents I loaded along my route',
             'Chart the incidents on the route by category',
-            'Total delay per country on this route',
-            'How big are these areas?',
-            'Bar chart of city areas',
-            'Incidents per place cluster',
-            'Total delay per traffic corridor',
+            'Total delay by country for the incidents on my route',
+            'How big are the city areas I loaded?',
+            'Bar chart of the sizes of the city areas I loaded',
+            'Count the loaded incidents per cluster of my loaded places',
+            'Total delay per corridor for my loaded route incidents',
             'Congestion distribution across the analytics tiles',
-            'Average historical speed per tile, as a chart',
+            'Chart the average historical speed per tile in my loaded analytics',
             'Group these EV stations by the congestion level of the tile they fall in',
             'For the route, which tiles does it cross and what is their average congestion?',
             'How many incidents of each category?',
             'Top 5 incidents by delay',
-            'Total delay grouped by road',
-            'Keep counting the incidents and tell me when it grows or fades',
-            'Highlight the 3 worst incidents by delay on the map',
+            'Total delay per road across my loaded incidents',
             'Bar chart of incidents per category',
-            'Which jams are growing vs fading on this monitored area?',
         ],
-        relatedTools: [
-            'processData',
-            'focusIncidents',
-            'recallPlaces',
-            'recallRoutes',
-            'recallGeometries',
-            'recallState',
-        ],
+        relatedTools: ['processData', 'focusIncidents', 'recallState'],
         dependsOn: [
             'discoverPlaces',
+            'locatePlace',
             'setRoute',
             'getTrafficIncidents',
             'getTrafficAreaAnalytics',
             'findReachableAreas',
-            'recallPlaces',
-            'recallRoutes',
-            'recallGeometries',
+            'addByodSource',
+            'processData',
+            'recallState',
         ],
     }),
     setRoute: {
         description: setRouteDescription,
         classificationPrompt:
-            'Use to define a new route or change route waypoints/options. Pass `locations` for a new origin/stops/destination, `parameters` to update cost model / alternatives / when, or both together. Do not use to show, query, or modify an existing displayed route.',
+            'Use to define a new route or change route waypoints/options. Pass `locations` for a new origin/stops/destination, `parameters` to update cost model / alternatives / when, or both together. Do not use to show, query, or modify an existing displayed route. To MONITOR / track / keep fresh the live traffic BETWEEN two places, START here (calculate with traffic "historical" + maxAlternatives 1-2 for stable paths), then pair with startRouteMonitor — startRouteMonitor needs a route to exist first.',
         inputSchema: setRouteSchema,
         outputSchema: setRouteOutputSchema,
         execute: executeSetRoute,
-        tags: ['route', 'waypoint', 'location'],
+        tags: ['route', 'waypoint', 'location', 'traffic'],
         examples: [
             'setRoute({ locations: [{ query: "Amsterdam" }, { query: "Brussels" }] })',
             'setRoute({ locations: [{ query: "Eiffel Tower" }, { query: "Louvre Museum" }, { query: "Notre Dame" }] })',
@@ -472,6 +453,8 @@ const defaultTools = {
             'setRoute({ parameters: { costModel: { routeType: "fast", avoid: ["tollRoads"] } } })',
             'setRoute({ parameters: { when: { option: "departAt", date: "2025-06-01T09:00:00Z" } } })',
             'setRoute({ locations: [{ query: "Paris" }, { query: "Lyon" }], parameters: { costModel: { routeType: "short" } } })',
+            // Monitoring in one call: historical paths + alternatives + monitor:true (no startRouteMonitor needed).
+            'setRoute({ locations: [{ query: "Paris" }, { query: "Amsterdam" }], parameters: { maxAlternatives: 2, costModel: { traffic: "historical" } }, monitor: true })',
         ],
         examplePrompts: [
             'Get directions from Paris to Lyon',
@@ -483,13 +466,22 @@ const defaultTools = {
             'Find the fastest route from Berlin to Munich',
             'Show 2 alternative routes for my current trip',
             'Depart at 9am on my current route',
+            // Monitoring intents enter through setRoute (it builds the route startRouteMonitor then watches).
+            'Monitor traffic between Paris and Amsterdam',
+            'Monitor traffic between Santa Monica and Downtown LA',
+            'Keep an eye on live traffic from the office to the airport',
+            'Show me fresh traffic between A and B',
+            // Leisure road-tripper / multi-stop traveller persona.
+            'Plan a road trip from Lisbon to Porto',
+            'Take me from the Eiffel Tower to the Arc de Triomphe',
         ],
         relatedTools: [
+            'startRouteMonitor',
             'updateRoutesDisplay',
             'addWaypointsToRoute',
             'removeWaypointsFromRoute',
             'replaceWaypointInRoute',
-            'recallRoutes',
+            'recallState',
         ],
     },
     addWaypointsToRoute: {
@@ -587,10 +579,11 @@ const defaultTools = {
             // Built from the canonical category list so the classifier hint can't drift from the schema.
             `Covers every incident category: ${trafficIncidentRequestCategories.join(', ')}. ` +
             'DO NOT pick for route-bound queries ("incidents ALONG / ON the route", "delays on the drive from X to Y"): ' +
-            'a calculated route already carries its incidents in `route.properties.sections.traffic[]` (category, ' +
-            'magnitudeOfDelay, delayInSeconds, effectiveSpeedInKmh) — call `analyseData` with `routesEntryIDs` for those. ' +
-            'When this tool IS the right pick: MANDATORY co-pick startTrafficIncidentsMonitor (they are a pair — data goes stale without it). ' +
-            'Also co-pick analyseData (one-shot aggregations / charts / clusters; pass `monitor: { entryId }` for the recurring spec + focus side-effect) and focusIncidents (highlight a subset) when the query implies them.',
+            'a calculated route already carries its incidents in `route.properties.sections.traffic[]` — call ' +
+            '`analyseData` with `routesEntryIDs` for those. Monitoring is built in: a shown fetch keeps the entry live ' +
+            '(`monitor: true` by default; `monitor: false` for a one-shot count) — no separate ' +
+            'setTrafficIncidentsMonitor call needed. Co-pick analyseData (aggregations / charts / clusters; pass ' +
+            '`monitor: { entryId }` for the recurring spec) and focusIncidents (highlight a subset) when the query implies them.',
         inputSchema: getTrafficIncidentsSchema,
         outputSchema: getTrafficIncidentsOutputSchema,
         execute: executeGetTrafficIncidents,
@@ -607,9 +600,15 @@ const defaultTools = {
             'Fetch traffic incidents in Amsterdam',
             'Any accidents in this area?',
             'Show roadworks across the city',
+            // "Watch this area…" is a fetch + monitor — getTrafficIncidents monitors by default, so it
+            // owns this prompt now (not setTrafficIncidentsMonitor, which is for an earlier entry).
+            'Watch this area for new accidents',
+            // Commuter / dispatcher persona: area-bound incident lookups by category.
+            'Are there any road closures downtown right now?',
+            'Show me the jams around the Amsterdam ring road',
             // Counter-examples: NOT this tool — route-bound queries use analyseData over routes.
         ],
-        relatedTools: ['calculateBBox', 'getViewport', 'analyseData', 'focusIncidents', 'startTrafficIncidentsMonitor'],
+        relatedTools: ['calculateBBox', 'getViewport', 'analyseData', 'focusIncidents', 'setTrafficIncidentsMonitor'],
     },
     focusIncidents: {
         description: focusIncidentsDescription,
@@ -631,70 +630,197 @@ const defaultTools = {
         relatedTools: ['analyseData', 'getTrafficIncidents'],
         dependsOn: ['getTrafficIncidents'],
     },
-    clusterIncidents: {
-        description: clusterIncidentsDescription,
+    clusterIncidents: clusterIncidentsBuilder({
         classificationPrompt:
-            'Deterministic DBSCAN clustering of loaded traffic incidents — "clusters / hotspots / dense pockets / worst areas". ' +
+            'DBSCAN clustering of loaded traffic incidents — "clusters / hotspots / dense pockets / worst areas". ' +
             'Produces stable IDs, road/category labels, delay aggregates, trend detection. Auto-reruns on monitor ticks. ' +
-            'ALWAYS co-pick with getTrafficIncidents + startTrafficIncidentsMonitor.',
-        inputSchema: clusterIncidentsSchema,
-        outputSchema: clusterIncidentsOutputSchema,
-        execute: executeClusterIncidents,
+            'Also handles clustering of a FILTERED subset ("only jams / accidents", "delayed over N minutes", ' +
+            '"along this route / within this area") via generated `code`. Co-pick with getTrafficIncidents (which ' +
+            'keeps the entry monitored by default).',
         tags: ['traffic', 'incident', 'analysis', 'clustering'],
         examples: [
             "clusterIncidents({ incidentsEntryID: 'incidents-0' })",
             "clusterIncidents({ incidentsEntryID: 'incidents-0', eps: 0.3, minMembers: 4, maxClusters: 8 })",
+            // Dynamic `code`: filter the incidents (real shape — `properties.delayInSeconds`) then cluster.
+            'clusterIncidents({ incidentsEntryID: \'incidents-0\', code: "const major = incidents.filter(i => (i.properties.delayInSeconds ?? 0) >= 300); return cluster(major, { eps: 0.4 }, previous, now);" })',
+            "clusterIncidents({ incidentsEntryID: 'incidents-0', code: \"const jams = incidents.filter(i => i.properties.category === 'jam'); return cluster(jams, {}, previous, now);\" })",
         ],
         examplePrompts: [
             'Cluster the incidents',
             'Show me the hotspots',
             'Where are the worst congestion pockets?',
             'Group the incidents into clusters',
+            // New code-generation capability: clustering of a dynamically-filtered subset.
+            'Cluster only the major jams',
+            'Where are the hotspots of incidents delayed more than 5 minutes?',
+            'Cluster just the accidents and road closures',
         ],
-        relatedTools: ['getTrafficIncidents', 'startTrafficIncidentsMonitor', 'analyseData', 'focusIncidents'],
+        relatedTools: ['getTrafficIncidents', 'setTrafficIncidentsMonitor', 'analyseData', 'focusIncidents'],
         dependsOn: ['getTrafficIncidents'],
-    },
-    startTrafficIncidentsMonitor: {
-        description: startTrafficIncidentsMonitorDescription,
+    }),
+    monitorAnalysis: {
+        description: monitorAnalysisDescription,
         classificationPrompt:
-            'Polls an existing incidents entry on a fixed interval (default 60s); registered analyses re-run on each tick. ' +
-            'ALWAYS pick this whenever getTrafficIncidents is picked — they are a mandatory pair, no exceptions. ' +
-            'Without it the loaded data is a frozen snapshot. Also pick on its own when the user says ' +
-            '"live"/"watch"/"keep updated"/"refresh every N seconds" against an already-loaded entry.',
-        inputSchema: startTrafficIncidentsMonitorSchema,
-        outputSchema: startTrafficIncidentsMonitorOutputSchema,
-        execute: executeStartTrafficIncidentsMonitor,
-        tags: ['traffic', 'incident', 'state'],
+            'Start or stop MONITORING an existing analysis by its `analysisId` (from analyseData) — a pure on/off ' +
+            'switch that recomputes the analysis on every change to its source entries (incidents monitor ticks, ' +
+            're-searched places, recalculated routes, refreshed data). When the user points at an analysis ALREADY ' +
+            'in state ("that count", "the breakdown you computed") and wants it kept live — "keep that count updated ' +
+            'and tell me when it grows or fades", "stop tracking that analysis" — pick THIS ALONE: the analysis ' +
+            'already exists, so do NOT re-fetch the data or arm a tracker. "Tell me when it grows or fades" about an ' +
+            'existing computed metric is monitorAnalysis, not createTracker. Define the computation with analyseData ' +
+            'first (a ONE-SHOT analysis needs analyseData alone); for a one-off highlight use focusIncidents.',
+        inputSchema: monitorAnalysisSchema,
+        outputSchema: monitorAnalysisOutputSchema,
+        execute: executeMonitorAnalysis,
+        tags: ['analysis', 'monitor'],
         examples: [
-            "startTrafficIncidentsMonitor({ incidentsEntryID: 'incidents-0' })",
-            "startTrafficIncidentsMonitor({ incidentsEntryID: 'incidents-0', intervalMs: 30000 })",
+            'monitorAnalysis({ analysisId: "rolling-count::incidents-0", enabled: true })',
+            'monitorAnalysis({ analysisId: "ev-near-route::places-0,route-1", enabled: false })',
+        ],
+        // Follow-up phrased — monitorAnalysis toggles an analysis analyseData already created, so its
+        // prompts reference an existing one ("that count / that analysis") rather than a cold request.
+        examplePrompts: [
+            'Keep that incident count updated and tell me when it grows or fades',
+            'Stop tracking that analysis',
+        ],
+        relatedTools: ['analyseData', 'getTrafficIncidents', 'setTrafficIncidentsMonitor', 'focusIncidents'],
+        dependsOn: ['analyseData'],
+    },
+    createTracker: {
+        description: createTrackerDescription,
+        classificationPrompt:
+            'Arm a TRACKER (a watch that ALERTS) on already-loaded entries: you write `code` returning ' +
+            '`{ active, members, summary }`, and it recomputes whenever the watched entries change, logging an ' +
+            'alert when the condition turns true and an event when it clears. Pick for "alert me when…", "let me ' +
+            'know if…", "watch for…", "notify when an incident appears near…". Reads multiple entry kinds at once ' +
+            '(e.g. incidents near hospitals/places). The watched entries must already be loaded — for a fresh ' +
+            'area co-pick getTrafficIncidents (load the incidents) and locatePlace (resolve a named area) so the ' +
+            'tracker has real entry ids to read. CONTRAST analyseData (one-shot, no alerts) and monitorAnalysis: ' +
+            'keeping an EXISTING analysis fresh — "keep that count updated, tell me when it grows or fades" — is ' +
+            'monitorAnalysis, NOT a tracker. createTracker defines a NEW condition in `code` from scratch.',
+        inputSchema: createTrackerSchema,
+        outputSchema: createTrackerOutputSchema,
+        execute: executeCreateTracker as (input: unknown, state: ToolState) => Promise<unknown>,
+        tags: ['tracker', 'alert', 'monitor', 'turf'],
+        examples: [
+            'createTracker({ incidentsEntryIDs: ["incidents-0"], name: "Major incidents", rule: "any major incident in the area", code: "const hits = incidents.filter(i => i.properties.magnitudeOfDelay === \'major\'); return { active: hits.length > 0, members: [{ entryId: \'incidents-0\', featureIds: hits.map(i => i.properties.id) }], summary: hits.length ? `${hits.length} major incident(s)` : \'no major incidents\' };" })',
+            'createTracker({ placesEntryIDs: ["hospitals"], incidentsEntryIDs: ["incidents-0"], name: "Incidents near hospitals", rule: "an incident within 100m of a hospital", code: "const near = []; const hosp = new Set(); for (const h of places.features) for (const i of incidents) { const c = i.geometry.type === \'Point\' ? i.geometry.coordinates : turf.centroid(i).geometry.coordinates; if (turf.distance(c, h.geometry.coordinates, { units: \'meters\' }) <= 100) { near.push(i.properties.id); hosp.add(h.properties.id); } } return { active: near.length > 0, members: [{ entryId: \'hospitals\', featureIds: [...hosp] }, { entryId: \'incidents-0\', featureIds: near }], summary: near.length ? `${near.length} incident(s) near ${hosp.size} hospital(s)` : \'clear\' };" })',
         ],
         examplePrompts: [
-            'Keep this updated',
-            'Refresh the incidents every 30 seconds',
-            'Watch this area for new accidents',
+            'Alert me when there is a major incident in this area',
+            'Let me know if an incident appears within 100m of a hospital',
+            'Watch these incidents and tell me when a jam forms near my route',
         ],
-        relatedTools: ['getTrafficIncidents', 'stopTrafficIncidentsMonitor', 'analyseData'],
+        relatedTools: ['getTrafficIncidents', 'analyseData', 'clearTracker', 'getTrackerHistory', 'getTrackers'],
+        dependsOn: ['getTrafficIncidents', 'locatePlace', 'analyseData'],
+    },
+    clearTracker: {
+        description: clearTrackerDescription,
+        classificationPrompt:
+            'Stop a tracker armed by createTracker — "stop watching / stop alerting / clear that tracker". Omit ' +
+            'trackerId when only one exists. Does not touch the watched entries.',
+        inputSchema: clearTrackerSchema,
+        outputSchema: clearTrackerOutputSchema,
+        execute: executeClearTracker as (input: unknown, state: ToolState) => Promise<unknown>,
+        tags: ['tracker', 'alert'],
+        examples: ['clearTracker({})', 'clearTracker({ trackerId: "incidents-near-hospitals" })'],
+        examplePrompts: ['Stop that tracker', 'Stop alerting me about incidents near hospitals'],
+        relatedTools: ['createTracker', 'getTrackers'],
+    },
+    getTrackerHistory: {
+        description: getTrackerHistoryDescription,
+        classificationPrompt:
+            'Read what trackers have FIRED — the alert/event log ("what alerts fired", "what happened with my ' +
+            'trackers", "any incidents near hospitals today"). Scope to one trackerId or a sinceMs cutoff.',
+        inputSchema: getTrackerHistorySchema,
+        outputSchema: getTrackerHistoryOutputSchema,
+        execute: executeGetTrackerHistory as (input: unknown, state: ToolState) => Promise<unknown>,
+        tags: ['tracker', 'alert', 'history'],
+        examples: ['getTrackerHistory({})', 'getTrackerHistory({ trackerId: "incidents-near-hospitals" })'],
+        examplePrompts: ['What alerts have fired?', 'Show me the history for that tracker'],
+        relatedTools: ['createTracker', 'getTrackers'],
+    },
+    getTrackers: {
+        description: getTrackersDescription,
+        classificationPrompt:
+            'List the active trackers and their live state — "what am I tracking / what alerts are set / is ' +
+            'anything firing". Read-only.',
+        inputSchema: getTrackersSchema,
+        outputSchema: getTrackersOutputSchema,
+        execute: executeGetTrackers as (input: unknown, state: ToolState) => Promise<unknown>,
+        tags: ['tracker', 'alert'],
+        examples: ['getTrackers({})'],
+        examplePrompts: ['What am I tracking?', 'Which alerts are set up?'],
+        relatedTools: ['createTracker', 'getTrackerHistory'],
+    },
+    setTrafficIncidentsMonitor: {
+        description: setTrafficIncidentsMonitorDescription,
+        classificationPrompt:
+            'Arm or pause background polling on an ALREADY-loaded incidents entry — one toggle (`enabled: true/false`). ' +
+            'Enable for "keep updated"/"watch"/"live"/"refresh every N seconds" referring to incidents loaded on an ' +
+            'EARLIER turn; disable for "stop refreshing"/"pause updates". A fresh getTrafficIncidents fetch already ' +
+            'monitors by default, so do not co-pick this to start monitoring right after it.',
+        inputSchema: setTrafficIncidentsMonitorSchema,
+        outputSchema: setTrafficIncidentsMonitorOutputSchema,
+        execute: executeSetTrafficIncidentsMonitor,
+        tags: ['traffic', 'incident', 'state'],
+        examples: [
+            "setTrafficIncidentsMonitor({ incidentsEntryID: 'incidents-0', enabled: true })",
+            "setTrafficIncidentsMonitor({ incidentsEntryID: 'incidents-0', enabled: true, intervalMs: 30000 })",
+            "setTrafficIncidentsMonitor({ incidentsEntryID: 'incidents-0', enabled: false })",
+        ],
+        examplePrompts: [
+            'Keep the incidents I loaded updated',
+            'Refresh the incidents every 30 seconds',
+            'Stop refreshing the incidents',
+        ],
+        relatedTools: ['getTrafficIncidents', 'analyseData', 'focusIncidents'],
         dependsOn: ['getTrafficIncidents'],
     },
-    stopTrafficIncidentsMonitor: {
-        description: stopTrafficIncidentsMonitorDescription,
+    startRouteMonitor: {
+        description: startRouteMonitorDescription,
         classificationPrompt:
-            'Stop polling an incidents entry; the entry stays in state with its last data. ' +
-            'Pick for "stop refreshing"/"pause updates" or when ending a watch.',
-        inputSchema: stopTrafficIncidentsMonitorSchema,
-        outputSchema: stopTrafficIncidentsMonitorOutputSchema,
-        execute: executeStopTrafficIncidentsMonitor,
-        tags: ['traffic', 'incident', 'state'],
-        examples: ["stopTrafficIncidentsMonitor({ incidentsEntryID: 'incidents-0' })"],
-        examplePrompts: ['Stop refreshing', 'Pause updates for this area'],
-        relatedTools: ['startTrafficIncidentsMonitor', 'getTrafficIncidents'],
-        dependsOn: ['startTrafficIncidentsMonitor'],
+            'Arm background recalculation on an ALREADY-calculated route (default 60s): re-runs the SAME route ' +
+            'each tick so its live-traffic delays stay current. Pick for "keep this route updated" / "watch the ' +
+            'traffic on this drive" / "recalculate every N seconds". Best paired with a route calculated as ' +
+            'traffic "historical" + maxAlternatives 1-2 (stable typical paths, fresh delays). Not needed just to ' +
+            'calculate a route — that is setRoute.',
+        inputSchema: startRouteMonitorSchema,
+        outputSchema: startRouteMonitorOutputSchema,
+        execute: executeStartRouteMonitor,
+        tags: ['route', 'traffic', 'state'],
+        examples: [
+            "startRouteMonitor({ routesEntryID: 'routes-0' })",
+            "startRouteMonitor({ routesEntryID: 'routes-0', intervalMs: 30000 })",
+        ],
+        examplePrompts: [
+            'Keep this route updated with live traffic',
+            'Watch the traffic on the drive from Paris to Amsterdam',
+            'Recalculate this route every 30 seconds',
+            'Monitor traffic between these places',
+        ],
+        relatedTools: ['setRoute', 'stopRouteMonitor', 'updateRoutesDisplay', 'analyseData'],
+        dependsOn: ['setRoute'],
+    },
+    stopRouteMonitor: {
+        description: stopRouteMonitorDescription,
+        classificationPrompt:
+            'Stop recalculating a route entry; the entry stays in state with its last data. Pick for "stop ' +
+            'refreshing the route" / "pause traffic updates on this drive".',
+        inputSchema: stopRouteMonitorSchema,
+        outputSchema: stopRouteMonitorOutputSchema,
+        execute: executeStopRouteMonitor,
+        tags: ['route', 'traffic', 'state'],
+        examples: ["stopRouteMonitor({ routesEntryID: 'routes-0' })"],
+        examplePrompts: ['Stop refreshing the route', 'Pause traffic updates on this drive'],
+        relatedTools: ['startRouteMonitor', 'setRoute'],
+        dependsOn: ['startRouteMonitor'],
     },
     getTrafficAreaAnalytics: {
         description: getTrafficAreaAnalyticsDescription,
         classificationPrompt:
-            'Fetch historical traffic analytics (speed, congestion, travel time) for an area. queryTrafficAnalytics drills down without re-fetching.',
+            'Fetch historical traffic analytics (speed, congestion, travel time) for an area. Use analyseData over the ' +
+            'loaded entry for breakdowns (per-day / per-hour / worst-day) without re-fetching.',
         inputSchema: getTrafficAreaAnalyticsSchema,
         outputSchema: getTrafficAreaAnalyticsOutputSchema,
         execute: executeGetTrafficAreaAnalytics,
@@ -708,39 +834,16 @@ const defaultTools = {
             'Analyze traffic patterns during rush hour in this area',
             'Show me historical speed data for the city center',
         ],
-        relatedTools: ['queryTrafficAnalytics', 'updateTrafficAreaAnalyticsDisplay', 'calculateBBox', 'getViewport'],
+        relatedTools: ['analyseData', 'updateTrafficAreaAnalyticsDisplay', 'calculateBBox', 'getViewport'],
         dependsOn: ['locatePlace'],
-    },
-    queryTrafficAnalytics: {
-        description: queryTrafficAnalyticsDescription,
-        classificationPrompt:
-            'Query cached traffic analytics data or check what metric/mode is currently displayed on the map.',
-        inputSchema: queryTrafficAnalyticsSchema,
-        outputSchema: queryTrafficAnalyticsOutputSchema,
-        execute: executeQueryTrafficAnalytics,
-        tags: ['traffic', 'location'],
-        examples: [
-            "queryTrafficAnalytics({ granularity: 'daily' })",
-            "queryTrafficAnalytics({ granularity: 'hourly', hourStart: 7, hourEnd: 9, metric: 'congestionLevel' })",
-            "queryTrafficAnalytics({ granularity: 'average', dayOfWeek: [6, 7] })",
-        ],
-        // NOTE: "What am I looking at?" awareness should be handled at a higher level
-        // (e.g. system prompt or state summary injected into context), not per-tool examplePrompts.
-        // Current approach works but doesn't scale — every stateful tool would need similar hints.
-        examplePrompts: [
-            'Show me the daily breakdown',
-            'What was rush hour congestion?',
-            'Which day had the worst traffic?',
-            'What metric am I looking at?',
-            'What is currently shown on the map?',
-        ],
-        relatedTools: ['getTrafficAreaAnalytics', 'updateTrafficAreaAnalyticsDisplay'],
-        dependsOn: ['getTrafficAreaAnalytics'],
     },
     updatePlacesDisplay: {
         description: updatePlacesDisplayDescription,
         classificationPrompt:
-            'Show, hide, and swap places entries on the map — add some (as pins and/or boundary polygons), remove others, swap atomically, or render boundaries.',
+            'Show, hide, and swap places ENTRIES already in state on the map — add some (as pins, base-map-style ' +
+            'markers via `markerType`, and/or boundary polygons), remove others, swap atomically, or render ' +
+            'boundaries. Owns rendering a stored entry with base-map-style markers; NOT the base-map tile POI icons ' +
+            '(those are toggleTilesPOIs).',
         inputSchema: updatePlacesDisplaySchema,
         outputSchema: updatePlacesDisplayOutputSchema,
         execute: executeUpdatePlacesDisplay,
@@ -769,15 +872,15 @@ const defaultTools = {
             'Drop every entry labelled "parking" from the map',
             'Toggle off the hotels without clearing the rest',
             'Replace the pins with the new set',
-            'Show entry places-3 as base-map POIs',
-            'Show the boundary of Amsterdam on the map',
+            'Render entry places-3 with the base-map marker style',
+            'Show the boundaries of the neighbourhoods I loaded',
             'Outline these neighbourhoods',
             'Highlight the shape of this place',
             'Pin the cities and outline them too',
             'Also outline Utrecht while keeping Amsterdam drawn',
             'Add the neighbourhood boundaries on top of the pins',
         ],
-        relatedTools: ['discoverPlaces', 'locatePlace', 'reverseGeocode', 'recallPlaces', 'clearMap', 'flyTo'],
+        relatedTools: ['discoverPlaces', 'locatePlace', 'reverseGeocode', 'recallState', 'clearMap', 'flyTo'],
         dependsOn: ['discoverPlaces', 'locatePlace', 'processData'],
     },
     updateRoutesDisplay: {
@@ -815,7 +918,7 @@ const defaultTools = {
             'Change the route color to coral',
             'Style the route in steelblue',
         ],
-        relatedTools: ['setRoute', 'processData', 'recallRoutes', 'clearMap'],
+        relatedTools: ['setRoute', 'processData', 'recallState', 'clearMap'],
         dependsOn: ['setRoute'],
     },
     updateTrafficAreaAnalyticsDisplay: {
@@ -843,17 +946,10 @@ const defaultTools = {
             'Normalize height to the current data range',
             'Switch to heatmap view',
             'Also show the Amsterdam analytics',
-            'Hide the Rotterdam analytics',
+            'Hide the Amsterdam analytics',
             'Replace what is on the map with this analytics',
         ],
-        relatedTools: [
-            'getTrafficAreaAnalytics',
-            'queryTrafficAnalytics',
-            'toggleTilesTrafficFlow',
-            'clearMap',
-            'analyseData',
-            'processData',
-        ],
+        relatedTools: ['getTrafficAreaAnalytics', 'toggleTilesTrafficFlow', 'clearMap', 'analyseData', 'processData'],
         dependsOn: ['getTrafficAreaAnalytics'],
     },
     updateWaypointsDisplay: {
@@ -877,27 +973,6 @@ const defaultTools = {
         relatedTools: ['setRoute', 'updateRoutesDisplay', 'getCurrentWaypoints', 'clearMap'],
         dependsOn: ['setRoute', 'locatePlace'],
     },
-    getShownTileIncidents: {
-        description: getShownTileIncidentsDescription,
-        classificationPrompt:
-            'Read traffic incidents currently rendered by the TomTom TRAFFIC-TILE OVERLAY (the rasterised live tiles ' +
-            "toggled via `toggleTilesTrafficIncidents`). DO NOT confuse with `getTrafficIncidents` — that's the GeoJSON " +
-            'service that returns full structured incidents with start/end times, road numbers, lanes, etc. ' +
-            'Pick this ONLY for "what\'s on the tile overlay right now"; for richer per-incident data use ' +
-            '`getTrafficIncidents`, and for "incidents along the route" use `analyseData` over routes ' +
-            '(`route.properties.sections.traffic[]`).',
-        inputSchema: getShownTileIncidentsSchema,
-        outputSchema: getShownTileIncidentsOutputSchema,
-        execute: executeGetShownTileIncidents,
-        tags: ['traffic', 'location', 'map style'],
-        examples: ['getShownTileIncidents()'],
-        examplePrompts: [
-            'What incidents does the traffic tile overlay show right now?',
-            "What's rendered on the traffic incidents layer?",
-        ],
-        relatedTools: ['toggleTilesTrafficIncidents', 'getTrafficIncidents', 'flyTo', 'getViewport'],
-        dependsOn: ['toggleTilesTrafficIncidents'],
-    },
     clearMap: {
         description: clearMapDescription,
         classificationPrompt:
@@ -913,7 +988,10 @@ const defaultTools = {
             'clearMap({ layers: ["trafficAreaAnalytics", "trafficIncidents"] })',
             'clearMap({ layers: ["byod"] })',
         ],
-        examplePrompts: ['Clear the map', 'Remove all markers', 'Start fresh', 'Hide the analytics overlay'],
+        // "Start fresh" → resetState (wipes the session); "Hide the analytics overlay" →
+        // updateTrafficAreaAnalyticsDisplay (per-slice hide). Both routed away from clearMap, so the
+        // examples are kept to unambiguous whole-map clears.
+        examplePrompts: ['Clear the map', 'Remove all markers', 'Hide everything on the map'],
         relatedTools: ['updatePlacesDisplay', 'updateRoutesDisplay', 'updateTrafficAreaAnalyticsDisplay'],
     },
     flyTo: {
@@ -929,7 +1007,10 @@ const defaultTools = {
             'flyTo({ where: { boundingBox: [4.8, 52.3, 5.0, 52.5], padding: 100 } })',
             'flyTo({ where: { position: [4.9, 52.4], zoom: 14 } })',
         ],
-        examplePrompts: ['Go to Berlin', 'Center the map on Rome', 'Fly to these coordinates'],
+        // Coordinate prompt first: it moves the camera directly (no place lookup), so it's the
+        // reliable canonical. "Go to Berlin" / "Center on Rome" need a locatePlace step first, which
+        // the agent may stop at, so they stay as fanout cases.
+        examplePrompts: ['Fly to [4.9, 52.37]', 'Go to Berlin', 'Center the map on Rome'],
         relatedTools: ['getViewport', 'locatePlace', 'updatePlacesDisplay', 'updateRoutesDisplay', 'calculateBBox'],
     },
     getViewport: {
@@ -948,48 +1029,13 @@ const defaultTools = {
         ],
         relatedTools: ['locatePlace', 'flyTo', 'discoverPlaces', 'reverseGeocode', 'getTrafficIncidents'],
     },
-    recallGeometries: {
-        description: recallGeometriesDescription,
-        classificationPrompt:
-            'List/inspect every polygon source in state across places footprints, ranges isochrones, and custom-geometries entries. Returns tagged ids (`{ kind, id }`) the geometry tools accept.',
-        inputSchema: recallGeometriesSchema,
-        outputSchema: recallGeometriesOutputSchema,
-        execute: executeRecallGeometries,
-        tags: ['geometry', 'boundary'],
-        examples: [
-            'recallGeometries()',
-            'recallGeometries({ id: { kind: "places", id: "ev-stations-oost" } })',
-            'recallGeometries({ id: { kind: "customGeometries", id: "bakery-candidates-gap-oost" } })',
-        ],
-        examplePrompts: [
-            'What polygons are in state right now?',
-            'Which IDs can I pass to processData (geometriesEntryIDs)?',
-            'Recall the custom zone we just produced',
-            'What does the bakery-candidates entry contain?',
-        ],
-        relatedTools: ['processData', 'analyseData', 'recallPlaces', 'recallRanges'],
-    },
-    recallPlaces: recallPlacesBuilder,
-    recallByod: {
-        description: recallByodDescription,
-        classificationPrompt:
-            'List/inspect BYOD (bring-your-own-data) layers in session state. Returns ids the model can pass to `byodEntryIDs` (analyseData / processData) or to `updateByodDisplay` for visibility control.',
-        inputSchema: recallByodSchema,
-        outputSchema: recallByodOutputSchema,
-        execute: executeRecallByod,
-        tags: ['recall', 'byod', 'state'],
-        examples: ['recallByod()', 'recallByod({ id: "byod-0" })'],
-        examplePrompts: [
-            'What customer-uploaded layers do we have?',
-            'List BYOD entries',
-            'Show details of the sales-territories BYOD layer',
-        ],
-        relatedTools: ['addByodSource', 'updateByodDisplay', 'analyseData', 'processData'],
-    },
     addByodSource: {
         description: addByodSourceDescription,
         classificationPrompt:
-            'Add a customer-owned GeoJSON FeatureCollection (URL fetch or inline) as a new BYOD source. Use when the user wants to import / load / overlay a customer-supplied dataset. Returns the new entry id plus a profile of the data shape (use the id with `byodEntryIDs` on analyseData / processData). The entry starts with NO layers and renders nothing — deciding the layers from that profile is a required follow-up `setByodLayers` step, so co-pick it on every ingest turn.',
+            'Add a customer-owned GeoJSON FeatureCollection (URL fetch or inline) as a new BYOD source. Use when the ' +
+            'user wants to import / load / overlay a customer-supplied dataset. Returns the new entry id (use with ' +
+            '`byodEntryIDs` on analyseData / processData) plus a data `profile`. The entry starts with NO layers and ' +
+            'renders nothing, so co-pick setByodLayers on every ingest turn to decide the layers from that profile.',
         inputSchema: addByodSourceSchema,
         outputSchema: addByodSourceOutputSchema,
         execute: executeAddByodSource,
@@ -1000,23 +1046,23 @@ const defaultTools = {
             'addByodSource({ label: "Q2 pins", data: { type: "FeatureCollection", features: [/* … */] } })',
         ],
         examplePrompts: [
-            'Load my territories layer from https://...',
-            'Import this GeoJSON as a BYOD layer',
-            'Add a customer-pins layer from this URL',
+            'Load my territories layer from https://example.com/territories.geojson',
+            'Import the GeoJSON at https://example.com/data.geojson as a BYOD layer',
+            'Add a customer-pins layer from https://example.com/pins.geojson',
         ],
-        relatedTools: ['recallByod', 'setByodLayers', 'updateByodDisplay', 'analyseData', 'processData'],
+        relatedTools: ['recallState', 'setByodLayers', 'updateByodDisplay', 'analyseData', 'processData'],
     },
     setByodLayers: {
         description: setByodLayersDescription,
         classificationPrompt:
             'Restyle a BYOD entry by replacing the MapLibre layers it renders under — pick layer types and ' +
-            'data-driven paint informed by the data `profile` (graduate point size by a numeric field, colour a ' +
-            'fill by category, switch points to symbols). Use when the user wants to change how a loaded BYOD layer ' +
-            'LOOKS. ALWAYS co-pick this alongside addByodSource on EVERY BYOD ingest turn — deciding the layers from ' +
-            "the detected schema is the agent's job in all cases, whether or not the user mentioned styling (e.g. " +
-            '"load X" or "import these" just as much as "load X and colour it by region"). addByodSource creates the ' +
-            'entry with no layers, so this is the only way it becomes visible. NOT for visibility (show/hide/remove → ' +
-            'updateByodDisplay) nor for importing new data (→ addByodSource).',
+            'data-driven paint from the data `profile` (graduate point size by a numeric field, colour a fill by ' +
+            'category, switch points to symbols). OWNS every restyle of a loaded / imported / customer (BYOD) layer ' +
+            '— recolour it, thicken its outlines, resize its points — even when phrased as generic styling; do NOT ' +
+            'route those to setPaintProperties/setLayoutProperties (which are for base-map style layers). ALWAYS ' +
+            'co-pick alongside addByodSource on EVERY BYOD ingest turn (whether or not styling was mentioned) — ' +
+            'addByodSource creates the entry with no layers, so this is the only way it becomes visible. NOT for ' +
+            'visibility (show/hide/remove → updateByodDisplay) nor for importing new data (→ addByodSource).',
         inputSchema: setByodLayersSchema,
         outputSchema: setByodLayersOutputSchema,
         execute: executeSetByodLayers,
@@ -1027,18 +1073,18 @@ const defaultTools = {
             'setByodLayers({ byodEntryId: "byod-2", layers: [{ type: "line", paint: { "line-color": "#2ca02c", "line-width": 3 } }], show: { zoomMode: "none" } })  // restyle a hidden entry and render it',
         ],
         examplePrompts: [
-            'Colour the territories by region',
-            'Make the point size reflect revenue',
-            'Style this layer with thicker green lines',
-            'Shade the polygons by their value',
+            'Colour my loaded territories layer by region',
+            'Size my BYOD layer points by revenue',
+            'Style my loaded BYOD layer with thicker green outlines',
+            'Shade my BYOD polygons by their value',
         ],
-        relatedTools: ['recallByod', 'addByodSource', 'updateByodDisplay'],
+        relatedTools: ['recallState', 'addByodSource', 'updateByodDisplay'],
         dependsOn: ['addByodSource'],
     },
     updateByodDisplay: {
         description: updateByodDisplayDescription,
         classificationPrompt:
-            'Toggle visibility (or drop) of BYOD entries already in session state. Use after `addByodSource` or after `recallByod` exposes the ids. Three actions: show / hide / remove. Pair with `clearAll` or `hideOthers` for bulk swaps.',
+            'Toggle visibility (or drop) of BYOD entries already in session state. Use after `addByodSource` or after `recallState({ kind: "byod" })` exposes the ids. Three actions: show / hide / remove. Pair with `clearAll` or `hideOthers` for bulk swaps.',
         inputSchema: updateByodDisplaySchema,
         outputSchema: updateByodDisplayOutputSchema,
         execute: executeUpdateByodDisplay,
@@ -1056,31 +1102,15 @@ const defaultTools = {
             'Hide all BYOD layers',
             'Drop the imported file from the session',
         ],
-        relatedTools: ['recallByod', 'addByodSource'],
+        relatedTools: ['recallState', 'addByodSource'],
         dependsOn: ['addByodSource'],
-    },
-    recallRoutes: {
-        description: recallRoutesDescription,
-        classificationPrompt: 'Return previously calculated routes from this session.',
-        inputSchema: recallRoutesSchema,
-        outputSchema: recallRoutesOutputSchema,
-        execute: executeRecallRoutes,
-        tags: ['route'],
-        examples: ['recallRoutes()', 'recallRoutes({ id: "routes-0" })'],
-        examplePrompts: [
-            'What routes have I calculated?',
-            'Show the first route we planned',
-            'What was the route to Schiphol?',
-        ],
-        relatedTools: ['setRoute', 'updateRoutesDisplay', 'getCurrentWaypoints'],
-        dependsOn: ['setRoute'],
     },
     getCurrentWaypoints: {
         description: getCurrentWaypointsDescription,
         classificationPrompt:
             'STAGED waypoint slots only — the origin/stops/destination being built up for the NEXT `setRoute` call ' +
             '(read off `state.routing.planningSlots`, NOT off any calculated route entry). ' +
-            "For waypoints of an EXISTING calculated route, use `recallRoutes({ id })` — its detail mode returns the entry's own waypoints.",
+            'For waypoints of an EXISTING calculated route, use `recallState({ kind: "routes", id })` — its detail mode returns the entry\'s own waypoints.',
         inputSchema: getCurrentWaypointsSchema,
         outputSchema: getCurrentWaypointsOutputSchema,
         execute: executeGetCurrentWaypoints,
@@ -1094,9 +1124,9 @@ const defaultTools = {
         examplePrompts: [
             "What's currently staged for the next route?",
             "What's my pending destination before I hit go?",
-            'Show the stops I have queued up',
+            'List the stops I have queued up',
         ],
-        relatedTools: ['locatePlace', 'setRoute', 'updateWaypointsDisplay', 'recallRoutes'],
+        relatedTools: ['locatePlace', 'setRoute', 'updateWaypointsDisplay', 'recallState'],
     },
     getStandardMapStyles: {
         description: getStandardMapStylesDescription,
@@ -1117,7 +1147,13 @@ const defaultTools = {
         execute: executeSetMapStandardStyle,
         tags: ['map style'],
         examples: ['setMapStandardStyle("standardDark")', 'setMapStandardStyle("satellite")'],
-        examplePrompts: ['Switch to dark mode', 'Use the satellite view', 'Change to the light theme'],
+        examplePrompts: [
+            'Switch to dark mode',
+            'Use the satellite view',
+            'Change to the light theme',
+            // Driver persona: the driving-optimised standard preset.
+            'Use the driving map style',
+        ],
         relatedTools: ['getStandardMapStyles', 'setLanguage', 'toggleTilesBaseMapLayerGroups', 'getMapStyleLayers'],
     },
     setLanguage: {
@@ -1182,14 +1218,14 @@ const defaultTools = {
     toggleTilesTrafficIncidents: {
         description: toggleTilesTrafficIncidentsDescription,
         classificationPrompt:
-            'Toggle the vector-tile traffic-incidents overlay (live jam/accident/closure markers). NOT the GeoJSON `getTrafficIncidents` service and NOT `analyseData` (which aggregates fetched entries). Use `getShownTileIncidents` to read what this overlay currently renders.',
+            'Toggle the vector-tile traffic-incidents overlay (live jam/accident/closure markers). NOT the GeoJSON `getTrafficIncidents` service and NOT `analyseData` (which aggregates fetched entries).',
         inputSchema: toggleTilesTrafficIncidentsSchema,
         outputSchema: toggleTilesTrafficIncidentsOutputSchema,
         execute: executeToggleTilesTrafficIncidents,
         tags: ['traffic', 'map style'],
         examples: ['toggleTilesTrafficIncidents({ visible: true })', 'toggleTilesTrafficIncidents({ visible: false })'],
         examplePrompts: ['Show traffic incidents overlay', 'Hide accident icons', 'Enable incident markers on the map'],
-        relatedTools: ['toggleTilesTrafficFlow', 'getTrafficIncidents', 'getShownTileIncidents', 'setRoute'],
+        relatedTools: ['toggleTilesTrafficFlow', 'getTrafficIncidents', 'setRoute'],
     },
     getMapStyleLayers: {
         description: getMapStyleLayersDescription,
@@ -1204,7 +1240,9 @@ const defaultTools = {
     },
     setLayoutProperties: {
         description: setLayoutPropertiesDescription,
-        classificationPrompt: 'Set MapLibre layout properties (visibility, text-field, icon-size) on named layers.',
+        classificationPrompt:
+            'Set MapLibre layout properties (visibility, text-field, icon-size) on named base-map style layers. NOT ' +
+            'for loaded BYOD / imported / customer layers — restyle those with setByodLayers.',
         inputSchema: setLayoutPropertiesSchema,
         outputSchema: setLayoutPropertiesOutputSchema,
         execute: executeSetLayoutProperties,
@@ -1214,7 +1252,7 @@ const defaultTools = {
             'setLayoutProperties([{ layerId: "poi-label", propertyName: "text-field", value: "{name}" }, { layerId: "poi-label", propertyName: "icon-size", value: 1.2 }])',
         ],
         examplePrompts: [
-            'Hide the road-label layer',
+            "Set the road-label layer's visibility property to none",
             'Change the text size on building labels',
             'Make the city labels bigger',
         ],
@@ -1223,7 +1261,9 @@ const defaultTools = {
     },
     setPaintProperties: {
         description: setPaintPropertiesDescription,
-        classificationPrompt: 'Set MapLibre paint properties (colors, widths, opacity) on named layers.',
+        classificationPrompt:
+            'Set MapLibre paint properties (colors, widths, opacity) on named base-map style layers. NOT for loaded ' +
+            'BYOD / imported / customer layers — restyle those with setByodLayers.',
         inputSchema: setPaintPropertiesSchema,
         outputSchema: setPaintPropertiesOutputSchema,
         execute: executeSetPaintProperties,
@@ -1270,7 +1310,11 @@ const defaultTools = {
     executeMaplibreCode: {
         description: executeMaplibreCodeDescription,
         classificationPrompt:
-            'Execute any MapLibre JS code against the live map for maximum flexibility — use when no other tool covers the required operation.',
+            'Execute arbitrary MapLibre JS against the live map — the escape hatch when no other tool covers the ' +
+            'operation. Pick it for map rendering that has no dedicated tool: fog / atmosphere / sky, terrain, ' +
+            'globe vs mercator projection, or adding a raster / tile overlay — as well as time-based ANIMATIONS and ' +
+            'multi-step loops (gradually fade a layer in/out, pulse opacity, sequence camera moves) that the ' +
+            'one-shot setPaintProperties / setLayoutProperties cannot express.',
         inputSchema: executeMaplibreCodeSchema,
         outputSchema: executeMaplibreCodeOutputSchema,
         execute: executeExecuteMaplibreCode,
@@ -1281,12 +1325,18 @@ const defaultTools = {
             "executeMaplibreCode({ code: \"for (let i = 0; i <= 20; i++) { map.setPaintProperty('fill', 'fill-opacity', i / 20); await new Promise(r => setTimeout(r, 50)); }\" })",
             "executeMaplibreCode({ code: \"map.setFog({ color: 'white', 'horizon-blend': 0.1 })\" })",
         ],
+        // Kept to operations no dedicated tool covers. Dropped "Add a GeoJSON layer to the map"
+        // (the classifier rightly prefers addByodSource) and "Animate the map camera" (→ flyTo) —
+        // the escape-hatch tool should only be exemplified by genuinely-uncovered map operations.
+        // "Set map fog or atmosphere" first: a concrete map.setFog call with no dedicated tool, so
+        // it routes reliably to the escape hatch (the canonical). "Fade in a layer gradually" is a
+        // time-based animation no one-shot style tool can express — the classificationPrompt now
+        // names that case explicitly so it routes here rather than to setPaintProperties.
         examplePrompts: [
-            'Add a GeoJSON layer to the map',
-            'Animate the map camera',
-            'Fade in a layer gradually',
             'Set map fog or atmosphere',
             'Add a raster tile overlay',
+            'Fade in a layer gradually',
+            'Switch the map to a globe projection',
         ],
         relatedTools: ['getMapStyleLayers', 'setLayoutProperties', 'setPaintProperties', 'flyTo'],
         dependsOn: ['getMapStyleLayers'],
@@ -1299,30 +1349,11 @@ const defaultTools = {
         execute: executeCalculateBBox,
         tags: ['utilities', 'location'],
         examples: ['calculateBBox(place)', 'calculateBBox(routes)', 'calculateBBox([place1, place2])'],
-        examplePrompts: ["What's the bounding box of these places?", 'Calculate the extent of this route'],
+        // Route-extent prompt first: it classifies to calculateBBox reliably and is the canonical
+        // scenario. "bounding box of these places" is kept but is flakier (the agent often computes
+        // it via processData instead).
+        examplePrompts: ['Calculate the extent of this route', "What's the bounding box of these places?"],
         relatedTools: ['flyTo', 'getViewport', 'updatePlacesDisplay', 'updateRoutesDisplay'],
-    },
-    formatDistance: {
-        description: formatDistanceDescription,
-        classificationPrompt:
-            'Format meters into a human-readable string (e.g. "2.5 km"); use after tools that return distances.',
-        inputSchema: formatDistanceSchema,
-        execute: executeFormatDistance,
-        tags: ['utilities', 'route'],
-        examples: ['formatDistance(2500)', 'formatDistance(5000, "imperial_us")'],
-        examplePrompts: ['Format 5000 meters as a distance', 'Convert meters to a readable string'],
-        relatedTools: ['formatDuration', 'setRoute'],
-    },
-    formatDuration: {
-        description: formatDurationDescription,
-        classificationPrompt:
-            'Format seconds into a human-readable string (e.g. "1 h 30 min"); use after tools that return durations.',
-        inputSchema: formatDurationSchema,
-        execute: executeFormatDuration,
-        tags: ['utilities', 'route'],
-        examples: ['formatDuration(3600)', 'formatDuration(9000)'],
-        examplePrompts: ['Format 3600 seconds as a duration', 'Convert seconds to hours and minutes'],
-        relatedTools: ['formatDistance', 'setRoute'],
     },
     getCurrentLocation: {
         description: getCurrentLocationDescription,
@@ -1373,36 +1404,13 @@ const defaultTools = {
             'Compare 30-minute reach from Amsterdam, Rotterdam and Utrecht',
             'What area is within 50 km of Berlin?',
             'Show 10, 20, 30 minute drive zones from here',
+            // Logistics / field-service planner persona: coverage from a named depot/warehouse site.
+            'Map the 20-minute drive zone around our Rotterdam depot',
+            'Show the area reachable within 25 km of the Eindhoven warehouse',
         ],
-        relatedTools: ['recallRanges', 'locatePlace'],
+        relatedTools: ['recallState', 'locatePlace'],
     },
-    recallRanges: {
-        description: recallRangesDescription,
-        classificationPrompt: 'Retrieve stored reachable range results from session history.',
-        inputSchema: recallRangesSchema,
-        outputSchema: recallRangesOutputSchema,
-        execute: executeRecallRanges,
-        tags: ['recall', 'reachable-range', 'state'],
-        examples: ['recallRanges()', 'recallRanges({ id: "ranges-0" })'],
-        examplePrompts: ['What range did I calculate earlier?', 'Recall the isochrone from Amsterdam'],
-        relatedTools: ['findReachableAreas'],
-    },
-    recallState: {
-        description: recallStateDescription,
-        classificationPrompt:
-            "Inventory the agent's session: list every places / routes / ranges entry by id+label, plus current map style and POIs/traffic visualization configs.",
-        inputSchema: recallStateSchema,
-        outputSchema: recallStateOutputSchema,
-        execute: executeRecallState,
-        tags: ['recall', 'state', 'overview'],
-        examples: ['recallState()'],
-        examplePrompts: [
-            'What do you have so far?',
-            'List everything you remember from this session',
-            'Show me the current map / data overview',
-        ],
-        relatedTools: ['recallPlaces', 'recallRoutes', 'recallRanges', 'resetState'],
-    },
+    recallState: recallStateBuilder,
     resetState: {
         description: resetStateDescription,
         classificationPrompt:
@@ -1434,7 +1442,7 @@ const defaultTools = {
             'Switch ranges back to single mode',
             'Only keep the latest traffic incidents snapshot',
         ],
-        relatedTools: ['recallState', 'recallPlaces', 'recallRoutes', 'recallRanges'],
+        relatedTools: ['recallState'],
     },
 } satisfies Record<string, ToolDefinition>;
 
@@ -1482,9 +1490,8 @@ export const TOOL_NAMES = Object.keys(DEFAULT_TOOLS) as ToolName[];
  * @group Agent Toolkit
  */
 export const TOOLS_BY_DATA_ENTRY_KIND: Record<DataEntryKind, readonly ToolName[]> = {
-    places: ['recallPlaces', 'updatePlacesDisplay', 'locatePlace', 'discoverPlaces'],
+    places: ['updatePlacesDisplay', 'locatePlace', 'discoverPlaces'],
     routes: [
-        'recallRoutes',
         'updateRoutesDisplay',
         'setRoute',
         'addWaypointsToRoute',
@@ -1492,19 +1499,14 @@ export const TOOLS_BY_DATA_ENTRY_KIND: Record<DataEntryKind, readonly ToolName[]
         'replaceWaypointInRoute',
         'getCurrentWaypoints',
         'updateWaypointsDisplay',
+        'startRouteMonitor',
+        'stopRouteMonitor',
     ],
-    incidents: [
-        'getTrafficIncidents',
-        'focusIncidents',
-        'startTrafficIncidentsMonitor',
-        'stopTrafficIncidentsMonitor',
-        'getShownTileIncidents',
-        'clusterIncidents',
-    ],
-    customGeometries: ['recallGeometries'],
-    trafficAreaAnalytics: ['getTrafficAreaAnalytics', 'queryTrafficAnalytics', 'updateTrafficAreaAnalyticsDisplay'],
-    byod: ['recallByod', 'addByodSource', 'setByodLayers', 'updateByodDisplay'],
-    ranges: ['findReachableAreas', 'recallRanges'],
+    incidents: ['getTrafficIncidents', 'focusIncidents', 'setTrafficIncidentsMonitor', 'clusterIncidents'],
+    customGeometries: [],
+    trafficAreaAnalytics: ['getTrafficAreaAnalytics', 'updateTrafficAreaAnalyticsDisplay'],
+    byod: ['addByodSource', 'setByodLayers', 'updateByodDisplay'],
+    ranges: ['findReachableAreas'],
 };
 
 /**

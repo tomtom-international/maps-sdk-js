@@ -20,8 +20,12 @@ import type { RangesEntry } from './entry';
  * @group Agent Toolkit
  */
 export type RangeStateEvents = {
-    /** Range history changed — entry added or cleared via `reset()`. */
-    'entries-change': readonly RangesEntry[];
+    /**
+     * Range history changed — entry added or cleared via `reset()`. `entries` is the full snapshot
+     * after the change; `changedIds` lists the ids of the entries this specific change added,
+     * replaced in place, or removed.
+     */
+    'entries-change': { entries: readonly RangesEntry[]; changedIds: readonly string[] };
     /** Set of ranges entries currently rendered on the map changed (multi-show under `multiple`). */
     'shown-change': ReadonlySet<string>;
     /** Display policy switched between `single` and `multiple`. */
@@ -71,8 +75,9 @@ export class RangeState implements ShownEntriesSlice {
         if (this._entryMode === mode) return;
         this._entryMode = mode;
         if (mode === 'single' && this._entries.length > 1) {
+            const droppedIds = this._entries.slice(0, -1).map((entry) => entry.id);
             this._entries = await collapseHistoryToLatest(this._entries, (entry) => this.hideEntry(entry.id));
-            this.events.emit('entries-change', this._entries);
+            this.events.emit('entries-change', { entries: this._entries, changedIds: droppedIds });
         }
         this.events.emit('mode-change', mode);
     }
@@ -150,7 +155,7 @@ export class RangeState implements ShownEntriesSlice {
         if (idx === -1) return;
         await this.hideEntry(entryId);
         this._entries.splice(idx, 1);
-        this.events.emit('entries-change', this._entries);
+        this.events.emit('entries-change', { entries: this._entries, changedIds: [entryId] });
     }
 
     private _requireEntry(entryId: string): RangesEntry {
@@ -168,6 +173,7 @@ export class RangeState implements ShownEntriesSlice {
     }
 
     async addEntry(entry: Omit<RangesEntry, 'id' | 'timestamp'>): Promise<string> {
+        const droppedIds = this._entryMode === 'single' ? this._entries.map((existing) => existing.id) : [];
         if (this._entryMode === 'single' && this._entries.length > 0) {
             await hideAllEntries(this._entries, (existing) => this.hideEntry(existing.id));
             this._entries = [];
@@ -178,7 +184,7 @@ export class RangeState implements ShownEntriesSlice {
             timestamp: Date.now(),
             ...entry,
         });
-        this.events.emit('entries-change', this._entries);
+        this.events.emit('entries-change', { entries: this._entries, changedIds: [...droppedIds, id] });
         return id;
     }
 
@@ -191,12 +197,13 @@ export class RangeState implements ShownEntriesSlice {
     }
 
     reset(): void {
+        const clearedIds = this._entries.map((entry) => entry.id);
         for (const entry of this._entries) {
             entry._modules?.geometries?.clear();
             entry._modules?.places?.clear();
         }
         this._entries = [];
-        this.events.emit('entries-change', this._entries);
+        this.events.emit('entries-change', { entries: this._entries, changedIds: clearedIds });
         this.events.emit('shown-change', this.shownEntryIds);
     }
 }

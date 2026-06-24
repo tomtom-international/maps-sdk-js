@@ -7,12 +7,12 @@ import { withInsertedWaypoints } from '@tomtom-org/maps-sdk/core';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { hidePreviousEntriesSchema, locationInputSchema } from '../shared';
-import { routesOutputSchema, toolErrorSchema } from '../shared-output-schemas';
+import { routesWriteOutputSchema, toolErrorSchema } from '../shared-output-schemas';
 import { resolveLocationInput } from './resolve-location-input';
 import { calculateAndAddRoute, resolveRouteWaypoints } from './set-route';
 
 /** Output schema for the add-waypoints-to-route tool. */
-export const addWaypointsToRouteOutputSchema = z.union([routesOutputSchema, toolErrorSchema]);
+export const addWaypointsToRouteOutputSchema = z.union([routesWriteOutputSchema, toolErrorSchema]);
 
 /**
  * Tool schema for adding waypoints to an existing route.

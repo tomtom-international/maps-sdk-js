@@ -16,7 +16,6 @@ import type { StateSlice } from '../../types';
 import { collapseHistoryToLatest, hideAllEntries, pickUniqueEntryId } from '../entry-helpers';
 import { StateEvents } from '../events';
 import type { EntryMode } from '../state';
-import type { PlacesAnalysis } from './analysis';
 import type { PlacesEntry } from './entry';
 
 // Geometry Data service accepts up to 20 ids per request; we intentionally cap our batches
@@ -33,12 +32,15 @@ export type PlacesMarkerType = 'pin' | 'base-map' | 'pin-clustered';
  * @group Agent Toolkit
  */
 export type PlacesStateEvents = {
-    /** History changed — entry added, replaced, or cleared via `reset()`. Payload: the full entries snapshot. */
-    'entries-change': readonly PlacesEntry[];
+    /**
+     * History changed — entry added, replaced, or cleared via `reset()`. `entries` is the full
+     * snapshot after the change; `changedIds` lists the ids of the entries this specific change
+     * added, replaced in place, or removed (the standing-analysis sweep matches these against each
+     * record's `affectedEntryIds`).
+     */
+    'entries-change': { entries: readonly PlacesEntry[]; changedIds: readonly string[] };
     /** Set of entries currently rendered on the map changed (or marker type swapped). */
     'shown-change': ReadonlySet<string>;
-    /** A new analysis was attached to (or replaced on) an entry. */
-    'analysis-added': { entryId: string; analysis: PlacesAnalysis };
     /** Boundary polygons were fetched and cached on an entry. */
     'geometries-change': { entryId: string; count: number };
     /** Display policy switched between `single` and `multiple`. */
@@ -117,8 +119,9 @@ export class PlacesState implements StateSlice {
         if (this._entryMode === mode) return;
         this._entryMode = mode;
         if (mode === 'single' && this._entries.length > 1) {
+            const droppedIds = this._entries.slice(0, -1).map((entry) => entry.id);
             this._entries = await collapseHistoryToLatest(this._entries, (entry) => this._hideEntry(entry));
-            this.events.emit('entries-change', this._entries);
+            this.events.emit('entries-change', { entries: this._entries, changedIds: droppedIds });
             this.events.emit('shown-change', this.shownEntryIds);
         }
         this.events.emit('mode-change', mode);
@@ -205,7 +208,7 @@ export class PlacesState implements StateSlice {
             ...(connections?.length && { connections }),
             ...(geometries?.length && { geometries }),
         });
-        this.events.emit('entries-change', this._entries);
+        this.events.emit('entries-change', { entries: this._entries, changedIds: [entryId] });
         // Surface geometries via the same `geometries-change` event consumers
         // already use for `fetchGeometriesForEntry`, so a place panel that
         // listens once picks them up regardless of which writer added them.
@@ -213,28 +216,6 @@ export class PlacesState implements StateSlice {
             this.events.emit('geometries-change', { entryId, count: geometries.length });
         }
         return entryId;
-    }
-
-    /**
-     * Attach an analysis result to an existing entry. Analysis names are unique
-     * within a single entry — adding one with an existing name replaces it.
-     * Returns true on success, false if the entry doesn't exist.
-     */
-    addAnalysisToEntry(entryId: string, analysis: PlacesAnalysis): boolean {
-        const entry = this._entries.find((e) => e.id === entryId);
-        if (!entry) return false;
-        entry._analysis ??= [];
-        const existingIdx = entry._analysis.findIndex((a) => a.name === analysis.name);
-        if (existingIdx >= 0) {
-            entry._analysis[existingIdx] = analysis;
-        } else {
-            entry._analysis.push(analysis);
-        }
-        this.events.emit('analysis-added', { entryId, analysis });
-        // Entries-change tracks the entry array reference *and* its observable contents — analyses
-        // mutate an entry's `_analysis` field, so re-emit so consumers re-render.
-        this.events.emit('entries-change', this._entries);
-        return true;
     }
 
     // Scans entries (newest first) for a Place by its feature id. Each entry
@@ -552,7 +533,7 @@ export class PlacesState implements StateSlice {
             await entry._modules.geometries?.clear();
         }
         this._entries.splice(idx, 1);
-        this.events.emit('entries-change', this._entries);
+        this.events.emit('entries-change', { entries: this._entries, changedIds: [id] });
         if (wasShown) this.events.emit('shown-change', this.shownEntryIds);
     }
 
@@ -586,8 +567,9 @@ export class PlacesState implements StateSlice {
                 entry._modules.geometries?.clear();
             }
         }
+        const clearedIds = this._entries.map((entry) => entry.id);
         this._entries = [];
-        this.events.emit('entries-change', this._entries);
+        this.events.emit('entries-change', { entries: this._entries, changedIds: clearedIds });
         this.events.emit('shown-change', this.shownEntryIds);
     }
 }

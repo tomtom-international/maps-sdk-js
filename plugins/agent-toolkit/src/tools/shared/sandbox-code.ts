@@ -158,9 +158,13 @@ export const validateAnalysisResult = (
     return { value: normalized.value };
 };
 
-/** @ignore */
-export const toJsonSafe = (value: unknown): { value: unknown } | { error: string } => {
+const toJsonSafe = (value: unknown): { value: unknown } | { error: string } => {
     try {
+        // JSON round-trip, NOT structuredClone: this must COERCE to a JSON-safe value
+        // (drop `undefined`, `NaN`/`Infinity` → `null`, Date → ISO string, throw on
+        // circular) before it crosses the AI SDK's `jsonValueSchema` boundary.
+        // `structuredClone` faithfully preserves those non-JSON values, which then
+        // poison later ModelMessage validation — see the note above this function.
         return { value: JSON.parse(JSON.stringify(value)) };
     } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
@@ -173,19 +177,108 @@ export const toJsonSafe = (value: unknown): { value: unknown } | { error: string
     }
 };
 
+// Globals shadowed to `undefined` inside every sandbox body. LLM-authored code
+// has no legitimate need for network / storage / DOM / global reaches: the data
+// it works on is injected, and the only libraries it needs (`h3`, `turf`,
+// `routeUtils`) are injected too. Binding these names as `undefined` parameters
+// turns a stray `fetch(...)` / `localStorage.getItem(...)` into a loud
+// "fetch is not a function" instead of a silent exfiltration or browser-state
+// mutation.
+//
+// `process` matters specifically for the Node main-thread path (the `'auto'`
+// default on the server): it is a direct global there and the first hop toward
+// `child_process` → RCE. Harmless to shadow in the browser (no such global).
+//
+// This is a TRIPWIRE, not a security boundary. The same capabilities stay
+// reachable via constructor walks (`({}).constructor.constructor`) and other
+// realm escapes, so it raises the bar and surfaces accidents — it does not
+// contain a determined attacker. True isolation is a separate concern (running
+// these tools off the main thread in a locked-down realm).
+//
+// Only valid, non-reserved identifiers are listed: `eval` / `arguments` are
+// illegal as strict-mode parameter names, and `Function` is omitted because it
+// is trivially reachable through any constructor — shadowing it would be theatre.
+const SHADOWED_GLOBALS = [
+    'fetch',
+    'XMLHttpRequest',
+    'WebSocket',
+    'EventSource',
+    'localStorage',
+    'sessionStorage',
+    'indexedDB',
+    'document',
+    'window',
+    'globalThis',
+    'self',
+    'navigator',
+    'importScripts',
+    'process',
+] as const;
+
+// Exported so the iframe-worker executor (and any future executor) can re-apply the
+// exact same shadowing inside its own realm, keeping behaviour identical across executors.
+/** @ignore */
+export const sandboxedGlobalShadows = SHADOWED_GLOBALS;
+
+// Injected parameter names the worker supplies itself rather than receiving over
+// `postMessage`: `turf` / `h3` are function namespaces (not cloneable), `routeUtils`
+// is the route-helper namespace (bundled into the worker as `self.routeUtils`; shared
+// by analyseData + processData), and `log` (monitor path) is a no-op in the worker.
+// Two consumers share this one list:
+//   • the iframe-worker executor partitions these OUT of the data it posts and the
+//     worker re-provides them from its own globals;
+//   • the main-thread executor skips them when deep-copying inputs (`structuredClone`
+//     throws on the function namespaces).
+// Defined here (the core module) so both share one source of truth without an import
+// cycle. `now` (monitor clock, a Date) is intentionally absent: it is cloneable, so
+// the main-thread copy harmlessly clones it, and the monitor path never routes
+// through the worker — keeping this list exactly the set the worker re-provides.
+/** @ignore */
+export const WORKER_PROVIDED_PARAMS = ['turf', 'h3', 'routeUtils', 'log', 'cluster'] as const;
+
 /**
- * Compiles `code` as the body of an `async` function that takes the named
- * `paramNames`, sanitises injected redeclarations, runs it with `args`, and
- * returns either `{ value }` or `{ error }`. Centralises the AsyncFunction
- * dance shared by every sandbox-running tool (analyse-* and process-*) so
- * each callsite only owns its inputs and result handling.
+ * Pluggable strategy for executing sandbox code. The default
+ * {@link mainThreadExecutor} compiles + runs in the host realm; an alternative
+ * executor (e.g. the iframe-worker one) can run the same code in a locked-down
+ * realm off the main thread while honouring this exact contract.
  *
- * `verb` is the human-readable action used in the error prefix (e.g.
- * `"Analysis"`, `"Process"`).
+ * `run` MUST resolve to `{ value }` or `{ error }` and never reject — execution
+ * failures are reported as `{ error }` via {@link formatSandboxExecutionError}.
  *
- * @ignore
+ * @group Agent Toolkit
  */
-export const runSandboxedFn = async <Result = unknown>(
+export type SandboxExecutor = {
+    run<Result = unknown>(
+        code: string,
+        paramNames: readonly string[],
+        args: readonly unknown[],
+        verb: string,
+    ): Promise<{ value: Result } | { error: string }>;
+    /** Release any held resources (iframe / worker). No-op for the main-thread executor. */
+    destroy?(): void;
+};
+
+// Deep-copy a single sandbox arg before it crosses into LLM-authored code, UNLESS it
+// is a library namespace (which `structuredClone` would throw on) or `undefined`. The
+// merged / per-entry data views are shallow — their feature objects are the SAME
+// references held in the entry slices — so without this copy a sandbox body could
+// mutate live app state in place (`places.features[0].properties = …`). We copy rather
+// than freeze so legitimate in-place work (`places.features.sort(...)`) still succeeds
+// on the throwaway copy.
+//
+// This clone lives in the MAIN-THREAD executor only: the iframe-worker executor gets a
+// copy for free because `postMessage` structured-clones every data arg across the
+// worker boundary. Cloning here too would be redundant double-work — so callers
+// (`packSandboxArgs`, the monitor path) now pass live references and let each executor
+// copy exactly once, only where needed.
+const cloneDataArg = (value: unknown, name: string): unknown =>
+    value === undefined || (WORKER_PROVIDED_PARAMS as readonly string[]).includes(name)
+        ? value
+        : structuredClone(value);
+
+// Compile `code` as the body of an async function taking `paramNames` (+ the shadowed
+// globals as trailing `undefined` params) and run it with deep-copied `args`.
+const compileAndRun = async <Result>(
     code: string,
     paramNames: readonly string[],
     args: readonly unknown[],
@@ -195,13 +288,67 @@ export const runSandboxedFn = async <Result = unknown>(
         const AsyncFunction = Object.getPrototypeOf(async () => {}).constructor as new (
             ...names: string[]
         ) => (...callArgs: unknown[]) => Promise<Result> | Result;
-        const sanitizedCode = stripInjectedRedeclarations(code, paramNames);
-        const fn = new AsyncFunction(...paramNames, sanitizedCode);
-        return { value: await fn(...args) };
+        // NOTE: `code` arrives already sanitised — `runSandboxedFn` strips injected
+        // redeclarations once, before dispatching to any executor, so the iframe-worker
+        // realm gets the same treatment. (The worker compiles `code` verbatim too.)
+        // Never shadow a name the caller legitimately injects — that would add a
+        // duplicate formal parameter and clobber the real value with `undefined`.
+        const shadows = SHADOWED_GLOBALS.filter((name) => !paramNames.includes(name));
+        // Deep-copy the data inputs so the body can mutate them in place without
+        // corrupting live state; library namespaces and undefined pass through.
+        const clonedArgs = args.map((value, index) => cloneDataArg(value, paramNames[index]));
+        // Caller args stay first so they line up positionally with `paramNames`;
+        // the shadow `undefined`s fill the appended slots.
+        const fn = new AsyncFunction(...paramNames, ...shadows, code);
+        return { value: await fn(...clonedArgs, ...shadows.map(() => undefined)) };
     } catch (error) {
         return { error: formatSandboxExecutionError(verb, error) };
     }
 };
+
+/**
+ * Default executor for Node/SSR (and the in-browser fallback): compiles + runs the
+ * code synchronously in the host realm. Deep-copies data inputs (see
+ * {@link cloneDataArg}) so the body can't mutate live state, but provides no isolation
+ * beyond the global shadowing — see {@link SHADOWED_GLOBALS}.
+ *
+ * @ignore
+ */
+export const mainThreadExecutor: SandboxExecutor = {
+    run: compileAndRun,
+};
+
+/**
+ * Compiles `code` as the body of an `async` function that takes the named
+ * `paramNames`, sanitises injected redeclarations, runs it with `args`, and
+ * returns either `{ value }` or `{ error }`. Centralises the AsyncFunction
+ * dance shared by every sandbox-running tool (analyse-* and process-*) so
+ * each callsite only owns its inputs and result handling.
+ *
+ * In addition to the caller's `paramNames`, a fixed set of network / storage /
+ * DOM globals ({@link SHADOWED_GLOBALS}) is appended as `undefined` parameters
+ * so the body cannot reach them by name. This is defense-in-depth, not a
+ * sandbox: it surfaces accidental/undesired global access as an error rather
+ * than containing a hostile escape (see the note on `SHADOWED_GLOBALS`).
+ *
+ * Injected-redeclaration sanitising happens HERE, once, before dispatch — so every
+ * executor (main-thread and iframe-worker alike) runs identically de-fanged code
+ * and an LLM `const turf = require(...)` can't compile in one realm but throw in
+ * another. `executor` is REQUIRED (no implicit main-thread default): callers must
+ * choose the realm explicitly — `state.codeExecution` for the env-resolved sandbox,
+ * or `mainThreadExecutor` to opt into host-realm execution on purpose. `verb` is the
+ * human-readable action used in the error prefix (e.g. `"Analysis"`).
+ *
+ * @ignore
+ */
+export const runSandboxedFn = <Result = unknown>(
+    code: string,
+    paramNames: readonly string[],
+    args: readonly unknown[],
+    verb: string,
+    executor: SandboxExecutor,
+): Promise<{ value: Result } | { error: string }> =>
+    executor.run<Result>(stripInjectedRedeclarations(code, paramNames), paramNames, args, verb);
 
 /** @ignore */
 export const stripInjectedRedeclarations = (code: string, identifiers: readonly string[]): string => {
@@ -274,9 +421,8 @@ const SANDBOX_ERROR_HINTS: ReadonlyArray<{ pattern: RegExp; hint: string }> = [
         hint: 'The sandbox is not a Node module — `require` and top-level `import` are not available. The libraries you need (`h3`, `turf`) and inputs (`places`, `geometries`) are already injected as parameters; drop the import lines and use them directly.',
     },
     {
-        pattern:
-            /\b(?:functions|tools|agent|recallPlaces|recallRoutes|recallRanges|discoverPlaces|locatePlace) is not defined\b/i,
-        hint: 'The sandbox cannot call other tools — `functions.recallPlaces(...)`, `tools.discoverPlaces(...)`, etc. are NOT available. To use additional entries, list every needed id in the tool inputs (`placesEntryIDs`, `routesEntryIDs`, `incidentsEntryIDs`, `geometriesEntryIDs`): each is exposed via the injected sandbox args (`places`, `routes`, `incidents`, `geometries`, plus their `*ByEntry` per-entry views). To bring in NEW places call `discoverPlaces` BEFORE this tool and pass the resulting entry id back in.',
+        pattern: /\b(?:functions|tools|agent|recallState|discoverPlaces|locatePlace) is not defined\b/i,
+        hint: 'The sandbox cannot call other tools — `functions.recallState(...)`, `tools.discoverPlaces(...)`, etc. are NOT available. To use additional entries, list every needed id in the tool inputs (`placesEntryIDs`, `routesEntryIDs`, `incidentsEntryIDs`, `geometriesEntryIDs`): each is exposed via the injected sandbox args (`places`, `routes`, `incidents`, `geometries`, plus their `*ByEntry` per-entry views). To bring in NEW places call `discoverPlaces` BEFORE this tool and pass the resulting entry id back in.',
     },
     {
         pattern: /is not iterable/i,

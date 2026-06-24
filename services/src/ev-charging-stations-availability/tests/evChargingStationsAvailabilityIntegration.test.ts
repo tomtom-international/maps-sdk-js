@@ -96,6 +96,38 @@ describe('evChargingStationsAvailability integration tests', () => {
         );
     });
 
+    test('getPlacesWithEVAvailability forwards an explicit API key, overriding the global default', async () => {
+        const evStations = await search({
+            poiCategories: ['ELECTRIC_VEHICLE_STATION'],
+            position: [13.41273, 52.52308], // Berlin
+            limit: 15,
+        });
+
+        // Explicit correct key (matching the global default) -> availability is fetched as usual:
+        const withCorrectKey = await getPlacesWithEVAvailability(evStations, {
+            apiKey: process.env.API_KEY_TESTS,
+        });
+        expect(
+            withCorrectKey.features.some((feature) => hasChargingAvailability(feature.properties.chargingPark)),
+        ).toBe(true);
+
+        // Explicit incorrect key -> overrides the correct global default; every availability request fails (401).
+        // The per-place errors are swallowed, so no station ends up with availability data:
+        const withInvalidKey = await getPlacesWithEVAvailability(evStations, {
+            apiKey: 'invalid',
+        });
+        expect(
+            withInvalidKey.features.some((feature) => hasChargingAvailability(feature.properties.chargingPark)),
+        ).toBe(false);
+
+        // ...and with excludeIfAvailabilityUnknown the failing stations are all filtered out:
+        const withInvalidKeyExcluded = await getPlacesWithEVAvailability(evStations, {
+            apiKey: 'invalid',
+            excludeIfAvailabilityUnknown: true,
+        });
+        expect(withInvalidKeyExcluded.features).toHaveLength(0);
+    });
+
     test('ChargingStationsAvailability with API request and response callbacks', async () => {
         const onApiRequest = vi.fn() as (request: URL) => void;
         const onApiResponse = vi.fn() as (request: URL, response: ChargingStationsAvailabilityResponseAPI) => void;

@@ -80,9 +80,10 @@ export const buildExecuteRecallPlaces =
         if (!id) {
             const entries = [...allEntries]
                 .sort((a, b) => b.timestamp - a.timestamp)
-                .map(({ id, label, timestamp, places, _analysis }) => {
+                .map(({ id, label, timestamp, places }) => {
                     const shown = shownEntryIds.has(id);
                     const markerType = shown ? state.places.getShownMarkerType(id) : undefined;
+                    const analyses = state.analyses.getAnalysesForEntry(id, 'analysis');
                     return {
                         id,
                         label,
@@ -90,8 +91,8 @@ export const buildExecuteRecallPlaces =
                         featureCount: places.length,
                         shown,
                         ...(markerType && { markerType }),
-                        ...(_analysis?.length && {
-                            analyses: _analysis.map(({ name, outputFormat, timestamp, description }) => ({
+                        ...(analyses.length && {
+                            analyses: analyses.map(({ name, outputFormat, timestamp, description }) => ({
                                 name,
                                 outputFormat,
                                 timestamp,

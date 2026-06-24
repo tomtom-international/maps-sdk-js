@@ -1,5 +1,29 @@
 import { describe, expect, it } from 'vitest';
-import { makePlacesLabel, makeRoutesLabel } from '../state-labels';
+import { makePlacesLabel, makeRoutesLabel, placeAreaLabel } from '../state-labels';
+
+describe('placeAreaLabel', () => {
+    const place = (freeformAddress?: string, countryCode?: string) =>
+        ({
+            properties: { ...((freeformAddress || countryCode) && { address: { freeformAddress, countryCode } }) },
+        }) as any;
+
+    it('appends the country code to disambiguate same-name areas', () => {
+        expect(placeAreaLabel(place('London', 'GB'))).toBe('London, GB');
+    });
+
+    it('returns the bare address when no country code is present', () => {
+        expect(placeAreaLabel(place('London'))).toBe('London');
+    });
+
+    it('does not double-append when the address already ends with the code (case-insensitive)', () => {
+        expect(placeAreaLabel(place('Paris, FR', 'FR'))).toBe('Paris, FR');
+        expect(placeAreaLabel(place('Paris, fr', 'FR'))).toBe('Paris, fr');
+    });
+
+    it('returns undefined when the place has no address', () => {
+        expect(placeAreaLabel(place())).toBeUndefined();
+    });
+});
 
 describe('makePlacesLabel', () => {
     it('labels a single locate result', () => {

@@ -3,7 +3,7 @@ import { TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { type ClassificationResult, createMapAgent } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import type { ChatTransport } from 'ai';
 import { useEffect, useState } from 'react';
-import { TRAFFIC_MANAGER_SYSTEM_PROMPT } from '../agent/system-prompt';
+import { TRAFFIC_MANAGER_PROMPT_OVERRIDES } from '../agent/system-prompt';
 import { API_KEY, createDemoAzure } from '../config';
 import { AgentUIMessage, createInstrumentedTransport } from '../telemetry';
 
@@ -51,7 +51,9 @@ export function useAgentBootstrap({ deploymentId }: BootstrapOptions) {
         const created = createMapAgent(map, {
             model: createDemoAzure().chat(deploymentId),
             maxSteps: 10,
-            systemPrompt: TRAFFIC_MANAGER_SYSTEM_PROMPT,
+            // Layer the persona onto the toolkit's base prompt via section overrides
+            // (instead of a full-string replacement) — see agent/system-prompt.ts.
+            systemPrompt: TRAFFIC_MANAGER_PROMPT_OVERRIDES,
             tools: {
                 toggleTrafficIncidents: false,
             },

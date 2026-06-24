@@ -1,5 +1,5 @@
-import type { Map, ResourceType } from 'maplibre-gl';
-import { describe, expect, test, vi } from 'vitest';
+import type { Map, RequestParameters, ResourceType } from 'maplibre-gl';
+import { afterEach, describe, expect, test, vi } from 'vitest';
 import type { StyleInput, StyleModule } from '../../init';
 import poiLayerSpec from '../../places/layers/tests/poiLayerSpec.data';
 import type { TomTomMap } from '../../TomTomMap';
@@ -19,6 +19,18 @@ import {
 import type { AbstractSourceWithLayers, GeoJSONSourceWithLayers } from '../SourceWithLayers';
 import type { ToBeAddedLayerSpec, ToBeAddedLayerSpecWithoutSource } from '../types';
 import updateStyleData from './mapUtils.test.data';
+
+// transformRequest's returned fn may yield a Promise when the demo-BFF
+// session gate is installed on window. None of the tests below install it,
+// so narrow back to the synchronous shape (and fail loudly if that changes).
+const transformSync = (params: Parameters<typeof transformRequest>[0]) => {
+    const fn = transformRequest(params);
+    return (url: string, resourceType?: ResourceType): RequestParameters => {
+        const result = fn(url, resourceType);
+        if (result instanceof Promise) throw new Error('expected a synchronous result (no session gate installed)');
+        return result;
+    };
+};
 
 const getTomTomMapMock = (mapReady: boolean[]) =>
     ({
@@ -55,27 +67,27 @@ describe('Map utils - waitUntilMapIsReady', () => {
 describe('Map utils - injectCustomHeaders', () => {
     test('Return only url if it is not TomTom domain', () => {
         const url = 'https://test.com';
-        const transformRequestFn = transformRequest({});
+        const transformRequestFn = transformSync({});
         expect(transformRequestFn(url)).toEqual({ url });
     });
 
     test('Return custom headers if url if it is TomTom domain', () => {
         const url = 'https://tomtom.com/';
-        const transformRequestFn = transformRequest({});
+        const transformRequestFn = transformSync({});
         const request = transformRequestFn(url);
         expect(request).toEqual({ url, headers: { 'tomtom-user-agent': expect.any(String) } });
     });
 
     test('Return only url if it is TomTom domain but an image resource', () => {
         const url = 'https://tomtom.com';
-        const transformRequestFn = transformRequest({});
+        const transformRequestFn = transformSync({});
 
         expect(transformRequestFn(url, 'Image' as ResourceType)).toStrictEqual({ url });
     });
 
     test('Append incident tags to TomTom incidents URL', () => {
         const url = 'https://api.tomtom.com/traffic/incidents/tile';
-        const transformRequestFn = transformRequest({});
+        const transformRequestFn = transformSync({});
         const result = transformRequestFn(url);
         const resultUrl = new URL(result.url);
         expect(resultUrl.searchParams.get('tags')).toBe(INCIDENT_TAGS.join(','));
@@ -83,7 +95,7 @@ describe('Map utils - injectCustomHeaders', () => {
 
     test('Append flow tags to TomTom flow URL', () => {
         const url = 'https://api.tomtom.com/traffic/flow/tile';
-        const transformRequestFn = transformRequest({});
+        const transformRequestFn = transformSync({});
         const result = transformRequestFn(url);
         const resultUrl = new URL(result.url);
         expect(resultUrl.searchParams.get('tags')).toBe(FLOW_TAGS.join(','));
@@ -96,19 +108,19 @@ describe('Map utils - injectCustomHeaders', () => {
         test('rewrites api.tomtom.com tile URLs to the proxy base', () => {
             // MapLibre substitutes {z}/{x}/{y} before calling transformRequest,
             // so use a concrete tile URL here.
-            const transformRequestFn = transformRequest(demoBff);
+            const transformRequestFn = transformSync(demoBff);
             const result = transformRequestFn('https://api.tomtom.com/maps/orbis/tiles/12/2048/1364.pbf');
             expect(result.url).toBe(`${proxy}/maps/orbis/tiles/12/2048/1364.pbf`);
         });
 
         test('adds credentials=include for proxied requests', () => {
-            const transformRequestFn = transformRequest(demoBff);
+            const transformRequestFn = transformSync(demoBff);
             const result = transformRequestFn('https://api.tomtom.com/maps/orbis/style');
             expect(result.credentials).toBe('include');
         });
 
         test('adds credentials=include for image requests that get rewritten', () => {
-            const transformRequestFn = transformRequest(demoBff);
+            const transformRequestFn = transformSync(demoBff);
             const result = transformRequestFn(
                 'https://api.tomtom.com/maps/orbis/assets/sprites/sprite.png',
                 'Image' as ResourceType,
@@ -118,7 +130,7 @@ describe('Map utils - injectCustomHeaders', () => {
         });
 
         test('preserves incident tag injection through the rewrite', () => {
-            const transformRequestFn = transformRequest(demoBff);
+            const transformRequestFn = transformSync(demoBff);
             const result = transformRequestFn('https://api.tomtom.com/traffic/incidents/tile/123');
             expect(result.url).toContain(`${proxy}/traffic/incidents/tile/123`);
             const resultUrl = new URL(result.url);
@@ -127,13 +139,13 @@ describe('Map utils - injectCustomHeaders', () => {
         });
 
         test('passes through non-tomtom non-proxy URLs unchanged', () => {
-            const transformRequestFn = transformRequest(demoBff);
+            const transformRequestFn = transformSync(demoBff);
             const result = transformRequestFn('https://other-host.example/something');
             expect(result).toEqual({ url: 'https://other-host.example/something' });
         });
 
         test('does not treat tomtom.com lookalike hosts as TomTom (hostname-based check)', () => {
-            const transformRequestFn = transformRequest(demoBff);
+            const transformRequestFn = transformSync(demoBff);
             // Substring "tomtom.com" appears, but the host is attacker-controlled.
             // Must pass through untouched: no TomTom headers, no tag injection,
             // no credentials, no rewrite.
@@ -149,7 +161,7 @@ describe('Map utils - injectCustomHeaders', () => {
             // TomTom's style JSON embeds tile URLs with the request's apiKey
             // baked into ?key=. When we rewrite the hostname to the proxy we
             // also drop the key so it never reaches the browser console.
-            const transformRequestFn = transformRequest(demoBff);
+            const transformRequestFn = transformSync(demoBff);
             const result = transformRequestFn(
                 'https://c.api.tomtom.com/maps/orbis/tiles/5/14/12.pbf?apiVersion=1&key=LEAKED_KEY',
             );
@@ -160,7 +172,7 @@ describe('Map utils - injectCustomHeaders', () => {
         });
 
         test('non-proxy mode still omits credentials on TomTom URLs (backward compat)', () => {
-            const transformRequestFn = transformRequest({});
+            const transformRequestFn = transformSync({});
             const result = transformRequestFn('https://api.tomtom.com/maps/orbis/style');
             expect(result.credentials).toBeUndefined();
         });
@@ -169,7 +181,7 @@ describe('Map utils - injectCustomHeaders', () => {
             // An example may run put({ apiKey: process.env.API_KEY_EXAMPLES })
             // with that env unset, overwriting the bootstrap's apiKey:'' to
             // undefined. Tiles must still strip key= and attach credentials.
-            const transformRequestFn = transformRequest({ commonBaseURL: proxy, apiKey: undefined });
+            const transformRequestFn = transformSync({ commonBaseURL: proxy, apiKey: undefined });
             const result = transformRequestFn(
                 'https://c.api.tomtom.com/maps/orbis/tiles/5/14/12.pbf?apiVersion=1&key=LEAKED_KEY',
             );
@@ -188,7 +200,7 @@ describe('Map utils - injectCustomHeaders', () => {
         const customBackend = { commonBaseURL: proxy, apiKey: 'CUSTOMER_KEY' };
 
         test('still rewrites *.api.tomtom.com tile hostnames to the custom backend', () => {
-            const transformRequestFn = transformRequest(customBackend);
+            const transformRequestFn = transformSync(customBackend);
             const result = transformRequestFn(
                 'https://b.api.tomtom.com/maps/orbis/tiles/12/2048/1364.pbf?apiVersion=1&key=CUSTOMER_KEY',
             );
@@ -196,7 +208,7 @@ describe('Map utils - injectCustomHeaders', () => {
         });
 
         test('preserves the key= param on rewritten URLs', () => {
-            const transformRequestFn = transformRequest(customBackend);
+            const transformRequestFn = transformSync(customBackend);
             const result = transformRequestFn(
                 'https://c.api.tomtom.com/maps/orbis/tiles/5/14/12.pbf?apiVersion=1&key=CUSTOMER_KEY',
             );
@@ -205,18 +217,97 @@ describe('Map utils - injectCustomHeaders', () => {
         });
 
         test('does NOT add credentials=include (would break Allow-Origin: * backends)', () => {
-            const transformRequestFn = transformRequest(customBackend);
+            const transformRequestFn = transformSync(customBackend);
             const result = transformRequestFn('https://api.tomtom.com/maps/orbis/style');
             expect(result.credentials).toBeUndefined();
         });
 
         test('does NOT add credentials=include on rewritten image requests', () => {
-            const transformRequestFn = transformRequest(customBackend);
+            const transformRequestFn = transformSync(customBackend);
             const result = transformRequestFn(
                 'https://api.tomtom.com/maps/orbis/assets/sprites/sprite.png',
                 'Image' as ResourceType,
             );
             expect(result.credentials).toBeUndefined();
+        });
+    });
+
+    describe('demo-BFF session gate (globalThis.__DEMO_BFF_ENSURE_SESSION__)', () => {
+        // The sandpack proxy bootstrap installs this hook; MapLibre awaits
+        // transformRequest on the main thread before dispatching each request
+        // to its tile workers, so awaiting the hook here is what keeps
+        // worker-fetched tiles from going out with an expired session cookie.
+        const proxy = 'https://demo-bff.example.com/api';
+        const demoBff = { commonBaseURL: proxy, apiKey: '' };
+
+        afterEach(() => {
+            vi.unstubAllGlobals();
+        });
+
+        test('awaits the hook before returning proxied tile params', async () => {
+            const ensureSession = vi.fn().mockResolvedValue(undefined);
+            vi.stubGlobal('__DEMO_BFF_ENSURE_SESSION__', ensureSession);
+
+            const transformRequestFn = transformRequest(demoBff);
+            const pending = transformRequestFn('https://api.tomtom.com/maps/orbis/tiles/12/2048/1364.pbf');
+
+            expect(pending).toBeInstanceOf(Promise);
+            const result = await pending;
+            expect(ensureSession).toHaveBeenCalledTimes(1);
+            expect(result?.credentials).toBe('include');
+            expect(result?.url).toBe(`${proxy}/maps/orbis/tiles/12/2048/1364.pbf`);
+        });
+
+        test('gates rewritten image requests too', async () => {
+            const ensureSession = vi.fn().mockResolvedValue(undefined);
+            vi.stubGlobal('__DEMO_BFF_ENSURE_SESSION__', ensureSession);
+
+            const transformRequestFn = transformRequest(demoBff);
+            const result = await transformRequestFn(
+                'https://api.tomtom.com/maps/orbis/assets/sprites/sprite.png',
+                'Image' as ResourceType,
+            );
+
+            expect(ensureSession).toHaveBeenCalledTimes(1);
+            expect(result?.credentials).toBe('include');
+        });
+
+        test('a failed renewal still returns the request params (request 401s instead of wedging the map)', async () => {
+            const ensureSession = vi.fn().mockRejectedValue(new Error('hcaptcha unavailable'));
+            vi.stubGlobal('__DEMO_BFF_ENSURE_SESSION__', ensureSession);
+
+            const transformRequestFn = transformRequest(demoBff);
+            const result = await transformRequestFn('https://api.tomtom.com/maps/orbis/tiles/12/2048/1364.pbf');
+
+            expect(result?.url).toBe(`${proxy}/maps/orbis/tiles/12/2048/1364.pbf`);
+        });
+
+        test('does not gate non-proxied requests even with the hook installed', () => {
+            const ensureSession = vi.fn().mockResolvedValue(undefined);
+            vi.stubGlobal('__DEMO_BFF_ENSURE_SESSION__', ensureSession);
+
+            const transformRequestFn = transformSync(demoBff);
+            const result = transformRequestFn('https://other-host.example/something');
+
+            expect(result).toEqual({ url: 'https://other-host.example/something' });
+            expect(ensureSession).not.toHaveBeenCalled();
+        });
+
+        test('does not gate direct (non-proxy) mode even with the hook installed', () => {
+            const ensureSession = vi.fn().mockResolvedValue(undefined);
+            vi.stubGlobal('__DEMO_BFF_ENSURE_SESSION__', ensureSession);
+
+            const transformRequestFn = transformSync({});
+            const result = transformRequestFn('https://api.tomtom.com/maps/orbis/style');
+
+            expect(result.credentials).toBeUndefined();
+            expect(ensureSession).not.toHaveBeenCalled();
+        });
+
+        test('stays synchronous without the hook (non-sandpack consumers)', () => {
+            const transformRequestFn = transformSync(demoBff);
+            const result = transformRequestFn('https://api.tomtom.com/maps/orbis/style');
+            expect(result.credentials).toBe('include');
         });
     });
 });

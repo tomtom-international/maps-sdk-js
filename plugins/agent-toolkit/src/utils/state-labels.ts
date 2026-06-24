@@ -14,13 +14,12 @@ export type PlacesLabelContext = {
     routeLabel?: string;
 };
 
-const placeName = (place: Place): string | undefined => place.properties?.poi?.name;
-
-const placeAddress = (place: Place): string | undefined => place.properties?.address?.freeformAddress;
-
 const waypointAddress = (wp: WaypointLike): string | undefined => {
     if (Array.isArray(wp)) return undefined;
-    return (wp as any).properties?.address?.freeformAddress;
+    // wp is the non-array branch of WaypointLike (a Waypoint feature or a HasLngLat object); only a
+    // Waypoint carries address properties, so read the field structurally and let optional chaining
+    // yield undefined for the plain-coordinate forms.
+    return (wp as Place).properties?.address?.freeformAddress;
 };
 
 /** Builds a label for a Places FeatureCollection from its count and search context. */
@@ -50,14 +49,32 @@ const makeCollectionLabel = (count: number, context?: PlacesLabelContext): strin
 export const makePlacesLabel = (data: Place | Places, context?: PlacesLabelContext): string => {
     if ('features' in data) return makeCollectionLabel(data.features.length, context);
 
-    const name = placeName(data);
-    const address = placeAddress(data);
+    const name = data.properties?.poi?.name;
+    const address = data.properties?.address?.freeformAddress;
 
     if (name && address) return `${name}, ${address}`;
     if (name) return name;
     if (address) return address;
     if (context?.query) return context.query;
     return 'Place';
+};
+
+/**
+ * Grounded AREA label for a geocoded place: its `freeformAddress` with `, <countryCode>` appended
+ * (when a code is present and the address doesn't already end with that exact `, <countryCode>`
+ * suffix). Unlike {@link makePlacesLabel} it never uses the POI name or a query echo and always
+ * carries the country code — it's the truthful "where did this resolve" label that disambiguates
+ * same-name areas (e.g. "London, GB" vs "London, CA"). Returns undefined when the place has no
+ * address.
+ */
+export const placeAreaLabel = (place: Place): string | undefined => {
+    const address = place.properties?.address?.freeformAddress;
+    if (!address) return undefined;
+    const countryCode = place.properties?.address?.countryCode;
+    if (!countryCode) return address;
+    const suffix = `, ${countryCode}`;
+    // Case-insensitive so an already-suffixed address isn't doubled by an odd-cased code.
+    return address.toLowerCase().endsWith(suffix.toLowerCase()) ? address : `${address}${suffix}`;
 };
 
 /**

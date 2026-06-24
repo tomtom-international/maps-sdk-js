@@ -12,9 +12,11 @@ import { z } from 'zod';
 import type { EntryDataKind } from '../../types';
 import { geometriesEntryIDsSchema } from './geometries-id';
 import { GEOMETRIES_SCHEMA_DOC } from './geometries-schema-doc';
+import { INCIDENTS_SCHEMA_DOC } from './incidents-schema-doc';
 import { PLACES_SCHEMA_DOC } from './places-schema-doc';
 import { ROUTES_SCHEMA_DOC } from './routes-schema-doc';
 import { placesEntryIDsSchema, routesEntryIDsSchema } from './schema';
+import { TRAFFIC_AREA_ANALYTICS_SCHEMA_DOC } from './traffic-area-analytics-schema-doc';
 
 /**
  * Canonical ordering for {@link EntryDataKind}. Used wherever per-kind doc fragments or
@@ -102,7 +104,7 @@ const incidentsField = (options: FieldBuildOptions) =>
         .describe(
             `IDs of existing incidents entries to ${options.verb} (e.g. ["incidents-0"]). ` +
                 'Injected as `incidents` (merged) and `incidentsByEntry[id]`. Undefined when omitted. ' +
-                'Use `recallState` to list incident entries. ' +
+                "Use `recallState({ kind: 'incidents' })` to list incident entries. " +
                 options.requiredHint,
         );
 
@@ -124,7 +126,7 @@ const trafficAreaAnalyticsField = (options: FieldBuildOptions) =>
             `IDs of existing traffic-area-analytics entries to ${options.verb} (e.g. ["tta-0"]). ` +
                 'Injected as `trafficAreaAnalytics` (merged FeatureCollection of tile/hex regions with metric ' +
                 'properties) and `trafficAreaAnalyticsByEntry[id]`. Undefined when omitted. ' +
-                'Use `recallState` to list available ids. ' +
+                "Use `recallState({ kind: 'trafficAreaAnalytics' })` to list available ids. " +
                 options.requiredHint,
         );
 
@@ -136,7 +138,7 @@ const byodField = (options: FieldBuildOptions) =>
         .describe(
             `IDs of existing BYOD entries to ${options.verb} (e.g. ["byod-0"]) — customer-authored GeoJSON layers. ` +
                 'Injected as `byod` (merged FeatureCollection) and `byodByEntry[id]`. Undefined when omitted. ' +
-                'Use `recallByod` to list available ids. ' +
+                'Use `recallState` to list available ids. ' +
                 options.requiredHint,
         );
 
@@ -154,16 +156,19 @@ export const ENTRY_KIND_META: Record<EntryDataKind, EntryKindMeta> = {
         sandboxDoc:
             '• `places` — merged FeatureCollection over `placesEntryIDs`; `placesByEntry[id]` keeps them separate.',
         schemaDoc: PLACES_SCHEMA_DOC,
-        recallTool: 'recallPlaces',
+        recallTool: "recallState({ kind: 'places' })",
     },
     routes: {
         fieldName: 'routesEntryIDs',
         fieldLabel: '`routesEntryIDs`',
         buildField: routesField,
         sandboxDoc:
-            '• `routes` — merged FeatureCollection over `routesEntryIDs`; `routesByEntry[id]` keeps them separate.',
+            '• `routes` — merged FeatureCollection of Route LineStrings over `routesEntryIDs`; `routesByEntry[id]` ' +
+            'keeps them separate. On-route incidents live in `f.properties.sections.traffic[]` (each ' +
+            '`{ categories: string[], magnitudeOfDelay, delayInSeconds }`) — there is NO `f.properties.incidents`. ' +
+            'Route totals are on `f.properties.summary` (`travelTimeInSeconds`, `trafficDelayInSeconds`).',
         schemaDoc: ROUTES_SCHEMA_DOC,
-        recallTool: 'recallRoutes',
+        recallTool: "recallState({ kind: 'routes' })",
     },
     incidents: {
         fieldName: 'incidentsEntryIDs',
@@ -171,8 +176,8 @@ export const ENTRY_KIND_META: Record<EntryDataKind, EntryKindMeta> = {
         buildField: incidentsField,
         sandboxDoc:
             '• `incidents` — flat `TrafficIncident[]` over `incidentsEntryIDs`; `incidentsByEntry[id]` keeps them separate.',
-        schemaDoc: '',
-        recallTool: 'recallState',
+        schemaDoc: INCIDENTS_SCHEMA_DOC,
+        recallTool: "recallState({ kind: 'incidents' })",
     },
     customGeometries: {
         fieldName: 'geometriesEntryIDs',
@@ -182,7 +187,7 @@ export const ENTRY_KIND_META: Record<EntryDataKind, EntryKindMeta> = {
             '• `geometries` — mixed Polygon/MultiPolygon array over `geometriesEntryIDs`; every feature carries ' +
             '`properties._source: { kind, id }` so you can filter by role (see `GEOMETRIES_PROPS_DOC`).',
         schemaDoc: GEOMETRIES_SCHEMA_DOC,
-        recallTool: 'recallGeometries',
+        recallTool: "recallState({ kind: 'geometries' })",
     },
     trafficAreaAnalytics: {
         fieldName: 'trafficAreaAnalyticsEntryIDs',
@@ -190,12 +195,12 @@ export const ENTRY_KIND_META: Record<EntryDataKind, EntryKindMeta> = {
         buildField: trafficAreaAnalyticsField,
         sandboxDoc:
             '• `trafficAreaAnalytics` — merged TrafficAreaAnalytics FeatureCollection over `trafficAreaAnalyticsEntryIDs`. ' +
-            'Each feature is a tile / hex region with metric properties on `feature.properties` (e.g. `congestionLevel`, ' +
+            'Each feature is a region whose metrics live under `feature.properties.baseData` (e.g. `congestionLevel`, ' +
             '`speed`, `freeFlowSpeed`, `travelTime`, `networkLength`). `trafficAreaAnalyticsByEntry[id]` keeps each ' +
-            "request's collection separate. The collection's top-level `properties` (metrics list, date range) come from " +
-            'the first entry when ids span multiple requests.',
-        schemaDoc: '',
-        recallTool: 'recallState',
+            "request's collection separate. The collection's top-level `properties` (metrics list, date range, ranges) come " +
+            'from the first entry when ids span multiple requests.',
+        schemaDoc: TRAFFIC_AREA_ANALYTICS_SCHEMA_DOC,
+        recallTool: "recallState({ kind: 'trafficAreaAnalytics' })",
     },
     byod: {
         fieldName: 'byodEntryIDs',
@@ -206,7 +211,7 @@ export const ENTRY_KIND_META: Record<EntryDataKind, EntryKindMeta> = {
             'Polygon features are normal (BYOD layers carry whatever the integrator uploaded). `byodByEntry[id]` keeps ' +
             'each entry separate. Treat `feature.properties` as opaque application-specific data.',
         schemaDoc: '',
-        recallTool: 'recallByod',
+        recallTool: "recallState({ kind: 'byod' })",
     },
 };
 

@@ -56,7 +56,7 @@ describe('TrafficAreaAnalyticsState', () => {
         state.reset();
 
         expect(state.entries).toHaveLength(0);
-        expect(entriesHandler).toHaveBeenCalledWith([]);
+        expect(entriesHandler).toHaveBeenCalledWith({ entries: [], changedIds: ['tta-0'] });
         expect(shownHandler).toHaveBeenCalledTimes(1);
     });
 });

@@ -21,12 +21,19 @@ import { z } from 'zod';
 import type { RouteParams, ToolState } from '../../types';
 import { makeRoutesLabel, summarizeRoutes } from '../../utils';
 import { hidePreviousEntriesSchema, hidePreviousShownEntries, locationInputSchema } from '../shared';
-import { routesOutputSchema, toolErrorSchema } from '../shared-output-schemas';
+import { routesWriteOutputSchema, toolErrorSchema } from '../shared-output-schemas';
 import { resolveLocationInput } from './resolve-location-input';
 
 export const costModelSchema = z.object({
     routeType: z.enum(routeTypes).optional().describe('fast|short|efficient|thrilling'),
-    traffic: z.enum(['live', 'historical']).optional().describe('live|historical'),
+    traffic: z
+        .enum(['live', 'historical'])
+        .optional()
+        .describe(
+            'live|historical. `historical` picks the TYPICAL route path (ignores current incidents when ' +
+                'routing) while still reporting live delays — use it with startRouteMonitor so each tick refreshes ' +
+                'delays on the SAME paths instead of re-routing around current traffic.',
+        ),
     avoid: z
         .array(z.enum(avoidableTypes as unknown as [Avoidable, ...Avoidable[]]))
         .optional()
@@ -53,7 +60,7 @@ export const routeParametersSchema = z.object({
 
 /** Output schema for the set-route tool. */
 export const setRouteOutputSchema = z.union([
-    routesOutputSchema,
+    routesWriteOutputSchema,
     z.object({ success: z.literal(true) }),
     toolErrorSchema,
 ]);
@@ -72,7 +79,31 @@ export const setRouteSchema = z
         parameters: routeParametersSchema
             .optional()
             .describe('Routing options. Omitted fields keep their current values.'),
-        showOnMap: z.boolean().describe('Show the route and waypoints on the map after calculation.'),
+        showOnMap: z.boolean().describe('Show the route on the map after calculation.'),
+        showWaypoints: z
+            .boolean()
+            .optional()
+            .describe(
+                'Show the origin/stop/destination pins (default true). Pass false to draw the route line ' +
+                    'without waypoint markers — e.g. a monitored traffic corridor where the pins add noise. ' +
+                    'Only applies when showOnMap is true.',
+            ),
+        showSummaryBubbles: z
+            .boolean()
+            .optional()
+            .describe(
+                'Show the per-route ETA/summary bubbles (default true). Pass false to drop them — e.g. when ' +
+                    'monitoring traffic on a corridor, where the bubbles add noise. Only applies when showOnMap is true.',
+            ),
+        monitor: z
+            .boolean()
+            .optional()
+            .describe(
+                'Arm a live route monitor on the new route immediately (default false) — recalculates the same ' +
+                    'route every 60s so its live-traffic delays stay current, no separate startRouteMonitor call ' +
+                    'needed. Pair with `costModel.traffic: "historical"` + `maxAlternatives: 1-2` so the typical ' +
+                    'paths stay stable while delays refresh. Ignored when no route is calculated.',
+            ),
         hidePreviousEntries: hidePreviousEntriesSchema('routes'),
     })
     .refine((v) => v.locations !== undefined || v.parameters !== undefined, {
@@ -85,7 +116,11 @@ export const setRouteDescription =
     'At least one of `locations` or `parameters` MUST be provided. ' +
     'If only `parameters` is given and waypoints already exist, recalculates with the new options; ' +
     'if no waypoints exist yet, parameters are stored and no recalculation runs. Car/driving only. ' +
-    'Do NOT use to show, query, or modify an EXISTING displayed route — use updateRoutesDisplay / recallRoutes / ' +
+    'To MONITOR traffic between places over time, calculate with `parameters.costModel.traffic: "historical"` + ' +
+    '`maxAlternatives: 1-2` (stable typical paths) and set `monitor: true` — that arms the live monitor in the ' +
+    'same call (each tick refreshes live-traffic delays on the same routes), so no separate startRouteMonitor ' +
+    'call is needed. ' +
+    'Do NOT use to show, query, or modify an EXISTING displayed route — use updateRoutesDisplay / recallState / ' +
     'addWaypointsToRoute / removeWaypointsFromRoute / replaceWaypointInRoute / discoverPlaces (detour|withinRoute) / getRouteProgress instead.';
 
 /**
@@ -113,12 +148,20 @@ export const buildCalculateRouteParams = (routeParams: RouteParams) => {
     };
 };
 
+// Recalc closure for a route monitor: re-runs the SAME route (captured waypoints + params) so
+// each tick refreshes only the live-traffic delays. Shared by setRoute's `monitor` flag and
+// startRouteMonitor so both arm monitors identically.
+export const buildRouteRecalc = (waypoints: WaypointLike[], routeParams: RouteParams) => () =>
+    calculateRoute({ locations: waypoints, ...buildCalculateRouteParams(routeParams) });
+
 export const showRouteOnMap = async (
     state: ToolState,
     entryId: string,
     routes: Routes,
     _waypoints: WaypointLike[],
     hidePreviousEntries?: 'all' | readonly string[],
+    showWaypoints?: boolean,
+    showSummaryBubbles?: boolean,
 ): Promise<void> => {
     // RoutingState.showEntry handles route + waypoints rendering on the
     // entry's own RoutingModule. Under entryMode 'multiple' previously-shown
@@ -126,7 +169,10 @@ export const showRouteOnMap = async (
     // callers clear them ("all") or hide specific ids before the new entry
     // is shown.
     await hidePreviousShownEntries(state.routing, [entryId], hidePreviousEntries);
-    await state.routing.showEntry(entryId);
+    await state.routing.showEntry(entryId, {
+        showWaypoints: showWaypoints !== false,
+        showSummaryBubbles: showSummaryBubbles !== false,
+    });
     const bbox = bboxFromGeoJSON(routes);
     if (bbox) {
         state.baseMap.mapLibreMap.fitBounds(bbox as LngLatBoundsLike, { padding: 50 });
@@ -144,6 +190,9 @@ export const calculateAndAddRoute = async (
     waypoints: WaypointLike[],
     showOnMap: boolean,
     hidePreviousEntries?: 'all' | readonly string[],
+    monitor?: boolean,
+    showWaypoints?: boolean,
+    showSummaryBubbles?: boolean,
 ) => {
     const routes = await calculateRoute({
         locations: waypoints,
@@ -153,10 +202,21 @@ export const calculateAndAddRoute = async (
     const entryId = await state.routing.addRoutes(routes, waypoints, makeRoutesLabel(routes, waypoints));
 
     if (showOnMap) {
-        await showRouteOnMap(state, entryId, routes, waypoints, hidePreviousEntries);
+        await showRouteOnMap(state, entryId, routes, waypoints, hidePreviousEntries, showWaypoints, showSummaryBubbles);
     }
 
-    return summarizeRoutes(routes);
+    if (monitor) {
+        const entry = state.routing.entries.find((e) => e.id === entryId);
+        if (entry) {
+            state.routing.startMonitoring(entryId, {
+                recalculate: buildRouteRecalc(entry.waypoints, entry.params),
+            });
+        }
+    }
+
+    // Surface the routing entry id so follow-up tools (analyseData / processData / addWaypointsToRoute)
+    // know which entry the route landed in.
+    return { ...summarizeRoutes(routes), entryId };
 };
 
 /** Standalone execute for ToolEntry format. */
@@ -164,7 +224,8 @@ export const executeSetRoute = async (
     params: z.infer<typeof setRouteSchema>,
     state: ToolState,
 ): Promise<z.infer<typeof setRouteOutputSchema>> => {
-    const { locations, parameters, showOnMap, hidePreviousEntries } = params;
+    const { locations, parameters, showOnMap, showWaypoints, showSummaryBubbles, monitor, hidePreviousEntries } =
+        params;
     try {
         if (parameters) state.routing.setParams(parameters);
 
@@ -195,7 +256,15 @@ export const executeSetRoute = async (
             }
         }
 
-        return calculateAndAddRoute(state, waypoints, showOnMap, hidePreviousEntries);
+        return calculateAndAddRoute(
+            state,
+            waypoints,
+            showOnMap,
+            hidePreviousEntries,
+            monitor,
+            showWaypoints,
+            showSummaryBubbles,
+        );
     } catch (error) {
         return {
             error: `Route calculation failed: ${error instanceof Error ? error.message : String(error)}`,

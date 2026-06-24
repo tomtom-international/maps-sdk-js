@@ -68,7 +68,7 @@ export const findReachableAreasOutputSchema = z.union([
 export const findReachableAreasDescription =
     'Compute reachable-area polygons (isochrone/isodistance) from one or more origins under shared time/distance ' +
     'budgets. Multiple origins → compared in one call (sequential to respect QPS); multiple budgets → nested ' +
-    'ranges. Stored in state (recallRanges); `showOnMap: true` renders. Per-origin failures land under ' +
+    'ranges. Stored in state (recallState); `showOnMap: true` renders. Per-origin failures land under ' +
     '`skipped` instead of aborting the whole call.';
 
 const computeReachableRangesForOrigin = async (

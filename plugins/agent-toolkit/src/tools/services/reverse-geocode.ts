@@ -10,7 +10,16 @@ import { makePlacesLabel, summarizePlace } from '../../utils';
 import { placeOutputSchema, toolErrorSchema } from '../shared-output-schemas';
 
 /** Output schema for the reverse-geocode tool. */
-export const reverseGeocodeOutputSchema = z.union([placeOutputSchema, toolErrorSchema]);
+export const reverseGeocodeOutputSchema = z.union([
+    placeOutputSchema.extend({
+        placesEntryId: z
+            .string()
+            .describe(
+                'Places entry id the result was written to — pass as `placesEntryIDs` to analyseData / processData.',
+            ),
+    }),
+    toolErrorSchema,
+]);
 
 /**
  * Tool schema for reverse geocoding (coordinates to address).
@@ -37,8 +46,8 @@ export const executeReverseGeocode = async (
         const result = await reverseGeocode({ position: pos });
 
         if (result) {
-            await state.places.addPlaceResult(result, makePlacesLabel(result));
-            return summarizePlace(result);
+            const placesEntryId = await state.places.addPlaceResult(result, makePlacesLabel(result));
+            return { ...summarizePlace(result), placesEntryId };
         }
 
         return { error: 'No result found for the given coordinates' };

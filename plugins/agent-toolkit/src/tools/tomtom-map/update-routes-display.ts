@@ -138,7 +138,7 @@ const resolveSelectors = (state: ToolState, params: z.infer<typeof updateRoutesD
     const unknownAdd = resolvedAdd.filter((id) => !knownIds.has(id));
     if (unknownAdd.length > 0) {
         return {
-            error: `Unknown routes entry ids: ${unknownAdd.join(', ')}. Use recallRoutes to list available entries.`,
+            error: `Unknown routes entry ids: ${unknownAdd.join(', ')}. Use recallState to list available entries.`,
         };
     }
     return { add: resolvedAdd, remove: resolvedRemove };

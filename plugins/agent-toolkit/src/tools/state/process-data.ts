@@ -21,18 +21,7 @@
  * label / entryId / operation, the description, the result validator and the executor.
  */
 
-import {
-    bboxFromGeoJSON,
-    type CommonPlaceProps,
-    calculateProgressAtRoutePoint,
-    getCoordinateAtRouteProgress,
-    getProgressAtNearestRoutePoint,
-    getRouteProgressBetween,
-    getRouteProgressForSection,
-    getSectionBBox,
-    type Places,
-    type PolygonFeature,
-} from '@tomtom-org/maps-sdk/core';
+import type { CommonPlaceProps, Places, PolygonFeature } from '@tomtom-org/maps-sdk/core';
 import type { PlaceConnectionDisplay } from '@tomtom-org/maps-sdk/map';
 import * as turf from '@turf/turf';
 import type { FeatureCollection as GeoJSONFeatureCollection, GeoJsonProperties } from 'geojson';
@@ -49,8 +38,7 @@ import {
     buildEntryKindSandboxDocs,
     buildEntryKindSchemaDocs,
     buildEntryKindScopeSchema,
-    buildSandboxCodePrompt,
-    CROSS_KIND_OPS_DOC,
+    buildSandboxToolsDoc,
     type EntryKindScope,
     FIT_ON_MAP_DOC,
     type FitOnMapInput,
@@ -101,28 +89,10 @@ export type ProcessDataScope = EntryKindScope;
  */
 export const processDataScopeSchema = buildEntryKindScopeSchema(ALL_ENTRY_DATA_KINDS);
 
-// `routeUtils` namespace — same set processRoutes injects, reused here so any
-// routes input can be sliced by section/progress without re-implementing it.
-const routeUtils = {
-    bboxFromGeoJSON,
-    calculateProgressAtRoutePoint,
-    getCoordinateAtRouteProgress,
-    getProgressAtNearestRoutePoint,
-    getRouteProgressBetween,
-    getRouteProgressForSection,
-    getSectionBBox,
-} as const;
-
-const ROUTE_UTILS_DOC =
-    '`routeUtils` (from @tomtom-org/maps-sdk/core, only useful when `routesEntryIDs` is set):\n' +
-    '• `getSectionBBox(route, section)` → `[W,S,E,N]`. Sections at `route.properties.sections.<type>`.\n' +
-    '• `getRouteProgressForSection(route, section)` / `getRouteProgressBetween(route, startIdx, endIdx)`.\n' +
-    '• `calculateProgressAtRoutePoint(route, pathIndex)`.\n' +
-    '• `getCoordinateAtRouteProgress(route, query)` — `query`: `{ traveledDistanceInMeters }` | `{ traveledTimeInSeconds }` | `{ clockTime: Date }`.\n' +
-    '• `getProgressAtNearestRoutePoint(route, { lng, lat })` — snap a point to the line.\n' +
-    '• `bboxFromGeoJSON(featureOrCollection)`.';
-
-const PROCESS_DATA_SANDBOX_PARAMS = [...MULTI_INPUT_SANDBOX_PARAMS, 'routeUtils'] as const;
+// The sandbox environment is shared with analyseData (multi-input.ts): the injected
+// params (MULTI_INPUT_SANDBOX_PARAMS), the `routeUtils` namespace, and the
+// "tools available in the sandbox" prompt section (buildSandboxToolsDoc). processData
+// reuses all three directly — no process-data-specific param list, namespace, or doc.
 
 const showProducedGeometriesSchema = z.object({
     theme: z
@@ -187,14 +157,12 @@ export const buildProcessDataCodeDoc = (
     // kinds. The unscoped path stays terse (terse one-line field hints already live in the
     // input-field describes; the code-doc just needs the operational reference).
     const schemaBlocks = scope ? buildEntryKindSchemaDocs(active) : '';
-    const showCrossKind = !!scope && active.length > 1;
     const showTrafficNote = !!scope && active.includes('trafficAreaAnalytics');
     const trafficNote = showTrafficNote
         ? '`trafficAreaAnalytics` is a FeatureCollection of tile/hex regions whose `feature.properties` carry metric ' +
           'fields (`congestionLevel`, `speed`, `freeFlowSpeed`, `travelTime`, `networkLength`); use ' +
           '`turf.booleanPointInPolygon` / `turf.lineIntersect` to bridge with places/routes.\n\n'
         : '';
-    const routeUtilsDoc = !!scope && active.includes('routes') ? `${ROUTE_UTILS_DOC}\n\n` : '';
     const geometriesProps = !!scope && active.includes('customGeometries') ? `${GEOMETRIES_PROPS_DOC}\n\n` : '';
     const byodOutputLine = active.includes('byod')
         ? '• `byod: FeatureCollection` — writes a NEW BYOD entry (any GeoJSON: Point/Line/Polygon/mixed). Use for ' +
@@ -218,12 +186,10 @@ export const buildProcessDataCodeDoc = (
         '• `fitOnMap` — bbox or `{ bbox, padding?, animate? }`. Camera move; when alone, no entry written.\n' +
         byodOutputLine +
         '\n' +
-        `${buildSandboxCodePrompt(PROCESS_DATA_SANDBOX_PARAMS)}\n\n` +
+        buildSandboxToolsDoc(active, !!scope) +
         sandboxList +
         'Each input is `undefined` when its `*EntryIDs` argument was omitted — guard before reading. ' +
         trafficNote +
-        (showCrossKind ? `${CROSS_KIND_OPS_DOC}\n\n` : '') +
-        routeUtilsDoc +
         `${FIT_ON_MAP_DOC}\n\n` +
         geometriesProps +
         schemaBlocks
@@ -670,9 +636,10 @@ export const executeProcessData = async (params: ProcessDataInput, state: ToolSt
 
     const sandboxResult = await runSandboxedFn(
         code,
-        PROCESS_DATA_SANDBOX_PARAMS,
-        [...packSandboxArgs(sandbox, { h3, turf }), routeUtils],
+        MULTI_INPUT_SANDBOX_PARAMS,
+        packSandboxArgs(sandbox, { h3, turf }),
         'Process',
+        state.codeExecution,
     );
     if ('error' in sandboxResult) return { error: sandboxResult.error };
 

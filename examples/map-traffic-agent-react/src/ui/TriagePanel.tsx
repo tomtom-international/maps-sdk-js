@@ -1,6 +1,8 @@
 import type { TrafficIncident } from '@tomtom-org/maps-sdk/core';
 import { useMemo, useState } from 'react';
+import { useIncidentAddresses } from '../hooks/useIncidentAddresses';
 import { formatDelay } from '../utils/format';
+import { formatEndpoints } from '../utils/incidentLocation';
 
 export type TriagePanelProps = {
     incidents: readonly TrafficIncident[];
@@ -51,6 +53,9 @@ export function TriagePanel({
     const [sortKey, setSortKey] = useState<SortKey>('delay');
     const [categoryFilter, setCategoryFilter] = useState<string | 'all'>('all');
     const [open, setOpen] = useState(true);
+    // Fills in addresses (via reverse geocoding) for incidents that have no road/street label —
+    // common for on-route corridor incidents.
+    const addresses = useIncidentAddresses(incidents);
 
     const categories = useMemo(() => {
         const set = new Set<string>();
@@ -235,8 +240,10 @@ export function TriagePanel({
                                                     )}
                                                 </div>
                                                 <div className="mt-0.5 truncate text-(--sdk-font-caption-s) text-(--sdk-text-low)">
-                                                    {p.from ? p.from : '—'}
-                                                    {p.to ? ` → ${p.to}` : ''}
+                                                    {(() => {
+                                                        const geo = addresses.get(p.id);
+                                                        return formatEndpoints(p.from ?? geo?.from, p.to ?? geo?.to);
+                                                    })()}
                                                 </div>
                                             </div>
                                             <div className="whitespace-nowrap text-right text-(--sdk-font-body-s) font-semibold text-(--sdk-text-high) [font-variant-numeric:tabular-nums]">

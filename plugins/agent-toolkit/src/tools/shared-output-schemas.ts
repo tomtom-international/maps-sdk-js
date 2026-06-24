@@ -26,6 +26,12 @@ export const toolErrorSchema = z.object({
  * and a per-property profile (type, coverage, examples). Lets the model learn
  * what it can filter / analyse without ever receiving the raw FeatureCollection.
  * Mirrors `BYODDataProfile` from the byod state slice.
+ *
+ * Note: when this profile is returned to the model it is passed through
+ * `toByodSafeProfile`, which drops **string** example values (customer-supplied,
+ * so a potential prompt-injection vector). Numeric / boolean examples and all
+ * structural fields are kept. The schema shape is unchanged — `examples` is just
+ * a string-free subset on model-facing results.
  */
 export const byodDataProfileSchema = z.object({
     featureCount: z.number(),
@@ -40,7 +46,11 @@ export const byodDataProfileSchema = z.object({
                 coverage: z.number().describe('Fraction of features carrying this key (1 = every feature).'),
                 examples: z
                     .array(z.union([z.string(), z.number(), z.boolean()]))
-                    .describe('A few short example values for inferring semantics.'),
+                    .describe(
+                        'A few example NUMERIC / BOOLEAN values for inferring semantics. String values are ' +
+                            'withheld from results (customer-supplied free text — a prompt-injection vector); ' +
+                            'use `types` to know a property is a string.',
+                    ),
             }),
         )
         .describe('Per-property profile, highest-coverage first.'),
@@ -49,6 +59,33 @@ export const byodDataProfileSchema = z.object({
         .optional()
         .describe('Count of property keys omitted when the data has more distinct keys than the cap.'),
 });
+
+// ---------------------------------------------------------------------------
+// Grounded `where` resolution — shared by every tool that resolves a named area
+// (getTrafficIncidents, discoverPlaces). Always-on awareness + a confirm/retry cue.
+// ---------------------------------------------------------------------------
+
+/**
+ * Where each named `where` query actually resolved. Present whenever a `where` named an area (a
+ * `queries`/`placeIds` entry or a `nearby` query) — built from the resolver's grounded match (see
+ * `resolvedAreasDisclosure` / `biasDisclosure` in resolve-where). Omitted for raw bounding boxes /
+ * geometries (nothing was geocoded). The grounded `matched` lets the model self-correct a wrong
+ * same-name resolution.
+ */
+export const resolvedAreasOutputSchema = z
+    .array(
+        z.object({
+            query: z.string().optional().describe('Your input query text, echoed.'),
+            matched: z.string().describe('The GROUNDED place the data was actually loaded for.'),
+        }),
+    )
+    .describe(
+        'Where each named `where` query ACTUALLY resolved. `matched` is the grounded geocoded place the ' +
+            'data was loaded for — NOT your query text. ALWAYS check it is the place the operator meant: a ' +
+            'same-name place elsewhere ("east London" → "London, CA") silently loads the wrong area. ' +
+            'If `matched` is wrong, re-issue with a more specific query. ' +
+            'Omitted for raw bounding boxes / geometries (nothing was geocoded).',
+    );
 
 // ---------------------------------------------------------------------------
 // Place (compact summary) — used by geocode, reverse-geocode, search, etc.
@@ -146,4 +183,15 @@ export const summarizedRouteSchema = z.object({
 export const routesOutputSchema = z.object({
     count: z.number(),
     routes: z.array(summarizedRouteSchema),
+});
+
+/**
+ * Route summary returned by the tools that WRITE a routing entry (setRoute + the waypoint editors).
+ * Adds `entryId` so follow-up tools (analyseData / processData) know which entry the route landed in.
+ * Recall tools surface the id separately (top-level `id`), so they use the plain {@link routesOutputSchema}.
+ */
+export const routesWriteOutputSchema = routesOutputSchema.extend({
+    entryId: z
+        .string()
+        .describe('Routing entry id the route was written to — pass as `routesEntryIDs` to analyseData / processData.'),
 });

@@ -31,7 +31,7 @@ export type BYODPropertyProfile = {
 /**
  * Token-frugal description of a BYOD FeatureCollection's runtime shape: feature
  * count, the geometry types present, and a per-property profile. Stored on every
- * {@link BYODEntry} and surfaced through `addByodSource` / `recallByod`
+ * {@link BYODEntry} and surfaced through `addByodSource` / `recallState`
  * so the model never has to receive raw GeoJSON just to learn the schema.
  *
  * @group Agent Toolkit
@@ -140,3 +140,28 @@ export const profileFeatureCollection = (data: FeatureCollection): BYODDataProfi
         ...(propertiesOmitted > 0 && { propertiesOmitted }),
     };
 };
+
+/**
+ * Strip attacker-controlled free-text from a {@link BYODDataProfile} before it
+ * crosses into the language model's context. A BYOD entry's data is supplied by
+ * the customer (URL fetch / inline GeoJSON), so its property string VALUES are
+ * untrusted — a malicious feature could carry prompt-injection text in a
+ * property value, and those values are exactly what {@link profileFeatureCollection}
+ * samples into each property's `examples`.
+ *
+ * This keeps every *structural* part of the profile (feature count, geometry
+ * types, property key names, JSON types, coverage, `propertiesOmitted`) and the
+ * numeric / boolean examples (which cannot carry instructions), and drops only
+ * the **string** examples. The full profile — examples included — stays on the
+ * {@link BYODEntry} for the embedding app to render directly to the user; it is
+ * just never echoed back to the model as if it were trusted.
+ *
+ * @group Agent Toolkit
+ */
+export const toByodSafeProfile = (profile: BYODDataProfile): BYODDataProfile => ({
+    ...profile,
+    properties: profile.properties.map((property) => ({
+        ...property,
+        examples: property.examples.filter((value) => typeof value !== 'string'),
+    })),
+});

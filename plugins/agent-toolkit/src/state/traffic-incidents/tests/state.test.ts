@@ -1,9 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
-import type { IncidentsAnalysisSpec } from '../analysis';
 import { TrafficIncidentsState } from '../state';
 
 const mockMap = {} as any;
 const mockTrafficMap = { mapLibreMap: { getSource: () => undefined, getLayer: () => undefined } } as any;
+
+// Analyses no longer live on the slice — they sit in the session-level `state.analyses` registry and
+// replay via the tools-layer standing sweep. Those behaviours are covered in
+// `tools/state/tests/deterministic-analyses.test.ts` (the full createToolState + sweep path).
 
 describe('TrafficIncidentsState', () => {
     it('starts with empty entries and multiple mode', async () => {
@@ -62,7 +65,7 @@ describe('TrafficIncidentsState', () => {
     it('emits entries-change on add and reset', async () => {
         const state = new TrafficIncidentsState(mockTrafficMap);
         const seen: number[] = [];
-        const unsub = state.events.on('entries-change', (entries) => seen.push(entries.length));
+        const unsub = state.events.on('entries-change', ({ entries }) => seen.push(entries.length));
         await state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
         state.reset();
         unsub();
@@ -83,237 +86,6 @@ describe('TrafficIncidentsState', () => {
         await state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'b', 0);
         expect(state.entries).toHaveLength(1);
         expect(state.entries[0].label).toBe('b');
-    });
-
-    it('addAnalysisToEntry attaches analysis and emits analysis-change', async () => {
-        const state = new TrafficIncidentsState(mockTrafficMap);
-        const id = await state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
-        const seen: any[] = [];
-        state.events.on('analysis-change', (e) => seen.push(e));
-        const ok = state.addAnalysisToEntry(id, {
-            name: 'by-cat',
-            timestamp: Date.now(),
-            outputFormat: 'json',
-            data: { x: 1 },
-        });
-        expect(ok).toBe(true);
-        expect(seen).toHaveLength(1);
-        expect(seen[0]).toMatchObject({ entryId: id, analysis: { name: 'by-cat' } });
-        expect(state.entries[0]._analyses?.history('by-cat')).toHaveLength(1);
-    });
-
-    it('addAnalysisToEntry appends to the timeline; getResult returns the latest', async () => {
-        const state = new TrafficIncidentsState(mockTrafficMap);
-        const id = await state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
-        state.addAnalysisToEntry(id, { name: 'k', timestamp: 1, outputFormat: 'json', data: 1 });
-        state.addAnalysisToEntry(id, { name: 'k', timestamp: 2, outputFormat: 'json', data: 2 });
-        expect(state.entries[0]._analyses?.history('k')).toHaveLength(2);
-        expect(state.entries[0]._analyses?.getResult('k')).toMatchObject({ name: 'k', data: 2, timestamp: 2 });
-    });
-
-    it('setAnalysisSpec stores the spec on every named source entry', async () => {
-        const state = new TrafficIncidentsState(mockTrafficMap);
-        const a = await state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
-        const b = await state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'b', 0);
-        state.setAnalysisSpec({
-            name: 'count',
-            outputFormat: 'json',
-            code: 'return { n: incidents.length };',
-            source: a,
-        });
-        const ea = state.entries.find((e) => e.id === a)!;
-        const eb = state.entries.find((e) => e.id === b)!;
-        expect(ea._analyses?.specs[0]?.name).toBe('count');
-        expect(eb._analyses?.specs ?? []).toHaveLength(0);
-    });
-
-    it('setAnalysisSpec replaces an existing spec by name on the same entry', async () => {
-        const state = new TrafficIncidentsState(mockTrafficMap);
-        const a = await state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
-        state.setAnalysisSpec({ name: 'x', outputFormat: 'json', code: 'return 1;', source: a });
-        state.setAnalysisSpec({ name: 'x', outputFormat: 'json', code: 'return 2;', source: a });
-        const e = state.entries.find((e) => e.id === a)!;
-        expect(e._analyses?.specs).toHaveLength(1);
-        expect((e._analyses!.specs[0] as IncidentsAnalysisSpec).code).toBe('return 2;');
-    });
-
-    it('removeAnalysisSpec drops the spec from its source entry', async () => {
-        const state = new TrafficIncidentsState(mockTrafficMap);
-        const a = await state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
-        state.setAnalysisSpec({ name: 'x', outputFormat: 'json', code: 'return 1;', source: a });
-        state.removeAnalysisSpec('x');
-        expect(state.entries.find((e) => e.id === a)!._analyses?.specs ?? []).toHaveLength(0);
-    });
-
-    it('removeAnalysisSpec also drops result history so a removed analysis cannot resurrect', async () => {
-        const state = new TrafficIncidentsState(mockTrafficMap);
-        const f = (id: string): any => ({
-            type: 'Feature',
-            id,
-            properties: { id },
-            geometry: { type: 'Point', coordinates: [0, 0] },
-        });
-        const a = await state.addIncidentsEntry([f('1')], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
-        await state.setDeterministicSpec(
-            { name: 'clusters', source: a, signature: 's1', run: (data) => ({ n: data.length }) },
-            { runNow: true },
-        );
-        expect(state.getAnalysisResult(a, 'clusters')).toEqual({ n: 1 });
-
-        state.removeAnalysisSpec('clusters');
-        // Spec gone AND history gone — the history-backed read must not resurrect it.
-        expect(state.getAnalysisResult(a, 'clusters')).toBeUndefined();
-    });
-
-    it('setDeterministicSpec with runNow attaches a result readable via getAnalysisResult', async () => {
-        const state = new TrafficIncidentsState(mockTrafficMap);
-        const f = (id: string): any => ({
-            type: 'Feature',
-            id,
-            properties: { id },
-            geometry: { type: 'Point', coordinates: [0, 0] },
-        });
-        const a = await state.addIncidentsEntry([f('1'), f('2')], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
-        await state.setDeterministicSpec(
-            { name: 'size', source: a, signature: 's1', run: (data) => ({ n: data.length }) },
-            { runNow: true },
-        );
-        expect(state.getAnalysisResult(a, 'size')).toEqual({ n: 2 });
-    });
-
-    it('a monitor tick replays a deterministic spec, threading its previous result', async () => {
-        const state = new TrafficIncidentsState(mockTrafficMap);
-        const f = (id: string): any => ({
-            type: 'Feature',
-            id,
-            properties: { id },
-            geometry: { type: 'Point', coordinates: [0, 0] },
-        });
-        const a = await state.addIncidentsEntry([f('1')], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
-        await state.setDeterministicSpec(
-            {
-                name: 'echo',
-                source: a,
-                signature: 's1',
-                run: (data, { previous }) => ({ n: data.length, hadPrevious: previous !== undefined }),
-            },
-            { runNow: true },
-        );
-        await state.replaceEntryData(a, [f('1'), f('2'), f('3')], 1);
-        expect(state.getAnalysisResult(a, 'echo')).toEqual({ n: 3, hadPrevious: true });
-    });
-
-    it('keeps multiple named deterministic specs side by side on one entry', async () => {
-        // Guards the toolkit shape: analyses are keyed by (entry, name), so distinct
-        // names are independent results on the same entry — not one global slot.
-        const state = new TrafficIncidentsState(mockTrafficMap);
-        const f = (id: string): any => ({
-            type: 'Feature',
-            id,
-            properties: { id },
-            geometry: { type: 'Point', coordinates: [0, 0] },
-        });
-        const a = await state.addIncidentsEntry([f('1'), f('2')], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
-        await state.setDeterministicSpec(
-            { name: 'clusters-fine', source: a, signature: 'eps=0.3', run: () => ({ tag: 'fine' }) },
-            { runNow: true },
-        );
-        await state.setDeterministicSpec(
-            { name: 'clusters-coarse', source: a, signature: 'eps=1.5', run: () => ({ tag: 'coarse' }) },
-            { runNow: true },
-        );
-        expect(state.getAnalysisResult(a, 'clusters-fine')).toEqual({ tag: 'fine' });
-        expect(state.getAnalysisResult(a, 'clusters-coarse')).toEqual({ tag: 'coarse' });
-        // Both replay independently on a tick, threading their own previous result.
-        await state.replaceEntryData(a, [f('1')], 1);
-        expect(state.getAnalysisResult(a, 'clusters-fine')).toEqual({ tag: 'fine' });
-        expect(state.getAnalysisResult(a, 'clusters-coarse')).toEqual({ tag: 'coarse' });
-    });
-
-    it('a monitor tick re-runs registered specs and replaces _analysis data', async () => {
-        const state = new TrafficIncidentsState(mockTrafficMap);
-        const f = (id: string): any => ({
-            type: 'Feature',
-            id,
-            properties: { id },
-            geometry: { type: 'Point', coordinates: [0, 0] },
-        });
-        const a = await state.addIncidentsEntry([f('1')], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
-        state.setAnalysisSpec({
-            name: 'count',
-            outputFormat: 'json',
-            code: 'return { n: incidents.length };',
-            source: a,
-        });
-        // Seed initial result so the equality check is meaningful.
-        state.addAnalysisToEntry(a, { name: 'count', timestamp: 0, outputFormat: 'json', data: { n: 1 } });
-        // Simulate a tick by calling replaceEntryData with a 3-incident snapshot.
-        await state.replaceEntryData(a, [f('1'), f('2'), f('3')], 0);
-        const entry = state.entries.find((e) => e.id === a)!;
-        const analysis = entry._analyses?.getResult('count');
-        expect(analysis?.data).toEqual({ n: 3 });
-    });
-
-    it('analyses keep a per-name history so consumers can trend results over ticks', async () => {
-        const state = new TrafficIncidentsState(mockTrafficMap);
-        const f = (id: string): any => ({
-            type: 'Feature',
-            id,
-            properties: { id },
-            geometry: { type: 'Point', coordinates: [0, 0] },
-        });
-        const a = await state.addIncidentsEntry([f('1')], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
-        state.setAnalysisSpec({
-            name: 'count',
-            outputFormat: 'json',
-            code: 'return { n: incidents.length };',
-            source: a,
-        });
-        // Distinct sampledAt per tick — each poll is its own moment (a re-poll at
-        // the same timestamp would overwrite, not append).
-        await state.replaceEntryData(a, [f('1'), f('2')], 1);
-        await state.replaceEntryData(a, [f('1'), f('2'), f('3')], 2);
-        await state.replaceEntryData(a, [f('1')], 3);
-        const entry = state.entries.find((e) => e.id === a)!;
-        const history = entry._analyses?.history('count') ?? [];
-        expect(history.map((r) => (r.data as { n: number }).n)).toEqual([2, 3, 1]);
-        expect(entry._analyses?.getResult('count')?.data).toEqual({ n: 1 });
-    });
-
-    it('a tick passes the prior _analysis result back to the spec as `previous`', async () => {
-        const state = new TrafficIncidentsState(mockTrafficMap);
-        const f = (id: string): any => ({
-            type: 'Feature',
-            id,
-            properties: { id },
-            geometry: { type: 'Point', coordinates: [0, 0] },
-        });
-        const a = await state.addIncidentsEntry([f('1')], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
-        state.setAnalysisSpec({
-            name: 'echo',
-            outputFormat: 'json',
-            code: 'return { count: incidents.length, prev: previous };',
-            source: a,
-        });
-        // Seed the prior result the slice will read back as `previous`.
-        state.addAnalysisToEntry(a, {
-            name: 'echo',
-            timestamp: 0,
-            outputFormat: 'json',
-            data: { count: 99, prev: undefined },
-        });
-        await state.replaceEntryData(a, [f('1'), f('2')], 0);
-        const entry = state.entries.find((e) => e.id === a)!;
-        const analysis = entry._analyses?.getResult('echo');
-        expect(analysis?.data).toEqual({ count: 2, prev: { count: 99, prev: undefined } });
-    });
-
-    it('removed entries lose their specs', async () => {
-        const state = new TrafficIncidentsState(mockTrafficMap);
-        const a = await state.addIncidentsEntry([], { bbox: [0, 0, 1, 1] as any }, 'a', 0);
-        state.setAnalysisSpec({ name: 'x', outputFormat: 'json', code: 'return 1;', source: a });
-        await state.removeEntry(a);
-        expect(state.entries.find((e) => e.id === a)).toBeUndefined();
     });
 
     it('findEntryWithIncident scans newest-first', async () => {

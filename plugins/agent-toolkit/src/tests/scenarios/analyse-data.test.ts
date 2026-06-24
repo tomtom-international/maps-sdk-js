@@ -1,74 +1,48 @@
-import { agent, run, user, userSimulatorAgent } from '@langwatch/scenario';
 import { describe, expect, it } from 'vitest';
-import { agentAdapter, expectToolCalled, FULL_SCENARIOS, getExamplePrompts, MODEL } from './helpers';
-
-const REGISTRY_PROMPTS = getExamplePrompts('analyseData');
+import { FULL_SCENARIOS, getExamplePrompts, MODEL, runToolScenario } from './helpers';
+// analyseData's prompts all reference mid-session state ("these results", "my route alternatives",
+// "the city areas I loaded", "the analytics tiles"). Run cold, the agent reasonably asks "which
+// results?" instead of analysing — so stage a rich loaded session (replayed as real tool results,
+// shared with process-data) so the prompts have something to operate on. Without this the canonical
+// "…these results?" flakes.
+import { loadedSessionSeed, routeOnlySeed } from './seed';
 
 describe.skipIf(!MODEL)('analyseData scenarios', { timeout: 180_000, retry: 3 }, () => {
-    it('runs a dynamic analysis over stored places', async () => {
-        const result = await run({
-            name: 'Analyse places',
-            description: 'User asks for a count or breakdown across already-loaded places.',
-            agents: [agentAdapter(), userSimulatorAgent()],
-            script: [
-                user('Bar chart of the POI category breakdown for the restaurants I loaded earlier'),
-                agent(),
-                expectToolCalled('analyseData'),
-            ],
+    // Canonical = the first registry examplePrompt (single source of truth); the rest fan out under
+    // SCENARIOS_FULL.
+    const [canonical, ...rest] = getExamplePrompts('analyseData');
+    // The agent often refreshes the loaded places via recallPlaces before counting/aggregating —
+    // a valid first step toward the analysis — so accept it as an alternative.
+    const acceptedAlternatives = ['recallState'] as const;
+    it(`classifies the canonical prompt: ${canonical}`, async () => {
+        const outcome = await runToolScenario({
+            expectedTool: 'analyseData',
+            prompt: canonical,
+            acceptedAlternatives,
+            priorTurns: loadedSessionSeed,
         });
-        expect(result.success).toBe(true);
+        expect(outcome.success, outcome.failureReason).toBe(true);
+    });
+    it.skipIf(!FULL_SCENARIOS).each(rest)('handles registry examplePrompt: %s', async (prompt) => {
+        const outcome = await runToolScenario({
+            expectedTool: 'analyseData',
+            prompt,
+            acceptedAlternatives,
+            priorTurns: loadedSessionSeed,
+        });
+        expect(outcome.success, outcome.failureReason).toBe(true);
     });
 
-    it('compares travel times across route alternatives', async () => {
-        const result = await run({
-            name: 'Compare route alternatives',
-            description: 'User asks for a chart comparing alternatives on the route they already calculated.',
-            agents: [agentAdapter(), userSimulatorAgent()],
-            script: [
-                user('Bar chart comparing the travel times of my route alternatives'),
-                agent(),
-                expectToolCalled('analyseData'),
-            ],
+    // The route is implied from an EARLIER turn (only `routes-0` exists; no id in the new prompt). The
+    // agent must target that entry to analyse it — either reuse the remembered id or recallRoutes to
+    // re-find it first. Proves followup analysis resolves an implied entry id rather than stalling.
+    it('analyses a route implied from history, resolving its entry id (recall allowed)', async () => {
+        const outcome = await runToolScenario({
+            expectedTool: 'analyseData',
+            prompt: 'Show the distribution of traffic incidents along that drive',
+            acceptedAlternatives: ['recallState'],
+            priorTurns: routeOnlySeed,
         });
-        expect(result.success).toBe(true);
-    });
-
-    it('breaks down loaded incidents by category', async () => {
-        const result = await run({
-            name: 'Incidents by category',
-            description: 'User asks for a category breakdown of incidents already loaded in the session.',
-            agents: [agentAdapter(), userSimulatorAgent()],
-            script: [
-                user('Give me a breakdown of the loaded traffic incidents grouped by category'),
-                agent(),
-                expectToolCalled('analyseData'),
-            ],
-        });
-        expect(result.success).toBe(true);
-    });
-
-    it('registers a recurring monitor spec on incidents', async () => {
-        const result = await run({
-            name: 'Monitor incidents trend',
-            description:
-                'User asks the agent to keep watching incidents and report whether the count is growing or fading.',
-            agents: [agentAdapter(), userSimulatorAgent()],
-            script: [
-                user('Keep counting the loaded traffic incidents and tell me when the count is growing or fading'),
-                agent(),
-                expectToolCalled('analyseData'),
-            ],
-        });
-        expect(result.success).toBe(true);
-    });
-
-    it.skipIf(!FULL_SCENARIOS).each(REGISTRY_PROMPTS)('handles registry examplePrompt: %s', async (prompt) => {
-        const result = await run({
-            name: `analyseData — ${prompt}`,
-            description: prompt,
-            agents: [agentAdapter(), userSimulatorAgent()],
-            script: [user(prompt), agent(), expectToolCalled('analyseData')],
-        });
-        expect(result.success).toBe(true);
+        expect(outcome.success, outcome.failureReason).toBe(true);
     });
 });

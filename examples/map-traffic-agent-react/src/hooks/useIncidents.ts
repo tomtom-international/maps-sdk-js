@@ -12,7 +12,7 @@ export function useIncidents(agent: AgentInstance | undefined) {
 
     useEffect(() => {
         if (!agent) return;
-        const unsub = agent.state.trafficIncidents.events.on('entries-change', (entries) => {
+        const unsub = agent.state.trafficIncidents.events.on('entries-change', ({ entries }) => {
             const latest = entries.length > 0 ? entries[entries.length - 1] : undefined;
             if (latest) {
                 setIncidents({ label: latest.label, items: latest.data });

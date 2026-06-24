@@ -27,7 +27,10 @@ export default defineConfig({
     plugins: [
         dts({
             outDirs: 'dist',
-            include: ['**/*'],
+            // Scope to the package's own sources (matching the SDK packages' shared
+            // config). A broad '**/*' pulls dependency and externalized-SDK .d.ts files
+            // into the emit loop, which are then skipped with noisy "Outside emitted" warnings.
+            include: ['index.ts', 'src/**/*'],
             exclude: ['**/*.test.ts'],
             bundleTypes: true,
         }),

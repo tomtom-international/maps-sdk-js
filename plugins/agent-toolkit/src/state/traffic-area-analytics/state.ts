@@ -8,7 +8,6 @@ import type { StateSlice } from '../../types';
 import { collapseHistoryToLatest, hideAllEntries, pickUniqueEntryId } from '../entry-helpers';
 import { StateEvents } from '../events';
 import type { EntryMode, ShownEntriesSlice } from '../state';
-import type { TrafficAreaAnalyticsAnalysis } from './analysis';
 import type { TrafficAreaAnalyticsEntry, TrafficAreaAnalyticsParams } from './entry';
 
 /**
@@ -18,14 +17,16 @@ import type { TrafficAreaAnalyticsEntry, TrafficAreaAnalyticsParams } from './en
  * @group Agent Toolkit
  */
 export type TrafficAreaAnalyticsStateEvents = {
-    /** History changed — entry added, removed, or cleared via `reset()`. */
-    'entries-change': readonly TrafficAreaAnalyticsEntry[];
+    /**
+     * History changed — entry added, removed, or cleared via `reset()`. `entries` is the full
+     * snapshot after the change; `changedIds` lists the ids of the entries this specific change
+     * added, replaced in place, or removed.
+     */
+    'entries-change': { entries: readonly TrafficAreaAnalyticsEntry[]; changedIds: readonly string[] };
     /** Set of entries currently rendered on the map changed. */
     'shown-change': ReadonlySet<string>;
     /** Per-entry viz config changed (mode / metric / scaleMode / …). */
     'config-change': { entryId: string; config: TrafficAreaAnalyticsConfig | undefined };
-    /** A new analysis was attached to (or replaced on) an entry. */
-    'analysis-added': { entryId: string; analysis: TrafficAreaAnalyticsAnalysis };
     /** Display policy switched between `single` and `multiple`. */
     'mode-change': EntryMode;
 };
@@ -71,8 +72,9 @@ export class TrafficAreaAnalyticsState implements ShownEntriesSlice, StateSlice 
         if (this._entryMode === mode) return;
         this._entryMode = mode;
         if (mode === 'single' && this._entries.length > 1) {
+            const droppedIds = this._entries.slice(0, -1).map((entry) => entry.id);
             this._entries = await collapseHistoryToLatest(this._entries, (entry) => this.hideEntry(entry.id));
-            this.events.emit('entries-change', this._entries);
+            this.events.emit('entries-change', { entries: this._entries, changedIds: droppedIds });
         }
         this.events.emit('mode-change', mode);
     }
@@ -91,6 +93,7 @@ export class TrafficAreaAnalyticsState implements ShownEntriesSlice, StateSlice 
         params: TrafficAreaAnalyticsParams,
         explicitId?: string,
     ): Promise<string> {
+        const droppedIds = this._entryMode === 'single' ? this._entries.map((entry) => entry.id) : [];
         if (this._entryMode === 'single' && this._entries.length > 0) {
             await hideAllEntries(this._entries, (entry) => this.hideEntry(entry.id));
             this._entries = [];
@@ -109,28 +112,8 @@ export class TrafficAreaAnalyticsState implements ShownEntriesSlice, StateSlice 
             data,
             params,
         });
-        this.events.emit('entries-change', this._entries);
+        this.events.emit('entries-change', { entries: this._entries, changedIds: [...droppedIds, entryId] });
         return entryId;
-    }
-
-    /**
-     * Attach an analysis to an existing entry. Replaces the prior result keyed by `analysis.name`
-     * on the same entry (mirrors PlacesState / CustomGeometriesState semantics). Returns `false`
-     * when the entry id is unknown.
-     */
-    addAnalysisToEntry(entryId: string, analysis: TrafficAreaAnalyticsAnalysis): boolean {
-        const entry = this._entries.find((e) => e.id === entryId);
-        if (!entry) return false;
-        entry._analysis ??= [];
-        const existingIdx = entry._analysis.findIndex((a) => a.name === analysis.name);
-        if (existingIdx >= 0) {
-            entry._analysis[existingIdx] = analysis;
-        } else {
-            entry._analysis.push(analysis);
-        }
-        this.events.emit('analysis-added', { entryId, analysis });
-        this.events.emit('entries-change', this._entries);
-        return true;
     }
 
     /**
@@ -183,7 +166,7 @@ export class TrafficAreaAnalyticsState implements ShownEntriesSlice, StateSlice 
         entry._configChangeUnsub = undefined;
         entry._module = undefined;
         this._entries.splice(idx, 1);
-        this.events.emit('entries-change', this._entries);
+        this.events.emit('entries-change', { entries: this._entries, changedIds: [entryId] });
     }
 
     private _requireEntry(entryId: string): TrafficAreaAnalyticsEntry {
@@ -201,12 +184,13 @@ export class TrafficAreaAnalyticsState implements ShownEntriesSlice, StateSlice 
     }
 
     reset(): void {
+        const clearedIds = this._entries.map((entry) => entry.id);
         for (const entry of this._entries) {
             entry._configChangeUnsub?.();
             entry._module?.clear();
         }
         this._entries = [];
-        this.events.emit('entries-change', this._entries);
+        this.events.emit('entries-change', { entries: this._entries, changedIds: clearedIds });
         this.events.emit('shown-change', this.shownEntryIds);
     }
 }

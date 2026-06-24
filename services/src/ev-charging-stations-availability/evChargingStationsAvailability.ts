@@ -73,6 +73,7 @@ export const evChargingStationsAvailability = async (
  * the place properties.
  *
  * @param place - The place to enhance with availability data
+ * @param commonParams - Common service parameters (e.g. `key`, `customServiceBaseURL`, `onAPIRequest`) forwarded to the availability request
  *
  * @returns Promise resolving to the place with merged availability information
  * @returns undefined if no availability data is present for the `place` input parameter.
@@ -95,13 +96,14 @@ export const evChargingStationsAvailability = async (
  */
 export const getPlaceWithEVAvailability = async <P extends CommonPlaceProps = CommonPlaceProps>(
     place: Place<P>,
+    commonParams?: Omit<ChargingStationsAvailabilityParams, 'id'>,
 ): Promise<Place<EVChargingStationWithAvailabilityPlaceProps> | undefined> => {
     const availabilityId = place.properties.dataSources?.chargingAvailability?.id;
     if (!availabilityId) {
         return undefined;
     }
     try {
-        const availability = await evChargingStationsAvailability({ id: availabilityId });
+        const availability = await evChargingStationsAvailability({ ...commonParams, id: availabilityId });
         const poi = place.properties.poi;
         return availability
             ? {
@@ -136,7 +138,7 @@ export const getPlaceWithEVAvailability = async <P extends CommonPlaceProps = Co
  * take some time.
  *
  * @param places - Collection of places to enhance
- * @param options - Configuration options
+ * @param options - Configuration options, including common service parameters (e.g. `key`, `customServiceBaseURL`, `onAPIRequest`) forwarded to each availability request
  *
  * @returns Promise resolving to places collection with merged availability
  *
@@ -164,28 +166,36 @@ export const getPlaceWithEVAvailability = async <P extends CommonPlaceProps = Co
  */
 export async function getPlacesWithEVAvailability<P extends CommonPlaceProps = CommonPlaceProps>(
     places: Places<P>,
-    options?: {
+    options?: Omit<ChargingStationsAvailabilityParams, 'id'> & {
         excludeIfAvailabilityUnknown: true;
     },
 ): Promise<Places<EVChargingStationWithAvailabilityPlaceProps>>;
 
 export async function getPlacesWithEVAvailability<P extends CommonPlaceProps = CommonPlaceProps>(
     places: Places<P>,
-    options?: {
+    options?: Omit<ChargingStationsAvailabilityParams, 'id'> & {
         /**
          * If true, places with unknown availability will be filtered out. Otherwise, they will be included.
          * @default false
          */
+        excludeIfAvailabilityUnknown?: false;
+    },
+): Promise<Places<P | EVChargingStationWithAvailabilityPlaceProps>>;
+
+export async function getPlacesWithEVAvailability<P extends CommonPlaceProps = CommonPlaceProps>(
+    places: Places<P>,
+    options?: Omit<ChargingStationsAvailabilityParams, 'id'> & {
         excludeIfAvailabilityUnknown?: boolean;
     },
 ): Promise<Places<P | EVChargingStationWithAvailabilityPlaceProps>> {
+    const { excludeIfAvailabilityUnknown, ...commonParams } = options ?? {};
     const enhancedPlaces: Array<Place<P> | Place<EVChargingStationWithAvailabilityPlaceProps>> = [];
     for (const place of places.features) {
         // (We fetch the availabilities sequentially on purpose to prevent QPS limit errors)
-        const placeWithAvailability = await getPlaceWithEVAvailability(place);
+        const placeWithAvailability = await getPlaceWithEVAvailability(place, commonParams);
         if (placeWithAvailability) {
             enhancedPlaces.push(placeWithAvailability);
-        } else if (!options?.excludeIfAvailabilityUnknown) {
+        } else if (!excludeIfAvailabilityUnknown) {
             enhancedPlaces.push(place);
         }
     }

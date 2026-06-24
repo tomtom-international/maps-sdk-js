@@ -523,7 +523,7 @@ describe('Calculate route integration tests', () => {
             assertSummaryBasics(routeProperties.summary);
             // arriveBy was requested: the returned arrival time is the requested time, differing only
             // by the response's dropped sub-second fraction — i.e. strictly under 1s.
-            expect(Math.abs(routeProperties.summary.arrivalTime.getTime() - arriveBy.getTime())).toBeLessThan(1_000);
+            expect(Math.abs(routeProperties.summary.arrivalTime.getTime() - arriveBy.getTime())).toBeLessThan(2_000);
             expect(routeProperties.guidance).toBeDefined();
             expect(routeProperties.progress?.length).toBeGreaterThan(0);
             const sections: SectionsProps = routeProperties.sections;

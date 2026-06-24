@@ -2,9 +2,11 @@
  * @module agent-toolkit-types
  */
 
+export { type AnalysesEvents, type AnalysisRecord, type EntryAnalysis } from '../state/analyses';
 export type { BYODAnalysis } from '../state/byod/analysis';
 export type { BYODEntry, BYODSource } from '../state/byod/entry';
 export type { BYODDataProfile, BYODPropertyProfile } from '../state/byod/profile';
+export type { ByodSourceUrlValidation, ByodSourceUrlValidator } from '../state/byod/state';
 export type { CustomGeometriesAnalysis } from '../state/custom-geometries/analysis';
 export type { CustomGeometriesEntry, GeometryProvenance } from '../state/custom-geometries/entry';
 export type { PlacesAnalysis } from '../state/places/analysis';
@@ -16,6 +18,7 @@ export type { TrafficAreaAnalyticsAnalysis } from '../state/traffic-area-analyti
 export type { TrafficAreaAnalyticsEntry, TrafficAreaAnalyticsParams } from '../state/traffic-area-analytics/entry';
 export type { IncidentsAnalysis, TrafficIncidentsEntry } from '../state/traffic-incidents/state';
 export { type GeometriesId, type GeometriesIdKind, geometriesIdSchema } from '../tools/shared';
+export type { SandboxExecutor } from '../tools/shared/sandbox-code';
 export * from './state';
 
 import type { LanguageModel, ModelMessage, PrepareStepFunction, ToolLoopAgent } from 'ai';
@@ -25,8 +28,10 @@ type ProviderOptions = Record<string, Record<string, JSONValue | undefined>>;
 
 import type { z } from 'zod';
 import type {
+    Analyses,
     BaseMapState,
     BYODState,
+    ByodSourceUrlValidator,
     CustomGeometriesState,
     DataEntryConfig,
     DataEntryKind,
@@ -34,11 +39,14 @@ import type {
     PlacesState,
     RangeState,
     RoutingState,
+    TrackerState,
     TrafficAreaAnalyticsState,
     TrafficIncidentsState,
     TrafficTilesState,
 } from '../state';
+import type { SystemPromptSectionOverrides } from '../system-prompt';
 import type { ToolName } from '../tools';
+import type { SandboxExecutor } from '../tools/shared/sandbox-code';
 import type { ClassificationResult } from '../utils';
 
 /**
@@ -106,6 +114,47 @@ export type ToolState = {
     customGeometries: CustomGeometriesState;
     /** Bring-your-own-data GeoJSON layers — customer-authored data the agent can read and render. */
     byod: BYODState;
+    /**
+     * Strategy used to run code-generation tools (`analyseData` / `processData`).
+     * Initialised to the main-thread executor by `createToolState`, and overridden
+     * by `createMapAgent` from {@link MapAgentOptions.codeExecution}. Tools read this
+     * to select where sandbox code runs.
+     */
+    codeExecution: SandboxExecutor;
+    /**
+     * Single session-level registry of every analysis (one-shot + recurring) across all entry kinds.
+     * Replaces the old per-entry `_analyses` stores: results live here, and per-entry views read them
+     * on demand via {@link Analyses.getAnalysesForEntry}. `analyseData` registers; `monitorAnalysis`
+     * toggles `enabled`.
+     */
+    analyses: Analyses;
+    /**
+     * Generic trackers — thin rising-edge reducers over `type: 'tracker-rule'` analyses. A tracker fires
+     * an alert/event when its rule's {@link Verdict} crosses an edge. Reacts to `analysis-change`; owns
+     * the durable {@link TrackerEvent} log.
+     */
+    trackers: TrackerState;
+};
+
+/**
+ * Tunes `analyseData` / `processData` sandbox execution. **Where** the code runs is
+ * not configurable: it is chosen by environment — a sandboxed, opaque-origin
+ * iframe + Web Worker in the browser (no DOM/storage access, no network via CSP,
+ * terminable on timeout), and the main thread in Node / SSR (where that boundary
+ * has no equivalent). The options below only tune the isolated browser run.
+ *
+ * @group Agent Toolkit
+ */
+export type CodeExecutionConfig = {
+    /** Wall-clock budget per isolated (browser) run, in ms. Default: 5000. */
+    timeoutMs?: number;
+    /**
+     * Optional override of the worker's library source. By default the SDK loads its own
+     * inlined turf/h3 UMD (a separate lazy chunk), so this is rarely needed — supply it only
+     * to pin a specific build or add libraries. Return UMD/IIFE JavaScript that defines
+     * `self.turf` and `self.h3` (string or Promise of one).
+     */
+    loadWorkerLibrarySource?: () => string | Promise<string>;
 };
 
 /**
@@ -326,14 +375,30 @@ export type MapAgentOptions<CS extends ToolState = ToolState> = {
     model: LanguageModel;
 
     /**
-     * Complete system prompt that replaces the default.
-     * If provided, `systemPromptSuffix` is ignored.
+     * Either a full prompt string that replaces the default entirely, or a
+     * {@link SystemPromptSectionOverrides} map whose entries override individual
+     * sections of the built-in prompt (omitted sections keep their defaults).
+     *
+     * To extend a single section rather than replace it, read its default from
+     * the exported `SYSTEM_PROMPT_SECTIONS` map and override with a derived value
+     * (e.g. ``responseFormatting: `${SYSTEM_PROMPT_SECTIONS.responseFormatting}\n- Answer in Spanish.` ``).
+     *
+     * A full string ignores `systemPromptPrefix` and `systemPromptSuffix`;
+     * section overrides still honor both.
      */
-    systemPrompt?: string;
+    systemPrompt?: string | SystemPromptSectionOverrides;
 
     /**
-     * Additional text appended to the built-in prompt.
-     * Ignored if `systemPrompt` is provided.
+     * Text prepended above the whole prompt as a preamble, separated by a blank
+     * line and carrying no heading. Applied on top of the base prompt or section
+     * overrides; ignored only when `systemPrompt` is a full replacement string.
+     */
+    systemPromptPrefix?: string;
+
+    /**
+     * Additional text appended under an `ADDITIONAL INSTRUCTIONS` heading.
+     * Applied on top of the base prompt or section overrides; ignored only when
+     * `systemPrompt` is a full replacement string.
      */
     systemPromptSuffix?: string;
 
@@ -393,13 +458,50 @@ export type MapAgentOptions<CS extends ToolState = ToolState> = {
      *     dataEntries: {
      *         routes: { entryMode: 'single' },
      *         incidents: { entryMode: 'single' },
-     *         byod: { enabled: false }, // disables recallByod, addByodSource, setByodLayers, updateByodDisplay + byod scope on analyse/process
-     *         ranges: { enabled: false }, // disables findReachableAreas + recallRanges
+     *         byod: { enabled: false }, // disables recallState, addByodSource, setByodLayers, updateByodDisplay + byod scope on analyse/process
+     *         ranges: { enabled: false }, // disables findReachableAreas + recallState
      *     },
      * });
      * ```
      */
     dataEntries?: Partial<Record<DataEntryKind, DataEntryConfig>>;
+
+    /**
+     * BYOD (bring-your-own-data) options.
+     *
+     * @example
+     * ```typescript
+     * createMapAgent(map, {
+     *     model: openai('gpt-4o'),
+     *     byod: {
+     *         // Refuse cloud-metadata / private addresses; allow only known hosts.
+     *         validateSourceUrl: (url) =>
+     *             url.hostname === 'data.example.com'
+     *                 ? { valid: true }
+     *                 : { valid: false, reason: `Host "${url.hostname}" is not allowed.` },
+     *     },
+     * });
+     * ```
+     */
+    byod?: {
+        /**
+         * Authorize each `addByodSource` URL before it is fetched — see
+         * {@link ByodSourceUrlValidator}. Return `{ valid: true }` to allow or
+         * `{ valid: false, reason }` to block (sync or async). Runs in addition
+         * to the built-in scheme / size / timeout policy.
+         */
+        validateSourceUrl?: ByodSourceUrlValidator;
+    };
+
+    /**
+     * Tunes `analyseData` / `processData` sandbox execution — see {@link CodeExecutionConfig}.
+     * Where the code runs is chosen by environment (off-thread iframe-worker in the browser,
+     * main thread in Node/SSR), not configured here; these options only adjust the isolated
+     * browser run (`timeoutMs`, `loadWorkerLibrarySource`).
+     *
+     * @experimental
+     */
+    codeExecution?: CodeExecutionConfig;
 
     /**
      * Pluggable classifier for automatic tool selection.

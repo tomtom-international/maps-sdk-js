@@ -5,8 +5,6 @@ The TomTom SDK provides the basemap — vector tiles, style, glyphs, and sprites
 ## Accessing MapLibre
 
 ```ts
-import maplibre from 'maplibre-gl';
-
 // Always use map.mapLibreMap for direct MapLibre access
 const mapLibreMap = map.mapLibreMap;
 ```
@@ -57,7 +55,9 @@ mapLibreMap.addSource('stores', { type: 'geojson', data: '/data/stores.geojson' 
 ### Update GeoJSON data at runtime
 
 ```ts
-const source = mapLibreMap.getSource('stores') as maplibre.GeoJSONSource;
+import { GeoJSONSource } from 'maplibre-gl';
+
+const source = mapLibreMap.getSource('stores') as GeoJSONSource;
 source.setData(updatedGeoJSON);
 ```
 

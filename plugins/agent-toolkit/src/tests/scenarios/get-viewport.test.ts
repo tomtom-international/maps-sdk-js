@@ -1,27 +1,16 @@
-import { agent, run, user, userSimulatorAgent } from '@langwatch/scenario';
 import { describe, expect, it } from 'vitest';
-import { agentAdapter, expectToolCalled, FULL_SCENARIOS, getExamplePrompts, MODEL } from './helpers';
-
-const REGISTRY_PROMPTS = getExamplePrompts('getViewport');
+import { FULL_SCENARIOS, getExamplePrompts, MODEL, runToolScenario } from './helpers';
 
 describe.skipIf(!MODEL)('getViewport scenarios', { timeout: 180_000, retry: 3 }, () => {
-    it('reads the current map viewport', async () => {
-        const result = await run({
-            name: 'Read viewport',
-            description: 'User asks what the map is currently showing.',
-            agents: [agentAdapter(), userSimulatorAgent()],
-            script: [user('What are the current map bounds?'), agent(), expectToolCalled('getViewport')],
-        });
-        expect(result.success).toBe(true);
+    // Canonical = the first registry examplePrompt (single source of truth); the rest fan out under
+    // SCENARIOS_FULL.
+    const [canonical, ...rest] = getExamplePrompts('getViewport');
+    it(`classifies the canonical prompt: ${canonical}`, async () => {
+        const outcome = await runToolScenario({ expectedTool: 'getViewport', prompt: canonical });
+        expect(outcome.success, outcome.failureReason).toBe(true);
     });
-
-    it.skipIf(!FULL_SCENARIOS).each(REGISTRY_PROMPTS)('handles registry examplePrompt: %s', async (prompt) => {
-        const result = await run({
-            name: `getViewport — ${prompt}`,
-            description: prompt,
-            agents: [agentAdapter(), userSimulatorAgent()],
-            script: [user(prompt), agent(), expectToolCalled('getViewport')],
-        });
-        expect(result.success).toBe(true);
+    it.skipIf(!FULL_SCENARIOS).each(rest)('handles registry examplePrompt: %s', async (prompt) => {
+        const outcome = await runToolScenario({ expectedTool: 'getViewport', prompt });
+        expect(outcome.success, outcome.failureReason).toBe(true);
     });
 });

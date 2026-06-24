@@ -6,33 +6,26 @@
  * them to user-authored JS as `places`, `routes`, `incidents`, `geometries`,
  * `trafficAreaAnalytics`, `byod` (and per-entry views), with `h3` and `turf`
  * available. The result is attached as `_analysis[name]` on every contributing
- * entry.
- *
- * Opt-in `monitor: { entryId }` registers the call as a recurring spec on the
- * targeted incidents entry — the code re-runs on every monitor-tick with
- * `previous` / `now` / `log` in scope. Constraint: only incidents-only inputs
- * are allowed when `monitor` is set (no cross-kind reruns in the lean merge).
- *
- * Opt-in `applyFocus` (default true when `monitor` is set) honours `focusIds`
- * on the result by calling `setFocus` on the source incidents entry.
+ * entry. This is a one-shot analysis: it never renders. Every run is also registered as a
+ * (disabled) standing analysis and returns an `analysisId`; pass that to `monitorAnalysis` to make
+ * it recompute on every source-entry change (the recurring sandbox then also sees `previous` /
+ * `now` / `log`).
  *
  * **Scope + enablement.** Shared scaffolding in `tools/shared/entry-kinds.ts` builds
  * the per-kind input fields, the "at least one of …" message, the per-kind sandbox /
  * schema docs, and the scope schema. This file only adds the tool-specific surface:
- * `name` / `description` / `outputFormat` / `monitor` / `applyFocus`, the code-doc
- * body (including the incidents-monitor extras), the description preamble, the
- * monitor refine, and the executor.
+ * `name` / `description` / `outputFormat`, the code-doc body, the description preamble,
+ * and the executor.
  */
 
 import * as turf from '@turf/turf';
 import * as h3 from 'h3-js';
 import { z } from 'zod';
-import { runIncidentSpec } from '../../state';
+import { makeAnalysisId } from '../../state';
 import type { EntryDataKind, ToolBuildOptions, ToolEntryBuilder, ToolState } from '../../types';
 import {
     ALL_ENTRY_DATA_KINDS,
     ANALYSE_OUTPUT_FORMAT_DESCRIPTION,
-    type AnalysisOutputFormat,
     buildAnalyseReturnPrompt,
     buildAtLeastOneEntryIdMessage,
     buildEntryFieldList,
@@ -40,15 +33,13 @@ import {
     buildEntryKindSandboxDocs,
     buildEntryKindSchemaDocs,
     buildEntryKindScopeSchema,
-    buildSandboxCodePrompt,
-    CROSS_KIND_OPS_DOC,
+    buildSandboxToolsDoc,
     type EntryKindScope,
     GEOMETRIES_PROPS_DOC,
     GEOMETRIES_SKIPPED_DESC,
     GEOMETRIES_SOURCE_IDS_DESC,
     type GeometriesId,
     hasAnyEntryIds,
-    isKindActive,
     MULTI_INPUT_SANDBOX_PARAMS,
     packSandboxArgs,
     prepareMultiInputs,
@@ -58,6 +49,7 @@ import {
     validateAnalysisResult,
 } from '../shared';
 import { toolErrorSchema } from '../shared-output-schemas';
+import { ensureStandingWired, registerAnalysis } from './analyses-runtime';
 
 /**
  * Per-turn scope kinds that `analyseData` understands. Identical to {@link EntryDataKind}
@@ -109,23 +101,21 @@ export const analyseDataOutputSchema = z.union([
             .array(z.unknown())
             .optional()
             .describe(`${GEOMETRIES_SOURCE_IDS_DESC} (only present when \`geometriesEntryIDs\` was set).`),
+        analysisId: z
+            .string()
+            .describe(
+                'Stable handle for this analysis. Pass to `monitorAnalysis` to keep it recomputing whenever ' +
+                    'its source entries change.',
+            ),
         name: z.string().describe('Unique name of the analysis within each affected entry.'),
         description: z.string().optional(),
         outputFormat: z.enum(['json', 'chart']),
+        monitoring: z
+            .boolean()
+            .optional()
+            .describe('True when `monitor: true` was set — the analysis now recomputes on every source change.'),
         analysis: z.unknown(),
         skipped: z.array(skippedSourceSchema).optional().describe(GEOMETRIES_SKIPPED_DESC),
-        focused: z
-            .object({
-                incidentsEntryID: z.string(),
-                focusedCount: z.number(),
-                droppedIds: z.array(z.string()),
-                reason: z.string().optional(),
-            })
-            .optional()
-            .describe(
-                'Present when the analysis ran with `monitor` AND returned `focusIds: string[]` (+ optional ' +
-                    '`focusReason`). The tool applied that focus as a side-effect on the source incidents entry.',
-            ),
     }),
     toolErrorSchema,
 ]);
@@ -142,37 +132,17 @@ export const buildAnalyseDataCodeDoc = (
     // one-liners, which is enough to write reasonable code without 3-4 KB of schema
     // reference per kind.
     const schemaBlocks = scope ? buildEntryKindSchemaDocs(active) : '';
-    // Cross-kind ops cheat-sheet only matters when more than one kind is in scope. It's a
-    // sizeable doc (~2 KB) so we keep it strictly gated on scoped + multi-kind.
-    const showCrossKind = !!scope && active.length > 1;
     // Geometries provenance doc only matters when customGeometries is actually in scope.
     const showGeometriesProps = !!scope && active.includes('customGeometries');
-    // Incidents monitor + focus side-effect blocks only matter when incidents is in scope.
-    // ~400 tokens and irrelevant to non-incidents analyses, so gate them too.
-    const showIncidentsExtras = !scope || active.includes('incidents');
-    const incidentsExtras = showIncidentsExtras
-        ? 'When `monitor: { entryId }` is set, the call ALSO registers as a recurring spec on that incidents entry. ' +
-          'On every monitor tick the code re-runs against the fresh `incidents` snapshot and these EXTRA sandbox args ' +
-          'become available:\n' +
-          '• `previous` — your last result for this `name` on the source entry, or `undefined` on the first run. Use it ' +
-          'for id stability (e.g. reuse a prior cluster id when memberIds overlap by ≥50%) and short trend reads ' +
-          "('growing' / 'fading' / 'steady'). Always guard `previous === undefined` — true on every first run.\n" +
-          '• `now: Date` — call-start time; compare against `startTime` / `endTime` on incidents.\n' +
-          '• `log: (...args) => void` — writes into the response logs.\n' +
-          'Constraint: cross-kind reruns are NOT supported — when `monitor` is set, `incidentsEntryIDs: [monitor.entryId]` ' +
-          'is the only allowed input. For one-shot cross-kind incidents analysis (no rerun), omit `monitor`.\n' +
-          'FOCUS SIDE-EFFECT: when `applyFocus !== false` AND the result has `focusIds: string[]` (+ optional ' +
-          '`focusReason`), `setFocus` is called once on the source entry to dim/highlight the listed incidents. ' +
-          'One-shot — the focus side-effect does NOT re-apply on monitor-tick replays.\n\n'
-        : '';
     return (
         'Async JS that aggregates the injected inputs and returns the result.\n\n' +
-        `${buildSandboxCodePrompt(MULTI_INPUT_SANDBOX_PARAMS)}\n\n` +
+        buildSandboxToolsDoc(active, !!scope) +
         'Each input is `undefined` when its `*EntryIDs` argument was omitted — guard before reading ' +
         '(`if (places) ...`, `routes?.features.length`, etc.). When defined:\n' +
         `${sandboxList}\n\n` +
-        incidentsExtras +
-        (showCrossKind ? `${CROSS_KIND_OPS_DOC}\n\n` : '') +
+        // Cross-kind ops cheat-sheet is emitted inside `buildSandboxToolsDoc` (gated on scoped +
+        // multi-kind); incidents-specific monitor extras are gone now that `monitorAnalysis` drives
+        // recurrence generically.
         `${buildAnalyseReturnPrompt('counts, per-kind breakdowns, hex bins, intersections, distance bins')}\n\n` +
         (showGeometriesProps ? `${GEOMETRIES_PROPS_DOC}\n\n` : '') +
         schemaBlocks
@@ -196,61 +166,18 @@ export const buildAnalyseDataSchema = (enabled: readonly EntryDataKind[], scope:
     shape.description = z.string().optional().describe('Optional short description of what the analysis computes.');
     shape.outputFormat = z.enum(['json', 'chart']).optional().describe(ANALYSE_OUTPUT_FORMAT_DESCRIPTION);
     shape.code = z.string().describe(buildAnalyseDataCodeDoc(enabled, scope));
-
-    // Monitor + applyFocus are only meaningful when `incidents` is in the active set. Out of
-    // scope or disabled at the agent level → drop both fields entirely so the LLM doesn't see
-    // surface that can't be exercised.
-    const incidentsActive = isKindActive(enabled, scope, 'incidents');
-    if (incidentsActive) {
-        shape.monitor = z
-            .object({
-                entryId: z
-                    .string()
-                    .describe(
-                        'Incidents entry id to register the spec on. Must match `incidentsEntryIDs[0]`. The spec re-runs on every monitor-tick of that entry.',
-                    ),
-            })
-            .optional()
-            .describe(
-                'Opt-in: register this analysis as a recurring spec on the targeted incidents entry. The code re-runs ' +
-                    'on every monitor-tick with extra sandbox args (`previous`, `now`, `log`). When set, only ' +
-                    '`incidentsEntryIDs: [monitor.entryId]` is allowed alongside — cross-kind reruns are not supported.',
-            );
-        shape.applyFocus = z
-            .boolean()
-            .optional()
-            .describe(
-                'When `monitor` is set AND the result has `focusIds: string[]` (+ optional `focusReason`), call ' +
-                    '`setFocus` on the source entry to dim/highlight those incidents. Default: true. One-shot — the ' +
-                    'focus side-effect does NOT re-apply on monitor-tick replays.',
-            );
-    }
+    shape.monitor = z
+        .boolean()
+        .optional()
+        .describe(
+            'When true, keep this analysis live — it recomputes on every change to its source entries (a ' +
+                'monitored incidents poll, a re-search, …), no separate monitorAnalysis call needed. Omit (or false) ' +
+                'for a one-shot run; you can still toggle it later via monitorAnalysis using the returned `analysisId`.',
+        );
 
     const baseObject = z.object(shape);
 
-    return baseObject.refine(hasAnyEntryIds, { message: buildAtLeastOneEntryIdMessage(active) }).refine(
-        (v: Record<string, unknown>) => {
-            const monitor = v.monitor as { entryId: string } | undefined;
-            if (!monitor) return true;
-            // Monitor requires incidentsEntryIDs to match the targeted entry, and no other input kinds.
-            const incidents = v.incidentsEntryIDs as string[] | undefined;
-            const incidentsOk = Array.isArray(incidents) && incidents.length === 1 && incidents[0] === monitor.entryId;
-            if (!incidentsOk) return false;
-            // No other *EntryIDs may be present alongside incidents.
-            for (const kind of ALL_ENTRY_DATA_KINDS) {
-                if (kind === 'incidents') continue;
-                const fieldName = `${kind === 'customGeometries' ? 'geometries' : kind}EntryIDs`;
-                const value = v[fieldName] as unknown[] | undefined;
-                if (value?.length) return false;
-            }
-            return true;
-        },
-        {
-            message:
-                'When `monitor` is set, only `incidentsEntryIDs: [monitor.entryId]` is allowed (cross-kind reruns are not supported in the lean merge). ' +
-                'Omit `monitor` for one-shot cross-kind incidents analysis.',
-        },
-    );
+    return baseObject.refine(hasAnyEntryIds, { message: buildAtLeastOneEntryIdMessage(active) });
 };
 
 /** Default full-surface input schema for analyse-data — every kind enabled, no per-turn scope. */
@@ -263,39 +190,26 @@ export const buildAnalyseDataDescription = (
 ): string => {
     const active = resolveActiveKinds(enabled, scope);
     const kindList = active.join(' / ');
-    const incidentsTail =
-        scope && active.includes('incidents')
-            ? 'Opt-in `monitor: { entryId }` registers the call as a recurring spec on the targeted incidents entry; ' +
-              'opt-in `applyFocus` honours `focusIds: string[]` by calling `setFocus`.'
-            : '';
     const contrast =
         'CONTRAST `processData`, which writes NEW renderable map entries (places / custom-geometries / BYOD); ' +
-        '`analyseData` never renders or creates entries — only attaches metadata.';
+        '`analyseData` never renders or creates entries — only attaches metadata. Returns an `analysisId`; pass it ' +
+        'to `monitorAnalysis` to keep the analysis recomputing whenever its source entries change.';
     if (scope) {
         return (
             `Aggregate ${kindList} entries via dynamic JS — counts, groupings, charts, hex bins, ` +
             `cross-kind correlations. ${contrast} Each scoped input is exposed as a merged collection and a ` +
             'per-entry record; fields are `undefined` when their `*EntryIDs` argument is omitted (guard with `?.`). ' +
             'Result is attached as `_analysis[name]` on every contributing entry. ' +
-            '`outputFormat: "json"` (default) or `"chart"` (Chart.js config). ' +
-            incidentsTail
+            '`outputFormat: "json"` (default) or `"chart"` (Chart.js config).'
         );
     }
-    const incidentsUnscopedTail = active.includes('incidents')
-        ? 'Opt-in `monitor: { entryId }` registers the call as a recurring spec on the targeted incidents entry — the ' +
-          'code re-runs on every monitor-tick with `previous` / `now` / `log` available in the sandbox. When `monitor` ' +
-          'is set, only `incidentsEntryIDs: [monitor.entryId]` is allowed alongside (no cross-kind reruns). ' +
-          'Opt-in `applyFocus` (default true under `monitor`) honours `focusIds: string[]` on the result by calling ' +
-          '`setFocus` on the source entry to dim/highlight a subset.'
-        : '';
     return (
         `Aggregate ${kindList} entries via dynamic JS — counts, groupings, charts, hex bins, cross-kind correlations. ` +
         `${contrast} ` +
         'Each input is exposed as a merged collection and a per-entry record; fields are `undefined` when their ' +
         '`*EntryIDs` argument is omitted (guard with `?.` / `if (places) …`). ' +
         'Result is attached as `_analysis[name]` on every contributing entry (ranges feed in but do not carry ' +
-        'analyses). `outputFormat: "json"` (default) or `"chart"` (Chart.js config). ' +
-        incidentsUnscopedTail
+        'analyses). `outputFormat: "json"` (default) or `"chart"` (Chart.js config).'
     );
 };
 
@@ -311,45 +225,6 @@ const buildAnalyseDataScopePrompt = (enabled: readonly EntryDataKind[]): string 
     );
 };
 
-// Every state slice's `addAnalysisToEntry` matches this shape — the per-slice `Analysis`
-// type is structurally identical across places/routes/incidents/trafficAreaAnalytics/custom.
-type AnalysisSink<E extends { id: string }> = {
-    addAnalysisToEntry: (entryId: E['id'], analysis: AnalysisRecord) => boolean;
-};
-
-type AnalysisRecord = {
-    name: string;
-    timestamp: number;
-    description?: string;
-    outputFormat: AnalysisOutputFormat;
-    data: unknown;
-};
-
-// Attach an analysis to every entry in `entries` on `slice`. Shares the timestamp across the
-// batch so the agent UI can correlate per-slice updates that originated from the same call.
-const attachAnalysisToEntries = <E extends { id: string }>(
-    slice: AnalysisSink<E>,
-    entries: readonly E[],
-    payload: {
-        name: string;
-        description?: string;
-        outputFormat: AnalysisOutputFormat;
-        analysis: unknown;
-        timestamp?: number;
-    },
-): void => {
-    const timestamp = payload.timestamp ?? Date.now();
-    for (const entry of entries) {
-        slice.addAnalysisToEntry(entry.id, {
-            name: payload.name,
-            timestamp,
-            ...(payload.description && { description: payload.description }),
-            outputFormat: payload.outputFormat,
-            data: payload.analysis,
-        });
-    }
-};
-
 type AnalyseDataInput = {
     placesEntryIDs?: string[];
     routesEntryIDs?: string[];
@@ -361,8 +236,7 @@ type AnalyseDataInput = {
     description?: string;
     code: string;
     outputFormat?: 'json' | 'chart';
-    monitor?: { entryId: string };
-    applyFocus?: boolean;
+    monitor?: boolean;
 };
 
 export const executeAnalyseData = async (
@@ -379,18 +253,8 @@ export const executeAnalyseData = async (
         name,
         description,
         code,
-        monitor,
-        applyFocus,
     } = params;
     const outputFormat = params.outputFormat ?? 'json';
-
-    // Monitor path: register a recurring spec on the source incidents entry, run with the
-    // incidents-only sandbox surface (incidents / h3 / turf / now / log / previous), then
-    // optionally apply the focus side-effect. Mirrors the old analyse-incidents semantics
-    // but lives behind the analyseData surface.
-    if (monitor) {
-        return runMonitorPath(state, monitor.entryId, name, description, code, outputFormat, applyFocus !== false);
-    }
 
     const prepared = await prepareMultiInputs(
         {
@@ -411,33 +275,14 @@ export const executeAnalyseData = async (
         MULTI_INPUT_SANDBOX_PARAMS,
         packSandboxArgs(sandbox, { h3, turf }),
         'Analysis',
+        state.codeExecution,
     );
     if ('error' in sandboxResult) return { error: sandboxResult.error };
 
     const validated = validateAnalysisResult(sandboxResult.value, outputFormat);
     if ('error' in validated) return { error: validated.error };
     const analysis = validated.value;
-
-    // Attach to every contributing entry across all slices, with a shared
-    // timestamp so the UI can correlate the per-slice updates back to one call.
     const timestamp = Date.now();
-    const payload = { name, description, outputFormat, analysis, timestamp };
-    attachAnalysisToEntries(state.places, resolved.places, payload);
-    attachAnalysisToEntries(state.routing, resolved.routes, payload);
-    attachAnalysisToEntries(state.trafficIncidents, resolved.incidents, payload);
-    attachAnalysisToEntries(state.trafficAreaAnalytics, resolved.trafficAreaAnalytics, payload);
-    attachAnalysisToEntries(state.byod, resolved.byod, payload);
-    // Geometries pull in places + custom entries indirectly via `collectInputGeometries`.
-    attachAnalysisToEntries(
-        state.places,
-        geometriesMeta.affectedEntries.filter((e) => e.kind === 'places').map((e) => ({ id: e.id })),
-        payload,
-    );
-    attachAnalysisToEntries(
-        state.customGeometries,
-        geometriesMeta.affectedEntries.filter((e) => e.kind === 'customGeometries').map((e) => ({ id: e.id })),
-        payload,
-    );
 
     const affectedEntries: Array<{
         kind: 'places' | 'routes' | 'incidents' | 'customGeometries' | 'trafficAreaAnalytics' | 'byod';
@@ -458,106 +303,44 @@ export const executeAnalyseData = async (
 
     const sourceIds: GeometriesId[] | undefined = geometriesEntryIDs ? geometriesMeta.sourceIds : undefined;
 
-    return {
-        affectedEntries,
-        ...(sourceIds && { sourceIds }),
-        name,
-        ...(description && { description }),
-        outputFormat,
-        analysis,
-        ...(geometriesMeta.skipped.length && { skipped: geometriesMeta.skipped }),
-    };
-};
-
-/**
- * Monitor path — incidents-only spec rerun. Mirrors the old `executeAnalyseIncidents` but
- * returns analyseData's output shape (affectedEntries + optional focused).
- *
- * Registers the spec BEFORE the first run so monitor-tick replays survive an initial-run
- * error. The focus side-effect is one-shot — replays read the registered spec but skip the
- * setFocus call.
- */
-const runMonitorPath = async (
-    state: ToolState,
-    entryId: string,
-    name: string,
-    description: string | undefined,
-    code: string,
-    outputFormat: 'json' | 'chart',
-    applyFocus: boolean,
-): Promise<z.infer<typeof analyseDataOutputSchema>> => {
-    const sourceEntry = state.trafficIncidents.entries.find((e) => e.id === entryId);
-    if (!sourceEntry) {
-        return {
-            error: `No incidents entry with id "${entryId}". Call getTrafficIncidents first.`,
-        };
-    }
-
-    const spec = {
-        name,
-        ...(description && { description }),
-        outputFormat,
-        code,
-        source: sourceEntry.id,
-    };
-    const previous = sourceEntry._analyses?.getResult(name)?.data;
-
-    // Register the spec before the first run so a failing initial run still leaves the spec
-    // available for the next monitor tick to retry. Replay drops failures silently.
-    state.trafficIncidents.setAnalysisSpec(spec);
-
-    const sampledAt = sourceEntry.timestamp;
-    const result = await runIncidentSpec(spec, sourceEntry.data, previous, sampledAt);
-    if ('error' in result) return { error: result.error };
-
-    const { value: analysis } = result;
-    attachAnalysisToEntries(state.trafficIncidents, [sourceEntry], {
+    // Register this run as a (disabled) standing analysis so `monitorAnalysis` can later make it
+    // recurring without re-declaring the code, then attach the one-shot result. The id is stable
+    // across an identical re-run. `affectedEntryIds` is the per-entry lookup key for the result.
+    const affectedEntryIds = affectedEntries.map((e) => e.id);
+    const analysisId = makeAnalysisId(name, affectedEntryIds);
+    registerAnalysis(state, {
+        analysisId,
         name,
         description,
         outputFormat,
-        analysis,
-        timestamp: sampledAt,
+        code,
+        inputs: {
+            placesEntryIDs,
+            routesEntryIDs,
+            incidentsEntryIDs,
+            geometriesEntryIDs,
+            trafficAreaAnalyticsEntryIDs,
+            byodEntryIDs,
+        },
+        affectedEntryIds,
     });
-
-    const focused = applyFocus ? applyFocusSideEffect(analysis, sourceEntry.id, state) : undefined;
+    state.analyses.attachResult(analysisId, { name, description, outputFormat, data: analysis, timestamp });
+    ensureStandingWired(state);
+    // Enabling monitoring just flips the flag — it fires no `entries-change`, so it won't replay now;
+    // only the next genuine change to a source entry does.
+    const monitoring = params.monitor === true;
+    if (monitoring) state.analyses.setEnabled(analysisId, true);
 
     return {
-        affectedEntries: [{ kind: 'incidents' as const, id: sourceEntry.id }],
+        affectedEntries,
+        ...(sourceIds && { sourceIds }),
+        analysisId,
         name,
         ...(description && { description }),
         outputFormat,
+        monitoring,
         analysis,
-        ...(focused && { focused }),
-    };
-};
-
-type FocusSideEffect = {
-    incidentsEntryID: string;
-    focusedCount: number;
-    droppedIds: string[];
-    reason?: string;
-};
-
-// Honour `focusIds` / `focusReason` on the analysis result by calling `setFocus` against the
-// source incidents entry. No-op when the result does not carry valid focus ids.
-const applyFocusSideEffect = (
-    analysis: unknown,
-    targetEntryID: string,
-    state: ToolState,
-): FocusSideEffect | undefined => {
-    if (!analysis || typeof analysis !== 'object') return undefined;
-    const focusIds = (analysis as { focusIds?: unknown }).focusIds;
-    if (!Array.isArray(focusIds) || focusIds.length === 0) return undefined;
-    const ids = focusIds.filter((id): id is string => typeof id === 'string');
-    if (ids.length === 0) return undefined;
-    const reasonRaw = (analysis as { focusReason?: unknown }).focusReason;
-    const reason = typeof reasonRaw === 'string' ? reasonRaw : undefined;
-    const result = state.trafficIncidents.setFocus(targetEntryID, ids, reason);
-    return {
-        incidentsEntryID: targetEntryID,
-        focusedCount: result.focusedCount,
-        droppedIds: result.droppedIds,
-        ...(reason && { reason }),
+        ...(geometriesMeta.skipped.length && { skipped: geometriesMeta.skipped }),
     };
 };
 

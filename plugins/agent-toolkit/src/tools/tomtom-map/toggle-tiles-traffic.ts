@@ -42,8 +42,7 @@ export const toggleTilesTrafficFlowDescription =
 export const toggleTilesTrafficIncidentsDescription =
     'Toggle the vector-tile traffic-incidents overlay (live jam/accident/closure markers). ' +
     'NOT the same as `getTrafficIncidents` (GeoJSON service → structured entries) or `analyseData` ' +
-    '(sandbox over fetched entries). Just a base-map style layer on/off. ' +
-    'Use `getShownTileIncidents` to read what this overlay is currently rendering.';
+    '(sandbox over fetched entries). Just a base-map style layer on/off.';
 
 /** Execute toggle-tiles-traffic-flow. */
 export const executeToggleTilesTrafficFlow = async (

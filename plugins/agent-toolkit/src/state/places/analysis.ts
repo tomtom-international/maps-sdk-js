@@ -2,22 +2,12 @@
  * @module agent-toolkit-state
  */
 
-import type { AnalysisOutputFormat } from '../../tools/shared';
+import type { EntryAnalysis } from '../analyses';
 
 /**
- * A single aggregation/analysis result attached to a places entry.
- * Produced by `analyseData`; `data` is whatever the dynamic code returned.
+ * A single analysis result attached to a places entry. Alias of the shared {@link EntryAnalysis} —
+ * every entry kind uses the same result shape; kept as a named export for back-compat.
  *
  * @group Agent Toolkit
  */
-export type PlacesAnalysis = {
-    /** Unique name within the parent entry (used as a key for future UI). */
-    name: string;
-    timestamp: number;
-    /** Optional human-readable description of what the analysis computed. */
-    description?: string;
-    /** How `data` should be interpreted — plain JSON or a Chart.js configuration. */
-    outputFormat: AnalysisOutputFormat;
-    /** Arbitrary aggregation result returned by the dynamic code. */
-    data: unknown;
-};
+export type PlacesAnalysis = EntryAnalysis;

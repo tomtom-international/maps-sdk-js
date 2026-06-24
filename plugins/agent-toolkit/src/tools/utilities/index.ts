@@ -10,16 +10,6 @@ export {
     executeCalculateBBox,
 } from './calculate-bbox';
 export {
-    executeFormatDistance,
-    formatDistanceDescription,
-    formatDistanceSchema,
-} from './format-distance';
-export {
-    executeFormatDuration,
-    formatDurationDescription,
-    formatDurationSchema,
-} from './format-duration';
-export {
     executeGetCurrentLocation,
     getCurrentLocationDescription,
     getCurrentLocationOutputSchema,

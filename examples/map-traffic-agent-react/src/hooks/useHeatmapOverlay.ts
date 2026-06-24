@@ -10,6 +10,8 @@ import type { AgentInstance } from './useAgentBootstrap';
  * the overlay's incident set in sync with the latest snapshot.
  */
 export function useHeatmapOverlay(agent: AgentInstance | undefined, incidents: IncidentsSnapshot) {
+    // Heatmap stays always-on; the manual toggle (VizToggle) was removed from the UI, but the overlay
+    // itself remains the default visualisation.
     const [vizMode, setVizMode] = useState<VizMode>('heatmap');
     const overlayRef = useRef<HeatmapOverlay | null>(null);
     const vizModeRef = useRef<VizMode>(vizMode);

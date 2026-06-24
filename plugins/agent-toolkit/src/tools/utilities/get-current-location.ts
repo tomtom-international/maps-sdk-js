@@ -47,7 +47,7 @@ const getLocationErrorMessage = (error: unknown): string | undefined => {
 
 export const getCurrentLocationDescription =
     'Browser geolocation — the user\'s physical position [lng, lat] for "near me" / "where I am" queries (may prompt for permission). ' +
-    'For map-based reference use getViewport.';
+    'For map-based reference use getViewport; if permission is denied, fall back to getViewport as the reference point.';
 
 /** Execute function for getCurrentLocation — usable with ToolEntry format. */
 export const executeGetCurrentLocation = async (

@@ -46,8 +46,8 @@ describe('prepareMultiInputs — byod', () => {
 
         const prepared = expectValue(await prepareMultiInputs({ byodEntryIDs: ['byod-0', 'byod-1'] }, state));
 
-        // Resolved entries are surfaced so analyseData can attach an analysis to each one
-        // (BYODState.addAnalysisToEntry).
+        // Resolved entries are surfaced so analyseData can record the analysis against each one
+        // (their ids feed the analysis record's `affectedEntryIds` in `state.analyses`).
         expect(prepared.resolved.byod.map((entry) => entry.id)).toEqual(['byod-0', 'byod-1']);
         // Merged view concatenates every entry's features.
         expect(prepared.sandbox.byod?.features).toHaveLength(3);
@@ -72,10 +72,10 @@ describe('prepareMultiInputs — byod', () => {
         expect(prepared.sandbox.byodByEntry).toBeUndefined();
     });
 
-    it('errors with a recallByod hint for an unknown byod id', async () => {
+    it('errors with a recallState hint for an unknown byod id', async () => {
         const state = mockState({ byod: [byodEntry('byod-0', 1)] });
         const result = await prepareMultiInputs({ byodEntryIDs: ['missing'] }, state);
-        expect(expectError(result)).toMatch(/No BYOD entry with id "missing".*recallByod/);
+        expect(expectError(result)).toMatch(/No BYOD entry with id "missing".*recallState/);
     });
 });
 
@@ -90,8 +90,12 @@ describe('packSandboxArgs — byod', () => {
 
         // Positional contract: each arg lines up with its name in MULTI_INPUT_SANDBOX_PARAMS.
         expect(args).toHaveLength(MULTI_INPUT_SANDBOX_PARAMS.length);
+        // packSandboxArgs passes LIVE references — the deep-copy is the executor's job
+        // (main-thread `structuredClone`, or iframe-worker `postMessage`), done once and
+        // only where needed. See the executor's `cloneDataArg` test for the isolation guarantee.
         expect(args[MULTI_INPUT_SANDBOX_PARAMS.indexOf('byod')]).toBe(prepared.sandbox.byod);
         expect(args[MULTI_INPUT_SANDBOX_PARAMS.indexOf('byodByEntry')]).toBe(prepared.sandbox.byodByEntry);
+        // Libs are passed through untouched.
         expect(args[MULTI_INPUT_SANDBOX_PARAMS.indexOf('h3')]).toBe(h3);
         expect(args[MULTI_INPUT_SANDBOX_PARAMS.indexOf('turf')]).toBe(turf);
     });

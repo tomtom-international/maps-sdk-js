@@ -2,63 +2,27 @@
  * @module agent-toolkit-tools
  */
 
-import { type BBox, getPosition, type Place, type WaypointLike } from '@tomtom-org/maps-sdk/core';
-import { geocode, geocodeOne, search, searchOne } from '@tomtom-org/maps-sdk/services';
-import * as turf from '@turf/turf';
-import type { Position } from 'geojson';
+import { getPosition, type Place } from '@tomtom-org/maps-sdk/core';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { makePlacesLabel, summarizePlace } from '../../utils';
 import {
-    getViewportBias,
-    getViewportBoundingBox,
+    isResolveError,
+    type LocateBias,
+    locatePlace,
     placesEntryIdHintSchema,
+    resolveNearbyPosition,
+    resolveWithinAreas,
     showEntryGeometries,
     shownSchema,
     showPlaceGeometriesSchema,
     showPlacesSchema,
     showResultsOnMap,
+    unionBBox,
     whereSchema,
 } from '../shared';
+import { toolStateToWhereContext } from '../shared/tool-state-where-context';
 import { placeOutputSchema, toolErrorSchema } from '../shared-output-schemas';
-
-export type LocateBias = { position: Position } | { boundingBox: BBox };
-
-export type QueryAs = 'poi' | 'place';
-
-/**
- * Resolves a query string to up to `limit` Places. POI search when `queryAs === 'poi'`, geocoding
- * otherwise. Optional `bias` narrows the search to a region.
- */
-export const locatePlaces = async (
-    query: string,
-    queryAs: QueryAs,
-    options: { limit: number; bias?: LocateBias },
-): Promise<Place[]> => {
-    const [searchFn, searchOneFn] = queryAs === 'poi' ? [search, searchOne] : [geocode, geocodeOne];
-    const { limit, bias } = options;
-
-    if (bias && 'position' in bias) {
-        const results = await searchFn({ query, position: bias.position, limit });
-        return results.features;
-    }
-    if (bias && 'boundingBox' in bias) {
-        const results = await searchFn({ query, boundingBox: bias.boundingBox, limit });
-        return results.features;
-    }
-    if (limit === 1) {
-        const result = await searchOneFn(query);
-        return result ? [result] : [];
-    }
-    const results = await searchFn({ query, limit });
-    return results.features;
-};
-
-/** Convenience wrapper around {@link locatePlaces} for the single-result case. */
-export const locatePlace = async (query: string, queryAs: QueryAs, bias?: LocateBias): Promise<Place | null> => {
-    const [first] = await locatePlaces(query, queryAs, { limit: 1, bias });
-    return first ?? null;
-};
 
 export const locatePlaceSchema = z.object({
     query: z.string().describe('Location string to resolve for downstream routes or searches.'),
@@ -74,7 +38,15 @@ export const locatePlaceSchema = z.object({
             '"poi" for venues / landmarks / businesses; ' +
                 '"place" for addresses, cities, neighborhoods, parks, postal codes, geographies.',
         ),
-    where: whereSchema.describe('Geographic scope.'),
+    where: whereSchema
+        .optional()
+        .describe(
+            'Optional geographic scope. OMIT to resolve a uniquely-named place anywhere (mode "global", ' +
+                'the default) — correct for landmarks, cities, and areas like "Schiphol" or "Westminster", ' +
+                'on-screen or not. Use "nearby" (a SOFT bias toward a point / viewport centre / query) only to ' +
+                'disambiguate same-named places. Use "within" only to HARD-restrict the result to a known area ' +
+                '(boundingBox / query / placeId).',
+        ),
     show: showPlacesSchema
         .optional()
         .describe('Map display actions after resolving. Skip for intermediate calculations.'),
@@ -84,6 +56,11 @@ export const locatePlaceSchema = z.object({
 
 export const locatePlaceOutputSchema = z.union([
     placeOutputSchema.extend({
+        placesEntryId: z
+            .string()
+            .describe(
+                'Places entry id the result was written to — pass as `placesEntryIDs` to analyseData / processData.',
+            ),
         waypointIndex: z.number().optional(),
         shown: shownSchema.optional(),
         geometryFetched: z
@@ -107,65 +84,52 @@ const resolveWithinBias = async (
     where: Extract<z.infer<typeof whereSchema>, { mode: 'within' }>,
     state: ToolState,
 ): Promise<ResolveBiasResult> => {
-    if (where.viewport) return { bias: { boundingBox: getViewportBoundingBox(state.baseMap) } };
-    if (where.boundingBox) return { bias: { boundingBox: where.boundingBox as BBox } };
-    if (where.query) {
-        const viewport = getViewportBias(state.baseMap);
-        const place = await locatePlace(
-            where.query,
-            where.queryAs ?? 'place',
-            viewport ? { position: viewport } : undefined,
-        );
-        if (!place) return { bias: undefined };
-        if (place.bbox) return { bias: { boundingBox: place.bbox } };
-        const position = getPosition(place);
-        return { bias: position ? { position } : undefined };
-    }
-    if (where.placeId) {
-        const lookup = state.places.findPlaceById(where.placeId);
-        if (!lookup) {
-            return { error: `Unknown placeId "${where.placeId}". Use recallPlaces to list available IDs.` };
-        }
-        if (!lookup.place.properties.dataSources?.geometry?.id) {
-            return {
-                error: `Place "${where.placeId}" has no geometry data source (most addresses and streets lack one).`,
-            };
-        }
-        const feature = await state.places.fetchPlaceGeometry(where.placeId);
-        if (!feature) {
-            return { error: `Geometry Data service returned no feature for place "${where.placeId}".` };
-        }
-        const bbox = (feature.bbox as BBox | undefined) ?? (turf.bbox(feature) as BBox);
-        return { bias: { boundingBox: bbox } };
-    }
-    return { bias: undefined };
+    // Delegate to the shared resolver. `bboxOnlyQueries` because LocateBias has no polygon form —
+    // the within area only narrows the final geocode to a bounding box. The within schema enforces
+    // EXACTLY ONE field, so at most one area returns; unionBBox is a no-op here but keeps the shape
+    // correct if the schema ever relaxes. A `within.query` resolves as an AREA (never a POI), matching
+    // discoverPlaces' `where.queries` — so `within.queryAs` is not consulted. An unresolvable area
+    // surfaces the resolver's actionable error rather than silently widening to a global search.
+    const within = await resolveWithinAreas(
+        {
+            viewport: where.viewport,
+            boundingBox: where.boundingBox,
+            queries: where.query ? [{ query: where.query, queryAs: where.queryAs }] : undefined,
+            placeIds: where.placeId ? [where.placeId] : undefined,
+        },
+        toolStateToWhereContext(state),
+        { bboxOnlyQueries: true },
+    );
+    if (isResolveError(within)) return within;
+
+    if (within.areas.length === 0) return { bias: undefined };
+
+    return { bias: { boundingBox: unionBBox(within.areas.map((a) => a.bbox)) } };
 };
 
 const resolveNearbyBias = async (
     where: Extract<z.infer<typeof whereSchema>, { mode: 'nearby' }>,
     state: ToolState,
 ): Promise<ResolveBiasResult> => {
-    if (where.viewport) {
-        const position = getViewportBias(state.baseMap);
-        return { bias: position ? { position } : undefined };
-    }
-    if (where.position) return { bias: { position: where.position as Position } };
-    if (where.query) {
-        const viewport = getViewportBias(state.baseMap);
-        const place = await locatePlace(
-            where.query,
-            where.queryAs ?? 'place',
-            viewport ? { position: viewport } : undefined,
-        );
-        if (!place) return { bias: undefined };
-        const position = getPosition(place);
-        return { bias: position ? { position } : undefined };
-    }
-    return { bias: undefined };
+    const { position } = await resolveNearbyPosition(
+        {
+            viewport: where.viewport,
+            position: where.position,
+            query: where.query,
+            queryAs: where.queryAs,
+        },
+        toolStateToWhereContext(state),
+    );
+    return { bias: position ? { position } : undefined };
 };
 
-const resolveLocateBias = async (where: z.infer<typeof whereSchema>, state: ToolState): Promise<ResolveBiasResult> => {
-    if (where.mode === 'global') return { bias: undefined };
+const resolveLocateBias = async (
+    where: z.infer<typeof whereSchema> | undefined,
+    state: ToolState,
+): Promise<ResolveBiasResult> => {
+    // No `where` (or explicit global) → resolve the name anywhere, no bias. This is the default for a
+    // uniquely-named place; the model no longer has to fill a mandatory scope and reach for the viewport.
+    if (!where || where.mode === 'global') return { bias: undefined };
     if (where.mode === 'within') return resolveWithinBias(where, state);
     return resolveNearbyBias(where, state);
 };
@@ -211,7 +175,7 @@ export const executeLocatePlace = async (
         const placesEntryId = await state.places.addPlaceResult(result, makePlacesLabel(result, { query }), entryId);
 
         if (waypointIndex !== undefined) {
-            state.routing.setWaypointAt(waypointIndex, result as unknown as WaypointLike);
+            state.routing.setWaypointAt(waypointIndex, result);
         }
 
         const shown = show ? await showLocateResult(state, result, placesEntryId, show) : undefined;
@@ -226,6 +190,7 @@ export const executeLocatePlace = async (
 
         return {
             ...summarizePlace(result),
+            placesEntryId,
             ...(waypointIndex !== undefined && { waypointIndex }),
             ...(shown && { shown }),
             ...(geometryFetched !== undefined && { geometryFetched }),

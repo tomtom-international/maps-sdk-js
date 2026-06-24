@@ -2,69 +2,43 @@
  * @module agent-toolkit-tools
  */
 
-import { getPosition, type HasBBox, type Place, type POICategory } from '@tomtom-org/maps-sdk/core';
+import { type HasBBox, type POICategory } from '@tomtom-org/maps-sdk/core';
 import {
     alongRouteSearch,
     explorationSearch,
-    geometryData,
     POPULATED_AREA_TAGS,
     type PopulatedAreaTag,
     search,
 } from '@tomtom-org/maps-sdk/services';
-import * as turf from '@turf/turf';
-import type { Feature, MultiPolygon, Polygon, Position } from 'geojson';
+import type { MultiPolygon, Polygon, Position } from 'geojson';
 import { z } from 'zod';
 import type { FeatureFlags, ToolEntry, ToolEntryBuilder, ToolState } from '../../types';
 import { makePlacesLabel, summarizePlaces } from '../../utils';
 import {
+    biasDisclosure,
     geoJsonBBoxSchema,
-    geometryInputSchema,
-    getViewportBias,
+    getRangePolygons,
     getViewportBoundingBox,
     globalWhereSchema,
+    isResolveError,
+    matchedAreasLabel,
     nearbyWhereSchema,
     placesEntryIdHintSchema,
-    queryAsSchema,
+    type ResolvedAreaDisclosure,
+    resolvedAreasDisclosure,
+    resolveNearbyPosition,
     resolvePoiCategories,
+    resolveWithinAreas,
+    sharedWithinFields,
     showEntryGeometries,
     shownSchema,
     showPlaceGeometriesSchema,
     showPlacesSchema,
     showResultsOnMap,
-    withinSharedFields,
+    toMultiFilters,
 } from '../shared';
-import { buildPlacesOutputSchema, toolErrorSchema } from '../shared-output-schemas';
-import { locatePlace, locatePlaces, type QueryAs } from './locate-place';
-
-// Number of candidate places to consider when resolving `where.query` — a precise polygon often
-// lives a few results down the list (e.g. a street POI may rank above the neighbourhood it sits in).
-const WITHIN_QUERY_CANDIDATE_LIMIT = 5;
-
-// `where.query` resolution for the within branch — geocodes (or POI-searches) the query, then
-// returns the first candidate that exposes a geometry data source (with its boundary polygon
-// fetched). Falls back to the top result when no candidate has a polygon. Discover-places owns
-// this helper because the polygon is consumed as a precise `geometries` filter on the search;
-// locate-place only needs a coarse bias bbox and skips the extra fetch.
-const resolveQueryToWithinArea = async (
-    query: string,
-    queryAs: QueryAs,
-    biasPosition?: Position,
-): Promise<{ place: Place; geometry?: Feature<Polygon | MultiPolygon> } | null> => {
-    const places = await locatePlaces(query, queryAs, {
-        limit: WITHIN_QUERY_CANDIDATE_LIMIT,
-        bias: biasPosition ? { position: biasPosition } : undefined,
-    });
-    if (places.length === 0) return null;
-
-    for (const place of places) {
-        if (!place.properties.dataSources?.geometry?.id) continue;
-        const result = await geometryData({ geometries: [place] });
-        const feature = result.features[0];
-        if (feature) return { place, geometry: feature as Feature<Polygon | MultiPolygon> };
-    }
-
-    return { place: places[0] };
-};
+import { toolStateToWhereContext } from '../shared/tool-state-where-context';
+import { buildPlacesOutputSchema, resolvedAreasOutputSchema, toolErrorSchema } from '../shared-output-schemas';
 
 /** Build the flag-aware output schema for the discover-places tool. */
 export const buildDiscoverPlacesOutputSchema = (flags: FeatureFlags) =>
@@ -81,6 +55,7 @@ export const buildDiscoverPlacesOutputSchema = (flags: FeatureFlags) =>
                 .optional()
                 .describe('Count of boundary polygons fetched and cached on the entry (when `geometries` was set).'),
             geometriesShown: z.boolean().optional().describe('Whether the fetched polygons were rendered on the map.'),
+            resolvedAreas: resolvedAreasOutputSchema.optional(),
         }),
         toolErrorSchema,
     ]);
@@ -96,83 +71,14 @@ export const discoverPlacesOutputSchema = buildDiscoverPlacesOutputSchema({});
 // Only the explorationSearch-only fields (`municipalities`, `boundingBoxes`, top-level
 // `placeTypes`) live behind the flag.
 
-// `within` fields shared between both variants. Both consume `withinSharedFields` (`mode` +
-// `viewport`) plus the multi-region fields whose values resolve to geometries the default search
-// backend can also consume (`queries`, `placeIds`, `geometries`, `range`, `route`).
-const sharedWithinFields = {
-    ...withinSharedFields,
-    queries: z
-        .array(
-            z.object({
-                query: z
-                    .string()
-                    .describe(
-                        'Name of a CONTAINING area to search within (e.g. "Paris", "De Jordaan, Amsterdam"). ' +
-                            "NEVER the user's search subject — that goes in the top-level `query`.",
-                    ),
-                queryAs: queryAsSchema,
-            }),
-        )
-        .optional()
-        .describe(
-            'CONTAINING areas to search WITHIN — answers "search where?", NOT "search for what?". ' +
-                "Never put the user's search subject here. " +
-                'Example: for "cafes in Amsterdam" → top-level `query`/`poiCategories` carry "cafes"; ' +
-                '`where.queries: [{query: "Amsterdam"}]` carries the region. ' +
-                'Each entry resolves to a boundary polygon (or bbox); the union is searched. ' +
-                'Per-item `queryAs` disambiguates POI vs place. ' +
-                'EXCLUSIVE with viewport; composes with other multi-region fields.',
-        ),
-    placeIds: z
-        .array(z.string())
-        .optional()
-        .describe(
-            'IDs of session places — each polygon (fetched on demand) joins the search area. ' +
-                'Use recallPlaces to list IDs. ' +
-                'EXCLUSIVE with viewport; composes with other multi-region fields.',
-        ),
-    geometries: z
-        .array(geometryInputSchema)
-        .optional()
-        .describe(
-            'Direct GeoJSON Polygons / MultiPolygons (custom drawing, external data). ' +
-                'For named or stored places use `queries` / `placeIds`. ' +
-                'EXCLUSIVE with viewport; composes with other multi-region fields.',
-        ),
-    range: z
-        .string()
-        .optional()
-        .describe(
-            'Range ID from findReachableAreas (e.g. "ranges-0") — restricts to that entry; ' +
-                'multi-origin entries combine their polygons. Use recallRanges to list IDs. ' +
-                'EXCLUSIVE with viewport; composes with other multi-region fields.',
-        ),
-    route: z
-        .object({
-            routeId: z
-                .string()
-                .optional()
-                .describe('Route entry ID (e.g. "routes-0"). Use recallRoutes. Default: latest route.'),
-            widthMeters: z
-                .number()
-                .positive()
-                .describe(
-                    'Total corridor width (metres) — widthMeters/2 each side. ' +
-                        'Typical: 200–500 m ("near the road"), 2–5 km ("broad area along the route").',
-                ),
-        })
-        .optional()
-        .describe(
-            'Buffered corridor around a stored route — turf.buffer at widthMeters/2 around the line. ' +
-                'BULK discovery (≤10000); for a SHORT ranked detour list use mode `maxDetour`. ' +
-                'EXCLUSIVE with viewport; composes with other multi-region fields.',
-        ),
-};
+// `within` fields shared between both variants — imported from schema.ts. `experimentalWithinFields`
+// (explorationSearch-only) stays local to discover-places.
 
 // explorationSearch-only `within` fields. The default search backend has no equivalent for these.
 const experimentalWithinFields = {
     boundingBoxes: z
         .array(geoJsonBBoxSchema)
+        .min(1)
         .optional()
         .describe(
             'Bboxes [W,S,E,N] — results in the union. ' +
@@ -181,6 +87,7 @@ const experimentalWithinFields = {
         ),
     municipalities: z
         .array(z.string())
+        .min(1)
         .optional()
         .describe(
             'Exact, case-sensitive municipality names (e.g. ["Amsterdam", "Utrecht"]). ' +
@@ -188,6 +95,7 @@ const experimentalWithinFields = {
         ),
     areaId: z
         .string()
+        .min(1)
         .optional()
         .describe(
             'Id of a small area polygon (few km², not a whole municipality) — restricts results to that single area. ' +
@@ -203,23 +111,17 @@ const buildDiscoverWithinWhereSchema = (flags: FeatureFlags) =>
         .object(flags.experimentalSearch ? { ...sharedWithinFields, ...experimentalWithinFields } : sharedWithinFields)
         .refine(
             (data) => {
-                const hasViewport = !!data.viewport;
-                const experimentalData = data as {
-                    municipalities?: string[];
-                    boundingBoxes?: unknown[];
-                    areaId?: string;
-                };
+                const hasViewport = data.viewport === true;
+                const exp = data as { municipalities?: string[]; boundingBoxes?: number[][]; areaId?: string };
                 const hasMulti =
-                    !!data.queries?.length ||
-                    !!data.placeIds?.length ||
-                    !!data.geometries?.length ||
-                    !!data.range ||
-                    !!data.route ||
-                    // Experimental-only fields — `data` is loosely typed because of the optional
-                    // intersection. Treat absent fields as empty.
-                    !!experimentalData.municipalities?.length ||
-                    !!experimentalData.boundingBoxes?.length ||
-                    !!experimentalData.areaId;
+                    data.queries !== undefined ||
+                    data.placeIds !== undefined ||
+                    data.geometries !== undefined ||
+                    data.range !== undefined ||
+                    data.route !== undefined ||
+                    exp.boundingBoxes !== undefined ||
+                    exp.municipalities !== undefined ||
+                    exp.areaId !== undefined;
                 if (hasViewport && hasMulti) return false;
                 return hasViewport || hasMulti;
             },
@@ -238,7 +140,7 @@ const maxDetourWhereSchema = z.object({
     routeId: z
         .string()
         .optional()
-        .describe('Route entry ID (e.g. "routes-0"). Use recallRoutes. Default: latest route.'),
+        .describe('Route entry ID (e.g. "routes-0"). Use recallState. Default: latest route.'),
     maxDetourTimeSeconds: z
         .number()
         .positive()
@@ -254,7 +156,7 @@ const maxDetourWhereSchema = z.object({
         .describe('Max results. Default: 10. Use this mode for short ranked lists, not bulk discovery.'),
 });
 
-const buildDiscoverPlacesWhereSchema = (flags: FeatureFlags) => {
+export const buildDiscoverPlacesWhereSchema = (flags: FeatureFlags) => {
     const withinFieldList = flags.experimentalSearch
         ? 'boundingBoxes/queries/placeIds/municipalities/areaId/geometries/range/route'
         : 'queries/placeIds/geometries/range/route';
@@ -396,42 +298,6 @@ type DiscoverWithinWhere = z.infer<ReturnType<typeof buildDiscoverWithinWhereSch
 type NearbyWhere = z.infer<typeof nearbyWhereSchema>;
 type MaxDetourWhere = z.infer<typeof maxDetourWhereSchema>;
 
-// Resolves a `withinRoute` ref to one corridor polygon per route alternative in the entry.
-// A route entry may carry multiple LineString features (main + alternatives); buffering only the
-// first would silently exclude POIs along alternatives. `widthMeters` is the *total* corridor
-// width — half is passed to turf.buffer as the radius.
-const resolveWithinRoute = (
-    state: ToolState,
-    withinRoute: { routeId?: string; widthMeters: number },
-): { polygons: (Polygon | MultiPolygon)[]; routeLabel: string } | { error: string } => {
-    const entries = state.routing.entries;
-    if (entries.length === 0) {
-        return { error: 'No routes in state. Calculate a route first via setRoute.' };
-    }
-    const entry = withinRoute.routeId ? entries.find((e) => e.id === withinRoute.routeId) : entries.at(-1);
-    if (!entry) {
-        return {
-            error: `No route found with id "${withinRoute.routeId}". Use recallRoutes to list available routes.`,
-        };
-    }
-    if (entry.data.features.length === 0) {
-        return { error: `Route entry "${entry.id}" has no geometry.` };
-    }
-    const radiusMeters = withinRoute.widthMeters / 2;
-    const polygons: (Polygon | MultiPolygon)[] = [];
-    for (const routeFeature of entry.data.features) {
-        const buffered = turf.buffer(routeFeature, radiusMeters, { units: 'meters' });
-        const geometry = buffered?.geometry as Polygon | MultiPolygon | undefined;
-        if (geometry) polygons.push(geometry);
-    }
-    if (polygons.length === 0) {
-        return {
-            error: `Failed to compute route corridor for "${entry.id}" (turf.buffer returned no geometry for any of the ${entry.data.features.length} route alternative(s)).`,
-        };
-    }
-    return { polygons, routeLabel: entry.label };
-};
-
 const searchByDetour = async (
     state: ToolState,
     detour: MaxDetourWhere,
@@ -445,7 +311,7 @@ const searchByDetour = async (
     }
     const routeEntry = detour.routeId ? entries.find((e) => e.id === detour.routeId) : entries.at(-1);
     if (!routeEntry) {
-        return { error: `No route found with id "${detour.routeId}". Use recallRoutes to list available routes.` };
+        return { error: `No route found with id "${detour.routeId}". Use recallState to list available routes.` };
     }
     const routeFeature = routeEntry.data.features[0];
     if (!routeFeature) {
@@ -511,21 +377,11 @@ const searchInRange = async (
     routeLabel: string | undefined,
     useExperimental: boolean,
 ): Promise<{ result: Awaited<ReturnType<typeof explorationSearch>>; placesEntryId: string } | { error: string }> => {
-    const rangesEntry = state.ranges.entries.find((e) => e.id === range);
-    if (!rangesEntry || rangesEntry.ranges.length === 0) {
-        return { error: `Range "${range}" not found. Use recallRanges to list available ranges.` };
-    }
-    // Combine every range's polygon into the search bias so multi-origin entries
-    // search the union of their reachable areas. We keep one geometry per
-    // origin's outermost polygon (entries store each origin's full polygon
-    // FeatureCollection — feature[0] is the largest budget when multi-budget).
-    const rangeGeometries = rangesEntry.ranges
-        .map((r) => r.polygon?.features[0]?.geometry)
-        .filter((g): g is NonNullable<typeof g> => !!g);
-    if (rangeGeometries.length === 0) {
-        return { error: `Range "${range}" has no polygons. Recompute via findReachableAreas.` };
-    }
-    const combinedGeometries = [...rangeGeometries, ...(multiFilters.geometries ?? [])];
+    // Combine every range's polygon into the search bias so multi-origin entries search the union
+    // of their reachable areas.
+    const ranged = getRangePolygons(state, range);
+    if ('error' in ranged) return ranged;
+    const combinedGeometries = [...ranged.polygons, ...(multiFilters.geometries ?? [])];
     const result = await dispatchPlacesSearch(useExperimental, {
         query,
         poiCategories: resolvedPoiCategories,
@@ -552,58 +408,10 @@ type WithinResolution = {
     multiFilters: MultiFilters;
     range?: string;
     routeLabel?: string;
-};
-
-// Resolve `where.queries` entries to polygons (preferred) or bboxes. A failure on any single entry
-// aborts — better to surface a precise error than to silently search a smaller area.
-const resolveQueriesToAreas = async (
-    queries: { query: string; queryAs?: QueryAs }[],
-    state: ToolState,
-): Promise<{ geometries: (Polygon | MultiPolygon)[]; boundingBoxes: HasBBox[] } | { error: string }> => {
-    const biasPosition = getViewportBias(state.baseMap);
-    const geometries: (Polygon | MultiPolygon)[] = [];
-    const boundingBoxes: HasBBox[] = [];
-    for (const q of queries) {
-        const resolved = await resolveQueryToWithinArea(q.query, q.queryAs ?? 'place', biasPosition);
-        if (!resolved) {
-            return { error: `Could not resolve "${q.query}". Try a more specific query, a placeId, or a boundingBox.` };
-        }
-        if (resolved.geometry?.geometry) {
-            geometries.push(resolved.geometry.geometry as Polygon | MultiPolygon);
-        } else if (resolved.place.bbox) {
-            boundingBoxes.push(resolved.place.bbox);
-        } else {
-            return {
-                error:
-                    `"${q.query}" resolved to a place with no geometry or bbox — cannot use as a "within" area. ` +
-                    'Use mode "nearby" with this query for a point bias instead.',
-            };
-        }
-    }
-    return { geometries, boundingBoxes };
-};
-
-// Resolve `where.placeIds` entries to their boundary polygons via the Geometry Data service.
-const resolvePlaceIdsToGeometries = async (
-    placeIds: string[],
-    state: ToolState,
-): Promise<{ geometries: (Polygon | MultiPolygon)[] } | { error: string }> => {
-    const geometries: (Polygon | MultiPolygon)[] = [];
-    for (const placeId of placeIds) {
-        const lookup = state.places.findPlaceById(placeId);
-        if (!lookup) {
-            return { error: `Unknown placeId "${placeId}". Use recallPlaces to list available IDs.` };
-        }
-        if (!lookup.place.properties.dataSources?.geometry?.id) {
-            return { error: `Place "${placeId}" has no geometry data source (most addresses and streets lack one).` };
-        }
-        const feature = await state.places.fetchPlaceGeometry(placeId);
-        if (!feature) {
-            return { error: `Geometry Data service returned no feature for place "${placeId}".` };
-        }
-        geometries.push(feature.geometry as Polygon | MultiPolygon);
-    }
-    return { geometries };
+    // Where each named query actually resolved — the grounded match (e.g. "restaurants in east
+    // London" → "London, CA"). Empty on the viewport path (no named query to mis-resolve) and on raw
+    // bbox/geometry input.
+    resolvedAreas?: ResolvedAreaDisclosure[];
 };
 
 const resolveDiscoverWithin = async (
@@ -618,21 +426,27 @@ const resolveDiscoverWithin = async (
         };
     }
 
-    const resolvedGeometries: (Polygon | MultiPolygon)[] = [];
-    const resolvedBoundingBoxes: HasBBox[] = [];
-
-    if (where.queries?.length) {
-        const resolved = await resolveQueriesToAreas(where.queries, state);
-        if ('error' in resolved) return resolved;
-        resolvedGeometries.push(...resolved.geometries);
-        resolvedBoundingBoxes.push(...resolved.boundingBoxes);
-    }
-
-    if (where.placeIds?.length) {
-        const resolved = await resolvePlaceIdsToGeometries(where.placeIds, state);
-        if ('error' in resolved) return resolved;
-        resolvedGeometries.push(...resolved.geometries);
-    }
+    // Resolve queries / placeIds / geometries / route via the shared resolver. resolveWithinAreas
+    // applies the "any area input?" guard itself, so a range-only or experimental-only
+    // (`municipalities` / `areaId` / `boundingBoxes`) within — whose scope is carried below — yields
+    // an empty result instead of tripping resolveAreas' "No area specified" guard. Experimental
+    // `boundingBoxes` stay local (only explorationSearch consumes them).
+    const within = await resolveWithinAreas(
+        {
+            boundingBox: undefined,
+            queries: where.queries,
+            placeIds: where.placeIds,
+            geometries: where.geometries,
+            route: where.route,
+        },
+        toolStateToWhereContext(state),
+    );
+    if (isResolveError(within)) return within;
+    const { geometries: resolvedGeometries, boundingBoxes: resolvedBoundingBoxes } = toMultiFilters(within.areas);
+    const routeLabel = within.routeLabel;
+    // Surface where each named query resolved — the grounded match (mirrors getTrafficIncidents), so
+    // the agent can confirm/correct a wrong same-name area.
+    const resolvedAreas = resolvedAreasDisclosure(within.areas);
 
     // `boundingBoxes`, `municipalities`, and `areaId` only exist on the experimental schema;
     // treat them as absent on the default schema.
@@ -643,13 +457,10 @@ const resolveDiscoverWithin = async (
     };
 
     const mergedBoundingBoxes: HasBBox[] = [
-        ...((experimentalWhere.boundingBoxes ?? []) as unknown as HasBBox[]),
-        ...resolvedBoundingBoxes,
+        ...(experimentalWhere.boundingBoxes ?? []),
+        ...(resolvedBoundingBoxes as HasBBox[]),
     ];
-    const mergedGeometries: (Polygon | MultiPolygon)[] = [
-        ...((where.geometries ?? []) as (Polygon | MultiPolygon)[]),
-        ...resolvedGeometries,
-    ];
+    const mergedGeometries: (Polygon | MultiPolygon)[] = [...resolvedGeometries];
 
     const multiFilters: MultiFilters = {
         ...baseFilters,
@@ -659,43 +470,37 @@ const resolveDiscoverWithin = async (
         ...(mergedGeometries.length && { geometries: mergedGeometries }),
     };
 
-    let routeLabel: string | undefined;
-    if (where.route) {
-        const resolved = resolveWithinRoute(state, where.route);
-        if ('error' in resolved) return resolved;
-        multiFilters.geometries = [...(multiFilters.geometries ?? []), ...resolved.polygons];
-        routeLabel = resolved.routeLabel;
-    }
-
-    return { bias: {}, multiFilters, range: where.range, routeLabel };
+    return {
+        bias: {},
+        multiFilters,
+        range: where.range,
+        routeLabel,
+        ...(resolvedAreas.length > 0 && { resolvedAreas }),
+    };
 };
 
-// Resolves a `nearby` bias to a position (and optional radius cap).
+// Resolves a `nearby` bias to a position (and optional radius cap) via the shared resolver. A
+// `query` bias surfaces where it resolved (`resolvedAreas`, mirrors the within-query path) — a bias
+// landing on a same-named place elsewhere silently skews the results to the wrong locale.
 const resolveNearbyBias = async (
     where: NearbyWhere,
     state: ToolState,
-): Promise<{ bias: WhereBias; radiusMeters?: number }> => {
-    if (where.viewport) {
-        const position = getViewportBias(state.baseMap);
-        return { bias: position ? { position } : {}, radiusMeters: where.radiusMeters };
-    }
-    if (where.position) {
-        return { bias: { position: where.position as Position }, radiusMeters: where.radiusMeters };
-    }
-    if (where.query) {
-        const viewport = getViewportBias(state.baseMap);
-        const place = await locatePlace(
-            where.query,
-            where.queryAs ?? 'place',
-            viewport ? { position: viewport } : undefined,
-        );
-        if (place) {
-            const pos = getPosition(place);
-            if (pos) return { bias: { position: pos }, radiusMeters: where.radiusMeters };
-        }
-        return { bias: {}, radiusMeters: where.radiusMeters };
-    }
-    return { bias: {}, radiusMeters: where.radiusMeters };
+): Promise<{ bias: WhereBias; radiusMeters?: number; resolvedAreas?: ResolvedAreaDisclosure[] }> => {
+    const resolved = await resolveNearbyPosition(
+        {
+            viewport: where.viewport,
+            position: where.position,
+            query: where.query,
+            queryAs: where.queryAs,
+        },
+        toolStateToWhereContext(state),
+    );
+    const resolvedAreas = biasDisclosure(resolved);
+    return {
+        bias: resolved.position ? { position: resolved.position } : {},
+        radiusMeters: where.radiusMeters,
+        ...(resolvedAreas.length > 0 && { resolvedAreas }),
+    };
 };
 
 type ResolvedDiscoverBias = {
@@ -704,6 +509,7 @@ type ResolvedDiscoverBias = {
     radiusMeters?: number;
     range?: string;
     routeLabel?: string;
+    resolvedAreas?: ResolvedAreaDisclosure[];
 };
 
 // Dispatch the `where` mode to its dedicated resolver. `maxDetour` is handled separately by the
@@ -715,7 +521,12 @@ const resolveDiscoverBias = async (
 ): Promise<ResolvedDiscoverBias | { error: string }> => {
     if (effectiveWhere.mode === 'nearby') {
         const nearby = await resolveNearbyBias(effectiveWhere, state);
-        return { bias: nearby.bias, multiFilters: baseMultiFilters, radiusMeters: nearby.radiusMeters };
+        return {
+            bias: nearby.bias,
+            multiFilters: baseMultiFilters,
+            radiusMeters: nearby.radiusMeters,
+            resolvedAreas: nearby.resolvedAreas,
+        };
     }
     if (effectiveWhere.mode === 'within') {
         const resolved = await resolveDiscoverWithin(effectiveWhere, state, baseMultiFilters);
@@ -725,6 +536,7 @@ const resolveDiscoverBias = async (
             multiFilters: resolved.multiFilters,
             range: resolved.range,
             routeLabel: resolved.routeLabel,
+            resolvedAreas: resolved.resolvedAreas,
         };
     }
     // mode === 'global'
@@ -747,7 +559,7 @@ const searchWithBias = async (
     radiusMeters: number | undefined,
     multiFilters: MultiFilters,
     entryId: string | undefined,
-    where: DiscoverPlacesWhere | undefined,
+    whereLabel: string | undefined,
     routeLabel: string | undefined,
     useExperimental: boolean,
 ): Promise<{ result: Awaited<ReturnType<typeof explorationSearch>>; placesEntryId: string }> => {
@@ -763,7 +575,7 @@ const searchWithBias = async (
         makePlacesLabel(result, {
             query,
             poiCategories: resolvedPoiCategories,
-            where: resolveWhereLabel(where),
+            where: whereLabel,
             ...(routeLabel && { routeLabel }),
         }),
         entryId,
@@ -779,6 +591,7 @@ const finalizeDiscoverResult = async (
     show: z.infer<ReturnType<typeof buildDiscoverPlacesSchema>>['show'],
     geometries: z.infer<ReturnType<typeof buildDiscoverPlacesSchema>>['geometries'],
     flags: FeatureFlags,
+    resolvedAreas?: ResolvedAreaDisclosure[],
 ) => {
     const shown = show ? await showResultsOnMap(state, [placesEntryId], show) : undefined;
 
@@ -799,6 +612,7 @@ const finalizeDiscoverResult = async (
         ...(shown && { shown }),
         ...(geometriesFetched !== undefined && { geometriesFetched }),
         ...(geometriesShown !== undefined && { geometriesShown }),
+        ...(resolvedAreas && resolvedAreas.length > 0 && { resolvedAreas }),
     };
 };
 
@@ -864,7 +678,7 @@ export const buildExecuteDiscoverPlaces = (flags: FeatureFlags) => {
 
             const resolved = await resolveDiscoverBias(effectiveWhere, state, baseMultiFilters);
             if ('error' in resolved) return resolved;
-            const { bias, multiFilters, radiusMeters, range, routeLabel } = resolved;
+            const { bias, multiFilters, radiusMeters, range, routeLabel, resolvedAreas } = resolved;
 
             if (range) {
                 const rangeResult = await searchInRange(
@@ -885,9 +699,13 @@ export const buildExecuteDiscoverPlaces = (flags: FeatureFlags) => {
                     show,
                     geometries,
                     flags,
+                    resolvedAreas,
                 );
             }
 
+            // Prefer the grounded match ("London, CA") over the query echo ("east London") in the
+            // entry label so the chip never masks a wrong same-name resolution.
+            const whereLabel = matchedAreasLabel(resolvedAreas) ?? resolveWhereLabel(effectiveWhere);
             const biasResult = await searchWithBias(
                 state,
                 query,
@@ -896,11 +714,19 @@ export const buildExecuteDiscoverPlaces = (flags: FeatureFlags) => {
                 radiusMeters,
                 multiFilters,
                 entryId,
-                effectiveWhere,
+                whereLabel,
                 routeLabel,
                 useExperimental,
             );
-            return finalizeDiscoverResult(state, biasResult.result, biasResult.placesEntryId, show, geometries, flags);
+            return finalizeDiscoverResult(
+                state,
+                biasResult.result,
+                biasResult.placesEntryId,
+                show,
+                geometries,
+                flags,
+                resolvedAreas,
+            );
         } catch (error) {
             return { error: `Search failed: ${error instanceof Error ? error.message : String(error)}` };
         }
@@ -937,7 +763,10 @@ const discoverPlacesMetadata = {
         '`where.mode`: within (area) / nearby (point bias) / maxDetour (route-relative ranked) / global. ' +
         'For "X in [named area]", put X in top-level `query`/`poiCategories` and the area in `where.queries: [{query: "..."}]` — geocoded in one step, no precursor locatePlace. ' +
         'Within-mode: route → corridor. Prefer geometries/municipalities/placeIds over bbox. ' +
-        'Skip for already-stored places — use recallPlaces/processData.',
+        'Also OWNS outlining the SUB-AREAS of a place — the neighbourhoods/districts of a city ("outline the ' +
+        'Amsterdam neighbourhoods"); a SINGLE named place\'s own boundary is locatePlace, and incrementally ' +
+        'adding/removing outlines among already-shown places is updatePlacesDisplay. ' +
+        'Skip for already-stored places — use recallState/processData.',
     tags: ['discover', 'place', 'location'],
     examples: [
         'discoverPlaces({ poiCategories: ["RESTAURANT", "CAFE", "BAR"], entryId: "amsterdam-food-spots" })  // batch many categories + semantic id',
@@ -961,15 +790,19 @@ const discoverPlacesMetadata = {
         'Hotels in Amsterdam and Utrecht',
         'Bakeries within the reachable range',
         'Outline the Amsterdam neighbourhoods',
-        'Show the boundaries of these municipalities',
-        'Search for new EV stations along my route',
+        // "Show the boundaries of Amsterdam and Utrecht" lives on locatePlace now — outlining two
+        // WHOLE named cities is locatePlace's repeated `geometry: { mode: "add" }` path, which the
+        // classifier (rightly) prefers over a discoverPlaces area search.
+        'Search for EV chargers in a corridor along my planned route',
         'Cafes in a 500 m corridor around the planned route',
         'Best 5 coffee stops without losing more than 5 min off my route',
         'EV chargers I can reach with under 10 min detour',
+        // Family / errand-runner persona: category search biased to an area or nearby point.
+        'Find playgrounds in this neighbourhood',
+        'Show pharmacies near Berlin Hauptbahnhof',
     ],
     relatedTools: [
         'getPOICategoryCodes',
-        'updatePlacesDisplay',
         'updatePlacesDisplay',
         'locatePlace',
         'getViewport',

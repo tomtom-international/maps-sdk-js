@@ -5,7 +5,6 @@
 import type { PolygonFeature } from '@tomtom-org/maps-sdk/core';
 import type { GeometriesModule } from '@tomtom-org/maps-sdk/map';
 import type { GeometriesId } from '../../tools/shared';
-import type { CustomGeometriesAnalysis } from './analysis';
 
 /**
  * Provenance metadata for a custom-geometries entry — captures every input
@@ -41,8 +40,6 @@ export type CustomGeometriesEntry = {
     features: PolygonFeature[];
     /** Inputs and operation that produced this entry. */
     provenance: GeometryProvenance;
-    /** Accumulated analysis results linked to this entry. */
-    _analysis?: CustomGeometriesAnalysis[];
     /**
      * Per-entry GeometriesModule. Each entry owns its own module so display state
      * (theme, current features) lives on the entry instead of a shared slice-level

@@ -184,12 +184,56 @@ const withInteractivityDefaults = (config: ChartConfiguration): ChartConfigurati
     } as ChartConfiguration;
 };
 
-type AnalysisChartProps = {
-    config: unknown;
+// Read an --sdk design token off the document root, falling back when unset (e.g. in tests).
+const readToken = (name: string, fallback: string): string => {
+    if (typeof document === 'undefined') return fallback;
+    const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return value || fallback;
 };
 
-export function AnalysisChart({ config }: AnalysisChartProps) {
+// Align Chart.js global defaults with the app's typography + neutral palette so charts read as part
+// of the UI rather than a stock chart. Idempotent and cheap — re-applied per render so a theme
+// (light/dark) switch is picked up. Data-series colors stay vivid (PALETTE); only chrome is themed.
+const applyChartTheme = (): void => {
+    if (typeof document === 'undefined') return;
+    const text = readToken('--sdk-text-medium', '#5b6470');
+    const textStrong = readToken('--sdk-text-high', '#1a1d21');
+    const line = readToken('--sdk-border-low', 'rgba(0,0,0,0.08)');
+    const surface = readToken('--sdk-surface-0', '#ffffff');
+    const bodyFont = typeof document.body !== 'undefined' ? getComputedStyle(document.body).fontFamily : '';
+
+    ChartJS.defaults.font.family = bodyFont || ChartJS.defaults.font.family;
+    ChartJS.defaults.font.size = 11;
+    ChartJS.defaults.color = text;
+    ChartJS.defaults.borderColor = line; // grid lines + element borders
+    ChartJS.defaults.elements.bar.borderRadius = 4;
+    ChartJS.defaults.elements.point.radius = 3;
+
+    ChartJS.defaults.plugins.legend.labels.usePointStyle = true;
+    ChartJS.defaults.plugins.legend.labels.boxWidth = 8;
+    ChartJS.defaults.plugins.legend.labels.boxHeight = 8;
+    ChartJS.defaults.plugins.title.color = textStrong;
+
+    const tooltip = ChartJS.defaults.plugins.tooltip;
+    tooltip.backgroundColor = surface;
+    tooltip.titleColor = textStrong;
+    tooltip.bodyColor = text;
+    tooltip.borderColor = line;
+    tooltip.borderWidth = 1;
+    tooltip.cornerRadius = 6;
+    tooltip.padding = 8;
+    tooltip.usePointStyle = true;
+};
+
+type AnalysisChartProps = {
+    config: unknown;
+    /** Taller chart for the expanded ("big") panel mode. */
+    expanded?: boolean;
+};
+
+export function AnalysisChart({ config, expanded = false }: AnalysisChartProps) {
     const chartRef = useRef<ChartJS>(null);
+    applyChartTheme();
 
     // Deep-clone so react-chartjs-2 can mutate without corrupting the value we read
     // from the assistant-ui state store, and layer defaults on top.
@@ -227,7 +271,11 @@ export function AnalysisChart({ config }: AnalysisChartProps) {
                     </button>
                 </div>
             )}
-            <div className="relative max-h-[320px] min-h-[220px] w-full cursor-grab active:cursor-grabbing">
+            <div
+                className={`relative w-full cursor-grab active:cursor-grabbing ${
+                    expanded ? 'min-h-[420px] max-h-[68vh]' : 'min-h-[220px] max-h-[320px]'
+                }`}
+            >
                 <Chart ref={chartRef} type={prepared.type} data={prepared.data} options={prepared.options} />
             </div>
         </div>

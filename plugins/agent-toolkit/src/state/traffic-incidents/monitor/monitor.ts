@@ -84,9 +84,19 @@ export class IncidentMonitor {
 
     /**
      * Begin polling. Captures `deps` for the lifetime of the run, fires the first tick
-     * immediately, then schedules an interval. No-op when already running.
+     * immediately (unless `skipInitialTick`), then schedules an interval. No-op when already running.
+     *
+     * `skipInitialTick` is for the caller that JUST fetched the data itself (e.g. getTrafficIncidents
+     * arming monitoring on the entry it just loaded): the entry is already fresh, so an eager first
+     * tick would be a redundant duplicate fetch. Standalone callers leave it false so the monitor
+     * produces an initial snapshot without waiting a full interval.
      */
-    start(area: MonitoredArea, deps: IncidentMonitorDeps, intervalMs: number = INCIDENT_MONITOR_INTERVAL_MS): void {
+    start(
+        area: MonitoredArea,
+        deps: IncidentMonitorDeps,
+        intervalMs: number = INCIDENT_MONITOR_INTERVAL_MS,
+        skipInitialTick = false,
+    ): void {
         if (this._status === 'running') return;
         this._status = 'running';
         this._error = undefined;
@@ -98,8 +108,9 @@ export class IncidentMonitor {
         this._clearInterval =
             deps.clearInterval ?? ((handle: unknown) => clearInterval(handle as ReturnType<typeof setInterval>));
         const setIntervalFn = deps.setInterval ?? setInterval;
-        // Eager first tick — consumers shouldn't wait an interval for the initial snapshot.
-        void this._tick();
+        // Eager first tick — consumers shouldn't wait an interval for the initial snapshot, unless
+        // the caller already has fresh data and only wants the recurring refresh.
+        if (!skipInitialTick) void this._tick();
         this._intervalHandle = setIntervalFn(() => void this._tick(), intervalMs);
     }
 

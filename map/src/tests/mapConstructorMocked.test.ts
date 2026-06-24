@@ -1,7 +1,7 @@
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { Map } from 'maplibre-gl';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { TomTomMap } from '../TomTomMap';
+import { type StyleChangeHandler, TomTomMap } from '../TomTomMap';
 
 vi.mock('maplibre-gl', () => {
     class MapMock {
@@ -69,5 +69,44 @@ describe('Map initialization mocked tests', () => {
             cancelPendingTileRequestsWhileZooming: false,
             transformRequest: expect.any(Function),
         });
+    });
+
+    test('addStyleChangeHandler returns a disposer that unregisters the handler', () => {
+        TomTomConfig.instance.put({ apiKey: 'TEST_KEY' });
+        const tomtomMap = new TomTomMap({ mapLibre: { container: mockedContainer } });
+        // Reach into the private registry to assert the add/dispose pair stays balanced.
+        const handlers = (tomtomMap as unknown as { styleChangeHandlers: StyleChangeHandler[] }).styleChangeHandlers;
+        const registrySize = handlers.length;
+
+        const handler: StyleChangeHandler = { onStyleChanged: vi.fn() };
+        const unsubscribe = tomtomMap.addStyleChangeHandler(handler);
+        expect(handlers).toContain(handler);
+        expect(handlers.length).toBe(registrySize + 1);
+
+        unsubscribe();
+        expect(handlers).not.toContain(handler);
+        expect(handlers.length).toBe(registrySize);
+
+        // The disposer is idempotent — a second call is a no-op.
+        unsubscribe();
+        expect(handlers.length).toBe(registrySize);
+    });
+
+    test('each registration of the same handler gets its own disposer', () => {
+        TomTomConfig.instance.put({ apiKey: 'TEST_KEY' });
+        const tomtomMap = new TomTomMap({ mapLibre: { container: mockedContainer } });
+        const handlers = (tomtomMap as unknown as { styleChangeHandlers: StyleChangeHandler[] }).styleChangeHandlers;
+        const registrySize = handlers.length;
+
+        // Registering the same object twice yields two distinct registrations.
+        const handler: StyleChangeHandler = { onStyleChanged: vi.fn() };
+        const unsubscribeFirst = tomtomMap.addStyleChangeHandler(handler);
+        tomtomMap.addStyleChangeHandler(handler);
+        expect(handlers.length).toBe(registrySize + 2);
+
+        // Disposing one leaves the other registration intact.
+        unsubscribeFirst();
+        expect(handlers).toContain(handler);
+        expect(handlers.length).toBe(registrySize + 1);
     });
 });

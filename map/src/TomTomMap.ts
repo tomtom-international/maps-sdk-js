@@ -47,7 +47,8 @@ import { addPinCategoriesSpriteToStyle, getStyleLightDarkTheme } from './shared/
  *   }
  * };
  *
- * map.addStyleChangeHandler(styleHandler);
+ * const unsubscribe = map.addStyleChangeHandler(styleHandler);
+ * // Call unsubscribe() when the handler's owner is torn down.
  * ```
  *
  * @see {@link TomTomMap.addStyleChangeHandler}
@@ -414,7 +415,9 @@ export class TomTomMap {
         this.mapReady = false;
 
         // Notify all modules that the style is about to change (they mark themselves as not ready).
-        for (const handler of this.styleChangeHandlers) {
+        // Iterate a snapshot so a handler that unsubscribes itself (or another) during the callback
+        // doesn't shift the live array out from under the loop.
+        for (const handler of [...this.styleChangeHandlers]) {
             try {
                 handler.onStyleAboutToChange?.();
             } catch (e) {
@@ -626,7 +629,8 @@ export class TomTomMap {
 
         this.mapReady = true;
         if (keepState) {
-            for (const handler of this.styleChangeHandlers) {
+            // Snapshot: a handler may unsubscribe during onStyleChanged (e.g. an overlay tearing down).
+            for (const handler of [...this.styleChangeHandlers]) {
                 try {
                     handler.onStyleChanged?.();
                 } catch (e) {
@@ -640,6 +644,11 @@ export class TomTomMap {
      * Registers a handler to be notified when the map style changes.
      *
      * @param handler - A {@link StyleChangeHandler} object with callbacks for style change events.
+     *
+     * @returns An unsubscribe function that removes this handler. Call it when the
+     * handler's owner (e.g. a custom overlay) is torn down — otherwise the handler,
+     * and everything it closes over, lives for the lifetime of the map. Mirrors the
+     * disposer returned by module event handlers (`module.events.on(...)`).
      *
      * @remarks
      * **When to Use:**
@@ -677,6 +686,17 @@ export class TomTomMap {
      *
      * // Later trigger the handlers
      * map.setStyle('standardDark');
+     * ```
+     *
+     * @example
+     * Unsubscribe when the owner is torn down:
+     * ```typescript
+     * const unsubscribe = map.addStyleChangeHandler({
+     *   onStyleChanged: () => reattachCustomLayers(),
+     * });
+     *
+     * // Later, when the overlay is removed:
+     * unsubscribe();
      * ```
      *
      * @example
@@ -746,7 +766,14 @@ export class TomTomMap {
      * @see {@link StyleChangeHandler} - Handler interface definition
      * @see {@link setStyle} - Method that triggers the handlers
      */
-    addStyleChangeHandler(handler: StyleChangeHandler): void {
+    addStyleChangeHandler(handler: StyleChangeHandler): () => void {
         this.styleChangeHandlers.push(handler);
+        let disposed = false;
+        return () => {
+            if (disposed) return;
+            disposed = true;
+            const index = this.styleChangeHandlers.indexOf(handler);
+            if (index !== -1) this.styleChangeHandlers.splice(index, 1);
+        };
     }
 }

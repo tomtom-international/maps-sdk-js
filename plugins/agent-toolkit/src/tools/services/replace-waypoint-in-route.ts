@@ -6,12 +6,12 @@ import type { Place, WaypointLike } from '@tomtom-org/maps-sdk/core';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { hidePreviousEntriesSchema, locationInputSchema } from '../shared';
-import { routesOutputSchema, toolErrorSchema } from '../shared-output-schemas';
+import { routesWriteOutputSchema, toolErrorSchema } from '../shared-output-schemas';
 import { resolveLocationInput } from './resolve-location-input';
 import { calculateAndAddRoute, resolveRouteWaypoints } from './set-route';
 
 /** Output schema for the replace-waypoint-in-route tool. */
-export const replaceWaypointInRouteOutputSchema = z.union([routesOutputSchema, toolErrorSchema]);
+export const replaceWaypointInRouteOutputSchema = z.union([routesWriteOutputSchema, toolErrorSchema]);
 
 const waypointTargetSchema = z
     .union([z.literal('origin'), z.literal('destination'), z.number().int()])

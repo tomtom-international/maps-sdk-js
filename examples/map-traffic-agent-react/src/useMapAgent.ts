@@ -1,11 +1,16 @@
 import { useAgentBootstrap } from './hooks/useAgentBootstrap';
+import { useAnalyses } from './hooks/useAnalyses';
 import { useClusters } from './hooks/useClusters';
 import { useClustersOverlay } from './hooks/useClustersOverlay';
 import { useFocus } from './hooks/useFocus';
 import { useHeatmapOverlay } from './hooks/useHeatmapOverlay';
 import { useIncidents } from './hooks/useIncidents';
 import { useMonitor } from './hooks/useMonitor';
+import { useMonitoredRouteDisplay } from './hooks/useMonitoredRouteDisplay';
+import { useRouteIncidents } from './hooks/useRouteIncidents';
+import { useRouteMonitor } from './hooks/useRouteMonitor';
 import { useSelectedIncident } from './hooks/useSelectedIncident';
+import { useTrackers } from './hooks/useTrackers';
 import { useTrafficAnalytics } from './hooks/useTrafficAnalytics';
 
 export type { AnalyticsState, FocusState, IncidentsSnapshot, SelectedIncident } from './hooks/types';
@@ -28,9 +33,30 @@ export function useMapAgent(options: UseMapAgentOptions) {
     const focus = useFocus(agent);
     const { clusters, clearClusters } = useClusters(agent);
     const monitor = useMonitor(agent);
+    const routeMonitor = useRouteMonitor(agent);
+    const { routeIncidents } = useRouteIncidents(agent);
+    const { analyses, toggleMonitor } = useAnalyses(agent);
+    const {
+        trackers,
+        areas: trackerAreas,
+        ungrouped: ungroupedTrackers,
+        events: trackerEvents,
+        toasts: trackerToasts,
+        dismissToast,
+        lastSeenAt: trackerLastSeenAt,
+        markSeen: markTrackersSeen,
+        setEnabled: setTrackerEnabled,
+        clearTracker,
+        focusArea: focusTrackerArea,
+    } = useTrackers(agent);
 
     const { vizMode, setVizMode } = useHeatmapOverlay(agent, incidents);
     useClustersOverlay(agent, clusters, focus.focusCluster);
+    useMonitoredRouteDisplay(agent);
+
+    // While a corridor is monitored, the top/right panels read the on-route incidents extracted
+    // from the routes; otherwise they read the area incidents. Same shape either way.
+    const panelIncidents = routeIncidents.items.length > 0 ? routeIncidents : incidents;
 
     return {
         agent,
@@ -42,6 +68,8 @@ export function useMapAgent(options: UseMapAgentOptions) {
         selectIncident,
         clearSelectedIncident,
         incidents,
+        // incidents shown in the top/right panels (route-corridor incidents when monitoring routes)
+        panelIncidents,
         // focus
         focus: focus.focus,
         focusIndex: focus.focusIndex,
@@ -54,13 +82,34 @@ export function useMapAgent(options: UseMapAgentOptions) {
         // clusters
         clusters,
         clearClusters,
+        // analyses (analyseData results + charts)
+        analyses,
+        toggleAnalysisMonitor: toggleMonitor,
         // monitor
         monitoredLabel: monitor.monitoredLabel,
         lastAnalysisAt: monitor.lastAnalysisAt,
         snapshotCount: monitor.snapshotCount,
         stopMonitor: monitor.stopMonitor,
+        // route monitor (corridor mode)
+        monitoredRoutes: routeMonitor.monitoredRoutes,
+        routeMonitorLabel: routeMonitor.routeMonitorLabel,
+        routeLastTickAt: routeMonitor.routeLastTickAt,
+        routeTickCount: routeMonitor.routeTickCount,
+        stopRouteMonitor: routeMonitor.stopRouteMonitor,
         // viz
         vizMode,
         setVizMode,
+        // trackers
+        trackers,
+        trackerAreas,
+        ungroupedTrackers,
+        trackerEvents,
+        trackerToasts,
+        dismissToast,
+        trackerLastSeenAt,
+        markTrackersSeen,
+        setTrackerEnabled,
+        clearTracker,
+        focusTrackerArea,
     };
 }

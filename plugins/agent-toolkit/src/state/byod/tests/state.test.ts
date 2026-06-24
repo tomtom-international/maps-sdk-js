@@ -131,41 +131,6 @@ describe('BYODState', () => {
         expect(handler).toHaveBeenCalledTimes(1);
     });
 
-    it('addAnalysisToEntry attaches an analysis and emits analysis-added', async () => {
-        const state = new BYODState(mockMap);
-        const id = await state.addEntry(pointFC, 'territories');
-        const handler = vi.fn();
-        state.events.on('analysis-added', handler);
-
-        const ok = state.addAnalysisToEntry(id, {
-            name: 'admin-distribution',
-            timestamp: 1,
-            outputFormat: 'chart',
-            data: { type: 'bar' },
-        });
-
-        expect(ok).toBe(true);
-        expect(state.entries.find((e) => e.id === id)?._analysis).toHaveLength(1);
-        expect(handler).toHaveBeenCalledTimes(1);
-    });
-
-    it('addAnalysisToEntry replaces an existing analysis of the same name', async () => {
-        const state = new BYODState(mockMap);
-        const id = await state.addEntry(pointFC, 'territories');
-        state.addAnalysisToEntry(id, { name: 'dist', timestamp: 1, outputFormat: 'json', data: 1 });
-        state.addAnalysisToEntry(id, { name: 'dist', timestamp: 2, outputFormat: 'json', data: 2 });
-
-        const analyses = state.entries.find((e) => e.id === id)?._analysis;
-        expect(analyses).toHaveLength(1);
-        expect(analyses?.[0]).toMatchObject({ name: 'dist', timestamp: 2, data: 2 });
-    });
-
-    it('addAnalysisToEntry returns false for an unknown entry', () => {
-        const state = new BYODState(mockMap);
-        const ok = state.addAnalysisToEntry('nope', { name: 'x', timestamp: 1, outputFormat: 'json', data: null });
-        expect(ok).toBe(false);
-    });
-
     it('reset empties history and emits entries-change + shown-change', async () => {
         const state = new BYODState(mockMap);
         await state.addEntry(emptyFC, 'a');
@@ -177,7 +142,7 @@ describe('BYODState', () => {
         state.reset();
 
         expect(state.entries).toHaveLength(0);
-        expect(entriesHandler).toHaveBeenCalledWith([]);
+        expect(entriesHandler).toHaveBeenCalledWith({ entries: [], changedIds: ['byod-0'] });
         expect(shownHandler).toHaveBeenCalledTimes(1);
     });
 });

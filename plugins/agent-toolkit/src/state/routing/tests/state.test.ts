@@ -112,21 +112,6 @@ describe('RoutingState events', () => {
         expect(handler).toHaveBeenCalledWith({ maxAlternatives: 2 });
     });
 
-    it('emits analysis-added on addAnalysisToEntry', () => {
-        const state = new RoutingState(mockMap);
-        state.addRoutes({} as any, [], 'r');
-        const handler = vi.fn();
-        state.events.on('analysis-added', handler);
-        const ok = state.addAnalysisToEntry('routes-0', {
-            name: 'summary',
-            timestamp: 1,
-            outputFormat: 'json',
-            data: {},
-        });
-        expect(ok).toBe(true);
-        expect(handler).toHaveBeenCalledTimes(1);
-    });
-
     it('reset emits all three change events', () => {
         const state = new RoutingState(mockMap);
         const fired: string[] = [];
@@ -135,5 +120,92 @@ describe('RoutingState events', () => {
         state.events.on('params-change', () => fired.push('params'));
         state.reset();
         expect(fired).toEqual(['entries', 'planning', 'params']);
+    });
+});
+
+describe('RoutingState — route monitoring', () => {
+    const fakeRoutes = (n = 1) =>
+        ({ type: 'FeatureCollection', features: Array.from({ length: n }, () => ({})) }) as any;
+
+    // Capturing timer double — drive the recurring tick on demand.
+    const fakeTimers = () => {
+        let scheduled: (() => void) | undefined;
+        return {
+            deps: (recalculate: () => Promise<any>) => ({
+                recalculate,
+                setInterval: (fn: () => void) => {
+                    scheduled = fn;
+                    return 1;
+                },
+                clearInterval: () => {},
+            }),
+            tick: () => scheduled?.(),
+        };
+    };
+
+    const seed = async (state: RoutingState) => {
+        await state.addRoutes(fakeRoutes(), [], 'A to B');
+        return state.entries[0].id;
+    };
+
+    it('startMonitoring emits monitor-start; a tick updates the entry in place + emits entries-change/monitor-tick', async () => {
+        const state = new RoutingState(mockMap);
+        const id = await seed(state);
+        const events: string[] = [];
+        state.events.on('monitor-start', () => events.push('start'));
+        state.events.on('monitor-tick', () => events.push('tick'));
+        const entryChanges: number[] = [];
+        state.events.on('entries-change', (e) => entryChanges.push(e.entries.length));
+
+        const timers = fakeTimers();
+        state.startMonitoring(
+            id,
+            timers.deps(() => Promise.resolve(fakeRoutes(3))),
+            { skipInitialTick: true },
+        );
+        expect(events).toContain('start');
+        expect(state.isMonitored(id)).toBe(true);
+
+        timers.tick();
+        await Promise.resolve();
+        await Promise.resolve();
+
+        expect(events).toContain('tick');
+        // The route entry's data was replaced in place — consumers learn via entries-change.
+        expect(state.entries[0].data.features).toHaveLength(3);
+        expect(entryChanges.at(-1)).toBe(1);
+
+        state.stopMonitoring(id);
+    });
+
+    it('stopMonitoring emits monitor-stop (manual) and halts ticks', async () => {
+        const state = new RoutingState(mockMap);
+        const id = await seed(state);
+        const stops: string[] = [];
+        state.events.on('monitor-stop', (e) => stops.push(e.reason));
+
+        const timers = fakeTimers();
+        const recalculate = vi.fn(() => Promise.resolve(fakeRoutes()));
+        state.startMonitoring(id, timers.deps(recalculate), { skipInitialTick: true });
+        state.stopMonitoring(id);
+        expect(stops).toEqual(['manual']);
+        expect(state.isMonitored(id)).toBe(false);
+
+        timers.tick(); // a stale interval fire after stop must not recalculate
+        await Promise.resolve();
+        expect(recalculate).not.toHaveBeenCalled();
+    });
+
+    it('removeEntry stops the monitor', async () => {
+        const state = new RoutingState(mockMap);
+        const id = await seed(state);
+        const timers = fakeTimers();
+        state.startMonitoring(
+            id,
+            timers.deps(() => Promise.resolve(fakeRoutes())),
+            { skipInitialTick: true },
+        );
+        await state.removeEntry(id);
+        expect(state.isMonitored(id)).toBe(false);
     });
 });

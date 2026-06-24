@@ -1,8 +1,10 @@
+import './chat.css';
 import { type AssistantRuntime, AssistantRuntimeProvider, ThreadPrimitive } from '@assistant-ui/react';
 import { useChatRuntime } from '@assistant-ui/react-ai-sdk';
 import type { ClassificationResult, createMapAgent } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import type { ChatTransport, InferAgentUIMessage } from 'ai';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { sendMessageToCurrentThread } from './assistantRuntimeUtils';
 import { ChatHeader } from './ChatHeader';
 import { ChatInput } from './ChatInput';
 import { ChatMessages, DEFAULT_WELCOME_TEXT } from './ChatMessages';
@@ -66,6 +68,14 @@ export function MapAgentChat({
             setErrors((prev) => [...prev, formatError(err)]);
         },
     });
+
+    // Eval mode only: expose a hook the Playwright proxy calls to drive the agent
+    // through the app's real send path.
+    useEffect(() => {
+        if (process.env.VITE_EVAL_MODE !== 'true') return;
+        (globalThis as Record<string, unknown>).__sendMessageToAgentUnderTest = (query: string) =>
+            sendMessageToCurrentThread(runtime, query);
+    }, [runtime]);
 
     const [isCollapsed, setIsCollapsed] = useState(true);
 

@@ -1,8 +1,7 @@
 import type { TrafficIncident } from '@tomtom-org/maps-sdk/core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TrafficAreaAnalyticsState, TrafficIncidentsState, TrafficTilesState } from '../../../state';
-import { executeStartTrafficIncidentsMonitor } from '../start-traffic-incidents-monitor';
-import { executeStopTrafficIncidentsMonitor } from '../stop-traffic-incidents-monitor';
+import { executeSetTrafficIncidentsMonitor } from '../set-traffic-incidents-monitor';
 
 vi.mock('@tomtom-org/maps-sdk/services', () => ({
     trafficIncidentDetails: vi.fn(),
@@ -37,15 +36,27 @@ const makeState = () => {
     } as any;
 };
 
-const seedEntry = (state: any, opts: Partial<{ filters: any; bbox: any; label: string }> = {}): Promise<string> =>
-    state.trafficIncidents.addIncidentsEntry(
+const seedEntry = async (
+    state: any,
+    opts: Partial<{ filters: any; bbox: any; label: string; show: boolean }> = {},
+): Promise<string> => {
+    const id = await state.trafficIncidents.addIncidentsEntry(
         [feat('seed-1')],
         { bbox: opts.bbox ?? [0, 0, 1, 1], ...opts.filters },
         opts.label ?? 'seed',
         Date.now(),
     );
+    // The monitor guard requires a displayed entry. Mark it shown directly — mirrors what
+    // showEntry sets, without spinning up the real overlay module against the mock map.
+    // Pass `show: false` to leave it hidden (for the guard-rejection test).
+    if (opts.show !== false) {
+        const entry = state.trafficIncidents.entries.find((e: any) => e.id === id);
+        if (entry) entry._shown = true;
+    }
+    return id;
+};
 
-describe('executeStartTrafficIncidentsMonitor', () => {
+describe('executeSetTrafficIncidentsMonitor — enable', () => {
     let entryIdsToStop: { state: any; id: string }[] = [];
 
     beforeEach(() => {
@@ -60,23 +71,35 @@ describe('executeStartTrafficIncidentsMonitor', () => {
 
     it('errors when the entry does not exist', async () => {
         const state = makeState();
-        const result = await executeStartTrafficIncidentsMonitor({ incidentsEntryID: 'missing' }, state);
+        const result = await executeSetTrafficIncidentsMonitor({ incidentsEntryID: 'missing', enabled: true }, state);
         expect('error' in result).toBe(true);
         if ('error' in result) expect(result.error).toContain('missing');
     });
 
-    it('starts polling and is idempotent on a second call', async () => {
+    it('rejects monitoring a hidden (show:false / never-shown) entry', async () => {
+        const state = makeState();
+        const id = await seedEntry(state, { show: false });
+        const result = await executeSetTrafficIncidentsMonitor({ incidentsEntryID: id, enabled: true }, state);
+        expect('error' in result).toBe(true);
+        if ('error' in result) expect(result.error).toContain("isn't displayed");
+        expect(state.trafficIncidents.isMonitored(id)).toBe(false);
+    });
+
+    it('starts polling and is idempotent on a second enable', async () => {
         mockFetch.mockResolvedValue({ type: 'FeatureCollection', features: [feat('a')] });
         const state = makeState();
         const id = await seedEntry(state);
         entryIdsToStop.push({ state, id });
 
-        const first = await executeStartTrafficIncidentsMonitor({ incidentsEntryID: id, intervalMs: 30_000 }, state);
-        expect(first).toMatchObject({ incidentsEntryID: id, alreadyRunning: false });
+        const first = await executeSetTrafficIncidentsMonitor(
+            { incidentsEntryID: id, enabled: true, intervalMs: 30_000 },
+            state,
+        );
+        expect(first).toMatchObject({ incidentsEntryID: id, enabled: true, alreadyInState: false });
         expect(state.trafficIncidents.isMonitored(id)).toBe(true);
 
-        const second = await executeStartTrafficIncidentsMonitor({ incidentsEntryID: id }, state);
-        expect(second).toMatchObject({ incidentsEntryID: id, alreadyRunning: true });
+        const second = await executeSetTrafficIncidentsMonitor({ incidentsEntryID: id, enabled: true }, state);
+        expect(second).toMatchObject({ incidentsEntryID: id, enabled: true, alreadyInState: true });
     });
 
     it('forwards the entry filters to the polling fetcher (eager tick uses entry.filters)', async () => {
@@ -87,7 +110,7 @@ describe('executeStartTrafficIncidentsMonitor', () => {
         });
         entryIdsToStop.push({ state, id });
 
-        await executeStartTrafficIncidentsMonitor({ incidentsEntryID: id }, state);
+        await executeSetTrafficIncidentsMonitor({ incidentsEntryID: id, enabled: true }, state);
 
         // Wait one microtask for the eager tick promise chain to flush.
         await Promise.resolve();
@@ -100,18 +123,14 @@ describe('executeStartTrafficIncidentsMonitor', () => {
         });
     });
 
-    it('reports alreadyRunning: false after the previous run errored, and re-arms the timer (regression)', async () => {
+    it('reports alreadyInState: false after the previous run errored, and re-arms the timer (regression)', async () => {
         // Regression: `isMonitored` used to track "any non-idle status", so a monitor
-        // sitting in `stopped-error` made the next `start` call report `alreadyRunning: true`
+        // sitting in `stopped-error` made the next enable report `alreadyInState: true`
         // even though `IncidentMonitor.start` actually does restart from `stopped-error`.
-        // The agent would then trust an unchanged interval and a recovered fetcher would
-        // be silently dropped.
         const state = makeState();
         const id = await seedEntry(state);
         entryIdsToStop.push({ state, id });
         const monitor = state.trafficIncidents.entries.find((e: any) => e.id === id);
-        // Drive the monitor's status into `stopped-error` directly — the public API
-        // only flips into that state through a failing fetch tick, which races real timers.
         const created = (state.trafficIncidents as any)._createMonitorForEntry(monitor);
         monitor._monitor = created;
         (created as any)._status = 'stopped-error';
@@ -119,56 +138,53 @@ describe('executeStartTrafficIncidentsMonitor', () => {
         expect(state.trafficIncidents.isMonitored(id)).toBe(false);
 
         mockFetch.mockResolvedValue({ type: 'FeatureCollection', features: [feat('a')] });
-        const result = await executeStartTrafficIncidentsMonitor({ incidentsEntryID: id }, state);
-        expect(result).toMatchObject({ incidentsEntryID: id, alreadyRunning: false });
+        const result = await executeSetTrafficIncidentsMonitor({ incidentsEntryID: id, enabled: true }, state);
+        expect(result).toMatchObject({ incidentsEntryID: id, enabled: true, alreadyInState: false });
         expect(state.trafficIncidents.isMonitored(id)).toBe(true);
     });
 
-    it('does not echo the requested intervalMs back — second call cannot be relied on to apply it', async () => {
-        // The output deliberately omits intervalMs because IncidentMonitor.start no-ops when
-        // already running; reporting the requested value back would mislead the agent into
-        // thinking a new interval took effect on the second call.
+    it('does not echo the requested intervalMs back — a running monitor cannot be relied on to apply it', async () => {
         mockFetch.mockResolvedValue({ type: 'FeatureCollection', features: [feat('a')] });
         const state = makeState();
         const id = await seedEntry(state);
         entryIdsToStop.push({ state, id });
 
-        const result = (await executeStartTrafficIncidentsMonitor(
-            { incidentsEntryID: id, intervalMs: 30_000 },
+        const result = (await executeSetTrafficIncidentsMonitor(
+            { incidentsEntryID: id, enabled: true, intervalMs: 30_000 },
             state,
         )) as Record<string, unknown>;
         expect(result.intervalMs).toBeUndefined();
     });
 });
 
-describe('executeStopTrafficIncidentsMonitor', () => {
+describe('executeSetTrafficIncidentsMonitor — disable', () => {
     beforeEach(() => {
         mockFetch.mockReset();
     });
 
     it('errors when the entry does not exist', async () => {
         const state = makeState();
-        const result = await executeStopTrafficIncidentsMonitor({ incidentsEntryID: 'missing' }, state);
+        const result = await executeSetTrafficIncidentsMonitor({ incidentsEntryID: 'missing', enabled: false }, state);
         expect('error' in result).toBe(true);
     });
 
-    it('reports wasRunning: false when no monitor was active', async () => {
+    it('reports alreadyInState: true when no monitor was active', async () => {
         const state = makeState();
         const id = await seedEntry(state);
-        const result = await executeStopTrafficIncidentsMonitor({ incidentsEntryID: id }, state);
-        expect(result).toMatchObject({ incidentsEntryID: id, wasRunning: false });
+        const result = await executeSetTrafficIncidentsMonitor({ incidentsEntryID: id, enabled: false }, state);
+        expect(result).toMatchObject({ incidentsEntryID: id, enabled: false, alreadyInState: true });
     });
 
-    it('stops a running monitor and reports wasRunning: true', async () => {
+    it('stops a running monitor and reports alreadyInState: false', async () => {
         mockFetch.mockResolvedValue({ type: 'FeatureCollection', features: [feat('a')] });
         const state = makeState();
         const id = await seedEntry(state);
 
-        await executeStartTrafficIncidentsMonitor({ incidentsEntryID: id }, state);
+        await executeSetTrafficIncidentsMonitor({ incidentsEntryID: id, enabled: true }, state);
         expect(state.trafficIncidents.isMonitored(id)).toBe(true);
 
-        const result = await executeStopTrafficIncidentsMonitor({ incidentsEntryID: id }, state);
-        expect(result).toMatchObject({ incidentsEntryID: id, wasRunning: true });
+        const result = await executeSetTrafficIncidentsMonitor({ incidentsEntryID: id, enabled: false }, state);
+        expect(result).toMatchObject({ incidentsEntryID: id, enabled: false, alreadyInState: false });
         expect(state.trafficIncidents.isMonitored(id)).toBe(false);
     });
 
@@ -177,8 +193,8 @@ describe('executeStopTrafficIncidentsMonitor', () => {
         const state = makeState();
         const id = await seedEntry(state);
 
-        await executeStartTrafficIncidentsMonitor({ incidentsEntryID: id }, state);
-        await executeStopTrafficIncidentsMonitor({ incidentsEntryID: id }, state);
+        await executeSetTrafficIncidentsMonitor({ incidentsEntryID: id, enabled: true }, state);
+        await executeSetTrafficIncidentsMonitor({ incidentsEntryID: id, enabled: false }, state);
 
         expect(state.trafficIncidents.entries.find((e: any) => e.id === id)).toBeDefined();
     });

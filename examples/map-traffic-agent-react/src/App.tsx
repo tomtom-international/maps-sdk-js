@@ -1,25 +1,30 @@
 import { MapAgentChat } from './chat';
 import { useAgentSettings } from './hooks/useAgentSettings';
+import { AnalysesPanel } from './ui/AnalysesPanel';
 import { AnalyticsControlPanel } from './ui/AnalyticsControlPanel';
 import { ClusterPanel } from './ui/ClusterPanel';
 import { FocusChip } from './ui/FocusChip';
 import { IncidentDetailsPanel } from './ui/IncidentDetailsPanel';
-import { MonitoredAreaChip } from './ui/MonitoredAreaChip';
 import { NetworkKPIStrip } from './ui/NetworkKPIStrip';
+import { OperationsPanel } from './ui/OperationsPanel';
+import { RouteMonitorPanel } from './ui/RouteMonitorPanel';
+import { TrackerToasts } from './ui/TrackerToasts';
 import { TriagePanel } from './ui/TriagePanel';
-import { VizToggle } from './ui/VizToggle';
 import { useMapAgent } from './useMapAgent';
 
 const WELCOME_TEXT = [
-    "I'm your **live traffic operations** partner — ask me what's happening on the network right now, where the biggest slowdowns are, or to triage a specific work zone or zone.",
+    "I'm your **live traffic operations** partner — ask me what's happening on the network right now, where the biggest slowdowns are, or to triage a specific work zone, route, or area you're watching.",
     '&nbsp;',
     '🧪 *Experimental feature.*',
 ].join('\n\n');
 
 const SUGGESTED_PROMPTS = [
-    "What incidents are happening on London's roads right now?",
-    'Summarise the 3 biggest slowdown clusters in central London',
-    'Focus on the worst delays inside the M25',
+    "What's happening on London's roads right now?",
+    'Monitor traffic between Heathrow and the City of London',
+    'Watch the City of London and alert me if a major incident appears',
+    "How are the roads around London's main hospitals right now?",
+    "Is the traffic I'm looking at normal for this time of day?",
+    'Summarise the 3 biggest slowdown clusters in London',
 ] as const;
 
 export function App() {
@@ -37,18 +42,28 @@ export function App() {
         focusPrev,
         focusNext,
         clearFocus,
-        incidents,
-        vizMode,
-        setVizMode,
+        panelIncidents,
         focusOneIncident,
         focusMany,
         clusters,
         focusCluster,
         clearClusters,
-        stopMonitor,
-        monitoredLabel,
-        lastAnalysisAt,
-        snapshotCount,
+        analyses,
+        toggleAnalysisMonitor,
+        monitoredRoutes,
+        routeLastTickAt,
+        stopRouteMonitor,
+        trackers,
+        trackerAreas,
+        ungroupedTrackers,
+        trackerEvents,
+        trackerToasts,
+        dismissToast,
+        trackerLastSeenAt,
+        markTrackersSeen,
+        setTrackerEnabled,
+        clearTracker,
+        focusTrackerArea,
     } = useMapAgent({
         deploymentId: settings.deploymentId,
     });
@@ -71,16 +86,23 @@ export function App() {
                  * / fixed 320px right rail. Rows: top auto / middle fluid / bottom auto. Children
                  * get pointer-events:auto via the `*:` variant; the grid itself is transparent. */}
                 <div className="pointer-events-none absolute inset-0 z-(--sdk-z-dropdown) grid grid-cols-[minmax(0,1fr)_320px] grid-rows-[auto_minmax(0,1fr)_auto] gap-x-3 gap-y-2 p-3 *:pointer-events-auto *:min-w-0">
-                    <div className="col-start-1 row-start-1 flex min-w-0 flex-col items-start gap-2">
-                        <div className="flex w-full min-w-0 items-stretch gap-2">
-                            <NetworkKPIStrip incidents={incidents.items} label={incidents.label} />
-                            <VizToggle mode={vizMode} onChange={setVizMode} />
-                        </div>
-                        <MonitoredAreaChip
-                            label={monitoredLabel}
-                            lastAnalysisAt={lastAnalysisAt}
-                            snapshotCount={snapshotCount}
-                            onClear={stopMonitor}
+                    <div className="col-start-1 row-start-1 flex min-h-0 min-w-0 flex-col items-start gap-2">
+                        <NetworkKPIStrip incidents={panelIncidents.items} label={panelIncidents.label} />
+                        <RouteMonitorPanel
+                            routes={monitoredRoutes}
+                            lastTickAt={routeLastTickAt}
+                            onStop={stopRouteMonitor}
+                        />
+                        <OperationsPanel
+                            areas={trackerAreas}
+                            ungrouped={ungroupedTrackers}
+                            trackerCount={trackers.length}
+                            events={trackerEvents}
+                            lastSeenAt={trackerLastSeenAt}
+                            onToggle={setTrackerEnabled}
+                            onClear={clearTracker}
+                            onFocusArea={focusTrackerArea}
+                            onSeen={markTrackersSeen}
                         />
                     </div>
 
@@ -99,9 +121,9 @@ export function App() {
                             onFocusCluster={focusCluster}
                             onClearClusters={clearClusters}
                         />
-                        {incidents.items.length > 0 && (
+                        {panelIncidents.items.length > 0 && (
                             <TriagePanel
-                                incidents={incidents.items}
+                                incidents={panelIncidents.items}
                                 focusedIds={focusedIdSet}
                                 onFocusIncident={focusOneIncident}
                                 onSelectIncident={selectIncident}
@@ -109,6 +131,7 @@ export function App() {
                                 onClearFocus={() => clearFocus?.()}
                             />
                         )}
+                        <AnalysesPanel analyses={analyses} onToggleMonitor={toggleAnalysisMonitor} />
                     </div>
 
                     <div className="col-start-1 row-start-3 flex min-w-0 flex-col items-start gap-2">
@@ -130,6 +153,7 @@ export function App() {
                         )}
                     </div>
                 </div>
+                <TrackerToasts toasts={trackerToasts} onDismiss={dismissToast} />
             </div>
             {transport ? (
                 <MapAgentChat

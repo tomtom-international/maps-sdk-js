@@ -140,7 +140,18 @@ The plugin ships a `DEFAULT_TOOLS` registry covering search, routing, traffic, r
 | `processData` | Transform entries into new `places`, `placeConnections`, `geometries`, `byod`, or a `fitOnMap` camera move via dynamic JS |
 | `executeMaplibreCode` | Execute arbitrary MapLibre JS against the live `Map` instance — escape hatch for custom layers, animations, raster overlays |
 
-> See [Code generation](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/code-generation) for the injected identifiers, output contracts, and threat model (these tools have no sandbox), and [Scope-aware data tools](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/scope-aware-data-tools) for how the per-turn classifier scope keeps the prompt small.
+> See [Code generation](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/code-generation) for the injected identifiers, output contracts, and threat model, and [Scope-aware data tools](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/scope-aware-data-tools) for how the per-turn classifier scope keeps the prompt small.
+
+`analyseData` / `processData` code is **always isolated in the browser** — a Web Worker in a sandboxed, opaque-origin iframe (no DOM/network; terminable on timeout), zero-config (the SDK lazily loads its own bundled turf/h3 for the worker). Where the code runs is chosen by environment, not configured: the browser always isolates; Node / SSR always run on the main thread (where that boundary has no equivalent — defense-in-depth only). The optional `codeExecution` only tunes the isolated browser run:
+
+```typescript
+const agent = createMapAgent(map, {
+    model,
+    codeExecution: { timeoutMs: 5000 }, // wall-clock budget per isolated run (default 5000)
+});
+```
+
+> **Experimental** — the isolation boundary is verified by the `e2e-tests/` suite (CSP egress-block, worker termination, opaque-origin isolation), which runs in CI as a dedicated job; if the iframe can't initialise it falls back to the main thread (with a warning). `turf` / `h3` / `routeUtils` are all bundled into the worker, so `analyseData` and `processData` (including route-slicing) run fully in the browser. See the [code-generation guide](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/code-generation#data-tool-execution-isolation-experimental).
 
 ### Map display
 
@@ -402,18 +413,50 @@ The classifier prompt is built dynamically from each tool's `classificationPromp
 
 ## System prompt
 
-The built-in `BASE_SYSTEM_PROMPT` teaches the LLM coordinate conventions, tool execution patterns, location reference rules, and response formatting. You can extend or replace it:
+The built-in `BASE_SYSTEM_PROMPT` covers identity, a capability summary, scope/rejection rules, response formatting, data-confidence rules, tool-execution guidance, and session-state conventions. Per-tool mechanics (coordinate order, location-reference routing, etc.) live in the tool descriptions and the classifier prompt, not here.
+
+`systemPrompt` accepts **either** a full replacement string **or** a section-overrides object (`Partial<Record<SystemPromptSection, string>>`) — omitted sections keep their defaults, and you supply only the section body (the heading is added for you):
 
 ```typescript
-import { createMapAgent, BASE_SYSTEM_PROMPT } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+import {
+    createMapAgent,
+    BASE_SYSTEM_PROMPT,
+    composeSystemPrompt,
+    SYSTEM_PROMPT_SECTIONS,
+} from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 
-// Append additional instructions
+// Override individual sections — pass the overrides object straight to systemPrompt
 const agent = createMapAgent(map, {
     model,
-    systemPromptSuffix: 'Always use metric units. Respond in Dutch.',
+    systemPrompt: {
+        identity: 'You are a delivery fleet dispatcher built on the TomTom map.',
+        responseFormatting: 'Reply in Dutch, metric units, one short paragraph.',
+        // every other section falls back to its default
+    },
+    // Section overrides still honor the prefix and suffix (a full string replacement does not).
+    // The prefix is prepended above the whole prompt as a heading-less preamble; the suffix is
+    // appended under an "ADDITIONAL INSTRUCTIONS" heading.
+    systemPromptPrefix: 'You work for Acme Logistics.',
+    systemPromptSuffix: 'Never expose internal entry ids to the user.',
 });
 
-// Full replacement
+// Append-only: keep the whole base prompt, add instructions
+const agent = createMapAgent(map, { model, systemPromptSuffix: 'Always use metric units.' });
+
+// composeSystemPrompt() does the same composition explicitly, if you need the string elsewhere
+const prompt = composeSystemPrompt({ responseFormatting: 'Reply in Dutch.' });
+
+// Extend a default section instead of replacing it: read its default body from
+// SYSTEM_PROMPT_SECTIONS, derive a new value, and override with the result. Handy for
+// handing a default to a coding agent to rewrite under some criteria.
+const agentWithExtraRule = createMapAgent(map, {
+    model,
+    systemPrompt: {
+        rejectionRules: `${SYSTEM_PROMPT_SECTIONS.rejectionRules}\n- Decline weather questions.`,
+    },
+});
+
+// Full replacement (systemPromptPrefix and systemPromptSuffix are ignored)
 const agent = createMapAgent(map, {
     model,
     systemPrompt: BASE_SYSTEM_PROMPT + '\n\nYou are a delivery fleet dispatcher...',

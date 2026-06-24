@@ -193,10 +193,10 @@ Event types across all modules: `'click'`, `'hover'`, `'long-hover'`, `'contextm
 Use `map.mapLibreMap` for anything not covered by SDK modules:
 
 ```ts
-import maplibre from 'maplibre-gl';
+import { NavigationControl } from 'maplibre-gl';
 
 // Controls
-map.mapLibreMap.addControl(new maplibre.NavigationControl(), 'top-right');
+map.mapLibreMap.addControl(new NavigationControl(), 'top-right');
 
 // Custom GeoJSON layer
 map.mapLibreMap.addSource('custom', { type: 'geojson', data: myGeoJSON });

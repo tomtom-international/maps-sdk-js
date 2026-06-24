@@ -61,13 +61,13 @@ map.addStyleChangeHandler({
 Custom sources/layers added via `map.mapLibreMap` are wiped when the style changes — save and restore them:
 
 ```ts
-import type maplibre from 'maplibre-gl';
+import type { GeoJSONSource } from 'maplibre-gl';
 
 let savedData: GeoJSON.FeatureCollection | null = null;
 
 map.addStyleChangeHandler({
     onStyleAboutToChange: () => {
-        const source = map.mapLibreMap.getSource('my-data') as maplibre.GeoJSONSource | undefined;
+        const source = map.mapLibreMap.getSource('my-data') as GeoJSONSource | undefined;
         if (source) {
             savedData = source._data as GeoJSON.FeatureCollection;
             map.mapLibreMap.removeLayer('my-layer');

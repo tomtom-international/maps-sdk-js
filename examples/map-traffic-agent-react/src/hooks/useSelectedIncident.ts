@@ -56,7 +56,7 @@ export function useSelectedIncident(agent: AgentInstance | undefined) {
         for (const id of agent.state.trafficIncidents.shownEntryIds) void wireEntry(id);
 
         sliceUnsubs.push(
-            agent.state.trafficIncidents.events.on('entries-change', (entries) => {
+            agent.state.trafficIncidents.events.on('entries-change', ({ entries }) => {
                 const latest = entries.length > 0 ? entries[entries.length - 1] : undefined;
                 setSelectedIncident((current) => {
                     if (!current) return null;

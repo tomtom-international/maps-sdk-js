@@ -18,6 +18,7 @@ import { buildSystemPrompt } from './system-prompt';
 import { type ScopableToolInfo, setupTools } from './tool-setup';
 import { DEFAULT_TOOLS, TOOLS_BY_DATA_ENTRY_KIND } from './tools';
 import { ALL_ENTRY_DATA_KINDS } from './tools/shared';
+import { resolveSandboxExecutor } from './tools/shared/sandbox';
 import type {
     Classifier,
     EntryDataKind,
@@ -130,6 +131,17 @@ export const createMapAgent = <CS extends ToolState = ToolState>(
 
     const state = createToolState(map, options.state) as CS;
 
+    // App-supplied authorization hook for BYOD URL fetches, stored on the slice so
+    // `addByodSource` can consult it (see ByodSourceUrlValidator). Optional — unset
+    // leaves only the built-in scheme / size / timeout policy in force.
+    if (options.byod?.validateSourceUrl) {
+        state.byod.sourceUrlValidator = options.byod.validateSourceUrl;
+    }
+
+    // Select where analyseData / processData sandbox code runs (default: main thread).
+    // Stored on state so those tools can pick it up at execute time.
+    state.codeExecution = resolveSandboxExecutor(options.codeExecution);
+
     // Apply per-kind `entryMode` from `dataEntries`. Each kind maps to a single slice via
     // {@link DATA_ENTRY_KIND_TO_SLICE}. The slice histories are empty at this point so
     // `setEntryMode` resolves synchronously (no entries to hide); the promise is
@@ -177,7 +189,11 @@ export const createMapAgent = <CS extends ToolState = ToolState>(
     const classifier: Classifier | null =
         options.classifier === false ? null : (options.classifier ?? createDefaultClassifier({ model: options.model }));
 
-    const systemPrompt = buildSystemPrompt(options.systemPrompt, options.systemPromptSuffix);
+    const systemPrompt = buildSystemPrompt({
+        customPrompt: options.systemPrompt,
+        prefix: options.systemPromptPrefix,
+        suffix: options.systemPromptSuffix,
+    });
 
     // Classification state — cached per turn (reset on step 0)
     let lastClassification: ClassificationResult | null = null;

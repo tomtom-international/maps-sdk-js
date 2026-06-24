@@ -71,7 +71,7 @@ const expandPlacesEntries = (
         if (!entry) {
             skipped.push({
                 source,
-                reason: 'No places entry with this id in session state. Use `recallGeometries` to list available ids.',
+                reason: 'No places entry with this id in session state. Use `recallState` to list available ids.',
             });
             continue;
         }
@@ -117,8 +117,7 @@ const resolvePlaceGeometry = async (placeId: string, state: ToolState): Promise<
         return {
             kind: 'skip',
             reason:
-                'No place with this id in session state. ' +
-                'Use `recallGeometries` to list known places ids and entries.',
+                'No place with this id in session state. ' + 'Use `recallState` to list known places ids and entries.',
         };
     }
     if (!lookup.place.properties.dataSources?.geometry?.id) {
@@ -181,7 +180,7 @@ const collectCustomGeometries = (
         if (!entry) {
             skipped.push({
                 source,
-                reason: 'No custom-geometries entry with this id in session state. Use `recallGeometries` to list available ids.',
+                reason: 'No custom-geometries entry with this id in session state. Use `recallState` to list available ids.',
             });
             continue;
         }
@@ -222,7 +221,7 @@ export const collectInputGeometries = async (
                 '`geometriesEntryIDs` must contain one or more tagged ids ' +
                 "(e.g. `{ kind: 'places', id: <entryId> }`, `{ kind: 'place', id: <placeId> }`, " +
                 "`{ kind: 'ranges', id: <entryId> }`, `{ kind: 'customGeometries', id: <entryId> }`). " +
-                'Use `recallGeometries` to list available ids.',
+                'Use `recallState` to list available ids.',
         };
     }
 
@@ -342,7 +341,7 @@ export const findPlacesByEntry = (
     for (const id of placesEntryIDs) {
         const placesEntry = state.places.entries.find((entry) => entry.id === id);
         if (!placesEntry) {
-            return { error: `No places entry found with id "${id}". Use recallPlaces to list available IDs.` };
+            return { error: `No places entry found with id "${id}". Use recallState to list available IDs.` };
         }
         placesByEntry[id] = { type: 'FeatureCollection', features: placesEntry.places } as Places;
     }

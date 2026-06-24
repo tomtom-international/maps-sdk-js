@@ -87,6 +87,38 @@ const injectTrafficTags = (url: URL): void => {
     }
 };
 
+declare global {
+    /**
+     * Installed by the demo-BFF sandpack bootstrap. Resolves once the proxy
+     * session cookie is valid and not about to expire, re-minting it first
+     * when needed. See ensureFreshSession in proxyBootstrap.ts. Declared as a
+     * global var (not a Window member) so it can be read off `globalThis`,
+     * which also works on the main thread where window === globalThis.
+     */
+    var __DEMO_BFF_ENSURE_SESSION__: (() => Promise<void>) | undefined;
+}
+
+/**
+ * Gate a request on a fresh demo-BFF session when the bootstrap installed
+ * its hook. MapLibre awaits transformRequest results on the MAIN thread
+ * before handing the request to its tile worker — which makes this the one
+ * place that can hold back worker-fetched tiles until the session cookie is
+ * renewed (the workers' own `fetch` is unreachable from here; they rely on
+ * the browser attaching whatever cookie exists when the request starts).
+ * Without the hook (direct mode, non-sandpack consumers) this stays fully
+ * synchronous. A failed renewal lets the request proceed (it will 401, same
+ * as without the gate) rather than wedging the map.
+ * @ignore
+ */
+const gateOnDemoBffSession = (result: RequestParameters): RequestParameters | Promise<RequestParameters> => {
+    const ensureSession = globalThis.__DEMO_BFF_ENSURE_SESSION__;
+    if (typeof ensureSession !== 'function') return result;
+    return ensureSession().then(
+        () => result,
+        () => result,
+    );
+};
+
 /**
  * Inject TomTom custom headers (and, when a proxy `commonBaseURL` is
  * configured, rewrite tile URLs + attach credentials) on requests issued
@@ -121,7 +153,7 @@ export const transformRequest = (params: Partial<GlobalConfig>) => {
     // the URL builders' `if (apiKey)` key-append decision.
     const isDemoBffMode = isProxyMode && !params.apiKey;
 
-    return (url: string, resourceType?: ResourceType): RequestParameters => {
+    return (url: string, resourceType?: ResourceType): RequestParameters | Promise<RequestParameters> => {
         const rewrittenUrl = rewriteForProxy(url, baseURL, isProxyMode, isDemoBffMode);
         const isProxyUrl = isProxyMode && rewrittenUrl.startsWith(baseURL);
         const useCredentials = isDemoBffMode && isProxyUrl;
@@ -147,7 +179,9 @@ export const transformRequest = (params: Partial<GlobalConfig>) => {
         }
 
         if (resourceType === 'Image') {
-            return useCredentials ? { url: rewrittenUrl, credentials: 'include' } : { url: rewrittenUrl };
+            return useCredentials
+                ? gateOnDemoBffSession({ url: rewrittenUrl, credentials: 'include' })
+                : { url: rewrittenUrl };
         }
 
         const parsedUrl = new URL(rewrittenUrl);
@@ -159,6 +193,7 @@ export const transformRequest = (params: Partial<GlobalConfig>) => {
         };
         if (useCredentials) {
             result.credentials = 'include';
+            return gateOnDemoBffSession(result);
         }
         return result;
     };

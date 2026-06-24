@@ -7,8 +7,9 @@ import { PlanningWaypoint, RoutingModule, type TomTomMap } from '@tomtom-org/map
 import { collapseHistoryToLatest, hideAllEntries } from '../entry-helpers';
 import { StateEvents } from '../events';
 import type { EntryMode, ShownEntriesSlice } from '../state';
-import type { RoutesAnalysis } from './analysis';
 import type { RouteParams, RoutesEntry } from './entry';
+import { RouteMonitor, type RouteMonitorDeps } from './monitor/monitor';
+import type { RouteSnapshot } from './monitor/types';
 
 /**
  * Events fired by {@link RoutingState}. Subscribe via `state.routing.events.on(type, handler)`.
@@ -16,18 +17,31 @@ import type { RouteParams, RoutesEntry } from './entry';
  * @group Agent Toolkit
  */
 export type RoutingStateEvents = {
-    /** Route history changed — new calculation stored, analysis attached, or cleared via `reset()`. */
-    'entries-change': readonly RoutesEntry[];
+    /**
+     * Route history changed — new calculation stored, analysis attached, or cleared via `reset()`.
+     * `entries` is the full snapshot after the change; `changedIds` lists the ids of the entries
+     * this specific change added, replaced in place, or removed.
+     */
+    'entries-change': { entries: readonly RoutesEntry[]; changedIds: readonly string[] };
     /** Sparse waypoint planning slots changed (origin/stop/destination assignment). */
     'planning-change': readonly PlanningWaypoint[];
     /** Route parameters (alternatives, cost model, depart/arrive time) changed. */
     'params-change': RouteParams;
-    /** A new analysis was attached to (or replaced on) a routes entry. */
-    'analysis-added': { entryId: string; analysis: RoutesAnalysis };
     /** Set of routes entries currently rendered on the map changed (multi-show under `multiple`). */
     'shown-change': ReadonlySet<string>;
     /** Display policy switched between `single` and `multiple`. */
     'mode-change': EntryMode;
+    /** Monitoring began on an entry (idle → running). Skipped when already running. */
+    'monitor-start': { entryId: string };
+    /**
+     * Monitoring halted on an entry. `reason: 'manual'` covers explicit `stopMonitoring` and entry
+     * teardown (remove / reset); `reason: 'error'` fires alongside `monitor-error`.
+     */
+    'monitor-stop': { entryId: string; reason: 'manual' | 'error' };
+    /** A monitored route was recalculated (per-tick). The entry's data has been updated in place. */
+    'monitor-tick': { entryId: string; snap: RouteSnapshot };
+    /** A monitored route's recalculation failed — the monitor cleared its timer and stopped. */
+    'monitor-error': { entryId: string; error: string };
 };
 
 /**
@@ -88,8 +102,9 @@ export class RoutingState implements ShownEntriesSlice {
         if (this._entryMode === mode) return;
         this._entryMode = mode;
         if (mode === 'single' && this._entries.length > 1) {
+            const droppedIds = this._entries.slice(0, -1).map((entry) => entry.id);
             this._entries = await collapseHistoryToLatest(this._entries, (entry) => this.hideEntry(entry.id));
-            this.events.emit('entries-change', this._entries);
+            this.events.emit('entries-change', { entries: this._entries, changedIds: droppedIds });
         }
         this.events.emit('mode-change', mode);
     }
@@ -113,22 +128,31 @@ export class RoutingState implements ShownEntriesSlice {
      * layers don't pile up. Under `entryMode === 'multiple'` previously-shown entries stay
      * rendered, letting the caller overlay several routes at once.
      *
-     * Emits `shown-change` once the new entry is up.
+     * Emits `shown-change` once the new entry is up. Pass `showWaypoints: false` to render the
+     * route lines without origin/stop/destination pins, and `showSummaryBubbles: false` to drop the
+     * per-route ETA bubbles (e.g. a monitored corridor backdrop).
      */
-    async showEntry(entryId: string): Promise<void> {
+    async showEntry(entryId: string, opts?: { showWaypoints?: boolean; showSummaryBubbles?: boolean }): Promise<void> {
         const entry = this._requireEntry(entryId);
         if (this._entryMode === 'single') {
             const others = this._entries.filter((e) => e._shown && e.id !== entryId);
             for (const other of others) await this.hideEntry(other.id);
         }
         const module = await this.getEntryRoutingModule(entryId);
-        // Apply the sticky main color BEFORE showing so the first paint already has the theme,
-        // avoiding a flash of the default style on newly-shown entries.
-        if (this._mainColor !== undefined) {
-            module.applyConfig({ theme: { mainColor: this._mainColor } });
-        }
+        // Apply the sticky main color + bubble visibility in ONE config BEFORE showing, so the first
+        // paint already has the theme (no flash) and a single applyConfig doesn't clobber the other.
+        const config: NonNullable<Parameters<typeof module.applyConfig>[0]> = {};
+        if (this._mainColor !== undefined) config.theme = { mainColor: this._mainColor };
+        // showRoutes gates the ETA bubbles on the top-level `summaryBubbles.visible` flag (NOT a
+        // layer visibility), so that's what we set to drop them.
+        if (opts?.showSummaryBubbles === false) config.summaryBubbles = { visible: false };
+        if (config.theme || config.summaryBubbles) module.applyConfig(config);
         await module.showRoutes(entry.data);
-        if (entry.waypoints.length) await module.showWaypoints(entry.waypoints);
+        if (opts?.showWaypoints === false) {
+            await module.clearWaypoints();
+        } else if (entry.waypoints.length) {
+            await module.showWaypoints(entry.waypoints);
+        }
         const wasShown = entry._shown;
         entry._shown = true;
         this._lastShownEntryId = entryId;
@@ -183,9 +207,10 @@ export class RoutingState implements ShownEntriesSlice {
     async removeEntry(entryId: string): Promise<void> {
         const idx = this._entries.findIndex((e) => e.id === entryId);
         if (idx === -1) return;
+        this.stopMonitoring(entryId);
         await this.hideEntry(entryId);
         this._entries.splice(idx, 1);
-        this.events.emit('entries-change', this._entries);
+        this.events.emit('entries-change', { entries: this._entries, changedIds: [entryId] });
     }
 
     private _requireEntry(entryId: string): RoutesEntry {
@@ -228,6 +253,7 @@ export class RoutingState implements ShownEntriesSlice {
     }
 
     async addRoutes(routes: Routes, waypoints: WaypointLike[], label: string): Promise<string> {
+        const droppedIds = this._entryMode === 'single' ? this._entries.map((entry) => entry.id) : [];
         if (this._entryMode === 'single' && this._entries.length > 0) {
             // Hide each existing entry's module so the map doesn't keep
             // showing the previous routes; we then drop them from history.
@@ -244,31 +270,9 @@ export class RoutingState implements ShownEntriesSlice {
             params: { ...this._params },
         });
         this._planningSlots = [...waypoints];
-        this.events.emit('entries-change', this._entries);
+        this.events.emit('entries-change', { entries: this._entries, changedIds: [...droppedIds, id] });
         this.events.emit('planning-change', this._planningSlots);
         return id;
-    }
-
-    /**
-     * Attach an analysis result to an existing routes entry. Names are unique within a single
-     * entry — adding one with an existing name replaces it. Returns true on success, false if
-     * the entry doesn't exist.
-     */
-    addAnalysisToEntry(entryId: string, analysis: RoutesAnalysis): boolean {
-        const entry = this._entries.find((e) => e.id === entryId);
-        if (!entry) return false;
-        entry._analysis ??= [];
-        const existingIdx = entry._analysis.findIndex((a) => a.name === analysis.name);
-        if (existingIdx >= 0) {
-            entry._analysis[existingIdx] = analysis;
-        } else {
-            entry._analysis.push(analysis);
-        }
-        this.events.emit('analysis-added', { entryId, analysis });
-        // Same reasoning as PlacesState.addAnalysisToEntry — analyses are attached in place,
-        // re-emit entries-change so consumers re-render.
-        this.events.emit('entries-change', this._entries);
-        return true;
     }
 
     setWaypointAt(index: number, waypoint: WaypointLike): void {
@@ -285,6 +289,77 @@ export class RoutingState implements ShownEntriesSlice {
         this.events.emit('params-change', this._params);
     }
 
+    // ---- Monitoring (live-traffic recalculation) ----
+
+    /**
+     * Replace a route entry's data in place (a monitor recalculated it). Bumps `_tick`, updates
+     * `data`/`timestamp`, emits `entries-change`, and re-renders the route on its module when shown.
+     * The `_tick` guard bails if a newer tick overwrote `data` while `showRoutes` awaited. No-op
+     * (returns false) when the entry is unknown. Mirrors `TrafficIncidentsState.replaceEntryData`.
+     */
+    async replaceRouteData(entryId: string, routes: Routes, sampledAt: number): Promise<boolean> {
+        const entry = this._entries.find((e) => e.id === entryId);
+        if (!entry) return false;
+        const tick = (entry._tick ?? 0) + 1;
+        entry._tick = tick;
+        entry.data = routes;
+        entry.timestamp = sampledAt;
+        this.events.emit('entries-change', { entries: this._entries, changedIds: [entryId] });
+        // Re-render only when this entry is currently on the map; the route geometry / traffic
+        // delays change each tick, while the waypoints are unchanged (same route).
+        if (entry._shown && entry._module) {
+            await entry._module.showRoutes(routes);
+        }
+        return true;
+    }
+
+    // Wire a fresh monitor to this entry: each tick recalculates the route and replaces the entry's
+    // data; errors surface as monitor-error + monitor-stop. The monitor itself is recalculation-
+    // agnostic — the `recalculate` closure (built in the tools layer) captures waypoints + params.
+    private _createMonitorForEntry(entry: RoutesEntry): RouteMonitor {
+        const monitor = new RouteMonitor();
+        monitor.events.on('tick', (snap) => {
+            void this.replaceRouteData(entry.id, snap.routes, snap.takenAt);
+            this.events.emit('monitor-tick', { entryId: entry.id, snap });
+        });
+        monitor.events.on('error', (error) => {
+            this.events.emit('monitor-error', { entryId: entry.id, error });
+            this.events.emit('monitor-stop', { entryId: entry.id, reason: 'error' });
+        });
+        return monitor;
+    }
+
+    /**
+     * Arm background recalculation on an entry. Lazy-creates its monitor, then starts polling with
+     * the caller-supplied `recalculate` closure. Emits `monitor-start` on the idle → running
+     * transition. Throws on unknown id.
+     */
+    startMonitoring(
+        entryId: string,
+        deps: RouteMonitorDeps,
+        opts?: { intervalMs?: number; skipInitialTick?: boolean },
+    ): void {
+        const entry = this._requireEntry(entryId);
+        const monitor = (entry._monitor ??= this._createMonitorForEntry(entry));
+        const wasRunning = monitor.isRunning;
+        monitor.start(deps, opts?.intervalMs, opts?.skipInitialTick);
+        if (!wasRunning) this.events.emit('monitor-start', { entryId });
+    }
+
+    /** Stop recalculating an entry; its last data stays. Emits `monitor-stop`. No-op when not running. */
+    stopMonitoring(entryId: string): void {
+        const entry = this._entries.find((e) => e.id === entryId);
+        if (!entry?._monitor) return;
+        const wasRunning = entry._monitor.isRunning;
+        entry._monitor.stop();
+        if (wasRunning) this.events.emit('monitor-stop', { entryId, reason: 'manual' });
+    }
+
+    /** True when the entry is currently being recalculated on its interval. */
+    isMonitored(entryId: string): boolean {
+        return this._entries.find((e) => e.id === entryId)?._monitor?.isRunning ?? false;
+    }
+
     /**
      * Hide every route + waypoint set currently on the map. Map-only — history (`entries`)
      * stays intact. Implements {@link ClearableMapSlice}.
@@ -296,8 +371,11 @@ export class RoutingState implements ShownEntriesSlice {
     reset(): void {
         // Clear every entry's module so the map looks empty before the
         // references go away. Layers persist on the style — same trade-off the
-        // previous shared-module reset had.
+        // previous shared-module reset had. Stop any monitors first so no tick
+        // fires against a torn-down entry.
+        const clearedIds = this._entries.map((entry) => entry.id);
         for (const entry of this._entries) {
+            entry._monitor?.stop();
             entry._module?.clearRoutes();
             entry._module?.clearWaypoints();
         }
@@ -306,7 +384,7 @@ export class RoutingState implements ShownEntriesSlice {
         this._params = {};
         this._lastShownEntryId = undefined;
         this._mainColor = undefined;
-        this.events.emit('entries-change', this._entries);
+        this.events.emit('entries-change', { entries: this._entries, changedIds: clearedIds });
         this.events.emit('planning-change', this._planningSlots);
         this.events.emit('params-change', this._params);
         this.events.emit('shown-change', this.shownEntryIds);

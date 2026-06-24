@@ -15,6 +15,14 @@
  */
 
 import type { Place, PolygonFeature, Route, TrafficAreaAnalytics, TrafficIncident } from '@tomtom-org/maps-sdk/core';
+import {
+    calculateProgressAtRoutePoint,
+    getCoordinateAtRouteProgress,
+    getProgressAtNearestRoutePoint,
+    getRouteProgressBetween,
+    getRouteProgressForSection,
+    getSectionBBox,
+} from '@tomtom-org/maps-sdk/core';
 import type { FeatureCollection as GeoJSONFeatureCollection } from 'geojson';
 import type {
     BYODEntry,
@@ -23,8 +31,10 @@ import type {
     TrafficAreaAnalyticsEntry,
     TrafficIncidentsEntry,
 } from '../../state';
-import type { ToolState } from '../../types';
+import { clusterIncidents } from '../../state/traffic-incidents/clustering';
+import type { EntryDataKind, ToolState } from '../../types';
 import type { GeometriesId } from './geometries-id';
+import { buildSandboxCodePrompt } from './sandbox-code';
 import { type AffectedEntry, collectInputGeometries, type SkippedSource } from './state-inputs';
 
 type FeatureCollection<F> = { type: 'FeatureCollection'; features: F[] };
@@ -113,12 +123,12 @@ const hasAnyInput = (ids: MultiInputIds): boolean => ID_FIELDS.some((field) => (
 // the first per-slice resolution error encountered.
 const resolveAllSlices = (ids: MultiInputIds, state: ToolState): { value: ResolvedEntries } | { error: string } => {
     const placesResult = resolveSliceEntries(ids.placesEntryIDs, state.places, {
-        missingId: (id) => `No places entry with id "${id}". Use recallPlaces to list available IDs.`,
+        missingId: (id) => `No places entry with id "${id}". Use recallState to list available IDs.`,
     });
     if ('error' in placesResult) return placesResult;
 
     const routesResult = resolveSliceEntries(ids.routesEntryIDs, state.routing, {
-        missingId: (id) => `No routes entry with id "${id}". Use recallRoutes to list available IDs.`,
+        missingId: (id) => `No routes entry with id "${id}". Use recallState to list available IDs.`,
     });
     if ('error' in routesResult) return routesResult;
 
@@ -137,7 +147,7 @@ const resolveAllSlices = (ids: MultiInputIds, state: ToolState): { value: Resolv
     if ('error' in trafficAreaAnalyticsResult) return trafficAreaAnalyticsResult;
 
     const byodResult = resolveSliceEntries(ids.byodEntryIDs, state.byod, {
-        missingId: (id) => `No BYOD entry with id "${id}". Use recallByod to list available IDs.`,
+        missingId: (id) => `No BYOD entry with id "${id}". Use recallState to list available IDs.`,
     });
     if ('error' in byodResult) return byodResult;
 
@@ -161,7 +171,7 @@ export const prepareMultiInputs = async (
             error:
                 'At least one of `placesEntryIDs`, `routesEntryIDs`, `incidentsEntryIDs`, ' +
                 '`geometriesEntryIDs`, `trafficAreaAnalyticsEntryIDs`, `byodEntryIDs` must be set. ' +
-                'Use `recallPlaces` / `recallRoutes` / `recallGeometries` / `recallByod` / `recallState` to list available ids.',
+                'Use `recallState` (optionally with a `kind`) to list available ids.',
         };
     }
 
@@ -203,10 +213,7 @@ export const prepareMultiInputs = async (
                     : undefined,
                 placesByEntry: placesEntries.length
                     ? Object.fromEntries(
-                          placesEntries.map((e) => [
-                              e.id,
-                              { type: 'FeatureCollection', features: [...e.places] } as FeatureCollection<Place>,
-                          ]),
+                          placesEntries.map((e) => [e.id, { type: 'FeatureCollection', features: [...e.places] }]),
                       )
                     : undefined,
                 routes: routesEntries.length
@@ -219,7 +226,7 @@ export const prepareMultiInputs = async (
                               {
                                   type: 'FeatureCollection',
                                   features: [...e.data.features],
-                              } as FeatureCollection<Route>,
+                              },
                           ]),
                       )
                     : undefined,
@@ -310,6 +317,31 @@ export const CROSS_KIND_OPS_DOC =
     '`geometry.coordinates` (a few helpers accept coords but most expect Features). Always check the function ' +
     'signature at https://turfjs.org/docs/.';
 
+// `routeUtils` namespace — SDK route section/progress helpers, injected into BOTH
+// analyseData and processData so any routes input can be sliced/measured without
+// re-implementing it. The functions depend only on `@turf/turf` (available in the
+// worker as `self.turf`) and pure local helpers, so the set is portable into the
+// iframe-worker sandbox (see `sandbox/sdk-utils-worker-entry.ts`).
+/** @ignore */
+export const routeUtils = {
+    calculateProgressAtRoutePoint,
+    getCoordinateAtRouteProgress,
+    getProgressAtNearestRoutePoint,
+    getRouteProgressBetween,
+    getRouteProgressForSection,
+    getSectionBBox,
+} as const;
+
+/** Shared `routeUtils` reference doc, surfaced by both tools when `routes` is in scope. @ignore */
+export const ROUTE_UTILS_DOC =
+    '`routeUtils` (route section / progress helpers, only useful when `routesEntryIDs` is set; ' +
+    'for a plain bounding box use `turf.bbox(route)`):\n' +
+    '• `getSectionBBox(route, section)` → `[W,S,E,N]`. Sections at `route.properties.sections.<type>`.\n' +
+    '• `getRouteProgressForSection(route, section)` / `getRouteProgressBetween(route, startIdx, endIdx)`.\n' +
+    '• `calculateProgressAtRoutePoint(route, pathIndex)`.\n' +
+    '• `getCoordinateAtRouteProgress(route, query)` — `query`: `{ traveledDistanceInMeters }` | `{ traveledTimeInSeconds }` | `{ clockTime: Date }`.\n' +
+    '• `getProgressAtNearestRoutePoint(route, { lng, lat })` — snap a point to the line.';
+
 /** Names injected into the sandbox by analyseData / processData, in fixed order. */
 export const MULTI_INPUT_SANDBOX_PARAMS = [
     'places',
@@ -325,12 +357,56 @@ export const MULTI_INPUT_SANDBOX_PARAMS = [
     'byodByEntry',
     'h3',
     'turf',
+    'routeUtils',
+    'cluster',
 ] as const;
+
+/** Shared `cluster` reference doc, surfaced by both tools when `incidents` is in scope. @ignore */
+export const CLUSTER_PRIMITIVE_DOC =
+    '`cluster(incidents, params?, previous?, now?)` — DBSCAN clustering with stable IDs + trends (only ' +
+    'useful with `incidentsEntryIDs`; filter incidents first, then cluster).\n' +
+    '• `params`: `{ eps?, minMembers?, maxClusters?, preFilter? }` — `eps` km radius (default 0.5; ' +
+    '0.3–0.5 urban, 1+ highways), `minMembers` (default 3), `maxClusters` top-N by delay (default 6).\n' +
+    '• Returns `{ groups: [{ id, centroid, memberIds, size, totalDelaySeconds, peakDelaySeconds, ' +
+    'diameterKm, primaryRoads, primaryCategory, trend }], sampledAt }`.\n' +
+    '• Live trends: pass the injected `previous` + `now` — `return cluster(incidents, { eps: 0.4 }, previous, now);`. Omit both for one-shot.';
+
+/**
+ * Common "tools available in the sandbox" prompt section, shared verbatim by
+ * analyseData and processData so the injected-library docs live in ONE place and the
+ * two tools never drift. It documents the three function namespaces handed to every
+ * sandbox body — `turf` / `h3` (base usage rules via {@link buildSandboxCodePrompt}),
+ * the cross-kind turf cheat-sheet ({@link CROSS_KIND_OPS_DOC}), and `routeUtils`
+ * ({@link ROUTE_UTILS_DOC}) — in a fixed order. The two scope-gated docs are appended
+ * only when relevant: cross-kind when scope commits to more than one kind, routeUtils
+ * when `routes` is in scope (matching the conditional `routeUtils` usefulness). Returns
+ * a block ending in a blank line, ready to drop straight into either tool's `code` doc.
+ *
+ * @ignore
+ */
+export const buildSandboxToolsDoc = (active: readonly EntryDataKind[], scoped: boolean): string => {
+    const crossKindDoc = scoped && active.length > 1 ? `\n\n${CROSS_KIND_OPS_DOC}` : '';
+    const routeUtilsDoc = scoped && active.includes('routes') ? `\n\n${ROUTE_UTILS_DOC}` : '';
+    const clusterDoc = scoped && active.includes('incidents') ? `\n\n${CLUSTER_PRIMITIVE_DOC}` : '';
+    return `${buildSandboxCodePrompt(MULTI_INPUT_SANDBOX_PARAMS)}${crossKindDoc}${routeUtilsDoc}${clusterDoc}\n\n`;
+};
 
 /**
  * Pack `prepared.sandbox` into the positional argument array expected by
  * `runSandboxedFn`, in the same order as {@link MULTI_INPUT_SANDBOX_PARAMS}.
- * Trailing `h3` and `turf` are supplied by the caller.
+ *
+ * The merged / per-entry views are shallow — their feature objects are the SAME
+ * references held in the entry slices — so sandbox code must not mutate them in
+ * place or it would corrupt live app state. We do NOT deep-copy here: the copy is
+ * the executor's job, done exactly once and only where needed — the main-thread
+ * executor `structuredClone`s the data args itself, while the iframe-worker
+ * executor gets a copy for free as `postMessage` clones them across the worker
+ * boundary. Cloning here too would be redundant double-work. Trailing `h3` / `turf` /
+ * `routeUtils` / `cluster` are read-only function references, passed through untouched —
+ * `routeUtils` is the shared {@link routeUtils} set and `cluster` is the
+ * {@link clusterIncidents} primitive; both are injected into both tools. (In the
+ * iframe-worker path these positions are dropped and refilled from the worker's own
+ * globals — see {@link WORKER_PROVIDED_PARAMS} — so they must stay function references here.)
  *
  * @ignore
  */
@@ -348,4 +424,6 @@ export const packSandboxArgs = (sandbox: SandboxInputs, libs: { h3: unknown; tur
     sandbox.byodByEntry,
     libs.h3,
     libs.turf,
+    routeUtils,
+    clusterIncidents,
 ];

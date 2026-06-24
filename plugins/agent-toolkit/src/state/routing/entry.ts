@@ -4,7 +4,7 @@
 
 import type { Routes, WaypointLike } from '@tomtom-org/maps-sdk/core';
 import type { RoutingModule } from '@tomtom-org/maps-sdk/map';
-import type { RoutesAnalysis } from './analysis';
+import type { RouteMonitor } from './monitor/monitor';
 
 /**
  * Route planning parameters stored in routing state.
@@ -35,8 +35,6 @@ export type RoutesEntry = {
     data: Routes;
     waypoints: WaypointLike[];
     params: RouteParams;
-    /** Accumulated analysis results linked to this entry. */
-    _analysis?: RoutesAnalysis[];
     /**
      * Per-entry RoutingModule. Each entry owns its own module so display state (which route
      * variant is selected, which waypoints are shown, layer theme) lives on the entry instead
@@ -46,4 +44,16 @@ export type RoutesEntry = {
     _module?: RoutingModule;
     /** True while this entry's `_module` is rendering routes/waypoints on the map. */
     _shown?: boolean;
+    /**
+     * Per-entry route monitor. Lazy-created on first {@link RoutingState.startMonitoring}; reused
+     * across stop/start cycles. Recalculates this route (same waypoints + params) on its interval so
+     * the entry stays fresh with live traffic.
+     */
+    _monitor?: RouteMonitor;
+    /**
+     * Monotonic counter bumped on every {@link RoutingState.replaceRouteData}. Guards against an
+     * out-of-order render: a slow `showRoutes` from an earlier tick that resolves after a newer tick
+     * has already overwritten `data` bails before touching the map.
+     */
+    _tick?: number;
 };

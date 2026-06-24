@@ -4,6 +4,7 @@
 
 import type { FeatureCollection } from 'geojson';
 import { z } from 'zod';
+import { toByodSafeProfile } from '../../state/byod';
 import type { ToolState } from '../../types';
 import { placesEntryIdHintSchema } from '../shared';
 import { byodDataProfileSchema, toolErrorSchema } from '../shared-output-schemas';
@@ -19,8 +20,9 @@ export const addByodSourceOutputSchema = z.union([
             .describe('Where the data came from.'),
         profile: byodDataProfileSchema.describe(
             'Runtime-inferred shape — geometry types plus a per-property profile (types, coverage, ' +
-                'examples). Use it to pick fields for analyseData / processData without re-fetching ' +
-                'the raw GeoJSON, and to choose the `setByodLayers` layers that render this entry.',
+                'numeric/boolean examples; string example values are withheld). Use it to pick fields for ' +
+                'analyseData / processData without re-fetching the raw GeoJSON, and to choose the ' +
+                '`setByodLayers` layers that render this entry.',
         ),
     }),
     toolErrorSchema,
@@ -52,17 +54,14 @@ export const addByodSourceSchema = z
     });
 
 export const addByodSourceDescription =
-    'Register a customer-owned GeoJSON FeatureCollection as a new BYOD source. Accepts either a URL (fetched once) ' +
-    'or inline GeoJSON. Returns the new entry id (usable with `byodEntryIDs` on `analyseData` / `processData` and ' +
-    'with `updateByodDisplay`) plus a `profile` of the data shape (geometry types + per-property ' +
-    'types/coverage/examples) so you can reason about it without re-fetching. A new entry has NO layers and renders ' +
-    'nothing on its own — there are no automatic geometry defaults; choosing the layers is always your job. For very ' +
-    'large datasets, prefer programmatic seeding via `state.byod.addEntry(...)`. ' +
-    'This tool only ingests — it never renders. ALWAYS follow it with `setByodLayers`, which sets the explicit ' +
-    'layers AND draws the entry: read the returned `profile` and supply layers + data-driven paint that fit THIS ' +
-    'data — graduate `circle-radius`/colour by a numeric field, colour a `fill` or `line` by a categorical field, ' +
-    'switch points to a `symbol`, and so on. Until `setByodLayers` runs, the entry is in state but nothing is drawn. ' +
-    '(`setByodLayers.show` controls the camera and clearing earlier BYOD layers.)';
+    'Register a customer-owned GeoJSON FeatureCollection as a new BYOD source from a URL (fetched once) or inline ' +
+    'GeoJSON. Returns the new entry id (usable with `byodEntryIDs` on `analyseData` / `processData` and with ' +
+    '`updateByodDisplay`) plus a `profile` of the data shape (geometry types + per-property types/coverage/examples) ' +
+    'so you can reason about it without re-fetching. For very large datasets, prefer programmatic seeding via ' +
+    '`state.byod.addEntry(...)`. ' +
+    'This tool ONLY ingests — the entry starts with NO layers and renders nothing (no automatic defaults). ALWAYS ' +
+    'follow it with `setByodLayers`, which picks layers + data-driven paint from the returned `profile` AND draws ' +
+    'the entry; until then nothing is shown. Choosing the layers is always your job, in every case.';
 
 const isFeatureCollection = (value: unknown): value is FeatureCollection => {
     if (!value || typeof value !== 'object') return false;
@@ -183,6 +182,10 @@ export const executeAddByodSource = async (
     if (params.url) {
         const urlCheck = validateUrl(params.url);
         if ('error' in urlCheck) return urlCheck;
+        // App-supplied policy gate (e.g. host allowlist / metadata-endpoint block), if configured.
+        // Runs after the built-in scheme check and before any network access.
+        const verdict = await state.byod.sourceUrlValidator?.(urlCheck.url);
+        if (verdict && !verdict.valid) return { error: verdict.reason };
         const fetched = await fetchJsonBounded(urlCheck.url);
         if ('error' in fetched) return fetched;
         data = fetched.value;
@@ -216,6 +219,8 @@ export const executeAddByodSource = async (
         byodEntryId,
         label: params.label,
         source: sourceRecord,
-        profile: entry.profile,
+        // Strip customer-supplied string example values before they reach the model (the full
+        // profile stays on `entry.profile` for the host to render). See `toByodSafeProfile`.
+        profile: toByodSafeProfile(entry.profile),
     };
 };

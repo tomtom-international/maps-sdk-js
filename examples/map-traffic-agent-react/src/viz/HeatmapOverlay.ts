@@ -1,5 +1,5 @@
 import type { TrafficIncident } from '@tomtom-org/maps-sdk/core';
-import { mapStyleLayerIDs, type StyleChangeHandler, type TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { mapStyleLayerIDs, type TomTomMap } from '@tomtom-org/maps-sdk/map';
 import type { GeoJSONSource, HeatmapLayerSpecification, Map as MapLibreMap } from 'maplibre-gl';
 import type { VizMode } from './types';
 
@@ -40,20 +40,21 @@ export class HeatmapOverlay {
     private removed = false;
     private features: GeoJSON.Feature<GeoJSON.Point, SampleProps>[] = [];
     private readonly map: MapLibreMap;
+    private readonly unsubscribeStyleChange: () => void;
 
     constructor(ttMap: TomTomMap) {
         this.map = ttMap.mapLibreMap;
         this.ensureSourceAndLayer();
         // MapLibre wipes all sources/layers on `setStyle`. Re-attach + re-push cached
         // features so the overlay survives the agent's style-switch tool.
-        const handler: StyleChangeHandler = {
+        this.unsubscribeStyleChange = ttMap.addStyleChangeHandler({
             onStyleChanged: () => {
                 if (this.removed) return;
+
                 this.ensureSourceAndLayer();
                 this.pushData();
             },
-        };
-        ttMap.addStyleChangeHandler(handler);
+        });
     }
 
     setIncidents(incidents: readonly TrafficIncident[]): void {
@@ -73,7 +74,9 @@ export class HeatmapOverlay {
 
     remove(): void {
         if (this.removed) return;
+
         this.removed = true;
+        this.unsubscribeStyleChange();
         try {
             if (this.map.getLayer(LAYER_ID)) this.map.removeLayer(LAYER_ID);
             if (this.map.getSource(SOURCE_ID)) this.map.removeSource(SOURCE_ID);

@@ -63,7 +63,9 @@ export const recallGeometriesDescription =
     'No service call.';
 
 const summariseAnalyses = (
-    analyses: { name: string; outputFormat: 'json' | 'chart'; timestamp: number; description?: string }[] | undefined,
+    analyses:
+        | readonly { name: string; outputFormat: 'json' | 'chart'; timestamp: number; description?: string }[]
+        | undefined,
 ) =>
     analyses?.length
         ? analyses.map(({ name, outputFormat, timestamp, description }) => ({
@@ -79,7 +81,7 @@ const indexEntries = (state: ToolState): z.infer<typeof refSchema>[] => {
 
     for (const entry of state.places.entries) {
         if (!entry.geometries?.length) continue;
-        const analyses = summariseAnalyses(entry._analysis);
+        const analyses = summariseAnalyses(state.analyses.getAnalysesForEntry(entry.id, 'analysis'));
         refs.push({
             id: { kind: 'places', id: entry.id },
             label: entry.label,
@@ -101,7 +103,7 @@ const indexEntries = (state: ToolState): z.infer<typeof refSchema>[] => {
     }
 
     for (const entry of state.customGeometries.entries) {
-        const analyses = summariseAnalyses(entry._analysis);
+        const analyses = summariseAnalyses(state.analyses.getAnalysesForEntry(entry.id, 'analysis'));
         refs.push({
             id: { kind: 'customGeometries', id: entry.id },
             label: entry.label,
@@ -126,7 +128,7 @@ const detailForPlaces = (id: GeometriesId, state: ToolState): Detail | { error: 
             error: `Places entry "${id.id}" has no cached footprints. Call discoverPlaces / locatePlace with \`withGeometries: true\` first.`,
         };
     }
-    const analyses = summariseAnalyses(entry._analysis);
+    const analyses = summariseAnalyses(state.analyses.getAnalysesForEntry(entry.id, 'analysis'));
     return {
         id,
         label: entry.label,
@@ -154,7 +156,7 @@ const detailForRanges = (id: GeometriesId, state: ToolState): Detail | { error: 
 const detailForCustomGeometries = (id: GeometriesId, state: ToolState): Detail | { error: string } => {
     const entry = state.customGeometries.findById(id.id);
     if (!entry) return { error: `No custom-geometries entry with id "${id.id}"` };
-    const analyses = summariseAnalyses(entry._analysis);
+    const analyses = summariseAnalyses(state.analyses.getAnalysesForEntry(entry.id, 'analysis'));
     return {
         id,
         label: entry.label,
@@ -177,7 +179,7 @@ const detailFor = (id: GeometriesId, state: ToolState): Detail | { error: string
             return detailForCustomGeometries(id, state);
         default:
             return {
-                error: '`{ kind: "place" }` is not a recallable detail target. Pass a places-entry id (`{ kind: "places", id }`) or use `recallPlaces` to inspect a single place.',
+                error: '`{ kind: "place" }` is not a recallable detail target. Pass a places-entry id (`recallState({ kind: "places", id })`) to inspect a single place.',
             };
     }
 };

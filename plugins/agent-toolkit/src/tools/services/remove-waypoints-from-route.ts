@@ -5,11 +5,11 @@
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { hidePreviousEntriesSchema } from '../shared';
-import { routesOutputSchema, toolErrorSchema } from '../shared-output-schemas';
+import { routesWriteOutputSchema, toolErrorSchema } from '../shared-output-schemas';
 import { calculateAndAddRoute, resolveRouteWaypoints } from './set-route';
 
 /** Output schema for the remove-waypoints-from-route tool. */
-export const removeWaypointsFromRouteOutputSchema = z.union([routesOutputSchema, toolErrorSchema]);
+export const removeWaypointsFromRouteOutputSchema = z.union([routesWriteOutputSchema, toolErrorSchema]);
 
 /**
  * Tool schema for removing waypoints from an existing route.

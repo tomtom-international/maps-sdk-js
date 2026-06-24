@@ -1,5 +1,4 @@
 import { useRef, useState } from 'react';
-import { AnalysisChart } from './AnalysisChart';
 
 type ToolCallProps = {
     toolName: string;
@@ -154,21 +153,12 @@ function ToolCallSection({ label, children }: { label: string; children: React.R
     );
 }
 
-// Agent-toolkit `analyse*` tools return a Chart.js configuration alongside the structured
-// analysis when invoked with `outputFormat: "chart"`. Surface it inline so the user sees a
-// chart instead of a JSON blob; fall back to the raw output otherwise.
-const CHART_PRODUCING_TOOLS = new Set(['analyseData']);
-function extractChartConfig(toolName: string, output: unknown): unknown | null {
-    if (!CHART_PRODUCING_TOOLS.has(toolName) || !output || typeof output !== 'object') return null;
-    const o = output as { outputFormat?: unknown; analysis?: unknown };
-    return o.outputFormat === 'chart' && o.analysis ? o.analysis : null;
-}
-
 export function ToolCall({ toolName, input, output, errorText }: ToolCallProps) {
     const [copyLabel, setCopyLabel] = useState('Copy');
     const contentRef = useRef<HTMLDivElement>(null);
 
-    const chartConfig = extractChartConfig(toolName, output);
+    // Charts are NOT rendered inline in the chat for this demo — analysis charts live in the
+    // right-rail Analyses panel instead. (See ui/AnalysesPanel.)
 
     const inputCode = takeCode(input);
     const inputJson = inputCode !== null ? stripCode(input) : input;
@@ -185,11 +175,6 @@ export function ToolCall({ toolName, input, output, errorText }: ToolCallProps) 
 
     return (
         <>
-            {chartConfig && (
-                <div className="message assistant tool-chart">
-                    <AnalysisChart config={chartConfig} />
-                </div>
-            )}
             <details className="tool-call max-w-[90%] self-start mx-3 my-1">
                 <summary className="inline-flex h-5 w-fit cursor-pointer list-none items-center justify-center gap-1 rounded-[5px] bg-[rgba(0,0,0,0.04)] px-1 font-(family-name:--sdk-font-code) text-[12px] leading-5 font-semibold text-(--sdk-text-high) [&::-webkit-details-marker]:hidden">
                     <span>{toolName}</span>

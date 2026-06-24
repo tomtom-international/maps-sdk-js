@@ -15,7 +15,7 @@
  *
  * Usage from outside the slice (subscribe-only):
  * ```ts
- * const unsub = state.places.events.on('entries-change', (entries) => render(entries));
+ * const unsub = state.places.events.on('entries-change', ({ entries }) => render(entries));
  * // ...
  * unsub();
  * ```

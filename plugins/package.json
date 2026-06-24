@@ -21,7 +21,7 @@
     "@types/react-dom": "catalog:",
     "@types/rollup-plugin-peer-deps-external": "catalog:",
     "@vitejs/plugin-react": "catalog:",
-    "js-yaml": "^4.1.1",
+    "js-yaml": "^5.0.0",
     "rollup-plugin-analyzer": "catalog:",
     "rollup-plugin-license": "catalog:",
     "rollup-plugin-peer-deps-external": "catalog:",

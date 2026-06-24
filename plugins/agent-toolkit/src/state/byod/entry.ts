@@ -4,7 +4,6 @@
 
 import type { CustomGeoJSONLayerSpec, CustomGeoJSONModule } from '@tomtom-org/maps-sdk/map';
 import type { FeatureCollection } from 'geojson';
-import type { BYODAnalysis } from './analysis';
 import type { BYODDataProfile } from './profile';
 
 /**
@@ -55,9 +54,4 @@ export type BYODEntry = {
     _module?: CustomGeoJSONModule;
     /** True while this entry's `_module` is rendering on the map. */
     _shown?: boolean;
-    /**
-     * Analyses attached by `analyseData` (keyed by `name` — re-running an analysis with the
-     * same name replaces it). Empty / absent until the first analysis runs against this entry.
-     */
-    _analysis?: BYODAnalysis[];
 };

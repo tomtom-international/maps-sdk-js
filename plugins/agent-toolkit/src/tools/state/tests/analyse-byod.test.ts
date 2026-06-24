@@ -43,10 +43,10 @@ describe('analyseData — byod', () => {
         // Reported back to the chat...
         expect(out.affectedEntries).toEqual([{ kind: 'byod', id }]);
         expect(out.analysis).toEqual({ India: 2, China: 1 });
-        // ...AND persisted on the entry, so the side panel's details view can render it.
-        const entry = state.byod.entries.find((e) => e.id === id);
-        expect(entry?._analysis).toHaveLength(1);
-        expect(entry?._analysis?.[0]).toMatchObject({
+        // ...AND persisted in the top-level store, fetched per-entry so the side panel can render it.
+        const analyses = state.analyses.getAnalysesForEntry(id);
+        expect(analyses).toHaveLength(1);
+        expect(analyses[0]).toMatchObject({
             name: 'admin-distribution',
             description: 'Disputed polygons per ADMIN value',
             outputFormat: 'json',

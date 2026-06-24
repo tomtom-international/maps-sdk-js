@@ -4,7 +4,6 @@
 
 import type { CommonPlaceProps, Place, PolygonFeature } from '@tomtom-org/maps-sdk/core';
 import type { GeometriesModule, PlaceConnectionDisplay, PlacesModule } from '@tomtom-org/maps-sdk/map';
-import type { PlacesAnalysis } from './analysis';
 
 /**
  * A single entry in the place search history.
@@ -25,8 +24,6 @@ export type PlacesEntry = {
      * (`place.properties.dataSources.geometry.id`), matching the response shape of `geometryData`.
      */
     geometries?: PolygonFeature<CommonPlaceProps>[];
-    /** Accumulated analysis results linked to this entry. */
-    _analysis?: PlacesAnalysis[];
     /** Lazy place-id → Place index, built on first ID lookup through PlacesState.findPlaceById. */
     _byId?: Record<string, Place>;
     /** Lazy place-id → boundary polygon index, built on first lookup through PlacesState.getGeometryForPlace. */

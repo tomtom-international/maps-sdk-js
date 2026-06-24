@@ -2,6 +2,59 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.49.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.48.3...v0.49.0) (2026-06-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* **agent-toolkit:** consolidate per-kind recall tools into recallState ([#1868](https://github.com/tomtom-international/maps-sdk-js/issues/1868))
+* **agent-toolkit:** analysis and incidents clustering improvements ([#1851](https://github.com/tomtom-international/maps-sdk-js/issues/1851))
+* **traffic, map-display:** migrate to Orbis v2 GA ([#1829](https://github.com/tomtom-international/maps-sdk-js/issues/1829))
+
+### Features
+
+* agent-eval framework Initial MVP baseline ([#1842](https://github.com/tomtom-international/maps-sdk-js/issues/1842)) ([223e15f](https://github.com/tomtom-international/maps-sdk-js/commit/223e15f0d3bc0ed607e678cef819ee1843c69a4b))
+* **agent-toolkit:** `resolvedAreas` — surface where every query resolved ([#1863](https://github.com/tomtom-international/maps-sdk-js/issues/1863)) ([f89f5cd](https://github.com/tomtom-international/maps-sdk-js/commit/f89f5cdb1e09362d4d3cef0c33e118a3fe29af42))
+* **agent-toolkit:** analysis and incidents clustering improvements ([#1851](https://github.com/tomtom-international/maps-sdk-js/issues/1851)) ([c9aa482](https://github.com/tomtom-international/maps-sdk-js/commit/c9aa4829056ae6779cd88415ff20b30be6f5e26a))
+* **agent-toolkit:** app-supplied URL-validator hook for addByodSource ([#1855](https://github.com/tomtom-international/maps-sdk-js/issues/1855)) ([b9a38a8](https://github.com/tomtom-international/maps-sdk-js/commit/b9a38a8263f6d54f8094c507ffa9d36f447686d5))
+* **agent-toolkit:** fold incident monitoring into getTrafficIncidents ([#1847](https://github.com/tomtom-international/maps-sdk-js/issues/1847)) ([6e63e92](https://github.com/tomtom-international/maps-sdk-js/commit/6e63e92571f4617f0502b18344a5252c6ee9902c))
+* **agent-toolkit:** generic trackers on the analyses registry ([#1876](https://github.com/tomtom-international/maps-sdk-js/issues/1876)) ([8d05187](https://github.com/tomtom-international/maps-sdk-js/commit/8d051871979e9f6ce2b281ae63b06286a56e62ea))
+* **agent-toolkit:** keep untrusted BYOD free-text out of model context ([#1854](https://github.com/tomtom-international/maps-sdk-js/issues/1854)) ([935c6eb](https://github.com/tomtom-international/maps-sdk-js/commit/935c6eb12899abe25fe5d5c1dfe42fb474ee5fa0))
+* **agent-toolkit:** monitor routes — periodic live-traffic recalculation ([#1869](https://github.com/tomtom-international/maps-sdk-js/issues/1869)) ([ca20d3c](https://github.com/tomtom-international/maps-sdk-js/commit/ca20d3cec0e20dcf247109ff0643b7104ba3ac9c))
+* **agent-toolkit:** sandbox data-tool execution in a browser iframe-worker ([#1857](https://github.com/tomtom-international/maps-sdk-js/issues/1857)) ([1103cf2](https://github.com/tomtom-international/maps-sdk-js/commit/1103cf2599379e57b19b7400da053fb7a5d96f73))
+* **agent-toolkit:** split and compact the base system prompt ([#1884](https://github.com/tomtom-international/maps-sdk-js/issues/1884)) ([bc9ff9e](https://github.com/tomtom-international/maps-sdk-js/commit/bc9ff9e5146dc92c610be8edaf463e1e3ac28bce))
+* **agent-toolkit:** unify where-resolution ([#1834](https://github.com/tomtom-international/maps-sdk-js/issues/1834)) ([6720e02](https://github.com/tomtom-international/maps-sdk-js/commit/6720e026b22b25b0cfe180fa7b811b4fa1daa18c))
+* **proxy:** bundle proxy config into static-html examples ([#1867](https://github.com/tomtom-international/maps-sdk-js/issues/1867)) ([97095ff](https://github.com/tomtom-international/maps-sdk-js/commit/97095ffa716cea2d751f8b1d6880e52303da9f33))
+* **services:** forward common service params ev availability util service ([#1888](https://github.com/tomtom-international/maps-sdk-js/issues/1888)) ([fb1783f](https://github.com/tomtom-international/maps-sdk-js/commit/fb1783f28184c31b01f17c5818b3b08eacd94771))
+* **traffic, map-display:** migrate to Orbis v2 GA ([#1829](https://github.com/tomtom-international/maps-sdk-js/issues/1829)) ([6ccd244](https://github.com/tomtom-international/maps-sdk-js/commit/6ccd2445de3ef4e209b30cdd13009e2408328d80))
+
+
+### Bug Fixes
+
+* **examples:** inject multi-chunk plugin builds correctly for Sandpack ([#1871](https://github.com/tomtom-international/maps-sdk-js/issues/1871)) ([0cf0752](https://github.com/tomtom-international/maps-sdk-js/commit/0cf07523fd176452fe7ce89c0284495e2af18baf))
+* **examples:** keep illegal-request rejection rule in traffic agent prompt ([#1891](https://github.com/tomtom-international/maps-sdk-js/issues/1891)) ([2ff7a3c](https://github.com/tomtom-international/maps-sdk-js/commit/2ff7a3c2da22b4f31d789d4bced1543200be6f86))
+* **examples:** re-enable demo-BFF proxy bootstrap ([#1835](https://github.com/tomtom-international/maps-sdk-js/issues/1835)) ([f0b9e7e](https://github.com/tomtom-international/maps-sdk-js/commit/f0b9e7e31a9da15d8a465867ce2b8cc8909ed7ed))
+* **examples:** unblock CI lint — suppress noUnusedVariables ([#1861](https://github.com/tomtom-international/maps-sdk-js/issues/1861)) ([0bd433c](https://github.com/tomtom-international/maps-sdk-js/commit/0bd433c1ca8d2d8b04177e4ee4bc06b55daf1517))
+* **map:** style-change handlers return an unsubscribe disposer ([#1870](https://github.com/tomtom-international/maps-sdk-js/issues/1870)) ([54758c3](https://github.com/tomtom-international/maps-sdk-js/commit/54758c36d9b105420d244c502ec8941062245944))
+* **skill:** trim tomtom-maps-sdk-js description under 1024-char limit ([#1838](https://github.com/tomtom-international/maps-sdk-js/issues/1838)) ([ddb7084](https://github.com/tomtom-international/maps-sdk-js/commit/ddb7084451496f4c6fd6b25a26baf3503e028905))
+
+
+### Reverts
+
+* feat(traffic, map-display)!: migrate to Orbis v2 GA ([#1829](https://github.com/tomtom-international/maps-sdk-js/issues/1829)) ([#1880](https://github.com/tomtom-international/maps-sdk-js/issues/1880)) ([12ed6b9](https://github.com/tomtom-international/maps-sdk-js/commit/12ed6b9dcc6b7e2c22d3525aa05f85c1ba6b5e89))
+
+
+### Code Refactoring
+
+* **agent-toolkit:** consolidate per-kind recall tools into recallState ([#1868](https://github.com/tomtom-international/maps-sdk-js/issues/1868)) ([a519e1f](https://github.com/tomtom-international/maps-sdk-js/commit/a519e1f82efc571ef64492e269706482b67b1ef7))
+
+## [0.48.3](https://github.com/tomtom-international/maps-sdk-js/compare/v0.48.2...v0.48.3) (2026-06-10)
+
+
+### Features
+
+* **routing:** migrate routing service to OrbisV3 API ([#1784](https://github.com/tomtom-international/maps-sdk-js/issues/1784)) ([f6b04fc](https://github.com/tomtom-international/maps-sdk-js/commit/f6b04fc5d31b3a1f014e262223e2f2683b0b6120))
+
 ## [0.48.2](https://github.com/tomtom-international/maps-sdk-js/compare/v0.48.1...v0.48.2) (2026-06-09)
 
 

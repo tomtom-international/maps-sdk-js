@@ -21,7 +21,7 @@ export const updateByodDisplaySchema = z
             .min(1)
             .optional()
             .describe(
-                'BYOD entry ids to act on (e.g. ["byod-0"]). Use `recallByod` to list. ' +
+                'BYOD entry ids to act on (e.g. ["byod-0"]). Use `recallState` to list. ' +
                     'Omit when `action: "hide"` and `clearAll: true` to hide every shown BYOD entry in one call.',
             ),
         action: actionSchema,
@@ -63,7 +63,7 @@ export const updateByodDisplayOutputSchema = z.union([
 
 export const updateByodDisplayDescription =
     'Toggle visibility (or drop) for one or more BYOD entries. Use after `addByodSource` or after seeing entries ' +
-    'via `recallByod`. Three actions: `show` renders listed entries, `hide` removes them from the map but keeps ' +
+    'via `recallState`. Three actions: `show` renders listed entries, `hide` removes them from the map but keeps ' +
     'them in state, `remove` hides AND drops them from history. Pair `action: "hide"` with `clearAll: true` to ' +
     'hide every shown BYOD entry in one call. Pair `action: "show"` with `hideOthers: true` to swap to a single ' +
     "set of entries (replaces what's already on the map).";
@@ -75,7 +75,7 @@ type BYODSlice = ToolState['byod'];
 const validateRequestedIds = (slice: BYODSlice, requested: readonly string[]): { error: string } | undefined => {
     for (const id of requested) {
         if (!slice.findById(id)) {
-            return { error: `No BYOD entry with id "${id}". Call recallByod to list available IDs.` };
+            return { error: `No BYOD entry with id "${id}". Call recallState to list available IDs.` };
         }
     }
     return undefined;

@@ -44,6 +44,18 @@ Consumer App
 - **No provider bundled**: `model` is required. Fail fast if not provided.
 - **Monorepo imports**: Use `@tomtom-org/maps-sdk/core`, `/map`, `/services`.
 - **Linting**: Biome, not ESLint/Prettier. Run `pnpm lint` from root.
+- **No needless exports**: don't `export` a symbol only used within its own file; directory barrels re-export only what's consumed *through* the barrel.
+- **Build config**: this package uses its **own** `vite.lib.config.ts` (extends the shared `../plugin-vite-config.ts`), NOT named `vite.config.ts` on purpose — Vitest auto-merges a `vite.config.ts`, and the lib-build plugins (dts/terser/peerDepsExternal) leaking into the test pipeline breaks tests. Keep build config named `vite.lib.config.ts`.
+
+---
+
+## Code-execution sandbox (`src/tools/shared/sandbox/`)
+
+`analyseData` / `processData` run model-authored JS via a pluggable `SandboxExecutor` (`sandbox-code.ts`). Execution mode is env-chosen, NOT configurable (`resolveSandboxExecutor` + `hasBrowserSandboxApis`): `iframe-worker` in the browser (opaque-origin iframe + worker + CSP `default-src 'none'` + timeout — mandatory there), `mainThreadExecutor` in Node/SSR (no equivalent boundary; a `worker_thread` adds only termination while exposing `fs`/`net`/`child_process`). `codeExecution` only tunes the browser run (`timeoutMs`, `loadWorkerLibrarySource`). **Input deep-copy lives in `mainThreadExecutor` only** (`cloneDataArg`, skips `WORKER_PROVIDED_PARAMS`) — the iframe-worker gets its copy free via `postMessage`; `packSandboxArgs` and the monitor path now pass live references. `turf` / `h3` / `routeUtils` are bundled into the worker and injected into BOTH tools (`routeUtils` shared from `multi-input.ts`).
+
+- **Worker libs (turf/h3/routeUtils)**: the worker can't `import` the host's peer-dep modules, so `worker-libs.ts` `?raw`-inlines turf's/h3's UMD bundles plus the bundled `routeUtils` IIFE into a **lazy chunk** (`dist/worker-libs-*.js`) loaded only in iframe-worker mode — the main bundle keeps turf/h3 externalized. turf needs the `sandbox-turf-umd` alias and the SDK worker-utilities (`routeUtils`, …) the `virtual:sandbox-sdk-utils` plugin (bundling `sdk-utils-worker-entry.ts`) — both live in `vite-sandbox-build.ts`, shared by `vite.lib.config.ts` and `e2e-tests/vite.config.ts`; `*?raw` and the virtual module are typed by `src/raw.d.ts`. After touching this, run `pnpm build` and confirm `dist/index.es.js` stays lean (~323 kB) and `dist/worker-libs-*.js` carries the libs.
+- **e2e harness** (`e2e-tests/`): real-browser isolation checks (CSP / opaque origin / Worker termination) — run `pnpm test:e2e` (one-time `pnpm test:e2e:install` for Chromium).
+- **e2e-verified, still experimental**: the `e2e-tests/` suite passes (5/5) in real Chromium — CSP egress-block, worker termination, opaque-origin isolation, zero-config turf/h3 — so the boundary is verified by those checks. Runs in CI via the dedicated `e2e-test-agent-toolkit-sandbox` job (`pnpm e2e-test:agent-toolkit:sandbox`), separate from the browser-free unit-test runs. Falls back (loudly) to main-thread when browser APIs are missing.
 
 ---
 

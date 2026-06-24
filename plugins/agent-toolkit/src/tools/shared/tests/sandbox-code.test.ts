@@ -3,12 +3,21 @@ import {
     formatSandboxExecutionError,
     isPolygonFeature,
     isPolygonFeatureArray,
+    mainThreadExecutor,
     runSandboxedFn,
     stripInjectedRedeclarations,
     validateAnalysisResult,
 } from '../sandbox-code';
 
 const IDS = ['places', 'h3', 'turf'] as const;
+
+// `runSandboxedFn`'s executor is required; these tests exercise the main-thread realm.
+const run = <Result = unknown>(
+    code: string,
+    paramNames: readonly string[] = [],
+    args: readonly unknown[] = [],
+    verb = 'Test',
+) => runSandboxedFn<Result>(code, paramNames, args, verb, mainThreadExecutor);
 
 describe('stripInjectedRedeclarations', () => {
     it('removes `const turf = require("@turf/turf")` prepended by the LLM', () => {
@@ -198,12 +207,12 @@ describe('validateAnalysisResult', () => {
 
 describe('runSandboxedFn', () => {
     it('compiles and executes the body with the supplied args', async () => {
-        const result = await runSandboxedFn<number>('return a + b;', ['a', 'b'], [2, 3], 'Test');
+        const result = await run<number>('return a + b;', ['a', 'b'], [2, 3], 'Test');
         expect(result).toEqual({ value: 5 });
     });
 
     it('awaits async return values', async () => {
-        const result = await runSandboxedFn<number>('return await Promise.resolve(x * 2);', ['x'], [21], 'Test');
+        const result = await run<number>('return await Promise.resolve(x * 2);', ['x'], [21], 'Test');
         expect(result).toEqual({ value: 42 });
     });
 
@@ -212,23 +221,75 @@ describe('runSandboxedFn', () => {
         // should strip it so `new AsyncFunction("turf", ...)` doesn't choke on
         // a redeclaration.
         const code = 'const turf = require("@turf/turf");\nreturn turf.flag;';
-        const result = await runSandboxedFn<unknown>(code, ['turf'], [{ flag: 'ok' }], 'Test');
+        const result = await run<unknown>(code, ['turf'], [{ flag: 'ok' }], 'Test');
         expect(result).toEqual({ value: 'ok' });
     });
 
     it('returns a labelled error when the code throws at runtime', async () => {
-        const result = await runSandboxedFn<unknown>('throw new Error("boom");', [], [], 'Analysis');
+        const result = await run<unknown>('throw new Error("boom");', [], [], 'Analysis');
         expect(result).toEqual({ error: expect.stringMatching(/^Analysis code execution failed:.*boom/) });
     });
 
     it('returns a labelled error when the code does not parse', async () => {
-        const result = await runSandboxedFn<unknown>('return @@@;', [], [], 'Process');
+        const result = await run<unknown>('return @@@;', [], [], 'Process');
         expect(result).toEqual({ error: expect.stringMatching(/^Process code execution failed:/) });
     });
 
     it('passes through `undefined` returns (caller decides what to do)', async () => {
-        const result = await runSandboxedFn<unknown>('return undefined;', [], [], 'Test');
+        const result = await run<unknown>('return undefined;', [], [], 'Test');
         expect(result).toEqual({ value: undefined });
+    });
+
+    it('deep-copies data inputs so in-place mutation cannot corrupt live state', async () => {
+        const live = { features: [{ properties: { ok: true } }] };
+        // The body mutates its input in place, then returns the live reference's value
+        // so we can confirm the original object was untouched.
+        const result = await run<unknown>(
+            'places.features[0].properties.ok = false; return 1;',
+            ['places'],
+            [live],
+            'Test',
+        );
+        expect(result).toEqual({ value: 1 });
+        expect(live.features[0].properties.ok).toBe(true);
+    });
+
+    it('passes library namespaces through by reference (does NOT clone — structuredClone would throw)', async () => {
+        // `turf` is a lib param: a function-bearing namespace structuredClone cannot copy.
+        // It must reach the body intact so the call below works.
+        const turf = { bbox: () => 'called' };
+        const result = await run<unknown>('return turf.bbox();', ['turf'], [turf], 'Test');
+        expect(result).toEqual({ value: 'called' });
+    });
+});
+
+describe('runSandboxedFn — shadowed globals', () => {
+    it('shadows `fetch` to undefined inside the body even though it exists globally', async () => {
+        // `fetch` is a real global in the test runtime, so this only reads
+        // `undefined` because the runner binds it as an `undefined` parameter.
+        expect(typeof fetch).toBe('function');
+        const result = await run<string>('return typeof fetch;', [], [], 'Test');
+        expect(result).toEqual({ value: 'undefined' });
+    });
+
+    it('shadows the network / storage / DOM globals as a group', async () => {
+        const code = 'return [typeof fetch, typeof globalThis, typeof XMLHttpRequest, typeof localStorage];';
+        const result = await run<string[]>(code, [], [], 'Test');
+        expect(result).toEqual({ value: ['undefined', 'undefined', 'undefined', 'undefined'] });
+    });
+
+    it('keeps caller args aligned positionally when shadows are appended', async () => {
+        // A real injected param plus a shadowed global: the arg lines up with the
+        // first parameter, the shadow fills its own appended slot.
+        const result = await run<unknown[]>('return [a, typeof window];', ['a'], [7], 'Test');
+        expect(result).toEqual({ value: [7, 'undefined'] });
+    });
+
+    it('does not shadow a global a caller legitimately injects under the same name', async () => {
+        // `window` is in the shadow list, but a caller that injects it by name must
+        // win — the duplicate shadow is filtered out, not appended as `undefined`.
+        const result = await run<string>('return window;', ['window'], ['real-value'], 'Test');
+        expect(result).toEqual({ value: 'real-value' });
     });
 });
 

@@ -7,10 +7,12 @@ import { API_KEY, MOVE_PORTAL_KEY } from './config';
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 
-const pastDateRange = (): { startDate: string } => {
+const pastDateRange = (): { startDate: string; endDate: string } => {
+    const end = new Date();
+    end.setDate(end.getDate() - 3);
     const start = new Date();
     start.setDate(start.getDate() - 9);
-    return { startDate: start.toISOString().slice(0, 10) };
+    return { startDate: start.toISOString().slice(0, 10), endDate: end.toISOString().slice(0, 10) };
 };
 
 (async () => {

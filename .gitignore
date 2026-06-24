@@ -24,3 +24,6 @@ node_modules/
 
 eval-report-*
 **/*stats*.html
+
+# Local pnpm content-addressable store (created by sandboxed installs)
+.pnpm-store/

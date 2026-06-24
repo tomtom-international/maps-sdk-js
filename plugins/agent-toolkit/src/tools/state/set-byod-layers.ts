@@ -25,15 +25,22 @@ const byodLayerSpecSchema = z
             .record(z.string(), z.unknown())
             .optional()
             .describe(
-                'MapLibre paint properties for this layer `type` (e.g. circle → `circle-radius` / `circle-color`, ' +
-                    'fill → `fill-color` / `fill-opacity`, line → `line-color` / `line-width`). Values may be data-driven ' +
+                'MapLibre PAINT properties — how the feature LOOKS: colour, opacity, halo, blur (any `*-color` / ' +
+                    '`*-opacity` / `*-halo-*`), plus `circle-radius` and `line-width`. Values may be data-driven ' +
                     'expressions referencing feature properties seen in the entry `profile` (e.g. ' +
                     '`["interpolate", ["linear"], ["get", "revenue"], 0, 4, 1000, 20]`).',
             ),
         layout: z
             .record(z.string(), z.unknown())
             .optional()
-            .describe('MapLibre layout properties (e.g. symbol `icon-image` / `text-field`, or `visibility`).'),
+            .describe(
+                'MapLibre LAYOUT properties — WHAT/WHERE the feature is: `visibility`, placement/anchor/offset, and ' +
+                    "a symbol's text/icon content + glyph sizing (`text-field`, `text-font`, `text-size`, " +
+                    '`icon-image`, `icon-size`). Everything else — all colour, opacity and halo — is `paint`. A ' +
+                    '`symbol` splits its text styling this way (`text-field`/`text-size` here, ' +
+                    '`text-color`/`text-halo-*` in `paint`); mixing them up makes MapLibre reject the layer with ' +
+                    '`unknown property`.',
+            ),
         filter: z
             .unknown()
             .optional()
@@ -44,7 +51,7 @@ const byodLayerSpecSchema = z
     .describe('A single MapLibre layer rendering the entry. Pick `type` by geometry; drive `paint` from the profile.');
 
 export const setByodLayersSchema = z.object({
-    byodEntryId: z.string().describe('Id of the BYOD entry to restyle (from `addByodSource` or `recallByod`).'),
+    byodEntryId: z.string().describe('Id of the BYOD entry to restyle (from `addByodSource` or `recallState`).'),
     layers: z
         .array(byodLayerSpecSchema)
         .min(1)
@@ -75,24 +82,21 @@ export const setByodLayersOutputSchema = z.union([
 ]);
 
 export const setByodLayersDescription =
-    'Replace the MapLibre layers a BYOD entry renders under, so the model can style customer data based on its ' +
-    '`profile` (geometry types + per-property types/coverage/examples) — e.g. graduate `circle-radius` by a numeric ' +
-    'field, colour a `fill` by category, or switch a Point layer to `symbol`. Operates on an entry already in state ' +
-    '(from `addByodSource` / `recallByod`); the supplied `layers` replace the current set wholesale. If the ' +
-    'entry is already on the map the new layers apply live in place; pass `show` to render a hidden entry or re-fit ' +
-    'the camera. Invalid layer specs leave the entry unchanged and return an error to correct and retry — so the ' +
-    "entry's previous styling is never lost. " +
-    'This is the SECOND STEP OF EVERY BYOD INGEST and the ONLY way a BYOD entry becomes visible: `addByodSource` ' +
-    'creates the entry with NO layers (nothing is drawn), so you must call this to decide the layers that fit the ' +
-    'detected schema, in all cases. Read the `profile` and encode whatever the data offers: graduate ' +
-    '`circle-radius`/colour by a numeric field via an `interpolate` expression, colour a `fill`/`line` by a ' +
-    'categorical field via a `match` expression, or switch dense points to a `symbol`. Even when no single property ' +
-    'dominates, choose sensible, legible layers suited to the geometry. ' +
-    'STYLE FOR LEGIBILITY ON THE TOMTOM BASEMAP (no need to inspect the style): keep `fill` translucent ' +
-    "(`fill-opacity` ~0.3–0.5) with a contrasting `fill-outline-color` so the basemap's roads and labels show " +
-    "through; give any `symbol` text a light halo (`text-halo-color: '#ffffff'`, `text-halo-width` ~1.5) at a modest " +
-    '`text-size` (~12, matching basemap labels); give `circle` a thin white stroke (`circle-stroke-color`/`-width`); ' +
-    'and pick a small, high-contrast palette — avoid fully opaque pure black or white fills that fight the map.';
+    'Replace the MapLibre layers a BYOD entry renders under, styling customer data from its `profile` ' +
+    '(geometry types + per-property types/coverage/examples). Operates on an entry already in state ' +
+    '(`addByodSource` / `recallState`); the supplied `layers` replace the current set wholesale, applying live in ' +
+    'place if the entry is shown. Pass `show` to render a hidden entry or re-fit the camera. Invalid specs leave ' +
+    "the entry unchanged and return an error to retry, so the entry's styling is never lost. " +
+    'This is the SECOND STEP OF EVERY BYOD INGEST and the ONLY way a BYOD entry becomes visible — `addByodSource` ' +
+    'creates the entry with NO layers — so always call it to pick layers that fit the detected schema: graduate ' +
+    '`circle-radius`/colour by a numeric field (`interpolate`), colour a `fill`/`line` by a categorical field ' +
+    '(`match`), or switch dense points to `symbol`; even with no dominant property, choose legible layers for the ' +
+    'geometry. ' +
+    'STYLE FOR LEGIBILITY ON THE TOMTOM BASEMAP (no need to inspect the style): translucent `fill` ' +
+    '(`fill-opacity` ~0.3–0.5) with a contrasting `fill-outline-color`; `symbol` text with a white halo ' +
+    "(`text-halo-color: '#ffffff'` + `text-halo-width` ~1.5 in `paint`, while `text-field`/`text-size` ~12 go in " +
+    '`layout`); `circle` with a thin white stroke (`circle-stroke-color`/`-width`); a small, high-contrast palette ' +
+    'that avoids fully opaque black or white fills.';
 
 export const executeSetByodLayers = async (
     params: z.infer<typeof setByodLayersSchema>,
@@ -101,7 +105,7 @@ export const executeSetByodLayers = async (
     const entry = state.byod.findById(params.byodEntryId);
     if (!entry) {
         return {
-            error: `No BYOD entry with id "${params.byodEntryId}". Call recallByod to list available IDs.`,
+            error: `No BYOD entry with id "${params.byodEntryId}". Call recallState to list available IDs.`,
         };
     }
 

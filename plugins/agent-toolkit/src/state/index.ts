@@ -1,3 +1,4 @@
+export * from './analyses';
 export * from './base-map';
 export * from './custom-geometries';
 export * from './digest';
@@ -7,6 +8,7 @@ export * from './places';
 export * from './range';
 export * from './routing';
 export * from './state';
+export * from './trackers';
 export * from './traffic-area-analytics';
 export * from './traffic-incidents';
 export * from './traffic-tiles';

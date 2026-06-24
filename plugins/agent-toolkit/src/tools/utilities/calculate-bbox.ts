@@ -2,7 +2,7 @@
  * @module agent-toolkit-tools
  */
 
-import { bboxFromGeoJSON } from '@tomtom-org/maps-sdk/core';
+import { bboxFromGeoJSON, type HasBBox } from '@tomtom-org/maps-sdk/core';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 
@@ -22,7 +22,9 @@ export const calculateBBoxDescription =
 export const executeCalculateBBox = async (params: z.infer<typeof calculateBBoxSchema>, _state: ToolState) => {
     const { geoJson } = params;
     try {
-        const bbox = bboxFromGeoJSON(geoJson as any);
+        // The schema validates `geoJson` only as a loose record/array; bridge through `unknown` to
+        // hand it to bboxFromGeoJSON, which validates the actual GeoJSON shape at runtime.
+        const bbox = bboxFromGeoJSON(geoJson as unknown as HasBBox);
 
         if (!bbox) {
             return { error: 'Could not calculate bounding box - input may be empty or invalid GeoJSON' };

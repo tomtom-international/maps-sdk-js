@@ -113,7 +113,7 @@ export const getTrafficAreaAnalyticsSchema = z.object({
 export const getTrafficAreaAnalyticsDescription =
     'Fetch historical traffic analytics for an area (≤31 days) via location (named city/region) or bbox. ' +
     'Fetch ALL metrics in ONE call (visualization needs them together); use city-scale areas (~10 km+) for meaningful data. ' +
-    'Returns period averages — `showOnMap` visualizes immediately; queryTrafficAnalytics for breakdowns.';
+    'Returns period averages — `showOnMap` visualizes immediately; use analyseData over the loaded entry for breakdowns.';
 
 // ---------------------------------------------------------------------------
 // Helpers

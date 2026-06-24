@@ -60,7 +60,7 @@ export const geometriesIdSchema = z
     .describe(
         'Tagged id `{ kind, id }`. `kind` must be exactly one of: "place" | "places" | "ranges" | "customGeometries" ' +
             '(do NOT use variants like "ranges-entry", "place-footprints", etc.). ' +
-            'Use `recallGeometries` to list every available `{kind, id}` pair.',
+            'Use `recallState` to list every available `{kind, id}` pair.',
     );
 
 /**
@@ -84,7 +84,7 @@ export const geometriesEntryIDsSchema = z
     .describe(
         'Tagged ids `{ kind, id }` of polygon sources to feed the run. `kind` must be exactly one of ' +
             '`"place"` | `"places"` | `"ranges"` | `"customGeometries"` (no variants). Mix kinds freely (e.g. union ' +
-            'place footprints with isochrones). Use `recallGeometries` to list available ids.',
+            'place footprints with isochrones). Use `recallState` to list available ids.',
     );
 
 /**

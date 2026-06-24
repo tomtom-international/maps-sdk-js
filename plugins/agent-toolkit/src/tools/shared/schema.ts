@@ -41,7 +41,7 @@ export const placesEntryIDsSchema = ({ verb, extra }: { verb: string; extra?: st
         .optional()
         .describe(
             `IDs of existing places entries to ${verb} (e.g. ["places-2"], ["places-1", "places-2"]). ` +
-                `Use recallPlaces to list IDs. Omit to ${verb} the latest entry.` +
+                `Use recallState to list IDs. Omit to ${verb} the latest entry.` +
                 (extra ? ` ${extra}` : ''),
         );
 
@@ -58,7 +58,7 @@ export const routesEntryIDsSchema = ({ verb, extra }: { verb: string; extra?: st
         .optional()
         .describe(
             `IDs of existing routes entries to ${verb} (e.g. ["routes-0"], ["routes-0", "routes-1"]). ` +
-                `Use recallRoutes to list IDs. Omit to ${verb} the latest route.` +
+                `Use recallState to list IDs. Omit to ${verb} the latest route.` +
                 (extra ? ` ${extra}` : ''),
         );
 
@@ -324,7 +324,9 @@ export const nearbyWhereSchema = z
 
 /** @ignore */
 export const globalWhereSchema = z.object({
-    mode: z.literal('global'),
+    mode: z
+        .literal('global')
+        .describe('No spatial constraint — resolve the name anywhere. The default for a uniquely-named place.'),
 });
 
 /**
@@ -333,3 +335,101 @@ export const globalWhereSchema = z.object({
  * @ignore
  */
 export const whereSchema = z.union([withinWhereSchema, nearbyWhereSchema, globalWhereSchema]);
+
+// --- Shared `within` fields (plural form) for discoverPlaces + getTrafficIncidents ---------------
+// Lifted from discover-places.ts so both tools build their `within` schemas from the same field
+// definitions. `experimentalWithinFields` (explorationSearch-only) stays local to discover-places.
+
+/**
+ * The multi-region `within` field block shared by discoverPlaces and getTrafficIncidents.
+ * Spread into each tool's `z.object({...})` alongside any tool-specific fields.
+ * @ignore
+ */
+export const sharedWithinFields = {
+    ...withinSharedFields,
+    queries: z
+        .array(
+            z.object({
+                query: z
+                    .string()
+                    .describe(
+                        'Name of a CONTAINING area to search within (e.g. "Paris", "De Jordaan, Amsterdam"). ' +
+                            "NEVER the user's search subject — that goes in the top-level `query`.",
+                    ),
+                queryAs: queryAsSchema,
+            }),
+        )
+        .min(1)
+        .optional()
+        .describe(
+            'CONTAINING areas to search WITHIN — answers "search where?", NOT "search for what?". ' +
+                "Never put the user's search subject here. " +
+                'Example: for "cafes in Amsterdam" → top-level `query`/`poiCategories` carry "cafes"; ' +
+                '`where.queries: [{query: "Amsterdam"}]` carries the region. ' +
+                'Each entry resolves to a boundary polygon (or bbox); the union is searched. ' +
+                'Per-item `queryAs` disambiguates POI vs place. ' +
+                'EXCLUSIVE with viewport; composes with other multi-region fields.',
+        ),
+    placeIds: z
+        .array(z.string())
+        .min(1)
+        .optional()
+        .describe(
+            'IDs of session places — each polygon (fetched on demand) joins the search area. ' +
+                'Use recallState to list IDs. ' +
+                'EXCLUSIVE with viewport; composes with other multi-region fields.',
+        ),
+    geometries: z
+        .array(geometryInputSchema)
+        .min(1)
+        .optional()
+        .describe(
+            'Direct GeoJSON Polygons / MultiPolygons (custom drawing, external data). ' +
+                'For named or stored places use `queries` / `placeIds`. ' +
+                'EXCLUSIVE with viewport; composes with other multi-region fields.',
+        ),
+    range: z
+        .string()
+        .min(1)
+        .optional()
+        .describe(
+            'Range ID from findReachableAreas (e.g. "ranges-0") — restricts to that entry; ' +
+                'multi-origin entries combine their polygons. Use recallState to list IDs. ' +
+                'EXCLUSIVE with viewport; composes with other multi-region fields.',
+        ),
+    route: z
+        .object({
+            routeId: z
+                .string()
+                .min(1)
+                .optional()
+                .describe('Route entry ID (e.g. "routes-0"). Use recallState. Default: latest route.'),
+            widthMeters: z
+                .number()
+                .positive()
+                .describe(
+                    'Total corridor width (metres) — widthMeters/2 each side. ' +
+                        'Typical: 200–500 m ("near the road"), 2–5 km ("broad area along the route").',
+                ),
+        })
+        .optional()
+        .describe(
+            'Buffered corridor around a stored route — turf.buffer at widthMeters/2 around the line. ' +
+                'EXCLUSIVE with viewport; composes with other multi-region fields.',
+        ),
+};
+
+/**
+ * The resolver's input: the area-producing `where` fields. `z.infer` of this is `AreaWhere` in
+ * resolve-where.ts, so the LLM-facing tool schemas and the resolver input share one definition.
+ * No `range` — that maps to stored isochrones and is resolved caller-side.
+ * @ignore
+ */
+export const areaWhereSchema = z.object({
+    viewport: z.boolean().optional(),
+    boundingBox: geoJsonBBoxSchema.optional(),
+    queries: sharedWithinFields.queries,
+    placeIds: sharedWithinFields.placeIds,
+    geometries: sharedWithinFields.geometries,
+    route: sharedWithinFields.route,
+});

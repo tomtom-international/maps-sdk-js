@@ -4,7 +4,6 @@
 
 import type { TrafficAreaAnalytics } from '@tomtom-org/maps-sdk/core';
 import type { TrafficAreaAnalyticsConfig, TrafficAreaAnalyticsModule } from '@tomtom-org/maps-sdk/map';
-import type { TrafficAreaAnalyticsAnalysis } from './analysis';
 
 /**
  * Compact provenance metadata for a traffic-area-analytics entry — the request
@@ -43,6 +42,4 @@ export type TrafficAreaAnalyticsEntry = {
     _configChangeUnsub?: () => void;
     /** True while `_module` is rendering on the map. */
     _shown?: boolean;
-    /** Accumulated analysis results linked to this entry. */
-    _analysis?: TrafficAreaAnalyticsAnalysis[];
 };

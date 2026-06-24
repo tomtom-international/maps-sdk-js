@@ -205,7 +205,7 @@ const resolveSelectors = (state: ToolState, params: z.infer<typeof updatePlacesD
     const unknownAdd = resolvedAdd.filter((id) => !knownIds.has(id));
     if (unknownAdd.length > 0) {
         return {
-            error: `Unknown places entry ids: ${unknownAdd.join(', ')}. Use recallPlaces to list available entries.`,
+            error: `Unknown places entry ids: ${unknownAdd.join(', ')}. Use recallState to list available entries.`,
         };
     }
     return { add: resolvedAdd, remove: resolvedRemove };

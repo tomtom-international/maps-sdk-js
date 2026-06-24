@@ -20,7 +20,7 @@ export const getSectionBBoxSchema = z.object({
     sectionType: z.enum(sectionTypes as [SectionType, ...SectionType[]]).describe('e.g. country|traffic|motorway|toll'),
     id: z
         .string()
-        .describe('Section ID — obtain from `recallRoutes({ id })` detail mode or from `analyseData` over routes.'),
+        .describe('Section ID — obtain from `recallState({ id })` detail mode or from `analyseData` over routes.'),
 });
 
 export const getSectionBBoxDescription =

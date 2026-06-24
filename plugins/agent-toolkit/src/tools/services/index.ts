@@ -47,7 +47,6 @@ export {
 } from './get-traffic-incidents';
 export {
     executeLocatePlace,
-    locatePlace,
     locatePlaceDescription,
     locatePlaceOutputSchema,
     locatePlaceSchema,

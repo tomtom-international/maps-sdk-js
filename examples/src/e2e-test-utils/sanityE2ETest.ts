@@ -45,6 +45,15 @@ export const sanityE2ETest = async (options: SanityE2ETestOptions) => {
     const tags = testInfo.tags;
 
     if (tags.includes(TAG_SANDPACK)) {
+        // Sandpack downloads deps + transpiles the example in-browser, which is far
+        // slower and more variable in CI than the prebuilt prod bundle — especially for
+        // the heavier agent examples. The flow below chains several waits that each may
+        // run up to `mapLoadTimeout`, so a single slow-bundling step could otherwise
+        // blow the default per-test timeout and get the page torn down mid-wait (the
+        // observed CI flake). Give the whole test a budget comfortably larger than any
+        // one step so slow-but-successful bundles still complete.
+        testInfo.setTimeout(Math.max(testInfo.timeout, mapLoadTimeout * 4));
+
         const consoleErrors: string[] = [];
         page.on('console', (msg) => {
             if (msg.type() === 'error') consoleErrors.push(msg.text());
@@ -63,6 +72,17 @@ export const sanityE2ETest = async (options: SanityE2ETestOptions) => {
             .locator(mapSelector)
             .waitFor({ state: 'visible', timeout: mapLoadTimeout })
             .catch(() => {});
+
+        // The map element being attached doesn't mean its tiles have painted. The prod
+        // path gates its screenshot on `networkidle`; the Sandpack path didn't, so a
+        // half-rendered preview (blank/loading map) could be snapshotted — the main
+        // remaining flake for the heavier agent examples, whose preview mounts slowly.
+        // Wait for the PREVIEW frame's own network to settle (tile requests) before
+        // snapshotting. Best-effort: the preview iframe can be cross-origin/inaccessible
+        // or keep a connection open, so fall back to the fixed settle below on timeout.
+        const previewFrame = await (await page.locator('.sp-preview-iframe').elementHandle())?.contentFrame();
+        await previewFrame?.waitForLoadState('networkidle', { timeout: mapLoadTimeout }).catch(() => {});
+
         await page.waitForTimeout(2000);
         await expect(page).toHaveScreenshot('upon-load-sandpack.png', {
             maxDiffPixelRatio,

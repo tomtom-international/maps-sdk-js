@@ -34,11 +34,11 @@ describe('findPlacesByEntry', () => {
         });
     });
 
-    it('errors with a recallPlaces hint when an id is unknown', () => {
+    it('errors with a recallState hint when an id is unknown', () => {
         const state = mockState([{ id: 'entry-1', places: [] }]);
         const result = findPlacesByEntry(['entry-missing'], state);
         expect(result).toEqual({
-            error: 'No places entry found with id "entry-missing". Use recallPlaces to list available IDs.',
+            error: 'No places entry found with id "entry-missing". Use recallState to list available IDs.',
         });
     });
 });

@@ -1,31 +1,24 @@
-import { agent, run, user, userSimulatorAgent } from '@langwatch/scenario';
 import { describe, expect, it } from 'vitest';
-import { agentAdapter, expectToolCalled, FULL_SCENARIOS, getExamplePrompts, MODEL } from './helpers';
-
-const REGISTRY_PROMPTS = getExamplePrompts('recallState');
+import { FULL_SCENARIOS, getExamplePrompts, MODEL, runToolScenario } from './helpers';
+// recallState only makes sense over a populated session: run cold, "what do you have?" is correctly
+// answered with "nothing loaded yet" and NO tool call. Replay a loaded session (shared with
+// analyse/process) so an inventory request has real entries to enumerate.
+import { loadedSessionSeed } from './seed';
 
 describe.skipIf(!MODEL)('recallState scenarios', { timeout: 180_000, retry: 3 }, () => {
-    it('recalls what is stored in the current session', async () => {
-        const result = await run({
-            name: 'Recall session state',
-            description: 'User asks the agent to summarise the session so far.',
-            agents: [agentAdapter(), userSimulatorAgent()],
-            script: [
-                user('What data do you have so far in this session? Give me an overview.'),
-                agent(),
-                expectToolCalled('recallState'),
-            ],
+    // Canonical = the first registry examplePrompt (single source of truth); the rest fan out under
+    // SCENARIOS_FULL.
+    const [canonical, ...rest] = getExamplePrompts('recallState');
+    it(`classifies the canonical prompt: ${canonical}`, async () => {
+        const outcome = await runToolScenario({
+            expectedTool: 'recallState',
+            prompt: canonical,
+            priorTurns: loadedSessionSeed,
         });
-        expect(result.success).toBe(true);
+        expect(outcome.success, outcome.failureReason).toBe(true);
     });
-
-    it.skipIf(!FULL_SCENARIOS).each(REGISTRY_PROMPTS)('handles registry examplePrompt: %s', async (prompt) => {
-        const result = await run({
-            name: `recallState — ${prompt}`,
-            description: prompt,
-            agents: [agentAdapter(), userSimulatorAgent()],
-            script: [user(prompt), agent(), expectToolCalled('recallState')],
-        });
-        expect(result.success).toBe(true);
+    it.skipIf(!FULL_SCENARIOS).each(rest)('handles registry examplePrompt: %s', async (prompt) => {
+        const outcome = await runToolScenario({ expectedTool: 'recallState', prompt, priorTurns: loadedSessionSeed });
+        expect(outcome.success, outcome.failureReason).toBe(true);
     });
 });

@@ -1,9 +1,12 @@
 import { AgentAdapter, type AgentInput, type AgentReturnTypes, AgentRole } from '@langwatch/scenario';
 import type { Place } from '@tomtom-org/maps-sdk/core';
+import type { TomTomMap } from '@tomtom-org/maps-sdk/map';
 import type { LanguageModel } from 'ai';
 import type { Position } from 'geojson';
+import type { z } from 'zod';
 import { createMapAgent } from '../../create-map-agent';
 import { DEFAULT_TOOLS } from '../../tools';
+import { recallStateSchema } from '../../tools/state';
 import type { MapAgentInstance, ToolBuildOptions, ToolEntry } from '../../types';
 
 // ---------------------------------------------------------------------------
@@ -17,11 +20,14 @@ export const mockMap = {
         getZoom: () => 12,
         getCenter: () => ({ lng: 4.89, lat: 52.37 }),
         getBounds: () => ({
-            getNorthEast: () => ({ lng: 5.0, lat: 52.4 }),
+            getNorthEast: () => ({ lng: 5, lat: 52.4 }),
             getSouthWest: () => ({ lng: 4.8, lat: 52.3 }),
         }),
     },
-} as any;
+    // Minimal stand-in: the scenarios only exercise tool classification, so the agent never touches
+    // the full TomTomMap surface. Bridge through `unknown` to assert the partial shape as the real
+    // type without widening to `any`.
+} as unknown as TomTomMap;
 
 // ---------------------------------------------------------------------------
 // Specific mock responses for tools whose returned shape is consumed by the
@@ -43,7 +49,18 @@ const MOCK_PLACE: Place = {
 
 const SPECIFIC_MOCKS: Record<string, (...args: any[]) => Promise<any>> = {
     locatePlace: async ({ query }: { query: string }) => ({
-        places: [{ ...MOCK_PLACE.properties, position: MOCK_POSITION, name: query }],
+        // Echo the queried place into the address so the mock never contradicts the request. The
+        // hardcoded "Amsterdam, Netherlands" address from MOCK_PLACE made attentive models reject a
+        // query like "City of London" as "resolved to the wrong country" and abort the flow — a
+        // nondeterministic source of scenario flakiness.
+        places: [
+            {
+                ...MOCK_PLACE.properties,
+                address: { ...MOCK_PLACE.properties.address, freeformAddress: query, municipality: query },
+                position: MOCK_POSITION,
+                name: query,
+            },
+        ],
         entryId: 'places-0',
         message: `Found location for "${query}"`,
     }),
@@ -99,48 +116,116 @@ const SPECIFIC_MOCKS: Record<string, (...args: any[]) => Promise<any>> = {
         ],
     }),
 
-    recallPlaces: async () => ({
-        entries: [{ id: 'places-0', label: MOCK_PLACE.properties.address.freeformAddress, count: 1 }],
-    }),
-
-    recallRoutes: async () => ({
-        entries: [{ id: 'routes-0', label: `${MOCK_PLACE.properties.address.municipality} → Brussels`, count: 1 }],
-    }),
-
-    recallRanges: async () => ({
-        entries: [{ id: 'ranges-0', label: `30-min from ${MOCK_PLACE.properties.address.municipality}`, count: 1 }],
-    }),
-
-    recallByod: async () => ({
-        entries: [
-            {
-                id: 'byod-0',
-                label: 'Sales territories',
-                timestamp: Date.now(),
-                featureCount: 12,
-                geometryTypes: ['Polygon'],
-                propertyNames: ['region', 'revenue'],
-                source: { kind: 'url', url: 'https://example.com/territories.geojson' },
-                shown: true,
-            },
-        ],
-        entryMode: 'multiple',
-    }),
-
-    recallGeometries: async () => ({
-        entries: [],
-    }),
-
-    recallState: async () => ({
-        places: [{ id: 'places-0', label: MOCK_PLACE.properties.address.freeformAddress }],
-        routes: [],
-        ranges: [],
-        incidents: [],
-        trafficAreaAnalytics: [],
-        customGeometries: [],
-        byod: [],
-        mapStyle: 'standardLight',
-    }),
+    // The per-kind recall tools were consolidated into `recallState({ kind?, id? })`. This mock returns a
+    // rich per-kind index for every recallable kind (places / routes / ranges / byod / geometries /
+    // incidents / trafficAreaAnalytics) so updatePlacesDisplay / updateRoutesDisplay / updateByodDisplay /
+    // analyseData prompts still resolve against real entries, and a full session snapshot when no `kind`
+    // is given.
+    recallState: async ({ kind }: z.infer<typeof recallStateSchema> = {}) => {
+        switch (kind) {
+            case 'places':
+                return {
+                    entries: [
+                        { id: 'places-1', label: 'cafes near the centre', count: 8 },
+                        { id: 'places-2', label: 'pubs near the centre', count: 5 },
+                        { id: 'places-3', label: 'banks', count: 4 },
+                        { id: 'places-4', label: 'hotels', count: 6 },
+                        { id: 'places-5', label: 'neighbourhood boundaries (Jordaan, De Pijp)', count: 2 },
+                    ],
+                };
+            case 'routes':
+                // routes-0 keeps 3 alternatives so "my route alternatives" prompts have something to
+                // compare; the named routes let updateRoutesDisplay's "show the Edinburgh route" prompts
+                // resolve to a real entry.
+                return {
+                    entries: [
+                        { id: 'routes-0', label: `${MOCK_PLACE.properties.address.municipality} → Brussels`, count: 3 },
+                        { id: 'routes-1', label: 'London → Edinburgh', count: 1 },
+                        { id: 'routes-2', label: 'Paris → Lyon', count: 1 },
+                    ],
+                };
+            case 'ranges':
+                return {
+                    entries: [
+                        {
+                            id: 'ranges-0',
+                            label: `30-min from ${MOCK_PLACE.properties.address.municipality}`,
+                            count: 1,
+                        },
+                    ],
+                };
+            case 'byod':
+                return {
+                    entries: [
+                        {
+                            id: 'byod-0',
+                            label: 'Sales territories',
+                            timestamp: Date.now(),
+                            featureCount: 12,
+                            geometryTypes: ['Polygon'],
+                            propertyNames: ['region', 'revenue'],
+                            source: { kind: 'url', url: 'https://example.com/territories.geojson' },
+                            shown: true,
+                        },
+                        {
+                            id: 'byod-1',
+                            label: 'Customer pins',
+                            timestamp: Date.now(),
+                            featureCount: 40,
+                            geometryTypes: ['Point'],
+                            propertyNames: ['name', 'status'],
+                            source: { kind: 'url', url: 'https://example.com/pins.geojson' },
+                            shown: true,
+                        },
+                    ],
+                    entryMode: 'multiple',
+                };
+            case 'geometries':
+                return { entries: [{ id: 'geometries-0', label: 'Amsterdam & Utrecht city boundaries', count: 2 }] };
+            case 'incidents':
+                return {
+                    entries: [
+                        {
+                            id: 'incidents-0',
+                            label: 'Amsterdam ring incidents',
+                            timestamp: Date.now(),
+                            count: 18,
+                            shown: true,
+                            monitored: false,
+                            focusedCount: 0,
+                        },
+                    ],
+                    entryMode: 'multiple',
+                };
+            case 'trafficAreaAnalytics':
+                return {
+                    entries: [
+                        {
+                            id: 'tta-0',
+                            label: 'Amsterdam analytics',
+                            timestamp: Date.now(),
+                            regionCount: 1,
+                            metrics: ['congestionLevel', 'speed'],
+                            shown: true,
+                        },
+                    ],
+                    entryMode: 'multiple',
+                };
+            default:
+                // Full snapshot — a realistic mid-session world so analyse/process prompts that reference
+                // "my route", "the incidents", or "these areas" have something to operate on.
+                return {
+                    places: [{ id: 'places-0', label: MOCK_PLACE.properties.address.freeformAddress }],
+                    routes: [{ id: 'routes-0', label: `${MOCK_PLACE.properties.address.municipality} → Brussels` }],
+                    ranges: [{ id: 'ranges-0', label: `30-min from ${MOCK_PLACE.properties.address.municipality}` }],
+                    incidents: [{ id: 'incidents-0', label: 'Amsterdam ring incidents' }],
+                    trafficAreaAnalytics: [{ id: 'tta-0', label: 'Amsterdam analytics' }],
+                    customGeometries: [{ id: 'geometries-0', label: 'Amsterdam & Utrecht city boundaries' }],
+                    byod: [],
+                    mapStyle: 'standardLight',
+                };
+        }
+    },
 
     getCurrentLocation: async () => ({
         position: MOCK_POSITION,
@@ -201,10 +286,6 @@ const SPECIFIC_MOCKS: Record<string, (...args: any[]) => Promise<any>> = {
         metrics: ['congestionLevel'],
     }),
 
-    queryTrafficAnalytics: async () => ({
-        entries: [{ id: 'tta-0', label: 'Amsterdam analytics', timestamp: Date.now() }],
-    }),
-
     updateTrafficAreaAnalyticsDisplay: async () => ({
         success: true,
         shown: ['tta-0'],
@@ -216,15 +297,10 @@ const SPECIFIC_MOCKS: Record<string, (...args: any[]) => Promise<any>> = {
         droppedIds: [],
     }),
 
-    startTrafficIncidentsMonitor: async () => ({
-        success: true,
-        entryId: 'incidents-0',
-        intervalMs: 30_000,
-    }),
-
-    stopTrafficIncidentsMonitor: async () => ({
-        success: true,
-        entryId: 'incidents-0',
+    setTrafficIncidentsMonitor: async (args: { enabled?: boolean }) => ({
+        incidentsEntryID: 'incidents-0',
+        enabled: args?.enabled ?? true,
+        alreadyInState: false,
     }),
 };
 
@@ -234,8 +310,14 @@ const SPECIFIC_MOCKS: Record<string, (...args: any[]) => Promise<any>> = {
 // request body under the gateway's payload cap.
 // ---------------------------------------------------------------------------
 
-export function buildMockedTools(toolNames: readonly string[]): Record<string, ToolEntry> {
+export const buildMockedTools = (toolNames: readonly string[]): Record<string, ToolEntry> => {
     const wanted = new Set(toolNames);
+    // Fail loudly on a misspelled / non-existent tool name rather than silently producing a smaller
+    // tool set (which would make a scenario "pass" against the wrong tools).
+    const unknown = [...wanted].filter((name) => !(name in DEFAULT_TOOLS));
+    if (unknown.length > 0) {
+        throw new Error(`buildMockedTools: unknown tool name(s): ${unknown.join(', ')}`);
+    }
     return Object.fromEntries(
         Object.entries(DEFAULT_TOOLS)
             .filter(([name]) => wanted.has(name))
@@ -245,7 +327,7 @@ export function buildMockedTools(toolNames: readonly string[]): Record<string, T
                 return [name, { ...resolved, execute: mockExecute }];
             }),
     );
-}
+};
 
 // ---------------------------------------------------------------------------
 // Scenario adapter
@@ -268,15 +350,15 @@ export class MapAgentScenarioAdapter extends AgentAdapter {
         this.agent = createMapAgent(mockMap, {
             model,
             maxSteps: 10,
-            tools: buildMockedTools(Object.keys(DEFAULT_TOOLS)) as any,
+            tools: buildMockedTools(Object.keys(DEFAULT_TOOLS)),
             includeDefaultTools: false,
         });
     }
 
     async call(input: AgentInput): Promise<AgentReturnTypes> {
-        const result = await this.agent.generate({ messages: input.messages } as any);
+        const result = await this.agent.generate({ messages: input.messages });
         // Return all response messages so @langwatch/scenario can detect tool calls
         // via state.hasToolCall() — includes assistant tool-call messages and tool results
-        return result.response.messages as any;
+        return result.response.messages as AgentReturnTypes;
     }
 }

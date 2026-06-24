@@ -295,39 +295,7 @@ describe('PlacesState events', () => {
         state.events.on('entries-change', handler);
         state.addPlaceResult({} as any, 'first');
         expect(handler).toHaveBeenCalledTimes(1);
-        expect(handler.mock.calls[0][0]).toHaveLength(1);
-    });
-
-    it('emits analysis-added and entries-change on addAnalysisToEntry', async () => {
-        const id = await state.addPlaceResult({} as any, 'entry');
-        const analysisHandler = vi.fn();
-        const entriesHandler = vi.fn();
-        state.events.on('analysis-added', analysisHandler);
-        state.events.on('entries-change', entriesHandler);
-
-        state.addAnalysisToEntry(id, {
-            name: 'a',
-            timestamp: 1,
-            outputFormat: 'json',
-            data: { count: 1 },
-        });
-
-        expect(analysisHandler).toHaveBeenCalledTimes(1);
-        expect(analysisHandler.mock.calls[0][0]).toMatchObject({ entryId: id, analysis: { name: 'a' } });
-        expect(entriesHandler).toHaveBeenCalledTimes(1);
-    });
-
-    it('does not emit analysis-added when entry id is unknown', () => {
-        const handler = vi.fn();
-        state.events.on('analysis-added', handler);
-        const ok = state.addAnalysisToEntry('does-not-exist', {
-            name: 'a',
-            timestamp: 1,
-            outputFormat: 'json',
-            data: {},
-        });
-        expect(ok).toBe(false);
-        expect(handler).not.toHaveBeenCalled();
+        expect(handler.mock.calls[0][0].entries).toHaveLength(1);
     });
 
     it('emits shown-change on set/add/remove/clear', async () => {

@@ -1,5 +1,22 @@
 import { describe, expect, it } from 'vitest';
+import { Analyses, type EntryAnalysis, makeAnalysisId } from '../../../state';
 import { executeRecallPlaces } from '../recall-places';
+
+// Seed the top-level analyses store with results for one entry — mirrors how the slice attaches
+// analyses at runtime (one record per name, keyed by analysisId, attached to the entry).
+const seedAnalyses = (store: Analyses, entryId: string, ...results: EntryAnalysis[]): void => {
+    for (const result of results) {
+        const analysisId = makeAnalysisId(result.name, [entryId]);
+        store.register({
+            analysisId,
+            name: result.name,
+            description: result.description,
+            outputFormat: result.outputFormat,
+            affectedEntryIds: [entryId],
+        });
+        store.attachResult(analysisId, result);
+    }
+};
 
 type FakeEntry = {
     id: string;
@@ -8,13 +25,14 @@ type FakeEntry = {
     places: any[];
 };
 
-const mockState = (entries: FakeEntry[] = [], shownIds: readonly string[] = []) =>
+const mockState = (entries: FakeEntry[] = [], shownIds: readonly string[] = [], analyses = new Analyses()) =>
     ({
         places: {
             entries,
             shownEntryIds: new Set(shownIds),
             getShownMarkerType: () => undefined,
         },
+        analyses,
     }) as any;
 
 describe('recallPlaces', () => {
@@ -39,24 +57,24 @@ describe('recallPlaces', () => {
     });
 
     it('surfaces attached analyses in the index', async () => {
-        const state = mockState([
+        const analyses = new Analyses();
+        seedAnalyses(
+            analyses,
+            'places-0',
             {
-                id: 'places-0',
-                timestamp: 1000,
-                label: '3 places',
-                places: [{}, {}, {}],
-                _analysis: [
-                    {
-                        name: 'by-category',
-                        timestamp: 1500,
-                        outputFormat: 'json',
-                        description: 'counts per category',
-                        data: {},
-                    },
-                    { name: 'top-brands-bar', timestamp: 1800, outputFormat: 'chart', data: {} },
-                ],
-            } as any,
-        ]);
+                name: 'by-category',
+                timestamp: 1500,
+                outputFormat: 'json',
+                description: 'counts per category',
+                data: {},
+            },
+            { name: 'top-brands-bar', timestamp: 1800, outputFormat: 'chart', data: {} },
+        );
+        const state = mockState(
+            [{ id: 'places-0', timestamp: 1000, label: '3 places', places: [{}, {}, {}] }],
+            [],
+            analyses,
+        );
         const result = await executeRecallPlaces({}, state);
         expect(result).toEqual({
             entries: [

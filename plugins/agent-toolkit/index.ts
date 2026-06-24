@@ -11,13 +11,29 @@ export {
     type EntryModeSliceName,
 } from './src/state/state';
 export type {
+    MemberRef,
+    Tracker,
+    TrackerEvent,
+    TrackerEventStatus,
+    TrackerEventType,
+    TrackerStateEvents,
+    Verdict,
+} from './src/state/trackers';
+export type {
     ClusteringOutput,
     ClusteringParams,
     ClusterResult,
     ClusterTrend,
 } from './src/state/traffic-incidents/clustering';
 export type { IncidentSnapshot, MonitoredArea, PollingStatus } from './src/state/traffic-incidents/monitor/types';
-export { BASE_SYSTEM_PROMPT, buildSystemPrompt } from './src/system-prompt';
+export {
+    BASE_SYSTEM_PROMPT,
+    buildSystemPrompt,
+    composeSystemPrompt,
+    SYSTEM_PROMPT_SECTIONS,
+    type SystemPromptSection,
+    type SystemPromptSectionOverrides,
+} from './src/system-prompt';
 export {
     DEFAULT_TOOLS,
     getDefaultToolPrompts,
@@ -25,7 +41,6 @@ export {
     TOOLS_BY_DATA_ENTRY_KIND,
     type ToolName,
 } from './src/tools';
-export { CLUSTER_ANALYSIS_NAME } from './src/tools/state/cluster-incidents';
 export * from './src/types/index';
 export {
     type ClassificationResult,

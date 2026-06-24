@@ -4,7 +4,9 @@
 
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import type { TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { resolveSandboxExecutor } from '../tools/shared/sandbox';
 import type { StateSlice, ToolState } from '../types';
+import { Analyses } from './analyses';
 import { BaseMapState } from './base-map';
 import { BYODState } from './byod';
 import { CustomGeometriesState } from './custom-geometries';
@@ -12,12 +14,20 @@ import { MapPOIsState } from './map-pois';
 import { PlacesState } from './places';
 import { RangeState } from './range';
 import { RoutingState } from './routing';
+import { TrackerState } from './trackers';
 import { TrafficAreaAnalyticsState } from './traffic-area-analytics';
 import { TrafficIncidentsState } from './traffic-incidents';
 import { TrafficTilesState } from './traffic-tiles';
 
 export { BaseMapState } from './base-map';
-export { type BYODEntry, type BYODSource, BYODState, type BYODStateEvents } from './byod';
+export {
+    type BYODEntry,
+    type BYODSource,
+    BYODState,
+    type BYODStateEvents,
+    type ByodSourceUrlValidation,
+    type ByodSourceUrlValidator,
+} from './byod';
 export { CustomGeometriesState, type CustomGeometriesStateEvents } from './custom-geometries/state';
 export { MapPOIsState } from './map-pois';
 export { type PlacesMarkerType, PlacesState, type PlacesStateEvents } from './places/state';
@@ -223,6 +233,8 @@ export const createToolState = <T extends Record<string, unknown> = Record<strin
     map: TomTomMap,
     customSlices?: T,
 ): ToolState & T => {
+    // The tracker reducer subscribes to the analyses registry, so analyses is constructed first.
+    const analyses = new Analyses();
     const base: ToolState = {
         places: new PlacesState(map),
         mapPOIs: new MapPOIsState(map),
@@ -234,6 +246,11 @@ export const createToolState = <T extends Record<string, unknown> = Record<strin
         ranges: new RangeState(map),
         customGeometries: new CustomGeometriesState(map),
         byod: new BYODState(map),
+        // Env-resolved executor (iframe-worker in the browser, main thread in Node/SSR) so even direct
+        // createToolState callers get the sandbox boundary; createMapAgent re-resolves with user tuning.
+        codeExecution: resolveSandboxExecutor(),
+        analyses,
+        trackers: new TrackerState(analyses),
     };
     if (customSlices) Object.assign(base, customSlices);
     return base as ToolState & T;

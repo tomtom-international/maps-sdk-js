@@ -4,8 +4,7 @@
 
 import { getPosition } from '@tomtom-org/maps-sdk/core';
 import type { ToolState } from '../../types';
-import type { LocationInput, ResolvedLocation } from '../shared';
-import { locatePlace } from './locate-place';
+import { type LocationInput, locatePlace, type ResolvedLocation } from '../shared';
 
 /** @ignore */
 export const resolveLocationInput = async (

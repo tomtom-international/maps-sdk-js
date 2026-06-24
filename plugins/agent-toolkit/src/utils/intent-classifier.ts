@@ -66,6 +66,15 @@ export const buildClassifySystemPrompt = (toolsMetadata: Record<string, ToolMeta
     return [
         'You are a tool selector for a map assistant.',
         'You will receive a conversation. Select the minimal set of tools needed to fulfill the LAST user message.',
+        // A picked tool can only read data that already exists in state. `Depends on:` lists the tools
+        // that PRODUCE that data — without co-picking them the model is hard-restricted and cannot load
+        // the prerequisite, so it invents entry ids and fails. The "unless already satisfied" clause keeps
+        // this from over-selecting when the data was loaded on an earlier turn.
+        'PREREQUISITES: each tool below may list `Depends on: <tools>` — the tools that produce the data it ' +
+            'reads. When you pick a tool, ALSO pick every tool in its `Depends on:` list, UNLESS the ' +
+            'conversation shows that prerequisite is already satisfied (the data was loaded, or the place ' +
+            'located, on an earlier turn). E.g. arming a tracker/alert on a fresh area needs getTrafficIncidents ' +
+            '(to load the incidents) and locatePlace (for a named area) picked alongside it.',
         `LOCATION REFERENCE:
             - "near me" / "my location" / "where I am" → getCurrentLocation (user's physical GPS position, may prompt permission)
             - "in this area" / "here on the map" / "near the map center" → getViewport (map's current view)

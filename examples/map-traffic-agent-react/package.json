@@ -9,20 +9,22 @@
     "develop": "vite --config ./vite.config.ts",
     "develop:sandpack": "vite --config ../example-sandpack-vite.config.ts",
     "type-check": "tsc --noEmit",
+    "test": "vitest run",
     "test:e2e": "playwright test",
+    "test:agent-eval": "VITE_EVAL_MODE=true vite build --config ./vite.config.ts && playwright test --grep @agent-eval",
     "test:e2e:ui": "playwright test  --ui",
     "test:e2e:update-snapshots": "playwright test --update-snapshots",
-    "start-test-server": "vite preview --port 9050",
+    "start-test-server:prod": "vite serve dist/prod --port 9050",
     "start-test-server:sandpack": "vite preview --config ../example-sandpack-vite.config.ts --port 9051"
   },
   "dependencies": {
     "@ai-sdk/azure": "catalog:",
-    "@ai-sdk/react": "^3.0.158",
+    "@ai-sdk/react": "^3.0.210",
     "@assistant-ui/react": "catalog:",
     "@assistant-ui/react-ai-sdk": "catalog:",
     "@assistant-ui/react-markdown": "catalog:",
     "@assistant-ui/react-ui": "^0.2.1",
-    "@microsoft/applicationinsights-web": "^3.4.1",
+    "@microsoft/applicationinsights-web": "^3.4.2",
     "@tomtom-org/maps-sdk": "workspace:*",
     "@tomtom-org/maps-sdk-plugin-agent-toolkit": "workspace:*",
     "ai": "catalog:",
@@ -36,6 +38,7 @@
   },
   "devDependencies": {
     "@playwright/test": "catalog:",
+    "agent-eval": "workspace:*",
     "@tailwindcss/vite": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
@@ -46,6 +49,7 @@
     "tailwindcss": "catalog:",
     "ts-node": "catalog:",
     "typescript": "catalog:",
-    "vite": "catalog:"
+    "vite": "catalog:",
+    "vitest": "catalog:"
   }
 }
