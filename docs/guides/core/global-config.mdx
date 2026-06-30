@@ -1,0 +1,209 @@
+---
+title: Global configuration
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.49.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Maps SDK keeps a single, application-wide set of configuration values — your API key, language, base URL, display units, and retry behavior — in one place. Setting these once means every service call and map module reuses them, so you don't have to pass an API key (or any other shared option) into each individual request.
+
+This guide explains how that global configuration works, what each option does, and how global values interact with the per-request options you pass to services.
+
+> **Global values are defaults, not locks.** Anything you set globally can also be set — and thereby overridden — on an individual service call or map instance. The global configuration is the baseline; per-request and per-map options take precedence for that call or map only. See [How global and per-request configuration combine](#how-global-and-per-request-configuration-combine) below.
+
+## The `TomTomConfig` singleton
+
+Global configuration is managed by the `TomTomConfig` singleton, exported from the Core bundle. Because it is a singleton, there is exactly one configuration shared across your entire application — accessed through `TomTomConfig.instance`.
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+
+TomTomConfig.instance.put({
+    apiKey: 'YOUR_API_KEY_HERE',
+    language: 'en-GB'
+});
+```
+
+Set your configuration once during application startup, before creating a map or calling any service. From then on, every SDK feature reads from this shared configuration automatically.
+
+### The three methods
+
+`TomTomConfig.instance` exposes three methods:
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+
+// Merge values into the current configuration
+TomTomConfig.instance.put({ apiKey: 'YOUR_API_KEY_HERE' });
+
+// Read the current configuration
+const config = TomTomConfig.instance.get();
+
+// Restore the initial defaults
+TomTomConfig.instance.reset();
+```
+
+- **`put(config)`** — merges the given values into the current configuration. New values override existing ones; keys you omit are left untouched.
+- **`get()`** — returns the current configuration object.
+- **`reset()`** — clears all custom values and restores the defaults. Note that the default API key is an empty string, so you must set a new API key after resetting.
+
+### `put` performs a shallow merge
+
+`put` merges at the top level only. Nested objects — such as `displayUnits` and `retry` — are **replaced entirely**, not deep-merged. Calling `put` twice with different nested keys does not combine them:
+
+```javascript
+TomTomConfig.instance.put({
+    displayUnits: { distance: { type: 'metric' } }
+});
+
+// This REPLACES displayUnits — the distance setting above is now lost
+TomTomConfig.instance.put({
+    displayUnits: { time: { hours: 'hrs' } }
+});
+```
+
+To change one nested field while preserving the rest, include the full nested object in a single call:
+
+```javascript
+TomTomConfig.instance.put({
+    displayUnits: {
+        distance: { type: 'metric' },
+        time: { hours: 'hrs' }
+    }
+});
+```
+
+## Configuration options
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+
+TomTomConfig.instance.put({
+    apiKey: 'YOUR_API_KEY_HERE',
+    apiVersion: 1,
+    commonBaseURL: 'https://api.tomtom.com',
+    language: 'en-GB',
+    trackingId: '9ac68072-c7a4-11e8-a8d5-f2801f1b9fd1',
+    displayUnits: {
+        distance: { type: 'metric' },
+        time: { hours: 'hrs', minutes: 'mins' }
+    },
+    retry: {
+        initialWaitMs: 0.447,
+        backoffFactor: 1.618,
+        timeoutMs: 40000
+    }
+});
+```
+
+### `apiKey`
+
+Your TomTom API key, used to authenticate every request. Required for all SDK features. Obtain one from [my.tomtom.com](https://my.tomtom.com/).
+
+### `apiVersion`
+
+The API version for service endpoints. Defaults to `1`. Each service may default to its own version and can override this value, so consult the specific service documentation when in doubt.
+
+### `commonBaseURL`
+
+The base URL for all TomTom API services. Defaults to `https://api.tomtom.com`. Individual services can override this with their own base URLs. You typically only change it for testing or enterprise deployments — for example, to route traffic through a [proxy](../services/customizing-services.mdx).
+
+### `language`
+
+An IETF language code (case-insensitive) applied to search results, routing instructions, and map labels. When omitted, the SDK uses `NGT` (Neutral Ground Truth) — the local language for each location.
+
+See the supported-language lists for [Search](https://docs.tomtom.com/search-api/documentation/product-information/supported-languages) and [Routing](https://docs.tomtom.com/routing-api/documentation/product-information/supported-languages).
+
+### `trackingId`
+
+An optional request identifier for tracing and support. It must match the pattern `^[a-zA-Z0-9-]{1,100}$`; a UUID is the recommended format. When set, it is included in the `Tracking-ID` response header. This is solely for support purposes and does not involve user tracking.
+
+### `displayUnits`
+
+Custom unit labels and unit system for distance and time. These are applied by the `formatDistance` and `formatDuration` utilities used throughout the SDK. If not provided, default labels are used.
+
+```javascript
+TomTomConfig.instance.put({
+    displayUnits: {
+        distance: {
+            type: 'imperial',  // 'metric' or 'imperial'
+            miles: 'miles',
+            feet: 'ft'
+        },
+        time: {
+            hours: 'hrs',
+            minutes: 'mins'
+        }
+    }
+});
+```
+
+See the [Formatting utilities guide](./utilities/formatting.mdx) for how these labels are used.
+
+### `retry`
+
+Controls automatic retry behavior when a service request receives a rate-limited (`429`) response. When a `429` is returned, the SDK retries automatically using exponential backoff, respecting the API's `Retry-After` header when present.
+
+```javascript
+TomTomConfig.instance.put({
+    retry: {
+        initialWaitMs: 0.447,   // base delay before the first retry
+        backoffFactor: 1.618,   // multiplier applied after each retry
+        timeoutMs: 40000        // give up once total retry time would exceed this
+    }
+});
+```
+
+- **`initialWaitMs`** — base delay (in milliseconds) before the first retry, used when no `Retry-After` header is present. Defaults to `0.447`.
+- **`backoffFactor`** — multiplier applied to the wait time after each subsequent retry. Defaults to `1.618`.
+- **`timeoutMs`** — maximum total time to spend retrying, measured from the first request. If the next wait would exceed it, the `429` error is returned to the caller. Defaults to `40000`.
+
+## How global and per-request configuration combine
+
+Global configuration is a baseline. When you call a service, the SDK merges the global configuration with the options you pass to that specific call — and **the per-request options take precedence**.
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { search } from '@tomtom-org/maps-sdk/services';
+
+TomTomConfig.instance.put({
+    apiKey: 'YOUR_API_KEY_HERE',
+    language: 'en-GB'
+});
+
+// Uses the global language ('en-GB')
+const ukResults = await search({ query: 'restaurants', position: [4.9041, 52.3676] });
+
+// Overrides the language for this call only
+const frResults = await search({
+    query: 'restaurants',
+    position: [4.9041, 52.3676],
+    language: 'fr-FR'
+});
+```
+
+In the second call, `language: 'fr-FR'` wins over the global `en-GB`, but only for that request. The global configuration is left unchanged, so later calls still default to `en-GB`. This lets you set sensible application-wide defaults once and override individual options exactly where you need to.
+
+For more advanced per-service customization — such as request validation, lifecycle hooks, and custom base URLs — see the [Customizing services guide](../services/customizing-services.mdx).
+
+## Setting configuration in Node.js
+
+The same `TomTomConfig` singleton works in Node.js. Keep your API key out of source control by reading it from an environment variable:
+
+```javascript
+const { TomTomConfig } = require('@tomtom-org/maps-sdk/core');
+
+TomTomConfig.instance.put({
+    apiKey: process.env.TOMTOM_API_KEY,
+    language: 'en-GB'
+});
+```
+
+## When to set configuration
+
+Set your global configuration **once, at application startup**, before you create a map or call any service. Because the configuration is a shared singleton, there is no need to re-apply it per component or per request — every part of the SDK reads from the same instance.
