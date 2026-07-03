@@ -1,0 +1,168 @@
+---
+title: Formatting
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.50.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+## Formatting Values
+
+### formatDuration
+
+Formats a duration in seconds into a human-readable time string with intelligent rounding based on duration length.
+
+**Rounding behavior:**
+- Durations under 30 seconds return `undefined`
+- 30-59 seconds round to "1 min"
+- Minutes are rounded to nearest minute
+- Hours are displayed when duration ≥ 1 hour
+
+```javascript
+import { formatDuration } from '@tomtom-org/maps-sdk/core';
+
+formatDuration(0);       // undefined (too short)
+formatDuration(20);      // undefined (too short)
+formatDuration(30);      // "1 min"
+formatDuration(60);      // "1 min"
+formatDuration(100);     // "2 min"
+formatDuration(1800);    // "30 min"
+formatDuration(3599);    // "1 hr 00 min"
+formatDuration(3660);    // "1 hr 01 min"
+formatDuration(7200);    // "2 hr 00 min"
+formatDuration(36120);   // "10 hr 02 min"
+
+// Custom units
+formatDuration(3660, { hours: 'h', minutes: 'm' });
+// Returns: "1 h 01 m"
+
+// Route travel time
+const route = await calculateRoute({ /* ... */ });
+const travelTime = formatDuration(route.features[0].summary.travelTimeInSeconds);
+console.log(`Estimated time: ${travelTime}`);
+// Output: "Estimated time: 2 hr 15 min"
+```
+
+**Parameters:**
+- `seconds` – The duration in seconds
+- `options` – Optional custom display units for hours and minutes
+
+**Returns:** `string | undefined` – Formatted time string, or `undefined` if duration is too short.
+
+### formatDistance
+
+Formats distance in meters into a human-readable string with appropriate units and precision based on the distance. Supports metric, US imperial, and UK imperial unit systems.
+
+**Unit systems:**
+
+- **`metric`** (International System)
+  - Units: meters (m), kilometers (km)
+  - Used in most of the world
+  - Decimal-based, no fractions
+
+- **`imperial_us`** (United States)
+  - Units: feet (ft), miles (mi)
+  - Uses fractions for miles (¼, ½, ¾)
+  - Feet for short distances (< 0.125 mi)
+
+- **`imperial_uk`** (United Kingdom)
+  - Units: yards (yd), miles (mi)
+  - Uses fractions for miles (¼, ½, ¾)
+  - Yards for short distances (< 0.125 mi)
+
+```javascript
+import { formatDistance } from '@tomtom-org/maps-sdk/core';
+
+// Metric formatting (default)
+formatDistance(0);       // "0 m"
+formatDistance(2);       // "2 m"
+formatDistance(237);     // "240 m"
+formatDistance(730);     // "700 m"
+formatDistance(950);     // "1 km"
+formatDistance(-999);    // "-1 km"
+formatDistance(2850);    // "2.9 km"
+formatDistance(283520);  // "284 km"
+
+// US Imperial formatting
+formatDistance(2, { type: 'imperial_us' });
+// Returns: "7 ft"
+
+formatDistance(100, { type: 'imperial_us' });
+// Returns: "330 ft"
+
+formatDistance(205.95, { type: 'imperial_us' });
+// Returns: "¼ mi"
+
+formatDistance(1205.95, { type: 'imperial_us' });
+// Returns: "¾ mi"
+
+formatDistance(5309.7, { type: 'imperial_us' });
+// Returns: "3½ mi"
+
+formatDistance(-18181.7, { type: 'imperial_us' });
+// Returns: "-11 mi"
+
+// UK Imperial formatting
+formatDistance(2, { type: 'imperial_uk' });
+// Returns: "2 yd"
+
+formatDistance(150.88, { type: 'imperial_uk' });
+// Returns: "170 yd"
+
+formatDistance(4344.3, { type: 'imperial_uk' });
+// Returns: "2¾ mi"
+
+formatDistance(21753.68, { type: 'imperial_uk' });
+// Returns: "14 mi"
+
+// Custom unit labels
+formatDistance(1500, { type: 'metric', kilometers: 'KM' });
+// Returns: "1.5 KM"
+
+// Route distance
+const route = await calculateRoute({ /* ... */ });
+const distance = formatDistance(route.features[0].summary.lengthInMeters);
+console.log(`Total distance: ${distance}`);
+// Output: "Total distance: 45 km"
+```
+
+**Parameters:**
+- `meters` – The distance in meters
+- `options` – Optional display units configuration
+  - `type` – Unit system: `'metric'`, `'imperial_us'`, or `'imperial_uk'`
+  - `meters`, `kilometers`, `feet`, `yards`, `miles` – Custom unit labels
+
+**Returns:** `string` – Formatted distance string (empty string if input is null/undefined).
+
+## Global Configuration
+
+You can set default display units globally using `TomTomConfig`:
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+
+TomTomConfig.instance.put({
+  apiKey: 'YOUR_API_KEY_HERE',
+  displayUnits: {
+    distance: {
+      type: 'imperial_us',
+      feet: 'ft',
+      miles: 'mi'
+    },
+    time: {
+      hours: 'hr',
+      minutes: 'min'
+    }
+  }
+});
+
+// Now all formatting functions will use these defaults
+formatDistance(1000);  // Uses imperial_us
+formatDuration(3600);  // Uses custom time units
+```
+
+Options passed directly to formatting functions will override global configuration.

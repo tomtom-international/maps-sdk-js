@@ -1,0 +1,198 @@
+---
+title: Customizing services
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.50.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The TomTom Maps SDK provides extensive configuration options to customize service behavior, optimize performance, and handle different application requirements. This guide covers request validation, custom configurations, error handling, and advanced service customization techniques.
+
+## Request Validation
+
+The SDK includes built-in request validation that verifies each service request adheres to the expected structure before sending it to the API. This validation system helps developers catch errors early and prevents faulty API calls that could result in unnecessary costs.
+
+**Benefits of Request Validation:**
+- Contextual error messages relevant to SDK types (easier debugging)
+- Prevention of malformed API calls (cost optimization)
+- Early error detection in development
+
+**Performance Considerations:**
+If you're confident about your inputs and want to optimize CPU usage, you can disable validation on a per-service basis:
+
+```javascript
+import { search, geocode, calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+// Disable validation for specific services
+await search({
+    query: "Eiffel Tower",
+    validateRequest: false
+});
+
+await geocode({
+    query: "Amsterdam",
+    validateRequest: false
+});
+```
+
+**Recommendation:** Keep validation enabled during development and testing phases. Only disable it in production when you're confident about input quality.
+
+## Service Lifecycle Hooks: onAPIRequest and onAPIResponse
+
+The SDK allows you to hook into the service request lifecycle for advanced debugging, logging, or analytics. You can use the `onAPIRequest` and `onAPIResponse` callbacks to observe outgoing requests and incoming responses.
+
+- **onAPIRequest**: Called immediately before the request is sent to the API.
+- **onAPIResponse**: Called as soon as the raw response is received from the API, before parsing.
+
+**Example:**
+
+```javascript
+await search({
+    query: "Eiffel Tower",
+    onAPIRequest: (apiRequest) => {
+        console.debug('API Request:', apiRequest);
+    },
+    onAPIResponse: (apiRequest, apiResponse) => {
+        console.debug('API Response:', apiResponse);
+    }
+});
+```
+
+These hooks are useful for debugging, analytics, or custom logging. They do not modify the request or response.
+
+## Global Service Configuration
+
+The `TomTomConfig` class provides centralized configuration management for all SDK services. This approach ensures consistent behavior across your application and simplifies configuration management.
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+
+TomTomConfig.instance.put({
+    apiKey: 'YOUR_API_KEY',
+    language: 'en-GB',                    // Default language for all responses
+    baseUrl: 'https://api.tomtom.com',    // Custom API base URL for enterprise
+    timeout: 10000,                       // Global request timeout (milliseconds)
+    validateRequest: false                // Global validation setting
+});
+```
+
+**Configuration Options:**
+- **apiKey**: Your TomTom API key (required)
+- **language**: ISO language code for response localization
+- **baseUrl**: Custom endpoint for enterprise or regional deployments
+- **timeout**: Maximum request duration before timeout
+- **validateRequest**: Global validation toggle
+
+## Comprehensive Error Handling
+
+Robust error handling is crucial for production applications. The SDK provides structured error responses that help you implement appropriate user feedback and fallback strategies:
+
+```javascript
+import { search } from '@tomtom-org/maps-sdk/services';
+
+try {
+    const results = await search({
+        query: "coffee",
+        position: [4.9041, 52.3676]
+    });
+
+    console.log(results);
+} catch (error) {
+    // Handle specific error types
+    if (error.status === 401) {
+        console.error('Authentication failed - check API key');
+        // Redirect to login or show API key configuration
+    } else if (error.status === 429) {
+        console.error('Rate limit exceeded - implement retry logic');
+        // Implement exponential backoff retry
+    } else if (error.status >= 500) {
+        console.error('Server error - implement fallback');
+        // Use cached data or alternative service
+    } else {
+        console.error('Request failed:', error.message);
+        // Show user-friendly error message
+    }
+}
+```
+
+**Common Error Codes:**
+- **400**: Bad Request - Invalid parameters or malformed request
+- **401**: Unauthorized - Invalid or missing API key
+- **403**: Forbidden - API key lacks required permissions
+- **429**: Too Many Requests - Rate limit exceeded
+- **500**: Internal Server Error - Service temporarily unavailable
+
+## Custom Timeouts and Retry Logic
+
+Different services may require different timeout configurations based on complexity and expected response times:
+
+```javascript
+// Short timeout for autocomplete (fast response expected)
+await autocompleteSearch({
+    query: "coffee",
+    position: [4.9041, 52.3676],
+    timeout: 3000 // 3 seconds
+});
+
+// Longer timeout for complex routing calculations
+await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    timeout: 15000 // 15 seconds
+});
+```
+
+## Advanced Customization
+
+For advanced use cases, the SDK exposes the [`customizeService`](https://docs.tomtom.com/maps-sdk-js/api-reference/variables/services.customizeService.html) object, which provides low-level access to the internal components of each service. This enables you to deeply customize how requests are built, how responses are parsed, and how the service logic operates.
+
+**When to use `customizeService`:**
+- You need to transform requests or responses beyond standard SDK options.
+- You want to integrate with custom API gateways, proxies, or non-standard endpoints.
+- You require custom validation, error handling, or logging at the service layer.
+- You need to adapt to new API versions or experimental features before official SDK support.
+
+**What does `customizeService` provide?**
+- **Request builders:** Functions to construct API requests with custom logic or parameters.
+- **Response parsers:** Functions to transform or post-process API responses.
+- **Templates:** Configuration objects that define service behavior.
+- **Validation schemas:** Rules for input parameter validation.
+
+**Example usage:**
+
+```typescript
+import { customizeService } from '@tomtom-org/maps-sdk/services';
+
+// Access the request builder for geocoding
+const { buildRequest } = customizeService.geocode;
+const request = buildRequest({
+  apiKey: 'your-api-key',
+  query: 'Amsterdam'
+});
+
+// Use the response parser for custom handling
+const { parseResponse } = customizeService.geocode;
+const rawApiResponse = await fetch(request.url);
+const parsedData = parseResponse(await rawApiResponse.json());
+```
+
+> **Note:** Most developers will not need to use `customizeService` directly. The standard service functions (like `geocode`, `search`, `calculateRoute`) are sufficient for typical use cases. Use advanced customization only when you need to modify internal service behavior.
+
+## Related Guides and Examples
+
+### Related Guides
+- **[Services Quickstart](./quickstart.mdx)** - Basic setup and usage patterns
+- **[Places Services Quickstart](./places/quickstart.mdx)** - Places-specific configuration
+- **[Routing Services Quickstart](./routing/quickstart.mdx)** - Routing-specific configuration
+- **[Core SDK Quickstart](../core/quickstart.mdx)** - Core configuration and setup
+
+### Configuration Examples
+- **[Map Config Playground](../../examples/map-config-playground/)** - Interactive configuration exploration
+- **[Traffic Config Playground](../../examples/traffic-config-playground/)** - Traffic service customization
+- **[Node.js Examples](../../examples/nodejs-geocode/)** - Server-side configuration patterns
+
+### Advanced Topics
+- **[Service Customization](https://docs.tomtom.com/maps-sdk-js/api-reference/variables/services.customizeService.html)** - API Reference for advanced service customization options
