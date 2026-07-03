@@ -125,8 +125,22 @@ export const SYSTEM_PROMPT_SECTIONS: Record<SystemPromptSection, string> = {
         "- If only partial, name what's missing and offer to proceed — let the user decide.\n" +
         '- If signals conflict, acknowledge it, state what you used, and why.',
     toolExecution:
-        '- Call context-independent tools in the same step (parallel execution).\n' +
-        `- Use a tool's own show / showOnMap to render results in the same step, rather than a separate follow-up display call.`,
+        "- Run independent tools in the same step (parallel); render results with the tool's own show / " +
+        'showOnMap in that step, not a follow-up call.\n' +
+        '- Ground every fact and effect in a tool, not your training data: anything a tool can supply or do ' +
+        '(an address, a count, a category, a list, any map change) is real ONLY when you call that tool — even ' +
+        'when the request reads like a general or explanatory question ("what categories represent X?"). Without ' +
+        'the call, never reply as if a result exists, the map changed, or an action is underway ("here are the ' +
+        'results", "Profiling X…", "the panel will show…"); the call IS the action, so make it.\n' +
+        '- The ONE exception is ANSWERING from what you already have: you may reply in prose, with no tool call, ' +
+        'from what is ALREADY in this conversation (earlier tool results, session state, what the user told you) ' +
+        'or about your own capabilities ("what can you do?"). Using what you have is fine; inventing what a tool ' +
+        'would return is not.\n' +
+        '- Needing MORE input is not that exception: for a clear, complete request, act with sensible defaults ' +
+        '(do not ask); when input is missing, implied, or ambiguous, your ONLY way to ask the user is to CALL ' +
+        'clarifyIntent. A plain-text request for the details — "I need…", "please provide…", "could you tell ' +
+        'me…", or a bare list of questions — without that call does NOT count; call clarifyIntent (it then states ' +
+        'whether to also write the questions as text).',
     sessionState: `- Results are stored as stable, append-only entries (e.g. \`places-3\`, \`routes-1\`) that every show / recall / process / analyse tool accepts. Call recallState to see what's loaded; always check it before referencing an entry id — never invent ids.`,
 };
 
@@ -173,7 +187,11 @@ const renderSection = (key: SystemPromptSection, body: string): string => {
  * @group Agent Toolkit
  */
 export const composeSystemPrompt = (overrides?: SystemPromptSectionOverrides): string =>
-    SECTION_ORDER.map((key) => renderSection(key, overrides?.[key] ?? SYSTEM_PROMPT_SECTIONS[key])).join('\n\n');
+    SECTION_ORDER.map((key) => ({ key, body: overrides?.[key] ?? SYSTEM_PROMPT_SECTIONS[key] }))
+        // Drop empty-bodied sections (e.g. a consumer overriding one to '') so they leave no dangling heading.
+        .filter(({ body }) => body.trim().length > 0)
+        .map(({ key, body }) => renderSection(key, body))
+        .join('\n\n');
 
 /**
  * The base system prompt that teaches the LLM how to use the agent toolkit tools.
@@ -234,11 +252,10 @@ export type BuildSystemPromptOptions = {
  * @ignore
  */
 export const buildSystemPrompt = ({ customPrompt, prefix, suffix }: BuildSystemPromptOptions = {}): string => {
-    // A full string replacement wins outright — the caller owns the whole prompt, so prefix/suffix are ignored.
+    // A full string replacement owns the whole prompt; everything else is ignored.
     if (typeof customPrompt === 'string') {
         return customPrompt;
     }
-    // Section overrides (or none) compose onto the base; an optional prefix prepends and suffix appends.
     const base = customPrompt ? composeSystemPrompt(customPrompt) : BASE_SYSTEM_PROMPT;
     const withSuffix = suffix ? `${base}\n\nADDITIONAL INSTRUCTIONS:\n${suffix}` : base;
     return prefix ? `${prefix}\n\n${withSuffix}` : withSuffix;

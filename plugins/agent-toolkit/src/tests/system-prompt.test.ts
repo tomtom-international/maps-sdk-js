@@ -18,7 +18,7 @@ const ALL_SECTIONS: SystemPromptSection[] = [
 ];
 
 describe('SYSTEM_PROMPT_SECTIONS', () => {
-    it('exposes every named section as a non-empty string', () => {
+    it('exposes every section as a non-empty string', () => {
         for (const key of ALL_SECTIONS) {
             expect(SYSTEM_PROMPT_SECTIONS[key]).toBeTypeOf('string');
             expect(SYSTEM_PROMPT_SECTIONS[key].length).toBeGreaterThan(0);
@@ -47,6 +47,10 @@ describe('composeSystemPrompt', () => {
         expect(prompt).toContain(`SESSION STATE:\n${SYSTEM_PROMPT_SECTIONS.sessionState}`);
         // identity opens the prompt with no heading.
         expect(prompt.startsWith(SYSTEM_PROMPT_SECTIONS.identity)).toBe(true);
+    });
+
+    it('omits a section whose body is empty — no dangling heading', () => {
+        expect(composeSystemPrompt({ responseFormatting: '' })).not.toContain('RESPONSE FORMATTING');
     });
 
     it('replaces only the overridden section and keeps the heading without the caller repeating it', () => {

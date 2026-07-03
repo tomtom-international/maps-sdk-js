@@ -21,7 +21,13 @@
  * label / entryId / operation, the description, the result validator and the executor.
  */
 
-import type { CommonPlaceProps, Places, PolygonFeature } from '@tomtom-org/maps-sdk/core';
+import {
+    type CommonPlaceProps,
+    type Place,
+    type Places,
+    type PolygonFeature,
+    placeTypes,
+} from '@tomtom-org/maps-sdk/core';
 import type { PlaceConnectionDisplay } from '@tomtom-org/maps-sdk/map';
 import * as turf from '@turf/turf';
 import type { FeatureCollection as GeoJSONFeatureCollection, GeoJsonProperties } from 'geojson';
@@ -176,8 +182,11 @@ export const buildProcessDataCodeDoc = (
         '`places` / `geometries` / `fitOnMap` / `byod` must be present. ' +
         '`places` (with optional attached `geometries`), standalone `geometries`, and `byod` are MUTUALLY ' +
         'EXCLUSIVE — only one is written per call, others are dropped. `fitOnMap` composes with any of them.\n\n' +
-        '• `places: Places` — writes a NEW places entry. Filters/merges/subsets of `places.features`, or computed point ' +
-        'features (must conform to the Place schema).\n' +
+        '• `places: Places` — writes a NEW places entry. Filters/merges/subsets of the input `placesByEntry[id].features`, or computed ' +
+        'point features that conform to the Place schema. Output is validated (validatePlaces): each place must be a Point Feature with a ' +
+        '`properties.type` and a display name at its schema path, else it is rejected with a fixable error. When transforming an EXISTING ' +
+        'place, spread it so its `id` is kept: `{ ...place, properties: { ...place.properties, poi: { ...place.properties.poi, name } } }`. ' +
+        'A deterministic id is minted only for a feature that carries none (a freshly computed point).\n' +
         '• `placeConnections: { from, to, id? }[]` — lines between output places (endpoints: Place or place id). ' +
         "Requires `places`. Drawn on the new entry's PlacesModule.\n" +
         '• `geometries: PolygonFeature[]` — polygons (Polygon/MultiPolygon, stable `id` recommended). ' +
@@ -344,6 +353,73 @@ const validateGeometries = (raw: unknown): { value: PolygonFeature[] } | { error
     return { value: validated };
 };
 
+const isNonEmptyString = (value: unknown): value is string => typeof value === 'string' && value.trim().length > 0;
+
+const isValidLngLat = (coordinates: unknown): coordinates is [number, number] => {
+    if (!Array.isArray(coordinates) || coordinates.length < 2) return false;
+    const [lng, lat] = coordinates;
+    return Number.isFinite(lng) && Number.isFinite(lat) && Math.abs(lng) <= 180 && Math.abs(lat) <= 90;
+};
+
+// We mint deterministic ids from the coordinates, and use the index as the disambiguator which is unique
+// This ensures places that share names/coordinates do no share an id. Mirrors the incident clustering id
+const derivedPlaceId = (lng: number, lat: number, index: number): string =>
+    `derived-${lng.toFixed(6)}_${lat.toFixed(6)}-${index}`;
+
+// The LLM-generated code can compute any features, but when it returns a feature as `places`, we validate and constrain it to the
+// canonical shape from `places-schema-doc`
+export const validatePlaces = (raw: unknown): { value: Places } | { error: string } => {
+    if (!isFeatureCollectionLike<Places>(raw)) {
+        return { error: '`places` must be a `Places` FeatureCollection of Point features.' };
+    }
+
+    const seenIds = new Map<string, number>();
+    for (let i = 0; i < raw.features.length; i++) {
+        const feature = raw.features[i] as Partial<Place> | undefined;
+        const geometry = feature?.geometry;
+        if (!geometry || geometry.type !== 'Point' || !isValidLngLat(geometry.coordinates)) {
+            return {
+                error: `\`places[${i}]\` must be a Point Feature with valid [lng, lat] coordinates (lng ∈ [-180,180], lat ∈ [-90,90]).`,
+            };
+        }
+        const properties = feature.properties as
+            | { type?: unknown; poi?: { name?: unknown }; address?: { freeformAddress?: unknown } }
+            | undefined;
+
+        const label = [properties?.poi?.name, properties?.address?.freeformAddress].find(isNonEmptyString);
+        if (!label) {
+            return {
+                error: `\`places[${i}]\` needs a display name in \`properties.poi.name\` (POIs) or \`properties.address.freeformAddress\` (streets, intersections, addresses).`,
+            };
+        }
+        if (
+            !isNonEmptyString(properties?.type) ||
+            !placeTypes.includes(properties.type as (typeof placeTypes)[number])
+        ) {
+            return {
+                error: `\`places[${i}].properties.type\` is required and must be one of: ${placeTypes.join(', ')}.`,
+            };
+        }
+
+        // Preserve a real id (a source place, or one carried through by spreading the source); mint a
+        // deterministic one only when the feature carries none, so the required features[].id holds.
+        if (!isNonEmptyString(feature.id)) {
+            const [lng, lat] = geometry.coordinates;
+            feature.id = derivedPlaceId(lng, lat, i);
+        }
+
+        // We reject duplicate ids for model-authored duplicates as minted ids are index-keyed and unique
+        const priorIndex = seenIds.get(feature.id);
+        if (priorIndex !== undefined) {
+            return {
+                error: `\`places[${i}]\` duplicates id "${feature.id}" of \`places[${priorIndex}]\`; give each place a distinct id, or omit it so a unique one is derived.`,
+            };
+        }
+        seenIds.set(feature.id, i);
+    }
+    return { value: raw };
+};
+
 // `validateField` collapses the "either the optional field is missing OR it passes the shape check"
 // pattern into one helper, so `validateProcessOutput` stays under the per-function cognitive
 // complexity cap (each per-field block was a nested `if` previously). Returning `value: undefined`
@@ -397,13 +473,11 @@ const validateProcessOutput = (raw: unknown): ProcessResult | string => {
 
     const result: ProcessResult = {};
 
-    const places = validateField<Places>(
-        candidate.places,
-        isFeatureCollectionLike<Places>,
-        '`places` must be a `Places` FeatureCollection of Point features.',
-    );
-    if ('error' in places) return places.error;
-    result.places = nonEmptyFeatureCollection(places.value);
+    if (candidate.places !== undefined) {
+        const places = validatePlaces(candidate.places);
+        if ('error' in places) return places.error;
+        result.places = nonEmptyFeatureCollection(places.value);
+    }
 
     const placeConnections = validateField(
         candidate.placeConnections,

@@ -1,5 +1,42 @@
 # Changelog
 
+## [0.4.3](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-agent-toolkit-v0.4.2...maps-sdk-plugin-agent-toolkit-v0.4.3) (2026-07-03)
+
+
+### Bug Fixes
+
+* **agent-toolkit:** unblock npm publishing of the plugin ([#1962](https://github.com/tomtom-international/maps-sdk-js/issues/1962)) ([b0ae964](https://github.com/tomtom-international/maps-sdk-js/commit/b0ae9647970ab03e3ed6906b529bdb6c7aba6b3a))
+
+## [0.4.2](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-agent-toolkit-v0.4.1...maps-sdk-plugin-agent-toolkit-v0.4.2) (2026-07-03)
+
+
+### Features
+
+* **examples:** agent telemetry and Azure Monitor observability dashboard ([#1936](https://github.com/tomtom-international/maps-sdk-js/issues/1936)) ([92893fe](https://github.com/tomtom-international/maps-sdk-js/commit/92893febbdcb6e1c1617867d1de3f0115c95815b))
+
+
+### Bug Fixes
+
+* **agent-toolkit:** accept places entry ids in where.placeIds ([#1935](https://github.com/tomtom-international/maps-sdk-js/issues/1935)) ([5cf934d](https://github.com/tomtom-international/maps-sdk-js/commit/5cf934ddcabdc9c48ead7c1e6cb530e7fa57a2e2))
+* **agent-toolkit:** guard setMapStandardStyle against accidental style changes ([#1951](https://github.com/tomtom-international/maps-sdk-js/issues/1951)) ([eed6211](https://github.com/tomtom-international/maps-sdk-js/commit/eed62110b17efb7fb8b894f3433c97760a68ee5f))
+* **agent-toolkit:** prefer dedicated tools over the MapLibre escape hatch ([#1954](https://github.com/tomtom-international/maps-sdk-js/issues/1954)) ([a67a548](https://github.com/tomtom-international/maps-sdk-js/commit/a67a54850c8ac25ed2624e3478137bc16a1d63c5))
+* **agent-toolkit:** validate processData places and trace derived ids ([#1949](https://github.com/tomtom-international/maps-sdk-js/issues/1949)) ([f820d53](https://github.com/tomtom-international/maps-sdk-js/commit/f820d535f3b75f2467bed380b78407c87f243cad))
+
+## [0.4.1](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-agent-toolkit-v0.4.0...maps-sdk-plugin-agent-toolkit-v0.4.1) (2026-06-30)
+
+
+### Features
+
+* **agent-toolkit:** expose sandbox data-tool inputs as per-entry records only ([#1890](https://github.com/tomtom-international/maps-sdk-js/issues/1890)) ([ae53be5](https://github.com/tomtom-international/maps-sdk-js/commit/ae53be54707aaa063d4a948d42226ae35761a2da))
+* **examples:** unify the agent example UI + clarifyIntent survey wizard ([#1923](https://github.com/tomtom-international/maps-sdk-js/issues/1923)) ([d1b3e05](https://github.com/tomtom-international/maps-sdk-js/commit/d1b3e0561134df7e3330ff04f360c1419a59d5ab))
+* **toolkit:** add clarifyIntent tool and add alwaysActive flag to tools ([#1883](https://github.com/tomtom-international/maps-sdk-js/issues/1883)) ([112a58a](https://github.com/tomtom-international/maps-sdk-js/commit/112a58abf731faed3df14618f41f0a63ddf57ed1))
+* **traffic-agent:** watched-area highlight, grouped Event tracker, summary follows focus ([#1914](https://github.com/tomtom-international/maps-sdk-js/issues/1914)) ([54476ec](https://github.com/tomtom-international/maps-sdk-js/commit/54476ec3415956a960f6013243cf1640f5480c9b))
+
+
+### Bug Fixes
+
+* **agent-toolkit:** register an empty entry for zero-incident results ([#1924](https://github.com/tomtom-international/maps-sdk-js/issues/1924)) ([aed58c2](https://github.com/tomtom-international/maps-sdk-js/commit/aed58c2be416ddfe3369fc6ac8f9991dcbb982a4))
+
 ## [0.4.0](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-agent-toolkit-v0.3.1...maps-sdk-plugin-agent-toolkit-v0.4.0) (2026-06-24)
 
 

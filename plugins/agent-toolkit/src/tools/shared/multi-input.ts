@@ -10,8 +10,8 @@
  * explicitly lists every kind it wants to consider.
  *
  * The helper resolves every requested kind, builds the sandbox-facing
- * `merged + byEntry` views, and returns the resolved entries so the analyse
- * path can attach an analysis to each contributing entry afterwards.
+ * per-entry (`<kind>ByEntry`) views, and returns the resolved entries so the
+ * analyse path can attach an analysis to each contributing entry afterwards.
  */
 
 import type { Place, PolygonFeature, Route, TrafficAreaAnalytics, TrafficIncident } from '@tomtom-org/maps-sdk/core';
@@ -31,7 +31,7 @@ import type {
     TrafficAreaAnalyticsEntry,
     TrafficIncidentsEntry,
 } from '../../state';
-import { clusterIncidents } from '../../state/traffic-incidents/clustering';
+import { clusterIncidents } from '../../state';
 import type { EntryDataKind, ToolState } from '../../types';
 import type { GeometriesId } from './geometries-id';
 import { buildSandboxCodePrompt } from './sandbox-code';
@@ -39,7 +39,11 @@ import { type AffectedEntry, collectInputGeometries, type SkippedSource } from '
 
 type FeatureCollection<F> = { type: 'FeatureCollection'; features: F[] };
 
-/** Inputs the LLM passes through the tool schema. All optional, but at least one must be set. */
+/**
+ * Inputs the LLM passes through the tool schema. All optional, but at least one must be set.
+ *
+ * @ignore
+ */
 export type MultiInputIds = {
     placesEntryIDs?: readonly string[];
     routesEntryIDs?: readonly string[];
@@ -49,7 +53,11 @@ export type MultiInputIds = {
     byodEntryIDs?: readonly string[];
 };
 
-/** Resolved entries, kept for the attach step in analyseData. Empty arrays for kinds the caller didn't request. */
+/**
+ * Resolved entries, kept for the attach step in analyseData. Empty arrays for kinds the caller didn't request.
+ *
+ * @ignore
+ */
 export type ResolvedEntries = {
     places: PlacesEntry[];
     routes: RoutesEntry[];
@@ -58,53 +66,83 @@ export type ResolvedEntries = {
     byod: BYODEntry[];
 };
 
-/** Sandbox-facing inputs. Each field is `undefined` when its kind wasn't requested. */
+/** Newest `timestamp` across every resolved source entry, or undefined when none carry one. The
+ * canonical `sampledAt` for a recurring sandbox run over these inputs. */
+export const latestTimestamp = (resolved: ResolvedEntries): number | undefined => {
+    let latest: number | undefined;
+    for (const group of Object.values(resolved)) {
+        for (const entry of group) {
+            const timestamp = (entry as { timestamp?: unknown }).timestamp;
+            if (typeof timestamp === 'number' && (latest === undefined || timestamp > latest)) latest = timestamp;
+        }
+    }
+    return latest;
+};
+
+/**
+ * Sandbox-facing inputs. Each kind is exposed as a single `<kind>ByEntry` record keyed by the entry id
+ * the caller passed in `<kind>EntryIDs`; the field is `undefined` when its kind wasn't requested. There
+ * is no flat/merged companion — code accesses one entry by id (`placesByEntry["places-2"]`) or merges
+ * across entries explicitly with `Object.values(...)`, so it always stays aware of which entries it spans.
+ *
+ * @ignore
+ */
 export type SandboxInputs = {
-    places: FeatureCollection<Place> | undefined;
-    placesByEntry: Record<string, FeatureCollection<Place>> | undefined;
-    routes: FeatureCollection<Route> | undefined;
-    routesByEntry: Record<string, FeatureCollection<Route>> | undefined;
-    incidents: TrafficIncident[] | undefined;
-    incidentsByEntry: Record<string, TrafficIncident[]> | undefined;
-    geometries: PolygonFeature[] | undefined;
     /**
-     * Merged TrafficAreaAnalytics FeatureCollection — every feature is a tile/hex region with
-     * the metric properties from the SDK (`congestionLevel`, `speed`, `travelTime`, …). When
-     * multiple entries are requested, their features are concatenated; `trafficAreaAnalyticsByEntry`
-     * keeps them separate.
+     * Per-entry places, keyed by entry id. Each value is a FeatureCollection of that one entry's places.
      */
-    trafficAreaAnalytics: TrafficAreaAnalytics | undefined;
+    placesByEntry: Record<string, FeatureCollection<Place>> | undefined;
+    /**
+     * Per-entry routes, keyed by entry id. Each value is a FeatureCollection of that one entry's routes.
+     */
+    routesByEntry: Record<string, FeatureCollection<Route>> | undefined;
+    /**
+     * Per-entry incidents, keyed by entry id. Each value is a plain array of that one entry's incidents.
+     */
+    incidentsByEntry: Record<string, TrafficIncident[]> | undefined;
+    /**
+     * Per-source polygons collected from every requested source (place / places / ranges / customGeometries).
+     * Keyed by the tagged source `${kind}:${id}` (NOT a bare id: the same id can recur across kinds, e.g. a
+     * `place` vs a `customGeometries` entry), so the kind stays unambiguous. Each feature also self-describes
+     * its origin in `properties._source` (`{ kind, id }`).
+     */
+    geometriesByEntry: Record<string, PolygonFeature[]> | undefined;
+    /**
+     * Per-entry TrafficAreaAnalytics, keyed by entry id. Each value is a full FeatureCollection whose features
+     * are tile/hex regions carrying the SDK metric properties (`congestionLevel`, `speed`, `travelTime`, …)
+     * and whose collection-level `properties` (metrics list, date range) stay intact per entry.
+     */
     trafficAreaAnalyticsByEntry: Record<string, TrafficAreaAnalytics> | undefined;
     /**
-     * Merged BYOD FeatureCollection. Each requested entry contributes its features; mixed
-     * geometry types are normal (BYOD layers can be Point / LineString / Polygon). When multiple
-     * entries are requested they're concatenated; `byodByEntry` keeps them separate.
+     * Per-entry BYOD, keyed by entry id. Each value is a FeatureCollection; mixed geometry types are normal
+     * (BYOD layers can be Point / LineString / Polygon).
      */
-    byod: GeoJSONFeatureCollection | undefined;
     byodByEntry: Record<string, GeoJSONFeatureCollection> | undefined;
 };
 
-/** Geometries metadata — only populated when `geometriesEntryIDs` was passed. */
+/**
+ * Geometries metadata — only populated when `geometriesEntryIDs` was passed.
+ *
+ * @ignore
+ */
 export type GeometriesMeta = {
     affectedEntries: AffectedEntry[];
     sourceIds: GeometriesId[];
     skipped: SkippedSource[];
 };
 
+/**
+ * Internal result of {@link prepareMultiInputs} — the resolved entries, the sandbox-facing views, and
+ * the geometries metadata, bundled for the analyse / process tools.
+ *
+ * @ignore
+ */
 export type PreparedInputs = {
     resolved: ResolvedEntries;
     sandbox: SandboxInputs;
     geometries: GeometriesMeta;
 };
 
-/**
- * Resolve every requested input kind, build sandbox views, and surface the
- * resolved entries to the caller. The caller (analyseData / processData) is
- * responsible for enforcing "at least one input must be set" via the zod
- * schema; this helper enforces it as a safety net.
- *
- * @ignore
- */
 // Per-id-array hint used by the "at least one input must be set" guard. Kept inline so the
 // guard's error message stays accurate when new kinds get added.
 const ID_FIELDS = [
@@ -162,6 +200,13 @@ const resolveAllSlices = (ids: MultiInputIds, state: ToolState): { value: Resolv
     };
 };
 
+/**
+ * Resolve every requested input kind, build the sandbox views, and surface the resolved entries to the
+ * caller. The caller (analyseData / processData) enforces "at least one input must be set" via the zod
+ * schema; this helper enforces it again as a safety net.
+ *
+ * @ignore
+ */
 export const prepareMultiInputs = async (
     ids: MultiInputIds,
     state: ToolState,
@@ -177,13 +222,6 @@ export const prepareMultiInputs = async (
 
     const resolved = resolveAllSlices(ids, state);
     if ('error' in resolved) return resolved;
-    const {
-        places: placesEntries,
-        routes: routesEntries,
-        incidents: incidentsEntries,
-        trafficAreaAnalytics: trafficAreaAnalyticsEntries,
-        byod: byodEntries,
-    } = resolved.value;
 
     let geometries: PolygonFeature[] | undefined;
     let geometriesMeta: GeometriesMeta = { affectedEntries: [], sourceIds: [], skipped: [] };
@@ -200,70 +238,58 @@ export const prepareMultiInputs = async (
 
     return {
         value: {
-            resolved: {
-                places: placesEntries,
-                routes: routesEntries,
-                incidents: incidentsEntries,
-                trafficAreaAnalytics: trafficAreaAnalyticsEntries,
-                byod: byodEntries,
-            },
-            sandbox: {
-                places: placesEntries.length
-                    ? { type: 'FeatureCollection', features: placesEntries.flatMap((e) => e.places) }
-                    : undefined,
-                placesByEntry: placesEntries.length
-                    ? Object.fromEntries(
-                          placesEntries.map((e) => [e.id, { type: 'FeatureCollection', features: [...e.places] }]),
-                      )
-                    : undefined,
-                routes: routesEntries.length
-                    ? { type: 'FeatureCollection', features: routesEntries.flatMap((e) => e.data.features) }
-                    : undefined,
-                routesByEntry: routesEntries.length
-                    ? Object.fromEntries(
-                          routesEntries.map((e) => [
-                              e.id,
-                              {
-                                  type: 'FeatureCollection',
-                                  features: [...e.data.features],
-                              },
-                          ]),
-                      )
-                    : undefined,
-                incidents: incidentsEntries.length ? incidentsEntries.flatMap((e) => e.data) : undefined,
-                incidentsByEntry: incidentsEntries.length
-                    ? Object.fromEntries(incidentsEntries.map((e) => [e.id, [...e.data]]))
-                    : undefined,
-                geometries,
-                trafficAreaAnalytics: trafficAreaAnalyticsEntries.length
-                    ? mergeTrafficAreaAnalytics(trafficAreaAnalyticsEntries.map((e) => e.data))
-                    : undefined,
-                trafficAreaAnalyticsByEntry: trafficAreaAnalyticsEntries.length
-                    ? Object.fromEntries(trafficAreaAnalyticsEntries.map((e) => [e.id, e.data]))
-                    : undefined,
-                byod: byodEntries.length
-                    ? {
-                          type: 'FeatureCollection',
-                          features: byodEntries.flatMap((e) => e.data.features),
-                      }
-                    : undefined,
-                byodByEntry: byodEntries.length
-                    ? Object.fromEntries(byodEntries.map((e) => [e.id, e.data]))
-                    : undefined,
-            },
+            resolved: resolved.value,
+            sandbox: buildSandboxInputs(resolved.value, geometries),
             geometries: geometriesMeta,
         },
     };
 };
 
-// Concatenate features from N TrafficAreaAnalytics entries into a single FeatureCollection.
-// Collection-level `properties` (metrics list, date range) are taken from the first entry —
-// the LLM should treat the merged collection as feature-level when ids span different requests.
-const mergeTrafficAreaAnalytics = (entries: readonly TrafficAreaAnalytics[]): TrafficAreaAnalytics => ({
-    type: 'FeatureCollection',
-    properties: entries[0].properties,
-    features: entries.flatMap((e) => e.features),
+// Assemble the sandbox-facing views from the resolved entries + collected geometries. Pulled out of
+// `prepareMultiInputs` so its cognitive complexity stays under the SonarQube cap (same reason as
+// `resolveAllSlices`). Every kind is a single `<kind>ByEntry` record keyed by entry id — there is no
+// flat/merged companion. `geometries` is the one kind not resolved per-slice: its per-source view is a
+// partition of the collected flat list by `_source` (see partitionGeometriesBySource).
+const buildSandboxInputs = (resolved: ResolvedEntries, geometries: PolygonFeature[] | undefined): SandboxInputs => ({
+    placesByEntry: resolved.places.length
+        ? Object.fromEntries(resolved.places.map((e) => [e.id, { type: 'FeatureCollection', features: [...e.data] }]))
+        : undefined,
+    routesByEntry: resolved.routes.length
+        ? Object.fromEntries(
+              resolved.routes.map((e) => [e.id, { type: 'FeatureCollection', features: [...e.data.features] }]),
+          )
+        : undefined,
+    incidentsByEntry: resolved.incidents.length
+        ? Object.fromEntries(resolved.incidents.map((e) => [e.id, [...e.data]]))
+        : undefined,
+    geometriesByEntry: partitionGeometriesBySource(geometries),
+    trafficAreaAnalyticsByEntry: resolved.trafficAreaAnalytics.length
+        ? Object.fromEntries(resolved.trafficAreaAnalytics.map((e) => [e.id, e.data]))
+        : undefined,
+    byodByEntry: resolved.byod.length ? Object.fromEntries(resolved.byod.map((e) => [e.id, e.data])) : undefined,
 });
+
+// Partition the collected polygons into a per-source view, keyed by the tagged source `${kind}:${id}`.
+// The geometries slot is polymorphic: one input (`geometriesEntryIDs`) spanning `place` (a single place
+// id — not an entry in any slice), `places` (expands to many footprints), `ranges`, and `customGeometries`.
+// So unlike every other kind there's no single slice whose `.entries` map to it — it can't be resolved
+// per-entry the way places/routes/etc. are. The one thing common to all four sources is the `_source` tag
+// `collectInputGeometries` stamps on each feature, so we group the flat list by that. The composite key is
+// unambiguous: the same id can recur across kinds, so a bare id would collide.
+const partitionGeometriesBySource = (
+    geometries: readonly PolygonFeature[] | undefined,
+): Record<string, PolygonFeature[]> | undefined => {
+    if (!geometries?.length) return undefined;
+    const byEntry: Record<string, PolygonFeature[]> = {};
+    for (const feature of geometries) {
+        const source = feature.properties?._source as GeometriesId | undefined;
+        const key = source ? `${source.kind}:${source.id}` : 'unknown';
+        const group = byEntry[key] ?? [];
+        group.push(feature);
+        byEntry[key] = group;
+    }
+    return byEntry;
+};
 
 const resolveSliceEntries = <E extends { id: string }>(
     ids: readonly string[] | undefined,
@@ -291,11 +317,14 @@ const resolveSliceEntries = <E extends { id: string }>(
  *
  * @ignore
  */
-export const CROSS_KIND_OPS_DOC =
-    'CROSS-KIND OPS — `turf` and `h3` operate on EVERY feature regardless of which input slot it came from. ' +
-    'You can freely combine `places` (Points), `routes` (LineStrings), `incidents` (Point or LineString), ' +
-    '`geometries` (Polygon / MultiPolygon), and `trafficAreaAnalytics` (Polygon tiles with `properties` like ' +
-    '`congestionLevel` / `speed` / `travelTime` / `freeFlowSpeed`) in the same call. Common bridges:\n' +
+const CROSS_KIND_OPS_DOC =
+    'CROSS-KIND OPS — `turf` and `h3` operate on EVERY feature regardless of which entry/kind it came from. ' +
+    'You can freely combine features from `placesByEntry` (Points), `routesByEntry` (LineStrings), ' +
+    '`incidentsByEntry` (Point or LineString), `geometriesByEntry` (Polygon / MultiPolygon), and ' +
+    '`trafficAreaAnalyticsByEntry` (Polygon tiles with `properties` like `congestionLevel` / `speed` / ' +
+    '`travelTime` / `freeFlowSpeed`) in the same call. Pull features out of a record first — one entry ' +
+    '`placesByEntry[id].features`, or all entries `Object.values(placesByEntry).flatMap(fc => fc.features)` ' +
+    '(`Object.values(incidentsByEntry).flat()` for the array kinds). Common bridges:\n' +
     '• Point ↔ LineString — `turf.pointToLineDistance(point, lineFeature, { units: "meters" })`, ' +
     '`turf.nearestPointOnLine(line, point)`.\n' +
     '• Point ↔ Polygon — `turf.booleanPointInPolygon(point, poly)`, ' +
@@ -304,25 +333,53 @@ export const CROSS_KIND_OPS_DOC =
     '`turf.lineSplit(line, poly)`.\n' +
     '• Polygon ↔ Polygon — `turf.union/intersect/difference(turf.featureCollection([a, b]))` (Turf v7 takes a single collection).\n' +
     '• Point/LineString ↔ trafficAreaAnalytics tile — `turf.booleanPointInPolygon(p, tile)` for points; ' +
-    '`turf.lineIntersect(routeLine, tile)` for routes; iterate `trafficAreaAnalytics.features` to find which ' +
-    'tile a place/route segment falls into and read its metric (`tile.properties.congestionLevel`, etc.).\n' +
+    "`turf.lineIntersect(routeLine, tile)` for routes; iterate a tile collection's `.features` " +
+    '(e.g. `trafficAreaAnalyticsByEntry[id].features`) to find which tile a place/route segment falls into ' +
+    'and read its metric (`tile.properties.congestionLevel`, etc.).\n' +
     '• Buffer to bridge kinds — `turf.buffer(anyFeature, meters/1000, { units: "kilometers" })` turns a point or ' +
     'line into a polygon you can then filter against.\n' +
     '• Bbox of anything — `turf.bbox(featureOrCollection)`.\n' +
     '• Centroid for Point↔shape distance — `turf.centroid(polygonOrLine).geometry.coordinates`.\n' +
     '• h3 — `h3.latLngToCell(lat, lng, res)` for any Point; `h3.polygonToCells(poly.geometry.coordinates, res)` ' +
     'for any Polygon; for a LineString iterate `geometry.coordinates` and bin each `[lng, lat]`.\n' +
-    'Note: arguments to turf functions are GeoJSON Features — pass the whole feature (`places.features[i]`, ' +
-    '`routes.features[0]`, `geometries[i]`, `incidents[i]`, `trafficAreaAnalytics.features[i]`), not the bare ' +
+    'Note: arguments to turf functions are GeoJSON Features — pass the whole feature ' +
+    '(`placesByEntry[id].features[i]`, `routesByEntry[id].features[0]`, `geometriesByEntry[key][i]`, ' +
+    '`incidentsByEntry[id][i]`, `trafficAreaAnalyticsByEntry[id].features[i]`), not the bare ' +
     '`geometry.coordinates` (a few helpers accept coords but most expect Features). Always check the function ' +
     'signature at https://turfjs.org/docs/.';
+
+/**
+ * Describes the per-entry input shape, surfaced by {@link buildSandboxToolsDoc} for every sandbox tool.
+ * Each requested kind is a single `<kind>ByEntry` record keyed by entry id — there is no flat/merged
+ * companion, so the model must access one entry by id or merge across entries explicitly. Spelling out
+ * the merge idioms keeps the model from assuming a bare `places`/`routes` array exists (it doesn't).
+ *
+ * @ignore
+ */
+export const BY_ENTRY_VIEWS_DOC =
+    'INPUTS (per-entry) — each requested kind is an object keyed by the id you passed in `<kind>EntryIDs`: ' +
+    '`placesByEntry`, `routesByEntry`, `incidentsByEntry`, `trafficAreaAnalyticsByEntry`, `byodByEntry`. ' +
+    "There is NO flat `places`/`routes`/… — only these per-entry records. Each value is that one entry's data: " +
+    'a FeatureCollection (`placesByEntry`, `routesByEntry`, `byodByEntry`), a TrafficAreaAnalytics ' +
+    'FeatureCollection (`trafficAreaAnalyticsByEntry`), or a plain array (`incidentsByEntry`).\n' +
+    '• One entry — index by id: `placesByEntry["places-2"]` (a FeatureCollection → `turf.bbox(placesByEntry["places-2"])`).\n' +
+    '• All requested entries of a kind — merge with `Object.values(...)`: ' +
+    '`Object.values(placesByEntry).flatMap(fc => fc.features)` for FeatureCollection kinds (wrap with ' +
+    '`turf.featureCollection(...)` before passing to turf), `Object.values(incidentsByEntry).flat()` for arrays.\n' +
+    '• Per-entry / comparative work ("count per entry", "which route set is faster") — iterate the record\'s ' +
+    'entries (`Object.entries(routesByEntry)`) so results stay labelled by source id.\n' +
+    '`geometriesByEntry` is the odd one out: keyed by the tagged source `${kind}:${id}` (e.g. ' +
+    '`"customGeometries:abc"`) rather than a bare id, since geometries mixes sources — each feature also ' +
+    'carries `properties._source` (`{ kind, id }`).';
 
 // `routeUtils` namespace — SDK route section/progress helpers, injected into BOTH
 // analyseData and processData so any routes input can be sliced/measured without
 // re-implementing it. The functions depend only on `@turf/turf` (available in the
 // worker as `self.turf`) and pure local helpers, so the set is portable into the
 // iframe-worker sandbox (see `sandbox/sdk-utils-worker-entry.ts`).
-/** @ignore */
+/**
+ * @ignore
+ */
 export const routeUtils = {
     calculateProgressAtRoutePoint,
     getCoordinateAtRouteProgress,
@@ -332,28 +389,29 @@ export const routeUtils = {
     getSectionBBox,
 } as const;
 
-/** Shared `routeUtils` reference doc, surfaced by both tools when `routes` is in scope. @ignore */
-export const ROUTE_UTILS_DOC =
-    '`routeUtils` (route section / progress helpers, only useful when `routesEntryIDs` is set; ' +
-    'for a plain bounding box use `turf.bbox(route)`):\n' +
+/**
+ * Shared `routeUtils` reference doc, surfaced by both tools when `routes` is in scope. @ignore
+ */
+const ROUTE_UTILS_DOC =
+    '`routeUtils` (route section / progress helpers, only useful when `routesEntryIDs` is set; each takes a ' +
+    'single route feature, e.g. `routesByEntry[id].features[0]`; for a plain bounding box use `turf.bbox(route)`):\n' +
     '• `getSectionBBox(route, section)` → `[W,S,E,N]`. Sections at `route.properties.sections.<type>`.\n' +
     '• `getRouteProgressForSection(route, section)` / `getRouteProgressBetween(route, startIdx, endIdx)`.\n' +
     '• `calculateProgressAtRoutePoint(route, pathIndex)`.\n' +
     '• `getCoordinateAtRouteProgress(route, query)` — `query`: `{ traveledDistanceInMeters }` | `{ traveledTimeInSeconds }` | `{ clockTime: Date }`.\n' +
     '• `getProgressAtNearestRoutePoint(route, { lng, lat })` — snap a point to the line.';
 
-/** Names injected into the sandbox by analyseData / processData, in fixed order. */
+/**
+ * Names injected into the sandbox by analyseData / processData, in fixed order.
+ *
+ * @ignore
+ */
 export const MULTI_INPUT_SANDBOX_PARAMS = [
-    'places',
     'placesByEntry',
-    'routes',
     'routesByEntry',
-    'incidents',
     'incidentsByEntry',
-    'geometries',
-    'trafficAreaAnalytics',
+    'geometriesByEntry',
     'trafficAreaAnalyticsByEntry',
-    'byod',
     'byodByEntry',
     'h3',
     'turf',
@@ -361,10 +419,13 @@ export const MULTI_INPUT_SANDBOX_PARAMS = [
     'cluster',
 ] as const;
 
-/** Shared `cluster` reference doc, surfaced by both tools when `incidents` is in scope. @ignore */
-export const CLUSTER_PRIMITIVE_DOC =
+/**
+ * Shared `cluster` reference doc, surfaced by both tools when `incidents` is in scope. @ignore
+ */
+const CLUSTER_PRIMITIVE_DOC =
     '`cluster(incidents, params?, previous?, now?)` — DBSCAN clustering with stable IDs + trends (only ' +
-    'useful with `incidentsEntryIDs`; filter incidents first, then cluster).\n' +
+    'useful with `incidentsEntryIDs`; `incidents` is an array — get it via ' +
+    '`Object.values(incidentsByEntry).flat()` or one entry `incidentsByEntry[id]`; filter first, then cluster).\n' +
     '• `params`: `{ eps?, minMembers?, maxClusters?, preFilter? }` — `eps` km radius (default 0.5; ' +
     '0.3–0.5 urban, 1+ highways), `minMembers` (default 3), `maxClusters` top-N by delay (default 6).\n' +
     '• Returns `{ groups: [{ id, centroid, memberIds, size, totalDelaySeconds, peakDelaySeconds, ' +
@@ -388,7 +449,9 @@ export const buildSandboxToolsDoc = (active: readonly EntryDataKind[], scoped: b
     const crossKindDoc = scoped && active.length > 1 ? `\n\n${CROSS_KIND_OPS_DOC}` : '';
     const routeUtilsDoc = scoped && active.includes('routes') ? `\n\n${ROUTE_UTILS_DOC}` : '';
     const clusterDoc = scoped && active.includes('incidents') ? `\n\n${CLUSTER_PRIMITIVE_DOC}` : '';
-    return `${buildSandboxCodePrompt(MULTI_INPUT_SANDBOX_PARAMS)}${crossKindDoc}${routeUtilsDoc}${clusterDoc}\n\n`;
+    // Per-entry input guidance is ungated: every multi-input call receives the `<kind>ByEntry` records and
+    // must know to index by id or merge with `Object.values`, regardless of how many entries are in scope.
+    return `${buildSandboxCodePrompt(MULTI_INPUT_SANDBOX_PARAMS)}\n\n${BY_ENTRY_VIEWS_DOC}${crossKindDoc}${routeUtilsDoc}${clusterDoc}\n\n`;
 };
 
 /**
@@ -411,16 +474,11 @@ export const buildSandboxToolsDoc = (active: readonly EntryDataKind[], scoped: b
  * @ignore
  */
 export const packSandboxArgs = (sandbox: SandboxInputs, libs: { h3: unknown; turf: unknown }): readonly unknown[] => [
-    sandbox.places,
     sandbox.placesByEntry,
-    sandbox.routes,
     sandbox.routesByEntry,
-    sandbox.incidents,
     sandbox.incidentsByEntry,
-    sandbox.geometries,
-    sandbox.trafficAreaAnalytics,
+    sandbox.geometriesByEntry,
     sandbox.trafficAreaAnalyticsByEntry,
-    sandbox.byod,
     sandbox.byodByEntry,
     libs.h3,
     libs.turf,

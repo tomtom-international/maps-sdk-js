@@ -1,5 +1,6 @@
+import { FULL_SCENARIOS, MODEL } from '@testing/agent-tool-calling';
 import { describe, expect, it } from 'vitest';
-import { FULL_SCENARIOS, getExamplePrompts, MODEL, runToolScenario } from './helpers';
+import { getExamplePrompts, runToolScenario } from './helpers';
 // recallState only makes sense over a populated session: run cold, "what do you have?" is correctly
 // answered with "nothing loaded yet" and NO tool call. Replay a loaded session (shared with
 // analyse/process) so an inventory request has real entries to enumerate.

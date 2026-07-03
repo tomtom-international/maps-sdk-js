@@ -1,5 +1,6 @@
+import { FULL_SCENARIOS, MODEL } from '@testing/agent-tool-calling';
 import { describe, expect, it } from 'vitest';
-import { FULL_SCENARIOS, getExamplePrompts, MODEL, runToolScenario } from './helpers';
+import { getExamplePrompts, runToolScenario } from './helpers';
 // analyseData's prompts all reference mid-session state ("these results", "my route alternatives",
 // "the city areas I loaded", "the analytics tiles"). Run cold, the agent reasonably asks "which
 // results?" instead of analysing — so stage a rich loaded session (replayed as real tool results,

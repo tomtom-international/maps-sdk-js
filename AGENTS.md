@@ -14,7 +14,7 @@ The SDK ships as **one npm package** (`@tomtom-org/maps-sdk`) with three sub-pat
 
 **Build order is strict**: `core` → `services` + `map` in parallel. Never import `map` from `services` or vice versa.
 
-Optional plugins live in `plugins/` (e.g. `viewport-places`, `agent-toolkit`) and declare `@tomtom-org/maps-sdk` as a **peer dependency** — they never bundle it.
+Optional plugins live in `plugins/` (e.g. `viewport-places`, `agent-toolkit`, `landmarks-3d`) and declare `@tomtom-org/maps-sdk` as a **peer dependency** — they never bundle it.
 
 ### Other workspaces
 
@@ -127,6 +127,7 @@ cp examples/.env.example examples/.env   # add API_KEY_EXAMPLES=…
 | `services/index.ts` | All service exports (search, geocode, routing, traffic, EV, …) |
 | `plugins/agent-toolkit/` | AI agent plugin; see its `AGENTS.md` + `ENGINEERING-GUIDELINES.md` |
 | `plugins/viewport-places/` | Plugin: continuously shows POIs in the visible map viewport |
+| `plugins/landmarks-3d/` | Plugin: renders Orbis 3D landmark GLB tiles via a Three.js MapLibre custom layer |
 | `plugins/plugin-vite-config.ts` | Shared Vite library-mode config for all plugins |
 | `shared-configs/` | Shared Vite, TypeScript, Vitest configs for all packages |
 | `testing/ai-eval/` | Map-agent eval harness: LLM judge, eval cases, scoring |

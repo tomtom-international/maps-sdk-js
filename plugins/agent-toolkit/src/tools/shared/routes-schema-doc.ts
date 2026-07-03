@@ -3,13 +3,13 @@
  *
  * Compact schema documentation for the `Route` properties shape, reused by
  * every tool whose LLM-authored code reads a Routes FeatureCollection
- * (`analyseData`, `processData`). Only the non-GeoJSON-standard bits are
- * spelled out — `Route` is a LineString Feature.
+ * (`analyseData`, `processData`) — injected per entry as `routesByEntry[id]`.
+ * Only the non-GeoJSON-standard bits are spelled out — `Route` is a LineString Feature.
  */
 
 /** @ignore */
 export const ROUTES_SCHEMA_DOC =
-    '`routes` is a FeatureCollection of LineString Features (each route has `feature.bbox`). `Route.properties` shape:\n' +
+    'Each `routesByEntry[id]` is a FeatureCollection of LineString Features (each route has `feature.bbox`). `Route.properties` shape:\n' +
     '```ts\n' +
     'type RouteProperties = {\n' +
     '  index: number; // 0 = main route, 1+ = alternatives\n' +

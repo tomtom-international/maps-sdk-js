@@ -506,6 +506,7 @@ examples/
 
 ### Plugins
 
+- **landmarks-3d-plugin** - Render Orbis 3D Landmarks with the Landmarks 3D plugin
 - **viewport-places-plugin** - Viewport Places Plugin example
 
 ### Node.js Examples

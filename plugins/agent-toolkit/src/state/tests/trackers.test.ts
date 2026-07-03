@@ -1,15 +1,11 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { Analyses } from '../analyses';
-import { MAX_TRACKER_EVENTS, type Tracker, type TrackerEvent, TrackerState, type Verdict } from '../trackers';
+import { EventsState, MAX_TRACKER_EVENTS, type Tracker, type TrackerEvent, type Verdict } from '../trackers';
 
-// Drive the reducer the way the standing sweep does: attach a verdict result to a tracker-rule analysis,
-// which emits `analysis-change` and triggers TrackerState's rising-edge reducer synchronously.
-describe('TrackerState rising-edge reducer', () => {
-    let analyses: Analyses;
-    let trackers: TrackerState;
+// Drive the reducer the way a tracker's job `run` does: feed each fresh verdict straight to
+// `ingestVerdict`, which applies the rising-edge reducer synchronously.
+describe('EventsState rising-edge reducer', () => {
+    let trackers: EventsState;
     let fired: TrackerEvent[];
-
-    const ANALYSIS = 'near-hospital::hospitals-0,incidents-0';
 
     const verdict = (active: boolean, summary = 's'): Verdict => ({
         active,
@@ -17,32 +13,21 @@ describe('TrackerState rising-edge reducer', () => {
         members: [{ entryId: 'incidents-0', featureIds: ['i1'] }],
     });
 
-    // Register the rule analysis (as createTracker would) and push a verdict at time `at`.
-    const recompute = (v: Verdict, at: number) => {
-        analyses.register({
-            analysisId: ANALYSIS,
-            name: 'near-hospital',
-            outputFormat: 'json',
-            affectedEntryIds: ['hospitals-0', 'incidents-0'],
-            type: 'tracker-rule',
-            enabled: true,
-        });
-        analyses.attachResult(ANALYSIS, { name: 'near-hospital', timestamp: at, outputFormat: 'json', data: v });
-    };
+    // Feed a verdict for tracker `t1` at time `at`, as its job would on a recompute.
+    const recompute = (v: Verdict, at: number, trackerId = 't1') => trackers.ingestVerdict(trackerId, v, at);
 
     const tracker = (over: Partial<Tracker> = {}): Tracker => ({
         id: 't1',
         name: 'Hospital incidents',
         rule: 'incident within 100m of a hospital',
-        analysisId: ANALYSIS,
+        affectedEntryIds: ['hospitals-0', 'incidents-0'],
         enabled: true,
         wasActive: false,
         ...over,
     });
 
     beforeEach(() => {
-        analyses = new Analyses();
-        trackers = new TrackerState(analyses);
+        trackers = new EventsState();
         fired = [];
         trackers.events.on('tracker-event', (e) => fired.push(e));
     });
@@ -85,46 +70,28 @@ describe('TrackerState rising-edge reducer', () => {
         expect(fired).toEqual([]);
     });
 
-    it('ignores analyses that are not tracker rules', () => {
+    it('a verdict for an unknown tracker id is a no-op', () => {
         trackers.register(tracker());
-        analyses.register({ analysisId: 'other::x', name: 'other', outputFormat: 'json', affectedEntryIds: ['x'] });
-        analyses.attachResult('other::x', { name: 'other', timestamp: 1, outputFormat: 'json', data: verdict(true) });
+        recompute(verdict(true), 1, 'ghost');
         expect(fired).toEqual([]);
     });
 
-    it('survives a malformed runtime verdict without firing or throwing', () => {
+    it('a malformed verdict is ignored without firing or throwing (defensive guard on the public reducer)', () => {
         trackers.register(tracker());
-        analyses.register({
-            analysisId: ANALYSIS,
-            name: 'near-hospital',
-            outputFormat: 'json',
-            affectedEntryIds: ['hospitals-0'],
-            type: 'tracker-rule',
-            enabled: true,
-        });
-        expect(() =>
-            analyses.attachResult(ANALYSIS, {
-                name: 'near-hospital',
-                timestamp: 1,
-                outputFormat: 'json',
-                data: { oops: true },
-            }),
-        ).not.toThrow();
+        expect(() => trackers.ingestVerdict('t1', { oops: true } as unknown as Verdict, 1)).not.toThrow();
         expect(fired).toEqual([]);
     });
 
     it('stops reacting once unregistered', () => {
         trackers.register(tracker());
         recompute(verdict(true), 1000);
-        const freed = trackers.unregister('t1');
-        expect(freed).toBe(ANALYSIS);
+        trackers.unregister('t1');
         recompute(verdict(false), 2000);
         expect(fired.map((e) => e.kind)).toEqual(['opened']); // resolved never logged
     });
 
-    it('trackersForEntry derives the watching set from the analysis (entryIds are not stored)', () => {
-        trackers.register(tracker()); // analysis affects hospitals-0 + incidents-0
-        recompute(verdict(true), 1000); // registers the analysis with its affectedEntryIds
+    it('trackersForEntry derives the watching set from the tracker’s affectedEntryIds', () => {
+        trackers.register(tracker()); // watches hospitals-0 + incidents-0
         expect(trackers.trackersForEntry('incidents-0').map((t) => t.id)).toEqual(['t1']);
         expect(trackers.trackersForEntry('hospitals-0').map((t) => t.id)).toEqual(['t1']);
         expect(trackers.trackersForEntry('places-9')).toEqual([]);
@@ -143,25 +110,11 @@ describe('TrackerState rising-edge reducer', () => {
     });
 
     it('caps the log PER tracker — a noisy tracker never evicts a quiet one’s events', () => {
-        const ANALYSIS_B = 'other-rule::x';
-        trackers.register(tracker()); // t1 over ANALYSIS
-        trackers.register(tracker({ id: 't2', analysisId: ANALYSIS_B }));
+        trackers.register(tracker()); // t1
+        trackers.register(tracker({ id: 't2', affectedEntryIds: ['x'] }));
 
         // t2 fires once.
-        analyses.register({
-            analysisId: ANALYSIS_B,
-            name: 'other-rule',
-            outputFormat: 'json',
-            affectedEntryIds: ['x'],
-            type: 'tracker-rule',
-            enabled: true,
-        });
-        analyses.attachResult(ANALYSIS_B, {
-            name: 'other-rule',
-            timestamp: 1,
-            outputFormat: 'json',
-            data: verdict(true),
-        });
+        recompute(verdict(true), 1, 't2');
         expect(trackers.log({ trackerId: 't2' }).length).toBe(1);
 
         // t1 churns well past the cap (each toggle is one edge = one event).

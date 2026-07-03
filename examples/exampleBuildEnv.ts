@@ -23,11 +23,22 @@ export const EXAMPLE_ENV_VARS = [
     'APPLICATIONINSIGHTS_CONNECTION_STRING',
     'DEMO_BFF_URL',
     'HCAPTCHA_SITEKEY',
+    'VITE_EVAL_MODE',
+    // Agent-eval build only (VITE_EVAL_MODE): route the agent under test to the agent-eval Azure resource so its
+    // token usage is tracked there. Only populated during eval runs; empty (and thus not baked) otherwise.
+    'AGENT_EVAL_RESOURCE_NAME',
+    'AGENT_EVAL_API_KEY',
+    'AGENT_EVAL_AUT_DEPLOYMENT_ID',
 ];
 
 // In proxy mode the Demo-BFF injects these server-side, so they must not appear
 // in the bundle at all (mirrors sandpackUtils.PROXY_REDACTED_ENV_VARS).
-export const PROXY_ONLY_SERVER_SECRETS = new Set(['API_KEY_EXAMPLES', 'MOVE_PORTAL_KEY', 'AZURE_API_KEY']);
+export const PROXY_ONLY_SERVER_SECRETS = new Set([
+    'API_KEY_EXAMPLES',
+    'MOVE_PORTAL_KEY',
+    'AZURE_API_KEY',
+    'AGENT_EVAL_API_KEY',
+]);
 
 export interface ResolvedExampleEnv {
     /** Allowlisted, proxy-redacted map to feed into vite `define['process.env']`. */

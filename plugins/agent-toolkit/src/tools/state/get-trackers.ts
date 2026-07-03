@@ -40,7 +40,7 @@ export const executeGetTrackers = async (
         enabled: t.enabled,
         firing: t.wasActive,
         ...(t.openedAt !== undefined && { openedAt: t.openedAt }),
-        watching: [...(state.analyses.get(t.analysisId)?.affectedEntryIds ?? [])],
+        watching: [...t.affectedEntryIds],
     }));
     return { trackers, count: trackers.length };
 };

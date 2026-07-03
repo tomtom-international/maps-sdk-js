@@ -29,8 +29,8 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
             await GeometriesModule.get(map, {
                 theme: 'inverted',
                 beforeLayerConfig: 'lowestPlaceLabel',
-                colorConfig: { fillColor: 'white', fillOpacity: 0.75 },
-                lineConfig: { lineOpacity: 0 },
+                fill: { color: 'white', opacity: 0.75 },
+                line: { opacity: 0 },
             })
         ).show({ type: 'FeatureCollection', features: [geometry] } as PolygonFeatures);
     };

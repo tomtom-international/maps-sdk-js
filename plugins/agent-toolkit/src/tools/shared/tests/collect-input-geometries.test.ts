@@ -28,20 +28,20 @@ describe('collectInputGeometries', () => {
         properties: { dataSources?: { geometry?: { id: string } } };
     };
 
-    type FakeCustomEntry = { id: string; features: unknown[] };
+    type FakeCustomEntry = { id: string; data: unknown[] };
 
     const mockState = (opts: {
         placesByOwner?: Record<string, { entryId: string; place: FakePlace }>;
         fetchPlaceGeometry?: (id: string) => Promise<unknown>;
-        rangesEntries?: { id: string; ranges: { polygon?: { features: unknown[] } }[] }[];
-        placesEntries?: { id: string; places: FakePlace[] }[];
+        rangesEntries?: { id: string; data: { polygon?: { features: unknown[] } }[] }[];
+        placesEntries?: { id: string; data: FakePlace[] }[];
         customEntries?: FakeCustomEntry[];
     }) => {
         const entries = opts.placesEntries ?? [];
         const findPlaceById = (id: string) => {
             if (opts.placesByOwner?.[id]) return opts.placesByOwner[id];
             for (const entry of entries) {
-                const place = entry.places.find((p) => p.id === id);
+                const place = entry.data.find((p) => p.id === id);
                 if (place) return { entryId: entry.id, place };
             }
             return undefined;
@@ -125,7 +125,7 @@ describe('collectInputGeometries', () => {
         const polyB = mkPolygon('gB');
         const fetchPlaceGeometry = vi.fn(async (id: string) => (id === 'a' ? polyA : id === 'b' ? polyB : undefined));
         const state = mockState({
-            placesEntries: [{ id: 'ev-stations-oost', places: [placeA, placeB, placeNoGeom] }],
+            placesEntries: [{ id: 'ev-stations-oost', data: [placeA, placeB, placeNoGeom] }],
             fetchPlaceGeometry,
         });
         const value = expectValue(await collectInputGeometries([places('ev-stations-oost')], state));
@@ -150,7 +150,7 @@ describe('collectInputGeometries', () => {
     it('skips a `places` entry with no geometry-bearing places', async () => {
         const placeNoGeom: FakePlace = { id: 'a', properties: {} };
         const state = mockState({
-            placesEntries: [{ id: 'addresses', places: [placeNoGeom] }],
+            placesEntries: [{ id: 'addresses', data: [placeNoGeom] }],
         });
         const result = await collectInputGeometries([places('addresses')], state);
         expect(expectError(result).error).toMatch(/places:addresses.*no places with a geometry data source/);
@@ -161,7 +161,7 @@ describe('collectInputGeometries', () => {
         const polyA = mkPolygon('gA');
         const fetchPlaceGeometry = vi.fn(async () => polyA);
         const state = mockState({
-            placesEntries: [{ id: 'shared', places: [placeA] }],
+            placesEntries: [{ id: 'shared', data: [placeA] }],
             fetchPlaceGeometry,
         });
         const value = expectValue(await collectInputGeometries([place('a'), places('shared')], state));
@@ -179,7 +179,7 @@ describe('collectInputGeometries', () => {
             rangesEntries: [
                 {
                     id: 'ranges-1',
-                    ranges: [{ polygon: { features: [polyA] } }, { polygon: { features: [polyB] } }],
+                    data: [{ polygon: { features: [polyA] } }, { polygon: { features: [polyB] } }],
                 },
             ],
         });
@@ -197,7 +197,7 @@ describe('collectInputGeometries', () => {
 
     it('errors when only an empty `ranges` id is requested', async () => {
         const state = mockState({
-            rangesEntries: [{ id: 'ranges-1', ranges: [{}] }],
+            rangesEntries: [{ id: 'ranges-1', data: [{}] }],
         });
         const result = await collectInputGeometries([ranges('ranges-1')], state);
         expect(expectError(result).error).toMatch(/ranges:ranges-1.*no polygons/);
@@ -207,7 +207,7 @@ describe('collectInputGeometries', () => {
         const polyA = mkPolygon('cA');
         const polyB = mkPolygon('cB');
         const state = mockState({
-            customEntries: [{ id: 'bakery-zone', features: [polyA, polyB] }],
+            customEntries: [{ id: 'bakery-zone', data: [polyA, polyB] }],
         });
         const value = expectValue(await collectInputGeometries([custom('bakery-zone')], state));
         expect(value.geometries).toEqual([tagged(polyA, custom('bakery-zone')), tagged(polyB, custom('bakery-zone'))]);
@@ -222,7 +222,7 @@ describe('collectInputGeometries', () => {
     });
 
     it('skips an empty `custom` entry', async () => {
-        const state = mockState({ customEntries: [{ id: 'empty', features: [] }] });
+        const state = mockState({ customEntries: [{ id: 'empty', data: [] }] });
         const result = await collectInputGeometries([custom('empty')], state);
         expect(expectError(result).error).toMatch(/customGeometries:empty.*Custom-geometries entry is empty/);
     });
@@ -236,8 +236,8 @@ describe('collectInputGeometries', () => {
         const state = mockState({
             placesByOwner: { a: { entryId: 'places-1', place: placeA } },
             fetchPlaceGeometry,
-            rangesEntries: [{ id: 'ranges-0', ranges: [{ polygon: { features: [polyRange] } }] }],
-            customEntries: [{ id: 'zone', features: [polyCustom] }],
+            rangesEntries: [{ id: 'ranges-0', data: [{ polygon: { features: [polyRange] } }] }],
+            customEntries: [{ id: 'zone', data: [polyCustom] }],
         });
         const value = expectValue(
             await collectInputGeometries([place('a'), ranges('ranges-0'), custom('zone')], state),

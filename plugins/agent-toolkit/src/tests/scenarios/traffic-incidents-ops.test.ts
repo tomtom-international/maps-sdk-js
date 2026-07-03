@@ -1,6 +1,7 @@
+import { FULL_SCENARIOS, MODEL, priorTurn } from '@testing/agent-tool-calling';
 import { describe, expect, it } from 'vitest';
-import { FULL_SCENARIOS, getExamplePrompts, MODEL, runToolScenario } from './helpers';
-import { priorTurn, toolCall } from './seed';
+import { getExamplePrompts, runToolScenario } from './helpers';
+import { toolCall } from './seed';
 
 // Operations over an ALREADY-LOADED incidents entry: focus a subset, cluster, and start/stop the
 // poll. Replay a loaded entry plus the monitor start (so "stop refreshing" has a monitor to stop).
@@ -122,7 +123,11 @@ const monitoredAnalysisSeed = () =>
             ),
             toolCall(
                 'analyseData',
-                { incidentsEntryIDs: ['incidents-0'], name: 'incident-count', code: 'return { n: incidents.length };' },
+                {
+                    incidentsEntryIDs: ['incidents-0'],
+                    name: 'incident-count',
+                    code: 'return { n: incidentsByEntry["incidents-0"].length };',
+                },
                 {
                     affectedEntries: [{ kind: 'incidents', id: 'incidents-0' }],
                     analysisId: 'incident-count::incidents-0',

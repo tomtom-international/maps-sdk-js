@@ -43,18 +43,41 @@ self-explanatory failure message listing the tools the agent actually called.
 ## Running
 
 The suite is **gated on model credentials**: `describe.skipIf(!MODEL)` skips
-everything unless Azure env vars are set (see `config.ts`). Add them to
-`plugins/agent-toolkit/.env`: `AZURE_RESOURCE_NAME`, `AZURE_API_KEY`,
-`AZURE_DEPLOYMENT_ID` (optionally `AZURE_API_VERSION`).
+everything unless Azure env vars are set (resolved in `@testing/agent-tool-calling`).
+Add them to `plugins/agent-toolkit/.env`: `AZURE_RESOURCE_NAME`, `AZURE_API_KEY`,
+and the model list — `AZURE_MODEL_IDS` (comma-separated, preferred) or a single
+`AZURE_DEPLOYMENT_ID`, defaulting to `gpt-5.1,gpt-4.1`. **Every scenario runs against
+each model in the list** and passes only when all do. Optionally `AZURE_API_VERSION`.
 
 ```bash
-pnpm --filter @tomtom-org/maps-sdk-plugin-agent-toolkit test:scenarios       # canonical set (~23 tests, ~40s, ~$0.50)
-pnpm --filter @tomtom-org/maps-sdk-plugin-agent-toolkit test:scenarios:full  # SCENARIOS_FULL=1 — every registry examplePrompt (~121 tests, ~5–15 min, ~$5)
+pnpm --filter @tomtom-org/maps-sdk-plugin-agent-toolkit test:agent-tool-calling       # canonical set (~23 tests, ~40s, ~$0.50)
+pnpm --filter @tomtom-org/maps-sdk-plugin-agent-toolkit test:agent-tool-calling:full  # SCENARIOS_FULL=1 — every registry examplePrompt (~121 tests, ~5–15 min, ~$5)
 ```
 
 Each file has one hand-picked canonical test (always on) plus an
 `it.each(REGISTRY_PROMPTS)` block gated behind `SCENARIOS_FULL=1`. The prompt
 list comes from the tool registry (`getExamplePrompts`), so a registry edit
 propagates to the tests on the next run.
+
+## Known-hard cases under `SCENARIOS_FULL`
+
+The **canonical set is kept green on every configured model** (this is what CI
+runs). The broad `SCENARIOS_FULL` fan-out additionally surfaces a small tail of
+prompts that depend on **model behaviour the prompt can't fully pin down** —
+treat these as expected-flaky in the nightly fan-out, not as regressions:
+
+- **Narrated / fabricated results** — some models reply "the country borders are
+  now pink" or fabricate a spatial-query answer ("none within 500 m") *without*
+  calling the tool, despite the base prompt's explicit "act, never narrate" rule.
+  When this happens the test correctly fails; it's a model limitation, not a
+  prompt bug.
+- **Prose clarification instead of the form** — for genuinely missing input that
+  has no good form representation ("tap a point on the map", a raster tile URL),
+  a model may ask in prose rather than via `clarifyIntent`. `clarifyIntent` is an
+  accepted route, so this passes when the model uses the form and fails when it
+  asks in prose.
+
+If you're tightening prompts, target the **canonical** set first; the fan-out tail
+above moves run-to-run with model sampling.
 
 [`@langwatch/scenario`]: https://github.com/langwatch/scenario

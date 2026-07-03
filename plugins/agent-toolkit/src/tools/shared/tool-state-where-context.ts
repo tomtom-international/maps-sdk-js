@@ -28,6 +28,7 @@ export const toolStateToWhereContext = (state: ToolState): WhereContext => ({
         }
     },
     findPlaceById: (id) => state.places.findPlaceById(id)?.place,
+    geometryPlaceIdsForEntry: (id) => state.places.geometryPlaceIdsForEntry(id),
     fetchPlaceGeometry: (id) => state.places.fetchPlaceGeometry(id),
     geocodeArea: (query, queryAs: QueryAs, bias) =>
         locatePlaces(query, queryAs, { limit: 5, bias: bias ? { position: bias } : undefined }),

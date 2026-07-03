@@ -56,7 +56,11 @@ const makeState = (viewportBBox: [number, number, number, number] = [-1, 50, 1, 
                 }),
             },
         },
-        places: { findPlaceById: () => undefined, fetchPlaceGeometry: async () => undefined },
+        places: {
+            findPlaceById: () => undefined,
+            geometryPlaceIdsForEntry: () => undefined,
+            fetchPlaceGeometry: async () => undefined,
+        },
         routing: { entries: [] },
     } as any;
 };
@@ -130,10 +134,10 @@ describe('executeGetTrafficIncidents — loader contract', () => {
         expect(result.topRoads).toBeUndefined();
     });
 
-    it('returns count: 0 with no entry when there are no features', async () => {
+    it('returns count: 0 with a referenceable empty entry when there are no features', async () => {
         mockFetch.mockResolvedValueOnce({ type: 'FeatureCollection', features: [] });
         const result = (await executeGetTrafficIncidents({ where: withBBox([0, 0, 1, 1]) }, makeState())) as any;
-        expect(result).toMatchObject({ count: 0 });
+        expect(result).toMatchObject({ count: 0, entryId: 'incidents-0' });
         expect(result.summary).toBeUndefined();
         // Loader-only contract: no per-incident array, no "top-N" shortcut, no includeIncidents
         // opt-in. Per-incident fields are reached only via analyseData / focusIncidents.
@@ -210,15 +214,19 @@ describe('executeGetTrafficIncidents — entries', () => {
         ]);
     });
 
-    it('does not append when bbox fetch returns zero features', async () => {
+    it('registers an empty (but referenceable) entry when bbox fetch returns zero features', async () => {
+        // A zero-incident area is valid data, not a no-op: it still gets an entryId so downstream
+        // analyseData / honest "no incidents found" can reference the empty set. It is not shown/fit
+        // (nothing to draw), but it IS appended to state.
         mockFetch.mockResolvedValueOnce({ type: 'FeatureCollection', features: [] });
         const state = makeState();
         const result = (await executeGetTrafficIncidents(
             { where: withBBox([0, 0, 1, 1]), label: 'empty' },
             state,
         )) as any;
-        expect(result.entryId).toBeUndefined();
-        expect(state.trafficIncidents.entries).toHaveLength(0);
+        expect(result).toMatchObject({ count: 0, entryId: 'incidents-0' });
+        expect(state.trafficIncidents.entries).toHaveLength(1);
+        expect(state.trafficIncidents.entries[0].data).toHaveLength(0);
     });
 
     it('does not start a monitor — polling is opt-in via setTrafficIncidentsMonitor', async () => {
@@ -363,7 +371,7 @@ const rangeState = () => {
         entries: [
             {
                 id: 'ranges-0',
-                ranges: [
+                data: [
                     {
                         polygon: {
                             features: [

@@ -10,7 +10,7 @@ describe('RangeState events', () => {
         state.events.on('entries-change', handler);
         state.addEntry({
             label: 'r',
-            ranges: [
+            data: [
                 {
                     origin: { position: [4.9, 52.3] },
                     budgets: [{ type: 'timeMinutes', value: 10 }],

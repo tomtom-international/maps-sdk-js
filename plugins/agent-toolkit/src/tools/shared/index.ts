@@ -18,4 +18,5 @@ export * from './show-byod-on-map';
 export * from './show-entry-geometries';
 export * from './show-places-on-map';
 export * from './state-inputs';
+export * from './tool-state-where-context';
 export * from './viewport-bias';

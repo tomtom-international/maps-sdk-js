@@ -1,9 +1,9 @@
 /**
  * @module agent-toolkit-tools
  *
- * `clearTracker` — stop a tracker and drop its rule analysis. Owns nothing else: the source entries are
- * the operator's (the tracker never owned them), so clearing only unregisters the tracker + removes its
- * `tracker-rule` analysis from the registry. Defaults to the sole tracker when only one exists.
+ * `clearTracker` — stop a tracker and tear down its rule job. Owns nothing else: the source entries are
+ * the operator's (the tracker never owned them), so clearing only unregisters the tracker (which
+ * unregisters its {@link JobEngine} job). Defaults to the sole tracker when only one exists.
  */
 
 import { z } from 'zod';
@@ -37,8 +37,7 @@ export const executeClearTracker = async (
     const tracker = state.trackers.get(trackerId);
     if (!tracker) return { error: `No tracker "${trackerId}". Active: ${all.map((t) => t.id).join(', ') || 'none'}.` };
 
-    const analysisId = state.trackers.unregister(trackerId);
-    if (analysisId) state.analyses.remove(analysisId);
+    state.trackers.unregister(trackerId);
 
     return { cleared: true, trackerId, name: tracker.name };
 };

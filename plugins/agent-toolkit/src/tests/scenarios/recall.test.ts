@@ -1,5 +1,6 @@
+import { FULL_SCENARIOS, MODEL } from '@testing/agent-tool-calling';
 import { describe, expect, it } from 'vitest';
-import { FULL_SCENARIOS, MODEL, runToolScenario } from './helpers';
+import { runToolScenario } from './helpers';
 
 // The per-kind recall tools were consolidated into the single parameterised `recallState`
 // ({ kind?, id? }), which lists/inspects EVERY entry-bearing kind — places / routes / ranges /

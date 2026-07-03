@@ -25,11 +25,7 @@ export function Switcher<T extends string>({
     'aria-label': string;
 }) {
     return (
-        <div
-            role="group"
-            aria-label={ariaLabel}
-            className="flex gap-1 rounded-(--sdk-radius-5) bg-(--sdk-surface-1) p-1"
-        >
+        <div role="group" aria-label={ariaLabel} className="flex gap-1 rounded-(--pb-radius-5) bg-(--pb-surface-1) p-1">
             {tabs.map((tab) => {
                 const selected = tab.id === value;
                 return (
@@ -39,10 +35,10 @@ export function Switcher<T extends string>({
                         aria-pressed={selected}
                         aria-label={tab['aria-label']}
                         onClick={() => onChange(tab.id)}
-                        className={`inline-flex flex-1 items-center justify-center gap-1.5 rounded-[calc(var(--sdk-radius-5)-2px)] border-0 px-2 py-1 text-[12px] font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-(--sdk-primary-color) ${
+                        className={`inline-flex flex-1 items-center justify-center gap-1.5 rounded-[calc(var(--pb-radius-5)-2px)] border-0 px-2 py-1 text-[12px] font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-(--pb-primary-color) ${
                             selected
-                                ? 'bg-(--sdk-surface-0) text-(--sdk-text-high) shadow-(--sdk-shadow-e2)'
-                                : 'cursor-pointer bg-transparent text-(--sdk-text-medium) hover:text-(--sdk-text-high)'
+                                ? 'bg-(--pb-surface-0) text-(--pb-text-high) shadow-(--pb-shadow-e2)'
+                                : 'cursor-pointer bg-transparent text-(--pb-text-medium) hover:text-(--pb-text-high)'
                         }`}
                     >
                         {tab.label}

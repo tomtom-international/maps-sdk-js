@@ -48,8 +48,9 @@ export const executeMaplibreCodeOutputSchema = z.union([
 ]);
 
 export const executeMaplibreCodeDescription =
-    'Run arbitrary MapLibre JS against the live `map` for anything no other tool covers — custom sources/layers, camera, style mutations, animations, event sequences. ' +
-    'Full JS (loops, helpers, top-level `await`). Returns added/removed/updated sources & layers.';
+    'Run arbitrary MapLibre JS against the live `map` — the escape hatch for operations no dedicated tool covers ' +
+    '(custom sources/layers, style mutations, animations, event sequences). If another tool already performs the ' +
+    'operation, prefer that tool. Full JS (loops, helpers, top-level `await`). Returns added/removed/updated sources & layers.';
 
 // ---------------------------------------------------------------------------
 // Helpers

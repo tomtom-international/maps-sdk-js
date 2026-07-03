@@ -4,6 +4,7 @@
 
 import type { CustomGeoJSONLayerSpec, CustomGeoJSONModule } from '@tomtom-org/maps-sdk/map';
 import type { FeatureCollection } from 'geojson';
+import type { BaseEntry } from '../entry';
 import type { BYODDataProfile } from './profile';
 
 /**
@@ -13,6 +14,8 @@ import type { BYODDataProfile } from './profile';
  * - `inline`: passed as inline GeoJSON via `addByodSource`.
  *
  * @group Agent Toolkit
+ *
+ * @ignore
  */
 export type BYODSource =
     | { kind: 'integrator'; description?: string }
@@ -25,12 +28,10 @@ export type BYODSource =
  * through analyseData / processData.
  *
  * @group Agent Toolkit
+ *
+ * @ignore
  */
-export type BYODEntry = {
-    id: string;
-    timestamp: number;
-    label: string;
-    data: FeatureCollection;
+export type BYODEntry = BaseEntry<FeatureCollection> & {
     /** Provenance for the data — used by recall tools and the UI. */
     source: BYODSource;
     /**

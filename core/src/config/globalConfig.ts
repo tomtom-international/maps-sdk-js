@@ -258,6 +258,14 @@ export type GlobalConfig = {
 };
 
 /**
+ * Default base URL for TomTom APIs. A `commonBaseURL` other than this signals a
+ * proxy or custom backend.
+ *
+ * @group Configuration
+ */
+export const DEFAULT_COMMON_BASE_URL = 'https://api.tomtom.com';
+
+/**
  * Default global configuration values.
  *
  * Provides sensible defaults for the global configuration.
@@ -266,7 +274,7 @@ export type GlobalConfig = {
  * @group Configuration
  */
 export const defaultConfig: GlobalConfig = {
-    commonBaseURL: 'https://api.tomtom.com',
+    commonBaseURL: DEFAULT_COMMON_BASE_URL,
     apiKey: '',
     apiVersion: 1,
     retry: {
@@ -371,3 +379,29 @@ export const mergeFromGlobal = <T extends Partial<GlobalConfig>>(givenConfig: T 
     ...TomTomConfig.instance.get(),
     ...givenConfig,
 });
+
+/**
+ * Whether the SDK is configured for a Demo-BFF-style proxy — no `apiKey` (the
+ * proxy injects the real key server-side from a cookie-gated session) plus a
+ * non-default `commonBaseURL`.
+ *
+ * In this mode SDK requests attach `credentials: 'include'` so the proxy's
+ * session cookie travels with them. In all other cases — direct TomTom usage
+ * and customer-owned `customServiceBaseURL` integrations — credentials stay at
+ * the browser default, so we don't break consumers whose backend responds with
+ * `Access-Control-Allow-Origin: *` (the browser rejects credentialed responses
+ * against a wildcard origin). A customer using `customServiceBaseURL` keeps a
+ * real `apiKey`, so this stays false for them.
+ *
+ * The `apiKey` test is a falsy check (not `=== ''`) on purpose: a proxy build
+ * may overwrite the bootstrap's `apiKey: ''` with `apiKey: undefined` (e.g.
+ * `put({ apiKey: process.env.API_KEY_EXAMPLES })` when that env var is unset).
+ * Both empty string and undefined mean "no key, the proxy injects it" — matching
+ * how the URL builders decide whether to append `key=` (`if (apiKey)`).
+ *
+ * @param config - Config to inspect; defaults to the global {@link TomTomConfig}.
+ * @group Configuration
+ */
+export const isProxyCredentialsMode = (
+    config: Partial<Pick<GlobalConfig, 'apiKey' | 'commonBaseURL'>> = TomTomConfig.instance.get(),
+): boolean => !config.apiKey && (config.commonBaseURL ?? DEFAULT_COMMON_BASE_URL) !== DEFAULT_COMMON_BASE_URL;

@@ -38,7 +38,7 @@ describe('Geometry module tests', () => {
     });
 
     test('Basic flows', async () => {
-        const geometryConfig = { colorConfig: { fillColor: 'warm' }, textConfig: { textField: 'title' } };
+        const geometryConfig = { fill: { color: 'warm' }, textConfig: { textField: 'title' } };
 
         const textField: DataDrivenPropertyValueSpecification<string> = ['get', 'country'];
 
@@ -49,27 +49,42 @@ describe('Geometry module tests', () => {
         vi.spyOn(geometryAny, 'applyConfig');
         vi.spyOn(geometryAny, 'applyTextConfig');
         vi.spyOn(geometryAny, 'updateLayerAndData');
-        vi.spyOn(geometryAny, 'moveBeforeLayerID');
+        vi.spyOn(geometryAny, 'moveLayersBefore');
         expect(geometry.getConfig()).toMatchObject(geometryConfig);
         geometry.applyTextConfig({ textField });
         expect(geometryAny.applyTextConfig).toHaveBeenCalledWith({ textField });
         expect(geometryAny.updateLayerAndData).toHaveBeenCalledTimes(1);
         expect(geometry.getConfig()).toEqual({ ...geometryConfig, textConfig: { textField } });
 
+        // A scalar layerConfig moves every geometry-layer group before the resolved layer id.
         geometry.moveBeforeLayer('top');
-        expect(geometryAny.moveBeforeLayerID).toHaveBeenCalledWith(expect.stringMatching(/^geometry-\d+_Title$/));
+        expect(geometryAny.moveLayersBefore).toHaveBeenCalledWith(
+            expect.any(Array),
+            expect.stringMatching(/^geometry-\d+_Title$/),
+        );
         geometry.moveBeforeLayer('country');
-        expect(geometryAny.moveBeforeLayerID).toHaveBeenCalledWith(mapStyleLayerIDs.country);
+        expect(geometryAny.moveLayersBefore).toHaveBeenCalledWith(expect.any(Array), mapStyleLayerIDs.country);
         geometry.moveBeforeLayer('lowestPlaceLabel');
-        expect(geometryAny.moveBeforeLayerID).toHaveBeenCalledWith(mapStyleLayerIDs.lowestPlaceLabel);
+        expect(geometryAny.moveLayersBefore).toHaveBeenCalledWith(expect.any(Array), mapStyleLayerIDs.lowestPlaceLabel);
         geometry.moveBeforeLayer('poi');
-        expect(geometryAny.moveBeforeLayerID).toHaveBeenCalledWith(mapStyleLayerIDs.poi);
+        expect(geometryAny.moveLayersBefore).toHaveBeenCalledWith(expect.any(Array), mapStyleLayerIDs.poi);
         geometry.moveBeforeLayer('lowestLabel');
-        expect(geometryAny.moveBeforeLayerID).toHaveBeenCalledWith(mapStyleLayerIDs.lowestLabel);
+        expect(geometryAny.moveLayersBefore).toHaveBeenCalledWith(expect.any(Array), mapStyleLayerIDs.lowestLabel);
         geometry.moveBeforeLayer('lowestRoadLine');
-        expect(geometryAny.moveBeforeLayerID).toHaveBeenCalledWith(mapStyleLayerIDs.lowestRoadLine);
+        expect(geometryAny.moveLayersBefore).toHaveBeenCalledWith(expect.any(Array), mapStyleLayerIDs.lowestRoadLine);
         geometry.moveBeforeLayer('lowestBuilding');
-        expect(geometryAny.moveBeforeLayerID).toHaveBeenCalledWith(mapStyleLayerIDs.lowestBuilding);
+        expect(geometryAny.moveLayersBefore).toHaveBeenCalledWith(expect.any(Array), mapStyleLayerIDs.lowestBuilding);
+
+        // The object form positions fill and border independently.
+        geometry.moveBeforeLayer({ fill: 'lowestRoadLine', line: 'top' });
+        expect(geometryAny.moveLayersBefore).toHaveBeenCalledWith(
+            [expect.stringMatching(/^geometry-\d+_Fill$/)],
+            mapStyleLayerIDs.lowestRoadLine,
+        );
+        expect(geometryAny.moveLayersBefore).toHaveBeenCalledWith(
+            expect.arrayContaining([expect.stringMatching(/^geometry-\d+_Outline$/)]),
+            expect.stringMatching(/^geometry-\d+_Title$/),
+        );
 
         geometry.show(testGeometryData);
         geometry.clear();

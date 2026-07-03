@@ -69,7 +69,7 @@ type FieldBuildOptions = {
  * Per-kind metadata. One row per {@link EntryDataKind}. Owns:
  * - field name + label used in schemas and "at least one of" messages;
  * - the factory that produces the `*EntryIDs` zod field for a given tool verb;
- * - the one-line sandbox-doc fragment ("• `places` — merged FeatureCollection …");
+ * - the one-line sandbox-doc fragment ("• `placesByEntry` — object keyed by entry id …");
  * - the deep schema-doc fragment (only included when scope commits to this kind);
  * - which recall tool the LLM should call to list available ids.
  *
@@ -87,13 +87,17 @@ export type EntryKindMeta = {
 const placesField = (options: FieldBuildOptions) =>
     placesEntryIDsSchema({
         verb: options.verb,
-        extra: 'Injected as `places` (merged) and `placesByEntry[id]`. Undefined when omitted. ' + options.requiredHint,
+        extra:
+            'Injected as `placesByEntry[id]` (a FeatureCollection per entry id). Undefined when omitted. ' +
+            options.requiredHint,
     });
 
 const routesField = (options: FieldBuildOptions) =>
     routesEntryIDsSchema({
         verb: options.verb,
-        extra: 'Injected as `routes` (merged) and `routesByEntry[id]`. Undefined when omitted. ' + options.requiredHint,
+        extra:
+            'Injected as `routesByEntry[id]` (a FeatureCollection per entry id). Undefined when omitted. ' +
+            options.requiredHint,
     });
 
 const incidentsField = (options: FieldBuildOptions) =>
@@ -103,7 +107,7 @@ const incidentsField = (options: FieldBuildOptions) =>
         .optional()
         .describe(
             `IDs of existing incidents entries to ${options.verb} (e.g. ["incidents-0"]). ` +
-                'Injected as `incidents` (merged) and `incidentsByEntry[id]`. Undefined when omitted. ' +
+                'Injected as `incidentsByEntry[id]` (a TrafficIncident[] per entry id). Undefined when omitted. ' +
                 "Use `recallState({ kind: 'incidents' })` to list incident entries. " +
                 options.requiredHint,
         );
@@ -113,7 +117,7 @@ const customGeometriesField = (options: FieldBuildOptions) =>
         .optional()
         .describe(
             'Tagged polygon sources `{ kind, id }` (see geometriesEntryIDsSchema). ' +
-                'Injected as `geometries`. Undefined when omitted. ' +
+                'Injected as `geometriesByEntry` (keyed by the tagged source `${kind}:${id}`). Undefined when omitted. ' +
                 options.requiredHint,
         );
 
@@ -124,8 +128,8 @@ const trafficAreaAnalyticsField = (options: FieldBuildOptions) =>
         .optional()
         .describe(
             `IDs of existing traffic-area-analytics entries to ${options.verb} (e.g. ["tta-0"]). ` +
-                'Injected as `trafficAreaAnalytics` (merged FeatureCollection of tile/hex regions with metric ' +
-                'properties) and `trafficAreaAnalyticsByEntry[id]`. Undefined when omitted. ' +
+                'Injected as `trafficAreaAnalyticsByEntry[id]` (a FeatureCollection of tile/hex regions with metric ' +
+                'properties, per entry id). Undefined when omitted. ' +
                 "Use `recallState({ kind: 'trafficAreaAnalytics' })` to list available ids. " +
                 options.requiredHint,
         );
@@ -137,7 +141,7 @@ const byodField = (options: FieldBuildOptions) =>
         .optional()
         .describe(
             `IDs of existing BYOD entries to ${options.verb} (e.g. ["byod-0"]) — customer-authored GeoJSON layers. ` +
-                'Injected as `byod` (merged FeatureCollection) and `byodByEntry[id]`. Undefined when omitted. ' +
+                'Injected as `byodByEntry[id]` (a FeatureCollection per entry id). Undefined when omitted. ' +
                 'Use `recallState` to list available ids. ' +
                 options.requiredHint,
         );
@@ -154,7 +158,8 @@ export const ENTRY_KIND_META: Record<EntryDataKind, EntryKindMeta> = {
         fieldLabel: '`placesEntryIDs`',
         buildField: placesField,
         sandboxDoc:
-            '• `places` — merged FeatureCollection over `placesEntryIDs`; `placesByEntry[id]` keeps them separate.',
+            '• `placesByEntry` — object keyed by `placesEntryIDs` id; each value a FeatureCollection of that ' +
+            "entry's places. Merge all entries with `Object.values(placesByEntry).flatMap(fc => fc.features)`.",
         schemaDoc: PLACES_SCHEMA_DOC,
         recallTool: "recallState({ kind: 'places' })",
     },
@@ -163,8 +168,9 @@ export const ENTRY_KIND_META: Record<EntryDataKind, EntryKindMeta> = {
         fieldLabel: '`routesEntryIDs`',
         buildField: routesField,
         sandboxDoc:
-            '• `routes` — merged FeatureCollection of Route LineStrings over `routesEntryIDs`; `routesByEntry[id]` ' +
-            'keeps them separate. On-route incidents live in `f.properties.sections.traffic[]` (each ' +
+            '• `routesByEntry` — object keyed by `routesEntryIDs` id; each value a FeatureCollection of that ' +
+            "entry's Route LineStrings. Merge all entries with `Object.values(routesByEntry).flatMap(fc => fc.features)`. " +
+            'On-route incidents live in `f.properties.sections.traffic[]` (each ' +
             '`{ categories: string[], magnitudeOfDelay, delayInSeconds }`) — there is NO `f.properties.incidents`. ' +
             'Route totals are on `f.properties.summary` (`travelTimeInSeconds`, `trafficDelayInSeconds`).',
         schemaDoc: ROUTES_SCHEMA_DOC,
@@ -175,7 +181,8 @@ export const ENTRY_KIND_META: Record<EntryDataKind, EntryKindMeta> = {
         fieldLabel: '`incidentsEntryIDs`',
         buildField: incidentsField,
         sandboxDoc:
-            '• `incidents` — flat `TrafficIncident[]` over `incidentsEntryIDs`; `incidentsByEntry[id]` keeps them separate.',
+            '• `incidentsByEntry` — object keyed by `incidentsEntryIDs` id; each value a flat `TrafficIncident[]` ' +
+            'for that entry. Merge all entries with `Object.values(incidentsByEntry).flat()`.',
         schemaDoc: INCIDENTS_SCHEMA_DOC,
         recallTool: "recallState({ kind: 'incidents' })",
     },
@@ -184,8 +191,9 @@ export const ENTRY_KIND_META: Record<EntryDataKind, EntryKindMeta> = {
         fieldLabel: '`geometriesEntryIDs`',
         buildField: customGeometriesField,
         sandboxDoc:
-            '• `geometries` — mixed Polygon/MultiPolygon array over `geometriesEntryIDs`; every feature carries ' +
-            '`properties._source: { kind, id }` so you can filter by role (see `GEOMETRIES_PROPS_DOC`).',
+            '• `geometriesByEntry` — object keyed by the tagged source `${kind}:${id}` (geometries mixes sources); ' +
+            'each value a mixed Polygon/MultiPolygon array. Merge all with `Object.values(geometriesByEntry).flat()`. ' +
+            'Every feature also carries `properties._source: { kind, id }` so you can filter by role (see `GEOMETRIES_PROPS_DOC`).',
         schemaDoc: GEOMETRIES_SCHEMA_DOC,
         recallTool: "recallState({ kind: 'geometries' })",
     },
@@ -194,11 +202,11 @@ export const ENTRY_KIND_META: Record<EntryDataKind, EntryKindMeta> = {
         fieldLabel: '`trafficAreaAnalyticsEntryIDs`',
         buildField: trafficAreaAnalyticsField,
         sandboxDoc:
-            '• `trafficAreaAnalytics` — merged TrafficAreaAnalytics FeatureCollection over `trafficAreaAnalyticsEntryIDs`. ' +
-            'Each feature is a region whose metrics live under `feature.properties.baseData` (e.g. `congestionLevel`, ' +
-            '`speed`, `freeFlowSpeed`, `travelTime`, `networkLength`). `trafficAreaAnalyticsByEntry[id]` keeps each ' +
-            "request's collection separate. The collection's top-level `properties` (metrics list, date range, ranges) come " +
-            'from the first entry when ids span multiple requests.',
+            '• `trafficAreaAnalyticsByEntry` — object keyed by `trafficAreaAnalyticsEntryIDs` id; each value a ' +
+            'TrafficAreaAnalytics FeatureCollection for that entry. Each feature is a region whose metrics live under ' +
+            '`feature.properties.baseData` (e.g. `congestionLevel`, `speed`, `freeFlowSpeed`, `travelTime`, ' +
+            "`networkLength`). Each entry's collection keeps its own top-level `properties` (metrics list, date range, " +
+            'ranges) intact — no cross-entry merge.',
         schemaDoc: TRAFFIC_AREA_ANALYTICS_SCHEMA_DOC,
         recallTool: "recallState({ kind: 'trafficAreaAnalytics' })",
     },
@@ -207,9 +215,10 @@ export const ENTRY_KIND_META: Record<EntryDataKind, EntryKindMeta> = {
         fieldLabel: '`byodEntryIDs`',
         buildField: byodField,
         sandboxDoc:
-            '• `byod` — merged customer-authored GeoJSON FeatureCollection over `byodEntryIDs`; mixed Point / LineString / ' +
-            'Polygon features are normal (BYOD layers carry whatever the integrator uploaded). `byodByEntry[id]` keeps ' +
-            'each entry separate. Treat `feature.properties` as opaque application-specific data.',
+            '• `byodByEntry` — object keyed by `byodEntryIDs` id; each value a customer-authored GeoJSON ' +
+            'FeatureCollection. Merge all with `Object.values(byodByEntry).flatMap(fc => fc.features)`. Mixed Point / ' +
+            'LineString / Polygon features are normal (BYOD layers carry whatever the integrator uploaded). Treat ' +
+            '`feature.properties` as opaque application-specific data.',
         schemaDoc: '',
         recallTool: "recallState({ kind: 'byod' })",
     },

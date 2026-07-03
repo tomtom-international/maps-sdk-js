@@ -137,7 +137,11 @@ export const getTrafficIncidentsSchema = z.object({
     timeValidityFilter: z
         .array(z.enum(['present', 'future']))
         .optional()
-        .describe("default: ['present']"),
+        .describe(
+            "Which incidents to fetch by time-validity. Default ['present'] — incidents active RIGHT NOW. " +
+                "Only pass 'future' when the user EXPLICITLY asks about upcoming, " +
+                'planned, or future incidents.',
+        ),
     label: z
         .string()
         .optional()
@@ -182,7 +186,8 @@ export const getTrafficIncidentsDescription =
     'detail or aggregation — those belong to analyseData/focusIncidents. ' +
     '\n\n' +
     'AREA via `where` (within mode only): omit `where` → current viewport; named area → `where.queries`; stored ' +
-    'places → `where.placeIds`; isochrone → `where.range`; route corridor → `where.route`; raw bounds → ' +
+    'places → `where.placeIds` (a places ENTRY id like "places-0" or locatePlace\'s `placesEntryId`, or a single ' +
+    'place id); isochrone → `where.range`; route corridor → `where.route`; raw bounds → ' +
     '`where.boundingBox`; custom shapes → `where.geometries`. Fields union into one bbox (≤10,000 km²). ' +
     '\n\n' +
     'CALL ONCE PER AREA — each call writes a new entry, so re-calling burns steps; pick a follow-up instead: ' +
@@ -318,22 +323,25 @@ export const executeGetTrafficIncidents = async (
 
         const result = await trafficIncidentDetails({ ...filters, bbox: effectiveBbox });
 
-        if (!result.features.length) {
-            // A zero-incident result writes no entry, but still surfaces where the query resolved —
-            // a mis-resolved area (wrong city) is exactly the case that returns nothing.
-            return {
-                count: 0,
-                entries: entriesSummary(state),
-                ...(resolvedAreas && resolvedAreas.length > 0 && { resolvedAreas }),
-            };
-        }
-
         const entryParams: TrafficIncidentDetailsByBBoxParams & { bbox: BBox } = {
             bbox: effectiveBbox,
             ...filters,
         };
         const capturedAt = Date.now();
         const entryLabel = label ?? defaultLabel(entryParams, effectiveWhere, routeLabel, resolvedAreas);
+
+        // We write an emtpy entry for a zero-incident result to subsequent tool calls can still analyze it as valid data
+        // resolvedAreas will catch mis-resolved areas in case of a query vs matched mistmatch
+        if (!result.features.length) {
+            const emptyId = await state.trafficIncidents.addIncidentsEntry([], entryParams, entryLabel, capturedAt);
+            return {
+                count: 0,
+                entryId: emptyId,
+                entries: entriesSummary(state),
+                ...(resolvedAreas && resolvedAreas.length > 0 && { resolvedAreas }),
+            };
+        }
+
         const entryId = await state.trafficIncidents.addIncidentsEntry(
             result.features,
             entryParams,

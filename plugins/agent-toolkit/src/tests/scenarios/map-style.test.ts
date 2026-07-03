@@ -1,5 +1,6 @@
+import { FULL_SCENARIOS, MODEL } from '@testing/agent-tool-calling';
 import { describe, expect, it } from 'vitest';
-import { FULL_SCENARIOS, getExamplePrompts, MODEL, runToolScenario } from './helpers';
+import { getExamplePrompts, runToolScenario } from './helpers';
 
 // Map-style / MapLibre tools. All classify cleanly from a cold turn: list/inspect tools are
 // self-contained and the mutate tools carry the target in the prompt. `setLayoutProperties` /

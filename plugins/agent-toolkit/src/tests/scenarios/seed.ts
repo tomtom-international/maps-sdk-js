@@ -1,6 +1,6 @@
 import type { ScriptStep } from '@langwatch/scenario';
-import { message, user } from '@langwatch/scenario';
-import type { JSONValue, ModelMessage, ToolCallPart, ToolResultPart } from 'ai';
+import { priorTurn } from '@testing/agent-tool-calling';
+import type { JSONValue } from 'ai';
 import type { z } from 'zod';
 import {
     discoverPlacesOutputSchema,
@@ -75,30 +75,9 @@ export const toolCall = <N extends SeedTool>(
     return { tool, input, output: output as unknown as JSONValue };
 };
 
-/**
- * Replay a completed prior turn as message history: the user request, the assistant's tool-call
- * message, the matching tool-result message, and a short natural-language summary (which must NOT
- * enumerate internal entry IDs — those now live in the tool results). Returns the `ScriptStep[]` a
- * scenario's `priorTurns` expects.
- */
-export const priorTurn = (request: string, calls: SeededToolCall[], summary: string): ScriptStep[] => {
-    const toolCallParts: ToolCallPart[] = calls.map((call, index) => ({
-        type: 'tool-call',
-        toolCallId: `seed-${index}`,
-        toolName: call.tool,
-        input: call.input,
-    }));
-    const toolResultParts: ToolResultPart[] = calls.map((call, index) => ({
-        type: 'tool-result',
-        toolCallId: `seed-${index}`,
-        toolName: call.tool,
-        output: { type: 'json', value: call.output },
-    }));
-    const assistantCall: ModelMessage = { role: 'assistant', content: toolCallParts };
-    const toolResults: ModelMessage = { role: 'tool', content: toolResultParts };
-    const assistantSummary: ModelMessage = { role: 'assistant', content: summary };
-    return [user(request), message(assistantCall), message(toolResults), message(assistantSummary)];
-};
+// `priorTurn` (the message-history staging) is imported above from `@testing/agent-tool-calling` and
+// used by the named seeds below; per-tool scenario files import it directly from that package. The
+// schema-validating `toolCall` above stays local because it depends on this package's own output schemas.
 
 const AMS: [number, number] = [4.89, 52.37];
 

@@ -1,6 +1,7 @@
+import { FULL_SCENARIOS, MODEL, priorTurn } from '@testing/agent-tool-calling';
 import { describe, expect, it } from 'vitest';
-import { FULL_SCENARIOS, getExamplePrompts, MODEL, runToolScenario } from './helpers';
-import { priorTurn, stagedWaypointsSeed, toolCall } from './seed';
+import { getExamplePrompts, runToolScenario } from './helpers';
+import { stagedWaypointsSeed, toolCall } from './seed';
 
 // Editing an EXISTING calculated route. Without a route in context these prompts ("remove the
 // second stop", "change the origin") have nothing to act on, so we replay a calculated 3-waypoint

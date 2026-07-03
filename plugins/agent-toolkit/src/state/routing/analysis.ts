@@ -9,5 +9,7 @@ import type { EntryAnalysis } from '../analyses';
  * every entry kind uses the same result shape; kept as a named export for back-compat.
  *
  * @group Agent Toolkit
+ *
+ * @ignore
  */
 export type RoutesAnalysis = EntryAnalysis;

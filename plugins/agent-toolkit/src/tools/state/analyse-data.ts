@@ -49,7 +49,7 @@ import {
     validateAnalysisResult,
 } from '../shared';
 import { toolErrorSchema } from '../shared-output-schemas';
-import { ensureStandingWired, registerAnalysis } from './analyses-runtime';
+import { registerAnalysisJob } from './monitoring';
 
 /**
  * Per-turn scope kinds that `analyseData` understands. Identical to {@link EntryDataKind}
@@ -303,12 +303,15 @@ export const executeAnalyseData = async (
 
     const sourceIds: GeometriesId[] | undefined = geometriesEntryIDs ? geometriesMeta.sourceIds : undefined;
 
-    // Register this run as a (disabled) standing analysis so `monitorAnalysis` can later make it
-    // recurring without re-declaring the code, then attach the one-shot result. The id is stable
-    // across an identical re-run. `affectedEntryIds` is the per-entry lookup key for the result.
+    // Register this run as a standing analysis job (paused unless `monitor`) so `monitorAnalysis` can
+    // later make it recurring without re-declaring the code, then attach the one-shot result (which backs
+    // `previous`). The id is stable across an identical re-run. `affectedEntryIds` is the per-entry lookup
+    // key for the result. Activating monitoring fires no `entries-change`, so it won't replay now; only
+    // the next genuine change to a source entry does.
     const affectedEntryIds = affectedEntries.map((e) => e.id);
     const analysisId = makeAnalysisId(name, affectedEntryIds);
-    registerAnalysis(state, {
+    const monitoring = params.monitor === true;
+    registerAnalysisJob(state, {
         analysisId,
         name,
         description,
@@ -323,13 +326,9 @@ export const executeAnalyseData = async (
             byodEntryIDs,
         },
         affectedEntryIds,
+        monitor: monitoring,
     });
     state.analyses.attachResult(analysisId, { name, description, outputFormat, data: analysis, timestamp });
-    ensureStandingWired(state);
-    // Enabling monitoring just flips the flag — it fires no `entries-change`, so it won't replay now;
-    // only the next genuine change to a source entry does.
-    const monitoring = params.monitor === true;
-    if (monitoring) state.analyses.setEnabled(analysisId, true);
 
     return {
         affectedEntries,

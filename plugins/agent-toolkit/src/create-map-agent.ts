@@ -4,13 +4,14 @@
 
 import type { TomTomMap } from '@tomtom-org/maps-sdk/map';
 import type { PrepareStepFunction, Tool } from 'ai';
-import { stepCountIs, ToolLoopAgent } from 'ai';
+import { hasToolCall, stepCountIs, ToolLoopAgent } from 'ai';
 import {
     applyToolScopes,
     composeStepResult,
     createPrepareStepMutex,
     destroyState,
     restoreScopableTools,
+    unionActiveTools,
 } from './prepare-step-helpers';
 import { resolveTools } from './resolve-tools';
 import { createToolState, DATA_ENTRY_KIND_TO_SLICE, type DataEntryKind, type EntryModeSlice } from './state';
@@ -183,6 +184,7 @@ export const createMapAgent = <CS extends ToolState = ToolState>(
         outputSchemas: options.outputSchemas,
         featureFlags: options.featureFlags,
         enabledDataKinds,
+        onToolExecute: options.onToolExecute,
     });
 
     // Resolve classifier
@@ -194,6 +196,20 @@ export const createMapAgent = <CS extends ToolState = ToolState>(
         prefix: options.systemPromptPrefix,
         suffix: options.systemPromptSuffix,
     });
+
+    // Tools flagged `alwaysActive` are unioned into every step's activeTools so the model can always
+    // reach them, regardless of what the classifier picked. Computed once from resolved metadata.
+    const alwaysActiveToolNames = Object.entries(toolsMetadata)
+        .filter(([, meta]) => meta.alwaysActive)
+        .map(([name]) => name);
+
+    // Tools flagged `endsTurnOnCall` halt the loop deterministically on the step that calls them — a
+    // single silent tool call (e.g. clarifyIntent rendering a form). A tool that awaits the user WITHOUT
+    // this flag (e.g. clarifyIntent in prose mode) instead gets one trailing step to present its result
+    // as text, then stops naturally when that step makes no tool call.
+    const endsTurnStops = Object.entries(toolsMetadata)
+        .filter(([, meta]) => meta.endsTurnOnCall)
+        .map(([name]) => hasToolCall(name));
 
     // Classification state — cached per turn (reset on step 0)
     let lastClassification: ClassificationResult | null = null;
@@ -219,20 +235,26 @@ export const createMapAgent = <CS extends ToolState = ToolState>(
             if (stepInfo.stepNumber === 0) {
                 lastClassification = await runStep0Classification(classificationDeps, stepInfo.messages);
             }
-            const activeTools = lastClassification?.activeToolNames;
+            const activeTools = unionActiveTools(lastClassification?.activeToolNames, alwaysActiveToolNames);
             const userResult = await options.prepareStep?.(stepInfo);
             const stepProviderOptions = options.stepProviderOptions?.({
                 activeTools,
                 stepNumber: stepInfo.stepNumber,
             });
-            return composeStepResult(activeTools, stepProviderOptions, userResult);
+            const composed = composeStepResult(activeTools, stepProviderOptions, userResult);
+            // composeStepResult intersects activeTools with a host-supplied prepareStep.activeTools,
+            // which could otherwise drop always-active tools. Re-assert them on the FINAL result so
+            // they stay reachable every step. (When activeTools is omitted, every tool is already
+            // active — nothing to re-add.)
+            if (!composed?.activeTools) return composed;
+            return { ...composed, activeTools: unionActiveTools(composed.activeTools, alwaysActiveToolNames) };
         });
 
     const agent = new ToolLoopAgent({
         model: options.model,
         tools,
         instructions: systemPrompt,
-        stopWhen: stepCountIs(options.maxSteps ?? 10),
+        stopWhen: [stepCountIs(options.maxSteps ?? 10), ...endsTurnStops],
         prepareStep,
         providerOptions: options.providerOptions,
     });

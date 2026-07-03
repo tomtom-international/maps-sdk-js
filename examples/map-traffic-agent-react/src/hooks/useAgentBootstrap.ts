@@ -1,11 +1,11 @@
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { TomTomMap } from '@tomtom-org/maps-sdk/map';
-import { type ClassificationResult, createMapAgent } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+import { createClarifyIntentTool, createMapAgent } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import type { ChatTransport } from 'ai';
 import { useEffect, useState } from 'react';
 import { TRAFFIC_MANAGER_PROMPT_OVERRIDES } from '../agent/system-prompt';
 import { API_KEY, createDemoAzure } from '../config';
-import { AgentUIMessage, createInstrumentedTransport } from '../telemetry';
+import { AgentUIMessage, createAgentTelemetry } from '../telemetry';
 
 export type AgentInstance = ReturnType<typeof createMapAgent>;
 
@@ -22,7 +22,6 @@ export function useAgentBootstrap({ deploymentId }: BootstrapOptions) {
     const [map, setMap] = useState<TomTomMap | undefined>(undefined);
     const [agent, setAgent] = useState<AgentInstance | undefined>(undefined);
     const [transport, setTransport] = useState<ChatTransport<AgentUIMessage> | undefined>(undefined);
-    const [classifications, setClassifications] = useState<readonly (ClassificationResult | null)[]>([]);
 
     useEffect(() => {
         // In Sandpack with the proxy bootstrap active, commonBaseURL is already
@@ -33,7 +32,7 @@ export function useAgentBootstrap({ deploymentId }: BootstrapOptions) {
         const created = new TomTomMap({
             mapLibre: {
                 container: 'map-container',
-                center: [-0.1276, 51.5074],
+                center: [13.405, 52.52],
                 zoom: 12,
             },
         });
@@ -48,6 +47,8 @@ export function useAgentBootstrap({ deploymentId }: BootstrapOptions) {
     useEffect(() => {
         if (!map) return;
 
+        const conversationId = crypto.randomUUID();
+        const telemetry = createAgentTelemetry(conversationId);
         const created = createMapAgent(map, {
             model: createDemoAzure().chat(deploymentId),
             maxSteps: 10,
@@ -56,20 +57,21 @@ export function useAgentBootstrap({ deploymentId }: BootstrapOptions) {
             systemPrompt: TRAFFIC_MANAGER_PROMPT_OVERRIDES,
             tools: {
                 toggleTrafficIncidents: false,
+                clarifyIntent: createClarifyIntentTool({ rendersForm: true }),
             },
-            onClassify: (result) => setClassifications((prev) => [...prev, result]),
+            onClassify: telemetry.onClassify,
+            onToolExecute: telemetry.onToolExecute,
         });
 
         setAgent(created);
-        setTransport(createInstrumentedTransport(created));
+        setTransport(telemetry.instrumentTransport(created));
 
         return () => {
             setAgent(undefined);
             setTransport(undefined);
-            setClassifications([]);
             created.destroy();
         };
     }, [map, deploymentId]);
 
-    return { agent, transport, classifications, isReady: transport !== undefined };
+    return { agent, transport, isReady: transport !== undefined };
 }

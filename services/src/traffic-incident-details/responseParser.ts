@@ -23,7 +23,7 @@ const parseTMC = (apiTMC: IncidentTMCAPI): TrafficIncidentTMC => ({
     direction: apiTMC.direction as 'positive' | 'negative',
     points: (apiTMC.points ?? []).map((p) => ({
         location: p.location,
-        ...(p.offset !== undefined && { offset: p.offset }),
+        ...(p.offset != null && { offset: p.offset }),
     })),
 });
 
@@ -45,14 +45,19 @@ const parseIncident = (apiIncident: IncidentAPI): TrafficIncident => {
             ...(p.endTime && { endTime: new Date(p.endTime) }),
             ...(p.from && { from: p.from }),
             ...(p.to && { to: p.to }),
-            ...(p.length !== undefined && { lengthInMeters: p.length }),
-            ...(p.delay !== undefined && { delayInSeconds: p.delay }),
+            // The API can return `length` / `delay` as an explicit `null` (e.g. closures and
+            // roadworks carry no delay). `!= null` drops both `null` and `undefined` so these
+            // optional numeric fields are omitted rather than set to `null` — a `null` here
+            // violates the `number | undefined` type and trips MapLibre's numeric paint/filter
+            // expressions ("Expected value to be of type number, but found null instead").
+            ...(p.length != null && { lengthInMeters: p.length }),
+            ...(p.delay != null && { delayInSeconds: p.delay }),
             ...(p.roadNumbers && { roadNumbers: p.roadNumbers }),
             timeValidity: p.timeValidity as TrafficIncidentTimeValidity,
             ...(p.probabilityOfOccurrence && {
                 probabilityOfOccurrence: p.probabilityOfOccurrence as TrafficIncidentProbability,
             }),
-            ...(p.numberOfReports !== undefined && { numberOfReports: p.numberOfReports }),
+            ...(p.numberOfReports != null && { numberOfReports: p.numberOfReports }),
             ...(p.lastReportTime && { lastReportTime: new Date(p.lastReportTime) }),
             ...(p.tmc && { tmc: parseTMC(p.tmc) }),
         },

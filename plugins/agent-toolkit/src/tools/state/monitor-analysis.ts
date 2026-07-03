@@ -3,9 +3,9 @@
  *
  * `monitorAnalysis` — the recurring half of the analysis pair, expressed as a pure toggle. It carries
  * no code and no sandbox surface: `analyseData` defines *what to compute* and returns an `analysisId`;
- * this tool only flips *whether it stays live*. Enabling makes the analysis recompute on every change
- * to its source entries (incidents monitor ticks, re-searched places, recalculated routes, …);
- * disabling stops it. The work lives in `analyses-runtime.ts`.
+ * this tool only flips *whether it stays live*. Enabling activates the analysis's {@link JobEngine} job
+ * so it recomputes on every change to its source entries (incidents monitor ticks, re-searched places,
+ * recalculated routes, …); disabling pauses it. The job is built in `monitoring.ts`.
  *
  * This replaces the incidents-only `monitorIncidentsAnalysis`: monitoring is now generic across every
  * analyseData input kind, and the focus side-effect is intentionally left out of the core — compose
@@ -15,7 +15,7 @@
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
-import { ensureStandingWired, setStandingEnabled } from './analyses-runtime';
+import { setAnalysisMonitored } from './monitoring';
 
 /** Structured output of `monitorAnalysis`: the toggled analysis id and its new monitoring state. */
 export const monitorAnalysisOutputSchema = z.union([
@@ -55,8 +55,7 @@ export const executeMonitorAnalysis = async (
     params: z.infer<typeof monitorAnalysisSchema>,
     state: ToolState,
 ): Promise<z.infer<typeof monitorAnalysisOutputSchema>> => {
-    ensureStandingWired(state);
-    const ok = setStandingEnabled(state, params.analysisId, params.enabled);
+    const ok = setAnalysisMonitored(state, params.analysisId, params.enabled);
     if (!ok) {
         return {
             error: `No analysis with id "${params.analysisId}". Run analyseData first and pass the analysisId it returns.`,

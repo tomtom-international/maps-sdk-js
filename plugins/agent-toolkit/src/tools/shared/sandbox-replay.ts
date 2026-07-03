@@ -3,10 +3,10 @@
  *
  * The shared sandbox-replay step: run sandbox `code` over already-prepared inputs in the env-resolved
  * executor with the recurring extras (`previous` / `now` / `log`), and validate the result. This is the
- * one sandbox run sequence behind BOTH recurring engines — the `analyseData` standing sweep
- * (`analyses-runtime.ts`) and the incidents clustering re-run (`clusters-runtime.ts`) — so the
- * pack → run → validate path lives in exactly one place. Callers own input prep and any
- * source-unchanged skip (they differ per engine); this owns only the realm-crossing run.
+ * one sandbox run sequence behind BOTH recurring paths — the {@link JobEngine} jobs that back
+ * `analyseData` / trackers (`tools/state/monitoring.ts`) and the incidents clustering re-run
+ * (`clusters-runtime.ts`) — so the pack → run → validate path lives in exactly one place. Callers own
+ * input prep and any source-unchanged skip (they differ per caller); this owns only the realm-crossing run.
  */
 
 import * as turf from '@turf/turf';

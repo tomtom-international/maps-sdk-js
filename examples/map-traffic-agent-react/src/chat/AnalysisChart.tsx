@@ -196,10 +196,10 @@ const readToken = (name: string, fallback: string): string => {
 // (light/dark) switch is picked up. Data-series colors stay vivid (PALETTE); only chrome is themed.
 const applyChartTheme = (): void => {
     if (typeof document === 'undefined') return;
-    const text = readToken('--sdk-text-medium', '#5b6470');
-    const textStrong = readToken('--sdk-text-high', '#1a1d21');
-    const line = readToken('--sdk-border-low', 'rgba(0,0,0,0.08)');
-    const surface = readToken('--sdk-surface-0', '#ffffff');
+    const text = readToken('--pb-text-medium', '#5b6470');
+    const textStrong = readToken('--pb-text-high', '#1a1d21');
+    const line = readToken('--pb-border-low', 'rgba(0,0,0,0.08)');
+    const surface = readToken('--pb-surface-0', '#ffffff');
     const bodyFont = typeof document.body !== 'undefined' ? getComputedStyle(document.body).fontFamily : '';
 
     ChartJS.defaults.font.family = bodyFont || ChartJS.defaults.font.family;
@@ -246,7 +246,7 @@ export function AnalysisChart({ config, expanded = false }: AnalysisChartProps) 
     );
 
     if (!prepared) {
-        return <div className="p-2 font-mono text-[12px] text-(--sdk-text-medium)">Invalid chart configuration.</div>;
+        return <div className="p-2 font-mono text-[12px] text-(--pb-text-medium)">Invalid chart configuration.</div>;
     }
 
     const isZoomable = ZOOMABLE_CHART_TYPES.has(prepared.type);
@@ -259,13 +259,13 @@ export function AnalysisChart({ config, expanded = false }: AnalysisChartProps) 
         <div className="flex w-full flex-col gap-2">
             {isZoomable && (
                 <div className="flex items-center justify-between gap-2">
-                    <span className="font-mono text-[11px] text-(--sdk-text-low)">
+                    <span className="font-mono text-[11px] text-(--pb-text-low)">
                         scroll / pinch to zoom · drag to pan
                     </span>
                     <button
                         type="button"
                         onClick={handleResetZoom}
-                        className="cursor-pointer rounded-(--sdk-radius-5) border border-(--sdk-border-medium) bg-(--sdk-surface-1) px-1.5 py-0.5 font-mono text-[11px] leading-snug text-(--sdk-text-medium) transition-colors hover:bg-(--sdk-surface-2) hover:text-(--sdk-text-high)"
+                        className="cursor-pointer rounded-(--pb-radius-5) border border-(--pb-border-medium) bg-(--pb-surface-1) px-1.5 py-0.5 font-mono text-[11px] leading-snug text-(--pb-text-medium) transition-colors hover:bg-(--pb-surface-2) hover:text-(--pb-text-high)"
                     >
                         Reset zoom
                     </button>

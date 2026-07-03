@@ -148,7 +148,7 @@ export class CustomGeometriesState implements ShownEntriesSlice, StateSlice {
             id: entryId,
             timestamp: Date.now(),
             label,
-            features,
+            data: features,
             provenance,
         });
         this.events.emit('entries-change', { entries: this._entries, changedIds: [...droppedIds, entryId] });
@@ -173,9 +173,9 @@ export class CustomGeometriesState implements ShownEntriesSlice, StateSlice {
 
     /**
      * Render this entry's polygons. `mode` is scoped to this entry's own layer:
-     * - `'replace'` (default) — show exactly `entry.features`, clearing whatever the
+     * - `'replace'` (default) — show exactly `entry.data`, clearing whatever the
      *   entry's module had rendered before.
-     * - `'add'` — merge `entry.features` with the polygons currently shown on this entry's
+     * - `'add'` — merge `entry.data` with the polygons currently shown on this entry's
      *   layer (deduped by feature id). Mostly only meaningful when re-showing the same entry.
      *
      * Cross-entry visibility is handled separately: under `entryMode === 'single'` other
@@ -190,7 +190,7 @@ export class CustomGeometriesState implements ShownEntriesSlice, StateSlice {
         const entry = this._requireEntry(entryId);
         await this._hideOthersUnderSingleMode(entryId);
         const module = await this.getEntryGeometriesModule(entryId, theme);
-        const features = entry.features as PolygonFeature<CommonPlaceProps>[];
+        const features = entry.data as PolygonFeature<CommonPlaceProps>[];
         if (mode === 'add') {
             await renderMerged(module, features);
         } else {

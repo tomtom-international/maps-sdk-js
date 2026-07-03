@@ -6,29 +6,29 @@
 
 export {
     calculateBBoxDescription,
+    calculateBBoxOutputSchema,
     calculateBBoxSchema,
     executeCalculateBBox,
 } from './calculate-bbox';
+export {
+    CLARIFY_FORM_PROMPT,
+    CLARIFY_PROSE_PROMPT,
+    type ClarifyIntentQuestion,
+    type ClarifyIntentToolOptions,
+    clarifyIntentClassificationPrompt,
+    clarifyIntentDescription,
+    clarifyIntentExamplePrompts,
+    clarifyIntentExamples,
+    clarifyIntentOutputSchema,
+    clarifyIntentSchema,
+    createClarifyIntentTool,
+    executeClarifyIntent,
+    questionSchema,
+} from './clarify-user-intent';
 export {
     executeGetCurrentLocation,
     getCurrentLocationDescription,
     getCurrentLocationOutputSchema,
     getCurrentLocationSchema,
 } from './get-current-location';
-export {
-    executeGetRouteProgress,
-    getRouteProgressDescription,
-    getRouteProgressSchema,
-} from './get-route-progress';
-export {
-    executeGetSectionBBox,
-    getSectionBBoxDescription,
-    getSectionBBoxOutputSchema,
-    getSectionBBoxSchema,
-} from './get-section-bbox';
-export {
-    executeGetSectionProgress,
-    getSectionProgressDescription,
-    getSectionProgressSchema,
-} from './get-section-progress';
 export { createHelpTool, helpDescription, helpOutputSchema, helpSchema } from './help';

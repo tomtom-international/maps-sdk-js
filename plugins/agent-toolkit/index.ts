@@ -41,6 +41,17 @@ export {
     TOOLS_BY_DATA_ENTRY_KIND,
     type ToolName,
 } from './src/tools';
+export * from './src/tools/shared/index';
+export {
+    CLARIFY_FORM_PROMPT,
+    CLARIFY_PROSE_PROMPT,
+    type ClarifyIntentQuestion,
+    type ClarifyIntentToolOptions,
+    clarifyIntentOutputSchema,
+    clarifyIntentSchema,
+    createClarifyIntentTool,
+    questionSchema,
+} from './src/tools/utilities';
 export * from './src/types/index';
 export {
     type ClassificationResult,

@@ -105,6 +105,25 @@ export const intersectActiveTools = (
 };
 
 /**
+ * Union `alwaysActive` tool names into a classifier-picked activeTools list. Returns `undefined`
+ * when `activeTools` is unset (the fail-open path — every tool is already active, so the always-on
+ * tools are included implicitly). Otherwise appends any always-active name not already picked,
+ * preserving the classifier's order first. Used so tools flagged `alwaysActive` are offered to the
+ * model every turn regardless of what the classifier selected.
+ *
+ * @ignore
+ */
+export const unionActiveTools = (
+    activeTools: string[] | undefined,
+    alwaysActive: readonly string[],
+): string[] | undefined => {
+    if (!activeTools) return undefined;
+    if (alwaysActive.length === 0) return activeTools;
+    const present = new Set(activeTools);
+    return [...activeTools, ...alwaysActive.filter((name) => !present.has(name))];
+};
+
+/**
  * Type guard for {@link StateSlice}. Detects the canonical shape (an object with a callable
  * `reset` method) without committing to a particular slice's full surface — used by
  * {@link destroyState} to walk the heterogeneous ToolState bag without per-slice knowledge.

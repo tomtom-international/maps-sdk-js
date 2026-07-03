@@ -138,7 +138,7 @@ const agent = createMapAgent(map, {
     dataEntries: {
         routes: { entryMode: 'single' },       // only one route at a time
         incidents: { entryMode: 'single' },
-        byod: { enabled: false },              // drop byod from analyseData/processData scope + recallByod/addByodSource/setByodLayers/updateByodDisplay
+        byod: { enabled: false },              // drop byod from analyseData/processData scope + addByodSource/setByodLayers/updateByodDisplay
     },
 
     // Classifier (optional)

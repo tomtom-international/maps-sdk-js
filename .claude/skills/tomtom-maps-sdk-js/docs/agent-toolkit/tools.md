@@ -12,19 +12,19 @@ Categories (representative names — see `DEFAULT_TOOLS` for the full list and `
 
 - **Location**: `locatePlace`, `reverseGeocode`, `getCurrentLocation`, `getViewport`
 - **Places & search**: `discoverPlaces`, `getPOICategoryCodes`
-- **Routing**: `setRoute`, `addWaypointsToRoute`, `removeWaypointsFromRoute`, `replaceWaypointInRoute`, `getCurrentWaypoints`
+- **Routing**: `setRoute`, `addWaypointsToRoute`, `removeWaypointsFromRoute`, `replaceWaypointInRoute`, `getCurrentWaypoints`, `startRouteMonitor`, `stopRouteMonitor`
 - **Reachable areas**: `findReachableAreas` (isochrones / isodistances)
-- **Geometries (polygon namespace)**: `recallGeometries` — tagged `{ kind, id }` lookups across `place` / `places` / `ranges` / `customGeometries` entries
-- **BYOD (bring-your-own-data)**: `addByodSource`, `setByodLayers`, `recallByod`, `updateByodDisplay` — customer-authored GeoJSON layers. See [byod.md](./byod.md) for the full ingest / profile / safety / styling model.
-- **Traffic — tiles**: `toggleTilesTrafficFlow`, `toggleTilesTrafficIncidents`, `getShownTileIncidents`
-- **Traffic — incidents (fetch / monitor / focus)**: `getTrafficIncidents`, `startTrafficIncidentsMonitor`, `stopTrafficIncidentsMonitor`, `focusIncidents`
-- **Traffic — area analytics**: `getTrafficAreaAnalytics`, `queryTrafficAnalytics`, `updateTrafficAreaAnalyticsDisplay`
+- **BYOD (bring-your-own-data)**: `addByodSource`, `setByodLayers`, `updateByodDisplay` — customer-authored GeoJSON layers. See [byod.md](./byod.md) for the full ingest / profile / safety / styling model.
+- **Traffic — tiles**: `toggleTilesTrafficFlow`, `toggleTilesTrafficIncidents`
+- **Traffic — incidents (fetch / monitor / focus)**: `getTrafficIncidents`, `setTrafficIncidentsMonitor`, `clusterIncidents`, `focusIncidents`
+- **Traffic — area analytics**: `getTrafficAreaAnalytics`, `monitorAnalysis`, `updateTrafficAreaAnalyticsDisplay`
+- **Trackers (geofence / proximity alerts)**: `createTracker`, `getTrackers`, `getTrackerHistory`, `clearTracker`
 - **Unified data tools (scope-aware)**: `analyseData`, `processData` — see [data-tools.md](./data-tools.md)
 - **Map display**: `updatePlacesDisplay`, `updateRoutesDisplay` (replaces the old `setRouteTheme`), `updateWaypointsDisplay`, `updateTrafficAreaAnalyticsDisplay`, `updateByodDisplay`, `setByodLayers` (BYOD restyle), `clearMap`
 - **Map control**: `flyTo`, `zoomInOrOut`, `setMapStandardStyle`, `setLanguage`, `toggleTilesPOIs`, `toggleTilesBaseMapLayerGroups`, `setPitchBearing`, `getStandardMapStyles`
 - **MapLibre direct**: `executeMaplibreCode`, `setLayoutProperties`, `setPaintProperties`, `getMapStyleLayers`
-- **State / recall**: `recallPlaces`, `recallRoutes`, `recallRanges`, `recallGeometries`, `recallByod`, `recallState`, `setEntryMode`, `resetState`
-- **Utilities**: `formatDistance`, `formatDuration`, `calculateBBox`, `help`
+- **State / recall**: `recallState` (scope-aware `{ kind, id }` over `places` / `routes` / `ranges` / `geometries` / `byod` / `incidents` / `trafficAreaAnalytics`), `setEntryMode`, `resetState`
+- **Utilities**: `clarifyIntent`, `calculateBBox`, `help`
 
 Every tool follows the same `ToolEntry` shape.
 Listed names are stable — agents and apps can reference them via `DEFAULT_TOOLS.locatePlace`, etc.

@@ -76,7 +76,7 @@ describe('clusterIncidents (dedicated clustering state)', () => {
         const out = await executeClusterIncidents(
             {
                 incidentsEntryID: id,
-                code: 'const slow = incidents.filter((i) => i.properties.delayInSeconds >= 300); return cluster(slow, { minMembers: 3 }, previous, now);',
+                code: 'const slow = Object.values(incidentsByEntry).flat().filter((i) => i.properties.delayInSeconds >= 300); return cluster(slow, { minMembers: 3 }, previous, now);',
             },
             state,
         );
@@ -111,7 +111,7 @@ describe('clusterIncidents (dedicated clustering state)', () => {
 
         // A custom-`code` call DOES use the sandbox — so a disabled executor surfaces as an error.
         const codeOut = await executeClusterIncidents(
-            { incidentsEntryID: id, code: 'return cluster(incidents);' },
+            { incidentsEntryID: id, code: 'return cluster(Object.values(incidentsByEntry).flat());' },
             state,
         );
         expect('error' in codeOut).toBe(true);

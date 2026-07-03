@@ -18,6 +18,8 @@ const CLEARED_SLICES = [
     'trafficAreaAnalytics',
     'trafficIncidents',
     'byod',
+    'analyses',
+    'trackers',
     'mapPOIs',
     'trafficFlow',
     'mapStyle',
@@ -90,6 +92,14 @@ export const executeResetState = async (
         state.trafficAreaAnalytics.reset();
         state.trafficIncidents.reset();
         state.byod.reset();
+
+        // Session-state owners. Resetting the entry slices above orphan-GCs their jobs, but the
+        // analyses records, tracker rows, and the durable tracker alert log only clear on an explicit
+        // reset — without these a "start over" leaves a stale alert feed and analysis history behind.
+        // The engine drops any remaining jobs; its slice subscriptions persist (harmless when empty).
+        state.analyses.reset();
+        state.trackers.reset();
+        state.engine.reset();
 
         // 4. Map style: revert to the canonical default. `keepState: false`
         //    so any sources/layers added after the last `setStyle` call are

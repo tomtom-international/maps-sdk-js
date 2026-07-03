@@ -1,15 +1,62 @@
 import type { Tool } from 'ai';
 import type { z } from 'zod';
 import { createHelpTool } from './tools/utilities';
-import type { EntryDataKind, ToolBuildOptions, ToolDefinition, ToolEntry, ToolMetadata, ToolState } from './types';
+import type {
+    EntryDataKind,
+    OnToolExecute,
+    ToolBuildOptions,
+    ToolDefinition,
+    ToolEntry,
+    ToolMetadata,
+    ToolState,
+} from './types';
 
-/** Converts a ToolEntry to an AI SDK Tool, binding state to execute. */
-const toAiTool = <S extends ToolState>(entry: ToolEntry<S>, state: S, includeOutputSchema: boolean): Tool =>
+const errorFromOutput = (output: unknown): string | undefined => {
+    const error = (output as { error?: unknown } | undefined)?.error;
+    return typeof error === 'string' ? error : undefined;
+};
+
+/**
+ * Converts a ToolEntry to an AI SDK Tool, binding state to execute. When
+ * `onToolExecute` is supplied, the executor is wrapped to report wall-clock
+ * duration and failure (thrown, or the standardized `{ error }` return) after
+ * each call. Without it, the plain executor is used (zero overhead).
+ */
+const toAiTool = <S extends ToolState>(
+    name: string,
+    entry: ToolEntry<S>,
+    state: S,
+    includeOutputSchema: boolean,
+    onToolExecute?: OnToolExecute,
+): Tool =>
     ({
         description: entry.description,
         inputSchema: entry.inputSchema,
         outputSchema: includeOutputSchema ? entry.outputSchema : undefined,
-        execute: (input: any) => entry.execute(input, state),
+        execute: onToolExecute
+            ? async (input: any) => {
+                  const start = Date.now();
+                  try {
+                      const output = await entry.execute(input, state);
+                      const errorMessage = errorFromOutput(output);
+                      onToolExecute({
+                          toolName: name,
+                          durationMs: Date.now() - start,
+                          isError: errorMessage !== undefined,
+                          errorMessage,
+                      });
+                      return output;
+                  } catch (error) {
+                      onToolExecute({
+                          toolName: name,
+                          durationMs: Date.now() - start,
+                          isError: true,
+                          errorMessage: error instanceof Error ? error.message : String(error),
+                      });
+                      throw error;
+                  }
+              }
+            : (input: any) => entry.execute(input, state),
     }) as Tool;
 
 /** Extracts ToolMetadata from a ToolEntry, adding the name. */
@@ -22,6 +69,8 @@ const toMetadata = <S extends ToolState>(name: string, entry: ToolEntry<S>): Too
     examplePrompts: entry.examplePrompts,
     relatedTools: entry.relatedTools,
     dependsOn: entry.dependsOn,
+    alwaysActive: entry.alwaysActive,
+    endsTurnOnCall: entry.endsTurnOnCall,
     scopePrompt: entry.scopePrompt,
 });
 
@@ -75,6 +124,7 @@ export const setupTools = <S extends ToolState>(
         outputSchemas?: boolean;
         featureFlags?: ToolBuildOptions['featureFlags'];
         enabledDataKinds?: readonly EntryDataKind[];
+        onToolExecute?: OnToolExecute;
     },
 ): {
     tools: Record<string, Tool>;
@@ -92,7 +142,7 @@ export const setupTools = <S extends ToolState>(
 
     for (const [name, entryOrBuilder] of Object.entries(toolEntries)) {
         const entry = materializeEntry(entryOrBuilder, buildOptions);
-        tools[name] = toAiTool(entry, state, includeOutputSchema);
+        tools[name] = toAiTool(name, entry, state, includeOutputSchema, options?.onToolExecute);
         toolsMetadata[name] = toMetadata(name, entry);
 
         // Builder + scopeSchema is the precondition for per-turn rebuilding. A static

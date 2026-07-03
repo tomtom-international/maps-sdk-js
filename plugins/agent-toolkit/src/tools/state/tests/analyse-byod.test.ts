@@ -29,7 +29,7 @@ describe('analyseData — byod', () => {
                 description: 'Disputed polygons per ADMIN value',
                 code: `
                     const counts = {};
-                    for (const f of byod.features) {
+                    for (const f of Object.values(byodByEntry).flatMap((fc) => fc.features)) {
                         const key = f.properties.ADMIN;
                         counts[key] = (counts[key] ?? 0) + 1;
                     }

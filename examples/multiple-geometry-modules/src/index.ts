@@ -21,8 +21,8 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
     const restOfTheMapGeometryModule = await GeometriesModule.get(map, {
         theme: 'inverted',
-        colorConfig: { fillColor: 'black', fillOpacity: ['interpolate', ['linear'], ['zoom'], 6, 0.6, 14, 0.4] },
-        lineConfig: { lineOpacity: 0 },
+        fill: { color: 'black', opacity: ['interpolate', ['linear'], ['zoom'], 6, 0.6, 14, 0.4] },
+        line: { opacity: 0 },
     });
     restOfTheMapGeometryModule.show(mainGeometry);
 
@@ -34,19 +34,19 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
     const subdivisionGeometries = await geometryData({ geometries: subdivisions });
     const closeupGeometriesModule = await GeometriesModule.get(map, {
         beforeLayerConfig: 'lowestRoadLine',
-        colorConfig: {
-            fillColor: 'fadedRainbow',
-            fillOpacity: ['interpolate', ['linear'], ['zoom'], 6, 0, 7, 1, 11, 0],
+        fill: {
+            color: 'fadedRainbow',
+            opacity: ['interpolate', ['linear'], ['zoom'], 6, 0, 7, 1, 11, 0],
         },
     });
     closeupGeometriesModule.show(subdivisionGeometries);
 
     const farAwayGeometriesModule = await GeometriesModule.get(map, {
         beforeLayerConfig: 'country',
-        lineConfig: { lineWidth: 0.7, lineOpacity: ['interpolate', ['linear'], ['zoom'], 6, 1, 8, 0] },
-        colorConfig: {
-            fillColor: 'fadedRainbow',
-            fillOpacity: ['interpolate', ['linear'], ['zoom'], 6, 1, 7, 0],
+        line: { width: 0.7, opacity: ['interpolate', ['linear'], ['zoom'], 6, 1, 8, 0] },
+        fill: {
+            color: 'fadedRainbow',
+            opacity: ['interpolate', ['linear'], ['zoom'], 6, 1, 7, 0],
         },
     });
     farAwayGeometriesModule.show(subdivisionGeometries);

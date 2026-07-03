@@ -6,6 +6,7 @@ import {
     intersectActiveTools,
     isStateSlice,
     mergeProviderOptions,
+    unionActiveTools,
 } from '../prepare-step-helpers';
 
 describe('intersectActiveTools', () => {
@@ -31,6 +32,34 @@ describe('intersectActiveTools', () => {
     test('returns empty array when the intersection is empty (not undefined)', () => {
         // An empty array communicates "user opted into none", distinct from "no filter at all".
         expect(intersectActiveTools(['a'], ['b'])).toEqual([]);
+    });
+});
+
+describe('unionActiveTools', () => {
+    test('returns undefined on the fail-open path (no classifier picks)', () => {
+        // undefined activeTools = every tool active, so always-on tools are already included.
+        expect(unionActiveTools(undefined, ['clarifyIntent'])).toBeUndefined();
+    });
+
+    test('returns undefined when activeTools is unset and there are no always-active tools', () => {
+        expect(unionActiveTools(undefined, [])).toBeUndefined();
+    });
+
+    test('returns the picks unchanged when there are no always-active tools', () => {
+        expect(unionActiveTools(['a', 'b'], [])).toEqual(['a', 'b']);
+    });
+
+    test('adds always-active tools when the classifier ran but picked nothing (empty array)', () => {
+        // An empty array is "classifier ran, selected none" — distinct from undefined (fail-open).
+        expect(unionActiveTools([], ['clarifyIntent'])).toEqual(['clarifyIntent']);
+    });
+
+    test('appends always-active names not already picked, classifier order first', () => {
+        expect(unionActiveTools(['a', 'b'], ['clarifyIntent'])).toEqual(['a', 'b', 'clarifyIntent']);
+    });
+
+    test('does not duplicate an always-active tool the classifier already picked', () => {
+        expect(unionActiveTools(['clarifyIntent', 'a'], ['clarifyIntent'])).toEqual(['clarifyIntent', 'a']);
     });
 });
 

@@ -22,7 +22,7 @@ describe('PlacesState — history', () => {
         expect(state.entries[0]).toMatchObject({
             id: 'places-0',
             label: 'Cafe, Amsterdam',
-            places: [place],
+            data: [place],
         });
         expect(state.entries[0].timestamp).toBeTypeOf('number');
     });
@@ -123,6 +123,44 @@ describe('PlacesState — history', () => {
 
             state.findPlaceById('b');
             expect(entry._byId).toBe(cacheAfterFirst);
+        });
+    });
+
+    describe('geometryPlaceIdsForEntry', () => {
+        // Feature collection where each id can opt into a geometry data source.
+        const makeFeatureCollection = (places: { id: string; geometrySource?: boolean }[]) =>
+            ({
+                type: 'FeatureCollection',
+                features: places.map(({ id, geometrySource }) => ({
+                    type: 'Feature',
+                    id,
+                    geometry: { type: 'Point', coordinates: [0, 0] },
+                    properties: { ...(geometrySource && { dataSources: { geometry: { id: `g-${id}` } } }) },
+                })),
+            }) as any;
+
+        it('expands an entry id to its geometry-bearing place ids only', async () => {
+            const state = new PlacesState(mockMap);
+            const id = await state.addPlaceResult(
+                makeFeatureCollection([
+                    { id: 'a', geometrySource: true },
+                    { id: 'b' },
+                    { id: 'c', geometrySource: true },
+                ]),
+                'mixed',
+            );
+            expect(state.geometryPlaceIdsForEntry(id)).toEqual(['a', 'c']);
+        });
+
+        it('returns [] when the entry holds no geometry-bearing place', async () => {
+            const state = new PlacesState(mockMap);
+            const id = await state.addPlaceResult(makeFeatureCollection([{ id: 'a' }, { id: 'b' }]), 'addresses');
+            expect(state.geometryPlaceIdsForEntry(id)).toEqual([]);
+        });
+
+        it('returns undefined for an unknown entry id (so callers fall back to feature-id lookup)', () => {
+            const state = new PlacesState(mockMap);
+            expect(state.geometryPlaceIdsForEntry('nope')).toBeUndefined();
         });
     });
 });

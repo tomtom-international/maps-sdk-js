@@ -1,6 +1,7 @@
+import { FULL_SCENARIOS, MODEL, priorTurn } from '@testing/agent-tool-calling';
 import { describe, expect, it } from 'vitest';
-import { FULL_SCENARIOS, getExamplePrompts, MODEL, runToolScenario } from './helpers';
-import { priorTurn, stagedWaypointsSeed, toolCall } from './seed';
+import { getExamplePrompts, runToolScenario } from './helpers';
+import { stagedWaypointsSeed, toolCall } from './seed';
 
 // Show / hide / swap / restyle of the agent's OWN rendered entries (distinct from the base-map tile
 // toggles in tile-toggles.test.ts). Each display tool acts on a slice that must already hold an

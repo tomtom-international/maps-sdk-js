@@ -2,14 +2,14 @@
  * @module agent-toolkit-tools
  *
  * Compact schema documentation for the `TrafficAreaAnalytics` shape, reused by every tool whose
- * LLM-authored code reads the injected `trafficAreaAnalytics` collection (`analyseData`, `processData`,
+ * LLM-authored code reads the injected `trafficAreaAnalyticsByEntry[id]` collections (`analyseData`, `processData`,
  * `clusterIncidents`). The metric numbers live under `feature.properties.baseData` — NOT directly on
  * `properties` — so without this the model reads the wrong path.
  */
 
 /** @ignore */
 export const TRAFFIC_AREA_ANALYTICS_SCHEMA_DOC =
-    '`trafficAreaAnalytics` is a FeatureCollection of Polygon Features (one per analysed region). The ' +
+    'Each `trafficAreaAnalyticsByEntry[id]` is a FeatureCollection of Polygon Features (one per analysed region). The ' +
     'aggregated metrics live under `feature.properties.baseData` (NOT directly on `properties`):\n' +
     '```ts\n' +
     'type AreaAnalyticsFeatureProperties = {\n' +

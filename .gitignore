@@ -27,3 +27,6 @@ eval-report-*
 
 # Local pnpm content-addressable store (created by sandboxed installs)
 .pnpm-store/
+
+# Agent-eval benchmark run logs (local experiment tracking, not source)
+agent-eval/benchmark/results/

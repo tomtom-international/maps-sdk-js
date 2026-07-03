@@ -1,5 +1,6 @@
+import { FULL_SCENARIOS, MODEL } from '@testing/agent-tool-calling';
 import { describe, expect, it } from 'vitest';
-import { FULL_SCENARIOS, getExamplePrompts, MODEL, runToolScenario } from './helpers';
+import { getExamplePrompts, runToolScenario } from './helpers';
 
 // Vector-tile base-map overlays. The FULL run showed a real, by-design overlap: "hide 3D buildings"
 // / "show only restaurant icons" can be served EITHER by the dedicated toggle OR by the lower-level

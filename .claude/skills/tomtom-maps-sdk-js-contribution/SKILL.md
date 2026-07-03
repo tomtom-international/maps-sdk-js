@@ -24,6 +24,7 @@ You are working as an SDK contributor on the TomTom Maps SDK for JavaScript mono
    | `plugins/` (any) | `plugins/AGENTS.md` |
    | `plugins/agent-toolkit/` | `plugins/agent-toolkit/AGENTS.md` + `plugins/agent-toolkit/ENGINEERING-GUIDELINES.md` |
    | `plugins/viewport-places/` | `plugins/AGENTS.md` (no dedicated AGENTS.md; see `src/viewportPlaces.ts`) |
+   | `plugins/landmarks-3d/` | `plugins/AGENTS.md` (no dedicated AGENTS.md; see `src/Landmarks3D.ts`) |
    | `shared-configs/` | `shared-configs/AGENTS.md` |
    | `documentation/` | `documentation/AGENTS.md` |
    | `documentation/docs-portal/` | `documentation/docs-portal/AGENTS.md` (guide writing with `SDKGuideLiveCodingExample`) |

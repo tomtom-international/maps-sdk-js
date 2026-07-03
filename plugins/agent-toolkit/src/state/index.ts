@@ -2,6 +2,7 @@ export * from './analyses';
 export * from './base-map';
 export * from './custom-geometries';
 export * from './digest';
+export * from './entry';
 export * from './events';
 export * from './map-pois';
 export * from './places';

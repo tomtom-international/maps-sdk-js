@@ -5,9 +5,10 @@ import {
     useAuiState,
 } from '@assistant-ui/react';
 import { marked } from 'marked';
-import { ClassificationChip } from './ClassificationChip';
-import { useMessageClassification } from './ClassificationsContext';
-import { ToolCall } from './ToolCall';
+import { useState } from 'react';
+import agentsDemoIconRaw from './assets/agents-demo-icon.svg?raw';
+import { Icon } from './icon';
+import { ToolCall, ToolDisclosure } from './ToolCall';
 
 const MarkdownText: TextMessagePartComponent = ({ text }) => (
     <div dangerouslySetInnerHTML={{ __html: marked(text) as string }} />
@@ -46,6 +47,85 @@ const formatToolError = (result: unknown): string => {
 const inBandError = (result: unknown): boolean =>
     !!result && typeof result === 'object' && 'error' in (result as Record<string, unknown>);
 
+type ToolCallData = { toolCallId: string; toolName: string; input: unknown; output: unknown; errorText?: string };
+
+// Pull the turn's executed tool calls out of the message content. clarifyIntent is normally excluded
+// (its UI is the pinned wizard), but a FAILED clarifyIntent has no wizard, so keep it here to surface
+// the error. These become the per-tool rows grouped under the "Used N tools" disclosure.
+function extractToolCalls(content: readonly unknown[] | undefined): ToolCallData[] {
+    return (content ?? [])
+        .map(
+            (p) =>
+                p as {
+                    type?: string;
+                    toolCallId?: string;
+                    toolName?: string;
+                    args?: unknown;
+                    result?: unknown;
+                    isError?: boolean;
+                },
+        )
+        .filter((p) => {
+            if (p.type !== 'tool-call') return false;
+            // Keep clarifyIntent out of the pill unless it failed (no wizard renders for a failed call).
+            if (p.toolName === 'clarifyIntent') return !!p.isError || inBandError(p.result);
+            return true;
+        })
+        .map((p) => {
+            const errored = !!p.isError || inBandError(p.result);
+            return {
+                toolCallId: p.toolCallId ?? p.toolName ?? '',
+                toolName: p.toolName ?? 'tool',
+                input: p.args,
+                output: errored ? undefined : p.result,
+                errorText: errored ? formatToolError(p.result) : undefined,
+            };
+        });
+}
+
+// "Used N tools" pill: the turn's tool calls collapsed into one chip that expands to the
+// individual per-tool rows. Renders nothing on turns that ran no tools.
+function ToolGroup({ toolCalls }: { toolCalls: ToolCallData[] }) {
+    const n = toolCalls.length;
+    if (n === 0) return null;
+    return (
+        <details className="group/used my-1 w-full self-start">
+            <summary className="inline-flex w-fit cursor-pointer list-none items-center gap-1 rounded-[5px] bg-[rgba(0,0,0,0.04)] py-1 pr-1 pl-2 font-(family-name:--pb-font-code) text-[12px] leading-5 font-semibold text-(--pb-text-high) group-open/used:rounded-b-none [&::-webkit-details-marker]:hidden">
+                <span>
+                    Used {n} {n === 1 ? 'tool' : 'tools'}
+                </span>
+                <svg
+                    className="shrink-0 transition-transform group-open/used:rotate-90"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    aria-hidden="true"
+                >
+                    <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+            </summary>
+            {/* Open state: the tool rows sit in a grey container that connects flush to the pill (shared
+                tint, squared-off shared edge), each row individually collapsible. */}
+            <div className="flex w-full flex-col rounded-b-(--pb-radius-10) rounded-tr-(--pb-radius-10) bg-[rgba(0,0,0,0.04)] p-1">
+                {toolCalls.map((tc) => (
+                    <ToolDisclosure
+                        key={tc.toolCallId}
+                        toolName={tc.toolName}
+                        input={tc.input}
+                        output={tc.output}
+                        errorText={tc.errorText}
+                    />
+                ))}
+            </div>
+        </details>
+    );
+}
+
+// Inline renderer for the per-part `tools` slot. Non-clarify tools render nothing here (their I/O lives
+// in the ToolGroup pill); clarifyIntent surfaces only its intro line, with the questions in the wizard.
 const ToolCallContent: ToolCallMessagePartComponent = ({ toolName, args, result, isError }) => {
     const errored = isError || inBandError(result);
     return (
@@ -58,10 +138,107 @@ const ToolCallContent: ToolCallMessagePartComponent = ({ toolName, args, result,
     );
 };
 
+// The copy control below an agent reply. The button itself is the hit zone — 32px square around a
+// 16px icon (extended hit zone) — so the tappable area is far larger than the glyph.
+function ActionIcon({ label, onClick, children }: { label: string; onClick: () => void; children: React.ReactNode }) {
+    return (
+        <button
+            type="button"
+            aria-label={label}
+            title={label}
+            onClick={onClick}
+            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-(--pb-radius-5) border-0 bg-transparent text-(--pb-text-low) transition-colors hover:bg-(--pb-surface-1) hover:text-(--pb-text-high) [&_svg]:h-4 [&_svg]:w-4"
+        >
+            {children}
+        </button>
+    );
+}
+
+// Action row beneath an agent reply: a single copy-the-reply control. (Thumbs up/down and the
+// more-options affordance were removed per captain review.) The padded hit zone (see ActionIcon)
+// doubles as the breathing room between the last reply and the composer.
+function AssistantActions({ text }: { text: string }) {
+    const [copied, setCopied] = useState(false);
+    const copy = () => {
+        void navigator.clipboard
+            .writeText(text)
+            .then(() => {
+                setCopied(true);
+                setTimeout(() => setCopied(false), 1500);
+            })
+            .catch(() => setCopied(false));
+    };
+    return (
+        <div className="-ml-1.5 mt-0.5 mb-2 flex items-center gap-0.5">
+            <ActionIcon label={copied ? 'Copied' : 'Copy'} onClick={copy}>
+                {copied ? (
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        aria-hidden="true"
+                    >
+                        <path d="M20 6 9 17l-5-5" />
+                    </svg>
+                ) : (
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        aria-hidden="true"
+                    >
+                        <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+                        <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+                    </svg>
+                )}
+            </ActionIcon>
+        </div>
+    );
+}
+
+// The turn's plain answer text (markdown source), concatenated from its text parts — used as the copy
+// payload and to decide whether the actions row should render (tool-only turns have none).
+function getAnswerText(content: readonly unknown[] | undefined): string {
+    return (content ?? [])
+        .map((p) => p as { type?: string; text?: unknown })
+        .filter((p) => p.type === 'text' && typeof p.text === 'string')
+        .map((p) => p.text as string)
+        .join('');
+}
+
 export function MessageComponent() {
     const { id, role, content } = useAuiState((s) => s.message);
-    const classification = useMessageClassification(id);
+    const hasUserMessage = useAuiState((s) => s.thread.messages.some((m) => m.role === 'user'));
     const hasContent = content?.length > 0;
+
+    // The seeded welcome renders as the start screen: a red two-star spark, the agent title +
+    // tagline (centered), and a full-width divider above the prompts. Not a chat bubble. Once the user
+    // sends their first prompt it disappears (the Restart pill takes its place).
+    if (id === 'welcome') {
+        if (hasUserMessage) return null;
+        const welcomeMarkdown = (content ?? [])
+            .map((part) =>
+                typeof (part as { text?: string }).text === 'string' ? (part as { text: string }).text : '',
+            )
+            .join('');
+        return (
+            <MessagePrimitive.Root>
+                <section className="chat-welcome">
+                    <span className="chat-welcome-spark" aria-hidden="true">
+                        <Icon raw={agentsDemoIconRaw} />
+                    </span>
+                    <div dangerouslySetInnerHTML={{ __html: marked(welcomeMarkdown) as string }} />
+                    <hr className="chat-welcome-divider" />
+                </section>
+            </MessagePrimitive.Root>
+        );
+    }
 
     if (role === 'user') {
         return (
@@ -71,18 +248,21 @@ export function MessageComponent() {
         );
     }
 
+    const answerText = getAnswerText(content as readonly unknown[] | undefined);
     return (
         <MessagePrimitive.Root>
-            {/* Per-turn classifier picks rendered right above this assistant turn's tool calls.
-                `undefined` means either the welcome message or an in-flight turn whose message
-                hasn't been zipped with the classifications array yet — skip in both cases. */}
-            {classification !== undefined ? <ClassificationChip classification={classification} /> : null}
+            {/* The turn's tool calls collapsed into the "Used N tools" pill — it expands to the
+                per-tool rows. Rendered above the answer text. */}
+            <ToolGroup toolCalls={extractToolCalls(content as readonly unknown[] | undefined)} />
             <MessagePrimitive.Content
                 components={{
                     Text: AssistantText,
                     tools: { Fallback: ToolCallContent },
                 }}
             />
+            {/* Action row beneath the reply. Only on turns that produced answer
+                text — tool-only turns get none. */}
+            {answerText.trim() && <AssistantActions text={answerText} />}
         </MessagePrimitive.Root>
     );
 }

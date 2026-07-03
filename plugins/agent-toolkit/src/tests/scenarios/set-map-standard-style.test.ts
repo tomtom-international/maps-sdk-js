@@ -1,5 +1,6 @@
+import { FULL_SCENARIOS, MODEL } from '@testing/agent-tool-calling';
 import { describe, expect, it } from 'vitest';
-import { FULL_SCENARIOS, getExamplePrompts, MODEL, runToolScenario } from './helpers';
+import { getExamplePrompts, runToolScenario } from './helpers';
 
 describe.skipIf(!MODEL)('setMapStandardStyle scenarios', { timeout: 180_000, retry: 3 }, () => {
     // Canonical = the first registry examplePrompt (single source of truth); the rest fan out under

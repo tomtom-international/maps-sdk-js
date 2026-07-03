@@ -1,4 +1,5 @@
 import {
+    type BeforeLayerConfig,
     type ColorPaletteOptions,
     colorPaletteIDs,
     type GeometryBeforeLayerConfig,
@@ -21,7 +22,7 @@ export type ControlCallbacks = {
     onBeforeLayerChange: (beforeLayer: GeometryBeforeLayerConfig) => void;
 };
 
-const BEFORE_LAYER_OPTIONS: Array<{ value: GeometryBeforeLayerConfig; label: string }> = [
+const BEFORE_LAYER_OPTIONS: Array<{ value: BeforeLayerConfig; label: string }> = [
     { value: 'top', label: 'Top' },
     { value: 'country', label: 'Below countries' },
     { value: 'lowestPlaceLabel', label: 'Below place labels' },

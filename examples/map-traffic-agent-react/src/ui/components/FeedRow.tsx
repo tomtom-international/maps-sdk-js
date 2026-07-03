@@ -72,7 +72,7 @@ export function FeedRow({
                   }
                 : {})}
             className={`flex w-full gap-2 border-0 bg-transparent px-3 py-2 text-left ${
-                clickable ? 'cursor-pointer transition-colors hover:bg-(--sdk-surface-1)' : ''
+                clickable ? 'cursor-pointer transition-colors hover:bg-(--pb-surface-1)' : ''
             }`}
             style={flash ? { backgroundColor: 'color-mix(in srgb, var(--ops-sweep) 20%, transparent)' } : undefined}
         >
@@ -80,13 +80,13 @@ export function FeedRow({
                 {icon}
             </span>
             <div className="min-w-0 flex-auto">
-                <div className="truncate text-[12px] font-semibold text-(--sdk-text-high)">{title}</div>
+                <div className="truncate text-[12px] font-semibold text-(--pb-text-high)">{title}</div>
                 {description != null && (
-                    <div className="mt-0.5 line-clamp-2 text-[12px] leading-snug text-(--sdk-text-medium)">
+                    <div className="mt-0.5 line-clamp-2 text-[12px] leading-snug text-(--pb-text-medium)">
                         {description}
                     </div>
                 )}
-                <div className="mt-1 flex items-center gap-2 text-[11px] text-(--sdk-text-low)">
+                <div className="mt-1 flex items-center gap-2 text-[11px] text-(--pb-text-low)">
                     {tag && (
                         <span
                             className="rounded-full px-1.5 py-px text-[10px] font-semibold uppercase"
@@ -101,12 +101,12 @@ export function FeedRow({
                     <span className="[font-variant-numeric:tabular-nums]" title={shortClock(at)}>
                         {relativeAge(at)}
                     </span>
-                    {unread && <span aria-label="unread" className="h-1.5 w-1.5 rounded-full bg-(--sdk-color-error)" />}
+                    {unread && <span aria-label="unread" className="h-1.5 w-1.5 rounded-full bg-(--pb-color-error)" />}
                 </div>
-                {note != null && <div className="mt-0.5 text-[10px] text-(--sdk-text-low)">{note}</div>}
+                {note != null && <div className="mt-0.5 text-[10px] text-(--pb-text-low)">{note}</div>}
             </div>
             {trailing != null && (
-                <span className="mt-0.5 flex h-6 w-4 shrink-0 items-center justify-center text-(--sdk-text-low)">
+                <span className="mt-0.5 flex h-6 w-4 shrink-0 items-center justify-center text-(--pb-text-low)">
                     {trailing}
                 </span>
             )}

@@ -1,6 +1,7 @@
+import { FULL_SCENARIOS, MODEL, priorTurn } from '@testing/agent-tool-calling';
 import { describe, expect, it } from 'vitest';
-import { FULL_SCENARIOS, getExamplePrompts, MODEL, runToolScenario } from './helpers';
-import { priorTurn, toolCall } from './seed';
+import { getExamplePrompts, runToolScenario } from './helpers';
+import { toolCall } from './seed';
 
 // Utility tools. Most classify from a cold turn (the prompt is the whole instruction). `calculateBBox`
 // is the exception: "the bounding box of these places" / "the extent of this route" only mean

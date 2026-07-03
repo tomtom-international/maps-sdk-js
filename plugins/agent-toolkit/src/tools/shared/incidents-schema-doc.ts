@@ -2,14 +2,14 @@
  * @module agent-toolkit-tools
  *
  * Compact schema documentation for the `TrafficIncident` shape, reused by every tool whose
- * LLM-authored code reads the injected `incidents` array (`analyseData`, `processData`,
+ * LLM-authored code reads the injected `incidentsByEntry[id]` arrays (`analyseData`, `processData`,
  * `clusterIncidents`). Without this the model invents fields (e.g. `reportedDelayInSeconds`) or
  * forgets the `properties` nesting — every documented field below is read off `feature.properties`.
  */
 
 /** @ignore */
 export const INCIDENTS_SCHEMA_DOC =
-    '`incidents` is a flat array of TrafficIncident Features (geometry is `Point` OR `LineString` — guard ' +
+    'Each `incidentsByEntry[id]` is a flat array of TrafficIncident Features (geometry is `Point` OR `LineString` — guard ' +
     'with `feature.geometry.type` before line-only ops). All fields below live on `feature.properties`:\n' +
     '```ts\n' +
     'type TrafficIncidentProperties = {\n' +

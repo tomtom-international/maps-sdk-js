@@ -1,49 +1,69 @@
-import type { AnalysisRecord } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import { useState } from 'react';
 import { AnalysisChart } from '../chat';
+import type { AnalysisView } from '../hooks/useAnalyses';
+import { cardShellClass, IconButton, MetaChip, Toggle, titleStyle } from './components';
+import { playbook } from './lib/playbook-tokens';
 
 export type AnalysesPanelProps = {
-    analyses: readonly AnalysisRecord[];
+    analyses: readonly AnalysisView[];
     onToggleMonitor: (analysisId: string, enabled: boolean) => void;
 };
 
 // Shared chrome; only the outer geometry differs between docked (right rail) and expanded
 // (overlay covering the map). Same DOM either way — no duplicated content.
-const PANEL_CHROME =
-    'flex flex-col overflow-hidden rounded-(--sdk-radius-10) border border-(--sdk-border-low) bg-(--sdk-surface-0) shadow-(--sdk-shadow-e4) backdrop-blur-md';
-const DOCKED = 'max-h-[70%] shrink-0';
+const PANEL_CHROME = `flex flex-col overflow-hidden ${cardShellClass}`;
+const DOCKED = 'w-[280px] max-w-full max-h-[70%] shrink-0';
 // `absolute inset-2` is relative to the map overlay grid (the nearest positioned ancestor lives
 // inside #sdk-map), so the panel fills the map area while the chat column stays interactive.
 const EXPANDED = 'absolute inset-2 z-20';
 
+// Maximize / minimize glyphs — arrows out to / in from the corners. Match the collapse
+// chevron's weight (1.6 stroke, currentColor) so the header control reads as part of the set.
+function ExpandGlyph() {
+    return (
+        <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.6">
+            <path d="M6 2H2v4M10 2h4v4M6 14H2v-4M10 14h4v-4" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+    );
+}
+function CollapseGlyph() {
+    return (
+        <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.6">
+            <path d="M2 6h4V2M14 6h-4V2M2 10h4v4M14 10h-4v4" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+    );
+}
+
 /**
  * Right-rail panel listing the agent's registered analyses (from analyseData), each rendered with
  * its latest result — a chart when `outputFormat: 'chart'`, otherwise a compact JSON readout.
- * A header toggle expands the SAME panel into a large overlay over the map (bigger charts) and back,
- * leaving the chat fully usable.
+ * Styled to match the overlay panels (PanelCard header, success Toggle, divider rows). A header
+ * toggle expands the SAME panel into a large overlay over the map (bigger charts) and back, leaving
+ * the chat fully usable.
  */
 export function AnalysesPanel({ analyses, onToggleMonitor }: AnalysesPanelProps) {
     const [expanded, setExpanded] = useState(false);
     if (analyses.length === 0) return null;
     return (
         <section aria-label="Agent analyses" className={`${PANEL_CHROME} ${expanded ? EXPANDED : DOCKED}`}>
-            <header className="flex shrink-0 items-center gap-2 border-b border-(--sdk-border-low) bg-gradient-to-r from-[hsla(200,70%,55%,0.12)] to-[hsla(160,70%,50%,0.06)] px-3 py-2">
-                <h3 className="m-0 flex-auto text-sm font-semibold text-(--sdk-text-high)">Analyses</h3>
-                <span className="rounded-full border border-(--sdk-border-low) bg-(--sdk-surface-1) px-2 py-0.5 text-[11px] font-semibold text-(--sdk-text-medium)">
-                    {analyses.length}
-                </span>
-                <button
-                    type="button"
-                    title={expanded ? 'Collapse to the side' : 'Expand over the map'}
-                    aria-label={expanded ? 'Collapse analyses panel' : 'Expand analyses panel'}
-                    aria-pressed={expanded}
+            <header
+                className="flex shrink-0 items-center gap-2 px-3 py-2"
+                style={{ borderBottom: `1px solid ${playbook.border.lowEm}` }}
+            >
+                <h2 style={titleStyle} className="m-0 min-w-0 flex-1 truncate">
+                    Analyses
+                </h2>
+                <MetaChip>{analyses.length}</MetaChip>
+                <IconButton
+                    label={expanded ? 'Collapse analyses panel' : 'Expand analyses panel'}
                     onClick={() => setExpanded((v) => !v)}
-                    className="flex h-[22px] w-[22px] cursor-pointer items-center justify-center rounded border-0 bg-transparent p-0 text-[14px] leading-none text-(--sdk-text-medium) hover:bg-(--sdk-surface-1) hover:text-(--sdk-text-high)"
+                    size="sm"
+                    active={expanded}
                 >
-                    {expanded ? '✕' : '⤢'}
-                </button>
+                    {expanded ? <CollapseGlyph /> : <ExpandGlyph />}
+                </IconButton>
             </header>
-            <ol className="m-0 flex-auto list-none overflow-y-auto p-0">
+            <ol className="m-0 flex min-h-0 flex-auto list-none flex-col divide-y divide-(--pb-border-low) overflow-y-auto p-0">
                 {analyses.map((record) => (
                     <AnalysisItem
                         key={record.analysisId}
@@ -62,7 +82,7 @@ function AnalysisItem({
     expanded,
     onToggleMonitor,
 }: {
-    record: AnalysisRecord;
+    record: AnalysisView;
     expanded: boolean;
     onToggleMonitor: (analysisId: string, enabled: boolean) => void;
 }) {
@@ -71,36 +91,31 @@ function AnalysisItem({
     const isChart = (latest?.outputFormat ?? record.outputFormat) === 'chart';
 
     return (
-        <li className="flex flex-col gap-1.5 border-b border-(--sdk-border-low) px-3 py-2">
+        <li className="flex flex-col gap-2 p-3">
             <div className="flex items-center gap-2">
-                <h4 className="m-0 flex-auto text-[13px] font-semibold leading-snug text-(--sdk-text-high)">
+                <h3 className="m-0 flex-auto text-[14px] font-bold leading-snug text-(--pb-text-high)">
                     {record.name}
-                </h4>
-                <button
-                    type="button"
-                    title={record.enabled ? 'Monitoring — click to stop' : 'Not monitoring — click to start'}
-                    aria-pressed={record.enabled}
-                    onClick={() => onToggleMonitor(record.analysisId, !record.enabled)}
-                    className={`cursor-pointer rounded border-0 px-1.5 py-0.5 text-[9px] font-semibold tracking-wider ${
-                        record.enabled
-                            ? 'bg-gradient-to-r from-[hsl(200,70%,50%)] to-[hsl(160,70%,45%)] text-white'
-                            : 'bg-(--sdk-surface-1) text-(--sdk-text-medium)'
-                    }`}
-                >
-                    {record.enabled ? 'LIVE' : 'OFF'}
-                </button>
+                </h3>
+                <Toggle
+                    checked={record.monitored}
+                    onChange={(next) => onToggleMonitor(record.analysisId, next)}
+                    size="md"
+                    tone="success"
+                    title={record.monitored ? 'Monitoring — click to stop' : 'Not monitoring — click to start'}
+                    labelClassName={null}
+                />
             </div>
-            {description && <p className="m-0 text-[11px] leading-snug text-(--sdk-text-low)">{description}</p>}
+            {description && <p className="m-0 text-[12px] leading-snug text-(--pb-text-low)">{description}</p>}
             {latest ? (
                 isChart ? (
                     <AnalysisChart config={latest.data} expanded={expanded} />
                 ) : (
-                    <pre className="m-0 max-h-40 overflow-auto rounded bg-(--sdk-surface-1) p-2 text-[11px] leading-snug text-(--sdk-text-medium) [font-variant-numeric:tabular-nums]">
+                    <pre className="m-0 max-h-40 overflow-auto rounded-(--pb-radius) bg-(--pb-surface-1) p-2 text-[11px] leading-snug text-(--pb-text-medium) [font-variant-numeric:tabular-nums]">
                         {safeStringify(latest.data)}
                     </pre>
                 )
             ) : (
-                <p className="m-0 text-[11px] text-(--sdk-text-low)">No result yet.</p>
+                <p className="m-0 text-[12px] text-(--pb-text-low)">No result yet.</p>
             )}
         </li>
     );

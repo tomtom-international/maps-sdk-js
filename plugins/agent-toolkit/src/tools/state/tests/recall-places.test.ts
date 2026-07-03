@@ -22,7 +22,7 @@ type FakeEntry = {
     id: string;
     timestamp: number;
     label: string;
-    places: any[];
+    data: any[];
 };
 
 const mockState = (entries: FakeEntry[] = [], shownIds: readonly string[] = [], analyses = new Analyses()) =>
@@ -44,8 +44,8 @@ describe('recallPlaces', () => {
 
     it('returns index with labels when no id given, sorted newest first', async () => {
         const state = mockState([
-            { id: 'places-0', timestamp: 1000, label: 'Cafe', places: [{}] },
-            { id: 'places-1', timestamp: 2000, label: '5 places', places: [{}, {}, {}, {}, {}] },
+            { id: 'places-0', timestamp: 1000, label: 'Cafe', data: [{}] },
+            { id: 'places-1', timestamp: 2000, label: '5 places', data: [{}, {}, {}, {}, {}] },
         ]);
         const result = await executeRecallPlaces({}, state);
         expect(result).toEqual({
@@ -71,7 +71,7 @@ describe('recallPlaces', () => {
             { name: 'top-brands-bar', timestamp: 1800, outputFormat: 'chart', data: {} },
         );
         const state = mockState(
-            [{ id: 'places-0', timestamp: 1000, label: '3 places', places: [{}, {}, {}] }],
+            [{ id: 'places-0', timestamp: 1000, label: '3 places', data: [{}, {}, {}] }],
             [],
             analyses,
         );
@@ -104,7 +104,7 @@ describe('recallPlaces', () => {
                 id: 'places-0',
                 timestamp: 1000,
                 label: 'Cafe de Jaren',
-                places: [
+                data: [
                     {
                         id: 'feat-1',
                         properties: {
@@ -139,7 +139,7 @@ describe('recallPlaces', () => {
                 id: 'places-0',
                 timestamp: 1000,
                 label: '2 places',
-                places: [
+                data: [
                     {
                         id: 'feat-A',
                         properties: { poi: { name: 'A' }, address: { freeformAddress: 'Addr A' } },

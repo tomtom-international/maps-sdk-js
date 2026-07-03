@@ -20,7 +20,7 @@ describe('getRangePolygons', () => {
         const state = stateWith([
             {
                 id: 'ranges-0',
-                ranges: [
+                data: [
                     { polygon: { features: [{ geometry: square }, { geometry: polygon([]) }] } },
                     { polygon: { features: [{ geometry: square }] } },
                 ],
@@ -34,13 +34,13 @@ describe('getRangePolygons', () => {
     });
 
     it('errors when the range id is unknown', () => {
-        const result = getRangePolygons(stateWith([{ id: 'ranges-0', ranges: [] }]), 'ranges-9');
+        const result = getRangePolygons(stateWith([{ id: 'ranges-0', data: [] }]), 'ranges-9');
 
         expect(result).toEqual({ error: expect.stringContaining('Range "ranges-9" not found') });
     });
 
     it('errors when the entry exists but holds no polygons', () => {
-        const state = stateWith([{ id: 'ranges-0', ranges: [{ polygon: undefined }] }]);
+        const state = stateWith([{ id: 'ranges-0', data: [{ polygon: undefined }] }]);
 
         const result = getRangePolygons(state, 'ranges-0');
 

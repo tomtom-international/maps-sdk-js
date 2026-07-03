@@ -375,7 +375,9 @@ export const sharedWithinFields = {
         .min(1)
         .optional()
         .describe(
-            'IDs of session places — each polygon (fetched on demand) joins the search area. ' +
+            'IDs of session places — a places ENTRY id (e.g. "places-0", or the `placesEntryId` ' +
+                'returned by locatePlace) expands to every place it holds, or a single place id. ' +
+                'Each resolved polygon (fetched on demand) joins the search area. ' +
                 'Use recallState to list IDs. ' +
                 'EXCLUSIVE with viewport; composes with other multi-region fields.',
         ),

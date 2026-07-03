@@ -57,7 +57,7 @@ export const executeRecallRanges = async (
     const entryMode = state.ranges.entryMode;
 
     if (!id) {
-        const entries = [...state.ranges.entries].reverse().map(({ id, label, timestamp, ranges }) => ({
+        const entries = [...state.ranges.entries].reverse().map(({ id, label, timestamp, data: ranges }) => ({
             id,
             label,
             timestamp,
@@ -75,7 +75,7 @@ export const executeRecallRanges = async (
         id: entry.id,
         label: entry.label,
         timestamp: entry.timestamp,
-        ranges: entry.ranges.map((r) => ({
+        ranges: entry.data.map((r) => ({
             origin: { ...r.origin, position: r.origin.position as [number, number] },
             budgets: r.budgets,
         })),

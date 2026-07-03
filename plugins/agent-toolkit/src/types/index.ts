@@ -27,6 +27,7 @@ type JSONValue = null | string | number | boolean | { [key: string]: JSONValue }
 type ProviderOptions = Record<string, Record<string, JSONValue | undefined>>;
 
 import type { z } from 'zod';
+import type { JobEngine } from '../engine';
 import type {
     Analyses,
     BaseMapState,
@@ -35,11 +36,11 @@ import type {
     CustomGeometriesState,
     DataEntryConfig,
     DataEntryKind,
+    EventsState,
     MapPOIsState,
     PlacesState,
     RangeState,
     RoutingState,
-    TrackerState,
     TrafficAreaAnalyticsState,
     TrafficIncidentsState,
     TrafficTilesState,
@@ -122,18 +123,24 @@ export type ToolState = {
      */
     codeExecution: SandboxExecutor;
     /**
+     * The single recurrence engine. Owners (`analyses`, `trackers`) register entry-anchored jobs and keep
+     * the returned handles; the engine re-runs each active job when its source entries change. Generic —
+     * it never interprets a job's recipe (the tools layer builds the run closure). See {@link JobEngine}.
+     */
+    engine: JobEngine;
+    /**
      * Single session-level registry of every analysis (one-shot + recurring) across all entry kinds.
-     * Replaces the old per-entry `_analyses` stores: results live here, and per-entry views read them
-     * on demand via {@link Analyses.getAnalysesForEntry}. `analyseData` registers; `monitorAnalysis`
-     * toggles `enabled`.
+     * Results live here, and per-entry views read them on demand via {@link Analyses.getAnalysesForEntry}.
+     * `analyseData` registers a record + a job on {@link JobEngine}; `monitorAnalysis` toggles the job's
+     * active flag.
      */
     analyses: Analyses;
     /**
-     * Generic trackers — thin rising-edge reducers over `type: 'tracker-rule'` analyses. A tracker fires
-     * an alert/event when its rule's {@link Verdict} crosses an edge. Reacts to `analysis-change`; owns
-     * the durable {@link TrackerEvent} log.
+     * Generic trackers — rising-edge reducers fed by their own {@link JobEngine} jobs. A tracker fires an
+     * alert/event when its rule's {@link Verdict} crosses an edge (`ingestVerdict`); owns the durable
+     * {@link TrackerEvent} log.
      */
-    trackers: TrackerState;
+    trackers: EventsState;
 };
 
 /**
@@ -192,6 +199,22 @@ export type ToolEntry<S extends ToolState = ToolState, Scope = unknown> = {
     /** Tool names that must run before this one. */
     dependsOn?: string[];
     /**
+     * Keep this tool active on every step regardless of the classifier's selection. Its name is
+     * unioned into the per-turn `activeTools` set, so the model can always reach it. Use sparingly —
+     * for tools that may be needed to set up *any* request (e.g. asking the user to clarify intent).
+     * Has no effect on the fail-open path (when classification is skipped, every tool is active).
+     */
+    alwaysActive?: boolean;
+    /**
+     * Halt the agent loop on the SAME step that calls this tool, with no trailing step. Use for tools
+     * whose turn must be a single silent tool call (e.g. clarifyIntent rendering a form). Leave unset to
+     * let the model take one more step after the tool returns — e.g. to present the tool's result as text
+     * before the loop stops naturally on a no-tool-call step. A tool that semantically awaits the user
+     * conveys that through its own result (e.g. clarifyIntent's `status: 'awaiting_user_response'`), not
+     * this flag.
+     */
+    endsTurnOnCall?: boolean;
+    /**
      * Optional per-tool scope schema. When set, the classifier may emit a
      * scope value (validated against this schema) and `prepareStep` will
      * rebuild this tool's `description` + `inputSchema` by re-invoking its
@@ -230,6 +253,10 @@ export type ToolMetadata = {
     relatedTools?: ToolNameHint[];
     /** Tool names that must run before this one. */
     dependsOn?: ToolNameHint[];
+    /** Keep this tool active on every step regardless of the classifier's selection. */
+    alwaysActive?: boolean;
+    /** Halt the agent loop on the step that calls this tool (no trailing step) — e.g. clarifyIntent rendering a form. */
+    endsTurnOnCall?: boolean;
     /** When set, the classifier may emit `toolScopes[name]` for this tool to narrow per-turn. */
     scopePrompt?: string;
 };
@@ -370,6 +397,21 @@ export type ToolDefinition<S extends ToolState = ToolState, Scope = any> =
  * });
  * ```
  */
+/** Per-tool execution outcome reported to {@link MapAgentOptions.onToolExecute}. */
+export type ToolExecutionInfo = {
+    /** Registered tool name (the `defaultTools` key). */
+    toolName: string;
+    /** Wall-clock duration of `execute`, in milliseconds (includes any network/IO). */
+    durationMs: number;
+    /** True if the tool threw or returned the standardized `{ error: string }` shape. */
+    isError: boolean;
+    /** Error message when `isError` is true (the thrown message or the returned `error`). */
+    errorMessage?: string;
+};
+
+/** Observer invoked after each tool's `execute` settles. */
+export type OnToolExecute = (info: ToolExecutionInfo) => void;
+
 export type MapAgentOptions<CS extends ToolState = ToolState> = {
     /** AI SDK language model instance. REQUIRED — no default provider. */
     model: LanguageModel;
@@ -515,6 +557,14 @@ export type MapAgentOptions<CS extends ToolState = ToolState> = {
      * Called after each classification. Use to observe selected tools or log.
      */
     onClassify?: (result: ClassificationResult | null) => void;
+
+    /**
+     * Called after each tool's `execute` settles (success or throw), with its
+     * wall-clock duration and whether it failed. Use to observe per-tool latency
+     * and error rates (e.g. telemetry). Errors are detected both from a thrown
+     * exception and from the standardized `{ error: string }` return shape.
+     */
+    onToolExecute?: OnToolExecute;
 
     /**
      * Custom prepareStep hook, composed with internal classification step.

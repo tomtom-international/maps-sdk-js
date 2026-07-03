@@ -2,6 +2,7 @@
  * @module agent-toolkit-tools
  */
 
+import type { CommonPlaceProps, Place, PolygonFeature } from '@tomtom-org/maps-sdk/core';
 import { bboxFromGeoJSON } from '@tomtom-org/maps-sdk/core';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
@@ -11,6 +12,50 @@ import { toolErrorSchema } from '../shared-output-schemas';
 type GeometryDisplayConfig = z.infer<typeof geometryDisplayConfigSchema>;
 type GeometrySkip = { placeId: string; reason: string };
 
+// Resolve one place to its boundary polygon, or a reason it can't be rendered (no geometry data
+// source, no feature returned, or a fetch error). Isolated so the per-entry / per-place loops stay flat.
+type PlaceGeometryResult = { feature: PolygonFeature<CommonPlaceProps> } | { skip: string };
+
+const fetchPlaceGeometryFeature = async (state: ToolState, place: Place): Promise<PlaceGeometryResult> => {
+    if (!place.properties.dataSources?.geometry?.id) {
+        return { skip: 'Place has no geometry data source (e.g. addresses and streets often lack one).' };
+    }
+    try {
+        const feature = await state.places.fetchPlaceGeometry(place.id);
+        if (!feature) return { skip: 'Geometry Data service returned no feature for this place.' };
+        return { feature };
+    } catch (error) {
+        return { skip: `Geometry fetch failed: ${error instanceof Error ? error.message : String(error)}` };
+    }
+};
+
+// Render one entry's boundary polygons (optionally filtered to `config.placeIds`) via its
+// GeometriesModule, returning the count rendered plus per-place skips.
+const renderEntryGeometries = async (
+    state: ToolState,
+    entryId: string,
+    config: GeometryDisplayConfig,
+): Promise<{ rendered: number; skipped: GeometrySkip[] }> => {
+    const entry = state.places.entries.find((e) => e.id === entryId);
+    if (!entry) return { rendered: 0, skipped: [] };
+
+    const placeIdFilter = config.placeIds ? new Set(config.placeIds) : undefined;
+    const targetPlaces = placeIdFilter ? entry.data.filter((p) => placeIdFilter.has(p.id)) : entry.data;
+
+    const skipped: GeometrySkip[] = [];
+    const features: PolygonFeature<CommonPlaceProps>[] = [];
+    for (const place of targetPlaces) {
+        const result = await fetchPlaceGeometryFeature(state, place);
+        if ('skip' in result) skipped.push({ placeId: place.id, reason: result.skip });
+        else features.push(result.feature);
+    }
+
+    if (features.length > 0) {
+        await state.places.showPlaceGeometries(features, config.theme ?? 'outline', config.mode ?? 'replace', entryId);
+    }
+    return { rendered: features.length, skipped };
+};
+
 // Renders boundary polygons for the given entries via each entry's GeometriesModule.
 // Place ids outside the targeted entries are ignored — see `geometryDisplayConfigSchema`.
 const applyGeometryDisplay = async (
@@ -18,52 +63,13 @@ const applyGeometryDisplay = async (
     entryIds: readonly string[],
     config: GeometryDisplayConfig,
 ): Promise<{ rendered: number; skipped: GeometrySkip[] }> => {
-    const theme = config.theme ?? 'outline';
-    const mode = config.mode ?? 'replace';
-    const placeIdFilter = config.placeIds ? new Set(config.placeIds) : undefined;
-
     const skipped: GeometrySkip[] = [];
     let rendered = 0;
-
     for (const entryId of entryIds) {
-        const entry = state.places.entries.find((e) => e.id === entryId);
-        if (!entry) continue;
-
-        const targetPlaces = placeIdFilter ? entry.places.filter((p) => placeIdFilter.has(p.id)) : entry.places;
-
-        const features = [];
-        for (const place of targetPlaces) {
-            if (!place.properties.dataSources?.geometry?.id) {
-                skipped.push({
-                    placeId: place.id,
-                    reason: 'Place has no geometry data source (e.g. addresses and streets often lack one).',
-                });
-                continue;
-            }
-            try {
-                const feature = await state.places.fetchPlaceGeometry(place.id);
-                if (!feature) {
-                    skipped.push({
-                        placeId: place.id,
-                        reason: 'Geometry Data service returned no feature for this place.',
-                    });
-                    continue;
-                }
-                features.push(feature);
-            } catch (error) {
-                skipped.push({
-                    placeId: place.id,
-                    reason: `Geometry fetch failed: ${error instanceof Error ? error.message : String(error)}`,
-                });
-            }
-        }
-
-        if (features.length > 0) {
-            await state.places.showPlaceGeometries(features, theme, mode, entryId);
-            rendered += features.length;
-        }
+        const result = await renderEntryGeometries(state, entryId, config);
+        rendered += result.rendered;
+        skipped.push(...result.skipped);
     }
-
     return { rendered, skipped };
 };
 
@@ -262,7 +268,7 @@ export const executeUpdatePlacesDisplay = async (
             .map((entry) => ({
                 id: entry.id,
                 label: entry.label,
-                featureCount: entry.places.length,
+                featureCount: entry.data.length,
                 markerType: state.places.getShownMarkerType(entry.id) ?? 'pin',
             }));
 

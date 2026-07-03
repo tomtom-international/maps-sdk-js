@@ -80,10 +80,10 @@ export const buildExecuteRecallPlaces =
         if (!id) {
             const entries = [...allEntries]
                 .sort((a, b) => b.timestamp - a.timestamp)
-                .map(({ id, label, timestamp, places }) => {
+                .map(({ id, label, timestamp, data: places }) => {
                     const shown = shownEntryIds.has(id);
                     const markerType = shown ? state.places.getShownMarkerType(id) : undefined;
-                    const analyses = state.analyses.getAnalysesForEntry(id, 'analysis');
+                    const analyses = state.analyses.getAnalysesForEntry(id);
                     return {
                         id,
                         label,
@@ -109,7 +109,7 @@ export const buildExecuteRecallPlaces =
             return { error: `No entry found with id "${id}"` };
         }
 
-        const places = summarizePlaces(entry.places, flags);
+        const places = summarizePlaces(entry.data, flags);
 
         return {
             id: entry.id,

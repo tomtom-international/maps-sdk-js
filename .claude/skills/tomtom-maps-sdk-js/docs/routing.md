@@ -447,8 +447,8 @@ import type { PolygonFeatures } from '@tomtom-org/maps-sdk/core';
 const geometriesModule = await GeometriesModule.get(map, {
     theme: 'inverted',
     beforeLayerConfig: 'lowestPlaceLabel',
-    colorConfig: { fillColor: 'white', fillOpacity: 0.75 },
-    lineConfig: { lineOpacity: 0 },
+    fill: { color: 'white', opacity: 0.75 },
+    line: { opacity: 0 },
 });
 
 const geometry = geometryData({ geometries: [place] });

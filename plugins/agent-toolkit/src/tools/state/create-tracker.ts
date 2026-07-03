@@ -3,11 +3,11 @@
  *
  * `createTracker` — arm a generic tracker. A tracker is one rule: sandbox `code` that reads the same
  * multi-kind inputs as `analyseData` and returns a {@link Verdict} (`{ active, members, summary }`). The
- * tool dry-runs the code once as a gate, registers it as a `type: 'tracker-rule'` analysis (so the
- * standing sweep recomputes the verdict whenever its source entries change), then registers the tracker
- * with its rising-edge bit clear and attaches that first verdict — so a condition already true at arm
- * time crosses false→true and fires one `opened` alert. From then on {@link TrackerState} logs an
- * `opened` alert / `resolved` event as the verdict crosses edges.
+ * tool dry-runs the code once as a gate, registers the tracker with its rising-edge bit clear, registers
+ * its rule as a {@link JobEngine} job (so the verdict recomputes whenever its source entries change),
+ * then feeds that first verdict through the reducer — so a condition already true at arm time crosses
+ * false→true and fires one `opened` alert. From then on {@link EventsState} logs an `opened` alert /
+ * `resolved` event as the verdict crosses edges.
  *
  * Mirrors `analyseData`'s input surface (`*EntryIDs` per kind) so a rule can read multiple entry kinds —
  * e.g. "an incident within 100m of a hospital" is one rule over a places + an incidents entry.
@@ -16,7 +16,7 @@
 import * as turf from '@turf/turf';
 import * as h3 from 'h3-js';
 import { z } from 'zod';
-import { makeAnalysisId, type Tracker, type Verdict } from '../../state';
+import { isVerdict, type Tracker } from '../../state';
 import type { GeometriesId, ToolState } from '../../types';
 import {
     ALL_ENTRY_DATA_KINDS,
@@ -33,7 +33,7 @@ import {
     runSandboxedFn,
 } from '../shared';
 import { toolErrorSchema } from '../shared-output-schemas';
-import { ensureStandingWired, registerAnalysis } from './analyses-runtime';
+import { registerTrackerJob } from './monitoring';
 
 /** The `code` contract: read the injected inputs, return a {@link Verdict}. */
 const buildVerdictCodeDoc = (): string =>
@@ -75,7 +75,6 @@ export const createTrackerOutputSchema = z.union([
         trackerId: z.string(),
         name: z.string(),
         rule: z.string(),
-        analysisId: z.string(),
         watching: z.array(z.string()).describe('Source entry ids the rule reads.'),
         firingNow: z
             .boolean()
@@ -150,45 +149,29 @@ export const executeCreateTracker = async (
     ];
 
     const trackerId = uniqueTrackerId(params.name, state);
-    // Namespace the analysis name by trackerId so a tracker rule never collides with an analyseData
-    // analysis (or another tracker) over the same entries.
-    const analysisName = `tracker:${trackerId}`;
-    const analysisId = makeAnalysisId(analysisName, affectedEntryIds);
     const timestamp = Date.now();
 
-    registerAnalysis(state, {
-        analysisId,
-        name: analysisName,
-        outputFormat: 'json',
-        type: 'tracker-rule',
-        code: params.code,
-        inputs,
-        affectedEntryIds,
-    });
-    // Register the tracker with its rising-edge bit CLEAR, then attach the arm-time verdict. The attach
-    // emits `analysis-change`, so the verdict flows through the SAME reducer as any later recompute: a
-    // condition already true at creation crosses false→true and fires one `opened` alert (the user asked
-    // to watch something that is already happening — surface it once). It does not re-toast while it
-    // stays active; only a resolve→reopen does. An inactive arm-time verdict is a no-op (stays clear).
+    // Register the tracker with its rising-edge bit CLEAR and its job, THEN feed the arm-time verdict
+    // through the SAME reducer as any later recompute: a condition already true at creation crosses
+    // false→true and fires one `opened` alert (the user asked to watch something already happening —
+    // surface it once). It does not re-toast while it stays active; only a resolve→reopen does. An
+    // inactive arm-time verdict is a no-op (stays clear).
     const tracker: Tracker = {
         id: trackerId,
         name: params.name,
         rule: params.rule,
-        analysisId,
+        affectedEntryIds,
         enabled: true,
         wasActive: false,
     };
     state.trackers.register(tracker);
-    state.analyses.attachResult(analysisId, { name: analysisName, outputFormat: 'json', data: verdict, timestamp });
-
-    ensureStandingWired(state);
-    state.analyses.setEnabled(analysisId, true);
+    registerTrackerJob(state, { trackerId, code: params.code, inputs, affectedEntryIds });
+    state.trackers.ingestVerdict(trackerId, verdict, timestamp);
 
     return {
         trackerId,
         name: params.name,
         rule: params.rule,
-        analysisId,
         watching: affectedEntryIds,
         firingNow: verdict.active,
         summary: verdict.summary,
@@ -205,10 +188,4 @@ const uniqueTrackerId = (name: string, state: ToolState): string => {
     const taken = new Set(state.trackers.trackers.map((t) => t.id));
     if (!taken.has(base)) return base;
     for (let i = 2; ; i++) if (!taken.has(`${base}-${i}`)) return `${base}-${i}`;
-};
-
-const isVerdict = (data: unknown): data is Verdict => {
-    if (typeof data !== 'object' || data === null) return false;
-    const v = data as Record<string, unknown>;
-    return typeof v.active === 'boolean' && typeof v.summary === 'string' && Array.isArray(v.members);
 };

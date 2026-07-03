@@ -4,17 +4,16 @@
 
 import type { CommonPlaceProps, Place, PolygonFeature } from '@tomtom-org/maps-sdk/core';
 import type { GeometriesModule, PlaceConnectionDisplay, PlacesModule } from '@tomtom-org/maps-sdk/map';
+import type { BaseEntry } from '../entry';
 
 /**
  * A single entry in the place search history.
  *
  * @group Agent Toolkit
+ *
+ * @ignore
  */
-export type PlacesEntry = {
-    id: string;
-    timestamp: number;
-    label: string;
-    places: Place[];
+export type PlacesEntry = BaseEntry<Place[]> & {
     /** Connections (lines between places) produced alongside this entry, rendered via PlacesModule.showConnections. */
     connections?: PlaceConnectionDisplay[];
     /**

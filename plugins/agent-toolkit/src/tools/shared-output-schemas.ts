@@ -5,6 +5,7 @@
  * Tool-specific output schemas live next to their respective tool definitions.
  */
 
+import { placeTypes } from '@tomtom-org/maps-sdk/core';
 import { z } from 'zod';
 import type { FeatureFlags } from '../types';
 
@@ -93,6 +94,10 @@ export const resolvedAreasOutputSchema = z
 
 const basePlaceShape = {
     id: z.string().describe('Stable place feature ID; pass as `{ placeId }` to setRoute / addWaypointsToRoute / etc.'),
+    type: z
+        .enum(placeTypes)
+        .optional()
+        .describe('Place classification (POI, Street, Geography, Cross Street, …), when known.'),
     name: z.string().optional().describe('POI name if available'),
     address: z.string().optional().describe('Human-readable address'),
     position: z.array(z.number()).length(2).describe('[longitude, latitude]'),

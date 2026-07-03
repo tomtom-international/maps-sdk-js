@@ -181,7 +181,7 @@ export const executeFindReachableAreas = async (
         const originNames = ranges.map(formatOriginName);
         const rangesId = await state.ranges.addEntry({
             label: makeRangesLabel(sortedBudgets, originNames),
-            ranges,
+            data: ranges,
         });
 
         if (showOnMap || showOriginPin) {

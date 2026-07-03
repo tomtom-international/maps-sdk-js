@@ -64,6 +64,36 @@ describe('parseTrafficIncidentDetailsResponse', () => {
         expect(props.lastReportTime).toBeUndefined();
         expect(props.tmc).toBeUndefined();
     });
+
+    test('omits optional numeric fields when the API returns them as null', () => {
+        // The live API returns `delay` / `length` as an explicit `null` for incidents with no delay
+        // (closures, roadworks). These optional fields are typed `number | undefined`, so a `null`
+        // must be dropped — leaving it trips MapLibre's numeric paint/filter expressions.
+        const result = parseTrafficIncidentDetailsResponse({
+            incidents: [
+                {
+                    type: 'Feature',
+                    geometry: { type: 'Point', coordinates: [0, 0] },
+                    properties: {
+                        id: 'null-numerics',
+                        iconCategory: 0,
+                        magnitudeOfDelay: 0,
+                        events: [],
+                        timeValidity: 'present',
+                        delay: null,
+                        length: null,
+                        numberOfReports: null,
+                    } as never,
+                },
+            ],
+        });
+
+        const props = result.features[0].properties;
+        expect(props.delayInSeconds).toBeUndefined();
+        expect(props.lengthInMeters).toBeUndefined();
+        expect(props.numberOfReports).toBeUndefined();
+        expect('delayInSeconds' in props).toBe(false);
+    });
 });
 
 describe('parseTrafficIncidentDetailsResponse — performance', () => {

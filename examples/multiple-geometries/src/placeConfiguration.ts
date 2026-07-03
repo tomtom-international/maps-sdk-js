@@ -8,41 +8,41 @@ export type Config = {
 
 export type NamedConfigs = Record<string, Config>;
 
-const lineConfig: GeometriesModuleConfig['lineConfig'] = { lineColor: '#0A3653' };
+const line: GeometriesModuleConfig['line'] = { color: '#0A3653' };
 
 export const namedConfigs: NamedConfigs = {
     france: {
         searchConfig: { countries: ['FR'], geographyTypes: ['CountrySubdivision'] },
-        geometryConfig: { colorConfig: { fillColor: 'warm', fillOpacity: 0.6 }, lineConfig },
+        geometryConfig: { fill: { color: 'warm', opacity: 0.6 }, line },
     },
     italy: {
         searchConfig: { countries: ['IT'], geographyTypes: ['CountrySubdivision'] },
-        geometryConfig: { colorConfig: { fillColor: 'cold', fillOpacity: 0.6 }, lineConfig },
+        geometryConfig: { fill: { color: 'cold', opacity: 0.6 }, line },
     },
     netherlands: {
         searchConfig: { countries: ['NL'], geographyTypes: ['CountrySubdivision'] },
-        geometryConfig: { colorConfig: { fillColor: 'contrastRetro', fillOpacity: 0.6 }, lineConfig },
+        geometryConfig: { fill: { color: 'contrastRetro', opacity: 0.6 }, line },
     },
     germany: {
         searchConfig: { countries: ['DE'], geographyTypes: ['CountrySubdivision'] },
         geometryConfig: {
-            colorConfig: {
-                fillColor: 'blueToRed',
-                fillOpacity: ['interpolate', ['linear'], ['zoom'], 6, 1, 8, 0.5, 12, 0],
+            fill: {
+                color: 'blueToRed',
+                opacity: ['interpolate', ['linear'], ['zoom'], 6, 1, 8, 0.5, 12, 0],
             },
-            lineConfig,
+            line,
         },
     },
     spain: {
         searchConfig: { countries: ['ES'], geographyTypes: ['CountrySubdivision'] },
-        geometryConfig: { colorConfig: { fillColor: '#00bbff', fillOpacity: 0.2 }, lineConfig },
+        geometryConfig: { fill: { color: '#00bbff', opacity: 0.2 }, line },
     },
     chicagoDistricts: {
         searchConfig: { boundingBox: [-87.70362, 41.73845, -87.57001, 41.83279], geographyTypes: ['Neighbourhood'] },
-        geometryConfig: { colorConfig: { fillColor: 'pastelRainbow', fillOpacity: 0.2 }, lineConfig },
+        geometryConfig: { fill: { color: 'pastelRainbow', opacity: 0.2 }, line },
     },
     chicagoPostcodes: {
         searchConfig: { boundingBox: [-87.70362, 41.73845, -87.57001, 41.83279], geographyTypes: ['PostalCodeArea'] },
-        geometryConfig: { colorConfig: { fillColor: 'fadedGreenToBlue', fillOpacity: 0.3 }, lineConfig },
+        geometryConfig: { fill: { color: 'fadedGreenToBlue', opacity: 0.3 }, line },
     },
 };

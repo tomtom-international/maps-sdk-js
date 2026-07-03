@@ -1,4 +1,3 @@
-import { AgentAdapter, type AgentInput, type AgentReturnTypes, AgentRole } from '@langwatch/scenario';
 import type { Place } from '@tomtom-org/maps-sdk/core';
 import type { TomTomMap } from '@tomtom-org/maps-sdk/map';
 import type { LanguageModel } from 'ai';
@@ -16,7 +15,26 @@ import type { MapAgentInstance, ToolBuildOptions, ToolEntry } from '../../types'
 export const mockMap = {
     mapLibreMap: {
         getContainer: () => document.createElement('div'),
-        getStyle: () => ({ layers: [], sources: {} }),
+        // A small but realistic layer set so getMapStyleLayers returns something actionable — style
+        // prompts (text size on building labels, road colour, country borders) can resolve a target
+        // layer and call setLayoutProperties / setPaintProperties instead of finding nothing.
+        getStyle: () => ({
+            layers: [
+                { id: 'background', type: 'background' },
+                { id: 'road', type: 'line', paint: { 'line-color': '#ffffff' } },
+                { id: 'admin-boundary', type: 'line', paint: { 'line-color': '#888888' } },
+                { id: 'building', type: 'fill', paint: { 'fill-color': '#dddddd' } },
+                { id: 'building-label', type: 'symbol', layout: { 'text-field': '{name}', 'text-size': 12 } },
+                { id: 'place-label', type: 'symbol', layout: { 'text-field': '{name}', 'text-size': 14 } },
+                {
+                    id: 'country-label',
+                    type: 'symbol',
+                    layout: { 'text-field': '{name}' },
+                    paint: { 'text-color': '#333333' },
+                },
+            ],
+            sources: {},
+        }),
         getZoom: () => 12,
         getCenter: () => ({ lng: 4.89, lat: 52.37 }),
         getBounds: () => ({
@@ -116,6 +134,29 @@ const SPECIFIC_MOCKS: Record<string, (...args: any[]) => Promise<any>> = {
         ],
     }),
 
+    // Return the actual layer list (matching mockMap.getStyle) so a "restyle the X layer" turn can pick a
+    // target and proceed to setLayoutProperties / setPaintProperties — without this it returns the generic
+    // { success: true }, the agent never sees a layer, and it loops calling getMapStyleLayers.
+    getMapStyleLayers: async () => ({
+        // Covers the layer names the style examplePrompts reference (water, road, road-label, poi-label,
+        // building(-label), place-label, admin-boundary = country borders) so the agent can resolve a
+        // target and call setPaint/setLayoutProperties instead of looping or reporting "no such layer".
+        layers: [
+            { id: 'background', type: 'background' },
+            { id: 'water', type: 'fill' },
+            { id: 'land', type: 'fill' },
+            { id: 'park', type: 'fill' },
+            { id: 'road', type: 'line' },
+            { id: 'admin-boundary', type: 'line' },
+            { id: 'building', type: 'fill' },
+            { id: 'road-label', type: 'symbol' },
+            { id: 'poi-label', type: 'symbol' },
+            { id: 'building-label', type: 'symbol' },
+            { id: 'place-label', type: 'symbol' },
+            { id: 'country-label', type: 'symbol' },
+        ],
+    }),
+
     // The per-kind recall tools were consolidated into `recallState({ kind?, id? })`. This mock returns a
     // rich per-kind index for every recallable kind (places / routes / ranges / byod / geometries /
     // incidents / trafficAreaAnalytics) so updatePlacesDisplay / updateRoutesDisplay / updateByodDisplay /
@@ -130,6 +171,7 @@ const SPECIFIC_MOCKS: Record<string, (...args: any[]) => Promise<any>> = {
                         { id: 'places-2', label: 'pubs near the centre', count: 5 },
                         { id: 'places-3', label: 'banks', count: 4 },
                         { id: 'places-4', label: 'hotels', count: 6 },
+                        { id: 'places-6', label: 'parking', count: 7 },
                         { id: 'places-5', label: 'neighbourhood boundaries (Jordaan, De Pijp)', count: 2 },
                     ],
                 };
@@ -215,7 +257,10 @@ const SPECIFIC_MOCKS: Record<string, (...args: any[]) => Promise<any>> = {
                 // Full snapshot — a realistic mid-session world so analyse/process prompts that reference
                 // "my route", "the incidents", or "these areas" have something to operate on.
                 return {
-                    places: [{ id: 'places-0', label: MOCK_PLACE.properties.address.freeformAddress }],
+                    places: [
+                        { id: 'places-0', label: MOCK_PLACE.properties.address.freeformAddress },
+                        { id: 'places-6', label: 'parking' },
+                    ],
                     routes: [{ id: 'routes-0', label: `${MOCK_PLACE.properties.address.municipality} → Brussels` }],
                     ranges: [{ id: 'ranges-0', label: `30-min from ${MOCK_PLACE.properties.address.municipality}` }],
                     incidents: [{ id: 'incidents-0', label: 'Amsterdam ring incidents' }],
@@ -330,35 +375,18 @@ export const buildMockedTools = (toolNames: readonly string[]): Record<string, T
 };
 
 // ---------------------------------------------------------------------------
-// Scenario adapter
+// Scenario agent
 // ---------------------------------------------------------------------------
 
 /**
- * Wraps createMapAgent for use with @langwatch/scenario.
- *
- * Each scenario passes the small set of tool names it expects the agent to
- * choose between. Real descriptions/schemas are kept; executes are mocked.
+ * Builds the map agent for a scenario run with the full default tool set — real
+ * descriptions/schemas kept, executes mocked. Wrap it with `MapAgentToolCallAdapter`
+ * from `@testing/agent-tool-calling` (see helpers.ts).
  */
-export class MapAgentScenarioAdapter extends AgentAdapter {
-    role = AgentRole.AGENT;
-    name = 'MapAgent';
-
-    private readonly agent: MapAgentInstance;
-
-    constructor(model: LanguageModel) {
-        super();
-        this.agent = createMapAgent(mockMap, {
-            model,
-            maxSteps: 10,
-            tools: buildMockedTools(Object.keys(DEFAULT_TOOLS)),
-            includeDefaultTools: false,
-        });
-    }
-
-    async call(input: AgentInput): Promise<AgentReturnTypes> {
-        const result = await this.agent.generate({ messages: input.messages });
-        // Return all response messages so @langwatch/scenario can detect tool calls
-        // via state.hasToolCall() — includes assistant tool-call messages and tool results
-        return result.response.messages as AgentReturnTypes;
-    }
-}
+export const createScenarioAgent = (model: LanguageModel): MapAgentInstance =>
+    createMapAgent(mockMap, {
+        model,
+        maxSteps: 10,
+        tools: buildMockedTools(Object.keys(DEFAULT_TOOLS)),
+        includeDefaultTools: false,
+    });

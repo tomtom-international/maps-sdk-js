@@ -1,0 +1,54 @@
+/* Playbook design-token layer, shared across all agent example apps. The `--pb-*` tokens are the
+   named Figma design system that agent components reference (via Tailwind `(--pb-*)` classes), so
+   component code never touches `--sdk-*` directly. They alias the shared SDK tokens — the single
+   bridge to the underlying design system. Imported from `styles.css` right after `base/tokens.css`
+   so the `--sdk-*` values are defined first. */
+:root {
+    --pb-border-base: var(--sdk-border-base);
+    --pb-border-high: var(--sdk-border-high);
+    --pb-border-low: var(--sdk-border-low);
+    --pb-border-medium: var(--sdk-border-medium);
+    --pb-color-error: var(--sdk-color-error);
+    --pb-color-info: var(--sdk-color-info);
+    --pb-color-success: var(--sdk-color-success);
+    --pb-color-warning: var(--sdk-color-warning);
+    --pb-font-body-l: var(--sdk-font-body-l);
+    --pb-font-body-l-lh: var(--sdk-font-body-l-lh);
+    --pb-font-body-m: var(--sdk-font-body-m);
+    --pb-font-body-m-lh: var(--sdk-font-body-m-lh);
+    --pb-font-body-s: var(--sdk-font-body-s);
+    --pb-font-caption-m: var(--sdk-font-caption-m);
+    --pb-font-caption-s: var(--sdk-font-caption-s);
+    --pb-font-code: var(--sdk-font-code);
+    --pb-font-family: var(--sdk-font-family);
+    --pb-font-primary: var(--sdk-font-primary);
+    --pb-font-secondary: var(--sdk-font-secondary);
+    --pb-font-weight-bold: var(--sdk-font-weight-bold);
+    --pb-font-weight-semibold: var(--sdk-font-weight-semibold);
+    --pb-panel-padding: var(--sdk-panel-padding);
+    --pb-primary-color: var(--sdk-primary-color);
+    --pb-primary-hover: var(--sdk-primary-hover);
+    --pb-radius-10: var(--sdk-radius-10);
+    --pb-radius-20: var(--sdk-radius-20);
+    --pb-radius-5: var(--sdk-radius-5);
+    --pb-shadow-e1: var(--sdk-shadow-e1);
+    --pb-shadow-e2: var(--sdk-shadow-e2);
+    --pb-shadow-e3: var(--sdk-shadow-e3);
+    --pb-shadow-e4: var(--sdk-shadow-e4);
+    --pb-shadow-focus: var(--sdk-shadow-focus);
+    --pb-space-1: var(--sdk-space-1);
+    --pb-space-2: var(--sdk-space-2);
+    --pb-space-3: var(--sdk-space-3);
+    --pb-space-4: var(--sdk-space-4);
+    --pb-space-6: var(--sdk-space-6);
+    --pb-surface-0: var(--sdk-surface-0);
+    --pb-surface-1: var(--sdk-surface-1);
+    --pb-surface-2: var(--sdk-surface-2);
+    --pb-text-disabled: var(--sdk-text-disabled);
+    --pb-text-high: var(--sdk-text-high);
+    --pb-text-low: var(--sdk-text-low);
+    --pb-text-medium: var(--sdk-text-medium);
+    --pb-text-white: var(--sdk-text-white);
+    --pb-z-dropdown: var(--sdk-z-dropdown);
+    --pb-z-tooltip: var(--sdk-z-tooltip);
+}

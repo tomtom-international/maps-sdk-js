@@ -1,7 +1,7 @@
 # Agent Toolkit — BYOD (bring-your-own-data)
 
 Customer-authored GeoJSON layers ingested via `addByodSource` (URL fetch or inline) and registered as `byod` entries.
-Tools: `addByodSource`, `setByodLayers`, `recallByod`, `updateByodDisplay`.
+Tools: `addByodSource`, `setByodLayers`, `updateByodDisplay`.
 See [tools.md](./tools.md) for the registry, [state.md](./state.md) for the `byod` slice,
 [data-tools.md](./data-tools.md) for using `byod` entries as analyse/process inputs.
 
@@ -12,7 +12,7 @@ See [tools.md](./tools.md) for the registry, [state.md](./state.md) for the `byo
 On ingest (every path — URL, inline, programmatic `state.byod.addEntry`) the slice auto-detects a `BYODDataProfile`:
 `featureCount`, `geometryTypes`, and a per-property profile (`name`, JSON `types`, `coverage`, capped `examples`),
 inferred locally in one pass — no extra service call.
-`addByodSource` returns it; `recallByod` exposes `propertyNames` in the list and the full `profile` when given an `id`.
+`addByodSource` returns it; `recallState` exposes `propertyNames` in the list and the full `profile` when given an `id`.
 The model uses it to pick fields for `analyseData` / `processData` without re-fetching raw GeoJSON.
 
 ## Untrusted-data handling
@@ -20,7 +20,7 @@ The model uses it to pick fields for `analyseData` / `processData` without re-fe
 BYOD content is customer-supplied, so all model-facing results pass through `toByodSafeProfile` (`state/byod/profile.ts`) —
 it withholds **string** example values (prompt-injection vector),
 keeping `name`/`types`/`coverage` + numeric/boolean examples;
-and `recallByod` **never** returns the raw `FeatureCollection`
+and `recallState` **never** returns the raw `FeatureCollection`
 (the full profile incl. string examples stays on the entry for host UI).
 Compute over feature values via `analyseData`/`processData`, not by echoing raw data back.
 
@@ -55,7 +55,7 @@ createMapAgent(map, {
     model,
     dataEntries: {
         byod: { enabled: false },  // drops byod from analyseData/processData scope
-                                   // + removes recallByod / addByodSource / setByodLayers / updateByodDisplay
+                                   // + removes addByodSource / setByodLayers / updateByodDisplay
     },
 });
 ```

@@ -1,8 +1,10 @@
 import type { AssistantRuntime, ThreadAssistantMessage, ThreadMessage, ThreadRuntime } from '@assistant-ui/react';
+import { getThreadMessageTokenUsage } from '@assistant-ui/react-ai-sdk';
 
 type AgentResponse = {
     outcome: string;
     toolCalls: { name: string; input: unknown; output: unknown }[];
+    usage: { inputTokens: number; outputTokens: number };
 };
 
 const isFromAssistant = (m: ThreadMessage): m is ThreadAssistantMessage => m.role === 'assistant';
@@ -58,5 +60,14 @@ export const sendMessageToCurrentThread = async (runtime: AssistantRuntime, quer
     await responded;
 
     const produced = thread.getState().messages.slice(startCount);
-    return { outcome: extractOutcome(produced), toolCalls: extractToolCalls(produced) };
+
+    // We only fetch the assistant usage as the UserAgent and Judge usage is captured in Node, while only the AUT is captured in the UI and flows through the bridge
+    const rawUsage = getThreadMessageTokenUsage(produced.filter(isFromAssistant).at(-1));
+    const usage = { inputTokens: rawUsage?.inputTokens ?? 0, outputTokens: rawUsage?.outputTokens ?? 0 };
+
+    return {
+        outcome: extractOutcome(produced),
+        toolCalls: extractToolCalls(produced),
+        usage,
+    };
 };

@@ -53,3 +53,20 @@ describe('summarizePlace — flag-aware area metadata', () => {
         expect(summary).not.toHaveProperty('areaTags');
     });
 });
+
+describe('summarizePlace — type passthrough', () => {
+    test('surfaces properties.type so the model can classify the place', () => {
+        const summary = summarizePlace(makePlace({ type: 'Cross Street' }));
+        expect(summary.type).toBe('Cross Street');
+    });
+
+    test('type is undefined when the source place carries none', () => {
+        const place = {
+            type: 'Feature',
+            id: 'p1',
+            geometry: { type: 'Point', coordinates: [4.9, 52.4] },
+            properties: { poi: { name: 'Test POI' } },
+        } as Place;
+        expect(summarizePlace(place).type).toBeUndefined();
+    });
+});

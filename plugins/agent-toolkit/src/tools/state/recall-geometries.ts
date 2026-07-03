@@ -81,7 +81,7 @@ const indexEntries = (state: ToolState): z.infer<typeof refSchema>[] => {
 
     for (const entry of state.places.entries) {
         if (!entry.geometries?.length) continue;
-        const analyses = summariseAnalyses(state.analyses.getAnalysesForEntry(entry.id, 'analysis'));
+        const analyses = summariseAnalyses(state.analyses.getAnalysesForEntry(entry.id));
         refs.push({
             id: { kind: 'places', id: entry.id },
             label: entry.label,
@@ -92,7 +92,7 @@ const indexEntries = (state: ToolState): z.infer<typeof refSchema>[] => {
     }
 
     for (const entry of state.ranges.entries) {
-        const featureCount = entry.ranges.reduce((acc, r) => acc + (r.polygon?.features.length ?? 0), 0);
+        const featureCount = entry.data.reduce((acc, r) => acc + (r.polygon?.features.length ?? 0), 0);
         if (featureCount === 0) continue;
         refs.push({
             id: { kind: 'ranges', id: entry.id },
@@ -103,12 +103,12 @@ const indexEntries = (state: ToolState): z.infer<typeof refSchema>[] => {
     }
 
     for (const entry of state.customGeometries.entries) {
-        const analyses = summariseAnalyses(state.analyses.getAnalysesForEntry(entry.id, 'analysis'));
+        const analyses = summariseAnalyses(state.analyses.getAnalysesForEntry(entry.id));
         refs.push({
             id: { kind: 'customGeometries', id: entry.id },
             label: entry.label,
             timestamp: entry.timestamp,
-            featureCount: entry.features.length,
+            featureCount: entry.data.length,
             ...(entry.provenance.operation && { operation: entry.provenance.operation }),
             ...(entry.provenance.sourceIds.length && { sourceIds: [...entry.provenance.sourceIds] }),
             ...(analyses && { analyses }),
@@ -128,7 +128,7 @@ const detailForPlaces = (id: GeometriesId, state: ToolState): Detail | { error: 
             error: `Places entry "${id.id}" has no cached footprints. Call discoverPlaces / locatePlace with \`withGeometries: true\` first.`,
         };
     }
-    const analyses = summariseAnalyses(state.analyses.getAnalysesForEntry(entry.id, 'analysis'));
+    const analyses = summariseAnalyses(state.analyses.getAnalysesForEntry(entry.id));
     return {
         id,
         label: entry.label,
@@ -142,7 +142,7 @@ const detailForPlaces = (id: GeometriesId, state: ToolState): Detail | { error: 
 const detailForRanges = (id: GeometriesId, state: ToolState): Detail | { error: string } => {
     const entry = state.ranges.entries.find((e) => e.id === id.id);
     if (!entry) return { error: `No ranges entry with id "${id.id}"` };
-    const features = entry.ranges.flatMap((range) => range.polygon?.features ?? []);
+    const features = entry.data.flatMap((range) => range.polygon?.features ?? []);
     if (features.length === 0) return { error: `Ranges entry "${id.id}" has no polygons.` };
     return {
         id,
@@ -156,13 +156,13 @@ const detailForRanges = (id: GeometriesId, state: ToolState): Detail | { error: 
 const detailForCustomGeometries = (id: GeometriesId, state: ToolState): Detail | { error: string } => {
     const entry = state.customGeometries.findById(id.id);
     if (!entry) return { error: `No custom-geometries entry with id "${id.id}"` };
-    const analyses = summariseAnalyses(state.analyses.getAnalysesForEntry(entry.id, 'analysis'));
+    const analyses = summariseAnalyses(state.analyses.getAnalysesForEntry(entry.id));
     return {
         id,
         label: entry.label,
         timestamp: entry.timestamp,
-        featureCount: entry.features.length,
-        features: { type: 'FeatureCollection', features: entry.features },
+        featureCount: entry.data.length,
+        features: { type: 'FeatureCollection', features: entry.data },
         ...(entry.provenance.operation && { operation: entry.provenance.operation }),
         ...(entry.provenance.sourceIds.length && { sourceIds: [...entry.provenance.sourceIds] }),
         ...(analyses && { analyses }),

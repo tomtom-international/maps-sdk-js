@@ -47,3 +47,41 @@ export const TrashGlyph = () => (
         <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
     </SVG>
 );
+
+/** Route / corridor — two waypoints joined by a path. Marks a route-monitor card apart from a watched
+ *  area. Sized 14px for the card's small eyebrow label, so it skips the 18px SVG wrapper. */
+export const RouteGlyph = () => (
+    <svg
+        viewBox="0 0 24 24"
+        width="14"
+        height="14"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+    >
+        <circle cx="6" cy="19" r="3" />
+        <path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15" />
+        <circle cx="18" cy="5" r="3" />
+    </svg>
+);
+
+/** Stop — a minus in a circle (Figma "Stop monitoring" button glyph). 16px to sit inline with button text. */
+export const StopGlyph = () => (
+    <svg
+        viewBox="0 0 24 24"
+        width="16"
+        height="16"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+    >
+        <circle cx="12" cy="12" r="10" />
+        <path d="M8 12h8" />
+    </svg>
+);

@@ -24,7 +24,7 @@ const seedIncidents = (state: ToolState, ids: string[]): Promise<string> =>
 
 // A rule whose verdict is active iff the entry currently has any incident.
 const ANY_INCIDENT_CODE =
-    'return { active: incidents.length > 0, members: [{ entryId: "incidents-0", featureIds: incidents.map((i) => i.properties.id) }], summary: incidents.length + " incident(s)" };';
+    'const inc = incidentsByEntry["incidents-0"]; return { active: inc.length > 0, members: [{ entryId: "incidents-0", featureIds: inc.map((i) => i.properties.id) }], summary: inc.length + " incident(s)" };';
 
 const arm = (state: ToolState, code: string, name = 'Any incident') =>
     executeCreateTracker({ incidentsEntryIDs: ['incidents-0'], name, rule: 'any incident in the area', code }, state);

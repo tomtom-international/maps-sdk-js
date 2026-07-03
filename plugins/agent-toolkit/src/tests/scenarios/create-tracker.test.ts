@@ -1,16 +1,15 @@
 import { agent, user, userSimulatorAgent } from '@langwatch/scenario';
-import { describe, expect, it } from 'vitest';
 import {
-    agentAdapter,
     expectAnyToolCalled,
     expectToolCalledInOrder,
     FULL_SCENARIOS,
-    getExamplePrompts,
     MODEL,
+    priorTurn,
     runScenario,
-    runToolScenario,
-} from './helpers';
-import { priorTurn, toolCall } from './seed';
+} from '@testing/agent-tool-calling';
+import { describe, expect, it } from 'vitest';
+import { agentAdapter, getExamplePrompts, runToolScenario } from './helpers';
+import { toolCall } from './seed';
 
 // Regression for the "tracker armed before its data is loaded" failure: on a fresh area the classifier
 // used to pick createTracker WITHOUT getTrafficIncidents, leaving the agent hard-restricted — it then
@@ -19,23 +18,25 @@ import { priorTurn, toolCall } from './seed';
 // as a `Depends on:` hint; the fix adds the PREREQUISITES directive telling the classifier to co-pick
 // those prerequisites unless they're already loaded. These scenarios pin both branches.
 
-// A prior turn that already loaded the City of London incidents (entry incidents-0) — used to prove a
+// A prior turn that already loaded the Amsterdam incidents (entry incidents-0) — used to prove a
 // tracker still routes on a warm session, AND that the prerequisite need not be reloaded.
+// (Area is Amsterdam, matching the Netherlands-based locatePlace mock — a non-NL name like
+// "City of London" makes attentive models reject the mock's NL result and abort, flaking the run.)
 const loadedIncidentsSeed = () =>
     priorTurn(
-        'Load the traffic incidents in the City of London',
+        'Load the traffic incidents in Amsterdam',
         [
             toolCall(
                 'getTrafficIncidents',
-                { where: { near: 'City of London' } },
+                { where: { near: 'Amsterdam' } },
                 {
                     count: 12,
                     entryId: 'incidents-0',
-                    entries: [{ id: 'incidents-0', label: 'City of London incidents', count: 12, timestamp: 0 }],
+                    entries: [{ id: 'incidents-0', label: 'Amsterdam incidents', count: 12, timestamp: 0 }],
                 },
             ),
         ],
-        'Loaded the City of London traffic incidents.',
+        'Loaded the Amsterdam traffic incidents.',
     );
 
 describe.skipIf(!MODEL)('createTracker scenarios', { timeout: 180_000, retry: 3 }, () => {
@@ -49,7 +50,7 @@ describe.skipIf(!MODEL)('createTracker scenarios', { timeout: 180_000, retry: 3 
             description: 'User asks to watch a fresh area for major incidents; nothing is loaded yet.',
             agents: [agentAdapter(), userSimulatorAgent()],
             script: [
-                user('Watch the City of London and alert me if a major incident appears'),
+                user('Watch Amsterdam and alert me if a major incident appears'),
                 agent(),
                 expectToolCalledInOrder('getTrafficIncidents', 'createTracker'),
             ],
@@ -76,7 +77,7 @@ describe.skipIf(!MODEL)('createTracker scenarios', { timeout: 180_000, retry: 3 
             description: 'User wants an alert when an incident appears near a hospital; nothing loaded yet.',
             agents: [agentAdapter(), userSimulatorAgent()],
             script: [
-                user('Alert me when an incident appears within 100m of a hospital in the City of London'),
+                user('Alert me when an incident appears within 100m of a hospital in Amsterdam'),
                 agent(),
                 expectAnyToolCalled('getTrafficIncidents'),
                 expectAnyToolCalled('createTracker'),

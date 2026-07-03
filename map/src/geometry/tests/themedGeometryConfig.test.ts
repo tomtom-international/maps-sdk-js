@@ -51,8 +51,8 @@ describe('themedGeometryConfig', () => {
 
     test('returns config with data-driven styling for themes', () => {
         const config = themedGeometryConfig('fadedRainbow');
-        expect(config.colorConfig?.fillColor).toBe('fadedRainbow');
-        expect(config.lineConfig).toBeDefined();
+        expect(config.fill?.color).toBe('fadedRainbow');
+        expect(config.line).toBeDefined();
         expect(config.beforeLayerConfig).toBe('lowestLabel');
     });
 });

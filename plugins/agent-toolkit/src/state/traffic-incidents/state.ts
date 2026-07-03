@@ -6,6 +6,7 @@ import { type BBox, bboxFromGeoJSON, type TrafficIncident } from '@tomtom-org/ma
 import { type TomTomMap, TrafficIncidentOverlayModule } from '@tomtom-org/maps-sdk/map';
 import type { TrafficIncidentDetailsByBBoxParams } from '@tomtom-org/maps-sdk/services';
 import type { StateSlice } from '../../types';
+import type { BaseEntry } from '../entry';
 import { collapseHistoryToLatest, hideAllEntries, pickUniqueEntryId } from '../entry-helpers';
 import { StateEvents } from '../events';
 import type { EntryMode } from '../state';
@@ -34,12 +35,10 @@ export type ClustersRecord = { recipe: unknown; output: SandboxClusteringOutput 
  * incidents state, kept in the slice's `clusters` map keyed by entry id (see {@link ClustersRecord}).
  *
  * @group Agent Toolkit
+ *
+ * @ignore
  */
-export type TrafficIncidentsEntry = {
-    id: string;
-    timestamp: number;
-    label: string;
-    data: TrafficIncident[];
+export type TrafficIncidentsEntry = BaseEntry<TrafficIncident[]> & {
     /**
      * The captured query that produced this entry. Replayed by the monitor on each tick so
      * polling stays in the same slice the entry was loaded with. Reuses the loader's own
@@ -92,7 +91,7 @@ export type TrafficIncidentsStateEvents = {
     /**
      * History changed — entry added, replaced, removed, or cleared via `reset()`. `entries` is the
      * full snapshot after the change; `changedIds` lists the ids of the entries this specific change
-     * added, replaced in place, or removed. The standing-analysis sweep and the clustering re-run
+     * added, replaced in place, or removed. The {@link JobEngine} and the clustering re-run
      * match these against the entries they depend on.
      */
     'entries-change': { entries: readonly TrafficIncidentsEntry[]; changedIds: readonly string[] };
@@ -222,9 +221,9 @@ export class TrafficIncidentsState implements StateSlice {
      * Used by the per-entry monitor tick so incident geometries and any open detail
      * panel stay in sync with the freshest snapshot. `sampledAt` is the canonical moment
      * for this update — propagated to the entry timestamp before the `entries-change` emit.
-     * That emit is what drives analysis replay: the session-level standing sweep
-     * (`tools/state/analyses-runtime.ts`) re-runs every analysis bound to this entry off the
-     * change, ASYNCHRONOUSLY (a microtask later) — the slice itself owns no analysis logic.
+     * That emit is what drives analysis replay: the session-level {@link JobEngine} re-runs every
+     * job bound to this entry off the change, ASYNCHRONOUSLY (a microtask later) — the slice itself
+     * owns no analysis logic.
      * Returns true on success, false when the entry is unknown.
      */
     async replaceEntryData(
@@ -516,8 +515,8 @@ export class TrafficIncidentsState implements StateSlice {
     // Tear an entry down: stop its monitor, clear its module, drop its clustering. Idempotent.
     // Used by removeEntry, single-mode trimming, and reset.
     //
-    // `analyseData` analyses bound to this entry are NOT dropped here — the standing-sweep wiring GCs
-    // them off the `entries-change` every teardown caller emits (`pruneToLiveEntries`). Clustering IS
+    // `analyseData` analyses bound to this entry are NOT dropped here — the {@link JobEngine} GCs each
+    // orphaned job (and its record) off the `entries-change` every teardown caller emits. Clustering IS
     // dropped here: it's dedicated state this slice owns.
     //
     // Synchronous emits run before any await so callers that fire-and-forget

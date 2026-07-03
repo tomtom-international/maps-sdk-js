@@ -24,7 +24,9 @@ export const setMapStandardStyleSchema = z.object({
 });
 
 export const setMapStandardStyleDescription =
-    'Set the map style to a standard preset (light, dark, mono, driving, satellite, etc). For detailed or incremental style tweaking use getMapStyleLayers, setLayoutProperties, and setPaintProperties.';
+    "Switch the map to a standard base-map style preset (IDs are the `style` argument's values). " +
+    'ONLY when the user explicitly asks to change the map style/theme — never on your own initiative. ' +
+    'For finer styling use getMapStyleLayers, setLayoutProperties, setPaintProperties.';
 
 /**
  * Execute set map standard style.

@@ -1,6 +1,7 @@
+import { MODEL, priorTurn } from '@testing/agent-tool-calling';
 import { describe, expect, it } from 'vitest';
-import { MODEL, runToolScenario } from './helpers';
-import { priorTurn, toolCall } from './seed';
+import { runToolScenario } from './helpers';
+import { toolCall } from './seed';
 
 // monitorAnalysis is generic over every analyseData input kind, not just incidents: enabling it keeps
 // an analysis recomputing whenever its source entries change — re-searched places, recalculated
@@ -30,7 +31,7 @@ const analysedPlacesSeed = () =>
                 {
                     placesEntryIDs: ['places-1'],
                     name: 'by-category',
-                    code: 'const c = {}; for (const p of places.features) c[p.properties.poi?.categories?.[0] ?? "other"] = (c[p.properties.poi?.categories?.[0] ?? "other"] ?? 0) + 1; return c;',
+                    code: 'const c = {}; for (const p of placesByEntry["places-1"].features) c[p.properties.poi?.categories?.[0] ?? "other"] = (c[p.properties.poi?.categories?.[0] ?? "other"] ?? 0) + 1; return c;',
                 },
                 {
                     affectedEntries: [{ kind: 'places', id: 'places-1' }],
@@ -64,7 +65,7 @@ const analysedRouteSeed = () =>
                 {
                     routesEntryIDs: ['routes-0'],
                     name: 'route-delay',
-                    code: 'const r = routes.features[0]; const secs = r.properties.sections.traffic ?? []; return { totalDelaySeconds: secs.reduce((s, x) => s + (x.delayInSeconds ?? 0), 0) };',
+                    code: 'const r = routesByEntry["routes-0"].features[0]; const secs = r.properties.sections.traffic ?? []; return { totalDelaySeconds: secs.reduce((s, x) => s + (x.delayInSeconds ?? 0), 0) };',
                 },
                 {
                     affectedEntries: [{ kind: 'routes', id: 'routes-0' }],
@@ -75,7 +76,7 @@ const analysedRouteSeed = () =>
                 },
             ),
         ],
-        'Planned the Amsterdam → Brussels route and summarised its total traffic delay — attached as the ' +
+        'Planned the Amsterdam → Brussels route and summarized its total traffic delay — attached as the ' +
             '"route-delay" analysis.',
     );
 

@@ -17,10 +17,10 @@ const CORRIDOR_ROUTE_CONFIG: RoutingModuleConfig = {
     summaryBubbles: { visible: false },
     layers: {
         mainLines: {
-            routeLine: { paint: { 'line-color': '#ffffff', 'line-opacity': 0.85 } },
-            routeOutline: { paint: { 'line-color': '#0b2545', 'line-opacity': 0.5 } },
-            routeDeselectedLine: { paint: { 'line-color': '#ffffff', 'line-opacity': 0.55 } },
-            routeDeselectedOutline: { paint: { 'line-color': '#0b2545', 'line-opacity': 0.3 } },
+            routeLine: { paint: { 'line-color': '#ffffff' } },
+            routeOutline: { paint: { 'line-color': '#3F454B' } },
+            routeDeselectedLine: { paint: { 'line-color': '#ABAFB3' } },
+            routeDeselectedOutline: { paint: { 'line-color': '#3F454B' } },
         },
     },
 };

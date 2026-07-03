@@ -1,0 +1,37 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/form/field.css";
+@import "../../src/templates/css/form/dropdown.css";
+@import "../../src/templates/css/form/color-picker.css";
+
+/* CUSTOM STYLES (example-specific) */
+
+.sdk-example-customPanel {
+    width: 300px;
+}
+
+.sdk-example-hint {
+    margin: 0 0 var(--sdk-space-4);
+    color: var(--sdk-example-color-text-subtle, #5c5c5c);
+    font-size: 12px;
+    line-height: 16px;
+}
+
+/* Section subheadings sit tight above their fields. */
+.sdk-example-subheading {
+    margin-bottom: var(--sdk-space-3);
+}
+
+/* In an inline row the color swatch right-aligns, lining up with the dropdowns' right edge. */
+.sdk-example-form-field-inline .sdk-example-color-swatch {
+    margin-left: auto;
+}
+
+/* Responsive: max-width 768px */
+@media (max-width: 768px) {
+    .sdk-example-customPanel {
+        width: 240px;
+    }
+}

@@ -11,12 +11,6 @@ export {
     executeClearMap,
 } from './clear-map';
 export {
-    executeFitRouteSection,
-    fitRouteSectionDescription,
-    fitRouteSectionOutputSchema,
-    fitRouteSectionSchema,
-} from './fit-route-section';
-export {
     executeGetStandardMapStyles,
     getStandardMapStylesDescription,
     getStandardMapStylesOutputSchema,

@@ -10,6 +10,7 @@ import type { AgentInstance } from './useAgentBootstrap';
  */
 export function useMonitor(agent: AgentInstance | undefined) {
     const [monitoredLabel, setMonitoredLabel] = useState<string | null>(null);
+    const [monitoredEntryId, setMonitoredEntryId] = useState<string | null>(null);
     const [lastAnalysisAt, setLastAnalysisAt] = useState<number | null>(null);
     const [snapshotCount, setSnapshotCount] = useState(0);
     // Id of the entry whose monitor is currently running. null when idle.
@@ -24,16 +25,19 @@ export function useMonitor(agent: AgentInstance | undefined) {
             const id = activeEntryIdRef.current;
             if (!id) {
                 setMonitoredLabel(null);
+                setMonitoredEntryId(null);
                 setLastAnalysisAt(null);
                 return;
             }
             const entry = slice.entries.find((e) => e.id === id);
             if (!entry) {
                 setMonitoredLabel(null);
+                setMonitoredEntryId(null);
                 setLastAnalysisAt(null);
                 return;
             }
             setMonitoredLabel(entry.label ?? null);
+            setMonitoredEntryId(entry.id);
             // Freshness = the entry's latest snapshot moment, set on load and every
             // monitor tick. Analyses re-run per snapshot and are stamped with the same
             // moment, so this is the "last analysis" time — no registry reach-in needed.
@@ -52,6 +56,7 @@ export function useMonitor(agent: AgentInstance | undefined) {
                 if (activeEntryIdRef.current !== entryId) return;
                 activeEntryIdRef.current = null;
                 setMonitoredLabel(null);
+                setMonitoredEntryId(null);
                 setLastAnalysisAt(null);
                 setSnapshotCount(0);
             }),
@@ -70,21 +75,11 @@ export function useMonitor(agent: AgentInstance | undefined) {
             for (const unsub of unsubs) unsub();
             activeEntryIdRef.current = null;
             setMonitoredLabel(null);
+            setMonitoredEntryId(null);
             setLastAnalysisAt(null);
             setSnapshotCount(0);
         };
     }, [agent]);
 
-    // Monitors are per-entry. The UI button is global, so apply stop to every
-    // entry that has one — typically just the single demo monitor.
-    const stopMonitor = () => {
-        if (!agent) return;
-        for (const entry of agent.state.trafficIncidents.entries) {
-            if (agent.state.trafficIncidents.isMonitored(entry.id)) {
-                agent.state.trafficIncidents.stopMonitoring(entry.id);
-            }
-        }
-    };
-
-    return { monitoredLabel, lastAnalysisAt, snapshotCount, stopMonitor };
+    return { monitoredLabel, monitoredEntryId, lastAnalysisAt, snapshotCount };
 }

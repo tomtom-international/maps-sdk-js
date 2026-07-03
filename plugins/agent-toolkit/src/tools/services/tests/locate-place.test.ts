@@ -43,6 +43,7 @@ const makeState = () =>
         },
         places: {
             findPlaceById: () => undefined,
+            geometryPlaceIdsForEntry: () => undefined,
             fetchPlaceGeometry: async () => undefined,
             addPlaceResult: async (_result: unknown, _label: string) => 'places-0',
             entries: [],

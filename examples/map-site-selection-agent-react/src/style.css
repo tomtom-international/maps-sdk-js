@@ -1,0 +1,101 @@
+/* This example's Tailwind entry. `@import "tailwindcss"` must live in each example's own src/ —
+   the sandpack build discovers and compiles it per-example (see sandpack/tailwindPlugin.ts).
+   Shared layers load via index.tsx; below are this example's own rules. */
+@import "tailwindcss";
+
+/* Markdown inside the USER bubble. The clarifyIntent wizard submits the user's picks as a markdown
+   bullet list (question + **bold answer**), but the shared agent-chat.css only styles markdown under
+   `.message.assistant`, so Tailwind's preflight would strip the bullets, indent and bold here. Mirror
+   just what those summaries use. */
+.message.user ul {
+    margin: 0;
+    padding-left: var(--pb-space-4); /* 16 */
+    list-style: disc;
+}
+
+.message.user li + li {
+    margin-top: var(--pb-space-1); /* 4 — breathing room between picks */
+}
+
+.message.user strong {
+    font-weight: var(--pb-font-weight-bold);
+}
+
+/* Marker popup chrome — the card body + close button are built in site-visuals.ts; MapLibre renders
+   popups outside React, so they're styled here (like the cluster pins below). */
+
+.site-popup .maplibregl-popup-content {
+    position: relative;
+    padding: 0;
+    overflow: hidden;
+    border-radius: 10px;
+    background: var(--pb-surface-0);
+    box-shadow: var(--pb-shadow-e2, 0 6px 16px -4px rgba(17, 12, 34, 0.16));
+}
+
+.site-popup .maplibregl-popup-close-button {
+    display: none;
+}
+
+/* Cluster map pins — MapLibre HTML markers injected outside React, so they can't take Tailwind
+   utility classes from JSX. */
+
+.cluster-pin {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cluster-pin:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+    border-radius: 999px;
+}
+
+.cluster-pin-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    background: var(--_cluster-color, hsl(210, 40%, 55%));
+    box-shadow:
+        0 0 0 3px hsla(0, 0%, 100%, 0.9),
+        0 2px 8px hsla(0, 0%, 0%, 0.4);
+}
+
+.cluster-pin-num {
+    position: relative;
+    z-index: 1;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    text-shadow: 0 1px 2px hsla(0, 0%, 0%, 0.4);
+    font-family: var(--pb-font-family, system-ui, sans-serif);
+}
+
+@keyframes cluster-pin-pulse {
+    0% {
+        box-shadow:
+            0 0 0 3px hsla(0, 0%, 100%, 0.9),
+            0 0 0 0 hsla(18, 75%, 48%, 0.55),
+            0 2px 8px hsla(0, 0%, 0%, 0.4);
+    }
+    70% {
+        box-shadow:
+            0 0 0 3px hsla(0, 0%, 100%, 0.9),
+            0 0 0 14px hsla(18, 75%, 48%, 0),
+            0 2px 8px hsla(0, 0%, 0%, 0.4);
+    }
+    100% {
+        box-shadow:
+            0 0 0 3px hsla(0, 0%, 100%, 0.9),
+            0 0 0 0 hsla(18, 75%, 48%, 0),
+            0 2px 8px hsla(0, 0%, 0%, 0.4);
+    }
+}

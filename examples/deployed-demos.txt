@@ -1,3 +1,4 @@
 map-chat-agent-react
 map-chat-agent-state-playground
 map-traffic-agent-react
+map-site-selection-agent-react

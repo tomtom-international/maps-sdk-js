@@ -50,6 +50,7 @@ const baseCtx = (over: Partial<WhereContext> = {}): WhereContext => ({
     viewportBBox: () => undefined,
     viewportCenter: () => undefined,
     findPlaceById: () => undefined,
+    geometryPlaceIdsForEntry: () => undefined,
     fetchPlaceGeometry: async () => undefined,
     geocodeArea: async () => [],
     geocodeAreas: async () => [],
@@ -193,6 +194,27 @@ describe('resolveAreas — other branches', () => {
     it('unknown placeId → error', async () => {
         const r = await resolveAreas({ placeIds: ['nope'] }, baseCtx());
         expect(r).toMatchObject({ error: expect.stringContaining('Unknown placeId') });
+    });
+
+    it('ENTRY id → expands to its geometry-bearing places (one area each)', async () => {
+        // The id passed in `placeIds` is an entry id; the entry holds two geometry-bearing places.
+        const ctx = baseCtx({
+            geometryPlaceIdsForEntry: (id) => (id === 'london-area' ? ['p1', 'p2'] : undefined),
+            findPlaceById: (id) => place(id, { geometrySource: true }),
+            fetchPlaceGeometry: async (id) =>
+                id === 'p1' ? polygonFeature([-0.2, 51.4, -0.1, 51.6]) : polygonFeature([0, 0, 1, 1]),
+        });
+        const r = await resolveAreas({ placeIds: ['london-area'] }, ctx);
+        expect(r).toEqual([
+            expect.objectContaining({ source: 'placeId', bbox: [-0.2, 51.4, -0.1, 51.6] }),
+            expect.objectContaining({ source: 'placeId', bbox: [0, 0, 1, 1] }),
+        ]);
+    });
+
+    it('ENTRY id with no geometry-bearing place → actionable error', async () => {
+        const ctx = baseCtx({ geometryPlaceIdsForEntry: (id) => (id === 'addr-entry' ? [] : undefined) });
+        const r = await resolveAreas({ placeIds: ['addr-entry'] }, ctx);
+        expect(r).toMatchObject({ error: expect.stringContaining('no place with a geometry data source') });
     });
 
     it('route → one buffered corridor area per route feature', async () => {

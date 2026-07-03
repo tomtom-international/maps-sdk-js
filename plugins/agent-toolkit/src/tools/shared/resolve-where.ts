@@ -43,6 +43,10 @@ export type WhereContext = {
     viewportBBox(): BBox | undefined;
     viewportCenter(): Position | undefined;
     findPlaceById(id: string): Place | undefined;
+    // Expands an ENTRY id to the feature ids of its geometry-bearing places. `undefined` when no
+    // such entry exists (caller falls back to treating the id as a place feature id); `[]` when the
+    // entry exists but holds no geometry-bearing place.
+    geometryPlaceIdsForEntry(id: string): string[] | undefined;
     fetchPlaceGeometry(id: string): Promise<Feature | undefined>;
     geocodeArea(query: string, queryAs: QueryAs, bias?: Position): Promise<Place[]>;
     // Geocodes `query` restricted to administrative AREA geographies (streets/POIs filtered out), so
@@ -151,10 +155,10 @@ const collectExplicitAreas = async (
     }
 
     for (const placeId of where.placeIds ?? []) {
-        const area = await resolvePlaceIdToArea(placeId, ctx);
-        if (isResolveError(area)) return area;
+        const resolved = await resolvePlaceIdsInput(placeId, ctx);
+        if (isResolveError(resolved)) return resolved;
 
-        areas.push(area);
+        areas.push(...resolved);
     }
 
     for (const polygon of where.geometries ?? []) {
@@ -365,6 +369,35 @@ const resolvePlaceIdToArea = async (id: string, ctx: WhereContext): Promise<Reso
         polygon: feature.geometry as Polygon | MultiPolygon,
         source: 'placeId',
     };
+};
+
+// Resolves one `where.placeIds` entry to its area(s). The id may be an ENTRY id (from locatePlace's
+// `placesEntryId`, discoverPlaces, or recallState — the same currency every `placesEntryIDs` tool
+// accepts) or a single place FEATURE id. Entry ids expand to every geometry-bearing place they hold
+// (each → one area, unioned downstream); a bare feature id resolves to one area. This unifies the
+// id space so the agent can reuse the entry id it already has rather than digging out a feature id.
+const resolvePlaceIdsInput = async (id: string, ctx: WhereContext): Promise<ResolvedArea[] | ResolveError> => {
+    const entryPlaceIds = ctx.geometryPlaceIdsForEntry(id);
+
+    // Not an entry id — treat it as a place feature id (legacy path).
+    if (entryPlaceIds === undefined) {
+        const area = await resolvePlaceIdToArea(id, ctx);
+        return isResolveError(area) ? area : [area];
+    }
+
+    if (entryPlaceIds.length === 0) {
+        return {
+            error: `Places entry "${id}" has no place with a geometry data source (most addresses and streets lack one). Provide a boundingBox or a different entry.`,
+        };
+    }
+
+    const areas: ResolvedArea[] = [];
+    for (const placeId of entryPlaceIds) {
+        const area = await resolvePlaceIdToArea(placeId, ctx);
+        if (isResolveError(area)) return area;
+        areas.push(area);
+    }
+    return areas;
 };
 
 // Buffers each route alternative into a corridor polygon (half the requested width on each side),

@@ -35,8 +35,8 @@ export type PlacesStateEvents = {
     /**
      * History changed — entry added, replaced, or cleared via `reset()`. `entries` is the full
      * snapshot after the change; `changedIds` lists the ids of the entries this specific change
-     * added, replaced in place, or removed (the standing-analysis sweep matches these against each
-     * record's `affectedEntryIds`).
+     * added, replaced in place, or removed (the {@link JobEngine} matches these against each job's
+     * `affectedEntryIds`).
      */
     'entries-change': { entries: readonly PlacesEntry[]; changedIds: readonly string[] };
     /** Set of entries currently rendered on the map changed (or marker type swapped). */
@@ -176,7 +176,7 @@ export class PlacesState implements StateSlice {
      * so we assume the most recent entry is the relevant one to show on the map.
      */
     get latestPlace(): Place[] | undefined {
-        return this._entries.at(-1)?.places;
+        return this._entries.at(-1)?.data;
     }
 
     async addPlaceResult(
@@ -204,7 +204,7 @@ export class PlacesState implements StateSlice {
             id: entryId,
             timestamp: Date.now(),
             label,
-            places: 'features' in place ? place.features : [place],
+            data: 'features' in place ? place.features : [place],
             ...(connections?.length && { connections }),
             ...(geometries?.length && { geometries }),
         });
@@ -220,19 +220,32 @@ export class PlacesState implements StateSlice {
 
     // Scans entries (newest first) for a Place by its feature id. Each entry
     // lazily caches an id → Place record on first miss so repeated lookups stay
-    // O(1) per entry. Safe because entry.places is effectively immutable after
+    // O(1) per entry. Safe because entry.data is effectively immutable after
     // addPlaceResult — no mutation path invalidates the index.
     findPlaceById(placeId: string): { place: Place; entryId: string } | undefined {
         for (let i = this._entries.length - 1; i >= 0; i--) {
             const entry = this._entries[i];
             if (!entry._byId) {
                 entry._byId = {};
-                for (const place of entry.places) entry._byId[place.id] = place;
+                for (const place of entry.data) entry._byId[place.id] = place;
             }
             const place = entry._byId[placeId];
             if (place) return { place, entryId: entry.id };
         }
         return undefined;
+    }
+
+    // Expands an ENTRY id to the feature ids of its places that carry a geometry data source — the
+    // ids `resolveWithinAreas` can fetch a boundary polygon for. Returns `undefined` when no entry
+    // with this id exists (so the caller can fall back to treating the id as a place feature id),
+    // or `[]` when the entry exists but holds no geometry-bearing place (addresses/streets often
+    // lack one). Keeps the place-id keying in one place alongside findPlaceById.
+    geometryPlaceIdsForEntry(entryId: string): string[] | undefined {
+        const entry = this._entries.find((e) => e.id === entryId);
+        if (!entry) return undefined;
+        return entry.data
+            .filter((place) => place.properties.dataSources?.geometry?.id && typeof place.id === 'string')
+            .map((place) => place.id as string);
     }
 
     /**
@@ -298,7 +311,7 @@ export class PlacesState implements StateSlice {
         // contributes one request, not several.
         const placesNeedingFetch: Place[] = [];
         const queuedGeometryIds = new Set<string>();
-        for (const place of entry.places) {
+        for (const place of entry.data) {
             const geometryDataSourceId = place.properties.dataSources?.geometry?.id;
             if (!geometryDataSourceId) continue;
             if (alreadyFetched.has(geometryDataSourceId)) continue;
@@ -373,7 +386,7 @@ export class PlacesState implements StateSlice {
             if (typeof feature.id === 'string') byGeometryId.set(feature.id, feature);
         }
         const index: Record<string, PolygonFeature<CommonPlaceProps>> = {};
-        for (const place of entry.places) {
+        for (const place of entry.data) {
             const geometryId = place.properties.dataSources?.geometry?.id;
             if (!geometryId) continue;
             const feature = byGeometryId.get(geometryId);
@@ -423,7 +436,7 @@ export class PlacesState implements StateSlice {
     getShownFeatures(): Place[] {
         const out: Place[] = [];
         for (const entry of this._entries) {
-            if (entry._shownAs) out.push(...entry.places);
+            if (entry._shownAs) out.push(...entry.data);
         }
         return out;
     }
@@ -542,7 +555,7 @@ export class PlacesState implements StateSlice {
     // theme just re-pushes the same data; switching themes rethemes the existing module in place.
     private async _showEntryAs(entry: PlacesEntry, markerType: PlacesMarkerType): Promise<void> {
         const module = await this.getEntryPlacesModule(entry.id, markerType);
-        await module.show({ type: 'FeatureCollection', features: entry.places } as Places);
+        await module.show({ type: 'FeatureCollection', features: entry.data } as Places);
         if (entry.connections?.length) {
             await module.showConnections(entry.connections);
         }

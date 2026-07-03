@@ -6,9 +6,12 @@
  * results on demand via {@link Analyses.getAnalysesForEntry}. Writers `register` an analysis then
  * `attachResult`; the registry emits `analysis-change` whenever a result lands.
  *
- * One recurrence engine feeds it: the standing sweep (`tools/state/analyses-runtime.ts`, reads
- * {@link Analyses.sweepCandidates}), driven by every input slice's `entries-change`. It replays the
- * sandboxed `analyseData` code so monitored results re-run on source change.
+ * It is a pure sink: it holds each analysis's metadata + bounded result `history`, but NOT its recipe
+ * or recurrence. A monitored analysis's recipe lives on a {@link Job} the tools layer registers with the
+ * {@link JobEngine}; the registry keeps the returned handle in `_jobs` (keyed by `analysisId`) so it can
+ * pause/resume it or compare its `code` on re-arm. The job's `run` writes results back here via
+ * {@link attachResult}. A one-shot analysis keeps a paused job (its recipe), so `monitorAnalysis` can
+ * promote it later without re-declaring the code.
  *
  * Incident clustering is NOT here — it is typed, dedicated state owned by `TrafficIncidentsState`
  * (`clusters`), not a generic analysis.
@@ -16,6 +19,7 @@
  * @group Agent Toolkit
  */
 
+import type { Job } from '../engine';
 import type { AnalysisOutputFormat } from '../tools/shared/sandbox-code';
 import { StateEvents } from './events';
 
@@ -24,6 +28,8 @@ import { StateEvents } from './events';
  * standing replay). `data` is whatever the dynamic code returned. Identical across every entry kind.
  *
  * @group Agent Toolkit
+ *
+ * @ignore
  */
 export type EntryAnalysis = {
     /** Unique name within the parent entry — used as the key (re-attaching the same name replaces). */
@@ -58,67 +64,40 @@ export const makeAnalysisId = (name: string, affectedIds: readonly string[]): st
     `${name}::${[...affectedIds].sort((a, b) => a.localeCompare(b)).join(',')}`;
 
 /**
- * What an analysis record is FOR — its purpose, not its execution kind (every record is sandbox code).
- * - `'analysis'`: an operator-facing `analyseData` result (the default), surfaced in the Analyses tab
- *   and per-entry detail.
- * - `'tracker-rule'`: a tracker rule's verdict. Recomputes, GC's, and reads by id exactly like an
- *   analysis, but is its own enumerable category so the tracker can list its rules and operator views
- *   can exclude them. Pass it to {@link Analyses.all} / {@link Analyses.getAnalysesForEntry} to filter.
+ * One analysis tracked by the session-level {@link Analyses} registry — the single home for every
+ * `analyseData` analysis, one-shot or monitored, across every entry kind. Pure sink state: metadata plus
+ * the bounded result `history`. The recipe (`code` / `inputs`) and recurrence are NOT here — they live on
+ * the analysis's {@link Job} (see `_jobs`). `affectedEntryIds` is the per-entry lookup key
+ * ({@link Analyses.getAnalysesForEntry}); `history` is the result timeline (oldest first), whose latest
+ * is the current result and is threaded back into the sandbox code as `previous`.
  *
  * @group Agent Toolkit
  */
-export type AnalysisType = 'analysis' | 'tracker-rule';
-
-/**
- * The metadata + lifecycle fields shared by {@link AnalysisRecord} and its {@link AnalysisRegistration}
- * input — everything except `enabled` (defaulted on register) and the runtime-built `history`. The
- * single source of truth for an analysis's declared shape, so the registry and its register input never
- * drift.
- *
- * @group Agent Toolkit
- */
-export type AnalysisBase = {
+export type AnalysisRecord = {
     /** Stable handle minted by {@link makeAnalysisId} (name + sorted source ids). */
     analysisId: string;
     name: string;
     description?: string;
     outputFormat: AnalysisOutputFormat;
-    /** What this record is for — `'analysis'` (default) or `'tracker-rule'`. See {@link AnalysisType}. */
-    type: AnalysisType;
-    /** Sandbox code replayed by the standing sweep. */
-    code?: string;
-    /** Original `analyseData` input descriptor (`MultiInputIds`); opaque here. */
-    inputs?: unknown;
     /** Ids of every entry this analysis is attached to. The per-entry lookup key. */
     affectedEntryIds: readonly string[];
-};
-
-/**
- * One analysis tracked by the session-level {@link Analyses} registry — the single home for every
- * `analyseData` analysis, one-shot or monitored, across every entry kind. The shared {@link AnalysisBase}
- * plus the registry-owned `enabled` flag and the runtime-built `history`. `affectedEntryIds` is the
- * per-entry lookup key ({@link Analyses.getAnalysesForEntry}); `enabled` means "recomputes on source
- * change". `history` is the bounded result timeline (replaces the old per-entry store); the latest is
- * the current result and is threaded back into the sandbox code as `previous`.
- *
- * @group Agent Toolkit
- */
-export type AnalysisRecord = AnalysisBase & {
-    /** Whether the standing sweep recomputes it when its source entry changes. */
-    enabled: boolean;
     /** Bounded result timeline, oldest first (see {@link MAX_HISTORY_PER_ANALYSIS}). */
     history: EntryAnalysis[];
 };
 
 /**
- * {@link Analyses.register} input — the shared {@link AnalysisBase} plus an optional `enabled`
- * (defaulted on register). No `history`; the registry builds that as results land.
+ * {@link Analyses.register} input — the record's metadata. No `history` (the registry builds that as
+ * results land) and no recipe (that lives on the {@link Job}).
  *
  * @group Agent Toolkit
  */
-export type AnalysisRegistration = Omit<AnalysisBase, 'type'> & { type?: AnalysisType; enabled?: boolean };
+export type AnalysisRegistration = Omit<AnalysisRecord, 'history'>;
 
-/** Events emitted by {@link Analyses}. One event for "an analysis result was attached or recomputed". */
+/**
+ * Events emitted by {@link Analyses}. One event for "an analysis result was attached or recomputed".
+ *
+ * @ignore
+ */
 export type AnalysesEvents = {
     /**
      * An analysis result landed (one-shot attach or a recompute). Carries the `analysisId` and the ids
@@ -133,53 +112,52 @@ export type AnalysesEvents = {
  * its own bounded result history. Entries carry no analysis state; per-entry views call
  * {@link getAnalysesForEntry}. Held on `ToolState` as `state.analyses`.
  *
- * Pure storage + lifecycle. The one recurrence engine lives elsewhere: the standing sweep in
- * `tools/state/analyses-runtime.ts` (reads {@link sweepCandidates}), which replays both `sandbox` and
- * `deterministic` records. `_wired` is a one-shot guard the sweep reads so it subscribes to slice
- * events once.
+ * Pure sink: metadata + result history only. The recurrence lives on the {@link JobEngine}; this
+ * registry keeps each monitored analysis's {@link Job} handle in `_jobs` (keyed by `analysisId`) so it
+ * can pause/resume it ({@link job}) or compare its `code` on re-arm. A one-shot analysis keeps a paused
+ * job for later promotion.
  *
  * @group Agent Toolkit
  */
 export class Analyses {
     private readonly _records = new Map<string, AnalysisRecord>();
-    private _wired = false;
+    /** analysisId → the {@link Job} backing it (one-shot = paused). The reference linking record to engine. */
+    private readonly _jobs = new Map<string, Job>();
 
     /** Subscribe to {@link AnalysesEvents} — fired whenever a result is attached or recomputed. */
     readonly events = new StateEvents<AnalysesEvents>();
 
-    /** True once the tools-layer sweep has subscribed to slice change events. Set via {@link markWired}. */
-    get wired(): boolean {
-        return this._wired;
-    }
-
-    /** Mark the session as wired so {@link wired} guards a repeat subscription. */
-    markWired(): void {
-        this._wired = true;
-    }
-
     /**
-     * Insert or replace a record's metadata + lifecycle (NOT its result — use {@link attachResult} for
-     * that). Re-registering an existing `analysisId` preserves its `enabled` flag and result history,
-     * UNLESS the sandbox `code` changed — in which case the history is dropped so the new recipe never
-     * inherits the old `previous`.
+     * Insert or replace a record's metadata (NOT its result — use {@link attachResult}; nor its recipe —
+     * that lives on the {@link Job}). Re-registering an existing `analysisId` preserves its result
+     * history; callers drop stale history explicitly via {@link resetHistory} when the recipe changes.
      */
     register(input: AnalysisRegistration): void {
         const existing = this._records.get(input.analysisId);
-        const enabled = input.enabled ?? existing?.enabled ?? false;
-        const type = input.type ?? existing?.type ?? 'analysis';
-        const changed = existing != null && existing.code !== input.code;
         this._records.set(input.analysisId, {
             analysisId: input.analysisId,
             name: input.name,
             description: input.description,
             outputFormat: input.outputFormat,
-            type,
-            code: input.code,
-            inputs: input.inputs,
             affectedEntryIds: input.affectedEntryIds,
-            enabled,
-            history: changed || !existing ? [] : existing.history,
+            history: existing?.history ?? [],
         });
+    }
+
+    /** Store the {@link Job} backing an analysis — the reference linking this record to the engine. */
+    setJob(analysisId: string, job: Job): void {
+        this._jobs.set(analysisId, job);
+    }
+
+    /** The {@link Job} backing an analysis, if monitored or a retained one-shot. */
+    job(analysisId: string): Job | undefined {
+        return this._jobs.get(analysisId);
+    }
+
+    /** Drop an analysis's result history — called on re-arm when the recipe changed (stale `previous`). */
+    resetHistory(analysisId: string): void {
+        const record = this._records.get(analysisId);
+        if (record) record.history = [];
     }
 
     /**
@@ -205,10 +183,9 @@ export class Analyses {
      * replacement for the old per-entry `_analyses.results`. Linear scan over records — fine at session
      * scale (one record per distinct analyseData name+sources, plus one per clustered incidents entry).
      */
-    getAnalysesForEntry(entryId: string, type?: AnalysisType): readonly EntryAnalysis[] {
+    getAnalysesForEntry(entryId: string): readonly EntryAnalysis[] {
         const out: EntryAnalysis[] = [];
         for (const record of this._records.values()) {
-            if (type !== undefined && record.type !== type) continue;
             if (!record.affectedEntryIds.includes(entryId)) continue;
             const latest = record.history.at(-1);
             if (latest) out.push(latest);
@@ -217,14 +194,12 @@ export class Analyses {
     }
 
     /**
-     * Every analysis record, in registration order — the combined, cross-entry view. Pass a
-     * {@link AnalysisType} to restrict to one category (`'analysis'` for the operator-facing set,
-     * `'tracker-rule'` for tracker verdicts); omit it for every record. Read `record.history.at(-1)`
-     * for each one's latest result.
+     * Every analysis record, in registration order — the combined, cross-entry view. Read
+     * `record.history.at(-1)` for each one's latest result. (Tracker verdicts are no longer analyses, so
+     * every record here is operator-facing.)
      */
-    all(type?: AnalysisType): readonly AnalysisRecord[] {
-        const records = [...this._records.values()];
-        return type === undefined ? records : records.filter((r) => r.type === type);
+    all(): readonly AnalysisRecord[] {
+        return [...this._records.values()];
     }
 
     /** Full result timeline for one analysis, oldest first. Empty when unknown. */
@@ -241,20 +216,15 @@ export class Analyses {
         return this._records.get(analysisId);
     }
 
-    /** Flip an analysis on/off. Returns false when the id is unknown. */
-    setEnabled(analysisId: string, enabled: boolean): boolean {
-        const record = this._records.get(analysisId);
-        if (!record) return false;
-        record.enabled = enabled;
-        return true;
+    /** Whether the analysis is currently recomputed on source change (its job exists and is active). */
+    isMonitored(analysisId: string): boolean {
+        return this._jobs.get(analysisId)?.active ?? false;
     }
 
-    /** Every enabled record, in registration order — the standing sweep's replay candidates. */
-    sweepCandidates(): AnalysisRecord[] {
-        return [...this._records.values()].filter((r) => r.enabled);
-    }
-
+    /** Remove an analysis: tear down its job and drop the record + handle. */
     remove(analysisId: string): void {
+        this._jobs.get(analysisId)?.unregister();
+        this._jobs.delete(analysisId);
         this._records.delete(analysisId);
     }
 
@@ -263,24 +233,13 @@ export class Analyses {
      * `unregister(name)` which dropped a named analysis wherever it was attached.
      */
     removeByName(name: string): void {
-        for (const [id, record] of this._records) if (record.name === name) this._records.delete(id);
+        for (const [id, record] of this._records) if (record.name === name) this.remove(id);
     }
 
-    /**
-     * Drop every record whose source entries are ALL gone — the single GC path now that entries no
-     * longer hold their analyses. The sweep wiring calls this on each `entries-change` with the live
-     * source-entry ids, so a removed entry's records are collected on the next change. A record over
-     * `[A, B]` survives while either is live (its `affectedEntryIds` keeps the dead id, which is
-     * harmless — nothing queries it).
-     */
-    pruneToLiveEntries(liveIds: ReadonlySet<string>): void {
-        for (const [id, record] of this._records) {
-            if (!record.affectedEntryIds.some((entryId) => liveIds.has(entryId))) this._records.delete(id);
-        }
-    }
-
-    /** Drop every record. Walked automatically by `destroyState` (duck-typed `reset`). */
+    /** Drop every record + job handle. Walked automatically by `destroyState` (duck-typed `reset`). */
     reset(): void {
+        for (const job of this._jobs.values()) job.unregister();
+        this._jobs.clear();
         this._records.clear();
     }
 }

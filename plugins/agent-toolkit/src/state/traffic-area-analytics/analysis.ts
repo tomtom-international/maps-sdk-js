@@ -10,5 +10,7 @@ import type { EntryAnalysis } from '../analyses';
  * back-compat.
  *
  * @group Agent Toolkit
+ *
+ * @ignore
  */
 export type TrafficAreaAnalyticsAnalysis = EntryAnalysis;

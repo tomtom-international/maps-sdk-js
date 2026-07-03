@@ -38,7 +38,7 @@ const buildColor = (
     config: GeometriesModuleConfig,
     index: number,
 ): DataDrivenPropertyValueSpecification<string> | string | undefined => {
-    const color = config?.colorConfig?.fillColor;
+    const color = config?.fill?.color;
     if (typeof color === 'string' && colorPalettes[color as ColorPaletteOptions]) {
         const palette = colorPalettes[color as ColorPaletteOptions];
         return palette[index % palette.length];

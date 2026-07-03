@@ -14,7 +14,8 @@
       "examples/**",
       "map-integration-tests/**",
       "testing/**",
-      "!**/.release-please-manifest.json"
+      "!**/.release-please-manifest.json",
+      "!**/*.svg"
     ]
   },
   "assist": { "actions": { "source": { "organizeImports": "on" } } },

@@ -1,0 +1,13 @@
+{
+  "extends": "@tsconfig/recommended",
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "strict": true,
+    "target": "ESNext",
+    "module": "ESNext",
+    "types": ["node"]
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"]
+}

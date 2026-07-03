@@ -32,31 +32,21 @@ export const themedGeometryConfig = (
     beforeLayerConfig: GeometryBeforeLayerConfig = 'lowestLabel',
 ): GeometriesModuleConfig => ({
     beforeLayerConfig,
-    lineConfig: {
+    line: {
         // outline theme: thick colored line; filled/inverted: thin grey line
-        lineWidth: ['case', ['==', ['get', 'theme'], 'outline'], OUTLINE_THEME_LINE_WIDTH, FILLED_THEME_LINE_WIDTH],
-        lineColor: [
+        width: ['case', ['==', ['get', 'theme'], 'outline'], OUTLINE_THEME_LINE_WIDTH, FILLED_THEME_LINE_WIDTH],
+        color: [
             'case',
             ['==', ['get', 'theme'], 'outline'],
             ['coalesce', ['get', 'color'], OUTLINE_THEME_LINE_COLOR],
             FILLED_THEME_LINE_COLOR,
         ],
-        lineOpacity: [
-            'case',
-            ['==', ['get', 'theme'], 'outline'],
-            OUTLINE_THEME_LINE_OPACITY,
-            FILLED_THEME_LINE_OPACITY,
-        ],
+        opacity: ['case', ['==', ['get', 'theme'], 'outline'], OUTLINE_THEME_LINE_OPACITY, FILLED_THEME_LINE_OPACITY],
     },
-    colorConfig: {
-        fillColor: palette,
+    fill: {
+        color: palette,
         // outline theme: transparent fill; filled/inverted: semi-transparent fill
-        fillOpacity: [
-            'case',
-            ['==', ['get', 'theme'], 'outline'],
-            OUTLINE_THEME_FILL_OPACITY,
-            FILLED_THEME_FILL_OPACITY,
-        ],
+        opacity: ['case', ['==', ['get', 'theme'], 'outline'], OUTLINE_THEME_FILL_OPACITY, FILLED_THEME_FILL_OPACITY],
     },
     // Non-undefined lineLabelConfig is required for GeometriesModule to always create the line label layer.
     lineLabelConfig: {},
@@ -102,13 +92,13 @@ export const reachableRangeGeometryConfig = (
     // theme: 'filled'; donut fills have no theme and fall through to the default case.
     return {
         ...base,
-        lineConfig: {
-            ...base.lineConfig,
-            lineOpacity: ['case', ['==', ['get', 'theme'], 'filled'], FILLED_THEME_LINE_OPACITY, 0],
+        line: {
+            ...base.line,
+            opacity: ['case', ['==', ['get', 'theme'], 'filled'], FILLED_THEME_LINE_OPACITY, 0],
         },
-        colorConfig: {
-            ...base.colorConfig,
-            fillOpacity: ['case', ['==', ['get', 'theme'], 'filled'], 0, FILLED_THEME_FILL_OPACITY],
+        fill: {
+            ...base.fill,
+            opacity: ['case', ['==', ['get', 'theme'], 'filled'], 0, FILLED_THEME_FILL_OPACITY],
         },
         lineLabelConfig: {
             textOpacity: ['case', ['==', ['get', 'theme'], 'filled'], 1, 0],

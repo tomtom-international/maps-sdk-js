@@ -1,5 +1,5 @@
 import type { GlobalConfig } from '@tomtom-org/maps-sdk/core';
-import { generateTomTomHeaders } from '@tomtom-org/maps-sdk/core';
+import { DEFAULT_COMMON_BASE_URL, generateTomTomHeaders, isProxyCredentialsMode } from '@tomtom-org/maps-sdk/core';
 import type {
     FilterSpecification,
     Map,
@@ -42,8 +42,6 @@ export const waitUntilSourceIsLoaded = async (tomtomMap: TomTomMap, sourceId: st
         await tomtomMap.mapLibreMap.once('sourcedata');
     }
 };
-
-const TOMTOM_DEFAULT_URL = 'https://api.tomtom.com';
 
 const isTomTomHostname = (hostname: string): boolean =>
     hostname === 'api.tomtom.com' || hostname.endsWith('.api.tomtom.com');
@@ -134,24 +132,15 @@ const gateOnDemoBffSession = (result: RequestParameters): RequestParameters | Pr
  * @param params Global SDK Map configuration
  */
 export const transformRequest = (params: Partial<GlobalConfig>) => {
-    const baseURL = params.commonBaseURL ?? TOMTOM_DEFAULT_URL;
+    const baseURL = params.commonBaseURL ?? DEFAULT_COMMON_BASE_URL;
     // commonBaseURL points at something other than TomTom — could be a
     // demo-BFF or a customer's own customServiceBaseURL. We always rewrite
     // tile hostnames to flow through it.
-    const isProxyMode = baseURL !== TOMTOM_DEFAULT_URL;
-    // Demo-BFF-style mode: no apiKey signals the proxy will inject the real
-    // key server-side from a cookie-gated session. Customers using
-    // customServiceBaseURL keep apiKey set so their backend can use it.
-    // We only strip key= and attach `credentials: 'include'` in this mode;
-    // doing it for customServiceBaseURL would break consumers whose backend
-    // serves CORS as `Access-Control-Allow-Origin: *`.
-    //
-    // Falsy check (not `=== ''`) on purpose: an example may overwrite the
-    // proxy bootstrap's `apiKey: ''` with `apiKey: undefined` via
-    // `put({ apiKey: process.env.API_KEY_EXAMPLES })` when that env is unset
-    // in a proxy build. Both empty and undefined mean "no key"; this matches
-    // the URL builders' `if (apiKey)` key-append decision.
-    const isDemoBffMode = isProxyMode && !params.apiKey;
+    const isProxyMode = baseURL !== DEFAULT_COMMON_BASE_URL;
+    // Demo-BFF-style mode: the proxy injects the key server-side (no apiKey), so
+    // we strip key= and attach `credentials: 'include'`. customServiceBaseURL
+    // keeps its apiKey and is excluded (its backend may serve CORS as `*`).
+    const isDemoBffMode = isProxyCredentialsMode(params);
 
     return (url: string, resourceType?: ResourceType): RequestParameters | Promise<RequestParameters> => {
         const rewrittenUrl = rewriteForProxy(url, baseURL, isProxyMode, isDemoBffMode);

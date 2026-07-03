@@ -1,7 +1,7 @@
 import type { PolygonFeatures } from '@tomtom-org/maps-sdk/core';
 import type { FeatureCollection, Point } from 'geojson';
 import type { SymbolLayerSpecification } from 'maplibre-gl';
-import type { SymbolLayerSpecWithoutSource, ToBeAddedLayerSpec } from '../shared';
+import type { BeforeLayerConfig, SymbolLayerSpecWithoutSource, ToBeAddedLayerSpec } from '../shared';
 import {
     AbstractMapModule,
     CombinedEvents,
@@ -84,14 +84,8 @@ type GeometrySourcesWithLayers = {
  * Custom styling:
  * ```typescript
  * const geometriesModule = await GeometriesModule.get(map, {
- *   colorConfig: {
- *     fillColor: '#FF5733',
- *     fillOpacity: 0.3
- *   },
- *   lineConfig: {
- *     lineColor: '#C70039',
- *     lineWidth: 3
- *   },
+ *   fill: { color: '#FF5733', opacity: 0.3 },
+ *   line: { color: '#C70039', width: 3 },
  *   textConfig: {
  *     textField: ['get', 'name']
  *   }
@@ -163,10 +157,10 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
      *
      * @remarks
      * **Configuration Options:**
-     * - `colorConfig`: Fill color and opacity settings
-     * - `lineConfig`: Border/outline styling
+     * - `fill`: Fill color, opacity, and optional fill-layer positioning
+     * - `line`: Border/outline styling and optional border-layer positioning
      * - `textConfig`: Label display configuration
-     * - `beforeLayerConfig`: Layer ordering (place above/below other layers)
+     * - `beforeLayerConfig`: Layer ordering — a single target, or `{ all, fill, line }` to split them
      *
      * **Multiple Instances:**
      * You can create multiple GeometriesModule instances on the same map,
@@ -182,15 +176,8 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
      * With custom styling:
      * ```typescript
      * const geometriesModule = await GeometriesModule.get(map, {
-     *   colorConfig: {
-     *     fillColor: 'blue',
-     *     fillOpacity: 0.25
-     *   },
-     *   lineConfig: {
-     *     lineColor: 'darkblue',
-     *     lineWidth: 2,
-     *     lineOpacity: 0.8
-     *   },
+     *   fill: { color: 'blue', opacity: 0.25 },
+     *   line: { color: 'darkblue', width: 2, opacity: 0.8 },
      *   textConfig: {
      *     textField: ['get', 'title']
      *   },
@@ -202,9 +189,9 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
      * Data-driven styling:
      * ```typescript
      * const geometriesModule = await GeometriesModule.get(map, {
-     *   colorConfig: {
+     *   fill: {
      *     // Color based on feature properties
-     *     fillColor: [
+     *     color: [
      *       'match',
      *       ['get', 'type'],
      *       'residential', '#FFEB3B',
@@ -212,7 +199,7 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
      *       'industrial', '#9E9E9E',
      *       '#E0E0E0' // default
      *     ],
-     *     fillOpacity: 0.4
+     *     opacity: 0.4
      *   }
      * });
      * ```
@@ -272,57 +259,80 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
      * @ignore
      */
     protected _applyConfig(config: GeometriesModuleConfig | undefined) {
-        if (config?.textConfig || config?.colorConfig || config?.lineConfig) {
+        if (config?.textConfig || config?.fill || config?.line) {
             this.updateLayerAndData(config);
         }
-        if (config?.beforeLayerConfig) {
-            this._moveBeforeLayer(config.beforeLayerConfig, false);
+        if (config?.beforeLayerConfig || config?.fill?.beforeLayerConfig || config?.line?.beforeLayerConfig) {
+            this.applyBeforeLayerConfig(config);
         }
         return config;
     }
 
-    private moveBeforeLayerID(beforeLayerId?: string) {
-        for (const layer of this.sourcesWithLayers.geometry.sourceAndLayerIDs.layerIDs) {
-            this.mapLibreMap.moveLayer(layer, beforeLayerId);
+    /** Resolve a positioning target to the map-style layer id the geometry layers should sit before. */
+    private resolveBeforeID(target: BeforeLayerConfig): string {
+        return target === 'top' ? this.titleLayerID : mapStyleLayerIDs[target];
+    }
+
+    private moveLayersBefore(layerIDs: string[], beforeLayerID: string) {
+        for (const layer of layerIDs) {
+            this.mapLibreMap.moveLayer(layer, beforeLayerID);
         }
+    }
+
+    // The fill is its own layer; the border/outline and its optional line labels move together as the
+    // "line" group. When fill and line target the same layer, move fill first so the border ends up
+    // above it (matching the source's fill-under-outline z-order).
+    private get fillLayerIDs(): string[] {
+        return [this.fillLayerID];
+    }
+    private get lineLayerIDs(): string[] {
+        return this.lineLabelLayerSpecs ? [this.outlineLayerID, this.lineLabelLayerID] : [this.outlineLayerID];
     }
 
     /**
      * Positions the geometry layers relative to other map layers.
      *
-     * @param layerConfig - Layer positioning configuration.
-     * Can be `'top'` to place above all layers, or a specific layer ID.
+     * @param layerConfig - Layer positioning. A single {@link BeforeLayerConfig} (`'top'` or a layer
+     * id) moves all geometry layers together; the object form (`{ all?, fill?, line? }`) positions the
+     * fill and border independently.
      *
      * @remarks
-     * **Use Cases:**
-     * - Place geometries above base map but below labels
-     * - Ensure geometries appear above/below specific features
-     * - Control visual hierarchy of multiple data layers
+     * A per-layer `beforeLayerConfig` set inside the `fill` / `line` config sections takes precedence
+     * over the value passed here.
      *
-     * **Available Layer IDs:**
-     * Use predefined layer IDs from `mapStyleLayerIDs` or custom layer IDs.
+     * **Available Layer IDs:** predefined ids from `mapStyleLayerIDs`, or a custom layer id.
      *
      * @example
      * ```typescript
      * import { mapStyleLayerIDs } from '@tomtom-international/maps-sdk-js/map';
      *
-     * // Place below labels
+     * // Place all geometry layers below labels
      * geometries.moveBeforeLayer(mapStyleLayerIDs.lowestLabel);
      *
-     * // Place on top
-     * geometries.moveBeforeLayer('top');
+     * // Fill below the road network, border on top
+     * geometries.moveBeforeLayer({ fill: 'lowestRoadLine', line: 'top' });
      * ```
      */
     moveBeforeLayer(layerConfig: GeometryBeforeLayerConfig) {
-        this._moveBeforeLayer(layerConfig);
+        this.config = { ...this.config, beforeLayerConfig: layerConfig };
+        this.applyBeforeLayerConfig(this.config);
+        this.emitConfigChange();
     }
 
-    private _moveBeforeLayer(layerConfig: GeometryBeforeLayerConfig, updateConfig = true) {
-        this.moveBeforeLayerID(layerConfig === 'top' ? this.titleLayerID : mapStyleLayerIDs[layerConfig]);
-        if (updateConfig) {
-            this.config = { ...this.config, beforeLayerConfig: layerConfig };
-            this.emitConfigChange();
-        }
+    // Compute the effective before-target for each layer group and move it. Precedence per group: the
+    // fill/line section's own `beforeLayerConfig`, else the top-level object's matching key (falling
+    // back to `all`), else the top-level scalar. Undefined leaves that group where it is.
+    private applyBeforeLayerConfig(config: GeometriesModuleConfig | undefined) {
+        const top = config?.beforeLayerConfig;
+        const topFor = (kind: 'fill' | 'line'): BeforeLayerConfig | undefined => {
+            if (top === undefined) return undefined;
+            if (typeof top === 'string') return top;
+            return top[kind] ?? top.all;
+        };
+        const fillTarget = config?.fill?.beforeLayerConfig ?? topFor('fill');
+        const lineTarget = config?.line?.beforeLayerConfig ?? topFor('line');
+        if (fillTarget !== undefined) this.moveLayersBefore(this.fillLayerIDs, this.resolveBeforeID(fillTarget));
+        if (lineTarget !== undefined) this.moveLayersBefore(this.lineLayerIDs, this.resolveBeforeID(lineTarget));
     }
 
     /**

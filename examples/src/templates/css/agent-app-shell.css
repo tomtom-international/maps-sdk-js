@@ -1,0 +1,49 @@
+/* Shared layout/map overrides for the agent examples, imported by each index.tsx after its
+   style.css so they win over Tailwind's preflight. */
+
+/* Override the SDK templates' absolute `#sdk-map` so it flexes into our layout instead of
+   collapsing the chat panel. ID selector beats Tailwind utilities. */
+#sdk-map {
+    position: relative;
+    flex: 1;
+    top: auto;
+    left: auto;
+    width: auto;
+    height: auto;
+}
+
+/* Re-assert absolute layout against MapLibre's `.maplibregl-map`, which otherwise collapses the
+   container to 0 height. ID selector beats the class. (Chat attaches to #sdk-map and skips this.) */
+#map-container {
+    position: absolute;
+    inset: 0;
+}
+
+/* box-sizing for nested SDK-template elements Tailwind preflight doesn't cover. */
+*,
+[hidden] {
+    box-sizing: border-box;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+/* Win over Tailwind's default font with the SDK typography tokens. */
+body {
+    overflow: hidden;
+    font-family: var(--pb-font-primary);
+    font-size: var(--pb-font-body-m);
+    line-height: var(--pb-font-body-m-lh);
+    color: var(--pb-text-high);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Hide a scrollbar while keeping the container scrollable. */
+.no-scrollbar {
+    scrollbar-width: none; /* Firefox */
+}
+.no-scrollbar::-webkit-scrollbar {
+    display: none; /* WebKit */
+}

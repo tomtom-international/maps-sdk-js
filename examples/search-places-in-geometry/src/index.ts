@@ -20,8 +20,8 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
 
     const areaGeometry = await geometryData({ geometries: [areaToSearch] });
     const geometryModule = await GeometriesModule.get(map, {
-        lineConfig: { lineColor: 'red' },
-        colorConfig: { fillOpacity: 0 },
+        line: { color: 'red' },
+        fill: { opacity: 0 },
     });
     geometryModule.show(areaGeometry);
 

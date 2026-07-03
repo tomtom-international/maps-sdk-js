@@ -1,5 +1,7 @@
 /* Base */
 @import url("base/tokens.css");
+/* Playbook (`--pb-*`) aliases — must follow tokens.css, which defines the `--sdk-*` values they map to. */
+@import url("base/playbook-tokens.css");
 @import url("base/global.css");
 @import url("base/typography.css");
 

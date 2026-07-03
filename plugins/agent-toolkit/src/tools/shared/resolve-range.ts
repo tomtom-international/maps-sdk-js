@@ -16,10 +16,10 @@ export const getRangePolygons = (
     rangeId: string,
 ): { polygons: (Polygon | MultiPolygon)[] } | { error: string } => {
     const rangesEntry = state.ranges.entries.find((e) => e.id === rangeId);
-    if (!rangesEntry || rangesEntry.ranges.length === 0) {
+    if (!rangesEntry || rangesEntry.data.length === 0) {
         return { error: `Range "${rangeId}" not found. Use recallState to list available ranges.` };
     }
-    const polygons = rangesEntry.ranges
+    const polygons = rangesEntry.data
         .map((r) => r.polygon?.features[0]?.geometry)
         .filter((g): g is Polygon | MultiPolygon => !!g);
     if (polygons.length === 0) {

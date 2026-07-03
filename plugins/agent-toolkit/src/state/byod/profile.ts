@@ -16,7 +16,11 @@
 
 import type { FeatureCollection, GeoJsonProperties } from 'geojson';
 
-/** Compact profile of one feature-`properties` key across the whole collection. */
+/**
+ * Compact profile of one feature-`properties` key across the whole collection.
+ *
+ * @ignore
+ */
 export type BYODPropertyProfile = {
     /** Property key as it appears in `feature.properties`. */
     name: string;
@@ -35,6 +39,8 @@ export type BYODPropertyProfile = {
  * so the model never has to receive raw GeoJSON just to learn the schema.
  *
  * @group Agent Toolkit
+ *
+ * @ignore
  */
 export type BYODDataProfile = {
     featureCount: number;

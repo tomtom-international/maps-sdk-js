@@ -27,10 +27,14 @@ export const TRAFFIC_MANAGER_PROMPT_OVERRIDES: SystemPromptSectionOverrides = {
         // Persona-independent safety rule kept from the base prompt (SYSTEM_PROMPT_SECTIONS.rejectionRules);
         // the rest of the base scope bullets are intentionally collapsed into the line above.
         '- Reject illegal requests outright with a brief reason and no detail — no partial help, rephrasing, or redirecting.',
-    responseFormatting: '- Markdown; bold the key numbers; bullets for multiple items.',
+    responseFormatting:
+        '- Markdown; bold the key numbers; bullets for multiple items.\n' +
+        '- Durations in operator units: minutes, or hours+minutes (e.g. "2h 3m", "29 min") — NEVER raw seconds.\n' +
+        '- Never surface internal plumbing in your replies: entry handles (e.g. `incidents-0`, `places-1`), ' +
+        'namespaced analysis keys (e.g. `label::incidents-0`), or raw provider incident IDs (e.g. `TTI-…-TTL…`). ' +
+        'Refer to results in plain language ("the Berlin area", "this set", "the worst cluster").',
     dataConfidence:
-        '- Cite inputs (clusters, roads, incident ids); name roads and places only from the data (from/to, ' +
-        "roadNumbers) — don't invent them.\n" +
+        "- Name roads and places only from the data (from/to, roadNumbers) — don't invent them.\n" +
         '- No baselines, "typical / earlier than usual", recommended actions, escalation thresholds, or confidence ' +
         "claims — describe what's happening; the operator decides.",
 

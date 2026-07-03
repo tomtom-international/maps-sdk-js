@@ -1,24 +1,23 @@
 /**
  * @module agent-toolkit-state
  *
- * The {@link TrackerState} slice — generic trackers over toolkit state. A tracker is a thin, stateful
- * layer on top of the {@link Analyses} registry: it IS one rule, compiled to a `type: 'tracker-rule'`
- * analysis whose result is a {@link Verdict}, recomputed by the registry's standing sweep whenever its
- * source entries change. The rule's INPUTS are not stored here — they are the analysis's
- * `affectedEntryIds` (single source of truth; a rule reads one or more entry kinds, e.g. hospitals +
- * incidents). This slice owns only what the registry can't: the analysis→tracker mapping, one bit of
- * rising-edge memory (`wasActive`), and the durable {@link TrackerEvent} log the UI renders.
+ * The {@link EventsState} slice — generic trackers over toolkit state. A tracker is one rule: sandbox
+ * code returning a {@link Verdict}, recomputed by a {@link JobEngine} job whenever its source entries
+ * change. The rule's INPUTS are the job's (and the tracker's) `affectedEntryIds` — a rule reads one or
+ * more entry kinds, e.g. hospitals + incidents. This slice owns the tracker metadata, one bit of
+ * rising-edge memory (`wasActive`), the {@link Job} handle backing it, and the durable
+ * {@link TrackerEvent} log the UI renders.
  *
- * It computes nothing itself. It subscribes to `analysis-change` and runs a pure rising-edge reducer:
- * a verdict flipping `false→true` logs an `opened` alert, `true→false` logs a `resolved` event. There
- * is no episode state machine, escalation, or resolve-hysteresis: a jittery feed can therefore produce
- * open/resolve churn.
+ * It computes nothing itself. The job's `run` hands each fresh verdict to {@link ingestVerdict}, which
+ * runs a pure rising-edge reducer: a verdict flipping `false→true` logs an `opened` alert, `true→false`
+ * logs a `resolved` event. There is no episode state machine, escalation, or resolve-hysteresis: a
+ * jittery feed can therefore produce open/resolve churn.
  *
  * @group Agent Toolkit
  */
 
+import type { Job } from '../engine';
 import type { StateSlice } from '../types/state';
-import type { Analyses } from './analyses';
 import { StateEvents } from './events';
 
 /**
@@ -63,17 +62,17 @@ export type TrackerEvent = {
 };
 
 /**
- * One tracker = one rule: an NL condition compiled to a `tracker-rule` analysis, plus its rising-edge
- * state. Inputs are NOT stored — read `analyses.get(analysisId)?.affectedEntryIds` for the entries the
- * rule watches, and a verdict's `members` for the ones that matched.
+ * One tracker = one rule: an NL condition plus its rising-edge state. The compiled code lives on the
+ * tracker's {@link Job}, not here. `affectedEntryIds` are the entries the rule watches; a verdict's
+ * `members` are the ones that matched.
  */
 export type Tracker = {
     id: string;
     name: string;
-    /** Natural-language condition (LLM-readable); the compiled code lives on the analysis record. */
+    /** Natural-language condition (LLM-readable); the compiled code lives on the tracker's job. */
     rule: string;
-    /** The `type: 'tracker-rule'` analysis whose `data` is this tracker's {@link Verdict}. */
-    analysisId: string;
+    /** Ids of every entry the rule reads — the per-entry lookup key ({@link EventsState.trackersForEntry}). */
+    affectedEntryIds: readonly string[];
     enabled: boolean;
     /** The one bit of memory: was the verdict active at the last recompute (rising-edge detection). */
     wasActive: boolean;
@@ -81,7 +80,7 @@ export type Tracker = {
     openedAt?: number;
 };
 
-/** Events emitted by {@link TrackerState}. */
+/** Events emitted by {@link EventsState}. */
 export type TrackerStateEvents = {
     /** The tracker set or a tracker's live state changed (create / clear / enable / edge crossed). */
     'trackers-change': readonly Tracker[];
@@ -95,55 +94,52 @@ export const MAX_TRACKER_EVENTS = 200;
 
 /**
  * Generic tracker store + rising-edge reducer. Held on `ToolState` as `state.trackers`. Pure
- * storage + reaction: tools register/unregister trackers and register their rule analyses in
- * {@link Analyses}; this slice maps analysis → tracker and reacts to `analysis-change`.
+ * storage + reaction: tools register/unregister trackers and register their rule jobs on the
+ * {@link JobEngine}; each job's `run` feeds verdicts here via {@link ingestVerdict}. Keeps the
+ * {@link Job} handle backing each tracker (`_jobs`) so pausing a tracker pauses its job.
  *
  * @group Agent Toolkit
  */
-export class TrackerState implements StateSlice {
+export class EventsState implements StateSlice {
     private readonly _trackers = new Map<string, Tracker>();
     private readonly _log: TrackerEvent[] = [];
-    /** analysisId → tracker id, so the reducer ignores non-tracker analyses in O(1). */
-    private readonly _trackerByAnalysis = new Map<string, string>();
+    /** trackerId → the {@link Job} backing it. The reference linking tracker to engine. */
+    private readonly _jobs = new Map<string, Job>();
     private _seq = 0;
 
     readonly events = new StateEvents<TrackerStateEvents>();
 
     /**
-     * Subscribe the rising-edge reducer to the analyses registry for the slice's lifetime. The
-     * subscription is never torn down (it no-ops without trackers); `reset()` only clears data.
-     */
-    constructor(private readonly analyses: Analyses) {
-        analyses.events.on('analysis-change', ({ analysisId }) => this.onAnalysisChange(analysisId));
-    }
-
-    /**
-     * Register a tracker and index its analysis. The caller (createTracker) registers it with the
-     * rising-edge bit clear (`wasActive: false`) and attaches the arm-time verdict AFTER this call, so a
-     * condition already live at creation crosses false→true through the reducer and fires one `opened`
-     * alert. Emits `trackers-change`.
+     * Register a tracker. The caller (createTracker) registers it with the rising-edge bit clear
+     * (`wasActive: false`) and feeds the arm-time verdict via {@link ingestVerdict} AFTER this call, so a
+     * condition already live at creation crosses false→true and fires one `opened` alert. Emits
+     * `trackers-change`.
      */
     register(tracker: Tracker): void {
         this._trackers.set(tracker.id, tracker);
-        this._trackerByAnalysis.set(tracker.analysisId, tracker.id);
         this.emitTrackers();
     }
 
-    /** Remove a tracker and drop its analysis index entry. Returns the analysis id it freed, if any. */
-    unregister(trackerId: string): string | undefined {
-        const tracker = this._trackers.get(trackerId);
-        if (!tracker) return undefined;
-        this._trackerByAnalysis.delete(tracker.analysisId);
+    /** Store the {@link Job} backing a tracker — the reference linking it to the engine. */
+    setJob(trackerId: string, job: Job): void {
+        this._jobs.set(trackerId, job);
+    }
+
+    /** Remove a tracker and tear down its job. */
+    unregister(trackerId: string): void {
+        if (!this._trackers.has(trackerId)) return;
+        this._jobs.get(trackerId)?.unregister();
+        this._jobs.delete(trackerId);
         this._trackers.delete(trackerId);
         this.emitTrackers();
-        return tracker.analysisId;
     }
 
-    /** Pause/resume a tracker. A paused tracker never crosses edges. Emits `trackers-change`. */
+    /** Pause/resume a tracker AND its job (a paused job never recomputes, so never crosses edges). */
     setEnabled(trackerId: string, enabled: boolean): boolean {
         const tracker = this._trackers.get(trackerId);
         if (!tracker) return false;
         tracker.enabled = enabled;
+        this._jobs.get(trackerId)?.setActive(enabled);
         this.emitTrackers();
         return true;
     }
@@ -159,12 +155,11 @@ export class TrackerState implements StateSlice {
     }
 
     /**
-     * Trackers whose rule reads `entryId` — e.g. every tracker watching a given incidents area. Derived
-     * from each rule's analysis `affectedEntryIds` (the inputs are NOT duplicated onto the tracker), so it
-     * stays correct if a rule's inputs change. Drives "show all trackers for this area" in the UI.
+     * Trackers whose rule reads `entryId` — e.g. every tracker watching a given incidents area. Drives
+     * "show all trackers for this area" in the UI.
      */
     trackersForEntry(entryId: string): readonly Tracker[] {
-        return this.trackers.filter((t) => this.analyses.get(t.analysisId)?.affectedEntryIds.includes(entryId));
+        return this.trackers.filter((t) => t.affectedEntryIds.includes(entryId));
     }
 
     /**
@@ -181,28 +176,27 @@ export class TrackerState implements StateSlice {
             .map((e) => structuredClone(e));
     }
 
-    /** Clear all trackers + log. The analyses subscription persists (no-ops without trackers). */
+    /** Clear all trackers + log + job handles. Walked automatically by `destroyState`. */
     reset(): void {
+        for (const job of this._jobs.values()) job.unregister();
+        this._jobs.clear();
         this._trackers.clear();
-        this._trackerByAnalysis.clear();
         this._log.length = 0;
         this._seq = 0;
     }
 
-    // The rising-edge reducer. Runs on every `analysis-change`; bails fast unless the changed analysis
-    // backs a live, enabled tracker. A verdict flipping false→true logs `opened` (alert); true→false
-    // logs `resolved` (event). No change on active→active / inactive→inactive.
-    private onAnalysisChange(analysisId: string): void {
-        const trackerId = this._trackerByAnalysis.get(analysisId);
-        if (trackerId === undefined) return;
+    /**
+     * Feed a freshly-computed verdict through the rising-edge reducer — called by the tracker's job `run`
+     * on each recompute (and once at arm time). Bails fast unless the tracker is live + enabled. A verdict
+     * flipping false→true logs `opened` (alert); true→false logs `resolved` (event). No change on
+     * active→active / inactive→inactive. `at` is the source-data sample time of the recompute.
+     */
+    ingestVerdict(trackerId: string, verdict: Verdict, at: number): void {
         const tracker = this._trackers.get(trackerId);
         if (!tracker?.enabled) return;
-
-        const history = this.analyses.history(analysisId);
-        const latest = history[history.length - 1];
-        if (!latest || !isVerdict(latest.data)) return;
-        const verdict = latest.data;
-        const at = latest.timestamp;
+        // Public method — never let a malformed verdict (a misbehaving rule that slipped the gate) crash
+        // the reducer on `verdict.members.map`.
+        if (!isVerdict(verdict)) return;
 
         if (verdict.active && !tracker.wasActive) {
             tracker.wasActive = true;
@@ -245,9 +239,17 @@ export class TrackerState implements StateSlice {
     }
 }
 
-/** Structural guard: trust the dry-run gate, but never let a malformed runtime verdict crash the reducer. */
-function isVerdict(data: unknown): data is Verdict {
+/**
+ * Structural guard for a {@link Verdict} — the shape a tracker rule's sandbox `code` must return. The
+ * arm-time gate and the job runner trust it before {@link EventsState.ingestVerdict}; ingest re-checks
+ * defensively since it's public.
+ */
+export function isVerdict(data: unknown): data is Verdict {
     if (typeof data !== 'object' || data === null) return false;
-    const v = data as Record<string, unknown>;
-    return typeof v.active === 'boolean' && typeof v.summary === 'string' && Array.isArray(v.members);
+    const verdictCandidate = data as Record<string, unknown>;
+    return (
+        typeof verdictCandidate.active === 'boolean' &&
+        typeof verdictCandidate.summary === 'string' &&
+        Array.isArray(verdictCandidate.members)
+    );
 }

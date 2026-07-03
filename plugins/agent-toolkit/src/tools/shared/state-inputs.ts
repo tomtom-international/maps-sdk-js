@@ -54,6 +54,26 @@ const groupByKind = (sources: readonly GeometriesId[]): ParsedByKind => {
 
 const formatSkipReason = (skip: SkippedSource): string => `${skip.source.kind}:${skip.source.id}: ${skip.reason}`;
 
+// Collect the ids of `places` that carry a geometry data source, deduping against `seen` and recording
+// the owning entry for each. Returns how many qualifying places the entry had (0 → the caller skips it).
+// Split out of `expandPlacesEntries` so that orchestrator stays under the cognitive-complexity ceiling.
+const collectGeometryBearingPlaceIds = (
+    places: readonly Place[],
+    sourceId: string,
+    acc: { placeIds: string[]; placeIdToEntry: Map<string, string>; seen: Set<string> },
+): number => {
+    let added = 0;
+    for (const place of places) {
+        if (!place.properties.dataSources?.geometry?.id || typeof place.id !== 'string') continue;
+        added++;
+        if (!acc.placeIdToEntry.has(place.id)) acc.placeIdToEntry.set(place.id, sourceId);
+        if (acc.seen.has(place.id)) continue;
+        acc.seen.add(place.id);
+        acc.placeIds.push(place.id);
+    }
+    return added;
+};
+
 // Walks `places` inputs, validates each entry, and emits the place ids that
 // have a geometry data source. Returns a back-pointer map so per-place
 // outcomes can be attributed to the requesting entry afterwards.
@@ -75,15 +95,7 @@ const expandPlacesEntries = (
             });
             continue;
         }
-        let added = 0;
-        for (const place of entry.places) {
-            if (!place.properties.dataSources?.geometry?.id || typeof place.id !== 'string') continue;
-            added++;
-            if (!placeIdToEntry.has(place.id)) placeIdToEntry.set(place.id, source.id);
-            if (seen.has(place.id)) continue;
-            seen.add(place.id);
-            placeIds.push(place.id);
-        }
+        const added = collectGeometryBearingPlaceIds(entry.data, source.id, { placeIds, placeIdToEntry, seen });
         if (added === 0) {
             skipped.push({
                 source,
@@ -153,7 +165,7 @@ const collectRangePolygons = (
             skipped.push({ source, reason: 'No ranges entry with this id in session state.' });
             continue;
         }
-        const polygons = entry.ranges.flatMap((r) => r.polygon?.features ?? []);
+        const polygons = entry.data.flatMap((r) => r.polygon?.features ?? []);
         if (polygons.length === 0) {
             skipped.push({
                 source,
@@ -184,11 +196,11 @@ const collectCustomGeometries = (
             });
             continue;
         }
-        if (entry.features.length === 0) {
+        if (entry.data.length === 0) {
             skipped.push({ source, reason: 'Custom-geometries entry is empty.' });
             continue;
         }
-        for (const feature of entry.features) features.push(tagFeatureSource(feature, source));
+        for (const feature of entry.data) features.push(tagFeatureSource(feature, source));
         contributingIds.add(source.id);
     }
     return { features, contributingIds, skipped };
@@ -343,7 +355,7 @@ export const findPlacesByEntry = (
         if (!placesEntry) {
             return { error: `No places entry found with id "${id}". Use recallState to list available IDs.` };
         }
-        placesByEntry[id] = { type: 'FeatureCollection', features: placesEntry.places } as Places;
+        placesByEntry[id] = { type: 'FeatureCollection', features: placesEntry.data } as Places;
     }
     return { value: placesByEntry };
 };

@@ -15,9 +15,9 @@ export type AnalysisOutputFormat = 'json' | 'chart';
 //
 // Critical: only strip when the RHS is a `require(...)`/`import(...)` call.
 // A naive name-only filter would also nuke legitimate user variables that
-// happen to share a name with an injected one (e.g. `const geometries =
-// places.features.map(...)`), corrupting the body and yielding a far less
-// actionable "Illegal return statement" error downstream.
+// happen to share a name with an injected one (e.g. `const geometriesByEntry =
+// Object.values(placesByEntry).map(...)`), corrupting the body and yielding a far
+// less actionable "Illegal return statement" error downstream.
 /**
  * Compact sandbox-code blurb shared by `process-places`, `process-geometries`,
  * `analyse-places`, `analyse-geometries`, and `analyse-routes`. Keeps the
@@ -33,19 +33,23 @@ export const buildSandboxCodePrompt = (injected: readonly string[]): string => {
     return (
         `In scope: ${injectedList} — injected as named parameters; use them directly. ` +
         'Do NOT redeclare them or read them off `arguments`: lines like `const turf = arguments.turf` / ' +
-        '`const turf = arguments[0].turf` / `const places = arguments.places` throw ' +
+        '`const turf = arguments[0].turf` / `const placesByEntry = arguments.placesByEntry` throw ' +
         '"Identifier \'…\' has already been declared". The body has no `arguments`-based access — reference each name as-is. ' +
         'No `require` / `import` / `await import` (body is an AsyncFunction, not a module — such lines are stripped silently). ' +
         '`h3` = h3-js (hex math). `turf` = @turf/turf v7 (verify names at https://turfjs.org/docs/). ' +
+        'INPUTS are `<kind>ByEntry` records keyed by entry id — get a value out first: one entry ' +
+        '`placesByEntry[id]` (a FeatureCollection) / `incidentsByEntry[id]` (an array), or all entries ' +
+        '`Object.values(placesByEntry).flatMap(fc => fc.features)` / `Object.values(incidentsByEntry).flat()`. ' +
         'TURF INPUTS: pass a Feature or FeatureCollection — never a bare Array (throws "Unknown Geometry Type"). ' +
-        'FC-shaped inputs (`places`, `routes`, `trafficAreaAnalytics`, `byod`) → pass directly: `turf.bbox(places)`. ' +
-        'Array inputs (`incidents`, `geometries`, `places.features`, …) → iterate per-feature ' +
-        '(`for (const f of places.features) turf.X(f)`) or wrap with `turf.featureCollection([...])`. ' +
+        'FeatureCollection values (`placesByEntry[id]`, `routesByEntry[id]`, `trafficAreaAnalyticsByEntry[id]`, ' +
+        '`byodByEntry[id]`) → pass directly: `turf.bbox(placesByEntry[id])`. ' +
+        'Array values (`incidentsByEntry[id]`, `geometriesByEntry[key]`, `…features`, merged `Object.values(...)`) → ' +
+        'iterate per-feature (`for (const f of incidentsByEntry[id]) turf.X(f)`) or wrap with `turf.featureCollection([...])`. ' +
         'Never `.map(f => f.geometry.coordinates)` / `.flatMap(f => f.geometry.coordinates)` to feed turf — ' +
         'that strips the feature wrapper turf reads and throws "coordinates must be an Array" (or worse, mixes ' +
         'Point/LineString shapes silently). Pass the whole feature and let turf read the geometry: ' +
-        '`turf.pointToLineDistance(point, lineFeature, { units: "meters" })`. `incidents` mixes Point + LineString ' +
-        'features — guard with `if (inc.geometry.type === "LineString")` before line-only ops. ' +
+        '`turf.pointToLineDistance(point, lineFeature, { units: "meters" })`. `incidentsByEntry[id]` mixes Point + ' +
+        'LineString features — guard with `if (inc.geometry.type === "LineString")` before line-only ops. ' +
         'TURF v7 SET OPS: `union`/`intersect`/`difference` take ONE FeatureCollection — ' +
         '`turf.difference(turf.featureCollection([outer, inner]))`. The v6 two-arg form throws. ' +
         'PERF: for large-N nearest/within queries, pre-bucket points with ' +
@@ -262,8 +266,8 @@ export type SandboxExecutor = {
 // is a library namespace (which `structuredClone` would throw on) or `undefined`. The
 // merged / per-entry data views are shallow — their feature objects are the SAME
 // references held in the entry slices — so without this copy a sandbox body could
-// mutate live app state in place (`places.features[0].properties = …`). We copy rather
-// than freeze so legitimate in-place work (`places.features.sort(...)`) still succeeds
+// mutate live app state in place (`placesByEntry[id].features[0].properties = …`). We copy rather
+// than freeze so legitimate in-place work (`placesByEntry[id].features.sort(...)`) still succeeds
 // on the throwaway copy.
 //
 // This clone lives in the MAIN-THREAD executor only: the iframe-worker executor gets a
@@ -398,7 +402,7 @@ const SANDBOX_ERROR_HINTS: ReadonlyArray<{ pattern: RegExp; hint: string }> = [
     },
     {
         pattern: /coordinates must be an Array|Unknown Geometry Type/i,
-        hint: 'turf was handed a raw coordinate (or a bare Array of features) instead of a Feature / FeatureCollection. Do NOT extract `.geometry.coordinates` with `.map` / `.flatMap` and feed the result to turf — pass the WHOLE feature: `turf.pointToLineDistance(pointFeature, lineFeature, { units: "meters" })`. `incidents` is an Array of mixed Point + LineString features; guard with `if (inc.geometry.type === "LineString")` before line-only ops. For FC-shaped inputs (`places`, `routes`, `trafficAreaAnalytics`, `byod`), pass the value directly (`turf.bbox(places)`); never `turf.bbox(places.features)`.',
+        hint: 'turf was handed a raw coordinate (or a bare Array of features) instead of a Feature / FeatureCollection. Do NOT extract `.geometry.coordinates` with `.map` / `.flatMap` and feed the result to turf — pass the WHOLE feature: `turf.pointToLineDistance(pointFeature, lineFeature, { units: "meters" })`. `incidentsByEntry[id]` is an Array of mixed Point + LineString features; guard with `if (inc.geometry.type === "LineString")` before line-only ops. A single entry of an FC kind (`placesByEntry[id]`, `routesByEntry[id]`, `trafficAreaAnalyticsByEntry[id]`, `byodByEntry[id]`) is a FeatureCollection — pass it directly (`turf.bbox(placesByEntry[id])`), never `turf.bbox(placesByEntry[id].features)`. To span entries, merge then wrap: `turf.bbox(turf.featureCollection(Object.values(placesByEntry).flatMap(fc => fc.features)))`.',
     },
     {
         pattern: /is not a function/i,
@@ -410,19 +414,19 @@ const SANDBOX_ERROR_HINTS: ReadonlyArray<{ pattern: RegExp; hint: string }> = [
     },
     {
         pattern: /Identifier ['"]?\w+['"]? has already been declared/i,
-        hint: 'A variable was declared twice — typically because the code prepends `const turf = require(...)` / `const turf = await import(...)` / `const turf = arguments.turf` / `const turf = arguments[0].turf` / `const places = ...`. Those names are already in scope as function parameters; drop the redeclaration line and use them directly (`turf.bbox(places)`).',
+        hint: 'A variable was declared twice — typically because the code prepends `const turf = require(...)` / `const turf = await import(...)` / `const turf = arguments.turf` / `const turf = arguments[0].turf` / `const placesByEntry = ...`. Those names are already in scope as function parameters; drop the redeclaration line and use them directly (`turf.bbox(placesByEntry[id])`).',
     },
     {
         pattern: /Unexpected (?:token|identifier|end of input)/i,
-        hint: 'The code did not parse as a JavaScript async-function body. Common causes: unbalanced braces/parens/brackets, a stray template literal, or `import`/`export` statements (not allowed in sandbox bodies — `places`/`geometries`/`h3`/`turf` are already in scope). Re-emit a self-contained body that ends with `return ...;`.',
+        hint: 'The code did not parse as a JavaScript async-function body. Common causes: unbalanced braces/parens/brackets, a stray template literal, or `import`/`export` statements (not allowed in sandbox bodies — `placesByEntry`/`geometriesByEntry`/`h3`/`turf` are already in scope). Re-emit a self-contained body that ends with `return ...;`.',
     },
     {
         pattern: /\brequire is not defined\b|\bimport (?:is not defined|outside a module)\b/i,
-        hint: 'The sandbox is not a Node module — `require` and top-level `import` are not available. The libraries you need (`h3`, `turf`) and inputs (`places`, `geometries`) are already injected as parameters; drop the import lines and use them directly.',
+        hint: 'The sandbox is not a Node module — `require` and top-level `import` are not available. The libraries you need (`h3`, `turf`) and inputs (`placesByEntry`, `geometriesByEntry`, …) are already injected as parameters; drop the import lines and use them directly.',
     },
     {
         pattern: /\b(?:functions|tools|agent|recallState|discoverPlaces|locatePlace) is not defined\b/i,
-        hint: 'The sandbox cannot call other tools — `functions.recallState(...)`, `tools.discoverPlaces(...)`, etc. are NOT available. To use additional entries, list every needed id in the tool inputs (`placesEntryIDs`, `routesEntryIDs`, `incidentsEntryIDs`, `geometriesEntryIDs`): each is exposed via the injected sandbox args (`places`, `routes`, `incidents`, `geometries`, plus their `*ByEntry` per-entry views). To bring in NEW places call `discoverPlaces` BEFORE this tool and pass the resulting entry id back in.',
+        hint: 'The sandbox cannot call other tools — `functions.recallState(...)`, `tools.discoverPlaces(...)`, etc. are NOT available. To use additional entries, list every needed id in the tool inputs (`placesEntryIDs`, `routesEntryIDs`, `incidentsEntryIDs`, `geometriesEntryIDs`): each is exposed via the injected per-entry sandbox args (`placesByEntry`, `routesByEntry`, `incidentsByEntry`, `geometriesByEntry`), keyed by the ids you passed. To bring in NEW places call `discoverPlaces` BEFORE this tool and pass the resulting entry id back in.',
     },
     {
         pattern: /is not iterable/i,

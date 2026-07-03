@@ -13,8 +13,11 @@ See [base reference](../agent-toolkit.md) for setup, [tools.md](./tools.md) for 
 and `processPlaces` / `processRoutes` / `processGeometries`).
 Each takes any combination of
 `placesEntryIDs` / `routesEntryIDs` / `incidentsEntryIDs` / `geometriesEntryIDs` / `trafficAreaAnalyticsEntryIDs` / `byodEntryIDs`
-and exposes them as sandbox inputs
-(`places`, `routes`, `incidents`, `geometries`, `trafficAreaAnalytics`, `byod`, plus `byEntry` partition views).
+and exposes them as sandbox inputs — **one per-entry record per kind**, no flat/merged companion:
+`placesByEntry` / `routesByEntry` / `incidentsByEntry` / `geometriesByEntry` / `trafficAreaAnalyticsByEntry` / `byodByEntry`,
+each mapping an entry id to that entry's data (`geometriesByEntry` is keyed by the composite `${kind}:${id}`).
+Index one entry by id, or span all requested entries with `Object.values(...)`
+(`.flatMap((fc) => fc.features)` for the FeatureCollection kinds, `.flat()` for the array kinds incidents/geometries).
 
 ### Sandbox execution
 
@@ -107,7 +110,7 @@ When `classifier: false`, scoping never engages and tools use the terse unscoped
 
 ```ts
 onClassify: (result) => {
-    console.log('tools:', result?.activeToolNames);   // ['analyseData', 'recallPlaces']
+    console.log('tools:', result?.activeToolNames);   // ['analyseData', 'recallState']
     console.log('scopes:', result?.toolScopes);       // { analyseData: { kinds: ['places', 'routes'] } }
 }
 ```

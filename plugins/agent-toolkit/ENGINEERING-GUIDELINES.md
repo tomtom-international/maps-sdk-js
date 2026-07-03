@@ -140,8 +140,8 @@ Alongside the eval suite, the plugin runs `@langwatch/scenario` per-tool tests u
 
 Two commands:
 
-- `pnpm test:scenarios` — canonical only, ~23 tests, ~40s (parallel), ~$0.50 in LLM cost. **CI default.**
-- `pnpm test:scenarios:full` — canonical + registry fanout, ~121 tests, ~5–15 min, ~$5. Run before merging tool description / classifier-prompt changes; otherwise nightly.
+- `pnpm test:agent-tool-calling` — canonical only, ~23 tests, ~40s (parallel), ~$0.50 in LLM cost. **CI default.**
+- `pnpm test:agent-tool-calling:full` — canonical + registry fanout, ~121 tests, ~5–15 min, ~$5. Run before merging tool description / classifier-prompt changes; otherwise nightly.
 
 **Single source of truth.** The `examplePrompts` array in the registry IS the broad-coverage test corpus — no parallel list. Edit the registry, the full suite's coverage updates on the next run.
 
@@ -149,8 +149,8 @@ Two commands:
 - add a tool → create `src/tests/scenarios/<tool-name>.test.ts` with one canonical `it()` + the standard `it.skipIf(!FULL_SCENARIOS).each(REGISTRY_PROMPTS)` block, and seed `examplePrompts` in the registry.
 - rename a tool → rename the scenario file AND update its `getExamplePrompts('<newName>')` argument (it's a type error otherwise).
 - remove a tool → delete the scenario file.
-- change a tool's `examplePrompts` → run `pnpm test:scenarios:full` locally before pushing.
-- change a tool's `description` / `classificationPrompt` → run `pnpm test:scenarios:full` for at least the affected tool and any sibling tool whose `examplePrompts` overlap thematically (e.g. tweaking `discoverPlaces.description` can pull the classifier away from `locatePlace`).
+- change a tool's `examplePrompts` → run `pnpm test:agent-tool-calling:full` locally before pushing.
+- change a tool's `description` / `classificationPrompt` → run `pnpm test:agent-tool-calling:full` for at least the affected tool and any sibling tool whose `examplePrompts` overlap thematically (e.g. tweaking `discoverPlaces.description` can pull the classifier away from `locatePlace`).
 
 See [`AGENTS.md` § "Scenario tests"](./AGENTS.md#scenario-tests) for the full checklist.
 

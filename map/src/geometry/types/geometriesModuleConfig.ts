@@ -1,83 +1,55 @@
 import type { PolygonFeatures } from '@tomtom-org/maps-sdk/core';
-import type { DataDrivenPropertyValueSpecification } from 'maplibre-gl';
-import type { BeforeLayerConfig, MapModuleCommonConfig } from '../../shared';
+import type { DataDrivenPropertyValueSpecification, LineLayerSpecification } from 'maplibre-gl';
+import type { BeforeLayerConfig, MapModuleCommonConfig, ToBeAddedLayerSpecTemplate } from '../../shared';
 import type { ColorPaletteOptions } from '../layers/colorPalettes';
 import type { GeometryTheme } from './geometryTheme';
 
 /**
- * Color configuration for geometry fill styling.
- *
- * Controls the fill color and opacity of polygon geometries displayed on the map.
+ * Fill configuration for geometry styling — the interior color, opacity, and (optionally) where the
+ * fill layer sits in the map's layer stack.
  *
  * @example
  * ```typescript
  * // Solid color with opacity
- * const colorConfig: GeometryColorConfig = {
- *   fillColor: '#FF5733',
- *   fillOpacity: 0.3
- * };
+ * const fill: GeometryFillConfig = { color: '#FF5733', opacity: 0.3 };
  *
- * // Using color palette
- * const paletteConfig: GeometryColorConfig = {
- *   fillColor: 'red',  // Color palette name
- *   fillOpacity: 0.25
- * };
+ * // Palette name
+ * const fill: GeometryFillConfig = { color: 'red', opacity: 0.25 };
  *
  * // Data-driven color based on properties
- * const dynamicConfig: GeometryColorConfig = {
- *   fillColor: ['match', ['get', 'type'], 'residential', '#FFEB3B', 'commercial', '#2196F3', '#E0E0E0'],
- *   fillOpacity: 0.4
+ * const fill: GeometryFillConfig = {
+ *   color: ['match', ['get', 'type'], 'residential', '#FFEB3B', 'commercial', '#2196F3', '#E0E0E0'],
+ *   opacity: 0.4,
  * };
  * ```
  *
  * @group Geometries
  */
-export type GeometryColorConfig = {
+export type GeometryFillConfig = {
     /**
-     * Fill color for the geometry.
-     *
-     * @remarks
-     * Can be:
-     * - Hex color string (e.g., `'#FF5733'`)
-     * - Color palette name (e.g., `'red'`, `'blue'`)
-     * - MapLibre expression for data-driven styling
+     * Fill color: a hex string (`'#FF5733'`), a palette name (`'red'`), or a MapLibre expression
+     * for data-driven styling (e.g. `['get', 'color']`).
      *
      * @default '#0A3653'
-     *
-     * @example
-     * ```typescript
-     * // Hex color
-     * fillColor: '#FF5733'
-     *
-     * // Palette name
-     * fillColor: 'red'
-     *
-     * // MapLibre expression
-     * fillColor: ['get', 'color']
-     *
-     * // Conditional coloring
-     * fillColor: ['case', ['>', ['get', 'area'], 10000], '#FF0000', '#00FF00']
-     * ```
      */
-    fillColor?: ColorPaletteOptions | DataDrivenPropertyValueSpecification<string>;
+    color?: ColorPaletteOptions | DataDrivenPropertyValueSpecification<string>;
 
     /**
-     * Opacity of the fill color.
-     *
-     * @remarks
-     * Value between 0 (fully transparent) and 1 (fully opaque).
+     * Fill opacity, 0 (transparent) to 1 (opaque). Also accepts a MapLibre expression.
      *
      * @default 0.15
-     *
-     * @example
-     * ```typescript
-     * fillOpacity: 0.5  // 50% transparent
-     *
-     * // Data-driven opacity
-     * fillOpacity: ['interpolate', ['linear'], ['get', 'importance'], 1, 0.8, 10, 0.3]
-     * ```
      */
-    fillOpacity?: DataDrivenPropertyValueSpecification<number>;
+    opacity?: DataDrivenPropertyValueSpecification<number>;
+
+    /**
+     * Layer positioning for the **fill** layer only.
+     *
+     * @remarks
+     * Overrides the top-level {@link GeometriesModuleConfig.beforeLayerConfig} for the fill.
+     * Use this to sink the fill below the road network while the border stays above, e.g.
+     * `fill: { beforeLayerConfig: 'lowestRoadLine' }`, `line: { beforeLayerConfig: 'top' }`.
+     */
+    beforeLayerConfig?: BeforeLayerConfig;
 };
 
 /**
@@ -124,24 +96,24 @@ export type GeometryTextConfig = {
 };
 
 /**
- * Line/border configuration for geometries.
+ * Line/border configuration for geometries — the outline color, opacity, width, an escape hatch for
+ * any other line property, and (optionally) where the border layer sits in the map's layer stack.
  *
- * Controls the outline appearance of polygon geometries.
+ * @remarks
+ * The curated `color` / `opacity` / `width` fields cover the common cases; the {@link
+ * GeometryLineConfig.layer | `layer`} escape hatch accepts a partial MapLibre `LineLayerSpecification`
+ * for anything else (`line-gap-width`, `line-cap`, `line-join`, …). The curated fields take precedence
+ * over the same `paint` property set via `layer`.
  *
  * @example
  * ```typescript
- * // Basic border
- * const lineConfig: GeometryLineConfig = {
- *   lineColor: '#333333',
- *   lineWidth: 2,
- *   lineOpacity: 0.8
- * };
+ * // Curated fields
+ * const line: GeometryLineConfig = { color: '#333333', width: 2, opacity: 0.8 };
  *
  * // Data-driven border
- * const dynamicLine: GeometryLineConfig = {
- *   lineColor: ['get', 'borderColor'],
- *   lineWidth: ['case', ['get', 'selected'], 4, 2],
- *   lineOpacity: 1
+ * const line: GeometryLineConfig = {
+ *   color: ['get', 'borderColor'],
+ *   width: ['case', ['get', 'selected'], 4, 2],
  * };
  * ```
  *
@@ -149,47 +121,58 @@ export type GeometryTextConfig = {
  */
 export type GeometryLineConfig = {
     /**
-     * Color of the geometry border/outline.
+     * Border/outline color: a hex string or a MapLibre expression (e.g. `['get', 'borderColor']`).
      *
      * @default '#0A3653'
-     *
-     * @example
-     * ```typescript
-     * lineColor: '#333333'
-     * lineColor: ['get', 'borderColor']
-     * ```
      */
-    lineColor?: DataDrivenPropertyValueSpecification<string>;
+    color?: DataDrivenPropertyValueSpecification<string>;
 
     /**
-     * Opacity of the border line.
-     *
-     * @remarks
-     * Value between 0 (fully transparent) and 1 (fully opaque).
+     * Border opacity, 0 (transparent) to 1 (opaque). Also accepts a MapLibre expression.
      *
      * @default 1
-     *
-     * @example
-     * ```typescript
-     * lineOpacity: 0.8
-     * ```
      */
-    lineOpacity?: DataDrivenPropertyValueSpecification<number>;
+    opacity?: DataDrivenPropertyValueSpecification<number>;
 
     /**
-     * Width of the border line in pixels.
+     * Border width in pixels. Also accepts a MapLibre expression
+     * (e.g. `['case', ['get', 'selected'], 4, 2]`).
      *
      * @default 2
+     */
+    width?: DataDrivenPropertyValueSpecification<number>;
+
+    /**
+     * Escape hatch for full control over the border (outline) line layer.
+     *
+     * @remarks
+     * Accepts a partial MapLibre `LineLayerSpecification` (without `id`/`source`) that is merged
+     * onto the outline layer: top-level fields first, then `layout` and `paint` are merged per
+     * property so base defaults survive. Use this to set any line property the curated fields above
+     * don't cover (e.g. `line-gap-width`, `line-cap`, `line-join`, `line-pattern`).
+     *
+     * The curated fields (`color`, `opacity`, `width`) **take precedence** over the same `paint`
+     * properties set here.
      *
      * @example
      * ```typescript
-     * lineWidth: 3
-     *
-     * // Highlight selected geometries
-     * lineWidth: ['case', ['get', 'selected'], 4, 2]
+     * line: {
+     *     color: '#00A65E',
+     *     layer: { paint: { 'line-gap-width': 3 }, layout: { 'line-cap': 'round' } },
+     * }
      * ```
      */
-    lineWidth?: DataDrivenPropertyValueSpecification<number>;
+    layer?: Partial<ToBeAddedLayerSpecTemplate<LineLayerSpecification>>;
+
+    /**
+     * Layer positioning for the **border/outline** layer only.
+     *
+     * @remarks
+     * Overrides the top-level {@link GeometriesModuleConfig.beforeLayerConfig} for the border.
+     * Pair with {@link GeometryFillConfig.beforeLayerConfig} to split the fill and border across
+     * the layer stack (e.g. fill below roads, border on top).
+     */
+    beforeLayerConfig?: BeforeLayerConfig;
 };
 
 /**
@@ -321,18 +304,44 @@ export type GeometryLineLabelConfig = {
  * Use this to ensure geometries appear above or below other map features like
  * labels, roads, or other data layers.
  *
+ * @remarks
+ * A single {@link BeforeLayerConfig} (`'top'` or a layer id) positions **all** geometry layers
+ * together. The object form positions the fill and border independently — `all` is the fallback
+ * for any target it doesn't name.
+ *
  * @example
  * ```typescript
- * // Place on top of all layers
+ * // Place all geometry layers on top
  * const beforeLayer: GeometryBeforeLayerConfig = 'top';
  *
- * // Place below labels
+ * // Place all below labels
  * const beforeLayer: GeometryBeforeLayerConfig = 'lowestLabel';
+ *
+ * // Fill below the road network, border on top
+ * const beforeLayer: GeometryBeforeLayerConfig = { fill: 'lowestRoadLine', line: 'top' };
  * ```
  *
  * @group Geometries
  */
-export type GeometryBeforeLayerConfig = BeforeLayerConfig;
+export type GeometryBeforeLayerConfig = BeforeLayerConfig | GeometryBeforeLayerTargets;
+
+/**
+ * Per-layer positioning targets for the object form of {@link GeometryBeforeLayerConfig}.
+ *
+ * `fill` and `line` position their respective layers; `all` is the fallback applied to any
+ * target not explicitly set. A per-layer `beforeLayerConfig` inside {@link GeometryFillConfig}
+ * or {@link GeometryLineConfig} wins over the value here.
+ *
+ * @group Geometries
+ */
+export type GeometryBeforeLayerTargets = {
+    /** Fallback position for any layer not named by `fill` / `line`. */
+    all?: BeforeLayerConfig;
+    /** Position for the fill layer. */
+    fill?: BeforeLayerConfig;
+    /** Position for the border/outline layer (and its line labels). */
+    line?: BeforeLayerConfig;
+};
 
 /**
  * Configuration options for the GeometriesModule.
@@ -343,26 +352,14 @@ export type GeometryBeforeLayerConfig = BeforeLayerConfig;
  * ```typescript
  * // Basic styling
  * const config: GeometriesModuleConfig = {
- *   colorConfig: {
- *     fillColor: '#FF5733',
- *     fillOpacity: 0.3
- *   },
- *   lineConfig: {
- *     lineColor: '#C70039',
- *     lineWidth: 2
- *   }
+ *   fill: { color: '#FF5733', opacity: 0.3 },
+ *   line: { color: '#C70039', width: 2 },
  * };
  *
  * // With labels and positioning
  * const advancedConfig: GeometriesModuleConfig = {
- *   colorConfig: {
- *     fillColor: 'blue',
- *     fillOpacity: 0.25
- *   },
- *   lineConfig: {
- *     lineColor: 'darkblue',
- *     lineWidth: 3
- *   },
+ *   fill: { color: 'blue', opacity: 0.25 },
+ *   line: { color: 'darkblue', width: 3 },
  *   textConfig: {
  *     textField: ['get', 'name']
  *   },
@@ -371,13 +368,12 @@ export type GeometryBeforeLayerConfig = BeforeLayerConfig;
  *
  * // Data-driven styling
  * const dynamicConfig: GeometriesModuleConfig = {
- *   colorConfig: {
- *     fillColor: ['match', ['get', 'category'], 'park', '#4CAF50', 'water', '#2196F3', '#9E9E9E'],
- *     fillOpacity: 0.4
+ *   fill: {
+ *     color: ['match', ['get', 'category'], 'park', '#4CAF50', 'water', '#2196F3', '#9E9E9E'],
+ *     opacity: 0.4
  *   },
- *   lineConfig: {
- *     lineColor: '#000000',
- *     lineWidth: ['case', ['get', 'highlighted'], 4, 2]
+ *   line: {
+ *     color: '#000000', width: ['case', ['get', 'highlighted'], 4, 2],
  *   },
  *   textConfig: {
  *     textField: ['concat', ['get', 'name'], '\n', ['get', 'area'], ' km²']
@@ -389,11 +385,11 @@ export type GeometryBeforeLayerConfig = BeforeLayerConfig;
  */
 export type GeometriesModuleConfig = MapModuleCommonConfig & {
     /**
-     * Fill color and opacity configuration.
+     * Fill color, opacity, and (optional) fill-layer positioning.
      *
      * Controls the interior color and transparency of polygon geometries.
      */
-    colorConfig?: GeometryColorConfig;
+    fill?: GeometryFillConfig;
 
     /**
      * Text label configuration.
@@ -403,11 +399,11 @@ export type GeometriesModuleConfig = MapModuleCommonConfig & {
     textConfig?: GeometryTextConfig;
 
     /**
-     * Border/outline configuration.
+     * Border/outline configuration, and (optional) border-layer positioning.
      *
      * Controls the outline appearance of polygon geometries.
      */
-    lineConfig?: GeometryLineConfig;
+    line?: GeometryLineConfig;
 
     /**
      * Layer positioning configuration.
@@ -451,7 +447,7 @@ export type GeometriesModuleConfig = MapModuleCommonConfig & {
      * // Show the "rest of the world" outside a country
      * const module = await GeometriesModule.get(map, {
      *     theme: 'inverted',
-     *     colorConfig: { fillColor: 'black', fillOpacity: 0.5 }
+     *     fill: { color: 'black', opacity: 0.5 }
      * });
      * module.show(countryGeometry);
      * ```
@@ -468,7 +464,7 @@ export type GeometriesModuleConfig = MapModuleCommonConfig & {
      * @remarks
      * Used internally by {@link reachableRangeGeometryConfig} to generate budget
      * labels (e.g. `'30 min'`) from feature properties. For most use cases,
-     * the standard config fields (`colorConfig`, `textConfig`, `theme`) suffice.
+     * the standard config fields (`fill`, `textConfig`, `theme`) suffice.
      *
      * @example
      * ```typescript

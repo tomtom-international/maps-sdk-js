@@ -9,14 +9,14 @@ import type { GeometriesModuleConfig } from '../types/geometriesModuleConfig';
 describe('prepareGeometryForDisplay', () => {
     test('Build geometry spec layer', () => {
         const config: GeometriesModuleConfig = {
-            colorConfig: {
-                fillOpacity: 1,
-                fillColor: '#00ffaa',
+            fill: {
+                opacity: 1,
+                color: '#00ffaa',
             },
-            lineConfig: {
-                lineColor: '#00ffbb',
-                lineWidth: 2,
-                lineOpacity: 0.3,
+            line: {
+                color: '#00ffbb',
+                width: 2,
+                opacity: 0.3,
             },
         };
 
@@ -27,7 +27,7 @@ describe('prepareGeometryForDisplay', () => {
             id: 'fillID',
             paint: {
                 'fill-color': ['get', 'color'],
-                'fill-opacity': config.colorConfig?.fillOpacity,
+                'fill-opacity': config.fill?.opacity,
                 'fill-antialias': false,
             },
         });
@@ -36,9 +36,9 @@ describe('prepareGeometryForDisplay', () => {
             type: 'line',
             id: 'outlineID',
             paint: {
-                'line-color': config.lineConfig?.lineColor,
-                'line-opacity': config.lineConfig?.lineOpacity,
-                'line-width': config.lineConfig?.lineWidth,
+                'line-color': config.line?.color,
+                'line-opacity': config.line?.opacity,
+                'line-width': config.line?.width,
             },
         });
     });
@@ -76,12 +76,12 @@ describe('prepareGeometryForDisplay', () => {
             ],
         };
 
-        const config: GeometriesModuleConfig = { colorConfig: { fillColor: 'warm' } };
+        const config: GeometriesModuleConfig = { fill: { color: 'warm' } };
 
         const results = prepareGeometryForDisplay(geometry, config);
 
         expect(results.features[0].properties).toHaveProperty('color');
-        expect(colorPalettes[config.colorConfig?.fillColor as ColorPaletteOptions]).toContain(
+        expect(colorPalettes[config.fill?.color as ColorPaletteOptions]).toContain(
             results.features[0].properties?.color,
         );
         expect(results.features[0].properties).toHaveProperty('title', 'TomTom');

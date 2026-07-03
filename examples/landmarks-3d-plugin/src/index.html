@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>3D Landmarks</title>
+        <meta name="viewport" content="initial-scale=1">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="sdk-example-body">
+        <div id="sdk-map"></div>
+
+        <div class="sdk-example-customPanel">
+            <div class="sdk-example-panel-header">
+                <h3 class="sdk-example-heading">
+                    <span class="sdk-example-heading-text">3D Landmarks</span>
+                    <button class="sdk-example-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="sdk-example-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+
+            <div class="sdk-example-panel-content">
+                <div class="sdk-example-section">
+                    <div class="sdk-example-form-field">
+                        <label class="sdk-example-form-label" for="sdk-example-basemap">Basemap theme:</label>
+                        <select class="sdk-example-dropdown" id="sdk-example-basemap"></select>
+                    </div>
+
+                    <div class="sdk-example-form-field">
+                        <span class="sdk-example-form-label">Landmarks theme:</span>
+                        <div class="sdk-example-radio-group">
+                            <label class="sdk-example-radio-label">
+                                <input type="radio" name="displayMode" value="inherited" checked>
+                                Inherited
+                            </label>
+                            <label class="sdk-example-radio-label">
+                                <input type="radio" name="displayMode" value="dark">
+                                Dark
+                            </label>
+                            <label class="sdk-example-radio-label">
+                                <input type="radio" name="displayMode" value="light">
+                                Light
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

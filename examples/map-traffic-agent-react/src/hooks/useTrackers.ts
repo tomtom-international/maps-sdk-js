@@ -1,6 +1,7 @@
-import { bboxFromGeoJSON } from '@tomtom-org/maps-sdk/core';
+import { isBBoxWithArea } from '@tomtom-org/maps-sdk/core';
 import type { Tracker, TrackerEvent } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import { useEffect, useState } from 'react';
+import { frameBounds } from '../utils/frameBounds';
 import type { AgentInstance } from './useAgentBootstrap';
 
 const MAX_TOASTS = 4;
@@ -9,60 +10,47 @@ const TOAST_TTL_MS = 12_000;
 export type TrackerToast = TrackerEvent & { seq: number };
 
 /**
- * A watched area = a traffic-incidents entry one or more trackers read, with its mini-KPIs. The tracker
+ * A watched area = a shown traffic-incidents entry, with the trackers (if any) that read it. The tracker
  * panel groups by area, so an operator sees "what am I watching, where".
  */
 export type WatchedArea = {
     entryId: string;
     label: string;
-    incidents: number;
-    delaySeconds: number;
-    majorPlus: number;
     trackers: Tracker[];
 };
 
 type Grouping = { areas: WatchedArea[]; ungrouped: Tracker[] };
 
-// Group trackers by the traffic-incidents entry they watch (their spatial "area"). A tracker's inputs are
-// the analysis `affectedEntryIds`; the incidents entry among them is the area anchor. Trackers with no
-// incidents entry (e.g. a pure places/routes rule) fall into `ungrouped`. KPIs come from the entry's live
-// incident data — traffic-specific, lives here in the example, not in the generic tracker layer.
+// Group trackers by the traffic-incidents entry they watch (their spatial "area"). Every SHOWN incident
+// entry becomes a watched area, even with no trackers — loading an area (getTrafficIncidents) is itself
+// "watching" it. A tracker's inputs are its analysis `affectedEntryIds`; one bound to exactly one incident
+// entry nests under that area. Trackers spanning several areas, or none (e.g. a pure places/routes rule),
+// fall into `ungrouped` (rendered as the "Other" group).
 function groupByArea(agent: AgentInstance, trackers: readonly Tracker[]): Grouping {
-    const incidentEntryIds = new Set(agent.state.trafficIncidents.entries.map((e) => e.id));
+    const entries = agent.state.trafficIncidents.entries;
+    const incidentEntryIds = new Set(entries.map((e) => e.id));
     const byArea = new Map<string, Tracker[]>();
+    // Seed an (initially empty) group per shown area so areas with no trackers still surface.
+    for (const id of agent.state.trafficIncidents.shownEntryIds) byArea.set(id, []);
     const ungrouped: Tracker[] = [];
 
     for (const tracker of trackers) {
-        const inputs = agent.state.analyses.get(tracker.analysisId)?.affectedEntryIds ?? [];
-        const areaId = inputs.find((id) => incidentEntryIds.has(id));
-        if (areaId === undefined) {
+        // Trackers carry their own input ids now (decoupled from the Analyses registry).
+        const areaIds = tracker.affectedEntryIds.filter((id) => incidentEntryIds.has(id));
+        // Single-area → nest under that area; multi-area or area-less → "Other".
+        if (areaIds.length !== 1) {
             ungrouped.push(tracker);
             continue;
         }
-        const group = byArea.get(areaId);
+        const group = byArea.get(areaIds[0]);
         if (group) group.push(tracker);
-        else byArea.set(areaId, [tracker]);
+        else byArea.set(areaIds[0], [tracker]);
     }
 
     const areas: WatchedArea[] = [];
     for (const [entryId, group] of byArea) {
-        const entry = agent.state.trafficIncidents.entries.find((e) => e.id === entryId);
-        const data = entry?.data ?? [];
-        let delaySeconds = 0;
-        let majorPlus = 0;
-        for (const f of data) {
-            delaySeconds += f.properties.delayInSeconds ?? 0;
-            const mag = f.properties.magnitudeOfDelay;
-            if (mag === 'major' || mag === 'indefinite') majorPlus += 1;
-        }
-        areas.push({
-            entryId,
-            label: entry?.label ?? entryId,
-            incidents: data.length,
-            delaySeconds,
-            majorPlus,
-            trackers: group,
-        });
+        const entry = entries.find((e) => e.id === entryId);
+        areas.push({ entryId, label: entry?.label ?? entryId, trackers: group });
     }
     return { areas, ungrouped };
 }
@@ -103,6 +91,9 @@ export function useTrackers(agent: AgentInstance | undefined) {
 
         const unsubChange = agent.state.trackers.events.on('trackers-change', sync);
         const unsubEntries = agent.state.trafficIncidents.events.on('entries-change', sync);
+        // Watched areas are seeded from the SHOWN entries, and an entry is shown right AFTER it's added
+        // (a separate `shown-change` after `entries-change`), so the list must re-derive on show/hide too.
+        const unsubShown = agent.state.trafficIncidents.events.on('shown-change', sync);
         const unsubEvent = agent.state.trackers.events.on('tracker-event', (event) => {
             sync();
             if (event.type !== 'alert') return; // only alerts toast; events sit quietly in the feed
@@ -118,6 +109,7 @@ export function useTrackers(agent: AgentInstance | undefined) {
         return () => {
             unsubChange();
             unsubEntries();
+            unsubShown();
             unsubEvent();
             dismissTimers.forEach(clearTimeout);
             setTrackers([]);
@@ -134,21 +126,17 @@ export function useTrackers(agent: AgentInstance | undefined) {
     const setEnabled = (trackerId: string, enabled: boolean) => agent?.state.trackers.setEnabled(trackerId, enabled);
 
     const clearTracker = (trackerId: string) => {
-        if (!agent) return;
-        const analysisId = agent.state.trackers.unregister(trackerId);
-        if (analysisId) agent.state.analyses.remove(analysisId);
+        // unregister tears down the tracker's job; there is no separate analysis to remove anymore.
+        agent?.state.trackers.unregister(trackerId);
     };
 
-    // Frame a watched area on the map — the bbox of its current incidents (click an area card to focus).
+    // Frame a watched area on the map — its fetched bbox (same anchor as the highlight box), so an area
+    // with zero incidents still frames. Click an area card to focus.
     const focusArea = (entryId: string) => {
         if (!agent) return;
-        const entry = agent.state.trafficIncidents.entries.find((e) => e.id === entryId);
-        if (!entry || entry.data.length === 0) return;
-        const bbox = bboxFromGeoJSON({ type: 'FeatureCollection', features: entry.data as never });
-        agent.state.baseMap.mapLibreMap.fitBounds(bbox as [number, number, number, number], {
-            padding: 80,
-            duration: 600,
-        });
+        const bbox = agent.state.trafficIncidents.entries.find((e) => e.id === entryId)?.params.bbox;
+        if (!bbox || !isBBoxWithArea(bbox)) return;
+        frameBounds(agent.state.baseMap.mapLibreMap, bbox as [number, number, number, number]);
     };
 
     return {

@@ -83,6 +83,7 @@ const makeState = () =>
         },
         places: {
             findPlaceById: () => undefined,
+            geometryPlaceIdsForEntry: () => undefined,
             fetchPlaceGeometry: async () => undefined,
             addPlaceResult: async (_result: unknown, _label: string) => 'places-0',
             entries: [],
@@ -354,7 +355,7 @@ describe('executeDiscoverPlaces — range-only within resolves (regression: no "
         // query/placeId/geometry/route field is present.
         const state = makeState();
         state.ranges = {
-            entries: [{ id: 'ranges-0', ranges: [{ polygon: { features: [polygonFeature([0, 0, 1, 1])] } }] }],
+            entries: [{ id: 'ranges-0', data: [{ polygon: { features: [polygonFeature([0, 0, 1, 1])] } }] }],
         };
         mockSearch.mockResolvedValueOnce(emptyFeatureCollection);
 

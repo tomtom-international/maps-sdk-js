@@ -7,6 +7,7 @@ import {
     getPosition,
     type Place,
     type Places,
+    type PlaceType,
     type Route,
     type Routes,
     type Waypoint,
@@ -18,6 +19,7 @@ import type { FeatureFlags } from '../types';
 /** @ignore */
 export type PlaceSummary = {
     id: string;
+    type?: PlaceType; // Field added to prevent the LLM from infering the nature of a place e.g. intersections
     name?: string;
     address?: string;
     position: [number, number];
@@ -67,6 +69,7 @@ export type SummarizedRoutes = { count: number; routes: SummarizedRoute[] };
 export const summarizePlace = (place: Place, flags: FeatureFlags = {}): PlaceSummary => {
     const summary: PlaceSummary = {
         id: place.id,
+        type: place.properties?.type,
         name: place.properties?.poi?.name,
         address: place.properties?.address?.freeformAddress,
         position: (place.geometry?.coordinates ?? [0, 0]) as [number, number],

@@ -19,7 +19,7 @@ Live state, accessible from custom tools and from your app via `agent.state`:
 | `baseMap` | Viewport, style, language, MapLibre map instance (`mapLibreMap`) |
 | `trafficTiles` | Real-time traffic flow + incident tile-overlay visibility |
 | `trafficAreaAnalytics` | Per-entry traffic-area-analytics history; per-entry visualisation config + lazy `TrafficAreaAnalyticsModule` |
-| `trafficIncidents` | Fetched incident entries (history) + per-entry analyses, focused subsets, and the live monitor — produced/refreshed by `getTrafficIncidents` and `startTrafficIncidentsMonitor` |
+| `trafficIncidents` | Fetched incident entries (history) + per-entry analyses, focused subsets, and the live monitor — produced/refreshed by `getTrafficIncidents` and `setTrafficIncidentsMonitor` |
 | `mapPOIs` | POI category visibility and filters |
 
 Common reads from app code:
@@ -37,7 +37,7 @@ agent.state.baseMap.mapLibreMap;       // raw maplibre-gl Map
 
 ## Tagged geometries-id discriminator
 
-`recallGeometries` and the data-tool `geometriesEntryIDs` input accept tagged ids that select polygons from any of four sources:
+`recallState({ kind: 'geometries' })` and the data-tool `geometriesEntryIDs` input accept tagged ids that select polygons from any of four sources:
 
 ```ts
 type GeometriesIdKind = 'place' | 'places' | 'ranges' | 'customGeometries';

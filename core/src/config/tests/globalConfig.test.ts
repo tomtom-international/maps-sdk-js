@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import type { GlobalConfig } from '../globalConfig';
-import { defaultConfig, mergeFromGlobal, TomTomConfig } from '../globalConfig';
+import { defaultConfig, isProxyCredentialsMode, mergeFromGlobal, TomTomConfig } from '../globalConfig';
 
 describe('GlobalConfig', () => {
     afterEach(() => TomTomConfig.instance.reset());
@@ -115,5 +115,30 @@ describe('mergeFromGlobal tests', () => {
             retry: defaultConfig.retry,
             language: 'es-ES',
         });
+    });
+});
+
+describe('isProxyCredentialsMode', () => {
+    afterEach(() => TomTomConfig.instance.reset());
+
+    test('reads the global config: proxy base URL + no apiKey is true', () => {
+        TomTomConfig.instance.put({ apiKey: '', commonBaseURL: 'https://proxy.example.com' });
+        expect(isProxyCredentialsMode()).toBe(true);
+    });
+
+    test('reads the global config: default host is false', () => {
+        expect(isProxyCredentialsMode()).toBe(false);
+    });
+
+    test('an explicit apiKey is false, even behind a proxy base URL', () => {
+        expect(isProxyCredentialsMode({ apiKey: 'KEY', commonBaseURL: 'https://proxy.example.com' })).toBe(false);
+    });
+
+    test('undefined apiKey with a proxy base URL is true (falsy check, not === "")', () => {
+        expect(isProxyCredentialsMode({ apiKey: undefined, commonBaseURL: 'https://proxy.example.com' })).toBe(true);
+    });
+
+    test('undefined commonBaseURL defaults to the TomTom host, so it is false', () => {
+        expect(isProxyCredentialsMode({ apiKey: '' })).toBe(false);
     });
 });

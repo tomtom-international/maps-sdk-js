@@ -1,6 +1,7 @@
+import { FULL_SCENARIOS, MODEL, priorTurn } from '@testing/agent-tool-calling';
 import { describe, expect, it } from 'vitest';
-import { FULL_SCENARIOS, getExamplePrompts, MODEL, runToolScenario } from './helpers';
-import { priorTurn, toolCall } from './seed';
+import { getExamplePrompts, runToolScenario } from './helpers';
+import { toolCall } from './seed';
 
 // Historical traffic-area-analytics that is already fetched and shown.
 // updateTrafficAreaAnalyticsDisplay restyles / toggles the render. Replay a loaded entry so

@@ -4,6 +4,7 @@
 
 import type { TrafficAreaAnalytics } from '@tomtom-org/maps-sdk/core';
 import type { TrafficAreaAnalyticsConfig, TrafficAreaAnalyticsModule } from '@tomtom-org/maps-sdk/map';
+import type { BaseEntry } from '../entry';
 
 /**
  * Compact provenance metadata for a traffic-area-analytics entry — the request
@@ -12,6 +13,8 @@ import type { TrafficAreaAnalyticsConfig, TrafficAreaAnalyticsModule } from '@to
  * enough context for `recall` / `digest` tools.
  *
  * @group Agent Toolkit
+ *
+ * @ignore
  */
 export type TrafficAreaAnalyticsParams = Record<string, unknown>;
 
@@ -22,13 +25,10 @@ export type TrafficAreaAnalyticsParams = Record<string, unknown>;
  * `TrafficAreaAnalyticsModule`, lazy-initialised on first show.
  *
  * @group Agent Toolkit
+ *
+ * @ignore
  */
-export type TrafficAreaAnalyticsEntry = {
-    id: string;
-    timestamp: number;
-    label: string;
-    /** The aggregated FeatureCollection result. */
-    data: TrafficAreaAnalytics;
+export type TrafficAreaAnalyticsEntry = BaseEntry<TrafficAreaAnalytics> & {
     /** Request parameters that produced this entry — provenance only, opaque to consumers. */
     params: TrafficAreaAnalyticsParams;
     /**

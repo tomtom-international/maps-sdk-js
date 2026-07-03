@@ -210,7 +210,9 @@ import {
 // --- Utility tools ---
 import {
     calculateBBoxDescription,
+    calculateBBoxOutputSchema,
     calculateBBoxSchema,
+    createClarifyIntentTool,
     executeCalculateBBox,
     executeGetCurrentLocation,
     getCurrentLocationDescription,
@@ -222,9 +224,9 @@ import {
 } from './utilities';
 
 // Shared classifier-prompt framing for the two dynamic-JS data tools (`analyseData`,
-// `processData`). Both run user-authored code against the same set of injected inputs
-// (`places` / `routes` / `incidents` / `geometries` / `trafficAreaAnalytics`); only the *contract*
-// of what the code returns differs. Lifting the common framing here keeps the two
+// `processData`). Both run user-authored code against the same set of injected per-entry inputs
+// (`placesByEntry` / `routesByEntry` / `incidentsByEntry` / `geometriesByEntry` /
+// `trafficAreaAnalyticsByEntry`); only the *contract* of what the code returns differs. Lifting the common framing here keeps the two
 // `classificationPrompt`s short — the per-tool prompt then only carries the verb (transforms vs
 // aggregates) plus disambiguating triggers.
 const DATA_TOOL_INPUTS = 'places / routes / incidents / geometries / trafficAreaAnalytics / byod';
@@ -297,29 +299,29 @@ const defaultTools = {
         tags: ['turf', 'h3', 'geometry', 'place', 'route', 'aggregation', 'connections'],
         examples: [
             // places-only: filter
-            'processData({ placesEntryIDs: ["places-2"], code: "return { places: { type: \'FeatureCollection\', features: places.features.filter(p => (p.properties.poi?.name ?? \'\').toLowerCase().includes(\'vegan\')) } };", label: "vegan only", show: { places: { markerType: "pin", zoomMode: "auto", hidePreviousEntries: "all" } } })',
+            'processData({ placesEntryIDs: ["places-2"], code: "return { places: { type: \'FeatureCollection\', features: placesByEntry[\'places-2\'].features.filter(p => (p.properties.poi?.name ?? \'\').toLowerCase().includes(\'vegan\')) } };", label: "vegan only", show: { places: { markerType: "pin", zoomMode: "auto", hidePreviousEntries: "all" } } })',
             // places-only: hub-spoke connections
-            'processData({ placesEntryIDs: ["places-1"], code: "const [hub, ...rest] = places.features; return { places, placeConnections: rest.map(p => ({ from: hub, to: p })) };" })',
+            'processData({ placesEntryIDs: ["places-1"], code: "const fc = placesByEntry[\'places-1\']; const [hub, ...rest] = fc.features; return { places: fc, placeConnections: rest.map(p => ({ from: hub, to: p })) };" })',
             // places + geometries (attached polygons): h3 hex coverage of result places
-            'processData({ placesEntryIDs: ["places-1"], code: "const cells = new Set(); for (const p of places.features) cells.add(h3.latLngToCell(p.geometry.coordinates[1], p.geometry.coordinates[0], 8)); return { places, geometries: [...cells].map(c => turf.polygon([h3.cellToBoundary(c, true)], { cell: c })) };", show: { places: { markerType: "pin", zoomMode: "auto" }, placesGeometries: { theme: "outline" } } })',
+            'processData({ placesEntryIDs: ["places-1"], code: "const fc = placesByEntry[\'places-1\']; const cells = new Set(); for (const p of fc.features) cells.add(h3.latLngToCell(p.geometry.coordinates[1], p.geometry.coordinates[0], 8)); return { places: fc, geometries: [...cells].map(c => turf.polygon([h3.cellToBoundary(c, true)], { cell: c })) };", show: { places: { markerType: "pin", zoomMode: "auto" }, placesGeometries: { theme: "outline" } } })',
             // routes-only: fit to worst traffic section
-            'processData({ routesEntryIDs: ["routes-0"], code: "const r = routes.features[0]; const sec = (r.properties.sections.traffic ?? []).slice().sort((a,b) => (b.delayInSeconds ?? 0) - (a.delayInSeconds ?? 0))[0]; const bbox = sec ? routeUtils.getSectionBBox(r, sec) : turf.bbox(r); return { fitOnMap: { bbox, padding: 80 } };" })',
+            'processData({ routesEntryIDs: ["routes-0"], code: "const r = routesByEntry[\'routes-0\'].features[0]; const sec = (r.properties.sections.traffic ?? []).slice().sort((a,b) => (b.delayInSeconds ?? 0) - (a.delayInSeconds ?? 0))[0]; const bbox = sec ? routeUtils.getSectionBBox(r, sec) : turf.bbox(r); return { fitOnMap: { bbox, padding: 80 } };" })',
             // routes-only: fit to first toll section
-            'processData({ routesEntryIDs: ["routes-0"], code: "const r = routes.features[0]; const sec = r.properties.sections.toll?.[0]; if (!sec) return { fitOnMap: turf.bbox(r) }; return { fitOnMap: routeUtils.getSectionBBox(r, sec) };" })',
+            'processData({ routesEntryIDs: ["routes-0"], code: "const r = routesByEntry[\'routes-0\'].features[0]; const sec = r.properties.sections.toll?.[0]; if (!sec) return { fitOnMap: turf.bbox(r) }; return { fitOnMap: routeUtils.getSectionBBox(r, sec) };" })',
             // routes + places: corridor filter into new places entry
-            'processData({ placesEntryIDs: ["ev-stations"], routesEntryIDs: ["routes-0"], code: "const r = routes.features[0]; const buf = turf.buffer(r, 0.5, { units: \'kilometers\' }); const near = places.features.filter(p => turf.booleanPointInPolygon(p, buf)); return { places: { type: \'FeatureCollection\', features: near }, fitOnMap: turf.bbox(turf.featureCollection([...near, r])) };", label: "ev near route", entryId: "ev-near-routes-0", show: { places: { markerType: "pin", zoomMode: "none", hidePreviousEntries: "all" } } })',
+            'processData({ placesEntryIDs: ["ev-stations"], routesEntryIDs: ["routes-0"], code: "const r = routesByEntry[\'routes-0\'].features[0]; const buf = turf.buffer(r, 0.5, { units: \'kilometers\' }); const near = placesByEntry[\'ev-stations\'].features.filter(p => turf.booleanPointInPolygon(p, buf)); return { places: { type: \'FeatureCollection\', features: near }, fitOnMap: turf.bbox(turf.featureCollection([...near, r])) };", label: "ev near route", entryId: "ev-near-routes-0", show: { places: { markerType: "pin", zoomMode: "none", hidePreviousEntries: "all" } } })',
             // geometries-only: union → new custom-geometries entry
-            'processData({ geometriesEntryIDs: [{ kind: "place", id: "amsterdam-id" }, { kind: "place", id: "rotterdam-id" }], code: "return { geometries: [turf.union(turf.featureCollection(geometries))].filter(Boolean) };", label: "ams ∪ rdam", operation: "union" })',
+            'processData({ geometriesEntryIDs: [{ kind: "place", id: "amsterdam-id" }, { kind: "place", id: "rotterdam-id" }], code: "const polys = Object.values(geometriesByEntry).flat(); return { geometries: [turf.union(turf.featureCollection(polys))].filter(Boolean) };", label: "ams ∪ rdam", operation: "union" })',
             // geometries-only: buffer each
-            'processData({ geometriesEntryIDs: [{ kind: "place", id: "paris-id" }], code: "return { geometries: geometries.map(f => ({ ...turf.buffer(f, 5, { units: \'kilometers\' }), id: `${f.id}-buf` })) };", label: "paris +5km", operation: "buffer" })',
+            'processData({ geometriesEntryIDs: [{ kind: "place", id: "paris-id" }], code: "return { geometries: Object.values(geometriesByEntry).flat().map(f => ({ ...turf.buffer(f, 5, { units: \'kilometers\' }), id: `${f.id}-buf` })) };", label: "paris +5km", operation: "buffer" })',
             // geometries + places: inverse (areas in X NOT reachable from Y)
-            'processData({ geometriesEntryIDs: [{ kind: "place", id: "amsterdam-id" }, { kind: "ranges", id: "ranges-0" }], code: "const outer = geometries.filter(g => g.properties._source.kind === \'place\'); const inner = geometries.filter(g => g.properties._source.kind === \'ranges\'); const env = turf.union(turf.featureCollection(outer)); const u = turf.union(turf.featureCollection(inner)); const inv = (env && u) ? turf.difference(turf.featureCollection([env, u])) : env; return { geometries: inv ? [{ ...inv, id: \'unreachable\' }] : [] };", label: "amsterdam minus reachable", operation: "difference", show: { customGeometries: { theme: "inverted", hidePreviousEntries: "all" } } })',
+            'processData({ geometriesEntryIDs: [{ kind: "place", id: "amsterdam-id" }, { kind: "ranges", id: "ranges-0" }], code: "const all = Object.values(geometriesByEntry).flat(); const outer = all.filter(g => g.properties._source.kind === \'place\'); const inner = all.filter(g => g.properties._source.kind === \'ranges\'); const env = turf.union(turf.featureCollection(outer)); const u = turf.union(turf.featureCollection(inner)); const inv = (env && u) ? turf.difference(turf.featureCollection([env, u])) : env; return { geometries: inv ? [{ ...inv, id: \'unreachable\' }] : [] };", label: "amsterdam minus reachable", operation: "difference", show: { customGeometries: { theme: "inverted", hidePreviousEntries: "all" } } })',
             // geometries (ranges) + places cross-ref: keep places inside the reachable area
-            'processData({ geometriesEntryIDs: [{ kind: "ranges", id: "ranges-0" }, { kind: "places", id: "ev-stations" }], code: "const ranges = geometries.filter(g => g.properties._source.kind === \'ranges\'); const env = ranges.length ? turf.union(turf.featureCollection(ranges)) : null; const ev = (placesByEntry?.[\'ev-stations\']?.features ?? []); const kept = env ? ev.filter(p => turf.booleanPointInPolygon(p, env)) : ev; return { places: { type: \'FeatureCollection\', features: kept } };", label: "ev within reachable" })',
+            'processData({ geometriesEntryIDs: [{ kind: "ranges", id: "ranges-0" }, { kind: "places", id: "ev-stations" }], code: "const ranges = Object.values(geometriesByEntry).flat().filter(g => g.properties._source.kind === \'ranges\'); const env = ranges.length ? turf.union(turf.featureCollection(ranges)) : null; const ev = (placesByEntry?.[\'ev-stations\']?.features ?? []); const kept = env ? ev.filter(p => turf.booleanPointInPolygon(p, env)) : ev; return { places: { type: \'FeatureCollection\', features: kept } };", label: "ev within reachable" })',
             // trafficAreaAnalytics + places cross-ref: keep places inside high-congestion tiles
-            'processData({ placesEntryIDs: ["ev-stations"], trafficAreaAnalyticsEntryIDs: ["tta-0"], code: "const hot = trafficAreaAnalytics.features.filter(t => (t.properties.congestionLevel ?? 0) >= 75); const kept = places.features.filter(p => hot.some(t => turf.booleanPointInPolygon(p, t))); return { places: { type: \'FeatureCollection\', features: kept } };", label: "ev in high-congestion tiles" })',
+            'processData({ placesEntryIDs: ["ev-stations"], trafficAreaAnalyticsEntryIDs: ["tta-0"], code: "const hot = trafficAreaAnalyticsByEntry[\'tta-0\'].features.filter(t => (t.properties.congestionLevel ?? 0) >= 75); const kept = placesByEntry[\'ev-stations\'].features.filter(p => hot.some(t => turf.booleanPointInPolygon(p, t))); return { places: { type: \'FeatureCollection\', features: kept } };", label: "ev in high-congestion tiles" })',
             // trafficAreaAnalytics → derived geometry entry: hot-tiles polygon
-            'processData({ trafficAreaAnalyticsEntryIDs: ["tta-0"], code: "const hot = trafficAreaAnalytics.features.filter(t => (t.properties.congestionLevel ?? 0) >= 75).map((t, i) => ({ ...t, id: `hot-${i}` })); const u = hot.length ? turf.union(turf.featureCollection(hot)) : null; return { geometries: u ? [{ ...u, id: \'congestion-hot-zone\' }] : [] };", label: "congestion hot zone", operation: "union", show: { customGeometries: { theme: "filled" } } })',
+            'processData({ trafficAreaAnalyticsEntryIDs: ["tta-0"], code: "const hot = trafficAreaAnalyticsByEntry[\'tta-0\'].features.filter(t => (t.properties.congestionLevel ?? 0) >= 75).map((t, i) => ({ ...t, id: `hot-${i}` })); const u = hot.length ? turf.union(turf.featureCollection(hot)) : null; return { geometries: u ? [{ ...u, id: \'congestion-hot-zone\' }] : [] };", label: "congestion hot zone", operation: "union", show: { customGeometries: { theme: "filled" } } })',
         ],
         examplePrompts: [
             'Keep only the vegan restaurants',
@@ -364,41 +366,41 @@ const defaultTools = {
         tags: ['analysis', 'turf', 'h3', 'place', 'route', 'geometry'],
         examples: [
             // places-only: counts
-            'analyseData({ placesEntryIDs: ["places-2"], name: "by-category", code: "const counts = {}; for (const p of places.features) for (const c of (p.properties.poi?.categories ?? [])) counts[c] = (counts[c] ?? 0) + 1; return { total: places.features.length, byCategory: counts };" })',
+            'analyseData({ placesEntryIDs: ["places-2"], name: "by-category", code: "const fc = placesByEntry[\'places-2\']; const counts = {}; for (const p of fc.features) for (const c of (p.properties.poi?.categories ?? [])) counts[c] = (counts[c] ?? 0) + 1; return { total: fc.features.length, byCategory: counts };" })',
             // places-only: h3 density
-            'analyseData({ placesEntryIDs: ["places-1"], name: "hex-density-8", code: "const bins = {}; for (const p of places.features) { const [lng,lat] = p.geometry.coordinates; const cell = h3.latLngToCell(lat, lng, 8); bins[cell] = (bins[cell] ?? 0) + 1; } return { resolution: 8, bins };" })',
+            'analyseData({ placesEntryIDs: ["places-1"], name: "hex-density-8", code: "const fc = placesByEntry[\'places-1\']; const bins = {}; for (const p of fc.features) { const [lng,lat] = p.geometry.coordinates; const cell = h3.latLngToCell(lat, lng, 8); bins[cell] = (bins[cell] ?? 0) + 1; } return { resolution: 8, bins };" })',
             // places-only: chart
-            'analyseData({ placesEntryIDs: ["places-2"], name: "top-categories-bar", outputFormat: "chart", code: "const counts = {}; for (const p of places.features) for (const c of (p.properties.poi?.categories ?? [])) counts[c] = (counts[c] ?? 0) + 1; const entries = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0,10); return { type: \'bar\', data: { labels: entries.map(e => e[0]), datasets: [{ label: \'Places\', data: entries.map(e => e[1]) }] } };" })',
+            'analyseData({ placesEntryIDs: ["places-2"], name: "top-categories-bar", outputFormat: "chart", code: "const fc = placesByEntry[\'places-2\']; const counts = {}; for (const p of fc.features) for (const c of (p.properties.poi?.categories ?? [])) counts[c] = (counts[c] ?? 0) + 1; const entries = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0,10); return { type: \'bar\', data: { labels: entries.map(e => e[0]), datasets: [{ label: \'Places\', data: entries.map(e => e[1]) }] } };" })',
             // routes-only: per-route summary
-            'analyseData({ routesEntryIDs: ["routes-0"], name: "summary", code: "return routes.features.map(r => ({ index: r.properties.index, distanceKm: r.properties.summary.lengthInMeters / 1000, durationMin: r.properties.summary.travelTimeInSeconds / 60, trafficDelaySec: r.properties.summary.trafficDelayInSeconds }));" })',
+            'analyseData({ routesEntryIDs: ["routes-0"], name: "summary", code: "return routesByEntry[\'routes-0\'].features.map(r => ({ index: r.properties.index, distanceKm: r.properties.summary.lengthInMeters / 1000, durationMin: r.properties.summary.travelTimeInSeconds / 60, trafficDelaySec: r.properties.summary.trafficDelayInSeconds }));" })',
             // routes-only: alternative-comparison chart
-            'analyseData({ routesEntryIDs: ["routes-0"], name: "alternative-comparison", outputFormat: "chart", code: "const r = routes.features; return { type: \'bar\', data: { labels: r.map(x => `Route ${x.properties.index}`), datasets: [{ label: \'Travel time (min)\', data: r.map(x => Math.round(x.properties.summary.travelTimeInSeconds / 60)) }, { label: \'Distance (km)\', data: r.map(x => Math.round(x.properties.summary.lengthInMeters / 1000)) }] } };" })',
+            'analyseData({ routesEntryIDs: ["routes-0"], name: "alternative-comparison", outputFormat: "chart", code: "const r = routesByEntry[\'routes-0\'].features; return { type: \'bar\', data: { labels: r.map(x => `Route ${x.properties.index}`), datasets: [{ label: \'Travel time (min)\', data: r.map(x => Math.round(x.properties.summary.travelTimeInSeconds / 60)) }, { label: \'Distance (km)\', data: r.map(x => Math.round(x.properties.summary.lengthInMeters / 1000)) }] } };" })',
             // routes-only: distribution of traffic incidents ALONG the route (reads route.properties.sections.traffic[])
-            'analyseData({ routesEntryIDs: ["routes-0"], name: "on-route-incidents-by-category", outputFormat: "chart", code: "const sections = (routes.features[0].properties.sections.traffic ?? []); const counts = {}; for (const s of sections) for (const c of (s.categories ?? [])) counts[c] = (counts[c] ?? 0) + 1; const entries = Object.entries(counts).sort((a,b) => b[1]-a[1]); return { type: \'bar\', data: { labels: entries.map(e => e[0]), datasets: [{ label: \'Incidents on route\', data: entries.map(e => e[1]) }] }, options: { plugins: { title: { display: true, text: \'Traffic incidents along the route\' } } } };" })',
+            'analyseData({ routesEntryIDs: ["routes-0"], name: "on-route-incidents-by-category", outputFormat: "chart", code: "const sections = (routesByEntry[\'routes-0\'].features[0].properties.sections.traffic ?? []); const counts = {}; for (const s of sections) for (const c of (s.categories ?? [])) counts[c] = (counts[c] ?? 0) + 1; const entries = Object.entries(counts).sort((a,b) => b[1]-a[1]); return { type: \'bar\', data: { labels: entries.map(e => e[0]), datasets: [{ label: \'Incidents on route\', data: entries.map(e => e[1]) }] }, options: { plugins: { title: { display: true, text: \'Traffic incidents along the route\' } } } };" })',
             // routes-only: total delay per country section
-            'analyseData({ routesEntryIDs: ["routes-0"], name: "delay-by-country", code: "const r = routes.features[0]; const byCountry = {}; for (const c of (r.properties.sections.country ?? [])) byCountry[c.countryCodeISO3] = (byCountry[c.countryCodeISO3] ?? 0) + (r.properties.sections.traffic ?? []).filter(t => t.startPointIndex >= c.startPointIndex && t.endPointIndex <= c.endPointIndex).reduce((s, t) => s + (t.delayInSeconds ?? 0), 0); return byCountry;" })',
+            'analyseData({ routesEntryIDs: ["routes-0"], name: "delay-by-country", code: "const r = routesByEntry[\'routes-0\'].features[0]; const byCountry = {}; for (const c of (r.properties.sections.country ?? [])) byCountry[c.countryCodeISO3] = (byCountry[c.countryCodeISO3] ?? 0) + (r.properties.sections.traffic ?? []).filter(t => t.startPointIndex >= c.startPointIndex && t.endPointIndex <= c.endPointIndex).reduce((s, t) => s + (t.delayInSeconds ?? 0), 0); return byCountry;" })',
             // routes + places cross-ref (count within distance)
-            'analyseData({ routesEntryIDs: ["routes-0"], placesEntryIDs: ["ev-stations"], name: "ev-near-route-500m", code: "const route = routes.features[0]; const out = {}; for (const [id, fc] of Object.entries(placesByEntry)) out[id] = fc.features.filter(p => turf.pointToLineDistance(p, route, { units: \'meters\' }) <= 500).length; return { withinMeters: 500, byEntry: out };" })',
+            'analyseData({ routesEntryIDs: ["routes-0"], placesEntryIDs: ["ev-stations"], name: "ev-near-route-500m", code: "const route = routesByEntry[\'routes-0\'].features[0]; const out = {}; for (const [id, fc] of Object.entries(placesByEntry)) out[id] = fc.features.filter(p => turf.pointToLineDistance(p, route, { units: \'meters\' }) <= 500).length; return { withinMeters: 500, byEntry: out };" })',
             // routes + places cross-ref (distance-to-route histogram, binned in km)
-            'analyseData({ routesEntryIDs: ["routes-0"], placesEntryIDs: ["cafes"], name: "cafe-distance-bins-km", outputFormat: "chart", code: "const route = routes.features[0]; const distances = places.features.map(p => turf.pointToLineDistance(p, route, { units: \'kilometers\' })); const max = Math.max(0, ...distances); const binWidth = 1; const binCount = Math.max(1, Math.ceil(max / binWidth)); const bins = new Array(binCount).fill(0); for (const d of distances) bins[Math.min(binCount - 1, Math.floor(d / binWidth))]++; const labels = bins.map((_, i) => `${i}-${i + binWidth} km`); return { type: \'bar\', data: { labels, datasets: [{ label: \'cafes\', data: bins }] }, options: { plugins: { title: { display: true, text: \'Cafe distance to route\' } } } };" })',
+            "analyseData({ routesEntryIDs: [\"routes-0\"], placesEntryIDs: [\"cafes\"], name: \"cafe-distance-bins-km\", outputFormat: \"chart\", code: \"const route = routesByEntry['routes-0'].features[0]; const distances = placesByEntry['cafes'].features.map(p => turf.pointToLineDistance(p, route, { units: 'kilometers' })); const max = Math.max(0, ...distances); const binWidth = 1; const binCount = Math.max(1, Math.ceil(max / binWidth)); const bins = new Array(binCount).fill(0); for (const d of distances) bins[Math.min(binCount - 1, Math.floor(d / binWidth))]++; const labels = bins.map((_, i) => `${i}-${i + binWidth} km`); return { type: 'bar', data: { labels, datasets: [{ label: 'cafes', data: bins }] }, options: { plugins: { title: { display: true, text: 'Cafe distance to route' } } } };\" })",
             // geometries-only: areas
-            'analyseData({ geometriesEntryIDs: [{ kind: "places", id: "cities" }], name: "areas", code: "return geometries.map(f => ({ id: f.id, km2: +(turf.area(f)/1e6).toFixed(2) }));" })',
+            'analyseData({ geometriesEntryIDs: [{ kind: "places", id: "cities" }], name: "areas", code: "return Object.values(geometriesByEntry).flat().map(f => ({ id: f.id, km2: +(turf.area(f)/1e6).toFixed(2) }));" })',
             // geometries-only: chart
-            'analyseData({ geometriesEntryIDs: [{ kind: "places", id: "cities" }], name: "area-bar", outputFormat: "chart", code: "return { type: \'bar\', data: { labels: geometries.map(f => f.id), datasets: [{ label: \'km²\', data: geometries.map(f => +(turf.area(f)/1e6).toFixed(2)) }] } };" })',
+            'analyseData({ geometriesEntryIDs: [{ kind: "places", id: "cities" }], name: "area-bar", outputFormat: "chart", code: "const polys = Object.values(geometriesByEntry).flat(); return { type: \'bar\', data: { labels: polys.map(f => f.id), datasets: [{ label: \'km²\', data: polys.map(f => +(turf.area(f)/1e6).toFixed(2)) }] } };" })',
             // cross-kind: incidents per place cluster
-            'analyseData({ placesEntryIDs: ["clusters"], incidentsEntryIDs: ["incidents-0"], name: "incidents-per-cluster", code: "const out = {}; for (const c of places.features) { const inCluster = incidents.filter(i => { const coord = i.geometry.type === \'Point\' ? i.geometry.coordinates : turf.centroid(i).geometry.coordinates; return turf.distance(coord, c.geometry.coordinates, { units: \'kilometers\' }) <= 0.5; }); out[c.id] = inCluster.length; } return out;" })',
+            'analyseData({ placesEntryIDs: ["clusters"], incidentsEntryIDs: ["incidents-0"], name: "incidents-per-cluster", code: "const fc = placesByEntry[\'clusters\']; const inc = incidentsByEntry[\'incidents-0\']; const out = {}; for (const c of fc.features) { const inCluster = inc.filter(i => { const coord = i.geometry.type === \'Point\' ? i.geometry.coordinates : turf.centroid(i).geometry.coordinates; return turf.distance(coord, c.geometry.coordinates, { units: \'kilometers\' }) <= 0.5; }); out[c.id] = inCluster.length; } return out;" })',
             // cross-kind: incidents inside custom corridors
-            'analyseData({ geometriesEntryIDs: [{ kind: "customGeometries", id: "buffered-routes" }], incidentsEntryIDs: ["incidents-0"], name: "incidents-in-corridors", code: "const out = []; for (const g of geometries) { const hits = incidents.filter(i => { const coord = i.geometry.type === \'Point\' ? i.geometry.coordinates : turf.centroid(i).geometry.coordinates; return turf.booleanPointInPolygon(coord, g); }); out.push({ id: g.id, count: hits.length, totalDelaySec: hits.reduce((s, i) => s + (i.properties.delayInSeconds ?? 0), 0) }); } return out;" })',
+            'analyseData({ geometriesEntryIDs: [{ kind: "customGeometries", id: "buffered-routes" }], incidentsEntryIDs: ["incidents-0"], name: "incidents-in-corridors", code: "const polys = Object.values(geometriesByEntry).flat(); const inc = incidentsByEntry[\'incidents-0\']; const out = []; for (const g of polys) { const hits = inc.filter(i => { const coord = i.geometry.type === \'Point\' ? i.geometry.coordinates : turf.centroid(i).geometry.coordinates; return turf.booleanPointInPolygon(coord, g); }); out.push({ id: g.id, count: hits.length, totalDelaySec: hits.reduce((s, i) => s + (i.properties.delayInSeconds ?? 0), 0) }); } return out;" })',
             // trafficAreaAnalytics-only: congestion distribution chart
-            "analyseData({ trafficAreaAnalyticsEntryIDs: [\"tta-0\"], name: \"congestion-distribution\", outputFormat: \"chart\", code: \"const bins = [0, 25, 50, 75, 100]; const counts = new Array(bins.length).fill(0); for (const t of trafficAreaAnalytics.features) { const c = t.properties.congestionLevel ?? 0; const idx = Math.min(bins.length - 1, Math.floor(c / 25)); counts[idx]++; } return { type: 'bar', data: { labels: ['0–24', '25–49', '50–74', '75+'], datasets: [{ label: 'Tiles', data: counts.slice(0, 4) }] } };\" })",
+            "analyseData({ trafficAreaAnalyticsEntryIDs: [\"tta-0\"], name: \"congestion-distribution\", outputFormat: \"chart\", code: \"const bins = [0, 25, 50, 75, 100]; const counts = new Array(bins.length).fill(0); for (const t of trafficAreaAnalyticsByEntry['tta-0'].features) { const c = t.properties.congestionLevel ?? 0; const idx = Math.min(bins.length - 1, Math.floor(c / 25)); counts[idx]++; } return { type: 'bar', data: { labels: ['0–24', '25–49', '50–74', '75+'], datasets: [{ label: 'Tiles', data: counts.slice(0, 4) }] } };\" })",
             // cross-kind: places by congestion tile
-            'analyseData({ placesEntryIDs: ["ev-stations"], trafficAreaAnalyticsEntryIDs: ["tta-0"], name: "ev-stations-by-congestion", code: "const buckets = { low: 0, mid: 0, high: 0 }; for (const p of places.features) { const tile = trafficAreaAnalytics.features.find(t => turf.booleanPointInPolygon(p, t)); if (!tile) continue; const c = tile.properties.congestionLevel ?? 0; if (c < 25) buckets.low++; else if (c < 75) buckets.mid++; else buckets.high++; } return buckets;" })',
+            'analyseData({ placesEntryIDs: ["ev-stations"], trafficAreaAnalyticsEntryIDs: ["tta-0"], name: "ev-stations-by-congestion", code: "const fc = placesByEntry[\'ev-stations\']; const tiles = trafficAreaAnalyticsByEntry[\'tta-0\'].features; const buckets = { low: 0, mid: 0, high: 0 }; for (const p of fc.features) { const tile = tiles.find(t => turf.booleanPointInPolygon(p, t)); if (!tile) continue; const c = tile.properties.congestionLevel ?? 0; if (c < 25) buckets.low++; else if (c < 75) buckets.mid++; else buckets.high++; } return buckets;" })',
             // cross-kind: route segments by tile metric
-            'analyseData({ routesEntryIDs: ["routes-0"], trafficAreaAnalyticsEntryIDs: ["tta-0"], name: "route-tile-coverage", code: "const r = routes.features[0]; const hits = trafficAreaAnalytics.features.filter(t => turf.lineIntersect(r, t).features.length > 0); return { tilesCrossed: hits.length, avgCongestion: hits.length ? +(hits.reduce((s, t) => s + (t.properties.congestionLevel ?? 0), 0) / hits.length).toFixed(1) : null };" })',
+            'analyseData({ routesEntryIDs: ["routes-0"], trafficAreaAnalyticsEntryIDs: ["tta-0"], name: "route-tile-coverage", code: "const r = routesByEntry[\'routes-0\'].features[0]; const hits = trafficAreaAnalyticsByEntry[\'tta-0\'].features.filter(t => turf.lineIntersect(r, t).features.length > 0); return { tilesCrossed: hits.length, avgCongestion: hits.length ? +(hits.reduce((s, t) => s + (t.properties.congestionLevel ?? 0), 0) / hits.length).toFixed(1) : null };" })',
             // incidents-only: counts by category (one-shot)
-            'analyseData({ incidentsEntryIDs: ["incidents-0"], name: "by-category", code: "const c = {}; for (const i of incidents) c[i.properties.category] = (c[i.properties.category] ?? 0) + 1; return { total: incidents.length, byCategory: c };" })',
+            'analyseData({ incidentsEntryIDs: ["incidents-0"], name: "by-category", code: "const inc = incidentsByEntry[\'incidents-0\']; const c = {}; for (const i of inc) c[i.properties.category] = (c[i.properties.category] ?? 0) + 1; return { total: inc.length, byCategory: c };" })',
             // incidents-only: top-N by delay (one-shot)
-            'analyseData({ incidentsEntryIDs: ["incidents-0"], name: "top-delays", code: "return [...incidents].sort((a,b) => (b.properties.delayInSeconds ?? 0) - (a.properties.delayInSeconds ?? 0)).slice(0,5).map(i => ({ id: i.properties.id, delay: i.properties.delayInSeconds, road: i.properties.roadNumbers?.[0] }));" })',
+            'analyseData({ incidentsEntryIDs: ["incidents-0"], name: "top-delays", code: "return [...incidentsByEntry[\'incidents-0\']].sort((a,b) => (b.properties.delayInSeconds ?? 0) - (a.properties.delayInSeconds ?? 0)).slice(0,5).map(i => ({ id: i.properties.id, delay: i.properties.delayInSeconds, road: i.properties.roadNumbers?.[0] }));" })',
         ],
         examplePrompts: [
             'How many of each POI category are in these results?',
@@ -642,8 +644,8 @@ const defaultTools = {
             "clusterIncidents({ incidentsEntryID: 'incidents-0' })",
             "clusterIncidents({ incidentsEntryID: 'incidents-0', eps: 0.3, minMembers: 4, maxClusters: 8 })",
             // Dynamic `code`: filter the incidents (real shape — `properties.delayInSeconds`) then cluster.
-            'clusterIncidents({ incidentsEntryID: \'incidents-0\', code: "const major = incidents.filter(i => (i.properties.delayInSeconds ?? 0) >= 300); return cluster(major, { eps: 0.4 }, previous, now);" })',
-            "clusterIncidents({ incidentsEntryID: 'incidents-0', code: \"const jams = incidents.filter(i => i.properties.category === 'jam'); return cluster(jams, {}, previous, now);\" })",
+            "clusterIncidents({ incidentsEntryID: 'incidents-0', code: \"const major = incidentsByEntry['incidents-0'].filter(i => (i.properties.delayInSeconds ?? 0) >= 300); return cluster(major, { eps: 0.4 }, previous, now);\" })",
+            "clusterIncidents({ incidentsEntryID: 'incidents-0', code: \"const jams = incidentsByEntry['incidents-0'].filter(i => i.properties.category === 'jam'); return cluster(jams, {}, previous, now);\" })",
         ],
         examplePrompts: [
             'Cluster the incidents',
@@ -703,8 +705,8 @@ const defaultTools = {
         execute: executeCreateTracker as (input: unknown, state: ToolState) => Promise<unknown>,
         tags: ['tracker', 'alert', 'monitor', 'turf'],
         examples: [
-            'createTracker({ incidentsEntryIDs: ["incidents-0"], name: "Major incidents", rule: "any major incident in the area", code: "const hits = incidents.filter(i => i.properties.magnitudeOfDelay === \'major\'); return { active: hits.length > 0, members: [{ entryId: \'incidents-0\', featureIds: hits.map(i => i.properties.id) }], summary: hits.length ? `${hits.length} major incident(s)` : \'no major incidents\' };" })',
-            'createTracker({ placesEntryIDs: ["hospitals"], incidentsEntryIDs: ["incidents-0"], name: "Incidents near hospitals", rule: "an incident within 100m of a hospital", code: "const near = []; const hosp = new Set(); for (const h of places.features) for (const i of incidents) { const c = i.geometry.type === \'Point\' ? i.geometry.coordinates : turf.centroid(i).geometry.coordinates; if (turf.distance(c, h.geometry.coordinates, { units: \'meters\' }) <= 100) { near.push(i.properties.id); hosp.add(h.properties.id); } } return { active: near.length > 0, members: [{ entryId: \'hospitals\', featureIds: [...hosp] }, { entryId: \'incidents-0\', featureIds: near }], summary: near.length ? `${near.length} incident(s) near ${hosp.size} hospital(s)` : \'clear\' };" })',
+            'createTracker({ incidentsEntryIDs: ["incidents-0"], name: "Major incidents", rule: "any major incident in the area", code: "const hits = incidentsByEntry[\'incidents-0\'].filter(i => i.properties.magnitudeOfDelay === \'major\'); return { active: hits.length > 0, members: [{ entryId: \'incidents-0\', featureIds: hits.map(i => i.properties.id) }], summary: hits.length ? `${hits.length} major incident(s)` : \'no major incidents\' };" })',
+            "createTracker({ placesEntryIDs: [\"hospitals\"], incidentsEntryIDs: [\"incidents-0\"], name: \"Incidents near hospitals\", rule: \"an incident within 100m of a hospital\", code: \"const near = []; const hosp = new Set(); for (const h of placesByEntry['hospitals'].features) for (const i of incidentsByEntry['incidents-0']) { const c = i.geometry.type === 'Point' ? i.geometry.coordinates : turf.centroid(i).geometry.coordinates; if (turf.distance(c, h.geometry.coordinates, { units: 'meters' }) <= 100) { near.push(i.properties.id); hosp.add(h.properties.id); } } return { active: near.length > 0, members: [{ entryId: 'hospitals', featureIds: [...hosp] }, { entryId: 'incidents-0', featureIds: near }], summary: near.length ? `${near.length} incident(s) near ${hosp.size} hospital(s)` : 'clear' };\" })",
         ],
         examplePrompts: [
             'Alert me when there is a major incident in this area',
@@ -1141,7 +1143,8 @@ const defaultTools = {
     },
     setMapStandardStyle: {
         description: setMapStandardStyleDescription,
-        classificationPrompt: 'Switch the map to a standard style preset (light, dark, satellite, driving, etc.).',
+        classificationPrompt:
+            'Switch the map to a standard base-map style/theme preset (light, dark, mono, satellite, etc.) — ONLY when the user explicitly asks to change it, never as a side effect of another task.',
         inputSchema: setMapStandardStyleSchema,
         outputSchema: setMapStandardStyleOutputSchema,
         execute: executeSetMapStandardStyle,
@@ -1310,11 +1313,10 @@ const defaultTools = {
     executeMaplibreCode: {
         description: executeMaplibreCodeDescription,
         classificationPrompt:
-            'Execute arbitrary MapLibre JS against the live map — the escape hatch when no other tool covers the ' +
-            'operation. Pick it for map rendering that has no dedicated tool: fog / atmosphere / sky, terrain, ' +
-            'globe vs mercator projection, or adding a raster / tile overlay — as well as time-based ANIMATIONS and ' +
-            'multi-step loops (gradually fade a layer in/out, pulse opacity, sequence camera moves) that the ' +
-            'one-shot setPaintProperties / setLayoutProperties cannot express.',
+            'Execute arbitrary MapLibre JS against the live map — the escape hatch ONLY for operations no dedicated ' +
+            'tool covers: fog / atmosphere / sky, terrain, globe vs mercator projection, raster / tile overlays, and ' +
+            'time-based animations / multi-step loops that one-shot tools cannot express. If any other tool already ' +
+            'performs the operation, use that tool instead.',
         inputSchema: executeMaplibreCodeSchema,
         outputSchema: executeMaplibreCodeOutputSchema,
         execute: executeExecuteMaplibreCode,
@@ -1346,6 +1348,7 @@ const defaultTools = {
         classificationPrompt:
             'Compute a [minLng, minLat, maxLng, maxLat] bounding box from GeoJSON features or tool results.',
         inputSchema: calculateBBoxSchema,
+        outputSchema: calculateBBoxOutputSchema,
         execute: executeCalculateBBox,
         tags: ['utilities', 'location'],
         examples: ['calculateBBox(place)', 'calculateBBox(routes)', 'calculateBBox([place1, place2])'],
@@ -1367,6 +1370,7 @@ const defaultTools = {
         examplePrompts: ['Where am I?', 'Get my GPS location', 'Use my current position'],
         relatedTools: ['discoverPlaces', 'reverseGeocode', 'locatePlace'],
     },
+    clarifyIntent: createClarifyIntentTool(),
     help: {
         description: helpDescription,
         classificationPrompt:

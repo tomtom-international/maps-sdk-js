@@ -102,12 +102,12 @@ function prettifyJS(code: string): string {
 
 function CodeBlock({ source }: { source: string }) {
     return (
-        <div className="overflow-hidden rounded-(--sdk-radius-5) border border-(--sdk-border-low) bg-(--sdk-surface-2)">
-            <div className="flex items-center justify-between border-b border-(--sdk-border-low) px-2 py-0.5 font-(family-name:--sdk-font-code) text-[10px] font-semibold tracking-wide text-(--sdk-text-low) uppercase">
+        <div className="overflow-hidden rounded-(--pb-radius-5) border border-(--pb-border-low) bg-(--pb-surface-0)">
+            <div className="flex items-center justify-between border-b border-(--pb-border-low) px-2 py-0.5 font-(family-name:--pb-font-code) text-[10px] font-semibold tracking-wide text-(--pb-text-low) uppercase">
                 <span>code</span>
-                <span className="text-(--sdk-text-low)">JS</span>
+                <span className="text-(--pb-text-low)">JS</span>
             </div>
-            <pre className="m-0 max-h-[320px] overflow-auto px-2 py-1.5 font-(family-name:--sdk-font-code) text-[12px] leading-[1.5] whitespace-pre text-(--sdk-text-high)">
+            <pre className="m-0 max-h-[320px] overflow-auto px-2 py-1.5 font-(family-name:--pb-font-code) text-[12px] leading-[1.5] whitespace-pre text-(--pb-text-high)">
                 {prettifyJS(source)}
             </pre>
         </div>
@@ -116,7 +116,7 @@ function CodeBlock({ source }: { source: string }) {
 
 function JsonBlock({ value }: { value: unknown }) {
     return (
-        <pre className="m-0 max-h-[260px] overflow-auto rounded-(--sdk-radius-5) bg-(--sdk-surface-1) px-2 py-1.5 font-(family-name:--sdk-font-code) text-[12px] whitespace-pre-wrap">
+        <pre className="m-0 max-h-[260px] overflow-auto rounded-(--pb-radius-5) bg-(--pb-surface-0) px-2 py-1.5 font-(family-name:--pb-font-code) text-[12px] whitespace-pre-wrap">
             {stringifyToolValue(value)}
         </pre>
     );
@@ -136,7 +136,7 @@ function ErrorBlock({ text }: { text: string }) {
         }
     }
     return (
-        <pre className="m-0 max-h-[260px] overflow-auto rounded-(--sdk-radius-5) border border-red-500/30 bg-red-500/10 px-2 py-1.5 font-(family-name:--sdk-font-code) text-[12px] whitespace-pre-wrap text-red-700 dark:text-red-300">
+        <pre className="m-0 max-h-[260px] overflow-auto rounded-(--pb-radius-5) border border-red-500/30 bg-red-500/10 px-2 py-1.5 font-(family-name:--pb-font-code) text-[12px] whitespace-pre-wrap text-red-700 dark:text-red-300">
             {pretty}
         </pre>
     );
@@ -145,7 +145,7 @@ function ErrorBlock({ text }: { text: string }) {
 function ToolCallSection({ label, children }: { label: string; children: React.ReactNode }) {
     return (
         <section className="flex w-full flex-col gap-1">
-            <div className="font-(family-name:--sdk-font-code) text-[11px] font-semibold tracking-wide text-(--sdk-text-low) uppercase">
+            <div className="font-(family-name:--pb-font-code) text-[11px] font-semibold tracking-wide text-(--pb-text-low) uppercase">
                 {label}
             </div>
             {children}
@@ -153,75 +153,131 @@ function ToolCallSection({ label, children }: { label: string; children: React.R
     );
 }
 
-export function ToolCall({ toolName, input, output, errorText }: ToolCallProps) {
-    const [copyLabel, setCopyLabel] = useState('Copy');
+// A single collapsible tool row: the toolName + a chevron, sitting inside the
+// grouped "Used N tools" container (see ChatMessage's ToolGroup). Expanding it reveals the call's raw
+// input/output/code so the debug data stays reachable; a per-tool copy icon (top-right, shown only when
+// open) copies that payload.
+export function ToolDisclosure({ toolName, input, output, errorText }: ToolCallProps) {
+    const [copied, setCopied] = useState(false);
     const contentRef = useRef<HTMLDivElement>(null);
-
-    // Charts are NOT rendered inline in the chat for this demo — analysis charts live in the
-    // right-rail Analyses panel instead. (See ui/AnalysesPanel.)
 
     const inputCode = takeCode(input);
     const inputJson = inputCode !== null ? stripCode(input) : input;
     const outputCode = output !== undefined ? takeCode(output) : null;
     const outputJson = outputCode !== null ? stripCode(output) : output;
 
+    // The copy control lives inside <summary>, where a click would otherwise toggle the row — so
+    // suppress that default (and bubbling) and just copy the expanded input/output text.
     const handleCopy = (event: React.MouseEvent) => {
+        event.preventDefault();
         event.stopPropagation();
-        void navigator.clipboard.writeText(contentRef.current?.innerText ?? '').then(() => {
-            setCopyLabel('Copied!');
-            setTimeout(() => setCopyLabel('Copy'), 1500);
-        });
+        navigator.clipboard
+            .writeText(contentRef.current?.innerText ?? '')
+            .then(() => {
+                setCopied(true);
+                setTimeout(() => setCopied(false), 1500);
+            })
+            .catch(() => setCopied(false));
     };
 
     return (
-        <>
-            <details className="tool-call max-w-[90%] self-start mx-3 my-1">
-                <summary className="inline-flex h-5 w-fit cursor-pointer list-none items-center justify-center gap-1 rounded-[5px] bg-[rgba(0,0,0,0.04)] px-1 font-(family-name:--sdk-font-code) text-[12px] leading-5 font-semibold text-(--sdk-text-high) [&::-webkit-details-marker]:hidden">
-                    <span>{toolName}</span>
-                    <svg
-                        className="shrink-0 transition-transform [details[open]_&]:rotate-90"
-                        width="12"
-                        height="12"
-                        viewBox="0 0 12 12"
-                        aria-hidden="true"
-                    >
-                        <path d="M4 3l4 3-4 3z" fill="currentColor" />
-                    </svg>
-                </summary>
-                <div
-                    ref={contentRef}
-                    className="flex w-full flex-col items-stretch gap-2 pt-2 text-(--sdk-text-medium)"
+        <details className="group/tool tool-call w-full self-start">
+            <summary className="flex w-full cursor-pointer list-none items-center gap-1 rounded-[5px] px-2 py-1 font-(family-name:--pb-font-code) text-[12px] leading-5 font-semibold text-(--pb-text-high) transition-colors hover:bg-[rgba(0,0,0,0.04)] [&::-webkit-details-marker]:hidden">
+                <span className="min-w-0 truncate">{toolName}</span>
+                <svg
+                    className="shrink-0 transition-transform group-open/tool:rotate-90"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    aria-hidden="true"
                 >
-                    <button
-                        type="button"
-                        onClick={handleCopy}
-                        className="w-fit cursor-pointer rounded-(--sdk-radius-5) border border-(--sdk-border-medium) bg-(--sdk-surface-1) px-1.5 py-0.5 font-(family-name:--sdk-font-code) text-[11px] leading-snug text-(--sdk-text-medium) transition-colors hover:bg-(--sdk-surface-2) hover:text-(--sdk-text-high)"
-                    >
-                        {copyLabel}
-                    </button>
-                    {inputCode !== null && <CodeBlock source={inputCode} />}
-                    {inputJson !== undefined && (
-                        <ToolCallSection label="input">
-                            <JsonBlock value={inputJson} />
-                        </ToolCallSection>
+                    <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                {/* Per-tool copy icon — only visible once the row is open. */}
+                <button
+                    type="button"
+                    onClick={handleCopy}
+                    aria-label={copied ? 'Copied' : 'Copy tool input and output'}
+                    title={copied ? 'Copied' : 'Copy'}
+                    className="ml-auto hidden h-6 w-6 shrink-0 cursor-pointer items-center justify-center rounded-(--pb-radius-5) border-0 bg-transparent text-(--pb-text-low) transition-colors group-open/tool:flex hover:bg-(--pb-surface-2) hover:text-(--pb-text-high) [&_svg]:h-4 [&_svg]:w-4"
+                >
+                    {copied ? (
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            aria-hidden="true"
+                        >
+                            <path d="M20 6 9 17l-5-5" />
+                        </svg>
+                    ) : (
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            aria-hidden="true"
+                        >
+                            <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+                            <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+                        </svg>
                     )}
-                    {output !== undefined && (
-                        <>
-                            {outputCode !== null && <CodeBlock source={outputCode} />}
-                            {outputJson !== undefined && (
-                                <ToolCallSection label="output">
-                                    <JsonBlock value={outputJson} />
-                                </ToolCallSection>
-                            )}
-                        </>
-                    )}
-                    {output === undefined && errorText !== undefined && (
-                        <ToolCallSection label="error">
-                            <ErrorBlock text={errorText} />
-                        </ToolCallSection>
-                    )}
-                </div>
-            </details>
-        </>
+                </button>
+            </summary>
+            <div
+                ref={contentRef}
+                className="flex w-full flex-col items-stretch gap-2 px-2 pt-1 pb-2 text-(--pb-text-medium)"
+            >
+                {inputCode !== null && <CodeBlock source={inputCode} />}
+                {inputJson !== undefined && (
+                    <ToolCallSection label="input">
+                        <JsonBlock value={inputJson} />
+                    </ToolCallSection>
+                )}
+                {output !== undefined && (
+                    <>
+                        {outputCode !== null && <CodeBlock source={outputCode} />}
+                        {outputJson !== undefined && (
+                            <ToolCallSection label="output">
+                                <JsonBlock value={outputJson} />
+                            </ToolCallSection>
+                        )}
+                    </>
+                )}
+                {output === undefined && errorText !== undefined && (
+                    <ToolCallSection label="error">
+                        <ErrorBlock text={errorText} />
+                    </ToolCallSection>
+                )}
+            </div>
+        </details>
+    );
+}
+
+// Inline tool side-effect within the turn: the clarify intro line (its questions render as the pinned
+// wizard — see MapAgentChat), read from the (streaming) args. All other tools render nothing here;
+// their raw I/O lives in the "Used N tools" pill.
+export function ToolCall({ toolName, input }: ToolCallProps) {
+    const clarifyIntro =
+        toolName === 'clarifyIntent' &&
+        input &&
+        typeof input === 'object' &&
+        typeof (input as { intro?: unknown }).intro === 'string'
+            ? (input as { intro: string }).intro
+            : null;
+
+    if (!clarifyIntro) return null;
+    return (
+        <p className="my-1 px-1 font-(family-name:--pb-font-secondary) text-[16px] leading-[24px] text-(--pb-text-medium)">
+            {clarifyIntro}
+        </p>
     );
 }

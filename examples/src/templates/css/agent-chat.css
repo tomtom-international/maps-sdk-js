@@ -1,0 +1,257 @@
+/* Shared chat-surface styles for the agent example apps (ChatMessages / ChatMessage / ToolCall /
+   ChatInput). Imported by each agent's MapAgentChat; references the `--pb-*` playbook tokens, so it
+   must load after the template token layer (it does — index.tsx imports styles.css first).
+   Kept in CSS because (a) the markdown content rendered inside `.message.assistant` from `marked()`
+   carries no Tailwind classes, and (b) the same bubble shape is shared by user, assistant, error,
+   and tool-call variants — easier to maintain as a cascade than as duplicated utility strings. */
+
+/* ─── Welcome empty-state (start screen) ─────────────────────────────────── */
+/* Not a bubble — a clean intro using the heading / body typography scale. The markdown
+   (# heading, tagline) is rendered by marked() into `.chat-welcome > div`. */
+.chat-welcome {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--pb-space-2); /* 8px between spark / title / tagline */
+    padding: 2.5rem 0 var(--pb-space-4); /* pt-40; horizontal inset comes from the chat-content px-2 */
+}
+.chat-welcome-spark {
+    display: flex;
+    color: var(--pb-primary-color); /* brand red — the SVG fills with currentColor */
+}
+.chat-welcome-spark svg {
+    width: 40px;
+    height: 40px;
+}
+.chat-welcome > div {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    gap: var(--pb-space-2);
+}
+.chat-welcome h1,
+.chat-welcome h2 {
+    margin: 0;
+    font-family: var(--pb-font-primary); /* Gilroy */
+    font-weight: var(--pb-font-weight-bold);
+    font-size: 28px;
+    line-height: 32px;
+    letter-spacing: -0.28px;
+    color: var(--pb-text-high);
+}
+.chat-welcome p {
+    margin: 0;
+    font-family: var(--pb-font-secondary); /* Proxima Nova */
+    font-size: var(--pb-font-body-l); /* 16 / 24 (body m/medium) */
+    line-height: var(--pb-font-body-l-lh);
+    color: var(--pb-text-medium);
+}
+.chat-welcome strong {
+    font-weight: var(--pb-font-weight-bold);
+    color: var(--pb-text-high);
+}
+.chat-welcome-divider {
+    width: 100%;
+    border: 0;
+    border-top: 1px solid var(--pb-border-base); /* border/base-em */
+    margin: var(--pb-space-4) 0 0; /* ~24px below the Hi block */
+}
+
+/* ─── Chat message bubbles ───────────────────────────────────────────────── */
+/* The user turn is a grey bubble that HUGS its content and right-aligns (short text → narrow,
+   long text that wraps → up to the full column width); the assistant turn is plain text on the panel.
+   Body copy is Proxima Nova 16/24 (web/body m). The user bubble keeps one sharp corner as a tail
+   (bottom-right). */
+.message {
+    padding: var(--pb-space-4); /* 16 all */
+    max-width: 100%;
+    border-radius: var(--pb-radius-20);
+    margin: var(--pb-space-3) 0; /* 12 top/bottom → 24px between turns */
+    font-family: var(--pb-font-secondary); /* Proxima Nova */
+    font-size: var(--pb-font-body-l); /* 16 */
+    line-height: var(--pb-font-body-l-lh); /* 24 */
+}
+
+.message.user {
+    /* Hug content + right-align: `fit-content` shrinks the bubble to its text, capped at the column
+       width (`.message` max-width:100%), so short prompts stay narrow and long ones wrap to full width.
+       `align-self:flex-end` (the bubble is a flex item of the messages column) pins it to the right. */
+    width: fit-content;
+    align-self: flex-end;
+    background: var(--pb-surface-1);
+    color: var(--pb-text-high);
+    border-radius: var(--pb-radius-20) var(--pb-radius-20) 0 var(--pb-radius-20);
+}
+/* Assistant turns are plain text on the panel — NO bubble (no border / fill / radius), only the
+   answer copy. The user message keeps its grey bubble; tool cards render their own chrome. */
+.message.assistant {
+    background: transparent;
+    color: var(--pb-text-medium);
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    min-width: 0;
+}
+
+/* The chat scrolls but shows NO scrollbar — the design uses fade edges, not a chunky native bar.
+   Wheel/trackpad/keyboard scrolling still work. */
+#chat-messages {
+    overflow-x: hidden;
+    scrollbar-width: none; /* Firefox */
+}
+#chat-messages::-webkit-scrollbar {
+    display: none; /* WebKit (Chrome/Safari/Edge) */
+}
+
+/* Slim, low-contrast scrollbars for the in-chat code/JSON/error blocks (tool input/output) and any
+   wide assistant markdown — replaces the chunky default bars with a 6px overlay-style thumb. */
+.tool-call pre,
+.message.assistant pre,
+.message.assistant table {
+    scrollbar-width: thin;
+    scrollbar-color: var(--pb-border-medium) transparent;
+}
+.tool-call pre::-webkit-scrollbar,
+.message.assistant pre::-webkit-scrollbar,
+.message.assistant table::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+.tool-call pre::-webkit-scrollbar-thumb,
+.message.assistant pre::-webkit-scrollbar-thumb,
+.message.assistant table::-webkit-scrollbar-thumb {
+    background: var(--pb-border-medium);
+    border-radius: 999px;
+}
+.tool-call pre::-webkit-scrollbar-track,
+.message.assistant pre::-webkit-scrollbar-track,
+.message.assistant table::-webkit-scrollbar-track {
+    background: transparent;
+}
+.message.thinking {
+    max-width: fit-content;
+}
+
+.message.assistant.thinking {
+    font-style: italic;
+    color: var(--pb-text-medium);
+    opacity: 0.8;
+}
+
+.message.error {
+    align-self: flex-start;
+    background: color-mix(in srgb, var(--pb-color-error) 8%, var(--pb-surface-0));
+    color: var(--pb-color-error);
+    border: 1px solid color-mix(in srgb, var(--pb-color-error) 25%, var(--pb-surface-0));
+}
+
+/* ── Markdown content rendered by `marked()` inside assistant bubbles ────── */
+/* These rules target tags emitted by marked, which can't carry Tailwind classes. */
+
+.message.assistant p {
+    margin-bottom: var(--pb-space-2);
+}
+
+.message.assistant p:last-child {
+    margin-bottom: 0;
+}
+
+/* The assistant turn = a bold title (web/title 2: Gilroy Bold 16/24, high-em) over med-em body.
+   marked() emits the title as a heading or **strong**, so promote both to the high-emphasis weight. */
+.message.assistant strong {
+    font-weight: var(--pb-font-weight-bold);
+    color: var(--pb-text-high);
+}
+
+.message.assistant h1,
+.message.assistant h2,
+.message.assistant h3,
+.message.assistant h4 {
+    margin: 0 0 var(--pb-space-1);
+    font-family: var(--pb-font-primary); /* Gilroy */
+    font-weight: var(--pb-font-weight-bold);
+    font-size: var(--pb-font-body-l); /* 16/24 — title 2 */
+    line-height: var(--pb-font-body-l-lh);
+    color: var(--pb-text-high);
+}
+
+.message.assistant ul,
+.message.assistant ol {
+    padding-left: var(--pb-space-4);
+    margin-bottom: var(--pb-space-2);
+}
+
+.message.assistant code {
+    background: var(--pb-surface-2);
+    padding: 1px 4px;
+    border-radius: var(--pb-radius-5);
+    font-family: var(--pb-font-code);
+    font-size: 0.9em;
+}
+
+.message.assistant pre code {
+    background: none;
+    padding: 0;
+}
+
+.message.assistant pre {
+    background: var(--pb-surface-2);
+    padding: var(--pb-space-3);
+    border-radius: var(--pb-radius-10);
+    overflow-x: auto;
+    margin-bottom: var(--pb-space-2);
+    font-family: var(--pb-font-code);
+    font-size: var(--pb-font-caption-m);
+}
+
+.message.assistant table {
+    border-collapse: collapse;
+    font-size: var(--pb-font-caption-m);
+    margin: 0.4em 0;
+    max-width: 100%;
+    overflow-x: auto;
+    display: block;
+}
+
+.message.assistant th,
+.message.assistant td {
+    padding: var(--pb-space-1) var(--pb-space-2);
+    border: 1px solid var(--pb-border-low);
+    text-align: left;
+}
+
+.message.assistant th {
+    background: var(--pb-surface-2);
+    font-weight: var(--pb-font-weight-semibold);
+}
+
+/* assistant-ui wraps its messages in a generic `[data-message-id]` container that we want
+   to disappear into its parent's flex flow. */
+#chat-messages [data-message-id]:not(.message) {
+    display: contents;
+}
+
+/* ── Mobile message overrides ────────────────────────────────────────────── */
+/* The chat panel is reflowed via Tailwind responsive prefixes; only the message bubble's
+   max-width needs to shrink on small screens, which Tailwind can't apply directly to the
+   shared `.message` class without duplicating utilities on every consumer. */
+
+@media (max-width: 640px) {
+    .message {
+        max-width: 92%;
+        font-size: var(--pb-font-body-s, 0.85rem);
+    }
+}
+
+/* ── Mic-pulse keyframes referenced by ChatInput's mic button ──────────── */
+
+@keyframes mic-pulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+    }
+}

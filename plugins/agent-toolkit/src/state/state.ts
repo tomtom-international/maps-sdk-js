@@ -4,6 +4,7 @@
 
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import type { TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { JobEngine } from '../engine';
 import { resolveSandboxExecutor } from '../tools/shared/sandbox';
 import type { StateSlice, ToolState } from '../types';
 import { Analyses } from './analyses';
@@ -14,7 +15,7 @@ import { MapPOIsState } from './map-pois';
 import { PlacesState } from './places';
 import { RangeState } from './range';
 import { RoutingState } from './routing';
-import { TrackerState } from './trackers';
+import { EventsState } from './trackers';
 import { TrafficAreaAnalyticsState } from './traffic-area-analytics';
 import { TrafficIncidentsState } from './traffic-incidents';
 import { TrafficTilesState } from './traffic-tiles';
@@ -233,8 +234,6 @@ export const createToolState = <T extends Record<string, unknown> = Record<strin
     map: TomTomMap,
     customSlices?: T,
 ): ToolState & T => {
-    // The tracker reducer subscribes to the analyses registry, so analyses is constructed first.
-    const analyses = new Analyses();
     const base: ToolState = {
         places: new PlacesState(map),
         mapPOIs: new MapPOIsState(map),
@@ -249,9 +248,15 @@ export const createToolState = <T extends Record<string, unknown> = Record<strin
         // Env-resolved executor (iframe-worker in the browser, main thread in Node/SSR) so even direct
         // createToolState callers get the sandbox boundary; createMapAgent re-resolves with user tuning.
         codeExecution: resolveSandboxExecutor(),
-        analyses,
-        trackers: new TrackerState(analyses),
+        // The single recurrence engine: analyses + trackers register jobs on it.
+        engine: new JobEngine(),
+        analyses: new Analyses(),
+        trackers: new EventsState(),
     };
     if (customSlices) Object.assign(base, customSlices);
+    // Wire the recurrence engine once, here, after customSlices are merged — so the engine subscribes its
+    // entries-change handlers to the final slice objects (including any customSlices that override a core
+    // source slice) and every ToolState has a live engine without the job builders wiring lazily.
+    base.engine.ensureWired(base);
     return base as ToolState & T;
 };

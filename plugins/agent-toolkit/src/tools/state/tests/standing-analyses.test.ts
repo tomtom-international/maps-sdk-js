@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { Analyses, createToolState, makeAnalysisId } from '../../../state';
+import { Analyses, createToolState, makeAnalysisId, type TrackerEvent } from '../../../state';
 import type { ToolState } from '../../../types';
 import { executeAnalyseData } from '../analyse-data';
+import { executeCreateTracker } from '../create-tracker';
 import { executeMonitorAnalysis } from '../monitor-analysis';
 
 const mockTrafficMap = { mapLibreMap: { getSource: () => undefined, getLayer: () => undefined } } as any;
@@ -24,7 +25,10 @@ const seedIncidents = async (state: ToolState, ids: string[]): Promise<string> =
 
 // Run an async one-shot analysis over the seeded incidents entry and hand back the analysisId.
 const analyseCount = (state: ToolState, name = 'count') =>
-    executeAnalyseData({ incidentsEntryIDs: ['incidents-0'], name, code: 'return { n: incidents.length };' }, state);
+    executeAnalyseData(
+        { incidentsEntryIDs: ['incidents-0'], name, code: 'return { n: incidentsByEntry["incidents-0"].length };' },
+        state,
+    );
 
 // Replay is fired off the slice's `entries-change` via a debounced microtask, then runs async
 // (prepareMultiInputs + sandbox). Poll a few macrotask turns until the attached result catches up.
@@ -41,7 +45,7 @@ const readAttached = (state: ToolState, entryId: string, name: string): unknown 
     state.analyses.getAnalysesForEntry(entryId).find((a) => a.name === name)?.data;
 
 describe('standing analyses (analyseData + monitorAnalysis)', () => {
-    it('analyseData registers a disabled standing record and returns its analysisId', async () => {
+    it('analyseData registers an unmonitored (paused-job) analysis and returns its analysisId', async () => {
         const state = createToolState(mockTrafficMap);
         await seedIncidents(state, ['a', 'b']);
 
@@ -50,8 +54,8 @@ describe('standing analyses (analyseData + monitorAnalysis)', () => {
 
         expect(out.analysis).toEqual({ n: 2 });
         expect(out.analysisId).toBe('count::incidents-0');
-        const record = state.analyses.get(out.analysisId);
-        expect(record?.enabled).toBe(false);
+        expect(state.analyses.get(out.analysisId)).toBeDefined();
+        expect(state.analyses.isMonitored(out.analysisId)).toBe(false);
     });
 
     // Regression: the incidents panel reads analyses per entry. A one-shot analyseData result is stored
@@ -110,6 +114,34 @@ describe('standing analyses (analyseData + monitorAnalysis)', () => {
         expect('error' in out).toBe(true);
     });
 
+    // End-to-end through the JobEngine: createTracker registers a tracker job; a source-entry change
+    // drives the engine sweep → run → ingestVerdict → rising-edge event. Covers the tracker-job wiring
+    // (registerTrackerJob → engine) that the unit reducer tests bypass.
+    it('a tracker job recomputes through the engine and fires on a source-entry change', async () => {
+        const state = createToolState(mockTrafficMap);
+        await seedIncidents(state, ['a', 'b']);
+        const fired: TrackerEvent[] = [];
+        state.trackers.events.on('tracker-event', (e) => fired.push(e));
+
+        const out = await executeCreateTracker(
+            {
+                incidentsEntryIDs: ['incidents-0'],
+                name: 'busy',
+                rule: '3+ incidents',
+                code: 'const incidents = Object.values(incidentsByEntry).flat(); return { active: incidents.length >= 3, members: [{ entryId: "incidents-0", featureIds: [] }], summary: "n=" + incidents.length };',
+            },
+            state,
+        );
+        if ('error' in out) throw new Error(out.error);
+        expect(out.firingNow).toBe(false); // 2 incidents at arm time
+        expect(fired).toEqual([]);
+
+        // A monitor-tick-style refresh pushes the count to 3 → the engine re-runs the rule → fires.
+        await state.trafficIncidents.replaceEntryData('incidents-0', ['a', 'b', 'c'].map(fakeIncident), 1000);
+        await waitFor(() => fired.length > 0);
+        expect(fired.map((e) => e.kind)).toEqual(['opened']);
+    });
+
     // The `cluster()` primitive is injected alongside h3/turf so dynamic analyseData code can filter
     // incidents and cluster the result in one pass (independent of the dedicated clusterIncidents tool).
     it('exposes the cluster() primitive to analyseData sandbox code', async () => {
@@ -119,7 +151,7 @@ describe('standing analyses (analyseData + monitorAnalysis)', () => {
             {
                 incidentsEntryIDs: ['incidents-0'],
                 name: 'pockets',
-                code: 'return { n: cluster(incidents, { minMembers: 3 }).groups.length };',
+                code: 'return { n: cluster(incidentsByEntry["incidents-0"], { minMembers: 3 }).groups.length };',
             },
             state,
         );
@@ -161,7 +193,11 @@ describe('standing analyses — cross-kind replay on entries-change', () => {
         const state = createToolState(mockTrafficMap);
         await state.places.addPlaceResult(placesCollection(['a', 'b']), 'restaurants', 'places-1');
         const out = await executeAnalyseData(
-            { placesEntryIDs: ['places-1'], name: 'count', code: 'return { n: places.features.length };' },
+            {
+                placesEntryIDs: ['places-1'],
+                name: 'count',
+                code: 'return { n: placesByEntry["places-1"].features.length };',
+            },
             state,
         );
         if ('error' in out) throw new Error(out.error);
@@ -170,7 +206,7 @@ describe('standing analyses — cross-kind replay on entries-change', () => {
 
         // Refresh the bound entry's data, then fire the slice's change event.
         const entry = state.places.entries.find((e) => e.id === 'places-1') as any;
-        entry.places = [fakePlace('a'), fakePlace('b'), fakePlace('c')];
+        entry.data = [fakePlace('a'), fakePlace('b'), fakePlace('c')];
         entry.timestamp += 1000;
         state.places.events.emit('entries-change', { entries: state.places.entries, changedIds: ['places-1'] });
 
@@ -182,7 +218,11 @@ describe('standing analyses — cross-kind replay on entries-change', () => {
         const state = createToolState(mockTrafficMap);
         await state.routing.addRoutes(routesCollection(['r0']), [], 'ams-bru');
         const out = await executeAnalyseData(
-            { routesEntryIDs: ['routes-0'], name: 'count', code: 'return { n: routes.features.length };' },
+            {
+                routesEntryIDs: ['routes-0'],
+                name: 'count',
+                code: 'return { n: routesByEntry["routes-0"].features.length };',
+            },
             state,
         );
         if ('error' in out) throw new Error(out.error);
@@ -268,85 +308,17 @@ describe('Analyses store', () => {
         expect(store.all().map((r) => r.history.at(-1)?.data)).toEqual([1, 2]);
     });
 
-    describe('type classifier', () => {
-        // A tracker rule registers a `type: 'tracker-rule'` record — its own enumerable category. It
-        // recomputes / GC's / reads by id exactly like an analysis, but operator enumeration excludes it.
-        const seedRule = (store: Analyses, name: string, affectedEntryIds: string[], data: unknown) => {
-            const analysisId = makeAnalysisId(name, affectedEntryIds);
-            store.register({
-                analysisId,
-                name,
-                outputFormat: 'json',
-                affectedEntryIds,
-                type: 'tracker-rule',
-                enabled: true,
-            });
-            store.attachResult(analysisId, result(name, data));
-            return analysisId;
-        };
-
-        it("register defaults type to 'analysis'", () => {
-            const store = new Analyses();
-            const id = seed(store, 'plain', ['places-0'], 1);
-            expect(store.get(id)?.type).toBe('analysis');
-        });
-
-        it('all(type) partitions analyses from tracker rules; all() returns both', () => {
-            const store = new Analyses();
-            seed(store, 'plain', ['places-0'], 1);
-            seedRule(store, 'rule', ['places-0'], 2);
-            expect(store.all('analysis').map((r) => r.name)).toEqual(['plain']);
-            expect(store.all('tracker-rule').map((r) => r.name)).toEqual(['rule']);
-            expect(store.all().map((r) => r.name)).toEqual(['plain', 'rule']);
-        });
-
-        it('getAnalysesForEntry filters by type when one is given, returns all otherwise', () => {
-            const store = new Analyses();
-            seed(store, 'plain', ['places-0'], 1);
-            seedRule(store, 'rule', ['places-0'], 2);
-            expect(store.getAnalysesForEntry('places-0', 'analysis').map((a) => a.name)).toEqual(['plain']);
-            expect(store.getAnalysesForEntry('places-0', 'tracker-rule').map((a) => a.name)).toEqual(['rule']);
-            expect(
-                store
-                    .getAnalysesForEntry('places-0')
-                    .map((a) => a.name)
-                    .sort(),
-            ).toEqual(['plain', 'rule']);
-        });
-
-        it('a tracker rule is still swept, readable by id, and GC d like any record', () => {
-            const store = new Analyses();
-            const id = seedRule(store, 'rule', ['places-0'], 2);
-            expect(store.sweepCandidates().map((r) => r.analysisId)).toContain(id);
-            expect(store.get(id)?.type).toBe('tracker-rule');
-            expect(store.history(id).at(-1)?.data).toBe(2);
-            store.pruneToLiveEntries(new Set());
-            expect(store.get(id)).toBeUndefined();
-        });
-
-        it('re-register preserves type', () => {
-            const store = new Analyses();
-            const id = seedRule(store, 'rule', ['places-0'], 2);
-            store.register({ analysisId: id, name: 'rule', outputFormat: 'json', affectedEntryIds: ['places-0'] });
-            expect(store.get(id)?.type).toBe('tracker-rule');
-        });
-    });
-
-    it('pruneToLiveEntries drops a record only once all its source entries are gone', () => {
+    it('resetHistory drops a record’s timeline (called on re-arm when the recipe changes)', () => {
         const store = new Analyses();
-        const shared = seed(store, 'shared', ['places-0', 'routes-0'], 1);
-        const placesOnly = seed(store, 'places-only', ['places-0'], 2);
-
-        // routes-0 removed, places-0 still live → cross-kind record survives, single-source one survives.
-        store.pruneToLiveEntries(new Set(['places-0']));
-        expect(store.get(shared)).toBeDefined();
-        expect(store.get(placesOnly)).toBeDefined();
-
-        // places-0 removed too → both records gone.
-        store.pruneToLiveEntries(new Set());
-        expect(store.get(shared)).toBeUndefined();
-        expect(store.get(placesOnly)).toBeUndefined();
+        const id = seed(store, 'count', ['places-0'], 1);
+        expect(store.lastResult(id)).toBe(1);
+        store.resetHistory(id);
+        expect(store.history(id)).toEqual([]);
+        expect(store.lastResult(id)).toBeUndefined();
     });
+    // GC (dropping a record once its source entries are gone) now lives on the JobEngine: it drops each
+    // orphaned job and calls `onOrphaned` → `analyses.remove`. Covered end-to-end by 'prunes a record
+    // when its only source entry is removed' below.
 });
 
 // The sweep wiring matches each `entries-change`'s `changedIds` against every monitored record's
@@ -363,7 +335,11 @@ describe('standing analyses — changedIds-scoped replay', () => {
         await state.places.addPlaceResult(placesCollection(['a', 'b']), 'bound', 'places-bound');
         await state.places.addPlaceResult(placesCollection(['x']), 'other', 'places-other');
         const out = await executeAnalyseData(
-            { placesEntryIDs: ['places-bound'], name: 'count', code: 'return { n: places.features.length };' },
+            {
+                placesEntryIDs: ['places-bound'],
+                name: 'count',
+                code: 'return { n: placesByEntry["places-bound"].features.length };',
+            },
             state,
         );
         if ('error' in out) throw new Error(out.error);
@@ -371,7 +347,7 @@ describe('standing analyses — changedIds-scoped replay', () => {
 
         // Mutate the UNRELATED entry and fire a change naming only it — must not touch the bound analysis.
         const other = state.places.entries.find((e) => e.id === 'places-other') as any;
-        other.places = [fakePlace('x'), fakePlace('y'), fakePlace('z')];
+        other.data = [fakePlace('x'), fakePlace('y'), fakePlace('z')];
         other.timestamp += 1000;
         state.places.events.emit('entries-change', { entries: state.places.entries, changedIds: ['places-other'] });
         await settle();
@@ -401,7 +377,11 @@ describe('standing analyses — changedIds-scoped replay', () => {
         const state = createToolState(mockTrafficMap);
         await state.places.addPlaceResult(placesCollection(['a']), 'bound', 'places-bound');
         const out = await executeAnalyseData(
-            { placesEntryIDs: ['places-bound'], name: 'count', code: 'return { n: places.features.length };' },
+            {
+                placesEntryIDs: ['places-bound'],
+                name: 'count',
+                code: 'return { n: placesByEntry["places-bound"].features.length };',
+            },
             state,
         );
         if ('error' in out) throw new Error(out.error);

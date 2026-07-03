@@ -4,6 +4,7 @@
 
 import type { Routes, WaypointLike } from '@tomtom-org/maps-sdk/core';
 import type { RoutingModule } from '@tomtom-org/maps-sdk/map';
+import type { BaseEntry } from '../entry';
 import type { RouteMonitor } from './monitor/monitor';
 
 /**
@@ -11,6 +12,8 @@ import type { RouteMonitor } from './monitor/monitor';
  * Consumed by setRoute, addWaypointsToRoute, removeWaypointsFromRoute, and replaceWaypointInRoute.
  *
  * @group Agent Toolkit
+ *
+ * @ignore
  */
 export type RouteParams = {
     maxAlternatives?: number;
@@ -27,12 +30,10 @@ export type RouteParams = {
  * A single entry in the route calculation history.
  *
  * @group Agent Toolkit
+ *
+ * @ignore
  */
-export type RoutesEntry = {
-    id: string;
-    timestamp: number;
-    label: string;
-    data: Routes;
+export type RoutesEntry = BaseEntry<Routes> & {
     waypoints: WaypointLike[];
     params: RouteParams;
     /**

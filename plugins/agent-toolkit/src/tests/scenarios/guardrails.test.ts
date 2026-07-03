@@ -1,6 +1,7 @@
 import { agent, user, userSimulatorAgent } from '@langwatch/scenario';
+import { expectNoneOfToolsCalled, MODEL, runScenario } from '@testing/agent-tool-calling';
 import { describe, expect, it } from 'vitest';
-import { agentAdapter, expectNoneOfToolsCalled, MODEL, runScenario } from './helpers';
+import { agentAdapter } from './helpers';
 
 describe.skipIf(!MODEL)('Guardrail scenarios', { timeout: 180_000, retry: 3 }, () => {
     it('does not call routing tools for a simple place lookup', async () => {

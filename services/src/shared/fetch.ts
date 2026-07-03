@@ -1,4 +1,4 @@
-import { RetryConfig, TomTomConfig, type TomTomHeaders } from '@tomtom-org/maps-sdk/core';
+import { isProxyCredentialsMode, RetryConfig, TomTomConfig, type TomTomHeaders } from '@tomtom-org/maps-sdk/core';
 import type { FetchInput, GetObject, ParsedFetchResponse, PostObject } from './types/fetch';
 
 /**
@@ -78,28 +78,7 @@ const fetchWithRetry = async (fetchFn: () => Promise<Response>): Promise<Respons
     return response;
 };
 
-const TOMTOM_DEFAULT_URL = 'https://api.tomtom.com';
-
-/**
- * Return `'include'` only when the SDK is wired into a Demo-BFF-style proxy
- * (no `apiKey` + non-default `commonBaseURL`). In all other cases — direct
- * TomTom usage and customer-owned `customServiceBaseURL` integrations — we
- * leave credentials at the browser default so we don't break consumers
- * whose backend responds with `Access-Control-Allow-Origin: *` (the browser
- * rejects credentialed responses against a wildcard origin).
- *
- * The `apiKey` test is a falsy check (not `=== ''`) on purpose: an example
- * may overwrite the proxy bootstrap's `apiKey: ''` with `apiKey: undefined`
- * (e.g. `put({ apiKey: process.env.API_KEY_EXAMPLES })` when that env var is
- * unset in a proxy build). Both empty string and undefined mean "no key,
- * the proxy injects it" — and this matches how the URL builders decide
- * whether to append `key=` (`if (params.apiKey)`). A customer using
- * `customServiceBaseURL` keeps a real key, so this stays falsy-false for them.
- */
-const proxyModeCredentials = (): RequestCredentials | undefined => {
-    const cfg = TomTomConfig.instance.get();
-    return !cfg.apiKey && cfg.commonBaseURL !== TOMTOM_DEFAULT_URL ? 'include' : undefined;
-};
+const proxyModeCredentials = (): RequestCredentials | undefined => (isProxyCredentialsMode() ? 'include' : undefined);
 
 /**
  * Fetches the given HTTP JSON resource with an HTTP GET request and returns a promise with the response as a JSON object.

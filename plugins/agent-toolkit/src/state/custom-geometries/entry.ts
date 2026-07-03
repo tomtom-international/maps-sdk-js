@@ -5,6 +5,7 @@
 import type { PolygonFeature } from '@tomtom-org/maps-sdk/core';
 import type { GeometriesModule } from '@tomtom-org/maps-sdk/map';
 import type { GeometriesId } from '../../tools/shared';
+import type { BaseEntry } from '../entry';
 
 /**
  * Provenance metadata for a custom-geometries entry — captures every input
@@ -17,6 +18,8 @@ import type { GeometriesId } from '../../tools/shared';
  * `'h3-coverage'`).
  *
  * @group Agent Toolkit
+ *
+ * @ignore
  */
 export type GeometryProvenance = {
     /** Short label for the operation that produced this entry (free-form). */
@@ -31,13 +34,10 @@ export type GeometryProvenance = {
  * places or ranges).
  *
  * @group Agent Toolkit
+ *
+ * @ignore
  */
-export type CustomGeometriesEntry = {
-    id: string;
-    timestamp: number;
-    label: string;
-    /** The polygons stored on this entry (Polygon / MultiPolygon GeoJSON Features). */
-    features: PolygonFeature[];
+export type CustomGeometriesEntry = BaseEntry<PolygonFeature[]> & {
     /** Inputs and operation that produced this entry. */
     provenance: GeometryProvenance;
     /**

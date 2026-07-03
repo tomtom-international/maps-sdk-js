@@ -1,5 +1,6 @@
+import { FULL_SCENARIOS, MODEL } from '@testing/agent-tool-calling';
 import { describe, expect, it } from 'vitest';
-import { FULL_SCENARIOS, getExamplePrompts, MODEL, runToolScenario } from './helpers';
+import { getExamplePrompts, runToolScenario } from './helpers';
 // processData's prompts reference mid-session state ("the vegan restaurants", "these places", "the
 // route", "the city boundaries I loaded", "my loaded analytics"). Run cold, the agent reasonably
 // asks what to operate on instead of processing — so stage a rich loaded session (replayed as real

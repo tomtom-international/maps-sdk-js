@@ -6,6 +6,7 @@ import type { PolygonFeatures } from '@tomtom-org/maps-sdk/core';
 import type { GeometriesModule, PlacesModule } from '@tomtom-org/maps-sdk/map';
 import type { ReachableRangeBudget } from '@tomtom-org/maps-sdk/services';
 import type { Position } from 'geojson';
+import type { BaseEntry } from '../entry';
 
 /**
  * A single reachable area, scoped to one origin and one set of budgets.
@@ -13,6 +14,8 @@ import type { Position } from 'geojson';
  * coverage from several origins under the same query.
  *
  * @group Agent Toolkit
+ *
+ * @ignore
  */
 export type ReachableRange = {
     origin: { query?: string; position: Position };
@@ -27,13 +30,10 @@ export type ReachableRange = {
  * one per origin in a multi-origin call to `findReachableAreas`.
  *
  * @group Agent Toolkit
+ *
+ * @ignore
  */
-export type RangesEntry = {
-    id: string;
-    timestamp: number;
-    label: string;
-    /** One or more ranges sharing this entry — typically one per origin. */
-    ranges: ReachableRange[];
+export type RangesEntry = BaseEntry<ReachableRange[]> & {
     /**
      * Per-entry display modules. Each entry owns a dedicated GeometriesModule (for the
      * isochrone polygons) and PlacesModule (for the origin pin(s)), so display state lives

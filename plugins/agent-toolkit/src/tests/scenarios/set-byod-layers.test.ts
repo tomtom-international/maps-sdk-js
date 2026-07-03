@@ -1,14 +1,7 @@
 import { agent, user, userSimulatorAgent } from '@langwatch/scenario';
+import { expectToolCalledInOrder, FULL_SCENARIOS, MODEL, runScenario } from '@testing/agent-tool-calling';
 import { describe, expect, it } from 'vitest';
-import {
-    agentAdapter,
-    expectToolCalledInOrder,
-    FULL_SCENARIOS,
-    getExamplePrompts,
-    MODEL,
-    runScenario,
-    runToolScenario,
-} from './helpers';
+import { agentAdapter, getExamplePrompts, runToolScenario } from './helpers';
 import { loadedByodSeed } from './seed';
 
 describe.skipIf(!MODEL)('setByodLayers scenarios', { timeout: 180_000, retry: 3 }, () => {

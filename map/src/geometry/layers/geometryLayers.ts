@@ -60,27 +60,35 @@ export const buildGeometryLayerSpecs = (
     outlineLayerId: string,
     config?: GeometriesModuleConfig,
 ): [SymbolLayerSpecWithoutSource, SymbolLayerSpecWithoutSource] => {
-    const colorConfig = config?.colorConfig;
-    const lineConfig = config?.lineConfig;
+    const fill = config?.fill;
+    const line = config?.line;
 
     const fillLayerSpec = {
         ...geometryFillSpec,
         id: fillLayerId,
         paint: {
             ...geometryFillSpec.paint,
-            ...(!isNil(colorConfig?.fillOpacity) && { 'fill-opacity': colorConfig?.fillOpacity }),
-            ...(colorConfig?.fillColor && { 'fill-color': ['get', 'color'] }),
+            ...(!isNil(fill?.opacity) && { 'fill-opacity': fill?.opacity }),
+            ...(fill?.color && { 'fill-color': ['get', 'color'] }),
         },
     } as unknown as SymbolLayerSpecWithoutSource;
 
+    // `line.layer` is a full-spec escape hatch: merge it onto the outline layer first
+    // (top-level, then `layout`/`paint` per property so base defaults survive), then let the
+    // curated named fields below win over any paint property it sets.
+    const linePassthrough = line?.layer;
+
     const outlineLayerSpec = {
         ...geometryOutlineSpec,
+        ...linePassthrough,
         id: outlineLayerId,
+        ...(linePassthrough?.layout && { layout: { ...geometryOutlineSpec.layout, ...linePassthrough.layout } }),
         paint: {
             ...geometryOutlineSpec.paint,
-            ...(!isNil(lineConfig?.lineColor) && { 'line-color': lineConfig?.lineColor }),
-            ...(!isNil(lineConfig?.lineWidth) && { 'line-width': lineConfig?.lineWidth }),
-            ...(!isNil(lineConfig?.lineOpacity) && { 'line-opacity': lineConfig?.lineOpacity }),
+            ...linePassthrough?.paint,
+            ...(!isNil(line?.color) && { 'line-color': line?.color }),
+            ...(!isNil(line?.width) && { 'line-width': line?.width }),
+            ...(!isNil(line?.opacity) && { 'line-opacity': line?.opacity }),
         },
     } as unknown as SymbolLayerSpecWithoutSource;
 

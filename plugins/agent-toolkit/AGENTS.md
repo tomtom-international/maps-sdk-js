@@ -24,7 +24,7 @@ Consumer App
 │   │     └── Map ToolSet (Zod-validated tools)
 │   │           ├── Data tools: locatePlace, reverseGeocode, discoverPlaces, setRoute, findReachableAreas, getTrafficIncidents, …
 │   │           ├── Scope-aware unified tools: analyseData, processData (per-turn scope narrows description + schema)
-│   │           ├── BYOD tools: addByodSource, recallByod, setByodLayers, updateByodDisplay
+│   │           ├── BYOD tools: addByodSource, setByodLayers, updateByodDisplay
 │   │           └── Map tools: updatePlacesDisplay, updateRoutesDisplay, updateWaypointsDisplay, flyTo, toggleTilesTrafficFlow, toggleTilesTrafficIncidents, …
 │   ├── MapAgentState (per-entry histories: places, routing, ranges, customGeometries, byod, trafficIncidents, trafficAreaAnalytics)
 │   └── Per-entry modules (lazy PlacesModule, RoutingModule, CustomGeoJSONModule, TrafficAreaAnalyticsModule, …)
@@ -142,14 +142,14 @@ Two suites, two cost profiles:
 
 | Command | Gate | Tests | Wall-clock | Use |
 |---|---|---|---|---|
-| `pnpm test:scenarios` | `SCENARIOS_FULL` unset | ~23 (canonical only) | ~40s (parallel) | CI on every PR, fast pre-push check |
-| `pnpm test:scenarios:full` | `SCENARIOS_FULL=1` | ~121 (canonical + registry fanout) | ~5–15 min | Nightly job, before touching tool descriptions/classifier prompts |
+| `pnpm test:agent-tool-calling` | `SCENARIOS_FULL` unset | ~23 (canonical only) | ~40s (parallel) | CI on every PR, fast pre-push check |
+| `pnpm test:agent-tool-calling:full` | `SCENARIOS_FULL=1` | ~121 (canonical + registry fanout) | ~5–15 min | Nightly job, before touching tool descriptions/classifier prompts |
 
 Editing `examplePrompts` in `tool-registry.ts` automatically reshapes the **full** suite's coverage on its next run — **no parallel list to maintain, but also no buffer when an examplePrompt is removed or reworded**. The sanity suite is unaffected by registry changes.
 
 Walk these checks whenever you touch a tool's registry surface:
-- changed a tool's `examplePrompts` → run `pnpm test:scenarios:full` locally; the new list is now under test in the full suite.
-- changed a tool's `description` / `classificationPrompt` → run `pnpm test:scenarios:full` for at least the affected tool and any thematically-adjacent sibling (e.g. tweaking `processData.classificationPrompt` can pull `analyseData`'s prompts off-target).
+- changed a tool's `examplePrompts` → run `pnpm test:agent-tool-calling:full` locally; the new list is now under test in the full suite.
+- changed a tool's `description` / `classificationPrompt` → run `pnpm test:agent-tool-calling:full` for at least the affected tool and any thematically-adjacent sibling (e.g. tweaking `processData.classificationPrompt` can pull `analyseData`'s prompts off-target).
 - renamed or removed a tool → rename / delete the per-tool scenario file alongside the registry edit; an orphan file calling `getExamplePrompts('<oldName>')` is a type error.
 - added a tool → create the per-tool scenario file as per the checklist above; seed it with one canonical `it()` scenario and the standard `it.skipIf(!FULL_SCENARIOS).each(REGISTRY_PROMPTS)` block.
 

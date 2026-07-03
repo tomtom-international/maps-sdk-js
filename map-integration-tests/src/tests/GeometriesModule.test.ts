@@ -135,7 +135,7 @@ test.describe('Geometry integration tests', () => {
     test('Show multiple geometries in the map with title, custom config', async ({ page }) => {
         const mapEnv = await MapTestEnv.loadPageAndMap(page, { bounds: netherlandsData.bbox });
         await initGeometries(page, {
-            colorConfig: { fillColor: '#00ccbb', fillOpacity: 0.6 },
+            fill: { color: '#00ccbb', opacity: 0.6 },
             textConfig: { textField: 'CustomText' },
         });
         const sourcesAndLayers = await getGeometriesSourceAndLayerIDs(page);
@@ -187,6 +187,72 @@ test.describe('Geometry integration tests', () => {
         expect(geometriesLayerIndex).toBeGreaterThan(0);
         lowestBuildingIndex = layers.findIndex((layer) => layer.id === mapStyleLayerIDs.lowestBuilding);
         expect(geometriesLayerIndex).toBeLessThan(lowestBuildingIndex);
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test('Granular beforeLayerConfig moves the fill below roads while the border stays above', async ({ page }) => {
+        const mapEnv = await MapTestEnv.loadPageAndMap(page, { bounds: netherlandsData.bbox });
+        await initGeometries(page);
+        const sourcesAndLayers = await getGeometriesSourceAndLayerIDs(page);
+        const layerIDs = sourcesAndLayers?.geometry?.layerIDs as string[];
+        const fillLayerId = layerIDs.find((id) => id.endsWith('_Fill')) as string;
+        const outlineLayerId = layerIDs.find((id) => id.endsWith('_Outline')) as string;
+
+        await showGeometry(page, netherlandsData);
+        await waitForMapIdle(page);
+
+        // Object form: sink only the fill beneath the road network; keep the border on top.
+        await moveBeforeLayer(page, { fill: 'lowestRoadLine', line: 'top' });
+        await waitForMapIdle(page);
+
+        const layers = await getAllLayers(page);
+        const indexOf = (id: string) => layers.findIndex((layer) => layer.id === id);
+        const fillIndex = indexOf(fillLayerId);
+        const outlineIndex = indexOf(outlineLayerId);
+        const roadLineIndex = indexOf(mapStyleLayerIDs.lowestRoadLine);
+
+        // The fill moved below the lowest road line...
+        expect(fillIndex).toBeGreaterThan(0);
+        expect(roadLineIndex).toBeGreaterThan(0);
+        expect(fillIndex).toBeLessThan(roadLineIndex);
+        // ...while the border did NOT move down with it — it stays above the roads.
+        expect(outlineIndex).toBeGreaterThan(roadLineIndex);
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test('Granular beforeLayerConfig applied from the initial module config (no moveBeforeLayer call)', async ({
+        page,
+    }) => {
+        const mapEnv = await MapTestEnv.loadPageAndMap(page, { bounds: netherlandsData.bbox });
+        // Same split as the test above, but declared up-front in the module config instead of via a
+        // later moveBeforeLayer() call — the fill target sinks below roads, the border stays on top.
+        await initGeometries(page, {
+            fill: { color: '#2A5BD7', opacity: 0.4 },
+            line: { color: '#1B3A8C', width: 3 },
+            beforeLayerConfig: { fill: 'lowestRoadLine', line: 'top' },
+        });
+        const sourcesAndLayers = await getGeometriesSourceAndLayerIDs(page);
+        const layerIDs = sourcesAndLayers?.geometry?.layerIDs as string[];
+        const fillLayerId = layerIDs.find((id) => id.endsWith('_Fill')) as string;
+        const outlineLayerId = layerIDs.find((id) => id.endsWith('_Outline')) as string;
+
+        await showGeometry(page, netherlandsData);
+        await waitForMapIdle(page);
+
+        const layers = await getAllLayers(page);
+        const indexOf = (id: string) => layers.findIndex((layer) => layer.id === id);
+        const fillIndex = indexOf(fillLayerId);
+        const outlineIndex = indexOf(outlineLayerId);
+        const roadLineIndex = indexOf(mapStyleLayerIDs.lowestRoadLine);
+
+        // The fill was positioned below the lowest road line straight from the config...
+        expect(fillIndex).toBeGreaterThan(0);
+        expect(roadLineIndex).toBeGreaterThan(0);
+        expect(fillIndex).toBeLessThan(roadLineIndex);
+        // ...while the border stayed above the roads.
+        expect(outlineIndex).toBeGreaterThan(roadLineIndex);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });

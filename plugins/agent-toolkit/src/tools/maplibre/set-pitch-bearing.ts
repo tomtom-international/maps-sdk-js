@@ -23,8 +23,9 @@ export const setPitchBearingSchema = z.object({
 });
 
 export const setPitchBearingDescription =
-    'Tilt and/or rotate the map camera. Pitch 0 = top-down view, 85 = near-horizontal (3D effect). ' +
-    'Bearing 0 = north up, 90 = east up. Provide at least one of pitch or bearing.';
+    'Tilt (pitch) and/or rotate (bearing) the map camera — the dedicated tool for a tilt, 3D/perspective, or ' +
+    'rotate-to-face view. Pitch 0 = top-down, 85 = near-horizontal (3D); bearing 0 = north up, 90 = east up. ' +
+    'Provide at least one of pitch or bearing.';
 
 /** Execute function for setPitchBearing — usable with ToolEntry format. */
 export const executeSetPitchBearing = async (params: z.infer<typeof setPitchBearingSchema>, state: ToolState) => {

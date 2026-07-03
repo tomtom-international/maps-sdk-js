@@ -21,7 +21,12 @@ export default defineConfig({
         rollupOptions: {
             // Externalize peer dependencies automatically, plus SDK packages
             plugins: [peerDepsExternal()],
-            external: ['@tomtom-org/maps-sdk/core', '@tomtom-org/maps-sdk/services', '@tomtom-org/maps-sdk/map'],
+            external: [
+                '@tomtom-org/maps-sdk/core',
+                '@tomtom-org/maps-sdk/services',
+                '@tomtom-org/maps-sdk/map',
+                /^three(\/.*)?$/,
+            ],
         },
     },
     plugins: [
