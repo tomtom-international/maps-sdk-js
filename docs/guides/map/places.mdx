@@ -1,0 +1,249 @@
+---
+title: Places Module
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.50.3"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Places Module allows you to display and interact with [places](../core/places.mdx) on your TomTom map. You can add search results, custom locations, and handle user interactions.
+
+<SDKGuideLiveCodingExample exampleDirectory="search-places-nearby-location" />
+
+## Initialization
+
+```javascript
+import { TomTomMap, PlacesModule } from '@tomtom-org/maps-sdk/map';
+
+// Initialize map
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+
+// Initialize Places module with default configuration
+const placesModule = await PlacesModule.get(map);
+```
+
+## Displaying Places
+
+Display one or multiple places on the map:
+
+```javascript
+import { search } from '@tomtom-org/maps-sdk/services';
+
+// Show single place
+await placesModule.show({
+  id: 'custom-place-1',
+  type: 'Feature',
+  geometry: { type: 'Point', coordinates: [4.9041, 52.3676] },
+  properties: {
+    type: 'POI',
+    address: { freeformAddress: 'Custom Place 1, Amsterdam' },
+    poi: { name: 'Custom Place' }
+  }
+});
+
+// Show multiple places
+await placesModule.show([place1, place2, place3]);
+
+const searchResults = await search({
+    query: 'restaurants',
+    position: [4.9041, 52.3676], // Amsterdam
+    limit: 10
+});
+
+// Show search results
+await placesModule.show(searchResults);
+
+// Remove all places from the map:
+await placesModule.clear();
+```
+
+## Custom Styling
+
+### Theme
+
+Themes control the overall look of place markers. Choose one at initialization or swap
+at runtime:
+
+- `pin` (default): traditional teardrop pin markers
+- `circle-icon`: circular markers with a centered category icon
+- `base-map`: mimics the base map style's POI layer, combining `main`, `selected`, and
+  `micro` layers so places blend in with the style's built-in POIs. To render exclusively
+  through the lightweight `POI - Micro` layer — ideal for dense results where a full POI
+  treatment would be too heavy — hide the `main` layer via
+  `layers.main.layout.visibility = 'none'`.
+
+```javascript
+// Initialize with a specific theme
+const placesModule = await PlacesModule.get(map, { theme: 'base-map' });
+
+// Or swap at runtime
+placesModule.applyTheme('circle-icon');
+
+// Micro-only rendering: combine `base-map` with a hidden `main` layer
+const placesModule = await PlacesModule.get(map, {
+    theme: 'base-map',
+    layers: { main: { layout: { visibility: 'none' } } },
+});
+```
+
+### Text Styling
+
+Customize labels for places using text configuration:
+
+```javascript
+// Make POI names red and other places blue
+const customTextConfig: PlaceTextConfig = {
+    color: ['match', ['get', 'type'], 'POI', '#D32F2F', '#1976D2']
+};
+
+// Initialize with custom text styling
+const placesModule = await PlacesModule.get(map, {
+    text: customTextConfig,
+});
+
+// Or apply after initialization
+placesModule.applyTextConfig(customTextConfig);
+```
+
+### Icon Styling
+
+Customize place icons and markers. Custom icons work under every theme: when a category
+is mapped, features in that category use the provided sprite; otherwise the theme's
+default icon (the base-map style's category/group expression or the default pin) still
+renders.
+
+```javascript
+// Per-category custom images — layered on top of any theme
+const customIconConfig: PlaceIconConfig = {
+  categoryIcons: [
+    { id: 'RESTAURANT', image: '/icons/food.png', pixelRatio: 2 },
+    { id: 'HOTEL_MOTEL', image: '/icons/hotel.png', pixelRatio: 2 }
+  ]
+};
+
+// Initialize with custom icon styling
+const placesModule = await PlacesModule.get(map, {
+  theme: 'pin',
+  icon: customIconConfig
+});
+
+// Or apply after initialization
+placesModule.applyIconConfig(customIconConfig);
+```
+
+### Extra Properties
+
+Add custom properties to places for advanced styling or filtering:
+
+```javascript
+placesModule.applyExtraFeatureProps({
+    category: (place) => place.properties.poi?.categories?.[0],
+    rating: (place) => place.properties.poi?.rating || 0,
+    isOpen: true
+});
+```
+
+## Events
+
+### User events
+
+Handle user interactions with places:
+
+```javascript
+// Click events
+placesModule.events.on('click', (feature, lngLat) => {
+    console.log('Click coordinates:', lngLat);
+    console.log('Place title:', feature.properties.title);
+    console.log('Place coordinates:', feature.geometry.coordinates);
+});
+
+// Hover events
+placesModule.events.on('hover', (feature, lngLat) => {
+    console.log('Hovering over:', feature.properties.poi?.name);
+});
+
+// Remove event listeners
+placesModule.events.off('click', handler);
+```
+
+### Programmatic Event States
+
+Manually control visual states of places:
+
+```javascript
+// Highlight first place as if clicked
+placesModule.putEventState({
+    index: 0,
+    state: 'click',
+    mode: 'put'
+});
+
+// Remove event state from specific place
+placesModule.cleanEventState({ index: 0 });
+
+// Remove all hover states
+placesModule.cleanEventStates({ states: ['hover'] });
+
+// Remove all event states
+placesModule.cleanEventStates();
+```
+
+## Multiple Module Instances
+
+You can create multiple independent instances of the Places module, each with its own configuration and data. This is useful for displaying different sets of places with distinct styling or behavior.
+
+```javascript
+// Create separate instances for different purposes
+const restaurantPlaces = await PlacesModule.get(map, {
+    theme: 'pin',
+    icon: {
+        categoryIcons: [{ id: 'RESTAURANT', image: '/icons/restaurant.png', pixelRatio: 2 }]
+    }
+});
+
+const hotelPlaces = await PlacesModule.get(map, {
+    theme: 'circle-icon',
+    icon: {
+        categoryIcons: [{ id: 'HOTEL_MOTEL', image: '/icons/hotel.png', pixelRatio: 2 }]
+    }
+});
+
+// Each instance manages its own places independently
+await restaurantPlaces.show(restaurantResults);
+await hotelPlaces.show(hotelResults);
+```
+
+## Reading Shown Data
+
+Use `getShown()` to retrieve the places currently displayed on the map. This returns the exact data previously passed to `show()`:
+
+```javascript
+const shown = placesModule.getShown();
+console.log(`Showing ${shown.places.features.length} places`);
+```
+
+## API Reference
+
+For complete documentation of all Places Module properties, methods, and types, see the **[PlacesModule API Reference](/maps-sdk-js/api-reference/classes/map.PlacesModule.html)**.
+
+## Related Guides and Examples
+
+### Services Integration
+- **[Search Services](../services/places/search.mdx)** - Find places and POIs to display using the Places Module with autocomplete, fuzzy search, and geometry search
+- **[Geocoding](../services/places/geocoding.mdx)** - Convert addresses to coordinates for precise place positioning on the map
+- **[Reverse Geocoding](../services/places/reverse-geocoding.mdx)** - Get address information for places and display them with rich location context
+
+### Related Examples
+- **[Places Customize](../../examples/places-customize)** - Advanced place styling and customization techniques
+- **[Places in Geometry](../../examples/places-in-geometry)** - Display places within specific geographic boundaries
+- **[Fuzzy Search Playground](../../examples/fuzzy-search-playground)** - Search for places and display results interactively
+- **[Geometry Search with POI Categories](../../examples/geometry-search-with-poi-categories)** - Category-filtered place discovery and visualization
+- **[Pin Interaction](../../examples/pin-interaction)** - Interactive place markers with click events and popups
+
+### Related Map Modules
+- **[POIs](./pois.mdx)** - Advanced point-of-interest filtering and categorization for places
+- **[User Interaction Events](./user-events.mdx)** - Handle user interactions with places on the map
