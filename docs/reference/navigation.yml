@@ -1,0 +1,7 @@
+group: maps-sdk-js
+isPrivate: false
+productName: TomTom Maps SDK for JavaScript
+isMenuOpened: false
+menu:
+- fileId: overview
+  title: API Reference
