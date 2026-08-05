@@ -1,0 +1,117 @@
+---
+title: Guidance
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.51.2"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The guidance parameter enables turn-by-turn navigation instructions in route responses. When specified, the calculated route includes detailed maneuvers, road names, distances, and optional phonetic pronunciations for voice guidance.
+
+## Basic Usage
+
+Request guidance instructions with default settings:
+
+```javascript
+import { calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+const route = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    guidance: {
+        type: 'coded'
+    }
+});
+```
+
+## Configuration
+
+### Instruction Format
+
+Currently only `'coded'` format is supported:
+
+```javascript
+const route = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    guidance: {
+        type: 'coded',
+    }
+});
+```
+
+### Phonetic Transcriptions
+
+Include phonetic pronunciations for street names to enable accurate voice guidance:
+
+```javascript
+// International Phonetic Alphabet (default)
+const route = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    guidance: {
+        type: 'coded',
+        phonetics: 'IPA'
+    }
+});
+
+// Language-specific phonetic representation
+const route = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    guidance: {
+        type: 'coded',
+        phonetics: 'LHP'
+    }
+});
+```
+
+**Available phonetic formats:**
+- `IPA` - International Phonetic Alphabet (default)
+- `LHP` - Language-specific phonetic representation
+
+### Road Shield References
+
+Include references to road sign images for visual display:
+
+```javascript
+const route = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    guidance: {
+        type: 'coded',
+        roadShieldReferences: 'all'
+    }
+});
+```
+
+When enabled, the response includes references to road shield images that can be fetched from the TomTom Road Shield API.
+
+## Accessing Guidance Data
+
+Route instructions are included in the response properties:
+
+```javascript
+const route = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    guidance: {
+        type: 'coded'
+    }
+});
+
+// Access guidance instructions
+const instructions = route.features[0].properties.guidance?.instructions;
+```
+
+## API Reference
+
+For complete documentation of all route guidance properties and types, see the [GuidanceParams API Reference](/maps-sdk-js/api-reference/types/services.GuidanceParams.html).
+
+## Related Guides and Examples
+
+### Related Guides
+- [Routing Quickstart](../../services/routing/quickstart.mdx) - Getting started with route calculation
+- [Route Planning Parameters](../../services/routing/parameters.mdx) - Comprehensive route planning with configuration options
+- [Route Object](../../core/routes.mdx) - Understanding route structure
+
+### Related Examples
+- [Route with guidance arrows](/maps-sdk-js/examples/route-with-guidance) - Displaying routes with turn-by-turn instructions
