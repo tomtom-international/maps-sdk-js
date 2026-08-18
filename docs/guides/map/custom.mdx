@@ -1,0 +1,293 @@
+---
+title: Custom GeoJSON Module
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.51.3"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The `CustomGeoJSONModule` lets you render arbitrary GeoJSON data on the map while keeping the lifecycle conveniences of the TomTom SDK: style-change restoration, configuration events, and per-source user interaction events (`click`, `hover`, `long-hover`, `contextmenu`). Unlike opinionated modules such as `PlacesModule` or `GeometriesModule`, this module makes no assumptions about how your data is rendered — you supply raw MapLibre layer specs (`circle`, `heatmap`, `fill`, `line`, `symbol`, …) and the module wires them to one or more managed GeoJSON sources.
+
+<SDKGuideLiveCodingExample exampleDirectory="byod-geojson-heatmap-custom-module" />
+
+## When to use this module
+
+Reach for `CustomGeoJSONModule` when:
+
+- You have **your own GeoJSON data** (BYOD) and the existing modules (`PlacesModule`, `GeometriesModule`, …) don't fit the visualization you want.
+- You need **multiple visualizations of the same or related data** — for example, a heatmap aggregation at low zoom and a symbol layer with labels at high zoom.
+- You want the SDK to **survive `setStyle` calls automatically** — sources, layers and shown data are restored after every style swap, without you wiring up your own `StyleChangeHandler`.
+- You want **SDK-grade user events** (`click`, `hover`, `long-hover`, `contextmenu`) and module lifecycle events (`config-change`, `shown-features`) on top of customer-owned layers.
+
+If you only need to drop a single source/layer onto the map and don't care about restoration or events, `map.mapLibreMap.addSource(...)` + `map.mapLibreMap.addLayer(...)` is simpler. See the [MapLibre direct access guide](./about-maplibre.mdx).
+
+## Core concepts
+
+### Sources and layers
+
+A `CustomGeoJSONModule` instance manages one or more **named sources**. Each source corresponds to a single MapLibre GeoJSON source and the layers that render it. Source names are caller-defined and used to address data via `show(name, …)`, `clear(name)`, and `events.{name}`.
+
+```typescript
+import { CustomGeoJSONModule } from '@tomtom-org/maps-sdk/map';
+
+const module = await CustomGeoJSONModule.get(map, {
+    sources: {
+        points: {
+            layers: [
+                { type: 'circle', paint: { 'circle-radius': 4, 'circle-color': '#0a3653' } },
+            ],
+        },
+    },
+});
+
+await module.show(myFeatureCollection, 'points');
+```
+
+Each layer is a MapLibre `LayerSpecification` without the `source` field — the module assigns the source for you. Both the source ID and each layer ID are optional. When omitted they are auto-generated as:
+
+- Source: `custom-geojson-${moduleIndex}-${sourceName}`
+- Layer: `${sourceID}-layer-${layerIndex}`
+
+Provide explicit IDs when you want to refer to them from outside the module, or when the layer set may change at runtime and you need a stable identity that is independent of array order.
+
+### Generic types for source payloads
+
+When you have a typed source schema, declare it as a generic on `.get` to get type-safe `show`, `clear`, `getShown`, and per-source `events`:
+
+```typescript
+import type { FeatureCollection, Point, Polygon } from 'geojson';
+
+type Sources = {
+    heatmap: FeatureCollection<Point>;
+    buildings: FeatureCollection<Polygon, { name: string }>;
+};
+
+const module = await CustomGeoJSONModule.get<Sources>(map, {
+    sources: {
+        heatmap: { layers: [{ type: 'heatmap', paint: { 'heatmap-radius': 12 } }] },
+        buildings: { layers: [{ type: 'fill', paint: { 'fill-color': '#5a5' } }] },
+    },
+});
+
+await module.show(heatmapData, 'heatmap');     // typed as FeatureCollection<Point>
+await module.show(buildingData, 'buildings');  // typed as FeatureCollection<Polygon, { name: string }>
+```
+
+Without the generic, every source defaults to `FeatureCollection`.
+
+## Feature IDs
+
+The module normalizes feature IDs at `show()` time. For every feature in the supplied collection:
+
+- If both `feature.id` and `feature.properties.id` are present and equal, the feature is passed through untouched.
+- If either is missing, the module fills the gap so that both end up with the same value (your explicit id if you supplied one on either field, otherwise the feature's index in the array).
+
+This is needed because feature event lookup depends on `feature.id`. MapLibre disables `promoteId` when a source is clustered, so without normalization clustered points share `feature.id === undefined` and every click resolves to the first one. The normalization keeps `feature.id` populated in both cluster and non-cluster mode, and keeps `properties.id` in sync so the non-cluster `promoteId: 'id'` path still maps correctly.
+
+If you want to use your own IDs, just set `feature.id` (or `feature.properties.id`) on each feature — the module preserves them.
+
+## Showing and clearing data
+
+```typescript
+// Replace the data on a single source
+await module.show(newFeatureCollection, 'points');
+
+// Read what's currently displayed (per source)
+const { points } = module.getShown();
+
+// Empty a single source
+await module.clear('points');
+
+// Empty every source
+await module.clear();
+```
+
+Layer visibility follows the data automatically: a source's layers are hidden when its feature collection is empty and revealed when it isn't. Call `setVisible(false)` to force every layer across every source off, regardless of data state.
+
+## Multiple layers per source
+
+A source can have any number of layers. This is how you combine, for example, a fill polygon with an outline, or a circle "halo" beneath a labeled icon. Order in the array reflects MapLibre draw order (later layers render on top).
+
+```typescript
+const module = await CustomGeoJSONModule.get(map, {
+    sources: {
+        markers: {
+            layers: [
+                { type: 'circle', paint: { 'circle-radius': 6, 'circle-color': '#0a3653' } },
+                {
+                    type: 'symbol',
+                    layout: {
+                        'text-field': ['get', 'name'],
+                        'text-offset': [0, 1.2],
+                        'text-anchor': 'top',
+                        'text-optional': true,
+                    },
+                    paint: { 'text-color': '#0a3653', 'text-halo-color': '#fff', 'text-halo-width': 1.5 },
+                },
+            ],
+        },
+    },
+});
+```
+
+Symbol layers that use `icon-image` need the image to exist on the map before the layer renders any data. Use `config.images` to let `CustomGeoJSONModule` manage registration and style-change restoration for you — see [Custom images](#custom-images) below.
+
+## Custom images
+
+When a symbol layer references an icon via `icon-image: 'my-icon'`, the corresponding image has to be registered on the map (`map.mapLibreMap.addImage`) **before** the layer renders any feature. MapLibre also clears all custom images on every `setStyle` call, so a naive `addImage` registration only lasts until the next style swap.
+
+`CustomGeoJSONModule.config.images` solves both problems. Images declared there are registered during module setup — before any source or layer is created — and re-registered after every style change as part of the same restoration pass that re-adds your sources and layers.
+
+```typescript
+const module = await CustomGeoJSONModule.get(map, {
+    sources: {
+        markers: {
+            layers: [
+                {
+                    type: 'symbol',
+                    layout: { 'icon-image': 'my-marker', 'text-field': ['get', 'name'] },
+                },
+            ],
+        },
+    },
+    images: {
+        'my-marker': { image: myImageBitmap, options: { pixelRatio: 2 } },
+    },
+});
+```
+
+`image` accepts any payload that MapLibre's `addImage` accepts (`HTMLImageElement`, `ImageBitmap`, `ImageData`, `StyleImageInterface`, or the `{ width, height, data }` shape). Asynchronous sources — URLs and raw SVG strings — are not handled by the module; pre-load them and pass a loaded `HTMLImageElement` (or convert to `ImageBitmap` / `ImageData`). `options` is the `Partial<StyleImageMetadata>` argument forwarded verbatim (`pixelRatio`, `sdf`, `stretchX`, `stretchY`, `content`).
+
+Existing images on the map are not overwritten — the module skips IDs for which `map.hasImage(id)` already returns `true`. This keeps multiple modules registering the same icon safe.
+
+## Clustering
+
+Forward MapLibre's cluster options verbatim on a per-source basis. Cluster features themselves are synthetic — they don't appear in the source's shown-features list, so the first argument to your click handler is `undefined` for cluster clicks. Fall back to the third argument, which always contains the rendered MapLibre feature with `cluster: true`, `cluster_id`, and `point_count`:
+
+```typescript
+module.events.incidents.on('click', (feature, _lngLat, features) => {
+    const properties = feature?.properties ?? features[0]?.properties ?? {};
+    if (properties.cluster) {
+        showCluster(properties.point_count);
+    } else {
+        showIncident(properties);
+    }
+});
+```
+
+Below is a typical cluster-aware source config:
+
+```typescript
+const module = await CustomGeoJSONModule.get(map, {
+    sources: {
+        incidents: {
+            cluster: { cluster: true, clusterRadius: 50, clusterMaxZoom: 14 },
+            layers: [
+                { type: 'circle', filter: ['has', 'point_count'],   paint: { 'circle-radius': 18 } },
+                { type: 'symbol', filter: ['!', ['has', 'point_count']], layout: { 'icon-image': 'marker' } },
+            ],
+        },
+    },
+});
+```
+
+Cluster options are applied at source creation time and cannot be changed via `applyConfig`. To change clustering, recreate the module.
+
+## Style-change restoration
+
+`CustomGeoJSONModule` extends the same `AbstractMapModule` base as the rest of the SDK's GeoJSON modules. When `map.setStyle(...)` is called:
+
+1. Images declared via `config.images` are re-registered on the map first.
+2. The module's sources and layers are re-added to the new style with the same IDs.
+3. The most recently shown data on each source is re-applied via `show`.
+4. Per-source `config-change` and `shown-features` handlers continue to fire normally.
+
+You don't need to register a `StyleChangeHandler` yourself for any of the above. Declare custom icons via `config.images` so the module also restores them — see [Custom images](#custom-images).
+
+## Events
+
+Each named source exposes its own `CombinedEvents` surface via `module.events.{name}`. Both user interaction events and module lifecycle events are available from the same handle:
+
+```typescript
+const unsubscribe = module.events.points.on('click', (feature, lngLat, features) => {
+    console.log('Clicked:', feature.properties);
+    console.log('At:', lngLat);
+});
+
+module.events.points.on('hover', (feature) => { /* ... */ });
+module.events.points.on('shown-features', (data) => {
+    console.log(`Now showing ${data.features.length} points`);
+});
+
+// config-change handlers fire from any source's events — the handler list is module-wide
+module.events.points.on('config-change', (config) => { /* ... */ });
+
+unsubscribe();           // remove a specific handler
+module.events.points.off('click');  // remove all click handlers on the points source
+```
+
+Registering through `module.events` rather than `map.mapLibreMap.on(...)` is what lets the SDK coordinate interactions when this module's layers sit alongside other modules' (Places, Routing, Geometries, …). The shared `EventsProxy` arbitrates overlapping layers, manages a single cursor state, and applies consistent hover / long-hover delays — so a click on a feature in your custom source doesn't double-fire with a Places marker underneath, and the cursor doesn't flicker between modules.
+
+For the full event API (precision modes, hover delays, layer-order semantics), see [User Events](./user-events.mdx) and [Module Events](./module-events.mdx).
+
+## Updating layers at runtime
+
+Layer specs live inside `config.sources` rather than being a constructor argument, which means `applyConfig` can swap them at runtime. The module diffs the new layer set against the previous one and:
+
+- **Updates** layers whose ID is present in both sets (paint, layout, zoom range, filter).
+- **Adds** layers whose ID is new.
+- **Removes** layers whose ID disappeared.
+
+```typescript
+module.applyConfig({
+    sources: {
+        points: {
+            layers: [
+                { id: 'points-dot',   type: 'circle', paint: { 'circle-radius': 6, 'circle-color': '#c33' } },
+                { id: 'points-label', type: 'symbol', layout: { 'text-field': ['get', 'name'] } },
+            ],
+        },
+    },
+});
+```
+
+Provide explicit `id`s on layers when you intend to mutate them this way — auto-generated IDs are position-based and shift if you reorder the array. Source-level changes (adding new source names, removing existing ones, or changing cluster options) are not supported by `applyConfig`; recreate the module instead.
+
+## Reading the underlying source and layer IDs
+
+Use `sourceAndLayerIDs` to access the resolved MapLibre IDs for each source. This is useful when you need to call MapLibre APIs directly — for example, `queryRenderedFeatures` or `setPaintProperty`:
+
+```typescript
+const ids = module.sourceAndLayerIDs;
+// {
+//   points: { sourceID: 'custom-geojson-0-points', layerIDs: ['custom-geojson-0-points-layer-0'] }
+// }
+
+const rendered = map.mapLibreMap.queryRenderedFeatures(undefined, {
+    layers: ids.points.layerIDs,
+});
+```
+
+## Multiple module instances
+
+You can create any number of `CustomGeoJSONModule` instances on the same map. Each gets a distinct `instanceIndex`, so auto-generated source and layer IDs never collide. Use multiple instances when you want to manage different data sets with independent lifecycles, configurations, or visibility states.
+
+## Related guides and examples
+
+### Related examples
+
+- **[Bring Your Own Data: GeoJSON Heatmap with Custom Module](../../examples/byod-geojson-heatmap-custom-module/)** — Heatmap + symbol layers with click/hover events, custom icons, and style switching
+- **[Bring Your Own Data: Clusters and Polygons](../../examples/byod-custom-module-mock-data/)** — 20k clustered points + random polygons, both clickable, with mock data generation
+- **[Bring Your Own Data: Yorkshire Heatmap](../../examples/byod-geojson-heatmap/)** — A simpler BYOD heatmap using raw MapLibre + `PlacesModule`
+
+### Related map modules
+
+- **[Places Module](./places.mdx)** — Render TomTom Places (or compatible point data) with iconography and themes
+- **[Geometries Module](./geometries.mdx)** — Display polygon features with TomTom-style theming
+- **[User Interaction Events](./user-events.mdx)** — Full reference for `click`, `hover`, `long-hover`, `contextmenu`
+- **[Module Events](./module-events.mdx)** — `config-change` and `shown-features` lifecycle events
+- **[Map Styles](./styles.mdx)** — `setStyle`, `StyleChangeHandler`, and style lifecycle

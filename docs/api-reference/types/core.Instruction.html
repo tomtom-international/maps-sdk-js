@@ -1,0 +1,295 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>Instruction | TomTom Maps for JavaScript</title><meta name="description" content="Documentation for TomTom Maps for JavaScript"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container"><a href="../index.html" class="title">TomTom Maps for JavaScript</a>
+<div id="tsd-toolbar-links"></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/>
+<ul role="listbox" id="tsd-search-results"></ul>
+<div id="tsd-search-status" aria-live="polite" aria-atomic="true">
+<div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header>
+<div class="container container-main">
+<div class="col-content">
+<div class="tsd-page-title">
+<ul class="tsd-breadcrumb" aria-label="Breadcrumb">
+<li><a href="../modules/core.html">core</a></li>
+<li><a href="" aria-current="page">Instruction</a></li></ul>
+<h1>Type Alias Instruction</h1></div>
+<section class="tsd-panel tsd-comment">
+<div class="tsd-comment tsd-typography"><p>A set of attributes describing a maneuver, e.g., &quot;Turn right&quot;, &quot;Keep left&quot;, &quot;Take the ferry&quot;, &quot;Take the motorway&quot;, &quot;Arrive&quot;.</p>
+</div></section>
+<div class="tsd-signature"><span class="tsd-signature-keyword">type</span> <span class="tsd-kind-type-alias">Instruction</span> <span class="tsd-signature-symbol">=</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#changeofangleindegrees">changeOfAngleInDegrees</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#countrycrossingfromcode">countryCrossingFromCode</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#countrycrossingfromname">countryCrossingFromName</a><span class="tsd-signature-symbol">?:</span> <a href="core.TextWithPhonetics.html" class="tsd-signature-type tsd-kind-type-alias">TextWithPhonetics</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#countrycrossingtocode">countryCrossingToCode</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#countrycrossingtoname">countryCrossingToName</a><span class="tsd-signature-symbol">?:</span> <a href="core.TextWithPhonetics.html" class="tsd-signature-type tsd-kind-type-alias">TextWithPhonetics</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#drivingside">drivingSide</a><span class="tsd-signature-symbol">?:</span> <a href="core.DrivingSide.html" class="tsd-signature-type tsd-kind-type-alias">DrivingSide</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#intersectionname">intersectionName</a><span class="tsd-signature-symbol">?:</span> <a href="core.TextWithPhonetics.html" class="tsd-signature-type tsd-kind-type-alias">TextWithPhonetics</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#ismaneuverobligatory">isManeuverObligatory</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#landmark">landmark</a><span class="tsd-signature-symbol">?:</span> <a href="core.Landmark.html" class="tsd-signature-type tsd-kind-type-alias">Landmark</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#maneuver">maneuver</a><span class="tsd-signature-symbol">:</span> <a href="core.Maneuver.html" class="tsd-signature-type tsd-kind-type-alias">Maneuver</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#maneuverpoint">maneuverPoint</a><span class="tsd-signature-symbol">:</span> <a href="https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/geojson/index.d.ts" class="tsd-signature-type external" target="_blank">Position</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#nextroadinfo">nextRoadInfo</a><span class="tsd-signature-symbol">:</span> <a href="core.RoadInformation.html" class="tsd-signature-type tsd-kind-type-alias">RoadInformation</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#offsetofambiguousexitfrommaneuverinmeters">offsetOfAmbiguousExitFromManeuverInMeters</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#pathpointindex">pathPointIndex</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#previousroadinfo">previousRoadInfo</a><span class="tsd-signature-symbol">:</span> <a href="core.RoadInformation.html" class="tsd-signature-type tsd-kind-type-alias">RoadInformation</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#roadshieldatlasreference">roadShieldAtlasReference</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#roadshieldreferences">roadShieldReferences</a><span class="tsd-signature-symbol">?:</span> <a href="core.RoadShieldReference.html" class="tsd-signature-type tsd-kind-type-alias">RoadShieldReference</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#roundaboutexitnumber">roundaboutExitNumber</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#routeoffsetinmeters">routeOffsetInMeters</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#routepath">routePath</a><span class="tsd-signature-symbol">:</span> <a href="core.RoutePathPoint.html" class="tsd-signature-type tsd-kind-type-alias">RoutePathPoint</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#sideroads">sideRoads</a><span class="tsd-signature-symbol">?:</span> <a href="core.SideRoad.html" class="tsd-signature-type tsd-kind-type-alias">SideRoad</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#signpost">signpost</a><span class="tsd-signature-symbol">?:</span> <a href="core.Signpost.html" class="tsd-signature-type tsd-kind-type-alias">Signpost</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#signpostroadshieldreferences">signpostRoadShieldReferences</a><span class="tsd-signature-symbol">?:</span> <a href="core.RoadShieldReference.html" class="tsd-signature-type tsd-kind-type-alias">RoadShieldReference</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#tollgatename">tollgateName</a><span class="tsd-signature-symbol">?:</span> <a href="core.TextWithPhonetics.html" class="tsd-signature-type tsd-kind-type-alias">TextWithPhonetics</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#tollpaymenttypes">tollPaymentTypes</a><span class="tsd-signature-symbol">?:</span> <a href="core.TollPaymentType.html" class="tsd-signature-type tsd-kind-type-alias">TollPaymentType</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#trafficlightoffsetinmeters">trafficLightOffsetInMeters</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div>
+<section class="tsd-panel-group tsd-index-group">
+<section class="tsd-panel tsd-index-panel">
+<details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h5 class="tsd-index-heading uppercase">Index</h5></summary>
+<div class="tsd-accordion-details">
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="properties">Properties<a href="#properties" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#changeofangleindegrees" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>change<wbr/>Of<wbr/>Angle<wbr/>In<wbr/>Degrees?</span></a>
+<a href="#countrycrossingfromcode" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>country<wbr/>Crossing<wbr/>From<wbr/>Code?</span></a>
+<a href="#countrycrossingfromname" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>country<wbr/>Crossing<wbr/>From<wbr/>Name?</span></a>
+<a href="#countrycrossingtocode" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>country<wbr/>Crossing<wbr/>To<wbr/>Code?</span></a>
+<a href="#countrycrossingtoname" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>country<wbr/>Crossing<wbr/>To<wbr/>Name?</span></a>
+<a href="#drivingside" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>driving<wbr/>Side?</span></a>
+<a href="#intersectionname" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>intersection<wbr/>Name?</span></a>
+<a href="#ismaneuverobligatory" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>is<wbr/>Maneuver<wbr/>Obligatory?</span></a>
+<a href="#landmark" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>landmark?</span></a>
+<a href="#maneuver" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>maneuver</span></a>
+<a href="#maneuverpoint" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>maneuver<wbr/>Point</span></a>
+<a href="#nextroadinfo" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>next<wbr/>Road<wbr/>Info</span></a>
+<a href="#offsetofambiguousexitfrommaneuverinmeters" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>offset<wbr/>Of<wbr/>Ambiguous<wbr/>Exit<wbr/>From<wbr/>Maneuver<wbr/>In<wbr/>Meters?</span></a>
+<a href="#pathpointindex" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>path<wbr/>Point<wbr/>Index</span></a>
+<a href="#previousroadinfo" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>previous<wbr/>Road<wbr/>Info</span></a>
+<a href="#roadshieldatlasreference" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>road<wbr/>Shield<wbr/>Atlas<wbr/>Reference?</span></a>
+<a href="#roadshieldreferences" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>road<wbr/>Shield<wbr/>References?</span></a>
+<a href="#roundaboutexitnumber" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>roundabout<wbr/>Exit<wbr/>Number?</span></a>
+<a href="#routeoffsetinmeters" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>route<wbr/>Offset<wbr/>In<wbr/>Meters</span></a>
+<a href="#routepath" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>route<wbr/>Path</span></a>
+<a href="#sideroads" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>side<wbr/>Roads?</span></a>
+<a href="#signpost" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>signpost?</span></a>
+<a href="#signpostroadshieldreferences" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>signpost<wbr/>Road<wbr/>Shield<wbr/>References?</span></a>
+<a href="#tollgatename" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>tollgate<wbr/>Name?</span></a>
+<a href="#tollpaymenttypes" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>toll<wbr/>Payment<wbr/>Types?</span></a>
+<a href="#trafficlightoffsetinmeters" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>traffic<wbr/>Light<wbr/>Offset<wbr/>In<wbr/>Meters?</span></a>
+</div></section></div></details></section></section>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="properties-1">Properties<a href="#properties-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="changeofangleindegrees"><code class="tsd-tag">Optional</code><span>change<wbr/>Of<wbr/>Angle<wbr/>In<wbr/>Degrees</span><a href="#changeofangleindegrees" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">changeOfAngleInDegrees</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span></div>
+<div class="tsd-comment tsd-typography"><p>Gives the total change of angle (in degrees) from the entry until the exit of the maneuver, in the range [-180,180). For example, -90 means &quot;forks off to the left in a perpendicular angle&quot;.
+At complex junctions, the angle is relative to the entry road.
+Included if the maneuver is a turn or roundabout maneuver, i.e., maneuver is one of the following:
+STRAIGHT
+SLIGHT_RIGHT
+TURN_RIGHT
+SHARP_RIGHT
+SLIGHT_LEFT
+TURN_LEFT
+SHARP_LEFT
+MAKE_UTURN
+ROUNDABOUT_STRAIGHT
+ROUNDABOUT_SLIGHT_RIGHT
+ROUNDABOUT_RIGHT
+ROUNDABOUT_SHARP_RIGHT
+ROUNDABOUT_SLIGHT_LEFT
+ROUNDABOUT_LEFT
+ROUNDABOUT_SHARP_LEFT
+ROUNDABOUT_BACK</p>
+</div></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="countrycrossingfromcode"><code class="tsd-tag">Optional</code><span>country<wbr/>Crossing<wbr/>From<wbr/>Code</span><a href="#countrycrossingfromcode" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">countryCrossingFromCode</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
+<div class="tsd-comment tsd-typography"><p>The code (ISO 3166-1 alpha-3) of the country the border crossing occurs from.
+Included if the maneuver is a border crossing maneuver, i.e., maneuver is one of:
+CROSS_BORDER
+TAKE_SHIP_FERRY
+TAKE_CAR_TRAIN
+LEAVE_SHIP_FERRY
+LEAVE_CAR_TRAIN</p>
+</div></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="countrycrossingfromname"><code class="tsd-tag">Optional</code><span>country<wbr/>Crossing<wbr/>From<wbr/>Name</span><a href="#countrycrossingfromname" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">countryCrossingFromName</span><span class="tsd-signature-symbol">?:</span> <a href="core.TextWithPhonetics.html" class="tsd-signature-type tsd-kind-type-alias">TextWithPhonetics</a></div>
+<div class="tsd-comment tsd-typography"><p>The name of the country the border crossing occurs from.
+Included if the maneuver is a border crossing maneuver, or leads to a border crossing, i.e., maneuver is one of:
+CROSS_BORDER
+TAKE_SHIP_FERRY
+TAKE_CAR_TRAIN
+LEAVE_SHIP_FERRY
+LEAVE_CAR_TRAIN</p>
+</div></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="countrycrossingtocode"><code class="tsd-tag">Optional</code><span>country<wbr/>Crossing<wbr/>To<wbr/>Code</span><a href="#countrycrossingtocode" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">countryCrossingToCode</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
+<div class="tsd-comment tsd-typography"><p>The code (ISO 3166-1 alpha-3) of the country the border crossing occurs to.
+Included if the maneuver is a border crossing maneuver, i.e., maneuver is one of:
+CROSS_BORDER
+TAKE_SHIP_FERRY
+TAKE_CAR_TRAIN
+LEAVE_SHIP_FERRY
+LEAVE_CAR_TRAIN</p>
+</div></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="countrycrossingtoname"><code class="tsd-tag">Optional</code><span>country<wbr/>Crossing<wbr/>To<wbr/>Name</span><a href="#countrycrossingtoname" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">countryCrossingToName</span><span class="tsd-signature-symbol">?:</span> <a href="core.TextWithPhonetics.html" class="tsd-signature-type tsd-kind-type-alias">TextWithPhonetics</a></div>
+<div class="tsd-comment tsd-typography"><p>The name of the country the border crossing occurs to.
+Included if the maneuver is a border crossing maneuver, or leads to a border crossing, i.e., maneuver is one of:
+CROSS_BORDER
+TAKE_SHIP_FERRY
+TAKE_CAR_TRAIN
+LEAVE_SHIP_FERRY
+LEAVE_CAR_TRAIN</p>
+</div></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="drivingside"><code class="tsd-tag">Optional</code><span>driving<wbr/>Side</span><a href="#drivingside" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">drivingSide</span><span class="tsd-signature-symbol">?:</span> <a href="core.DrivingSide.html" class="tsd-signature-type tsd-kind-type-alias">DrivingSide</a></div>
+<div class="tsd-comment tsd-typography"><p>Indicates left-hand vs. right-hand side driving at the point of the maneuver.</p>
+</div></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="intersectionname"><code class="tsd-tag">Optional</code><span>intersection<wbr/>Name</span><a href="#intersectionname" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">intersectionName</span><span class="tsd-signature-symbol">?:</span> <a href="core.TextWithPhonetics.html" class="tsd-signature-type tsd-kind-type-alias">TextWithPhonetics</a></div>
+<div class="tsd-comment tsd-typography"><p>Name of the intersection at which the maneuver must be performed.
+Included if intersection name is available for this maneuver.</p>
+</div></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="ismaneuverobligatory"><code class="tsd-tag">Optional</code><span>is<wbr/>Maneuver<wbr/>Obligatory</span><a href="#ismaneuverobligatory" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">isManeuverObligatory</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
+<div class="tsd-comment tsd-typography"><p>Marks this maneuver as obligatory. For example, when a driver reaches a T-junction, where one option is drivable, while the other is not.
+Included if the maneuver is a turn maneuver, i.e., maneuver is one of the following:
+SLIGHT_RIGHT
+TURN_RIGHT
+SHARP_RIGHT
+SLIGHT_LEFT
+TURN_LEFT
+SHARP_LEFT
+MAKE_UTURN</p>
+</div></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="landmark"><code class="tsd-tag">Optional</code><span>landmark</span><a href="#landmark" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">landmark</span><span class="tsd-signature-symbol">?:</span> <a href="core.Landmark.html" class="tsd-signature-type tsd-kind-type-alias">Landmark</a></div>
+<div class="tsd-comment tsd-typography"><p>Included if instruction has a landmark.</p>
+</div></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="maneuver"><span>maneuver</span><a href="#maneuver" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">maneuver</span><span class="tsd-signature-symbol">:</span> <a href="core.Maneuver.html" class="tsd-signature-type tsd-kind-type-alias">Maneuver</a></div>
+<div class="tsd-comment tsd-typography"><p>A code identifying the maneuver (e.g., &quot;Turn right&quot;).</p>
+</div></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="maneuverpoint"><span>maneuver<wbr/>Point</span><a href="#maneuverpoint" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">maneuverPoint</span><span class="tsd-signature-symbol">:</span> <a href="https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/geojson/index.d.ts" class="tsd-signature-type external" target="_blank">Position</a></div>
+<div class="tsd-comment tsd-typography"><p>Location of the maneuver.</p>
+</div></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="nextroadinfo"><span>next<wbr/>Road<wbr/>Info</span><a href="#nextroadinfo" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">nextRoadInfo</span><span class="tsd-signature-symbol">:</span> <a href="core.RoadInformation.html" class="tsd-signature-type tsd-kind-type-alias">RoadInformation</a></div>
+<div class="tsd-comment tsd-typography"><p>Provides information about the road we are heading to (past the maneuver).
+The source of this information is either the road past the maneuver or the signpost at the maneuver if such exists.</p>
+</div></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="offsetofambiguousexitfrommaneuverinmeters"><code class="tsd-tag">Optional</code><span>offset<wbr/>Of<wbr/>Ambiguous<wbr/>Exit<wbr/>From<wbr/>Maneuver<wbr/>In<wbr/>Meters</span><a href="#offsetofambiguousexitfrommaneuverinmeters" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">offsetOfAmbiguousExitFromManeuverInMeters</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span></div>
+<div class="tsd-comment tsd-typography"><p>Included if current maneuver is an exit, and there is another exit before the current maneuver within reasonable distance, which may cause ambiguity.
+In such case there might be a need to resolve the ambiguity on client side, and compose an instruction like &quot;Take the 2nd exit&quot;.
+Represents the offset (on route) of the ambiguous exit from the maneuver point (represented by maneuverPoint), in meters.
+The offset is absolute, i.e., it is a positive integer despite the ambiguous exit being located before the maneuver on the route.
+Applicable for maneuvers where maneuver is one of the following values:
+EXIT_ROUNDABOUT
+EXIT_MOTORWAY_LEFT
+EXIT_MOTORWAY_RIGHT
+SWITCH_MOTORWAY_LEFT
+SWITCH_MOTORWAY_RIGHT</p>
+</div></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="pathpointindex"><span>path<wbr/>Point<wbr/>Index</span><a href="#pathpointindex" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">pathPointIndex</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+<div class="tsd-comment tsd-typography"><p>The index of the point on the route path where the maneuver takes place.</p>
+<ul>
+<li>maneuverPoint is expected to be equal to the path point at this index.</li>
+</ul>
+</div></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="previousroadinfo"><span>previous<wbr/>Road<wbr/>Info</span><a href="#previousroadinfo" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">previousRoadInfo</span><span class="tsd-signature-symbol">:</span> <a href="core.RoadInformation.html" class="tsd-signature-type tsd-kind-type-alias">RoadInformation</a></div>
+<div class="tsd-comment tsd-typography"><p>Provides information about the road in the link before the maneuver.</p>
+</div></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="roadshieldatlasreference"><code class="tsd-tag">Optional</code><span>road<wbr/>Shield<wbr/>Atlas<wbr/>Reference</span><a href="#roadshieldatlasreference" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">roadShieldAtlasReference</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
+<div class="tsd-comment tsd-typography"><p>The base URL of the Road Shields service to fetch the road shield atlas and metadata resources.
+Currently available resources are:
+sprite.png
+sprite.json
+We recommend to cache the sprite atlas (sprite.png) and metadata (sprite.json) as it changes infrequently and is large compared to a typical road shield description.</p>
+</div></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="roadshieldreferences"><code class="tsd-tag">Optional</code><span>road<wbr/>Shield<wbr/>References</span><a href="#roadshieldreferences" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">roadShieldReferences</span><span class="tsd-signature-symbol">?:</span> <a href="core.RoadShieldReference.html" class="tsd-signature-type tsd-kind-type-alias">RoadShieldReference</a><span class="tsd-signature-symbol">[]</span></div>
+<div class="tsd-comment tsd-typography"><p>List of road shield references to be shown for the instruction.</p>
+</div></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="roundaboutexitnumber"><code class="tsd-tag">Optional</code><span>roundabout<wbr/>Exit<wbr/>Number</span><a href="#roundaboutexitnumber" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">roundaboutExitNumber</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span></div>
+<div class="tsd-comment tsd-typography"><p>The ordinal number of the exit to take at a roundabout, e.g., &quot;take the first/second exit&quot;.
+Included if the maneuver is a roundabout maneuver, i.e., maneuver is one of the following:
+ROUNDABOUT_STRAIGHT
+ROUNDABOUT_SLIGHT_RIGHT
+ROUNDABOUT_RIGHT
+ROUNDABOUT_SHARP_RIGHT
+ROUNDABOUT_SLIGHT_LEFT
+ROUNDABOUT_LEFT
+ROUNDABOUT_SHARP_LEFT
+ROUNDABOUT_BACK</p>
+</div></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="routeoffsetinmeters"><span>route<wbr/>Offset<wbr/>In<wbr/>Meters</span><a href="#routeoffsetinmeters" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">routeOffsetInMeters</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+<div class="tsd-comment tsd-typography"><p>The distance from the start of the route to the point of the instruction.</p>
+</div></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="routepath"><span>route<wbr/>Path</span><a href="#routepath" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">routePath</span><span class="tsd-signature-symbol">:</span> <a href="core.RoutePathPoint.html" class="tsd-signature-type tsd-kind-type-alias">RoutePathPoint</a><span class="tsd-signature-symbol">[]</span></div>
+<div class="tsd-comment tsd-typography"><p>A maneuver can occupy more than one point. For such a maneuver, this field will contain a sequence of all the points it occupies on the map.
+For maneuvers that only occupy a single point, this field will contain a single array item, with a point value equal to maneuverPoint.</p>
+</div></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="sideroads"><code class="tsd-tag">Optional</code><span>side<wbr/>Roads</span><a href="#sideroads" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">sideRoads</span><span class="tsd-signature-symbol">?:</span> <a href="core.SideRoad.html" class="tsd-signature-type tsd-kind-type-alias">SideRoad</a><span class="tsd-signature-symbol">[]</span></div>
+<div class="tsd-comment tsd-typography"><p>List of roads connected to the route but not part of it, right before the maneuver.
+These are roads which the driver can accidentally take based on the instruction without considering the dynamic restriction of the route like time or vehicle profile dependent restriction.
+Dual-carriageway roads might be represented as a single or several side roads, depending on how the driver might perceive them.
+The list will be empty if no road is crossing the route before the maneuver.
+This information can be used to allow a richer graphical presentation of the maneuver and visualize connected roads preceding it in proximity.
+The list is ordered in ascending order of offset on route.
+Included if there are side roads within a reasonable distance before the maneuver.</p>
+</div></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="signpost"><code class="tsd-tag">Optional</code><span>signpost</span><a href="#signpost" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">signpost</span><span class="tsd-signature-symbol">?:</span> <a href="core.Signpost.html" class="tsd-signature-type tsd-kind-type-alias">Signpost</a></div>
+<div class="tsd-comment tsd-typography"><p>Included if a signpost is available for this maneuver.
+Provides the information displayed in the signpost indicating the direction on route.</p>
+</div></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="signpostroadshieldreferences"><code class="tsd-tag">Optional</code><span>signpost<wbr/>Road<wbr/>Shield<wbr/>References</span><a href="#signpostroadshieldreferences" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">signpostRoadShieldReferences</span><span class="tsd-signature-symbol">?:</span> <a href="core.RoadShieldReference.html" class="tsd-signature-type tsd-kind-type-alias">RoadShieldReference</a><span class="tsd-signature-symbol">[]</span></div>
+<div class="tsd-comment tsd-typography"><p>List of road shield references to be shown for the signpost.</p>
+</div></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="tollgatename"><code class="tsd-tag">Optional</code><span>tollgate<wbr/>Name</span><a href="#tollgatename" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">tollgateName</span><span class="tsd-signature-symbol">?:</span> <a href="core.TextWithPhonetics.html" class="tsd-signature-type tsd-kind-type-alias">TextWithPhonetics</a></div>
+<div class="tsd-comment tsd-typography"><p>The name of the tollgate, if available.
+Included if the maneuver is a tollgate maneuver, i.e., maneuver is TOLLGATE.</p>
+</div></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="tollpaymenttypes"><code class="tsd-tag">Optional</code><span>toll<wbr/>Payment<wbr/>Types</span><a href="#tollpaymenttypes" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">tollPaymentTypes</span><span class="tsd-signature-symbol">?:</span> <a href="core.TollPaymentType.html" class="tsd-signature-type tsd-kind-type-alias">TollPaymentType</a><span class="tsd-signature-symbol">[]</span></div>
+<div class="tsd-comment tsd-typography"><p>Included if the maneuver is a tollgate maneuver, i.e., maneuver is TOLLGATE.
+Array containing one or more available toll payment options for this tollgate.</p>
+</div></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="trafficlightoffsetinmeters"><code class="tsd-tag">Optional</code><span>traffic<wbr/>Light<wbr/>Offset<wbr/>In<wbr/>Meters</span><a href="#trafficlightoffsetinmeters" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">trafficLightOffsetInMeters</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span></div>
+<div class="tsd-comment tsd-typography"><p>Included if the landmark is AT_TRAFFIC_LIGHT, and a maneuver takes place at the second traffic light (out of two consequent traffic lights).
+In such case this attribute represents the distance on the route (in meters) between those traffic lights.</p>
+</div></section></section></details></div>
+<div class="col-sidebar">
+<div class="page-menu">
+<div class="tsd-navigation settings">
+<details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div>
+<div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
+<details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>On This Page</h3></summary>
+<div class="tsd-accordion-details">
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Properties</summary>
+<div><a href="#changeofangleindegrees"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>change<wbr/>Of<wbr/>Angle<wbr/>In<wbr/>Degrees</span></a><a href="#countrycrossingfromcode"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>country<wbr/>Crossing<wbr/>From<wbr/>Code</span></a><a href="#countrycrossingfromname"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>country<wbr/>Crossing<wbr/>From<wbr/>Name</span></a><a href="#countrycrossingtocode"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>country<wbr/>Crossing<wbr/>To<wbr/>Code</span></a><a href="#countrycrossingtoname"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>country<wbr/>Crossing<wbr/>To<wbr/>Name</span></a><a href="#drivingside"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>driving<wbr/>Side</span></a><a href="#intersectionname"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>intersection<wbr/>Name</span></a><a href="#ismaneuverobligatory"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>is<wbr/>Maneuver<wbr/>Obligatory</span></a><a href="#landmark"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>landmark</span></a><a href="#maneuver"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>maneuver</span></a><a href="#maneuverpoint"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>maneuver<wbr/>Point</span></a><a href="#nextroadinfo"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>next<wbr/>Road<wbr/>Info</span></a><a href="#offsetofambiguousexitfrommaneuverinmeters"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>offset<wbr/>Of<wbr/>Ambiguous<wbr/>Exit<wbr/>From<wbr/>Maneuver<wbr/>In<wbr/>Meters</span></a><a href="#pathpointindex"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>path<wbr/>Point<wbr/>Index</span></a><a href="#previousroadinfo"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>previous<wbr/>Road<wbr/>Info</span></a><a href="#roadshieldatlasreference"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>road<wbr/>Shield<wbr/>Atlas<wbr/>Reference</span></a><a href="#roadshieldreferences"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>road<wbr/>Shield<wbr/>References</span></a><a href="#roundaboutexitnumber"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>roundabout<wbr/>Exit<wbr/>Number</span></a><a href="#routeoffsetinmeters"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>route<wbr/>Offset<wbr/>In<wbr/>Meters</span></a><a href="#routepath"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>route<wbr/>Path</span></a><a href="#sideroads"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>side<wbr/>Roads</span></a><a href="#signpost"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>signpost</span></a><a href="#signpostroadshieldreferences"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>signpost<wbr/>Road<wbr/>Shield<wbr/>References</span></a><a href="#tollgatename"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>tollgate<wbr/>Name</span></a><a href="#tollpaymenttypes"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>toll<wbr/>Payment<wbr/>Types</span></a><a href="#trafficlightoffsetinmeters"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>traffic<wbr/>Light<wbr/>Offset<wbr/>In<wbr/>Meters</span></a></div></details></div></details></div>
+<div class="site-menu">
+<nav class="tsd-navigation"><a href="../index.html">TomTom Maps for JavaScript</a>
+<ul class="tsd-small-nested-navigation" id="tsd-nav-container">
+<li>Loading...</li></ul></nav></div></div></div><footer>
+<p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer>
+<div class="overlay"></div></body></html>

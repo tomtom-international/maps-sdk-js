@@ -1,0 +1,89 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>customizeService | TomTom Maps for JavaScript</title><meta name="description" content="Documentation for TomTom Maps for JavaScript"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container"><a href="../index.html" class="title">TomTom Maps for JavaScript</a>
+<div id="tsd-toolbar-links"></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/>
+<ul role="listbox" id="tsd-search-results"></ul>
+<div id="tsd-search-status" aria-live="polite" aria-atomic="true">
+<div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header>
+<div class="container container-main">
+<div class="col-content">
+<div class="tsd-page-title">
+<ul class="tsd-breadcrumb" aria-label="Breadcrumb">
+<li><a href="../modules/services.html">services</a></li>
+<li><a href="" aria-current="page">customizeService</a></li></ul>
+<h1>Variable customizeService<code class="tsd-tag">Const</code></h1></div>
+<div class="tsd-signature"><span class="tsd-kind-variable">customizeService</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span><br/>    <span class="tsd-kind-property">alongRouteSearch</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-keyword">typeof</span> <span class="tsd-signature-type">alongRouteSearchCustomize</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">autocompleteSearch</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-keyword">typeof</span> <span class="tsd-signature-type">autocompleteCustomize</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">calculateRoute</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-keyword">typeof</span> <span class="tsd-signature-type">routingCustomize</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">evChargingStationsAvailability</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-keyword">typeof</span> <span class="tsd-signature-type">evChargingStationsAvailabilityCustomize</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">geocode</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-keyword">typeof</span> <span class="tsd-signature-type">geocodeCustomize</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">geometryData</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-keyword">typeof</span> <span class="tsd-signature-type">geometryDataCustomize</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">geometrySearch</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-keyword">typeof</span> <span class="tsd-signature-type">geometrySearchCustomize</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">placeByID</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-keyword">typeof</span> <span class="tsd-signature-type">placeByIdCustomize</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">reachableRange</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-keyword">typeof</span> <span class="tsd-signature-type">reachableRangeCustomize</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">reverseGeocode</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-keyword">typeof</span> <span class="tsd-signature-type">revgeoCustomize</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">trafficAreaAnalytics</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-keyword">typeof</span> <span class="tsd-signature-type">trafficAreaAnalyticsCustomize</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">trafficIncidentDetails</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-keyword">typeof</span> <span class="tsd-signature-type">trafficIncidentDetailsCustomize</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol"> = ...</span></div>
+<div class="tsd-comment tsd-typography"><p>Access to service implementation components for advanced customization.</p>
+<p>This object provides low-level access to the internal components of each service,
+allowing developers to customize request building, response parsing, and other
+aspects of service behavior. This is useful for advanced use cases like:</p>
+<ul>
+<li>Custom request/response transformations</li>
+<li>Integration with custom API gateways or proxies</li>
+<li>Adding custom validation or error handling</li>
+<li>Implementing request/response logging or monitoring</li>
+<li>Adapting to custom API endpoints or versions</li>
+</ul>
+</div>
+<div class="tsd-type-declaration">
+<h4>Type Declaration</h4>
+<ul class="tsd-parameters">
+<li class="tsd-parameter">
+<h5 id="alongroutesearch"><span class="tsd-kind-property">alongRouteSearch</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-keyword">typeof</span> <span class="tsd-signature-type">alongRouteSearchCustomize</span></h5></li>
+<li class="tsd-parameter">
+<h5 id="autocompletesearch"><span class="tsd-kind-property">autocompleteSearch</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-keyword">typeof</span> <span class="tsd-signature-type">autocompleteCustomize</span></h5></li>
+<li class="tsd-parameter">
+<h5 id="calculateroute"><span class="tsd-kind-property">calculateRoute</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-keyword">typeof</span> <span class="tsd-signature-type">routingCustomize</span></h5></li>
+<li class="tsd-parameter">
+<h5 id="evchargingstationsavailability"><span class="tsd-kind-property">evChargingStationsAvailability</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-keyword">typeof</span> <span class="tsd-signature-type">evChargingStationsAvailabilityCustomize</span></h5></li>
+<li class="tsd-parameter">
+<h5 id="geocode"><span class="tsd-kind-property">geocode</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-keyword">typeof</span> <span class="tsd-signature-type">geocodeCustomize</span></h5></li>
+<li class="tsd-parameter">
+<h5 id="geometrydata"><span class="tsd-kind-property">geometryData</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-keyword">typeof</span> <span class="tsd-signature-type">geometryDataCustomize</span></h5></li>
+<li class="tsd-parameter">
+<h5 id="geometrysearch"><span class="tsd-kind-property">geometrySearch</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-keyword">typeof</span> <span class="tsd-signature-type">geometrySearchCustomize</span></h5></li>
+<li class="tsd-parameter">
+<h5 id="placebyid"><span class="tsd-kind-property">placeByID</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-keyword">typeof</span> <span class="tsd-signature-type">placeByIdCustomize</span></h5></li>
+<li class="tsd-parameter">
+<h5 id="reachablerange"><span class="tsd-kind-property">reachableRange</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-keyword">typeof</span> <span class="tsd-signature-type">reachableRangeCustomize</span></h5></li>
+<li class="tsd-parameter">
+<h5 id="reversegeocode"><span class="tsd-kind-property">reverseGeocode</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-keyword">typeof</span> <span class="tsd-signature-type">revgeoCustomize</span></h5></li>
+<li class="tsd-parameter">
+<h5 id="trafficareaanalytics"><span class="tsd-kind-property">trafficAreaAnalytics</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-keyword">typeof</span> <span class="tsd-signature-type">trafficAreaAnalyticsCustomize</span></h5></li>
+<li class="tsd-parameter">
+<h5 id="trafficincidentdetails"><span class="tsd-kind-property">trafficIncidentDetails</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-keyword">typeof</span> <span class="tsd-signature-type">trafficIncidentDetailsCustomize</span></h5></li></ul></div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks">Remarks<a href="#remarks" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Most developers won't need to use this directly. The standard service functions
+(like <code>geocode</code>, <code>search</code>, <code>calculateRoute</code>) are sufficient for typical use cases.
+Only use customization when you need to modify the internal service behavior.</p>
+<p>Each service exposes:</p>
+<ul>
+<li>Request builders: Functions that construct API requests</li>
+<li>Response parsers: Functions that transform API responses</li>
+<li>Templates: Configuration objects defining service behavior</li>
+<li>Validation schemas: Input parameter validation rules</li>
+</ul>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example">Example<a href="#example" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-0">// Access request builder for custom processing</span><br/><span class="hl-10">import</span><span class="hl-2"> { </span><span class="hl-1">customizeService</span><span class="hl-2"> } </span><span class="hl-10">from</span><span class="hl-2"> </span><span class="hl-4">&#39;@tomtom-international/web-sdk-services&#39;</span><span class="hl-2">;</span><br/><br/><span class="hl-5">const</span><span class="hl-2"> { </span><span class="hl-6">buildRequest</span><span class="hl-2"> } = </span><span class="hl-1">customizeService</span><span class="hl-2">.</span><span class="hl-1">geocode</span><span class="hl-2">;</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">request</span><span class="hl-2"> = </span><span class="hl-3">buildRequest</span><span class="hl-2">({</span><br/><span class="hl-2">  </span><span class="hl-1">key:</span><span class="hl-2"> </span><span class="hl-4">&#39;your-api-key&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-1">query:</span><span class="hl-2"> </span><span class="hl-4">&#39;Amsterdam&#39;</span><br/><span class="hl-2">});</span><br/><br/><span class="hl-0">// Access response parser for custom handling</span><br/><span class="hl-5">const</span><span class="hl-2"> { </span><span class="hl-6">parseResponse</span><span class="hl-2"> } = </span><span class="hl-1">customizeService</span><span class="hl-2">.</span><span class="hl-1">geocode</span><span class="hl-2">;</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">rawApiResponse</span><span class="hl-2"> = </span><span class="hl-10">await</span><span class="hl-2"> </span><span class="hl-3">fetch</span><span class="hl-2">(</span><span class="hl-1">request</span><span class="hl-2">.</span><span class="hl-1">url</span><span class="hl-2">);</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">parsedData</span><span class="hl-2"> = </span><span class="hl-3">parseResponse</span><span class="hl-2">(</span><span class="hl-10">await</span><span class="hl-2"> </span><span class="hl-1">rawApiResponse</span><span class="hl-2">.</span><span class="hl-3">json</span><span class="hl-2">());</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></div>
+<div class="col-sidebar">
+<div class="page-menu">
+<div class="tsd-navigation settings">
+<details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div>
+<div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div></div>
+<div class="site-menu">
+<nav class="tsd-navigation"><a href="../index.html">TomTom Maps for JavaScript</a>
+<ul class="tsd-small-nested-navigation" id="tsd-nav-container">
+<li>Loading...</li></ul></nav></div></div></div><footer>
+<p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer>
+<div class="overlay"></div></body></html>
