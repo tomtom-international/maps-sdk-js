@@ -1,0 +1,290 @@
+---
+title: Routing module
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.51.5"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Routing Module enables displaying calculated routes and waypoints on maps with comprehensive functionality for visualizing navigation routes, alternative routes, turn-by-turn guidance, traffic incidents that occur along the calculated path, and route-related interactions.
+
+<SDKGuideLiveCodingExample exampleDirectory="route" />
+
+## Initialization
+
+```javascript
+import { TomTomMap, RoutingModule } from '@tomtom-org/maps-sdk/map';
+
+// Initialize map
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+
+// Initialize Routes module with default configuration
+const routingModule = await RoutingModule.get(map);
+
+// Or with custom configuration
+const routingModule = await RoutingModule.get(map, {
+    displayUnits: {
+        distance: { type: 'metric' }
+    },
+    waypointsSource: {
+        entryPoints: 'main-when-available'
+    }
+});
+```
+
+## Displaying routes
+
+Display calculated routes on the map:
+
+```javascript
+import { calculateRoute, geocodeOne } from '@tomtom-org/maps-sdk/services';
+
+// Calculate a route with coordinates
+const route = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676], // Amsterdam
+        [4.4777, 51.9244]  // Rotterdam
+    ],
+});
+
+// Or calculate a route with geocoded locations
+const waypoints = await Promise.all([
+    geocodeOne('Amsterdam, Netherlands'),
+    geocodeOne('Rotterdam, Netherlands')
+]);
+
+const routes = await calculateRoute({ locations: waypoints });
+
+// Show the route
+await routingModule.showRoutes(route);
+```
+
+> **Note:** `showRoutes` draws the route line but does **not** show waypoint markers (start, stop, destination pins). Call `showWaypoints` separately to display them — see [Waypoints](#waypoints) below.
+
+## Displaying guidance on map
+
+Request guidance instructions when calculating a route to show them visually:
+
+```javascript
+import { calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+const route = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676], // Amsterdam
+        [4.4777, 51.9244]  // Rotterdam
+    ],
+    guidance: {
+        type: 'coded'
+    }
+});
+
+// Display route with guidance on map
+await routingModule.showRoutes(route);
+```
+
+## Route selection
+
+Change which route appears as selected when displaying multiple routes:
+
+```javascript
+import { calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+// Calculate route with alternatives
+const routes = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676], // Amsterdam
+        [4.4777, 51.9244]  // Rotterdam
+    ],
+    maxAlternatives: 2,
+});
+
+// Show the routes (first route selected by default)
+await routingModule.showRoutes(routes);
+
+// Show the routes with specific selection
+await routingModule.showRoutes(routes, { selectedIndex: 1 });
+
+// Switch to second route
+await routingModule.selectRoute(1);
+
+// Switch back to first route
+await routingModule.selectRoute(0);
+```
+
+## Waypoints
+
+`showRoutes` only draws route lines — waypoint markers (start, stop, and destination pins) are **not** included. You must call `showWaypoints` separately:
+
+```javascript
+const locations = [
+    [4.9041, 52.3676], // Amsterdam
+    [4.4777, 51.9244]  // Rotterdam
+];
+
+const route = await calculateRoute({ locations });
+
+// Draw the route line
+await routingModule.showRoutes(route);
+
+// Waypoint markers must be shown separately
+await routingModule.showWaypoints(locations);
+
+// Clear waypoints independently from routes
+await routingModule.clearWaypoints();
+```
+
+For more control over marker appearance and behavior (custom icons, popups, click handlers), use the [Places Module](../map/places.mdx) to render waypoints as place markers instead.
+
+## Custom styling
+
+Customize route appearance through layer configuration:
+
+```javascript
+import { RoutingModule } from '@tomtom-org/maps-sdk/map';
+
+// Override paint properties on specific route layers.
+// Each entry under `layers` is keyed by layer group (mainLines, sections, …),
+// and each layer accepts partial `paint`/`layout` overrides that are merged
+// onto the SDK defaults.
+const routingModule = await RoutingModule.get(map, {
+    layers: {
+        mainLines: {
+            routeLine: {
+                paint: {
+                    'line-color': '#FF0000', // Red main route line
+                    'line-width': 6
+                }
+            }
+        }
+    }
+});
+```
+
+## Events
+
+Handle user interactions with routes and waypoints:
+
+```javascript
+// Route click events
+routingModule.events.user.mainLines.on('click', (feature, lngLat) => {
+    console.log('Route clicked:', feature.properties);
+    console.log('Coordinates:', lngLat);
+});
+
+// Waypoint events
+routingModule.events.user.waypoints.on('click', (feature, lngLat) => {
+    console.log('Waypoint:', feature.properties);
+});
+
+// Traffic incident events
+routingModule.events.user.incidents.on('hover', (feature, lngLat) => {
+    console.log('Traffic delay:', feature.features.map(feature => feature.properties.delayInSeconds));
+});
+
+// Turn-by-turn instruction events
+routingModule.events.user.instructionLines.on('click', (feature, lngLat) => {
+    console.log('Instruction properties:', feature.properties);
+});
+
+// Summary bubble events
+routingModule.events.user.summaryBubbles.on('click', (feature, lngLat) => {
+    console.log('Route summary:', feature.properties);
+});
+
+// Route section events
+routingModule.events.user.ferries.on('click', (feature, lngLat) => {
+    console.log('Ferry section');
+});
+
+routingModule.events.user.tollRoads.on('click', (feature, lngLat) => {
+    console.log('Toll road section');
+});
+
+routingModule.events.user.tunnels.on('click', (feature, lngLat) => {
+    console.log('Tunnel section');
+});
+
+routingModule.events.user.vehicleRestricted.on('click', (feature, lngLat) => {
+    console.log('Vehicle restricted section');
+});
+
+routingModule.events.user.chargingStops.on('click', (feature, lngLat) => {
+    console.log('EV charging station');
+});
+
+// Remove event listeners
+routingModule.events.user.mainLines.off('click', handler);
+```
+
+## Multiple module instances
+
+You can create multiple independent instances of the Routing module, each with its own configuration and styling. This is useful for comparing different route types or displaying routes for multiple users.
+
+```javascript
+// Create separate instances for different route types
+const carRoutes = await RoutingModule.get(map, {
+    customLayerSpec: {
+        layers: {
+            mainLines: [{ layerSpec: { paint: { 'line-color': '#2ECC71' } } }]
+        }
+    }
+});
+
+const truckRoutes = await RoutingModule.get(map, {
+    customLayerSpec: {
+        layers: {
+            mainLines: [{ layerSpec: { paint: { 'line-color': '#E67E22' } } }]
+        }
+    }
+});
+
+// Each instance manages its own routes independently
+await carRoutes.showRoutes(carRoute);
+await truckRoutes.showRoutes(truckRoute);
+```
+
+## Reading shown data
+
+Use `getShown()` to retrieve all routing data currently displayed on the map. This returns the exact data previously passed to `showRoutes()` and `showWaypoints()`:
+
+```javascript
+const shown = routingModule.getShown();
+console.log(`Showing ${shown.mainLines.features.length} routes`);
+console.log(`Showing ${shown.waypoints.features.length} waypoints`);
+```
+
+Check whether any routes are currently displayed:
+
+```javascript
+const shown = routingModule.getShown();
+if (shown.mainLines.features.length > 0) {
+    console.log('Routes are displayed');
+}
+```
+
+The returned object includes: `mainLines`, `waypoints`, `incidents`, `ferries`, `chargingStops`, `tollRoads`, `tunnels`, `vehicleRestricted`, `instructionLines`, `instructionArrows`, and `summaryBubbles`.
+
+## API reference
+
+For complete documentation of all Routing Module properties, methods, and types, see the **[RoutingModule API Reference](/maps-sdk-js/api-reference/classes/map.RoutingModule.html)**.
+
+## Related guides and examples
+
+### Services integration
+- [Route Planning Parameters](../services/routing/parameters.mdx) - Comprehensive route planning with configuration options
+- [Locations](../services/routing/locations.mdx) - Specifying route planning locations
+- [Geocoding](../services/places/geocoding.mdx) - Convert addresses to coordinates for route waypoints and destinations
+
+### Related examples
+- [Route](../../examples/route) - Basic route calculation and display on the map
+- [Route with Alternatives](../../examples/route-with-alternatives) - Display multiple route options for comparison
+- [Waypoints](../../examples/waypoints) - Multi-stop route visualization with interactive waypoints
+- [Map route reconstruction playground](../../examples/route-reconstruction) - Interactive route building and editing
+
+### Related map modules
+- [Places Module](../map/places.mdx) - Display route waypoints and destinations as interactive markers
+- [User Interaction Events](../map/user-events.mdx) - Handle user interactions with routes and route segments
