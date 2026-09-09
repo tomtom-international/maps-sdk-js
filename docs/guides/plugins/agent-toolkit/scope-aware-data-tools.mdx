@@ -1,0 +1,197 @@
+---
+title: Scope-aware data tools
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.52.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+`analyseData` and `processData` are the **two unified data tools** that work across every entry-owning state kind — places, routes, traffic incidents, custom polygons, traffic-area analytics, and BYOD layers. Each accepts any combination of those kinds as input and exposes them to a JavaScript sandbox as **one per-entry record per kind** — `placesByEntry`, `routesByEntry`, `incidentsByEntry`, `geometriesByEntry`, `trafficAreaAnalyticsByEntry`, `byodByEntry` — each mapping an entry id to that entry's data (no flat/merged companion). Index one entry by id, or span every requested entry with `Object.values(...)` (`.flatMap((fc) => fc.features)` for the FeatureCollection kinds, `.flat()` for the array kinds).
+
+For SDK-sourced kinds the feature properties are known up front, but BYOD layers carry whatever the customer's data holds. The model doesn't guess: every BYOD entry ships an auto-detected [data profile](./byod.mdx#auto-detected-data-profile) (geometry types + per-property `types` / `coverage` / `examples`) from `addByodSource` / `recallState`, so the sandbox code references real `properties` keys (e.g. `byodByEntry[id].features[0].properties.name`) without first reading the raw FeatureCollection.
+
+This page covers how scope keeps these tools' prompts cheap, how the mechanism works under the hood, and how to add your own scopable tools.
+
+## Why scope exists
+
+A tool that documents all six input kinds — with per-kind schema hints, an `outputFormat` selector, the cross-kind operations cheat-sheet, and example prompts — is large. Unscoped, `analyseData`'s description plus its `inputSchema` is on the order of 5-8 K tokens. Multiply that across every turn, and the cost grows quickly even when most turns touch one or two kinds.
+
+The trick: when a user asks *"chart the distribution of places by category"*, only `places` is relevant. The other five kinds don't need to appear in the prompt at all. `scope` is the mechanism that prunes the surface per turn.
+
+```d2
+direction: down
+
+Unscoped: Unscoped surface {
+  style: {
+    fill: "#fef2f2"
+    stroke: "#f87171"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 14
+  }
+
+  Fields: "placesEntryIDs, routesEntryIDs, incidentsEntryIDs, geometriesEntryIDs, trafficAreaAnalyticsEntryIDs, byodEntryIDs (~5-8K tokens)" {
+    style: {
+      fill: "#fef2f2"
+      stroke: "#f87171"
+      stroke-width: 1
+      font-color: "#333"
+      border-radius: 4
+      font-size: 12
+    }
+  }
+}
+
+Classifier: Intent classifier {
+  style: {
+    fill: "#e8f5e9"
+    stroke: "#1b5e20"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 18
+  }
+  width: 220
+  height: 60
+}
+
+Scope: "toolScopes.analyseData = { kinds: ['places'] }" {
+  style: {
+    fill: "#fffde7"
+    stroke: "#ff6f00"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 14
+  }
+}
+
+Narrowed: Narrowed surface for this turn {
+  style: {
+    fill: "#f3e5f5"
+    stroke: "#4a148c"
+    stroke-width: 3
+    font-color: "#333"
+    border-radius: 8
+    font-size: 14
+  }
+
+  Fields: "placesEntryIDs only (~1K tokens)" {
+    style: {
+      fill: "#f3e5f5"
+      stroke: "#4a148c"
+      stroke-width: 1
+      font-color: "#333"
+      border-radius: 4
+      font-size: 12
+    }
+  }
+}
+
+Unscoped -> Classifier: "tool selected"
+Classifier -> Scope: "emit scope alongside selection" {
+  style: {
+    stroke-width: 2
+  }
+}
+Scope -> Narrowed: "prepareStep re-builds description + inputSchema" {
+  style: {
+    stroke-width: 2
+  }
+}
+```
+
+The narrowing is invisible to the model — it just sees a smaller, more focused prompt for that turn. The classifier handles scope emission alongside its normal "which tools should be active" selection.
+
+## The scope shape
+
+```typescript
+import type { EntryDataKind } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+
+// EntryDataKind = 'places' | 'routes' | 'incidents'
+//               | 'customGeometries' | 'trafficAreaAnalytics' | 'byod'
+
+type DataToolScope = { kinds: readonly EntryDataKind[] };
+```
+
+`analyseData` and `processData` both expose a `scopeSchema` of this shape — the in-source aliases `AnalyseDataScope` and `ProcessDataScope` are internal, the public-facing union is `EntryDataKind`.
+
+`EntryDataKind` covers every entry-owning slice that can appear as a data-tool input. It's distinct from `EntryModeSliceName` (state-slice keys: `routing` vs `routes`, `customGeometries` vs `geometries`) — the data-tool kinds are tool-facing, while `EntryModeSliceName` is state-facing.
+
+## Mandatory scope
+
+Selecting a scopable tool **without** emitting its scope is rejected by the classifier's output schema (`superRefine` validates the shape). The structured-output mode retries up to twice with the validation error pointing at the missing entry; on persistent failure the tool falls back to a terse unscoped surface (functional but with shorter per-kind hints).
+
+When `classifier: false` is configured, the scope-mutation path never engages and the terse fallback is used permanently — a deliberate opt-out. This is the cheapest mode for low-token deployments where the classifier itself isn't worth running.
+
+## Observing scopes
+
+```typescript
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    onClassify: (result) => {
+        console.log('tools:', result?.activeToolNames);
+        console.log('scopes:', result?.toolScopes);
+        // e.g. { analyseData: { kinds: ['places', 'routes'] } }
+    },
+});
+```
+
+This is the easiest way to see scope narrowing in action — watch the `toolScopes` field across a few turns and confirm the classifier is picking minimal kind sets.
+
+## Add a scopable custom tool
+
+Custom tools can opt into the same per-turn narrowing. Two pieces are required:
+
+1. A **`scopeSchema`** (Zod) describing the scope shape your tool understands.
+2. A **`scopePrompt`** — a compact one-line hint for the classifier explaining when and how to scope the tool.
+
+Together with a **`ToolEntryBuilder`** (not a static `ToolEntry`), they let `prepareStep` re-invoke your builder per turn with the parsed scope.
+
+```typescript
+import { z } from 'zod';
+import type { ToolEntryBuilder } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+
+type FleetScope = { kinds: ('vehicles' | 'jobs')[] };
+const fleetScopeSchema = z.object({ kinds: z.array(z.enum(['vehicles', 'jobs'])).min(1) });
+
+const fleetAnalyseBuilder: ToolEntryBuilder<MyState, FleetScope> = ({ scope }) => ({
+    description: scope
+        ? `Analyse ${scope.kinds.join(' + ')} entries via dynamic JS.`
+        : 'Analyse fleet data.',
+    inputSchema: buildFleetSchema(scope),    // narrowed when scope is set
+    execute: executeFleetAnalyse,
+    scopeSchema: fleetScopeSchema,
+    scopePrompt: 'Emit `{ kinds: ["vehicles" | "jobs"] }` listing only the kinds the user query touches.',
+});
+
+createMapAgent<MyState>(map, {
+    model: openai('gpt-4o'),
+    tools: { fleetAnalyse: fleetAnalyseBuilder },
+});
+```
+
+The classifier picks up the new tool's `scopePrompt` automatically and requires the corresponding scope to be emitted whenever the tool is selected.
+
+### Why builder, not static entry
+
+A static `ToolEntry` carrying a `scopeSchema` is silently never rebuilt because there is no factory to call. Builders are the **only** mechanism for per-turn rebuilding — when you need scope-aware behavior, the entry has to come from a builder. Otherwise the schema in front of the model is the full surface, regardless of what scope the classifier emitted.
+
+## A note on history
+
+`analyseData` and `processData` replaced an earlier design with **per-kind splits** — `analysePlaces`, `analyseRoutes`, `analyseGeometries`, `analyseIncidents`, `processPlaces`, `processRoutes`, `processGeometries`. The per-kind tools were cheap individually but combinatorially expensive: cross-kind work (places ↔ routes ↔ geometries) required orchestrating multiple tool calls and the model frequently mis-paired them.
+
+Unifying into two scope-aware tools turned the matrix into a single capability with a smaller per-turn prompt and made cross-kind composition trivial — see [Code generation](./code-generation.mdx) for what the unified surface lets the model do.
+
+## Related
+
+- **[Code generation](./code-generation.mdx)** — the runtime / sandbox / threat model for `analyseData` and `processData`.
+- **[How it works](./how-it-works.mdx)** — where in the turn the classifier emits scopes.
+- **[Customizing tools](./customizing-tools.mdx)** — non-scopable custom tools.
+- **[State](./state.mdx)** — what each entry kind looks like in state.
+- **[Securing your agent](./securing-your-agent.mdx)** — what the toolkit bounds per turn, and what needs a server.

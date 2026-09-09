@@ -1,0 +1,281 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>UserEvents | TomTom Maps for JavaScript</title><meta name="description" content="Documentation for TomTom Maps for JavaScript"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container"><a href="../index.html" class="title">TomTom Maps for JavaScript</a>
+<div id="tsd-toolbar-links"></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/>
+<ul role="listbox" id="tsd-search-results"></ul>
+<div id="tsd-search-status" aria-live="polite" aria-atomic="true">
+<div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header>
+<div class="container container-main">
+<div class="col-content">
+<div class="tsd-page-title">
+<ul class="tsd-breadcrumb" aria-label="Breadcrumb">
+<li><a href="../modules/map.html">map</a></li>
+<li><a href="" aria-current="page">UserEvents</a></li></ul>
+<h1>Class UserEvents&lt;T, WHERE_SCOPE&gt;</h1></div>
+<section class="tsd-panel tsd-comment">
+<div class="tsd-comment tsd-typography"><p>Event handling interface for map features.</p>
+<p>Provides a simple API for attaching and removing event handlers for user interactions
+with map features such as clicks, hovers, and context menus. Each map module (POIs, Routing,
+Places, etc.) exposes an <code>events</code> property that returns a <code>UserEvents</code> instance.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks">Remarks<a href="#remarks" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><strong>Supported Event Types:</strong></p>
+<ul>
+<li><code>click</code>: User clicks/taps on a feature</li>
+<li><code>contextmenu</code>: User right-clicks on a feature (or long-press on mobile)</li>
+<li><code>hover</code>: Mouse enters a feature</li>
+<li><code>long-hover</code>: Mouse hovers over feature for configured duration (300-800ms)</li>
+</ul>
+<p><strong>Event Handler Signature:</strong></p>
+<pre><code class="typescript"><span class="hl-2">(</span><span class="hl-1">feature</span><span class="hl-2">: </span><span class="hl-7">T</span><span class="hl-2">, </span><span class="hl-1">lngLat</span><span class="hl-2">: </span><span class="hl-7">LngLat</span><span class="hl-2">, </span><span class="hl-1">features</span><span class="hl-2">: </span><span class="hl-7">T</span><span class="hl-2">[]) </span><span class="hl-5">=&gt;</span><span class="hl-2"> </span><span class="hl-5">void</span>
+</code><button type="button">Copy</button></pre>
+
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>feature</code>: The primary feature under the cursor</li>
+<li><code>lngLat</code>: Geographic coordinates of the event</li>
+<li><code>features</code>: All features at this location (when multiple overlap)</li>
+</ul>
+<p><strong>Key Features:</strong></p>
+<ul>
+<li>Automatic cursor management (pointer on hover)</li>
+<li>Smart event handling for overlapping features</li>
+<li>Configurable hover delays</li>
+<li>Memory-safe cleanup when removing handlers</li>
+</ul>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example">Example<a href="#example" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-0">// POI click handler</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">pois</span><span class="hl-2"> = </span><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-3">pois</span><span class="hl-2">();</span><br/><span class="hl-1">pois</span><span class="hl-2">.</span><span class="hl-1">events</span><span class="hl-2">.</span><span class="hl-3">on</span><span class="hl-2">(</span><span class="hl-4">&#39;click&#39;</span><span class="hl-2">, (</span><span class="hl-1">feature</span><span class="hl-2">, </span><span class="hl-1">lngLat</span><span class="hl-2">) </span><span class="hl-5">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">  </span><span class="hl-1">console</span><span class="hl-2">.</span><span class="hl-3">log</span><span class="hl-2">(</span><span class="hl-4">&#39;Clicked POI:&#39;</span><span class="hl-2">, </span><span class="hl-1">feature</span><span class="hl-2">.</span><span class="hl-1">properties</span><span class="hl-2">.</span><span class="hl-1">name</span><span class="hl-2">);</span><br/><span class="hl-2">  </span><span class="hl-1">console</span><span class="hl-2">.</span><span class="hl-3">log</span><span class="hl-2">(</span><span class="hl-4">&#39;Location:&#39;</span><span class="hl-2">, </span><span class="hl-1">lngLat</span><span class="hl-2">);</span><br/><span class="hl-2">  </span><span class="hl-3">showInfoWindow</span><span class="hl-2">(</span><span class="hl-1">feature</span><span class="hl-2">.</span><span class="hl-1">properties</span><span class="hl-2">);</span><br/><span class="hl-2">});</span><br/><br/><span class="hl-0">// Route waypoint hover</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">routing</span><span class="hl-2"> = </span><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-3">routing</span><span class="hl-2">();</span><br/><span class="hl-1">routing</span><span class="hl-2">.</span><span class="hl-1">events</span><span class="hl-2">.</span><span class="hl-1">waypoints</span><span class="hl-2">.</span><span class="hl-3">on</span><span class="hl-2">(</span><span class="hl-4">&#39;hover&#39;</span><span class="hl-2">, (</span><span class="hl-1">waypoint</span><span class="hl-2">) </span><span class="hl-5">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">  </span><span class="hl-3">showTooltip</span><span class="hl-2">(</span><span class="hl-4">`Waypoint </span><span class="hl-5">${</span><span class="hl-1">waypoint</span><span class="hl-11">.</span><span class="hl-1">properties</span><span class="hl-11">.</span><span class="hl-1">index</span><span class="hl-5">}</span><span class="hl-4">`</span><span class="hl-2">);</span><br/><span class="hl-2">});</span><br/><br/><span class="hl-0">// Long-hover for detailed info</span><br/><span class="hl-1">pois</span><span class="hl-2">.</span><span class="hl-1">events</span><span class="hl-2">.</span><span class="hl-3">on</span><span class="hl-2">(</span><span class="hl-4">&#39;long-hover&#39;</span><span class="hl-2">, (</span><span class="hl-1">feature</span><span class="hl-2">) </span><span class="hl-5">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">  </span><span class="hl-3">loadAndShowDetailedInfo</span><span class="hl-2">(</span><span class="hl-1">feature</span><span class="hl-2">.</span><span class="hl-1">properties</span><span class="hl-2">.</span><span class="hl-1">id</span><span class="hl-2">);</span><br/><span class="hl-2">});</span><br/><br/><span class="hl-0">// Context menu (right-click)</span><br/><span class="hl-1">routing</span><span class="hl-2">.</span><span class="hl-1">events</span><span class="hl-2">.</span><span class="hl-1">mainLines</span><span class="hl-2">.</span><span class="hl-3">on</span><span class="hl-2">(</span><span class="hl-4">&#39;contextmenu&#39;</span><span class="hl-2">, (</span><span class="hl-1">route</span><span class="hl-2">, </span><span class="hl-1">lngLat</span><span class="hl-2">) </span><span class="hl-5">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">  </span><span class="hl-3">showContextMenu</span><span class="hl-2">(</span><span class="hl-1">lngLat</span><span class="hl-2">, [</span><br/><span class="hl-2">    { </span><span class="hl-1">label:</span><span class="hl-2"> </span><span class="hl-4">&#39;Add waypoint here&#39;</span><span class="hl-2">, </span><span class="hl-3">action</span><span class="hl-1">:</span><span class="hl-2"> () </span><span class="hl-5">=&gt;</span><span class="hl-2"> </span><span class="hl-3">addWaypoint</span><span class="hl-2">(</span><span class="hl-1">lngLat</span><span class="hl-2">) },</span><br/><span class="hl-2">    { </span><span class="hl-1">label:</span><span class="hl-2"> </span><span class="hl-4">&#39;View route details&#39;</span><span class="hl-2">, </span><span class="hl-3">action</span><span class="hl-1">:</span><span class="hl-2"> () </span><span class="hl-5">=&gt;</span><span class="hl-2"> </span><span class="hl-3">showDetails</span><span class="hl-2">(</span><span class="hl-1">route</span><span class="hl-2">) }</span><br/><span class="hl-2">  ]);</span><br/><span class="hl-2">});</span><br/><br/><span class="hl-0">// Remove all click handlers</span><br/><span class="hl-1">pois</span><span class="hl-2">.</span><span class="hl-1">events</span><span class="hl-2">.</span><span class="hl-3">off</span><span class="hl-2">(</span><span class="hl-4">&#39;click&#39;</span><span class="hl-2">);</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-1">Example<a href="#example-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-0">// Complete interaction example</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">places</span><span class="hl-2"> = </span><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-3">places</span><span class="hl-2">();</span><br/><br/><span class="hl-0">// Show name on hover</span><br/><span class="hl-1">places</span><span class="hl-2">.</span><span class="hl-1">events</span><span class="hl-2">.</span><span class="hl-3">on</span><span class="hl-2">(</span><span class="hl-4">&#39;hover&#39;</span><span class="hl-2">, (</span><span class="hl-1">place</span><span class="hl-2">) </span><span class="hl-5">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">  </span><span class="hl-1">tooltip</span><span class="hl-2">.</span><span class="hl-3">show</span><span class="hl-2">(</span><span class="hl-1">place</span><span class="hl-2">.</span><span class="hl-1">properties</span><span class="hl-2">.</span><span class="hl-1">name</span><span class="hl-2">);</span><br/><span class="hl-2">});</span><br/><br/><span class="hl-0">// Show details on click</span><br/><span class="hl-1">places</span><span class="hl-2">.</span><span class="hl-1">events</span><span class="hl-2">.</span><span class="hl-3">on</span><span class="hl-2">(</span><span class="hl-4">&#39;click&#39;</span><span class="hl-2">, (</span><span class="hl-1">place</span><span class="hl-2">, </span><span class="hl-1">lngLat</span><span class="hl-2">) </span><span class="hl-5">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">  </span><span class="hl-1">sidebar</span><span class="hl-2">.</span><span class="hl-3">show</span><span class="hl-2">({</span><br/><span class="hl-2">    </span><span class="hl-1">title:</span><span class="hl-2"> </span><span class="hl-1">place</span><span class="hl-2">.</span><span class="hl-1">properties</span><span class="hl-2">.</span><span class="hl-1">name</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">address:</span><span class="hl-2"> </span><span class="hl-1">place</span><span class="hl-2">.</span><span class="hl-1">properties</span><span class="hl-2">.</span><span class="hl-1">address</span><span class="hl-2">.</span><span class="hl-1">freeformAddress</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">coordinates:</span><span class="hl-2"> </span><span class="hl-1">lngLat</span><br/><span class="hl-2">  });</span><br/><span class="hl-2">});</span><br/><br/><span class="hl-0">// Cleanup on component unmount</span><br/><span class="hl-3">onUnmount</span><span class="hl-2">(() </span><span class="hl-5">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">  </span><span class="hl-1">places</span><span class="hl-2">.</span><span class="hl-1">events</span><span class="hl-2">.</span><span class="hl-3">off</span><span class="hl-2">(</span><span class="hl-4">&#39;hover&#39;</span><span class="hl-2">);</span><br/><span class="hl-2">  </span><span class="hl-1">places</span><span class="hl-2">.</span><span class="hl-1">events</span><span class="hl-2">.</span><span class="hl-3">off</span><span class="hl-2">(</span><span class="hl-4">&#39;click&#39;</span><span class="hl-2">);</span><br/><span class="hl-2">});</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></section>
+<section class="tsd-panel">
+<h4>Type Parameters</h4>
+<ul class="tsd-type-parameter-list">
+<li><span id="t"><span class="tsd-kind-type-parameter">T</span> = <a href="https://maplibre.org/maplibre-gl-js-docs/api/" class="tsd-signature-type external" target="_blank">MapGeoJSONFeature</a></span>
+<div class="tsd-comment tsd-typography"><p>The feature type returned in event handlers (extends MapGeoJSONFeature)</p>
+</div></li>
+<li><span id="where_scope"><span class="tsd-kind-type-parameter">WHERE_SCOPE</span> = <span class="tsd-signature-type">never</span></span></li></ul></section>
+<section class="tsd-panel-group tsd-index-group">
+<section class="tsd-panel tsd-index-panel">
+<details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h5 class="tsd-index-heading uppercase">Index</h5></summary>
+<div class="tsd-accordion-details">
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="constructors">Constructors<a href="#constructors" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#constructor" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Constructor"><use href="../assets/icons.svg#icon-512"></use></svg><span>constructor</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="methods">Methods<a href="#methods" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#off" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>off</span></a>
+<a href="#on" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>on</span></a>
+<a href="#where" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>where</span></a>
+</div></section></div></details></section></section>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="constructors-1">Constructors<a href="#constructors-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="constructor"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="constructoruserevents"><span class="tsd-signature-keyword">new</span> <span class="tsd-kind-constructor-signature">UserEvents</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#constructorusereventst">T</a> <span class="tsd-signature-symbol">=</span> <a href="https://maplibre.org/maplibre-gl-js-docs/api/" class="tsd-signature-type external" target="_blank">MapGeoJSONFeature</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#constructorusereventswhere_scope">WHERE_SCOPE</a> <span class="tsd-signature-symbol">=</span> <span class="tsd-signature-type">never</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">options</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">UserEventsOptions</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#where_scope">WHERE_SCOPE</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">UserEvents</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#where_scope">WHERE_SCOPE</a><span class="tsd-signature-symbol">&gt;</span><a href="#constructoruserevents" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<section class="tsd-panel">
+<h4>Type Parameters</h4>
+<ul class="tsd-type-parameter-list">
+<li><span id="constructorusereventst"><span class="tsd-kind-type-parameter">T</span> = <a href="https://maplibre.org/maplibre-gl-js-docs/api/" class="tsd-signature-type external" target="_blank">MapGeoJSONFeature</a></span>
+<div class="tsd-comment tsd-typography"><p>The feature type returned in event handlers (extends MapGeoJSONFeature)</p>
+</div></li>
+<li><span id="constructorusereventswhere_scope"><span class="tsd-kind-type-parameter">WHERE_SCOPE</span> = <span class="tsd-signature-type">never</span></span></li></ul></section>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">options</span>: <span class="tsd-signature-type">UserEventsOptions</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#where_scope">WHERE_SCOPE</a><span class="tsd-signature-symbol">&gt;</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">UserEvents</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#where_scope">WHERE_SCOPE</a><span class="tsd-signature-symbol">&gt;</span></h4></div></li></ul></section></section></details>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="off"><span>off</span><a href="#off" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="off-1"><span class="tsd-kind-call-signature">off</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">type</span><span class="tsd-signature-symbol">:</span> <a href="../types/map.EventType.html" class="tsd-signature-type tsd-kind-type-alias">EventType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#off-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Remove all event handlers for a specific event type.</p>
+<p>Unregisters the callback function for the specified event type, stopping
+further event notifications. This is important for cleanup to prevent
+memory leaks and unwanted behavior.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">type</span>: <a href="../types/map.EventType.html" class="tsd-signature-type tsd-kind-type-alias">EventType</a></span>
+<div class="tsd-comment tsd-typography"><p>The type of event to stop listening for</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-1">Remarks<a href="#remarks-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><strong>Cleanup Behavior:</strong></p>
+<ul>
+<li>Removes <strong>all</strong> handlers for the specified event type — to remove a single handler, call
+the unsubscribe function returned by <a href="#on" class="tsd-kind-method">on</a></li>
+<li>Other event types remain active</li>
+<li>Resets cursor behavior for this module</li>
+<li>Safe to call multiple times (no error if no handler exists)</li>
+<li>Does not affect other modules' event handlers</li>
+</ul>
+<p><strong>When to Use:</strong></p>
+<ul>
+<li>Component unmounting/cleanup</li>
+<li>Switching between interaction modes</li>
+<li>Temporarily disabling interactions</li>
+<li>Replacing an existing handler (call <code>off()</code> then <code>on()</code>)</li>
+</ul>
+<p><strong>Best Practices:</strong></p>
+<ul>
+<li>Always clean up event handlers when component unmounts</li>
+<li>Remove handlers before removing features from the map</li>
+<li>Use framework lifecycle hooks for automatic cleanup</li>
+</ul>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-2">Example<a href="#example-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-0">// Remove click handlers</span><br/><span class="hl-7">module</span><span class="hl-2">.</span><span class="hl-1">events</span><span class="hl-2">.</span><span class="hl-3">off</span><span class="hl-2">(</span><span class="hl-4">&#39;click&#39;</span><span class="hl-2">);</span><br/><br/><span class="hl-0">// Remove all handlers</span><br/><span class="hl-7">module</span><span class="hl-2">.</span><span class="hl-1">events</span><span class="hl-2">.</span><span class="hl-3">off</span><span class="hl-2">(</span><span class="hl-4">&#39;click&#39;</span><span class="hl-2">);</span><br/><span class="hl-7">module</span><span class="hl-2">.</span><span class="hl-1">events</span><span class="hl-2">.</span><span class="hl-3">off</span><span class="hl-2">(</span><span class="hl-4">&#39;hover&#39;</span><span class="hl-2">);</span><br/><span class="hl-7">module</span><span class="hl-2">.</span><span class="hl-1">events</span><span class="hl-2">.</span><span class="hl-3">off</span><span class="hl-2">(</span><span class="hl-4">&#39;long-hover&#39;</span><span class="hl-2">);</span><br/><span class="hl-7">module</span><span class="hl-2">.</span><span class="hl-1">events</span><span class="hl-2">.</span><span class="hl-3">off</span><span class="hl-2">(</span><span class="hl-4">&#39;contextmenu&#39;</span><span class="hl-2">);</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-3">Example<a href="#example-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-0">// React component cleanup</span><br/><span class="hl-3">useEffect</span><span class="hl-2">(() </span><span class="hl-5">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">  </span><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">pois</span><span class="hl-2"> = </span><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-3">pois</span><span class="hl-2">();</span><br/><br/><span class="hl-2">  </span><span class="hl-1">pois</span><span class="hl-2">.</span><span class="hl-1">events</span><span class="hl-2">.</span><span class="hl-3">on</span><span class="hl-2">(</span><span class="hl-4">&#39;click&#39;</span><span class="hl-2">, </span><span class="hl-1">handlePoiClick</span><span class="hl-2">);</span><br/><span class="hl-2">  </span><span class="hl-1">pois</span><span class="hl-2">.</span><span class="hl-1">events</span><span class="hl-2">.</span><span class="hl-3">on</span><span class="hl-2">(</span><span class="hl-4">&#39;hover&#39;</span><span class="hl-2">, </span><span class="hl-1">handlePoiHover</span><span class="hl-2">);</span><br/><br/><span class="hl-2">  </span><span class="hl-10">return</span><span class="hl-2"> () </span><span class="hl-5">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-0">// Cleanup on unmount</span><br/><span class="hl-2">    </span><span class="hl-1">pois</span><span class="hl-2">.</span><span class="hl-1">events</span><span class="hl-2">.</span><span class="hl-3">off</span><span class="hl-2">(</span><span class="hl-4">&#39;click&#39;</span><span class="hl-2">);</span><br/><span class="hl-2">    </span><span class="hl-1">pois</span><span class="hl-2">.</span><span class="hl-1">events</span><span class="hl-2">.</span><span class="hl-3">off</span><span class="hl-2">(</span><span class="hl-4">&#39;hover&#39;</span><span class="hl-2">);</span><br/><span class="hl-2">  };</span><br/><span class="hl-2">}, [</span><span class="hl-1">map</span><span class="hl-2">]);</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-4">Example<a href="#example-4" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-0">// Replace handler</span><br/><span class="hl-7">module</span><span class="hl-2">.</span><span class="hl-1">events</span><span class="hl-2">.</span><span class="hl-3">off</span><span class="hl-2">(</span><span class="hl-4">&#39;click&#39;</span><span class="hl-2">); </span><span class="hl-0">// Remove old handler</span><br/><span class="hl-7">module</span><span class="hl-2">.</span><span class="hl-1">events</span><span class="hl-2">.</span><span class="hl-3">on</span><span class="hl-2">(</span><span class="hl-4">&#39;click&#39;</span><span class="hl-2">, </span><span class="hl-1">newHandler</span><span class="hl-2">); </span><span class="hl-0">// Add new handler</span><br/><br/><span class="hl-0">// Disable interactions temporarily</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">savedHandler</span><span class="hl-2"> = </span><span class="hl-1">currentHandler</span><span class="hl-2">;</span><br/><span class="hl-7">module</span><span class="hl-2">.</span><span class="hl-1">events</span><span class="hl-2">.</span><span class="hl-3">off</span><span class="hl-2">(</span><span class="hl-4">&#39;click&#39;</span><span class="hl-2">); </span><span class="hl-0">// Disable</span><br/><span class="hl-0">// ... later ...</span><br/><span class="hl-7">module</span><span class="hl-2">.</span><span class="hl-1">events</span><span class="hl-2">.</span><span class="hl-3">on</span><span class="hl-2">(</span><span class="hl-4">&#39;click&#39;</span><span class="hl-2">, </span><span class="hl-1">savedHandler</span><span class="hl-2">); </span><span class="hl-0">// Re-enable</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="on"><span>on</span><a href="#on" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="on-1"><span class="tsd-kind-call-signature">on</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">type</span><span class="tsd-signature-symbol">:</span> <a href="../types/map.EventType.html" class="tsd-signature-type tsd-kind-type-alias">EventType</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">handler</span><span class="tsd-signature-symbol">:</span> <a href="../types/map.UserEventHandler.html" class="tsd-signature-type tsd-kind-type-alias">UserEventHandler</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">()</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span><a href="#on-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Register an event handler for user interactions with map features.</p>
+<p>Attaches a callback function that will be invoked when users interact with
+features in this module (e.g., clicking on a POI, hovering over a route).</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">type</span>: <a href="../types/map.EventType.html" class="tsd-signature-type tsd-kind-type-alias">EventType</a></span>
+<div class="tsd-comment tsd-typography"><p>The type of event to listen for (click, contextmenu, hover, long-hover)</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">handler</span>: <a href="../types/map.UserEventHandler.html" class="tsd-signature-type tsd-kind-type-alias">UserEventHandler</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">&gt;</span></span>
+<div class="tsd-comment tsd-typography"><p>Callback function invoked when the event occurs</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">()</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span></h4><p>An unsubscribe function that removes the handler registered by this call.</p>
+
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-2">Remarks<a href="#remarks-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><strong>Handler Parameters:</strong></p>
+<ul>
+<li><code>feature</code>: The primary feature that triggered the event</li>
+<li><code>lngLat</code>: Geographic coordinates [longitude, latitude] of the event</li>
+<li><code>features</code>: The features from this module at the event location, de-duplicated (for
+overlapping features within the module). To inspect features across all modules, query
+<code>map.mapLibreMap.queryRenderedFeatures(...)</code> directly — see <a href="../types/map.UserEventHandler.html" class="tsd-kind-type-alias">UserEventHandler</a>.</li>
+</ul>
+<p><strong>Behavior:</strong></p>
+<ul>
+<li>Multiple handlers per event type are supported — each <code>on()</code> adds a handler (it does
+<strong>not</strong> replace existing ones) and all of them fire. To remove one, call the unsubscribe
+this returns; to clear them all, use <code>off(type)</code>.</li>
+<li>Handlers are preserved across map style changes</li>
+<li>Cursor automatically changes to pointer on hover</li>
+<li>Events respect module visibility (hidden features don't trigger events)</li>
+</ul>
+<p><strong>Performance:</strong></p>
+<ul>
+<li>Hover events use spatial indexing for fast lookup</li>
+<li>Long-hover has configurable delay to prevent accidental triggers</li>
+<li>Event handlers should be lightweight to maintain smooth interaction</li>
+</ul>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-5">Example<a href="#example-5" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-0">// Basic click handler</span><br/><span class="hl-7">module</span><span class="hl-2">.</span><span class="hl-1">events</span><span class="hl-2">.</span><span class="hl-3">on</span><span class="hl-2">(</span><span class="hl-4">&#39;click&#39;</span><span class="hl-2">, (</span><span class="hl-1">feature</span><span class="hl-2">, </span><span class="hl-1">lngLat</span><span class="hl-2">, </span><span class="hl-1">features</span><span class="hl-2">) </span><span class="hl-5">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">  </span><span class="hl-1">console</span><span class="hl-2">.</span><span class="hl-3">log</span><span class="hl-2">(</span><span class="hl-4">&#39;Clicked feature:&#39;</span><span class="hl-2">, </span><span class="hl-1">feature</span><span class="hl-2">.</span><span class="hl-1">properties</span><span class="hl-2">);</span><br/><span class="hl-2">  </span><span class="hl-1">console</span><span class="hl-2">.</span><span class="hl-3">log</span><span class="hl-2">(</span><span class="hl-4">&#39;Location:&#39;</span><span class="hl-2">, </span><span class="hl-1">lngLat</span><span class="hl-2">);</span><br/><span class="hl-2">  </span><span class="hl-1">console</span><span class="hl-2">.</span><span class="hl-3">log</span><span class="hl-2">(</span><span class="hl-4">&#39;All features here:&#39;</span><span class="hl-2">, </span><span class="hl-1">features</span><span class="hl-2">.</span><span class="hl-1">length</span><span class="hl-2">);</span><br/><span class="hl-2">});</span><br/><br/><span class="hl-0">// Hover with tooltip</span><br/><span class="hl-7">module</span><span class="hl-2">.</span><span class="hl-1">events</span><span class="hl-2">.</span><span class="hl-3">on</span><span class="hl-2">(</span><span class="hl-4">&#39;hover&#39;</span><span class="hl-2">, (</span><span class="hl-1">feature</span><span class="hl-2">) </span><span class="hl-5">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">  </span><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">name</span><span class="hl-2"> = </span><span class="hl-1">feature</span><span class="hl-2">.</span><span class="hl-1">properties</span><span class="hl-2">.</span><span class="hl-1">name</span><span class="hl-2"> || </span><span class="hl-4">&#39;Unnamed&#39;</span><span class="hl-2">;</span><br/><span class="hl-2">  </span><span class="hl-1">tooltip</span><span class="hl-2">.</span><span class="hl-3">show</span><span class="hl-2">(</span><span class="hl-1">name</span><span class="hl-2">);</span><br/><span class="hl-2">});</span><br/><br/><span class="hl-0">// Long-hover for detailed preview</span><br/><span class="hl-7">module</span><span class="hl-2">.</span><span class="hl-1">events</span><span class="hl-2">.</span><span class="hl-3">on</span><span class="hl-2">(</span><span class="hl-4">&#39;long-hover&#39;</span><span class="hl-2">, (</span><span class="hl-1">feature</span><span class="hl-2">) </span><span class="hl-5">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">  </span><span class="hl-0">// Only triggered after hovering for 300-800ms</span><br/><span class="hl-2">  </span><span class="hl-3">loadPreview</span><span class="hl-2">(</span><span class="hl-1">feature</span><span class="hl-2">.</span><span class="hl-1">properties</span><span class="hl-2">.</span><span class="hl-1">id</span><span class="hl-2">);</span><br/><span class="hl-2">});</span><br/><br/><span class="hl-0">// Right-click context menu</span><br/><span class="hl-7">module</span><span class="hl-2">.</span><span class="hl-1">events</span><span class="hl-2">.</span><span class="hl-3">on</span><span class="hl-2">(</span><span class="hl-4">&#39;contextmenu&#39;</span><span class="hl-2">, (</span><span class="hl-1">feature</span><span class="hl-2">, </span><span class="hl-1">lngLat</span><span class="hl-2">) </span><span class="hl-5">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">  </span><span class="hl-1">event</span><span class="hl-2">.</span><span class="hl-3">preventDefault</span><span class="hl-2">(); </span><span class="hl-0">// Prevent browser context menu</span><br/><span class="hl-2">  </span><span class="hl-3">showCustomMenu</span><span class="hl-2">(</span><span class="hl-1">lngLat</span><span class="hl-2">, </span><span class="hl-1">feature</span><span class="hl-2">);</span><br/><span class="hl-2">});</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-6">Example<a href="#example-6" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-0">// Route-specific handlers</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">routing</span><span class="hl-2"> = </span><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-3">routing</span><span class="hl-2">();</span><br/><br/><span class="hl-0">// Handle route line clicks</span><br/><span class="hl-1">routing</span><span class="hl-2">.</span><span class="hl-1">events</span><span class="hl-2">.</span><span class="hl-1">mainLines</span><span class="hl-2">.</span><span class="hl-3">on</span><span class="hl-2">(</span><span class="hl-4">&#39;click&#39;</span><span class="hl-2">, (</span><span class="hl-1">route</span><span class="hl-2">) </span><span class="hl-5">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">  </span><span class="hl-3">highlightRoute</span><span class="hl-2">(</span><span class="hl-1">route</span><span class="hl-2">.</span><span class="hl-1">properties</span><span class="hl-2">.</span><span class="hl-1">routeID</span><span class="hl-2">);</span><br/><span class="hl-2">  </span><span class="hl-3">showRouteSummary</span><span class="hl-2">(</span><span class="hl-1">route</span><span class="hl-2">.</span><span class="hl-1">properties</span><span class="hl-2">.</span><span class="hl-1">summary</span><span class="hl-2">);</span><br/><span class="hl-2">});</span><br/><br/><span class="hl-0">// Handle waypoint interactions</span><br/><span class="hl-1">routing</span><span class="hl-2">.</span><span class="hl-1">events</span><span class="hl-2">.</span><span class="hl-1">waypoints</span><span class="hl-2">.</span><span class="hl-3">on</span><span class="hl-2">(</span><span class="hl-4">&#39;hover&#39;</span><span class="hl-2">, (</span><span class="hl-1">waypoint</span><span class="hl-2">) </span><span class="hl-5">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">  </span><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">index</span><span class="hl-2"> = </span><span class="hl-1">waypoint</span><span class="hl-2">.</span><span class="hl-1">properties</span><span class="hl-2">.</span><span class="hl-1">index</span><span class="hl-2">;</span><br/><span class="hl-2">  </span><span class="hl-3">showTooltip</span><span class="hl-2">(</span><span class="hl-4">`Stop </span><span class="hl-5">${</span><span class="hl-1">index</span><span class="hl-11"> </span><span class="hl-2">+</span><span class="hl-11"> </span><span class="hl-8">1</span><span class="hl-5">}</span><span class="hl-4">`</span><span class="hl-2">);</span><br/><span class="hl-2">});</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="where"><span>where</span><a href="#where" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="where-1"><span class="tsd-kind-call-signature">where</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">scope</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">EventScope</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#where_scope">WHERE_SCOPE</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">config</span><span class="tsd-signature-symbol">?:</span> <a href="../types/map.EventHandlerCursorConfig.html" class="tsd-signature-type tsd-kind-type-alias">EventHandlerCursorConfig</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">UserEvents</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#where_scope">WHERE_SCOPE</a><span class="tsd-signature-symbol">&gt;</span><a href="#where-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Narrows these events to part of what they cover, returning a <a href="#" class="tsd-kind-class">UserEvents</a> over just
+that part.</p>
+<p>Two things can be narrowed. A <strong>feature predicate</strong> keeps only the features you care about —
+available on every module, since only the module's own data can tell a major incident from a
+minor one. A <strong>layer scope</strong> keeps only part of the map's layers; the SDK offers this where
+a stable, typed vocabulary for those layers exists, which today means
+<a href="map.BaseMapModule.html" class="tsd-kind-class">BaseMapModule</a>'s layer groups.</p>
+<p>A new instance, rather than this one narrowed in place: callers hold <code>events</code> and narrow it
+more than once, and mutating would make the second <code>where()</code> mean &quot;first AND second&quot; while
+leaving the surface it came from silently scoped — and its <code>config</code> overridden.</p>
+<p>Narrowing on both axes is one call, not two — <a href="map.BaseMapModule.html" class="tsd-kind-class">BaseMapModule</a>'s scope object takes a
+<code>features</code> predicate alongside its <code>layerGroups</code>. A further <code>where()</code> does intersect with
+this one, but two feature predicates read better as a single <code>a(f) &amp;&amp; b(f)</code>.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">scope</span>: <span class="tsd-signature-type">EventScope</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#where_scope">WHERE_SCOPE</a><span class="tsd-signature-symbol">&gt;</span></span>
+<div class="tsd-comment tsd-typography"><p>See EventScope — a predicate over this scope's feature type, or, where
+the module supports one, a scope object such as <code>{ layerGroups }</code>.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">config</span>: <a href="../types/map.EventHandlerCursorConfig.html" class="tsd-signature-type tsd-kind-type-alias">EventHandlerCursorConfig</a></span>
+<div class="tsd-comment tsd-typography"><p>Event configuration for handlers registered through the returned instance.
+Each scope can carry its own, which is how two parts of one module get different hover
+cursors. Defaults to the configuration this instance already uses.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">UserEvents</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#t">T</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#where_scope">WHERE_SCOPE</a><span class="tsd-signature-symbol">&gt;</span></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-7">Example<a href="#example-7" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-0">// Feature scope: only major incidents are clickable.</span><br/><span class="hl-1">trafficIncidents</span><span class="hl-2">.</span><span class="hl-1">events</span><span class="hl-2">.</span><span class="hl-3">where</span><span class="hl-2">((</span><span class="hl-1">incident</span><span class="hl-2">) </span><span class="hl-5">=&gt;</span><span class="hl-2"> </span><span class="hl-1">incident</span><span class="hl-2">.</span><span class="hl-1">properties</span><span class="hl-2">.</span><span class="hl-1">magnitude</span><span class="hl-2"> === </span><span class="hl-4">&#39;major&#39;</span><span class="hl-2">)</span><br/><span class="hl-2">    .</span><span class="hl-3">on</span><span class="hl-2">(</span><span class="hl-4">&#39;click&#39;</span><span class="hl-2">, </span><span class="hl-1">showIncidentDetails</span><span class="hl-2">);</span><br/><br/><span class="hl-0">// Layer scope with its own cursor, on the base map.</span><br/><span class="hl-1">baseMap</span><span class="hl-2">.</span><span class="hl-1">events</span><br/><span class="hl-2">    .</span><span class="hl-3">where</span><span class="hl-2">({ </span><span class="hl-1">layerGroups:</span><span class="hl-2"> { </span><span class="hl-1">mode:</span><span class="hl-2"> </span><span class="hl-4">&#39;include&#39;</span><span class="hl-2">, </span><span class="hl-1">names:</span><span class="hl-2"> [</span><span class="hl-4">&#39;roadLabels&#39;</span><span class="hl-2">] } }, { </span><span class="hl-1">cursorOnHover:</span><span class="hl-2"> </span><span class="hl-4">&#39;pointer&#39;</span><span class="hl-2"> })</span><br/><span class="hl-2">    .</span><span class="hl-3">on</span><span class="hl-2">(</span><span class="hl-4">&#39;click&#39;</span><span class="hl-2">, </span><span class="hl-1">showRoadName</span><span class="hl-2">);</span><br/><br/><span class="hl-0">// A named scope, narrowed by a predicate.</span><br/><span class="hl-1">routing</span><span class="hl-2">.</span><span class="hl-1">events</span><span class="hl-2">.</span><span class="hl-1">tunnels</span><span class="hl-2">.</span><span class="hl-3">where</span><span class="hl-2">((</span><span class="hl-1">section</span><span class="hl-2">) </span><span class="hl-5">=&gt;</span><span class="hl-2"> </span><span class="hl-1">section</span><span class="hl-2">.</span><span class="hl-1">properties</span><span class="hl-2">.</span><span class="hl-1">lengthInMeters</span><span class="hl-2"> &gt; </span><span class="hl-8">500</span><span class="hl-2">)</span><br/><span class="hl-2">    .</span><span class="hl-3">on</span><span class="hl-2">(</span><span class="hl-4">&#39;click&#39;</span><span class="hl-2">, </span><span class="hl-1">showLongTunnel</span><span class="hl-2">);</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></div></li></ul></section></section></details></div>
+<div class="col-sidebar">
+<div class="page-menu">
+<div class="tsd-navigation settings">
+<details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div>
+<div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
+<details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>On This Page</h3></summary>
+<div class="tsd-accordion-details">
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Constructors</summary>
+<div><a href="#constructor"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Constructor"><use href="../assets/icons.svg#icon-512"></use></svg><span>constructor</span></a></div></details>
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Methods</summary>
+<div><a href="#off"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>off</span></a><a href="#on"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>on</span></a><a href="#where"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>where</span></a></div></details></div></details></div>
+<div class="site-menu">
+<nav class="tsd-navigation"><a href="../index.html">TomTom Maps for JavaScript</a>
+<ul class="tsd-small-nested-navigation" id="tsd-nav-container">
+<li>Loading...</li></ul></nav></div></div></div><footer>
+<p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer>
+<div class="overlay"></div></body></html>

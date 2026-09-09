@@ -1,0 +1,137 @@
+---
+title: Map utilities
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.52.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The TomTom Maps SDK provides a collection of utility functions exported from `@tomtom-org/maps-sdk/map` that help you work with maps in common scenarios. These utilities simplify complex map operations and provide ready-to-use solutions for frequently encountered challenges.
+
+## Padded bounds utilities
+
+When you have UI elements positioned over your map (such as control panels, sidebars, or headers), you often need to calculate the visible area that isn't obscured by these elements. The padded bounds utilities help you determine the effective visible area and adjust map behavior accordingly.
+
+These utilities calculate adjusted bounds and center points that account for surrounding UI elements, allowing you to:
+
+- **Calculate visible map bounds**: Determine the bounding box of the map area not covered by UI elements
+- **Calculate adjusted center point**: Find the center of the unobscured map area for better visual balance
+- **Fit bounds with UI compensation**: Expand bounds to ensure a specific geographic area is visible within the unobscured portion
+
+### Available functions
+
+The padded bounds utilities include:
+
+- **`calculatePaddedBBox`**: Calculates the bounding box of the visible map area excluding UI elements
+- **`calculatePaddedCenter`**: Calculates the center point of the visible map area excluding UI elements
+- **`calculateFittingBBox`**: Calculates an expanded bounding box that ensures a target area fits within the visible portion
+
+### calculatePaddedBBox
+
+Calculates the bounding box in lng-lat coordinates of the visible map area that does not overlap with the given UI HTML elements.
+
+**Parameters:**
+- `map` - The TomTomMap or MapLibre map instance
+- `surroundingElements` - Array of HTML elements or DOM selector strings positioned over the map
+- `paddingPX` - (Optional) Additional padding in pixels. Default is 0
+
+**Returns:** A `BBox` array `[west, south, east, north]` representing the unobscured area, or `null` if the visible area is too small.
+
+This example demonstrates how to visualize the padded bounding box (shown in red) that excludes the surrounding UI panels. The calculated bounds represent the visible map area that isn't covered by the left, top, and right panels.
+
+### calculatePaddedCenter
+
+Calculates the center point in lng-lat coordinates of the visible map area that does not overlap with the given UI HTML elements. This is useful to offset the map center in a way that looks harmonious with surrounding UI components.
+
+**Parameters:**
+- `map` - The TomTomMap or MapLibre map instance
+- `surroundingElements` - Array of HTML elements or DOM selector strings positioned over the map
+
+**Returns:** A `Position` array `[lng, lat]` representing the center of the unobscured area, or `null` if the visible area is too small.
+
+**Note**: This is equivalent to calculating the center of the bounding box returned by `calculatePaddedBBox`.
+
+<SDKGuideLiveCodingExample exampleDirectory="padded-bbox" />
+
+### calculateFittingBBox
+
+Calculates an expanded bounding box that, when the map is zoomed to it, ensures that a given target bounding box is visible within the area not obscured by surrounding UI elements. **[API Reference →](/maps-sdk-js/api-reference/modules/map.html#calculateFittingBBox)**
+
+This is useful when you have a specific geographic area that you want to be fully visible in the unobscured portion of the map. The function returns a larger bounding box that accounts for the space taken by UI elements.
+
+**Parameters:**
+- `map` - The TomTomMap or MapLibre map instance
+- `toBeContainedBBox` - The target bounding box `[west, south, east, north]` to be contained in the visible area
+- `surroundingElements` - Array of HTML elements or DOM selector strings positioned over the map
+- `paddingPX` - (Optional) Additional padding in pixels. Default is 0
+
+**Returns:** An expanded `BBox` array `[west, south, east, north]` that will contain the target bbox when accounting for UI elements, or `null` if the visible area is too small.
+
+#### Example
+
+<SDKGuideLiveCodingExample exampleDirectory="padded-fitting-bbox" />
+
+This example shows how to calculate an expanded bounding box (shown in red with low opacity) that ensures the target area (shown in blue) fits within the visible portion of the map when UI panels are present.
+
+```javascript
+import { calculateFittingBBox, TomTomMap } from '@tomtom-org/maps-sdk/map';
+
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+
+// The area you want to ensure is visible
+const targetBBox = [4.8, 52.3, 4.95, 52.4];
+
+// Calculate expanded bounds that will contain the target area
+const fittingBBox = calculateFittingBBox({
+    map,
+    toBeContainedBBox: targetBBox,
+    surroundingElements: ['#panel-left', '#panel-top', '#panel-right'],
+    paddingPX: 20,
+});
+
+if (fittingBBox) {
+    // Fit the map to the expanded bounds
+    // This ensures the target area is fully visible in the unobscured portion
+    map.mapLibreMap.fitBounds(fittingBBox);
+}
+```
+
+### Using selectors vs element references
+
+All utility functions accept either HTML element references or DOM selector strings for the `surroundingElements` parameter:
+
+```javascript
+// Using element references
+const sidebar = document.getElementById('sidebar');
+const header = document.getElementById('header');
+calculatePaddedBBox({ map, surroundingElements: [sidebar, header] });
+
+// Using selector strings
+calculatePaddedBBox({ map, surroundingElements: ['#sidebar', '#header'] });
+
+// Mixed approach
+calculatePaddedBBox({ map, surroundingElements: [sidebar, '#header'] });
+```
+
+### How it works
+
+The utilities analyze the position and size of surrounding UI elements to determine which portions of the map are obscured. The algorithm:
+
+1. **Identifies element positions**: Calculates the bounds of each UI element relative to the map container
+2. **Determines element types**: Distinguishes between horizontal bars (spanning full width), vertical bars (spanning full height), and floating elements
+3. **Adjusts visible bounds**: Progressively reduces the visible area by excluding obscured regions
+4. **Applies padding**: Adds additional spacing around UI elements and map edges as specified
+
+## API reference
+
+For complete documentation of all utility function signatures, types, and options, see the **[Map Utilities API Reference](/maps-sdk-js/api-reference/modules/map.html#Utils)**.
+
+## Next steps
+
+- Explore the **[Map Introduction](./introduction.mdx)** for general map concepts
+- Learn about **[Map Geometries](./geometries.mdx)** for adding shapes to your map
+- Check out **[User Events](./user-events.mdx)** for handling map interactions

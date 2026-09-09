@@ -1,0 +1,652 @@
+---
+title: User interaction events
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.52.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The User Interaction Events system in the TomTom Maps SDK provides enhanced event handling capabilities that build upon MapLibre's native events. This system simplifies complex user interactions and provides consistent event handling across different map elements and modules, enabling rich interactive mapping experiences.
+
+<SDKGuideLiveCodingExample exampleDirectory="map-events" />
+
+## Event system architecture
+
+The TomTom SDK's event system addresses common MapLibre event handling challenges while maintaining full compatibility with the underlying MapLibre event infrastructure. This dual-layer approach provides both familiar MapLibre patterns and enhanced TomTom-specific functionality.
+
+### Enhanced event capabilities
+
+**Problems Solved by TomTom Events:**
+- **Complex hover implementation**: MapLibre hover events require manual timing, state management, and precision handling
+- **Event conflicts**: Multiple interactive sources can interfere with each other without proper coordination
+- **Data transformation**: Raw MapLibre events need conversion to application-specific formats with relevant context
+- **Precision issues**: Accurate event detection with appropriate tolerance is difficult to implement consistently
+
+**TomTom SDK Solutions:**
+- **Unified event API**: Consistent event handling patterns across all SDK modules through dedicated `events` objects
+- **Built-in hover support**: Automatic hover detection with configurable delays, thresholds, and state management
+- **Conflict resolution**: Smart event routing between different map modules and layers prevents interference
+- **Rich data integration**: Events include relevant TomTom data and contextual information automatically
+
+### Module-specific event systems
+
+Each TomTom module provides its own dedicated event system through an `events` object, eliminating the need to work directly with MapLibre events for module-specific interactions:
+
+```javascript
+import { PlacesModule, TrafficIncidentsModule, RoutingModule } from '@tomtom-org/maps-sdk/map';
+
+// Each module exposes its own events object
+const placesModule = await PlacesModule.create(map);
+const trafficModule = await TrafficIncidentsModule.get(map);
+const routesModule = await RoutingModule.create(map);
+
+// Access module-specific events through the events object
+placesModule.events.on('click', handlePlaceClick);
+trafficModule.events.on('hover', handleTrafficHover);
+routesModule.events.mainLines.on('click', handleRouteClick);
+```
+
+## Basic event handling
+
+### Standard MapLibre event integration
+
+The SDK maintains full compatibility with MapLibre events for general map interactions:
+
+```javascript
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+
+// Standard MapLibre events for general map interaction
+map.mapLibreMap.on('click', (event) => {
+    console.log('Map clicked at:', event.lngLat);
+});
+
+map.mapLibreMap.on('moveend', () => {
+    const bounds = map.mapLibreMap.getBounds();
+    console.log('New map bounds:', bounds);
+});
+```
+
+## TomTom module event handling
+
+### Places module events
+
+The Places Module provides rich event handling for place interactions through its dedicated events system:
+
+```javascript
+import { PlacesModule } from '@tomtom-org/maps-sdk/map';
+
+const placesModule = await PlacesModule.create(map);
+
+// Use the module's events object for TomTom-specific interactions
+placesModule.events.on('click', (feature, lngLat) => {
+    console.log('Place clicked:', feature.properties.title);
+    console.log('Click coordinates:', lngLat);
+    displayPlaceDetails(feature.properties);
+});
+
+placesModule.events.on('hover', (feature) => {
+    console.log('Place hovered:', feature.properties.title);
+    showPlacePreview(feature.properties);
+});
+```
+
+### Traffic module events
+
+Traffic incidents and flow data provide specialized event handling for traffic-related interactions:
+
+```javascript
+import { TrafficIncidentsModule } from '@tomtom-org/maps-sdk/map';
+
+const trafficIncidentsModule = await TrafficIncidentsModule.get(map);
+
+// Traffic-specific events with enriched data
+trafficIncidentsModule.events.on('click', (feature, lngLat) => {
+    displayTrafficIncident({
+        category: feature.properties.category,
+        magnitudeOfDelay: feature.properties.magnitudeOfDelay,
+        description: feature.properties.description,
+        delayInSeconds: feature.properties.delayInSeconds,
+        location: lngLat
+    });
+});
+
+trafficIncidentsModule.events.on('long-hover', (feature, lngLat) => {
+    showTrafficTooltip(feature.properties, lngLat);
+});
+```
+
+### Routing module events
+
+Route interactions provide detailed information about route segments and waypoints:
+
+```javascript
+import { RoutingModule } from '@tomtom-org/maps-sdk/map';
+
+const routesModule = await RoutingModule.create(map);
+
+routesModule.events.mainLines.on('click', (feature) => {
+    console.log('Route clicked:', feature.properties.routeId);
+    console.log('Route segment:', feature.properties.segmentIndex);
+    showRouteDetails(feature.properties);
+});
+```
+
+## Scoping events
+
+`events.where(scope, config?)` narrows a module's events to part of what it covers, and returns an events object for just that part. Each scope carries its own event configuration, so two parts of one module can have different hover cursors.
+
+There are two things you can narrow.
+
+**A feature predicate** works on every module — only your data can tell a major incident from a minor one:
+
+```javascript
+trafficIncidents.events
+    .where((incident) => incident.properties.magnitude === 'major')
+    .on('click', showIncidentDetails);
+```
+
+**Layer groups** work on `BaseMapModule`, the one module whose layers have a stable, published vocabulary:
+
+```javascript
+baseMap.events
+    .where({ layerGroups: { mode: 'include', names: ['roadLabels'] } }, { cursorOnHover: 'pointer' })
+    .on('click', (feature) => showRoadName(feature.properties.name));
+```
+
+A module's [named scopes](#module-event-scopes) narrow the same way:
+
+```javascript
+routing.events.tunnels
+    .where((section) => section.properties.lengthInMeters > 500)
+    .on('click', showLongTunnel);
+```
+
+To narrow on both axes at once, give `BaseMapModule`'s scope object a `features` predicate alongside its `layerGroups` — one `where` call, rather than two:
+
+```javascript
+baseMap.events
+    .where({
+        layerGroups: { mode: 'include', names: ['roadLabels'] },
+        features: (feature) => feature.properties.name?.startsWith('A'),
+    })
+    .on('click', showRoadName);
+```
+
+A predicate filters every feature under the pointer, not just the topmost one, and the first match becomes the handler's primary feature. Clicking a stack whose top hit is a minor incident and whose second is major still reaches a `'major'` handler, with the major incident. When nothing under the pointer matches, the handler is not called.
+
+## Module event scopes
+
+A module that draws several distinct things exposes one named scope per thing. A scope covers the *user* events of that part, with the same `on`, `off` and `where` as anywhere else. Lifecycle events (`config-change`, `shown-features`) stay on the module: a module has one configuration and one `show` stream, and a scope narrows neither.
+
+| Module | Named scopes |
+| --- | --- |
+| `RoutingModule` | `mainLines`, `waypoints`, `chargingStops`, `summaryBubbles`, `incidents`, `vehicleRestricted`, `ferries`, `tollRoads`, `tunnels`, `instructionLines` |
+| `PlacesModule` | `places`, `connections` |
+| `GeometriesModule` | `geometry`, `geometryLabel` |
+| `CustomGeoJSONModule` | your own `sources` keys |
+
+```javascript
+routing.events.mainLines.on('click', (route) => showRouteSummary(route));
+routing.events.waypoints.on('hover', (waypoint) => showTooltip(waypoint));
+
+// The module's own events cover all of its scopes at once, plus the lifecycle events:
+routing.events.on('click', (feature) => console.log('something on the route', feature));
+routing.events.on('config-change', (config) => console.log(config));
+```
+
+Modules that draw one thing — `BaseMapModule`, `POIsModule`, `HillshadeModule`, `TrafficFlowModule`, `TrafficIncidentsModule`, `TrafficIncidentOverlayModule`, `TrafficAreaAnalyticsModule` — have no named scopes. Their `events` already is that scope; narrow it with `where()`.
+
+## Advanced event types
+
+### Hover events
+
+The SDK introduces sophisticated hover detection that addresses the complexity of implementing reliable hover functionality with MapLibre.
+Traditional hover implementation requires managing mouse enter/leave events, dealing with timing issues, and handling state management across different map features.
+
+**Hover Event Challenges:**
+- **Timing complexity**: Raw mouse events require debouncing and timing management
+- **State management**: Tracking which features are currently hovered requires careful state handling
+- **Performance concerns**: Frequent mouse events can impact application performance
+- **Cross-layer conflicts**: Multiple interactive layers can interfere with hover detection
+
+**TomTom Hover Solutions:**
+The SDK provides automatic hover detection with built-in timing, state management, and performance optimization:
+
+```javascript
+// Standard hover: Immediate response to mouse enter
+placesModule.events.on('hover', (feature) => {
+    showQuickPreview(feature.properties);
+});
+```
+
+### Long-hover events
+
+Long-hover events are particularly valuable for displaying detailed information without cluttering the interface with immediate popups.
+This pattern is ideal for progressive disclosure interfaces where users can get quick information by hovering briefly, or detailed information by maintaining hover focus.
+
+**Long-Hover Implementation Benefits:**
+- **Prevents accidental triggers**: Users must maintain focus for a specified duration
+- **Reduces UI noise**: Detailed information appears only when users demonstrate intent
+- **Improves performance**: Expensive operations (like API calls) are triggered only after sustained interest
+- **Enhanced UX**: Creates a natural progression from quick glance to detailed exploration
+
+**Configurable Long-Hover Timing:**
+The long-hover delay is configurable to match your application's UX requirements:
+
+```javascript
+// Long hover with default timing (typically 800ms)
+trafficModule.events.on('long-hover', (feature, lngLat) => {
+    fetchDetailedTrafficInfo(feature.properties.incidentId)
+        .then(details => showDetailedIncident(details, lngLat));
+});
+```
+
+### Event timing and configuration
+
+Different modules may have different timing requirements based on the type of interaction and data complexity:
+
+```javascript
+// Example of how timing might vary by module type
+// (Note: Actual configuration methods may vary by implementation)
+trafficModule.events.on('long-hover', (feature) => {
+    // Triggered after longer delay for complex traffic data
+    displayComprehensiveTrafficAnalysis(feature.properties);
+});
+
+placesModule.events.on('hover', (feature) => {
+    // Triggered quickly for simple place information
+    showPlaceBasicInfo(feature.properties);
+});
+```
+
+## Event data structure
+
+### Enhanced event payloads
+
+TomTom module events provide enriched data compared to raw MapLibre events.
+
+Modules where service data is added (places, routes, geometries) will map their user events to the original added data.
+
+```javascript
+placesModule.events.on('click', (feature, lngLat, allFeatures, source) => {
+    // feature: GeoJSON feature with TomTom-specific properties
+    console.log('Feature data:', feature.properties);
+
+    // lngLat: Precise click coordinates
+    console.log('Click location:', lngLat);
+
+    // allFeatures: All features at the event location (array of MapGeoJSONFeature)
+    console.log('All features at location:', allFeatures.length);
+
+    // source: Source and layer configuration for the feature
+    console.log('Source:', source);
+});
+```
+
+## Event configuration
+
+### Map-level configuration (MapEventsConfig)
+
+Configure global event behavior when initializing the map through the `events` option. These settings affect all interactive modules and layers:
+
+```javascript
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+
+const map = new TomTomMap({
+    mapLibre: {
+        container: 'map'
+    },
+    events: {
+        precisionMode: 'box',
+        paddingBoxPx: 10,
+        cursorOnHover: 'pointer',
+        longHoverDelayAfterMapMoveMS: 800,
+        longHoverDelayOnStillMapMS: 300
+    }
+});
+```
+
+#### Precision configuration
+
+Control how accurately events detect features:
+
+```javascript
+// Standard: Easier clicking with 5px tolerance (default)
+events: {
+    precisionMode: 'box',
+    paddingBoxPx: 5
+}
+
+// Mobile: Larger touch targets
+events: {
+    precisionMode: 'box',
+    paddingBoxPx: 15
+}
+
+// Precise: Exact pixel matching for dense data
+events: {
+    precisionMode: 'point'
+}
+```
+
+#### Hover timing configuration
+
+Adjust long-hover delays to match your UX requirements:
+
+```javascript
+// Responsive: Quick tooltips after map settles
+events: {
+    longHoverDelayAfterMapMoveMS: 500,  // After panning
+    longHoverDelayOnStillMapMS: 200     // Subsequent hovers
+}
+
+// Conservative: Prevent accidental triggers
+events: {
+    longHoverDelayAfterMapMoveMS: 1200,
+    longHoverDelayOnStillMapMS: 500
+}
+```
+
+#### Cursor styling
+
+Customize cursor appearance for different interaction states:
+
+```javascript
+events: {
+    cursorOnMap: 'grab',           // Default cursor
+    cursorOnHover: 'pointer',      // When hovering features
+    cursorOnMouseDown: 'grabbing'  // During click/drag
+}
+```
+
+### Module-level configuration (EventHandlerConfig)
+
+Individual modules can override cursor behavior for their specific features:
+
+```javascript
+import { PlacesModule } from '@tomtom-org/maps-sdk/map';
+
+const placesModule = await PlacesModule.create(map, {
+    events: {
+        cursorOnHover: 'help'  // Custom cursor for places
+    }
+});
+
+// Different cursor for different modules
+const trafficModule = await TrafficIncidentsModule.get(map, {
+    events: {
+        cursorOnHover: 'crosshair'  // Different cursor for traffic
+    }
+});
+```
+
+## Handling events on the rest of the map
+
+### Detecting clicks outside interactive features
+
+When building interactive maps, you often need to detect when users interact with the base map itself—areas outside of your custom features like places, routes, or traffic incidents. This is essential for:
+- **Clearing selections**: Deselecting features when users click empty map areas
+- **Resetting UI state**: Hiding popups or info panels when focus moves away
+- **Triggering map-wide actions**: Performing reverse geocoding on arbitrary map locations
+- **Managing interaction modes**: Switching between different interaction states
+
+The `BaseMapModule` provides a solution for detecting these "rest of the map" interactions through its event system.
+
+### Using BaseMapModule for background interactions
+
+The `BaseMapModule` manages all fundamental map layers (roads, buildings, land, water, etc.). By using its event handlers, you can detect user interactions with the underlying map:
+
+```javascript
+import { BaseMapModule } from '@tomtom-org/maps-sdk/map';
+
+const baseMap = await BaseMapModule.get(map);
+
+// Detect clicks on the base map
+baseMap.events.on('click', (feature, lngLat) => {
+    console.log('Map clicked at:', lngLat);
+    clearAllSelections();
+    performReverseGeocoding(lngLat);
+});
+
+// Detect hovers over the base map
+baseMap.events.on('hover', (feature, lngLat) => {
+    console.log('Hovering over:', feature.properties);
+    hideAllPopups();
+});
+```
+
+### Separating interactive and background layers
+
+For more sophisticated applications, you can treat some map layers as interactive and the rest as background. Use two **scopes** over the one base map module — each with its own handlers and its own cursor.
+
+```javascript
+import { BaseMapModule } from '@tomtom-org/maps-sdk/map';
+
+// Define which layer groups should be interactive
+const interactiveLayerGroups = ['roads', 'roadLabels', 'buildings3D'];
+
+const baseMap = await BaseMapModule.get(map);
+
+const interactiveLayers = baseMap.events.where({
+    layerGroups: { mode: 'include', names: interactiveLayerGroups }
+});
+
+const restOfTheMap = baseMap.events.where(
+    { layerGroups: { mode: 'exclude', names: interactiveLayerGroups } },
+    { cursorOnHover: 'default' }  // Keep default cursor on background
+);
+
+// Handle interactive layer clicks
+interactiveLayers.on('click', (feature, lngLat) => {
+    console.log('Interactive feature clicked:', feature.properties);
+    showFeatureDetails(feature);
+});
+
+// Handle background clicks
+restOfTheMap.on('click', (feature, lngLat) => {
+    console.log('Background clicked');
+    clearAllSelections();
+});
+```
+
+### Practical example: clearing selections
+
+A common use case is clearing feature selections when users click outside interactive elements:
+
+```javascript
+import { PlacesModule, BaseMapModule } from '@tomtom-org/maps-sdk/map';
+
+const placesModule = await PlacesModule.create(map);
+const baseMap = await BaseMapModule.get(map, {
+    events: { cursorOnHover: 'default' }
+});
+
+let selectedPlace = null;
+
+// Select places on click
+placesModule.events.on('click', (feature, lngLat) => {
+    selectedPlace = feature;
+    highlightPlace(feature);
+    showPlaceDetails(feature);
+});
+
+// Clear selection when clicking the base map
+baseMap.events.on('click', () => {
+    if (selectedPlace) {
+        selectedPlace = null;
+        clearHighlights();
+        hidePlaceDetails();
+    }
+});
+```
+
+See the **[Rest of the Map Click](../../examples/rest-of-the-map-click)** example for a complete working implementation of this pattern.
+
+### Cursor behavior for background interactions
+
+When handling background map interactions, it's important to configure the cursor appropriately to provide proper visual feedback to users.
+
+**Why Set `cursorOnHover: 'default'`?**
+
+By default, when hovering over any interactive module features, the cursor changes to indicate interactivity (typically to `'pointer'`). However, for background map layers, you usually want to maintain the default cursor to signal that these elements are not primary interactive targets:
+
+```javascript
+// Background scope with default cursor
+const baseMap = await BaseMapModule.get(map);
+
+const restOfTheMap = baseMap.events.where(
+    { layerGroups: { mode: 'exclude', names: ['roads', 'roadLabels'] } },
+    { cursorOnHover: 'default' }  // Prevents pointer cursor on hover
+);
+```
+
+**Cursor Configuration Patterns:**
+
+```javascript
+// Pattern 1: two scopes of one module, each with its own cursor
+const baseMap = await BaseMapModule.get(map);
+
+const interactiveFeatures = baseMap.events.where(
+    { layerGroups: { mode: 'include', names: ['roads'] } },
+    { cursorOnHover: 'pointer' }  // Shows as clickable
+);
+
+const background = baseMap.events.where(
+    { layerGroups: { mode: 'exclude', names: ['roads'] } },
+    { cursorOnHover: 'default' }  // Shows as not interactive
+);
+
+// Pattern 2: map-wide configuration, overridden per module or per scope
+const map = new TomTomMap({
+    mapLibre: {
+        container: 'map'
+    },
+    events: {
+        cursorOnHover: 'pointer'  // Default for all modules
+    }
+});
+
+// Override for the whole base map module...
+const baseMapWithDefaultCursor = await BaseMapModule.get(map, {
+    events: { cursorOnHover: 'default' }
+});
+
+// ...or for just one scope of it
+const labels = baseMapWithDefaultCursor.events.where(
+    { layerGroups: { mode: 'include', names: ['roadLabels'] } },
+    { cursorOnHover: 'pointer' }
+);
+```
+
+### Complete example: multi-module interaction
+
+Here's a comprehensive example showing how different modules work together with background detection:
+
+```javascript
+import {
+    BaseMapModule,
+    PlacesModule,
+    TrafficIncidentsModule
+} from '@tomtom-org/maps-sdk/map';
+
+// Initialize modules
+const placesModule = await PlacesModule.create(map);
+const trafficModule = await TrafficIncidentsModule.get(map);
+const baseMap = await BaseMapModule.get(map, {
+    events: { cursorOnHover: 'default' }
+});
+
+let activePopup = null;
+
+// Places interactions
+placesModule.events.on('click', (feature, lngLat) => {
+    activePopup = showPopup('place', feature, lngLat);
+});
+
+// Traffic interactions
+trafficModule.events.on('click', (feature, lngLat) => {
+    activePopup = showPopup('traffic', feature, lngLat);
+});
+
+// Base map hover - clear popups when moving to background
+baseMap.events.on('hover', () => {
+    if (activePopup) {
+        activePopup.remove();
+        activePopup = null;
+    }
+});
+
+// Base map click - perform reverse geocoding
+baseMap.events.on('click', async (feature, lngLat) => {
+    if (activePopup) {
+        activePopup.remove();
+        activePopup = null;
+    }
+
+    const result = await reverseGeocode({
+        position: [lngLat.lng, lngLat.lat]
+    });
+
+    showAddressInfo(result, lngLat);
+});
+```
+
+### Event priority and layer order
+
+Event priority is determined by **layer rendering order** - whichever layer is rendered on top receives the event first. This follows the natural visual stacking of map elements.
+
+**How Event Priority Works:**
+
+The module whose layers are rendered highest (top-most) in the layer stack receives the event:
+
+```javascript
+const placesModule = await PlacesModule.create(map);
+const baseMap = await BaseMapModule.get(map);
+
+// Click on a place marker: placesModule receives the event
+// Click on a road: baseMap receives the event
+```
+
+**Multiple scopes of one module:**
+
+Scopes of the same module follow the same rule — whichever layer is on top wins, regardless of which scope registered first:
+
+```javascript
+const baseMap = await BaseMapModule.get(map);
+
+const roads = baseMap.events.where({ layerGroups: { mode: 'include', names: ['roads'] } });
+const buildings = baseMap.events.where({ layerGroups: { mode: 'include', names: ['buildings3D'] } });
+
+// Where a building covers a road, the building is drawn on top, so `buildings` fires
+```
+
+**Key Principles:**
+- **Layer-based priority**: Top-most visible layer receives the event
+- **No event bubbling**: Events don't propagate to lower layers
+- **Visual hierarchy**: What users see on top gets the interaction
+- **Scope independence**: Each module and each scope handles its own events
+
+## Related guides and examples
+
+### Services integration
+- **[Reverse Geocoding](../services/places/reverse-geocoding.mdx)** - Use user click events to trigger reverse geocoding and display address information
+- **[Search Services](../services/places/search.mdx)** - Handle user interactions to trigger place searches and display results
+- **[Geocoding](../services/places/geocoding.mdx)** - Process user input events to geocode addresses and show locations
+
+### Related examples
+- **[Rest of the Map Click](../../examples/rest-of-the-map-click)** - Simple example showing how to detect clicks on places vs. the rest of the map
+- **[Map Events](../../examples/map-events)** - Comprehensive map event handling examples with different interaction patterns
+- **[Pin Interaction](../../examples/pin-interaction)** - Interactive markers with click and hover events
+- **[Reverse geocoding playground](../../examples/rev-geo-playground)** - Click events triggering reverse geocoding with visual feedback
+- **[Places customization playground](../../examples/places-customize-playground)** - Custom event handling for place interactions
+
+### Related map modules
+- **[Places Module](./places.mdx)** - Handle user interactions with places and markers
+- **[Routing Module](./routes.mdx)** - Manage user interactions with routes and route segments
+- **[Traffic Incidents](./traffic-incidents.mdx)** - Handle user interactions with traffic data and incidents

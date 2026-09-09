@@ -1,0 +1,364 @@
+---
+title: Traffic area analytics module
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.52.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Traffic Area Analytics Module visualizes historical traffic data for a geographic region on the map.
+Data is fetched from the TomTom Move Portal API and rendered using one of five visualization modes: 3D or flat hexagonal grids, 3D or flat square grids, or a density heatmap.
+
+<SDKGuideLiveCodingExample exampleDirectory="traffic-area-analytics" />
+
+## Initialization
+
+```javascript
+import { TomTomMap, TrafficAreaAnalyticsModule } from '@tomtom-org/maps-sdk/map';
+
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+const analyticsModule = await TrafficAreaAnalyticsModule.create(map);
+```
+
+Configure the module at initialization time using a config object:
+
+```javascript
+const analyticsModule = await TrafficAreaAnalyticsModule.create(map, {
+    displayMode: 'hexgrid-3d',
+    activeMetric: 'congestionLevel',
+    metricConfig: {
+        congestionLevel: { color: 'trafficLight' },
+    },
+});
+```
+
+## Fetching and displaying data
+
+Fetch area analytics data using the `trafficAreaAnalytics` service and pass the response directly to `show()`.
+
+```javascript
+import { geocodeOne, geometryData, trafficAreaAnalytics } from '@tomtom-org/maps-sdk/services';
+import { bboxFromGeoJSON } from '@tomtom-org/maps-sdk/core';
+
+// 1. Geocode a city to get its boundary
+const place = await geocodeOne('Amsterdam, Netherlands');
+const boundary = await geometryData({ geometries: [place] });
+const regionGeometry = boundary.features[0].geometry;
+
+// 2. Fetch analytics for the last 7 days
+const endDate = new Date();
+endDate.setDate(endDate.getDate() - 2); // API requires at least 2 days ago
+const startDate = new Date(endDate);
+startDate.setDate(startDate.getDate() - 6);
+const fmt = (d) => d.toISOString().slice(0, 10);
+
+const analytics = await trafficAreaAnalytics({
+    apiKey: MOVE_PORTAL_KEY,
+    name: 'Amsterdam, Netherlands',
+    startDate: fmt(startDate),
+    endDate: fmt(endDate),
+    metrics: 'all',
+    functionalRoadClasses: 'all',
+    hours: 'all',
+    geometry: regionGeometry,
+});
+
+// 3. Display on the map
+await analyticsModule.show(analytics);
+```
+
+To remove data from the map:
+
+```javascript
+await analyticsModule.clear();
+```
+
+## Visualization modes
+
+Five modes are available, set via `displayMode` at init time or changed at runtime with `setMode()`:
+
+| Mode | Description |
+|------|-------------|
+| `'hexgrid-3d'` | 3D extruded hexagonal cells colored and raised by metric value (default) |
+| `'hexgrid-2d'` | Flat hexagonal cells colored by metric value |
+| `'square-3d'` | 3D extruded square cells colored and raised by metric value |
+| `'square-2d'` | Flat square cells colored by metric value |
+| `'heatmap'` | MapLibre density heatmap from tile center points |
+
+Switch modes at any time using `setMode()`:
+
+```javascript
+analyticsModule.setMode('heatmap');
+analyticsModule.setMode('hexgrid-2d');
+analyticsModule.setMode('square-3d');
+```
+
+## Metrics
+
+Five metrics are available to drive color and extrusion height. Set the active one via `activeMetric`. Per-metric style settings (color, height, filters) are configured via `metricConfig`.
+
+| Metric | Description |
+|--------|-------------|
+| `'congestionLevel'` | Percentage increase in travel time above free-flow conditions (default active metric) |
+| `'speed'` | Average vehicle speed in km/h |
+| `'travelTime'` | Average travel time per 10 km in minutes |
+| `'freeFlowSpeed'` | Average speed under uncongested conditions in km/h |
+| `'networkLength'` | Total road length within each tile in metres — useful as a road density indicator |
+
+```javascript
+analyticsModule.setMetric('speed');
+analyticsModule.setMetric('travelTime');
+analyticsModule.setMetric('freeFlowSpeed');
+```
+
+You can also pre-configure multiple metrics at init time:
+
+```javascript
+const analyticsModule = await TrafficAreaAnalyticsModule.create(map, {
+    activeMetric: 'congestionLevel',
+    metricConfig: {
+        congestionLevel: { color: 'trafficLight' },
+        speed: { color: 'heat' },
+        travelTime: { height: { maxHeightMeters: 300 } },
+    },
+});
+```
+
+## Color
+
+Color configuration is per-metric and set under `metric.[metricKey].color`. You can use a preset theme name or provide custom color stops.
+
+### Preset themes
+
+```javascript
+// Apply a preset theme to all metrics
+analyticsModule.setColor('trafficLight'); // green → amber → red (default)
+analyticsModule.setColor('heat');         // blue → orange → red
+analyticsModule.setColor('monochrome');   // light grey → dark grey
+analyticsModule.setColor('viridis');      // purple → blue → green → yellow
+analyticsModule.setColor('plasma');       // purple → magenta → orange → yellow
+```
+
+### Custom color stops
+
+Provide an `AreaAnalyticsColorStopsConfig` object with a `valueType` and `stops` array.
+
+**`'raw'` (default)** — stop `value` fields are actual data values:
+
+```javascript
+analyticsModule.setColor({
+    valueType: 'raw',
+    stops: [
+        { value: 0,   color: '#2dc653' },  // 0% congestion
+        { value: 30,  color: '#f5a623' },  // 30% congestion
+        { value: 100, color: '#e03030' },  // 100% congestion
+    ],
+});
+```
+
+**`'relativeToPredefinedRangePCT'`** — stop `value` fields are 0–100 percentages relative to the SDK's predefined metric ranges (congestion 0–100, speed 0–120 km/h, travelTime 0–20 s/km). Useful for consistent coloring across datasets:
+
+```javascript
+analyticsModule.setColor({
+    valueType: 'relativeToPredefinedRangePCT',
+    stops: [
+        { value: 0,   color: '#2dc653' },  // 0% of predefined range
+        { value: 50,  color: '#f5a623' },  // 50% of predefined range
+        { value: 100, color: '#e03030' },  // 100% of predefined range
+    ],
+});
+```
+
+**`'relativeToActualRangePCT'`** — stop `value` fields are 0–100 percentages relative to the live data range actually present in the loaded tiles (0 % = loaded minimum, 100 % = loaded maximum). Maximises contrast regardless of absolute values:
+
+```javascript
+analyticsModule.setColor({
+    valueType: 'relativeToActualRangePCT',
+    stops: [
+        { value: 0,   color: '#2dc653' },  // 0% of loaded range
+        { value: 50,  color: '#f5a623' },  // 50% of loaded range
+        { value: 100, color: '#e03030' },  // 100% of loaded range
+    ],
+});
+```
+
+Pass `undefined` to revert to the default `'trafficLight'` theme:
+
+```javascript
+analyticsModule.setColor(undefined);
+```
+
+For `speed`, the color order is automatically inverted so that slow speeds render as "bad" (red) and fast speeds as "good" (green).
+
+## Height
+
+Height (extrusion) configuration is per-metric under `metric.[metricKey].height`. Use `setHeight()` to update the active metric's height config.
+
+```javascript
+// Predefined range (default): metric normalized to SDK predefined range, visual max = maxHeightMeters
+analyticsModule.setHeight({ maxHeightMeters: 200 });
+
+// Set a minimum height floor
+analyticsModule.setHeight({ maxHeightMeters: 100, minHeightMeters: 10 });
+
+// Current range: normalizes to live data range — maximises contrast for whatever data is loaded
+analyticsModule.setHeight({ maxHeightMeters: 150, scaleMode: 'currentRange' });
+
+// Raw: scaleFactor is multiplied directly with the raw metric value to obtain height in meters
+analyticsModule.setHeight({ scaleMode: 'raw', scaleFactor: 10 });
+```
+
+## Filtering
+
+Filter visible tiles by value range for the active metric using `filter()`. Only tiles within the given range will be rendered.
+
+```javascript
+// Show only tiles with congestion ≥ 50
+analyticsModule.filter({ min: 50 });
+
+// Show only tiles within a range
+analyticsModule.filter({ min: 20, max: 80 });
+
+// Clear the filter
+analyticsModule.clearFilter();
+analyticsModule.filter(undefined); // equivalent
+```
+
+## Region boundary
+
+When `show()` is called, **all region polygons** in the analytics response are rendered alongside the analytics cells as a subtle fill with an outline. Customize their appearance using `regionPolygon`:
+
+```javascript
+const analyticsModule = await TrafficAreaAnalyticsModule.create(map, {
+    regionPolygon: {
+        color: '#0052a5',      // fill and outline color (default: '#000000')
+        fillOpacity: 0.08,     // default: 0
+        outlineOpacity: 1.0,   // default: 0.5
+        outlineWidth: 3,       // default: 2
+    }
+});
+```
+
+## Layer positioning
+
+Control where analytics layers are placed in the map's rendering stack using `beforeLayerConfig`. Use `'top'` to draw above all layers, or supply a well-known style layer ID to insert the analytics layers below it.
+
+```javascript
+// Place below all labels (default behavior)
+const analyticsModule = await TrafficAreaAnalyticsModule.create(map, {
+    beforeLayerConfig: { heatmap: 'lowestLabel' },
+});
+
+// Place everything on top
+const analyticsModule = await TrafficAreaAnalyticsModule.create(map, {
+    beforeLayerConfig: {
+        heatmap: 'top',
+        hexgrid: { flat2D: 'top', extrusion3D: 'top' },
+    },
+});
+
+// Reposition after initialization
+analyticsModule.moveBeforeLayer({
+    hexgrid: { flat2D: 'lowestLabel', extrusion3D: 'lowestPlaceLabel' },
+});
+```
+
+## Visibility
+
+Control overall layer visibility:
+
+```javascript
+// Hidden at startup
+const analyticsModule = await TrafficAreaAnalyticsModule.create(map, { visible: false });
+
+// Toggle later
+analyticsModule.setVisible(true);
+
+// Check current state
+console.log(analyticsModule.isVisible()); // true | false
+```
+
+## Events
+
+Listen to click and hover events on hexgrid and square cells. Events fire for whichever mode is currently active.
+
+```javascript
+analyticsModule.events.on('click', (feature, lngLat) => {
+    console.log('Congestion:', feature.properties.congestionLevel);
+    console.log('Speed:', feature.properties.speed);
+});
+
+analyticsModule.events.on('hover', (feature) => {
+    console.log('Hovered cell:', feature.properties);
+});
+
+analyticsModule.events.on('long-hover', (feature) => {
+    console.log('Long-hovered cell:', feature.properties);
+});
+
+// Remove a specific listener
+analyticsModule.events.off('click');
+```
+
+### Custom tooltip on hover
+
+Use `events.on('hover')` to build a hover tooltip:
+
+```javascript
+import { Popup } from 'maplibre-gl';
+
+const popup = new Popup({ closeButton: false, anchor: 'left', offset: 12 });
+
+analyticsModule.events.on('hover', (feature, lngLat) => {
+    if (!feature) { popup.remove(); return; }
+    const { congestionLevel, speed } = feature.properties;
+    popup
+        .setLngLat(lngLat)
+        .setHTML(`<strong>Congestion:</strong> ${congestionLevel ?? 0}%<br/><strong>Speed:</strong> ${speed ?? 0} km/h`)
+        .addTo(map.mapLibreMap);
+});
+
+map.mapLibreMap.getCanvas().addEventListener('mouseleave', () => popup.remove());
+```
+
+## Config change events
+
+Subscribe to config changes emitted whenever a setter is called:
+
+```javascript
+const unsub = analyticsModule.events.on('config-change', (config) => {
+    console.log('Active metric:', config?.activeMetric);
+});
+// Later: unsub();
+```
+
+## Querying shown features
+
+Use `getShown()` to access the GeoJSON feature collections currently rendered for each visualization mode:
+
+```javascript
+const { heatmap, hexgrid, square } = analyticsModule.getShown();
+console.log(`Hexagonal cells in view: ${hexgrid.features.length}`);
+```
+
+## API reference
+
+For complete documentation of all properties, methods, and types, see the **[TrafficAreaAnalyticsModule API Reference](/maps-sdk-js/api-reference/classes/map.TrafficAreaAnalyticsModule.html)**.
+
+## Related guides and examples
+
+### Traffic overview
+- **[Traffic Overview](./traffic.mdx)** - Overview of all traffic visualization options
+
+### Related traffic modules
+- **[Traffic Flow Module](./traffic-flow.mdx)** - Real-time traffic speed conditions across the road network
+- **[Traffic Incidents Module](./traffic-incidents.mdx)** - Real-time traffic events and incidents
+
+### Related examples
+- **[Traffic Area Analytics](../../examples/traffic-area-analytics)** - Basic area analytics with a geocoded location
+- **[Traffic Area Analytics Playground](../../examples/traffic-area-analytics-playground)** - Full-featured playground with city search, legend, and tooltips
+- **[Traffic Area Analytics Config Playground](../../examples/traffic-area-analytics-config-playground)** - 2D/3D mode toggle and custom color pickers
