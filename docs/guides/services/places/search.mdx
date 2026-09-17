@@ -1,0 +1,358 @@
+---
+title: Search (fuzzy/geometry/along-route/autocomplete)
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.54.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The TomTom Maps SDK provides three powerful search services that help you find places, addresses, and points of interest with different search strategies optimized for various use cases. Each search type is designed to handle specific user interaction patterns and application requirements.
+
+## Available search types
+
+### Fuzzy search
+
+Comprehensive search that handles typos, variations in queries, and natural language input. Fuzzy search is robust and forgiving, making it ideal for situations where users might not know exact spellings or when dealing with international locations.
+
+```javascript
+import { search } from '@tomtom-org/maps-sdk/services';
+
+const results = await search({
+    query: 'coffe shop near dam square',  // Handles typos and variations
+    position: [4.9041, 52.3676]
+});
+```
+
+**Advanced Capabilities:**
+- **Tolerates spelling mistakes** and variations in input
+- **Supports natural language queries** for intuitive user interaction
+- **Category and POI search** with intelligent matching
+- **Flexible radius-based** or bounding box search options
+
+**Ideal Applications:**
+- General search functionality where user input quality varies
+- International applications with diverse language inputs
+- Voice-to-text search implementations
+
+### Geometry search
+
+Find places within specific geographic boundaries or custom areas. Geometry search enables location discovery within precisely defined regions, making it perfect for area-specific applications and location-based services.
+
+```javascript
+import { search } from '@tomtom-org/maps-sdk/services';
+
+// Search within a circle
+const results = await search({
+    query: 'restaurants',
+    geometries: [{
+        type: 'Circle',
+        coordinates: [4.9041, 52.3676], // [longitude, latitude]
+        radius: 5000                     // meters
+    }]
+});
+
+// Search within a GeoJSON polygon
+const results = await search({
+    query: 'museums',
+    geometries: [{
+        type: 'Polygon',
+        coordinates: [[[4.7, 52.2], [5.1, 52.2], [5.1, 52.5], [4.7, 52.5], [4.7, 52.2]]]
+    }]
+});
+```
+
+The `search()` function automatically dispatches to geometry search when `geometries` is provided, and to fuzzy search otherwise.
+
+**Geometric Search Options:**
+- **Circle**: Custom radius around a point (`type: 'Circle'`, `coordinates`, `radius`)
+- **Polygon**: GeoJSON polygon for custom area boundaries
+- **MultiPolygon**: Multiple non-contiguous areas in a single query
+
+**Perfect For:**
+- Location discovery within specific neighborhoods or districts
+- Delivery and service area applications
+- Tourism and local business discovery
+
+### Along-route search
+
+Discover places of interest along a planned route, filtered to a maximum detour time. Along-route search is ideal for trip planning scenarios where users want to find fuel stops, restaurants, or EV charging stations without significantly deviating from their journey.
+
+```javascript
+import { search } from '@tomtom-org/maps-sdk/services';
+
+// Pass a GeoJSON LineString directly
+const results = await search({
+    route: {
+        type: 'LineString',
+        coordinates: [
+            [4.9, 52.37],  // Amsterdam [longitude, latitude]
+            [4.95, 52.28],
+            [5.0, 52.15],
+            [5.1, 52.09],  // Utrecht
+        ]
+    },
+    maxDetourTimeSeconds: 600,
+    poiCategories: ['ELECTRIC_VEHICLE_STATION'],
+    limit: 10,
+});
+
+// Or pass a Route Feature returned by calculateRoute
+import { calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+const routes = await calculateRoute({ locations: [amsterdamWaypoint, utrechtWaypoint] });
+const results = await search({
+    route: routes.features[0],
+    maxDetourTimeSeconds: 600,
+    query: 'cafe',
+});
+```
+
+The `search()` function dispatches to along-route search when a `route` is provided.
+
+**Key Features:**
+- **Detour-time filtering** — only surfaces places reachable within the allowed detour
+- **Flexible route input** — accepts a `LineString`, `Position[]`, or a `Route` Feature from `calculateRoute`
+- **Category and text search** — combine `poiCategories` and `query` as needed
+- **Sort control** — order results by detour time or position along the route
+
+**Ideal Applications:**
+- EV trip planning with charging stop discovery
+- Road-trip itinerary building
+- Fleet routing with service stop optimization
+
+<SDKGuideLiveCodingExample exampleDirectory="nodejs-along-route-search" />
+
+### Autocomplete search
+
+Perfect for search-as-you-type experiences with instant suggestions, autocomplete search provides real-time results as users type their queries. This service is optimized for speed and relevance, making it ideal for interactive search interfaces.
+
+```javascript
+import { autocompleteSearch } from '@tomtom-org/maps-sdk/services';
+
+const suggestions = await autocompleteSearch({
+    query: 'coffee',
+    position: [4.9041, 52.3676], // Amsterdam
+    resultType: ['category', 'brand', 'plaintext']
+});
+```
+
+**Key Features:**
+- **Real-time suggestions** as users type with minimal latency
+- **Brand and category suggestions** for enhanced user experience
+- **Optimized for speed** with lightweight responses
+- **Perfect for search bars** and interactive input fields
+
+## Parameter reference
+
+### Common parameters
+
+These parameters apply to fuzzy search, geometry search, and along-route search:
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `query` | `string` *(optional)* | Search query text. Omit when searching purely by `poiCategories`, `poiBrands`, `fuelTypes`, or geometry. |
+| `limit` | `number` | Maximum results to return (1–100, default: `10`). |
+| `countries` | `string[]` | Restrict results to specific countries using ISO 3166-1 alpha-2 or alpha-3 codes (e.g. `['NL', 'DE']`). |
+| `poiCategories` | `POICategory[]` | Filter results by POI category. Use the [`getPOICategories` service](./poi-categories.mdx) to discover available values. See [POI Categories](#poi-categories). |
+| `poiBrands` | `string[]` | Filter by brand name (case-sensitive). Example: `['Starbucks', 'Costa Coffee']`. |
+| `indexes` | `SearchIndexType[]` | Which indexes to search. Options: `'Geo'`, `'PAD'`, `'Addr'`, `'Str'`, `'XStr'`, `'POI'`. Defaults to all. |
+| `openingHours` | `OpeningHoursMode` | Include opening hours in results (e.g. `'nextSevenDays'`). |
+| `timeZone` | `TimeZoneRequest` | Include timezone info. Use `'iana'` to receive IANA timezone IDs (e.g. `'Europe/Amsterdam'`). |
+| `relatedPois` | `RelatedPoisRequest` | Include related POIs in results. Options: `'off'` (default), `'child'`, `'parent'`, `'all'`. |
+| `connectors` | `ConnectorType[]` | Filter EV charging stations by connector type (e.g. `['IEC62196Type2CCS', 'Chademo']`). |
+| `fuelTypes` | `Fuel[]` | Filter fuel stations by fuel type (e.g. `['Petrol', 'Diesel', 'E85']`). |
+| `minPowerKW` | `number` | Minimum EV charging power in kilowatts. |
+| `maxPowerKW` | `number` | Maximum EV charging power in kilowatts. |
+| `view` | `View` | Geopolitical view for disputed territories. Options: `'Unified'`, `'AR'`, `'IN'`, `'PK'`, `'IL'`, `'MA'`, `'RU'`, `'TR'`, `'CN'`. |
+| `mapcodes` | `MapcodeType[]` | Request mapcode formats in results: `'Local'`, `'International'`, `'Alternative'`. |
+| `extendedPostalCodesFor` | `SearchIndexType[]` | Include extended postal codes for specific indexes (default: all except `'Geo'`). |
+| `geographyTypes` | `GeographyType[]` | Filter results to specific geography types (e.g. `['Municipality', 'Neighbourhood']`). |
+
+### Fuzzy search parameters
+
+In addition to all common parameters, fuzzy search supports:
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `position` | `HasLngLat` | Bias results toward this location. Accepts a `[longitude, latitude]` pair, a GeoJSON `Point`, a `Feature<Point>`, or any [`Place`](#working-with-search-results) from a previous search result. Required for `radiusMeters`. |
+| `radiusMeters` | `number` | Constrain results to this radius around `position` (in meters). Requires `position`. |
+| `boundingBox` | `[minLng, minLat, maxLng, maxLat]` | Restrict results to a rectangular geographic area. |
+| `typeahead` | `boolean` | Enable predictive/autocomplete mode for partial queries (default: `false`). |
+| `offset` | `number` | Pagination offset, zero-based (default: `0`). |
+| `minFuzzyLevel` | `number` | Minimum fuzziness level (1–4, default: `1`). Lower values require closer matches. |
+| `maxFuzzyLevel` | `number` | Maximum fuzziness level (1–4, default: `2`). Higher values tolerate more typos. |
+
+### Geometry search parameters
+
+In addition to all common parameters, geometry search requires:
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `geometries` | `SearchGeometryInput[]` | **Required.** One or more geometries to search within. Supports `Circle`, `Polygon`, and `MultiPolygon`. |
+
+> **Note:** Geometry search does not support `position`. The geometry shapes define the search area.
+
+### Along-route search parameters
+
+Along-route search requires `route` and `maxDetourTimeSeconds`. All [common parameters](#common-parameters) also apply. `position` is not available — the route geometry defines where to search. Parameters from fuzzy/geometry search such as `boundingBox`, `radiusMeters`, `geometries`, and `offset` also do not apply.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `route` | `LineString \| Position[] \| Route` | **Required.** The route to search along. Accepts a GeoJSON `LineString`, an array of `[longitude, latitude]` positions, or a `Route` Feature returned by `calculateRoute`. |
+| `maxDetourTimeSeconds` | `number` | **Required.** Maximum allowed detour time in seconds (positive integer). |
+| `sortBy` | `'detourTime' \| 'detourOffset'` | Sort results by minimum detour time or by position along the route. |
+
+### Autocomplete search parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `query` | `string` | Partial user input to autocomplete. |
+| `position` | `HasLngLat` | Bias suggestions toward this location. Accepts a `[longitude, latitude]` pair, a GeoJSON `Point`, a `Feature<Point>`, or a [`Place`](#working-with-search-results). |
+| `limit` | `number` | Maximum suggestions to return (1–100, default: `10`). |
+| `radiusMeters` | `number` | Constrain suggestions to this radius around `position`. |
+| `countries` | `string[]` | Restrict to specific countries. |
+| `resultType` | `AutocompleteSearchSegmentType[]` | Filter suggestion types: `'brand'`, `'category'`, `'plaintext'`. |
+
+## POI categories
+
+Use `poiCategories` to filter results to specific types of places. Each value must be a `POICategory` enum constant. Use the [`getPOICategories` service](./poi-categories.mdx) to search and browse available categories by name or synonym, then pass the resulting `code` values directly here.
+
+```javascript
+import { search, getPOICategoryCodes } from '@tomtom-org/maps-sdk/services';
+
+// Filter to a known category
+const italian = await search({
+    position: [4.9041, 52.3676],
+    radiusMeters: 1000,
+    poiCategories: ['ITALIAN_RESTAURANT']
+});
+
+// Discover categories first, then search
+const restaurantCodes = await getPOICategoryCodes({ filters: ['restaurant'] });
+const restaurants = await search({
+    position: [4.9041, 52.3676],
+    radiusMeters: 1000,
+    poiCategories: restaurantCodes
+});
+
+// EV charging with connector and power filtering
+const evChargers = await search({
+    position: [4.9041, 52.3676],
+    radiusMeters: 5000,
+    poiCategories: ['ELECTRIC_VEHICLE_STATION'],
+    connectors: ['IEC62196Type2CCS', 'Tesla'],
+    minPowerKW: 50
+});
+```
+
+Example category values: `ITALIAN_RESTAURANT`, `GAS_STATION`, `HOTEL`, `PHARMACY`, `MUSEUM`, `PARKING_GARAGE`, `ELECTRIC_VEHICLE_STATION`, `SHOPPING_CENTER`. See the `POICategory` type for the full list, or use the [`getPOICategories` service](./poi-categories.mdx) to search and explore them at runtime.
+
+## Working with search results
+
+Search results follow a GeoJSON `FeatureCollection` structure. Each feature is a GeoJSON `Feature<Point>` with place data in `properties`:
+
+```javascript
+const results = await search({
+    query: 'coffee',
+    position: [4.9041, 52.3676]
+});
+
+results.features.forEach(place => {
+    console.log(place.properties.poi?.name);              // Business name (POI results)
+    console.log(place.properties.address.freeformAddress);// Formatted address
+    console.log(place.geometry.coordinates);              // [longitude, latitude]
+    console.log(place.properties.poi?.categories);        // POICategory[] (e.g. ['CAFE'])
+    console.log(place.properties.poi?.localizedCategories); // string[] (e.g. ['café'])
+    console.log(place.properties.score);                  // Relevance score
+    console.log(place.properties.distance);               // Distance in meters (if position was given)
+});
+```
+
+To retrieve only the first result, use `searchOne()` — it throws if no results are found:
+
+```javascript
+import { searchOne } from '@tomtom-org/maps-sdk/services';
+
+const place = await searchOne('Eiffel Tower');
+console.log(place.properties.poi?.name); // 'Eiffel Tower'
+```
+
+## Examples
+
+### Find bus stops in an area (Node.js)
+
+Use `boundingBox` to search for all bus stops within a rectangular geographic area. This example searches the Amsterdam city area:
+
+```javascript
+import { search } from '@tomtom-org/maps-sdk/services';
+
+const results = await search({
+    poiCategories: ['BUS_STOP'],
+    boundingBox: [4.72, 52.27, 5.07, 52.43], // [minLng, minLat, maxLng, maxLat]
+    limit: 100
+});
+
+results.features.forEach(stop => {
+    const [lng, lat] = stop.geometry.coordinates;
+    console.log(`${stop.properties.poi?.name} — ${lng}, ${lat}`);
+});
+```
+
+## Integration with map visualization
+
+Search results can be directly integrated with the TomTom Maps SDK for immediate visual representation:
+
+```javascript
+import { TomTomMap, PlacesModule } from '@tomtom-org/maps-sdk/map';
+
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+const placesModule = await PlacesModule.create(map);
+
+const results = await search({
+    query: 'museums',
+    position: [4.9041, 52.3676]
+});
+
+// Display search results as markers on the map
+await placesModule.show(results);
+```
+
+## Performance optimization
+
+For optimal performance in production applications, consider these best practices:
+
+**Search Strategy Selection:**
+- Use **autocomplete** for real-time search interfaces
+- Use **fuzzy search** for comprehensive location finding
+- Use **geometry search** for area-specific discovery
+
+**Result Limiting:**
+- Set appropriate `limit` values based on UI requirements
+- Use `offset` for pagination of large result sets
+- Cache frequent search results for faster response times
+
+For complete search implementation examples and advanced usage patterns, go to the [examples gallery](../../../examples).
+
+## Related guides and examples
+
+### Map integration
+- **[Places Module](../../map/places.mdx)** - Display search results as interactive places on the map with customizable styling and user interactions
+- **[POIs](../../map/pois.mdx)** - Advanced point-of-interest visualization and filtering for search results
+
+### Related examples
+- **[Along Route Search (Node.js)](../../../examples/nodejs-along-route-search)** - Find EV charging stations along a planned route using Node.js
+- **[Along Route Search Playground](../../../examples/along-route-search-playground)** - Interactive along-route search with query input and POI category checkboxes
+- **[Autocomplete Fuzzy Search Playground](../../../examples/autocomplete-fuzzy-search-playground)** - Real-time search-as-you-type with instant map updates
+- **[Geometry Search Playground](../../../examples/geometry-search-playground)** - Search within custom geographic boundaries and areas
+- **[Geometry Search with POI Categories](../../../examples/geometry-search-with-poi-categories)** - Category-filtered search within specific regions
+- **[Places customization playground](../../../examples/places-customize-playground)** - Customizing the appearance and behavior of search result markers
+- **[Search Places in Geometry](../../../examples/search-places-in-geometry)** - Specialized search example for finding places in a defined area
+- **[Search Places nearby Location](../../../examples/search-places-nearby-location)** - Specialized search example for finding places nearby a location
+
+### Related services
+- **[Geocoding](./geocoding.mdx)** - Convert search result addresses to precise coordinates for enhanced accuracy
+- **[Reverse Geocoding](./reverse-geocoding.mdx)** - Get address information for search result coordinates

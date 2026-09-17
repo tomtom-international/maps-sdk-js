@@ -1,0 +1,247 @@
+---
+title: Map styles
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.54.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+Map Styles in the TomTom Maps SDK define the visual appearance and data presentation of maps. This guide covers TomTom's built-in styles, style components, and customization options.
+
+A map style consists of various layers and sources that determine how geographic features are rendered.
+
+The SDK provides several pre-defined styles optimized for different use cases, along with the ability to customize styles by including additional layers or modifying existing ones.
+
+<SDKGuideLiveCodingExample exampleDirectory="map-style-switcher" />
+
+## Built-in styles
+
+### Basic styles
+
+```javascript
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+
+// Light theme (default)
+const map = new TomTomMap({
+    mapLibre: {
+        container: 'map'
+    },
+    style: 'monoLight'
+});
+
+// Dark theme
+const map = new TomTomMap({
+    mapLibre: {
+        container: 'map'
+    },
+    style: 'monoDark'
+});
+
+// Satellite imagery with roads and labels
+const map = new TomTomMap({
+    mapLibre: {
+        container: 'map'
+    },
+    style: 'satellite'
+});
+```
+
+The full list of IDs is exported as `standardStyleIDs`: `standardLight`, `standardDark`, `drivingLight`, `drivingDark`, `monoLight`, `monoDark` and `satellite`.
+
+## Dynamic style switching
+
+```javascript
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+
+// Change style after map creation
+map.setStyle('monoDark');
+// ...
+map.setStyle('drivingLight');
+```
+
+`setStyle` returns a promise that resolves once the new style has loaded and every SDK module has restored itself onto it. Awaiting it is optional, but it is the moment after which the map is safe to read and draw on again:
+
+```javascript
+await map.setStyle('standardDark');
+// map.mapReady is true again; routes, places and traffic are back on the new style
+```
+
+### Keeping or dropping state
+
+By default a style switch carries everything over: module data and configuration (routes, places, POI filters, traffic visibility…) and the style parts of the previous style (traffic, hillshade). Pass `resetState: true` for a clean switch instead:
+
+```javascript
+// Carry everything over (default)
+map.setStyle('standardDark');
+
+// Clean switch: modules re-bind to the new style with default configuration and nothing shown,
+// and only the style parts named in the new style are loaded
+map.setStyle('standardDark', { resetState: true });
+```
+
+Both variants run the registered style change handlers (below); each handler learns which kind of switch it is from its `context.resetState` argument.
+
+The [map language](#map-language) is not SDK state, so neither variant touches it: it is re-applied to the new style either way, and only `setLanguage` changes it.
+
+Passing the style that is already loaded runs the same lifecycle without reloading the style, so `setStyle(currentStyle, { resetState: true })` is how you reset the SDK modules over the map you are already looking at.
+
+## Listening to style changes
+
+Use `addStyleChangeHandler` to react when a style transition triggered by `map.setStyle()` begins or completes. This is the right hook for preserving custom layers, syncing UI state, or reinitializing anything that depends on the current style.
+
+:::note
+This handler only fires for `setStyle` calls on `TomTomMap`. It does **not** fire on initial map construction. For lower-level style lifecycle hooks — such as reacting to the initial style load or to any style-related MapLibre event — use [`map.mapLibreMap.on('styledata', ...)`](https://maplibre.org/maplibre-gl-js/docs/API/interfaces/MapEventType/) directly.
+:::
+
+```typescript
+import { TomTomMap, type StyleChangeHandler } from '@tomtom-org/maps-sdk/map';
+
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+
+const unsubscribe = map.addStyleChangeHandler({
+    onStyleAboutToChange: (context) => {
+        // Called before the style change begins — clean up anything tied to the current style
+    },
+    onStyleChanged: (context) => {
+        // Called after the new style is fully loaded — restore state, re-add layers, update UI.
+        // context.resetState tells you whether this is a clean switch (see above).
+    },
+});
+
+// Later, when the handler's owner is torn down:
+unsubscribe();
+```
+
+Both callbacks are optional. Use only the one(s) you need. Handlers run in registration order, after the SDK's own modules have restored themselves.
+
+### Preserving custom MapLibre layers
+
+Custom sources and layers added via `map.mapLibreMap` are removed when the style changes. Use `onStyleAboutToChange` to save their data and `onStyleChanged` to restore them:
+
+```typescript
+import type { GeoJSONSource } from 'maplibre-gl';
+
+let savedData: GeoJSON.FeatureCollection | null = null;
+
+map.addStyleChangeHandler({
+    onStyleAboutToChange: () => {
+        const source = map.mapLibreMap.getSource('my-data') as GeoJSONSource | undefined;
+        if (source) {
+            savedData = source._data as GeoJSON.FeatureCollection;
+        }
+    },
+    onStyleChanged: () => {
+        if (savedData) {
+            map.mapLibreMap.addSource('my-data', { type: 'geojson', data: savedData });
+            map.mapLibreMap.addLayer({
+                id: 'my-layer',
+                type: 'circle',
+                source: 'my-data',
+                paint: { 'circle-radius': 6, 'circle-color': '#007cbf' },
+            });
+        }
+    },
+});
+```
+
+### Updating UI based on the active style
+
+```typescript
+map.addStyleChangeHandler({
+    onStyleChanged: () => {
+        const style = map.getStyle();
+        const isDark = typeof style === 'string'
+            ? style.toLowerCase().includes('dark')
+            : style?.id?.toLowerCase().includes('dark') ?? false;
+        document.body.classList.toggle('dark-mode', isDark);
+    },
+});
+```
+
+### Async handlers
+
+Both callbacks can be `async`. The SDK awaits each one before continuing: `onStyleAboutToChange` handlers finish before the new style is handed to MapLibre, and the promise returned by `setStyle` resolves only after the last `onStyleChanged` handler has finished.
+
+```typescript
+map.addStyleChangeHandler({
+    onStyleAboutToChange: async () => {
+        await persistStateToServer(map.getStyle());
+    },
+    onStyleChanged: async () => {
+        await restoreStateFromServer();
+    },
+});
+```
+
+### Custom styles
+
+A custom style (`style: { type: 'custom', url }` or `{ type: 'custom', json }`) loads as-is. Once it has loaded, the SDK reads its light/dark theme from the style's background colour, so overlays such as places and routes pick legible text colours on a dark custom style too. Declare `lightDarkTheme: 'light' | 'dark'` on the style to say it yourself, and the SDK takes it at its word rather than reading the background: worth doing when the canvas sits behind full-coverage imagery, or when its colour does not represent what the map ends up looking like. Either way, `map.styleLightDarkTheme` reports the theme in effect. Style-owned modules (traffic, hillshade) work on a custom style when it already ships the matching source; the SDK cannot add a style part to a custom style, and says so if you ask it to.
+
+## Available style parts
+
+The map style includes multiple parts that come from different data sources:
+- **Base Map and POIs**: Core geographic features and points of interest.
+  - Included and visible by default with all styles.
+  - Controlled by [BaseMapModule](../map/base-map.mdx) and [POIsModule](../map/pois.mdx).
+- **Traffic Incidents**: Real-time traffic incident data.
+  - Included in the style by default, but hidden upfront.
+  - Can be optionally excluded from the style for performance.
+  - Controlled by [TrafficIncidentsModule](../map/traffic-incidents.mdx).
+- **Traffic Flow**: Live traffic flow information.
+  - Included in the style by default, but hidden upfront.
+  - Can be optionally excluded from the style for performance.
+  - Controlled by [TrafficFlowModule](../map/traffic-flow.mdx).
+- **Hillshade**: Terrain elevation shading for enhanced topography.
+  - Included in the style by default, but hidden upfront.
+  - Can be optionally excluded from the style for performance.
+  - Controlled by [HillshadeModule](../map/hillshade.mdx).
+
+```javascript
+// Common layer modules you can include or not:
+include: [
+    'trafficIncidents',  // Traffic incidents
+    'trafficFlow',       // Traffic flow data
+    'hillshade'          // Terrain shading
+]
+```
+
+## Map language
+
+```javascript
+const map = new TomTomMap({
+    mapLibre: {
+        container: 'map'
+    },
+    style: 'monoLight',
+    language: 'de-DE' // German labels
+});
+```
+
+Set it once — here, or in the [global configuration](../core/global-config.mdx) — and it holds for the life of the map. Every style arrives with local-language labels, so the SDK re-applies the language after each style load, whether or not the switch [carries state over](#keeping-or-dropping-state). `map.setLanguage('nl-NL')` changes it at runtime.
+
+## Related guides and examples
+
+### Core map setup
+- **[Map Quickstart](./quickstart.mdx)** - Basic map creation and style configuration
+- **[Base Map](./base-map.mdx)** - Control fundamental map layer visibility
+- **[About MapLibre](./about-maplibre.mdx)** - Understanding the underlying mapping technology
+
+### Advanced features
+- **[Traffic Flow](./traffic-flow.mdx)** - Add real-time traffic data to your styles
+- **[Traffic Incidents](./traffic-incidents.mdx)** - Display traffic incidents with custom styling
+- **[Hillshade](./hillshade.mdx)** - Add terrain elevation shading to your maps
+
+### Practical examples
+- **[Reset State When Changing Style](../../examples/reset-state-when-changing-style)** - Carry the map state across a style switch, or drop it
+- **[Load Style Parts](../../examples/load-style-parts)** - Dynamic style component loading
+- **[Map Language](../../examples/map-language)** - Language switching and localization
+- **[Default map](../../examples/default-map)** - Simple style implementation
+
+### Integration and customization
+- **[User Interaction Events](./user-events.mdx)** - Handle style-related user interactions
+- **[Places](./places.mdx)** - Style integration with places data
+- **[Routes](./routes.mdx)** - Route visualization with different map styles

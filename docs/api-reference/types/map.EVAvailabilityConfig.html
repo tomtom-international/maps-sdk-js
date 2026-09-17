@@ -1,0 +1,123 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>EVAvailabilityConfig | TomTom Maps for JavaScript</title><meta name="description" content="Documentation for TomTom Maps for JavaScript"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container"><a href="../index.html" class="title">TomTom Maps for JavaScript</a>
+<div id="tsd-toolbar-links"></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/>
+<ul role="listbox" id="tsd-search-results"></ul>
+<div id="tsd-search-status" aria-live="polite" aria-atomic="true">
+<div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header>
+<div class="container container-main">
+<div class="col-content">
+<div class="tsd-page-title">
+<ul class="tsd-breadcrumb" aria-label="Breadcrumb">
+<li><a href="../modules/map.html">map</a></li>
+<li><a href="" aria-current="page">EVAvailabilityConfig</a></li></ul>
+<h1>Type Alias EVAvailabilityConfig</h1></div>
+<section class="tsd-panel tsd-comment">
+<div class="tsd-comment tsd-typography"><p>Configuration for EV charging station availability display.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks">Remarks<a href="#remarks" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><strong>Opt-In Feature:</strong></p>
+<ul>
+<li>Disabled by default - set <code>enabled: true</code> to activate</li>
+<li>Requires fetching availability via getPlacesWithEVAvailability</li>
+<li>Each PlacesModule can enable/disable independently</li>
+</ul>
+<p>When enabled, displays formatted availability text (e.g., &quot;3/10&quot;) below the station name
+with color-coding based on availability ratio: green (high), orange (limited), red (none/low).</p>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example">Example<a href="#example" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-0">// Enable with defaults</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">places</span><span class="hl-2"> = </span><span class="hl-10">await</span><span class="hl-2"> </span><span class="hl-1">PlacesModule</span><span class="hl-2">.</span><span class="hl-3">create</span><span class="hl-2">(</span><span class="hl-1">map</span><span class="hl-2">, {</span><br/><span class="hl-2">  </span><span class="hl-1">evAvailability:</span><span class="hl-2"> { </span><span class="hl-1">enabled:</span><span class="hl-2"> </span><span class="hl-5">true</span><span class="hl-2"> }</span><br/><span class="hl-2">});</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">stations</span><span class="hl-2"> = </span><span class="hl-10">await</span><span class="hl-2"> </span><span class="hl-3">search</span><span class="hl-2">({ </span><span class="hl-1">poiCategories:</span><span class="hl-2"> [</span><span class="hl-4">&#39;ELECTRIC_VEHICLE_STATION&#39;</span><span class="hl-2">] });</span><br/><span class="hl-1">places</span><span class="hl-2">.</span><span class="hl-3">show</span><span class="hl-2">(</span><span class="hl-10">await</span><span class="hl-2"> </span><span class="hl-3">getPlacesWithEVAvailability</span><span class="hl-2">(</span><span class="hl-1">stations</span><span class="hl-2">));</span><br/><br/><span class="hl-0">// Custom threshold and format</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">places</span><span class="hl-2"> = </span><span class="hl-10">await</span><span class="hl-2"> </span><span class="hl-1">PlacesModule</span><span class="hl-2">.</span><span class="hl-3">create</span><span class="hl-2">(</span><span class="hl-1">map</span><span class="hl-2">, {</span><br/><span class="hl-2">  </span><span class="hl-1">evAvailability:</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-1">enabled:</span><span class="hl-2"> </span><span class="hl-5">true</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">threshold:</span><span class="hl-2"> </span><span class="hl-8">0.5</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-3">formatText</span><span class="hl-1">:</span><span class="hl-2"> (</span><span class="hl-1">available</span><span class="hl-2">, </span><span class="hl-1">total</span><span class="hl-2">) </span><span class="hl-5">=&gt;</span><span class="hl-2"> </span><span class="hl-4">`</span><span class="hl-5">${</span><span class="hl-1">available</span><span class="hl-5">}</span><span class="hl-4"> of </span><span class="hl-5">${</span><span class="hl-1">total</span><span class="hl-5">}</span><span class="hl-4">`</span><br/><span class="hl-2">  }</span><br/><span class="hl-2">});</span><br/><br/><span class="hl-0">// Combine with custom icon</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">places</span><span class="hl-2"> = </span><span class="hl-10">await</span><span class="hl-2"> </span><span class="hl-1">PlacesModule</span><span class="hl-2">.</span><span class="hl-3">create</span><span class="hl-2">(</span><span class="hl-1">map</span><span class="hl-2">, {</span><br/><span class="hl-2">  </span><span class="hl-1">icon:</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-1">categoryIcons:</span><span class="hl-2"> [{</span><br/><span class="hl-2">      </span><span class="hl-1">id:</span><span class="hl-2"> </span><span class="hl-4">&#39;ELECTRIC_VEHICLE_STATION&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">      </span><span class="hl-1">image:</span><span class="hl-2"> </span><span class="hl-1">customEvIconSvg</span><span class="hl-2">,</span><br/><span class="hl-2">      </span><span class="hl-1">pixelRatio:</span><span class="hl-2"> </span><span class="hl-8">2</span><br/><span class="hl-2">    }]</span><br/><span class="hl-2">  },</span><br/><span class="hl-2">  </span><span class="hl-1">evAvailability:</span><span class="hl-2"> { </span><span class="hl-1">enabled:</span><span class="hl-2"> </span><span class="hl-5">true</span><span class="hl-2"> }</span><br/><span class="hl-2">});</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></section>
+<div class="tsd-signature"><span class="tsd-signature-keyword">type</span> <span class="tsd-kind-type-alias">EVAvailabilityConfig</span> <span class="tsd-signature-symbol">=</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#enabled">enabled</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#formattext">formatText</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">available</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">total</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#threshold">threshold</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div>
+<section class="tsd-panel-group tsd-index-group">
+<section class="tsd-panel tsd-index-panel">
+<details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h5 class="tsd-index-heading uppercase">Index</h5></summary>
+<div class="tsd-accordion-details">
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="properties">Properties<a href="#properties" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#enabled" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>enabled?</span></a>
+<a href="#formattext" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>format<wbr/>Text?</span></a>
+<a href="#threshold" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>threshold?</span></a>
+</div></section></div></details></section></section>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="properties-1">Properties<a href="#properties-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="enabled"><code class="tsd-tag">Optional</code><span>enabled</span><a href="#enabled" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">enabled</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
+<div class="tsd-comment tsd-typography"><p>Enable or disable EV availability display.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-1">Remarks<a href="#remarks-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Must be explicitly set to <code>true</code> to display availability.</p>
+</div></div></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="formattext"><code class="tsd-tag">Optional</code><span>format<wbr/>Text</span><a href="#formattext" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">formatText</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">available</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">total</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">string</span></div>
+<div class="tsd-comment tsd-typography"><p>Custom function to format the availability text.</p>
+</div>
+<div class="tsd-type-declaration">
+<h4>Type Declaration</h4>
+<ul class="tsd-parameters">
+<li class="tsd-parameter-signature">
+<ul class="tsd-signatures">
+<li class="tsd-signature"><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">available</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">total</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">available</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>Number of available charging points</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">total</span>: <span class="tsd-signature-type">number</span></span>
+<div class="tsd-comment tsd-typography"><p>Total number of charging points</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><p>Formatted availability text</p>
+</li></ul></li></ul></div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-default">
+<h4 class="tsd-anchor-link" id="default">Default<a href="#default" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>(available, total) =&gt; <code>${available}/${total}</code></p>
+</div></div></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="threshold"><code class="tsd-tag">Optional</code><span>threshold</span><a href="#threshold" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">threshold</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span></div>
+<div class="tsd-comment tsd-typography"><p>Availability ratio threshold for determining available vs occupied.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-2">Remarks<a href="#remarks-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><ul>
+<li><code>ratio &gt;= threshold</code>: Available (green)</li>
+<li><code>ratio &lt; threshold</code>: Occupied (red)</li>
+</ul>
+</div>
+<div class="tsd-tag-default">
+<h4 class="tsd-anchor-link" id="default-1">Default<a href="#default-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="ts"><span class="hl-8">0</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></section></section></details></div>
+<div class="col-sidebar">
+<div class="page-menu">
+<div class="tsd-navigation settings">
+<details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div>
+<div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
+<details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>On This Page</h3></summary>
+<div class="tsd-accordion-details">
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Properties</summary>
+<div><a href="#enabled"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>enabled</span></a><a href="#formattext"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>format<wbr/>Text</span></a><a href="#threshold"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>threshold</span></a></div></details></div></details></div>
+<div class="site-menu">
+<nav class="tsd-navigation"><a href="../index.html">TomTom Maps for JavaScript</a>
+<ul class="tsd-small-nested-navigation" id="tsd-nav-container">
+<li>Loading...</li></ul></nav></div></div></div><footer>
+<p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer>
+<div class="overlay"></div></body></html>

@@ -1,0 +1,660 @@
+# Routing Reference
+
+## Imports
+
+```ts
+import { calculateRoute, calculateReachableRanges, geocodeOne } from '@tomtom-org/maps-sdk/services';
+import {
+    RoutingModule, GeometriesModule, reachableRangeGeometryConfig,
+    defaultRoutingLayers, SELECTED_ROUTE_FILTER, MIDDLE_INDEX,
+} from '@tomtom-org/maps-sdk/map';
+import type {
+    PlanningWaypoint, ColorPaletteOptions, GeometryTheme, GeometryBeforeLayerConfig,
+} from '@tomtom-org/maps-sdk/map';
+import { bboxFromGeoJSON, formatDistance, formatDuration, withInsertedWaypoint } from '@tomtom-org/maps-sdk/core';
+import type { Waypoint, WaypointLike, PolygonFeatures } from '@tomtom-org/maps-sdk/core';
+```
+
+---
+
+## Basic route — geocode → calculate → display
+
+```ts
+const routingModule = await RoutingModule.create(map);
+
+const [origin, destination] = await Promise.all([
+    geocodeOne('Amsterdam, Netherlands'),
+    geocodeOne('Rotterdam, Netherlands'),
+]);
+
+const routes = await calculateRoute({ locations: [origin, destination] });
+
+// showRoutes draws the line; showWaypoints draws the pins — always call both
+await routingModule.showRoutes(routes);
+await routingModule.showWaypoints([origin, destination]);
+
+const summary = routes.features[0].properties.summary;
+console.log(formatDistance(summary.lengthInMeters));      // e.g. '75 km'
+console.log(formatDuration(summary.travelTimeInSeconds)); // e.g. '1 hr 10 min'
+console.log(summary.arrivalTime);                         // Date object
+```
+
+---
+
+## Coordinate-only locations (no geocoding needed)
+
+```ts
+const routes = await calculateRoute({
+    locations: [
+        [4.897, 52.377],   // [longitude, latitude]
+        [4.897, 52.200],
+        [4.462, 51.926],
+    ],
+});
+```
+
+A nested coordinate array is a **path** — geometry the route must follow, for replaying a route you
+already have. It is not a stop-free corridor: the path's endpoints go out as waypoints, so a path
+between an origin and a destination adds two of them and the legs that come with them.
+
+```ts
+// Reconstruct a route from its own coordinates — one path, no extra waypoints
+const routes = await calculateRoute({ locations: [previousRoute.geometry.coordinates] });
+```
+
+---
+
+## Multiple alternatives — display and select
+
+```ts
+const routes = await calculateRoute({
+    locations: [origin, destination],
+    maxAlternatives: 2,    // returns up to 3 routes (best + 2 alternatives)
+});
+
+await routingModule.showRoutes(routes, { selectedIndex: 0 });
+await routingModule.showWaypoints([origin, destination]);
+
+// Programmatic selection
+await routingModule.selectRoute(1);
+
+// Let user click to select
+routingModule.events.mainLines.on('click', (feature) => {
+    routingModule.selectRoute(feature.properties.index);
+});
+```
+
+---
+
+## Clearing routes and waypoints
+
+```ts
+// Remove route lines from the map (does NOT clear waypoints)
+await routingModule.clearRoutes();
+
+// Remove waypoint markers
+await routingModule.clearWaypoints();
+
+// Calling showRoutes() again replaces the previous display — no need to clear first
+await routingModule.showRoutes(newRoutes);
+```
+
+---
+
+## Multiple routes with different colors
+
+Create separate `RoutingModule` instances for each route — they manage routes, waypoints, and events independently:
+
+```ts
+const colors = ['#0066CC', '#00BBDD', '#33AA33', '#99BB00'];
+
+const modules = await Promise.all(
+    origins.map((_, i) => RoutingModule.create(map, { theme: { mainColor: colors[i % colors.length] } })),
+);
+
+for (let i = 0; i < origins.length; i++) {
+    const routes = await calculateRoute({ locations: [origins[i], destination] });
+    await modules[i].showRoutes(routes);
+    await modules[i].showWaypoints([origins[i], destination]);
+}
+```
+
+---
+
+## Traffic and routing options
+
+```ts
+const routes = await calculateRoute({
+    locations: [origin, destination],
+    costModel: {
+        traffic:   'live',       // 'live' | 'historical'
+        routeType: 'fast',       // 'fast' | 'short' | 'efficient' | 'thrilling'
+        avoid: ['tollRoads', 'ferries', 'motorways'],
+    },
+    guidance: { type: 'coded' },  // enables turn-by-turn instructions
+    maxAlternatives: 2,
+});
+
+const instructions = routes.features[0].properties.guidance?.instructions;
+```
+
+---
+
+## Vehicle weight, speed and toll restrictions
+
+```ts
+const routes = await calculateRoute({
+    locations: [origin, destination],
+    vehicle: {
+        model: {
+            dimensions: { weightKG: 3500 },
+        },
+        // tollTransponder is 'all' | 'unknown' | 'none' — tolls payable only by transponder are
+        // avoided with 'none', tolls that cannot be paid by one are avoided with 'all'
+        restrictions: { maxSpeedKMH: 80, tollTransponder: 'none' },
+    },
+});
+```
+
+---
+
+## Arrival side
+
+```ts
+// 'any' (default) arrives from whichever side is faster; 'curb' arrives on the curb side for the
+// country's driving direction, at the destination and at every intermediate stop
+const routes = await calculateRoute({ locations: [origin, destination], arrivalSide: 'curb' });
+```
+
+---
+
+## Per-stop options — pause, arriving-leg cost model, entry points
+
+Options ride on a waypoint's own `properties`, typed with `RouteStopOptions`. They describe the leg
+*arriving* at that stop plus the wait once there, so inserting an earlier stop leaves them attached
+to the right place.
+
+```ts
+import type { RouteStopOptions } from '@tomtom-org/maps-sdk/services';
+import type { Waypoint } from '@tomtom-org/maps-sdk/core';
+
+const stop: Waypoint<RouteStopOptions> = {
+    type: 'Feature',
+    geometry: { type: 'Point', coordinates: [2.4467, 41.5381] },
+    properties: {
+        pauseDurationSeconds: 1800,                                   // counted into travel time,
+                                                                      // and shown on the stop's pin
+        legCostModel: { routeType: 'short', avoid: ['motorways'] },   // this leg only
+        candidateEntryPoints: [[2.4467, 41.5381], [2.4479, 41.5372]], // router picks one
+        preferredEntryPointIndex: 1,
+    },
+};
+
+const routes = await calculateRoute({ locations: [origin, warehouse, destination] });
+```
+
+The wait comes back on the leg that arrives at the stop, as time spent there:
+
+```ts
+const legs = routes.features[0].properties.sections.leg;
+legs[0].summary.stopTimeInSeconds;    // whole time at the first stop (absent when it does not stop)
+legs[0].summary.chargingInformationAtEndOfLeg?.properties.chargingTimeInSeconds; // of which charging
+legs[0].summary.travelTimeInSeconds;  // driving only — the stop is NOT in here
+routes.features[0].properties.summary.travelTimeInSeconds; // driving + every stop
+```
+
+**Gotchas:**
+- `pauseDurationSeconds` is a core `WaypointProps` field, not a `RouteStopOptions` one, because the
+  map reads it too: `showWaypoints` labels the stop's pin with the formatted wait by default, and
+  charging stop pins carry the same `stopDuration` label (the whole time there, charging included;
+  `chargingDuration` still holds the charging part alone).
+- Driving time = sum of the legs' `travelTimeInSeconds`; total time standing still = the route's
+  minus that sum. On an EV route with charging stops, that includes the charging.
+- `stopTimeInSeconds` is one number for the whole stop on purpose — a requested wait and charging at
+  the same stop widen the same gap, so they are never two competing durations.
+- `pauseDurationSeconds` is rejected on the destination — the API requires the last leg's pause to
+  be 0, and the SDK throws before sending.
+- `legCostModel` on the origin is ignored: the origin has no arriving leg.
+- Not called `entryPoints`: a `Place` already carries its own `entryPoints` from search, and those
+  are never sent to the routing API.
+- `vehicle.model.variantId` only works on the EV-with-charging path, so it needs
+  `preferences.chargingPreferences` set; the SDK throws otherwise rather than silently routing for
+  a default vehicle.
+
+---
+
+## EV routing with automatic charging stops
+
+Provide `chargingPreferences` to trigger automatic stop insertion:
+
+```ts
+const routes = await calculateRoute({
+    locations: [origin, destination],
+    // How the service picks the stops: 'automaticFastest' (default) | 'manualFastest'
+    //   | 'automaticFastestWithFallbackToManual'
+    chargingStopsStrategy: 'automaticFastest',
+    vehicle: {
+        engineType: 'electric',
+        model: {
+            dimensions: { weightKG: 2000 },
+            engine: {
+                charging: {
+                    maxChargeKWH: 75,
+                    chargingConnectors: [{
+                        currentType: 'DC',
+                        plugTypes: ['IEC_62196_Type_2_Outlet'],
+                        efficiency: 0.9,
+                        maxPowerInkW: 50,
+                    }],
+                },
+                consumption: {
+                    speedsToConsumptionsKWH: [{ speedKMH: 90, consumptionUnitsPer100KM: 18 }],
+                },
+            },
+        },
+        state: { currentChargePCT: 80 },
+        preferences: {
+            chargingPreferences: {
+                minChargeAtDestinationPCT: 20,
+                minChargeAtChargingStopsPCT: 10,
+            },
+        },
+    },
+});
+
+const summary = routes.features[0].properties.summary;
+console.log(summary.totalChargingTimeInSeconds);
+console.log(summary.remainingChargeAtArrivalInPCT);
+
+// Charging stop pins appear automatically via showRoutes
+await routingModule.showRoutes(routes);
+routingModule.events.chargingStops.on('click', (feature) => { showChargerDetails(feature); });
+```
+
+`chargingStopsStrategy` only reaches the wire on the EV endpoint, which is selected by
+`vehicle.preferences.chargingPreferences`. Setting the strategy without the preferences throws at
+validation, before the request is sent — the endpoint also needs a minimum charge at the
+destination, and only the preferences supply it.
+
+Legs on an EV route do not line up with the requested stops, because the service inserts charging
+stops of its own. `leg.originalWaypointIndex` maps a leg back to the stop the caller asked for:
+
+```ts
+routes.features[0].properties.sections.leg?.forEach((leg) => {
+    const index = leg.originalWaypointIndex;  // undefined on the final leg and on inserted stops
+    const stop = index === undefined ? undefined : locations[index];
+});
+```
+
+---
+
+## Reachable ranges (isochrones)
+
+```ts
+const geometriesModule = await GeometriesModule.create(
+    map,
+    reachableRangeGeometryConfig('fadedRainbow', 'filled', 'lowestLabel'),
+);
+
+const ranges = await calculateReachableRanges([
+    { origin: [4.9, 52.4], budget: { type: 'timeMinutes', value: 10 } },
+    { origin: [4.9, 52.4], budget: { type: 'timeMinutes', value: 20 } },
+    { origin: [4.9, 52.4], budget: { type: 'timeMinutes', value: 30 } },
+]);
+
+await geometriesModule.show(ranges);  // auto-labels: '30 min', '20 min', '10 min'
+```
+
+Budget types: `'timeMinutes'`, `'distanceKM'`, `'remainingChargeCPT'`, `'spentChargePCT'`, `'spentFuelLiters'`
+
+Palette options: `'fadedRainbow'` | `'rainbow'` | ... (see `ColorPaletteOptions`)
+
+Themes: `'filled'` | `'inverted'` | `'outlined'` | ...
+
+Before-layer config: `'lowestLabel'` | `'lowestPlaceLabel'` | `'aboveRoads'` | ...
+
+### Abort in-flight requests
+
+Every service that takes a parameters object accepts a `signal`. Aborting cancels the in-flight
+HTTP request and rejects with `SDKAbortError`, so the `catch` is required — without it the
+superseded call rejects unhandled and the line after the `await` never runs.
+
+`searchOne` and `geocodeOne` are the exception: they take a bare query string, so use `search` /
+`geocode` with `limit: 1` when the lookup must be cancellable.
+
+```ts
+import { SDKAbortError, calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+let abortController: AbortController | undefined;
+
+const calculate = async () => {
+    // Cancel whatever the previous call left in flight
+    abortController?.abort();
+    abortController = new AbortController();
+
+    try {
+        const routes = await calculateRoute({ locations, signal: abortController.signal });
+        routingModule.showRoutes(routes);
+    } catch (error) {
+        if (error instanceof SDKAbortError) return; // superseded, not a failure
+        throw error;
+    }
+};
+```
+
+`calculateReachableRanges` also accepts a batch-level signal as its second argument, which
+applies to every range in the array:
+
+```ts
+const ranges = await calculateReachableRanges(paramsArray, { signal: abortController.signal });
+```
+
+### Update geometry config without re-fetching
+
+```ts
+geometriesModule.applyConfig(reachableRangeGeometryConfig('rainbow', 'inverted', 'lowestLabel'));
+// or move all geometries before a different layer
+geometriesModule.moveBeforeLayer('aboveRoads');
+```
+
+---
+
+## Traffic incidents on route
+
+`showRoutes()` automatically renders incident markers along the route:
+
+```ts
+const routes = await calculateRoute({
+    locations: [origin, destination],
+    costModel: { traffic: 'live' },
+});
+
+await routingModule.showRoutes(routes);
+
+const { trafficDelayInSeconds } = routes.features[0].properties.summary;
+
+routingModule.events.incidents.on('click', (feature) => {
+    const { category, magnitudeOfDelay, delayInSeconds } = feature.properties;
+});
+```
+
+---
+
+## Accessing route data
+
+```ts
+const route = routes.features[0];
+
+const { lengthInMeters, travelTimeInSeconds, trafficDelayInSeconds,
+        arrivalTime, departureTime, batteryConsumptionInkWh } = route.properties.summary;
+
+const sections     = route.properties.sections;
+const instructions = route.properties.guidance?.instructions;
+const path         = route.geometry.coordinates; // [lng, lat][]
+```
+
+---
+
+## Turn-by-turn instructions
+
+`guidance: { type: 'coded' }` is what fills `route.properties.guidance.instructions`. Every
+instruction carries ready-made text, so a turn list needs no translation table of your own:
+
+```ts
+const routes = await calculateRoute({
+    locations: [origin, destination],
+    guidance: { type: 'coded', phonetics: 'IPA' },  // 'IPA' | 'LHP'
+});
+
+routes.features[0].properties.guidance?.instructions.forEach((inst) => {
+    inst.message;         // 'Turn right onto Damrak' — generated and localised by the service
+    inst.maneuver;        // Maneuver code, e.g. 'TURN_RIGHT'
+    inst.maneuverPoint;   // Position — [lng, lat]
+    inst.roundaboutType;  // 'REGULAR' | 'SMALL' — on roundabout maneuvers
+    inst.maneuverView;    // the junction layout: { onRouteAngle?, offRouteAngles }
+    inst.sideRoads;       // [{ side: 'LEFT', offsetFromManeuverInMeters: 12, isDrivable: true }]
+    inst.nextRoadInfo.streetName?.phonetic;  // a flat string, already in the requested alphabet
+    inst.nextRoadInfo.countryCode;           // ISO3
+});
+```
+
+- `message` is present on every instruction — read it instead of mapping `maneuver` to your own
+  strings.
+- `maneuverView` angles are relative **directions**, not degrees: `ManeuverAngle` is `'STRAIGHT' |
+  'SLIGHT_RIGHT' | 'RIGHT' | 'SHARP_RIGHT' | 'SLIGHT_LEFT' | 'LEFT' | 'SHARP_LEFT' | 'BACK'`.
+  `onRouteAngle` is the way the route goes, `offRouteAngles` the ways it passes up — enough to draw
+  a junction diagram.
+- `isDrivable` on a side road says whether it can actually be driven into. A non-drivable one still
+  belongs in a diagram; it just cannot be taken by mistake.
+- `phonetic` is a flat string, not an object — the alphabet is chosen by `guidance.phonetics`.
+
+---
+
+## Route sections — what costs money, and which incident
+
+```ts
+const sections = routes.features[0].properties.sections;
+
+sections.toll;      // stretches charging a per-use toll (ticket, barrier or free-flow point)
+sections.tollRoad;  // stretches that cost money by ANY scheme — a superset of `toll`
+sections.traffic?.forEach((t) => t.eventId);  // join key to the traffic incident details service
+```
+
+- **`toll` vs `tollRoad`.** `toll` answers *will this cost a toll to drive*; `tollRoad` answers
+  *does this cost anything at all to drive* — a vignette-only motorway (Austria, Switzerland) or an
+  urban charge zone (central London, Milan Area C, Stockholm) appears in `tollRoad` and not in
+  `toll`. `RoutingModule`'s `tollRoads` overlay draws `tollRoad`.
+- Leaving `sectionTypes` unset requests every section type, `tollRoad` included. Passing a list
+  requests only the types it names, so a list has to name `'tollRoad'` to keep it.
+
+---
+
+## RoutingModule — visual customization
+
+### Custom route color
+
+```ts
+const routingModule = await RoutingModule.create(map, { theme: { mainColor: '#DF1B12' } });
+```
+
+### Custom waypoint icon style
+
+```ts
+const routingModule = await RoutingModule.create(map, {
+    waypoints: {
+        icon: { style: { fillColor: 'green', outlineColor: 'orange', outlineOpacity: 0.7 } },
+    },
+});
+```
+
+### Custom charging stop icons
+
+```ts
+const routingModule = await RoutingModule.create(map, {
+    chargingStops: {
+        icon: {
+            customIcons: [
+                { id: 'slow-charger', image: chargerSlowSVG },
+                { id: 'fast-charger', image: chargerFastSVG, offsetX: 0, offsetY: -10 },
+            ],
+            mapping: {
+                basedOn: 'chargingSpeed',
+                value: { slow: 'slow-charger', regular: 'slow-charger', fast: 'fast-charger', 'ultra-fast': 'fast-charger' },
+            },
+        },
+    },
+});
+```
+
+`mapping` also takes `{ basedOn: 'custom', fn: (stop) => spriteID }`, and works without
+`customIcons` when pointing at sprites the style already ships. `offsetX`/`offsetY` (pixels,
+`CustomImage`) shift an icon from its coordinate; they need `image` on the same entry, so an
+entry naming an existing sprite by `id` alone ignores them. Icon ids here are used as written —
+unlike places `categoryIcons`, they are not instance-suffixed.
+
+### MapLibre layer overrides (advanced)
+
+Customize route line paint, add extra layers, modify section visuals:
+
+```ts
+import { defaultRoutingLayers, SELECTED_ROUTE_FILTER } from '@tomtom-org/maps-sdk/map';
+
+const routingModule = await RoutingModule.create(map, {
+    theme: { mainColor: '#DF1B12' },
+    layers: {
+        mainLines: {
+            routeOutline: {
+                paint: { 'line-color': '#555', 'line-width': 10 },
+            },
+            // add a new custom layer
+            additional: {
+                myDashLine: {
+                    type: 'line',
+                    filter: SELECTED_ROUTE_FILTER,
+                    paint: { 'line-color': 'lightgrey', 'line-dasharray': [3, 2] },
+                    beforeID: 'routeIncidentBackgroundLine',
+                },
+            },
+        },
+        sections: {
+            tollRoad: {
+                routeTollRoadSymbol: { layout: { visibility: 'none' } }, // hide toll icons
+                routeTollRoadOutline: {
+                    paint: { 'line-color': '#29A2FF', 'line-dasharray': [1, 0.2] },
+                },
+            },
+            tunnel: {
+                routeTunnelLine: {
+                    paint: {
+                        ...defaultRoutingLayers.sections.tunnel?.routeTunnelLine?.paint,
+                        'line-opacity': 1,
+                    },
+                },
+            },
+        },
+    },
+});
+```
+
+---
+
+## RoutingModule — waypoint events
+
+```ts
+import { MIDDLE_INDEX } from '@tomtom-org/maps-sdk/map';
+import type { WaypointDisplayProps } from '@tomtom-org/maps-sdk/map';
+import type { Waypoint } from '@tomtom-org/maps-sdk/core';
+
+// Click on any waypoint pin
+routingModule.events.waypoints.on('click', (waypoint: Waypoint<WaypointDisplayProps>, lngLat) => {
+    // START_INDEX 'start' | MIDDLE_INDEX 'middle' | FINISH_INDEX 'finish' — all from
+    // '@tomtom-org/maps-sdk/map'.
+    waypoint.properties.indexType;
+    waypoint.properties.index;     // position in the waypoints array
+
+    if (waypoint.properties.indexType === MIDDLE_INDEX) {
+        // intermediate stop clicked — offer to remove it
+        const stopIndex = waypoint.properties.index - 1;
+    }
+});
+```
+
+### Route section events
+
+Beyond `mainLines` and `waypoints`, the module exposes click events for specific route section types:
+
+```ts
+routingModule.events.ferries.on('click', (section, lngLat) => { /* ferry segment */ });
+routingModule.events.tollRoads.on('click', (section, lngLat) => { /* toll segment */ });
+routingModule.events.tunnels.on('click', (section, lngLat) => { /* tunnel segment */ });
+routingModule.events.vehicleRestricted.on('click', (section, lngLat) => { /* restricted area */ });
+```
+
+---
+
+## Dynamic stop insertion with `withInsertedWaypoint` / `withInsertedWaypoints`
+
+For a single new stop (e.g. a map click), use `withInsertedWaypoint`:
+
+```ts
+import { withInsertedWaypoint } from '@tomtom-org/maps-sdk/core';
+
+let waypoints: WaypointLike[] = [origin, destination];
+let currentRoute = routes.features[0];
+
+// On map click: find optimal position and insert new stop
+map.mapLibreMap.on('click', async (e) => {
+    const newStop = e.lngLat.toArray() as [number, number];
+    waypoints = withInsertedWaypoint(currentRoute, waypoints, newStop);
+
+    const updated = await calculateRoute({ locations: waypoints });
+    currentRoute = updated.features[0];
+    routingModule.showWaypoints(waypoints);
+    routingModule.showRoutes(updated);
+});
+```
+
+For multiple new stops at once (e.g. results from `alongRouteSearch`), use `withInsertedWaypoints` — projections are computed once and the result is in along-route order regardless of input order:
+
+```ts
+import { withInsertedWaypoints } from '@tomtom-org/maps-sdk/core';
+import { search, calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+const stops = await search({
+    poiCategories: ['ELECTRIC_VEHICLE_STATION'],
+    route: routes.features[0],
+    maxDetourTimeSeconds: 300,
+    limit: 5,
+});
+
+const updatedWaypoints = withInsertedWaypoints(
+    routes.features[0],
+    waypoints,
+    stops.features.map((f) => f.geometry.coordinates as [number, number]),
+);
+
+const updatedRoutes = await calculateRoute({ locations: updatedWaypoints });
+```
+
+**Don't loop `withInsertedWaypoint` to insert N stops** — the plural variant projects everything once (O(n+m) instead of O(n·m)) and gives a deterministic along-route order independent of input order.
+
+---
+
+## GeometriesModule — full config
+
+```ts
+import type { PolygonFeatures } from '@tomtom-org/maps-sdk/core';
+
+// Display city boundaries (inverted = shade everything outside)
+const geometriesModule = await GeometriesModule.create(map, {
+    theme: 'inverted',
+    beforeLayerConfig: 'lowestPlaceLabel',
+    fill: { color: 'white', opacity: 0.75 },
+    line: { opacity: 0 },
+});
+
+const geometry = geometryData({ geometries: [place] });
+await geometriesModule.show(geometry as PolygonFeatures);
+```
+
+---
+
+## Gotchas
+
+- `showRoutes()` draws the line; `showWaypoints()` draws the pins — always call both
+- `maxAlternatives: 2` returns up to 3 routes; index 0 is the recommended route
+- EV charging stop insertion requires `chargingPreferences`; only `routeType: 'fast'` is supported
+- `chargingStopsStrategy` without `vehicle.preferences.chargingPreferences` fails validation — the strategy is an EV-endpoint parameter, and only the preferences select that endpoint
+- The `tollRoads` overlay draws the `tollRoad` sections, not the `toll` ones — every charged stretch, vignette motorways and city charge zones included, all with the toll-plaza icon
+- `leg.originalWaypointIndex` is `undefined` on the final leg and on legs ending at a service-inserted charging stop — handle it rather than assuming a number
+- `selectRoute(index)` highlights an alternative without recalculating
+- `SELECTED_ROUTE_FILTER` is a MapLibre filter expression — use it in `additional` layers to limit them to the active route
+- `MIDDLE_INDEX` is the `indexType` value for intermediate stops (not a number — compare with `===`)
+- Every point in `locations` ends a leg and draws a numbered pin — three points give two legs. A path's endpoints count too, so there is no way to shape a route without adding waypoints
+- `showWaypoints` takes `PlanningWaypoint[]`, where a `null` is an unset planner slot: it draws no pin but keeps its position, so the stops after it keep their numbers
+- `clearRoutes()` does NOT clear waypoints — call `clearWaypoints()` separately if needed
+- Only `'car'` travel mode is supported — truck, motorcycle, bicycle, pedestrian are not available in the current API
+- Event handlers on overlapping source/layer IDs (e.g., two modules sharing layers) — only the first handler fires
+- Long-hover events are suppressed on features already in "clicked" state
+- An aborted call rejects with `SDKAbortError` (`name === 'AbortError'`), which has no `status` — match the class before any `error.status` check, or a cancellation reads as an unknown failure
+- For map-wide traffic overlays (flow layer, incidents layer) see `docs/traffic.md`

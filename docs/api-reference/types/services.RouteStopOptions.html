@@ -1,0 +1,117 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>RouteStopOptions | TomTom Maps for JavaScript</title><meta name="description" content="Documentation for TomTom Maps for JavaScript"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container"><a href="../index.html" class="title">TomTom Maps for JavaScript</a>
+<div id="tsd-toolbar-links"></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/>
+<ul role="listbox" id="tsd-search-results"></ul>
+<div id="tsd-search-status" aria-live="polite" aria-atomic="true">
+<div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header>
+<div class="container container-main">
+<div class="col-content">
+<div class="tsd-page-title">
+<ul class="tsd-breadcrumb" aria-label="Breadcrumb">
+<li><a href="../modules/services.html">services</a></li>
+<li><a href="" aria-current="page">RouteStopOptions</a></li></ul>
+<h1>Type Alias RouteStopOptions</h1></div>
+<section class="tsd-panel tsd-comment">
+<div class="tsd-comment tsd-typography"><p>Per-stop routing options, carried on the <code>properties</code> of a route stop.</p>
+<p>Attach these to any waypoint in CalculateRouteParams.locations to control how the
+route reaches that stop, and how long it waits there.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks">Remarks<a href="#remarks" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><strong>Leg attribution.</strong> Options describe the leg <em>arriving at</em> this stop. Reading them that way
+is what keeps them attached to the right stop when another stop is inserted earlier in the
+list. <code>legCostModel</code> on the origin has no leg to describe and is ignored.</p>
+<p><strong>The wait at a stop</strong> is WaypointProps.pauseDurationSeconds, which every waypoint
+carries — the map reads it too, to label the stop's pin.</p>
+<p><strong>Entry points.</strong> Explicit <code>candidateEntryPoints</code> hand the routing engine a set of approach
+points and let it choose; this takes precedence over the route-wide
+CalculateRouteParams.useEntryPoints, which only resolves a single position
+client-side.</p>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example">Example<a href="#example" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-10">import</span><span class="hl-2"> </span><span class="hl-10">type</span><span class="hl-2"> { </span><span class="hl-1">Waypoint</span><span class="hl-2"> } </span><span class="hl-10">from</span><span class="hl-2"> </span><span class="hl-4">&#39;@tomtom-org/maps-sdk/core&#39;</span><span class="hl-2">;</span><br/><span class="hl-10">import</span><span class="hl-2"> </span><span class="hl-10">type</span><span class="hl-2"> { </span><span class="hl-1">RouteStopOptions</span><span class="hl-2"> } </span><span class="hl-10">from</span><span class="hl-2"> </span><span class="hl-4">&#39;@tomtom-org/maps-sdk/services&#39;</span><span class="hl-2">;</span><br/><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">stop</span><span class="hl-2">: </span><span class="hl-7">Waypoint</span><span class="hl-2">&lt;</span><span class="hl-7">RouteStopOptions</span><span class="hl-2">&gt; = {</span><br/><span class="hl-2">    </span><span class="hl-1">type:</span><span class="hl-2"> </span><span class="hl-4">&#39;Feature&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">geometry:</span><span class="hl-2"> { </span><span class="hl-1">type:</span><span class="hl-2"> </span><span class="hl-4">&#39;Point&#39;</span><span class="hl-2">, </span><span class="hl-1">coordinates:</span><span class="hl-2"> [</span><span class="hl-8">4.7</span><span class="hl-2">, </span><span class="hl-8">52.1</span><span class="hl-2">] },</span><br/><span class="hl-2">    </span><span class="hl-1">properties:</span><span class="hl-2"> {</span><br/><span class="hl-2">        </span><span class="hl-0">// wait 20 minutes at this stop</span><br/><span class="hl-2">        </span><span class="hl-1">pauseDurationSeconds:</span><span class="hl-2"> </span><span class="hl-8">1200</span><span class="hl-2">,</span><br/><span class="hl-2">        </span><span class="hl-0">// reach this stop without using motorways</span><br/><span class="hl-2">        </span><span class="hl-1">legCostModel:</span><span class="hl-2"> { </span><span class="hl-1">routeType:</span><span class="hl-2"> </span><span class="hl-4">&#39;short&#39;</span><span class="hl-2">, </span><span class="hl-1">avoid:</span><span class="hl-2"> [</span><span class="hl-4">&#39;motorways&#39;</span><span class="hl-2">] },</span><br/><span class="hl-2">    },</span><br/><span class="hl-2">};</span><br/><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">route</span><span class="hl-2"> = </span><span class="hl-10">await</span><span class="hl-2"> </span><span class="hl-3">calculateRoute</span><span class="hl-2">({ </span><span class="hl-1">locations:</span><span class="hl-2"> [</span><span class="hl-1">origin</span><span class="hl-2">, </span><span class="hl-1">stop</span><span class="hl-2">, </span><span class="hl-1">destination</span><span class="hl-2">] });</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></section>
+<div class="tsd-signature"><span class="tsd-signature-keyword">type</span> <span class="tsd-kind-type-alias">RouteStopOptions</span> <span class="tsd-signature-symbol">=</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#candidateentrypoints">candidateEntryPoints</a><span class="tsd-signature-symbol">?:</span> <a href="core.HasLngLat.html" class="tsd-signature-type tsd-kind-type-alias">HasLngLat</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#legcostmodel">legCostModel</a><span class="tsd-signature-symbol">?:</span> <a href="services.LegCostModel.html" class="tsd-signature-type tsd-kind-type-alias">LegCostModel</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#preferredentrypointindex">preferredEntryPointIndex</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div>
+<section class="tsd-panel-group tsd-index-group">
+<section class="tsd-panel tsd-index-panel">
+<details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h5 class="tsd-index-heading uppercase">Index</h5></summary>
+<div class="tsd-accordion-details">
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="properties">Properties<a href="#properties" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#candidateentrypoints" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>candidate<wbr/>Entry<wbr/>Points?</span></a>
+<a href="#legcostmodel" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>leg<wbr/>Cost<wbr/>Model?</span></a>
+<a href="#preferredentrypointindex" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>preferred<wbr/>Entry<wbr/>Point<wbr/>Index?</span></a>
+</div></section></div></details></section></section>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="properties-1">Properties<a href="#properties-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="candidateentrypoints"><code class="tsd-tag">Optional</code><span>candidate<wbr/>Entry<wbr/>Points</span><a href="#candidateentrypoints" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">candidateEntryPoints</span><span class="tsd-signature-symbol">?:</span> <a href="core.HasLngLat.html" class="tsd-signature-type tsd-kind-type-alias">HasLngLat</a><span class="tsd-signature-symbol">[]</span></div>
+<div class="tsd-comment tsd-typography"><p>Candidate approach points for this stop, for the routing engine to choose between.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-1">Remarks<a href="#remarks-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Use this when a place has several usable entrances and you want the engine to pick the one
+that suits the route, rather than resolving a single entry point yourself. Takes precedence
+over CalculateRouteParams.useEntryPoints for this stop.</p>
+<p>Deliberately not called <code>entryPoints</code>: a Place already carries <code>entryPoints</code> of its
+own in <code>properties</code>, describing entrances found by search, and those are not sent to the
+routing API. These are positions you choose to offer the router.</p>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-1">Example<a href="#example-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-0">// Let the router choose between the main and the delivery entrance</span><br/><span class="hl-9">candidateEntryPoints</span><span class="hl-2">: [[</span><span class="hl-8">4.701</span><span class="hl-2">, </span><span class="hl-8">52.101</span><span class="hl-2">], [</span><span class="hl-8">4.703</span><span class="hl-2">, </span><span class="hl-8">52.099</span><span class="hl-2">]]</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="legcostmodel"><code class="tsd-tag">Optional</code><span>leg<wbr/>Cost<wbr/>Model</span><a href="#legcostmodel" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">legCostModel</span><span class="tsd-signature-symbol">?:</span> <a href="services.LegCostModel.html" class="tsd-signature-type tsd-kind-type-alias">LegCostModel</a></div>
+<div class="tsd-comment tsd-typography"><p>Cost model overrides for the leg <em>arriving at</em> this stop.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-2">Remarks<a href="#remarks-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Falls back to the route-wide <a href="services.CostModel.html" class="tsd-kind-type-alias">CostModel</a> for anything not set here. Ignored on the
+origin, which has no arriving leg.</p>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-2">Example<a href="#example-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-0">// Take the scenic way to this one stop</span><br/><span class="hl-9">legCostModel</span><span class="hl-2">: { </span><span class="hl-9">routeType</span><span class="hl-2">: </span><span class="hl-4">&#39;thrilling&#39;</span><span class="hl-2">, </span><span class="hl-9">avoid</span><span class="hl-2">: [</span><span class="hl-4">&#39;motorways&#39;</span><span class="hl-2">] }</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="preferredentrypointindex"><code class="tsd-tag">Optional</code><span>preferred<wbr/>Entry<wbr/>Point<wbr/>Index</span><a href="#preferredentrypointindex" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">preferredEntryPointIndex</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span></div>
+<div class="tsd-comment tsd-typography"><p>Index into <a href="#candidateentrypoints" class="tsd-kind-property">RouteStopOptions.candidateEntryPoints</a> of the preferred approach point.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-3">Remarks<a href="#remarks-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>The routing engine uses this entry point unless another one produces a materially better
+route. Ignored when <code>candidateEntryPoints</code> is not set.</p>
+</div></div></section></section></details></div>
+<div class="col-sidebar">
+<div class="page-menu">
+<div class="tsd-navigation settings">
+<details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div>
+<div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
+<details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>On This Page</h3></summary>
+<div class="tsd-accordion-details">
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Properties</summary>
+<div><a href="#candidateentrypoints"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>candidate<wbr/>Entry<wbr/>Points</span></a><a href="#legcostmodel"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>leg<wbr/>Cost<wbr/>Model</span></a><a href="#preferredentrypointindex"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>preferred<wbr/>Entry<wbr/>Point<wbr/>Index</span></a></div></details></div></details></div>
+<div class="site-menu">
+<nav class="tsd-navigation"><a href="../index.html">TomTom Maps for JavaScript</a>
+<ul class="tsd-small-nested-navigation" id="tsd-nav-container">
+<li>Loading...</li></ul></nav></div></div></div><footer>
+<p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer>
+<div class="overlay"></div></body></html>
