@@ -1,0 +1,267 @@
+---
+title: Proxying your API calls
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.55.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+A proxy is a small service of your own that sits between the browser and `api.tomtom.com`. The browser calls your proxy, your proxy adds the API key and forwards the request, and the response comes back the same way. The key stays on your server and never reaches the page.
+
+The SDK supports this directly, so your application code barely changes. This guide covers how to switch the SDK into proxy mode and what the proxy has to do to be correct. It describes behaviour rather than prescribing an implementation, since the right one depends on your stack.
+
+```d2
+direction: down
+
+Browser: Browser {
+  style: {
+    stroke: "#f87171"
+    stroke-width: 3
+    fill: "#fef2f2"
+    border-radius: 8
+    font-size: 18
+    font-color: "#333"
+  }
+
+  App: Your app (SDK in proxy mode, no key) {
+    style: {
+      fill: "white"
+      stroke: "#f87171"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 14
+    }
+  }
+
+  Workers: MapLibre tile workers {
+    style: {
+      fill: "white"
+      stroke: "#295DAA"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 14
+    }
+  }
+}
+
+Proxy: Your proxy (holds the key) {
+  style: {
+    fill: "#e3f2fd"
+    stroke: "#1565c0"
+    stroke-width: 3
+    font-color: "#333"
+    border-radius: 8
+    font-size: 18
+  }
+  width: 260
+  height: 80
+}
+
+API: api.tomtom.com {
+  style: {
+    fill: "#f3e5f5"
+    stroke: "#4a148c"
+    stroke-width: 3
+    font-color: "#333"
+    border-radius: 8
+    font-size: 18
+  }
+  width: 220
+  height: 80
+}
+
+Browser.App -> Proxy: "service calls, session cookie" {
+  style: {
+    stroke-width: 2
+  }
+}
+Browser.Workers -> Proxy: "tiles, sprites, glyphs" {
+  style: {
+    stroke-width: 2
+  }
+}
+Proxy -> API: "key added here" {
+  style: {
+    stroke: "#1565c0"
+    stroke-width: 3
+  }
+}
+API -> Proxy: "response, key echoed in style.json" {
+  style: {
+    stroke-dash: 3
+    stroke-width: 2
+  }
+}
+Proxy -> Browser.App: "response, key stripped out" {
+  style: {
+    stroke-dash: 3
+    stroke-width: 2
+  }
+}
+```
+
+<Blockquote>
+    A proxy is only for what the browser has to fetch from TomTom itself, which means style documents, map tiles, sprites and glyphs. A Node.js script, cron job or backend service needs none of this: the key is already on your server. Neither does a browser app that only calls services, since those calls can move into a backend of your own. And a browser app that is not worth a proxy yet has cheaper options, from a domain whitelist to per-key limits and monitoring. See [Where your API key runs](./where-your-api-key-runs.mdx) for both.
+</Blockquote>
+
+## Pointing the SDK at a proxy
+
+The SDK has a **proxy-credentials mode** built in. You turn it on by setting `commonBaseURL` to your proxy and leaving `apiKey` unset:
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+
+TomTomConfig.instance.put({
+    commonBaseURL: 'https://proxy.example.com/map',
+    // No apiKey at all. Its absence, together with a non-TomTom
+    // commonBaseURL, is what switches the SDK into proxy mode.
+});
+```
+
+No `apiKey`, plus a `commonBaseURL` pointing away from `https://api.tomtom.com`, changes three things:
+
+1. **Every TomTom URL is rewritten to your proxy.** This covers the service calls the SDK makes on your behalf, and also the tile, sprite and glyph URLs baked into the style document, which MapLibre fetches itself. Without this rewrite the map would go straight to `api.tomtom.com` with no key.
+2. **No credential leaves the browser.** Service calls are built without a `key=` parameter and without the `TomTom-Api-Key` header, and any `key=` baked into a style-document URL is removed before the request goes out. Your proxy is the only place a key exists.
+3. **Requests go out with `credentials: 'include'`**, so the session cookie your proxy issues travels with them, including on the tile requests MapLibre makes from its web workers.
+
+<Blockquote>
+    Setting `commonBaseURL` **while keeping an `apiKey`** is a different mode, for routing traffic through infrastructure you own with a key that is legitimately yours to send. URLs are rewritten to your base URL, the key stays in the request, and no session cookie is attached.
+</Blockquote>
+
+To route one service through a different host while leaving everything else alone, use the per-request `customServiceBaseURL` instead. See [Customizing services](../services/customizing-services.mdx) and [Global configuration](../core/global-config.mdx).
+
+## Establish the session before the first request
+
+If your proxy issues a session cookie, it needs to exist **before the SDK makes its first call**. This is a little more delicate than it looks. MapLibre fetches tiles from web workers, so wrapping `fetch` on the main thread does not hold those requests back. A tile that leaves before the cookie is set gets a `401`, and the worker has no way to recover from it on its own.
+
+So bootstrap the session first, and create the map once it resolves:
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+
+TomTomConfig.instance.put({ commonBaseURL: 'https://proxy.example.com/map' });
+
+// Ask your proxy for a session cookie and wait for it. The cookie is HttpOnly,
+// so this response completing is the only signal the page gets that it exists.
+// What the request carries is up to your proxy: nothing at all, or a token from
+// whatever challenge you put in front of it.
+await fetch('https://proxy.example.com/session', {
+    method: 'POST',
+    credentials: 'include',
+});
+
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+```
+
+If your sessions are short-lived, renew them on a timer rather than in response to a `401`. By the time a worker sees one, the tile it was fetching is already gone.
+
+## What your proxy has to do
+
+Three routes are enough:
+
+| Route | Purpose |
+| --- | --- |
+| `POST /session` | Verify a challenge token, set the session cookie, return its expiry |
+| `ALL /map/*` (or whatever prefix you point `commonBaseURL` at) | Check the caller, inject the key, forward to `api.tomtom.com`, stream the response back |
+
+Injecting the key and forwarding is most of it. The rest of this section is the TomTom-specific part, which is where the surprises are.
+
+### Inject the key in exactly one place
+
+The SDK sends the key two different ways, depending on the service.
+
+Most requests carry it as a **`key=` query parameter**. That covers every map resource (style documents, tiles, sprites and glyphs) plus search, geocoding, reverse geocoding, autocomplete, POI categories, traffic, EV charging, matrix routing, reachable ranges and geometry data.
+
+**Routing is the exception.** `calculateRoute` sends a **`TomTom-Api-Key` request header** and puts nothing on the URL.
+
+So set both, server-side, from an environment variable or secret store. A proxy that only sets `key=` serves tiles and search perfectly well and then fails every routing request. That failure looks like a routing bug rather than a proxy one, which is why it is worth getting right up front.
+
+<Blockquote type="warning">
+    Drop any `TomTom-Api-Key` header that arrives *from the browser* before you set your own. Otherwise a caller can supply that header themselves and your proxy will forward it.
+</Blockquote>
+
+Those two lines should be the only place in your codebase where the key appears.
+
+### Strip the key back out of the responses
+
+This is the easiest thing to get wrong, and it quietly undoes the rest.
+
+TomTom echoes the key you injected *inside* the documents it returns. The `sprite`, `glyphs` and tile URL templates in `style.json` all come back carrying `key=<your key>`, and so does the sprite index. Forward those unchanged and the key is back in the browser on the first request the map makes, through the proxy you added to keep it out.
+
+Nothing fails visibly when this happens. The map still renders, so the only symptom is the key sitting in the network tab. Check for it there rather than waiting for something to break.
+
+So any `application/json` or `text/*` response body needs the key removed on the way out. A string replacement is the right tool here: the shape of TomTom's documents is TomTom's business, and walking their fields only creates a way to miss one.
+
+### Stream binary bodies, read only textual ones
+
+Tiles, sprite images and glyph ranges are the large majority of your traffic and can be megabytes each. Pipe them through without reading, buffering or re-encoding. Only `json` and `text/*` bodies, the ones that need the sanitisation above, should ever be materialised.
+
+### Filter headers in both directions
+
+Neither side's headers should pass through untouched.
+
+**Do not forward upstream:**
+
+- `Cookie`, because your session is not TomTom's business
+- `Authorization`
+- `Origin`
+- `Referer`, because forwarding the browser's referrer both discloses your users' page URLs and lets any client satisfy a referrer restriction on your key
+- `Host`
+
+**Do not return to the browser:**
+
+- `Set-Cookie` from upstream
+- The upstream's CORS headers, since yours should be the only ones or the browser sees an ambiguous response
+- `Content-Encoding` and `Content-Length`, which are both wrong if your HTTP client transparently decompressed the body
+
+### Get CORS right
+
+Your proxy is cross-origin from your app unless you deliberately arrange otherwise, and it needs credentials. That combination has one firm rule: **`Access-Control-Allow-Origin` must name a specific origin, never `*`**, paired with `Access-Control-Allow-Credentials: true`. Browsers reject a credentialed response against a wildcard, so getting this wrong means every tile fails.
+
+Echo back the request's origin only after checking it against your allowlist. Reflecting it unconditionally is the same as `*`, with the additional property of looking careful. Add `Vary: Origin` so a shared cache never serves one origin's response to another.
+
+You also have to answer preflights. The SDK sets a `tomtom-user-agent` header on every request, which makes them non-simple, so the browser sends an `OPTIONS` request first.
+
+Allow every header the SDK actually sends, or the preflight fails and the request never happens:
+
+| Header | Sent on |
+| --- | --- |
+| `tomtom-user-agent` | Every request |
+| `Content-Type` | Any `POST`, including routing |
+| `TomTom-Api-Version` | Routing |
+| `Attributes` | Routing |
+
+So answer with `Access-Control-Allow-Headers: tomtom-user-agent, Content-Type, TomTom-Api-Version, Attributes` (plus anything else your own code adds), the allowed methods, and the same origin and credentials headers as above. Listing only `tomtom-user-agent` is the same trap as injecting only `key=`: tiles and search work, routing does not.
+
+A proxy that handles `GET` correctly but returns `404` for `OPTIONS` gives you a map that fails with nothing but CORS errors in the console.
+
+### Serve it on your app's origin if you can
+
+Because of that same custom header, every tile request costs a preflight, **one per distinct tile URL**, since each URL is its own preflight cache entry. `Access-Control-Max-Age` only helps when the same URL is fetched again, which for tiles it mostly is not.
+
+Putting the proxy behind a path on the app's own hostname (`https://example.com/map/*`) makes those requests same-origin and removes preflights entirely. On a map that is a large difference, and it lets the session cookie be `SameSite=Lax` instead of `None`.
+
+## The order things happen in
+
+How you build the proxy is your call, and any language or runtime will do. The sequence, though, is not arbitrary, because two of the steps have to come before the others:
+
+1. **Check where the request claims to come from.** The cheapest rejection, so it goes first. Cross-origin requests carry `Origin`, same-origin ones do not, so fall back to `Referer` and refuse only when both are missing. A check that simply requires `Origin` rejects every same-origin tile.
+2. **Answer `OPTIONS` preflights**, before any session or rate-limit check. A preflight carries no cookie, so a proxy that demands a session first rejects the preflight and the real request never follows.
+3. **Check the session**, then the rate limit. In that order, so an unauthenticated caller cannot consume a real user's allowance.
+4. **Inject the key** and forward, as the query parameter and the header.
+5. **Sanitise the response**: strip the key from `json` and `text/*` bodies, stream everything else untouched, and set your own CORS headers rather than passing the upstream's through.
+
+[Hardening your proxy](./hardening-your-proxy.mdx) covers steps 1 to 3 in detail.
+
+## Next steps
+
+- [Hardening your proxy](./hardening-your-proxy.mdx) - The checks in front of the proxy, and what to do about the fact that it now has a public URL.
+- [Where your API key runs](./where-your-api-key-runs.mdx) - Whether you need a proxy at all, and what a Node.js backend can do instead.
+- [Global configuration](../core/global-config.mdx) - The full list of options you can set alongside `commonBaseURL`.

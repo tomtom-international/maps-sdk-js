@@ -1,0 +1,324 @@
+---
+title: Bring your own data
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.55.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+**BYOD (bring-your-own-data) layers** let the agent read and render customer-authored GeoJSON alongside the built-in stack. A sales territories overlay, a delivery zones layer, customer pin sets, isochrone polygons computed by your backend — anything you can express as a GeoJSON `FeatureCollection`.
+
+Each BYOD source becomes a `byod` entry in agent state. The model can then style it with MapLibre layers chosen from the data's detected schema (`setByodLayers`), reference it by id from any unified data tool (`analyseData`, `processData`), toggle its visibility on the map, or recall its contents.
+
+## Lifecycle
+
+```d2
+direction: right
+
+Sources: Your data {
+  style: {
+    fill: "#fef2f2"
+    stroke: "#f87171"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 18
+  }
+
+  URL: URL-hosted .geojson {
+    style: {
+      fill: "#fef2f2"
+      stroke: "#f87171"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 14
+    }
+  }
+
+  Inline: Inline FeatureCollection {
+    style: {
+      fill: "#fef2f2"
+      stroke: "#f87171"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 14
+    }
+  }
+}
+
+Entry: byod-N entry in state {
+  style: {
+    fill: "#f3e5f5"
+    stroke: "#4a148c"
+    stroke-width: 3
+    font-color: "#333"
+    border-radius: 8
+    font-size: 18
+  }
+  width: 220
+  height: 60
+}
+
+Render: Rendered on the map {
+  style: {
+    fill: "#e8e8e8"
+    stroke: "#333"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 14
+  }
+}
+
+Analyse: analyseData / processData input {
+  style: {
+    fill: "#fffde7"
+    stroke: "#ff6f00"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 14
+  }
+}
+
+Recall: recallState(\{ kind: 'byod' \}) {
+  style: {
+    fill: "#fffde7"
+    stroke: "#ff6f00"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 14
+  }
+}
+
+Style: setByodLayers {
+  style: {
+    fill: "#e3f2fd"
+    stroke: "#1565c0"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 14
+  }
+}
+
+Sources.URL -> Entry: "addByodSource(\{ url \})"
+Sources.Inline -> Entry: "addByodSource(\{ data \})"
+Entry -> Style: "setByodLayers (decide layers from profile)" {
+  style: {
+    stroke-width: 2
+  }
+}
+Entry -> Render: "updateByodDisplay" {
+  style: {
+    stroke-width: 2
+  }
+}
+Entry -> Analyse: "byodEntryIDs: [id]" {
+  style: {
+    stroke-width: 2
+  }
+}
+Entry -> Recall: "{ id }" {
+  style: {
+    stroke-width: 2
+  }
+}
+```
+
+## Two ways to ingest
+
+### 1. URL-hosted layer (via the `addByodSource` tool)
+
+The most conversational path: the model is told the URL by the user and calls `addByodSource`. URL fetching is **policy-gated** for safety — only `http://` and `https://` are allowed, responses are capped at 25 MB, the request times out at 15 seconds, and the body is parsed as GeoJSON before being committed to state.
+
+```typescript
+addByodSource({
+    label: 'Sales territories',
+    url: 'https://example.com/territories.geojson',
+    show: { zoomMode: 'auto' },
+});
+```
+
+#### Restricting which URLs may be fetched
+
+The built-in policy bounds the *cost* of a fetch but doesn't restrict *where* it goes — the URL is whatever the model (steered by the user) supplies, so it could point at an internal address or a cloud-metadata endpoint. The toolkit can't enforce SSRF guarantees the host itself can't, so it leaves the destination open by default and gives you a hook to add your own policy. Pass `byod.validateSourceUrl` to `createMapAgent`: it runs **after** the scheme check and **before** the fetch, receives the parsed `URL`, and returns `{ valid: true }` to allow or `{ valid: false, reason }` to **block** (the `reason` is surfaced to the model as the tool error). It may be sync or async (e.g. an allowlist lookup).
+
+```typescript
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    byod: {
+        validateSourceUrl: (url) => {
+            const allowed = new Set(['data.example.com', 'cdn.example.com']);
+            return allowed.has(url.hostname)
+                ? { valid: true }
+                : { valid: false, reason: `Host "${url.hostname}" is not on the BYOD allowlist.` };
+        },
+    },
+});
+```
+
+Only the **URL** ingest path is gated — inline `data` never touches the network, so the hook doesn't run for it. (You can also assign `agent.state.byod.sourceUrlValidator` directly.)
+
+The `show` object (omit it to store the source hidden) mirrors `discoverPlaces` minus the marker style: `zoomMode` (`"auto"` fits the camera to the rendered entries, `"none"` keeps the map still) and `hidePreviousEntries` (`"all"` or a list of ids to clear earlier BYOD layers before this one renders).
+
+The tool returns the new entry's id (`byod-0`, `byod-1`, …), a one-line summary the model relays back to the user, and an auto-detected [data profile](#auto-detected-data-profile) describing the FeatureCollection's shape.
+
+### 2. Inline FeatureCollection (also via `addByodSource`)
+
+When the data is already in scope — pasted into the chat, generated by a previous tool, or held by your application — pass `data` instead of `url`:
+
+```typescript
+addByodSource({
+    label: 'Customer pins 2026-Q1',
+    data: { type: 'FeatureCollection', features: [/* … */] },
+});
+```
+
+No fetch policy applies — the data was never out on the network. As with every ingest path, the new entry has **no layers** and renders nothing until the agent sets them from the detected schema with `setByodLayers` (see [Styling](#styling-the-agent-decides-the-layers)).
+
+> **Data you own upfront belongs in your own tools, not here.** BYOD state is for **runtime** data — GeoJSON you don't know ahead of time and the user introduces mid-conversation. When you already own the data and its schema, routing it through BYOD only gets you a generic `byod-N` entry with no domain meaning, leaving the agent to guess layers from an [inferred profile](#auto-detected-data-profile). Model it as [your own state and tools](./customizing-tools.mdx#add-a-custom-tool) instead — they receive the same `state` object and compose with the built-in stack.
+
+## Auto-detected data profile
+
+Whichever ingest path you use — URL or inline — the slice derives a compact **data profile** in a single pass over the FeatureCollection the moment the entry is added. A BYOD source's only guaranteed shape is "GeoJSON FeatureCollection"; everything past that — which geometry types it carries, which feature `properties` exist — is whatever the customer's data happens to hold. The profile captures exactly that, so the model can reason about the data without ever receiving the raw features:
+
+- **`featureCount`** — number of features in the collection.
+- **`geometryTypes`** — the geometry types present (`Point`, `LineString`, `Polygon`, `MultiPolygon`, …).
+- **`properties`** — one entry per feature-property key, highest-coverage first. Each carries its `name`, the JSON `types` seen across the data (`["string"]`, `["number", "null"]`, …), `coverage` (the fraction of features that carry the key — `1` means every feature), and a few short, distinct `examples`.
+
+`addByodSource` returns the profile in its result; `recallState` surfaces it too (`propertyNames` in the list view, the full `profile` when you pass an `id`). The profile is **bounded** — capped property and example counts, truncated long strings — so it stays cheap to ship to the model even for wide or large datasets.
+
+**Why this matters:** the model needs the exact property keys to write correct `analyseData` / `processData` code (e.g. `territory.properties.name` [below](#using-byod-in-unified-data-tools)). The profile hands it those keys — types, coverage, and numeric sample values included — straight from ingest, so it never has to pull raw GeoJSON just to discover the schema.
+
+> The profile is inferred **locally and dependency-free** — one linear scan, no extra service call and no schema upload. It is stored on the entry as a `BYODDataProfile` and re-used by every recall path.
+
+### Untrusted data never flows back to the model
+
+BYOD content is **customer-supplied** (a URL you don't control, or inline GeoJSON), so its feature-property **string values are untrusted** — a malicious feature could carry prompt-injection text (`"Ignore previous instructions and …"`) in a property value. To keep that text out of the model's context, every model-facing BYOD result is passed through `toByodSafeProfile`:
+
+- **String `examples` are withheld.** The profile still reports each property's `name`, `types`, and `coverage`, plus numeric / boolean examples (which can't carry instructions) — enough to pick fields for `analyseData` / `processData` — but sampled **string** values are dropped.
+- **`recallState` never returns the raw GeoJSON.** Passing an `id` returns the profile only; to compute over the actual feature values, hand the entry to `analyseData` / `processData` (whose sandbox runs locally and returns a summary, not the raw text).
+
+The **full** profile — string examples included — stays on the entry (`state.byod`) for your own app to render directly to the user. The principle is that untrusted content may flow to the *user* (rendered on the map / in your UI) but not back into the *model* as if it were trusted instructions. This is one layer of defense-in-depth; see the code-generation [threat model](./code-generation.mdx#threat-model) for the others.
+
+## Inspecting what's loaded
+
+```typescript
+// List every BYOD entry (compact summary)
+recallState({ kind: 'byod' });
+
+// Full data profile of one entry (never the raw GeoJSON)
+recallState({ kind: 'byod', id: 'byod-0' });
+```
+
+`recallState` is opt-in and deliberately light: the list view returns `id`, `label`, `featureCount`, `geometryTypes`, `propertyNames`, `source`, `shown`, and passing an `id` adds the full [data profile](#auto-detected-data-profile) (per-property `types` / `coverage` / numeric `examples`). It **never** returns the raw `FeatureCollection` — both to keep megabytes of features out of context and because those features are [untrusted](#untrusted-data-never-flows-back-to-the-model). To work with the actual feature values, pass the entry to `analyseData` / `processData`.
+
+## Toggling visibility
+
+```typescript
+// Show one entry
+updateByodDisplay({ entryIds: ['byod-0'], action: 'show' });
+
+// Hide everything BYOD-related
+updateByodDisplay({ action: 'hide', clearAll: true });
+```
+
+Visibility is independent of presence in state — hiding an entry doesn't remove it from `byodEntryIDs` inputs to `analyseData` / `processData`. That's deliberate: the model can compute against the data without rendering it.
+
+## Using BYOD in unified data tools
+
+Once an entry exists, the model can pass it into `analyseData` / `processData` like any other entry kind:
+
+```typescript
+analyseData({
+    byodEntryIDs: ['byod-0'],
+    placesEntryIDs: ['places-2'],
+    name: 'territory-coverage',
+    code: `
+        const counts = {};
+        const territories = byodByEntry['byod-0'].features;
+        const placeFeatures = placesByEntry['places-2'].features;
+        for (const territory of territories) {
+            const inside = placeFeatures.filter((p) =>
+                turf.booleanPointInPolygon(p, territory),
+            );
+            counts[territory.properties.name] = inside.length;
+        }
+        return counts;
+    `,
+});
+```
+
+The injected `byodByEntry` identifier maps each id passed in `byodEntryIDs` to its own `FeatureCollection`; index one (`byodByEntry['byod-0']`) or merge across all with `Object.values(byodByEntry).flatMap((fc) => fc.features)`. Mixed-geometry collections are normal — Point, LineString, and Polygon features can all live in one BYOD entry. The model knows `properties.name` exists on each territory because the entry's [data profile](#auto-detected-data-profile) surfaced that key (with its type and coverage) at ingest — it doesn't need to peek at raw features first.
+
+For the cross-kind operations the sandbox supports (`turf.booleanPointInPolygon`, `turf.buffer`, `h3.polygonToCells`, etc.), see [Code generation](./code-generation.mdx).
+
+## Disabling BYOD entirely
+
+For deployments where you don't want any BYOD surface at all — for example, an embed where you trust only TomTom-sourced data — switch the kind off via `dataEntries`:
+
+```typescript
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    dataEntries: {
+        byod: { enabled: false },
+    },
+});
+```
+
+This drops `addByodSource`, `setByodLayers`, and `updateByodDisplay` from the registry AND removes `byod` from `analyseData` / `processData` scope. The classifier won't pick BYOD tools and the model won't see them in its prompt. For data you own upfront, model it as [your own state and tools](./customizing-tools.mdx#add-a-custom-tool) rather than the BYOD slice.
+
+## Styling: the agent decides the layers
+
+A new BYOD entry has **no layers** — `addByodSource` renders nothing on its own, and there are no automatic geometry-typed defaults. Choosing the layers that fit the data is the agent's job on **every** ingest, via `setByodLayers` (which is also how the entry first becomes visible):
+
+```typescript
+// Colour polygons by a categorical field
+setByodLayers({
+    byodEntryId: 'byod-0',
+    layers: [
+        {
+            type: 'fill',
+            paint: {
+                'fill-color': ['match', ['get', 'region'], 'North', '#1f77b4', 'South', '#ff7f0e', '#cccccc'],
+                'fill-opacity': 0.4,
+                'fill-outline-color': '#333',
+            },
+        },
+    ],
+});
+
+// Graduate point size by a numeric field
+setByodLayers({
+    byodEntryId: 'byod-1',
+    layers: [
+        {
+            type: 'circle',
+            paint: {
+                'circle-radius': ['interpolate', ['linear'], ['get', 'revenue'], 0, 3, 100000, 20],
+                'circle-color': '#d62728',
+            },
+        },
+    ],
+});
+```
+
+The supplied `layers` **replace** the entry's current set wholesale. On a shown entry they apply live in place (no flicker) via the module's runtime layer diff; pass `show` to render a hidden entry or re-fit the camera. Invalid specs are rejected with a semantic error and leave the previous styling intact, so a bad attempt never breaks the map.
+
+Because the agent reads the entry's [data profile](#auto-detected-data-profile) — property names, JSON types, coverage, examples — before choosing, it can pick the encoding that suits the schema: graduate a `circle-radius` or colour ramp by a well-covered numeric field, colour a `fill` / `line` by a small categorical set, or switch dense points to a `symbol`. Even when no single property dominates, it still picks legible layers suited to the geometry rather than leaving the entry blank. (`setByodLayers` also steers toward basemap-legible styling — translucent fills with outlines, text halos, high-contrast palettes.)
+
+## Related
+
+- **[State](./state.mdx)** — the `byod` slice's shape and `entryMode` semantics.
+- **[Customizing tools](./customizing-tools.mdx)** — wrap BYOD ingest in your own domain-specific tools (e.g. *"Load the Q1 sales territories"*).
+- **[Scope-aware data tools](./scope-aware-data-tools.mdx)** — passing `byod` into `analyseData` / `processData`.
+- **[Code generation](./code-generation.mdx)** — what the sandbox can do with BYOD features.
+- **[Securing your agent](./securing-your-agent.mdx)** — why BYOD string values are withheld from the model, and the other places untrusted text arrives.

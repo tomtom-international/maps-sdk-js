@@ -1,0 +1,354 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>CommonSearchParams | TomTom Maps for JavaScript</title><meta name="description" content="Documentation for TomTom Maps for JavaScript"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container"><a href="../index.html" class="title">TomTom Maps for JavaScript</a>
+<div id="tsd-toolbar-links"></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/>
+<ul role="listbox" id="tsd-search-results"></ul>
+<div id="tsd-search-status" aria-live="polite" aria-atomic="true">
+<div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header>
+<div class="container container-main">
+<div class="col-content">
+<div class="tsd-page-title">
+<ul class="tsd-breadcrumb" aria-label="Breadcrumb">
+<li><a href="../modules/services.html">services</a></li>
+<li><a href="" aria-current="page">CommonSearchParams</a></li></ul>
+<h1>Type Alias CommonSearchParams&lt;ApiRequest, ApiResponse&gt;</h1></div>
+<div class="tsd-signature"><span class="tsd-kind-type-alias">CommonSearchParams</span><span class="tsd-signature-symbol">:</span> <a href="services.CommonPlacesParams.html" class="tsd-signature-type tsd-kind-type-alias">CommonPlacesParams</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#apirequest">ApiRequest</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#apiresponse">ApiResponse</a><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">&amp;</span> <span class="tsd-signature-symbol">{</span><br/>    <span class="tsd-kind-property">connectors</span><span class="tsd-signature-symbol">?:</span> <a href="core.ConnectorType.html" class="tsd-signature-type tsd-kind-type-alias">ConnectorType</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">fuelTypes</span><span class="tsd-signature-symbol">?:</span> <a href="core.Fuel.html" class="tsd-signature-type tsd-kind-type-alias">Fuel</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">indexes</span><span class="tsd-signature-symbol">?:</span> <a href="services.SearchIndexType.html" class="tsd-signature-type tsd-kind-type-alias">SearchIndexType</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">maxPowerKW</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">minPowerKW</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">openingHours</span><span class="tsd-signature-symbol">?:</span> <a href="core.OpeningHoursMode.html" class="tsd-signature-type tsd-kind-type-alias">OpeningHoursMode</a><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">poiBrands</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">poiCategories</span><span class="tsd-signature-symbol">?:</span> <a href="core.POICategory.html" class="tsd-signature-type tsd-kind-type-alias">POICategory</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">query</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">relatedPois</span><span class="tsd-signature-symbol">?:</span> <a href="services.RelatedPoisRequest.html" class="tsd-signature-type tsd-kind-type-alias">RelatedPoisRequest</a><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">timeZone</span><span class="tsd-signature-symbol">?:</span> <a href="services.TimeZoneRequest.html" class="tsd-signature-type tsd-kind-type-alias">TimeZoneRequest</a><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div>
+<div class="tsd-comment tsd-typography"><p>Common parameters for search services with POI filtering capabilities.</p>
+<p>Extends basic places parameters with advanced search features including
+category filtering, brand filtering, and EV charging station specifics.</p>
+</div>
+<section class="tsd-panel">
+<h4>Type Parameters</h4>
+<ul class="tsd-type-parameter-list">
+<li><span id="apirequest"><span class="tsd-kind-type-parameter">ApiRequest</span></span>
+<div class="tsd-comment tsd-typography"><p>The API request type</p>
+</div></li>
+<li><span id="apiresponse"><span class="tsd-kind-type-parameter">ApiResponse</span></span>
+<div class="tsd-comment tsd-typography"><p>The API response type</p>
+</div></li></ul></section>
+<div class="tsd-type-declaration">
+<h4>Type Declaration</h4>
+<ul class="tsd-parameters">
+<li class="tsd-parameter">
+<h5><code class="tsd-tag">Optional</code><span class="tsd-kind-property">connectors</span><span class="tsd-signature-symbol">?: </span><a href="core.ConnectorType.html" class="tsd-signature-type tsd-kind-type-alias">ConnectorType</a><span class="tsd-signature-symbol">[]</span></h5>
+<div class="tsd-comment tsd-typography"><p>Filter EV charging stations by connector types.</p>
+<p>Restricts results to EV charging stations that support at least one
+of the specified connector types. Essential for EV drivers to find
+compatible charging infrastructure.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks">Remarks<a href="#remarks" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><strong>Common Connector Types:</strong></p>
+<ul>
+<li><code>IEC62196Type2CableAttached</code>: Type 2 / Mennekes (Europe)</li>
+<li><code>IEC62196Type2CCS</code>: CCS Combo 2 (Europe)</li>
+<li><code>IEC62196Type1CCS</code>: CCS Combo 1 (North America)</li>
+<li><code>Chademo</code>: CHAdeMO (Japan)</li>
+<li><code>Tesla</code>: Tesla proprietary</li>
+</ul>
+<p><strong>Multiple Connectors:</strong>
+Results include stations with ANY of the specified connectors (OR logic).</p>
+<p><strong>Use Cases:</strong></p>
+<ul>
+<li>Find compatible chargers for specific EV model</li>
+<li>Route planning for long-distance EV travel</li>
+<li>Filter by fast charging capability</li>
+</ul>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example">Example<a href="#example" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-0">// CCS Combo 2 (common in Europe)</span><br/><span class="hl-9">connectors</span><span class="hl-2">: [</span><span class="hl-4">&#39;IEC62196Type2CCS&#39;</span><span class="hl-2">]</span><br/><br/><span class="hl-0">// Multiple connector types</span><br/><span class="hl-9">connectors</span><span class="hl-2">: [</span><span class="hl-4">&#39;IEC62196Type2CCS&#39;</span><span class="hl-2">, </span><span class="hl-4">&#39;Chademo&#39;</span><span class="hl-2">]</span><br/><br/><span class="hl-0">// Tesla or CCS</span><br/><span class="hl-9">connectors</span><span class="hl-2">: [</span><span class="hl-4">&#39;Tesla&#39;</span><span class="hl-2">, </span><span class="hl-4">&#39;IEC62196Type2CCS&#39;</span><span class="hl-2">]</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></li>
+<li class="tsd-parameter">
+<h5><code class="tsd-tag">Optional</code><span class="tsd-kind-property">fuelTypes</span><span class="tsd-signature-symbol">?: </span><a href="core.Fuel.html" class="tsd-signature-type tsd-kind-type-alias">Fuel</a><span class="tsd-signature-symbol">[]</span></h5>
+<div class="tsd-comment tsd-typography"><p>Filter fuel stations by available fuel types.</p>
+<p>Restricts results to fuel stations that offer the specified fuel types.
+Can be used with empty query to find any station with specific fuel.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-1">Remarks<a href="#remarks-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><strong>Common Fuel Types:</strong></p>
+<ul>
+<li>Petrol/Gasoline</li>
+<li>Diesel</li>
+<li>LPG (Liquefied Petroleum Gas)</li>
+<li>CNG (Compressed Natural Gas)</li>
+<li>E85 (Ethanol blend)</li>
+<li>AdBlue (Diesel exhaust fluid)</li>
+</ul>
+<p><strong>Multiple Fuel Types:</strong>
+Results include stations offering ANY of the specified fuels (OR logic).</p>
+<p><strong>Empty Query:</strong>
+When <code>fuelTypes</code> is specified, the query parameter can be empty,
+and all POIs with matching fuel types will be returned.</p>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-1">Example<a href="#example-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-0">// Diesel stations only</span><br/><span class="hl-9">fuelTypes</span><span class="hl-2">: [</span><span class="hl-4">&#39;Diesel&#39;</span><span class="hl-2">]</span><br/><br/><span class="hl-0">// Alternative fuels</span><br/><span class="hl-9">fuelTypes</span><span class="hl-2">: [</span><span class="hl-4">&#39;CNG&#39;</span><span class="hl-2">, </span><span class="hl-4">&#39;LPG&#39;</span><span class="hl-2">, </span><span class="hl-4">&#39;E85&#39;</span><span class="hl-2">]</span><br/><br/><span class="hl-0">// Standard fuels</span><br/><span class="hl-9">fuelTypes</span><span class="hl-2">: [</span><span class="hl-4">&#39;Petrol&#39;</span><span class="hl-2">, </span><span class="hl-4">&#39;Diesel&#39;</span><span class="hl-2">]</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></li>
+<li class="tsd-parameter">
+<h5><code class="tsd-tag">Optional</code><span class="tsd-kind-property">indexes</span><span class="tsd-signature-symbol">?: </span><a href="services.SearchIndexType.html" class="tsd-signature-type tsd-kind-type-alias">SearchIndexType</a><span class="tsd-signature-symbol">[]</span></h5>
+<div class="tsd-comment tsd-typography"><p>Specify which search indexes to query.</p>
+<p>Fine-tunes search by selecting specific data categories to include.
+By default, all indexes are searched.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-2">Remarks<a href="#remarks-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><strong>Available Indexes:</strong></p>
+<ul>
+<li><code>Geo</code>: Geographic entities (countries, cities, etc.)</li>
+<li><code>PAD</code>: Point addresses with building numbers</li>
+<li><code>Addr</code>: Address ranges on streets</li>
+<li><code>Str</code>: Street names</li>
+<li><code>XStr</code>: Cross streets (intersections)</li>
+<li><code>POI</code>: Points of interest</li>
+</ul>
+<p><strong>Use Cases:</strong></p>
+<ul>
+<li>POI-only search: <code>['POI']</code></li>
+<li>Address-only search: <code>['PAD', 'Addr']</code></li>
+<li>Exclude geographies: <code>['PAD', 'Addr', 'Str', 'POI']</code></li>
+</ul>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-2">Example<a href="#example-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-0">// Search only POIs</span><br/><span class="hl-9">indexes</span><span class="hl-2">: [</span><span class="hl-4">&#39;POI&#39;</span><span class="hl-2">]</span><br/><br/><span class="hl-0">// Search addresses and streets only</span><br/><span class="hl-9">indexes</span><span class="hl-2">: [</span><span class="hl-4">&#39;PAD&#39;</span><span class="hl-2">, </span><span class="hl-4">&#39;Addr&#39;</span><span class="hl-2">, </span><span class="hl-4">&#39;Str&#39;</span><span class="hl-2">]</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></li>
+<li class="tsd-parameter">
+<h5><code class="tsd-tag">Optional</code><span class="tsd-kind-property">maxPowerKW</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span></h5>
+<div class="tsd-comment tsd-typography"><p>Maximum charging power for EV stations (in kilowatts).</p>
+<p>Filters EV charging stations to those with at least one connector
+not exceeding the specified maximum power output.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-3">Remarks<a href="#remarks-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><strong>Use Cases:</strong></p>
+<ul>
+<li>Find charging compatible with vehicle's maximum charge rate</li>
+<li>Exclude ultra-fast chargers when not needed</li>
+<li>Filter by infrastructure capability</li>
+</ul>
+<p><strong>Closed Interval:</strong>
+Includes stations with exactly this power value.</p>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-3">Example<a href="#example-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-0">// Level 2 charging only (up to 22kW)</span><br/><span class="hl-9">maxPowerKW</span><span class="hl-2">: </span><span class="hl-8">22</span><br/><br/><span class="hl-0">// Moderate fast charging (up to 50kW)</span><br/><span class="hl-9">maxPowerKW</span><span class="hl-2">: </span><span class="hl-8">50</span><br/><br/><span class="hl-0">// Power range 50-150 kW</span><br/><span class="hl-9">minPowerKW</span><span class="hl-2">: </span><span class="hl-8">50</span><span class="hl-2">,</span><br/><span class="hl-9">maxPowerKW</span><span class="hl-2">: </span><span class="hl-8">150</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></li>
+<li class="tsd-parameter">
+<h5><code class="tsd-tag">Optional</code><span class="tsd-kind-property">minPowerKW</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span></h5>
+<div class="tsd-comment tsd-typography"><p>Minimum charging power for EV stations (in kilowatts).</p>
+<p>Filters EV charging stations to those supporting at least one
+connector with the specified minimum power output. Useful for
+finding fast charging capabilities.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-4">Remarks<a href="#remarks-4" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><strong>Power Levels:</strong></p>
+<ul>
+<li>3-7 kW: Level 2 AC (slow charging)</li>
+<li>7-22 kW: Level 2 AC (moderate charging)</li>
+<li>50+ kW: DC fast charging</li>
+<li>150+ kW: Ultra-fast charging</li>
+<li>350 kW: Maximum current technology</li>
+</ul>
+<p><strong>Closed Interval:</strong>
+Includes stations with exactly this power value.</p>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-4">Example<a href="#example-4" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-0">// Fast charging (50kW+)</span><br/><span class="hl-9">minPowerKW</span><span class="hl-2">: </span><span class="hl-8">50</span><br/><br/><span class="hl-0">// Ultra-fast charging (150kW+)</span><br/><span class="hl-9">minPowerKW</span><span class="hl-2">: </span><span class="hl-8">150</span><br/><br/><span class="hl-0">// Combined with max power</span><br/><span class="hl-9">minPowerKW</span><span class="hl-2">: </span><span class="hl-8">50</span><span class="hl-2">,</span><br/><span class="hl-9">maxPowerKW</span><span class="hl-2">: </span><span class="hl-8">150</span><span class="hl-2">  </span><span class="hl-0">// 50-150 kW range</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></li>
+<li class="tsd-parameter">
+<h5><code class="tsd-tag">Optional</code><span class="tsd-kind-property">openingHours</span><span class="tsd-signature-symbol">?: </span><a href="core.OpeningHoursMode.html" class="tsd-signature-type tsd-kind-type-alias">OpeningHoursMode</a></h5>
+<div class="tsd-comment tsd-typography"><p>Request opening hours information for POIs.</p>
+<p>Specifies the format and detail level of opening hours data
+included in the response.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-5">Remarks<a href="#remarks-5" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><strong>Opening Hours Modes:</strong>
+Different modes provide varying levels of detail about when
+a POI is open for business.</p>
+<p><strong>Use Cases:</strong></p>
+<ul>
+<li>Display &quot;Open Now&quot; status</li>
+<li>Show full weekly schedule</li>
+<li>Plan visits during open hours</li>
+<li>Filter to currently open locations</li>
+</ul>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-5">Example<a href="#example-5" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-0">// Request opening hours</span><br/><span class="hl-9">openingHours</span><span class="hl-2">: </span><span class="hl-4">&#39;nextSevenDays&#39;</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></li>
+<li class="tsd-parameter">
+<h5><code class="tsd-tag">Optional</code><span class="tsd-kind-property">poiBrands</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+<div class="tsd-comment tsd-typography"><p>Filter results to specific POI brands.</p>
+<p>Restricts results to Points of Interest belonging to the specified
+brand names. Useful for finding specific chain locations.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-6">Remarks<a href="#remarks-6" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><strong>Brand Names:</strong></p>
+<ul>
+<li>Case-sensitive</li>
+<li>Exact match required</li>
+<li>Brands with commas must be quoted: <code>&quot;A,B,C&quot;</code></li>
+</ul>
+<p><strong>Multiple Brands:</strong>
+Results include POIs matching ANY of the specified brands (OR logic).</p>
+<p><strong>Use Cases:</strong></p>
+<ul>
+<li>Find specific chain stores: &quot;Starbucks&quot;, &quot;McDonald's&quot;</li>
+<li>Compare competing brands</li>
+<li>Brand-specific navigation</li>
+</ul>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-6">Example<a href="#example-6" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-0">// Single brand</span><br/><span class="hl-9">poiBrands</span><span class="hl-2">: [</span><span class="hl-4">&#39;Starbucks&#39;</span><span class="hl-2">]</span><br/><br/><span class="hl-0">// Multiple brands</span><br/><span class="hl-9">poiBrands</span><span class="hl-2">: [</span><span class="hl-4">&#39;Shell&#39;</span><span class="hl-2">, </span><span class="hl-4">&#39;BP&#39;</span><span class="hl-2">, </span><span class="hl-4">&#39;Chevron&#39;</span><span class="hl-2">]</span><br/><br/><span class="hl-0">// Brand with comma in name</span><br/><span class="hl-9">poiBrands</span><span class="hl-2">: [</span><span class="hl-4">&#39;&quot;A,B,C&quot;&#39;</span><span class="hl-2">]</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></li>
+<li class="tsd-parameter">
+<h5><code class="tsd-tag">Optional</code><span class="tsd-kind-property">poiCategories</span><span class="tsd-signature-symbol">?: </span><a href="core.POICategory.html" class="tsd-signature-type tsd-kind-type-alias">POICategory</a><span class="tsd-signature-symbol">[]</span></h5>
+<div class="tsd-comment tsd-typography"><p>Filter results to specific POI categories.</p>
+<p>Restricts results to Points of Interest belonging to the specified
+categories. Use values from the <a href="core.POICategory.html" class="tsd-kind-type-alias">POICategory</a> type.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-7">Remarks<a href="#remarks-7" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><strong>Multiple Categories:</strong>
+Results include POIs matching ANY of the specified categories (OR logic).</p>
+<p><strong>Discovering Categories:</strong>
+Use the <a href="../functions/services.getPOICategories.html" class="tsd-kind-function">getPOICategories</a> service to search and browse available
+categories by name or synonym, then pass the resulting <code>code</code> values here.</p>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-7">Example<a href="#example-7" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-0">// Filter to specific categories</span><br/><span class="hl-9">poiCategories</span><span class="hl-2">: [</span><span class="hl-4">&#39;RESTAURANT&#39;</span><span class="hl-2">, </span><span class="hl-4">&#39;CAFE&#39;</span><span class="hl-2">]</span><br/><br/><span class="hl-0">// Category-only search (no query)</span><br/><span class="hl-9">poiCategories</span><span class="hl-2">: [</span><span class="hl-4">&#39;ELECTRIC_VEHICLE_STATION&#39;</span><span class="hl-2">]</span><br/><br/><span class="hl-0">// Discovered via getPOICategories() service</span><br/><span class="hl-10">import</span><span class="hl-2"> { </span><span class="hl-1">getPOICategoryCodes</span><span class="hl-2"> } </span><span class="hl-10">from</span><span class="hl-2"> </span><span class="hl-4">&#39;@tomtom-org/maps-sdk/services&#39;</span><span class="hl-2">;</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">codes</span><span class="hl-2"> = </span><span class="hl-10">await</span><span class="hl-2"> </span><span class="hl-3">getPOICategoryCodes</span><span class="hl-2">({ </span><span class="hl-1">filters:</span><span class="hl-2"> [</span><span class="hl-4">&#39;italian&#39;</span><span class="hl-2">] });</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">results</span><span class="hl-2"> = </span><span class="hl-10">await</span><span class="hl-2"> </span><span class="hl-3">search</span><span class="hl-2">({ </span><span class="hl-1">poiCategories:</span><span class="hl-2"> </span><span class="hl-1">codes</span><span class="hl-2">, </span><span class="hl-1">position</span><span class="hl-2"> });</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></li>
+<li class="tsd-parameter">
+<h5><code class="tsd-tag">Optional</code><span class="tsd-kind-property">query</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span></h5>
+<div class="tsd-comment tsd-typography"><p>Search query string.</p>
+<p>The text to search for — can be a place name, POI, address, or any free-form location query.
+When omitted, results are driven entirely by other filters such as <a href="#" class="tsd-kind-property">poiCategories</a>,
+<a href="#" class="tsd-kind-property">poiBrands</a>, <a href="#" class="tsd-kind-property">fuelTypes</a>, or geometries.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-8">Remarks<a href="#remarks-8" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><strong>Query Examples:</strong></p>
+<ul>
+<li>Place/POI names: &quot;Eiffel Tower&quot;, &quot;Starbucks&quot;</li>
+<li>General queries: &quot;pizza near me&quot;, &quot;gas station&quot;</li>
+<li>Partial inputs: &quot;Amst&quot; (for autocomplete / typeahead)</li>
+</ul>
+<p>The query is processed with fuzzy matching to handle typos and variations.</p>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-8">Example<a href="#example-8" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-0">// Text-driven search</span><br/><span class="hl-9">query</span><span class="hl-2">: </span><span class="hl-4">&#39;coffee shop&#39;</span><br/><br/><span class="hl-0">// Omit query to search purely by category</span><br/><span class="hl-9">poiCategories</span><span class="hl-2">: [</span><span class="hl-4">&#39;ELECTRIC_VEHICLE_STATION&#39;</span><span class="hl-2">]</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></li>
+<li class="tsd-parameter">
+<h5><code class="tsd-tag">Optional</code><span class="tsd-kind-property">relatedPois</span><span class="tsd-signature-symbol">?: </span><a href="services.RelatedPoisRequest.html" class="tsd-signature-type tsd-kind-type-alias">RelatedPoisRequest</a></h5>
+<div class="tsd-comment tsd-typography"><p>Include related POIs in the response.</p>
+<p>Some POIs have hierarchical relationships (e.g., terminal inside airport).
+This parameter controls which related POIs are included.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-9">Remarks<a href="#remarks-9" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><strong>Relationship Types:</strong></p>
+<ul>
+<li><code>off</code>: No related POIs (default)</li>
+<li><code>child</code>: Include child POIs (e.g., terminals of an airport)</li>
+<li><code>parent</code>: Include parent POIs (e.g., airport of a terminal)</li>
+<li><code>all</code>: Include both parent and child relationships</li>
+</ul>
+<p><strong>Use Cases:</strong></p>
+<ul>
+<li>Show all terminals when user searches for airport</li>
+<li>Navigate from specific location to broader facility</li>
+<li>Display hierarchical location structure</li>
+<li>Provide alternative entry points</li>
+</ul>
+</div>
+<div class="tsd-tag-default">
+<h4 class="tsd-anchor-link" id="default">Default<a href="#default" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="ts"><span class="hl-4">&#39;off&#39;</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-9">Example<a href="#example-9" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-0">// Include child POIs</span><br/><span class="hl-9">relatedPois</span><span class="hl-2">: </span><span class="hl-4">&#39;child&#39;</span><span class="hl-2">  </span><span class="hl-0">// Airport → show terminals</span><br/><br/><span class="hl-0">// Include parent POIs</span><br/><span class="hl-9">relatedPois</span><span class="hl-2">: </span><span class="hl-4">&#39;parent&#39;</span><span class="hl-2">  </span><span class="hl-0">// Terminal → show airport</span><br/><br/><span class="hl-0">// Include all related POIs</span><br/><span class="hl-9">relatedPois</span><span class="hl-2">: </span><span class="hl-4">&#39;all&#39;</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></li>
+<li class="tsd-parameter">
+<h5><code class="tsd-tag">Optional</code><span class="tsd-kind-property">timeZone</span><span class="tsd-signature-symbol">?: </span><a href="services.TimeZoneRequest.html" class="tsd-signature-type tsd-kind-type-alias">TimeZoneRequest</a></h5>
+<div class="tsd-comment tsd-typography"><p>Request timezone information for POI locations.</p>
+<p>Includes timezone data in the response, useful for scheduling
+and time-aware applications.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-10">Remarks<a href="#remarks-10" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><strong>Timezone Format:</strong></p>
+<ul>
+<li><code>iana</code>: Returns IANA timezone identifier (e.g., &quot;Europe/Amsterdam&quot;)</li>
+</ul>
+<p><strong>Use Cases:</strong></p>
+<ul>
+<li>Display local time for POI</li>
+<li>Schedule appointments across timezones</li>
+<li>Calculate opening hours in local time</li>
+<li>International business coordination</li>
+</ul>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-10">Example<a href="#example-10" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-0">// Request IANA timezone ID</span><br/><span class="hl-9">timeZone</span><span class="hl-2">: </span><span class="hl-4">&#39;iana&#39;</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></li></ul></div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-11">Remarks<a href="#remarks-11" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Used by:</p>
+<ul>
+<li><a href="../functions/services.search.html" class="tsd-kind-function">search</a></li>
+<li>fuzzySearch</li>
+<li>geometrySearch</li>
+</ul>
+<p>Provides extensive filtering options for:</p>
+<ul>
+<li>POI categories and brands</li>
+<li>EV charging station specifications</li>
+<li>Fuel type availability</li>
+<li>Opening hours and timezone data</li>
+<li>Related POI relationships</li>
+</ul>
+</div>
+<div class="tsd-tag-see">
+<h4 class="tsd-anchor-link" id="see">See<a href="#see" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><a href="https://docs.tomtom.com/search-api/documentation/search-service/search-service">Search Service Documentation</a></p>
+</div></div></div>
+<div class="col-sidebar">
+<div class="page-menu">
+<div class="tsd-navigation settings">
+<details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div>
+<div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div></div>
+<div class="site-menu">
+<nav class="tsd-navigation"><a href="../index.html">TomTom Maps for JavaScript</a>
+<ul class="tsd-small-nested-navigation" id="tsd-nav-container">
+<li>Loading...</li></ul></nav></div></div></div><footer>
+<p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer>
+<div class="overlay"></div></body></html>
