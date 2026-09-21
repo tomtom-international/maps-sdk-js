@@ -68,7 +68,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         },
     });
 
-    const routingModule = await RoutingModule.get(map, buildConfig());
+    const routingModule = await RoutingModule.create(map, buildConfig());
     routingModule.showWaypoints(waypoints);
     routingModule.showRoutes(await calculateRoute({ locations: waypoints }));
 

@@ -3,8 +3,8 @@
  */
 
 import type { Routes, WaypointLike } from '@tomtom-org/maps-sdk/core';
-import { PlanningWaypoint, RoutingModule, type TomTomMap } from '@tomtom-org/maps-sdk/map';
-import { collapseHistoryToLatest, hideAllEntries } from '../entry-helpers';
+import { PlanningWaypoint, RoutingModule, type RoutingModuleConfig, type TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { collapseHistoryToLatest, hideAllEntries, pickUniqueEntryId } from '../entry-helpers';
 import { StateEvents } from '../events';
 import type { EntryMode, ShownEntriesSlice } from '../state';
 import type { RouteParams, RoutesEntry } from './entry';
@@ -43,6 +43,12 @@ export type RoutingStateEvents = {
     /** A monitored route's recalculation failed — the monitor cleared its timer and stopped. */
     'monitor-error': { entryId: string; error: string };
 };
+
+// `RoutingModule.applyConfig` replaces the whole config, so a partial update has to be merged over
+// the module's current one — otherwise recolouring a route would also bring back bubbles the
+// caller had hidden, and drop any custom layers.
+const updateModuleConfig = (module: RoutingModule, partial: RoutingModuleConfig) =>
+    module.applyConfig({ ...module.getConfig(), ...partial });
 
 /**
  * State for route calculation, waypoint management, and route planning parameters.
@@ -115,9 +121,8 @@ export class RoutingState implements ShownEntriesSlice {
      */
     async getEntryRoutingModule(entryId: string): Promise<RoutingModule> {
         const entry = this._requireEntry(entryId);
-        if (!entry._module) {
-            entry._module = await RoutingModule.get(this._ttMap);
-        }
+        entry._module ??= await RoutingModule.create(this._ttMap);
+
         return entry._module;
     }
 
@@ -141,12 +146,12 @@ export class RoutingState implements ShownEntriesSlice {
         const module = await this.getEntryRoutingModule(entryId);
         // Apply the sticky main color + bubble visibility in ONE config BEFORE showing, so the first
         // paint already has the theme (no flash) and a single applyConfig doesn't clobber the other.
-        const config: NonNullable<Parameters<typeof module.applyConfig>[0]> = {};
-        if (this._mainColor !== undefined) config.theme = { mainColor: this._mainColor };
+        const partial: RoutingModuleConfig = {};
+        if (this._mainColor !== undefined) partial.theme = { mainColor: this._mainColor };
         // showRoutes gates the ETA bubbles on the top-level `summaryBubbles.visible` flag (NOT a
         // layer visibility), so that's what we set to drop them.
-        if (opts?.showSummaryBubbles === false) config.summaryBubbles = { visible: false };
-        if (config.theme || config.summaryBubbles) module.applyConfig(config);
+        if (opts?.showSummaryBubbles === false) partial.summaryBubbles = { visible: false };
+        if (partial.theme || partial.summaryBubbles) updateModuleConfig(module, partial);
         await module.showRoutes(entry.data);
         if (opts?.showWaypoints === false) {
             await module.clearWaypoints();
@@ -175,7 +180,7 @@ export class RoutingState implements ShownEntriesSlice {
         if (color === undefined) return;
         for (const entry of this._entries) {
             if (entry._shown && entry._module) {
-                entry._module.applyConfig({ theme: { mainColor: color } });
+                updateModuleConfig(entry._module, { theme: { mainColor: color } });
             }
         }
     }
@@ -260,7 +265,11 @@ export class RoutingState implements ShownEntriesSlice {
             await hideAllEntries(this._entries, (entry) => this.hideEntry(entry.id));
             this._entries = [];
         }
-        const id = `routes-${this._entries.length}`;
+        // Dedupe the length-based id — after removals it can collide with a surviving entry.
+        const id = pickUniqueEntryId(
+            `routes-${this._entries.length}`,
+            this._entries.map((entry) => entry.id),
+        );
         this._entries.push({
             id,
             timestamp: Date.now(),

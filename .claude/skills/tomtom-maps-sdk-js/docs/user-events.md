@@ -92,7 +92,7 @@ const map = new TomTomMap({
 ## Module-level override
 
 ```ts
-const places = await PlacesModule.get(map, {
+const places = await PlacesModule.create(map, {
     events: { cursorOnHover: 'crosshair' },
 });
 ```
@@ -115,17 +115,19 @@ baseMap.events.on('click', (feature, lngLat) => {
 
 ### Interactive vs. background split
 
-```ts
-const interactive = await BaseMapModule.get(map, {
-    layerGroupsFilter: { mode: 'include', names: ['roadLines', 'buildings3D'] },
-});
-const background = await BaseMapModule.get(map, {
-    layerGroupsFilter: { mode: 'exclude', names: ['roadLines', 'buildings3D'] },
-    events: { cursorOnHover: 'default' },
-});
+One base map module per map, two scopes over it:
 
-interactive.events.on('click', (feature) => showFeatureDetails(feature));
-background.events.on('click', () => clearAllSelections());
+```ts
+const baseMap = await BaseMapModule.get(map);
+const names = ['roads', 'buildings3D'];
+
+baseMap.events
+    .where({ layerGroups: { mode: 'include', names } })
+    .on('click', (feature) => showFeatureDetails(feature));
+
+baseMap.events
+    .where({ layerGroups: { mode: 'exclude', names } }, { cursorOnHover: 'default' })
+    .on('click', () => clearAllSelections());
 ```
 
 ---
@@ -136,16 +138,54 @@ The module whose layers render **on top** receives the event first. Events do no
 
 ---
 
-## RoutingModule user events
+## Scoping events
 
-RoutingModule exposes user events per source under `events.user`:
+`events.where(scope, config?)` narrows to part of what a module covers and returns an events object
+for just that part. Each scope takes its own event config, which is how two parts of one module get
+different hover cursors.
+
+Every module accepts a **feature predicate**. BaseMapModule additionally accepts
+`{ layerGroups }`, because the base-map style is the one place with a stable, typed vocabulary for
+its layers — do not expect layer scoping elsewhere.
 
 ```ts
-routing.events.user.mainLines.on('click', (route, lngLat) => { });
-routing.events.user.waypoints.on('hover', (waypoint, lngLat) => { });
-routing.events.user.ferries.on('click', (section, lngLat) => { });
-routing.events.user.incidents.on('click', (section, lngLat) => { });
-// Also: chargingStops, summaryBubbles, vehicleRestricted, tollRoads, tunnels, instructionLines
+// Feature scope, on any module
+trafficIncidents.events.where((incident) => incident.properties.magnitude === 'major')
+    .on('click', showIncidentDetails);
+
+// Layer-group scope with its own cursor — BaseMapModule only
+baseMap.events
+    .where({ layerGroups: { mode: 'include', names: ['roadLabels'] } }, { cursorOnHover: 'pointer' })
+    .on('click', showRoadName);
+
+// A named scope narrows the same way
+routing.events.tunnels.where((section) => section.properties.lengthInMeters > 500)
+    .on('click', showLongTunnel);
+
+// Both axes at once — one `where`, not two chained
+baseMap.events
+    .where({
+        layerGroups: { mode: 'include', names: ['roadLabels'] },
+        features: (feature) => feature.properties.name?.startsWith('A'),
+    })
+    .on('click', showRoadName);
+```
+
+A predicate filters the whole stack of features under the pointer and promotes the first survivor,
+so a click whose top hit is out of scope still reaches a handler when a feature below it matches.
+
+## RoutingModule user events
+
+RoutingModule exposes one named scope per part of a route it draws:
+
+```ts
+routing.events.mainLines.on('click', (route, lngLat) => { });
+routing.events.waypoints.on('hover', (waypoint, lngLat) => { });
+routing.events.ferries.on('click', (section, lngLat) => { });
+routing.events.incidents.on('click', (section, lngLat) => { });
+// Also: chargingStops, summaryBubbles, vehicleRestricted, tollRoads, tunnels, instructionLines,
+// and one <type>Sections scope per generated section type (urbanSections, motorwaySections, …)
+// routing.events.on('click', ...) covers all of them at once.
 ```
 
 ---

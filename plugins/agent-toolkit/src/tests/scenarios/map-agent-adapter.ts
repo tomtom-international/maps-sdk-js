@@ -42,6 +42,7 @@ export const mockMap = {
             getSouthWest: () => ({ lng: 4.8, lat: 52.3 }),
         }),
     },
+    _setTomTomUserAgent: () => {},
     // Minimal stand-in: the scenarios only exercise tool classification, so the agent never touches
     // the full TomTomMap surface. Bridge through `unknown` to assert the partial shape as the real
     // type without widening to `any`.

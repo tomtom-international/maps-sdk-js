@@ -1,0 +1,63 @@
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Rows are sized in pixels rather than fractions: a map measuring its container as zero high never
+   asks for a tile, and a percentage height inside a grid can still be zero when MapLibre sizes its
+   canvas. `50vh` minus the gutters keeps the four tiles on one screen. */
+#ui-maps-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: calc(50vh - 18px);
+    gap: 12px;
+    padding: 12px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.tile {
+    position: relative;
+    height: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgb(0 0 0 / 18%);
+}
+
+.tile-map {
+    width: 100%;
+    height: 100%;
+}
+
+.tile-label {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: flex;
+    flex-direction: column;
+    padding: 6px 10px;
+    border-radius: 6px;
+    background: rgb(255 255 255 / 92%);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 20%);
+}
+
+.tile-country {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a2024;
+}
+
+.tile-note {
+    font-size: 11px;
+    color: #5a646e;
+}
+
+@media screen and (max-width: 768px) {
+    #ui-maps-container {
+        grid-template-columns: 1fr;
+        grid-auto-rows: 220px;
+    }
+}

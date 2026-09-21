@@ -146,8 +146,7 @@ test.describe('Map vector tile traffic module tests', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    // TODO(LSI-263): Enable when flakyness has been fixed
-    test('Traffic flow filtering with complex initial config', { tag: '@flaky' }, async ({ page }) => {
+    test('Traffic flow filtering with complex initial config', async ({ page }) => {
         await mapEnv.loadPageAndMap(page, { zoom: 14, center: [-0.12621, 51.50394] });
 
         const config: FlowConfig = {

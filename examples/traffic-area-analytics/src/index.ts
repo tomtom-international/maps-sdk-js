@@ -39,7 +39,7 @@ const pastDateRange = (): { startDate: string; endDate: string } => {
             }),
         );
 
-    const [analyticsModule, analytics] = await Promise.all([TrafficAreaAnalyticsModule.get(map), analyticsPromise]);
+    const [analyticsModule, analytics] = await Promise.all([TrafficAreaAnalyticsModule.create(map), analyticsPromise]);
 
     await analyticsModule.show(analytics);
 })();

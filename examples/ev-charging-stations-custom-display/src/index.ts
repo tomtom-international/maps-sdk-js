@@ -34,7 +34,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         filters: { categories: { show: 'all_except', values: ['ELECTRIC_VEHICLE_STATION'] } },
     });
 
-    const popUp = new Popup({ closeButton: false, offset: 35, className: 'sdk-example-maps-sdk-js-popup' });
+    const popUp = new Popup({ closeButton: false, offset: 35, className: 'ui-maps-sdk-js-popup' });
 
     // =============================================================================
     // CUSTOMIZATION STATE: All configurable options
@@ -165,7 +165,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     // =============================================================================
 
     // Background stations: Show all stations on the map
-    const bgStations = await PlacesModule.get(map, {
+    const bgStations = await PlacesModule.create(map, {
         theme: 'base-map',
         icon: buildCircleIconConfig(state.bgCustomIcon, state.bgAvailability),
         evAvailability: buildEVConfig(state.bgAvailability),
@@ -173,7 +173,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     });
 
     // Searched stations: User-searched results
-    const searchedStations = await PlacesModule.get(map, {
+    const searchedStations = await PlacesModule.create(map, {
         theme: 'pin',
         icon: buildIconConfig(state.searchCustomIcon, state.searchAvailability),
         evAvailability: buildEVConfig(state.searchAvailability),
@@ -181,7 +181,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     });
 
     // Selected station: With highlighted style
-    const selectedStation = await PlacesModule.get(map, {
+    const selectedStation = await PlacesModule.create(map, {
         icon: buildIconConfig(state.searchCustomIcon, state.searchAvailability),
         evAvailability: buildEVConfig(state.searchAvailability),
         text: { ...buildTextConfig(), color: '#90D5FF', haloWidth: 2 },
@@ -219,7 +219,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 
     // Simplified search focusing on EV stations by brand name
     const searchEVStations = async () => {
-        const evBrandTextBox = document.querySelector('#sdk-example-evBrandTextBox') as HTMLInputElement;
+        const evBrandTextBox = document.querySelector('#ui-evBrandTextBox') as HTMLInputElement;
         popUp.remove();
         mapBasePOIs.setVisible(false);
 
@@ -237,7 +237,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 
     // Clear search results
     const clear = () => {
-        const evBrandTextBox = document.querySelector('#sdk-example-evBrandTextBox') as HTMLInputElement;
+        const evBrandTextBox = document.querySelector('#ui-evBrandTextBox') as HTMLInputElement;
         evBrandTextBox.value = '';
         popUp.remove();
         searchedStations.clear();
@@ -255,14 +255,14 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         const { address, poi, chargingPark } = stationWithAvailability.properties;
         popUp
             .setHTML(`
-                <div class="sdk-example-popup-header">
-                    <h3 class="sdk-example-popup-title">${escapeHtml(poi?.name ?? '')}</h3>
-                    <span class="sdk-example-address">${escapeHtml(address.freeformAddress)}</span>
+                <div class="ui-popup-header">
+                    <h3 class="ui-popup-title">${escapeHtml(poi?.name ?? '')}</h3>
+                    <span class="ui-address">${escapeHtml(address.freeformAddress)}</span>
                 </div>
                 ${
                     chargingPark
                         ? connectorsHTML(chargingPark)
-                        : '<p class="sdk-example-popup-empty">Charging park data not available.</p>'
+                        : '<p class="ui-popup-empty">Charging park data not available.</p>'
                 }
             `)
             .setLngLat(stationWithAvailability.geometry.coordinates as [number, number])

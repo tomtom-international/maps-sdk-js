@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@ai-sdk/azure": "catalog:",
-    "@langwatch/scenario": "^0.4.11",
+    "@langwatch/scenario": "^0.4.15",
     "ai": "catalog:"
   },
   "devDependencies": {

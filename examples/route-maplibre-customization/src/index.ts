@@ -19,7 +19,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         },
     });
 
-    const routingModule = await RoutingModule.get(map, {
+    const routingModule = await RoutingModule.create(map, {
         theme: { mainColor: '#DF1B12' },
         layers: {
             mainLines: {

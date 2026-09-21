@@ -30,7 +30,8 @@ export const ROUTES_SCHEMA_DOC =
     '  // Segments grouped by characteristic. Every section has { id, startPointIndex, endPointIndex }\n' +
     '  // unless noted; *Index values reference `geometry.coordinates`.\n' +
     '  sections: {\n' +
-    '    leg: Array<{ id; startPointIndex?; endPointIndex?; summary: RouteSummary }>; // ALWAYS present; one per non-circle waypoint pair\n' +
+    '    leg: Array<{ id; startPointIndex?; endPointIndex?; summary: RouteSummary; originalWaypointIndex?: number }>; // ALWAYS present\n' +
+    '    // originalWaypointIndex = which requested stop the leg arrives at; absent on the last leg and on service-inserted EV charging stops\n' +
     '    country?: Array<{ id; startPointIndex; endPointIndex; countryCodeISO3: string }>;       // ISO 3166-1 alpha-3\n' +
     '    tollVignette?: Array<{ id; startPointIndex; endPointIndex; countryCodeISO3: string }>;\n' +
     '    traffic?: Array<{\n' +
@@ -40,6 +41,7 @@ export const ROUTES_SCHEMA_DOC =
     '      tec: { effectCode?: number; causes?: Array<{ mainCauseCode: number; subCauseCode?: number }> };\n' +
     '      effectiveSpeedInKmh?: number;\n' +
     '      delayInSeconds?: number;\n' +
+    '      eventId?: string;                        // join key to the traffic incident details service\n' +
     '    }>;\n' +
     '    importantRoadStretch?: Array<{ id; startPointIndex; endPointIndex; index: number; streetName?: string; roadNumbers?: string[] }>;\n' +
     '    lanes?: Array<{\n' +
@@ -52,13 +54,21 @@ export const ROUTES_SCHEMA_DOC =
     '    roadShields?: Array<{ id; startPointIndex; endPointIndex; roadShieldReferences: RoadShieldReference[] }>;\n' +
     '    // Plain section ranges (id + startPointIndex + endPointIndex only):\n' +
     '    ferry?: SectionProps[]; motorway?: SectionProps[]; toll?: SectionProps[]; tunnel?: SectionProps[];\n' +
+    '    tollRoad?: SectionProps[];               // costs money by ANY scheme: every `toll` stretch, plus vignette motorways and city charge zones\n' +
     '    unpaved?: SectionProps[]; urban?: SectionProps[]; pedestrian?: SectionProps[];\n' +
     '    carpool?: SectionProps[]; carTrain?: SectionProps[];\n' +
     '    lowEmissionZone?: SectionProps[]; vehicleRestricted?: SectionProps[];\n' +
     '  };\n' +
     '  progress?: Array<{ pointIndex: number; travelTimeInSeconds?: number; distanceInMeters?: number }>; // cumulative milestones\n' +
-    '  guidance?: { instructions: Array<{ pointIndex: number; maneuver: string; street?: string; message?: string }> };\n' +
+    '  guidance?: { instructions: Array<{\n' +
+    '    pathPointIndex: number; maneuver: string;\n' +
+    '    message?: string;                      // ready-made localised text ("Turn right onto Damrak") — prefer it over mapping `maneuver` yourself\n' +
+    '    nextRoadInfo: { streetName?: { text: string; phonetic?: string }; countryCode?: string };\n' +
+    '    roundaboutType?: "REGULAR"|"SMALL";\n' +
+    '    maneuverView?: { onRouteAngle?: ManeuverAngle; offRouteAngles: ManeuverAngle[] }; // relative directions ("RIGHT","SLIGHT_LEFT","BACK"), not degrees\n' +
+    '    sideRoads?: Array<{ side: "LEFT"|"RIGHT"|"LEFT_AND_RIGHT"; offsetFromManeuverInMeters: number; isDrivable?: boolean }>;\n' +
+    '  }> };\n' +
     '};\n' +
     '```\n' +
-    '`pointIndex` values reference positions in `geometry.coordinates`. Guard `?` fields with `?.` / `??`. ' +
+    '`pathPointIndex` and `pointIndex` values reference positions in `geometry.coordinates`. Guard `?` fields with `?.` / `??`. ' +
     'For "how long / how far" questions, use `summary.lengthInMeters` / `summary.travelTimeInSeconds`.';

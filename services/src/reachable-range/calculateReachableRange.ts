@@ -79,6 +79,13 @@ export const calculateReachableRange = async (
 ): Promise<PolygonFeature<ReachableRangeParams>> =>
     callService(params, { ...reachableRangeTemplate, ...customTemplate }, 'Reachable Range');
 
+// Either signal cancels the call. A lone signal passes through unwrapped, so a caller still
+// sees the identical signal it handed in.
+const combineSignals = (...signals: (AbortSignal | undefined)[]): AbortSignal | undefined => {
+    const live = signals.filter((signal): signal is AbortSignal => !!signal);
+    return live.length < 2 ? live[0] : AbortSignal.any(live);
+};
+
 /**
  * Calculate multiple reachable range areas from different origins or with different constraints.
  *
@@ -97,7 +104,8 @@ export const calculateReachableRange = async (
  * consider implementing your own parallel processing with appropriate throttling.
  *
  * @param paramsArray Array of reachable range parameters, one for each area to calculate
- * @param options.signal An `AbortSignal` to cancel in-flight requests between iterations.
+ * @param options.signal An `AbortSignal` to cancel the in-flight request and skip the remaining ones.
+ *   Composed with any per-entry `signal`, so either one cancels.
  * @param customTemplate Advanced customization for request/response handling
  *
  * @returns Promise resolving to a FeatureCollection of reachable area polygons
@@ -147,11 +155,10 @@ export const calculateReachableRanges = async (
 ): Promise<PolygonFeatures<ReachableRangeParams>> => {
     const features: PolygonFeature<ReachableRangeParams>[] = [];
     for (const params of paramsArray) {
-        // Throws AbortError if a newer call has cancelled this one before the next request starts
-        options?.signal?.throwIfAborted();
+        const signal = combineSignals(params.signal, options?.signal);
         try {
             // we sequentially fetch reachable ranges (less speed but better to prevent QPS limit breaches):
-            features.push(await calculateReachableRange(params, customTemplate));
+            features.push(await calculateReachableRange({ ...params, ...(signal && { signal }) }, customTemplate));
         } catch (error) {
             // Re-throw non-API errors (e.g. validation/programming errors) and critical HTTP errors
             // (403 Forbidden, 429 Too Many Requests) — only silently skip API errors that indicate

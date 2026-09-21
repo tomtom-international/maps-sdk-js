@@ -1,14 +1,12 @@
 import { isNil, omitBy } from 'lodash-es';
-import type { FilterSpecification } from 'maplibre-gl';
 import type { LayerSpecWithSource } from '../shared';
 import {
-    AbstractMapModule,
-    CombinedEvents,
+    AbstractStyleOwnedMapModule,
+    type CombinedEvents,
     filterLayersBySources,
-    ModuleEvents,
     StyleSourceWithLayers,
+    sharedInstance,
     TRAFFIC_FLOW_SOURCE_ID,
-    UserEvents,
 } from '../shared';
 import { notInTheStyle } from '../shared/errorMessages';
 import { ensureAddedToStyle, waitUntilMapIsReady } from '../shared/mapUtils';
@@ -17,6 +15,9 @@ import { applyFilter, buildMapLibreFlowFilters } from './filters/trafficFilters'
 import type { FlowConfig, TrafficFlowFilters } from './types/trafficFlowConfig';
 import type { TrafficFlowModuleFeature } from './types/trafficFlowFeature';
 import { trafficFlowMapping } from './util/trafficFlowMapping';
+
+// This module's key with the shared filter composer.
+const FLOW_CONTRIBUTOR = 'traffic.flow';
 
 /**
  * IDs of sources and layers for traffic flow module.
@@ -48,7 +49,7 @@ type TrafficFlowSourcesWithLayers = {
  * @example
  * Basic usage:
  * ```typescript
- * import { TrafficFlowModule } from '@tomtom-international/maps-sdk-js/map';
+ * import { TrafficFlowModule } from '@tomtom-org/maps-sdk/map';
  *
  * // Get module (auto-add to style if needed)
  * const trafficFlow = await TrafficFlowModule.get(map, {
@@ -99,9 +100,7 @@ type TrafficFlowSourcesWithLayers = {
  *
  * @group Traffic Flow
  */
-export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithLayers, FlowConfig> {
-    private originalFilters!: Record<string, FilterSpecification | undefined>;
-
+export class TrafficFlowModule extends AbstractStyleOwnedMapModule<TrafficFlowSourcesWithLayers, FlowConfig> {
     /**
      * Retrieves a TrafficFlowModule instance for the given map.
      *
@@ -142,15 +141,26 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
      *   }
      * });
      * ```
+     *
+     * @remarks
+     * **Instances:**
+     * `TrafficFlowModule` controls the traffic-flow source and layers the map style already
+     * provides, under fixed global IDs. Every instance is another handle on that same shared state,
+     * so visibility and filters applied through one are visible through all of them.
      */
     static async get(map: TomTomMap, config?: FlowConfig): Promise<TrafficFlowModule> {
         await waitUntilMapIsReady(map);
         await ensureAddedToStyle(map, TRAFFIC_FLOW_SOURCE_ID, 'trafficFlow');
-        return new TrafficFlowModule(map, config);
+        return sharedInstance(
+            map,
+            TrafficFlowModule,
+            () => new TrafficFlowModule(map, config),
+            config && ((existing) => existing.applyConfig(config)),
+        );
     }
 
     private constructor(map: TomTomMap, config?: FlowConfig) {
-        super('style', map, config);
+        super(map, config);
     }
 
     /**
@@ -160,10 +170,6 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
         const flowSource = this.mapLibreMap.getSource(TRAFFIC_FLOW_SOURCE_ID);
         if (!flowSource) {
             throw notInTheStyle(`init ${TrafficFlowModule.name} with source ID ${TRAFFIC_FLOW_SOURCE_ID}`);
-        }
-        this.originalFilters = {};
-        for (const layer of this.getLayers()) {
-            this.originalFilters[layer.id] = layer.filter;
         }
         return { trafficFlow: new StyleSourceWithLayers(this.mapLibreMap, flowSource) };
     }
@@ -260,10 +266,10 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
             if (filters?.any?.length) {
                 const filterExpression = buildMapLibreFlowFilters(filters);
                 if (filterExpression) {
-                    applyFilter(filterExpression, this.getLayers(), this.mapLibreMap, this.originalFilters);
+                    applyFilter(filterExpression, this.getLayers(), this.filterComposer, FLOW_CONTRIBUTOR);
                 }
             } else if (this.config?.filters?.any?.length) {
-                applyFilter(undefined, this.getLayers(), this.mapLibreMap, this.originalFilters);
+                applyFilter(undefined, this.getLayers(), this.filterComposer, FLOW_CONTRIBUTOR);
             }
         }
 
@@ -353,14 +359,6 @@ export class TrafficFlowModule extends AbstractMapModule<TrafficFlowSourcesWithL
     }
 
     get events(): CombinedEvents<TrafficFlowModuleFeature, FlowConfig, never> {
-        return new CombinedEvents(
-            new UserEvents<TrafficFlowModuleFeature>(
-                this.tomtomMap._eventsProxy,
-                this.sourcesWithLayers.trafficFlow,
-                this.config?.events,
-                trafficFlowMapping,
-            ),
-            new ModuleEvents(this.configChangeHandlers, []),
-        );
+        return this.moduleEvents<TrafficFlowModuleFeature>(['trafficFlow'], { mapping: trafficFlowMapping });
     }
 }

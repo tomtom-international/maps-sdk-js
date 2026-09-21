@@ -12,30 +12,27 @@ import {
 } from '@tomtom-org/maps-sdk/services';
 import type { MultiPolygon, Polygon, Position } from 'geojson';
 import { z } from 'zod';
-import type { FeatureFlags, ToolEntry, ToolEntryBuilder, ToolState } from '../../types';
+import type { FeatureFlags, ToolEntry, ToolEntryBuilder, ToolExecuteOptions, ToolState } from '../../types';
 import { makePlacesLabel, summarizePlaces } from '../../utils';
 import {
-    biasDisclosure,
     geoJsonBBoxSchema,
     getRangePolygons,
     getViewportBoundingBox,
     globalWhereSchema,
     isResolveError,
-    matchedAreasLabel,
     nearbyWhereSchema,
     placesEntryIdHintSchema,
     type ResolvedAreaDisclosure,
-    resolvedAreasDisclosure,
-    resolveNearbyPosition,
+    resolveNearby,
     resolvePoiCategories,
-    resolveWithinAreas,
+    resolveWithin,
     sharedWithinFields,
     showEntryGeometries,
     shownSchema,
     showPlaceGeometriesSchema,
     showPlacesSchema,
     showResultsOnMap,
-    toMultiFilters,
+    withAgentToolkitHeaders,
 } from '../shared';
 import { toolStateToWhereContext } from '../shared/tool-state-where-context';
 import { buildPlacesOutputSchema, resolvedAreasOutputSchema, toolErrorSchema } from '../shared-output-schemas';
@@ -195,7 +192,7 @@ export const buildDiscoverPlacesSchema = (flags: FeatureFlags) => {
                     'Common: "RESTAURANT", "CAFE", "BAR", "HOTEL", "PARK", "PARK_RECREATION_AREA", ' +
                     '"ELECTRIC_VEHICLE_STATION", "GAS_STATION", "PARKING_GARAGE", ' +
                     '"SUPERMARKETS_HYPERMARKETS", "PHARMACY", "ATM". ' +
-                    'For anything else, call getPoiCategoryCodes first to resolve natural-language terms (e.g. "italian food", "gym").',
+                    'For anything else, call getPOICategoryCodes first to resolve natural-language terms (e.g. "italian food", "gym").',
             ),
         show: showPlacesSchema
             .optional()
@@ -304,6 +301,7 @@ const searchByDetour = async (
     query: string | undefined,
     resolvedPoiCategories: POICategory[] | undefined,
     entryId: string | undefined,
+    options?: ToolExecuteOptions,
 ): Promise<{ result: Awaited<ReturnType<typeof alongRouteSearch>>; placesEntryId: string } | { error: string }> => {
     const entries = state.routing.entries;
     if (entries.length === 0) {
@@ -318,14 +316,16 @@ const searchByDetour = async (
         return { error: `Route entry "${routeEntry.id}" has no geometry.` };
     }
 
-    const result = await alongRouteSearch({
+    const requestParams = withAgentToolkitHeaders({
         route: routeFeature,
         maxDetourTimeSeconds: detour.maxDetourTimeSeconds,
         ...(query && { query }),
         ...(resolvedPoiCategories && { poiCategories: resolvedPoiCategories }),
         ...(detour.sortBy && { sortBy: detour.sortBy }),
         ...(detour.limit !== undefined && { limit: detour.limit }),
+        signal: options?.signal,
     });
+    const result = await alongRouteSearch(requestParams);
     const placesEntryId = await state.places.addPlaceResult(
         result,
         makePlacesLabel(result, { query, poiCategories: resolvedPoiCategories, routeLabel: routeEntry.label }),
@@ -354,6 +354,7 @@ const dispatchPlacesSearch = (
         radiusMeters?: number;
         multiFilters: MultiFilters;
     },
+    options?: ToolExecuteOptions,
 ): Promise<Awaited<ReturnType<typeof explorationSearch>>> => {
     const { query, poiCategories, bias = {}, radiusMeters, multiFilters } = params;
     const common = {
@@ -361,10 +362,18 @@ const dispatchPlacesSearch = (
         poiCategories,
         ...bias,
         ...(radiusMeters !== undefined && { radiusMeters }),
+        signal: options?.signal,
     };
-    return useExperimental
-        ? explorationSearch({ ...common, limit: 10000, ...multiFilters })
-        : search({ ...common, limit: 100, ...stripExperimentalFilters(multiFilters) });
+    if (useExperimental) {
+        const requestParams = withAgentToolkitHeaders({ ...common, limit: 10000, ...multiFilters });
+        return explorationSearch(requestParams);
+    }
+    const requestParams = withAgentToolkitHeaders({
+        ...common,
+        limit: 100,
+        ...stripExperimentalFilters(multiFilters),
+    });
+    return search(requestParams);
 };
 
 const searchInRange = async (
@@ -376,17 +385,22 @@ const searchInRange = async (
     entryId: string | undefined,
     routeLabel: string | undefined,
     useExperimental: boolean,
+    options?: ToolExecuteOptions,
 ): Promise<{ result: Awaited<ReturnType<typeof explorationSearch>>; placesEntryId: string } | { error: string }> => {
     // Combine every range's polygon into the search bias so multi-origin entries search the union
     // of their reachable areas.
     const ranged = getRangePolygons(state, range);
     if ('error' in ranged) return ranged;
     const combinedGeometries = [...ranged.polygons, ...(multiFilters.geometries ?? [])];
-    const result = await dispatchPlacesSearch(useExperimental, {
-        query,
-        poiCategories: resolvedPoiCategories,
-        multiFilters: { ...multiFilters, geometries: combinedGeometries },
-    });
+    const result = await dispatchPlacesSearch(
+        useExperimental,
+        {
+            query,
+            poiCategories: resolvedPoiCategories,
+            multiFilters: { ...multiFilters, geometries: combinedGeometries },
+        },
+        options,
+    );
     const placesEntryId = await state.places.addPlaceResult(
         result,
         makePlacesLabel(result, {
@@ -418,6 +432,7 @@ const resolveDiscoverWithin = async (
     where: DiscoverWithinWhere,
     state: ToolState,
     baseFilters: MultiFilters,
+    options?: ToolExecuteOptions,
 ): Promise<WithinResolution | { error: string }> => {
     if (where.viewport) {
         return {
@@ -426,12 +441,11 @@ const resolveDiscoverWithin = async (
         };
     }
 
-    // Resolve queries / placeIds / geometries / route via the shared resolver. resolveWithinAreas
-    // applies the "any area input?" guard itself, so a range-only or experimental-only
-    // (`municipalities` / `areaId` / `boundingBoxes`) within — whose scope is carried below — yields
-    // an empty result instead of tripping resolveAreas' "No area specified" guard. Experimental
-    // `boundingBoxes` stay local (only explorationSearch consumes them).
-    const within = await resolveWithinAreas(
+    // Resolve queries / placeIds / geometries / route via the shared resolver. resolveWithin returns
+    // an empty area set (not an error) when nothing resolved, so a range-only or experimental-only
+    // (`municipalities` / `areaId` / `boundingBoxes`) within — whose scope is carried below — composes
+    // fine here. Experimental `boundingBoxes` stay local (only explorationSearch consumes them).
+    const within = await resolveWithin(
         {
             boundingBox: undefined,
             queries: where.queries,
@@ -439,14 +453,17 @@ const resolveDiscoverWithin = async (
             geometries: where.geometries,
             route: where.route,
         },
-        toolStateToWhereContext(state),
+        toolStateToWhereContext(state, options),
     );
     if (isResolveError(within)) return within;
-    const { geometries: resolvedGeometries, boundingBoxes: resolvedBoundingBoxes } = toMultiFilters(within.areas);
-    const routeLabel = within.routeLabel;
+    const resolvedGeometries = within.filter((a) => a.polygon).map((a) => a.polygon as Polygon | MultiPolygon);
+    const resolvedBoundingBoxes = within.filter((a) => !a.polygon).map((a) => a.bbox);
+    const routeLabel = within.find((a) => a.source === 'route')?.label;
     // Surface where each named query resolved — the grounded match (mirrors getTrafficIncidents), so
     // the agent can confirm/correct a wrong same-name area.
-    const resolvedAreas = resolvedAreasDisclosure(within.areas);
+    const resolvedAreas = within
+        .filter((a) => a.source === 'query' && a.label)
+        .map((a) => ({ matched: a.label as string, ...(a.query !== undefined && { query: a.query }) }));
 
     // `boundingBoxes`, `municipalities`, and `areaId` only exist on the experimental schema;
     // treat them as absent on the default schema.
@@ -485,17 +502,22 @@ const resolveDiscoverWithin = async (
 const resolveNearbyBias = async (
     where: NearbyWhere,
     state: ToolState,
+    options?: ToolExecuteOptions,
 ): Promise<{ bias: WhereBias; radiusMeters?: number; resolvedAreas?: ResolvedAreaDisclosure[] }> => {
-    const resolved = await resolveNearbyPosition(
+    // `position` is a literal point — nothing to resolve, so it never goes through resolveNearby.
+    if (where.position) {
+        return { bias: { position: where.position }, radiusMeters: where.radiusMeters };
+    }
+    const resolved = await resolveNearby(
         {
             viewport: where.viewport,
-            position: where.position,
-            query: where.query,
-            queryAs: where.queryAs,
+            queries: where.query ? [{ query: where.query, queryAs: where.queryAs }] : undefined,
         },
-        toolStateToWhereContext(state),
+        toolStateToWhereContext(state, options),
     );
-    const resolvedAreas = biasDisclosure(resolved);
+    const resolvedAreas = resolved.label
+        ? [{ matched: resolved.label, ...(resolved.query !== undefined && { query: resolved.query }) }]
+        : [];
     return {
         bias: resolved.position ? { position: resolved.position } : {},
         radiusMeters: where.radiusMeters,
@@ -518,9 +540,10 @@ const resolveDiscoverBias = async (
     effectiveWhere: DiscoverPlacesWhere,
     state: ToolState,
     baseMultiFilters: MultiFilters,
+    options?: ToolExecuteOptions,
 ): Promise<ResolvedDiscoverBias | { error: string }> => {
     if (effectiveWhere.mode === 'nearby') {
-        const nearby = await resolveNearbyBias(effectiveWhere, state);
+        const nearby = await resolveNearbyBias(effectiveWhere, state, options);
         return {
             bias: nearby.bias,
             multiFilters: baseMultiFilters,
@@ -529,7 +552,7 @@ const resolveDiscoverBias = async (
         };
     }
     if (effectiveWhere.mode === 'within') {
-        const resolved = await resolveDiscoverWithin(effectiveWhere, state, baseMultiFilters);
+        const resolved = await resolveDiscoverWithin(effectiveWhere, state, baseMultiFilters, options);
         if ('error' in resolved) return resolved;
         return {
             bias: resolved.bias,
@@ -562,14 +585,19 @@ const searchWithBias = async (
     whereLabel: string | undefined,
     routeLabel: string | undefined,
     useExperimental: boolean,
+    options?: ToolExecuteOptions,
 ): Promise<{ result: Awaited<ReturnType<typeof explorationSearch>>; placesEntryId: string }> => {
-    const result = await dispatchPlacesSearch(useExperimental, {
-        query,
-        poiCategories: resolvedPoiCategories,
-        bias,
-        radiusMeters,
-        multiFilters,
-    });
+    const result = await dispatchPlacesSearch(
+        useExperimental,
+        {
+            query,
+            poiCategories: resolvedPoiCategories,
+            bias,
+            radiusMeters,
+            multiFilters,
+        },
+        options,
+    );
     const placesEntryId = await state.places.addPlaceResult(
         result,
         makePlacesLabel(result, {
@@ -592,13 +620,14 @@ const finalizeDiscoverResult = async (
     geometries: z.infer<ReturnType<typeof buildDiscoverPlacesSchema>>['geometries'],
     flags: FeatureFlags,
     resolvedAreas?: ResolvedAreaDisclosure[],
+    options?: ToolExecuteOptions,
 ) => {
     const shown = show ? await showResultsOnMap(state, [placesEntryId], show) : undefined;
 
     let geometriesFetched: number | undefined;
     let geometriesShown: boolean | undefined;
     if (geometries) {
-        const geometryResult = await showEntryGeometries(state, placesEntryId, geometries);
+        const geometryResult = await showEntryGeometries(state, placesEntryId, geometries, options);
         geometriesFetched = geometryResult.fetched;
         if (geometryResult.shown) geometriesShown = true;
     }
@@ -627,6 +656,7 @@ export const buildExecuteDiscoverPlaces = (flags: FeatureFlags) => {
     return async (
         params: z.infer<ReturnType<typeof buildDiscoverPlacesSchema>>,
         state: ToolState,
+        options?: ToolExecuteOptions,
     ): Promise<z.infer<typeof discoverPlacesOutputSchema>> => {
         const { query, where, poiCategories, show, entryId, geometries } = params;
         // `placeTypes` and `areaTags` only exist on the experimental schema.
@@ -638,18 +668,18 @@ export const buildExecuteDiscoverPlaces = (flags: FeatureFlags) => {
         const areaTags = experimentalParams.areaTags;
 
         // Resolve once upstream — exact catalog codes pass through, natural-language terms are
-        // synonym-resolved via getPoiCategoryCodes. We only error when the LLM passed inputs and
+        // synonym-resolved via getPOICategoryCodes. We only error when the LLM passed inputs and
         // NONE matched anything, since a no-filter search would silently widen the result set.
         // Note: this trades a hard error for confusable inputs (e.g. "PARKING_LOT" → parking codes
         // when the user meant parks); we accept that and rely on the description hints to steer
         // the LLM toward the right codes up-front.
-        const { resolved: resolvedPoiCategories, unresolved } = await resolvePoiCategories(poiCategories);
+        const { resolved: resolvedPoiCategories, unresolved } = await resolvePoiCategories(poiCategories, options);
         if (poiCategories?.length && !resolvedPoiCategories) {
             return {
                 error:
                     `No POI categories matched: ${unresolved.map((c) => `"${c}"`).join(', ')}. ` +
                     'POI category codes must be exact CONSTANT_CASE values, or natural-language terms resolvable by the SDK catalog. ' +
-                    'Call getPoiCategoryCodes to find valid codes for your search subject (e.g. "italian food", "gym").',
+                    'Call getPOICategoryCodes to find valid codes for your search subject (e.g. "italian food", "gym").',
             };
         }
 
@@ -664,7 +694,14 @@ export const buildExecuteDiscoverPlaces = (flags: FeatureFlags) => {
         try {
             // maxDetour dispatches to a different SDK endpoint and shares no params with the rest.
             if (effectiveWhere.mode === 'maxDetour') {
-                const detourResult = await searchByDetour(state, effectiveWhere, query, resolvedPoiCategories, entryId);
+                const detourResult = await searchByDetour(
+                    state,
+                    effectiveWhere,
+                    query,
+                    resolvedPoiCategories,
+                    entryId,
+                    options,
+                );
                 if ('error' in detourResult) return detourResult;
                 return finalizeDiscoverResult(
                     state,
@@ -673,10 +710,12 @@ export const buildExecuteDiscoverPlaces = (flags: FeatureFlags) => {
                     show,
                     geometries,
                     flags,
+                    undefined,
+                    options,
                 );
             }
 
-            const resolved = await resolveDiscoverBias(effectiveWhere, state, baseMultiFilters);
+            const resolved = await resolveDiscoverBias(effectiveWhere, state, baseMultiFilters, options);
             if ('error' in resolved) return resolved;
             const { bias, multiFilters, radiusMeters, range, routeLabel, resolvedAreas } = resolved;
 
@@ -690,6 +729,7 @@ export const buildExecuteDiscoverPlaces = (flags: FeatureFlags) => {
                     entryId,
                     routeLabel,
                     useExperimental,
+                    options,
                 );
                 if ('error' in rangeResult) return rangeResult;
                 return finalizeDiscoverResult(
@@ -700,12 +740,14 @@ export const buildExecuteDiscoverPlaces = (flags: FeatureFlags) => {
                     geometries,
                     flags,
                     resolvedAreas,
+                    options,
                 );
             }
 
             // Prefer the grounded match ("London, CA") over the query echo ("east London") in the
             // entry label so the chip never masks a wrong same-name resolution.
-            const whereLabel = matchedAreasLabel(resolvedAreas) ?? resolveWhereLabel(effectiveWhere);
+            const groundedLabel = resolvedAreas?.length ? resolvedAreas.map((a) => a.matched).join(', ') : undefined;
+            const whereLabel = groundedLabel ?? resolveWhereLabel(effectiveWhere);
             const biasResult = await searchWithBias(
                 state,
                 query,
@@ -717,6 +759,7 @@ export const buildExecuteDiscoverPlaces = (flags: FeatureFlags) => {
                 whereLabel,
                 routeLabel,
                 useExperimental,
+                options,
             );
             return finalizeDiscoverResult(
                 state,
@@ -726,6 +769,7 @@ export const buildExecuteDiscoverPlaces = (flags: FeatureFlags) => {
                 geometries,
                 flags,
                 resolvedAreas,
+                options,
             );
         } catch (error) {
             return { error: `Search failed: ${error instanceof Error ? error.message : String(error)}` };

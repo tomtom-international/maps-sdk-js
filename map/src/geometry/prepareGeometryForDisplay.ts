@@ -8,7 +8,8 @@ import {
 import { mask } from '@turf/turf';
 import type { Feature, FeatureCollection, GeoJsonProperties, MultiPolygon, Point, Polygon, Position } from 'geojson';
 import type { DataDrivenPropertyValueSpecification } from 'maplibre-gl';
-import { type ColorPaletteOptions, colorPalettes } from './layers/colorPalettes';
+import type { LightDark } from '../shared';
+import { adaptPaletteForTheme, type ColorPaletteOptions, colorPalettes } from './layers/colorPalettes';
 import type { GeometriesModuleConfig } from './types/geometriesModuleConfig';
 import type { DisplayGeometryProps, ExtraGeometryDisplayProps } from './types/geometryDisplayProps';
 import type { GeometryTheme } from './types/geometryTheme';
@@ -37,10 +38,11 @@ const buildTitle = (
 const buildColor = (
     config: GeometriesModuleConfig,
     index: number,
+    lightDark: LightDark,
 ): DataDrivenPropertyValueSpecification<string> | string | undefined => {
     const color = config?.fill?.color;
     if (typeof color === 'string' && colorPalettes[color as ColorPaletteOptions]) {
-        const palette = colorPalettes[color as ColorPaletteOptions];
+        const palette = adaptPaletteForTheme(colorPalettes[color as ColorPaletteOptions], lightDark);
         return palette[index % palette.length];
     }
     return color;
@@ -85,6 +87,7 @@ type InputFeatureProps = {
 export const prepareGeometryForDisplay = (
     geometry: PolygonFeatures<GeoJsonProperties | DisplayGeometryProps>,
     config: GeometriesModuleConfig = {},
+    lightDark: LightDark = 'light',
 ): PolygonFeatures<ExtraGeometryDisplayProps> => ({
     ...geometry,
     features: geometry.features.map((feature, index) => {
@@ -94,7 +97,7 @@ export const prepareGeometryForDisplay = (
         const processedProps = (processedFeature.properties ?? {}) as InputFeatureProps;
         // buildTitle/buildColor may return MapLibre expressions; cast since output type expects string
         const title = (processedProps.title ?? buildTitle(processedFeature, config)) as string | undefined;
-        const color = (processedProps.color ?? buildColor(config, index)) as string | undefined;
+        const color = (processedProps.color ?? buildColor(config, index, lightDark)) as string | undefined;
         return {
             ...processedFeature,
             properties: {

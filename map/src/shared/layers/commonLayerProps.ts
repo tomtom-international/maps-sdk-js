@@ -9,7 +9,7 @@ import type { ExpressionSpecification } from 'maplibre-gl';
  *
  * @example
  * ```typescript
- * import { MAP_BOLD_FONT } from '@tomtom-international/maps-sdk-js/map';
+ * import { MAP_BOLD_FONT } from '@tomtom-org/maps-sdk/map';
  *
  * const textLayer = {
  *   type: 'symbol',
@@ -33,7 +33,7 @@ export const MAP_BOLD_FONT = 'Noto-Bold';
  *
  * @example
  * ```typescript
- * import { MAP_REGULAR_FONT } from '@tomtom-international/maps-sdk-js/map';
+ * import { MAP_REGULAR_FONT } from '@tomtom-org/maps-sdk/map';
  *
  * const textLayer = {
  *   type: 'symbol',
@@ -57,7 +57,7 @@ export const MAP_REGULAR_FONT = 'Noto-Regular';
  *
  * @example
  * ```typescript
- * import { MAP_MEDIUM_FONT } from '@tomtom-international/maps-sdk-js/map';
+ * import { MAP_MEDIUM_FONT } from '@tomtom-org/maps-sdk/map';
  *
  * const textLayer = {
  *   type: 'symbol',
@@ -81,7 +81,7 @@ export const MAP_MEDIUM_FONT = 'Noto-Medium';
  *
  * @example
  * ```typescript
- * import { MAP_ITALIC_FONT } from '@tomtom-international/maps-sdk-js/map';
+ * import { MAP_ITALIC_FONT } from '@tomtom-org/maps-sdk/map';
  *
  * const textLayer = {
  *   type: 'symbol',
@@ -105,7 +105,7 @@ export const MAP_ITALIC_FONT = 'NotoSans-MediumItalic';
  *
  * @example
  * ```typescript
- * import { DEFAULT_TEXT_SIZE } from '@tomtom-international/maps-sdk-js/map';
+ * import { DEFAULT_TEXT_SIZE } from '@tomtom-org/maps-sdk/map';
  *
  * const textLayer = {
  *   type: 'symbol',
@@ -129,7 +129,7 @@ export const DEFAULT_TEXT_SIZE: ExpressionSpecification = ['interpolate', ['line
  *
  * @example
  * ```typescript
- * import { mapFonts } from '@tomtom-international/maps-sdk-js/map';
+ * import { mapFonts } from '@tomtom-org/maps-sdk/map';
  *
  * // Check if a font is available
  * if (mapFonts.includes('Noto-Bold')) {
@@ -158,7 +158,7 @@ export const mapFonts = [MAP_REGULAR_FONT, MAP_ITALIC_FONT, MAP_BOLD_FONT, MAP_M
  *
  * @example
  * ```typescript
- * import type { MapFont } from '@tomtom-international/maps-sdk-js/map';
+ * import type { MapFont } from '@tomtom-org/maps-sdk/map';
  *
  * function createTextLayer(font: MapFont) {
  *   return {

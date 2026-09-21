@@ -132,6 +132,48 @@ export type CustomImage<I extends string = string> = {
      * ```
      */
     availabilityLevel?: AvailabilityLevel;
+
+    /**
+     * Horizontal offset of the icon from its anchor point, in pixels.
+     *
+     * @remarks
+     * Positive values shift the icon right, negative values shift it left.
+     * The offset is applied before `icon-size` scaling, matching the
+     * MapLibre `icon-offset` convention.
+     *
+     * Only takes effect when `image` is also provided — an icon referencing an
+     * existing sprite icon by `id` alone ignores `offsetX`/`offsetY`.
+     *
+     * @default 0
+     *
+     * @example
+     * ```typescript
+     * // Shift the icon 10px to the right of its coordinate
+     * offsetX: 10
+     * ```
+     */
+    offsetX?: number;
+
+    /**
+     * Vertical offset of the icon from its anchor point, in pixels.
+     *
+     * @remarks
+     * Positive values shift the icon down, negative values shift it up.
+     * The offset is applied before `icon-size` scaling, matching the
+     * MapLibre `icon-offset` convention.
+     *
+     * Only takes effect when `image` is also provided — an icon referencing an
+     * existing sprite icon by `id` alone ignores `offsetX`/`offsetY`.
+     *
+     * @default 0
+     *
+     * @example
+     * ```typescript
+     * // Shift the icon 10px above its coordinate
+     * offsetY: -10
+     * ```
+     */
+    offsetY?: number;
 };
 
 /**

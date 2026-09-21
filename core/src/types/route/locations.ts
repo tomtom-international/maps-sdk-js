@@ -10,30 +10,22 @@ import type { Route } from './route';
  */
 export type WaypointProps = {
     /**
-     * Radius in meters defining a circle (soft) waypoint.
+     * How long the vehicle waits at this stop, in seconds.
      *
-     * When specified, the waypoint becomes a circle waypoint that shapes the route without
-     * generating explicit navigation instructions or creating an additional route leg.
+     * When specified, the routing service adds the wait to the leg arriving at this waypoint, and
+     * the map shows it on the stop's pin.
      *
      * @remarks
-     * - Circle waypoints influence the route path while providing flexibility to the routing engine
-     * - Larger radius values give more freedom for route optimization
-     * - Smaller radius values force the route to pass closer to the specified point
-     * - Unlike regular waypoints, circle waypoints don't create legs or generate "arrive at waypoint" instructions
-     * - Useful for shaping routes through general areas rather than specific points
-     *
-     * Must be a positive integer with a maximum value of 135000.
+     * - The wait counts towards the route's `travelTimeInSeconds`, not only its arrival time
+     * - Not supported on the destination: the routing service requires the last leg's wait to be 0
      *
      * @example
      * ```typescript
-     * // Circle waypoint with 1km radius - route will pass somewhere within this area
-     * { radiusMeters: 1000 }
-     *
-     * // Small radius - route will pass very close to this point
-     * { radiusMeters: 50 }
+     * // Wait 30 minutes at this stop
+     * { pauseDurationSeconds: 30 * 60 }
      * ```
      */
-    radiusMeters?: number;
+    pauseDurationSeconds?: number;
 };
 
 /**
@@ -45,8 +37,7 @@ export type WaypointProps = {
  * @typeParam T - Additional custom properties beyond the standard waypoint properties
  *
  * @remarks
- * - Regular waypoints (without radius) create route legs and generate arrival instructions
- * - Circle waypoints (with radiusMeters) shape the route without creating legs
+ * Every waypoint creates a route leg and an arrival instruction.
  *
  * @example
  * ```typescript
@@ -57,11 +48,11 @@ export type WaypointProps = {
  *   properties: {}
  * };
  *
- * // Circle waypoint with custom properties
- * const circleWaypoint: Waypoint<{ name: string }> = {
+ * // Waypoint with custom properties
+ * const namedWaypoint: Waypoint<{ name: string }> = {
  *   type: 'Feature',
  *   geometry: { type: 'Point', coordinates: [4.9041, 52.3676] },
- *   properties: { radiusMeters: 1000, name: 'Via Amsterdam' }
+ *   properties: { name: 'Amsterdam' }
  * };
  * ```
  *
@@ -95,12 +86,12 @@ export type Waypoints<T extends Anything = Anything> = FeatureCollection<Point, 
  * Flexible input type for specifying a waypoint location.
  *
  * Accepts various formats for convenience:
- * - Full `Waypoint` Feature (for circle waypoints or waypoints with custom properties)
+ * - Full `Waypoint` Feature (for waypoints carrying custom properties)
  * - Any object with coordinates (Position array, Point geometry, or Feature)
  *
  * @remarks
- * Waypoints are single points by default. To create a circle (soft) waypoint,
- * use the full Waypoint Feature format with a radiusMeters property.
+ * Waypoints are single points by default. Use the full Waypoint Feature format to carry
+ * properties of your own alongside the position.
  *
  * @example
  * ```typescript
@@ -110,11 +101,11 @@ export type Waypoints<T extends Anything = Anything> = FeatureCollection<Point, 
  * // As Point geometry
  * const wp2: WaypointLike = { type: 'Point', coordinates: [4.9041, 52.3676] };
  *
- * // As full Waypoint Feature with radius
+ * // As full Waypoint Feature carrying custom properties
  * const wp3: WaypointLike = {
  *   type: 'Feature',
  *   geometry: { type: 'Point', coordinates: [4.9041, 52.3676] },
- *   properties: { radiusMeters: 500 }
+ *   properties: { name: 'Amsterdam' }
  * };
  * ```
  *
@@ -158,14 +149,15 @@ export type PathLike = Position[] | Route;
  * @remarks
  * - Use waypoints for origin, destination, and intermediate stops
  * - Use paths for route reconstruction or to force the route along specific roads
+ * - A path's own endpoints are sent as waypoints, so a path between two points adds two of them
  *
  * @example
  * ```typescript
  * const locations: RoutePlanningLocation[] = [
- *   [4.9, 52.3],                    // Start waypoint
- *   { radiusMeters: 1000, ... },    // Circle waypoint
- *   existingPathCoordinates,        // Path to follow
- *   [5.0, 52.4]                     // End waypoint
+ *   [4.9, 52.3],              // Start waypoint
+ *   [4.95, 52.35],            // Intermediate stop
+ *   existingPathCoordinates,  // Path to follow
+ *   [5.0, 52.4]               // End waypoint
  * ];
  * ```
  *

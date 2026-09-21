@@ -1,6 +1,7 @@
 import type { ChargingPark, ChargingParkWithAvailability, Place, POICategory } from '@tomtom-org/maps-sdk/core';
 import type { ExpressionSpecification } from 'maplibre-gl';
 import type { AvailabilityLevel } from '../../shared';
+import { toPinSpriteImageID } from '../../shared/imageUtils';
 import { suffixNumber } from '../../shared/layers/utils';
 import type { EVAvailabilityConfig, PlacesModuleConfig, PlacesTheme } from '../types/placesModuleConfig';
 
@@ -119,7 +120,7 @@ export const getEVAvailabilityIconID = (
 
     // For pin theme: use CDN availability sprites when no custom icons are defined
     if (!hasCustomIcons && iconTheme === 'pin') {
-        return `7309-${requiredLevel}`;
+        return toPinSpriteImageID(`7309-${requiredLevel}`);
     }
 
     // Otherwise, fall through to regular icon selection

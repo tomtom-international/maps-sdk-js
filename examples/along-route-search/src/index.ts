@@ -18,12 +18,12 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         },
     });
 
-    const routingModule = await RoutingModule.get(map);
+    const routingModule = await RoutingModule.create(map);
     routingModule.showWaypoints(waypoints);
     const routes = await calculateRoute({ locations: waypoints });
     routingModule.showRoutes(routes);
 
-    const placesModule = await PlacesModule.get(map);
+    const placesModule = await PlacesModule.create(map);
     const results = await search({
         poiCategories: ['BEACH', 'SCENIC_PANORAMIC_VIEW'],
         route: routes.features[0],

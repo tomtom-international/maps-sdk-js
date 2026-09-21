@@ -72,7 +72,7 @@ pnpm -F map test
 pnpm -F map test:coverage
 
 # Test map integration
-pnpm -F map-integration-tests test
+pnpm e2e-test:sdk
 ```
 
 ## 🧪 TEST FRAMEWORK

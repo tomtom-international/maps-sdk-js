@@ -43,8 +43,8 @@ export const trafficAreaAnalyticsRequestSchema = commonServiceRequestSchema
         startDate: dateInputSchema.optional(),
         endDate: dateInputSchema.optional(),
         days: z.array(dateInputSchema).min(1).optional(),
-        metrics: z.union([z.array(z.enum([...areaAnalyticsMetricKeys])).min(1), z.literal('all')]),
-        functionalRoadClasses: z.union([z.array(z.enum([...functionalRoadClasses])).min(1), z.literal('all')]),
+        metrics: z.union([z.array(z.enum(areaAnalyticsMetricKeys)).min(1), z.literal('all')]),
+        functionalRoadClasses: z.union([z.array(z.enum(functionalRoadClasses)).min(1), z.literal('all')]),
         hours: z.union([z.array(z.number().int().min(0).max(23)).min(1), z.literal('all')]),
         geometry: geometrySchema,
     })

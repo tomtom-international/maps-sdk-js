@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { type OverlapResult, useOverlap } from '../results/results-store';
 import { OVERLAP_COLOR } from '../viz/site-visuals';
 import { setPanelActive, useIsTopPanel } from './active-panel-store';
-import { captionStyle, NoteBanner, PanelShell, RankBadge, ScoreBar, ScoreBreakdown, title2Class } from './panel-ui';
+import { captionStyle, PanelShell, RankBadge, ScoreBar, ScoreBreakdown, title2Class } from './panel-ui';
 
 const OVERLAP_PINK = OVERLAP_COLOR; // cannibalization accent (Figma) — headline % + bar fill (shared with the map)
 
@@ -26,16 +26,11 @@ export function CatchmentOverlapPanel() {
     const maxPct = Math.max(...data.pairs.map((pair) => pair.pctOfProposed), 1);
 
     return (
-        <PanelShell
-            title={`Cannibalization — ${data.proposed.properties.label}`}
-            onClose={() => setDismissed(data)}
-            expanded={isTop}
-        >
+        <PanelShell title="Cannibalization" onClose={() => setDismissed(data)} expanded={isTop}>
             <div className="flex flex-col gap-0.5 px-4 pt-3 pb-1">
-                <span className={title2Class}>Shared catchment</span>
+                <span className={`truncate ${title2Class}`}>{data.proposed.properties.label}</span>
                 <span style={captionStyle}>
-                    {data.proposedSharedPct}% of the new catchment already covered · {data.sharedKm2} km² of{' '}
-                    {data.proposed.properties.catchmentKm2} km² ({data.basis})
+                    Geographic reach overlap only — not a revenue or customer-loss estimate.
                 </span>
             </div>
 
@@ -47,7 +42,7 @@ export function CatchmentOverlapPanel() {
                             <div className="flex items-baseline justify-between gap-2">
                                 <span className={`truncate ${title2Class}`}>{pair.existing.properties.label}</span>
                                 <span
-                                    className="shrink-0 font-(family-name:--pb-font-primary) text-[20px] leading-[24px] font-bold"
+                                    className="shrink-0 font-(family-name:--ui-font-gilroy) text-[20px] leading-[24px] font-bold"
                                     style={{ color: OVERLAP_PINK }}
                                 >
                                     {pair.pctOfProposed}%
@@ -64,10 +59,6 @@ export function CatchmentOverlapPanel() {
                     </li>
                 ))}
             </ol>
-
-            <div className="px-4 pt-1 pb-3">
-                <NoteBanner>Geographic reach overlap only — not a revenue or customer-loss estimate.</NoteBanner>
-            </div>
         </PanelShell>
     );
 }

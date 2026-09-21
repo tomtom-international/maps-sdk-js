@@ -12,7 +12,6 @@ import { VehicleDimensions } from '../types/vehicleModel';
 import { ElectricVehicleParams, VehicleParameters } from '../types/vehicleParams';
 import { ChargingPreferencesKWH, ChargingPreferencesPCT } from '../types/vehiclePreferences';
 import { ElectricVehicleStateKWH, ElectricVehicleStatePCT, VehicleState } from '../types/vehicleState';
-import { appendByRepeatingParamName } from './requestBuildingUtils';
 
 const appendConsumptionEfficiency = (urlParams: URLSearchParams, efficiency?: ConsumptionModelEfficiency): void => {
     if (efficiency) {
@@ -71,9 +70,6 @@ const appendVehicleState = (urlParams: URLSearchParams, vehicleParams: VehiclePa
     if (!vehicleParams.state) {
         return;
     }
-
-    // Generic state props:
-    vehicleParams.state.heading && urlParams.append('vehicleHeading', String(vehicleParams.state.heading));
 
     if (!('engineType' in vehicleParams)) {
         // Generic vehicle, no engine-specific state to append:
@@ -155,28 +151,19 @@ const appendVehiclePreferences = (urlParams: URLSearchParams, vehicleParams: Veh
 };
 
 const appendVehicleDimensions = (urlParams: URLSearchParams, dimensions?: VehicleDimensions): void => {
-    if (dimensions) {
-        // (defaults are 0):
-        dimensions.lengthMeters && urlParams.append('vehicleLength', String(dimensions.lengthMeters));
-        dimensions.heightMeters && urlParams.append('vehicleHeight', String(dimensions.heightMeters));
-        dimensions.widthMeters && urlParams.append('vehicleWidth', String(dimensions.widthMeters));
-        dimensions.weightKG && urlParams.append('vehicleWeight', String(dimensions.weightKG));
-        dimensions.axleWeightKG && urlParams.append('vehicleAxleWeight', String(dimensions.axleWeightKG));
-    }
+    // (default is 0):
+    if (dimensions?.weightKG) urlParams.append('vehicleWeight', String(dimensions.weightKG));
 };
 
 const appendVehicleRestrictions = (urlParams: URLSearchParams, vehicleParams: VehicleParameters): void => {
-    // Vehicle restrictions from VehicleRestrictions intersection:
-    const restrictions = vehicleParams.restrictions;
-    if (!restrictions) {
-        return;
-    }
-
-    appendByRepeatingParamName(urlParams, 'vehicleLoadType', restrictions.loadTypes);
-    restrictions.adrCode && urlParams.append('vehicleAdrTunnelRestrictionCode', restrictions.adrCode);
-    restrictions.commercial && urlParams.append('vehicleCommercial', String(restrictions.commercial));
     // (default is 0):
-    restrictions.maxSpeedKMH && urlParams.append('vehicleMaxSpeed', String(restrictions.maxSpeedKMH));
+    const maxSpeedKMH = vehicleParams.restrictions?.maxSpeedKMH;
+    if (maxSpeedKMH) urlParams.append('vehicleMaxSpeed', String(maxSpeedKMH));
+
+    // This V2 endpoint spells it "Electric"; the V3 routing endpoints spell it "Electronic" and
+    // take it in the POST body. Each rejects the other's name.
+    const tollTransponder = vehicleParams.restrictions?.tollTransponder;
+    if (tollTransponder) urlParams.append('vehicleHasElectricTollCollectionTransponder', tollTransponder);
 };
 
 const appendVehicleEngineModel = (

@@ -37,11 +37,11 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         });
     };
 
-    setupLazyToggle('#sdk-example-toggleIncidents', () => TrafficIncidentsModule.get(map, { visible: true }));
-    setupLazyToggle('#sdk-example-toggleFlow', () => TrafficFlowModule.get(map, { visible: true }));
-    setupLazyToggle('#sdk-example-toggleHillshade', () => HillshadeModule.get(map, { visible: true }));
+    setupLazyToggle('#ui-toggleIncidents', () => TrafficIncidentsModule.get(map, { visible: true }));
+    setupLazyToggle('#ui-toggleFlow', () => TrafficFlowModule.get(map, { visible: true }));
+    setupLazyToggle('#ui-toggleHillshade', () => HillshadeModule.get(map, { visible: true }));
 
-    const stylesSelector = document.querySelector('#sdk-example-mapStyles') as HTMLSelectElement;
+    const stylesSelector = document.querySelector('#ui-mapStyles') as HTMLSelectElement;
     standardStyleIDs.forEach((id) => stylesSelector.add(new Option(id)));
     stylesSelector.addEventListener('change', (event) =>
         map.setStyle((event.target as HTMLOptionElement).value as StandardStyleID),

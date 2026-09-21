@@ -27,11 +27,11 @@ const rotterdamToAmsterdamRoutes: Routes = JSON.parse(JSON.stringify(rotterdamTo
 const setupWaypointsHoverHandlers = async (page: Page) =>
     page.evaluate(() => {
         const mapsSdkThis = globalThis as MapsSDKThis;
-        mapsSdkThis.routing?.events.user.waypoints.on('hover', (waypoint) => {
+        mapsSdkThis.routing?.events.waypoints.on('hover', (waypoint) => {
             mapsSdkThis._numOfHovers++;
             mapsSdkThis._hoveredTopFeature = waypoint;
         });
-        mapsSdkThis.routing?.events.user.waypoints.on('long-hover', (waypoint) => {
+        mapsSdkThis.routing?.events.waypoints.on('long-hover', (waypoint) => {
             mapsSdkThis._numOfLongHovers++;
             mapsSdkThis._hoveredTopFeature = waypoint;
         });
@@ -40,18 +40,18 @@ const setupWaypointsHoverHandlers = async (page: Page) =>
 const clearWaypointsHoverHandlers = async (page: Page) =>
     page.evaluate(() => {
         const mapsSdkThis = globalThis as MapsSDKThis;
-        mapsSdkThis.routing?.events.user.waypoints.off('hover');
-        mapsSdkThis.routing?.events.user.waypoints.off('long-hover');
+        mapsSdkThis.routing?.events.waypoints.off('hover');
+        mapsSdkThis.routing?.events.waypoints.off('long-hover');
     });
 
 const setupWaypointsClickHandlers = async (page: Page) =>
     page.evaluate(() => {
         const mapsSdkThis = globalThis as MapsSDKThis;
-        mapsSdkThis.routing?.events.user.waypoints.on('click', (waypoint) => {
+        mapsSdkThis.routing?.events.waypoints.on('click', (waypoint) => {
             mapsSdkThis._numOfClicks++;
             mapsSdkThis._clickedTopFeature = waypoint;
         });
-        mapsSdkThis.routing?.events.user.waypoints.on('contextmenu', (waypoint) => {
+        mapsSdkThis.routing?.events.waypoints.on('contextmenu', (waypoint) => {
             mapsSdkThis._numOfContextmenuClicks++;
             mapsSdkThis._clickedTopFeature = waypoint;
         });
@@ -60,18 +60,18 @@ const setupWaypointsClickHandlers = async (page: Page) =>
 const clearWaypointsClickHandlers = async (page: Page) =>
     page.evaluate(() => {
         const mapsSdkThis = globalThis as MapsSDKThis;
-        mapsSdkThis.routing?.events.user.waypoints.off('click');
-        mapsSdkThis.routing?.events.user.waypoints.off('contextmenu');
+        mapsSdkThis.routing?.events.waypoints.off('click');
+        mapsSdkThis.routing?.events.waypoints.off('contextmenu');
     });
 
 const setupRouteLineHoverHandlers = async (page: Page) =>
     page.evaluate(() => {
         const mapsSdkThis = globalThis as MapsSDKThis;
-        mapsSdkThis.routing?.events.user.mainLines.on('hover', (route) => {
+        mapsSdkThis.routing?.events.mainLines.on('hover', (route) => {
             mapsSdkThis._numOfHovers++;
             mapsSdkThis._hoveredTopFeature = route;
         });
-        mapsSdkThis.routing?.events.user.mainLines.on('long-hover', (route) => {
+        mapsSdkThis.routing?.events.mainLines.on('long-hover', (route) => {
             mapsSdkThis._numOfLongHovers++;
             mapsSdkThis._hoveredTopFeature = route;
         });
@@ -80,18 +80,18 @@ const setupRouteLineHoverHandlers = async (page: Page) =>
 const clearRouteLineHoverHandlers = async (page: Page) =>
     page.evaluate(() => {
         const mapsSdkThis = globalThis as MapsSDKThis;
-        mapsSdkThis.routing?.events.user.mainLines.off('hover');
-        mapsSdkThis.routing?.events.user.mainLines.off('long-hover');
+        mapsSdkThis.routing?.events.mainLines.off('hover');
+        mapsSdkThis.routing?.events.mainLines.off('long-hover');
     });
 
 const setupRouteLineClickHandlers = async (page: Page) =>
     page.evaluate(() => {
         const mapsSdkThis = globalThis as MapsSDKThis;
-        mapsSdkThis.routing?.events.user.mainLines.on('click', (route) => {
+        mapsSdkThis.routing?.events.mainLines.on('click', (route) => {
             mapsSdkThis._numOfClicks++;
             mapsSdkThis._clickedTopFeature = route;
         });
-        mapsSdkThis.routing?.events.user.mainLines.on('contextmenu', (route) => {
+        mapsSdkThis.routing?.events.mainLines.on('contextmenu', (route) => {
             mapsSdkThis._numOfContextmenuClicks++;
             mapsSdkThis._clickedTopFeature = route;
         });
@@ -100,8 +100,8 @@ const setupRouteLineClickHandlers = async (page: Page) =>
 const clearRouteLineClickHandlers = async (page: Page) =>
     page.evaluate(() => {
         const mapsSdkThis = globalThis as MapsSDKThis;
-        mapsSdkThis.routing?.events.user.mainLines.off('click');
-        mapsSdkThis.routing?.events.user.mainLines.off('contextmenu');
+        mapsSdkThis.routing?.events.mainLines.off('click');
+        mapsSdkThis.routing?.events.mainLines.off('contextmenu');
     });
 
 test.describe('Routing and waypoint events tests', () => {
@@ -368,7 +368,8 @@ test.describe('Routing and waypoint events tests', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    // TODO(LSI-263): Enable when flakyness has been fixed
+    // TODO(LSI-263): still fails intermittently — the waypoint layers are not always back in the
+    // style by the time the click is asserted after a setStyle.
     test('Click events for a waypoint after changing map style', { tag: '@flaky' }, async ({ page }) => {
         await setupWaypointsClickHandlers(page);
         await showWaypoints(page, [waypoint0Coords]);
@@ -424,6 +425,8 @@ test.describe('Routing and waypoint events tests', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
+    // TODO(LSI-263): passes locally but still marginal on CI runners — re-tagged after a CI run
+    // where the hover state had not settled inside the wait budget.
     test('Custom cursor on route hover persists after changing map style', { tag: '@flaky' }, async ({ page }) => {
         await initRouting(page, { events: { cursorOnHover: 'cell' } });
         await setupRouteLineHoverHandlers(page);

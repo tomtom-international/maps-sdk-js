@@ -28,7 +28,25 @@ describe('setupTools', () => {
 
         await (tools.myTool as any).execute({ query: 'hello' });
 
-        expect(executeFn).toHaveBeenCalledWith({ query: 'hello' }, mockState);
+        expect(executeFn).toHaveBeenCalledWith({ query: 'hello' }, mockState, { signal: undefined });
+    });
+
+    it("forwards the AI SDK's abortSignal to execute, so a cancelled turn cancels its service calls", async () => {
+        const executeFn = vi.fn().mockResolvedValue({ result: 'ok' });
+        const toolEntries: Record<string, ToolEntry<any>> = {
+            myTool: {
+                description: 'Test tool',
+                inputSchema: { type: 'object', properties: {} } as any,
+                execute: executeFn,
+                classificationPrompt: 'test',
+            },
+        };
+        const { signal } = new AbortController();
+
+        const { tools } = setupTools(toolEntries, mockState);
+        await (tools.myTool as any).execute({ query: 'hello' }, { abortSignal: signal });
+
+        expect(executeFn).toHaveBeenCalledWith({ query: 'hello' }, mockState, { signal });
     });
 });
 
@@ -91,6 +109,16 @@ describe('setupTools onToolExecute', () => {
 
         await (tools.myTool as any).execute({ q: 1 });
 
-        expect(execute).toHaveBeenCalledWith({ q: 1 }, mockState);
+        expect(execute).toHaveBeenCalledWith({ q: 1 }, mockState, { signal: undefined });
+    });
+
+    it('forwards the abortSignal through the instrumented executor too', async () => {
+        const execute = vi.fn().mockResolvedValue({ ok: true });
+        const { signal } = new AbortController();
+        const { tools } = setupTools(entriesWith(execute), mockState, { onToolExecute: vi.fn() });
+
+        await (tools.myTool as any).execute({ q: 1 }, { abortSignal: signal });
+
+        expect(execute).toHaveBeenCalledWith({ q: 1 }, mockState, { signal });
     });
 });

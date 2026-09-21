@@ -8,8 +8,8 @@ import { geometryData, trafficAreaAnalytics } from '@tomtom-org/maps-sdk/service
 import type { MultiPolygon, Polygon } from 'geojson';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import { z } from 'zod';
-import type { ToolState } from '../../types';
-import { locationInputSchema } from '../shared';
+import type { ToolExecuteOptions, ToolState } from '../../types';
+import { locationInputSchema, withAgentToolkitHeaders } from '../shared';
 import { toolErrorSchema } from '../shared-output-schemas';
 import { resolveLocationInput } from './resolve-location-input';
 
@@ -141,9 +141,10 @@ const resolveGeometry = async (
     location: z.infer<typeof locationInputSchema> | undefined,
     bbox: number[] | undefined,
     state: ToolState,
+    options?: ToolExecuteOptions,
 ): Promise<Polygon | MultiPolygon | { error: string }> => {
     if (location) {
-        const resolved = await resolveLocationInput(location, state);
+        const resolved = await resolveLocationInput(location, state, options);
         if (!resolved) return { error: 'Could not resolve the provided location.' };
         if (Array.isArray(resolved.place)) {
             return {
@@ -151,7 +152,11 @@ const resolveGeometry = async (
             };
         }
         // resolved.place is a Place at runtime (locatePlace always returns Place | null)
-        const boundary = await geometryData({ geometries: [resolved.place as unknown as Place] });
+        const requestParams = withAgentToolkitHeaders({
+            geometries: [resolved.place as unknown as Place],
+            signal: options?.signal,
+        });
+        const boundary = await geometryData(requestParams);
         const boundaryGeometry = boundary?.features?.[0]?.geometry as Polygon | MultiPolygon | undefined;
         if (!boundaryGeometry) {
             return { error: `No boundary polygon found for "${resolved.name}". Try a bbox instead.` };
@@ -274,6 +279,7 @@ const summarize = (
 export const executeGetTrafficAreaAnalytics = async (
     params: z.infer<typeof getTrafficAreaAnalyticsSchema>,
     state: ToolState,
+    options?: ToolExecuteOptions,
 ): Promise<z.infer<typeof getTrafficAreaAnalyticsOutputSchema>> => {
     const { location, bbox, showOnMap, startDate, endDate, days, metrics, functionalRoadClasses, hours } = params;
 
@@ -288,20 +294,22 @@ export const executeGetTrafficAreaAnalytics = async (
     }
 
     try {
-        const resolvedGeometry = await resolveGeometry(location, bbox, state);
+        const resolvedGeometry = await resolveGeometry(location, bbox, state, options);
         if ('error' in resolvedGeometry) return resolvedGeometry;
 
         // Resolve dates — SDK defaults to startDate=3 days ago, endDate=2 days ago when omitted
         const dateParams = resolveDateParams(days, startDate, endDate);
 
-        const result = await trafficAreaAnalytics({
+        const requestParams = withAgentToolkitHeaders({
             apiKey,
             ...dateParams,
             metrics,
             functionalRoadClasses: functionalRoadClasses ?? 'all',
             hours: hours ?? 'all',
             geometry: resolvedGeometry,
+            signal: options?.signal,
         } as TrafficAreaAnalyticsParams);
+        const result = await trafficAreaAnalytics(requestParams);
 
         const regionName = result.features[0]?.properties?.name;
         const label = regionName

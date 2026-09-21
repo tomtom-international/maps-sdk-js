@@ -121,7 +121,7 @@ Loops happen when a tool fails ambiguously and the model retries indefinitely. M
 
 ## 11. Evals
 
-Develop against realistic evals, not happy-path demos. Eval cases live in each example's `e2e-tests/eval/eval-cases.ts`.
+Develop against realistic evals, not happy-path demos. Each agent example carries its own eval suite under `e2e-tests/` — the layout differs per example, so look before assuming: `map-chat-agent-react` has `e2e-tests/eval/eval-cases.ts` plus `e2e-tests/personas/`, `map-traffic-agent-react` has `e2e-tests/eval-personas.ts`, and `map-site-selection-agent-react` has `e2e-tests/personas/`. All three drive them from `e2e-tests/agent-eval.test.ts`.
 
 **Eval prompts should sound like real users:**
 - Good: "Find the central station." / "Route from Amsterdam to Utrecht and show traffic."
@@ -133,23 +133,27 @@ Develop against realistic evals, not happy-path demos. Eval cases live in each e
 
 ## 12. Scenario tests
 
-Alongside the eval suite, the plugin runs `@langwatch/scenario` per-tool tests under `src/tests/scenarios/<tool-name>.test.ts`. Coverage is a curated subset of `DEFAULT_TOOLS` — new tools are not auto-covered; expand the suite when a tool needs scenario-level assertion. Each covered file has two parts:
+Alongside the eval suite, the plugin runs `@langwatch/scenario` tool-selection tests under `src/tests/scenarios/`. One `describe` block per covered tool — sometimes in its own `<tool-name>.test.ts`, sometimes grouped into a themed file (`display.test.ts`, `map-style.test.ts`, `utilities.test.ts`, …), so locate a tool's block with `grep -rl "getExamplePrompts('<toolName>')" src/tests/scenarios`. Coverage is 51 of 54 default tools; new tools are not auto-covered.
 
-- **Canonical scenarios** (`it()` calls) — hand-picked, hand-stabilised prompts. Always run. CI default.
-- **Registry fanout** (`it.skipIf(!FULL_SCENARIOS).each(REGISTRY_PROMPTS)`) — every entry in the tool's `examplePrompts` from `tool-registry.ts`, via `getExamplePrompts('<toolName>')`. Gated on `SCENARIOS_FULL=1`.
+Each block has two parts, both driven off the registry:
 
-Two commands:
+- **Canonical scenario** — `getExamplePrompts('<toolName>')[0]`, the tool's **first** `examplePrompt`. Always runs; this is what CI asserts.
+- **Registry fanout** — `it.skipIf(!FULL_SCENARIOS).each(rest)` over the remaining `examplePrompts`. Gated on `SCENARIOS_FULL=1`.
 
-- `pnpm test:agent-tool-calling` — canonical only, ~23 tests, ~40s (parallel), ~$0.50 in LLM cost. **CI default.**
-- `pnpm test:agent-tool-calling:full` — canonical + registry fanout, ~121 tests, ~5–15 min, ~$5. Run before merging tool description / classifier-prompt changes; otherwise nightly.
+Two commands (counts measured with `npx vitest list src/tests/scenarios`; re-measure rather than trusting a number in a doc):
 
-**Single source of truth.** The `examplePrompts` array in the registry IS the broad-coverage test corpus — no parallel list. Edit the registry, the full suite's coverage updates on the next run.
+- `pnpm test:agent-tool-calling` — canonical only, **61** tests. Runs in CI on push to `main` (`scenario-tests.yml`).
+- `pnpm test:agent-tool-calling:full` — canonical + registry fanout, **269** tests. Run manually before merging tool description / classifier-prompt changes; **no CI job runs it**.
+
+Every scenario runs against each model in `AZURE_MODEL_IDS` and passes only when all do, so wall-clock and cost scale with that list, not the test count alone.
+
+**Single source of truth — including the canonical prompt.** The `examplePrompts` array in the registry IS the test corpus. There is no parallel list, and no buffer: reordering the array or rewording `examplePrompts[0]` changes what the canonical (CI) suite asserts, and editing later entries reshapes the fanout.
 
 **Therefore: keep registry and tests in lockstep.** When you:
-- add a tool → create `src/tests/scenarios/<tool-name>.test.ts` with one canonical `it()` + the standard `it.skipIf(!FULL_SCENARIOS).each(REGISTRY_PROMPTS)` block, and seed `examplePrompts` in the registry.
-- rename a tool → rename the scenario file AND update its `getExamplePrompts('<newName>')` argument (it's a type error otherwise).
-- remove a tool → delete the scenario file.
-- change a tool's `examplePrompts` → run `pnpm test:agent-tool-calling:full` locally before pushing.
+- add a tool → seed `examplePrompts` in the registry and add a `describe` block (own file or the fitting themed file) with the canonical `it()` + `it.skipIf(!FULL_SCENARIOS).each(rest)` pair.
+- rename a tool → update the `getExamplePrompts('<newName>')` argument in the owning file (it's a type error otherwise) and rename the file if it covered only that tool.
+- remove a tool → delete its `describe` block, and the file if that was its only block.
+- change a tool's `examplePrompts` → run `pnpm test:agent-tool-calling:full` locally before pushing; if you touched entry 0, the CI assertion changed too.
 - change a tool's `description` / `classificationPrompt` → run `pnpm test:agent-tool-calling:full` for at least the affected tool and any sibling tool whose `examplePrompts` overlap thematically (e.g. tweaking `discoverPlaces.description` can pull the classifier away from `locatePlace`).
 
 See [`AGENTS.md` § "Scenario tests"](./AGENTS.md#scenario-tests) for the full checklist.

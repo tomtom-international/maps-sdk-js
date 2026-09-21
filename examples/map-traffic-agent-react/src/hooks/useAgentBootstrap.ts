@@ -24,16 +24,18 @@ export function useAgentBootstrap({ deploymentId }: BootstrapOptions) {
     const [transport, setTransport] = useState<ChatTransport<AgentUIMessage> | undefined>(undefined);
 
     useEffect(() => {
-        // In Sandpack with the proxy bootstrap active, commonBaseURL is already
-        // set to the BFF; this put() just adds apiKey (which the BFF ignores).
+        // In Sandpack with the demos-proxy bootstrap active, commonBaseURL is
+        // already set to the proxy; this put() just adds apiKey (which it ignores).
         // In local dev (no bootstrap), the API_KEY path runs as before.
         TomTomConfig.instance.put({ apiKey: API_KEY });
 
         const created = new TomTomMap({
             mapLibre: {
                 container: 'map-container',
-                center: [13.405, 52.52],
-                zoom: 12,
+                // Las Vegas — the resort corridor plus downtown, so the first viewport-scoped
+                // incident fetch lands on a busy stretch of network.
+                center: [-115.155, 36.14],
+                zoom: 11.5,
             },
         });
         setMap(created);

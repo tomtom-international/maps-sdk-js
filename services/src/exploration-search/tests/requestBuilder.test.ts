@@ -6,15 +6,16 @@ import type { ExplorationSearchParams, ExplorationSearchRequestAPI } from '../ty
 import requestBuilderData from './requestBuilder.data';
 
 describe('Exploration Search request builder tests', () => {
-    test.each(
-        requestBuilderData,
-    )("'%s'", (_name: string, params: ExplorationSearchParams, expected: ExplorationSearchRequestAPI) => {
-        // Reparse via JSON to compare structure ignoring URL prototype identity and key order.
-        // NOSONAR: structuredClone cannot clone URL objects; JSON round-trip is intentional here.
-        expect(JSON.parse(JSON.stringify(buildExplorationSearchRequest(params)))).toMatchObject(
-            JSON.parse(JSON.stringify(expected)),
-        ); // NOSONAR
-    });
+    test.each(requestBuilderData)(
+        "'%s'",
+        (_name: string, params: ExplorationSearchParams, expected: ExplorationSearchRequestAPI) => {
+            // Reparse via JSON to compare structure ignoring URL prototype identity and key order.
+            // NOSONAR: structuredClone cannot clone URL objects; JSON round-trip is intentional here.
+            expect(JSON.parse(JSON.stringify(buildExplorationSearchRequest(params)))).toMatchObject(
+                JSON.parse(JSON.stringify(expected)),
+            ); // NOSONAR
+        },
+    );
 
     // The standard table-driven test can't easily assert on the buffered-circle ring (64 sampled
     // vertices), so the structural invariants get their own dedicated check.

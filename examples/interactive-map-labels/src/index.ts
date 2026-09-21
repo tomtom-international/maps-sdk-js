@@ -16,17 +16,10 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         },
     });
 
-    const geometryModule = await GeometriesModule.get(map, { theme: 'inverted' });
-    const labelsToClick: BaseMapLayerGroupName[] = ['placeLabels', 'stateLabels', 'capitalLabels', 'countryLabels'];
+    const geometryModule = await GeometriesModule.create(map, { theme: 'inverted' });
+    const labelsToClick: BaseMapLayerGroupName[] = ['allPlaceLabels', 'stateLabels', 'capitalLabels', 'countryLabels'];
 
-    const baseMap = await BaseMapModule.get(map, {
-        layerGroupsFilter: { mode: 'include', names: labelsToClick },
-    });
-
-    const restOfTheMap = await BaseMapModule.get(map, {
-        layerGroupsFilter: { mode: 'exclude', names: labelsToClick },
-        events: { cursorOnHover: 'default' },
-    });
+    const baseMap = await BaseMapModule.get(map);
 
     const hintEl = document.getElementById('hint') as HTMLElement;
 
@@ -58,9 +51,15 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         hintEl.textContent = 'Click a city label to show its boundary';
     };
 
-    baseMap.events.on('click', async (feature, lngLat) => {
-        await showBoundary(feature.properties.name, lngLat.toArray());
-    });
+    // Two scopes of the one base map module. `where` narrows to part of the map and takes its own
+    // event configuration, so each scope gets the hover cursor that suits it.
+    baseMap.events
+        .where({ layerGroups: { mode: 'include', names: labelsToClick } })
+        .on('click', async (feature, lngLat) => {
+            await showBoundary(feature.properties.name, lngLat.toArray());
+        });
 
-    restOfTheMap.events.on('click', clearBoundary);
+    baseMap.events
+        .where({ layerGroups: { mode: 'exclude', names: labelsToClick } }, { cursorOnHover: 'default' })
+        .on('click', clearBoundary);
 })();

@@ -41,19 +41,17 @@ import trafficIncidentDetailsCustomize from '../traffic-incident-details/customi
  *
  * @example
  * ```typescript
- * // Access request builder for custom processing
- * import { customizeService } from '@tomtom-international/web-sdk-services';
+ * import { mergeFromGlobal } from '@tomtom-org/maps-sdk/core';
+ * import { customizeService } from '@tomtom-org/maps-sdk/services';
  *
- * const { buildRequest } = customizeService.geocode;
- * const request = buildRequest({
- *   key: 'your-api-key',
- *   query: 'Amsterdam'
- * });
+ * const { buildGeocodingRequest, parseGeocodingResponse } = customizeService.geocode;
  *
- * // Access response parser for custom handling
- * const { parseResponse } = customizeService.geocode;
- * const rawApiResponse = await fetch(request.url);
- * const parsedData = parseResponse(await rawApiResponse.json());
+ * // Request builders expect the global configuration to be merged in already
+ * const url = buildGeocodingRequest(mergeFromGlobal({ query: 'Amsterdam' }));
+ *
+ * // Send the request yourself, then parse the raw API payload
+ * const apiResponse = await fetch(url);
+ * const places = parseGeocodingResponse(await apiResponse.json());
  * ```
  *
  * @group Advanced

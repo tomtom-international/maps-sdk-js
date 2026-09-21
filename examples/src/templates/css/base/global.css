@@ -4,14 +4,14 @@
     box-sizing: border-box;
 }
 
-.sdk-example-body {
+.ui-body {
     margin: 0;
     padding: 0;
-    font-family: var(--sdk-font-primary);
-    font-size: var(--sdk-font-body-m);
-    line-height: var(--sdk-font-body-m-lh);
-    color: var(--sdk-text-high);
-    background-color: var(--sdk-surface-0);
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-m);
+    line-height: var(--ui-font-body-m-lh);
+    color: var(--ui-text-high-em);
+    background-color: var(--ui-surface-0);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }

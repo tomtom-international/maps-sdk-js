@@ -1,4 +1,4 @@
-import { GlobalConfig } from '@tomtom-org/maps-sdk/core';
+import type { GlobalConfig } from '@tomtom-org/maps-sdk/core';
 import { describe, expect, test } from 'vitest';
 import { generateTomTomHeaders, TOMTOM_USER_AGENT_SDK_NAME } from '../headers';
 
@@ -32,7 +32,8 @@ describe('CustomHeaders', () => {
     });
 
     test('Override tomtom-user-agent via params', () => {
-        const headers = generateTomTomHeaders({ 'tomtom-user-agent': 'CustomAgent/1.0' } as unknown as GlobalConfig);
+        // Cast because the key is deliberately absent from GlobalConfig.
+        const headers = generateTomTomHeaders({ 'tomtom-user-agent': 'CustomAgent/1.0' } as Partial<GlobalConfig>);
         expect(headers['tomtom-user-agent']).toBe('CustomAgent/1.0');
     });
 });

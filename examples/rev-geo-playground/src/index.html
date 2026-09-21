@@ -1,12 +1,112 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
     <head>
+        <meta charset="utf-8">
         <title>Reverse geocoding playground</title>
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
         <link rel="icon" href="data:,">
     </head>
-    <body>
+    <body class="ui-body">
         <div id="sdk-map"></div>
+
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Reverse geocoding</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <p class="ui-instructions">
+                        Click the map. White pin: your click. Red pin: the match. Blue dots: its entry points, which the
+                        service places on the road network. Every setting re-runs the same point.
+                    </p>
+                </div>
+
+                <div class="ui-section">
+                    <dl id="ui-result" class="ui-summary"></dl>
+                    <p id="ui-status" class="ui-status" role="status"></p>
+                </div>
+
+                <div class="ui-section">
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="ui-radiusSlider">
+                            Search radius
+                            <span class="ui-form-hint">radiusMeters</span>
+                        </label>
+                        <div class="ui-slider-container">
+                            <input
+                                id="ui-radiusSlider"
+                                class="ui-slider"
+                                type="range"
+                                min="0"
+                                max="1000"
+                                step="25"
+                                value="0"
+                            >
+                            <span id="ui-radiusValue" class="ui-slider-value">any</span>
+                        </div>
+                    </div>
+
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="ui-headingSlider">
+                            Direction of travel
+                            <span class="ui-form-hint">heading</span>
+                        </label>
+                        <label class="ui-toggle-label">
+                            <input id="ui-headingToggle" class="ui-toggle-input" type="checkbox">
+                            <span class="ui-toggle-switch"></span>
+                            Send a heading
+                        </label>
+                        <div class="ui-slider-container">
+                            <input
+                                id="ui-headingSlider"
+                                class="ui-slider"
+                                type="range"
+                                min="0"
+                                max="359"
+                                step="1"
+                                value="90"
+                                disabled
+                            >
+                            <span id="ui-headingValue" class="ui-slider-value">90° E</span>
+                            <svg class="ui-compass" viewBox="0 0 36 36" aria-hidden="true">
+                                <text class="ui-compass-north" x="18" y="5.5">N</text>
+                                <circle class="ui-compass-dial" cx="18" cy="18" r="12.5" />
+                                <path id="ui-headingArrow" class="ui-compass-arrow" d="M18 8L23 28L18 24.5L13 28Z" />
+                            </svg>
+                        </div>
+                        <p id="ui-headingNote" class="ui-note" hidden>Ignored with area types.</p>
+                    </div>
+                </div>
+
+                <div class="ui-section">
+                    <h4 class="ui-subheading">
+                        Area types
+                        <span class="ui-form-hint">geographyType</span>
+                    </h4>
+                    <p class="ui-note">None: the nearest address or street. One or more: the area around the point.</p>
+                    <div id="ui-areaTypes" class="ui-checkbox-list"></div>
+                </div>
+
+                <div class="ui-section">
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="ui-viewSelect">
+                            Geopolitical view
+                            <span class="ui-form-hint">view</span>
+                        </label>
+                        <select id="ui-viewSelect" class="ui-dropdown"></select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script type="module" src="./index.ts"></script>
     </body>
 </html>

@@ -17,7 +17,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         },
     });
 
-    const placesModule = await PlacesModule.get(map, {
+    const placesModule = await PlacesModule.create(map, {
         theme: 'base-map',
         layers: {
             main: {

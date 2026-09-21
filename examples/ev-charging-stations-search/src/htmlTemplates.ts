@@ -28,7 +28,7 @@ export const connectorsHTML = (chargingPark: ChargingPark | ChargingParkWithAvai
         ? renderConnectorsWithAvailability(chargingPark.availability.connectorAvailabilities)
         : renderConnectors(chargingPark.connectors);
 
-    return `<ul class="sdk-example-connector-ul">${connectorsListHTML}</ul>`;
+    return `<ul class="ui-connector-ul">${connectorsListHTML}</ul>`;
 };
 
 const connectorRow = ({
@@ -44,14 +44,14 @@ const connectorRow = ({
     count: string;
     statusClass: 'available' | 'unavailable' | 'unknown';
 }): string => `
-    <li class="sdk-example-connector-li">
-        <span class="sdk-example-connector-icon">${icon}</span>
-        <span class="sdk-example-connector-name">${escapeHtml(name)}</span>
-        <span class="sdk-example-connector-sublabel">
-            <span class="sdk-example-connector-power">${escapeHtml(power)}</span>
-            <span class="sdk-example-connector-availability-cell">
-                <span class="sdk-example-connector-availability sdk-example-availability-${statusClass}">${escapeHtml(count)}</span>
-                <span class="sdk-example-status-dot sdk-example-status-dot-${statusClass}"></span>
+    <li class="ui-connector-li">
+        <span class="ui-connector-icon">${icon}</span>
+        <span class="ui-connector-name">${escapeHtml(name)}</span>
+        <span class="ui-connector-sublabel">
+            <span class="ui-connector-power">${escapeHtml(power)}</span>
+            <span class="ui-connector-availability-cell">
+                <span class="ui-connector-availability ui-availability-${statusClass}">${escapeHtml(count)}</span>
+                <span class="ui-status-dot ui-status-dot-${statusClass}"></span>
             </span>
         </span>
     </li>`;

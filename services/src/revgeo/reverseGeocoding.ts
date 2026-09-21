@@ -30,10 +30,9 @@ export type ReverseGeocodingResponse = Place<RevGeoAddressProps>;
  *
  * Features:
  * - Returns complete address hierarchy (street, city, state, country)
- * - Supports cross-street results
- * - Includes side of street information
- * - Provides address ranges for streets
- * - Returns multiple result types (street, POI, geography)
+ * - Returns the result type (address, street, or geography)
+ * - Narrows results to administrative areas with `geographyType`
+ * - Direction-aware street matching with `heading`
  *
  * @param params - Reverse geocoding parameters including coordinates
  * @param customTemplate - Advanced customization for request/response handling
@@ -49,19 +48,18 @@ export type ReverseGeocodingResponse = Place<RevGeoAddressProps>;
  * });
  * // Returns: Dam, 1012 Amsterdam, Netherlands
  *
- * // Get address with specific street number
+ * // Get the address matched along a given travel direction
  * const specificAddress = await reverseGeocode({
  *   key: 'your-api-key',
  *   position: [-77.0369, 38.8977],  // Washington DC
- *   number: '1600'
+ *   heading: 90                     // Traveling east
  * });
- * // Returns: 1600 Pennsylvania Avenue NW
  *
- * // Get nearest cross street
- * const crossStreet = await reverseGeocode({
+ * // Get the containing municipality instead of the street
+ * const municipality = await reverseGeocode({
  *   key: 'your-api-key',
  *   position: [-74.0060, 40.7128],  // New York
- *   returnRoadUse: true
+ *   geographyType: ['Municipality']
  * });
  * ```
  *

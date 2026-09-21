@@ -4,7 +4,7 @@
 
 import { z } from 'zod';
 import type { ToolState } from '../../types';
-import { geoJsonBBoxSchema } from '../shared';
+import { geoJsonBBoxSchema, positionSchema } from '../shared';
 import { toolErrorSchema } from '../shared-output-schemas';
 
 /** Output schema for the fly-to tool. */
@@ -26,7 +26,7 @@ export const flyToSchema = z.object({
             .describe('Fit the camera to a bounding box.'),
         z
             .object({
-                position: z.array(z.number()).length(2).describe('[lng, lat] to fly to.'),
+                position: positionSchema.describe('[lng, lat] to fly to.'),
                 zoom: z.number().optional().describe('Camera zoom level. Default: 14.'),
             })
             .describe('Fly the camera to a specific position.'),

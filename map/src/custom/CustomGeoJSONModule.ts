@@ -1,7 +1,14 @@
 import type { FeatureCollection } from 'geojson';
 import type { MapGeoJSONFeature } from 'maplibre-gl';
-import type { ToBeAddedLayerSpec, ToBeAddedLayerSpecWithoutSource } from '../shared';
-import { AbstractMapModule, CombinedEvents, GeoJSONSourceWithLayers, ModuleEvents, UserEvents } from '../shared';
+import {
+    AbstractDataOwnedMapModule,
+    assertNoReservedScopeNames,
+    type CombinedEvents,
+    GeoJSONSourceWithLayers,
+    type ToBeAddedLayerSpec,
+    type ToBeAddedLayerSpecWithoutSource,
+    type UserEvents,
+} from '../shared';
 import { addLayers, updateLayersAndSource, waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
 import type { CustomGeoJSONModuleConfig } from './types/customGeoJSONModuleConfig';
@@ -16,8 +23,22 @@ type CustomGeoJSONSourcesWithLayers<TSources extends Record<string, FeatureColle
  *
  * @group Custom
  */
-export type CustomGeoJSONEvents<TSources extends Record<string, FeatureCollection>> = {
-    [K in keyof TSources]: CombinedEvents<MapGeoJSONFeature, CustomGeoJSONModuleConfig<TSources>, TSources[K]>;
+/**
+ * What `module.events.on('shown-features', ...)` receives. This module's `show` names the source
+ * it writes, so the event names it too — the one module whose shown data is per source.
+ *
+ * @group Custom
+ */
+export type CustomGeoJSONShownFeatures<TSources extends Record<string, FeatureCollection>> = {
+    [K in keyof TSources]: { sourceName: K; data: TSources[K] };
+}[keyof TSources];
+
+export type CustomGeoJSONEvents<TSources extends Record<string, FeatureCollection>> = CombinedEvents<
+    MapGeoJSONFeature,
+    CustomGeoJSONModuleConfig<TSources>,
+    CustomGeoJSONShownFeatures<TSources>
+> & {
+    [K in keyof TSources]: UserEvents<MapGeoJSONFeature>;
 };
 
 /**
@@ -32,6 +53,11 @@ export type CustomGeoJSONEvents<TSources extends Record<string, FeatureCollectio
  * this module makes no assumptions about how data is rendered — the caller passes raw
  * MapLibre layer specs (`circle`, `heatmap`, `fill`, `line`, `symbol`, …).
  *
+ * @remarks
+ * Because the sources and layers are caller-supplied, the module has no built-in defaults:
+ * `resetConfig()` (or `applyConfig(undefined)`) returns to the configuration passed to
+ * {@link CustomGeoJSONModule.create | create}, and `getConfig()` never becomes `undefined`.
+ *
  * @typeParam TSources - A record mapping source names to the {@link FeatureCollection}
  * type each source carries. Pass this generic when you want type-safe `show` /
  * `getShown` per source.
@@ -39,7 +65,7 @@ export type CustomGeoJSONEvents<TSources extends Record<string, FeatureCollectio
  * @example
  * Single source, default generic:
  * ```typescript
- * const module = await CustomGeoJSONModule.get(map, {
+ * const module = await CustomGeoJSONModule.create(map, {
  *     sources: {
  *         points: {
  *             layers: [{ type: 'circle', paint: { 'circle-radius': 4, 'circle-color': '#0a3653' } }],
@@ -59,7 +85,7 @@ export type CustomGeoJSONEvents<TSources extends Record<string, FeatureCollectio
  *     buildings: FeatureCollection<Polygon, { name: string }>;
  * };
  *
- * const module = await CustomGeoJSONModule.get<Sources>(map, {
+ * const module = await CustomGeoJSONModule.create<Sources>(map, {
  *     sources: {
  *         heatmap: { layers: [{ type: 'heatmap', paint: { 'heatmap-radius': 12 } }] },
  *         buildings: { layers: [{ type: 'fill', paint: { 'fill-color': '#5a5' } }] },
@@ -75,7 +101,7 @@ export type CustomGeoJSONEvents<TSources extends Record<string, FeatureCollectio
  * ```typescript
  * type Buildings = FeatureCollection<Point, { Name: string }>;
  *
- * const module = await CustomGeoJSONModule.get<{ heatmap: Buildings; markers: Buildings }>(map, {
+ * const module = await CustomGeoJSONModule.create<{ heatmap: Buildings; markers: Buildings }>(map, {
  *     sources: {
  *         heatmap: { layers: heatmapLayers },
  *         markers: { layers: markerLayers },
@@ -89,7 +115,7 @@ export type CustomGeoJSONEvents<TSources extends Record<string, FeatureCollectio
  */
 export class CustomGeoJSONModule<
     TSources extends Record<string, FeatureCollection> = Record<string, FeatureCollection>,
-> extends AbstractMapModule<CustomGeoJSONSourcesWithLayers<TSources>, CustomGeoJSONModuleConfig<TSources>> {
+> extends AbstractDataOwnedMapModule<CustomGeoJSONSourcesWithLayers<TSources>, CustomGeoJSONModuleConfig<TSources>> {
     // Resolved (post-auto-gen) IDs and layer specs, indexed by source name.
     // Stable across style changes because they are derived deterministically from instanceIndex + config.
     private resolvedSourceIDs!: { [K in keyof TSources]: string };
@@ -100,19 +126,27 @@ export class CustomGeoJSONModule<
     // before subclass field initialisers run.
     private lastShown!: Partial<{ [K in keyof TSources]: TSources[K] }>;
 
+    // The config the module was created with — what `resetConfig()` returns to.
+    // Captured on the first `_applyConfig`, which the base-class constructor triggers.
+    private initialConfig!: CustomGeoJSONModuleConfig<TSources>;
+
     // Per-source shown-features handler arrays. References are kept stable so that handlers
     // registered through one events getter call survive subsequent getter calls.
     // Lazy-initialised for the same reason as lastShown.
-    private shownFeaturesHandlersBySource!: Map<keyof TSources, ((data: TSources[keyof TSources]) => void)[]>;
+    private readonly shownFeaturesHandlers: ((features: CustomGeoJSONShownFeatures<TSources>) => void)[] = [];
 
     /**
      * Creates a new {@link CustomGeoJSONModule} once the map is ready.
+     *
+     * `CustomGeoJSONModule` owns the sources, layers and images it adds, all suffixed per instance.
+     * Every call therefore returns a **new, independent** instance, and stacking several of them on
+     * one map is a supported thing to do.
      *
      * @param tomtomMap The TomTomMap instance.
      * @param config Module configuration. `sources` is required and must contain at
      * least one entry; each entry must have at least one layer.
      */
-    static async get<TSources extends Record<string, FeatureCollection> = Record<string, FeatureCollection>>(
+    static async create<TSources extends Record<string, FeatureCollection> = Record<string, FeatureCollection>>(
         tomtomMap: TomTomMap,
         config: CustomGeoJSONModuleConfig<TSources>,
     ): Promise<CustomGeoJSONModule<TSources>> {
@@ -122,7 +156,7 @@ export class CustomGeoJSONModule<
     }
 
     private constructor(map: TomTomMap, config: CustomGeoJSONModuleConfig<TSources>) {
-        super('geojson', map, config);
+        super(map, config);
     }
 
     /**
@@ -132,11 +166,10 @@ export class CustomGeoJSONModule<
         config: CustomGeoJSONModuleConfig<TSources> | undefined,
         restore?: boolean,
     ): CustomGeoJSONSourcesWithLayers<TSources> {
-        // config is required by the public API; AbstractMapModule's signature allows undefined.
+        // config is required by the public API; the base-class signature allows undefined.
         const effectiveConfig = config ?? (this.config as CustomGeoJSONModuleConfig<TSources>);
         if (!restore) {
             this.lastShown = {};
-            this.shownFeaturesHandlersBySource = new Map();
         }
         this.resolveIDs(effectiveConfig);
         // Images must be registered BEFORE the GeoJSONSourceWithLayers instances are
@@ -157,10 +190,6 @@ export class CustomGeoJSONModule<
                 true,
                 cluster,
             );
-
-            if (!this.shownFeaturesHandlersBySource.has(sourceName)) {
-                this.shownFeaturesHandlersBySource.set(sourceName, []);
-            }
         }
         return sources;
     }
@@ -201,10 +230,11 @@ export class CustomGeoJSONModule<
         config: CustomGeoJSONModuleConfig<TSources> | undefined,
     ): CustomGeoJSONModuleConfig<TSources> | undefined {
         if (!config) {
-            // Resetting the config to undefined is not supported — the module requires
-            // a sources structure to remain operational. Keep the existing config.
-            return this.config;
+            // A module whose sources are caller-supplied has no built-in defaults to fall back to,
+            // so resetting returns to the config it was created with (see the class remarks).
+            return this._applyConfig(this.initialConfig);
         }
+        this.initialConfig ??= config;
 
         const previousConfig = this.config;
         const previousLayerSpecs = previousConfig ? this.resolvedLayerSpecs : undefined;
@@ -267,6 +297,13 @@ export class CustomGeoJSONModule<
     /**
      * @ignore
      */
+    protected discardShownData(): void {
+        this.lastShown = {};
+    }
+
+    /**
+     * @ignore
+     */
     protected restoreDataAndConfigImpl(): void {
         const sourceNames = Object.keys(this.lastShown) as Array<keyof TSources>;
         this.initSourcesWithLayers(this.config, true);
@@ -309,11 +346,8 @@ export class CustomGeoJSONModule<
         const normalized = ensureFeatureIDs(data);
         this.lastShown[sourceName] = normalized;
         this.sourcesWithLayers[sourceName].show(normalized);
-        const handlers = this.shownFeaturesHandlersBySource.get(sourceName);
-        if (handlers) {
-            for (const handler of handlers) {
-                handler(normalized);
-            }
+        for (const handler of this.shownFeaturesHandlers) {
+            handler({ sourceName, data: normalized });
         }
     }
 
@@ -376,24 +410,26 @@ export class CustomGeoJSONModule<
      * @example
      * ```typescript
      * module.events.buildings.on('click', (feature, lngLat) => { ... });
-     * module.events.heatmap.on('shown-features', (data) => { ... });
-     * module.events.buildings.on('config-change', (config) => { ... });
+     * module.events.on('shown-features', ({ sourceName, data }) => { ... });
+     * module.events.on('config-change', (config) => { ... });
      * ```
      */
     get events(): CustomGeoJSONEvents<TSources> {
-        const result = {} as CustomGeoJSONEvents<TSources>;
-        for (const sourceName of Object.keys(this.sourcesWithLayers) as Array<keyof TSources>) {
-            const sourceWithLayers = this.sourcesWithLayers[sourceName];
-            const shownHandlers = this.shownFeaturesHandlersBySource.get(sourceName) ?? [];
-            result[sourceName] = new CombinedEvents(
-                new UserEvents<MapGeoJSONFeature>(this.eventsProxy, sourceWithLayers, this.config?.events),
-                new ModuleEvents<CustomGeoJSONModuleConfig<TSources>, TSources[typeof sourceName]>(
-                    this.configChangeHandlers,
-                    shownHandlers as ((data: TSources[typeof sourceName]) => void)[],
-                ),
-            );
+        const sourceNames = Object.keys(this.sourcesWithLayers) as Array<keyof TSources>;
+        const scopes = {} as { [K in keyof TSources]: UserEvents<MapGeoJSONFeature> };
+        for (const sourceName of sourceNames) {
+            scopes[sourceName] = this.userEvents<MapGeoJSONFeature>([sourceName]);
         }
-        return result;
+
+        // Module-wide events cover every source at once, and their `shown-features` names the
+        // source that was written; each named scope covers the user events of one source.
+        return this.buildEvents(
+            this.moduleEventsWithShown<MapGeoJSONFeature, CustomGeoJSONShownFeatures<TSources>>(
+                sourceNames,
+                this.shownFeaturesHandlers,
+            ),
+            scopes,
+        ) as CustomGeoJSONEvents<TSources>;
     }
 }
 
@@ -403,6 +439,9 @@ const validateConfig = <TSources extends Record<string, FeatureCollection>>(
     if (!config.sources || Object.keys(config.sources).length === 0) {
         throw new Error('CustomGeoJSONModule requires at least one source in config.sources.');
     }
+    // Source names become properties on `events`, alongside its own methods. Every other module's
+    // scope names are ours and covered by a unit test; these are the caller's, so check at runtime.
+    assertNoReservedScopeNames(Object.keys(config.sources), 'CustomGeoJSONModule source');
     for (const [sourceName, sourceSpec] of Object.entries(config.sources)) {
         if (!sourceSpec.layers || sourceSpec.layers.length === 0) {
             throw new Error(`CustomGeoJSONModule source "${sourceName}" requires at least one layer.`);

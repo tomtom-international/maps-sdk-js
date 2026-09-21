@@ -1,6 +1,6 @@
 import type { PolygonFeature, PolygonFeatures } from '@tomtom-org/maps-sdk/core';
 import { describe, expect, test } from 'vitest';
-import { type ColorPaletteOptions, colorPalettes } from '../layers/colorPalettes';
+import { adaptPaletteForTheme, type ColorPaletteOptions, colorPalettes } from '../layers/colorPalettes';
 import { TURF_MASK_WORLD_RING } from '../layers/constants';
 import { buildGeometryLayerSpecs, buildGeometryTitleLayerSpec } from '../layers/geometryLayers';
 import { prepareGeometryForDisplay, prepareTitleForDisplay } from '../prepareGeometryForDisplay';
@@ -49,12 +49,55 @@ describe('prepareGeometryForDisplay', () => {
 
         expect(geometryTitleSpec).toHaveProperty('id', 'titleLayerID');
         expect(geometryTitleSpec.layout).toHaveProperty('text-field', 'title');
+        expect(geometryTitleSpec.paint).toMatchObject({ 'text-color': '#333333', 'text-halo-color': '#FFFFFF' });
 
         // Using Maplibre expressions
         config = { textConfig: { textField: ['get', 'name'] } };
         geometryTitleSpec = buildGeometryTitleLayerSpec('anotherTitleLayerID', config);
         expect(geometryTitleSpec).toHaveProperty('id', 'anotherTitleLayerID');
         expect(geometryTitleSpec.layout).toHaveProperty('text-field', config.textConfig?.textField);
+
+        // Dark theme swaps title text and halo colours
+        geometryTitleSpec = buildGeometryTitleLayerSpec('darkTitleLayerID', config, 'dark');
+        expect(geometryTitleSpec.paint).toMatchObject({ 'text-color': '#FFFFFF', 'text-halo-color': '#333333' });
+    });
+
+    test('adaptPaletteForTheme', () => {
+        expect(adaptPaletteForTheme(colorPalettes.fadedRainbow, 'light')).toBe(colorPalettes.fadedRainbow);
+
+        const dark = adaptPaletteForTheme(colorPalettes.fadedRainbow, 'dark');
+        expect(dark).not.toEqual(colorPalettes.fadedRainbow);
+        // pale pastel '#ffadad' is deepened
+        expect(dark[0]).not.toBe('#ffadad');
+        expect(dark).toHaveLength(colorPalettes.fadedRainbow.length);
+        for (const color of dark) {
+            expect(color).toMatch(/^#[0-9a-f]{6}$/i);
+        }
+
+        // near-black ramp entries are lifted rather than darkened further
+        const darkBlues = adaptPaletteForTheme(colorPalettes.fadedBlues, 'dark');
+        expect(darkBlues[0]).not.toBe('#152033');
+    });
+
+    test('prepareGeometryForDisplay adapts palette colours for the dark theme', () => {
+        const geometry: PolygonFeatures = {
+            type: 'FeatureCollection',
+            features: [
+                {
+                    type: 'Feature',
+                    bbox: [0, 0, 1, 1],
+                    properties: {},
+                    geometry: { type: 'Polygon', coordinates: [] },
+                },
+            ],
+        };
+        const config: GeometriesModuleConfig = { fill: { color: 'fadedRainbow' } };
+
+        const light = prepareGeometryForDisplay(geometry, config, 'light');
+        const dark = prepareGeometryForDisplay(geometry, config, 'dark');
+
+        expect(light.features[0].properties?.color).toBe(colorPalettes.fadedRainbow[0]);
+        expect(dark.features[0].properties?.color).not.toBe(colorPalettes.fadedRainbow[0]);
     });
 
     test('Prepare geometry for display', () => {

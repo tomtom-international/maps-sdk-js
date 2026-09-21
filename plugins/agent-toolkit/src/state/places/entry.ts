@@ -5,6 +5,7 @@
 import type { CommonPlaceProps, Place, PolygonFeature } from '@tomtom-org/maps-sdk/core';
 import type { GeometriesModule, PlaceConnectionDisplay, PlacesModule } from '@tomtom-org/maps-sdk/map';
 import type { BaseEntry } from '../entry';
+import type { PlacesMarkerType } from './state';
 
 /**
  * A single entry in the place search history.
@@ -38,5 +39,5 @@ export type PlacesEntry = BaseEntry<Place[]> & {
         geometries?: GeometriesModule;
     };
     /** The marker theme currently rendering this entry, or undefined when hidden. */
-    _shownAs?: 'pin' | 'base-map' | 'pin-clustered';
+    _shownAs?: PlacesMarkerType;
 };

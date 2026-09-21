@@ -30,7 +30,7 @@ export function useMapAgent(options: UseMapAgentOptions) {
     const { agent, transport, isReady } = useAgentBootstrap(options);
 
     const { analyticsState } = useTrafficAnalytics(agent);
-    const { selectedIncident, selectIncident, clearSelectedIncident } = useSelectedIncident(agent);
+    const { selectedIncident, selectIncident, pageIncident, clearSelectedIncident } = useSelectedIncident(agent);
     const { incidents, entryId: panelEntryId, focusEntry } = useIncidents(agent);
     const focus = useFocus(agent);
     const { clusters, clearClusters } = useClusters(agent);
@@ -105,6 +105,7 @@ export function useMapAgent(options: UseMapAgentOptions) {
         analyticsState,
         selectedIncident,
         selectIncident,
+        pageIncident,
         clearSelectedIncident,
         incidents,
         // incidents shown in the top/right panels (route-corridor incidents when monitoring routes)

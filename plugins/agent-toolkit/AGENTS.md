@@ -24,9 +24,14 @@ Consumer App
 │   │     └── Map ToolSet (Zod-validated tools)
 │   │           ├── Data tools: locatePlace, reverseGeocode, discoverPlaces, setRoute, findReachableAreas, getTrafficIncidents, …
 │   │           ├── Scope-aware unified tools: analyseData, processData (per-turn scope narrows description + schema)
+│   │           ├── Recurrence tools: monitorAnalysis, createTracker, getTrackers, getTrackerHistory, clearTracker
 │   │           ├── BYOD tools: addByodSource, setByodLayers, updateByodDisplay
-│   │           └── Map tools: updatePlacesDisplay, updateRoutesDisplay, updateWaypointsDisplay, flyTo, toggleTilesTrafficFlow, toggleTilesTrafficIncidents, …
-│   ├── MapAgentState (per-entry histories: places, routing, ranges, customGeometries, byod, trafficIncidents, trafficAreaAnalytics)
+│   │           ├── Map tools: updatePlacesDisplay, updateRoutesDisplay, updateWaypointsDisplay, flyTo, toggleTilesTrafficFlow, toggleTilesTrafficIncidents, …
+│   │           └── Styling tools: describeMapStyling, setMapStyling (StylingModule knob catalogue)
+│   ├── ToolState — the state object every tool receives (`src/types/index.ts`):
+│   │     ├── Entry-owning slices: places, routing, ranges, customGeometries, byod, trafficIncidents, trafficAreaAnalytics
+│   │     ├── Non-entry slices: mapPOIs, baseMap, trafficTiles
+│   │     └── Session-level: engine (JobEngine), analyses (Analyses), trackers (EventsState), codeExecution (SandboxExecutor)
 │   └── Per-entry modules (lazy PlacesModule, RoutingModule, CustomGeoJSONModule, TrafficAreaAnalyticsModule, …)
 │
 ├── TomTomMap instance + maplibre-gl
@@ -38,8 +43,9 @@ Consumer App
 ## Key Conventions
 
 - **Coordinates**: Always `[longitude, latitude]` — GeoJSON standard.
-- **Async modules**: All `Module.get(map)` calls are async. Cache in `state.modules`.
+- **Async modules**: Module factories are all async. Style-owned modules use `Module.get(map)`, which the SDK memoizes per map — call it freely, no local `??=` cache needed. Data-owned modules use `Module.create(map)`, which builds a new independent instance per call — create one per entry you render, and cache that instance alongside its entry.
 - **Error handling**: Every tool `execute` must catch and return `{ error: string }`, never throw.
+- **Cancellation**: `execute`'s third argument is `ToolExecuteOptions` (`{ signal?: AbortSignal }`), the AI SDK's per-call `abortSignal`. Forward `options.signal` into every service call's params so a cancelled turn cancels its HTTP requests; an abort rejects with `SDKAbortError`. Never forward it into a monitor tick or other deferred job — those run after the turn, and a rejected tick clears the monitor's interval.
 - **Token efficiency**: Summarize results. Never return full GeoJSON to the LLM.
 - **No provider bundled**: `model` is required. Fail fast if not provided.
 - **Monorepo imports**: Use `@tomtom-org/maps-sdk/core`, `/map`, `/services`.
@@ -49,13 +55,13 @@ Consumer App
 
 ---
 
-## Code-execution sandbox (`src/tools/shared/sandbox/`)
+## Code-execution sandbox (`src/tools/shared/sandbox/` + `sandbox-code.ts` / `sandbox-replay.ts`)
 
-`analyseData` / `processData` run model-authored JS via a pluggable `SandboxExecutor` (`sandbox-code.ts`). Execution mode is env-chosen, NOT configurable (`resolveSandboxExecutor` + `hasBrowserSandboxApis`): `iframe-worker` in the browser (opaque-origin iframe + worker + CSP `default-src 'none'` + timeout — mandatory there), `mainThreadExecutor` in Node/SSR (no equivalent boundary; a `worker_thread` adds only termination while exposing `fs`/`net`/`child_process`). `codeExecution` only tunes the browser run (`timeoutMs`, `loadWorkerLibrarySource`). **Input deep-copy lives in `mainThreadExecutor` only** (`cloneDataArg`, skips `WORKER_PROVIDED_PARAMS`) — the iframe-worker gets its copy free via `postMessage`; `packSandboxArgs` and the monitor path now pass live references. `turf` / `h3` / `routeUtils` are bundled into the worker and injected into BOTH tools (`routeUtils` shared from `multi-input.ts`).
+`analyseData` / `processData` run model-authored JS via a pluggable `SandboxExecutor`. The executor contract, the main-thread executor and the arg packing live in `src/tools/shared/sandbox-code.ts` (a **sibling** of the `sandbox/` directory, not inside it); `sandbox/` holds the browser path (`iframe-worker-executor.ts`, `worker-runtime.ts`, `worker-libs.ts`, `sdk-utils-worker-entry.ts`) and `sandbox-replay.ts` the standing/monitor re-run path. Execution mode is env-chosen, NOT configurable (`resolveSandboxExecutor` + `hasBrowserSandboxApis`): `iframe-worker` in the browser (opaque-origin iframe + worker + CSP `default-src 'none'` + timeout — mandatory there), `mainThreadExecutor` in Node/SSR (no equivalent boundary; a `worker_thread` adds only termination while exposing `fs`/`net`/`child_process`). `codeExecution` only tunes the browser run (`timeoutMs`, `loadWorkerLibrarySource`). **Input deep-copy lives in `mainThreadExecutor` only** (`cloneDataArg`, skips `WORKER_PROVIDED_PARAMS`) — the iframe-worker gets its copy free via `postMessage`; `packSandboxArgs` and the monitor path now pass live references. `turf` / `h3` / `routeUtils` are bundled into the worker and injected into BOTH tools (`routeUtils` shared from `multi-input.ts`).
 
-- **Worker libs (turf/h3/routeUtils)**: the worker can't `import` the host's peer-dep modules, so `worker-libs.ts` `?raw`-inlines turf's/h3's UMD bundles plus the bundled `routeUtils` IIFE into a **lazy chunk** (`dist/worker-libs-*.js`) loaded only in iframe-worker mode — the main bundle keeps turf/h3 externalized. turf needs the `sandbox-turf-umd` alias and the SDK worker-utilities (`routeUtils`, …) the `virtual:sandbox-sdk-utils` plugin (bundling `sdk-utils-worker-entry.ts`) — both live in `vite-sandbox-build.ts`, shared by `vite.lib.config.ts` and `e2e-tests/vite.config.ts`; `*?raw` and the virtual module are typed by `src/raw.d.ts`. After touching this, run `pnpm build` and confirm `dist/index.es.js` stays lean (~323 kB) and `dist/worker-libs-*.js` carries the libs.
-- **e2e harness** (`e2e-tests/`): real-browser isolation checks (CSP / opaque origin / Worker termination) — run `pnpm test:e2e` (one-time `pnpm test:e2e:install` for Chromium).
-- **e2e-verified, still experimental**: the `e2e-tests/` suite passes (5/5) in real Chromium — CSP egress-block, worker termination, opaque-origin isolation, zero-config turf/h3 — so the boundary is verified by those checks. Runs in CI via the dedicated `e2e-test-agent-toolkit-sandbox` job (`pnpm e2e-test:agent-toolkit:sandbox`), separate from the browser-free unit-test runs. Falls back (loudly) to main-thread when browser APIs are missing.
+- **Worker libs (turf/h3/routeUtils)**: the worker can't `import` the host's peer-dep modules, so `worker-libs.ts` `?raw`-inlines turf's/h3's UMD bundles plus the bundled `routeUtils` IIFE into a **lazy chunk** (`dist/worker-libs-*.js`) loaded only in iframe-worker mode — the main bundle keeps turf/h3 externalized. turf needs the `sandbox-turf-umd` alias and the SDK worker-utilities (`routeUtils`, …) the `virtual:sandbox-sdk-utils` plugin (bundling `sdk-utils-worker-entry.ts`) — both live in `vite-sandbox-build.ts`, shared by `vite.lib.config.ts` and `e2e-tests/vite.config.ts`; `*?raw` and the virtual module are typed by `src/raw.d.ts`. After touching this, run `pnpm build` and confirm `dist/index.es.js` stays lean (**370 kB** as of 0.5.3 — it should not jump by the size of a library) and `dist/worker-libs-*.js` (**755 kB**) carries the libs.
+- **e2e harness** (`e2e-tests/`): real-browser checks across two specs — `sandbox-isolation.spec.ts` (5 tests: CSP egress-block, Worker termination, opaque-origin isolation, zero-config turf/h3) and `cluster-incidents.spec.ts` (2 tests: `clusterIncidents` running in the iframe-worker). Run `pnpm test:e2e` (one-time `pnpm test:e2e:install` for Chromium).
+- **e2e-verified, still experimental**: the `e2e-tests/` suite passes (**7/7**) in real Chromium, so the boundary is verified by those checks. Runs in CI via the dedicated `e2e-test-agent-toolkit-sandbox` job (`pnpm e2e-test:agent-toolkit:sandbox`), separate from the browser-free unit-test runs. Falls back (loudly) to main-thread when browser APIs are missing.
 
 ---
 
@@ -72,7 +78,9 @@ export * from './src/types/index';  // types/ only contains public types
 // ...
 ```
 
-Because the root is explicit, **directory barrels** (`src/*/index.ts`) can export everything in their directory for convenient internal cross-directory imports. Nothing leaks to the public surface unless the root explicitly re-exports it.
+Because the root is *mostly* explicit, **directory barrels** (`src/*/index.ts`) can export everything in their directory for convenient internal cross-directory imports.
+
+**Two exceptions carry a whole barrel onto the public surface** — `export * from './src/types/index'` (intended: `types/` holds only public types) and `export * from './src/tools/shared/index'` (**not** intended that way: that barrel wildcards 23 modules, including `@ignore` internals like `geometries-id`, `multi-input`, `sandbox-code`, `resolve-where` and `state-inputs`). So "nothing leaks unless the root re-exports it" holds for every directory *except* `tools/shared`. Treat anything you add there as publicly reachable — `@ignore` keeps it out of the API reference, not out of the published types. Narrowing that wildcard to named exports is a breaking change and needs a major bump.
 
 ```typescript
 // Use the barrel for internal cross-directory imports
@@ -116,42 +124,57 @@ The toolkit's "tool" + "state slice" abstractions appear in many places that are
 - if it's referenced by another tool's `description` ("call `xTool` first"), confirm `xTool` exists and is registered too — dead pointers in descriptions mislead the model
 - if it's scope-aware, supplied a `scopeSchema` + `scopePrompt` and verified `prepareStep` rebuilds it correctly
 - added eval coverage in the relevant example's eval cases file (or marked why no eval is needed)
-- if the tool warrants scenario-level coverage, added a per-tool scenario file `src/tests/scenarios/<tool-name>.test.ts` that exercises `examplePrompts` from the registry via `getExamplePrompts('<toolName>')` (coverage is a curated subset, not every tool) — see [Scenario tests](#scenario-tests) below
+- if the tool warrants scenario-level coverage, added a `describe` block under `src/tests/scenarios/` (its own `<tool-name>.test.ts`, or the fitting themed file) that exercises `examplePrompts` from the registry via `getExamplePrompts('<toolName>')` — see [Scenario tests](#scenario-tests) below
 
 **Added a new entry-owning state slice** — walk every "every slice" code path and wire the new slice in:
-- `tools/state/reset-state.ts` calls both the pre-reset module-clear loop AND `state.<slice>.reset()`
-- `tools/state/recall-state.ts` includes the new slice in its summary
+- `state/state.ts` adds it to the `DataEntryKind` union and `DATA_ENTRY_KIND_TO_SLICE`, and `ToolState` in `types/index.ts` carries the slice
+- `tools/state/reset-state.ts` calls both the pre-reset module-clear loop AND `state.<slice>.reset()` (the session-level `analyses` / `trackers` / `engine` resets there are separate — leave them alone)
+- `tools/state/recall-state.ts` includes the new slice in its summary, and `RecallableKind` accepts its `kind`
 - `state/digest.ts` (`getStateDigest` + `formatStateDigestDiff`) reports the new slice's `shown` / `entryMode` / `entryCount`
+- `tools/shared/entry-kinds.ts` gets an `ENTRY_KIND_META` row (field name, sandbox/schema docs, `recallTool`) if the unified data tools should accept it
+- `tools/tool-registry.ts` adds a `TOOLS_BY_DATA_ENTRY_KIND` row so disabling the kind drops the right tools
 - `system-prompt.ts` mentions the slice if the model needs to know about it
 - the slice's barrel re-exports its public types and the package root re-exports the slice type
 - there are tests in `state/<slice>/tests/state.test.ts` covering ID generation/collisions, `single` mode, show/hide/clear, and reset
 
-**Removed or renamed a public tool / type / slice** — in addition to the root-level surfaces in `.claude/skills/tomtom-maps-sdk-js-contribution`, also sweep:
+**Removed or renamed a public tool / type / slice** — in addition to the root-level surfaces in `.claude/skills/tomtom-maps-sdk-js-preflight`, also sweep:
 - `system-prompt.ts` and every per-tool `description` / `classificationPrompt` for stale name references
 - `documentation/docs-portal/guides/plugins/agent-toolkit/*.mdx` and the `navigation.yml` entry that exposes the affected page
 - decide on a deprecated alias or a major-version bump in `.release-please-manifest.json` — silently dropping a public export is a breaking release
-- `src/tests/scenarios/<tool-name>.test.ts` — rename the per-tool scenario file (and the `getExamplePrompts('<oldName>')` argument inside it) or delete it if the tool is gone
+- `src/tests/scenarios/` — update the `getExamplePrompts('<oldName>')` argument in the owning file (find it with `grep -rl`), and rename or delete that file if it covered only this tool
 
 ## Scenario tests
 
-`src/tests/scenarios/` holds one `<tool-name>.test.ts` file per **covered** tool — a curated subset of `DEFAULT_TOOLS`, not every tool. New tools are not auto-covered; expand the suite intentionally when a tool needs scenario-level assertion. Each file has:
-- a small set of **canonical `it()` scenarios** — hand-picked, hand-stabilised prompts that always run.
-- one **`it.skipIf(!FULL_SCENARIOS).each(REGISTRY_PROMPTS)` block** that fans out across every entry in the tool's `examplePrompts` array from the registry (via `getExamplePrompts('<toolName>')` in `helpers.ts`).
+`src/tests/scenarios/` holds LLM-in-the-loop tool-selection tests. See [`src/tests/scenarios/README.md`](./src/tests/scenarios/README.md) for what is real vs. mocked, the assertion helpers, and the known-hard cases.
 
-Two suites, two cost profiles:
+**File layout is per *tool* where one tool warrants a file, per *theme* where several do** — `locate-place.test.ts`, `set-route.test.ts` and `analyse-data.test.ts` cover a single tool each; `display.test.ts`, `map-style.test.ts`, `route-edits.test.ts`, `tile-toggles.test.ts`, `utilities.test.ts`, `guardrails.test.ts`, `state-management.test.ts`, `traffic-incidents-ops.test.ts` and `traffic-analytics-ops.test.ts` each hold several `describe` blocks, one per tool. Don't assume `<tool-name>.test.ts` exists — `grep -rl "getExamplePrompts('<toolName>')" src/tests/scenarios` finds the owning file.
 
-| Command | Gate | Tests | Wall-clock | Use |
-|---|---|---|---|---|
-| `pnpm test:agent-tool-calling` | `SCENARIOS_FULL` unset | ~23 (canonical only) | ~40s (parallel) | CI on every PR, fast pre-push check |
-| `pnpm test:agent-tool-calling:full` | `SCENARIOS_FULL=1` | ~121 (canonical + registry fanout) | ~5–15 min | Nightly job, before touching tool descriptions/classifier prompts |
+Each `describe` block follows the same two-part shape, where **the canonical prompt is the tool's FIRST registry `examplePrompt`** (not a separately maintained one):
 
-Editing `examplePrompts` in `tool-registry.ts` automatically reshapes the **full** suite's coverage on its next run — **no parallel list to maintain, but also no buffer when an examplePrompt is removed or reworded**. The sanity suite is unaffected by registry changes.
+```typescript
+const [canonical, ...rest] = getExamplePrompts('locatePlace');
+it(`classifies the canonical prompt: ${canonical}`, ...);                       // always runs
+it.skipIf(!FULL_SCENARIOS).each(rest)('handles registry examplePrompt: %s', ...); // SCENARIOS_FULL=1 only
+```
+
+Two suites, two cost profiles (counts measured with `npx vitest list src/tests/scenarios`, as of 0.5.3 — re-measure rather than trusting these):
+
+| Command | Gate | Tests | Use |
+|---|---|---|---|
+| `pnpm test:agent-tool-calling` | `SCENARIOS_FULL` unset | **61** (canonical only) | the CI suite (`scenario-tests.yml`, on push to `main`), fast pre-push check |
+| `pnpm test:agent-tool-calling:full` | `SCENARIOS_FULL=1` | **269** (canonical + registry fanout) | run manually before touching tool descriptions / classifier prompts — **nothing runs this in CI** |
+
+Every scenario runs against **each** model in `AZURE_MODEL_IDS` and passes only when all do, so wall-clock and LLM cost scale with the length of that list — not with the test count alone.
+
+**The registry is the single source of truth, canonical prompts included.** Editing `examplePrompts` reshapes both suites on the next run: reordering the array or rewording `examplePrompts[0]` changes what the *canonical* (CI) suite asserts, and adding/removing later entries changes the fanout. There is no parallel list to maintain and no buffer either way.
+
+Coverage is **51 of 54 default tools** (`clearTracker`, `getTrackerHistory` and `getTrackers` have none). New tools are not auto-covered — add a `describe` block intentionally.
 
 Walk these checks whenever you touch a tool's registry surface:
-- changed a tool's `examplePrompts` → run `pnpm test:agent-tool-calling:full` locally; the new list is now under test in the full suite.
+- changed a tool's `examplePrompts` → run `pnpm test:agent-tool-calling:full` locally; if you touched `examplePrompts[0]`, the canonical/CI assertion changed too.
 - changed a tool's `description` / `classificationPrompt` → run `pnpm test:agent-tool-calling:full` for at least the affected tool and any thematically-adjacent sibling (e.g. tweaking `processData.classificationPrompt` can pull `analyseData`'s prompts off-target).
-- renamed or removed a tool → rename / delete the per-tool scenario file alongside the registry edit; an orphan file calling `getExamplePrompts('<oldName>')` is a type error.
-- added a tool → create the per-tool scenario file as per the checklist above; seed it with one canonical `it()` scenario and the standard `it.skipIf(!FULL_SCENARIOS).each(REGISTRY_PROMPTS)` block.
+- renamed or removed a tool → update the owning file's `getExamplePrompts('<name>')` argument (an orphan call is a type error), and rename or delete the file if it covered only that tool.
+- added a tool → add a `describe` block to the tool's own file or the fitting themed file, with the canonical `it()` + `it.skipIf(!FULL_SCENARIOS).each(rest)` pair above.
 
 ## Keeping docs and the SDK skill in sync (REQUIRED for every public-surface change)
 
@@ -169,6 +192,8 @@ The three surfaces, in the order to walk:
    - `byod.mdx` — BYOD layer ingest and usage.
    - `scope-aware-data-tools.mdx` — `analyseData`/`processData` scope mechanism.
    - `code-generation.mdx` — sandbox runtime, injected identifiers, guardrails, threat model.
+   - `customizing-system-prompt.mdx` — prompt assembly and the four ways to shape it; touch on any `SYSTEM_PROMPT_SECTIONS` change.
+   - `securing-your-agent.mdx` — where the agent runs, proxying the model, what the toolkit does and does not bound; touch on any guardrail or trust-boundary change.
 3. **`documentation/docs-portal/guides/navigation.yml`** — must list any new MDX file under the `Agent Toolkit` items array. A new page that isn't in `navigation.yml` won't appear in the sidebar.
 
 ### What to change for which kind of code change

@@ -2,7 +2,7 @@
  * @module agent-toolkit-tools
  */
 
-import type { CustomGeoJSONLayerSpec } from '@tomtom-org/maps-sdk/map';
+import { type CustomGeoJSONLayerSpec, mapStyleLayerIDs } from '@tomtom-org/maps-sdk/map';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { showByodOnMap, showByodSchema, shownByodSchema } from '../shared';
@@ -46,7 +46,17 @@ const byodLayerSpecSchema = z
             .optional()
             .describe('Optional MapLibre filter expression restricting which features this layer renders.'),
         id: z.string().optional().describe('Stable layer id. Auto-generated when omitted.'),
-        beforeID: z.string().optional().describe('Id of an existing map layer to insert this layer before.'),
+        beforeID: z
+            .string()
+            .optional()
+            .describe(
+                'Style layer id to draw this layer BELOW; omit to draw on top of everything. Any layer ' +
+                    "already on the map is allowed (e.g. another entry's layer), but prefer these base-map " +
+                    `anchors: '${mapStyleLayerIDs.lowestLabel}' for fill/line/heatmap, which keeps every map ` +
+                    `label readable above the data, or '${mapStyleLayerIDs.lowestRoadLine}' when the road ` +
+                    'network should stay drawn over a fill; omit for point layers. An id that is not in the ' +
+                    'current style silently drops the layer.',
+            ),
     })
     .describe('A single MapLibre layer rendering the entry. Pick `type` by geometry; drive `paint` from the profile.');
 

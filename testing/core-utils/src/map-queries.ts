@@ -1,7 +1,7 @@
 import type { Page } from '@playwright/test';
 import type { Position } from 'geojson';
 import type { LayerSpecWithSource } from 'map';
-import type { LayerSpecification, LngLatLike, MapGeoJSONFeature } from 'maplibre-gl';
+import type { AllPaintProperties, LayerSpecification, LngLatLike, MapGeoJSONFeature } from 'maplibre-gl';
 import { tryBeforeTimeout, waitForTimeout } from './async-utils';
 import type { MapWindowLike } from './map-window';
 
@@ -113,13 +113,31 @@ export const isLayerVisible = async (page: Page, layerId: string): Promise<boole
         layerId,
     );
 
+/**
+ * The position of a layer in the style's draw order, counting from the bottom. `-1` when the style
+ * has no such layer.
+ *
+ * @remarks
+ * Two indices compared say which of two layers draws over the other, which is what a test asserting
+ * stacking needs — the absolute number shifts with every layer the basemap adds.
+ */
+export const getLayerIndex = async (page: Page, layerId: string): Promise<number> =>
+    page.evaluate((inputLayerId) => {
+        const map = (globalThis as MapWindowLike).mapLibreMap;
+        if (!map) {
+            throw new Error('globalThis.mapLibreMap is not available.');
+        }
+        return map.getStyle().layers.findIndex((layer) => layer.id === inputLayerId);
+    }, layerId);
+
 // ---------------------------------------------------------------------------
 // Paint
 // ---------------------------------------------------------------------------
 
 export const getPaintProperty = async (page: Page, layerId: string, propertyName: string): Promise<unknown> =>
     page.evaluate(
-        ({ layerID, propertyName: prop }) => (globalThis as MapWindowLike).mapLibreMap?.getPaintProperty(layerID, prop),
+        ({ layerID, propertyName: prop }) =>
+            (globalThis as MapWindowLike).mapLibreMap?.getPaintProperty(layerID, prop as keyof AllPaintProperties),
         { layerID: layerId, propertyName },
     );
 
@@ -173,11 +191,11 @@ export const waitUntilRenderedFeatures = async (
             let currentFeatures: MapGeoJSONFeature[] = [];
             do {
                 await waitForTimeout(500);
-                // After `setStyle`, GeoJSON-source modules defer re-registering their layers by
-                // one animation frame. Querying before the layer is back has MapLibre log a
-                // `console.error` that fails tests asserting on empty `consoleErrors`. Skip the
-                // query until all requested layers exist; the outer `tryBeforeTimeout` still
-                // bounds the wait, so a permanently-missing layer still fails the test.
+                // A module re-registers its layers while the style change is being applied, so a
+                // query issued in between finds no layer, and MapLibre logs a `console.error`
+                // that fails tests asserting on empty `consoleErrors`. Skip the query until all
+                // requested layers exist; the outer `tryBeforeTimeout` still bounds the wait, so
+                // a permanently-missing layer still fails the test.
                 if (!(await allLayersPresent(page, layerIDs))) continue;
                 currentFeatures = await queryRenderedFeatures(page, layerIDs, lngLat);
             } while (currentFeatures.length !== expectNumFeatures);

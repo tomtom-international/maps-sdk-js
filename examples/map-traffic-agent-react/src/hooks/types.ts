@@ -6,9 +6,10 @@ export type AnalyticsState = {
     module: TrafficAreaAnalyticsModule;
 } | null;
 
+// The overlap stack under the click point, plus which one is showing; the panel pages through it.
 export type SelectedIncident = {
-    incident: TrafficIncident;
-    overlapCount: number;
+    incidents: TrafficIncident[];
+    index: number;
 } | null;
 
 // Focus is per-entry. The owning entryId travels with the focus state so

@@ -6,7 +6,7 @@ export const setupAvoidOptions = (onChange: () => Promise<void>, onReset: () => 
     const avoidTypesList = document.getElementById('avoid-types-list') as HTMLDivElement;
     for (const type of avoidableTypes) {
         const label = document.createElement('label');
-        label.className = 'sdk-example-checkbox-label';
+        label.className = 'ui-checkbox-label';
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.value = type;

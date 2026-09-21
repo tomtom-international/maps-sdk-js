@@ -1,5 +1,5 @@
 import { coverageConfigDefaults, defaultExclude, defineConfig } from 'vitest/config';
-import { getSdkVersion } from './vite.config';
+import { getSdkVersion } from './vite.config.ts';
 
 export default defineConfig({
     define: {

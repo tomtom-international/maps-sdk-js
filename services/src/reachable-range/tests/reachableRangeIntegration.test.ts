@@ -35,6 +35,21 @@ describe('Reachable Range integration tests', () => {
         expectBasics(await calculateReachableRange(params), params);
     });
 
+    test('Vehicle weight and max speed are accepted', async () => {
+        // The two vehicle parameters this endpoint supports. Everything else the shared vehicle
+        // builder can produce is rejected by name, so it is not sent -- asserted in
+        // requestBuilder.data.ts, where the whole built request is compared.
+        const params: ReachableRangeParams = {
+            origin,
+            budget: { type: 'timeMinutes', value: 15 },
+            vehicle: {
+                model: { dimensions: { weightKG: 3500 } },
+                restrictions: { maxSpeedKMH: 80 },
+            },
+        };
+        expectBasics(await calculateReachableRange(params), params);
+    });
+
     test('Distance-based reachable range', async () => {
         const params: ReachableRangeParams = { origin, budget: { type: 'distanceKM', value: 5 } };
         expectBasics(await calculateReachableRange(params), params);

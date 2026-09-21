@@ -1,13 +1,15 @@
+import type { TomTomAPIHeaders } from '@tomtom-org/maps-sdk/core';
 import type { ReverseGeocodingParams } from '../types/reverseGeocodingParams';
 
-const reverseGeocodeReqObjectsAndUrls: [string, ReverseGeocodingParams, string][] = [
+const reverseGeocodeReqObjectsAndUrls: [string, ReverseGeocodingParams, string, TomTomAPIHeaders][] = [
     [
         'Reverse geocoding without api key nor version',
         {
             commonBaseURL: 'https://api.tomtom.com',
             position: [1.12345, 23.45678],
         },
-        'https://api.tomtom.com/maps/orbis/places/reverseGeocode/23.45678,1.12345.json?apiVersion=undefined',
+        'https://api.tomtom.com/maps/orbis/places/reverseGeocode?position=1.12345%2C23.45678',
+        { Attributes: 'results(*)' },
     ],
     [
         'Reverse geocoding using custom URL',
@@ -19,56 +21,71 @@ const reverseGeocodeReqObjectsAndUrls: [string, ReverseGeocodingParams, string][
             customServiceBaseURL: 'https://api.tomtom.com/search/10/reverseGeocodeTest',
             language: 'en-US',
             heading: 30,
-            number: '10A',
             radiusMeters: 30,
-            returnRoadUse: true,
-            roadUses: ['LimitedAccess', 'Arterial'],
             view: 'AR',
         },
-        'https://api.tomtom.com/search/10/reverseGeocodeTest/-23.45678,-100.12345.json?apiVersion=2&key=ANOTHER_API_KEY&language=en-US&heading=30&number=10A&radius=30&returnRoadUse=true&roadUse=%5B%22LimitedAccess%22%2C%22Arterial%22%5D',
+        'https://api.tomtom.com/search/10/reverseGeocodeTest?position=-100.12345%2C-23.45678&radiusInMeters=30&vehicleHeadingInDegrees=30&geopoliticalView=AR',
+        {
+            'TomTom-Api-Key': 'ANOTHER_API_KEY',
+            'TomTom-Api-Version': '2',
+            'Accept-Language': 'en-US',
+            Attributes: 'results(*)',
+        },
     ],
     [
         'Reverse geocoding with mandatory Params and an optional param - example 1',
         {
             position: [1.12345, 23.45678],
             apiKey: 'GIVEN_API_KEY',
-            apiVersion: 1,
+            apiVersion: 4,
             commonBaseURL: 'https://api.tomtom.com',
             language: 'en-GB',
         },
-        'https://api.tomtom.com/maps/orbis/places/reverseGeocode/23.45678,1.12345.json?apiVersion=1&key=GIVEN_API_KEY&language=en-GB',
+        'https://api.tomtom.com/maps/orbis/places/reverseGeocode?position=1.12345%2C23.45678',
+        {
+            'TomTom-Api-Key': 'GIVEN_API_KEY',
+            'TomTom-Api-Version': '4',
+            'Accept-Language': 'en-GB',
+            Attributes: 'results(*)',
+        },
     ],
     [
         'Reverse geocoding with mandatory Params and an optional param - example 2',
         {
             apiKey: 'GLOBAL_API_KEY',
-            apiVersion: 1,
+            apiVersion: 4,
             commonBaseURL: 'https://api-test.tomtom.com',
             language: 'es-ES',
             position: [1.12345, 23.45678],
         },
-        'https://api-test.tomtom.com/maps/orbis/places/reverseGeocode/23.45678,1.12345.json?apiVersion=1&key=GLOBAL_API_KEY&language=es-ES',
+        'https://api-test.tomtom.com/maps/orbis/places/reverseGeocode?position=1.12345%2C23.45678',
+        {
+            'TomTom-Api-Key': 'GLOBAL_API_KEY',
+            'TomTom-Api-Version': '4',
+            'Accept-Language': 'es-ES',
+            Attributes: 'results(*)',
+        },
     ],
     [
         'Reverse geocoding with a combination of mandatory & optional params',
         {
             position: [1.12345, 23.45678],
             apiKey: 'GIVEN_API_KEY',
-            apiVersion: 1,
+            apiVersion: 4,
             commonBaseURL: 'https://api.tomtom.com',
             language: 'es-ES',
-            allowFreeformNewline: true,
             geographyType: ['Country', 'Municipality'],
-            mapcodes: ['Local', 'International'],
             heading: 30,
-            number: '10A',
             radiusMeters: 30,
-            returnRoadUse: true,
-            returnSpeedLimit: true,
-            roadUses: ['LimitedAccess', 'Arterial'],
             view: 'AR',
         },
-        'https://api.tomtom.com/maps/orbis/places/reverseGeocode/23.45678,1.12345.json?apiVersion=1&key=GIVEN_API_KEY&language=es-ES&allowFreeformNewline=true&entityType=Country%2CMunicipality&heading=30&mapcodes=Local%2CInternational&number=10A&radius=30&returnSpeedLimit=true&returnRoadUse=true&roadUse=%5B%22LimitedAccess%22%2C%22Arterial%22%5D',
+        'https://api.tomtom.com/maps/orbis/places/reverseGeocode?position=1.12345%2C23.45678&radiusInMeters=30&areaTypes=country%2Cmunicipality&vehicleHeadingInDegrees=30&geopoliticalView=AR',
+        {
+            'TomTom-Api-Key': 'GIVEN_API_KEY',
+            'TomTom-Api-Version': '4',
+            'Accept-Language': 'es-ES',
+            Attributes: 'results(*)',
+        },
     ],
 ];
 

@@ -2,6 +2,7 @@
  * @module agent-toolkit-tools/maplibre
  */
 
+import type { AllPaintProperties } from 'maplibre-gl';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
@@ -51,7 +52,12 @@ export const executeSetPaintProperties = async (params: z.infer<typeof setPaintP
     try {
         const results = changes.map(({ layerId, propertyName, value }) => {
             try {
-                state.baseMap.mapLibreMap.setPaintProperty(layerId, propertyName, value);
+                const paintProperty = propertyName as keyof AllPaintProperties;
+                state.baseMap.mapLibreMap.setPaintProperty(
+                    layerId,
+                    paintProperty,
+                    value as AllPaintProperties[typeof paintProperty],
+                );
                 return { layerId, propertyName, value, success: true as const };
             } catch (error) {
                 return {

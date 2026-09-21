@@ -1,112 +1,98 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
     <head>
         <title>EV Charging Stations Custom Display</title>
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
         <link rel="icon" href="data:,">
     </head>
-    <body class="sdk-example-body">
+    <body class="ui-body">
         <div id="sdk-map"></div>
 
         <!-- Search Panel -->
-        <div class="sdk-example-searchPanel">
-            <input
-                id="sdk-example-evBrandTextBox"
-                class="sdk-example-input"
-                type="text"
-                placeholder="EV brand (Shell, BP, ...)"
-            >
-            <button id="sdk-example-searchButton" class="sdk-example-button">Search</button>
-            <button id="sdk-example-clearButton" class="sdk-example-button sdk-example-button-secondary">Clear</button>
+        <div class="ui-searchPanel">
+            <input id="ui-evBrandTextBox" class="ui-input" type="text" placeholder="EV brand (Shell, BP, ...)">
+            <button id="ui-searchButton" class="ui-button">Search</button>
+            <button id="ui-clearButton" class="ui-button ui-button-secondary">Clear</button>
         </div>
 
         <!-- Customization Panel -->
-        <div class="sdk-example-customPanel">
-            <div class="sdk-example-panel-header">
-                <h3 class="sdk-example-heading">
-                    <span class="sdk-example-heading-text">EV Display Customization</span>
-                    <button class="sdk-example-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
-                        <svg class="sdk-example-heading-chevron" viewBox="0 0 16 10">
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">EV Display Customization</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
                             <path d="M3 1.5L8 6.5L13 1.5" />
                         </svg>
                     </button>
                 </h3>
             </div>
 
-            <div class="sdk-example-panel-content">
+            <div class="ui-panel-content">
                 <!-- Map Style Selector -->
-                <div class="sdk-example-section">
-                    <label class="sdk-example-form-label" for="sdk-example-mapStyles">Map Style:</label>
-                    <select id="sdk-example-mapStyles" class="sdk-example-dropdown"></select>
+                <div class="ui-section">
+                    <label class="ui-form-label" for="ui-mapStyles">Map Style:</label>
+                    <select id="ui-mapStyles" class="ui-dropdown"></select>
                 </div>
 
                 <!-- Background Stations Section -->
-                <div class="sdk-example-section">
-                    <h4 class="sdk-example-subheading">Background Stations</h4>
-                    <label class="sdk-example-checkbox-label">
-                        <input type="checkbox" id="sdk-example-bgAvailabilityToggle">
+                <div class="ui-section">
+                    <h4 class="ui-subheading">Background Stations</h4>
+                    <label class="ui-checkbox-label">
+                        <input type="checkbox" id="ui-bgAvailabilityToggle">
                         Show Availability
                     </label>
-                    <label class="sdk-example-checkbox-label">
-                        <input type="checkbox" id="sdk-example-bgCustomIconToggle">
+                    <label class="ui-checkbox-label">
+                        <input type="checkbox" id="ui-bgCustomIconToggle">
                         Use Custom Icon
                     </label>
                 </div>
 
                 <!-- Searched Stations Section -->
-                <div class="sdk-example-section">
-                    <h4 class="sdk-example-subheading">Searched Stations</h4>
-                    <label class="sdk-example-checkbox-label">
-                        <input type="checkbox" id="sdk-example-searchAvailabilityToggle" checked>
+                <div class="ui-section">
+                    <h4 class="ui-subheading">Searched Stations</h4>
+                    <label class="ui-checkbox-label">
+                        <input type="checkbox" id="ui-searchAvailabilityToggle" checked>
                         Show Availability
                     </label>
-                    <label class="sdk-example-checkbox-label">
-                        <input type="checkbox" id="sdk-example-searchCustomIconToggle" checked>
+                    <label class="ui-checkbox-label">
+                        <input type="checkbox" id="ui-searchCustomIconToggle" checked>
                         Use Custom Icon
                     </label>
                 </div>
 
                 <!-- Availability Display Section -->
-                <div class="sdk-example-section">
-                    <h4 class="sdk-example-subheading">Availability Display</h4>
+                <div class="ui-section">
+                    <h4 class="ui-subheading">Availability Display</h4>
 
-                    <div class="sdk-example-form-field">
-                        <label class="sdk-example-form-label" for="sdk-example-availabilityFormat">Format:</label>
-                        <select id="sdk-example-availabilityFormat" class="sdk-example-dropdown">
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="ui-availabilityFormat">Format:</label>
+                        <select id="ui-availabilityFormat" class="ui-dropdown">
                             <option value="slash" selected>3/10</option>
                             <option value="of">3 of 10</option>
                             <option value="available">3 available</option>
                         </select>
                     </div>
 
-                    <div class="sdk-example-form-field">
-                        <label class="sdk-example-form-label" for="sdk-example-threshold"
-                            >Availability Threshold (&gt;=):</label
-                        >
-                        <div class="sdk-example-slider-container">
-                            <input
-                                type="range"
-                                id="sdk-example-threshold"
-                                min="0"
-                                max="100"
-                                value="0"
-                                class="sdk-example-slider"
-                            >
-                            <span id="sdk-example-thresholdValue" class="sdk-example-slider-value">0%</span>
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="ui-threshold">Availability Threshold (&gt;=):</label>
+                        <div class="ui-slider-container">
+                            <input type="range" id="ui-threshold" min="0" max="100" value="0" class="ui-slider">
+                            <span id="ui-thresholdValue" class="ui-slider-value">0%</span>
                         </div>
                     </div>
 
-                    <div class="sdk-example-color-preview">
-                        <div class="sdk-example-color-box">
+                    <div class="ui-color-preview">
+                        <div class="ui-color-box">
                             <div
-                                class="sdk-example-color-indicator"
+                                class="ui-color-indicator"
                                 style="background: #00A65E; width: 20px; height: 20px; border-radius: 0;"
                             ></div>
                             <span>Available (green)</span>
                         </div>
-                        <div class="sdk-example-color-box">
+                        <div class="ui-color-box">
                             <div
-                                class="sdk-example-color-indicator"
+                                class="ui-color-indicator"
                                 style="background: #df1b12; width: 20px; height: 20px; border-radius: 0;"
                             ></div>
                             <span>Occupied (red)</span>
@@ -115,57 +101,57 @@
                 </div>
 
                 <!-- Text Style Section -->
-                <div class="sdk-example-section">
-                    <h4 class="sdk-example-subheading">Text Style</h4>
+                <div class="ui-section">
+                    <h4 class="ui-subheading">Text Style</h4>
 
-                    <div class="sdk-example-form-field">
-                        <label class="sdk-example-form-label" for="sdk-example-textColorPicker">Text Color:</label>
-                        <span class="sdk-example-color-swatch">
-                            <input type="color" id="sdk-example-textColorPicker" value="#FFFFFF">
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="ui-textColorPicker">Text Color:</label>
+                        <span class="ui-color-swatch">
+                            <input type="color" id="ui-textColorPicker" value="#FFFFFF">
                         </span>
                     </div>
 
-                    <div class="sdk-example-form-field">
-                        <label class="sdk-example-form-label" for="sdk-example-haloColorPicker">Halo Color:</label>
-                        <span class="sdk-example-color-swatch">
-                            <input type="color" id="sdk-example-haloColorPicker" value="#000000">
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="ui-haloColorPicker">Halo Color:</label>
+                        <span class="ui-color-swatch">
+                            <input type="color" id="ui-haloColorPicker" value="#000000">
                         </span>
                     </div>
 
-                    <div class="sdk-example-form-field">
-                        <label class="sdk-example-form-label" for="sdk-example-haloWidth">Halo Width:</label>
-                        <div class="sdk-example-slider-container">
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="ui-haloWidth">Halo Width:</label>
+                        <div class="ui-slider-container">
                             <input
                                 type="range"
-                                id="sdk-example-haloWidth"
+                                id="ui-haloWidth"
                                 min="0"
                                 max="5"
                                 value="1"
                                 step="0.5"
-                                class="sdk-example-slider"
+                                class="ui-slider"
                             >
-                            <span id="sdk-example-haloWidthValue" class="sdk-example-slider-value">1px</span>
+                            <span id="ui-haloWidthValue" class="ui-slider-value">1px</span>
                         </div>
                     </div>
 
-                    <div class="sdk-example-form-field">
-                        <label class="sdk-example-form-label" for="sdk-example-textOffset">Text Offset:</label>
-                        <div class="sdk-example-slider-container">
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="ui-textOffset">Text Offset:</label>
+                        <div class="ui-slider-container">
                             <input
                                 type="range"
-                                id="sdk-example-textOffset"
+                                id="ui-textOffset"
                                 min="0"
                                 max="6"
                                 value="0"
                                 step="0.1"
-                                class="sdk-example-slider"
+                                class="ui-slider"
                             >
-                            <span id="sdk-example-textOffsetValue" class="sdk-example-slider-value">0 em</span>
+                            <span id="ui-textOffsetValue" class="ui-slider-value">0 em</span>
                         </div>
                     </div>
 
-                    <label class="sdk-example-checkbox-label">
-                        <input type="checkbox" id="sdk-example-useCustomOffset">
+                    <label class="ui-checkbox-label">
+                        <input type="checkbox" id="ui-useCustomOffset">
                         Override Auto Offset
                     </label>
                 </div>

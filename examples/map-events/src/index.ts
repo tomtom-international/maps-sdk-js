@@ -27,7 +27,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         closeOnClick: true,
         closeOnMove: true,
         offset: 15,
-        className: 'sdk-example-popup',
+        className: 'ui-popup',
     });
     let isMarkerVisible = false;
     const revGeocodingMarker = new Marker({ color: '#df1b12' });
@@ -67,7 +67,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
             closeOnClick: true,
             closeOnMove: true,
             offset: 15,
-            className: 'sdk-example-popup',
+            className: 'ui-popup',
         })
             .setHTML(
                 `
@@ -76,8 +76,8 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
             <b id="place-address"> Address: </b> ${address.freeformAddress}
             <br />
             ${poi?.phone ? `<b> Phone: </b> ${poi?.phone}` : ''}
-            <div id="sdk-example-popup-tags">
-            ${poi?.localizedCategories?.map((category) => `<span class="sdk-example-popup-tags-item">${category}</span>`)}
+            <div id="ui-popup-tags">
+            ${poi?.localizedCategories?.map((category) => `<span class="ui-popup-tags-item">${category}</span>`)}
             </div>
             </div> 
             `,
@@ -88,7 +88,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     };
 
     const initPlacesModule = async () => {
-        const placesModule = await PlacesModule.get(map);
+        const placesModule = await PlacesModule.create(map);
 
         const places = await search({
             query: 'pharmacy',
@@ -97,7 +97,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         });
 
         placesModule.show(places);
-        placesModule.events.on('click', showPlacesPopUp);
+        placesModule.events.places.on('click', showPlacesPopUp);
     };
 
     const showBasemapPopup = async (_: any, lnglat: LngLat) => {
@@ -110,17 +110,17 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
                 closeOnClick: true,
                 closeOnMove: true,
                 offset: 6,
-                className: 'sdk-example-popup-basemap',
+                className: 'ui-popup-basemap',
             })
                 .setHTML(
                     `
-                <div id="sdk-example-popup-basemap">
+                <div id="ui-popup-basemap">
                 ${
                     properties.address.freeformAddress
-                        ? ` <h4 id="sdk-example-popup-basemap-address">${properties.address.freeformAddress}</h4> <hr class="sdk-example-hr" />`
+                        ? ` <h4 id="ui-popup-basemap-address">${properties.address.freeformAddress}</h4> <hr class="ui-hr" />`
                         : ''
                 }
-                    <div id="sdk-example-popup-lnglat">
+                    <div id="ui-popup-lnglat">
                         <span> ${lnglat.lng.toFixed(5)}, ${lnglat.lat.toFixed(5)}</span>
                     </div>
                 </div> 

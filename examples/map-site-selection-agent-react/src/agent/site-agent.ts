@@ -6,8 +6,10 @@ import {
     SYSTEM_PROMPT_SECTIONS,
     type SystemPromptSectionOverrides,
     type ToolEntry,
+    type ToolEntryBuilder,
 } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import type { LanguageModel } from 'ai';
+import { setExperimentalSearch } from '../demographics/experimental-search';
 import { clarifyIntent } from '../tools/clarify-intent';
 import { compareCatchments } from '../tools/compare-catchments';
 import { findWhitespace } from '../tools/find-whitespace';
@@ -155,6 +157,10 @@ const SITE_TOOLS_GUIDANCE =
     'BRING-YOUR-OWN-DATA — load a layer with addByodSource (URL), read the profile it returns, then style ' +
     "with setByodLayers; to ANALYSE the user's data, pass its entry id into an analysis " +
     '(candidatesByodEntryId / demandByodEntryId / existingByodEntryId), not by eyeballing the map. ' +
+    'ALWAYS style a BYOD layer in the brand colour #EE6748 — a translucent fill (fill-opacity ~0.3–0.5) ' +
+    'with #EE6748 for fill-color and fill-outline-color / line-color / circle-color as the geometry needs. ' +
+    'Use this SAME colour every time; never pick a random or different colour per run, UNLESS the user ' +
+    'explicitly asks to colour the layer by a data field. ' +
     'PREFERENCES — call updateSitePreferences ONLY for a STANDING default the user wants to persist ' +
     '("from now on…", "always…", "by default…"). A value scoped to the current request ("…within a 10-min ' +
     'drive" for THIS scan) is NOT a preference — pass it as that analysis tool\'s argument instead. ' +
@@ -188,7 +194,9 @@ export const SITE_AGENT_MAX_STEPS = 10;
 // cover (they search internally but draw no free-standing pins); the isochrone primitive
 // findReachableAreas overlaps the domain tools' reach internals, so it (and out-of-scope routing/
 // traffic) stays out.
-export const buildSiteTools = (): Record<string, ToolEntry> => ({
+// The four household-aware domain tools are BUILDERS: setupTools invokes them with the agent's
+// featureFlags so their model-facing schema/description match the experimentalSearch switch.
+export const buildSiteTools = (): Record<string, ToolEntry | ToolEntryBuilder> => ({
     profileSite,
     rankSites,
     findWhitespace,
@@ -237,21 +245,46 @@ export const buildSiteTools = (): Record<string, ToolEntry> => ({
     calculateBBox: builtin.calculateBBox,
 });
 
+/** The example's own feature switches, decided by whoever creates the agent. */
+export type SiteAgentFlags = {
+    /**
+     * Route search through the experimental backend (10 000-result cap instead of 100) and enable
+     * every household ("Reach" / residential-density) surface — the Reach ranking factor, the
+     * whitespace householdDemand blend, and the household rows in panels/report/methodology. Off by
+     * default: the households concept is then hidden everywhere. Forwarded to createMapAgent as
+     * `featureFlags: { experimentalSearch }` so the toolkit's built-in tools follow the same switch.
+     */
+    experimentalSearch?: boolean;
+};
+
 /**
  * Builds the full {@link MapAgentOptions} for the Site Selection agent from a bare model. The React
  * bootstrap layers `onClassify` on top; the scenario tests override `tools` with mocked executes.
  * Everything else (the scoped system prompt, the meta-tool-preserving classifier, the hand-picked tool
  * set, maxSteps) is shared so the tested agent matches the shipped one.
  */
-export const buildSiteAgentOptions = (model: LanguageModel): MapAgentOptions<SiteToolState> => ({
-    model,
-    maxSteps: SITE_AGENT_MAX_STEPS,
-    systemPrompt: siteSystemPromptSections,
-    systemPromptSuffix: buildSiteSystemPromptSuffix(),
-    classifier: keepGenericToolsActive(createDefaultClassifier({ model })),
-    includeDefaultTools: false,
-    tools: buildSiteTools(),
-    // Session-preferences slice (catchment size, scoring weights, demand anchors) — runtime-mutable
-    // defaults the domain tools and the sandbox read instead of hardcoding thresholds.
-    state: { siteSelection: new SiteSelectionState() },
-});
+export const buildSiteAgentOptions = (
+    model: LanguageModel,
+    { experimentalSearch = false }: SiteAgentFlags = {},
+): MapAgentOptions<SiteToolState> => {
+    // Store the flag BEFORE assembling the options: the system-prompt suffix (methodology) is built
+    // below, and tool executors / panels / the report read the stored value at runtime, while the
+    // ToolEntryBuilders in buildSiteTools receive the same value via featureFlags at createMapAgent
+    // time — one switch, no way to disagree.
+    setExperimentalSearch(experimentalSearch);
+    return {
+        model,
+        maxSteps: SITE_AGENT_MAX_STEPS,
+        systemPrompt: siteSystemPromptSections,
+        systemPromptSuffix: buildSiteSystemPromptSuffix(),
+        classifier: keepGenericToolsActive(createDefaultClassifier({ model })),
+        featureFlags: { experimentalSearch },
+        includeDefaultTools: false,
+        // The cast mirrors the `builtin` one above: builders are legal tool values (setupTools
+        // resolves them), the options type just doesn't say so.
+        tools: buildSiteTools() as Record<string, ToolEntry>,
+        // Session-preferences slice (catchment size, scoring weights, demand anchors) — runtime-mutable
+        // defaults the domain tools and the sandbox read instead of hardcoding thresholds.
+        state: { siteSelection: new SiteSelectionState() },
+    };
+};

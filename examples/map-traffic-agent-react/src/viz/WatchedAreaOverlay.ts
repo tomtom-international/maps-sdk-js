@@ -4,7 +4,7 @@ import { Marker } from 'maplibre-gl';
 import { playbook } from '../ui/lib/playbook-tokens';
 
 /**
- * The watched-area highlight: a green rounded box around each shown incident area's fetched bbox, with a
+ * The watched-area highlight: a green rounded outline around each shown incident area's fetched bbox, with a
  * "Live · <label>" pill pinned to its top-left corner. Mirrors {@link HeatmapOverlay}/`ClustersOverlay` —
  * an example-side viz overlay over the map, kept in sync from `useWatchedAreaOverlay`. The agent-toolkit
  * state layer intentionally owns no presentation: this brand visual (color, font, copy) lives here.
@@ -14,16 +14,18 @@ import { playbook } from '../ui/lib/playbook-tokens';
  */
 export type WatchedArea = { id: string; bbox: BBox; label: string };
 
-// Brand success-green — mirrors the `--pb-color-success` token. Hard-coded as a hex because MapLibre
+// Brand success-green — mirrors the `--ui-surface-success` token. Hard-coded as a hex because MapLibre
 // paint properties can't resolve CSS custom properties; the DOM pill below uses the token directly.
 const AREA_COLOR = '#00A65E';
 
-// Solid outline over a faint green fill, below the map's labels (and so below the incident markers).
+// Boundary only — `theme: 'outline'` makes the fill fully transparent, so just the green ring shows
+// (no tinted area). The explicit `line` fields override the outline theme's default border so the
+// green 2px solid outline is preserved. Sits below the map's labels (and so below the incident markers).
 // TODO: once the GeometriesModule `lineDashArray` option ships (PR #1916), add `lineDashArray: [2, 2]`
 // here for the Figma dashed treatment.
 const AREA_CONFIG: GeometriesModuleConfig = {
     beforeLayerConfig: 'lowestLabel',
-    fill: { color: AREA_COLOR, opacity: 0.1 },
+    theme: 'outline',
     line: { color: AREA_COLOR, width: 2, opacity: 1 },
 };
 
@@ -92,7 +94,7 @@ export class WatchedAreaOverlay {
         const drawable = areas.filter((a) => hasArea(a.bbox));
 
         // Lazy-init the box module on first use; GeometriesModule.get is async, so re-check `removed`.
-        this.module ??= await GeometriesModule.get(this.ttMap, AREA_CONFIG);
+        this.module ??= await GeometriesModule.create(this.ttMap, AREA_CONFIG);
         if (this.removed) return;
         await this.module.show({
             type: 'FeatureCollection',

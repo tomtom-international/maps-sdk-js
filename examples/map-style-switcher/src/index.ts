@@ -14,7 +14,7 @@ const map = new TomTomMap({
     },
 });
 
-const stylesSelector = document.querySelector('#sdk-example-mapStyles') as HTMLSelectElement;
+const stylesSelector = document.querySelector('#ui-mapStyles') as HTMLSelectElement;
 standardStyleIDs.forEach((id) => stylesSelector.add(new Option(id)));
 stylesSelector.addEventListener('change', (event) =>
     map.setStyle((event.target as HTMLOptionElement).value as StandardStyleID),

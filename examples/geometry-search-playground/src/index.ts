@@ -18,12 +18,14 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         },
         language: 'en-GB',
     });
-    const placesModule = await PlacesModule.get(map);
-    const geometryModule = await GeometriesModule.get(map, { theme: 'inverted' });
+    const placesModule = await PlacesModule.create(map);
+    const geometryModule = await GeometriesModule.create(map, { theme: 'inverted' });
 
     let placeToSearchBBox: LngLatBoundsLike;
 
     const searchPlacesInGeometry = async (placesQuery: string, geometryQuery: string) => {
+        if (!placesQuery || !geometryQuery) return;
+
         const placeToSearchInside = await geocodeOne(geometryQuery);
         // (bounding box is also available directly in placeToSearchInside.bbox)
         placeToSearchBBox = bboxFromGeoJSON(placeToSearchInside) as LngLatBoundsLike;
@@ -48,19 +50,21 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         geometryModule.clear();
     };
 
-    const searchTextBox = document.querySelector('#sdk-example-searchTextBox') as HTMLInputElement;
-    const inTextBox = document.querySelector('#sdk-example-inTextBox') as HTMLInputElement;
-    const searchButton = document.querySelector('#sdk-example-searchButton') as HTMLButtonElement;
+    const searchTextBox = document.querySelector('#ui-searchTextBox') as HTMLInputElement;
+    const inTextBox = document.querySelector('#ui-inTextBox') as HTMLInputElement;
+    const searchButton = document.querySelector('#ui-searchButton') as HTMLButtonElement;
 
     const listenToUserEvents = () => {
-        searchButton.addEventListener('click', () => searchPlacesInGeometry(searchTextBox.value, inTextBox.value));
+        searchButton.addEventListener('click', () =>
+            searchPlacesInGeometry(searchTextBox.value.trim(), inTextBox.value.trim()),
+        );
         searchTextBox.addEventListener('keypress', (event) => event.key === 'Enter' && searchButton.click());
         inTextBox.addEventListener('keypress', (event) => event.key === 'Enter' && searchButton.click());
 
-        (document.querySelector('#sdk-example-clearButton') as HTMLButtonElement).addEventListener('click', clear);
+        (document.querySelector('#ui-clearButton') as HTMLButtonElement).addEventListener('click', clear);
 
         document
-            .querySelector('#sdk-example-reCenter')
+            .querySelector('#ui-reCenter')
             ?.addEventListener('click', () => map.mapLibreMap.fitBounds(placeToSearchBBox, fitBoundsOptions));
     };
 

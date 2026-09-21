@@ -40,7 +40,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         .querySelectorAll('input[name="roadCategory"]')
         .forEach((checkbox) => checkbox.addEventListener('change', applyFilter));
 
-    document.getElementById('sdk-example-clearFilter')?.addEventListener('click', () => {
+    document.getElementById('ui-clearFilter')?.addEventListener('click', () => {
         document
             .querySelectorAll<HTMLInputElement>('input[name="roadCategory"]')
             .forEach((checkbox) => (checkbox.checked = true));

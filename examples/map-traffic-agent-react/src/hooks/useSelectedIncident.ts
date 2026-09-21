@@ -24,7 +24,12 @@ export function useSelectedIncident(agent: AgentInstance | undefined) {
             if (moduleUnsubs.has(entryId)) return;
             const overlay = await agent.state.trafficIncidents.getEntryModule(entryId);
             const onClick: UserEventHandler<TrafficIncident> = (incident, _lngLat, all) => {
-                setSelectedIncident({ incident, overlapCount: all.length });
+                const stack = all.length > 0 ? all : [incident];
+                const index = Math.max(
+                    0,
+                    stack.findIndex((f) => f.properties.id === incident.properties.id),
+                );
+                setSelectedIncident({ incidents: stack, index });
             };
             const unsub = overlay.events.on('click', onClick);
             moduleUnsubs.set(entryId, unsub);
@@ -41,11 +46,12 @@ export function useSelectedIncident(agent: AgentInstance | undefined) {
                 for (const id of [...moduleUnsubs.keys()]) {
                     if (!shown.has(id)) unwireEntry(id);
                 }
-                // Drop the panel when the entry holding the selected incident is no longer shown.
+                // Drop the panel when the entry holding the shown incident is no longer shown.
                 setSelectedIncident((current) => {
                     if (!current) return null;
+                    const shownId = current.incidents[current.index]?.properties.id;
                     const owning = agent.state.trafficIncidents.entries.find((e) =>
-                        e.data.some((f) => f.properties.id === current.incident.properties.id),
+                        e.data.some((f) => f.properties.id === shownId),
                     );
                     return owning && shown.has(owning.id) ? current : null;
                 });
@@ -57,14 +63,21 @@ export function useSelectedIncident(agent: AgentInstance | undefined) {
 
         sliceUnsubs.push(
             agent.state.trafficIncidents.events.on('entries-change', ({ entries }) => {
-                const latest = entries.length > 0 ? entries[entries.length - 1] : undefined;
+                const allData = entries.flatMap((e) => e.data);
                 setSelectedIncident((current) => {
                     if (!current) return null;
-                    if (!latest) return null;
-                    // If the API id has rolled (split/merge), the underlying
-                    // handle no longer exists — close the panel.
-                    const refreshed = latest.data.find((f) => f.properties.id === current.incident.properties.id);
-                    return refreshed ? { incident: refreshed, overlapCount: current.overlapCount } : null;
+                    // Re-bind each stacked incident to its freshest version, dropping any whose API id
+                    // rolled (split/merge); close if none survive, else keep the shown one in view.
+                    const shownId = current.incidents[current.index]?.properties.id;
+                    const refreshed = current.incidents
+                        .map((inc) => allData.find((f) => f.properties.id === inc.properties.id))
+                        .filter((f): f is TrafficIncident => f !== undefined);
+                    if (refreshed.length === 0) return null;
+                    const index = Math.max(
+                        0,
+                        refreshed.findIndex((f) => f.properties.id === shownId),
+                    );
+                    return { incidents: refreshed, index };
                 });
             }),
         );
@@ -82,14 +95,23 @@ export function useSelectedIncident(agent: AgentInstance | undefined) {
         const entry = agent.state.trafficIncidents.findEntryWithIncident(id);
         const incident = entry?.data.find((f) => f.properties.id === id);
         if (!incident) return;
-        // Panel-driven selection has no map-stack context, so overlapCount is 1
-        // (the panel only renders the overlap row when count > 1).
-        setSelectedIncident({ incident, overlapCount: 1 });
+        // Panel-driven selection has no map-stack context, so it's a single-item stack.
+        setSelectedIncident({ incidents: [incident], index: 0 });
     };
+
+    // Page through the overlap stack (footer prev/next), clamped to its bounds.
+    const pageIncident = (delta: number) =>
+        setSelectedIncident((current) => {
+            if (!current) return current;
+            const index = current.index + delta;
+            if (index < 0 || index >= current.incidents.length) return current;
+            return { ...current, index };
+        });
 
     return {
         selectedIncident,
         selectIncident,
+        pageIncident,
         clearSelectedIncident: () => setSelectedIncident(null),
     };
 }

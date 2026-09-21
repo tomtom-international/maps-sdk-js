@@ -6,7 +6,7 @@ const mockTrafficMap = { mapLibreMap: { getSource: () => undefined, getLayer: ()
 
 // Analyses no longer live on the slice — they sit in the session-level `state.analyses` registry and
 // replay via the tools-layer standing sweep. Those behaviours are covered in
-// `tools/state/tests/deterministic-analyses.test.ts` (the full createToolState + sweep path).
+// `tools/state/tests/standing-analyses.test.ts` (the full createToolState + sweep path).
 
 describe('TrafficIncidentsState', () => {
     it('starts with empty entries and multiple mode', async () => {

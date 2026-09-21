@@ -11,7 +11,7 @@ export const trafficIncidentDetailsRequestSchema = commonServiceRequestSchema
         bbox: hasBBoxSchema.optional(),
         ids: z.array(z.string()).optional(),
         trafficModelId: z.string().optional(),
-        categoryFilter: z.array(z.enum([...trafficIncidentRequestCategories])).optional(),
+        categoryFilter: z.array(z.enum(trafficIncidentRequestCategories)).optional(),
         timeValidityFilter: z.array(z.enum(['present', 'future'])).optional(),
     })
     .refine((data) => !(data.bbox && data.ids), {

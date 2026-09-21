@@ -4,7 +4,7 @@ import type { CalculateRoutePOSTDataAPI } from '../types/apiRequestTypes';
 import type { CalculateRouteParams } from '../types/calculateRouteParams';
 
 const BASE_URL = 'https://api.tomtom.com';
-const V3_URL = new URL(`${BASE_URL}/maps/orbis/routing/routes/calculate`);
+const CALCULATE_ROUTE_URL = new URL(`${BASE_URL}/maps/orbis/routing/routes/calculate`);
 
 const defaultHeaders = (attributes: string) => ({
     'TomTom-Api-Key': 'GLOBAL_API_KEY',
@@ -26,7 +26,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         },
         {
             method: 'POST',
-            url: V3_URL,
+            url: CALCULATE_ROUTE_URL,
             data: {
                 routePlanningLocations: {
                     origin: { type: 'Point', coordinates: [4.89066, 52.37317] },
@@ -34,7 +34,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 },
             },
             headers: defaultHeaders(
-                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.roadShields,sections.importantRoadStretch,progressPoints)',
+                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch,progressPoints)',
             ),
         },
     ],
@@ -52,7 +52,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         },
         {
             method: 'POST',
-            url: V3_URL,
+            url: CALCULATE_ROUTE_URL,
             data: {
                 routePlanningLocations: {
                     origin: { type: 'Point', coordinates: [4.89066, 52.37317] },
@@ -61,7 +61,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 },
             },
             headers: defaultHeaders(
-                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.roadShields,sections.importantRoadStretch,progressPoints)',
+                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch,progressPoints)',
             ),
         },
     ],
@@ -79,7 +79,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         },
         {
             method: 'POST',
-            url: V3_URL,
+            url: CALCULATE_ROUTE_URL,
             data: {
                 routePlanningLocations: {
                     origin: { type: 'Point', coordinates: [4.89066, 52.37317] },
@@ -89,7 +89,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 traffic: 'live',
             },
             headers: defaultHeaders(
-                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.roadShields,sections.importantRoadStretch,progressPoints)',
+                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch,progressPoints)',
             ),
         },
     ],
@@ -107,7 +107,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         },
         {
             method: 'POST',
-            url: V3_URL,
+            url: CALCULATE_ROUTE_URL,
             data: {
                 routePlanningLocations: {
                     origin: { type: 'Point', coordinates: [4.89066, 52.37317] },
@@ -116,7 +116,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 avoids: ['tollRoads', 'motorways'],
             },
             headers: defaultHeaders(
-                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.roadShields,sections.importantRoadStretch,progressPoints)',
+                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch,progressPoints)',
             ),
         },
     ],
@@ -134,7 +134,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         },
         {
             method: 'POST',
-            url: V3_URL,
+            url: CALCULATE_ROUTE_URL,
             data: {
                 routePlanningLocations: {
                     origin: { type: 'Point', coordinates: [4.89066, 52.37317] },
@@ -143,7 +143,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 maxPathAlternativeRoutes: 2,
             },
             headers: defaultHeaders(
-                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.roadShields,sections.importantRoadStretch,progressPoints)',
+                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch,progressPoints)',
             ),
         },
     ],
@@ -161,7 +161,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         },
         {
             method: 'POST',
-            url: V3_URL,
+            url: CALCULATE_ROUTE_URL,
             data: {
                 routePlanningLocations: {
                     origin: { type: 'Point', coordinates: [4.89066, 52.37317] },
@@ -171,7 +171,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 instructionPhonetics: 'ipa',
             },
             headers: defaultHeaders(
-                'roadShieldAtlasReference,routes(summary,legs(summary,path),sections,sections.tollVignette,sections.roadShields,sections.importantRoadStretch,sections.lanes,progressPoints,instructions(*,nextRoadInformation.roadShields.iconReference,previousRoadInformation.roadShields.iconReference,signpost.exitIconReference,distanceToPreviousTrafficLightInMeters))',
+                'roadShieldAtlasReference,routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch,sections.lanes,progressPoints,instructions(*,nextRoadInformation.roadShields.iconReference,previousRoadInformation.roadShields.iconReference,signpost.exitIconReference,distanceToPreviousTrafficLightInMeters))',
             ),
         },
     ],
@@ -189,7 +189,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         },
         {
             method: 'POST',
-            url: V3_URL,
+            url: CALCULATE_ROUTE_URL,
             data: {
                 routePlanningLocations: {
                     origin: { type: 'Point', coordinates: [4.89066, 52.37317] },
@@ -198,7 +198,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 departureDateTime: '2025-10-25T09:30:00.000Z',
             },
             headers: defaultHeaders(
-                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.roadShields,sections.importantRoadStretch,progressPoints)',
+                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch,progressPoints)',
             ),
         },
     ],
@@ -216,7 +216,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         },
         {
             method: 'POST',
-            url: V3_URL,
+            url: CALCULATE_ROUTE_URL,
             data: {
                 routePlanningLocations: {
                     origin: { type: 'Point', coordinates: [4.89066, 52.37317] },
@@ -225,7 +225,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 arrivalDateTime: '2025-10-25T14:00:00.000Z',
             },
             headers: defaultHeaders(
-                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.roadShields,sections.importantRoadStretch,progressPoints)',
+                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch,progressPoints)',
             ),
         },
     ],
@@ -245,7 +245,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         },
         {
             method: 'POST',
-            url: V3_URL,
+            url: CALCULATE_ROUTE_URL,
             data: {
                 routePlanningLocations: {
                     origin: { type: 'Point', coordinates: [4.89066, 52.37317] },
@@ -256,7 +256,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 },
             },
             headers: defaultHeaders(
-                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.roadShields,sections.importantRoadStretch,progressPoints)',
+                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch,progressPoints)',
             ),
         },
     ],
@@ -274,7 +274,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         },
         {
             method: 'POST',
-            url: V3_URL,
+            url: CALCULATE_ROUTE_URL,
             data: {
                 routePlanningLocations: {
                     origin: { type: 'Point', coordinates: [4.89066, 52.37317] },
@@ -282,7 +282,33 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 },
             },
             headers: defaultHeaders(
-                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.roadShields,sections.importantRoadStretch,progressPoints)',
+                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch,progressPoints)',
+            ),
+        },
+    ],
+    [
+        'Route with empty extendedRouteRepresentations omits progressPoints from Attributes header',
+        {
+            apiKey: 'GLOBAL_API_KEY',
+            apiVersion: 3,
+            commonBaseURL: BASE_URL,
+            locations: [
+                [4.89066, 52.37317],
+                [4.49015, 52.16109],
+            ],
+            extendedRouteRepresentations: [],
+        },
+        {
+            method: 'POST',
+            url: CALCULATE_ROUTE_URL,
+            data: {
+                routePlanningLocations: {
+                    origin: { type: 'Point', coordinates: [4.89066, 52.37317] },
+                    destination: { type: 'Point', coordinates: [4.49015, 52.16109] },
+                },
+            },
+            headers: defaultHeaders(
+                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch)',
             ),
         },
     ],
@@ -300,7 +326,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         },
         {
             method: 'POST',
-            url: V3_URL,
+            url: CALCULATE_ROUTE_URL,
             data: {
                 routePlanningLocations: {
                     origin: { type: 'Point', coordinates: [4.89066, 52.37317] },
@@ -324,7 +350,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         },
         {
             method: 'POST',
-            url: V3_URL,
+            url: CALCULATE_ROUTE_URL,
             data: {
                 routePlanningLocations: {
                     origin: { type: 'Point', coordinates: [4.89066, 52.37317] },
@@ -333,7 +359,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             },
             headers: {
                 ...defaultHeaders(
-                    'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.roadShields,sections.importantRoadStretch,progressPoints)',
+                    'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch,progressPoints)',
                 ),
                 'Accept-Language': 'nl-NL',
             },
@@ -381,7 +407,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 vehicleWeightInKilograms: 1500,
             },
             headers: defaultHeaders(
-                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.roadShields,sections.importantRoadStretch,progressPoints)',
+                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch,progressPoints)',
             ),
         },
     ],
@@ -430,7 +456,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 vehicleWeightInKilograms: 2000,
             },
             headers: defaultHeaders(
-                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.roadShields,sections.importantRoadStretch,progressPoints)',
+                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch,progressPoints)',
             ),
         },
     ],
@@ -448,7 +474,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         },
         {
             method: 'POST',
-            url: V3_URL,
+            url: CALCULATE_ROUTE_URL,
             data: {
                 routePlanningLocations: {
                     origin: { type: 'Point', coordinates: [4.89066, 52.37317] },
@@ -468,11 +494,11 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 [4.89066, 52.37317],
                 [4.49015, 52.16109],
             ],
-            sectionTypes: ['tollVignette', 'roadShields', 'importantRoadStretch', 'traffic'],
+            sectionTypes: ['tollVignette', 'tollRoad', 'roadShields', 'importantRoadStretch', 'traffic'],
         },
         {
             method: 'POST',
-            url: V3_URL,
+            url: CALCULATE_ROUTE_URL,
             data: {
                 routePlanningLocations: {
                     origin: { type: 'Point', coordinates: [4.89066, 52.37317] },
@@ -480,7 +506,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 },
             },
             headers: defaultHeaders(
-                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.roadShields,sections.importantRoadStretch,progressPoints)',
+                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch,progressPoints)',
             ),
         },
     ],
@@ -499,7 +525,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         },
         {
             method: 'POST',
-            url: V3_URL,
+            url: CALCULATE_ROUTE_URL,
             data: {
                 routePlanningLocations: {
                     origin: { type: 'Point', coordinates: [4.89066, 52.37317] },
@@ -528,7 +554,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         },
         {
             method: 'POST',
-            url: V3_URL,
+            url: CALCULATE_ROUTE_URL,
             data: {
                 routePlanningLocations: {
                     origin: { type: 'Point', coordinates: [4.89066, 52.37317] },
@@ -560,7 +586,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         },
         {
             method: 'POST',
-            url: V3_URL,
+            url: CALCULATE_ROUTE_URL,
             data: {
                 routePlanningLocations: {
                     origin: { type: 'Point', coordinates: [4.89066, 52.37317] },
@@ -569,12 +595,12 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 },
             },
             headers: defaultHeaders(
-                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.roadShields,sections.importantRoadStretch,progressPoints)',
+                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch,progressPoints)',
             ),
         },
     ],
     [
-        'Default A-B route where B is a GeoJSON point feature with entry points (V3 uses feature coordinates, ignores entry points)',
+        'Default A-B route where B is a GeoJSON point feature with entry points (the API uses feature coordinates, ignores entry points)',
         {
             apiKey: 'GLOBAL_API_KEY',
             apiVersion: 3,
@@ -590,7 +616,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         },
         {
             method: 'POST',
-            url: V3_URL,
+            url: CALCULATE_ROUTE_URL,
             data: {
                 routePlanningLocations: {
                     origin: { type: 'Point', coordinates: [4.89066, 52.37317] },
@@ -598,12 +624,12 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 },
             },
             headers: defaultHeaders(
-                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.roadShields,sections.importantRoadStretch,progressPoints)',
+                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch,progressPoints)',
             ),
         },
     ],
     [
-        'Default A-s-C route where s is a soft(circle) waypoint (V3 uses feature coordinates, ignores radiusMeters)',
+        'Default A-B-C route where B is drawn as a via circle (a display choice the request ignores)',
         {
             apiKey: 'GLOBAL_API_KEY',
             apiVersion: 3,
@@ -613,14 +639,14 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 {
                     type: 'Feature',
                     geometry: { type: 'Point', coordinates: [4.49015, 52.16109] },
-                    properties: { radiusMeters: 20 },
+                    properties: {},
                 } as unknown as [number, number],
                 [4.47059, 51.92291],
             ],
         },
         {
             method: 'POST',
-            url: V3_URL,
+            url: CALCULATE_ROUTE_URL,
             data: {
                 routePlanningLocations: {
                     origin: { type: 'Point', coordinates: [4.89066, 52.37317] },
@@ -629,7 +655,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 },
             },
             headers: defaultHeaders(
-                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.roadShields,sections.importantRoadStretch,progressPoints)',
+                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch,progressPoints)',
             ),
         },
     ],
@@ -647,7 +673,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         },
         {
             method: 'POST',
-            url: V3_URL,
+            url: CALCULATE_ROUTE_URL,
             data: {
                 routePlanningLocations: {
                     origin: { type: 'Point', coordinates: [52.52, 13.405] },
@@ -656,7 +682,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 vehicleWeightInKilograms: 2500,
             },
             headers: defaultHeaders(
-                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.roadShields,sections.importantRoadStretch,progressPoints)',
+                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch,progressPoints)',
             ),
         },
     ],
@@ -750,10 +776,54 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
             },
             headers: {
                 ...defaultHeaders(
-                    'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.roadShields,sections.importantRoadStretch,progressPoints)',
+                    'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch,progressPoints)',
                 ),
                 'Accept-Language': 'es-ES',
             },
+        },
+    ],
+    [
+        'LDEVR route with empty extendedRouteRepresentations omits progressPoints too',
+        {
+            apiKey: 'GLOBAL_API_KEY',
+            apiVersion: 3,
+            commonBaseURL: BASE_URL,
+            locations: [
+                [13.492, 52.507],
+                [8.624, 50.104],
+            ],
+            extendedRouteRepresentations: [],
+            vehicle: {
+                engineType: 'electric' as const,
+                model: { variantId: '54B969E8-E28D-11EC-8FEA-0242AC120002' },
+                state: { currentChargeInkWh: 25 },
+                preferences: {
+                    chargingPreferences: { minChargeAtDestinationInkWh: 5, minChargeAtChargingStopsInkWh: 5 },
+                },
+            },
+        },
+        {
+            method: 'POST',
+            url: (() => {
+                const url = new URL(`${BASE_URL}/maps/orbis/routing/calculateLongDistanceEVRoute`);
+                url.searchParams.set('vehicleModelId', '54B969E8-E28D-11EC-8FEA-0242AC120002');
+                url.searchParams.set('currentChargeInkWh', '25');
+                url.searchParams.set('minChargeAtDestinationInkWh', '5');
+                url.searchParams.set('minChargeAtChargingStopsInkWh', '5');
+                return url;
+            })(),
+            data: {
+                routePlanningLocations: {
+                    origin: { type: 'Point', coordinates: [13.492, 52.507] },
+                    destination: { type: 'Point', coordinates: [8.624, 50.104] },
+                },
+                vehicleEngineType: 'electric',
+            },
+            // The Attributes header is built before the LDEVR branch, so the opt-out applies to both
+            // endpoints. Confirmed live: LDEVR returns the route with charging stops and no progress.
+            headers: defaultHeaders(
+                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch)',
+            ),
         },
     ],
     [
@@ -793,7 +863,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 vehicleEngineType: 'electric',
             },
             headers: defaultHeaders(
-                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.roadShields,sections.importantRoadStretch,progressPoints)',
+                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch,progressPoints)',
             ),
         },
     ],
@@ -815,7 +885,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         },
         {
             method: 'POST',
-            url: V3_URL,
+            url: CALCULATE_ROUTE_URL,
             data: {
                 routePlanningLocations: {
                     origin: { type: 'Point', coordinates: [4.89066, 52.37317] },
@@ -837,7 +907,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 ],
             },
             headers: defaultHeaders(
-                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.roadShields,sections.importantRoadStretch,progressPoints)',
+                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch,progressPoints)',
             ),
         },
     ],
@@ -877,7 +947,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         },
         {
             method: 'POST',
-            url: V3_URL,
+            url: CALCULATE_ROUTE_URL,
             data: {
                 routePlanningLocations: {
                     origin: { type: 'Point', coordinates: [0, 0] },
@@ -927,7 +997,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 ],
             },
             headers: defaultHeaders(
-                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.roadShields,sections.importantRoadStretch,progressPoints)',
+                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch,progressPoints)',
             ),
         },
     ],
@@ -970,7 +1040,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         },
         {
             method: 'POST',
-            url: V3_URL,
+            url: CALCULATE_ROUTE_URL,
             data: {
                 routePlanningLocations: {
                     origin: { type: 'Point', coordinates: [0, 0] },
@@ -1029,7 +1099,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 ],
             },
             headers: defaultHeaders(
-                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.roadShields,sections.importantRoadStretch,progressPoints)',
+                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch,progressPoints)',
             ),
         },
     ],
@@ -1069,7 +1139,7 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
         },
         {
             method: 'POST',
-            url: V3_URL,
+            url: CALCULATE_ROUTE_URL,
             data: {
                 routePlanningLocations: {
                     origin: { type: 'Point', coordinates: [1, 0] },
@@ -1119,7 +1189,333 @@ export const sdkAndAPIRequests: [string, CalculateRouteParams, FetchInput<Calcul
                 ],
             },
             headers: defaultHeaders(
-                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.roadShields,sections.importantRoadStretch,progressPoints)',
+                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch,progressPoints)',
+            ),
+        },
+    ],
+    [
+        'Route with arrivalSide and a toll transponder (body fields)',
+        {
+            apiKey: 'GLOBAL_API_KEY',
+            apiVersion: 3,
+            commonBaseURL: BASE_URL,
+            locations: [
+                [4.89066, 52.37317],
+                [4.49015, 52.16109],
+            ],
+            arrivalSide: 'curb' as const,
+            vehicle: {
+                restrictions: { tollTransponder: 'all' as const },
+            },
+        },
+        {
+            method: 'POST',
+            url: CALCULATE_ROUTE_URL,
+            data: {
+                routePlanningLocations: {
+                    origin: { type: 'Point', coordinates: [4.89066, 52.37317] },
+                    destination: { type: 'Point', coordinates: [4.49015, 52.16109] },
+                },
+                arrivalSidePreference: 'curbSide',
+                vehicleHasElectronicTollCollectionTransponder: 'all',
+            },
+            headers: defaultHeaders(
+                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch,progressPoints)',
+            ),
+        },
+    ],
+    [
+        'Route with arrivalSide any maps to anySide',
+        {
+            apiKey: 'GLOBAL_API_KEY',
+            apiVersion: 3,
+            commonBaseURL: BASE_URL,
+            locations: [
+                [4.89066, 52.37317],
+                [4.49015, 52.16109],
+            ],
+            arrivalSide: 'any' as const,
+        },
+        {
+            method: 'POST',
+            url: CALCULATE_ROUTE_URL,
+            data: {
+                routePlanningLocations: {
+                    origin: { type: 'Point', coordinates: [4.89066, 52.37317] },
+                    destination: { type: 'Point', coordinates: [4.49015, 52.16109] },
+                },
+                arrivalSidePreference: 'anySide',
+            },
+            headers: defaultHeaders(
+                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch,progressPoints)',
+            ),
+        },
+    ],
+    [
+        'Per-stop options land on the leg arriving at that stop',
+        {
+            apiKey: 'GLOBAL_API_KEY',
+            apiVersion: 3,
+            commonBaseURL: BASE_URL,
+            locations: [
+                [4.89066, 52.37317],
+                {
+                    type: 'Feature' as const,
+                    geometry: { type: 'Point' as const, coordinates: [4.7, 52.25] },
+                    properties: {
+                        pauseDurationSeconds: 1200,
+                        legCostModel: { routeType: 'short' as const, avoid: ['motorways' as const] },
+                    },
+                },
+                [4.49015, 52.16109],
+            ],
+        },
+        {
+            method: 'POST',
+            url: CALCULATE_ROUTE_URL,
+            data: {
+                routePlanningLocations: {
+                    origin: { type: 'Point', coordinates: [4.89066, 52.37317] },
+                    destination: { type: 'Point', coordinates: [4.49015, 52.16109] },
+                    waypoints: { type: 'MultiPoint', coordinates: [[4.7, 52.25]] },
+                },
+                // legs[0] arrives at the middle stop and carries its options; legs[1] arrives at
+                // the destination, which has none. Note `avoids` takes objects per leg, where the
+                // route-level `avoids` is a string array.
+                legs: [
+                    {
+                        routeType: 'short',
+                        avoids: [{ name: 'motorways' }],
+                        routeStop: { pauseDurationInSeconds: 1200 },
+                    },
+                    {},
+                ],
+            },
+            headers: defaultHeaders(
+                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch,progressPoints)',
+            ),
+        },
+    ],
+    [
+        'A per-leg route type and a per-leg avoid list each stand alone, on any leg including the last',
+        {
+            apiKey: 'GLOBAL_API_KEY',
+            apiVersion: 3,
+            commonBaseURL: BASE_URL,
+            locations: [
+                [4.89066, 52.37317],
+                {
+                    type: 'Feature' as const,
+                    geometry: { type: 'Point' as const, coordinates: [4.7, 52.25] },
+                    properties: { legCostModel: { routeType: 'thrilling' as const } },
+                },
+                {
+                    type: 'Feature' as const,
+                    geometry: { type: 'Point' as const, coordinates: [4.49015, 52.16109] },
+                    properties: { legCostModel: { avoid: ['tollRoads' as const, 'ferries' as const] } },
+                },
+            ],
+        },
+        {
+            method: 'POST',
+            url: CALCULATE_ROUTE_URL,
+            data: {
+                routePlanningLocations: {
+                    origin: { type: 'Point', coordinates: [4.89066, 52.37317] },
+                    destination: { type: 'Point', coordinates: [4.49015, 52.16109] },
+                    waypoints: { type: 'MultiPoint', coordinates: [[4.7, 52.25]] },
+                },
+                // Either half of the cost model can travel on its own, and the leg arriving at the
+                // destination takes one as readily as an intermediate leg — unlike a pause, which
+                // the API rejects there. Each avoid becomes its own `{ name }` object.
+                legs: [{ routeType: 'thrilling' }, { avoids: [{ name: 'tollRoads' }, { name: 'ferries' }] }],
+            },
+            headers: defaultHeaders(
+                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch,progressPoints)',
+            ),
+        },
+    ],
+    [
+        'A per-leg cost model rides alongside the route-level one, which keeps its own body fields',
+        {
+            apiKey: 'GLOBAL_API_KEY',
+            apiVersion: 3,
+            commonBaseURL: BASE_URL,
+            locations: [
+                [4.89066, 52.37317],
+                {
+                    type: 'Feature' as const,
+                    geometry: { type: 'Point' as const, coordinates: [4.7, 52.25] },
+                    properties: {
+                        legCostModel: {
+                            routeType: 'short' as const,
+                            avoid: ['motorways' as const, 'ferries' as const],
+                        },
+                    },
+                },
+                [4.49015, 52.16109],
+            ],
+            costModel: { routeType: 'fast' as const, avoid: ['tollRoads' as const] },
+        },
+        {
+            method: 'POST',
+            url: CALCULATE_ROUTE_URL,
+            data: {
+                routePlanningLocations: {
+                    origin: { type: 'Point', coordinates: [4.89066, 52.37317] },
+                    destination: { type: 'Point', coordinates: [4.49015, 52.16109] },
+                    waypoints: { type: 'MultiPoint', coordinates: [[4.7, 52.25]] },
+                },
+                // The route-level cost model still goes to the body, in its own shapes — a bare
+                // `routeType` and a string array of `avoids`. The leg that overrides it repeats
+                // both in the per-leg shapes, and the leg that does not stays empty, so the
+                // untouched leg inherits the route-level model rather than being sent a copy.
+                routeType: 'fast',
+                avoids: ['tollRoads'],
+                legs: [{ routeType: 'short', avoids: [{ name: 'motorways' }, { name: 'ferries' }] }, {}],
+            },
+            headers: defaultHeaders(
+                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch,progressPoints)',
+            ),
+        },
+    ],
+    [
+        'A legCostModel on the origin is dropped, since no leg arrives there',
+        {
+            apiKey: 'GLOBAL_API_KEY',
+            apiVersion: 3,
+            commonBaseURL: BASE_URL,
+            locations: [
+                {
+                    type: 'Feature' as const,
+                    geometry: { type: 'Point' as const, coordinates: [4.89066, 52.37317] },
+                    properties: {
+                        legCostModel: { routeType: 'short' as const, avoid: ['motorways' as const] },
+                    },
+                },
+                [4.49015, 52.16109],
+            ],
+        },
+        {
+            method: 'POST',
+            url: CALCULATE_ROUTE_URL,
+            // The only leg arrives at the destination, which carries no options, so `legs` is left
+            // out of the body entirely rather than sent as a row of empty objects.
+            data: {
+                routePlanningLocations: {
+                    origin: { type: 'Point', coordinates: [4.89066, 52.37317] },
+                    destination: { type: 'Point', coordinates: [4.49015, 52.16109] },
+                },
+            },
+            headers: defaultHeaders(
+                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch,progressPoints)',
+            ),
+        },
+    ],
+    [
+        'Candidate entry points are sent as a MultiPoint and keep the stop at its own position',
+        {
+            apiKey: 'GLOBAL_API_KEY',
+            apiVersion: 3,
+            commonBaseURL: BASE_URL,
+            locations: [
+                [4.89066, 52.37317],
+                {
+                    type: 'Feature' as const,
+                    geometry: { type: 'Point' as const, coordinates: [4.7, 52.25] },
+                    properties: {
+                        candidateEntryPoints: [
+                            [4.701, 52.251],
+                            [4.703, 52.249],
+                        ],
+                        preferredEntryPointIndex: 1,
+                    },
+                },
+                [4.49015, 52.16109],
+            ],
+        },
+        {
+            method: 'POST',
+            url: CALCULATE_ROUTE_URL,
+            data: {
+                routePlanningLocations: {
+                    origin: { type: 'Point', coordinates: [4.89066, 52.37317] },
+                    destination: { type: 'Point', coordinates: [4.49015, 52.16109] },
+                    waypoints: { type: 'MultiPoint', coordinates: [[4.7, 52.25]] },
+                },
+                legs: [
+                    {
+                        routeStop: {
+                            entryPoints: {
+                                type: 'MultiPoint',
+                                coordinates: [
+                                    [4.701, 52.251],
+                                    [4.703, 52.249],
+                                ],
+                            },
+                            preferredEntryPointIndex: 1,
+                        },
+                    },
+                    {},
+                ],
+            },
+            headers: defaultHeaders(
+                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch,progressPoints)',
+            ),
+        },
+    ],
+    [
+        'LDEVR receives the shared vehicle body, travel-time param and per-stop legs',
+        {
+            apiKey: 'GLOBAL_API_KEY',
+            apiVersion: 3,
+            commonBaseURL: BASE_URL,
+            locations: [
+                [13.492, 52.507],
+                {
+                    type: 'Feature' as const,
+                    geometry: { type: 'Point' as const, coordinates: [11, 51.5] },
+                    properties: { pauseDurationSeconds: 600 },
+                },
+                [8.624, 50.104],
+            ],
+            computeTravelTimeFor: 'all' as const,
+            vehicle: {
+                engineType: 'electric' as const,
+                model: { variantId: '54B969E8-E28D-11EC-8FEA-0242AC120002' },
+                state: { currentChargeInkWh: 25 },
+                restrictions: { maxSpeedKMH: 90, tollTransponder: 'none' as const },
+                preferences: {
+                    chargingPreferences: { minChargeAtDestinationInkWh: 5, minChargeAtChargingStopsInkWh: 5 },
+                },
+            },
+        },
+        {
+            method: 'POST',
+            url: (() => {
+                const url = new URL(`${BASE_URL}/maps/orbis/routing/calculateLongDistanceEVRoute`);
+                url.searchParams.set('vehicleModelId', '54B969E8-E28D-11EC-8FEA-0242AC120002');
+                url.searchParams.set('currentChargeInkWh', '25');
+                url.searchParams.set('minChargeAtDestinationInkWh', '5');
+                url.searchParams.set('minChargeAtChargingStopsInkWh', '5');
+                url.searchParams.set('computeTravelTimeFor', 'all');
+                return url;
+            })(),
+            data: {
+                routePlanningLocations: {
+                    origin: { type: 'Point', coordinates: [13.492, 52.507] },
+                    destination: { type: 'Point', coordinates: [8.624, 50.104] },
+                    waypoints: { type: 'MultiPoint', coordinates: [[11, 51.5]] },
+                },
+                // The LDEVR endpoint acts on all of these, so the shared work has to reach it
+                // and not only the ROUTE body.
+                legs: [{ routeStop: { pauseDurationInSeconds: 600 } }, {}],
+                vehicleMaxSpeedInKilometersPerHour: 90,
+                vehicleHasElectronicTollCollectionTransponder: 'none',
+                vehicleEngineType: 'electric',
+            },
+            headers: defaultHeaders(
+                'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch,progressPoints)',
             ),
         },
     ],

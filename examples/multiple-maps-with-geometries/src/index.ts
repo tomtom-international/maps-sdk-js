@@ -6,7 +6,7 @@ import type { LngLatBoundsLike } from 'maplibre-gl';
 import './style.css';
 import { API_KEY } from './config';
 
-const mapsElement = document.querySelector('#sdk-example-maps-container') as HTMLElement;
+const mapsElement = document.querySelector('#ui-maps-container') as HTMLElement;
 
 // (Set your own API key when working in your own environment)
 TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
@@ -15,7 +15,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
     const initMap = async (geometry: Feature<Polygon | MultiPolygon>, index: number) => {
         const div = document.createElement('div');
         div.id = `map${index}`;
-        div.className = 'sdk-example-map';
+        div.className = 'ui-map';
         mapsElement.appendChild(div);
 
         const map = new TomTomMap({
@@ -26,7 +26,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
             },
         });
         await (
-            await GeometriesModule.get(map, {
+            await GeometriesModule.create(map, {
                 theme: 'inverted',
                 beforeLayerConfig: 'lowestPlaceLabel',
                 fill: { color: 'white', opacity: 0.75 },

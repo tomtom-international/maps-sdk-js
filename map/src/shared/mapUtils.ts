@@ -1,21 +1,26 @@
 import type { GlobalConfig } from '@tomtom-org/maps-sdk/core';
 import { DEFAULT_COMMON_BASE_URL, generateTomTomHeaders, isProxyCredentialsMode } from '@tomtom-org/maps-sdk/core';
 import type {
+    AllLayoutProperties,
+    AllPaintProperties,
+    BackgroundLayerSpecification,
     FilterSpecification,
     Map,
     MapGeoJSONFeature,
     RequestParameters,
     ResourceType,
     StyleImageMetadata,
+    StyleSpecification,
 } from 'maplibre-gl';
-import { InternalTomTomMapParams, StandardStyle, StandardStyleID, StyleInput, StyleModule } from '../init';
+import { CustomStyle, InternalTomTomMapParams, StandardStyle, StandardStyleID, StyleInput, StyleModule } from '../init';
 import type { TomTomMap } from '../TomTomMap';
 import { FLOW_TAGS } from '../traffic/util/trafficFlowMapping';
 import { INCIDENT_TAGS } from '../traffic/util/trafficIncidentMapping';
+import { relativeLuminance } from '../utils/colorUtils';
 import { cannotAddStyleModuleToCustomStyle } from './errorMessages';
-import { svgToImg } from './imageUtils';
+import { PIN_CATEGORIES_SPRITE_ID, svgToImg } from './imageUtils';
 import { parseSvg } from './resources';
-import { AbstractSourceWithLayers, filterLayersBySources } from './SourceWithLayers';
+import { AbstractSourceWithLayers } from './SourceWithLayers';
 import type { LightDark, ToBeAddedLayerSpec, ToBeAddedLayerSpecWithoutSource } from './types';
 
 /**
@@ -49,21 +54,20 @@ const isTomTomHostname = (hostname: string): boolean =>
 /**
  * Vector tiles are served from prefixed-subdomain CDN hosts
  * (a./b./c./d.api.tomtom.com) for browser-parallelism. Rewrite all of those
- * plus the bare `api.tomtom.com` host to the proxy. In demo-BFF mode
- * (`isDemoBffMode`) drop any inbound `key` param too: TomTom's edge bakes
- * the request's key into tile URLs returned in the style JSON, and the
- * proxy injects its own server-side — leaving the client-visible key would
- * just leak it to the browser console.
+ * plus the bare `api.tomtom.com` host to the proxy. With credentials-proxy
+ * mode drop any inbound `key` param too: TomTom's edge bakes the request's key
+ * into tile URLs returned in the style JSON, and the proxy injects its own
+ * server-side — leaving the client-visible key would just leak it.
  *
  * Returns the original URL unchanged when it isn't a TomTom host or when
  * we're not in proxy mode.
  */
-const rewriteForProxy = (url: string, baseURL: string, isProxyMode: boolean, isDemoBffMode: boolean): string => {
+const rewriteForProxy = (url: string, baseURL: string, isProxyMode: boolean, isCredentialsProxy: boolean): string => {
     if (!isProxyMode) return url;
     try {
         const parsed = new URL(url);
         if (!isTomTomHostname(parsed.hostname)) return url;
-        if (isDemoBffMode) {
+        if (isCredentialsProxy) {
             parsed.searchParams.delete('key');
         }
         return baseURL + parsed.pathname + parsed.search + parsed.hash;
@@ -87,29 +91,27 @@ const injectTrafficTags = (url: URL): void => {
 
 declare global {
     /**
-     * Installed by the demo-BFF sandpack bootstrap. Resolves once the proxy
-     * session cookie is valid and not about to expire, re-minting it first
-     * when needed. See ensureFreshSession in proxyBootstrap.ts. Declared as a
-     * global var (not a Window member) so it can be read off `globalThis`,
-     * which also works on the main thread where window === globalThis.
+     * Installed by the demos-proxy session bootstrap both example builds inject
+     * (`examples/src/demos-proxy/demosProxyBootstrap.ts`). Resolves once the
+     * session cookie is valid and not about to expire, re-minting it first when
+     * needed. A global var rather than a Window member so it can be read off
+     * `globalThis`.
      */
-    var __DEMO_BFF_ENSURE_SESSION__: (() => Promise<void>) | undefined;
+    var __DEMOS_PROXY_ENSURE_SESSION__: (() => Promise<void>) | undefined;
 }
 
 /**
- * Gate a request on a fresh demo-BFF session when the bootstrap installed
- * its hook. MapLibre awaits transformRequest results on the MAIN thread
- * before handing the request to its tile worker — which makes this the one
- * place that can hold back worker-fetched tiles until the session cookie is
- * renewed (the workers' own `fetch` is unreachable from here; they rely on
- * the browser attaching whatever cookie exists when the request starts).
- * Without the hook (direct mode, non-sandpack consumers) this stays fully
- * synchronous. A failed renewal lets the request proceed (it will 401, same
- * as without the gate) rather than wedging the map.
+ * Gate a request on a fresh demos-proxy session when the bootstrap installed its
+ * hook. MapLibre awaits transformRequest results on the MAIN thread before
+ * handing a request to its tile worker, which makes this the one place that can
+ * hold back worker-fetched tiles until the session cookie is renewed (the
+ * workers' own `fetch` is unreachable from here). Without the hook this stays
+ * fully synchronous, and a failed renewal lets the request proceed (it will
+ * 401, same as without the gate) rather than wedging the map.
  * @ignore
  */
-const gateOnDemoBffSession = (result: RequestParameters): RequestParameters | Promise<RequestParameters> => {
-    const ensureSession = globalThis.__DEMO_BFF_ENSURE_SESSION__;
+const gateOnDemosProxySession = (result: RequestParameters): RequestParameters | Promise<RequestParameters> => {
+    const ensureSession = globalThis.__DEMOS_PROXY_ENSURE_SESSION__;
     if (typeof ensureSession !== 'function') return result;
     return ensureSession().then(
         () => result,
@@ -125,7 +127,7 @@ const gateOnDemoBffSession = (result: RequestParameters): RequestParameters | Pr
  * In "proxy mode" (commonBaseURL points away from api.tomtom.com), tile
  * URLs baked into the style JSON still arrive here as `api.tomtom.com/...`
  * because MapLibre fetches them directly. We rewrite them to flow through
- * the configured base URL, and — in demo-BFF mode — set
+ * the configured base URL, and — with a credentials proxy — set
  * `credentials: 'include'` so the session cookie travels with each tile.
  *
  * @ignore
@@ -133,19 +135,19 @@ const gateOnDemoBffSession = (result: RequestParameters): RequestParameters | Pr
  */
 export const transformRequest = (params: Partial<GlobalConfig>) => {
     const baseURL = params.commonBaseURL ?? DEFAULT_COMMON_BASE_URL;
-    // commonBaseURL points at something other than TomTom — could be a
-    // demo-BFF or a customer's own customServiceBaseURL. We always rewrite
-    // tile hostnames to flow through it.
+    // commonBaseURL points at something other than TomTom — the demos proxy or a
+    // customer's own customServiceBaseURL. We always rewrite tile hostnames to
+    // flow through it.
     const isProxyMode = baseURL !== DEFAULT_COMMON_BASE_URL;
-    // Demo-BFF-style mode: the proxy injects the key server-side (no apiKey), so
-    // we strip key= and attach `credentials: 'include'`. customServiceBaseURL
-    // keeps its apiKey and is excluded (its backend may serve CORS as `*`).
-    const isDemoBffMode = isProxyCredentialsMode(params);
+    // Credentials proxy: it injects the key server-side (no apiKey), so we strip
+    // key= and attach `credentials: 'include'`. customServiceBaseURL keeps its
+    // apiKey and is excluded (its backend may serve CORS as `*`).
+    const isCredentialsProxy = isProxyCredentialsMode(params);
 
     return (url: string, resourceType?: ResourceType): RequestParameters | Promise<RequestParameters> => {
-        const rewrittenUrl = rewriteForProxy(url, baseURL, isProxyMode, isDemoBffMode);
+        const rewrittenUrl = rewriteForProxy(url, baseURL, isProxyMode, isCredentialsProxy);
         const isProxyUrl = isProxyMode && rewrittenUrl.startsWith(baseURL);
-        const useCredentials = isDemoBffMode && isProxyUrl;
+        const useCredentials = isCredentialsProxy && isProxyUrl;
 
         // Hostname-based TomTom detection — a substring check like
         // `url.includes('tomtom.com')` would also match lookalikes
@@ -169,7 +171,7 @@ export const transformRequest = (params: Partial<GlobalConfig>) => {
 
         if (resourceType === 'Image') {
             return useCredentials
-                ? gateOnDemoBffSession({ url: rewrittenUrl, credentials: 'include' })
+                ? gateOnDemosProxySession({ url: rewrittenUrl, credentials: 'include' })
                 : { url: rewrittenUrl };
         }
 
@@ -182,7 +184,7 @@ export const transformRequest = (params: Partial<GlobalConfig>) => {
         };
         if (useCredentials) {
             result.credentials = 'include';
-            return gateOnDemoBffSession(result);
+            return gateOnDemosProxySession(result);
         }
         return result;
     };
@@ -206,6 +208,13 @@ type LayerProps = {
     filter?: FilterSpecification;
 };
 
+// Style-spec property names and name/value pairs, as `changeLayerProps` needs them to call
+// maplibre's key-generic setters.
+type LayoutKey = keyof AllLayoutProperties;
+type PaintKey = keyof AllPaintProperties;
+type LayoutEntry = [LayoutKey, AllLayoutProperties[LayoutKey]];
+type PaintEntry = [PaintKey, AllPaintProperties[PaintKey]];
+
 /**
  * Applies the layout and paint properties from newLayoutPaint
  * while unsetting (setting as undefined) the ones from previousSpec which no longer exist in newLayoutPaint.
@@ -225,21 +234,26 @@ export const changeLayerProps = (newLayerProps: LayerProps, prevLayerProps: Laye
         );
     }
     map.setFilter(layerId, newLayerProps.filter, { validate: false });
-    for (const property of Object.keys(prevLayerProps.layout ?? [])) {
+    // maplibre v6 keys both setters by property name, while the specs we diff here are
+    // string-keyed (`layout`/`paint` are `any`). Narrow once per loop rather than at every call:
+    // `Object.keys`/`Object.entries` can only ever report `string`, so the correspondence to the
+    // style-spec keys is ours to assert either way — doing it in the loop header keeps the
+    // setter calls readable and asserts each fact once.
+    for (const property of Object.keys(prevLayerProps.layout ?? {}) as LayoutKey[]) {
         if (!newLayerProps.layout?.[property]) {
             map.setLayoutProperty(layerId, property, undefined, { validate: false });
         }
     }
-    for (const property of Object.keys(prevLayerProps.paint ?? [])) {
+    for (const property of Object.keys(prevLayerProps.paint ?? {}) as PaintKey[]) {
         if (!newLayerProps.paint?.[property]) {
             map.setPaintProperty(layerId, property, undefined, { validate: false });
         }
     }
-    for (const [property, value] of Object.entries(newLayerProps.paint ?? [])) {
+    for (const [property, value] of Object.entries(newLayerProps.paint ?? {}) as PaintEntry[]) {
         map.setPaintProperty(layerId, property, value, { validate: false });
     }
 
-    for (const [property, value] of Object.entries(newLayerProps.layout ?? [])) {
+    for (const [property, value] of Object.entries(newLayerProps.layout ?? {}) as LayoutEntry[]) {
         map.setLayoutProperty(layerId, property, value, { validate: false });
     }
 };
@@ -254,6 +268,49 @@ export const changeLayerProps = (newLayerProps: LayerProps, prevLayerProps: Laye
  */
 export const changeLayersProps = (newLayerProps: LayerProps[], prevLayerProps: LayerProps[], map: Map) => {
     newLayerProps.forEach((layoutPaint, index) => changeLayerProps(layoutPaint, prevLayerProps[index], map));
+};
+
+/**
+ * Moves every layer whose spec now names a different anchor, and every layer pinned to one that
+ * moved, so a group of layers drawn as one keeps its internal order wherever it lands.
+ *
+ * @remarks
+ * Where a layer draws is neither paint nor layout, so {@link changeLayersProps} cannot say it —
+ * only `moveLayer` can. Moving the anchored layer alone is not enough either: MapLibre holds no
+ * relation between two layers, so a sibling pinned to the one that moved stays behind and the
+ * group tears apart. A section drawn with a coloured line under a dashed one is exactly that case.
+ * @ignore
+ */
+const restackMovedLayers = (
+    newLayerSpecs: ToBeAddedLayerSpecWithoutSource[],
+    oldLayerSpecs: ToBeAddedLayerSpecWithoutSource[],
+    recordedSpecs: ToBeAddedLayerSpec[],
+    map: Map,
+): void => {
+    const movedLayerIDs = new Set<string>();
+    const restack = (layerSpec: ToBeAddedLayerSpecWithoutSource): void => {
+        if (!map.getLayer(layerSpec.id)) return;
+
+        moveLayerBefore(map, layerSpec.id, layerSpec.beforeID);
+        movedLayerIDs.add(layerSpec.id);
+        // The recorded spec is what a style change replays, so it has to name the new anchor too.
+        const recordedSpec = recordedSpecs.find((spec) => spec.id === layerSpec.id);
+        if (recordedSpec) recordedSpec.beforeID = layerSpec.beforeID;
+    };
+
+    newLayerSpecs.forEach((newLayerSpec, index) => {
+        if (newLayerSpec.beforeID !== oldLayerSpecs[index].beforeID) restack(newLayerSpec);
+    });
+
+    // Followers resolve in as many passes as the chain is long, and a layer already moved is never
+    // picked again, so a circular pinning cannot spin here.
+    const followers = () =>
+        newLayerSpecs.filter(
+            (spec) => !movedLayerIDs.has(spec.id) && spec.beforeID !== undefined && movedLayerIDs.has(spec.beforeID),
+        );
+    for (let pinned = followers(); pinned.length; pinned = followers()) {
+        pinned.forEach(restack);
+    }
 };
 
 /**
@@ -314,17 +371,54 @@ export const updateLayersAndSource = (
         }
     });
     // add new layers
-    layersToAdd.forEach((layerId) => {
-        // add layer spec and map
-        const toBeAddedLayerSpec: ToBeAddedLayerSpec = {
-            ...newLayersMap[layerId],
-            source: sourceWithLayers.source.id,
-        } as ToBeAddedLayerSpec;
-        layerSpecs.push(toBeAddedLayerSpec);
-    });
+    const addedLayerSpecs = layersToAdd.map(
+        (layerId) =>
+            ({
+                ...newLayersMap[layerId],
+                source: sourceWithLayers.source.id,
+            }) as ToBeAddedLayerSpec,
+    );
+    if (addedLayerSpecs.length) {
+        layerSpecs.push(...addedLayerSpecs);
+        // A layer the new config introduced is not on the map yet — recording the spec does not put
+        // it there. `addLayers` honours each spec's `beforeID` and adds it hidden; the caller
+        // reveals it alongside the layers that were already there.
+        addLayers(addedLayerSpecs, map);
+    }
     sourceWithLayers._updateSourceAndLayerIDs();
+    restackMovedLayers(newLayersToUpdate, oldLayersToUpdate, layerSpecs, map);
     // update existing layers
     changeLayersProps(newLayersToUpdate, oldLayersToUpdate, map);
+};
+
+/**
+ * Returns `beforeLayerID` when the current style has that layer, and undefined — the top of the
+ * layer stack — when it does not.
+ *
+ * MapLibre refuses both `addLayer` and `moveLayer` against a layer the style does not have: it
+ * fires an `ErrorEvent` and gives up, so the layer is either never added or left where it was. Not
+ * every anchor in the map style layer IDs exists in every style — the satellite style has neither
+ * `lowestRoadLine` nor `lowestBuilding` — so a module positioning itself against one has to check
+ * first. The top of the stack is the documented fallback for a missing reference layer.
+ *
+ * @ignore
+ * @param map MapLibre map
+ * @param beforeLayerID The wanted anchor layer, if any.
+ */
+export const existingBeforeLayerID = (map: Map, beforeLayerID: string | undefined): string | undefined =>
+    beforeLayerID && map.getLayer(beforeLayerID) ? beforeLayerID : undefined;
+
+/**
+ * Moves a layer below `beforeLayerID`, or to the top of the stack when the style does not have
+ * that layer. See {@link existingBeforeLayerID}.
+ *
+ * @ignore
+ * @param map MapLibre map
+ * @param layerID The layer to move.
+ * @param beforeLayerID The layer to move it below, or undefined for the top of the stack.
+ */
+export const moveLayerBefore = (map: Map, layerID: string, beforeLayerID: string | undefined): void => {
+    map.moveLayer(layerID, existingBeforeLayerID(map, beforeLayerID));
 };
 
 /**
@@ -417,17 +511,10 @@ export const ensureAddedToStyle = async (map: TomTomMap, sourceId: string, style
             // we let the map settle before changing its style again, so the previous style/data load goes smoother:
             await mapLibreMap.once('idle');
         }
-        map.setStyle(updateStyleWithModule(map.getStyle(), styleModule));
+        // Resolves once the new style has loaded and the map has hidden the freshly added part's
+        // layers (see TomTomMap.handleStyleData) — the module then shows them if asked to.
+        await map.setStyle(updateStyleWithModule(map.getStyle(), styleModule));
         await waitUntilSourceIsLoaded(map, sourceId);
-
-        await mapLibreMap.once('styledata');
-        // we're loading a bunch of style layers to the map, and we hide them all by default:
-        // see TomTomMap.handleStyleData for similar logic
-        for (const layer of filterLayersBySources(mapLibreMap, [sourceId])) {
-            mapLibreMap.setLayoutProperty(layer.id, 'visibility', 'none', { validate: false });
-        }
-        // Since we just changed the style visibility, we ensure to wait until the style data is changed before returning to prevent race conditions:
-        await mapLibreMap.once('styledata');
     }
 };
 
@@ -481,7 +568,11 @@ export const addOrUpdateImage = async (
             ensureImageLoaded(imgElement);
         } else {
             // Expecting image URL, so the image needs to be downloaded first:
-            addOrUpdateToMap((await map.loadImage(imageToLoad)).data);
+            try {
+                addOrUpdateToMap((await map.loadImage(imageToLoad)).data);
+            } catch (error) {
+                console.warn(`Failed to load image for ID ${imageId}`, error);
+            }
         }
     } else {
         // Expecting HTMLImageElement, wait for it to be loaded
@@ -507,13 +598,20 @@ const getStandardStyleTheme = (standardStyleID: StandardStyleID): LightDark => {
 
 /**
  * Returns the light/dark theme for a given style input.
- * * Unknown standard styles and custom styles are considered as 'light' theme.
+ * * A custom style that declares its `lightDarkTheme` is taken at its word.
+ * * Unknown standard styles, and custom styles that declare nothing, are considered as 'light'
+ *   theme. For the latter, {@link detectStyleLightDarkTheme} gives a better answer once the style
+ *   has loaded.
  * @param styleInput The style input to check. If not provided, 'light' is returned.
  * @ignore
  */
 export const getStyleLightDarkTheme = (styleInput?: StyleInput): LightDark => {
     if (typeof styleInput === 'string') {
         return getStandardStyleTheme(styleInput);
+    }
+    const declaredTheme = getDeclaredLightDarkTheme(styleInput);
+    if (declaredTheme) {
+        return declaredTheme;
     }
     const standardStyle = styleInput as StandardStyle;
     if (standardStyle?.id) {
@@ -523,20 +621,85 @@ export const getStyleLightDarkTheme = (styleInput?: StyleInput): LightDark => {
 };
 
 /**
- * Adds the large POI sprite to the map style.
+ * The light/dark theme a custom style declares for itself, or `undefined` when it declares none —
+ * which is also every standard style, whose theme follows from its ID.
  * @ignore
  */
-export const addPinCategoriesSpriteToStyle = async (mapParams: InternalTomTomMapParams, mapLibreMap: Map) => {
+export const getDeclaredLightDarkTheme = (styleInput?: StyleInput): LightDark | undefined =>
+    isCustomStyle(styleInput) ? (styleInput as CustomStyle).lightDarkTheme : undefined;
+
+/**
+ * Whether the style input names a custom style (URL or inline JSON) rather than a standard one.
+ * @ignore
+ */
+export const isCustomStyle = (styleInput?: StyleInput): boolean =>
+    typeof styleInput === 'object' && styleInput?.type === 'custom';
+
+// Below this relative luminance (0 = black, 1 = white) a canvas colour reads as a dark map.
+const DARK_LUMINANCE_THRESHOLD = 0.35;
+
+// The first colour literal reachable in a paint value: the value itself when it is a plain colour,
+// otherwise the first string inside the expression that parses as a colour. Good enough to tell a
+// dark canvas from a light one; a background colour is very rarely data-driven.
+const firstColorLiteral = (value: unknown): string | undefined => {
+    if (typeof value === 'string') {
+        return relativeLuminance(value) === undefined ? undefined : value;
+    }
+    if (Array.isArray(value)) {
+        for (const item of value) {
+            const found = firstColorLiteral(item);
+            if (found) return found;
+        }
+    }
+    return undefined;
+};
+
+/**
+ * Reads the light/dark theme off a loaded style, from the colour its `background` layer paints the
+ * canvas with. Returns `undefined` when the style has no background layer or its colour cannot be
+ * read, so the caller can keep whatever it assumed before.
+ * @ignore
+ */
+export const detectStyleLightDarkTheme = (
+    style: Pick<StyleSpecification, 'layers'> | undefined,
+): LightDark | undefined => {
+    const background = style?.layers?.find((layer) => layer?.type === 'background');
+    if (!background) return undefined;
+
+    const color = firstColorLiteral((background as BackgroundLayerSpecification).paint?.['background-color']);
+    const luminance = color === undefined ? undefined : relativeLuminance(color);
+    if (luminance === undefined) return undefined;
+    return luminance < DARK_LUMINANCE_THRESHOLD ? 'dark' : 'light';
+};
+
+/**
+ * Adds the large POI sprite to the map style, as a sprite of its own.
+ * * It has to be *added*, not set: the style already ships a `default` sprite with the base map
+ *   icons (POIs, road shields, traffic), and setting the style's sprite replaces that one, which
+ *   makes MapLibre drop every image it brought in.
+ * * Called on every style load, so it skips the sprite once the current style has it.
+ * @ignore
+ */
+export const addPinCategoriesSpriteToStyle = async (
+    mapParams: InternalTomTomMapParams,
+    theme: LightDark,
+    mapLibreMap: Map,
+) => {
+    if (mapLibreMap.getSprite().some((sprite) => sprite.id === PIN_CATEGORIES_SPRITE_ID)) {
+        return;
+    }
     const params = new URLSearchParams();
     // Proxy deployments leave apiKey empty and let the proxy inject the real
     // key server-side. Skip the param entirely rather than emitting `key=`.
     if (mapParams.apiKey) {
         params.set('key', mapParams.apiKey);
     }
-    params.set('poi', `poi_${getStyleLightDarkTheme(mapParams.style)}`);
+    params.set('poi', `poi_${theme}`);
     params.set('apiVersion', '1');
     params.set('apiChannel', 'preview');
-    mapLibreMap.setSprite(`${mapParams.commonBaseURL}/maps/orbis/assets/sprites/2.*/sprite?${params}`, {
-        validate: false,
-    });
+    mapLibreMap.addSprite(
+        PIN_CATEGORIES_SPRITE_ID,
+        `${mapParams.commonBaseURL}/maps/orbis/assets/sprites/2.*/sprite?${params}`,
+        { validate: false },
+    );
 };

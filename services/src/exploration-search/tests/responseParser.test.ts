@@ -6,11 +6,12 @@ import type { ExplorationSearchParams, ExplorationSearchResponse, ExplorationSea
 import { apiAndParsedResponses } from './responseParser.data';
 
 describe('Exploration Search response parser tests', () => {
-    test.each(
-        apiAndParsedResponses,
-    )("'%s'", (_name: string, apiResponse: ExplorationSearchResponseAPI, params: ExplorationSearchParams, parsedResponse: ExplorationSearchResponse) => {
-        expect(parseExplorationSearchResponse(apiResponse, params)).toStrictEqual(parsedResponse);
-    });
+    test.each(apiAndParsedResponses)(
+        "'%s'",
+        (_name: string, apiResponse: ExplorationSearchResponseAPI, params: ExplorationSearchParams, parsedResponse: ExplorationSearchResponse) => {
+            expect(parseExplorationSearchResponse(apiResponse, params)).toStrictEqual(parsedResponse);
+        },
+    );
 });
 
 describe('Exploration Search response parser performance tests', () => {

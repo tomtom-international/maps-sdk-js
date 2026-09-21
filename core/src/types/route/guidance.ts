@@ -87,6 +87,30 @@ export type Maneuver =
 export type SideRoadSide = 'LEFT' | 'RIGHT' | 'LEFT_AND_RIGHT';
 
 /**
+ * A direction relative to the vehicle's approach, used by {@link ManeuverView} to describe the
+ * junction geometry at a maneuver.
+ *
+ * These are relative directions, not angles in degrees — the API reports the road layout as a
+ * small vocabulary of bearings.
+ * @group Route
+ */
+export type ManeuverAngle =
+    | 'STRAIGHT'
+    | 'SLIGHT_RIGHT'
+    | 'RIGHT'
+    | 'SHARP_RIGHT'
+    | 'SLIGHT_LEFT'
+    | 'LEFT'
+    | 'SHARP_LEFT'
+    | 'BACK';
+
+/**
+ * The kind of roundabout a roundabout maneuver takes place on.
+ * @group Route
+ */
+export type RoundaboutType = 'REGULAR' | 'SMALL';
+
+/**
  * Available toll payment options.
  * @group Route
  */
@@ -108,6 +132,9 @@ export type TollPaymentType =
  * @group Route
  */
 export type RoutePathPoint = {
+    /**
+     * The position of this point on the route.
+     */
     point: Position;
     /**
      * Distance (in meters) from the start of the route to this point.
@@ -203,6 +230,10 @@ export type RoadInformation = {
      * The list can be empty if no road shields are available.
      */
     roadShields?: RoadShield[];
+    /**
+     * The code (ISO 3166-1 alpha-3) of the country this road is in.
+     */
+    countryCode?: string;
 };
 
 /**
@@ -240,6 +271,40 @@ export type SideRoad = {
      * The offset is absolute, i.e., it is a positive integer despite that the side road is located before the maneuver on the route.
      */
     offsetFromManeuverInMeters: number;
+    /**
+     * Whether the side road can actually be driven into.
+     *
+     * A non-drivable side road still matters for a junction diagram — the driver can see it — but
+     * cannot be taken by mistake.
+     */
+    isDrivable?: boolean;
+};
+
+/**
+ * The layout of the junction at a maneuver: which way the route goes, and which other ways lead
+ * off it.
+ *
+ * Useful for drawing a junction diagram — the route's own direction plus the roads it passes up.
+ *
+ * @example
+ * ```typescript
+ * // A right turn at a T-junction where the other arm continues straight
+ * const view: ManeuverView = { onRouteAngle: 'RIGHT', offRouteAngles: ['STRAIGHT'] };
+ * ```
+ *
+ * @group Route
+ */
+export type ManeuverView = {
+    /**
+     * The direction the route takes through the junction.
+     */
+    onRouteAngle?: ManeuverAngle;
+    /**
+     * The directions of the other roads at the junction, which the route does not take.
+     *
+     * Empty when the junction has no other arms.
+     */
+    offRouteAngles: ManeuverAngle[];
 };
 
 /**
@@ -264,6 +329,13 @@ export type Instruction = {
      * A code identifying the maneuver (e.g., "Turn right").
      */
     maneuver: Maneuver;
+    /**
+     * The ready-made, human-readable instruction text, e.g. "Turn right onto Damrak".
+     *
+     * Generated and localised by the routing service using the request's language, so it needs no
+     * translation table of your own. Present on every instruction when guidance was requested.
+     */
+    message?: string;
     /**
      * A maneuver can occupy more than one point. For such a maneuver, this field will contain a sequence of all the points it occupies on the map.
      * For maneuvers that only occupy a single point, this field will contain a single array item, with a point value equal to maneuverPoint.
@@ -387,6 +459,16 @@ export type Instruction = {
      * ROUNDABOUT_BACK
      */
     roundaboutExitNumber?: number;
+    /**
+     * The kind of roundabout this maneuver takes place on.
+     * Included on roundabout maneuvers.
+     */
+    roundaboutType?: RoundaboutType;
+    /**
+     * The layout of the junction at this maneuver — the route's own direction plus the directions
+     * of the roads it does not take.
+     */
+    maneuverView?: ManeuverView;
     /**
      * The name of the tollgate, if available.
      * Included if the maneuver is a tollgate maneuver, i.e., maneuver is TOLLGATE.

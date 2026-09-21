@@ -24,9 +24,9 @@ export const captionStyle: CSSProperties = {
 
 // ── Card shell ──────────────────────────────────────────────────────────────
 /** Floating-card chrome shared by every overlay panel — surface-0, hairline border, e4 elevation,
- *  blurred backdrop. Compose with per-panel layout/sizing classes. Uses the playbook (`--pb-*`) tokens. */
+ *  blurred backdrop. Compose with per-panel layout/sizing classes. Uses the Playbook (`--ui-*`) tokens. */
 export const cardShellClass =
-    'rounded-(--pb-radius-10) border border-(--pb-border-low) bg-(--pb-surface-0) shadow-(--pb-shadow-e4) backdrop-blur-md';
+    'rounded-(--ui-rounded-10) border border-(--ui-border-low-em) bg-(--ui-surface-0) shadow-(--ui-elevation-e4) backdrop-blur-md';
 
 // ── Status tag ───────────────────────────────────────────────────────────────
 export type StatusTone = 'error' | 'warning' | 'success' | 'info' | 'neutral';
@@ -61,7 +61,11 @@ export function StatusTag({
     return (
         <span
             className={`inline-flex items-center rounded-full px-1.5 py-px text-[10px] font-semibold ${uppercase ? 'uppercase' : ''} ${className}`}
-            style={{ color, backgroundColor: tint(color), fontFamily: playbook.font.body }}
+            style={{
+                color,
+                backgroundColor: tint(color),
+                fontFamily: playbook.font.body,
+            }}
         >
             {children}
         </span>
@@ -88,7 +92,10 @@ export function MetaChip({ children, className = '' }: { children: ReactNode; cl
 export type IconButtonSize = 'sm' | 'md';
 export type IconButtonVariant = 'ghost' | 'outline';
 
-const ICON_SIZE: Record<IconButtonSize, string> = { sm: 'h-6 w-6', md: 'h-7 w-7' };
+const ICON_SIZE: Record<IconButtonSize, string> = {
+    sm: 'h-6 w-6',
+    md: 'h-7 w-7',
+};
 
 /**
  * Square icon button used across panel headers and chrome. `active`/`expanded` reflect a pressed
@@ -126,15 +133,15 @@ export function IconButton({
             aria-pressed={active}
             aria-expanded={expanded}
             title={label}
-            className={`inline-flex shrink-0 cursor-pointer items-center justify-center rounded-(--pb-radius) leading-none transition-colors hover:bg-(--pb-hover) hover:text-(--pb-hovertext) focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-(--pb-focus) disabled:cursor-not-allowed disabled:opacity-40 ${ICON_SIZE[size]} ${className}`}
+            className={`inline-flex shrink-0 cursor-pointer items-center justify-center rounded-(--panel-radius) leading-none transition-colors hover:bg-(--panel-hover) hover:text-(--panel-hover-text) focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-(--panel-focus) disabled:cursor-not-allowed disabled:opacity-40 ${ICON_SIZE[size]} ${className}`}
             style={{
                 color: playbook.text.medEm,
                 background: pressed ? playbook.surface.surface1 : 'transparent',
                 border: variant === 'outline' ? `1px solid ${playbook.border.lowEm}` : '0',
-                ['--pb-radius' as string]: playbook.radius.sm,
-                ['--pb-hover' as string]: playbook.surface.surface1,
-                ['--pb-hovertext' as string]: playbook.text.highEm,
-                ['--pb-focus' as string]: playbook.text.brand,
+                ['--panel-radius' as string]: playbook.radius.sm,
+                ['--panel-hover' as string]: playbook.surface.surface1,
+                ['--panel-hover-text' as string]: playbook.text.highEm,
+                ['--panel-focus' as string]: playbook.text.brand,
             }}
         >
             {children}
@@ -177,29 +184,36 @@ export type KpiTone = 'error' | 'info' | 'plain';
 
 /**
  * A metric tile ("Current viewport / Summary" + the "Jam" Severity/Delay tiles): a big value over
- * a small label, on a tint of its tone (`error` red, `info` blue) or a neutral surface. `labelTop` puts
- * the label above the value (the incident-details tiles read "Severity" → "Major").
+ * a small label, on a tint of its tone (`error` red, `info` blue) or a neutral surface.
  */
 export function KpiTile({
     label,
     value,
     tone = 'plain',
     accent: accentOverride,
-    labelTop,
+    swatch,
 }: {
     label: string;
     value: ReactNode;
     tone?: KpiTone;
     /** Explicit accent colour (e.g. the severity ramp), overriding `tone`. */
     accent?: string;
-    labelTop?: boolean;
+    /** Explicit text/bg/border palette, overriding `tone`/`accent` — for ramp fills too light to be text. */
+    swatch?: { color: string; background: string; border: string };
 }) {
     const accent =
         accentOverride ?? (tone === 'error' ? playbook.status.error : tone === 'info' ? playbook.status.info : null);
+    // Neutral tile: white card + hairline outline; tone/accent tiles sit on a tint of their own colour.
+    const fg = swatch?.color ?? accent;
+    const background = swatch?.background ?? (accent ? tint(accent, 8) : playbook.surface.surface0);
+    const border = swatch?.border ?? (accent ? tint(accent, 30) : playbook.border.base);
     const labelEl = (
         <div
-            className="text-[11px] tracking-wide"
-            style={{ color: accent ?? playbook.text.lowEm, fontFamily: playbook.font.body }}
+            className="text-[14px] leading-5 font-bold"
+            style={{
+                color: fg ?? playbook.text.medEm,
+                fontFamily: playbook.font.headings,
+            }}
         >
             {label}
         </div>
@@ -207,7 +221,10 @@ export function KpiTile({
     const valueEl = (
         <div
             className="text-[20px] leading-6 font-bold"
-            style={{ color: accent ?? playbook.text.highEm, fontFamily: playbook.font.headings }}
+            style={{
+                color: fg ?? playbook.text.highEm,
+                fontFamily: playbook.font.headings,
+            }}
         >
             {value}
         </div>
@@ -217,21 +234,12 @@ export function KpiTile({
             className="flex flex-col gap-0.5 px-3 py-2"
             style={{
                 borderRadius: playbook.radius.sm,
-                background: accent ? tint(accent, 8) : playbook.surface.surface1,
-                border: `1px solid ${accent ? tint(accent, 30) : playbook.border.lowEm}`,
+                background,
+                border: `1px solid ${border}`,
             }}
         >
-            {labelTop ? (
-                <>
-                    {labelEl}
-                    {valueEl}
-                </>
-            ) : (
-                <>
-                    {valueEl}
-                    {labelEl}
-                </>
-            )}
+            {valueEl}
+            {labelEl}
         </div>
     );
 }
@@ -301,7 +309,9 @@ export function PanelCard({
         >
             <header
                 className={`flex shrink-0 items-center gap-2 px-3 py-2 ${headerClassName}`}
-                style={{ borderBottom: collapsed ? '0' : `1px solid ${playbook.border.lowEm}` }}
+                style={{
+                    borderBottom: collapsed ? '0' : `1px solid ${playbook.border.lowEm}`,
+                }}
             >
                 <h2 style={titleStyle} className="m-0 min-w-0 flex-1 truncate">
                     {title}

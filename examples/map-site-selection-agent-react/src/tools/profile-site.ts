@@ -12,19 +12,21 @@ import {
     geocodeOne,
     trafficAreaAnalytics,
 } from '@tomtom-org/maps-sdk/services';
-import type { ReachableRange, ToolEntry, ToolState } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+import type { ReachableRange, ToolEntry, ToolEntryBuilder, ToolState } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import { resolvePoiCategories } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import * as turf from '@turf/turf';
 import type { Feature, GeoJsonProperties, MultiPolygon, Polygon } from 'geojson';
 import { z } from 'zod';
+import { km2 } from '../agent/geometry';
 import { resolveCatchment } from '../agent/site-selection-state';
 import {
     countHouseholds,
+    householdsEnabled,
     nearestMeters,
     placeInfo,
-    SEARCH_LIMIT,
     type SearchFeature,
     searchInGeometry,
+    searchLimit,
 } from '../demographics/households';
 import { startProgress } from '../progress/progress-store';
 import { type Counted, pointFeature, publishProfile } from '../results/results-store';
@@ -76,7 +78,7 @@ const AREA_BUCKETS = [
 ] as const;
 
 const profileSiteSchema = z.object({
-    address: z.string().describe('The candidate site address or place name to profile.'),
+    addresses: z.array(z.string()).min(1).describe('One or more candidate site addresses or place names to profile.'),
     concept: z.string().describe('What is being sited, e.g. "coffee shop", "gym". Drives the competitor categories.'),
     competitorCategories: z
         .array(z.string())
@@ -123,13 +125,13 @@ const positionOf = (feature: SearchFeature): [number, number] | null => {
     return p ? [p[0], p[1]] : null;
 };
 
-// Count POIs matching category terms inside the catchment (search, up to SEARCH_LIMIT).
+// Count POIs matching category terms inside the catchment (search, up to searchLimit()).
 // null (never 0) when nothing resolves or the search fails. `capped` = count hit the window.
 export const countCategory = async (catchment: Catchment, terms: string[]): Promise<Counted> => {
     const { resolved } = await resolvePoiCategories(terms);
     if (!resolved || resolved.length === 0) return { count: null, capped: false };
-    const features = await searchInGeometry(catchment.geometry, { poiCategories: resolved, limit: SEARCH_LIMIT });
-    return { count: features.length, capped: features.length >= SEARCH_LIMIT };
+    const features = await searchInGeometry(catchment.geometry, { poiCategories: resolved, limit: searchLimit() });
+    return { count: features.length, capped: features.length >= searchLimit() };
 };
 
 // Competitors inside the catchment, category-first (language-independent), with the full set of
@@ -147,13 +149,13 @@ export const findCompetitors = async (
         const features = await searchInGeometry(catchment.geometry, {
             poiCategories: codes,
             query: concept,
-            limit: SEARCH_LIMIT,
+            limit: searchLimit(),
         });
         const nearest = nearestMeters(sitePosition, features);
         return {
             features,
             count: features.length,
-            capped: features.length >= SEARCH_LIMIT,
+            capped: features.length >= searchLimit(),
             nearestMeters: nearest.meters,
             nearestPosition: nearest.feature ? positionOf(nearest.feature) : null,
             nearestLabel: nearest.feature?.properties?.address?.freeformAddress ?? null,
@@ -184,7 +186,7 @@ export const findParking = async (catchment: Catchment, sitePosition: [number, n
     try {
         const { resolved } = await resolvePoiCategories(PARKING_TERMS);
         if (!resolved || resolved.length === 0) return empty;
-        const features = await searchInGeometry(catchment.geometry, { poiCategories: resolved, limit: SEARCH_LIMIT });
+        const features = await searchInGeometry(catchment.geometry, { poiCategories: resolved, limit: searchLimit() });
         const nearest = nearestMeters(sitePosition, features);
         return {
             features,
@@ -276,9 +278,7 @@ export const drawCatchment = async (
     // rangeColors (one per range) stamps `properties.color` so fill/border paint per feature.
     const features = ranges.flatMap((range, index) =>
         (range.polygon?.features ?? []).map((feature: PolygonFeatures['features'][number]) =>
-            rangeColors
-                ? { ...feature, properties: { ...feature.properties, color: rangeColors[index] } }
-                : feature,
+            rangeColors ? { ...feature, properties: { ...feature.properties, color: rangeColors[index] } } : feature,
         ),
     );
     const merged = { type: 'FeatureCollection', features } as PolygonFeatures;
@@ -304,47 +304,77 @@ export const drawCatchment = async (
     }
 };
 
-const STEPS = [
-    'Locating site',
-    'Building catchment',
-    'Counting households',
+const buildSteps = (n: number): string[] => [
+    n === 1 ? 'Locating site' : 'Locating sites',
+    n === 1 ? 'Building catchment' : 'Building catchments',
+    ...(householdsEnabled() ? ['Counting households'] : []),
     'Finding competitors',
-    'Nearest parking',
-    'Area make-up',
+    'Parking & area make-up',
 ];
+// Later phase indices shift when the households step is hidden.
+const stepCompetitors = (): number => (householdsEnabled() ? 3 : 2);
+const stepFinish = (): number => (householdsEnabled() ? 4 : 3);
 
-export const profileSite: ToolEntry = {
-    description:
-        'Profile a SINGLE candidate site for a retail/service concept. Draws the catchment, all competitor pins, ' +
-        'a line to the nearest competitor (with distance), all nearby parking points (line to the nearest), and reports households (address ' +
-        'count), competition, parking and area make-up — all shown in the Site Profile panel. Defaults to an ~800 m ' +
-        'walking radius; large-format / car-oriented concepts use a driving catchment. For "what kind of area is X" ' +
-        'questions, answer only from the returned areaMakeup counts (residential character is not measurable).',
-    classificationPrompt:
-        'Profile / assess / size up ONE candidate location for opening a store or site, OR characterize what kind ' +
-        'of area an address is in (offices / tourist / retail / residential character).',
-    inputSchema: profileSiteSchema,
-    execute: (async (params: ProfileSiteInput, state: ToolState) => {
-        const progress = startProgress('profileSite', STEPS);
-        try {
-            const { address, concept, competitorCategories, includeParking } = params;
-            const { walking, walkReachMeters, driveMinutes } = resolveCatchment(state, params);
-            progress.step(0);
+// BUILDER: the description mentions households only when the flag enables them, so it is assembled
+// at createMapAgent time — after buildSiteAgentOptions stored the flag — rather than at module load.
+// (Read from the store, not options.featureFlags: the toolkit's public FeatureFlags type strips the
+// internal experimentalSearch member.) The executor reads the same stored flag at runtime.
+export const profileSite: ToolEntryBuilder = () => {
+    const households = householdsEnabled();
+    return {
+        description:
+            'Profile one or more candidate sites for a retail/service concept. Pass ALL addresses in a SINGLE call — ' +
+            'never call this tool more than once per user request. For each site: draws the catchment, all competitor pins, a line to the ' +
+            'nearest competitor (with distance), all nearby parking points (line to the nearest), and reports ' +
+            (households ? 'households (address count), ' : '') +
+            'competition, parking and area make-up — all shown in the Site Profile panel. Defaults to an ' +
+            '~800 m walking radius; large-format / car-oriented concepts use a driving catchment. For "what kind of area ' +
+            'is X" questions, answer only from the returned areaMakeup counts (residential character is not measurable).',
+        classificationPrompt:
+            'Profile / assess / size up one or more candidate locations for opening a store or site, OR characterize ' +
+            'what kind of area an address is in (offices / tourist / retail / residential character).',
+        inputSchema: profileSiteSchema,
+        execute: executeProfileSite,
+        examplePrompts: PROFILE_SITE_EXAMPLE_PROMPTS,
+    };
+};
+
+/** Shared executor — also invoked directly by the Site Profile panel's radius switcher (re-run). */
+export const executeProfileSite = (async (params: ProfileSiteInput, state: ToolState) => {
+    const { addresses, concept, competitorCategories, includeParking } = params;
+    const progress = startProgress('profileSite', buildSteps(addresses.length));
+    const { walking, walkReachMeters, driveMinutes } = resolveCatchment(state, params);
+    const basis = walking ? `≈${walkReachMeters} m walk radius` : `${driveMinutes}-min drive`;
+    const budgets: ReachableRange['budgets'] = [
+        walking ? { type: 'distanceKM', value: walkReachMeters / 1000 } : { type: 'timeMinutes', value: driveMinutes },
+    ];
+
+    try {
+        // Phase 0 — geocode all sites
+        progress.step(0);
+        const geos: { address: string; position: [number, number]; label: string }[] = [];
+        for (const address of addresses) {
             const place = await geocodeOne(address);
-            const position: [number, number] = [place.geometry.coordinates[0], place.geometry.coordinates[1]];
-            const label = place.properties.address?.freeformAddress ?? address;
+            geos.push({
+                address,
+                position: [place.geometry.coordinates[0], place.geometry.coordinates[1]],
+                label: place.properties.address?.freeformAddress ?? address,
+            });
+        }
 
-            progress.step(1);
+        // Phase 1 — build catchments for all sites
+        progress.step(1);
+        const catchmentData: {
+            address: string;
+            position: [number, number];
+            label: string;
+            catchment: Catchment;
+            catchmentKm2: number;
+        }[] = [];
+        for (const { address, position, label } of geos) {
             const catchment = await (walking
                 ? buildWalkCircle(position, walkReachMeters)
                 : buildDriveIsochrone(position, driveMinutes));
-            const catchmentKm2 = Math.round((turf.area(catchment) / 1e6) * 100) / 100;
-            const basis = walking ? `≈${walkReachMeters} m walk radius` : `${driveMinutes}-min drive`;
-            const budgets: ReachableRange['budgets'] = [
-                walking
-                    ? { type: 'distanceKM', value: walkReachMeters / 1000 }
-                    : { type: 'timeMinutes', value: driveMinutes },
-            ];
             await drawCatchment(
                 state,
                 `${concept} catchment — ${basis} — ${label}`,
@@ -358,17 +388,42 @@ export const profileSite: ToolEntry = {
                 false, // profileSite draws its own Figma pin + label (drawSiteMarker) — no SDK origin pin
                 false, // and renders the catchment itself (drawRichOverlay) in the Figma style — no SDK outline
             );
+            catchmentData.push({
+                address,
+                position,
+                label,
+                catchment,
+                catchmentKm2: km2(catchment),
+            });
+        }
 
+        // Phase 2 — households for all sites (the whole phase disappears when the household
+        // signal is off; the panel/report then hide the metric entirely).
+        const householdsAll: Counted[] = [];
+        if (householdsEnabled()) {
             progress.step(2);
-            const households = await countHouseholds(catchment.geometry);
+            for (const { catchment } of catchmentData) {
+                householdsAll.push(await countHouseholds(catchment.geometry));
+            }
+        }
 
-            progress.step(3);
-            const competitors = await findCompetitors(catchment, position, concept, competitorCategories);
+        // Phase 3 — competitors for all sites
+        progress.step(stepCompetitors());
+        const competitorsAll: Awaited<ReturnType<typeof findCompetitors>>[] = [];
+        for (const { catchment, position } of catchmentData) {
+            competitorsAll.push(await findCompetitors(catchment, position, concept, competitorCategories));
+        }
 
-            progress.step(4);
+        // Phase 4 — parking, area make-up, overlay, publish for all sites
+        progress.step(stepFinish());
+        const labels: string[] = [];
+        for (let i = 0; i < catchmentData.length; i++) {
+            const { address, position, label, catchment, catchmentKm2 } = catchmentData[i]!;
+            const households = householdsEnabled() ? householdsAll[i]! : null;
+            const competitors = competitorsAll[i]!;
+            labels.push(label);
+
             const parking = includeParking ? await findParking(catchment, position) : null;
-
-            progress.step(5);
             const areaMakeup = await findAreaMakeup(catchment);
             const traffic = await trafficNote(position);
 
@@ -414,7 +469,7 @@ export const profileSite: ToolEntry = {
             }
             await drawRichOverlay(state, `Profile — ${label}`, points, lines, catchment.geometry);
             // Hide any stray PlacesModule pin left by a prior locatePlace/discoverPlaces (e.g. an
-            // earlier "Messe Berlin" locate) so the focused profile shows ONLY our Figma site pin —
+            // earlier "Las Vegas Convention Center" locate) so the focused profile shows ONLY our Figma site pin —
             // otherwise the SDK pin and the custom pin stack on the same spot. profileSite draws its
             // own competitor/parking markers via the BYOD overlay, so it never needs state.places.
             // `clearShownEntries` only hides — the entries stay in history, so a later
@@ -423,10 +478,6 @@ export const profileSite: ToolEntry = {
             // The Figma on-map address label under the site pin (single-site cue).
             drawSiteMarker(state, position, label);
 
-            const notes = [
-                traffic,
-                'Households = address (PointAddress) count in the catchment — a dwellings proxy, not residents.',
-            ];
             publishProfile({
                 site: pointFeature(position, label, {
                     label,
@@ -443,31 +494,50 @@ export const profileSite: ToolEntry = {
                     },
                     parking: parking ? { count: parking.count, nearestMeters: parking.nearestMeters } : null,
                     areaMakeup,
-                    notes,
-                    rerun: { address, concept, includeParking, walkReachMeters, driveMinutes, competitorCategories },
+                    notes: [
+                        traffic,
+                        ...(householdsEnabled()
+                            ? [
+                                  'Households = address (PointAddress) count in the catchment — a dwellings proxy, not residents.',
+                              ]
+                            : []),
+                    ],
+                    rerun: {
+                        address,
+                        concept,
+                        includeParking,
+                        walkReachMeters,
+                        driveMinutes,
+                        competitorCategories,
+                    },
                 }),
                 catchment: toPolygonFeature(catchment, label),
             });
-            progress.done();
-            return {
-                ok: true as const,
-                panel: 'Site Profile',
-                headline: `Profiled ${label} for ${concept}.`,
-                hint: 'All metrics are in the Site Profile panel. Summarise in ONE short sentence; do NOT restate the panel numbers.',
-            };
-        } catch (error) {
-            progress.done();
-            return {
-                error: `Could not profile "${params.address}": ${error instanceof Error ? error.message : String(error)}`,
-            };
         }
-    }) as ToolEntry['execute'],
-    examplePrompts: [
-        'Profile Marnixstraat 250 Amsterdam for a coffee shop',
-        'Size up Damrak 70 for a drive-through',
-        'What kind of area is Keizersgracht 200 — offices, tourists, residential?',
-        'Assess Nieuwendijk 100 for a bakery — enough footfall, not too many rivals?',
-        'Profile Overtoom 50 for a gym with a 15-minute walking catchment',
-        'How many competing pharmacies are within walking distance of Ferdinand Bolstraat 30?',
-    ],
-};
+
+        progress.done();
+        return {
+            ok: true as const,
+            panel: 'Site Profile',
+            headline:
+                labels.length === 1
+                    ? `Profiled ${labels[0]} for ${concept}.`
+                    : `Profiled ${labels.join(', ')} for ${concept}.`,
+            hint: 'All metrics are in the Site Profile panel. Summarise in ONE short sentence; do NOT restate the panel numbers.',
+        };
+    } catch (error) {
+        progress.done();
+        return {
+            error: `Could not profile "${addresses.join(', ')}": ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
+}) as ToolEntry['execute'];
+
+const PROFILE_SITE_EXAMPLE_PROMPTS = [
+    'Profile 3200 S Las Vegas Blvd, Las Vegas for a coffee shop',
+    'Size up 6605 S Eastern Ave for a drive-through',
+    'What kind of area is 400 S 4th St — offices, tourists, residential?',
+    'Assess 425 Fremont St for a bakery — enough footfall, not too many rivals?',
+    'Profile 9350 W Sahara Ave for a gym with a 15-minute walking catchment',
+    'How many competing pharmacies are within walking distance of 2020 E Charleston Blvd?',
+];

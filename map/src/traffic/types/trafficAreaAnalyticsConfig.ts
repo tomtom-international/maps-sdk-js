@@ -254,9 +254,13 @@ export type AreaAnalyticsBeforeLayerConfig = {
  */
 export type AreaAnalyticsRegionPolygonConfig = {
     /**
-     * Color used for both the fill and outline of the region boundary.
+     * CSS colour used for both the fill and outline of the region boundary.
      *
-     * @defaultValue '#000000'
+     * When omitted, a theme-adaptive default is used. Known standard styles are classified as
+     * light or dark; a custom style is treated as light, so set `color` explicitly if a custom
+     * style is dark.
+     *
+     * @defaultValue Black (`#000000`) on light styles, white (`#FFFFFF`) on dark styles
      */
     color?: string;
 
@@ -371,9 +375,11 @@ export const AREA_ANALYTICS_DEFAULTS = {
             height: { maxHeightMeters: 1000, minHeightMeters: 0, scaleMode: 'currentRange' },
         },
     },
-    /** @see {@link AreaAnalyticsRegionPolygonConfig} */
+    /**
+     * @see {@link AreaAnalyticsRegionPolygonConfig}
+     * `color` is omitted — the layer builders apply a theme-adaptive default.
+     */
     regionPolygon: {
-        color: '#000000',
         fillOpacity: 0,
         outlineOpacity: 0.5,
         outlineWidth: 2,

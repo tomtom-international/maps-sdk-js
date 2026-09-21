@@ -24,7 +24,7 @@ const pointsData: FeatureCollection<Point> = {
 const initCustomGeoJSON = async (page: import('@playwright/test').Page) =>
     page.evaluate(async () => {
         const mapsSdkThis = globalThis as MapsSDKThis;
-        mapsSdkThis.customGeoJSON = await mapsSdkThis.MapsSDK.CustomGeoJSONModule.get(mapsSdkThis.tomtomMap, {
+        mapsSdkThis.customGeoJSON = await mapsSdkThis.MapsSDK.CustomGeoJSONModule.create(mapsSdkThis.tomtomMap, {
             sources: {
                 points: {
                     layers: [
@@ -113,7 +113,7 @@ test.describe('CustomGeoJSONModule integration tests', () => {
         await installMakeIcon(page);
         await page.evaluate(async () => {
             const mapsSdkThis = globalThis as MapsSDKThis;
-            mapsSdkThis.customGeoJSON = await mapsSdkThis.MapsSDK.CustomGeoJSONModule.get(mapsSdkThis.tomtomMap, {
+            mapsSdkThis.customGeoJSON = await mapsSdkThis.MapsSDK.CustomGeoJSONModule.create(mapsSdkThis.tomtomMap, {
                 sources: {
                     points: {
                         layers: [

@@ -76,13 +76,13 @@ export function TriagePanel({
             className="w-[280px] max-w-full max-h-[60vh]"
         >
             <div className="flex min-h-0 flex-1 flex-col">
-                <div className="flex shrink-0 gap-0.5 border-b border-(--pb-border-low) p-1" role="tablist">
+                <div className="flex shrink-0 gap-0.5 border-b border-(--ui-border-low-em) p-1" role="tablist">
                     <TabButton active={tab === 'incidents'} onClick={() => setTab('incidents')}>
                         Incidents
                     </TabButton>
                     <TabButton active={tab === 'roads'} onClick={() => setTab('roads')}>
                         Roads
-                        <span className="rounded-[8px] bg-(--pb-surface-2) px-1.5 py-px text-[10px] font-normal text-(--pb-text-low)">
+                        <span className="rounded-[8px] bg-(--ui-surface-2) px-1.5 py-px text-[10px] font-normal text-(--ui-text-low-em)">
                             {topRoads.length}
                         </span>
                     </TabButton>
@@ -90,12 +90,12 @@ export function TriagePanel({
 
                 {tab === 'incidents' && (
                     <>
-                        <div className="flex flex-wrap items-center gap-1 border-b border-(--pb-border-low) px-3 py-2">
+                        <div className="flex flex-wrap items-center gap-1 border-b border-(--ui-border-low-em) px-3 py-2">
                             <SelectLabel label="Sort">
                                 <select
                                     value={sortKey}
                                     onChange={(e) => setSortKey(e.target.value as SortKey)}
-                                    className="rounded-(--pb-radius-5) border border-(--pb-border-low) bg-(--pb-surface-1) px-1.5 py-1 font-(family-name:--pb-font-primary) text-(--pb-font-caption-m) font-normal normal-case tracking-normal text-(--pb-text-high)"
+                                    className="rounded-(--ui-rounded-5) border border-(--ui-border-low-em) bg-(--ui-surface-1) px-1.5 py-1 font-(family-name:--ui-font-gilroy) text-(--ui-font-caption-m) font-normal normal-case tracking-normal text-(--ui-text-high-em)"
                                 >
                                     <option value="delay">Delay</option>
                                     <option value="severity">Severity</option>
@@ -106,7 +106,7 @@ export function TriagePanel({
                                 <select
                                     value={categoryFilter}
                                     onChange={(e) => setCategoryFilter(e.target.value as string | 'all')}
-                                    className="rounded-(--pb-radius-5) border border-(--pb-border-low) bg-(--pb-surface-1) px-1.5 py-1 font-(family-name:--pb-font-primary) text-(--pb-font-caption-m) font-normal normal-case tracking-normal text-(--pb-text-high)"
+                                    className="rounded-(--ui-rounded-5) border border-(--ui-border-low-em) bg-(--ui-surface-1) px-1.5 py-1 font-(family-name:--ui-font-gilroy) text-(--ui-font-caption-m) font-normal normal-case tracking-normal text-(--ui-text-high-em)"
                                 >
                                     {categories.map((c) => (
                                         <option key={c} value={c}>
@@ -120,7 +120,7 @@ export function TriagePanel({
                                     type="button"
                                     title="Clear focus"
                                     onClick={onClearFocus}
-                                    className="ml-auto cursor-pointer self-end rounded-(--pb-radius-5) border border-(--pb-border-low) bg-(--pb-surface-1) px-2.5 py-1.5 text-(--pb-font-caption-m) font-semibold text-(--pb-text-medium) hover:border-(--pb-border-high) hover:text-(--pb-text-high)"
+                                    className="ml-auto cursor-pointer self-end rounded-(--ui-rounded-5) border border-(--ui-border-low-em) bg-(--ui-surface-1) px-2.5 py-1.5 text-(--ui-font-caption-m) font-semibold text-(--ui-text-med-em) hover:border-(--ui-border-high-em) hover:text-(--ui-text-high-em)"
                                 >
                                     Clear focus
                                 </button>
@@ -135,7 +135,7 @@ export function TriagePanel({
                                                 'Top 3 by delay',
                                             )
                                         }
-                                        className="ml-auto cursor-pointer self-end rounded-(--pb-radius-5) border-0 bg-(--pb-primary-color) px-2.5 py-1.5 text-(--pb-font-caption-m) font-semibold text-(--pb-text-white) hover:brightness-110"
+                                        className="ml-auto cursor-pointer self-end rounded-(--ui-rounded-5) border-0 bg-(--ui-surface-brand-red) px-2.5 py-1.5 text-(--ui-font-caption-m) font-semibold text-(--ui-text-white) hover:brightness-110"
                                     >
                                         Focus top 3
                                     </button>
@@ -166,7 +166,7 @@ export function TriagePanel({
                                                 onSelectIncident(p.id);
                                             }
                                         }}
-                                        className={`grid cursor-pointer grid-cols-[10px_1fr_auto] items-center gap-2 border-b border-(--pb-border-low) py-2 transition-colors hover:bg-(--pb-surface-1) focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-(--pb-primary-color) ${isFocused ? 'border-l-[3px] border-l-(--pb-primary-color) bg-[color-mix(in_srgb,var(--pb-primary-color)_10%,var(--pb-surface-0))] pl-[calc(var(--pb-space-3)-3px)] pr-3' : 'px-3'}`}
+                                        className={`grid cursor-pointer grid-cols-[10px_1fr_auto] items-center gap-2 border-b border-(--ui-border-low-em) py-2 transition-colors hover:bg-(--ui-surface-1) focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-(--ui-surface-brand-red) ${isFocused ? 'border-l-[3px] border-l-(--ui-surface-brand-red) bg-[color-mix(in_srgb,var(--ui-surface-brand-red)_10%,var(--ui-surface-0))] pl-[calc(var(--ui-space-3)-3px)] pr-3' : 'px-3'}`}
                                     >
                                         <SeverityDot
                                             color={severityColor(p.magnitudeOfDelay)}
@@ -174,25 +174,25 @@ export function TriagePanel({
                                         />
                                         <div className="min-w-0">
                                             {/* Title is the location; the incident type is the subtitle. */}
-                                            <div className="flex items-baseline gap-1.5 text-(--pb-font-body-s) font-semibold">
+                                            <div className="flex items-baseline gap-1.5 text-(--ui-font-body-s) font-semibold">
                                                 <span
-                                                    className={`truncate text-(--pb-text-high) ${hasLocation ? '' : 'capitalize'}`}
+                                                    className={`truncate text-(--ui-text-high-em) ${hasLocation ? '' : 'capitalize'}`}
                                                 >
                                                     {hasLocation ? location : p.category}
                                                 </span>
                                                 {p.roadNumbers?.[0] && (
-                                                    <span className="shrink-0 rounded-[3px] bg-(--pb-surface-2) px-1.5 py-px text-[10px] uppercase tracking-wider text-(--pb-text-medium)">
+                                                    <span className="shrink-0 rounded-[3px] bg-(--ui-surface-2) px-1.5 py-px text-[10px] uppercase tracking-wider text-(--ui-text-med-em)">
                                                         {p.roadNumbers[0]}
                                                     </span>
                                                 )}
                                             </div>
                                             {hasLocation && (
-                                                <div className="mt-0.5 truncate text-(--pb-font-caption-s) capitalize text-(--pb-text-low)">
+                                                <div className="mt-0.5 truncate text-(--ui-font-caption-s) capitalize text-(--ui-text-low-em)">
                                                     {p.category}
                                                 </div>
                                             )}
                                         </div>
-                                        <div className="whitespace-nowrap text-right text-(--pb-font-body-s) font-semibold text-(--pb-text-high) [font-variant-numeric:tabular-nums]">
+                                        <div className="whitespace-nowrap text-right text-(--ui-font-body-s) font-semibold text-(--ui-text-high-em) [font-variant-numeric:tabular-nums]">
                                             {delay > 0 ? formatDelay(delay) : '—'}
                                         </div>
                                     </li>
@@ -205,7 +205,7 @@ export function TriagePanel({
                 {tab === 'roads' && (
                     <ol className="m-0 flex-1 list-none overflow-y-auto p-0">
                         {topRoads.length === 0 ? (
-                            <li className="p-3 text-center text-(--pb-font-caption-m) text-(--pb-text-low)">
+                            <li className="p-3 text-center text-(--ui-font-caption-m) text-(--ui-text-low-em)">
                                 No road numbers on current incidents.
                             </li>
                         ) : (
@@ -222,22 +222,22 @@ export function TriagePanel({
                                         }
                                     }}
                                     title={`Focus ${r.ids.length} incidents on ${r.road}`}
-                                    className="grid cursor-pointer grid-cols-[60px_1fr_auto] items-center gap-2 border-b border-(--pb-border-low) px-3 py-2 transition-colors hover:bg-(--pb-surface-1) focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-(--pb-primary-color)"
+                                    className="grid cursor-pointer grid-cols-[60px_1fr_auto] items-center gap-2 border-b border-(--ui-border-low-em) px-3 py-2 transition-colors hover:bg-(--ui-surface-1) focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-(--ui-surface-brand-red)"
                                 >
-                                    <span className="text-(--pb-font-body-s) font-semibold uppercase tracking-wider text-(--pb-text-high)">
+                                    <span className="text-(--ui-font-body-s) font-semibold uppercase tracking-wider text-(--ui-text-high-em)">
                                         {r.road}
                                     </span>
-                                    <span className="relative min-w-[30px] h-2.5 overflow-hidden rounded-[3px] bg-(--pb-surface-2)">
+                                    <span className="relative min-w-[30px] h-2.5 overflow-hidden rounded-[3px] bg-(--ui-surface-2)">
                                         <span
                                             className="block h-full rounded-[3px] bg-gradient-to-r from-[hsl(45,100%,51%)] via-[hsl(9,97%,51%)] to-[hsl(0,100%,34%)]"
                                             style={{ width: `${r.barPct}%` }}
                                         />
                                     </span>
                                     <span className="flex flex-col items-end [font-variant-numeric:tabular-nums]">
-                                        <strong className="text-(--pb-font-body-s) text-(--pb-text-high)">
+                                        <strong className="text-(--ui-font-body-s) text-(--ui-text-high-em)">
                                             {formatDelay(r.totalDelay)}
                                         </strong>
-                                        <span className="text-[10px] text-(--pb-text-low)">· {r.ids.length}</span>
+                                        <span className="text-[10px] text-(--ui-text-low-em)">· {r.ids.length}</span>
                                     </span>
                                 </li>
                             ))
@@ -251,15 +251,15 @@ export function TriagePanel({
 
 function TabButton({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
     const activeClass = active
-        ? 'bg-(--pb-surface-0) text-(--pb-text-high) shadow-(--pb-shadow-e1)'
-        : 'bg-transparent text-(--pb-text-medium) hover:text-(--pb-text-high)';
+        ? 'bg-(--ui-surface-0) text-(--ui-text-high-em) shadow-(--ui-elevation-e1)'
+        : 'bg-transparent text-(--ui-text-med-em) hover:text-(--ui-text-high-em)';
     return (
         <button
             type="button"
             role="tab"
             aria-selected={active}
             onClick={onClick}
-            className={`inline-flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-(--pb-radius-5) border-0 px-2 py-1.5 text-(--pb-font-caption-m) font-semibold ${activeClass}`}
+            className={`inline-flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-(--ui-rounded-5) border-0 px-2 py-1.5 text-(--ui-font-caption-m) font-semibold ${activeClass}`}
         >
             {children}
         </button>
@@ -268,7 +268,7 @@ function TabButton({ active, onClick, children }: { active: boolean; onClick: ()
 
 function SelectLabel({ label, children }: { label: string; children: React.ReactNode }) {
     return (
-        <label className="inline-flex min-w-0 flex-1 flex-col gap-0.5 text-[10px] font-semibold uppercase tracking-wider text-(--pb-text-low)">
+        <label className="inline-flex min-w-0 flex-1 flex-col gap-0.5 text-[10px] font-semibold uppercase tracking-wider text-(--ui-text-low-em)">
             <span>{label}</span>
             {children}
         </label>

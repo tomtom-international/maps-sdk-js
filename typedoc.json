@@ -4,15 +4,16 @@
   "readme": "none",
   "name": "TomTom Maps for JavaScript",
   "exclude": ["**/*.test.ts"],
+  "skipErrorChecking": true,
   "compilerOptions": {
     "skipLibCheck": true,
     "jsx": "preserve"
   },
   "externalSymbolLinkMappings": {
     "maplibre-gl": {
-      "Map": "https://maplibre.org/maplibre-gl-js-docs/api/map/",
-      "MapOptions": "https://maplibre.org/maplibre-gl-js-docs/api/map/",
-      "*": "https://maplibre.org/maplibre-gl-js-docs/api/"
+      "Map": "https://maplibre.org/maplibre-gl-js/docs/API/classes/Map/",
+      "MapOptions": "https://maplibre.org/maplibre-gl-js/docs/API/type-aliases/MapOptions/",
+      "*": "https://maplibre.org/maplibre-gl-js/docs/API/"
     },
     "@types/geojson": {
       "*": "https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/geojson/index.d.ts"

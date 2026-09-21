@@ -75,6 +75,25 @@ describe('AbstractSourceWithLayers tests', () => {
         expect(sourceWithLayers.isAnyLayerVisible((layer) => layer.id === layer1.id)).toBe(false);
     });
 
+    test('treats a removed map as having no layers, without touching it', () => {
+        // A removed map (map.remove()) throws on any getLayer/setLayoutProperty call; teardown
+        // runs after removal, so layer ops must short-circuit rather than throw.
+        const throwRemoved = () => {
+            throw new TypeError("Cannot read properties of undefined (reading 'getLayer')");
+        };
+        const mapLibreMock = {
+            _removed: true,
+            getLayer: vi.fn(throwRemoved),
+            getLayoutProperty: vi.fn(throwRemoved),
+            setLayoutProperty: vi.fn(throwRemoved),
+        } as unknown as Map;
+        const sourceWithLayers = new TestSourceWithLayers(mapLibreMock, testTomTomMapSource, testLayerSpecs);
+
+        expect(() => sourceWithLayers.setLayersVisible(false)).not.toThrow();
+        expect(sourceWithLayers.isAnyLayerVisible()).toBe(false);
+        expect(mapLibreMock.getLayer).not.toHaveBeenCalled();
+    });
+
     test('isAnyLayerVisible treats a missing layer as not visible', () => {
         // Regression: if a layer was removed from the map out-of-band (e.g. style swap),
         // `getLayoutProperty` returns undefined which used to be treated as visible.
@@ -264,47 +283,6 @@ describe('AddedSourceWithLayers tests', () => {
             validate: false,
         });
     });
-
-    test('equalSourceAndLayerIDs', () => {
-        const mapLibreMock = {
-            getLayer: vi.fn(),
-            getSource: vi.fn().mockReturnValue({ id: testSourceId }),
-            addLayer: vi.fn(),
-            setLayoutProperty: vi.fn(),
-            getStyle: vi.fn().mockReturnValue({
-                sources: { testSourceID: { id: testSourceId } },
-                layers: testLayerSpecs,
-            }),
-        } as unknown as Map;
-
-        const sourceWithLayersA = new AddedSourceWithLayers(
-            mapLibreMock,
-            testSourceId,
-            { type: 'vector' },
-            testLayerSpecs,
-        );
-
-        expect(sourceWithLayersA.equalSourceAndLayerIDs(sourceWithLayersA)).toBe(true);
-
-        const sourceWithLayersB = new GeoJSONSourceWithLayers(mapLibreMock, testSourceId, testToBeAddedLayerSpecs);
-        expect(sourceWithLayersA.equalSourceAndLayerIDs(sourceWithLayersB)).toBe(true);
-        expect(sourceWithLayersB.equalSourceAndLayerIDs(sourceWithLayersA)).toBe(true);
-
-        const anotherSource = new GeoJSONSourceWithLayers(mapLibreMock, 'another-source', testToBeAddedLayerSpecs);
-        expect(sourceWithLayersB.equalSourceAndLayerIDs(anotherSource)).toBe(false);
-
-        const onlyOneLayer = new GeoJSONSourceWithLayers(mapLibreMock, testSourceId, [layer0]);
-        expect(sourceWithLayersB.equalSourceAndLayerIDs(onlyOneLayer)).toBe(false);
-        expect(anotherSource.equalSourceAndLayerIDs(onlyOneLayer)).toBe(false);
-
-        const styleSourceWithLayers = new StyleSourceWithLayers(mapLibreMock, { id: testSourceId } as Source);
-        expect(sourceWithLayersA.equalSourceAndLayerIDs(styleSourceWithLayers)).toBe(true);
-        expect(styleSourceWithLayers.equalSourceAndLayerIDs(sourceWithLayersA)).toBe(true);
-        expect(styleSourceWithLayers.equalSourceAndLayerIDs(sourceWithLayersB)).toBe(true);
-        expect(styleSourceWithLayers.equalSourceAndLayerIDs(anotherSource)).toBe(false);
-        expect(anotherSource.equalSourceAndLayerIDs(styleSourceWithLayers)).toBe(false);
-        expect(styleSourceWithLayers.equalSourceAndLayerIDs(onlyOneLayer)).toBe(false);
-    });
 });
 
 describe('GeoJSONSourceWithLayers', () => {
@@ -366,6 +344,29 @@ describe('GeoJSONSourceWithLayers', () => {
         } as unknown as Map;
         const sourceWithLayers = new GeoJSONSourceWithLayers(mapLibreMock, testSourceId, testToBeAddedLayerSpecs);
         sourceWithLayers.clear();
+    });
+
+    test('clear/show are safe no-ops once the map is removed', () => {
+        // The reported crash: module clear() -> show() -> setLayersVisible() -> getLayer() on a
+        // map removed during an HMR unmount. Construct while alive, then remove.
+        const setData = vi.fn();
+        const mapLibreMock = {
+            _removed: false,
+            getSource: vi.fn().mockReturnValue({ id: testSourceId, setData }),
+            getLayer: vi.fn(),
+            addLayer: vi.fn(),
+            setLayoutProperty: vi.fn(),
+        } as unknown as Map & { _removed: boolean };
+        const sourceWithLayers = new GeoJSONSourceWithLayers(mapLibreMock, testSourceId, testToBeAddedLayerSpecs);
+
+        mapLibreMock._removed = true;
+        setData.mockClear();
+
+        expect(() => sourceWithLayers.clear()).not.toThrow();
+        expect(() =>
+            sourceWithLayers.show({ type: 'FeatureCollection', features: [{}] } as FeatureCollection),
+        ).not.toThrow();
+        expect(setData).not.toHaveBeenCalled();
     });
 
     test('putEventState', () => {

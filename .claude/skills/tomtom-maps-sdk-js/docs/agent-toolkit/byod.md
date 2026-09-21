@@ -48,6 +48,14 @@ It applies live in place on a shown entry (via the module's `applyConfig` runtim
 or `show` renders a hidden one;
 invalid specs are rejected with a semantic error and leave the entry's previous layers intact.
 
+### Layer placement (`beforeID`)
+
+Optional per layer: a style layer id to draw **below**; omit for the top of the stack. Any layer on the map is
+valid, but the sane anchors are the SDK's `mapStyleLayerIDs`, passed as their raw names because the schema is a
+plain string — `'Borders - Treaty label'` (`lowestLabel`) for fill/line/heatmap so all labels stay above the data,
+`'Tunnel - Railway outline'` (`lowestRoadLine`) when the road network should paint over a fill; omit for points.
+An id absent from the current style silently drops the layer.
+
 ## Disabling BYOD
 
 ```ts

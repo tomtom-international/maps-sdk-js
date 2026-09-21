@@ -137,13 +137,14 @@ export class CustomGeometriesState implements ShownEntriesSlice, StateSlice {
             await hideAllEntries(this._entries, (entry) => this.hideEntry(entry.id));
             this._entries = [];
         }
+        // The length-based fallback must be deduped too: after removals, `entries.length` can equal
+        // the index of a surviving entry (add 3, remove the first → next fallback collides with the
+        // last). A duplicate id makes every id-based lookup resolve the wrong entry.
         const fallback = `geometries-${this._entries.length}`;
-        const entryId = explicitId
-            ? pickUniqueEntryId(
-                  explicitId,
-                  this._entries.map((entry) => entry.id),
-              )
-            : fallback;
+        const entryId = pickUniqueEntryId(
+            explicitId ?? fallback,
+            this._entries.map((entry) => entry.id),
+        );
         this._entries.push({
             id: entryId,
             timestamp: Date.now(),
@@ -162,7 +163,7 @@ export class CustomGeometriesState implements ShownEntriesSlice, StateSlice {
         // effective theme for every feature that doesn't carry its own `properties.theme`.
         const config = { ...themedGeometryConfig(), theme };
         if (!entry._module) {
-            entry._module = await GeometriesModule.get(this._ttMap, config);
+            entry._module = await GeometriesModule.create(this._ttMap, config);
             entry._shownTheme = theme;
         } else if (entry._shownTheme !== theme) {
             entry._module.applyConfig(config);

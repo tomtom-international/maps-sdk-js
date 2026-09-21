@@ -104,12 +104,12 @@ function prettifyJS(code: string): string {
 
 function CodeBlock({ source }: { source: string }) {
     return (
-        <div className="overflow-hidden rounded-(--pb-radius-5) border border-(--pb-border-low) bg-(--pb-surface-0)">
-            <div className="flex items-center justify-between border-b border-(--pb-border-low) px-2 py-0.5 font-(family-name:--pb-font-code) text-[10px] font-semibold tracking-wide text-(--pb-text-low) uppercase">
+        <div className="overflow-hidden rounded-(--ui-rounded-5) border border-(--ui-border-low-em) bg-(--ui-surface-0)">
+            <div className="flex items-center justify-between border-b border-(--ui-border-low-em) px-2 py-0.5 font-(family-name:--ui-font-fira) text-[10px] font-semibold tracking-wide text-(--ui-text-low-em) uppercase">
                 <span>code</span>
-                <span className="text-(--pb-text-low)">JS</span>
+                <span className="text-(--ui-text-low-em)">JS</span>
             </div>
-            <pre className="m-0 max-h-[320px] overflow-auto px-2 py-1.5 font-(family-name:--pb-font-code) text-[12px] leading-[1.5] whitespace-pre text-(--pb-text-high)">
+            <pre className="m-0 max-h-[320px] overflow-auto px-2 py-1.5 font-(family-name:--ui-font-fira) text-[12px] leading-[1.5] whitespace-pre text-(--ui-text-high-em)">
                 {prettifyJS(source)}
             </pre>
         </div>
@@ -118,7 +118,7 @@ function CodeBlock({ source }: { source: string }) {
 
 function JsonBlock({ value }: { value: unknown }) {
     return (
-        <pre className="m-0 max-h-[260px] overflow-auto rounded-(--pb-radius-5) bg-(--pb-surface-0) px-2 py-1.5 font-(family-name:--pb-font-code) text-[12px] whitespace-pre-wrap">
+        <pre className="m-0 max-h-[260px] overflow-auto rounded-(--ui-rounded-5) bg-(--ui-surface-0) px-2 py-1.5 font-(family-name:--ui-font-fira) text-[12px] whitespace-pre-wrap">
             {stringifyToolValue(value)}
         </pre>
     );
@@ -138,7 +138,7 @@ function ErrorBlock({ text }: { text: string }) {
         }
     }
     return (
-        <pre className="m-0 max-h-[260px] overflow-auto rounded-(--pb-radius-5) border border-red-500/30 bg-red-500/10 px-2 py-1.5 font-(family-name:--pb-font-code) text-[12px] whitespace-pre-wrap text-red-700 dark:text-red-300">
+        <pre className="m-0 max-h-[260px] overflow-auto rounded-(--ui-rounded-5) border border-red-500/30 bg-red-500/10 px-2 py-1.5 font-(family-name:--ui-font-fira) text-[12px] whitespace-pre-wrap text-red-700 dark:text-red-300">
             {pretty}
         </pre>
     );
@@ -147,7 +147,7 @@ function ErrorBlock({ text }: { text: string }) {
 function ToolCallSection({ label, children }: { label: string; children: React.ReactNode }) {
     return (
         <section className="flex w-full flex-col gap-1">
-            <div className="font-(family-name:--pb-font-code) text-[11px] font-semibold tracking-wide text-(--pb-text-low) uppercase">
+            <div className="font-(family-name:--ui-font-fira) text-[11px] font-semibold tracking-wide text-(--ui-text-low-em) uppercase">
                 {label}
             </div>
             {children}
@@ -194,7 +194,7 @@ export function ToolDisclosure({ toolName, input, output, errorText }: ToolCallP
 
     return (
         <details className="group/tool tool-call w-full self-start">
-            <summary className="flex w-full cursor-pointer list-none items-center gap-1 rounded-[5px] px-2 py-1 font-(family-name:--pb-font-code) text-[12px] leading-5 font-semibold text-(--pb-text-high) transition-colors hover:bg-[rgba(0,0,0,0.04)] [&::-webkit-details-marker]:hidden">
+            <summary className="flex w-full cursor-pointer list-none items-center gap-1 rounded-[5px] px-2 py-1 font-(family-name:--ui-font-fira) text-[12px] leading-5 font-semibold text-(--ui-text-high-em) transition-colors hover:bg-[rgba(0,0,0,0.04)] [&::-webkit-details-marker]:hidden">
                 <span className="min-w-0 truncate">{toolName}</span>
                 <svg
                     className="shrink-0 transition-transform group-open/tool:rotate-90"
@@ -214,7 +214,7 @@ export function ToolDisclosure({ toolName, input, output, errorText }: ToolCallP
                     onClick={handleCopy}
                     aria-label={copied ? 'Copied' : 'Copy tool input and output'}
                     title={copied ? 'Copied' : 'Copy'}
-                    className="ml-auto hidden h-6 w-6 shrink-0 cursor-pointer items-center justify-center rounded-(--pb-radius-5) border-0 bg-transparent text-(--pb-text-low) transition-colors group-open/tool:flex hover:bg-(--pb-surface-2) hover:text-(--pb-text-high) [&_svg]:h-4 [&_svg]:w-4"
+                    className="ml-auto hidden h-6 w-6 shrink-0 cursor-pointer items-center justify-center rounded-(--ui-rounded-5) border-0 bg-transparent text-(--ui-text-low-em) transition-colors group-open/tool:flex hover:bg-(--ui-surface-2) hover:text-(--ui-text-high-em) [&_svg]:h-4 [&_svg]:w-4"
                 >
                     {copied ? (
                         <svg
@@ -246,7 +246,7 @@ export function ToolDisclosure({ toolName, input, output, errorText }: ToolCallP
             </summary>
             <div
                 ref={contentRef}
-                className="flex w-full flex-col items-stretch gap-2 px-2 pt-1 pb-2 text-(--pb-text-medium)"
+                className="flex w-full flex-col items-stretch gap-2 px-2 pt-1 pb-2 text-(--ui-text-med-em)"
             >
                 {inputCode !== null && <CodeBlock source={inputCode} />}
                 {inputJson !== undefined && (
@@ -296,7 +296,7 @@ export function ToolCall({ toolName, input, output }: ToolCallProps) {
                 </div>
             )}
             {clarifyIntro && (
-                <p className="my-1 px-1 font-(family-name:--pb-font-secondary) text-[16px] leading-[24px] text-(--pb-text-medium)">
+                <p className="my-1 px-1 font-(family-name:--ui-font-proxima) text-[16px] leading-[24px] text-(--ui-text-med-em)">
                     {clarifyIntro}
                 </p>
             )}

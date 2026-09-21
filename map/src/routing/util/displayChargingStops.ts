@@ -8,7 +8,8 @@ import {
 } from '@tomtom-org/maps-sdk/core';
 import { FeatureCollection, Point } from 'geojson';
 import { PlaceDisplayProps } from '../../places';
-import type { DisplayRouteProps, RouteStateProps } from '../types/displayRoutes';
+import { toPinSpriteImageID } from '../../shared/imageUtils';
+import type { DisplayRouteProps, DisplayRouteRelatedProps } from '../types/displayRoutes';
 import { RoutingModuleConfig } from '../types/routeModuleConfig';
 
 const getIconID = (chargingStop: ChargingStop, config: RoutingModuleConfig | undefined): string => {
@@ -27,7 +28,7 @@ const getIconID = (chargingStop: ChargingStop, config: RoutingModuleConfig | und
     }
 
     // default: (genesis-like) categorySet ID for "EV Charging Station" based on search
-    return '7309';
+    return toPinSpriteImageID('7309');
 };
 
 const formatTitle = (chargingStop: ChargingStop): string => {
@@ -37,12 +38,18 @@ const formatTitle = (chargingStop: ChargingStop): string => {
 
 type DisplayChargingStopProps = PlaceDisplayProps &
     ChargingStopProps &
-    RouteStateProps & {
+    DisplayRouteRelatedProps & {
         chargingDuration: string;
         chargingPower: string;
+        stopDuration?: string;
     };
 
-type DisplayChargingStops = FeatureCollection<Point, DisplayChargingStopProps>;
+/**
+ * The charging stops as displayed on the map, carrying the route state and index so a selection
+ * change can restyle them in place.
+ * @ignore
+ */
+export type DisplayChargingStops = FeatureCollection<Point, DisplayChargingStopProps>;
 
 /**
  * Generates display-ready charging stations for the given planning context ones.
@@ -64,6 +71,14 @@ export const toDisplayChargingStops = (
 
                 if (chargingStop) {
                     const properties = chargingStop.properties;
+                    // The whole time at this stop, which is the charging plus any wait the caller
+                    // asked for at the same place. The two are one gap in the response, so the pin
+                    // shows the total and `chargingDuration` stays available for a label that wants
+                    // only the charging part.
+                    const stopDuration = formatDuration(
+                        leg.summary.stopTimeInSeconds ?? properties.chargingTimeInSeconds,
+                        config?.displayUnits?.time,
+                    );
                     displayChargingStops.push({
                         ...chargingStop,
                         properties: {
@@ -76,7 +91,11 @@ export const toDisplayChargingStops = (
                                 properties.chargingTimeInSeconds,
                                 config?.displayUnits?.time,
                             ) as string,
+                            ...(stopDuration && { stopDuration }),
                             routeState: route.properties.routeState,
+                            // Carrying the route index is what lets `selectRoute` restyle these
+                            // rather than regenerate the whole collection.
+                            routeIndex: route.properties.index,
                         },
                     });
                 }

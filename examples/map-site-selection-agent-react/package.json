@@ -23,12 +23,12 @@
   },
   "dependencies": {
     "@ai-sdk/azure": "catalog:",
-    "@ai-sdk/react": "^3.0.158",
+    "@ai-sdk/react": "^3.0.269",
     "@assistant-ui/react": "catalog:",
     "@assistant-ui/react-ai-sdk": "catalog:",
     "@assistant-ui/react-markdown": "catalog:",
     "@assistant-ui/react-ui": "^0.2.1",
-    "@microsoft/applicationinsights-web": "^3.4.1",
+    "@microsoft/applicationinsights-web": "^3.4.3",
     "@tomtom-org/maps-sdk": "workspace:*",
     "@tomtom-org/maps-sdk-plugin-agent-toolkit": "workspace:*",
     "@turf/turf": "catalog:",
@@ -42,7 +42,7 @@
     "react-dom": "catalog:"
   },
   "devDependencies": {
-    "@langwatch/scenario": "^0.4.11",
+    "@langwatch/scenario": "^0.4.15",
     "@playwright/test": "catalog:",
     "@tailwindcss/vite": "catalog:",
     "@testing/agent-tool-calling": "workspace:*",

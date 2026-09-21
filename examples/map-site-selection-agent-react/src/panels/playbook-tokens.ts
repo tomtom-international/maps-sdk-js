@@ -1,39 +1,39 @@
 /**
- * Panel design tokens — `var(--pb-*)` strings aliasing the shared playbook layer
- * (`base/playbook-tokens.css`, which itself aliases the SDK `--sdk-*` system). Usable in inline styles,
- * so the panels track the same TomTom design system as the chat and Figma.
+ * Panel design tokens — `var(--ui-*)` strings referencing the shared token layer
+ * (`base/tokens.css`), which carries TomTom Playbook's own token names and values. Usable in
+ * inline styles, so the panels track the same design system as the chat and Figma.
  */
 export const playbook = {
     surface: {
-        surface0: 'var(--pb-surface-0)',
-        surface1: 'var(--pb-surface-1)',
-        surface2: 'var(--pb-surface-2)',
-        highEm: 'var(--pb-text-high)', // score-bar fill — darkest neutral
-        infoAccent: '#F5F8FA', // gentle info tint (no SDK token for it); subtle, non-brand
+        surface0: 'var(--ui-surface-0)',
+        surface1: 'var(--ui-surface-1)',
+        surface2: 'var(--ui-surface-2)',
+        highEm: 'var(--ui-text-high-em)', // score-bar fill — darkest neutral
+        infoAccent: 'var(--ui-surface-info-accent-1)', // gentle info tint; subtle, non-brand
     },
     text: {
-        highEm: 'var(--pb-text-high)',
-        medEm: 'var(--pb-text-medium)',
-        lowEm: 'var(--pb-text-low)',
-        brand: 'var(--pb-primary-color)', // TomTom brand red — headline scores / accents
+        highEm: 'var(--ui-text-high-em)',
+        medEm: 'var(--ui-text-med-em)',
+        lowEm: 'var(--ui-text-low-em)',
+        brand: 'var(--ui-surface-brand-red)', // TomTom brand red — headline scores / accents
     },
     border: {
-        lowEm: 'var(--pb-border-low)',
-        medEm: 'var(--pb-border-medium)',
+        lowEm: 'var(--ui-border-low-em)',
+        medEm: 'var(--ui-border-med-em)',
     },
     outline: {
-        focusPrimary: 'var(--pb-shadow-focus)', // mandatory keyboard-focus ring
+        focusPrimary: 'var(--ui-shadow-focus)', // mandatory keyboard-focus ring
     },
     elevation: {
-        e1: 'var(--pb-shadow-e1)',
-        e2: 'var(--pb-shadow-e2)',
-        e3: 'var(--pb-shadow-e3)',
+        e1: 'var(--ui-elevation-e1)',
+        e2: 'var(--ui-elevation-e2)',
+        e3: 'var(--ui-elevation-e3)',
     },
     font: {
-        headings: 'var(--pb-font-primary)', // Gilroy
-        body: 'var(--pb-font-secondary)', // Proxima Nova
+        headings: 'var(--ui-font-gilroy)', // Gilroy
+        body: 'var(--ui-font-proxima)', // Proxima Nova
     },
     radius: {
-        lg: 'var(--pb-radius-20)',
+        lg: 'var(--ui-rounded-20)',
     },
 } as const;

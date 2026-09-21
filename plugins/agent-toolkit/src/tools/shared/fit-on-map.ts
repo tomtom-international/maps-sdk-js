@@ -11,20 +11,21 @@
 import type { BBox } from '@tomtom-org/maps-sdk/core';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
+import { geoJsonBBoxSchema } from './schema';
 
 /** @ignore */
 export const fitOnMapInputSchema = z
     .union([
-        z.tuple([z.number(), z.number(), z.number(), z.number()]),
+        geoJsonBBoxSchema,
         z.object({
-            bbox: z.tuple([z.number(), z.number(), z.number(), z.number()]),
+            bbox: geoJsonBBoxSchema,
             padding: z.number().optional(),
             animate: z.boolean().optional(),
         }),
     ])
     .describe(
         'Bounds to fit the camera to: a `[W, S, E, N]` BBox tuple, or `{ bbox: [W,S,E,N], padding?: number, animate?: boolean }`. ' +
-            'Default padding: 50px.',
+            'lng in [-180, 180], lat in [-90, 90]. Default padding: 50px.',
     );
 
 /** @ignore */
@@ -39,12 +40,19 @@ export type FitOnMapInput = BBox | { bbox: BBox; padding?: number; animate?: boo
 /** Doc blurb to inline in sandboxed-code descriptions. @ignore */
 export const FIT_ON_MAP_DOC =
     '`fitOnMap` (opt): `[W,S,E,N]` BBox or `{ bbox: [W,S,E,N], padding?: number, animate?: boolean }` ' +
-    '(default padding 50). Camera fits these bounds after the tool runs. Returning ONLY `fitOnMap` skips ' +
+    '(default padding 50, lng in [-180, 180], lat in [-90, 90]). Camera fits these bounds after the tool ' +
+    'runs. Returning ONLY `fitOnMap` skips ' +
     'state writes (pure camera focus); combine with `places` / `geometries` to also write+focus. ' +
     'Derive bboxes via `turf.bbox(feature | FeatureCollection)`.';
 
-const isBBoxTuple = (value: unknown): value is BBox =>
-    Array.isArray(value) && value.length === 4 && value.every((n) => typeof n === 'number' && Number.isFinite(n));
+// Delegates to `geoJsonBBoxSchema` so this guard and every zod bbox input enforce the same
+// semantics: four finite numbers, lng/lat in range, minLat <= maxLat, and an antimeridian
+// crossing (minLng > maxLng) still allowed. Arity is what makes the `BBox` narrowing sound.
+//
+// This is the only validation the sandbox `fitOnMap` path gets — the LLM-authored code's
+// return value never passes through a tool input schema — so a bare finiteness check let an
+// out-of-range latitude reach `fitBounds`, which throws after the entry has been written.
+const isBBoxTuple = (value: unknown): value is BBox => geoJsonBBoxSchema.safeParse(value).success;
 
 /** @ignore */
 export const isFitOnMapInput = (value: unknown): value is FitOnMapInput => {

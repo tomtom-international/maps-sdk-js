@@ -22,6 +22,7 @@ Categories (representative names — see `DEFAULT_TOOLS` for the full list and `
 - **Unified data tools (scope-aware)**: `analyseData`, `processData` — see [data-tools.md](./data-tools.md)
 - **Map display**: `updatePlacesDisplay`, `updateRoutesDisplay` (replaces the old `setRouteTheme`), `updateWaypointsDisplay`, `updateTrafficAreaAnalyticsDisplay`, `updateByodDisplay`, `setByodLayers` (BYOD restyle), `clearMap`
 - **Map control**: `flyTo`, `zoomInOrOut`, `setMapStandardStyle`, `setLanguage`, `toggleTilesPOIs`, `toggleTilesBaseMapLayerGroups`, `setPitchBearing`, `getStandardMapStyles`
+- **Map styling**: `describeMapStyling` (the knob catalogue: ids, kinds, ranges, defaults, current values), `setMapStyling` (set/reset knobs — `labels.sizeFactor`, `roads.exitNumbers`, `buildings.3d`, `traffic.flow.slowColor`, …). Backed by `StylingModule`; see [map-styling.md](../map-styling.md)
 - **MapLibre direct**: `executeMaplibreCode`, `setLayoutProperties`, `setPaintProperties`, `getMapStyleLayers`
 - **State / recall**: `recallState` (scope-aware `{ kind, id }` over `places` / `routes` / `ranges` / `geometries` / `byod` / `incidents` / `trafficAreaAnalytics`), `setEntryMode`, `resetState`
 - **Utilities**: `clarifyIntent`, `calculateBBox`, `help`
@@ -38,7 +39,7 @@ type ToolEntry<S extends ToolState = ToolState, Scope = unknown> = {
     description: string;            // sent to the model
     inputSchema: z.ZodType;         // Zod-validated input
     outputSchema?: z.ZodType;       // structured output schema (improves reliability)
-    execute: (input: any, state: S) => Promise<any>;
+    execute: (input: any, state: S, options?: ToolExecuteOptions) => Promise<any>;
 
     // classifier metadata
     classificationPrompt?: string;  // one-liner: when to activate this tool
@@ -53,6 +54,42 @@ type ToolEntry<S extends ToolState = ToolState, Scope = unknown> = {
     scopePrompt?: string;           // hint shown to the classifier explaining the scope shape
 };
 ```
+
+### Cancellation — `options.signal`
+
+`execute`'s third argument carries the AI SDK's own `abortSignal` for the tool call, which fires
+when the model's turn is cancelled:
+
+```ts
+type ToolExecuteOptions = { signal?: AbortSignal };
+```
+
+Forward it to every `@tomtom-org/maps-sdk/services` call your tool makes, so a cancelled turn also
+cancels the in-flight HTTP request:
+
+```ts
+execute: async ({ query }, state, options) => {
+    const results = await search(withAgentToolkitHeaders({ query, signal: options?.signal }));
+    // ...
+},
+```
+
+An aborted call rejects with `SDKAbortError`. Since `execute` must never throw, catch it and return
+a standard error shape:
+
+```ts
+try {
+    const results = await search(withAgentToolkitHeaders({ query, signal: options?.signal }));
+} catch (error) {
+    if (error instanceof SDKAbortError) return { error: 'Cancelled.' };
+    return { error: `Search failed: ${error instanceof Error ? error.message : String(error)}` };
+}
+```
+
+**Do NOT forward it into work that outlives the turn** — a monitor's recurring tick, or any
+deferred job. Those fire after the signal has already aborted, and a monitor treats a rejected
+tick as fatal (it clears its own interval), so a leaked signal kills the monitor instead of
+cancelling a request.
 
 Builder form (`ToolEntryBuilder`) accepts `ToolBuildOptions<Scope>`
 and is what the registry uses for tools that need to react to feature flags or per-turn scope:

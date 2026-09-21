@@ -1,6 +1,7 @@
 import type { TrafficIncident } from '@tomtom-org/maps-sdk/core';
+import type { Position } from 'geojson';
 
-export type Coord = GeoJSON.Position;
+export type Coord = Position;
 export type IncidentAddress = { from?: string; to?: string };
 
 /** The slice of a reverse-geocode result this module reads. */

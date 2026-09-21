@@ -1,4 +1,4 @@
-import { views } from '@tomtom-org/maps-sdk/core';
+import { geographyTypes, views } from '@tomtom-org/maps-sdk/core';
 import { z } from 'zod';
 import { hasLngLatSchema } from '../shared/schema/geometriesSchema';
 
@@ -7,16 +7,9 @@ const revGeocodeRequestMandatory = z.object({
 });
 
 const revGeocodeRequestOptional = z.object({
-    allowFreeformNewline: z.boolean().optional(),
-    geographyType: z.array(z.string()).optional(),
+    geographyType: z.array(z.enum(geographyTypes)).optional(),
     heading: z.number().min(-360).max(360).optional(),
-    mapcodes: z.array(z.string()).optional(),
-    number: z.string().optional(),
-    radiusMeters: z.number().optional(),
-    returnMatchType: z.boolean().optional(),
-    returnRoadUse: z.boolean().optional(),
-    returnSpeedLimit: z.boolean().optional(),
-    roadUses: z.array(z.string()).optional(),
+    radiusMeters: z.number().positive().max(5_000_000).optional(),
     view: z.enum(views).optional(),
 });
 

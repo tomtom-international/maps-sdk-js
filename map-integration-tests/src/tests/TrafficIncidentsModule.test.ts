@@ -6,13 +6,7 @@ import type { IncidentsConfig, RoadCategory, TrafficIncidentsFilters, TrafficInc
 import { TRAFFIC_INCIDENTS_SOURCE_ID } from 'map';
 import { MapsSDKThis } from './types/MapsSDKThis';
 import { MapTestEnv } from './util/MapTestEnv';
-import {
-    getVisibleLayersBySource,
-    initTrafficIncidents,
-    setStyle,
-    waitForMapIdle,
-    waitForMapReady,
-} from './util/TestUtils';
+import { getVisibleLayersBySource, initTrafficIncidents, setStyle, waitForMapIdle } from './util/TestUtils';
 
 const waitForShownIncidentsChange = async (
     page: Page,
@@ -168,8 +162,7 @@ test.describe('Map vector tile traffic incidents module tests', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    // TODO(LSI-263): Enable when flakyness has been fixed
-    test('Traffic incidents filtering with config changes', { tag: '@flaky' }, async ({ page }) => {
+    test('Traffic incidents filtering with config changes', async ({ page }) => {
         await mapEnv.loadPageAndMap(page, { zoom: 13, center: [-0.12621, 51.50394] }); // London
         await initTrafficIncidents(page, { visible: true });
         expect(await getConfig(page)).toEqual({ visible: true });
@@ -191,7 +184,6 @@ test.describe('Map vector tile traffic incidents module tests', () => {
         // changing the map style (and manually adding also poi part):
         // verifying the config is still the same (state restoration):
         await setStyle(page, 'standardDark');
-        await waitForMapReady(page);
         await waitForMapIdle(page);
         expect(await getConfig(page)).toEqual(config);
 

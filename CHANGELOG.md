@@ -2,6 +2,183 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.54.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.53.0...v0.54.0) (2026-09-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* **routing:** phase 3 — land the response data v3 already returns ([#2077](https://github.com/tomtom-international/maps-sdk-js/issues/2077))
+
+### Features
+
+* **examples:** withdraw claim-validation-service from search ([#2147](https://github.com/tomtom-international/maps-sdk-js/issues/2147)) ([806f174](https://github.com/tomtom-international/maps-sdk-js/commit/806f1749871af48aac2b7efb1d1cfcbd6ba0f05a))
+* **map:** let custom place icons offset from their coordinate ([#2123](https://github.com/tomtom-international/maps-sdk-js/issues/2123)) ([0771ef9](https://github.com/tomtom-international/maps-sdk-js/commit/0771ef9004ea82db3c8168944498fba2038fa27b))
+* **routing:** phase 3 — land the response data v3 already returns ([#2077](https://github.com/tomtom-international/maps-sdk-js/issues/2077)) ([d071f02](https://github.com/tomtom-international/maps-sdk-js/commit/d071f02a30cbe6abf14423dc0309c782480f8a06))
+* **service:** support request cancellation via AbortSignal ([#2136](https://github.com/tomtom-international/maps-sdk-js/issues/2136)) ([f2df5e4](https://github.com/tomtom-international/maps-sdk-js/commit/f2df5e42547e0d4fab79e078f375d419a82dd2a1))
+* **skills:** add an opt-in skill that reports SDK friction to GitHub ([#2124](https://github.com/tomtom-international/maps-sdk-js/issues/2124)) ([03bd482](https://github.com/tomtom-international/maps-sdk-js/commit/03bd4823711d8fa4a882b1135dce100badfdbf2a))
+
+
+### Bug Fixes
+
+* place-customization crash when using custom icons ([#2134](https://github.com/tomtom-international/maps-sdk-js/issues/2134)) ([4a67239](https://github.com/tomtom-international/maps-sdk-js/commit/4a67239adcf446bdac3ec392b1aeee9cd88eabbd))
+
+## [0.53.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.52.0...v0.53.0) (2026-09-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* **map:** styling GA phase 0 - resetState, awaited lifecycle, custom themes ([#2088](https://github.com/tomtom-international/maps-sdk-js/issues/2088))
+* **map:** add more dark theme styling ([#2108](https://github.com/tomtom-international/maps-sdk-js/issues/2108))
+
+### Features
+
+* **map:** add more dark theme styling ([#2108](https://github.com/tomtom-international/maps-sdk-js/issues/2108)) ([b53d60a](https://github.com/tomtom-international/maps-sdk-js/commit/b53d60ae9a75c394605de947b8c84d441f8d6660))
+* **map:** styling GA phase 0 - resetState, awaited lifecycle, custom themes ([#2088](https://github.com/tomtom-international/maps-sdk-js/issues/2088)) ([657e9f7](https://github.com/tomtom-international/maps-sdk-js/commit/657e9f7b5177404dbe163111b805def0910b07d0))
+* **services:** add routing request parameters the API accepts ([#2066](https://github.com/tomtom-international/maps-sdk-js/issues/2066)) ([1dab989](https://github.com/tomtom-international/maps-sdk-js/commit/1dab989d2854b8e477817f3e58aabc8849045e37))
+
+
+### Bug Fixes
+
+* **examples:** pin the demos-proxy LLM base URL to the /v1 surface ([#2127](https://github.com/tomtom-international/maps-sdk-js/issues/2127)) ([bdc0ac4](https://github.com/tomtom-international/maps-sdk-js/commit/bdc0ac44917e90aef9c163fe45ce2ee40b0b3644))
+* **map:** keep the map language across a clean style switch ([#2121](https://github.com/tomtom-international/maps-sdk-js/issues/2121)) ([f88b3b4](https://github.com/tomtom-international/maps-sdk-js/commit/f88b3b448495529457094018b07343d6d5510895))
+* **skills:** correct four wrong APIs in the consumer skill docs ([#2116](https://github.com/tomtom-international/maps-sdk-js/issues/2116)) ([319cf5f](https://github.com/tomtom-international/maps-sdk-js/commit/319cf5f06b1af1613b57eb8c81414072694c6d43))
+
+## [0.52.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.51.5...v0.52.0) (2026-09-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* **routing:** drop the circle waypoint the API never had ([#2109](https://github.com/tomtom-international/maps-sdk-js/issues/2109))
+* migrate rev-geocoding to Orbis v2 ([#2063](https://github.com/tomtom-international/maps-sdk-js/issues/2063))
+* **map:** scoped module events and per-map shared style modules (lsi-159) ([#2062](https://github.com/tomtom-international/maps-sdk-js/issues/2062))
+* **services:** remove routing parameters the API does not support ([#2064](https://github.com/tomtom-international/maps-sdk-js/issues/2064))
+* **map:** replace get() with create() on data-owned map modules ([#2058](https://github.com/tomtom-international/maps-sdk-js/issues/2058))
+
+### Features
+
+* **examples:** claim validation intake example ([#2110](https://github.com/tomtom-international/maps-sdk-js/issues/2110)) ([6f20f43](https://github.com/tomtom-international/maps-sdk-js/commit/6f20f434549e357c7bdac98bbc86e0892f296024))
+* **map:** replace get() with create() on data-owned map modules ([#2058](https://github.com/tomtom-international/maps-sdk-js/issues/2058)) ([9d3d81e](https://github.com/tomtom-international/maps-sdk-js/commit/9d3d81e349d21ce00368c12462c5919f6d8da491))
+* **map:** scoped module events and per-map shared style modules (lsi-159) ([#2062](https://github.com/tomtom-international/maps-sdk-js/issues/2062)) ([d91519e](https://github.com/tomtom-international/maps-sdk-js/commit/d91519e870f2796a9874aa0b10651b7bc350b81e))
+* migrate rev-geocoding to Orbis v2 ([#2063](https://github.com/tomtom-international/maps-sdk-js/issues/2063)) ([d939fc8](https://github.com/tomtom-international/maps-sdk-js/commit/d939fc8eced2c016efac51723a3d18fecd78c180))
+* **routing:** drop the circle waypoint the API never had ([#2109](https://github.com/tomtom-international/maps-sdk-js/issues/2109)) ([a25365b](https://github.com/tomtom-international/maps-sdk-js/commit/a25365b8f491cc0b85001386601f2265c4ca05e2))
+* **services:** remove routing parameters the API does not support ([#2064](https://github.com/tomtom-international/maps-sdk-js/issues/2064)) ([943be5d](https://github.com/tomtom-international/maps-sdk-js/commit/943be5d0fefde37f284b1d44a7d0bca2582a0d30))
+
+
+### Bug Fixes
+
+* **examples:** stack the searched EV pins above the viewport stations ([#2068](https://github.com/tomtom-international/maps-sdk-js/issues/2068)) ([7017081](https://github.com/tomtom-international/maps-sdk-js/commit/7017081ae467d6d762eba3d8f48cd86a7203ccce))
+* stop partial route updates clobbering config, give BYOD reset a contract ([#2097](https://github.com/tomtom-international/maps-sdk-js/issues/2097)) ([e69e37e](https://github.com/tomtom-international/maps-sdk-js/commit/e69e37ec833f665ec00b1b32835296e4918f9ad9))
+
+## [0.51.5](https://github.com/tomtom-international/maps-sdk-js/compare/v0.51.4...v0.51.5) (2026-08-25)
+
+
+### Bug Fixes
+
+* **docs:** correct stale APIs, dead links and drifted contributor docs ([#2053](https://github.com/tomtom-international/maps-sdk-js/issues/2053)) ([fa3dc7b](https://github.com/tomtom-international/maps-sdk-js/commit/fa3dc7bab594c685a1235376abb2ac9c386ebb81))
+
+## [0.51.4](https://github.com/tomtom-international/maps-sdk-js/compare/v0.51.3...v0.51.4) (2026-08-24)
+
+
+### Bug Fixes
+
+* **agent-toolkit:** range-check model coordinates and report plugin coverage ([#2048](https://github.com/tomtom-international/maps-sdk-js/issues/2048)) ([8a4bcde](https://github.com/tomtom-international/maps-sdk-js/commit/8a4bcde241e0d6339c84d037a547e79ed5be9adc))
+* **agent-toolkit:** range-check the sandbox fitOnMap bbox ([6d1c02e](https://github.com/tomtom-international/maps-sdk-js/commit/6d1c02e5e8d15bcc50c385479e72bddc662dc61c))
+
+## [0.51.3](https://github.com/tomtom-international/maps-sdk-js/compare/v0.51.2...v0.51.3) (2026-08-18)
+
+
+### Features
+
+* add BaseMapModule appearance API and upgrade maplibre-gl to v6 ([#2035](https://github.com/tomtom-international/maps-sdk-js/issues/2035)) ([f6b5296](https://github.com/tomtom-international/maps-sdk-js/commit/f6b52966d456f1f73a9ce9dbe3a7b19eac164bc3))
+* attribute map traffic to the product embedding the SDK ([#2028](https://github.com/tomtom-international/maps-sdk-js/issues/2028)) ([644089f](https://github.com/tomtom-international/maps-sdk-js/commit/644089f7921e12caf9405bea715a62e3c7c8aa97))
+
+## [0.51.2](https://github.com/tomtom-international/maps-sdk-js/compare/v0.51.1...v0.51.2) (2026-08-05)
+
+
+### Bug Fixes
+
+* include dist files from examples ([#2031](https://github.com/tomtom-international/maps-sdk-js/issues/2031)) ([ded965a](https://github.com/tomtom-international/maps-sdk-js/commit/ded965a8fba7e9bb45c9010210b017c6c58ee565))
+
+## [0.51.1](https://github.com/tomtom-international/maps-sdk-js/compare/v0.51.0...v0.51.1) (2026-08-04)
+
+
+### Features
+
+* **examples:** move the traffic and site-selection agents to Las Vegas ([#2016](https://github.com/tomtom-international/maps-sdk-js/issues/2016)) ([4b19cb9](https://github.com/tomtom-international/maps-sdk-js/commit/4b19cb994fee43e28bead4b6595526679d63e569))
+* **examples:** record query and response text on AgentSuccess telemetry ([#2017](https://github.com/tomtom-international/maps-sdk-js/issues/2017)) ([ded1d51](https://github.com/tomtom-international/maps-sdk-js/commit/ded1d513c319fc91cc4f3d316f7b005c1c77817e))
+
+
+### Bug Fixes
+
+* **deps:** pin a pnpm release that can still be installed ([#2030](https://github.com/tomtom-international/maps-sdk-js/issues/2030)) ([c4d0882](https://github.com/tomtom-international/maps-sdk-js/commit/c4d0882b39b8805efb670a3ce80189904f9bc1ea))
+* **deps:** upgrade react and react-dom to 19.2.8 ([#2021](https://github.com/tomtom-international/maps-sdk-js/issues/2021)) ([e6208dc](https://github.com/tomtom-international/maps-sdk-js/commit/e6208dcf5a10e59d38897e5033c5649b03f8d405))
+* geometry search playground empty query and unneeded promise.all ([#2029](https://github.com/tomtom-international/maps-sdk-js/issues/2029)) ([eaae67e](https://github.com/tomtom-international/maps-sdk-js/commit/eaae67e5ac01df9c64f715baef4d12aad31dbdf5))
+* location resolver selecting subdivision over parent city ([#2024](https://github.com/tomtom-international/maps-sdk-js/issues/2024)) ([11b44ef](https://github.com/tomtom-international/maps-sdk-js/commit/11b44ef67f2811b67011a3cdc228e0d105d10736))
+
+## [0.51.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.50.4...v0.51.0) (2026-07-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* **map:** improve base map layer groups ([#1966](https://github.com/tomtom-international/maps-sdk-js/issues/1966))
+
+### Features
+
+* **map:** improve base map layer groups ([#1966](https://github.com/tomtom-international/maps-sdk-js/issues/1966)) ([4bf43b8](https://github.com/tomtom-international/maps-sdk-js/commit/4bf43b88910378e129ff2ec8d486eaf67a6210b6))
+
+
+### Bug Fixes
+
+* **agent-toolkit:** surface reverse-geocode no-match as an error ([#1995](https://github.com/tomtom-international/maps-sdk-js/issues/1995)) ([8582a44](https://github.com/tomtom-international/maps-sdk-js/commit/8582a4407776e44e7fd5cd28d12411748bc7ed79))
+* chat UX polish, whitespace hex rendering, entry-id collision in toolkit ([#1999](https://github.com/tomtom-international/maps-sdk-js/issues/1999)) ([c1b97db](https://github.com/tomtom-international/maps-sdk-js/commit/c1b97dbe0e577918f0c391704632ee76378c23a3))
+* **landmarks-3d:** render POIs on top of 3D landmark meshes ([#2011](https://github.com/tomtom-international/maps-sdk-js/issues/2011)) ([79b0922](https://github.com/tomtom-international/maps-sdk-js/commit/79b092201562e4452ac31f2890ac8046fdf3b27e))
+
+## [0.50.4](https://github.com/tomtom-international/maps-sdk-js/compare/v0.50.3...v0.50.4) (2026-07-09)
+
+
+### Bug Fixes
+
+* **map:** guard SourceWithLayers against a removed map ([#1985](https://github.com/tomtom-international/maps-sdk-js/issues/1985)) ([8895e1a](https://github.com/tomtom-international/maps-sdk-js/commit/8895e1a36da01d30c8ae967b4fe65aa628c4a159))
+
+## [0.50.3](https://github.com/tomtom-international/maps-sdk-js/compare/v0.50.2...v0.50.3) (2026-07-08)
+
+
+### Bug Fixes
+
+* **examples:** lazy-load App Insights in traffic agent to fix sandpack ([#1982](https://github.com/tomtom-international/maps-sdk-js/issues/1982)) ([2b7a8f2](https://github.com/tomtom-international/maps-sdk-js/commit/2b7a8f203019ca7d44cac8b443f18bbd2562aaff))
+
+## [0.50.2](https://github.com/tomtom-international/maps-sdk-js/compare/v0.50.1...v0.50.2) (2026-07-07)
+
+
+### Features
+
+* **examples:** add byod district prompts and per-district traffic monitoring ([#1978](https://github.com/tomtom-international/maps-sdk-js/issues/1978)) ([60fe0e8](https://github.com/tomtom-international/maps-sdk-js/commit/60fe0e8619a1efa7b40c0061aa40293fb89179f1))
+* **examples:** gate site-selection household behind the experimental flag ([#1979](https://github.com/tomtom-international/maps-sdk-js/issues/1979)) ([5366d98](https://github.com/tomtom-international/maps-sdk-js/commit/5366d98485238921d23672737583f5fa2cdbf219))
+* **examples:** prioritize agent-setup files in map agent Sandpack tabs ([#1961](https://github.com/tomtom-international/maps-sdk-js/issues/1961)) ([13b2fd2](https://github.com/tomtom-international/maps-sdk-js/commit/13b2fd258b2aa8960fd35427214fa89fceeec91d))
+
+
+### Bug Fixes
+
+* **agent-toolkit:** resolve routing waypoints by place id or entry id ([#1974](https://github.com/tomtom-international/maps-sdk-js/issues/1974)) ([e73a15f](https://github.com/tomtom-international/maps-sdk-js/commit/e73a15f8f6d0a7b796b36b5d6a58ee04437e1f70))
+* **agent-toolkit:** ungate scope and cross kind schemas ([#1977](https://github.com/tomtom-international/maps-sdk-js/issues/1977)) ([6a4cb2e](https://github.com/tomtom-international/maps-sdk-js/commit/6a4cb2e8925072d301a615bc285b1394af4eb28b))
+* allow for an array of inputs with tools that use the progress bar ([#1975](https://github.com/tomtom-international/maps-sdk-js/issues/1975)) ([1373650](https://github.com/tomtom-international/maps-sdk-js/commit/137365019d6e17fd8e78548157d966b24361260c))
+* **examples:** example titles + jam detail panel design fixes ([#1980](https://github.com/tomtom-international/maps-sdk-js/issues/1980)) ([c150c0f](https://github.com/tomtom-international/maps-sdk-js/commit/c150c0fe1eb5cb7edd87eca6db3951f051da66fe))
+* **examples:** polish clarify wizard survey UX and hover states ([#1971](https://github.com/tomtom-international/maps-sdk-js/issues/1971)) ([f992706](https://github.com/tomtom-international/maps-sdk-js/commit/f992706ca02a23d1542fb0ed4df44199245e4789))
+* **examples:** scroll chat when hovering the resize handle ([#1972](https://github.com/tomtom-international/maps-sdk-js/issues/1972)) ([7d42a04](https://github.com/tomtom-international/maps-sdk-js/commit/7d42a04bc9dd5141814d945ccd85a091541065f0))
+* **site-selection:** panel polish + BYOD titles, colour & containment ([#1973](https://github.com/tomtom-international/maps-sdk-js/issues/1973)) ([137b472](https://github.com/tomtom-international/maps-sdk-js/commit/137b47233b9dd0d556fab141abfa0d71fe690c0c))
+
+
+### Performance Improvements
+
+* move scenario-tests to main pushes ([#1968](https://github.com/tomtom-international/maps-sdk-js/issues/1968)) ([a78a729](https://github.com/tomtom-international/maps-sdk-js/commit/a78a729a7ccf0c76c881cbdcbfccacc5f11cd827))
+
+## [0.50.1](https://github.com/tomtom-international/maps-sdk-js/compare/v0.50.0...v0.50.1) (2026-07-03)
+
+
+### Bug Fixes
+
+* **agent-toolkit:** unblock npm publishing of the plugin ([#1962](https://github.com/tomtom-international/maps-sdk-js/issues/1962)) ([b0ae964](https://github.com/tomtom-international/maps-sdk-js/commit/b0ae9647970ab03e3ed6906b529bdb6c7aba6b3a))
+
 ## [0.50.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.49.1...v0.50.0) (2026-07-03)
 
 

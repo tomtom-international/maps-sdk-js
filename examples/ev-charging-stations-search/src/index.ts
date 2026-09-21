@@ -23,13 +23,13 @@ import { connectorsHTML, escapeHtml } from './htmlTemplates';
 TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 
 (async () => {
-    const evBrandTextBox = document.querySelector('#sdk-example-evBrandTextBox') as HTMLInputElement;
-    const areaTextBox = document.querySelector('#sdk-example-areaTextBox') as HTMLInputElement;
+    const evBrandTextBox = document.querySelector('#ui-evBrandTextBox') as HTMLInputElement;
+    const areaTextBox = document.querySelector('#ui-areaTextBox') as HTMLInputElement;
     const fitBoundsOptions = { padding: 50 };
     const popUp = new Popup({
         closeButton: false,
         offset: 35,
-        className: 'sdk-example-maps-sdk-js-popup',
+        className: 'ui-maps-sdk-js-popup',
     });
 
     const map = new TomTomMap({
@@ -46,8 +46,15 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
             categories: { show: 'all_except', values: ['ELECTRIC_VEHICLE_STATION'] },
         },
     });
+    const mapEVStationsId = 'ev-stations';
     const placesLayers = new ViewportPlaces(map);
-    let mapEVStationsModule: PlacesModule | null = null;
+    // Places modules stack in creation order, so the base-map styled viewport stations
+    // are added first for the searched and selected pins below to render on top of them.
+    const mapEVStationsModule = await placesLayers.addPOICategories({
+        id: mapEVStationsId,
+        categories: ['ELECTRIC_VEHICLE_STATION'],
+        minZoom: 7,
+    });
 
     const buildAvailabilityText = (place: Place<EVChargingStationWithAvailabilityPlaceProps>): string => {
         const availability = getChargingPointAvailability(place);
@@ -83,28 +90,26 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         },
     };
 
-    const mapSearchedEVStationsModule = await PlacesModule.get(map, evStationPinConfig);
-    const selectedEVStationModule = await PlacesModule.get(map, evStationPinConfig);
-    const mapGeometryModule = await GeometriesModule.get(map, { theme: 'inverted' });
+    const mapSearchedEVStationsModule = await PlacesModule.create(map, evStationPinConfig);
+    const selectedEVStationModule = await PlacesModule.create(map, evStationPinConfig);
+    const mapGeometryModule = await GeometriesModule.create(map, { theme: 'inverted' });
 
     let minPowerKWMapEVStations = 50;
     let minPowerKWSearchedEVStations = 0;
-
-    const mapEVStationsId = 'ev-stations';
 
     const showPopup = (evStation: Place | Place<EVChargingStationWithAvailabilityPlaceProps>) => {
         const { address, poi, chargingPark } = evStation.properties;
         popUp
             .setHTML(
                 `
-                    <div class="sdk-example-popup-header">
-                        <h3 class="sdk-example-popup-title">${escapeHtml(poi?.name ?? '')}</h3>
-                        <span class="sdk-example-address">${escapeHtml(address.freeformAddress)}</span>
+                    <div class="ui-popup-header">
+                        <h3 class="ui-popup-title">${escapeHtml(poi?.name ?? '')}</h3>
+                        <span class="ui-address">${escapeHtml(address.freeformAddress)}</span>
                     </div>
                     ${
                         chargingPark
                             ? connectorsHTML(chargingPark)
-                            : '<p class="sdk-example-popup-empty">Charging park data not available.</p>'
+                            : '<p class="ui-popup-empty">Charging park data not available.</p>'
                     }
                 `,
             )
@@ -160,29 +165,27 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         showPopup(evStation);
     };
 
-    const listenToMapUserEvents = async () => {
-        mapEVStationsModule?.events.on('click', async (evStation) =>
+    const listenToMapUserEvents = () => {
+        mapEVStationsModule.events.places.on('click', async (evStation) =>
             selectEVStation((await getPlaceWithEVAvailability(evStation)) ?? evStation),
         );
-        mapSearchedEVStationsModule.events.on('click', async (evWithAvailability) =>
+        mapSearchedEVStationsModule.events.places.on('click', async (evWithAvailability) =>
             selectEVStation(evWithAvailability),
         );
         popUp.on('close', () => selectedEVStationModule.clear());
     };
 
     const listenToHTMLUserEvents = () => {
-        const searchButton = document.querySelector('#sdk-example-searchButton') as HTMLButtonElement;
+        const searchButton = document.querySelector('#ui-searchButton') as HTMLButtonElement;
         searchButton.addEventListener('click', searchEVStations);
-        (document.querySelector('#sdk-example-clearButton') as HTMLButtonElement).addEventListener('click', clear);
+        (document.querySelector('#ui-clearButton') as HTMLButtonElement).addEventListener('click', clear);
         evBrandTextBox.addEventListener('keypress', (event) => event.key === 'Enter' && searchButton.click());
         areaTextBox.addEventListener('keypress', (event) => event.key === 'Enter' && searchButton.click());
 
-        const minPowerKWMapEVStationsInput = document.querySelector(
-            '#sdk-example-minPowerKWMapEVStations',
-        ) as HTMLInputElement;
+        const minPowerKWMapEVStationsInput = document.querySelector('#ui-minPowerKWMapEVStations') as HTMLInputElement;
         minPowerKWMapEVStationsInput.value = String(minPowerKWMapEVStations);
         const minPowerKWSearchedEVStationsInput = document.querySelector(
-            '#sdk-example-minPowerKWSearchedEVStations',
+            '#ui-minPowerKWSearchedEVStations',
         ) as HTMLInputElement;
         minPowerKWSearchedEVStationsInput.value = String(minPowerKWSearchedEVStations);
         minPowerKWMapEVStationsInput.addEventListener('keyup', async () => {
@@ -211,11 +214,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         return undefined;
     };
 
-    mapEVStationsModule = await placesLayers.addPOICategories({
-        id: mapEVStationsId,
-        categories: ['ELECTRIC_VEHICLE_STATION'],
-        minZoom: 7,
-    });
-    await listenToMapUserEvents();
+    listenToMapUserEvents();
     listenToHTMLUserEvents();
 })();

@@ -47,10 +47,10 @@ pnpm -F core build
 
 ```bash
 # Run in a separate terminal to auto-rebuild on file changes
-pnpm -F core build --watch
+pnpm -F core build:watch
 ```
 
-This watches for changes in the `core` package and automatically rebuilds. Useful when making frequent changes to core types/utilities that are used by `map` or `services` packages.
+This watches for changes in the `core` package and automatically rebuilds both the JS bundle and `dist/index.d.ts`. Useful when making frequent changes to core types/utilities that are used by `map` or `services` packages, since those consumers read the declarations.
 
 See [../CONTRIBUTING.md](../CONTRIBUTING.md) and [../documentation/development/](../documentation/development/) for detailed setup.
 

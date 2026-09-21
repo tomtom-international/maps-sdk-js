@@ -1,5 +1,6 @@
 import type { GlobalConfig } from '@tomtom-org/maps-sdk/core';
 import type { MapOptions, StyleSpecification } from 'maplibre-gl';
+import type { LightDark } from '../../shared/types/style';
 import type { MapEventsConfig } from './mapEventsConfig';
 
 /**
@@ -218,6 +219,27 @@ export type CustomStyle = {
      * ```
      */
     json?: StyleSpecification;
+    /**
+     * Whether the style draws a light or a dark map.
+     *
+     * Overlays that are drawn on top of the style — places, routes, waypoint labels, the pin
+     * sprite — pick their colours from this, so that their text stays legible on the canvas
+     * underneath. {@link TomTomMap.styleLightDarkTheme} reports the value in effect.
+     *
+     * Leave it out and the SDK reads the theme off the loaded style, from the colour its
+     * `background` layer paints the canvas with. Set it when that guess is wrong or when you
+     * would rather not depend on a guess: a style whose canvas is hidden behind full-coverage
+     * imagery, or one whose background colour does not represent what the map ends up looking
+     * like.
+     *
+     * @default Read from the background colour of the loaded style, falling back to `'light'`
+     *
+     * @example
+     * ```typescript
+     * style: { type: 'custom', url: 'https://example.com/midnight.json', lightDarkTheme: 'dark' }
+     * ```
+     */
+    lightDarkTheme?: LightDark;
 };
 
 /**

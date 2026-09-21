@@ -5,6 +5,7 @@ import * as turf from '@turf/turf';
 import type { FeatureCollection, MultiPolygon, Polygon } from 'geojson';
 import { z } from 'zod';
 import { byodCandidateSites, requireByodFeatures } from '../agent/byod-inputs';
+import { type AreaFeature, clipPolygons, km2 } from '../agent/geometry';
 import { resolveCatchment } from '../agent/site-selection-state';
 import { startProgress } from '../progress/progress-store';
 import { type OverlapPair, pointFeature, publishOverlap } from '../results/results-store';
@@ -54,12 +55,8 @@ const compareCatchmentsSchema = z.object({
 
 type CompareCatchmentsInput = z.infer<typeof compareCatchmentsSchema>;
 type ResolvedSite = { label: string; position: [number, number]; catchment: Catchment; km2: number };
-type PolyFeature = PolygonFeature<CommonPlaceProps>;
 
-const km2Of = (feature: Catchment | PolyFeature): number => Math.round((turf.area(feature) / 1e6) * 100) / 100;
 const pct = (part: number, whole: number): number => (whole > 0 ? Math.round((part / whole) * 1000) / 10 : 0);
-const asPolygonPair = (a: Catchment, b: Catchment): FeatureCollection<Polygon | MultiPolygon> =>
-    ({ type: 'FeatureCollection', features: [a, b] }) as unknown as FeatureCollection<Polygon | MultiPolygon>;
 
 type Catchmenter = { walking: boolean; walkReachMeters: number; driveMinutes: number };
 
@@ -74,7 +71,7 @@ const buildResolvedSite = async (
         const catchment = walking
             ? buildWalkCircle(position, walkReachMeters)
             : await buildDriveIsochrone(position, driveMinutes);
-        return { label, position, catchment, km2: km2Of(catchment) };
+        return { label, position, catchment, km2: km2(catchment) };
     } catch {
         return null;
     }
@@ -173,7 +170,10 @@ export const compareCatchments: ToolEntry = {
                     label: site.label,
                     catchmentKm2: site.km2,
                 });
-                const intersection = turf.intersect(asPolygonPair(proposed.catchment, site.catchment));
+                const intersection = clipPolygons(
+                    proposed.catchment as unknown as AreaFeature,
+                    site.catchment as unknown as AreaFeature,
+                );
                 if (!intersection) {
                     return {
                         existing: existingFeature,
@@ -183,7 +183,7 @@ export const compareCatchments: ToolEntry = {
                         pctOfExisting: 0,
                     };
                 }
-                const overlapKm2 = km2Of(intersection as unknown as PolyFeature);
+                const overlapKm2 = km2(intersection);
                 const overlapFeature = toPolygonFeature(intersection, `overlap-${index}`, {
                     name: `Overlap with ${site.label} (${overlapKm2} km²)`,
                     color: OVERLAP_COLOR, // pink shared-catchment fill (matches the Cannibalization panel)
@@ -214,7 +214,7 @@ export const compareCatchments: ToolEntry = {
                     type: 'FeatureCollection',
                     features: overlapFeatures,
                 } as unknown as FeatureCollection<Polygon | MultiPolygon>);
-                sharedKm2 = union ? km2Of(union as unknown as PolyFeature) : 0;
+                sharedKm2 = union ? km2(union) : 0;
             }
 
             progress.step(3);
@@ -241,7 +241,9 @@ export const compareCatchments: ToolEntry = {
             }
             if (overlapFeatures.length > 0) {
                 const entryId = await state.customGeometries.addEntry(
-                    overlapFeatures,
+                    // customGeometries is generically typed to CommonPlaceProps; overlap
+                    // polygons carry only name/color, so cast as the codebase does elsewhere.
+                    overlapFeatures as unknown as PolygonFeature<CommonPlaceProps>[],
                     { operation: 'catchment-overlap', sourceIds: [] },
                     `Catchment overlap — ${proposed.label}`,
                 );
@@ -257,15 +259,17 @@ export const compareCatchments: ToolEntry = {
             // the order the existing sites happened to be passed in.
             const rankedPairs = [...pairs].sort((a, b) => b.pctOfProposed - a.pctOfProposed);
 
+            const basis = walking ? `≈${walkReachMeters} m walk radius per site` : `${driveMinutes}-min drive per site`;
+            const proposedSharedPct = pct(sharedKm2, proposed.km2);
             publishOverlap({
                 proposed: pointFeature(proposed.position, proposed.label, {
                     label: proposed.label,
                     catchmentKm2: proposed.km2,
                 }),
                 proposedCatchment: toPolygonFeature(proposed.catchment, proposed.label),
-                basis: walking ? `≈${walkReachMeters} m walk radius per site` : `${driveMinutes}-min drive per site`,
+                basis,
                 sharedKm2,
-                proposedSharedPct: pct(sharedKm2, proposed.km2),
+                proposedSharedPct,
                 pairs: rankedPairs,
             });
             progress.done();
@@ -273,7 +277,9 @@ export const compareCatchments: ToolEntry = {
                 ok: true as const,
                 panel: 'Cannibalization',
                 headline: `Checked ${proposed.label} against ${existing.length} existing site${existing.length === 1 ? '' : 's'}.`,
-                hint: 'The overlap figures are in the Cannibalization panel — geographic reach only. Summarise in ONE sentence; do NOT restate the % or km². Refuse any revenue/customer-loss estimate unless the user provides sales data.',
+                // Ready-made one-sentence headline for the model to relay.
+                summary: `${proposedSharedPct}% of the new catchment is already covered — ${sharedKm2} km² of ${proposed.km2} km² (${basis}).`,
+                hint: 'Per-store overlap figures are in the Cannibalization panel — geographic reach only. Relay `summary` as your ONE-sentence reply (verbatim or lightly reworded). Refuse any revenue/customer-loss estimate unless the user provides sales data.',
                 ...(skipped.length > 0 && { skipped }),
             };
         } catch (error) {

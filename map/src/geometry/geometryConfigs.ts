@@ -30,27 +30,39 @@ import type { GeometryTheme } from './types/geometryTheme';
 export const themedGeometryConfig = (
     palette: ColorPaletteOptions = 'fadedRainbow',
     beforeLayerConfig: GeometryBeforeLayerConfig = 'lowestLabel',
-): GeometriesModuleConfig => ({
-    beforeLayerConfig,
-    line: {
-        // outline theme: thick colored line; filled/inverted: thin grey line
-        width: ['case', ['==', ['get', 'theme'], 'outline'], OUTLINE_THEME_LINE_WIDTH, FILLED_THEME_LINE_WIDTH],
-        color: [
-            'case',
-            ['==', ['get', 'theme'], 'outline'],
-            ['coalesce', ['get', 'color'], OUTLINE_THEME_LINE_COLOR],
-            FILLED_THEME_LINE_COLOR,
-        ],
-        opacity: ['case', ['==', ['get', 'theme'], 'outline'], OUTLINE_THEME_LINE_OPACITY, FILLED_THEME_LINE_OPACITY],
-    },
-    fill: {
-        color: palette,
-        // outline theme: transparent fill; filled/inverted: semi-transparent fill
-        opacity: ['case', ['==', ['get', 'theme'], 'outline'], OUTLINE_THEME_FILL_OPACITY, FILLED_THEME_FILL_OPACITY],
-    },
-    // Non-undefined lineLabelConfig is required for GeometriesModule to always create the line label layer.
-    lineLabelConfig: {},
-});
+): GeometriesModuleConfig => {
+    return {
+        beforeLayerConfig,
+        line: {
+            // outline theme: thick colored line; filled/inverted: thin grey line
+            width: ['case', ['==', ['get', 'theme'], 'outline'], OUTLINE_THEME_LINE_WIDTH, FILLED_THEME_LINE_WIDTH],
+            color: [
+                'case',
+                ['==', ['get', 'theme'], 'outline'],
+                ['coalesce', ['get', 'color'], OUTLINE_THEME_LINE_COLOR],
+                FILLED_THEME_LINE_COLOR,
+            ],
+            opacity: [
+                'case',
+                ['==', ['get', 'theme'], 'outline'],
+                OUTLINE_THEME_LINE_OPACITY,
+                FILLED_THEME_LINE_OPACITY,
+            ],
+        },
+        fill: {
+            color: palette,
+            // outline theme: transparent fill; filled/inverted: semi-transparent fill
+            opacity: [
+                'case',
+                ['==', ['get', 'theme'], 'outline'],
+                OUTLINE_THEME_FILL_OPACITY,
+                FILLED_THEME_FILL_OPACITY,
+            ],
+        },
+        // Non-undefined lineLabelConfig is required for GeometriesModule to always create the line label layer.
+        lineLabelConfig: {},
+    };
+};
 
 /**
  * Returns a {@link GeometriesModuleConfig} for reachable ranges.
@@ -66,7 +78,7 @@ export const themedGeometryConfig = (
  *
  * @example
  * ```typescript
- * const module = await GeometriesModule.get(map, reachableRangeGeometryConfig());
+ * const module = await GeometriesModule.create(map, reachableRangeGeometryConfig());
  * const result = await calculateReachableRanges([...]);
  * module.show(result); // labels and theme applied automatically
  * ```

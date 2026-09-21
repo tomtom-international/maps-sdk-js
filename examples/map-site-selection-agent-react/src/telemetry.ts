@@ -117,13 +117,15 @@ export function createTracker(sink: TelemetrySink) {
                 },
             });
         },
-        // Only the length is recorded; the response body is intentionally dropped to avoid noise.
-        agentSuccess(ctx: TurnContext, responseLength: number, wallClockMs: number, stepCount: number) {
+
+        agentSuccess(ctx: TurnContext, query: string, response: string, wallClockMs: number, stepCount: number) {
             sink.trackEvent({
                 name: 'AgentSuccess',
                 properties: {
                     ...ctxProps(ctx),
-                    responseLength: String(responseLength),
+                    query,
+                    response,
+                    responseLength: String(response.length),
                     wallClockMs: String(wallClockMs),
                     stepCount: String(stepCount),
                 },
@@ -176,13 +178,14 @@ function extractUserText(messages: readonly AgentUIMessage[]): string {
 function trackTurnOutcome(
     track: Tracker,
     ctx: TurnContext,
+    userQuery: string,
     result: { totalUsage: PromiseLike<LanguageModelUsage>; text: PromiseLike<string> },
     turnStartMs: number,
     getStepCount: () => number,
 ) {
     void result.totalUsage.then((usage) => track.tokenUsage(ctx, usage));
     void result.text.then(
-        (text) => track.agentSuccess(ctx, text.length, Date.now() - turnStartMs, getStepCount()),
+        (text) => track.agentSuccess(ctx, userQuery, text, Date.now() - turnStartMs, getStepCount()),
         (error: unknown) =>
             track.agentError(ctx, error instanceof Error ? error.message : String(error), Date.now() - turnStartMs),
     );
@@ -202,8 +205,9 @@ async function runInstrumentedTurn(
 ) {
     const { track, startTurn, onAgentTurn } = deps;
 
+    const userText = extractUserText(messages);
     const userCtx = startTurn('user');
-    track.userQuery(userCtx, extractUserText(messages));
+    track.userQuery(userCtx, userText);
 
     const agentCtx = startTurn('agent');
     onAgentTurn(agentCtx);
@@ -227,7 +231,7 @@ async function runInstrumentedTurn(
         },
     });
 
-    trackTurnOutcome(track, agentCtx, result, turnStartMs, () => stepCount);
+    trackTurnOutcome(track, agentCtx, userText, result, turnStartMs, () => stepCount);
     return result.toUIMessageStream();
 }
 

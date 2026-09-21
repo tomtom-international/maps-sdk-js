@@ -1,39 +1,39 @@
 /* CHECKBOX */
 
-.sdk-example-checkbox-label {
+.ui-checkbox-label {
     display: flex;
     align-items: center;
-    gap: var(--sdk-space-4);
-    margin-bottom: var(--sdk-space-2);
-    font-family: var(--sdk-font-primary);
-    font-size: var(--sdk-font-body-s);
-    line-height: var(--sdk-font-body-s-lh);
-    color: var(--sdk-text-high);
+    gap: var(--ui-space-4);
+    margin-bottom: var(--ui-space-2);
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-s);
+    line-height: var(--ui-font-body-s-lh);
+    color: var(--ui-text-high-em);
     cursor: pointer;
     user-select: none;
 }
 
-.sdk-example-checkbox-label input[type="checkbox"] {
+.ui-checkbox-label input[type="checkbox"] {
     width: 16px;
     height: 16px;
     margin: 0;
     cursor: pointer;
-    accent-color: var(--sdk-primary-color);
-    border-radius: var(--sdk-radius-5);
+    accent-color: var(--ui-surface-brand-red);
+    border-radius: var(--ui-rounded-5);
 }
 
-.sdk-example-checkbox-label input[type="checkbox"]:disabled {
+.ui-checkbox-label input[type="checkbox"]:disabled {
     cursor: not-allowed;
     opacity: 0.5;
 }
 
-.sdk-example-checkbox-label input[type="checkbox"]:focus {
-    outline: 2px solid var(--sdk-primary-color);
+.ui-checkbox-label input[type="checkbox"]:focus {
+    outline: 2px solid var(--ui-surface-brand-red);
     outline-offset: 2px;
 }
 
-.sdk-example-checkbox-list {
+.ui-checkbox-list {
     display: flex;
     flex-direction: column;
-    gap: var(--sdk-space-2);
+    gap: var(--ui-space-2);
 }

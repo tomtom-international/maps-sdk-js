@@ -185,12 +185,16 @@ const applyRenderKnobs = async (
     const defaultMetric = entry.data.properties?.metrics?.[0] ?? 'congestionLevel';
     const mode = params.mode ?? 'hexgrid-3d';
     const metric = params.metric ?? defaultMetric;
-    const colorTheme = params.colorTheme ?? 'trafficLight';
 
     const module = await state.trafficAreaAnalytics.getEntryModule(entryId);
     module.setMode(mode);
     module.setMetric(metric);
-    module.setColor(colorTheme);
+    // Set the colour only when this call names a theme. Without this guard every render-knob call
+    // resets the ramp to `trafficLight`, discarding a theme a previous call set; leaving it alone
+    // lets that choice persist the same way `mode` and `metric` already do.
+    if (params.colorTheme !== undefined) {
+        module.setColor(params.colorTheme);
+    }
     if (params.heightScale !== undefined || params.scaleMode !== undefined) {
         module.setHeight({
             ...(params.heightScale !== undefined && { maxHeightMeters: params.heightScale }),

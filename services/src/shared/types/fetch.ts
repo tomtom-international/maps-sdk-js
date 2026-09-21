@@ -20,6 +20,12 @@ export type PostObject<D> = { url: URL; data?: D; headers?: TomTomAPIHeaders };
  */
 export type FetchInput<PostData = void> = ({ method: 'GET' } & GetObject) | ({ method: 'POST' } & PostObject<PostData>);
 
+/**
+ * Per-call HTTP options threaded from service params down to `fetch`.
+ * @ignore
+ */
+export type RequestOptions = { signal?: AbortSignal };
+
 export type ParsedFetchResponse<T> = Promise<{
     data: Promise<T>;
     status: number;

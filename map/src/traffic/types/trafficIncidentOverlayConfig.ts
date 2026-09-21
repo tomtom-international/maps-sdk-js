@@ -8,7 +8,9 @@ import type { BeforeLayerConfig, MapModuleCommonConfig } from '../../shared';
  */
 export type IncidentFocusStyle = {
     /**
-     * Colour of the outline painted beneath the focused stripe. Defaults to `#000`.
+     * Colour of the outline painted beneath the focused stripe.
+     *
+     * @defaultValue `#000` on light map styles, `#FFF` on dark styles
      */
     outlineColor?: string;
 
@@ -44,8 +46,8 @@ export type TrafficIncidentOverlayConfig = MapModuleCommonConfig & {
     /**
      * Visual treatment for {@link TrafficIncidentOverlayModule.setFocus}.
      *
-     * - Omit (or `undefined`) — use the SDK default treatment: a black outline
-     *   beneath the focused stripe and a `1.6×` width pop.
+     * - Omit (or `undefined`) — use the SDK default treatment: an outline beneath
+     *   the focused stripe (black on light map styles, white on dark) and a `1.6×` width pop.
      * - `false` — disable the visual treatment. `setFocus(ids)` still writes
      *   MapLibre `feature-state.focused`, so callers can drive their own
      *   styling (extra layers, sidebar overlays, …) off that state.

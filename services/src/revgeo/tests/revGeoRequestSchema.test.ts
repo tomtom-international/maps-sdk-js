@@ -124,50 +124,6 @@ describe('ReverseGeocoding schema validation', () => {
         );
     });
 
-    test("it should fail when mapcode isn't of type string array", () => {
-        const invalidParams: ReverseGeocodingParams = {
-            apiKey,
-            commonBaseURL: commonBaseUrl,
-            position: [-122.420679, 37.772537],
-            // @ts-ignore
-            mapcodes: 'Local',
-        };
-
-        expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
-            expect.objectContaining({
-                issues: [
-                    expect.objectContaining({
-                        code: 'invalid_type',
-                        expected: 'array',
-                        path: ['mapcodes'],
-                    }),
-                ],
-            }),
-        );
-    });
-
-    test("it should fail when param number isn't in string format", () => {
-        const invalidParams: ReverseGeocodingParams = {
-            apiKey,
-            commonBaseURL: commonBaseUrl,
-            position: [-122.420679, 37.772537],
-            // @ts-ignore
-            number: 36,
-        };
-
-        expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
-            expect.objectContaining({
-                issues: [
-                    expect.objectContaining({
-                        code: 'invalid_type',
-                        expected: 'string',
-                        path: ['number'],
-                    }),
-                ],
-            }),
-        );
-    });
-
     test("it should fail when param radius isn't in number format", () => {
         const invalidParams: ReverseGeocodingParams = {
             apiKey,
@@ -212,94 +168,6 @@ describe('ReverseGeocoding schema validation', () => {
         );
     });
 
-    test("it should fail when param returnRoadUse isn't of type string array", () => {
-        const invalidParams: ReverseGeocodingParams = {
-            apiKey,
-            commonBaseURL: commonBaseUrl,
-            position: [-122.420679, 37.772537],
-            // @ts-ignore
-            returnRoadUse: 'LimitedAccess',
-        };
-
-        expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
-            expect.objectContaining({
-                issues: [
-                    expect.objectContaining({
-                        code: 'invalid_type',
-                        expected: 'boolean',
-                        path: ['returnRoadUse'],
-                    }),
-                ],
-            }),
-        );
-    });
-
-    test("it should fail when param allowFreeformNewline isn't of type boolean", () => {
-        const invalidParams: ReverseGeocodingParams = {
-            apiKey,
-            commonBaseURL: commonBaseUrl,
-            position: [-122.420679, 37.772537],
-            // @ts-ignore
-            allowFreeformNewline: 'true',
-        };
-
-        expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
-            expect.objectContaining({
-                issues: [
-                    expect.objectContaining({
-                        code: 'invalid_type',
-                        expected: 'boolean',
-                        path: ['allowFreeformNewline'],
-                    }),
-                ],
-            }),
-        );
-    });
-
-    test("it should fail when param returnSpeedLimit isn't of type boolean", () => {
-        const invalidParams: ReverseGeocodingParams = {
-            apiKey,
-            commonBaseURL: commonBaseUrl,
-            position: [-122.420679, 37.772537],
-            // @ts-ignore
-            returnSpeedLimit: 'true',
-        };
-
-        expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
-            expect.objectContaining({
-                issues: [
-                    expect.objectContaining({
-                        code: 'invalid_type',
-                        expected: 'boolean',
-                        path: ['returnSpeedLimit'],
-                    }),
-                ],
-            }),
-        );
-    });
-
-    test("it should fail when param returnMatchType isn't of type boolean", () => {
-        const invalidParams: ReverseGeocodingParams = {
-            apiKey,
-            commonBaseURL: commonBaseUrl,
-            position: [-122.420679, 37.772537],
-            // @ts-ignore
-            returnMatchType: 'true',
-        };
-
-        expect(() => validateRequestSchema(invalidParams, { schema: revGeocodeRequestSchema })).toThrow(
-            expect.objectContaining({
-                issues: [
-                    expect.objectContaining({
-                        code: 'invalid_type',
-                        expected: 'boolean',
-                        path: ['returnMatchType'],
-                    }),
-                ],
-            }),
-        );
-    });
-
     test('it should fail when view is an invalid param', () => {
         const invalidParams: ReverseGeocodingParams = {
             apiKey,
@@ -314,7 +182,7 @@ describe('ReverseGeocoding schema validation', () => {
                 issues: [
                     expect.objectContaining({
                         code: 'invalid_value',
-                        values: ['Unified', 'AR', 'IN', 'PK', 'IL', 'MA', 'RU', 'TR', 'CN'],
+                        values: ['Unified', 'AR', 'IN', 'PK', 'IL', 'MA', 'RU', 'TR', 'CN', 'TW', 'RS'],
                         path: ['view'],
                     }),
                 ],

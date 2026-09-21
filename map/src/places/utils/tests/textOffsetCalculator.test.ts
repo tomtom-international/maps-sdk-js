@@ -178,4 +178,56 @@ describe('getTextOffset', () => {
             ]);
         });
     });
+
+    // Regression coverage for the `iconScaleMultiplier` fix: a layer whose `icon-size`
+    // maxes out above/below DEFAULT_MAX_PIN_SCALE (e.g. the `selected` pin layer, which
+    // renders icons larger than `main`) must scale a custom icon's per-icon offset by the
+    // same multiplier it applies to the fallback offset — otherwise an icon with an entry
+    // in the map (even an offset-only one with heightScale/widthScale at 1) sits at a
+    // different distance from its icon than an icon with no entry at all.
+    describe('with a non-default icon-size (e.g. the larger `selected` pin layer)', () => {
+        // Mirrors SELECTED_PIN_ICON_SIZE maxing at 1 instead of DEFAULT_MAX_PIN_SCALE (0.8).
+        const iconSizeExpression: ExpressionSpecification = ['interpolate', ['linear'], ['zoom'], 8, 0.8, 22, 1];
+        const scaleMultiplier = 1 / DEFAULT_MAX_PIN_SCALE; // 1.25
+
+        test('scales an offset-only icon (heightScale/widthScale at 1) by the same multiplier as the fallback', () => {
+            const customIcons = new Map([['offset-only-icon', { heightScale: 1, widthScale: 1 }]]);
+
+            const result = getTextOffset(iconSizeExpression, customIcons, 'pin');
+            const variableAnchorOffset = result['text-variable-anchor-offset'] as unknown[];
+
+            const expectedOffsets = [
+                'top',
+                [0, DEFAULT_TEXT_OFFSET_Y * scaleMultiplier],
+                'left',
+                [DEFAULT_TEXT_OFFSET_X * scaleMultiplier, -DEFAULT_TEXT_OFFSET_X * scaleMultiplier],
+                'right',
+                [-DEFAULT_TEXT_OFFSET_X * scaleMultiplier, -DEFAULT_TEXT_OFFSET_X * scaleMultiplier],
+            ];
+
+            // Per-icon branch (this icon's case)
+            expect(variableAnchorOffset[2]).toEqual(['literal', expectedOffsets]);
+            // Fallback branch (for any icon not in the map) — must match exactly
+            expect(variableAnchorOffset.at(-1)).toEqual(['literal', expectedOffsets]);
+        });
+
+        test('applies the multiplier together with a real heightScale/widthScale difference', () => {
+            const heightScale = 1.5;
+            const widthScale = 1.2;
+            const customIcons = new Map([['custom-icon', { heightScale, widthScale }]]);
+
+            const result = getTextOffset(iconSizeExpression, customIcons, 'pin');
+            const variableAnchorOffset = result['text-variable-anchor-offset'] as unknown[];
+
+            // Rounded to 4 decimals to match the implementation's float-noise guard.
+            const round4 = (n: number) => Math.round(n * 10000) / 10000;
+            const topOffset = round4(DEFAULT_TEXT_OFFSET_Y * heightScale * scaleMultiplier);
+            const sideOffset = round4(DEFAULT_TEXT_OFFSET_X * widthScale * scaleMultiplier);
+
+            expect(variableAnchorOffset[2]).toEqual([
+                'literal',
+                ['top', [0, topOffset], 'left', [sideOffset, -sideOffset], 'right', [-sideOffset, -sideOffset]],
+            ]);
+        });
+    });
 });

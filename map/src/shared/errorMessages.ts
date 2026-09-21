@@ -10,4 +10,8 @@ export const notInTheStyle = (actionText: string): Error =>
  * @ignore
  */
 export const cannotAddStyleModuleToCustomStyle = (styleModule: StyleModule): Error =>
-    new Error(`Trying to add style module ${styleModule} to the custom style!`);
+    new Error(
+        `The custom map style has no '${styleModule}' part and the SDK cannot add one to it. ` +
+            'Style-owned modules work on a custom style only when it already ships the matching source ' +
+            '(e.g. built with Map Maker with that part enabled) — or switch to a standard style.',
+    );

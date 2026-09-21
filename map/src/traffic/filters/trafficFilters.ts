@@ -1,100 +1,79 @@
 import { indexedMagnitudes } from '@tomtom-org/maps-sdk/core';
 import { isNil } from 'lodash-es';
-import type {
-    ExpressionFilterSpecification,
-    FilterSpecification,
-    LayerSpecification,
-    LegacyFilterSpecification,
-    Map,
-} from 'maplibre-gl';
-import type { MultiSyntaxFilter, ValuesFilter } from '../../shared';
-import { buildValuesFilter, getMergedAllFilter, getMergedAnyFilter } from '../../shared/mapLibreFilterUtils';
+import type { ExpressionFilterSpecification, ExpressionSpecification, LayerSpecification } from 'maplibre-gl';
+import type { ValuesFilter } from '../../shared';
+import type { LayerFilterComposer } from '../../shared/layers/layerFilterComposer';
+import { buildValuesFilter, getMergedAnyFilter } from '../../shared/mapLibreFilterUtils';
 import type { TrafficCommonFilter } from '../types/trafficCommonConfig';
 import type { TrafficFlowFilter, TrafficFlowFilters } from '../types/trafficFlowConfig';
 import type { DelayFilter, TrafficIncidentsFilter, TrafficIncidentsFilters } from '../types/trafficIncidentsConfig';
 import { incidentToIconCategoryMapping } from '../util/trafficIncidentMapping';
 
-const toMultiSyntaxAllFilter = (
-    newSyntaxExpressions: unknown[],
-    legacySyntaxExpressions: unknown[],
-): MultiSyntaxFilter | null => {
-    if (!newSyntaxExpressions.length) {
+const toAllFilter = (expressions: ExpressionFilterSpecification[]): ExpressionFilterSpecification | null => {
+    if (!expressions.length) {
         return null;
     }
-    if (newSyntaxExpressions.length === 1) {
-        return {
-            expression: newSyntaxExpressions[0] as ExpressionFilterSpecification,
-            legacy: legacySyntaxExpressions[0] as LegacyFilterSpecification,
-        };
+    if (expressions.length === 1) {
+        return expressions[0];
     }
-    return {
-        expression: ['all', ...newSyntaxExpressions] as ExpressionFilterSpecification,
-        legacy: ['all', ...legacySyntaxExpressions] as LegacyFilterSpecification,
-    };
+
+    return ['all', ...expressions] as ExpressionSpecification;
 };
 
-const delayFilterToMapLibre = (delayFilter: DelayFilter): MultiSyntaxFilter | null => {
-    const newSyntaxExpressions = [];
-    const legacySyntaxExpressions = [];
+const delayFilterToMapLibre = (delayFilter: DelayFilter): ExpressionFilterSpecification | null => {
+    const expressions: ExpressionFilterSpecification[] = [];
     if (delayFilter.mustHaveDelay && delayFilter.minDelayMinutes) {
         // there must be a delay and with the min specified value:
         const delaySeconds = delayFilter.minDelayMinutes * 60;
-        newSyntaxExpressions.push(['>=', ['get', 'delay'], delaySeconds]);
-        legacySyntaxExpressions.push(['>=', 'delay', delaySeconds]);
+        expressions.push(['>=', ['get', 'delay'], delaySeconds]);
     } else if (delayFilter.mustHaveDelay) {
         // just expects a delay of any kind
-        newSyntaxExpressions.push(['>', ['get', 'delay'], 0]);
-        legacySyntaxExpressions.push(['>', 'delay', 0]);
+        expressions.push(['>', ['get', 'delay'], 0]);
     } else if (delayFilter.minDelayMinutes) {
         // Min delay expected, but also allows for non-existing delays:
         const delaySeconds = delayFilter.minDelayMinutes * 60;
-        newSyntaxExpressions.push([
+        expressions.push([
             'any',
             ['!', ['has', 'delay']],
             ['==', ['get', 'delay'], 0],
             ['>=', ['get', 'delay'], delaySeconds],
         ]);
-        legacySyntaxExpressions.push(['any', ['!has', 'delay'], ['==', 'delay', 0], ['>=', 'delay', delaySeconds]]);
     }
-    return toMultiSyntaxAllFilter(newSyntaxExpressions, legacySyntaxExpressions);
+
+    return toAllFilter(expressions);
 };
 
 const addFilter = (
-    filter: MultiSyntaxFilter | undefined | null,
-    newSyntaxExpressions: unknown[],
-    legacySyntaxExpressions: unknown[],
+    filter: ExpressionFilterSpecification | undefined | null,
+    expressions: ExpressionFilterSpecification[],
 ) => {
     if (filter) {
-        newSyntaxExpressions.push(filter.expression);
-        legacySyntaxExpressions.push(filter.legacy);
+        expressions.push(filter);
     }
 };
 
 const addValuesFilter = (
     valuesFilter: ValuesFilter<string> | undefined,
-    propName: string,
-    newSyntaxExpressions: unknown[],
-    legacySyntaxExpressions: unknown[],
+    propertyName: string,
+    expressions: ExpressionFilterSpecification[],
 ) => {
     if (valuesFilter) {
-        addFilter(buildValuesFilter(propName, valuesFilter), newSyntaxExpressions, legacySyntaxExpressions);
+        addFilter(buildValuesFilter(propertyName, valuesFilter), expressions);
     }
 };
 
 const addCommonFilterExpressions = (
     sdkFilter: TrafficCommonFilter,
-    newSyntaxExpressions: unknown[],
-    legacySyntaxExpressions: unknown[],
+    expressions: ExpressionFilterSpecification[],
 ): void => {
-    addValuesFilter(sdkFilter.roadCategories, 'road_category', newSyntaxExpressions, legacySyntaxExpressions);
-    addValuesFilter(sdkFilter.roadSubCategories, 'road_subcategory', newSyntaxExpressions, legacySyntaxExpressions);
+    addValuesFilter(sdkFilter.roadCategories, 'road_category', expressions);
+    addValuesFilter(sdkFilter.roadSubCategories, 'road_subcategory', expressions);
 };
 
-const buildMapLibreIncidentsFilter = (sdkFilter: TrafficIncidentsFilter): MultiSyntaxFilter | null => {
-    const newSyntaxExpressions: unknown[] = [];
-    const legacySyntaxExpressions: unknown[] = [];
+const buildMapLibreIncidentsFilter = (sdkFilter: TrafficIncidentsFilter): ExpressionFilterSpecification | null => {
+    const expressions: ExpressionFilterSpecification[] = [];
 
-    addCommonFilterExpressions(sdkFilter, newSyntaxExpressions, legacySyntaxExpressions);
+    addCommonFilterExpressions(sdkFilter, expressions);
 
     if (sdkFilter.incidentCategories) {
         const incidentCategoryFilter = buildValuesFilter(
@@ -102,25 +81,27 @@ const buildMapLibreIncidentsFilter = (sdkFilter: TrafficIncidentsFilter): MultiS
             sdkFilter.incidentCategories,
             (value) => incidentToIconCategoryMapping[value],
         );
-        addFilter(incidentCategoryFilter, newSyntaxExpressions, legacySyntaxExpressions);
+        addFilter(incidentCategoryFilter, expressions);
     }
     if (sdkFilter.magnitudes) {
         const magnitudesFilter = buildValuesFilter('magnitude_of_delay', sdkFilter.magnitudes, (magnitude) =>
             indexedMagnitudes.indexOf(magnitude),
         );
-        addFilter(magnitudesFilter, newSyntaxExpressions, legacySyntaxExpressions);
+        addFilter(magnitudesFilter, expressions);
     }
     if (sdkFilter.delays) {
-        addFilter(delayFilterToMapLibre(sdkFilter.delays), newSyntaxExpressions, legacySyntaxExpressions);
+        addFilter(delayFilterToMapLibre(sdkFilter.delays), expressions);
     }
 
-    return toMultiSyntaxAllFilter(newSyntaxExpressions, legacySyntaxExpressions);
+    return toAllFilter(expressions);
 };
 
 /**
  * @ignore
  */
-export const buildMapLibreIncidentFilters = (incidentFilters: TrafficIncidentsFilters): MultiSyntaxFilter | null => {
+export const buildMapLibreIncidentFilters = (
+    incidentFilters: TrafficIncidentsFilters,
+): ExpressionFilterSpecification | null => {
     if (!incidentFilters?.any?.length) {
         return null;
     }
@@ -130,24 +111,22 @@ export const buildMapLibreIncidentFilters = (incidentFilters: TrafficIncidentsFi
     return getMergedAnyFilter(mapLibreFilters);
 };
 
-const buildMapLibreFlowFilter = (sdkFilter: TrafficFlowFilter): MultiSyntaxFilter | null => {
-    const newSyntaxExpressions: unknown[] = [];
-    const legacySyntaxExpressions: unknown[] = [];
+const buildMapLibreFlowFilter = (sdkFilter: TrafficFlowFilter): ExpressionFilterSpecification | null => {
+    const expressions: ExpressionFilterSpecification[] = [];
 
-    addCommonFilterExpressions(sdkFilter, newSyntaxExpressions, legacySyntaxExpressions);
+    addCommonFilterExpressions(sdkFilter, expressions);
     if (sdkFilter.showRoadClosures) {
         const operator = sdkFilter.showRoadClosures === 'only' ? '==' : '!=';
-        newSyntaxExpressions.push([operator, ['get', 'road_closure'], true]);
-        legacySyntaxExpressions.push([operator, 'road_closure', true]);
+        expressions.push([operator, ['get', 'road_closure'], true]);
     }
 
-    return toMultiSyntaxAllFilter(newSyntaxExpressions, legacySyntaxExpressions);
+    return toAllFilter(expressions);
 };
 
 /**
  * @ignore
  */
-export const buildMapLibreFlowFilters = (flowFilters: TrafficFlowFilters): MultiSyntaxFilter | null => {
+export const buildMapLibreFlowFilters = (flowFilters: TrafficFlowFilters): ExpressionFilterSpecification | null => {
     if (!flowFilters?.any?.length) {
         return null;
     }
@@ -158,22 +137,25 @@ export const buildMapLibreFlowFilters = (flowFilters: TrafficFlowFilters): Multi
 };
 
 /**
+ * Narrows the given style layers by `filter`, or with `undefined` leaves them to whatever the style
+ * and the other contributors filter them by.
+ *
+ * One key per module, not per call: the incident and icon filters land on disjoint layer sets, and a
+ * later call that covers both sets is meant to replace what the earlier one put there.
+ *
  * @ignore
  * @param filter
  * @param layers
- * @param mapLibreMap
- * @param originalFilters
+ * @param filterComposer
+ * @param contributor
  */
 export const applyFilter = (
-    filter: MultiSyntaxFilter | undefined,
+    filter: ExpressionFilterSpecification | undefined,
     layers: LayerSpecification[],
-    mapLibreMap: Map,
-    originalFilters: Record<string, FilterSpecification | undefined>,
+    filterComposer: LayerFilterComposer,
+    contributor: string,
 ) => {
     for (const layer of layers) {
-        mapLibreMap.setFilter(
-            layer.id,
-            filter ? getMergedAllFilter(filter, originalFilters[layer.id]) : originalFilters[layer.id],
-        );
+        filterComposer.setClause(layer.id, contributor, filter);
     }
 };

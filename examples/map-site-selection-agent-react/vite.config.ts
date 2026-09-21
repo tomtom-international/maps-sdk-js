@@ -1,6 +1,6 @@
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig, type UserConfig, type UserConfigFnObject } from 'vite';
-import sharedConfig from '../example-vite.config';
+import sharedConfig from '../example-vite.config.ts';
 
 // Reuse the shared example Vite config and prepend the Tailwind v4 plugin so its `enforce: 'pre'`
 // hooks see CSS first.

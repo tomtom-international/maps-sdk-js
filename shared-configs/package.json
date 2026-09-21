@@ -1,14 +1,17 @@
 {
   "name": "shared-configs",
   "type": "module",
+  "scripts": {
+    "test": "vitest run --config vitest.self.config.ts",
+    "test:coverage": "vitest run --coverage --config vitest.self.config.ts"
+  },
   "devDependencies": {
-    "@types/rollup-plugin-peer-deps-external": "catalog:",
+    "rolldown": "catalog:",
+    "rolldown-plugin-dts": "catalog:",
     "rollup-plugin-analyzer": "catalog:",
     "rollup-plugin-license": "catalog:",
-    "rollup-plugin-peer-deps-external": "catalog:",
     "rollup-plugin-visualizer": "catalog:",
     "vite": "catalog:",
-    "vite-plugin-dts": "catalog:",
     "vitest": "catalog:"
   }
 }

@@ -19,22 +19,22 @@
  * **RoutingModule** - Positions route visualizations below labels for readability:
  * ```typescript
  * // Routes appear below labels but above the base map
- * const routingModule = await RoutingModule.get(map);
+ * const routingModule = await RoutingModule.create(map);
  * // Uses mapStyleLayerIDs.lowestLabel by default
  * ```
  *
  * **GeometriesModule** - Configurable layer positioning for polygon areas:
  * ```typescript
  * // Default: below labels
- * const geometriesModule = await GeometriesModule.get(map);
+ * const geometriesModule = await GeometriesModule.create(map);
  *
  * // Custom: below buildings to show at ground level
- * const geometriesModule = await GeometriesModule.get(map, {
+ * const geometriesModule = await GeometriesModule.create(map, {
  *   beforeLayerConfig: 'lowestBuilding'
  * });
  *
  * // On top of everything
- * const geometriesModule = await GeometriesModule.get(map, {
+ * const geometriesModule = await GeometriesModule.create(map, {
  *   beforeLayerConfig: 'top'
  * });
  * ```
@@ -57,8 +57,10 @@
  * the corresponding reference layers in the new style, maintaining the intended visual hierarchy.
  *
  * **Important Notes:**
- * - `lowestBuilding` is not available in the Satellite style
- * - If a reference layer doesn't exist, custom layers will be added on top of the style
+ * - `lowestRoadLine` and `lowestBuilding` are not available in the Satellite style
+ * - If a reference layer doesn't exist, a module repositioning its layers puts them on top of the
+ *   style instead. A layer added with a `beforeID` that never appears is reported through
+ *   `console.error` and skipped, since a missing anchor there is usually a typo.
  * - Both RoutingModule and GeometriesModule default to `lowestLabel` for optimal visibility
  *
  * @see {@link GeometryBeforeLayerConfig} for GeometriesModule layer positioning options
@@ -112,6 +114,8 @@ export const mapStyleLayerIDs = {
      * Represents tunnel railway outlines. Use to position content below the road network,
      * useful for showing base layers or features that should appear beneath transportation
      * infrastructure.
+     *
+     * **Note:** Not available in the Satellite style.
      */
     lowestRoadLine: 'Tunnel - Railway outline',
     /**

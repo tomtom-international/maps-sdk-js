@@ -22,7 +22,7 @@ const DATA_URL = 'https://dataworks.calderdale.gov.uk/download/2kyp8/hcj/listed%
 
     await addHeatmapSourceAndLayer(map.mapLibreMap, data);
 
-    const placesModule = await PlacesModule.get(map, {
+    const placesModule = await PlacesModule.create(map, {
         theme: 'base-map',
         icon: { mapping: { to: 'poiCategory', fn: () => 'COMPANY' } },
         text: { title: (place: any) => place.properties.Name },

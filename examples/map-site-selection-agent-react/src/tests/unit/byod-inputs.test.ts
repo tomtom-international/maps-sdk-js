@@ -1,7 +1,7 @@
 import type { ToolState } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import type { Feature, FeatureCollection, LineString, Point, Polygon } from 'geojson';
 import { describe, expect, it } from 'vitest';
-import { byodCandidateSites, requireByodFeatures, sumNumericInArea } from '../../agent/byod-inputs';
+import { byodCandidateSites, outerBoundary, requireByodFeatures, sumNumericInArea } from '../../agent/byod-inputs';
 
 const point = (lng: number, lat: number, properties: Record<string, unknown>): Feature<Point> => ({
     type: 'Feature',
@@ -146,6 +146,32 @@ describe('sumNumericInArea', () => {
     it('ignores a polygon that does not overlap the area at all', () => {
         const result = sumNumericInArea(fc([box(20, 20, 30, 30, { population: 100 })]), SQUARE, 'population');
         expect(result).toEqual({ value: 0, matched: 0 });
+    });
+});
+
+describe('outerBoundary', () => {
+    it('returns null for a layer with no polygons', () => {
+        expect(outerBoundary(fc([point(1, 1, {}), point(2, 2, {})]))).toBeNull();
+    });
+
+    it('returns the single polygon as-is', () => {
+        expect(outerBoundary(fc([box(0, 0, 2, 2)]))?.geometry.type).toBe('Polygon');
+    });
+
+    it('unions adjacent polygons into one contiguous clip region', () => {
+        // Two boxes sharing an edge at lng=2 → a single merged mass.
+        const boundary = outerBoundary(fc([box(0, 0, 2, 2), box(2, 0, 4, 2)]));
+        expect(boundary?.geometry.type).toBe('Polygon');
+    });
+
+    it('skips clipping (null) when the polygons are scattered far-apart blobs', () => {
+        // Two equal, widely-separated boxes → neither part dominates → not a real extent.
+        expect(outerBoundary(fc([box(0, 0, 1, 1), box(50, 50, 51, 51)]))).toBeNull();
+    });
+
+    it('still clips when a dominant mass carries only a tiny detached exclave', () => {
+        // A large box plus a sliver holding well under 10% of the area → coherent.
+        expect(outerBoundary(fc([box(0, 0, 10, 10), box(50, 50, 50.2, 50.2)]))).not.toBeNull();
     });
 });
 

@@ -320,7 +320,8 @@ const resolveSliceEntries = <E extends { id: string }>(
 const CROSS_KIND_OPS_DOC =
     'CROSS-KIND OPS — `turf` and `h3` operate on EVERY feature regardless of which entry/kind it came from. ' +
     'You can freely combine features from `placesByEntry` (Points), `routesByEntry` (LineStrings), ' +
-    '`incidentsByEntry` (Point or LineString), `geometriesByEntry` (Polygon / MultiPolygon), and ' +
+    '`incidentsByEntry` (Point or LineString), `geometriesByEntry` (Polygon / MultiPolygon), ' +
+    '`byodByEntry` (customer GeoJSON — Point / LineString / Polygon, mixed), and ' +
     '`trafficAreaAnalyticsByEntry` (Polygon tiles with `properties` like `congestionLevel` / `speed` / ' +
     '`travelTime` / `freeFlowSpeed`) in the same call. Pull features out of a record first — one entry ' +
     '`placesByEntry[id].features`, or all entries `Object.values(placesByEntry).flatMap(fc => fc.features)` ' +
@@ -328,7 +329,13 @@ const CROSS_KIND_OPS_DOC =
     '• Point ↔ LineString — `turf.pointToLineDistance(point, lineFeature, { units: "meters" })`, ' +
     '`turf.nearestPointOnLine(line, point)`.\n' +
     '• Point ↔ Polygon — `turf.booleanPointInPolygon(point, poly)`, ' +
-    '`turf.pointsWithinPolygon(turf.featureCollection(points), poly)`.\n' +
+    '`turf.pointsWithinPolygon(turf.featureCollection(points), poly)` — POINT-ONLY (throw "coord must be ' +
+    'GeoJSON Point" on a line/polygon).\n' +
+    '• ANY feature ↔ Polygon (containment / overlap) — `incidentsByEntry` and `byodByEntry` mix geometry ' +
+    'types, so when you group features into polygons (e.g. incidents per BYOD district) use ' +
+    '`turf.booleanIntersects(feature, poly)`, which accepts Point / LineString / Polygon alike. Only use ' +
+    '`booleanPointInPolygon` after a `feature.geometry.type === "Point"` guard, or first collapse a ' +
+    'line/area to a point with `turf.pointOnFeature(feature)`.\n' +
     '• LineString ↔ Polygon — `turf.lineIntersect(line, poly)`, `turf.booleanCrosses(line, poly)`, ' +
     '`turf.lineSplit(line, poly)`.\n' +
     '• Polygon ↔ Polygon — `turf.union/intersect/difference(turf.featureCollection([a, b]))` (Turf v7 takes a single collection).\n' +

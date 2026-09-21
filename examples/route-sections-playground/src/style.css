@@ -1,0 +1,105 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/form/field.css";
+@import "../../src/templates/css/form/checkbox.css";
+@import "../../src/templates/css/form/color-picker.css";
+@import "../../src/templates/css/form/dropdown.css";
+@import "../../src/templates/css/form/slider.css";
+@import "../../src/templates/css/form/toggle.css";
+
+.ui-customPanel {
+    width: 320px;
+}
+
+/* A pair of place names needs more room than a knob's value. */
+#route-picker {
+    font-size: var(--ui-font-caption-m);
+}
+
+.section-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: var(--ui-space-2);
+    padding: var(--ui-space-1) 0;
+}
+
+.section-row:has(input[data-knob="visible"]:disabled) {
+    opacity: 0.45;
+}
+
+.section-name {
+    font-size: var(--ui-font-caption-s);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.section-count {
+    font-size: var(--ui-font-caption-s);
+    color: var(--ui-text-low-em);
+    font-variant-numeric: tabular-nums;
+}
+
+/* The knobs pair up two to a line, each under the name of what it sets. */
+.section-knobs {
+    display: none;
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+    gap: var(--ui-space-1) var(--ui-space-2);
+    padding: 0 0 var(--ui-space-2) var(--ui-space-5);
+}
+
+.section-row.enabled .section-knobs {
+    display: grid;
+}
+
+.section-knob {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ui-space-1);
+    min-width: 0;
+    font-size: var(--ui-font-caption-m);
+    color: var(--ui-text-med-em);
+}
+
+/* The slider needs the full width to be worth dragging. */
+.section-knob-wide {
+    grid-column: 1 / -1;
+}
+
+/* Tighter than a full-size field, so the widest value still reads next to the arrow. */
+.section-knob .ui-dropdown {
+    min-width: 0;
+    height: var(--ui-height-sm);
+    padding: 0 var(--ui-space-6) 0 var(--ui-space-2);
+    font-size: var(--ui-font-caption-m);
+    background-position: right var(--ui-space-2) center;
+}
+
+.section-knob .ui-slider-container {
+    min-width: 0;
+    margin: 0;
+}
+
+.section-knob .ui-slider-value {
+    min-width: 36px;
+    font-size: var(--ui-font-caption-m);
+}
+
+/* Holds the swatch column open for the types that colour themselves from their own data. */
+.section-no-color {
+    display: inline-block;
+    width: 32px;
+    flex-shrink: 0;
+}
+
+/* Responsive: max-width 768px */
+@media (max-width: 768px) {
+    .ui-customPanel {
+        width: 260px;
+    }
+}

@@ -1,5 +1,5 @@
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import { Map } from 'maplibre-gl';
+import { Map, type RequestParameters } from 'maplibre-gl';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { type StyleChangeHandler, TomTomMap } from '../TomTomMap';
 
@@ -14,6 +14,7 @@ vi.mock('maplibre-gl', () => {
             },
         });
         getZoom = vi.fn();
+        setTransformRequest = vi.fn();
     }
     return {
         // biome-ignore lint/complexity/useArrowFunction: arrow functions cannot be invoked with `new`
@@ -69,6 +70,19 @@ describe('Map initialization mocked tests', () => {
             cancelPendingTileRequestsWhileZooming: false,
             transformRequest: expect.any(Function),
         });
+    });
+
+    test('_setTomTomUserAgent re-installs transformRequest, so later requests carry the new tag', () => {
+        // Updating _params alone would leave MapLibre holding the transformRequest built at
+        // construction — the tag would never reach the wire.
+        TomTomConfig.instance.put({ apiKey: 'TEST_KEY' });
+        const tomtomMap = new TomTomMap({ mapLibre: { container: mockedContainer } });
+
+        tomtomMap._setTomTomUserAgent('MapsSDKJS-AgentToolkit/1.2.3');
+
+        const installed = vi.mocked(tomtomMap.mapLibreMap.setTransformRequest).mock.lastCall?.[0];
+        const request = installed?.('https://api.tomtom.com/maps/orbis/style') as RequestParameters;
+        expect(request.headers?.['tomtom-user-agent']).toBe('MapsSDKJS-AgentToolkit/1.2.3');
     });
 
     test('addStyleChangeHandler returns a disposer that unregisters the handler', () => {

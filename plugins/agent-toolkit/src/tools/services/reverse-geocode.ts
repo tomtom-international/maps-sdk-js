@@ -5,8 +5,9 @@
 import { reverseGeocode } from '@tomtom-org/maps-sdk/services';
 import type { Position } from 'geojson';
 import { z } from 'zod';
-import type { ToolState } from '../../types';
+import type { ToolExecuteOptions, ToolState } from '../../types';
 import { makePlacesLabel, summarizePlace } from '../../utils';
+import { positionSchema, withAgentToolkitHeaders } from '../shared';
 import { placeOutputSchema, toolErrorSchema } from '../shared-output-schemas';
 
 /** Output schema for the reverse-geocode tool. */
@@ -25,7 +26,7 @@ export const reverseGeocodeOutputSchema = z.union([
  * Tool schema for reverse geocoding (coordinates to address).
  */
 export const reverseGeocodeSchema = z.object({
-    position: z.array(z.number()).length(2).describe('[longitude, latitude] GeoJSON position to reverse geocode'),
+    position: positionSchema.describe('[longitude, latitude] GeoJSON position to reverse geocode'),
 });
 
 export const reverseGeocodeDescription =
@@ -39,13 +40,19 @@ export const reverseGeocodeDescription =
 export const executeReverseGeocode = async (
     params: z.infer<typeof reverseGeocodeSchema>,
     state: ToolState,
+    options?: ToolExecuteOptions,
 ): Promise<z.infer<typeof reverseGeocodeOutputSchema>> => {
     const { position } = params;
     const pos: Position = position as Position;
     try {
-        const result = await reverseGeocode({ position: pos });
+        const requestParams = withAgentToolkitHeaders({
+            position: pos,
+            signal: options?.signal,
+        });
+        const result = await reverseGeocode(requestParams);
 
-        if (result) {
+        // We guard for result.properties and not only result to account for phantom returns, which are succesfully-shaped Feature result with no data
+        if (result.properties) {
             const placesEntryId = await state.places.addPlaceResult(result, makePlacesLabel(result));
             return { ...summarizePlace(result), placesEntryId };
         }

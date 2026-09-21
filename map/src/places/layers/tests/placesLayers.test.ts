@@ -499,4 +499,24 @@ describe('Get places layer spec with base-map icon style config', () => {
             ...hiddenClusterLayers,
         });
     });
+
+    // Regression test: `micro` inherits the style's group-driven `icon-image` (not
+    // `['get', 'iconID']`), so an offset case-matched on `iconID` must not apply there —
+    // it would shift the unrelated native sprite `micro` actually renders.
+    test('does not apply icon-offset to the micro layer', () => {
+        const config = {
+            theme: 'base-map' as const,
+            icon: {
+                categoryIcons: [
+                    { id: 'RESTAURANT' as const, image: 'https://example.com/icon.png', offsetX: 10, offsetY: -5 },
+                ],
+            },
+        };
+
+        const result = buildPlacesLayerSpecs(config, mapLibreMock, 'light', 0);
+
+        expect(result.main?.layout).toHaveProperty('icon-offset');
+        expect(result.selected?.layout).toHaveProperty('icon-offset');
+        expect(result.micro?.layout).not.toHaveProperty('icon-offset');
+    });
 });

@@ -15,8 +15,8 @@ export const clarifyIntent = createClarifyIntentTool({
     examplePrompts: [
         'Profile this site for me (no concept or travel mode given)',
         'Rank these addresses (no concept given)',
-        'Profile Damrak 70 — I’m not sure whether to use a walking or driving catchment',
-        'Find demand gaps for a gym in Amsterdam Oost — help me pick what counts as nearby demand',
+        'Profile 425 Fremont St — I’m not sure whether to use a walking or driving catchment',
+        'Find demand gaps for a gym in East Las Vegas — help me pick what counts as nearby demand',
         'Rank these sites for a clinic — I’m not sure what should count as a competitor',
         'Rank these candidate sites, but I’m not sure how to weigh the factors',
         'Compare a proposed store with my existing locations — I haven’t listed the addresses yet',

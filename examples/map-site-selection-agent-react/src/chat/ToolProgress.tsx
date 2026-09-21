@@ -8,7 +8,7 @@ import { useToolProgress } from '../progress/progress-store';
 function StepIcon({ done, active }: { done: boolean; active: boolean }) {
     if (done) {
         return (
-            <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-(--pb-text-high)">
+            <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-(--ui-text-high-em)">
                 <svg
                     viewBox="0 0 24 24"
                     width="11"
@@ -33,7 +33,7 @@ function StepIcon({ done, active }: { done: boolean; active: boolean }) {
     }
     return (
         <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center" aria-hidden="true">
-            <span className="h-1.5 w-1.5 rounded-full bg-(--pb-border-medium)" />
+            <span className="h-1.5 w-1.5 rounded-full bg-(--ui-border-med-em)" />
         </span>
     );
 }
@@ -43,15 +43,15 @@ export function ToolProgress({ toolName }: { toolName: string }) {
     if (!run) return null;
 
     return (
-        <div className="my-1 flex w-full flex-col gap-2 self-start rounded-(--pb-radius-10) border border-(--pb-border-low) bg-(--pb-surface-0) p-3">
+        <div className="my-1 flex w-full flex-col gap-2 self-start rounded-(--ui-rounded-10) border border-(--ui-border-low-em) bg-(--ui-surface-0) p-3">
             {run.steps.map((label, index) => {
                 const done = run.done || index < run.currentStep;
                 const active = !run.done && index === run.currentStep;
                 return (
                     <div
                         key={label}
-                        className="flex items-center gap-2 font-(family-name:--pb-font-secondary) text-[14px] leading-[20px] font-semibold"
-                        style={{ color: done || active ? 'var(--pb-text-high)' : 'var(--pb-text-low)' }}
+                        className="flex items-center gap-2 font-(family-name:--ui-font-proxima) text-[14px] leading-[20px] font-semibold"
+                        style={{ color: done || active ? 'var(--ui-text-high-em)' : 'var(--ui-text-low-em)' }}
                     >
                         <StepIcon done={done} active={active} />
                         <span>{label}</span>

@@ -28,23 +28,23 @@ export function ReportActions() {
     };
 
     return (
-        <div className="message assistant flex w-[90%] max-w-[90%] flex-col gap-2 self-start rounded-(--pb-radius-5) border border-(--pb-border-low) bg-(--pb-surface-1) p-3">
-            <span className="text-[13px] font-semibold text-(--pb-text-high)">{data.title}</span>
-            <span className="text-[12px] text-(--pb-text-medium)">
+        <div className="message assistant flex w-[90%] max-w-[90%] flex-col gap-2 self-start rounded-(--ui-rounded-5) border border-(--ui-border-low-em) bg-(--ui-surface-1) p-3">
+            <span className="text-[13px] font-semibold text-(--ui-text-high-em)">{data.title}</span>
+            <span className="text-[12px] text-(--ui-text-med-em)">
                 Customer-ready report — open (print → PDF) or download.
             </span>
             <div className="flex gap-2">
                 <button
                     type="button"
                     onClick={open}
-                    className="cursor-pointer rounded-(--pb-radius-5) border-0 bg-(--pb-primary-color) px-3 py-1.5 text-[13px] font-semibold text-white"
+                    className="cursor-pointer rounded-(--ui-rounded-5) border-0 bg-(--ui-surface-brand-red) px-3 py-1.5 text-[13px] font-semibold text-white"
                 >
                     Open report
                 </button>
                 <button
                     type="button"
                     onClick={download}
-                    className="cursor-pointer rounded-(--pb-radius-5) border border-(--pb-border-medium) bg-(--pb-surface-0) px-3 py-1.5 text-[13px] font-semibold text-(--pb-text-high) transition-colors hover:bg-(--pb-surface-2)"
+                    className="cursor-pointer rounded-(--ui-rounded-5) border border-(--ui-border-med-em) bg-(--ui-surface-0) px-3 py-1.5 text-[13px] font-semibold text-(--ui-text-high-em) transition-colors hover:bg-(--ui-surface-2)"
                 >
                     Download .html
                 </button>

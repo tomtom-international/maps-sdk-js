@@ -130,6 +130,52 @@ describe('fetchWithRetry', () => {
         expect(fetch).toHaveBeenCalledTimes(1);
     });
 
+    test('aborting during the backoff wait rejects and skips the next attempt', async () => {
+        vi.spyOn(globalThis, 'fetch').mockResolvedValue(createMockResponse({ status: 429, retryAfter: '3' }));
+        const controller = new AbortController();
+
+        const assertion = expect(get(mockUrl, mockHeaders, { signal: controller.signal })).rejects.toHaveProperty(
+            'name',
+            'AbortError',
+        );
+
+        // Abort partway into the 3s wait — without an abortable sleep this would
+        // sit out the full delay and then issue a second request
+        await vi.advanceTimersByTimeAsync(1000);
+        expect(fetch).toHaveBeenCalledTimes(1);
+
+        controller.abort();
+        await assertion;
+
+        await vi.advanceTimersByTimeAsync(5000);
+        expect(fetch).toHaveBeenCalledTimes(1);
+    });
+
+    // Draining the body is an await point, so a caller can abort there — the one case an
+    // abort listener alone cannot catch, since the abort has already happened.
+    test('aborting while the 429 body drains rejects without waiting out the backoff', async () => {
+        const controller = new AbortController();
+        const response = createMockResponse({ status: 429, retryAfter: '3' });
+        // Abort at exactly the await point between the response and the sleep
+        (response as any).text = () => {
+            controller.abort();
+            return Promise.resolve('{}');
+        };
+        vi.spyOn(globalThis, 'fetch').mockResolvedValue(response);
+
+        let rejection: unknown;
+        const pending = get(mockUrl, mockHeaders, { signal: controller.signal }).catch((error) => {
+            rejection = error;
+        });
+
+        // Flush microtasks only — no timer advance, so a settled promise proves it did not wait
+        await vi.advanceTimersByTimeAsync(0);
+        await pending;
+
+        expect(rejection).toHaveProperty('name', 'AbortError');
+        expect(fetch).toHaveBeenCalledTimes(1);
+    });
+
     test('does not retry on non-429 errors', async () => {
         vi.spyOn(globalThis, 'fetch').mockResolvedValue(createMockResponse({ status: 500 }));
 

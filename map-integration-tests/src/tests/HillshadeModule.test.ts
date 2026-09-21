@@ -92,7 +92,6 @@ test.describe('Map vector tiles hillshade module tests', () => {
 
         // changing style at runtime, verifying hillshade is still there:
         await setStyle(page, 'monoDark');
-        await waitForMapReady(page);
         await waitForMapIdle(page);
 
         // The config was reset above, so hillshade will be restored as invisible:
@@ -101,9 +100,7 @@ test.describe('Map vector tiles hillshade module tests', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test('Hillshade stays hidden when style changes immediately after resetConfig', { tag: '@flaky' }, async ({
-        page,
-    }) => {
+    test('Hillshade stays hidden when style changes immediately after resetConfig', async ({ page }) => {
         await mapEnv.loadPageAndMap(page, { zoom: 14, center: [-0.12621, 51.50394] });
 
         await initHillshade(page);
@@ -115,7 +112,6 @@ test.describe('Map vector tiles hillshade module tests', () => {
         // Reset config and change style without waiting in between:
         await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.resetConfig());
         await setStyle(page, 'standardDark');
-        await waitForMapReady(page);
         await waitForMapIdle(page);
 
         expect(await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.getConfig())).toBeUndefined();

@@ -1,0 +1,79 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/form/field.css";
+@import "../../src/templates/css/form/slider.css";
+
+/* CUSTOM STYLES (example-specific) */
+
+.ui-customPanel {
+    width: 300px;
+}
+
+.ui-instructions {
+    margin: 0;
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-s);
+    line-height: var(--ui-font-body-s-lh);
+    color: var(--ui-text-med-em);
+}
+
+/* The API parameter behind each control, so the panel maps onto the SDK surface. */
+.ui-form-hint {
+    display: block;
+    font-family: var(--ui-font-mono, monospace);
+    font-size: var(--ui-font-caption-m);
+    color: var(--ui-text-low-em, var(--ui-text-med-em));
+}
+
+.ui-summary {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--ui-space-1) var(--ui-space-3);
+    margin: 0;
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-s);
+}
+
+.ui-summary-label {
+    margin: 0;
+    color: var(--ui-text-med-em);
+}
+
+.ui-summary-value {
+    margin: 0;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    color: var(--ui-text-high-em);
+}
+
+.ui-stops {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ui-space-2);
+    margin: 0;
+    padding-left: var(--ui-space-4);
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-s);
+}
+
+.ui-stop-name {
+    display: block;
+    color: var(--ui-text-high-em);
+}
+
+.ui-stop-detail {
+    display: block;
+    font-size: var(--ui-font-caption-m);
+    font-variant-numeric: tabular-nums;
+    color: var(--ui-text-med-em);
+}
+
+.ui-status {
+    margin: var(--ui-space-2) 0 0;
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-caption-m);
+    color: var(--ui-text-med-em);
+    min-height: 1.2em;
+}

@@ -22,7 +22,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         },
     });
 
-    const routingModule = await RoutingModule.get(map);
+    const routingModule = await RoutingModule.create(map);
     routingModule.showWaypoints(waypoints);
     const routes = await calculateRoute({
         locations: waypoints,
@@ -31,7 +31,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     });
     routingModule.showRoutes(routes);
 
-    const routeSelector = document.querySelector('#sdk-example-routeSelection') as HTMLSelectElement;
+    const routeSelector = document.querySelector('#ui-routeSelection') as HTMLSelectElement;
     for (let index = 0; index < routes.features.length; index++) {
         const routeTitle = index == 0 ? 'Recommended' : `Alternative ${index}`;
         routeSelector.add(new Option(routeTitle, index + ''));

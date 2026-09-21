@@ -46,7 +46,7 @@ function RadioGroup<T extends string>({
 }) {
     return (
         <div className="mb-3">
-            <div className="mb-1 text-[11px] font-semibold uppercase text-(--pb-text-low)">{label}</div>
+            <div className="mb-1 text-[11px] font-semibold uppercase text-(--ui-text-low-em)">{label}</div>
             <div className="flex flex-wrap gap-1">
                 {options.map((option) => (
                     <Button
@@ -80,9 +80,9 @@ function Stats({ analytics }: { analytics: TrafficAreaAnalytics }) {
             {items.map((item) => (
                 <div
                     key={item.label}
-                    className="rounded-(--pb-radius-5) border border-(--pb-border-low) bg-(--pb-surface-1) p-2"
+                    className="rounded-(--ui-rounded-5) border border-(--ui-border-low-em) bg-(--ui-surface-1) p-2"
                 >
-                    <div className="text-[11px] uppercase text-(--pb-text-low)">{item.label}</div>
+                    <div className="text-[11px] uppercase text-(--ui-text-low-em)">{item.label}</div>
                     <div className="text-[16px] font-semibold">{item.value}</div>
                 </div>
             ))}
@@ -105,9 +105,9 @@ function Legend({ metric, module }: { metric: AreaAnalyticsMetricKey; module: Tr
     }
 
     return (
-        <div className="mb-2 flex items-center gap-2 text-[11px] text-(--pb-text-medium)">
+        <div className="mb-2 flex items-center gap-2 text-[11px] text-(--ui-text-med-em)">
             <span>{labels.min}</span>
-            <div className="h-2 flex-1 rounded-(--pb-radius-5)" style={{ background: gradient }} />
+            <div className="h-2 flex-1 rounded-(--ui-rounded-5)" style={{ background: gradient }} />
             <span>{labels.max}</span>
         </div>
     );
@@ -142,8 +142,8 @@ function HourlyChart({
 
     return (
         <div className="mb-3">
-            <div className="mb-1 text-[11px] font-semibold uppercase text-(--pb-text-low)">Hourly Pattern</div>
-            <canvas ref={canvasRef} className="h-20 w-full rounded-(--pb-radius-5)" width={290} height={80} />
+            <div className="mb-1 text-[11px] font-semibold uppercase text-(--ui-text-low-em)">Hourly Pattern</div>
+            <canvas ref={canvasRef} className="h-20 w-full rounded-(--ui-rounded-5)" width={290} height={80} />
         </div>
     );
 }
@@ -180,7 +180,7 @@ export function AnalyticsControlPanel({ analytics, module }: AnalyticsControlPan
 
     return (
         <div
-            className={`max-w-[320px] text-[13px] text-(--pb-text-high) ${cardShellClass} ${collapsed ? 'px-4 py-3' : 'p-4'}`}
+            className={`max-w-[320px] text-[13px] text-(--ui-text-high-em) ${cardShellClass} ${collapsed ? 'px-4 py-3' : 'p-4'}`}
         >
             <div
                 className={`flex cursor-pointer select-none items-center justify-between ${collapsed ? '' : 'mb-3'}`}
@@ -189,7 +189,7 @@ export function AnalyticsControlPanel({ analytics, module }: AnalyticsControlPan
                 <span className="text-[14px] font-semibold">Traffic Analytics</span>
                 <svg
                     viewBox="0 0 16 10"
-                    className={`h-3.5 w-3.5 fill-none stroke-(--pb-text-medium) [stroke-linecap:round] [stroke-linejoin:round] [stroke-width:2] transition-transform ${collapsed ? '-rotate-90' : ''}`}
+                    className={`h-3.5 w-3.5 fill-none stroke-(--ui-text-med-em) [stroke-linecap:round] [stroke-linejoin:round] [stroke-width:2] transition-transform ${collapsed ? '-rotate-90' : ''}`}
                 >
                     <path d="M3 1.5L8 6.5L13 1.5" />
                 </svg>

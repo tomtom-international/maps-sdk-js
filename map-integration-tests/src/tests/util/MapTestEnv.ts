@@ -14,12 +14,14 @@ const resetMapModules = async (page: Page) =>
     page.evaluate(() => {
         const mapSdkThis = globalThis as MapsSDKThis;
         mapSdkThis.baseMap = undefined;
-        mapSdkThis.baseMap2 = undefined;
+        mapSdkThis.baseMapScope = undefined;
+        mapSdkThis.baseMapScope2 = undefined;
         mapSdkThis.trafficIncidents = undefined;
         mapSdkThis.trafficIncidentOverlay = undefined;
         mapSdkThis.trafficFlow = undefined;
         mapSdkThis.pois = undefined;
         mapSdkThis.hillshade = undefined;
+        mapSdkThis.styling = undefined;
         mapSdkThis.places = undefined;
         mapSdkThis.places2 = undefined;
         mapSdkThis.geometries = undefined;

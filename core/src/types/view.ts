@@ -2,7 +2,7 @@
  * List of available views for geopolitical context.
  * @group Shared
  */
-export const views = ['Unified', 'AR', 'IN', 'PK', 'IL', 'MA', 'RU', 'TR', 'CN'] as const;
+export const views = ['Unified', 'AR', 'IN', 'PK', 'IL', 'MA', 'RU', 'TR', 'CN', 'TW', 'RS'] as const;
 
 /**
  * Geopolitical view context for map display and data.

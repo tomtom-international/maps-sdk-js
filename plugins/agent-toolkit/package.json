@@ -2,7 +2,7 @@
   "name": "@tomtom-org/maps-sdk-plugin-agent-toolkit",
   "author": "TomTom International B.V.",
   "license": "See in LICENSE.txt",
-  "version": "0.4.3",
+  "version": "0.5.4",
   "type": "module",
   "description": "Agent toolkit plugin for TomTom Maps SDK JS using Vercel AI SDK",
   "types": "dist/index.d.ts",
@@ -11,6 +11,7 @@
     "build:watch": "vite build --watch --config vite.lib.config.ts",
     "type-check": "tsc --noEmit",
     "test": "vitest run --exclude '**/tests/scenarios/**'",
+    "test:coverage": "vitest run --coverage --exclude '**/tests/scenarios/**'",
     "test:watch": "vitest --exclude '**/tests/scenarios/**'",
     "test:agent-tool-calling": "vitest run src/tests/scenarios",
     "test:agent-tool-calling:full": "cross-env SCENARIOS_FULL=1 vitest run src/tests/scenarios",
@@ -31,25 +32,27 @@
   },
   "devDependencies": {
     "@ai-sdk/azure": "catalog:",
-    "@langwatch/scenario": "^0.4.11",
-    "@microsoft/api-extractor": "catalog:",
+    "@langwatch/scenario": "^0.4.15",
     "@playwright/test": "catalog:",
     "@testing/agent-tool-calling": "workspace:*",
     "@tsconfig/recommended": "catalog:",
     "@types/geojson": "catalog:",
     "@types/node": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "ai": "catalog:",
     "cross-env": "^10.1.0",
+    "rolldown": "catalog:",
     "ts-node": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vite-plugin-dts": "catalog:",
     "vitest": "catalog:"
   },
   "files": [
     "dist",
     "package.json",
     "README.md",
-    "LICENSE.txt"
+    "LICENSE.txt",
+    "THIRD_PARTY.txt"
   ],
   "exports": {
     ".": {

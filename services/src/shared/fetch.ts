@@ -1,5 +1,5 @@
 import { isProxyCredentialsMode, RetryConfig, TomTomConfig, type TomTomHeaders } from '@tomtom-org/maps-sdk/core';
-import type { FetchInput, GetObject, ParsedFetchResponse, PostObject } from './types/fetch';
+import type { FetchInput, GetObject, ParsedFetchResponse, PostObject, RequestOptions } from './types/fetch';
 
 /**
  * Custom error class for HTTP fetch errors.
@@ -42,12 +42,32 @@ const returnOrThrow = async <T>(response: Response): ParsedFetchResponse<T> => {
     throw new FetchError(response.status, message, errorBody);
 };
 
+// Waits for the given duration, rejecting with the abort reason if the signal fires.
+const sleep = (ms: number, signal?: AbortSignal): Promise<void> =>
+    new Promise((resolve, reject) => {
+        // addEventListener never fires for an abort that already happened
+        if (signal?.aborted) {
+            reject(signal.reason);
+            return;
+        }
+        const onAbort = () => {
+            clearTimeout(timer);
+            reject(signal?.reason);
+        };
+        const timer = setTimeout(() => {
+            signal?.removeEventListener('abort', onAbort);
+            resolve();
+        }, ms);
+        signal?.addEventListener('abort', onAbort, { once: true });
+    });
+
 /**
  * Wraps a fetch call with automatic retry on 429 (Too Many Requests) responses.
  * Respects the Retry-After header when present, otherwise uses exponential backoff.
+ * A given signal cancels both the in-flight request and any pending backoff wait.
  * @ignore
  */
-const fetchWithRetry = async (fetchFn: () => Promise<Response>): Promise<Response> => {
+const fetchWithRetry = async (fetchFn: () => Promise<Response>, signal?: AbortSignal): Promise<Response> => {
     const retryConfig = TomTomConfig.instance.get().retry;
     if (!retryConfig) {
         return fetchFn();
@@ -70,7 +90,7 @@ const fetchWithRetry = async (fetchFn: () => Promise<Response>): Promise<Respons
         // Drain the body to free the connection
         await response.text().catch(() => {});
 
-        await new Promise((resolve) => setTimeout(resolve, waitMs));
+        await sleep(waitMs, signal);
         backoffMs *= backoffFactor;
         response = await fetchFn();
     }
@@ -86,15 +106,23 @@ const proxyModeCredentials = (): RequestCredentials | undefined => (isProxyCrede
  * @ignore
  * @param input A URL or a GET object with URL and optional service-specific headers.
  * @param sdkHeaders SDK-wide TomTom headers to be sent with the request.
+ * @param options Per-call HTTP options, such as the `AbortSignal` used to cancel the request.
  */
-export const get = async <T>(input: URL | GetObject, sdkHeaders: TomTomHeaders): ParsedFetchResponse<T> =>
+export const get = async <T>(
+    input: URL | GetObject,
+    sdkHeaders: TomTomHeaders,
+    options?: RequestOptions,
+): ParsedFetchResponse<T> =>
     returnOrThrow(
         await fetchWithRetry(() => {
             const credentials = proxyModeCredentials();
             const { url, headers: inputHeaders } = input instanceof URL ? { url: input, headers: undefined } : input;
-            const headers = { ...sdkHeaders, ...inputHeaders };
-            return fetch(url, credentials ? { headers, credentials } : { headers });
-        }),
+            const init: RequestInit = { headers: { ...sdkHeaders, ...inputHeaders } };
+            if (credentials) init.credentials = credentials;
+            if (options?.signal) init.signal = options.signal;
+
+            return fetch(url, init);
+        }, options?.signal),
     );
 
 /**
@@ -103,8 +131,13 @@ export const get = async <T>(input: URL | GetObject, sdkHeaders: TomTomHeaders):
  * @ignore
  * @param input The POST object with URL, optional payload, and optional service-specific headers.
  * @param sdkHeaders SDK-wide TomTom headers to be sent with the request.
+ * @param options Per-call HTTP options, such as the `AbortSignal` used to cancel the request.
  */
-export const post = async <T, D>(input: PostObject<D>, sdkHeaders: TomTomHeaders): ParsedFetchResponse<T> =>
+export const post = async <T, D>(
+    input: PostObject<D>,
+    sdkHeaders: TomTomHeaders,
+    options?: RequestOptions,
+): ParsedFetchResponse<T> =>
     returnOrThrow(
         await fetchWithRetry(() => {
             const credentials = proxyModeCredentials();
@@ -114,9 +147,10 @@ export const post = async <T, D>(input: PostObject<D>, sdkHeaders: TomTomHeaders
                 headers: { ...sdkHeaders, ...input.headers, 'Content-Type': 'application/json' },
             };
             if (credentials) init.credentials = credentials;
+            if (options?.signal) init.signal = options.signal;
 
             return fetch(input.url, init);
-        }),
+        }, options?.signal),
     );
 
 /**
@@ -124,13 +158,15 @@ export const post = async <T, D>(input: PostObject<D>, sdkHeaders: TomTomHeaders
  * * Useful for services which can use different HTTP methods depending on the parameters.
  * @param input The input object (e.g. containing either GET or POST data)
  * @param sdkHeaders SDK-wide TomTom headers to be sent with the request.
+ * @param options Per-call HTTP options, such as the `AbortSignal` used to cancel the request.
  * @ignore
  */
 export const fetchWith = async <T, D = void>(
     input: FetchInput<D>,
     sdkHeaders: TomTomHeaders,
+    options?: RequestOptions,
 ): ParsedFetchResponse<T> => {
-    if (input.method === 'GET') return get<T>(input, sdkHeaders);
-    if (input.method === 'POST') return post<T, D>(input, sdkHeaders);
+    if (input.method === 'GET') return get<T>(input, sdkHeaders, options);
+    if (input.method === 'POST') return post<T, D>(input, sdkHeaders, options);
     throw new Error(`Unsupported HTTP method received: ${(input as { method: string }).method}`);
 };

@@ -9,10 +9,10 @@ const BASE_POPUP_OPTIONS = {
 };
 
 export const createHoverPopup = (): Popup =>
-    new Popup({ ...BASE_POPUP_OPTIONS, className: 'sdk-example-maplibre-popup progress-popup' });
+    new Popup({ ...BASE_POPUP_OPTIONS, className: 'ui-maplibre-popup progress-popup' });
 
 export const createPinnedPopup = (): Popup =>
-    new Popup({ ...BASE_POPUP_OPTIONS, className: 'sdk-example-maplibre-popup progress-popup progress-popup--pinned' });
+    new Popup({ ...BASE_POPUP_OPTIONS, className: 'ui-maplibre-popup progress-popup progress-popup--pinned' });
 
 const formatClockTime = (departureTime: Date, travelTimeInSeconds: number): string => {
     const clockTime = new Date(departureTime.getTime() + travelTimeInSeconds * 1000);

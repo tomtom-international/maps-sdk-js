@@ -280,7 +280,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx' },
+                                            phonetic: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Haarlemmerweg',
                                         },
@@ -292,7 +292,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx' },
+                                            phonetic: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Haarlemmerweg',
                                         },
@@ -323,7 +323,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8\u0263\u0254s.x\u0251lk.\u02cclan' },
+                                            phonetic: '\u02c8\u0263\u0254s.x\u0251lk.\u02cclan',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Gosschalklaan',
                                         },
@@ -335,7 +335,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx' },
+                                            phonetic: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Haarlemmerweg',
                                         },
@@ -381,7 +381,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8\u0263\u0254s.x\u0251lk.\u02cclan' },
+                                            phonetic: '\u02c8\u0263\u0254s.x\u0251lk.\u02cclan',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Gosschalklaan',
                                         },
@@ -470,7 +470,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx' },
+                                            phonetic: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Haarlemmerweg',
                                         },
@@ -525,7 +525,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx' },
+                                            phonetic: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Haarlemmerweg',
                                         },
@@ -537,7 +537,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx' },
+                                            phonetic: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Haarlemmerweg',
                                         },
@@ -573,7 +573,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8har.l\u025b.m\u0259r.\u02ccpl\u025b\u2040in' },
+                                            phonetic: '\u02c8har.l\u025b.m\u0259r.\u02ccpl\u025b\u2040in',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Haarlemmerplein',
                                         },
@@ -585,7 +585,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8har.l\u025b.m\u0259r.\u02ccpl\u025b\u2040in' },
+                                            phonetic: '\u02c8har.l\u025b.m\u0259r.\u02ccpl\u025b\u2040in',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Haarlemmerplein',
                                         },
@@ -639,7 +639,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8dro\u0263.\u02ccb\u0251k' },
+                                            phonetic: '\u02c8dro\u0263.\u02ccb\u0251k',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Droogbak',
                                         },
@@ -651,9 +651,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8ni.w\u0259 \u02c8\u028b\u025bs.t\u0259r.d\u0254k.strat',
-                                            },
+                                            phonetic: '\u02c8ni.w\u0259 \u02c8\u028b\u025bs.t\u0259r.d\u0254k.strat',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Nieuwe Westerdokstraat',
                                         },
@@ -745,7 +743,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259' },
+                                            phonetic: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'De Ruijterkade',
                                         },
@@ -757,7 +755,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8dro\u0263.\u02ccb\u0251k' },
+                                            phonetic: '\u02c8dro\u0263.\u02ccb\u0251k',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Droogbak',
                                         },
@@ -822,7 +820,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259' },
+                                            phonetic: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'De Ruijterkade',
                                         },
@@ -843,7 +841,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259' },
+                                            phonetic: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'De Ruijterkade',
                                         },
@@ -902,7 +900,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259' },
+                                            phonetic: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'De Ruijterkade',
                                         },
@@ -923,7 +921,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259' },
+                                            phonetic: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'De Ruijterkade',
                                         },
@@ -959,7 +957,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259' },
+                                            phonetic: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'De Ruijterkade',
                                         },
@@ -971,7 +969,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259' },
+                                            phonetic: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'De Ruijterkade',
                                         },
@@ -1017,7 +1015,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259' },
+                                            phonetic: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'De Ruijterkade',
                                         },
@@ -1053,9 +1051,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: 'mi.\u02c8xil d\u0259 \u02c8r\u0153\u2040y.t\u0259r.t\u028c.n\u0259l',
-                                            },
+                                            phonetic:
+                                                'mi.\u02c8xil d\u0259 \u02c8r\u0153\u2040y.t\u0259r.t\u028c.n\u0259l',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Michiel de Ruijtertunnel',
                                         },
@@ -1067,9 +1064,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: 'mi.\u02c8xil d\u0259 \u02c8r\u0153\u2040y.t\u0259r.t\u028c.n\u0259l',
-                                            },
+                                            phonetic:
+                                                'mi.\u02c8xil d\u0259 \u02c8r\u0153\u2040y.t\u0259r.t\u028c.n\u0259l',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Michiel de Ruijtertunnel',
                                         },
@@ -1385,7 +1381,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx' },
+                                            phonetic: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Haarlemmerweg',
                                         },
@@ -1397,7 +1393,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx' },
+                                            phonetic: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Haarlemmerweg',
                                         },
@@ -1428,7 +1424,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8\u0263\u0254s.x\u0251lk.\u02cclan' },
+                                            phonetic: '\u02c8\u0263\u0254s.x\u0251lk.\u02cclan',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Gosschalklaan',
                                         },
@@ -1440,7 +1436,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx' },
+                                            phonetic: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Haarlemmerweg',
                                         },
@@ -1486,7 +1482,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8\u0263\u0254s.x\u0251lk.\u02cclan' },
+                                            phonetic: '\u02c8\u0263\u0254s.x\u0251lk.\u02cclan',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Gosschalklaan',
                                         },
@@ -1575,7 +1571,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx' },
+                                            phonetic: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Haarlemmerweg',
                                         },
@@ -1630,7 +1626,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx' },
+                                            phonetic: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Haarlemmerweg',
                                         },
@@ -1642,7 +1638,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx' },
+                                            phonetic: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Haarlemmerweg',
                                         },
@@ -1678,7 +1674,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8har.l\u025b.m\u0259r.\u02ccpl\u025b\u2040in' },
+                                            phonetic: '\u02c8har.l\u025b.m\u0259r.\u02ccpl\u025b\u2040in',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Haarlemmerplein',
                                         },
@@ -1690,7 +1686,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8har.l\u025b.m\u0259r.\u02ccpl\u025b\u2040in' },
+                                            phonetic: '\u02c8har.l\u025b.m\u0259r.\u02ccpl\u025b\u2040in',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Haarlemmerplein',
                                         },
@@ -1744,9 +1740,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8b\u0153\u2040y.t\u0259n \u02c8br\u0251\u2040u.w\u0259rs.strat',
-                                            },
+                                            phonetic:
+                                                '\u02c8b\u0153\u2040y.t\u0259n \u02c8br\u0251\u2040u.w\u0259rs.strat',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Buiten Brouwersstraat',
                                         },
@@ -1758,9 +1753,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8ni.w\u0259 \u02c8\u028b\u025bs.t\u0259r.d\u0254k.strat',
-                                            },
+                                            phonetic: '\u02c8ni.w\u0259 \u02c8\u028b\u025bs.t\u0259r.d\u0254k.strat',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Nieuwe Westerdokstraat',
                                         },
@@ -1805,9 +1798,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8har.l\u025b.m\u0259r \u02c8h\u0251\u2040ut.t\u0153\u2040y.n\u0259n',
-                                            },
+                                            phonetic:
+                                                '\u02c8har.l\u025b.m\u0259r \u02c8h\u0251\u2040ut.t\u0153\u2040y.n\u0259n',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Haarlemmer Houttuinen',
                                         },
@@ -1819,9 +1811,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8b\u0153\u2040y.t\u0259n \u02c8br\u0251\u2040u.w\u0259rs.strat',
-                                            },
+                                            phonetic:
+                                                '\u02c8b\u0153\u2040y.t\u0259n \u02c8br\u0251\u2040u.w\u0259rs.strat',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Buiten Brouwersstraat',
                                         },
@@ -1857,9 +1848,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8\u028b\u025bs.t\u0259r.d\u0254ks.\u02ccka.d\u0259',
-                                            },
+                                            phonetic: '\u02c8\u028b\u025bs.t\u0259r.d\u0254ks.\u02ccka.d\u0259',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Westerdokskade',
                                         },
@@ -1871,9 +1860,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8har.l\u025b.m\u0259r \u02c8h\u0251\u2040ut.t\u0153\u2040y.n\u0259n',
-                                            },
+                                            phonetic:
+                                                '\u02c8har.l\u025b.m\u0259r \u02c8h\u0251\u2040ut.t\u0153\u2040y.n\u0259n',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Haarlemmer Houttuinen',
                                         },
@@ -1918,7 +1906,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259' },
+                                            phonetic: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'De Ruijterkade',
                                         },
@@ -1978,7 +1966,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259' },
+                                            phonetic: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'De Ruijterkade',
                                         },
@@ -1999,7 +1987,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259' },
+                                            phonetic: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'De Ruijterkade',
                                         },
@@ -2070,7 +2058,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259' },
+                                            phonetic: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'De Ruijterkade',
                                         },
@@ -2091,7 +2079,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259' },
+                                            phonetic: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'De Ruijterkade',
                                         },
@@ -2127,7 +2115,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259' },
+                                            phonetic: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'De Ruijterkade',
                                         },
@@ -2139,7 +2127,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259' },
+                                            phonetic: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'De Ruijterkade',
                                         },
@@ -2185,7 +2173,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259' },
+                                            phonetic: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'De Ruijterkade',
                                         },
@@ -2221,9 +2209,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: 'mi.\u02c8xil d\u0259 \u02c8r\u0153\u2040y.t\u0259r.t\u028c.n\u0259l',
-                                            },
+                                            phonetic:
+                                                'mi.\u02c8xil d\u0259 \u02c8r\u0153\u2040y.t\u0259r.t\u028c.n\u0259l',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Michiel de Ruijtertunnel',
                                         },
@@ -2235,9 +2222,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: 'mi.\u02c8xil d\u0259 \u02c8r\u0153\u2040y.t\u0259r.t\u028c.n\u0259l',
-                                            },
+                                            phonetic:
+                                                'mi.\u02c8xil d\u0259 \u02c8r\u0153\u2040y.t\u0259r.t\u028c.n\u0259l',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Michiel de Ruijtertunnel',
                                         },
@@ -2822,7 +2808,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx' },
+                                            phonetic: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Haarlemmerweg',
                                         },
@@ -2834,7 +2820,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx' },
+                                            phonetic: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Haarlemmerweg',
                                         },
@@ -2865,7 +2851,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8\u0263\u0254s.x\u0251lk.\u02cclan' },
+                                            phonetic: '\u02c8\u0263\u0254s.x\u0251lk.\u02cclan',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Gosschalklaan',
                                         },
@@ -2877,7 +2863,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx' },
+                                            phonetic: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Haarlemmerweg',
                                         },
@@ -2923,7 +2909,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8\u0263\u0254s.x\u0251lk.\u02cclan' },
+                                            phonetic: '\u02c8\u0263\u0254s.x\u0251lk.\u02cclan',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Gosschalklaan',
                                         },
@@ -3012,7 +2998,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx' },
+                                            phonetic: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Haarlemmerweg',
                                         },
@@ -3067,7 +3053,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx' },
+                                            phonetic: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Haarlemmerweg',
                                         },
@@ -3079,7 +3065,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx' },
+                                            phonetic: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Haarlemmerweg',
                                         },
@@ -3115,7 +3101,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: 'v\u0251n \u02c8h\u0251l.strat' },
+                                            phonetic: 'v\u0251n \u02c8h\u0251l.strat',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Van Hallstraat',
                                         },
@@ -3136,7 +3122,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx' },
+                                            phonetic: '\u02c8har.l\u025b.m\u0259r.\u02cc\u028b\u025bx',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Haarlemmerweg',
                                         },
@@ -3172,9 +3158,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8fre.d\u0259.r\u026ak \u02c8h\u025bn.dr\u026ak.pl\u0251nt.sun',
-                                            },
+                                            phonetic:
+                                                '\u02c8fre.d\u0259.r\u026ak \u02c8h\u025bn.dr\u026ak.pl\u0251nt.sun',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Frederik Hendrikplantsoen',
                                         },
@@ -3186,7 +3171,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8k\u0254st.f\u0259r.lo.r\u0259n.\u02ccstrat' },
+                                            phonetic: '\u02c8k\u0254st.f\u0259r.lo.r\u0259n.\u02ccstrat',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Kostverlorenstraat',
                                         },
@@ -3259,9 +3244,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8fre.d\u0259.r\u026ak \u02c8h\u025bn.dr\u026ak.pl\u0251nt.sun',
-                                            },
+                                            phonetic:
+                                                '\u02c8fre.d\u0259.r\u026ak \u02c8h\u025bn.dr\u026ak.pl\u0251nt.sun',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Frederik Hendrikplantsoen',
                                         },
@@ -3273,9 +3257,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8fre.d\u0259.r\u026ak \u02c8h\u025bn.dr\u026ak.pl\u0251nt.sun',
-                                            },
+                                            phonetic:
+                                                '\u02c8fre.d\u0259.r\u026ak \u02c8h\u025bn.dr\u026ak.pl\u0251nt.sun',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Frederik Hendrikplantsoen',
                                         },
@@ -3307,9 +3290,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8fre.d\u0259.r\u026ak \u02c8h\u025bn.dr\u026ak.strat',
-                                            },
+                                            phonetic: '\u02c8fre.d\u0259.r\u026ak \u02c8h\u025bn.dr\u026ak.strat',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Frederik Hendrikstraat',
                                         },
@@ -3321,9 +3302,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8fre.d\u0259.r\u026ak \u02c8h\u025bn.dr\u026ak.strat',
-                                            },
+                                            phonetic: '\u02c8fre.d\u0259.r\u026ak \u02c8h\u025bn.dr\u026ak.strat',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Frederik Hendrikstraat',
                                         },
@@ -3409,7 +3388,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8k\u026a\u014b.k\u0259r.\u02ccstrat' },
+                                            phonetic: '\u02c8k\u026a\u014b.k\u0259r.\u02ccstrat',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Kinkerstraat',
                                         },
@@ -3421,7 +3400,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8b\u026al.d\u0259r.d\u025b\u2040ik.\u02ccstrat' },
+                                            phonetic: '\u02c8b\u026al.d\u0259r.d\u025b\u2040ik.\u02ccstrat',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Bilderdijkstraat',
                                         },
@@ -3497,7 +3476,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8n\u0251.s\u0251\u2040u.\u02ccka.d\u0259' },
+                                            phonetic: '\u02c8n\u0251.s\u0251\u2040u.\u02ccka.d\u0259',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Nassaukade',
                                         },
@@ -3509,7 +3488,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8k\u026a\u014b.k\u0259r.\u02ccstrat' },
+                                            phonetic: '\u02c8k\u026a\u014b.k\u0259r.\u02ccstrat',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Kinkerstraat',
                                         },
@@ -3568,7 +3547,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8m\u0251\u2040u.r\u026ats.\u02ccka.d\u0259' },
+                                            phonetic: '\u02c8m\u0251\u2040u.r\u026ats.\u02ccka.d\u0259',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Mauritskade',
                                         },
@@ -3589,7 +3568,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8m\u0251\u2040u.r\u026ats.\u02ccka.d\u0259' },
+                                            phonetic: '\u02c8m\u0251\u2040u.r\u026ats.\u02ccka.d\u0259',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Mauritskade',
                                         },
@@ -3686,7 +3665,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8m\u0251\u2040u.r\u026ats.\u02ccka.d\u0259' },
+                                            phonetic: '\u02c8m\u0251\u2040u.r\u026ats.\u02ccka.d\u0259',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Mauritskade',
                                         },
@@ -3708,7 +3687,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8m\u0251\u2040u.r\u026ats.\u02ccka.d\u0259' },
+                                            phonetic: '\u02c8m\u0251\u2040u.r\u026ats.\u02ccka.d\u0259',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Mauritskade',
                                         },
@@ -3739,7 +3718,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259' },
+                                            phonetic: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'De Ruijterkade',
                                         },
@@ -3760,7 +3739,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259' },
+                                            phonetic: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'De Ruijterkade',
                                         },
@@ -3805,7 +3784,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259' },
+                                            phonetic: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'De Ruijterkade',
                                         },
@@ -3817,7 +3796,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259' },
+                                            phonetic: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'De Ruijterkade',
                                         },
@@ -3863,7 +3842,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259' },
+                                            phonetic: 'd\u0259 \u02c8r\u0153\u2040y.t\u0259r.\u02ccka.d\u0259',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'De Ruijterkade',
                                         },
@@ -3899,9 +3878,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: 'mi.\u02c8xil d\u0259 \u02c8r\u0153\u2040y.t\u0259r.t\u028c.n\u0259l',
-                                            },
+                                            phonetic:
+                                                'mi.\u02c8xil d\u0259 \u02c8r\u0153\u2040y.t\u0259r.t\u028c.n\u0259l',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Michiel de Ruijtertunnel',
                                         },
@@ -3913,9 +3891,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: 'mi.\u02c8xil d\u0259 \u02c8r\u0153\u2040y.t\u0259r.t\u028c.n\u0259l',
-                                            },
+                                            phonetic:
+                                                'mi.\u02c8xil d\u0259 \u02c8r\u0153\u2040y.t\u0259r.t\u028c.n\u0259l',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Michiel de Ruijtertunnel',
                                         },
@@ -3936,7 +3913,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                 },
             ],
             roadShieldAtlasReference: 'https://api.tomtom.com/map/1/roadshield/1.0.0/',
-        } as CalculateRouteResponseAPI,
+        },
         {} as CalculateRouteParams,
         {
             type: 'FeatureCollection',
@@ -7738,7 +7715,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8\u0263\u0153\u2040ys.\u02cc\u028b\u025bx' },
+                                            phonetic: '\u02c8\u0263\u0153\u2040ys.\u02cc\u028b\u025bx',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Guisweg',
                                         },
@@ -7759,7 +7736,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8\u0263\u0153\u2040ys.\u02cc\u028b\u025bx' },
+                                            phonetic: '\u02c8\u0263\u0153\u2040ys.\u02cc\u028b\u025bx',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Guisweg',
                                         },
@@ -7801,7 +7778,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8lex.\u028ba.t\u0259r.\u02cc\u028b\u025bx' },
+                                            phonetic: '\u02c8lex.\u028ba.t\u0259r.\u02cc\u028b\u025bx',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Leeghwaterweg',
                                         },
@@ -7829,7 +7806,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8lex.\u028ba.t\u0259r.\u02cc\u028b\u025bx' },
+                                            phonetic: '\u02c8lex.\u028ba.t\u0259r.\u02cc\u028b\u025bx',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Leeghwaterweg',
                                         },
@@ -7887,7 +7864,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: { ipa: '\u02c8lex.\u028ba.t\u0259r.\u02cc\u028b\u025bx' },
+                                            phonetic: '\u02c8lex.\u028ba.t\u0259r.\u02cc\u028b\u025bx',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Leeghwaterweg',
                                         },
@@ -7979,9 +7956,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8z\u025b\u2040i.l\u0259n.ma.k\u0259rs.\u02ccp\u0251t',
-                                            },
+                                            phonetic: '\u02c8z\u025b\u2040i.l\u0259n.ma.k\u0259rs.\u02ccp\u0251t',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Zeilenmakerspad',
                                         },
@@ -8032,9 +8007,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8z\u025b\u2040i.l\u0259n.ma.k\u0259rs.\u02ccp\u0251t',
-                                            },
+                                            phonetic: '\u02c8z\u025b\u2040i.l\u0259n.ma.k\u0259rs.\u02ccp\u0251t',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Zeilenmakerspad',
                                         },
@@ -8046,9 +8019,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8z\u025b\u2040i.l\u0259n.ma.k\u0259rs.\u02ccp\u0251t',
-                                            },
+                                            phonetic: '\u02c8z\u025b\u2040i.l\u0259n.ma.k\u0259rs.\u02ccp\u0251t',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Zeilenmakerspad',
                                         },
@@ -8089,9 +8060,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8z\u025b\u2040i.l\u0259n.ma.k\u0259rs.\u02ccp\u0251t',
-                                            },
+                                            phonetic: '\u02c8z\u025b\u2040i.l\u0259n.ma.k\u0259rs.\u02ccp\u0251t',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Zeilenmakerspad',
                                         },
@@ -8103,9 +8072,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8z\u025b\u2040i.l\u0259n.ma.k\u0259rs.\u02ccp\u0251t',
-                                            },
+                                            phonetic: '\u02c8z\u025b\u2040i.l\u0259n.ma.k\u0259rs.\u02ccp\u0251t',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Zeilenmakerspad',
                                         },
@@ -8159,9 +8126,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8z\u025b\u2040i.l\u0259n.ma.k\u0259rs.\u02ccp\u0251t',
-                                            },
+                                            phonetic: '\u02c8z\u025b\u2040i.l\u0259n.ma.k\u0259rs.\u02ccp\u0251t',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Zeilenmakerspad',
                                         },
@@ -8173,9 +8138,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8z\u025b\u2040i.l\u0259n.ma.k\u0259rs.\u02ccp\u0251t',
-                                            },
+                                            phonetic: '\u02c8z\u025b\u2040i.l\u0259n.ma.k\u0259rs.\u02ccp\u0251t',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Zeilenmakerspad',
                                         },
@@ -8226,9 +8189,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8z\u025b\u2040i.l\u0259n.ma.k\u0259rs.\u02ccp\u0251t',
-                                            },
+                                            phonetic: '\u02c8z\u025b\u2040i.l\u0259n.ma.k\u0259rs.\u02ccp\u0251t',
                                             phoneticLanguageCode: 'nl-NL',
                                             text: 'Zeilenmakerspad',
                                         },
@@ -8332,7 +8293,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                 },
             ],
             roadShieldAtlasReference: 'https://api.tomtom.com/map/1/roadshield/1.0.0/',
-        } as CalculateRouteResponseAPI,
+        },
         {} as CalculateRouteParams,
         {
             type: 'FeatureCollection',
@@ -10256,9 +10217,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 \u02c8l\u00e6 k\u00e6.\u02c8nu\u02d0.\u00f0\u0259',
-                                            },
+                                            phonetic:
+                                                '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 \u02c8l\u00e6 k\u00e6.\u02c8nu\u02d0.\u00f0\u0259',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Calle de la Canuda',
                                         },
@@ -10270,9 +10230,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 \u02c8l\u00e6 k\u00e6.\u02c8nu\u02d0.\u00f0\u0259',
-                                            },
+                                            phonetic:
+                                                '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 \u02c8l\u00e6 k\u00e6.\u02c8nu\u02d0.\u00f0\u0259',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Calle de la Canuda',
                                         },
@@ -10308,9 +10267,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u00e6.v\u0259.\u02c8ni\u02d0.d\u0259 \u02c8d\u025bl \u02c8p\u0254\u02d0\u027b.t\u0259l \u02c8d\u025bl \u02c8e\u2040\u026an.d\u2040\u0292\u0259l',
-                                            },
+                                            phonetic:
+                                                '\u00e6.v\u0259.\u02c8ni\u02d0.d\u0259 \u02c8d\u025bl \u02c8p\u0254\u02d0\u027b.t\u0259l \u02c8d\u025bl \u02c8e\u2040\u026an.d\u2040\u0292\u0259l',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Avenida del Portal del \u00c1ngel',
                                         },
@@ -10322,9 +10280,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 \u02c8l\u00e6 k\u00e6.\u02c8nu\u02d0.\u00f0\u0259',
-                                            },
+                                            phonetic:
+                                                '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 \u02c8l\u00e6 k\u00e6.\u02c8nu\u02d0.\u00f0\u0259',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Calle de la Canuda',
                                         },
@@ -10370,9 +10327,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 \u02c8l\u0259\u2040\u028as \u02c8\u0251\u02d0\u027b.k\u0259\u2040\u028as',
-                                            },
+                                            phonetic:
+                                                '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 \u02c8l\u0259\u2040\u028as \u02c8\u0251\u02d0\u027b.k\u0259\u2040\u028as',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Calle de los Arcos',
                                         },
@@ -10384,9 +10340,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u00e6.v\u0259.\u02c8ni\u02d0.d\u0259 \u02c8d\u025bl \u02c8p\u0254\u02d0\u027b.t\u0259l \u02c8d\u025bl \u02c8e\u2040\u026an.d\u2040\u0292\u0259l',
-                                            },
+                                            phonetic:
+                                                '\u00e6.v\u0259.\u02c8ni\u02d0.d\u0259 \u02c8d\u025bl \u02c8p\u0254\u02d0\u027b.t\u0259l \u02c8d\u025bl \u02c8e\u2040\u026an.d\u2040\u0292\u0259l',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Avenida del Portal del \u00c1ngel',
                                         },
@@ -10427,9 +10382,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u00e6.v\u0259.\u02c8ni\u02d0.d\u0259 \u02c8d\u0259 \u02c8l\u00e6 k\u00e6.t\u025b.\u02c8\u00f0\u027b\u00e6l',
-                                            },
+                                            phonetic:
+                                                '\u00e6.v\u0259.\u02c8ni\u02d0.d\u0259 \u02c8d\u0259 \u02c8l\u00e6 k\u00e6.t\u025b.\u02c8\u00f0\u027b\u00e6l',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Avenida de la Catedral',
                                         },
@@ -10485,9 +10439,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u00e6.v\u0259.\u02c8ni\u02d0.d\u0259 \u02c8d\u0259 \u02c8l\u00e6 k\u00e6.t\u025b.\u02c8\u00f0\u027b\u00e6l',
-                                            },
+                                            phonetic:
+                                                '\u00e6.v\u0259.\u02c8ni\u02d0.d\u0259 \u02c8d\u0259 \u02c8l\u00e6 k\u00e6.t\u025b.\u02c8\u00f0\u027b\u00e6l',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Avenida de la Catedral',
                                         },
@@ -10528,9 +10481,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8bi\u02d0.\u0259 l\u0259.j\u0259.\u02c8t\u00e6.n\u0259',
-                                            },
+                                            phonetic: '\u02c8bi\u02d0.\u0259 l\u0259.j\u0259.\u02c8t\u00e6.n\u0259',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'V\u00eda Laietana',
                                         },
@@ -10562,7 +10513,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             ],
                             sideRoads: [
                                 {
-                                    drivable: true,
+                                    isDrivable: true,
                                     offsetFromManeuverInMeters: 175,
                                     side: 'LEFT',
                                 },
@@ -10585,9 +10536,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u025bl \u02c8d\u0252k.t\u0259\u027b \u0259j.gw\u0259.\u02c8\u00f0\u025b',
-                                            },
+                                            phonetic:
+                                                '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u025bl \u02c8d\u0252k.t\u0259\u027b \u0259j.gw\u0259.\u02c8\u00f0\u025b',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Calle del Doctor Aiguader',
                                         },
@@ -10599,9 +10549,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u025bl \u02c8d\u0252k.t\u0259\u027b \u0259j.gw\u0259.\u02c8\u00f0\u025b',
-                                            },
+                                            phonetic:
+                                                '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u025bl \u02c8d\u0252k.t\u0259\u027b \u0259j.gw\u0259.\u02c8\u00f0\u025b',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Calle del Doctor Aiguader',
                                         },
@@ -10618,87 +10567,87 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             ],
                             sideRoads: [
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 987,
                                     side: 'LEFT',
                                 },
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 880,
                                     side: 'LEFT',
                                 },
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 880,
                                     side: 'RIGHT',
                                 },
                                 {
-                                    drivable: true,
+                                    isDrivable: true,
                                     offsetFromManeuverInMeters: 732,
                                     side: 'LEFT',
                                 },
                                 {
-                                    drivable: true,
+                                    isDrivable: true,
                                     offsetFromManeuverInMeters: 732,
                                     side: 'RIGHT',
                                 },
                                 {
-                                    drivable: true,
+                                    isDrivable: true,
                                     offsetFromManeuverInMeters: 723,
                                     side: 'RIGHT',
                                 },
                                 {
-                                    drivable: true,
+                                    isDrivable: true,
                                     offsetFromManeuverInMeters: 630,
                                     side: 'RIGHT',
                                 },
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 540,
                                     side: 'LEFT',
                                 },
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 428,
                                     side: 'LEFT',
                                 },
                                 {
-                                    drivable: true,
+                                    isDrivable: true,
                                     offsetFromManeuverInMeters: 428,
                                     side: 'RIGHT',
                                 },
                                 {
-                                    drivable: true,
+                                    isDrivable: true,
                                     offsetFromManeuverInMeters: 326,
                                     side: 'LEFT',
                                 },
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 326,
                                     side: 'RIGHT',
                                 },
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 240,
                                     side: 'LEFT',
                                 },
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 240,
                                     side: 'RIGHT',
                                 },
                                 {
-                                    drivable: true,
+                                    isDrivable: true,
                                     offsetFromManeuverInMeters: 177,
                                     side: 'RIGHT',
                                 },
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 116,
                                     side: 'RIGHT',
                                 },
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 7,
                                     side: 'RIGHT',
                                 },
@@ -10719,7 +10668,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'B-10',
                                         },
                                         roadNumber: {
-                                            phonetic: { ipa: '\u02c8bi\u02d0 \u02c8t\u025bn' },
+                                            phonetic: '\u02c8bi\u02d0 \u02c8t\u025bn',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'B-10',
                                         },
@@ -10729,9 +10678,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8\u027b\u0252n.d\u0259 \u02c8d\u025bl li\u02d0.t\u0254\u02d0.\u02c8\u027b\u00e6l',
-                                            },
+                                            phonetic:
+                                                '\u02c8\u027b\u0252n.d\u0259 \u02c8d\u025bl li\u02d0.t\u0254\u02d0.\u02c8\u027b\u00e6l',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Ronda del Litoral',
                                         },
@@ -10780,7 +10728,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'C-58',
                                         },
                                         roadNumber: {
-                                            phonetic: { ipa: '\u02c8si\u02d0 f\u026af.ti\u02d0.\u02c8e\u2040\u026at' },
+                                            phonetic: '\u02c8si\u02d0 f\u026af.ti\u02d0.\u02c8e\u2040\u026at',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'C-58',
                                         },
@@ -10805,7 +10753,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'B-10',
                                         },
                                         roadNumber: {
-                                            phonetic: { ipa: '\u02c8bi\u02d0 \u02c8t\u025bn' },
+                                            phonetic: '\u02c8bi\u02d0 \u02c8t\u025bn',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'B-10',
                                         },
@@ -10815,9 +10763,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8\u027b\u0252n.d\u0259 \u02c8d\u025bl li\u02d0.t\u0254\u02d0.\u02c8\u027b\u00e6l',
-                                            },
+                                            phonetic:
+                                                '\u02c8\u027b\u0252n.d\u0259 \u02c8d\u025bl li\u02d0.t\u0254\u02d0.\u02c8\u027b\u00e6l',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Ronda del Litoral',
                                         },
@@ -10834,12 +10781,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             ],
                             sideRoads: [
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 573,
                                     side: 'RIGHT',
                                 },
                                 {
-                                    drivable: true,
+                                    isDrivable: true,
                                     offsetFromManeuverInMeters: 129,
                                     side: 'RIGHT',
                                 },
@@ -10852,7 +10799,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                     text: '',
                                 },
                                 towardName: {
-                                    phonetic: { ipa: 'd\u2040\u0292\u026a.\u02c8\u027b\u0259\u2040\u028a.n\u0259' },
+                                    phonetic: 'd\u2040\u0292\u026a.\u02c8\u027b\u0259\u2040\u028a.n\u0259',
                                     phoneticLanguageCode: 'en-GB',
                                     text: 'Girona',
                                 },
@@ -10890,7 +10837,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'C-58',
                                         },
                                         roadNumber: {
-                                            phonetic: { ipa: '\u02c8si\u02d0 f\u026af.ti\u02d0.\u02c8e\u2040\u026at' },
+                                            phonetic: '\u02c8si\u02d0 f\u026af.ti\u02d0.\u02c8e\u2040\u026at',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'C-58',
                                         },
@@ -10900,9 +10847,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u0254\u02d0.t\u0254\u02d0.\u02c8pi\u02d0.st\u0259 \u02c8d\u025bl b\u00e6.\u02c8j\u025bs',
-                                            },
+                                            phonetic:
+                                                '\u0254\u02d0.t\u0254\u02d0.\u02c8pi\u02d0.st\u0259 \u02c8d\u025bl b\u00e6.\u02c8j\u025bs',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Autopista del Vall\u00e9s',
                                         },
@@ -10919,12 +10865,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             ],
                             sideRoads: [
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 800,
                                     side: 'RIGHT',
                                 },
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 773,
                                     side: 'RIGHT',
                                 },
@@ -10937,7 +10883,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                     text: '',
                                 },
                                 towardName: {
-                                    phonetic: { ipa: 'd\u2040\u0292\u026a.\u02c8\u027b\u0259\u2040\u028a.n\u0259' },
+                                    phonetic: 'd\u2040\u0292\u026a.\u02c8\u027b\u0259\u2040\u028a.n\u0259',
                                     phoneticLanguageCode: 'en-GB',
                                     text: 'Girona',
                                 },
@@ -10975,9 +10921,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'C-33',
                                         },
                                         roadNumber: {
-                                            phonetic: {
-                                                ipa: '\u02c8si\u02d0 \u03b8\u025c\u02d0.ti\u02d0.\u02c8\u03b8\u027bi\u02d0',
-                                            },
+                                            phonetic:
+                                                '\u02c8si\u02d0 \u03b8\u025c\u02d0.ti\u02d0.\u02c8\u03b8\u027bi\u02d0',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'C-33',
                                         },
@@ -11009,7 +10954,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                     text: '',
                                 },
                                 towardName: {
-                                    phonetic: { ipa: 'd\u2040\u0292\u026a.\u02c8\u027b\u0259\u2040\u028a.n\u0259' },
+                                    phonetic: 'd\u2040\u0292\u026a.\u02c8\u027b\u0259\u2040\u028a.n\u0259',
                                     phoneticLanguageCode: 'en-GB',
                                     text: 'Girona',
                                 },
@@ -11037,9 +10982,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'C-25',
                                         },
                                         roadNumber: {
-                                            phonetic: {
-                                                ipa: '\u02c8si\u02d0 tw\u025bn.ti\u02d0.\u02c8fa\u2040\u026av',
-                                            },
+                                            phonetic: '\u02c8si\u02d0 tw\u025bn.ti\u02d0.\u02c8fa\u2040\u026av',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'C-25',
                                         },
@@ -11064,7 +11007,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'AP-7',
                                         },
                                         roadNumber: {
-                                            phonetic: { ipa: 'e\u2040\u026a.\u02c8pi\u02d0 \u02c8s\u025b.vn\u0329' },
+                                            phonetic: 'e\u2040\u026a.\u02c8pi\u02d0 \u02c8s\u025b.vn\u0329',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'AP-7',
                                         },
@@ -11077,7 +11020,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'E-15',
                                         },
                                         roadNumber: {
-                                            phonetic: { ipa: '\u02c8i\u02d0 f\u026af.\u02c8ti\u02d0n' },
+                                            phonetic: '\u02c8i\u02d0 f\u026af.\u02c8ti\u02d0n',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'E-15',
                                         },
@@ -11087,9 +11030,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u0254\u02d0.t\u0254\u02d0.\u02c8pi\u02d0.st\u0259 \u02c8d\u025bl m\u025b.d\u026a.t\u0259.\u02c8\u027be\u2040\u026a.ni\u02d0.\u0259\u2040\u028a',
-                                            },
+                                            phonetic:
+                                                '\u0254\u02d0.t\u0254\u02d0.\u02c8pi\u02d0.st\u0259 \u02c8d\u025bl m\u025b.d\u026a.t\u0259.\u02c8\u027be\u2040\u026a.ni\u02d0.\u0259\u2040\u028a',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Autopista del Mediterr\u00e1neo',
                                         },
@@ -11117,9 +11059,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                     text: '8',
                                 },
                                 towardName: {
-                                    phonetic: {
-                                        ipa: '\u027bi\u02d0.u\u02d0.\u02c8\u00f0\u025b.j\u0254\u02d0ts \u02c8d\u0259 \u02c8l\u00e6 \u02c8s\u025bl.v\u0259',
-                                    },
+                                    phonetic:
+                                        '\u027bi\u02d0.u\u02d0.\u02c8\u00f0\u025b.j\u0254\u02d0ts \u02c8d\u0259 \u02c8l\u00e6 \u02c8s\u025bl.v\u0259',
                                     phoneticLanguageCode: 'en-GB',
                                     text: 'RIUDELLOTS DE LA SELVA',
                                 },
@@ -11145,9 +11086,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'N-156',
                                         },
                                         roadNumber: {
-                                            phonetic: {
-                                                ipa: '\u02c8\u025bn w\u028cn.f\u026af.ti\u02d0.\u02c8s\u026aks',
-                                            },
+                                            phonetic: '\u02c8\u025bn w\u028cn.f\u026af.ti\u02d0.\u02c8s\u026aks',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'N-156',
                                         },
@@ -11189,7 +11128,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             ],
                             sideRoads: [
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 340,
                                     side: 'LEFT',
                                 },
@@ -11202,7 +11141,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                     text: '',
                                 },
                                 towardName: {
-                                    phonetic: { ipa: '\u0259.\u02c8e\u2040\u026a.\u027b\u0259.p\u0254\u02d0\u027bt' },
+                                    phonetic: '\u0259.\u02c8e\u2040\u026a.\u027b\u0259.p\u0254\u02d0\u027bt',
                                     phoneticLanguageCode: 'en-GB',
                                     text: 'Aeroport',
                                 },
@@ -11223,9 +11162,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8p\u0251\u02d0\u027bk a\u2040\u026a.\u027b\u0254\u02d0.p\u0254\u02d0\u027b.\u02c8tw\u00e6.\u027bj\u0259\u2040\u028a \u02c8i\u02d0 l\u0259.\u02c8d\u2040\u0292\u026a.st\u026a.k\u0259\u2040\u028a',
-                                            },
+                                            phonetic:
+                                                '\u02c8p\u0251\u02d0\u027bk a\u2040\u026a.\u027b\u0254\u02d0.p\u0254\u02d0\u027b.\u02c8tw\u00e6.\u027bj\u0259\u2040\u028a \u02c8i\u02d0 l\u0259.\u02c8d\u2040\u0292\u026a.st\u026a.k\u0259\u2040\u028a',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Parque Aeroportuario y Log\u00edstico',
                                         },
@@ -11242,9 +11180,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'N-156',
                                         },
                                         roadNumber: {
-                                            phonetic: {
-                                                ipa: '\u02c8\u025bn w\u028cn.f\u026af.ti\u02d0.\u02c8s\u026aks',
-                                            },
+                                            phonetic: '\u02c8\u025bn w\u028cn.f\u026af.ti\u02d0.\u02c8s\u026aks',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'N-156',
                                         },
@@ -11311,17 +11247,17 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             ],
                             sideRoads: [
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 849,
                                     side: 'LEFT',
                                 },
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 268,
                                     side: 'LEFT',
                                 },
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 168,
                                     side: 'LEFT',
                                 },
@@ -11356,9 +11292,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8p\u0251\u02d0\u027bk a\u2040\u026a.\u027b\u0254\u02d0.p\u0254\u02d0\u027b.\u02c8tw\u00e6.\u027bj\u0259\u2040\u028a \u02c8i\u02d0 l\u0259.\u02c8d\u2040\u0292\u026a.st\u026a.k\u0259\u2040\u028a',
-                                            },
+                                            phonetic:
+                                                '\u02c8p\u0251\u02d0\u027bk a\u2040\u026a.\u027b\u0254\u02d0.p\u0254\u02d0\u027b.\u02c8tw\u00e6.\u027bj\u0259\u2040\u028a \u02c8i\u02d0 l\u0259.\u02c8d\u2040\u0292\u026a.st\u026a.k\u0259\u2040\u028a',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Parque Aeroportuario y Log\u00edstico',
                                         },
@@ -11483,9 +11418,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8p\u0251\u02d0\u027bk a\u2040\u026a.\u027b\u0254\u02d0.p\u0254\u02d0\u027b.\u02c8tw\u00e6.\u027bj\u0259\u2040\u028a \u02c8i\u02d0 l\u0259.\u02c8d\u2040\u0292\u026a.st\u026a.k\u0259\u2040\u028a',
-                                            },
+                                            phonetic:
+                                                '\u02c8p\u0251\u02d0\u027bk a\u2040\u026a.\u027b\u0254\u02d0.p\u0254\u02d0\u027b.\u02c8tw\u00e6.\u027bj\u0259\u2040\u028a \u02c8i\u02d0 l\u0259.\u02c8d\u2040\u0292\u026a.st\u026a.k\u0259\u2040\u028a',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Parque Aeroportuario y Log\u00edstico',
                                         },
@@ -11547,9 +11481,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'N-156',
                                         },
                                         roadNumber: {
-                                            phonetic: {
-                                                ipa: '\u02c8\u025bn w\u028cn.f\u026af.ti\u02d0.\u02c8s\u026aks',
-                                            },
+                                            phonetic: '\u02c8\u025bn w\u028cn.f\u026af.ti\u02d0.\u02c8s\u026aks',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'N-156',
                                         },
@@ -11569,9 +11501,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8p\u0251\u02d0\u027bk a\u2040\u026a.\u027b\u0254\u02d0.p\u0254\u02d0\u027b.\u02c8tw\u00e6.\u027bj\u0259\u2040\u028a \u02c8i\u02d0 l\u0259.\u02c8d\u2040\u0292\u026a.st\u026a.k\u0259\u2040\u028a',
-                                            },
+                                            phonetic:
+                                                '\u02c8p\u0251\u02d0\u027bk a\u2040\u026a.\u027b\u0254\u02d0.p\u0254\u02d0\u027b.\u02c8tw\u00e6.\u027bj\u0259\u2040\u028a \u02c8i\u02d0 l\u0259.\u02c8d\u2040\u0292\u026a.st\u026a.k\u0259\u2040\u028a',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Parque Aeroportuario y Log\u00edstico',
                                         },
@@ -11685,9 +11616,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'N-156',
                                         },
                                         roadNumber: {
-                                            phonetic: {
-                                                ipa: '\u02c8\u025bn w\u028cn.f\u026af.ti\u02d0.\u02c8s\u026aks',
-                                            },
+                                            phonetic: '\u02c8\u025bn w\u028cn.f\u026af.ti\u02d0.\u02c8s\u026aks',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'N-156',
                                         },
@@ -11708,9 +11637,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8p\u0251\u02d0\u027bk a\u2040\u026a.\u027b\u0254\u02d0.p\u0254\u02d0\u027b.\u02c8tw\u00e6.\u027bj\u0259\u2040\u028a \u02c8i\u02d0 l\u0259.\u02c8d\u2040\u0292\u026a.st\u026a.k\u0259\u2040\u028a',
-                                            },
+                                            phonetic:
+                                                '\u02c8p\u0251\u02d0\u027bk a\u2040\u026a.\u027b\u0254\u02d0.p\u0254\u02d0\u027b.\u02c8tw\u00e6.\u027bj\u0259\u2040\u028a \u02c8i\u02d0 l\u0259.\u02c8d\u2040\u0292\u026a.st\u026a.k\u0259\u2040\u028a',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Parque Aeroportuario y Log\u00edstico',
                                         },
@@ -11749,7 +11677,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'AP-7',
                                         },
                                         roadNumber: {
-                                            phonetic: { ipa: 'e\u2040\u026a.\u02c8pi\u02d0 \u02c8s\u025b.vn\u0329' },
+                                            phonetic: 'e\u2040\u026a.\u02c8pi\u02d0 \u02c8s\u025b.vn\u0329',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'AP-7',
                                         },
@@ -11762,7 +11690,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'E-15',
                                         },
                                         roadNumber: {
-                                            phonetic: { ipa: '\u02c8i\u02d0 f\u026af.\u02c8ti\u02d0n' },
+                                            phonetic: '\u02c8i\u02d0 f\u026af.\u02c8ti\u02d0n',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'E-15',
                                         },
@@ -11787,9 +11715,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'N-156',
                                         },
                                         roadNumber: {
-                                            phonetic: {
-                                                ipa: '\u02c8\u025bn w\u028cn.f\u026af.ti\u02d0.\u02c8s\u026aks',
-                                            },
+                                            phonetic: '\u02c8\u025bn w\u028cn.f\u026af.ti\u02d0.\u02c8s\u026aks',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'N-156',
                                         },
@@ -11911,17 +11837,17 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             ],
                             sideRoads: [
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 723,
                                     side: 'RIGHT',
                                 },
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 624,
                                     side: 'RIGHT',
                                 },
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 43,
                                     side: 'LEFT',
                                 },
@@ -11934,7 +11860,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                     text: '',
                                 },
                                 towardName: {
-                                    phonetic: { ipa: 'd\u2040\u0292\u026a.\u02c8\u027b\u0259\u2040\u028a.n\u0259' },
+                                    phonetic: 'd\u2040\u0292\u026a.\u02c8\u027b\u0259\u2040\u028a.n\u0259',
                                     phoneticLanguageCode: 'en-GB',
                                     text: 'Girona',
                                 },
@@ -11960,7 +11886,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'AP-7',
                                         },
                                         roadNumber: {
-                                            phonetic: { ipa: 'e\u2040\u026a.\u02c8pi\u02d0 \u02c8s\u025b.vn\u0329' },
+                                            phonetic: 'e\u2040\u026a.\u02c8pi\u02d0 \u02c8s\u025b.vn\u0329',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'AP-7',
                                         },
@@ -11973,7 +11899,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'E-15',
                                         },
                                         roadNumber: {
-                                            phonetic: { ipa: '\u02c8i\u02d0 f\u026af.\u02c8ti\u02d0n' },
+                                            phonetic: '\u02c8i\u02d0 f\u026af.\u02c8ti\u02d0n',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'E-15',
                                         },
@@ -11999,9 +11925,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'N-156',
                                         },
                                         roadNumber: {
-                                            phonetic: {
-                                                ipa: '\u02c8\u025bn w\u028cn.f\u026af.ti\u02d0.\u02c8s\u026aks',
-                                            },
+                                            phonetic: '\u02c8\u025bn w\u028cn.f\u026af.ti\u02d0.\u02c8s\u026aks',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'N-156',
                                         },
@@ -12050,7 +11974,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'AP-7',
                                         },
                                         roadNumber: {
-                                            phonetic: { ipa: 'e\u2040\u026a.\u02c8pi\u02d0 \u02c8s\u025b.vn\u0329' },
+                                            phonetic: 'e\u2040\u026a.\u02c8pi\u02d0 \u02c8s\u025b.vn\u0329',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'AP-7',
                                         },
@@ -12063,7 +11987,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'E-15',
                                         },
                                         roadNumber: {
-                                            phonetic: { ipa: '\u02c8i\u02d0 f\u026af.\u02c8ti\u02d0n' },
+                                            phonetic: '\u02c8i\u02d0 f\u026af.\u02c8ti\u02d0n',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'E-15',
                                         },
@@ -12105,7 +12029,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                     text: '',
                                 },
                                 towardName: {
-                                    phonetic: { ipa: 'd\u2040\u0292\u026a.\u02c8\u027b\u0259\u2040\u028a.n\u0259' },
+                                    phonetic: 'd\u2040\u0292\u026a.\u02c8\u027b\u0259\u2040\u028a.n\u0259',
                                     phoneticLanguageCode: 'en-GB',
                                     text: 'Girona',
                                 },
@@ -12126,7 +12050,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'AP-7',
                                         },
                                         roadNumber: {
-                                            phonetic: { ipa: 'e\u2040\u026a.\u02c8pi\u02d0 \u02c8s\u025b.vn\u0329' },
+                                            phonetic: 'e\u2040\u026a.\u02c8pi\u02d0 \u02c8s\u025b.vn\u0329',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'AP-7',
                                         },
@@ -12139,7 +12063,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'E-15',
                                         },
                                         roadNumber: {
-                                            phonetic: { ipa: '\u02c8i\u02d0 f\u026af.\u02c8ti\u02d0n' },
+                                            phonetic: '\u02c8i\u02d0 f\u026af.\u02c8ti\u02d0n',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'E-15',
                                         },
@@ -12149,9 +12073,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u0254\u02d0.t\u0254\u02d0.\u02c8pi\u02d0.st\u0259 \u02c8d\u025bl m\u025b.d\u026a.t\u0259.\u02c8\u027be\u2040\u026a.ni\u02d0.\u0259\u2040\u028a',
-                                            },
+                                            phonetic:
+                                                '\u0254\u02d0.t\u0254\u02d0.\u02c8pi\u02d0.st\u0259 \u02c8d\u025bl m\u025b.d\u026a.t\u0259.\u02c8\u027be\u2040\u026a.ni\u02d0.\u0259\u2040\u028a',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Autopista del Mediterr\u00e1neo',
                                         },
@@ -12200,7 +12123,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'AP-7',
                                         },
                                         roadNumber: {
-                                            phonetic: { ipa: 'e\u2040\u026a.\u02c8pi\u02d0 \u02c8s\u025b.vn\u0329' },
+                                            phonetic: 'e\u2040\u026a.\u02c8pi\u02d0 \u02c8s\u025b.vn\u0329',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'AP-7',
                                         },
@@ -12213,7 +12136,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'E-15',
                                         },
                                         roadNumber: {
-                                            phonetic: { ipa: '\u02c8i\u02d0 f\u026af.\u02c8ti\u02d0n' },
+                                            phonetic: '\u02c8i\u02d0 f\u026af.\u02c8ti\u02d0n',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'E-15',
                                         },
@@ -12223,9 +12146,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u0254\u02d0.t\u0254\u02d0.\u02c8pi\u02d0.st\u0259 \u02c8d\u025bl m\u025b.d\u026a.t\u0259.\u02c8\u027be\u2040\u026a.ni\u02d0.\u0259\u2040\u028a',
-                                            },
+                                            phonetic:
+                                                '\u0254\u02d0.t\u0254\u02d0.\u02c8pi\u02d0.st\u0259 \u02c8d\u025bl m\u025b.d\u026a.t\u0259.\u02c8\u027be\u2040\u026a.ni\u02d0.\u0259\u2040\u028a',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Autopista del Mediterr\u00e1neo',
                                         },
@@ -12242,7 +12164,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'AP-7',
                                         },
                                         roadNumber: {
-                                            phonetic: { ipa: 'e\u2040\u026a.\u02c8pi\u02d0 \u02c8s\u025b.vn\u0329' },
+                                            phonetic: 'e\u2040\u026a.\u02c8pi\u02d0 \u02c8s\u025b.vn\u0329',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'AP-7',
                                         },
@@ -12255,7 +12177,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'E-15',
                                         },
                                         roadNumber: {
-                                            phonetic: { ipa: '\u02c8i\u02d0 f\u026af.\u02c8ti\u02d0n' },
+                                            phonetic: '\u02c8i\u02d0 f\u026af.\u02c8ti\u02d0n',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'E-15',
                                         },
@@ -12265,9 +12187,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u0254\u02d0.t\u0254\u02d0.\u02c8pi\u02d0.st\u0259 \u02c8d\u025bl m\u025b.d\u026a.t\u0259.\u02c8\u027be\u2040\u026a.ni\u02d0.\u0259\u2040\u028a',
-                                            },
+                                            phonetic:
+                                                '\u0254\u02d0.t\u0254\u02d0.\u02c8pi\u02d0.st\u0259 \u02c8d\u025bl m\u025b.d\u026a.t\u0259.\u02c8\u027be\u2040\u026a.ni\u02d0.\u0259\u2040\u028a',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Autopista del Mediterr\u00e1neo',
                                         },
@@ -12316,7 +12237,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'AP-7',
                                         },
                                         roadNumber: {
-                                            phonetic: { ipa: 'e\u2040\u026a.\u02c8pi\u02d0 \u02c8s\u025b.vn\u0329' },
+                                            phonetic: 'e\u2040\u026a.\u02c8pi\u02d0 \u02c8s\u025b.vn\u0329',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'AP-7',
                                         },
@@ -12329,7 +12250,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'E-15',
                                         },
                                         roadNumber: {
-                                            phonetic: { ipa: '\u02c8i\u02d0 f\u026af.\u02c8ti\u02d0n' },
+                                            phonetic: '\u02c8i\u02d0 f\u026af.\u02c8ti\u02d0n',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'E-15',
                                         },
@@ -12339,9 +12260,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u0254\u02d0.t\u0254\u02d0.\u02c8pi\u02d0.st\u0259 \u02c8d\u025bl m\u025b.d\u026a.t\u0259.\u02c8\u027be\u2040\u026a.ni\u02d0.\u0259\u2040\u028a',
-                                            },
+                                            phonetic:
+                                                '\u0254\u02d0.t\u0254\u02d0.\u02c8pi\u02d0.st\u0259 \u02c8d\u025bl m\u025b.d\u026a.t\u0259.\u02c8\u027be\u2040\u026a.ni\u02d0.\u0259\u2040\u028a',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Autopista del Mediterr\u00e1neo',
                                         },
@@ -12369,9 +12289,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                     text: '7',
                                 },
                                 towardName: {
-                                    phonetic: {
-                                        ipa: 'd\u2040\u0292\u026a.\u02c8\u027b\u0259\u2040\u028a.n\u0259 \u02c8s\u028a\u2040\u0259\u027b',
-                                    },
+                                    phonetic:
+                                        'd\u2040\u0292\u026a.\u02c8\u027b\u0259\u2040\u028a.n\u0259 \u02c8s\u028a\u2040\u0259\u027b',
                                     phoneticLanguageCode: 'en-GB',
                                     text: 'GIRONA S',
                                 },
@@ -12425,7 +12344,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             ],
                             sideRoads: [
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 215,
                                     side: 'LEFT',
                                 },
@@ -12473,9 +12392,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                     text: '',
                                 },
                                 towardName: {
-                                    phonetic: {
-                                        ipa: 'd\u2040\u0292\u026a.\u02c8\u027b\u0259\u2040\u028a.n\u0259 \u02c8s\u025bn.t\u0259\u027b',
-                                    },
+                                    phonetic:
+                                        'd\u2040\u0292\u026a.\u02c8\u027b\u0259\u2040\u028a.n\u0259 \u02c8s\u025bn.t\u0259\u027b',
                                     phoneticLanguageCode: 'en-GB',
                                     text: 'Girona Centre',
                                 },
@@ -12503,9 +12421,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'C-65',
                                         },
                                         roadNumber: {
-                                            phonetic: {
-                                                ipa: '\u02c8si\u02d0 s\u026ak.sti\u02d0.\u02c8fa\u2040\u026av',
-                                            },
+                                            phonetic: '\u02c8si\u02d0 s\u026ak.sti\u02d0.\u02c8fa\u2040\u026av',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'C-65',
                                         },
@@ -12530,9 +12446,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'C-65',
                                         },
                                         roadNumber: {
-                                            phonetic: {
-                                                ipa: '\u02c8si\u02d0 s\u026ak.sti\u02d0.\u02c8fa\u2040\u026av',
-                                            },
+                                            phonetic: '\u02c8si\u02d0 s\u026ak.sti\u02d0.\u02c8fa\u2040\u026av',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'C-65',
                                         },
@@ -12589,9 +12503,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'C-65',
                                         },
                                         roadNumber: {
-                                            phonetic: {
-                                                ipa: '\u02c8si\u02d0 s\u026ak.sti\u02d0.\u02c8fa\u2040\u026av',
-                                            },
+                                            phonetic: '\u02c8si\u02d0 s\u026ak.sti\u02d0.\u02c8fa\u2040\u026av',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'C-65',
                                         },
@@ -12616,7 +12528,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             ],
                             sideRoads: [
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 225,
                                     side: 'RIGHT',
                                 },
@@ -12684,7 +12596,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'N-IIa',
                                         },
                                         roadNumber: {
-                                            phonetic: { ipa: '\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a' },
+                                            phonetic: '\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'N-IIa',
                                         },
@@ -12694,9 +12606,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259',
-                                            },
+                                            phonetic:
+                                                '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Calle de Barcelona',
                                         },
@@ -12870,7 +12781,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'N-IIa',
                                         },
                                         roadNumber: {
-                                            phonetic: { ipa: '\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a' },
+                                            phonetic: '\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'N-IIa',
                                         },
@@ -12880,9 +12791,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259',
-                                            },
+                                            phonetic:
+                                                '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Calle de Barcelona',
                                         },
@@ -12932,7 +12842,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'N-IIa',
                                         },
                                         roadNumber: {
-                                            phonetic: { ipa: '\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a' },
+                                            phonetic: '\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'N-IIa',
                                         },
@@ -12942,9 +12852,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259',
-                                            },
+                                            phonetic:
+                                                '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Calle de Barcelona',
                                         },
@@ -12961,7 +12870,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'N-IIa',
                                         },
                                         roadNumber: {
-                                            phonetic: { ipa: '\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a' },
+                                            phonetic: '\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'N-IIa',
                                         },
@@ -12971,9 +12880,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259',
-                                            },
+                                            phonetic:
+                                                '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Calle de Barcelona',
                                         },
@@ -13032,7 +12940,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             ],
                             sideRoads: [
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 62,
                                     side: 'LEFT',
                                 },
@@ -13058,7 +12966,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'N-IIa',
                                         },
                                         roadNumber: {
-                                            phonetic: { ipa: '\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a' },
+                                            phonetic: '\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'N-IIa',
                                         },
@@ -13068,9 +12976,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259',
-                                            },
+                                            phonetic:
+                                                '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Calle de Barcelona',
                                         },
@@ -13088,7 +12995,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'N-IIa',
                                         },
                                         roadNumber: {
-                                            phonetic: { ipa: '\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a' },
+                                            phonetic: '\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'N-IIa',
                                         },
@@ -13098,9 +13005,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259',
-                                            },
+                                            phonetic:
+                                                '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Calle de Barcelona',
                                         },
@@ -13142,7 +13048,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'N-IIa',
                                         },
                                         roadNumber: {
-                                            phonetic: { ipa: '\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a' },
+                                            phonetic: '\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'N-IIa',
                                         },
@@ -13152,9 +13058,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259',
-                                            },
+                                            phonetic:
+                                                '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Calle de Barcelona',
                                         },
@@ -13171,7 +13076,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'N-IIa',
                                         },
                                         roadNumber: {
-                                            phonetic: { ipa: '\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a' },
+                                            phonetic: '\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'N-IIa',
                                         },
@@ -13181,9 +13086,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259',
-                                            },
+                                            phonetic:
+                                                '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Calle de Barcelona',
                                         },
@@ -13210,102 +13114,102 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             ],
                             sideRoads: [
                                 {
-                                    drivable: true,
+                                    isDrivable: true,
                                     offsetFromManeuverInMeters: 967,
                                     side: 'RIGHT',
                                 },
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 924,
                                     side: 'RIGHT',
                                 },
                                 {
-                                    drivable: true,
+                                    isDrivable: true,
                                     offsetFromManeuverInMeters: 875,
                                     side: 'RIGHT',
                                 },
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 798,
                                     side: 'RIGHT',
                                 },
                                 {
-                                    drivable: true,
+                                    isDrivable: true,
                                     offsetFromManeuverInMeters: 741,
                                     side: 'RIGHT',
                                 },
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 671,
                                     side: 'LEFT',
                                 },
                                 {
-                                    drivable: true,
+                                    isDrivable: true,
                                     offsetFromManeuverInMeters: 671,
                                     side: 'RIGHT',
                                 },
                                 {
-                                    drivable: true,
+                                    isDrivable: true,
                                     offsetFromManeuverInMeters: 636,
                                     side: 'LEFT',
                                 },
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 636,
                                     side: 'RIGHT',
                                 },
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 603,
                                     side: 'RIGHT',
                                 },
                                 {
-                                    drivable: true,
+                                    isDrivable: true,
                                     offsetFromManeuverInMeters: 565,
                                     side: 'RIGHT',
                                 },
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 486,
                                     side: 'RIGHT',
                                 },
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 426,
                                     side: 'LEFT',
                                 },
                                 {
-                                    drivable: true,
+                                    isDrivable: true,
                                     offsetFromManeuverInMeters: 426,
                                     side: 'RIGHT',
                                 },
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 378,
                                     side: 'RIGHT',
                                 },
                                 {
-                                    drivable: true,
+                                    isDrivable: true,
                                     offsetFromManeuverInMeters: 314,
                                     side: 'RIGHT',
                                 },
                                 {
-                                    drivable: true,
+                                    isDrivable: true,
                                     offsetFromManeuverInMeters: 224,
                                     side: 'LEFT',
                                 },
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 180,
                                     side: 'LEFT',
                                 },
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 105,
                                     side: 'LEFT',
                                 },
                                 {
-                                    drivable: true,
+                                    isDrivable: true,
                                     offsetFromManeuverInMeters: 105,
                                     side: 'RIGHT',
                                 },
@@ -13330,9 +13234,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 \u02c8s\u00e6nt \u02c8d\u2040\u0292\u0259\u2040\u028an b\u00e6p.\u02c8ti\u02d0.st\u0259 \u02c8d\u0259 \u02c8l\u00e6 \u02c8s\u0254\u02d0l',
-                                            },
+                                            phonetic:
+                                                '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 \u02c8s\u00e6nt \u02c8d\u2040\u0292\u0259\u2040\u028an b\u00e6p.\u02c8ti\u02d0.st\u0259 \u02c8d\u0259 \u02c8l\u00e6 \u02c8s\u0254\u02d0l',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Calle de Sant Joan Baptista de la Salle',
                                         },
@@ -13350,7 +13253,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                             shieldContent: 'N-IIa',
                                         },
                                         roadNumber: {
-                                            phonetic: { ipa: '\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a' },
+                                            phonetic: '\u02c8\u025bn \u02c8tu\u02d0 \u02c8e\u2040\u026a',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'N-IIa',
                                         },
@@ -13360,9 +13263,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259',
-                                            },
+                                            phonetic:
+                                                '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 b\u0251\u02d0\u027b.s\u0259.\u02c8l\u0259\u2040\u028a.n\u0259',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Calle de Barcelona',
                                         },
@@ -13384,12 +13286,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             ],
                             sideRoads: [
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 175,
                                     side: 'LEFT',
                                 },
                                 {
-                                    drivable: true,
+                                    isDrivable: true,
                                     offsetFromManeuverInMeters: 175,
                                     side: 'RIGHT',
                                 },
@@ -13414,9 +13316,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u2040\u0292\u0259\u2040\u028an m\u0259.\u027b\u0259.\u02c8g\u00e6j',
-                                            },
+                                            phonetic:
+                                                '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u2040\u0292\u0259\u2040\u028an m\u0259.\u027b\u0259.\u02c8g\u00e6j',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Calle Joan Maragall',
                                         },
@@ -13429,9 +13330,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 \u02c8s\u00e6nt \u02c8d\u2040\u0292\u0259\u2040\u028an b\u00e6p.\u02c8ti\u02d0.st\u0259 \u02c8d\u0259 \u02c8l\u00e6 \u02c8s\u0254\u02d0l',
-                                            },
+                                            phonetic:
+                                                '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u0259 \u02c8s\u00e6nt \u02c8d\u2040\u0292\u0259\u2040\u028an b\u00e6p.\u02c8ti\u02d0.st\u0259 \u02c8d\u0259 \u02c8l\u00e6 \u02c8s\u0254\u02d0l',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Calle de Sant Joan Baptista de la Salle',
                                         },
@@ -13453,12 +13353,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             ],
                             sideRoads: [
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 102,
                                     side: 'LEFT',
                                 },
                                 {
-                                    drivable: true,
+                                    isDrivable: true,
                                     offsetFromManeuverInMeters: 30,
                                     side: 'RIGHT',
                                 },
@@ -13483,9 +13383,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8\u027b\u0252n.d\u0259 \u02c8d\u0259 \u02c8s\u00e6nt \u00e6n.\u02c8t\u0259\u2040\u028a.n\u026a m\u0259.\u02c8\u027bi\u02d0.\u0259 \u02c8kl\u00e6.\u027b\u0259t',
-                                            },
+                                            phonetic:
+                                                '\u02c8\u027b\u0252n.d\u0259 \u02c8d\u0259 \u02c8s\u00e6nt \u00e6n.\u02c8t\u0259\u2040\u028a.n\u026a m\u0259.\u02c8\u027bi\u02d0.\u0259 \u02c8kl\u00e6.\u027b\u0259t',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Ronda de Sant Antoni Maria Claret',
                                         },
@@ -13498,9 +13397,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u2040\u0292\u0259\u2040\u028an m\u0259.\u027b\u0259.\u02c8g\u00e6j',
-                                            },
+                                            phonetic:
+                                                '\u02c8k\u00e6.je\u2040\u026a \u02c8d\u2040\u0292\u0259\u2040\u028an m\u0259.\u027b\u0259.\u02c8g\u00e6j',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Calle Joan Maragall',
                                         },
@@ -13517,12 +13415,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             ],
                             sideRoads: [
                                 {
-                                    drivable: true,
+                                    isDrivable: true,
                                     offsetFromManeuverInMeters: 121,
                                     side: 'LEFT',
                                 },
                                 {
-                                    drivable: false,
+                                    isDrivable: false,
                                     offsetFromManeuverInMeters: 121,
                                     side: 'RIGHT',
                                 },
@@ -13537,9 +13435,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8\u027b\u0252n.d\u0259 \u02c8d\u0259 \u02c8s\u00e6nt \u00e6n.\u02c8t\u0259\u2040\u028a.n\u026a m\u0259.\u02c8\u027bi\u02d0.\u0259 \u02c8kl\u00e6.\u027b\u0259t',
-                                            },
+                                            phonetic:
+                                                '\u02c8\u027b\u0252n.d\u0259 \u02c8d\u0259 \u02c8s\u00e6nt \u00e6n.\u02c8t\u0259\u2040\u028a.n\u026a m\u0259.\u02c8\u027bi\u02d0.\u0259 \u02c8kl\u00e6.\u027b\u0259t',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Ronda de Sant Antoni Maria Claret',
                                         },
@@ -13551,9 +13448,8 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                 roadNames: [
                                     {
                                         identifier: {
-                                            phonetic: {
-                                                ipa: '\u02c8\u027b\u0252n.d\u0259 \u02c8d\u0259 \u02c8s\u00e6nt \u00e6n.\u02c8t\u0259\u2040\u028a.n\u026a m\u0259.\u02c8\u027bi\u02d0.\u0259 \u02c8kl\u00e6.\u027b\u0259t',
-                                            },
+                                            phonetic:
+                                                '\u02c8\u027b\u0252n.d\u0259 \u02c8d\u0259 \u02c8s\u00e6nt \u00e6n.\u02c8t\u0259\u2040\u028a.n\u026a m\u0259.\u02c8\u027bi\u02d0.\u0259 \u02c8kl\u00e6.\u027b\u0259t',
                                             phoneticLanguageCode: 'en-GB',
                                             text: 'Ronda de Sant Antoni Maria Claret',
                                         },
@@ -13806,6 +13702,11 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                 },
             ],
             roadShieldAtlasReference: 'https://api.tomtom.com/maps/assets/sprites/1.0.0-0-roadshields/',
+            // Recorded from the live API, so it carries four fields the SDK's own request/response
+            // types do not model yet: `isEnforcedAtForkPoint` on instructions, and
+            // `plugAndChargeSupport`, `mobilityServiceProviders` and `countryCode` on the charging
+            // park. Kept verbatim rather than trimmed to fit the types — the assertion is what lets
+            // the extra keys through, and they are watch items for a later phase.
         } as CalculateRouteResponseAPI,
         {
             vehicle: {
@@ -15396,7 +15297,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                     ],
                                     sideRoads: [
                                         {
-                                            drivable: true,
+                                            isDrivable: true,
                                             offsetFromManeuverInMeters: 175,
                                             side: 'LEFT',
                                         },
@@ -15438,87 +15339,87 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                     ],
                                     sideRoads: [
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 987,
                                             side: 'LEFT',
                                         },
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 880,
                                             side: 'LEFT',
                                         },
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 880,
                                             side: 'RIGHT',
                                         },
                                         {
-                                            drivable: true,
+                                            isDrivable: true,
                                             offsetFromManeuverInMeters: 732,
                                             side: 'LEFT',
                                         },
                                         {
-                                            drivable: true,
+                                            isDrivable: true,
                                             offsetFromManeuverInMeters: 732,
                                             side: 'RIGHT',
                                         },
                                         {
-                                            drivable: true,
+                                            isDrivable: true,
                                             offsetFromManeuverInMeters: 723,
                                             side: 'RIGHT',
                                         },
                                         {
-                                            drivable: true,
+                                            isDrivable: true,
                                             offsetFromManeuverInMeters: 630,
                                             side: 'RIGHT',
                                         },
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 540,
                                             side: 'LEFT',
                                         },
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 428,
                                             side: 'LEFT',
                                         },
                                         {
-                                            drivable: true,
+                                            isDrivable: true,
                                             offsetFromManeuverInMeters: 428,
                                             side: 'RIGHT',
                                         },
                                         {
-                                            drivable: true,
+                                            isDrivable: true,
                                             offsetFromManeuverInMeters: 326,
                                             side: 'LEFT',
                                         },
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 326,
                                             side: 'RIGHT',
                                         },
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 240,
                                             side: 'LEFT',
                                         },
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 240,
                                             side: 'RIGHT',
                                         },
                                         {
-                                            drivable: true,
+                                            isDrivable: true,
                                             offsetFromManeuverInMeters: 177,
                                             side: 'RIGHT',
                                         },
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 116,
                                             side: 'RIGHT',
                                         },
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 7,
                                             side: 'RIGHT',
                                         },
@@ -15632,12 +15533,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                     ],
                                     sideRoads: [
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 573,
                                             side: 'RIGHT',
                                         },
                                         {
-                                            drivable: true,
+                                            isDrivable: true,
                                             offsetFromManeuverInMeters: 129,
                                             side: 'RIGHT',
                                         },
@@ -15704,12 +15605,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                     ],
                                     sideRoads: [
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 800,
                                             side: 'RIGHT',
                                         },
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 773,
                                             side: 'RIGHT',
                                         },
@@ -15927,7 +15828,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                     ],
                                     sideRoads: [
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 340,
                                             side: 'LEFT',
                                         },
@@ -16034,17 +15935,17 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                     ],
                                     sideRoads: [
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 849,
                                             side: 'LEFT',
                                         },
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 268,
                                             side: 'LEFT',
                                         },
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 168,
                                             side: 'LEFT',
                                         },
@@ -16542,17 +16443,17 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                     ],
                                     sideRoads: [
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 723,
                                             side: 'RIGHT',
                                         },
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 624,
                                             side: 'RIGHT',
                                         },
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 43,
                                             side: 'LEFT',
                                         },
@@ -16977,7 +16878,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                     ],
                                     sideRoads: [
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 215,
                                             side: 'LEFT',
                                         },
@@ -17129,7 +17030,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                     ],
                                     sideRoads: [
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 225,
                                             side: 'RIGHT',
                                         },
@@ -17488,7 +17389,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                     ],
                                     sideRoads: [
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 62,
                                             side: 'LEFT',
                                         },
@@ -17637,102 +17538,102 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                     ],
                                     sideRoads: [
                                         {
-                                            drivable: true,
+                                            isDrivable: true,
                                             offsetFromManeuverInMeters: 967,
                                             side: 'RIGHT',
                                         },
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 924,
                                             side: 'RIGHT',
                                         },
                                         {
-                                            drivable: true,
+                                            isDrivable: true,
                                             offsetFromManeuverInMeters: 875,
                                             side: 'RIGHT',
                                         },
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 798,
                                             side: 'RIGHT',
                                         },
                                         {
-                                            drivable: true,
+                                            isDrivable: true,
                                             offsetFromManeuverInMeters: 741,
                                             side: 'RIGHT',
                                         },
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 671,
                                             side: 'LEFT',
                                         },
                                         {
-                                            drivable: true,
+                                            isDrivable: true,
                                             offsetFromManeuverInMeters: 671,
                                             side: 'RIGHT',
                                         },
                                         {
-                                            drivable: true,
+                                            isDrivable: true,
                                             offsetFromManeuverInMeters: 636,
                                             side: 'LEFT',
                                         },
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 636,
                                             side: 'RIGHT',
                                         },
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 603,
                                             side: 'RIGHT',
                                         },
                                         {
-                                            drivable: true,
+                                            isDrivable: true,
                                             offsetFromManeuverInMeters: 565,
                                             side: 'RIGHT',
                                         },
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 486,
                                             side: 'RIGHT',
                                         },
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 426,
                                             side: 'LEFT',
                                         },
                                         {
-                                            drivable: true,
+                                            isDrivable: true,
                                             offsetFromManeuverInMeters: 426,
                                             side: 'RIGHT',
                                         },
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 378,
                                             side: 'RIGHT',
                                         },
                                         {
-                                            drivable: true,
+                                            isDrivable: true,
                                             offsetFromManeuverInMeters: 314,
                                             side: 'RIGHT',
                                         },
                                         {
-                                            drivable: true,
+                                            isDrivable: true,
                                             offsetFromManeuverInMeters: 224,
                                             side: 'LEFT',
                                         },
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 180,
                                             side: 'LEFT',
                                         },
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 105,
                                             side: 'LEFT',
                                         },
                                         {
-                                            drivable: true,
+                                            isDrivable: true,
                                             offsetFromManeuverInMeters: 105,
                                             side: 'RIGHT',
                                         },
@@ -17797,12 +17698,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                     ],
                                     sideRoads: [
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 175,
                                             side: 'LEFT',
                                         },
                                         {
-                                            drivable: true,
+                                            isDrivable: true,
                                             offsetFromManeuverInMeters: 175,
                                             side: 'RIGHT',
                                         },
@@ -17852,12 +17753,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                     ],
                                     sideRoads: [
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 102,
                                             side: 'LEFT',
                                         },
                                         {
-                                            drivable: true,
+                                            isDrivable: true,
                                             offsetFromManeuverInMeters: 30,
                                             side: 'RIGHT',
                                         },
@@ -17902,12 +17803,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                                     ],
                                     sideRoads: [
                                         {
-                                            drivable: true,
+                                            isDrivable: true,
                                             offsetFromManeuverInMeters: 121,
                                             side: 'LEFT',
                                         },
                                         {
-                                            drivable: false,
+                                            isDrivable: false,
                                             offsetFromManeuverInMeters: 121,
                                             side: 'RIGHT',
                                         },

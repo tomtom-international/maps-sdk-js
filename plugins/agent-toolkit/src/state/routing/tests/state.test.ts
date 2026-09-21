@@ -209,3 +209,66 @@ describe('RoutingState — route monitoring', () => {
         expect(state.isMonitored(id)).toBe(false);
     });
 });
+
+describe('RoutingState — partial display updates', () => {
+    // RoutingModule.applyConfig replaces the config wholesale; these guard the merge the state does
+    // on top so a partial update never wipes what the module already had.
+    const stubModule = (config: Record<string, unknown>) => ({
+        applyConfig: vi.fn(),
+        getConfig: vi.fn().mockReturnValue(config),
+        showRoutes: vi.fn().mockResolvedValue(undefined),
+        showWaypoints: vi.fn().mockResolvedValue(undefined),
+        clearWaypoints: vi.fn().mockResolvedValue(undefined),
+    });
+
+    it('setMainColor keeps hidden bubbles and custom layers on a shown module', async () => {
+        const state = new RoutingState(mockMap);
+        await state.addRoutes({} as any, [] as any, 'A to B');
+        const entry = state.entries[0] as any;
+        const module = stubModule({ summaryBubbles: { visible: false }, layers: { mainLines: {} } });
+        entry._module = module;
+        entry._shown = true;
+
+        state.setMainColor('#ff0000');
+
+        expect(module.applyConfig).toHaveBeenCalledWith({
+            summaryBubbles: { visible: false },
+            layers: { mainLines: {} },
+            theme: { mainColor: '#ff0000' },
+        });
+    });
+
+    it('showEntry merges the sticky colour over the module config instead of replacing it', async () => {
+        const state = new RoutingState(mockMap);
+        await state.addRoutes({} as any, [] as any, 'A to B');
+        const entry = state.entries[0] as any;
+        const module = stubModule({ layers: { mainLines: {} } });
+        entry._module = module;
+        state.setMainColor('#00ff00');
+
+        await state.showEntry(entry.id, { showSummaryBubbles: false });
+
+        expect(module.applyConfig).toHaveBeenCalledWith({
+            layers: { mainLines: {} },
+            theme: { mainColor: '#00ff00' },
+            summaryBubbles: { visible: false },
+        });
+    });
+});
+
+describe('RoutingState — entry id collisions', () => {
+    it('never reuses a surviving entry id after removals (add 3, remove first, add again)', async () => {
+        const state = new RoutingState(mockMap);
+        const routes = { features: [{ properties: { summary: {} } }] } as any;
+        const waypoints = [{ type: 'Feature' }] as any;
+        await state.addRoutes(routes, waypoints, 'A'); // routes-0
+        await state.addRoutes(routes, waypoints, 'B'); // routes-1
+        await state.addRoutes(routes, waypoints, 'C'); // routes-2
+        await state.removeEntry('routes-0');
+        // entries.length is now 2, so a naive length-based id would mint
+        // `routes-2` again and collide with the surviving entry.
+        await state.addRoutes(routes, waypoints, 'D');
+        const ids = state.entries.map((entry) => entry.id);
+        expect(new Set(ids).size).toBe(ids.length);
+    });
+});

@@ -5,6 +5,7 @@
 import type { CommonPlaceProps, Place, PolygonFeature } from '@tomtom-org/maps-sdk/core';
 import { bboxFromGeoJSON } from '@tomtom-org/maps-sdk/core';
 import { z } from 'zod';
+import { type PlacesMarkerType, placesMarkerTypes } from '../../state';
 import type { ToolState } from '../../types';
 import { geometryDisplayConfigSchema } from '../shared';
 import { toolErrorSchema } from '../shared-output-schemas';
@@ -77,7 +78,7 @@ const shownEntrySummarySchema = z.object({
     id: z.string(),
     label: z.string(),
     featureCount: z.number(),
-    markerType: z.enum(['pin', 'base-map', 'pin-clustered']).describe('How the entry is rendered on the map.'),
+    markerType: z.enum(placesMarkerTypes).describe('How the entry is rendered on the map.'),
 });
 
 export const updatePlacesDisplayOutputSchema = z.union([
@@ -117,7 +118,7 @@ export const updatePlacesDisplaySchema = z
         removeMatching: z.array(z.string()).optional().describe('Category labels to hide.'),
         clear: z.boolean().optional().describe('Hide every displayed entry.'),
         markerType: z
-            .enum(['pin', 'base-map', 'pin-clustered'])
+            .enum(placesMarkerTypes)
             .optional()
             .describe(
                 'How newly-added entries are rendered as markers: "pin", "base-map", or "pin-clustered" (pins with a count badge ' +
@@ -176,7 +177,7 @@ const resolveMatchingIds = (state: ToolState, terms: readonly string[]): string[
 const applyMarkerAdds = async (
     state: ToolState,
     addIds: readonly string[],
-    markerType: 'pin' | 'base-map' | 'pin-clustered' | undefined,
+    markerType: PlacesMarkerType | undefined,
     beforeShown: ReadonlySet<string>,
 ): Promise<void> => {
     const markerIds = markerType !== undefined ? addIds : addIds.filter((id) => !beforeShown.has(id));

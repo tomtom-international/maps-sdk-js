@@ -116,11 +116,13 @@ describe('executeSetTrafficIncidentsMonitor — enable', () => {
         await Promise.resolve();
         await Promise.resolve();
 
-        expect(mockFetch).toHaveBeenCalledWith({
-            bbox: [0, 0, 1, 1],
-            categoryFilter: ['jam'],
-            timeValidityFilter: ['present'],
-        });
+        expect(mockFetch).toHaveBeenCalledWith(
+            expect.objectContaining({
+                bbox: [0, 0, 1, 1],
+                categoryFilter: ['jam'],
+                timeValidityFilter: ['present'],
+            }),
+        );
     });
 
     it('reports alreadyInState: false after the previous run errored, and re-arms the timer (regression)', async () => {

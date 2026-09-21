@@ -31,7 +31,7 @@ export {
 } from './byod';
 export { CustomGeometriesState, type CustomGeometriesStateEvents } from './custom-geometries/state';
 export { MapPOIsState } from './map-pois';
-export { type PlacesMarkerType, PlacesState, type PlacesStateEvents } from './places/state';
+export { type PlacesMarkerType, PlacesState, type PlacesStateEvents, placesMarkerTypes } from './places/state';
 export { RangeState, type RangeStateEvents } from './range/state';
 export { RoutingState, type RoutingStateEvents } from './routing/state';
 export { TrafficAreaAnalyticsState, type TrafficAreaAnalyticsStateEvents } from './traffic-area-analytics/state';

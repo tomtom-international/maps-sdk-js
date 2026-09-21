@@ -1,18 +1,17 @@
 import { POICategory } from '@tomtom-org/maps-sdk/core';
 import { isNil } from 'lodash-es';
-import type { FilterSpecification } from 'maplibre-gl';
 import { toBaseMapPOICategory } from '../places';
 import type { ValuesFilter } from '../shared';
 import {
-    AbstractMapModule,
-    CombinedEvents,
-    ModuleEvents,
+    AbstractStyleOwnedMapModule,
+    type CombinedEvents,
+    mapStyleLayerIDs,
     POI_SOURCE_ID,
     StyleSourceWithLayers,
-    UserEvents,
+    sharedInstance,
 } from '../shared';
 import { notInTheStyle } from '../shared/errorMessages';
-import { buildMappedValuesFilter, getMergedAllFilter } from '../shared/mapLibreFilterUtils';
+import { buildMappedValuesFilter } from '../shared/mapLibreFilterUtils';
 import { waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
 import { poiLayerIDs } from './layers/poisLayers';
@@ -27,16 +26,19 @@ import { poisMapping } from './util/poisMapping';
  * @ignore
  */
 export const getStyleCategories = (categories: FilterablePOICategory[]): string[] => {
-    const categoryIds: string[] = [];
-    categories.forEach((category: FilterablePOICategory) => {
-        if (category in poiCategoryGroups) {
-            categoryIds.push(...poiCategoryGroups[category].map(toBaseMapPOICategory));
-        } else {
-            categoryIds.push(toBaseMapPOICategory(category as POICategory));
-        }
-    });
-    return [...new Set(categoryIds)];
+    const categoryIds = categories.flatMap((category: FilterablePOICategory) =>
+        category in poiCategoryGroups
+            ? poiCategoryGroups[category].map(toBaseMapPOICategory)
+            : [toBaseMapPOICategory(category as POICategory)],
+    );
+    // A category the base-map style shows no icon for maps to nothing, and MapLibre rejects a
+    // filter that carries that `undefined` outright.
+    return [...new Set(categoryIds.filter((categoryId): categoryId is string => !isNil(categoryId)))];
 };
+
+// This module's key with the shared filter composer — the styling knob `pois.zoomShift` rewrites the
+// same layer's filter under its own key.
+const CATEGORIES_CONTRIBUTOR = 'pois.categories';
 
 /**
  * IDs of sources and layers for places of interest module.
@@ -74,7 +76,7 @@ type PoIsSourcesAndLayers = {
  * @example
  * Basic usage:
  * ```typescript
- * import { POIsModule } from '@tomtom-international/maps-sdk-js/map';
+ * import { POIsModule } from '@tomtom-org/maps-sdk/map';
  *
  * // Get module
  * const poisModule = await POIsModule.get(map);
@@ -129,9 +131,8 @@ type PoIsSourcesAndLayers = {
  *
  * @group POIs
  */
-export class POIsModule extends AbstractMapModule<PoIsSourcesAndLayers, POIsModuleConfig> {
+export class POIsModule extends AbstractStyleOwnedMapModule<PoIsSourcesAndLayers, POIsModuleConfig> {
     private categoriesFilter?: ValuesFilter<FilterablePOICategory> | null;
-    private originalFilter?: FilterSpecification;
 
     /**
      * Retrieves a POIsModule instance for the given map.
@@ -167,14 +168,25 @@ export class POIsModule extends AbstractMapModule<PoIsSourcesAndLayers, POIsModu
      *   }
      * });
      * ```
+     *
+     * @remarks
+     * **Instances:**
+     * `POIsModule` controls the POI sources and layers the map style already provides, under fixed
+     * global IDs. Every instance is another handle on that same shared state, so visibility and
+     * filters applied through one are visible through all of them.
      */
     static async get(map: TomTomMap, config?: POIsModuleConfig): Promise<POIsModule> {
         await waitUntilMapIsReady(map);
-        return new POIsModule(map, config);
+        return sharedInstance(
+            map,
+            POIsModule,
+            () => new POIsModule(map, config),
+            config && ((existing) => existing.applyConfig(config)),
+        );
     }
 
     private constructor(map: TomTomMap, config?: POIsModuleConfig) {
-        super('style', map, config);
+        super(map, config);
     }
 
     /**
@@ -189,10 +201,6 @@ export class POIsModule extends AbstractMapModule<PoIsSourcesAndLayers, POIsModu
             poiLayerIDs.includes(layer.id),
         );
         // TODO: check if the layers are present in the style, and if not, throw exception?
-        const mainLayer = poi.sourceAndLayerIDs.layerIDs[0];
-        if (this.mapLibreMap.getLayer(mainLayer)) {
-            this.originalFilter = this.mapLibreMap.getFilter(mainLayer) as FilterSpecification;
-        }
         return { poi };
     }
 
@@ -325,7 +333,7 @@ export class POIsModule extends AbstractMapModule<PoIsSourcesAndLayers, POIsModu
                     getStyleCategories(categoriesFilter.values),
                 );
 
-                this.mapLibreMap.setFilter('POI', getMergedAllFilter(poiFilter, this.originalFilter));
+                this.filterComposer.setClause(mapStyleLayerIDs.poi, CATEGORIES_CONTRIBUTOR, poiFilter);
             }
             if (updateConfig) {
                 this.config = {
@@ -349,8 +357,9 @@ export class POIsModule extends AbstractMapModule<PoIsSourcesAndLayers, POIsModu
                 };
             }
             if (this.tomtomMap.mapReady) {
-                // Applies default:
-                this.mapLibreMap.setFilter('POI', this.originalFilter);
+                // Applies default: the layer keeps whatever the style, and any other contributor,
+                // filters it by.
+                this.filterComposer.setClause(mapStyleLayerIDs.poi, CATEGORIES_CONTRIBUTOR, undefined);
             }
         }
 
@@ -388,7 +397,7 @@ export class POIsModule extends AbstractMapModule<PoIsSourcesAndLayers, POIsModu
     /**
      * Gets the events interface for handling user interactions with POIs.
      *
-     * @returns A `UserEvents` instance for registering event handlers.
+     * @returns The module's events, with `on` / `off` for handlers and `where` for scoping.
      *
      * @remarks
      * **Supported Events:**
@@ -419,14 +428,6 @@ export class POIsModule extends AbstractMapModule<PoIsSourcesAndLayers, POIsModu
      * ```
      */
     get events(): CombinedEvents<POIsModuleFeature, POIsModuleConfig, never> {
-        return new CombinedEvents(
-            new UserEvents<POIsModuleFeature>(
-                this.tomtomMap._eventsProxy,
-                this.sourcesWithLayers.poi,
-                this.config?.events,
-                poisMapping,
-            ),
-            new ModuleEvents(this.configChangeHandlers, []),
-        );
+        return this.moduleEvents<POIsModuleFeature>(['poi'], { mapping: poisMapping });
     }
 }

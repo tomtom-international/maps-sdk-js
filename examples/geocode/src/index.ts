@@ -18,6 +18,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         },
     });
 
-    const placesModule = await PlacesModule.get(map);
+    const placesModule = await PlacesModule.create(map);
     await placesModule.show(location);
 })();

@@ -1,6 +1,6 @@
 {
   "name": "@examples/route-styling-playground",
-  "description": "Route theme playground \u2014 color, line size, and icon size",
+  "description": "Route theme playground — color, line size, and icon size",
   "type": "module",
   "scripts": {
     "build": "vite build --config ../example-vite.config.ts",

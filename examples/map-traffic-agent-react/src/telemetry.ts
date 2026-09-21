@@ -1,4 +1,3 @@
-import { ApplicationInsights } from '@microsoft/applicationinsights-web';
 import {
     type ClassificationResult,
     createMapAgent,
@@ -24,25 +23,38 @@ export type AgentUIMessage = InferAgentUIMessage<ReturnType<typeof createMapAgen
 type Tracker = ReturnType<typeof createTracker>;
 
 function createAppInsightsSink(connectionString: string): TelemetrySink {
-    const instance = new ApplicationInsights({
-        config: {
-            connectionString,
-            disableFetchTracking: true,
-            disableAjaxTracking: true,
-            autoTrackPageVisitTime: true,
-            samplingPercentage: 100, // Keep every event; sampling would punch holes in conversation reconstruction.
-        },
-    });
-    instance.loadAppInsights();
-    // Tag every event with the app so one resource can separate the agents.
-    instance.addTelemetryInitializer((envelope) => {
-        envelope.tags = envelope.tags ?? {};
-        envelope.tags['ai.cloud.role'] = APP_NAME;
-    });
+    // Lazy-load the SDK: a static import would make the docs' in-browser sandpack bundler resolve
+    // the whole App Insights module graph at page load (and crash when its CDN manifest is
+    // incomplete). Events fired before the SDK arrives queue on the promise; if it never loads,
+    // telemetry degrades to a warning instead of taking the app down.
+    const instancePromise = import('@microsoft/applicationinsights-web')
+        .then(({ ApplicationInsights }) => {
+            const instance = new ApplicationInsights({
+                config: {
+                    connectionString,
+                    disableFetchTracking: true,
+                    disableAjaxTracking: true,
+                    autoTrackPageVisitTime: true,
+                    samplingPercentage: 100, // Keep every event; sampling would punch holes in conversation reconstruction.
+                },
+            });
+            instance.loadAppInsights();
+            // Tag every event with the app so one resource can separate the agents.
+            instance.addTelemetryInitializer((envelope) => {
+                envelope.tags = envelope.tags ?? {};
+                envelope.tags['ai.cloud.role'] = APP_NAME;
+            });
+            return instance;
+        })
+        .catch((error) => {
+            console.warn('Application Insights failed to load — telemetry disabled.', error);
+            return null;
+        });
 
     return {
-        trackEvent: (event) => instance.trackEvent(event),
-        trackException: ({ error, properties }) => instance.trackException({ exception: error, properties }),
+        trackEvent: (event) => void instancePromise.then((instance) => instance?.trackEvent(event)),
+        trackException: ({ error, properties }) =>
+            void instancePromise.then((instance) => instance?.trackException({ exception: error, properties })),
     };
 }
 
@@ -105,13 +117,15 @@ export function createTracker(sink: TelemetrySink) {
                 },
             });
         },
-        // Only the length is recorded; the response body is intentionally dropped to avoid noise.
-        agentSuccess(ctx: TurnContext, responseLength: number, wallClockMs: number, stepCount: number) {
+
+        agentSuccess(ctx: TurnContext, query: string, response: string, wallClockMs: number, stepCount: number) {
             sink.trackEvent({
                 name: 'AgentSuccess',
                 properties: {
                     ...ctxProps(ctx),
-                    responseLength: String(responseLength),
+                    query,
+                    response,
+                    responseLength: String(response.length),
                     wallClockMs: String(wallClockMs),
                     stepCount: String(stepCount),
                 },
@@ -164,13 +178,14 @@ function extractUserText(messages: readonly AgentUIMessage[]): string {
 function trackTurnOutcome(
     track: Tracker,
     ctx: TurnContext,
+    userQuery: string,
     result: { totalUsage: PromiseLike<LanguageModelUsage>; text: PromiseLike<string> },
     turnStartMs: number,
     getStepCount: () => number,
 ) {
     void result.totalUsage.then((usage) => track.tokenUsage(ctx, usage));
     void result.text.then(
-        (text) => track.agentSuccess(ctx, text.length, Date.now() - turnStartMs, getStepCount()),
+        (text) => track.agentSuccess(ctx, userQuery, text, Date.now() - turnStartMs, getStepCount()),
         (error: unknown) =>
             track.agentError(ctx, error instanceof Error ? error.message : String(error), Date.now() - turnStartMs),
     );
@@ -190,8 +205,9 @@ async function runInstrumentedTurn(
 ) {
     const { track, startTurn, onAgentTurn } = deps;
 
+    const userText = extractUserText(messages);
     const userCtx = startTurn('user');
-    track.userQuery(userCtx, extractUserText(messages));
+    track.userQuery(userCtx, userText);
 
     const agentCtx = startTurn('agent');
     onAgentTurn(agentCtx);
@@ -215,7 +231,7 @@ async function runInstrumentedTurn(
         },
     });
 
-    trackTurnOutcome(track, agentCtx, result, turnStartMs, () => stepCount);
+    trackTurnOutcome(track, agentCtx, userText, result, turnStartMs, () => stepCount);
 
     // Attach token usage to the finish message so the bridge can read it back. assistant-ui normalizes
     // thread-message metadata to a fixed shape and drops arbitrary keys, but preserves `custom`, which

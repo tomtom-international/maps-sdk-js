@@ -31,7 +31,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         language: configLanguage,
     });
 
-    const languageSelector = document.querySelector('#sdk-example-mapLanguages') as HTMLSelectElement;
+    const languageSelector = document.querySelector('#ui-mapLanguages') as HTMLSelectElement;
     for (const language of mapLanguages) {
         languageSelector.add(new Option(language.text, language.value, undefined, configLanguage === language.value));
     }

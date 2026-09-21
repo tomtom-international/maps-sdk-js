@@ -2,6 +2,11 @@
 // agent's answers (injected into the system prompt), the HTML report's Methodology + Not-measured
 // sections — reads from here, so the explanation can never drift from the implementation. When a
 // tool's calculation changes, update the matching entry here and every surface updates with it.
+// The household ("Reach" / residential-density) signal exists only under the experimental search
+// backend, so every mention of it below is gated on householdsEnabled(). The lists are functions
+// (not constants) because the flag is set at agent creation, after modules load.
+
+import { householdsEnabled, searchLimit } from '../demographics/experimental-search';
 
 export type MethodologyEntry = {
     id: string;
@@ -15,7 +20,7 @@ export type MethodologyEntry = {
     caveat: string;
 };
 
-export const METHODOLOGY: MethodologyEntry[] = [
+export const methodology = (): MethodologyEntry[] => [
     {
         id: 'catchment',
         term: 'Catchment (trade area)',
@@ -23,19 +28,34 @@ export const METHODOLOGY: MethodologyEntry[] = [
         source: 'Geocoding + routing reachable-range (isochrone) APIs',
         caveat: 'The walking catchment is a straight-line radius, not a street-network walk distance.',
     },
-    {
-        id: 'reach',
-        term: 'Reach (households)',
-        method: 'A count of individual address points (PointAddress) found inside the catchment by an address search, up to a 100 ceiling. Used as a dwellings/households proxy.',
-        source: 'Address search (point-address records inside the catchment)',
-        caveat: 'Counts addressable points, not residents or population. It caps at 100, so in any populated area it saturates almost immediately and stops differentiating nearby sites — when that happens the scorer drops it.',
-    },
+    ...(householdsEnabled()
+        ? [
+              {
+                  id: 'reach',
+                  term: 'Reach (households)',
+                  method: `A count of individual address points (PointAddress) found inside the catchment by an address search, up to a ${searchLimit().toLocaleString('en-US')} ceiling. Used as a dwellings/households proxy.`,
+                  source: 'Address search (point-address records inside the catchment)',
+                  caveat: `Counts addressable points, not residents or population. It caps at ${searchLimit().toLocaleString('en-US')}, so a very dense catchment can saturate and stop differentiating nearby sites — when that happens the scorer drops it.`,
+              },
+          ]
+        : []),
     {
         id: 'demand',
         term: 'Demand (whitespace scan)',
-        method: 'For each grid cell, the number of "demand-anchor" POIs — the categories chosen as proxies for what draws the concept\'s customers (e.g. café, supermarket, university) — within the walk radius of the cell\'s centre. A bring-your-own-data demand layer, when supplied, adds its own points to that count. For resident-serving concepts (daycare, pharmacy, GP), household-demand mode also blends in RESIDENTIAL density (address points per cell, 50/50 with the anchor signal). Each signal is min-max normalized across all cells.',
-        source: 'POI category search for the chosen anchors; an optional bring-your-own-data demand layer; address search (point-address records) for residential density',
-        caveat: 'A proxy for nearby activity / residents, NOT measured footfall or population. Determined by the chosen anchors. The residential sample caps at 100 addresses per scan, so it is a coarse relative density, not a true count.',
+        method:
+            'For each grid cell, the number of "demand-anchor" POIs — the categories chosen as proxies for what draws the concept\'s customers (e.g. café, supermarket, university) — within the walk radius of the cell\'s centre. A bring-your-own-data demand layer, when supplied, adds its own points to that count.' +
+            (householdsEnabled()
+                ? ' For resident-serving concepts (daycare, pharmacy, GP), household-demand mode also blends in RESIDENTIAL density (address points per cell, 50/50 with the anchor signal).'
+                : '') +
+            ' Each signal is min-max normalized across all cells.',
+        source:
+            'POI category search for the chosen anchors; an optional bring-your-own-data demand layer' +
+            (householdsEnabled() ? '; address search (point-address records) for residential density' : ''),
+        caveat:
+            'A proxy for nearby activity, NOT measured footfall or population. Determined by the chosen anchors.' +
+            (householdsEnabled()
+                ? ` The residential sample caps at ${searchLimit().toLocaleString('en-US')} addresses per scan, so it is a coarse relative density, not a true count.`
+                : ''),
     },
     {
         id: 'competition',
@@ -68,7 +88,12 @@ export const METHODOLOGY: MethodologyEntry[] = [
     {
         id: 'site-score',
         term: 'Site score (ranking, 0–100)',
-        method: "A weighted sum of the normalized factors Reach / Spend power / Competition / Accessibility, using your weights (default 30 / 30 / 25 / 15). Each factor is min-max normalized across ONLY the sites being compared, so scores are relative to that set. Gates exclude any site that fails a hard requirement (e.g. parking within 300 m) with a stated reason. The panel shows the glass-box breakdown — each factor's point contribution — plus a confidence flag based on how many factors had usable data.",
+        method:
+            'A weighted sum of the normalized factors ' +
+            (householdsEnabled()
+                ? 'Reach / Spend power / Competition / Accessibility, using your weights (default 30 / 30 / 25 / 15).'
+                : 'Spend power / Competition / Accessibility, using your weights (default 30 / 25 / 15).') +
+            " Each factor is min-max normalized across ONLY the sites being compared, so scores are relative to that set. Gates exclude any site that fails a hard requirement (e.g. parking within 300 m) with a stated reason. The panel shows the glass-box breakdown — each factor's point contribution — plus a confidence flag based on how many factors had usable data.",
         source: 'Derived from the factor signals above',
         caveat: 'Relative screening scores within the compared set, not absolute or predictive. Factors that do not vary across the sites are dropped from the score.',
     },
@@ -83,8 +108,10 @@ export const METHODOLOGY: MethodologyEntry[] = [
 
 // What we explicitly do NOT measure — the honest boundary, surfaced in both the report and the
 // agent's context so neither over-claims.
-export const NOT_MEASURED: string[] = [
-    'Resident population or demographics (Reach is an address/dwellings proxy, not people)',
+export const notMeasured = (): string[] => [
+    householdsEnabled()
+        ? 'Resident population or demographics (Reach is an address/dwellings proxy, not people)'
+        : 'Resident population, households, or demographics',
     'Income / spend power (the ranking factor is scored only when a demographics layer is supplied)',
     'Footfall / pedestrian volume, vehicle counts, or vehicle-type mix',
     'Revenue, sales, or financial cannibalization (overlap is geographic reach, not predicted revenue loss)',
@@ -92,17 +119,17 @@ export const NOT_MEASURED: string[] = [
 
 /** Compact plain-text block for the system prompt so the agent can answer "how is X measured?". */
 export const methodologyPromptBlock = (): string => {
-    const lines = METHODOLOGY.map((e) => `- ${e.term}: ${e.method} (Source: ${e.source}. Note: ${e.caveat})`);
+    const lines = methodology().map((e) => `- ${e.term}: ${e.method} (Source: ${e.source}. Note: ${e.caveat})`);
     return (
         'HOW WE MEASURE THINGS (METHODOLOGY) — when the user asks how a number, score, or metric is ' +
-        'calculated, what it means, or where it comes from (demand, reach/households, competition, ' +
+        `calculated, what it means, or where it comes from (demand, ${householdsEnabled() ? 'reach/households, ' : ''}competition, ` +
         'accessibility, spend power, opportunity score, site score, catchment, overlap, confidence), ' +
         'answer precisely and ONLY from this list, combined with the specific inputs you chose for ' +
         'their query (the anchor/competitor categories you searched, the radius, the weights). Quote ' +
         'the method and the caveat; never invent or guess a formula. If the thing they ask about is ' +
         'under "Not measured", say plainly that it is not measured and why.\n' +
         `${lines.join('\n')}\n` +
-        `Not measured: ${NOT_MEASURED.join('; ')}.`
+        `Not measured: ${notMeasured().join('; ')}.`
     );
 };
 
@@ -110,9 +137,9 @@ const escapeHtml = (value: string): string => value.replace(/&/g, '&amp;').repla
 
 /** Methodology section for the HTML report (same content as the prompt block). */
 export const methodologyReportHtml = (): string => {
-    const items = METHODOLOGY.map(
-        (e) => `<li><strong>${escapeHtml(e.term)}</strong> — ${escapeHtml(e.method)}</li>`,
-    ).join('');
+    const items = methodology()
+        .map((e) => `<li><strong>${escapeHtml(e.term)}</strong> — ${escapeHtml(e.method)}</li>`)
+        .join('');
     return `<h2>Methodology &amp; data sources</h2>
   <p class="muted">All findings come from TomTom location data, queried live during this analysis.</p>
   <ul class="muted">${items}</ul>`;
@@ -120,7 +147,9 @@ export const methodologyReportHtml = (): string => {
 
 /** "Not measured" callout for the HTML report. */
 export const notMeasuredReportHtml = (): string => {
-    const items = NOT_MEASURED.map((entry) => `<li>${escapeHtml(entry)}</li>`).join('');
+    const items = notMeasured()
+        .map((entry) => `<li>${escapeHtml(entry)}</li>`)
+        .join('');
     return `<h2>Not measured</h2>
   <div class="callout">TomTom provides no data for the following, so this report makes <strong>no claims</strong> about them:
     <ul>${items}</ul>

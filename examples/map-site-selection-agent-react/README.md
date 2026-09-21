@@ -24,10 +24,10 @@ A conversational **site-selection co-pilot** built on the TomTom Maps SDK Agent 
 
 ## What it can do
 
-- **Profile a site** — "Profile Marnixstraat 250 for a coffee shop" → catchment, competitors, parking, area make-up.
+- **Profile a site** — "Profile 425 Fremont St for a coffee shop" → catchment, competitors, parking, area make-up.
 - **Rank a shortlist** — "Rank these three addresses for a gym, weight competition highest" → a glass-box 4-factor score.
-- **Find whitespace** — "Where in De Pijp is there demand but no gym within a 10-minute walk?"
-- **Check cannibalization** — "Would a store at Damrak 70 overlap my existing branches?"
+- **Find whitespace** — "Where in East Las Vegas is there demand but no gym within a 10-minute walk?"
+- **Check cannibalization** — "Would a store in Summerlin overlap my existing branches?"
 - **Compile a report** — assembles the analyses into a styled HTML report.
 
 ### Flexible, state-driven, and bring-your-own-data

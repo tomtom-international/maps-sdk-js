@@ -36,9 +36,9 @@ services      map
           examples
 ```
 
-**Important**: Build order matters! Core must be built before services/map.
+**Important**: Nx orders the builds from this graph (`nx.json`, `dependsOn: ["^build"]`), so `core` builds before `services` and `map`. Direct `pnpm -F <workspace> build` calls skip that order.
 
-**Note**: `map-integration-tests` depends on `core` and `map` only. `examples` consume the SDK packages but don't declare them as dependencies.
+**Note**: `map-integration-tests` depends on `core` and `map` only. Every example declares `@tomtom-org/maps-sdk` as a workspace dependency.
 
 ## 🔨 Build Commands
 
@@ -70,7 +70,8 @@ Each `./dist` directory contains:
 - **index.d.ts** - Main type definitions
 - **[workspace].js** - ES module bundle (minified)
 - **[workspace].js.map** - Source map
-- **THIRD_PARTY.txt** - Third-party licenses
+- **THIRD_PARTY.txt** - Third-party licenses for that bundle
+- **third-party.json** - The same data, machine-readable; the root `THIRD_PARTY.txt` is aggregated from these
 
 ## ⚙️ Additional Build Commands
 
@@ -80,6 +81,11 @@ pnpm clean
 
 # Clean specific workspace
 pnpm -F core clean:dist
+
+# Regenerate the committed third-party notices from the last build's output
+# (also runs at the end of `build:sdk` / `build:plugins`)
+pnpm build:third-party
+pnpm build:third-party:plugins
 
 # Build API reference documentation
 pnpm build:api-reference
@@ -100,8 +106,10 @@ pnpm -F map build:watch           # Auto-rebuild map on changes
 The project uses a modern build toolchain:
 - **Vite** - Fast build tool and dev server
 - **TypeScript** - Type-safe compilation
-- **Rollup** - Bundling (via Vite)
-- **vite-plugin-dts** - Type declaration generation
+- **Rolldown** - Bundling (via Vite)
+- **rolldown-plugin-dts** - Type declaration generation, in a declaration-only rolldown pass
+  that runs beside the JS bundle (`shared-configs/dtsBundlePlugin.ts`); see that file for why
+  the declarations are not emitted as part of vite's JS output
 - **Biome** - Linting and formatting
 
 ### Configuration Files
@@ -110,10 +118,11 @@ Each workspace has its own configuration:
 
 | File | Purpose |
 |------|---------|
-| `vite.config.ts` | Vite build configuration |
+| `vite.config.ts` | Vite build configuration (JS bundle) |
 | `tsconfig.json` | TypeScript compiler options |
 | `package.json` | Workspace metadata and scripts |
 | `vitest.config.ts` | Test configuration (if present) |
+| `shared-configs/dtsBundlePlugin.ts` | Declaration build, shared by every published workspace |
 
 Shared configurations are in the `shared-configs` workspace.
 
@@ -130,7 +139,8 @@ workspace/dist/
 ├── src/                       # Module-specific type definitions
 │   └── [module]/
 │       └── index.d.ts
-└── THIRD_PARTY.txt            # Third-party licenses
+├── THIRD_PARTY.txt            # Third-party licenses for that bundle
+└── third-party.json          # Same data, machine-readable (aggregated into the root notice)
 ```
 
 ### Examples
@@ -171,6 +181,10 @@ pnpm -F map build:watch
 - ✅ **core**: `pnpm -F core build:watch`
 - ✅ **services**: `pnpm -F services build:watch`
 - ✅ **map**: `pnpm -F map build:watch`
+
+`build:watch` keeps both `dist/<bundle>.es.js` and `dist/index.d.ts` current: the declaration
+pass runs at the end of every vite build, so it re-emits on each rebuild without a second
+command.
 
 **Note**: When working on core, remember that services and map depend on it. You may need to run watch mode for dependent packages as well to see changes propagate.
 

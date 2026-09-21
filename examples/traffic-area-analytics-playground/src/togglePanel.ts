@@ -8,6 +8,6 @@ const wireToggle = (btnSel: string, contentSel: string): void => {
 };
 
 export const initTogglePanel = (): void => {
-    wireToggle('.sdk-example-heading-toggle', '.sdk-example-panel-content');
+    wireToggle('.ui-heading-toggle', '.ui-panel-content');
     wireToggle('.aa-bottom-panel-toggle', '.aa-bottom-panel-content');
 };

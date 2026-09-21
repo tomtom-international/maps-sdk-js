@@ -58,4 +58,23 @@ test.describe('Map localization tests', () => {
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
+
+    test('a clean style switch keeps the language', async ({ page }) => {
+        const mapEnv = new MapTestEnv();
+        await mapEnv.loadPage(page);
+        await putGlobalConfig(page, { language: 'nl-NL' });
+        await mapEnv.loadMap(page, { zoom: 12, center: [-0.12621, 51.50394] });
+        await waitForMapIdle(page);
+
+        // The language comes from the global config, so a state reset has nothing to do with it.
+        await setStyle(page, 'monoLight', { resetState: true });
+        await waitForMapIdle(page);
+
+        const countryLayer = (await getLayerById(page, countryLayerId)) as SymbolLayerSpecification;
+        const largeCityLayer = (await getLayerById(page, cityLayerId)) as SymbolLayerSpecification;
+        expect(countryLayer?.layout?.['text-field']).toEqual(localizedExpression('nl'));
+        expect(largeCityLayer?.layout?.['text-field']).toEqual(localizedExpression('nl'));
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
 });

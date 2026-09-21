@@ -116,9 +116,11 @@ describe('Autocomplete service', () => {
         const onApiRequest = vi.fn() as (request: URL) => void;
         const onApiResponse = vi.fn() as (request: URL, response: AutocompleteSearchResponseAPI) => void;
         const query = 'cafe';
-        const language = 'INCORRECT' as never;
+        // The service resolves `resultSet` against an enum, so an unknown segment type is always a
+        // 400. An unknown `language` is not: the service ignores it and answers 200.
+        const resultType = ['INCORRECT'] as never;
         await expect(() =>
-            autocompleteSearch({ query, language, onAPIRequest: onApiRequest, onAPIResponse: onApiResponse }),
+            autocompleteSearch({ query, resultType, onAPIRequest: onApiRequest, onAPIResponse: onApiResponse }),
         ).rejects.toThrow(expect.objectContaining({ status: 400 }));
         expect(onApiRequest).toHaveBeenCalledWith(expect.any(URL));
         expect(onApiResponse).toHaveBeenCalledWith(expect.any(URL), expect.objectContaining({ status: 400 }));

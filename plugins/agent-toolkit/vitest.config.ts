@@ -3,9 +3,9 @@ import path from 'node:path';
 import { withScenario } from '@langwatch/scenario/integrations/vitest/config';
 import { loadEnv } from 'vite';
 import { defineConfig, mergeConfig } from 'vitest/config';
-import commonVitestConfig from '../../shared-configs/vitest.config';
+import commonVitestConfig from '../../shared-configs/vitest.config.ts';
 
-Object.assign(process.env, loadEnv('', path.resolve(__dirname), ''));
+Object.assign(process.env, loadEnv('', path.resolve(import.meta.dirname), ''));
 
 export default withScenario(
     mergeConfig(
@@ -13,9 +13,9 @@ export default withScenario(
         defineConfig({
             resolve: {
                 alias: {
-                    '@tomtom-org/maps-sdk/core': path.resolve(__dirname, '../../core/index.ts'),
-                    '@tomtom-org/maps-sdk/map': path.resolve(__dirname, '../../map/index.ts'),
-                    '@tomtom-org/maps-sdk/services': path.resolve(__dirname, '../../services/index.ts'),
+                    '@tomtom-org/maps-sdk/core': path.resolve(import.meta.dirname, '../../core/index.ts'),
+                    '@tomtom-org/maps-sdk/map': path.resolve(import.meta.dirname, '../../map/index.ts'),
+                    '@tomtom-org/maps-sdk/services': path.resolve(import.meta.dirname, '../../services/index.ts'),
                 },
             },
         }),

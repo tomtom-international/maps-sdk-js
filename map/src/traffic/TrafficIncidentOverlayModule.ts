@@ -1,14 +1,12 @@
 import type { TrafficIncident, TrafficIncidentDetails } from '@tomtom-org/maps-sdk/core';
-import type { BeforeLayerConfig } from '../shared';
 import {
-    AbstractMapModule,
-    CombinedEvents,
+    AbstractDataOwnedMapModule,
+    type BeforeLayerConfig,
+    type CombinedEvents,
     GeoJSONSourceWithLayers,
-    ModuleEvents,
     mapStyleLayerIDs,
-    UserEvents,
 } from '../shared';
-import { addOrUpdateImage, waitUntilMapIsReady } from '../shared/mapUtils';
+import { addOrUpdateImage, moveLayerBefore, waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
 import {
     buildCanonicalIncidentLineLayers,
@@ -57,8 +55,9 @@ const resolveBeforeID = (beforeLayerConfig?: BeforeLayerConfig): string | undefi
  * ## Focus
  *
  * {@link setFocus} writes MapLibre feature-state `focused=true|false` on each rendered
- * incident. The default visual treatment widens the focused subset and paints a black
- * outline beneath it; unfocused incidents are unchanged. Override or disable the visual
+ * incident. The default visual treatment widens the focused subset and paints an
+ * outline beneath it (black on light map styles, white on dark); unfocused incidents
+ * are unchanged. Override or disable the visual
  * treatment via the `focus` config — `focus: false` keeps `setFocus` writing feature-state
  * but emits no halo layer and no width pop, leaving callers free to drive their own
  * styling off `feature-state.focused`.
@@ -106,7 +105,7 @@ const resolveBeforeID = (beforeLayerConfig?: BeforeLayerConfig): string | undefi
  *
  * const map = new TomTomMap({ mapLibre: { container: 'map', center: [4.9, 52.37], zoom: 13 } });
  *
- * const overlay = await TrafficIncidentOverlayModule.get(map);
+ * const overlay = await TrafficIncidentOverlayModule.create(map);
  * const result = await trafficIncidentDetails({
  *     bbox: [4.85, 52.34, 4.95, 52.40],
  *     timeValidityFilter: ['present'],
@@ -125,13 +124,24 @@ const resolveBeforeID = (beforeLayerConfig?: BeforeLayerConfig): string | undefi
  *
  * @group Traffic
  */
-export class TrafficIncidentOverlayModule extends AbstractMapModule<Sources, TrafficIncidentOverlayConfig> {
+export class TrafficIncidentOverlayModule extends AbstractDataOwnedMapModule<Sources, TrafficIncidentOverlayConfig> {
     private lastResult: TrafficIncidentDetails | null = null;
     private lastFeatureIds: string[] = [];
     private lastFocusIds: readonly string[] | null = null;
     private readonly shownFeaturesHandlers: ((result: TrafficIncidentDetails) => void)[] = [];
 
-    static async get(
+    /**
+     * Creates a new module instance on the given map, waiting until the map is ready first.
+     *
+     * `TrafficIncidentOverlayModule` owns the sources, layers and images it adds, all suffixed per
+     * instance. Every call therefore returns a **new, independent** instance, and stacking several
+     * of them on one map is a supported thing to do.
+     *
+     * @param tomtomMap The TomTomMap instance.
+     * @param config The module optional configuration.
+     * @returns {Promise} Returns a promise with a new instance of this module.
+     */
+    static async create(
         tomtomMap: TomTomMap,
         config?: TrafficIncidentOverlayConfig,
     ): Promise<TrafficIncidentOverlayModule> {
@@ -140,12 +150,14 @@ export class TrafficIncidentOverlayModule extends AbstractMapModule<Sources, Tra
     }
 
     private constructor(map: TomTomMap, config?: TrafficIncidentOverlayConfig) {
-        super('geojson', map, config);
+        super(map, config);
     }
 
     /** @ignore */
     protected _initSourcesWithLayers(config?: TrafficIncidentOverlayConfig, _restore?: boolean): Sources {
         const sourceId = `traffic-incident-overlay-${this.instanceIndex}`;
+
+        const lightDark = this.tomtomMap.styleLightDarkTheme;
 
         // Skipped in non-DOM envs — the image getter returns undefined there.
         const chevronImg = getIncidentDirectionChevronImage();
@@ -163,7 +175,7 @@ export class TrafficIncidentOverlayModule extends AbstractMapModule<Sources, Tra
         // analytics, and geometries modules. Callers can override via `beforeLayerConfig`.
         const beforeID = resolveBeforeID(config?.beforeLayerConfig);
         const palette = readIncidentPalette(this.mapLibreMap);
-        const focus = resolveFocusStyle(config?.focus);
+        const focus = resolveFocusStyle(config?.focus, lightDark);
         const layerSpecs = [
             ...buildCanonicalIncidentLineLayers(sourceId, beforeID, palette, focus),
             ...buildCanonicalIncidentSymbolLayers(sourceId, beforeID),
@@ -188,8 +200,15 @@ export class TrafficIncidentOverlayModule extends AbstractMapModule<Sources, Tra
     private applyBeforeLayer(beforeLayerConfig?: BeforeLayerConfig): void {
         const beforeId = resolveBeforeID(beforeLayerConfig);
         for (const lid of this.sourcesWithLayers.incidents.sourceAndLayerIDs.layerIDs) {
-            this.mapLibreMap.moveLayer(lid, beforeId);
+            moveLayerBefore(this.mapLibreMap, lid, beforeId);
         }
+    }
+
+    /** @ignore */
+    protected discardShownData(): void {
+        this.lastResult = null;
+        this.lastFeatureIds = [];
+        this.lastFocusIds = null;
     }
 
     /** @ignore */
@@ -272,13 +291,9 @@ export class TrafficIncidentOverlayModule extends AbstractMapModule<Sources, Tra
     }
 
     get events(): CombinedEvents<TrafficIncident, TrafficIncidentOverlayConfig, TrafficIncidentDetails> {
-        return new CombinedEvents(
-            new UserEvents<TrafficIncident>(
-                this.tomtomMap._eventsProxy,
-                this.sourcesWithLayers.incidents,
-                this.config?.events,
-            ),
-            new ModuleEvents(this.configChangeHandlers, this.shownFeaturesHandlers),
+        return this.moduleEventsWithShown<TrafficIncident, TrafficIncidentDetails>(
+            ['incidents'],
+            this.shownFeaturesHandlers,
         );
     }
 
@@ -286,7 +301,7 @@ export class TrafficIncidentOverlayModule extends AbstractMapModule<Sources, Tra
      * Mark a subset of currently-rendered incidents as "focused" via MapLibre
      * feature-state. `null` clears the state. Paint expressions in
      * `incidentDetailsLayers.ts` read `['feature-state', 'focused']` and pop the
-     * focused subset (wider stripe + black outline). Unfocused features are
+     * focused subset (wider stripe + a theme-aware outline). Unfocused features are
      * unchanged — the focus treatment adds emphasis, it does not dim the rest.
      *
      * No effect if called before `show()`.

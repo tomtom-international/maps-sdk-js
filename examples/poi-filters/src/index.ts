@@ -63,20 +63,20 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     };
 
     const createFilterToggles = () => {
-        const container = document.getElementById('sdk-example-filtersContainer');
+        const container = document.getElementById('ui-filtersContainer');
         for (const [key, value] of Object.entries(categories)) {
             const label = document.createElement('label');
-            label.className = 'sdk-example-toggle-label';
+            label.className = 'ui-toggle-label';
 
             const input = document.createElement('input');
             input.type = 'checkbox';
-            input.className = 'sdk-example-toggle-input';
+            input.className = 'ui-toggle-input';
             input.value = key;
             input.checked = categoryFilter.values.includes(input.value);
             input.id = key;
 
             const toggle = document.createElement('span');
-            toggle.className = 'sdk-example-toggle-switch';
+            toggle.className = 'ui-toggle-switch';
 
             label.appendChild(input);
             label.appendChild(toggle);
@@ -101,12 +101,12 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     });
     poisModule = await POIsModule.get(map);
 
-    modeSelector = document.getElementById('sdk-example-modeSelector') as HTMLSelectElement;
+    modeSelector = document.getElementById('ui-modeSelector') as HTMLSelectElement;
     modeSelector?.addEventListener('change', (e) =>
         changeFilterMode((e.target as HTMLSelectElement).value as FilterShowMode),
     );
 
-    document.getElementById('sdk-example-resetButton')?.addEventListener('click', resetConfig);
+    document.getElementById('ui-resetButton')?.addEventListener('click', resetConfig);
 
     createFilterToggles();
 

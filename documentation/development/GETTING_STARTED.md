@@ -16,7 +16,7 @@ Before you begin, ensure you have the following tools installed:
 - **Git** - Latest version for version control
 - **NVM** (Node Version Manager) - Latest version for Node.js management
 - **Node.js 24+** (LTS) - Installed via NVM
-- **pnpm 10+** - Package manager (see `packageManager` field in root `package.json`)
+- **pnpm 11+** - Package manager (pinned via the `packageManager` field in root `package.json`; enable Corepack or run `pnpm` directly)
 
 ### Optional but Recommended
 - **Visual Studio Code** or **JetBrains IDE** - With recommended extensions

@@ -21,7 +21,7 @@ const infoPanel = document.getElementById('info-panel') as HTMLElement;
         },
     });
 
-    const placesModule = await PlacesModule.get(map);
+    const placesModule = await PlacesModule.create(map);
     await placesModule.show(place);
 
     const baseMap = await BaseMapModule.get(map, {

@@ -54,36 +54,36 @@ export const setupEventListeners = ({
     } = operations;
 
     // Search controls
-    document.querySelector('#sdk-example-searchButton')?.addEventListener('click', searchEVStations);
-    document.querySelector('#sdk-example-clearButton')?.addEventListener('click', clear);
-    document.querySelector('#sdk-example-evBrandTextBox')?.addEventListener('keypress', (event) => {
+    document.querySelector('#ui-searchButton')?.addEventListener('click', searchEVStations);
+    document.querySelector('#ui-clearButton')?.addEventListener('click', clear);
+    document.querySelector('#ui-evBrandTextBox')?.addEventListener('keypress', (event) => {
         if ((event as KeyboardEvent).key === 'Enter') searchEVStations();
     });
 
     // Map style selector
-    const stylesSelector = document.querySelector('#sdk-example-mapStyles') as HTMLSelectElement;
+    const stylesSelector = document.querySelector('#ui-mapStyles') as HTMLSelectElement;
     standardStyleIDs.forEach((id) => stylesSelector.add(new Option(id)));
     stylesSelector.addEventListener('change', (event) =>
         map.setStyle((event.target as HTMLOptionElement).value as StandardStyleID),
     );
 
     // Background stations toggles
-    document.querySelector('#sdk-example-bgAvailabilityToggle')?.addEventListener('change', async (event) => {
+    document.querySelector('#ui-bgAvailabilityToggle')?.addEventListener('change', async (event) => {
         state.bgAvailability = (event.target as HTMLInputElement).checked;
         await applyBackgroundConfig();
     });
-    document.querySelector('#sdk-example-bgCustomIconToggle')?.addEventListener('change', async (event) => {
+    document.querySelector('#ui-bgCustomIconToggle')?.addEventListener('change', async (event) => {
         state.bgCustomIcon = (event.target as HTMLInputElement).checked;
         bgStations.clear();
         await applyBackgroundConfig();
     });
 
     // Searched stations toggles
-    document.querySelector('#sdk-example-searchAvailabilityToggle')?.addEventListener('change', async (event) => {
+    document.querySelector('#ui-searchAvailabilityToggle')?.addEventListener('change', async (event) => {
         state.searchAvailability = (event.target as HTMLInputElement).checked;
         await applySearchedConfig();
     });
-    document.querySelector('#sdk-example-searchCustomIconToggle')?.addEventListener('change', async (event) => {
+    document.querySelector('#ui-searchCustomIconToggle')?.addEventListener('change', async (event) => {
         state.searchCustomIcon = (event.target as HTMLInputElement).checked;
         searchedStations.clear();
         selectedStation.clear();
@@ -91,15 +91,15 @@ export const setupEventListeners = ({
     });
 
     // Format dropdown
-    document.querySelector('#sdk-example-availabilityFormat')?.addEventListener('change', async (event) => {
+    document.querySelector('#ui-availabilityFormat')?.addEventListener('change', async (event) => {
         state.formatOption = (event.target as HTMLSelectElement).value as typeof state.formatOption;
         await applyBackgroundConfig();
         await applySearchedConfig();
     });
 
     // Threshold slider
-    const thresholdSlider = document.querySelector('#sdk-example-threshold') as HTMLInputElement;
-    const thresholdValue = document.querySelector('#sdk-example-thresholdValue') as HTMLSpanElement;
+    const thresholdSlider = document.querySelector('#ui-threshold') as HTMLInputElement;
+    const thresholdValue = document.querySelector('#ui-thresholdValue') as HTMLSpanElement;
     thresholdSlider?.addEventListener('input', async () => {
         state.threshold = Number.parseInt(thresholdSlider.value) / 100;
         thresholdValue.textContent = `${thresholdSlider.value}%`;
@@ -108,7 +108,7 @@ export const setupEventListeners = ({
     });
 
     // Text color picker
-    const textColorPicker = document.querySelector('#sdk-example-textColorPicker') as HTMLInputElement;
+    const textColorPicker = document.querySelector('#ui-textColorPicker') as HTMLInputElement;
     textColorPicker?.addEventListener('input', async () => {
         state.textColor = textColorPicker.value;
         await applyBackgroundConfig();
@@ -116,7 +116,7 @@ export const setupEventListeners = ({
     });
 
     // Halo color picker
-    const haloColorPicker = document.querySelector('#sdk-example-haloColorPicker') as HTMLInputElement;
+    const haloColorPicker = document.querySelector('#ui-haloColorPicker') as HTMLInputElement;
     haloColorPicker?.addEventListener('input', async () => {
         state.haloColor = haloColorPicker.value;
         await applyBackgroundConfig();
@@ -124,8 +124,8 @@ export const setupEventListeners = ({
     });
 
     // Halo width slider
-    const haloSlider = document.querySelector('#sdk-example-haloWidth') as HTMLInputElement;
-    const haloValue = document.querySelector('#sdk-example-haloWidthValue') as HTMLSpanElement;
+    const haloSlider = document.querySelector('#ui-haloWidth') as HTMLInputElement;
+    const haloValue = document.querySelector('#ui-haloWidthValue') as HTMLSpanElement;
     haloSlider?.addEventListener('input', async () => {
         state.haloWidth = Number.parseFloat(haloSlider.value);
         haloValue.textContent = `${state.haloWidth}px`;
@@ -134,9 +134,9 @@ export const setupEventListeners = ({
     });
 
     // Text offset controls
-    const offsetSlider = document.querySelector('#sdk-example-textOffset') as HTMLInputElement;
-    const offsetValue = document.querySelector('#sdk-example-textOffsetValue') as HTMLSpanElement;
-    const useCustomOffsetCheckbox = document.querySelector('#sdk-example-useCustomOffset') as HTMLInputElement;
+    const offsetSlider = document.querySelector('#ui-textOffset') as HTMLInputElement;
+    const offsetValue = document.querySelector('#ui-textOffsetValue') as HTMLSpanElement;
+    const useCustomOffsetCheckbox = document.querySelector('#ui-useCustomOffset') as HTMLInputElement;
 
     offsetSlider?.addEventListener('input', async () => {
         state.textOffset = Number.parseFloat(offsetSlider.value);
@@ -155,7 +155,7 @@ export const setupEventListeners = ({
 
     // Map interaction events
     map.mapLibreMap.on('moveend', updateBackgroundStations);
-    bgStations.events.on('click', selectEVStation);
-    searchedStations.events.on('click', selectEVStation);
+    bgStations.events.places.on('click', selectEVStation);
+    searchedStations.events.places.on('click', selectEVStation);
     popUp.on('close', () => selectedStation.clear());
 };

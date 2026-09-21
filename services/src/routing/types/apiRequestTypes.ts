@@ -1,9 +1,9 @@
 import type { LineString, MultiPoint, Point } from 'geojson';
-import type { FetchInput } from '../../shared';
+import type { FetchInput, RouteType } from '../../shared';
 import type { BatteryCurve, ChargingConnector } from '../../shared/types/vehicleEngineParams';
 
 /**
- * V3 charging model sent in the POST body of the LDEVR endpoint.
+ * Charging model sent in the POST body of the LDEVR endpoint.
  * @ignore
  */
 export type ChargingParametersAPI = {
@@ -22,7 +22,7 @@ export type RoutePlanningLocationsAPI = {
 };
 
 /**
- * V3 avoid area rectangle expressed as a GeoJSON Feature with a bbox.
+ * Avoid area rectangle expressed as a GeoJSON Feature with a bbox.
  * @ignore
  */
 export type AvoidRectangleAPI = {
@@ -39,15 +39,30 @@ export type AvoidAreasAPI = {
 };
 
 /**
- * V3 per-leg request (used in the `legs` array for route reconstruction).
+ * Per-stop request options, nested under the leg that arrives at the stop.
+ * @ignore
+ */
+export type RouteStopRequestAPI = {
+    pauseDurationInSeconds?: number;
+    // The API takes candidate entry points as a GeoJSON MultiPoint; an array of Points is rejected.
+    entryPoints?: MultiPoint;
+    preferredEntryPointIndex?: number;
+};
+
+/**
+ * Per-leg request, used in the `legs` array for route reconstruction and per-stop options.
  * @ignore
  */
 export type LegRequestAPI = {
     path?: LineString;
+    routeType?: RouteType;
+    // Note the shape difference from the route-level `avoids`, which is a plain string array.
+    avoids?: { name: string }[];
+    routeStop?: RouteStopRequestAPI;
 };
 
 /**
- * V3 POST body for /routing/routes/calculate and (partially) /routing/calculateLongDistanceEVRoute.
+ * POST body for /routing/routes/calculate and (partially) /routing/calculateLongDistanceEVRoute.
  * Consumption model parameters are sent as URL query params, not in the POST body.
  * @ignore
  */
@@ -55,7 +70,7 @@ export type CalculateRoutePOSTDataAPI = {
     routePlanningLocations: RoutePlanningLocationsAPI;
     path?: LineString;
     legs?: LegRequestAPI[];
-    routeType?: string;
+    routeType?: RouteType;
     traffic?: string;
     avoids?: string[];
     travelMode?: string;
@@ -66,6 +81,9 @@ export type CalculateRoutePOSTDataAPI = {
     vehicleWeightInKilograms?: number;
     vehicleMaxSpeedInKilometersPerHour?: number;
     vehicleHeadingInDegrees?: number;
+    // V3 spells this "Electronic"; the V2 reachable-range endpoint spells it "Electric".
+    vehicleHasElectronicTollCollectionTransponder?: string;
+    arrivalSidePreference?: 'anySide' | 'curbSide';
     // LDEVR charging model (POST body for calculateLongDistanceEVRoute)
     chargingParameters?: ChargingParametersAPI;
     guidance?: 'none' | 'instructions';

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Route Stop Wait Playground</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Wait at the stop</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <p class="ui-instructions">
+                        The middle stop carries a <code>pauseDurationSeconds</code>. Change it to see the wait on the
+                        stop's pin, and inside the route's travel time.
+                    </p>
+                </div>
+
+                <div class="ui-section">
+                    <label class="ui-form-label" for="ui-waitSlider">Wait at the stop</label>
+                    <div class="ui-slider-container">
+                        <input id="ui-waitSlider" class="ui-slider" type="range" min="0" max="120" step="5" value="30">
+                        <span id="ui-waitValue" class="ui-slider-value">30 min</span>
+                    </div>
+                </div>
+
+                <div class="ui-section">
+                    <dl class="ui-summary" id="ui-summary"></dl>
+                    <p class="ui-status" id="ui-status" role="status"></p>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

@@ -5,7 +5,6 @@ const SOURCE_ID = 'connecting-line';
 const LAYER_ID = 'connecting-line-layer';
 
 export const initConnectingLine = (map: Map): void => {
-    // Add a source and layer for the connecting line
     map.addSource(SOURCE_ID, {
         type: 'geojson',
         data: {
@@ -32,10 +31,10 @@ export const initConnectingLine = (map: Map): void => {
     });
 };
 
-export const getConnectingLineSource = (map: Map): GeoJSONSource => map.getSource(SOURCE_ID) as GeoJSONSource;
+const connectingLineSource = (map: Map): GeoJSONSource => map.getSource(SOURCE_ID) as GeoJSONSource;
 
 export const updateConnectingLine = (map: Map, coordinates: Position[]): void => {
-    getConnectingLineSource(map).setData({
+    connectingLineSource(map).setData({
         type: 'Feature',
         geometry: {
             type: 'LineString',

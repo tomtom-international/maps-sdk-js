@@ -20,18 +20,21 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
             zoom: 10,
         },
     });
-    const places = await PlacesModule.get(map);
+    const places = await PlacesModule.create(map);
 
-    const fontSelectors: NodeListOf<HTMLInputElement> = document.querySelectorAll('.sdk-example-font-selector');
-    const contentSelectors: NodeListOf<HTMLInputElement> = document.querySelectorAll('.sdk-example-content-selector');
-    const labelColorPicker = document.getElementById('sdk-example-labelColorPicker') as HTMLInputElement;
+    const fontSelectors: NodeListOf<HTMLInputElement> = document.querySelectorAll('.ui-font-selector');
+    const contentSelectors: NodeListOf<HTMLInputElement> = document.querySelectorAll('.ui-content-selector');
+    const labelColorPicker = document.getElementById('ui-labelColorPicker') as HTMLInputElement;
 
-    const customIconsConfig: PlaceIconConfig = {
+    const cafeIcon =
+        '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="20"><rect width="30" height="20" fill="#4137ce"/></svg>';
+
+    const buildCustomIconsConfig = (offsetX = 0, offsetY = 0): PlaceIconConfig => ({
         categoryIcons: [
             { id: 'ELECTRIC_VEHICLE_STATION', image: tomtomLogo, pixelRatio: 1 },
-            { id: 'CAFE', image: 'https://dummyimage.com/30x20/4137ce/fff', pixelRatio: 1 },
+            { id: 'CAFE', image: cafeIcon, pixelRatio: 1, offsetX, offsetY },
         ],
-    };
+    });
 
     const multiLineLabel: DataDrivenPropertyValueSpecification<string> = [
         'format',
@@ -51,14 +54,14 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         await places.show(
             await search({
                 poiCategories: ['ELECTRIC_VEHICLE_STATION', 'CAFE_PUB'],
-                boundingBox: calculatePaddedBBox({ map, surroundingElements: ['.sdk-example-panel'] }) as BBox,
+                boundingBox: calculatePaddedBBox({ map, surroundingElements: ['.ui-panel'] }) as BBox,
                 limit: 100,
             }),
         );
     };
 
     const listenToUIEvents = () => {
-        const iconStyleSelector = document.getElementById('sdk-example-icon-style-selector') as HTMLSelectElement;
+        const iconStyleSelector = document.getElementById('ui-icon-style-selector') as HTMLSelectElement;
         labelColorPicker.addEventListener('input', () => {
             places.applyTextConfig({ ...places.getConfig()?.text, color: labelColorPicker.value });
         });
@@ -90,9 +93,27 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
             places.applyTheme((e.target as HTMLSelectElement).value as PlacesTheme);
         });
 
-        const customIconsToggle = document.getElementById('sdk-example-custom-icons-toggle') as HTMLInputElement;
-        customIconsToggle?.addEventListener('change', () => {
-            places.applyIconConfig(customIconsToggle.checked ? customIconsConfig : {});
+        const customIconsToggle = document.getElementById('ui-custom-icons-toggle') as HTMLInputElement;
+        const offsetXSlider = document.getElementById('ui-icon-offset-x') as HTMLInputElement;
+        const offsetXValue = document.getElementById('ui-icon-offset-x-value') as HTMLSpanElement;
+        const offsetYSlider = document.getElementById('ui-icon-offset-y') as HTMLInputElement;
+        const offsetYValue = document.getElementById('ui-icon-offset-y-value') as HTMLSpanElement;
+
+        const applyCustomIcons = () => {
+            const config = customIconsToggle.checked
+                ? buildCustomIconsConfig(Number(offsetXSlider.value), Number(offsetYSlider.value))
+                : {};
+            places.applyIconConfig(config);
+        };
+
+        customIconsToggle?.addEventListener('change', applyCustomIcons);
+        offsetXSlider?.addEventListener('input', () => {
+            offsetXValue.textContent = `${offsetXSlider.value}px`;
+            applyCustomIcons();
+        });
+        offsetYSlider?.addEventListener('input', () => {
+            offsetYValue.textContent = `${offsetYSlider.value}px`;
+            applyCustomIcons();
         });
     };
 

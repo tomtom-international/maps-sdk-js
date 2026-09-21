@@ -78,16 +78,17 @@ export type PlaceDisplayProps = {
      * The main layer binds `icon-image` to `['get', 'iconID']`, so the sprite
      * named here is what renders. The base map's POI-Micro-like layer inherits
      * the style's group-driven expression verbatim and ignores this value. The
-     * sprite name is resolved per theme: `pin` / `circle-icon` pick a built-in
-     * sprite; `base-map` picks the base map's `poi-<category>` sprite; a custom
-     * `PlaceIconConfig.categoryIcons` entry overrides the default for the main
-     * layer on any theme.
+     * sprite name is resolved per theme: `pin` picks a POI category image of the
+     * `pinCategories` sprite, so its ID carries that sprite's namespace;
+     * `circle-icon` and `base-map` pick the base map's `poi-<category>` image; a
+     * custom `PlaceIconConfig.categoryIcons` entry overrides the default for the
+     * main layer on any theme.
      *
      * @example
      * ```typescript
-     * iconID: '7315'              // pin theme sprite
-     * iconID: 'poi-restaurant'    // circle-icon / base-map theme sprite
-     * iconID: 'custom-marker-0'   // user-provided custom icon
+     * iconID: 'pinCategories:7315' // pin theme sprite
+     * iconID: 'poi-restaurant'     // circle-icon / base-map theme sprite
+     * iconID: 'custom-marker-0'    // user-provided custom icon
      * ```
      */
     iconID: string;

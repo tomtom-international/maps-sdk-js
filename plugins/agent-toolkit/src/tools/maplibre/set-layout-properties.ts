@@ -2,6 +2,7 @@
  * @module agent-toolkit-tools/maplibre
  */
 
+import type { AllLayoutProperties } from 'maplibre-gl';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
@@ -54,7 +55,12 @@ export const executeSetLayoutProperties = async (
     try {
         const results = changes.map(({ layerId, propertyName, value }) => {
             try {
-                state.baseMap.mapLibreMap.setLayoutProperty(layerId, propertyName, value);
+                const layoutProperty = propertyName as keyof AllLayoutProperties;
+                state.baseMap.mapLibreMap.setLayoutProperty(
+                    layerId,
+                    layoutProperty,
+                    value as AllLayoutProperties[typeof layoutProperty],
+                );
                 return { layerId, propertyName, value, success: true as const };
             } catch (error) {
                 return {

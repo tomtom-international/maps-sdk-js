@@ -5,21 +5,22 @@ import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
 import type { CalculateRouteParams } from '..';
 import { parseCalculateRouteResponse } from '../responseParser';
 import { parseRoutingResponseError } from '../routingResponseErrorParser';
-import type { CalculateRouteResponseAPI } from '../types/apiResponseTypes';
+import type { CalculateRouteResponseAPI, ChargingStopAPI } from '../types/apiResponseTypes';
 import { apiAndParsedResponses } from './responseParser.data';
 import { errorResponses } from './responseParserError.data';
 import { longApiResponse } from './responseParserPerf.data';
 
 describe('Calculate Route response parsing functional tests', () => {
     // Functional tests:
-    test.each(
-        apiAndParsedResponses,
-    )("'%s'", (_name: string, apiResponse: CalculateRouteResponseAPI, params: CalculateRouteParams, expectedResponse: Routes) => {
-        // (We use JSON.stringify because of the relation between JSON inputs and Date objects)
-        // (We reparse the objects to compare them ignoring the order of properties)
-        const actual = parseCalculateRouteResponse(apiResponse, params);
-        expect(actual).toMatchObject(expectedResponse);
-    });
+    test.each(apiAndParsedResponses)(
+        "'%s'",
+        (_name: string, apiResponse: CalculateRouteResponseAPI, params: CalculateRouteParams, expectedResponse: Routes) => {
+            // (We use JSON.stringify because of the relation between JSON inputs and Date objects)
+            // (We reparse the objects to compare them ignoring the order of properties)
+            const actual = parseCalculateRouteResponse(apiResponse, params);
+            expect(actual).toMatchObject(expectedResponse);
+        },
+    );
 });
 
 describe('Calculate Route response parsing performance tests', () => {
@@ -126,7 +127,7 @@ describe('sectionTypes client-side filtering', () => {
         expect(sections).not.toHaveProperty('tunnel');
     });
 
-    test('returns only leg when sectionTypes requests a type V3 never returns (e.g. lanes)', () => {
+    test('returns only leg when sectionTypes requests a type the API never returns (e.g. lanes)', () => {
         const result = parseCalculateRouteResponse(API_RESPONSE_WITH_SECTIONS, {
             ...BASE_PARAMS,
             sectionTypes: ['lanes'],
@@ -188,7 +189,7 @@ describe('sectionTypes client-side filtering', () => {
     });
 });
 
-describe('V3 → SDK guidance/section conversions', () => {
+describe('wire → SDK guidance/section conversions', () => {
     const SUMMARY = {
         lengthInMeters: 100,
         travelDurationInSeconds: 10,
@@ -255,7 +256,7 @@ describe('V3 → SDK guidance/section conversions', () => {
                         landmark: 'atTrafficLight',
                         distanceToPreviousTrafficLightInMeters: 12,
                         ambiguousExitOffsetFromManeuverInMeters: 34,
-                        tollgateName: { text: 'Gate', phonetic: { ipa: 'geɪt' }, phoneticLanguageCode: 'en' },
+                        tollgateName: { text: 'Gate', phonetic: 'geɪt', phoneticLanguageCode: 'en' },
                         tollPaymentTypes: ['cashCoinsAndBills', 'etcTransponder'],
                         countryCrossingFromName: { text: 'Spain' },
                         countryCrossingFromCodeIso2: 'ES',
@@ -273,7 +274,7 @@ describe('V3 → SDK guidance/section conversions', () => {
                                 {
                                     identifier: {
                                         text: 'Main St',
-                                        phonetic: { lhp: 'meɪn' },
+                                        phonetic: 'meɪn',
                                         phoneticLanguageCode: 'en',
                                     },
                                 },
@@ -356,5 +357,143 @@ describe('V3 → SDK guidance/section conversions', () => {
                 properties: ['IS_MANEUVER'],
             }),
         ]);
+    });
+});
+
+describe('leg stop time', () => {
+    // A stop only shows up as the gap between arriving on one leg and departing on the next, so
+    // every case here is about a pair of legs.
+    const buildLeg = (
+        departure: string,
+        arrival: string,
+        chargingTimeInSeconds?: number,
+    ): CalculateRouteResponseAPI['routes'][number]['legs'][number] => ({
+        summary: {
+            lengthInMeters: 1000,
+            travelDurationInSeconds: 600,
+            trafficDelayDurationInSeconds: 0,
+            trafficLengthInMeters: 0,
+            departureDateTime: departure,
+            arrivalDateTime: arrival,
+            // Only the charging time and the park location matter here, so the fixture stops there
+            // rather than filling in the whole of `ChargingStopAPI`.
+            ...(chargingTimeInSeconds && {
+                chargingInformationAtEndOfLeg: {
+                    chargingTimeInSeconds,
+                    chargingParkId: 'park-1',
+                    chargingParkLocation: { coordinate: { longitude: 1, latitude: 2 } },
+                } as ChargingStopAPI,
+            }),
+        },
+        path: {
+            type: 'LineString' as const,
+            coordinates: [
+                [0, 0],
+                [1, 1],
+            ],
+        },
+    });
+
+    const parseLegs = (legs: CalculateRouteResponseAPI['routes'][number]['legs']) =>
+        parseCalculateRouteResponse(
+            { routes: [{ summary: legs[0].summary, legs }] },
+            {
+                apiKey: 'KEY',
+                locations: [[0, 0]],
+            },
+        ).features[0].properties.sections.leg;
+
+    test('the gap between arriving and departing again is the time spent at that stop', () => {
+        const legs = parseLegs([
+            buildLeg('2024-01-01T10:00:00+00:00', '2024-01-01T10:10:00+00:00'),
+            buildLeg('2024-01-01T10:40:00+00:00', '2024-01-01T10:50:00+00:00'),
+        ]);
+
+        expect(legs[0].summary.stopTimeInSeconds).toBe(30 * 60);
+        // The last leg has no following departure, and the API rejects a wait at the destination.
+        expect(legs[1].summary.stopTimeInSeconds).toBeUndefined();
+    });
+
+    test('no gap means no stop, rather than a zero', () => {
+        const legs = parseLegs([
+            buildLeg('2024-01-01T10:00:00+00:00', '2024-01-01T10:10:00+00:00'),
+            buildLeg('2024-01-01T10:10:00+00:00', '2024-01-01T10:20:00+00:00'),
+        ]);
+
+        expect(legs[0].summary.stopTimeInSeconds).toBeUndefined();
+    });
+
+    test('charging counts as time at the stop, and stays separately available', () => {
+        // Probed on a live LDEVR route: at a charging stop the gap equals `chargingTimeInSeconds`
+        // exactly, so the whole stop is charging and nothing is left over as waiting.
+        const legs = parseLegs([
+            buildLeg('2024-01-01T10:00:00+00:00', '2024-01-01T10:10:00+00:00', 20 * 60),
+            buildLeg('2024-01-01T10:30:00+00:00', '2024-01-01T10:40:00+00:00'),
+        ]);
+
+        expect(legs[0].summary.stopTimeInSeconds).toBe(20 * 60);
+        // The parsed charging stop is a Feature, so its own timing sits under `properties`.
+        expect(legs[0].summary.chargingInformationAtEndOfLeg?.properties.chargingTimeInSeconds).toBe(20 * 60);
+    });
+
+    test('a stop that both waits and charges reports the whole time, with charging breaking it down', () => {
+        const legs = parseLegs([
+            buildLeg('2024-01-01T10:00:00+00:00', '2024-01-01T10:10:00+00:00', 20 * 60),
+            buildLeg('2024-01-01T10:40:00+00:00', '2024-01-01T10:50:00+00:00'),
+        ]);
+
+        // 30 minutes at the stop, 20 of them charging — so 10 minutes of waiting.
+        expect(legs[0].summary.stopTimeInSeconds).toBe(30 * 60);
+        expect(legs[0].summary.chargingInformationAtEndOfLeg?.properties.chargingTimeInSeconds).toBe(20 * 60);
+    });
+});
+
+describe('leg original waypoint index', () => {
+    // `legs[i]` is not reliably the leg arriving at `locations[i + 1]`, so the index the service
+    // reports is the only reliable way back to the stop the caller passed.
+    const buildLeg = (
+        originalWaypointIndexAtEndOfLeg?: number,
+    ): CalculateRouteResponseAPI['routes'][number]['legs'][number] => ({
+        summary: {
+            lengthInMeters: 1000,
+            travelDurationInSeconds: 600,
+            departureDateTime: '2024-01-01T10:00:00+00:00',
+            arrivalDateTime: '2024-01-01T10:10:00+00:00',
+            ...(originalWaypointIndexAtEndOfLeg !== undefined && { originalWaypointIndexAtEndOfLeg }),
+        },
+        path: {
+            type: 'LineString' as const,
+            coordinates: [
+                [0, 0],
+                [1, 1],
+            ],
+        },
+    });
+
+    const parseLegs = (legs: CalculateRouteResponseAPI['routes'][number]['legs']) =>
+        parseCalculateRouteResponse(
+            { routes: [{ summary: legs[0].summary, legs }] },
+            { apiKey: 'KEY', locations: [[0, 0]] },
+        ).features[0].properties.sections.leg;
+
+    test('a leg reports which requested waypoint it ends at', () => {
+        const legs = parseLegs([buildLeg(1), buildLeg(2)]);
+
+        expect(legs[0].originalWaypointIndex).toBe(1);
+        expect(legs[1].originalWaypointIndex).toBe(2);
+    });
+
+    test('index 0 survives, rather than being dropped as falsy', () => {
+        const legs = parseLegs([buildLeg(0)]);
+
+        expect(legs[0].originalWaypointIndex).toBe(0);
+    });
+
+    test('a leg the caller did not ask for carries no index', () => {
+        // An inserted charging stop, or the final leg, where the service sends nothing.
+        const legs = parseLegs([buildLeg(), buildLeg(3)]);
+
+        expect(legs[0].originalWaypointIndex).toBeUndefined();
+        expect(legs[1].originalWaypointIndex).toBe(3);
     });
 });

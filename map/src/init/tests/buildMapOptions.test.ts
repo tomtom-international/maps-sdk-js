@@ -6,13 +6,14 @@ import type { TomTomMapParams } from '../types/mapInit';
 import sdkAndRendererInitParams from './buildMapOptions.data';
 
 describe('Renderer init params tests', () => {
-    test.each(
-        sdkAndRendererInitParams,
-    )(`'%s`, (_name: string, tomtomMapParams: TomTomMapParams, rendererOptions: MapOptions) => {
-        const mergedOptions = mergeFromGlobal(tomtomMapParams);
-        expect(buildMapOptions(mergedOptions)).toEqual({
-            ...rendererOptions,
-            transformRequest: expect.any(Function),
-        });
-    });
+    test.each(sdkAndRendererInitParams)(
+        `'%s`,
+        (_name: string, tomtomMapParams: TomTomMapParams, rendererOptions: MapOptions) => {
+            const mergedOptions = mergeFromGlobal(tomtomMapParams);
+            expect(buildMapOptions(mergedOptions)).toEqual({
+                ...rendererOptions,
+                transformRequest: expect.any(Function),
+            });
+        },
+    );
 });

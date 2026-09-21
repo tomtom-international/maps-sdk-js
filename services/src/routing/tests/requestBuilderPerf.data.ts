@@ -13,9 +13,7 @@ export const routeRequestParams: CalculateRouteParams = {
                 type: 'Point',
                 coordinates: [10.874140452495482, 52.378404663191446],
             },
-            properties: {
-                radiusMeters: 10391,
-            },
+            properties: {},
         },
         [10.277207424270273, 52.414625638793154],
         [9.427315041133511, 52.29791537992651],
@@ -97,9 +95,7 @@ export const shortRouteRequestParams: CalculateRouteParams = {
                 type: 'Point',
                 coordinates: [4.70512, 51.82878],
             },
-            properties: {
-                radiusMeters: 20,
-            },
+            properties: {},
         },
         [3.72227, 51.05382],
     ],

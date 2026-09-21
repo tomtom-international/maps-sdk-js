@@ -17,7 +17,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         },
     });
 
-    const places = await PlacesModule.get(map);
+    const places = await PlacesModule.create(map);
     places.events.on('click', () => alert('pin clicked'));
 
     places.show(await reverseGeocode({ position }));

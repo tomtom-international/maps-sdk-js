@@ -7,236 +7,233 @@ h4,
 h5,
 h6 {
     margin: 0;
-    font-family: var(--sdk-font-primary);
-    font-weight: var(--sdk-font-weight-bold);
-    color: var(--sdk-text-high);
+    font-family: var(--ui-font-gilroy);
+    font-weight: var(--ui-font-weight-bold);
+    color: var(--ui-text-high-em);
 }
 
 h1 {
-    font-size: var(--sdk-font-title);
-    line-height: var(--sdk-font-title-lh);
+    font-size: var(--ui-font-title-1);
+    line-height: var(--ui-font-title-1-lh);
 }
 h2 {
-    font-size: var(--sdk-font-heading);
-    line-height: var(--sdk-font-heading-lh);
+    font-size: var(--ui-font-title-2);
+    line-height: var(--ui-font-title-2-lh);
 }
 h3 {
-    font-size: var(--sdk-font-body-l);
-    line-height: var(--sdk-font-body-l-lh);
+    font-size: var(--ui-font-title-3);
+    line-height: var(--ui-font-title-3-lh);
 }
 h4 {
-    font-size: var(--sdk-font-subheading);
-    line-height: var(--sdk-font-subheading-lh);
+    font-size: var(--ui-font-title-4);
+    line-height: var(--ui-font-title-4-lh);
 }
-h5 {
-    font-size: var(--sdk-font-body-m);
-    line-height: var(--sdk-font-body-m-lh);
-}
+h5,
 h6 {
-    font-size: var(--sdk-font-body-s);
-    line-height: var(--sdk-font-body-s-lh);
+    font-size: var(--ui-font-title-5);
+    line-height: var(--ui-font-title-5-lh);
 }
 
-.sdk-example-heading {
-    margin: 0 0 var(--sdk-space-4);
-    font-family: var(--sdk-font-primary);
-    font-size: var(--sdk-font-title);
-    line-height: var(--sdk-font-title-lh);
-    font-weight: var(--sdk-font-weight-bold);
-    color: var(--sdk-text-high);
-    border-bottom: 2px solid var(--sdk-primary-color);
-    padding-bottom: var(--sdk-space-2);
+.ui-heading {
+    margin: 0 0 var(--ui-space-4);
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-title-1);
+    line-height: var(--ui-font-title-1-lh);
+    font-weight: var(--ui-font-weight-bold);
+    color: var(--ui-text-high-em);
+    border-bottom: 2px solid var(--ui-surface-brand-red);
+    padding-bottom: var(--ui-space-2);
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-.sdk-example-heading-text {
+.ui-heading-text {
     flex: 1;
 }
 
-.sdk-example-heading-toggle {
+.ui-heading-toggle {
     background: none;
     border: none;
-    padding: var(--sdk-space-1);
+    padding: var(--ui-space-1);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-left: var(--sdk-space-2);
-    border-radius: var(--sdk-radius-5);
+    margin-left: var(--ui-space-2);
+    border-radius: var(--ui-rounded-5);
     flex-shrink: 0;
-    transition: background var(--sdk-transition-fast);
+    transition: background var(--ui-transition-fast);
 }
 
-.sdk-example-heading-toggle:hover {
-    background: var(--sdk-surface-1);
+.ui-heading-toggle:hover {
+    background: var(--ui-surface-1);
 }
 
-.sdk-example-heading-toggle:focus-visible {
-    outline: 2px solid var(--sdk-color-info);
+.ui-heading-toggle:focus-visible {
+    outline: 2px solid var(--ui-surface-info);
     outline-offset: 2px;
 }
 
-.sdk-example-heading-chevron {
+.ui-heading-chevron {
     width: 16px;
     height: 16px;
     fill: none;
-    stroke: var(--sdk-text-high);
+    stroke: var(--ui-text-high-em);
     stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
-    transition: transform var(--sdk-transition-normal);
+    transition: transform var(--ui-transition-normal);
 }
 
-.sdk-example-heading-toggle[aria-expanded="false"] .sdk-example-heading-chevron {
+.ui-heading-toggle[aria-expanded="false"] .ui-heading-chevron {
     transform: rotate(-180deg);
 }
 
-.sdk-example-subheading {
-    margin: 0 0 var(--sdk-space-3);
-    font-family: var(--sdk-font-primary);
-    font-size: var(--sdk-font-subheading);
-    line-height: var(--sdk-font-subheading-lh);
-    font-weight: var(--sdk-font-weight-bold);
-    color: var(--sdk-text-medium);
+.ui-subheading {
+    margin: 0 0 var(--ui-space-3);
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-title-3);
+    line-height: var(--ui-font-title-3-lh);
+    font-weight: var(--ui-font-weight-bold);
+    color: var(--ui-text-med-em);
 }
 
-.sdk-example-text {
-    margin: 0 0 var(--sdk-space-3);
-    font-family: var(--sdk-font-primary);
-    font-size: var(--sdk-font-body-m);
-    line-height: var(--sdk-font-body-m-lh);
-    color: var(--sdk-text-high);
+.ui-text {
+    margin: 0 0 var(--ui-space-3);
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-m);
+    line-height: var(--ui-font-body-m-lh);
+    color: var(--ui-text-high-em);
 }
 
-.sdk-example-label {
+.ui-label {
     display: block;
-    margin-bottom: var(--sdk-label-margin);
-    font-family: var(--sdk-font-primary);
-    font-size: var(--sdk-font-body-s);
-    line-height: var(--sdk-font-body-s-lh);
-    color: var(--sdk-text-medium);
+    margin-bottom: var(--ui-label-margin);
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-s);
+    line-height: var(--ui-font-body-s-lh);
+    color: var(--ui-text-med-em);
 }
 
-.sdk-example-form-label {
+.ui-form-label {
     display: block;
-    margin-bottom: var(--sdk-label-margin);
-    font-family: var(--sdk-font-primary);
-    font-size: var(--sdk-font-caption-m);
-    line-height: var(--sdk-font-caption-m-lh);
-    font-weight: var(--sdk-font-weight-bold);
-    color: var(--sdk-text-medium);
+    margin-bottom: var(--ui-label-margin);
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-caption-m);
+    line-height: var(--ui-font-caption-m-lh);
+    font-weight: var(--ui-font-weight-bold);
+    color: var(--ui-text-med-em);
 }
 
-.sdk-example-value {
-    font-family: var(--sdk-font-primary);
-    font-size: var(--sdk-font-body-s);
-    line-height: var(--sdk-font-body-s-lh);
-    font-weight: var(--sdk-font-weight-bold);
-    color: var(--sdk-primary-color);
+.ui-value {
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-s);
+    line-height: var(--ui-font-body-s-lh);
+    font-weight: var(--ui-font-weight-bold);
+    color: var(--ui-surface-brand-red);
 }
 
-.sdk-example-note {
-    margin: var(--sdk-space-2) 0 0;
-    font-family: var(--sdk-font-primary);
-    font-size: var(--sdk-font-caption-m);
-    line-height: var(--sdk-font-caption-m-lh);
-    color: var(--sdk-text-low);
+.ui-note {
+    margin: var(--ui-space-2) 0 0;
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-caption-m);
+    line-height: var(--ui-font-caption-m-lh);
+    color: var(--ui-text-low-em);
 }
 
-.sdk-example-note code {
-    font-family: var(--sdk-font-code);
-    font-size: var(--sdk-font-caption-s);
+.ui-note code {
+    font-family: var(--ui-font-fira);
+    font-size: var(--ui-font-caption-s);
 }
 
 /* Responsive: max-width 768px */
 @media (max-width: 768px) {
     h1 {
-        font-size: var(--sdk-font-heading);
-        line-height: var(--sdk-font-heading-lh);
+        font-size: var(--ui-font-title-2);
+        line-height: var(--ui-font-title-2-lh);
     }
     h2 {
-        font-size: var(--sdk-font-body-l);
-        line-height: var(--sdk-font-body-l-lh);
+        font-size: var(--ui-font-title-3);
+        line-height: var(--ui-font-title-3-lh);
     }
     h3 {
-        font-size: var(--sdk-font-subheading);
-        line-height: var(--sdk-font-subheading-lh);
+        font-size: var(--ui-font-title-4);
+        line-height: var(--ui-font-title-4-lh);
     }
-    .sdk-example-heading {
-        font-size: var(--sdk-font-heading);
-        line-height: var(--sdk-font-heading-lh);
+    .ui-heading {
+        font-size: var(--ui-font-title-2);
+        line-height: var(--ui-font-title-2-lh);
     }
 }
 
 /* Responsive: max-width 600px */
 @media (max-width: 600px) {
     h1 {
-        font-size: var(--sdk-font-body-l);
-        line-height: var(--sdk-font-body-l-lh);
+        font-size: var(--ui-font-title-3);
+        line-height: var(--ui-font-title-3-lh);
     }
     h2 {
-        font-size: var(--sdk-font-subheading);
-        line-height: var(--sdk-font-subheading-lh);
+        font-size: var(--ui-font-title-4);
+        line-height: var(--ui-font-title-4-lh);
     }
     h3 {
-        font-size: var(--sdk-font-body-s);
-        line-height: var(--sdk-font-body-s-lh);
+        font-size: var(--ui-font-title-5);
+        line-height: var(--ui-font-title-5-lh);
     }
-    .sdk-example-heading {
-        font-size: var(--sdk-font-body-l);
-        line-height: var(--sdk-font-body-l-lh);
+    .ui-heading {
+        font-size: var(--ui-font-title-3);
+        line-height: var(--ui-font-title-3-lh);
     }
-    .sdk-example-form-label {
-        font-size: var(--sdk-font-caption-s);
-        line-height: var(--sdk-font-caption-s-lh);
+    .ui-form-label {
+        font-size: var(--ui-font-caption-s);
+        line-height: var(--ui-font-caption-s-lh);
     }
 }
 
 /* Responsive: max-height 700px */
 @media (max-height: 700px) {
     h1 {
-        font-size: var(--sdk-font-heading);
-        line-height: var(--sdk-font-heading-lh);
+        font-size: var(--ui-font-title-2);
+        line-height: var(--ui-font-title-2-lh);
     }
     h2 {
-        font-size: var(--sdk-font-body-l);
-        line-height: var(--sdk-font-body-l-lh);
+        font-size: var(--ui-font-title-3);
+        line-height: var(--ui-font-title-3-lh);
     }
     h3 {
-        font-size: var(--sdk-font-subheading);
-        line-height: var(--sdk-font-subheading-lh);
+        font-size: var(--ui-font-title-4);
+        line-height: var(--ui-font-title-4-lh);
     }
-    .sdk-example-heading {
-        font-size: var(--sdk-font-heading);
-        line-height: var(--sdk-font-heading-lh);
+    .ui-heading {
+        font-size: var(--ui-font-title-2);
+        line-height: var(--ui-font-title-2-lh);
     }
 }
 
 /* Responsive: max-height 550px */
 @media (max-height: 550px) {
     h1 {
-        font-size: var(--sdk-font-body-l);
-        line-height: var(--sdk-font-body-l-lh);
+        font-size: var(--ui-font-title-3);
+        line-height: var(--ui-font-title-3-lh);
     }
     h2 {
-        font-size: var(--sdk-font-subheading);
-        line-height: var(--sdk-font-subheading-lh);
+        font-size: var(--ui-font-title-4);
+        line-height: var(--ui-font-title-4-lh);
     }
     h3 {
-        font-size: var(--sdk-font-body-s);
-        line-height: var(--sdk-font-body-s-lh);
+        font-size: var(--ui-font-title-5);
+        line-height: var(--ui-font-title-5-lh);
     }
-    .sdk-example-heading {
-        font-size: var(--sdk-font-body-l);
-        line-height: var(--sdk-font-body-l-lh);
+    .ui-heading {
+        font-size: var(--ui-font-title-3);
+        line-height: var(--ui-font-title-3-lh);
     }
 }
 
 /* UTILITIES */
 
-.sdk-example-sr-only {
+.ui-sr-only {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -248,7 +245,7 @@ h6 {
     border-width: 0;
 }
 
-.sdk-example-visually-hidden {
+.ui-visually-hidden {
     position: absolute;
     left: -10000px;
     top: auto;
@@ -257,36 +254,36 @@ h6 {
     overflow: hidden;
 }
 
-.sdk-example-section {
-    margin-bottom: var(--sdk-space-5);
-    padding-bottom: var(--sdk-space-4);
-    border-bottom: 1px solid var(--sdk-border-low);
+.ui-section {
+    margin-bottom: var(--ui-space-5);
+    padding-bottom: var(--ui-space-4);
+    border-bottom: 1px solid var(--ui-border-low-em);
 }
 
-.sdk-example-section:last-child {
+.ui-section:last-child {
     border-bottom: none;
     margin-bottom: 0;
 }
 
-.sdk-example-scrollable {
+.ui-scrollable {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
 }
 
-.sdk-example-scrollable::-webkit-scrollbar {
+.ui-scrollable::-webkit-scrollbar {
     width: 8px;
 }
 
-.sdk-example-scrollable::-webkit-scrollbar-track {
-    background: var(--sdk-surface-1);
-    border-radius: var(--sdk-radius-5);
+.ui-scrollable::-webkit-scrollbar-track {
+    background: var(--ui-surface-1);
+    border-radius: var(--ui-rounded-5);
 }
 
-.sdk-example-scrollable::-webkit-scrollbar-thumb {
-    background: var(--sdk-border-medium);
-    border-radius: var(--sdk-radius-5);
+.ui-scrollable::-webkit-scrollbar-thumb {
+    background: var(--ui-border-med-em);
+    border-radius: var(--ui-rounded-5);
 }
 
-.sdk-example-scrollable::-webkit-scrollbar-thumb:hover {
-    background: var(--sdk-border-high);
+.ui-scrollable::-webkit-scrollbar-thumb:hover {
+    background: var(--ui-border-high-em);
 }

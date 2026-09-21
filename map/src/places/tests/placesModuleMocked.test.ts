@@ -1,8 +1,9 @@
 import { Place, Places } from '@tomtom-org/maps-sdk/core';
 import type { GeoJSONSource, Map } from 'maplibre-gl';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { CombinedEvents } from '../../shared';
+import { CombinedEvents, UserEvents } from '../../shared';
 import type { TomTomMap } from '../../TomTomMap';
+import type { PlacesShownFeatures } from '../PlacesModule';
 import { PlacesModule } from '../PlacesModule';
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
@@ -45,7 +46,7 @@ describe('GeoJSON Places module tests', () => {
             type: 'FeatureCollection',
             features: [{ properties: { address: { freeformAddress: 'TEST_ADDRESS' } } }],
         } as Places;
-        const places = await PlacesModule.get(tomtomMapMock, {
+        const places = await PlacesModule.create(tomtomMapMock, {
             theme: 'circle-icon',
             text: {
                 color: 'green',
@@ -81,13 +82,39 @@ describe('GeoJSON Places module tests', () => {
         expect(places.events).toBeInstanceOf(CombinedEvents);
     });
 
+    // Two show operations, one event stream that says which ran. `showConnections` used to emit
+    // nothing at all, so a caller had no way to observe it. See LSI-159.
+    test('shown-features reports which of the two show operations ran', async () => {
+        const places = await PlacesModule.create(tomtomMapMock);
+        const shown: PlacesShownFeatures[] = [];
+        places.events.on('shown-features', (features) => shown.push(features));
+
+        const testPlaces = { type: 'FeatureCollection', features: [] } as unknown as Places;
+        await places.show(testPlaces);
+        await places.showConnections([]);
+
+        expect(shown).toEqual([{ places: testPlaces }, { connections: [] }]);
+    });
+
+    // A named scope narrows neither the module's config nor its `show`, so it carries user events
+    // only — no `config-change` subscription that would just duplicate the module's.
+    test('named scopes are user events, with no lifecycle half', async () => {
+        const places = await PlacesModule.create(tomtomMapMock);
+
+        for (const scope of [places.events.places, places.events.connections]) {
+            expect(scope).toBeInstanceOf(UserEvents);
+            expect(scope).not.toBeInstanceOf(CombinedEvents);
+            expect(typeof scope.where).toBe('function');
+        }
+    });
+
     test('restoreDataAndConfigImpl keeps source and layer IDs stable across a style change', async () => {
         const testPlaces = {
             type: 'FeatureCollection',
             features: [{ properties: { address: { freeformAddress: 'TEST_ADDRESS' } } }],
         } as Places;
 
-        const places = await PlacesModule.get(tomtomMapMock, { theme: 'circle-icon' });
+        const places = await PlacesModule.create(tomtomMapMock, { theme: 'circle-icon' });
         places.show(testPlaces);
 
         const before = structuredClone(places.sourceAndLayerIDs);

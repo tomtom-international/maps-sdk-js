@@ -1,11 +1,14 @@
 import type { Feature } from 'geojson';
 import type { LngLat, Map, MapGeoJSONFeature, MapMouseEvent, Point2D, PointLike } from 'maplibre-gl';
 import type { MapEventsConfig } from '../init';
-import { AbstractEventProxy } from './AbstractEventProxy';
+import { AbstractEventProxy, type HandlerEntry } from './AbstractEventProxy';
 import { dedupeRenderedFeatures, detectHoverState, scopeToSource, updateEventState } from './eventUtils';
 import { renderedRefId } from './featureId';
 import { GeoJSONSourceWithLayers } from './SourceWithLayers';
 import type { ClickEventType, EventHandlerConfig, SourceWithLayers } from './types';
+
+// Shared empty result, so the fallbacks on the pointer path never allocate.
+const noRenderedFeatures: MapGeoJSONFeature[] = [];
 
 // Default values for events
 const eventsProxyDefaultConfig: Required<MapEventsConfig> = {
@@ -43,6 +46,9 @@ export class EventsProxy extends AbstractEventProxy {
     private lastClickedFeature?: MapGeoJSONFeature;
     private lastClickedSourceWithLayers?: SourceWithLayers;
     private lastCursorStyle: string;
+    // Newest un-handled mouse move, and whether a frame is already booked to handle it.
+    private pendingMouseMove?: MapMouseEvent;
+    private mouseMoveFrameRequested = false;
     // Configuration
     private readonly config: Required<MapEventsConfig>;
 
@@ -72,6 +78,9 @@ export class EventsProxy extends AbstractEventProxy {
         this.enabled = enabled;
         if (!enabled) {
             this.clearLongHoverTimeout();
+            // Drop any move already queued for the next frame, so disabling takes effect now
+            // rather than one frame late.
+            this.pendingMouseMove = undefined;
         }
     }
 
@@ -100,12 +109,36 @@ export class EventsProxy extends AbstractEventProxy {
      * tiles, unregistered sources — the MapLibre-rendered feature passes through (`MapGeoJSONFeature
      * extends Feature`).
      */
-    private toCallerFeatures(rendered: MapGeoJSONFeature[], firingSource: string | undefined): Feature[] {
-        const scoped = dedupeRenderedFeatures(scopeToSource(rendered, firingSource));
-        const sourceWithLayers = this.sourceWithLayersFor(firingSource);
+    private toCallerFeatures(
+        rendered: MapGeoJSONFeature[],
+        firingFeature: MapGeoJSONFeature | undefined,
+        scopedLayerIDs?: Set<string>,
+    ): Feature[] {
+        const inScope = scopedLayerIDs ? rendered.filter((feature) => scopedLayerIDs.has(feature.layer.id)) : rendered;
+        const scoped = dedupeRenderedFeatures(scopeToSource(inScope, firingFeature?.source));
+        const sourceWithLayers = this.sourceWithLayersFor(firingFeature?.layer.id);
         return sourceWithLayers instanceof GeoJSONSourceWithLayers
             ? scoped.map((feature) => sourceWithLayers.findById(renderedRefId(feature))?.feature ?? feature)
             : scoped;
+    }
+
+    // The features a given handler should see. A layer-scoped handler gets its own narrowed array;
+    // everyone else shares the one computed for the source, so the common path costs nothing.
+    //
+    // A scope is resolved to concrete layer IDs once, against the style's own specs, and those IDs
+    // are what narrowing uses. The scope's predicate is not an option here: it matches on
+    // `metadata.group`, which the style carries but a feature from `queryRenderedFeatures` does
+    // not.
+    //
+    // Feature predicates are not applied here either — UserEvents applies those, because it also
+    // has to promote the first surviving feature to the primary argument.
+    private callerFeaturesFor(
+        handler: HandlerEntry,
+        rendered: MapGeoJSONFeature[],
+        firingFeature: MapGeoJSONFeature | undefined,
+        shared: Feature[],
+    ): Feature[] {
+        return handler.scope?.layerFilter ? this.toCallerFeatures(rendered, firingFeature, handler.layerIDs) : shared;
     }
 
     private getRenderedFeatures(point: Point2D): MapGeoJSONFeature[] {
@@ -146,16 +179,15 @@ export class EventsProxy extends AbstractEventProxy {
         if (this.hoveringSourceWithLayers) {
             updateEventState('long-hover', this.hoveringFeature, undefined, this.hoveringSourceWithLayers, undefined);
 
-            const longHoverHandlers = this.findHandlers(
-                ['long-hover'],
-                this.hoveringFeature?.source,
-                this.hoveringFeature?.layer.id,
-            );
+            const longHoverHandlers = this.findHandlers(['long-hover'], this.hoveringFeature?.layer.id);
 
             // Only build `allEventFeatures` when a handler will read it (see onMouseMove).
             if (longHoverHandlers.length) {
-                const callerFeatures = this.toCallerFeatures(this.hoveringFeatures ?? [], this.hoveringFeature?.source);
+                const rendered = this.hoveringFeatures ?? noRenderedFeatures;
+                const firing = this.hoveringFeature;
+                const shared = this.toCallerFeatures(rendered, firing);
                 for (const handler of longHoverHandlers) {
+                    const callerFeatures = this.callerFeaturesFor(handler, rendered, firing, shared);
                     handler.fn(
                         callerFeatures[0],
                         this.hoveringLngLat as LngLat,
@@ -187,7 +219,32 @@ export class EventsProxy extends AbstractEventProxy {
         this.mapCanvas.style.cursor = this.lastCursorStyle;
     }
 
+    /**
+     * Mouse movement arrives far more often than the browser paints, and each pass runs a
+     * `queryRenderedFeatures` — by a wide margin the most expensive thing this proxy does. Only
+     * the newest position matters by the time anything is drawn, so moves are coalesced into one
+     * pass per animation frame and the intermediate ones are dropped.
+     *
+     * Hover semantics are unaffected: `detectHoverState` compares against the previously handled
+     * position, so a coalesced move is indistinguishable from the pointer having travelled
+     * straight there.
+     */
     private onMouseMove(ev: MapMouseEvent) {
+        this.pendingMouseMove = ev;
+        if (this.mouseMoveFrameRequested) return;
+
+        this.mouseMoveFrameRequested = true;
+        requestAnimationFrame(() => {
+            this.mouseMoveFrameRequested = false;
+            const latestMove = this.pendingMouseMove;
+            this.pendingMouseMove = undefined;
+            if (latestMove) {
+                this.handleMouseMove(latestMove);
+            }
+        });
+    }
+
+    private handleMouseMove(ev: MapMouseEvent) {
         if (!this.isEnabled()) {
             // We ensure no unwanted hover handling while disabled or the map moves
             return;
@@ -199,7 +256,7 @@ export class EventsProxy extends AbstractEventProxy {
         // Check if the layer has any handlers registered.
         // Since hover is the "lowest" event type, having a handler for any event type justifies supporting hover state.
         // However, we'll only fire the hover events if there are handlers for hover specifically.
-        if (hoveredTopFeature && !this.hasSourceID(hoveredTopFeature.source)) {
+        if (hoveredTopFeature && !this.hasHandlerForLayer(hoveredTopFeature.layer.id)) {
             return;
         }
 
@@ -211,74 +268,103 @@ export class EventsProxy extends AbstractEventProxy {
             this.hoveringPoint,
             this.hoveringFeature,
         );
+        if (!hoverChanged && !mouseInMotionOverHoveredFeature) return;
 
-        if (hoverChanged || mouseInMotionOverHoveredFeature) {
-            this.hoveringLngLat = ev.lngLat;
-            this.hoveringPoint = ev.point;
-            const prevHoveredFeature = this.hoveringFeature;
-            this.hoveringFeature = hoveredTopFeature;
-            const prevHoveredSourceWithLayers = this.hoveringSourceWithLayers;
+        const prevHoveredFeature = this.hoveringFeature;
+        const prevHoveredSourceWithLayers = this.hoveringSourceWithLayers;
+        this.hoveringLngLat = ev.lngLat;
+        this.hoveringPoint = ev.point;
+        this.hoveringFeature = hoveredTopFeature;
+        this.hoveringSourceWithLayers = this.sourceWithLayersFor(hoveredTopFeature?.layer.id);
 
-            // Hovering basic event states are still processed if any other handlers are registered for that source/layers.
-            // We do so because basic hovering states indicate a feature is interactive.
-            // (e.g. if there's a click handler, we'll still apply basic hover states, even if we don't fire hover events)
-            const firstHandler = this.findHandlers(
-                ['hover', 'hover-move', 'long-hover', 'click', 'contextmenu'],
-                hoveredTopFeature?.source,
-                hoveredTopFeature?.layer.id,
-            )?.[0];
+        // Resolved lazily by the `hover` branch so it picks up the marker-added spread that
+        // `updateEventState` writes back to `shownFeatures` (matches the click path's dispatch
+        // order), then reused by `hover-move` rather than recomputed.
+        let callerFeatures: Feature[] | undefined;
 
-            this.hoveringSourceWithLayers = this.sourceWithLayersFor(hoveredTopFeature?.source);
+        if (hoverChanged) {
+            callerFeatures = this.dispatchHoverEnter(ev, prevHoveredFeature, prevHoveredSourceWithLayers);
+        }
 
-            // Resolved lazily so the `hover` branch picks up the marker-added spread that
-            // `updateEventState` writes back to `shownFeatures` (matches the click path's
-            // dispatch order).
-            let callerFeatures: Feature[] | undefined;
+        if (mouseInMotionOverHoveredFeature) {
+            this.dispatchHoverMove(ev, callerFeatures);
+        }
 
-            if (hoverChanged) {
-                this.updateHoverCursor(firstHandler?.config);
+        this.restartLongHoverTimeout();
+    }
 
-                updateEventState(
-                    'hover',
-                    this.hoveringFeature,
-                    prevHoveredFeature,
-                    this.hoveringSourceWithLayers,
-                    prevHoveredSourceWithLayers,
-                );
+    /**
+     * Handles the pointer arriving on a different feature: cursor, `eventState` marker, and the
+     * `hover` handlers themselves.
+     * @returns the caller-facing features, if they had to be built, so `hover-move` can reuse them.
+     */
+    private dispatchHoverEnter(
+        ev: MapMouseEvent,
+        prevHoveredFeature: MapGeoJSONFeature | undefined,
+        prevHoveredSourceWithLayers: SourceWithLayers | undefined,
+    ): Feature[] | undefined {
+        const layerId = this.hoveringFeature?.layer.id;
 
-                const hoverHandlers = this.findHandlers(
-                    ['hover'],
-                    hoveredTopFeature?.source,
-                    hoveredTopFeature?.layer.id,
-                );
+        // Hovering basic event states are still processed if any other handlers are registered for that source/layers.
+        // We do so because basic hovering states indicate a feature is interactive.
+        // (e.g. if there's a click handler, we'll still apply basic hover states, even if we don't fire hover events)
+        // The top feature is passed here so a feature-scoped handler only claims the cursor for
+        // features it actually accepts. The dispatch lookup below deliberately omits it: UserEvents
+        // filters the whole stack itself, and may promote a lower feature the top one hid.
+        const firstHandler = this.findHandlers(
+            ['hover', 'hover-move', 'long-hover', 'click', 'contextmenu'],
+            layerId,
+            this.hoveringFeature,
+        )?.[0];
+        this.updateHoverCursor(firstHandler?.config);
 
-                // Only build `allEventFeatures` (scope + dedupe + substitute) when a handler
-                // will read it — hover state above is tracked for the cursor/eventState even
-                // without hover handlers, so a click-only module pays nothing here.
-                if (hoverHandlers.length) {
-                    callerFeatures = this.toCallerFeatures(this.hoveringFeatures, hoveredTopFeature?.source);
-                    for (const handler of hoverHandlers) {
-                        handler.fn(callerFeatures[0], ev.lngLat, callerFeatures, handler.sourceWithLayers);
-                    }
-                }
-            }
+        updateEventState(
+            'hover',
+            this.hoveringFeature,
+            prevHoveredFeature,
+            this.hoveringSourceWithLayers,
+            prevHoveredSourceWithLayers,
+        );
 
-            if (mouseInMotionOverHoveredFeature) {
-                const hoverMoveHandlers = this.findHandlers(
-                    ['hover-move'],
-                    this.hoveringFeature?.source,
-                    this.hoveringFeature?.layer.id,
-                );
+        const hoverHandlers = this.findHandlers(['hover'], layerId);
+        // Only build `allEventFeatures` (scope + dedupe + substitute) when a handler will read it —
+        // hover state above is tracked for the cursor/eventState even without hover handlers, so a
+        // click-only module pays nothing here.
+        if (!hoverHandlers.length) return undefined;
 
-                if (hoverMoveHandlers.length) {
-                    callerFeatures ??= this.toCallerFeatures(this.hoveringFeatures, this.hoveringFeature?.source);
-                    for (const handler of hoverMoveHandlers) {
-                        handler.fn(callerFeatures[0], ev.lngLat, callerFeatures, handler.sourceWithLayers);
-                    }
-                }
-            }
+        const callerFeatures = this.toCallerFeatures(this.hoveringFeatures ?? noRenderedFeatures, this.hoveringFeature);
+        this.dispatchToHandlers(hoverHandlers, ev, this.hoveringFeature, callerFeatures);
+        return callerFeatures;
+    }
 
-            this.restartLongHoverTimeout();
+    // Handles the pointer travelling along the feature it is already on.
+    private dispatchHoverMove(ev: MapMouseEvent, alreadyBuiltFeatures: Feature[] | undefined): void {
+        const hoverMoveHandlers = this.findHandlers(['hover-move'], this.hoveringFeature?.layer.id);
+        if (!hoverMoveHandlers.length) return;
+
+        const firing = this.hoveringFeature;
+        const callerFeatures =
+            alreadyBuiltFeatures ?? this.toCallerFeatures(this.hoveringFeatures ?? noRenderedFeatures, firing);
+        this.dispatchToHandlers(hoverMoveHandlers, ev, firing, callerFeatures);
+    }
+
+    // Calls each handler with the features its own scope allows. Kept parameter-by-parameter
+    // rather than bundled into an options object: this runs on the pointer path, and an object
+    // literal per call would be garbage collected every frame for no benefit.
+    private dispatchToHandlers(
+        handlers: HandlerEntry[],
+        ev: MapMouseEvent,
+        firingFeature: MapGeoJSONFeature | undefined,
+        sharedFeatures: Feature[],
+    ): void {
+        for (const handler of handlers) {
+            const handlerFeatures = this.callerFeaturesFor(
+                handler,
+                this.hoveringFeatures ?? noRenderedFeatures,
+                firingFeature,
+                sharedFeatures,
+            );
+            handler.fn(handlerFeatures[0], ev.lngLat, handlerFeatures, handler.sourceWithLayers);
         }
     }
 
@@ -301,11 +387,7 @@ export class EventsProxy extends AbstractEventProxy {
         const prevClickedFeature = this.lastClickedFeature;
         this.lastClickedFeature = clickedFeatures[0];
         const prevClickedSourceWithLayers = this.lastClickedSourceWithLayers;
-        const clickHandlers = this.findHandlers(
-            [clickType],
-            this.lastClickedFeature?.source,
-            this.lastClickedFeature?.layer.id,
-        );
+        const clickHandlers = this.findHandlers([clickType], this.lastClickedFeature?.layer.id);
 
         // Resolve from the firing click handler, NOT sourceWithLayersFor(source): the high-priority
         // `click` eventState must only be written when this module actually handles clicks. Otherwise
@@ -325,8 +407,10 @@ export class EventsProxy extends AbstractEventProxy {
         // map click (no source pre-filter), so a click on empty map or a feature whose module
         // has no click handler does no scope/dedupe/substitution work.
         if (clickHandlers.length) {
-            const callerFeatures = this.toCallerFeatures(clickedFeatures, this.lastClickedFeature?.source);
+            const firing = this.lastClickedFeature;
+            const shared = this.toCallerFeatures(clickedFeatures, firing);
             for (const handler of clickHandlers) {
+                const callerFeatures = this.callerFeaturesFor(handler, clickedFeatures, firing, shared);
                 handler.fn(callerFeatures[0], ev.lngLat, callerFeatures, handler.sourceWithLayers);
             }
         }

@@ -10,7 +10,11 @@ import {
     addLayers,
     addOrUpdateImage,
     changeLayerProps,
+    detectStyleLightDarkTheme,
     ensureAddedToStyle,
+    getDeclaredLightDarkTheme,
+    getStyleLightDarkTheme,
+    moveLayerBefore,
     transformRequest,
     updateLayersAndSource,
     updateStyleWithModule,
@@ -20,7 +24,7 @@ import type { AbstractSourceWithLayers, GeoJSONSourceWithLayers } from '../Sourc
 import type { ToBeAddedLayerSpec, ToBeAddedLayerSpecWithoutSource } from '../types';
 import updateStyleData from './mapUtils.test.data';
 
-// transformRequest's returned fn may yield a Promise when the demo-BFF
+// transformRequest's returned fn may yield a Promise when the demos-proxy
 // session gate is installed on window. None of the tests below install it,
 // so narrow back to the synchronous shape (and fail loudly if that changes).
 const transformSync = (params: Parameters<typeof transformRequest>[0]) => {
@@ -101,26 +105,26 @@ describe('Map utils - injectCustomHeaders', () => {
         expect(resultUrl.searchParams.get('tags')).toBe(FLOW_TAGS.join(','));
     });
 
-    describe('demo-BFF proxy mode (apiKey === "" + non-default commonBaseURL)', () => {
-        const proxy = 'https://demo-bff.example.com/api';
-        const demoBff = { commonBaseURL: proxy, apiKey: '' };
+    describe('credentials proxy mode (apiKey === "" + non-default commonBaseURL)', () => {
+        const proxy = 'https://proxy.example.com/api';
+        const proxyConfig = { commonBaseURL: proxy, apiKey: '' };
 
         test('rewrites api.tomtom.com tile URLs to the proxy base', () => {
             // MapLibre substitutes {z}/{x}/{y} before calling transformRequest,
             // so use a concrete tile URL here.
-            const transformRequestFn = transformSync(demoBff);
+            const transformRequestFn = transformSync(proxyConfig);
             const result = transformRequestFn('https://api.tomtom.com/maps/orbis/tiles/12/2048/1364.pbf');
             expect(result.url).toBe(`${proxy}/maps/orbis/tiles/12/2048/1364.pbf`);
         });
 
         test('adds credentials=include for proxied requests', () => {
-            const transformRequestFn = transformSync(demoBff);
+            const transformRequestFn = transformSync(proxyConfig);
             const result = transformRequestFn('https://api.tomtom.com/maps/orbis/style');
             expect(result.credentials).toBe('include');
         });
 
         test('adds credentials=include for image requests that get rewritten', () => {
-            const transformRequestFn = transformSync(demoBff);
+            const transformRequestFn = transformSync(proxyConfig);
             const result = transformRequestFn(
                 'https://api.tomtom.com/maps/orbis/assets/sprites/sprite.png',
                 'Image' as ResourceType,
@@ -130,7 +134,7 @@ describe('Map utils - injectCustomHeaders', () => {
         });
 
         test('preserves incident tag injection through the rewrite', () => {
-            const transformRequestFn = transformSync(demoBff);
+            const transformRequestFn = transformSync(proxyConfig);
             const result = transformRequestFn('https://api.tomtom.com/traffic/incidents/tile/123');
             expect(result.url).toContain(`${proxy}/traffic/incidents/tile/123`);
             const resultUrl = new URL(result.url);
@@ -139,13 +143,13 @@ describe('Map utils - injectCustomHeaders', () => {
         });
 
         test('passes through non-tomtom non-proxy URLs unchanged', () => {
-            const transformRequestFn = transformSync(demoBff);
+            const transformRequestFn = transformSync(proxyConfig);
             const result = transformRequestFn('https://other-host.example/something');
             expect(result).toEqual({ url: 'https://other-host.example/something' });
         });
 
         test('does not treat tomtom.com lookalike hosts as TomTom (hostname-based check)', () => {
-            const transformRequestFn = transformSync(demoBff);
+            const transformRequestFn = transformSync(proxyConfig);
             // Substring "tomtom.com" appears, but the host is attacker-controlled.
             // Must pass through untouched: no TomTom headers, no tag injection,
             // no credentials, no rewrite.
@@ -161,14 +165,14 @@ describe('Map utils - injectCustomHeaders', () => {
             // TomTom's style JSON embeds tile URLs with the request's apiKey
             // baked into ?key=. When we rewrite the hostname to the proxy we
             // also drop the key so it never reaches the browser console.
-            const transformRequestFn = transformSync(demoBff);
+            const transformRequestFn = transformSync(proxyConfig);
             const result = transformRequestFn(
                 'https://c.api.tomtom.com/maps/orbis/tiles/5/14/12.pbf?apiVersion=1&key=LEAKED_KEY',
             );
             const resultUrl = new URL(result.url);
             expect(resultUrl.searchParams.has('key')).toBe(false);
             expect(resultUrl.searchParams.get('apiVersion')).toBe('1');
-            expect(resultUrl.host).toBe('demo-bff.example.com');
+            expect(resultUrl.host).toBe('proxy.example.com');
         });
 
         test('non-proxy mode still omits credentials on TomTom URLs (backward compat)', () => {
@@ -177,7 +181,7 @@ describe('Map utils - injectCustomHeaders', () => {
             expect(result.credentials).toBeUndefined();
         });
 
-        test('apiKey overwritten to undefined still counts as demo-BFF mode', () => {
+        test('apiKey overwritten to undefined still counts as credentials proxy mode', () => {
             // An example may run put({ apiKey: process.env.API_KEY_EXAMPLES })
             // with that env unset, overwriting the bootstrap's apiKey:'' to
             // undefined. Tiles must still strip key= and attach credentials.
@@ -232,13 +236,13 @@ describe('Map utils - injectCustomHeaders', () => {
         });
     });
 
-    describe('demo-BFF session gate (globalThis.__DEMO_BFF_ENSURE_SESSION__)', () => {
+    describe('demos-proxy session gate (globalThis.__DEMOS_PROXY_ENSURE_SESSION__)', () => {
         // The sandpack proxy bootstrap installs this hook; MapLibre awaits
         // transformRequest on the main thread before dispatching each request
         // to its tile workers, so awaiting the hook here is what keeps
         // worker-fetched tiles from going out with an expired session cookie.
-        const proxy = 'https://demo-bff.example.com/api';
-        const demoBff = { commonBaseURL: proxy, apiKey: '' };
+        const proxy = 'https://proxy.example.com/api';
+        const proxyConfig = { commonBaseURL: proxy, apiKey: '' };
 
         afterEach(() => {
             vi.unstubAllGlobals();
@@ -246,9 +250,9 @@ describe('Map utils - injectCustomHeaders', () => {
 
         test('awaits the hook before returning proxied tile params', async () => {
             const ensureSession = vi.fn().mockResolvedValue(undefined);
-            vi.stubGlobal('__DEMO_BFF_ENSURE_SESSION__', ensureSession);
+            vi.stubGlobal('__DEMOS_PROXY_ENSURE_SESSION__', ensureSession);
 
-            const transformRequestFn = transformRequest(demoBff);
+            const transformRequestFn = transformRequest(proxyConfig);
             const pending = transformRequestFn('https://api.tomtom.com/maps/orbis/tiles/12/2048/1364.pbf');
 
             expect(pending).toBeInstanceOf(Promise);
@@ -260,9 +264,9 @@ describe('Map utils - injectCustomHeaders', () => {
 
         test('gates rewritten image requests too', async () => {
             const ensureSession = vi.fn().mockResolvedValue(undefined);
-            vi.stubGlobal('__DEMO_BFF_ENSURE_SESSION__', ensureSession);
+            vi.stubGlobal('__DEMOS_PROXY_ENSURE_SESSION__', ensureSession);
 
-            const transformRequestFn = transformRequest(demoBff);
+            const transformRequestFn = transformRequest(proxyConfig);
             const result = await transformRequestFn(
                 'https://api.tomtom.com/maps/orbis/assets/sprites/sprite.png',
                 'Image' as ResourceType,
@@ -274,9 +278,9 @@ describe('Map utils - injectCustomHeaders', () => {
 
         test('a failed renewal still returns the request params (request 401s instead of wedging the map)', async () => {
             const ensureSession = vi.fn().mockRejectedValue(new Error('hcaptcha unavailable'));
-            vi.stubGlobal('__DEMO_BFF_ENSURE_SESSION__', ensureSession);
+            vi.stubGlobal('__DEMOS_PROXY_ENSURE_SESSION__', ensureSession);
 
-            const transformRequestFn = transformRequest(demoBff);
+            const transformRequestFn = transformRequest(proxyConfig);
             const result = await transformRequestFn('https://api.tomtom.com/maps/orbis/tiles/12/2048/1364.pbf');
 
             expect(result?.url).toBe(`${proxy}/maps/orbis/tiles/12/2048/1364.pbf`);
@@ -284,9 +288,9 @@ describe('Map utils - injectCustomHeaders', () => {
 
         test('does not gate non-proxied requests even with the hook installed', () => {
             const ensureSession = vi.fn().mockResolvedValue(undefined);
-            vi.stubGlobal('__DEMO_BFF_ENSURE_SESSION__', ensureSession);
+            vi.stubGlobal('__DEMOS_PROXY_ENSURE_SESSION__', ensureSession);
 
-            const transformRequestFn = transformSync(demoBff);
+            const transformRequestFn = transformSync(proxyConfig);
             const result = transformRequestFn('https://other-host.example/something');
 
             expect(result).toEqual({ url: 'https://other-host.example/something' });
@@ -295,7 +299,7 @@ describe('Map utils - injectCustomHeaders', () => {
 
         test('does not gate direct (non-proxy) mode even with the hook installed', () => {
             const ensureSession = vi.fn().mockResolvedValue(undefined);
-            vi.stubGlobal('__DEMO_BFF_ENSURE_SESSION__', ensureSession);
+            vi.stubGlobal('__DEMOS_PROXY_ENSURE_SESSION__', ensureSession);
 
             const transformRequestFn = transformSync({});
             const result = transformRequestFn('https://api.tomtom.com/maps/orbis/style');
@@ -305,10 +309,40 @@ describe('Map utils - injectCustomHeaders', () => {
         });
 
         test('stays synchronous without the hook (non-sandpack consumers)', () => {
-            const transformRequestFn = transformSync(demoBff);
+            const transformRequestFn = transformSync(proxyConfig);
             const result = transformRequestFn('https://api.tomtom.com/maps/orbis/style');
             expect(result.credentials).toBe('include');
         });
+    });
+});
+
+describe('Map utils - moveLayerBefore', () => {
+    // MapLibre refuses to move a layer before one the style does not have, so an anchor missing
+    // from the current style (the satellite style has no `lowestRoadLine` or `lowestBuilding`)
+    // has to become "top of the stack" instead.
+    const newMapMock = (existingLayerIDs: string[]): Map =>
+        ({
+            moveLayer: vi.fn(),
+            getLayer: vi.fn((layerID: string) => (existingLayerIDs.includes(layerID) ? { id: layerID } : undefined)),
+        }) as unknown as Map;
+
+    test('keeps an anchor the style has', () => {
+        const mapLibreMock = newMapMock(['anchor']);
+        moveLayerBefore(mapLibreMock, 'myLayer', 'anchor');
+        expect(mapLibreMock.moveLayer).toHaveBeenCalledWith('myLayer', 'anchor');
+    });
+
+    test('falls back to the top of the stack when the anchor is missing', () => {
+        const mapLibreMock = newMapMock([]);
+        moveLayerBefore(mapLibreMock, 'myLayer', 'Buildings - Underground');
+        expect(mapLibreMock.moveLayer).toHaveBeenCalledWith('myLayer', undefined);
+    });
+
+    test('passes an undefined anchor straight through', () => {
+        const mapLibreMock = newMapMock([]);
+        moveLayerBefore(mapLibreMock, 'myLayer', undefined);
+        expect(mapLibreMock.moveLayer).toHaveBeenCalledWith('myLayer', undefined);
+        expect(mapLibreMock.getLayer).not.toHaveBeenCalled();
     });
 });
 
@@ -406,6 +440,8 @@ describe('Map utils - updateLayersAndSource', () => {
                 setLayoutProperty: vi.fn(),
                 setPaintProperty: vi.fn(),
                 setFilter: vi.fn(),
+                getLayer: vi.fn(),
+                addLayer: vi.fn(),
             }) as unknown as Map;
 
         // empty arrays
@@ -440,7 +476,8 @@ describe('Map utils - updateLayersAndSource', () => {
             _updateSourceAndLayerIDs: vi.fn(),
         };
 
-        // add one layer
+        // add one layer: a layer the new configuration introduced reaches the map right away,
+        // hidden, rather than waiting for the next `show()` to put it there.
         mapMock = newMapMock();
         updateLayersAndSource(
             [{ id: someId } as ToBeAddedLayerSpecWithoutSource],
@@ -448,6 +485,12 @@ describe('Map utils - updateLayersAndSource', () => {
             sourceWithLayersMock2 as unknown as GeoJSONSourceWithLayers,
             mapMock,
         );
+        expect(mapMock.addLayer).toHaveBeenCalledTimes(1);
+        expect(mapMock.addLayer).toHaveBeenCalledWith(
+            { id: someId, source: 'sourceId', layout: { visibility: 'none' } },
+            undefined,
+        );
+        expect(sourceWithLayersMock2._layerSpecs.map((spec) => spec.id)).toEqual([someId, someId]);
 
         // update one layer
         mapMock = newMapMock();
@@ -461,6 +504,97 @@ describe('Map utils - updateLayersAndSource', () => {
         expect(mapMock.setFilter).toHaveBeenCalledTimes(1);
         expect(mapMock.setPaintProperty).toHaveBeenCalledTimes(0);
         expect(sourceWithLayersMock2._updateSourceAndLayerIDs).toHaveBeenCalledTimes(2);
+    });
+
+    test('a layer whose spec names a new anchor is moved, and the recorded spec follows it', () => {
+        const mapMock = {
+            setLayoutProperty: vi.fn(),
+            setPaintProperty: vi.fn(),
+            setFilter: vi.fn(),
+            getLayer: vi.fn().mockReturnValue({}),
+            moveLayer: vi.fn(),
+        } as unknown as Map;
+        const sourceWithLayersMock = {
+            source: { id: 'sourceId' },
+            _layerSpecs: [{ id: 'sectionLine', beforeID: 'routeDeselectedOutline' }],
+            _updateSourceAndLayerIDs: vi.fn(),
+        };
+
+        updateLayersAndSource(
+            [{ id: 'sectionLine', type: 'line', beforeID: 'routeLineArrows' }],
+            [{ id: 'sectionLine', type: 'line', beforeID: 'routeDeselectedOutline' }],
+            sourceWithLayersMock as unknown as GeoJSONSourceWithLayers,
+            mapMock,
+        );
+
+        expect(mapMock.moveLayer).toHaveBeenCalledWith('sectionLine', 'routeLineArrows');
+        expect(sourceWithLayersMock._layerSpecs[0].beforeID).toBe('routeLineArrows');
+    });
+
+    test('a layer pinned to one that moved follows it, so a group of lines stays together', () => {
+        const mapMock = {
+            setLayoutProperty: vi.fn(),
+            setPaintProperty: vi.fn(),
+            setFilter: vi.fn(),
+            getLayer: vi.fn().mockReturnValue({}),
+            moveLayer: vi.fn(),
+        } as unknown as Map;
+        // The traffic section: a coloured line beneath a dashed one. Only the dashed line names the
+        // anchor that changed, but both have to end up on the other side of the route line.
+        const dashedLine = { id: 'dashedLine', type: 'line', beforeID: 'routeDeselectedOutline' };
+        const backgroundLine = { id: 'backgroundLine', type: 'line', beforeID: 'dashedLine' };
+
+        updateLayersAndSource(
+            [backgroundLine, dashedLine] as ToBeAddedLayerSpecWithoutSource[],
+            [
+                { id: 'backgroundLine', type: 'line', beforeID: 'dashedLine' },
+                { id: 'dashedLine', type: 'line', beforeID: 'routeLineArrows' },
+            ],
+            {
+                source: { id: 'sourceId' },
+                _layerSpecs: [{ id: 'dashedLine' }, { id: 'backgroundLine' }],
+                _updateSourceAndLayerIDs: vi.fn(),
+            } as unknown as GeoJSONSourceWithLayers,
+            mapMock,
+        );
+
+        // The anchored line first, then the one pinned to it: the other order would leave the
+        // follower under wherever the anchor used to be.
+        expect(vi.mocked(mapMock.moveLayer).mock.calls).toEqual([
+            ['dashedLine', 'routeDeselectedOutline'],
+            ['backgroundLine', 'dashedLine'],
+        ]);
+    });
+
+    test('a layer whose anchor is unchanged is left where it is', () => {
+        const mapMock = {
+            setLayoutProperty: vi.fn(),
+            setPaintProperty: vi.fn(),
+            setFilter: vi.fn(),
+            getLayer: vi.fn().mockReturnValue({}),
+            moveLayer: vi.fn(),
+        } as unknown as Map;
+
+        updateLayersAndSource(
+            [
+                {
+                    id: 'sectionLine',
+                    type: 'line',
+                    beforeID: 'routeLineArrows',
+                    paint: { 'line-opacity': 0.5 },
+                },
+            ],
+            [{ id: 'sectionLine', type: 'line', beforeID: 'routeLineArrows' }],
+            {
+                source: { id: 'sourceId' },
+                _layerSpecs: [{ id: 'sectionLine', beforeID: 'routeLineArrows' }],
+                _updateSourceAndLayerIDs: vi.fn(),
+            } as unknown as GeoJSONSourceWithLayers,
+            mapMock,
+        );
+
+        expect(mapMock.moveLayer).not.toHaveBeenCalled();
+        expect(mapMock.setPaintProperty).toHaveBeenCalledWith('sectionLine', 'line-opacity', 0.5, { validate: false });
     });
 });
 
@@ -532,12 +666,13 @@ describe('Map utils - updateStyleWithStyleModule', () => {
         expect(() => updateStyleWithModule({ type: 'custom' }, 'trafficIncidents')).toThrow();
     });
 
-    test.each(
-        updateStyleData,
-    )(`'%s`, (_name: string, styleInput: StyleInput | null, styleModule: StyleModule, styleOutput: StyleInput) => {
-        // @ts-ignore
-        expect(updateStyleWithModule(styleInput ? styleInput : undefined, styleModule)).toEqual(styleOutput);
-    });
+    test.each(updateStyleData)(
+        `'%s`,
+        (_name: string, styleInput: StyleInput | null, styleModule: StyleModule, styleOutput: StyleInput) => {
+            // @ts-ignore
+            expect(updateStyleWithModule(styleInput ? styleInput : undefined, styleModule)).toEqual(styleOutput);
+        },
+    );
 });
 
 describe('Map utils - tryToAddSourceToMapIfMissing', () => {
@@ -634,9 +769,99 @@ describe('addOrUpdateImage tests', () => {
             addImage: vi.fn(),
             hasImage: vi.fn().mockReturnValue(false),
         } as unknown as Map;
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-        expect(async () =>
+        await expect(
             addOrUpdateImage('if-not-in-sprite', 'restaurant', 'https://test.com', mapLibreMock),
-        ).rejects.toMatchObject(error);
+        ).resolves.toBeUndefined();
+        expect(warnSpy).toHaveBeenCalledWith('Failed to load image for ID restaurant', error);
+        expect(mapLibreMock.addImage).not.toHaveBeenCalled();
+
+        warnSpy.mockRestore();
+    });
+
+    test('A failed image load does not prevent other images from loading', async () => {
+        const error = new Error('image not found');
+        const mapLibreMock = {
+            loadImage: vi
+                .fn()
+                .mockImplementation((url: string) =>
+                    url === 'https://broken.com' ? Promise.reject(error) : Promise.resolve({ data: {} }),
+                ),
+            addImage: vi.fn(),
+            hasImage: vi.fn().mockReturnValue(false),
+        } as unknown as Map;
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+        await Promise.all([
+            addOrUpdateImage('if-not-in-sprite', 'broken-icon', 'https://broken.com', mapLibreMock),
+            addOrUpdateImage('if-not-in-sprite', 'working-icon', 'https://test.com', mapLibreMock),
+        ]);
+
+        expect(warnSpy).toHaveBeenCalledWith('Failed to load image for ID broken-icon', error);
+        expect(mapLibreMock.addImage).toHaveBeenCalledTimes(1);
+        expect(mapLibreMock.addImage).toHaveBeenCalledWith('working-icon', {}, undefined);
+
+        warnSpy.mockRestore();
+    });
+});
+
+describe('Map utils - detectStyleLightDarkTheme', () => {
+    const styleWithBackground = (color: unknown) => ({
+        layers: [{ id: 'background', type: 'background', paint: { 'background-color': color } }],
+    });
+
+    test('reads a dark canvas as dark and a light one as light', () => {
+        expect(detectStyleLightDarkTheme(styleWithBackground('#0b0e12') as never)).toBe('dark');
+        expect(detectStyleLightDarkTheme(styleWithBackground('hsl(0, 0%, 12%)') as never)).toBe('dark');
+        expect(detectStyleLightDarkTheme(styleWithBackground('#f4f2ee') as never)).toBe('light');
+        expect(detectStyleLightDarkTheme(styleWithBackground('rgb(240, 240, 240)') as never)).toBe('light');
+    });
+
+    test('looks through an expression for the first colour literal', () => {
+        const expression = ['interpolate', ['linear'], ['zoom'], 5, '#111111', 12, '#222222'];
+        expect(detectStyleLightDarkTheme(styleWithBackground(expression) as never)).toBe('dark');
+    });
+
+    test('gives no answer without a readable background colour', () => {
+        expect(detectStyleLightDarkTheme(undefined)).toBeUndefined();
+        expect(detectStyleLightDarkTheme({ layers: [] })).toBeUndefined();
+        expect(detectStyleLightDarkTheme({ layers: [{ id: 'water', type: 'fill' }] } as never)).toBeUndefined();
+        expect(detectStyleLightDarkTheme(styleWithBackground('not-a-colour') as never)).toBeUndefined();
+    });
+});
+
+describe('Map utils - getStyleLightDarkTheme', () => {
+    test('reads the theme off a standard style ID', () => {
+        expect(getStyleLightDarkTheme('standardLight')).toBe('light');
+        expect(getStyleLightDarkTheme('standardDark')).toBe('dark');
+        expect(getStyleLightDarkTheme({ type: 'standard', id: 'monoDark' })).toBe('dark');
+    });
+
+    test('takes a custom style at its word when it declares a theme', () => {
+        expect(getStyleLightDarkTheme({ type: 'custom', url: 'https://x/y.json', lightDarkTheme: 'dark' })).toBe(
+            'dark',
+        );
+        expect(
+            getStyleLightDarkTheme({
+                type: 'custom',
+                json: { version: 8, sources: {}, layers: [] },
+                lightDarkTheme: 'light',
+            }),
+        ).toBe('light');
+    });
+
+    test('falls back to light for a custom style that declares nothing', () => {
+        expect(getStyleLightDarkTheme({ type: 'custom', url: 'https://x/y.json' })).toBe('light');
+        expect(getStyleLightDarkTheme()).toBe('light');
+    });
+
+    test('only a custom style declares a theme', () => {
+        expect(getDeclaredLightDarkTheme({ type: 'custom', url: 'https://x/y.json', lightDarkTheme: 'dark' })).toBe(
+            'dark',
+        );
+        expect(getDeclaredLightDarkTheme({ type: 'custom', url: 'https://x/y.json' })).toBeUndefined();
+        expect(getDeclaredLightDarkTheme('standardDark')).toBeUndefined();
+        expect(getDeclaredLightDarkTheme()).toBeUndefined();
     });
 });

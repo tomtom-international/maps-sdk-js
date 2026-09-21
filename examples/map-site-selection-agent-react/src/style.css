@@ -9,16 +9,16 @@
    just what those summaries use. */
 .message.user ul {
     margin: 0;
-    padding-left: var(--pb-space-4); /* 16 */
+    padding-left: var(--ui-space-4); /* 16 */
     list-style: disc;
 }
 
 .message.user li + li {
-    margin-top: var(--pb-space-1); /* 4 — breathing room between picks */
+    margin-top: var(--ui-space-1); /* 4 — breathing room between picks */
 }
 
 .message.user strong {
-    font-weight: var(--pb-font-weight-bold);
+    font-weight: var(--ui-font-weight-bold);
 }
 
 /* Marker popup chrome — the card body + close button are built in site-visuals.ts; MapLibre renders
@@ -29,8 +29,8 @@
     padding: 0;
     overflow: hidden;
     border-radius: 10px;
-    background: var(--pb-surface-0);
-    box-shadow: var(--pb-shadow-e2, 0 6px 16px -4px rgba(17, 12, 34, 0.16));
+    background: var(--ui-surface-0);
+    box-shadow: var(--ui-elevation-e2, 0 6px 16px -4px rgba(17, 12, 34, 0.16));
 }
 
 .site-popup .maplibregl-popup-close-button {
@@ -76,7 +76,7 @@
     font-size: 14px;
     font-weight: 700;
     text-shadow: 0 1px 2px hsla(0, 0%, 0%, 0.4);
-    font-family: var(--pb-font-family, system-ui, sans-serif);
+    font-family: var(--ui-font-proxima, system-ui, sans-serif);
 }
 
 @keyframes cluster-pin-pulse {

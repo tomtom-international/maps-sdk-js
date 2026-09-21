@@ -4,6 +4,7 @@ import type { ToolState } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import * as turf from '@turf/turf';
 import type { Feature, FeatureCollection, LineString, MultiPolygon, Point, Polygon } from 'geojson';
 import { type DataDrivenPropertyValueSpecification, type Map as MapLibreMap, Marker, Popup } from 'maplibre-gl';
+import { clipPolygons } from '../agent/geometry';
 import sitePinSvg from './assets/site-pin.svg?raw';
 
 // Shared rich map visuals for the site tools. Markers + connector lines (with distance labels) are
@@ -16,7 +17,7 @@ const GLYPH_FONT = 'Noto-Bold'; // the style's bundled glyph set (matches the SD
 
 // CSS font shorthands for the HTML overlays (popups, badges, pins) — the Playbook titles the panels
 // use, sharable here because these elements render outside React.
-const FONT_STACK = 'var(--pb-font-primary),system-ui,sans-serif';
+const FONT_STACK = 'var(--ui-font-gilroy),system-ui,sans-serif';
 const TITLE_3_FONT = `700 14px/20px ${FONT_STACK}`;
 const TITLE_4_FONT = `700 12px/16px ${FONT_STACK}`;
 
@@ -247,14 +248,14 @@ const buildPopupCard = (name: string, info: string, kind: string): HTMLElement =
     const title = document.createElement('div');
     title.textContent = name;
     // padding-right keeps long names clear of the corner close button
-    title.style.cssText = `padding-right:24px;font:${TITLE_3_FONT};color:var(--pb-text-high)`;
+    title.style.cssText = `padding-right:24px;font:${TITLE_3_FONT};color:var(--ui-text-high-em)`;
     body.appendChild(title);
 
     const subtitle = [info, cap(kind)].filter(Boolean).join(' · ');
     if (subtitle) {
         const sub = document.createElement('div');
         sub.textContent = subtitle;
-        sub.style.cssText = `max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:${TITLE_4_FONT};color:var(--pb-text-low)`;
+        sub.style.cssText = `max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:${TITLE_4_FONT};color:var(--ui-text-low-em)`;
         body.appendChild(sub);
     }
 
@@ -263,7 +264,7 @@ const buildPopupCard = (name: string, info: string, kind: string): HTMLElement =
     close.setAttribute('aria-label', 'Close');
     close.innerHTML = CLOSE_ICON;
     close.style.cssText =
-        'position:absolute;top:0;right:0;display:flex;align-items:center;justify-content:center;padding:8px;border:0;background:transparent;border-radius:40px;cursor:pointer;color:var(--pb-text-high)';
+        'position:absolute;top:0;right:0;display:flex;align-items:center;justify-content:center;padding:8px;border:0;background:transparent;border-radius:40px;cursor:pointer;color:var(--ui-text-high-em)';
     close.addEventListener('click', closeActivePopup);
     body.appendChild(close);
 
@@ -354,7 +355,7 @@ export const drawSiteMarker = (state: ToolState, position: [number, number], tex
             'max-width:220px',
             'text-align:center',
             'white-space:normal',
-            "font-family:'Noto Sans',var(--pb-font-primary),system-ui,sans-serif",
+            "font-family:'Noto Sans',var(--ui-font-gilroy),system-ui,sans-serif",
             'font-weight:600',
             'font-size:20px',
             'line-height:28px',
@@ -451,14 +452,8 @@ type AreaGeometry = Polygon | MultiPolygon;
  * Clip a hex to the region so partial cells are trimmed at the boundary (no hexes spilling outside).
  * Returns the clipped polygon, or null when the hex doesn't overlap the area at all.
  */
-export const clipHexToArea = (hex: Feature<Polygon>, area: AreaGeometry): Feature<Polygon | MultiPolygon> | null => {
-    try {
-        const clipped = turf.intersect(turf.featureCollection([hex, turf.feature(area)]));
-        return clipped ? (clipped as Feature<Polygon | MultiPolygon>) : null;
-    } catch {
-        return null;
-    }
-};
+export const clipHexToArea = (hex: Feature<Polygon>, area: AreaGeometry): Feature<Polygon | MultiPolygon> | null =>
+    clipPolygons(hex, turf.feature(area));
 
 export type NumberedHex = { feature: Feature<Polygon | MultiPolygon>; color: string; number: number; label: string };
 
@@ -481,9 +476,7 @@ const addHexNumberMarkers = (state: ToolState, hexes: NumberedHex[]): void => {
             `font:${TITLE_4_FONT};color:#ffffff`;
         const centre = turf.centerOfMass(hex.feature).geometry.coordinates;
         hexNumberMarkers.push(
-            new Marker({ element: badge })
-                .setLngLat([centre[0], centre[1]])
-                .addTo(state.baseMap.mapLibreMap),
+            new Marker({ element: badge }).setLngLat([centre[0], centre[1]]).addTo(state.baseMap.mapLibreMap),
         );
     }
 };
@@ -509,8 +502,16 @@ export const drawNumberedHexes = async (state: ToolState, label: string, hexes: 
     const config = geometriesModule.getConfig();
     geometriesModule.applyConfig({
         ...config,
-        fill: { ...config?.fill, color: PER_FEATURE_COLOR, opacity: 0.5, beforeLayerConfig: LINE_BEFORE_LAYER },
-        line: { ...config?.line, color: PER_FEATURE_COLOR, width: 3, opacity: 1, beforeLayerConfig: LINE_BEFORE_LAYER },
+        // The fill sits above the roads (below labels) but fades out as the user zooms in: pockets
+        // read strongly at district overview, then recede so the map underneath stays explorable at
+        // street level — only the coloured border keeps marking the pocket.
+        fill: {
+            ...config?.fill,
+            color: PER_FEATURE_COLOR,
+            opacity: ['interpolate', ['linear'], ['zoom'], 11.5, 0.45, 13, 0.28, 15, 0.12, 16, 0.04],
+            beforeLayerConfig: LINE_BEFORE_LAYER,
+        },
+        line: { ...config?.line, color: PER_FEATURE_COLOR, width: 2, opacity: 1, beforeLayerConfig: LINE_BEFORE_LAYER },
     });
     await state.customGeometries.showEntry(entryId, 'filled');
     addHexNumberMarkers(state, hexes);

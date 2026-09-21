@@ -10,42 +10,42 @@
 
 /* CUSTOM STYLES (example-specific) */
 
-.sdk-example-customPanel {
+.ui-customPanel {
     width: 280px;
 }
 
-#sdk-example-clearButton {
-    margin-bottom: var(--sdk-space-3);
+#ui-clearButton {
+    margin-bottom: var(--ui-space-3);
 }
 
-.sdk-example-categories-section {
+.ui-categories-section {
     overflow: hidden;
     display: flex;
     flex-direction: column;
 }
 
-.sdk-example-categories-list {
+.ui-categories-list {
     max-height: 240px;
     overflow-y: auto;
-    padding-right: var(--sdk-space-1);
+    padding-right: var(--ui-space-1);
 }
 
-.sdk-example-footer-buttons {
+.ui-footer-buttons {
     display: flex;
     flex-direction: column;
-    gap: var(--sdk-space-2);
+    gap: var(--ui-space-2);
 }
 
 /* Responsive: max-height 700px */
 @media (max-height: 700px) {
-    .sdk-example-categories-list {
+    .ui-categories-list {
         max-height: 160px;
     }
 }
 
 /* Responsive: max-height 550px */
 @media (max-height: 550px) {
-    .sdk-example-categories-list {
+    .ui-categories-list {
         max-height: 100px;
     }
 }

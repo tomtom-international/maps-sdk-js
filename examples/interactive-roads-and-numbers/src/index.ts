@@ -37,21 +37,15 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
     });
     const mapLibreMap = map.mapLibreMap;
 
-    const interactiveGroupNames: BaseMapLayerGroupName[] = ['roadLines', 'roadLabels', 'roadShields', 'houseNumbers'];
-    const interactiveGroups = await BaseMapModule.get(map, {
-        layerGroupsFilter: { mode: 'include', names: interactiveGroupNames },
-    });
-    const restOfTheMap = await BaseMapModule.get(map, {
-        layerGroupsFilter: { mode: 'exclude', names: [...interactiveGroupNames, 'placeLabels'] },
-        events: { cursorOnHover: 'default' },
-    });
+    const interactiveGroupNames: BaseMapLayerGroupName[] = ['roads', 'roadLabels', 'roadShields', 'houseNumbers'];
+    const baseMap = await BaseMapModule.get(map);
 
     const hoveredSource = initHoveredSourceAndLayers(mapLibreMap);
     const selectedSource = initSelectedSourceAndLayers(mapLibreMap);
 
-    const titleElement = document.querySelector('#sdk-example-title') as Element;
-    const subtitleElement = document.querySelector('#sdk-example-subtitle') as Element;
-    const addressesElement = document.querySelector('#sdk-example-addresses') as Element;
+    const titleElement = document.querySelector('#ui-title') as Element;
+    const subtitleElement = document.querySelector('#ui-subtitle') as Element;
+    const addressesElement = document.querySelector('#ui-addresses') as Element;
 
     const setTitleAndSubtitle = (feature: Feature<any, any>) => {
         titleElement.innerHTML = `${feature.properties.category} ${feature.properties.subcategory ?? ''}`;
@@ -65,7 +59,13 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
     };
 
     let clickedFeature: Feature<any, any> | undefined;
-    interactiveGroups.events.on('hover', (feature, lngLat) => {
+
+    // The parts of the map we let the user explore. This scope keeps the default pointer cursor.
+    const interactiveGroups = baseMap.events.where({
+        layerGroups: { mode: 'include', names: interactiveGroupNames },
+    });
+
+    interactiveGroups.on('hover', (feature, lngLat) => {
         if (!clickedFeature) {
             const extractedFeature = findClosestLineString(feature, [lngLat.lng, lngLat.lat]);
             hoveredSource.setData(extractedFeature);
@@ -73,7 +73,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         }
     });
 
-    interactiveGroups.events.on('click', async (feature, lngLat) => {
+    interactiveGroups.on('click', async (feature, lngLat) => {
         clickedFeature = findClosestLineString(feature, [lngLat.lng, lngLat.lat]);
         hoveredSource.setData(clickedFeature);
         selectedSource.setData(createInvertedBuffer(clickedFeature, pxToMeters(15, mapLibreMap), 'meters'));
@@ -91,7 +91,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
             showRevGeoResponses([
                 await reverseGeocode({
                     position: clickedFeature.geometry.coordinates,
-                    number: String(clickedFeature.properties.number),
                 }),
             ]);
         } else {
@@ -107,14 +106,20 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
     const emptyFeatureCollection: FeatureCollection = { type: 'FeatureCollection', features: [] };
 
-    restOfTheMap.events.on('hover', () => {
+    // Everything else, which only clears the selection — hence the plain cursor.
+    const restOfTheMap = baseMap.events.where(
+        { layerGroups: { mode: 'exclude', names: [...interactiveGroupNames, 'allPlaceLabels'] } },
+        { cursorOnHover: 'default' },
+    );
+
+    restOfTheMap.on('hover', () => {
         if (!clickedFeature) {
             hoveredSource.setData(emptyFeatureCollection);
             setPlaceholderText();
         }
     });
 
-    restOfTheMap.events.on('click', () => {
+    restOfTheMap.on('click', () => {
         clickedFeature = undefined;
         hoveredSource.setData(emptyFeatureCollection);
         selectedSource.setData(emptyFeatureCollection);

@@ -34,6 +34,7 @@ describe('Geometry module tests', () => {
             },
             addStyleChangeHandler: vi.fn(),
             mapReady: vi.fn().mockReturnValue(true),
+            styleLightDarkTheme: 'light',
         } as unknown as TomTomMap;
     });
 
@@ -43,7 +44,7 @@ describe('Geometry module tests', () => {
         const textField: DataDrivenPropertyValueSpecification<string> = ['get', 'country'];
 
         const testGeometryData = amsterdamGeometryData as PolygonFeatures;
-        let geometry = await GeometriesModule.get(tomtomMapMock, geometryConfig);
+        let geometry = await GeometriesModule.create(tomtomMapMock, geometryConfig);
         // to be able to spy on private methods
         const geometryAny: any = geometry;
         vi.spyOn(geometryAny, 'applyConfig');
@@ -88,18 +89,33 @@ describe('Geometry module tests', () => {
 
         geometry.show(testGeometryData);
         geometry.clear();
-        geometry = await GeometriesModule.get(tomtomMapMock);
+        geometry = await GeometriesModule.create(tomtomMapMock);
         geometry.show(testGeometryData);
         geometry.clear();
         expect(geometry.events).toBeDefined();
     });
 
     test('restoreDataAndConfigImpl keeps source and layer IDs stable across a style change', async () => {
-        const geometry = await GeometriesModule.get(tomtomMapMock);
+        const geometry = await GeometriesModule.create(tomtomMapMock);
         const before = structuredClone(geometry.sourceAndLayerIDs);
 
         (geometry as unknown as { restoreDataAndConfigImpl(): void }).restoreDataAndConfigImpl();
 
         expect(geometry.sourceAndLayerIDs).toEqual(before);
+    });
+
+    test('a light→dark style change repaints the outline default colour', async () => {
+        const geometry = await GeometriesModule.create(tomtomMapMock);
+        const outlineColor = () =>
+            (geometry as unknown as { geometryOutlineLayerSpecs: { paint: Record<string, unknown> } })
+                .geometryOutlineLayerSpecs.paint['line-color'];
+
+        // non-outline branch of the ['case', …] falls back to the theme default colour
+        expect(outlineColor()).toEqual(expect.arrayContaining([['coalesce', ['get', 'color'], '#0A3653']]));
+
+        (tomtomMapMock as unknown as { styleLightDarkTheme: string }).styleLightDarkTheme = 'dark';
+        (geometry as unknown as { restoreDataAndConfigImpl(): void }).restoreDataAndConfigImpl();
+
+        expect(outlineColor()).toEqual(expect.arrayContaining([['coalesce', ['get', 'color'], '#5FA8D8']]));
     });
 });

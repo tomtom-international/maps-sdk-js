@@ -12,19 +12,39 @@ describe('toolStateToWhereContext', () => {
     it('exposes the viewport bbox from baseMap (via mapLibreMap.getBounds)', () => {
         const bounds = { getWest: () => 0, getSouth: () => 0, getEast: () => 1, getNorth: () => 1 };
         const state = { baseMap: { mapLibreMap: { getBounds: () => bounds } } } as any;
-        expect(toolStateToWhereContext(state).viewportBBox()).toEqual([0, 0, 1, 1]);
+        expect(toolStateToWhereContext(state).viewport().bbox).toEqual([0, 0, 1, 1]);
     });
-    it('geocodeArea delegates to locatePlaces with limit 5', async () => {
+    it('geocodeAreas with queryAs set delegates to locatePlaces with limit 5', async () => {
         const { locatePlaces } = await import('../locate-places');
         const ctx = toolStateToWhereContext({ baseMap: {} } as any);
-        await ctx.geocodeArea('London', 'place', [0, 0]);
-        expect(locatePlaces).toHaveBeenCalledWith('London', 'place', { limit: 5, bias: { position: [0, 0] } });
+        await ctx.geocodeAreas('London', 'place', [0, 0]);
+        expect(locatePlaces).toHaveBeenCalledWith(
+            'London',
+            'place',
+            { limit: 5, bias: { position: [0, 0] } },
+            undefined,
+        );
     });
-    it('geocodeAreas delegates to the area-restricted geocode with the centre bias', async () => {
+    it('geocodeAreas without queryAs delegates to the area-restricted geocode with the centre bias', async () => {
         const { geocodeAreas } = await import('../geocode-areas');
         const ctx = toolStateToWhereContext({ baseMap: {} } as any);
-        await ctx.geocodeAreas('De Pijp', [4.9, 52.37]);
-        expect(geocodeAreas).toHaveBeenCalledWith('De Pijp', { bias: [4.9, 52.37] });
+        await ctx.geocodeAreas('De Pijp', undefined, [4.9, 52.37]);
+        expect(geocodeAreas).toHaveBeenCalledWith('De Pijp', { bias: [4.9, 52.37] }, undefined);
+    });
+
+    // The context is the single seam carrying a turn's signal into the whole resolve-where layer,
+    // so it must reach both branches — otherwise area resolution stays uncancellable.
+    it('forwards the exec options to both geocodeAreas branches', async () => {
+        const { locatePlaces } = await import('../locate-places');
+        const { geocodeAreas } = await import('../geocode-areas');
+        const { signal } = new AbortController();
+        const ctx = toolStateToWhereContext({ baseMap: {} } as any, { signal });
+
+        await ctx.geocodeAreas('London', 'place', [0, 0]);
+        await ctx.geocodeAreas('De Pijp', undefined, [4.9, 52.37]);
+
+        expect(locatePlaces).toHaveBeenLastCalledWith('London', 'place', expect.anything(), { signal });
+        expect(geocodeAreas).toHaveBeenLastCalledWith('De Pijp', expect.anything(), { signal });
     });
 
     describe('getRoute returns a distinct, actionable error per failure mode', () => {

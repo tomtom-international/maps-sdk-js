@@ -60,3 +60,18 @@ describe('TrafficAreaAnalyticsState', () => {
         expect(shownHandler).toHaveBeenCalledTimes(1);
     });
 });
+
+describe('TrafficAreaAnalyticsState — entry id collisions', () => {
+    it('never reuses a surviving entry id after removals (add 3, remove first, add again)', async () => {
+        const state = new TrafficAreaAnalyticsState(mockMap);
+        await state.addEntry({} as any, 'A', { metrics: ['speed'] }); // tta-0
+        await state.addEntry({} as any, 'B', { metrics: ['speed'] }); // tta-1
+        await state.addEntry({} as any, 'C', { metrics: ['speed'] }); // tta-2
+        await state.removeEntry('tta-0');
+        // entries.length is now 2, so a naive length-based fallback would mint
+        // `tta-2` again and collide with the surviving entry.
+        await state.addEntry({} as any, 'D', { metrics: ['speed'] });
+        const ids = state.entries.map((entry) => entry.id);
+        expect(new Set(ids).size).toBe(ids.length);
+    });
+});

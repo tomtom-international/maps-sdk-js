@@ -22,12 +22,13 @@ import { ViewportPlaces } from '@tomtom-org/maps-sdk-plugin-viewport-places';
 ## Search → display on map
 
 ```ts
-const placesModule = await PlacesModule.get(map);
+const placesModule = await PlacesModule.create(map);
 
 const places = await search({ query: 'coffee shop', position: [4.9, 52.4], limit: 20 });
 await placesModule.show(places);
 
-placesModule.events.on('click', (place, lngLat) => {
+// `events` covers every surface the module draws; `events.places` is the pins alone, typed as Place
+placesModule.events.places.on('click', (place, lngLat) => {
     console.log(place.properties.poi?.name, place.properties.address.freeformAddress);
 });
 
@@ -100,8 +101,8 @@ const places = await search({
     limit: 100,
 });
 
-const placesModule = await PlacesModule.get(map);
-const geometriesModule = await GeometriesModule.get(map, { theme: 'inverted' });
+const placesModule = await PlacesModule.create(map);
+const geometriesModule = await GeometriesModule.create(map, { theme: 'inverted' });
 
 await placesModule.show(places);
 await geometriesModule.show(boundary);
@@ -171,7 +172,7 @@ const stops = await search({
 **Display on map:**
 
 ```ts
-const placesModule = await PlacesModule.get(map);
+const placesModule = await PlacesModule.create(map);
 await placesModule.show(evStations);
 ```
 
@@ -294,8 +295,8 @@ viewportPlaces.remove('restaurants');
 ## Multiple PlacesModule instances — different styling per category
 
 ```ts
-const restaurants = await PlacesModule.get(map, { icon: { iconColor: '#e74c3c' } });
-const hotels      = await PlacesModule.get(map, { icon: { iconColor: '#3498db' } });
+const restaurants = await PlacesModule.create(map, { icon: { iconColor: '#e74c3c' } });
+const hotels      = await PlacesModule.create(map, { icon: { iconColor: '#3498db' } });
 
 await restaurants.show(await search({ poiCategories: ['RESTAURANT'], position }));
 await hotels.show(await search({ poiCategories: ['HOTEL_MOTEL'], position }));
@@ -309,7 +310,7 @@ await hotels.show(await search({ poiCategories: ['HOTEL_MOTEL'], position }));
 
 ```ts
 // At init time
-const places = await PlacesModule.get(map, { theme: 'base-map' });
+const places = await PlacesModule.create(map, { theme: 'base-map' });
 // Available themes: 'pin' | 'circle-icon' | 'base-map' (default: 'pin')
 // - 'pin': classic teardrop pin markers
 // - 'circle-icon': centered circular POI icons (same sprites as base-map's POI layer)
@@ -325,7 +326,7 @@ places.applyTheme('base-map');
 ### MapLibre layer paint overrides
 
 ```ts
-const places = await PlacesModule.get(map, {
+const places = await PlacesModule.create(map, {
     theme: 'base-map',
     layers: {
         main:     { paint: { 'text-color': '#AA0000', 'icon-opacity': 0.75 } },
@@ -344,13 +345,19 @@ import myLogo from './myLogo.png';
 const iconConfig: PlaceIconConfig = {
     categoryIcons: [
         { id: 'ELECTRIC_VEHICLE_STATION', image: myLogo, pixelRatio: 1 },
-        { id: 'CAFE_PUB', image: 'https://example.com/icon.png', pixelRatio: 1 },
+        { id: 'CAFE_PUB', image: 'https://example.com/icon.png', pixelRatio: 1, offsetX: 0, offsetY: -10 },
     ],
 };
 
 places.applyIconConfig(iconConfig);
 // or: pass as icon: { ... } at get() time using the same shape
 ```
+
+`offsetX`/`offsetY` (pixels, `CustomImage`) shift a custom icon from its coordinate. Scope:
+only a `categoryIcons` entry that also has `image` — no `image` (existing sprite by `id`
+alone) means the offset is a no-op. Also honoured by
+`RoutingModule` charging stop `customIcons` (see routing.md). Not wired for
+`PlaceIconConfig.default.image`, even though it also accepts `CustomImage`.
 
 ### Custom text and extra feature properties
 
@@ -394,7 +401,7 @@ import type { Places } from '@tomtom-org/maps-sdk/core';
 
 const data: Places = await fetch('https://your-api.com/data.json').then(r => r.json());
 
-const places = await PlacesModule.get(map, {
+const places = await PlacesModule.create(map, {
     theme: 'base-map',
     icon: { mapping: { to: 'poiCategory', fn: () => 'COMPANY' } }, // map all to one icon
     text: { title: (place) => place.properties['Name'] },

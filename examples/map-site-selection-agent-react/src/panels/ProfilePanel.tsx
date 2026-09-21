@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import { focusFeature, getActiveToolState } from '../agent/agent-bridge';
 import { type ProfileResult, useProfile } from '../results/results-store';
-import { profileSite } from '../tools/profile-site';
+import { executeProfileSite } from '../tools/profile-site';
 import { KIND_COLOR } from '../viz/site-visuals';
 import { setPanelActive, useIsTopPanel } from './active-panel-store';
 import { CategoryIcon } from './category-icons';
 import { captionClass, NoteBanner, PanelShell, title1Class, title2Class, title3Class, title4Class } from './panel-ui';
 
 // Site Profile panel — the on-map analytics card from Figma (node 998:38739). Every metric lives
-// here so the chat stays a one-liner. Styling uses the shared --pb-* design tokens (same system the
+// here so the chat stays a one-liner. Styling uses the shared --ui-* design tokens (same system the
 // chat + Figma share), so panel ↔ chat ↔ Figma stay in lockstep.
 
 const WALK_RADII = [400, 800, 1200]; // metres
@@ -34,7 +34,7 @@ function RadiusSwitcher({
     format: (size: number) => string;
 }) {
     return (
-        <div className="flex w-full items-center gap-1 rounded-[32px] border border-(--pb-border-base) bg-(--pb-surface-1) p-0.5">
+        <div className="flex w-full items-center gap-1 rounded-[32px] border border-(--ui-border-base-em) bg-(--ui-surface-1) p-0.5">
             {options.map((size) => {
                 const active = size === current;
                 return (
@@ -45,8 +45,8 @@ function RadiusSwitcher({
                         onClick={() => onPick(size)}
                         className={`flex-1 cursor-pointer rounded-[32px] border px-3 py-1.5 text-center ${title4Class} transition-colors disabled:cursor-default disabled:opacity-50 ${
                             active
-                                ? 'border-(--pb-border-low) bg-(--pb-surface-0) text-(--pb-text-high) shadow-[0px_2px_4px_-2px_rgba(17,12,34,0.12)]'
-                                : 'border-transparent text-(--pb-text-medium) hover:text-(--pb-text-high)'
+                                ? 'border-(--ui-border-low-em) bg-(--ui-surface-0) text-(--ui-text-high-em) shadow-[0px_2px_4px_-2px_rgba(17,12,34,0.12)]'
+                                : 'border-transparent text-(--ui-text-med-em) hover:text-(--ui-text-high-em)'
                         }`}
                     >
                         {format(size)}
@@ -60,15 +60,15 @@ function RadiusSwitcher({
 // Metric card — big number + label, optional caption and a brand-coloured corner dot.
 function MetricCard({ value, label, caption, dot }: { value: string; label: string; caption?: string; dot?: string }) {
     return (
-        <div className="relative flex flex-col rounded-[10px] border border-(--pb-border-base) bg-(--pb-surface-0) px-3 py-2">
+        <div className="relative flex flex-col rounded-[10px] border border-(--ui-border-base-em) bg-(--ui-surface-0) px-3 py-2">
             {dot && (
                 <span aria-hidden className="absolute top-2 right-2 size-2 rounded-full" style={{ background: dot }} />
             )}
-            <span className={`overflow-hidden text-ellipsis whitespace-nowrap ${title1Class} text-(--pb-text-high)`}>
+            <span className={`overflow-hidden text-ellipsis whitespace-nowrap ${title1Class} text-(--ui-text-high-em)`}>
                 {value}
             </span>
-            <span className={`${title3Class} text-(--pb-text-medium)`}>{label}</span>
-            {caption && <span className={`${captionClass} text-(--pb-text-high) opacity-50`}>{caption}</span>}
+            <span className={`${title3Class} text-(--ui-text-med-em)`}>{label}</span>
+            {caption && <span className={`${captionClass} text-(--ui-text-high-em) opacity-50`}>{caption}</span>}
         </div>
     );
 }
@@ -98,9 +98,9 @@ export function ProfilePanel() {
         if (!state || busy || size === currentSize) return;
         setBusy(true);
         void Promise.resolve(
-            profileSite.execute(
+            executeProfileSite(
                 {
-                    address: p.rerun.address,
+                    addresses: [p.rerun.address],
                     concept: p.rerun.concept,
                     competitorCategories: p.rerun.competitorCategories,
                     travelMode: p.mode,
@@ -126,7 +126,7 @@ export function ProfilePanel() {
                     {p.label}
                 </button>
                 <div className="flex flex-col gap-1">
-                    <div className="flex items-baseline gap-1 whitespace-nowrap text-(--pb-text-medium)">
+                    <div className="flex items-baseline gap-1 whitespace-nowrap text-(--ui-text-med-em)">
                         <span className={`overflow-hidden text-ellipsis ${title4Class}`}>
                             {walking ? 'Walking radius' : 'Driving radius'}
                         </span>
@@ -148,7 +148,10 @@ export function ProfilePanel() {
             {/* Metric cards */}
             <div className="grid grid-cols-2 gap-2 px-4 py-3">
                 <MetricCard
-                    value={fmt({ count: p.competitors.count, capped: p.competitors.capped })}
+                    value={fmt({
+                        count: p.competitors.count,
+                        capped: p.competitors.capped,
+                    })}
                     label="Competitors"
                     caption={
                         p.competitors.nearestMeters !== null
@@ -167,7 +170,8 @@ export function ProfilePanel() {
                         dot={KIND_COLOR.parking}
                     />
                 )}
-                <MetricCard value={fmt(p.households)} label="Households" />
+                {/* Hidden entirely when the household signal is disabled (experimental search off). */}
+                {p.households && <MetricCard value={fmt(p.households)} label="Households" />}
             </div>
 
             {/* Honesty notes (kept from the data; the design omits them but they matter) */}
@@ -180,15 +184,19 @@ export function ProfilePanel() {
             )}
 
             {/* Area make-up */}
-            <div className="flex flex-col gap-1 bg-(--pb-surface-1) px-4 py-3">
-                <span className={`${title3Class} text-(--pb-text-low)`}>Area make-up</span>
+            <div className="flex flex-col gap-1 bg-(--ui-surface-1) px-4 py-3">
+                <span className={`${title3Class} text-(--ui-text-low-em)`}>Area make-up</span>
                 <div className="flex flex-col">
                     {p.areaMakeup.map((bucket) => (
                         <div key={bucket.key} className="flex w-full items-center gap-2 py-1">
-                            <CategoryIcon bucketKey={bucket.key} className="text-(--pb-text-medium)" />
-                            <div className="flex min-h-6 flex-1 items-center justify-between font-(family-name:--pb-font-secondary) text-[14px] leading-[20px] font-bold">
-                                <span className="truncate text-(--pb-text-medium)">{bucket.label}</span>
-                                <span className={bucket.count === null ? 'text-(--pb-text-low)' : 'text-(--pb-text-high)'}>
+                            <CategoryIcon bucketKey={bucket.key} className="text-(--ui-text-med-em)" />
+                            <div className="flex min-h-6 flex-1 items-center justify-between font-(family-name:--ui-font-proxima) text-[14px] leading-[20px] font-bold">
+                                <span className="truncate text-(--ui-text-med-em)">{bucket.label}</span>
+                                <span
+                                    className={
+                                        bucket.count === null ? 'text-(--ui-text-low-em)' : 'text-(--ui-text-high-em)'
+                                    }
+                                >
                                     {fmt(bucket)}
                                 </span>
                             </div>

@@ -9,48 +9,49 @@
  */
 export const playbook = {
     surface: {
-        surface0: 'var(--pb-surface-0)',
-        surface1: 'var(--pb-surface-1)',
-        surface2: 'var(--pb-surface-2)',
-        infoAccent: '#F5F8FA', // gentle info tint (no design-system token for it); subtle, non-brand
+        surface0: 'var(--ui-surface-0)',
+        surface1: 'var(--ui-surface-1)',
+        surface2: 'var(--ui-surface-2)',
+        infoAccent: 'var(--ui-surface-info-accent-1)', // gentle info tint; subtle, non-brand
     },
     text: {
-        highEm: 'var(--pb-text-high)',
-        medEm: 'var(--pb-text-medium)',
-        lowEm: 'var(--pb-text-low)',
-        white: 'var(--pb-text-white)',
-        brand: 'var(--pb-primary-color)', // TomTom brand red — accents / headline scores
+        highEm: 'var(--ui-text-high-em)',
+        medEm: 'var(--ui-text-med-em)',
+        lowEm: 'var(--ui-text-low-em)',
+        white: 'var(--ui-text-white)',
+        brand: 'var(--ui-surface-brand-red)', // TomTom brand red — accents / headline scores
     },
     // Semantic status colours (Figma status tags, emphasis KPI tiles).
     status: {
-        error: 'var(--pb-color-error)',
-        warning: 'var(--pb-color-warning)',
-        success: 'var(--pb-color-success)',
-        info: 'var(--pb-color-info)',
+        error: 'var(--ui-surface-brand-red)',
+        warning: 'var(--ui-surface-warning)',
+        success: 'var(--ui-surface-success)',
+        info: 'var(--ui-surface-info)',
     },
     border: {
-        lowEm: 'var(--pb-border-low)',
-        medEm: 'var(--pb-border-medium)',
-        highEm: 'var(--pb-border-high)',
+        base: 'var(--ui-border-base-em)',
+        lowEm: 'var(--ui-border-low-em)',
+        medEm: 'var(--ui-border-med-em)',
+        highEm: 'var(--ui-border-high-em)',
     },
     elevation: {
-        e1: 'var(--pb-shadow-e1)',
-        e2: 'var(--pb-shadow-e2)',
-        e3: 'var(--pb-shadow-e3)',
-        e4: 'var(--pb-shadow-e4)',
+        e1: 'var(--ui-elevation-e1)',
+        e2: 'var(--ui-elevation-e2)',
+        e3: 'var(--ui-elevation-e3)',
+        e4: 'var(--ui-elevation-e4)',
     },
     outline: {
-        focusPrimary: 'var(--pb-shadow-focus)', // mandatory keyboard-focus ring
+        focusPrimary: 'var(--ui-shadow-focus)', // mandatory keyboard-focus ring
     },
     radius: {
-        sm: 'var(--pb-radius-5)',
-        md: 'var(--pb-radius-10)',
-        lg: 'var(--pb-radius-20)',
+        sm: 'var(--ui-rounded-5)',
+        md: 'var(--ui-rounded-10)',
+        lg: 'var(--ui-rounded-20)',
     },
     font: {
-        headings: 'var(--pb-font-primary)', // Gilroy
-        body: 'var(--pb-font-secondary)', // Proxima Nova
-        code: 'var(--pb-font-code)',
+        headings: 'var(--ui-font-gilroy)', // Gilroy
+        body: 'var(--ui-font-proxima)', // Proxima Nova
+        code: 'var(--ui-font-fira)',
     },
     weight: { semibold: 600, bold: 700 },
 } as const;

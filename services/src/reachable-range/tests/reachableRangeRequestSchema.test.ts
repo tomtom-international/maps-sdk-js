@@ -187,3 +187,72 @@ describe.skip('Reachable range request schema validation', () => {
         );
     });
 });
+
+describe('Reachable range parameter narrowing', () => {
+    const base = { apiKey: 'APIKEY', commonBaseURL: 'https://api-test.tomtom.com' };
+    const config = reachableRangeRequestValidationConfig;
+
+    test('it should reject vehicle.state.heading, which the endpoint does not support', () => {
+        const validationCall = () =>
+            validateRequestSchema<ReachableRangeParams>(
+                {
+                    ...base,
+                    budget: { type: 'timeMinutes', value: 30 },
+                    origin: [10, 20],
+                    vehicle: { state: { heading: 90 } } as never,
+                },
+                config,
+            );
+
+        expect(validationCall).toThrow(/heading/);
+    });
+
+    test('it should accept the vehicle parameters the endpoint does support', () => {
+        const validationCall = () =>
+            validateRequestSchema<ReachableRangeParams>(
+                {
+                    ...base,
+                    budget: { type: 'timeMinutes', value: 30 },
+                    origin: [10, 20],
+                    vehicle: { model: { dimensions: { weightKG: 3500 } }, restrictions: { maxSpeedKMH: 80 } },
+                },
+                config,
+            );
+
+        expect(validationCall).not.toThrow();
+    });
+
+    test('it should reject avoid=alreadyUsedRoads, which the endpoint does not support', () => {
+        const validationCall = () =>
+            validateRequestSchema<ReachableRangeParams>(
+                {
+                    ...base,
+                    budget: { type: 'timeMinutes', value: 30 },
+                    origin: [10, 20],
+                    costModel: { avoid: ['alreadyUsedRoads' as never] },
+                },
+                config,
+            );
+
+        expect(validationCall).toThrow();
+    });
+
+    test('it should accept the avoid values the endpoint does support', () => {
+        const validationCall = () =>
+            validateRequestSchema<ReachableRangeParams>(
+                {
+                    ...base,
+                    budget: { type: 'timeMinutes', value: 30 },
+                    origin: [10, 20],
+                    costModel: {
+                        avoid: ['tollRoads', 'motorways', 'ferries', 'unpavedRoads', 'carpools'],
+                        routeType: 'efficient',
+                        traffic: 'live',
+                    },
+                },
+                config,
+            );
+
+        expect(validationCall).not.toThrow();
+    });
+});

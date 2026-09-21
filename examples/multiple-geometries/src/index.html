@@ -1,32 +1,32 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
     <head>
         <title>Display multiple geometries in map</title>
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
         <link rel="icon" href="data:,">
     </head>
-    <body class="sdk-example-body">
+    <body class="ui-body">
         <div id="sdk-map"></div>
-        <div id="sdk-example-panel" class="sdk-example-customPanel">
-            <div class="sdk-example-panel-header">
-                <h3 class="sdk-example-heading">
-                    <span class="sdk-example-heading-text">Geometries</span>
-                    <button class="sdk-example-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
-                        <svg class="sdk-example-heading-chevron" viewBox="0 0 16 10">
+        <div id="ui-panel" class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Geometries</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
                             <path d="M3 1.5L8 6.5L13 1.5" />
                         </svg>
                     </button>
                 </h3>
             </div>
-            <div class="sdk-example-panel-content">
-                <div class="sdk-example-section">
-                    <label class="sdk-example-form-label" for="sdk-example-mapStyles">Map Style:</label>
-                    <select class="sdk-example-dropdown" id="sdk-example-mapStyles"></select>
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <label class="ui-form-label" for="ui-mapStyles">Map Style:</label>
+                    <select class="ui-dropdown" id="ui-mapStyles"></select>
                 </div>
 
-                <div class="sdk-example-section">
-                    <label class="sdk-example-form-label" for="sdk-example-placeSelector">Region:</label>
-                    <select class="sdk-example-dropdown" id="sdk-example-placeSelector">
+                <div class="ui-section">
+                    <label class="ui-form-label" for="ui-placeSelector">Region:</label>
+                    <select class="ui-dropdown" id="ui-placeSelector">
                         <option value="france">Regions of France</option>
                         <option value="italy">Regions of Italy</option>
                         <option value="netherlands">Regions of NL</option>
@@ -37,42 +37,42 @@
                     </select>
                 </div>
 
-                <div class="sdk-example-section">
-                    <span class="sdk-example-form-label">Layer position:</span>
-                    <div class="sdk-example-radio-group">
-                        <label class="sdk-example-radio-label">
+                <div class="ui-section">
+                    <span class="ui-form-label">Layer position:</span>
+                    <div class="ui-radio-group">
+                        <label class="ui-radio-label">
                             <input type="radio" name="layerOption" value="top" checked>
                             Top
                         </label>
-                        <label class="sdk-example-radio-label">
+                        <label class="ui-radio-label">
                             <input type="radio" name="layerOption" value="country">
                             Below countries
                         </label>
-                        <label class="sdk-example-radio-label">
+                        <label class="ui-radio-label">
                             <input type="radio" name="layerOption" value="lowestPlaceLabel">
                             Below place labels
                         </label>
-                        <label class="sdk-example-radio-label">
+                        <label class="ui-radio-label">
                             <input type="radio" name="layerOption" value="poi">
                             Below Map POIs
                         </label>
-                        <label class="sdk-example-radio-label">
+                        <label class="ui-radio-label">
                             <input type="radio" name="layerOption" value="lowestLabel">
                             Below all labels
                         </label>
-                        <label class="sdk-example-radio-label">
+                        <label class="ui-radio-label">
                             <input type="radio" name="layerOption" value="lowestRoadLine">
                             Below roads
                         </label>
-                        <label class="sdk-example-radio-label">
+                        <label class="ui-radio-label">
                             <input type="radio" name="layerOption" value="lowestBuilding">
                             Below buildings
                         </label>
                     </div>
                 </div>
 
-                <div class="sdk-example-section">
-                    <button id="sdk-example-reCenter" class="sdk-example-button">Re-Center</button>
+                <div class="ui-section">
+                    <button id="ui-reCenter" class="ui-button">Re-Center</button>
                 </div>
             </div>
         </div>

@@ -378,3 +378,19 @@ describe('PlacesState events', () => {
         expect(handler).toHaveBeenCalledTimes(3);
     });
 });
+
+describe('PlacesState — entry id collisions', () => {
+    it('never reuses a surviving entry id after removals (add 3, remove first, add again)', async () => {
+        const state = new PlacesState(mockMap);
+        const place = { properties: {} } as any;
+        await state.addPlaceResult(place, 'A'); // places-0
+        await state.addPlaceResult(place, 'B'); // places-1
+        await state.addPlaceResult(place, 'C'); // places-2
+        await state.removeEntry('places-0');
+        // entries.length is now 2, so a naive length-based fallback would mint
+        // `places-2` again and collide with the surviving entry.
+        await state.addPlaceResult(place, 'D');
+        const ids = state.entries.map((entry) => entry.id);
+        expect(new Set(ids).size).toBe(ids.length);
+    });
+});

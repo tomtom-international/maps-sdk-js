@@ -7299,6 +7299,16 @@
               "endPointIndex": 4703
             }
           ],
+          "tollRoad": [
+            {
+              "startPointIndex": 3647,
+              "endPointIndex": 4283
+            },
+            {
+              "startPointIndex": 4305,
+              "endPointIndex": 4703
+            }
+          ],
           "vehicleRestricted": [
             {
               "id": "mhd5zj2ff26h7gdzv77",

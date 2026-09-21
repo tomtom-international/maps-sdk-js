@@ -1,14 +1,18 @@
+import path from 'node:path';
 import type { Page, TestInfo } from '@playwright/test';
 import { expect } from '@playwright/test';
-import path from 'path';
 import { PROD_TEST_SERVER_PORT, SANDPACK_TEST_SERVER_PORT } from '../../playwright.config';
 import { DEFAULT_MAP_LOAD_TIMEOUT, DEFAULT_MAP_SELECTOR, TAG_PROD, TAG_SANDPACK } from './e2eTestConstants';
+import { checkTempUiSnapshot } from './tempUiSnapshot';
 
 const getExampleName = (testInfo: TestInfo): string => {
     const testFilePath = testInfo.file;
     const exampleDir = path.dirname(path.dirname(testFilePath)); // from e2e-tests/sanity.test.ts to example/
     return path.basename(exampleDir);
 };
+
+/** Tolerance for the whole-page shots, which are dominated by the genuinely variable WebGL map. */
+const WHOLE_PAGE_MAX_DIFF_RATIO = 0.15;
 
 export type SanityE2ETestOptions = {
     page: Page;
@@ -17,7 +21,17 @@ export type SanityE2ETestOptions = {
     mapSelector?: string;
     /** Custom timeout for map loading (default: 10000ms) */
     mapLoadTimeout?: number;
+    /**
+     * Fraction of pixels allowed to differ from the baseline (default: 0.15).
+     *
+     * Sized to absorb genuine map variation — traffic and incident data change between runs,
+     * labels reflow, SwiftShader antialiases inconsistently — while still failing a preview that
+     * rendered the wrong thing. A Sandpack error panel or an unpainted map differs from a real
+     * baseline across the whole preview pane (~35% of the shot), so it can no longer slip through.
+     */
     maxDiffPixelRatio?: number;
+    /** TEMPORARY: selector → fixed value, for elements whose content changes between runs. */
+    uiPinnedValues?: Record<string, string>;
 };
 
 /**
@@ -39,7 +53,8 @@ export const sanityE2ETest = async (options: SanityE2ETestOptions) => {
         testInfo,
         mapSelector = DEFAULT_MAP_SELECTOR,
         mapLoadTimeout = DEFAULT_MAP_LOAD_TIMEOUT,
-        maxDiffPixelRatio = 0.2,
+        maxDiffPixelRatio = WHOLE_PAGE_MAX_DIFF_RATIO,
+        uiPinnedValues = {},
     } = options;
 
     const tags = testInfo.tags;
@@ -99,6 +114,14 @@ export const sanityE2ETest = async (options: SanityE2ETestOptions) => {
         await expect(page).toHaveScreenshot('upon-load.png', {
             maxDiffPixelRatio,
             timeout: mapLoadTimeout,
+        });
+
+        await checkTempUiSnapshot({
+            page,
+            testInfo,
+            mapSelector,
+            timeout: mapLoadTimeout,
+            pinnedValues: uiPinnedValues,
         });
     }
 };

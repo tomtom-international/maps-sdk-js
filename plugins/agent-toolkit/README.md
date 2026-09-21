@@ -119,6 +119,8 @@ The plugin ships a `DEFAULT_TOOLS` registry covering search, routing, traffic, r
 | `queryTrafficAnalytics` | Query cached analytics data or check what is currently displayed |
 | `toggleTilesTrafficFlow` | Toggle the real-time traffic-flow tile overlay |
 | `toggleTilesTrafficIncidents` | Toggle the real-time traffic-incidents tile overlay |
+| `describeMapStyling` | List the semantic base-map styling knobs (sizes, toggles, POI and traffic colours) with ranges and current values |
+| `setMapStyling` | Set or reset base-map styling knobs — label/icon/road sizes, exit numbers, shields, 3D buildings, congestion colours… |
 | `getShownTileIncidents` | List real-time incidents visible in the current viewport |
 
 ### Bring-your-own-data (BYOD)
@@ -541,7 +543,7 @@ For the complete, always-current list of exports — factories, tool-registry he
 | Peer | `@tomtom-org/maps-sdk` | TomTom Maps SDK (types, services, map modules) |
 | Peer | `ai@^6` | Vercel AI SDK (ToolLoopAgent, tool types) |
 | Peer | `zod@^4` | Schema validation |
-| Peer | `maplibre-gl@^5` | Map rendering engine |
+| Peer | `maplibre-gl@^6` | Map rendering engine |
 | Peer | `@turf/turf@^7` | Geospatial math (distance, bbox, bearing) used by the data tools |
 | Peer | `chart.js@^4` | Chart rendering for `analyseData` outputs |
 | Peer | `h3-js@^4` | H3 hexagonal grid for `processData` coverage / hexgrid visualizations |

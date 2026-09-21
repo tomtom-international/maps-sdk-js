@@ -64,6 +64,43 @@ export type InputSectionType = (typeof inputSectionTypes)[number];
 export type InputSectionTypes = InputSectionType[];
 
 /**
+ * The phonetic alphabet street names are transcribed in.
+ *
+ * @remarks
+ * - `LHP`: Language-specific phonetic representation
+ * - `IPA`: International Phonetic Alphabet
+ *
+ * @group Routing
+ */
+export type Phonetics = 'LHP' | 'IPA';
+
+/**
+ * The accepted values of {@link ChargingStopsStrategy}.
+ * @group Routing
+ */
+export const chargingStopsStrategies = [
+    'automaticFastest',
+    'manualFastest',
+    'automaticFastestWithFallbackToManual',
+] as const;
+
+/**
+ * How the routing service should plan charging stops on an electric route.
+ *
+ * @remarks
+ * - `automaticFastest`: the service picks charging stops for the fastest journey. The default.
+ * - `manualFastest`: the service plans no charging stops of its own; only stops you pass as
+ *   waypoints are charged at.
+ * - `automaticFastestWithFallbackToManual`: automatic, falling back to manual when no chargeable
+ *   route exists.
+ *
+ * Requires `vehicle.preferences.chargingPreferences` to be set as well: the endpoint also needs a
+ * minimum charge at the destination, which only the preferences supply.
+ * @group Routing
+ */
+export type ChargingStopsStrategy = (typeof chargingStopsStrategies)[number];
+
+/**
  * Configuration for turn-by-turn guidance instructions.
  *
  * Specifies the format and detail level for navigation guidance.
@@ -73,7 +110,6 @@ export type InputSectionTypes = InputSectionType[];
  * // Request coded guidance with phonetics
  * const guidance: GuidanceParams = {
  *   type: 'coded',
- *   version: 2,
  *   phonetics: 'IPA'
  * };
  * ```
@@ -88,12 +124,6 @@ export type GuidanceParams = {
      */
     type: 'coded';
     /**
-     * Guidance instruction version.
-     *
-     * @default 2
-     */
-    version?: 2;
-    /**
      * Phonetic transcription format for street names.
      *
      * @remarks
@@ -102,7 +132,7 @@ export type GuidanceParams = {
      *
      * @default 'IPA'
      */
-    phonetics?: 'LHP' | 'IPA';
+    phonetics?: Phonetics;
 };
 
 /**
@@ -149,6 +179,31 @@ export type ExtendedRouteRepresentation = 'distance' | 'travelTime';
  * @group Routing
  */
 export type ComputeTravelTimeFor = 'none' | 'all';
+
+/**
+ * Side of the road to arrive on.
+ *
+ * @group Routing
+ */
+export const arrivalSides = ['any', 'curb'] as const;
+
+/**
+ * Which side of the road the route should arrive on at each stop.
+ *
+ * @remarks
+ * - `any`: arrive from either side, whichever is faster
+ * - `curb`: arrive on the curb side for the country's driving direction
+ *
+ * @example
+ * ```typescript
+ * const arrivalSide: ArrivalSide = 'curb';
+ * ```
+ *
+ * @default 'any'
+ *
+ * @group Routing
+ */
+export type ArrivalSide = (typeof arrivalSides)[number];
 
 /**
  * Maximum number of alternative routes to calculate.
@@ -245,7 +300,12 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
          * Supported formats:
          * - Coordinate arrays: `[longitude, latitude]`
          * - Path arrays for route reconstruction
-         * - (not supported) Waypoint objects with radius for circle waypoints
+         * - Waypoint Features, whose properties carry the per-stop options
+         *
+         * The route ends a leg at every location in this list. There is no circle (soft) waypoint
+         * that the route merely passes: the routing API takes a plain point for each one. A path
+         * pins the geometry the route must follow, but its endpoints go out as waypoints as well,
+         * so it shapes the route without shortening the list of legs.
          *
          * @see [POST data parameters](https://docs.tomtom.com/routing-api/documentation/tomtom-maps/calculate-route#post-data-parameters)
          * @see [Response structure](https://docs.tomtom.com/routing-api/documentation/tomtom-maps/calculate-route#structure-of-a-successful-response)
@@ -265,17 +325,6 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
          *     [4.85, 52.25], [4.80, 52.20], [4.75, 52.15]  // Path points between waypoints
          *   ],
          *   [4.5, 51.9]   // Destination waypoint
-         * ]
-         *
-         * // (not supported) Waypoint objects with radius for circle waypoints
-         * locations: [
-         *   [4.9, 52.3],
-         *   {
-         *     type: 'Feature',
-         *     geometry: { type: 'Point', coordinates: [4.7, 52.1] },
-         *     properties: { radiusMeters: 5000 }
-         *   },
-         *   [4.5, 51.9]
          * ]
          * ```
          */
@@ -302,7 +351,27 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
         useEntryPoints?: GetPositionEntryPointOption;
 
         /**
-         * Request additional travel time calculations for different traffic scenarios.
+         * Which side of the road the route should arrive on.
+         *
+         * @remarks
+         * - `any`: arrive from either side, whichever is faster
+         * - `curb`: arrive on the curb side for the country's driving direction, so passengers or
+         *   deliveries can leave the vehicle without crossing the road
+         *
+         * Applies to the destination and to every intermediate stop.
+         *
+         * @default 'any'
+         *
+         * @example
+         * ```typescript
+         * // Pull up on the passenger side at each stop
+         * arrivalSide: 'curb'
+         * ```
+         */
+        arrivalSide?: ArrivalSide;
+
+        /**
+         * Request travel time calculations for different traffic scenarios.
          *
          * When set to 'all', the returned route summary will contain extra fields:
          * - `noTrafficTravelTimeInSeconds` – Free-flow (no traffic)
@@ -315,10 +384,26 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
          *
          * @example
          * ```typescript
-         * computeAdditionalTravelTimeFor: 'all'
+         * computeTravelTimeFor: 'all'
          * ```
          */
-        computeAdditionalTravelTimeFor?: ComputeTravelTimeFor;
+        computeTravelTimeFor?: ComputeTravelTimeFor;
+
+        /**
+         * How the service should plan charging stops on an electric route.
+         *
+         * Only applies to electric routes, so `vehicle.preferences.chargingPreferences` must be set
+         * too — validation says so before the request is sent.
+         *
+         * @default 'automaticFastest' (the service's own default when unset)
+         *
+         * @example
+         * ```typescript
+         * // Plan the fastest journey, choosing charging stops along the way
+         * chargingStopsStrategy: 'automaticFastest'
+         * ```
+         */
+        chargingStopsStrategy?: ChargingStopsStrategy;
 
         /**
          * Request extended progress information at route polyline points.
@@ -331,11 +416,19 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
          *
          * Useful for displaying progress during navigation or animating route visualization.
          *
+         * @remarks
+         * Orbis v3 has no per-representation selector: progress points are all-or-nothing. Any
+         * non-empty array therefore requests both `distance` and `travelTime`. Pass an empty array
+         * to opt out entirely and keep the progress data out of the response payload.
+         *
          * @default ['distance', 'travelTime']
          *
          * @example
          * ```typescript
          * extendedRouteRepresentations: ['distance', 'travelTime']
+         *
+         * // Opt out of progress points altogether
+         * extendedRouteRepresentations: []
          * ```
          */
         extendedRouteRepresentations?: ExtendedRouteRepresentation[];
@@ -350,7 +443,6 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
          * ```typescript
          * guidance: {
          *   type: 'coded',
-         *   version: 2,
          *   phonetics: 'IPA'
          * }
          * ```

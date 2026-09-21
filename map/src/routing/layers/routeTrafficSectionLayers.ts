@@ -2,9 +2,7 @@ import type { ExpressionSpecification, LineLayerSpecification, SymbolLayerSpecif
 import type { LayerSpecTemplate } from '../../shared';
 import { MAP_BOLD_FONT } from '../../shared/layers/commonLayerProps';
 import { severityDashedFilter, severityLineDashColor } from '../../traffic/util/trafficIncidentStyle';
-import type { RouteWidth } from '../types/routeModuleConfig';
 import {
-    getLineForegroundWidth,
     MAJOR_DELAY_COLOR,
     MINOR_DELAY_COLOR,
     MINOR_DELAY_LABEL_COLOR,
@@ -35,11 +33,10 @@ export const magnitudeOfDelayTextColor: ExpressionSpecification = [
 /**
  * @ignore
  */
-export const routeIncidentsBGLine = (routeWidth?: RouteWidth): LayerSpecTemplate<LineLayerSpecification> => ({
+export const routeIncidentsBGLine: LayerSpecTemplate<LineLayerSpecification> = {
     type: 'line',
     layout: { 'line-cap': 'round' },
     paint: {
-        'line-width': getLineForegroundWidth(routeWidth),
         'line-color': [
             'match',
             ['get', 'magnitudeOfDelay'],
@@ -53,21 +50,20 @@ export const routeIncidentsBGLine = (routeWidth?: RouteWidth): LayerSpecTemplate
             UNKNOWN_DELAY_BG_COLOR,
         ],
     },
-});
+};
 
 /**
  * @ignore
  */
-export const routeIncidentsDashedLine = (routeWidth?: RouteWidth): LayerSpecTemplate<LineLayerSpecification> => ({
+export const routeIncidentsDashedLine: LayerSpecTemplate<LineLayerSpecification> = {
     type: 'line',
     filter: severityDashedFilter,
     layout: { 'line-join': 'round' },
     paint: {
-        'line-width': getLineForegroundWidth(routeWidth),
         'line-color': severityLineDashColor,
         'line-dasharray': [1.5, 1],
     },
-});
+};
 
 const routeIncidentsSymbolBase: LayerSpecTemplate<SymbolLayerSpecification> = {
     filter: SELECTED_ROUTE_FILTER,

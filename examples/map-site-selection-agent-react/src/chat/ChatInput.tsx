@@ -23,22 +23,22 @@ export function ChatInput() {
     // Listening pulses the mic red; the placeholder shows the state — so the input stays one row.
     const micVisualClass =
         speechStatus === 'listening'
-            ? 'bg-[color-mix(in_srgb,var(--pb-color-error)_8%,var(--pb-surface-0))] text-(--pb-color-error) [animation:mic-pulse_1.2s_ease-in-out_infinite]'
-            : 'bg-transparent text-(--pb-text-medium) hover:bg-(--pb-surface-1) hover:text-(--pb-text-high)';
+            ? 'bg-[color-mix(in_srgb,var(--ui-surface-brand-red)_8%,var(--ui-surface-0))] text-(--ui-surface-brand-red) [animation:mic-pulse_1.2s_ease-in-out_infinite]'
+            : 'bg-transparent text-(--ui-text-med-em) hover:bg-(--ui-surface-1) hover:text-(--ui-text-high-em)';
     const placeholder =
         speechStatus === 'listening' ? 'Listening…' : speechStatus === 'sending' ? 'Sending…' : 'Ask anything';
 
     return (
-        <div className="flex shrink-0 flex-col gap-1 bg-(--pb-surface-0)">
+        <div className="flex shrink-0 flex-col gap-1 bg-(--ui-surface-0)">
             {/* AI Input: a rounded-10 card stacking the text field over an actions
                 row. Stacking (rather than one inline row) keeps the action buttons put as the textarea
                 grows to multiple rows. Border stays neutral on focus — no brand-red active outline. */}
-            <ComposerPrimitive.Root className="flex w-full flex-col gap-1 rounded-[10px] border border-(--pb-border-low) bg-(--pb-surface-0) p-2 shadow-(--pb-shadow-e3)">
+            <ComposerPrimitive.Root className="flex w-full flex-col gap-1 rounded-[10px] border border-(--ui-border-low-em) bg-(--ui-surface-0) p-2 shadow-(--ui-elevation-e3)">
                 {/* Text field — full-width, grows downward up to 200px then scrolls. */}
                 <div className="flex w-full px-2 py-1">
                     <ComposerPrimitive.Input
                         id="chat-input"
-                        className="min-h-[20px] max-h-[200px] w-full resize-none overflow-y-auto border-0 bg-transparent p-0 text-[14px] leading-[20px] text-(--pb-text-high) shadow-none outline-none [field-sizing:content] placeholder:text-(--pb-text-low) focus:outline-none focus:ring-0"
+                        className="min-h-[20px] max-h-[200px] w-full resize-none overflow-y-auto border-0 bg-transparent p-0 text-[14px] leading-[20px] text-(--ui-text-high-em) shadow-none outline-none [field-sizing:content] placeholder:text-(--ui-text-low-em) focus:outline-none focus:ring-0"
                         placeholder={placeholder}
                         autoComplete="off"
                         rows={1}
@@ -54,18 +54,11 @@ export function ChatInput() {
                         disabled
                         aria-label="Attach file (not available)"
                         title="Attachments aren't supported yet"
-                        className="flex h-11 w-11 shrink-0 cursor-not-allowed items-center justify-center rounded-full border-0 bg-transparent text-(--pb-text-disabled) opacity-60 [&_svg]:h-5 [&_svg]:w-5"
+                        className="flex h-11 w-11 shrink-0 cursor-not-allowed items-center justify-center rounded-full border-0 bg-transparent text-(--ui-text-disabled) opacity-60 [&_svg]:h-5 [&_svg]:w-5"
                     >
-                        <svg
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            aria-hidden="true"
-                        >
-                            <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
+                        {/* Attachment glyph exported verbatim from the Figma AI-toolkit design. */}
+                        <svg viewBox="13 13 18 18" fill="currentColor" aria-hidden="true">
+                            <path d="M21.0044 13.6667C19.2524 13.6667 17.8333 15.0858 17.8333 16.8378V26.0561C17.8333 28.4201 19.7465 30.3334 22.1106 30.3334C24.4747 30.3334 26.3879 28.4201 26.3879 26.0561V17.354H24.8392V26.0561C24.8392 27.5637 23.6182 28.7847 22.1106 28.7847C20.603 28.7847 19.382 27.5637 19.382 26.0561V16.8378C19.382 15.9423 20.1089 15.2154 21.0044 15.2154C21.8999 15.2154 22.6268 15.9423 22.6268 16.8378V24.5811C22.6268 24.8646 22.394 25.0974 22.1106 25.0974C21.8272 25.0974 21.5944 24.8646 21.5944 24.5811V17.354H20.0457V24.5811C20.0457 25.721 20.9707 26.646 22.1106 26.646C23.2505 26.646 24.1755 25.721 24.1755 24.5811V16.8378C24.1755 15.0858 22.7564 13.6667 21.0044 13.6667Z" />
                         </svg>
                     </button>
 
@@ -84,17 +77,22 @@ export function ChatInput() {
                         )}
                         <ComposerPrimitive.Send
                             aria-label="Send"
-                            className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-full border-0 bg-(--pb-primary-color) p-0 text-white transition-colors hover:bg-(--pb-primary-hover) disabled:cursor-not-allowed disabled:bg-(--pb-surface-1) disabled:text-(--pb-text-disabled)"
+                            className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-full border-0 bg-(--ui-surface-brand-red) p-0 text-white transition-colors hover:bg-(--ui-surface-brand-red-hover) disabled:cursor-not-allowed disabled:bg-(--ui-surface-1) disabled:text-(--ui-text-disabled)"
                         >
-                            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
-                                <path d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z" />
+                            {/* Send glyph exported verbatim from the Figma AI-toolkit design. */}
+                            <svg viewBox="13 13 18 18" className="h-5 w-5" fill="currentColor" aria-hidden="true">
+                                <path
+                                    fillRule="evenodd"
+                                    clipRule="evenodd"
+                                    d="M16.5271 14.6083L15.3333 15.6245L17.8333 22.2912L18.6136 22.8319H22.7802V21.1652H19.1911L17.7044 17.2007L26.1006 21.9986L17.7311 26.7812L18.609 24.4986H16.8233L15.3358 28.3661L16.5271 29.3888L28.1937 22.7221V21.275L16.5271 14.6083Z"
+                                />
                             </svg>
                         </ComposerPrimitive.Send>
                     </div>
                 </div>
             </ComposerPrimitive.Root>
             {/* Tiny always-on AI-mistakes disclaimer (the privacy notice shows once on the welcome screen). */}
-            <p className="px-1 text-center font-(family-name:--pb-font-secondary) text-[10px] leading-[14px] text-(--pb-text-low)">
+            <p className="px-1 text-center font-(family-name:--ui-font-proxima) text-[10px] leading-[14px] text-(--ui-text-low-em)">
                 AI can make mistakes — verify important results.
             </p>
         </div>

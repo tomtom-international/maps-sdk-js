@@ -20,4 +20,12 @@ export default defineConfig({
             '@tomtom-org/maps-sdk/core': path.resolve('../core/dist/core.es.js'),
         },
     },
+    // maplibre-gl v6 loads its web worker as a separate module (maplibre-gl-worker.mjs).
+    // Vite's dependency pre-bundler doesn't emit that worker into .vite/deps, so the
+    // worker fails to load and the map never finishes initializing. Excluding
+    // maplibre-gl from optimization lets it load from its own package where the
+    // worker resolves correctly.
+    optimizeDeps: {
+        exclude: ['maplibre-gl'],
+    },
 });

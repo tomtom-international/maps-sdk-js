@@ -18,9 +18,9 @@ const WELCOME_TEXT = [
 ].join('\n\n');
 
 const SUGGESTED_PROMPTS = [
-    "Where's traffic worst in Berlin right now?",
-    'Monitor traffic between Messe Berlin and Berlin Brandenburg Airport.',
-    "How are the roads around Berlin's major hospitals right now?",
+    "Where's traffic worst in Las Vegas right now?",
+    'Monitor traffic between The Venetian hotel and Harry Reid International Airport.',
+    'Show on the map and a live chart of the hospitals in Las Vegas which have their nearby streets congested right now',
     'What can you do? Show me a few things I can ask.',
 ] as const;
 
@@ -35,6 +35,7 @@ export function App() {
         analyticsState,
         selectedIncident,
         selectIncident,
+        pageIncident,
         clearSelectedIncident,
         focus,
         focusIndex,
@@ -105,11 +106,11 @@ export function App() {
     const focusedIdSet = new Set(focus?.ids ?? []);
 
     return (
-        <div className="absolute inset-0 flex flex-row-reverse gap-2 bg-(--pb-surface-0) p-2 max-sm:flex-col max-sm:gap-0 max-sm:p-0">
+        <div className="absolute inset-0 flex flex-row-reverse gap-2 bg-(--ui-surface-0) p-2 max-sm:flex-col max-sm:gap-0 max-sm:p-0">
             {/* `id="sdk-map"` is required — MapLibre attaches to the DOM node by ID. */}
             <div
                 id="sdk-map"
-                className="relative flex-1 overflow-hidden rounded-[20px] bg-(--pb-surface-1) max-sm:min-h-0 max-sm:basis-1/2 max-sm:rounded-none"
+                className="relative flex-1 overflow-hidden rounded-[20px] bg-(--ui-surface-1) max-sm:min-h-0 max-sm:basis-1/2 max-sm:rounded-none"
             >
                 {/* MapLibre mounts into this inner element. Keeping it separate from the panel
                  * tree below preserves React-managed children — MapLibre wipes every child of
@@ -121,7 +122,7 @@ export function App() {
                  * the incident detail floating top and the map controls (focus, analytics) bottom. The
                  * grid AND its wrappers stay `pointer-events-none` so the map is clickable through every
                  * empty area; only the panels (`[&>*]:pointer-events-auto`) capture clicks. */}
-                <div className="pointer-events-none absolute inset-0 z-(--pb-z-dropdown) grid grid-cols-[auto_minmax(0,1fr)] grid-rows-[minmax(0,1fr)_auto] gap-3 p-3 *:min-w-0">
+                <div className="pointer-events-none absolute inset-0 z-(--ui-z-dropdown) grid grid-cols-[auto_minmax(0,1fr)] grid-rows-[minmax(0,1fr)_auto] gap-3 p-3 *:min-w-0">
                     {/* Left panel rail — monitoring chips, then the panels, stacked + scrollable. The rail
                         is the scroll container; `[&>*]:shrink-0` stops flexbox from squishing panels (which
                         would clip their content, e.g. the Summary tiles) so the rail scrolls instead. */}
@@ -173,8 +174,11 @@ export function App() {
                     {selectedIncident && (
                         <div className="col-start-2 row-start-1 pointer-events-none flex min-h-0 justify-start self-start [&>*]:pointer-events-auto">
                             <IncidentDetailsPanel
-                                incident={selectedIncident.incident}
-                                overlapCount={selectedIncident.overlapCount}
+                                incident={selectedIncident.incidents[selectedIncident.index]}
+                                index={selectedIncident.index}
+                                total={selectedIncident.incidents.length}
+                                onPrev={() => pageIncident(-1)}
+                                onNext={() => pageIncident(1)}
                                 onClose={clearSelectedIncident}
                             />
                         </div>
@@ -213,24 +217,10 @@ export function App() {
                         deploymentId={settings.deploymentId}
                         availableDeployments={availableDeployments}
                         onDeploymentChange={setDeploymentId}
+                        onResizePointerDown={isMobile ? undefined : startResize} // We move the handle inside the chat viewport so the resize icon maintains the chat scrolling behavior
                     />
                 ) : (
-                    <div className="w-full p-4 text-(--pb-text-medium)">Initializing assistant...</div>
-                )}
-
-                {/* Drag handle on the chat's inner (map-facing) edge — resize up to half the screen. */}
-                {!isMobile && (
-                    <div
-                        role="separator"
-                        aria-orientation="vertical"
-                        aria-label="Resize chat"
-                        onPointerDown={startResize}
-                        className="group absolute top-0 right-0 z-20 flex h-full w-3 translate-x-1/2 cursor-col-resize items-center justify-center gap-0.5"
-                    >
-                        {/* Figma "Handle" — two 2px bars (text/low-em), 40px tall. */}
-                        <span className="h-10 w-0.5 rounded-full bg-(--pb-text-low) transition-colors group-hover:bg-(--pb-primary-color)" />
-                        <span className="h-10 w-0.5 rounded-full bg-(--pb-text-low) transition-colors group-hover:bg-(--pb-primary-color)" />
-                    </div>
+                    <div className="w-full p-4 text-(--ui-text-med-em)">Initializing assistant...</div>
                 )}
             </div>
         </div>

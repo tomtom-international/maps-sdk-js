@@ -2,7 +2,8 @@
  * @vitest-environment jsdom
  */
 import { describe, expect, test, vi } from 'vitest';
-import { extractImageDimensions } from '../customIconScales';
+import type { PlacesModuleConfig } from '../../types/placesModuleConfig';
+import { buildCustomIconScalesMap, extractImageDimensions } from '../customIconScales';
 
 describe('extractImageDimensions', () => {
     describe('SVG string inputs', () => {
@@ -119,5 +120,103 @@ describe('extractImageDimensions', () => {
 
             consoleSpy.mockRestore();
         });
+    });
+});
+
+describe('buildCustomIconScalesMap', () => {
+    test('includes offsetX/offsetY for a custom icon with an image, defaulting scale to 1', () => {
+        const config: PlacesModuleConfig = {
+            icon: {
+                categoryIcons: [{ id: 'CAFE', image: 'https://example.com/cafe.png', offsetX: 10, offsetY: -5 }],
+            },
+        };
+
+        const result = buildCustomIconScalesMap(config, 0);
+
+        expect(result.get('CAFE-0')).toEqual({ heightScale: 1, widthScale: 1, offset: { x: 10, y: -5 } });
+    });
+
+    test('defaults the unset offset axis to 0', () => {
+        const config: PlacesModuleConfig = {
+            icon: {
+                categoryIcons: [{ id: 'CAFE', image: 'https://example.com/cafe.png', offsetX: 10 }],
+            },
+        };
+
+        const result = buildCustomIconScalesMap(config, 0);
+
+        expect(result.get('CAFE-0')).toEqual({ heightScale: 1, widthScale: 1, offset: { x: 10, y: 0 } });
+    });
+
+    test('ignores offsetX/offsetY when no image is provided (references an existing sprite icon)', () => {
+        const config: PlacesModuleConfig = {
+            icon: {
+                categoryIcons: [{ id: 'CAFE', offsetX: 10, offsetY: -5 }],
+            },
+        };
+
+        const result = buildCustomIconScalesMap(config, 0);
+
+        expect(result.size).toBe(0);
+    });
+
+    test('combines offset with a real scale difference from the image', () => {
+        const config: PlacesModuleConfig = {
+            icon: {
+                categoryIcons: [{ id: 'CAFE', image: '<svg viewBox="0 0 240 280"></svg>', offsetX: 10, offsetY: -5 }],
+            },
+        };
+
+        const result = buildCustomIconScalesMap(config, 0);
+
+        // Default pin dimensions are 120x140 — 240x280 is exactly double.
+        expect(result.get('CAFE-0')).toEqual({ heightScale: 2, widthScale: 2, offset: { x: 10, y: -5 } });
+    });
+
+    test('carries the offset onto the availability-suffixed id too', () => {
+        const config: PlacesModuleConfig = {
+            icon: {
+                categoryIcons: [
+                    {
+                        id: 'ELECTRIC_VEHICLE_STATION',
+                        image: 'https://example.com/ev.png',
+                        offsetX: 10,
+                        offsetY: 0,
+                        availabilityLevel: 'available',
+                    },
+                ],
+            },
+        };
+
+        const result = buildCustomIconScalesMap(config, 0);
+
+        const expected = { heightScale: 1, widthScale: 1, offset: { x: 10, y: 0 } };
+        expect(result.get('ELECTRIC_VEHICLE_STATION-0')).toEqual(expected);
+        expect(result.get('ELECTRIC_VEHICLE_STATION-available-0')).toEqual(expected);
+    });
+
+    test('suffixes the icon id with the module instance index', () => {
+        const config: PlacesModuleConfig = {
+            icon: {
+                categoryIcons: [{ id: 'CAFE', image: 'https://example.com/cafe.png', offsetX: 10 }],
+            },
+        };
+
+        const result = buildCustomIconScalesMap(config, 2);
+
+        expect(result.has('CAFE-2')).toBe(true);
+        expect(result.has('CAFE-0')).toBe(false);
+    });
+
+    test('excludes an icon with a standard-size image and no offset', () => {
+        const config: PlacesModuleConfig = {
+            icon: {
+                categoryIcons: [{ id: 'CAFE', image: 'https://example.com/cafe.png' }],
+            },
+        };
+
+        const result = buildCustomIconScalesMap(config, 0);
+
+        expect(result.size).toBe(0);
     });
 });

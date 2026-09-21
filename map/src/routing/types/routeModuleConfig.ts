@@ -11,6 +11,45 @@ import type {
     SVGIconStyleOptions,
     ToBeAddedLayerSpecTemplate,
 } from '../../shared';
+import type {
+    DrawnSectionType,
+    GeneratedSectionType,
+    SectionDrawStyle,
+    SectionKnobOf,
+    SectionLinePattern,
+} from '../layers/sectionRegistry';
+
+/**
+ * The MapLibre layer id of a generated section's line layer.
+ *
+ * @remarks
+ * Derived from the section type, so `motorway` is drawn by `routeSectionMotorwayLine`.
+ * @group Routing
+ */
+export type SectionLineLayerName<T extends GeneratedSectionType = GeneratedSectionType> =
+    `routeSection${Capitalize<T>}Line`;
+
+/**
+ * The MapLibre layer id of a section's icon layer.
+ *
+ * @remarks
+ * Added to a generated section as soon as `sections.<type>.icon` asks for one, so `motorway` draws
+ * its icon through `routeSectionMotorwaySymbol`.
+ * @group Routing
+ */
+export type SectionSymbolLayerName<T extends GeneratedSectionType = GeneratedSectionType> =
+    `routeSection${Capitalize<T>}Symbol`;
+
+/**
+ * The MapLibre layer id drawing the signs of one generated section type.
+ *
+ * @remarks
+ * Present for the types that post their own value on a sign, so `speedLimit` draws its signs
+ * through `routeSectionSpeedLimitSign`.
+ * @group Routing
+ */
+export type SectionSignLayerName<T extends GeneratedSectionType = GeneratedSectionType> =
+    `routeSection${Capitalize<T>}Sign`;
 
 /**
  * Detailed configuration for the visual appearance of route layers on the map with the MapLibre specification.
@@ -113,15 +152,26 @@ export type RouteLayersConfig = {
     } & HasAdditionalLayersConfig;
 
     /**
-     * Layer specifications for specialized route sections.
+     * Layer specifications for route sections, keyed by section type.
      *
      * @remarks
-     * Each section is a subset of the route path.
+     * Each section is a subset of the route path, and every type the module draws has an entry
+     * here — the same vocabulary as the semantic `sections` config, one tier down. This is the
+     * escape hatch: use it when the knobs on `sections` are not enough and you need full MapLibre
+     * control over the layers a section is drawn with.
      *
-     * Different types of road sections along the route can be styled individually
-     * to highlight specific characteristics or conditions.
+     * The generated types carry a line layer, and an icon layer once `sections.<type>.icon` asks
+     * for one. The remaining five draw themselves with the hand-written layers documented below.
      */
     sections?: {
+        [T in GeneratedSectionType]?: {
+            [K in SectionLineLayerName<T>]?: Partial<ToBeAddedLayerSpecTemplate<LineLayerSpecification>>;
+        } & {
+            [K in SectionSymbolLayerName<T>]?: Partial<ToBeAddedLayerSpecTemplate<SymbolLayerSpecification>>;
+        } & {
+            [K in SectionSignLayerName<T>]?: Partial<ToBeAddedLayerSpecTemplate<SymbolLayerSpecification>>;
+        } & HasAdditionalLayersConfig;
+    } & {
         /**
          * Ferry crossing section layers.
          *
@@ -151,7 +201,7 @@ export type RouteLayersConfig = {
          * @remarks
          * Highlights route segments affected by traffic incidents or disruptions.
          */
-        incident?: {
+        traffic?: {
             /**
              * Symbol layer used to mark the start of a jam on the route.
              *
@@ -183,24 +233,26 @@ export type RouteLayersConfig = {
         } & HasAdditionalLayersConfig;
 
         /**
-         * Toll road section layers.
+         * Layers for the `tollRoad` section type.
          *
          * @remarks
-         * Identifies route segments that require toll payments.
+         * Marks the stretches of the route that cost money to drive, by any charging scheme:
+         * per-use tolls, motorways that need a vignette, and urban road-charge zones.
          */
         tollRoad?: {
             /**
-             * Symbol layer for marking toll booths or toll segments.
+             * Symbol layer marking the charged stretches with an icon.
              *
              * @remarks
-             * Use for icons or markers indicating toll-related points along the route.
+             * Defaults to the toll-plaza icon, which is the closest the base-map sprite offers to
+             * a generic road-charge icon. Override it to distinguish the schemes yourself.
              */
             routeTollRoadSymbol?: Partial<ToBeAddedLayerSpecTemplate<SymbolLayerSpecification>>;
             /**
-             * Line layer used to outline toll road segments.
+             * Line layer used to outline the charged stretches.
              *
              * @remarks
-             * Typically styled to visually differentiate toll segments from regular roads.
+             * Typically styled to visually differentiate charged stretches from regular roads.
              */
             routeTollRoadOutline?: Partial<ToBeAddedLayerSpecTemplate<LineLayerSpecification>>;
         } & HasAdditionalLayersConfig;
@@ -345,6 +397,10 @@ export type ChargingStopIconConfig = {
      * @remarks
      * These icons can be referenced in the `mapping` configuration to customize
      * the appearance of charging stop markers based on specific criteria.
+     *
+     * An entry's `offsetX`/`offsetY` shift that icon from the charging stop's coordinate.
+     * They only take effect when the same entry also provides an `image`; an entry naming an
+     * existing sprite icon by `id` alone ignores them.
      */
     customIcons?: CustomImage[];
 
@@ -544,6 +600,208 @@ export type RouteTheme = {
 };
 
 /**
+ * The icon drawn on a route section.
+ *
+ * @remarks
+ * Backed by a symbol layer over the section's own source: the generated section types get one
+ * added, and the types that already draw an icon (`ferry`, `tollRoad`) have theirs replaced.
+ *
+ * @group Routing
+ */
+export type SectionIconConfig = {
+    /**
+     * The id of an image in the loaded style's sprite, e.g. `poi-toll_plaza`. An id the sprite does
+     * not carry draws nothing.
+     */
+    image: string;
+    /**
+     * Where the icon sits on the section.
+     *
+     * @remarks
+     * - `center`: one icon at the middle of each section.
+     * - `along`: icons repeated along the section.
+     *
+     * A section is a stretch of line, so there is no placement at its start: MapLibre places
+     * symbols on a line either once at its centre or repeatedly along it.
+     *
+     * @defaultValue `"center"`
+     */
+    placement?: 'center' | 'along';
+    /**
+     * Icon scale, where `1` is the sprite image's own size.
+     *
+     * @defaultValue 1
+     */
+    size?: number;
+};
+
+// Every knob the section tier offers. What one type actually takes is a subset of these, named by
+// its registry entry: `SectionDisplayConfig` picks them per type.
+type SectionKnobs = {
+    /**
+     * Whether the section is drawn at all.
+     *
+     * @remarks
+     * The default is per type, on one rule: a type draws itself when its stretches are sparse
+     * along a route and consequential for the driver. `carTrain`, `ferry`, `lowEmissionZone`,
+     * `tollRoad`, `tollVignette`, `traffic`, `tunnel` and `vehicleRestricted` do, until switched
+     * off here, and so does `speedLimit`, which posts a sign per section rather than banding the
+     * route. The rest wait to be asked — `motorway`, `urban` and `country` each run nearly a
+     * route's whole length, so a band drawn for them buries the route line.
+     */
+    visible?: boolean;
+    /**
+     * Line colour, as any CSS colour string. Each section type has its own default; on a type
+     * drawn with more than one line, this sets the principal one and the rest are derived from it.
+     */
+    color?: string;
+    /**
+     * Line opacity, 0 to 1. Sections default to partial opacity so the route line stays readable
+     * underneath.
+     */
+    opacity?: number;
+    /**
+     * Line width preset. Defaults to the route's own width.
+     */
+    width?: RouteWidth;
+    /**
+     * Whether the section bands the route (`halo`) or stands in for the route line along its own
+     * stretch (`inline`). This decides both where the section's line sits in the layer order and
+     * how wide it is drawn. Each type defaults to the one it has always been drawn as.
+     */
+    style?: SectionDrawStyle;
+    /**
+     * Line pattern. Each type has its own default — the ones that mark a legal rather than a
+     * physical property of the road are dashed, and `vehicleRestricted` is dotted.
+     */
+    pattern?: SectionLinePattern;
+    /**
+     * An icon drawn on the section. None of the generated types draws one by default.
+     */
+    icon?: SectionIconConfig;
+    /**
+     * The sign a section posts its own value on, for the one type whose information is a number
+     * rather than a stretch: `speedLimit`.
+     */
+    sign?: SectionSignConfig;
+};
+
+/**
+ * The unit a speed limit sign reads in.
+ *
+ * @group Routing
+ */
+export type SectionSignUnit = 'km/h' | 'mph';
+
+/**
+ * What a section's signs give way to when two symbols want the same spot.
+ *
+ * @remarks
+ * MapLibre resolves symbol collisions from the topmost layer down, so the layer underneath is the
+ * one that gives way.
+ *
+ * - `belowMapLabels` — the signs give way to everything, the base map's own labels included, so a
+ *   sign never lands on a street or place name. Sparse maps, and the price of a tidy one: in a city
+ *   the labels take most of the room. Affordable because a sign repeats along its stretch, so one
+ *   dropped where a label sits reappears further along.
+ * - `belowRouteIcons` — the signs give way to the route's own icons, each of which says something
+ *   the road cannot, but take precedence over the base map's labels.
+ * - `aboveRouteIcons` — the signs give way to nothing, for a map whose subject is the limits.
+ *
+ * @group Routing
+ */
+export type SectionSignPriority = 'belowMapLabels' | 'belowRouteIcons' | 'aboveRouteIcons';
+
+/**
+ * The sign a section type posts its own value on.
+ *
+ * @remarks
+ * `speedLimit` is the one type that takes this, and a sign is the whole of what it draws — there
+ * is no line along the stretch, because a line would mark every stretch that carries a limit
+ * without ever saying what the limit is. {@link SectionDisplayConfig.visible} switches the signs
+ * themselves.
+ *
+ * The sign follows the road rather than the reader. Where the route also carries `country`
+ * sections, each sign takes the face, the unit and the numeral colour of the country its stretch
+ * runs through: the white disc most of Europe posts on, the yellow one Sweden, Finland and Iceland
+ * use, the `SPEED LIMIT` plaque of the United States, and Japan's blue numerals. A country with no
+ * entry posts the white disc in km/h.
+ *
+ * Where mph is posted the number is converted and rounded to the step signs come in. Without
+ * `country` sections the display units decide the face and the unit, and an explicit {@link unit}
+ * overrides both.
+ *
+ * Signs scale with the zoom, as the ferry and toll-road icons do; {@link minzoom} decides how early
+ * they appear at all.
+ *
+ * @group Routing
+ */
+export type SectionSignConfig = {
+    /**
+     * The lowest zoom the signs are drawn at.
+     *
+     * @defaultValue 9, the zoom at which a sign is about a stretch of road a reader can see. Over
+     * a whole country the stretches fall in the same few pixels, so the few signs that survive the
+     * collision are an arbitrary sample rather than the limits of the drive.
+     */
+    minzoom?: number;
+    /**
+     * Whether a sign gives way to the other icons the route draws, or takes precedence over them.
+     *
+     * @defaultValue `'belowRouteIcons'`
+     */
+    priority?: SectionSignPriority;
+    /**
+     * The unit every sign reads in, whatever the road posts.
+     *
+     * @remarks
+     * Left out, each sign follows its own country, or the display units where the route carries no
+     * `country` sections.
+     */
+    unit?: SectionSignUnit;
+};
+
+/**
+ * Appearance of one route section type.
+ *
+ * @remarks
+ * The semantic tier for sections: enough to draw, recolour, resize or mute any section type the
+ * module draws, without writing a MapLibre layer spec — see {@link DrawnSectionType} for the
+ * types, and `layers.sections` for anything these knobs cannot express.
+ *
+ * Which knobs a type takes is part of its type. `traffic` colours its line by `magnitudeOfDelay`
+ * and takes its icons from the incident data, so `sections.traffic.color` does not compile rather
+ * than compiling and drawing nothing. {@link sectionSupportsKnob} answers the same question at
+ * runtime, for a UI that builds its controls from the type.
+ *
+ * @example
+ * ```typescript
+ * const config: RoutingModuleConfig = {
+ *   sections: {
+ *     // Opt in to two of the sections nothing draws by default:
+ *     urban: { visible: true },
+ *     lowEmissionZone: { visible: true, color: '#1B7A43', opacity: 0.8 },
+ *     // Restyle two that are drawn already:
+ *     tunnel: { color: '#402060', style: 'halo' },
+ *     tollRoad: { icon: { image: 'poi-toll_plaza', placement: 'along' } },
+ *     // And drop one:
+ *     traffic: { visible: false },
+ *   },
+ * };
+ * ```
+ *
+ * @group Routing
+ */
+export type SectionDisplayConfig<T extends DrawnSectionType = DrawnSectionType> = Pick<SectionKnobs, SectionKnobOf<T>>;
+
+/**
+ * Appearance of every route section type, keyed by type.
+ *
+ * @group Routing
+ */
+export type SectionsDisplayConfig = { [T in DrawnSectionType]?: SectionDisplayConfig<T> };
+
+/**
  * Configuration options for the routing module.
  *
  * @remarks
@@ -609,6 +867,24 @@ export type RoutingModuleConfig = MapModuleCommonConfig & {
          */
         visible?: boolean;
     };
+
+    /**
+     * Appearance of the route sections, keyed by section type.
+     *
+     * @remarks
+     * Covers every section type the module draws, on the same knobs: draw it or not, its colour,
+     * opacity, width, whether it bands the route or stands in for its line, its line pattern and
+     * its icon.
+     *
+     * The types whose stretches are sparse and consequential draw themselves — `carTrain`,
+     * `ferry`, `lowEmissionZone`, `tollRoad`, `tollVignette`, `traffic`, `tunnel` and
+     * `vehicleRestricted` — and switch off with `{ visible: false }`. The rest switch on with
+     * `{ visible: true }`: a type covering most of a route buries the route line.
+     *
+     * `layers.sections` takes full MapLibre layer specs for the same types, for anything these
+     * knobs cannot express.
+     */
+    sections?: SectionsDisplayConfig;
 
     /**
      * Custom layer styling configuration.

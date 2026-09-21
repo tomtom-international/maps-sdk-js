@@ -31,12 +31,12 @@ const DEFAULT_DETOUR_MINUTES = 5;
 export type SearchPanelParams = Pick<AlongRouteSearchParams, 'query' | 'poiCategories' | 'maxDetourTimeSeconds'>;
 
 export const setupPanel = (onSearch: (params: SearchPanelParams) => Promise<void>, onClear: () => void) => {
-    const queryInput = document.querySelector('#sdk-example-queryInput') as HTMLInputElement;
-    const searchButton = document.querySelector('#sdk-example-searchButton') as HTMLButtonElement;
-    const clearButton = document.querySelector('#sdk-example-clearButton') as HTMLButtonElement;
-    const categoriesContainer = document.querySelector('#sdk-example-categoriesContainer') as HTMLDivElement;
-    const detourMinutesSlider = document.querySelector('#sdk-example-detourSlider') as HTMLInputElement;
-    const detourValue = document.querySelector('#sdk-example-detourValue') as HTMLSpanElement;
+    const queryInput = document.querySelector('#ui-queryInput') as HTMLInputElement;
+    const searchButton = document.querySelector('#ui-searchButton') as HTMLButtonElement;
+    const clearButton = document.querySelector('#ui-clearButton') as HTMLButtonElement;
+    const categoriesContainer = document.querySelector('#ui-categoriesContainer') as HTMLDivElement;
+    const detourMinutesSlider = document.querySelector('#ui-detourSlider') as HTMLInputElement;
+    const detourValue = document.querySelector('#ui-detourValue') as HTMLSpanElement;
 
     // Sync slider to the constant so the HTML never needs to be updated manually
     detourMinutesSlider.value = String(DEFAULT_DETOUR_MINUTES);
@@ -47,7 +47,7 @@ export const setupPanel = (onSearch: (params: SearchPanelParams) => Promise<void
 
     for (const category of ROUTE_POI_CATEGORIES) {
         const label = document.createElement('label');
-        label.className = 'sdk-example-checkbox-label';
+        label.className = 'ui-checkbox-label';
 
         const input = document.createElement('input');
         input.type = 'checkbox';

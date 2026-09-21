@@ -8,7 +8,7 @@ export const initTooltip = (map: TomTomMap, analyticsModule: TrafficAreaAnalytic
         anchor: 'left',
         offset: 20,
         maxWidth: '220px',
-        className: 'sdk-example-maplibre-popup aa-tile-popup',
+        className: 'ui-maplibre-popup aa-tile-popup',
     });
 
     const buildHTML = (properties: Record<string, unknown>) => `

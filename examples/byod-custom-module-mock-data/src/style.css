@@ -3,35 +3,35 @@
 @import "../../src/templates/css/base/typography.css";
 @import "../../src/templates/css/panel/custom-panel.css";
 
-.sdk-example-customPanel {
+.ui-customPanel {
     width: 320px;
 }
 
-.sdk-example-description {
+.ui-description {
     margin: 0;
-    font-size: var(--sdk-font-body-s);
-    line-height: var(--sdk-font-body-s-lh);
-    color: var(--sdk-text-medium);
+    font-size: var(--ui-font-body-s);
+    line-height: var(--ui-font-body-s-lh);
+    color: var(--ui-text-med-em);
 }
 
-.sdk-example-description code {
-    background: var(--sdk-surface-1);
+.ui-description code {
+    background: var(--ui-surface-1);
     padding: 1px 4px;
-    border-radius: var(--sdk-radius-5);
+    border-radius: var(--ui-rounded-5);
     font-size: 12px;
 }
 
-.sdk-example-selection {
-    font-size: var(--sdk-font-body-s);
-    line-height: var(--sdk-font-body-s-lh);
-    color: var(--sdk-text-high);
-    background: var(--sdk-surface-1);
-    padding: var(--sdk-space-3);
-    border-radius: var(--sdk-radius-10);
+.ui-selection {
+    font-size: var(--ui-font-body-s);
+    line-height: var(--ui-font-body-s-lh);
+    color: var(--ui-text-high-em);
+    background: var(--ui-surface-1);
+    padding: var(--ui-space-3);
+    border-radius: var(--ui-rounded-10);
     min-height: 20px;
 }
 
-.sdk-example-selection strong {
+.ui-selection strong {
     display: block;
-    margin-bottom: var(--sdk-space-1);
+    margin-bottom: var(--ui-space-1);
 }

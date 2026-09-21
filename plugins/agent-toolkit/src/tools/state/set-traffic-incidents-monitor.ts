@@ -11,6 +11,7 @@
 import { trafficIncidentDetails } from '@tomtom-org/maps-sdk/services';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
+import { withAgentToolkitHeaders } from '../shared';
 import { toolErrorSchema } from '../shared-output-schemas';
 
 export const setTrafficIncidentsMonitorOutputSchema = z.union([
@@ -95,7 +96,12 @@ export const executeSetTrafficIncidentsMonitor = async (
     state.trafficIncidents.startMonitoring(
         incidentsEntryID,
         { bbox, capturedAt: entry.timestamp, label: entry.label },
-        { fetchIncidents: async (b) => (await trafficIncidentDetails({ ...filters, bbox: b })).features },
+        {
+            fetchIncidents: async (b) => {
+                const requestParams = withAgentToolkitHeaders({ ...filters, bbox: b });
+                return (await trafficIncidentDetails(requestParams)).features;
+            },
+        },
         intervalMs ? { intervalMs } : undefined,
     );
 

@@ -33,7 +33,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         return fetchedPlace;
     };
 
-    const presetSelector = document.getElementById('sdk-example-presetSelector') as HTMLSelectElement;
+    const presetSelector = document.getElementById('ui-presetSelector') as HTMLSelectElement;
     configPresets.forEach((preset, index) => presetSelector.add(new Option(preset.title, String(index))));
     presetSelector.addEventListener('change', (event) => {
         const config = configPresets[Number((event.target as HTMLOptionElement).value)].config;
@@ -41,7 +41,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         trafficFlowModule.applyConfig(config?.flow);
     });
 
-    const locationsSelector = document.getElementById('sdk-example-jumpToSelector') as HTMLSelectElement;
+    const locationsSelector = document.getElementById('ui-jumpToSelector') as HTMLSelectElement;
     jumpToPlaces.forEach((location, index) => locationsSelector.add(new Option(location, String(index))));
     locationsSelector.addEventListener('change', async (event) => {
         const place = await geocodeWithCache(jumpToPlaces[Number((event.target as HTMLOptionElement).value)]);

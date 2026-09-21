@@ -9,7 +9,7 @@ const buildOpeningHoursHtml = (place: Place<SearchPlaceProps>): string => {
     if (!openingHours) return '';
 
     if (openingHours.alwaysOpenThisPeriod) {
-        return '<p class="sdk-example-popup-hours sdk-example-popup-hours--open">Open 24/7</p>';
+        return '<p class="ui-popup-hours ui-popup-hours--open">Open 24/7</p>';
     }
 
     const now = new Date();
@@ -20,10 +20,11 @@ const buildOpeningHoursHtml = (place: Place<SearchPlaceProps>): string => {
         .map(({ start, end }) => `${formatTime(start.hour, start.minute)}–${formatTime(end.hour, end.minute)}`)
         .join(', ');
 
-    const statusClass = isOpenNow ? 'sdk-example-popup-hours--open' : 'sdk-example-popup-hours--closed';
+    const statusClass = isOpenNow ? 'ui-popup-hours--open' : 'ui-popup-hours--closed';
     const statusText = isOpenNow ? 'Open now' : 'Closed now';
+    const hoursSuffix = hoursText ? ` · ${hoursText}` : '';
 
-    return `<p class="sdk-example-popup-hours ${statusClass}">${statusText}${hoursText ? ` · ${hoursText}` : ''}</p>`;
+    return `<p class="ui-popup-hours ${statusClass}">${statusText}${hoursSuffix}</p>`;
 };
 
 export const buildPopupHtml = (place: Place<SearchPlaceProps>): string => {
@@ -32,13 +33,13 @@ export const buildPopupHtml = (place: Place<SearchPlaceProps>): string => {
     const category = poi?.localizedCategories?.[0];
 
     return `
-        <div class="sdk-example-popup">
-            <p class="sdk-example-popup-name">${poi?.name}</p>
-            ${category ? `<p class="sdk-example-popup-category">${category}</p>` : ''}
+        <div class="ui-popup">
+            <p class="ui-popup-name">${poi?.name}</p>
+            ${category ? `<p class="ui-popup-category">${category}</p>` : ''}
             ${buildOpeningHoursHtml(place)}
-            ${address?.freeformAddress ? `<p class="sdk-example-popup-address">${address.freeformAddress}</p>` : ''}
-            ${poi?.url ? `<a class="sdk-example-popup-url" href="${poi.url}" target="_blank" rel="noopener">${poi.url.replace(/^https?:\/\/(www\.)?/, '')}</a>` : ''}
-            ${poi?.phone ? `<p class="sdk-example-popup-phone">${poi.phone}</p>` : ''}
+            ${address?.freeformAddress ? `<p class="ui-popup-address">${address.freeformAddress}</p>` : ''}
+            ${poi?.url ? `<a class="ui-popup-url" href="${poi.url}" target="_blank" rel="noopener">${poi.url.replace(/^https?:\/\/(www\.)?/, '')}</a>` : ''}
+            ${poi?.phone ? `<p class="ui-popup-phone">${poi.phone}</p>` : ''}
         </div>
     `;
 };
@@ -50,5 +51,5 @@ export const createPOIPopup = (): Popup =>
         anchor: 'bottom',
         offset: 50,
         maxWidth: '280px',
-        className: 'sdk-example-maplibre-popup sdk-example-poi-popup',
+        className: 'ui-maplibre-popup ui-poi-popup',
     });

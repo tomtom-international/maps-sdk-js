@@ -21,7 +21,7 @@ type ToggleProps = {
     labelClassName?: string | null;
 };
 
-// Geometry mirrors the SDK templates' `.sdk-example-toggle-switch` (md) and the chat-agent
+// Geometry mirrors the SDK templates' `.ui-toggle-switch` (md) and the chat-agent
 // example's `.always-on-track` (sm). The thumb's translateX equals
 // `track-width − thumb-width − 2 × inset(2px)`.
 const SIZE_CLASS: Record<ToggleSize, string> = {
@@ -30,12 +30,12 @@ const SIZE_CLASS: Record<ToggleSize, string> = {
 };
 
 const TONE_CLASS: Record<ToggleTone, string> = {
-    success: 'peer-checked:bg-(--pb-color-success)',
-    primary: 'peer-checked:bg-(--pb-primary-color)',
+    success: 'peer-checked:bg-(--ui-surface-success)',
+    primary: 'peer-checked:bg-(--ui-surface-brand-red)',
 };
 
 /**
- * Track-and-thumb toggle switch. Replicates `.sdk-example-toggle-switch` from the SDK templates
+ * Track-and-thumb toggle switch. Replicates `.ui-toggle-switch` from the SDK templates
  * (success green by default) with a "primary" variant for the chat-agent's always-on mic toggle.
  */
 export function Toggle({
@@ -57,9 +57,9 @@ export function Toggle({
         labelClassName === null
             ? ''
             : (labelClassName ??
-              'flex cursor-pointer select-none items-center gap-3 py-1 text-[13px] leading-[18px] text-(--pb-text-high)');
+              'flex cursor-pointer select-none items-center gap-3 py-1 text-[13px] leading-[18px] text-(--ui-text-high-em)');
 
-    const trackClass = `relative inline-block shrink-0 rounded-full bg-(--pb-border-high) transition-colors duration-300 ease-in-out after:absolute after:left-0.5 after:top-0.5 after:rounded-full after:bg-(--pb-surface-0) after:shadow-[0_2px_4px_rgba(0,0,0,0.2)] after:transition-transform after:duration-300 after:ease-in-out after:content-[''] peer-disabled:cursor-not-allowed peer-disabled:opacity-50 ${SIZE_CLASS[size]} ${TONE_CLASS[tone]}`;
+    const trackClass = `relative inline-block shrink-0 rounded-full bg-(--ui-border-high-em) transition-colors duration-300 ease-in-out after:absolute after:left-0.5 after:top-0.5 after:rounded-full after:bg-(--ui-surface-0) after:shadow-[0_2px_4px_rgba(0,0,0,0.2)] after:transition-transform after:duration-300 after:ease-in-out after:content-[''] peer-disabled:cursor-not-allowed peer-disabled:opacity-50 ${SIZE_CLASS[size]} ${TONE_CLASS[tone]}`;
 
     return (
         <label className={`${baseLabel} ${disabled ? 'cursor-not-allowed opacity-50' : ''}`} title={title}>

@@ -186,19 +186,26 @@ export type TrafficSectionProps = SectionProps & {
      * Extra time compared to free-flow conditions. Present when delay can be calculated.
      */
     delayInSeconds?: number;
+    /**
+     * The identifier of the traffic incident behind this section.
+     *
+     * This is the join key back to the full incident: pass it to the traffic incident details
+     * service to get the whole record, rather than re-deriving it from the section's geometry.
+     */
+    eventId?: string;
 };
 
 /**
  * Route section representing a leg between waypoints.
  *
- * A leg is the portion of route between two consecutive non-circle waypoints.
+ * A leg is the portion of route between two consecutive waypoints.
  * This is a top-level section that encompasses the entire journey segment.
  *
  * @remarks
  * Leg examples:
  * - A→B route: 1 leg (A to B)
  * - A→B→C route: 2 legs (A to B, then B to C)
- * - A→B→(circle)→C route: 2 legs (A to B, then B to C) - circle waypoint doesn't create a leg
+ * - An EV route: one leg per charging stop the service adds, on top of the stops that were asked for
  *
  * @example
  * ```typescript
@@ -231,6 +238,25 @@ export type LegSectionProps = Omit<SectionProps, 'startPointIndex' | 'endPointIn
      * Only present if the route polyline geometry is available.
      */
     endPointIndex?: number;
+    /**
+     * Index, in the `locations` the route was requested with, of the waypoint this leg ends at.
+     *
+     * @remarks
+     * A leg does not always end at the location with the same index: on an EV route the service
+     * inserts charging stops of its own, so `legs[i]` is not reliably the leg arriving at
+     * `locations[i + 1]`. This is the index that maps a leg back to the stop the caller passed.
+     *
+     * Absent on the final leg, and on legs that end somewhere the caller did not ask for — an
+     * inserted charging stop, for instance.
+     *
+     * @example
+     * ```typescript
+     * // Which of the stops I passed does this leg arrive at?
+     * const index = leg.originalWaypointIndex;
+     * const stop = index === undefined ? undefined : locations[index];
+     * ```
+     */
+    originalWaypointIndex?: number;
     /**
      * Summary statistics for this leg.
      *
@@ -364,29 +390,74 @@ export type RoadShieldSectionProps = SectionProps & {
  * @group Route
  */
 export type SectionsProps = {
+    /** Stretches reserved for carpool (high-occupancy) vehicles. */
     carpool?: SectionProps[];
+    /** Stretches travelled on a car train, where the vehicle is carried by rail. */
     carTrain?: SectionProps[];
+    /** One section per country the route passes through, each naming that country. */
     country?: CountrySectionProps[];
+    /** Stretches travelled by ferry. */
     ferry?: SectionProps[];
+    /** Stretches whose street name or road numbers identify the course of the route. */
     importantRoadStretch?: ImportantRoadStretchProps[];
     /** Lane configuration sections. Guidance-only: present solely when `guidance` was requested. */
     lanes?: LaneSectionProps[];
+    /** One section per leg of the route. Always present: every route has at least one leg. */
     leg: LegSectionProps[];
+    /** Stretches inside a low-emission zone, which a vehicle may need to qualify to enter. */
     lowEmissionZone?: SectionProps[];
+    /** Stretches on a motorway. */
     motorway?: SectionProps[];
+    /** Stretches travelled on foot. */
     pedestrian?: SectionProps[];
+    /** Stretches carrying road shields, for rendering route numbers along the route. */
     roadShields?: RoadShieldSectionProps[];
+    /** Stretches with a known maximum speed limit. */
     speedLimit?: SpeedLimitSectionProps[];
+    /**
+     * Stretches where a per-use road toll is charged — a ticket or barrier motorway, or a
+     * free-flow tolling point.
+     *
+     * @remarks
+     * A subset of {@link SectionsProps.tollRoad | `tollRoad`}: every stretch reported here is also
+     * reported there. Use `toll` for "will this route cost a toll to drive", and `tollRoad` for
+     * "does this route cost anything at all to drive" — the latter also covers vignette-only
+     * motorways and urban charge zones, which carry no per-use toll.
+     *
+     * Requested with `sectionTypes: ['toll']`.
+     */
     toll?: SectionProps[];
+    /**
+     * Stretches that cost money to drive, by any charging scheme: per-use tolls, motorways that
+     * need a vignette, and urban road-charge zones.
+     *
+     * @remarks
+     * A superset of {@link SectionsProps.toll | `toll`}. On a ticket motorway the two report the
+     * same stretches; a vignette-only motorway or a city charge zone appears here and not in
+     * `toll`.
+     *
+     * Included by default: leaving `sectionTypes` unset requests it, and a `sectionTypes` list has
+     * to name `'tollRoad'` to keep it.
+     */
+    tollRoad?: SectionProps[];
+    /**
+     * Stretches needing a vignette, one section per country requiring one.
+     */
     tollVignette?: CountrySectionProps[];
+    /** Stretches affected by a traffic incident, with its delay and cause. */
     traffic?: TrafficSectionProps[];
+    /** Stretches inside a tunnel. */
     tunnel?: SectionProps[];
+    /** Stretches on an unpaved road. */
     unpaved?: SectionProps[];
+    /** Stretches on urban roads. */
     urban?: SectionProps[];
+    /** Stretches the requested vehicle is not permitted to use. */
     vehicleRestricted?: SectionProps[];
 };
 
 /**
+ * The name of one route section type — a key of {@link SectionsProps}.
  * @group Route
  */
 export type SectionType = keyof SectionsProps;
@@ -407,6 +478,7 @@ export const inputSectionTypes: SectionType[] = [
     'roadShields',
     'speedLimit',
     'toll',
+    'tollRoad',
     'tollVignette',
     'traffic',
     'tunnel',

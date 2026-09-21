@@ -22,17 +22,17 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         },
     });
 
-    const firstPlacesModule = await PlacesModule.get(map, {
+    const firstPlacesModule = await PlacesModule.create(map, {
         icon: { default: { style: { fillColor: '#FFBF00', outlineColor: '#113300', outlineOpacity: 0.25 } } },
     });
     await firstPlacesModule.show(firstGroup);
 
-    const secondPlacesModule = await PlacesModule.get(map, {
+    const secondPlacesModule = await PlacesModule.create(map, {
         icon: { default: { style: { fillColor: 'lightblue', outlineColor: 'grey', outlineOpacity: 0.5 } } },
     });
     await secondPlacesModule.show(secondGroup);
 
-    const thirdPlacesModule = await PlacesModule.get(map, {
+    const thirdPlacesModule = await PlacesModule.create(map, {
         icon: { default: { style: { fillColor: '#FFBBCC', outlineColor: 'red', outlineOpacity: 0.25 } } },
     });
     await thirdPlacesModule.show(thirdGroup);

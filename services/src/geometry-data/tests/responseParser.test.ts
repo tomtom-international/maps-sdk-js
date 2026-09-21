@@ -5,9 +5,10 @@ import type { GeometryDataResponseAPI } from '../types/apiTypes';
 import apiAndParsedResponses from './responseParser.data';
 
 describe('Geometry Data response parser tests', () => {
-    test.each(
-        apiAndParsedResponses,
-    )("'%s'", (_name, apiResponse: GeometryDataResponseAPI, parsedResponse: PolygonFeatures) => {
-        expect(parseGeometryDataResponse(apiResponse)).toStrictEqual(parsedResponse);
-    });
+    test.each(apiAndParsedResponses)(
+        "'%s'",
+        (_name, apiResponse: GeometryDataResponseAPI, parsedResponse: PolygonFeatures) => {
+            expect(parseGeometryDataResponse(apiResponse)).toStrictEqual(parsedResponse);
+        },
+    );
 });

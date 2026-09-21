@@ -1,6 +1,7 @@
 import type { ExpressionSpecification, LineLayerSpecification, SymbolLayerSpecification } from 'maplibre-gl';
+import type { LightDark } from '../../shared';
 import { INCIDENT_DIRECTION_CHEVRON_IMAGE_ID } from '../util/incidentDirectionChevron';
-import { FALLBACK_INCIDENT_PALETTE, type IncidentPalette } from '../util/readIncidentPalette';
+import type { IncidentPalette } from '../util/readIncidentPalette';
 
 /**
  * Incident rendering for {@link TrafficIncidentOverlayModule}. All road-class-driven geometry
@@ -87,7 +88,8 @@ const INNER_PATTERN: ExpressionSpecification = [
 //
 // Defaults are applied via `resolveFocusStyle` and can be overridden / disabled via the
 // module's `focus` config.
-const DEFAULT_FOCUS_OUTLINE_COLOR = '#000';
+// Default focus-outline colour, resolved for the active map theme: black on light, white on dark.
+const getThemeAdaptiveFocusOutlineColor = (lightDark: LightDark) => (lightDark === 'dark' ? '#FFF' : '#000');
 const DEFAULT_FOCUS_WIDTH_SCALE = 1.6;
 
 type ResolvedFocus = { outlineColor: string; widthScale: number };
@@ -101,10 +103,11 @@ type ResolvedFocus = { outlineColor: string; widthScale: number };
  */
 export const resolveFocusStyle = (
     focus: false | { outlineColor?: string; widthScale?: number } | undefined,
+    lightDark: LightDark,
 ): ResolvedFocus | null => {
     if (focus === false) return null;
     return {
-        outlineColor: focus?.outlineColor ?? DEFAULT_FOCUS_OUTLINE_COLOR,
+        outlineColor: focus?.outlineColor ?? getThemeAdaptiveFocusOutlineColor(lightDark),
         widthScale: focus?.widthScale ?? DEFAULT_FOCUS_WIDTH_SCALE,
     };
 };
@@ -196,8 +199,8 @@ const PATTERN_FILTER: ExpressionSpecification = [
 export const buildCanonicalIncidentLineLayers = (
     sourceId: string,
     beforeID: string | undefined,
-    palette: IncidentPalette = FALLBACK_INCIDENT_PALETTE,
-    focus: ResolvedFocus | null = resolveFocusStyle(undefined),
+    palette: IncidentPalette,
+    focus: ResolvedFocus | null,
 ): LineLayerWithBefore[] => {
     const widthScale = focus?.widthScale ?? null;
     const layers: LineLayerWithBefore[] = [];

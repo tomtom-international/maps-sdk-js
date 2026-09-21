@@ -1,5 +1,6 @@
 import type { TrafficIncident } from '@tomtom-org/maps-sdk/core';
 import { mapStyleLayerIDs, type TomTomMap } from '@tomtom-org/maps-sdk/map';
+import type { Feature, Point } from 'geojson';
 import type { GeoJSONSource, HeatmapLayerSpecification, Map as MapLibreMap } from 'maplibre-gl';
 import type { VizMode } from './types';
 
@@ -38,7 +39,7 @@ type SampleProps = { weight: number };
 export class HeatmapOverlay {
     private mode: VizMode = 'off';
     private removed = false;
-    private features: GeoJSON.Feature<GeoJSON.Point, SampleProps>[] = [];
+    private features: Feature<Point, SampleProps>[] = [];
     private readonly map: MapLibreMap;
     private readonly unsubscribeStyleChange: () => void;
 
@@ -139,8 +140,8 @@ const buildHeatmapLayerSpec = (): HeatmapLayerSpecification => ({
 
 // ── Sampling: incidents → weighted point features ───────────────────────
 
-function featuresFromIncidents(incidents: readonly TrafficIncident[]): GeoJSON.Feature<GeoJSON.Point, SampleProps>[] {
-    const out: GeoJSON.Feature<GeoJSON.Point, SampleProps>[] = [];
+function featuresFromIncidents(incidents: readonly TrafficIncident[]): Feature<Point, SampleProps>[] {
+    const out: Feature<Point, SampleProps>[] = [];
     for (const inc of incidents) {
         const id = inc.properties.id;
         if (typeof id !== 'string') continue;
@@ -179,7 +180,7 @@ function clampWeight(w: number): number {
     return Math.min(w, MAX_DELAY_PER_M);
 }
 
-function pointFeature(coord: [number, number], weight: number): GeoJSON.Feature<GeoJSON.Point, SampleProps> {
+function pointFeature(coord: [number, number], weight: number): Feature<Point, SampleProps> {
     return {
         type: 'Feature',
         geometry: { type: 'Point', coordinates: coord },

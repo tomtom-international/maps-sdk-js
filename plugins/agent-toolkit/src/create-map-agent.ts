@@ -18,7 +18,7 @@ import { createToolState, DATA_ENTRY_KIND_TO_SLICE, type DataEntryKind, type Ent
 import { buildSystemPrompt } from './system-prompt';
 import { type ScopableToolInfo, setupTools } from './tool-setup';
 import { DEFAULT_TOOLS, TOOLS_BY_DATA_ENTRY_KIND } from './tools';
-import { ALL_ENTRY_DATA_KINDS } from './tools/shared';
+import { AGENT_TOOLKIT_USER_AGENT, ALL_ENTRY_DATA_KINDS } from './tools/shared';
 import { resolveSandboxExecutor } from './tools/shared/sandbox';
 import type {
     Classifier,
@@ -129,6 +129,11 @@ export const createMapAgent = <CS extends ToolState = ToolState>(
     if (!options.model) {
         throw new Error('MapAgent requires a model option. Please provide an AI SDK LanguageModel instance.');
     }
+
+    // MapLibre fetches tiles itself, outside any tool call, so the map has to carry the tag. That
+    // counts everything it requests from here on, user panning included — tile fetching is decoupled
+    // from whatever triggered it, so "map under agent control" is the finest attribution available.
+    map._setTomTomUserAgent(AGENT_TOOLKIT_USER_AGENT);
 
     const state = createToolState(map, options.state) as CS;
 

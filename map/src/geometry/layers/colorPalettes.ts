@@ -1,3 +1,6 @@
+import type { LightDark } from '../../shared';
+import { darkenColor, lightenColor } from '../../utils/colorUtils';
+
 export const colorPalettes = {
     warm: [
         '#793F0D',
@@ -132,3 +135,38 @@ export const colorPalettes = {
 
 export type ColorPaletteOptions = keyof typeof colorPalettes;
 export const colorPaletteIDs = Object.keys(colorPalettes) as ColorPaletteOptions[];
+
+// Rec. 601 perceived lightness of a `#rrggbb` colour, 0 (black) to 1 (white).
+const perceivedLightness = (hexColor: string): number => {
+    const hex = hexColor.replace('#', '');
+    if (hex.length !== 6) {
+        return 0.5;
+    }
+    const red = Number.parseInt(hex.slice(0, 2), 16) / 255;
+    const green = Number.parseInt(hex.slice(2, 4), 16) / 255;
+    const blue = Number.parseInt(hex.slice(4, 6), 16) / 255;
+    return 0.299 * red + 0.587 * green + 0.114 * blue;
+};
+
+/**
+ * Adapts a fill palette for the active map theme. Light themes pass through unchanged; for dark
+ * themes each colour is nudged toward a mid, saturated tone — pale ramps are deepened so they read
+ * against the dark base map, near-black ramps are lifted so they don't vanish.
+ * @ignore
+ */
+export const adaptPaletteForTheme = (colors: string[], lightDark: LightDark): string[] => {
+    if (lightDark === 'light') {
+        return colors;
+    }
+
+    return colors.map((color) => {
+        const lightness = perceivedLightness(color);
+        if (lightness > 0.6) {
+            return darkenColor(color, 0.3) ?? color;
+        }
+        if (lightness < 0.22) {
+            return lightenColor(color, 0.4) ?? color;
+        }
+        return color;
+    });
+};

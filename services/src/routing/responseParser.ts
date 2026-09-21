@@ -16,6 +16,8 @@ import {
     type LegSectionProps,
     type LegSummary,
     type Maneuver,
+    type ManeuverAngle,
+    type ManeuverView,
     type PossibleLaneDirection,
     type PossibleLaneSeparator,
     type RoadInformation,
@@ -23,11 +25,14 @@ import {
     type RoadShield,
     type RoadShieldReference,
     type RoadShieldSectionProps,
+    type RoundaboutType,
     type Route,
     type RouteSummary,
     type Routes,
     type SectionProps,
     type SectionsProps,
+    type SideRoad,
+    type SideRoadSide,
     type Signpost,
     type SpeedLimitSectionProps,
     type TextWithPhonetics,
@@ -53,8 +58,10 @@ import type {
     InstructionRoadShieldAPI,
     LanesSectionAPI,
     LegAPI,
+    ManeuverViewAPI,
     ProgressPointAPI,
     RouteAPI,
+    SideRoadAPI,
     SpeedLimitSectionAPI,
     SummaryAPI,
     TextWithPhoneticsAPI,
@@ -167,6 +174,21 @@ const parseRoutePath = (apiRouteLegs: LegAPI[]): LineString => ({
     coordinates: apiRouteLegs.flatMap((leg) => leg.path.coordinates),
 });
 
+// A stop is only visible as the gap between arriving on one leg and departing on the next, so it
+// takes the pair to see it. Everything spent there widens that one gap -- a requested wait, or
+// charging on an EV route, or both at one stop -- so the gap is reported as it is, and
+// `chargingInformationAtEndOfLeg` is left to say how much of it was charging.
+const parseLegStopTime = (leg: LegAPI, nextLeg: LegAPI | undefined): number | undefined => {
+    if (!nextLeg) return undefined;
+
+    const arrival = new Date(leg.summary.arrivalDateTime).getTime();
+    const nextDeparture = new Date(nextLeg.summary.departureDateTime).getTime();
+    if (Number.isNaN(arrival) || Number.isNaN(nextDeparture)) return undefined;
+
+    const stopSeconds = Math.round((nextDeparture - arrival) / 1000);
+    return stopSeconds > 0 ? stopSeconds : undefined;
+};
+
 const parseLegSectionProps = (apiLegs: LegAPI[], params: CalculateRouteParams): LegSectionProps[] =>
     apiLegs.reduce<LegSectionProps[]>((accumulator, leg, legIndex) => {
         const legCoordinateCount = leg.path.coordinates.length;
@@ -176,10 +198,21 @@ const parseLegSectionProps = (apiLegs: LegAPI[], params: CalculateRouteParams): 
             endPointIndex =
                 lastEndIndex === 0 ? Math.max(legCoordinateCount - 1, 0) : lastEndIndex + legCoordinateCount;
         }
+        const stopTimeInSeconds = parseLegStopTime(leg, apiLegs[legIndex + 1]);
+        // A leg is not reliably the one arriving at `locations[legIndex + 1]`, because the service
+        // inserts charging stops of its own. It says which requested waypoint each leg ended at, so
+        // that is what the caller gets to map a leg back with.
+        const { originalWaypointIndexAtEndOfLeg } = leg.summary;
         accumulator.push({
             ...(!isNil(lastEndIndex) && { startPointIndex: lastEndIndex }),
             ...(endPointIndex !== undefined && { endPointIndex }),
-            summary: parseSummary(leg.summary, params),
+            ...(!isNil(originalWaypointIndexAtEndOfLeg) && {
+                originalWaypointIndex: originalWaypointIndexAtEndOfLeg,
+            }),
+            summary: {
+                ...(parseSummary(leg.summary, params) as LegSummary),
+                ...(stopTimeInSeconds !== undefined && { stopTimeInSeconds }),
+            },
             id: generateId(),
         });
         return accumulator;
@@ -192,7 +225,7 @@ const toSectionProps = (section: BasicSectionAPI): SectionProps => ({
 });
 
 /**
- * Map an OrbisV3 traffic section to the SDK's semantic traffic incident categories.
+ * Map a traffic section to the SDK's semantic traffic incident categories.
  * Uses TEC main cause codes when available, falling back to the API's coarser `iconCategory`.
  * @ignore
  */
@@ -270,13 +303,14 @@ type BasicSectionKey =
     | 'motorway'
     | 'pedestrian'
     | 'toll'
+    | 'tollRoad'
     | 'carpool'
     | 'urban'
     | 'unpaved'
     | 'lowEmissionZone';
 
 const parseSpeedLimitSections = (speedLimitSections: SpeedLimitSectionAPI[]): SpeedLimitSectionProps[] =>
-    // V3 carries speeds under `speedRestrictions`; the SDK exposes only the maximum limit.
+    // Speeds arrive under `speedRestrictions`; the SDK exposes only the maximum limit.
     speedLimitSections
         .map((speedLimit): SpeedLimitSectionProps | undefined => {
             const max = speedLimit.speedRestrictions?.find((r) => r.type === 'maximum')?.inKilometersPerHour;
@@ -285,22 +319,22 @@ const parseSpeedLimitSections = (speedLimitSections: SpeedLimitSectionAPI[]): Sp
         .filter((speedLimit): speedLimit is SpeedLimitSectionProps => !!speedLimit);
 
 const parseLaneSections = (laneSections: LanesSectionAPI[]): LaneSectionProps[] =>
-    // V3 lane directions/separators are camelCase strings; map to the SDK's UPPER_SNAKE enums.
+    // Lane directions/separators are camelCase strings; map to the SDK's UPPER_SNAKE enums.
     laneSections.map(
         (lanesSection): LaneSectionProps => ({
             ...toSectionProps(lanesSection),
             lanes: (lanesSection.lanes ?? []).map(
                 (lane): LaneDirection => ({
                     directions: lane.directions.map(
-                        (direction) => V3_LANE_DIRECTION_MAP[direction] ?? (direction as PossibleLaneDirection),
+                        (direction) => LANE_DIRECTION_MAP[direction] ?? (direction as PossibleLaneDirection),
                     ),
                     ...(lane.follow && {
-                        follow: V3_LANE_DIRECTION_MAP[lane.follow] ?? (lane.follow as PossibleLaneDirection),
+                        follow: LANE_DIRECTION_MAP[lane.follow] ?? (lane.follow as PossibleLaneDirection),
                     }),
                 }),
             ),
             laneSeparators: (lanesSection.laneSeparators ?? []).map(
-                (separator) => V3_LANE_SEPARATOR_MAP[separator] ?? (separator as PossibleLaneSeparator),
+                (separator) => LANE_SEPARATOR_MAP[separator] ?? (separator as PossibleLaneSeparator),
             ),
             properties: lanesSection.properties,
         }),
@@ -320,7 +354,7 @@ const parseImportantRoadStretchSections = (
         }),
     );
 
-// V3 always returns every section type when sections are requested. Restore the legacy filtering by
+// The API always returns every section type when sections are requested. Restore the legacy filtering by
 // dropping the section keys the caller did not ask for (the always-present `leg` is kept).
 const applyRequestedSectionFilter = (
     result: SectionsProps,
@@ -353,6 +387,7 @@ const parseSections = (apiRoute: RouteAPI, params: CalculateRouteParams): Sectio
     addBasic('motorway', sections.motorway);
     addBasic('pedestrian', sections.pedestrian);
     addBasic('toll', sections.toll);
+    addBasic('tollRoad', sections.tollRoad);
     addBasic('carpool', sections.carpool);
     addBasic('urban', sections.urban);
     addBasic('unpaved', sections.unpaved);
@@ -382,6 +417,7 @@ const parseSections = (apiRoute: RouteAPI, params: CalculateRouteParams): Sectio
                     ? 'indefinite'
                     : traffic.delayMagnitude) as DelayMagnitude,
                 tec: traffic.tec as TrafficIncidentTEC,
+                ...(traffic.eventId && { eventId: traffic.eventId }),
             }),
         );
     }
@@ -425,9 +461,9 @@ const DELTA = 0.0001;
 const similar = (pointA: Position, pointB: Position): boolean =>
     Math.abs(pointA[0] - pointB[0]) < DELTA && Math.abs(pointA[1] - pointB[1]) < DELTA;
 
-// V3 maneuver camelCase JSON values → SDK UPPER_SNAKE_CASE Maneuver type.
+// Maneuver camelCase JSON values → SDK UPPER_SNAKE_CASE Maneuver type.
 // The two renamed cases: continueStraight → STRAIGHT, passTollgate → TOLLGATE.
-const V3_MANEUVER_MAP: Record<string, Maneuver> = {
+const MANEUVER_MAP: Record<string, Maneuver> = {
     depart: 'DEPART',
     waypointLeft: 'WAYPOINT_LEFT',
     waypointRight: 'WAYPOINT_RIGHT',
@@ -474,14 +510,14 @@ const V3_MANEUVER_MAP: Record<string, Maneuver> = {
     passTollgate: 'TOLLGATE',
 };
 
-const V3_ROAD_PROPERTY_MAP: Record<string, RoadInformationProperty> = {
+const ROAD_PROPERTY_MAP: Record<string, RoadInformationProperty> = {
     urban: 'URBAN',
     motorway: 'MOTORWAY',
     controlledAccess: 'CONTROLLED_ACCESS',
 };
 
-// V3 landmark camelCase JSON values → SDK UPPER_SNAKE_CASE Landmark type.
-const V3_LANDMARK_MAP: Record<string, Landmark> = {
+// Landmark camelCase JSON values → SDK UPPER_SNAKE_CASE Landmark type.
+const LANDMARK_MAP: Record<string, Landmark> = {
     endOfRoad: 'END_OF_ROAD',
     atTrafficLight: 'AT_TRAFFIC_LIGHT',
     onToBridge: 'ON_TO_BRIDGE',
@@ -492,8 +528,8 @@ const V3_LANDMARK_MAP: Record<string, Landmark> = {
     afterTunnel: 'AFTER_TUNNEL',
 };
 
-// V3 toll payment camelCase JSON values → SDK UPPER_SNAKE_CASE TollPaymentType.
-const V3_TOLL_PAYMENT_MAP: Record<string, TollPaymentType> = {
+// Toll payment camelCase JSON values → SDK UPPER_SNAKE_CASE TollPaymentType.
+const TOLL_PAYMENT_MAP: Record<string, TollPaymentType> = {
     cashCoinsAndBills: 'CASH_COINS_AND_BILLS',
     cashBillsOnly: 'CASH_BILLS_ONLY',
     cashCoinsOnly: 'CASH_COINS_ONLY',
@@ -507,8 +543,8 @@ const V3_TOLL_PAYMENT_MAP: Record<string, TollPaymentType> = {
     subscription: 'SUBSCRIPTION',
 };
 
-// V3 lane direction camelCase JSON values → SDK UPPER_SNAKE_CASE PossibleLaneDirection.
-const V3_LANE_DIRECTION_MAP: Record<string, PossibleLaneDirection> = {
+// Lane direction camelCase JSON values → SDK UPPER_SNAKE_CASE PossibleLaneDirection.
+const LANE_DIRECTION_MAP: Record<string, PossibleLaneDirection> = {
     straight: 'STRAIGHT',
     slightRight: 'SLIGHT_RIGHT',
     right: 'RIGHT',
@@ -520,8 +556,8 @@ const V3_LANE_DIRECTION_MAP: Record<string, PossibleLaneDirection> = {
     leftUTurn: 'LEFT_U_TURN',
 };
 
-// V3 lane separator camelCase JSON values → SDK UPPER_SNAKE_CASE PossibleLaneSeparator.
-const V3_LANE_SEPARATOR_MAP: Record<string, PossibleLaneSeparator> = {
+// Lane separator camelCase JSON values → SDK UPPER_SNAKE_CASE PossibleLaneSeparator.
+const LANE_SEPARATOR_MAP: Record<string, PossibleLaneSeparator> = {
     unknown: 'UNKNOWN',
     noMarking: 'NO_MARKING',
     longDashed: 'LONG_DASHED',
@@ -540,11 +576,38 @@ const V3_LANE_SEPARATOR_MAP: Record<string, PossibleLaneSeparator> = {
     curb: 'CURB',
 };
 
+// Maneuver-view angles are relative-direction words, not degrees → SDK ManeuverAngle.
+const MANEUVER_ANGLE_MAP: Record<string, ManeuverAngle> = {
+    straight: 'STRAIGHT',
+    slightRight: 'SLIGHT_RIGHT',
+    right: 'RIGHT',
+    sharpRight: 'SHARP_RIGHT',
+    slightLeft: 'SLIGHT_LEFT',
+    left: 'LEFT',
+    sharpLeft: 'SHARP_LEFT',
+    back: 'BACK',
+};
+
+// Roundabout kinds → SDK RoundaboutType.
+const ROUNDABOUT_TYPE_MAP: Record<string, RoundaboutType> = {
+    regular: 'REGULAR',
+    small: 'SMALL',
+};
+
+// Side-road sides are lowercase on the wire → SDK SideRoadSide.
+const SIDE_ROAD_SIDE_MAP: Record<string, SideRoadSide> = {
+    left: 'LEFT',
+    right: 'RIGHT',
+    leftAndRight: 'LEFT_AND_RIGHT',
+};
+
 const EMPTY_ROAD_INFO: RoadInformation = { properties: [] };
 
-// V3 phonetic is an object keyed by alphabet ({lhp}|{ipa}); the SDK exposes a single flat string.
+// The API sends `phonetic` as a flat string, already in the alphabet the request asked for via
+// `instructionPhonetics`. The parser previously read it as `{ lhp, ipa }`, so every transcription
+// resolved to undefined and was dropped — 63 values on a Barcelona → Girona route.
 const toTextWithPhonetics = (t: TextWithPhoneticsAPI): TextWithPhonetics => {
-    const phonetic = t.phonetic?.lhp ?? t.phonetic?.ipa;
+    const phonetic = t.phonetic;
     return {
         text: t.text,
         ...(phonetic && { phonetic }),
@@ -554,9 +617,10 @@ const toTextWithPhonetics = (t: TextWithPhoneticsAPI): TextWithPhonetics => {
 
 const parseInstructionRoadInformation = (road: InstructionRoadInformationAPI): RoadInformation => ({
     properties: (road.properties ?? []).map(
-        (p: string) => V3_ROAD_PROPERTY_MAP[p] ?? (p.toUpperCase() as RoadInformationProperty),
+        (p: string) => ROAD_PROPERTY_MAP[p] ?? (p.toUpperCase() as RoadInformationProperty),
     ),
     ...(road.roadNames?.length && { streetName: toTextWithPhonetics(road.roadNames[0].identifier) }),
+    ...(road.countryCodeIso2 && { countryCode: toIso3(road.countryCodeIso2) }),
     ...(road.roadShields?.length && {
         roadShields: road.roadShields.map(
             (s: InstructionRoadShieldAPI): RoadShield => ({
@@ -584,7 +648,7 @@ const parseSignpost = (signpost: NonNullable<InstructionAPI['signpost']>): Signp
 const parseTollAndCrossing = (a: InstructionAPI): Partial<Instruction> => ({
     ...(a.tollgateName && { tollgateName: toTextWithPhonetics(a.tollgateName) }),
     ...(a.tollPaymentTypes?.length && {
-        tollPaymentTypes: a.tollPaymentTypes.map((t) => V3_TOLL_PAYMENT_MAP[t] ?? (t as TollPaymentType)),
+        tollPaymentTypes: a.tollPaymentTypes.map((t) => TOLL_PAYMENT_MAP[t] ?? (t as TollPaymentType)),
     }),
     ...(a.countryCrossingFromName && { countryCrossingFromName: toTextWithPhonetics(a.countryCrossingFromName) }),
     ...(a.countryCrossingFromCodeIso2 && { countryCrossingFromCode: toIso3(a.countryCrossingFromCodeIso2) }),
@@ -593,14 +657,34 @@ const parseTollAndCrossing = (a: InstructionAPI): Partial<Instruction> => ({
 });
 
 // Optional maneuver detail fields, only present on the relevant maneuver kinds.
+const toManeuverAngle = (angle: string): ManeuverAngle => MANEUVER_ANGLE_MAP[angle] ?? (angle as ManeuverAngle);
+
+// The API side is lowercase and carries `isDrivable`; both need mapping onto the SDK's SideRoad.
+const parseSideRoads = (sideRoads: SideRoadAPI[]): SideRoad[] =>
+    sideRoads.map((sideRoad) => ({
+        side: SIDE_ROAD_SIDE_MAP[sideRoad.side] ?? (sideRoad.side as SideRoadSide),
+        offsetFromManeuverInMeters: sideRoad.offsetFromManeuverInMeters,
+        ...(!isNil(sideRoad.isDrivable) && { isDrivable: sideRoad.isDrivable }),
+    }));
+
+const parseManeuverView = (view: ManeuverViewAPI): ManeuverView => ({
+    ...(view.onRouteAngle && { onRouteAngle: toManeuverAngle(view.onRouteAngle) }),
+    offRouteAngles: (view.offRouteAngles ?? []).map(toManeuverAngle),
+});
+
 const parseManeuverExtras = (a: InstructionAPI): Partial<Instruction> => ({
+    ...(a.message && { message: a.message }),
     ...(a.intersectionName && { intersectionName: toTextWithPhonetics(a.intersectionName) }),
     ...(a.drivingSide && { drivingSide: a.drivingSide.toUpperCase() as DrivingSide }),
-    ...(a.landmark && { landmark: V3_LANDMARK_MAP[a.landmark] ?? (a.landmark as Landmark) }),
+    ...(a.landmark && { landmark: LANDMARK_MAP[a.landmark] ?? (a.landmark as Landmark) }),
     ...(!isNil(a.distanceToPreviousTrafficLightInMeters) && {
         trafficLightOffsetInMeters: a.distanceToPreviousTrafficLightInMeters,
     }),
-    ...(a.sideRoads && { sideRoads: a.sideRoads }),
+    ...(a.sideRoads && { sideRoads: parseSideRoads(a.sideRoads) }),
+    ...(a.maneuverView && { maneuverView: parseManeuverView(a.maneuverView) }),
+    ...(a.roundaboutType && {
+        roundaboutType: ROUNDABOUT_TYPE_MAP[a.roundaboutType] ?? (a.roundaboutType as RoundaboutType),
+    }),
     ...(!isNil(a.isManeuverObligatory) && { isManeuverObligatory: a.isManeuverObligatory }),
     ...(!isNil(a.changeOfAngleInDegrees) && { changeOfAngleInDegrees: a.changeOfAngleInDegrees }),
     ...(!isNil(a.ambiguousExitOffsetFromManeuverInMeters) && {
@@ -610,7 +694,7 @@ const parseManeuverExtras = (a: InstructionAPI): Partial<Instruction> => ({
 });
 
 // Road-shield related fields: signpost, the atlas base URL, and the flat reference lists. V2 exposed
-// a flat per-instruction road-shield list; V3 carries them under nextRoadInformation.
+// a flat per-instruction road-shield list; the API carries them under nextRoadInformation.
 const parseRoadShieldFields = (a: InstructionAPI, roadShieldAtlasReference?: string): Partial<Instruction> => {
     const signpost = a.signpost ? parseSignpost(a.signpost) : undefined;
     const roadShieldReferences = (a.nextRoadInformation?.roadShields ?? [])
@@ -635,7 +719,7 @@ const parseInstruction = (
     maneuverPoint,
     pathPointIndex,
     routeOffsetInMeters: a.routeOffsetInMeters,
-    maneuver: (a.maneuver ? (V3_MANEUVER_MAP[a.maneuver] ?? a.maneuver) : a.maneuver) as Maneuver,
+    maneuver: (a.maneuver ? (MANEUVER_MAP[a.maneuver] ?? a.maneuver) : a.maneuver) as Maneuver,
     routePath: (a.routePath ?? []).map((rp) => ({
         point: [rp.point.longitude, rp.point.latitude] as [number, number],
         distanceInMeters: rp.distanceFromRouteStartInMeters,
@@ -659,7 +743,7 @@ const parseGuidance = (
     let lastPathIndex = 0;
 
     for (const apiInstruction of instructions) {
-        // V3 uses {latitude, longitude}, convert to GeoJSON [longitude, latitude] Position.
+        // Instructions use {latitude, longitude}, convert to GeoJSON [longitude, latitude] Position.
         const maneuverPoint: [number, number] = [
             apiInstruction.maneuverPoint.longitude,
             apiInstruction.maneuverPoint.latitude,

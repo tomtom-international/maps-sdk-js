@@ -1,75 +1,75 @@
 /* TOGGLE SWITCH */
 
-.sdk-example-toggle-label {
+.ui-toggle-label {
     display: flex;
     align-items: center;
-    gap: var(--sdk-space-4);
-    margin-bottom: var(--sdk-space-2);
-    font-family: var(--sdk-font-primary);
-    font-size: var(--sdk-font-body-s);
-    line-height: var(--sdk-font-body-s-lh);
-    color: var(--sdk-text-high);
+    gap: var(--ui-space-4);
+    margin-bottom: var(--ui-space-2);
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-s);
+    line-height: var(--ui-font-body-s-lh);
+    color: var(--ui-text-high-em);
     cursor: pointer;
     user-select: none;
 }
 
-.sdk-example-toggle-input {
+.ui-toggle-input {
     position: absolute;
     opacity: 0;
     width: 0;
     height: 0;
 }
 
-.sdk-example-toggle-switch {
+.ui-toggle-switch {
     position: relative;
     display: inline-block;
     width: 34px;
     height: 20px;
-    background: var(--sdk-border-high);
-    border-radius: var(--sdk-radius-30);
-    transition: background-color var(--sdk-transition-slow);
+    background: var(--ui-border-high-em);
+    border-radius: var(--ui-rounded-30);
+    transition: background-color var(--ui-transition-slow);
     flex-shrink: 0;
 }
 
-.sdk-example-toggle-switch::after {
+.ui-toggle-switch::after {
     content: "";
     position: absolute;
     top: 2px;
     left: 2px;
     width: 16px;
     height: 16px;
-    background: var(--sdk-surface-0);
-    border-radius: var(--sdk-radius-full);
+    background: var(--ui-surface-0);
+    border-radius: var(--ui-rounded-full);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    transition: transform var(--sdk-transition-slow);
+    transition: transform var(--ui-transition-slow);
 }
 
-.sdk-example-toggle-input:checked + .sdk-example-toggle-switch {
-    background: var(--sdk-color-success);
+.ui-toggle-label:has(.ui-toggle-input:checked) .ui-toggle-switch {
+    background: var(--ui-surface-success);
 }
 
-.sdk-example-toggle-input:checked + .sdk-example-toggle-switch::after {
+.ui-toggle-label:has(.ui-toggle-input:checked) .ui-toggle-switch::after {
     transform: translateX(14px);
 }
 
-.sdk-example-toggle-input:focus + .sdk-example-toggle-switch {
-    outline: 2px solid var(--sdk-primary-color);
+.ui-toggle-label:has(.ui-toggle-input:focus) .ui-toggle-switch {
+    outline: 2px solid var(--ui-surface-brand-red);
     outline-offset: 2px;
 }
 
-.sdk-example-toggle-input:disabled + .sdk-example-toggle-switch {
+.ui-toggle-label:has(.ui-toggle-input:disabled) .ui-toggle-switch {
     opacity: 0.5;
     cursor: not-allowed;
 }
 
-.sdk-example-toggle-label:has(input:disabled) {
+.ui-toggle-label:has(.ui-toggle-input:disabled) {
     cursor: not-allowed;
     opacity: 0.5;
 }
 
 /* Responsive: reduced motion */
 @media (prefers-reduced-motion: reduce) {
-    .sdk-example-toggle-switch::after {
+    .ui-toggle-switch::after {
         transition-duration: 0.1s !important;
     }
 }

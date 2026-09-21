@@ -72,7 +72,7 @@ export type GeometriesId = z.infer<typeof geometriesIdSchema>;
 
 /**
  * Shared `geometriesEntryIDs` input schema for tools that read polygons from
- * session state (`processGeometries`, `analyseGeometries`). One canonical
+ * session state (`processData`, `analyseData`). One canonical
  * description so the two tools stay aligned and the model sees the same
  * contract everywhere.
  *
@@ -89,7 +89,7 @@ export const geometriesEntryIDsSchema = z
 
 /**
  * One-liner describing the per-source variability of `geometry.properties`.
- * Shared between `processGeometries` and `analyseGeometries` `code` prompts.
+ * Shared between `processData` and `analyseData` `code` prompts.
  *
  * @ignore
  */

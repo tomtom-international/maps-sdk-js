@@ -228,11 +228,40 @@ export type RouteSummary = SummaryWithConsumption & {
  * @remarks
  * - An A→B route has 1 leg
  * - An A→B→C route has 2 legs (A→B, B→C)
- * - Circle waypoints don't create new legs
+ * - An EV route can hold more legs than the stops asked for, one per charging stop the service adds
  *
  * @group Route
  */
 export type LegSummary = SummaryWithConsumption & {
+    /**
+     * Time in seconds the vehicle stands still at the stop this leg arrives at.
+     *
+     * @remarks
+     * One number for the whole stop, whatever it is spent on — a
+     * {@link WaypointProps.pauseDurationSeconds} the caller asked for, charging the routing service
+     * planned on an EV route, or both at one stop. It is what the service actually planned rather
+     * than an echo of the request: the gap between this leg's `arrivalTime` and the next leg's
+     * `departureTime`.
+     *
+     * For the breakdown, {@link LegSummary.chargingInformationAtEndOfLeg} carries the charging part;
+     * whatever is left is waiting.
+     *
+     * - Absent when the vehicle does not stop at the end of this leg
+     * - Absent on the last leg, which has no following departure — and the routing service does not
+     *   accept a wait at the destination anyway
+     * - This leg's own `travelTimeInSeconds` is driving only and *excludes* the stop, while the
+     *   route's total *includes* every stop. So driving time is the sum of the legs, and the time
+     *   spent standing still is the difference.
+     *
+     * @example
+     * ```typescript
+     * // Half an hour at this stop, twenty minutes of it charging
+     * stopTimeInSeconds: 1800
+     * chargingInformationAtEndOfLeg: { properties: { chargingTimeInSeconds: 1200 } }
+     * ```
+     */
+    stopTimeInSeconds?: number;
+
     /**
      * Charging information at the end of this leg.
      *

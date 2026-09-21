@@ -3,13 +3,15 @@ import {
     getPositionStrict,
     getRoutePlanningLocationType,
     type HasBBox,
+    type HasLngLat,
     type LegSectionProps,
     type PathLike,
     type RoutePlanningLocation,
     type TomTomAPIHeaders,
     type WaypointLike,
+    type WaypointProps,
 } from '@tomtom-org/maps-sdk/core';
-import type { LineString, Point } from 'geojson';
+import type { Feature, LineString, MultiPoint, Point } from 'geojson';
 import { isNil } from 'lodash-es';
 import type {
     ChargingPreferencesKWH,
@@ -30,8 +32,14 @@ import type {
     VehicleEngineType,
 } from '../shared/types/vehicleEngineParams';
 import type { ExplicitVehicleModel } from '../shared/types/vehicleModel';
-import type { AvoidAreasAPI, CalculateRoutePOSTDataAPI, LegRequestAPI } from './types/apiRequestTypes';
+import type {
+    AvoidAreasAPI,
+    CalculateRoutePOSTDataAPI,
+    LegRequestAPI,
+    RouteStopRequestAPI,
+} from './types/apiRequestTypes';
 import type { CalculateRouteParams, GuidanceParams } from './types/calculateRouteParams';
+import type { RouteStopOptions } from './types/routeStopOptions';
 
 const buildAvoidAreas = (avoidAreas: HasBBox[]): AvoidAreasAPI => ({
     rectangles: avoidAreas.map((rectangle) => {
@@ -53,20 +61,20 @@ const toGuidanceBody = (
 const buildSpeedConsumptionString = (rates: SpeedToConsumptionRate[]): string =>
     rates.map((rate) => `${rate.speedKMH},${rate.consumptionUnitsPer100KM}`).join(':');
 
-// V3 section types that are EXPLICIT — they must be individually listed in the Attributes header
+// Section types that are EXPLICIT — they must be individually listed in the Attributes header
 // to be included in the response, even when the parent `sections` is already requested.
 // `lanes` is also EXPLICIT but is guidance-only and handled separately below.
-const EXPLICIT_SECTION_TYPES = ['tollVignette', 'roadShields', 'importantRoadStretch'] as const;
+const EXPLICIT_SECTION_TYPES = ['tollVignette', 'tollRoad', 'roadShields', 'importantRoadStretch'] as const;
 
 const buildAttributesHeader = (params: CalculateRouteParams): string => {
     const parts = ['summary', 'legs(summary,path)'];
     const sectionTypes = params.sectionTypes;
-    // V3 returns all non-EXPLICIT section types when sections is requested.
+    // All non-EXPLICIT section types come back when sections is requested.
     // Omit sections only when the caller explicitly passes an empty sectionTypes array.
     const requestSections = !sectionTypes || sectionTypes.length > 0;
     if (requestSections) {
         parts.push('sections');
-        // EXPLICIT V3 section sub-attributes must be listed individually in the Attributes header.
+        // EXPLICIT section sub-attributes must be listed individually in the Attributes header.
         // When sectionTypes is undefined the customer wants everything, so request all EXPLICIT types
         // (preserving V2 behavior). When sectionTypes is a specific list, only add the requested ones.
         const wantAll = !sectionTypes;
@@ -80,7 +88,10 @@ const buildAttributesHeader = (params: CalculateRouteParams): string => {
             parts.push('sections.lanes');
         }
     }
-    parts.push('progressPoints');
+    // There is no per-representation `extendedRouteRepresentation` parameter: `progressPoints`
+    // is all-or-nothing, so a non-empty `extendedRouteRepresentations` array coarsens to "give me
+    // progress points". An explicitly empty array is the caller opting out, and saves the payload.
+    if (params.extendedRouteRepresentations?.length !== 0) parts.push('progressPoints');
     // When guidance is requested, include the EXPLICIT instruction sub-attributes that back
     // fields the V2 SDK exposed: road-shield icon references, signpost exit icon
     // (→ signpostRoadShieldReferences), and the traffic-light offset.
@@ -95,7 +106,7 @@ const buildAttributesHeader = (params: CalculateRouteParams): string => {
     return params.guidance ? `roadShieldAtlasReference,${routesAttr}` : routesAttr;
 };
 
-// ─── Regular route (V3 /routes/calculate) vehicle body + URL param helpers ───
+// ─── Regular route (/routes/calculate) vehicle body + URL param helpers ───
 
 const buildVehicleBody = (vehicle: VehicleParameters): Partial<CalculateRoutePOSTDataAPI> => {
     const result: Partial<CalculateRoutePOSTDataAPI> = {};
@@ -110,6 +121,9 @@ const buildVehicleBody = (vehicle: VehicleParameters): Partial<CalculateRoutePOS
     if (vehicle.state?.heading) result.vehicleHeadingInDegrees = vehicle.state.heading;
 
     if (vehicle.restrictions?.maxSpeedKMH) result.vehicleMaxSpeedInKilometersPerHour = vehicle.restrictions.maxSpeedKMH;
+
+    if (vehicle.restrictions?.tollTransponder)
+        result.vehicleHasElectronicTollCollectionTransponder = vehicle.restrictions.tollTransponder;
 
     return result;
 };
@@ -280,12 +294,23 @@ const appendLDEVRVehicleParams = (url: URL, vehicle: VehicleParameters | undefin
     appendLDEVRChargingPrefParams(url, vehicle);
 };
 
-const isLDEVRRequest = (params: CalculateRouteParams): boolean =>
+// Charging preferences alone select this endpoint. `chargingStopsStrategy` deliberately does NOT:
+// LDEVR also requires `minChargeAtDestinationInkWh`, which only the preferences supply, so
+// triggering the endpoint on the strategy alone builds a request the API is guaranteed to reject.
+// The pairing is enforced in the request schema instead, which calls this same predicate so that
+// the endpoint the builder picks and the request the schema accepts can never disagree.
+export const isLDEVRRequest = (params: CalculateRouteParams): boolean =>
     !!(params.vehicle as ElectricVehicleParams | undefined)?.preferences?.chargingPreferences;
 
 // ─── Route reconstruction helpers ────────────────────────────────────────────
 
-type Stop = { coordinate: [number, number]; legToNext?: LegRequestAPI };
+// The wait lives on core's `WaypointProps`, since the map reads it too; the rest is routing-only.
+type StopOptions = WaypointProps & RouteStopOptions;
+
+// The builder's own intermediate, not a wire shape — hence no `API` suffix and no place in
+// apiRequestTypes.ts: the coordinate becomes `routePlanningLocations`, the options become part of
+// `legs[]`, and only `legToNext` is already wire-shaped.
+type Stop = { coordinate: [number, number]; legToNext?: LegRequestAPI; options?: StopOptions };
 
 const getPathCoordinates = (pathLike: PathLike): [number, number][] => {
     if (Array.isArray(pathLike)) return pathLike as [number, number][];
@@ -334,6 +359,13 @@ const expandPathToStops = (pathLike: PathLike): Stop[] => {
     ];
 };
 
+// Per-stop options ride on the `properties` of a waypoint Feature — see RouteStopOptions.
+const getRouteStopOptions = (location: RoutePlanningLocation): StopOptions | undefined => {
+    if (Array.isArray(location) || !('properties' in location)) return undefined;
+
+    return (location as Feature<Point, StopOptions>).properties ?? undefined;
+};
+
 const flattenLocations = (
     locations: RoutePlanningLocation[],
     useEntryPoint?: CalculateRouteParams['useEntryPoints'],
@@ -341,13 +373,70 @@ const flattenLocations = (
     const result: Stop[] = [];
     for (const location of locations) {
         if (getRoutePlanningLocationType(location) === 'waypoint') {
-            const [longitude, latitude] = getPositionStrict(location as WaypointLike, { useEntryPoint });
-            result.push({ coordinate: [longitude, latitude] });
+            const options = getRouteStopOptions(location);
+            // Explicit candidate entry points are chosen between by the routing engine, so the
+            // stop itself must stay the place center rather than a client-side entry point.
+            const stopEntryPoint = options?.candidateEntryPoints?.length ? 'ignore' : useEntryPoint;
+            const [longitude, latitude] = getPositionStrict(location as WaypointLike, {
+                useEntryPoint: stopEntryPoint,
+            });
+            result.push({ coordinate: [longitude, latitude], ...(options && { options }) });
         } else {
             result.push(...expandPathToStops(location as PathLike));
         }
     }
     return result;
+};
+
+const toEntryPointsMultiPoint = (entryPoints: HasLngLat[]): MultiPoint => ({
+    type: 'MultiPoint',
+    coordinates: entryPoints.map((entryPoint) => getPositionStrict(entryPoint)),
+});
+
+// Builds the `legs[]` entry for the leg *arriving at* `arrivingStop`, from that stop's options.
+const toLegRequest = (arrivingStop: Stop, isDestination: boolean): LegRequestAPI => {
+    const options = arrivingStop.options;
+    if (!options) return {};
+
+    if (isDestination && options.pauseDurationSeconds)
+        throw new Error(
+            'pauseDurationSeconds is not supported on the destination: the routing API requires the pause on the last leg to be 0.',
+        );
+
+    const routeStop: RouteStopRequestAPI = {
+        ...(options.pauseDurationSeconds && { pauseDurationInSeconds: options.pauseDurationSeconds }),
+        ...(options.candidateEntryPoints?.length && {
+            entryPoints: toEntryPointsMultiPoint(options.candidateEntryPoints),
+            ...(!isNil(options.preferredEntryPointIndex) && {
+                preferredEntryPointIndex: options.preferredEntryPointIndex,
+            }),
+        }),
+    };
+
+    return {
+        ...(options.legCostModel?.routeType && { routeType: options.legCostModel.routeType }),
+        // The route-level `avoids` is a string array; per-leg it takes objects.
+        ...(options.legCostModel?.avoid?.length && {
+            avoids: options.legCostModel.avoid.map((name) => ({ name })),
+        }),
+        ...(Object.keys(routeStop).length > 0 && { routeStop }),
+    };
+};
+
+// `legs[]` carries route-reconstruction paths and per-stop options; both triggers share the one
+// array, so it is emitted when either applies. Options belong to the stop the leg arrives at,
+// which is what keeps them on the right stop when another stop is inserted earlier in the list.
+const buildLegs = (allStops: Stop[], hasPathLocations: boolean): LegRequestAPI[] | undefined => {
+    // One leg per stop that has something before it, so the index is the departing stop's.
+    const arrivingStops = allStops.slice(1);
+    const legs = arrivingStops.map((arrivingStop, index) => ({
+        ...allStops[index].legToNext,
+        ...toLegRequest(arrivingStop, index === arrivingStops.length - 1),
+    }));
+
+    if (!hasPathLocations && legs.every((leg) => Object.keys(leg).length === 0)) return undefined;
+
+    return legs;
 };
 
 const buildRoutePlanningLocations = (allStops: Stop[]) => {
@@ -371,8 +460,6 @@ const buildRoutePlanningLocations = (allStops: Stop[]) => {
 
 // ─── Main exported function helpers ──────────────────────────────────────────
 
-type CommonBodyFields = ReturnType<typeof buildCommonBodyFields>;
-
 const buildCommonBodyFields = (params: CalculateRouteParams) => ({
     ...(params.costModel?.routeType && { routeType: params.costModel.routeType }),
     ...(params.costModel?.traffic && { traffic: params.costModel.traffic }),
@@ -384,36 +471,53 @@ const buildCommonBodyFields = (params: CalculateRouteParams) => ({
     ...(params.when?.option === 'arriveBy' && params.when.date && { arrivalDateTime: params.when.date.toISOString() }),
     ...(params.guidance && toGuidanceBody(params.guidance)),
     ...(params.costModel?.avoidAreas?.length && { avoidAreas: buildAvoidAreas(params.costModel.avoidAreas) }),
+    ...(params.arrivalSide && {
+        arrivalSidePreference: params.arrivalSide === 'curb' ? ('curbSide' as const) : ('anySide' as const),
+    }),
 });
+
+const appendTravelTimeParam = (url: URL, params: CalculateRouteParams): void => {
+    if (params.computeTravelTimeFor) url.searchParams.set('computeTravelTimeFor', params.computeTravelTimeFor);
+};
 
 const buildRequestHeaders = (params: CalculateRouteParams): TomTomAPIHeaders => ({
     ...buildCommonServiceRequestHeaders(params),
     Attributes: buildAttributesHeader(params),
 });
 
+const getLDEVRChargingModel = (params: CalculateRouteParams) =>
+    params.vehicle?.model && !('variantId' in params.vehicle.model)
+        ? ((params.vehicle.model as ExplicitVehicleModel<VehicleEngineType>).engine as ElectricEngineModel | undefined)
+              ?.charging
+        : undefined;
+
 const buildLDEVRRequest = (
     params: CalculateRouteParams,
-    routePlanningLocations: ReturnType<typeof buildRoutePlanningLocations>,
-    commonBodyFields: CommonBodyFields,
+    sharedBody: CalculateRoutePOSTDataAPI,
     headers: TomTomAPIHeaders,
 ): FetchInput<CalculateRoutePOSTDataAPI> => {
     const baseURL =
         params.customServiceBaseURL ?? `${params.commonBaseURL}/maps/orbis/routing/calculateLongDistanceEVRoute`;
     const url = new URL(baseURL);
     appendLDEVRVehicleParams(url, params.vehicle);
+    // A query parameter, not a body field — the body rejects it as an unknown JSON field.
+    if (params.chargingStopsStrategy) url.searchParams.set('chargingStopsStrategy', params.chargingStopsStrategy);
 
-    const chargingModel =
-        params.vehicle?.model && !('variantId' in params.vehicle.model)
-            ? (
-                  (params.vehicle.model as ExplicitVehicleModel<VehicleEngineType>).engine as
-                      | ElectricEngineModel
-                      | undefined
-              )?.charging
-            : undefined;
+    const chargingModel = getLDEVRChargingModel(params);
+    const hasPredefinedModel = !!params.vehicle?.model && 'variantId' in params.vehicle.model;
+    // `chargingParameters` is mandatory on this endpoint, but the endpoint itself is selected by
+    // `vehicle.preferences.chargingPreferences` — a different part of the params. Without either a
+    // predefined model (the API supplies the charging model for it) or explicit connectors, the
+    // request is guaranteed to fail, so fail here with a message that names the actual cause.
+    if (!hasPredefinedModel && !chargingModel?.chargingConnectors?.length)
+        throw new Error(
+            'Charging preferences require a charging model: set vehicle.model.engine.charging.chargingConnectors (or a predefined vehicle.model.variantId) to plan charging stops.',
+        );
 
+    // Only ever *adds* to the shared body: every field both endpoints take is built once, before
+    // the branch, so a field added there cannot reach one endpoint and silently miss the other.
     const body: CalculateRoutePOSTDataAPI = {
-        routePlanningLocations,
-        ...commonBodyFields,
+        ...sharedBody,
         ...(chargingModel && {
             chargingParameters: {
                 ...(chargingModel.batteryCurve?.length && { batteryCurve: chargingModel.batteryCurve }),
@@ -425,13 +529,8 @@ const buildLDEVRRequest = (
                 }),
             },
         }),
+        // This endpoint is electric by definition, whatever the vehicle body derived.
         vehicleEngineType: 'electric',
-        ...(params.vehicle?.model &&
-            !('variantId' in params.vehicle.model) && {
-                vehicleWeightInKilograms: (params.vehicle.model as ExplicitVehicleModel<VehicleEngineType>).dimensions
-                    ?.weightKG,
-            }),
-        ...(params.vehicle?.state?.heading && { vehicleHeadingInDegrees: params.vehicle.state.heading }),
     };
 
     return { method: 'POST', url, data: body, headers };
@@ -441,7 +540,7 @@ const buildLDEVRRequest = (
 
 /**
  * Default function for building calculate route request from {@link CalculateRouteParams}
- * targeting the OrbisV3 routing API.
+ * targeting the Orbis routing API.
  * @param params The calculate route parameters, with global configuration already merged into them.
  */
 export const buildCalculateRouteRequest = (params: CalculateRouteParams): FetchInput<CalculateRoutePOSTDataAPI> => {
@@ -450,27 +549,36 @@ export const buildCalculateRouteRequest = (params: CalculateRouteParams): FetchI
     const routePlanningLocations = buildRoutePlanningLocations(allStops);
     const commonBodyFields = buildCommonBodyFields(params);
     const headers = buildRequestHeaders(params);
-
-    if (isLDEVRRequest(params)) {
-        return buildLDEVRRequest(params, routePlanningLocations, commonBodyFields, headers);
-    }
-
-    const baseURL = params.customServiceBaseURL ?? `${params.commonBaseURL}/maps/orbis/routing/routes/calculate`;
-    const url = new URL(baseURL);
-    if (params.vehicle) appendConsumptionParams(url, params.vehicle);
-    // V3 renamed computeAdditionalTravelTimeFor → computeTravelTimeFor
-    if (params.computeAdditionalTravelTimeFor) {
-        url.searchParams.set('computeTravelTimeFor', params.computeAdditionalTravelTimeFor);
-    }
-
-    const legs = hasPathLocations ? allStops.slice(0, -1).map((stop) => stop.legToNext ?? {}) : undefined;
-
-    const body: CalculateRoutePOSTDataAPI = {
+    // Everything above, plus `legs` and the travel-time param below, is shared by both endpoints:
+    // the same CalculateRouteParams must mean the same thing whether or not charging preferences
+    // routed it to LDEVR.
+    const legs = buildLegs(allStops, hasPathLocations);
+    const sharedBody: CalculateRoutePOSTDataAPI = {
         routePlanningLocations,
         ...commonBodyFields,
         ...(legs && { legs }),
         ...(params.vehicle && buildVehicleBody(params.vehicle)),
     };
+    if (isLDEVRRequest(params)) {
+        const ldevrRequest = buildLDEVRRequest(params, sharedBody, headers);
+        appendTravelTimeParam(ldevrRequest.url, params);
+        return ldevrRequest;
+    }
 
-    return { method: 'POST', url, data: body, headers };
+    // `vehicleModelId` is only supported by the LDEVR endpoint, which is reached by setting
+    // `vehicle.preferences.chargingPreferences`. Sending it here returns
+    // `400 parameter [vehicleModelId] not supported`, and dropping it silently would plan the
+    // route for a default vehicle instead of the requested one.
+    if (params.vehicle?.model && 'variantId' in params.vehicle.model)
+        throw new Error(
+            'vehicle.model.variantId is only supported for EV routes with charging stops: set vehicle.preferences.chargingPreferences, or describe the vehicle with vehicle.model.dimensions and vehicle.model.engine instead.',
+        );
+
+    const baseURL = params.customServiceBaseURL ?? `${params.commonBaseURL}/maps/orbis/routing/routes/calculate`;
+    const url = new URL(baseURL);
+    if (params.vehicle) appendConsumptionParams(url, params.vehicle);
+
+    appendTravelTimeParam(url, params);
+
+    return { method: 'POST', url, data: sharedBody, headers };
 };

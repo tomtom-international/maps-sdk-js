@@ -23,6 +23,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         limit: 50,
     });
 
-    const placesModule = await PlacesModule.get(map);
+    const placesModule = await PlacesModule.create(map);
     placesModule.show(parkingSpots);
 })();

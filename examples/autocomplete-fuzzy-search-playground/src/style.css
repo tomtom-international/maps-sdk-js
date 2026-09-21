@@ -6,98 +6,98 @@
 
 /* CUSTOM STYLES (example-specific) */
 
-.sdk-example-searchPanel {
+.ui-searchPanel {
     position: absolute;
-    top: var(--sdk-panel-margin);
-    right: var(--sdk-panel-margin);
+    top: var(--ui-panel-margin);
+    right: var(--ui-panel-margin);
     width: 340px;
     max-height: calc(100vh - 20px);
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-    z-index: var(--sdk-z-panel);
+    z-index: var(--ui-z-panel);
 }
 
-.sdk-example-search-row {
+.ui-search-row {
     display: flex;
     align-items: center;
-    gap: var(--sdk-space-2);
-    padding: var(--sdk-space-3);
-    background: var(--sdk-surface-0);
-    border-radius: var(--sdk-radius-20);
-    box-shadow: var(--sdk-shadow-e2);
+    gap: var(--ui-space-2);
+    padding: var(--ui-space-3);
+    background: var(--ui-surface-0);
+    border-radius: var(--ui-rounded-20);
+    box-shadow: var(--ui-elevation-e2);
 }
 
-.sdk-example-search-row .sdk-example-input {
+.ui-search-row .ui-input {
     flex: 1;
     min-width: 0;
 }
 
-.sdk-example-result-list {
+.ui-result-list {
     list-style: none;
-    margin: var(--sdk-space-2) 0 0;
+    margin: var(--ui-space-2) 0 0;
     padding: 0;
-    background: var(--sdk-surface-0);
-    border-radius: var(--sdk-radius-10);
-    box-shadow: var(--sdk-shadow-e2);
+    background: var(--ui-surface-0);
+    border-radius: var(--ui-rounded-10);
+    box-shadow: var(--ui-elevation-e2);
     overflow: hidden;
-    font-family: var(--sdk-font-primary);
+    font-family: var(--ui-font-gilroy);
 }
 
-.sdk-example-result-list:empty {
+.ui-result-list:empty {
     display: none;
 }
 
-.sdk-example-result-item {
-    padding: var(--sdk-space-2) var(--sdk-space-3);
-    font-size: var(--sdk-font-body-m);
-    line-height: var(--sdk-font-body-m-lh);
-    color: var(--sdk-text-high);
+.ui-result-item {
+    padding: var(--ui-space-2) var(--ui-space-3);
+    font-size: var(--ui-font-body-m);
+    line-height: var(--ui-font-body-m-lh);
+    color: var(--ui-text-high-em);
     cursor: pointer;
-    transition: background-color var(--sdk-transition-fast);
+    transition: background-color var(--ui-transition-fast);
 }
 
-.sdk-example-result-item:hover,
-.sdk-example-result-item.sdk-example-hovered {
-    background-color: var(--sdk-surface-1);
+.ui-result-item:hover,
+.ui-result-item.ui-hovered {
+    background-color: var(--ui-surface-1);
 }
 
-.sdk-example-result-item:active {
-    background-color: var(--sdk-primary-color);
-    color: var(--sdk-text-white);
+.ui-result-item:active {
+    background-color: var(--ui-surface-brand-red);
+    color: var(--ui-text-white);
 }
 
-.sdk-example-result-value {
+.ui-result-value {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
 }
 
-.sdk-example-result-type {
-    font-size: var(--sdk-font-body-s);
-    color: var(--sdk-text-medium);
+.ui-result-type {
+    font-size: var(--ui-font-body-s);
+    color: var(--ui-text-med-em);
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
 }
 
-#sdk-example-searchThisArea {
+#ui-searchThisArea {
     position: absolute;
-    top: var(--sdk-panel-margin);
-    left: var(--sdk-panel-margin);
-    z-index: var(--sdk-z-panel);
+    top: var(--ui-panel-margin);
+    left: var(--ui-panel-margin);
+    z-index: var(--ui-z-panel);
 }
 
 /* Responsive: max-width 768px */
 @media (max-width: 768px) {
-    .sdk-example-searchPanel {
+    .ui-searchPanel {
         width: 280px;
     }
 }
 
 /* Responsive: max-width 600px */
 @media (max-width: 600px) {
-    .sdk-example-searchPanel {
+    .ui-searchPanel {
         width: calc(100% - 20px);
     }
 }

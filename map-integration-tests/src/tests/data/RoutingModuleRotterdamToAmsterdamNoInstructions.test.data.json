@@ -1237,6 +1237,12 @@
               "endPointIndex": 973
             }
           ],
+          "tollRoad": [
+            {
+              "startPointIndex": 450,
+              "endPointIndex": 973
+            }
+          ],
           "ferry": [
             {
               "startPointIndex": 1000,
@@ -4565,6 +4571,16 @@
             }
           ],
           "toll": [
+            {
+              "startPointIndex": 350,
+              "endPointIndex": 400
+            },
+            {
+              "startPointIndex": 450,
+              "endPointIndex": 973
+            }
+          ],
+          "tollRoad": [
             {
               "startPointIndex": 350,
               "endPointIndex": 400

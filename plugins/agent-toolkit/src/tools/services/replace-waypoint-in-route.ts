@@ -4,7 +4,7 @@
 
 import type { Place, WaypointLike } from '@tomtom-org/maps-sdk/core';
 import { z } from 'zod';
-import type { ToolState } from '../../types';
+import type { ToolExecuteOptions, ToolState } from '../../types';
 import { hidePreviousEntriesSchema, locationInputSchema } from '../shared';
 import { routesWriteOutputSchema, toolErrorSchema } from '../shared-output-schemas';
 import { resolveLocationInput } from './resolve-location-input';
@@ -47,7 +47,7 @@ const resolveTargetIndex = (target: z.infer<typeof waypointTargetSchema>, waypoi
 
 const labelForLocation = (location: z.infer<typeof locationInputSchema>): string => {
     if ('query' in location) return `"${location.query}"`;
-    if ('placeId' in location) return `placeId "${location.placeId}"`;
+    if ('placeIdOrEntryId' in location) return `placeIdOrEntryId "${location.placeIdOrEntryId}"`;
     return JSON.stringify(location.position);
 };
 
@@ -55,6 +55,7 @@ const labelForLocation = (location: z.infer<typeof locationInputSchema>): string
 export const executeReplaceWaypointInRoute = async (
     params: z.infer<typeof replaceWaypointInRouteSchema>,
     state: ToolState,
+    options?: ToolExecuteOptions,
 ): Promise<z.infer<typeof replaceWaypointInRouteOutputSchema>> => {
     const { waypointIndex, location, showOnMap, hidePreviousEntries } = params;
     try {
@@ -68,7 +69,7 @@ export const executeReplaceWaypointInRoute = async (
         const idx = resolveTargetIndex(waypointIndex, current.length);
         if (typeof idx === 'string') return { error: idx };
 
-        const resolved = await resolveLocationInput(location, state);
+        const resolved = await resolveLocationInput(location, state, options);
         if (!resolved) {
             return { error: `Could not resolve location: ${labelForLocation(location)}` };
         }
@@ -81,7 +82,16 @@ export const executeReplaceWaypointInRoute = async (
             return { error: 'Not enough valid waypoints to calculate a route (minimum 2).' };
         }
 
-        return calculateAndAddRoute(state, waypoints, showOnMap, hidePreviousEntries);
+        return calculateAndAddRoute(
+            state,
+            waypoints,
+            showOnMap,
+            hidePreviousEntries,
+            undefined,
+            undefined,
+            undefined,
+            options,
+        );
     } catch (error) {
         return {
             error: `Failed to replace waypoint in route: ${error instanceof Error ? error.message : String(error)}`,

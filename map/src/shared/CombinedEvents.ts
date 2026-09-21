@@ -1,6 +1,7 @@
-import type { ModuleEvents } from './ModuleEvents';
-import type { EventType, UserEventHandler } from './types';
-import { UserEvents } from './UserEvents';
+import type { EventScope } from './eventScope';
+import type { ModuleEvents, ShownFeaturesType } from './ModuleEvents';
+import type { EventHandlerConfig, EventType, UserEventHandler } from './types';
+import type { UserEvents } from './UserEvents';
 
 /**
  * Unified events interface that blends user interaction events and module lifecycle events
@@ -13,10 +14,18 @@ import { UserEvents } from './UserEvents';
  * underlying {@link ModuleEvents} instance. Each `on` call returns an unsubscribe function.
  * Both user and module event types are also removable in bulk via {@link off}.
  *
+ * Named scopes, where a module has them, hang off this object as properties and are themselves
+ * `CombinedEvents` — so a scope carries the lifecycle events that module actually scopes.
+ * {@link where} narrows ad hoc instead, and returns a plain {@link UserEvents}: a filter you build
+ * on the spot has no lifecycle of its own.
+ *
  * @typeParam T - Feature type surfaced by user interaction handlers.
  * @typeParam CFG - Module configuration type passed to `config-change` handlers.
  * @typeParam TShown - Data type passed to `shown-features` handlers. Use `never` for
  *   modules that have no `show` method.
+ * @typeParam WHERE_SCOPE - Module-specific scope object accepted by {@link where}, in addition to a
+ *   feature predicate. `never` for modules that only support predicates. Unrelated to a module's
+ *   *named* scopes, which are properties on this object rather than an argument to it.
  *
  * @example
  * ```typescript
@@ -43,11 +52,31 @@ import { UserEvents } from './UserEvents';
  *
  * @group Events
  */
-export class CombinedEvents<T, CFG, TShown = never> {
+export class CombinedEvents<T, CFG, TShown = never, WHERE_SCOPE = never> {
     constructor(
-        private readonly userEventsInstance: UserEvents<T>,
+        private readonly userEventsInstance: UserEvents<T, WHERE_SCOPE>,
         private readonly moduleEventsInstance: ModuleEvents<CFG, TShown>,
     ) {}
+
+    /**
+     * Narrows these events to part of what they cover — see {@link UserEvents.where}.
+     *
+     * @param scope See {@link EventScope} — a predicate over this module's feature type, or, where
+     * the module supports one, a scope object such as `{ layerGroups }` on {@link BaseMapModule}.
+     * @param config Event configuration for handlers registered through the returned instance, so
+     * each scope can have its own hover cursor.
+     * @returns A {@link UserEvents} covering only the narrowed set. Lifecycle events stay on the
+     * module (or named scope) they belong to.
+     *
+     * @example
+     * ```typescript
+     * trafficIncidents.events.where((incident) => incident.properties.magnitude === 'major')
+     *     .on('click', showIncidentDetails);
+     * ```
+     */
+    where(scope: EventScope<T, WHERE_SCOPE>, config?: EventHandlerConfig): UserEvents<T, WHERE_SCOPE> {
+        return this.userEventsInstance.where(scope, config);
+    }
 
     /**
      * Subscribe to a user interaction event (`click`, `contextmenu`, `hover`, `long-hover`).
@@ -103,7 +132,7 @@ export class CombinedEvents<T, CFG, TShown = never> {
      * unsub();
      * ```
      */
-    on(type: 'shown-features', handler: (features: TShown) => void): () => void;
+    on(type: ShownFeaturesType<TShown>, handler: (features: TShown) => void): () => void;
     on(
         type: EventType | 'config-change' | 'shown-features',
         handler: UserEventHandler<T> | ((config: CFG | undefined) => void) | ((features: TShown) => void),
@@ -113,7 +142,12 @@ export class CombinedEvents<T, CFG, TShown = never> {
         }
 
         if (type === 'shown-features') {
-            return this.moduleEventsInstance.on('shown-features', handler as (features: TShown) => void);
+            // The overload keeps `shown-features` off modules with no `show`; inside the class the
+            // literal has to be re-asserted, since `ShownFeaturesType` is still generic here.
+            return this.moduleEventsInstance.on(
+                'shown-features' as ShownFeaturesType<TShown>,
+                handler as (features: TShown) => void,
+            );
         }
 
         return this.userEventsInstance.on(type, handler as UserEventHandler<T>);

@@ -1,4 +1,4 @@
-import type { SectionProps, TrafficSectionProps } from '@tomtom-org/maps-sdk/core';
+import type { SectionProps, SpeedLimitSectionProps, TrafficSectionProps } from '@tomtom-org/maps-sdk/core';
 import type { Feature, FeatureCollection, LineString } from 'geojson';
 import type { DisplayRouteRelatedProps } from './displayRoutes';
 
@@ -168,4 +168,38 @@ export type DisplayTrafficSectionProps = DisplaySectionProps &
          * ```
          */
         title?: string;
+    };
+
+/**
+ * A sign face the SDK draws speed limits on. The number is drawn over the face rather than baked
+ * into it, so one image per face covers every limit.
+ *
+ * @remarks
+ * `whiteDisc` is the white disc with a red ring used across most of Europe and in the United Kingdom,
+ * `yellowDisc` the same shape as the Nordics post it, and `plaque` the upright rectangle reading
+ * `SPEED LIMIT` used in the United States.
+ * @ignore
+ */
+export type SpeedLimitSignFace = 'whiteDisc' | 'yellowDisc' | 'plaque';
+
+/**
+ * A speed limit section, ready to draw the sign that posts it.
+ *
+ * @remarks
+ * The section itself carries the limit in km/h. These properties are what the sign layer reads:
+ * the face to draw it on, and the number to print over that face — already converted to the unit
+ * the road posts in.
+ *
+ * @ignore
+ */
+export type DisplaySpeedLimitSectionProps = DisplaySectionProps &
+    SpeedLimitSectionProps & {
+        /** The image id of the sign face this section's country posts on. */
+        signImageID: string;
+        /** The number printed over that face, in the unit the sign reads in. */
+        signLabel: string;
+        /** Which face that is, which decides where on it the number sits. */
+        signFace: SpeedLimitSignFace;
+        /** The colour the number is printed in, which is the country's too. */
+        signNumeralsColor: string;
     };

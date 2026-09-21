@@ -1,5 +1,5 @@
 import { generateTomTomHeaders, mergeFromGlobal } from '@tomtom-org/maps-sdk/core';
-import { buildResponseError, buildValidationError } from './errors';
+import { buildResponseError, buildValidationError, SDKAbortError } from './errors';
 import type { ValidationError } from './schema/validation';
 import { validateRequestSchema } from './schema/validation';
 import type { CommonServiceParams, ServiceTemplate } from './serviceTypes';
@@ -21,6 +21,11 @@ export const callService = async <PARAMS extends CommonServiceParams, ApiRequest
     template: ServiceTemplate<PARAMS, ApiRequest, ApiResponse, RESPONSE>,
     serviceName: ServiceName,
 ): Promise<RESPONSE> => {
+    // Bail before doing any work, so a superseded call never fires onAPIRequest
+    if (params.signal?.aborted) {
+        throw new SDKAbortError(serviceName, params.signal.reason);
+    }
+
     const customApiVersion = template.getAPIVersion?.(params);
     const mergedParams = mergeFromGlobal({ ...params, ...(customApiVersion && { apiVersion: customApiVersion }) });
     // (params.validateRequest defaults to true, thus true and undefined are the same)
@@ -36,11 +41,11 @@ export const callService = async <PARAMS extends CommonServiceParams, ApiRequest
     params.onAPIRequest?.(apiRequest);
 
     try {
-        const apiResponse = await template.sendRequest(apiRequest, headers);
+        const apiResponse = await template.sendRequest(apiRequest, headers, { signal: params.signal });
         params.onAPIResponse?.(apiRequest, apiResponse);
         return template.parseResponse(await apiResponse.data, mergedParams);
     } catch (e) {
         params.onAPIResponse?.(apiRequest, e);
-        throw buildResponseError(e, serviceName, template.parseResponseError);
+        throw buildResponseError(e, serviceName, template.parseResponseError, params.signal);
     }
 };

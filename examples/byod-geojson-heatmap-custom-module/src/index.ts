@@ -42,7 +42,7 @@ const createMarkerIcon = (size: number): ImageData => {
 };
 
 const initSelectionPanel = (customGeoJSON: CustomGeoJSONModule<Sources>) => {
-    const selection = document.querySelector('#sdk-example-selection') as HTMLDivElement;
+    const selection = document.querySelector('#ui-selection') as HTMLDivElement;
 
     customGeoJSON.events.markers.on('hover', (feature) => {
         const { Name } = (feature.properties ?? {}) as ListedBuilding;
@@ -58,7 +58,7 @@ const initSelectionPanel = (customGeoJSON: CustomGeoJSONModule<Sources>) => {
 };
 
 const initStyleSelector = () => {
-    const selector = document.querySelector('#sdk-example-mapStyles') as HTMLSelectElement;
+    const selector = document.querySelector('#ui-mapStyles') as HTMLSelectElement;
     standardStyleIDs.forEach((id) => selector.add(new Option(id)));
     selector.addEventListener('change', (event) =>
         map.setStyle((event.target as HTMLOptionElement).value as StandardStyleID),
@@ -66,7 +66,7 @@ const initStyleSelector = () => {
 };
 
 (async () => {
-    const customGeoJSON = await CustomGeoJSONModule.get<Sources>(map, {
+    const customGeoJSON = await CustomGeoJSONModule.create<Sources>(map, {
         sources: {
             heatmap: { layers: heatmapLayers },
             markers: { layers: buildMarkersLayers(MARKER_ICON_ID) },

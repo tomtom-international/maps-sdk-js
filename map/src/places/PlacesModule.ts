@@ -1,19 +1,21 @@
 import type { Place, Places } from '@tomtom-org/maps-sdk/core';
-import type { LayerSpecification, LineLayerSpecification, SymbolLayerSpecification } from 'maplibre-gl';
 import type {
-    CleanEventStateOptions,
-    CleanEventStatesOptions,
-    GeoJSONSourceClusterOptions,
-    PutEventStateOptions,
-    ToBeAddedLayerSpecWithoutSource,
-} from '../shared';
+    LayerSpecification,
+    LineLayerSpecification,
+    MapGeoJSONFeature,
+    SymbolLayerSpecification,
+} from 'maplibre-gl';
 import {
-    AbstractMapModule,
-    CombinedEvents,
+    AbstractDataOwnedMapModule,
+    type CleanEventStateOptions,
+    type CleanEventStatesOptions,
+    type CombinedEvents,
+    type GeoJSONSourceClusterOptions,
     GeoJSONSourceWithLayers,
-    ModuleEvents,
     mapStyleLayerIDs,
-    UserEvents,
+    type PutEventStateOptions,
+    type ToBeAddedLayerSpecWithoutSource,
+    type UserEvents,
 } from '../shared';
 import { DEFAULT_PLACE_ICON_ID } from '../shared/layers/symbolLayers';
 import { suffixNumber } from '../shared/layers/utils';
@@ -63,6 +65,40 @@ type ConnectionLayerSpecMap = {
     label: ToBeAddedLayerSpecWithoutSource<SymbolLayerSpecification>;
 };
 
+// Default radius (in pixels) used by MapLibre when clustering pins for the
+// `pin-clustered` theme. Tuned to the default pin sprite footprint so that
+// adjacent pins are visually merged but cities/blocks aren't collapsed into
+// a single cluster.
+const DEFAULT_CLUSTER_RADIUS_PX = 60;
+
+/**
+ * What {@link PlacesModule.show} accepts, and what `shown-features` handlers receive back.
+ *
+ * @group Places
+ */
+export type ShownPlaces = Place | Place[] | Places;
+
+/**
+ * What `places.events.on('shown-features', ...)` receives: whichever of places or connections was
+ * just rendered.
+ *
+ * @group Places
+ */
+export type PlacesShownFeatures = { places: ShownPlaces } | { connections: PlaceConnectionDisplay[] };
+
+/**
+ * Event surface of {@link PlacesModule}: the module's own events, plus one named scope per
+ * surface it manages.
+ *
+ * @group Places
+ */
+export type PlacesEvents = CombinedEvents<MapGeoJSONFeature, PlacesModuleConfig, PlacesShownFeatures> & {
+    /** The place pins themselves, clustered or not. */
+    places: UserEvents<Place<DisplayPlaceProps>>;
+    /** The lines and labels connecting places to their parent, when connections are shown. */
+    connections: UserEvents<MapGeoJSONFeature>;
+};
+
 /**
  * Map module for displaying and managing place markers.
  *
@@ -106,7 +142,7 @@ type ConnectionLayerSpecMap = {
  * @example
  * ```typescript
  * // Create places module with pin markers
- * const placesModule = await PlacesModule.get(map, {
+ * const placesModule = await PlacesModule.create(map, {
  *   icon: {
  *     categoryIcons: []
  *   },
@@ -120,15 +156,15 @@ type ConnectionLayerSpecMap = {
  * await placesModule.show(searchResults);
  *
  * // EV Charging Stations - Opt-in to availability display
- * const evStations = await PlacesModule.get(map, {
+ * const evStations = await PlacesModule.create(map, {
  *   evAvailability: { enabled: true }
  * });
  * const results = await search({ poiCategories: ['ELECTRIC_VEHICLE_STATION'] });
  * evStations.show(await getPlacesWithEVAvailability(results)); // Shows availability
  *
  * // Granular control: Enable for searched stations only, background stations without
- * const bgStations = await PlacesModule.get(map); // EV availability disabled
- * const searched = await PlacesModule.get(map, {
+ * const bgStations = await PlacesModule.create(map); // EV availability disabled
+ * const searched = await PlacesModule.create(map, {
  *   evAvailability: { enabled: true }
  * });
  *
@@ -146,13 +182,7 @@ type ConnectionLayerSpecMap = {
  *
  * @group Places
  */
-// Default radius (in pixels) used by MapLibre when clustering pins for the
-// `pin-clustered` theme. Tuned to the default pin sprite footprint so that
-// adjacent pins are visually merged but cities/blocks aren't collapsed into
-// a single cluster.
-const DEFAULT_CLUSTER_RADIUS_PX = 60;
-
-export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, PlacesModuleConfig> {
+export class PlacesModule extends AbstractDataOwnedMapModule<PlacesSourcesAndLayers, PlacesModuleConfig> {
     // Cluster layers (`clusterBadge` in particular) aren't symbol layers, so the
     // record value is widened to the full layer-spec union.
     private layerSpecs!: Record<PlaceLayerName, ToBeAddedLayerSpecWithoutSource<LayerSpecification>>;
@@ -173,21 +203,26 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
     // base-class constructor). A class-field initializer would be too late: it runs
     // after `super()`, by which point `_applyConfig` has already read this field.
     private shownConnections!: PlaceConnectionDisplay[];
-    private readonly shownFeaturesHandlers: ((features: Place | Place[] | Places) => void)[] = [];
+    private readonly shownFeaturesHandlers: ((features: PlacesShownFeatures) => void)[] = [];
 
     /**
-     * Make sure the map is ready before create an instance of the module and any other interaction with the map
+     * Creates a new module instance on the given map, waiting until the map is ready first.
+     *
+     * `PlacesModule` owns the sources, layers and images it adds, all suffixed per instance. Every
+     * call therefore returns a **new, independent** instance, and stacking several of them on one
+     * map is a supported thing to do.
+     *
      * @param tomtomMap The TomTomMap instance.
      * @param config  The module optional configuration
      * @returns {Promise} Returns a promise with a new instance of this module
      */
-    static async get(tomtomMap: TomTomMap, config?: PlacesModuleConfig): Promise<PlacesModule> {
+    static async create(tomtomMap: TomTomMap, config?: PlacesModuleConfig): Promise<PlacesModule> {
         await waitUntilMapIsReady(tomtomMap);
         return new PlacesModule(tomtomMap, config);
     }
 
     private constructor(map: TomTomMap, config?: PlacesModuleConfig) {
-        super('geojson', map, config);
+        super(map, config);
     }
 
     /**
@@ -336,7 +371,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
     }
 
     private buildConnectionLayerSpecs(config?: PlacesModuleConfig): ConnectionLayerSpecMap {
-        const specs = buildConnectionLayerSpecs(config?.connections);
+        const specs = buildConnectionLayerSpecs(config?.connections, undefined, this.tomtomMap.styleLightDarkTheme);
         const lineID = `${this.layerIDPrefix}-connection-line`;
         const labelID = `${this.layerIDPrefix}-connection-label`;
         // Stack connections under the base-map label layer (`lowestLabel`) so city /
@@ -356,6 +391,13 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
     protected _applyConfig(config: PlacesModuleConfig | undefined) {
         this.updateLayersAndData(config);
         return config;
+    }
+
+    /**
+     * @ignore
+     */
+    protected discardShownData() {
+        this.shownConnections = [];
     }
 
     /**
@@ -691,7 +733,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      * @example
      * Display search results:
      * ```typescript
-     * import { search } from '@tomtom-international/maps-sdk-js/services';
+     * import { search } from '@tomtom-org/maps-sdk/services';
      *
      * const results = await search({ query: 'coffee' });
      * await placesModule.show(results);
@@ -716,7 +758,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      * await placesModule.show([place1, place2, place3]);
      * ```
      */
-    async show(places: Place | Place[] | Places) {
+    async show(places: ShownPlaces) {
         await this.waitUntilModuleReady();
         // Calling `show` swaps the underlying place set, which invalidates any
         // previously-shown connections (their endpoints may no longer exist). Clear
@@ -731,7 +773,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
         this.sourcesWithLayers.placesUnclustered?.show(prepared, { automaticVisibility: false });
         this.applyPlacesVisibility();
         for (const handler of this.shownFeaturesHandlers) {
-            handler(places);
+            handler({ places });
         }
     }
 
@@ -775,7 +817,7 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
      *
      * @example
      * ```typescript
-     * const places = await PlacesModule.get(map, {
+     * const places = await PlacesModule.create(map, {
      *   connections: {
      *     label: (c) => `${c.distanceMeters} m`
      *   }
@@ -794,6 +836,9 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
         await this.waitUntilModuleReady();
         this.shownConnections = [...connections];
         this.updateConnectionsData(this.config);
+        for (const handler of this.shownFeaturesHandlers) {
+            handler({ connections });
+        }
     }
 
     /**
@@ -889,14 +934,22 @@ export class PlacesModule extends AbstractMapModule<PlacesSourcesAndLayers, Plac
         this.sourcesWithLayers.places.cleanEventStates(options);
     }
 
-    get events(): CombinedEvents<Place<DisplayPlaceProps>, PlacesModuleConfig, Place | Place[] | Places> {
-        return new CombinedEvents(
-            new UserEvents<Place<DisplayPlaceProps>>(
-                this.eventsProxy,
-                this.sourcesWithLayers.places,
-                this.config?.events,
+    get events(): PlacesEvents {
+        // `placesUnclustered` only exists under the clustered theme, and is the same data seen
+        // another way, so it belongs to the `places` scope rather than being a scope of its own.
+        const placeSources: (keyof PlacesSourcesAndLayers)[] = ['places', 'placesUnclustered'];
+        return this.buildEvents(
+            // Module-wide events cover every surface this module draws, so they carry the raw
+            // MapLibre feature — a connection line is not a place. Use the `places` scope for the
+            // pins alone and their `Place` shape.
+            this.moduleEventsWithShown<MapGeoJSONFeature, PlacesShownFeatures>(
+                [...placeSources, 'connections'],
+                this.shownFeaturesHandlers,
             ),
-            new ModuleEvents(this.configChangeHandlers, this.shownFeaturesHandlers),
+            {
+                places: this.userEvents<Place<DisplayPlaceProps>>(placeSources),
+                connections: this.userEvents<MapGeoJSONFeature>(['connections']),
+            },
         );
     }
 }

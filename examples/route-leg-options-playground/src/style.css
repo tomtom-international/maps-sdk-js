@@ -1,0 +1,116 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/form/field.css";
+@import "../../src/templates/css/form/dropdown.css";
+@import "../../src/templates/css/form/checkbox.css";
+
+/* CUSTOM STYLES (example-specific) */
+
+.ui-customPanel {
+    width: 300px;
+}
+
+.ui-instructions {
+    margin: 0;
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-s);
+    line-height: var(--ui-font-body-s-lh);
+    color: var(--ui-text-med-em);
+}
+
+.ui-leg {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ui-space-1);
+    padding: var(--ui-space-3) 0;
+    border-bottom: 1px solid var(--ui-border-low-em);
+}
+
+.ui-leg-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ui-space-2);
+    margin: 0;
+    cursor: pointer;
+    font-weight: inherit;
+}
+
+.ui-leg-headings {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.ui-leg-title {
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-s);
+    color: var(--ui-text-high-em);
+}
+
+.ui-leg-stats {
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-caption-m);
+    font-variant-numeric: tabular-nums;
+    color: var(--ui-text-med-em);
+}
+
+/* The options a collapsed leg is set to, so folding one away does not hide its state. */
+.ui-leg-choices {
+    margin: 0;
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-caption-m);
+    color: var(--ui-text-med-em);
+}
+
+.ui-leg:not(.ui-leg-collapsed) .ui-leg-choices {
+    display: none;
+}
+
+.ui-leg-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ui-space-1);
+}
+
+.ui-leg-body.collapsed {
+    display: none;
+}
+
+.ui-leg-avoids {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 var(--ui-space-2);
+}
+
+.ui-summary {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--ui-space-1) var(--ui-space-3);
+    margin: 0;
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-s);
+}
+
+.ui-summary-label {
+    margin: 0;
+    color: var(--ui-text-med-em);
+}
+
+.ui-summary-value {
+    margin: 0;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    color: var(--ui-text-high-em);
+}
+
+.ui-status {
+    margin: var(--ui-space-2) 0 0;
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-caption-m);
+    color: var(--ui-text-med-em);
+    min-height: 1.2em;
+}

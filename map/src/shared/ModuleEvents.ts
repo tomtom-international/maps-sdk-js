@@ -33,6 +33,15 @@
  *
  * @group Events
  */
+/**
+ * `'shown-features'`, except on a module with no `show` — where `TShownFeatures` is `never` and
+ * this collapses to `never`, making the overload uncallable. Without it a handler could be
+ * registered for an event the module can never emit.
+ *
+ * @group Events
+ */
+export type ShownFeaturesType<TShownFeatures> = [TShownFeatures] extends [never] ? never : 'shown-features';
+
 export class ModuleEvents<TConfig, TShownFeatures = never> {
     constructor(
         private readonly configChangeHandlers: ((config: TConfig | undefined) => void)[],
@@ -82,7 +91,7 @@ export class ModuleEvents<TConfig, TShownFeatures = never> {
      * unsub();
      * ```
      */
-    on(type: 'shown-features', handler: (features: TShownFeatures) => void): () => void;
+    on(type: ShownFeaturesType<TShownFeatures>, handler: (features: TShownFeatures) => void): () => void;
     on(
         type: 'config-change' | 'shown-features',
         handler: ((config: TConfig | undefined) => void) | ((features: TShownFeatures) => void),

@@ -14,13 +14,13 @@
     "test:coverage": "vitest run --coverage",
     "test:dist": "vitest run dist-validation.test.ts",
     "build": "vite build",
-    "build:watch": "pnpm build --watch",
+    "build:watch": "vite build --watch",
     "build:full": "pnpm type-check && pnpm build",
     "type-check": "tsc --noEmit",
+    "refresh-style-fixture": "node scripts/refresh-style-fixture.mjs",
     "clean:dist": "rimraf ./dist"
   },
   "devDependencies": {
-    "@microsoft/api-extractor": "catalog:",
     "@types/geojson": "catalog:",
     "@types/lodash-es": "catalog:",
     "@types/node": "catalog:",
@@ -31,7 +31,6 @@
     "ts-node": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vite-plugin-dts": "catalog:",
     "vitest": "catalog:"
   },
   "typedoc": {

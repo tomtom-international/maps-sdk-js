@@ -1,7 +1,7 @@
 import type { GlobalConfig, TomTomHeaders } from '@tomtom-org/maps-sdk/core';
 import type { SDKServiceError } from './errors';
 import type { APIErrorResponse, DefaultAPIResponseErrorBody } from './types/apiResponseErrorTypes';
-import type { ParsedFetchResponse } from './types/fetch';
+import type { ParsedFetchResponse, RequestOptions } from './types/fetch';
 import type { RequestValidationConfig } from './types/validation';
 
 /**
@@ -65,6 +65,37 @@ export type CommonServiceParams<ApiRequest = any, ApiResponse = any> = Partial<G
      * @param apiResponse - The received raw (unparsed) API response
      */
     onAPIResponse?: (apiRequest: ApiRequest, apiResponse: ApiResponse) => void;
+
+    /**
+     * An `AbortSignal` used to cancel the request.
+     *
+     * @remarks
+     * Aborting rejects the call with an {@link SDKAbortError} (its `name` is `'AbortError'`)
+     * and cancels the underlying HTTP request, including while the SDK is waiting to retry
+     * a rate-limited (429) response. Aborting a call that already completed has no effect.
+     *
+     * Compose signals to add a deadline: `AbortSignal.any([mine, AbortSignal.timeout(5000)])`.
+     *
+     * @example
+     * Cancel the previous search whenever a new one starts:
+     * ```ts
+     * let controller: AbortController | undefined;
+     *
+     * const searchForQuery = async (query: string) => {
+     *     controller?.abort();
+     *     controller = new AbortController();
+     *     try {
+     *         return await search({ query, signal: controller.signal });
+     *     } catch (error) {
+     *         if (error instanceof SDKAbortError) return;
+     *         throw error;
+     *     }
+     * };
+     * ```
+     *
+     * @defaultValue `undefined` (the request cannot be cancelled)
+     */
+    signal?: AbortSignal;
 };
 
 /**
@@ -140,9 +171,14 @@ export type ServiceTemplate<
      *
      * @param request - The request object to send
      * @param headers - Custom TomTom headers to include in the request
+     * @param options - Per-call HTTP options, such as the `AbortSignal` used to cancel the request
      * @returns A promise resolving to the parsed fetch response
      */
-    sendRequest: (request: ApiRequest, headers: TomTomHeaders) => ParsedFetchResponse<ApiResponse>;
+    sendRequest: (
+        request: ApiRequest,
+        headers: TomTomHeaders,
+        options?: RequestOptions,
+    ) => ParsedFetchResponse<ApiResponse>;
 
     /**
      * Parses the successful API response into the expected return type.

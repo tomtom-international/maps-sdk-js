@@ -11,7 +11,7 @@ import { buildReportHtml, hasResults } from '../report/report-html';
 const generateSiteReportSchema = z.object({
     title: z.string().default('Site Selection Report').describe('Report title.'),
     concept: z.string().optional().describe('What is being sited, e.g. "coffee shop" — shown in the header.'),
-    area: z.string().optional().describe('The market/area studied, e.g. "Amsterdam" — shown in the header.'),
+    area: z.string().optional().describe('The market/area studied, e.g. "Las Vegas" — shown in the header.'),
 });
 
 type GenerateSiteReportInput = z.infer<typeof generateSiteReportSchema>;

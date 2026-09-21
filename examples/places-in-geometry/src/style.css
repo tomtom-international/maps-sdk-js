@@ -4,9 +4,9 @@
 
 /* CUSTOM STYLES (example-specific) */
 
-.sdk-example-floating-button {
+.ui-floating-button {
     position: absolute;
     bottom: 20px;
     right: 20px;
-    z-index: var(--sdk-z-panel);
+    z-index: var(--ui-z-panel);
 }

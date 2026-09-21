@@ -1,17 +1,19 @@
 import type { PolygonFeatures } from '@tomtom-org/maps-sdk/core';
 import type { FeatureCollection, Point } from 'geojson';
-import type { SymbolLayerSpecification } from 'maplibre-gl';
-import type { BeforeLayerConfig, SymbolLayerSpecWithoutSource, ToBeAddedLayerSpec } from '../shared';
+import type { MapGeoJSONFeature, SymbolLayerSpecification } from 'maplibre-gl';
 import {
-    AbstractMapModule,
-    CombinedEvents,
+    AbstractDataOwnedMapModule,
+    type BeforeLayerConfig,
+    type CombinedEvents,
     GeoJSONSourceWithLayers,
-    ModuleEvents,
     mapStyleLayerIDs,
-    UserEvents,
+    type SymbolLayerSpecWithoutSource,
+    type ToBeAddedLayerSpec,
+    type UserEvents,
 } from '../shared';
-import { changeLayerProps, waitUntilMapIsReady } from '../shared/mapUtils';
+import { changeLayerProps, moveLayerBefore, waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
+import { getThemeAdaptiveGeometryColors } from './layers/constants';
 import {
     buildGeometryLayerSpecs,
     buildGeometryLineLabelLayerSpec,
@@ -30,6 +32,19 @@ import type {
 type GeometrySourcesWithLayers = {
     geometry: GeoJSONSourceWithLayers<PolygonFeatures>;
     geometryLabel: GeoJSONSourceWithLayers<FeatureCollection<Point>>;
+};
+
+/**
+ * Event surface of {@link GeometriesModule}: the module's own events, plus one named scope per
+ * surface it manages.
+ *
+ * @group Geometries
+ */
+export type GeometriesEvents = CombinedEvents<MapGeoJSONFeature, GeometriesModuleConfig, PolygonFeatures> & {
+    /** The geometry fills and outlines. */
+    geometry: UserEvents<MapGeoJSONFeature>;
+    /** The labels rendered on top of the geometries. */
+    geometryLabel: UserEvents<MapGeoJSONFeature>;
 };
 
 /**
@@ -62,10 +77,10 @@ type GeometrySourcesWithLayers = {
  * @example
  * Basic usage:
  * ```typescript
- * import { GeometriesModule } from '@tomtom-international/maps-sdk-js/map';
+ * import { GeometriesModule } from '@tomtom-org/maps-sdk/map';
  *
  * // Initialize module
- * const geometriesModule = await GeometriesModule.get(map);
+ * const geometriesModule = await GeometriesModule.create(map);
  *
  * // Display a polygon
  * await geometriesModule.show({
@@ -83,7 +98,7 @@ type GeometrySourcesWithLayers = {
  * @example
  * Custom styling:
  * ```typescript
- * const geometriesModule = await GeometriesModule.get(map, {
+ * const geometriesModule = await GeometriesModule.create(map, {
  *   fill: { color: '#FF5733', opacity: 0.3 },
  *   line: { color: '#C70039', width: 3 },
  *   textConfig: {
@@ -131,7 +146,7 @@ type GeometrySourcesWithLayers = {
  *
  * @group Geometries
  */
-export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayers, GeometriesModuleConfig> {
+export class GeometriesModule extends AbstractDataOwnedMapModule<GeometrySourcesWithLayers, GeometriesModuleConfig> {
     private titleLayerSpecs!: SymbolLayerSpecWithoutSource;
     private geometryFillLayerSpecs!: SymbolLayerSpecWithoutSource;
     private geometryOutlineLayerSpecs!: SymbolLayerSpecWithoutSource;
@@ -163,19 +178,20 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
      * - `beforeLayerConfig`: Layer ordering — a single target, or `{ all, fill, line }` to split them
      *
      * **Multiple Instances:**
-     * You can create multiple GeometriesModule instances on the same map,
-     * each managing different sets of geometries with different styles.
+     * `GeometriesModule` owns the sources, layers and images it adds, all suffixed per instance.
+     * Every call therefore returns a **new, independent** instance, so you can put several on the
+     * same map, each managing a different set of geometries with different styles.
      *
      * @example
      * Default initialization:
      * ```typescript
-     * const geometriesModule = await GeometriesModule.get(map);
+     * const geometriesModule = await GeometriesModule.create(map);
      * ```
      *
      * @example
      * With custom styling:
      * ```typescript
-     * const geometriesModule = await GeometriesModule.get(map, {
+     * const geometriesModule = await GeometriesModule.create(map, {
      *   fill: { color: 'blue', opacity: 0.25 },
      *   line: { color: 'darkblue', width: 2, opacity: 0.8 },
      *   textConfig: {
@@ -188,7 +204,7 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
      * @example
      * Data-driven styling:
      * ```typescript
-     * const geometriesModule = await GeometriesModule.get(map, {
+     * const geometriesModule = await GeometriesModule.create(map, {
      *   fill: {
      *     // Color based on feature properties
      *     color: [
@@ -204,13 +220,27 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
      * });
      * ```
      */
-    static async get(tomtomMap: TomTomMap, config?: GeometriesModuleConfig): Promise<GeometriesModule> {
+    static async create(tomtomMap: TomTomMap, config?: GeometriesModuleConfig): Promise<GeometriesModule> {
         await waitUntilMapIsReady(tomtomMap);
         return new GeometriesModule(tomtomMap, config);
     }
 
     private constructor(map: TomTomMap, config?: GeometriesModuleConfig) {
-        super('geojson', map, config);
+        super(map, config);
+    }
+
+    /** Current light/dark map theme, re-read on every layer/data build so style switches repaint. */
+    private get lightDark() {
+        return this.tomtomMap.styleLightDarkTheme;
+    }
+
+    /**
+     * Default fill / plain-outline colour a feature falls back to when it carries no `color`.
+     * Resolved from the active theme; once the styling module ships this also reads the map's
+     * published accent (`mapAccentColor(this.tomtomMap) ?? …`).
+     */
+    private get defaultColor(): string {
+        return getThemeAdaptiveGeometryColors(this.lightDark).defaultColor;
     }
 
     /**
@@ -231,8 +261,9 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
             this.fillLayerID,
             this.outlineLayerID,
             config,
+            this.defaultColor,
         );
-        const titleLayerSpec = buildGeometryTitleLayerSpec(this.titleLayerID, config);
+        const titleLayerSpec = buildGeometryTitleLayerSpec(this.titleLayerID, config, this.lightDark);
         this.titleLayerSpecs = titleLayerSpec;
         this.geometryFillLayerSpecs = geometryFillSpec;
         this.geometryOutlineLayerSpecs = geometryOutlineSpec;
@@ -240,7 +271,7 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
         const lineLabelSpec =
             config?.lineLabelConfig === undefined
                 ? null
-                : buildGeometryLineLabelLayerSpec(this.lineLabelLayerID, config);
+                : buildGeometryLineLabelLayerSpec(this.lineLabelLayerID, config, this.lightDark);
         this.lineLabelLayerSpecs = lineLabelSpec as SymbolLayerSpecWithoutSource | null;
 
         return {
@@ -275,7 +306,7 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
 
     private moveLayersBefore(layerIDs: string[], beforeLayerID: string) {
         for (const layer of layerIDs) {
-            this.mapLibreMap.moveLayer(layer, beforeLayerID);
+            moveLayerBefore(this.mapLibreMap, layer, beforeLayerID);
         }
     }
 
@@ -304,7 +335,7 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
      *
      * @example
      * ```typescript
-     * import { mapStyleLayerIDs } from '@tomtom-international/maps-sdk-js/map';
+     * import { mapStyleLayerIDs } from '@tomtom-org/maps-sdk/map';
      *
      * // Place all geometry layers below labels
      * geometries.moveBeforeLayer(mapStyleLayerIDs.lowestLabel);
@@ -380,8 +411,9 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
             this.fillLayerID,
             this.outlineLayerID,
             config,
+            this.defaultColor,
         );
-        const newTitleLayerSpecs = buildGeometryTitleLayerSpec(this.titleLayerID, config);
+        const newTitleLayerSpecs = buildGeometryTitleLayerSpec(this.titleLayerID, config, this.lightDark);
 
         changeLayerProps(geometryFillSpec, this.geometryFillLayerSpecs, this.mapLibreMap);
         changeLayerProps(geometryOutlineSpec, this.geometryOutlineLayerSpecs, this.mapLibreMap);
@@ -392,7 +424,7 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
         this.titleLayerSpecs = newTitleLayerSpecs;
 
         if (this.lineLabelLayerSpecs) {
-            const newLineLabelSpec = buildGeometryLineLabelLayerSpec(this.lineLabelLayerID, config);
+            const newLineLabelSpec = buildGeometryLineLabelLayerSpec(this.lineLabelLayerID, config, this.lightDark);
             changeLayerProps(
                 newLineLabelSpec as SymbolLayerSpecWithoutSource,
                 this.lineLabelLayerSpecs,
@@ -400,6 +432,13 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
             );
             this.lineLabelLayerSpecs = newLineLabelSpec as SymbolLayerSpecWithoutSource;
         }
+    }
+
+    /**
+     * @ignore
+     */
+    protected discardShownData() {
+        this.lastRawInput = null;
     }
 
     /**
@@ -464,7 +503,7 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
      * @example
      * From search API response:
      * ```typescript
-     * import { search } from '@tomtom-international/maps-sdk-js/services';
+     * import { search } from '@tomtom-org/maps-sdk/services';
      *
      * const result = await search.geometrySearch({
      *   query: 'Amsterdam',
@@ -482,7 +521,7 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
         const { transformFeaturesForDisplay } = this.config ?? {};
         const transformed = transformFeaturesForDisplay ? transformFeaturesForDisplay(geometries) : geometries;
         const geometry = this.sourcesWithLayers.geometry;
-        geometry.show(prepareGeometryForDisplay(transformed, this.config));
+        geometry.show(prepareGeometryForDisplay(transformed, this.config, this.lightDark));
         this.sourcesWithLayers.geometryLabel.show(prepareTitleForDisplay(geometry.shownFeatures));
         for (const handler of this.shownFeaturesHandlers) {
             handler(geometries);
@@ -536,7 +575,7 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
     /**
      * Gets the events interface for handling user interactions with geometries.
      *
-     * @returns A `UserEvents` instance for registering event handlers.
+     * @returns The module's events, with `on` / `off` for handlers and `where` for scoping.
      *
      * @remarks
      * **Supported Events:**
@@ -578,10 +617,17 @@ export class GeometriesModule extends AbstractMapModule<GeometrySourcesWithLayer
      * });
      * ```
      */
-    get events(): CombinedEvents<import('maplibre-gl').MapGeoJSONFeature, GeometriesModuleConfig, PolygonFeatures> {
-        return new CombinedEvents(
-            new UserEvents(this.tomtomMap._eventsProxy, this.sourcesWithLayers.geometry, this.config?.events),
-            new ModuleEvents(this.configChangeHandlers, this.shownFeaturesHandlers),
+    get events(): GeometriesEvents {
+        return this.buildEvents(
+            // Module-wide events cover both surfaces; the scopes below single one out.
+            this.moduleEventsWithShown<MapGeoJSONFeature, PolygonFeatures>(
+                ['geometry', 'geometryLabel'],
+                this.shownFeaturesHandlers,
+            ),
+            {
+                geometry: this.userEvents<MapGeoJSONFeature>(['geometry']),
+                geometryLabel: this.userEvents<MapGeoJSONFeature>(['geometryLabel']),
+            },
         );
     }
 }

@@ -10,8 +10,8 @@ export type RoutePlaygroundState = {
 
 export const initControls = (state: RoutePlaygroundState, apply: () => void): void => {
     // Panel toggle
-    const toggleButton = document.querySelector('.sdk-example-heading-toggle')!;
-    const panelContent = document.querySelector('.sdk-example-panel-content')!;
+    const toggleButton = document.querySelector('.ui-heading-toggle')!;
+    const panelContent = document.querySelector('.ui-panel-content')!;
     toggleButton.addEventListener('click', () => {
         const isExpanded = toggleButton.getAttribute('aria-expanded') === 'true';
         toggleButton.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');

@@ -11,9 +11,9 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 const INITIAL_QUERY = 'London';
 
 (async () => {
-    const searchBox = document.getElementById('sdk-example-searchBox') as HTMLInputElement;
-    const searchButton = document.getElementById('sdk-example-searchButton') as HTMLButtonElement;
-    const statusElement = document.getElementById('sdk-example-status') as HTMLDivElement;
+    const searchBox = document.getElementById('ui-searchBox') as HTMLInputElement;
+    const searchButton = document.getElementById('ui-searchButton') as HTMLButtonElement;
+    const statusElement = document.getElementById('ui-status') as HTMLDivElement;
 
     const map = new TomTomMap({
         mapLibre: {
@@ -23,7 +23,7 @@ const INITIAL_QUERY = 'London';
         },
     });
 
-    const overlay = await TrafficIncidentOverlayModule.get(map);
+    const overlay = await TrafficIncidentOverlayModule.create(map);
     const baseMap = await BaseMapModule.get(map);
     const popup = createIncidentPopup();
 

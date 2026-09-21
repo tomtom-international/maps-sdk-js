@@ -110,11 +110,9 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         },
     });
 
-    const routingModule = await RoutingModule.get(map);
+    const routingModule = await RoutingModule.create(map);
     initDrawMapStyle(map.mapLibreMap, routingModule);
-    document
-        .querySelector('#sdk-example-resetButton')
-        ?.addEventListener('click', () => resetState(routingModule, waypoints));
+    document.querySelector('#ui-resetButton')?.addEventListener('click', () => resetState(routingModule, waypoints));
     await resetState(routingModule, waypoints);
     initDrawUserEvents(map.mapLibreMap, routingModule);
 

@@ -20,7 +20,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
     const restOfTheMapModule = await BaseMapModule.get(map, { events: { cursorOnHover: 'default' } });
     const poisModule = await POIsModule.get(map);
-    const placesModule = await PlacesModule.get(map);
+    const placesModule = await PlacesModule.create(map);
 
     let activePopup: Popup | null = null;
 

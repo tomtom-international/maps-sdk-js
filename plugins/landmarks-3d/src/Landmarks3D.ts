@@ -1,6 +1,6 @@
 import { isProxyCredentialsMode } from '@tomtom-org/maps-sdk/core';
-import type { TomTomMap } from '@tomtom-org/maps-sdk/map';
-import type { FilterSpecification } from 'maplibre-gl';
+import { LayerFilterComposer, mapStyleLayerIDs, type TomTomMap } from '@tomtom-org/maps-sdk/map';
+import type { ExpressionFilterSpecification } from 'maplibre-gl';
 import {
     type BasemapBuildingMaterial,
     type Landmarks3DDisplayMode,
@@ -20,7 +20,9 @@ const DEFAULT_LAYER_MAX_ZOOM = 22;
 
 // Filters out basemap extruded buildings that overlap a landmark, so they don't clip through its mesh.
 const DEFAULT_BASEMAP_BUILDING_LAYER_ID = '3D - Building';
-const NO_LANDMARK_FILTER_CLAUSE: FilterSpecification = ['!', ['coalesce', ['get', 'has_landmark'], false]];
+const NO_LANDMARK_FILTER_CLAUSE: ExpressionFilterSpecification = ['!', ['coalesce', ['get', 'has_landmark'], false]];
+// This plugin's key with the shared filter composer.
+const LANDMARKS_CONTRIBUTOR = 'landmarks3d.buildings';
 
 // Resolves `fill-extrusion-color` to one CSS colour, for `match` expressions, the last operand is the default.
 const extractColorFromPaint = (paintColor: unknown): string | null => {
@@ -214,7 +216,7 @@ export class Landmarks3D {
     private install(): void {
         const mapLibreMap = this.map.mapLibreMap;
         if (!mapLibreMap.getLayer(this.layerID)) {
-            mapLibreMap.addLayer(this.modelsLayer);
+            mapLibreMap.addLayer(this.modelsLayer, this.landmarkInsertBeforeID());
         }
 
         // The standard styles ship the 3D building layer hidden; show it so landmarks get a 3D city context.
@@ -235,6 +237,12 @@ export class Landmarks3D {
         this.applyDisplayMode();
     }
 
+    // Insert before the POI anchor so POIs draw over the meshes and roads stay below; undefined = on top.
+    private landmarkInsertBeforeID(): string | undefined {
+        const poiAnchor = mapStyleLayerIDs.poi;
+        return this.map.mapLibreMap.getLayer(poiAnchor) ? poiAnchor : undefined;
+    }
+
     // Tracks the basemap 3D building layer's zoom range so landmarks appear and disappear together with
     // it, unless the caller pinned an explicit min/max zoom. No-op when the building layer is absent.
     private alignZoomRangeWithBasemapBuildings(): void {
@@ -248,21 +256,14 @@ export class Landmarks3D {
     }
 
     private excludeLandmarkBuildingsFromBasemap(): void {
-        const mapLibreMap = this.map.mapLibreMap;
-        if (!mapLibreMap.getLayer(this.basemapBuildingLayerID)) {
-            return;
-        }
-
-        const existing = mapLibreMap.getFilter(this.basemapBuildingLayerID);
-        if (existing && JSON.stringify(existing).includes(JSON.stringify(NO_LANDMARK_FILTER_CLAUSE))) {
-            return;
-        }
-
-        // Asserted because `['all', ...]` arms span FilterSpecification's expression and legacy variants.
-        const combined = (
-            existing ? ['all', existing, NO_LANDMARK_FILTER_CLAUSE] : NO_LANDMARK_FILTER_CLAUSE
-        ) as FilterSpecification;
-        mapLibreMap.setFilter(this.basemapBuildingLayerID, combined);
+        // The composer owns the layer's filter: registering under this plugin's key adds the clause
+        // once however often `install` runs, and keeps it beside what the style and any other
+        // contributor filter the layer by.
+        LayerFilterComposer.for(this.map).setClause(
+            this.basemapBuildingLayerID,
+            LANDMARKS_CONTRIBUTOR,
+            NO_LANDMARK_FILTER_CLAUSE,
+        );
     }
 
     // Reads the basemap building colour for `inherited` mode; null when absent or not resolvable to one colour.

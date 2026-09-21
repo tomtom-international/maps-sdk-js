@@ -2,23 +2,22 @@
  * @module agent-toolkit-tools
  */
 
-import { getPosition, type Place } from '@tomtom-org/maps-sdk/core';
+import { type BBox, bboxFromBBoxes, getPosition, type Place } from '@tomtom-org/maps-sdk/core';
 import { z } from 'zod';
-import type { ToolState } from '../../types';
+import type { ToolExecuteOptions, ToolState } from '../../types';
 import { makePlacesLabel, summarizePlace } from '../../utils';
 import {
     isResolveError,
     type LocateBias,
     locatePlace,
     placesEntryIdHintSchema,
-    resolveNearbyPosition,
-    resolveWithinAreas,
+    resolveNearby,
+    resolveWithin,
     showEntryGeometries,
     shownSchema,
     showPlaceGeometriesSchema,
     showPlacesSchema,
     showResultsOnMap,
-    unionBBox,
     whereSchema,
 } from '../shared';
 import { toolStateToWhereContext } from '../shared/tool-state-where-context';
@@ -59,7 +58,8 @@ export const locatePlaceOutputSchema = z.union([
         placesEntryId: z
             .string()
             .describe(
-                'Places entry id the result was written to — pass as `placesEntryIDs` to analyseData / processData.',
+                'Places entry id the result was written to — pass as `placesEntryIDs` to analyseData / processData, ' +
+                    'or as `placeIdOrEntryId` to setRoute / addWaypointsToRoute to route to this place.',
             ),
         waypointIndex: z.number().optional(),
         shown: shownSchema.optional(),
@@ -83,42 +83,42 @@ type ResolveBiasResult = { bias?: LocateBias } | { error: string };
 const resolveWithinBias = async (
     where: Extract<z.infer<typeof whereSchema>, { mode: 'within' }>,
     state: ToolState,
+    options?: ToolExecuteOptions,
 ): Promise<ResolveBiasResult> => {
-    // Delegate to the shared resolver. `bboxOnlyQueries` because LocateBias has no polygon form —
-    // the within area only narrows the final geocode to a bounding box. The within schema enforces
-    // EXACTLY ONE field, so at most one area returns; unionBBox is a no-op here but keeps the shape
-    // correct if the schema ever relaxes. A `within.query` resolves as an AREA (never a POI), matching
-    // discoverPlaces' `where.queries` — so `within.queryAs` is not consulted. An unresolvable area
-    // surfaces the resolver's actionable error rather than silently widening to a global search.
-    const within = await resolveWithinAreas(
+    // Delegate to the shared resolver. The within schema enforces EXACTLY ONE field, so at most one
+    // area returns; bboxFromBBoxes is a no-op here but keeps the shape correct if the schema ever
+    // relaxes. A `within.query` resolves as an AREA (never a POI), matching discoverPlaces'
+    // `where.queries` — so `within.queryAs` is not consulted. An unresolvable area surfaces the
+    // resolver's actionable error rather than silently widening to a global search.
+    const within = await resolveWithin(
         {
             viewport: where.viewport,
             boundingBox: where.boundingBox,
             queries: where.query ? [{ query: where.query, queryAs: where.queryAs }] : undefined,
             placeIds: where.placeId ? [where.placeId] : undefined,
         },
-        toolStateToWhereContext(state),
-        { bboxOnlyQueries: true },
+        toolStateToWhereContext(state, options),
     );
     if (isResolveError(within)) return within;
 
-    if (within.areas.length === 0) return { bias: undefined };
+    if (within.length === 0) return { bias: undefined };
 
-    return { bias: { boundingBox: unionBBox(within.areas.map((a) => a.bbox)) } };
+    return { bias: { boundingBox: bboxFromBBoxes(within.map((a) => a.bbox)) as BBox } };
 };
 
 const resolveNearbyBias = async (
     where: Extract<z.infer<typeof whereSchema>, { mode: 'nearby' }>,
     state: ToolState,
+    options?: ToolExecuteOptions,
 ): Promise<ResolveBiasResult> => {
-    const { position } = await resolveNearbyPosition(
+    // `position` is a literal point — nothing to resolve, so it never goes through resolveNearby.
+    if (where.position) return { bias: { position: where.position } };
+    const { position } = await resolveNearby(
         {
             viewport: where.viewport,
-            position: where.position,
-            query: where.query,
-            queryAs: where.queryAs,
+            queries: where.query ? [{ query: where.query, queryAs: where.queryAs }] : undefined,
         },
-        toolStateToWhereContext(state),
+        toolStateToWhereContext(state, options),
     );
     return { bias: position ? { position } : undefined };
 };
@@ -126,12 +126,13 @@ const resolveNearbyBias = async (
 const resolveLocateBias = async (
     where: z.infer<typeof whereSchema> | undefined,
     state: ToolState,
+    options?: ToolExecuteOptions,
 ): Promise<ResolveBiasResult> => {
     // No `where` (or explicit global) → resolve the name anywhere, no bias. This is the default for a
     // uniquely-named place; the model no longer has to fill a mandatory scope and reach for the viewport.
     if (!where || where.mode === 'global') return { bias: undefined };
-    if (where.mode === 'within') return resolveWithinBias(where, state);
-    return resolveNearbyBias(where, state);
+    if (where.mode === 'within') return resolveWithinBias(where, state, options);
+    return resolveNearbyBias(where, state, options);
 };
 
 // Defer hide + marker rendering to the shared helper; only the zoom step is
@@ -160,13 +161,14 @@ const showLocateResult = async (
 export const executeLocatePlace = async (
     params: z.infer<typeof locatePlaceSchema>,
     state: ToolState,
+    options?: ToolExecuteOptions,
 ): Promise<z.infer<typeof locatePlaceOutputSchema>> => {
     const { query, queryAs, waypointIndex, where, show, entryId, geometry } = params;
 
     try {
-        const resolved = await resolveLocateBias(where, state);
+        const resolved = await resolveLocateBias(where, state, options);
         if ('error' in resolved) return resolved;
-        const result = await locatePlace(query, queryAs, resolved.bias);
+        const result = await locatePlace(query, queryAs, resolved.bias, options);
 
         if (!result) {
             return { error: `No result found for "${query}"` };
@@ -183,7 +185,7 @@ export const executeLocatePlace = async (
         let geometryFetched: boolean | undefined;
         let geometryShown: boolean | undefined;
         if (geometry) {
-            const geometryResult = await showEntryGeometries(state, placesEntryId, geometry);
+            const geometryResult = await showEntryGeometries(state, placesEntryId, geometry, options);
             geometryFetched = geometryResult.fetched > 0;
             if (geometryResult.shown) geometryShown = true;
         }

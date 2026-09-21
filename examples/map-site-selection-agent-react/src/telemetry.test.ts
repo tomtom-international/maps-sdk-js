@@ -93,16 +93,21 @@ describe('createTracker', () => {
         });
     });
 
-    it('agentSuccess: records only metrics (as strings), never the response body', () => {
+    it('agentSuccess: records the exchange text (query + response) alongside the metrics (as strings)', () => {
         const { sink, events } = fakeSink();
-        createTracker(sink).agentSuccess(ctx, 42, 1234, 3);
+        createTracker(sink).agentSuccess(ctx, 'find a cafe', 'here are three cafes', 1234, 3);
 
         expect(events[0]).toEqual({
             name: 'AgentSuccess',
-            properties: { ...agentProps, responseLength: '42', wallClockMs: '1234', stepCount: '3' },
+            properties: {
+                ...agentProps,
+                query: 'find a cafe',
+                response: 'here are three cafes',
+                responseLength: String('here are three cafes'.length),
+                wallClockMs: '1234',
+                stepCount: '3',
+            },
         });
-        // Guard against a response body sneaking back in.
-        expect(Object.keys(events[0].properties)).not.toContain('response');
     });
 
     it('agentError: routes to trackException with ids + wallClockMs', () => {
@@ -248,6 +253,8 @@ describe('createAgentTelemetry', () => {
         expect(usage).toMatchObject({ inputTokens: '5', outputTokens: '7', totalTokens: '12' });
 
         const success = events.find((e) => e.name === 'AgentSuccess');
+        expect(success?.properties.query).toBe('hello');
+        expect(success?.properties.response).toBe('final answer');
         expect(success?.properties.responseLength).toBe(String('final answer'.length));
         expect(success?.properties.stepCount).toBe('2');
 

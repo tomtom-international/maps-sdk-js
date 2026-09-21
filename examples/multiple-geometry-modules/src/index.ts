@@ -19,7 +19,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
     });
     const mainGeometry = await geometryData({ geometries: mainPlace });
 
-    const restOfTheMapGeometryModule = await GeometriesModule.get(map, {
+    const restOfTheMapGeometryModule = await GeometriesModule.create(map, {
         theme: 'inverted',
         fill: { color: 'black', opacity: ['interpolate', ['linear'], ['zoom'], 6, 0.6, 14, 0.4] },
         line: { opacity: 0 },
@@ -32,7 +32,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         limit: 20,
     });
     const subdivisionGeometries = await geometryData({ geometries: subdivisions });
-    const closeupGeometriesModule = await GeometriesModule.get(map, {
+    const closeupGeometriesModule = await GeometriesModule.create(map, {
         beforeLayerConfig: 'lowestRoadLine',
         fill: {
             color: 'fadedRainbow',
@@ -41,7 +41,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
     });
     closeupGeometriesModule.show(subdivisionGeometries);
 
-    const farAwayGeometriesModule = await GeometriesModule.get(map, {
+    const farAwayGeometriesModule = await GeometriesModule.create(map, {
         beforeLayerConfig: 'country',
         line: { width: 0.7, opacity: ['interpolate', ['linear'], ['zoom'], 6, 1, 8, 0] },
         fill: {

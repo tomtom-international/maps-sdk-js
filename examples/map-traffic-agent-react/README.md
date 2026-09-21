@@ -52,11 +52,11 @@ This example demonstrates the TomTom Maps SDK Agent Toolkit plugin set up as a t
 
 Try asking the assistant:
 
-- "Find restaurants near Trafalgar Square"
-- "Show me a route from London Eye to Buckingham Palace"
+- "Find restaurants near the Fremont Street Experience"
+- "Show me a route from the Las Vegas Convention Center to Allegiant Stadium"
 - "Switch to satellite view"
 - "Turn on traffic"
-- "What's at coordinates -0.1276, 51.5074?"
+- "What's at coordinates -115.1728, 36.1147?"
 - "Hide POIs and show only main roads"
 - "Find charging stations along the route"
 

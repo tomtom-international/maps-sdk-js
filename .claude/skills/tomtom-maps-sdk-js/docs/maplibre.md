@@ -73,20 +73,37 @@ Avoid `null` values in GeoJSON feature properties — MapLibre's worker logs rep
 
 ---
 
-## Layer z-order — inserting below TomTom labels
+## Layer z-order — `mapStyleLayerIDs`
 
-Layers are drawn bottom-to-top. To keep TomTom road labels and POI icons visible above your overlay, insert your layer **before the first symbol layer**:
+Layers draw bottom-to-top; `addLayer`'s second argument (`beforeId`) inserts your layer **below** the named one, and omitting it draws on top of everything. Any layer id present in the style is valid (`mapLibreMap.getStyle().layers` lists them), but prefer `mapStyleLayerIDs` — six anchors the SDK keeps stable across the standard styles, and the ones its own modules use.
+
+**Default for lines and polygons: `lowestLabel`** — every label and icon stays readable above your data. It is what RoutingModule and GeometriesModule use. Points and markers usually belong on top, so omit `beforeId`.
 
 ```ts
-const firstSymbolId = mapLibreMap.getStyle().layers.find(l => l.type === 'symbol')?.id;
+import { mapStyleLayerIDs } from '@tomtom-org/maps-sdk/map';
 
 mapLibreMap.addLayer(
-  { id: 'my-fill', type: 'fill', source: 'my-data', paint: { 'fill-color': '#0080ff', 'fill-opacity': 0.4 } },
-  firstSymbolId  // insert before labels; omit to draw above everything
+  { id: 'zone', type: 'fill', source: 'my-data', paint: { 'fill-color': '#0080ff', 'fill-opacity': 0.4 } },
+  mapStyleLayerIDs.lowestLabel  // below every label
 );
 ```
 
-For points (circles/markers) you usually want them above labels — omit `beforeId`.
+| Constant (bottom → top) | Style layer                 | Your layer lands below…                                          |
+| ----------------------- | --------------------------- | ---------------------------------------------------------------- |
+| `lowestRoadLine`        | `Tunnel - Railway outline`  | roads, buildings, labels — the base road network paints over you  |
+| `lowestBuilding`        | `Buildings - Underground`   | 3D buildings and labels (roads stay underneath)                   |
+| `lowestLabel`           | `Borders - Treaty label`    | **every label and icon — the default for lines and polygons**     |
+| `country`               | `Places - Country name`     | country names and the place labels above them                     |
+| `lowestPlaceLabel`      | `Places - Village / Hamlet` | city/town/village names and POIs                                  |
+| `poi`                   | `POI`                       | POI icons only                                                    |
+
+Go below `lowestLabel` only for a reason: `lowestRoadLine` to keep the road network drawn over a polygon fill, `lowestBuilding` to sit under 3D buildings.
+
+**Gotchas**
+
+- `lowestRoadLine` and `lowestBuilding` are both absent from the `satellite` style. A missing anchor does **not** throw — MapLibre fires an `error` event (`Cannot add layer "x" before non-existing layer "y".`) and skips the layer, so the data silently never appears.
+- `beforeId` only positions at insertion time. After `map.setStyle(...)` your raw MapLibre layers are gone — re-add them with the same anchor, or let `CustomGeoJSONModule` handle it.
+- Reposition an existing layer with `mapLibreMap.moveLayer('my-layer', mapStyleLayerIDs.lowestLabel)`. Check the anchor exists first (`mapLibreMap.getLayer(anchor)`): `moveLayer` against a missing layer fires an `error` event and leaves the layer where it was. The SDK's own modules fall back to the top of the stack.
 
 ---
 
@@ -99,18 +116,18 @@ mapLibreMap.addLayer({
   paint: { 'circle-radius': 8, 'circle-color': '#e74c3c' }
 });
 
-// Line
+// Line (roads, routes, tracks) — below labels
 mapLibreMap.addLayer({
   id: 'route', type: 'line', source: 'my-data',
   layout: { 'line-join': 'round', 'line-cap': 'round' },
   paint: { 'line-color': '#3498db', 'line-width': 4 }
-});
+}, mapStyleLayerIDs.lowestLabel);
 
 // Fill (polygon)
 mapLibreMap.addLayer({
   id: 'zone', type: 'fill', source: 'my-data',
   paint: { 'fill-color': '#2ecc71', 'fill-opacity': 0.3 }
-}, firstSymbolId);
+}, mapStyleLayerIDs.lowestLabel);
 
 // Symbol (icon or text label)
 mapLibreMap.addLayer({
@@ -147,7 +164,7 @@ mapLibreMap.addLayer({
   source: 'my-tiles',
   'source-layer': 'parcels',       // must match tile schema exactly
   paint: { 'fill-color': '#f39c12', 'fill-opacity': 0.5 }
-}, firstSymbolId);
+}, mapStyleLayerIDs.lowestLabel);
 ```
 
 ### Serverless vector tiles (PMTiles)
@@ -171,7 +188,7 @@ mapLibreMap.addLayer({
   type: 'raster',
   source: 'satellite',
   paint: { 'raster-opacity': 0.7 }
-}, firstSymbolId);
+}, mapStyleLayerIDs.lowestLabel);
 ```
 
 ---
@@ -219,13 +236,17 @@ const allFeatures = mapLibreMap.querySourceFeatures('stores', {
 
 ```ts
 map.mapLibreMap.once('style.load', () => {
-  // Re-add your sources and layers here
+  // Re-add your sources and layers here, with the same mapStyleLayerIDs anchor —
+  // the anchor layers exist under the same IDs in the new style.
   mapLibreMap.addSource('my-data', { type: 'geojson', data: myGeoJSON });
+  mapLibreMap.addLayer({ id: 'my-zone', type: 'fill', source: 'my-data' }, mapStyleLayerIDs.lowestLabel);
   mapLibreMap.addLayer({ id: 'my-layer', type: 'circle', source: 'my-data' });
 });
 
 map.setStyle('monoDark');
 ```
+
+Re-adding by hand is what `CustomGeoJSONModule` exists to avoid — it restores sources, layers (including each layer's `beforeID`), images and data for you. See `custom.md`.
 
 ---
 

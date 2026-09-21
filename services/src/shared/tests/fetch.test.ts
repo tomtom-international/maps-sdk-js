@@ -2,7 +2,7 @@ import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { afterAll, afterEach, describe, expect, test } from 'vitest';
 import { geocode } from '../../geocode';
 import { fetchWith, get, post } from '../fetch';
-import { mockFetchResponse } from './fetchMockUtils';
+import { mockFetchResponse, mockPendingFetch } from './fetchMockUtils';
 
 describe('Fetch utility tests', () => {
     const unMockedFetch = global.fetch;
@@ -157,39 +157,96 @@ describe('Fetch utility tests', () => {
             expect(init.credentials).toBeUndefined();
         });
 
-        test('demo-BFF proxy mode (empty apiKey + non-default commonBaseURL): get includes credentials', async () => {
+        test('credentials proxy mode (empty apiKey + non-default commonBaseURL): get includes credentials', async () => {
             const fetchMock = mockFetchResponse(200, { id: 'ok' });
-            TomTomConfig.instance.put({ apiKey: '', commonBaseURL: 'https://demo-bff.example.com/api' });
-            await get(new URL('https://demo-bff.example.com/api/search'), {});
+            TomTomConfig.instance.put({ apiKey: '', commonBaseURL: 'https://proxy.example.com/api' });
+            await get(new URL('https://proxy.example.com/api/search'), {});
             expect(fetchMock).toHaveBeenCalledWith(
                 expect.any(URL),
                 expect.objectContaining({ credentials: 'include' }),
             );
         });
 
-        test('demo-BFF proxy mode with apiKey overwritten to undefined still includes credentials', async () => {
+        test('credentials proxy mode with apiKey overwritten to undefined still includes credentials', async () => {
             // Reproduces the real bug: an example runs
             // `put({ apiKey: process.env.API_KEY_EXAMPLES })` with that env
             // unset, overwriting the bootstrap's `apiKey: ''` to undefined.
             // Must still be treated as proxy mode (falsy apiKey).
             const fetchMock = mockFetchResponse(200, { id: 'ok' });
-            TomTomConfig.instance.put({ commonBaseURL: 'https://demo-bff.example.com/api' });
+            TomTomConfig.instance.put({ commonBaseURL: 'https://proxy.example.com/api' });
             TomTomConfig.instance.put({ apiKey: undefined as unknown as string });
-            await get(new URL('https://demo-bff.example.com/api/search'), {});
+            await get(new URL('https://proxy.example.com/api/search'), {});
             expect(fetchMock).toHaveBeenCalledWith(
                 expect.any(URL),
                 expect.objectContaining({ credentials: 'include' }),
             );
         });
 
-        test('demo-BFF proxy mode: post includes credentials', async () => {
+        test('credentials proxy mode: post includes credentials', async () => {
             const fetchMock = mockFetchResponse(200, { id: 'ok' });
-            TomTomConfig.instance.put({ apiKey: '', commonBaseURL: 'https://demo-bff.example.com/api' });
-            await post({ url: new URL('https://demo-bff.example.com/api/route') }, {});
+            TomTomConfig.instance.put({ apiKey: '', commonBaseURL: 'https://proxy.example.com/api' });
+            await post({ url: new URL('https://proxy.example.com/api/route') }, {});
             expect(fetchMock).toHaveBeenCalledWith(
                 expect.any(URL),
                 expect.objectContaining({ credentials: 'include' }),
             );
+        });
+    });
+
+    describe('signal', () => {
+        const headers = { 'tomtom-user-agent': 'TEST/1' };
+
+        test('get forwards the signal to fetch', async () => {
+            const fetchMock = mockFetchResponse(200, { id: 'ok' });
+            const { signal } = new AbortController();
+
+            await get(new URL('https://blah1234.com'), headers, { signal });
+
+            expect(fetchMock).toHaveBeenCalledWith(new URL('https://blah1234.com'), { headers, signal });
+        });
+
+        test('post forwards the signal to fetch', async () => {
+            const fetchMock = mockFetchResponse(200, { id: 'ok' });
+            const { signal } = new AbortController();
+
+            await post({ url: new URL('https://blah1234.com'), data: { foo: 'bar' } }, headers, { signal });
+
+            expect(fetchMock).toHaveBeenCalledWith(
+                new URL('https://blah1234.com'),
+                expect.objectContaining({ method: 'POST', signal }),
+            );
+        });
+
+        test('fetchWith forwards the signal for both methods', async () => {
+            const fetchMock = mockFetchResponse(200, { id: 'ok' }).mockClear();
+            const { signal } = new AbortController();
+
+            await fetchWith({ method: 'GET', url: new URL('https://blah1234.com') }, headers, { signal });
+            await fetchWith({ method: 'POST', url: new URL('https://blah1234.com') }, headers, { signal });
+
+            expect((fetchMock.mock.calls[0][1] as RequestInit).signal).toBe(signal);
+            expect((fetchMock.mock.calls[1][1] as RequestInit).signal).toBe(signal);
+        });
+
+        // Guards the exact-match assertions above, which would break on `signal: undefined`
+        test('no signal key in the RequestInit when none is given', async () => {
+            const fetchMock = mockFetchResponse(200, { id: 'ok' }).mockClear();
+
+            await get(new URL('https://blah1234.com'), headers);
+            await post({ url: new URL('https://blah1234.com') }, headers);
+
+            expect(fetchMock.mock.calls[0][1] as RequestInit).not.toHaveProperty('signal');
+            expect(fetchMock.mock.calls[1][1] as RequestInit).not.toHaveProperty('signal');
+        });
+
+        test('aborting rejects an in-flight get', async () => {
+            mockPendingFetch();
+            const controller = new AbortController();
+
+            const pending = get(new URL('https://blah1234.com'), headers, { signal: controller.signal });
+            controller.abort();
+
+            await expect(pending).rejects.toHaveProperty('name', 'AbortError');
         });
     });
 

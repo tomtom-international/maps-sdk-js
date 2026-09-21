@@ -30,10 +30,7 @@ describe('BaseMap module tests', () => {
     });
 
     test('Initializing module with config', async () => {
-        const basemap: BaseMapModule = await BaseMapModule.get(tomtomMapMock, {
-            visible: false,
-            layerGroupsFilter: { mode: 'include', names: ['borders', 'water', 'land'] },
-        });
+        const basemap: BaseMapModule = await BaseMapModule.get(tomtomMapMock, { visible: false });
         expect(basemap).toBeDefined();
         expect(tomtomMapMock.mapLibreMap.getSource).toHaveBeenCalled();
         expect(tomtomMapMock.mapLibreMap.getStyle).toHaveBeenCalled();
@@ -62,7 +59,7 @@ describe('BaseMap module tests', () => {
     test('restoreDataAndConfigImpl re-runs init and re-applies config after a style change', async () => {
         const basemap = await BaseMapModule.get(tomtomMapMock, {
             visible: false,
-            layerGroupsFilter: { mode: 'include', names: ['borders', 'water', 'land'] },
+            layerGroupsVisibility: { mode: 'include', names: ['borders', 'water', 'land'], visible: true },
         });
         // After init, the once-mock is exhausted; restore needs getSource to keep returning the source.
         (tomtomMapMock.mapLibreMap.getSource as ReturnType<typeof vi.fn>).mockReturnValue({ id: BASE_MAP_SOURCE_ID });
@@ -76,7 +73,52 @@ describe('BaseMap module tests', () => {
         );
         expect(basemap.getConfig()).toMatchObject({
             visible: false,
-            layerGroupsFilter: { mode: 'include', names: ['borders', 'water', 'land'] },
+            layerGroupsVisibility: { mode: 'include', names: ['borders', 'water', 'land'], visible: true },
         });
+    });
+
+    test('getLayers and getLayerIds hand out copies of the group index', async () => {
+        tomtomMapMock.mapLibreMap.getStyle = vi.fn().mockReturnValue({
+            layers: [
+                { id: 'Water - Fill', type: 'fill', source: BASE_MAP_SOURCE_ID, metadata: { group: 'water' } },
+                { id: 'Water - Line', type: 'line', source: BASE_MAP_SOURCE_ID, metadata: { group: 'water' } },
+            ],
+            sources: { [BASE_MAP_SOURCE_ID]: {} },
+        });
+        const basemap = await BaseMapModule.get(tomtomMapMock);
+        expect(basemap.getLayerIds('water')).toEqual(['Water - Fill', 'Water - Line']);
+
+        // Mutating what a caller got back must not reach the module's cached index.
+        basemap.getLayers().water.push('injected');
+        basemap.getLayerIds('water').reverse();
+
+        expect(basemap.getLayers().water).toEqual(['Water - Fill', 'Water - Line']);
+        expect(basemap.getLayerIds('water')).toEqual(['Water - Fill', 'Water - Line']);
+    });
+
+    // isVisible mirrors setVisible: both take the group to act on, which is what lets one module
+    // back a per-group control. See LSI-159.
+    test('isVisible asks about one layer group, mirroring setVisible', async () => {
+        const roadLabel = { id: 'Road label', type: 'symbol', metadata: { group: 'road_label' } };
+        const water = { id: 'Water', type: 'fill', metadata: { group: 'water' } };
+        const hiddenLayerIDs = new Set(['Water']);
+        const mapLibreMap = tomtomMapMock.mapLibreMap as unknown as {
+            getStyle: ReturnType<typeof vi.fn>;
+            getLayer: ReturnType<typeof vi.fn>;
+            getLayoutProperty: ReturnType<typeof vi.fn>;
+        };
+        mapLibreMap.getStyle = vi.fn().mockReturnValue({
+            layers: [roadLabel, water].map((l) => ({ ...l, source: BASE_MAP_SOURCE_ID })),
+            sources: {},
+        });
+        mapLibreMap.getLayer = vi.fn().mockReturnValue({});
+        mapLibreMap.getLayoutProperty = vi.fn((id: string) => (hiddenLayerIDs.has(id) ? 'none' : 'visible'));
+
+        const baseMap = await BaseMapModule.get(tomtomMapMock);
+
+        expect(baseMap.isVisible({ layerGroups: { mode: 'include', names: ['roadLabels'] } })).toBe(true);
+        expect(baseMap.isVisible({ layerGroups: { mode: 'include', names: ['water'] } })).toBe(false);
+        // Without a group it still answers for the module as a whole.
+        expect(baseMap.isVisible()).toBe(true);
     });
 });

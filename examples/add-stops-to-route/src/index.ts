@@ -17,7 +17,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         },
     });
 
-    const routingModule = await RoutingModule.get(map);
+    const routingModule = await RoutingModule.create(map);
     routingModule.showWaypoints(initialWaypoints);
     const initialRoutes = await calculateRoute({ locations: initialWaypoints });
 
@@ -31,7 +31,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         maxDetourTimeSeconds: 60,
         limit: 10,
     });
-    const placesModule = await PlacesModule.get(map);
+    const placesModule = await PlacesModule.create(map);
     placesModule.show(stopsAlongRoute);
 
     // Insert all charging stops at their optimal along-route positions in one call.

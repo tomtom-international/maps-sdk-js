@@ -2,43 +2,6 @@ import type { Avoidable, HasBBox, TravelMode } from '@tomtom-org/maps-sdk/core';
 import { VehicleParameters } from './vehicleParams';
 
 /**
- * Basic low/normal/high intensity level option.
- *
- * Used for configuring route characteristics like hilliness or windingness.
- *
- * @remarks
- * - `low`: Minimal intensity
- * - `normal`: Moderate intensity
- * - `high`: Maximum intensity
- *
- * @group Routing
- */
-export type LNH = 'low' | 'normal' | 'high';
-
-// TODO: there is no slope data yet in Orbis, thus hilliness isn't supported yet
-// /**
-//  * Options applicable to the thrilling route type.
-//  */
-// export type ThrillingParams = {
-//     /**
-//      * The level of hilliness on a thrilling route.
-//      * * Possible values: low, normal, high.
-//      * * This parameter can only be used in conjunction with routeType thrilling.
-//      * @default None
-//      */
-//     hilliness?: LNH;
-//
-//     /**
-//      * The level of windingness on a thrilling route.
-//      *
-//      * * Possible values: low, normal, high.
-//      * * This parameter can only be used in conjunction with routeType thrilling.
-//      * @default None
-//      */
-//     windingness?: LNH;
-// };
-
-/**
  * Available route types, where each type specifies the type of optimization used when calculating routes:
  * * **fast**: Route calculation is optimized by travel time, while keeping the routes sensible. For example, the calculation may avoid shortcuts along inconvenient side roads or long detours that only save very little time.
  * * **short**: Route calculation is optimized such that a good compromise between small travel time and short travel distance is achieved.
@@ -230,12 +193,6 @@ export type CostModel = {
      * @default fast
      */
     routeType?: RouteType;
-
-    /**
-     * Optional parameters if the route type is "thrilling" to indicate how curvy and hilly the route should be.
-     */
-    // TODO not supported yet in Orbis (no slope data)
-    // thrillingParams?: ThrillingParams;
 };
 
 type DepartArriveOption = 'departAt' | 'arriveBy';
@@ -386,17 +343,11 @@ export type DepartArriveParams<Option extends DepartArriveOption = DepartArriveO
  *   vehicle: {
  *     model: {
  *       dimensions: {
- *         lengthMeters: 16.5,
- *         widthMeters: 2.5,
- *         heightMeters: 4.0,
  *         weightKG: 40000
- *       },
- *       restrictions: {
- *         restrictions: {
- *           commercial: true,
- *           maxSpeedKMH: 90
- *         }
  *       }
+ *     },
+ *     restrictions: {
+ *       maxSpeedKMH: 90
  *     }
  *   }
  * };

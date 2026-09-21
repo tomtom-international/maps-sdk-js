@@ -1,0 +1,30 @@
+{
+  "name": "@examples/route-stop-wait-playground",
+  "description": "Adjust how long a route waits at a stop, and see the wait on the stop pin and in the journey time.",
+  "type": "module",
+  "scripts": {
+    "build": "vite build --config ../example-vite.config.ts",
+    "build:sandpack": "vite build --config ../example-sandpack-vite.config.ts",
+    "clean:dist": "rimraf ./dist",
+    "develop": "vite --config ../example-vite.config.ts",
+    "develop:sandpack": "vite --config ../example-sandpack-vite.config.ts",
+    "type-check": "tsc --noEmit",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test  --ui",
+    "test:e2e:update-snapshots": "playwright test --update-snapshots",
+    "start-test-server:prod": "vite serve dist/prod --port 9050",
+    "start-test-server:sandpack": "vite preview --outDir dist/sandpack --port 9051"
+  },
+  "dependencies": {
+    "@tomtom-org/maps-sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@playwright/test": "catalog:",
+    "@types/node": "catalog:",
+    "rimraf": "catalog:",
+    "rollup-plugin-visualizer": "catalog:",
+    "ts-node": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  }
+}

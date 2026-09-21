@@ -381,7 +381,8 @@ export const mergeFromGlobal = <T extends Partial<GlobalConfig>>(givenConfig: T 
 });
 
 /**
- * Whether the SDK is configured for a Demo-BFF-style proxy — no `apiKey` (the
+ * Whether the SDK is configured for a credentials proxy such as the demos proxy
+ * — no `apiKey` (the
  * proxy injects the real key server-side from a cookie-gated session) plus a
  * non-default `commonBaseURL`.
  *

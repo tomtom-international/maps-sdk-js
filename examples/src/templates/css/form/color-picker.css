@@ -1,18 +1,18 @@
 /* COLOR PICKER */
 
-.sdk-example-color-swatch {
+.ui-color-swatch {
     display: inline-block;
     width: 32px;
     height: 32px;
     flex-shrink: 0;
 }
 
-.sdk-example-color-swatch input[type="color"] {
+.ui-color-swatch input[type="color"] {
     width: 100%;
     height: 100%;
     padding: 2px;
-    border: 1px solid var(--sdk-border-low);
-    border-radius: var(--sdk-radius-5);
+    border: 1px solid var(--ui-border-low-em);
+    border-radius: var(--ui-rounded-5);
     cursor: pointer;
     background: none;
     -webkit-appearance: none;
@@ -20,49 +20,49 @@
     appearance: none;
 }
 
-.sdk-example-color-swatch input[type="color"]:focus-visible {
+.ui-color-swatch input[type="color"]:focus-visible {
     outline: none;
-    border-color: var(--sdk-primary-color);
-    box-shadow: var(--sdk-shadow-focus);
+    border-color: var(--ui-surface-brand-red);
+    box-shadow: var(--ui-shadow-focus);
 }
 
-.sdk-example-color-swatch input[type="color"]::-webkit-color-swatch-wrapper {
+.ui-color-swatch input[type="color"]::-webkit-color-swatch-wrapper {
     padding: 0;
 }
 
-.sdk-example-color-swatch input[type="color"]::-webkit-color-swatch {
+.ui-color-swatch input[type="color"]::-webkit-color-swatch {
     border: none;
-    border-radius: calc(var(--sdk-radius-5) - 3px);
+    border-radius: calc(var(--ui-rounded-5) - 3px);
 }
 
-.sdk-example-color-swatch input[type="color"]::-moz-color-swatch {
+.ui-color-swatch input[type="color"]::-moz-color-swatch {
     border: none;
-    border-radius: calc(var(--sdk-radius-5) - 3px);
+    border-radius: calc(var(--ui-rounded-5) - 3px);
 }
 
 /* COLOR PREVIEW (informational color indicators) */
 
-.sdk-example-color-preview {
+.ui-color-preview {
     display: flex;
-    gap: var(--sdk-space-2);
+    gap: var(--ui-space-2);
     align-items: center;
-    padding: var(--sdk-space-2);
-    background: var(--sdk-surface-1);
-    border-radius: var(--sdk-radius-5);
+    padding: var(--ui-space-2);
+    background: var(--ui-surface-1);
+    border-radius: var(--ui-rounded-5);
 }
 
-.sdk-example-color-box {
+.ui-color-box {
     display: flex;
     align-items: center;
-    gap: var(--sdk-space-1);
-    font-family: var(--sdk-font-primary);
+    gap: var(--ui-space-1);
+    font-family: var(--ui-font-gilroy);
     font-size: 11px;
-    color: var(--sdk-text-medium);
+    color: var(--ui-text-med-em);
 }
 
-.sdk-example-color-indicator {
+.ui-color-indicator {
     width: 16px;
     height: 16px;
-    border-radius: var(--sdk-radius-5);
-    border: 1px solid var(--sdk-border-medium);
+    border-radius: var(--ui-rounded-5);
+    border: 1px solid var(--ui-border-med-em);
 }

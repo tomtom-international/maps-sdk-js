@@ -1,4 +1,5 @@
-import { asSoftWaypoint, bboxFromGeoJSON, TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import type { Waypoint } from '@tomtom-org/maps-sdk/core';
+import { bboxFromGeoJSON, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { PlanningWaypoint, RoutingModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { geocodeOne } from '@tomtom-org/maps-sdk/services';
 import './style.css';
@@ -12,9 +13,14 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     const waypointA = await geocodeOne('Kensinton Road, London, UK');
     const waypointB = await geocodeOne('Vincent Square, London, UK');
     const waypointC = await geocodeOne('Bridge Street, London, UK');
-    const softWaypoint = asSoftWaypoint([-0.10507, 51.4879], 20);
+    // A waypoint built by hand rather than geocoded — every waypoint is a stop, and ends a leg.
+    const waypointAtCoordinates: Waypoint = {
+        type: 'Feature',
+        geometry: { type: 'Point', coordinates: [-0.10507, 51.4879] },
+        properties: {},
+    };
     const waypointD = await geocodeOne('Roan Street, Greenwich, UK');
-    const allWaypoints = [waypointA, waypointB, softWaypoint, waypointC, waypointD];
+    const allWaypoints = [waypointA, waypointB, waypointAtCoordinates, waypointC, waypointD];
 
     const examples: Record<string, { title: string; waypoints: PlanningWaypoint[] }> = {
         all: { title: 'Show waypoints', waypoints: allWaypoints },
@@ -23,11 +29,11 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         origin: { title: 'Show a waypoint as origin', waypoints: [waypointC] },
         allExceptOrigin: {
             title: 'Show waypoints without origin',
-            waypoints: [null, waypointB, softWaypoint, waypointC, waypointD],
+            waypoints: [null, waypointB, waypointAtCoordinates, waypointC, waypointD],
         },
         allExceptDestination: {
             title: 'Show waypoints without destination',
-            waypoints: [waypointA, waypointB, softWaypoint, waypointC, null],
+            waypoints: [waypointA, waypointB, waypointAtCoordinates, waypointC, null],
         },
     };
 
@@ -40,12 +46,12 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         style: 'monoLight',
     });
 
-    const examplesSelector = document.querySelector('#sdk-example-waypointExamples') as HTMLSelectElement;
+    const examplesSelector = document.querySelector('#ui-waypointExamples') as HTMLSelectElement;
     for (const exampleKey in examples) {
         examplesSelector.add(new Option(examples[exampleKey].title, exampleKey));
     }
 
-    const routingModule = await RoutingModule.get(map);
+    const routingModule = await RoutingModule.create(map);
     routingModule.showWaypoints(examples['all'].waypoints);
     examplesSelector.addEventListener('change', (event) =>
         routingModule.showWaypoints(examples[(event.target as HTMLOptionElement).value].waypoints),

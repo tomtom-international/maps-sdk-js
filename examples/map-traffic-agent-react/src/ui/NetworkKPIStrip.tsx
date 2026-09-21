@@ -75,7 +75,7 @@ export function NetworkKPIStrip({
         titleText
     );
     const headerMeta = monitored ? (
-        <span className="text-[12px] leading-[1.2] text-(--pb-text-low)" aria-live="polite">
+        <span className="text-[12px] leading-[1.2] text-(--ui-text-low-em)" aria-live="polite">
             {lastAnalysisAt != null ? `updated ${relativeAge(lastAnalysisAt)}` : 'no data yet'}
             {snapshotCount > 0 ? ` · ${snapshotCount}` : ''}
         </span>

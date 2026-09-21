@@ -8,11 +8,13 @@ import {
     type GeometryTheme,
     type PlaceConnectionDisplay,
     PlacesModule,
+    type PlacesTheme,
     type TomTomMap,
     themedGeometryConfig,
 } from '@tomtom-org/maps-sdk/map';
 import { geometryData } from '@tomtom-org/maps-sdk/services';
-import type { StateSlice } from '../../types';
+import { withAgentToolkitHeaders } from '../../tools/shared/agent-headers';
+import type { StateSlice, ToolExecuteOptions } from '../../types';
 import { collapseHistoryToLatest, hideAllEntries, pickUniqueEntryId } from '../entry-helpers';
 import { StateEvents } from '../events';
 import type { EntryMode } from '../state';
@@ -23,8 +25,15 @@ import type { PlacesEntry } from './entry';
 // parallel without hitting rate limits). Any larger input set is split into multiple chunks.
 const GEOMETRY_DATA_BATCH_SIZE = 5;
 
-/** How an entry is rendered on the map: as individual pins, base-map POIs, or clustered pins. */
-export type PlacesMarkerType = 'pin' | 'base-map' | 'pin-clustered';
+/**
+ * The marker looks an entry can be rendered with: individual pins, base-map POIs, or clustered
+ * pins. A type-checked subset of the SDK's {@link PlacesTheme} — `circle-icon` is not offered to
+ * the agent. Every tool enum for marker types derives from this array rather than repeating it.
+ */
+export const placesMarkerTypes = ['pin', 'base-map', 'pin-clustered'] as const satisfies readonly PlacesTheme[];
+
+/** How an entry is rendered on the map — one of {@link placesMarkerTypes}. */
+export type PlacesMarkerType = (typeof placesMarkerTypes)[number];
 
 /**
  * Events fired by {@link PlacesState}. Subscribe via `state.places.events.on(type, handler)`.
@@ -136,7 +145,7 @@ export class PlacesState implements StateSlice {
         const entry = this._requireEntry(entryId);
         entry._modules ??= {};
         if (!entry._modules.places) {
-            entry._modules.places = await PlacesModule.get(this._ttMap, { theme: markerType });
+            entry._modules.places = await PlacesModule.create(this._ttMap, { theme: markerType });
         } else if (entry._shownAs !== markerType) {
             entry._modules.places.applyTheme(markerType);
         }
@@ -154,7 +163,7 @@ export class PlacesState implements StateSlice {
         // effective theme for every feature that doesn't carry its own `properties.theme`.
         const config = { ...themedGeometryConfig(), theme };
         if (!entry._modules.geometries) {
-            entry._modules.geometries = await GeometriesModule.get(this._ttMap, config);
+            entry._modules.geometries = await GeometriesModule.create(this._ttMap, config);
         } else {
             entry._modules.geometries.applyConfig(config);
         }
@@ -193,13 +202,12 @@ export class PlacesState implements StateSlice {
             await hideAllEntries(this._entries, (entry) => this._hideEntry(entry));
             this._entries = [];
         }
+        // Dedupe the length-based fallback too — after removals it can collide with a surviving entry.
         const fallback = `places-${this._entries.length}`;
-        const entryId = explicitId
-            ? pickUniqueEntryId(
-                  explicitId,
-                  this._entries.map((entry) => entry.id),
-              )
-            : fallback;
+        const entryId = pickUniqueEntryId(
+            explicitId ?? fallback,
+            this._entries.map((entry) => entry.id),
+        );
         this._entries.push({
             id: entryId,
             timestamp: Date.now(),
@@ -268,7 +276,10 @@ export class PlacesState implements StateSlice {
      * the owning entry. Returns the cached feature if already fetched, or undefined if the place
      * is unknown or has no geometry data source.
      */
-    async fetchPlaceGeometry(placeId: string): Promise<PolygonFeature<CommonPlaceProps> | undefined> {
+    async fetchPlaceGeometry(
+        placeId: string,
+        options?: ToolExecuteOptions,
+    ): Promise<PolygonFeature<CommonPlaceProps> | undefined> {
         const cached = this.getGeometryForPlace(placeId);
         if (cached) return cached;
 
@@ -277,7 +288,11 @@ export class PlacesState implements StateSlice {
         const geometryDataSourceId = lookup.place.properties.dataSources?.geometry?.id;
         if (!geometryDataSourceId) return undefined;
 
-        const result = await geometryData({ geometries: [lookup.place] });
+        const requestParams = withAgentToolkitHeaders({
+            geometries: [lookup.place],
+            signal: options?.signal,
+        });
+        const result = await geometryData(requestParams);
         const feature = result.features[0];
         if (!feature) return undefined;
 
@@ -298,7 +313,10 @@ export class PlacesState implements StateSlice {
      * place ids (the API caps each request) and stores the merged result on `entry.geometries`.
      * Returns the full geometries list for the entry, or an empty array if the entry is unknown.
      */
-    async fetchGeometriesForEntry(entryId: string): Promise<PolygonFeature<CommonPlaceProps>[]> {
+    async fetchGeometriesForEntry(
+        entryId: string,
+        options?: ToolExecuteOptions,
+    ): Promise<PolygonFeature<CommonPlaceProps>[]> {
         const entry = this._entries.find((e) => e.id === entryId);
         if (!entry) return [];
 
@@ -326,7 +344,16 @@ export class PlacesState implements StateSlice {
         for (let i = 0; i < placesNeedingFetch.length; i += GEOMETRY_DATA_BATCH_SIZE) {
             batches.push(placesNeedingFetch.slice(i, i + GEOMETRY_DATA_BATCH_SIZE));
         }
-        const results = await Promise.all(batches.map((batch) => geometryData({ geometries: batch })));
+        const results = await Promise.all(
+            batches.map((batch) =>
+                geometryData(
+                    withAgentToolkitHeaders({
+                        geometries: batch,
+                        signal: options?.signal,
+                    }),
+                ),
+            ),
+        );
 
         const merged: PolygonFeature<CommonPlaceProps>[] = [...(entry.geometries ?? [])];
         for (const result of results) merged.push(...result.features);

@@ -63,16 +63,35 @@ A module exposes them via a `get events()` accessor, e.g. `TrafficIncidentOverla
 
 ```ts
 get events(): CombinedEvents<TrafficIncident, TrafficIncidentOverlayConfig, TrafficIncidentDetails> {
-    return new CombinedEvents(
-        new UserEvents<TrafficIncident>(
-            this.tomtomMap._eventsProxy,                 // the one shared proxy
-            this.sourcesWithLayers.incidents,            // this module's source + layers
-            this.config?.events,
-        ),
-        new ModuleEvents(this.configChangeHandlers, this.shownFeaturesHandlers),
-    );
+    return this.scopedEvents<TrafficIncident, TrafficIncidentDetails>(['incidents'], {
+        shownFeaturesHandlers: this.shownFeaturesHandlers,
+    });
 }
 ```
+
+`scopedEvents` (on `AbstractMapModule`) wires the shared proxy, the module's own sources, its event
+config and the owner in one place. A module that manages several surfaces builds one scope per
+surface and attaches them with `buildEvents`, so `events.on(...)` and `events.<scope>.on(...)` live
+on one object — see `RoutingModule`.
+
+### Scopes
+
+A scope narrows a registration to part of a source. `UserEvents.where()` resolves whatever it is
+handed — a feature predicate everywhere, `{ layerGroups }` on `BaseMapModule` via an injected
+`scopeResolver` — into a `ResolvedEventScope` (`eventScope.ts`):
+
+```ts
+type ResolvedEventScope = {
+    layerFilter?: LayerSpecFilter;                               // which of the source's layers
+    featureMatches?: (feature: MapGeoJSONFeature) => boolean;     // which features within them
+};
+```
+
+The scope travels with the handler into the proxy, where it does four jobs: it picks the layers
+marked interactive, it filters `findHandlers` by layer, it decides the hover cursor, and it is
+re-resolved on every style change so a scope never holds stale layer IDs. Feature predicates are
+applied by `UserEvents` rather than the proxy, because they also promote the first surviving
+feature to the handler's primary argument.
 
 ### The typed `mapping` wrap
 
@@ -173,20 +192,27 @@ const clickHandlers = this.findHandlers([clickType], this.lastClickedFeature?.so
 ### `findHandlers` is single-source — the key invariant
 
 ```ts
-protected findHandlers = (types, sourceId, layerId): SourceEventTypeHandler[] =>
+protected findHandlers = (types, sourceId, layerId, feature?): SourceEventTypeHandler[] =>
     (sourceId && layerId &&
-        types.flatMap((type) => {
-            const sourceEventTypeHandlers = this.handlers[sourceId]?.[type];
-            return sourceEventTypeHandlers?.length === 1
-                ? sourceEventTypeHandlers                                         // 1 handler → skip layer match
-                : this.handlers[sourceId]?.[type]?.filter((h) => h.layerIDs.includes(layerId)) || [];
-        })) || [];
+        types.flatMap((type) =>
+            this.handlers[sourceId]?.[type]?.filter(
+                (h) => h.layerIDs.has(layerId) &&
+                       (!feature || !h.scope?.featureMatches || h.scope.featureMatches(feature)),
+            ) || [],
+        )) || [];
 ```
 
 **Every return path indexes `this.handlers[sourceId]`.** So whatever fires, every dispatched
-handler belongs to that one source. Since each module creates its own source
-(`sourceWithLayersFor`'s "at most one `SourceWithLayers` per source id" assumption), **one source =
-one module**. This is *the* fact Problem-B scoping relies on.
+handler belongs to that one source.
+
+Layer matching is **unconditional**, and `layerIDs` is a Set because this runs on every dispatch.
+Skipping the check when a source has a single handler for that type would be wrong: a scoped
+handler is routinely the only one on its source, and a `roadLabels` handler would then fire on a
+water click. See LSI-159.
+
+The optional `feature` is passed only by the hover-cursor lookup, so a feature-scoped handler
+claims the cursor only for features it accepts. Dispatch lookups deliberately omit it: `UserEvents`
+filters the whole stack itself and may promote a feature the top hit hid.
 
 ---
 

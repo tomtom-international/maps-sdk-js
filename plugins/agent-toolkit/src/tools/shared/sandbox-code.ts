@@ -405,6 +405,10 @@ const SANDBOX_ERROR_HINTS: ReadonlyArray<{ pattern: RegExp; hint: string }> = [
         hint: 'turf was handed a raw coordinate (or a bare Array of features) instead of a Feature / FeatureCollection. Do NOT extract `.geometry.coordinates` with `.map` / `.flatMap` and feed the result to turf — pass the WHOLE feature: `turf.pointToLineDistance(pointFeature, lineFeature, { units: "meters" })`. `incidentsByEntry[id]` is an Array of mixed Point + LineString features; guard with `if (inc.geometry.type === "LineString")` before line-only ops. A single entry of an FC kind (`placesByEntry[id]`, `routesByEntry[id]`, `trafficAreaAnalyticsByEntry[id]`, `byodByEntry[id]`) is a FeatureCollection — pass it directly (`turf.bbox(placesByEntry[id])`), never `turf.bbox(placesByEntry[id].features)`. To span entries, merge then wrap: `turf.bbox(turf.featureCollection(Object.values(placesByEntry).flatMap(fc => fc.features)))`.',
     },
     {
+        pattern: /coord must be (?:a )?(?:GeoJSON )?Point|must be a Point/i,
+        hint: 'A point-only turf op (`booleanPointInPolygon`, `pointsWithinPolygon`, `getCoord`, `distance`, …) was handed a non-Point feature. `incidentsByEntry[id]` and `byodByEntry[id]` mix Point + LineString + Polygon geometries, so `feature` may be a LineString. To test whether ANY feature falls inside a polygon regardless of its geometry type, use `turf.booleanIntersects(feature, polygon)` — it accepts Point / LineString / Polygon. Only reach for `turf.booleanPointInPolygon(pt, polygon)` after guarding `if (feature.geometry.type === "Point")`, or reduce a line/area to one representative point first with `turf.pointOnFeature(feature)` (guaranteed on the feature) or `turf.centroid(feature)`.',
+    },
+    {
         pattern: /is not a function/i,
         hint: 'A method was called on a value that does not have it (typo, or the value is not the expected type). Verify the type before calling, e.g. `Array.isArray(x) ? x.map(...) : []`.',
     },

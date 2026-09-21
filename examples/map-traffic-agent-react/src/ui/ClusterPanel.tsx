@@ -6,7 +6,7 @@ const TREND_BADGE: Record<string, { label: string; tone?: StatusTone; accent?: s
     growing: { label: '↑ Growing', tone: 'error' },
     fading: { label: '↓ Fading', tone: 'success' },
     steady: { label: '→ Steady', tone: 'info' },
-    new: { label: '★ New', accent: 'var(--pb-primary-color)' },
+    new: { label: '★ New', accent: 'var(--ui-surface-brand-red)' },
 };
 
 export type ClusterPanelProps = {
@@ -53,10 +53,10 @@ export function ClusterPanel({ clusters, focusedIds, onFocusCluster, onClearClus
                             role="button"
                             tabIndex={0}
                             title={`Focus ${c.incidentIds.length} incidents`}
-                            className={`flex cursor-pointer flex-col gap-1.5 border-b border-l-[3px] border-l-transparent border-(--pb-border-low) px-3 py-2 transition-colors duration-100 hover:bg-(--pb-surface-1) focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-(--pb-primary-color) ${isFocused ? 'bg-(--pb-surface-1)' : ''}`}
+                            className={`flex cursor-pointer flex-col gap-1.5 border-b border-l-[3px] border-l-transparent border-(--ui-border-low-em) px-3 py-2 transition-colors duration-100 hover:bg-(--ui-surface-1) focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-(--ui-surface-brand-red) ${isFocused ? 'bg-(--ui-surface-1)' : ''}`}
                         >
-                            <div className="flex items-center gap-2 text-[11px] text-(--pb-text-medium)">
-                                <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-(--pb-border-low) bg-(--pb-surface-1) text-[11px] font-semibold text-(--pb-text-high)">
+                            <div className="flex items-center gap-2 text-[11px] text-(--ui-text-med-em)">
+                                <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-(--ui-border-low-em) bg-(--ui-surface-1) text-[11px] font-semibold text-(--ui-text-high-em)">
                                     {idx + 1}
                                 </span>
                                 {c.trend && TREND_BADGE[c.trend] && (
@@ -65,7 +65,7 @@ export function ClusterPanel({ clusters, focusedIds, onFocusCluster, onClearClus
                                     </StatusTag>
                                 )}
                             </div>
-                            <h4 className="m-0 text-[13px] font-semibold leading-snug text-(--pb-text-high)">
+                            <h4 className="m-0 text-[13px] font-semibold leading-snug text-(--ui-text-high-em)">
                                 {c.headline}
                             </h4>
                             {(c.size != null ||
@@ -74,36 +74,36 @@ export function ClusterPanel({ clusters, focusedIds, onFocusCluster, onClearClus
                                 c.diameterKm != null) && (
                                 <p
                                     aria-label="Evidence"
-                                    className="m-0 flex flex-wrap items-center gap-1 text-[11px] leading-snug text-(--pb-text-low) [font-variant-numeric:tabular-nums]"
+                                    className="m-0 flex flex-wrap items-center gap-1 text-[11px] leading-snug text-(--ui-text-low-em) [font-variant-numeric:tabular-nums]"
                                 >
                                     {c.size != null && (
-                                        <span className="font-semibold text-(--pb-text-medium)">
+                                        <span className="font-semibold text-(--ui-text-med-em)">
                                             {c.size} incidents
                                         </span>
                                     )}
                                     {c.totalDelaySeconds != null && c.totalDelaySeconds > 0 && (
                                         <>
-                                            <span aria-hidden className="text-(--pb-text-low)">
+                                            <span aria-hidden className="text-(--ui-text-low-em)">
                                                 ·
                                             </span>
-                                            <span className="text-(--pb-text-medium)">
+                                            <span className="text-(--ui-text-med-em)">
                                                 {formatDelay(c.totalDelaySeconds)} total
                                             </span>
                                         </>
                                     )}
                                     {c.peakDelaySeconds != null && c.peakDelaySeconds > 0 && (
                                         <>
-                                            <span aria-hidden className="text-(--pb-text-low)">
+                                            <span aria-hidden className="text-(--ui-text-low-em)">
                                                 ·
                                             </span>
-                                            <span className="text-(--pb-text-medium)">
+                                            <span className="text-(--ui-text-med-em)">
                                                 peak {formatDelay(c.peakDelaySeconds)}
                                             </span>
                                         </>
                                     )}
                                     {c.diameterKm != null && (
                                         <>
-                                            <span aria-hidden className="text-(--pb-text-low)">
+                                            <span aria-hidden className="text-(--ui-text-low-em)">
                                                 ·
                                             </span>
                                             <span>{c.diameterKm.toFixed(1)} km</span>
@@ -111,10 +111,10 @@ export function ClusterPanel({ clusters, focusedIds, onFocusCluster, onClearClus
                                     )}
                                     {c.primaryRoads && c.primaryRoads.length > 0 && (
                                         <>
-                                            <span aria-hidden className="text-(--pb-text-low)">
+                                            <span aria-hidden className="text-(--ui-text-low-em)">
                                                 ·
                                             </span>
-                                            <span className="font-semibold text-(--pb-text-medium)">
+                                            <span className="font-semibold text-(--ui-text-med-em)">
                                                 {c.primaryRoads.slice(0, 3).join(' + ')}
                                             </span>
                                         </>

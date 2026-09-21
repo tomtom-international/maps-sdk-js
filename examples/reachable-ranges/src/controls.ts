@@ -67,8 +67,8 @@ const BUDGET_TYPE_LABELS: Record<BudgetType, string> = {
 export const getBudgetsForMax = (maxValue: number, type: BudgetType, isInverted = false): number[] =>
     (isInverted ? INVERTED_BUDGET_STEPS[type] : BUDGET_STEPS[type]).filter((b) => b <= maxValue);
 
-const statusText = document.getElementById('sdk-example-statusText') as HTMLElement;
-const spinner = document.getElementById('sdk-example-spinner') as HTMLElement;
+const statusText = document.getElementById('ui-statusText') as HTMLElement;
+const spinner = document.getElementById('ui-spinner') as HTMLElement;
 
 export const setStatus = (msg: string, loading = false): void => {
     statusText.textContent = msg;
@@ -80,19 +80,19 @@ export const initControls = (
     map: TomTomMap,
     callbacks: ControlCallbacks,
 ): { setOriginInput: (value: string) => void } => {
-    const originInput = document.getElementById('sdk-example-originSearch') as HTMLInputElement;
-    const resultsList = document.getElementById('sdk-example-searchResults') as HTMLUListElement;
-    const searchButton = document.getElementById('sdk-example-searchButton') as HTMLButtonElement;
-    const clearButton = document.getElementById('sdk-example-clearButton') as HTMLButtonElement;
-    const budgetTypeSelect = document.getElementById('sdk-example-budgetType') as HTMLSelectElement;
-    const maxBudgetSelect = document.getElementById('sdk-example-maxBudget') as HTMLSelectElement;
-    const paletteSelect = document.getElementById('sdk-example-palette') as HTMLSelectElement;
-    const themeSelect = document.getElementById('sdk-example-theme') as HTMLSelectElement;
-    const mapStylesSelect = document.getElementById('sdk-example-mapStyles') as HTMLSelectElement;
-    const toggleButton = document.querySelector('.sdk-example-heading-toggle') as HTMLButtonElement;
-    const panelContent = document.querySelector('.sdk-example-panel-content') as HTMLDivElement;
-    const vehicleNote = document.getElementById('sdk-example-vehicleNote') as HTMLParagraphElement;
-    const beforeLayerSelect = document.getElementById('sdk-example-beforeLayer') as HTMLSelectElement;
+    const originInput = document.getElementById('ui-originSearch') as HTMLInputElement;
+    const resultsList = document.getElementById('ui-searchResults') as HTMLUListElement;
+    const searchButton = document.getElementById('ui-searchButton') as HTMLButtonElement;
+    const clearButton = document.getElementById('ui-clearButton') as HTMLButtonElement;
+    const budgetTypeSelect = document.getElementById('ui-budgetType') as HTMLSelectElement;
+    const maxBudgetSelect = document.getElementById('ui-maxBudget') as HTMLSelectElement;
+    const paletteSelect = document.getElementById('ui-palette') as HTMLSelectElement;
+    const themeSelect = document.getElementById('ui-theme') as HTMLSelectElement;
+    const mapStylesSelect = document.getElementById('ui-mapStyles') as HTMLSelectElement;
+    const toggleButton = document.querySelector('.ui-heading-toggle') as HTMLButtonElement;
+    const panelContent = document.querySelector('.ui-panel-content') as HTMLDivElement;
+    const vehicleNote = document.getElementById('ui-vehicleNote') as HTMLParagraphElement;
+    const beforeLayerSelect = document.getElementById('ui-beforeLayer') as HTMLSelectElement;
 
     const addOption = (select: HTMLSelectElement, label: string, value = label, selected = false) =>
         select.add(new Option(label, value, selected, selected));
@@ -175,7 +175,7 @@ export const initControls = (
                 ? `${place.properties.poi.name} — ${place.properties.address.freeformAddress}`
                 : place.properties.address.freeformAddress;
             const li = Object.assign(document.createElement('li'), {
-                className: 'sdk-example-result-item',
+                className: 'ui-result-item',
                 textContent: name,
             });
             li.addEventListener('click', () => {

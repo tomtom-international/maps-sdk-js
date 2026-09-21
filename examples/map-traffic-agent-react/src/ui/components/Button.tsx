@@ -2,7 +2,7 @@ import { type ButtonHTMLAttributes, forwardRef, type ReactNode } from 'react';
 
 // Mirrors the variants in `examples/src/templates/css/button/variants.css`. Adding a variant here
 // keeps the Tailwind/React surface in sync with the SDK CSS contract — no need to remember the
-// raw `sdk-example-button-*` class names at every call site.
+// raw `ui-button-*` class names at every call site.
 export type ButtonVariant =
     | 'primary'
     | 'secondary'
@@ -33,21 +33,21 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 
 const VARIANT_CLASS: Record<ButtonVariant, string> = {
     primary: '',
-    secondary: 'sdk-example-button-secondary',
-    tertiary: 'sdk-example-button-tertiary',
-    outline: 'sdk-example-button-outline',
-    ghost: 'sdk-example-button-ghost',
-    success: 'sdk-example-button-success',
-    warning: 'sdk-example-button-warning',
-    toggle: 'sdk-example-toggle',
+    secondary: 'ui-button-secondary',
+    tertiary: 'ui-button-tertiary',
+    outline: 'ui-button-outline',
+    ghost: 'ui-button-ghost',
+    success: 'ui-button-success',
+    warning: 'ui-button-warning',
+    toggle: 'ui-toggle',
 };
 
 const SIZE_CLASS: Record<ButtonSize, string> = {
-    xs: 'sdk-example-button-xs',
-    sm: 'sdk-example-button-sm',
+    xs: 'ui-button-xs',
+    sm: 'ui-button-sm',
     md: '',
-    lg: 'sdk-example-button-lg',
-    xl: 'sdk-example-button-xl',
+    lg: 'ui-button-lg',
+    xl: 'ui-button-xl',
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
@@ -69,13 +69,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
 ) {
     const hasIcon = leadingIcon != null || trailingIcon != null;
     const composed = [
-        'sdk-example-button',
+        'ui-button',
         VARIANT_CLASS[variant],
         SIZE_CLASS[size],
-        fullWidth && 'sdk-example-button-full',
-        iconOnly && 'sdk-example-button-icon',
-        hasIcon && 'sdk-example-button-with-icon',
-        loading && 'sdk-example-button-loading',
+        fullWidth && 'ui-button-full',
+        iconOnly && 'ui-button-icon',
+        hasIcon && 'ui-button-with-icon',
+        loading && 'ui-button-loading',
         active && 'active',
         className,
     ]

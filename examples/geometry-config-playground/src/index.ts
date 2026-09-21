@@ -30,7 +30,7 @@ const state: GeometryStyleState = {
         mapLibre: { container: 'sdk-map', bounds: place.bbox as LngLatBoundsLike },
     });
 
-    const geometryModule = await GeometriesModule.get(map, { fill: { ...state.fill }, line: { ...state.line } });
+    const geometryModule = await GeometriesModule.create(map, { fill: { ...state.fill }, line: { ...state.line } });
     const geometries = await geometryData({ geometries: [place], zoom: 12 });
     await geometryModule.show(geometries);
 

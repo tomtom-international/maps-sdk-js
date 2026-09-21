@@ -34,7 +34,9 @@ const validateTrackingId = (trackingId: string): string => {
  * @param params Global SDK configuration
  */
 export const generateTomTomHeaders = (params: Partial<GlobalConfig>): TomTomHeaders => {
-    const userAgentHeader = (params as any)['tomtom-user-agent'];
+    // Read through a cast: the key is deliberately absent from `GlobalConfig`, which is the base of
+    // every service and map params type, so declaring it would offer it across the public API.
+    const userAgentHeader = (params as Record<string, string | undefined>)['tomtom-user-agent'];
     return {
         // (tomtom-user-agent can be overwritten by SDK TomTom clients for custom analytics purposes)
         'tomtom-user-agent': userAgentHeader ?? `${TOMTOM_USER_AGENT_SDK_NAME}/${__SDK_VERSION__}`,

@@ -1,8 +1,9 @@
 import type { DataDrivenPropertyValueSpecification, SymbolLayerSpecification } from 'maplibre-gl';
 import type { LayerSpecTemplate, LightDark } from '../../shared';
+import { buildIconOffsetExpression } from '../../shared/layers/iconOffset';
 import { TITLE } from '../../shared/layers/symbolLayers';
 import type { PlaceLayerName, PlacesModuleConfig } from '../types/placesModuleConfig';
-import type { IconScalesMap } from './customIconScales';
+import type { IconPositioningMap } from './customIconScales';
 import { getAvailabilityColorExpression } from './evAvailabilityHelpers';
 import { getTextOffset } from './textOffsetCalculator';
 import { getThemeAdaptiveTextColors } from './themeAdaptation';
@@ -51,7 +52,7 @@ export const buildLayoutConfig = (
     config: PlacesModuleConfig | undefined,
     layerName: PlaceLayerName,
     textField: DataDrivenPropertyValueSpecification<string> | undefined,
-    iconTextOffsetScales?: IconScalesMap,
+    iconTextOffsetScales?: IconPositioningMap,
 ): SymbolLayerSpecification['layout'] => {
     const textConfig = config?.text;
     const customLayer = config?.layers?.[layerName];
@@ -80,12 +81,25 @@ export const buildLayoutConfig = (
         ...(textField !== undefined && { 'text-field': textField }),
     };
 
-    // Apply offset configuration
+    // Text label position: recalculated when custom icons, a custom offset, or the
+    // circle-icon theme are present; otherwise the base layout's offsets pass through.
+    //
     if (needsOffsetRecalculation) {
-        // Dynamic offset calculation handles custom icons, custom offset, and circle-icon theme centering
-        const iconSize = layout['icon-size'];
-        const scales = iconTextOffsetScales ?? new Map();
-        return { ...layout, ...getTextOffset(iconSize, scales, config?.theme, textConfig?.offset) };
+        const layoutWithTextOffset = {
+            ...layout,
+            ...getTextOffset(layout['icon-size'], iconTextOffsetScales ?? new Map(), config?.theme, textConfig?.offset),
+        };
+        // Icon's own pixel offset — independent of the text-offset recalculation above,
+        // applied whenever any custom icon specifies `offsetX`/`offsetY`. Skip `micro`: it
+        // never binds `icon-image` to `iconID` (base-map/pin-clustered themes render the
+        // style's own group-driven native sprite there, not the custom category icon), so
+        // matching on `iconID` would shift that unrelated native sprite instead.
+        const iconOffset =
+            layerName !== 'micro' &&
+            iconTextOffsetScales &&
+            buildIconOffsetExpression([...iconTextOffsetScales].map(([iconId, { offset }]) => [iconId, offset]));
+
+        return iconOffset ? { ...layoutWithTextOffset, 'icon-offset': iconOffset } : layoutWithTextOffset;
     }
 
     return layout;

@@ -5,12 +5,13 @@ import { toDisplayTrafficSectionProps } from '../displayTrafficSectionProps';
 import { toDisplayTrafficSectionPropsData } from './data/toDisplayTrafficSectionProps.data';
 
 describe('Traffic section builder tests', () => {
-    test.each(
-        toDisplayTrafficSectionPropsData,
-    )('%s', (_name: string, sectionProps: TrafficSectionProps, expectedDisplaySectionProps: Omit<
-        DisplayTrafficSectionProps,
-        'routeState' | 'routeIndex'
-    >) => {
-        expect(toDisplayTrafficSectionProps(sectionProps)).toStrictEqual(expectedDisplaySectionProps);
-    });
+    test.each(toDisplayTrafficSectionPropsData)(
+        '%s',
+        (_name: string, sectionProps: TrafficSectionProps, expectedDisplaySectionProps: Omit<
+            DisplayTrafficSectionProps,
+            'routeState' | 'routeIndex'
+        >) => {
+            expect(toDisplayTrafficSectionProps(sectionProps)).toStrictEqual(expectedDisplaySectionProps);
+        },
+    );
 });

@@ -7,13 +7,13 @@
 
 /* CUSTOM STYLES (example-specific) */
 
-.sdk-example-customPanel {
+.ui-customPanel {
     width: 280px;
 }
 
 /* Responsive: max-width 768px */
 @media (max-width: 768px) {
-    .sdk-example-customPanel {
+    .ui-customPanel {
         width: 220px;
     }
 }

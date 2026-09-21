@@ -18,7 +18,6 @@ import type {
     LayerSpecWithSource,
     PutEventStateOptions,
     SourceWithLayerIDs,
-    SourceWithLayers,
     ToBeAddedLayerSpec,
     ToBeAddedLayerSpecWithoutSource,
 } from './types';
@@ -44,6 +43,15 @@ export abstract class AbstractSourceWithLayers<
         this._updateSourceAndLayerIDs();
     }
 
+    /**
+     * True once `map.remove()` has run — it deletes `map.style`, so any `getLayer`/`setLayoutProperty`/
+     * `addLayer` then throws. Teardown (module `clear()`/`setVisible()`, overlay `remove()`) can run
+     * after the host removes the map, so callers treat a removed map as "no layers present".
+     */
+    protected get mapRemoved(): boolean {
+        return this.map._removed === true;
+    }
+
     isAnyLayerVisible(filter?: LayerSpecFilter): boolean {
         return this.getLayerSpecs(filter).some((layer) => this.isLayerVisible(layer));
     }
@@ -61,6 +69,7 @@ export abstract class AbstractSourceWithLayers<
     }
 
     private isLayerVisible(layer: LayerSpecification): boolean {
+        if (this.mapRemoved) return false;
         // If the layer is no longer attached to the map (e.g. an out-of-band style swap removed
         // it before this snapshot got refreshed), `getLayoutProperty` returns `undefined` and
         // also fires a MapLibre error. Treat a missing layer as hidden, mirroring
@@ -70,6 +79,7 @@ export abstract class AbstractSourceWithLayers<
     }
 
     setLayersVisible(visible: boolean, filter?: LayerSpecFilter): void {
+        if (this.mapRemoved) return;
         for (const layerSpec of this.getLayerSpecs(filter)) {
             // The layer may have been removed by an out-of-band style swap
             // (e.g. `setStyle()` between calls) — `setLayoutProperty` on a
@@ -82,14 +92,6 @@ export abstract class AbstractSourceWithLayers<
 
     get sourceAndLayerIDs(): SourceWithLayerIDs {
         return this._sourceAndLayerIDs;
-    }
-
-    equalSourceAndLayerIDs(other: SourceWithLayers): boolean {
-        return (
-            this.sourceAndLayerIDs.sourceID === other.sourceAndLayerIDs.sourceID &&
-            this.sourceAndLayerIDs.layerIDs.length === other.sourceAndLayerIDs.layerIDs.length &&
-            this.sourceAndLayerIDs.layerIDs.every((id, index) => id === other.sourceAndLayerIDs.layerIDs[index])
-        );
     }
 }
 
@@ -147,6 +149,7 @@ export class AddedSourceWithLayers<
     }
 
     private ensureLayersAddedToMap(): void {
+        if (this.mapRemoved) return;
         for (const layerSpec of this._layerSpecs) {
             if (!this.map.getLayer(layerSpec.id)) {
                 this.map.addLayer(layerSpec, layerSpec.beforeID);
@@ -155,6 +158,7 @@ export class AddedSourceWithLayers<
     }
 
     ensureAddedToMapWithVisibility(visible: boolean, addLayersToMap: boolean): void {
+        if (this.mapRemoved) return;
         this.source.ensureAddedToMap(this.map);
         if (addLayersToMap) {
             this.ensureLayersAddedToMap();
@@ -220,6 +224,7 @@ export class GeoJSONSourceWithLayers<T extends FeatureCollection = FeatureCollec
 
     show(featureCollection: T, { automaticVisibility = true }: ShowOptions = {}): void {
         this.shownFeatures = featureCollection;
+        if (this.mapRemoved) return; // keep the bookkeeping above; skip the MapLibre calls
         asDefined(this.source.runtimeSource).setData(featureCollection);
         if (automaticVisibility) {
             this.setLayersVisible(!!featureCollection.features.length);

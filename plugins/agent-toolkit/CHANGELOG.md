@@ -1,5 +1,74 @@
 # Changelog
 
+## [0.5.4](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-agent-toolkit-v0.5.3...maps-sdk-plugin-agent-toolkit-v0.5.4) (2026-08-25)
+
+
+### Bug Fixes
+
+* **docs:** correct stale APIs, dead links and drifted contributor docs ([#2053](https://github.com/tomtom-international/maps-sdk-js/issues/2053)) ([fa3dc7b](https://github.com/tomtom-international/maps-sdk-js/commit/fa3dc7bab594c685a1235376abb2ac9c386ebb81))
+
+## [0.5.3](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-agent-toolkit-v0.5.2...maps-sdk-plugin-agent-toolkit-v0.5.3) (2026-08-24)
+
+
+### Bug Fixes
+
+* **agent-toolkit:** range-check the sandbox fitOnMap bbox ([6d1c02e](https://github.com/tomtom-international/maps-sdk-js/commit/6d1c02e5e8d15bcc50c385479e72bddc662dc61c))
+
+## [0.5.2](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-agent-toolkit-v0.5.1...maps-sdk-plugin-agent-toolkit-v0.5.2) (2026-08-24)
+
+
+### Features
+
+* add BaseMapModule appearance API and upgrade maplibre-gl to v6 ([#2035](https://github.com/tomtom-international/maps-sdk-js/issues/2035)) ([f6b5296](https://github.com/tomtom-international/maps-sdk-js/commit/f6b52966d456f1f73a9ce9dbe3a7b19eac164bc3))
+* attribute map traffic to the product embedding the SDK ([#2028](https://github.com/tomtom-international/maps-sdk-js/issues/2028)) ([644089f](https://github.com/tomtom-international/maps-sdk-js/commit/644089f7921e12caf9405bea715a62e3c7c8aa97))
+
+
+### Bug Fixes
+
+* **agent-toolkit:** range-check model coordinates and report plugin coverage ([#2048](https://github.com/tomtom-international/maps-sdk-js/issues/2048)) ([8a4bcde](https://github.com/tomtom-international/maps-sdk-js/commit/8a4bcde241e0d6339c84d037a547e79ed5be9adc))
+
+## [0.5.1](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-agent-toolkit-v0.5.0...maps-sdk-plugin-agent-toolkit-v0.5.1) (2026-08-04)
+
+
+### Features
+
+* **examples:** move the traffic and site-selection agents to Las Vegas ([#2016](https://github.com/tomtom-international/maps-sdk-js/issues/2016)) ([4b19cb9](https://github.com/tomtom-international/maps-sdk-js/commit/4b19cb994fee43e28bead4b6595526679d63e569))
+
+
+### Bug Fixes
+
+* location resolver selecting subdivision over parent city ([#2024](https://github.com/tomtom-international/maps-sdk-js/issues/2024)) ([11b44ef](https://github.com/tomtom-international/maps-sdk-js/commit/11b44ef67f2811b67011a3cdc228e0d105d10736))
+
+## [0.5.0](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-agent-toolkit-v0.4.4...maps-sdk-plugin-agent-toolkit-v0.5.0) (2026-07-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* **map:** improve base map layer groups ([#1966](https://github.com/tomtom-international/maps-sdk-js/issues/1966))
+
+### Features
+
+* **map:** improve base map layer groups ([#1966](https://github.com/tomtom-international/maps-sdk-js/issues/1966)) ([4bf43b8](https://github.com/tomtom-international/maps-sdk-js/commit/4bf43b88910378e129ff2ec8d486eaf67a6210b6))
+
+
+### Bug Fixes
+
+* **agent-toolkit:** surface reverse-geocode no-match as an error ([#1995](https://github.com/tomtom-international/maps-sdk-js/issues/1995)) ([8582a44](https://github.com/tomtom-international/maps-sdk-js/commit/8582a4407776e44e7fd5cd28d12411748bc7ed79))
+* chat UX polish, whitespace hex rendering, entry-id collision in toolkit ([#1999](https://github.com/tomtom-international/maps-sdk-js/issues/1999)) ([c1b97db](https://github.com/tomtom-international/maps-sdk-js/commit/c1b97dbe0e577918f0c391704632ee76378c23a3))
+
+## [0.4.4](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-agent-toolkit-v0.4.3...maps-sdk-plugin-agent-toolkit-v0.4.4) (2026-07-07)
+
+
+### Features
+
+* **examples:** add byod district prompts and per-district traffic monitoring ([#1978](https://github.com/tomtom-international/maps-sdk-js/issues/1978)) ([60fe0e8](https://github.com/tomtom-international/maps-sdk-js/commit/60fe0e8619a1efa7b40c0061aa40293fb89179f1))
+
+
+### Bug Fixes
+
+* **agent-toolkit:** resolve routing waypoints by place id or entry id ([#1974](https://github.com/tomtom-international/maps-sdk-js/issues/1974)) ([e73a15f](https://github.com/tomtom-international/maps-sdk-js/commit/e73a15f8f6d0a7b796b36b5d6a58ee04437e1f70))
+* **agent-toolkit:** ungate scope and cross kind schemas ([#1977](https://github.com/tomtom-international/maps-sdk-js/issues/1977)) ([6a4cb2e](https://github.com/tomtom-international/maps-sdk-js/commit/6a4cb2e8925072d301a615bc285b1394af4eb28b))
+
 ## [0.4.3](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-agent-toolkit-v0.4.2...maps-sdk-plugin-agent-toolkit-v0.4.3) (2026-07-03)
 
 

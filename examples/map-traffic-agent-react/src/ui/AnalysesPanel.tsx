@@ -63,7 +63,7 @@ export function AnalysesPanel({ analyses, onToggleMonitor }: AnalysesPanelProps)
                     {expanded ? <CollapseGlyph /> : <ExpandGlyph />}
                 </IconButton>
             </header>
-            <ol className="m-0 flex min-h-0 flex-auto list-none flex-col divide-y divide-(--pb-border-low) overflow-y-auto p-0">
+            <ol className="m-0 flex min-h-0 flex-auto list-none flex-col divide-y divide-(--ui-border-low-em) overflow-y-auto p-0">
                 {analyses.map((record) => (
                     <AnalysisItem
                         key={record.analysisId}
@@ -90,10 +90,22 @@ function AnalysisItem({
     const description = record.description ?? latest?.description;
     const isChart = (latest?.outputFormat ?? record.outputFormat) === 'chart';
 
+    // Guarded with `if` rather than a ternary because both branches read `latest.data`.
+    let latestBody = <p className="m-0 text-[12px] text-(--ui-text-low-em)">No result yet.</p>;
+    if (latest) {
+        latestBody = isChart ? (
+            <AnalysisChart config={latest.data} expanded={expanded} />
+        ) : (
+            <pre className="m-0 max-h-40 overflow-auto rounded-(--panel-radius) bg-(--ui-surface-1) p-2 text-[11px] leading-snug text-(--ui-text-med-em) [font-variant-numeric:tabular-nums]">
+                {safeStringify(latest.data)}
+            </pre>
+        );
+    }
+
     return (
         <li className="flex flex-col gap-2 p-3">
             <div className="flex items-center gap-2">
-                <h3 className="m-0 flex-auto text-[14px] font-bold leading-snug text-(--pb-text-high)">
+                <h3 className="m-0 flex-auto text-[14px] font-bold leading-snug text-(--ui-text-high-em)">
                     {record.name}
                 </h3>
                 <Toggle
@@ -105,18 +117,8 @@ function AnalysisItem({
                     labelClassName={null}
                 />
             </div>
-            {description && <p className="m-0 text-[12px] leading-snug text-(--pb-text-low)">{description}</p>}
-            {latest ? (
-                isChart ? (
-                    <AnalysisChart config={latest.data} expanded={expanded} />
-                ) : (
-                    <pre className="m-0 max-h-40 overflow-auto rounded-(--pb-radius) bg-(--pb-surface-1) p-2 text-[11px] leading-snug text-(--pb-text-medium) [font-variant-numeric:tabular-nums]">
-                        {safeStringify(latest.data)}
-                    </pre>
-                )
-            ) : (
-                <p className="m-0 text-[12px] text-(--pb-text-low)">No result yet.</p>
-            )}
+            {description && <p className="m-0 text-[12px] leading-snug text-(--ui-text-low-em)">{description}</p>}
+            {latestBody}
         </li>
     );
 }

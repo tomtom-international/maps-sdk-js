@@ -41,8 +41,8 @@ const addTargetOptions = (select: HTMLSelectElement, preselected: BeforeLayerCon
 /** Wires every panel control: the fill/border sections, the map-style switcher, re-center, and the collapse toggle. */
 export const initControls = ({ state, initialStyle, apply, onStyleChange }: ControlsOptions): void => {
     // Panel collapse/expand.
-    const toggle = document.querySelector('.sdk-example-heading-toggle');
-    const content = document.querySelector('.sdk-example-panel-content');
+    const toggle = document.querySelector('.ui-heading-toggle');
+    const content = document.querySelector('.ui-panel-content');
     toggle?.addEventListener('click', () => {
         const expanded = toggle.getAttribute('aria-expanded') === 'true';
         toggle.setAttribute('aria-expanded', expanded ? 'false' : 'true');
@@ -50,10 +50,10 @@ export const initControls = ({ state, initialStyle, apply, onStyleChange }: Cont
     });
 
     // Fill + border sections: a color picker and a "Below layer" dropdown each.
-    const fillColor = getElement<HTMLInputElement>('sdk-example-fillColor');
-    const lineColor = getElement<HTMLInputElement>('sdk-example-lineColor');
-    const fillLayer = getElement<HTMLSelectElement>('sdk-example-fillLayer');
-    const lineLayer = getElement<HTMLSelectElement>('sdk-example-lineLayer');
+    const fillColor = getElement<HTMLInputElement>('ui-fillColor');
+    const lineColor = getElement<HTMLInputElement>('ui-lineColor');
+    const fillLayer = getElement<HTMLSelectElement>('ui-fillLayer');
+    const lineLayer = getElement<HTMLSelectElement>('ui-lineLayer');
 
     fillColor.value = state.fill.color;
     lineColor.value = state.line.color;
@@ -78,7 +78,7 @@ export const initControls = ({ state, initialStyle, apply, onStyleChange }: Cont
     });
 
     // Map-style switcher.
-    const styles = getElement<HTMLSelectElement>('sdk-example-mapStyles');
+    const styles = getElement<HTMLSelectElement>('ui-mapStyles');
     standardStyleIDs.forEach((id) => styles.add(new Option(id)));
     styles.value = initialStyle;
     styles.addEventListener('change', () => onStyleChange(styles.value as StandardStyleID));

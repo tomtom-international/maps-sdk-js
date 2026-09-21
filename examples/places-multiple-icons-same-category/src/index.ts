@@ -25,17 +25,17 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         },
     });
 
-    const spainAirportsModule = await PlacesModule.get(map, {
+    const spainAirportsModule = await PlacesModule.create(map, {
         icon: { categoryIcons: [{ id: 'PUBLIC_AIRPORT', image: airportEsSVG }] },
     });
     await spainAirportsModule.show(spainAirports);
 
-    const italyAirportsModule = await PlacesModule.get(map, {
+    const italyAirportsModule = await PlacesModule.create(map, {
         icon: { categoryIcons: [{ id: 'PUBLIC_AIRPORT', image: airportItSVG }] },
     });
     await italyAirportsModule.show(italyAirports);
 
-    const franceAirportsModule = await PlacesModule.get(map, {
+    const franceAirportsModule = await PlacesModule.create(map, {
         icon: { categoryIcons: [{ id: 'PUBLIC_AIRPORT', image: airportFrSVG }] },
     });
     await franceAirportsModule.show(franceAirports);

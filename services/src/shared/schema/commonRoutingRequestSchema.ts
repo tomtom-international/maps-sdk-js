@@ -14,12 +14,6 @@ export const commonRoutingRequestSchema = z.object({
             traffic: z.enum(['live', 'historical']).optional(),
             routeType: z.enum(routeTypes).optional(),
             avoidAreas: z.array(hasBBoxSchema).max(10).optional(),
-            thrillingParams: z
-                .object({
-                    hilliness: z.enum(['low', 'normal', 'high']).optional(),
-                    windingness: z.enum(['low', 'normal', 'high']).optional(),
-                })
-                .optional(),
         })
         .optional(),
     travelMode: z.string().optional(),

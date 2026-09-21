@@ -5,7 +5,7 @@
 import type { Place, WaypointLike } from '@tomtom-org/maps-sdk/core';
 import { withInsertedWaypoints } from '@tomtom-org/maps-sdk/core';
 import { z } from 'zod';
-import type { ToolState } from '../../types';
+import type { ToolExecuteOptions, ToolState } from '../../types';
 import { hidePreviousEntriesSchema, locationInputSchema } from '../shared';
 import { routesWriteOutputSchema, toolErrorSchema } from '../shared-output-schemas';
 import { resolveLocationInput } from './resolve-location-input';
@@ -74,7 +74,7 @@ const validateExistingRoute = async (state: ToolState) => {
 
 const labelForLocation = (location: z.infer<typeof locationInputSchema>): string => {
     if ('query' in location) return `"${location.query}"`;
-    if ('placeId' in location) return `placeId "${location.placeId}"`;
+    if ('placeIdOrEntryId' in location) return `placeIdOrEntryId "${location.placeIdOrEntryId}"`;
     return JSON.stringify(location.position);
 };
 
@@ -91,6 +91,7 @@ const resolveAllInputs = async (
         stops?: z.infer<typeof locationInputSchema>[];
     },
     state: ToolState,
+    options?: ToolExecuteOptions,
 ): Promise<ResolvedWaypoints | { error: string }> => {
     const { origin, destination, stops = [] } = params;
     const inputs = [
@@ -99,7 +100,7 @@ const resolveAllInputs = async (
         ...stops.map((location) => ({ kind: 'stop' as const, location })),
     ];
 
-    const resolved = await Promise.all(inputs.map(({ location }) => resolveLocationInput(location, state)));
+    const resolved = await Promise.all(inputs.map(({ location }) => resolveLocationInput(location, state, options)));
 
     const unresolved: string[] = [];
     for (let i = 0; i < inputs.length; i++) {
@@ -123,6 +124,7 @@ const resolveAllInputs = async (
 export const executeAddWaypointsToRoute = async (
     params: z.infer<typeof addWaypointsToRouteSchema>,
     state: ToolState,
+    options?: ToolExecuteOptions,
 ): Promise<z.infer<typeof addWaypointsToRouteOutputSchema>> => {
     const { origin, destination, stops, showOnMap, hidePreviousEntries } = params;
     try {
@@ -130,7 +132,7 @@ export const executeAddWaypointsToRoute = async (
         if (typeof routeResult === 'string') return { error: routeResult };
         const { shownRouteLines, shownWaypoints } = routeResult;
 
-        const resolved = await resolveAllInputs({ origin, destination, stops }, state);
+        const resolved = await resolveAllInputs({ origin, destination, stops }, state, options);
         if ('error' in resolved) return resolved;
 
         const baseWaypoints: WaypointLike[] = [
@@ -149,7 +151,16 @@ export const executeAddWaypointsToRoute = async (
             return { error: 'Not enough valid waypoints to calculate a route (minimum 2).' };
         }
 
-        return calculateAndAddRoute(state, waypoints, showOnMap, hidePreviousEntries);
+        return calculateAndAddRoute(
+            state,
+            waypoints,
+            showOnMap,
+            hidePreviousEntries,
+            undefined,
+            undefined,
+            undefined,
+            options,
+        );
     } catch (error) {
         return {
             error: `Failed to add waypoints to route: ${error instanceof Error ? error.message : String(error)}`,

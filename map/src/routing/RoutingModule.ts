@@ -1,19 +1,28 @@
-import type { Route, Routes, Waypoint, Waypoints } from '@tomtom-org/maps-sdk/core';
+import type { Route, Routes, SpeedLimitSectionProps, Waypoint, Waypoints } from '@tomtom-org/maps-sdk/core';
 import { isEqual } from 'lodash-es';
-import type { StyleImageMetadata } from 'maplibre-gl';
+import type { MapGeoJSONFeature, StyleImageMetadata } from 'maplibre-gl';
 import {
-    AbstractMapModule,
+    AbstractDataOwnedMapModule,
+    type CombinedEvents,
     GeoJSONSourceWithLayers,
-    ModuleEvents,
     mapStyleLayerIDs,
     SVGIconStyleOptions,
-    UserEvents,
+    type UserEvents,
 } from '../shared';
-import { suffixNumber } from '../shared/layers/utils';
+import { prefixLayerID, suffixNumber } from '../shared/layers/utils';
 import { addLayers, addOrUpdateImage, updateLayersAndSource, waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
 import { INSTRUCTION_ARROW_IMAGE_ID } from './layers/guidanceLayers';
 import { DESELECTED_SUMMARY_POPUP_IMAGE_ID, SELECTED_SUMMARY_POPUP_IMAGE_ID } from './layers/routeMainLineLayers';
+import { isSectionVisible, sectionSignLayerID } from './layers/sectionLayers';
+import {
+    drawnSectionTypes,
+    type GeneratedSectionType,
+    generatedSectionTypes,
+    postsSign,
+    type SectionSourceKey,
+    sectionSourceKey,
+} from './layers/sectionRegistry';
 import { MAJOR_DELAY_COLOR, MINOR_DELAY_LABEL_COLOR, MODERATE_DELAY_COLOR, UNKNOWN_DELAY_COLOR } from './layers/shared';
 import {
     TRAFFIC_CLEAR_IMAGE_ID,
@@ -21,15 +30,10 @@ import {
     TRAFFIC_MINOR_IMAGE_ID,
     TRAFFIC_MODERATE_IMAGE_ID,
 } from './layers/summaryBubbleLayers';
-import {
-    WAYPOINT_FINISH_IMAGE_ID,
-    WAYPOINT_SOFT_IMAGE_ID,
-    WAYPOINT_START_IMAGE_ID,
-    WAYPOINT_STOP_IMAGE_ID,
-} from './layers/waypointLayers';
+import { WAYPOINT_FINISH_IMAGE_ID, WAYPOINT_START_IMAGE_ID, WAYPOINT_STOP_IMAGE_ID } from './layers/waypointLayers';
 import {
     instructionArrowIconImg,
-    softWaypointIcon,
+    speedLimitSignImg,
     summaryBubbleImageOptions,
     summaryMapBubbleImg,
     trafficImg,
@@ -40,8 +44,14 @@ import {
 import type { DisplayRouteProps, DisplayRouteSummary } from './types/displayRoutes';
 import type { DisplayInstruction } from './types/guidance';
 import type { PlanningWaypoint } from './types/planningWaypoint';
-import type { RoutingModuleConfig } from './types/routeModuleConfig';
-import type { DisplayTrafficSectionProps, RouteSection } from './types/routeSections';
+import type { RoutingModuleConfig, SectionDisplayConfig } from './types/routeModuleConfig';
+import type {
+    DisplaySpeedLimitSectionProps,
+    DisplayTrafficSectionProps,
+    RouteSection,
+    RouteSections,
+    SpeedLimitSignFace,
+} from './types/routeSections';
 import type { RoutingLayersSpecs, RoutingSourcesWithLayers } from './types/routingSourcesAndLayers';
 import type { ShowRoutesOptions } from './types/showOptions';
 import type { WaypointDisplayProps } from './types/waypointDisplayProps';
@@ -53,6 +63,47 @@ import { toDisplayInstructionArrows, toDisplayInstructions } from './util/guidan
 import { toDisplayRouteSections } from './util/routeSections';
 import { showFeaturesWithRouteSelection } from './util/routeSelection';
 import { toDisplayRouteSummaries, toDisplayRoutes } from './util/routes';
+import { SPEED_LIMIT_IMAGE_ID_BY_FACE, toDisplaySpeedLimitSectionProps } from './util/speedLimitSigns';
+
+/**
+ * What `routing.events.on('shown-features', ...)` receives: whichever of routes or waypoints was
+ * just rendered.
+ *
+ * @group Routing
+ */
+export type RoutingShownFeatures = { routes: Route | Routes } | { waypoints: PlanningWaypoint[] | Waypoints };
+
+/**
+ * Event surface of {@link RoutingModule}: the module's own events, plus one named scope per part
+ * of a route it draws.
+ *
+ * @group Routing
+ */
+export type RoutingEvents = CombinedEvents<MapGeoJSONFeature, RoutingModuleConfig, RoutingShownFeatures> & {
+    /** One scope per section type generated from the registry, keyed `<type>Sections`. */
+    [K in SectionSourceKey<GeneratedSectionType>]: UserEvents<RouteSection>;
+} & {
+    /** The route lines themselves. */
+    mainLines: UserEvents<Route<DisplayRouteProps>>;
+    /** Origin, destination and intermediate stops. */
+    waypoints: UserEvents<Waypoint<WaypointDisplayProps>>;
+    /** Charging stops along an EV route. */
+    chargingStops: UserEvents<RouteSection>;
+    /** The summary bubbles shown against each alternative. */
+    summaryBubbles: UserEvents<DisplayRouteSummary>;
+    /** Traffic incidents on the route. */
+    incidents: UserEvents<RouteSection<DisplayTrafficSectionProps>>;
+    /** Sections the vehicle is restricted from. */
+    vehicleRestricted: UserEvents<RouteSection>;
+    /** Ferry sections. */
+    ferries: UserEvents<RouteSection>;
+    /** Toll road sections. */
+    tollRoads: UserEvents<RouteSection>;
+    /** Tunnel sections. */
+    tunnels: UserEvents<RouteSection>;
+    /** The guidance instruction lines. */
+    instructionLines: UserEvents<DisplayInstruction>;
+};
 
 /**
  * Map module for displaying and managing route visualizations.
@@ -81,7 +132,7 @@ import { toDisplayRouteSummaries, toDisplayRoutes } from './util/routes';
  * @example
  * ```typescript
  * // Create the module
- * const routingModule = await RoutingModule.getInstance(map, {
+ * const routingModule = await RoutingModule.create(map, {
  *   displayUnits: {
  *     distance: { type: 'metric' }
  *   }
@@ -107,7 +158,7 @@ import { toDisplayRouteSummaries, toDisplayRoutes } from './util/routes';
  *
  * @group Routing
  */
-export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, RoutingModuleConfig> {
+export class RoutingModule extends AbstractDataOwnedMapModule<RoutingSourcesWithLayers, RoutingModuleConfig> {
     private layersSpecs!: RoutingLayersSpecs;
     private layerIDPrefix!: string;
     private readonly shownFeaturesHandlers: ((
@@ -121,6 +172,11 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * @returns {Promise} Returns a promise with a new instance of this module
      *
      * @remarks
+     * **Instances:**
+     * `RoutingModule` owns the sources, layers and images it adds, all suffixed per instance. Every
+     * call therefore returns a **new, independent** instance, and stacking several of them on one
+     * map is a supported thing to do.
+     *
      * **Configuration Options:**
      * - `displayUnits`: Distance units (metric/imperial)
      * - `waypointsSource`: Waypoint entry point options
@@ -132,13 +188,13 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * @example
      * Default initialization:
      * ```typescript
-     * const routingModule = await RoutingModule.get(map);
+     * const routingModule = await RoutingModule.create(map);
      * ```
      *
      * @example
      * With custom configuration:
      * ```typescript
-     * const routingModule = await RoutingModule.get(map, {
+     * const routingModule = await RoutingModule.create(map, {
      *   displayUnits: 'imperial',
      *   waypointsSource: {
      *     entryPoints: 'main-when-available'
@@ -146,18 +202,29 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * });
      * ```
      */
-    static async get(tomtomMap: TomTomMap, config?: RoutingModuleConfig): Promise<RoutingModule> {
+    static async create(tomtomMap: TomTomMap, config?: RoutingModuleConfig): Promise<RoutingModule> {
         await waitUntilMapIsReady(tomtomMap);
         return new RoutingModule(tomtomMap, config);
     }
 
     private constructor(map: TomTomMap, config?: RoutingModuleConfig) {
-        super('geojson', map, config);
+        super(map, config);
     }
 
     private createSourcesWithLayers(layersSpecs: RoutingLayersSpecs): RoutingSourcesWithLayers {
         const sourcePrefix = suffixNumber('routes', this.instanceIndex);
+        // One source per generated section, from the same table the layers come from.
+        const generatedSectionSources = Object.fromEntries(
+            generatedSectionTypes.map((type) => {
+                const key = sectionSourceKey(type);
+                return [
+                    key,
+                    new GeoJSONSourceWithLayers(this.mapLibreMap, `${sourcePrefix}-${key}`, layersSpecs[key], false),
+                ];
+            }),
+        ) as Pick<RoutingSourcesWithLayers, SectionSourceKey<GeneratedSectionType>>;
         return {
+            ...generatedSectionSources,
             mainLines: new GeoJSONSourceWithLayers(
                 this.mapLibreMap,
                 `${sourcePrefix}-mainLines`,
@@ -258,7 +325,6 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
         // Generate instance-specific image IDs to support multiple RoutingModule instances
         const waypointStartImageId = suffixNumber(WAYPOINT_START_IMAGE_ID, this.instanceIndex);
         const waypointStopImageId = suffixNumber(WAYPOINT_STOP_IMAGE_ID, this.instanceIndex);
-        const waypointSoftImageId = suffixNumber(WAYPOINT_SOFT_IMAGE_ID, this.instanceIndex);
         const waypointFinishImageId = suffixNumber(WAYPOINT_FINISH_IMAGE_ID, this.instanceIndex);
         const instructionArrowImageId = suffixNumber(INSTRUCTION_ARROW_IMAGE_ID, this.instanceIndex);
         const selectedSummaryPopupImageId = suffixNumber(SELECTED_SUMMARY_POPUP_IMAGE_ID, this.instanceIndex);
@@ -271,7 +337,6 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
         // loading of extra assets if not present in the map style:
         this.addImageIfNotExisting(waypointStartImageId, waypointStartIcon(svgIconOptions), options);
         this.addImageIfNotExisting(waypointStopImageId, waypointIcon(undefined, svgIconOptions), options);
-        this.addImageIfNotExisting(waypointSoftImageId, softWaypointIcon(), options);
         this.addImageIfNotExisting(waypointFinishImageId, waypointFinishIcon(svgIconOptions), options);
         this.addImageIfNotExisting(instructionArrowImageId, instructionArrowIconImg, options);
         this.addImageIfNotExisting(
@@ -284,6 +349,15 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
             summaryMapBubbleImg('#EEEEEE'),
             summaryBubbleImageOptions,
         );
+        // One image per sign face, never per limit: the number rides over the face as text, so a
+        // route through any country is served by the faces this loop adds once.
+        for (const [face, imageID] of Object.entries(SPEED_LIMIT_IMAGE_ID_BY_FACE)) {
+            this.addImageIfNotExisting(
+                suffixNumber(imageID, this.instanceIndex),
+                speedLimitSignImg(face as SpeedLimitSignFace),
+                options,
+            );
+        }
         this.addImageIfNotExisting(trafficClearImageId, trafficImg(UNKNOWN_DELAY_COLOR), options);
         this.addImageIfNotExisting(trafficMajorImageId, trafficImg(MAJOR_DELAY_COLOR), options);
         this.addImageIfNotExisting(trafficModerateImageId, trafficImg(MODERATE_DELAY_COLOR), options);
@@ -304,6 +378,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      */
     protected _applyConfig(config?: RoutingModuleConfig) {
         const mergedConfig = routeModuleConfigWithDefaults(config, this.layerIDPrefix, this.instanceIndex);
+        const displayUnitsChanged = !isEqual(this.config?.displayUnits, mergedConfig.displayUnits);
 
         // If there was already some config set, we must update the changes:
         if (this.config) {
@@ -326,8 +401,12 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
                 listOfSources.flatMap((source) => source._layerSpecs),
                 this.mapLibreMap,
             );
+            this.reshowSpeedLimitSigns(mergedConfig, displayUnitsChanged);
+
             // set the correct visibility if there are new layers
             listOfSources.forEach((source) => source.setLayersVisible(!!source.shownFeatures.features.length));
+            this.applySectionVisibility(config);
+            this.applySignPriority(config);
             this.layersSpecs = newLayersSpecs;
         }
 
@@ -366,7 +445,6 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
         // ... so we need to re-show or clear them if relevant config parts changed:
         const summaryBubblesVisible = mergedConfig.summaryBubbles?.visible !== false;
         const visibilityChanged = !isEqual(this.config?.summaryBubbles?.visible, mergedConfig.summaryBubbles?.visible);
-        const displayUnitsChanged = !isEqual(this.config?.displayUnits, mergedConfig.displayUnits);
         const hasSummaryBubbles = this.sourcesWithLayers.summaryBubbles.shownFeatures.features.length > 0;
         const hasRoutes = this.sourcesWithLayers.mainLines.shownFeatures.features.length > 0;
 
@@ -385,6 +463,129 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
     }
 
     /**
+     * Shows the speed limit sections, each carrying the sign that posts it.
+     *
+     * @remarks
+     * `speedLimit` is the one type drawn from its own number rather than its extent, so the number,
+     * the face and the numeral colour are derived here and ride on the feature. That makes the unit
+     * in force an input to the data rather than to the paint, which is why a change to it re-runs
+     * this instead of restyling the layer in place.
+     */
+    private showSpeedLimitSections(
+        displayRoutes: Routes<DisplayRouteProps>,
+        config: RoutingModuleConfig | undefined,
+    ): void {
+        this.sourcesWithLayers.speedLimitSections.show(
+            toDisplayRouteSections<SpeedLimitSectionProps, DisplaySpeedLimitSectionProps>(
+                displayRoutes,
+                'speedLimit',
+                toDisplaySpeedLimitSectionProps(this.instanceIndex, {
+                    unit: config?.sections?.speedLimit?.sign?.unit,
+                    displayUnits: config?.displayUnits,
+                }),
+            ),
+        );
+    }
+
+    /**
+     * Re-derives the posted signs when the unit they read in changed.
+     *
+     * @remarks
+     * No paint property can restate a number, so `sign.unit` and `displayUnits` are the two knobs
+     * that have to reach the features rather than the layers — the summary bubbles are re-shown for
+     * the same reason. Runs before the visibility pass, so the re-shown source goes through it.
+     */
+    private reshowSpeedLimitSigns(mergedConfig: RoutingModuleConfig, displayUnitsChanged: boolean): void {
+        const signUnitChanged = !isEqual(
+            this.config?.sections?.speedLimit?.sign?.unit,
+            mergedConfig.sections?.speedLimit?.sign?.unit,
+        );
+        if (!signUnitChanged && !displayUnitsChanged) return;
+
+        if (!this.sourcesWithLayers.speedLimitSections.shownFeatures.features.length) return;
+
+        this.showSpeedLimitSections(this.sourcesWithLayers.mainLines.shownFeatures, mergedConfig);
+    }
+
+    /**
+     * Applies the `sections.<type>.visible` knob to every section type.
+     *
+     * @remarks
+     * Every other source here follows one rule — its layers are visible whenever it holds features
+     * — and for sections that rule is not enough. Almost every route has urban stretches, a tunnel
+     * or a country crossing somewhere along it, so "has features" would draw all sixteen types the
+     * moment a route is shown, whatever the caller asked for. This runs right after anything that
+     * shows features and after any config change, in the same tick, so nothing renders in between.
+     */
+    private applySectionVisibility(config: RoutingModuleConfig | undefined): void {
+        for (const type of drawnSectionTypes) {
+            const source = this.sourcesWithLayers[sectionSourceKey(type)];
+            const hasFeatures = !!source.shownFeatures.features.length;
+            source.setLayersVisible(hasFeatures && isSectionVisible(type, config?.sections?.[type]));
+        }
+    }
+
+    /** The id of the layer posting this type's signs, for a type that posts them. */
+    private signLayerID(type: GeneratedSectionType): string | undefined {
+        if (!postsSign(type)) return undefined;
+
+        return prefixLayerID(sectionSignLayerID(type), this.layerIDPrefix);
+    }
+
+    /**
+     * Settles which icons a section's signs give way to.
+     *
+     * @remarks
+     * MapLibre resolves symbol collisions from the topmost layer down, so this is a matter of where
+     * the sign layer sits — and it cannot be a `beforeID`, because the layers a sign yields to are
+     * added when the features that need them are shown: a route with no waypoints shown has no
+     * waypoint layer to anchor to, and an anchor that is not on the map costs the sign layer
+     * itself. So the stacking is settled here instead, after each show and each config change.
+     */
+    private applySignPriority(config: RoutingModuleConfig | undefined): void {
+        for (const type of generatedSectionTypes) {
+            const signLayerID = this.signLayerID(type);
+            if (!signLayerID || !this.mapLibreMap.getLayer(signLayerID)) continue;
+
+            const sectionConfig: SectionDisplayConfig | undefined = config?.sections?.[type];
+            this.mapLibreMap.moveLayer(signLayerID, this.signAnchorLayerID(signLayerID, sectionConfig));
+        }
+    }
+
+    /**
+     * The layer a section's signs are moved under, for what they are configured to give way to.
+     *
+     * @remarks
+     * `aboveRouteIcons` anchors to nothing, which puts the layer on top. The other two differ only
+     * in where the search starts: under the base map's labels for `belowMapLabels`, and at them for
+     * `belowRouteIcons`, since a section's own icon layer is pinned below the labels and a sign
+     * sent under that would give way to every place name on the way.
+     */
+    private signAnchorLayerID(signLayerID: string, config?: SectionDisplayConfig): string | undefined {
+        const priority = config?.sign?.priority ?? 'belowRouteIcons';
+        if (priority === 'aboveRouteIcons') return undefined;
+
+        const layers = this.mapLibreMap.getStyle().layers;
+        if (priority === 'belowMapLabels') return mapStyleLayerIDs.lowestLabel;
+
+        const lowestLabelIndex = layers.findIndex((layer) => layer.id === mapStyleLayerIDs.lowestLabel);
+        return layers.find(
+            (layer, index) =>
+                layer.type === 'symbol' &&
+                layer.id !== signLayerID &&
+                index > lowestLabelIndex &&
+                (!this.layerIDPrefix || layer.id.startsWith(this.layerIDPrefix)),
+        )?.id;
+    }
+
+    /** @ignore */
+    protected discardShownData(): void {
+        // Nothing to forget: this module keeps no copy of what it shows. `restoreDataAndConfigImpl`
+        // reads the shown features off the sources themselves, and a clean switch rebuilds those
+        // empty.
+    }
+
+    /**
      * @ignore
      */
     protected restoreDataAndConfigImpl() {
@@ -400,6 +601,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
         for (const key of Object.keys(previouslyShown) as (keyof RoutingSourcesWithLayers)[]) {
             this.sourcesWithLayers[key].show(previouslyShown[key]);
         }
+        this.applySectionVisibility(this.config);
     }
 
     private addImageIfNotExisting(
@@ -431,7 +633,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * **Route Features:**
      * - Main route lines (selected and deselected styles)
      * - Traffic sections with delays
-     * - Ferry, tunnel, and toll sections
+     * - Ferry, tunnel, and charged-road (`tollRoad`) sections
      * - EV charging stations (for EV routes)
      * - Turn-by-turn instruction lines and arrows
      * - Summary bubbles with distance/time/traffic info
@@ -469,7 +671,21 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
         this.sourcesWithLayers.chargingStops.show(toDisplayChargingStops(displayRoutes, this.config));
         this.sourcesWithLayers.ferries.show(toDisplayRouteSections(displayRoutes, 'ferry'));
         this.sourcesWithLayers.tunnels.show(toDisplayRouteSections(displayRoutes, 'tunnel'));
-        this.sourcesWithLayers.tollRoads.show(toDisplayRouteSections(displayRoutes, 'toll'));
+        // `tollRoad` is the section type that answers "does this stretch cost money to drive" — it
+        // covers per-use tolls, vignette-only motorways and urban charge zones alike, where `toll`
+        // covers only the first. It is also the type this overlay has always been named for. The
+        // symbol still uses the toll-plaza icon: the sprite offers no generic road-charge icon, and
+        // picking per-scheme icons is the job of the follow-up that gives `toll` and `tollVignette`
+        // their own treatment.
+        this.sourcesWithLayers.tollRoads.show(toDisplayRouteSections(displayRoutes, 'tollRoad'));
+        for (const type of generatedSectionTypes) {
+            if (postsSign(type)) continue;
+
+            this.sourcesWithLayers[sectionSourceKey(type)].show(toDisplayRouteSections(displayRoutes, type));
+        }
+        this.showSpeedLimitSections(displayRoutes, this.config);
+        this.applySectionVisibility(this.config);
+        this.applySignPriority(this.config);
         this.sourcesWithLayers.instructionLines.show(toDisplayInstructions(displayRoutes));
         this.sourcesWithLayers.instructionArrows.show(toDisplayInstructionArrows(displayRoutes));
         if (this.config?.summaryBubbles?.visible !== false) {
@@ -538,16 +754,21 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
 
         await this.waitUntilModuleReady();
         this.sourcesWithLayers.mainLines.show(updatedRoutes);
-        // TODO: simply update route style instead of regenerating EV stations again
-        this.sourcesWithLayers.chargingStops.show(toDisplayChargingStops(updatedRoutes, this.config));
+        // Charging stops now carry their route index, so a selection change restyles them like
+        // every other route-related source instead of regenerating the whole collection.
+        showFeaturesWithRouteSelection(updatedRoutes, this.sourcesWithLayers.chargingStops);
         showFeaturesWithRouteSelection(updatedRoutes, this.sourcesWithLayers.vehicleRestricted);
         showFeaturesWithRouteSelection(updatedRoutes, this.sourcesWithLayers.incidents);
         showFeaturesWithRouteSelection(updatedRoutes, this.sourcesWithLayers.ferries);
         showFeaturesWithRouteSelection(updatedRoutes, this.sourcesWithLayers.tollRoads);
+        for (const type of generatedSectionTypes) {
+            showFeaturesWithRouteSelection(updatedRoutes, this.sourcesWithLayers[sectionSourceKey(type)]);
+        }
         showFeaturesWithRouteSelection(updatedRoutes, this.sourcesWithLayers.tunnels);
         showFeaturesWithRouteSelection(updatedRoutes, this.sourcesWithLayers.instructionLines);
         showFeaturesWithRouteSelection(updatedRoutes, this.sourcesWithLayers.instructionArrows);
         showFeaturesWithRouteSelection(updatedRoutes, this.sourcesWithLayers.summaryBubbles);
+        this.applySectionVisibility(this.config);
     }
 
     /**
@@ -571,11 +792,18 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      */
     async showWaypoints(waypoints: PlanningWaypoint[] | Waypoints) {
         const displayWaypoints = Array.isArray(waypoints)
-            ? toDisplayWaypoints(waypoints, this.config?.waypoints, this.instanceIndex)
+            ? toDisplayWaypoints(waypoints, this.config?.waypoints, this.instanceIndex, this.config?.displayUnits?.time)
             : // FeatureCollection expected:
-              toDisplayWaypoints(waypoints.features as PlanningWaypoint[], this.config?.waypoints, this.instanceIndex);
+              toDisplayWaypoints(
+                  waypoints.features,
+                  this.config?.waypoints,
+                  this.instanceIndex,
+                  this.config?.displayUnits?.time,
+              );
         await this.waitUntilModuleReady();
         this.sourcesWithLayers.waypoints.show(displayWaypoints);
+        // The pins are new layers to give way to, so where the signs sit is settled again.
+        this.applySignPriority(this.config);
         for (const handler of this.shownFeaturesHandlers) {
             handler({ waypoints });
         }
@@ -604,7 +832,7 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
      * - `incidents`: Traffic incidents on routes
      * - `ferries`: Ferry sections
      * - `chargingStops`: EV charging stations
-     * - `tollRoads`: Toll road sections
+     * - `tollRoads`: Sections that cost money to drive — the `tollRoad` section type
      * - `tunnels`: Tunnel sections
      * - `vehicleRestricted`: Vehicle-restricted sections
      * - `instructionLines`: Turn-by-turn instruction lines
@@ -638,6 +866,12 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
             ferries: this.sourcesWithLayers.ferries.shownFeatures,
             chargingStops: this.sourcesWithLayers.chargingStops.shownFeatures,
             tollRoads: this.sourcesWithLayers.tollRoads.shownFeatures,
+            ...(Object.fromEntries(
+                generatedSectionTypes.map((type) => [
+                    sectionSourceKey(type),
+                    this.sourcesWithLayers[sectionSourceKey(type)].shownFeatures,
+                ]),
+            ) as Record<SectionSourceKey<GeneratedSectionType>, RouteSections | undefined>),
             tunnels: this.sourcesWithLayers.tunnels.shownFeatures,
             vehicleRestricted: this.sourcesWithLayers.vehicleRestricted.shownFeatures,
             instructionLines: this.sourcesWithLayers.instructionLines.shownFeatures,
@@ -647,96 +881,71 @@ export class RoutingModule extends AbstractMapModule<RoutingSourcesWithLayers, R
     }
 
     /**
-     * Unified events interface for the routing module, split into two namespaces:
+     * Unified events interface for the routing module.
      *
-     * **`events.user`** — user interaction events, keyed by source:
-     * ```typescript
-     * routing.events.user.mainLines.on('click', (route) => { ... });
-     * routing.events.user.waypoints.on('hover', (waypoint) => { ... });
-     * ```
+     * `events` itself covers every route feature and the module's lifecycle events; the named
+     * scopes below cover one part of a route each, and every one of them can be narrowed further
+     * with `where()`.
      *
-     * **`events.module`** — module lifecycle events:
      * ```typescript
-     * const unsub = routing.events.module.on('config-change', (config) => { ... });
-     * const unsub = routing.events.module.on('shown-features', (features) => {
+     * routing.events.mainLines.on('click', (route) => { ... });
+     * routing.events.waypoints.on('hover', (waypoint) => { ... });
+     *
+     * // Only the long tunnels, with their own hover cursor:
+     * routing.events.tunnels
+     *     .where((section) => section.properties.lengthInMeters > 500, { cursorOnHover: 'help' })
+     *     .on('click', showTunnel);
+     *
+     * const unsub = routing.events.on('config-change', (config) => { ... });
+     * routing.events.on('shown-features', (features) => {
      *   if ('routes' in features) { ... }
      * });
      * unsub();
      * ```
      */
-    get events(): {
-        user: {
-            mainLines: UserEvents<Route<DisplayRouteProps>>;
-            waypoints: UserEvents<Waypoint<WaypointDisplayProps>>;
-            chargingStops: UserEvents<RouteSection>;
-            summaryBubbles: UserEvents<DisplayRouteSummary>;
-            incidents: UserEvents<RouteSection<DisplayTrafficSectionProps>>;
-            vehicleRestricted: UserEvents<RouteSection>;
-            ferries: UserEvents<RouteSection>;
-            tollRoads: UserEvents<RouteSection>;
-            tunnels: UserEvents<RouteSection>;
-            instructionLines: UserEvents<DisplayInstruction>;
-        };
-        module: ModuleEvents<
-            RoutingModuleConfig,
-            { routes: Route | Routes } | { waypoints: PlanningWaypoint[] | Waypoints }
-        >;
-    } {
-        return {
-            user: {
-                mainLines: new UserEvents<Route<DisplayRouteProps>>(
-                    this.tomtomMap._eventsProxy,
-                    this.sourcesWithLayers.mainLines,
-                    this.config?.events,
-                ),
-                waypoints: new UserEvents<Waypoint<WaypointDisplayProps>>(
-                    this.tomtomMap._eventsProxy,
-                    this.sourcesWithLayers.waypoints,
-                    this.config?.events,
-                ),
-                chargingStops: new UserEvents<RouteSection>(
-                    this.tomtomMap._eventsProxy,
-                    this.sourcesWithLayers.chargingStops,
-                    this.config?.events,
-                ),
-                summaryBubbles: new UserEvents<DisplayRouteSummary>(
-                    this.tomtomMap._eventsProxy,
-                    this.sourcesWithLayers.summaryBubbles,
-                    this.config?.events,
-                ),
-                incidents: new UserEvents<RouteSection<DisplayTrafficSectionProps>>(
-                    this.tomtomMap._eventsProxy,
-                    this.sourcesWithLayers.incidents,
-                    this.config?.events,
-                ),
-                vehicleRestricted: new UserEvents<RouteSection>(
-                    this.tomtomMap._eventsProxy,
-                    this.sourcesWithLayers.vehicleRestricted,
-                    this.config?.events,
-                ),
-                ferries: new UserEvents<RouteSection>(
-                    this.tomtomMap._eventsProxy,
-                    this.sourcesWithLayers.ferries,
-                    this.config?.events,
-                ),
-                tollRoads: new UserEvents<RouteSection>(
-                    this.tomtomMap._eventsProxy,
-                    this.sourcesWithLayers.tollRoads,
-                    this.config?.events,
-                ),
-                tunnels: new UserEvents<RouteSection>(
-                    this.tomtomMap._eventsProxy,
-                    this.sourcesWithLayers.tunnels,
-                    this.config?.events,
-                ),
-                instructionLines: new UserEvents<DisplayInstruction>(
-                    this.tomtomMap._eventsProxy,
-                    this.sourcesWithLayers.instructionLines,
-                    this.config?.events,
-                ),
+    get events(): RoutingEvents {
+        // Every generated section gets a scoped events surface for free, and joins the module-wide
+        // one alongside the bespoke sections — that is the point of registering them from one table.
+        const generatedSectionScopes = Object.fromEntries(
+            generatedSectionTypes.map((type) => [
+                sectionSourceKey(type),
+                this.userEvents<RouteSection>([sectionSourceKey(type)]),
+            ]),
+        ) as Record<SectionSourceKey<GeneratedSectionType>, UserEvents<RouteSection>>;
+
+        // `instructionArrows` is deliberately absent: the arrows are a decoration drawn along the
+        // instruction lines, and a caller clicking one means to click the instruction.
+        return this.buildEvents(
+            this.moduleEventsWithShown<MapGeoJSONFeature, RoutingShownFeatures>(
+                [
+                    'mainLines',
+                    'waypoints',
+                    'chargingStops',
+                    'summaryBubbles',
+                    'incidents',
+                    'vehicleRestricted',
+                    'ferries',
+                    'tollRoads',
+                    'tunnels',
+                    'instructionLines',
+                    ...generatedSectionTypes.map(sectionSourceKey),
+                ],
+                this.shownFeaturesHandlers,
+            ),
+            {
+                ...generatedSectionScopes,
+                mainLines: this.userEvents<Route<DisplayRouteProps>>(['mainLines']),
+                waypoints: this.userEvents<Waypoint<WaypointDisplayProps>>(['waypoints']),
+                chargingStops: this.userEvents<RouteSection>(['chargingStops']),
+                summaryBubbles: this.userEvents<DisplayRouteSummary>(['summaryBubbles']),
+                incidents: this.userEvents<RouteSection<DisplayTrafficSectionProps>>(['incidents']),
+                vehicleRestricted: this.userEvents<RouteSection>(['vehicleRestricted']),
+                ferries: this.userEvents<RouteSection>(['ferries']),
+                tollRoads: this.userEvents<RouteSection>(['tollRoads']),
+                tunnels: this.userEvents<RouteSection>(['tunnels']),
+                instructionLines: this.userEvents<DisplayInstruction>(['instructionLines']),
             },
-            module: new ModuleEvents(this.configChangeHandlers, this.shownFeaturesHandlers),
-        };
+        );
     }
 
     /**

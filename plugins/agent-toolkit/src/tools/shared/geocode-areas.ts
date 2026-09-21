@@ -10,6 +10,8 @@
 import { type GeographyType, type Place } from '@tomtom-org/maps-sdk/core';
 import { geocode } from '@tomtom-org/maps-sdk/services';
 import type { Position } from 'geojson';
+import type { ToolExecuteOptions } from '../../types';
+import { withAgentToolkitHeaders } from './agent-headers';
 
 /**
  * Administrative-AREA geography types accepted when resolving a query to a *containing area*
@@ -32,12 +34,18 @@ export const AREA_GEOGRAPHY_TYPES: GeographyType[] = [
  * `boundingBox`. Callers choose among the candidates (e.g. the one nearest the current view) — a
  * centre bias is used rather than a hard viewport-bbox filter so out-of-view areas still resolve.
  */
-export const geocodeAreas = async (query: string, opts: { bias?: Position; limit?: number } = {}): Promise<Place[]> => {
-    const result = await geocode({
+export const geocodeAreas = async (
+    query: string,
+    opts: { bias?: Position; limit?: number } = {},
+    execOptions?: ToolExecuteOptions,
+): Promise<Place[]> => {
+    const requestParams = withAgentToolkitHeaders({
         query,
         limit: opts.limit ?? 6,
         geographyTypes: AREA_GEOGRAPHY_TYPES,
         ...(opts.bias ? { position: opts.bias } : {}),
+        signal: execOptions?.signal,
     });
+    const result = await geocode(requestParams);
     return result.features;
 };

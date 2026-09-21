@@ -30,7 +30,8 @@ writing example code. It is the canonical reference for the consumer-facing API
 (`TomTomMap`, modules, `setStyle`, `standardStyleIDs`, events, services, etc.)
 and will steer you away from internal helpers that aren't part of the public
 surface. The contributor-mode skill (`tomtom-maps-sdk-js-contribution`) is for
-editing `core/`, `services/`, `map/`, or plugins — not for example apps.
+editing `core/`, `services/`, `map/`, or plugins — not for example apps. For the
+example workflow itself, use `tomtom-maps-sdk-js-example-authoring`.
 
 When an example needs an SDK constant or type (style IDs, layer IDs, config
 types, etc.), import it from `@tomtom-org/maps-sdk/...` rather than hardcoding
@@ -80,7 +81,7 @@ my-example/
 │   ├── style.css       # Full-screen #sdk-map positioning
 │   └── config.ts       # export const API_KEY = process.env.API_KEY_EXAMPLES;
 ├── content/
-│   ├── page.mdx        # Frontmatter: title, description, thumbnail, tags
+│   ├── page.mdx        # Frontmatter: title, description, thumbnail, tags (+ optional hideExample/hideDemo/noIndex)
 │   └── thumbnail.png   # Screenshot of the example
 ├── e2e-tests/
 │   ├── sanity.test.ts  # Calls sanityE2ETest({ page, testInfo })
@@ -92,9 +93,43 @@ my-example/
 └── tsconfig.json       # One line: { "extends": "../tsconfig.json" }
 ```
 
-**`src/index.html`** — minimal shell:
+**`content/page.mdx`** — pure frontmatter, empty body. The docs portal reads it to
+build the examples gallery:
+
+```mdx
+---
+title: "My example"
+thumbnail: "./thumbnail.png"
+description: "One-line gallery blurb"
+tags:
+    - getting-started
+    - web
+---
+```
+
+`tags` must use ids declared in [`src/constants/tags.ts`](./src/constants/tags.ts).
+
+Two optional visibility flags control where the portal publishes the example
+(omitted = visible everywhere):
+
+- `hideExample: true` — no gallery card and no sandbox page
+  (`/maps-sdk-js/examples/<name>`); the fullscreen demo (`/demos/<name>`) still
+  deploys if the example ships a prod build. Use for demo-only examples such as
+  `claim-validation-service`.
+- `hideDemo: true` — no fullscreen `/demos/<name>` page even when a prod build
+  ships; the gallery card and sandbox page are unaffected.
+
+A third flag controls search engines rather than publication:
+
+- `noIndex: true` — every page the example still publishes is built and linked
+  as usual, but each carries a `noindex, nofollow` robots tag and is left out of
+  the portal's sitemap. It applies to whichever pages the two flags above leave
+  in place. Use it to withdraw an example from search without unpublishing it.
+
+**`src/index.html`** — minimal shell (lowercase `doctype`; Biome's formatter rewrites the
+uppercase form):
 ```html
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
     <head>
         <title>My Example</title>
@@ -146,6 +181,7 @@ new TomTomMap({
   "type": "module",
   "scripts": {
     "build": "vite build --config ../example-vite.config.ts",
+    "build:sandpack": "vite build --config ../example-sandpack-vite.config.ts",
     "clean:dist": "rimraf ./dist",
     "develop": "vite --config ../example-vite.config.ts",
     "develop:sandpack": "vite --config ../example-sandpack-vite.config.ts",
@@ -153,7 +189,8 @@ new TomTomMap({
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:update-snapshots": "playwright test --update-snapshots",
-    "start-test-server": "vite preview --port 9050"
+    "start-test-server:prod": "vite serve dist/prod --port 9050",
+    "start-test-server:sandpack": "vite preview --outDir dist/sandpack --port 9051"
   },
   "dependencies": {
     "@tomtom-org/maps-sdk": "workspace:*"
@@ -182,7 +219,7 @@ my-nodejs-example/
 │   ├── index.ts        # SDK code: TomTomConfig + service call + console.log (imports config)
 │   └── config.ts       # export const API_KEY = process.env.API_KEY_EXAMPLES;
 ├── content/
-│   ├── page.mdx        # Frontmatter: title, description, thumbnail, tags (include tag: nodejs)
+│   ├── page.mdx        # Frontmatter: same contract as web examples (include tag: nodejs)
 │   └── thumbnail.png   # Screenshot or representative image
 ├── sandpack.ts         # Required (can be empty: export const sandpackOptions = {})
 ├── package.json        # See required scripts below
@@ -268,6 +305,25 @@ export const sandpackOptions: Partial<SandpackOptions> = {
 };
 ```
 
+#### Ordering the tab strip with `sandpackPriorityFiles`
+
+By default the tab strip follows the files-object order and Sandpack opens the template's `main` (`/App.tsx` for `react-ts`). When an example has files a reader should see first — e.g. the agent-setup files in the map agent examples — declare `sandpackPriorityFiles` to float them to the front and open the top one:
+
+```typescript
+// my-example/sandpack.ts
+// Ordered list of VFS path prefixes; a trailing `/` matches a whole folder.
+export const sandpackPriorityFiles: readonly string[] = [
+  '/agent/system-prompt.ts', // exact file
+  '/agent/',                 // then the rest of the folder
+  '/useMapAgent.ts',
+];
+```
+
+- Each entry is a VFS path **prefix**: a file ranks by the first prefix it `startsWith`, so `/tools/` floats the whole folder while `/App.tsx` targets one file.
+- Unranked files keep their original order after the ranked ones; **no file is hidden** — every non-hidden file still appears in the tabs.
+- `getSandpackFilesAndOptions` turns this into standard `visibleFiles` / `activeFile` `SandpackOptions` (see `buildVisibleAndActiveFileOptions` in `src/sandpack/sandpackUtils.ts`). Because it rides the returned `options`, any consumer that spreads them into `<Sandpack>` (the exported `LiveCodingExample`, and the docs portal's `SDKGuideLiveCodingExample` that wraps it) honours the order with **no extra work** — no reliance on files-object key order surviving the trip.
+- Omit it (or leave it empty) to keep Sandpack's default ordering.
+
 The Sandpack preview:
 
 - Automatically loads all example files (index.html, index.ts, style.css)
@@ -305,16 +361,20 @@ Web examples have E2E tests (Node.js examples do not).
 
 **Quick commands:**
 ```bash
-# 1. Build the SDK and the example you're targeting
+# 1. Build the SDK and BOTH bundles of the example you're targeting
 pnpm -F map build
-pnpm -F @examples/<example-name> build
+pnpm -F @examples/<example-name> build            # → dist/prod, served on 9050 for the @prod test
+pnpm -F @examples/<example-name> build:sandpack   # → dist/sandpack, served on 9051 for @sandpack
 
 # 2. Then run E2E from inside the example
 cd examples/<example-name>
 pnpm test:e2e                    # Run tests
-pnpm test:e2e:update-snapshots   # Regenerate upon-load.png snapshot
+pnpm test:e2e:update-snapshots   # Regenerate the snapshots
 pnpm test:e2e:ui                 # Interactive UI mode
 ```
+
+Playwright starts both servers but builds neither: skip a build and that half serves a blank page,
+failing identically to a real regression.
 
 **New example checklist.** When you add a brand-new example, the snapshot and
 thumbnail don't exist yet — the first `pnpm test:e2e:update-snapshots` writes
@@ -322,10 +382,15 @@ thumbnail don't exist yet — the first `pnpm test:e2e:update-snapshots` writes
 <example-name>` then derives `content/thumbnail.png` from it. Commit both
 files alongside the example source.
 
-Each web example has one snapshot:
-- `e2e-tests/snapshots/upon-load.png` — screenshot taken on page load (commit this file)
+A web example's snapshots under `e2e-tests/snapshots/` (all committed):
+- `upon-load.png` — the `@prod` test's whole-page shot of `dist/prod`, at `maxDiffPixelRatio: 0.15`
+- `upon-load-sandpack.png` — the `@sandpack` test's shot of the Sandpack preview of `dist/sandpack`
+- `ui-temp-upon-load.png` — TEMPORARY (`src/e2e-test-utils/tempUiSnapshot.ts`): the example's own
+  chrome with the map hidden, at zero tolerance, on the examples that have chrome. The baseline is
+  a Linux capture and the check **self-skips outside CI**, so it can only be regenerated from the
+  CI job's `ui-temp-baselines` artifact — never locally.
 
-**See [E2E_TESTING.md](./E2E_TESTING.md) for detailed testing documentation.**
+The `tomtom-maps-sdk-js-example-authoring` skill carries this workflow as an ordered procedure.
 
 ### Snapshot & Thumbnail Workflow
 
@@ -357,8 +422,10 @@ pnpm generate-thumbnails:examples
   ```bash
   pnpm -F map build
   pnpm -F @examples/<example-name> build
+  pnpm -F @examples/<example-name> build:sandpack
   ```
-- The Playwright test server (`pnpm start-test-server`) serves from `dist/` — examples must be built first.
+- The Playwright test servers serve from `dist/prod` (`start-test-server:prod`, port 9050) and
+  `dist/sandpack` (`start-test-server:sandpack`, port 9051) — both bundles must be built first.
 - CORS-header tests in some examples require a live API key and will fail in offline/CI environments — this is expected and does not block snapshot updates.
 - Commit both `upon-load.png` and `thumbnail.png` after updating.
 
@@ -418,7 +485,7 @@ examples/
 
 - **default-map** - Basic map initialization with styles, center, and zoom
 - **map-language** - Display maps in different languages
-- **keep-state-when-changing-style** - Maintain map state when switching styles
+- **reset-state-when-changing-style** - Carry the map state across a style switch, or drop it
 
 ### Geometry & Data Visualization
 
@@ -426,6 +493,7 @@ examples/
 - **multiple-geometries** - Show multiple geometric shapes on one map
 - **byod-geojson-heatmap** - Create heatmaps from GeoJSON data
 - **layer-group-toggling** - Toggle layer groups on/off
+- **map-styling-playground** - Semantic styling knobs (sizes, toggles, POI and traffic colours) from a panel built off `StylingModule.describe()`
 - **layer-groups-visibility-animation** - Animate layer visibility changes
 
 ### Search & Geocoding
@@ -434,7 +502,7 @@ examples/
 - **geocode-init** - Initialize map at geocoded location
 - **reverse-geocode** - Convert coordinates to addresses
 - **rev-geo-json** - Reverse geocode with full GeoJSON response
-- **rev-geo-playground** - Interactive reverse geocoding playground
+- **rev-geo-playground** - Reverse geocode a clicked point, with search radius, heading, area types and geopolitical view on one panel
 - **autocomplete-fuzzy-search-playground** - Search with autocomplete suggestions
 - **search-places-in-geometry** - Search for places in the geometry of a geocoded location
 - **search-places-nearby-location** - Search for places in nearby the center of a geocoded location
@@ -455,11 +523,15 @@ examples/
 - **route-reconstruction** - Reconstruct routes from GPS traces
 - **route-monitor-traffic** - Routes considering live traffic
 - **route-geometry-searches** - Find POIs along a route
+- **route-leg-options-playground** - Per-leg route type and avoid list on a multi-stop route
+- **route-stop-wait-playground** - How long a route waits at a stop, on the pin and in the journey time
 
 ### Routing Customization
 
 - **route-custom-main-color** - Customize route line color
 - **route-styling-playground** - Interactive route styling with theme properties and layer overrides
+- **route-sections-playground** - Every route section type on one set of knobs, and the speed-limit sign controls
+- **route-speed-signs** - Four short routes, each posting its speed limits as its own country's road sign
 - **route-waypoint-icon-style** - Custom waypoint markers
 - **route-maplibre-customization** - Advanced route styling with MapLibre
 
@@ -468,6 +540,7 @@ examples/
 - **ldevr-model-id** - EV routing with vehicle model
 - **ldevr-detailed-vehicle** - Detailed EV parameters for routing
 - **ldevr-custom-charging-stops** - Custom charging station preferences
+- **ldevr-preferences-playground** - Tune EV charging preferences and see where the charging time goes
 - **reachable-ranges** - Calculate reachable area on single charge
 - **ev-charging-stations-search** - Interactive exploration of charging station availability data
 - **ev-charging-stations-custom-display** - Customize EV charging station icons, text, and availability display

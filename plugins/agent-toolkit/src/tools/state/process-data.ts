@@ -159,24 +159,22 @@ export const buildProcessDataCodeDoc = (
     scope: ProcessDataScope | undefined,
 ): string => {
     const active = resolveActiveKinds(enabled, scope);
-    // Deep per-kind schema docs only appear once the classifier has committed to specific
-    // kinds. The unscoped path stays terse (terse one-line field hints already live in the
-    // input-field describes; the code-doc just needs the operational reference).
-    const schemaBlocks = scope ? buildEntryKindSchemaDocs(active) : '';
-    const showTrafficNote = !!scope && active.includes('trafficAreaAnalytics');
+    // Deep per-kind schema docs are emitted for every active kind, scoped or not for cross-kind
+    const schemaBlocks = buildEntryKindSchemaDocs(active);
+    const showTrafficNote = active.includes('trafficAreaAnalytics');
     const trafficNote = showTrafficNote
         ? '`trafficAreaAnalytics` is a FeatureCollection of tile/hex regions whose `feature.properties` carry metric ' +
           'fields (`congestionLevel`, `speed`, `freeFlowSpeed`, `travelTime`, `networkLength`); use ' +
           '`turf.booleanPointInPolygon` / `turf.lineIntersect` to bridge with places/routes.\n\n'
         : '';
-    const geometriesProps = !!scope && active.includes('customGeometries') ? `${GEOMETRIES_PROPS_DOC}\n\n` : '';
+    const geometriesProps = active.includes('customGeometries') ? `${GEOMETRIES_PROPS_DOC}\n\n` : '';
     const byodOutputLine = active.includes('byod')
         ? '• `byod: FeatureCollection` — writes a NEW BYOD entry (any GeoJSON: Point/Line/Polygon/mixed). Use for ' +
           'derived BYOD layers (e.g. cleaned/filtered customer data).\n'
         : '';
-    // Per-kind sandbox-doc one-liners — only when scope commits to specific kinds (matches
-    // analyseData's gating; otherwise the input-field describes already carry enough info).
-    const sandboxList = scope ? `${buildEntryKindSandboxDocs(active)}\n` : '';
+    // Per-kind sandbox-doc one-liners — always emitted for the active kinds, matching analyseData
+    // (which never gated these). `active` narrows to the scoped subset when scope is set.
+    const sandboxList = `${buildEntryKindSandboxDocs(active)}\n`;
     return (
         'Async JS returning `{ places?, placeConnections?, geometries?, fitOnMap?, byod? }`. At least one of ' +
         '`places` / `geometries` / `fitOnMap` / `byod` must be present. ' +
@@ -195,7 +193,7 @@ export const buildProcessDataCodeDoc = (
         '• `fitOnMap` — bbox or `{ bbox, padding?, animate? }`. Camera move; when alone, no entry written.\n' +
         byodOutputLine +
         '\n' +
-        buildSandboxToolsDoc(active, !!scope) +
+        buildSandboxToolsDoc(active, true) +
         sandboxList +
         'Each input is `undefined` when its `*EntryIDs` argument was omitted — guard before reading. ' +
         trafficNote +

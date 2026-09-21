@@ -1,12 +1,11 @@
 import type { LineLayerSpecification, SymbolLayerSpecification } from 'maplibre-gl';
 import type { LayerSpecTemplate } from '../../shared';
-import type { RouteWidth } from '../types/routeModuleConfig';
-import { getTollRoadOutlineWidth, SELECTED_ROUTE_FILTER } from './shared';
+import { SELECTED_ROUTE_FILTER } from './shared';
 
 /**
  * @ignore
  */
-export const routeTollRoadsOutline = (routeWidth?: RouteWidth): LayerSpecTemplate<LineLayerSpecification> => ({
+export const routeTollRoadsOutline: LayerSpecTemplate<LineLayerSpecification> = {
     filter: SELECTED_ROUTE_FILTER,
     type: 'line',
     layout: {
@@ -14,10 +13,9 @@ export const routeTollRoadsOutline = (routeWidth?: RouteWidth): LayerSpecTemplat
         'line-cap': 'round',
     },
     paint: {
-        'line-width': getTollRoadOutlineWidth(routeWidth),
         'line-color': '#BEBFFA',
     },
-});
+};
 
 /**
  * @ignore

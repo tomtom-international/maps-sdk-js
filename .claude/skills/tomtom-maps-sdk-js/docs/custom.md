@@ -15,7 +15,7 @@ import type { FeatureCollection, Point, Polygon } from 'geojson';
 ## Basic usage
 
 ```ts
-const module = await CustomGeoJSONModule.get(map, {
+const module = await CustomGeoJSONModule.create(map, {
     sources: {
         points: {
             layers: [{ type: 'circle', paint: { 'circle-radius': 4, 'circle-color': '#0a3653' } }],
@@ -41,7 +41,7 @@ type Sources = {
     buildings: FeatureCollection<Polygon, { name: string }>;
 };
 
-const module = await CustomGeoJSONModule.get<Sources>(map, {
+const module = await CustomGeoJSONModule.create<Sources>(map, {
     sources: {
         heatmap:   { layers: [{ type: 'heatmap', paint: { 'heatmap-radius': 12 } }] },
         buildings: { layers: [{ type: 'fill',    paint: { 'fill-color': '#5a5' } }] },
@@ -115,18 +115,23 @@ class CustomGeoJSONModule<TSources extends Record<string, FeatureCollection> = R
 
 ## Events — per source
 
-`module.events.{sourceName}` returns a `CombinedEvents` for that source covering both user interactions and module lifecycle:
+`module.events.{sourceName}` returns the user events for that source — `on` / `off` / `where`:
 
 ```ts
 const unsubscribe = module.events.points.on('click', (feature, lngLat, features) => { /* ... */ });
 module.events.points.on('hover',         (feature) => { /* ... */ });
 module.events.points.on('long-hover',    (feature) => { /* ... */ });
 module.events.points.on('contextmenu',   (feature, lngLat) => { /* ... */ });
-module.events.points.on('shown-features',(data)    => { /* ... */ });
-module.events.points.on('config-change', (config)  => { /* ... */ });
 
 unsubscribe();
 module.events.points.off('click');
+```
+
+Lifecycle events live on the module. `show` names the source it writes, so `shown-features` does too:
+
+```ts
+module.events.on('shown-features', ({ sourceName, data }) => { /* ... */ });
+module.events.on('config-change',  (config) => { /* ... */ });
 ```
 
 `config-change` handlers are module-wide — every source's `events` shares the same handler list. `shown-features` handlers fire only for their own source.
@@ -157,14 +162,46 @@ markers: {
 ```
 
 ```ts
-// Fill + outline
+// Fill + outline — both below the labels; array order keeps the outline above the fill
 polygons: {
     layers: [
-        { type: 'fill', paint: { 'fill-color': '#5a5', 'fill-opacity': 0.3 } },
-        { type: 'line', paint: { 'line-color': '#2a2', 'line-width': 2 } },
+        { type: 'fill', beforeID: mapStyleLayerIDs.lowestLabel, paint: { 'fill-color': '#5a5', 'fill-opacity': 0.3 } },
+        { type: 'line', beforeID: mapStyleLayerIDs.lowestLabel, paint: { 'line-color': '#2a2', 'line-width': 2 } },
     ],
 },
 ```
+
+---
+
+## Layer placement — `beforeID`
+
+Each layer spec takes an optional `beforeID`: a style layer id the layer is inserted **below** (MapLibre's `addLayer` `beforeId`). Omit it and the layer goes on top of everything. Any layer id in the style is valid, but prefer the `mapStyleLayerIDs` anchors — stable across the standard styles, and the module re-applies your `beforeID` after every style change, so the stacking survives `setStyle`.
+
+**Default for lines and polygons: `mapStyleLayerIDs.lowestLabel`**, so every label and icon stays readable above the data. Point layers (`circle`, `symbol`) usually omit `beforeID`. Use `lowestRoadLine` when the road network should paint over a polygon fill and `lowestBuilding` to sit under 3D buildings — full anchor table in `maplibre.md`.
+
+```ts
+import { CustomGeoJSONModule, mapStyleLayerIDs } from '@tomtom-org/maps-sdk/map';
+
+const module = await CustomGeoJSONModule.create(map, {
+    sources: {
+        zones: {
+            layers: [
+                {
+                    type: 'fill',
+                    beforeID: mapStyleLayerIDs.lowestLabel,
+                    paint: { 'fill-color': '#2A5BD7', 'fill-opacity': 0.35 },
+                },
+            ],
+        },
+    },
+});
+```
+
+Within a source, the `layers` array order decides the draw order of layers sharing a `beforeID`.
+
+`applyConfig` honours `beforeID` only for layer ids it adds. Updating an existing id patches paint/layout/filter/zoom in place and does **not** re-position the layer — use `map.mapLibreMap.moveLayer(layerID, anchor)` with an id from `module.sourceAndLayerIDs`.
+
+**Gotcha:** `lowestRoadLine` and `lowestBuilding` are both absent from the `satellite` style. A missing anchor is not an exception — the SDK logs `Some layers cannot be added…` and the layer is never added, so the data silently doesn't render.
 
 ---
 
@@ -173,7 +210,7 @@ polygons: {
 If a symbol layer references `icon-image: 'my-icon'`, declare the image in `config.images`. The module registers each entry **before** sources/layers are created on init, and re-registers them on every style change as part of its own restoration pass — so you don't write a `StyleChangeHandler` and the symbol layer never renders against a missing image.
 
 ```ts
-const module = await CustomGeoJSONModule.get(map, {
+const module = await CustomGeoJSONModule.create(map, {
     sources: {
         markers: {
             layers: [{ type: 'symbol', layout: { 'icon-image': 'my-marker', 'text-field': ['get', 'name'] } }],
@@ -264,5 +301,6 @@ You don't write a `StyleChangeHandler` yourself — declare icons in `config.ima
 - **Cluster options aren't mutable** via `applyConfig`. Same for source-name changes.
 - **`setVisible(false)` is overridden by `show()`** — calling `show(nonEmptyData, name)` re-reveals that source's layers. Call `setVisible(false)` after the next `show` to keep them hidden.
 - **Custom images go in `config.images`**, not raw `map.addImage`. The module registers them on init and re-registers them on every style change. URLs and SVG strings aren't accepted — pre-load to `HTMLImageElement`/`ImageBitmap`/`ImageData`.
+- **Layer placement goes through `beforeID`** — default lines and polygons to `mapStyleLayerIDs.lowestLabel` so labels stay above them; points go on top (no `beforeID`). The module re-applies it after every style change.
 - **Auto-generated layer IDs are position-based** — if you plan to mutate the layer list with `applyConfig`, give each layer a stable `id`.
 - **Cluster features (synthetic) aren't in the source's shown-features list**, so the first argument to `events.{name}.on('click', …)` is `undefined` for cluster clicks. Fall back to the third argument `features[0]` (the raw MapLibre `MapGeoJSONFeature`) — it always contains the rendered cluster with `cluster: true`, `cluster_id`, `point_count`, `point_count_abbreviated`.

@@ -13,8 +13,10 @@ const CREASE_ANGLE_RADIANS = Math.PI / 6;
 const DEFAULT_TRANSCODER_PATH = `https://unpkg.com/three@0.${REVISION}.x/examples/jsm/libs/basis/`;
 
 // Private maplibre-gl internals this source needs, reached via an `unknown` cast.
+// v6 stopped having `Map` extend `Camera`, so the transform hangs off the composed `_camera`
+// rather than the map itself (see the same note in ModelsLayer).
 interface MapLibreTransformInternals {
-    transform: { tileSize: number };
+    _camera: { transform: { tileSize: number } };
 }
 
 // Element of maplibre's coveringTiles() result; exposes `.key`, `.canonical.{z,url}` and `.toString()`.
@@ -75,7 +77,7 @@ export class ModelsSource {
     }
 
     private coveringTiles(): CoveringTile[] {
-        const transform = (this.map as unknown as MapLibreTransformInternals).transform;
+        const transform = (this.map as unknown as MapLibreTransformInternals)._camera.transform;
         return this.map.coveringTiles({
             tileSize: transform.tileSize,
             minzoom: this.minzoom,
@@ -107,7 +109,7 @@ export class ModelsSource {
     }
 
     // Fetch via the global `fetch` (not three.js' XHR) so it rides any installed
-    // session wrapper — e.g. the demo-BFF cookie gate — then parse the GLB.
+    // session wrapper — e.g. the demos-proxy cookie gate — then parse the GLB.
     private async fetchTile(url: string): Promise<Group | null> {
         const response = await fetch(url, this.withCredentials ? { credentials: 'include' } : undefined);
         // 204 = no landmark in this tile, 404 = tile not produced — both expected.

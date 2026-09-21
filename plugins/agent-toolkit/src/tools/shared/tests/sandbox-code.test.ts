@@ -123,6 +123,15 @@ describe('formatSandboxExecutionError', () => {
         expect(result).toMatch(/Hint:.*Feature/);
     });
 
+    it('hints on `coord must be GeoJSON Point` (point-only op on a LineString incident)', () => {
+        const result = formatSandboxExecutionError(
+            'Analysis',
+            new Error('coord must be GeoJSON Point or an Array of numbers'),
+        );
+        expect(result).toMatch(/Hint:.*booleanIntersects/);
+        expect(result).toMatch(/geometry\.type === "Point"/);
+    });
+
     it('hints on `is not iterable`', () => {
         const result = formatSandboxExecutionError('Analysis', new TypeError('undefined is not iterable'));
         expect(result).toMatch(/Hint:.*iterable/);

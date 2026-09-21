@@ -192,7 +192,7 @@ export class BYODState implements ShownEntriesSlice, StateSlice {
      */
     async getEntryModule(entryId: string): Promise<CustomGeoJSONModule> {
         const entry = this._requireEntry(entryId);
-        entry._module ??= await CustomGeoJSONModule.get(this._ttMap, {
+        entry._module ??= await CustomGeoJSONModule.create(this._ttMap, {
             sources: { data: { layers: entry.layers } },
         });
         return entry._module;

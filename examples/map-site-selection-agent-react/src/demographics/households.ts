@@ -2,20 +2,17 @@ import { getPosition, type POICategory } from '@tomtom-org/maps-sdk/core';
 import { explorationSearch, search } from '@tomtom-org/maps-sdk/services';
 import type { MultiPolygon, Polygon } from 'geojson';
 import type { Counted } from '../results/results-store';
+import { householdsEnabled, isExperimentalSearch, searchLimit } from './experimental-search';
 
-// The agent-toolkit can route search through an experimental backend via its `experimentalSearch` feature
-// flag; this module mirrors that single switch for the example's own searches. Both backends do
-// everything this example needs — POI/category search AND enumerating address points (the household
-// "Reach" / residential-density signal): the experimental backend filters addresses with `placeTypes`,
-// the default one with the `PAD` (point-address) index. The only practical difference is the result
-// ceiling (SEARCH_LIMIT) — the default backend maxes out at 100, so in a populated area Reach saturates
-// and reads as a coarse relative signal (never a true household total); the experimental backend's higher
-// ceiling differentiates further.
-//
-// Hardcoded OFF for now — the default search is enough and we are not exposing the experimental backend
-// yet. To enable it later, flip this one constant AND pass `featureFlags: { experimentalSearch: true }` to
-// createMapAgent so the toolkit and this example agree. Typed `boolean` so both branches stay live.
-const EXPERIMENTAL_SEARCH: boolean = false;
+// Search backends for the example's own queries, driven by the experimentalSearch flag stored at
+// agent creation (see experimental-search.ts). Both backends serve the POI/category search; the
+// household ("Reach" / residential-density) address lookup exists ONLY on the experimental backend —
+// it needs the 10 000 ceiling to differentiate, so countHouseholds / searchAddresses are guarded by
+// householdsEnabled() and report null / an empty sample when the flag is off (callers hide every
+// household surface then).
+
+// Re-exported so the tools keep one import site for the search plumbing.
+export { householdsEnabled, searchLimit };
 
 type AreaGeometry = Polygon | MultiPolygon;
 // A feature can come from either backend, so the shared type is the union of both result shapes.
@@ -23,30 +20,31 @@ export type SearchFeature =
     | Awaited<ReturnType<typeof search>>['features'][number]
     | Awaited<ReturnType<typeof explorationSearch>>['features'][number];
 
-// Result cap, matching the active backend's ceiling (mirrors the toolkit's own per-backend limits).
-export const SEARCH_LIMIT = EXPERIMENTAL_SEARCH ? 10_000 : 100;
-
-// The two places the search backend is chosen, driven by the toolkit's feature flag. Both backends
-// accept the same core request (query / poiCategories / geometries / limit) for POI search...
+// Where the POI-search backend is chosen. Both backends accept the same core request
+// (query / poiCategories / geometries / limit) for POI search.
 const runSearch = (request: {
     geometries: AreaGeometry[];
     limit: number;
     poiCategories?: POICategory[];
     query?: string;
-}) => (EXPERIMENTAL_SEARCH ? explorationSearch(request) : search(request));
+}) => (isExperimentalSearch() ? explorationSearch(request) : search(request));
 
-// ...and both can enumerate address points within a geometry, via the filter each backend exposes.
+// Address-point enumeration is experimental-backend only (its `placeTypes` filter under the 10 000
+// ceiling); only reachable when householdsEnabled() — the guards below never call it otherwise.
 const searchAddressPoints = (geometry: AreaGeometry) =>
-    EXPERIMENTAL_SEARCH
-        ? explorationSearch({ placeTypes: ['PointAddress'], geometries: [geometry], limit: SEARCH_LIMIT })
-        : search({ indexes: ['PAD'], geometries: [geometry], limit: SEARCH_LIMIT });
+    explorationSearch({ placeTypes: ['PointAddress'], geometries: [geometry], limit: searchLimit() });
 
-/** Address (≈household) count within the catchment. `count: null` = the address search failed. */
+/**
+ * Address (≈household) count within the catchment. `count: null` = the address search failed, or the
+ * household signal is disabled (experimental search off) — callers gate their UI on
+ * {@link householdsEnabled}, not on this null.
+ */
 export const countHouseholds = async (geometry: AreaGeometry): Promise<Counted> => {
+    if (!householdsEnabled()) return { count: null, capped: false };
     try {
         const result = await searchAddressPoints(geometry);
         const count = result.features.length;
-        return { count, capped: count >= SEARCH_LIMIT };
+        return { count, capped: count >= searchLimit() };
     } catch {
         return { count: null, capped: false };
     }
@@ -54,30 +52,30 @@ export const countHouseholds = async (geometry: AreaGeometry): Promise<Counted> 
 
 /**
  * Address (≈household) POINTS within an area, for per-cell residential-density counting in a whitespace
- * scan. Caps at {@link SEARCH_LIMIT}; on the default backend (100) the sample saturates almost
- * immediately, so the result is a coarse relative signal, not a true total — callers should surface
- * `capped`.
+ * scan. Caps at {@link searchLimit} — callers should surface `capped`. Always empty when the household
+ * signal is disabled (experimental search off).
  */
 export const searchAddresses = async (
     geometry: AreaGeometry,
 ): Promise<{ features: SearchFeature[]; capped: boolean }> => {
+    if (!householdsEnabled()) return { features: [], capped: false };
     try {
         const result = await searchAddressPoints(geometry);
-        return { features: result.features, capped: result.features.length >= SEARCH_LIMIT };
+        return { features: result.features, capped: result.features.length >= searchLimit() };
     } catch {
         return { features: [], capped: false };
     }
 };
 
 /**
- * POI search inside a geometry, capped at {@link SEARCH_LIMIT}. Category search when codes resolve;
+ * POI search inside a geometry, capped at {@link searchLimit}. Category search when codes resolve;
  * free-text fallback otherwise. Routes through the active search backend. Returns [] on failure.
  */
 export const searchInGeometry = async (
     geometry: AreaGeometry,
     options: { poiCategories?: POICategory[]; query?: string; limit?: number },
 ): Promise<SearchFeature[]> => {
-    const limit = options.limit ?? SEARCH_LIMIT;
+    const limit = options.limit ?? searchLimit();
     try {
         const result = await runSearch(
             options.poiCategories && options.poiCategories.length > 0

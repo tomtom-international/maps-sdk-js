@@ -27,8 +27,10 @@ const toRadians = (degrees: number): number => (degrees * Math.PI) / 180;
 const LANDMARK_LIGHT_INTENSITY = 0.5;
 
 // Subset of the private maplibre-gl internals this layer needs, reached via an `unknown` cast.
+// v6 stopped having `Map` extend `Camera`, so the transform is no longer a property of the map —
+// it hangs off the composed `_camera` instead. Reading `map.transform` there yields `undefined`.
 interface MapLibreRenderInternals {
-    transform: { tileZoom: number; bearingInRadians?: number };
+    _camera: { transform: { tileZoom: number; bearingInRadians?: number } };
     style: {
         light?: {
             properties?: {
@@ -123,7 +125,7 @@ export class ModelsLayer implements CustomLayerInterface {
 
     render(_gl: WebGLRenderingContext | WebGL2RenderingContext, options: CustomRenderMethodInput) {
         const internals = this.map as unknown as MapLibreRenderInternals;
-        const tileZoom = internals.transform.tileZoom;
+        const tileZoom = internals._camera.transform.tileZoom;
         const inZoomRange = tileZoom >= this.minzoom && tileZoom <= this.maxzoom;
         this.tiles.visible = this.visible && inZoomRange;
 
@@ -145,7 +147,10 @@ export class ModelsLayer implements CustomLayerInterface {
         this.map.triggerRepaint();
     }
 
-    // Canonical maplibre v5 pattern: MVP*scale on camera.projectionMatrix, via mainMatrix because v5 flattens Z.
+    // maplibre hands custom layers `defaultProjectionData.mainMatrix`, which takes mercator 0..1 for x/y
+    // and — in `3d` rendering mode — a conformal z in those same mercator units, not metres. Metre
+    // altitudes therefore need the mercator scale factor at the current latitude, hence the extra
+    // 1/cos(lat) that z carries and x/y don't.
     private alignCameraToMap(options: CustomRenderMethodInput) {
         const latitudeInRadians = (this.map.getCenter().lat * Math.PI) / 180;
         const zScale = TILE_SCALE / Math.cos(latitudeInRadians);
@@ -225,7 +230,7 @@ export class ModelsLayer implements CustomLayerInterface {
 
             // Viewport-anchored lights rotate with the map bearing, like maplibre's painter.
             const anchor = properties.get('anchor');
-            const bearingInRadians = anchor === 'viewport' ? (internals.transform.bearingInRadians ?? 0) : 0;
+            const bearingInRadians = anchor === 'viewport' ? (internals._camera.transform.bearingInRadians ?? 0) : 0;
             const color = properties.get('color');
             this.forEachFillExtrusionMaterial((material) =>
                 material.setLight(position, bearingInRadians, intensity, color),

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -7,31 +7,31 @@
         <link rel="stylesheet" href="../css/styles.css">
     </head>
     <body class="body">
-        <div class="sdk-example-form-field">
-            <span class="sdk-example-form-label">Checkbox Options</span>
+        <div class="ui-form-field">
+            <span class="ui-form-label">Checkbox Options</span>
 
-            <div class="sdk-example-checkbox-list">
+            <div class="ui-checkbox-list">
                 <!-- Option 1 -->
-                <label class="sdk-example-checkbox-label">
-                    <input type="checkbox" id="sdk-example-option1" checked>
+                <label class="ui-checkbox-label">
+                    <input type="checkbox" id="ui-option1" checked>
                     First option (checked by default)
                 </label>
 
                 <!-- Option 2 -->
-                <label class="sdk-example-checkbox-label">
-                    <input type="checkbox" id="sdk-example-option2">
+                <label class="ui-checkbox-label">
+                    <input type="checkbox" id="ui-option2">
                     Second option
                 </label>
 
                 <!-- Option 3 -->
-                <label class="sdk-example-checkbox-label">
-                    <input type="checkbox" id="sdk-example-option3">
+                <label class="ui-checkbox-label">
+                    <input type="checkbox" id="ui-option3">
                     Third option
                 </label>
 
                 <!-- Option 4 (disabled) -->
-                <label class="sdk-example-checkbox-label">
-                    <input type="checkbox" id="sdk-example-option4" disabled>
+                <label class="ui-checkbox-label">
+                    <input type="checkbox" id="ui-option4" disabled>
                     Fourth option (disabled)
                 </label>
             </div>
@@ -40,7 +40,7 @@
         <!--
         JavaScript Event Listener Example:
 
-        document.querySelector('#sdk-example-option1')?.addEventListener('change', (event) => {
+        document.querySelector('#ui-option1')?.addEventListener('change', (event) => {
             const isChecked = (event.target as HTMLInputElement).checked;
             console.log('Option 1 is now:', isChecked);
 

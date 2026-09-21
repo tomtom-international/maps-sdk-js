@@ -6,7 +6,7 @@ import type {
     HeatmapLayerSpecification,
     LineLayerSpecification,
 } from 'maplibre-gl';
-import type { BeforeLayerConfig, ToBeAddedLayerSpecWithoutSource } from '../../shared';
+import type { BeforeLayerConfig, LightDark, ToBeAddedLayerSpecWithoutSource } from '../../shared';
 import { mapStyleLayerIDs } from '../../shared';
 import { isClickEventState } from '../../shared/layers/eventState';
 import type {
@@ -25,6 +25,12 @@ import { AREA_ANALYTICS_DEFAULTS } from '../types/trafficAreaAnalyticsConfig';
  * @ignore
  */
 export type MetricRange = { min: number; max: number };
+
+// White outline / prism for the cell hover / click highlight.
+const HIGHLIGHT_COLOR = '#ffffff';
+
+// Default region polygon colour, resolved for the active map theme: black on light, white on dark.
+const getThemeAdaptiveRegionPolygonColor = (lightDark: LightDark) => (lightDark === 'dark' ? '#FFFFFF' : '#000000');
 
 // ── Colour theme presets ─────────────────────────────────────────────
 
@@ -94,8 +100,8 @@ const resolveExtrusionBeforeID = (beforeLayerConfig?: BeforeLayerConfig): string
 // Builds a MapLibre interpolation expression mapping a metric property to a color scale.
 const buildColorExpression = (
     metric: AreaAnalyticsMetricKey,
-    colorConfig?: AreaAnalyticsColorTheme | AreaAnalyticsColorStopsConfig,
-    computedRange?: MetricRange,
+    colorConfig: AreaAnalyticsColorTheme | AreaAnalyticsColorStopsConfig | undefined,
+    computedRange: MetricRange | undefined,
 ): ExpressionSpecification => {
     const effectiveConfig = colorConfig ?? AREA_ANALYTICS_DEFAULTS.metricConfig[metric].color ?? 'trafficLight';
     const stops = resolveColorStops(effectiveConfig);
@@ -128,7 +134,7 @@ const buildColorExpression = (
 // Builds a MapLibre heatmap-color expression using the given color config.
 const buildHeatmapColorExpression = (
     metric: AreaAnalyticsMetricKey,
-    colorConfig?: AreaAnalyticsColorTheme | AreaAnalyticsColorStopsConfig,
+    colorConfig: AreaAnalyticsColorTheme | AreaAnalyticsColorStopsConfig | undefined,
 ): ExpressionSpecification => {
     const effectiveConfig = colorConfig ?? AREA_ANALYTICS_DEFAULTS.metricConfig[metric].color ?? 'trafficLight';
     const stops = resolveColorStops(effectiveConfig);
@@ -224,7 +230,7 @@ export const expandThemeToAllMetrics = (
  */
 export const buildHeatmapLayerSpec = (
     layerId: string,
-    config?: TrafficAreaAnalyticsConfig,
+    config: TrafficAreaAnalyticsConfig | undefined,
     computedRange?: MetricRange,
 ): ToBeAddedLayerSpecWithoutSource<HeatmapLayerSpecification> => {
     const metric = getActiveMetric(config);
@@ -253,7 +259,7 @@ export const buildHeatmapLayerSpec = (
  */
 export const buildHexFillLayerSpec = (
     layerId: string,
-    config?: TrafficAreaAnalyticsConfig,
+    config: TrafficAreaAnalyticsConfig | undefined,
     computedRange?: MetricRange,
 ): ToBeAddedLayerSpecWithoutSource<FillLayerSpecification> => {
     const metric = getActiveMetric(config);
@@ -276,7 +282,7 @@ export const buildHexFillLayerSpec = (
  */
 export const buildHexExtrusionLayerSpec = (
     layerId: string,
-    config?: TrafficAreaAnalyticsConfig,
+    config: TrafficAreaAnalyticsConfig | undefined,
     computedRange?: MetricRange,
 ): ToBeAddedLayerSpecWithoutSource<FillExtrusionLayerSpecification> => {
     const metric = getActiveMetric(config);
@@ -303,7 +309,7 @@ export const buildHexExtrusionLayerSpec = (
  */
 export const buildSquareFillLayerSpec = (
     layerId: string,
-    config?: TrafficAreaAnalyticsConfig,
+    config: TrafficAreaAnalyticsConfig | undefined,
     computedRange?: MetricRange,
 ): ToBeAddedLayerSpecWithoutSource<FillLayerSpecification> => {
     const metric = getActiveMetric(config);
@@ -326,7 +332,7 @@ export const buildSquareFillLayerSpec = (
  */
 export const buildSquareExtrusionLayerSpec = (
     layerId: string,
-    config?: TrafficAreaAnalyticsConfig,
+    config: TrafficAreaAnalyticsConfig | undefined,
     computedRange?: MetricRange,
 ): ToBeAddedLayerSpecWithoutSource<FillExtrusionLayerSpecification> => {
     const metric = getActiveMetric(config);
@@ -359,7 +365,8 @@ const resolveRegionConfig = (region?: AreaAnalyticsRegionPolygonConfig) => ({
  */
 export const buildRegionFillLayerSpec = (
     layerId: string,
-    config?: TrafficAreaAnalyticsConfig,
+    config: TrafficAreaAnalyticsConfig | undefined,
+    lightDark: LightDark,
 ): ToBeAddedLayerSpecWithoutSource<FillLayerSpecification> => {
     const { color, fillOpacity } = resolveRegionConfig(config?.regionPolygon);
 
@@ -368,7 +375,7 @@ export const buildRegionFillLayerSpec = (
         type: 'fill',
         beforeID: resolveBeforeID(),
         paint: {
-            'fill-color': color,
+            'fill-color': color ?? getThemeAdaptiveRegionPolygonColor(lightDark),
             'fill-opacity': fillOpacity,
         },
     };
@@ -380,7 +387,8 @@ export const buildRegionFillLayerSpec = (
  */
 export const buildRegionLineLayerSpec = (
     layerId: string,
-    config?: TrafficAreaAnalyticsConfig,
+    config: TrafficAreaAnalyticsConfig | undefined,
+    lightDark: LightDark,
 ): ToBeAddedLayerSpecWithoutSource<LineLayerSpecification> => {
     const { color, outlineOpacity, outlineWidth } = resolveRegionConfig(config?.regionPolygon);
 
@@ -389,7 +397,7 @@ export const buildRegionLineLayerSpec = (
         type: 'line',
         beforeID: resolveBeforeID(),
         paint: {
-            'line-color': color,
+            'line-color': color ?? getThemeAdaptiveRegionPolygonColor(lightDark),
             'line-opacity': outlineOpacity,
             'line-width': outlineWidth,
         },
@@ -412,7 +420,7 @@ const buildPolygonOutlineLayerSpec = (
     beforeID,
     filter: ['has', 'eventState'],
     paint: {
-        'line-color': '#ffffff',
+        'line-color': HIGHLIGHT_COLOR,
         'line-width': ['case', isClickEventState, 3, 2],
         'line-opacity': ['case', isClickEventState, 1, 0.8],
     },
@@ -424,7 +432,7 @@ const buildPolygonOutlineLayerSpec = (
  */
 export const buildHexOutlineLayerSpec = (
     layerId: string,
-    config?: TrafficAreaAnalyticsConfig,
+    config: TrafficAreaAnalyticsConfig | undefined,
 ): ToBeAddedLayerSpecWithoutSource<LineLayerSpecification> =>
     buildPolygonOutlineLayerSpec(layerId, resolveBeforeID(config?.beforeLayerConfig?.hexgrid?.flat2D));
 
@@ -434,7 +442,7 @@ export const buildHexOutlineLayerSpec = (
  */
 export const buildSquareOutlineLayerSpec = (
     layerId: string,
-    config?: TrafficAreaAnalyticsConfig,
+    config: TrafficAreaAnalyticsConfig | undefined,
 ): ToBeAddedLayerSpecWithoutSource<LineLayerSpecification> =>
     buildPolygonOutlineLayerSpec(layerId, resolveBeforeID(config?.beforeLayerConfig?.square?.flat2D));
 
@@ -450,7 +458,7 @@ const buildExtrusionHighlightLayerSpec = (
     paint: {
         ...base.paint,
         // fill-extrusion-opacity is not data-driven — use a constant and vary the color instead.
-        'fill-extrusion-color': ['case', isClickEventState, '#ffffff', '#ffffff'],
+        'fill-extrusion-color': ['case', isClickEventState, HIGHLIGHT_COLOR, HIGHLIGHT_COLOR],
         'fill-extrusion-height': ['+', base.paint?.['fill-extrusion-height'] as ExpressionSpecification, 0.5],
         'fill-extrusion-opacity': 0.6,
     },
@@ -463,7 +471,7 @@ const buildExtrusionHighlightLayerSpec = (
  */
 export const buildHexExtrusionHighlightLayerSpec = (
     layerId: string,
-    config?: TrafficAreaAnalyticsConfig,
+    config: TrafficAreaAnalyticsConfig | undefined,
     computedRange?: MetricRange,
 ): ToBeAddedLayerSpecWithoutSource<FillExtrusionLayerSpecification> =>
     buildExtrusionHighlightLayerSpec(buildHexExtrusionLayerSpec(layerId, config, computedRange));
@@ -475,7 +483,7 @@ export const buildHexExtrusionHighlightLayerSpec = (
  */
 export const buildSquareExtrusionHighlightLayerSpec = (
     layerId: string,
-    config?: TrafficAreaAnalyticsConfig,
+    config: TrafficAreaAnalyticsConfig | undefined,
     computedRange?: MetricRange,
 ): ToBeAddedLayerSpecWithoutSource<FillExtrusionLayerSpecification> =>
     buildExtrusionHighlightLayerSpec(buildSquareExtrusionLayerSpec(layerId, config, computedRange));

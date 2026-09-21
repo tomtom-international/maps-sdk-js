@@ -1,5 +1,6 @@
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import {
+    BaseMapLayerGroupName,
     BaseMapModule,
     POIsModule,
     TomTomMap,
@@ -21,32 +22,46 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         },
     });
 
-    const orderedModules = [
-        await BaseMapModule.get(map, { layerGroupsFilter: { mode: 'include', names: ['borders'] } }),
-        await BaseMapModule.get(map, { layerGroupsFilter: { mode: 'include', names: ['buildings2D'] } }),
-        await BaseMapModule.get(map, { layerGroupsFilter: { mode: 'include', names: ['countryLabels'] } }),
-        await BaseMapModule.get(map, { layerGroupsFilter: { mode: 'include', names: ['land'] } }),
-        await BaseMapModule.get(map, { layerGroupsFilter: { mode: 'include', names: ['capitalLabels'] } }),
-        await BaseMapModule.get(map, { layerGroupsFilter: { mode: 'include', names: ['roadLines'] } }),
-        await BaseMapModule.get(map, { layerGroupsFilter: { mode: 'include', names: ['buildings3D'] } }),
-        await BaseMapModule.get(map, { layerGroupsFilter: { mode: 'include', names: ['placeLabels'] } }),
-        await BaseMapModule.get(map, { layerGroupsFilter: { mode: 'include', names: ['roadLabels'] } }),
-        await BaseMapModule.get(map, { layerGroupsFilter: { mode: 'include', names: ['roadShields'] } }),
-        await TrafficIncidentsModule.get(map),
-        await POIsModule.get(map),
-        await TrafficFlowModule.get(map),
+    const baseMap = await BaseMapModule.get(map);
+    const trafficIncidents = await TrafficIncidentsModule.get(map);
+    const pois = await POIsModule.get(map);
+    const trafficFlow = await TrafficFlowModule.get(map);
+
+    // The order the map builds up in. Base map groups are toggled through the one base map
+    // module, which takes the group to act on; the other three are whole modules of their own.
+    const baseMapGroupOrder: BaseMapLayerGroupName[] = [
+        'borders',
+        'buildings2D',
+        'countryLabels',
+        'land',
+        'capitalLabels',
+        'roads',
+        'buildings3D',
+        'allPlaceLabels',
+        'roadLabels',
+        'roadShields',
+    ];
+
+    const orderedSteps: ((visible: boolean) => void)[] = [
+        ...baseMapGroupOrder.map(
+            (name) => (visible: boolean) =>
+                baseMap.setVisible(visible, { layerGroups: { mode: 'include', names: [name] } }),
+        ),
+        (visible) => trafficIncidents.setVisible(visible),
+        (visible) => pois.setVisible(visible),
+        (visible) => trafficFlow.setVisible(visible),
     ];
 
     // Iterating through negative indexes shows the default map:
     let index = -3;
     setInterval(() => {
         if (index == -1) {
-            orderedModules.forEach((module) => module.setVisible(false));
+            orderedSteps.forEach((step) => step(false));
         } else if (index >= 0) {
-            orderedModules[index].setVisible(true);
+            orderedSteps[index](true);
         }
         index++;
-        if (index > orderedModules.length - 1) {
+        if (index > orderedSteps.length - 1) {
             // Iterating through negative indexes shows the default map:
             index = -3;
         }

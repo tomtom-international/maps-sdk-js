@@ -8,7 +8,7 @@ import { LayerSpecTemplate, LightDark, mapStyleLayerIDs } from '../../shared';
 import { SELECTED_PIN_ICON_SIZE } from '../../shared/layers/commonLayerProps';
 import { pinLayerBaseSpec } from '../../shared/layers/symbolLayers';
 import type { PlaceLayerName, PlaceLayersConfig, PlacesModuleConfig } from '../types/placesModuleConfig';
-import { buildCustomIconScalesMap, type IconScalesMap } from '../utils/customIconScales';
+import { buildCustomIconScalesMap, type IconPositioningMap } from '../utils/customIconScales';
 import { buildLayoutConfig, buildPaintConfig, buildTextFieldExpression } from '../utils/layerConfiguration';
 import {
     buildBaseMapPOILayerSpec,
@@ -129,7 +129,7 @@ const withConfig = (
     config: PlacesModuleConfig | undefined,
     layerName: SymbolPlaceLayerName,
     lightDark: LightDark,
-    iconTextOffsetScales?: IconScalesMap,
+    iconTextOffsetScales?: IconPositioningMap,
 ): LayerSpecTemplate<SymbolLayerSpecification> => {
     const textConfig = config?.text;
     const customLayer = config?.layers?.[layerName];

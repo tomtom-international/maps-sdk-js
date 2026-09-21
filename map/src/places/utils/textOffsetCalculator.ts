@@ -146,8 +146,11 @@ export const getTextOffset = (
     for (const [iconId, scales] of iconTextOffsetScales.entries()) {
         // Centered themes (base-map / circle-icon) use larger vertical offsets to match native map styling
         const baseTopOffset = isCenteredTheme ? DEFAULT_TEXT_OFFSET_Y * 2 : DEFAULT_TEXT_OFFSET_Y;
-        const topOffset = baseTopOffset * scales.heightScale;
-        const sideOffset = DEFAULT_TEXT_OFFSET_X * scales.widthScale;
+        // iconScaleMultiplier accounts for this layer's own icon-size (e.g. the larger
+        // `selected` pin layer) — without it, a custom icon's offset would ignore which
+        // layer it's rendered on, unlike the fallback offset above.
+        const topOffset = baseTopOffset * scales.heightScale * iconScaleMultiplier;
+        const sideOffset = DEFAULT_TEXT_OFFSET_X * scales.widthScale * iconScaleMultiplier;
 
         // Centered themes (centered icon anchor) → no vertical adjustment for side anchors
         // Pin theme uses pins (bottom-anchored) → shift labels upward to align with visual center

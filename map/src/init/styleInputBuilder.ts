@@ -4,6 +4,19 @@ import { styleModules } from './types/mapInit';
 
 export const DEFAULT_STANDARD_STYLE_ID: StandardStyleID = 'standardLight';
 
+/**
+ * The version of the TomTom Orbis map styles the SDK loads when {@link StandardStyle.version} is not
+ * given. Everything in the SDK that relies on the structure of a standard style — the base-map
+ * layer groups, the styling knobs — is curated and verified against this version, so a bump here is
+ * a bump of those tables too.
+ *
+ * Exported so the tooling that curates against it — the style-fixture refresh script — reads the
+ * same value, rather than restating it.
+ *
+ * @ignore
+ */
+export const DEFAULT_STYLE_VERSION = '0.6.0-0';
+
 const standardStyleModulesValues: Record<StandardStyleID, Record<StyleModule, string>> = {
     standardLight: {
         trafficIncidents: 'incidents_light',
@@ -54,7 +67,7 @@ const mapSuffixes: Record<StandardStyleID, string> = {
 
 const buildStandardStyleUrl = (standardStyle: StandardStyle, baseUrl: string, apiKey: string): string => {
     const standardStyleID = standardStyle.id ?? DEFAULT_STANDARD_STYLE_ID;
-    const version = standardStyle.version ?? '0.6.0-0';
+    const version = standardStyle.version ?? DEFAULT_STYLE_VERSION;
 
     const styleURL = new URL(`${baseUrl}/maps/orbis/assets/styles/${version}/style.json`);
     // Param order is asserted by tests and matches the order historically

@@ -20,7 +20,7 @@ Deep-dive subsystems live in `docs/agent-toolkit/` — match your task below and
 | Classifier & system prompt | `agent-toolkit/prompt-and-classifier.md` | Swapping / disabling the classifier, tuning `classificationPrompt`, shaping `BASE_SYSTEM_PROMPT` via prefix / suffix / section overrides |
 | BYOD | `agent-toolkit/byod.md` | Bring-your-own-data ingest, `BYODDataProfile`, untrusted-data handling, URL fetch policy, `setByodLayers` styling |
 
-Use `Glob` with pattern `.claude/skills/tomtom-maps-sdk-js/docs/agent-toolkit/<filename>` to locate a sub-doc, then read it.
+Read `${CLAUDE_SKILL_DIR}/docs/agent-toolkit/<filename>` directly.
 For multi-topic tasks, read several.
 
 ---

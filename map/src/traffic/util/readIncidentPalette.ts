@@ -29,7 +29,10 @@ const LAYER_IDS: Record<Magnitude, LayerIdPair> = {
     indefinite: { outline: 'TrafficIncidents - Closed road outline', inner: 'TrafficIncidents - Closed road pattern' },
 };
 
-/** @ignore */
+/**
+ * Fallback used only when the loaded style's incident layers can't be read as plain colour strings.
+ * @ignore
+ */
 export const FALLBACK_INCIDENT_PALETTE: IncidentPalette = {
     outline: {
         unknown: 'hsl(198, 20%, 54%)',

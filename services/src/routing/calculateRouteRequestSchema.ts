@@ -9,7 +9,8 @@ import {
     lineStringCoordsSchema,
 } from '../shared/schema/geometriesSchema';
 import type { SchemaRefinement } from '../shared/types/validation';
-import type { CalculateRouteParams } from './types/calculateRouteParams';
+import { isLDEVRRequest } from './requestBuilder';
+import { arrivalSides, type CalculateRouteParams, chargingStopsStrategies } from './types/calculateRouteParams';
 
 const waypointLikeSchema = z.union([hasLngLatSchema, geometrySchema]);
 const pathLikeSchema = z.union([lineStringCoordsSchema, featureSchema]);
@@ -19,10 +20,9 @@ const mandatorySchema = z.object({
 });
 
 const optionalSchema = z.object({
-    computeAdditionalTravelTimeFor: z.enum(['none', 'all']).optional(),
-    vehicleHeading: z.number().min(0).max(359.5).optional(),
-    // TODO add proper instructionsInfo check
-    // instructionsType: z.enum(instructionsTypes),
+    arrivalSide: z.enum(arrivalSides).optional(),
+    chargingStopsStrategy: z.enum(chargingStopsStrategies).optional(),
+    computeTravelTimeFor: z.enum(['none', 'all']).optional(),
     maxAlternatives: z.number().min(0).max(5).optional(),
     sectionTypes: z.array(z.enum(inputSectionTypesWithGuidance as [SectionType, ...SectionType[]])).optional(),
 });
@@ -40,7 +40,20 @@ const locationsRefinement: SchemaRefinement<CalculateRouteParams> = {
     message: 'At least 2 waypoints or 1 path (route reconstruction) is required.',
 };
 
+// The strategy only reaches the wire on the LDEVR endpoint, and only charging preferences select
+// that endpoint. A strategy on its own would be dropped by the request builder, so ask the builder's
+// own predicate rather than re-deciding here: a `chargingPreferences: undefined` that satisfied a
+// key check would pass validation and then silently lose the strategy.
+const chargingStopsStrategyRefinement: SchemaRefinement<CalculateRouteParams> = {
+    check: (data: CalculateRouteParams): boolean => !data.chargingStopsStrategy || isLDEVRRequest(data),
+    message:
+        'chargingStopsStrategy: set vehicle.preferences.chargingPreferences as well — an EV route needs a minimum charge at the destination, which only the charging preferences provide.',
+};
+
 /**
  * @ignore
  */
-export const routeRequestValidationConfig = { schema, refinements: [locationsRefinement] };
+export const routeRequestValidationConfig = {
+    schema,
+    refinements: [locationsRefinement, chargingStopsStrategyRefinement],
+};

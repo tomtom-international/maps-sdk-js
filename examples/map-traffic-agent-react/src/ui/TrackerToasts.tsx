@@ -17,22 +17,22 @@ export function TrackerToasts({ toasts, onDismiss }: TrackerToastsProps) {
     if (toasts.length === 0) return null;
     return (
         <div
-            className="pointer-events-none absolute top-3 right-3 z-(--pb-z-tooltip) flex w-[300px] max-w-[90vw] flex-col gap-2"
+            className="pointer-events-none absolute top-3 right-3 z-(--ui-z-tooltip) flex w-[300px] max-w-[90vw] flex-col gap-2"
             aria-live="assertive"
         >
             {toasts.map((toast) => (
                 <div
                     key={toast.seq}
-                    className={`pointer-events-auto flex items-start overflow-hidden border-l-4 border-l-(--pb-color-error) ${cardShellClass}`}
+                    className={`pointer-events-auto flex items-start overflow-hidden border-l-4 border-l-(--ui-surface-brand-red) ${cardShellClass}`}
                     role="status"
                 >
                     <div className="min-w-0 flex-auto">
                         <FeedRow
                             icon={<AlertGlyph />}
-                            iconColor="var(--pb-color-error)"
+                            iconColor="var(--ui-surface-brand-red)"
                             title={toast.trackerName}
                             description={toast.summary}
-                            tag={{ label: toast.kind, accent: 'var(--pb-color-error)' }}
+                            tag={{ label: toast.kind, accent: 'var(--ui-surface-brand-red)' }}
                             at={toast.at}
                         />
                     </div>

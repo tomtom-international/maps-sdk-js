@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>LDEVR Preferences Playground</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Charging preferences</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <p class="ui-instructions">
+                        The routing service picks the charging stops on this route. These three settings decide how long
+                        it plans to spend at them.
+                    </p>
+                </div>
+
+                <div class="ui-section">
+                    <label class="ui-form-label" for="ui-offsetSlider">
+                        Fixed time per stop
+                        <span class="ui-form-hint">chargingTimeOffsetInSec</span>
+                    </label>
+                    <div class="ui-slider-container">
+                        <input
+                            id="ui-offsetSlider"
+                            class="ui-slider"
+                            type="range"
+                            min="0"
+                            max="1200"
+                            step="60"
+                            value="60"
+                        >
+                        <span id="ui-offsetValue" class="ui-slider-value">1 min</span>
+                    </div>
+
+                    <label class="ui-form-label" for="ui-stopChargeSlider">
+                        Charge up to, at each stop
+                        <span class="ui-form-hint">minChargeAtChargingStopsPCT · max 50</span>
+                    </label>
+                    <div class="ui-slider-container">
+                        <input
+                            id="ui-stopChargeSlider"
+                            class="ui-slider"
+                            type="range"
+                            min="10"
+                            max="50"
+                            step="5"
+                            value="10"
+                        >
+                        <span id="ui-stopChargeValue" class="ui-slider-value">10%</span>
+                    </div>
+
+                    <label class="ui-form-label" for="ui-destinationChargeSlider">
+                        Charge left on arrival
+                        <span class="ui-form-hint">minChargeAtDestinationPCT</span>
+                    </label>
+                    <div class="ui-slider-container">
+                        <input
+                            id="ui-destinationChargeSlider"
+                            class="ui-slider"
+                            type="range"
+                            min="10"
+                            max="80"
+                            step="5"
+                            value="20"
+                        >
+                        <span id="ui-destinationChargeValue" class="ui-slider-value">20%</span>
+                    </div>
+                </div>
+
+                <div class="ui-section">
+                    <dl class="ui-summary" id="ui-summary"></dl>
+                </div>
+
+                <div class="ui-section">
+                    <h4 class="ui-subheading">Charging stops</h4>
+                    <ol class="ui-stops" id="ui-stops"></ol>
+                    <p class="ui-status" id="ui-status" role="status"></p>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

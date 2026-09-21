@@ -1,0 +1,94 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "parallel": 10,
+  "namedInputs": {
+    "sharedGlobals": [
+      "{workspaceRoot}/package.json",
+      "{workspaceRoot}/pnpm-workspace.yaml",
+      "{workspaceRoot}/pnpm-lock.yaml",
+      "{workspaceRoot}/tsconfig.json",
+      "{workspaceRoot}/stubs/nodebox/**"
+    ],
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "production": [
+      "default",
+      "!{projectRoot}/**/*.test.ts",
+      "!{projectRoot}/**/*.spec.ts",
+      "!{projectRoot}/e2e-tests/**",
+      "!{projectRoot}/vitest.config.ts",
+      "!{projectRoot}/playwright*.config.ts"
+    ],
+    "exampleHarness": [
+      "{workspaceRoot}/examples/*",
+      "{workspaceRoot}/examples/src/**/*",
+      "!{workspaceRoot}/examples/**/*.test.ts"
+    ],
+    "exampleBuildEnv": [
+      {
+        "runtime": "node examples/scripts/hashExampleBuildEnv.ts"
+      }
+    ]
+  },
+  "targetDefaults": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production", "exampleHarness", "exampleBuildEnv"],
+      "outputs": ["{projectRoot}/dist"],
+      "cache": true
+    },
+    "build:sandpack": {
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production", "exampleHarness", "exampleBuildEnv"],
+      "outputs": ["{projectRoot}/dist/sandpack"],
+      "cache": true
+    },
+    "type-check": {
+      "dependsOn": ["^build"],
+      "inputs": ["default", "^production"],
+      "cache": true
+    },
+    "test": {
+      "dependsOn": ["build", "^build"],
+      "inputs": [
+        "default",
+        "^production",
+        {
+          "env": "API_KEY_TESTS"
+        }
+      ],
+      "cache": true
+    },
+    "test:coverage": {
+      "dependsOn": ["build", "^build"],
+      "inputs": [
+        "default",
+        "^production",
+        {
+          "env": "API_KEY_TESTS"
+        }
+      ],
+      "outputs": ["{projectRoot}/coverage"],
+      "cache": true
+    },
+    "test:e2e": {
+      "dependsOn": ["build", "^build"],
+      "cache": false
+    },
+    "test:e2e:prod": {
+      "dependsOn": ["build", "^build"],
+      "cache": false
+    },
+    "test:e2e:sandpack": {
+      "dependsOn": ["build:sandpack", "^build"],
+      "cache": false
+    },
+    "test:eval": {
+      "dependsOn": ["build", "^build"],
+      "cache": false
+    },
+    "test:agent-tool-calling": {
+      "dependsOn": ["^build"],
+      "cache": false
+    }
+  }
+}

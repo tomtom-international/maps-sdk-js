@@ -19,7 +19,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
 
     // Create routing modules dynamically for each route pair
     const routingModules = await Promise.all(
-        routePairs.map((_, index) => RoutingModule.get(map, { theme: { mainColor: routeColors[index] } })),
+        routePairs.map((_, index) => RoutingModule.create(map, { theme: { mainColor: routeColors[index] } })),
     );
 
     // Calculate and display routes for each origin-destination pair

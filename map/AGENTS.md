@@ -41,9 +41,9 @@ pnpm -F map build
 **💡 Hot-rebuild while developing:**
 ```bash
 # Run in a separate terminal to auto-rebuild on file changes
-pnpm -F map build --watch
+pnpm -F map build:watch
 ```
-This watches for changes in the `map` package and automatically rebuilds. Useful when developing map features and testing changes in examples with live reload.
+This watches for changes in the `map` package and automatically rebuilds the JS bundle and the declarations. Useful when developing map features and testing changes in examples with live reload.
 
 See [../CONTRIBUTING.md](../CONTRIBUTING.md) and [../documentation/development/](../documentation/development/) for detailed setup.
 
@@ -142,5 +142,5 @@ src/places/
   - pnpm: Add `auto-install-peers=true` to `.npmrc` for automatic installation, or manually install: `pnpm install maplibre-gl lodash-es`
 - **CSS required** — Must import `maplibre-gl/dist/maplibre-gl.css`
 - **API key required** — Need TomTom API key for map tiles and services
-- **MapLibre compatibility** — Built on MapLibre GL JS v5
+- **MapLibre compatibility** — Built on MapLibre GL JS v6
 - **For Node.js/backend** — Use `@tomtom-org/maps-sdk/services` instead

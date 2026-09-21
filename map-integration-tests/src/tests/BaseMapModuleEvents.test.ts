@@ -8,7 +8,7 @@ import {
     getCursor,
     getPixelCoords,
     initBasemap,
-    initBasemap2,
+    initBasemapScope,
     waitForMapIdle,
     waitForTimeout,
 } from './util/TestUtils';
@@ -45,17 +45,19 @@ test.describe('Tests with user events related to Base Map', () => {
         );
     });
 
-    test('Events from two Base Map modules with mutually exclusive layer groups', async ({ page }) => {
-        await initBasemap(page, { layerGroupsFilter: { mode: 'include', names: ['cityLabels'] } });
-        await initBasemap2(page, { layerGroupsFilter: { mode: 'exclude', names: ['cityLabels'] } });
+    // Two scopes over one base map module, covering complementary layer groups. See LSI-159.
+    test('Events from two mutually exclusive layer-group scopes', async ({ page }) => {
+        await initBasemap(page);
+        await initBasemapScope(page, 'baseMapScope', { mode: 'include', names: ['cityLabels'] });
+        await initBasemapScope(page, 'baseMapScope2', { mode: 'exclude', names: ['cityLabels'] });
         await waitForMapIdle(page);
 
         const baseMapCityFeature = await getCityFeaturePixelCoords(page);
 
-        // only first base map listens to click events for now:
+        // only the city-label scope listens to click events for now:
         await page.evaluate(async () => {
             const mapsSdkThis = globalThis as MapsSDKThis;
-            mapsSdkThis.baseMap?.events.on('click', (topFeature) => {
+            mapsSdkThis.baseMapScope?.on('click', (topFeature) => {
                 mapsSdkThis._numOfClicks++;
                 mapsSdkThis._clickedTopFeature = topFeature;
             });
@@ -66,29 +68,29 @@ test.describe('Tests with user events related to Base Map', () => {
         expect(await page.evaluate(() => (globalThis as MapsSDKThis)._numOfClicks)).toBe(1);
         expect((await getClickedTopFeature(page))?.layer.id).toBe('Places - City');
 
-        // now we register a click handler for the second base map:
+        // now we register a click handler for the complementary scope:
         await page.evaluate(async () => {
             const mapsSdkThis = globalThis as MapsSDKThis;
-            mapsSdkThis.baseMap2?.events.on('click', (topFeature) => {
+            mapsSdkThis.baseMapScope2?.on('click', (topFeature) => {
                 (mapsSdkThis as any)._numOfClicks2++;
                 (mapsSdkThis as any)._clickedTopFeature2 = topFeature;
             });
         });
         await page.evaluate(() => ((globalThis as any)._numOfClicks2 = 0));
 
-        // We click on the city label again. Even if the other base map module also listens to clicks, its layers are below
-        // so the first base map is the only one to fire the event:
+        // We click on the city label again. Even if the other scope also listens to clicks, its layers are below
+        // so the city-label scope is the only one to fire the event:
         await page.mouse.click(baseMapCityFeature.x, baseMapCityFeature.y);
         expect(await page.evaluate(() => (globalThis as MapsSDKThis)._numOfClicks)).toBe(2);
         expect(await page.evaluate(() => (globalThis as any)._numOfClicks2)).toBe(0);
         expect((await getClickedTopFeature(page))?.layer.id).toBe('Places - City');
         expect(await page.evaluate(() => (globalThis as any)._clickedTopFeature2)).toBeUndefined();
 
-        // now we click on an "empty" (non-city) area of the map, and verify that this time the second base map module fires the event:
+        // now we click on an "empty" (non-city) area of the map, and verify that this time the second scope fires the event:
         await page.mouse.click(baseMapCityFeature.x + 50, baseMapCityFeature.y + 50);
-        // no changes in first base map:
+        // no changes in the city-label scope:
         expect(await page.evaluate(() => (globalThis as MapsSDKThis)._numOfClicks)).toBe(2);
-        // base map 2 fired the event:
+        // the complementary scope fired the event:
         expect(await page.evaluate(() => (globalThis as any)._numOfClicks2)).toBe(1);
         expect(
             await page.evaluate(() => ((globalThis as any)._clickedTopFeature2 as MapGeoJSONFeature)?.layer.id),
@@ -97,41 +99,47 @@ test.describe('Tests with user events related to Base Map', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test('Two Base Map modules with exclusive layer groups and different cursor on hover', async ({ page }) => {
-        // Initialize first base map with cityLabels and 'grabbing' cursor on hover
-        await initBasemap(page, {
-            layerGroupsFilter: { mode: 'include', names: ['cityLabels'] },
-            events: { cursorOnHover: 'grabbing' },
-        });
-        // Initialize second base map without cityLabels and 'default' cursor on hover
-        await initBasemap2(page, {
-            layerGroupsFilter: { mode: 'exclude', names: ['cityLabels'] },
-            events: { cursorOnHover: 'cell' },
-        });
+    // Per-scope event config is what makes one module enough: each scope carries its own cursor.
+    test('Two exclusive layer-group scopes with different cursor on hover', async ({ page }) => {
+        await initBasemap(page);
+        // city labels, with a 'grabbing' cursor on hover
+        await initBasemapScope(
+            page,
+            'baseMapScope',
+            { mode: 'include', names: ['cityLabels'] },
+            { cursorOnHover: 'grabbing' },
+        );
+        // everything else, with a 'cell' cursor on hover
+        await initBasemapScope(
+            page,
+            'baseMapScope2',
+            { mode: 'exclude', names: ['cityLabels'] },
+            { cursorOnHover: 'cell' },
+        );
         await waitForMapIdle(page);
 
         // Get pixel coordinates of a city label feature
         const baseMapCityFeature = await getCityFeaturePixelCoords(page);
 
-        // Register hover listeners for both base map modules
+        // Register hover listeners for both scopes
         await page.evaluate(async () => {
             const mapsSdkThis = globalThis as MapsSDKThis;
-            mapsSdkThis.baseMap?.events.on('hover', (topFeature) => {});
-            mapsSdkThis.baseMap2?.events.on('hover', (topFeature) => {});
+            mapsSdkThis.baseMapScope?.on('hover', (topFeature) => {});
+            mapsSdkThis.baseMapScope2?.on('hover', (topFeature) => {});
         });
 
-        // Hover over the city label (belongs to first base map with 'grabbing' cursor)
+        // Hover over the city label (belongs to the first scope, with the 'grabbing' cursor)
         await page.mouse.move(baseMapCityFeature.x, baseMapCityFeature.y);
         await waitForTimeout(500); // Wait for hover delay
 
         // Verify cursor is 'grabbing' when hovering over the city label
         expect(await getCursor(page)).toBe('grabbing');
 
-        // Move to an area without city labels (should trigger second base map's hover)
+        // Move to an area without city labels (should trigger the second scope's hover)
         await page.mouse.move(baseMapCityFeature.x + 50, baseMapCityFeature.y + 50);
         await waitForTimeout(500); // Wait for hover delay
 
-        // Verify cursor is 'cell' when hovering over the second base map's layers
+        // Verify cursor is 'cell' when hovering over the second scope's layers
         expect(await getCursor(page)).toBe('cell');
 
         expect(mapEnv.consoleErrors).toHaveLength(0);

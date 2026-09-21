@@ -9,25 +9,29 @@
   "scripts": {
     "build": "vite build --config ../plugin-vite-config.ts",
     "build:watch": "vite build --watch --config ../plugin-vite-config.ts",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "type-check": "tsc --noEmit"
   },
   "peerDependencies": {
     "@tomtom-org/maps-sdk": "workspace:*"
   },
   "devDependencies": {
-    "@microsoft/api-extractor": "catalog:",
     "@tsconfig/recommended": "catalog:",
     "@types/node": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "rolldown": "catalog:",
     "ts-node": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vite-plugin-dts": "catalog:"
+    "vitest": "catalog:"
   },
   "files": [
     "dist",
     "package.json",
     "README.md",
-    "LICENSE.txt"
+    "LICENSE.txt",
+    "THIRD_PARTY.txt"
   ],
   "exports": {
     ".": {

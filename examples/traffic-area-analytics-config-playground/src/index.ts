@@ -133,7 +133,7 @@ const initBeforeLayerSelect = (analyticsModule: TrafficAreaAnalyticsModule): voi
         );
 
     const [analyticsModule, analytics] = await Promise.all([
-        TrafficAreaAnalyticsModule.get(map),
+        TrafficAreaAnalyticsModule.create(map),
         analyticsPromise,
     ]).finally(() => loadingOverlay.classList.add('aa-hidden'));
 

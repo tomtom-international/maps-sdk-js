@@ -1,9 +1,9 @@
 import { Popup } from 'maplibre-gl';
 
 export const createStopPopup = (): Popup =>
-    new Popup({ closeButton: false, anchor: 'bottom', className: 'sdk-example-maplibre-popup stop-action-popup' });
+    new Popup({ closeButton: false, anchor: 'bottom', className: 'ui-maplibre-popup stop-action-popup' });
 
-export const buildAddStopHTML = (): string => `<button class="sdk-example-button stop-popup-btn">Add stop</button>`;
+export const buildAddStopHTML = (): string => `<button class="ui-button stop-popup-btn">Add stop</button>`;
 
 export const buildRemoveStopHTML = (): string =>
-    `<button class="sdk-example-button sdk-example-button-secondary stop-popup-btn">Remove stop</button>`;
+    `<button class="ui-button ui-button-secondary stop-popup-btn">Remove stop</button>`;

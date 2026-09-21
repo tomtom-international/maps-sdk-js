@@ -48,7 +48,7 @@ const haversineMeters = (a: [number, number], b: [number, number]): number => {
         limit: 10,
     });
 
-    const placesModule = await PlacesModule.get(map, {
+    const placesModule = await PlacesModule.create(map, {
         theme: 'pin',
         connections: {
             // Prefer travel time once it's been resolved — fall back to the straight-

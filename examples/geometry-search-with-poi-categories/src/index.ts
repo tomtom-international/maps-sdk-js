@@ -19,7 +19,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     });
 
     const areaGeometry = await geometryData({ geometries: [areaToSearch] });
-    const geometryModule = await GeometriesModule.get(map, { theme: 'inverted' });
+    const geometryModule = await GeometriesModule.create(map, { theme: 'inverted' });
     geometryModule.show(areaGeometry);
 
     const restaurants = await search({
@@ -28,7 +28,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         limit: 100,
     });
 
-    const placesModule = await PlacesModule.get(map);
+    const placesModule = await PlacesModule.create(map);
     placesModule.show(restaurants);
     (window as any).map = map;
 })();

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Route Sections Playground</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Route sections</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <span class="ui-subheading">route</span>
+                    <select id="route-picker" class="ui-dropdown"></select>
+                </div>
+
+                <div class="ui-section">
+                    <span class="ui-subheading">sections — drawn by default</span>
+                    <div id="drawn-section-rows" class="section-rows"></div>
+                </div>
+
+                <div class="ui-section">
+                    <span class="ui-subheading">sections — opt-in</span>
+                    <div id="opt-in-section-rows" class="section-rows"></div>
+                </div>
+            </div>
+        </div>
+
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

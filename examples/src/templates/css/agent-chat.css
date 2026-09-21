@@ -1,5 +1,5 @@
 /* Shared chat-surface styles for the agent example apps (ChatMessages / ChatMessage / ToolCall /
-   ChatInput). Imported by each agent's MapAgentChat; references the `--pb-*` playbook tokens, so it
+   ChatInput). Imported by each agent's MapAgentChat; references the `--ui-*` Playbook tokens, so it
    must load after the template token layer (it does — index.tsx imports styles.css first).
    Kept in CSS because (a) the markdown content rendered inside `.message.assistant` from `marked()`
    carries no Tailwind classes, and (b) the same bubble shape is shared by user, assistant, error,
@@ -13,12 +13,12 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: var(--pb-space-2); /* 8px between spark / title / tagline */
-    padding: 2.5rem 0 var(--pb-space-4); /* pt-40; horizontal inset comes from the chat-content px-2 */
+    gap: var(--ui-space-2); /* 8px between spark / title / tagline */
+    padding: 2.5rem 0 var(--ui-space-4); /* pt-40; horizontal inset comes from the chat-content px-2 */
 }
 .chat-welcome-spark {
     display: flex;
-    color: var(--pb-primary-color); /* brand red — the SVG fills with currentColor */
+    color: var(--ui-surface-brand-red); /* brand red — the SVG fills with currentColor */
 }
 .chat-welcome-spark svg {
     width: 40px;
@@ -28,34 +28,34 @@
     display: flex;
     width: 100%;
     flex-direction: column;
-    gap: var(--pb-space-2);
+    gap: var(--ui-space-2);
 }
 .chat-welcome h1,
 .chat-welcome h2 {
     margin: 0;
-    font-family: var(--pb-font-primary); /* Gilroy */
-    font-weight: var(--pb-font-weight-bold);
+    font-family: var(--ui-font-gilroy); /* Gilroy */
+    font-weight: var(--ui-font-weight-bold);
     font-size: 28px;
     line-height: 32px;
     letter-spacing: -0.28px;
-    color: var(--pb-text-high);
+    color: var(--ui-text-high-em);
 }
 .chat-welcome p {
     margin: 0;
-    font-family: var(--pb-font-secondary); /* Proxima Nova */
-    font-size: var(--pb-font-body-l); /* 16 / 24 (body m/medium) */
-    line-height: var(--pb-font-body-l-lh);
-    color: var(--pb-text-medium);
+    font-family: var(--ui-font-proxima); /* Proxima Nova */
+    font-size: var(--ui-font-body-l); /* 16 / 24 (body m/medium) */
+    line-height: var(--ui-font-body-l-lh);
+    color: var(--ui-text-med-em);
 }
 .chat-welcome strong {
-    font-weight: var(--pb-font-weight-bold);
-    color: var(--pb-text-high);
+    font-weight: var(--ui-font-weight-bold);
+    color: var(--ui-text-high-em);
 }
 .chat-welcome-divider {
     width: 100%;
     border: 0;
-    border-top: 1px solid var(--pb-border-base); /* border/base-em */
-    margin: var(--pb-space-4) 0 0; /* ~24px below the Hi block */
+    border-top: 1px solid var(--ui-border-base-em); /* border/base-em */
+    margin: var(--ui-space-4) 0 0; /* ~24px below the Hi block */
 }
 
 /* ─── Chat message bubbles ───────────────────────────────────────────────── */
@@ -64,13 +64,13 @@
    Body copy is Proxima Nova 16/24 (web/body m). The user bubble keeps one sharp corner as a tail
    (bottom-right). */
 .message {
-    padding: var(--pb-space-4); /* 16 all */
+    padding: var(--ui-space-4); /* 16 all */
     max-width: 100%;
-    border-radius: var(--pb-radius-20);
-    margin: var(--pb-space-3) 0; /* 12 top/bottom → 24px between turns */
-    font-family: var(--pb-font-secondary); /* Proxima Nova */
-    font-size: var(--pb-font-body-l); /* 16 */
-    line-height: var(--pb-font-body-l-lh); /* 24 */
+    border-radius: var(--ui-rounded-20);
+    margin: var(--ui-space-3) 0; /* 12 top/bottom → 24px between turns */
+    font-family: var(--ui-font-proxima); /* Proxima Nova */
+    font-size: var(--ui-font-body-l); /* 16 */
+    line-height: var(--ui-font-body-l-lh); /* 24 */
 }
 
 .message.user {
@@ -79,15 +79,15 @@
        `align-self:flex-end` (the bubble is a flex item of the messages column) pins it to the right. */
     width: fit-content;
     align-self: flex-end;
-    background: var(--pb-surface-1);
-    color: var(--pb-text-high);
-    border-radius: var(--pb-radius-20) var(--pb-radius-20) 0 var(--pb-radius-20);
+    background: var(--ui-surface-1);
+    color: var(--ui-text-high-em);
+    border-radius: var(--ui-rounded-20) var(--ui-rounded-20) 0 var(--ui-rounded-20);
 }
 /* Assistant turns are plain text on the panel — NO bubble (no border / fill / radius), only the
    answer copy. The user message keeps its grey bubble; tool cards render their own chrome. */
 .message.assistant {
     background: transparent;
-    color: var(--pb-text-medium);
+    color: var(--ui-text-med-em);
     border: 0;
     border-radius: 0;
     padding: 0;
@@ -110,7 +110,7 @@
 .message.assistant pre,
 .message.assistant table {
     scrollbar-width: thin;
-    scrollbar-color: var(--pb-border-medium) transparent;
+    scrollbar-color: var(--ui-border-med-em) transparent;
 }
 .tool-call pre::-webkit-scrollbar,
 .message.assistant pre::-webkit-scrollbar,
@@ -121,7 +121,7 @@
 .tool-call pre::-webkit-scrollbar-thumb,
 .message.assistant pre::-webkit-scrollbar-thumb,
 .message.assistant table::-webkit-scrollbar-thumb {
-    background: var(--pb-border-medium);
+    background: var(--ui-border-med-em);
     border-radius: 999px;
 }
 .tool-call pre::-webkit-scrollbar-track,
@@ -135,22 +135,22 @@
 
 .message.assistant.thinking {
     font-style: italic;
-    color: var(--pb-text-medium);
+    color: var(--ui-text-med-em);
     opacity: 0.8;
 }
 
 .message.error {
     align-self: flex-start;
-    background: color-mix(in srgb, var(--pb-color-error) 8%, var(--pb-surface-0));
-    color: var(--pb-color-error);
-    border: 1px solid color-mix(in srgb, var(--pb-color-error) 25%, var(--pb-surface-0));
+    background: color-mix(in srgb, var(--ui-surface-brand-red) 8%, var(--ui-surface-0));
+    color: var(--ui-surface-brand-red);
+    border: 1px solid color-mix(in srgb, var(--ui-surface-brand-red) 25%, var(--ui-surface-0));
 }
 
 /* ── Markdown content rendered by `marked()` inside assistant bubbles ────── */
 /* These rules target tags emitted by marked, which can't carry Tailwind classes. */
 
 .message.assistant p {
-    margin-bottom: var(--pb-space-2);
+    margin-bottom: var(--ui-space-2);
 }
 
 .message.assistant p:last-child {
@@ -160,33 +160,63 @@
 /* The assistant turn = a bold title (web/title 2: Gilroy Bold 16/24, high-em) over med-em body.
    marked() emits the title as a heading or **strong**, so promote both to the high-emphasis weight. */
 .message.assistant strong {
-    font-weight: var(--pb-font-weight-bold);
-    color: var(--pb-text-high);
+    font-weight: var(--ui-font-weight-bold);
+    color: var(--ui-text-high-em);
 }
 
 .message.assistant h1,
 .message.assistant h2,
 .message.assistant h3,
 .message.assistant h4 {
-    margin: 0 0 var(--pb-space-1);
-    font-family: var(--pb-font-primary); /* Gilroy */
-    font-weight: var(--pb-font-weight-bold);
-    font-size: var(--pb-font-body-l); /* 16/24 — title 2 */
-    line-height: var(--pb-font-body-l-lh);
-    color: var(--pb-text-high);
+    margin: 0 0 var(--ui-space-1);
+    font-family: var(--ui-font-gilroy); /* Gilroy */
+    font-weight: var(--ui-font-weight-bold);
+    font-size: var(--ui-font-body-l); /* 16/24 — title 2 */
+    line-height: var(--ui-font-body-l-lh);
+    color: var(--ui-text-high-em);
 }
 
+/* Tailwind's preflight strips list markers (`list-style: none`) from every ul/ol, so restore them
+   explicitly — otherwise the agent's markdown bullets render as flat unmarked lines. The 24px
+   padding is one full indent step per nesting level: with outside markers anything less puts a
+   nested list's bullets in the same visual column as the parent's "1." marker, flattening the
+   hierarchy. */
 .message.assistant ul,
 .message.assistant ol {
-    padding-left: var(--pb-space-4);
-    margin-bottom: var(--pb-space-2);
+    padding-left: var(--ui-space-6);
+    margin-bottom: var(--ui-space-2);
+    list-style-position: outside;
+}
+
+/* A nested list belongs to its parent item: small gap above, none below (the parent's own
+   spacing carries on), so it reads as the item's children rather than a new sibling block. */
+.message.assistant li > ul,
+.message.assistant li > ol {
+    margin-top: var(--ui-space-1);
+    margin-bottom: 0;
+}
+
+.message.assistant ul {
+    list-style-type: disc;
+}
+
+.message.assistant ol {
+    list-style-type: decimal;
+}
+
+.message.assistant li {
+    margin-bottom: var(--ui-space-1);
+}
+
+.message.assistant li:last-child {
+    margin-bottom: 0;
 }
 
 .message.assistant code {
-    background: var(--pb-surface-2);
+    background: var(--ui-surface-2);
     padding: 1px 4px;
-    border-radius: var(--pb-radius-5);
-    font-family: var(--pb-font-code);
+    border-radius: var(--ui-rounded-5);
+    font-family: var(--ui-font-fira);
     font-size: 0.9em;
 }
 
@@ -196,18 +226,18 @@
 }
 
 .message.assistant pre {
-    background: var(--pb-surface-2);
-    padding: var(--pb-space-3);
-    border-radius: var(--pb-radius-10);
+    background: var(--ui-surface-2);
+    padding: var(--ui-space-3);
+    border-radius: var(--ui-rounded-10);
     overflow-x: auto;
-    margin-bottom: var(--pb-space-2);
-    font-family: var(--pb-font-code);
-    font-size: var(--pb-font-caption-m);
+    margin-bottom: var(--ui-space-2);
+    font-family: var(--ui-font-fira);
+    font-size: var(--ui-font-caption-m);
 }
 
 .message.assistant table {
     border-collapse: collapse;
-    font-size: var(--pb-font-caption-m);
+    font-size: var(--ui-font-caption-m);
     margin: 0.4em 0;
     max-width: 100%;
     overflow-x: auto;
@@ -216,14 +246,14 @@
 
 .message.assistant th,
 .message.assistant td {
-    padding: var(--pb-space-1) var(--pb-space-2);
-    border: 1px solid var(--pb-border-low);
+    padding: var(--ui-space-1) var(--ui-space-2);
+    border: 1px solid var(--ui-border-low-em);
     text-align: left;
 }
 
 .message.assistant th {
-    background: var(--pb-surface-2);
-    font-weight: var(--pb-font-weight-semibold);
+    background: var(--ui-surface-2);
+    font-weight: var(--ui-font-weight-semibold);
 }
 
 /* assistant-ui wraps its messages in a generic `[data-message-id]` container that we want
@@ -240,7 +270,7 @@
 @media (max-width: 640px) {
     .message {
         max-width: 92%;
-        font-size: var(--pb-font-body-s, 0.85rem);
+        font-size: var(--ui-font-body-s, 0.85rem);
     }
 }
 

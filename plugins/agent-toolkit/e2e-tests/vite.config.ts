@@ -5,7 +5,7 @@ import { defineConfig } from 'vite';
 // `exports` map blocks the UMD subpath; h3 must avoid peer-dep externalization) and
 // the `virtual:sandbox-sdk-utils` plugin that `worker-libs.ts` imports. Sharing them
 // keeps this config in sync with `vite.lib.config.ts`.
-import { sandboxH3UmdAlias, sandboxSdkUtilsPlugin, sandboxTurfUmdAlias } from '../vite-sandbox-build';
+import { sandboxH3UmdAlias, sandboxSdkUtilsPlugin, sandboxTurfUmdAlias } from '../vite-sandbox-build.ts';
 
 export default defineConfig({
     root: resolve(import.meta.dirname, 'app'),

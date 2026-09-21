@@ -1,0 +1,35 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/form/toggle.css";
+@import "../../src/templates/css/form/dropdown.css";
+@import "../../src/templates/css/form/slider.css";
+@import "../../src/templates/css/form/color-picker.css";
+@import "../../src/templates/css/form/field.css";
+
+/* CUSTOM STYLES (example-specific) */
+
+/* A knob group collapses on its own heading. The button keeps `ui-heading-toggle`, so the hover,
+   focus ring and chevron rotation come from the panel's own toggle. */
+.ui-sectionHeading {
+    margin: 0;
+}
+
+.ui-sectionToggle {
+    width: 100%;
+    justify-content: space-between;
+    margin-left: 0;
+    padding: var(--ui-space-1) 0;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+}
+
+.ui-section-content {
+    margin-top: var(--ui-space-3);
+}
+
+.ui-section-content.collapsed {
+    display: none;
+}

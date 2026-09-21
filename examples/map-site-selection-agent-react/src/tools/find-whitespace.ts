@@ -1,18 +1,20 @@
 import { type CommonPlaceProps, getPosition, type PolygonFeature } from '@tomtom-org/maps-sdk/core';
 import { reverseGeocode } from '@tomtom-org/maps-sdk/services';
-import type { ToolEntry, ToolState } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
-import { isResolveError, resolveAreas, toolStateToWhereContext } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+import type { ToolEntry, ToolEntryBuilder, ToolState } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+import { isResolveError, resolveWithin, toolStateToWhereContext } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import * as turf from '@turf/turf';
 import type { Feature, FeatureCollection, MultiPolygon, Point, Polygon } from 'geojson';
 import { z } from 'zod';
 import { byodCandidateSites, requireByodFeatures } from '../agent/byod-inputs';
+import { km2 } from '../agent/geometry';
 import { getSitePreferences } from '../agent/site-selection-state';
 import {
+    householdsEnabled,
     placeInfo,
-    SEARCH_LIMIT,
     type SearchFeature,
     searchAddresses,
     searchInGeometry,
+    searchLimit,
 } from '../demographics/households';
 import { pocketColor } from '../pocket-colors';
 import { startProgress } from '../progress/progress-store';
@@ -42,8 +44,13 @@ type Colocation = 'avoid' | 'seek';
 type AreaGeometry = Polygon | MultiPolygon;
 type ResolvedArea = { geometry: AreaGeometry; label: string; km2: number; source: 'boundary' | 'radius' };
 
-const findWhitespaceSchema = z.object({
-    area: z.string().describe('City / district / neighbourhood to scan, e.g. "Amsterdam Oost".'),
+const findWhitespaceBaseSchema = z.object({
+    areas: z
+        .array(z.string())
+        .min(1)
+        .describe(
+            'One or more cities / districts / neighbourhoods to scan, e.g. ["Downtown Las Vegas", "East Las Vegas"].',
+        ),
     targetCategories: z
         .array(z.string())
         .min(1)
@@ -70,12 +77,6 @@ const findWhitespaceSchema = z.object({
                 "cell — e.g. the customer's own footfall or demand points. Polygons/lines are reduced to their " +
                 'centroid. Augments the searched anchor demand.',
         ),
-    householdDemand: z
-        .boolean()
-        .default(false)
-        .describe(
-            'Blend RESIDENTIAL density (address-point count per cell) into demand — set true for concepts whose customers are local residents (daycare, pharmacy, GP, grocery, gym), where families/homes nearby matter more than anchor POIs. Leave false for destination/comparison retail. Note: the address sample caps at 100 per scan, so it is a coarse relative signal, not a true count.',
-        ),
     walkRadiusMeters: z
         .number()
         .positive()
@@ -91,15 +92,32 @@ const findWhitespaceSchema = z.object({
         .describe('How many top opportunity pockets to return + draw (keep 3-5).'),
 });
 
-type FindWhitespaceInput = z.infer<typeof findWhitespaceSchema>;
+// The residential-density blend rides on the household signal, which exists only under the
+// experimental search backend — with the flag off the field disappears from the model's schema
+// entirely, so the agent can never mention or request it. Built per agent (see the builder below).
+const buildFindWhitespaceSchema = (households: boolean) =>
+    households
+        ? findWhitespaceBaseSchema.extend({
+              householdDemand: z
+                  .boolean()
+                  .default(false)
+                  .describe(
+                      'Blend RESIDENTIAL density (address-point count per cell) into demand — set true for concepts whose customers are local residents (daycare, pharmacy, GP, grocery, gym), where families/homes nearby matter more than anchor POIs. Leave false for destination/comparison retail. Note: the address sample caps at ' +
+                          `${searchLimit().toLocaleString('en-US')} per scan, so it is a relative signal, not a true count.`,
+                  ),
+          })
+        : findWhitespaceBaseSchema;
+
+// `householdDemand` is optional in the shared type: absent (hence never true) when the flag is off.
+type FindWhitespaceInput = z.infer<typeof findWhitespaceBaseSchema> & { householdDemand?: boolean };
 
 const resolveArea = async (query: string, state: ToolState): Promise<ResolvedArea | null> => {
-    const result = await resolveAreas({ queries: [{ query, queryAs: 'place' }] }, toolStateToWhereContext(state));
+    const result = await resolveWithin({ queries: [{ query, queryAs: 'place' }] }, toolStateToWhereContext(state));
     if (isResolveError(result) || result.length === 0) return null;
     const raw = result[0];
     if (raw.polygon) {
         const geometry = raw.polygon as AreaGeometry;
-        const areaKm2 = Math.round((turf.area({ type: 'Feature', geometry, properties: {} }) / 1e6) * 100) / 100;
+        const areaKm2 = km2(geometry);
         return {
             geometry,
             label: raw.label ?? query,
@@ -400,7 +418,7 @@ const rankPockets = async (
     // Only blend the residential signal when it actually VARIES across cells — guards against an
     // artificial normalize()=0.5 (and a false "+ residential address density" claim) when households
     // are constant or the address search returned nothing.
-    const useHouseholdSignal = params.householdDemand && householdRange[1] > householdRange[0];
+    const useHouseholdSignal = !!params.householdDemand && householdRange[1] > householdRange[0];
     const ranked = candidates
         .map((c) => ({
             ...c,
@@ -512,6 +530,7 @@ const renderWhitespace = async (
 // capped residential sample).
 const buildWarnings = (
     params: FindWhitespaceInput,
+    areaQuery: string,
     resolved: ResolvedArea,
     cellSizeMeters: number,
     targets: { codes: string[] },
@@ -529,12 +548,12 @@ const buildWarnings = (
     }
     if (resolved.source === 'radius') {
         warnings.push(
-            `"${params.area}" had no administrative boundary — scanned a ${AREA_FALLBACK_KM} km radius around the best match.`,
+            `"${areaQuery}" had no administrative boundary — scanned a ${AREA_FALLBACK_KM} km radius around the best match.`,
         );
     }
     if (params.householdDemand && addressesCapped) {
         warnings.push(
-            `Residential demand is approximate — ${resolved.label} has more than 100 addresses, so the household sample is capped and reads as a coarse relative density, not a true count.`,
+            `Residential demand is approximate — ${resolved.label} has more than ${searchLimit().toLocaleString('en-US')} addresses, so the household sample is capped and reads as a coarse relative density, not a true count.`,
         );
     }
     return warnings;
@@ -580,100 +599,176 @@ const buildPockets = (
     return { pockets: pointCollection(features), hexes };
 };
 
-export const findWhitespace: ToolEntry = {
-    description:
-        'Find the best sub-zones in an area for a concept: scans a hex grid (clipped to the region), ranks every ' +
-        'busy cell on an opportunity score (0–100) blending demand-anchor density with peer proximity, and draws ' +
-        'NUMBERED, coloured opportunity hexes plus the existing peers. colocation="avoid" rewards being away from ' +
-        'peers; "seek" rewards clustering. demandAnchors drive the result most — use SPECIFIC category terms (gym → ' +
-        'university, public transport, supermarket, sports shop), not generic words like "office"/"shop" that pull ' +
-        'in unrelated compounds; if anchors are unstated, ask via clarifyIntent first. Set householdDemand=true for ' +
-        'resident-serving concepts (daycare, pharmacy, grocery, gym). Opportunity score is 60% demand / 40% ' +
-        'peer-proximity; demand is a proxy (anchor POIs ± address density), never measured footfall. Refer to a ' +
-        'pocket by number AND colour, e.g. "Pocket 1 (teal)". Details in the panel.',
-    classificationPrompt:
-        'Find under-served gaps / whitespace / best opportunity zones for a concept within an area, given demand ' +
-        'and a proximity preference to existing peers (avoid them, or cluster with them).',
-    inputSchema: findWhitespaceSchema,
-    execute: (async (params: FindWhitespaceInput, state: ToolState) => {
-        const progress = startProgress('findWhitespace', [
-            'Resolving area',
-            'Searching anchors & peers',
-            'Scanning grid',
-            'Scoring pockets',
-            'Drawing',
-        ]);
-        try {
-            progress.step(0);
-            const resolved = await resolveArea(params.area, state);
+type AreaSearchResult = {
+    areaQuery: string;
+    resolved: ResolvedArea;
+    anchorFeatures: SearchFeature[];
+    targetFeatures: SearchFeature[];
+    hasTargets: boolean;
+    addresses: { features: readonly SearchFeature[]; capped: boolean };
+};
+type AreaGridResult = AreaSearchResult & {
+    bbox: [number, number, number, number];
+    cellSizeMeters: number;
+    candidates: Candidate[];
+    allHexes: Feature<Polygon | MultiPolygon>[];
+};
+type AreaRankedResult = AreaGridResult & { top: ScoredPocket[]; ranges: Ranges };
 
+const buildSteps = (n: number): string[] => [
+    n === 1 ? 'Resolving area' : 'Resolving areas',
+    'Searching anchors & peers',
+    'Scanning grid',
+    'Scoring pockets',
+    'Drawing',
+];
+
+// BUILDER: the model-facing surface (householdDemand field + description) depends on the household
+// signal, so it is assembled at createMapAgent time — after buildSiteAgentOptions stored the flag —
+// rather than at module load. (Read from the store, not options.featureFlags: the toolkit's public
+// FeatureFlags type strips the internal experimentalSearch member.) The executor reads the same
+// stored flag at runtime.
+export const findWhitespace: ToolEntryBuilder = () => {
+    const households = householdsEnabled();
+    return {
+        description:
+            'Find the best sub-zones in one or more areas for a concept. Pass ALL areas in a SINGLE call — never call ' +
+            'this tool more than once per user request. Scans a hex grid (clipped to each region), ranks every busy ' +
+            'cell on an opportunity score (0–100) blending demand-anchor density with peer proximity, and draws ' +
+            'NUMBERED, coloured opportunity hexes plus the existing peers. colocation="avoid" rewards being away from ' +
+            'peers; "seek" rewards clustering. demandAnchors drive the result most — use SPECIFIC category terms ' +
+            '(gym → university, public transport, supermarket, sports shop), not generic words like "office"/"shop" ' +
+            'that pull in unrelated compounds; if anchors are unstated, ask via clarifyIntent first. ' +
+            (households
+                ? 'Set householdDemand=true for resident-serving concepts (daycare, pharmacy, grocery, gym). '
+                : '') +
+            'Opportunity score is 60% demand / 40% peer-proximity; demand is a proxy (anchor POIs' +
+            (households ? ' ± address density' : '') +
+            '), never measured footfall. Refer to a pocket by number AND colour, e.g. "Pocket 1 (teal)". Details in the panel.',
+        classificationPrompt:
+            'Find under-served gaps / whitespace / best opportunity zones for a concept within one or more areas, ' +
+            'given demand and a proximity preference to existing peers (avoid them, or cluster with them).',
+        inputSchema: buildFindWhitespaceSchema(households),
+        execute: executeFindWhitespace,
+        examplePrompts: FIND_WHITESPACE_EXAMPLE_PROMPTS,
+    };
+};
+
+const executeFindWhitespace = (async (params: FindWhitespaceInput, state: ToolState) => {
+    const { areas, colocation } = params;
+    const progress = startProgress('findWhitespace', buildSteps(areas.length));
+    const prefs = getSitePreferences(state);
+    const radius = params.walkRadiusMeters ?? prefs.walkReachMeters;
+    // User-supplied demand points (from a BYOD layer) augment the searched anchor demand.
+    const byodDemandPoints = params.demandByodEntryId
+        ? byodCandidateSites(requireByodFeatures(state, params.demandByodEntryId))
+        : [];
+    const byodDemandPositions = byodDemandPoints.map((point) => point.position);
+
+    try {
+        // Phase 0 — resolve all areas
+        progress.step(0);
+        const resolvedAreas: { areaQuery: string; resolved: ResolvedArea }[] = [];
+        for (const areaQuery of areas) {
+            const resolved = await resolveArea(areaQuery, state);
             if (!resolved) {
                 progress.done();
-                return { error: `Could not resolve "${params.area}" to an area. Try a more specific name.` };
+                return { error: `Could not resolve "${areaQuery}" to an area. Try a more specific name.` };
             }
+            resolvedAreas.push({ areaQuery, resolved });
+        }
+
+        // Phase 1 — resolve categories once (same for all areas), then search anchors & peers per area
+        progress.step(1);
+        const anchorsRaw = await resolveCategoriesWithNames(params.demandAnchors ?? prefs.demandAnchors);
+        const targets = await resolveCategoriesWithNames(params.targetCategories);
+        // The peer concept must never count as its own demand — drop target categories from anchors.
+        const targetCodes = new Set<string>(targets.codes);
+        const anchors = {
+            codes: anchorsRaw.codes.filter((code) => !targetCodes.has(code)),
+            names: anchorsRaw.names.filter((_, index) => !targetCodes.has(anchorsRaw.codes[index])),
+        };
+        const areaSearches: AreaSearchResult[] = [];
+        for (const { areaQuery, resolved } of resolvedAreas) {
             const { geometry: area } = resolved;
-            const { colocation } = params;
-            const prefs = getSitePreferences(state);
-            const radius = params.walkRadiusMeters ?? prefs.walkReachMeters;
-            // User-supplied demand points (from a BYOD layer) augment the searched anchor demand.
-            const byodDemandPoints = params.demandByodEntryId
-                ? byodCandidateSites(requireByodFeatures(state, params.demandByodEntryId))
-                : [];
-            const byodDemandPositions = byodDemandPoints.map((point) => point.position);
-
-            progress.step(1);
-
-            const anchorsRaw = await resolveCategoriesWithNames(params.demandAnchors ?? prefs.demandAnchors);
-            const targets = await resolveCategoriesWithNames(params.targetCategories);
-            // The peer concept must never count as its own demand — drop target categories from anchors.
-            const targetCodes = new Set<string>(targets.codes);
-            const anchors = {
-                codes: anchorsRaw.codes.filter((code) => !targetCodes.has(code)),
-                names: anchorsRaw.names.filter((_, index) => !targetCodes.has(anchorsRaw.codes[index])),
-            };
             const anchorFeatures = await searchInGeometry(area, {
                 poiCategories: anchors.codes,
                 query: 'shop',
-                limit: SEARCH_LIMIT,
+                limit: searchLimit(),
             });
             const targetFeatures = await searchInGeometry(area, {
                 poiCategories: targets.codes,
                 query: params.targetCategories.join(' '),
-                limit: SEARCH_LIMIT,
+                limit: searchLimit(),
             });
-
-            // Whether any competitors exist in the area — affects how peer proximity is scored.
-            const hasTargets = targetFeatures.length > 0;
             // Optional residential-density signal for resident-serving concepts (daycare, pharmacy, …).
-            const addresses = params.householdDemand ? await searchAddresses(area) : { features: [], capped: false };
+            const addresses = params.householdDemand
+                ? await searchAddresses(area)
+                : { features: [] as readonly SearchFeature[], capped: false };
+            areaSearches.push({
+                areaQuery,
+                resolved,
+                anchorFeatures,
+                targetFeatures,
+                hasTargets: targetFeatures.length > 0,
+                addresses,
+            });
+        }
 
-            progress.step(2);
-            const bbox = turf.bbox(area) as [number, number, number, number];
-            const { grid, cellSizeMeters } = buildGrid(bbox, resolved.km2, params.cellSizeMeters);
+        // Phase 2 — build grids + scan candidates for all areas
+        progress.step(2);
+        const areaGrids: AreaGridResult[] = [];
+        for (const s of areaSearches) {
+            const bbox = turf.bbox(s.resolved.geometry) as [number, number, number, number];
+            const { grid, cellSizeMeters } = buildGrid(bbox, s.resolved.km2, params.cellSizeMeters);
             if (grid.features.length > MAX_GRID_CELLS) {
                 progress.done();
                 return {
-                    error: `That area at ${cellSizeMeters} m cells is ${grid.features.length} cells — too many. Use a larger cellSizeMeters.`,
+                    error: `Area "${s.resolved.label}" at ${cellSizeMeters} m cells is ${grid.features.length} cells — too many. Use a larger cellSizeMeters.`,
                 };
             }
-            const { candidates, allHexes } = buildCandidates(grid, area, {
+            const { candidates, allHexes } = buildCandidates(grid, s.resolved.geometry, {
                 radius,
-                householdDemand: params.householdDemand,
-                anchorFeatures,
+                householdDemand: params.householdDemand ?? false,
+                anchorFeatures: s.anchorFeatures,
                 byodDemandPositions,
-                addresses,
-                targetFeatures,
+                addresses: s.addresses,
+                targetFeatures: s.targetFeatures,
             });
+            areaGrids.push({ ...s, bbox, cellSizeMeters, candidates, allHexes });
+        }
 
-            progress.step(3);
-            const { top, ranges } = await rankPockets(candidates, params, radius, hasTargets, colocation);
+        // Phase 3 — rank pockets for all areas
+        progress.step(3);
+        const areaRanked: AreaRankedResult[] = [];
+        for (const g of areaGrids) {
+            const { top, ranges } = await rankPockets(g.candidates, params, radius, g.hasTargets, colocation);
+            areaRanked.push({ ...g, top, ranges });
+        }
 
-            progress.step(4);
+        // Phase 4 — draw + publish for all areas
+        progress.step(4);
+        let lastHint = '';
+        const headlines: string[] = [];
+        for (const ranked of areaRanked) {
+            const {
+                areaQuery,
+                resolved,
+                bbox,
+                top,
+                ranges,
+                allHexes,
+                anchorFeatures,
+                targetFeatures,
+                hasTargets,
+                addresses,
+                cellSizeMeters,
+            } = ranked;
             const { demandLegend, demandComposition } = await renderWhitespace(
                 state,
                 params,
                 resolved,
-                area,
+                resolved.geometry,
                 bbox,
                 top,
                 allHexes,
@@ -681,23 +776,27 @@ export const findWhitespace: ToolEntry = {
                 byodDemandPoints,
                 targetFeatures,
             );
-
             const goalMet = (pocket: ScoredPocket): boolean =>
                 colocation === 'avoid' ? pocket.beyondWalk : pocket.nearestTargetMeters !== null && !pocket.beyondWalk;
             const gapCount = top.filter(goalMet).length;
             // Prefer the resolved friendly category name(s) over the raw input ("FITNESS_CLUB_CENTER").
             const peers = targets.names.length ? targets.names.join('/') : params.targetCategories.join('/');
-            const warnings = buildWarnings(params, resolved, cellSizeMeters, targets, targetFeatures, addresses.capped);
+            const warnings = buildWarnings(
+                params,
+                areaQuery,
+                resolved,
+                cellSizeMeters,
+                targets,
+                targetFeatures,
+                addresses.capped,
+            );
             const { pockets, hexes } = buildPockets(top, ranges, hasTargets, colocation, anchorFeatures);
             publishWhitespace({
                 area: resolved.label ?? '',
                 areaKm2: resolved.km2,
                 colocation,
                 // No "(genuine gap)" suffix — it would clash with the "No genuine gaps" empty-state.
-                goal:
-                    colocation === 'avoid'
-                        ? `no ${peers} within ${radius} m`
-                        : `a ${peers} within ${radius} m`,
+                goal: colocation === 'avoid' ? `no ${peers} within ${radius} m` : `a ${peers} within ${radius} m`,
                 targetMatchedBy: targets.names.length
                     ? `categories: ${targets.names.join(', ')}`
                     : 'name match (no category resolved)',
@@ -713,31 +812,37 @@ export const findWhitespace: ToolEntry = {
                 demandComposition,
                 warnings,
             });
-            progress.done();
             const goalWord = colocation === 'avoid' ? 'genuine gap' : 'in-cluster pocket';
             // Honest framing for saturated areas: if NOTHING clears the goal, the agent must say so
             // rather than calling busy-but-served spots "gaps" or "sparse".
-            const hint =
+            lastHint =
                 gapCount === 0
                     ? `IMPORTANT: NONE of these pockets is a ${goalWord} — every one already has a ${peers} within ${radius} m, so ${resolved.label} is already well-served for this. Say that plainly in ONE sentence; these are only the LEAST-served busy spots, NOT gaps — do not call them "sparse". Refer to pockets by colour/number; do not restate scores or coordinates.`
                     : `${gapCount} of ${pockets.features.length} pockets is a ${goalWord}${gapCount === 1 ? '' : 's'}; the rest are only least-served. Lead with that count in ONE sentence and don't oversell the non-gaps. Refer to pockets by colour/number; do not restate scores or coordinates.`;
-            return {
-                ok: true as const,
-                panel: 'Opportunities',
-                headline: `Scanned ${resolved.label} for ${peers} — ${pockets.features.length} pocket${pockets.features.length === 1 ? '' : 's'}, ${gapCount} ${goalWord}${gapCount === 1 ? '' : 's'}.`,
-                hint,
-            };
-        } catch (error) {
-            progress.done();
-            return { error: `Whitespace scan failed: ${error instanceof Error ? error.message : String(error)}` };
+            headlines.push(
+                `Scanned ${resolved.label} for ${peers} — ${pockets.features.length} pocket${pockets.features.length === 1 ? '' : 's'}, ${gapCount} ${goalWord}${gapCount === 1 ? '' : 's'}`,
+            );
         }
-    }) as ToolEntry['execute'],
-    examplePrompts: [
-        'Where in Amsterdam Oost is there demand but no gym within a 10-minute walk?',
-        'Find opportunity zones for a coffee shop in De Pijp',
-        'Best spots for a furniture showroom that clusters near other furniture stores',
-        'Find under-served areas for a daycare in Amsterdam West, near schools and supermarkets',
-        'Where in the centre should a specialty bike shop open to be near other sports retailers?',
-        'Show the best pockets for a pharmacy in Nieuw-West where residents are under-served',
-    ],
-};
+
+        progress.done();
+        return {
+            ok: true as const,
+            panel: 'Opportunities',
+            headline: headlines.join('. ') + '.',
+            hint: lastHint,
+        };
+    } catch (error) {
+        progress.done();
+        return { error: `Whitespace scan failed: ${error instanceof Error ? error.message : String(error)}` };
+    }
+}) as ToolEntry['execute'];
+
+const FIND_WHITESPACE_EXAMPLE_PROMPTS = [
+    'Where in East Las Vegas is there demand but no gym within a 10-minute walk?',
+    'Find opportunity zones for a coffee shop in the Arts District',
+    'Best spots for a furniture showroom that clusters near other furniture stores',
+    'Find under-served areas for a daycare in Summerlin, near schools and supermarkets',
+    'Where in the centre should a specialty bike shop open to be near other sports retailers?',
+    'Show the best pockets for a pharmacy in North Las Vegas where residents are under-served',
+    'Compare whitespace for a gym in East Las Vegas and Henderson',
+];

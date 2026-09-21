@@ -1,4 +1,3 @@
-import { expect } from 'vitest';
 import type { ReverseGeocodingResponse } from '../reverseGeocoding';
 import type { ReverseGeocodingResponseAPI } from '../types/apiTypes';
 import type { ReverseGeocodingParams } from '../types/reverseGeocodingParams';
@@ -10,105 +9,44 @@ const data: [string, ReverseGeocodingParams, ReverseGeocodingResponseAPI, Revers
             position: [5.72884, 52.33499],
         },
         {
-            summary: {
-                queryTime: 15,
-                numResults: 1,
-            },
-            addresses: [
+            results: [
                 {
+                    id: '00005858-5800-1200-0000-0000773670cd',
+                    type: 'street',
+                    title: 'Hierderweg, 8077 Hulshorst',
+                    position: { type: 'Point', coordinates: [5.728785, 52.335152] },
                     address: {
-                        streetName: 'Hierderweg',
-                        countryCode: 'NL',
+                        street: 'Hierderweg',
+                        countryCodeIso2: 'NL',
                         countrySubdivision: 'Gelderland',
                         municipality: 'Nunspeet',
                         postalCode: '8077',
                         municipalitySubdivision: 'Hulshorst',
                         country: 'Nederland',
-                        countryCodeISO3: 'NLD',
-                        freeformAddress: 'Hierderweg, 8077 Hulshorst',
-                        boundingBox: {
-                            northEast: '52.336436,5.739380',
-                            southWest: '52.334605,5.722876',
-                            entity: 'position',
-                        },
-                        localName: 'Hulshorst',
-                        sideOfStreet: 'R',
-                        offsetPosition: '52.33516,5.72879',
-                    },
-                    mapcodes: [
-                        {
-                            type: 'Local',
-                            fullMapcode: 'US-CA FS.WRG0',
-                            territory: 'US-CA',
-                            code: 'FS.WRG0',
-                        },
-                        {
-                            type: 'International',
-                            fullMapcode: 'S4ZW4.89XV',
-                        },
-                        {
-                            type: 'Alternative',
-                            fullMapcode: 'USA JJCH.H9CF',
-                            territory: 'USA',
-                            code: 'JJCH.H9CF',
-                        },
-                    ],
-                    position: '52.335152,5.728785',
-                    dataSources: {
-                        geometry: {
-                            id: '00005858-5800-1200-0000-0000773670cd',
-                        },
                     },
                 },
             ],
         },
         {
             type: 'Feature',
-            id: expect.any(String),
+            id: '00005858-5800-1200-0000-0000773670cd',
             geometry: {
                 type: 'Point',
                 coordinates: [5.72884, 52.33499],
             },
-            bbox: [5.722876, 52.334605, 5.73938, 52.336436],
             properties: {
                 type: 'Street',
                 address: {
+                    freeformAddress: 'Hierderweg, 8077 Hulshorst',
                     streetName: 'Hierderweg',
                     countryCode: 'NL',
+                    countryCodeISO3: 'NLD',
                     countrySubdivision: 'Gelderland',
                     municipality: 'Nunspeet',
                     postalCode: '8077',
                     municipalitySubdivision: 'Hulshorst',
                     country: 'Nederland',
-                    countryCodeISO3: 'NLD',
-                    freeformAddress: 'Hierderweg, 8077 Hulshorst',
-                    localName: 'Hulshorst',
                 },
-                dataSources: {
-                    geometry: {
-                        id: '00005858-5800-1200-0000-0000773670cd',
-                    },
-                },
-                mapcodes: [
-                    {
-                        type: 'Local',
-                        fullMapcode: 'US-CA FS.WRG0',
-                        territory: 'US-CA',
-                        code: 'FS.WRG0',
-                    },
-                    {
-                        type: 'International',
-                        fullMapcode: 'S4ZW4.89XV',
-                    },
-                    {
-                        type: 'Alternative',
-                        fullMapcode: 'USA JJCH.H9CF',
-                        territory: 'USA',
-                        code: 'JJCH.H9CF',
-                    },
-                ],
-                sideOfStreet: 'R',
-                offsetPosition: [5.72879, 52.33516],
                 originalPosition: [5.728785, 52.335152],
             },
         },
@@ -120,55 +58,36 @@ const data: [string, ReverseGeocodingParams, ReverseGeocodingResponseAPI, Revers
             geographyType: ['Country'],
         },
         {
-            summary: {
-                queryTime: 15,
-                numResults: 1,
-            },
-            addresses: [
+            results: [
                 {
+                    id: '00004732-3100-3c00-0000-0000240fa19a',
+                    type: 'area',
+                    areaType: 'country',
+                    title: 'Nederland',
+                    position: { type: 'Point', coordinates: [5.72884, 52.334991] },
                     address: {
-                        countryCode: 'NL',
+                        countryCodeIso2: 'NL',
                         country: 'Nederland',
-                        countryCodeISO3: 'NLD',
-                        freeformAddress: 'Nederland',
-                        boundingBox: {
-                            northEast: '53.555013,7.227545',
-                            southWest: '50.750449,3.358334',
-                            entity: 'position',
-                        },
-                        sideOfStreet: 'L',
-                        offsetPosition: '0,0',
                     },
-                    position: '52.334991,5.728840',
-                    dataSources: {
-                        geometry: {
-                            id: '00005858-5800-1200-0000-0000773670cd',
-                        },
-                    },
-                    entityType: 'Geography',
                 },
             ],
         },
         {
             type: 'Feature',
-            id: expect.any(String),
+            id: '00004732-3100-3c00-0000-0000240fa19a',
             geometry: {
                 type: 'Point',
                 coordinates: [5.72884, 52.33499],
             },
-            bbox: [3.358334, 50.750449, 7.227545, 53.555013],
             properties: {
                 type: 'Geography',
+                geographyType: ['Country'],
+                dataSources: { geometry: { id: '00004732-3100-3c00-0000-0000240fa19a' } },
                 address: {
-                    countryCode: 'NL',
-                    country: 'Nederland',
-                    countryCodeISO3: 'NLD',
                     freeformAddress: 'Nederland',
-                },
-                dataSources: {
-                    geometry: {
-                        id: '00005858-5800-1200-0000-0000773670cd',
-                    },
+                    countryCode: 'NL',
+                    countryCodeISO3: 'NLD',
+                    country: 'Nederland',
                 },
                 originalPosition: [5.72884, 52.334991],
             },

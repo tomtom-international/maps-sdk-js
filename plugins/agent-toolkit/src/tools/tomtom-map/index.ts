@@ -11,6 +11,12 @@ export {
     executeClearMap,
 } from './clear-map';
 export {
+    describeMapStylingDescription,
+    describeMapStylingOutputSchema,
+    describeMapStylingSchema,
+    executeDescribeMapStyling,
+} from './describe-map-styling';
+export {
     executeGetStandardMapStyles,
     getStandardMapStylesDescription,
     getStandardMapStylesOutputSchema,
@@ -28,6 +34,12 @@ export {
     setMapStandardStyleOutputSchema,
     setMapStandardStyleSchema,
 } from './set-map-standard-style';
+export {
+    executeSetMapStyling,
+    setMapStylingDescription,
+    setMapStylingOutputSchema,
+    setMapStylingSchema,
+} from './set-map-styling';
 export {
     executeToggleTilesBaseMapLayerGroups,
     toggleTilesBaseMapLayerGroupsDescription,

@@ -8,17 +8,36 @@ import {
     getNumLayersBySource,
     getNumVisibleLayersBySource,
     initBasemap,
-    initBasemap2,
+    moveAndZoomTo,
     setStyle,
     waitForMapIdle,
     waitForMapReady,
+    waitUntilRenderedFeatures,
+    waitUntilRenderedFeaturesChange,
 } from './util/TestUtils';
 
 const getBaseMapLayerCount = async (page: Page): Promise<number> =>
     page.evaluate(() => (globalThis as MapsSDKThis).baseMap?.sourceAndLayerIDs.vectorTiles.layerIDs.length as number);
 
-const getBaseMap2LayerCount = async (page: Page): Promise<number> =>
-    page.evaluate(() => (globalThis as MapsSDKThis).baseMap2?.sourceAndLayerIDs.vectorTiles.layerIDs.length as number);
+// The base map is shared per map, so "the layers of one group" is asked of the one module rather
+// than of a second instance scoped to that group. See LSI-159.
+const getGroupLayerIDs = async (page: Page, group: BaseMapLayerGroupName): Promise<string[]> =>
+    page.evaluate((name) => (globalThis as MapsSDKThis).baseMap?.getLayerIds(name) as string[], group);
+
+const areGroupLayersVisible = async (page: Page, group: BaseMapLayerGroupName): Promise<boolean | undefined> =>
+    page.evaluate(
+        (name) => (globalThis as MapsSDKThis).baseMap?.isVisible({ layerGroups: { mode: 'include', names: [name] } }),
+        group,
+    );
+
+const setGroupVisible = async (page: Page, group: BaseMapLayerGroupName, visible: boolean) =>
+    page.evaluate(
+        ({ name, isVisible }) =>
+            (globalThis as MapsSDKThis).baseMap?.setVisible(isVisible, {
+                layerGroups: { mode: 'include', names: [name] },
+            }),
+        { name: group, isVisible: visible },
+    );
 
 const setBaseMapVisible = async (page: Page, visible: boolean, options?: { layerGroups?: BaseMapLayerGroups }) =>
     page.evaluate(({ visible, options }) => (globalThis as MapsSDKThis).baseMap?.setVisible(visible, options), {
@@ -30,15 +49,11 @@ const isBaseMapVisible = async (page: Page) => page.evaluate(() => (globalThis a
 
 const getBaseMapConfig = async (page: Page) => page.evaluate(() => (globalThis as MapsSDKThis).baseMap?.getConfig());
 
-const setBaseMap2Visible = async (page: Page, visible: boolean, options?: { layerGroups?: BaseMapLayerGroups }) =>
-    page.evaluate(({ visible, options }) => (globalThis as MapsSDKThis).baseMap2?.setVisible(visible, options), {
-        visible,
-        options,
-    });
+const getBaseMapLayers = async (page: Page) =>
+    page.evaluate(() => (globalThis as MapsSDKThis).baseMap?.getLayers() as Record<BaseMapLayerGroupName, string[]>);
 
-const isBaseMap2Visible = async (page: Page) => page.evaluate(() => (globalThis as MapsSDKThis).baseMap2?.isVisible());
-
-const getBaseMap2Config = async (page: Page) => page.evaluate(() => (globalThis as MapsSDKThis).baseMap2?.getConfig());
+const getBaseMapLayerIds = async (page: Page, group: BaseMapLayerGroupName) =>
+    page.evaluate((inputGroup) => (globalThis as MapsSDKThis).baseMap?.getLayerIds(inputGroup) as string[], group);
 
 test.describe('BaseMap module tests', () => {
     const mapEnv = new MapTestEnv();
@@ -72,31 +87,32 @@ test.describe('BaseMap module tests', () => {
         expect(await getBaseMapConfig(page)).toEqual({ visible: true });
         expect(await getBaseMapLayerCount(page)).toBe(originalBaseMapLayerCount);
 
-        // ANOTHER BASE MAP MODULE INSTANCE WITH LAYER GROUPS FILTERED:
-        await initBasemap2(page, { layerGroupsFilter: { mode: 'include', names: ['land', 'water'] } });
-        expect(await getBaseMap2Config(page)).toEqual({
-            layerGroupsFilter: { mode: 'include', names: ['land', 'water'] },
-        });
-        // double-checking we haven't altered the overall visible base map layers:
+        // Hiding one part of the map, through the same module — there is only ever one.
+        await setBaseMapVisible(page, false, { layerGroups: { mode: 'include', names: ['land', 'water'] } });
+        // double-checking we haven't altered the overall base map layer set:
         vectorTilesLayersCount = await getNumLayersBySource(page, BASE_MAP_SOURCE_ID);
         expect(vectorTilesLayersCount).toBe(originalBaseMapLayerCount + poiLayerIDs.length);
-        expect(await getNumVisibleLayersBySource(page, BASE_MAP_SOURCE_ID)).toBeGreaterThan(vectorTilesLayersCount - 5);
         expect(await getBaseMapLayerCount(page)).toBe(originalBaseMapLayerCount);
-        // the second base map module should have just a subset of the overall layers:
-        expect(await getBaseMap2LayerCount(page)).toBeLessThan(vectorTilesLayersCount / 2);
-
-        // we make the second base map module instance invisible, which should hide only some layers:
-        await setBaseMap2Visible(page, false);
-        expect(await getBaseMap2Config(page)).toEqual({
-            visible: false,
-            layerGroupsFilter: { mode: 'include', names: ['land', 'water'] },
-        });
-        expect(await isBaseMap2Visible(page)).toBe(false);
-        // (the overall base map is still visible since some layer are still visible):
+        // the overall base map is still visible since many layers are:
         expect(await isBaseMapVisible(page)).toBe(true);
         expect(await getNumVisibleLayersBySource(page, BASE_MAP_SOURCE_ID)).toBeGreaterThan(0);
         expect(await getNumVisibleLayersBySource(page, BASE_MAP_SOURCE_ID)).toBeLessThan(vectorTilesLayersCount);
 
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    // Style-owned modules are shared per map: a second get() is a lookup, not a construction.
+    // See LSI-159.
+    test('BaseMapModule.get returns the same instance for one map', async ({ page }) => {
+        await initBasemap(page);
+
+        const sameInstance = await page.evaluate(async () => {
+            const mapsSdkThis = globalThis as MapsSDKThis;
+            const again = await mapsSdkThis.MapsSDK.BaseMapModule.get(mapsSdkThis.tomtomMap);
+            return again === mapsSdkThis.baseMap;
+        });
+
+        expect(sameInstance).toBe(true);
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
@@ -121,117 +137,139 @@ test.describe('BaseMap module tests', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test('BaseMap modules and visibility changes for some layer groups', async ({ page }) => {
+    test('BaseMap visibility changes for some layer groups', async ({ page }) => {
         // Initializing a base map with all layers:
         await initBasemap(page);
-        await initBasemap2(page, { layerGroupsFilter: { mode: 'include', names: ['land'] } });
-        expect(await getBaseMap2Config(page)).toEqual({ layerGroupsFilter: { mode: 'include', names: ['land'] } });
+        expect(await areGroupLayersVisible(page, 'land')).toBe(true);
 
-        // Hiding land via the first generic base map module:
-        await setBaseMapVisible(page, false, { layerGroups: { mode: 'include', names: ['land'] } });
-        // The first base map module should be visible because many layers are still visible:
+        // Hiding land:
+        await setGroupVisible(page, 'land', false);
+        // The module as a whole is still visible, because many layers still are:
         expect(await isBaseMapVisible(page)).toBe(true);
-        // The second base map module, based only on land, should be now invisible:
-        expect(await isBaseMap2Visible(page)).toBe(false);
-        // Caveat: even if it's invisible, the config of the second base map doesn't state invisibility, since it was changed via another map module:
-        expect(await getBaseMap2Config(page)).toEqual({ layerGroupsFilter: { mode: 'include', names: ['land'] } });
+        expect(await areGroupLayersVisible(page, 'land')).toBe(false);
 
         // Showing land again:
-        await setBaseMapVisible(page, true, { layerGroups: { mode: 'include', names: ['land'] } });
-        expect(await isBaseMap2Visible(page)).toBe(true);
+        await setGroupVisible(page, 'land', true);
+        expect(await areGroupLayersVisible(page, 'land')).toBe(true);
 
         // Hiding everything but land:
         await setBaseMapVisible(page, false, { layerGroups: { mode: 'exclude', names: ['land'] } });
-        // Land module still visible:
-        expect(await isBaseMap2Visible(page)).toBe(true);
+        // Land is still visible:
+        expect(await areGroupLayersVisible(page, 'land')).toBe(true);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test('Two BaseMap modules with mutually exclusive groups', async ({ page }) => {
+    test('Mutually exclusive layer groups toggle independently on one module', async ({ page }) => {
         const originalLayersCount = await getNumLayersBySource(page, BASE_MAP_SOURCE_ID);
         const originalVisibleLayersCount = await getNumVisibleLayersBySource(page, BASE_MAP_SOURCE_ID);
 
-        const names: BaseMapLayerGroupName[] = ['roadLines', 'roadShields', 'roadLabels'];
+        const roadGroups: BaseMapLayerGroups = { mode: 'include', names: ['roads', 'roadShields', 'roadLabels'] };
+        const everythingElse: BaseMapLayerGroups = { mode: 'exclude', names: roadGroups.names };
 
-        // "foundation" base map excluding roads:
-        await initBasemap(page, { layerGroupsFilter: { mode: 'exclude', names } });
-        // second base map with roads only (should be mutually exclusive):
-        await initBasemap2(page, { layerGroupsFilter: { mode: 'include', names } });
+        await initBasemap(page);
 
         // double-checking we haven't altered the overall base map layers:
         expect(await getNumLayersBySource(page, BASE_MAP_SOURCE_ID)).toBe(originalLayersCount);
         expect(await getNumVisibleLayersBySource(page, BASE_MAP_SOURCE_ID)).toBe(originalVisibleLayersCount);
 
-        // changing visibilities and ensuring one base map doesn't affect the other:
-        expect(await isBaseMapVisible(page)).toBe(true);
-        expect(await isBaseMap2Visible(page)).toBe(true);
+        expect(await areGroupLayersVisible(page, 'roads')).toBe(true);
+        expect(await areGroupLayersVisible(page, 'water')).toBe(true);
 
-        await setBaseMapVisible(page, false);
-        expect(await isBaseMapVisible(page)).toBe(false);
-        expect(await isBaseMap2Visible(page)).toBe(true);
+        // Hiding everything but the roads leaves the roads alone, and vice versa.
+        await setBaseMapVisible(page, false, { layerGroups: everythingElse });
+        expect(await areGroupLayersVisible(page, 'roads')).toBe(true);
+        expect(await areGroupLayersVisible(page, 'water')).toBe(false);
 
-        await setBaseMap2Visible(page, false);
-        expect(await isBaseMapVisible(page)).toBe(false);
-        expect(await isBaseMap2Visible(page)).toBe(false);
+        await setBaseMapVisible(page, false, { layerGroups: roadGroups });
+        expect(await areGroupLayersVisible(page, 'roads')).toBe(false);
+        expect(await areGroupLayersVisible(page, 'water')).toBe(false);
 
-        await setBaseMapVisible(page, true);
-        expect(await isBaseMapVisible(page)).toBe(true);
-        expect(await isBaseMap2Visible(page)).toBe(false);
+        await setBaseMapVisible(page, true, { layerGroups: everythingElse });
+        expect(await areGroupLayersVisible(page, 'roads')).toBe(false);
+        expect(await areGroupLayersVisible(page, 'water')).toBe(true);
 
-        await setBaseMap2Visible(page, true);
-        expect(await isBaseMapVisible(page)).toBe(true);
-        expect(await isBaseMap2Visible(page)).toBe(true);
+        await setBaseMapVisible(page, true, { layerGroups: roadGroups });
+        expect(await areGroupLayersVisible(page, 'roads')).toBe(true);
+        expect(await areGroupLayersVisible(page, 'water')).toBe(true);
     });
 
-    test('BaseMap modules including each layer group, including visibility changes', async ({ page }) => {
-        const vectorTilesLayersCount = await getNumLayersBySource(page, BASE_MAP_SOURCE_ID);
-        for (const layerGroup of baseMapLayerGroupNames) {
-            await initBasemap(page, { layerGroupsFilter: { mode: 'include', names: [layerGroup] } });
-            const visibleLayers = await getNumVisibleLayersBySource(page, BASE_MAP_SOURCE_ID);
-            // The number of visible style layers should be close to the total amount (but some style layers might be hidden by default):
-            expect(visibleLayers).toBeGreaterThan(vectorTilesLayersCount - 20);
+    // One module backs every group: `setVisible` and `isVisible` both take the group to act on,
+    // so visibility is asserted per group rather than inferred from layer counts. See LSI-159.
+    test('Every layer group hides and shows independently on the one base map module', async ({ page }) => {
+        await initBasemap(page);
+        const initiallyVisible = await getNumVisibleLayersBySource(page, BASE_MAP_SOURCE_ID);
 
-            await setBaseMapVisible(page, false);
-            const visibleLayersAfterModuleInvisible = await getNumVisibleLayersBySource(page, BASE_MAP_SOURCE_ID);
-            // (only some layers became invisible):
-            expect(visibleLayersAfterModuleInvisible).toBeGreaterThan(0);
-            // (there might be some layers which are hidden by default in the style)
-            if (layerGroup === 'buildings3D') {
-                expect(visibleLayersAfterModuleInvisible).toBeLessThanOrEqual(visibleLayers);
-            } else {
-                expect(visibleLayersAfterModuleInvisible).toBeLessThan(visibleLayers);
-            }
+        for (const layerGroup of baseMapLayerGroupNames) {
+            // A style need not ship every group; an absent one has nothing to toggle.
+            if (!(await getGroupLayerIDs(page, layerGroup)).length) continue;
+
+            await setGroupVisible(page, layerGroup, false);
+            expect(await areGroupLayersVisible(page, layerGroup), `'${layerGroup}' should hide`).toBe(false);
+            // Hiding one group never blanks the whole base map.
+            expect(await getNumVisibleLayersBySource(page, BASE_MAP_SOURCE_ID)).toBeGreaterThan(0);
+
+            await setGroupVisible(page, layerGroup, true);
+            expect(await areGroupLayersVisible(page, layerGroup), `'${layerGroup}' should show again`).toBe(true);
+        }
+
+        // Everything is back on — plus any group that shipped hidden and we just switched on.
+        expect(await getNumVisibleLayersBySource(page, BASE_MAP_SOURCE_ID)).toBeGreaterThanOrEqual(initiallyVisible);
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    // The complement of the test above: hiding everything *except* one group leaves that group,
+    // and only that group, on the map.
+    test('Hiding all but one layer group leaves exactly that group visible', async ({ page }) => {
+        await initBasemap(page);
+
+        for (const layerGroup of baseMapLayerGroupNames) {
+            if (!(await getGroupLayerIDs(page, layerGroup)).length) continue;
+
+            await setBaseMapVisible(page, false, { layerGroups: { mode: 'exclude', names: [layerGroup] } });
+            const visibleLayers = await getNumVisibleLayersBySource(page, BASE_MAP_SOURCE_ID);
+            // Groups overlap — `cityLabels` is inside `allPlaceLabels` — so the survivors are this
+            // group's layers, not necessarily only them. What matters is that something survived
+            // and that most of the map went away.
+            expect(visibleLayers, `'${layerGroup}' should survive`).toBeGreaterThan(0);
 
             await setBaseMapVisible(page, true);
-            const visibleLayersAfterModuleVisible = await getNumVisibleLayersBySource(page, BASE_MAP_SOURCE_ID);
-            // all layers are visible again:
-            // (there might be some layers which are hidden by default in the style so here we might end up with more visible layers than before)
-            expect(visibleLayersAfterModuleVisible).toBeGreaterThanOrEqual(visibleLayers);
+            expect(await getNumVisibleLayersBySource(page, BASE_MAP_SOURCE_ID)).toBeGreaterThan(visibleLayers);
         }
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test('BaseMap modules excluding each layer group, including visibility changes', async ({ page }) => {
-        const vectorTilesLayersCount = await getNumLayersBySource(page, BASE_MAP_SOURCE_ID);
-        for (const layerGroup of baseMapLayerGroupNames) {
-            await initBasemap(page, { layerGroupsFilter: { mode: 'exclude', names: [layerGroup] } });
-            const visibleLayers = await getNumVisibleLayersBySource(page, BASE_MAP_SOURCE_ID);
-            // The number of visible style layers should be close to the total amount (but some style layers might be hidden by default):
-            expect(visibleLayers).toBeGreaterThan(vectorTilesLayersCount - 20);
+    test('New layer groups toggle real rendered features (railways, ferries, nature labels)', async ({ page }) => {
+        // Istanbul at z12 straddles the Bosphorus: dense railways on both shores,
+        // cross-strait ferry lines, and water-area/strait nature labels — so the
+        // three groups added by the metadata-based classification all have
+        // features here and the visibility assertions below aren't vacuous.
+        await moveAndZoomTo(page, { center: [29.0, 41.03], zoom: 12 });
+        await waitForMapIdle(page);
+        await initBasemap(page);
 
-            await setBaseMapVisible(page, false);
-            const visibleLayersAfterModuleInvisible = await getNumVisibleLayersBySource(page, BASE_MAP_SOURCE_ID);
-            // (only some layers became invisible):
-            expect(visibleLayersAfterModuleInvisible).toBeGreaterThan(0);
-            expect(visibleLayersAfterModuleInvisible).toBeLessThan(visibleLayers);
+        const newGroups: BaseMapLayerGroupName[] = ['railways', 'ferries', 'natureLabels'];
+        for (const group of newGroups) {
+            // getLayerIds reveals the group's exact style layer ids.
+            const layerIDs = await getGroupLayerIDs(page, group);
+            expect(layerIDs, `group '${group}' should map to style layers`).not.toHaveLength(0);
 
-            await setBaseMapVisible(page, true);
-            const visibleLayersAfterModuleVisible = await getNumVisibleLayersBySource(page, BASE_MAP_SOURCE_ID);
-            // all layers are visible again:
-            // (there might be some layers which are hidden by default in the style so here we might end up with more visible layers than before)
-            expect(visibleLayersAfterModuleVisible).toBeGreaterThanOrEqual(visibleLayers);
+            // The group must actually render features here (otherwise hiding proves nothing):
+            const shown = await waitUntilRenderedFeaturesChange(page, layerIDs, 0, 15000);
+            expect(shown.length, `group '${group}' should render features in Istanbul`).toBeGreaterThan(0);
+
+            // Hiding the group removes its features from the map:
+            await setGroupVisible(page, group, false);
+            expect(await areGroupLayersVisible(page, group)).toBe(false);
+            await waitUntilRenderedFeatures(page, layerIDs, 0, 15000);
+
+            // Showing it again brings them back:
+            await setGroupVisible(page, group, true);
+            expect(await areGroupLayersVisible(page, group)).toBe(true);
+            const reshown = await waitUntilRenderedFeaturesChange(page, layerIDs, 0, 15000);
+            expect(reshown.length, `group '${group}' should render features again`).toBeGreaterThan(0);
         }
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
@@ -253,6 +291,33 @@ test.describe('BaseMap module tests', () => {
 
         expect(await getBaseMapConfig(page)).toBeUndefined();
         expect(await isBaseMapVisible(page)).toBe(true);
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test('getLayers exposes grouped layer ids for the initialized map', async ({ page }) => {
+        await initBasemap(page);
+        const layers = await getBaseMapLayers(page);
+
+        // Every group has an entry (some may be empty in a given style).
+        expect(Object.keys(layers).sort((a, b) => a.localeCompare(b))).toEqual(
+            [...baseMapLayerGroupNames].sort((a, b) => a.localeCompare(b)),
+        );
+        // Water is present everywhere; getLayerIds agrees with getLayers.
+        expect(layers.water.length).toBeGreaterThan(0);
+        expect(await getBaseMapLayerIds(page, 'water')).toEqual(layers.water);
+
+        // The place-label groups are subsets of the allPlaceLabels superset.
+        for (const cityLayer of layers.cityLabels) {
+            expect(layers.allPlaceLabels).toContain(cityLayer);
+        }
+
+        // Every grouped id is one of the module's managed layers (POIs excluded).
+        const managed = await page.evaluate(
+            () => (globalThis as MapsSDKThis).baseMap?.sourceAndLayerIDs.vectorTiles.layerIDs as string[],
+        );
+        const allGrouped = new Set(Object.values(layers).flat());
+        for (const id of allGrouped) expect(managed).toContain(id);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });

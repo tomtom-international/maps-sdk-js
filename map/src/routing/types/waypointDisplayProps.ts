@@ -96,8 +96,8 @@ export type WaypointDisplayProps = PlaceDisplayProps & {
      * The stop index to be displayed.
      *
      * @remarks
-     * Stops are the non-soft waypoints added between origin and destination,
-     * numbered starting from 1. Only present for middle waypoints.
+     * Stops are the waypoints between origin and destination, numbered starting from 1.
+     * Only present for middle waypoints.
      *
      * **Display Behavior:**
      * - Start waypoint: undefined
@@ -115,12 +115,22 @@ export type WaypointDisplayProps = PlaceDisplayProps & {
      * ```
      */
     stopDisplayIndex?: number;
-};
 
-/**
- * @ignore
- */
-export const INDEX_TYPE = 'indexType';
+    /**
+     * How long the route waits at this waypoint, formatted for display.
+     *
+     * @remarks
+     * Taken from {@link WaypointProps.pauseDurationSeconds} and rendered on the stop's label by
+     * default (e.g. `30 min`). Absent when the waypoint carries no wait. Charging-stop pins carry
+     * the same property, so both kinds of pin say how long you are there in the same words.
+     *
+     * @example
+     * ```typescript
+     * stopDuration: '30 min'
+     * ```
+     */
+    stopDuration?: string;
+};
 
 /**
  * @ignore

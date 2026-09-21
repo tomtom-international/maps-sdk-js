@@ -33,8 +33,8 @@ const MOCK_POSITION: [number, number] = [4.9041, 52.3676];
 // analysis / map mutation — they only keep multi-step flows from stalling on an empty result.
 const SPECIFIC_MOCKS: Record<string, (...args: any[]) => Promise<unknown>> = {
     // Domain tools — terse summaries (the real tools write full results into on-screen panels).
-    profileSite: async ({ address }: { address?: string } = {}) => ({
-        summary: `Profiled ${address ?? 'the site'}`,
+    profileSite: async ({ addresses }: { addresses?: string[] } = {}) => ({
+        summary: `Profiled ${addresses?.[0] ?? 'the site'}`,
         areaMakeup: { retail: 12, food: 8, office: 5, residential: 20 },
     }),
     rankSites: async ({ sites }: { sites?: unknown[] } = {}) => ({

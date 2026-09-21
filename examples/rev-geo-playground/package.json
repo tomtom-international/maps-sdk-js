@@ -7,6 +7,7 @@
     "build:sandpack": "vite build --config ../example-sandpack-vite.config.ts",
     "clean:dist": "rimraf ./dist",
     "develop": "vite --config ../example-vite.config.ts",
+    "develop:sandpack": "vite --config ../example-sandpack-vite.config.ts",
     "start-test-server": "vite preview --port 9050 --outDir dist/prod",
     "start-test-server:prod": "vite preview --port 9050 --outDir dist/prod",
     "test:e2e": "playwright test",

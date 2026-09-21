@@ -94,7 +94,7 @@ trafficIncidents.applyConfig(newIncidentsConfig);
 GeoJSON-source companion to the tile module. You fetch incidents yourself via the `trafficIncidentDetails()` service, hand the result to `show()`, and the module renders the same per-magnitude line + symbol style as the tile overlay — but driven by *your* snapshot, with ids, delays, and click access to the full typed feature.
 
 ```ts
-const overlay = await TrafficIncidentOverlayModule.get(map);
+const overlay = await TrafficIncidentOverlayModule.create(map);
 
 // Fetch a snapshot and render it.
 const result = await trafficIncidentDetails({
@@ -114,12 +114,13 @@ overlay.events.on('click', (incident, lngLat) => {
     overlay.setFocus(typeof id === 'string' ? [id] : null);
 });
 
-// De-duplicate hit-test results when one click lands on multiple stacked incidents
-// (each incident renders across outline + inner + symbol layers — `allFeatures`
-// contains every layer hit).
-overlay.events.on('click', (_incident, _lngLat, allFeatures) => {
-    const distinct = overlay.distinctIncidents(allFeatures);
-    console.log(`${distinct.length} incidents at this point`);
+// De-duplicate hit-test results when one click lands on multiple stacked incidents.
+// Each incident renders across outline + inner + symbol layers, so the handler's third
+// argument holds every layer hit — the same incident appears more than once. There is no
+// SDK helper for this; de-duplicate on `properties.id`, which is a required string.
+overlay.events.on('click', (_incident, _lngLat, allEventFeatures) => {
+    const distinctIDs = new Set(allEventFeatures.map((incident) => incident.properties.id));
+    console.log(`${distinctIDs.size} incidents at this point`);
 });
 
 overlay.setFocus(null);     // clear focus
@@ -134,13 +135,13 @@ overlay.moveBeforeLayer('lowestLabel'); // default — below labels
 
 ```ts
 // Override the default treatment (outline color + width multiplier).
-const overlay = await TrafficIncidentOverlayModule.get(map, {
+const overlay = await TrafficIncidentOverlayModule.create(map, {
     focus: { outlineColor: '#0052a5', widthScale: 2 },
 });
 
 // Disable the built-in visual treatment but keep feature-state writing —
 // drive your own styling off `feature-state.focused`.
-const overlay = await TrafficIncidentOverlayModule.get(map, { focus: false });
+const overlay = await TrafficIncidentOverlayModule.create(map, { focus: false });
 ```
 
 ### When to hide the tile module first
@@ -151,7 +152,7 @@ The vector-tile `TrafficIncidentsModule` is hidden in the default style, so the 
 const tileIncidents = await TrafficIncidentsModule.get(map);
 tileIncidents.setVisible(false);
 
-const overlay = await TrafficIncidentOverlayModule.get(map);
+const overlay = await TrafficIncidentOverlayModule.create(map);
 await overlay.show(await trafficIncidentDetails({ bbox: map.getBBox() }));
 ```
 
@@ -271,7 +272,7 @@ const place = await geocodeOne('Amsterdam, Netherlands');
 const boundary = await geometryData({ geometries: [place] });
 
 // 2. Create module
-const analyticsModule = await TrafficAreaAnalyticsModule.get(map, {
+const analyticsModule = await TrafficAreaAnalyticsModule.create(map, {
     displayMode: 'hexgrid-3d',        // 'hexgrid-3d' | 'hexgrid-2d' | 'square-3d' | 'square-2d' | 'heatmap'
     activeMetric: 'congestionLevel',  // which metric drives color + height
     metricConfig: {
@@ -304,12 +305,12 @@ analyticsModule.isVisible();               // boolean
 await analyticsModule.clear();
 
 // Region boundary appearance (always shown alongside analytics cells)
-const analyticsModule = await TrafficAreaAnalyticsModule.get(map, {
+const analyticsModule = await TrafficAreaAnalyticsModule.create(map, {
     regionPolygon: { color: '#0052a5', fillOpacity: 0.08, outlineOpacity: 1, outlineWidth: 3 },
 });
 
 // Layer ordering — per-layer-type positioning
-const analyticsModule = await TrafficAreaAnalyticsModule.get(map, {
+const analyticsModule = await TrafficAreaAnalyticsModule.create(map, {
     beforeLayerConfig: {
         heatmap: 'lowestLabel',
         hexgrid: { flat2D: 'lowestLabel', extrusion3D: 'lowestPlaceLabel' },

@@ -1,42 +1,40 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
     <head>
         <title>Map POI Filters Playground</title>
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
         <link rel="icon" href="data:,">
     </head>
-    <body class="sdk-example-body">
+    <body class="ui-body">
         <div id="sdk-map"></div>
-        <div class="sdk-example-customPanel">
-            <div class="sdk-example-panel-header">
-                <h3 class="sdk-example-heading">
-                    <span class="sdk-example-heading-text">POI Filters</span>
-                    <button class="sdk-example-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
-                        <svg class="sdk-example-heading-chevron" viewBox="0 0 16 10">
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">POI Filters</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
                             <path d="M3 1.5L8 6.5L13 1.5" />
                         </svg>
                     </button>
                 </h3>
             </div>
 
-            <div class="sdk-example-panel-content">
-                <div class="sdk-example-section">
-                    <label class="sdk-example-form-label" for="sdk-example-modeSelector">Filter Mode:</label>
-                    <select class="sdk-example-dropdown" id="sdk-example-modeSelector">
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <label class="ui-form-label" for="ui-modeSelector">Filter Mode:</label>
+                    <select class="ui-dropdown" id="ui-modeSelector">
                         <option value="all_except">All Except</option>
                         <option value="only">Only</option>
                     </select>
                 </div>
 
-                <div class="sdk-example-section">
-                    <h4 class="sdk-example-subheading">Categories</h4>
-                    <div id="sdk-example-filtersContainer"></div>
+                <div class="ui-section">
+                    <h4 class="ui-subheading">Categories</h4>
+                    <div id="ui-filtersContainer"></div>
                 </div>
 
-                <div class="sdk-example-section">
-                    <button class="sdk-example-button sdk-example-button-full" id="sdk-example-resetButton">
-                        Reset
-                    </button>
+                <div class="ui-section">
+                    <button class="ui-button ui-button-full" id="ui-resetButton">Reset</button>
                 </div>
             </div>
         </div>

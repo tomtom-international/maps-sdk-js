@@ -18,10 +18,11 @@ export class MapPOIsState implements StateSlice {
 
     constructor(private readonly _ttMap: TomTomMap) {}
 
-    // Module getter (lazy initialization)
+    // Module getter. The SDK shares style-owned modules per map, so this is a lookup —
+    // the field only records that we have fetched it, for the synchronous accessor below.
 
     async getPOIsModule(): Promise<POIsModule> {
-        this._poisModule ??= await POIsModule.get(this._ttMap);
+        this._poisModule = await POIsModule.get(this._ttMap);
         return this._poisModule;
     }
 

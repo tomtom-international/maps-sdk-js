@@ -41,7 +41,7 @@ export interface ModelsSourceSpecification {
     transcoderPath?: string;
     /**
      * Send `credentials: 'include'` with each tile request so a session cookie
-     * (e.g. the demo-BFF proxy's) travels with it. Leave off for direct
+     * (e.g. the demos proxy's) travels with it. Leave off for direct
      * `api.tomtom.com` access, where credentialed CORS would fail.
      * @defaultValue `false`
      */

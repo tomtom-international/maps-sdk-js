@@ -2,40 +2,48 @@
  * @module agent-toolkit-tools
  */
 
+import type { BBox } from '@tomtom-org/maps-sdk/core';
 import { geometryData } from '@tomtom-org/maps-sdk/services';
-import type { Feature, MultiPolygon, Polygon } from 'geojson';
-import type { ToolState } from '../../types';
-import { geocodeAreas } from './geocode-areas';
-import { locatePlaces, type QueryAs } from './locate-places';
+import type { Feature, MultiPolygon, Polygon, Position } from 'geojson';
+import type { ToolExecuteOptions, ToolState } from '../../types';
+import { withAgentToolkitHeaders } from './agent-headers';
+import { geocodeAreas as geocodeContainingAreas } from './geocode-areas';
+import { locatePlaces } from './locate-places';
 import type { WhereContext } from './resolve-where';
 import { getViewportBias, getViewportBoundingBox } from './viewport-bias';
 
 /** Adapts the live `ToolState` to the narrow `WhereContext` the resolver depends on. Keeping this
  * mapping in one place is what lets resolveAreas stay testable without a ToolState. */
-export const toolStateToWhereContext = (state: ToolState): WhereContext => ({
-    viewportBBox: () => {
+export const toolStateToWhereContext = (state: ToolState, options?: ToolExecuteOptions): WhereContext => ({
+    viewport: () => {
+        let bbox: BBox | undefined;
+        let center: Position | undefined;
         try {
-            return getViewportBoundingBox(state.baseMap);
+            bbox = getViewportBoundingBox(state.baseMap);
         } catch {
-            return undefined;
+            bbox = undefined;
         }
-    },
-    viewportCenter: () => {
         try {
-            return getViewportBias(state.baseMap);
+            center = getViewportBias(state.baseMap);
         } catch {
-            return undefined;
+            center = undefined;
         }
+        return { bbox, center };
     },
-    findPlaceById: (id) => state.places.findPlaceById(id)?.place,
-    geometryPlaceIdsForEntry: (id) => state.places.geometryPlaceIdsForEntry(id),
-    fetchPlaceGeometry: (id) => state.places.fetchPlaceGeometry(id),
-    geocodeArea: (query, queryAs: QueryAs, bias) =>
-        locatePlaces(query, queryAs, { limit: 5, bias: bias ? { position: bias } : undefined }),
-    geocodeAreas: (query, bias) => geocodeAreas(query, { bias }),
-    fetchAreaPolygon: async (place) => {
+    expandEntry: (id) => state.places.geometryPlaceIdsForEntry(id),
+    geocodeAreas: (query, queryAs, bias) => {
+        if (queryAs)
+            return locatePlaces(query, queryAs, { limit: 5, bias: bias ? { position: bias } : undefined }, options);
+        return geocodeContainingAreas(query, { bias }, options);
+    },
+    fetchGeometry: async (place) => {
+        if (typeof place === 'string') return state.places.fetchPlaceGeometry(place, options);
         if (!place.properties.dataSources?.geometry?.id) return undefined;
-        const result = await geometryData({ geometries: [place] });
+        const requestParams = withAgentToolkitHeaders({
+            geometries: [place],
+            signal: options?.signal,
+        });
+        const result = await geometryData(requestParams);
         return result.features[0] as Feature<Polygon | MultiPolygon> | undefined;
     },
     getRoute: (routeId) => {

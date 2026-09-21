@@ -47,18 +47,20 @@ test.describe('PlacesModule theme tests', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
+    // TODO(LSI-263): flakes on the places `micro` icon layer — the same cluster as the untagged
+    // PlacesModule:32 and PlacesModuleTheme:146, all downstream of the maplibre 6.4.0 icon race.
     test('Apply different themes and icon configs to a place', { tag: '@flaky' }, async ({ page }) => {
         const mapEnv = await MapTestEnv.loadPageAndMap(page, { center: [4.90047, 52.37708], zoom: 14 });
         await initPlaces(page);
         // Wait for map idle so the pin-categories sprite (loaded async by
         // `addPinCategoriesSpriteToStyle`) is available before the first render query —
-        // otherwise `iconID: '7313'` resolves to a missing sprite and the feature is dropped.
+        // otherwise `iconID: 'pinCategories:7313'` resolves to a missing sprite and the feature is dropped.
         await waitForMapIdle(page);
         const { layerIDs } = await getPlacesSourceAndLayerIDs(page);
         await showPlaces(page, testPlace);
 
         let renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, 1, 10000);
-        expect(renderedPlaces[0].properties.iconID).toBe('7313');
+        expect(renderedPlaces[0].properties.iconID).toBe('pinCategories:7313');
 
         // Apply circle-icon theme
         await applyPlacesTheme(page, 'circle-icon');
@@ -114,14 +116,14 @@ test.describe('PlacesModule theme tests', () => {
     test('Pin theme: applyIconConfig registers and renders the custom sprite', async ({ page }) => {
         const mapEnv = await MapTestEnv.loadPageAndMap(page, { center: [4.90047, 52.37708], zoom: 14 });
         await initPlaces(page);
-        // Wait for the pin-categories sprite to finish loading before relying on '7313'.
+        // Wait for the pin-categories sprite to finish loading before relying on 'pinCategories:7313'.
         await waitForMapIdle(page);
         const { layerIDs } = await getPlacesSourceAndLayerIDs(page);
         await showPlaces(page, testPlace);
 
         // Pin default: iconID is the POI category numeric ID
         let renderedPlaces = await waitUntilRenderedFeatures(page, layerIDs, 1, 10000);
-        expect(renderedPlaces[0].properties.iconID).toBe('7313');
+        expect(renderedPlaces[0].properties.iconID).toBe('pinCategories:7313');
 
         // Apply a custom icon for PARKING_GARAGE while staying on pin theme
         await applyPlacesIconConfig(page, {

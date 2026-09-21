@@ -1,0 +1,48 @@
+THIRD-PARTY SOFTWARE NOTICES FOR @tomtom-org/maps-sdk-plugin-landmarks-3d
+
+This file lists the third-party components used by this package, together with
+their licenses. It is generated from the build output — do not edit it by hand.
+
+Components marked "Bundled: false (peer dependency)" are not shipped inside it:
+your package manager installs them alongside it and your application bundles them.
+The licenses below apply to those copies, and each such component may in turn install
+its own dependencies under their own licenses.
+
+The software itself is licensed under the terms in LICENSE.txt, which is not affected
+by the licenses reproduced here.
+
+--------------------------------------------------------------------------------
+
+Name: three
+Version: 0.170.0
+License: MIT
+Bundled: false (peer dependency)
+Description: JavaScript 3D library
+Repository: https://github.com/mrdoob/three.js
+Homepage: https://threejs.org/
+Author: mrdoob
+License Text:
+===
+
+The MIT License
+
+Copyright © 2010-2024 three.js authors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+

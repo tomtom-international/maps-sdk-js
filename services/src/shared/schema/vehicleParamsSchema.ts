@@ -1,6 +1,6 @@
 import { currentTypes, plugTypes } from '@tomtom-org/maps-sdk/core';
 import { z } from 'zod';
-import { loadTypes } from '../types/vehicleRestrictionParams';
+import { tollTransponderOptions } from '../types/vehicleRestrictionParams';
 
 // Common validation schemas
 const positiveNumber = z.number().positive();
@@ -96,11 +96,7 @@ const electricEngineModelSchema = z.object({
 // Vehicle dimensions schema
 const vehicleDimensionsSchema = z
     .object({
-        lengthMeters: optionalPositiveNumber,
-        widthMeters: optionalPositiveNumber,
-        heightMeters: optionalPositiveNumber,
         weightKG: optionalPositiveNumber,
-        axleWeightKG: optionalPositiveNumber,
     })
     .optional();
 
@@ -152,10 +148,8 @@ const electricVehiclePreferencesSchema = z.object({
 // Vehicle restrictions schema
 const vehicleRestrictionsSchema = z
     .object({
-        loadTypes: z.array(z.enum(loadTypes)).optional(),
         maxSpeedKMH: z.number().min(0).max(250).optional(),
-        adrCode: z.enum(['B', 'C', 'D', 'E']).optional(),
-        commercial: z.boolean().optional(),
+        tollTransponder: z.enum(tollTransponderOptions).optional(),
     })
     .optional();
 

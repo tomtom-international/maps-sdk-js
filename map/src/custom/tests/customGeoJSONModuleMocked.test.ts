@@ -84,7 +84,7 @@ describe('CustomGeoJSONModule', () => {
     });
 
     test('init creates one source per config entry with auto-generated and explicit IDs', async () => {
-        const module = await CustomGeoJSONModule.get<TestSources>(tomtomMapMock, buildConfig());
+        const module = await CustomGeoJSONModule.create<TestSources>(tomtomMapMock, buildConfig());
         const ids = module.sourceAndLayerIDs;
 
         expect(ids.points.sourceID).toMatch(/^custom-geojson-\d+-points$/);
@@ -94,7 +94,7 @@ describe('CustomGeoJSONModule', () => {
     });
 
     test('show/clear/getShown round-trip per source', async () => {
-        const module = await CustomGeoJSONModule.get<TestSources>(tomtomMapMock, buildConfig());
+        const module = await CustomGeoJSONModule.create<TestSources>(tomtomMapMock, buildConfig());
         const pointsData: FeatureCollection<Point> = {
             type: 'FeatureCollection',
             features: [
@@ -120,7 +120,7 @@ describe('CustomGeoJSONModule', () => {
             a: FeatureCollection<Point>;
             b: FeatureCollection<Point>;
         };
-        const module = await CustomGeoJSONModule.get<SharedSources>(tomtomMapMock, {
+        const module = await CustomGeoJSONModule.create<SharedSources>(tomtomMapMock, {
             sources: {
                 a: { layers: [{ type: 'circle' as const, paint: { 'circle-radius': 4 } }] },
                 b: { layers: [{ type: 'circle' as const, paint: { 'circle-radius': 6 } }] },
@@ -144,7 +144,7 @@ describe('CustomGeoJSONModule', () => {
     });
 
     test('show normalizes feature.id and properties.id when missing', async () => {
-        const module = await CustomGeoJSONModule.get<TestSources>(tomtomMapMock, buildConfig());
+        const module = await CustomGeoJSONModule.create<TestSources>(tomtomMapMock, buildConfig());
         const pointsData: FeatureCollection<Point> = {
             type: 'FeatureCollection',
             features: [
@@ -163,7 +163,7 @@ describe('CustomGeoJSONModule', () => {
     });
 
     test('show preserves explicit feature.id and aligns properties.id', async () => {
-        const module = await CustomGeoJSONModule.get<TestSources>(tomtomMapMock, buildConfig());
+        const module = await CustomGeoJSONModule.create<TestSources>(tomtomMapMock, buildConfig());
         const pointsData: FeatureCollection<Point> = {
             type: 'FeatureCollection',
             features: [
@@ -184,32 +184,31 @@ describe('CustomGeoJSONModule', () => {
     });
 
     test('throws on empty sources or empty layers', async () => {
-        await expect(CustomGeoJSONModule.get(tomtomMapMock, { sources: {} } as never)).rejects.toThrow(
-            /at least one source/,
-        );
+        await expect(CustomGeoJSONModule.create(tomtomMapMock, { sources: {} })).rejects.toThrow(/at least one source/);
         await expect(
-            CustomGeoJSONModule.get(tomtomMapMock, {
+            CustomGeoJSONModule.create(tomtomMapMock, {
                 sources: { foo: { layers: [] } },
-            } as never),
+            }),
         ).rejects.toThrow(/at least one layer/);
     });
 
-    test('events getter returns a CombinedEvents per source', async () => {
-        const module = await CustomGeoJSONModule.get<TestSources>(tomtomMapMock, buildConfig());
+    test('events getter returns a user-events scope per source', async () => {
+        const module = await CustomGeoJSONModule.create<TestSources>(tomtomMapMock, buildConfig());
         expect(module.events.points).toBeDefined();
         expect(module.events.polygons).toBeDefined();
         expect(typeof module.events.points.on).toBe('function');
+        expect(typeof module.events.points.where).toBe('function');
     });
 
-    test('shown-features handlers fire per source and config-change is module-wide', async () => {
-        const module = await CustomGeoJSONModule.get<TestSources>(tomtomMapMock, buildConfig());
-        const onShownPoints = vi.fn();
-        const onShownPolygons = vi.fn();
+    // This module's `show` names the source it writes, so `shown-features` names it too — the one
+    // module whose shown data is genuinely per source. See LSI-159.
+    test('shown-features names the source that was written, and config-change is module-wide', async () => {
+        const module = await CustomGeoJSONModule.create<TestSources>(tomtomMapMock, buildConfig());
+        const onShown = vi.fn();
         const onConfigChange = vi.fn();
 
-        module.events.points.on('shown-features', onShownPoints);
-        module.events.polygons.on('shown-features', onShownPolygons);
-        module.events.points.on('config-change', onConfigChange);
+        module.events.on('shown-features', onShown);
+        module.events.on('config-change', onConfigChange);
 
         const pointsData: FeatureCollection<Point> = {
             type: 'FeatureCollection',
@@ -219,15 +218,15 @@ describe('CustomGeoJSONModule', () => {
         };
 
         await module.show(pointsData, 'points');
-        expect(onShownPoints).toHaveBeenCalledWith(pointsData);
-        expect(onShownPolygons).not.toHaveBeenCalled();
+        expect(onShown).toHaveBeenCalledTimes(1);
+        expect(onShown).toHaveBeenCalledWith({ sourceName: 'points', data: pointsData });
 
         module.setVisible(false);
         expect(onConfigChange).toHaveBeenCalledTimes(1);
     });
 
     test('restoreDataAndConfigImpl keeps source and layer IDs stable across a style change', async () => {
-        const module = await CustomGeoJSONModule.get<TestSources>(tomtomMapMock, buildConfig());
+        const module = await CustomGeoJSONModule.create<TestSources>(tomtomMapMock, buildConfig());
         const before = structuredClone(module.sourceAndLayerIDs);
 
         (module as unknown as { restoreDataAndConfigImpl(): void }).restoreDataAndConfigImpl();
@@ -237,7 +236,7 @@ describe('CustomGeoJSONModule', () => {
 
     test('config.images are registered with map.addImage on init', async () => {
         const fakeImage = { width: 1, height: 1, data: new Uint8ClampedArray([0, 0, 0, 0]) };
-        await CustomGeoJSONModule.get<TestSources>(tomtomMapMock, {
+        await CustomGeoJSONModule.create<TestSources>(tomtomMapMock, {
             ...buildConfig(),
             images: { 'my-marker': { image: fakeImage, options: { pixelRatio: 2 } } },
         });
@@ -247,7 +246,7 @@ describe('CustomGeoJSONModule', () => {
 
     test('images are re-registered on restore after a style change clears them', async () => {
         const fakeImage = { width: 1, height: 1, data: new Uint8ClampedArray([0, 0, 0, 0]) };
-        const module = await CustomGeoJSONModule.get<TestSources>(tomtomMapMock, {
+        const module = await CustomGeoJSONModule.create<TestSources>(tomtomMapMock, {
             ...buildConfig(),
             images: { 'my-marker': { image: fakeImage } },
         });
@@ -263,7 +262,7 @@ describe('CustomGeoJSONModule', () => {
     test('applyConfig registers newly added images', async () => {
         const initialImage = { width: 1, height: 1, data: new Uint8ClampedArray([0, 0, 0, 0]) };
         const newImage = { width: 1, height: 1, data: new Uint8ClampedArray([255, 0, 0, 255]) };
-        const module = await CustomGeoJSONModule.get<TestSources>(tomtomMapMock, {
+        const module = await CustomGeoJSONModule.create<TestSources>(tomtomMapMock, {
             ...buildConfig(),
             images: { initial: { image: initialImage } },
         });
@@ -281,12 +280,33 @@ describe('CustomGeoJSONModule', () => {
         expect(mapHarness.addImageMock).not.toHaveBeenCalledWith('initial', expect.anything(), expect.anything());
     });
 
+    test('resetConfig returns to the config the module was created with', async () => {
+        const initialConfig = buildConfig();
+        const module = await CustomGeoJSONModule.create<TestSources>(tomtomMapMock, initialConfig);
+        const onConfigChange = vi.fn();
+        module.events.on('config-change', onConfigChange);
+
+        const replacement = {
+            sources: {
+                points: { layers: [{ type: 'circle' as const, paint: { 'circle-radius': 9 } }] },
+                polygons: { sourceID: 'custom-polygons', layers: [{ id: 'polygon-fill', type: 'fill' as const }] },
+            },
+        };
+        module.applyConfig(replacement);
+        expect(module.getConfig()).toEqual(replacement);
+
+        module.resetConfig();
+
+        expect(module.getConfig()).toEqual(initialConfig);
+        expect(onConfigChange).toHaveBeenLastCalledWith(initialConfig);
+    });
+
     test('images already present on the map are not re-added', async () => {
         const fakeImage = { width: 1, height: 1, data: new Uint8ClampedArray([0, 0, 0, 0]) };
         // Pre-seed an image to simulate a previously registered one.
         mapHarness.registeredImages['existing-icon'] = fakeImage;
 
-        await CustomGeoJSONModule.get<TestSources>(tomtomMapMock, {
+        await CustomGeoJSONModule.create<TestSources>(tomtomMapMock, {
             ...buildConfig(),
             images: { 'existing-icon': { image: fakeImage } },
         });

@@ -48,9 +48,9 @@ pnpm -F services build
 **💡 Hot-rebuild while developing:**
 ```bash
 # Run in a separate terminal to auto-rebuild on file changes
-pnpm -F services build --watch
+pnpm -F services build:watch
 ```
-This watches for changes in the `services` package and automatically rebuilds. Useful when iterating on service APIs and testing changes in examples.
+This watches for changes in the `services` package and automatically rebuilds the JS bundle and the declarations. Useful when iterating on service APIs and testing changes in examples.
 
 See [../CONTRIBUTING.md](../CONTRIBUTING.md) and [../documentation/development/](../documentation/development/) for detailed setup.
 

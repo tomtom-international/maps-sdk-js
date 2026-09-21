@@ -9,7 +9,7 @@ import type {
 import type { LineString, Point } from 'geojson';
 
 /**
- * V3 traffic section icon categories.
+ * Traffic section icon categories.
  * @ignore
  */
 export type IconCategoryAPI =
@@ -27,7 +27,7 @@ export type IconCategoryAPI =
     | 'wind';
 
 /**
- * V3 delay magnitude values. `'undefined'` is the raw API value mapped to SDK `'indefinite'`.
+ * Delay magnitude values. `'undefined'` is the raw API value mapped to SDK `'indefinite'`.
  * @ignore
  */
 export type DelayMagnitudeAPI = 'unknown' | 'minor' | 'moderate' | 'major' | 'undefined';
@@ -39,13 +39,6 @@ export type DelayMagnitudeAPI = 'unknown' | 'minor' | 'moderate' | 'major' | 'un
 export type LatitudeLongitudePointAPI = {
     latitude: number;
     longitude: number;
-};
-
-/**
- * @ignore
- */
-export type ReportAPI = {
-    effectiveSettings: { key: string; value: string }[];
 };
 
 /**
@@ -81,7 +74,7 @@ export type ChargingStopAPI = Omit<ChargingStopProps, 'targetChargeInPCT' | 'cha
 };
 
 /**
- * V3 summary — field names changed from V2.
+ * Route summary as the API returns it.
  * @ignore
  */
 export type SummaryAPI = {
@@ -94,6 +87,9 @@ export type SummaryAPI = {
     deviationDistanceInMeters?: number;
     deviationDurationInSeconds?: number;
     deviationPoint?: Point;
+    // Leg-only: the index, among the requested locations, of the waypoint the leg ends at. Returned
+    // without asking for anything extra in `Attributes`; absent on the final leg.
+    originalWaypointIndexAtEndOfLeg?: number;
     // Traffic variant times (returned via additionalProperties when computeTravelTimeFor=all was used)
     historicTrafficTravelTimeInSeconds?: number;
     liveTrafficIncidentsTravelTimeInSeconds?: number;
@@ -108,7 +104,7 @@ export type SummaryAPI = {
 };
 
 /**
- * V3 leg — path is now a GeoJSON LineString instead of a points array.
+ * Route leg. Its path is a GeoJSON LineString, not a points array.
  * @ignore
  */
 export type LegAPI = {
@@ -117,7 +113,7 @@ export type LegAPI = {
 };
 
 /**
- * V3 basic section — uses pathIndex instead of pointIndex.
+ * Basic section. Spans are expressed with pathIndex, not pointIndex.
  * @ignore
  */
 export type BasicSectionAPI = {
@@ -152,7 +148,7 @@ export type TrafficSectionAPI = BasicSectionAPI & {
 };
 
 /**
- * V3 speed limit section — speed values live under `speedRestrictions` (typed maximum/minimum)
+ * Speed limit section — speed values live under `speedRestrictions` (typed maximum/minimum)
  * instead of the V2 flat `maxSpeedLimitInKmh`.
  * @ignore
  */
@@ -161,7 +157,7 @@ export type SpeedLimitSectionAPI = BasicSectionAPI & {
 };
 
 /**
- * V3 lanes section — directions/separators are camelCase strings (mapped to the SDK's
+ * Lanes section — directions/separators are camelCase strings (mapped to the SDK's
  * UPPER_SNAKE enums during parsing), and lanes are objects rather than flat direction lists.
  * @ignore
  */
@@ -181,7 +177,7 @@ export type ImportantRoadStretchSectionAPI = BasicSectionAPI & {
 };
 
 /**
- * V3 sections object — already grouped by type (no flat array + discriminator).
+ * Sections object, grouped by type rather than a flat array with a discriminator.
  * @ignore
  */
 export type SectionsAPI = {
@@ -201,12 +197,13 @@ export type SectionsAPI = {
     speedLimit?: SpeedLimitSectionAPI[];
     lanes?: LanesSectionAPI[];
     roadShields?: (BasicSectionAPI & { roadShieldReferences?: RoadShieldReference[] })[];
+    tollRoad?: BasicSectionAPI[];
     tollVignette?: CountrySectionAPI[];
     importantRoadStretch?: ImportantRoadStretchSectionAPI[];
 };
 
 /**
- * V3 lat/lon point used in guidance instructions (different from GeoJSON used elsewhere).
+ * Lat/lon point used in guidance instructions (different from the GeoJSON used elsewhere).
  * @ignore
  */
 export type LatLonPointAPI = {
@@ -215,7 +212,7 @@ export type LatLonPointAPI = {
 };
 
 /**
- * V3 routePath point — field names changed from V2.
+ * A point on the route path.
  * @ignore
  */
 export type RoutePathPointAPI = {
@@ -225,25 +222,20 @@ export type RoutePathPointAPI = {
 };
 
 /**
- * V3 phonetic transcription — an object keyed by phonetic alphabet, not a flat string as in V2.
+ * Text with phonetics. `phonetic` is a flat string, already transcribed in the alphabet the
+ * request asked for via `instructionPhonetics` — there is no per-alphabet object to choose from.
  * @ignore
  */
-export type PhoneticAPI = { lhp?: string; ipa?: string };
+export type TextWithPhoneticsAPI = { text: string; phonetic?: string; phoneticLanguageCode?: string };
 
 /**
- * V3 text-with-phonetics — `phonetic` is now an object (mapped to a flat string during parsing).
- * @ignore
- */
-export type TextWithPhoneticsAPI = { text: string; phonetic?: PhoneticAPI; phoneticLanguageCode?: string };
-
-/**
- * V3 icon reference — same shape as the SDK's RoadShieldReference.
+ * Icon reference — same shape as the SDK's RoadShieldReference.
  * @ignore
  */
 export type IconReferenceAPI = { reference: string; shieldContent?: string; affixes?: string[] };
 
 /**
- * V3 road shield inside an instruction's road information. `iconReference` is EXPLICIT.
+ * Road shield inside an instruction's road information. `iconReference` is EXPLICIT.
  * @ignore
  */
 export type InstructionRoadShieldAPI = {
@@ -254,18 +246,39 @@ export type InstructionRoadShieldAPI = {
 };
 
 /**
- * V3 road information inside an instruction — field names changed from V2.
+ * Side road. `side` is lowercase on the wire, mapped to the SDK's UPPER_SNAKE `SideRoadSide`.
+ * @ignore
+ */
+export type SideRoadAPI = {
+    side: string;
+    offsetFromManeuverInMeters: number;
+    isDrivable?: boolean;
+};
+
+/**
+ * Maneuver view. Both angle fields are relative-direction strings (`slightLeft`, `back`, …),
+ * not degrees, and are mapped to the SDK's UPPER_SNAKE `ManeuverAngle`.
+ * @ignore
+ */
+export type ManeuverViewAPI = {
+    onRouteAngle?: string;
+    offRouteAngles?: string[];
+};
+
+/**
+ * Road information inside an instruction.
  * @ignore
  */
 export type InstructionRoadInformationAPI = {
     properties?: string[];
     roadShields?: InstructionRoadShieldAPI[];
-    roadNames?: Array<{ identifier: TextWithPhoneticsAPI }>;
-    roadNumbers?: Array<{ identifier: TextWithPhoneticsAPI }>;
+    roadNames?: Array<{ identifier: TextWithPhoneticsAPI; source?: string }>;
+    roadNumbers?: Array<{ identifier: TextWithPhoneticsAPI; source?: string }>;
+    countryCodeIso2?: string;
 };
 
 /**
- * V3 signpost — adds an EXPLICIT `exitIconReference` (mapped to signpostRoadShieldReferences).
+ * Signpost. Carries an EXPLICIT `exitIconReference`, mapped to signpostRoadShieldReferences.
  * @ignore
  */
 export type SignpostAPI = {
@@ -276,7 +289,7 @@ export type SignpostAPI = {
 };
 
 /**
- * V3 instruction — raw response shape. Coordinates are lat/lon (not GeoJSON), and several field
+ * Instruction — raw response shape. Coordinates are lat/lon (not GeoJSON), and several field
  * names / value casings differ from the SDK's {@link Instruction}; the parser converts them.
  * @ignore
  */
@@ -302,11 +315,15 @@ export type InstructionAPI = {
     countryCrossingFromCodeIso2?: string;
     countryCrossingToName?: TextWithPhoneticsAPI;
     countryCrossingToCodeIso2?: string;
-    sideRoads?: Instruction['sideRoads'];
+    sideRoads?: SideRoadAPI[];
+    /** Generated, localised instruction text. Present on every instruction. */
+    message?: string;
+    maneuverView?: ManeuverViewAPI;
+    roundaboutType?: string;
 };
 
 /**
- * V3 progress point — field names differ from the SDK's RouteProgressPoint.
+ * Progress point. Its field names differ from the SDK's RouteProgressPoint.
  * @ignore
  */
 export type ProgressPointAPI = {

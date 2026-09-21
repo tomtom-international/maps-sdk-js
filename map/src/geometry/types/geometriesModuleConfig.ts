@@ -14,7 +14,7 @@ import type { GeometryTheme } from './geometryTheme';
  * const fill: GeometryFillConfig = { color: '#FF5733', opacity: 0.3 };
  *
  * // Palette name
- * const fill: GeometryFillConfig = { color: 'red', opacity: 0.25 };
+ * const fill: GeometryFillConfig = { color: 'blues', opacity: 0.25 };
  *
  * // Data-driven color based on properties
  * const fill: GeometryFillConfig = {
@@ -27,8 +27,12 @@ import type { GeometryTheme } from './geometryTheme';
  */
 export type GeometryFillConfig = {
     /**
-     * Fill color: a hex string (`'#FF5733'`), a palette name (`'red'`), or a MapLibre expression
+     * Fill color: a hex string (`'#FF5733'`), a palette name (`'blues'`, see {@link colorPaletteIDs}), or a MapLibre expression
      * for data-driven styling (e.g. `['get', 'color']`).
+     *
+     * @remarks
+     * When unset the default is theme-adaptive: `'#0A3653'` on light map styles, `'#5FA8D8'` on dark.
+     * Custom styles are treated as light — pass a colour explicitly on a dark custom style.
      *
      * @default '#0A3653'
      */
@@ -122,6 +126,9 @@ export type GeometryTextConfig = {
 export type GeometryLineConfig = {
     /**
      * Border/outline color: a hex string or a MapLibre expression (e.g. `['get', 'borderColor']`).
+     *
+     * @remarks
+     * When unset the default is theme-adaptive: `'#0A3653'` on light map styles, `'#5FA8D8'` on dark.
      *
      * @default '#0A3653'
      */
@@ -222,6 +229,9 @@ export type GeometryLineLabelConfig = {
     /**
      * Color of the border label text.
      *
+     * @remarks
+     * When unset the default is theme-adaptive: `'#333333'` on light map styles, `'#FFFFFF'` on dark.
+     *
      * @default '#333333'
      *
      * @example
@@ -236,6 +246,9 @@ export type GeometryLineLabelConfig = {
      * Color of the halo drawn around the border label text.
      *
      * The halo improves legibility against complex or dark backgrounds.
+     *
+     * @remarks
+     * When unset the default is theme-adaptive: `'#FFFFFF'` on light map styles, `'#333333'` on dark.
      *
      * @default '#FFFFFF'
      *
@@ -445,7 +458,7 @@ export type GeometriesModuleConfig = MapModuleCommonConfig & {
      * @example
      * ```typescript
      * // Show the "rest of the world" outside a country
-     * const module = await GeometriesModule.get(map, {
+     * const module = await GeometriesModule.create(map, {
      *     theme: 'inverted',
      *     fill: { color: 'black', opacity: 0.5 }
      * });

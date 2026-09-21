@@ -1,16 +1,19 @@
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { mergeFromGlobal, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import type { StyleSpecification } from 'maplibre-gl';
 import { afterEach, describe, expect, test } from 'vitest';
-import { buildStyleInput, withPreviousStyleParts } from '../styleInputBuilder';
+import { buildStyleInput, DEFAULT_STYLE_VERSION, withPreviousStyleParts } from '../styleInputBuilder';
 import type { TomTomMapParams } from '../types/mapInit';
 import mapsSdkInitParamsAndMapStyles from './styleInputBuilder.data';
 
 describe('Map style input builder tests', () => {
-    test.each(mapsSdkInitParamsAndMapStyles)(`'%s`, (_name: string, tomtomMapParams: TomTomMapParams, rendererStyle:
-        | StyleSpecification
-        | string) => {
-        expect(buildStyleInput(mergeFromGlobal(tomtomMapParams))).toEqual(rendererStyle);
-    });
+    test.each(mapsSdkInitParamsAndMapStyles)(
+        `'%s`,
+        (_name: string, tomtomMapParams: TomTomMapParams, rendererStyle: StyleSpecification | string) => {
+            expect(buildStyleInput(mergeFromGlobal(tomtomMapParams))).toEqual(rendererStyle);
+        },
+    );
 
     describe('proxy mode (empty apiKey)', () => {
         afterEach(() => {
@@ -62,5 +65,18 @@ describe('Map style input builder tests', () => {
                 { type: 'standard', id: 'monoLight', include: ['trafficIncidents'] },
             ),
         ).toEqual({ type: 'standard', id: 'standardDark', include: ['trafficIncidents'] });
+    });
+});
+
+// The fixture-refresh script regenerates what the styling version-guard tests run against, so it
+// has to fetch the same version the SDK pins. It runs under plain `node`, which cannot resolve the
+// SDK's extensionless imports, so it reads the pin out of this module's source rather than holding a
+// copy. That read is what this test protects: reshape the declaration and the script stops finding
+// it, at the one moment it is ever run — a style bump.
+describe('the pinned style version', () => {
+    test('is readable from source the way the fixture-refresh script reads it', () => {
+        const sourcePath = fileURLToPath(new URL('../styleInputBuilder.ts', import.meta.url));
+        const declared = /DEFAULT_STYLE_VERSION = '([^']+)'/.exec(readFileSync(sourcePath, 'utf8'))?.[1];
+        expect(declared, `No DEFAULT_STYLE_VERSION declaration found in ${sourcePath}`).toBe(DEFAULT_STYLE_VERSION);
     });
 });

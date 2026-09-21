@@ -2,13 +2,14 @@ import type { ExpressionSpecification, SymbolLayerSpecification } from 'maplibre
 import type { LayerSpecTemplate } from '../../shared';
 import { MAP_BOLD_FONT } from '../../shared/layers/commonLayerProps';
 import {
-    ICON_ID,
     pinIconBaseLayout,
     pinIconBasePaint,
     pinTextBaseLayout,
     pinTextBasePaint,
+    TITLE,
 } from '../../shared/layers/symbolLayers';
-import { INDEX_TYPE, MIDDLE_INDEX, STOP_DISPLAY_INDEX } from '../types/waypointDisplayProps';
+import { STOP_DISPLAY_INDEX } from '../types/waypointDisplayProps';
+import { hasStopDuration, stopDurationLabelSection } from '../util/stopDuration';
 
 /**
  * Waypoint start image ID.
@@ -25,25 +26,22 @@ export const WAYPOINT_START_IMAGE_ID = 'waypointStart';
  */
 export const WAYPOINT_STOP_IMAGE_ID = 'waypointStop';
 /**
- * Soft waypoint image ID.
- *
- * @remarks
- * This is currently unsupported in Orbis maps.
- *
- * @group Routing
- */
-export const WAYPOINT_SOFT_IMAGE_ID = 'waypointSoft';
-/**
  * Waypoint finish image ID.
  *
  * @group Routing
  */
 export const WAYPOINT_FINISH_IMAGE_ID = 'waypointFinish';
 
-const isSoftWaypoint: ExpressionSpecification = [
-    'all',
-    ['==', ['get', INDEX_TYPE], MIDDLE_INDEX],
-    ['!', ['has', STOP_DISPLAY_INDEX]],
+// `title` is often absent -- a waypoint given as bare coordinates has no name -- so the newline
+// between the two is only emitted when both are actually there. The duration itself is styled by
+// `stopDurationLabelSection`, which the charging-stop pins use too.
+const waypointLabelTextField: ExpressionSpecification = [
+    'format',
+    ['coalesce', ['get', TITLE], ''],
+    {},
+    ['case', ['all', ['has', TITLE], hasStopDuration], '\n', ''],
+    {},
+    ...stopDurationLabelSection,
 ];
 
 const pinIndexLabelPaint: SymbolLayerSpecification['paint'] = {
@@ -56,14 +54,7 @@ const pinIndexLabelLayout: SymbolLayerSpecification['layout'] = {
     'text-font': [MAP_BOLD_FONT],
     'text-size': ['interpolate', ['linear'], ['zoom'], 13, 14, 18, 16],
     'text-offset': [0, -1.6],
-    // pin vs circle:
-    'icon-anchor': [
-        'case',
-        isSoftWaypoint,
-        'center',
-        // else
-        'bottom',
-    ],
+    'icon-anchor': 'bottom',
     'text-allow-overlap': true,
 };
 
@@ -80,12 +71,7 @@ export const waypointSymbols: LayerSpecTemplate<SymbolLayerSpecification> = {
     layout: {
         ...pinIconBaseLayout,
         ...pinIndexLabelLayout,
-        'symbol-sort-key': [
-            'case',
-            ['==', ['get', ICON_ID], WAYPOINT_SOFT_IMAGE_ID],
-            0,
-            ['abs', ['-', ['get', 'index'], 1000]],
-        ],
+        'symbol-sort-key': ['abs', ['-', ['get', 'index'], 1000]],
     },
 };
 
@@ -102,6 +88,7 @@ export const waypointLabels: LayerSpecTemplate<SymbolLayerSpecification> = {
     },
     layout: {
         ...pinTextBaseLayout,
+        'text-field': waypointLabelTextField,
         'text-anchor': 'top',
         'text-offset': [0, 0.4],
     },

@@ -35,21 +35,22 @@ The map container **and its parent elements** (`html`, `body`) all need explicit
 
 ---
 
-## Vite projects — required build target
+## Vite projects — exclude MapLibre from pre-bundling
 
-MapLibre GL v5 uses native class fields. Vite's default esbuild target downcompiles these into a `__publicField()` helper that isn't available inside MapLibre's web workers. The result: routes, layers, and sources silently fail to render with no error in the console.
+MapLibre GL v6 ships its web worker as a separate module (`dist/maplibre-gl-worker.mjs`) that the entry locates at runtime through `import.meta.url`. Vite's dependency pre-bundler doesn't emit that sibling into `.vite/deps`, so the worker fails to load and the map never finishes initializing — a blank map with no error in the console:
 
 ```ts
 // vite.config.ts
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-    build: { target: 'esnext' },
-    optimizeDeps: { esbuildOptions: { target: 'esnext' } },
+    optimizeDeps: { exclude: ['maplibre-gl'] },
 });
 ```
 
-This only applies when MapLibre is bundled by Vite (not loaded from a CDN). The SDK's own examples avoid this by loading MapLibre via CDN import maps.
+Excluding it lets MapLibre load from its own package directory, where the worker resolves.
+
+The same constraint applies when serving MapLibre from a CDN: point at the published `dist/maplibre-gl.mjs` (e.g. jsDelivr, which mirrors the tarball as-is), **not** a re-bundling CDN such as esm.sh — it serves the entry from a rewritten path where the worker sibling doesn't exist, so the worker 404s and the map paints a blank background.
 
 ---
 
@@ -130,37 +131,46 @@ const trafficFlow = await TrafficFlowModule.get(map, { visible: true });
 
 ## Module architecture
 
-All map modules share the same pattern. Always `await Module.get(map)` before calling any method:
+All map modules are async, and the factory name tells you who owns the layers being controlled:
+
+- **Data-owned** (`PlacesModule`, `RoutingModule`, `GeometriesModule`, `CustomGeoJSONModule`, `TrafficIncidentOverlayModule`, `TrafficAreaAnalyticsModule`) — `await Module.create(map, optionalConfig)`. Each call returns a **new independent instance** owning its own sources, layers and images, so several can coexist on one map, each managing its own data.
+- **Style-owned** (`BaseMapModule`, `POIsModule`, `TrafficFlowModule`, `TrafficIncidentsModule`, `HillshadeModule`) — `await Module.get(map, optionalConfig)`. These control layers the style already provides under fixed global IDs, so every instance is a handle on the **same shared state**.
 
 ```ts
-const module = await ModuleClass.get(map, optionalConfig);
-module.setVisible(true);
-module.getShown();                                    // current data on the map
-module.events.on('click', (feature, lngLat) => { });
-module.events.on('hover', (feature, lngLat) => { });
-module.events.off('click', handler);
-```
+const placesModule = await PlacesModule.create(map, optionalConfig);   // data-owned
+const poisModule = await POIsModule.get(map, optionalConfig);          // style-owned
 
-Multiple instances of the same module type can coexist on one map — each manages its own data independently.
+placesModule.setVisible(true);
+placesModule.getShown();                              // current data on the map
+placesModule.events.on('click', (feature, lngLat) => { });
+placesModule.events.on('hover', (feature, lngLat) => { });
+placesModule.events.off('click', handler);
+```
 
 ---
 
 ## BaseMapModule — layer control and background click detection
 
+One shared module per map — a second `get(map)` returns the same instance. Name the layer groups
+per call instead:
+
 ```ts
-const baseMap = await BaseMapModule.get(map, {
-    layerGroupsFilter: {
+const baseMap = await BaseMapModule.get(map, { visible: true });
+
+baseMap.setVisible(false, {
+    layerGroups: {
         mode: 'include',    // 'include' | 'exclude'
-        names: ['roadLines', 'buildings2D'],
+        names: ['roads', 'buildings2D'],
     },
-    visible: true,
 });
+baseMap.isVisible({ layerGroups: { mode: 'include', names: ['buildings3D'] } });
+baseMap.getLayerIds('roadLabels');
 
 // Detect clicks on non-feature areas (e.g. to deselect)
 baseMap.events.on('click', (feature, lngLat) => { clearSelection(); });
 ```
 
-Layer group names: `land`, `water`, `borders`, `buildings2D`, `buildings3D`, `houseNumbers`, `roadLines`, `roadLabels`, `roadShields`, `placeLabels`, `smallerTownLabels`, `cityLabels`, `capitalLabels`, `stateLabels`, `countryLabels`
+Layer group names: `land`, `water`, `borders`, `buildings2D`, `buildings3D`, `houseNumbers`, `roads`, `railways`, `ferries`, `natureLabels`, `roadLabels`, `roadShields`, `allPlaceLabels`, `smallerTownLabels`, `cityLabels`, `capitalLabels`, `stateLabels`, `countryLabels`
 
 ---
 
@@ -179,7 +189,7 @@ const map = new TomTomMap({
 });
 
 // Override for a specific module
-const module = await PlacesModule.get(map, {
+const module = await PlacesModule.create(map, {
     events: { cursorOnHover: 'crosshair' },
 });
 ```

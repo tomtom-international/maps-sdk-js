@@ -1,43 +1,39 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
     <head>
         <title>EV Charging Stations Search</title>
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
         <link rel="icon" href="data:,">
     </head>
-    <body class="sdk-example-body">
+    <body class="ui-body">
         <div id="sdk-map"></div>
-        <div class="sdk-example-searchPanel">
-            <div class="sdk-example-search-row">
-                <input id="sdk-example-evBrandTextBox" class="sdk-example-input" type="text" placeholder="EV brand">
-                <span class="sdk-example-label">in</span>
-                <input id="sdk-example-areaTextBox" class="sdk-example-input" type="text" placeholder="Area">
+        <div class="ui-searchPanel">
+            <div class="ui-search-row">
+                <input id="ui-evBrandTextBox" class="ui-input" type="text" placeholder="EV brand">
+                <span class="ui-label">in</span>
+                <input id="ui-areaTextBox" class="ui-input" type="text" placeholder="Area">
             </div>
-            <div class="sdk-example-controls-row">
-                <div class="sdk-example-kw-field">
-                    <label class="sdk-example-form-label" for="sdk-example-minPowerKWMapEVStations">Min KW map</label>
+            <div class="ui-controls-row">
+                <div class="ui-kw-field">
+                    <label class="ui-form-label" for="ui-minPowerKWMapEVStations">Min KW map</label>
                     <input
-                        id="sdk-example-minPowerKWMapEVStations"
+                        id="ui-minPowerKWMapEVStations"
                         type="text"
                         placeholder="Min KW"
-                        class="sdk-example-input sdk-example-kw-input"
+                        class="ui-input ui-kw-input"
                     >
                 </div>
-                <div class="sdk-example-kw-field">
-                    <label class="sdk-example-form-label" for="sdk-example-minPowerKWSearchedEVStations"
-                        >Min KW search</label
-                    >
+                <div class="ui-kw-field">
+                    <label class="ui-form-label" for="ui-minPowerKWSearchedEVStations">Min KW search</label>
                     <input
-                        id="sdk-example-minPowerKWSearchedEVStations"
+                        id="ui-minPowerKWSearchedEVStations"
                         type="text"
                         placeholder="Min KW"
-                        class="sdk-example-input sdk-example-kw-input"
+                        class="ui-input ui-kw-input"
                     >
                 </div>
-                <button id="sdk-example-searchButton" class="sdk-example-button">Search</button>
-                <button id="sdk-example-clearButton" class="sdk-example-button sdk-example-button-secondary">
-                    Clear
-                </button>
+                <button id="ui-searchButton" class="ui-button">Search</button>
+                <button id="ui-clearButton" class="ui-button ui-button-secondary">Clear</button>
             </div>
         </div>
         <script type="module" src="./index.ts"></script>

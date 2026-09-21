@@ -7,11 +7,12 @@ import { apiAndParsedResponses } from './responseParser.data';
 import { apiResponses } from './responseParserPerf.data';
 
 describe('Along Route Search response parser tests', () => {
-    test.each(
-        apiAndParsedResponses,
-    )("'%s'", (_name: string, apiResponse: AlongRouteSearchResponseAPI, parsedResponse: AlongRouteSearchResponse) => {
-        expect(parseAlongRouteSearchResponse(apiResponse)).toStrictEqual(parsedResponse);
-    });
+    test.each(apiAndParsedResponses)(
+        "'%s'",
+        (_name: string, apiResponse: AlongRouteSearchResponseAPI, parsedResponse: AlongRouteSearchResponse) => {
+            expect(parseAlongRouteSearchResponse(apiResponse)).toStrictEqual(parsedResponse);
+        },
+    );
 });
 
 describe('Along Route Search response parser performance tests', () => {

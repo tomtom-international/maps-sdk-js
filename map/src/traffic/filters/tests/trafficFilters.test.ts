@@ -1,5 +1,7 @@
-import { describe, expect, test } from 'vitest';
-import { buildMapLibreFlowFilters, buildMapLibreIncidentFilters } from '../trafficFilters';
+import type { ExpressionFilterSpecification, LayerSpecification } from 'maplibre-gl';
+import { describe, expect, test, vi } from 'vitest';
+import type { LayerFilterComposer } from '../../../shared/layers/layerFilterComposer';
+import { applyFilter, buildMapLibreFlowFilters, buildMapLibreIncidentFilters } from '../trafficFilters';
 
 describe('Traffic filter tests', () => {
     test('build MapLibre incident filters: empty filters', () => {
@@ -13,56 +15,38 @@ describe('Traffic filter tests', () => {
     test('build MapLibre incident filters: simple filters', () => {
         expect(
             buildMapLibreIncidentFilters({ any: [{ incidentCategories: { show: 'only', values: ['jam'] } }] }),
-        ).toStrictEqual({
-            expression: ['==', ['get', 'icon_category_0'], 6],
-            legacy: ['==', 'icon_category_0', 6],
-        });
+        ).toStrictEqual(['==', ['get', 'icon_category_0'], 6]);
         expect(
             buildMapLibreIncidentFilters({ any: [{ roadCategories: { show: 'only', values: ['motorway'] } }] }),
-        ).toStrictEqual({
-            expression: ['==', ['get', 'road_category'], 'motorway'],
-            legacy: ['==', 'road_category', 'motorway'],
-        });
+        ).toStrictEqual(['==', ['get', 'road_category'], 'motorway']);
         expect(
             buildMapLibreIncidentFilters({ any: [{ roadSubCategories: { show: 'only', values: ['residential'] } }] }),
-        ).toStrictEqual({
-            expression: ['==', ['get', 'road_subcategory'], 'residential'],
-            legacy: ['==', 'road_subcategory', 'residential'],
-        });
+        ).toStrictEqual(['==', ['get', 'road_subcategory'], 'residential']);
         expect(
             buildMapLibreIncidentFilters({
                 any: [{ roadCategories: { show: 'all_except', values: ['secondary', 'tertiary'] } }],
             }),
-        ).toStrictEqual({
-            expression: ['!', ['in', ['get', 'road_category'], ['literal', ['secondary', 'tertiary']]]],
-            legacy: ['!in', 'road_category', 'secondary', 'tertiary'],
-        });
+        ).toStrictEqual(['!', ['in', ['get', 'road_category'], ['literal', ['secondary', 'tertiary']]]]);
         expect(
             buildMapLibreIncidentFilters({ any: [{ magnitudes: { show: 'only', values: ['major'] } }] }),
-        ).toStrictEqual({
-            expression: ['==', ['get', 'magnitude_of_delay'], 3],
-            legacy: ['==', 'magnitude_of_delay', 3],
-        });
+        ).toStrictEqual(['==', ['get', 'magnitude_of_delay'], 3]);
         expect(
             buildMapLibreIncidentFilters({ any: [{ magnitudes: { show: 'only', values: ['moderate', 'major'] } }] }),
-        ).toStrictEqual({
-            expression: ['in', ['get', 'magnitude_of_delay'], ['literal', [2, 3]]],
-            legacy: ['in', 'magnitude_of_delay', 2, 3],
-        });
-        expect(buildMapLibreIncidentFilters({ any: [{ delays: { mustHaveDelay: true } }] })).toStrictEqual({
-            expression: ['>', ['get', 'delay'], 0],
-            legacy: ['>', 'delay', 0],
-        });
+        ).toStrictEqual(['in', ['get', 'magnitude_of_delay'], ['literal', [2, 3]]]);
+        expect(buildMapLibreIncidentFilters({ any: [{ delays: { mustHaveDelay: true } }] })).toStrictEqual([
+            '>',
+            ['get', 'delay'],
+            0,
+        ]);
         expect(
             buildMapLibreIncidentFilters({ any: [{ delays: { mustHaveDelay: true, minDelayMinutes: 10 } }] }),
-        ).toStrictEqual({
-            expression: ['>=', ['get', 'delay'], 600],
-            legacy: ['>=', 'delay', 600],
-        });
-        expect(buildMapLibreIncidentFilters({ any: [{ delays: { minDelayMinutes: 10 } }] })).toStrictEqual({
-            expression: ['any', ['!', ['has', 'delay']], ['==', ['get', 'delay'], 0], ['>=', ['get', 'delay'], 600]],
-            legacy: ['any', ['!has', 'delay'], ['==', 'delay', 0], ['>=', 'delay', 600]],
-        });
+        ).toStrictEqual(['>=', ['get', 'delay'], 600]);
+        expect(buildMapLibreIncidentFilters({ any: [{ delays: { minDelayMinutes: 10 } }] })).toStrictEqual([
+            'any',
+            ['!', ['has', 'delay']],
+            ['==', ['get', 'delay'], 0],
+            ['>=', ['get', 'delay'], 600],
+        ]);
     });
 
     test('build MapLibre incident filters: complex filters', () => {
@@ -94,30 +78,17 @@ describe('Traffic filter tests', () => {
                     },
                 ],
             }),
-        ).toStrictEqual({
-            expression: [
-                'any',
-                [
-                    'all',
-                    ['!', ['in', ['get', 'road_category'], ['literal', ['secondary', 'tertiary']]]],
-                    ['in', ['get', 'icon_category_0'], ['literal', [6, 1, 3]]],
-                    ['in', ['get', 'magnitude_of_delay'], ['literal', [2, 3]]],
-                    ['any', ['!', ['has', 'delay']], ['==', ['get', 'delay'], 0], ['>=', ['get', 'delay'], 300]],
-                ],
-                ['==', ['get', 'icon_category_0'], 8],
+        ).toStrictEqual([
+            'any',
+            [
+                'all',
+                ['!', ['in', ['get', 'road_category'], ['literal', ['secondary', 'tertiary']]]],
+                ['in', ['get', 'icon_category_0'], ['literal', [6, 1, 3]]],
+                ['in', ['get', 'magnitude_of_delay'], ['literal', [2, 3]]],
+                ['any', ['!', ['has', 'delay']], ['==', ['get', 'delay'], 0], ['>=', ['get', 'delay'], 300]],
             ],
-            legacy: [
-                'any',
-                [
-                    'all',
-                    ['!in', 'road_category', 'secondary', 'tertiary'],
-                    ['in', 'icon_category_0', 6, 1, 3],
-                    ['in', 'magnitude_of_delay', 2, 3],
-                    ['any', ['!has', 'delay'], ['==', 'delay', 0], ['>=', 'delay', 300]],
-                ],
-                ['==', 'icon_category_0', 8],
-            ],
-        });
+            ['==', ['get', 'icon_category_0'], 8],
+        ]);
     });
 
     test('build MapLibre flow filters: empty filters', () => {
@@ -139,10 +110,7 @@ describe('Traffic filter tests', () => {
                     },
                 ],
             }),
-        ).toStrictEqual({
-            expression: ['in', ['get', 'road_category'], ['literal', ['motorway', 'trunk']]],
-            legacy: ['in', 'road_category', 'motorway', 'trunk'],
-        });
+        ).toStrictEqual(['in', ['get', 'road_category'], ['literal', ['motorway', 'trunk']]]);
         expect(
             buildMapLibreFlowFilters({
                 any: [
@@ -154,10 +122,7 @@ describe('Traffic filter tests', () => {
                     },
                 ],
             }),
-        ).toStrictEqual({
-            expression: ['!', ['in', ['get', 'road_subcategory'], ['literal', ['residential', 'driveway']]]],
-            legacy: ['!in', 'road_subcategory', 'residential', 'driveway'],
-        });
+        ).toStrictEqual(['!', ['in', ['get', 'road_subcategory'], ['literal', ['residential', 'driveway']]]]);
         expect(
             buildMapLibreFlowFilters({
                 any: [
@@ -166,10 +131,7 @@ describe('Traffic filter tests', () => {
                     },
                 ],
             }),
-        ).toStrictEqual({
-            expression: ['==', ['get', 'road_closure'], true],
-            legacy: ['==', 'road_closure', true],
-        });
+        ).toStrictEqual(['==', ['get', 'road_closure'], true]);
         expect(
             buildMapLibreFlowFilters({
                 any: [
@@ -178,10 +140,7 @@ describe('Traffic filter tests', () => {
                     },
                 ],
             }),
-        ).toStrictEqual({
-            expression: ['!=', ['get', 'road_closure'], true],
-            legacy: ['!=', 'road_closure', true],
-        });
+        ).toStrictEqual(['!=', ['get', 'road_closure'], true]);
     });
 
     test('build MapLibre flow filters: complex filters', () => {
@@ -203,25 +162,37 @@ describe('Traffic filter tests', () => {
                     },
                 ],
             }),
-        ).toStrictEqual({
-            expression: [
-                'any',
-                [
-                    'all',
-                    ['in', ['get', 'road_category'], ['literal', ['motorway', 'trunk', 'primary']]],
-                    ['==', ['get', 'road_subcategory'], 'residential'],
-                ],
-                ['==', ['get', 'road_closure'], true],
+        ).toStrictEqual([
+            'any',
+            [
+                'all',
+                ['in', ['get', 'road_category'], ['literal', ['motorway', 'trunk', 'primary']]],
+                ['==', ['get', 'road_subcategory'], 'residential'],
             ],
-            legacy: [
-                'any',
-                [
-                    'all',
-                    ['in', 'road_category', 'motorway', 'trunk', 'primary'],
-                    ['==', 'road_subcategory', 'residential'],
-                ],
-                ['==', 'road_closure', true],
-            ],
+            ['==', ['get', 'road_closure'], true],
+        ]);
+    });
+    describe('applyFilter', () => {
+        const makeComposer = () =>
+            ({ setClause: vi.fn() }) as unknown as LayerFilterComposer & { setClause: ReturnType<typeof vi.fn> };
+        const layers = [{ id: 'Traffic - Slow flow' }, { id: 'Traffic - Slow flow outline' }] as LayerSpecification[];
+        const clause: ExpressionFilterSpecification = ['==', ['get', 'road_closure'], true];
+
+        test('registers the filter on every layer under the module key', () => {
+            const composer = makeComposer();
+            applyFilter(clause, layers, composer, 'traffic.flow');
+
+            expect(composer.setClause.mock.calls).toStrictEqual([
+                ['Traffic - Slow flow', 'traffic.flow', clause],
+                ['Traffic - Slow flow outline', 'traffic.flow', clause],
+            ]);
+        });
+
+        test('withdraws the module key when the filter is dropped, leaving the rest of the filter alone', () => {
+            const composer = makeComposer();
+            applyFilter(undefined, layers, composer, 'traffic.flow');
+
+            expect(composer.setClause.mock.calls.every((call) => call[2] === undefined)).toBe(true);
         });
     });
 });

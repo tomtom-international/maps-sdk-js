@@ -1,4 +1,4 @@
-import type { Tool } from 'ai';
+import type { Tool, ToolCallOptions } from 'ai';
 import type { z } from 'zod';
 import { createHelpTool } from './tools/utilities';
 import type {
@@ -21,6 +21,9 @@ const errorFromOutput = (output: unknown): string | undefined => {
  * `onToolExecute` is supplied, the executor is wrapped to report wall-clock
  * duration and failure (thrown, or the standardized `{ error }` return) after
  * each call. Without it, the plain executor is used (zero overhead).
+ *
+ * The AI SDK's per-call `abortSignal` is forwarded to `execute` as `options.signal`,
+ * so a cancelled turn can cancel the tool's in-flight service requests.
  */
 const toAiTool = <S extends ToolState>(
     name: string,
@@ -34,10 +37,10 @@ const toAiTool = <S extends ToolState>(
         inputSchema: entry.inputSchema,
         outputSchema: includeOutputSchema ? entry.outputSchema : undefined,
         execute: onToolExecute
-            ? async (input: any) => {
+            ? async (input: any, options?: ToolCallOptions) => {
                   const start = Date.now();
                   try {
-                      const output = await entry.execute(input, state);
+                      const output = await entry.execute(input, state, { signal: options?.abortSignal });
                       const errorMessage = errorFromOutput(output);
                       onToolExecute({
                           toolName: name,
@@ -56,7 +59,7 @@ const toAiTool = <S extends ToolState>(
                       throw error;
                   }
               }
-            : (input: any) => entry.execute(input, state),
+            : (input: any, options?: ToolCallOptions) => entry.execute(input, state, { signal: options?.abortSignal }),
     }) as Tool;
 
 /** Extracts ToolMetadata from a ToolEntry, adding the name. */

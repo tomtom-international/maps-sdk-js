@@ -2,16 +2,15 @@ import type { AreaAnalyticsMetricKey, TrafficAreaAnalytics } from '@tomtom-org/m
 import { mask } from '@turf/turf';
 import type { FeatureCollection, Point, Polygon } from 'geojson';
 import { ExpressionSpecification } from 'maplibre-gl';
-import type { BeforeLayerConfig } from '../shared';
 import {
-    AbstractMapModule,
-    CombinedEvents,
+    AbstractDataOwnedMapModule,
+    type BeforeLayerConfig,
+    type CombinedEvents,
     GeoJSONSourceWithLayers,
-    ModuleEvents,
+    type LightDark,
     mapStyleLayerIDs,
-    UserEvents,
 } from '../shared';
-import { changeLayerProps, waitUntilMapIsReady } from '../shared/mapUtils';
+import { changeLayerProps, existingBeforeLayerID, moveLayerBefore, waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
 import {
     buildHeatmapLayerSpec,
@@ -71,7 +70,7 @@ type AreaAnalyticsSourcesWithLayers = {
  * import { TrafficAreaAnalyticsModule } from '@tomtom-org/maps-sdk/map';
  * import { trafficAreaAnalytics } from '@tomtom-org/maps-sdk/services';
  *
- * const module = await TrafficAreaAnalyticsModule.get(map, {
+ * const module = await TrafficAreaAnalyticsModule.create(map, {
  *   displayMode: 'hexgrid-3d',
  *   metric: { active: 'congestionLevel' },
  * });
@@ -81,7 +80,7 @@ type AreaAnalyticsSourcesWithLayers = {
  *
  * @group Traffic Area Analytics
  */
-export class TrafficAreaAnalyticsModule extends AbstractMapModule<
+export class TrafficAreaAnalyticsModule extends AbstractDataOwnedMapModule<
     AreaAnalyticsSourcesWithLayers,
     TrafficAreaAnalyticsConfig
 > {
@@ -110,9 +109,13 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
      *
      * All configuration properties are optional. When `config` is omitted (or only
      * partially supplied), built-in defaults are applied for every missing field.
-     * After `get()` resolves, {@link TrafficAreaAnalyticsModule.getConfig} always returns a
+     * After `create()` resolves, {@link TrafficAreaAnalyticsModule.getConfig} always returns a
      * fully-populated configuration — there is no need to reference any default
      * values yourself.
+     *
+     * `TrafficAreaAnalyticsModule` owns the sources, layers and images it adds, all suffixed per
+     * instance. Every call therefore returns a **new, independent** instance, and stacking several
+     * of them on one map is a supported thing to do.
      *
      * @param tomtomMap - The TomTomMap instance.
      * @param config - Optional initial configuration. Omit to use all defaults.
@@ -121,11 +124,11 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
      * @example
      * ```typescript
      * // No config needed — defaults are applied automatically.
-     * const module = await TrafficAreaAnalyticsModule.get(map);
+     * const module = await TrafficAreaAnalyticsModule.create(map);
      * await module.show(analytics);
      *
      * // Or override specific properties while keeping everything else at default:
-     * const module = await TrafficAreaAnalyticsModule.get(map, {
+     * const module = await TrafficAreaAnalyticsModule.create(map, {
      *   displayMode: 'heatmap',
      *   metricConfig: {
      *     congestionLevel: { color: 'heat' },
@@ -133,7 +136,10 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
      * });
      * ```
      */
-    static async get(tomtomMap: TomTomMap, config?: TrafficAreaAnalyticsConfig): Promise<TrafficAreaAnalyticsModule> {
+    static async create(
+        tomtomMap: TomTomMap,
+        config?: TrafficAreaAnalyticsConfig,
+    ): Promise<TrafficAreaAnalyticsModule> {
         await waitUntilMapIsReady(tomtomMap);
         // Always pass a config object (even if empty) so _applyConfig fills in all
         // defaults and getConfig() returns a fully-populated result from the start.
@@ -141,7 +147,7 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
     }
 
     private constructor(map: TomTomMap, config?: TrafficAreaAnalyticsConfig) {
-        super('geojson', map, config);
+        super(map, config);
     }
 
     // ── AbstractMapModule hooks ──────────────────────────────────────
@@ -169,14 +175,15 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
         const regionFillLayerId = `${regionSourceId}-fill`;
         const regionLineLayerId = `${regionSourceId}-line`;
 
-        // No computed ranges available at init time — pass undefined
+        // No computed ranges available at init time — omit computedRange
+        const lightDark = this.lightDark;
         this.heatmapLayerSpec = buildHeatmapLayerSpec(heatmapLayerId, config);
         this.hexFillLayerSpec = buildHexFillLayerSpec(hexFillLayerId, config);
         this.hexExtrusionLayerSpec = buildHexExtrusionLayerSpec(hexExtrusionLayerId, config);
         this.squareFillLayerSpec = buildSquareFillLayerSpec(squareFillLayerId, config);
         this.squareExtrusionLayerSpec = buildSquareExtrusionLayerSpec(squareExtrusionLayerId, config);
-        this.regionFillLayerSpec = buildRegionFillLayerSpec(regionFillLayerId, config);
-        this.regionLineLayerSpec = buildRegionLineLayerSpec(regionLineLayerId, config);
+        this.regionFillLayerSpec = buildRegionFillLayerSpec(regionFillLayerId, config, lightDark);
+        this.regionLineLayerSpec = buildRegionLineLayerSpec(regionLineLayerId, config, lightDark);
 
         // Highlight/outline specs — added directly to MapLibre (not through GeoJSONSourceWithLayers)
         // so they are never included in interactiveLayerIDs and won't break queryRenderedFeatures.
@@ -264,6 +271,11 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
         this.config = merged;
         this.applyModeVisibility();
         return merged;
+    }
+
+    /** @ignore */
+    protected discardShownData(): void {
+        this.lastAnalytics = null;
     }
 
     /** @ignore */
@@ -551,23 +563,23 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
         const toId = (value: BeforeLayerConfig) => (value === 'top' ? undefined : mapStyleLayerIDs[value]);
 
         if (layerConfig.heatmap !== undefined) {
-            this.mapLibreMap.moveLayer(this.heatmapLayerSpec.id, toId(layerConfig.heatmap));
+            moveLayerBefore(this.mapLibreMap, this.heatmapLayerSpec.id, toId(layerConfig.heatmap));
         }
 
         if (layerConfig.hexgrid?.flat2D !== undefined) {
-            this.mapLibreMap.moveLayer(this.hexFillLayerSpec.id, toId(layerConfig.hexgrid.flat2D));
+            moveLayerBefore(this.mapLibreMap, this.hexFillLayerSpec.id, toId(layerConfig.hexgrid.flat2D));
         }
 
         if (layerConfig.hexgrid?.extrusion3D !== undefined) {
-            this.mapLibreMap.moveLayer(this.hexExtrusionLayerSpec.id, toId(layerConfig.hexgrid.extrusion3D));
+            moveLayerBefore(this.mapLibreMap, this.hexExtrusionLayerSpec.id, toId(layerConfig.hexgrid.extrusion3D));
         }
 
         if (layerConfig.square?.flat2D !== undefined) {
-            this.mapLibreMap.moveLayer(this.squareFillLayerSpec.id, toId(layerConfig.square.flat2D));
+            moveLayerBefore(this.mapLibreMap, this.squareFillLayerSpec.id, toId(layerConfig.square.flat2D));
         }
 
         if (layerConfig.square?.extrusion3D !== undefined) {
-            this.mapLibreMap.moveLayer(this.squareExtrusionLayerSpec.id, toId(layerConfig.square.extrusion3D));
+            moveLayerBefore(this.mapLibreMap, this.squareExtrusionLayerSpec.id, toId(layerConfig.square.extrusion3D));
         }
 
         if (updateConfig) {
@@ -598,13 +610,11 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
      * ```
      */
     get events(): CombinedEvents<AreaAnalyticsTileFeature, TrafficAreaAnalyticsConfig, TrafficAreaAnalytics> {
-        return new CombinedEvents(
-            new UserEvents(
-                this.tomtomMap._eventsProxy,
-                [this.sourcesWithLayers.hexgrid, this.sourcesWithLayers.square, this.sourcesWithLayers.heatmap],
-                this.config?.events,
-            ),
-            new ModuleEvents(this.configChangeHandlers, this.shownFeaturesHandlers),
+        // One surface over three sources: hexgrid, square and heatmap are display modes of the
+        // same dataset, not three things a caller would scope between.
+        return this.moduleEventsWithShown<AreaAnalyticsTileFeature, TrafficAreaAnalytics>(
+            ['hexgrid', 'square', 'heatmap'],
+            this.shownFeaturesHandlers,
         );
     }
 
@@ -616,6 +626,10 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
 
     private get activeMetric(): AreaAnalyticsMetricKey {
         return getActiveMetric(this.config);
+    }
+
+    private get lightDark(): LightDark {
+        return this.tomtomMap.styleLightDarkTheme;
     }
 
     private applyModeVisibility(): void {
@@ -674,7 +688,10 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
         const addHidden = (spec: { id: string; beforeID?: string; [key: string]: unknown }, sourceId: string) => {
             if (!this.mapLibreMap.getLayer(spec.id)) {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                this.mapLibreMap.addLayer({ ...spec, source: sourceId } as any, spec.beforeID);
+                this.mapLibreMap.addLayer(
+                    { ...spec, source: sourceId } as any,
+                    existingBeforeLayerID(this.mapLibreMap, spec.beforeID),
+                );
             }
             this.mapLibreMap.setLayoutProperty(spec.id, 'visibility', 'none');
         };
@@ -734,8 +751,9 @@ export class TrafficAreaAnalyticsModule extends AbstractMapModule<
     }
 
     private applyRegionConfig(config: TrafficAreaAnalyticsConfig | undefined): void {
-        const newRegionFillSpec = buildRegionFillLayerSpec(this.regionFillLayerSpec.id, config);
-        const newRegionLineSpec = buildRegionLineLayerSpec(this.regionLineLayerSpec.id, config);
+        const lightDark = this.lightDark;
+        const newRegionFillSpec = buildRegionFillLayerSpec(this.regionFillLayerSpec.id, config, lightDark);
+        const newRegionLineSpec = buildRegionLineLayerSpec(this.regionLineLayerSpec.id, config, lightDark);
 
         changeLayerProps(newRegionFillSpec, this.regionFillLayerSpec, this.mapLibreMap);
         changeLayerProps(newRegionLineSpec, this.regionLineLayerSpec, this.mapLibreMap);

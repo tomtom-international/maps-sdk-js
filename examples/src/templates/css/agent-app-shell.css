@@ -32,10 +32,10 @@
 /* Win over Tailwind's default font with the SDK typography tokens. */
 body {
     overflow: hidden;
-    font-family: var(--pb-font-primary);
-    font-size: var(--pb-font-body-m);
-    line-height: var(--pb-font-body-m-lh);
-    color: var(--pb-text-high);
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-m);
+    line-height: var(--ui-font-body-m-lh);
+    color: var(--ui-text-high-em);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }

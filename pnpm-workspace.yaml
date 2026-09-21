@@ -12,66 +12,115 @@ packages:
   - examples/**
   - agent-eval
 
+# Dependency overrides (moved from the package.json `pnpm.overrides` field, which
+# pnpm 11 no longer reads — non-auth config now lives in pnpm-workspace.yaml).
+overrides:
+  "@assistant-ui/react-ai-sdk": 1.3.32
+  # `@assistant-ui/react-ai-sdk` declares core/store as plain deps with `^` ranges, so
+  # without these pins they float ahead of the pinned `@assistant-ui/react` and the tree
+  # lands on a core/tap pair it was never built against (build fails outright on
+  # tap's missing `./react-shim/compiler-runtime` export).
+  "@assistant-ui/core": 0.2.11
+  "@assistant-ui/store": 0.2.14
+  "@assistant-ui/tap": 0.6.0
+  "@codesandbox/nodebox": link:./stubs/nodebox
+  ajv: ^8.20.0
+  fsevents: ^2.3.3
+  "minimatch@10": ^10.2.5
+  nanoid: ^5.1.11
+  sax: ^1.6.0
+  "semver@7": ^7.8.3
+  typescript: "catalog:"
+
+# Dependency build scripts (replaces the removed `pnpm.onlyBuiltDependencies`).
+# In pnpm 11 packages not listed here are NOT built, and `strictDepBuilds`
+# (now default true) fails the install if a dep has an unapproved build script.
+# `sharp` (image processing, actively used) is the only build we run — it was
+# also the only one approved under pnpm 10. The rest are `false` to preserve
+# that behavior: none were built before and the repo builds, tests, and runs
+# fine without them.
+allowBuilds:
+  "@parcel/watcher": false
+  es5-ext: false
+  esbuild: false
+  ffmpeg-static: false
+  nx: false
+  protobufjs: false
+  sharp: true
+
+# Keep pnpm 11's 1-day quarantine on newly published packages (supply-chain
+# protection: a compromised release must survive ~24h before we'll install it).
+# Exempt only our own freshly-published aliases, which CI publishes and then
+# installs within minutes (feature-branch / release flows).
+minimumReleaseAge: 1440
+minimumReleaseAgeExclude:
+  - "@tomtom-org/*"
+
 catalog:
-  "@ai-sdk/azure": ^3.0.77
-  "@assistant-ui/react": ^0.14.15
-  # Resolved version is forced to 1.3.32 via pnpm.overrides in the root package.json (1.3.33
+  "@ai-sdk/azure": ^3.0.107
+  # Pinned exact: 0.14.16+ (core 0.2.12+/tap 0.7+) makes a `useSyncExternalStore`
+  # getSnapshot return a fresh value every call — React throws "Maximum update depth
+  # exceeded. The result of getSnapshot should be cached" and aborts the chat render,
+  # so the seeded welcome turn never mounts and the thread never runs. Keep the
+  # assistant-ui core/store/tap trio pinned in `overrides` alongside this.
+  "@assistant-ui/react": 0.14.15
+  # Resolved version is forced to 1.3.32 via `overrides` in this file (1.3.33
   # ships a `#mcp-stdio` package-`imports` seam Sandpack's bundler can't resolve — assistant-ui#4304).
   "@assistant-ui/react-ai-sdk": 1.3.32
-  "@assistant-ui/react-markdown": ^0.14.2
+  "@assistant-ui/react-markdown": 0.14.2
   # Pinned exact: the transitive @codesandbox/sandpack-client version sets the
   # Sandpack iframe runtime origin (e.g. 2-19-8-sandpack.codesandbox.io).
-  # The Demo-BFF CORS allowlist now matches that origin by pattern, so a bump
+  # The demos proxy's CORS allowlist now matches that origin by pattern, so a bump
   # no longer breaks CORS — but the hCaptcha site's hostname allowlist is still
   # exact, and a floating version would also hurt build reproducibility. Keep
   # exact and bump deliberately (and update the hCaptcha allowlist) when needed.
   "@codesandbox/sandpack-react": 2.20.0
   "@codesandbox/sandpack-themes": ^2.0.21
-  "@microsoft/api-extractor": 7.58.9
   # Pinned exact: 1.61 changed Playwright's module loader to pull externalized
   # ESM (map/dist/map.es.js) through Node's native require(esm), which bypasses
   # the CommonJS `Module._load` alias patch in map-integration-tests/
   # nodejs-test-code-setup.ts — so `@tomtom-org/maps-sdk/core` no longer resolves
   # and the SDK e2e suite collects 0 tests. Bump only with a matching harness fix.
   "@playwright/test": 1.60.0
-  "@tailwindcss/node": ^4.3.1
-  "@tailwindcss/oxide": ^4.3.1
-  "@tailwindcss/vite": ^4.3.1
+  "@tailwindcss/node": ^4.3.3
+  "@tailwindcss/oxide": ^4.3.3
+  "@tailwindcss/vite": ^4.3.3
   "@tsconfig/recommended": ^1.0.13
-  "@turf/turf": ^7.3.5
+  "@turf/turf": ^7.4.0
   "@types/geojson": ^7946.0.16
   "@types/lodash-es": ^4.17.12
-  "@types/node": ^26.0.0
-  "@types/react": ^19.2.17
-  "@types/react-dom": ^19.2.3
-  "@types/rollup-plugin-peer-deps-external": ^2.2.6
+  "@types/node": ^26.3.0
+  "@types/react": ^19.2.18
+  "@types/react-dom": ^19.2.5
   "@types/three": ^0.170.0
-  "@vitejs/plugin-react": ^6.0.2
-  "@vitest/coverage-v8": ^4.1.9
-  ai: ^6.0.208
-  assistant-stream: ^0.3.21
+  "@vitejs/plugin-react": ^6.1.0
+  "@vitest/coverage-v8": ^4.1.11
+  ai: ^6.0.266
+  assistant-stream: 0.3.21
   "chart.js": ^4.5.1
   "chartjs-plugin-zoom": ^2.2.0
-  "h3-js": ^4.4.0
+  "h3-js": ^4.5.0
   jsdom: ^29.1.1
   jszip: ^3.10.1
   lodash-es: ^4.18.1
-  maplibre-gl: ^5.24.0
-  marked: ^18.0.5
-  react: ^19.2.7
+  maplibre-gl: ^6.9.0
+  marked: ^18.0.11
+  react: ^19.2.8
   "react-chartjs-2": ^5.3.1
-  react-dom: ^19.2.7
+  react-dom: ^19.2.8
   rimraf: ^6.1.3
+  # rolldown (vite 8's bundler) + its native dts plugin generate the SDK's bundled
+  # .d.ts via the `tsc` generator, replacing the vite-plugin-dts + API Extractor stack.
+  rolldown: ^1.2.5
+  rolldown-plugin-dts: ^0.28.2
   rollup-plugin-analyzer: ^4.0.0
   rollup-plugin-license: ^3.7.1
-  rollup-plugin-peer-deps-external: ^2.2.4
-  rollup-plugin-visualizer: ^7.0.1
-  tailwindcss: ^4.3.1
+  rollup-plugin-visualizer: ^7.1.1
+  tailwindcss: ^4.3.3
   three: ^0.170.0
   ts-node: ^10.9.2
   typescript: ^6.0.3
-  vite: ^8.0.16
-  vite-plugin-dts: ^5.0.2
+  vite: ^8.2.2
   vite-plugin-singlefile: ^2.3.3
-  vitest: ^4.1.9
+  vitest: ^4.1.11
   zod: ^4.4.3

@@ -1,23 +1,21 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
     <head>
         <title>Autocomplete & Fuzzy search</title>
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
         <link rel="icon" href="data:,">
     </head>
-    <body class="sdk-example-body">
+    <body class="ui-body">
         <div id="sdk-map"></div>
-        <div class="sdk-example-searchPanel">
-            <div class="sdk-example-search-row">
-                <input id="sdk-example-searchBox" type="text" class="sdk-example-input" placeholder="Search for place">
-                <button id="sdk-example-clearButton" class="sdk-example-button sdk-example-button-secondary">
-                    Clear
-                </button>
+        <div class="ui-searchPanel">
+            <div class="ui-search-row">
+                <input id="ui-searchBox" type="text" class="ui-input" placeholder="Search for place">
+                <button id="ui-clearButton" class="ui-button ui-button-secondary">Clear</button>
             </div>
-            <ul id="sdk-example-autocompleteResults" class="sdk-example-result-list"></ul>
-            <ul id="sdk-example-fuzzySearchResults" class="sdk-example-result-list"></ul>
+            <ul id="ui-autocompleteResults" class="ui-result-list"></ul>
+            <ul id="ui-fuzzySearchResults" class="ui-result-list"></ul>
         </div>
-        <div id="sdk-example-searchThisArea"></div>
+        <div id="ui-searchThisArea"></div>
         <script type="module" src="./index.ts"></script>
     </body>
 </html>

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -6,28 +6,28 @@
         <meta name="viewport" content="initial-scale=1">
         <link rel="icon" href="data:,">
     </head>
-    <body class="sdk-example-body">
+    <body class="ui-body">
         <div id="sdk-map"></div>
 
         <!-- Controls panel (top-right) -->
-        <div class="sdk-example-customPanel">
-            <div class="sdk-example-panel-header">
-                <h3 class="sdk-example-heading">
-                    <span class="sdk-example-heading-text">Traffic Area Analytics</span>
-                    <button class="sdk-example-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
-                        <svg class="sdk-example-heading-chevron" viewBox="0 0 16 10">
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Traffic Area Analytics</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
                             <path d="M3 1.5L8 6.5L13 1.5" />
                         </svg>
                     </button>
                 </h3>
             </div>
-            <div class="sdk-example-panel-content">
-                <div class="sdk-example-section">
-                    <label class="sdk-example-form-label" for="city-input">City</label>
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <label class="ui-form-label" for="city-input">City</label>
                     <div class="aa-search-wrapper">
                         <input
                             type="text"
-                            class="sdk-example-input"
+                            class="ui-input"
                             id="city-input"
                             placeholder="Search for a city..."
                             autocomplete="off"
@@ -35,9 +35,9 @@
                         <ul id="city-suggestions" class="aa-suggestions" aria-label="City suggestions"></ul>
                     </div>
                 </div>
-                <div class="sdk-example-section">
-                    <label class="sdk-example-form-label" for="metric-selector">Metric</label>
-                    <select class="sdk-example-dropdown" id="metric-selector">
+                <div class="ui-section">
+                    <label class="ui-form-label" for="metric-selector">Metric</label>
+                    <select class="ui-dropdown" id="metric-selector">
                         <option value="congestionLevel" selected>Congestion Level</option>
                         <option value="speed">Speed</option>
                         <option value="travelTime">Travel Time</option>
@@ -45,9 +45,9 @@
                         <option value="networkLength">Network Length (road density)</option>
                     </select>
                 </div>
-                <div class="sdk-example-section">
-                    <label class="sdk-example-form-label" for="mode-selector">Visualization</label>
-                    <select class="sdk-example-dropdown" id="mode-selector">
+                <div class="ui-section">
+                    <label class="ui-form-label" for="mode-selector">Visualization</label>
+                    <select class="ui-dropdown" id="mode-selector">
                         <option value="hexgrid-3d" selected>3D Hex Grid</option>
                         <option value="hexgrid-2d">Flat Hex Grid</option>
                         <option value="square-3d">3D Square Grid</option>
@@ -55,9 +55,9 @@
                         <option value="heatmap">Heatmap</option>
                     </select>
                 </div>
-                <div class="sdk-example-section">
-                    <label class="sdk-example-form-label" for="color-scheme-selector">Color Theme</label>
-                    <select class="sdk-example-dropdown" id="color-scheme-selector">
+                <div class="ui-section">
+                    <label class="ui-form-label" for="color-scheme-selector">Color Theme</label>
+                    <select class="ui-dropdown" id="color-scheme-selector">
                         <option value="trafficLight" selected>Traffic Light</option>
                         <option value="heat">Heat</option>
                         <option value="monochrome">Monochrome</option>
@@ -69,41 +69,36 @@
                 <details class="aa-filters" open>
                     <summary class="aa-filters-summary">Query filters</summary>
 
-                    <div class="sdk-example-section aa-date-row">
+                    <div class="ui-section aa-date-row">
                         <div>
-                            <label class="sdk-example-form-label" for="filter-start-date">Start date</label>
-                            <input type="date" class="sdk-example-input" id="filter-start-date">
+                            <label class="ui-form-label" for="filter-start-date">Start date</label>
+                            <input type="date" class="ui-input" id="filter-start-date">
                         </div>
                         <div>
-                            <label class="sdk-example-form-label" for="filter-end-date">End date</label>
-                            <input type="date" class="sdk-example-input" id="filter-end-date">
+                            <label class="ui-form-label" for="filter-end-date">End date</label>
+                            <input type="date" class="ui-input" id="filter-end-date">
                         </div>
                     </div>
                     <p class="aa-filters-hint">End date must be ≥ 2 days ago; max 31-day window.</p>
                     <p id="filter-date-error" class="aa-filters-error aa-hidden" role="alert"></p>
 
-                    <fieldset class="sdk-example-section aa-fieldset">
-                        <legend class="sdk-example-form-label">Hours of day</legend>
+                    <fieldset class="ui-section aa-fieldset">
+                        <legend class="ui-form-label">Hours of day</legend>
                         <div id="filter-hour-presets" class="aa-preset-row"></div>
                         <div id="filter-hour-grid" class="aa-hour-grid"></div>
                     </fieldset>
 
-                    <fieldset class="sdk-example-section aa-fieldset">
-                        <legend class="sdk-example-form-label">Functional road classes</legend>
+                    <fieldset class="ui-section aa-fieldset">
+                        <legend class="ui-form-label">Functional road classes</legend>
                         <div class="aa-preset-row">
                             <button type="button" id="filter-frc-all" class="aa-preset-button">All</button>
                             <button type="button" id="filter-frc-none" class="aa-preset-button">None</button>
                         </div>
-                        <div id="filter-frc-list" class="sdk-example-checkbox-list aa-frc-list"></div>
+                        <div id="filter-frc-list" class="ui-checkbox-list aa-frc-list"></div>
                     </fieldset>
 
-                    <div class="sdk-example-section">
-                        <button
-                            type="button"
-                            id="filter-apply"
-                            class="sdk-example-button sdk-example-button-full"
-                            disabled
-                        >
+                    <div class="ui-section">
+                        <button type="button" id="filter-apply" class="ui-button ui-button-full" disabled>
                             Apply filters
                         </button>
                     </div>
@@ -141,7 +136,7 @@
                     </div>
                 </div>
                 <div class="aa-heatmap-section">
-                    <span class="sdk-example-form-label" id="heatmap-label">Congestion by Day &amp; Hour</span>
+                    <span class="ui-form-label" id="heatmap-label">Congestion by Day &amp; Hour</span>
                     <div id="heatmap-chart"></div>
                 </div>
             </div>
@@ -159,7 +154,7 @@
 
         <!-- Loading overlay -->
         <div id="loading-overlay" class="aa-loading aa-hidden">
-            <div class="sdk-example-spinner"></div>
+            <div class="ui-spinner"></div>
             <span>Loading analytics...</span>
         </div>
 

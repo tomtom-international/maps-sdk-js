@@ -1,83 +1,65 @@
 import type { LayerSpecification } from 'maplibre-gl';
 import { poiLayerIDs } from '../pois';
 import type { LayerSpecFilter } from '../shared';
-import type { BaseMapLayerGroupName, BaseMapLayerGroups } from './types/baseMapModuleConfig';
+import { type LayerSelector, matchesLayerSelector } from '../shared/layers/layerSelector';
+import {
+    type BaseMapLayerGroupName,
+    type BaseMapLayerGroups,
+    baseMapLayerGroupNames,
+} from './types/baseMapModuleConfig';
 
-type LayerGroupMapping = {
-    layerIDMatches: string[];
-    layerTypes: LayerSpecification['type'][];
-};
+// Layers are classified by the style's `metadata.group` — the authoritative
+// taxonomy TomTom ships with the style — rather than by their (unstable) layer
+// ids. `idIncludes`/`idExcludes` only sub-split a single metadata group (roads
+// and place labels), and `layerTypes` disambiguates where a metadata group mixes
+// geometry types. The matching rule itself is shared with the styling knobs.
+type LayerGroupMapping = LayerSelector & { metadataGroups: string[] };
+
+// Rail/ferry/aerialway lines carved out of the `road` metadata group by layer id.
+const railAndWaterTransitIDs = ['railway', 'subway', 'aerialway', 'ferry'];
 
 const layerGroupMappings: Record<BaseMapLayerGroupName, LayerGroupMapping> = {
-    land: {
-        layerIDMatches: ['lulc'],
-        layerTypes: ['fill'],
-    },
-    borders: {
-        layerIDMatches: ['borders'],
-        layerTypes: ['line'],
-    },
-    water: {
-        layerIDMatches: ['water'],
-        layerTypes: ['fill', 'line'],
-    },
-    buildings2D: {
-        layerIDMatches: ['building'],
-        layerTypes: ['fill', 'line'],
-    },
-    buildings3D: {
-        layerIDMatches: ['building'],
-        layerTypes: ['fill-extrusion'],
-    },
-    houseNumbers: {
-        layerIDMatches: ['house number'],
-        layerTypes: ['symbol'],
-    },
-    roadLines: {
-        layerIDMatches: ['road', 'tunnel', 'bridge', 'surface'],
-        layerTypes: ['fill', 'line'],
-    },
-    roadLabels: {
-        layerIDMatches: ['road', 'tunnel', 'bridge', 'surface'],
-        layerTypes: ['symbol'],
-    },
-    roadShields: {
-        layerIDMatches: ['shield'],
-        layerTypes: ['symbol'],
-    },
-    placeLabels: {
-        layerIDMatches: ['places'],
-        layerTypes: ['symbol'],
-    },
-    smallerTownLabels: {
-        layerIDMatches: ['town', 'village', 'neighbourhood'],
-        layerTypes: ['symbol'],
-    },
-    cityLabels: {
-        layerIDMatches: ['city', 'capital'],
-        layerTypes: ['symbol'],
-    },
-    capitalLabels: {
-        layerIDMatches: ['capital'],
-        layerTypes: ['symbol'],
-    },
-    stateLabels: {
-        layerIDMatches: ['state'],
-        layerTypes: ['symbol'],
-    },
-    countryLabels: {
-        layerIDMatches: ['places - country'],
-        layerTypes: ['symbol'],
-    },
+    // 'area' fills plus the base 'background' canvas.
+    land: { metadataGroups: ['area', 'background'] },
+    water: { metadataGroups: ['water'] },
+    natureLabels: { metadataGroups: ['label'] },
+
+    // All road geometry (incl. paths, tracks and road/transit surface areas)
+    // except rail/ferry/aerialway lines, which get their own groups.
+    roads: { metadataGroups: ['road', 'road_area', 'transit_area'], idExcludes: railAndWaterTransitIDs },
+    railways: { metadataGroups: ['road'], layerTypes: ['line'], idIncludes: ['railway', 'subway', 'aerialway'] },
+    ferries: { metadataGroups: ['road'], layerTypes: ['line'], idIncludes: ['ferry'] },
+
+    buildings2D: { metadataGroups: ['building'], layerTypes: ['fill', 'line'] },
+    buildings3D: { metadataGroups: ['area_3d', 'building'], layerTypes: ['fill-extrusion'] },
+
+    // Admin boundaries, overlays (military/protected) and boundary labels.
+    borders: { metadataGroups: ['border', 'border_label'] },
+
+    // `road_label` split into shields vs. everything else.
+    roadLabels: { metadataGroups: ['road_label'], idExcludes: ['shield'] },
+    roadShields: { metadataGroups: ['road_label'], idIncludes: ['shield'] },
+    houseNumbers: { metadataGroups: ['address_point_label'] },
+
+    // `allPlaceLabels` is the superset of the whole `places_label` group; the
+    // groups below are narrower sub-selections of it, split by layer id.
+    allPlaceLabels: { metadataGroups: ['places_label'] },
+    smallerTownLabels: { metadataGroups: ['places_label'], idIncludes: ['neighbourhood', 'village', 'hamlet', 'town'] },
+    cityLabels: { metadataGroups: ['places_label'], idIncludes: ['city'] },
+    capitalLabels: { metadataGroups: ['places_label'], idIncludes: ['capital'] },
+    stateLabels: { metadataGroups: ['places_label'], idIncludes: ['state'] },
+    countryLabels: { metadataGroups: ['places_label'], idIncludes: ['country'] },
 };
 
-const isMatching = (group: BaseMapLayerGroupName, layer: LayerSpecification) => {
-    const mapping = layerGroupMappings[group];
-    return (
-        mapping.layerIDMatches.some((part) => layer.id.toLowerCase().includes(part)) &&
-        mapping.layerTypes.includes(layer.type)
-    );
-};
+const isMatching = (group: BaseMapLayerGroupName, layer: LayerSpecification) =>
+    matchesLayerSelector(layerGroupMappings[group], layer);
+
+/**
+ * The selector behind a base-map layer group, for other curated maps (the styling knobs) that
+ * want to build on the same taxonomy instead of restating it.
+ * @ignore
+ */
+export const baseMapLayerGroupSelector = (group: BaseMapLayerGroupName): LayerSelector => layerGroupMappings[group];
 
 /**
  * @ignore
@@ -97,26 +79,35 @@ export const buildLayerGroupFilter = (layerGroups: BaseMapLayerGroups): LayerSpe
 };
 
 /**
+ * The layers the base map module manages: everything in the base-map source except the POI
+ * layers, which {@link POIsModule} owns.
+ *
  * @ignore
  */
-export const filterLayerByGroups = (layer: LayerSpecification, layerGroups?: BaseMapLayerGroups): boolean => {
-    const mode = layerGroups?.mode;
-    const groups = layerGroups?.names;
-    if (mode && groups?.length) {
-        if (mode === 'include') {
-            return groups.some((group) => isMatching(group, layer));
-        }
-        if (mode === 'exclude') {
-            return !groups.some((group) => isMatching(group, layer));
-        }
-    }
-    return true;
-};
+export const baseMapLayerFilter: LayerSpecFilter = (layer: LayerSpecification): boolean =>
+    !poiLayerIDs.includes(layer.id);
 
 /**
+ * Classifies the given layers into every base-map layer group they belong to,
+ * using the same `metadata.group` matching as the visibility filters.
+ *
+ * The result has an entry for every {@link BaseMapLayerGroupName} (empty array
+ * when no layer matches), so callers get a stable, fully-keyed record. Layer ids
+ * keep their style z-order within each group. Groups intentionally overlap — e.g.
+ * a city label is in both `cityLabels` and `allPlaceLabels` — so a layer id can
+ * appear under several groups.
+ *
  * @ignore
  */
-export const buildBaseMapLayerGroupFilter =
-    (layerGroupsFilter?: BaseMapLayerGroups): LayerSpecFilter =>
-    (layer: LayerSpecification): boolean =>
-        (!layerGroupsFilter || filterLayerByGroups(layer, layerGroupsFilter)) && !poiLayerIDs.includes(layer.id);
+export const groupBaseMapLayers = (layers: LayerSpecification[]): Record<BaseMapLayerGroupName, string[]> => {
+    const grouped = Object.fromEntries(baseMapLayerGroupNames.map((group) => [group, [] as string[]])) as Record<
+        BaseMapLayerGroupName,
+        string[]
+    >;
+    for (const layer of layers) {
+        for (const group of baseMapLayerGroupNames) {
+            if (isMatching(group, layer)) grouped[group].push(layer.id);
+        }
+    }
+    return grouped;
+};

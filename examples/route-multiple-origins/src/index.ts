@@ -26,13 +26,13 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     });
 
     // Show a single place for the common destination:
-    (await PlacesModule.get(map)).show(destination);
+    (await PlacesModule.create(map)).show(destination);
 
     // Create routing modules dynamically based on the number of origins
     const routeColors = ['#0066CC', '#00BBDD', '#33AA33', '#99BB00'];
     const routingModules = await Promise.all(
         origins.map((_, index) =>
-            RoutingModule.get(map, { theme: { mainColor: routeColors[index % routeColors.length] } }),
+            RoutingModule.create(map, { theme: { mainColor: routeColors[index % routeColors.length] } }),
         ),
     );
 

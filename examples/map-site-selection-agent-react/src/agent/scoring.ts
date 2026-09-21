@@ -12,9 +12,17 @@
  *   carries no ranking info and is dropped (reported), so it never flattens the spread.
  */
 
+import { householdsEnabled } from '../demographics/experimental-search';
 import type { ScoreFactor } from '../results/results-store';
 
-export const SCORE_FACTORS: readonly ScoreFactor[] = ['reach', 'demand', 'competition', 'accessibility'];
+// Reach (households) exists only when the experimental-search flag is on — with it off the factor is
+// dropped from scoring entirely (not merely reported as "skipped"), so no household surface leaks
+// through the panel, the report, or the glass-box breakdown. A function (not a constant) because the
+// flag is set at agent creation, after modules load.
+export const scoreFactors = (): readonly ScoreFactor[] =>
+    householdsEnabled()
+        ? ['reach', 'demand', 'competition', 'accessibility']
+        : ['demand', 'competition', 'accessibility'];
 
 export type FactorWeights = Record<ScoreFactor, number>;
 
@@ -78,7 +86,7 @@ export const scoreSites = (
     const normalizedByFactor = new Map<ScoreFactor, Map<string, number>>();
     const usedFactors: ScoreFactor[] = [];
     const skipped: SkippedFactor[] = [];
-    for (const factor of SCORE_FACTORS) {
+    for (const factor of scoreFactors()) {
         const present = eligible.filter((site) => typeof site.values[factor] === 'number');
         if (present.length === 0) {
             skipped.push({ factor, reason: 'no-data' });

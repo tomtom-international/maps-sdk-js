@@ -13,14 +13,6 @@ const appendWhenParams = (urlParams: URLSearchParams, when?: DepartArriveParams)
     }
 };
 
-// TODO: not supported yet in Orbis
-// const appendThrillingParams = (urlParams: URLSearchParams, thrillingParams?: ThrillingParams): void => {
-//     if (thrillingParams) {
-//         thrillingParams.hilliness && urlParams.append('hilliness', thrillingParams.hilliness);
-//         thrillingParams.windingness && urlParams.append('windingness', thrillingParams.windingness);
-//     }
-// };
-
 /**
  * @ignore
  */
@@ -30,10 +22,6 @@ export const appendCommonRoutingParams = (urlParams: URLSearchParams, params: Co
     appendOptionalParam(urlParams, 'traffic', costModel?.traffic);
     appendWhenParams(urlParams, params.when);
     appendOptionalParam(urlParams, 'routeType', costModel?.routeType);
-    // TODO not supported in Orbis
-    // if (costModel?.routeType === 'thrilling') {
-    //     appendThrillingParams(urlParams, costModel.thrillingParams);
-    // }
     appendOptionalParam(urlParams, 'travelMode', params.travelMode);
     appendVehicleParams(urlParams, params.vehicle);
 };

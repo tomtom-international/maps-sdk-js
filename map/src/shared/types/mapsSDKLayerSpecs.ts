@@ -93,6 +93,18 @@ export type SourceWithLayers = StyleSourceWithLayers | GeoJSONSourceWithLayers;
 export type SourcesWithLayers = { [name: string]: SourceWithLayers };
 
 /**
+ * The sources a style-owned module controls, keyed by the name the module gives them.
+ * @ignore
+ */
+export type StyleSourcesWithLayers = { [name: string]: StyleSourceWithLayers };
+
+/**
+ * The sources a data-owned module adds and owns, keyed by the name the module gives them.
+ * @ignore
+ */
+export type GeoJSONSourcesWithLayers = { [name: string]: GeoJSONSourceWithLayers };
+
+/**
  * Contains the IDs of a source and its related layers.
  *
  * @remarks

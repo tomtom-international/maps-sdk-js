@@ -1,9 +1,8 @@
 import path from 'node:path';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
-import dts from 'vite-plugin-dts';
-import { resolveExampleEnv } from './exampleBuildEnv';
-import { sandpackTailwindPlugin } from './src/sandpack/tailwindPlugin';
+import { resolveExampleEnv } from './exampleBuildEnv.ts';
+import { sandpackTailwindPlugin } from './src/sandpack/tailwindPlugin.ts';
 
 // NOTE: This config is meant to build the examples package located in ./src and to be consumed in docs portal for the examples pages
 export default defineConfig(({ mode }) => {
@@ -26,12 +25,10 @@ export default defineConfig(({ mode }) => {
             minify: 'terser',
         },
         plugins: [
-            sandpackTailwindPlugin({ examplesDir: path.resolve(__dirname) }),
-            dts({
-                outDirs: 'dist',
-                include: ['index.ts', 'src/**/*'],
-                exclude: ['**/*.test.ts'],
-            }),
+            sandpackTailwindPlugin({ examplesDir: path.resolve(import.meta.dirname) }),
+            // Declaration files are emitted separately by `tsc -p tsconfig.build.json` in the
+            // build script — see package.json. Examples ship per-file .d.ts, so they need no
+            // bundling pass (unlike core/services/map — see shared-configs/vite.config.ts).
             ...(process.env.CI
                 ? []
                 : [

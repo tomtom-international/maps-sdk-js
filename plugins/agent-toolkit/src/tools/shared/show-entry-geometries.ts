@@ -3,7 +3,7 @@
  */
 
 import type { z } from 'zod';
-import type { ToolState } from '../../types';
+import type { ToolExecuteOptions, ToolState } from '../../types';
 import type { showPlaceGeometriesSchema } from './schema';
 
 /** @ignore */
@@ -22,8 +22,9 @@ export const showEntryGeometries = async (
     state: ToolState,
     placesEntryId: string,
     config: NonNullable<z.infer<typeof showPlaceGeometriesSchema>>,
+    options?: ToolExecuteOptions,
 ): Promise<ShowEntryGeometriesResult> => {
-    const fetched = await state.places.fetchGeometriesForEntry(placesEntryId);
+    const fetched = await state.places.fetchGeometriesForEntry(placesEntryId, options);
     if (config.show && fetched.length > 0) {
         await state.places.showPlaceGeometries(fetched, config.theme ?? 'outline', config.mode ?? 'replace');
         return { fetched: fetched.length, shown: true };

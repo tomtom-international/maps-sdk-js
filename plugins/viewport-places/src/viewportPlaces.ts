@@ -1,6 +1,6 @@
 import { generateId, POICategory } from '@tomtom-org/maps-sdk/core';
 import { PlacesModule, type PlacesModuleConfig, TomTomMap } from '@tomtom-org/maps-sdk/map';
-import { type FuzzySearchParams, search } from '@tomtom-org/maps-sdk/services';
+import { type FuzzySearchParams, SDKAbortError, search } from '@tomtom-org/maps-sdk/services';
 
 /**
  * Common Options when adding a viewport places module.
@@ -34,8 +34,12 @@ export type ViewportPlacesAddCommonOptions = {
 export type ViewportPlacesAddOptions = ViewportPlacesAddCommonOptions & {
     /**
      * The search parameters to query places for this place module.
+     *
+     * @remarks
+     * `signal` is not accepted here: each module owns an `AbortSignal` internally so that a new
+     * viewport search cancels the one it supersedes.
      */
-    searchOptions: Omit<FuzzySearchParams, 'boundingBox' | 'position'>;
+    searchOptions: Omit<FuzzySearchParams, 'boundingBox' | 'position' | 'signal'>;
     /**
      * Optional configuration for the places module, such as styling.
      */
@@ -71,7 +75,13 @@ export class ViewportPlaces {
      */
     private registeredModules: Record<
         string,
-        { options: ViewportPlacesAddOptions; placesModule: PlacesModule; subscription: any }
+        {
+            options: ViewportPlacesAddOptions;
+            placesModule: PlacesModule;
+            subscription: any;
+            /** Cancels this module's in-flight search when a newer viewport supersedes it. */
+            controller?: AbortController;
+        }
     > = {};
     private readonly mapLibreMap;
 
@@ -84,23 +94,45 @@ export class ViewportPlaces {
     }
 
     /**
-     * Performs the update logic for a PlacesModule with given options.
-     * @param placesModule - The PlacesModule to update.
-     * @param options - The options containing search parameters and zoom constraints.
+     * Performs the update logic for a registered PlacesModule, cancelling whatever search that
+     * module still has in flight.
+     * @param id - The unique identifier of the registered place module to refresh.
      */
-    private async searchAndDisplay(placesModule: PlacesModule, options: ViewportPlacesAddOptions): Promise<void> {
+    private async searchAndDisplay(id: string): Promise<void> {
+        const entry = this.registeredModules[id];
+        if (!entry) return;
+
+        const { placesModule, options } = entry;
+
+        // The previous viewport's search is stale. Must precede the zoom guard below: that path
+        // clears and returns early, and a search left running would repopulate what it cleared.
+        entry.controller?.abort();
+
         const zoom = this.mapLibreMap.getZoom();
         if ((options.minZoom && zoom < options.minZoom) || (options.maxZoom && zoom > options.maxZoom)) {
             await placesModule.clear();
             return;
         }
-        await placesModule.show(
-            await search({
+
+        const controller = new AbortController();
+        entry.controller = controller;
+
+        try {
+            const places = await search({
                 boundingBox: this.map.getBBox(),
                 limit: 100,
                 ...options.searchOptions,
-            }),
-        );
+                signal: controller.signal,
+            });
+            // Superseded between the response arriving and rendering it
+            if (controller.signal.aborted) return;
+
+            await placesModule.show(places);
+        } catch (error) {
+            if (error instanceof SDKAbortError) return;
+
+            throw error;
+        }
     }
 
     /**
@@ -121,11 +153,8 @@ export class ViewportPlaces {
             placesModuleConfig: { theme: 'base-map', ...options.placesModuleConfig } as PlacesModuleConfig,
         };
 
-        const placesModule = await PlacesModule.get(this.map, effectiveOptions.placesModuleConfig);
-        const searchAndDisplay = async () => {
-            const entry = this.registeredModules[id];
-            await this.searchAndDisplay(entry.placesModule, entry.options);
-        };
+        const placesModule = await PlacesModule.create(this.map, effectiveOptions.placesModuleConfig);
+        const searchAndDisplay = () => this.searchAndDisplay(id);
 
         const subscription = this.mapLibreMap.on('moveend', searchAndDisplay);
         this.registeredModules[id] = { placesModule, subscription, options: effectiveOptions };
@@ -163,6 +192,7 @@ export class ViewportPlaces {
     remove(id: string): void {
         const entry = this.registeredModules[id];
         if (entry) {
+            entry.controller?.abort();
             entry.placesModule.clear();
             entry.subscription.unsubscribe();
             delete this.registeredModules[id];
@@ -201,6 +231,6 @@ export class ViewportPlaces {
         };
         // Update the places module configuration and refresh the display:
         entry.placesModule.applyConfig(entry.options.placesModuleConfig);
-        await this.searchAndDisplay(entry.placesModule, entry.options);
+        await this.searchAndDisplay(newOptions.id);
     }
 }

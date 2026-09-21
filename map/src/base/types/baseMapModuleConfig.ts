@@ -6,26 +6,32 @@ import type { MapModuleCommonConfig } from '../../shared';
  * @remarks
  * Use these names with {@link BaseMapModule} to control layer visibility.
  *
+ * Ordered by z-order in the TomTom base-map style, from the layers painted
+ * lowest (underneath) to highest (on top). The place-label order mirrors the
+ * style's own draw order rather than the settlement hierarchy.
+ *
  * @see {@link BaseMapLayerGroupName}
- * @see {@link BaseMapModuleInitConfig.layerGroupsFilter}
  *
  * @group Base Map
  */
 export const baseMapLayerGroupNames = [
     'land',
     'water',
-    'borders',
     'buildings2D',
+    'roads',
+    'railways',
+    'ferries',
+    'borders',
     'buildings3D',
-    'houseNumbers',
-    'roadLines',
+    'natureLabels',
     'roadLabels',
     'roadShields',
-    'placeLabels',
+    'houseNumbers',
     'smallerTownLabels',
-    'cityLabels',
-    'capitalLabels',
     'stateLabels',
+    'cityLabels',
+    'allPlaceLabels',
+    'capitalLabels',
     'countryLabels',
 ] as const;
 
@@ -35,18 +41,35 @@ export const baseMapLayerGroupNames = [
  * Identifies specific categories of base map layers that can be controlled together.
  *
  * @remarks
- * **Available Layer Groups:**
- * - `land` - Land areas and terrain
+ * Layers are classified by the style's `metadata.group`, so these groups track
+ * the TomTom base-map style rather than any layer id naming.
+ *
+ * **Surfaces & nature:**
+ * - `land` - Land use & land cover areas (and the map background)
  * - `water` - Water bodies (oceans, lakes, rivers)
- * - `borders` - Country and administrative boundaries
+ * - `natureLabels` - Natural feature labels (peaks, islands, rivers, water areas)
+ *
+ * **Transport geometry:**
+ * - `roads` - Road lines (motorway…street, service, paths, tracks), their arrows,
+ *   and road/transit surface areas (pedestrian areas, runways, platforms, piers)
+ * - `railways` - Railways (rail, light rail, subway, tram) and aerial cableways
+ * - `ferries` - Ferry connections
+ *
+ * **Buildings:**
  * - `buildings2D` - 2D building footprints
  * - `buildings3D` - 3D building models
- * - `houseNumbers` - House number labels
- * - `roadLines` - Road line geometries
- * - `roadLabels` - Street name labels
+ *
+ * **Boundaries:**
+ * - `borders` - Administrative boundaries, overlays (military/protected) and their labels
+ *
+ * **Text:**
+ * - `roadLabels` - Road name labels
  * - `roadShields` - Highway shields (e.g., I-95, A1)
- * - `placeLabels` - General place labels
- * - `smallerTownLabels` - Small town/village labels
+ * - `houseNumbers` - House number labels
+ *
+ * **Place labels:**
+ * - `allPlaceLabels` - All place labels (superset of the settlement/admin groups below)
+ * - `smallerTownLabels` - Neighbourhood, village, hamlet & town labels
  * - `cityLabels` - City labels
  * - `capitalLabels` - Capital city labels
  * - `stateLabels` - State/province labels
@@ -54,7 +77,7 @@ export const baseMapLayerGroupNames = [
  *
  * @example
  * ```typescript
- * const group: BaseMapLayerGroupName = 'roadLines';
+ * const group: BaseMapLayerGroupName = 'roads';
  * const labels: BaseMapLayerGroupName[] = ['cityLabels', 'countryLabels'];
  * ```
  *
@@ -80,7 +103,7 @@ export type BaseMapLayerGroupName = (typeof baseMapLayerGroupNames)[number];
  * // Show only roads
  * const roadsOnly: BaseMapLayerGroupsVisibility = {
  *   mode: 'include',
- *   names: ['roadLines', 'roadLabels'],
+ *   names: ['roads', 'roadLabels'],
  *   visible: true
  * };
  * ```
@@ -112,7 +135,7 @@ export type BaseMapLayerGroupsVisibility = BaseMapLayerGroups & { visible: boole
  * // Show only roads and borders
  * const roadsOnly: BaseMapLayerGroups = {
  *   mode: 'include',
- *   names: ['roadLines', 'roadLabels', 'borders']
+ *   names: ['roads', 'roadLabels', 'borders']
  * };
  *
  * // Show everything except buildings
@@ -157,7 +180,7 @@ export type BaseMapLayerGroups = {
      * @example
      * ```typescript
      * // Show only these
-     * names: ['roadLines', 'roadLabels', 'water']
+     * names: ['roads', 'roadLabels', 'water']
      *
      * // Hide these
      * names: ['buildings2D', 'buildings3D', 'houseNumbers']
@@ -193,7 +216,7 @@ export type BaseMapLayerGroups = {
  *   visible: true,
  *   layerGroupsVisibility: {
  *     mode: 'include',
- *     names: ['roadLines', 'water', 'land'],
+ *     names: ['roads', 'water', 'land'],
  *     visible: true
  *   }
  * };
@@ -213,9 +236,6 @@ export type BaseMapModuleConfig = MapModuleCommonConfig & {
      * Optional visibility configuration for specific layer groups.
      *
      * @remarks
-     * **Important:** The layer groups specified here must be included in the
-     * module (not excluded by `layerGroupsFilter` during initialization).
-     *
      * Use this to control visibility of layer groups at runtime without
      * reinitializing the module.
      *
@@ -231,90 +251,10 @@ export type BaseMapModuleConfig = MapModuleCommonConfig & {
      * // Show only labels
      * layerGroupsVisibility: {
      *   mode: 'include',
-     *   names: ['placeLabels', 'cityLabels', 'countryLabels'],
+     *   names: ['allPlaceLabels', 'cityLabels', 'countryLabels'],
      *   visible: true
      * }
      * ```
      */
     layerGroupsVisibility?: BaseMapLayerGroupsVisibility;
-};
-
-/**
- * Initialization configuration for the BaseMapModule.
- *
- * Extends {@link BaseMapModuleConfig} with additional options available only
- * during module initialization.
- *
- * @remarks
- * **Initialization vs Runtime:**
- * - `layerGroupsFilter`: Only available at init - determines which groups to load
- * - `layerGroupsVisibility`: Available at init and runtime - controls visibility
- *
- * **Use Cases:**
- * - Create minimal maps with only essential layers
- * - Build custom map styles by excluding certain features
- * - Optimize performance by not loading unnecessary layers
- *
- * @example
- * ```typescript
- * // Initialize with only roads and water
- * const initConfig: BaseMapModuleInitConfig = {
- *   layerGroupsFilter: {
- *     mode: 'include',
- *     names: ['roadLines', 'roadLabels', 'water', 'land']
- *   },
- *   visible: true
- * };
- *
- * // Exclude buildings from initialization
- * const noBuildingsConfig: BaseMapModuleInitConfig = {
- *   layerGroupsFilter: {
- *     mode: 'exclude',
- *     names: ['buildings2D', 'buildings3D', 'houseNumbers']
- *   }
- * };
- *
- * // Minimal map for data overlay
- * const overlayBaseConfig: BaseMapModuleInitConfig = {
- *   layerGroupsFilter: {
- *     mode: 'include',
- *     names: ['water', 'land', 'borders']
- *   },
- *   visible: true
- * };
- * ```
- *
- * @group Base Map
- */
-export type BaseMapModuleInitConfig = BaseMapModuleConfig & {
-    /**
-     * Layer groups to include/exclude during module initialization.
-     *
-     * @remarks
-     * **One-time configuration:** This can only be set during initialization.
-     * Once the module is created, you cannot change which groups are loaded,
-     * only their visibility via `layerGroupsVisibility`.
-     *
-     * @example
-     * ```typescript
-     * // Load only essential layers
-     * layerGroupsFilter: {
-     *   mode: 'include',
-     *   names: ['land', 'water', 'roadLines', 'borders']
-     * }
-     *
-     * // Load everything except 3D buildings
-     * layerGroupsFilter: {
-     *   mode: 'exclude',
-     *   names: ['buildings3D']
-     * }
-     *
-     * // Minimal overlay map
-     * layerGroupsFilter: {
-     *   mode: 'include',
-     *   names: ['water', 'land']
-     * }
-     * ```
-     */
-    layerGroupsFilter?: BaseMapLayerGroups;
 };

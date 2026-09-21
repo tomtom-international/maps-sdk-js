@@ -29,7 +29,7 @@ document.querySelectorAll<HTMLInputElement>('input[name="displayMode"]').forEach
     });
 });
 
-const basemapSelector = document.querySelector('#sdk-example-basemap') as HTMLSelectElement;
+const basemapSelector = document.querySelector('#ui-basemap') as HTMLSelectElement;
 standardStyleIDs.forEach((id) => basemapSelector.add(new Option(id)));
 basemapSelector.addEventListener('change', (event) =>
     map.setStyle((event.target as HTMLSelectElement).value as StandardStyleID),

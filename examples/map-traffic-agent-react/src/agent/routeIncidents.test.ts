@@ -1,4 +1,5 @@
 import type { Routes } from '@tomtom-org/maps-sdk/core';
+import type { Position } from 'geojson';
 import { describe, expect, it } from 'vitest';
 import { incidentsFromRoutes } from './routeIncidents';
 
@@ -8,7 +9,7 @@ type TrafficSection = NonNullable<Sections['traffic']>[number];
 type RoadStretch = NonNullable<Sections['importantRoadStretch']>[number];
 
 // A straight 5-point line: coordinate indices 0..4 map to [0,0]..[4,0].
-const LINE: GeoJSON.Position[] = [
+const LINE: Position[] = [
     [0, 0],
     [1, 0],
     [2, 0],
@@ -34,7 +35,7 @@ const route = (
     index: number,
     traffic: TrafficSection[],
     importantRoadStretch: RoadStretch[] = [],
-    coordinates: GeoJSON.Position[] = LINE,
+    coordinates: Position[] = LINE,
 ): RouteFeature =>
     ({
         type: 'Feature',

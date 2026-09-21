@@ -6,7 +6,7 @@
     height: 100%;
 }
 
-.sdk-example-button-container {
+.ui-button-container {
     position: absolute;
     right: 20px;
     bottom: 20px;
@@ -17,7 +17,7 @@
     box-sizing: border-box;
 }
 
-.sdk-example-panel {
+.ui-panel {
     position: absolute;
     top: 10px;
     left: 0;
@@ -33,18 +33,18 @@
     box-sizing: border-box;
 }
 
-.sdk-example-heading-label {
+.ui-heading-label {
     margin: 15px 0 5px 0;
     font-weight: bold;
 }
 
-.sdk-example-dropdown {
+.ui-dropdown {
     margin-left: 10px;
     padding: 7px;
     border-radius: 5px;
 }
 
-#sdk-example-reCenter {
+#ui-reCenter {
     padding: 8px 16px;
     margin-bottom: 5px;
     font-family: Gilroy, sans-serif;
@@ -59,7 +59,7 @@
     user-select: none;
 }
 
-.sdk-example-layers {
+.ui-layers {
     display: flex;
     align-items: flex-start;
     justify-content: left;
@@ -67,7 +67,7 @@
     gap: 5px;
 }
 
-#sdk-example-mapStyles {
+#ui-mapStyles {
     position: absolute;
     right: 20px;
     height: 26px;

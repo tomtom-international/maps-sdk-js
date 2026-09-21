@@ -89,7 +89,9 @@ export function WhitespacePanel() {
             <div className="flex flex-col gap-1 px-4 pt-3 pb-1">
                 <span className={`${title2Class} first-letter:uppercase`}>{data.goal}</span>
                 {data.pocketsMeetingGoal === 0 ? (
-                    <NoteBanner>{noneMessage}</NoteBanner>
+                    <span style={{ ...captionStyle, fontSize: '14px', lineHeight: '20px', color: playbook.text.medEm }}>
+                        {noneMessage}
+                    </span>
                 ) : (
                     <span style={captionStyle}>
                         {data.pocketsMeetingGoal} of {data.pockets.features.length}{' '}
@@ -98,7 +100,7 @@ export function WhitespacePanel() {
                 )}
             </div>
 
-            <ol className="flex flex-col">
+            <ol className="flex flex-col gap-1">
                 {ranked.map(({ feature, originalIndex, opp }) => {
                     const hue = pocketColor(originalIndex).hex;
                     return (
@@ -106,13 +108,17 @@ export function WhitespacePanel() {
                             key={feature.properties.color}
                             onClick={() => focusFeature(feature, 15)}
                             title="Show on map"
-                            className="flex cursor-pointer items-start gap-2 px-4 py-2 hover:bg-(--pb-surface-1)"
+                            className="group flex cursor-pointer items-start gap-2 px-4 py-1 hover:bg-[#f5f5f5]"
                         >
                             <RankBadge n={originalIndex + 1} />
                             <div className="flex min-w-0 flex-1 flex-col">
                                 <div className="flex items-start gap-2">
                                     <div className="flex h-6 min-w-0 flex-1 items-center">
-                                        <ScoreBar value={opp} color={hue} />
+                                        <ScoreBar
+                                            value={opp}
+                                            color={hue}
+                                            trackClassName="bg-(--ui-surface-1) group-hover:bg-white"
+                                        />
                                     </div>
                                     <span className="flex shrink-0 flex-col items-end">
                                         <span className={title1Class} style={{ color: hue }}>
@@ -134,7 +140,7 @@ export function WhitespacePanel() {
             </ol>
 
             {/* Re-rank — live demand ↔ peer-proximity blend + methodology notes */}
-            <div className="mx-4 border-t border-(--pb-border-base)" />
+            <div className="mx-4 border-t border-(--ui-border-base-em)" />
             <div className="flex flex-col gap-2 px-4 pt-3 pb-3">
                 <div className="flex items-center justify-between gap-2">
                     <span style={titleStyle}>Re-rank</span>

@@ -1,5 +1,7 @@
 import { poiCategories as knownPoiCategories, POICategory } from '@tomtom-org/maps-sdk/core';
 import { getPOICategoryCodes } from '@tomtom-org/maps-sdk/services';
+import type { ToolExecuteOptions } from '../../types';
+import { withAgentToolkitHeaders } from './agent-headers';
 
 const knownPoiCategoriesSet = new Set<string>(knownPoiCategories);
 
@@ -20,7 +22,10 @@ export type ResolvedPoiCategories = {
  *
  * @ignore
  */
-export const resolvePoiCategories = async (poiCategories: string[] | undefined): Promise<ResolvedPoiCategories> => {
+export const resolvePoiCategories = async (
+    poiCategories: string[] | undefined,
+    options?: ToolExecuteOptions,
+): Promise<ResolvedPoiCategories> => {
     if (!poiCategories) {
         return { resolved: undefined, unresolved: [] };
     }
@@ -35,12 +40,16 @@ export const resolvePoiCategories = async (poiCategories: string[] | undefined):
     // `getPOICategoryCodes({ filters: [term] })` below is served from memory — they share
     // the cached catalog and filter it locally. Without the warm-up, N concurrent first-time
     // calls would race the network even though only one fetch is needed.
-    await getPOICategoryCodes();
+    const warmupParams = withAgentToolkitHeaders({ signal: options?.signal });
+    await getPOICategoryCodes(warmupParams);
 
     // One filter lookup per term so we can attribute zero-match results back to their input.
     // All cache hits after the warm-up above — no extra network calls.
     const lookups = await Promise.all(
-        unrecognized.map(async (term) => ({ term, codes: await getPOICategoryCodes({ filters: [term] }) })),
+        unrecognized.map(async (term) => {
+            const requestParams = withAgentToolkitHeaders({ filters: [term], signal: options?.signal });
+            return { term, codes: await getPOICategoryCodes(requestParams) };
+        }),
     );
 
     const unresolved: string[] = [];

@@ -1,5 +1,6 @@
 import type { Feature, FeatureCollection, Point } from 'geojson';
 import type {
+    BaseMapEventScope,
     BaseMapModule,
     CustomGeoJSONModule,
     GeometriesModule,
@@ -8,13 +9,15 @@ import type {
     POIsModule,
     RoutingModule,
     SourceWithLayers,
+    StylingModule,
     TomTomMap,
     TrafficAreaAnalyticsModule,
     TrafficFlowModule,
     TrafficIncidentOverlayModule,
     TrafficIncidentsModule,
+    UserEvents,
 } from 'map';
-import type { LngLatLike, Map } from 'maplibre-gl';
+import type { LngLatLike, Map, MapGeoJSONFeature } from 'maplibre-gl';
 
 /**
  * Extension of globalThis with convenient SDK properties for testing.
@@ -27,13 +30,16 @@ export type MapsSDKThis = typeof globalThis & {
     tomtomMap: TomTomMap;
     mapLibreMap: Map;
     baseMap?: BaseMapModule;
-    // extra base map instance that can coexist with the main one:
-    baseMap2?: BaseMapModule;
+    // The base map is shared per map, so two independently-handled parts of it are two scopes of
+    // the one module rather than two instances.
+    baseMapScope?: UserEvents<MapGeoJSONFeature, BaseMapEventScope>;
+    baseMapScope2?: UserEvents<MapGeoJSONFeature, BaseMapEventScope>;
     trafficIncidents?: TrafficIncidentsModule;
     trafficIncidentOverlay?: TrafficIncidentOverlayModule;
     trafficFlow?: TrafficFlowModule;
     pois?: POIsModule;
     hillshade?: HillshadeModule;
+    styling?: StylingModule;
     places?: PlacesModule;
     places2?: PlacesModule;
     geometries?: GeometriesModule;
@@ -66,4 +72,7 @@ export type MapsSDKThis = typeof globalThis & {
     _shownFeaturesResult: unknown;
     _shownFeaturesCount: number;
     _shownFeaturesUnsub?: () => void;
+    // The `map` parameter of every style MapLibre has applied since the recorder was installed, in
+    // the order it applied them
+    _appliedStyles: string[];
 };

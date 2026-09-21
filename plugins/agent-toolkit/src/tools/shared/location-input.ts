@@ -5,6 +5,7 @@
 import type { WaypointLike } from '@tomtom-org/maps-sdk/core';
 import type { Position } from 'geojson';
 import { z } from 'zod';
+import { positionSchema } from './schema';
 
 /** @ignore */
 export type ResolvedLocation = {
@@ -27,17 +28,20 @@ export const locationInputSchema = z.union([
             ),
     }),
     z.object({
-        position: z
-            .object({ lng: z.number(), lat: z.number() })
-            .describe('Explicit coordinates — use when you already have a position.'),
+        position: positionSchema.describe(
+            'Explicit [lng, lat] — GeoJSON order, longitude first. Use when you already have a ' +
+                'position, e.g. copied straight from a getViewport / getCurrentLocation / ' +
+                'reverseGeocode result. lng in [-180, 180], lat in [-90, 90].',
+        ),
     }),
     z.object({
-        placeId: z
+        placeIdOrEntryId: z
             .string()
             .describe(
-                'ID of a place stored in session state (any previous places entry). ' +
-                    'Resolves to the full Place with its POI name, address, and coordinates — ' +
-                    'prefer this over re-searching by name when routing to a place the user has already seen.',
+                'Place already in session state, by its feature `id` or its `placesEntryId`. ' +
+                    'Prefer over re-searching by name. Prefer a feature `id`: it targets one place, ' +
+                    'whereas an entry id resolves to its FIRST place (fine for a single-place locatePlace ' +
+                    'entry, ambiguous for a multi-place discoverPlaces one).',
             ),
     }),
 ]);

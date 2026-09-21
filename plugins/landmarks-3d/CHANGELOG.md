@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.4](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-landmarks-3d-v0.0.3...maps-sdk-plugin-landmarks-3d-v0.0.4) (2026-07-24)
+
+
+### Bug Fixes
+
+* **landmarks-3d:** render POIs on top of 3D landmark meshes ([#2011](https://github.com/tomtom-international/maps-sdk-js/issues/2011)) ([79b0922](https://github.com/tomtom-international/maps-sdk-js/commit/79b092201562e4452ac31f2890ac8046fdf3b27e))
+
 ## [0.0.3](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-landmarks-3d-v0.0.2...maps-sdk-plugin-landmarks-3d-v0.0.3) (2026-07-03)
 
 

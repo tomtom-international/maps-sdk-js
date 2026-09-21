@@ -13,7 +13,10 @@ import { PlacesModule, GeometriesModule, RoutingModule, TrafficFlowModule } from
 | Event | Fires when | Available on |
 |-------|-----------|-------------|
 | `config-change` | Any config mutation (`applyConfig`, `setVisible`, any setter) | All modules |
-| `shown-features` | After `show()` / `showRoutes()` / `showWaypoints()` completes | PlacesModule, GeometriesModule, RoutingModule, TrafficAreaAnalyticsModule |
+| `shown-features` | After any of a module's `show*()` operations completes | PlacesModule, GeometriesModule, RoutingModule, CustomGeoJSONModule, TrafficIncidentOverlayModule, TrafficAreaAnalyticsModule |
+
+Both live on the module, never on a named scope: a module has one configuration and one `show`
+stream, and a scope narrows neither.
 
 ---
 
@@ -34,10 +37,18 @@ Common triggers: `setVisible`, `applyConfig`, `applyTheme`, `moveBeforeLayer`, `
 
 ## `shown-features`
 
+A module with more than one show operation reports them all on one stream; the payload says which
+ran.
+
 ```ts
-// PlacesModule — Place | Place[] | Places
+// PlacesModule — { places } from show(), { connections } from showConnections()
 places.events.on('shown-features', (features) => {
-    fitMapToResults(features);
+    if ('places' in features) fitMapToResults(features.places);
+});
+
+// CustomGeoJSONModule — its show names a source, so the event does too
+custom.events.on('shown-features', ({ sourceName, data }) => {
+    updatePanel(sourceName, data);
 });
 
 // GeometriesModule — PolygonFeatures
@@ -54,15 +65,18 @@ trafficAreaAnalytics.events.on('shown-features', (data) => {
 
 ---
 
-## RoutingModule — separate `events.module` namespace
+## Named scopes
 
-RoutingModule keeps user events and module events in separate namespaces:
+A module that manages several surfaces also exposes one named scope per surface, covering that
+surface's **user** events — `on` / `off` / `where`. Lifecycle events are not on a scope. Modules with
+a single surface — BaseMap, POIs, Hillshade, both traffic tile modules, TrafficIncidentOverlay —
+have no named scopes; `events` already is that scope.
 
 ```ts
-// Module lifecycle events
-const unsubConfig = routing.events.module.on('config-change', (config) => { ... });
+// Module lifecycle events, module-wide
+const unsubConfig = routing.events.on('config-change', (config) => { ... });
 
-const unsubShown = routing.events.module.on('shown-features', (features) => {
+const unsubShown = routing.events.on('shown-features', (features) => {
     if ('routes' in features) {
         // { routes: Route | Routes }
     } else {
@@ -70,10 +84,17 @@ const unsubShown = routing.events.module.on('shown-features', (features) => {
     }
 });
 
-// User interaction events (different namespace)
-routing.events.user.mainLines.on('click', (route, lngLat) => { ... });
-routing.events.user.waypoints.on('hover', (waypoint, lngLat) => { ... });
+// User interaction events, on the same surface or narrowed to one scope
+routing.events.on('click', (feature, lngLat) => { ... });
+routing.events.mainLines.on('click', (route, lngLat) => { ... });
+routing.events.waypoints.on('hover', (waypoint, lngLat) => { ... });
 ```
+
+Scopes by module: RoutingModule has `mainLines`, `waypoints`, `chargingStops`, `summaryBubbles`,
+`incidents`, `vehicleRestricted`, `ferries`, `tollRoads`, `tunnels`, `instructionLines`, plus one
+`<type>Sections` scope per generated section type (`urbanSections`, `motorwaySections`, …).
+PlacesModule has `places` and `connections`. GeometriesModule has `geometry` and `geometryLabel`.
+CustomGeoJSONModule uses your own `sources` keys.
 
 ---
 
@@ -94,12 +115,12 @@ unsubA(); // only removes handlerA
 
 ## Modules that do NOT emit `shown-features`
 
-`TrafficFlowModule`, `TrafficIncidentsModule`, `HillshadeModule`, `BaseMapModule`, `POIsModule` — these control existing map data and have no `show()` method.
+`TrafficFlowModule`, `TrafficIncidentsModule`, `HillshadeModule`, `BaseMapModule`, `POIsModule` — these control existing map data and have no `show()` method, so `events.on('shown-features', …)` does not compile on them.
 
 ---
 
 ## Gotchas
 
-- `config-change` is **not** fired during `Module.get()` initialization — only on subsequent config mutations.
-- RoutingModule uses `events.module.on(...)` for lifecycle events, not the bare `events.on(...)` used by all other modules.
+- `config-change` is **not** fired during `Module.create()` / `Module.get()` initialization — only on subsequent config mutations.
+- Every module uses the same `events.on(...)` for both user and lifecycle events. A named scope carries user events only, so `routing.events.tunnels.on('click', …)` works but `routing.events.tunnels.on('config-change', …)` does not — config belongs to the module.
 - `shown-features` fires synchronously inside `show()` after the source data is updated — you can safely read `module.getShown()` inside the handler.

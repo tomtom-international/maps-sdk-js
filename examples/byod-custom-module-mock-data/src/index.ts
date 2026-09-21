@@ -23,14 +23,14 @@ type Sources = {
 };
 
 const showSelection = (html: string) => {
-    (document.querySelector('#sdk-example-selection') as HTMLDivElement).innerHTML = html;
+    (document.querySelector('#ui-selection') as HTMLDivElement).innerHTML = html;
 };
 
 (async () => {
     const points = generatePoints(20_000);
     const polygons = generatePolygons(8);
 
-    const customGeoJSON = await CustomGeoJSONModule.get<Sources>(map, {
+    const customGeoJSON = await CustomGeoJSONModule.create<Sources>(map, {
         sources: {
             points: {
                 cluster: { cluster: true, clusterRadius: 50, clusterMaxZoom: 14 },

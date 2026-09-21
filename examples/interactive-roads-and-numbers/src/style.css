@@ -1,4 +1,4 @@
-.sdk-example-body {
+.ui-body {
     font-family: "Open Sans", Arial, sans-serif;
     font-size: 14px;
 }
@@ -11,7 +11,7 @@
     height: 100%;
 }
 
-#sdk-example-infoPanel {
+#ui-infoPanel {
     padding: 8px 16px;
     border: none;
     border-radius: 20px;
@@ -32,6 +32,6 @@
     box-sizing: border-box;
 }
 
-.sdk-example-info-label {
+.ui-info-label {
     margin: 10px;
 }

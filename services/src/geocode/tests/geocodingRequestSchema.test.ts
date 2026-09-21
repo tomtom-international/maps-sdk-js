@@ -26,7 +26,7 @@ describe('Geocoding schema validation', () => {
                 issues: [
                     expect.objectContaining({
                         code: 'invalid_value',
-                        values: ['Unified', 'AR', 'IN', 'PK', 'IL', 'MA', 'RU', 'TR', 'CN'],
+                        values: ['Unified', 'AR', 'IN', 'PK', 'IL', 'MA', 'RU', 'TR', 'CN', 'TW', 'RS'],
                         path: ['view'],
                     }),
                 ],

@@ -40,7 +40,8 @@ export type ProfileSiteProps = {
     mode: 'walking' | 'driving';
     basis: string;
     catchmentKm2: number;
-    households: Counted; // Reach proxy — address (PointAddress) count in the catchment
+    /** Reach proxy — address (PointAddress) count in the catchment; null (and hidden everywhere) when the household signal is disabled (experimental search off). */
+    households: Counted | null;
     competitors: {
         count: number | null;
         capped: boolean;

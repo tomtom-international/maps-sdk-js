@@ -55,4 +55,13 @@ describe('themedGeometryConfig', () => {
         expect(config.line).toBeDefined();
         expect(config.beforeLayerConfig).toBe('lowestLabel');
     });
+
+    test('uses fixed neutral line colours (theme-independent; the accent is carried by the fill)', () => {
+        expect(themedGeometryConfig('fadedRainbow').line?.color).toEqual([
+            'case',
+            ['==', ['get', 'theme'], 'outline'],
+            ['coalesce', ['get', 'color'], '#555555'],
+            'grey',
+        ]);
+    });
 });

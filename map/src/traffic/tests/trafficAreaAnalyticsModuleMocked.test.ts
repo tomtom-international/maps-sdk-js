@@ -30,6 +30,7 @@ describe('Traffic area analytics module tests', () => {
                 updateIfRegistered: vi.fn(),
             },
             addStyleChangeHandler: vi.fn(),
+            styleLightDarkTheme: 'light',
             mapReady: vi.fn().mockReturnValueOnce(false).mockReturnValue(true),
         } as unknown as TomTomMap;
     }
@@ -92,7 +93,7 @@ describe('Traffic area analytics module tests', () => {
 
     test('Initialising module with default config', async () => {
         const mockMap = createMockMap();
-        const module = await TrafficAreaAnalyticsModule.get(mockMap);
+        const module = await TrafficAreaAnalyticsModule.create(mockMap);
         expect(module).toBeDefined();
         expect(module.getShown().heatmap.features).toHaveLength(0);
         expect(module.getShown().hexgrid.features).toHaveLength(0);
@@ -100,7 +101,7 @@ describe('Traffic area analytics module tests', () => {
 
     test('Initialising module with explicit config', async () => {
         const mockMap = createMockMap();
-        const module = await TrafficAreaAnalyticsModule.get(mockMap, {
+        const module = await TrafficAreaAnalyticsModule.create(mockMap, {
             displayMode: 'heatmap',
             activeMetric: 'speed',
             visible: true,
@@ -115,7 +116,7 @@ describe('Traffic area analytics module tests', () => {
 
     test('show() populates both sources from raw response and clear() resets', async () => {
         const mockMap = createMockMap();
-        const module = await TrafficAreaAnalyticsModule.get(mockMap);
+        const module = await TrafficAreaAnalyticsModule.create(mockMap);
 
         await module.show(createSampleAnalytics());
         expect(module.getShown().heatmap.features.length).toBeGreaterThanOrEqual(1);
@@ -127,7 +128,7 @@ describe('Traffic area analytics module tests', () => {
 
     test('setMetric() is a no-op when value unchanged', async () => {
         const mockMap = createMockMap();
-        const module = await TrafficAreaAnalyticsModule.get(mockMap);
+        const module = await TrafficAreaAnalyticsModule.create(mockMap);
 
         module.setMetric('speed');
         const callCount = (mockMap.mapLibreMap.setPaintProperty as ReturnType<typeof vi.fn>).mock.calls.length;
@@ -138,7 +139,7 @@ describe('Traffic area analytics module tests', () => {
 
     test('setMetric() updates paint properties when value changes', async () => {
         const mockMap = createMockMap();
-        const module = await TrafficAreaAnalyticsModule.get(mockMap);
+        const module = await TrafficAreaAnalyticsModule.create(mockMap);
 
         module.setMetric('speed');
         expect(mockMap.mapLibreMap.setPaintProperty).toHaveBeenCalled();
@@ -150,7 +151,7 @@ describe('Traffic area analytics module tests', () => {
 
     test('setMode() toggles layer visibility', async () => {
         const mockMap = createMockMap();
-        const module = await TrafficAreaAnalyticsModule.get(mockMap);
+        const module = await TrafficAreaAnalyticsModule.create(mockMap);
 
         module.setMode('heatmap');
         expect(module.getConfig()?.displayMode).toBe('heatmap');
@@ -161,7 +162,7 @@ describe('Traffic area analytics module tests', () => {
 
     test('setMode() is a no-op when value unchanged', async () => {
         const mockMap = createMockMap();
-        const module = await TrafficAreaAnalyticsModule.get(mockMap);
+        const module = await TrafficAreaAnalyticsModule.create(mockMap);
 
         module.setMode('heatmap');
         const callCount = (mockMap.mapLibreMap.setLayoutProperty as ReturnType<typeof vi.fn>).mock.calls.length;
@@ -172,7 +173,7 @@ describe('Traffic area analytics module tests', () => {
 
     test('setVisible() controls all layer visibility', async () => {
         const mockMap = createMockMap();
-        const module = await TrafficAreaAnalyticsModule.get(mockMap);
+        const module = await TrafficAreaAnalyticsModule.create(mockMap);
 
         module.setVisible(false);
         expect(module.getConfig()?.visible).toBe(false);
@@ -183,7 +184,7 @@ describe('Traffic area analytics module tests', () => {
 
     test('setColor() with preset theme updates active metric config and repaints', async () => {
         const mockMap = createMockMap();
-        const module = await TrafficAreaAnalyticsModule.get(mockMap);
+        const module = await TrafficAreaAnalyticsModule.create(mockMap);
 
         module.setColor('heat');
         // Theme is expanded to explicit raw stops for each metric (not stored as the theme string).
@@ -197,7 +198,7 @@ describe('Traffic area analytics module tests', () => {
 
     test('setColor() with custom color stops updates active metric config and repaints', async () => {
         const mockMap = createMockMap();
-        const module = await TrafficAreaAnalyticsModule.get(mockMap, {
+        const module = await TrafficAreaAnalyticsModule.create(mockMap, {
             activeMetric: 'congestionLevel',
             metricConfig: { congestionLevel: { color: 'heat' } },
         });
@@ -218,7 +219,7 @@ describe('Traffic area analytics module tests', () => {
 
     test('applyConfig() deep-merges metricConfig record', async () => {
         const mockMap = createMockMap();
-        const module = await TrafficAreaAnalyticsModule.get(mockMap, {
+        const module = await TrafficAreaAnalyticsModule.create(mockMap, {
             activeMetric: 'congestionLevel',
             metricConfig: { congestionLevel: { color: 'heat' } },
         });
@@ -246,20 +247,20 @@ describe('Traffic area analytics module tests', () => {
 
     test('events property is defined', async () => {
         const mockMap = createMockMap();
-        const module = await TrafficAreaAnalyticsModule.get(mockMap);
+        const module = await TrafficAreaAnalyticsModule.create(mockMap);
         expect(module.events).toBeDefined();
     });
 
     test('applyConfig with undefined resets', async () => {
         const mockMap = createMockMap();
-        const module = await TrafficAreaAnalyticsModule.get(mockMap, { displayMode: 'heatmap' });
+        const module = await TrafficAreaAnalyticsModule.create(mockMap, { displayMode: 'heatmap' });
         module.applyConfig(undefined);
         expect(module.getConfig()).toBeUndefined();
     });
 
     test('restoreDataAndConfigImpl keeps source and layer IDs stable across a style change', async () => {
         const mockMap = createMockMap();
-        const mod = await TrafficAreaAnalyticsModule.get(mockMap);
+        const mod = await TrafficAreaAnalyticsModule.create(mockMap);
         await mod.show(createSampleAnalytics());
 
         const before = structuredClone(mod.sourceAndLayerIDs);

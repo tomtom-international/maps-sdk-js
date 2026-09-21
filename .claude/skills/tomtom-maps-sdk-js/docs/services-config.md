@@ -50,12 +50,22 @@ await search({
     validateRequest: false,
 });
 
-// Custom timeout
+// Cancel a superseded call (search-as-you-type, refetch on map move)
+const controller = new AbortController();
+await search({
+    query: 'coffee',
+    signal: controller.signal,
+});
+
+// There is no `timeout` option — compose a deadline onto the signal instead
 await calculateRoute({
     locations: [[4.9, 52.4], [2.3, 48.8]],
-    timeout: 15000,  // ms
+    signal: AbortSignal.any([controller.signal, AbortSignal.timeout(15000)]),
 });
 ```
+
+Aborting cancels the in-flight HTTP request, including while the SDK waits to retry a `429`.
+An already-aborted signal rejects before any request is sent.
 
 ---
 
@@ -79,10 +89,20 @@ await search({
 
 ## Error handling
 
+Every rejection is an `SDKError`. HTTP failures are `SDKServiceError` (adds `.status`), and a
+cancelled call is `SDKAbortError` (`name === 'AbortError'`, abort reason on `.cause`).
+
+`SDKAbortError` carries no `.status`, so match it **before** any status check or a cancellation
+reads as an unknown failure:
+
 ```ts
+import { SDKAbortError, search } from '@tomtom-org/maps-sdk/services';
+
 try {
-    const results = await search({ query: 'coffee', position: [4.9, 52.4] });
+    const results = await search({ query: 'coffee', position: [4.9, 52.4], signal });
 } catch (error) {
+    if (error instanceof SDKAbortError) return; // superseded, not a failure
+
     switch (error.status) {
         case 400: console.error('Bad request — check parameters'); break;
         case 401: console.error('Invalid API key'); break;
@@ -93,7 +113,7 @@ try {
 }
 ```
 
-**Tip:** Both `geocodeOne()` and `searchOne()` throw if no result — use `geocode()` / `search()` or wrap in try/catch when the query might not be found.
+**Tip:** Both `geocodeOne()` and `searchOne()` throw if no result — use `geocode()` / `search()` or wrap in try/catch when the query might not be found. They take a bare query string, so they cannot be cancelled; use `search()` / `geocode()` with a `signal` when you need that.
 
 ---
 

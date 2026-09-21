@@ -104,7 +104,7 @@ test.describe('PlacesModule tests', () => {
         } as Place;
 
         const expectedDisplayProps: PlaceDisplayProps[] = [
-            { id: 'test-place-123', iconID: '7315', title: 'Test Place' },
+            { id: 'test-place-123', iconID: 'pinCategories:7315', title: 'Test Place' },
         ];
 
         const mapEnv = await MapTestEnv.loadPageAndMap(page, { center: coordinates as [number, number], zoom: 14 });
@@ -158,7 +158,7 @@ test.describe('PlacesModule tests', () => {
         expect(renderedPlaces).toHaveLength(1);
         expect(renderedPlaces[0].properties.id).toBe('528009001852275');
         expect(renderedPlaces[0].properties.title).toBe('Q-Park Amsterdam Nieuwendijk');
-        expect(renderedPlaces[0].properties.iconID).toBe('7313');
+        expect(renderedPlaces[0].properties.iconID).toBe('pinCategories:7313');
         expect(await getNumVisiblePlacesLayers(page, sourceID)).toBe(2);
 
         // extra wait for stability (not sure why it gets unstable if we change the map style right after the query above)
@@ -210,8 +210,7 @@ test.describe('PlacesModule tests', () => {
 });
 
 test.describe('Places module programmatic event state tests', () => {
-    // TODO(LSI-263): Enable when flakyness has been fixed
-    test('putEventState and cleanEventStates', { tag: '@flaky' }, async ({ page }) => {
+    test('putEventState and cleanEventStates', async ({ page }) => {
         const mapEnv = await MapTestEnv.loadPageAndMap(page, { center: [-75.43974, 39.82295], zoom: 14 });
         await initPlaces(page);
         await showPlaces(page, [

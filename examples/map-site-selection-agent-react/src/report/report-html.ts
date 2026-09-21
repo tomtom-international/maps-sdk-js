@@ -1,4 +1,6 @@
 import { methodologyReportHtml, notMeasuredReportHtml } from '../agent/methodology';
+import { scoreFactors } from '../agent/scoring';
+import { householdsEnabled } from '../demographics/experimental-search';
 import {
     FACTOR_LABELS,
     getResultsSnapshot,
@@ -43,23 +45,28 @@ const STYLE = `
   @media print { body { margin: 0; } h2 { break-after: avoid; } table, .card { break-inside: avoid; } }
 `;
 
+// Active factors only (scoreFactors() drops Reach when the household signal is off), so the report
+// never mentions a factor that cannot be scored.
 const factorList = (weights: Record<ScoreFactor, number>): string =>
-    (['reach', 'demand', 'competition', 'accessibility'] as ScoreFactor[])
+    scoreFactors()
         .map((f) => `${FACTOR_LABELS[f]} ${weights[f]}`)
         .join(' · ');
 
 const rankingSection = (ranking: RankingResult): string => {
+    // The Households column exists only when the household signal is on.
+    const householdsHeader = householdsEnabled() ? '<th class="n">Households</th>' : '';
+    const excludedColspan = householdsEnabled() ? 4 : 3;
     const rows = ranking.sites.features
         .map(({ properties: site }) => {
             if (site.excluded) {
-                return `<tr><td>#${site.rank}</td><td>${esc(site.label)}</td><td colspan="4" class="excluded">Excluded — ${esc(site.excluded.reason)}</td></tr>`;
+                return `<tr><td>#${site.rank}</td><td>${esc(site.label)}</td><td colspan="${excludedColspan}" class="excluded">Excluded — ${esc(site.excluded.reason)}</td></tr>`;
             }
             const breakdown = site.breakdown.map((b) => `${FACTOR_LABELS[b.factor]} ${b.points}`).join(' + ');
             return `<tr>
               <td>#${site.rank}</td><td>${esc(site.label)}</td>
               <td class="n"><strong>${site.score}</strong></td>
               <td class="muted">${esc(breakdown)}</td>
-              <td class="n">${num(site.households)}</td>
+              ${householdsEnabled() ? `<td class="n">${num(site.households)}</td>` : ''}
               <td class="n">${num(site.competitorCount)}</td>
             </tr>`;
         })
@@ -72,7 +79,7 @@ const rankingSection = (ranking: RankingResult): string => {
         : '';
     return `<h2>Ranked shortlist — ${esc(ranking.concept)}</h2>
       <p class="muted">${esc(ranking.mode)} catchments · weights ${esc(factorList(ranking.weights))} · confidence ${ranking.confidence}.</p>
-      <table><thead><tr><th>#</th><th>Site</th><th class="n">Score</th><th>Breakdown</th><th class="n">Households</th><th class="n">Rivals</th></tr></thead><tbody>${rows}</tbody></table>
+      <table><thead><tr><th>#</th><th>Site</th><th class="n">Score</th><th>Breakdown</th>${householdsHeader}<th class="n">Rivals</th></tr></thead><tbody>${rows}</tbody></table>
       ${gates}${skipped}`;
 };
 
@@ -84,11 +91,15 @@ const profileSection = (profile: NonNullable<ReturnType<typeof getResultsSnapsho
                 `<tr><td>${esc(bucket.label)}</td><td class="n">${bucket.count === null ? '—' : `${bucket.count}${bucket.capped ? '+' : ''}`}</td></tr>`,
         )
         .join('');
+    // The households KPI renders only when the household signal produced a value (experimental search on).
+    const householdsKpi = p.households
+        ? `<div class="kpi"><div class="v">${p.households.count === null ? '—' : `${p.households.count.toLocaleString()}${p.households.capped ? '+' : ''}`}</div><div class="l">Households (reach)</div></div>
+        `
+        : '';
     return `<h2>Site profile — ${esc(p.label)}</h2>
       <p class="muted">${esc(p.mode)} · ${esc(p.basis)} · ${p.catchmentKm2} km²</p>
       <div class="kpis card">
-        <div class="kpi"><div class="v">${p.households.count === null ? '—' : `${p.households.count.toLocaleString()}${p.households.capped ? '+' : ''}`}</div><div class="l">Households (reach)</div></div>
-        <div class="kpi"><div class="v">${num(p.competitors.count)}</div><div class="l">Competitors${p.competitors.nearestMeters !== null ? ` · nearest ${p.competitors.nearestMeters} m` : ''}</div></div>
+        ${householdsKpi}<div class="kpi"><div class="v">${num(p.competitors.count)}</div><div class="l">Competitors${p.competitors.nearestMeters !== null ? ` · nearest ${p.competitors.nearestMeters} m` : ''}</div></div>
         <div class="kpi"><div class="v">${p.parking ? num(p.parking.count) : '—'}</div><div class="l">Parking${p.parking?.nearestMeters != null ? ` · nearest ${p.parking.nearestMeters} m` : ''}</div></div>
       </div>
       <table><thead><tr><th>Area make-up</th><th class="n">POIs</th></tr></thead><tbody>${makeup}</tbody></table>`;

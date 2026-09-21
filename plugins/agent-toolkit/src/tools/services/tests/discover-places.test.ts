@@ -1,4 +1,9 @@
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+import * as sdkServices from '@tomtom-org/maps-sdk/services';
+import type { Polygon } from 'geojson';
 import { afterEach, describe, expect, it, test, vi } from 'vitest';
+import { PlacesState, RoutingState } from '../../../state';
+import { makeMockRanges, makeMockRoute, makeMockState } from '../../../tests/constants';
 import { buildDiscoverPlacesSchema, buildDiscoverPlacesWhereSchema, executeDiscoverPlaces } from '../discover-places';
 
 // --- services mock (hoisted by Vitest) ---
@@ -83,7 +88,7 @@ const makeState = () =>
         },
         places: {
             findPlaceById: () => undefined,
-            geometryPlaceIdsForEntry: () => undefined,
+            expandEntry: () => undefined,
             fetchPlaceGeometry: async () => undefined,
             addPlaceResult: async (_result: unknown, _label: string) => 'places-0',
             entries: [],
@@ -155,6 +160,35 @@ describe('discoverPlaces — areaId / areaTags are gated on experimentalSearch',
             where: { mode: 'within', areaId: '20567430' },
         });
         expect(result.success).toBe(false);
+    });
+});
+
+// The schema's `.refine` (discover-places.ts:235) and the tool description (line 263: "Never call
+// this with empty `query` AND empty `poiCategories`") both say a search subject is mandatory — this
+// pins that requirement at the schema level, independent of the executor.
+describe('discoverPlaces — requires a search subject (query and/or poiCategories)', () => {
+    test('rejects when both query and poiCategories are absent', () => {
+        const schema = buildDiscoverPlacesSchema({});
+        const result = schema.safeParse({ where: { mode: 'within', viewport: true } });
+        expect(result.success).toBe(false);
+    });
+
+    test('rejects when poiCategories is present but empty', () => {
+        const schema = buildDiscoverPlacesSchema({});
+        const result = schema.safeParse({ poiCategories: [], where: { mode: 'within', viewport: true } });
+        expect(result.success).toBe(false);
+    });
+
+    test('accepts when only poiCategories is provided', () => {
+        const schema = buildDiscoverPlacesSchema({});
+        const result = schema.safeParse({ poiCategories: ['RESTAURANT'], where: { mode: 'within', viewport: true } });
+        expect(result.success).toBe(true);
+    });
+
+    test('accepts when only query is provided', () => {
+        const schema = buildDiscoverPlacesSchema({});
+        const result = schema.safeParse({ query: 'cafe', where: { mode: 'within', viewport: true } });
+        expect(result.success).toBe(true);
     });
 });
 
@@ -366,5 +400,163 @@ describe('executeDiscoverPlaces — range-only within resolves (regression: no "
 
         expect(result.error).toBeUndefined();
         expect(mockSearch).toHaveBeenCalledOnce();
+    });
+});
+
+// --- real-state unit tests (spies the sdkServices namespace directly rather than the
+// module-level vi.mock above, and asserts against a real PlacesState/RoutingState instance) ---
+
+describe('executeDiscoverPlaces', () => {
+    const places = new PlacesState({} as TomTomMap);
+
+    // Reset places after every test so each test starts from an empty entries array — a real
+    // state instance carries whatever was written to it by the previous test otherwise, since
+    // clearAllMocks/restoreAllMocks only reset vi.fn() mocks, not this class's own entries.
+    afterEach(() => {
+        places.reset();
+        vi.clearAllMocks();
+        vi.restoreAllMocks();
+    });
+
+    // Verifies poiCategories reaches the search call, and that a real state entry is written
+    // with the id returned to the caller.
+    it('calls search with resolved poiCategories when poiCategories are provided', async () => {
+        const searchSpy = vi
+            .spyOn(sdkServices, 'search')
+            .mockResolvedValue({ type: 'FeatureCollection', features: [] });
+
+        const result = await executeDiscoverPlaces(
+            { poiCategories: ['RESTAURANT'], where: { mode: 'global' } },
+            makeMockState({ places }),
+        );
+        if ('error' in result) {
+            expect.fail('expected executeDiscoverPlaces to succeed');
+        }
+
+        expect(searchSpy).toHaveBeenCalledWith(expect.objectContaining({ poiCategories: ['RESTAURANT'] }));
+        expect(places.entries).toHaveLength(1);
+        expect(places.entries[0].id).toBe(result.placesEntryId);
+    });
+
+    // Per discover-places.ts's resolvePoiCategories check: poiCategories were given but NONE matched an
+    // exact catalog code or a synonym, so the tool must hard-error rather than silently widening to an
+    // unfiltered search.
+    it('errors when poiCategories are provided but none resolve to a catalog code', async () => {
+        vi.spyOn(sdkServices, 'getPOICategoryCodes').mockResolvedValue([]);
+        const searchSpy = vi.spyOn(sdkServices, 'search');
+
+        const result = (await executeDiscoverPlaces(
+            { poiCategories: ['NOT_A_CODE'], where: { mode: 'global' } },
+            makeMockState({ places }),
+        )) as { error?: string };
+
+        expect(result.error).toContain('NOT_A_CODE');
+        expect(searchSpy).not.toHaveBeenCalled();
+        expect(places.entries).toHaveLength(0);
+    });
+
+    // Verifies maxDetour dispatches to alongRouteSearch (not search) with the stored route
+    // feature and detour params, and that a real state entry is written.
+    it('calls alongRouteSearch when where mode is maxDetour', async () => {
+        const routeFeature = makeMockRoute();
+
+        const routing = new RoutingState({} as TomTomMap);
+        await routing.addRoutes({ type: 'FeatureCollection', features: [routeFeature] }, [], 'route');
+
+        const alongRouteSearchSpy = vi
+            .spyOn(sdkServices, 'alongRouteSearch')
+            .mockResolvedValue({ type: 'FeatureCollection', features: [] });
+
+        const result = await executeDiscoverPlaces(
+            { poiCategories: ['RESTAURANT'], where: { mode: 'maxDetour', maxDetourTimeSeconds: 300 } },
+            makeMockState({ routing, places }),
+        );
+        if ('error' in result) {
+            expect.fail('expected executeDiscoverPlaces to succeed');
+        }
+
+        expect(alongRouteSearchSpy).toHaveBeenCalledWith(
+            expect.objectContaining({ route: routeFeature, maxDetourTimeSeconds: 300, poiCategories: ['RESTAURANT'] }),
+        );
+        expect(places.entries).toHaveLength(1);
+        expect(places.entries[0].id).toBe(result.placesEntryId);
+    });
+
+    // Verifies nearby mode dispatches to search (not alongRouteSearch) with poiCategories, and
+    // that a real state entry is written. Does not exercise bias-point (position/radius) resolution.
+    it('calls search when mode is nearby', async () => {
+        const searchSpy = vi
+            .spyOn(sdkServices, 'search')
+            .mockResolvedValue({ type: 'FeatureCollection', features: [] });
+
+        const result = await executeDiscoverPlaces(
+            {
+                poiCategories: ['RESTAURANT'],
+                where: { mode: 'nearby' },
+            },
+            makeMockState({ places }),
+        );
+        if ('error' in result) {
+            expect.fail('expected executeDiscoverPlaces to succeed');
+        }
+
+        expect(searchSpy).toHaveBeenCalledWith(expect.objectContaining({ poiCategories: ['RESTAURANT'] }));
+        expect(places.entries).toHaveLength(1);
+        expect(places.entries[0].id).toBe(result.placesEntryId);
+    });
+
+    // Verifies within mode with a range set resolves the stored reachable-range polygon into
+    // search's geometries filter, and that a real state entry is written.
+    it('searches within a reachable range when mode is within with range set', async () => {
+        const rangePolygon: Polygon = {
+            type: 'Polygon',
+            coordinates: [
+                [
+                    [0, 0],
+                    [1, 0],
+                    [1, 1],
+                    [0, 1],
+                    [0, 0],
+                ],
+            ],
+        };
+
+        const { ranges, rangeId } = await makeMockRanges(rangePolygon);
+
+        const searchSpy = vi
+            .spyOn(sdkServices, 'search')
+            .mockResolvedValue({ type: 'FeatureCollection', features: [] });
+
+        const result = await executeDiscoverPlaces(
+            { poiCategories: ['RESTAURANT'], where: { mode: 'within', range: rangeId } },
+            makeMockState({ ranges, places }),
+        );
+        if ('error' in result) {
+            expect.fail('expected executeDiscoverPlaces to succeed');
+        }
+
+        expect(searchSpy).toHaveBeenCalledWith(
+            expect.objectContaining({ geometries: [rangePolygon], poiCategories: ['RESTAURANT'] }),
+        );
+        expect(places.entries).toHaveLength(1);
+        expect(places.entries[0].id).toBe(result.placesEntryId);
+    });
+
+    // Verifies the returned label is built from poiCategories + result count, and that the
+    // same label is what actually got written to the state entry.
+    it('builds a label from poiCategories and the result count', async () => {
+        vi.spyOn(sdkServices, 'search').mockResolvedValue({ type: 'FeatureCollection', features: [] });
+
+        const result = await executeDiscoverPlaces(
+            { poiCategories: ['RESTAURANT'], where: { mode: 'global' } },
+            makeMockState({ places }),
+        );
+        if ('error' in result) {
+            expect.fail('expected executeDiscoverPlaces to succeed');
+        }
+
+        expect(result).toHaveProperty('label', 'RESTAURANT (0 places)');
+        expect(places.entries).toHaveLength(1);
+        expect(places.entries[0].label).toBe('RESTAURANT (0 places)');
     });
 });

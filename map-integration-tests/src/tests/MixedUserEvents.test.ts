@@ -21,7 +21,6 @@ import {
     showGeometry,
     showPlaces,
     waitForMapIdle,
-    waitForMapReady,
     waitUntilRenderedFeatures,
 } from './util/TestUtils';
 
@@ -51,7 +50,9 @@ const waitUntilRenderedGeometry = async (
     numFeatures: number,
     position: Position,
     layerIDs: string[],
-): Promise<MapGeoJSONFeature[]> => waitUntilRenderedFeatures(page, layerIDs, numFeatures, 3000, position);
+    // 5s rather than the geometry-only suite's 3s: this test draws two modules before asserting,
+    // and CI runners have been taking well over twice the local wall-clock for the whole suite.
+): Promise<MapGeoJSONFeature[]> => waitUntilRenderedFeatures(page, layerIDs, numFeatures, 5000, position);
 
 const setupBasemapClickHandler = async (page: Page) =>
     page.evaluate(() => {
@@ -80,6 +81,10 @@ test.describe('Tests with user events', () => {
     test('Events combining different map modules', async ({ page }) => {
         await initGeometries(page);
         await showGeometry(page, geometryData);
+        // Let the map settle before the render wait below, as the geometry-only tests do. Without
+        // it the wait starts while tiles are still loading, and its budget is spent on the map
+        // coming up rather than on the geometry being drawn — fine locally, not on a loaded runner.
+        await waitForMapIdle(page);
         const geometrySourcesAndLayerIDs = await getGeometriesSourceAndLayerIDs(page);
         await waitUntilRenderedGeometry(
             page,
@@ -120,7 +125,6 @@ test.describe('Tests with user events', () => {
 
         // changing the style in between, to double-check that we can still register to events in base map after:
         await setStyle(page, 'monoLight');
-        await waitForMapReady(page);
         await waitForMapIdle(page);
         const placesLayerIDs = (await getPlacesSourceAndLayerIDs(page)).layerIDs.filter((id) => !id.endsWith('-micro'));
         await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 10000);

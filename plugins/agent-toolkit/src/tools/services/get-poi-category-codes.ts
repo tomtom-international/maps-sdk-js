@@ -5,7 +5,8 @@
 import { type Language } from '@tomtom-org/maps-sdk/core';
 import { getPOICategoryCodes } from '@tomtom-org/maps-sdk/services';
 import { z } from 'zod';
-import type { ToolState } from '../../types';
+import type { ToolExecuteOptions, ToolState } from '../../types';
+import { withAgentToolkitHeaders } from '../shared';
 import { toolErrorSchema } from '../shared-output-schemas';
 
 /** Output schema for the get-poi-category-codes tool. */
@@ -44,13 +45,16 @@ export const getPoiCategoryCodesDescription =
 export const executeGetPoiCategoryCodes = async (
     params: z.infer<typeof getPoiCategoryCodesSchema>,
     _state: ToolState,
+    options?: ToolExecuteOptions,
 ): Promise<z.infer<typeof getPoiCategoryCodesOutputSchema>> => {
     const { filters, language } = params;
     try {
-        const codes = await getPOICategoryCodes({
+        const requestParams = withAgentToolkitHeaders({
             filters,
             language: language as Language,
+            signal: options?.signal,
         });
+        const codes = await getPOICategoryCodes(requestParams);
         return {
             count: codes.length,
             codes,

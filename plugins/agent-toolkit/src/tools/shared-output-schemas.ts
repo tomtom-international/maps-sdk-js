@@ -93,7 +93,9 @@ export const resolvedAreasOutputSchema = z
 // ---------------------------------------------------------------------------
 
 const basePlaceShape = {
-    id: z.string().describe('Stable place feature ID; pass as `{ placeId }` to setRoute / addWaypointsToRoute / etc.'),
+    id: z
+        .string()
+        .describe('Stable place feature ID; pass as `{ placeIdOrEntryId }` to setRoute / addWaypointsToRoute / etc.'),
     type: z
         .enum(placeTypes)
         .optional()

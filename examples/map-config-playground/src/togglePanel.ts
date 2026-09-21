@@ -1,6 +1,6 @@
 export const initTogglePanel = () => {
-    const toggleButton = document.querySelector('.sdk-example-heading-toggle');
-    const panelContent = document.querySelector('.sdk-example-panel-content');
+    const toggleButton = document.querySelector('.ui-heading-toggle');
+    const panelContent = document.querySelector('.ui-panel-content');
 
     toggleButton?.addEventListener('click', () => {
         const isExpanded = toggleButton.getAttribute('aria-expanded') === 'true';

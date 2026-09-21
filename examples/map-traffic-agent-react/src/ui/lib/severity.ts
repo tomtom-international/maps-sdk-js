@@ -18,6 +18,19 @@ export const SEVERITY_LABEL: Record<string, string> = {
     indefinite: 'Road closed',
 };
 
+// A KPI tile normally colours itself from the SEVERITY_COLOR value above — that colour as the text, over
+// a light tint of itself. That fails for `minor`, whose colour is a bright yellow that's unreadable as
+// text on a near-white tint. So `minor` gets an explicit palette instead (the Figma warning tokens: dark
+// text, soft-yellow surface, saturated border). Darker severities read fine as text, so they're omitted.
+type TilePalette = { color: string; background: string; border: string };
+
+const SEVERITY_TILE: Partial<Record<string, TilePalette>> = {
+    minor: { color: '#634801', background: '#FFF5DD', border: '#FDCF53' },
+};
+
+/** Explicit tile palette for a severity, or `undefined` to derive it from the ramp colour. */
+export const severityTile = (magnitude: string): TilePalette | undefined => SEVERITY_TILE[magnitude];
+
 /** Fill colour for a magnitude-of-delay value, falling back to the neutral `unknown` grey. */
 export const severityColor = (magnitude: string): string => SEVERITY_COLOR[magnitude] ?? SEVERITY_COLOR.unknown;
 

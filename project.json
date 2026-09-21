@@ -1,0 +1,16 @@
+{
+  "implicitDependencies": ["core", "services", "map"],
+  "targets": {
+    "typedoc": {
+      "command": "typedoc",
+      "dependsOn": ["^build"],
+      "inputs": [
+        "^production",
+        { "projects": ["@tomtom-org/maps-sdk-plugin*"], "input": "production" },
+        "{workspaceRoot}/typedoc.json"
+      ],
+      "outputs": ["{workspaceRoot}/documentation/docs-portal/api-reference"],
+      "cache": true
+    }
+  }
+}

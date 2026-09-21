@@ -8,6 +8,7 @@ import type {
 } from '@tomtom-org/maps-sdk/core';
 import { beforeAll, describe, expect, test, vi } from 'vitest';
 import { putIntegrationTestsAPIKey } from '../../shared/tests/integrationTestUtils';
+import type { VehicleParameters } from '../../shared/types/vehicleParams';
 import { calculateRoute } from '../calculateRoute';
 import type { CalculateRouteRequestAPI } from '../types/apiRequestTypes';
 import type { CalculateRouteResponseAPI } from '../types/apiResponseTypes';
@@ -46,7 +47,10 @@ const assertSectionBasics = (section: SectionProps): void => {
 // Other types — `motorway`, `traffic`, `tunnel`, `ferry`, `pedestrian`, `toll`, etc. — are
 // route-dependent and only appear when the route actually traverses them, so they are intentionally
 // not asserted here. The EXPLICIT types (`tollVignette`, `roadShields`, `importantRoadStretch`,
-// `lanes`) require opt-in via `sectionTypes` and so are never present in a default request.
+// `lanes`) are also requested by a default call — `buildAttributesHeader` treats an omitted
+// `sectionTypes` as "everything" — but they are route-dependent too, and `lanes` additionally
+// requires guidance, so they are asserted at the call sites that actually provoke them rather than
+// here.
 const assertDefaultSectionsReturnsAll = (sections: SectionsProps): void => {
     expect(Object.keys(sections).length).toBeGreaterThan(1);
     expect(sections.leg.length).toBeGreaterThan(0);
@@ -90,6 +94,22 @@ describe('Calculate route integration tests', () => {
                 }
             }
         }
+    });
+
+    test('Empty extendedRouteRepresentations drops progress points from the response', async () => {
+        const result = await calculateRoute({
+            locations: [
+                [3.1748, 42.26297],
+                [2.48819, 42.18211],
+            ],
+            extendedRouteRepresentations: [],
+        });
+
+        // There is no per-representation selector, so an empty array is an opt-out: `progressPoints`
+        // is left out of the Attributes header and the route comes back without per-point progress.
+        // This is the payload saving the empty array buys, and the only thing it changes.
+        expect(result.features[0].geometry.coordinates.length).toBeGreaterThan(1000);
+        expect(result.features[0].properties.progress).toBeUndefined();
     });
 
     test('Route with departAt returns a departure time matching the input', async () => {
@@ -138,92 +158,88 @@ describe('Calculate route integration tests', () => {
         expect(routeProperties.progress?.length).toBeGreaterThan(0);
     });
 
-    test(
-        'Route from Kandersteg to Dover via Lötschen Pass with specified ' +
-            'sectionTypes and combustion vehicle parameters',
-        async () => {
-            const testInputSectionTypes: SectionType[] = ['carTrain', 'motorway', 'toll', 'urban'];
+    test('Route from Kandersteg to Dover via Visp with specified sectionTypes and combustion vehicle parameters', async () => {
+        const testInputSectionTypes: SectionType[] = ['carTrain', 'motorway', 'toll', 'urban'];
 
-            const result = await calculateRoute({
-                locations: [
-                    [7.675106, 46.490793],
-                    [7.74328, 46.403849],
-                    [1.32248, 51.111645],
-                ],
-                language: undefined, // we ensure no language param is sent
-                costModel: { traffic: 'live', avoid: ['tunnels', 'lowEmissionZones'], routeType: 'efficient' },
-                sectionTypes: testInputSectionTypes,
-                vehicle: {
-                    engineType: 'combustion',
-                    model: {
-                        dimensions: { weightKG: 1500 },
-                        engine: {
-                            consumption: {
-                                speedsToConsumptionsLiters: [
-                                    { speedKMH: 50, consumptionUnitsPer100KM: 6.3 },
-                                    { speedKMH: 130, consumptionUnitsPer100KM: 11.5 },
-                                ],
-                                auxiliaryPowerInLitersPerHour: 0.2,
-                                fuelEnergyDensityInMJoulesPerLiter: 34.2,
-                                efficiency: {
-                                    acceleration: 0.33,
-                                    deceleration: 0.83,
-                                    uphill: 0.27,
-                                    downhill: 0.51,
-                                },
+        // Kandersteg is a road dead-end: the only way south is the Lötschberg car train, so an
+        // intermediate waypoint anywhere in the Rhône valley forces a `carTrain` section on the
+        // first leg whatever else the cost model asks for. That is what makes this route, and
+        // not the geography, the stable way to provoke `carTrain`.
+        //
+        // The waypoint must also be a point the router can *leave*. The previous one
+        // ([7.74328, 46.403849], up by the Lötschen Pass) snapped to a segment with no onward
+        // route: the API reached it happily but answered `NO_ROUTE_FOUND: route search failed
+        // between waypoint 1 and destination` for the second leg, with or without any
+        // avoidance. Visp is a Rhône-valley through-town on the A9, so both legs route.
+        const result = await calculateRoute({
+            locations: [
+                [7.675106, 46.490793], // Kandersteg
+                [7.8828, 46.2947], // Visp
+                [1.32248, 51.111645], // Dover
+            ],
+            language: undefined, // we ensure no language param is sent
+            costModel: { traffic: 'live', avoid: ['tunnels', 'lowEmissionZones'], routeType: 'efficient' },
+            sectionTypes: testInputSectionTypes,
+            vehicle: {
+                engineType: 'combustion',
+                model: {
+                    dimensions: { weightKG: 1500 },
+                    engine: {
+                        consumption: {
+                            speedsToConsumptionsLiters: [
+                                { speedKMH: 50, consumptionUnitsPer100KM: 6.3 },
+                                { speedKMH: 130, consumptionUnitsPer100KM: 11.5 },
+                            ],
+                            auxiliaryPowerInLitersPerHour: 0.2,
+                            fuelEnergyDensityInMJoulesPerLiter: 34.2,
+                            efficiency: {
+                                acceleration: 0.33,
+                                deceleration: 0.83,
+                                uphill: 0.27,
+                                downhill: 0.51,
                             },
                         },
                     },
-                    state: {
-                        currentFuelInLiters: 50,
-                    },
                 },
-            });
+                state: {
+                    currentFuelInLiters: 50,
+                },
+            },
+        });
 
-            expect(result?.features?.length).toEqual(1);
-            const routeFeature = result.features[0];
-            expect(routeFeature.geometry.coordinates.length).toBeGreaterThan(1000);
-            const routeProperties = routeFeature.properties;
-            assertSummaryBasics(routeProperties.summary);
-            expect(routeProperties.summary.fuelConsumptionInLiters).toBeDefined();
-            const sections = routeProperties.sections;
-            expect(sections.leg).toHaveLength(2);
-            assertLegSectionBasics(sections.leg[0]);
-            expect(sections.leg[0].summary.fuelConsumptionInLiters).toBeDefined();
-            assertLegSectionBasics(sections.leg[1]);
-            expect(sections.leg[1].summary.fuelConsumptionInLiters).toBeDefined();
-            // Asserting the existence of sections in response:
-            for (const inputSectionType of testInputSectionTypes) {
-                expect(routeProperties.sections[inputSectionType]?.length).toBeGreaterThan(0);
-                for (const section of routeProperties.sections[inputSectionType] || []) {
-                    assertSectionBasics(section as SectionProps);
-                }
+        expect(result?.features?.length).toEqual(1);
+        const routeFeature = result.features[0];
+        expect(routeFeature.geometry.coordinates.length).toBeGreaterThan(1000);
+        const routeProperties = routeFeature.properties;
+        assertSummaryBasics(routeProperties.summary);
+        expect(routeProperties.summary.fuelConsumptionInLiters).toBeDefined();
+        const sections = routeProperties.sections;
+        expect(sections.leg).toHaveLength(2);
+        assertLegSectionBasics(sections.leg[0]);
+        expect(sections.leg[0].summary.fuelConsumptionInLiters).toBeDefined();
+        assertLegSectionBasics(sections.leg[1]);
+        expect(sections.leg[1].summary.fuelConsumptionInLiters).toBeDefined();
+        // Asserting the existence of sections in response:
+        for (const inputSectionType of testInputSectionTypes) {
+            expect(routeProperties.sections[inputSectionType]?.length).toBeGreaterThan(0);
+            for (const section of routeProperties.sections[inputSectionType] || []) {
+                assertSectionBasics(section as SectionProps);
             }
-            // Note: OrbisV3 returns all non-EXPLICIT section types when sections is requested.
-            // EXPLICIT types (tollVignette, roadShields, importantRoadStretch, lanes) require
-            // explicit opt-in via sectionTypes; client-side filtering is applied after parsing.
-            // sectionTypes was specified without 'lanes' and no guidance was requested, so the
-            // guidance-gated `lanes` section must be absent.
-            expect(sections.lanes).toBeUndefined();
-            expect(routeProperties.progress?.length).toBeGreaterThan(0);
-        },
-    );
+        }
+        // Note: all non-EXPLICIT section types come back when sections is requested.
+        // EXPLICIT types (tollVignette, roadShields, importantRoadStretch, lanes) require
+        // explicit opt-in via sectionTypes; client-side filtering is applied after parsing.
+        // sectionTypes was specified without 'lanes' and no guidance was requested, so the
+        // guidance-gated `lanes` section must be absent.
+        expect(sections.lanes).toBeUndefined();
+        expect(routeProperties.progress?.length).toBeGreaterThan(0);
+    });
 
     test('Amsterdam to Leiden to Rotterdam with electric vehicle parameters (non - LDEVR)', async () => {
         const result = await calculateRoute({
             locations: [
                 [4.89066, 52.37317],
                 [4.49015, 52.16109],
-                // TODO soft waypoints not working with Orbis, so I commented them out
-                // Dragged point in Pijnacker
-                // {
-                //     type: "Feature",
-                //     geometry: {
-                //         type: "Point",
-                //         coordinates: [4.42788, 52.01833]
-                //     },
-                //     properties: { radiusMeters: 20 }
-                // },
                 [4.47059, 51.92291],
             ],
             vehicle: {
@@ -391,7 +407,7 @@ describe('Calculate route integration tests', () => {
         // Guidance requested with default sectionTypes: the guidance-gated `lanes` section is present.
         expect(routeProperties.sections.lanes?.length).toBeGreaterThan(0);
         expect(routeProperties.progress?.length).toBeGreaterThan(0);
-    }, 20000);
+    }, 40000);
 
     test('LDEVR with vehicle model ID and guidance', async () => {
         const result = await calculateRoute({
@@ -451,7 +467,7 @@ describe('Calculate route integration tests', () => {
         // Guidance requested with default sectionTypes: the guidance-gated `lanes` section is present.
         expect(routeProperties.sections.lanes?.length).toBeGreaterThan(0);
         expect(routeProperties.progress?.length).toBeGreaterThan(0);
-    }, 20000);
+    }, 40000);
 
     test('Route from Roses to Olot with avoidAreas around Figueres', async () => {
         // Figueres sits on the direct Roses → Olot path; avoiding it should force a detour.
@@ -492,20 +508,14 @@ describe('Calculate route integration tests', () => {
                 avoid: ['carpools', 'ferries', 'carTrains'],
                 traffic: 'historical',
                 routeType: 'thrilling',
-                // TODO no trhilling params with Orbis, so I commented them out
-                // thrillingParams: {
-                //     hilliness: 'low',
-                //     windingness: 'high',
-                // },
             },
-            computeAdditionalTravelTimeFor: 'all',
+            computeTravelTimeFor: 'all',
             guidance: {
                 type: 'coded',
-                version: 2,
                 phonetics: 'IPA',
             },
             maxAlternatives: 2,
-            sectionTypes: ['traffic', 'ferry', 'toll', 'lanes', 'speedLimit', 'roadShields'],
+            sectionTypes: ['traffic', 'ferry', 'toll', 'lanes', 'speedLimit', 'roadShields', 'importantRoadStretch'],
             travelMode: 'car',
             // TODO no travel mode motorcycle with Orbis, so I commented it out
             // travelMode: 'motorcycle',
@@ -521,11 +531,21 @@ describe('Calculate route integration tests', () => {
             expect(routeFeature.geometry.coordinates.length).toBeGreaterThan(1000);
             const routeProperties = routeFeature.properties;
             assertSummaryBasics(routeProperties.summary);
-            // arriveBy was requested: the returned arrival time is the requested time, differing only
-            // by the response's dropped sub-second fraction — i.e. strictly under 1s.
-            expect(Math.abs(routeProperties.summary.arrivalTime.getTime() - arriveBy.getTime())).toBeLessThan(2_000);
+            // arriveBy was requested: the returned arrival time is anchored to it. The API used to
+            // echo the requested time to the second; since 2026-09-05 it returns a recomputed
+            // arrival that drifts by up to ~30s per alternative (observed 15.7-29.3s, CI runs
+            // 33909493115 and 33939841975). Two minutes still proves arriveBy reached the API and
+            // shaped the plan - ignoring it entirely would put the arrival a day off.
+            expect(Math.abs(routeProperties.summary.arrivalTime.getTime() - arriveBy.getTime())).toBeLessThan(120_000);
             expect(routeProperties.guidance).toBeDefined();
             expect(routeProperties.progress?.length).toBeGreaterThan(0);
+            // computeTravelTimeFor: 'all' was requested, so the three traffic variant
+            // times must come back. The v2->v3 migration guide claims `computeTravelTimeFor` and
+            // these fields were dropped in Orbis; they are not, and this is what proves it.
+            const summary = routeProperties.summary;
+            expect(summary.noTrafficTravelTimeInSeconds).toBeGreaterThan(0);
+            expect(summary.historicTrafficTravelTimeInSeconds).toBeGreaterThan(0);
+            expect(summary.liveTrafficIncidentsTravelTimeInSeconds).toBeGreaterThan(0);
             const sections: SectionsProps = routeProperties.sections;
             expect(sections.leg).toHaveLength(1);
             assertLegSectionBasics(sections.leg[0]);
@@ -538,6 +558,22 @@ describe('Calculate route integration tests', () => {
         // Guidance was requested (and `lanes` listed in sectionTypes): the guidance-specific `lanes`
         // section is gated on guidance in the request builder, so it must be present in the response.
         expect(result.features[0].properties.sections.lanes?.length).toBeGreaterThan(0);
+        // The remaining EXPLICIT section types listed in sectionTypes. The migration guide claims
+        // road shield sections do not exist in Orbis; this route returns them on every alternative.
+        for (const routeFeature of result.features) {
+            const sections = routeFeature.properties.sections;
+            expect(sections.roadShields?.length).toBeGreaterThan(0);
+            expect(sections.importantRoadStretch?.length).toBeGreaterThan(0);
+        }
+        // The road shield chain the request builder goes out of its way to ask for: the atlas base
+        // URL lands on every instruction, and the icon references resolve onto the ones that carry a
+        // shield. Nothing renders these yet, so only this test would catch them disappearing.
+        const instructions = result.features[0].properties.guidance?.instructions ?? [];
+        expect(instructions.length).toBeGreaterThan(0);
+        expect(instructions.every((instruction) => instruction.roadShieldAtlasReference)).toBe(true);
+        const shieldReferences = instructions.flatMap((instruction) => instruction.roadShieldReferences ?? []);
+        expect(shieldReferences.length).toBeGreaterThan(0);
+        expect(shieldReferences[0].reference).toEqual(expect.any(String));
     });
 
     test('Route reconstruction flows', async () => {
@@ -603,6 +639,232 @@ describe('Calculate route integration tests', () => {
         expect(reconstructedRoute.properties.progress?.length).toBeGreaterThan(0);
     });
 
+    test('Route with arrivalSide and a toll transponder is accepted and reaches the wire', async () => {
+        const onAPIRequest = vi.fn() as (request: CalculateRouteRequestAPI) => void;
+        const result = await calculateRoute({
+            locations: [
+                [2.1734, 41.3851], // Barcelona
+                [2.8214, 41.9794], // Girona
+            ],
+            arrivalSide: 'curb',
+            vehicle: { restrictions: { tollTransponder: 'none' } },
+            onAPIRequest,
+        });
+
+        assertSummaryBasics(result.features[0].properties.summary);
+        expect(onAPIRequest).toHaveBeenCalledWith(
+            expect.objectContaining({
+                data: expect.objectContaining({
+                    arrivalSidePreference: 'curbSide',
+                    vehicleHasElectronicTollCollectionTransponder: 'none',
+                }),
+            }),
+        );
+    }, 30000);
+
+    test('A pause at an intermediate stop pushes the arrival time out by that pause', async () => {
+        const locations = (pauseDurationSeconds?: number) => [
+            [2.1734, 41.3851], // Barcelona
+            {
+                type: 'Feature' as const,
+                geometry: { type: 'Point' as const, coordinates: [2.4467, 41.5381] }, // Mataró
+                properties: pauseDurationSeconds ? { pauseDurationSeconds } : {},
+            },
+            [2.8214, 41.9794], // Girona
+        ];
+        const pauseSeconds = 1800;
+
+        const withoutPause = await calculateRoute({ locations: locations() });
+        const withPause = await calculateRoute({ locations: locations(pauseSeconds) });
+
+        const travelTimeOf = (route: Awaited<ReturnType<typeof calculateRoute>>) =>
+            route.features[0].properties.summary.travelTimeInSeconds;
+        const arrivalOf = (route: Awaited<ReturnType<typeof calculateRoute>>) =>
+            route.features[0].properties.summary.arrivalTime.getTime();
+
+        // Live behaviour: the pause counts into travelTimeInSeconds, not only into the arrival
+        // time — a stop that waits 30 minutes is reported as a 30-minutes-longer journey.
+        const travelTimeIncrease = travelTimeOf(withPause) - travelTimeOf(withoutPause);
+        expect(travelTimeIncrease).toBeGreaterThan(pauseSeconds * 0.8);
+        expect(travelTimeIncrease).toBeLessThan(pauseSeconds * 1.2);
+        expect(arrivalOf(withPause) - arrivalOf(withoutPause)).toBeGreaterThanOrEqual(pauseSeconds * 1000 * 0.8);
+
+        // The pause comes back as time spent at the stop on the leg that arrives there, derived
+        // from the gap to the next leg's departure, and the legs' own travel times stay
+        // driving-only.
+        //
+        // Both checks allow a second either way. The stop time is the difference of two timestamps
+        // the service reports to the second, and the identity below is the difference of durations
+        // it rounds independently — live runs land on 1799 as often as 1800. A wrong implementation
+        // would be out by a leg or by a charging time, not by a second.
+        const legs = withPause.features[0].properties.sections.leg;
+        expect(legs[0].summary.stopTimeInSeconds).toBeGreaterThanOrEqual(pauseSeconds - 1);
+        expect(legs[0].summary.stopTimeInSeconds).toBeLessThanOrEqual(pauseSeconds + 1);
+        expect(legs[1].summary.stopTimeInSeconds).toBeUndefined();
+        const drivingSeconds = legs.reduce((total, leg) => total + leg.summary.travelTimeInSeconds, 0);
+        expect(Math.abs(travelTimeOf(withPause) - drivingSeconds - pauseSeconds)).toBeLessThanOrEqual(1);
+    }, 40000);
+
+    test('A per-stop legCostModel changes only the leg arriving at that stop', async () => {
+        const onAPIRequest = vi.fn() as (request: CalculateRouteRequestAPI) => void;
+        const result = await calculateRoute({
+            locations: [
+                [2.1734, 41.3851], // Barcelona
+                {
+                    type: 'Feature' as const,
+                    geometry: { type: 'Point' as const, coordinates: [2.4467, 41.5381] }, // Mataró
+                    properties: { legCostModel: { routeType: 'short' as const, avoid: ['motorways' as const] } },
+                },
+                [2.8214, 41.9794], // Girona
+            ],
+            sectionTypes: ['motorway'],
+            onAPIRequest,
+        });
+
+        // Per-leg `avoids` takes objects, unlike the route-level string array.
+        expect(onAPIRequest).toHaveBeenCalledWith(
+            expect.objectContaining({
+                data: expect.objectContaining({
+                    legs: [{ routeType: 'short', avoids: [{ name: 'motorways' }] }, {}],
+                }),
+            }),
+        );
+
+        const routeProperties = result.features[0].properties;
+        const legs = routeProperties.sections.leg;
+        expect(legs).toHaveLength(2);
+        // Motorways are avoided only up to the middle stop, so any motorway section that remains
+        // has to start after the first leg ends.
+        const firstLegEnd = legs[0].endPointIndex ?? 0;
+        for (const motorwaySection of routeProperties.sections.motorway ?? []) {
+            expect(motorwaySection.startPointIndex).toBeGreaterThanOrEqual(firstLegEnd);
+        }
+    }, 40000);
+
+    test('Candidate entry points are accepted for an intermediate stop', async () => {
+        const onAPIRequest = vi.fn() as (request: CalculateRouteRequestAPI) => void;
+        const result = await calculateRoute({
+            locations: [
+                [2.1734, 41.3851], // Barcelona
+                {
+                    type: 'Feature' as const,
+                    geometry: { type: 'Point' as const, coordinates: [2.4467, 41.5381] }, // Mataró
+                    properties: {
+                        candidateEntryPoints: [
+                            [2.4467, 41.5381],
+                            [2.4479, 41.5372],
+                        ],
+                        preferredEntryPointIndex: 1,
+                    },
+                },
+                [2.8214, 41.9794], // Girona
+            ],
+            onAPIRequest,
+        });
+
+        assertSummaryBasics(result.features[0].properties.summary);
+        // The API takes candidates as a MultiPoint; an array of Points is rejected.
+        expect(onAPIRequest).toHaveBeenCalledWith(
+            expect.objectContaining({
+                data: expect.objectContaining({
+                    legs: [
+                        {
+                            routeStop: {
+                                entryPoints: {
+                                    type: 'MultiPoint',
+                                    coordinates: [
+                                        [2.4467, 41.5381],
+                                        [2.4479, 41.5372],
+                                    ],
+                                },
+                                preferredEntryPointIndex: 1,
+                            },
+                        },
+                        {},
+                    ],
+                }),
+            }),
+        );
+    }, 40000);
+
+    test('LDEVR receives maxSpeedKMH, which changes the planned charging time', async () => {
+        const evVehicle = (maxSpeedKMH?: number): CalculateRouteParams['vehicle'] => ({
+            engineType: 'electric' as const,
+            model: {
+                engine: {
+                    consumption: {
+                        speedsToConsumptionsKWH: [
+                            { speedKMH: 50, consumptionUnitsPer100KM: 15 },
+                            { speedKMH: 90, consumptionUnitsPer100KM: 18 },
+                            { speedKMH: 120, consumptionUnitsPer100KM: 23 },
+                        ],
+                    },
+                    charging: {
+                        maxChargeKWH: 40,
+                        batteryCurve: [
+                            { stateOfChargeInkWh: 10, maxPowerInkW: 150 },
+                            { stateOfChargeInkWh: 30, maxPowerInkW: 80 },
+                            { stateOfChargeInkWh: 38, maxPowerInkW: 40 },
+                        ],
+                        chargingConnectors: [
+                            {
+                                currentType: 'DC' as const,
+                                plugTypes: [
+                                    'IEC_62196_Type_2_Outlet' as const,
+                                    'IEC_62196_Type_2_Connector_Cable_Attached' as const,
+                                    'Combo_to_IEC_62196_Type_2_Base' as const,
+                                ],
+                                voltageRange: { minVoltageInV: 0, maxVoltageInV: 500 },
+                                efficiency: 0.9,
+                                baseLoadInkW: 0.2,
+                                maxPowerInkW: 150,
+                            },
+                        ],
+                    },
+                },
+            },
+            state: { currentChargePCT: 80 },
+            ...(maxSpeedKMH && { restrictions: { maxSpeedKMH } }),
+            preferences: {
+                chargingPreferences: { minChargeAtDestinationPCT: 20, minChargeAtChargingStopsPCT: 10 },
+            },
+        });
+
+        const locations = [
+            [13.405, 52.52], // Berlin
+            [8.6821, 50.1109], // Frankfurt
+        ];
+        const onAPIRequest = vi.fn() as (request: CalculateRouteRequestAPI) => void;
+
+        const unrestricted = await calculateRoute({ locations, vehicle: evVehicle() });
+        const speedLimited = await calculateRoute({ locations, vehicle: evVehicle(90), onAPIRequest });
+
+        // The shared vehicle body reaches this endpoint, which acts on the speed cap.
+        expect(onAPIRequest).toHaveBeenCalledWith(
+            expect.objectContaining({
+                data: expect.objectContaining({ vehicleMaxSpeedInKilometersPerHour: 90 }),
+            }),
+        );
+
+        const chargingTimeOf = (route: Awaited<ReturnType<typeof calculateRoute>>) =>
+            route.features[0].properties.summary.totalChargingTimeInSeconds;
+        expect(chargingTimeOf(unrestricted)).toBeGreaterThan(0);
+        expect(chargingTimeOf(speedLimited)).toBeGreaterThan(0);
+        // Capping the speed changes consumption, and so the charging the route has to plan.
+        expect(chargingTimeOf(speedLimited)).not.toEqual(chargingTimeOf(unrestricted));
+
+        // Charging is time at the stop too, and on this route it is all of it: no wait was asked
+        // for anywhere, so each charging stop's time is exactly its charging time.
+        const chargingLegs = unrestricted.features[0].properties.sections.leg;
+        expect(chargingLegs.length).toBeGreaterThan(1);
+        const chargingSeconds = chargingLegs[0].summary.chargingInformationAtEndOfLeg?.properties
+            .chargingTimeInSeconds as number;
+        expect(chargingSeconds).toBeGreaterThan(0);
+        expect(Math.abs((chargingLegs[0].summary.stopTimeInSeconds as number) - chargingSeconds)).toBeLessThanOrEqual(
+            1,
+        );
+    }, 60000);
+
     test('Calculate route with API request and response callbacks', async () => {
         const locations = [
             [7.675106, 51.490793],
@@ -618,6 +880,211 @@ describe('Calculate route integration tests', () => {
         const expectedApiRequest = expect.objectContaining({ method: 'POST', url: expect.any(URL) });
         expect(onApiRequest).toHaveBeenCalledWith(expectedApiRequest);
         expect(onApiResponse).toHaveBeenCalledWith(expectedApiRequest, expect.anything());
+    });
+
+    // Every field below was probed against the live API on 2026-09-03 before it was typed.
+
+    test('Guidance instructions carry the generated message, junction view and side roads', async () => {
+        const result = await calculateRoute({
+            locations: [
+                [2.1734, 41.3851],
+                [2.8214, 41.9794],
+            ],
+            guidance: { type: 'coded' },
+            language: 'en-GB',
+        });
+
+        const guidance = result.features[0].properties.guidance;
+        expect(guidance).toBeDefined();
+        const instructions = guidance?.instructions ?? [];
+        expect(instructions.length).toBeGreaterThan(5);
+
+        // `message` is the localised turn text. Present on every instruction, so anyone building a
+        // turn list no longer needs their own translation table.
+        for (const instruction of instructions) {
+            expect(typeof instruction.message).toBe('string');
+            expect(instruction.message?.length).toBeGreaterThan(0);
+        }
+
+        // The junction view reports relative directions, not degrees.
+        const withView = instructions.filter((instruction) => instruction.maneuverView);
+        expect(withView.length).toBeGreaterThan(0);
+        for (const instruction of withView) {
+            expect(Array.isArray(instruction.maneuverView?.offRouteAngles)).toBe(true);
+            for (const angle of instruction.maneuverView?.offRouteAngles ?? []) {
+                expect(angle).toEqual(angle.toUpperCase());
+            }
+            if (instruction.maneuverView?.onRouteAngle) {
+                expect(instruction.maneuverView.onRouteAngle).toEqual(
+                    instruction.maneuverView.onRouteAngle.toUpperCase(),
+                );
+            }
+        }
+
+        // Side roads: the API sends a lowercase side and an isDrivable flag; both must land mapped.
+        const withSideRoads = instructions.filter((instruction) => instruction.sideRoads?.length);
+        expect(withSideRoads.length).toBeGreaterThan(0);
+        for (const instruction of withSideRoads) {
+            for (const sideRoad of instruction.sideRoads ?? []) {
+                expect(['LEFT', 'RIGHT', 'LEFT_AND_RIGHT']).toContain(sideRoad.side);
+                expect(typeof sideRoad.isDrivable).toBe('boolean');
+            }
+        }
+
+        // Road information carries the country, converted to the SDK's ISO3 convention.
+        const countryCodes = instructions
+            .map((instruction) => instruction.nextRoadInfo.countryCode)
+            .filter((code): code is string => !!code);
+        expect(countryCodes.length).toBeGreaterThan(0);
+        expect(countryCodes).toContain('ESP');
+    });
+
+    test('Phonetic transcriptions arrive, in the alphabet that was requested', async () => {
+        const locations = [
+            [2.1734, 41.3851],
+            [2.8214, 41.9794],
+        ];
+        const withIpa = await calculateRoute({
+            locations,
+            guidance: { type: 'coded', phonetics: 'IPA' },
+            language: 'en-GB',
+        });
+        const withLhp = await calculateRoute({
+            locations,
+            guidance: { type: 'coded', phonetics: 'LHP' },
+            language: 'en-GB',
+        });
+
+        const phonetics = (routes: typeof withIpa): string[] =>
+            (routes.features[0].properties.guidance?.instructions ?? [])
+                .map((instruction) => instruction.nextRoadInfo.streetName?.phonetic)
+                .filter((phonetic): phonetic is string => !!phonetic);
+
+        const ipa = phonetics(withIpa);
+        const lhp = phonetics(withLhp);
+        // The bug this guards: the API sends `phonetic` as a flat string, but the parser read it as
+        // `{ lhp, ipa }`, so every transcription resolved to undefined and none of them arrived.
+        expect(ipa.length).toBeGreaterThan(0);
+        expect(lhp.length).toBeGreaterThan(0);
+        // Different alphabets, so the same street transcribes differently.
+        expect(ipa[0]).not.toEqual(lhp[0]);
+    });
+
+    test('Traffic sections carry the eventId that joins back to the incident service', async () => {
+        const result = await calculateRoute({
+            locations: [
+                [2.3522, 48.8566],
+                [4.8357, 45.764],
+            ],
+            sectionTypes: ['traffic'],
+        });
+
+        const traffic = result.features[0].properties.sections.traffic ?? [];
+        expect(traffic.length).toBeGreaterThan(0);
+        const withEventId = traffic.filter((section) => section.eventId);
+        expect(withEventId.length).toBeGreaterThan(0);
+    });
+
+    // `toll` and `tollRoad` are two section types, and the difference between them is what the two
+    // tests below pin down. Probed across nine European routes on 2026-09-08: `tollRoad` reported
+    // every stretch `toll` did, on all nine, and reported more on four of them. What it adds is the
+    // charging schemes that are not a per-use toll — the Austrian motorway vignette, and the London,
+    // Milan and Stockholm urban charge zones.
+    test('tollRoad reports every stretch toll does, on a ticket motorway', async () => {
+        const result = await calculateRoute({
+            locations: [
+                [2.3522, 48.8566],
+                [4.8357, 45.764],
+            ],
+            sectionTypes: ['tollRoad', 'toll'],
+        });
+
+        const sections = result.features[0].properties.sections;
+        // Requesting tollRoad is what makes it arrive: it is an EXPLICIT sub-attribute, so it was
+        // invisible to the SDK until it was added to the Attributes header.
+        expect(sections.tollRoad?.length).toBeGreaterThan(0);
+        for (const section of sections.tollRoad ?? []) {
+            assertSectionBasics(section);
+        }
+
+        // Paris -> Lyon runs on the A6, a ticket motorway, so every toll stretch is a tolled road.
+        expect(sections.toll?.length).toBeGreaterThan(0);
+        for (const toll of sections.toll ?? []) {
+            const covering = (sections.tollRoad ?? []).some(
+                (tollRoad) =>
+                    tollRoad.startPointIndex <= toll.startPointIndex && tollRoad.endPointIndex >= toll.endPointIndex,
+            );
+            expect(covering).toBe(true);
+        }
+    });
+
+    test('tollRoad also reports a charge that is not a per-use toll, where toll reports nothing', async () => {
+        const result = await calculateRoute({
+            // Munich -> Salzburg: the Austrian motorway needs a vignette, which costs money to
+            // drive but collects no toll per use.
+            locations: [
+                [11.582, 48.1351],
+                [13.055, 47.8095],
+            ],
+            sectionTypes: ['tollRoad', 'toll'],
+        });
+
+        const sections = result.features[0].properties.sections;
+        expect(sections.tollRoad?.length).toBeGreaterThan(0);
+        expect(sections.toll).toBeUndefined();
+    });
+
+    test('chargingStopsStrategy is honoured on an EV route, and required to pair with preferences', async () => {
+        const vehicle: VehicleParameters = {
+            engineType: 'electric',
+            state: { currentChargePCT: 80 },
+            preferences: { chargingPreferences: { minChargeAtDestinationPCT: 20, minChargeAtChargingStopsPCT: 10 } },
+            model: {
+                engine: {
+                    charging: {
+                        maxChargeKWH: 40,
+                        batteryCurve: [
+                            { stateOfChargeInkWh: 10, maxPowerInkW: 150 },
+                            { stateOfChargeInkWh: 30, maxPowerInkW: 100 },
+                            { stateOfChargeInkWh: 38, maxPowerInkW: 40 },
+                        ],
+                        chargingConnectors: [
+                            {
+                                currentType: 'DC',
+                                plugTypes: ['IEC_62196_Type_2_Outlet'],
+                                efficiency: 0.9,
+                                baseLoadInkW: 0.2,
+                                maxPowerInkW: 150,
+                            },
+                        ],
+                    },
+                    consumption: {
+                        speedsToConsumptionsKWH: [
+                            { speedKMH: 32, consumptionUnitsPer100KM: 10.87 },
+                            { speedKMH: 77, consumptionUnitsPer100KM: 18.01 },
+                        ],
+                    },
+                },
+            },
+        };
+        const locations = [
+            [2.3522, 48.8566],
+            [4.8952, 52.3702],
+        ];
+
+        // `manualFastest` tells the service to plan no charging stops of its own.
+        const manual = await calculateRoute({ locations, vehicle, chargingStopsStrategy: 'manualFastest' });
+        assertSummaryBasics(manual.features[0].properties.summary);
+
+        // Rejected by name, before the network call, because the endpoint also needs a minimum
+        // charge at the destination and only the preferences supply it.
+        await expect(() =>
+            calculateRoute({
+                locations,
+                vehicle: { engineType: 'electric', state: { currentChargePCT: 80 } },
+                chargingStopsStrategy: 'automaticFastest',
+            }),
+        ).rejects.toThrow(/chargingStopsStrategy/);
     });
 
     test('Calculate route with API request and error response callbacks', async () => {
@@ -637,4 +1104,31 @@ describe('Calculate route integration tests', () => {
         expect(onApiRequest).toHaveBeenCalledWith(expectedApiRequest);
         expect(onApiResponse).toHaveBeenCalledWith(expectedApiRequest, expect.objectContaining({ status: 400 }));
     });
+
+    test('An intermediate waypoint reaches the wire as a bare point, and ends a leg', async () => {
+        const onAPIRequest = vi.fn() as (request: CalculateRouteRequestAPI) => void;
+        const result = await calculateRoute({
+            locations: [
+                [2.1734, 41.3851], // Barcelona
+                [2.4467, 41.5381], // Mataró
+                [2.8214, 41.9794], // Girona
+            ],
+            onAPIRequest,
+        });
+
+        // There is nothing to send but the position. Every radius spelling the SDK used to imply
+        // was rejected with `Unknown JSON field '.routePlanningLocations.waypoints.<name>'`, so the
+        // API has no circle waypoint to ask for.
+        expect(onAPIRequest).toHaveBeenCalledWith(
+            expect.objectContaining({
+                data: expect.objectContaining({
+                    routePlanningLocations: expect.objectContaining({
+                        waypoints: { type: 'MultiPoint', coordinates: [[2.4467, 41.5381]] },
+                    }),
+                }),
+            }),
+        );
+        // And so the route stops there: two legs, not one.
+        expect(result.features[0].properties.sections?.leg).toHaveLength(2);
+    }, 40000);
 });

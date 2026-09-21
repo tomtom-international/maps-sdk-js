@@ -107,6 +107,101 @@ const parseCssColor = (cssColor: string): RGBColor | undefined => {
     return parseHslColor(input);
 };
 
+const rgbToHsl = ([r, g, b, alpha]: RGBColor): HSLColor => {
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const lightness = (max + min) / 2;
+    const delta = max - min;
+    if (delta === 0) {
+        return [0, 0, lightness * 100, alpha];
+    }
+    const saturation = delta / (1 - Math.abs(2 * lightness - 1));
+    let hue: number;
+    if (max === r) {
+        hue = ((g - b) / delta) % 6;
+    } else if (max === g) {
+        hue = (b - r) / delta + 2;
+    } else {
+        hue = (r - g) / delta + 4;
+    }
+    return [normalizeAngle(hue * 60), saturation * 100, lightness * 100, alpha];
+};
+
+/**
+ * Hue (0–360), saturation (0–100) and lightness (0–100) of a CSS color, plus its alpha (0–1), or
+ * `undefined` when the color cannot be parsed.
+ * @ignore
+ */
+export const toHsl = (cssColor: string): HSLColor | undefined => {
+    const parsed = parseCssColor(cssColor);
+    return parsed && rgbToHsl(parsed);
+};
+
+/**
+ * Formats hue/saturation/lightness/alpha back into a CSS `hsl()`/`hsla()` string, rounding to what
+ * the map styles themselves use (whole degrees and percents).
+ * @ignore
+ */
+export const formatHsl = ([hue, saturation, lightness, alpha]: HSLColor): string => {
+    const h = Math.round(normalizeAngle(hue));
+    const s = Math.round(clamp(saturation, 0, 100));
+    const l = Math.round(clamp(lightness, 0, 100));
+    return alpha < 1 ? `hsla(${h}, ${s}%, ${l}%, ${Math.round(alpha * 100) / 100})` : `hsl(${h}, ${s}%, ${l}%)`;
+};
+
+/**
+ * The HSL offset that turns `fromColor` into `toColor`: how the map style derived one shade (an
+ * outline, a tunnel variant) from another. Applying it to a new base colour with {@link shiftHsl}
+ * re-derives the shade, so a recolour keeps the style's own shade relationships.
+ * @ignore
+ */
+export type HslShift = { hue: number; saturation: number; lightness: number; alpha: number };
+
+/**
+ * @ignore
+ */
+export const hslShiftBetween = (fromColor: string, toColor: string): HslShift | undefined => {
+    const from = toHsl(fromColor);
+    const to = toHsl(toColor);
+    if (!from || !to) {
+        return undefined;
+    }
+    // A hue shift is meaningless when either colour is grey; keep the base hue then.
+    const hue = from[1] < 1 || to[1] < 1 ? 0 : to[0] - from[0];
+    return { hue, saturation: to[1] - from[1], lightness: to[2] - from[2], alpha: to[3] - from[3] };
+};
+
+/**
+ * Applies an {@link HslShift} to a CSS color, clamping saturation and lightness to their ranges.
+ * @ignore
+ */
+export const shiftHsl = (cssColor: string, shift: HslShift): string | undefined => {
+    const hsl = toHsl(cssColor);
+    if (!hsl) {
+        return undefined;
+    }
+    return formatHsl([
+        hsl[0] + shift.hue,
+        hsl[1] + shift.saturation,
+        hsl[2] + shift.lightness,
+        clamp(hsl[3] + shift.alpha, 0, 1),
+    ]);
+};
+
+/**
+ * Relative luminance (WCAG 2.x definition, 0 = black, 1 = white) of a CSS color, or `undefined`
+ * when the color cannot be parsed. Alpha is ignored.
+ * @ignore
+ */
+export const relativeLuminance = (cssColor: string): number | undefined => {
+    const parsed = parseCssColor(cssColor);
+    if (!parsed) {
+        return undefined;
+    }
+    const linear = (channel: number) => (channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4);
+    return 0.2126 * linear(parsed[0]) + 0.7152 * linear(parsed[1]) + 0.0722 * linear(parsed[2]);
+};
+
 /**
  * Darkens a CSS color by a given factor (0 = unchanged, 1 = black).
  * Accepts hex (#rgb, #rrggbb, #rrggbbaa), rgb(), hsl(), and CSS named colors.
@@ -122,6 +217,24 @@ export const darkenColor = (cssColor: string, darkenFactor: number): string | un
     const red = Math.round(parsed[0] * 255 * brightnessScale);
     const green = Math.round(parsed[1] * 255 * brightnessScale);
     const blue = Math.round(parsed[2] * 255 * brightnessScale);
+    return `#${[red, green, blue].map((channel) => channel.toString(16).padStart(2, '0')).join('')}`;
+};
+
+/**
+ * Lightens a CSS color by a given factor (0 = unchanged, 1 = white).
+ * Accepts hex (#rgb, #rrggbb, #rrggbbaa), rgb(), hsl(), and CSS named colors.
+ * Returns undefined if the color cannot be parsed.
+ * @ignore
+ */
+export const lightenColor = (cssColor: string, lightenFactor: number): string | undefined => {
+    const parsed = parseCssColor(cssColor);
+    if (!parsed) {
+        return undefined;
+    }
+    const toChannel = (value: number) => Math.round((value + (1 - value) * lightenFactor) * 255);
+    const red = toChannel(parsed[0]);
+    const green = toChannel(parsed[1]);
+    const blue = toChannel(parsed[2]);
     return `#${[red, green, blue].map((channel) => channel.toString(16).padStart(2, '0')).join('')}`;
 };
 

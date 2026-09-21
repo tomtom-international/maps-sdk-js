@@ -1,9 +1,18 @@
 # Tool-selection scenarios
 
 LLM-in-the-loop tests that verify the **map agent picks the right tool(s) for a
-prompt**. Each per-tool file (e.g. `locate-place.test.ts`) drives a real
-`createMapAgent` against a real model via [`@langwatch/scenario`] and asserts
-which tools the agent *chose to call* — not what those tools do.
+prompt**. Each `describe` block drives a real `createMapAgent` against a real
+model via [`@langwatch/scenario`] and asserts which tools the agent *chose to
+call* — not what those tools do.
+
+One `describe` block per covered tool. Some live in their own file
+(`locate-place.test.ts`, `set-route.test.ts`, …); others are grouped into themed
+files (`display.test.ts`, `map-style.test.ts`, `route-edits.test.ts`,
+`tile-toggles.test.ts`, `utilities.test.ts`, `guardrails.test.ts`,
+`state-management.test.ts`, `traffic-incidents-ops.test.ts`,
+`traffic-analytics-ops.test.ts`). To find a tool's block:
+`grep -rl "getExamplePrompts('<toolName>')" .` — 51 of the 54 default tools are
+covered (`clearTracker`, `getTrackerHistory` and `getTrackers` are not).
 
 ## What is real vs. mocked
 
@@ -50,21 +59,33 @@ and the model list — `AZURE_MODEL_IDS` (comma-separated, preferred) or a singl
 each model in the list** and passes only when all do. Optionally `AZURE_API_VERSION`.
 
 ```bash
-pnpm --filter @tomtom-org/maps-sdk-plugin-agent-toolkit test:agent-tool-calling       # canonical set (~23 tests, ~40s, ~$0.50)
-pnpm --filter @tomtom-org/maps-sdk-plugin-agent-toolkit test:agent-tool-calling:full  # SCENARIOS_FULL=1 — every registry examplePrompt (~121 tests, ~5–15 min, ~$5)
+pnpm --filter @tomtom-org/maps-sdk-plugin-agent-toolkit test:agent-tool-calling       # canonical set (61 tests)
+pnpm --filter @tomtom-org/maps-sdk-plugin-agent-toolkit test:agent-tool-calling:full  # SCENARIOS_FULL=1 — every registry examplePrompt (269 tests)
 ```
 
-Each file has one hand-picked canonical test (always on) plus an
-`it.each(REGISTRY_PROMPTS)` block gated behind `SCENARIOS_FULL=1`. The prompt
-list comes from the tool registry (`getExamplePrompts`), so a registry edit
-propagates to the tests on the next run.
+Counts measured with `npx vitest list src/tests/scenarios` — re-measure rather
+than trusting them here. Wall-clock and LLM cost also scale with the length of
+`AZURE_MODEL_IDS`, since every scenario runs against every configured model.
+
+Each `describe` block is two parts, both driven off the registry:
+
+```typescript
+const [canonical, ...rest] = getExamplePrompts('locatePlace');
+it(`classifies the canonical prompt: ${canonical}`, ...);                          // always runs
+it.skipIf(!FULL_SCENARIOS).each(rest)('handles registry examplePrompt: %s', ...);  // SCENARIOS_FULL=1
+```
+
+The canonical prompt is **`examplePrompts[0]`**, not a separately maintained
+one — so reordering the registry array or rewording its first entry changes what
+the always-on suite asserts, and editing later entries reshapes the fanout.
 
 ## Known-hard cases under `SCENARIOS_FULL`
 
 The **canonical set is kept green on every configured model** (this is what CI
-runs). The broad `SCENARIOS_FULL` fan-out additionally surfaces a small tail of
+runs, on push to `main` — see `.github/workflows/scenario-tests.yml`; nothing
+runs the `SCENARIOS_FULL` fan-out in CI). The broad `SCENARIOS_FULL` fan-out additionally surfaces a small tail of
 prompts that depend on **model behaviour the prompt can't fully pin down** —
-treat these as expected-flaky in the nightly fan-out, not as regressions:
+treat these as expected-flaky in the fan-out, not as regressions:
 
 - **Narrated / fabricated results** — some models reply "the country borders are
   now pink" or fabricate a spatial-query answer ("none within 500 m") *without*

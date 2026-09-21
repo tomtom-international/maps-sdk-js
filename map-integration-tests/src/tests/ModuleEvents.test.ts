@@ -218,7 +218,7 @@ test.describe('ModuleEvents — config-change events', () => {
         await page.evaluate(setupConfigChangeHandler('baseMap'));
         await page.evaluate(() =>
             (globalThis as MapsSDKThis).baseMap?.setVisible(false, {
-                layerGroups: { mode: 'include', names: ['roadLines'] },
+                layerGroups: { mode: 'include', names: ['roads'] },
             }),
         );
 
@@ -251,7 +251,7 @@ test.describe('ModuleEvents — config-change events', () => {
             const mapsSdkThis = globalThis as MapsSDKThis;
             mapsSdkThis._configChangeResult = undefined;
             mapsSdkThis._configChangeCount = 0;
-            mapsSdkThis._configChangeUnsub = mapsSdkThis.routing?.events.module.on('config-change', (config) => {
+            mapsSdkThis._configChangeUnsub = mapsSdkThis.routing?.events.on('config-change', (config) => {
                 mapsSdkThis._configChangeResult = config;
                 mapsSdkThis._configChangeCount = ((mapsSdkThis as any)._configChangeCount || 0) + 1;
             });
@@ -287,26 +287,35 @@ test.describe('ModuleEvents — config-change events', () => {
 test.describe('ModuleEvents — shown-features events', () => {
     const mapEnv = new MapTestEnv();
 
-    test('PlacesModule fires shown-features when show is called', async ({ page }) => {
+    // Places has two show operations, so the payload says which one ran. See LSI-159.
+    test('PlacesModule fires shown-features naming the show operation that ran', async ({ page }) => {
         await mapEnv.loadPageAndMap(page, { zoom: 14, center: [4.90047, 52.37708] });
         await initPlaces(page);
 
         await page.evaluate(() => {
-            (globalThis as any)._shownFeaturesResult = undefined;
+            (globalThis as any)._shownFeaturesResults = [];
             (globalThis as MapsSDKThis).places?.events.on('shown-features', (features) => {
-                (globalThis as any)._shownFeaturesResult = features;
+                (globalThis as any)._shownFeaturesResults.push(features);
             });
         });
 
         await showPlaces(page, places);
 
-        await page.waitForFunction(() => (globalThis as any)._shownFeaturesResult !== undefined, undefined, {
+        await page.waitForFunction(() => (globalThis as any)._shownFeaturesResults.length > 0, undefined, {
             timeout: 5000,
         });
-        const shownFeatures = await page.evaluate(() => (globalThis as any)._shownFeaturesResult);
-        expect(shownFeatures).toBeDefined();
-        expect(shownFeatures.type).toBe('FeatureCollection');
-        expect(shownFeatures.features.length).toBeGreaterThan(0);
+        const [shown] = await page.evaluate(() => (globalThis as any)._shownFeaturesResults);
+        expect(shown.places).toBeDefined();
+        expect(shown.places.type).toBe('FeatureCollection');
+        expect(shown.places.features.length).toBeGreaterThan(0);
+
+        // `showConnections` used to emit nothing at all.
+        await page.evaluate(() => (globalThis as MapsSDKThis).places?.showConnections([]));
+        await page.waitForFunction(() => (globalThis as any)._shownFeaturesResults.length > 1, undefined, {
+            timeout: 5000,
+        });
+        const results = await page.evaluate(() => (globalThis as any)._shownFeaturesResults);
+        expect(results[1]).toEqual({ connections: [] });
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
@@ -338,12 +347,12 @@ test.describe('ModuleEvents — shown-features events', () => {
 
         await page.evaluate(async () => {
             const mapsSdkThis = globalThis as MapsSDKThis;
-            mapsSdkThis.routing = await mapsSdkThis.MapsSDK.RoutingModule.get(mapsSdkThis.tomtomMap);
+            mapsSdkThis.routing = await mapsSdkThis.MapsSDK.RoutingModule.create(mapsSdkThis.tomtomMap);
         });
 
         await page.evaluate(() => {
             (globalThis as any)._shownFeaturesResult = undefined;
-            (globalThis as MapsSDKThis).routing?.events.module.on('shown-features', (features) => {
+            (globalThis as MapsSDKThis).routing?.events.on('shown-features', (features) => {
                 (globalThis as any)._shownFeaturesResult = features;
             });
         });

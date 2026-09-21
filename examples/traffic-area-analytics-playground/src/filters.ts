@@ -171,7 +171,7 @@ export const initFilters = (state: AnalyticsFilters, onChange: () => void): Init
 
     for (const option of FRC_OPTIONS) {
         const label = document.createElement('label');
-        label.className = 'sdk-example-checkbox-label aa-frc-row';
+        label.className = 'ui-checkbox-label aa-frc-row';
 
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';

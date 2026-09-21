@@ -15,7 +15,7 @@ type BootstrapOptions = {
 };
 
 // Demo starting view.
-const BERLIN_CENTRE: [number, number] = [13.405, 52.52];
+const LAS_VEGAS_CENTRE: [number, number] = [-115.155, 36.14];
 
 /**
  * Owns map + agent lifecycle. The map is created once; the agent re-instantiates when the
@@ -38,7 +38,7 @@ export function useAgentBootstrap({ deploymentId }: BootstrapOptions) {
             style: 'monoLight',
             mapLibre: {
                 container: 'map-container',
-                center: BERLIN_CENTRE,
+                center: LAS_VEGAS_CENTRE,
                 zoom: 12,
             },
         });

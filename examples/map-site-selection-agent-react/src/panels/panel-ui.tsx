@@ -17,13 +17,13 @@ export const titleStyle: React.CSSProperties = {
 // labels. A Tailwind class rather than a style object because it composes with layout utilities
 // (`truncate`, `overflow-hidden`) at the call sites; centralised here so the next type tweak is one edit.
 export const title2Class =
-    'font-(family-name:--pb-font-primary) text-[16px] leading-[24px] font-bold text-(--pb-text-high)';
+    'font-(family-name:--ui-font-gilroy) text-[16px] leading-[24px] font-bold text-(--ui-text-high-em)';
 
 // Playbook type scale as composable classes; colour stays at the call site (it varies per use).
-export const title1Class = 'font-(family-name:--pb-font-primary) text-[20px] leading-[24px] font-bold';
-export const title3Class = 'font-(family-name:--pb-font-primary) text-[14px] leading-[20px] font-bold';
-export const title4Class = 'font-(family-name:--pb-font-primary) text-[12px] leading-[16px] font-bold';
-export const captionClass = 'font-(family-name:--pb-font-secondary) text-[12px] leading-[16px] font-normal';
+export const title1Class = 'font-(family-name:--ui-font-gilroy) text-[20px] leading-[24px] font-bold';
+export const title3Class = 'font-(family-name:--ui-font-gilroy) text-[14px] leading-[20px] font-bold';
+export const title4Class = 'font-(family-name:--ui-font-gilroy) text-[12px] leading-[16px] font-bold';
+export const captionClass = 'font-(family-name:--ui-font-proxima) text-[12px] leading-[16px] font-normal';
 
 export const captionStyle: React.CSSProperties = {
     fontFamily: playbook.font.body, // caption-m
@@ -70,7 +70,7 @@ export function RankBadge({ n }: { n: number | null }) {
     return (
         <span
             aria-hidden
-            className="flex size-6 shrink-0 items-center justify-center rounded-[6px] font-(family-name:--pb-font-primary) text-[14px] leading-[20px] font-bold"
+            className="flex size-6 shrink-0 items-center justify-center rounded-[6px] font-(family-name:--ui-font-gilroy) text-[14px] leading-[20px] font-bold"
             style={{
                 background: 'rgba(0,0,0,0.04)', // surface/primary-accent
                 color: n === null ? playbook.text.lowEm : playbook.text.highEm,
@@ -81,16 +81,14 @@ export function RankBadge({ n }: { n: number | null }) {
     );
 }
 
-// 0-100 score bar — 8px track on surface-1, fill defaults to the darkest neutral but takes a colour
-// (score scale, cannibalization pink, pocket hue) so the bar matches its headline number.
-export function ScoreBar({ value, color }: { value: number; color?: string }) {
+export function ScoreBar({ value, color, trackClassName }: { value: number; color?: string; trackClassName?: string }) {
     const clamped = Math.max(0, Math.min(100, value));
     return (
         <div
             role="img"
-            aria-label={`Score ${value} out of 100`}
-            className="h-2 w-full overflow-hidden"
-            style={{ background: playbook.surface.surface1, borderRadius: '5px' }}
+            aria-label={`Score ${Math.round(clamped)} out of 100`}
+            className={`h-2 w-full overflow-hidden ${trackClassName ?? 'bg-(--ui-surface-1)'}`}
+            style={{ borderRadius: '5px' }}
         >
             <div
                 className="h-full"
@@ -142,12 +140,12 @@ export function ScoreBreakdown({ rows }: { rows: { label: string; value: string;
                 </svg>
             </button>
             {open && (
-               <div
+                <div
                     className="-mr-4 -ml-12 flex flex-col gap-1 px-4 py-1.5"
                     style={{ background: playbook.surface.surface1 }}
                 >
                     {rows.map((row) => (
-                        <div key={row.label} className="flex items-center justify-between gap-2">
+                        <div key={row.label} className="flex items-center justify-between gap-4">
                             <span style={{ ...breakdownRowText, color: playbook.text.medEm }}>{row.label}</span>
                             <span
                                 style={{
@@ -243,7 +241,7 @@ export function ResetButton({ onClick }: { onClick: () => void }) {
             onClick={onClick}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
-            className="flex shrink-0 items-center gap-1 transition-colors hover:bg-(--pb-hover)"
+            className="flex shrink-0 items-center gap-1 transition-colors hover:bg-(--panel-hover)"
             style={{
                 fontFamily: playbook.font.headings,
                 fontWeight: 700,
@@ -256,7 +254,7 @@ export function ResetButton({ onClick }: { onClick: () => void }) {
                 padding: '3px 8px',
                 outline: 'none',
                 boxShadow: focused ? playbook.outline.focusPrimary : undefined,
-                ['--pb-hover' as string]: playbook.surface.surface1,
+                ['--panel-hover' as string]: playbook.surface.surface1,
             }}
         >
             <svg viewBox="0 0 12 12" width={14} height={14} fill="currentColor" aria-hidden>
@@ -280,7 +278,7 @@ export function FooterSection({
     titleStyle?: React.CSSProperties;
 }) {
     return (
-        <div className="flex flex-col gap-2 bg-(--pb-surface-1) px-4 py-3">
+        <div className="flex flex-col gap-2 bg-(--ui-surface-1) px-4 py-3">
             <span
                 style={{
                     fontFamily: playbook.font.headings,
@@ -334,7 +332,7 @@ function HeaderIconButton({ label, onClick, children }: { label: string; onClick
             type="button"
             aria-label={label}
             onClick={onClick}
-            className="flex size-8 shrink-0 items-center justify-center rounded-[8px] text-(--pb-text-high) transition-colors hover:bg-(--pb-surface-1)"
+            className="flex size-8 shrink-0 items-center justify-center rounded-[8px] text-(--ui-text-high-em) transition-colors hover:bg-(--ui-surface-1)"
         >
             {children}
         </button>
@@ -366,11 +364,11 @@ export function PanelShell({
     return (
         <section
             aria-label={title}
-            className="pointer-events-auto w-full overflow-clip rounded-[10px] border border-(--pb-border-low) bg-(--pb-surface-0) shadow-(--pb-shadow-e3)"
+            className="pointer-events-auto w-full overflow-clip rounded-[10px] border border-(--ui-border-low-em) bg-(--ui-surface-0) shadow-(--ui-elevation-e3)"
         >
-            <header className="flex min-h-[52px] items-center gap-2 border-b border-(--pb-border-base) py-1 pr-2 pl-4">
+            <header className="flex min-h-[52px] items-center gap-2 border-b border-(--ui-border-base-em) py-1 pr-2 pl-4">
                 {/* the `!` beats the template css's un-layered `h2 { font-size }` rule */}
-                <h2 className="flex-1 truncate font-(family-name:--pb-font-primary) text-[16px]! leading-[24px] font-bold text-(--pb-text-high)">
+                <h2 className="flex-1 truncate font-(family-name:--ui-font-gilroy) text-[16px]! leading-[24px] font-bold text-(--ui-text-high-em)">
                     {title}
                 </h2>
                 <div className="flex shrink-0 items-center gap-1">

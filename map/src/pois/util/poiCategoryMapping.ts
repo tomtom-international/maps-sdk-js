@@ -576,7 +576,8 @@ export type MapStylePOICategory = keyof typeof mapDisplayPoiCategoryMappings;
 /**
  * @ignore
  */
-export const toBaseMapPOICategory = (category: POICategory): string => completeMapDisplayPoiCategoryMappings[category];
+export const toBaseMapPOICategory = (category: POICategory): string | undefined =>
+    completeMapDisplayPoiCategoryMappings[category];
 
 /**
  * The deduplicated set of base-map POI categories — the right-hand side of

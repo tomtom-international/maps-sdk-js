@@ -1,12 +1,7 @@
 import type { Anything, Waypoint, WaypointProps } from '@tomtom-org/maps-sdk/core';
 import type { Position } from 'geojson';
 import { describe, expect, test } from 'vitest';
-import {
-    WAYPOINT_FINISH_IMAGE_ID,
-    WAYPOINT_SOFT_IMAGE_ID,
-    WAYPOINT_START_IMAGE_ID,
-    WAYPOINT_STOP_IMAGE_ID,
-} from '../../layers/waypointLayers';
+import { WAYPOINT_FINISH_IMAGE_ID, WAYPOINT_START_IMAGE_ID, WAYPOINT_STOP_IMAGE_ID } from '../../layers/waypointLayers';
 import { FINISH_INDEX, MIDDLE_INDEX, START_INDEX } from '../../types/waypointDisplayProps';
 import { buildWaypointTitle, getImageIDForWaypoint, toDisplayWaypoints } from '../displayWaypoints';
 
@@ -39,19 +34,33 @@ describe('locations util tests', () => {
         ).toBe('POI');
     });
 
+    test('A stop wait is formatted for display, on every waypoint that carries one', () => {
+        const stopWithPause = buildTestWaypoint({ pauseDurationSeconds: 30 * 60 }, [1, 2]);
+        const secondStopWithPause = buildTestWaypoint({ pauseDurationSeconds: 45 * 60 }, [3, 4]);
+        const plainStop = buildTestWaypoint({}, [5, 6]);
+
+        const displayed = toDisplayWaypoints([plainStop, stopWithPause, secondStopWithPause, plainStop], undefined);
+
+        expect(displayed.features[1].properties.stopDuration).toBe('30 min');
+        expect(displayed.features[2].properties.stopDuration).toBe('45 min');
+        expect(displayed.features[0].properties.stopDuration).toBeUndefined();
+    });
+
+    test('The stop duration follows the time display units it is given', () => {
+        const stopWithPause = buildTestWaypoint({ pauseDurationSeconds: 90 * 60 }, [1, 2]);
+
+        const displayed = toDisplayWaypoints([stopWithPause, buildTestWaypoint({}, [3, 4])], undefined, undefined, {
+            hours: 'uur',
+            minutes: 'minuten',
+        });
+
+        expect(displayed.features[0].properties.stopDuration).toBe('1 uur 30 minuten');
+    });
+
     test('Get image ID for waypoint', () => {
         expect(getImageIDForWaypoint(buildTestWaypoint({}, [1, 2]), START_INDEX)).toBe(WAYPOINT_START_IMAGE_ID);
         expect(getImageIDForWaypoint(buildTestWaypoint({}, [1, 2]), MIDDLE_INDEX)).toBe(WAYPOINT_STOP_IMAGE_ID);
         expect(getImageIDForWaypoint(buildTestWaypoint({}, [1, 2]), FINISH_INDEX)).toBe(WAYPOINT_FINISH_IMAGE_ID);
-        expect(getImageIDForWaypoint(buildTestWaypoint({ radiusMeters: 0 }, [1, 2]), START_INDEX)).toBe(
-            WAYPOINT_START_IMAGE_ID,
-        );
-        expect(getImageIDForWaypoint(buildTestWaypoint({ radiusMeters: 1 }, [1, 2]), START_INDEX)).toBe(
-            WAYPOINT_SOFT_IMAGE_ID,
-        );
-        expect(getImageIDForWaypoint(buildTestWaypoint({ radiusMeters: 1 }, [1, 2]), MIDDLE_INDEX)).toBe(
-            WAYPOINT_SOFT_IMAGE_ID,
-        );
     });
 
     test('To display waypoints', () => {
@@ -142,7 +151,7 @@ describe('locations util tests', () => {
             toDisplayWaypoints(
                 [
                     buildTestWaypoint({ poi: { name: 'POI' } }, [1, 2]),
-                    buildTestWaypoint({ radiusMeters: 25 }, [3, 4]),
+                    buildTestWaypoint({}, [3, 4]),
                     buildTestWaypoint({ address: { freeformAddress: 'ADDRESS' } }, [5, 6]),
                     [9, 10],
                     { type: 'Point', coordinates: [11, 12] },
@@ -176,10 +185,10 @@ describe('locations util tests', () => {
                     id: expect.any(String),
                     properties: {
                         id: expect.any(String),
-                        radiusMeters: 25,
                         index: 1,
                         indexType: MIDDLE_INDEX,
-                        iconID: WAYPOINT_SOFT_IMAGE_ID,
+                        iconID: WAYPOINT_STOP_IMAGE_ID,
+                        stopDisplayIndex: 1,
                     },
                 },
                 {
@@ -193,7 +202,7 @@ describe('locations util tests', () => {
                         indexType: MIDDLE_INDEX,
                         iconID: WAYPOINT_STOP_IMAGE_ID,
                         title: 'ADDRESS',
-                        stopDisplayIndex: 1,
+                        stopDisplayIndex: 2,
                     },
                 },
                 {
@@ -205,7 +214,7 @@ describe('locations util tests', () => {
                         index: 3,
                         indexType: MIDDLE_INDEX,
                         iconID: WAYPOINT_STOP_IMAGE_ID,
-                        stopDisplayIndex: 2,
+                        stopDisplayIndex: 3,
                     },
                 },
                 {
@@ -217,7 +226,7 @@ describe('locations util tests', () => {
                         index: 4,
                         indexType: MIDDLE_INDEX,
                         iconID: WAYPOINT_STOP_IMAGE_ID,
-                        stopDisplayIndex: 3,
+                        stopDisplayIndex: 4,
                     },
                 },
                 {

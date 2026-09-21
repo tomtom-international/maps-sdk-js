@@ -1,4 +1,5 @@
 import { loadEnv } from 'vite';
+import { DEMOS_PROXY_SERVER_SECRETS } from './src/demos-proxy/demosProxyEnv.ts';
 
 /**
  * Shared build-time env handling for BOTH example build configs:
@@ -12,16 +13,20 @@ import { loadEnv } from 'vite';
  */
 
 // The only env vars the example sources / sandpackUtils read via `process.env`.
+// `scripts/hashExampleBuildEnv.ts` hashes the same list for the Nx task cache.
 export const EXAMPLE_ENV_VARS = [
     'API_KEY_EXAMPLES',
     'MOVE_PORTAL_KEY',
+    // Claim Resolution API base URL for the claim-intake example (e.g. http://localhost:8080).
+    // Ignored in demos-proxy mode, which derives it from DEMOS_PROXY_URL.
+    'CLAIMS_API_URL',
     'AZURE_API_KEY',
     'AZURE_RESOURCE_NAME',
     'AZURE_GATEWAY_BASE_URL',
     'AZURE_DEPLOYMENT_ID',
     'AZURE_MODEL_IDS',
     'APPLICATIONINSIGHTS_CONNECTION_STRING',
-    'DEMO_BFF_URL',
+    'DEMOS_PROXY_URL',
     'HCAPTCHA_SITEKEY',
     'VITE_EVAL_MODE',
     // Agent-eval build only (VITE_EVAL_MODE): route the agent under test to the agent-eval Azure resource so its
@@ -31,31 +36,22 @@ export const EXAMPLE_ENV_VARS = [
     'AGENT_EVAL_AUT_DEPLOYMENT_ID',
 ];
 
-// In proxy mode the Demo-BFF injects these server-side, so they must not appear
-// in the bundle at all (mirrors sandpackUtils.PROXY_REDACTED_ENV_VARS).
-export const PROXY_ONLY_SERVER_SECRETS = new Set([
-    'API_KEY_EXAMPLES',
-    'MOVE_PORTAL_KEY',
-    'AZURE_API_KEY',
-    'AGENT_EVAL_API_KEY',
-]);
-
 export interface ResolvedExampleEnv {
-    /** Allowlisted, proxy-redacted map to feed into vite `define['process.env']`. */
+    /** Allowlisted, secret-redacted map to feed into vite `define['process.env']`. */
     define: Record<string, string>;
-    /** True when both DEMO_BFF_URL and HCAPTCHA_SITEKEY are set → route via the BFF. */
-    proxyMode: boolean;
+    /** True when both DEMOS_PROXY_URL and HCAPTCHA_SITEKEY are set → route via the demos proxy. */
+    demosProxyMode: boolean;
 }
 
 export const resolveExampleEnv = (mode: string, envDir: string): ResolvedExampleEnv => {
     // loadEnv is typed Record<string, string>, but an unset var is actually
     // `undefined` at runtime — widen so the filter below genuinely narrows.
     const env = loadEnv(mode, envDir, '') as Record<string, string | undefined>;
-    const proxyMode = !!(env.DEMO_BFF_URL && env.HCAPTCHA_SITEKEY);
+    const demosProxyMode = !!(env.DEMOS_PROXY_URL && env.HCAPTCHA_SITEKEY);
     const define: Record<string, string> = Object.fromEntries(
-        EXAMPLE_ENV_VARS.filter((name) => !(proxyMode && PROXY_ONLY_SERVER_SECRETS.has(name)))
+        EXAMPLE_ENV_VARS.filter((name) => !(demosProxyMode && DEMOS_PROXY_SERVER_SECRETS.has(name)))
             .map((name): readonly [string, string | undefined] => [name, env[name]])
             .filter((entry): entry is readonly [string, string] => entry[1] !== undefined),
     );
-    return { define, proxyMode };
+    return { define, demosProxyMode };
 };

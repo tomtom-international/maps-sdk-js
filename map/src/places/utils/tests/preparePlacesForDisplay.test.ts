@@ -143,7 +143,7 @@ describe('Get Icon ID for a given Place tests', () => {
                     },
                 },
             }),
-        ).toBe('7315');
+        ).toBe('pinCategories:7315');
 
         const placeWithoutCustom = {
             properties: {
@@ -160,7 +160,7 @@ describe('Get Icon ID for a given Place tests', () => {
                     },
                 },
             }),
-        ).toBe('7314');
+        ).toBe('pinCategories:7314');
 
         expect(
             getIconIDForPlace(placeWithoutCustom, 0, {
@@ -433,7 +433,7 @@ describe('test prepare places for display', () => {
         const result = preparePlacesForDisplay(restaurant, 0, { theme: 'pin' });
         const props = result.features[0].properties;
 
-        expect(props.iconID).toBe('7315');
+        expect(props.iconID).toBe('pinCategories:7315');
         expect(props).not.toHaveProperty('category');
         expect(props).not.toHaveProperty('group');
     });

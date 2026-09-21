@@ -263,7 +263,7 @@ export class TrafficIncidentsState implements StateSlice {
      */
     async getEntryModule(entryId: TrafficIncidentsEntry['id']): Promise<TrafficIncidentOverlayModule> {
         const entry = this._requireEntry(entryId);
-        entry._module ??= await TrafficIncidentOverlayModule.get(this._ttMap);
+        entry._module ??= await TrafficIncidentOverlayModule.create(this._ttMap);
         return entry._module;
     }
 

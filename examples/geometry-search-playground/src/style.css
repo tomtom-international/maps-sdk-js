@@ -6,54 +6,54 @@
 
 /* CUSTOM STYLES (example-specific) */
 
-.sdk-example-searchPanel {
+.ui-searchPanel {
     position: absolute;
-    top: var(--sdk-panel-margin);
-    right: var(--sdk-panel-margin);
-    padding: var(--sdk-space-3);
-    background: var(--sdk-surface-0);
-    border-radius: var(--sdk-radius-20);
-    box-shadow: var(--sdk-shadow-e2);
-    z-index: var(--sdk-z-panel);
+    top: var(--ui-panel-margin);
+    right: var(--ui-panel-margin);
+    padding: var(--ui-space-3);
+    background: var(--ui-surface-0);
+    border-radius: var(--ui-rounded-20);
+    box-shadow: var(--ui-elevation-e2);
+    z-index: var(--ui-z-panel);
 }
 
-.sdk-example-search-row {
+.ui-search-row {
     display: flex;
-    gap: var(--sdk-space-2);
+    gap: var(--ui-space-2);
     align-items: center;
     flex-wrap: nowrap;
 }
 
-.sdk-example-search-row .sdk-example-input {
+.ui-search-row .ui-input {
     flex: 1;
     min-width: 0;
 }
 
-.sdk-example-button-container {
+.ui-button-container {
     position: absolute;
-    right: var(--sdk-panel-margin);
-    bottom: var(--sdk-panel-margin);
-    z-index: var(--sdk-z-panel);
+    right: var(--ui-panel-margin);
+    bottom: var(--ui-panel-margin);
+    z-index: var(--ui-z-panel);
 }
 
 /* Responsive: max-width 768px */
 @media (max-width: 768px) {
-    .sdk-example-search-row {
+    .ui-search-row {
         flex-wrap: wrap;
     }
 }
 
 /* Responsive: max-width 600px */
 @media (max-width: 600px) {
-    .sdk-example-searchPanel {
-        left: var(--sdk-panel-margin);
-        right: var(--sdk-panel-margin);
+    .ui-searchPanel {
+        left: var(--ui-panel-margin);
+        right: var(--ui-panel-margin);
     }
 }
 
 /* Responsive: max-height 550px */
 @media (max-height: 550px) {
-    .sdk-example-searchPanel {
-        padding: var(--sdk-space-2);
+    .ui-searchPanel {
+        padding: var(--ui-space-2);
     }
 }

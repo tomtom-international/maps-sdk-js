@@ -37,7 +37,9 @@ export const executeSetMapStandardStyle = async (
 ) => {
     const { style } = params;
     try {
-        state.baseMap.ttMap.setStyle(style);
+        // Resolves once the style has loaded and the SDK modules have restored themselves onto it,
+        // so the agent only reports success for a map that is actually showing the new style.
+        await state.baseMap.ttMap.setStyle(style);
 
         return {
             success: true,

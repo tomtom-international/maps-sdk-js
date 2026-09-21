@@ -14,4 +14,5 @@ export * from './types/searchSummary';
 export * from './types/servicesTypes';
 export * from './types/vehicleParams';
 export * from './types/vehiclePreferences';
+export * from './types/vehicleRestrictionParams';
 export * from './types/vehicleState';

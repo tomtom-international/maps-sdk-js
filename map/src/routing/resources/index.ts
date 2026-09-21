@@ -2,9 +2,12 @@ import type { StyleImageMetadata } from 'maplibre-gl';
 import { SVGIconStyleOptions } from '../../shared';
 import { isDOMImageSupported, svgToImg } from '../../shared/imageUtils';
 import { parseSvg, pinSvg } from '../../shared/resources';
-import circleSvgRaw from './circle.svg?raw';
+import type { SpeedLimitSignFace } from '../types/routeSections';
 import finishSvgRaw from './finish.svg?raw';
 import instructionArrowSvgRaw from './instruction-line-arrow.svg?raw';
+import speedLimitDiscSvgRaw from './speed-limit-disc.svg?raw';
+import speedLimitDiscYellowSvgRaw from './speed-limit-disc-yellow.svg?raw';
+import speedLimitPlaqueSvgRaw from './speed-limit-plaque.svg?raw';
 import startSvgRaw from './start.svg?raw';
 import summaryMapBubbleSvgRaw from './summary-map-bubble.svg?raw';
 import trafficSvgRaw from './traffic.svg?raw';
@@ -48,6 +51,26 @@ export const summaryBubbleImageOptions: Partial<StyleImageMetadata> = {
     ],
     stretchY: [[20, 35]],
     content: [10, 10, 130, 45],
+};
+
+const SPEED_LIMIT_SIGN_SVGS: Record<SpeedLimitSignFace, string> = {
+    whiteDisc: speedLimitDiscSvgRaw,
+    yellowDisc: speedLimitDiscYellowSvgRaw,
+    plaque: speedLimitPlaqueSvgRaw,
+};
+
+/**
+ * The speed limit sign faces: the white disc most of Europe posts on, the yellow one the Nordics
+ * use, and the upright plaque of the United States. The number is part of none of them — it is
+ * drawn over the face as text — so one image serves every limit a route carries.
+ * @ignore
+ */
+export const speedLimitSignImg = (face: SpeedLimitSignFace): HTMLImageElement => {
+    // defensive check for SSR and node-test environments:
+    if (!isDOMImageSupported()) {
+        return undefined as never as HTMLImageElement;
+    }
+    return svgToImg(parseSvg(SPEED_LIMIT_SIGN_SVGS[face]));
 };
 
 /**
@@ -104,15 +127,4 @@ export const waypointFinishIcon = (svgOptions: SVGIconStyleOptions | undefined):
         return undefined as never as HTMLImageElement;
     }
     return waypointIcon(parseSvg(finishSvgRaw), svgOptions);
-};
-
-/**
- * @ignore
- */
-export const softWaypointIcon = (): HTMLImageElement => {
-    // defensive check for SSR and node-test environments:
-    if (!isDOMImageSupported()) {
-        return undefined as never as HTMLImageElement;
-    }
-    return svgToImg(parseSvg(circleSvgRaw));
 };

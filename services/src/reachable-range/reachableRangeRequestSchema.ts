@@ -1,6 +1,9 @@
+import { avoidableTypes } from '@tomtom-org/maps-sdk/core';
 import { z } from 'zod';
 import { commonRoutingRequestSchema } from '../shared/schema/commonRoutingRequestSchema';
 import { hasLngLatSchema } from '../shared/schema/geometriesSchema';
+import { vehicleParametersSchema } from '../shared/schema/vehicleParamsSchema';
+import { routeTypes } from '../shared/types/commonRoutingParams';
 import { budgetTypes } from './types/reachableRangeParams';
 
 // import { SchemaRefinement } from "../shared/types/validation";
@@ -13,7 +16,29 @@ const reachableRangeRequestSchemaMandatory = z.object({
     }),
 });
 
+// Narrower than `commonRoutingRequestSchema.costModel`: the endpoint rejects
+// `avoid=alreadyUsedRoads` outright, and has no avoid-areas parameter at all.
+const reachableRangeAvoidableSchema = z.enum(avoidableTypes).exclude(['alreadyUsedRoads']);
+
+// Matches `ReachableRangeVehicleParameters`: the endpoint answers
+// `400 parameter [vehicleHeading] not supported`, so a heading fails validation here rather than
+// being quietly dropped for callers who are not type-checked.
+const reachableRangeVehicleSchema = vehicleParametersSchema.check(
+    z.refine(
+        (vehicle) => !(vehicle.state && 'heading' in vehicle.state),
+        'vehicle.state.heading: calculateReachableRange has no vehicle heading parameter',
+    ),
+);
+
 const reachableRangeRequestSchemaOptional = z.object({
+    vehicle: reachableRangeVehicleSchema.optional(),
+    costModel: z
+        .object({
+            avoid: z.array(reachableRangeAvoidableSchema).optional(),
+            traffic: z.enum(['live', 'historical']).optional(),
+            routeType: z.enum(routeTypes).optional(),
+        })
+        .optional(),
     maxFerryLengthMeters: z.number().min(0).optional(),
     smoothing: z.enum(['none', 'weak', 'strong']).optional(),
 });

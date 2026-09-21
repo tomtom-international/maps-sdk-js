@@ -1,7 +1,105 @@
-#sdk-map {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/form/field.css";
+@import "../../src/templates/css/form/checkbox.css";
+@import "../../src/templates/css/form/dropdown.css";
+@import "../../src/templates/css/form/slider.css";
+@import "../../src/templates/css/form/toggle.css";
+
+/* CUSTOM STYLES (example-specific) */
+
+.ui-customPanel {
+    width: 320px;
+}
+
+.ui-instructions {
+    margin: 0;
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-s);
+    line-height: var(--ui-font-body-s-lh);
+    color: var(--ui-text-med-em);
+}
+
+.ui-form-hint {
+    display: block;
+    font-family: var(--ui-font-fira);
+    font-size: var(--ui-font-caption-s);
+    font-weight: var(--ui-font-weight-normal);
+    text-transform: none;
+    color: var(--ui-text-low-em);
+}
+
+.ui-compass {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+}
+
+.ui-compass-north {
+    font-family: var(--ui-font-gilroy);
+    font-size: 8px;
+    font-weight: var(--ui-font-weight-bold);
+    text-anchor: middle;
+    fill: var(--ui-text-low-em);
+}
+
+.ui-compass-dial {
+    fill: var(--ui-surface-0);
+    stroke: var(--ui-border-med-em);
+}
+
+.ui-compass-arrow {
+    fill: var(--ui-surface-brand-red);
+}
+
+.ui-slider:disabled ~ .ui-compass .ui-compass-arrow {
+    fill: var(--ui-text-disabled);
+}
+
+.ui-note + .ui-checkbox-list {
+    margin-top: var(--ui-space-3);
+}
+
+.ui-checkbox-list {
+    font-size: var(--ui-font-caption-m);
+}
+
+.ui-checkbox-list .ui-checkbox-label {
+    gap: var(--ui-space-2);
+    margin-bottom: 0;
+    font-size: var(--ui-font-caption-m);
+    line-height: var(--ui-font-caption-m-lh);
+}
+
+.ui-summary {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--ui-space-1) var(--ui-space-3);
+    margin: 0;
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-s);
+}
+
+.ui-summary-label {
+    margin: 0;
+    color: var(--ui-text-med-em);
+}
+
+.ui-summary-value {
+    margin: 0;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    color: var(--ui-text-high-em);
+    overflow-wrap: anywhere;
+}
+
+.ui-status {
+    margin: var(--ui-space-2) 0 0;
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-caption-m);
+    line-height: var(--ui-font-caption-m-lh);
+    color: var(--ui-text-med-em);
+    min-height: 1.2em;
 }

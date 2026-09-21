@@ -3,7 +3,7 @@
  */
 
 import { z } from 'zod';
-import type { ToolState } from '../../types';
+import type { ToolExecuteOptions, ToolState } from '../../types';
 import { hidePreviousEntriesSchema } from '../shared';
 import { routesWriteOutputSchema, toolErrorSchema } from '../shared-output-schemas';
 import { calculateAndAddRoute, resolveRouteWaypoints } from './set-route';
@@ -57,6 +57,7 @@ const validateRemoveWaypoints = <T>(
 export const executeRemoveWaypointsFromRoute = async (
     params: z.infer<typeof removeWaypointsFromRouteSchema>,
     state: ToolState,
+    options?: ToolExecuteOptions,
 ): Promise<z.infer<typeof removeWaypointsFromRouteOutputSchema>> => {
     const { waypointIndices, showOnMap, hidePreviousEntries } = params;
     try {
@@ -68,7 +69,16 @@ export const executeRemoveWaypointsFromRoute = async (
             return { error: 'Not enough valid waypoints to calculate a route (minimum 2).' };
         }
 
-        return calculateAndAddRoute(state, waypoints, showOnMap, hidePreviousEntries);
+        return calculateAndAddRoute(
+            state,
+            waypoints,
+            showOnMap,
+            hidePreviousEntries,
+            undefined,
+            undefined,
+            undefined,
+            options,
+        );
     } catch (error) {
         return {
             error: `Failed to remove waypoints from route: ${error instanceof Error ? error.message : String(error)}`,

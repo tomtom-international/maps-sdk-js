@@ -6,10 +6,10 @@
 
 /* CUSTOM STYLES (example-specific) */
 
-.sdk-example-instructions {
-    margin: 0 0 var(--sdk-space-3);
-    font-family: var(--sdk-font-primary);
-    font-size: var(--sdk-font-body-s);
-    line-height: var(--sdk-font-body-s-lh);
-    color: var(--sdk-text-medium);
+.ui-instructions {
+    margin: 0 0 var(--ui-space-3);
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-s);
+    line-height: var(--ui-font-body-s-lh);
+    color: var(--ui-text-med-em);
 }

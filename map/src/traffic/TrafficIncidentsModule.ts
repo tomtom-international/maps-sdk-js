@@ -1,14 +1,12 @@
 import { isEmpty, isNil, omitBy } from 'lodash-es';
-import type { FilterSpecification } from 'maplibre-gl';
 import type { LayerSpecWithSource } from '../shared';
 import {
-    AbstractMapModule,
-    CombinedEvents,
+    AbstractStyleOwnedMapModule,
+    type CombinedEvents,
     filterLayersBySources,
-    ModuleEvents,
     StyleSourceWithLayers,
+    sharedInstance,
     TRAFFIC_INCIDENTS_SOURCE_ID,
-    UserEvents,
 } from '../shared';
 import { notInTheStyle } from '../shared/errorMessages';
 import { ensureAddedToStyle, waitUntilMapIsReady } from '../shared/mapUtils';
@@ -17,6 +15,10 @@ import { applyFilter, buildMapLibreIncidentFilters } from './filters/trafficFilt
 import type { IncidentsConfig, TrafficIncidentsFilters } from './types/trafficIncidentsConfig';
 import { TrafficIncidentsModuleFeature } from './types/trafficIncidentsFeature';
 import { trafficIncidentMapping } from './util/trafficIncidentMapping';
+
+// This module's key with the shared filter composer: one for both the incident and the icon
+// filters, which it applies to disjoint layer sets.
+const INCIDENTS_CONTRIBUTOR = 'traffic.incidents';
 
 /**
  * IDs of sources and layers for traffic incidents module.
@@ -52,7 +54,7 @@ type TrafficIncidentsSourcesWithLayers = {
  * @example
  * Basic usage:
  * ```typescript
- * import { TrafficIncidentsModule } from '@tomtom-international/maps-sdk-js/map';
+ * import { TrafficIncidentsModule } from '@tomtom-org/maps-sdk/map';
  *
  * // Get module (auto-add to style if needed)
  * const trafficIncidentsModule = await TrafficIncidentsModule.get(map, {
@@ -140,9 +142,10 @@ type TrafficIncidentsSourcesWithLayers = {
  *
  * @group Traffic Incidents
  */
-export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSourcesWithLayers, IncidentsConfig> {
-    private originalFilters!: Record<string, FilterSpecification | undefined>;
-
+export class TrafficIncidentsModule extends AbstractStyleOwnedMapModule<
+    TrafficIncidentsSourcesWithLayers,
+    IncidentsConfig
+> {
     /**
      * Retrieves a TrafficIncidentsModule instance for the given map.
      *
@@ -183,15 +186,26 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
      *   }
      * });
      * ```
+     *
+     * @remarks
+     * **Instances:**
+     * `TrafficIncidentsModule` controls the traffic-incident source and layers the map style already
+     * provides, under fixed global IDs. Every instance is another handle on that same shared state,
+     * so visibility and filters applied through one are visible through all of them.
      */
     static async get(map: TomTomMap, config?: IncidentsConfig): Promise<TrafficIncidentsModule> {
         await waitUntilMapIsReady(map);
         await ensureAddedToStyle(map, TRAFFIC_INCIDENTS_SOURCE_ID, 'trafficIncidents');
-        return new TrafficIncidentsModule(map, config);
+        return sharedInstance(
+            map,
+            TrafficIncidentsModule,
+            () => new TrafficIncidentsModule(map, config),
+            config && ((existing) => existing.applyConfig(config)),
+        );
     }
 
     private constructor(map: TomTomMap, config?: IncidentsConfig) {
-        super('style', map, config);
+        super(map, config);
     }
 
     /**
@@ -201,10 +215,6 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
         const incidentsSource = this.mapLibreMap.getSource(TRAFFIC_INCIDENTS_SOURCE_ID);
         if (!incidentsSource) {
             throw notInTheStyle(`init ${TrafficIncidentsModule.name} with source ID ${TRAFFIC_INCIDENTS_SOURCE_ID}`);
-        }
-        this.originalFilters = {};
-        for (const layer of this.getLayers()) {
-            this.originalFilters[layer.id] = layer.filter;
         }
         return { trafficIncidents: new StyleSourceWithLayers(this.mapLibreMap, incidentsSource) };
     }
@@ -312,15 +322,20 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
                 const incidentFilterExpression = buildMapLibreIncidentFilters(incidentFilters);
                 if (incidentFilterExpression) {
                     const layers = iconFilters ? this.getNonSymbolLayers() : this.getLayers();
-                    applyFilter(incidentFilterExpression, layers, this.mapLibreMap, this.originalFilters);
+                    applyFilter(incidentFilterExpression, layers, this.filterComposer, INCIDENTS_CONTRIBUTOR);
                 }
             } else if (this.config?.filters?.any?.length) {
-                applyFilter(undefined, this.getLayers(), this.mapLibreMap, this.originalFilters);
+                applyFilter(undefined, this.getLayers(), this.filterComposer, INCIDENTS_CONTRIBUTOR);
             }
             if (iconFilters?.any?.length) {
                 const iconFilterExpression = buildMapLibreIncidentFilters(iconFilters);
                 if (iconFilterExpression) {
-                    applyFilter(iconFilterExpression, this.getSymbolLayers(), this.mapLibreMap, this.originalFilters);
+                    applyFilter(
+                        iconFilterExpression,
+                        this.getSymbolLayers(),
+                        this.filterComposer,
+                        INCIDENTS_CONTRIBUTOR,
+                    );
                 }
             }
         }
@@ -497,14 +512,8 @@ export class TrafficIncidentsModule extends AbstractMapModule<TrafficIncidentsSo
     }
 
     get events(): CombinedEvents<TrafficIncidentsModuleFeature, IncidentsConfig, never> {
-        return new CombinedEvents(
-            new UserEvents<TrafficIncidentsModuleFeature>(
-                this.tomtomMap._eventsProxy,
-                this.sourcesWithLayers.trafficIncidents,
-                this.config?.events,
-                trafficIncidentMapping,
-            ),
-            new ModuleEvents(this.configChangeHandlers, []),
-        );
+        return this.moduleEvents<TrafficIncidentsModuleFeature>(['trafficIncidents'], {
+            mapping: trafficIncidentMapping,
+        });
     }
 }

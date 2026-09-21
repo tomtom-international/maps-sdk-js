@@ -1,3 +1,5 @@
+import type { LineLayerSpecification, SymbolLayerSpecification } from 'maplibre-gl';
+import type { HasAdditionalLayersConfig, LayerSpecTemplate, ToBeAddedLayerSpecTemplate } from '../../shared';
 import { mapStyleLayerIDs } from '../../shared';
 import { darkenColor } from '../../utils/colorUtils';
 import type { RouteLayersConfig, RoutingModuleConfig } from '../types/routeModuleConfig';
@@ -20,6 +22,20 @@ import {
 } from './routeTrafficSectionLayers';
 import { routeTunnelsLine } from './routeTunnelSectionLayers';
 import { routeVehicleRestrictedBackgroundLine, routeVehicleRestrictedDottedLine } from './routeVehicleRestrictedLayers';
+import type { SectionLineRole } from './sectionLayers';
+import {
+    sectionLine,
+    sectionLineLayerID,
+    sectionSign,
+    sectionSignLayerID,
+    sectionStyleAnchor,
+    sectionSymbol,
+    sectionSymbolLayerID,
+    withSectionLineKnobs,
+    withSectionSymbolKnobs,
+} from './sectionLayers';
+import type { BespokeSectionType } from './sectionRegistry';
+import { generatedSectionTypes, postsSign } from './sectionRegistry';
 import { getWaypointIconSize } from './shared';
 import { buildSummaryBubbleSymbolPoint, summaryBubbleSymbolPoint } from './summaryBubbleLayers';
 import { waypointLabels, waypointSymbols } from './waypointLayers';
@@ -104,6 +120,82 @@ export const buildRoutingLayers = (
     const waypointSize = config.theme?.waypointSize;
     const waypointIconSize = getWaypointIconSize(waypointSize);
 
+    const sectionConfigs = config.sections;
+
+    // The five bespoke sections keep hand-written layers, but they reach the map the same way the
+    // generated ones do: the uniform knobs of their own type first, then the caller's raw spec over
+    // them. Naming the type once is what keeps a layer, the configuration it reads and the anchor
+    // it lands on from drifting apart. `beforeID` defaults to where the draw style puts the type,
+    // which every line but a chained one wants.
+    const bespokeSectionLine = (
+        type: BespokeSectionType,
+        spec: LayerSpecTemplate<LineLayerSpecification>,
+        options?: { beforeID?: string; role?: SectionLineRole },
+    ): ToBeAddedLayerSpecTemplate<LineLayerSpecification> => ({
+        ...withSectionLineKnobs(type, spec, sectionConfigs?.[type], routeWidth, options?.role),
+        beforeID: prefixBeforeID(options?.beforeID ?? sectionStyleAnchor(type, sectionConfigs?.[type]), layerIDPrefix),
+    });
+
+    const bespokeSectionSymbol = (
+        type: BespokeSectionType,
+        spec: LayerSpecTemplate<SymbolLayerSpecification>,
+        beforeID: string,
+    ): ToBeAddedLayerSpecTemplate<SymbolLayerSpecification> => ({
+        ...withSectionSymbolKnobs(type, spec, sectionConfigs?.[type]),
+        beforeID: prefixBeforeID(beforeID, layerIDPrefix),
+    });
+
+    // The generated sections: one registry entry each, rather than a source/layer/config/events
+    // quartet per type. Where the line lands follows its draw style, while an icon it asks for
+    // goes above everything the route draws either way — an icon under the route line would be an
+    // icon nobody sees.
+    const generatedSections = Object.fromEntries(
+        generatedSectionTypes.map((type) => {
+            const sectionConfig = sectionConfigs?.[type];
+            const lineLayerID = sectionLineLayerID(type);
+            const symbolLayerID = sectionSymbolLayerID(type);
+            const advancedConfig = configSectionLayers?.[type] as
+                | (Record<string, Partial<ToBeAddedLayerSpecTemplate<LineLayerSpecification>>> &
+                      HasAdditionalLayersConfig)
+                | undefined;
+            // A type that posts a sign draws nothing else: a line along the stretch would mark
+            // every one that carries a value without ever saying what the value is. Which icons
+            // the sign gives way to is a collision matter the module settles once its layers are
+            // on the map, not a `beforeID`.
+            if (postsSign(type)) {
+                const signLayerID = sectionSignLayerID(type);
+                return [
+                    type,
+                    {
+                        [signLayerID]: mergeLayer(sectionSign(type, sectionConfig), advancedConfig?.[signLayerID]),
+                        ...prefixBeforeIDs(advancedConfig?.additional, layerIDPrefix),
+                    },
+                ];
+            }
+
+            const symbolLayer = sectionConfig && sectionSymbol(type, sectionConfig);
+            return [
+                type,
+                {
+                    [lineLayerID]: mergeLayer(
+                        {
+                            ...sectionLine(type, sectionConfig, routeWidth),
+                            beforeID: prefixBeforeID(sectionStyleAnchor(type, sectionConfig), layerIDPrefix),
+                        },
+                        advancedConfig?.[lineLayerID],
+                    ),
+                    ...(symbolLayer && {
+                        [symbolLayerID]: mergeLayer(
+                            { ...symbolLayer, beforeID: mapStyleLayerIDs.lowestLabel },
+                            advancedConfig?.[symbolLayerID],
+                        ),
+                    }),
+                    ...prefixBeforeIDs(advancedConfig?.additional, layerIDPrefix),
+                },
+            ];
+        }),
+    );
+
     return {
         mainLines: {
             routeLineArrows: mergeLayer(
@@ -160,85 +252,67 @@ export const buildRoutingLayers = (
             ...prefixBeforeIDs(configLayers?.chargingStops?.additional, layerIDPrefix),
         },
         sections: {
-            incident: {
+            ...generatedSections,
+            traffic: {
                 routeIncidentJamSymbol: mergeLayer(
-                    {
-                        ...routeIncidentsJamSymbol,
-                        beforeID: prefixBeforeID('routeChargingStopSymbol', layerIDPrefix),
-                    },
-                    configSectionLayers?.incident?.routeIncidentJamSymbol,
+                    bespokeSectionSymbol('traffic', routeIncidentsJamSymbol, 'routeChargingStopSymbol'),
+                    configSectionLayers?.traffic?.routeIncidentJamSymbol,
                 ),
                 routeIncidentCauseSymbol: mergeLayer(
-                    {
-                        ...routeIncidentsCauseSymbol,
-                        beforeID: prefixBeforeID('routeChargingStopSymbol', layerIDPrefix),
-                    },
-                    configSectionLayers?.incident?.routeIncidentCauseSymbol,
+                    bespokeSectionSymbol('traffic', routeIncidentsCauseSymbol, 'routeChargingStopSymbol'),
+                    configSectionLayers?.traffic?.routeIncidentCauseSymbol,
                 ),
                 routeIncidentBackgroundLine: mergeLayer(
-                    {
-                        ...routeIncidentsBGLine(routeWidth),
-                        beforeID: prefixBeforeID('routeIncidentDashedLine', layerIDPrefix),
-                    },
-                    configSectionLayers?.incident?.routeIncidentBackgroundLine,
+                    bespokeSectionLine('traffic', routeIncidentsBGLine, { beforeID: 'routeIncidentDashedLine' }),
+                    configSectionLayers?.traffic?.routeIncidentBackgroundLine,
                 ),
                 routeIncidentDashedLine: mergeLayer(
-                    {
-                        ...routeIncidentsDashedLine(routeWidth),
-                        beforeID: prefixBeforeID('routeTunnelLine', layerIDPrefix),
-                    },
-                    configSectionLayers?.incident?.routeIncidentDashedLine,
+                    bespokeSectionLine('traffic', routeIncidentsDashedLine),
+                    configSectionLayers?.traffic?.routeIncidentDashedLine,
                 ),
-                ...prefixBeforeIDs(configSectionLayers?.incident?.additional, layerIDPrefix),
+                ...prefixBeforeIDs(configSectionLayers?.traffic?.additional, layerIDPrefix),
             },
             ferry: {
                 routeFerryLine: mergeLayer(
-                    { ...routeFerriesLine(routeWidth), beforeID: prefixBeforeID('routeLineArrows', layerIDPrefix) },
+                    bespokeSectionLine('ferry', routeFerriesLine),
                     configSectionLayers?.ferry?.routeFerryLine,
                 ),
                 routeFerrySymbol: mergeLayer(
-                    {
-                        ...routeFerriesSymbol,
-                        beforeID: prefixBeforeID('routeIncidentJamSymbol', layerIDPrefix),
-                    },
+                    bespokeSectionSymbol('ferry', routeFerriesSymbol, 'routeIncidentJamSymbol'),
                     configSectionLayers?.ferry?.routeFerrySymbol,
                 ),
                 ...prefixBeforeIDs(configSectionLayers?.ferry?.additional, layerIDPrefix),
             },
             tollRoad: {
                 routeTollRoadOutline: mergeLayer(
-                    {
-                        ...routeTollRoadsOutline(routeWidth),
-                        beforeID: prefixBeforeID('routeDeselectedOutline', layerIDPrefix),
-                    },
+                    bespokeSectionLine('tollRoad', routeTollRoadsOutline),
                     configSectionLayers?.tollRoad?.routeTollRoadOutline,
                 ),
                 routeTollRoadSymbol: mergeLayer(
-                    {
-                        ...routeTollRoadsSymbol,
-                        beforeID: prefixBeforeID('routeChargingStopSymbol', layerIDPrefix),
-                    },
+                    bespokeSectionSymbol('tollRoad', routeTollRoadsSymbol, 'routeChargingStopSymbol'),
                     configSectionLayers?.tollRoad?.routeTollRoadSymbol,
                 ),
                 ...prefixBeforeIDs(configSectionLayers?.tollRoad?.additional, layerIDPrefix),
             },
             tunnel: {
                 routeTunnelLine: mergeLayer(
-                    { ...routeTunnelsLine(routeWidth), beforeID: prefixBeforeID('routeLineArrows', layerIDPrefix) },
+                    bespokeSectionLine('tunnel', routeTunnelsLine),
                     configSectionLayers?.tunnel?.routeTunnelLine,
                 ),
                 ...prefixBeforeIDs(configSectionLayers?.tunnel?.additional, layerIDPrefix),
             },
             vehicleRestricted: {
+                // The background is the continuous halo the dots sit on, so it chains to the line
+                // above it rather than to the route, and derives its colour as an outline.
                 routeVehicleRestrictedBackgroundLine: mergeLayer(
-                    {
-                        ...routeVehicleRestrictedBackgroundLine(routeWidth),
-                        beforeID: prefixBeforeID('routeVehicleRestrictedForegroundLine', layerIDPrefix),
-                    },
+                    bespokeSectionLine('vehicleRestricted', routeVehicleRestrictedBackgroundLine, {
+                        beforeID: 'routeVehicleRestrictedForegroundLine',
+                        role: 'outline',
+                    }),
                     configSectionLayers?.vehicleRestricted?.routeVehicleRestrictedBackgroundLine,
                 ),
                 routeVehicleRestrictedForegroundLine: mergeLayer(
-                    { ...routeVehicleRestrictedDottedLine(routeWidth), beforeID: mapStyleLayerIDs.lowestLabel },
+                    bespokeSectionLine('vehicleRestricted', routeVehicleRestrictedDottedLine),
                     configSectionLayers?.vehicleRestricted?.routeVehicleRestrictedForegroundLine,
                 ),
                 ...prefixBeforeIDs(configSectionLayers?.vehicleRestricted?.additional, layerIDPrefix),

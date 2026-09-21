@@ -1,3 +1,5 @@
+import { toPinSpriteImageID } from '../../shared/imageUtils';
+
 // Supported sub-categories for map display pins
 // See: https://github.com/tomtom-international/mdt-backend-mapbox-gl-js-styles/blob/orbis-preview/src/orbis/sprites/poi_light/config.json
 // For the rest we'll use the main categories (which are the first 4 digits of a category)
@@ -18,9 +20,9 @@ export const toPinImageID = (categoryID: number | undefined): string | undefined
 
     // Check if the category ID is in our supported subcategories:
     if (supportedPinSubcategories.has(categoryID)) {
-        return categoryID.toString();
+        return toPinSpriteImageID(categoryID.toString());
     }
 
     // If not, fall back to the main category (first 4 digits of the category ID):
-    return categoryID.toString().substring(0, 4);
+    return toPinSpriteImageID(categoryID.toString().substring(0, 4));
 };

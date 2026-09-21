@@ -77,7 +77,7 @@ export const setupAvoidedAreas = (
         closeClearPopup();
         const popup = new Popup({ closeButton: false, anchor: 'bottom', className: 'avoid-section-popup' })
             .setLngLat(e.lngLat)
-            .setHTML(`<button class="sdk-example-button avoid-popup-btn">Clear</button>`)
+            .setHTML(`<button class="ui-button avoid-popup-btn">Clear</button>`)
             .addTo(mapLibreMap);
         clearPopup = popup;
         popup
@@ -116,7 +116,7 @@ export const setupAvoidedAreas = (
             labelEl.textContent = label;
 
             const removeBtn = document.createElement('button');
-            removeBtn.className = 'sdk-example-button sdk-example-button-ghost avoid-area-remove';
+            removeBtn.className = 'ui-button ui-button-ghost avoid-area-remove';
             removeBtn.setAttribute('aria-label', `Remove area ${index + 1}`);
             removeBtn.innerHTML = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg>`;
             removeBtn.addEventListener('click', () => onRemove(index));

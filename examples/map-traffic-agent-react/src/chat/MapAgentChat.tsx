@@ -55,12 +55,13 @@ type MapAgentChatProps = {
     deploymentId?: string;
     availableDeployments?: readonly string[];
     onDeploymentChange?: (deploymentId: string) => void;
+    onResizePointerDown?: (e: React.PointerEvent) => void; // Desktop only. We render the resize element as a  DOM child to maintain the scroll viewport behavior
 };
 
 // Figma start-screen disclaimer — info-accent box pinned just above the composer until the first turn.
 function WelcomeDisclaimer() {
     return (
-        <div className="mb-2 flex items-start gap-1 rounded-(--pb-radius-10) bg-[#F5F8FA] p-2 font-(family-name:--pb-font-secondary) text-[10px] leading-[14px] font-semibold text-[#5083A7]">
+        <div className="mb-2 flex items-start gap-1 rounded-(--ui-rounded-10) bg-[#F5F8FA] p-2 font-(family-name:--ui-font-proxima) text-[10px] leading-[14px] font-semibold text-[#5083A7]">
             <svg
                 viewBox="0 0 24 24"
                 width="16"
@@ -130,6 +131,7 @@ export function MapAgentChat({
     deploymentId,
     availableDeployments,
     onDeploymentChange,
+    onResizePointerDown,
 }: MapAgentChatProps) {
     const [errors, setErrors] = useState<string[]>([]);
 
@@ -162,7 +164,7 @@ export function MapAgentChat({
     return (
         <AssistantRuntimeProvider runtime={runtime as unknown as AssistantRuntime}>
             <ThreadPrimitive.Root
-                className={`flex h-full w-full flex-col gap-3 rounded-[20px] bg-(--pb-surface-0) py-3 pr-2 pl-3 transition-[max-height] max-sm:w-full max-sm:rounded-none max-sm:overflow-hidden ${collapsedClass}`}
+                className={`flex h-full w-full flex-col gap-3 rounded-[20px] bg-(--ui-surface-0) py-3 pr-2 pl-3 transition-[max-height] max-sm:w-full max-sm:rounded-none max-sm:overflow-hidden ${collapsedClass}`}
             >
                 <ChatHeader
                     isCollapsed={isCollapsed}
@@ -172,8 +174,23 @@ export function MapAgentChat({
                     availableDeployments={availableDeployments}
                     onDeploymentChange={onDeploymentChange}
                 />
-                {/* px-2 insets the scrolling messages so they read as narrower than the composer. */}
-                <ThreadPrimitive.Viewport id="chat-messages" className="flex flex-1 flex-col overflow-y-auto px-2">
+                <ThreadPrimitive.Viewport
+                    id="chat-messages"
+                    className="relative -mr-4 flex flex-1 flex-col overflow-y-auto pr-6 pl-2 [container-type:size]"
+                >
+                    {onResizePointerDown && (
+                        <div
+                            role="separator"
+                            aria-orientation="vertical"
+                            aria-label="Resize chat"
+                            onPointerDown={onResizePointerDown}
+                            className="group sticky top-0 z-20 -mr-6 -mb-[100cqh] ml-auto hidden h-[100cqh] w-3 shrink-0 cursor-col-resize items-center justify-center gap-0.5 sm:flex"
+                        >
+                            {/* Figma "Handle" — two 2px bars (text/low-em), 40px tall. */}
+                            <span className="h-10 w-0.5 rounded-full bg-(--ui-text-low-em) transition-colors group-hover:bg-(--ui-surface-brand-red)" />
+                            <span className="h-10 w-0.5 rounded-full bg-(--ui-text-low-em) transition-colors group-hover:bg-(--ui-surface-brand-red)" />
+                        </div>
+                    )}
                     <ChatMessages errors={errors} suggestedPrompts={suggestedPrompts} />
                 </ThreadPrimitive.Viewport>
                 {/* Composer is a static bottom bar outside the scroll viewport — as a sticky footer

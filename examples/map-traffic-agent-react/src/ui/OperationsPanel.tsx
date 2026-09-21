@@ -132,7 +132,7 @@ export function OperationsPanel({
                             <Empty>No alerts yet. Trackers log here when a condition opens or clears.</Empty>
                         ) : (
                             <>
-                                <ul className="flex max-h-[52vh] flex-col divide-y divide-(--pb-border-low) overflow-y-auto">
+                                <ul className="flex max-h-[52vh] flex-col divide-y divide-(--ui-border-low-em) overflow-y-auto">
                                     {events.map((e) => (
                                         <li key={e.id}>
                                             <FeedRow
@@ -147,7 +147,7 @@ export function OperationsPanel({
                                         </li>
                                     ))}
                                 </ul>
-                                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-5 bg-gradient-to-t from-(--pb-surface-0) to-transparent" />
+                                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-5 bg-gradient-to-t from-(--ui-surface-0) to-transparent" />
                             </>
                         )}
                     </div>
@@ -174,7 +174,7 @@ function AreaCard({
     onFocusArea: (entryId: string) => void;
 }) {
     return (
-        <div className="flex flex-col rounded-(--pb-radius-10) border border-(--pb-border-low) bg-(--pb-surface-0)">
+        <div className="flex flex-col rounded-(--ui-rounded-10) border border-(--ui-border-low-em) bg-(--ui-surface-0)">
             <div className="p-3">
                 <button
                     type="button"
@@ -182,16 +182,16 @@ function AreaCard({
                     title={`Frame ${area.label} on the map`}
                     className="flex w-full cursor-pointer items-center gap-2 bg-transparent p-0 text-left"
                 >
-                    <span className="min-w-0 flex-1 truncate text-[15px] font-bold leading-snug text-(--pb-text-high)">
+                    <span className="min-w-0 flex-1 truncate text-[15px] font-bold leading-snug text-(--ui-text-high-em)">
                         {area.label}
                     </span>
-                    <span className="shrink-0 text-(--pb-text-low)">
+                    <span className="shrink-0 text-(--ui-text-low-em)">
                         <LocateGlyph />
                     </span>
                 </button>
             </div>
             {area.trackers.length > 0 && (
-                <div className="flex flex-col divide-y divide-(--pb-border-low) border-t border-(--pb-border-low)">
+                <div className="flex flex-col divide-y divide-(--ui-border-low-em) border-t border-(--ui-border-low-em)">
                     {area.trackers.map((tracker) => (
                         <TrackerRow
                             key={tracker.id}
@@ -229,14 +229,14 @@ function RouteCard({
         : null;
 
     return (
-        <div className="flex flex-col rounded-(--pb-radius-10) border border-(--pb-border-low) bg-(--pb-surface-0)">
+        <div className="flex flex-col rounded-(--ui-rounded-10) border border-(--ui-border-low-em) bg-(--ui-surface-0)">
             <div className="flex flex-col gap-1 px-4 pt-3 pb-2">
-                <div className="flex items-center gap-1.5 text-(--pb-text-medium)">
+                <div className="flex items-center gap-1.5 text-(--ui-text-med-em)">
                     <RouteGlyph />
                     <span className="text-[11px] font-semibold tracking-wide uppercase">Route monitor</span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <span className="min-w-0 flex-1 truncate text-[16px] leading-6 font-bold text-(--pb-text-high)">
+                    <span className="min-w-0 flex-1 truncate text-[16px] leading-6 font-bold text-(--ui-text-high-em)">
                         {route.label}
                     </span>
                     <IconButton
@@ -249,7 +249,7 @@ function RouteCard({
                 </div>
             </div>
 
-            <div className="flex flex-col divide-y divide-(--pb-border-low) border-t border-(--pb-border-low)">
+            <div className="flex flex-col divide-y divide-(--ui-border-low-em) border-t border-(--ui-border-low-em)">
                 {route.alternatives.map((alt) => {
                     const isFastest = alt.index === fastest?.index;
                     const slower = alt.travelTimeInSeconds - (fastest?.travelTimeInSeconds ?? 0);
@@ -262,19 +262,19 @@ function RouteCard({
                     const delayLabel = hasDelay ? `${formatDuration(alt.trafficDelayInSeconds)} delay` : '0 min delay';
                     return (
                         <div key={alt.index} className="flex flex-col gap-1 px-4 py-3">
-                            <div className="text-[14px] leading-5 font-bold text-(--pb-text-high)">
+                            <div className="text-[14px] leading-5 font-bold text-(--ui-text-high-em)">
                                 {alt.index === 0 ? 'Route 1' : `Alt ${alt.index}`}
                             </div>
-                            <div className="text-[13px] leading-5 text-(--pb-text-medium)">{descriptor}</div>
+                            <div className="text-[13px] leading-5 text-(--ui-text-med-em)">{descriptor}</div>
                             <div className="flex flex-wrap items-center gap-x-1 text-[13px] leading-5">
-                                <span className="font-semibold text-(--pb-text-high)">
+                                <span className="font-semibold text-(--ui-text-high-em)">
                                     {formatDuration(alt.travelTimeInSeconds) ?? '—'}
                                 </span>
-                                <span className="text-(--pb-text-low)">·</span>
-                                <span className="font-semibold text-(--pb-text-high)">
+                                <span className="text-(--ui-text-low-em)">·</span>
+                                <span className="font-semibold text-(--ui-text-high-em)">
                                     {Math.round(alt.lengthInMeters / 1000)} km
                                 </span>
-                                <span className="text-(--pb-text-low)">·</span>
+                                <span className="text-(--ui-text-low-em)">·</span>
                                 <span
                                     className="font-semibold"
                                     style={{ color: hasDelay ? playbook.status.error : playbook.text.lowEm }}
@@ -287,15 +287,15 @@ function RouteCard({
                 })}
             </div>
 
-            <div className="flex flex-col gap-2 border-t border-(--pb-border-low) px-4 pt-2 pb-3">
-                <span className="text-[10px] leading-[14px] text-(--pb-text-low)">
+            <div className="flex flex-col gap-2 border-t border-(--ui-border-low-em) px-4 pt-2 pb-3">
+                <span className="text-[10px] leading-[14px] text-(--ui-text-low-em)">
                     Updated {relativeAge(route.lastTickAt)}
                 </span>
                 <button
                     type="button"
                     onClick={() => onStop(route.entryId)}
                     aria-label={`Stop monitoring ${route.label}`}
-                    className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full border border-(--pb-border-low) bg-(--pb-surface-0) px-3 py-2 text-[13px] font-semibold transition-colors hover:bg-(--pb-surface-1)"
+                    className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full border border-(--ui-border-low-em) bg-(--ui-surface-0) px-3 py-2 text-[13px] font-semibold transition-colors hover:bg-(--ui-surface-1)"
                     style={{ color: playbook.status.error }}
                 >
                     <StopGlyph />
@@ -318,9 +318,9 @@ function OtherCard({
     onClear: (id: string) => void;
 }) {
     return (
-        <div className="flex flex-col rounded-(--pb-radius-10) border border-(--pb-border-low) bg-(--pb-surface-0)">
-            <div className="p-3 text-[15px] font-bold leading-snug text-(--pb-text-high)">Other</div>
-            <div className="flex flex-col divide-y divide-(--pb-border-low) border-t border-(--pb-border-low)">
+        <div className="flex flex-col rounded-(--ui-rounded-10) border border-(--ui-border-low-em) bg-(--ui-surface-0)">
+            <div className="p-3 text-[15px] font-bold leading-snug text-(--ui-text-high-em)">Other</div>
+            <div className="flex flex-col divide-y divide-(--ui-border-low-em) border-t border-(--ui-border-low-em)">
                 {trackers.map((tracker) => (
                     <TrackerRow key={tracker.id} tracker={tracker} onToggle={onToggle} onClear={onClear} />
                 ))}
@@ -356,8 +356,8 @@ function TrackerRow({
 
     return (
         <div className="flex flex-col gap-2 p-3">
-            <div className="text-[14px] font-bold leading-snug text-(--pb-text-high)">{tracker.name}</div>
-            <div className="line-clamp-2 text-[13px] leading-snug text-(--pb-text-medium)">{tracker.rule}</div>
+            <div className="text-[14px] font-bold leading-snug text-(--ui-text-high-em)">{tracker.name}</div>
+            <div className="line-clamp-2 text-[13px] leading-snug text-(--ui-text-med-em)">{tracker.rule}</div>
             <div className="text-[12px]" style={{ color: statusColor }}>
                 {statusText}
             </div>
@@ -386,5 +386,5 @@ function TrackerRow({
 }
 
 function Empty({ children }: { children: React.ReactNode }) {
-    return <p className="px-1 py-3 text-[12px] leading-snug text-(--pb-text-low)">{children}</p>;
+    return <p className="px-1 py-3 text-[12px] leading-snug text-(--ui-text-low-em)">{children}</p>;
 }

@@ -130,18 +130,21 @@ export const getLineOutlineWidth = (size?: RouteWidth): ExpressionSpecification 
 export const getWaypointIconSize = (size?: RouteWaypointSize): ExpressionSpecification =>
     WAYPOINT_ICON_SIZES[size ?? 'm'];
 
-const TOLL_ROAD_OUTLINE_WIDTHS: Record<RouteWidth, ExpressionSpecification> = {
+const SECTION_HALO_WIDTHS: Record<RouteWidth, ExpressionSpecification> = {
     s: ['interpolate', ['linear'], ['zoom'], 1, 8, 5, 9, 10, 12, 18, 15],
     m: ['interpolate', ['linear'], ['zoom'], 1, 9, 5, 11, 10, 15, 18, 20],
     l: ['interpolate', ['linear'], ['zoom'], 1, 12, 5, 14, 10, 19, 18, 24],
 };
 
 /**
- * Returns the toll road outline width expression for the given size preset.
+ * Returns the width expression of a section halo for the given size preset.
+ *
+ * @remarks
+ * Wider than {@link getLineOutlineWidth} at every zoom, which is what makes a section drawn
+ * beneath the route show as a band around it rather than disappear under the route's own outline.
  * @ignore
  */
-export const getTollRoadOutlineWidth = (size?: RouteWidth): ExpressionSpecification =>
-    TOLL_ROAD_OUTLINE_WIDTHS[size ?? 'm'];
+export const getSectionHaloWidth = (size?: RouteWidth): ExpressionSpecification => SECTION_HALO_WIDTHS[size ?? 'm'];
 
 const INSTRUCTION_LINE_WIDTHS: Record<RouteWidth, ExpressionSpecification> = {
     s: ['interpolate', ['linear'], ['zoom'], 16, 8, 22, 12],

@@ -125,7 +125,7 @@ test.describe('Geometry integration tests', () => {
         expect(features).toHaveLength(12);
         features.forEach((feature) => {
             expect(feature).toMatchObject({
-                properties: { title: JSON.parse(feature.properties.address).freeformAddress },
+                properties: { title: feature.properties.address.freeformAddress },
             });
         });
 
@@ -187,6 +187,50 @@ test.describe('Geometry integration tests', () => {
         expect(geometriesLayerIndex).toBeGreaterThan(0);
         lowestBuildingIndex = layers.findIndex((layer) => layer.id === mapStyleLayerIDs.lowestBuilding);
         expect(geometriesLayerIndex).toBeLessThan(lowestBuildingIndex);
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    // The satellite style ships neither `lowestRoadLine` nor `lowestBuilding`, and MapLibre refuses
+    // to move a layer before one the style does not have — it fires an error and leaves the layer
+    // where it was. `mapStyleLayerIDs` promises the top of the stack instead, so the module resolves
+    // a missing anchor to undefined.
+    test('An anchor the satellite style lacks moves the geometry layers to the top', async ({ page }) => {
+        const mapEnv = await MapTestEnv.loadPageAndMap(page, { bounds: geometryData.bbox }, { style: 'satellite' });
+        await initGeometries(page);
+        const sourcesAndLayers = await getGeometriesSourceAndLayerIDs(page);
+        const layerIDs = sourcesAndLayers?.geometry?.layerIDs as string[];
+        const fillLayerId = layerIDs.find((id) => id.endsWith('_Fill')) as string;
+
+        await showGeometry(page, geometryData);
+        await waitForMapIdle(page);
+
+        let layers = await getAllLayers(page);
+        const hasLayer = (id: string) => layers.some((layer) => layer.id === id);
+        // Guard the premise: if satellite ever gains these, this test stops proving anything.
+        expect(hasLayer(mapStyleLayerIDs.lowestBuilding)).toBe(false);
+        expect(hasLayer(mapStyleLayerIDs.lowestRoadLine)).toBe(false);
+        expect(hasLayer(mapStyleLayerIDs.lowestLabel)).toBe(true);
+
+        // Sink the layers below an anchor this style does have, so "moved to the top" afterwards
+        // can only come from the fallback — without it the layers stay down here.
+        await moveBeforeLayer(page, 'lowestLabel');
+        await waitForMapIdle(page);
+        layers = await getAllLayers(page);
+        const indexOf = (id: string) => layers.findIndex((layer) => layer.id === id);
+        expect(indexOf(fillLayerId)).toBeLessThan(indexOf(mapStyleLayerIDs.lowestLabel));
+
+        await moveBeforeLayer(page, 'lowestBuilding');
+        await waitForMapIdle(page);
+
+        layers = await getAllLayers(page);
+        const geometryLayerIDs = new Set(layerIDs);
+        const lastBaseStyleIndex = layers.reduce(
+            (last, layer, index) => (geometryLayerIDs.has(layer.id) ? last : index),
+            -1,
+        );
+        // Still on the map, and now above every layer the style itself provides.
+        expect(layers.findIndex((layer) => layer.id === fillLayerId)).toBeGreaterThan(lastBaseStyleIndex);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });

@@ -90,7 +90,7 @@ function ToolGroup({ toolCalls }: { toolCalls: ToolCallData[] }) {
     if (n === 0) return null;
     return (
         <details className="group/used my-1 w-full self-start">
-            <summary className="inline-flex w-fit cursor-pointer list-none items-center gap-1 rounded-[5px] bg-[rgba(0,0,0,0.04)] py-1 pr-1 pl-2 font-(family-name:--pb-font-code) text-[12px] leading-5 font-semibold text-(--pb-text-high) group-open/used:rounded-b-none [&::-webkit-details-marker]:hidden">
+            <summary className="inline-flex w-fit cursor-pointer list-none items-center gap-1 rounded-[5px] bg-[rgba(0,0,0,0.04)] py-1 pr-1 pl-2 font-(family-name:--ui-font-fira) text-[12px] leading-5 font-semibold text-(--ui-text-high-em) group-open/used:rounded-b-none [&::-webkit-details-marker]:hidden">
                 <span>
                     Used {n} {n === 1 ? 'tool' : 'tools'}
                 </span>
@@ -109,7 +109,7 @@ function ToolGroup({ toolCalls }: { toolCalls: ToolCallData[] }) {
             </summary>
             {/* Open state: the tool rows sit in a grey container that connects flush to the pill (shared
                 tint, squared-off shared edge), each row individually collapsible. */}
-            <div className="flex w-full flex-col rounded-b-(--pb-radius-10) rounded-tr-(--pb-radius-10) bg-[rgba(0,0,0,0.04)] p-1">
+            <div className="flex w-full flex-col rounded-b-(--ui-rounded-10) rounded-tr-(--ui-rounded-10) bg-[rgba(0,0,0,0.04)] p-1">
                 {toolCalls.map((tc) => (
                     <ToolDisclosure
                         key={tc.toolCallId}
@@ -147,7 +147,7 @@ function ActionIcon({ label, onClick, children }: { label: string; onClick: () =
             aria-label={label}
             title={label}
             onClick={onClick}
-            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-(--pb-radius-5) border-0 bg-transparent text-(--pb-text-low) transition-colors hover:bg-(--pb-surface-1) hover:text-(--pb-text-high) [&_svg]:h-4 [&_svg]:w-4"
+            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-(--ui-rounded-5) border-0 bg-transparent text-(--ui-text-low-em) transition-colors hover:bg-(--ui-surface-1) hover:text-(--ui-text-high-em) [&_svg]:h-4 [&_svg]:w-4"
         >
             {children}
         </button>

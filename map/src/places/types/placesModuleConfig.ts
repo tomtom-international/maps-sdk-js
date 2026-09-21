@@ -31,7 +31,14 @@ import type {
  *
  * @group Places
  */
-export type PlacesTheme = 'pin' | 'circle-icon' | 'base-map' | 'pin-clustered';
+export type PlacesTheme = (typeof placesThemes)[number];
+
+/**
+ * All valid {@link PlacesTheme} values.
+ *
+ * @group Places
+ */
+export const placesThemes = ['pin', 'circle-icon', 'base-map', 'pin-clustered'] as const;
 
 /**
  * Configuration for EV charging station availability display.
@@ -48,14 +55,14 @@ export type PlacesTheme = 'pin' | 'circle-icon' | 'base-map' | 'pin-clustered';
  * @example
  * ```typescript
  * // Enable with defaults
- * const places = await PlacesModule.get(map, {
+ * const places = await PlacesModule.create(map, {
  *   evAvailability: { enabled: true }
  * });
  * const stations = await search({ poiCategories: ['ELECTRIC_VEHICLE_STATION'] });
  * places.show(await getPlacesWithEVAvailability(stations));
  *
  * // Custom threshold and format
- * const places = await PlacesModule.get(map, {
+ * const places = await PlacesModule.create(map, {
  *   evAvailability: {
  *     enabled: true,
  *     threshold: 0.5,
@@ -64,7 +71,7 @@ export type PlacesTheme = 'pin' | 'circle-icon' | 'base-map' | 'pin-clustered';
  * });
  *
  * // Combine with custom icon
- * const places = await PlacesModule.get(map, {
+ * const places = await PlacesModule.create(map, {
  *   icon: {
  *     categoryIcons: [{
  *       id: 'ELECTRIC_VEHICLE_STATION',

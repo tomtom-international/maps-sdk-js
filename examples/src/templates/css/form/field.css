@@ -1,70 +1,70 @@
 /* FORM FIELDS */
 
-.sdk-example-form-field {
-    margin-bottom: var(--sdk-form-field-margin);
+.ui-form-field {
+    margin-bottom: var(--ui-form-field-margin);
 }
 
-.sdk-example-form-field:last-child {
+.ui-form-field:last-child {
     margin-bottom: 0;
 }
 
-.sdk-example-form-field-inline {
+.ui-form-field-inline {
     display: flex;
     align-items: center;
-    gap: var(--sdk-space-3);
-    margin-bottom: var(--sdk-form-field-margin);
+    gap: var(--ui-space-3);
+    margin-bottom: var(--ui-form-field-margin);
 }
 
-.sdk-example-form-field-inline .sdk-example-label,
-.sdk-example-form-field-inline .sdk-example-form-label {
+.ui-form-field-inline .ui-label,
+.ui-form-field-inline .ui-form-label {
     margin-bottom: 0;
     flex-shrink: 0;
 }
 
-.sdk-example-form-field-inline .sdk-example-input,
-.sdk-example-form-field-inline .sdk-example-dropdown {
+.ui-form-field-inline .ui-input,
+.ui-form-field-inline .ui-dropdown {
     flex: 1;
 }
 
-.sdk-example-form-helper {
-    margin-top: var(--sdk-label-margin);
-    font-size: var(--sdk-font-caption-s);
-    line-height: var(--sdk-font-caption-s-lh);
-    color: var(--sdk-text-low);
+.ui-form-helper {
+    margin-top: var(--ui-label-margin);
+    font-size: var(--ui-font-caption-s);
+    line-height: var(--ui-font-caption-s-lh);
+    color: var(--ui-text-low-em);
 }
 
-.sdk-example-form-error {
-    margin-top: var(--sdk-label-margin);
-    font-size: var(--sdk-font-caption-s);
-    line-height: var(--sdk-font-caption-s-lh);
-    color: var(--sdk-color-error);
-    font-weight: var(--sdk-font-weight-medium);
+.ui-form-error {
+    margin-top: var(--ui-label-margin);
+    font-size: var(--ui-font-caption-s);
+    line-height: var(--ui-font-caption-s-lh);
+    color: var(--ui-surface-brand-red);
+    font-weight: var(--ui-font-weight-medium);
 }
 
 /* Responsive: max-width 768px */
 @media (max-width: 768px) {
-    .sdk-example-form-field {
-        margin-bottom: var(--sdk-space-5);
+    .ui-form-field {
+        margin-bottom: var(--ui-space-5);
     }
 }
 
 /* Responsive: max-width 600px */
 @media (max-width: 600px) {
-    .sdk-example-form-field {
-        margin-bottom: var(--sdk-space-4);
+    .ui-form-field {
+        margin-bottom: var(--ui-space-4);
     }
 }
 
 /* Responsive: max-height 700px */
 @media (max-height: 700px) {
-    .sdk-example-form-field {
-        margin-bottom: var(--sdk-space-4);
+    .ui-form-field {
+        margin-bottom: var(--ui-space-4);
     }
 }
 
 /* Responsive: max-height 550px */
 @media (max-height: 550px) {
-    .sdk-example-form-field {
-        margin-bottom: var(--sdk-space-3);
+    .ui-form-field {
+        margin-bottom: var(--ui-space-3);
     }
 }

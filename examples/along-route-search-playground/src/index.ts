@@ -24,17 +24,17 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         calculateFittingBBox({
             map,
             toBeContainedBBox: waypointsBBox,
-            surroundingElements: ['.sdk-example-customPanel'],
+            surroundingElements: ['.ui-customPanel'],
             paddingPX: 40,
         }) as BBox,
     );
 
-    const routingModule = await RoutingModule.get(map);
+    const routingModule = await RoutingModule.create(map);
     await routingModule.showWaypoints(waypoints);
     const routes = await calculateRoute({ locations: waypoints });
     await routingModule.showRoutes(routes);
 
-    const placesModule = await PlacesModule.get(map);
+    const placesModule = await PlacesModule.create(map);
 
     setupPanel(
         async (params: SearchPanelParams) => {

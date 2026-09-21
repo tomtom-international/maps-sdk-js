@@ -151,7 +151,7 @@ export const initCitySearch = ({
                 const fittingBBox = calculateFittingBBox({
                     map,
                     toBeContainedBBox: place.bbox!,
-                    surroundingElements: ['.sdk-example-customPanel', '#bottom-panel'],
+                    surroundingElements: ['.ui-customPanel', '#bottom-panel'],
                     paddingPX: 60,
                 });
 

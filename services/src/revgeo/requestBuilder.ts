@@ -1,33 +1,56 @@
+import type { GeographyType } from '@tomtom-org/maps-sdk/core';
 import { getPositionStrict } from '@tomtom-org/maps-sdk/core';
 import { isNil } from 'lodash-es';
-import type { CommonServiceParams } from '../shared';
-import { arrayToCSV } from '../shared/arrays';
+import type { GetObject } from '../shared';
 import { PLACES_URL_PATH } from '../shared/request/commonSearchRequestBuilder';
-import { appendCommonParams } from '../shared/request/requestBuildingUtils';
+import { buildCommonServiceRequestHeaders } from '../shared/request/requestBuildingUtils';
+import type { ReverseGeocodingAreaTypeAPI } from './types/apiTypes';
 import type { ReverseGeocodingParams } from './types/reverseGeocodingParams';
 
-const buildUrlBasePath = (params: CommonServiceParams): string =>
-    params.customServiceBaseURL || `${params.commonBaseURL}${PLACES_URL_PATH}/reverseGeocode`;
+// Maps the SDK's public GeographyType values to the API's `areaTypes` values.
+export const AREA_TYPE_BY_GEOGRAPHY_TYPE: Record<GeographyType, ReverseGeocodingAreaTypeAPI> = {
+    Country: 'country',
+    CountrySubdivision: 'countrySubdivision',
+    CountrySecondarySubdivision: 'countrySecondarySubdivision',
+    CountryTertiarySubdivision: 'countryTertiarySubdivision',
+    Municipality: 'municipality',
+    MunicipalitySubdivision: 'municipalitySubdivision',
+    MunicipalitySecondarySubdivision: 'municipalitySecondarySubdivision',
+    Neighbourhood: 'neighborhood',
+    PostalCodeArea: 'postalCode',
+};
+
+// Requests every result field the SDK's response parser understands, so callers get a
+// complete place without having to specify a projection themselves.
+const DEFAULT_ATTRIBUTES = 'results(*)';
+
+const buildUrlBasePath = (params: ReverseGeocodingParams): string =>
+    params.customServiceBaseURL ?? `${params.commonBaseURL}${PLACES_URL_PATH}/reverseGeocode`;
 
 /**
  * Default function for building a reverse geocoding request from {@link ReverseGeocodingParams}
  * @param params The reverse geocoding parameters, with global configuration already merged into them.
  */
-export const buildRevGeoRequest = (params: ReverseGeocodingParams): URL => {
-    const lngLat = getPositionStrict(params.position);
-    const url = new URL(`${buildUrlBasePath(params)}/${lngLat[1]},${lngLat[0]}.json`);
+export const buildRevGeoRequest = (params: ReverseGeocodingParams): GetObject => {
+    const [lng, lat] = getPositionStrict(params.position);
+    const url = new URL(buildUrlBasePath(params));
     const urlParams = url.searchParams;
-    appendCommonParams(urlParams, params);
+    urlParams.append('position', `${lng},${lat}`);
 
-    // rev-geo specific parameters:
-    params.allowFreeformNewline && urlParams.append('allowFreeformNewline', String(params.allowFreeformNewline));
-    params.geographyType && urlParams.append('entityType', arrayToCSV(params.geographyType));
-    !isNil(params.heading) && urlParams.append('heading', String(params.heading));
-    params.mapcodes && urlParams.append('mapcodes', arrayToCSV(params.mapcodes));
-    params.number && urlParams.append('number', params.number);
-    !isNil(params.radiusMeters) && urlParams.append('radius', String(params.radiusMeters));
-    params.returnSpeedLimit && urlParams.append('returnSpeedLimit', String(params.returnSpeedLimit));
-    params.returnRoadUse && urlParams.append('returnRoadUse', String(params.returnRoadUse));
-    params.roadUses && urlParams.append('roadUse', JSON.stringify(params.roadUses));
-    return url;
+    !isNil(params.radiusMeters) && urlParams.append('radiusInMeters', String(params.radiusMeters));
+    params.geographyType &&
+        urlParams.append(
+            'areaTypes',
+            params.geographyType.map((geographyType) => AREA_TYPE_BY_GEOGRAPHY_TYPE[geographyType]).join(','),
+        );
+    !isNil(params.heading) && urlParams.append('vehicleHeadingInDegrees', String(params.heading));
+    params.view && urlParams.append('geopoliticalView', params.view);
+
+    return {
+        url,
+        headers: {
+            ...buildCommonServiceRequestHeaders(params),
+            Attributes: DEFAULT_ATTRIBUTES,
+        },
+    };
 };

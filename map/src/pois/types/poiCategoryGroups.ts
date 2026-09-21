@@ -26,7 +26,7 @@ import type { MapStylePOICategory } from '../../places';
  * @example
  * Filter to show only food-related POIs:
  * ```ts
- * import { poiCategoryGroups } from '@tomtom-international/maps-sdk-js/map';
+ * import { poiCategoryGroups } from '@tomtom-org/maps-sdk/map';
  *
  * const foodCategories = poiCategoryGroups.FOOD_DRINKS_GROUP;
  * console.log(foodCategories);

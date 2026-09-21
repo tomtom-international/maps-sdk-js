@@ -48,26 +48,26 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     // Hillshade
     const hillshadeModule = await HillshadeModule.get(map);
 
-    setupToggle('#sdk-example-toggleTraffic', (checked) => {
+    setupToggle('#ui-toggleTraffic', (checked) => {
         trafficIncidentsModule.setVisible(checked);
         trafficIncidentsModule.setIconsVisible(checked);
         trafficFlowModule.setVisible(checked);
         poisModule.setVisible(checked);
         hillshadeModule.setVisible(checked);
-        setChecked('#sdk-example-toggleIncidents', checked);
-        setChecked('#sdk-example-toggleIncidentIcons', checked);
-        setChecked('#sdk-example-toggleFlow', checked);
-        setChecked('#sdk-example-togglePOIs', checked);
-        setChecked('#sdk-example-toggleHillshade', checked);
+        setChecked('#ui-toggleIncidents', checked);
+        setChecked('#ui-toggleIncidentIcons', checked);
+        setChecked('#ui-toggleFlow', checked);
+        setChecked('#ui-togglePOIs', checked);
+        setChecked('#ui-toggleHillshade', checked);
     });
-    setupToggle('#sdk-example-toggleIncidents', (checked) => trafficIncidentsModule.setVisible(checked));
-    setupToggle('#sdk-example-toggleIncidentIcons', (checked) => trafficIncidentsModule.setIconsVisible(checked));
-    setupToggle('#sdk-example-toggleFlow', (checked) => trafficFlowModule.setVisible(checked));
-    setupToggle('#sdk-example-togglePOIs', (checked) => poisModule.setVisible(checked));
-    setupToggle('#sdk-example-toggleHillshade', (checked) => hillshadeModule.setVisible(checked));
+    setupToggle('#ui-toggleIncidents', (checked) => trafficIncidentsModule.setVisible(checked));
+    setupToggle('#ui-toggleIncidentIcons', (checked) => trafficIncidentsModule.setIconsVisible(checked));
+    setupToggle('#ui-toggleFlow', (checked) => trafficFlowModule.setVisible(checked));
+    setupToggle('#ui-togglePOIs', (checked) => poisModule.setVisible(checked));
+    setupToggle('#ui-toggleHillshade', (checked) => hillshadeModule.setVisible(checked));
 
     // Styles selector
-    const stylesSelector = document.querySelector('#sdk-example-mapStyles') as HTMLSelectElement;
+    const stylesSelector = document.querySelector('#ui-mapStyles') as HTMLSelectElement;
     standardStyleIDs.forEach((id) => stylesSelector.add(new Option(id)));
     stylesSelector.addEventListener('change', (event) =>
         map.setStyle((event.target as HTMLOptionElement).value as StandardStyleID),

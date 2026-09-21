@@ -9,7 +9,7 @@ import {
     type StandardStyleID,
     TomTomMap,
 } from '@tomtom-org/maps-sdk/map';
-import { type BudgetType, calculateReachableRanges } from '@tomtom-org/maps-sdk/services';
+import { type BudgetType, calculateReachableRanges, SDKAbortError } from '@tomtom-org/maps-sdk/services';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import './style.css';
 import { API_KEY } from './config';
@@ -32,8 +32,8 @@ const map = new TomTomMap({
 });
 
 (async () => {
-    const originPin = await PlacesModule.get(map);
-    const geometriesModule = await GeometriesModule.get(
+    const originPin = await PlacesModule.create(map);
+    const geometriesModule = await GeometriesModule.create(
         map,
         reachableRangeGeometryConfig(currentPalette, currentTheme, currentBeforeLayer),
     );
@@ -74,8 +74,10 @@ const map = new TomTomMap({
             }
 
             setStatus('');
-        } catch {
-            // AbortError — a newer call is already in flight
+        } catch (error) {
+            if (error instanceof SDKAbortError) return;
+
+            setStatus('Could not calculate reachable ranges.');
         }
     };
 

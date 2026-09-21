@@ -25,9 +25,10 @@ describe('Tests to test building display routes', () => {
         });
     });
 
-    test.each(
-        displayRouteSummariesData,
-    )('%s', (_name: string, displayRoutes: Routes<DisplayRouteProps>, displayUnits: DisplayUnits, expectedSummaries: DisplayRouteSummaries) => {
-        expect(toDisplayRouteSummaries(displayRoutes, displayUnits)).toEqual(expectedSummaries);
-    });
+    test.each(displayRouteSummariesData)(
+        '%s',
+        (_name: string, displayRoutes: Routes<DisplayRouteProps>, displayUnits: DisplayUnits, expectedSummaries: DisplayRouteSummaries) => {
+            expect(toDisplayRouteSummaries(displayRoutes, displayUnits)).toEqual(expectedSummaries);
+        },
+    );
 });

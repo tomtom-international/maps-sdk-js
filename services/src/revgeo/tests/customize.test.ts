@@ -11,9 +11,7 @@ describe('Using customize obj', () => {
                     commonBaseURL: 'https://test.tomtom.com',
                     position: [1.12345, 23.45678],
                 })
-                .toString(),
-        ).toStrictEqual(
-            'https://test.tomtom.com/maps/orbis/places/reverseGeocode/23.45678,1.12345.json?apiVersion=2&key=API_KEY',
-        );
+                .url.toString(),
+        ).toStrictEqual('https://test.tomtom.com/maps/orbis/places/reverseGeocode?position=1.12345%2C23.45678');
     });
 });

@@ -19,7 +19,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     });
 
     const areaGeometry = await geometryData({ geometries: [areaToSearch] });
-    const geometryModule = await GeometriesModule.get(map, {
+    const geometryModule = await GeometriesModule.create(map, {
         line: { color: 'red' },
         fill: { opacity: 0 },
     });
@@ -31,6 +31,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         limit: 50,
     });
 
-    const placesModule = await PlacesModule.get(map);
+    const placesModule = await PlacesModule.create(map);
     placesModule.show(parkingSpots);
 })();

@@ -17,9 +17,8 @@ const SCHOOLS_URL =
     'https://raw.githubusercontent.com/sebastian-meier/BerlinRefinedAssets/master/tools/fisbroker/moabit/re_schulstand.geojson';
 const POPULATION_URL =
     'https://raw.githubusercontent.com/mxfh/LOR-Berlin/master/Planungsraum_WGS84_konsolidiert.geojson';
-// Berlin districts (Bezirke): the human name lives in `spatial_alias` ("Mitte", "Pankow", …), which the
-// LABEL_KEYS heuristic (label/name/title/site/address/id) does NOT cover — so the agent has to name the
-// label field via rankSites' `candidatesLabelProperty`, or the sites fall back to "Site 1/2/…".
+// Berlin districts (Bezirke): individual features have no reliable name, so rankSites labels them
+// generically as "<candidatesLabel> <rank>" (e.g. "District 1") to match their numbered map pins.
 const DISTRICTS_URL = 'https://raw.githubusercontent.com/m-hoerz/berlin-shapes/master/berliner-bezirke.geojson';
 
 describe.skipIf(!MODEL)('BYOD scenarios', { timeout: 180_000, retry: 3 }, () => {
@@ -33,12 +32,10 @@ describe.skipIf(!MODEL)('BYOD scenarios', { timeout: 180_000, retry: 3 }, () => 
         expect(outcome.success, outcome.failureReason).toBe(true);
     });
 
-    it('loads a district layer and ranks its features, naming the label field the heuristic would miss', async () => {
+    it('loads a district layer and ranks its features as candidate sites', async () => {
         const outcome = await runToolScenario({
             expectedTool: 'rankSites',
-            prompt:
-                `Load the Berlin districts from ${DISTRICTS_URL} and rank those districts for a flagship store — ` +
-                'label each site by its spatial_alias',
+            prompt: `Load the Berlin districts from ${DISTRICTS_URL} and rank those districts for a flagship store`,
             inOrder: ['addByodSource', 'rankSites'],
             forbiddenTools: ['profileSite', 'findWhitespace', 'compareCatchments'],
         });

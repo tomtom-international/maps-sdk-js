@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { placesMarkerTypes } from '../../state';
 import type { FeatureFlags, ToolEntry, ToolEntryBuilder, ToolState } from '../../types';
 import { summarizePlaces } from '../../utils';
 import { buildPlacesOutputSchema, toolErrorSchema } from '../shared-output-schemas';
@@ -21,7 +22,7 @@ const indexEntrySchema = z.object({
     featureCount: z.number().describe('Number of Place features stored in this entry.'),
     shown: z.boolean().describe('Whether this entry is currently rendered on the map.'),
     markerType: z
-        .enum(['pin', 'base-map', 'pin-clustered'])
+        .enum(placesMarkerTypes)
         .optional()
         .describe('Which marker theme is rendering this entry (undefined when `shown` is false).'),
     analyses: z

@@ -98,13 +98,12 @@ export class TrafficAreaAnalyticsState implements ShownEntriesSlice, StateSlice 
             await hideAllEntries(this._entries, (entry) => this.hideEntry(entry.id));
             this._entries = [];
         }
+        // Dedupe the length-based fallback too — after removals it can collide with a surviving entry.
         const fallback = `tta-${this._entries.length}`;
-        const entryId = explicitId
-            ? pickUniqueEntryId(
-                  explicitId,
-                  this._entries.map((entry) => entry.id),
-              )
-            : fallback;
+        const entryId = pickUniqueEntryId(
+            explicitId ?? fallback,
+            this._entries.map((entry) => entry.id),
+        );
         this._entries.push({
             id: entryId,
             timestamp: Date.now(),
@@ -123,7 +122,7 @@ export class TrafficAreaAnalyticsState implements ShownEntriesSlice, StateSlice 
     async getEntryModule(entryId: string): Promise<TrafficAreaAnalyticsModule> {
         const entry = this._requireEntry(entryId);
         if (!entry._module) {
-            entry._module = await TrafficAreaAnalyticsModule.get(this._ttMap);
+            entry._module = await TrafficAreaAnalyticsModule.create(this._ttMap);
             entry._configChangeUnsub = entry._module.events.on('config-change', (config) => {
                 entry._config = config;
                 this.events.emit('config-change', { entryId, config });

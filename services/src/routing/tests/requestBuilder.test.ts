@@ -9,14 +9,96 @@ import { sdkAndAPIRequests } from './requestBuilder.data';
 import { routeRequestParams, shortRouteRequestParams } from './requestBuilderPerf.data';
 
 describe('Calculate Route request building functional tests', () => {
-    test.each(
-        sdkAndAPIRequests,
-    )("'%s'", (_name: string, params: CalculateRouteParams, apiRequest: FetchInput<CalculateRoutePOSTDataAPI>) => {
-        // Reparse via JSON to compare structure ignoring URL prototype identity and key order.
-        // NOSONAR: structuredClone cannot clone URL objects; JSON round-trip is intentional here.
-        expect(JSON.parse(JSON.stringify(buildCalculateRouteRequest(params)))).toEqual(
-            JSON.parse(JSON.stringify(apiRequest)),
-        ); // NOSONAR
+    test.each(sdkAndAPIRequests)(
+        "'%s'",
+        (_name: string, params: CalculateRouteParams, apiRequest: FetchInput<CalculateRoutePOSTDataAPI>) => {
+            // Reparse via JSON to compare structure ignoring URL prototype identity and key order.
+            // NOSONAR: structuredClone cannot clone URL objects; JSON round-trip is intentional here.
+            expect(JSON.parse(JSON.stringify(buildCalculateRouteRequest(params)))).toEqual(
+                JSON.parse(JSON.stringify(apiRequest)),
+            ); // NOSONAR
+        },
+    );
+});
+
+// Each of these builds a request the API rejects by name, so the builder rejects it first with a
+// message naming the actual cause. Each rejection was probed against the live API first.
+describe('Calculate Route request building rejections', () => {
+    const baseParams = {
+        apiKey: 'GLOBAL_API_KEY',
+        apiVersion: 3,
+        commonBaseURL: 'https://api.tomtom.com',
+    };
+
+    test('A pause on the destination is rejected, because the API requires the last leg to be 0', () => {
+        const params: CalculateRouteParams = {
+            ...baseParams,
+            locations: [
+                [4.89066, 52.37317],
+                {
+                    type: 'Feature',
+                    geometry: { type: 'Point', coordinates: [4.49015, 52.16109] },
+                    properties: { pauseDurationSeconds: 300 },
+                },
+            ],
+        };
+
+        expect(() => buildCalculateRouteRequest(params)).toThrow(/pauseDurationSeconds is not supported/);
+    });
+
+    test('A pause on an intermediate stop is accepted', () => {
+        const params: CalculateRouteParams = {
+            ...baseParams,
+            locations: [
+                [4.89066, 52.37317],
+                {
+                    type: 'Feature',
+                    geometry: { type: 'Point', coordinates: [4.7, 52.25] },
+                    properties: { pauseDurationSeconds: 300 },
+                },
+                [4.49015, 52.16109],
+            ],
+        };
+
+        expect(buildCalculateRouteRequest(params)).toMatchObject({
+            data: { legs: [{ routeStop: { pauseDurationInSeconds: 300 } }, {}] },
+        });
+    });
+
+    test('A vehicle model ID without charging preferences is rejected, since only LDEVR takes it', () => {
+        const params: CalculateRouteParams = {
+            ...baseParams,
+            locations: [
+                [4.89066, 52.37317],
+                [4.49015, 52.16109],
+            ],
+            vehicle: { model: { variantId: '54B969E8-E28D-11EC-8FEA-0242AC120002' } },
+        };
+
+        expect(() => buildCalculateRouteRequest(params)).toThrow(/variantId is only supported for EV routes/);
+    });
+
+    test('Charging preferences without a charging model are rejected, since LDEVR requires one', () => {
+        const params: CalculateRouteParams = {
+            ...baseParams,
+            locations: [
+                [13.492, 52.507],
+                [8.624, 50.104],
+            ],
+            vehicle: {
+                engineType: 'electric',
+                model: {
+                    engine: {
+                        consumption: { speedsToConsumptionsKWH: [{ speedKMH: 90, consumptionUnitsPer100KM: 18 }] },
+                    },
+                },
+                preferences: {
+                    chargingPreferences: { minChargeAtDestinationInkWh: 5, minChargeAtChargingStopsInkWh: 5 },
+                },
+            },
+        };
+
+        expect(() => buildCalculateRouteRequest(params)).toThrow(/Charging preferences require a charging model/);
     });
 });
 

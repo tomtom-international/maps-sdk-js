@@ -4,6 +4,7 @@ import type {
     AreaAnalyticsColorStopsConfig,
     AreaAnalyticsColorTheme,
     AreaAnalyticsDisplayMode,
+    BaseMapLayerGroupName,
 } from '@tomtom-org/maps-sdk/map';
 import { BaseMapModule, TomTomMap, TrafficAreaAnalyticsModule } from '@tomtom-org/maps-sdk/map';
 import { API_KEY } from './config';
@@ -25,7 +26,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         mapLibre: { container: 'sdk-map', center: [-3.7038, 40.4168], zoom: 12, pitch: 45, bearing: -17 },
     });
 
-    const analyticsModule = await TrafficAreaAnalyticsModule.get(map, {
+    const analyticsModule = await TrafficAreaAnalyticsModule.create(map, {
         displayMode: 'hexgrid-3d',
         activeMetric: 'congestionLevel',
     });
@@ -56,27 +57,25 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         await reloadCurrent();
     });
 
-    const cityLabelsMap = await BaseMapModule.get(map, {
-        layerGroupsFilter: { mode: 'include', names: ['cityLabels', 'capitalLabels'] },
-    });
+    const baseMap = await BaseMapModule.get(map);
+    const cityLabelGroups: BaseMapLayerGroupName[] = ['cityLabels', 'capitalLabels'];
 
-    cityLabelsMap.events.on('click', async (feature, lngLat) => {
-        const cityName = feature.properties.name as string | undefined;
+    baseMap.events
+        .where({ layerGroups: { mode: 'include', names: cityLabelGroups } })
+        .on('click', async (feature, lngLat) => {
+            const cityName = feature.properties.name as string | undefined;
 
-        if (cityName) {
-            await selectCityByName(cityName, lngLat.toArray());
-        }
-    });
+            if (cityName) {
+                await selectCityByName(cityName, lngLat.toArray());
+            }
+        });
 
-    const restOfTheMap = await BaseMapModule.get(map, {
-        layerGroupsFilter: { mode: 'exclude', names: ['cityLabels', 'capitalLabels'] },
-        events: { cursorOnHover: 'default' },
-    });
-
-    restOfTheMap.events.on('click', () => {
-        analyticsModule.clear();
-        $('bottom-panel').classList.add('aa-hidden');
-    });
+    baseMap.events
+        .where({ layerGroups: { mode: 'exclude', names: cityLabelGroups } }, { cursorOnHover: 'default' })
+        .on('click', () => {
+            analyticsModule.clear();
+            $('bottom-panel').classList.add('aa-hidden');
+        });
 
     (document.getElementById('metric-selector') as HTMLSelectElement).addEventListener('change', (event) => {
         const metricKey = (event.target as HTMLSelectElement).value as AreaAnalyticsMetricKey;

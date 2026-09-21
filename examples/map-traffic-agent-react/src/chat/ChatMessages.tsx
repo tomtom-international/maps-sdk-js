@@ -13,12 +13,12 @@ function RestartButton() {
             className="sticky top-0 z-10 flex items-start justify-center pt-1 pb-4"
             // Solid behind the pill, fading to transparent at the bottom so messages dissolve as they
             // scroll under it (rather than hard-cutting against a solid white bar).
-            style={{ background: 'linear-gradient(var(--pb-surface-0) 60%, transparent)' }}
+            style={{ background: 'linear-gradient(var(--ui-surface-0) 60%, transparent)' }}
         >
             <button
                 type="button"
                 onClick={restart}
-                className="inline-flex items-center gap-1.5 rounded-full border border-(--pb-border-low) bg-(--pb-surface-0) px-3 py-1 font-(family-name:--pb-font-primary) text-[12px] leading-[16px] font-bold text-(--pb-text-high) transition-colors hover:bg-(--pb-surface-1)"
+                className="inline-flex items-center gap-1.5 rounded-full border border-(--ui-border-low-em) bg-(--ui-surface-0) px-3 py-1 font-(family-name:--ui-font-gilroy) text-[12px] leading-[16px] font-bold text-(--ui-text-high-em) transition-colors hover:bg-(--ui-surface-1)"
             >
                 Restart
                 <svg
@@ -50,7 +50,7 @@ function SuggestedPrompts({ prompts }: { prompts: readonly string[] }) {
     const visible = showAll ? prompts : prompts.slice(0, INITIAL_PROMPTS);
     return (
         <div className="flex w-full flex-col items-center gap-2 py-1">
-            <h2 className="m-0 w-full font-(family-name:--pb-font-primary) text-[16px] leading-[24px] font-bold text-(--pb-text-high)">
+            <h2 className="m-0 w-full font-(family-name:--ui-font-gilroy) text-[16px] leading-[24px] font-bold text-(--ui-text-high-em)">
                 Pick a prompt
             </h2>
             <div className="flex w-full flex-col gap-2">
@@ -59,7 +59,7 @@ function SuggestedPrompts({ prompts }: { prompts: readonly string[] }) {
                         key={prompt}
                         prompt={prompt}
                         send
-                        className="cursor-pointer rounded-(--pb-radius-10) border border-(--pb-border-base) bg-(--pb-surface-0) px-3 py-2 text-left font-(family-name:--pb-font-secondary) text-[16px] leading-[24px] text-(--pb-text-high) transition-colors hover:border-(--pb-border-low) hover:bg-(--pb-surface-1) focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--pb-primary-color)"
+                        className="cursor-pointer rounded-(--ui-rounded-10) border border-(--ui-border-base-em) bg-(--ui-surface-0) px-3 py-2 text-left font-(family-name:--ui-font-proxima) text-[16px] leading-[24px] text-(--ui-text-high-em) transition-colors hover:border-(--ui-border-low-em) hover:bg-(--ui-surface-1) focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--ui-surface-brand-red)"
                     >
                         {prompt}
                     </ThreadPrimitive.Suggestion>
@@ -69,7 +69,7 @@ function SuggestedPrompts({ prompts }: { prompts: readonly string[] }) {
                 <button
                     type="button"
                     onClick={() => setShowAll(true)}
-                    className="rounded-full border border-(--pb-border-low) bg-(--pb-surface-0) px-3 py-1.5 font-(family-name:--pb-font-primary) text-[13px] leading-[18px] font-semibold text-(--pb-text-high) transition-colors hover:bg-(--pb-surface-1)"
+                    className="rounded-full border border-(--ui-border-low-em) bg-(--ui-surface-0) px-3 py-1.5 font-(family-name:--ui-font-gilroy) text-[13px] leading-[18px] font-semibold text-(--ui-text-high-em) transition-colors hover:bg-(--ui-surface-1)"
                 >
                     More prompts
                 </button>

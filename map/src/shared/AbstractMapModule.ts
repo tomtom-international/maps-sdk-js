@@ -1,13 +1,24 @@
-import type { Map } from 'maplibre-gl';
+import type { Map, MapGeoJSONFeature } from 'maplibre-gl';
 import type { TomTomMap } from '../TomTomMap';
+import { CombinedEvents } from './CombinedEvents';
 import type { EventsProxy } from './EventsProxy';
+import { assertNoReservedScopeNames, type ResolvedEventScope } from './eventScope';
+import { LayerFilterComposer } from './layers/layerFilterComposer';
+import { ModuleEvents } from './ModuleEvents';
 import { waitUntilMapIsReady } from './mapUtils';
 import type { MapModuleCommonConfig, SourcesWithLayers, SourceWithLayerIDs } from './types';
+import { UserEvents } from './UserEvents';
 
 /**
- * Whether a map module is based on a map style or on added GeoJSON data.
+ * How a module builds user events over some of its sources.
+ * @ignore
  */
-type MapModuleSource = 'style' | 'geojson';
+type EventScopeOptions<T, WHERE_SCOPE> = {
+    /** Turns a raw MapLibre feature into the feature type this scope exposes. */
+    mapping?: (feature: MapGeoJSONFeature) => T;
+    /** Resolves a module-specific scope object, such as BaseMapModule's `{ layerGroups }`. */
+    scopeResolver?: (scope: WHERE_SCOPE) => ResolvedEventScope;
+};
 
 /**
  * Base class for all Maps SDK map modules.
@@ -21,14 +32,23 @@ type MapModuleSource = 'style' | 'geojson';
  * The class manages the module's sources, layers, and configuration, automatically
  * handling map style changes by restoring the module's state when needed.
  *
+ * No module extends this class directly. Each one extends the subclass that says who owns the
+ * sources and layers it controls, and therefore how its instances behave:
+ *
+ * - {@link AbstractDataOwnedMapModule} — the module adds and owns its own sources, layers and
+ *   images, suffixed per instance. Multi-instance, built with `create(map, config?)`.
+ * - {@link AbstractStyleOwnedMapModule} — the module controls sources and layers the map style
+ *   already provides, under fixed global IDs. A shared controller, obtained with
+ *   `get(map, config?)`.
+ *
  * @typeParam SOURCES_WITH_LAYERS - The type defining the sources and layers used by this module
  * @typeParam CFG - The configuration type for this module, or undefined if no configuration is needed. When defined, must extend MapModuleCommonConfig.
  *
  * @example
  * ```typescript
- * class CustomModule extends AbstractMapModule<MySourcesWithLayers, MyConfig> {
+ * class CustomModule extends AbstractDataOwnedMapModule<MySourcesWithLayers, MyConfig> {
  *   constructor(tomtomMap: TomTomMap, config?: MyConfig) {
- *     super('geojson', tomtomMap, config);
+ *     super(tomtomMap, config);
  *   }
  *   // Implement abstract methods...
  * }
@@ -40,7 +60,6 @@ export abstract class AbstractMapModule<
     SOURCES_WITH_LAYERS extends SourcesWithLayers,
     CFG extends MapModuleCommonConfig | undefined = undefined,
 > {
-    private readonly sourceType: MapModuleSource;
     /**
      * @ignore
      */
@@ -83,9 +102,25 @@ export abstract class AbstractMapModule<
      * has its own counter without per-subclass boilerplate. Use as a suffix on
      * auto-generated source and layer IDs to keep them stable across style changes and
      * unique across module instances.
+     *
+     * Only the data-owned modules need it, because the style-owned ones work under fixed global
+     * IDs. It is assigned here all the same: this constructor already runs
+     * `_initSourcesWithLayers`, which reads it, so a subclass field would be assigned too late.
      * @ignore
      */
     protected readonly instanceIndex: number;
+
+    /**
+     * The map's single owner of a **style** layer's `filter`. Several modules narrow the same style
+     * layer, so none of them calls `setFilter` on one directly: the composer is what keeps one from
+     * dropping another's work, and what holds the filter the style itself shipped. A module may
+     * still set the filter of a layer it added and owns alone.
+     *
+     * Assigned in this constructor, which already runs `_initSourcesWithLayers` and `applyConfig`,
+     * so a subclass field would be assigned too late for either to use it.
+     * @ignore
+     */
+    protected readonly filterComposer: LayerFilterComposer;
 
     /**
      * Per-concrete-class instance counter. WeakMap-keyed so unloaded classes can be GC'd.
@@ -104,19 +139,18 @@ export abstract class AbstractMapModule<
      * Builds this module based on a given Maps SDK map.
      * @param tomtomMap The map. It may or may not be initialized at this stage,
      * but the module ensures to initialize itself once it is.
-     * @param sourceType Whether the module is based on a map style or on added GeoJSON data.
      * @param config Optional configuration to initialize directly as soon as the map is ready.
      */
-    protected constructor(sourceType: MapModuleSource, tomtomMap: TomTomMap, config?: CFG) {
+    protected constructor(tomtomMap: TomTomMap, config?: CFG) {
         const concreteClass = new.target;
         const previousIndex = AbstractMapModule.instanceCounters.get(concreteClass) ?? -1;
         this.instanceIndex = previousIndex + 1;
         AbstractMapModule.instanceCounters.set(concreteClass, this.instanceIndex);
 
-        this.sourceType = sourceType;
         this.tomtomMap = tomtomMap;
         this.eventsProxy = tomtomMap._eventsProxy;
         this.mapLibreMap = tomtomMap.mapLibreMap;
+        this.filterComposer = LayerFilterComposer.for(tomtomMap);
         // TODO: we need to find a cleaner separation between initSourcesWithLayers and applyConfig for most modules to prevent double work, particularly with adding layers
         this.initSourcesWithLayers(config);
         this.applyConfig(config);
@@ -124,9 +158,21 @@ export abstract class AbstractMapModule<
             onStyleAboutToChange: () => {
                 this.moduleReady = false;
             },
-            onStyleChanged: () => this.restoreDataAndConfig(),
+            onStyleChanged: ({ resetState }) => (resetState ? this.resetOnNewStyle() : this.restoreDataAndConfig()),
+            priority: this.styleChangePriority(),
         });
         this._initializing = false;
+    }
+
+    /**
+     * Where this module restores itself in the style-change sequence (see
+     * {@link StyleChangeHandler.priority}). Data and visibility modules keep the default; a module
+     * whose work must land on top of theirs returns a higher value.
+     * @protected
+     * @ignore
+     */
+    protected styleChangePriority(): number {
+        return 0;
     }
 
     /**
@@ -146,7 +192,9 @@ export abstract class AbstractMapModule<
             ]),
         ) as Record<keyof SOURCES_WITH_LAYERS, SourceWithLayerIDs>;
         if (restore) {
-            this.eventsProxy.updateIfRegistered(this.sourcesWithLayers);
+            // Passing `this` lets the proxy re-resolve only this module's scopes: POIs and the
+            // base map share the `vectorTiles` source ID, so source ID alone cannot tell them apart.
+            this.eventsProxy.updateIfRegistered(this.sourcesWithLayers, this);
         }
         // Only if the map is still ready, we consider that the module is ready.
         // Otherwise, we assume there's a quick style change in progress and expect that'll trigger the module to restore itself again.
@@ -189,6 +237,10 @@ export abstract class AbstractMapModule<
      * When a configuration is applied, the module updates its visual representation and behavior
      * accordingly. The configuration persists across map style changes, ensuring consistent
      * module behavior even when the map's base style is modified.
+     *
+     * Unless a module documents otherwise, the given configuration **replaces** the current one
+     * rather than being merged into it. To change one part of it, spread the current
+     * configuration into the new one: `myModule.applyConfig({ ...myModule.getConfig(), theme })`.
      *
      * @example
      * ```typescript
@@ -257,18 +309,41 @@ export abstract class AbstractMapModule<
         this.applyConfig(undefined);
     }
 
-    private async restoreDataAndConfig() {
+    // Runs while `TomTomMap` notifies its style-change handlers, so `setStyle` only resolves once
+    // every module is back. The new style is fully applied by then: the SDK waits for MapLibre's
+    // `style.load`, which fires once all the layers of the new style are in place.
+    private restoreDataAndConfig(): void {
         // defensively declaring the module as not ready to prevent race conditions:
         this.moduleReady = false;
-        if (this.sourceType === 'geojson') {
-            // Defer GeoJSON layer restoration by one animation frame to work around a MapLibre
-            // glitch where symbol layers can't be added right after a styledata event.
-            requestAnimationFrame(() => {
-                this.restoreDataAndConfigImpl();
-            });
-        } else {
-            this.restoreDataAndConfigImpl();
-        }
+        this.restoreDataAndConfigImpl();
+    }
+
+    // The clean-switch counterpart of restoreDataAndConfig (`setStyle(style, { resetState: true })`):
+    // the module re-binds to the new style with default configuration and nothing shown, so it
+    // stays usable — a stale module over a style that no longer has its layers would not be.
+    private resetOnNewStyle(): void {
+        this.moduleReady = false;
+        this.config = undefined;
+        this.discardShownData();
+        this.initSourcesWithLayers(undefined, true);
+        this._applyConfig(undefined);
+        this.emitConfigChange();
+    }
+
+    /**
+     * Forgets whatever this module remembers beyond its configuration, so that a clean style
+     * switch does not bring it back. The sources are rebuilt empty right after, so there is
+     * nothing to clear on the map.
+     *
+     * A data-owned module always remembers something, so {@link AbstractDataOwnedMapModule} makes
+     * this abstract. A style-owned module overrides it only when it keeps state of its own, such
+     * as raw layer edits.
+     * @protected
+     * @ignore
+     */
+    protected discardShownData(): void {
+        // Deliberately empty: a style-owned module remembers nothing beyond its configuration
+        // unless it says otherwise, and the ones that do override this.
     }
 
     /**
@@ -357,5 +432,86 @@ export abstract class AbstractMapModule<
      */
     get sourceAndLayerIDs(): Record<keyof SOURCES_WITH_LAYERS, SourceWithLayerIDs> {
         return this._sourceAndLayerIDs;
+    }
+
+    /**
+     * User events over the named sources of this module — what every named scope is.
+     *
+     * `sourceNames` may list several sources when they carry the same data in different display
+     * modes — clustered and unclustered places, or the hexgrid/square/heatmap trio — and missing
+     * ones are skipped, so an optional source costs the caller nothing.
+     *
+     * A scope carries no lifecycle events: a module has one configuration and one `show` stream,
+     * neither of which a scope narrows. Both live on the module's own `events`.
+     * @ignore
+     */
+    protected userEvents<T = MapGeoJSONFeature, WHERE_SCOPE = never>(
+        sourceNames: (keyof SOURCES_WITH_LAYERS)[],
+        options: EventScopeOptions<T, WHERE_SCOPE> = {},
+    ): UserEvents<T, WHERE_SCOPE> {
+        return new UserEvents<T, WHERE_SCOPE>({
+            eventProxy: this.eventsProxy,
+            sourcesWithLayers: sourceNames
+                .map((name) => this.sourcesWithLayers[name])
+                .filter((sourceWithLayers) => !!sourceWithLayers),
+            owner: this,
+            config: this.config?.events,
+            mapping: options.mapping,
+            scopeResolver: options.scopeResolver,
+        });
+    }
+
+    /**
+     * The event surface of a module with no `show`: user events over the named sources, plus
+     * `config-change`. `shown-features` is not subscribable here — `TShown` is `never`, which
+     * makes the overload uncallable.
+     * @ignore
+     */
+    protected moduleEvents<T = MapGeoJSONFeature, WHERE_SCOPE = never>(
+        sourceNames: (keyof SOURCES_WITH_LAYERS)[],
+        options: EventScopeOptions<T, WHERE_SCOPE> = {},
+    ): CombinedEvents<T, CFG, never, WHERE_SCOPE> {
+        return new CombinedEvents<T, CFG, never, WHERE_SCOPE>(
+            this.userEvents<T, WHERE_SCOPE>(sourceNames, options),
+            new ModuleEvents<CFG, never>(this.configChangeHandlers, []),
+        );
+    }
+
+    /**
+     * The event surface of a module that has a `show`. `shownFeaturesHandlers` is passed
+     * positionally, and must be the very array `show` iterates: handing over a throwaway would
+     * accept subscriptions that can never fire.
+     * @ignore
+     */
+    protected moduleEventsWithShown<T, TShown, WHERE_SCOPE = never>(
+        sourceNames: (keyof SOURCES_WITH_LAYERS)[],
+        shownFeaturesHandlers: ((features: TShown) => void)[],
+        options: EventScopeOptions<T, WHERE_SCOPE> = {},
+    ): CombinedEvents<T, CFG, TShown, WHERE_SCOPE> {
+        return new CombinedEvents<T, CFG, TShown, WHERE_SCOPE>(
+            this.userEvents<T, WHERE_SCOPE>(sourceNames, options),
+            new ModuleEvents<CFG, TShown>(this.configChangeHandlers, shownFeaturesHandlers),
+        );
+    }
+
+    /**
+     * Attaches named scopes to the module's event surface, so `events.on(...)` and
+     * `events.<scope>.on(...)` live on one object.
+     *
+     * A module only declares scopes where it manages more than one surface; with a single source,
+     * `events` already is that scope and a named alias would just duplicate it.
+     *
+     * The two scope type parameters are unrelated, and a module typically has one or the other:
+     * `NAMED_SCOPES` is the object of scopes hung off `events` as properties (RoutingModule's
+     * `mainLines`, `waypoints`, …), while `WHERE_SCOPE` is the scope object `events.where(…)`
+     * accepts as an argument (BaseMapModule's `{ layerGroups }`).
+     * @ignore
+     */
+    protected buildEvents<T, TShown, WHERE_SCOPE, NAMED_SCOPES extends object>(
+        moduleWide: CombinedEvents<T, CFG, TShown, WHERE_SCOPE>,
+        scopes: NAMED_SCOPES,
+    ): CombinedEvents<T, CFG, TShown, WHERE_SCOPE> & NAMED_SCOPES {
+        assertNoReservedScopeNames(Object.keys(scopes), this.constructor.name);
+        return Object.assign(moduleWide, scopes);
     }
 }

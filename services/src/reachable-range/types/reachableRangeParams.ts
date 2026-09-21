@@ -1,5 +1,17 @@
-import type { HasLngLat } from '@tomtom-org/maps-sdk/core';
-import type { CommonRoutingParams, CommonServiceParams, DepartArriveParams } from '../../shared';
+import type { Avoidable, HasLngLat } from '@tomtom-org/maps-sdk/core';
+import type {
+    CombustionVehicleParams,
+    CombustionVehicleState,
+    CommonRoutingParams,
+    CommonServiceParams,
+    CostModel,
+    DepartArriveParams,
+    ElectricVehicleParams,
+    ElectricVehicleState,
+    GenericVehicleParams,
+    VehicleParameters,
+} from '../../shared';
+import type { VehicleRestrictions } from '../../shared/types/vehicleRestrictionParams';
 import type { ReachableRangeRequestAPI } from './apiRequestTypes';
 import type { ReachableRangeResponseAPI } from './apiResponseTypes';
 
@@ -115,6 +127,54 @@ export type ReachableRangeBudget = {
 };
 
 /**
+ * Route features `calculateReachableRange` can avoid.
+ *
+ * @remarks
+ * Every {@link Avoidable} except `alreadyUsedRoads`, which this endpoint rejects with
+ * *"Avoid alreadyUsedRoads not supported for calculateReachableRange"*. It stays available on
+ * `calculateRoute`.
+ *
+ * @group Reachable Range
+ */
+export type ReachableRangeAvoidable = Exclude<Avoidable, 'alreadyUsedRoads'>;
+
+/**
+ * Cost model accepted by `calculateReachableRange`.
+ *
+ * @remarks
+ * {@link CostModel} without `avoidAreas`, which this endpoint has no parameter for, and with the
+ * narrower {@link ReachableRangeAvoidable} avoid list.
+ *
+ * @group Reachable Range
+ */
+export type ReachableRangeCostModel = Omit<CostModel, 'avoid' | 'avoidAreas'> & {
+    /**
+     * Route features to avoid when calculating the range.
+     */
+    avoid?: ReachableRangeAvoidable[];
+};
+
+/**
+ * Vehicle parameters accepted by `calculateReachableRange`.
+ *
+ * @remarks
+ * {@link VehicleParameters} without `state.heading`, which this endpoint rejects with
+ * *"parameter [vehicleHeading] not supported"*. It stays available on `calculateRoute`, where the
+ * routing API takes it as `vehicleHeadingInDegrees`.
+ *
+ * Everything else is unchanged, including the engine-specific `state` variants -- an electric
+ * vehicle still picks between the percentage and kWh forms.
+ *
+ * @group Reachable Range
+ */
+export type ReachableRangeVehicleParameters = (
+    | Omit<GenericVehicleParams, 'state'>
+    | (Omit<CombustionVehicleParams, 'state'> & { state?: CombustionVehicleState })
+    | (Omit<ElectricVehicleParams, 'state'> & { state?: ElectricVehicleState })
+) &
+    VehicleRestrictions;
+
+/**
  * Parameters specific to reachable range calculation.
  *
  * @remarks
@@ -124,6 +184,24 @@ export type ReachableRangeBudget = {
  * @group Reachable Range
  */
 export type ReachableRangeOwnParams = {
+    /**
+     * How the routes underlying the range are optimized, and what they avoid.
+     *
+     * @remarks
+     * Narrower than {@link CostModel}: `calculateReachableRange` rejects `alreadyUsedRoads` and has
+     * no avoid-areas parameter, so neither is offered here.
+     */
+    costModel?: ReachableRangeCostModel;
+
+    /**
+     * Parameters for the vehicle whose reachable range is calculated.
+     *
+     * @remarks
+     * Narrower than {@link VehicleParameters}: `calculateReachableRange` has no vehicle-heading
+     * parameter, so {@link ReachableRangeVehicleParameters} does not offer `state.heading`.
+     */
+    vehicle?: ReachableRangeVehicleParameters;
+
     /**
      * Location from which the range calculation should start.
      *
@@ -293,5 +371,5 @@ export type ReachableRangeOwnParams = {
  * @group Reachable Range
  */
 export type ReachableRangeParams = CommonServiceParams<ReachableRangeRequestAPI, ReachableRangeResponseAPI> &
-    CommonRoutingParams &
+    Omit<CommonRoutingParams, 'costModel' | 'vehicle'> &
     ReachableRangeOwnParams;

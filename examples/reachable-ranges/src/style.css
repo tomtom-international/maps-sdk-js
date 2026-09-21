@@ -11,11 +11,11 @@
 
 /* CUSTOM STYLES (example-specific) */
 
-#sdk-example-spinner {
-    --spinner-size: 24px;
+#ui-spinner {
+    --ui-spinner-size: 24px;
     visibility: hidden;
 }
 
-#sdk-example-status-section {
-    padding: var(--sdk-panel-padding) 0;
+#ui-status-section {
+    padding: var(--ui-panel-padding) 0;
 }

@@ -127,22 +127,20 @@ export const buildAnalyseDataCodeDoc = (
 ): string => {
     const active = resolveActiveKinds(enabled, scope);
     const sandboxList = buildEntryKindSandboxDocs(active);
-    // Deep per-kind schema docs are gated on `scope !== undefined` — they only appear once
-    // the classifier commits to specific kinds. The unscoped fallback shows only the terse
-    // one-liners, which is enough to write reasonable code without 3-4 KB of schema
-    // reference per kind.
-    const schemaBlocks = scope ? buildEntryKindSchemaDocs(active) : '';
-    // Geometries provenance doc only matters when customGeometries is actually in scope.
-    const showGeometriesProps = !!scope && active.includes('customGeometries');
+    // Deep per-kind schema docs are emitted for every active kind, scoped or not for cross-kind
+    const schemaBlocks = buildEntryKindSchemaDocs(active);
+    // Geometries provenance doc is emitted whenever customGeometries is an active kind — like the
+    // schema docs above, no longer gated on scope emission, so it survives cross-kind turns.
+    const showGeometriesProps = active.includes('customGeometries');
     return (
         'Async JS that aggregates the injected inputs and returns the result.\n\n' +
-        buildSandboxToolsDoc(active, !!scope) +
+        buildSandboxToolsDoc(active, true) +
         'Each input is `undefined` when its `*EntryIDs` argument was omitted — guard before reading ' +
         '(`if (places) ...`, `routes?.features.length`, etc.). When defined:\n' +
         `${sandboxList}\n\n` +
-        // Cross-kind ops cheat-sheet is emitted inside `buildSandboxToolsDoc` (gated on scoped +
-        // multi-kind); incidents-specific monitor extras are gone now that `monitorAnalysis` drives
-        // recurrence generically.
+        // Cross-kind ops cheat-sheet is emitted inside `buildSandboxToolsDoc` (now gated on active
+        // kinds — multi-kind — not scope emission); incidents-specific monitor extras are gone now
+        // that `monitorAnalysis` drives recurrence generically.
         `${buildAnalyseReturnPrompt('counts, per-kind breakdowns, hex bins, intersections, distance bins')}\n\n` +
         (showGeometriesProps ? `${GEOMETRIES_PROPS_DOC}\n\n` : '') +
         schemaBlocks

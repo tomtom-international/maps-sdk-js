@@ -58,7 +58,7 @@ const makeState = (viewportBBox: [number, number, number, number] = [-1, 50, 1, 
         },
         places: {
             findPlaceById: () => undefined,
-            geometryPlaceIdsForEntry: () => undefined,
+            expandEntry: () => undefined,
             fetchPlaceGeometry: async () => undefined,
         },
         routing: { entries: [] },
@@ -66,6 +66,9 @@ const makeState = (viewportBBox: [number, number, number, number] = [-1, 50, 1, 
 };
 
 const withBBox = (bbox: [number, number, number, number]) => ({ mode: 'within', boundingBox: bbox }) as const;
+
+// Comfortably past the monitor's default poll interval, to drive one recurring tick.
+const NEXT_TICK_MS = 5 * 60_000;
 
 // A shown fetch now arms a background monitor by default (its recurring tick uses setInterval).
 // Fake only the interval timers so those polls never fire (and never leak) during unit tests, while
@@ -98,6 +101,40 @@ describe('executeGetTrafficIncidents — loader contract', () => {
         expect(mockFetch).toHaveBeenCalledTimes(1);
         expect(result.monitoring).toBe(true);
         expect(state.trafficIncidents.isMonitored(result.entryId)).toBe(true);
+    });
+
+    // The turn signal must reach the turn-scoped fetch but NOT the monitor's recurring tick.
+    // Ticks fire after the turn ends, and TrafficIncidentsMonitor treats a rejected tick as fatal
+    // (it clears the interval), so a leaked signal would silently kill the monitor rather than
+    // cancel one request. Asserted by exact key presence — `objectContaining` cannot tell the
+    // difference between "signal absent" and "signal present".
+    it('passes the turn signal to the fetch but never to the monitor tick', async () => {
+        mockFetch.mockReset();
+        mockFetch.mockResolvedValue({ type: 'FeatureCollection', features: [feat({ category: 'jam' })] });
+        const state = makeState();
+        stubRender(state);
+        const { signal } = new AbortController();
+
+        await executeGetTrafficIncidents({ where: withBBox([0, 0, 1, 1]) }, state, { signal });
+
+        expect(mockFetch).toHaveBeenCalledTimes(1);
+        expect(mockFetch.mock.calls[0][0]).toHaveProperty('signal', signal);
+
+        // Drive one monitor tick and prove its params carry no signal at all
+        await vi.advanceTimersByTimeAsync(NEXT_TICK_MS);
+        expect(mockFetch.mock.calls.length).toBeGreaterThan(1);
+        expect(mockFetch.mock.calls.at(-1)?.[0]).not.toHaveProperty('signal');
+    });
+
+    it('sends no signal when the caller gives none', async () => {
+        mockFetch.mockReset();
+        mockFetch.mockResolvedValueOnce({ type: 'FeatureCollection', features: [] });
+        const state = makeState();
+        stubRender(state);
+
+        await executeGetTrafficIncidents({ where: withBBox([0, 0, 1, 1]) }, state);
+
+        expect(mockFetch.mock.calls[0][0]).toHaveProperty('signal', undefined);
     });
 
     it('does not monitor a one-shot fetch (monitor: false) or a hidden fetch (show: false)', async () => {

@@ -18,9 +18,15 @@ import {
 } from '@tomtom-org/maps-sdk/services';
 import type { LngLatBoundsLike } from 'maplibre-gl';
 import { z } from 'zod';
-import type { RouteParams, ToolState } from '../../types';
+import type { RouteParams, ToolExecuteOptions, ToolState } from '../../types';
 import { makeRoutesLabel, summarizeRoutes } from '../../utils';
-import { hidePreviousEntriesSchema, hidePreviousShownEntries, locationInputSchema } from '../shared';
+import {
+    geoJsonBBoxSchema,
+    hidePreviousEntriesSchema,
+    hidePreviousShownEntries,
+    locationInputSchema,
+    withAgentToolkitHeaders,
+} from '../shared';
 import { routesWriteOutputSchema, toolErrorSchema } from '../shared-output-schemas';
 import { resolveLocationInput } from './resolve-location-input';
 
@@ -41,7 +47,7 @@ export const costModelSchema = z.object({
             'tollRoads|motorways|ferries|unpavedRoads|carpools|alreadyUsedRoads|borderCrossings|tunnels|carTrains|lowEmissionZones',
         ),
     avoidAreas: z
-        .array(z.array(z.number()).describe('GeoJSON bbox [minLng, minLat, maxLng, maxLat]'))
+        .array(geoJsonBBoxSchema.describe('GeoJSON bbox [minLng, minLat, maxLng, maxLat]'))
         .max(10)
         .optional()
         .describe('Up to 10 bounding boxes to bypass.'),
@@ -121,7 +127,7 @@ export const setRouteDescription =
     'same call (each tick refreshes live-traffic delays on the same routes), so no separate startRouteMonitor ' +
     'call is needed. ' +
     'Do NOT use to show, query, or modify an EXISTING displayed route — use updateRoutesDisplay / recallState / ' +
-    'addWaypointsToRoute / removeWaypointsFromRoute / replaceWaypointInRoute / discoverPlaces (detour|withinRoute) / getRouteProgress instead.';
+    'addWaypointsToRoute / removeWaypointsFromRoute / replaceWaypointInRoute / discoverPlaces (detour|withinRoute) / analyseData instead.';
 
 /**
  * Filters out null waypoints and returns the array only if there are at least 2 valid entries.
@@ -151,8 +157,17 @@ export const buildCalculateRouteParams = (routeParams: RouteParams) => {
 // Recalc closure for a route monitor: re-runs the SAME route (captured waypoints + params) so
 // each tick refreshes only the live-traffic delays. Shared by setRoute's `monitor` flag and
 // startRouteMonitor so both arm monitors identically.
-export const buildRouteRecalc = (waypoints: WaypointLike[], routeParams: RouteParams) => () =>
-    calculateRoute({ locations: waypoints, ...buildCalculateRouteParams(routeParams) });
+//
+// Deliberately takes NO AbortSignal. Ticks fire on the monitor's interval long after the arming
+// turn has ended, and RoutingMonitor treats a rejected tick as fatal — it clears the interval —
+// so a turn signal here would silently kill the monitor on its first tick after the turn.
+export const buildRouteRecalc = (waypoints: WaypointLike[], routeParams: RouteParams) => () => {
+    const requestParams = withAgentToolkitHeaders({
+        locations: waypoints,
+        ...buildCalculateRouteParams(routeParams),
+    });
+    return calculateRoute(requestParams);
+};
 
 export const showRouteOnMap = async (
     state: ToolState,
@@ -193,11 +208,14 @@ export const calculateAndAddRoute = async (
     monitor?: boolean,
     showWaypoints?: boolean,
     showSummaryBubbles?: boolean,
+    options?: ToolExecuteOptions,
 ) => {
-    const routes = await calculateRoute({
+    const requestParams = withAgentToolkitHeaders({
         locations: waypoints,
         ...buildCalculateRouteParams(state.routing.params),
+        signal: options?.signal,
     });
+    const routes = await calculateRoute(requestParams);
 
     const entryId = await state.routing.addRoutes(routes, waypoints, makeRoutesLabel(routes, waypoints));
 
@@ -223,6 +241,7 @@ export const calculateAndAddRoute = async (
 export const executeSetRoute = async (
     params: z.infer<typeof setRouteSchema>,
     state: ToolState,
+    options?: ToolExecuteOptions,
 ): Promise<z.infer<typeof setRouteOutputSchema>> => {
     const { locations, parameters, showOnMap, showWaypoints, showSummaryBubbles, monitor, hidePreviousEntries } =
         params;
@@ -231,14 +250,14 @@ export const executeSetRoute = async (
 
         let waypoints: WaypointLike[] | null;
         if (locations) {
-            const resolved = await Promise.all(locations.map((loc) => resolveLocationInput(loc, state)));
+            const resolved = await Promise.all(locations.map((loc) => resolveLocationInput(loc, state, options)));
 
             const unresolved: string[] = [];
             for (let i = 0; i < locations.length; i++) {
                 if (resolved[i] !== null) continue;
                 const loc = locations[i];
                 if ('query' in loc) unresolved.push(`"${loc.query}"`);
-                else if ('placeId' in loc) unresolved.push(`placeId "${loc.placeId}"`);
+                else if ('placeIdOrEntryId' in loc) unresolved.push(`placeIdOrEntryId "${loc.placeIdOrEntryId}"`);
             }
             if (unresolved.length > 0) {
                 return { error: `Could not resolve: ${unresolved.join(', ')}` };
@@ -264,6 +283,7 @@ export const executeSetRoute = async (
             monitor,
             showWaypoints,
             showSummaryBubbles,
+            options,
         );
     } catch (error) {
         return {

@@ -1,6 +1,46 @@
 import type { MapGeoJSONFeature } from 'maplibre-gl';
+import type { AnyMapModule } from './AbstractEventProxy';
 import type { EventsProxy } from './EventsProxy';
+import { combineEventScopes, type EventScope, type ResolvedEventScope } from './eventScope';
 import type { EventHandlerConfig, EventType, SourceWithLayers, UserEventHandler } from './types';
+
+/**
+ * Everything {@link UserEvents} needs to register handlers for one scope of one module.
+ * @ignore
+ */
+export type UserEventsOptions<T, WHERE_SCOPE> = {
+    eventProxy: EventsProxy;
+    /**
+     * The source(s) whose features this scope handles events for. Several sources back one scope
+     * when they carry the same data in different display modes — hexgrid, square and heatmap in
+     * {@link TrafficAreaAnalyticsModule}, clustered and unclustered places in {@link PlacesModule}.
+     */
+    sourcesWithLayers: SourceWithLayers[];
+    /**
+     * The module that owns these sources. Kept with every handler so a style-change restore can
+     * tell handlers apart when two modules share one MapLibre source ID.
+     */
+    owner: AnyMapModule;
+    /**
+     * Event configuration for every handler registered through this instance — the hover cursor,
+     * chiefly. A scope built by {@link UserEvents.where} inherits the module's unless `where` is
+     * given one of its own, which is how two parts of one module get different cursors.
+     */
+    config?: EventHandlerConfig;
+    /**
+     * Transforms a raw {@link MapGeoJSONFeature} into the feature type `T` this scope exposes, so
+     * callers receive the module's own feature shape. Applied before handlers and before any
+     * {@link UserEvents.where} predicate, so a predicate also sees `T`.
+     */
+    mapping?: (feature: MapGeoJSONFeature) => T;
+    /** The scope already applied to this instance, if it came from {@link UserEvents.where}. */
+    scope?: ResolvedEventScope;
+    /**
+     * Turns a module-specific scope object into a {@link ResolvedEventScope}. Only modules with a
+     * typed layer vocabulary supply one — today that is {@link BaseMapModule} and its layer groups.
+     */
+    scopeResolver?: (scope: WHERE_SCOPE) => ResolvedEventScope;
+};
 
 /**
  * Event handling interface for map features.
@@ -95,31 +135,83 @@ import type { EventHandlerConfig, EventType, SourceWithLayers, UserEventHandler 
  *
  * @group Events
  */
-export class UserEvents<T = MapGeoJSONFeature> {
+export class UserEvents<T = MapGeoJSONFeature, WHERE_SCOPE = never> {
     private readonly sources: SourceWithLayers[];
+    private readonly options: UserEventsOptions<T, WHERE_SCOPE>;
 
-    constructor(
-        private readonly eventProxy: EventsProxy,
-        /**
-         * The source(s) whose features this module handles events for.
-         * Pass an array to register handlers across multiple sources representing similar data in different display modes (e.g. hexgrid + square
-         * in {@link TrafficAreaAnalyticsModule}). A single value is also accepted for
-         * backwards compatibility.
-         */
-        sourcesWithLayers: SourceWithLayers | SourceWithLayers[],
-        private readonly config: EventHandlerConfig | undefined,
-        /**
-         * Optional function that transforms a raw {@link MapGeoJSONFeature} into the
-         * feature type `T` exposed by the module. When provided, every feature passed (fired)
-         * to event handlers is first run through this function, so callers receive the
-         * module's own feature shape instead of the underlying MapLibre feature.
-         *
-         * When omitted, `T` defaults to `MapGeoJSONFeature` and features are forwarded
-         * as-is.
-         */
-        private readonly mapping?: (feature: MapGeoJSONFeature) => T,
-    ) {
-        this.sources = Array.isArray(sourcesWithLayers) ? sourcesWithLayers : [sourcesWithLayers];
+    constructor(options: UserEventsOptions<T, WHERE_SCOPE>) {
+        this.options = options;
+        this.sources = options.sourcesWithLayers;
+    }
+
+    /**
+     * Narrows these events to part of what they cover, returning a {@link UserEvents} over just
+     * that part.
+     *
+     * Two things can be narrowed. A **feature predicate** keeps only the features you care about —
+     * available on every module, since only the module's own data can tell a major incident from a
+     * minor one. A **layer scope** keeps only part of the map's layers; the SDK offers this where
+     * a stable, typed vocabulary for those layers exists, which today means
+     * {@link BaseMapModule}'s layer groups.
+     *
+     * A new instance, rather than this one narrowed in place: callers hold `events` and narrow it
+     * more than once, and mutating would make the second `where()` mean "first AND second" while
+     * leaving the surface it came from silently scoped — and its `config` overridden.
+     *
+     * Narrowing on both axes is one call, not two — {@link BaseMapModule}'s scope object takes a
+     * `features` predicate alongside its `layerGroups`. A further `where()` does intersect with
+     * this one, but two feature predicates read better as a single `a(f) && b(f)`.
+     *
+     * @param scope See {@link EventScope} — a predicate over this scope's feature type, or, where
+     * the module supports one, a scope object such as `{ layerGroups }`.
+     * @param config Event configuration for handlers registered through the returned instance.
+     * Each scope can carry its own, which is how two parts of one module get different hover
+     * cursors. Defaults to the configuration this instance already uses.
+     *
+     * @example
+     * ```typescript
+     * // Feature scope: only major incidents are clickable.
+     * trafficIncidents.events.where((incident) => incident.properties.magnitude === 'major')
+     *     .on('click', showIncidentDetails);
+     *
+     * // Layer scope with its own cursor, on the base map.
+     * baseMap.events
+     *     .where({ layerGroups: { mode: 'include', names: ['roadLabels'] } }, { cursorOnHover: 'pointer' })
+     *     .on('click', showRoadName);
+     *
+     * // A named scope, narrowed by a predicate.
+     * routing.events.tunnels.where((section) => section.properties.lengthInMeters > 500)
+     *     .on('click', showLongTunnel);
+     * ```
+     */
+    where(scope: EventScope<T, WHERE_SCOPE>, config?: EventHandlerConfig): UserEvents<T, WHERE_SCOPE> {
+        return new UserEvents<T, WHERE_SCOPE>({
+            ...this.options,
+            config: config ?? this.options.config,
+            scope: combineEventScopes(this.options.scope, this.resolveScope(scope)),
+        });
+    }
+
+    // Turns whatever `where()` was handed into the two predicates the event proxy understands.
+    // A bare function is a feature predicate over `T`, so the module's mapping is composed in
+    // front of it — the caller's predicate must see the module's feature type, not MapLibre's.
+    private resolveScope(scope: EventScope<T, WHERE_SCOPE>): ResolvedEventScope {
+        if (typeof scope === 'function') {
+            const predicate = scope as (feature: T) => boolean;
+            const mapping = this.options.mapping;
+            return {
+                featureMatches: mapping
+                    ? (feature) => predicate(mapping(feature))
+                    : (feature) => predicate(feature as T),
+            };
+        }
+
+        const resolver = this.options.scopeResolver;
+        if (!resolver) {
+            throw new Error('This module supports only feature predicates in events.where().');
+        }
+
+        return resolver(scope);
     }
 
     /**
@@ -201,26 +293,48 @@ export class UserEvents<T = MapGeoJSONFeature> {
      * ```
      */
     on(type: EventType, handler: UserEventHandler<T>): () => void {
-        const entries: Array<{ source: SourceWithLayers; registeredHandler: UserEventHandler<any> }> = [];
+        const { eventProxy, config, owner, scope } = this.options;
+        const registeredHandler = this.toRegisteredHandler(handler);
+        const entries: SourceWithLayers[] = [];
 
-        if (this.mapping) {
-            const mapping = this.mapping;
-            for (const source of this.sources) {
-                const wrappedHandler: UserEventHandler<any> = (feature, ...rest) => handler(mapping(feature), ...rest);
-                this.eventProxy.addEventHandler(source, wrappedHandler, type, this.config);
-                entries.push({ source, registeredHandler: wrappedHandler });
-            }
-        } else {
-            for (const source of this.sources) {
-                this.eventProxy.addEventHandler(source, handler, type, this.config);
-                entries.push({ source, registeredHandler: handler });
-            }
+        for (const source of this.sources) {
+            eventProxy.addEventHandler(source, registeredHandler, type, { config, owner, scope });
+            entries.push(source);
         }
 
         return () => {
-            for (const { source, registeredHandler } of entries) {
-                this.eventProxy.removeHandler(source, type, registeredHandler);
+            for (const source of entries) {
+                eventProxy.removeHandler(source, type, registeredHandler);
             }
+        };
+    }
+
+    // Wraps the caller's handler with everything that has to happen between the event proxy and
+    // the caller: the module's feature mapping, and any feature predicate this scope carries.
+    private toRegisteredHandler(handler: UserEventHandler<T>): UserEventHandler<any> {
+        const { mapping, scope } = this.options;
+        const featureMatches = scope?.featureMatches;
+
+        if (!mapping && !featureMatches) return handler as UserEventHandler<any>;
+
+        const toExposed = (feature: MapGeoJSONFeature) => (mapping ? mapping(feature) : (feature as T));
+
+        if (!featureMatches) {
+            return (feature, lngLat, features, sourceWithLayers) =>
+                handler(toExposed(feature), lngLat, features.map(toExposed), sourceWithLayers);
+        }
+
+        // A predicate filters the whole stack of features under the pointer and promotes the first
+        // survivor to the primary argument, so clicking a stack whose top hit is a minor incident
+        // and whose second is major still reaches a `magnitude === 'major'` handler with the major
+        // one. When nothing in the stack matches, the handler is not called at all.
+        return (feature, lngLat, features, sourceWithLayers) => {
+            const stack = features.length ? features : [feature];
+            const inScope = stack.filter((candidate) => featureMatches(candidate));
+            if (!inScope.length) return;
+
+            const exposed = inScope.map(toExposed);
+            handler(exposed[0], lngLat, exposed, sourceWithLayers);
         };
     }
 
@@ -297,7 +411,7 @@ export class UserEvents<T = MapGeoJSONFeature> {
      */
     off(type: EventType) {
         for (const source of this.sources) {
-            this.eventProxy.remove(source, type);
+            this.options.eventProxy.remove(source, type, this.options.owner);
         }
     }
 }

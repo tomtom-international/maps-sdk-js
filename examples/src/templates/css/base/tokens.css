@@ -1,101 +1,197 @@
-/* TOKENS */
-
 :root {
-    --sdk-primary-color: #df1b12;
-    --sdk-primary-hover: #c01810;
-    --sdk-primary-active: #a01410;
+    /* --- Surface --- */
+    --ui-surface-0: #ffffff;
+    --ui-surface-1: #f2f2f2;
+    --ui-surface-2: #e0e0e0;
+    --ui-surface-3: #cccccc;
+    --ui-surface-primary: #000000;
+    --ui-surface-high-em: #333333;
+    --ui-surface-info: #004b7f;
+    --ui-surface-success: #00a65e;
+    --ui-surface-warning: #fdc530;
+    --ui-surface-brand-red: #df1b12;
+    --ui-surface-primary-accent-1: rgba(242, 242, 242, 0.5);
+    --ui-surface-secondary-accent-1: rgba(0, 0, 0, 0.28);
+    --ui-surface-info-accent-1: #f5f8fa;
+    --ui-surface-success-accent-1: #f5fbf8;
+    --ui-surface-warning-accent-1: #fff5dd;
+    --ui-surface-red-accent-1: #fff0ef;
+    --ui-surface-disabled-base-em: #f2f2f2;
+    --ui-surface-disabled-light-em: #e5e5e5;
+    --ui-surface-disabled-low-em: #f2f2f2;
+    --ui-surface-disabled-med-em: #c6c5ca;
+    --ui-surface-disabled-high-em: #b3b1b8;
 
-    --sdk-text-high: #000000;
-    --sdk-text-medium: #5c5c5c;
-    --sdk-text-low: #959595;
-    --sdk-text-disabled: #b2b2b2;
-    --sdk-text-white: #ffffff;
+    /* Brand interaction states */
+    --ui-surface-brand-red-hover: #c01810;
+    --ui-surface-brand-red-active: #a01410;
 
-    --sdk-border-high: #c2c2c2;
-    --sdk-border-medium: #cccccc;
-    --sdk-border-low: #e5e5e5;
-    --sdk-border-base: #f2f2f2;
+    /* --- Text --- */
+    --ui-text-high-em: #000000;
+    --ui-text-med-em: #5c5c5c;
+    --ui-text-low-em: #959595;
+    --ui-text-disabled: #b2b2b2;
+    --ui-text-white: #ffffff;
 
-    --sdk-surface-0: #ffffff;
-    --sdk-surface-1: #f2f2f2;
-    --sdk-surface-2: #e0e0e0;
-    --sdk-surface-3: #cccccc;
+    /* Context-aware text — pair each with its matching surface family for WCAG contrast. */
+    --ui-text-primary-on-base: #000000;
+    --ui-text-primary-on-accent-light: #1f1f1f;
+    --ui-text-primary-on-accent-dark: #ffffff;
+    --ui-text-info-on-base: #004b7f;
+    --ui-text-info-on-accent-light: #003255;
+    --ui-text-info-on-medium-dark: #5083a7;
+    --ui-text-info-on-accent-dark: #c9d9e4;
+    --ui-text-success-on-base: #00a65e;
+    --ui-text-success-on-accent-light: #006a3c;
+    --ui-text-success-on-medium-dark: #a0ddc3;
+    --ui-text-success-on-accent-dark: #c9ecdd;
+    --ui-text-warning-on-base: #f8b502;
+    --ui-text-warning-on-accent-light: #634801;
+    --ui-text-warning-on-medium-dark: #fdc530;
+    --ui-text-warning-on-accent-dark: #feecba;
+    --ui-text-red-on-base: #df1b12;
+    --ui-text-red-on-accent-light: #a2140d;
+    --ui-text-red-on-medium-dark: #f0514a;
+    --ui-text-red-on-accent-dark: #fbd4d2;
 
-    --sdk-color-success: #00a65e;
-    --sdk-color-info: #004b7f;
-    --sdk-color-warning: #fdc530;
-    --sdk-color-error: #df1b12;
+    /* --- Border --- */
+    --ui-border-transparent: rgba(0, 0, 0, 0);
+    --ui-border-white: #ffffff;
+    --ui-border-base-em: #f2f2f2;
+    --ui-border-low-em: #e5e5e5;
+    --ui-border-med-em: #cccccc;
+    --ui-border-high-em: #c2c2c2;
+    --ui-border-primary-low-em: #e5e5e5;
+    --ui-border-primary-med-em: #cccccc;
+    --ui-border-primary-high-em: #000000;
+    --ui-border-info-low-em: #c9d9e4;
+    --ui-border-info-med-em: #c9d9e4;
+    --ui-border-info-high-em: #004b7f;
+    --ui-border-success-low-em: #c9ecdd;
+    --ui-border-success-med-em: #c9ecdd;
+    --ui-border-success-high-em: #50c190;
+    --ui-border-warning-low-em: #feecba;
+    --ui-border-warning-med-em: #feecba;
+    --ui-border-warning-high-em: #fdc530;
+    --ui-border-red-low-em: #fbd4d2;
+    --ui-border-red-med-em: #fbd4d2;
+    --ui-border-red-high-em: #df1b12;
 
-    --sdk-font-primary: Gilroy, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    --sdk-font-secondary: "Proxima Nova", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    --sdk-font-code: "Fira Code", "Monaco", "Courier New", monospace;
+    /* --- Outline — colours only; ring geometry lives in component CSS --- */
+    --ui-outline-focus-gray: rgba(0, 0, 0, 0.12);
+    --ui-outline-focus-primary: #004b7f;
+    --ui-outline-focus-info: #c9edff;
+    --ui-outline-focus-success: #f5fbf8;
+    --ui-outline-focus-warning: #fff5dd;
+    --ui-outline-focus-red: #fff0ef;
 
-    --sdk-font-title: 22px;
-    --sdk-font-title-lh: 28px;
-    --sdk-font-heading: 18px;
-    --sdk-font-heading-lh: 24px;
-    --sdk-font-subheading: 14px;
-    --sdk-font-subheading-lh: 20px;
-    --sdk-font-body-l: 16px;
-    --sdk-font-body-l-lh: 24px;
-    --sdk-font-body-m: 14px;
-    --sdk-font-body-m-lh: 20px;
-    --sdk-font-body-s: 13px;
-    --sdk-font-body-s-lh: 18px;
-    --sdk-font-caption-m: 12px;
-    --sdk-font-caption-m-lh: 16px;
-    --sdk-font-caption-s: 11px;
-    --sdk-font-caption-s-lh: 14px;
+    /* --- Elevation — e0-e1 flat, e2 cards, e3 dropdowns, e4-e5 modals, e6 hero --- */
+    --ui-elevation-e0: 0px 1px 0px 0px rgba(17, 12, 34, 0);
+    --ui-elevation-e1: 0px 1px 2px -1px rgba(17, 12, 34, 0.08);
+    --ui-elevation-e2: 0px 2px 4px -2px rgba(17, 12, 34, 0.12);
+    --ui-elevation-e3: 0px 6px 16px -6px rgba(17, 12, 34, 0.1);
+    --ui-elevation-e4: 0px 16px 20px -8px rgba(17, 12, 34, 0.1);
+    --ui-elevation-e5: 0px 20px 24px -10px rgba(17, 12, 34, 0.1);
+    --ui-elevation-e6: 0px 32px 32px -12px rgba(17, 12, 34, 0.12);
+    --ui-elevation-e0-dark: 0px 1px 0px 0px rgba(255, 255, 255, 0);
+    --ui-elevation-e1-dark: 0px 1px 2px 0px rgba(0, 0, 0, 0.28);
+    --ui-elevation-e2-dark: 0px 2px 4px 0px rgba(0, 0, 0, 0.28);
+    --ui-elevation-e3-dark: 0px 6px 16px -4px rgba(0, 0, 0, 0.28);
+    --ui-elevation-e4-dark: 0px 16px 20px -8px rgba(0, 0, 0, 0.28);
+    --ui-elevation-e5-dark: 0px 20px 24px -10px rgba(0, 0, 0, 0.32);
+    --ui-elevation-e6-dark: 0px 24px 28px -12px rgba(0, 0, 0, 0.32);
 
-    --sdk-font-weight-normal: 400;
-    --sdk-font-weight-medium: 500;
-    --sdk-font-weight-semibold: 600;
-    --sdk-font-weight-bold: 700;
+    /* Focus rings */
+    --ui-shadow-focus: 0 0 0 4px rgba(0, 75, 127, 0.25);
+    --ui-shadow-focus-error: 0 0 0 4px rgba(223, 27, 18, 0.25);
 
-    --sdk-space-1: 4px;
-    --sdk-space-2: 8px;
-    --sdk-space-3: 12px;
-    --sdk-space-4: 16px;
-    --sdk-space-5: 20px;
-    --sdk-space-6: 24px;
-    --sdk-space-8: 32px;
+    /* --- Rounded --- */
+    --ui-rounded-5: 0.3125rem;
+    --ui-rounded-10: 0.625rem;
+    --ui-rounded-15: 0.9375rem;
+    --ui-rounded-20: 1.25rem;
+    --ui-rounded-30: 1.875rem;
+    --ui-rounded-40: 2.5rem;
+    --ui-rounded-none: 0;
+    --ui-rounded-full: 50%;
 
-    --sdk-height-xs: 24px;
-    --sdk-height-sm: 32px;
-    --sdk-height-md: 44px;
-    --sdk-height-lg: 48px;
-    --sdk-height-xl: 56px;
+    /* --- Typography --- */
+    --ui-font-gilroy: Gilroy, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --ui-font-proxima: "Proxima Nova", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --ui-font-fira: "Fira Code", "Monaco", "Courier New", monospace;
 
-    --sdk-panel-padding: 16px;
-    --sdk-panel-margin: 10px;
-    --sdk-form-field-margin: 24px;
-    --sdk-label-margin: 4px;
+    /* Gilroy — structural / wayfinding */
+    --ui-font-title-1: 1.25rem; /* 20px */
+    --ui-font-title-1-lh: 1.5rem; /* 24px */
+    --ui-font-title-2: 1rem; /* 16px */
+    --ui-font-title-2-lh: 1.5rem; /* 24px */
+    --ui-font-title-3: 0.875rem; /* 14px */
+    --ui-font-title-3-lh: 1.25rem; /* 20px */
+    --ui-font-title-4: 0.75rem; /* 12px */
+    --ui-font-title-4-lh: 1rem; /* 16px */
+    --ui-font-title-5: 0.625rem; /* 10px */
+    --ui-font-title-5-lh: 1rem; /* 16px */
 
-    --sdk-radius-5: 5px;
-    --sdk-radius-10: 10px;
-    --sdk-radius-15: 15px;
-    --sdk-radius-20: 20px;
-    --sdk-radius-30: 30px;
-    --sdk-radius-40: 40px;
-    --sdk-radius-full: 50%;
+    /* Proxima Nova — long-form reading */
+    --ui-font-body-l: 1.25rem; /* 20px */
+    --ui-font-body-l-lh: 1.5rem; /* 24px */
+    --ui-font-body-m: 1rem; /* 16px */
+    --ui-font-body-m-lh: 1.5rem; /* 24px */
+    --ui-font-body-s: 0.875rem; /* 14px */
+    --ui-font-body-s-lh: 1.25rem; /* 20px */
+    --ui-font-caption-m: 0.75rem; /* 12px */
+    --ui-font-caption-m-lh: 1rem; /* 16px */
+    --ui-font-caption-s: 0.625rem; /* 10px */
+    --ui-font-caption-s-lh: 0.875rem; /* 14px */
+    --ui-font-overline: 0.75rem; /* 12px — uppercase is baked in, see typography.css */
+    --ui-font-overline-lh: 1rem; /* 16px */
 
-    --sdk-shadow-e0: 0px 1px 0px 0px rgba(17, 12, 34, 0);
-    --sdk-shadow-e1: 0px 1px 2px -1px rgba(17, 12, 34, 0.08);
-    --sdk-shadow-e2: 0px 2px 4px -2px rgba(17, 12, 34, 0.12);
-    --sdk-shadow-e3: 0px 6px 16px -6px rgba(17, 12, 34, 0.1);
-    --sdk-shadow-e4: 0px 16px 20px -8px rgba(17, 12, 34, 0.1);
-    --sdk-shadow-e5: 0px 20px 24px -10px rgba(17, 12, 34, 0.1);
-    --sdk-shadow-e6: 0px 32px 32px -12px rgba(17, 12, 34, 0.12);
-    --sdk-shadow-focus: 0 0 0 4px rgba(0, 75, 127, 0.25);
-    --sdk-shadow-focus-error: 0 0 0 4px rgba(223, 27, 18, 0.25);
+    /* Fira Code — code only */
+    --ui-font-code-l: 1rem; /* 16px */
+    --ui-font-code-l-lh: 1.5rem; /* 24px */
+    --ui-font-code-m: 0.875rem; /* 14px */
+    --ui-font-code-m-lh: 1.5rem; /* 24px */
+    --ui-font-code-s: 0.75rem; /* 12px */
+    --ui-font-code-s-lh: 1.25rem; /* 20px */
+    --ui-font-code-xs: 0.625rem; /* 10px */
+    --ui-font-code-xs-lh: 1rem; /* 16px */
 
-    --sdk-transition-fast: 0.15s ease-in-out;
-    --sdk-transition-normal: 0.2s ease-in-out;
-    --sdk-transition-slow: 0.3s ease-in-out;
+    --ui-font-weight-normal: 400;
+    --ui-font-weight-medium: 500;
+    --ui-font-weight-semibold: 600;
+    --ui-font-weight-bold: 700;
 
-    --sdk-z-base: 1;
-    --sdk-z-dropdown: 10;
-    --sdk-z-panel: 100;
-    --sdk-z-modal: 1000;
-    --sdk-z-tooltip: 1100;
+    /* --- Spacing --- */
+    --ui-space-1: 4px;
+    --ui-space-2: 8px;
+    --ui-space-3: 12px;
+    --ui-space-4: 16px;
+    --ui-space-5: 20px;
+    --ui-space-6: 24px;
+    --ui-space-8: 32px;
+
+    /* --- Height --- */
+    --ui-height-xs: 24px;
+    --ui-height-sm: 32px;
+    --ui-height-md: 44px; /* minimum accessible touch target */
+    --ui-height-lg: 48px;
+    --ui-height-xl: 56px;
+
+    /* --- Layout --- */
+    --ui-panel-padding: 16px;
+    --ui-panel-margin: 10px;
+    --ui-form-field-margin: 24px;
+    --ui-label-margin: 4px;
+
+    /* --- Motion --- */
+    --ui-transition-fast: 0.15s ease-in-out;
+    --ui-transition-normal: 0.2s ease-in-out;
+    --ui-transition-slow: 0.3s ease-in-out;
+
+    /* --- Z-index --- */
+    --ui-z-base: 1;
+    --ui-z-dropdown: 10;
+    --ui-z-panel: 100;
+    --ui-z-modal: 1000;
+    --ui-z-tooltip: 1100;
 }

@@ -15,7 +15,6 @@ import { VehicleState } from './vehicleState';
  * const params: GenericVehicleParams = {
  *   model: {
  *     dimensions: {
- *       heightMeters: 2.5,
  *       weightKG: 3500
  *     }
  *   }
@@ -238,7 +237,7 @@ export type ElectricVehicleParams = {
  * - **Model**: Static properties (dimensions, engine specs)
  * - **State**: Current conditions (fuel/charge level, heading)
  * - **Preferences**: Routing preferences (charging stops, etc.)
- * - **Restrictions**: Cargo and usage restrictions
+ * - **Restrictions**: Maximum speed applied during route planning
  *
  * **Three Types:**
  * 1. **Generic**: Basic vehicle without engine-specific features
@@ -246,11 +245,9 @@ export type ElectricVehicleParams = {
  * 3. **Electric**: Battery-powered with charging stop optimization
  *
  * **When to Specify:**
- * - Size restrictions matter (trucks, vans)
+ * - Weight restrictions matter (trucks, vans)
  * - Accurate range prediction needed
  * - EV routing with charging stops
- * - Hazardous material transport
- * - Commercial vehicle routing
  *
  * @example
  * ```typescript
@@ -258,12 +255,8 @@ export type ElectricVehicleParams = {
  * const van: VehicleParameters = {
  *   model: {
  *     dimensions: {
- *       heightMeters: 2.5,
  *       weightKG: 3500
  *     }
- *   },
- *   restrictions: {
- *     commercial: true
  *   }
  * };
  *
@@ -302,17 +295,14 @@ export type ElectricVehicleParams = {
  *   }
  * };
  *
- * // Hazmat truck
- * const hazmatTruck: VehicleParameters = {
+ * // Speed-limited truck
+ * const truck: VehicleParameters = {
  *   model: {
  *     dimensions: {
- *       heightMeters: 4.0,
  *       weightKG: 40000
  *     }
  *   },
  *   restrictions: {
- *     loadTypes: ['USHazmatClass3'],
- *     commercial: true,
  *     maxSpeedKMH: 80
  *   }
  * };

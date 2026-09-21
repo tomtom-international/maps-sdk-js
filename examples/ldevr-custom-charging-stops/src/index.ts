@@ -21,7 +21,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         },
     });
 
-    const routingModule = await RoutingModule.get(map, {
+    const routingModule = await RoutingModule.create(map, {
         chargingStops: {
             text: {
                 title: ['format', ['get', 'chargingDuration'], { 'text-color': '#243882' }],

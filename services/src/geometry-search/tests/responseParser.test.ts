@@ -7,11 +7,12 @@ import { apiAndParsedResponses } from './responseParser.data';
 import { apiResponses } from './responseParserPerf.data';
 
 describe('Geometry Search response parser tests', () => {
-    test.each(
-        apiAndParsedResponses,
-    )("'%s'", (_name: string, apiResponse: GeometrySearchResponseAPI, parsedResponse: GeometrySearchResponse) => {
-        expect(parseGeometrySearchResponse(apiResponse)).toStrictEqual(parsedResponse);
-    });
+    test.each(apiAndParsedResponses)(
+        "'%s'",
+        (_name: string, apiResponse: GeometrySearchResponseAPI, parsedResponse: GeometrySearchResponse) => {
+            expect(parseGeometrySearchResponse(apiResponse)).toStrictEqual(parsedResponse);
+        },
+    );
 });
 
 describe('Geometry Search response parser performance tests', () => {

@@ -19,15 +19,16 @@ export class TrafficTilesState implements StateSlice {
 
     constructor(private readonly _ttMap: TomTomMap) {}
 
-    // Module getters (lazy initialization)
+    // Module getters. The SDK shares style-owned modules per map, so these are lookups —
+    // the field only records that we have fetched it, for the synchronous accessors below.
 
     async getTrafficFlowModule(): Promise<TrafficFlowModule> {
-        this._trafficFlowModule ??= await TrafficFlowModule.get(this._ttMap);
+        this._trafficFlowModule = await TrafficFlowModule.get(this._ttMap);
         return this._trafficFlowModule;
     }
 
     async getTrafficIncidentsModule(): Promise<TrafficIncidentsModule> {
-        this._trafficIncidentsModule ??= await TrafficIncidentsModule.get(this._ttMap);
+        this._trafficIncidentsModule = await TrafficIncidentsModule.get(this._ttMap);
         return this._trafficIncidentsModule;
     }
 

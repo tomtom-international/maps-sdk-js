@@ -18,11 +18,11 @@ export const FocusChip: FC<Props> = ({ count, currentIndex, reason, onPrev, onNe
     const position = showNav ? `${currentIndex + 1} / ${count}` : `${count}`;
     return (
         <div
-            className={`flex max-w-[320px] items-center gap-2 px-3 py-2 text-(--pb-font-body-s) text-(--pb-text-high) ${cardShellClass}`}
+            className={`flex max-w-[320px] items-center gap-2 px-3 py-2 text-(--ui-font-body-s) text-(--ui-text-high-em) ${cardShellClass}`}
         >
             <span>
                 <strong>Focus:</strong> {position} incident{count === 1 ? '' : 's'}
-                {label ? <span className="text-(--pb-text-medium)"> · {label}</span> : null}
+                {label ? <span className="text-(--ui-text-med-em)"> · {label}</span> : null}
             </span>
             {showNav && (
                 <span className="ml-auto inline-flex items-center gap-0.5">

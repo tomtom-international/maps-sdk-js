@@ -30,7 +30,7 @@ export type AffectedEntry = {
 /** @ignore */
 export type CollectedGeometries = {
     geometries: PolygonFeature[];
-    /** Place objects whose footprints contributed (used to seed processGeometries provenance). */
+    /** Place objects whose footprints contributed (used to seed processData provenance). */
     sourcePlaces: Place[];
     /** Entries that should receive analyses (places + customGeometries; ranges don't carry analyses). */
     affectedEntries: AffectedEntry[];
@@ -212,7 +212,7 @@ const collectCustomGeometries = (
  * consult: `place` and `places` go through the per-place fetch pipeline
  * (Geometry Data service for footprints, lazy cached on the places-entry);
  * `ranges` flattens isochrone polygons already in memory; `custom` reads a
- * derived entry produced by a previous `processGeometries`.
+ * derived entry produced by a previous `processData`.
  *
  * Validates the input precondition (at least one id) and the output
  * postcondition (at least one polygon collected). Returns `affectedEntries`

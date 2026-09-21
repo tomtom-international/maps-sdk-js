@@ -87,17 +87,17 @@ describe('Geometry Search service', () => {
             language,
         });
 
-        expect(res.features).toEqual(
-            expect.arrayContaining<GeometrySearchResponse>([
-                expect.objectContaining({
-                    properties: expect.objectContaining({
-                        poi: expect.objectContaining({
-                            categories: expect.arrayContaining(['RESTAURANT']),
-                        }),
-                    }),
-                }),
-            ]),
-        );
+        // `RESTAURANT` is a parent category: the API filters on it but tags each result
+        // with the child code that fits it (`ASIAN_RESTAURANT`, `PIZZERIA`, ...), naming
+        // the parent in `localizedCategories`. So match the family, not the exact code.
+        const isRestaurant = (place: Place<SearchPlaceProps>): boolean =>
+            Boolean(
+                place.properties.poi?.categories.some((category) => category.includes('RESTAURANT')) ||
+                    place.properties.poi?.localizedCategories.some((category) => category.includes('restaurant')),
+            );
+
+        expect(res.features.length).toBeGreaterThan(0);
+        expect(res.features.some(isRestaurant)).toBe(true);
     });
 
     test('geometrySearch for EV charging stations', async () => {

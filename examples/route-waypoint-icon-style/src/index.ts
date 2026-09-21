@@ -23,7 +23,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         },
     });
 
-    const routingModule = await RoutingModule.get(map, {
+    const routingModule = await RoutingModule.create(map, {
         waypoints: { icon: { style: { fillColor: 'green', outlineColor: 'orange', outlineOpacity: 0.7 } } },
     });
     routingModule.showWaypoints(waypoints);

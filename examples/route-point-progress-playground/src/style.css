@@ -4,45 +4,45 @@
 @import "../../src/templates/css/panel/custom-panel.css";
 @import "../../src/templates/css/maplibre/popup.css";
 
-.sdk-example-instructions {
-    margin: 0 0 var(--sdk-space-3);
-    font-family: var(--sdk-font-primary);
-    font-size: var(--sdk-font-body-s);
-    line-height: var(--sdk-font-body-s-lh);
-    color: var(--sdk-text-medium);
+.ui-instructions {
+    margin: 0 0 var(--ui-space-3);
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-s);
+    line-height: var(--ui-font-body-s-lh);
+    color: var(--ui-text-med-em);
 }
 
 /* PROGRESS POPUP */
 
 .progress-popup .maplibregl-popup-content {
-    padding: var(--sdk-space-2) var(--sdk-space-3);
-    border-radius: var(--sdk-radius-10);
+    padding: var(--ui-space-2) var(--ui-space-3);
+    border-radius: var(--ui-rounded-10);
     box-shadow:
         0 0 0 1px rgba(0, 0, 0, 0.08),
         0 2px 12px rgba(0, 0, 0, 0.18);
-    background: var(--sdk-surface-0);
+    background: var(--ui-surface-0);
 }
 
 .progress-popup-row {
     display: flex;
     align-items: center;
-    gap: var(--sdk-space-2);
-    font-size: var(--sdk-font-body-s);
-    line-height: var(--sdk-font-body-s-lh);
-    font-weight: var(--sdk-font-weight-semibold);
-    color: var(--sdk-text-high);
+    gap: var(--ui-space-2);
+    font-size: var(--ui-font-body-s);
+    line-height: var(--ui-font-body-s-lh);
+    font-weight: var(--ui-font-weight-semibold);
+    color: var(--ui-text-high-em);
     white-space: nowrap;
 }
 
 .progress-popup-row--right {
-    color: var(--sdk-text-medium);
-    font-weight: var(--sdk-font-weight-normal);
+    color: var(--ui-text-med-em);
+    font-weight: var(--ui-font-weight-normal);
 }
 
 .progress-popup-row--sub {
-    font-size: var(--sdk-font-caption-m);
-    line-height: var(--sdk-font-caption-m-lh);
-    color: var(--sdk-text-medium);
+    font-size: var(--ui-font-caption-m);
+    line-height: var(--ui-font-caption-m-lh);
+    color: var(--ui-text-med-em);
     margin-top: 2px;
 }
 
@@ -53,10 +53,10 @@
     flex-shrink: 0;
     width: 20px;
     height: 20px;
-    margin-left: var(--sdk-space-1);
+    margin-left: var(--ui-space-1);
     padding: 0;
     border: none;
-    border-radius: var(--sdk-radius-4);
+    border-radius: var(--ui-rounded-5);
     background: transparent;
     color: transparent;
     font-size: 12px;
@@ -65,11 +65,11 @@
 }
 
 button.progress-popup-close {
-    color: var(--sdk-text-low);
+    color: var(--ui-text-low-em);
     cursor: pointer;
 }
 
 button.progress-popup-close:hover {
-    background: var(--sdk-surface-2);
-    color: var(--sdk-text-high);
+    background: var(--ui-surface-2);
+    color: var(--ui-text-high-em);
 }

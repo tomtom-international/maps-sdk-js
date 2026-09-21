@@ -1,35 +1,50 @@
-import type { ToolEntry, ToolState } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+import type { ToolEntry, ToolEntryBuilder, ToolState } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import { z } from 'zod';
 import type { SiteSelectionPatch, SiteToolState } from '../agent/site-selection-state';
+import { householdsEnabled } from '../demographics/experimental-search';
 
 // updateSitePreferences is a state-only tool: it changes the session defaults the analysis tools read
 // (catchment, weights, demand anchors) so the user's standing choices stick across turns without being
 // restated each time. It fetches and computes nothing. See the PR description.
 
-const updateSitePreferencesSchema = z.object({
-    concept: z.string().optional().describe('Default concept being sited, e.g. "specialty coffee".'),
-    travelMode: z.enum(['walk', 'drive']).optional().describe('Default catchment mode for new analyses.'),
-    walkReachMeters: z.number().positive().optional().describe('Default walking-catchment radius in metres.'),
-    driveMinutes: z.number().positive().optional().describe('Default drive-time budget in minutes.'),
-    demandAnchors: z
-        .array(z.string())
-        .optional()
-        .describe('Default POI category terms that stand in for demand when scanning for whitespace.'),
-    scoringWeights: z
-        .object({
-            reach: z.number().min(0),
-            demand: z.number().min(0),
-            competition: z.number().min(0),
-            accessibility: z.number().min(0),
-        })
-        .partial()
-        .optional()
-        .describe('Default ranking weights. Partial — nudge one factor without restating the others.'),
-});
+// The Reach (households) factor exists only when the experimental-search flag enables the household
+// signal — otherwise it is absent from the schema so the agent can never mention it. Built per agent
+// (see the builder below).
+const buildUpdateSitePreferencesSchema = (households: boolean) =>
+    z.object({
+        concept: z.string().optional().describe('Default concept being sited, e.g. "specialty coffee".'),
+        travelMode: z.enum(['walk', 'drive']).optional().describe('Default catchment mode for new analyses.'),
+        walkReachMeters: z.number().positive().optional().describe('Default walking-catchment radius in metres.'),
+        driveMinutes: z.number().positive().optional().describe('Default drive-time budget in minutes.'),
+        demandAnchors: z
+            .array(z.string())
+            .optional()
+            .describe('Default POI category terms that stand in for demand when scanning for whitespace.'),
+        scoringWeights: (households
+            ? z.object({
+                  reach: z.number().min(0),
+                  demand: z.number().min(0),
+                  competition: z.number().min(0),
+                  accessibility: z.number().min(0),
+              })
+            : z.object({
+                  demand: z.number().min(0),
+                  competition: z.number().min(0),
+                  accessibility: z.number().min(0),
+              })
+        )
+            .partial()
+            .optional()
+            .describe('Default ranking weights. Partial — nudge one factor without restating the others.'),
+    });
 
-type UpdateSitePreferencesInput = z.infer<typeof updateSitePreferencesSchema>;
+type UpdateSitePreferencesInput = z.infer<ReturnType<typeof buildUpdateSitePreferencesSchema>>;
 
-export const updateSitePreferences: ToolEntry = {
+// BUILDER: the scoringWeights schema depends on the household signal, so it is assembled at
+// createMapAgent time — after buildSiteAgentOptions stored the flag — rather than at module load.
+// (Read from the store, not options.featureFlags: the toolkit's public FeatureFlags type strips the
+// internal experimentalSearch member.)
+export const updateSitePreferences: ToolEntryBuilder = () => ({
     description:
         'Set the session defaults the analysis tools inherit — default concept, travel mode, catchment size, ' +
         'demand anchors, and ranking weights. Call this ONLY when the user states a STANDING preference to persist ' +
@@ -42,7 +57,7 @@ export const updateSitePreferences: ToolEntry = {
         'The user states a STANDING / default preference to PERSIST across future requests ("from now on", ' +
         '"always", "by default") for catchment mode/size, scoring weights, demand anchors, or the concept — NOT a ' +
         'one-off value for an analysis they are asking to run now.',
-    inputSchema: updateSitePreferencesSchema,
+    inputSchema: buildUpdateSitePreferencesSchema(householdsEnabled()),
     execute: (async (params: UpdateSitePreferencesInput, state: ToolState) => {
         const patch: SiteSelectionPatch = params;
         const updated = (state as SiteToolState).siteSelection.update(patch);
@@ -59,4 +74,4 @@ export const updateSitePreferences: ToolEntry = {
         'My default demand anchors are gyms, transit stops and supermarkets',
         'Set the default concept to specialty coffee',
     ],
-};
+});

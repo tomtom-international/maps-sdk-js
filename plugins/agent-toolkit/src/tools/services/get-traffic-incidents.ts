@@ -2,22 +2,25 @@
  * @module agent-toolkit-tools
  */
 
-import { type BBox, bboxFromGeoJSON, trafficIncidentRequestCategories } from '@tomtom-org/maps-sdk/core';
+import {
+    type BBox,
+    bboxFromBBoxes,
+    bboxFromGeoJSON,
+    trafficIncidentRequestCategories,
+} from '@tomtom-org/maps-sdk/core';
 import { type TrafficIncidentDetailsByBBoxParams, trafficIncidentDetails } from '@tomtom-org/maps-sdk/services';
 
 import { z } from 'zod';
-import type { ToolState } from '../../types';
+import type { ToolExecuteOptions, ToolState } from '../../types';
 import {
     type AreaWhere,
     geoJsonBBoxSchema,
     getRangePolygons,
     isResolveError,
-    matchedAreasLabel,
     type ResolvedAreaDisclosure,
-    resolvedAreasDisclosure,
-    resolveWithinAreas,
+    resolveWithin,
     sharedWithinFields,
-    unionBBox,
+    withAgentToolkitHeaders,
 } from '../shared';
 import { toolStateToWhereContext } from '../shared/tool-state-where-context';
 import { resolvedAreasOutputSchema, toolErrorSchema } from '../shared-output-schemas';
@@ -221,6 +224,7 @@ const resolveRangeToBBoxes = (state: ToolState, rangeId: string): { bboxes: BBox
 const resolveWithinToBBox = async (
     where: WithinWhere,
     state: ToolState,
+    options?: ToolExecuteOptions,
 ): Promise<ResolvedScope | { error: string }> => {
     const bboxes: BBox[] = [];
 
@@ -232,10 +236,8 @@ const resolveWithinToBBox = async (
         bboxes.push(...ranged.bboxes);
     }
 
-    // resolveWithinAreas applies the "any area input?" guard itself, so a range-only `where` yields
-    // an empty result rather than tripping resolveAreas' "No area specified" guard. Traffic consumes
-    // only bboxes — resolve queries to the top candidate's bbox without fetching boundary polygons
-    // (it doesn't support polygon filters yet).
+    // resolveWithin returns an empty area set (not an error) when nothing resolved, so a range-only
+    // `where` composes fine here rather than tripping a "no area" guard.
     const areaWhere: AreaWhere = {
         viewport: where.viewport,
         boundingBox: where.boundingBox,
@@ -244,19 +246,22 @@ const resolveWithinToBBox = async (
         geometries: where.geometries,
         route: where.route,
     };
-    const within = await resolveWithinAreas(areaWhere, toolStateToWhereContext(state), { bboxOnlyQueries: true });
+    const within = await resolveWithin(areaWhere, toolStateToWhereContext(state));
     if (isResolveError(within)) return within;
-    bboxes.push(...within.areas.map((a) => a.bbox));
+    bboxes.push(...within.map((a) => a.bbox));
 
     // Surface where each named query actually resolved — the grounded match, independent of the
     // model's own `label`, so the agent can confirm the place (and correct a wrong same-name
     // resolution) rather than silently trust it.
-    const resolvedAreas = resolvedAreasDisclosure(within.areas);
+    const resolvedAreas = within
+        .filter((a) => a.source === 'query' && a.label)
+        .map((a) => ({ matched: a.label as string, ...(a.query !== undefined && { query: a.query }) }));
+    const routeLabel = within.find((a) => a.source === 'route')?.label;
 
     if (bboxes.length === 0) return { error: 'No area resolved from `where`.' };
     return {
-        bbox: unionBBox(bboxes),
-        routeLabel: within.routeLabel,
+        bbox: bboxFromBBoxes(bboxes) as BBox,
+        routeLabel,
         ...(resolvedAreas.length > 0 && { resolvedAreas }),
     };
 };
@@ -276,7 +281,7 @@ const defaultLabel = (
 
     // Prefer the grounded match ("London, CA") over the query echo ("east London") so the entry chip
     // never masks a wrong same-name resolution.
-    let head: string | undefined = matchedAreasLabel(resolvedAreas);
+    let head: string | undefined = resolvedAreas?.length ? resolvedAreas.map((a) => a.matched).join(', ') : undefined;
     if (head === undefined && where && !where.viewport) {
         if (where.queries?.length) head = where.queries.map((q) => q.query).join(', ');
         else if (routeLabel) head = `along ${routeLabel}`;
@@ -295,6 +300,7 @@ const defaultLabel = (
 export const executeGetTrafficIncidents = async (
     params: z.infer<typeof getTrafficIncidentsSchema>,
     state: ToolState,
+    options?: ToolExecuteOptions,
 ): Promise<z.infer<typeof getTrafficIncidentsOutputSchema>> => {
     const {
         where,
@@ -317,11 +323,16 @@ export const executeGetTrafficIncidents = async (
     };
 
     try {
-        const resolved = await resolveWithinToBBox(effectiveWhere, state);
+        const resolved = await resolveWithinToBBox(effectiveWhere, state, options);
         if ('error' in resolved) return resolved;
         const { bbox: effectiveBbox, routeLabel, resolvedAreas } = resolved;
 
-        const result = await trafficIncidentDetails({ ...filters, bbox: effectiveBbox });
+        const requestParams = withAgentToolkitHeaders({
+            ...filters,
+            bbox: effectiveBbox,
+            signal: options?.signal,
+        });
+        const result = await trafficIncidentDetails(requestParams);
 
         const entryParams: TrafficIncidentDetailsByBBoxParams & { bbox: BBox } = {
             bbox: effectiveBbox,
@@ -362,7 +373,15 @@ export const executeGetTrafficIncidents = async (
             state.trafficIncidents.startMonitoring(
                 entryId,
                 { bbox: effectiveBbox, capturedAt, label: entryLabel },
-                { fetchIncidents: async (b) => (await trafficIncidentDetails({ ...filters, bbox: b })).features },
+                {
+                    // No signal here, unlike the turn-scoped fetch above: ticks run on the
+                    // monitor's interval after this turn ends, and a rejected tick is fatal
+                    // to the monitor (it clears the interval).
+                    fetchIncidents: async (b) => {
+                        const tickParams = withAgentToolkitHeaders({ ...filters, bbox: b });
+                        return (await trafficIncidentDetails(tickParams)).features;
+                    },
+                },
                 { intervalMs: monitorIntervalMs, skipInitialTick: true },
             );
         }

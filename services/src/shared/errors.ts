@@ -111,6 +111,40 @@ export class SDKServiceError extends SDKError {
 }
 
 /**
+ * Error class for cancelled service calls.
+ *
+ * Thrown when the `signal` passed to a service call is aborted, either before the
+ * request is sent or while it is in flight. Its `name` is `'AbortError'`, matching
+ * the convention used by `fetch`, and the original abort reason — including a custom
+ * value passed to `AbortController.abort(reason)` — is available on `cause`.
+ *
+ * @example
+ * ```typescript
+ * try {
+ *   await search({ query: 'cafe', signal: controller.signal });
+ * } catch (error) {
+ *   if (error instanceof SDKAbortError) return; // superseded by a newer search
+ *   throw error;
+ * }
+ * ```
+ *
+ * @group Errors
+ */
+export class SDKAbortError extends SDKError {
+    /**
+     * Creates a new SDKAbortError instance.
+     *
+     * @param service - Name of the service whose call was cancelled
+     * @param cause - The abort reason carried by the signal
+     */
+    constructor(service: string, cause?: unknown) {
+        super('The operation was aborted.', service);
+        this.name = 'AbortError';
+        this.cause = cause;
+    }
+}
+
+/**
  * @ignore
  * @param error
  * @param serviceName
@@ -129,12 +163,26 @@ export const parseDefaultResponseError: ParseResponseError<DefaultAPIResponseErr
  * @param error The error captured by a catch function.
  * @param serviceName The name of the service.
  * @param parseResponseError
+ * @param signal The signal given to the call, used to recognise a cancellation.
  */
 export const buildResponseError = (
     error: unknown,
     serviceName: ServiceName,
     parseResponseError?: ParseResponseError<unknown>,
+    signal?: AbortSignal,
 ): SDKError => {
+    // Checked before the status: an aborted fetch carries no status. Not a bare `signal?.aborted`
+    // — `parseResponse` runs in the same `try`, so a real error thrown while the signal happens to
+    // be aborted must not be reported as a cancellation. fetch rejects with exactly `signal.reason`.
+    if (signal?.aborted && error === signal.reason) {
+        return new SDKAbortError(serviceName, signal.reason);
+    }
+
+    // A custom `sendRequest` may mint its own AbortError instead.
+    if (signal?.aborted && (error as Error)?.name === 'AbortError') {
+        return new SDKAbortError(serviceName, signal.reason);
+    }
+
     if ((error as APIErrorResponse).status) {
         const fetchError = error as APIErrorResponse;
         if (parseResponseError) {

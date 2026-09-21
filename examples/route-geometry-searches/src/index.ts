@@ -21,14 +21,14 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         },
     });
 
-    const routingModule = await RoutingModule.get(map);
+    const routingModule = await RoutingModule.create(map);
     routingModule.showWaypoints(waypoints);
     const routes = await calculateRoute({ locations: waypoints });
     routingModule.showRoutes(routes);
 
-    const extraWidePlacesModule = await PlacesModule.get(map, { theme: 'base-map' });
-    const widePlacesModule = await PlacesModule.get(map, { theme: 'base-map' });
-    const onRoadPlacesModule = await PlacesModule.get(map, { theme: 'circle-icon' });
+    const extraWidePlacesModule = await PlacesModule.create(map, { theme: 'base-map' });
+    const widePlacesModule = await PlacesModule.create(map, { theme: 'base-map' });
+    const onRoadPlacesModule = await PlacesModule.create(map, { theme: 'circle-icon' });
 
     const route = routes.features[0];
     extraWidePlacesModule.show(

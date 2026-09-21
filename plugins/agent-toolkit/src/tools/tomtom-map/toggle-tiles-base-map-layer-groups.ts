@@ -24,7 +24,7 @@ export const toggleTilesBaseMapLayerGroupsSchema = z.object({
 });
 
 export const toggleTilesBaseMapLayerGroupsDescription =
-    'Show / hide groups of vector-tile base-map style layers (water, buildings3D, roadLines, placeLabels, capitalLabels, …). ' +
+    'Show / hide groups of vector-tile base-map style layers (water, buildings3D, roads, allPlaceLabels, capitalLabels, …). ' +
     'Operates on the underlying MapLibre style — orthogonal to anything rendered through PlacesModule / RoutingModule / ' +
     'CustomGeoJSONModule (those layers are unaffected).';
 

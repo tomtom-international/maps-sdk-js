@@ -1,14 +1,14 @@
 /* SPINNER */
 
-.sdk-example-spinner {
-    --spinner-size: 32px;
-    --spinner-width: 3px;
-    --spinner-color: var(--sdk-primary-color);
+.ui-spinner {
+    --ui-spinner-size: 32px;
+    --ui-spinner-width: 3px;
+    --ui-spinner-color: var(--ui-surface-brand-red);
 
-    width: var(--spinner-size);
-    height: var(--spinner-size);
-    border: var(--spinner-width) solid var(--sdk-border-low);
-    border-bottom-color: var(--spinner-color);
+    width: var(--ui-spinner-size);
+    height: var(--ui-spinner-size);
+    border: var(--ui-spinner-width) solid var(--ui-border-low-em);
+    border-bottom-color: var(--ui-spinner-color);
     border-radius: 50%;
     display: inline-block;
     box-sizing: border-box;

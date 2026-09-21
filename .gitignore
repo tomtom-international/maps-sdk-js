@@ -30,3 +30,6 @@ eval-report-*
 
 # Agent-eval benchmark run logs (local experiment tracking, not source)
 agent-eval/benchmark/results/
+
+# Nx
+.nx/

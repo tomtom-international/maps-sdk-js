@@ -9,40 +9,40 @@
 
 /* FLOW POPUP */
 
-.sdk-example-flow-popup-wrapper .maplibregl-popup-content {
+.ui-flow-popup-wrapper .maplibregl-popup-content {
     padding: 0;
-    border-radius: var(--sdk-radius-15);
-    box-shadow: var(--sdk-shadow-e4);
+    border-radius: var(--ui-rounded-15);
+    box-shadow: var(--ui-elevation-e4);
     overflow: hidden;
     min-width: 200px;
 }
 
-.sdk-example-flow-popup {
-    padding: var(--sdk-panel-padding);
-    padding-right: calc(var(--sdk-panel-padding) + 20px);
+.ui-flow-popup {
+    padding: var(--ui-panel-padding);
+    padding-right: calc(var(--ui-panel-padding) + 20px);
 }
 
-.sdk-example-flow-row {
+.ui-flow-row {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    gap: var(--sdk-space-4);
-    padding: var(--sdk-space-1) 0;
-    border-bottom: 1px solid var(--sdk-border-base);
+    gap: var(--ui-space-4);
+    padding: var(--ui-space-1) 0;
+    border-bottom: 1px solid var(--ui-border-base-em);
 }
 
-.sdk-example-flow-row:last-child {
+.ui-flow-row:last-child {
     border-bottom: none;
 }
 
-.sdk-example-flow-row .sdk-example-form-label {
+.ui-flow-row .ui-form-label {
     margin: 0;
     flex-shrink: 0;
 }
 
-.sdk-example-flow-value {
-    font-size: var(--sdk-font-body-s);
-    font-weight: var(--sdk-font-weight-medium);
-    color: var(--sdk-text-high);
+.ui-flow-value {
+    font-size: var(--ui-font-body-s);
+    font-weight: var(--ui-font-weight-medium);
+    color: var(--ui-text-high-em);
     text-align: right;
 }

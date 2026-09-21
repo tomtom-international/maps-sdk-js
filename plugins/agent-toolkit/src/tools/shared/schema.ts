@@ -5,22 +5,60 @@
  */
 
 import { z } from 'zod';
+import { placesMarkerTypes } from '../../state';
+
+// Range guards for model-supplied coordinates. Written as refinements rather than
+// per-element `.min()/.max()` because one position array mixes two different valid
+// ranges (longitude ±180, latitude ±90) that a single element schema can't express.
+// Number.isFinite also rejects Infinity, which `z.number()` alone lets through.
+const isLongitude = (value: number) => Number.isFinite(value) && value >= -180 && value <= 180;
+const isLatitude = (value: number) => Number.isFinite(value) && value >= -90 && value <= 90;
+
+const POSITION_RANGE_MESSAGE = 'Position must be [lng, lat] with lng in [-180, 180] and lat in [-90, 90].';
+
+/**
+ * A `[lng, lat]` position with both components range-checked. Use for every
+ * model-supplied point input instead of a bare `z.array(z.number()).length(2)`.
+ *
+ * @ignore
+ */
+export const positionSchema = z
+    .array(z.number())
+    .length(2)
+    .refine(([lng, lat]) => isLongitude(lng) && isLatitude(lat), { message: POSITION_RANGE_MESSAGE });
+
+// A GeoJSON position inside a geometry, where a third altitude component is legal
+// (RFC 7946 §3.1.1). Only lng/lat are range-checked; altitude is left unconstrained.
+const geoJsonPositionSchema = z
+    .array(z.number())
+    .min(2)
+    .max(3)
+    .refine(([lng, lat]) => isLongitude(lng) && isLatitude(lat), { message: POSITION_RANGE_MESSAGE });
 
 /** @ignore */
 export const geoJsonBBoxSchema = z
-    .union([z.array(z.number()).refine((arr) => arr.length === 4, { message: 'BBox must have 4 elements' })])
-    .describe('[minLng, minLat, maxLng, maxLat] or [W,S,E,N]');
+    .array(z.number())
+    .length(4)
+    .refine(
+        ([west, south, east, north]) =>
+            isLongitude(west) && isLatitude(south) && isLongitude(east) && isLatitude(north),
+        { message: 'BBox values out of range — lng must be in [-180, 180] and lat in [-90, 90].' },
+    )
+    // Latitude must be ordered, but longitude must NOT be: a bbox crossing the
+    // antimeridian legitimately has minLng > maxLng (e.g. [170, -10, -170, 10]).
+    .refine(([, south, , north]) => south <= north, { message: 'BBox minLat must be <= maxLat.' })
+    .describe('[minLng, minLat, maxLng, maxLat] or [W,S,E,N]. lng in [-180, 180], lat in [-90, 90].');
 
 /** @ignore */
 export const polygonInputSchema = z.object({
     type: z.literal('Polygon'),
-    coordinates: z.array(z.array(z.array(z.number()))),
+    coordinates: z.array(z.array(geoJsonPositionSchema)),
 });
 
 /** @ignore */
 export const multiPolygonInputSchema = z.object({
     type: z.literal('MultiPolygon'),
-    coordinates: z.array(z.array(z.array(z.array(z.number())))),
+    coordinates: z.array(z.array(z.array(geoJsonPositionSchema))),
 });
 
 /** @ignore */
@@ -155,7 +193,7 @@ export const geometryDisplayConfigSchema = z
  * @ignore
  */
 export const markerTypeSchema = z
-    .enum(['base-map', 'pin', 'pin-clustered', 'none'])
+    .enum([...placesMarkerTypes, 'none'])
     .describe(
         '"pin" for few results; "base-map" for 10+; ' +
             '"pin-clustered" aggregates nearby pins under a count badge (best for dense city-scale POI sets — ' +
@@ -295,11 +333,7 @@ const nearbySingularKeys = ['position', 'viewport', 'query'] as const;
 export const nearbyWhereSchema = z
     .object({
         mode: z.literal('nearby'),
-        position: z
-            .array(z.number())
-            .length(2)
-            .optional()
-            .describe('Bias point [lng, lat]. EXCLUSIVE with viewport / query.'),
+        position: positionSchema.optional().describe('Bias point [lng, lat]. EXCLUSIVE with viewport / query.'),
         viewport: z
             .literal(true)
             .optional()
@@ -422,9 +456,9 @@ export const sharedWithinFields = {
 };
 
 /**
- * The resolver's input: the area-producing `where` fields. `z.infer` of this is `AreaWhere` in
- * resolve-where.ts, so the LLM-facing tool schemas and the resolver input share one definition.
- * No `range` — that maps to stored isochrones and is resolved caller-side.
+ * The resolver's input: the area-producing `where` fields, so the LLM-facing tool schemas and
+ * the resolver input (see {@link AreaWhere}) share one definition. No `range` — that maps to
+ * stored isochrones and is resolved caller-side.
  * @ignore
  */
 export const areaWhereSchema = z.object({
@@ -435,3 +469,6 @@ export const areaWhereSchema = z.object({
     geometries: sharedWithinFields.geometries,
     route: sharedWithinFields.route,
 });
+
+/** The `where` fields resolve-where.ts resolves — inferred from {@link areaWhereSchema}. */
+export type AreaWhere = z.infer<typeof areaWhereSchema>;

@@ -1,23 +1,26 @@
 {
   "name": "@tomtom-org/maps-sdk-examples",
-  "version": "0.50.0",
+  "version": "0.54.0",
   "type": "module",
   "description": "JavaScript library for examples of TomTom maps and location services",
   "module": "dist/examples.js",
   "types": "dist/src/index.d.ts",
+  "nx": {
+    "implicitDependencies": [
+      "@tomtom-org/maps-sdk",
+      "shared-configs"
+    ]
+  },
   "scripts": {
-    "build": "pnpm --workspace-concurrency=8 -F './*' build && vite build",
-    "build:sandpack": "pnpm --workspace-concurrency=8 -F './*' --if-present build:sandpack",
+    "build": "vite build && tsc -p tsconfig.build.json",
     "test": "vitest run",
     "test:e2e": "pnpm exec playwright install --with-deps chromium && playwright test",
     "test:e2e:sandpack": "pnpm exec playwright install --with-deps chromium && playwright test --grep @sandpack",
     "test:e2e:prod": "pnpm exec playwright install --with-deps chromium && playwright test --grep @prod",
     "test:eval": "pnpm exec playwright install --with-deps chromium && playwright test --config playwright.eval.config.ts --grep @agenteval",
-    "test:agent-tool-calling": "pnpm --workspace-concurrency=1 -F './*' --if-present test:agent-tool-calling",
     "test:e2e:ui": "pnpm exec playwright install --with-deps chromium && playwright test --ui",
     "test:e2e:update-all-snapshots": "pnpm exec playwright install --with-deps chromium && playwright test --update-snapshots",
     "test:e2e:update-snapshot": "bash -c 'pnpm exec playwright install --with-deps chromium && playwright test \"$1\"/ --update-snapshots' _",
-    "type-check": "pnpm --parallel -F './*' type-check",
     "generate-thumbnails": "bash scripts/generate-thumbnails.sh",
     "start-test-server:prod": "npx serve . -p 9050",
     "start-test-server:sandpack": "npx serve . -p 9051"
@@ -29,7 +32,6 @@
     "react-dom": "catalog:"
   },
   "devDependencies": {
-    "@microsoft/api-extractor": "catalog:",
     "@playwright/test": "catalog:",
     "@tailwindcss/node": "catalog:",
     "@tailwindcss/oxide": "catalog:",
@@ -39,18 +41,18 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
-    "js-yaml": "^5.0.0",
+    "js-yaml": "^5.4.0",
     "rollup-plugin-visualizer": "catalog:",
-    "sharp": "^0.35.2",
+    "sharp": "^0.35.3",
+    "typescript": "catalog:",
     "vite": "catalog:",
-    "vite-plugin-dts": "catalog:",
     "vite-plugin-singlefile": "catalog:",
     "vitest": "catalog:"
   },
   "files": [
     "dist",
-    "*/dist/prod",
-    "*/src"
+    "*/dist/prod/**",
+    "*/src/**"
   ],
   "exports": {
     ".": {

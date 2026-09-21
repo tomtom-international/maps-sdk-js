@@ -3,13 +3,21 @@ import path from 'node:path';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 import { viteSingleFile } from 'vite-plugin-singlefile';
-import { resolveExampleEnv } from './exampleBuildEnv';
+import { resolveExampleEnv } from './exampleBuildEnv.ts';
 
-const workspaceYaml = fs.readFileSync(path.resolve(__dirname, '../pnpm-workspace.yaml'), 'utf-8');
+const workspaceYaml = fs.readFileSync(path.resolve(import.meta.dirname, '../pnpm-workspace.yaml'), 'utf-8');
 const maplibreVersion = new RegExp(/maplibre-gl:\s*\^?([\d.]+)/).exec(workspaceYaml)?.[1];
 if (!maplibreVersion) {
     throw new Error('Could not find maplibre-gl version in pnpm-workspace.yaml');
 }
+
+// Pinned to an exact version: unpkg resolves a floating `@2` to the newest 2.x, so any
+// 2.x release invalidates the `integrity` hash and the browser blocks the shim (the map
+// still renders — browsers support import maps natively — but the console fills with SRI
+// errors and older browsers lose the fallback). Bump both together; the hash is
+// `openssl dgst -sha384 -binary dist/es-module-shims.js | openssl base64 -A`.
+const ES_MODULE_SHIMS_VERSION = '2.8.4';
+const ES_MODULE_SHIMS_INTEGRITY = 'sha384-XCYz0V79m/Nex83lKvfhMD2R7JHcINUuKrEt+xEoNmakEsh354CNM0h2mNT7xJqq';
 
 /**
  * Vite configuration for building production example applications.
@@ -27,33 +35,41 @@ if (!maplibreVersion) {
 /**
  * Scripts to inject into HTML pages to provide MapLibre GL via import map.
  * This allows examples to work without bundling MapLibre GL, which facilitates caching.
+ *
+ * The map target must be the package's published `dist/maplibre-gl.mjs` served verbatim,
+ * NOT a re-bundling CDN such as esm.sh. v6 splits its web worker into a sibling
+ * `dist/maplibre-gl-worker.mjs` that it locates at runtime through `import.meta.url`;
+ * esm.sh serves the entry from a rewritten path (`/es2022/maplibre-gl.mjs`) where that
+ * sibling doesn't exist, so the worker 404s and the map paints a blank background.
+ * jsDelivr mirrors the tarball as-is, so both the worker and the shared chunk resolve.
  */
 const MAPLIBRE_IMPORT_MAP_SCRIPTS = `
-    <script src="https://unpkg.com/es-module-shims@2/dist/es-module-shims.js" integrity="sha384-bu2JOhhs+024VlJUbPyr/5SY9ReRMZ1BTeZylHd9WKeTFKd2EK1bFTfOMrYe5NPo" crossorigin="anonymous" id="import-es-module-shim"></script>
+    <script src="https://unpkg.com/es-module-shims@${ES_MODULE_SHIMS_VERSION}/dist/es-module-shims.js" integrity="${ES_MODULE_SHIMS_INTEGRITY}" crossorigin="anonymous" id="import-es-module-shim"></script>
     <script type="importmap" id="import-maplibre-gl">
     {
         "imports": {
-            "maplibre-gl": "https://esm.sh/maplibre-gl@${maplibreVersion}"
+            "maplibre-gl": "https://cdn.jsdelivr.net/npm/maplibre-gl@${maplibreVersion}/dist/maplibre-gl.mjs"
         }
     }
     </script>
 `;
 
-// Absolute path to the Demo-BFF proxy bootstrap — the SAME file Sandpack injects
-// as raw text (see sandpackUtils.ts). In proxy mode it's bundled into each standalone
-// example via the inject-proxy-bootstrap plugin below.
-const PROXY_BOOTSTRAP_PATH = path.resolve(__dirname, 'src/proxy/proxyBootstrap.ts');
+// The demos-proxy session bootstrap — the SAME file Sandpack mounts as raw text
+// (see injectDemosProxyBootstrap in src/sandpack/sandpackUtils.ts); here it is
+// bundled from source by the inject-demos-proxy-bootstrap plugin below.
+const DEMOS_PROXY_BOOTSTRAP_PATH = path.resolve(import.meta.dirname, 'src/demos-proxy/demosProxyBootstrap.ts');
 
 /**
  * NOTE: This config is meant to be reused by each example.
  * All configured paths are relative to each example folder.
  */
 export default defineConfig(({ mode }) => {
-    // Allowlisted, proxy-redacted env shared with the Sandpack build (see
-    // exampleBuildEnv.ts). Without it these standalone bundles baked the ENTIRE
-    // CI environment. `proxyMode` (both DEMO_BFF_URL + HCAPTCHA_SITEKEY set)
-    // also gates whether the session bootstrap is injected.
-    const { define: exposedEnv, proxyMode } = resolveExampleEnv(mode, path.resolve('..'));
+    // Allowlisted, secret-redacted env shared with the Sandpack build (see
+    // exampleBuildEnv.ts) — without it these bundles baked the ENTIRE CI
+    // environment. `demosProxyMode` (both DEMOS_PROXY_URL + HCAPTCHA_SITEKEY set)
+    // gates the bootstrap injection below, and `define` bakes the bootstrap's own
+    // `process.env` reads into literals.
+    const { define: exposedEnv, demosProxyMode } = resolveExampleEnv(mode, path.resolve('..'));
     // Resolved build root (= the example's ./src), captured in configResolved
     // and used to identify the entry module for the bootstrap injection below.
     let entryRoot = '';
@@ -61,6 +77,14 @@ export default defineConfig(({ mode }) => {
     return {
         root: './src',
         base: './',
+        // `develop` serves maplibre-gl from node_modules (the import map above only takes
+        // effect in the built bundles, where maplibre-gl is external). v6 loads its web
+        // worker as a separate module (maplibre-gl-worker.mjs) that Vite's pre-bundler
+        // doesn't emit into .vite/deps, so the worker fails and the map never finishes
+        // initializing — a blank map. Same exclusion as map-integration-tests.
+        optimizeDeps: {
+            exclude: ['maplibre-gl'],
+        },
         build: {
             emptyOutDir: true,
             outDir: '../dist/prod',
@@ -90,27 +114,25 @@ export default defineConfig(({ mode }) => {
                 },
             },
             {
-                // Proxy mode: prepend an import of the Demo-BFF session bootstrap
-                // to the example's entry module so it's bundled and runs before
-                // any SDK call — establishing the session + wrapping fetch, the
-                // same behaviour Sandpack gets. Reuses proxyBootstrap.ts verbatim.
-                // NOTE: a transformIndexHtml-injected inline <script> is NOT
-                // processed by the bundler (its imports never resolve), so we
-                // prepend a real import into the module graph instead. Not
-                // injected outside proxy mode.
-                name: 'inject-proxy-bootstrap',
+                // Demos-proxy mode: prepend a bare side-effect import of the
+                // demos-proxy session bootstrap to the example's ENTRY module, so
+                // it runs before anything else in that graph (Sandpack anchors on
+                // config.ts instead, see injectDemosProxyBootstrap). A real
+                // import, because a transformIndexHtml <script> is not bundled
+                // and an injected `install()` call would run too late.
+                name: 'inject-demos-proxy-bootstrap',
                 enforce: 'pre',
                 configResolved(resolved) {
                     entryRoot = resolved.root;
                 },
                 transform(code, id) {
-                    if (!proxyMode || !entryRoot) return null;
+                    if (!demosProxyMode || !entryRoot) return null;
                     const file = id.split('?')[0];
                     const isEntry =
                         path.resolve(path.dirname(file)) === path.resolve(entryRoot) &&
                         /^index\.(ts|tsx)$/.test(path.basename(file));
                     return isEntry
-                        ? { code: `import ${JSON.stringify(PROXY_BOOTSTRAP_PATH)};\n${code}`, map: null }
+                        ? { code: `import ${JSON.stringify(DEMOS_PROXY_BOOTSTRAP_PATH)};\n${code}`, map: null }
                         : null;
                 },
             },
@@ -133,6 +155,7 @@ export default defineConfig(({ mode }) => {
         },
         define: {
             'process.env': JSON.stringify(exposedEnv),
+            global: 'globalThis',
         },
     };
 });

@@ -17,7 +17,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         },
         language: 'en-GB',
     });
-    const geometryModule = await GeometriesModule.get(map);
+    const geometryModule = await GeometriesModule.create(map);
 
     const geometryToSearch = await geometryData({ geometries: [location] });
     geometryModule.show(geometryToSearch);

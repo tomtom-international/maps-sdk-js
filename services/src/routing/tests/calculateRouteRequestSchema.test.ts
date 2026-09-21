@@ -140,13 +140,8 @@ describe('Calculate route request schema validation', () => {
                     costModel: {
                         avoid: 'tollRoads' as never,
                         traffic: true as never,
-                        // TODO not supported in Orbis
-                        // thrillingParams: {
-                        //     hilliness: "low",
-                        //     windingness: "medium" as never
-                        // }
                     },
-                    computeAdditionalTravelTimeFor: 'first' as never,
+                    computeTravelTimeFor: 'first' as never,
                     vehicle: {
                         state: {
                             heading: 360,
@@ -184,7 +179,7 @@ describe('Calculate route request schema validation', () => {
                     expect.objectContaining({
                         code: 'invalid_value',
                         values: ['none', 'all'],
-                        path: ['computeAdditionalTravelTimeFor'],
+                        path: ['computeTravelTimeFor'],
                     }),
                     expect.objectContaining({
                         origin: 'number',
@@ -302,6 +297,75 @@ describe('Calculate route request schema — avoidAreas validation', () => {
                 routeRequestValidationConfig,
             ),
         ).toThrow();
+    });
+});
+
+describe('Calculate route request schema — chargingStopsStrategy validation', () => {
+    const apiKey = 'APIKEY';
+    const commonBaseUrl = 'https://api-test.tomtom.com';
+    const baseLocations = [
+        [4.8, 52.3],
+        [4.9, 52.4],
+    ];
+
+    test('it should fail when chargingStopsStrategy is set without charging preferences', () => {
+        expect(() =>
+            validateRequestSchema<CalculateRouteParams>(
+                {
+                    locations: baseLocations,
+                    chargingStopsStrategy: 'automaticFastest',
+                    vehicle: { engineType: 'electric', state: { currentChargePCT: 80 } },
+                    apiKey,
+                    commonBaseURL: commonBaseUrl,
+                },
+                routeRequestValidationConfig,
+            ),
+        ).toThrow(/chargingStopsStrategy/);
+    });
+
+    test('it should accept chargingStopsStrategy alongside charging preferences', () => {
+        expect(() =>
+            validateRequestSchema<CalculateRouteParams>(
+                {
+                    locations: baseLocations,
+                    chargingStopsStrategy: 'automaticFastest',
+                    vehicle: {
+                        engineType: 'electric',
+                        state: { currentChargePCT: 80 },
+                        preferences: {
+                            chargingPreferences: {
+                                minChargeAtDestinationPCT: 20,
+                                minChargeAtChargingStopsPCT: 10,
+                            },
+                        },
+                    },
+                    apiKey,
+                    commonBaseURL: commonBaseUrl,
+                },
+                routeRequestValidationConfig,
+            ),
+        ).not.toThrow();
+    });
+
+    test('it should fail when chargingPreferences is present but undefined', () => {
+        // The key is there, the preferences are not — so the builder picks the regular endpoint and
+        // would drop the strategy. The refinement asks the builder's own predicate, so this fails here.
+        expect(() =>
+            validateRequestSchema<CalculateRouteParams>(
+                {
+                    locations: baseLocations,
+                    chargingStopsStrategy: 'automaticFastest',
+                    vehicle: {
+                        engineType: 'electric',
+                        state: { currentChargePCT: 80 },
+                        preferences: { chargingPreferences: undefined },
+                    },
+                    apiKey,
+                    commonBaseURL: commonBaseUrl,
+                },
+                routeRequestValidationConfig,
+            ),
+        ).toThrow(/chargingStopsStrategy/);
     });
 });
 

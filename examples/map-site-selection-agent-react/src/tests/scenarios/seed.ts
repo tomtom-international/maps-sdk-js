@@ -11,7 +11,7 @@ export const analysesRunSeed = (): ScriptStep[] =>
         [
             toolCall(
                 'profileSite',
-                { address: 'Marnixstraat 250, Amsterdam', concept: 'coffee shop' },
+                { addresses: ['Marnixstraat 250, Amsterdam'], concept: 'coffee shop' },
                 {
                     summary: 'Profiled Marnixstraat 250',
                     areaMakeup: { retail: 12, food: 8, office: 5, residential: 20 },

@@ -130,7 +130,7 @@ export function ShortlistPanel() {
                         key={row.site.properties.label}
                         onClick={() => focusFeature(row.site)}
                         title="Show on map"
-                        className="flex cursor-pointer items-start gap-2 px-4 py-2 hover:bg-(--pb-surface-1)"
+                        className="flex cursor-pointer items-start gap-2 px-4 py-2 hover:bg-(--ui-surface-1)"
                     >
                         <RankBadge n={row.rank} />
                         <div className="flex min-w-0 flex-1 flex-col gap-1">
@@ -164,7 +164,7 @@ export function ShortlistPanel() {
             </ol>
 
             {/* Adjustments — live weights + methodology notes */}
-            <div className="flex flex-col gap-3 border-t border-(--pb-border-base) px-4 pt-3 pb-3">
+            <div className="flex flex-col gap-3 border-t border-(--ui-border-base-em) px-4 pt-3 pb-3">
                 {scored.length >= 2 ? (
                     <div className="flex flex-col gap-2">
                         <div className="flex items-center justify-between gap-2">
@@ -190,7 +190,7 @@ export function ShortlistPanel() {
                                         max={100}
                                         value={percents[factor] ?? 0}
                                         onChange={(e) => rebalance(factor, Number(e.target.value))}
-                                        className="min-w-0 flex-1 accent-[var(--pb-primary-color)]"
+                                        className="min-w-0 flex-1 accent-[var(--ui-surface-brand-red)]"
                                     />
                                     <span style={captionStyle} className="w-9 shrink-0 text-right tabular-nums">
                                         {percents[factor] ?? 0}%

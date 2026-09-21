@@ -1,6 +1,6 @@
 import type { PolygonFeature } from '@tomtom-org/maps-sdk/core';
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import { SDKError, SDKServiceError } from '../../shared';
+import { SDKAbortError, SDKError, SDKServiceError } from '../../shared';
 import { calculateReachableRanges } from '../calculateReachableRange';
 import type { ReachableRangeParams } from '../types/reachableRangeParams';
 
@@ -84,20 +84,17 @@ describe('calculateReachableRanges', () => {
         await expect(calculateReachableRanges([paramsFor(10), paramsFor(20)])).rejects.toMatchObject({ status: 429 });
     });
 
-    test('rejects with AbortError and skips remaining requests when signal fires mid-sequence', async () => {
-        const controller = new AbortController();
+    test('rethrows a cancellation instead of skipping it like a no-road-network error', async () => {
+        mockCallService
+            .mockResolvedValueOnce(makeFeature(10))
+            .mockRejectedValueOnce(new SDKAbortError('Reachable Range', 'superseded'));
 
-        // Abort during the first request — the second should never start
-        mockCallService.mockImplementationOnce(async () => {
-            controller.abort();
-            return makeFeature(10);
-        });
+        await expect(calculateReachableRanges([paramsFor(10), paramsFor(20), paramsFor(30)])).rejects.toBeInstanceOf(
+            SDKAbortError,
+        );
 
-        await expect(
-            calculateReachableRanges([paramsFor(10), paramsFor(20)], { signal: controller.signal }),
-        ).rejects.toMatchObject({ name: 'AbortError' });
-
-        expect(mockCallService).toHaveBeenCalledTimes(1);
+        // Stopped at the rejection rather than carrying on to the third budget
+        expect(mockCallService).toHaveBeenCalledTimes(2);
     });
 
     test('resolves normally when signal is provided but never aborted', async () => {
@@ -109,14 +106,57 @@ describe('calculateReachableRanges', () => {
         expect(result.features).toHaveLength(2);
     });
 
-    test('rejects immediately when signal is already aborted before the call', async () => {
+    test('forwards the signal into every underlying request so the in-flight one is cancelled', async () => {
         const controller = new AbortController();
-        controller.abort();
+        mockCallService.mockResolvedValueOnce(makeFeature(10)).mockResolvedValueOnce(makeFeature(20));
 
-        await expect(calculateReachableRanges([paramsFor(10)], { signal: controller.signal })).rejects.toMatchObject({
-            name: 'AbortError',
-        });
+        await calculateReachableRanges([paramsFor(10), paramsFor(20)], { signal: controller.signal });
 
-        expect(mockCallService).not.toHaveBeenCalled();
+        expect(mockCallService).toHaveBeenCalledTimes(2);
+        for (const [params] of mockCallService.mock.calls) {
+            expect(params).toMatchObject({ signal: controller.signal });
+        }
+    });
+
+    test('keeps a per-entry signal when no batch options argument is given', async () => {
+        const controller = new AbortController();
+        mockCallService.mockResolvedValueOnce(makeFeature(10));
+
+        await calculateReachableRanges([{ ...paramsFor(10), signal: controller.signal }]);
+
+        expect(mockCallService).toHaveBeenCalledWith(
+            expect.objectContaining({ signal: controller.signal }),
+            expect.anything(),
+            expect.anything(),
+        );
+    });
+
+    // Runs one batch given both a per-entry and a batch signal, and reports the signal that
+    // reached the request so each test can check its own leg cancels it.
+    const callGivenBothSignals = async () => {
+        const perEntry = new AbortController();
+        const batch = new AbortController();
+        mockCallService.mockResolvedValueOnce(makeFeature(10));
+
+        await calculateReachableRanges([{ ...paramsFor(10), signal: perEntry.signal }], { signal: batch.signal });
+
+        const [params] = mockCallService.mock.calls[0];
+        return { perEntry, batch, signal: params.signal };
+    };
+
+    test('the per-entry signal still cancels a call that also got a batch signal', async () => {
+        const { perEntry, signal } = await callGivenBothSignals();
+
+        expect(signal?.aborted).toBe(false);
+        perEntry.abort();
+        expect(signal?.aborted).toBe(true);
+    });
+
+    test('the batch signal cancels a call that also got a per-entry signal', async () => {
+        const { batch, signal } = await callGivenBothSignals();
+
+        expect(signal?.aborted).toBe(false);
+        batch.abort();
+        expect(signal?.aborted).toBe(true);
     });
 });

@@ -8,6 +8,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
 
 (async () => {
     const revGeoResponse = await reverseGeocode({ position: [5.72884, 52.33499] });
-    const htmlElement = document.getElementById('sdk-example-rev-geo-json-output') as HTMLElement;
+    const htmlElement = document.getElementById('ui-rev-geo-json-output') as HTMLElement;
     htmlElement.innerHTML = `<pre>${JSON.stringify(revGeoResponse, null, 4)}</pre>`;
 })();

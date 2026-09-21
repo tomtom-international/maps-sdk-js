@@ -4,9 +4,9 @@ import { Popup } from 'maplibre-gl';
 const formatLabel = (value: string) => value.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 
 const row = (label: string, value: string) => `
-    <div class="sdk-example-flow-row">
-        <span class="sdk-example-form-label">${label}</span>
-        <span class="sdk-example-flow-value">${value}</span>
+    <div class="ui-flow-row">
+        <span class="ui-form-label">${label}</span>
+        <span class="ui-flow-value">${value}</span>
     </div>`;
 
 const formatPercent = (value: number) => `${Math.round(value * 100)}%`;
@@ -23,7 +23,7 @@ export const buildPopupHTML = ({ properties }: TrafficFlowModuleFeature): string
     } = properties;
 
     return `
-        <div class="sdk-example-flow-popup">
+        <div class="ui-flow-popup">
             ${row('Road Category', formatLabel(roadCategory))}
             ${roadSubcategory ? row('Subcategory', formatLabel(roadSubcategory)) : ''}
             ${roadClosure ? row('Road Closure', 'Yes') : ''}
@@ -34,4 +34,4 @@ export const buildPopupHTML = ({ properties }: TrafficFlowModuleFeature): string
         </div>`;
 };
 
-export const createFlowPopup = () => new Popup({ closeButton: false, className: 'sdk-example-flow-popup-wrapper' });
+export const createFlowPopup = () => new Popup({ closeButton: false, className: 'ui-flow-popup-wrapper' });

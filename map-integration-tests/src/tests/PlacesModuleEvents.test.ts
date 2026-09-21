@@ -15,7 +15,6 @@ import {
     showPlaces,
     waitForEventState,
     waitForMapIdle,
-    waitForMapReady,
     waitForTimeout,
     waitUntilRenderedFeatures,
 } from './util/TestUtils';
@@ -106,6 +105,8 @@ test.describe('Tests with user events related to PlacesModule', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
+    // TODO(LSI-263): passes locally but still marginal on CI runners — re-tagged after a CI run
+    // where the hover state had not settled inside the wait budget.
     test('Hover and long hover states for a place', { tag: '@flaky' }, async ({ page }) => {
         await initPlaces(page);
         await waitForMapIdle(page);
@@ -118,15 +119,17 @@ test.describe('Tests with user events related to PlacesModule', () => {
         await setupPlacesHoverHandlers(page);
         expect(await getNumHoversAndLongHovers(page)).toEqual([0, 0]);
 
-        // Moving cursor over the place (hovering)
+        // Moving cursor over the place (hovering). Mouse moves are handled once per animation
+        // frame, so let the hover state settle before counting the events it produced.
         await page.mouse.move(placePosition.x, placePosition.y);
-        expect(await getNumHoversAndLongHovers(page)).toEqual([1, 0]);
         await waitForEventState(page, 'hover', placesLayerIDs);
+        expect(await getNumHoversAndLongHovers(page)).toEqual([1, 0]);
 
         // Moving cursor away from the place
         await page.mouse.move(placePosition.x - 100, placePosition.y - 75);
-        expect(await getNumHoversAndLongHovers(page)).toEqual([1, 0]);
         await waitForEventState(page, undefined, placesLayerIDs);
+        // Leaving a feature is not itself a hover, so the count must not have moved.
+        expect(await getNumHoversAndLongHovers(page)).toEqual([1, 0]);
         // double-checking we still have the same number of rendered places:
         await waitUntilRenderedFeatures(page, placesLayerIDs, places.features.length, 3000);
 
@@ -146,7 +149,8 @@ test.describe('Tests with user events related to PlacesModule', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    // TODO(LSI-263): Enable when flakyness has been fixed
+    // TODO(LSI-263): passes locally but still marginal on CI runners — re-tagged after a CI run
+    // where the place pin had not rendered inside the wait budget.
     test('Click events for a place after changing map style', { tag: '@flaky' }, async ({ page }) => {
         await initPlaces(page);
         await setupPlacesClickHandler(page);
@@ -218,7 +222,6 @@ test.describe('Tests with user events related to PlacesModule', () => {
 
         await waitForMapIdle(page);
         await setStyle(page, 'standardDark');
-        await waitForMapReady(page);
         // We show the places after the map style has changed.
 
         // Now we'll test whether the events still work properly
@@ -272,8 +275,7 @@ test.describe('Tests with user events related to PlacesModule', () => {
 test.describe('Events custom configuration', () => {
     const mapEnv = new MapTestEnv();
 
-    // TODO(LSI-263): Enable when flakyness has been fixed
-    test('Overall custom cursor', { tag: '@flaky' }, async ({ page }) => {
+    test('Overall custom cursor', async ({ page }) => {
         // Amsterdam center
         await mapEnv.loadPageAndMap(
             page,
@@ -329,8 +331,7 @@ test.describe('Events custom configuration', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    // TODO(LSI-263): Enable when flakyness has been fixed
-    test('Point-then-box precision mode', { tag: '@flaky' }, async ({ page }) => {
+    test('Point-then-box precision mode', async ({ page }) => {
         // Amsterdam center
         await mapEnv.loadPageAndMap(
             page,
@@ -352,8 +353,7 @@ test.describe('Events custom configuration', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    // TODO(LSI-263): Enable when flakyness has been fixed
-    test('Places with grabbing cursor on hover', { tag: '@flaky' }, async ({ page }) => {
+    test('Places with grabbing cursor on hover', async ({ page }) => {
         // Amsterdam center
         await mapEnv.loadPageAndMap(page, { zoom: 10, center: [4.89067, 52.37313] });
 

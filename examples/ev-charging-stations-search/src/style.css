@@ -6,52 +6,52 @@
 
 /* CUSTOM STYLES (example-specific) */
 
-.sdk-example-searchPanel {
+.ui-searchPanel {
     position: absolute;
-    top: var(--sdk-panel-margin);
-    right: var(--sdk-panel-margin);
+    top: var(--ui-panel-margin);
+    right: var(--ui-panel-margin);
     display: flex;
     flex-direction: column;
-    gap: var(--sdk-space-3);
-    padding: var(--sdk-space-3);
-    background: var(--sdk-surface-0);
-    border-radius: var(--sdk-radius-20);
-    box-shadow: var(--sdk-shadow-e2);
-    z-index: var(--sdk-z-panel);
+    gap: var(--ui-space-3);
+    padding: var(--ui-space-3);
+    background: var(--ui-surface-0);
+    border-radius: var(--ui-rounded-20);
+    box-shadow: var(--ui-elevation-e2);
+    z-index: var(--ui-z-panel);
 }
 
-.sdk-example-search-row {
+.ui-search-row {
     display: flex;
-    gap: var(--sdk-space-2);
+    gap: var(--ui-space-2);
     align-items: center;
     flex-wrap: nowrap;
 }
 
-.sdk-example-search-row .sdk-example-input {
+.ui-search-row .ui-input {
     flex: 1;
     min-width: 0;
 }
 
-.sdk-example-controls-row {
+.ui-controls-row {
     display: flex;
-    gap: var(--sdk-space-3);
+    gap: var(--ui-space-3);
     align-items: flex-end;
     flex-wrap: nowrap;
 }
 
-.sdk-example-kw-field {
+.ui-kw-field {
     display: flex;
     align-items: center;
-    gap: var(--sdk-space-2);
+    gap: var(--ui-space-2);
     min-width: 0;
 }
 
-.sdk-example-kw-field .sdk-example-form-label {
+.ui-kw-field .ui-form-label {
     margin-bottom: 0;
     white-space: nowrap;
 }
 
-.sdk-example-kw-input {
+.ui-kw-input {
     width: 70px;
     min-width: 40px;
     flex-shrink: 1;
@@ -59,51 +59,51 @@
 
 /* EV popup — matches Figma "Tooltip - EV charging station" */
 
-.sdk-example-maps-sdk-js-popup .maplibregl-popup-content {
+.ui-maps-sdk-js-popup .maplibregl-popup-content {
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    gap: var(--sdk-space-4);
+    gap: var(--ui-space-4);
     width: 304px;
-    padding: var(--sdk-space-4);
-    background: var(--sdk-surface-0);
-    border: 4px solid var(--sdk-surface-0);
-    border-radius: var(--sdk-radius-20);
-    box-shadow: var(--sdk-shadow-e4);
-    font-family: var(--sdk-font-primary);
+    padding: var(--ui-space-4);
+    background: var(--ui-surface-0);
+    border: 4px solid var(--ui-surface-0);
+    border-radius: var(--ui-rounded-20);
+    box-shadow: var(--ui-elevation-e4);
+    font-family: var(--ui-font-gilroy);
 }
 
-.sdk-example-maps-sdk-js-popup .maplibregl-popup-tip {
-    border-top-color: var(--sdk-surface-0);
+.ui-maps-sdk-js-popup .maplibregl-popup-tip {
+    border-top-color: var(--ui-surface-0);
 }
 
-.sdk-example-popup-header {
+.ui-popup-header {
     display: flex;
     flex-direction: column;
-    gap: var(--sdk-space-1);
-    padding-bottom: var(--sdk-space-4);
-    border-bottom: 1px solid var(--sdk-border-base);
+    gap: var(--ui-space-1);
+    padding-bottom: var(--ui-space-4);
+    border-bottom: 1px solid var(--ui-border-base-em);
 }
 
-.sdk-example-popup-title {
+.ui-popup-title {
     margin: 0;
-    font-size: var(--sdk-font-body-l);
-    line-height: var(--sdk-font-body-l-lh);
-    font-weight: var(--sdk-font-weight-bold);
-    color: var(--sdk-text-high);
+    font-size: var(--ui-font-body-l);
+    line-height: var(--ui-font-body-l-lh);
+    font-weight: var(--ui-font-weight-bold);
+    color: var(--ui-text-high-em);
 }
 
-.sdk-example-address {
-    font-size: var(--sdk-font-body-m);
-    line-height: var(--sdk-font-body-m-lh);
-    font-weight: var(--sdk-font-weight-bold);
-    color: var(--sdk-text-medium);
+.ui-address {
+    font-size: var(--ui-font-body-m);
+    line-height: var(--ui-font-body-m-lh);
+    font-weight: var(--ui-font-weight-bold);
+    color: var(--ui-text-med-em);
 }
 
-.sdk-example-connector-ul {
+.ui-connector-ul {
     display: flex;
     flex-direction: column;
-    gap: var(--sdk-space-4);
+    gap: var(--ui-space-4);
     margin: 0;
     padding: 0;
     list-style: none;
@@ -111,17 +111,17 @@
     overflow-y: auto;
 }
 
-.sdk-example-connector-li {
+.ui-connector-li {
     display: flex;
     align-items: center;
-    gap: var(--sdk-space-2);
+    gap: var(--ui-space-2);
     height: 20px;
-    font-size: var(--sdk-font-body-m);
-    line-height: var(--sdk-font-body-m-lh);
-    color: var(--sdk-text-medium);
+    font-size: var(--ui-font-body-m);
+    line-height: var(--ui-font-body-m-lh);
+    color: var(--ui-text-med-em);
 }
 
-.sdk-example-connector-icon {
+.ui-connector-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -130,113 +130,113 @@
     flex-shrink: 0;
 }
 
-.sdk-example-connector-icon svg {
+.ui-connector-icon svg {
     width: 100%;
     height: 100%;
 }
 
-.sdk-example-connector-name {
+.ui-connector-name {
     flex: 1;
     min-width: 0;
-    font-weight: var(--sdk-font-weight-bold);
-    color: var(--sdk-text-medium);
+    font-weight: var(--ui-font-weight-bold);
+    color: var(--ui-text-med-em);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.sdk-example-connector-sublabel {
+.ui-connector-sublabel {
     display: flex;
     align-items: center;
-    gap: var(--sdk-space-4);
+    gap: var(--ui-space-4);
     flex: none;
     width: 136px;
     justify-content: flex-end;
 }
 
-.sdk-example-connector-power {
+.ui-connector-power {
     width: 60px;
     flex-shrink: 0;
-    font-weight: var(--sdk-font-weight-bold);
-    color: var(--sdk-text-medium);
+    font-weight: var(--ui-font-weight-bold);
+    color: var(--ui-text-med-em);
     text-align: right;
     white-space: nowrap;
 }
 
-.sdk-example-connector-availability-cell {
+.ui-connector-availability-cell {
     display: flex;
     align-items: center;
-    gap: var(--sdk-space-2);
+    gap: var(--ui-space-2);
     justify-content: flex-end;
     width: 60px;
     flex-shrink: 0;
 }
 
-.sdk-example-connector-availability {
+.ui-connector-availability {
     width: 40px;
     flex-shrink: 0;
-    font-weight: var(--sdk-font-weight-bold);
+    font-weight: var(--ui-font-weight-bold);
     text-align: right;
     white-space: nowrap;
 }
 
-.sdk-example-availability-available {
-    color: var(--sdk-color-success);
+.ui-availability-available {
+    color: var(--ui-surface-success);
 }
 
-.sdk-example-availability-unavailable,
-.sdk-example-availability-unknown {
-    color: var(--sdk-text-disabled);
+.ui-availability-unavailable,
+.ui-availability-unknown {
+    color: var(--ui-text-disabled);
 }
 
-.sdk-example-status-dot {
+.ui-status-dot {
     box-sizing: border-box;
     width: 12px;
     height: 12px;
     flex-shrink: 0;
-    border: 2.5px solid var(--sdk-surface-0);
-    border-radius: var(--sdk-radius-full);
-    background: var(--sdk-border-medium);
-    box-shadow: var(--sdk-shadow-e1);
+    border: 2.5px solid var(--ui-surface-0);
+    border-radius: var(--ui-rounded-full);
+    background: var(--ui-border-med-em);
+    box-shadow: var(--ui-elevation-e1);
 }
 
-.sdk-example-status-dot-available {
-    background: var(--sdk-color-success);
+.ui-status-dot-available {
+    background: var(--ui-surface-success);
 }
 
-.sdk-example-popup-empty {
+.ui-popup-empty {
     margin: 0;
-    font-size: var(--sdk-font-body-m);
-    line-height: var(--sdk-font-body-m-lh);
-    color: var(--sdk-text-medium);
+    font-size: var(--ui-font-body-m);
+    line-height: var(--ui-font-body-m-lh);
+    color: var(--ui-text-med-em);
 }
 
 /* Responsive: max-width 768px */
 @media (max-width: 768px) {
-    .sdk-example-searchPanel {
-        gap: var(--sdk-space-2);
+    .ui-searchPanel {
+        gap: var(--ui-space-2);
     }
 
-    .sdk-example-search-row {
+    .ui-search-row {
         flex-wrap: wrap;
     }
 
-    .sdk-example-search-row .sdk-example-input {
+    .ui-search-row .ui-input {
         min-width: 80px;
     }
 }
 
 /* Responsive: max-width 600px */
 @media (max-width: 600px) {
-    .sdk-example-searchPanel {
-        left: var(--sdk-panel-margin);
-        right: var(--sdk-panel-margin);
+    .ui-searchPanel {
+        left: var(--ui-panel-margin);
+        right: var(--ui-panel-margin);
     }
 }
 
 /* Responsive: max-height 550px */
 @media (max-height: 550px) {
-    .sdk-example-searchPanel {
-        padding: var(--sdk-space-2);
+    .ui-searchPanel {
+        padding: var(--ui-space-2);
     }
 }

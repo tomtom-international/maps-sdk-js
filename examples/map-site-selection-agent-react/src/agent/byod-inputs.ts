@@ -1,6 +1,7 @@
 import type { ToolState } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import * as turf from '@turf/turf';
 import type { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
+import { clipPolygons } from './geometry';
 
 // Helpers that let the domain tools CONSUME a bring-your-own-data layer the user already loaded via
 // the toolkit's `addByodSource` (stored on `state.byod`). The toolkit owns ingestion — fetch, scheme /
@@ -92,6 +93,46 @@ export const byodCandidateSites = (features: FeatureCollection, labelProperty?: 
     return sites;
 };
 
+// Min share of the total area one connected part must hold for a region to count as contiguous —
+// tolerates minor slivers/exclaves, rejects comparably-sized disjoint blobs.
+const MIN_DOMINANT_SHARE = 0.9;
+
+// True when the region is essentially one contiguous mass: a single Polygon, or a MultiPolygon with
+// one dominant part (see MIN_DOMINANT_SHARE).
+const isCoherentRegion = (region: Feature<Polygon | MultiPolygon>): boolean => {
+    if (region.geometry.type === 'Polygon' || region.geometry.coordinates.length <= 1) return true;
+    let total = 0;
+    let largest = 0;
+    for (const coordinates of region.geometry.coordinates) {
+        const partArea = turf.area(turf.polygon(coordinates));
+        total += partArea;
+        if (partArea > largest) largest = partArea;
+    }
+    return total > 0 && largest / total >= MIN_DOMINANT_SHARE;
+};
+
+// The outer limit of a BYOD layer: its polygon features unioned into one shape (e.g. districts merged
+// into the whole city), used to clip drawn ranges. Returns null — meaning draw the full range — when
+// the layer has no polygons or is too scattered to form a coherent extent (see isCoherentRegion),
+// mirroring how findWhitespace clips only to a single authoritative boundary.
+export const outerBoundary = (features: FeatureCollection): Feature<Polygon | MultiPolygon> | null => {
+    const polygons = features.features.filter(
+        (f): f is Feature<Polygon | MultiPolygon> =>
+            f.geometry?.type === 'Polygon' || f.geometry?.type === 'MultiPolygon',
+    );
+    if (polygons.length === 0) return null;
+    let union: Feature<Polygon | MultiPolygon> | null;
+    try {
+        union =
+            polygons.length === 1
+                ? polygons[0]
+                : (turf.union(turf.featureCollection(polygons)) as Feature<Polygon | MultiPolygon> | null);
+    } catch {
+        return null;
+    }
+    return union && isCoherentRegion(union) ? union : null;
+};
+
 // The share of `feature` that lies within `area`, in [0, 1]. A Point is all-or-nothing (1 inside, 0
 // outside). A Polygon/MultiPolygon is area-weighted — the intersected area ÷ the feature's own area —
 // so a demand cell only half-inside a catchment contributes half its value (areal interpolation),
@@ -105,9 +146,7 @@ const overlapWeight = (feature: Feature, area: Polygon | MultiPolygon): number =
     if (geometry.type === 'Polygon' || geometry.type === 'MultiPolygon') {
         const whole = turf.area(feature);
         if (whole <= 0) return 0;
-        const clipped = turf.intersect(
-            turf.featureCollection([feature as Feature<Polygon | MultiPolygon>, turf.feature(area)]),
-        );
+        const clipped = clipPolygons(feature as Feature<Polygon | MultiPolygon>, turf.feature(area));
         return clipped ? Math.min(1, turf.area(clipped) / whole) : 0;
     }
     return turf.booleanIntersects(feature, area) ? 1 : 0;

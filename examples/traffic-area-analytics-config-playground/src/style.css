@@ -11,14 +11,14 @@
 @import "../../src/templates/css/button/groups.css";
 @import "../../src/templates/css/feedback/loading-spinner.css";
 
-.sdk-example-body {
+.ui-body {
     overflow: hidden;
 }
 
 /* ── Right controls panel width override ──────────────────────────── */
 
 @media (min-width: 769px) {
-    .sdk-example-customPanel {
+    .ui-customPanel {
         width: 280px;
     }
 }
@@ -27,20 +27,20 @@
 
 .aa-map-controls {
     position: absolute;
-    top: var(--sdk-space-3);
-    left: var(--sdk-space-3);
+    top: var(--ui-space-3);
+    left: var(--ui-space-3);
     display: flex;
     align-items: center;
-    gap: var(--sdk-space-2);
+    gap: var(--ui-space-2);
     z-index: 10;
 }
 
 .aa-style-select {
     width: auto;
     min-width: 150px;
-    height: var(--sdk-height-sm);
-    font-size: var(--sdk-font-body-s);
-    line-height: var(--sdk-font-body-s-lh);
+    height: var(--ui-height-sm);
+    font-size: var(--ui-font-body-s);
+    line-height: var(--ui-font-body-s-lh);
 }
 
 /* ── Color stop row ──────────────────────────────────────────────── */
@@ -48,14 +48,14 @@
 .aa-color-stop-row {
     display: flex;
     align-items: center;
-    gap: var(--sdk-space-2);
+    gap: var(--ui-space-2);
 }
 
 /* ── Dynamic stop controls ───────────────────────────────────────── */
 
 .aa-stop-value-input {
     width: 72px;
-    height: var(--sdk-height-sm);
+    height: var(--ui-height-sm);
     flex-shrink: 0;
 }
 
@@ -68,29 +68,29 @@
     align-items: center;
     justify-content: center;
     padding: 0;
-    border-radius: var(--sdk-radius-5);
-    border: 1px solid var(--sdk-border-low);
+    border-radius: var(--ui-rounded-5);
+    border: 1px solid var(--ui-border-low-em);
     background: transparent;
-    color: var(--sdk-text-medium);
+    color: var(--ui-text-med-em);
     cursor: pointer;
     font-size: 18px;
     line-height: 1;
-    transition: var(--sdk-transition-fast);
+    transition: var(--ui-transition-fast);
 }
 
 .aa-stop-remove:hover:not(:disabled) {
-    background: var(--sdk-surface-1);
-    color: var(--sdk-text-high);
-    border-color: var(--sdk-border-medium);
+    background: var(--ui-surface-1);
+    color: var(--ui-text-high-em);
+    border-color: var(--ui-border-med-em);
 }
 
 .aa-stop-remove:disabled {
-    color: var(--sdk-text-disabled);
+    color: var(--ui-text-disabled);
     cursor: default;
 }
 
 #add-stop-btn {
-    margin-top: var(--sdk-space-2);
+    margin-top: var(--ui-space-2);
 }
 
 /* ── Generic label-value field rows ─────────────────────────────── */
@@ -99,26 +99,26 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--sdk-space-2);
-    margin-bottom: var(--sdk-space-2);
+    gap: var(--ui-space-2);
+    margin-bottom: var(--ui-space-2);
 }
 
 .aa-field-label {
-    font-size: var(--sdk-font-caption-m);
-    line-height: var(--sdk-font-caption-m-lh);
-    color: var(--sdk-text-medium);
+    font-size: var(--ui-font-caption-m);
+    line-height: var(--ui-font-caption-m-lh);
+    color: var(--ui-text-med-em);
     white-space: nowrap;
 }
 
 .aa-field-input-sm {
     width: 90px;
-    height: var(--sdk-height-sm);
+    height: var(--ui-height-sm);
     flex-shrink: 0;
 }
 
 .aa-field-select-sm {
-    height: var(--sdk-height-sm);
-    font-size: var(--sdk-font-caption-m);
+    height: var(--ui-height-sm);
+    font-size: var(--ui-font-caption-m);
     flex-shrink: 0;
     max-width: 145px;
 }
@@ -137,11 +137,11 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: var(--sdk-space-3);
-    z-index: var(--sdk-z-modal);
-    font-family: var(--sdk-font-primary);
-    font-size: var(--sdk-font-body-m);
-    color: var(--sdk-text-medium);
+    gap: var(--ui-space-3);
+    z-index: var(--ui-z-modal);
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-m);
+    color: var(--ui-text-med-em);
 }
 
 .aa-loading.aa-hidden {

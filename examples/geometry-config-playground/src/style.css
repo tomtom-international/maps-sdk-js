@@ -8,30 +8,30 @@
 
 /* CUSTOM STYLES (example-specific) */
 
-.sdk-example-customPanel {
+.ui-customPanel {
     width: 300px;
 }
 
-.sdk-example-hint {
-    margin: 0 0 var(--sdk-space-4);
-    color: var(--sdk-example-color-text-subtle, #5c5c5c);
+.ui-hint {
+    margin: 0 0 var(--ui-space-4);
+    color: var(--ui-text-med-em, #5c5c5c);
     font-size: 12px;
     line-height: 16px;
 }
 
 /* Section subheadings sit tight above their fields. */
-.sdk-example-subheading {
-    margin-bottom: var(--sdk-space-3);
+.ui-subheading {
+    margin-bottom: var(--ui-space-3);
 }
 
 /* In an inline row the color swatch right-aligns, lining up with the dropdowns' right edge. */
-.sdk-example-form-field-inline .sdk-example-color-swatch {
+.ui-form-field-inline .ui-color-swatch {
     margin-left: auto;
 }
 
 /* Responsive: max-width 768px */
 @media (max-width: 768px) {
-    .sdk-example-customPanel {
+    .ui-customPanel {
         width: 240px;
     }
 }

@@ -8,13 +8,14 @@ import requestBuilderData from './requestBuilder.data';
 import { alongRouteSearchReqObject } from './requestBuilderPerf.data';
 
 describe('Along Route Search request URL building tests', () => {
-    test.each(
-        requestBuilderData,
-    )("'%s'", (_name: string, params: AlongRouteSearchParams, requestData: PostObject<AlongRouteSearchPayloadAPI>) => {
-        expect(JSON.parse(JSON.stringify(buildAlongRouteSearchRequest(params)))).toMatchObject(
-            JSON.parse(JSON.stringify(requestData)),
-        );
-    });
+    test.each(requestBuilderData)(
+        "'%s'",
+        (_name: string, params: AlongRouteSearchParams, requestData: PostObject<AlongRouteSearchPayloadAPI>) => {
+            expect(JSON.parse(JSON.stringify(buildAlongRouteSearchRequest(params)))).toMatchObject(
+                JSON.parse(JSON.stringify(requestData)),
+            );
+        },
+    );
 
     test('Route Feature input produces same points as bare LineString', () => {
         const lineString: AlongRouteSearchParams = {

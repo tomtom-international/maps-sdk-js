@@ -21,12 +21,12 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
     });
 
     document
-        .querySelector('#sdk-example-reCenter')
+        .querySelector('#ui-reCenter')
         ?.addEventListener('click', () => map.mapLibreMap.fitBounds(bounds, fitBoundsOptions));
 
     const geometryToSearch = await geometryData({ geometries: [placeToSearchInside] });
 
-    const geometriesModule = await GeometriesModule.get(map, { theme: 'inverted' });
+    const geometriesModule = await GeometriesModule.create(map, { theme: 'inverted' });
     geometriesModule.show(geometryToSearch);
     const placesInsideGeometry = await search({
         query: 'metro stop',
@@ -34,6 +34,6 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         limit: 100,
     });
 
-    const placesModule = await PlacesModule.get(map);
+    const placesModule = await PlacesModule.create(map);
     placesModule.show(placesInsideGeometry);
 })();

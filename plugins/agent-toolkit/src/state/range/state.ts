@@ -9,7 +9,7 @@ import {
     reachableRangeGeometryConfig,
     type TomTomMap,
 } from '@tomtom-org/maps-sdk/map';
-import { collapseHistoryToLatest, hideAllEntries } from '../entry-helpers';
+import { collapseHistoryToLatest, hideAllEntries, pickUniqueEntryId } from '../entry-helpers';
 import { StateEvents } from '../events';
 import type { EntryMode, ShownEntriesSlice } from '../state';
 import type { RangesEntry } from './entry';
@@ -90,7 +90,7 @@ export class RangeState implements ShownEntriesSlice {
         const entry = this._requireEntry(entryId);
         entry._modules ??= {};
         if (!entry._modules.geometries) {
-            entry._modules.geometries = await GeometriesModule.get(
+            entry._modules.geometries = await GeometriesModule.create(
                 this._ttMap,
                 reachableRangeGeometryConfig(undefined, theme),
             );
@@ -110,9 +110,8 @@ export class RangeState implements ShownEntriesSlice {
     async getEntryPlacesModule(entryId: string): Promise<PlacesModule> {
         const entry = this._requireEntry(entryId);
         entry._modules ??= {};
-        if (!entry._modules.places) {
-            entry._modules.places = await PlacesModule.get(this._ttMap);
-        }
+        entry._modules.places ??= await PlacesModule.create(this._ttMap);
+
         return entry._modules.places;
     }
 
@@ -178,7 +177,11 @@ export class RangeState implements ShownEntriesSlice {
             await hideAllEntries(this._entries, (existing) => this.hideEntry(existing.id));
             this._entries = [];
         }
-        const id = `ranges-${this._entries.length}`;
+        // Dedupe the length-based id — after removals it can collide with a surviving entry.
+        const id = pickUniqueEntryId(
+            `ranges-${this._entries.length}`,
+            this._entries.map((entry) => entry.id),
+        );
         this._entries.push({
             id,
             timestamp: Date.now(),

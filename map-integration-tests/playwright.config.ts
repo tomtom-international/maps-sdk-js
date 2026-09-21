@@ -38,6 +38,11 @@ export default defineConfig({
         trace: 'on-first-retry',
     },
 
+    /* Baselines sit beside the tests that take them, under the name the shot is taken by — which
+     * carries the feature it belongs to, as in `routing/tunnel-halo.png`. The only project here
+     * forces SwiftShader, so the platform a shot was taken on is not part of what it shows. */
+    snapshotPathTemplate: '{testDir}/snapshots/{arg}{ext}',
+
     /* Configure projects for major browsers */
     projects: [
         {

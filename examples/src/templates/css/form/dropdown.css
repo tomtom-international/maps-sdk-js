@@ -1,89 +1,89 @@
 /* SELECT FIELD */
 
-.sdk-example-dropdown {
+.ui-dropdown {
     width: 100%;
-    height: var(--sdk-height-md);
-    padding: 0 var(--sdk-space-3);
-    padding-right: var(--sdk-space-8);
-    font-family: var(--sdk-font-primary);
-    font-size: var(--sdk-font-body-m);
-    line-height: var(--sdk-font-body-m-lh);
-    color: var(--sdk-text-high);
-    background: var(--sdk-surface-0);
-    border: 1px solid var(--sdk-border-low);
-    border-radius: var(--sdk-radius-10);
+    height: var(--ui-height-md);
+    padding: 0 var(--ui-space-3);
+    padding-right: var(--ui-space-8);
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-m);
+    line-height: var(--ui-font-body-m-lh);
+    color: var(--ui-text-high-em);
+    background: var(--ui-surface-0);
+    border: 1px solid var(--ui-border-low-em);
+    border-radius: var(--ui-rounded-10);
     outline: none;
     cursor: pointer;
     appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%235C5C5C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: right var(--sdk-space-3) center;
+    background-position: right var(--ui-space-3) center;
     transition:
-        border-color var(--sdk-transition-normal),
-        box-shadow var(--sdk-transition-normal);
+        border-color var(--ui-transition-normal),
+        box-shadow var(--ui-transition-normal);
 }
 
-.sdk-example-dropdown:hover {
-    border-color: var(--sdk-border-medium);
+.ui-dropdown:hover {
+    border-color: var(--ui-border-med-em);
 }
 
-.sdk-example-dropdown:focus {
-    border-color: var(--sdk-primary-color);
-    box-shadow: var(--sdk-shadow-focus);
+.ui-dropdown:focus {
+    border-color: var(--ui-surface-brand-red);
+    box-shadow: var(--ui-shadow-focus);
 }
 
-.sdk-example-dropdown:disabled {
-    background-color: var(--sdk-surface-1);
-    color: var(--sdk-text-disabled);
+.ui-dropdown:disabled {
+    background-color: var(--ui-surface-1);
+    color: var(--ui-text-disabled);
     cursor: not-allowed;
-    border-color: var(--sdk-border-base);
+    border-color: var(--ui-border-base-em);
 }
 
-.sdk-example-dropdown option {
-    padding: var(--sdk-space-2);
-    background: var(--sdk-surface-0);
-    color: var(--sdk-text-high);
+.ui-dropdown option {
+    padding: var(--ui-space-2);
+    background: var(--ui-surface-0);
+    color: var(--ui-text-high-em);
 }
 
 /* Responsive: max-width 768px */
 @media (max-width: 768px) {
-    .sdk-example-dropdown {
-        font-size: var(--sdk-font-body-s);
-        line-height: var(--sdk-font-body-s-lh);
+    .ui-dropdown {
+        font-size: var(--ui-font-body-s);
+        line-height: var(--ui-font-body-s-lh);
     }
 }
 
 /* Responsive: max-width 600px */
 @media (max-width: 600px) {
-    .sdk-example-dropdown {
-        height: var(--sdk-height-sm);
-        padding: 0 var(--sdk-space-2);
-        font-size: var(--sdk-font-caption-m);
-        line-height: var(--sdk-font-caption-m-lh);
+    .ui-dropdown {
+        height: var(--ui-height-sm);
+        padding: 0 var(--ui-space-2);
+        font-size: var(--ui-font-caption-m);
+        line-height: var(--ui-font-caption-m-lh);
     }
 }
 
 /* Responsive: max-height 700px */
 @media (max-height: 700px) {
-    .sdk-example-dropdown {
-        font-size: var(--sdk-font-body-s);
-        line-height: var(--sdk-font-body-s-lh);
+    .ui-dropdown {
+        font-size: var(--ui-font-body-s);
+        line-height: var(--ui-font-body-s-lh);
     }
 }
 
 /* Responsive: max-height 550px */
 @media (max-height: 550px) {
-    .sdk-example-dropdown {
-        height: var(--sdk-height-sm);
-        padding: 0 var(--sdk-space-2);
-        font-size: var(--sdk-font-caption-m);
-        line-height: var(--sdk-font-caption-m-lh);
+    .ui-dropdown {
+        height: var(--ui-height-sm);
+        padding: 0 var(--ui-space-2);
+        font-size: var(--ui-font-caption-m);
+        line-height: var(--ui-font-caption-m-lh);
     }
 }
 
 /* Responsive: high contrast */
 @media (prefers-contrast: high) {
-    .sdk-example-dropdown {
+    .ui-dropdown {
         border-width: 2px;
     }
 }

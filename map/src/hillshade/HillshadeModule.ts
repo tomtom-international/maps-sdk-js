@@ -1,10 +1,9 @@
 import {
-    AbstractMapModule,
-    CombinedEvents,
+    AbstractStyleOwnedMapModule,
+    type CombinedEvents,
     HILLSHADE_SOURCE_ID,
-    ModuleEvents,
     StyleSourceWithLayers,
-    UserEvents,
+    sharedInstance,
 } from '../shared';
 import { notInTheStyle } from '../shared/errorMessages';
 import { ensureAddedToStyle, waitUntilMapIsReady } from '../shared/mapUtils';
@@ -59,7 +58,7 @@ type HillshadeSourcesWithLayers = {
  *
  * @group Hillshade
  */
-export class HillshadeModule extends AbstractMapModule<HillshadeSourcesWithLayers, HillshadeModuleConfig> {
+export class HillshadeModule extends AbstractStyleOwnedMapModule<HillshadeSourcesWithLayers, HillshadeModuleConfig> {
     /**
      * Retrieves a HillshadeModule instance for the given map.
      *
@@ -100,15 +99,26 @@ export class HillshadeModule extends AbstractMapModule<HillshadeSourcesWithLayer
      *   visible: false
      * });
      * ```
+     *
+     * @remarks
+     * **Instances:**
+     * `HillshadeModule` controls the hillshade source and layers the map style already provides,
+     * under fixed global IDs. Every instance is another handle on that same shared state, so
+     * visibility applied through one is visible through all of them.
      */
     static async get(map: TomTomMap, config?: HillshadeModuleConfig): Promise<HillshadeModule> {
         await waitUntilMapIsReady(map);
         await ensureAddedToStyle(map, HILLSHADE_SOURCE_ID, 'hillshade');
-        return new HillshadeModule(map, config);
+        return sharedInstance(
+            map,
+            HillshadeModule,
+            () => new HillshadeModule(map, config),
+            config && ((existing) => existing.applyConfig(config)),
+        );
     }
 
     private constructor(map: TomTomMap, config?: HillshadeModuleConfig) {
-        super('style', map, config);
+        super(map, config);
     }
 
     /**
@@ -194,9 +204,6 @@ export class HillshadeModule extends AbstractMapModule<HillshadeSourcesWithLayer
      * ```
      */
     get events(): CombinedEvents<import('maplibre-gl').MapGeoJSONFeature, HillshadeModuleConfig, never> {
-        return new CombinedEvents(
-            new UserEvents(this.tomtomMap._eventsProxy, this.sourcesWithLayers.hillshade, this.config?.events),
-            new ModuleEvents(this.configChangeHandlers, []),
-        );
+        return this.moduleEvents(['hillshade']);
     }
 }

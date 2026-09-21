@@ -11,6 +11,7 @@ export const geographyTypes = [
     'CountryTertiarySubdivision',
     'Municipality',
     'MunicipalitySubdivision',
+    'MunicipalitySecondarySubdivision',
     'Neighbourhood',
     'PostalCodeArea',
 ] as const;
@@ -84,9 +85,12 @@ export type MapcodeType = 'Local' | 'International' | 'Alternative';
  */
 export type Mapcode = {
     /**
-     * The type of mapcode (Local, International, or Alternative).
+     * The mapcode without territory.
+     *
+     * Two groups of letters/digits separated by a dot (e.g., "4J.P2").
+     * Uses the response language/alphabet. Not present for International mapcodes.
      */
-    type: MapcodeType;
+    code?: string;
     /**
      * Complete mapcode including territory if applicable.
      *
@@ -101,12 +105,9 @@ export type Mapcode = {
      */
     territory?: string;
     /**
-     * The mapcode without territory.
-     *
-     * Two groups of letters/digits separated by a dot (e.g., "4J.P2").
-     * Uses the response language/alphabet. Not present for International mapcodes.
+     * The type of mapcode (Local, International, or Alternative).
      */
-    code?: string;
+    type: MapcodeType;
 };
 
 /**
@@ -118,6 +119,10 @@ export type Mapcode = {
  * @group Place
  */
 export type AddressRanges = {
+    /**
+     * Starting coordinates of the street segment [longitude, latitude].
+     */
+    from: Position;
     /**
      * Address range on the left side of the street.
      *
@@ -131,10 +136,6 @@ export type AddressRanges = {
      */
     rangeRight: string;
     /**
-     * Starting coordinates of the street segment [longitude, latitude].
-     */
-    from: Position;
-    /**
      * Ending coordinates of the street segment [longitude, latitude].
      */
     to: Position;
@@ -146,6 +147,9 @@ export type AddressRanges = {
  * @remarks
  * - `main`: Primary entrance (at most one per place)
  * - `minor`: Secondary or alternative entrance (can have multiple)
+ *
+ * Absent when the service does not classify its entry points, which is the case for
+ * reverse geocoding.
  *
  * @group Place
  */
@@ -170,10 +174,6 @@ export type EntryPointType = 'main' | 'minor';
  */
 export type EntryPoint = {
     /**
-     * Type of entry point (main or minor).
-     */
-    type: EntryPointType;
-    /**
      * Functional description of the entry point.
      *
      * Examples: 'FrontDoor', 'ServiceEntrance', 'ParkingGarage'
@@ -183,6 +183,10 @@ export type EntryPoint = {
      * Geographic coordinates of the entry point [longitude, latitude].
      */
     position: Position;
+    /**
+     * Type of entry point (main or minor), when the service classifies it.
+     */
+    type?: EntryPointType;
 };
 
 /**
@@ -238,59 +242,9 @@ export type PlaceType = (typeof placeTypes)[number];
  */
 export type AddressProperties = {
     /**
-     * Complete formatted address string.
-     *
-     * Follows the formatting conventions of the result's country of origin.
-     * For countries, this is the full country name.
+     * Full country name.
      */
-    freeformAddress: string;
-
-    /**
-     * Building or house number on the street.
-     */
-    streetNumber?: string;
-
-    /**
-     * Street name without the building number.
-     */
-    streetName?: string;
-
-    /**
-     * Subdivision of a municipality (sub-city or super-city area).
-     */
-    municipalitySubdivision?: string;
-
-    /**
-     * City or town name.
-     */
-    municipality?: string;
-
-    /**
-     * County or second-level administrative subdivision.
-     */
-    countrySecondarySubdivision?: string;
-
-    /**
-     * Named area or third-level administrative subdivision.
-     */
-    countryTertiarySubdivision?: string;
-
-    /**
-     * State or province (first-level administrative subdivision).
-     */
-    countrySubdivision?: string;
-
-    /**
-     * Postal code or ZIP code.
-     */
-    postalCode?: string;
-
-    /**
-     * Extended postal code.
-     *
-     * Availability depends on region. More precise than standard postal code.
-     */
-    extendedPostalCode?: string;
+    country?: string;
 
     /**
      * Two-letter ISO 3166-1 alpha-2 country code.
@@ -298,11 +252,6 @@ export type AddressProperties = {
      * Examples: 'US', 'GB', 'NL', 'DE'
      */
     countryCode?: string;
-
-    /**
-     * Full country name.
-     */
-    country?: string;
 
     /**
      * Three-letter ISO 3166-1 alpha-3 country code.
@@ -314,6 +263,21 @@ export type AddressProperties = {
     countryCodeISO3?: string;
 
     /**
+     * County or second-level administrative subdivision.
+     */
+    countrySecondarySubdivision?: string;
+
+    /**
+     * State or province (first-level administrative subdivision).
+     */
+    countrySubdivision?: string;
+
+    /**
+     * ISO code of the first-level administrative subdivision (e.g. "US-CA").
+     */
+    countrySubdivisionCodeIso?: string;
+
+    /**
      * Full name of the first-level administrative subdivision.
      *
      * Present when countrySubdivision is abbreviated. Supported for USA, Canada, and Great Britain.
@@ -322,12 +286,79 @@ export type AddressProperties = {
     countrySubdivisionName?: string;
 
     /**
+     * Named area or third-level administrative subdivision.
+     */
+    countryTertiarySubdivision?: string;
+
+    /**
+     * Extended postal code.
+     *
+     * Availability depends on region. More precise than standard postal code.
+     */
+    extendedPostalCode?: string;
+
+    /**
+     * Complete formatted address string.
+     *
+     * Follows the formatting conventions of the result's country of origin.
+     * For countries, this is the full country name.
+     */
+    freeformAddress: string;
+
+    /**
      * Local area or locality name.
      *
      * Represents a named geographic area that groups addressable objects
      * without being an official administrative unit.
      */
     localName?: string;
+
+    /**
+     * City or town name.
+     */
+    municipality?: string;
+
+    /**
+     * District within a municipality subdivision (third-level city administrative division).
+     */
+    municipalitySecondarySubdivision?: string;
+
+    /**
+     * Formal administrative subdivision of a municipality (sub-city or super-city area).
+     * Has official boundaries, unlike a neighborhood.
+     */
+    municipalitySubdivision?: string;
+
+    /**
+     * Informally-named area within a city, with no official boundaries.
+     * Distinct from municipalitySubdivision, which is a formal administrative division.
+     */
+    neighborhood?: string;
+
+    /**
+     * Postal code or ZIP code.
+     */
+    postalCode?: string;
+
+    /**
+     * Name of the postal code area, when the result is a postal code area itself.
+     */
+    postalName?: string;
+
+    /**
+     * Route/road numbers associated with the address (e.g. highway numbers).
+     */
+    routeNumbers?: string[];
+
+    /**
+     * Street name without the building number.
+     */
+    streetName?: string;
+
+    /**
+     * Building or house number on the street.
+     */
+    streetNumber?: string;
 };
 
 /**
@@ -340,13 +371,35 @@ export type AddressProperties = {
  */
 export type CommonPlaceProps = {
     /**
-     * Type classification of this place.
-     */
-    type: PlaceType;
-    /**
      * Structured address components.
      */
     address: AddressProperties;
+    /**
+     * Address ranges along a street segment.
+     *
+     * Present only when type === 'Address Range'.
+     */
+    addressRanges?: AddressRanges;
+    /**
+     * EV charging infrastructure information.
+     *
+     * Present only for Electric Vehicle charging station POIs.
+     */
+    chargingPark?: ChargingPark;
+    /**
+     * References to additional data sources.
+     *
+     * IDs for fetching more detailed information from other services
+     * (geometry, availability, POI details).
+     */
+    dataSources?: PlaceDataSources;
+    /**
+     * Physical entry points (entrances) to the place.
+     *
+     * Useful for navigation to direct users to the correct entrance. Reverse geocoding
+     * returns them unclassified, so their `type` is absent.
+     */
+    entryPoints?: EntryPoint[];
     /**
      * Geographic entity type(s).
      *
@@ -361,18 +414,6 @@ export type CommonPlaceProps = {
      */
     mapcodes?: Mapcode[];
     /**
-     * Physical entry points (entrances) to the place.
-     *
-     * Useful for navigation to direct users to the correct entrance.
-     */
-    entryPoints?: EntryPoint[];
-    /**
-     * Address ranges along a street segment.
-     *
-     * Present only when type === 'Address Range'.
-     */
-    addressRanges?: AddressRanges;
-    /**
      * Point of Interest information.
      *
      * Present only when type === 'POI'. Contains business details, categories, hours, etc.
@@ -385,30 +426,10 @@ export type CommonPlaceProps = {
      */
     relatedPois?: RelatedPOI[];
     /**
-     * EV charging infrastructure information.
-     *
-     * Present only for Electric Vehicle charging station POIs.
+     * Type classification of this place.
      */
-    chargingPark?: ChargingPark;
-    /**
-     * References to additional data sources.
-     *
-     * IDs for fetching more detailed information from other services
-     * (geometry, availability, POI details).
-     */
-    dataSources?: PlaceDataSources;
+    type: PlaceType;
 };
-
-/**
- * Side of the street indicator.
- *
- * @remarks
- * - `L`: Left side
- * - `R`: Right side
- *
- * @group Place
- */
-export type SideOfStreet = 'L' | 'R';
 
 /**
  * Properties for reverse geocoded places.
@@ -423,19 +444,6 @@ export type RevGeoAddressProps = CommonPlaceProps & {
      * Original coordinates used in the reverse geocoding query [longitude, latitude].
      */
     originalPosition: Position;
-    /**
-     * Offset position coordinates for address interpolation.
-     *
-     * Present when a street number was specified in the query.
-     * Represents the interpolated position of the specific address number.
-     */
-    offsetPosition?: Position;
-    /**
-     * Which side of the street the address is located on.
-     *
-     * Present only when a street number was specified in the query.
-     */
-    sideOfStreet?: SideOfStreet;
 };
 
 /**
@@ -447,6 +455,12 @@ export type RevGeoAddressProps = CommonPlaceProps & {
  * @group Place
  */
 export type SearchPlaceProps = CommonPlaceProps & {
+    /**
+     * Distance in meters to this result from the bias position.
+     *
+     * Present only when geoBias (position bias) was provided in the search.
+     */
+    distance?: number;
     /**
      * Information about the original data source.
      *
@@ -460,12 +474,6 @@ export type SearchPlaceProps = CommonPlaceProps & {
      * Used for ranking search results.
      */
     score?: number;
-    /**
-     * Distance in meters to this result from the bias position.
-     *
-     * Present only when geoBias (position bias) was provided in the search.
-     */
-    distance?: number;
 };
 
 /**
@@ -495,18 +503,18 @@ export type SearchPlaceProps = CommonPlaceProps & {
  */
 export type Place<P extends CommonPlaceProps = CommonPlaceProps> = Omit<Feature<Point, P>, 'id' | 'bbox'> & {
     /**
-     * Unique identifier for this place.
-     *
-     * Required string ID (stricter than GeoJSON Feature's optional id).
-     */
-    id: string;
-
-    /**
      * Bounding box that contains the place.
      *
      * * Typically significant for places covering wider areas.
      */
     bbox?: BBox;
+
+    /**
+     * Unique identifier for this place.
+     *
+     * Required string ID (stricter than GeoJSON Feature's optional id).
+     */
+    id: string;
 };
 
 /**
@@ -535,14 +543,14 @@ export type Places<P extends CommonPlaceProps = CommonPlaceProps, FeatureCollect
     'features' | 'bbox'
 > & {
     /**
-     * Array of place features.
-     * * Each place has a required string ID.
-     */
-    features: Place<P>[];
-
-    /**
      * Bounding box that contains all the places, including their bounding boxes.
      * * Only included if any places are present.
      */
     bbox?: BBox;
+
+    /**
+     * Array of place features.
+     * * Each place has a required string ID.
+     */
+    features: Place<P>[];
 };

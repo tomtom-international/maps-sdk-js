@@ -165,6 +165,22 @@ export type CodeExecutionConfig = {
 };
 
 /**
+ * Per-call options handed to a tool's `execute`, separate from its parsed input.
+ *
+ * `signal` is the AI SDK's own `abortSignal` for the tool call — it fires when the model's
+ * turn is cancelled. Forward it to any `@tomtom-org/maps-sdk/services` call the tool makes
+ * (as `signal`) so a cancelled turn also cancels its in-flight HTTP requests.
+ *
+ * Do NOT forward it into work that outlives the turn — a monitor's recurring tick, or any
+ * deferred job. Those fire after the signal has aborted, and a monitor treats a rejected tick
+ * as fatal (it clears its own interval), so a leaked signal kills the monitor rather than
+ * cancelling a request.
+ *
+ * @group Agent Toolkit
+ */
+export type ToolExecuteOptions = { signal?: AbortSignal };
+
+/**
  * A tool definition — the universal format for both built-in and third-party tools.
  * Combines execution (inputSchema + execute) with classifier metadata.
  *
@@ -184,8 +200,16 @@ export type ToolEntry<S extends ToolState = ToolState, Scope = unknown> = {
     inputSchema: z.ZodType;
     /** Optional Zod schema describing the tool's structured output. */
     outputSchema?: z.ZodType;
-    /** Function that executes the tool. Receives parsed input and the agent's state. */
-    execute: (input: any, state: S) => Promise<any>;
+    /**
+     * Function that executes the tool. Receives parsed input and the agent's state.
+     *
+     * If this calls a `@tomtom-org/maps-sdk/services` function directly, wrap its params with
+     * `withAgentToolkitHeaders` (`tools/shared/agent-headers.ts`) before passing them in — e.g.
+     * `const requestParams = withAgentToolkitHeaders({ position }); await reverseGeocode(requestParams);`.
+     * This tags the request so TomTom's traffic analytics attribute it to agent-toolkit; an
+     * untagged call is picked up by the guard test in `tools/shared/tests/agent-headers.test.ts`.
+     */
+    execute: (input: any, state: S, options?: ToolExecuteOptions) => Promise<any>;
     /** Compact one-liner for the intent classifier prompt. */
     classificationPrompt?: string;
     /** Category tags (e.g. 'location', 'routing'). */
@@ -379,6 +403,29 @@ export type ToolDefinition<S extends ToolState = ToolState, Scope = any> =
     | ToolEntryBuilder<S, Scope>;
 
 /**
+ * Per-tool execution outcome reported to {@link MapAgentOptions.onToolExecute}.
+ *
+ * @group Agent Toolkit
+ */
+export type ToolExecutionInfo = {
+    /** Registered tool name (the `defaultTools` key). */
+    toolName: string;
+    /** Wall-clock duration of `execute`, in milliseconds (includes any network/IO). */
+    durationMs: number;
+    /** True if the tool threw or returned the standardized `{ error: string }` shape. */
+    isError: boolean;
+    /** Error message when `isError` is true (the thrown message or the returned `error`). */
+    errorMessage?: string;
+};
+
+/**
+ * Observer invoked after each tool's `execute` settles.
+ *
+ * @group Agent Toolkit
+ */
+export type OnToolExecute = (info: ToolExecutionInfo) => void;
+
+/**
  * Options for creating an agent toolkit.
  *
  * @typeParam CS - Full state type. Must extend `ToolState`. Defaults to base `ToolState` (no custom slices).
@@ -397,21 +444,6 @@ export type ToolDefinition<S extends ToolState = ToolState, Scope = any> =
  * });
  * ```
  */
-/** Per-tool execution outcome reported to {@link MapAgentOptions.onToolExecute}. */
-export type ToolExecutionInfo = {
-    /** Registered tool name (the `defaultTools` key). */
-    toolName: string;
-    /** Wall-clock duration of `execute`, in milliseconds (includes any network/IO). */
-    durationMs: number;
-    /** True if the tool threw or returned the standardized `{ error: string }` shape. */
-    isError: boolean;
-    /** Error message when `isError` is true (the thrown message or the returned `error`). */
-    errorMessage?: string;
-};
-
-/** Observer invoked after each tool's `execute` settles. */
-export type OnToolExecute = (info: ToolExecutionInfo) => void;
-
 export type MapAgentOptions<CS extends ToolState = ToolState> = {
     /** AI SDK language model instance. REQUIRED — no default provider. */
     model: LanguageModel;

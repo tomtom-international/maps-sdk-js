@@ -20,6 +20,20 @@ if (!Module.__patched) {
         if (request.endsWith('.svg?raw')) {
             return '';
         }
+        // maplibre-gl v6 is ESM-only (its package `exports` has no `main`/`require`
+        // entry), so a CommonJS require() through this patch can't resolve it. The SDK
+        // never invokes maplibre-gl in Node — it only runs in the test browsers — so
+        // return a self-referential no-op stub: any property access / call / construct
+        // yields the same stub, so destructured imports never throw at load time.
+        // (`maplibre-gl/package.json`, used for the version, still resolves normally.)
+        if (request === 'maplibre-gl') {
+            const stub: any = new Proxy(() => {}, {
+                get: () => stub,
+                apply: () => stub,
+                construct: () => stub,
+            });
+            return stub;
+        }
         return originalLoad.apply(this, arguments);
     };
     Module.__patched = true;

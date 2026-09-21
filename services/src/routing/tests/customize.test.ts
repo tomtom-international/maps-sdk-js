@@ -29,7 +29,7 @@ describe('Using customize obj', () => {
                         'TomTom-Api-Key': 'API_KEY',
                         'TomTom-Api-Version': '3',
                         Attributes:
-                            'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.roadShields,sections.importantRoadStretch,progressPoints)',
+                            'routes(summary,legs(summary,path),sections,sections.tollVignette,sections.tollRoad,sections.roadShields,sections.importantRoadStretch,progressPoints)',
                     },
                 }),
             ),

@@ -1,5 +1,11 @@
 /**
  * @module agent-toolkit-tools
+ *
+ * Adding a new default tool here that calls a `@tomtom-org/maps-sdk/services` function directly?
+ * Wrap its params with `withAgentToolkitHeaders` (`tools/shared/agent-headers.ts`) before passing
+ * them in, so TomTom's traffic analytics can attribute the request to agent-toolkit — see
+ * {@link ToolEntry.execute} for the pattern. A missed tag is caught by the guard test in
+ * `tools/shared/tests/agent-headers.test.ts`.
  */
 
 import { trafficIncidentRequestCategories } from '@tomtom-org/maps-sdk/core';
@@ -156,10 +162,15 @@ import {
     clearMapDescription,
     clearMapOutputSchema,
     clearMapSchema,
+    describeMapStylingDescription,
+    describeMapStylingOutputSchema,
+    describeMapStylingSchema,
     executeClearMap,
+    executeDescribeMapStyling,
     executeGetStandardMapStyles,
     executeSetLanguage,
     executeSetMapStandardStyle,
+    executeSetMapStyling,
     executeToggleTilesBaseMapLayerGroups,
     executeToggleTilesPOIs,
     executeToggleTilesTrafficFlow,
@@ -178,6 +189,9 @@ import {
     setMapStandardStyleDescription,
     setMapStandardStyleOutputSchema,
     setMapStandardStyleSchema,
+    setMapStylingDescription,
+    setMapStylingOutputSchema,
+    setMapStylingSchema,
     toggleTilesBaseMapLayerGroupsDescription,
     toggleTilesBaseMapLayerGroupsOutputSchema,
     toggleTilesBaseMapLayerGroupsSchema,
@@ -1173,7 +1187,7 @@ const defaultTools = {
     toggleTilesBaseMapLayerGroups: {
         description: toggleTilesBaseMapLayerGroupsDescription,
         classificationPrompt:
-            'Show / hide vector-tile base-map layer groups (buildings3D, roadLabels, water, placeLabels, …). Style-layer only — does NOT touch places / routes / custom-geometries rendered by the agent.',
+            'Show / hide vector-tile base-map layer groups (buildings3D, roadLabels, water, allPlaceLabels, …). Style-layer only — does NOT touch places / routes / custom-geometries rendered by the agent.',
         inputSchema: toggleTilesBaseMapLayerGroupsSchema,
         outputSchema: toggleTilesBaseMapLayerGroupsOutputSchema,
         execute: executeToggleTilesBaseMapLayerGroups,
@@ -1205,6 +1219,45 @@ const defaultTools = {
             'Turn off parking icons in the base map',
         ],
         relatedTools: ['toggleTilesBaseMapLayerGroups', 'discoverPlaces', 'setMapStandardStyle'],
+    },
+    describeMapStyling: {
+        description: describeMapStylingDescription,
+        classificationPrompt:
+            'List what can be restyled on the base map (sizes, feature toggles, POI and traffic colours) with ranges, defaults and current values. Read-only.',
+        inputSchema: describeMapStylingSchema,
+        outputSchema: describeMapStylingOutputSchema,
+        execute: executeDescribeMapStyling,
+        tags: ['map style'],
+        examples: ['describeMapStyling()', 'describeMapStyling({ kind: "toggle" })'],
+        examplePrompts: [
+            'What can I change about the map styling?',
+            'Which map styling knobs are currently overridden?',
+        ],
+        relatedTools: ['setMapStyling', 'setMapStandardStyle'],
+    },
+    setMapStyling: {
+        description: setMapStylingDescription,
+        classificationPrompt:
+            'Adjust the base-map look semantically — bigger/smaller labels or icons, thicker roads, hide/show exit numbers, route shields, road arrows, 3D buildings or POI micro markers, POI label colour or zoom, traffic congestion/incident colours — or reset those to the style defaults. NOT for switching the whole style (setMapStandardStyle), NOT for layers the agent drew.',
+        inputSchema: setMapStylingSchema,
+        outputSchema: setMapStylingOutputSchema,
+        execute: executeSetMapStyling,
+        tags: ['map style'],
+        examples: [
+            'setMapStyling({ set: { "labels.sizeFactor": 1.3 } })',
+            'setMapStyling({ set: { "roads.exitNumbers": false, "roads.shields": false } })',
+            'setMapStyling({ set: { "buildings.3d": true } })',
+            'setMapStyling({ set: { "traffic.flow.slowColor": "#f59e0b", "traffic.flow.stationaryColor": "#7f1d1d" } })',
+            'setMapStyling({ reset: true })',
+        ],
+        examplePrompts: [
+            'Make the map labels bigger',
+            'Hide the exit numbers and route shields',
+            'Show 3D buildings',
+            'Use orange for slow traffic and dark red for stationary traffic',
+            'Reset the map styling',
+        ],
+        relatedTools: ['describeMapStyling', 'setMapStandardStyle', 'toggleTilesBaseMapLayerGroups', 'toggleTilesPOIs'],
     },
     toggleTilesTrafficFlow: {
         description: toggleTilesTrafficFlowDescription,
@@ -1400,7 +1453,7 @@ const defaultTools = {
         examples: [
             'findReachableAreas({ origins: [{ query: "Amsterdam", queryAs: "place" }], budgets: [{ type: "timeMinutes", value: 30 }], showOnMap: true })',
             'findReachableAreas({ origins: [{ query: "Amsterdam", queryAs: "place" }, { query: "Rotterdam", queryAs: "place" }], budgets: [{ type: "timeMinutes", value: 30 }], showOnMap: true })',
-            'findReachableAreas({ origins: [{ position: { lng: 4.9, lat: 52.3 } }], budgets: [{ type: "timeMinutes", value: 10 }, { type: "timeMinutes", value: 30 }], showOnMap: true, theme: "inverted" })',
+            'findReachableAreas({ origins: [{ position: [4.9, 52.3] }], budgets: [{ type: "timeMinutes", value: 10 }, { type: "timeMinutes", value: 30 }], showOnMap: true, theme: "inverted" })',
             'findReachableAreas({ origins: [{ query: "my location", queryAs: "place" }], budgets: [{ type: "distanceKM", value: 50 }], showOnMap: false })',
         ],
         examplePrompts: [

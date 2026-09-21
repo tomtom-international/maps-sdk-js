@@ -1,12 +1,13 @@
+import type { IconOffset } from '../../shared/layers/iconOffset';
 import { suffixNumber } from '../../shared/layers/utils';
 import { parseSvg } from '../../shared/resources';
 import type { PlacesModuleConfig, PlacesTheme } from '../types/placesModuleConfig';
 
 /**
- * Map of icon IDs to their text offset scale factors.
+ * Map of icon IDs to their text offset scale factors and the icon's own pixel offset.
  * @ignore
  */
-export type IconScalesMap = Map<string, { heightScale: number; widthScale: number }>;
+export type IconPositioningMap = Map<string, { heightScale: number; widthScale: number; offset: IconOffset }>;
 
 /**
  * Default pin dimensions (from base pin.svg)
@@ -110,33 +111,43 @@ export const calculateIconScale = (
 };
 
 /**
- * Builds a map of icon IDs to their text offset scales for custom icons.
+ * Builds a map of icon IDs to their text offset scales and pixel offsets for custom icons.
+ * An icon gets an entry when it has a non-standard image size (`heightScale`/`widthScale`
+ * default to `1` otherwise) or specifies `offsetX`/`offsetY` (default `0` otherwise).
  * @ignore
  */
 export const buildCustomIconScalesMap = (
     config: PlacesModuleConfig | undefined,
     instanceIndex: number,
-): IconScalesMap => {
-    const iconTextOffsetScales = new Map<string, { heightScale: number; widthScale: number }>();
+): IconPositioningMap => {
+    const iconScales: IconPositioningMap = new Map();
     const customIcons = config?.icon?.categoryIcons ?? [];
 
     for (const icon of customIcons) {
         if (icon.image) {
             const scales = calculateIconScale(icon.image, config?.theme);
-            if (scales !== undefined) {
-                // Base icon ID with instance suffix
-                const suffixedIconId = suffixNumber(icon.id, instanceIndex);
-                iconTextOffsetScales.set(suffixedIconId, scales);
+            const hasOffset = icon.offsetX !== undefined || icon.offsetY !== undefined;
 
-                // If this icon has an availability level, also add the availability-suffixed version
-                // (e.g., "ELECTRIC_VEHICLE_STATION-available-0")
-                if (icon.availabilityLevel) {
-                    const availabilitySuffixedId = suffixNumber(`${icon.id}-${icon.availabilityLevel}`, instanceIndex);
-                    iconTextOffsetScales.set(availabilitySuffixedId, scales);
-                }
+            if (scales === undefined && !hasOffset) {
+                continue;
+            }
+            const entry = {
+                heightScale: scales?.heightScale ?? 1,
+                widthScale: scales?.widthScale ?? 1,
+                offset: { x: icon.offsetX ?? 0, y: icon.offsetY ?? 0 },
+            };
+            // Base icon ID with instance suffix
+            const suffixedIconId = suffixNumber(icon.id, instanceIndex);
+            iconScales.set(suffixedIconId, entry);
+
+            // If this icon has an availability level, also add the availability-suffixed version
+            // (e.g., "ELECTRIC_VEHICLE_STATION-available-0")
+            if (icon.availabilityLevel) {
+                const availabilitySuffixedId = suffixNumber(`${icon.id}-${icon.availabilityLevel}`, instanceIndex);
+                iconScales.set(availabilitySuffixedId, entry);
             }
         }
     }
 
-    return iconTextOffsetScales;
+    return iconScales;
 };

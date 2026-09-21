@@ -61,7 +61,10 @@ export const addByodSourceDescription =
     '`state.byod.addEntry(...)`. ' +
     'This tool ONLY ingests — the entry starts with NO layers and renders nothing (no automatic defaults). ALWAYS ' +
     'follow it with `setByodLayers`, which picks layers + data-driven paint from the returned `profile` AND draws ' +
-    'the entry; until then nothing is shown. Choosing the layers is always your job, in every case.';
+    'the entry; until then nothing is shown. Choosing the layers is always your job, in every case. ' +
+    'The entry does not exist until this call RETURNS — even when you chose `entryId` yourself. So every tool that ' +
+    'reads the entry (`setByodLayers`, `analyseData` / `processData`, `updateByodDisplay`, …) belongs in a LATER ' +
+    'step: issuing one alongside this call fails with "No BYOD entry with id …".';
 
 const isFeatureCollection = (value: unknown): value is FeatureCollection => {
     if (!value || typeof value !== 'object') return false;

@@ -101,10 +101,10 @@ export const executeResetState = async (
         state.trackers.reset();
         state.engine.reset();
 
-        // 4. Map style: revert to the canonical default. `keepState: false`
-        //    so any sources/layers added after the last `setStyle` call are
-        //    dropped along with the previous style.
-        state.baseMap.ttMap.setStyle(DEFAULT_STYLE_ID, { keepState: false });
+        // 4. Map style: revert to the canonical default. `resetState: true` so the SDK modules
+        //    re-bind to it with default configuration and nothing shown, and any sources/layers
+        //    added after the last `setStyle` call are dropped along with the previous style.
+        await state.baseMap.ttMap.setStyle(DEFAULT_STYLE_ID, { resetState: true });
 
         return {
             success: true,

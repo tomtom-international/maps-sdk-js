@@ -16,13 +16,15 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         mapLibre: { container: 'sdk-map', bounds: bboxFromGeoJSON(locations), fitBoundsOptions: { padding: 80 } },
     });
 
-    const [routingModule, restOfTheMap] = await Promise.all([
-        RoutingModule.get(map, { summaryBubbles: { visible: false } }),
-        BaseMapModule.get(map, {
-            layerGroupsFilter: { mode: 'include', names: ['land', 'water'] },
-            events: { cursorOnHover: 'default' },
-        }),
+    const [routingModule, baseMap] = await Promise.all([
+        RoutingModule.create(map, { summaryBubbles: { visible: false } }),
+        BaseMapModule.get(map),
     ]);
+
+    const restOfTheMap = baseMap.events.where(
+        { layerGroups: { mode: 'include', names: ['land', 'water'] } },
+        { cursorOnHover: 'default' },
+    );
 
     const routeResult = await calculateRoute({ locations });
     const route: Route = routeResult.features[0];
@@ -61,19 +63,19 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
             ?.addEventListener('click', () => pinnedPopup.remove());
     };
 
-    routingModule.events.user.mainLines.on('hover-move', (_, lngLat) => {
+    routingModule.events.mainLines.on('hover-move', (_, lngLat) => {
         showHoverAt(lngLat.toArray());
     });
 
-    restOfTheMap.events.on('hover', () => {
+    restOfTheMap.on('hover', () => {
         hoverPopup.remove();
     });
 
-    restOfTheMap.events.on('click', () => {
+    restOfTheMap.on('click', () => {
         hoverPopup.remove();
     });
 
-    routingModule.events.user.mainLines.on('click', (_, lngLat) => {
+    routingModule.events.mainLines.on('click', (_, lngLat) => {
         pinProgressAt(lngLat.toArray());
     });
 })();

@@ -38,6 +38,7 @@ const makeMockMap = () => {
         mapLibreMap,
         _eventsProxy: { add: vi.fn(), ensureAdded: vi.fn(), updateIfRegistered: vi.fn() },
         addStyleChangeHandler: vi.fn(),
+        styleLightDarkTheme: 'light',
         mapReady: true,
     } as unknown as TomTomMap;
 };
@@ -49,7 +50,7 @@ const TOTAL_LAYERS = 8; // 5 line (focus-halo + outline + inner-solid + inner-ch
 describe('TrafficIncidentOverlayModule', () => {
     test('get() resolves an instance and initialises source+layers', async () => {
         const tomtomMap = makeMockMap();
-        const mod = await TrafficIncidentOverlayModule.get(tomtomMap);
+        const mod = await TrafficIncidentOverlayModule.create(tomtomMap);
 
         expect(mod).toBeDefined();
         expect(tomtomMap.mapLibreMap.addSource).toHaveBeenCalled();
@@ -58,7 +59,7 @@ describe('TrafficIncidentOverlayModule', () => {
 
     test('adds five line layers in paint order: focus-halo (bottom), outline, inner-solid, inner-chevron, inner-pattern', async () => {
         const tomtomMap = makeMockMap();
-        await TrafficIncidentOverlayModule.get(tomtomMap);
+        await TrafficIncidentOverlayModule.create(tomtomMap);
 
         const addLayer = tomtomMap.mapLibreMap.addLayer as ReturnType<typeof vi.fn>;
         const lineLayers = addLayer.mock.calls.map((c) => c[0]).filter((l) => l.type === 'line');
@@ -68,7 +69,7 @@ describe('TrafficIncidentOverlayModule', () => {
 
     test('focus-halo layer is invisible for non-focused features and renders a crisp black outline on focused ones', async () => {
         const tomtomMap = makeMockMap();
-        await TrafficIncidentOverlayModule.get(tomtomMap);
+        await TrafficIncidentOverlayModule.create(tomtomMap);
 
         const addLayer = tomtomMap.mapLibreMap.addLayer as ReturnType<typeof vi.fn>;
         const halo = addLayer.mock.calls.map((c) => c[0]).find((l) => l.id.endsWith('-focus-halo'));
@@ -84,7 +85,7 @@ describe('TrafficIncidentOverlayModule', () => {
 
     test('inner-chevron layer paints the direction chevron on jam magnitudes only, from z12', async () => {
         const tomtomMap = makeMockMap();
-        await TrafficIncidentOverlayModule.get(tomtomMap);
+        await TrafficIncidentOverlayModule.create(tomtomMap);
 
         const addLayer = tomtomMap.mapLibreMap.addLayer as ReturnType<typeof vi.fn>;
         const chevron = addLayer.mock.calls.map((c) => c[0]).find((l) => l.id.endsWith('-inner-chevron'));
@@ -101,7 +102,7 @@ describe('TrafficIncidentOverlayModule', () => {
 
     test('inner-pattern layer uses canonical line-pattern sprites per magnitude', async () => {
         const tomtomMap = makeMockMap();
-        await TrafficIncidentOverlayModule.get(tomtomMap);
+        await TrafficIncidentOverlayModule.create(tomtomMap);
 
         const addLayer = tomtomMap.mapLibreMap.addLayer as ReturnType<typeof vi.fn>;
         const patternLayer = addLayer.mock.calls.map((c) => c[0]).find((l) => l.id.endsWith('-inner-pattern'));
@@ -112,7 +113,7 @@ describe('TrafficIncidentOverlayModule', () => {
 
     test('line-width is a plain zoom interpolation (no road-class references)', async () => {
         const tomtomMap = makeMockMap();
-        await TrafficIncidentOverlayModule.get(tomtomMap);
+        await TrafficIncidentOverlayModule.create(tomtomMap);
 
         const addLayer = tomtomMap.mapLibreMap.addLayer as ReturnType<typeof vi.fn>;
         const lineLayers = addLayer.mock.calls.map((c) => c[0]).filter((l) => l.type === 'line');
@@ -129,7 +130,7 @@ describe('TrafficIncidentOverlayModule', () => {
 
     test('adds three symbol marker layers at correct minzooms', async () => {
         const tomtomMap = makeMockMap();
-        await TrafficIncidentOverlayModule.get(tomtomMap);
+        await TrafficIncidentOverlayModule.create(tomtomMap);
 
         const addLayer = tomtomMap.mapLibreMap.addLayer as ReturnType<typeof vi.fn>;
         const symbolLayers = addLayer.mock.calls.map((c) => c[0]).filter((l) => l.type === 'symbol');
@@ -151,7 +152,7 @@ describe('TrafficIncidentOverlayModule', () => {
 
     test('incident marker filter excludes indefinite (road-closed) magnitude', async () => {
         const tomtomMap = makeMockMap();
-        await TrafficIncidentOverlayModule.get(tomtomMap);
+        await TrafficIncidentOverlayModule.create(tomtomMap);
 
         const addLayer = tomtomMap.mapLibreMap.addLayer as ReturnType<typeof vi.fn>;
         const incidentMarker = addLayer.mock.calls.map((c) => c[0]).find((l) => l.id.endsWith('-incident-marker'));
@@ -162,7 +163,7 @@ describe('TrafficIncidentOverlayModule', () => {
 
     test('jam marker selects category=jam, renders icon + delay text', async () => {
         const tomtomMap = makeMockMap();
-        await TrafficIncidentOverlayModule.get(tomtomMap);
+        await TrafficIncidentOverlayModule.create(tomtomMap);
 
         const addLayer = tomtomMap.mapLibreMap.addLayer as ReturnType<typeof vi.fn>;
         const jamMarker = addLayer.mock.calls.map((c) => c[0]).find((l) => l.id.endsWith('-jam-marker'));
@@ -181,7 +182,7 @@ describe('TrafficIncidentOverlayModule', () => {
 
     test('closed-road marker filters on indefinite magnitude and uses the road_closed sprite', async () => {
         const tomtomMap = makeMockMap();
-        await TrafficIncidentOverlayModule.get(tomtomMap);
+        await TrafficIncidentOverlayModule.create(tomtomMap);
 
         const addLayer = tomtomMap.mapLibreMap.addLayer as ReturnType<typeof vi.fn>;
         const closedMarker = addLayer.mock.calls.map((c) => c[0]).find((l) => l.id.endsWith('-closed-road-marker'));
@@ -191,7 +192,7 @@ describe('TrafficIncidentOverlayModule', () => {
 
     test('symbol layers do not force allow-overlap or ignore-placement (canonical relies on collision culling)', async () => {
         const tomtomMap = makeMockMap();
-        await TrafficIncidentOverlayModule.get(tomtomMap);
+        await TrafficIncidentOverlayModule.create(tomtomMap);
 
         const addLayer = tomtomMap.mapLibreMap.addLayer as ReturnType<typeof vi.fn>;
         const symbolLayers = addLayer.mock.calls.map((c) => c[0]).filter((l) => l.type === 'symbol');
@@ -203,7 +204,7 @@ describe('TrafficIncidentOverlayModule', () => {
 
     test('show() and clear() update the source data', async () => {
         const tomtomMap = makeMockMap();
-        const mod = await TrafficIncidentOverlayModule.get(tomtomMap);
+        const mod = await TrafficIncidentOverlayModule.create(tomtomMap);
 
         await mod.show(emptyResult);
         await mod.clear();
@@ -217,7 +218,7 @@ describe('TrafficIncidentOverlayModule', () => {
 
     test('setVisible toggles layer visibility; show() does not flip it', async () => {
         const tomtomMap = makeMockMap();
-        const mod = await TrafficIncidentOverlayModule.get(tomtomMap, { visible: false });
+        const mod = await TrafficIncidentOverlayModule.create(tomtomMap, { visible: false });
         const setLayoutProperty = tomtomMap.mapLibreMap.setLayoutProperty as ReturnType<typeof vi.fn>;
 
         // visible:false at init must have hidden the layers.
@@ -248,7 +249,7 @@ describe('TrafficIncidentOverlayModule', () => {
             ],
         };
 
-        const mod = await TrafficIncidentOverlayModule.get(tomtomMap);
+        const mod = await TrafficIncidentOverlayModule.create(tomtomMap);
         await mod.show(result);
         queryRenderedFeatures.mockClear();
         const shown = mod.getShown();
@@ -260,7 +261,7 @@ describe('TrafficIncidentOverlayModule', () => {
 
     test('defaults all layers to sit below `lowestLabel` so labels stay readable', async () => {
         const tomtomMap = makeMockMap();
-        await TrafficIncidentOverlayModule.get(tomtomMap);
+        await TrafficIncidentOverlayModule.create(tomtomMap);
 
         const addLayer = tomtomMap.mapLibreMap.addLayer as ReturnType<typeof vi.fn>;
         expect(addLayer).toHaveBeenCalledTimes(TOTAL_LAYERS);
@@ -274,7 +275,7 @@ describe('TrafficIncidentOverlayModule', () => {
 
     test('beforeLayerConfig: "top" suppresses the anchor so layers render above everything', async () => {
         const tomtomMap = makeMockMap();
-        await TrafficIncidentOverlayModule.get(tomtomMap, { beforeLayerConfig: 'top' });
+        await TrafficIncidentOverlayModule.create(tomtomMap, { beforeLayerConfig: 'top' });
 
         const addLayer = tomtomMap.mapLibreMap.addLayer as ReturnType<typeof vi.fn>;
         for (const call of addLayer.mock.calls) {
@@ -284,7 +285,7 @@ describe('TrafficIncidentOverlayModule', () => {
 
     test('moveBeforeLayer moves all layers before the target', async () => {
         const tomtomMap = makeMockMap();
-        const mod = await TrafficIncidentOverlayModule.get(tomtomMap);
+        const mod = await TrafficIncidentOverlayModule.create(tomtomMap);
         const moveLayer = tomtomMap.mapLibreMap.moveLayer as ReturnType<typeof vi.fn>;
         moveLayer.mockClear();
 
@@ -295,7 +296,7 @@ describe('TrafficIncidentOverlayModule', () => {
 
     test('moveBeforeLayer with "top" passes undefined to MapLibre', async () => {
         const tomtomMap = makeMockMap();
-        const mod = await TrafficIncidentOverlayModule.get(tomtomMap);
+        const mod = await TrafficIncidentOverlayModule.create(tomtomMap);
         const moveLayer = tomtomMap.mapLibreMap.moveLayer as ReturnType<typeof vi.fn>;
         moveLayer.mockClear();
 
@@ -308,14 +309,14 @@ describe('TrafficIncidentOverlayModule', () => {
         const tomtomMap = makeMockMap();
         const moveLayer = tomtomMap.mapLibreMap.moveLayer as ReturnType<typeof vi.fn>;
 
-        await TrafficIncidentOverlayModule.get(tomtomMap, { beforeLayerConfig: 'lowestLabel' });
+        await TrafficIncidentOverlayModule.create(tomtomMap, { beforeLayerConfig: 'lowestLabel' });
 
         expect(moveLayer).toHaveBeenCalledTimes(TOTAL_LAYERS);
     });
 
     test('shown-features handler fires with the service result', async () => {
         const tomtomMap = makeMockMap();
-        const mod = await TrafficIncidentOverlayModule.get(tomtomMap);
+        const mod = await TrafficIncidentOverlayModule.create(tomtomMap);
 
         const seen: TrafficIncidentDetails[] = [];
         mod.events.on('shown-features', (r) => seen.push(r));
@@ -345,7 +346,7 @@ describe('TrafficIncidentOverlayModule', () => {
 
     test('config-change handler fires when setVisible is called', async () => {
         const tomtomMap = makeMockMap();
-        const mod = await TrafficIncidentOverlayModule.get(tomtomMap);
+        const mod = await TrafficIncidentOverlayModule.create(tomtomMap);
 
         const seen: Array<TrafficIncidentOverlayConfig | undefined> = [];
         mod.events.on('config-change', (c) => seen.push(c));
@@ -357,7 +358,7 @@ describe('TrafficIncidentOverlayModule', () => {
 
     test('restore replays last show() after style change', async () => {
         const tomtomMap = makeMockMap();
-        const mod = await TrafficIncidentOverlayModule.get(tomtomMap);
+        const mod = await TrafficIncidentOverlayModule.create(tomtomMap);
 
         const result: TrafficIncidentDetails = {
             type: 'FeatureCollection',
@@ -393,7 +394,7 @@ describe('TrafficIncidentOverlayModule', () => {
 
     test('restore keeps source and layer IDs stable', async () => {
         const tomtomMap = makeMockMap();
-        const mod = await TrafficIncidentOverlayModule.get(tomtomMap);
+        const mod = await TrafficIncidentOverlayModule.create(tomtomMap);
         const before = { ...mod.sourceAndLayerIDs.incidents };
 
         (mod as unknown as { restoreDataAndConfigImpl: () => void }).restoreDataAndConfigImpl();
@@ -448,7 +449,7 @@ describe('TrafficIncidentOverlayModule', () => {
 
         test('setFocus(ids) writes focused=true for the set and focused=false for the rest', async () => {
             const tomtomMap = makeMockMap();
-            const mod = await TrafficIncidentOverlayModule.get(tomtomMap);
+            const mod = await TrafficIncidentOverlayModule.create(tomtomMap);
             await mod.show(fixture);
 
             mod.setFocus(['a']);
@@ -463,7 +464,7 @@ describe('TrafficIncidentOverlayModule', () => {
 
         test('setFocus(null) removes feature-state for every rendered feature', async () => {
             const tomtomMap = makeMockMap();
-            const mod = await TrafficIncidentOverlayModule.get(tomtomMap);
+            const mod = await TrafficIncidentOverlayModule.create(tomtomMap);
             await mod.show(fixture);
             mod.setFocus(['a']);
 
@@ -478,7 +479,7 @@ describe('TrafficIncidentOverlayModule', () => {
 
         test('setFocus before show() is a no-op (nothing to write state on)', async () => {
             const tomtomMap = makeMockMap();
-            const mod = await TrafficIncidentOverlayModule.get(tomtomMap);
+            const mod = await TrafficIncidentOverlayModule.create(tomtomMap);
 
             mod.setFocus(['a']);
 
@@ -487,7 +488,7 @@ describe('TrafficIncidentOverlayModule', () => {
 
         test('show() with new data clears prior feature-state before applying', async () => {
             const tomtomMap = makeMockMap();
-            const mod = await TrafficIncidentOverlayModule.get(tomtomMap);
+            const mod = await TrafficIncidentOverlayModule.create(tomtomMap);
             await mod.show(fixture);
             mod.setFocus(['a']);
 
@@ -501,7 +502,7 @@ describe('TrafficIncidentOverlayModule', () => {
 
         test('restoreDataAndConfigImpl re-applies focus after a style reload', async () => {
             const tomtomMap = makeMockMap();
-            const mod = await TrafficIncidentOverlayModule.get(tomtomMap);
+            const mod = await TrafficIncidentOverlayModule.create(tomtomMap);
             await mod.show(fixture);
             mod.setFocus(['a']);
 
@@ -521,7 +522,7 @@ describe('TrafficIncidentOverlayModule', () => {
 
         test('show() with new data resets the focus cache so a later style reload does not re-apply stale focus', async () => {
             const tomtomMap = makeMockMap();
-            const mod = await TrafficIncidentOverlayModule.get(tomtomMap);
+            const mod = await TrafficIncidentOverlayModule.create(tomtomMap);
             await mod.show(fixture);
             mod.setFocus(['a']);
 
@@ -539,7 +540,7 @@ describe('TrafficIncidentOverlayModule', () => {
 
         test('clear() removes feature-state and resets the tracked set', async () => {
             const tomtomMap = makeMockMap();
-            const mod = await TrafficIncidentOverlayModule.get(tomtomMap);
+            const mod = await TrafficIncidentOverlayModule.create(tomtomMap);
             await mod.show(fixture);
             mod.setFocus(['a']);
 
@@ -554,7 +555,7 @@ describe('TrafficIncidentOverlayModule', () => {
 
         test('non-halo line layers do not encode feature-state on opacity or colour (unfocused features render unchanged)', async () => {
             const tomtomMap = makeMockMap();
-            await TrafficIncidentOverlayModule.get(tomtomMap);
+            await TrafficIncidentOverlayModule.create(tomtomMap);
 
             const addLayer = tomtomMap.mapLibreMap.addLayer as ReturnType<typeof vi.fn>;
             const nonHaloLines = addLayer.mock.calls
@@ -574,7 +575,7 @@ describe('TrafficIncidentOverlayModule', () => {
 
         test('symbol layers do not encode feature-state on opacity (unfocused markers render unchanged)', async () => {
             const tomtomMap = makeMockMap();
-            await TrafficIncidentOverlayModule.get(tomtomMap);
+            await TrafficIncidentOverlayModule.create(tomtomMap);
 
             const addLayer = tomtomMap.mapLibreMap.addLayer as ReturnType<typeof vi.fn>;
             const symbolLayers = addLayer.mock.calls.map((c) => c[0]).filter((l) => l.type === 'symbol');
@@ -587,7 +588,7 @@ describe('TrafficIncidentOverlayModule', () => {
 
         test('line layers widen focused features via feature-state', async () => {
             const tomtomMap = makeMockMap();
-            await TrafficIncidentOverlayModule.get(tomtomMap);
+            await TrafficIncidentOverlayModule.create(tomtomMap);
 
             const addLayer = tomtomMap.mapLibreMap.addLayer as ReturnType<typeof vi.fn>;
             const outline = addLayer.mock.calls.map((c) => c[0]).find((l) => l.id.endsWith('-outline'));
@@ -598,7 +599,7 @@ describe('TrafficIncidentOverlayModule', () => {
     describe('focus config', () => {
         test('focus: false drops the halo layer and removes feature-state from line widths', async () => {
             const tomtomMap = makeMockMap();
-            await TrafficIncidentOverlayModule.get(tomtomMap, { focus: false });
+            await TrafficIncidentOverlayModule.create(tomtomMap, { focus: false });
 
             const addLayer = tomtomMap.mapLibreMap.addLayer as ReturnType<typeof vi.fn>;
             const ids = addLayer.mock.calls.map((c) => c[0].id);
@@ -616,7 +617,7 @@ describe('TrafficIncidentOverlayModule', () => {
         test('focus: false still lets setFocus write feature-state for caller-managed visuals', async () => {
             const tomtomMap = makeMockMap();
             const setFS = tomtomMap.mapLibreMap.setFeatureState as ReturnType<typeof vi.fn>;
-            const mod = await TrafficIncidentOverlayModule.get(tomtomMap, { focus: false });
+            const mod = await TrafficIncidentOverlayModule.create(tomtomMap, { focus: false });
 
             await mod.show({
                 type: 'FeatureCollection',
@@ -642,7 +643,7 @@ describe('TrafficIncidentOverlayModule', () => {
 
         test('focus.outlineColor overrides the halo line-color', async () => {
             const tomtomMap = makeMockMap();
-            await TrafficIncidentOverlayModule.get(tomtomMap, { focus: { outlineColor: '#ff00aa' } });
+            await TrafficIncidentOverlayModule.create(tomtomMap, { focus: { outlineColor: '#ff00aa' } });
 
             const addLayer = tomtomMap.mapLibreMap.addLayer as ReturnType<typeof vi.fn>;
             const halo = addLayer.mock.calls.map((c) => c[0]).find((l) => l.id.endsWith('-focus-halo'));
@@ -651,7 +652,7 @@ describe('TrafficIncidentOverlayModule', () => {
 
         test('focus.widthScale: 1 keeps the focus-halo layer but stops the focused stripe from widening', async () => {
             const tomtomMap = makeMockMap();
-            await TrafficIncidentOverlayModule.get(tomtomMap, { focus: { widthScale: 1 } });
+            await TrafficIncidentOverlayModule.create(tomtomMap, { focus: { widthScale: 1 } });
 
             const addLayer = tomtomMap.mapLibreMap.addLayer as ReturnType<typeof vi.fn>;
             const ids = addLayer.mock.calls.map((c) => c[0].id);

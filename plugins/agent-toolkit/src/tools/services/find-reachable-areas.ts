@@ -8,9 +8,14 @@ import type { BudgetType, ReachableRangeParams } from '@tomtom-org/maps-sdk/serv
 import { calculateReachableRanges } from '@tomtom-org/maps-sdk/services';
 import type { Position } from 'geojson';
 import { z } from 'zod';
-import type { ReachableRange, ToolState } from '../../types';
+import type { ReachableRange, ToolExecuteOptions, ToolState } from '../../types';
 import { makeRangesLabel } from '../../utils';
-import { hidePreviousEntriesSchema, hidePreviousShownEntries, locationInputSchema } from '../shared';
+import {
+    hidePreviousEntriesSchema,
+    hidePreviousShownEntries,
+    locationInputSchema,
+    withAgentToolkitHeaders,
+} from '../shared';
 import { toolErrorSchema } from '../shared-output-schemas';
 import { resolveLocationInput } from './resolve-location-input';
 
@@ -74,12 +79,15 @@ export const findReachableAreasDescription =
 const computeReachableRangesForOrigin = async (
     budgets: z.infer<typeof budgetSchema>[],
     origin: Position,
+    options?: ToolExecuteOptions,
 ): Promise<PolygonFeatures | null> => {
-    const paramsArray: ReachableRangeParams[] = budgets.map((b) => ({
-        origin,
-        budget: { type: b.type as BudgetType, value: b.value },
-    }));
-    const result = await calculateReachableRanges(paramsArray);
+    const requestParams: ReachableRangeParams[] = budgets.map((b) =>
+        withAgentToolkitHeaders({
+            origin,
+            budget: { type: b.type as BudgetType, value: b.value },
+        }),
+    );
+    const result = await calculateReachableRanges(requestParams, { signal: options?.signal });
     return result.features.length === 0 ? null : result;
 };
 
@@ -97,6 +105,58 @@ const mergeRangePolygons = (ranges: ReachableRange[]): PolygonFeatures | null =>
 
 const formatOriginName = (range: ReachableRange): string =>
     range.origin.query ?? `${range.origin.position[1]}, ${range.origin.position[0]}`;
+
+// Best-effort label for an origin that never resolved, so `skipped` entries stay
+// traceable back to what the caller actually asked for.
+const labelForUnresolvedOrigin = (origin: z.infer<typeof locationInputSchema>): string => {
+    if ('query' in origin) return origin.query;
+
+    if ('position' in origin) return `${origin.position[1]}, ${origin.position[0]}`;
+
+    if ('placeIdOrEntryId' in origin) return origin.placeIdOrEntryId;
+
+    return 'unnamed origin';
+};
+
+// Resolve each origin and compute its polygon, collecting per-origin failures into
+// `skipped` rather than aborting the whole call.
+//
+// Sequential — fan-out would race the service's per-key QPS limit when callers pass
+// many origins. The cost is latency, not correctness.
+const resolveOriginsToRanges = async (
+    origins: z.infer<typeof locationInputSchema>[],
+    sortedBudgets: z.infer<typeof budgetSchema>[],
+    state: ToolState,
+    options?: ToolExecuteOptions,
+): Promise<{ ranges: ReachableRange[]; skipped: { origin: string; reason: string }[] }> => {
+    const ranges: ReachableRange[] = [];
+    const skipped: { origin: string; reason: string }[] = [];
+
+    for (const origin of origins) {
+        const fallbackLabel = labelForUnresolvedOrigin(origin);
+        const resolved = await resolveLocationInput(origin, state, options);
+        if (!resolved) {
+            skipped.push({ origin: fallbackLabel, reason: 'origin not found' });
+            continue;
+        }
+
+        const polygon = await computeReachableRangesForOrigin(sortedBudgets, resolved.position, options);
+        if (!polygon) {
+            skipped.push({ origin: resolved.name ?? fallbackLabel, reason: 'no reachable area returned' });
+            continue;
+        }
+
+        ranges.push({
+            origin: resolved.query
+                ? { query: resolved.query, position: resolved.position }
+                : { position: resolved.position },
+            budgets: sortedBudgets,
+            polygon,
+        });
+    }
+
+    return { ranges, skipped };
+};
 
 const showOriginsAndPolygons = async (
     state: ToolState,
@@ -137,61 +197,28 @@ const showOriginsAndPolygons = async (
 export const executeFindReachableAreas = async (
     params: z.infer<typeof findReachableAreasSchema>,
     state: ToolState,
+    options?: ToolExecuteOptions,
 ): Promise<z.infer<typeof findReachableAreasOutputSchema>> => {
     const { origins, budgets, theme, showOnMap, showOriginPin = true, hidePreviousEntries } = params;
 
     try {
         const sortedBudgets = [...budgets].sort((a, b) => b.value - a.value);
 
-        // Sequential — fan-out would race the service's per-key QPS limit when
-        // callers pass many origins. The cost is latency, not correctness.
-        const ranges: ReachableRange[] = [];
-        const skipped: { origin: string; reason: string }[] = [];
-        for (const origin of origins) {
-            const fallbackLabel =
-                'query' in origin
-                    ? origin.query
-                    : 'position' in origin
-                      ? `${origin.position.lat}, ${origin.position.lng}`
-                      : 'placeId' in origin
-                        ? origin.placeId
-                        : 'unnamed origin';
-            const resolved = await resolveLocationInput(origin, state);
-            if (!resolved) {
-                skipped.push({ origin: fallbackLabel, reason: 'origin not found' });
-                continue;
-            }
-            const polygon = await computeReachableRangesForOrigin(sortedBudgets, resolved.position);
-            if (!polygon) {
-                skipped.push({ origin: resolved.name ?? fallbackLabel, reason: 'no reachable area returned' });
-                continue;
-            }
-            ranges.push({
-                origin: resolved.query
-                    ? { query: resolved.query, position: resolved.position }
-                    : { position: resolved.position },
-                budgets: sortedBudgets,
-                polygon,
-            });
-        }
-
+        const { ranges, skipped } = await resolveOriginsToRanges(origins, sortedBudgets, state, options);
         if (ranges.length === 0) return { status: 'no_results' };
 
-        const resolvedTheme = theme ?? 'outline';
-        const originNames = ranges.map(formatOriginName);
         const rangesId = await state.ranges.addEntry({
-            label: makeRangesLabel(sortedBudgets, originNames),
+            label: makeRangesLabel(sortedBudgets, ranges.map(formatOriginName)),
             data: ranges,
         });
 
-        if (showOnMap || showOriginPin) {
-            await hidePreviousShownEntries(state.ranges, [rangesId], hidePreviousEntries);
-        }
+        const willRender = showOnMap || showOriginPin;
+        if (willRender) await hidePreviousShownEntries(state.ranges, [rangesId], hidePreviousEntries);
 
-        await showOriginsAndPolygons(state, rangesId, ranges, resolvedTheme, showOnMap, showOriginPin);
+        await showOriginsAndPolygons(state, rangesId, ranges, theme ?? 'outline', showOnMap, showOriginPin);
 
         // Track which entry is rendered so state-digest snapshots can surface it later.
-        if (showOnMap || showOriginPin) await state.ranges.markEntryShown(rangesId);
+        if (willRender) await state.ranges.markEntryShown(rangesId);
 
         // All ranges in this entry share the same `sortedBudgets`; reusing
         // it keeps the response type aligned with the input schema's narrower

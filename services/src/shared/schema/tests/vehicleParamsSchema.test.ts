@@ -1,6 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import type { VehicleParameters } from '../../index';
-import { loadTypes } from '../../types/vehicleRestrictionParams';
+import { tollTransponderOptions, type VehicleParameters } from '../..';
 import { ValidationError } from '../validation';
 import { vehicleParametersSchema } from '../vehicleParamsSchema';
 
@@ -190,15 +189,11 @@ describe('Routing: Vehicle parameter schema expected failures', () => {
             validate({
                 model: {
                     dimensions: {
-                        lengthMeters: 4.5,
-                        widthMeters: 1.8,
-                        heightMeters: 1.6,
                         weightKG: 1500,
                     },
                 },
                 restrictions: {
                     maxSpeedKMH: 130,
-                    commercial: true,
                 },
             }),
         ).not.toThrow();
@@ -228,8 +223,22 @@ describe('Routing: Vehicle parameter schema expected failures', () => {
                 },
                 restrictions: {
                     maxSpeedKMH: 300, // Invalid: above 250 max
-                    loadTypes: ['InvalidLoadType' as never],
                 },
+            }),
+        ).toThrow(ValidationError);
+    });
+
+    test('should pass with each toll transponder option', () => {
+        for (const tollTransponder of tollTransponderOptions) {
+            expect(() => validate({ restrictions: { tollTransponder } })).not.toThrow();
+        }
+    });
+
+    test('should fail with an unknown toll transponder value', () => {
+        expect(() =>
+            validate({
+                // A boolean cannot express the API's three-value default, so it is not accepted.
+                restrictions: { tollTransponder: true as unknown as 'all' },
             }),
         ).toThrow(ValidationError);
     });
@@ -292,9 +301,6 @@ describe('Routing: Vehicle parameter schema successful validations', () => {
                 },
                 model: {
                     dimensions: {
-                        lengthMeters: 4.2,
-                        widthMeters: 1.9,
-                        heightMeters: 1.5,
                         weightKG: 1800,
                     },
                     engine: {
@@ -319,8 +325,6 @@ describe('Routing: Vehicle parameter schema successful validations', () => {
                 },
                 restrictions: {
                     maxSpeedKMH: 180,
-                    commercial: false,
-                    loadTypes: ['otherHazmatExplosive'],
                 },
             }),
         ).not.toThrow();
@@ -335,9 +339,6 @@ describe('Routing: Vehicle parameter schema successful validations', () => {
                 },
                 model: {
                     dimensions: {
-                        lengthMeters: 5.1,
-                        widthMeters: 2.0,
-                        heightMeters: 1.8,
                         weightKG: 2200,
                     },
                     engine: {
@@ -354,8 +355,6 @@ describe('Routing: Vehicle parameter schema successful validations', () => {
                 },
                 restrictions: {
                     maxSpeedKMH: 200,
-                    commercial: true,
-                    loadTypes: ['otherHazmatHarmfulToWater', 'USHazmatClass3'],
                 },
             }),
         ).not.toThrow();
@@ -366,9 +365,6 @@ describe('Routing: Vehicle parameter schema successful validations', () => {
             validate({
                 model: {
                     dimensions: {
-                        lengthMeters: 3.8,
-                        widthMeters: 1.6,
-                        heightMeters: 1.4,
                         weightKG: 1200,
                     },
                 },
@@ -430,7 +426,6 @@ describe('Routing: Vehicle parameter schema successful validations', () => {
                 },
                 restrictions: {
                     maxSpeedKMH: 250, // At maximum boundary
-                    commercial: false,
                 },
             }),
         ).not.toThrow();
@@ -444,10 +439,7 @@ describe('Routing: Vehicle parameter schema successful validations', () => {
                         weightKG: 2500,
                     },
                 },
-                restrictions: {
-                    loadTypes: [...loadTypes],
-                    commercial: true,
-                },
+                restrictions: {},
             }),
         ).not.toThrow();
     });

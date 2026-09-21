@@ -35,7 +35,7 @@ export const initColorStops = (
 
             const valueInput = document.createElement('input');
             valueInput.type = 'number';
-            valueInput.className = 'sdk-example-input aa-stop-value-input';
+            valueInput.className = 'ui-input aa-stop-value-input';
             valueInput.min = String(range.min);
             valueInput.max = String(range.max);
             valueInput.step = String(step);
@@ -48,7 +48,7 @@ export const initColorStops = (
             });
 
             const swatchLabel = document.createElement('label');
-            swatchLabel.className = 'sdk-example-color-swatch';
+            swatchLabel.className = 'ui-color-swatch';
 
             const colorInput = document.createElement('input');
             colorInput.type = 'color';
