@@ -48,3 +48,17 @@ export const locationInputSchema = z.union([
 
 /** @ignore */
 export type LocationInput = z.infer<typeof locationInputSchema>;
+
+/**
+ * Names a location input in an error message, without resolving it — so the model reads back the
+ * same thing it sent.
+ *
+ * @ignore
+ */
+export const labelForLocationInput = (location: LocationInput): string => {
+    if ('query' in location) return `"${location.query}"`;
+
+    if ('placeIdOrEntryId' in location) return `placeIdOrEntryId "${location.placeIdOrEntryId}"`;
+
+    return JSON.stringify(location.position);
+};

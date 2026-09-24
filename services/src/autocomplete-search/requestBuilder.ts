@@ -2,7 +2,7 @@ import { PLACES_URL_PATH } from '../shared/request/commonSearchRequestBuilder';
 import {
     appendByJoiningParamValue,
     appendCommonParams,
-    appendLatLonParamsFromPosition,
+    appendGeoBiasParams,
     appendOptionalParam,
 } from '../shared/request/requestBuildingUtils';
 import type { AutocompleteSearchParams } from './types';
@@ -25,9 +25,8 @@ export const buildAutocompleteSearchRequest = (params: AutocompleteSearchParams)
     params.language = params.language ?? 'en-GB';
     appendCommonParams(urlParams, params);
     appendOptionalParam(urlParams, 'limit', params.limit);
-    appendLatLonParamsFromPosition(urlParams, params.position);
+    appendGeoBiasParams(urlParams, params.geoBias);
     appendByJoiningParamValue(urlParams, 'countrySet', params.countries);
-    appendOptionalParam(urlParams, 'radius', params.radiusMeters);
     appendByJoiningParamValue(urlParams, 'resultSet', params.resultType);
 
     return url;

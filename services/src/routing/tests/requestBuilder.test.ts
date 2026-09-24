@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { bestExecutionTimeMS } from '../../../../core/src/util/tests/performanceTestUtils';
-import type { FetchInput } from '../../shared';
+import type { FetchInput, VehicleParameters } from '../../shared';
 import { MAX_EXEC_TIMES_MS } from '../../shared/tests/perfConfig';
 import { buildCalculateRouteRequest } from '../requestBuilder';
 import type { CalculateRoutePOSTDataAPI } from '../types/apiRequestTypes';
@@ -30,22 +30,6 @@ describe('Calculate Route request building rejections', () => {
         commonBaseURL: 'https://api.tomtom.com',
     };
 
-    test('A pause on the destination is rejected, because the API requires the last leg to be 0', () => {
-        const params: CalculateRouteParams = {
-            ...baseParams,
-            locations: [
-                [4.89066, 52.37317],
-                {
-                    type: 'Feature',
-                    geometry: { type: 'Point', coordinates: [4.49015, 52.16109] },
-                    properties: { pauseDurationSeconds: 300 },
-                },
-            ],
-        };
-
-        expect(() => buildCalculateRouteRequest(params)).toThrow(/pauseDurationSeconds is not supported/);
-    });
-
     test('A pause on an intermediate stop is accepted', () => {
         const params: CalculateRouteParams = {
             ...baseParams,
@@ -65,6 +49,8 @@ describe('Calculate Route request building rejections', () => {
         });
     });
 
+    // The type forbids this pairing outright; the cast stands in for an untyped JavaScript caller,
+    // whom the builder still has to stop before the API rejects the request.
     test('A vehicle model ID without charging preferences is rejected, since only LDEVR takes it', () => {
         const params: CalculateRouteParams = {
             ...baseParams,
@@ -72,7 +58,7 @@ describe('Calculate Route request building rejections', () => {
                 [4.89066, 52.37317],
                 [4.49015, 52.16109],
             ],
-            vehicle: { model: { variantId: '54B969E8-E28D-11EC-8FEA-0242AC120002' } },
+            vehicle: { model: { variantId: '54B969E8-E28D-11EC-8FEA-0242AC120002' } } as VehicleParameters,
         };
 
         expect(() => buildCalculateRouteRequest(params)).toThrow(/variantId is only supported for EV routes/);

@@ -201,8 +201,8 @@ export const areBothDefinedAndEqual = (
 
 type LayerProps = {
     id: string;
-    layout?: any;
-    paint?: any;
+    layout?: Partial<AllLayoutProperties>;
+    paint?: Partial<AllPaintProperties>;
     minzoom?: number;
     maxzoom?: number;
     filter?: FilterSpecification;
@@ -234,11 +234,9 @@ export const changeLayerProps = (newLayerProps: LayerProps, prevLayerProps: Laye
         );
     }
     map.setFilter(layerId, newLayerProps.filter, { validate: false });
-    // maplibre v6 keys both setters by property name, while the specs we diff here are
-    // string-keyed (`layout`/`paint` are `any`). Narrow once per loop rather than at every call:
-    // `Object.keys`/`Object.entries` can only ever report `string`, so the correspondence to the
-    // style-spec keys is ours to assert either way — doing it in the loop header keeps the
-    // setter calls readable and asserts each fact once.
+    // `Object.keys`/`Object.entries` can only ever report `string`, while both maplibre setters key
+    // by style-spec property name. That correspondence is ours to assert; the loop headers do it
+    // once each, which keeps the setter calls below free of casts.
     for (const property of Object.keys(prevLayerProps.layout ?? {}) as LayoutKey[]) {
         if (!newLayerProps.layout?.[property]) {
             map.setLayoutProperty(layerId, property, undefined, { validate: false });

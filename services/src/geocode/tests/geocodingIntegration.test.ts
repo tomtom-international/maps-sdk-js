@@ -1,4 +1,3 @@
-import type { Polygon } from 'geojson';
 import { beforeAll, describe, expect, test, vi } from 'vitest';
 import { SDKServiceError } from '../../shared';
 import { putIntegrationTestsAPIKey } from '../../shared/tests/integrationTestUtils';
@@ -56,27 +55,14 @@ describe('Geocoding integration tests', () => {
             typeahead: true,
             limit: 15,
             offset: 3,
-            position: [4.81063, 51.85925],
+            geoBias: { position: [4.81063, 51.85925], radiusMeters: 1000000 },
             countries: [],
-            boundingBox: {
-                type: 'Polygon',
-                coordinates: [
-                    [
-                        [5.16905, 52.44009],
-                        [5.16957, 52.44009],
-                        [5.16957, 51.85925],
-                        [5.16905, 51.85925],
-                        [5.16905, 52.44009],
-                    ],
-                ],
-            } as Polygon,
             extendedPostalCodesFor: ['Addr', 'Str', 'Geo'],
             mapcodes: ['International'],
             // TODO: not supported yet in Orbis:
             // view: "MA",
             geographyTypes: ['Municipality', 'MunicipalitySubdivision'],
             language: 'en-GB',
-            radiusMeters: 1000000,
         });
         expect(result).toMatchObject({
             type: 'FeatureCollection',

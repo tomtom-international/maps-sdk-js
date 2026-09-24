@@ -2,7 +2,7 @@
   "name": "@tomtom-org/maps-sdk",
   "author": "TomTom International B.V.",
   "license": "See in LICENSE.txt",
-  "version": "0.54.0",
+  "version": "0.55.1",
   "description": "TomTom maps, search, geocoding, routing, isochrones, EV and traffic for JavaScript — typed GeoJSON services and a MapLibre GL JS map.",
   "homepage": "https://docs.tomtom.com/maps-sdk-js/introduction/overview",
   "repository": {

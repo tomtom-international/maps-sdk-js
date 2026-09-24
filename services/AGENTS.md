@@ -101,41 +101,21 @@ pnpm dev
 
 ## Source Structure Conventions
 
-### Barrel files (`index.ts`)
-
-Each service module exposes its public surface through an `index.ts` barrel. Because the package entry point re-exports these barrels wholesale, anything in a module barrel becomes part of the public API — so keep them selective.
-
-Internal symbols (e.g. raw API request/response adapter types) are not added to `index.ts` and are imported directly from their source file:
-
-```typescript
-// Internal cross-module import — go directly to the source file
-import { CalculateRouteApiResponse } from '../routing/types/apiResponseTypes';
-```
-
-### `types/` subdirectories — public API types only
-
-Each service module places its public-facing parameter and response types in a `types/` subdirectory. Internal adapter types stay in the source file that uses them.
+Barrels, import paths, `types/` and test placement: [`CODING_GUIDELINES.md`](../CODING_GUIDELINES.md) §§ 4 and 8.
+One service per directory, laid out like this:
 
 ```
 src/routing/
 ├── index.ts                      ← barrel
 ├── calculateRoute.ts             ← implementation
+├── tests/                        ← calculateRoute.test.ts
 └── types/
     ├── calculateRouteParams.ts   ← public input/output types
-    ├── apiRequestTypes.ts        ← internal
-    └── apiResponseTypes.ts       ← internal
+    ├── apiRequestTypes.ts        ← internal, imported by path
+    └── apiResponseTypes.ts       ← internal, imported by path
 ```
 
-### `tests/` subdirectories
-
-Test files live in a `tests/` subdirectory alongside the service module they cover:
-
-```
-src/routing/
-├── calculateRoute.ts
-└── tests/
-    └── calculateRoute.test.ts
-```
+The raw API request/response adapter types are the one kind of type that lives under `types/` while staying off the barrel — they describe the wire format, not the SDK surface, so import them by path (`from '../routing/types/apiResponseTypes'`).
 
 ---
 

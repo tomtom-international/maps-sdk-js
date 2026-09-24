@@ -308,6 +308,49 @@ describe('Calculate route request schema — chargingStopsStrategy validation', 
         [4.9, 52.4],
     ];
 
+    // The type forbids both pairings below; the casts stand in for untyped JavaScript callers, whom
+    // the refinement still has to stop.
+    test('it should fail when the destination carries a pause', () => {
+        expect(() =>
+            validateRequestSchema<CalculateRouteParams>(
+                {
+                    locations: [
+                        baseLocations[0],
+                        {
+                            type: 'Feature',
+                            geometry: { type: 'Point', coordinates: baseLocations[1] },
+                            properties: { pauseDurationSeconds: 300 },
+                        },
+                    ],
+                    apiKey,
+                    commonBaseURL: commonBaseUrl,
+                },
+                routeRequestValidationConfig,
+            ),
+        ).toThrow(/pauseDurationSeconds is not supported on the destination/);
+    });
+
+    test('it should accept a pause on an intermediate stop', () => {
+        expect(() =>
+            validateRequestSchema<CalculateRouteParams>(
+                {
+                    locations: [
+                        baseLocations[0],
+                        {
+                            type: 'Feature',
+                            geometry: { type: 'Point', coordinates: [4.85, 52.35] },
+                            properties: { pauseDurationSeconds: 300 },
+                        },
+                        baseLocations[1],
+                    ],
+                    apiKey,
+                    commonBaseURL: commonBaseUrl,
+                },
+                routeRequestValidationConfig,
+            ),
+        ).not.toThrow();
+    });
+
     test('it should fail when chargingStopsStrategy is set without charging preferences', () => {
         expect(() =>
             validateRequestSchema<CalculateRouteParams>(
@@ -317,7 +360,7 @@ describe('Calculate route request schema — chargingStopsStrategy validation', 
                     vehicle: { engineType: 'electric', state: { currentChargePCT: 80 } },
                     apiKey,
                     commonBaseURL: commonBaseUrl,
-                },
+                } as CalculateRouteParams,
                 routeRequestValidationConfig,
             ),
         ).toThrow(/chargingStopsStrategy/);
@@ -362,10 +405,47 @@ describe('Calculate route request schema — chargingStopsStrategy validation', 
                     },
                     apiKey,
                     commonBaseURL: commonBaseUrl,
-                },
+                } as CalculateRouteParams,
                 routeRequestValidationConfig,
             ),
         ).toThrow(/chargingStopsStrategy/);
+    });
+
+    test('it should reject a predefined variantId without charging preferences', () => {
+        expect(() =>
+            validateRequestSchema<CalculateRouteParams>(
+                {
+                    locations: baseLocations,
+                    vehicle: { engineType: 'electric', model: { variantId: '54B969E8-E28D-11EC-8FEA-0242AC120002' } },
+                    apiKey,
+                    commonBaseURL: commonBaseUrl,
+                },
+                routeRequestValidationConfig,
+            ),
+        ).toThrow(/variantId/);
+    });
+
+    test('it should accept a predefined variantId alongside charging preferences', () => {
+        expect(() =>
+            validateRequestSchema<CalculateRouteParams>(
+                {
+                    locations: baseLocations,
+                    vehicle: {
+                        engineType: 'electric',
+                        model: { variantId: '54B969E8-E28D-11EC-8FEA-0242AC120002' },
+                        preferences: {
+                            chargingPreferences: {
+                                minChargeAtDestinationInkWh: 15,
+                                minChargeAtChargingStopsInkWh: 10,
+                            },
+                        },
+                    },
+                    apiKey,
+                    commonBaseURL: commonBaseUrl,
+                },
+                routeRequestValidationConfig,
+            ),
+        ).not.toThrow();
     });
 });
 

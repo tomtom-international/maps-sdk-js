@@ -93,7 +93,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         const searchParams = selectedAutoCompleteSegment
             ? {
                   limit: 20,
-                  boundingBox: map.getBBox(),
+                  geoBias: { boundingBox: map.getBBox() },
                   ...(selectedAutoCompleteSegment.type === 'category' && {
                       poiCategories: [selectedAutoCompleteSegment.category],
                   }),
@@ -105,7 +105,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
                   query,
                   typeahead: true,
                   limit: 10,
-                  position: map.mapLibreMap.getCenter().toArray(),
+                  geoBias: { position: map.mapLibreMap.getCenter().toArray() },
               };
 
         showFuzzySearchResults(await search({ ...searchParams, signal }));

@@ -229,7 +229,7 @@ describe('pluginPackageDirectories', () => {
         addPackage(root, ...plugin('landmarks-3d'));
         // Source without a package of its own, a package that is never built, and the
         // hoisted install — none of them leave a sidecar to aggregate.
-        fs.mkdirSync(path.join(root, 'plugins', 'map-effects'), { recursive: true });
+        fs.mkdirSync(path.join(root, 'plugins', 'sprites'), { recursive: true });
         addPackage(root, 'plugins/shared', { name: 'shared' });
         addPackage(root, 'plugins/node_modules/three', { name: 'three' });
 

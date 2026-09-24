@@ -14,7 +14,7 @@ The SDK ships as **one npm package** (`@tomtom-org/maps-sdk`) with three sub-pat
 
 **Build order is strict**: `core` → `services` + `map` in parallel. Never import `map` from `services` or vice versa.
 
-Optional plugins live in `plugins/` (e.g. `viewport-places`, `agent-toolkit`, `landmarks-3d`) and declare `@tomtom-org/maps-sdk` as a **peer dependency** — they never bundle it.
+Optional plugins live in `plugins/` (e.g. `viewport-places`, `agent-toolkit`, `landmarks-3d`, `map-effects`) and declare `@tomtom-org/maps-sdk` as a **peer dependency** — they never bundle it.
 
 ### Other workspaces
 
@@ -24,7 +24,7 @@ Optional plugins live in `plugins/` (e.g. `viewport-places`, `agent-toolkit`, `l
 | `testing/core-utils` | `@testing/core-utils` — Playwright/async helpers shared by `map-integration-tests` and `ai-eval` (not unit tests) |
 | `testing/ai-eval` | AI agent evaluation harness (LLM judge + eval cases for agent-toolkit) |
 | `testing/ai-eval-explorer` | Dev UI for browsing and running eval results |
-| `examples/` | 95 runnable examples, each a standalone Vite app |
+| `examples/` | 99 runnable examples, each a standalone Vite app |
 | `map-integration-tests/` | Playwright browser tests against the built map package; runs a local HTTPS server at `https://localhost:9001` |
 
 ### Data flow
@@ -41,6 +41,7 @@ All map modules extend `AbstractMapModule` (`map/src/shared/AbstractMapModule.ts
 | `HillshadeModule` | Style-owned | `get()` | `setVisible` |
 | `TrafficFlowModule` | Style-owned | `get()` | `setVisible`, `applyConfig` |
 | `TrafficIncidentsModule` | Style-owned | `get()` | `setVisible`, `applyConfig` |
+| `StylingModule` | Style-owned | `get()` | `set`, `reset`, `applyPreset`, `describe` |
 | `PlacesModule` | Data-owned | `create()` | `show`, `clear`, `applyTheme`, `applyIconConfig` |
 | `RoutingModule` | Data-owned | `create()` | `showRoutes`, `showWaypoints`, `clear` |
 | `GeometriesModule` | Data-owned | `create()` | `show`, `clear` |
@@ -107,23 +108,9 @@ cp examples/.env.example examples/.env   # add API_KEY_EXAMPLES=…
 
 ## Conventions & Patterns
 
-- **Tooling**: Biome (not ESLint/Prettier). 4-space indentation, single quotes, 120-char line width. Run `pnpm lint` from root.
-- **Package manager**: pnpm workspaces. Add deps with `pnpm -F <workspace> add <pkg>`. Shared version pins live in `pnpm-workspace.yaml` under `catalog:`.
-- **Coordinates**: always `[longitude, latitude]` (GeoJSON standard) — enforced throughout services and the agent-toolkit plugin.
-- **Map modules**: never `new SomeModule()` directly. The factory names the ownership kind — `await SomeDataModule.create(map)` for data-owned modules (a new independent instance every call), `await SomeStyleModule.get(map)` for style-owned ones (a shared controller over style-provided layers). Reaching for the wrong one does not compile. See the module table below and `documentation/docs-portal/guides/map/modules.mdx`.
-- **Error handling in tools/plugins**: every tool `execute` must catch and return `{ error: string }`, never throw.
-- **Test placement**: a `tests/` subdirectory **beside the source it covers** — `src/<area>/tests/<Name>.test.ts`, or `src/tests/` for files sitting directly in `src/`. Never a sibling `<Name>.test.ts`. Live-API tests sit there too, suffixed `*Integration.test.ts` (all in `services/` today), and nothing excludes them — so `pnpm test:sdk` makes real API calls, keyed by `API_KEY_TESTS` from `shared-configs/.env*` locally and a CI secret.
-- **Shared build config**: packages extend `shared-configs/` for Vite, TypeScript, and Vitest — modify there to affect all packages.
-- **TypeScript**: strict mode, no `any`, no unnecessary casts.
-- **Variable naming**: always use full, descriptive names — never abbreviate. Use `response` not `res`, `request` not `req`, `error` not `err`, `parameters` not `params`, `configuration` not `config`, `index` not `idx`, `element` not `el`, `reference` not `ref`, `argument` not `arg`, `destination` not `dest`, `source` not `src`, `message` not `msg`, `previous` not `prev`, `current` not `curr`.
-- **No spaghetti code**: a function is spaghetti if it is both longer than one screen (~50 lines) and has complex nested logic (deeply nested conditions, loops within loops, etc.). If both conditions are met, extract the nested blocks into named functions whose names make the intent self-evident.
-- **Blank line after single-line `if`**: always add a blank line after a single-line `if` (i.e. an `if` with no `else` whose body is a single statement or early-exit) when it is followed by more code. This makes it visually distinct from the code that follows. Biome does not enforce this — apply it manually.
-- **Arrow functions**: prefer arrow function syntax (`const fn = () => ...`) over `function` declarations. One-liner arrows that return a single expression omit the curly braces and `return` keyword (e.g. `const double = (x: number) => x * 2`).
-- **Shortest import path**: when a module barrel (`index.ts`) already exports the symbol you need, import it from the barrel instead of reaching for the file behind it — `from '../../shared'`, not `from '../../shared/types/commonRoutingParams'`. Use the deep path only when the barrel does not export the symbol, or when the importing file sits inside that barrel's own subtree (importing your own barrel makes a cycle). Drop a trailing `/index` as well: `from '../..'`, not `from '../../index'`.
-- **No re-exports**: do not re-export types or values that originate elsewhere — always import directly from the canonical source. Barrel re-exports that just forward a symbol from another module add indirection without value.
-- **Reuse core utilities**: before writing a local helper for geometry, bbox, distance, formatting, or any other generic operation, check `core/src/util/` (exported via `@tomtom-org/maps-sdk/core`). The same applies to `services/` helpers when working in higher layers. Only add a new local helper when nothing in the canonical location fits.
-- **Document the end state, not the change**: guides, TSDoc and code comments describe how the SDK works today. Never write what was removed, renamed or fixed — "there is no `hybrid` ID", "this no longer throws", "the option used to be ignored". The diff, the PR and the changelog carry the history; a doc that carries it too ages badly and doubles the noise. When the removal leaves a fact worth knowing, state the fact on its own ("`satellite` draws roads and labels over the imagery"); otherwise delete the sentence along with the code.
-- **Cross-file consistency**: when renaming or removing a public symbol (tool, type, slice, helper, schema), sweep `git grep -l '<oldName>'` across `plugins/`, `examples/`, `documentation/docs-portal/`, and `.claude/skills/` — descriptions, JSDoc, navigation entries, and skill trigger keywords all go stale silently. The `tomtom-maps-sdk-js-preflight` skill walks the full set of surfaces before pushing, alongside the gates CI runs.
+**[`CODING_GUIDELINES.md`](./CODING_GUIDELINES.md) is normative for every change** — reuse and duplication, type
+precision, comment and TSDoc density, barrels and imports, naming, tests, dependencies. Read it before writing
+code; a workspace's own `AGENTS.md` adds only what is specific to that workspace.
 
 ## Key Files & Directories
 
@@ -137,6 +124,7 @@ cp examples/.env.example examples/.env   # add API_KEY_EXAMPLES=…
 | `plugins/agent-toolkit/` | AI agent plugin; see its `AGENTS.md` + `ENGINEERING-GUIDELINES.md` |
 | `plugins/viewport-places/` | Plugin: continuously shows POIs in the visible map viewport |
 | `plugins/landmarks-3d/` | Plugin: renders Orbis 3D landmark GLB tiles via a Three.js MapLibre custom layer |
+| `plugins/map-effects/` | Plugin: post-processing over the rendered map (bloom, grade, tint, fog, edge blur, vignette) and high-DPI capture |
 | `plugins/plugin-vite-config.ts` | Shared Vite library-mode config for all plugins |
 | `shared-configs/` | Shared Vite, TypeScript, Vitest configs for all packages |
 | `testing/ai-eval/` | Map-agent eval harness: LLM judge, eval cases, scoring |

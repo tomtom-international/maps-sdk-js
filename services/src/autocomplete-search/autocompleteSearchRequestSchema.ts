@@ -1,14 +1,13 @@
 import { z } from 'zod';
-import { hasLngLatSchema } from '../shared/schema/geometriesSchema';
+import { pointGeoBiasSchema } from '../shared/schema/geoBiasSchema';
 
 const autocompleteSearchRequestMandatory = z.object({
     query: z.string(),
 });
 
 const autocompleteSearchRequestOptional = z.object({
-    position: hasLngLatSchema.optional(),
+    geoBias: pointGeoBiasSchema.optional(),
     limit: z.number().max(100).optional(),
-    radiusMeters: z.number().optional(),
     countries: z.array(z.string()).optional(),
     resultType: z.array(z.string()).optional(),
 });

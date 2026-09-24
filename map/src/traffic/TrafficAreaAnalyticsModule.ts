@@ -1,7 +1,7 @@
 import type { AreaAnalyticsMetricKey, TrafficAreaAnalytics } from '@tomtom-org/maps-sdk/core';
 import { mask } from '@turf/turf';
 import type { FeatureCollection, Point, Polygon } from 'geojson';
-import { ExpressionSpecification } from 'maplibre-gl';
+import { type AddLayerObject, ExpressionSpecification } from 'maplibre-gl';
 import {
     AbstractDataOwnedMapModule,
     type BeforeLayerConfig,
@@ -9,6 +9,7 @@ import {
     GeoJSONSourceWithLayers,
     type LightDark,
     mapStyleLayerIDs,
+    type ToBeAddedLayerSpecWithoutSource,
 } from '../shared';
 import { changeLayerProps, existingBeforeLayerID, moveLayerBefore, waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
@@ -685,11 +686,12 @@ export class TrafficAreaAnalyticsModule extends AbstractDataOwnedMapModule<
     }
 
     private addHighlightLayersToMap(hexgridSourceId: string, squareSourceId: string): void {
-        const addHidden = (spec: { id: string; beforeID?: string; [key: string]: unknown }, sourceId: string) => {
+        const addHidden = (spec: ToBeAddedLayerSpecWithoutSource, sourceId: string) => {
             if (!this.mapLibreMap.getLayer(spec.id)) {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                // Attaching the source completes the spec, but not in a way TS can prove across the
+                // union of layer kinds `spec` may be.
                 this.mapLibreMap.addLayer(
-                    { ...spec, source: sourceId } as any,
+                    { ...spec, source: sourceId } as AddLayerObject,
                     existingBeforeLayerID(this.mapLibreMap, spec.beforeID),
                 );
             }
@@ -802,7 +804,7 @@ export class TrafficAreaAnalyticsModule extends AbstractDataOwnedMapModule<
             type: 'FeatureCollection',
             features: features.map((feature, i) => {
                 const id = `traffic-area-analytics-region-${i}`;
-                const geometry = inverted ? mask(feature as any).geometry : feature.geometry;
+                const geometry = inverted ? mask(feature).geometry : feature.geometry;
                 return { ...feature, id, geometry, properties: { id } };
             }),
         };

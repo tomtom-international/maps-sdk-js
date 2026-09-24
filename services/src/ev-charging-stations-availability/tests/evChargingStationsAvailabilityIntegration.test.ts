@@ -72,7 +72,7 @@ describe('evChargingStationsAvailability integration tests', () => {
     test('search combined with getPlacesWithEVAvailability', async () => {
         const evStationsWithoutAvailability = await search({
             poiCategories: ['ELECTRIC_VEHICLE_STATION'],
-            position: [13.41273, 52.52308], // Berlin
+            geoBias: { position: [13.41273, 52.52308] }, // Berlin
             limit: 15,
         });
 
@@ -99,7 +99,7 @@ describe('evChargingStationsAvailability integration tests', () => {
     test('getPlacesWithEVAvailability forwards an explicit API key, overriding the global default', async () => {
         const evStations = await search({
             poiCategories: ['ELECTRIC_VEHICLE_STATION'],
-            position: [13.41273, 52.52308], // Berlin
+            geoBias: { position: [13.41273, 52.52308] }, // Berlin
             limit: 15,
         });
 

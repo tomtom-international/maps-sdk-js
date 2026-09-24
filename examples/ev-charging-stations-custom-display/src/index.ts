@@ -207,7 +207,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
             bgStationsData = await search({
                 poiCategories: ['ELECTRIC_VEHICLE_STATION'],
                 minPowerKW: 50,
-                boundingBox: map.getBBox(),
+                geoBias: { boundingBox: map.getBBox() },
                 limit: zoom < 10 ? 50 : 100,
             });
             const dataToShow = state.bgAvailability
@@ -225,7 +225,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 
         searchedStationsData = await search({
             query: evBrandTextBox.value,
-            boundingBox: map.getBBox(),
+            geoBias: { boundingBox: map.getBBox() },
             poiCategories: ['ELECTRIC_VEHICLE_STATION'],
             limit: 100,
         });

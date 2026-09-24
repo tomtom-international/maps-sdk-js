@@ -6,7 +6,7 @@ import type { Place, WaypointLike } from '@tomtom-org/maps-sdk/core';
 import { withInsertedWaypoints } from '@tomtom-org/maps-sdk/core';
 import { z } from 'zod';
 import type { ToolExecuteOptions, ToolState } from '../../types';
-import { hidePreviousEntriesSchema, locationInputSchema } from '../shared';
+import { hidePreviousEntriesSchema, labelForLocationInput, locationInputSchema } from '../shared';
 import { routesWriteOutputSchema, toolErrorSchema } from '../shared-output-schemas';
 import { resolveLocationInput } from './resolve-location-input';
 import { calculateAndAddRoute, resolveRouteWaypoints } from './set-route';
@@ -72,12 +72,6 @@ const validateExistingRoute = async (state: ToolState) => {
     return { shownRouteLines, shownWaypoints };
 };
 
-const labelForLocation = (location: z.infer<typeof locationInputSchema>): string => {
-    if ('query' in location) return `"${location.query}"`;
-    if ('placeIdOrEntryId' in location) return `placeIdOrEntryId "${location.placeIdOrEntryId}"`;
-    return JSON.stringify(location.position);
-};
-
 type ResolvedWaypoints = {
     origin?: Place | [number, number];
     destination?: Place | [number, number];
@@ -104,7 +98,7 @@ const resolveAllInputs = async (
 
     const unresolved: string[] = [];
     for (let i = 0; i < inputs.length; i++) {
-        if (resolved[i] === null) unresolved.push(labelForLocation(inputs[i].location));
+        if (resolved[i] === null) unresolved.push(labelForLocationInput(inputs[i].location));
     }
     if (unresolved.length > 0) {
         return { error: `Could not resolve: ${unresolved.join(', ')}` };

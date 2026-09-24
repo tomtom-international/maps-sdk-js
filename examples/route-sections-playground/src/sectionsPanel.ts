@@ -1,4 +1,5 @@
 import type {
+    CountryCrossingAlignment,
     DrawnSectionType,
     RouteWidth,
     SectionDrawStyle,
@@ -162,7 +163,7 @@ const syncRow = (type: DrawnSectionType, state: PanelState): void => {
     document.querySelector(`[data-row="${type}"]`)?.classList.toggle('enabled', isDrawn(type, state));
 };
 
-const readKnob = (target: HTMLInputElement | HTMLSelectElement, state: PanelState): void => {
+const readSectionKnob = (target: HTMLInputElement | HTMLSelectElement, state: PanelState): void => {
     const type = target.dataset.type as DrawnSectionType;
     const section = state.sections[type];
     switch (target.dataset.knob) {
@@ -194,6 +195,47 @@ const readKnob = (target: HTMLInputElement | HTMLSelectElement, state: PanelStat
     syncRow(type, state);
 };
 
+// The crossings are not a section type, so their row is written in the HTML and keyed on its own
+// attribute. Same three knobs as a section row, minus the ones only a line can answer to.
+const initCrossingRow = (state: PanelState, apply: () => void): void => {
+    const row = document.getElementById('country-crossing-row')!;
+    const minzoomReadout = document.querySelector('[data-readout="countryCrossings-minzoom"]')!;
+
+    const syncReadout = (): void => {
+        const minzoom = row.querySelector<HTMLInputElement>('[data-crossing-knob="minzoom"]')!;
+        minzoomReadout.textContent = `z${minzoom.value}`;
+    };
+
+    const readCrossingKnob = (target: HTMLInputElement | HTMLSelectElement): void => {
+        switch (target.dataset.crossingKnob) {
+            case 'visible':
+                state.countryCrossings.visible = (target as HTMLInputElement).checked;
+                break;
+            case 'color':
+                state.countryCrossings.color = target.value;
+                break;
+            case 'textColor':
+                state.countryCrossings.textColor = target.value;
+                break;
+            case 'alignment':
+                state.countryCrossings.alignment = target.value as CountryCrossingAlignment;
+                break;
+            case 'minzoom':
+                state.countryCrossings.minzoom = Number(target.value);
+                break;
+        }
+        syncReadout();
+    };
+
+    syncReadout();
+    for (const eventName of ['change', 'input']) {
+        row.addEventListener(eventName, (event) => {
+            readCrossingKnob(event.target as HTMLInputElement | HTMLSelectElement);
+            apply();
+        });
+    }
+};
+
 const initPanelToggle = (): void => {
     const toggleButton = document.querySelector('.ui-heading-toggle')!;
     const panelContent = document.querySelector('.ui-panel-content')!;
@@ -204,18 +246,26 @@ const initPanelToggle = (): void => {
     });
 };
 
-/** What the panel hands back, so a new route can refresh the per-type counts it shows. */
+/** How much of each thing the route on the map has, which a route change refreshes. */
+export type PanelCounts = {
+    sections: Record<DrawnSectionType, number>;
+    crossings: number;
+};
+
+/** What the panel hands back, so a new route can refresh the counts it shows. */
 export type SectionsPanel = {
-    setSectionCounts: (sectionCounts: Record<DrawnSectionType, number>) => void;
+    setCounts: (counts: PanelCounts) => void;
+    /** Writes what the last clicked crossing joins under the crossing row. */
+    setCrossingDetail: (detail: string) => void;
 };
 
 export const initSectionsPanel = (options: {
     map: TomTomMap;
     state: PanelState;
-    sectionCounts: Record<DrawnSectionType, number>;
+    counts: PanelCounts;
     apply: () => void;
 }): SectionsPanel => {
-    const { map, state, sectionCounts, apply } = options;
+    const { map, state, counts, apply } = options;
 
     // The two groups differ only in where they start, and which type sits in which is the module's
     // answer rather than this panel's — `sectionDrawsByDefault` is the same registry field the
@@ -230,18 +280,23 @@ export const initSectionsPanel = (options: {
     drawnRows.innerHTML = rowsFor(allTypes.filter(sectionDrawsByDefault));
     optInRows.innerHTML = rowsFor(allTypes.filter((type) => !sectionDrawsByDefault(type)));
 
-    const setSectionCounts = (counts: Record<DrawnSectionType, number>): void => {
-        for (const type of allTypes) applySectionCount(type, counts[type]);
+    const crossingCount = document.querySelector('#country-crossing-row .section-count')!;
+
+    const setCounts = (updated: PanelCounts): void => {
+        for (const type of allTypes) applySectionCount(type, updated.sections[type]);
+
+        crossingCount.textContent = String(updated.crossings);
     };
 
-    setSectionCounts(sectionCounts);
+    setCounts(counts);
     seedControlsFromMap(map, allTypes);
     for (const type of allTypes) syncRow(type, state);
+    initCrossingRow(state, apply);
 
     for (const eventName of ['change', 'input']) {
         for (const rows of [drawnRows, optInRows]) {
             rows.addEventListener(eventName, (event) => {
-                readKnob(event.target as HTMLInputElement | HTMLSelectElement, state);
+                readSectionKnob(event.target as HTMLInputElement | HTMLSelectElement, state);
                 apply();
             });
         }
@@ -249,5 +304,12 @@ export const initSectionsPanel = (options: {
 
     initPanelToggle();
 
-    return { setSectionCounts };
+    const crossingDetail = document.getElementById('crossing-detail')!;
+
+    return {
+        setCounts,
+        setCrossingDetail: (detail: string) => {
+            crossingDetail.textContent = detail;
+        },
+    };
 };

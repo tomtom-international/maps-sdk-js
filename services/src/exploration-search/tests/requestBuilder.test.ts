@@ -42,7 +42,7 @@ describe('Exploration Search request builder tests', () => {
     test('omits filter keys entirely when no inputs are supplied', () => {
         const { data } = buildExplorationSearchRequest({
             customServiceBaseURL: 'https://exploration.example.com',
-            boundingBox: [4.85, 52.35, 4.95, 52.4],
+            boundingBoxes: [[4.85, 52.35, 4.95, 52.4]],
         });
         expect(data).not.toHaveProperty('q');
         expect(data).not.toHaveProperty('country');
@@ -61,7 +61,7 @@ describe('Exploration Search request builder tests', () => {
     test('empty arrays for areaTags / placeTypes / poiCategories / municipalities do not pollute the payload', () => {
         const { data } = buildExplorationSearchRequest({
             customServiceBaseURL: 'https://exploration.example.com',
-            boundingBox: [4.85, 52.35, 4.95, 52.4],
+            boundingBoxes: [[4.85, 52.35, 4.95, 52.4]],
             areaTags: [],
             placeTypes: [],
             poiCategories: [],

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { hasBBoxSchema } from './geometriesSchema';
+import { geoBiasSchema } from './geoBiasSchema';
 
 /**
  * @ignore
@@ -7,7 +7,6 @@ import { hasBBoxSchema } from './geometriesSchema';
 export const commonGeocodeAndFuzzySearchParamsSchema = z.object({
     typeahead: z.boolean().optional(),
     offset: z.number().max(1900).optional(),
-    radiusMeters: z.number().optional(),
-    boundingBox: hasBBoxSchema.optional(),
+    geoBias: geoBiasSchema.optional(),
     countries: z.array(z.string()).optional(),
 });

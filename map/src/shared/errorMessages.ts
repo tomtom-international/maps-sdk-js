@@ -9,6 +9,15 @@ export const notInTheStyle = (actionText: string): Error =>
 /**
  * @ignore
  */
+export const customStyleWithoutSource = (): Error =>
+    new Error(
+        "A custom map style takes exactly one of 'url' or 'json', and this one carries neither. " +
+            'Give the URL the style is served from, or the style specification itself.',
+    );
+
+/**
+ * @ignore
+ */
 export const cannotAddStyleModuleToCustomStyle = (styleModule: StyleModule): Error =>
     new Error(
         `The custom map style has no '${styleModule}' part and the SDK cannot add one to it. ` +

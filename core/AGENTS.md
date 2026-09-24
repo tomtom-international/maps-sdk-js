@@ -90,36 +90,19 @@ pnpm test:dist         # Validate built distribution
 
 ## Source Structure Conventions
 
-### Barrel files (`index.ts`)
-
-Each directory exposes its public surface through an `index.ts` barrel. Because the package entry point re-exports these barrels wholesale, anything in a directory barrel becomes part of the public API — so keep them selective.
-
-Internal symbols are not added to `index.ts` and are imported directly from their source file:
-
-```typescript
-// Internal cross-directory import — go directly to the source file
-import { internalHelper } from './util/internalHelper';
-```
-
-### `types/` subdirectories — public API types only
-
-`types/` subdirectories contain only types that are part of the public API reference. Internal helpers belong in the source file that uses them.
+Barrels, import paths, `types/` and test placement: [`CODING_GUIDELINES.md`](../CODING_GUIDELINES.md) §§ 4 and 8.
+Specific to this package:
 
 ```
 src/types/          ← public SDK types (Place, Route, BBox, …)
 src/types/place/    ← place-specific type groupings
 src/types/route/    ← route-specific type groupings
 src/types/traffic/  ← traffic-specific type groupings
+src/util/           ← the canonical home for generic geometry, bbox, distance and formatting helpers
 ```
 
-### `tests/` subdirectories
-
-Test files live in a `tests/` subdirectory alongside the source files they cover:
-
-```
-src/config/tests/    ← tests for src/config/
-src/util/tests/      ← tests for src/util/
-```
+`src/util/` is where the whole SDK looks first for a generic helper, so check it before adding one anywhere, and
+put a helper that two packages need here rather than in both.
 
 ---
 

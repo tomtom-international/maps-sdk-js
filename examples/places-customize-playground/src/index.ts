@@ -54,7 +54,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
         await places.show(
             await search({
                 poiCategories: ['ELECTRIC_VEHICLE_STATION', 'CAFE_PUB'],
-                boundingBox: calculatePaddedBBox({ map, surroundingElements: ['.ui-panel'] }) as BBox,
+                geoBias: { boundingBox: calculatePaddedBBox({ map, surroundingElements: ['.ui-panel'] }) as BBox },
                 limit: 100,
             }),
         );

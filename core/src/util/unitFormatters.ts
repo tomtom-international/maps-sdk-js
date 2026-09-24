@@ -122,7 +122,13 @@ export const formatDuration = (seconds: number | undefined, options?: TimeDispla
  */
 export type DistanceUnitsType = 'metric' | 'imperial_us' | 'imperial_uk';
 
-const MILE_IN_METERS = 1609.344;
+/**
+ * Metres in one international mile — the factor behind every metric-to-imperial conversion in the SDK.
+ *
+ * @ignore
+ */
+export const MILE_IN_METERS = 1609.344;
+
 const FEET_IN_METERS = 0.3048;
 const YARD_IN_METERS = 0.9144;
 

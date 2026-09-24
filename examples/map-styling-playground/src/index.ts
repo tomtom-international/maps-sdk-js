@@ -3,6 +3,7 @@ import {
     StandardStyleID,
     StylingKnobDescriptor,
     StylingModule,
+    StylingPresetId,
     standardStyleIDs,
     TomTomMap,
     TrafficFlowModule,
@@ -91,6 +92,13 @@ const controlFor = (knob: StylingKnobDescriptor, styling: StylingModule): HTMLEl
         const input = field.querySelector('input') as HTMLInputElement;
         input.checked = knob.current === true;
         input.addEventListener('change', () => applyKnob(styling, knob.id, input.checked));
+    } else if (knob.kind === 'enum') {
+        field.innerHTML = `<span class="ui-form-label">${labelOf(knob)}</span><select class="ui-dropdown"></select>`;
+        const select = field.querySelector('select') as HTMLSelectElement;
+        for (const option of knob.options ?? []) {
+            select.add(new Option(option, option, false, option === knob.current));
+        }
+        select.addEventListener('change', () => applyKnob(styling, knob.id, select.value));
     } else if (knob.kind === 'color') {
         field.innerHTML = `<span class="ui-form-label">${labelOf(knob)}</span><span class="ui-color-swatch"><input type="color"></span>`;
         const input = field.querySelector('input') as HTMLInputElement;
@@ -101,8 +109,8 @@ const controlFor = (knob: StylingKnobDescriptor, styling: StylingModule): HTMLEl
         const applier = perFrameApplier((value) => applyKnob(styling, knob.id, value));
         input.addEventListener('input', () => applier.queue(input.value));
         input.addEventListener('change', () => applier.flush());
-    } else {
-        const { min, max, step } = knob.range as { min: number; max: number; step: number };
+    } else if (knob.range) {
+        const { min, max, step } = knob.range;
         field.innerHTML = `<span class="ui-form-label">${labelOf(knob)}</span>
             <div class="ui-slider-container"><input type="range" class="ui-slider" min="${min}" max="${max}" step="${step}"><span class="ui-slider-value"></span></div>`;
         const input = field.querySelector('input') as HTMLInputElement;
@@ -184,6 +192,15 @@ const renderPanel = (styling: StylingModule) => {
     });
 
     document.querySelector('#ui-reset')?.addEventListener('click', () => styling.reset());
+
+    // Presets are named bundles of knob settings, listed by the catalogue too.
+    const presetsSelector = document.querySelector('#ui-presets') as HTMLSelectElement;
+    for (const preset of styling.describe().presets) {
+        presetsSelector.add(new Option(preset.name, preset.id));
+    }
+    presetsSelector.addEventListener('change', () => {
+        if (presetsSelector.value) styling.applyPreset(presetsSelector.value as StylingPresetId);
+    });
 
     const stylesSelector = document.querySelector('#ui-mapStyles') as HTMLSelectElement;
     for (const id of standardStyleIDs) {

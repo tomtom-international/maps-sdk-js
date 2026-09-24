@@ -326,7 +326,9 @@ describe('executeDiscoverPlaces — nearby query bias via resolveBiasPoint', () 
             makeState(),
         );
         // The second search call (coffee) must be biased to [4.76, 52.31].
-        expect(mockSearch).toHaveBeenCalledWith(expect.objectContaining({ position: [4.76, 52.31] }));
+        expect(mockSearch).toHaveBeenCalledWith(
+            expect.objectContaining({ geoBias: expect.objectContaining({ position: [4.76, 52.31] }) }),
+        );
     });
 });
 

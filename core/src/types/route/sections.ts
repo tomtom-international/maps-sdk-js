@@ -45,13 +45,23 @@ export type SectionProps = {
  *   id: 'country-section-1',
  *   startPointIndex: 0,
  *   endPointIndex: 150,
- *   countryCodeISO3: 'NLD',  // Netherlands
+ *   countryCodeISO2: 'NL',   // Netherlands
+ *   countryCodeISO3: 'NLD',
  * };
  * ```
  *
  * @group Route
  */
 export type CountrySectionProps = SectionProps & {
+    /**
+     * Two-letter ISO 3166-1 alpha-2 country code.
+     *
+     * Examples: 'US', 'GB', 'NL', 'DE', 'FR'
+     *
+     * @see [ISO 3166-1 alpha-2 codes](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)
+     */
+    countryCodeISO2: string;
+
     /**
      * Three-letter ISO 3166-1 alpha-3 country code.
      *

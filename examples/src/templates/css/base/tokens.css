@@ -1,3 +1,7 @@
+/* The faces the typography tokens below name. First, so an @font-face is declared before anything
+   can ask for it. */
+@import url("fonts.css");
+
 :root {
     /* --- Surface --- */
     --ui-surface-0: #ffffff;

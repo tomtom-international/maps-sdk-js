@@ -10,6 +10,7 @@ import {
     TRAFFIC_INCIDENTS_SOURCE_ID,
 } from 'map';
 import type { MapGeoJSONFeature } from 'maplibre-gl';
+import { spainToFranceAlternatives } from './data/RoutingModuleCountryCrossings.test.data';
 import ldevrTestRoutesJson from './data/RoutingModuleLDEVR.test.data.json';
 import rotterdamToAmsterdamRoutesJson from './data/RoutingModuleRotterdamToAmsterdamNoInstructions.test.data.json';
 import {
@@ -1098,6 +1099,76 @@ test.describe('Route section display configuration', () => {
         await applyConfig(page, { sections: { speedLimit: { sign: { priority: 'aboveRouteIcons' } } } });
         await waitForMapIdle(page);
         expect(await getLayerIndex(page, signLayer)).toBeGreaterThan(await getLayerIndex(page, waypointLayer));
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test('Border crossing colours follow the map theme, and an override outranks it', async ({ page }) => {
+        const mapEnv = await MapTestEnv.loadPageAndMap(page, { bounds: spainToFranceAlternatives.bbox });
+        await initRouting(page);
+        await showRoutes(page, spainToFranceAlternatives);
+        await waitForMapIdle(page);
+
+        // The light style puts the near-black plaque under a near-white label.
+        const crossingLayer = layerID('routeCountryCrossing');
+        expect(await getPaintProperty(page, crossingLayer, 'text-color')).toBe('#F1F3F5');
+
+        await setStyle(page, 'standardDark');
+        await waitForMapIdle(page);
+        // The dark style swaps both, so the plaque still reads as a label rather than as canvas.
+        expect(await getPaintProperty(page, crossingLayer, 'text-color')).toBe('#1A2024');
+
+        // A configured plaque takes the label that reads on it, without the caller naming one.
+        await applyConfig(page, { countryCrossings: { color: '#0B5FA5' } });
+        await waitForMapIdle(page);
+        expect(await getPaintProperty(page, crossingLayer, 'text-color')).toBe('#F1F3F5');
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test('Border crossings turn to the route only when the alignment knob asks them to', async ({ page }) => {
+        const mapEnv = await MapTestEnv.loadPageAndMap(page, { bounds: spainToFranceAlternatives.bbox });
+        await initRouting(page);
+        await showRoutes(page, spainToFranceAlternatives);
+        await waitForMapIdle(page);
+
+        const crossingLayer = layerID('routeCountryCrossing');
+        expect(await layoutProperty(page, crossingLayer, 'text-rotation-alignment')).toBe('viewport');
+        expect(await layoutProperty(page, crossingLayer, 'text-rotate')).toBeUndefined();
+
+        await applyConfig(page, { countryCrossings: { alignment: 'route' } });
+        await waitForMapIdle(page);
+
+        // Map-aligned, and turned by the bearing the feature carries rather than by a constant.
+        expect(await layoutProperty(page, crossingLayer, 'text-rotation-alignment')).toBe('map');
+        expect(JSON.stringify(await layoutProperty(page, crossingLayer, 'text-rotate'))).toContain('bearing');
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test('Picking an alternative moves the border crossings onto it, as it does the rest of the route', async ({
+        page,
+    }) => {
+        const mapEnv = await MapTestEnv.loadPageAndMap(page, { bounds: spainToFranceAlternatives.bbox });
+        await initRouting(page);
+        await showRoutes(page, spainToFranceAlternatives);
+        await waitForMapIdle(page);
+
+        // The crossings filter on the selected route, so they have to be restyled with everything
+        // else — a stale `routeState` leaves the plaques on the route the picker no longer names.
+        const crossingStates = async (): Promise<string[]> =>
+            page.evaluate(
+                () =>
+                    (globalThis as MapsSDKThis).routing
+                        ?.getShown()
+                        .countryCrossings.features.map((feature) => feature.properties.routeState) ?? [],
+            );
+
+        expect(await crossingStates()).toEqual(['selected', 'deselected']);
+
+        await selectRoute(page, 1);
+        await waitForMapIdle(page);
+        expect(await crossingStates()).toEqual(['deselected', 'selected']);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });

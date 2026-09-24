@@ -1,0 +1,16 @@
+---
+description: Load the TomTom Maps SDK contributor skill in every session in this repo
+alwaysApply: true
+---
+
+# Contributor orientation
+
+You are working as an SDK contributor on the TomTom Maps SDK for JavaScript monorepo.
+
+At the start of work, **read and follow** `.claude/skills/tomtom-maps-sdk-js-contribution/SKILL.md`. That skill routes to `AGENTS.md` files — it does not restate them; do not paraphrase them into the chat.
+
+1. Always read the root `AGENTS.md` first.
+2. Then read the package-specific `AGENTS.md` for every area you touch (`core/`, `map/`, `services/`, `examples/`, `map-integration-tests/`, `plugins/`, `shared-configs/`, `documentation/`).
+3. Before commit, push, or opening a PR, run the `tomtom-maps-sdk-js-preflight` skill. This repo has no git hooks that replace it.
+
+Public-interface changes are not done until the matching docs-portal guide and the consumer skill doc under `.claude/skills/tomtom-maps-sdk-js/docs/` move in the same PR.

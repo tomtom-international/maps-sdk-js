@@ -165,6 +165,11 @@ sections.speedLimit;         // SpeedLimitSectionProps[]
 // All sections have: startPointIndex, endPointIndex (indices into route.geometry.coordinates)
 const section = sections.leg?.[0];
 route.geometry.coordinates.slice(section.startPointIndex, section.endPointIndex + 1);
+
+// Country sections tile a route end to end, and carry both code forms.
+const countries = sections.country ?? [];
+countries[0]?.countryCodeISO2;   // 'NL'
+countries[0]?.countryCodeISO3;   // 'NLD'
 ```
 
 **`toll` vs `tollRoad`.** `toll` answers *will this cost a toll to drive*; `tollRoad` answers *does

@@ -93,7 +93,9 @@ describe('executeLocatePlace — nearby query bias via resolveBiasPoint', () => 
         );
 
         // The second search call (pharmacy) must be biased to [2.29, 48.85].
-        expect(mockSearch).toHaveBeenCalledWith(expect.objectContaining({ position: [2.29, 48.85] }));
+        expect(mockSearch).toHaveBeenCalledWith(
+            expect.objectContaining({ geoBias: expect.objectContaining({ position: [2.29, 48.85] }) }),
+        );
     });
 });
 
@@ -138,7 +140,7 @@ describe('executeLocatePlace — within delegates to resolveWithinAreas', () => 
         // Returns the places entry id it wrote (the contract follow-up tools rely on).
         expect(result).toMatchObject({ placesEntryId: 'places-0' });
         expect(mockSearch).toHaveBeenCalledWith(
-            expect.objectContaining({ query: 'Eiffel Tower', boundingBox: [2.2, 48.8, 2.4, 48.9] }),
+            expect.objectContaining({ query: 'Eiffel Tower', geoBias: { boundingBox: [2.2, 48.8, 2.4, 48.9] } }),
         );
     });
 
@@ -241,7 +243,12 @@ describe('executeLocatePlace', () => {
             expect.fail('expected executeLocatePlace to succeed');
         }
 
-        expect(geocodeSpy).toHaveBeenCalledWith(expect.objectContaining({ query: 'Amsterdam', position: [4.9, 52.4] }));
+        expect(geocodeSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                query: 'Amsterdam',
+                geoBias: expect.objectContaining({ position: [4.9, 52.4] }),
+            }),
+        );
     });
 
     // Verifies waypointIndex stages the resolved place onto routing's planning slots — a state

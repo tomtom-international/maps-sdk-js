@@ -1,5 +1,4 @@
-import type { HasLngLat } from '@tomtom-org/maps-sdk/core';
-import type { CommonServiceParams } from '../../shared';
+import type { CommonServiceParams, PointGeoBias } from '../../shared';
 import type { AutocompleteSearchResponseAPI } from './autocompleteSearchResponseAPI';
 
 /**
@@ -94,28 +93,19 @@ export type AutocompleteSearchParams = CommonServiceParams<URL, AutocompleteSear
     query: string;
 
     /**
-     * Position to bias results towards.
-     *
-     * Results closer to this location will be ranked higher in suggestions.
+     * The point to bias suggestions towards, and how far around it to look.
      *
      * @remarks
-     * Can be provided as:
-     * - Object with `lon` and `lat` properties
-     * - Array `[longitude, latitude]`
-     *
-     * When used without `radiusMeters`, biases results but doesn't restrict them.
-     * When used with `radiusMeters`, constrains results to that area.
+     * This endpoint biases by point only — it takes no bounding box. Without `radiusMeters` the
+     * point ranks nearer suggestions higher without restricting them.
      *
      * @example
      * ```typescript
-     * // Object format
-     * position: { lon: 4.9041, lat: 52.3676 }
-     *
-     * // Array format
-     * position: [4.9041, 52.3676]
+     * geoBias: { position: [4.9041, 52.3676] }
+     * geoBias: { position: [4.9041, 52.3676], radiusMeters: 5000 }
      * ```
      */
-    position?: HasLngLat;
+    geoBias?: PointGeoBias;
 
     /**
      * Maximum number of suggestions to return.
@@ -130,25 +120,6 @@ export type AutocompleteSearchParams = CommonServiceParams<URL, AutocompleteSear
      * ```
      */
     limit?: number;
-
-    /**
-     * Search radius in meters from the position.
-     *
-     * When combined with `position`, restricts results to within this radius.
-     * Without `position`, this parameter is ignored.
-     *
-     * @remarks
-     * Only results within this distance from `position` will be returned.
-     * Values ≤ 0 are ignored.
-     *
-     * @example
-     * ```typescript
-     * // Search within 5km of position
-     * position: [4.9, 52.3],
-     * radiusMeters: 5000
-     * ```
-     */
-    radiusMeters?: number;
 
     /**
      * Restrict results to specific countries.

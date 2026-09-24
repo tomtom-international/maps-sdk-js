@@ -27,7 +27,7 @@ This section is for developers working on the SDK codebase itself.
   - `maplibre-gl` — Map rendering engine (required)
   - `lodash-es` — Utility functions (required)
 - **Entry Point**: `index.ts`
-- **Key Modules**: `base`, `geometry`, `hillshade`, `init`, `places`, `pois`, `routing`, `traffic`, `TomTomMap`
+- **Key Modules**: `base`, `custom`, `geometry`, `hillshade`, `init`, `places`, `pois`, `routing`, `styling`, `traffic`, `TomTomMap`
 
 **Installation Note**: When using npm (v7+) or Yarn, peer dependencies are installed automatically. When using pnpm, install peer dependencies manually: `pnpm install maplibre-gl lodash-es`
 
@@ -94,43 +94,20 @@ pnpm dev
 
 ## Source Structure Conventions
 
-### Barrel files (`index.ts`)
-
-Each module exposes its public surface through an `index.ts` barrel. Because the package entry point re-exports these barrels wholesale, anything in a module barrel becomes part of the public API — so keep them selective.
-
-Internal symbols are not added to `index.ts` and are imported directly from their source file:
-
-```typescript
-// Internal cross-module import — go directly to the source file
-import { internalLayerHelper } from '../places/layers/internalLayerHelper';
-```
-
-### `types/` subdirectories — public API types only
-
-Each module places its public-facing types in a `types/` subdirectory. Internal types stay in the source file that uses them.
+Barrels, import paths, `types/` and test placement: [`CODING_GUIDELINES.md`](../CODING_GUIDELINES.md) §§ 4 and 8.
+One module per directory, laid out like this:
 
 ```
 src/places/
 ├── index.ts          ← barrel
 ├── PlacesModule.ts   ← implementation
-└── types/
-    └── ...           ← public option/config types
+├── types/            ← public option/config types
+└── tests/            ← PlacesModule.test.ts
 ```
 
 ### Layer ID constants
 
 Before hardcoding a TomTom map-style layer ID (e.g. `'Borders - Treaty label'`, `'POI'`), check `mapStyleLayerIDs` in `src/shared/layers/layerIDs.ts`. Reuse an existing constant, or add a new named entry there so all modules anchor against a single source of truth.
-
-### `tests/` subdirectories
-
-Test files live in a `tests/` subdirectory alongside the module they cover:
-
-```
-src/places/
-├── PlacesModule.ts
-└── tests/
-    └── PlacesModule.test.ts
-```
 
 ---
 

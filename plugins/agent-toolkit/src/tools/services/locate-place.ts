@@ -3,12 +3,12 @@
  */
 
 import { type BBox, bboxFromBBoxes, getPosition, type Place } from '@tomtom-org/maps-sdk/core';
+import type { GeoBias } from '@tomtom-org/maps-sdk/services';
 import { z } from 'zod';
 import type { ToolExecuteOptions, ToolState } from '../../types';
 import { makePlacesLabel, summarizePlace } from '../../utils';
 import {
     isResolveError,
-    type LocateBias,
     locatePlace,
     placesEntryIdHintSchema,
     resolveNearby,
@@ -78,7 +78,7 @@ export const locatePlaceDescription =
     'pin or zoom display (via `show`), or staging as a routing waypoint. ' +
     'For multi-place or category searches, use discoverPlaces.';
 
-type ResolveBiasResult = { bias?: LocateBias } | { error: string };
+type ResolveBiasResult = { bias?: GeoBias } | { error: string };
 
 const resolveWithinBias = async (
     where: Extract<z.infer<typeof whereSchema>, { mode: 'within' }>,

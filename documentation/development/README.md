@@ -75,14 +75,20 @@ This directory contains documentation for building and testing the TomTom Maps S
 
 ### Code Quality
 
+#### **[CODING_GUIDELINES.md](../../CODING_GUIDELINES.md)**
+*The rules every change is held to*
+- Reuse before adding, and where a shared helper belongs
+- Types that make illegal states unrepresentable
+- Comment and TSDoc density
+- Barrels, import paths, naming, test placement
+
+**Read before writing code**
+
 #### **[QUALITY.md](./QUALITY.md)**
-*Maintaining code quality*
-- Linting with Biome
-- Formatting standards
-- Code style configuration
-- Running quality checks
-- Pre-commit requirements
-- Best practices
+*The automated half*
+- Linting and formatting with Biome
+- Which lint rules fail CI and which only warn
+- Type-check commands and quality gates
 
 **Reference before committing code**
 

@@ -39,6 +39,12 @@ describe('Map style input builder tests', () => {
         });
     });
 
+    test('rejects a custom style carrying neither url nor json', () => {
+        expect(() => buildStyleInput(mergeFromGlobal({ style: { type: 'custom' } } as TomTomMapParams))).toThrow(
+            /exactly one of 'url' or 'json'/,
+        );
+    });
+
     test('With previous style parts test', () => {
         expect(withPreviousStyleParts('standardDark')).toBe('standardDark');
         expect(withPreviousStyleParts('standardDark', 'monoLight')).toBe('standardDark');

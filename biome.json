@@ -35,11 +35,28 @@
             "maxAllowedComplexity": 25
           }
         },
+        "noExcessiveLinesPerFunction": {
+          "level": "warn",
+          "options": {
+            "maxLines": 50,
+            "skipBlankLines": true,
+            "skipIifes": true
+          }
+        },
         "useArrowFunction": "error"
       },
       "recommended": false,
+      "suspicious": {
+        "noExplicitAny": "warn"
+      },
       "style": {
         "useNamingConvention": "off",
+        "useConsistentTypeDefinitions": {
+          "level": "warn",
+          "options": {
+            "style": "type"
+          }
+        },
         "noNonNullAssertion": "warn",
         "noParameterAssign": "error",
         "useAsConstAssertion": "warn",
@@ -96,5 +113,51 @@
       "allowComments": false,
       "allowTrailingCommas": false
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["**/tests/**", "**/*.test.ts", "**/*.test.tsx", "**/e2e-tests/**"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noExcessiveLinesPerFunction": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["services/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "@tomtom-org/maps-sdk/map": "services must not depend on map: it compiles locally and breaks the published entry points."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["map/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "@tomtom-org/maps-sdk/services": "map must not depend on services: it compiles locally and breaks the published entry points."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
 }

@@ -9,7 +9,7 @@ const requestBuilderData: [string, ExplorationSearchParams, ExplorationSearchReq
         {
             customServiceBaseURL: TEST_BASE_URL,
             query: 'restaurant',
-            boundingBox: [4.85, 52.35, 4.95, 52.4],
+            boundingBoxes: [[4.85, 52.35, 4.95, 52.4]],
         },
         {
             url: EXPECTED_URL,
@@ -23,8 +23,7 @@ const requestBuilderData: [string, ExplorationSearchParams, ExplorationSearchReq
         'near + radiusMeters maps to near.coordinates + near.radius_km',
         {
             customServiceBaseURL: TEST_BASE_URL,
-            position: [4.9003, 52.3791],
-            radiusMeters: 5000,
+            geoBias: { position: [4.9003, 52.3791], radiusMeters: 5000 },
             poiCategories: ['RESTAURANT'],
             limit: 10,
         },
@@ -41,7 +40,7 @@ const requestBuilderData: [string, ExplorationSearchParams, ExplorationSearchReq
         'near without radiusMeters falls back to the 2km default',
         {
             customServiceBaseURL: TEST_BASE_URL,
-            position: [4.9003, 52.3791],
+            geoBias: { position: [4.9003, 52.3791] },
         },
         {
             url: EXPECTED_URL,
@@ -62,10 +61,11 @@ const requestBuilderData: [string, ExplorationSearchParams, ExplorationSearchReq
             placeTypes: ['POI', 'PointAddress'],
             areaId: '20567430',
             areaTags: ['walkable', 'transit_connected'],
-            position: [4.9, 52.37],
-            radiusMeters: 2500,
-            boundingBox: [4.85, 52.35, 4.95, 52.4],
-            boundingBoxes: [[4.45, 51.9, 4.55, 51.95]],
+            geoBias: { position: [4.9, 52.37], radiusMeters: 2500 },
+            boundingBoxes: [
+                [4.85, 52.35, 4.95, 52.4],
+                [4.45, 51.9, 4.55, 51.95],
+            ],
             geometries: [
                 {
                     type: 'Polygon',

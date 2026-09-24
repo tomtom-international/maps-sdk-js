@@ -1,5 +1,5 @@
-import { VehicleModel } from './vehicleModel';
-import { VehiclePreferences } from './vehiclePreferences';
+import { ExplicitVehicleModel, VehicleModel } from './vehicleModel';
+import { ElectricVehiclePreferences, VehiclePreferences } from './vehiclePreferences';
 import { VehicleRestrictions } from './vehicleRestrictionParams';
 import { VehicleState } from './vehicleState';
 
@@ -28,9 +28,11 @@ export type GenericVehicleParams = {
      * Model (static properties) of the vehicle with generic/unspecified engine type.
      *
      * @remarks
-     * Includes dimensions and other characteristics that don't change during travel.
+     * Includes dimensions and other characteristics that don't change during travel. A predefined
+     * `variantId` is not accepted here — only the charging-stops endpoint understands one, and that
+     * endpoint is reached with an electric vehicle carrying charging preferences.
      */
-    model?: VehicleModel;
+    model?: ExplicitVehicleModel<undefined>;
 
     /**
      * State of the vehicle with generic/unspecified engine type.
@@ -96,9 +98,10 @@ export type CombustionVehicleParams = {
      * Model (static properties) specifically for combustion engine vehicles.
      *
      * @remarks
-     * Can include fuel consumption curves and efficiency parameters.
+     * Can include fuel consumption curves and efficiency parameters. A predefined `variantId` is not
+     * accepted here — only the charging-stops endpoint understands one.
      */
-    model?: VehicleModel<'combustion'>;
+    model?: ExplicitVehicleModel<'combustion'>;
 
     /**
      * State specifically for combustion engine vehicles.
@@ -208,7 +211,9 @@ export type ElectricVehicleParams = {
      * Model (static properties) specifically for electric vehicles.
      *
      * @remarks
-     * Should include battery capacity, charging curve, and consumption profiles.
+     * Should include battery capacity, charging curve, and consumption profiles. A predefined
+     * `variantId` is accepted here, but only `calculateRoute` with charging preferences understands
+     * one — a range or a matrix has no charging stops to plan for.
      */
     model?: VehicleModel<'electric'>;
 
@@ -312,3 +317,21 @@ export type ElectricVehicleParams = {
  */
 export type VehicleParameters = (GenericVehicleParams | CombustionVehicleParams | ElectricVehicleParams) &
     VehicleRestrictions;
+
+/**
+ * An electric vehicle that has asked for charging stops.
+ *
+ * @remarks
+ * Charging preferences are what select the charging-stops endpoint, so `chargingStopsStrategy` —
+ * which no other endpoint accepts — requires this shape rather than plain
+ * {@link ElectricVehicleParams}.
+ *
+ * A predefined `model.variantId` is bound to the same endpoint, but the rule cannot ride on the
+ * vehicle type: `calculateReachableRange` takes the same vehicle and accepts a variant on its own.
+ * `calculateRoute` validates that pairing instead.
+ *
+ * @group Routing
+ */
+export type ElectricVehicleParamsWithChargingStops = ElectricVehicleParams & {
+    preferences: Required<ElectricVehiclePreferences>;
+} & VehicleRestrictions;

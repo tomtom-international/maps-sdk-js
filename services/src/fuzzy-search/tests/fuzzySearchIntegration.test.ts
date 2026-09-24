@@ -73,7 +73,7 @@ describe('Fuzzy Search service', () => {
             query,
             poiCategories: ['ELECTRIC_VEHICLE_STATION'],
             limit: 10,
-            position: sanFrancisco,
+            geoBias: { position: sanFrancisco },
         });
 
         expect(evStations?.features?.length).toBeGreaterThan(0);

@@ -12,6 +12,7 @@ import {
 import { prefixLayerID, suffixNumber } from '../shared/layers/utils';
 import { addLayers, addOrUpdateImage, updateLayersAndSource, waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
+import { COUNTRY_CROSSING_LAYER_ID, COUNTRY_CROSSING_PLAQUE_IMAGE_ID } from './layers/countryCrossingLayers';
 import { INSTRUCTION_ARROW_IMAGE_ID } from './layers/guidanceLayers';
 import { DESELECTED_SUMMARY_POPUP_IMAGE_ID, SELECTED_SUMMARY_POPUP_IMAGE_ID } from './layers/routeMainLineLayers';
 import { isSectionVisible, sectionSignLayerID } from './layers/sectionLayers';
@@ -32,6 +33,8 @@ import {
 } from './layers/summaryBubbleLayers';
 import { WAYPOINT_FINISH_IMAGE_ID, WAYPOINT_START_IMAGE_ID, WAYPOINT_STOP_IMAGE_ID } from './layers/waypointLayers';
 import {
+    countryCrossingPlaqueImageOptions,
+    countryCrossingPlaqueImg,
     instructionArrowIconImg,
     speedLimitSignImg,
     summaryBubbleImageOptions,
@@ -41,7 +44,7 @@ import {
     waypointIcon,
     waypointStartIcon,
 } from './resources';
-import type { DisplayRouteProps, DisplayRouteSummary } from './types/displayRoutes';
+import type { CountryCrossingFeature, DisplayRouteProps, DisplayRouteSummary } from './types/displayRoutes';
 import type { DisplayInstruction } from './types/guidance';
 import type { PlanningWaypoint } from './types/planningWaypoint';
 import type { RoutingModuleConfig, SectionDisplayConfig } from './types/routeModuleConfig';
@@ -56,6 +59,8 @@ import type { RoutingLayersSpecs, RoutingSourcesWithLayers } from './types/routi
 import type { ShowRoutesOptions } from './types/showOptions';
 import type { WaypointDisplayProps } from './types/waypointDisplayProps';
 import { createLayersSpecs, routeModuleConfigWithDefaults } from './util/config';
+import { type CountryCrossingColors, resolveCountryCrossingColors } from './util/countryCrossingColors';
+import { toCountryCrossingEventFeature, toDisplayCountryCrossings } from './util/countryCrossings';
 import { toDisplayChargingStops } from './util/displayChargingStops';
 import { toDisplayTrafficSectionProps } from './util/displayTrafficSectionProps';
 import { toDisplayWaypoints } from './util/displayWaypoints';
@@ -91,6 +96,8 @@ export type RoutingEvents = CombinedEvents<MapGeoJSONFeature, RoutingModuleConfi
     chargingStops: UserEvents<RouteSection>;
     /** The summary bubbles shown against each alternative. */
     summaryBubbles: UserEvents<DisplayRouteSummary>;
+    /** The border crossings along the route, each carrying the two `country` sections it joins. */
+    countryCrossings: UserEvents<CountryCrossingFeature>;
     /** Traffic incidents on the route. */
     incidents: UserEvents<RouteSection<DisplayTrafficSectionProps>>;
     /** Sections the vehicle is restricted from. */
@@ -291,6 +298,12 @@ export class RoutingModule extends AbstractDataOwnedMapModule<RoutingSourcesWith
                 layersSpecs.summaryBubbles,
                 false,
             ),
+            countryCrossings: new GeoJSONSourceWithLayers(
+                this.mapLibreMap,
+                `${sourcePrefix}-countryCrossings`,
+                layersSpecs.countryCrossings,
+                false,
+            ),
         };
     }
 
@@ -305,7 +318,12 @@ export class RoutingModule extends AbstractDataOwnedMapModule<RoutingSourcesWith
         }
 
         this.layersSpecs = createLayersSpecs(
-            routeModuleConfigWithDefaults(config, this.layerIDPrefix, this.instanceIndex).layers,
+            routeModuleConfigWithDefaults(
+                config,
+                this.layerIDPrefix,
+                this.instanceIndex,
+                this.tomtomMap.styleLightDarkTheme,
+            ).layers,
             this.layerIDPrefix,
         );
         const routingSourcesWithLayers: RoutingSourcesWithLayers = this.createSourcesWithLayers(this.layersSpecs);
@@ -358,6 +376,14 @@ export class RoutingModule extends AbstractDataOwnedMapModule<RoutingSourcesWith
                 options,
             );
         }
+        // Forgotten rather than reused: the layers are new, and the theme behind the colours may
+        // have changed with the style that replaced them.
+        this.appliedCrossingColors = undefined;
+        this.addImageIfNotExisting(
+            suffixNumber(COUNTRY_CROSSING_PLAQUE_IMAGE_ID, this.instanceIndex),
+            countryCrossingPlaqueImg(this.crossingColors(this.config).plaque),
+            { ...options, ...countryCrossingPlaqueImageOptions },
+        );
         this.addImageIfNotExisting(trafficClearImageId, trafficImg(UNKNOWN_DELAY_COLOR), options);
         this.addImageIfNotExisting(trafficMajorImageId, trafficImg(MAJOR_DELAY_COLOR), options);
         this.addImageIfNotExisting(trafficModerateImageId, trafficImg(MODERATE_DELAY_COLOR), options);
@@ -377,7 +403,12 @@ export class RoutingModule extends AbstractDataOwnedMapModule<RoutingSourcesWith
      * @ignore
      */
     protected _applyConfig(config?: RoutingModuleConfig) {
-        const mergedConfig = routeModuleConfigWithDefaults(config, this.layerIDPrefix, this.instanceIndex);
+        const mergedConfig = routeModuleConfigWithDefaults(
+            config,
+            this.layerIDPrefix,
+            this.instanceIndex,
+            this.tomtomMap.styleLightDarkTheme,
+        );
         const displayUnitsChanged = !isEqual(this.config?.displayUnits, mergedConfig.displayUnits);
 
         // If there was already some config set, we must update the changes:
@@ -459,6 +490,8 @@ export class RoutingModule extends AbstractDataOwnedMapModule<RoutingSourcesWith
             );
         }
 
+        this.applyCountryCrossingConfig(mergedConfig);
+
         return mergedConfig;
     }
 
@@ -485,6 +518,65 @@ export class RoutingModule extends AbstractDataOwnedMapModule<RoutingSourcesWith
                 }),
             ),
         );
+    }
+
+    /** The colours the crossings draw with, which follow the map's theme unless configured. */
+    private crossingColors(config: RoutingModuleConfig | undefined): CountryCrossingColors {
+        return resolveCountryCrossingColors(config?.countryCrossings, this.tomtomMap.styleLightDarkTheme);
+    }
+
+    /**
+     * What {@link applyCountryCrossingConfig} last painted the crossings with.
+     *
+     * @remarks
+     * Tracked here rather than re-derived from `this.config`, because the theme is an input the
+     * config cannot see: a style change moves the resolved colours while the config says the same
+     * thing. Cleared when the sources are rebuilt, so a restored style repaints from scratch.
+     */
+    private appliedCrossingColors: CountryCrossingColors | undefined;
+
+    /**
+     * Brings the border crossings in line with a changed configuration.
+     *
+     * @remarks
+     * The source is gated on `visible`, as the summary bubbles' is, so switching them back on
+     * re-derives the features: a layer spec cannot put back data the source does not hold.
+     *
+     * Both colours are applied here rather than left to the layer spec: the plaque is an image, so
+     * a new colour has to replace it, and the label's colour follows the map theme, which the spec
+     * that built the layer cannot know about after a style change.
+     */
+    private applyCountryCrossingConfig(mergedConfig: RoutingModuleConfig): void {
+        const crossingsVisible = mergedConfig.countryCrossings?.visible !== false;
+        const visibilityChanged = !isEqual(
+            this.config?.countryCrossings?.visible,
+            mergedConfig.countryCrossings?.visible,
+        );
+
+        if (!crossingsVisible && visibilityChanged) {
+            this.sourcesWithLayers.countryCrossings.clear();
+        } else if (crossingsVisible && visibilityChanged) {
+            this.sourcesWithLayers.countryCrossings.show(
+                toDisplayCountryCrossings(this.sourcesWithLayers.mainLines.shownFeatures),
+            );
+        }
+
+        const colors = this.crossingColors(mergedConfig);
+        if (isEqual(this.appliedCrossingColors, colors)) return;
+
+        this.appliedCrossingColors = colors;
+        addOrUpdateImage(
+            'add-or-update',
+            suffixNumber(COUNTRY_CROSSING_PLAQUE_IMAGE_ID, this.instanceIndex),
+            countryCrossingPlaqueImg(colors.plaque),
+            this.mapLibreMap,
+            countryCrossingPlaqueImageOptions,
+        );
+
+        const crossingLayerID = prefixLayerID(COUNTRY_CROSSING_LAYER_ID, this.layerIDPrefix);
+        if (this.mapLibreMap.getLayer(crossingLayerID)) {
+            this.mapLibreMap.setPaintProperty(crossingLayerID, 'text-color', colors.text, { validate: false });
+        }
     }
 
     /**
@@ -589,11 +681,16 @@ export class RoutingModule extends AbstractDataOwnedMapModule<RoutingSourcesWith
      * @ignore
      */
     protected restoreDataAndConfigImpl() {
-        const previouslyShown = Object.entries(this.sourcesWithLayers)
-            .map((entry) => ({
-                [entry[0]]: entry[1].shownFeatures,
-            }))
-            .reduce((acc, item) => ({ ...acc, ...item }), {}) as Record<keyof RoutingSourcesWithLayers, any>;
+        // Collected by key, not closed over: `initSourcesWithLayers` replaces every source before the
+        // re-show below. Each source shows its own feature type, and TypeScript cannot keep a key
+        // correlated with that type through an index access, so the payload stays unconstrained here
+        // and `show` is what actually checks it.
+        const previouslyShown = Object.fromEntries(
+            Object.entries(this.sourcesWithLayers).map(([key, sourceWithLayers]) => [
+                key,
+                sourceWithLayers.shownFeatures,
+            ]),
+        ) as Record<keyof RoutingSourcesWithLayers, never>;
 
         this.initSourcesWithLayers(this.config, true);
         this._applyConfig(this.config);
@@ -688,6 +785,12 @@ export class RoutingModule extends AbstractDataOwnedMapModule<RoutingSourcesWith
         this.applySignPriority(this.config);
         this.sourcesWithLayers.instructionLines.show(toDisplayInstructions(displayRoutes));
         this.sourcesWithLayers.instructionArrows.show(toDisplayInstructionArrows(displayRoutes));
+        if (this.config?.countryCrossings?.visible !== false) {
+            this.sourcesWithLayers.countryCrossings.show(toDisplayCountryCrossings(displayRoutes));
+        } else {
+            this.sourcesWithLayers.countryCrossings.clear();
+        }
+
         if (this.config?.summaryBubbles?.visible !== false) {
             this.sourcesWithLayers.summaryBubbles.show(
                 toDisplayRouteSummaries(displayRoutes, this.config?.displayUnits),
@@ -768,6 +871,7 @@ export class RoutingModule extends AbstractDataOwnedMapModule<RoutingSourcesWith
         showFeaturesWithRouteSelection(updatedRoutes, this.sourcesWithLayers.instructionLines);
         showFeaturesWithRouteSelection(updatedRoutes, this.sourcesWithLayers.instructionArrows);
         showFeaturesWithRouteSelection(updatedRoutes, this.sourcesWithLayers.summaryBubbles);
+        showFeaturesWithRouteSelection(updatedRoutes, this.sourcesWithLayers.countryCrossings);
         this.applySectionVisibility(this.config);
     }
 
@@ -838,6 +942,7 @@ export class RoutingModule extends AbstractDataOwnedMapModule<RoutingSourcesWith
      * - `instructionLines`: Turn-by-turn instruction lines
      * - `instructionArrows`: Instruction arrow markers
      * - `summaryBubbles`: Route summary popups
+     * - `countryCrossings`: Border crossings along the route
      *
      * @example
      * ```typescript
@@ -877,6 +982,7 @@ export class RoutingModule extends AbstractDataOwnedMapModule<RoutingSourcesWith
             instructionLines: this.sourcesWithLayers.instructionLines.shownFeatures,
             instructionArrows: this.sourcesWithLayers.instructionArrows.shownFeatures,
             summaryBubbles: this.sourcesWithLayers.summaryBubbles.shownFeatures,
+            countryCrossings: this.sourcesWithLayers.countryCrossings.shownFeatures,
         };
     }
 
@@ -922,6 +1028,7 @@ export class RoutingModule extends AbstractDataOwnedMapModule<RoutingSourcesWith
                     'waypoints',
                     'chargingStops',
                     'summaryBubbles',
+                    'countryCrossings',
                     'incidents',
                     'vehicleRestricted',
                     'ferries',
@@ -938,6 +1045,10 @@ export class RoutingModule extends AbstractDataOwnedMapModule<RoutingSourcesWith
                 waypoints: this.userEvents<Waypoint<WaypointDisplayProps>>(['waypoints']),
                 chargingStops: this.userEvents<RouteSection>(['chargingStops']),
                 summaryBubbles: this.userEvents<DisplayRouteSummary>(['summaryBubbles']),
+                countryCrossings: this.userEvents<CountryCrossingFeature>(['countryCrossings'], {
+                    mapping: (feature) =>
+                        toCountryCrossingEventFeature(feature, this.sourcesWithLayers.mainLines.shownFeatures),
+                }),
                 incidents: this.userEvents<RouteSection<DisplayTrafficSectionProps>>(['incidents']),
                 vehicleRestricted: this.userEvents<RouteSection>(['vehicleRestricted']),
                 ferries: this.userEvents<RouteSection>(['ferries']),

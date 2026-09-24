@@ -6,14 +6,16 @@ allowed-tools: Read, Glob
 
 You are working as an SDK contributor on the TomTom Maps SDK for JavaScript monorepo.
 
-`AGENTS.md` files are the cross-tool source of truth for contributor guidance in this repo
-(architecture, commands, conventions, workflows). This skill routes you to them — **it does not
-restate them.**
+`CODING_GUIDELINES.md` holds the coding rules and the `AGENTS.md` files hold everything else
+(architecture, commands, workflows), for every tool and not just Claude. This skill routes you to
+them — **it does not restate them.**
 
 ## Orientation steps
 
-1. **Always** read the root `AGENTS.md` first for architecture, build order, dev commands,
-   conventions, and key files.
+1. **Always** read, in this order:
+
+    - root `AGENTS.md` — architecture, build order, dev commands, key files.
+    - root `CODING_GUIDELINES.md` — the rule set every change is held to.
 
 2. Read the package-specific `AGENTS.md` for the area you're touching:
 
@@ -28,30 +30,18 @@ restate them.**
    | `plugins/agent-toolkit/` | `plugins/agent-toolkit/AGENTS.md` + `ENGINEERING-GUIDELINES.md` |
    | `plugins/viewport-places/` | `plugins/AGENTS.md` (no dedicated file; see `src/viewportPlaces.ts`) |
    | `plugins/landmarks-3d/` | `plugins/AGENTS.md` (no dedicated file; see `src/Landmarks3D.ts`) |
+   | `plugins/map-effects/` | `plugins/AGENTS.md` (no dedicated file; see `src/MapEffects.ts`) |
    | `shared-configs/` | `shared-configs/AGENTS.md` |
    | `documentation/` | `documentation/AGENTS.md` |
    | `documentation/docs-portal/` | `documentation/docs-portal/AGENTS.md` (guide writing with `SDKGuideLiveCodingExample`) |
 
    If the area is unclear, read all package-level `AGENTS.md` files before acting.
 
-3. The conventions with **no automated backstop** — Biome and `tsc` catch the rest, so these are
-   the ones to hold in mind while writing:
-
-   - **Coordinates**: always `[longitude, latitude]` (GeoJSON order).
-   - **Full variable names** — `response` not `res`, `parameters` not `params`, `configuration`
-     not `config` (full list in root `AGENTS.md`).
-   - **Blank line after a single-line `if`** when more code follows.
-   - **No re-exports** — import from the canonical source, never barrel-forward.
-   - **Tests** go in a `tests/` subdirectory beside the source, never a sibling `*.test.ts`.
-   - **Tool `execute`** in plugins catches and returns `{ error: string }`, never throws.
-   - **Never import `map` from `services` or vice versa** — it compiles locally and breaks the
-     published packages.
-
 ## After editing source
 
 `pnpm lint:fix` from the root — it runs `biome check --write` (format, lint and import ordering)
-followed by `biome lint --write`. Fix the errors it reports; warnings about pre-existing complexity
-or non-null assertions in files you didn't touch are not yours.
+followed by `biome lint --write`. Fix the errors it reports, and the warnings on lines you wrote;
+several warn-level rules carry a repository-wide backlog that is not yours.
 
 ## Before committing or pushing
 
@@ -93,18 +83,13 @@ inherited from the active skill, so a procedure nested under this router's `Read
 Hence the rule: a **procedure** that is invoked or auto-triggered on its own is a sibling directory;
 **reference material** read only from inside one procedure goes under that skill's own `docs/`.
 Nesting is a per-skill decision, not a family-wide layout. A new task skill belongs here only when it
-encodes an *order of operations* — everything else belongs in an `AGENTS.md`, where non-Claude tools
-read it too.
+encodes an *order of operations* — a coding rule belongs in `CODING_GUIDELINES.md` and anything else
+in an `AGENTS.md`, where non-Claude tools read it too.
 
 Branch off when:
 
 - Verifying a finished change before commit / push / PR → **`/tomtom-maps-sdk-js-preflight`**.
-- Writing, rewriting or compacting a PR title and body — the ≤80-character conventional commit
-  title, the `Problem Statement` → `Solution Overview` → diff-walk → `Caveats` section order,
-  keeping it compact and technical — bullets rather than paragraphs, a size ceiling per section,
-  the detail in the diff sections — links to the Jira key, the wiki pages and every named file's
-  own PR diff, and where a diagram goes →
-  **`tomtom-maps-sdk-js-pr-description`**.
+- Writing, rewriting or compacting a PR title and body → **`tomtom-maps-sdk-js-pr-description`**.
 - Adding or editing an example under `examples/`, or updating a snapshot or thumbnail →
   **`tomtom-maps-sdk-js-example-authoring`** (examples are SDK *consumers*; it also covers the
   two-build/two-snapshot e2e workflow).

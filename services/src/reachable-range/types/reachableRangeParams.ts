@@ -10,8 +10,8 @@ import type {
     ElectricVehicleState,
     GenericVehicleParams,
     VehicleParameters,
+    VehicleRestrictions,
 } from '../../shared';
-import type { VehicleRestrictions } from '../../shared/types/vehicleRestrictionParams';
 import type { ReachableRangeRequestAPI } from './apiRequestTypes';
 import type { ReachableRangeResponseAPI } from './apiResponseTypes';
 
@@ -158,19 +158,24 @@ export type ReachableRangeCostModel = Omit<CostModel, 'avoid' | 'avoidAreas'> & 
  * Vehicle parameters accepted by `calculateReachableRange`.
  *
  * @remarks
- * {@link VehicleParameters} without `state.heading`, which this endpoint rejects with
- * *"parameter [vehicleHeading] not supported"*. It stays available on `calculateRoute`, where the
- * routing API takes it as `vehicleHeadingInDegrees`.
+ * {@link VehicleParameters} without the two things this endpoint has no parameter for:
  *
- * Everything else is unchanged, including the engine-specific `state` variants -- an electric
- * vehicle still picks between the percentage and kWh forms.
+ * - `state.heading`, which it rejects with *"parameter [vehicleHeading] not supported"*. The
+ *   routing API takes it as `vehicleHeadingInDegrees`.
+ * - `preferences`, whose only member is `chargingPreferences`. Those belong to the charging-stops
+ *   endpoint, and a range has no stops to plan. A predefined `model.variantId` therefore needs
+ *   nothing beside it here, unlike on `calculateRoute`.
+ *
+ * Both stay available on `calculateRoute`. Everything else is unchanged, including the
+ * engine-specific `state` variants -- an electric vehicle still picks between the percentage and
+ * kWh forms.
  *
  * @group Reachable Range
  */
 export type ReachableRangeVehicleParameters = (
-    | Omit<GenericVehicleParams, 'state'>
-    | (Omit<CombustionVehicleParams, 'state'> & { state?: CombustionVehicleState })
-    | (Omit<ElectricVehicleParams, 'state'> & { state?: ElectricVehicleState })
+    | Omit<GenericVehicleParams, 'state' | 'preferences'>
+    | (Omit<CombustionVehicleParams, 'state' | 'preferences'> & { state?: CombustionVehicleState })
+    | (Omit<ElectricVehicleParams, 'state' | 'preferences'> & { state?: ElectricVehicleState })
 ) &
     VehicleRestrictions;
 

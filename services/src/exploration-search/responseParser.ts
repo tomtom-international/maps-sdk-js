@@ -108,11 +108,10 @@ const parseResult = (result: ExplorationSearchResultAPI): Place<ExplorationPlace
 };
 
 const buildSummary = (apiResponse: ExplorationSearchResponseAPI, params: ExplorationSearchParams): SearchSummary => {
-    const hasNear = !!getPosition(params.position);
-    const geoBias = hasNear ? getPosition(params.position) : null;
+    const geoBias = getPosition(params.geoBias?.position);
     return {
         query: params.query ?? '',
-        queryType: hasNear ? 'NEARBY' : 'NON_NEAR',
+        queryType: geoBias ? 'NEARBY' : 'NON_NEAR',
         queryTime: 0,
         numResults: apiResponse.hits.length,
         offset: params.offset ?? 0,

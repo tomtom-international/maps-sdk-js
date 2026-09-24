@@ -1,9 +1,11 @@
 import type { LineLayerSpecification, SymbolLayerSpecification } from 'maplibre-gl';
 import type { HasAdditionalLayersConfig, LayerSpecTemplate, ToBeAddedLayerSpecTemplate } from '../../shared';
-import { mapStyleLayerIDs } from '../../shared';
+import { type LightDark, mapStyleLayerIDs } from '../../shared';
 import { darkenColor } from '../../utils/colorUtils';
 import type { RouteLayersConfig, RoutingModuleConfig } from '../types/routeModuleConfig';
+import { resolveCountryCrossingColors } from '../util/countryCrossingColors';
 import { chargingStopSymbol } from './chargingStopLayers';
+import { COUNTRY_CROSSING_LAYER_ID, countryCrossingSymbol } from './countryCrossingLayers';
 import { instructionArrow, instructionLine, instructionOutline } from './guidanceLayers';
 import { routeFerriesLine, routeFerriesSymbol } from './routeFerrySectionLayers';
 import {
@@ -60,9 +62,9 @@ const prefixBeforeID = (beforeID: string | undefined, layerIDPrefix: string | un
  * @ignore
  */
 const prefixBeforeIDs = (
-    additional: Record<string, any> | undefined,
+    additional: HasAdditionalLayersConfig['additional'],
     layerIDPrefix: string | undefined,
-): Record<string, any> | undefined => {
+): HasAdditionalLayersConfig['additional'] => {
     if (!additional || !layerIDPrefix) {
         return additional;
     }
@@ -79,8 +81,13 @@ const prefixBeforeIDs = (
  * Merges a base layer spec with a user override, deep-merging paint and layout instead of replacing them.
  * @ignore
  */
-const mergeLayer = <T extends Record<string, any>>(base: T, override: Record<string, any> | undefined): T => {
+// `paint` and `layout` are all this reads; everything else on an override is spread through
+// untouched, so an override does not have to be declared for the same layer kind as its base.
+type LayerStyleMaps = { paint?: object; layout?: object };
+
+const mergeLayer = <T extends LayerStyleMaps>(base: T, override: LayerStyleMaps | undefined): T => {
     if (!override) return base;
+
     return {
         ...base,
         ...override,
@@ -105,12 +112,14 @@ const suffixImageID = (imageID: string | undefined, instanceIndex: number | unde
  * @param config - Optional routing module configuration to customize layer properties.
  * @param layerIDPrefix - Optional prefix to add to layer IDs for supporting multiple instances.
  * @param instanceIndex - Optional instance index for image ID suffixes.
+ * @param lightDark - The map style's light/dark theme, which the country crossing plaque colours follow.
  * @ignore
  */
 export const buildRoutingLayers = (
     config: RoutingModuleConfig = {},
     layerIDPrefix?: string,
     instanceIndex?: number,
+    lightDark: LightDark = 'light',
 ): Required<RouteLayersConfig> => {
     const configLayers = config.layers;
     const configSectionLayers = configLayers?.sections;
@@ -357,6 +366,17 @@ export const buildRoutingLayers = (
                 configLayers?.summaryBubbles?.routeSummaryBubbleSymbol,
             ),
             ...prefixBeforeIDs(configLayers?.summaryBubbles?.additional, layerIDPrefix),
+        },
+        countryCrossings: {
+            [COUNTRY_CROSSING_LAYER_ID]: mergeLayer(
+                countryCrossingSymbol(
+                    instanceIndex,
+                    config.countryCrossings,
+                    resolveCountryCrossingColors(config.countryCrossings, lightDark),
+                ),
+                configLayers?.countryCrossings?.[COUNTRY_CROSSING_LAYER_ID],
+            ),
+            ...prefixBeforeIDs(configLayers?.countryCrossings?.additional, layerIDPrefix),
         },
     };
 };

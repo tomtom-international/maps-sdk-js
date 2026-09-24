@@ -1,6 +1,7 @@
 import { generateId, POICategory } from '@tomtom-org/maps-sdk/core';
 import { PlacesModule, type PlacesModuleConfig, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { type FuzzySearchParams, SDKAbortError, search } from '@tomtom-org/maps-sdk/services';
+import type { Subscription } from 'maplibre-gl';
 
 /**
  * Common Options when adding a viewport places module.
@@ -36,10 +37,10 @@ export type ViewportPlacesAddOptions = ViewportPlacesAddCommonOptions & {
      * The search parameters to query places for this place module.
      *
      * @remarks
-     * `signal` is not accepted here: each module owns an `AbortSignal` internally so that a new
-     * viewport search cancels the one it supersedes.
+     * `geoBias` and `signal` are not accepted here: each module always searches the current
+     * viewport and owns an `AbortSignal` so that a new search cancels the one it supersedes.
      */
-    searchOptions: Omit<FuzzySearchParams, 'boundingBox' | 'position' | 'signal'>;
+    searchOptions: Omit<FuzzySearchParams, 'geoBias' | 'signal'>;
     /**
      * Optional configuration for the places module, such as styling.
      */
@@ -78,7 +79,7 @@ export class ViewportPlaces {
         {
             options: ViewportPlacesAddOptions;
             placesModule: PlacesModule;
-            subscription: any;
+            subscription: Subscription;
             /** Cancels this module's in-flight search when a newer viewport supersedes it. */
             controller?: AbortController;
         }
@@ -119,7 +120,7 @@ export class ViewportPlaces {
 
         try {
             const places = await search({
-                boundingBox: this.map.getBBox(),
+                geoBias: { boundingBox: this.map.getBBox() },
                 limit: 100,
                 ...options.searchOptions,
                 signal: controller.signal,

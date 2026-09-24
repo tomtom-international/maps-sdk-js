@@ -209,6 +209,9 @@ describe('Routing: Vehicle parameter schema expected failures', () => {
                 state: {
                     currentChargePCT: 80,
                 },
+                preferences: {
+                    chargingPreferences: { minChargeAtDestinationPCT: 20, minChargeAtChargingStopsPCT: 10 },
+                },
             }),
         ).not.toThrow();
     });
@@ -264,6 +267,9 @@ describe('Routing: Vehicle parameter schema successful validations', () => {
                     variantId: 'nissan-leaf-2023',
                 },
                 state: { currentChargeInkWh: 65 },
+                preferences: {
+                    chargingPreferences: { minChargeAtDestinationInkWh: 10, minChargeAtChargingStopsInkWh: 5 },
+                },
             }),
         ).not.toThrow();
     });

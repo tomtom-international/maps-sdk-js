@@ -61,7 +61,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         return availability ? `${availability.availableCount}/${availability.totalCount}` : '';
     };
 
-    const evStationPinConfig: PlacesModuleConfig = {
+    const evStationPinConfig: PlacesModuleConfig<EVChargingStationWithAvailabilityPlaceProps> = {
         extraFeatureProps: {
             availabilityText: buildAvailabilityText,
             availabilityRatio: (place: Place<EVChargingStationWithAvailabilityPlaceProps>) =>

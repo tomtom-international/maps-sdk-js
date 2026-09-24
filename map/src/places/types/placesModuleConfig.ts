@@ -1,4 +1,4 @@
-import type { Place } from '@tomtom-org/maps-sdk/core';
+import type { CommonPlaceProps, Place } from '@tomtom-org/maps-sdk/core';
 import type {
     CircleLayerSpecification,
     DataDrivenPropertyValueSpecification,
@@ -646,7 +646,7 @@ export type PlaceConnectionsConfig = {
  *
  * @group Places
  */
-export type PlacesModuleConfig = MapModuleCommonConfig & {
+export type PlacesModuleConfig<P extends CommonPlaceProps = CommonPlaceProps> = MapModuleCommonConfig & {
     /**
      * Base style for all places.
      *
@@ -735,5 +735,32 @@ export type PlacesModuleConfig = MapModuleCommonConfig & {
      * }
      * ```
      */
-    extraFeatureProps?: { [key: string]: ((place: Place) => any) | any };
+    extraFeatureProps?: Record<string, ExtraFeatureProp<P>>;
 };
+
+/**
+ * A value a GeoJSON feature property can hold.
+ *
+ * @group Places
+ */
+export type FeaturePropValue =
+    | string
+    | number
+    | boolean
+    | null
+    | undefined
+    | FeaturePropValue[]
+    | { [key: string]: FeaturePropValue };
+
+/**
+ * An entry of {@link PlacesModuleConfig.extraFeatureProps}: a fixed value written onto every place
+ * feature, or a function computing one per place.
+ *
+ * @typeParam P - The place properties the callbacks receive. Name it on the config
+ * (`PlacesModuleConfig<MyPlaceProps>`) to have callbacks typed for the places you show.
+ *
+ * @group Places
+ */
+export type ExtraFeatureProp<P extends CommonPlaceProps = CommonPlaceProps> =
+    | FeaturePropValue
+    | ((place: Place<P>) => FeaturePropValue);

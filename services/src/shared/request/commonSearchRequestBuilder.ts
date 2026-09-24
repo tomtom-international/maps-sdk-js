@@ -4,7 +4,6 @@ import type { GeometrySearchParams } from '../../geometry-search';
 import {
     appendByJoiningParamValue,
     appendCommonParams,
-    appendLatLonParamsFromPosition,
     appendOptionalParam,
     mapPOICategoriesToIDs,
 } from './requestBuildingUtils';
@@ -27,8 +26,6 @@ export const appendCommonSearchParams = (
     const urlParams = searchUrl.searchParams;
     appendCommonParams(urlParams, params);
     appendOptionalParam(urlParams, 'limit', params.limit);
-    appendLatLonParamsFromPosition(urlParams, 'position' in params ? params.position : undefined);
-
     appendByJoiningParamValue(urlParams, 'fuelSet', params.fuelTypes);
     appendByJoiningParamValue(urlParams, 'idxSet', params.indexes);
     appendByJoiningParamValue(urlParams, 'brandSet', params.poiBrands);

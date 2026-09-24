@@ -91,8 +91,9 @@ routing.events.waypoints.on('hover', (waypoint, lngLat) => { ... });
 ```
 
 Scopes by module: RoutingModule has `mainLines`, `waypoints`, `chargingStops`, `summaryBubbles`,
-`incidents`, `vehicleRestricted`, `ferries`, `tollRoads`, `tunnels`, `instructionLines`, plus one
-`<type>Sections` scope per generated section type (`urbanSections`, `motorwaySections`, …).
+`countryCrossings`, `incidents`, `vehicleRestricted`, `ferries`, `tollRoads`, `tunnels`,
+`instructionLines`, plus one `<type>Sections` scope per generated section type (`urbanSections`,
+`motorwaySections`, …).
 PlacesModule has `places` and `connections`. GeometriesModule has `geometry` and `geometryLabel`.
 CustomGeoJSONModule uses your own `sources` keys.
 

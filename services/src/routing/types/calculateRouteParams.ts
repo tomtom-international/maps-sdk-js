@@ -1,5 +1,5 @@
 import type { GetPositionEntryPointOption, inputSectionTypes, RoutePlanningLocation } from '@tomtom-org/maps-sdk/core';
-import type { CommonRoutingParams, CommonServiceParams } from '../../shared';
+import type { CommonRoutingParams, CommonServiceParams, ElectricVehicleParamsWithChargingStops } from '../../shared';
 import type { CalculateRouteRequestAPI } from './apiRequestTypes';
 import type { CalculateRouteResponseAPI } from './apiResponseTypes';
 
@@ -286,7 +286,31 @@ export type MaxNumberOfAlternatives = 0 | 1 | 2 | 3 | 4 | 5;
  *
  * @group Routing
  */
-export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI, CalculateRouteResponseAPI> &
+export type CalculateRouteParams = (
+    | { chargingStopsStrategy?: never }
+    | {
+          /**
+           * How the service should plan charging stops on an electric route.
+           *
+           * Only the charging-stops endpoint understands it, and
+           * `vehicle.preferences.chargingPreferences` is what selects that endpoint — hence the
+           * vehicle this variant requires.
+           *
+           * @default 'automaticFastest' (the service's own default when unset)
+           *
+           * @example
+           * ```typescript
+           * // Plan the fastest journey, choosing charging stops along the way
+           * chargingStopsStrategy: 'automaticFastest'
+           * ```
+           */
+          chargingStopsStrategy: ChargingStopsStrategy;
+
+          /** An electric vehicle whose charging preferences ask the service to plan stops. */
+          vehicle: ElectricVehicleParamsWithChargingStops;
+      }
+) &
+    CommonServiceParams<CalculateRouteRequestAPI, CalculateRouteResponseAPI> &
     CommonRoutingParams & {
         /**
          * Ordered list of locations (waypoints) and/or path points for route calculation.
@@ -388,22 +412,6 @@ export type CalculateRouteParams = CommonServiceParams<CalculateRouteRequestAPI,
          * ```
          */
         computeTravelTimeFor?: ComputeTravelTimeFor;
-
-        /**
-         * How the service should plan charging stops on an electric route.
-         *
-         * Only applies to electric routes, so `vehicle.preferences.chargingPreferences` must be set
-         * too — validation says so before the request is sent.
-         *
-         * @default 'automaticFastest' (the service's own default when unset)
-         *
-         * @example
-         * ```typescript
-         * // Plan the fastest journey, choosing charging stops along the way
-         * chargingStopsStrategy: 'automaticFastest'
-         * ```
-         */
-        chargingStopsStrategy?: ChargingStopsStrategy;
 
         /**
          * Request extended progress information at route polyline points.

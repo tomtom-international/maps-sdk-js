@@ -60,7 +60,17 @@ function WelcomeDisclaimer() {
                 <path d="M12 8h.01" strokeLinecap="round" />
             </svg>
             <span>
-                Chats are temporarily stored for learning purposes only — please avoid sharing personal information.
+                Your messages are stored for 30 days to monitor and improve the service, then deleted. Don't enter
+                personal details about yourself or anyone else. See our{' '}
+                <a
+                    href="https://www.tomtom.com/en-gb/privacy/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-inherit underline"
+                >
+                    Privacy Statement
+                </a>{' '}
+                for how we handle data.
             </span>
         </div>
     );

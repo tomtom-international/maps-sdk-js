@@ -183,8 +183,8 @@ routing.events.mainLines.on('click', (route, lngLat) => { });
 routing.events.waypoints.on('hover', (waypoint, lngLat) => { });
 routing.events.ferries.on('click', (section, lngLat) => { });
 routing.events.incidents.on('click', (section, lngLat) => { });
-// Also: chargingStops, summaryBubbles, vehicleRestricted, tollRoads, tunnels, instructionLines,
-// and one <type>Sections scope per generated section type (urbanSections, motorwaySections, …)
+// Also: chargingStops, summaryBubbles, countryCrossings, vehicleRestricted, tollRoads, tunnels,
+// instructionLines, and one <type>Sections scope per generated section type (urbanSections, …)
 // routing.events.on('click', ...) covers all of them at once.
 ```
 

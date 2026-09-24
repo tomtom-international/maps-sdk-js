@@ -1,4 +1,4 @@
-import type { DelayMagnitude, RouteProps } from '@tomtom-org/maps-sdk/core';
+import type { CountrySectionProps, DelayMagnitude, RouteProps } from '@tomtom-org/maps-sdk/core';
 import type { Feature, FeatureCollection, Point } from 'geojson';
 import type { SupportsEvents } from '../../shared';
 
@@ -278,3 +278,72 @@ export type DisplayRouteSummary = Feature<Point, DisplayRouteSummaryProps>;
  * @group Routing
  */
 export type DisplayRouteSummaries = FeatureCollection<Point, DisplayRouteSummaryProps>;
+
+/**
+ * Display-ready props of one border crossing.
+ *
+ * @group Routing
+ */
+export type DisplayCountryCrossingProps = DisplayRouteRelatedProps & {
+    /** ISO 3166-1 alpha-2 code of the country the route leaves. */
+    fromCountryCode: string;
+
+    /** ISO 3166-1 alpha-2 code of the country the route enters. */
+    toCountryCode: string;
+
+    /** The label the plaque is stretched around — `'ES → FR'`. */
+    label: string;
+
+    /**
+     * Bearing of the route where it crosses, in degrees clockwise from north.
+     *
+     * @remarks
+     * What `alignment: 'route'` turns the plaque by. Present whatever the alignment, so switching
+     * it is a restyle rather than a re-derive.
+     */
+    bearing: number;
+
+    /**
+     * `startPointIndex` of the `country` section the route leaves, which identifies that section
+     * on {@link RouteProps.sections} even when the route enters the same country twice.
+     */
+    fromSectionStartPointIndex: number;
+
+    /** `startPointIndex` of the `country` section the route enters. */
+    toSectionStartPointIndex: number;
+};
+
+/**
+ * GeoJSON feature of one border crossing, placed where the route enters the second country.
+ *
+ * @group Routing
+ */
+export type DisplayCountryCrossing = Feature<Point, DisplayCountryCrossingProps>;
+
+/**
+ * A border crossing as an event hands it over: the drawn feature, plus the two `country` sections
+ * it joins.
+ *
+ * @remarks
+ * The sections are looked up on the route the crossing belongs to, so they are the same objects
+ * `route.properties.sections.country` holds rather than copies. They are absent only when the route
+ * that carried them is no longer shown.
+ *
+ * @group Routing
+ */
+export type CountryCrossingFeature = Feature<
+    Point,
+    DisplayCountryCrossingProps & {
+        /** The `country` section the route leaves. */
+        fromSection?: CountrySectionProps;
+        /** The `country` section the route enters. */
+        toSection?: CountrySectionProps;
+    }
+>;
+
+/**
+ * GeoJSON feature collection of the border crossings along the shown routes.
+ *
+ * @group Routing
+ */
+export type DisplayCountryCrossings = FeatureCollection<Point, DisplayCountryCrossingProps>;

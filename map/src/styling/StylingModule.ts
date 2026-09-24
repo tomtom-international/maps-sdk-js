@@ -1,6 +1,15 @@
-import type { LayerSpecification, MapGeoJSONFeature, SourceSpecification, StyleSetterOptions } from 'maplibre-gl';
+import type {
+    LayerSpecification,
+    MapGeoJSONFeature,
+    ProjectionSpecification,
+    SkySpecification,
+    SourceSpecification,
+    StyleSetterOptions,
+    StyleSpecification,
+    TerrainSpecification,
+} from 'maplibre-gl';
 import { DEFAULT_STYLE_VERSION } from '../init';
-import { AbstractStyleOwnedMapModule, type CombinedEvents, knob, sharedInstance } from '../shared';
+import { AbstractStyleOwnedMapModule, type CombinedEvents, knob, type LightDark, sharedInstance } from '../shared';
 import { matchesAnyLayerSelector } from '../shared/layers/layerSelector';
 import { waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
@@ -16,7 +25,14 @@ import {
     type StylingKnobValueOf,
     stylingKnobIds,
 } from './knobCatalogue';
-import type { StylingCatalogue, StylingKnobDescriptor, StylingKnobValue, StylingSettings } from './types/stylingTypes';
+import { type StylingPresetId, stylingPresetIds, stylingPresets } from './presets';
+import type {
+    StylingCatalogue,
+    StylingKnobDescriptor,
+    StylingKnobValue,
+    StylingPresetDescriptor,
+    StylingSettings,
+} from './types/stylingTypes';
 
 /**
  * Event surface of {@link StylingModule}: it owns no map features, so only the lifecycle half is
@@ -75,6 +91,65 @@ type ResolvedKnob = { definition: KnobDefinition; mechanisms: ResolvedMechanism[
 
 const targetKey = (layerId: string, property: LayerProperty) => `${layerId}|${property}`;
 
+// A map-level knob reaches the map itself rather than a layer, so it stands in for its one target
+// under a layer id no style can have. What it captured lives in `mapLevelState`, typed.
+const MAP_LEVEL = '\u0000map';
+
+// Everything MapLibre accepts as a projection, which is a plain name only in the simple case.
+type ProjectionValue = ProjectionSpecification['type'];
+
+// The map-level state the view knobs own, as the loaded style declares it before a knob touches it.
+type MapLevelState = {
+    projection: ProjectionValue;
+    sky: SkySpecification | undefined;
+    terrain: TerrainSpecification | undefined;
+};
+
+// Our own sky, with both colours as literals rather than expressions — which is what lets
+// `describe()` report them as the knob's default value.
+type SkyDefaults = SkySpecification & { 'sky-color': string; 'horizon-color': string };
+
+// The sky the atmosphere is drawn in, per light/dark theme of the loaded style: a daylit blue with a
+// white horizon over a light map, a night blue with a dim horizon over a dark one. A light sky behind
+// a dark map reads as a halo around the globe rather than as atmosphere.
+const SKY_DEFAULTS: Record<LightDark, SkyDefaults> = {
+    light: {
+        'sky-color': '#88c6fc',
+        'horizon-color': '#ffffff',
+        'sky-horizon-blend': 0.8,
+        'atmosphere-blend': 0.8,
+        'fog-color': '#ffffff',
+        'fog-ground-blend': 0.5,
+        'horizon-fog-blend': 0.8,
+    },
+    dark: {
+        'sky-color': '#0a1626',
+        'horizon-color': '#2b4a72',
+        'sky-horizon-blend': 0.8,
+        'atmosphere-blend': 0.8,
+        'fog-color': '#0a1626',
+        'fog-ground-blend': 0.5,
+        'horizon-fog-blend': 0.8,
+    },
+};
+
+// What shows around a globe, where the map canvas is transparent and the page would otherwise show
+// through. Matches the sky, so the planet sits in air of the same colour it is lit by. Only used
+// where the page paints nothing of its own behind the map.
+const SPACE_COLOR_DEFAULTS: Record<LightDark, string> = { light: '#ffffff', dark: '#0a1626' };
+
+// What a computed `background-color` reads as on a container the page never painted.
+const UNPAINTED_BACKGROUNDS = new Set(['', 'transparent', 'rgba(0, 0, 0, 0)']);
+
+// The sky MapLibre draws for a style without one, written out because `setSky` has no "unset".
+const CLEAR_SKY: SkySpecification = {
+    'sky-color': 'transparent',
+    'horizon-color': 'transparent',
+    'fog-color': 'transparent',
+    'fog-ground-blend': 1,
+    'atmosphere-blend': 0,
+};
+
 /**
  * Semantic styling of the base map, traffic and POIs — the tier between hiding a layer group and
  * hand-editing MapLibre layers.
@@ -127,11 +202,16 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
     // Declared without initialisers on purpose: the base constructor already runs `indexStyle`
     // (through `_initSourcesWithLayers`), and a field initialiser would wipe its work afterwards.
     private originalValues!: Map<string, unknown>;
+    private mapLevelState!: MapLevelState;
     private styleSources!: Record<string, SourceSpecification>;
     private resolved!: Map<StylingKnobId, ResolvedKnob>;
     // Scale knobs compose: a (layer, property) reached by several of them gets their product.
     private scaleKnobsByTarget!: Map<string, StylingKnobId[]>;
     private warned!: Set<string>;
+    // What the page painted behind the map before this module first painted over it: the value
+    // `view.spaceColor` reports as its default and resets to, empty when the page painted nothing.
+    // Captured once — by the second style load the container already carries this module's colour.
+    private originalSpaceColor: string | undefined;
 
     /**
      * Retrieves the styling module of the given map, creating it on first use.
@@ -176,8 +256,11 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
      * @ignore
      */
     protected _initSourcesWithLayers(): Record<string, never> {
-        const style = this.mapLibreMap.getStyle();
-        this.indexStyle(style?.layers ?? [], style?.sources ?? {});
+        this.indexStyle(this.mapLibreMap.getStyle());
+        // The one knob that has to be applied whether or not it was set: nothing else paints behind
+        // the canvas, so leaving it alone shows the page through a globe. Runs on every style load,
+        // which is what makes it follow a light/dark switch.
+        this.refreshSpace(this.config ?? {});
         return {};
     }
 
@@ -210,7 +293,40 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
     describe(): StylingCatalogue {
         return {
             knobs: stylingKnobIds.map((id) => this.describeKnob(id)),
+            presets: stylingPresetIds.map(
+                (id): StylingPresetDescriptor => ({
+                    id,
+                    ...stylingPresets[id],
+                    settings: { ...stylingPresets[id].settings },
+                }),
+            ),
         };
+    }
+
+    /**
+     * Applies a preset: a named bundle of knob settings the SDK ships for a common intent
+     * (`data-viz`, `night-driving`, `minimal`, `globe`, `terrain`). See `describe().presets` for
+     * what each one sets.
+     *
+     * @param id - The preset to apply.
+     * @param options - `merge: true` lays the preset over the current settings instead of replacing
+     * them (the default), so knobs the preset does not mention keep their values.
+     * @throws `Error` for an unknown preset id.
+     *
+     * @example
+     * ```typescript
+     * styling.applyPreset('data-viz');
+     * styling.set('labels.sizeFactor', 1.1); // then adjust
+     *
+     * styling.applyPreset('globe', { merge: true }); // keep the rest, switch to a globe with a sky
+     * ```
+     */
+    applyPreset(id: StylingPresetId, options: { merge?: boolean } = {}): void {
+        const preset = stylingPresets[id];
+        if (!preset) {
+            throw new Error(`Unknown styling preset '${id}'. Known presets: ${stylingPresetIds.join(', ')}.`);
+        }
+        this.applyConfig(options.merge ? { ...this.config, ...preset.settings } : { ...preset.settings });
     }
 
     /**
@@ -293,12 +409,18 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
 
     // ── Indexing the loaded style ─────────────────────────────────────────────────────────────
 
-    private indexStyle(layers: LayerSpecification[], sources: Record<string, SourceSpecification>): void {
+    private indexStyle(style: StyleSpecification | undefined): void {
+        const layers = style?.layers ?? [];
         this.originalValues = new Map();
-        this.styleSources = sources;
+        this.styleSources = style?.sources ?? {};
         this.resolved = new Map();
         this.scaleKnobsByTarget = new Map();
         this.warned = new Set();
+        this.mapLevelState = {
+            projection: style?.projection?.type ?? 'mercator',
+            sky: style?.sky,
+            terrain: style?.terrain ?? undefined,
+        };
 
         for (const id of stylingKnobIds) {
             const definition: KnobDefinition = knobDefinitions[id];
@@ -319,6 +441,12 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
         mechanism: KnobMechanism,
         layers: LayerSpecification[],
     ): ResolvedMechanism {
+        if (!('layers' in mechanism)) {
+            // Map-level: one target when the map can honour it — terrain needs an elevation source.
+            const reachable = mechanism.type !== 'terrain' || this.demSourceId() !== undefined;
+            return { mechanism, layerIds: reachable ? [MAP_LEVEL] : [], shadeLayerIds: [] };
+        }
+
         const matched = layers.filter((layer) => matchesAnyLayerSelector(mechanism.layers, layer, this.styleSources));
         let layerIds: string[];
         let shadeLayerIds: string[] = [];
@@ -379,6 +507,11 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
         return this.originalValues.get(targetKey(layerId, property)) as LayerPropertyValue<PROPERTY> | undefined;
     }
 
+    // The style's elevation source, if it has one (the hillshade style part ships a raster-dem).
+    private demSourceId(): string | undefined {
+        return Object.entries(this.styleSources).find(([, source]) => source.type === 'raster-dem')?.[0];
+    }
+
     // ── Applying knobs ────────────────────────────────────────────────────────────────────────
 
     // Brings every layer the knob reaches in line with `settings`: the knob's value when set, the
@@ -414,7 +547,76 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
             case 'zoomOffset':
                 for (const layerId of layerIds) this.refreshZoomOffset(layerId, value as number | undefined);
                 break;
+            case 'projection':
+                this.refreshProjection(settings);
+                break;
+            case 'sky':
+                this.refreshSky(settings);
+                break;
+            case 'terrain':
+                if (layerIds.length) this.refreshTerrain(settings);
+                break;
+            case 'space':
+                this.refreshSpace(settings);
+                break;
         }
+    }
+
+    // The canvas is transparent wherever the map does not reach — around a globe, and behind a
+    // tilted flat map — so this paints the container the canvas sits on. Re-applied after a style
+    // change like every other knob, which is what keeps it following a light/dark switch.
+    private refreshSpace(settings: StylingSettings): void {
+        const container = this.mapLibreMap.getContainer();
+        this.originalSpaceColor ??= paintedBackgroundOf(container);
+        container.style.backgroundColor = settings['view.spaceColor'] ?? this.defaultSpaceColor();
+    }
+
+    // The page's own background where it painted one, so the knob gives it back on a reset instead
+    // of the SDK keeping a colour the page never asked for; the theme's otherwise, since then
+    // nothing at all paints behind the canvas.
+    private defaultSpaceColor(): string {
+        return this.originalSpaceColor || SPACE_COLOR_DEFAULTS[this.tomtomMap.styleLightDarkTheme];
+    }
+
+    private refreshProjection(settings: StylingSettings): void {
+        // Validated against the knob's `options` before it was stored, so it is one of MapLibre's
+        // projection names — which the knob's value type, a plain string, cannot promise.
+        const wanted = settings['view.projection'] as ProjectionValue | undefined;
+        this.mapLibreMap.setProjection({ type: wanted ?? this.mapLevelState.projection });
+    }
+
+    // The sky is one MapLibre setting driven by three knobs: on/off and its two colours. The style's
+    // own sky wins over our defaults, and those follow the style's light/dark theme. Off means no
+    // sky, including over a style that ships one.
+    private refreshSky(settings: StylingSettings): void {
+        const styleSky = this.mapLevelState.sky;
+        const wanted = settings['view.sky'] ?? this.defaultOf('view.sky');
+        const themeSky = SKY_DEFAULTS[this.tomtomMap.styleLightDarkTheme];
+        const sky: SkySpecification = wanted
+            ? {
+                  ...themeSky,
+                  ...styleSky,
+                  'sky-color': settings['view.skyColor'] ?? styleSky?.['sky-color'] ?? themeSky['sky-color'],
+                  'horizon-color':
+                      settings['view.horizonColor'] ?? styleSky?.['horizon-color'] ?? themeSky['horizon-color'],
+              }
+            : CLEAR_SKY;
+        this.mapLibreMap.setSky(sky, { validate: false });
+    }
+
+    private refreshTerrain(settings: StylingSettings): void {
+        const styleTerrain = this.mapLevelState.terrain;
+        const styleHasTerrain = styleTerrain !== undefined;
+        const wanted = settings['view.terrain'] ?? styleHasTerrain;
+        if (!wanted) {
+            this.mapLibreMap.setTerrain(null);
+            return;
+        }
+        const source = styleTerrain?.source ?? this.demSourceId();
+        if (!source) return;
+
+        const exaggeration = settings['view.terrainExaggeration'] ?? styleTerrain?.exaggeration ?? 1;
+        this.mapLibreMap.setTerrain({ source, exaggeration });
     }
 
     private refreshVisibility(layerId: string, visible: boolean | undefined): void {
@@ -501,9 +703,12 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
     // ── Catalogue ─────────────────────────────────────────────────────────────────────────────
 
     private describeKnob(id: StylingKnobId): StylingKnobDescriptor {
-        const { definition, targets } = this.resolved.get(id) ?? { definition: knobDefinitions[id], targets: 0 };
+        const resolvedKnob = this.resolved.get(id);
+        const definition: KnobDefinition = resolvedKnob?.definition ?? knobDefinitions[id];
+        const targets = resolvedKnob?.targets ?? 0;
         return knob(id, definition.kind, definition.description, this.defaultOf(id), this.config?.[id], {
             ...(definition.range && { range: definition.range }),
+            ...(definition.options && { options: definition.options }),
             available: targets > 0,
             appliesTo: definition.appliesTo,
         });
@@ -523,6 +728,8 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
         const [layerId] = first?.layerIds ?? [];
         if (layerId === undefined) return undefined;
 
+        if (!('layers' in first.mechanism)) return this.mapLevelDefaultOf(id);
+
         switch (first.mechanism.type) {
             case 'visibility':
                 return this.originalValueOf(layerId, 'visibility') !== 'none';
@@ -539,6 +746,35 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
         }
     }
 
+    // What the loaded style declares for the view knobs.
+    private mapLevelDefaultOf(id: StylingKnobId): StylingKnobValue | undefined {
+        const { projection, sky, terrain } = this.mapLevelState;
+        switch (id) {
+            case 'view.projection':
+                // A style that drives its projection from an expression has no one value to report.
+                return typeof projection === 'string' ? projection : undefined;
+            case 'view.sky':
+                // A style without a sky, or with a fully transparent one, shows none.
+                return sky !== undefined && sky['atmosphere-blend'] !== 0 && sky['sky-color'] !== 'transparent';
+            case 'view.skyColor':
+                return isColorLiteral(sky?.['sky-color'])
+                    ? sky['sky-color']
+                    : SKY_DEFAULTS[this.tomtomMap.styleLightDarkTheme]['sky-color'];
+            case 'view.horizonColor':
+                return isColorLiteral(sky?.['horizon-color'])
+                    ? sky['horizon-color']
+                    : SKY_DEFAULTS[this.tomtomMap.styleLightDarkTheme]['horizon-color'];
+            case 'view.spaceColor':
+                return this.defaultSpaceColor();
+            case 'view.terrain':
+                return terrain !== undefined;
+            case 'view.terrainExaggeration':
+                return terrain?.exaggeration ?? 1;
+            default:
+                return undefined;
+        }
+    }
+
     // ── Validation ────────────────────────────────────────────────────────────────────────────
 
     private assertKnob(id: string): asserts id is StylingKnobId {
@@ -548,11 +784,16 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
     }
 
     private validate(id: StylingKnobId, value: unknown): void {
-        const { kind, range } = knobDefinitions[id];
+        const { kind, range, options }: KnobDefinition = knobDefinitions[id];
         switch (kind) {
             case 'toggle':
                 if (typeof value !== 'boolean')
                     throw new RangeError(`Knob '${id}' expects true or false; got ${describe(value)}.`);
+                break;
+            case 'enum':
+                if (typeof value !== 'string' || !options?.includes(value)) {
+                    throw new RangeError(`Knob '${id}' expects one of ${options?.join(', ')}; got ${describe(value)}.`);
+                }
                 break;
             case 'color':
                 if (typeof value !== 'string' || !toHsl(value)) {
@@ -591,6 +832,13 @@ const knobIdsIn = (settings: StylingSettings | undefined): StylingKnobId[] =>
 // Settings without `undefined` entries (an explicit `undefined` means "not set", like an absent key).
 const withoutUndefined = (settings: StylingSettings | undefined): StylingSettings =>
     Object.fromEntries(Object.entries(settings ?? {}).filter(([, value]) => value !== undefined)) as StylingSettings;
+
+// What the page paints behind the map container, empty when it paints nothing. Computed rather than
+// inline, since a background a stylesheet sets never reaches `style`.
+const paintedBackgroundOf = (container: HTMLElement): string => {
+    const painted = getComputedStyle(container).backgroundColor;
+    return UNPAINTED_BACKGROUNDS.has(painted) ? '' : painted;
+};
 
 const layerFilterOf = (layer: LayerSpecification): unknown => ('filter' in layer ? layer.filter : undefined);
 

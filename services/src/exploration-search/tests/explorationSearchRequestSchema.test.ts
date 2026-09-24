@@ -1,7 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { validateRequestSchema } from '../../shared/schema/validation';
 import { explorationSearchRequestValidationConfig } from '../explorationSearchRequestSchema';
-import type { ExplorationSearchParams } from '../types';
 
 const COMMON = {
     apiKey: 'TEST_KEY',
@@ -31,19 +30,10 @@ describe('Exploration Search schema — geo-bias refinement', () => {
         ).toThrow(/geographic bias is required/);
     });
 
-    test('accepts position as a standalone geo-bias', () => {
+    test('accepts a point geoBias as a standalone geo-bias', () => {
         expect(() =>
             validateRequestSchema(
-                { ...COMMON, query: 'cafe', position: [4.9, 52.37] } as ExplorationSearchParams,
-                explorationSearchRequestValidationConfig,
-            ),
-        ).not.toThrow();
-    });
-
-    test('accepts boundingBox as a standalone geo-bias', () => {
-        expect(() =>
-            validateRequestSchema(
-                { ...COMMON, query: 'cafe', boundingBox: BBOX } as ExplorationSearchParams,
+                { ...COMMON, query: 'cafe', geoBias: { position: [4.9, 52.37] } },
                 explorationSearchRequestValidationConfig,
             ),
         ).not.toThrow();
@@ -52,7 +42,7 @@ describe('Exploration Search schema — geo-bias refinement', () => {
     test('accepts a non-empty boundingBoxes array as a standalone geo-bias', () => {
         expect(() =>
             validateRequestSchema(
-                { ...COMMON, query: 'cafe', boundingBoxes: [BBOX] } as ExplorationSearchParams,
+                { ...COMMON, query: 'cafe', boundingBoxes: [BBOX] },
                 explorationSearchRequestValidationConfig,
             ),
         ).not.toThrow();
@@ -61,7 +51,7 @@ describe('Exploration Search schema — geo-bias refinement', () => {
     test('rejects an empty boundingBoxes array as the sole geo-bias', () => {
         expect(() =>
             validateRequestSchema(
-                { ...COMMON, query: 'cafe', boundingBoxes: [] } as ExplorationSearchParams,
+                { ...COMMON, query: 'cafe', boundingBoxes: [] },
                 explorationSearchRequestValidationConfig,
             ),
         ).toThrow(/geographic bias is required/);
@@ -70,7 +60,7 @@ describe('Exploration Search schema — geo-bias refinement', () => {
     test('accepts a geometry as a standalone geo-bias', () => {
         expect(() =>
             validateRequestSchema(
-                { ...COMMON, query: 'cafe', geometries: [POLYGON] } as ExplorationSearchParams,
+                { ...COMMON, query: 'cafe', geometries: [POLYGON] },
                 explorationSearchRequestValidationConfig,
             ),
         ).not.toThrow();
@@ -79,7 +69,7 @@ describe('Exploration Search schema — geo-bias refinement', () => {
     test('accepts municipalities as a standalone geo-bias', () => {
         expect(() =>
             validateRequestSchema(
-                { ...COMMON, query: 'cafe', municipalities: ['Amsterdam'] } as ExplorationSearchParams,
+                { ...COMMON, query: 'cafe', municipalities: ['Amsterdam'] },
                 explorationSearchRequestValidationConfig,
             ),
         ).not.toThrow();
@@ -88,7 +78,7 @@ describe('Exploration Search schema — geo-bias refinement', () => {
     test('accepts areaId as a standalone geo-bias', () => {
         expect(() =>
             validateRequestSchema(
-                { ...COMMON, query: 'cafe', areaId: '20567430' } as ExplorationSearchParams,
+                { ...COMMON, query: 'cafe', areaId: '20567430' },
                 explorationSearchRequestValidationConfig,
             ),
         ).not.toThrow();
@@ -97,7 +87,7 @@ describe('Exploration Search schema — geo-bias refinement', () => {
     test('rejects when areaTags is provided without a geo-bias', () => {
         expect(() =>
             validateRequestSchema(
-                { ...COMMON, query: 'cafe', areaTags: ['walkable'] } as ExplorationSearchParams,
+                { ...COMMON, query: 'cafe', areaTags: ['walkable'] },
                 explorationSearchRequestValidationConfig,
             ),
         ).toThrow(/geographic bias is required/);
@@ -108,7 +98,7 @@ describe('Exploration Search schema — pagination window refinement', () => {
     test('accepts offset + limit at the cap', () => {
         expect(() =>
             validateRequestSchema(
-                { ...COMMON, boundingBox: BBOX, offset: 9000, limit: 1000 } as ExplorationSearchParams,
+                { ...COMMON, boundingBoxes: [BBOX], offset: 9000, limit: 1000 },
                 explorationSearchRequestValidationConfig,
             ),
         ).not.toThrow();
@@ -117,7 +107,7 @@ describe('Exploration Search schema — pagination window refinement', () => {
     test('rejects offset + limit one past the cap', () => {
         expect(() =>
             validateRequestSchema(
-                { ...COMMON, boundingBox: BBOX, offset: 9001, limit: 1000 } as ExplorationSearchParams,
+                { ...COMMON, boundingBoxes: [BBOX], offset: 9001, limit: 1000 },
                 explorationSearchRequestValidationConfig,
             ),
         ).toThrow(/offset \+ limit must not exceed 10000/);
@@ -126,7 +116,7 @@ describe('Exploration Search schema — pagination window refinement', () => {
     test('accepts limit alone up to the cap', () => {
         expect(() =>
             validateRequestSchema(
-                { ...COMMON, boundingBox: BBOX, limit: 10000 } as ExplorationSearchParams,
+                { ...COMMON, boundingBoxes: [BBOX], limit: 10000 },
                 explorationSearchRequestValidationConfig,
             ),
         ).not.toThrow();
@@ -137,7 +127,7 @@ describe('Exploration Search schema — pagination window refinement', () => {
     test('rejects offset at the cap when limit is omitted (backend default size pushes over)', () => {
         expect(() =>
             validateRequestSchema(
-                { ...COMMON, boundingBox: BBOX, offset: 10000 } as ExplorationSearchParams,
+                { ...COMMON, boundingBoxes: [BBOX], offset: 10000 },
                 explorationSearchRequestValidationConfig,
             ),
         ).toThrow(/offset \+ limit must not exceed 10000/);
@@ -146,7 +136,7 @@ describe('Exploration Search schema — pagination window refinement', () => {
     test('accepts offset = MAX − default size when limit is omitted', () => {
         expect(() =>
             validateRequestSchema(
-                { ...COMMON, boundingBox: BBOX, offset: 9990 } as ExplorationSearchParams,
+                { ...COMMON, boundingBoxes: [BBOX], offset: 9990 },
                 explorationSearchRequestValidationConfig,
             ),
         ).not.toThrow();
@@ -155,7 +145,7 @@ describe('Exploration Search schema — pagination window refinement', () => {
     test('rejects offset > MAX_WINDOW outright (per-field bound)', () => {
         expect(() =>
             validateRequestSchema(
-                { ...COMMON, boundingBox: BBOX, offset: 10001 } as ExplorationSearchParams,
+                { ...COMMON, boundingBoxes: [BBOX], offset: 10001 },
                 explorationSearchRequestValidationConfig,
             ),
         ).toThrow();
@@ -164,7 +154,7 @@ describe('Exploration Search schema — pagination window refinement', () => {
     test('rejects limit > MAX_WINDOW outright (per-field bound)', () => {
         expect(() =>
             validateRequestSchema(
-                { ...COMMON, boundingBox: BBOX, limit: 10001 } as ExplorationSearchParams,
+                { ...COMMON, boundingBoxes: [BBOX], limit: 10001 },
                 explorationSearchRequestValidationConfig,
             ),
         ).toThrow();
@@ -173,7 +163,7 @@ describe('Exploration Search schema — pagination window refinement', () => {
     test('rejects limit < 1', () => {
         expect(() =>
             validateRequestSchema(
-                { ...COMMON, boundingBox: BBOX, limit: 0 } as ExplorationSearchParams,
+                { ...COMMON, boundingBoxes: [BBOX], limit: 0 },
                 explorationSearchRequestValidationConfig,
             ),
         ).toThrow();
@@ -182,7 +172,7 @@ describe('Exploration Search schema — pagination window refinement', () => {
     test('rejects negative offset', () => {
         expect(() =>
             validateRequestSchema(
-                { ...COMMON, boundingBox: BBOX, offset: -1 } as ExplorationSearchParams,
+                { ...COMMON, boundingBoxes: [BBOX], offset: -1 },
                 explorationSearchRequestValidationConfig,
             ),
         ).toThrow();

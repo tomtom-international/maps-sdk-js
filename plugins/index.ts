@@ -6,4 +6,5 @@
 
 export * from './agent-toolkit';
 export * from './landmarks-3d';
+export * from './map-effects';
 export * from './viewport-places';

@@ -1248,6 +1248,8 @@ const defaultTools = {
             'setMapStyling({ set: { "roads.exitNumbers": false, "roads.shields": false } })',
             'setMapStyling({ set: { "buildings.3d": true } })',
             'setMapStyling({ set: { "traffic.flow.slowColor": "#f59e0b", "traffic.flow.stationaryColor": "#7f1d1d" } })',
+            'setMapStyling({ set: { "view.projection": "globe", "view.sky": true } })',
+            'setMapStyling({ preset: "data-viz" })',
             'setMapStyling({ reset: true })',
         ],
         examplePrompts: [
@@ -1255,6 +1257,9 @@ const defaultTools = {
             'Hide the exit numbers and route shields',
             'Show 3D buildings',
             'Use orange for slow traffic and dark red for stationary traffic',
+            'Show the map as a globe',
+            'Turn on 3D terrain',
+            'Make the base map quieter so my data stands out',
             'Reset the map styling',
         ],
         relatedTools: ['describeMapStyling', 'setMapStandardStyle', 'toggleTilesBaseMapLayerGroups', 'toggleTilesPOIs'],

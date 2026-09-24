@@ -1,4 +1,6 @@
-import type { ExpressionFilterSpecification, LayerSpecification, Map } from 'maplibre-gl';
+// @vitest-environment jsdom
+// `view.spaceColor` reads the container's computed background, which needs a real DOM.
+import type { ExpressionFilterSpecification, LayerSpecification, Map, SkySpecification } from 'maplibre-gl';
 import { beforeEach, describe, expect, type Mock, test, vi } from 'vitest';
 import { knobSettings } from '../../shared';
 import { LayerFilterComposer } from '../../shared/layers/layerFilterComposer';
@@ -17,11 +19,20 @@ const fixtureSources = {
 
 // A MapLibre map over the fixture's layers: property setters are recorded, and the style the module
 // indexes on a restore is whatever `layers` holds at that moment.
-const makeMapLibreMock = (layers: LayerSpecification[], sources: Record<string, { type: string }> = fixtureSources) => {
+const makeMapLibreMock = (
+    layers: LayerSpecification[],
+    sources: Record<string, { type: string }> = fixtureSources,
+    sky?: SkySpecification,
+) => {
     const state = { layers };
+    // Real element rather than a stub: the space knob reads the computed background off it, and a
+    // test paints it first to stand in for a page that styles its own map container. Attached,
+    // since jsdom serves a detached element a computed style frozen at creation.
+    const container = document.body.appendChild(document.createElement('div'));
     return {
         state,
-        getStyle: vi.fn(() => ({ layers: state.layers, sources })),
+        container,
+        getStyle: vi.fn(() => ({ layers: state.layers, sources, sky })),
         getLayer: vi.fn((id: string) => state.layers.find((layer) => layer.id === id)),
         setLayoutProperty: vi.fn(),
         setPaintProperty: vi.fn(),
@@ -31,6 +42,11 @@ const makeMapLibreMock = (layers: LayerSpecification[], sources: Record<string, 
             return layer && 'filter' in layer ? layer.filter : undefined;
         }),
         setFilter: vi.fn(),
+        setProjection: vi.fn(),
+        setSky: vi.fn(),
+        setTerrain: vi.fn(),
+        // The module paints the container behind the canvas, which a globe leaves visible.
+        getContainer: vi.fn(() => container),
         isStyleLoaded: vi.fn().mockReturnValue(true),
         once: vi.fn(),
     };
@@ -48,6 +64,7 @@ const makeTomTomMapMock = (mapLibre: MapLibreMock) => {
             return () => undefined;
         }),
         mapReady: true,
+        styleLightDarkTheme: 'light',
     } as unknown as TomTomMap;
     return { tomtomMap, styleChangeHandlers };
 };
@@ -103,8 +120,10 @@ describe('StylingModule', () => {
                 if (knob.kind === 'toggle') expect(typeof knob.default).toBe('boolean');
                 // A colour default is the style's literal, or undefined where the style uses an expression.
                 if (knob.kind === 'color') expect(['string', 'undefined']).toContain(typeof knob.default);
-                if (knob.kind !== 'toggle' && knob.kind !== 'color') expect(knob.range).toBeDefined();
+                if (knob.kind === 'enum') expect(knob.options).toContain(knob.default);
+                if (knob.kind === 'factor' || knob.kind === 'number') expect(knob.range).toBeDefined();
             }
+            expect(styling.describe().presets.map((preset) => preset.id)).toContain('data-viz');
         });
 
         test('reads defaults off the style: toggle visibility, POIs from zoom 6, free flow is green', async () => {
@@ -256,6 +275,149 @@ describe('StylingModule', () => {
         });
     });
 
+    describe('view knobs (map-level)', () => {
+        test('projection, sky and terrain default to what the style declares', async () => {
+            const styling = await StylingModule.get(tomtomMap);
+            expect(styling.get('view.projection')).toBe('mercator');
+            expect(styling.get('view.sky')).toBe(false);
+            expect(styling.get('view.terrain')).toBe(false);
+            expect(styling.get('view.terrainExaggeration')).toBe(1);
+            // The hillshade raster-dem source is what makes terrain reachable.
+            expect(styling.describe().knobs.find((knob) => knob.id === 'view.terrain')?.available).toBe(true);
+        });
+
+        test('a globe with a sky: the sky is written with atmosphere, coloured by the colour knobs', async () => {
+            const styling = await StylingModule.get(tomtomMap);
+            styling.set('view.projection', 'globe');
+            expect(mapLibre.setProjection).toHaveBeenLastCalledWith({ type: 'globe' });
+            expect(() => styling.set('view.projection', 'orthographic')).toThrow(RangeError);
+
+            styling.set('view.sky', true);
+            styling.set('view.skyColor', '#123456');
+            const sky = mapLibre.setSky.mock.lastCall?.[0];
+            expect(sky).toMatchObject({ 'sky-color': '#123456', 'horizon-color': '#ffffff', 'atmosphere-blend': 0.8 });
+
+            styling.reset('view.sky');
+            // No sky in the style: back to MapLibre's transparent default, spelled out.
+            expect(mapLibre.setSky.mock.lastCall?.[0]).toMatchObject({
+                'atmosphere-blend': 0,
+                'sky-color': 'transparent',
+            });
+            styling.reset('view.projection');
+            expect(mapLibre.setProjection).toHaveBeenLastCalledWith({ type: 'mercator' });
+        });
+
+        test('turning the sky off clears it over a style that ships one of its own', async () => {
+            const withSky = makeMapLibreMock(orbisStreetLightLayers, fixtureSources, {
+                'sky-color': '#88c6fc',
+                'horizon-color': '#ffffff',
+                'atmosphere-blend': 0.8,
+            });
+            const styling = await StylingModule.get(makeTomTomMapMock(withSky).tomtomMap);
+            expect(styling.get('view.sky')).toBe(true);
+
+            styling.set('view.sky', false);
+            expect(withSky.setSky.mock.lastCall?.[0]).toMatchObject({
+                'atmosphere-blend': 0,
+                'sky-color': 'transparent',
+            });
+        });
+
+        test('the sky follows the style light/dark theme, so a dark map gets no white horizon', async () => {
+            const dark = makeTomTomMapMock(mapLibre);
+            (dark.tomtomMap as { styleLightDarkTheme: string }).styleLightDarkTheme = 'dark';
+            const styling = await StylingModule.get(dark.tomtomMap);
+
+            styling.set('view.sky', true);
+            expect(mapLibre.setSky.mock.lastCall?.[0]).toMatchObject({
+                'sky-color': '#0a1626',
+                'horizon-color': '#2b4a72',
+                'fog-color': '#0a1626',
+            });
+            // `describe()` reports the same default it would apply, rather than the light one.
+            expect(styling.get('view.horizonColor')).toBe('#2b4a72');
+        });
+
+        test('the space behind an unpainted container follows the theme, since nothing else fills it', async () => {
+            const styling = await StylingModule.get(tomtomMap);
+            // Applied on style load without being asked for, since nothing else paints behind the map.
+            expect(mapLibre.container.style.backgroundColor).toBe('rgb(255, 255, 255)');
+
+            styling.set('view.spaceColor', '#05070d');
+            expect(mapLibre.container.style.backgroundColor).toBe('rgb(5, 7, 13)');
+
+            // Reset falls back to the theme's own colour rather than leaving the page to show through.
+            styling.reset('view.spaceColor');
+            expect(mapLibre.container.style.backgroundColor).toBe('rgb(255, 255, 255)');
+        });
+
+        test('a background the page painted is the space default, and a reset gives it back', async () => {
+            const painted = makeMapLibreMock(orbisStreetLightLayers);
+            painted.container.style.backgroundColor = '#123456';
+            const { tomtomMap: pageMap } = makeTomTomMapMock(painted);
+
+            const styling = await StylingModule.get(pageMap);
+            // Untouched on load, and reported as the knob's default the way a style's own value is.
+            expect(painted.container.style.backgroundColor).toBe('rgb(18, 52, 86)');
+            expect(styling.get('view.spaceColor')).toBe('rgb(18, 52, 86)');
+
+            styling.set('view.spaceColor', '#05070d');
+            expect(painted.container.style.backgroundColor).toBe('rgb(5, 7, 13)');
+
+            styling.reset('view.spaceColor');
+            expect(painted.container.style.backgroundColor).toBe('rgb(18, 52, 86)');
+        });
+
+        test('the page background survives a style change, which must not re-capture our own paint', async () => {
+            const painted = makeMapLibreMock(orbisStreetLightLayers);
+            painted.container.style.backgroundColor = '#123456';
+            const { tomtomMap: pageMap, styleChangeHandlers: handlers } = makeTomTomMapMock(painted);
+            const styling = await StylingModule.get(pageMap);
+
+            styling.set('view.spaceColor', '#05070d');
+            const stylingHandler = stylingHandlerIn(handlers);
+            expect(stylingHandler).toBeDefined();
+            stylingHandler?.onStyleAboutToChange?.({ resetState: false });
+            stylingHandler?.onStyleChanged?.({ resetState: false });
+            // The style change re-ran the module's own restore, which is what could re-capture.
+            expect(painted.container.style.backgroundColor).toBe('rgb(5, 7, 13)');
+
+            // Had the capture run again it would have read '#05070d' and reset would never come back.
+            styling.reset('view.spaceColor');
+            expect(painted.container.style.backgroundColor).toBe('rgb(18, 52, 86)');
+        });
+
+        test('terrain hangs off the raster-dem source with the exaggeration knob', async () => {
+            const styling = await StylingModule.get(tomtomMap);
+            styling.set('view.terrain', true);
+            expect(mapLibre.setTerrain).toHaveBeenLastCalledWith({ source: 'hillshade', exaggeration: 1 });
+            styling.set('view.terrainExaggeration', 1.5);
+            expect(mapLibre.setTerrain).toHaveBeenLastCalledWith({ source: 'hillshade', exaggeration: 1.5 });
+            styling.set('view.terrain', false);
+            expect(mapLibre.setTerrain).toHaveBeenLastCalledWith(null);
+        });
+    });
+
+    describe('presets', () => {
+        test('applyPreset replaces the settings by default and merges on request', async () => {
+            const styling = await StylingModule.get(tomtomMap);
+            styling.set('traffic.flow.widthFactor', 1.8);
+
+            styling.applyPreset('data-viz');
+            const settings = styling.getConfig() ?? {};
+            expect(settings['roads.exitNumbers']).toBe(false);
+            expect(settings['traffic.flow.widthFactor']).toBeUndefined();
+            expect(lastValueSetFor(mapLibre.setLayoutProperty, 'TransitLabels - Exit Number', 'visibility')).toBe(
+                'none',
+            );
+
+            styling.applyPreset('globe', { merge: true });
+            expect(styling.getConfig()).toMatchObject({ 'roads.exitNumbers': false, 'view.projection': 'globe' });
+            expect(mapLibre.setProjection).toHaveBeenLastCalledWith({ type: 'globe' });
+            expect(() => styling.applyPreset('vaporwave' as never)).toThrow(/Unknown styling preset/);
+        });
+    });
+
     describe('settings and lifecycle', () => {
         test('getConfig is a serializable snapshot that applyConfig replays; config-change fires', async () => {
             const styling = await StylingModule.get(tomtomMap);
@@ -313,7 +475,13 @@ describe('StylingModule', () => {
             const styling = await StylingModule.get(makeTomTomMapMock(customStyleMap).tomtomMap);
 
             const unreached = styling.describe().knobs.filter((knob) => !knob.available);
-            expect(unreached.length).toBe(stylingKnobIds.length - 1);
+            const unreachedIds = unreached.map((knob) => knob.id);
+            // Transforms and map-level view knobs still apply; curated tables and terrain (no
+            // elevation source here) do not.
+            expect(unreachedIds).not.toContain('labels.sizeFactor');
+            expect(unreachedIds).not.toContain('view.projection');
+            expect(unreachedIds).toContain('roads.exitNumbers');
+            expect(unreachedIds).toContain('view.terrain');
             expect(warn).toHaveBeenCalledTimes(unreached.length);
             // The one transform that still applies: the custom style's own labels.
             styling.set('labels.sizeFactor', 1.5);

@@ -1,5 +1,42 @@
 # Changelog
 
+## [0.6.0](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-agent-toolkit-v0.5.4...maps-sdk-plugin-agent-toolkit-v0.6.0) (2026-09-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* **map:** precise types for custom styles, places props and traffic data ([#2161](https://github.com/tomtom-international/maps-sdk-js/issues/2161))
+* **services:** replace flat geo-bias fields with a single geoBias option ([#2158](https://github.com/tomtom-international/maps-sdk-js/issues/2158))
+* **routing:** phase 3 — land the response data v3 already returns ([#2077](https://github.com/tomtom-international/maps-sdk-js/issues/2077))
+* **map:** styling GA phase 0 - resetState, awaited lifecycle, custom themes ([#2088](https://github.com/tomtom-international/maps-sdk-js/issues/2088))
+* **map:** add more dark theme styling ([#2108](https://github.com/tomtom-international/maps-sdk-js/issues/2108))
+* **routing:** drop the circle waypoint the API never had ([#2109](https://github.com/tomtom-international/maps-sdk-js/issues/2109))
+* **map:** scoped module events and per-map shared style modules (lsi-159) ([#2062](https://github.com/tomtom-international/maps-sdk-js/issues/2062))
+* **map:** replace get() with create() on data-owned map modules ([#2058](https://github.com/tomtom-international/maps-sdk-js/issues/2058))
+
+### Features
+
+* **map:** add more dark theme styling ([#2108](https://github.com/tomtom-international/maps-sdk-js/issues/2108)) ([b53d60a](https://github.com/tomtom-international/maps-sdk-js/commit/b53d60ae9a75c394605de947b8c84d441f8d6660))
+* **map:** replace get() with create() on data-owned map modules ([#2058](https://github.com/tomtom-international/maps-sdk-js/issues/2058)) ([9d3d81e](https://github.com/tomtom-international/maps-sdk-js/commit/9d3d81e349d21ce00368c12462c5919f6d8da491))
+* **map:** scoped module events and per-map shared style modules (lsi-159) ([#2062](https://github.com/tomtom-international/maps-sdk-js/issues/2062)) ([d91519e](https://github.com/tomtom-international/maps-sdk-js/commit/d91519e870f2796a9874aa0b10651b7bc350b81e))
+* **map:** styling GA phase 0 - resetState, awaited lifecycle, custom themes ([#2088](https://github.com/tomtom-international/maps-sdk-js/issues/2088)) ([657e9f7](https://github.com/tomtom-international/maps-sdk-js/commit/657e9f7b5177404dbe163111b805def0910b07d0))
+* **map:** styling GA phase 1 — StylingModule and the describe() catalogue ([#2089](https://github.com/tomtom-international/maps-sdk-js/issues/2089)) ([4379765](https://github.com/tomtom-international/maps-sdk-js/commit/437976535b976b33573002ade2d3611a3013ac28))
+* **map:** styling GA phase 2 - view knobs, presets, map-effects plugin ([#2090](https://github.com/tomtom-international/maps-sdk-js/issues/2090)) ([a672ffb](https://github.com/tomtom-international/maps-sdk-js/commit/a672ffbe5f9d2c61e009674e44ac49a4b9e0c980))
+* **routing:** drop the circle waypoint the API never had ([#2109](https://github.com/tomtom-international/maps-sdk-js/issues/2109)) ([a25365b](https://github.com/tomtom-international/maps-sdk-js/commit/a25365b8f491cc0b85001386601f2265c4ca05e2))
+* **routing:** phase 3 — land the response data v3 already returns ([#2077](https://github.com/tomtom-international/maps-sdk-js/issues/2077)) ([d071f02](https://github.com/tomtom-international/maps-sdk-js/commit/d071f02a30cbe6abf14423dc0309c782480f8a06))
+* **services:** replace flat geo-bias fields with a single geoBias option ([#2158](https://github.com/tomtom-international/maps-sdk-js/issues/2158)) ([14fdb49](https://github.com/tomtom-international/maps-sdk-js/commit/14fdb491b1a481ea49e050bee399be570a5120e0))
+* **service:** support request cancellation via AbortSignal ([#2136](https://github.com/tomtom-international/maps-sdk-js/issues/2136)) ([f2df5e4](https://github.com/tomtom-international/maps-sdk-js/commit/f2df5e42547e0d4fab79e078f375d419a82dd2a1))
+
+
+### Bug Fixes
+
+* stop partial route updates clobbering config, give BYOD reset a contract ([#2097](https://github.com/tomtom-international/maps-sdk-js/issues/2097)) ([e69e37e](https://github.com/tomtom-international/maps-sdk-js/commit/e69e37ec833f665ec00b1b32835296e4918f9ad9))
+
+
+### Code Refactoring
+
+* **map:** precise types for custom styles, places props and traffic data ([#2161](https://github.com/tomtom-international/maps-sdk-js/issues/2161)) ([8f2a9bd](https://github.com/tomtom-international/maps-sdk-js/commit/8f2a9bd80073cfaa5087e09698167aedebc1acba))
+
 ## [0.5.4](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-agent-toolkit-v0.5.3...maps-sdk-plugin-agent-toolkit-v0.5.4) (2026-08-25)
 
 

@@ -46,7 +46,7 @@ export const apiAndParsedResponses: Array<
                 },
             ],
         },
-        { query: 'ubitricity', boundingBox: [4.7, 52.6, 4.8, 52.7] },
+        { query: 'ubitricity', boundingBoxes: [[4.7, 52.6, 4.8, 52.7]] },
         {
             type: 'FeatureCollection',
             properties: {
@@ -114,7 +114,7 @@ export const apiAndParsedResponses: Array<
                 },
             ],
         },
-        { boundingBox: [-3.8, 40.3, -3.6, 40.5] },
+        { boundingBoxes: [[-3.8, 40.3, -3.6, 40.5]] },
         {
             type: 'FeatureCollection',
             properties: {
@@ -174,7 +174,7 @@ export const apiAndParsedResponses: Array<
                 },
             ],
         },
-        { boundingBox: [6, 50, 7, 51] },
+        { boundingBoxes: [[6, 50, 7, 51]] },
         {
             type: 'FeatureCollection',
             // With a single feature carrying a bbox, the FeatureCollection bbox derives from it.
@@ -250,7 +250,7 @@ export const apiAndParsedResponses: Array<
                 },
             ],
         },
-        { position: [4.9003, 52.3791], radiusMeters: 1000 },
+        { geoBias: { position: [4.9003, 52.3791], radiusMeters: 1000 } },
         {
             type: 'FeatureCollection',
             properties: {
@@ -334,7 +334,7 @@ export const apiAndParsedResponses: Array<
                 },
             ],
         },
-        { query: 'trattoria', boundingBox: [4.8, 52.3, 5, 52.4] },
+        { query: 'trattoria', boundingBoxes: [[4.8, 52.3, 5, 52.4]] },
         {
             type: 'FeatureCollection',
             properties: {
@@ -375,7 +375,7 @@ export const apiAndParsedResponses: Array<
             total: 0,
             hits: [],
         },
-        { query: 'noresults', boundingBox: [0, 0, 1, 1], offset: 40, limit: 10 },
+        { query: 'noresults', boundingBoxes: [[0, 0, 1, 1]], offset: 40, limit: 10 },
         {
             type: 'FeatureCollection',
             properties: {

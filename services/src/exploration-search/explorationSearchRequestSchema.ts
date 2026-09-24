@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { commonSearchParamsSchema } from '../search/commonSearchParamsSchema';
 import { commonGeocodeAndFuzzySearchParamsSchema } from '../shared/schema/commonGeocodeAndFuzzySearchParamsSchema';
+import { pointGeoBiasSchema } from '../shared/schema/geoBiasSchema';
 import type { SchemaRefinement } from '../shared/types/validation';
 import type { ExplorationSearchParams } from './types';
 
@@ -54,6 +55,9 @@ const PLACES_API_DEFAULT_SIZE = 10;
 const recordTypeSchema = z.enum(['POI', 'PointAddress', 'Street']);
 
 const explorationSearchRequestOptional = z.object({
+    // Point-only: this endpoint takes `near` and `bboxes` as separate filters, so it overrides the
+    // exclusive union the other search services share.
+    geoBias: pointGeoBiasSchema.optional(),
     municipalities: z.array(z.string()).optional(),
     boundingBoxes: z.array(hasBBoxSchema).optional(),
     geometries: z.array(geometryInputSchema).optional(),
@@ -77,14 +81,13 @@ export const explorationSearchRequestSchema = commonSearchParamsSchema.extend(
 // the response to a specific municipality polygon, no bbox/position needed.
 const geoBiasRefinement: SchemaRefinement<ExplorationSearchParams> = {
     check: (data) =>
-        !!data.position ||
-        !!data.boundingBox ||
+        !!data.geoBias ||
         !!data.boundingBoxes?.length ||
         !!data.geometries?.length ||
         !!data.municipalities?.length ||
         !!data.areaId,
     message:
-        'A geographic bias is required: provide one of position, boundingBox(es), geometries, municipalities, or areaId.',
+        'A geographic bias is required: provide one of geoBias, boundingBoxes, geometries, municipalities, or areaId.',
 };
 
 // The places-api enforces `from + size ≤ 10000` (OpenSearch's

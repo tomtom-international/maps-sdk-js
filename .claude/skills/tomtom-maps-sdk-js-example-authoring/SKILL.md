@@ -1,6 +1,6 @@
 ---
 name: tomtom-maps-sdk-js-example-authoring
-description: CONTRIBUTOR skill (editing this monorepo, not building an app with the SDK). Author, run and test an example app under examples/ in the Maps SDK monorepo — the required file set for a web or Node.js example, page.mdx frontmatter and its closed tag vocabulary, the build-time env allowlist, running via Vite or the Sandpack preview, and the snapshot/thumbnail workflow (which builds must precede which test, which of the three snapshot artifacts is regenerated where). Use when adding a new example, editing an existing one, updating a snapshot or thumbnail, or when an example renders a blank map or its e2e test fails.
+description: CONTRIBUTOR skill (editing this monorepo, not building an app with the SDK). Author, run and test an example app under examples/ in the Maps SDK monorepo — the required file set for a web or Node.js example, page.mdx frontmatter and its closed tag vocabulary, the page body copy the portal renders under the live demo, the build-time env allowlist, running via Vite or the Sandpack preview, and the snapshot/thumbnail workflow (which builds must precede which test, which of the three snapshot artifacts is regenerated where). Use when adding a new example, editing an existing one, writing or refreshing the prose on its docs-portal page, updating a snapshot or thumbnail, or when an example renders a blank map or its e2e test fails.
 ---
 
 Examples are **SDK consumers**: standalone Vite apps importing from
@@ -59,12 +59,16 @@ Then, in order:
    `utilities`, `plugins`, `ai`), one platform (`web` / `nodejs`). A tag outside the list silently
    fails to filter in the gallery.
 3. **`src/`** — one idea, visibly demonstrated.
-4. **A new build-time env var** goes in `EXAMPLE_ENV_VARS`
+4. **`content/page.mdx` body** — the same file again, once `src/` is final: the portal prints it
+   *after* the demo, so it claims what the reader has just watched. Contract and ceiling in
+   [`examples/AGENTS.md` § The page.mdx body](../../../examples/AGENTS.md#the-pagemdx-body),
+   drafting pass below.
+5. **A new build-time env var** goes in `EXAMPLE_ENV_VARS`
    ([`examples/exampleBuildEnv.ts`](../../../examples/exampleBuildEnv.ts)). That allowlist is
    deny-by-default on purpose — it once baked the whole CI environment into public bundles — so an
    unlisted `process.env.X` is simply `undefined` in the built example.
-5. **Snapshot + thumbnail** (below); both committed with the example.
-6. **Catalog** — a bullet under the right heading in `examples/AGENTS.md` § Example Catalog.
+6. **Snapshot + thumbnail** (below); both committed with the example.
+7. **Catalog** — a bullet under the right heading in `examples/AGENTS.md` § Example Catalog.
 
 ## Running it
 
@@ -77,6 +81,29 @@ pnpm develop:sandpack                # the Sandpack live-editor preview of the s
 
 Both take Vite's default port, so run one at a time. `examples/.env` supplies `API_KEY_EXAMPLES`.
 After changing SDK source, rebuild it — examples consume `dist/`.
+
+## Writing the page body
+
+Draft it against a running example, never from the ticket: the body claims what the reader
+watches, and a claim that drifts from the code is the one defect here that no gate catches.
+
+1. **Watch it.** With `pnpm develop` open, write the outcome in one sentence — what appears on the
+   map, not which endpoint returned it. That is the lead.
+2. **Walk the imports.** Read `src/index.ts` top to bottom and keep the calls the outcome depends
+   on — delete one and the demo stops doing what the lead just claimed. Skip the setup every
+   example repeats: `TomTomConfig`, constructing the map, wiring the container. Those are the
+   bullets, in the order the code runs them. Two earn a sentence rather than a bare symbol name:
+   the call that removes work the reader would otherwise write themselves, and the one whose input
+   is unusual (a route handed to a search, a service response handed straight to a module).
+3. **Link the calls.** For each principal call, search `documentation/docs-portal/guides/` and link
+   its first mention to the narrowest section that explains it. No link beats a link to a section
+   that does not actually cover it.
+4. **Cut against the frontmatter.** Read `description` and the body back to back and delete every
+   clause that survives in both. The description sells the gallery card; the body sells the SDK.
+
+Two checks before committing, and again whenever an example changes what it does: could a reader
+who skipped the code name the call that carries the example, and does every sentence still hold
+when the services answer differently tomorrow — no pin counts, no place names lifted from one run?
 
 ## Two builds, two servers, two snapshots
 

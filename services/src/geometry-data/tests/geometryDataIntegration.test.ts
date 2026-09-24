@@ -108,7 +108,8 @@ describe('Geometry data integration tests', () => {
                     bbox: expect.any(Array),
                     properties: {},
                     geometry: {
-                        type: 'Polygon',
+                        // Polygon or MultiPolygon depending on the map data release at this zoom.
+                        type: expect.stringMatching(/^(Multi)?Polygon$/),
                         coordinates: expect.arrayContaining([]),
                     },
                 },

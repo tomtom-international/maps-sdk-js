@@ -211,7 +211,12 @@ export const initCitySearch = ({
         cityInput.value = name;
 
         try {
-            const results = await geocode({ query: name, position, limit: 1, geographyTypes: ['Municipality'] });
+            const results = await geocode({
+                query: name,
+                geoBias: { position },
+                limit: 1,
+                geographyTypes: ['Municipality'],
+            });
             const place = results.features[0];
 
             if (place) {

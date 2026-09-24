@@ -6,6 +6,7 @@ import { type HasBBox, type POICategory } from '@tomtom-org/maps-sdk/core';
 import {
     alongRouteSearch,
     explorationSearch,
+    type GeoBias,
     POPULATED_AREA_TAGS,
     type PopulatedAreaTag,
     search,
@@ -274,7 +275,15 @@ export const discoverPlacesSchema = buildDiscoverPlacesSchema(DEFAULT_FLAGS);
 /** Default-flag (`experimentalSearch: false`) tool description. */
 export const discoverPlacesDescription = buildDiscoverPlacesDescription(DEFAULT_FLAGS);
 
+// What the `where` resolvers produce before a backend is picked: at most one of the two, but which
+// one depends on the mode, so it stays loose until `toGeoBias` commits it to the service's union.
 type WhereBias = { boundingBox?: HasBBox; position?: Position };
+
+const toGeoBias = (bias: WhereBias | undefined, radiusMeters: number | undefined): GeoBias | undefined => {
+    if (bias?.position) return { position: bias.position, radiusMeters };
+
+    return bias?.boundingBox ? { boundingBox: bias.boundingBox } : undefined;
+};
 
 type MultiFilters = {
     municipalities?: string[];
@@ -356,22 +365,28 @@ const dispatchPlacesSearch = (
     },
     options?: ToolExecuteOptions,
 ): Promise<Awaited<ReturnType<typeof explorationSearch>>> => {
-    const { query, poiCategories, bias = {}, radiusMeters, multiFilters } = params;
-    const common = {
-        query,
-        poiCategories,
-        ...bias,
-        ...(radiusMeters !== undefined && { radiusMeters }),
-        signal: options?.signal,
-    };
+    const { query, poiCategories, bias, radiusMeters, multiFilters } = params;
+    const common = { query, poiCategories, signal: options?.signal };
     if (useExperimental) {
-        const requestParams = withAgentToolkitHeaders({ ...common, limit: 10000, ...multiFilters });
+        // explorationSearch biases by point only, and takes rectangles as its own `boundingBoxes`.
+        const boundingBoxes = [...(multiFilters.boundingBoxes ?? []), ...(bias?.boundingBox ? [bias.boundingBox] : [])];
+        const requestParams = withAgentToolkitHeaders({
+            ...common,
+            limit: 10000,
+            ...multiFilters,
+            ...(boundingBoxes.length && { boundingBoxes }),
+            ...(bias?.position && { geoBias: { position: bias.position, radiusMeters } }),
+        });
+
         return explorationSearch(requestParams);
     }
+
+    const geoBias = toGeoBias(bias, radiusMeters);
     const requestParams = withAgentToolkitHeaders({
         ...common,
         limit: 100,
         ...stripExperimentalFilters(multiFilters),
+        ...(geoBias && { geoBias }),
     });
     return search(requestParams);
 };

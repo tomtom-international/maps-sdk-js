@@ -7,8 +7,8 @@ import type {
     SummaryBase,
 } from '@tomtom-org/maps-sdk/core';
 import { beforeAll, describe, expect, test, vi } from 'vitest';
+import type { ElectricVehicleParamsWithChargingStops } from '../../shared';
 import { putIntegrationTestsAPIKey } from '../../shared/tests/integrationTestUtils';
-import type { VehicleParameters } from '../../shared/types/vehicleParams';
 import { calculateRoute } from '../calculateRoute';
 import type { CalculateRouteRequestAPI } from '../types/apiRequestTypes';
 import type { CalculateRouteResponseAPI } from '../types/apiResponseTypes';
@@ -1035,7 +1035,7 @@ describe('Calculate route integration tests', () => {
     });
 
     test('chargingStopsStrategy is honoured on an EV route, and required to pair with preferences', async () => {
-        const vehicle: VehicleParameters = {
+        const vehicle: ElectricVehicleParamsWithChargingStops = {
             engineType: 'electric',
             state: { currentChargePCT: 80 },
             preferences: { chargingPreferences: { minChargeAtDestinationPCT: 20, minChargeAtChargingStopsPCT: 10 } },
@@ -1078,12 +1078,14 @@ describe('Calculate route integration tests', () => {
 
         // Rejected by name, before the network call, because the endpoint also needs a minimum
         // charge at the destination and only the preferences supply it.
+        // The type forbids this pairing; the cast stands in for an untyped JavaScript caller, whom
+        // the request schema still has to stop.
         await expect(() =>
             calculateRoute({
                 locations,
                 vehicle: { engineType: 'electric', state: { currentChargePCT: 80 } },
                 chargingStopsStrategy: 'automaticFastest',
-            }),
+            } as CalculateRouteParams),
         ).rejects.toThrow(/chargingStopsStrategy/);
     });
 

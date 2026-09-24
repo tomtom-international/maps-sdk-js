@@ -86,21 +86,11 @@ Ensure `package.json` includes:
 }
 ```
 
-## Best Practices
+## What a New Plugin Needs
 
-- Keep plugins focused on a single responsibility
-- Document public APIs thoroughly
-- Include TypeScript type definitions
-- Provide examples and integration guides
-- Write comprehensive tests
-- Follow semantic versioning
+[`CODING_GUIDELINES.md`](../CODING_GUIDELINES.md) applies to plugin source as it does to the SDK. On top of it, a plugin earns its place when it:
 
-## Contributing
-
-To contribute a new plugin, ensure it:
-
-1. Adds meaningful functionality not present in the core SDK
-2. Has clear documentation and examples
-3. Includes appropriate tests
-4. Follows the project's coding standards
-5. Has a defined license
+1. Adds functionality the core SDK does not have, around a single responsibility
+2. Ships a guide and at least one runnable example under `examples/`
+3. Has tests, and a defined license
+4. Versions semantically, independently of the SDK

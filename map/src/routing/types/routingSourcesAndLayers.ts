@@ -2,7 +2,7 @@ import type { Routes, Waypoints } from '@tomtom-org/maps-sdk/core';
 import type { GeoJSONSourceWithLayers, ToBeAddedLayerSpecWithoutSource } from '../../shared';
 import type { GeneratedSectionType, SectionSourceKey } from '../layers/sectionRegistry';
 import type { DisplayChargingStops } from '../util/displayChargingStops';
-import type { DisplayRouteProps, DisplayRouteSummaries } from './displayRoutes';
+import type { DisplayCountryCrossings, DisplayRouteProps, DisplayRouteSummaries } from './displayRoutes';
 import type { DisplayInstructionArrows, DisplayInstructions } from './guidance';
 import type { DisplayTrafficSectionProps, RouteSections } from './routeSections';
 import type { WaypointDisplayProps } from './waypointDisplayProps';
@@ -25,6 +25,7 @@ export type RoutingSourcesWithLayers = {
     instructionLines: GeoJSONSourceWithLayers<DisplayInstructions>;
     instructionArrows: GeoJSONSourceWithLayers<DisplayInstructionArrows>;
     summaryBubbles: GeoJSONSourceWithLayers<DisplayRouteSummaries>;
+    countryCrossings: GeoJSONSourceWithLayers<DisplayCountryCrossings>;
 };
 
 /**

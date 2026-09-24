@@ -126,6 +126,30 @@ export const sdkAndAPIRequests: [string, ReachableRangeParams, FetchInput][] = [
         },
     ],
     [
+        // The service holds this vehicle's battery model, so the variant stands on its own —
+        // charging preferences are a charging-stops parameter and have no place beside it here.
+        'EV reachable range for a predefined vehicle variant',
+        {
+            apiKey: 'GLOBAL_API_KEY',
+            apiVersion: 2,
+            commonBaseURL: 'https://api.tomtom.com',
+            origin: [10.123, 20.567],
+            budget: { type: 'timeMinutes', value: 30 },
+            vehicle: {
+                engineType: 'electric',
+                model: { variantId: '54B969E8-E28D-11EC-8FEA-0242AC120002' },
+            },
+        },
+        {
+            method: 'GET',
+            url: new URL(
+                'https://api.tomtom.com/maps/orbis/routing/calculateReachableRange/20.567,10.123/json?apiVersion=2&key=GLOBAL_API_KEY' +
+                    '&vehicleEngineType=electric&vehicleModelId=54B969E8-E28D-11EC-8FEA-0242AC120002' +
+                    '&timeBudgetInSec=1800&smoothing=strong',
+            ),
+        },
+    ],
+    [
         'Distance-based reachable range',
         {
             apiKey: 'GLOBAL_API_KEY',

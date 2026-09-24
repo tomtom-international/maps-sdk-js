@@ -93,8 +93,9 @@ my-example/
 └── tsconfig.json       # One line: { "extends": "../tsconfig.json" }
 ```
 
-**`content/page.mdx`** — pure frontmatter, empty body. The docs portal reads it to
-build the examples gallery:
+**`content/page.mdx`** — frontmatter, then a short body. The portal builds the
+gallery card from the frontmatter and renders the body on the example's own
+page:
 
 ```mdx
 ---
@@ -105,6 +106,9 @@ tags:
     - getting-started
     - web
 ---
+
+What the reader just watched, then the calls that did it — see
+[The page.mdx body](#the-pagemdx-body).
 ```
 
 `tags` must use ids declared in [`src/constants/tags.ts`](./src/constants/tags.ts).
@@ -260,6 +264,76 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
   }
 }
 ```
+
+---
+
+### The page.mdx body
+
+Every example page on the portal (`/maps-sdk-js/examples/<name>`) renders the
+body of `content/page.mdx` in the slot **below the live demo and above "Related
+examples"**. `title` and `description` are already printed above the demo, so
+the reader reaches the body having watched the example run.
+
+The body has exactly two jobs: **name what the example showcases**, and show
+**how little SDK surface it took**. It is not a tutorial — no setup steps, no
+API-key instructions, no parameter tables, no "in this example we will…", and no
+restating the `description`.
+
+**Shape** — around 90 words, 120 at the outside:
+
+1. A lead of one or two sentences: the outcome the reader just watched.
+2. Two to four bullets, one line each. Each names the SDK symbol doing the work,
+   and what that call spares the caller. When a guide explains that symbol or
+   concept, its first mention links to the narrowest applicable guide section.
+
+Past that ceiling the copy has started explaining the domain instead of the SDK,
+or the example is demonstrating more than one idea.
+
+**Rules**
+
+- **No headings.** `##` renders at the same weight as the page's own "Related
+  examples" heading, so it reads as a new page section rather than as part of
+  the example.
+- **Concrete over adjectives** — "one call", "no layer wiring", "the response is
+  already GeoJSON"; never "powerful", "seamless", "effortless", "simply",
+  "just".
+- **Name the exported symbol**, spelled as it is exported:
+  `withInsertedWaypoints`, `RoutingModule.create`, `calculateRoute`.
+- **Embed guide links in the key code words** — for example,
+  [`withInsertedWaypoints`](/maps-sdk-js/guides/core/utilities/routes#withinsertedwaypoints).
+  Prefer the section that explains the exact call or concept over the top of its
+  guide. Link every principal call that has useful guide coverage; do not impose
+  a one-link quota or add a detached "More in…" line.
+- **Links are root-relative and carry no `.mdx`** —
+  [`RoutingModule.showRoutes`](/maps-sdk-js/guides/map/routes#displaying-routes),
+  `[TomTomMap](/maps-sdk-js/api-reference/classes/map.TomTomMap.html)`. The
+  relative-link convention the guides use does not apply here: an example page's
+  URL sits under `/maps-sdk-js/examples/`, nowhere near this file on disk.
+- Do not manufacture a link when no guide section explains the call. The API
+  reference remains the fallback for a symbol with no guide coverage.
+
+Node.js examples follow the same contract; their demo is console output rather
+than a map.
+
+**Worked example** — `add-stops-to-route`:
+
+```mdx
+Two waypoints go in, a route comes back, and the chargers beside it land on the map as extra
+stops, in along-route order, on a single recalculation.
+
+- [`search`](/maps-sdk-js/guides/services/places/search#along-route-search) takes the route
+  itself as an input, so "along this route, within this detour" is a query rather than a
+  post-filter.
+- [`withInsertedWaypoints`](/maps-sdk-js/guides/core/utilities/routes#withinsertedwaypoints)
+  projects old and new stops onto the route once and orders them, so the insert positions are
+  not yours to work out.
+- [`RoutingModule.showRoutes`](/maps-sdk-js/guides/map/routes#displaying-routes) and
+  [`showWaypoints`](/maps-sdk-js/guides/map/routes#waypoints) redraw the updated journey
+  straight from the service response, with no layer bookkeeping.
+```
+
+The `tomtom-maps-sdk-js-example-authoring` skill carries the drafting pass that
+gets you there.
 
 ---
 
@@ -475,6 +549,7 @@ examples/
 - **Test new SDK feature** → Add example demonstrating the feature
 - **Verify bug fix** → Run affected examples to validate fix
 - **Document API usage** → Create example showing best practices
+- **Change what an example does** → Update its `content/page.mdx` body in the same pass (see [The page.mdx body](#the-pagemdx-body))
 - **Generate thumbnails** → Run `pnpm generate-thumbnails` (see scripts)
 - **Test example interactively** → Use `pnpm develop:sandpack` for live code editing
 - **Share interactive demo** → Create sandpack.ts to customize the preview experience
@@ -493,7 +568,9 @@ examples/
 - **multiple-geometries** - Show multiple geometric shapes on one map
 - **byod-geojson-heatmap** - Create heatmaps from GeoJSON data
 - **layer-group-toggling** - Toggle layer groups on/off
-- **map-styling-playground** - Semantic styling knobs (sizes, toggles, POI and traffic colours) from a panel built off `StylingModule.describe()`
+- **map-styling-playground** - Semantic styling knobs (sizes, toggles, POI and traffic colours, view, presets) from a panel built off `StylingModule.describe()`
+- **globe-terrain** - Globe projection, sky/atmosphere and 3D terrain through the styling module's `view.*` knobs
+- **map-effects-playground** - The map-effects plugin: bloom, grade, tint, fog, edge blur, vignette and high-DPI capture
 - **layer-groups-visibility-animation** - Animate layer visibility changes
 
 ### Search & Geocoding

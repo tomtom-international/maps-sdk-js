@@ -2,7 +2,7 @@
  * @module agent-toolkit-tools
  */
 
-import { type StylingKnobId, stylingKnobIds } from '@tomtom-org/maps-sdk/map';
+import { type StylingKnobId, stylingKnobIds, stylingPresetIds } from '@tomtom-org/maps-sdk/map';
 import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
@@ -34,12 +34,21 @@ export const setMapStylingSchema = z.object({
     reset: z
         .union([z.literal(true), z.array(z.string())])
         .optional()
-        .describe('true resets every knob to the style default; a list resets just those knobs. Applied before `set`.'),
+        .describe('true resets every knob to the style default; a list resets just those knobs. Applied first.'),
+    preset: z
+        .enum(stylingPresetIds)
+        .optional()
+        .describe(
+            'Apply a named preset (replaces the current knobs; `set` is applied on top). ' +
+                'data-viz: quiet base for data overlays · night-driving: bigger labels, wider roads · minimal: bare map · ' +
+                'globe: globe projection with atmosphere · terrain: 3D terrain with sky.',
+        ),
 });
 
 export const setMapStylingDescription =
     'Restyle the base map semantically: label/icon/road size factors, feature toggles (exit numbers, shields, road ' +
-    'arrows, 3D buildings, POI micro markers…), POI zoom and label colours, traffic congestion and incident colours. ' +
+    'arrows, 3D buildings, POI micro markers…), POI zoom and label colours, traffic congestion and incident colours, ' +
+    'globe projection, sky and 3D terrain, or a whole preset (data-viz, night-driving, minimal, globe, terrain). ' +
     'Durable across style switches. Not for layers the agent drew (places, routes, BYOD) — use their update*Display tools.';
 
 /** Execute set-map-styling. */
@@ -61,6 +70,9 @@ export const executeSetMapStyling = async (params: z.infer<typeof setMapStylingS
             styling.reset();
         } else if (Array.isArray(params.reset)) {
             for (const id of params.reset) attempt(id, () => styling.reset(id as StylingKnobId));
+        }
+        if (params.preset) {
+            styling.applyPreset(params.preset);
         }
         for (const [id, value] of Object.entries(params.set ?? {})) {
             attempt(id, () => styling.set(id as StylingKnobId, value));

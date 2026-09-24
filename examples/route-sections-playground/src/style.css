@@ -90,6 +90,13 @@
     font-size: var(--ui-font-caption-m);
 }
 
+/* What the last clicked crossing joins, so the event payload is visible without a console. */
+.crossing-detail {
+    color: var(--ui-text-low-em);
+    font-size: var(--ui-font-caption-s);
+    font-variant-numeric: tabular-nums;
+}
+
 /* Holds the swatch column open for the types that colour themselves from their own data. */
 .section-no-color {
     display: inline-block;

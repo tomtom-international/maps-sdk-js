@@ -1,4 +1,5 @@
 import type {
+    CountryCrossingConfig,
     DrawnSectionType,
     RoutingModuleConfig,
     SectionDisplayConfig,
@@ -8,10 +9,12 @@ import { drawnSectionTypes } from '@tomtom-org/maps-sdk/map';
 
 /**
  * The panel's state is the config itself: one `SectionDisplayConfig` per section type, exactly as
- * `sections` takes them. A knob left `undefined` is left out, so the type keeps its own default.
+ * `sections` takes them, plus the border crossings, which are not a section type. A knob left
+ * `undefined` is left out, so the type keeps its own default.
  */
 export type PanelState = {
     sections: Record<DrawnSectionType, SectionDisplayConfig>;
+    countryCrossings: CountryCrossingConfig;
 };
 
 /**
@@ -26,6 +29,7 @@ export const buildInitialState = (): PanelState => ({
         DrawnSectionType,
         SectionDisplayConfig
     >,
+    countryCrossings: {},
 });
 
 // Only the types the panel actually touched, so the config stays a diff against the defaults rather
@@ -41,4 +45,5 @@ const configuredSections = (state: PanelState): SectionsDisplayConfig =>
 
 export const buildConfig = (state: PanelState): RoutingModuleConfig => ({
     sections: configuredSections(state),
+    countryCrossings: state.countryCrossings,
 });

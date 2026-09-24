@@ -1,11 +1,11 @@
-import { bboxFromGeoJSON, TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { bboxFromGeoJSON, type CountrySectionProps, type SectionType, TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import type { DrawnSectionType } from '@tomtom-org/maps-sdk/map';
 import { drawnSectionTypes, RoutingModule, sectionSourceKey, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import { calculateRoute, SDKAbortError } from '@tomtom-org/maps-sdk/services';
 import { API_KEY } from './config';
 import { PICKABLE_ROUTES } from './routes';
 import { buildConfig, buildInitialState } from './sectionsConfig';
-import { initSectionsPanel } from './sectionsPanel';
+import { initSectionsPanel, type PanelCounts } from './sectionsPanel';
 import './style.css';
 
 TomTomConfig.instance.put({ apiKey: API_KEY });
@@ -14,8 +14,9 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
 const FIT_PADDING = { top: 60, bottom: 60, left: 60, right: 340 };
 
 // A section type is only in the response when it was asked for, so ask for every type the map
-// draws. `drawnSectionTypes` is the SDK's own list of them.
-const SECTION_TYPES = [...drawnSectionTypes];
+// draws. `drawnSectionTypes` is the SDK's own list of them. `country` is not among them — it draws
+// no line of its own — but the border crossings are read off it.
+const SECTION_TYPES: SectionType[] = [...drawnSectionTypes, 'country'];
 
 (async () => {
     const [firstRoute] = PICKABLE_ROUTES;
@@ -39,19 +40,32 @@ const SECTION_TYPES = [...drawnSectionTypes];
     await routingModule.showRoutes(routes);
 
     // Each section type files its features under its own key, so one `getShown()` says which types
-    // the route currently on the map actually has.
-    const sectionCounts = (): Record<DrawnSectionType, number> => {
+    // the route currently on the map actually has — and how many borders it crosses.
+    const panelCounts = (): PanelCounts => {
         const shown = routingModule.getShown();
-        return Object.fromEntries(
-            drawnSectionTypes.map((type) => [type, shown[sectionSourceKey(type)]?.features.length ?? 0]),
-        ) as Record<DrawnSectionType, number>;
+        return {
+            sections: Object.fromEntries(
+                drawnSectionTypes.map((type) => [type, shown[sectionSourceKey(type)]?.features.length ?? 0]),
+            ) as Record<DrawnSectionType, number>,
+            crossings: shown.countryCrossings.features.length,
+        };
     };
 
     const panel = initSectionsPanel({
         map,
         state,
-        sectionCounts: sectionCounts(),
+        counts: panelCounts(),
         apply: () => routingModule.applyConfig(buildConfig(state)),
+    });
+
+    // A crossing hands over the two `country` sections it joins, so the click can report the
+    // stretch each one covers rather than just the pair of codes on the plaque.
+    routingModule.events.countryCrossings.on('click', (crossing) => {
+        const { fromSection, toSection, label } = crossing.properties;
+        const extent = (section?: CountrySectionProps) =>
+            section ? `${section.startPointIndex}–${section.endPointIndex}` : '?';
+
+        panel.setCrossingDetail(`${label}  ·  points ${extent(fromSection)} → ${extent(toSection)}`);
     });
 
     let controller: AbortController | undefined;
@@ -77,7 +91,7 @@ const SECTION_TYPES = [...drawnSectionTypes];
             const bounds = bboxFromGeoJSON(picked);
             if (bounds) map.mapLibreMap.fitBounds(bounds, { padding: FIT_PADDING });
 
-            panel.setSectionCounts(sectionCounts());
+            panel.setCounts(panelCounts());
         } catch (error) {
             // A superseded pick is expected to abort — the one that replaced it paints instead.
             if (error instanceof SDKAbortError) return;

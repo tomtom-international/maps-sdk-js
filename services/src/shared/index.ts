@@ -10,6 +10,7 @@ export * from './types/commonPlacesParams';
 export * from './types/commonRoutingParams';
 export * from './types/commonSearchParams';
 export * from './types/fetch';
+export * from './types/geoBias';
 export * from './types/searchSummary';
 export * from './types/servicesTypes';
 export * from './types/vehicleParams';

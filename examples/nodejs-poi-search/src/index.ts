@@ -7,7 +7,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
 (async () => {
     const response = await search({
         poiCategories: ['BUS_STOP'],
-        boundingBox: [4.72, 52.27, 5.07, 52.43], // Amsterdam
+        geoBias: { boundingBox: [4.72, 52.27, 5.07, 52.43] }, // Amsterdam
     });
 
     console.log(`Found ${response.features.length} results\n`);

@@ -396,6 +396,7 @@ const parseSections = (apiRoute: RouteAPI, params: CalculateRouteParams): Sectio
     if (sections.country?.length) {
         result.country = sections.country.map((country: CountrySectionAPI) => ({
             ...toSectionProps(country),
+            countryCodeISO2: country.countryCodeIso2 ?? '',
             countryCodeISO3: toIso3(country.countryCodeIso2 ?? ''),
         }));
     }
@@ -443,6 +444,7 @@ const parseSections = (apiRoute: RouteAPI, params: CalculateRouteParams): Sectio
         result.tollVignette = sections.tollVignette.map(
             (tollVignette: CountrySectionAPI): CountrySectionProps => ({
                 ...toSectionProps(tollVignette),
+                countryCodeISO2: tollVignette.countryCodeIso2 ?? '',
                 countryCodeISO3: toIso3(tollVignette.countryCodeIso2 ?? ''),
             }),
         );

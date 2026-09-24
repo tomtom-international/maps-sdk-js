@@ -360,52 +360,63 @@ describe('Map utils - changeLayerProps', () => {
             }) as unknown as Map;
 
         let mapLibreMock = newMapMock();
-        changeLayerProps({ id: 'layerX', layout: { prop0: 'value0' } }, { id: 'layerX' }, mapLibreMock);
+        changeLayerProps({ id: 'layerX', layout: { visibility: 'visible' } }, { id: 'layerX' }, mapLibreMock);
         expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(1);
         expect(mapLibreMock.setPaintProperty).toHaveBeenCalledTimes(0);
 
         mapLibreMock = newMapMock();
-        changeLayerProps({ id: 'layerX', layout: { prop0: 'a', prop1: 'b' } }, { id: 'layerX' }, mapLibreMock);
+        changeLayerProps(
+            { id: 'layerX', layout: { visibility: 'visible', 'icon-size': 1.5 } },
+            { id: 'layerX' },
+            mapLibreMock,
+        );
         expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(2);
         expect(mapLibreMock.setPaintProperty).toHaveBeenCalledTimes(0);
 
         mapLibreMock = newMapMock();
         changeLayerProps(
-            { id: 'layerX', layout: { prop0: 'a', prop1: 'b' } },
-            { id: 'layerX', layout: { prop0: 'old-a' } },
+            { id: 'layerX', layout: { visibility: 'visible', 'icon-size': 1.5 } },
+            { id: 'layerX', layout: { visibility: 'none' } },
             mapLibreMock,
         );
         expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(2);
         expect(mapLibreMock.setPaintProperty).toHaveBeenCalledTimes(0);
-        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith('layerX', 'prop0', 'a', { validate: false });
-        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith('layerX', 'prop1', 'b', { validate: false });
+        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith('layerX', 'visibility', 'visible', {
+            validate: false,
+        });
+        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith('layerX', 'icon-size', 1.5, { validate: false });
 
+        // A property the previous spec set and the new one drops is reset to undefined.
         mapLibreMock = newMapMock();
         changeLayerProps(
-            { id: 'layerX', layout: { prop0: 'a', prop1: 'b' } },
-            { id: 'layerX', layout: { prop5: 'old-a' } },
+            { id: 'layerX', layout: { visibility: 'visible', 'icon-size': 1.5 } },
+            { id: 'layerX', layout: { 'text-size': 12 } },
             mapLibreMock,
         );
-        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith('layerX', 'prop5', undefined, {
+        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith('layerX', 'text-size', undefined, {
             validate: false,
         });
         expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(3);
         expect(mapLibreMock.setPaintProperty).toHaveBeenCalledTimes(0);
-        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith('layerX', 'prop0', 'a', { validate: false });
-        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith('layerX', 'prop1', 'b', { validate: false });
+        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith('layerX', 'visibility', 'visible', {
+            validate: false,
+        });
+        expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledWith('layerX', 'icon-size', 1.5, { validate: false });
 
         mapLibreMock = newMapMock();
         changeLayerProps(
-            { id: 'layerY', layout: { prop0: 'value0' }, paint: { propA: '10' } },
-            { id: 'layerY', paint: { propC: '20' } },
+            { id: 'layerY', layout: { visibility: 'visible' }, paint: { 'icon-opacity': 0.5 } },
+            { id: 'layerY', paint: { 'text-color': '#ffffff' } },
             mapLibreMock,
         );
         expect(mapLibreMock.setLayoutProperty).toHaveBeenCalledTimes(1);
         expect(mapLibreMock.setPaintProperty).toHaveBeenCalledTimes(2);
-        expect(mapLibreMock.setPaintProperty).toHaveBeenCalledWith('layerY', 'propC', undefined, {
+        expect(mapLibreMock.setPaintProperty).toHaveBeenCalledWith('layerY', 'text-color', undefined, {
             validate: false,
         });
-        expect(mapLibreMock.setPaintProperty).toHaveBeenCalledWith('layerY', 'propA', '10', { validate: false });
+        expect(mapLibreMock.setPaintProperty).toHaveBeenCalledWith('layerY', 'icon-opacity', 0.5, {
+            validate: false,
+        });
 
         mapLibreMock = newMapMock();
         changeLayerProps(
@@ -663,7 +674,9 @@ describe('Map utils - addLayersInCorrectOrder', () => {
 
 describe('Map utils - updateStyleWithStyleModule', () => {
     test('error case', () => {
-        expect(() => updateStyleWithModule({ type: 'custom' }, 'trafficIncidents')).toThrow();
+        expect(() =>
+            updateStyleWithModule({ type: 'custom', url: 'https://example.com/style.json' }, 'trafficIncidents'),
+        ).toThrow();
     });
 
     test.each(updateStyleData)(

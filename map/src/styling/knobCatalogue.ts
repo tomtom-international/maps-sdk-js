@@ -25,13 +25,23 @@ export type KnobMechanism =
     /** Sets the minimum zoom of the matched layers. */
     | { type: 'minZoom'; layers: LayerSelector[] }
     /** Shifts the `["-", ["zoom"], offset]` density term inside the matched layers' filters. */
-    | { type: 'zoomOffset'; layers: LayerSelector[] };
+    | { type: 'zoomOffset'; layers: LayerSelector[] }
+    /** Map-level: the projection the whole map is drawn in. */
+    | { type: 'projection' }
+    /** Map-level: the sky/atmosphere (its colours come from the sibling colour knobs). */
+    | { type: 'sky' }
+    /** Map-level: 3D terrain from the style's raster-dem source (exaggeration from the sibling knob). */
+    | { type: 'terrain' }
+    /** Map-level: the colour behind the map canvas, which a globe leaves visible around the planet. */
+    | { type: 'space' };
 
 /** @ignore */
 export type KnobDefinition = {
     kind: StylingKnobKind;
     description: string;
     range?: StylingKnobRange;
+    /** The valid values of an `enum` knob. */
+    options?: readonly string[];
     appliesTo: StylingKnobAppliesTo;
     mechanisms: KnobMechanism[];
 };
@@ -207,6 +217,61 @@ export const knobDefinitions = {
         ],
         WIDE_FACTOR_RANGE,
     ),
+
+    // View — projection, atmosphere and terrain. Map-level MapLibre state the SDK owns here so it
+    // survives style switches (MapLibre resets all three on every `setStyle`).
+    'view.projection': {
+        kind: 'enum',
+        description:
+            'How the map is drawn: flat Mercator or a globe. The globe flattens to Mercator between zoom 11 and 12 by design.',
+        options: ['mercator', 'globe'],
+        appliesTo: 'any-style',
+        mechanisms: [{ type: 'projection' }],
+    },
+    'view.sky': {
+        kind: 'toggle',
+        description:
+            'A sky with atmosphere behind the globe and above a tilted flat map. Without it MapLibre draws a fully transparent sky, so a globe arrives with no atmosphere.',
+        appliesTo: 'any-style',
+        mechanisms: [{ type: 'sky' }],
+    },
+    'view.skyColor': {
+        kind: 'color',
+        description:
+            'Colour of the sky (and of the atmosphere halo around the globe). Defaults to a daylit blue on a light style and a night blue on a dark one.',
+        appliesTo: 'any-style',
+        mechanisms: [{ type: 'sky' }],
+    },
+    'view.horizonColor': {
+        kind: 'color',
+        description:
+            'Colour of the sky at the horizon. Defaults with the style theme, so a dark map gets a dim horizon rather than a white one.',
+        appliesTo: 'any-style',
+        mechanisms: [{ type: 'sky' }],
+    },
+    'view.spaceColor': {
+        kind: 'color',
+        description:
+            'Colour behind the map, which a globe leaves visible around the planet. The map canvas is transparent, so without this the page background shows through. Defaults with the style theme: white on a light style, near-black on a dark one.',
+        appliesTo: 'any-style',
+        mechanisms: [{ type: 'space' }],
+    },
+    // Terrain works on any style that carries an elevation source — the TomTom hillshade style part,
+    // or a custom style's own raster-dem — and reports itself unavailable on one that carries none.
+    'view.terrain': {
+        kind: 'toggle',
+        description:
+            "3D terrain from the style's elevation source (the hillshade style part). Needs a tilted camera to show; MapLibre's terrain fog starts at pitch 60, which is also its default maxPitch.",
+        appliesTo: 'any-style',
+        mechanisms: [{ type: 'terrain' }],
+    },
+    'view.terrainExaggeration': {
+        kind: 'number',
+        description: 'Vertical exaggeration of the 3D terrain (1 = true elevation).',
+        range: { min: 0.5, max: 3, step: 0.1 },
+        appliesTo: 'any-style',
+        mechanisms: [{ type: 'terrain' }],
+    },
 } as const satisfies Record<string, KnobDefinition>;
 
 /**
@@ -225,7 +290,7 @@ export const stylingKnobIds = Object.keys(knobDefinitions) as StylingKnobId[];
 
 type ValueOfKind<KIND extends StylingKnobKind> = KIND extends 'toggle'
     ? boolean
-    : KIND extends 'color'
+    : KIND extends 'color' | 'enum'
       ? string
       : number;
 

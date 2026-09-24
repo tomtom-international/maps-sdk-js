@@ -74,7 +74,7 @@ describe('Autocomplete service', () => {
         const countries = ['NL', 'FR'];
         const response = await autocompleteSearch({
             query,
-            position,
+            geoBias: { position },
             limit,
             countries,
         });

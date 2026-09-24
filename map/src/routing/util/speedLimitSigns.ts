@@ -1,15 +1,14 @@
-import type {
-    CountrySectionProps,
-    DisplayUnits,
-    DistanceUnitsType,
-    SpeedLimitSectionProps,
+import {
+    type CountrySectionProps,
+    type DisplayUnits,
+    type DistanceUnitsType,
+    MILE_IN_METERS,
+    type SpeedLimitSectionProps,
 } from '@tomtom-org/maps-sdk/core';
 import { suffixNumber } from '../../shared/layers/utils';
 import type { DisplayRouteProps } from '../types/displayRoutes';
 import type { SectionSignUnit } from '../types/routeModuleConfig';
 import type { DisplaySpeedLimitSectionProps, SpeedLimitSignFace } from '../types/routeSections';
-
-const METERS_PER_MILE = 1609.344;
 
 /** The step a limit is posted in, so a converted number lands on one a sign can show. */
 const MPH_STEP = 5;
@@ -76,7 +75,7 @@ const countryAt = (pointIndex: number, countrySections?: CountrySectionProps[]):
 /** The number a sign shows: converted for its unit, and rounded to the step limits are posted in. */
 const postedSpeedLimit = (maxSpeedLimitInKmh: number, unit: SectionSignUnit): number =>
     unit === 'mph'
-        ? Math.round((maxSpeedLimitInKmh * 1000) / METERS_PER_MILE / MPH_STEP) * MPH_STEP
+        ? Math.round((maxSpeedLimitInKmh * 1000) / MILE_IN_METERS / MPH_STEP) * MPH_STEP
         : maxSpeedLimitInKmh;
 
 /**

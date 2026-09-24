@@ -24,7 +24,7 @@ import { ViewportPlaces } from '@tomtom-org/maps-sdk-plugin-viewport-places';
 ```ts
 const placesModule = await PlacesModule.create(map);
 
-const places = await search({ query: 'coffee shop', position: [4.9, 52.4], limit: 20 });
+const places = await search({ query: 'coffee shop', geoBias: { position: [4.9, 52.4] }, limit: 20 });
 await placesModule.show(places);
 
 // `events` covers every surface the module draws; `events.places` is the pins alone, typed as Place
@@ -69,7 +69,7 @@ map.mapLibreMap.on('click', async (event) => {
 ```ts
 const places = await search({
     poiCategories: ['PARKING_GARAGE', 'OPEN_CAR_PARKING_AREA'],
-    position: [4.9, 52.4],
+    geoBias: { position: [4.9, 52.4] },
     limit: 50,
 });
 await placesModule.show(places);
@@ -80,7 +80,7 @@ await placesModule.show(places);
 ```ts
 // Get codes matching a keyword — pass directly to search
 const codes = await getPOICategoryCodes({ filters: ['restaurant'] });
-const places = await search({ poiCategories: codes, position: [4.9, 52.4] });
+const places = await search({ poiCategories: codes, geoBias: { position: [4.9, 52.4] } });
 
 // Full category objects (name, synonyms, childCategoryCodes)
 const { poiCategories } = await getPOICategories({ filters: ['gym'] });
@@ -123,7 +123,7 @@ const places = await search({
 // Bounding box
 const places = await search({
     poiCategories: ['BUS_STOP'],
-    boundingBox: [4.72, 52.27, 5.07, 52.43], // [west, south, east, north]
+    geoBias: { boundingBox: [4.72, 52.27, 5.07, 52.43] }, // [west, south, east, north]
 });
 ```
 
@@ -233,7 +233,7 @@ const stations = await search({
     poiCategories: ['ELECTRIC_VEHICLE_STATION'],
     connectors: ['IEC62196Type2CCS'],
     minPowerKW: 50,
-    position: [4.9, 52.4],
+    geoBias: { position: [4.9, 52.4] },
 });
 
 const withAvailability = await getPlacesWithEVAvailability(stations);
@@ -417,10 +417,10 @@ await places.show(data);
 
 ```ts
 // Brand-based search
-const places = await search({ poiBrands: ['Starbucks'], position: [4.9, 52.4] });
+const places = await search({ poiBrands: ['Starbucks'], geoBias: { position: [4.9, 52.4] } });
 
 // Typeahead (partial query)
-const places = await search({ query: 'amst', typeahead: true, position: [4.9, 52.4] });
+const places = await search({ query: 'amst', typeahead: true, geoBias: { position: [4.9, 52.4] } });
 
 // Search for administrative geographies (e.g. to get geometry IDs for municipalities)
 const places = await search({
@@ -443,10 +443,10 @@ for (const result of response.results) {
 
     if (seg.type === 'category') {
         // seg.category is a POICategory value — pass to search({ poiCategories: [seg.category] })
-        const places = await search({ poiCategories: [seg.category], boundingBox: map.getBBox() });
+        const places = await search({ poiCategories: [seg.category], geoBias: { boundingBox: map.getBBox() } });
     } else if (seg.type === 'brand') {
         // seg.value is the brand name — pass to search({ poiBrands: [seg.value] })
-        const places = await search({ poiBrands: [seg.value], boundingBox: map.getBBox() });
+        const places = await search({ poiBrands: [seg.value], geoBias: { boundingBox: map.getBBox() } });
     }
 }
 ```
@@ -459,4 +459,7 @@ for (const result of response.results) {
 - `place.properties.poi?.categories` — `POICategory[]` (standardized enum, e.g. `'ITALIAN_RESTAURANT'`)
 - `place.properties.poi?.localizedCategories` — `string[]` (human-readable, e.g. `'restaurant'`)
 - `applyExtraFeatureProps` properties are accessible in MapLibre expressions via `['get', 'propName']`
+- An `extraFeatureProps` entry is a JSON value or a `(place) => jsonValue` callback. To have the
+  callbacks typed for a narrower place shape, name it on the config:
+  `PlacesModuleConfig<EVChargingStationWithAvailabilityPlaceProps>`
 - `applyTextConfig` / `applyIconConfig` / `applyTheme` are runtime methods — apply after `get()`

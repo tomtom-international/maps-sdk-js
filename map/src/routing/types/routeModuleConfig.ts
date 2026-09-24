@@ -351,6 +351,19 @@ export type RouteLayersConfig = {
          */
         routeSummaryBubbleSymbol?: Partial<ToBeAddedLayerSpecTemplate<SymbolLayerSpecification>>;
     } & HasAdditionalLayersConfig;
+
+    /**
+     * Border crossing layers.
+     *
+     * @remarks
+     * Anything {@link CountryCrossingConfig} cannot express about the plaque or its label.
+     */
+    countryCrossings?: {
+        /**
+         * Symbol layer writing each crossing's label on its plaque.
+         */
+        routeCountryCrossing?: Partial<ToBeAddedLayerSpecTemplate<SymbolLayerSpecification>>;
+    } & HasAdditionalLayersConfig;
 };
 
 /**
@@ -762,6 +775,75 @@ export type SectionSignConfig = {
 };
 
 /**
+ * How a border crossing's plaque is turned on the map.
+ *
+ * - `viewport` — level with the screen, however the map is rotated.
+ * - `route` — turned to the route's bearing where it crosses, so the plaque runs along the road. It
+ *   is kept upright, so the label never reads upside down.
+ *
+ * @group Routing
+ */
+export type CountryCrossingAlignment = 'viewport' | 'route';
+
+/**
+ * Appearance of the border crossings along a route.
+ *
+ * @remarks
+ * A crossing is the seam between two consecutive `country` sections, so it is a point rather than a
+ * stretch, and takes knobs of its own instead of a place in the section catalogue. Each is a plaque
+ * naming both countries by their ISO 3166-1 alpha-2 codes in the direction of travel, `'ES → FR'`.
+ *
+ * The plaque follows the map's light/dark theme unless {@link color} or {@link textColor} says
+ * otherwise, so it stays legible across a style change without being reconfigured.
+ *
+ * @example
+ * ```typescript
+ * const routes = await calculateRoute({ locations, sectionTypes: ['country'] });
+ * await routing.showRoutes(routes);
+ * ```
+ *
+ * @group Routing
+ */
+export type CountryCrossingConfig = {
+    /**
+     * Whether the crossings are drawn.
+     *
+     * @defaultValue `true`
+     */
+    visible?: boolean;
+
+    /**
+     * The lowest zoom a crossing is drawn at.
+     *
+     * @defaultValue 4, low enough for a continental route to show its borders while framed whole.
+     */
+    minzoom?: number;
+
+    /**
+     * The plaque colour behind the label.
+     *
+     * @defaultValue the SDK's near-black `'#1A2024'` on a light map, and the near-white `'#F1F3F5'`
+     * on a dark one.
+     */
+    color?: string;
+
+    /**
+     * The label colour.
+     *
+     * @defaultValue whichever of the SDK's near-black and near-white reads on the plaque, so
+     * setting {@link color} alone stays legible.
+     */
+    textColor?: string;
+
+    /**
+     * How the plaque is turned on the map.
+     *
+     * @defaultValue `'viewport'`
+     */
+    alignment?: CountryCrossingAlignment;
+};
+
+/**
  * Appearance of one route section type.
  *
  * @remarks
@@ -867,6 +949,14 @@ export type RoutingModuleConfig = MapModuleCommonConfig & {
          */
         visible?: boolean;
     };
+
+    /**
+     * Appearance of the border crossings along the route.
+     *
+     * @remarks
+     * Read off the route's `country` sections, so a route carrying none draws none.
+     */
+    countryCrossings?: CountryCrossingConfig;
 
     /**
      * Appearance of the route sections, keyed by section type.

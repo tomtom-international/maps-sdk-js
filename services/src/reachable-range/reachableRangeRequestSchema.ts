@@ -20,13 +20,18 @@ const reachableRangeRequestSchemaMandatory = z.object({
 // `avoid=alreadyUsedRoads` outright, and has no avoid-areas parameter at all.
 const reachableRangeAvoidableSchema = z.enum(avoidableTypes).exclude(['alreadyUsedRoads']);
 
-// Matches `ReachableRangeVehicleParameters`: the endpoint answers
-// `400 parameter [vehicleHeading] not supported`, so a heading fails validation here rather than
-// being quietly dropped for callers who are not type-checked.
+// Matches `ReachableRangeVehicleParameters`: the endpoint answers `400 parameter [x] not
+// supported` to both of these, so they fail validation here rather than being quietly dropped for
+// callers who are not type-checked. Charging preferences encode to `minChargeAt*InkWh`, which only
+// the charging-stops endpoint takes — this one plans no stops.
 const reachableRangeVehicleSchema = vehicleParametersSchema.check(
     z.refine(
         (vehicle) => !(vehicle.state && 'heading' in vehicle.state),
         'vehicle.state.heading: calculateReachableRange has no vehicle heading parameter',
+    ),
+    z.refine(
+        (vehicle) => !(vehicle.preferences && 'chargingPreferences' in vehicle.preferences),
+        'vehicle.preferences.chargingPreferences: calculateReachableRange plans no charging stops',
     ),
 );
 

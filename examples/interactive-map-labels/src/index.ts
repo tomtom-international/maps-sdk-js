@@ -27,7 +27,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         hintEl.hidden = true;
         const place = await search({
             query,
-            position,
+            geoBias: { position },
             limit: 1,
             geographyTypes: [
                 'Municipality',

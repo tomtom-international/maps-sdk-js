@@ -17,7 +17,7 @@ import type {
     AreaAnalyticsRegionPolygonConfig,
     TrafficAreaAnalyticsConfig,
 } from '../types/trafficAreaAnalyticsConfig';
-import { AREA_ANALYTICS_DEFAULTS } from '../types/trafficAreaAnalyticsConfig';
+import { AREA_ANALYTICS_DEFAULTS, TRAFFIC_LIGHT_COLORS } from '../types/trafficAreaAnalyticsConfig';
 
 // ── Internal types ───────────────────────────────────────────────────
 
@@ -38,7 +38,7 @@ const getThemeAdaptiveRegionPolygonColor = (lightDark: LightDark) => (lightDark 
  * @ignore
  */
 export const COLOR_THEMES: Record<AreaAnalyticsColorTheme, string[]> = {
-    trafficLight: ['#2dc653', '#f5a623', '#e03030'],
+    trafficLight: [TRAFFIC_LIGHT_COLORS.good, TRAFFIC_LIGHT_COLORS.moderate, TRAFFIC_LIGHT_COLORS.bad],
     heat: ['#2196F3', '#FF9800', '#F44336'],
     monochrome: ['#e0e0e0', '#888888', '#1a1a1a'],
     viridis: ['#fde725', '#35b779', '#31688e', '#440154'],

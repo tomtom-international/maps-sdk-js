@@ -38,11 +38,17 @@ export const namedConfigs: NamedConfigs = {
         geometryConfig: { fill: { color: '#00bbff', opacity: 0.2 }, line },
     },
     chicagoDistricts: {
-        searchConfig: { boundingBox: [-87.70362, 41.73845, -87.57001, 41.83279], geographyTypes: ['Neighbourhood'] },
+        searchConfig: {
+            geoBias: { boundingBox: [-87.70362, 41.73845, -87.57001, 41.83279] },
+            geographyTypes: ['Neighbourhood'],
+        },
         geometryConfig: { fill: { color: 'pastelRainbow', opacity: 0.2 }, line },
     },
     chicagoPostcodes: {
-        searchConfig: { boundingBox: [-87.70362, 41.73845, -87.57001, 41.83279], geographyTypes: ['PostalCodeArea'] },
+        searchConfig: {
+            geoBias: { boundingBox: [-87.70362, 41.73845, -87.57001, 41.83279] },
+            geographyTypes: ['PostalCodeArea'],
+        },
         geometryConfig: { fill: { color: 'fadedGreenToBlue', opacity: 0.3 }, line },
     },
 };

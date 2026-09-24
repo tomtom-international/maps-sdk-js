@@ -1,9 +1,4 @@
-import {
-    generateId,
-    iconToTrafficIncidentCategory,
-    indexedMagnitudes,
-    type TrafficIncidentCategory,
-} from '@tomtom-org/maps-sdk/core';
+import { generateId, iconToTrafficIncidentCategory, indexedMagnitudes } from '@tomtom-org/maps-sdk/core';
 import type { MapGeoJSONFeature } from 'maplibre-gl';
 import type { TrafficIncidentsModuleFeature } from '../types/trafficIncidentsFeature';
 
@@ -30,27 +25,6 @@ export const INCIDENT_TAGS = [
     'time_validity',
     'display_class',
 ] as const;
-
-/**
- * @ignore
- */
-export const incidentToIconCategoryMapping: Record<TrafficIncidentCategory, number> = {
-    other: 0,
-    accident: 1,
-    fog: 2,
-    danger: 3,
-    rain: 4,
-    frost: 5,
-    jam: 6,
-    'lane-closed': 7,
-    'road-closed': 8,
-    roadworks: 9,
-    wind: 10,
-    flooding: 11,
-    'animals-on-road': 12,
-    'narrow-lanes': 13,
-    'broken-down-vehicle': 14,
-} as const;
 
 /**
  * @ignore

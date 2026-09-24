@@ -300,6 +300,28 @@ export type AreaAnalyticsRegionPolygonConfig = {
 // ── Default values ───────────────────────────────────────────────────
 
 /**
+ * The green / amber / red every metric's default colour stops and the `trafficLight` colour theme
+ * are drawn from.
+ *
+ * @ignore
+ */
+export const TRAFFIC_LIGHT_COLORS = { good: '#2dc653', moderate: '#f5a623', bad: '#e03030' } as const;
+
+// Both return a fresh array: AREA_ANALYTICS_DEFAULTS is public, and sharing one array across metrics
+// would let a caller mutating its own copy reach the others.
+const higherIsWorseStops = () => [
+    { value: 0, color: TRAFFIC_LIGHT_COLORS.good },
+    { value: 50, color: TRAFFIC_LIGHT_COLORS.moderate },
+    { value: 100, color: TRAFFIC_LIGHT_COLORS.bad },
+];
+
+const higherIsBetterStops = () => [
+    { value: 0, color: TRAFFIC_LIGHT_COLORS.bad },
+    { value: 50, color: TRAFFIC_LIGHT_COLORS.moderate },
+    { value: 100, color: TRAFFIC_LIGHT_COLORS.good },
+];
+
+/**
  * Default values for all {@link TrafficAreaAnalyticsConfig} options.
  *
  * Use these as a reference for what the module applies when a property is omitted,
@@ -317,61 +339,26 @@ export const AREA_ANALYTICS_DEFAULTS = {
     /** @see {@link TrafficAreaAnalyticsConfig.metricConfig} */
     metricConfig: {
         congestionLevel: {
-            color: {
-                valueType: 'raw',
-                stops: [
-                    { value: 0, color: '#2dc653' }, // free flow — green
-                    { value: 50, color: '#f5a623' }, // moderate  — amber
-                    { value: 100, color: '#e03030' }, // severe    — red
-                ],
-            },
+            color: { valueType: 'raw', stops: higherIsWorseStops() },
             height: { maxHeightMeters: 1000, minHeightMeters: 0, scaleMode: 'predefinedRange' },
         },
         speed: {
-            color: {
-                valueType: 'relativeToPredefinedRangePCT',
-                stops: [
-                    { value: 0, color: '#e03030' }, // slow — red
-                    { value: 50, color: '#f5a623' }, // medium — amber
-                    { value: 100, color: '#2dc653' }, // fast  — green
-                ],
-            },
+            color: { valueType: 'relativeToPredefinedRangePCT', stops: higherIsBetterStops() },
             height: { maxHeightMeters: 1000, minHeightMeters: 0, scaleMode: 'predefinedRange' },
         },
         travelTime: {
-            color: {
-                valueType: 'relativeToPredefinedRangePCT',
-                stops: [
-                    { value: 0, color: '#2dc653' }, // fast travel — green
-                    { value: 50, color: '#f5a623' }, // moderate   — amber
-                    { value: 100, color: '#e03030' }, // slow travel — red
-                ],
-            },
+            color: { valueType: 'relativeToPredefinedRangePCT', stops: higherIsWorseStops() },
             height: { maxHeightMeters: 1000, minHeightMeters: 0, scaleMode: 'predefinedRange' },
         },
         freeFlowSpeed: {
-            color: {
-                valueType: 'relativeToPredefinedRangePCT',
-                stops: [
-                    { value: 0, color: '#e03030' }, // slow — red
-                    { value: 50, color: '#f5a623' }, // medium — amber
-                    { value: 100, color: '#2dc653' }, // fast  — green
-                ],
-            },
+            color: { valueType: 'relativeToPredefinedRangePCT', stops: higherIsBetterStops() },
             height: { maxHeightMeters: 1000, minHeightMeters: 0, scaleMode: 'predefinedRange' },
         },
         // networkLength is the total road length within each tile — per-tile values vary widely
         // and are unpredictable, so relativeToActualRangePCT is used as the default to ensure
         // the visualization always scales to the live data range.
         networkLength: {
-            color: {
-                valueType: 'relativeToActualRangePCT',
-                stops: [
-                    { value: 0, color: '#2dc653' }, // low coverage  — green
-                    { value: 50, color: '#f5a623' }, // mid coverage  — amber
-                    { value: 100, color: '#e03030' }, // high coverage — red
-                ],
-            },
+            color: { valueType: 'relativeToActualRangePCT', stops: higherIsWorseStops() },
             height: { maxHeightMeters: 1000, minHeightMeters: 0, scaleMode: 'currentRange' },
         },
     },

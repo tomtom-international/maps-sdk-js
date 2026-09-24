@@ -1,7 +1,9 @@
-import { bboxFromGeoJSON } from '@tomtom-org/maps-sdk/core';
-import { arrayToCSV } from '../shared/arrays';
 import { appendCommonSearchParams, PLACES_URL_PATH } from '../shared/request/commonSearchRequestBuilder';
-import { appendByJoiningParamValue, appendOptionalParam } from '../shared/request/requestBuildingUtils';
+import {
+    appendByJoiningParamValue,
+    appendGeoBiasParams,
+    appendOptionalParam,
+} from '../shared/request/requestBuildingUtils';
 import type { FuzzySearchParams } from './types';
 
 const buildUrlBasePath = (params: FuzzySearchParams): string =>
@@ -18,12 +20,7 @@ export const buildFuzzySearchRequest = (params: FuzzySearchParams): URL => {
     appendOptionalParam(urlParams, 'typeahead', params.typeahead);
     appendOptionalParam(urlParams, 'ofs', params.offset);
     appendByJoiningParamValue(urlParams, 'countrySet', params.countries);
-    appendOptionalParam(urlParams, 'radius', params.radiusMeters);
-    const bbox = params.boundingBox && bboxFromGeoJSON(params.boundingBox);
-    if (bbox) {
-        urlParams.append('topLeft', arrayToCSV([bbox[3], bbox[0]]));
-        urlParams.append('btmRight', arrayToCSV([bbox[1], bbox[2]]));
-    }
+    appendGeoBiasParams(urlParams, params.geoBias);
     appendOptionalParam(urlParams, 'minFuzzyLevel', params.minFuzzyLevel);
     appendOptionalParam(urlParams, 'maxFuzzyLevel', params.maxFuzzyLevel);
     return url;

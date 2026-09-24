@@ -1,4 +1,4 @@
-import type { HasBBox } from '@tomtom-org/maps-sdk/core';
+import type { GeoBias } from './geoBias';
 
 /**
  * Common parameters shared between fuzzy search and geocoding services.
@@ -77,87 +77,19 @@ export type CommonGeocodeAndFuzzySearchParams = {
     offset?: number;
 
     /**
-     * Search radius in meters around the specified position.
-     *
-     * When used with `position`, constrains results to locations within
-     * this distance from the position. Creates a circular search area.
+     * Where to look: a point with an optional radius, or a bounding box.
      *
      * @remarks
-     * **Behavior:**
-     * - Must be used with `position` parameter
-     * - Values ≤ 0 are ignored (parameter has no effect)
-     * - Mutually exclusive with `boundingBox` (radius takes precedence)
-     *
-     * **Typical Values:**
-     * - 500m: Immediate vicinity (walking distance)
-     * - 2000m: Neighborhood area
-     * - 5000m: City district
-     * - 10000m: Greater city area
+     * A point without `radiusMeters` biases the ranking; with one, or with a `boundingBox`, results
+     * are confined to that area. Leave it out to search without a geographic bias.
      *
      * @example
      * ```typescript
-     * // Search within 1km radius
-     * radiusMeters: 1000
-     *
-     * // Search within 5km radius
-     * radiusMeters: 5000
-     *
-     * // Combined with position
-     * position: [4.9, 52.3],
-     * radiusMeters: 2000  // Within 2km of Amsterdam center
+     * geoBias: { position: [4.9, 52.3], radiusMeters: 2000 }
+     * geoBias: { boundingBox: [4.8, 52.3, 5.0, 52.4] }
      * ```
      */
-    radiusMeters?: number;
-
-    /**
-     * Bounding box to constrain search results to a rectangular area.
-     *
-     * Filters results to only include locations within the specified bounding box.
-     * Accepts various GeoJSON formats that contain or can derive a bounding box.
-     *
-     * @remarks
-     * **Accepted Formats:**
-     * - Direct BBox array: `[minLng, minLat, maxLng, maxLat]`
-     * - GeoJSON Feature/FeatureCollection with bbox property
-     * - Any GeoJSON geometry (bbox calculated automatically)
-     *
-     * **Important:**
-     * - Mutually exclusive with Point-Radius parameters
-     * - Point-Radius (`position` + `radiusMeters`) takes precedence if both provided
-     * - Useful for map viewport filtering
-     *
-     * **Use Cases:**
-     * - "Search in visible map area"
-     * - City/region boundary filtering
-     * - Custom geographic restrictions
-     *
-     * @example
-     * ```typescript
-     * // Direct bounding box (Amsterdam area)
-     * boundingBox: [4.8, 52.3, 5.0, 52.4]
-     *
-     * // From GeoJSON Feature
-     * boundingBox: {
-     *   type: 'Feature',
-     *   bbox: [4.8, 52.3, 5.0, 52.4],
-     *   geometry: { ... },
-     *   properties: {}
-     * }
-     *
-     * // From Polygon (bbox calculated)
-     * boundingBox: {
-     *   type: 'Polygon',
-     *   coordinates: [[
-     *     [4.8, 52.3],
-     *     [5.0, 52.3],
-     *     [5.0, 52.4],
-     *     [4.8, 52.4],
-     *     [4.8, 52.3]
-     *   ]]
-     * }
-     * ```
-     */
-    boundingBox?: HasBBox;
+    geoBias?: GeoBias;
 
     /**
      * Restrict search to specific countries.

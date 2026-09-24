@@ -56,8 +56,49 @@ Invalid values throw `RangeError` naming the knob and its range; unknown ids thr
 | | `traffic.flow.widthFactor` | factor 0.5–2 |
 | Traffic incidents | `traffic.incidents.minorColor`, `traffic.incidents.moderateColor`, `traffic.incidents.majorColor`, `traffic.incidents.closedColor` | color |
 | | `traffic.incidents.widthFactor` | factor 0.5–2 |
+| View | `view.projection` (`'mercator'` \| `'globe'`) | enum |
+| | `view.sky`, `view.terrain` | toggle |
+| | `view.skyColor`, `view.horizonColor`, `view.spaceColor` | color |
+| | `view.terrainExaggeration` (0.5–3) | number |
 
 Traffic knobs need the traffic style part loaded (`TrafficFlowModule.get(map, { visible: true })`) to show anything.
+
+## Globe, sky, 3D terrain — the `view` knobs
+
+Map-level MapLibre state a `setStyle` would reset; owned here so it survives style switches.
+
+```ts
+styling.set('view.projection', 'globe');
+styling.set('view.sky', true);              // without it a globe has NO atmosphere (MapLibre's default sky is transparent)
+styling.set('view.terrain', true);          // needs the hillshade style part (default) and a tilted camera
+styling.set('view.terrainExaggeration', 1.5);
+map.mapLibreMap.setMaxPitch(75);            // terrain fog starts at pitch 60 = MapLibre's default maxPitch
+```
+
+The sky defaults follow `map.styleLightDarkTheme` — daylit blue + white horizon on a light style, night blue + dim horizon on a dark one. `view.skyColor` / `view.horizonColor` override; a style's own `sky` wins over both.
+
+`view.spaceColor` is the colour **behind** the map, which a globe leaves visible around the planet. The map canvas is transparent there, so something has to fill it. A background your page already gives the map container is the knob's default and what `reset` returns to — the SDK does not paint over it. Otherwise it follows the theme (white on light, near-black on dark) and is re-applied after a `setStyle`, so a light→dark switch carries it.
+
+Gotchas: the globe flattens to Mercator between zoom 11–12 by design; `view.terrain` reports `available: false` (warns, no-op) on a style without a raster-dem source (e.g. `include: []` without `'hillshade'`).
+
+## Presets — `applyPreset(id, { merge? })`
+
+Named bundles of knob settings; `describe().presets` lists them with their settings.
+
+| Preset | Intent |
+| --- | --- |
+| `'data-viz'` | quiet base under your data: smaller labels/icons, thinner roads, no badges, POIs from z14 |
+| `'night-driving'` | bigger labels/shields, wider roads and traffic tubes, POIs from z13 |
+| `'minimal'` | bare map: everything decorative off |
+| `'globe'` | `view.projection: 'globe'` + `view.sky: true` |
+| `'terrain'` | `view.terrain: true`, exaggeration 1.2, sky on |
+
+```ts
+styling.applyPreset('data-viz');                // replaces current settings
+styling.applyPreset('globe', { merge: true });  // lays over current settings
+```
+
+Agent toolkit: `setMapStyling({ preset: 'data-viz' })`. For dimming/desaturating the base map itself, pair with the map-effects plugin (`map-effects.md`).
 
 ## The catalogue — `describe()`
 

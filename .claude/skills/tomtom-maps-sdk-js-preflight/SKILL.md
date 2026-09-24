@@ -1,12 +1,12 @@
 ---
 name: tomtom-maps-sdk-js-preflight
-description: CONTRIBUTOR skill (editing this monorepo, not building an app with the SDK). ALWAYS run this before committing, pushing, or opening a PR in the Maps SDK monorepo — there are no git hooks here, so it is the only gate before CI. Also use it whenever the user asks to "preflight", "check", or "review my changes for consistency". It runs the Biome, build, type-check and unit-test gates CI runs, scoped to the packages you touched; catches debug leftovers and stray files; and enforces that any public-interface change to the SDK or a plugin ships its docs-portal MDX guide and AI-skill doc updates in the same PR (plus AGENTS.md, navigation.yml, examples). For bug hunting use /code-review; for refactors use /simplify.
+description: CONTRIBUTOR skill (editing this monorepo, not building an app with the SDK). ALWAYS run this before committing, pushing, or opening a PR in the Maps SDK monorepo — there are no git hooks here, so it is the only gate before CI. Also use it whenever the user asks to "preflight", "check", or "review my changes for consistency". It runs the Biome, build, type-check and unit-test gates CI runs, scoped to the packages you touched; audits the diff against CODING_GUIDELINES.md — duplicated helpers and types, imprecise types, verbose comments, abbreviated names; catches debug leftovers and stray files; and enforces that any public-interface change to the SDK or a plugin ships its docs-portal MDX guide and AI-skill doc updates in the same PR (plus AGENTS.md, navigation.yml, examples). For bug hunting use /code-review; for refactors use /simplify.
 ---
 
 Gate the **working diff** before it becomes a commit or PR. Consistency and completeness, not bug
 hunting — logic bugs are `/code-review`, refactors `/simplify`, vulnerabilities
-`/security-review`. Conventions live in `tomtom-maps-sdk-js-contribution`; this verifies you
-followed them. **There are no git hooks in this repository**, so every gate below is a CI job or
+`/security-review`. [`CODING_GUIDELINES.md`](../../../CODING_GUIDELINES.md) holds the rules; Step 4
+verifies the diff against them. **There are no git hooks in this repository**, so every gate below is a CI job or
 nothing — which is why `.claude/settings.json` bounces the first `git commit` of a session here.
 
 **Fix**: Biome autofixes, generated churn, stale references after a rename, doc rows derivable from
@@ -45,11 +45,30 @@ change reads stale declarations. CI's chain (`.github/actions/install-analysis-b
 Collect every failure in one pass rather than stopping at the first, and attribute each to
 `biome` / `tsc` / `vitest` so the user knows what CI blocks on.
 
+**Judge every gate by its exit code.** Run it, then read `$?` — or run it without piping and read
+the tool's own summary line (`Found N errors`, `error TSxxxx`, `Test Files N failed`). Never
+conclude a gate passed from a `grep` over its output: these commands colour and wrap their
+diagnostics, and pnpm prefixes them, so an anchored pattern can match nothing while the gate is
+failing. A `grep` that returns zero is only evidence the pattern was wrong.
+
+```bash
+pnpm lint > /dev/null 2>&1; echo "lint exit=$?"   # 0 or it blocks CI
+```
+
 - **`pnpm lint` is `biome lint .` only** — no formatter, no `organizeImports`, so an unformatted
   file passes CI's lint job. `pnpm lint:fix` writes all three.
+- **`pnpm lint:fix` leaves error-level findings behind.** It is
+  `biome check . --write && biome lint . --write`, and neither pass applies a fix Biome considers
+  unsafe — `noUnusedImports` among them. It prints `No fixes applied` and still exits non-zero, so
+  a refactor that strips the last use of an import needs the import removed **by hand**. This is the
+  commonest way a red `lint` job reaches CI.
 - **Warn-level rules never fail, so CI never shows them**: `noExcessiveCognitiveComplexity`
-  (max 25), `noUnusedVariables`, `noNonNullAssertion`, `useAsConstAssertion`, `noInferrableTypes`.
-  Warnings **on touched files** are findings; ignore pre-existing ones.
+  (max 25), `noExcessiveLinesPerFunction` (max 50), `noExplicitAny`,
+  `useConsistentTypeDefinitions`, `noUnusedVariables`, `noNonNullAssertion`, `useAsConstAssertion`,
+  `noInferrableTypes`. Warnings **on touched files** are findings; ignore pre-existing ones.
+  `noExplicitAny`, `noExcessiveLinesPerFunction` and `useConsistentTypeDefinitions` each carry a
+  repository-wide backlog, so read their counts per file and never as a total. `noUnusedImports`, by
+  contrast, is **error**-level: unlike its `noUnusedVariables` neighbour it blocks the build.
 - **`pnpm test:sdk` includes the live-API `*Integration.test.ts` files** under `services/`, so it
   needs a key and spends quota. Fix the code if a test encodes intended behaviour; if the change
   intentionally alters behaviour, update the test and say so.
@@ -91,26 +110,49 @@ excludes them (`--exclude '**/tests/scenarios/**'`):
 
 Name whatever you skip in the report, with the CI job covering it.
 
-## Step 4: Conventions Biome cannot enforce
+## Step 4: The coding guidelines
 
-The full list is root [`AGENTS.md`](../../../AGENTS.md) § Conventions & Patterns plus the
-package-level files. **Changed lines only**, and only what has no automated backstop — these are
-the ones that actually slip:
+[`CODING_GUIDELINES.md`](../../../CODING_GUIDELINES.md) is the rule set; this step verifies the diff
+against it, on **changed lines only**. Do not restate the rules in the report — cite the section.
+Four of the nine sections need active searching rather than reading; the rest you catch by reading
+the diff.
 
-- **No abbreviated names** (`response` not `res`, `parameters` not `params`, `configuration` not
-  `config`; full mapping in `AGENTS.md`). Loop indices excepted.
-- **Blank line after a single-line `if`** when more code follows.
-- **No re-exports** — import from the canonical source; a forwarding barrel is pure indirection.
-- **Coordinates are `[longitude, latitude]`** (GeoJSON order).
-- **Tests** go in a `tests/` subdirectory beside the source, never a sibling `*.test.ts`.
-- **Reuse core utilities** — check `core/src/util/` and the package's own helpers before adding a
-  geometry / bbox / distance / formatting helper. A duplicated helper is the commonest slip here.
-- **No spaghetti** — a function both >~50 lines *and* deeply nested gets its nested blocks
-  extracted into named helpers.
-- **Never import `map` from `services` or vice versa** — compiles locally, breaks the published
-  packages.
+**§ 1 Reuse** — the commonest and costliest slip, because nothing flags it. For every new function,
+type, constant or literal block in the diff:
 
-## Step 5: Strays, debug leftovers, duplication
+- `git grep` a distinctive token from it across the repo. A hit outside the diff is a finding: name
+  both locations and which one should survive.
+- New geometry / bbox / distance / formatting / unit helper → confirm `core/src/util/` has no
+  equivalent. New map-style layer ID literal → confirm it is not already in
+  `map/src/shared/layers/layerIDs.ts`.
+- A helper now used by two packages belongs in `core/src/util/`, not copied into both.
+- Duplicated **data** counts: layer-ID lists, style-key tables, unit factors, category maps.
+- Sonar's copy-paste detector decorates the PR without blocking, and skips `**/*.test.ts`,
+  `**/*.data.ts` and `**/vite.config.ts` — so this is inspection, not a gate.
+- Hand a large extraction to `/simplify` rather than doing it unasked.
+
+**§ 2 Types** — `tsc` proves the code compiles, never that the type says what is possible:
+
+- Two or more optional properties on one new or changed type → can they legally coexist? If not,
+  it should be a discriminated union. Same for a property that is mandatory only in some mode.
+- `git diff -U0 | rg 'as [A-Z]'` on the diff → each `as` either narrows instead or justifies
+  itself. The `any` and `!` cases are Biome's, under `noExplicitAny` and `noNonNullAssertion`.
+- A new type that restates an existing one or a Zod schema → derive it (`Pick`, `Omit`, `z.infer`).
+- New `string` / `number` parameter with a known value set → literal union.
+
+**§ 3 Comments and docs** — read every comment, TSDoc block and guide paragraph the diff adds.
+Flag one that narrates the next line, runs past three lines, repeats the parameter name in
+`@param`, or carries history rather than the end state ("no longer", "was renamed", "used to").
+Then `git grep` a distinctive phrase from each new explanation: a concept spelled out at several
+call sites belongs at the definition that owns it, with the call sites pointing there.
+
+**§ 5 Naming** — `rg -n '\b(res|req|err|params|idx|el|ref|arg|dest|src|msg|prev|curr)\b'`
+over the changed files; loop counters and `config` are the sanctioned exceptions.
+
+Everything else — arrow functions, the blank line after a single-line `if`, `[longitude, latitude]`
+order, `tests/` placement, no re-exports — is a read of the diff against §§ 4, 6, 7 and 8.
+
+## Step 5: Strays and debug leftovers
 
 - **Untracked files** — for each `??`, does it belong here? A throwaway live-API probe test must not
   be committed: it runs in CI and burns quota. Report; never `git add` or delete a file the user
@@ -130,17 +172,12 @@ the ones that actually slip:
   `examples/default-map`. The examples-root `pnpm e2e-test:examples` sweeps every
   `e2e-tests/**/*.test.ts`, so CI stays green while `pnpm -F @examples/<name> test:e2e` cannot run
   at all.
-- **Duplication** — Sonar's copy-paste detector decorates the PR without blocking and skips
-  `**/*.test.ts`, `**/*.data.ts`, `**/vite.config.ts`, so judge by inspection: `git grep` a
-  distinctive line from every new function or block over ~10 lines. Duplicated *data* counts too —
-  layer-ID lists, style-key tables, unit constants restating `core/src/util/`. Report both
-  locations with a suggestion; hand a large extraction to `/simplify` rather than doing it unasked.
 
 ## Step 6: Cross-surface consistency — the check nothing else performs
 
 **A change to the public interface of the SDK or a plugin must land in the same PR as the
 developer-facing documentation of that interface**: both the customer MDX guides
-(`documentation/docs-portal/guides/`, 68 pages) and the AI skill docs
+(`documentation/docs-portal/guides/`, 70 pages) and the AI skill docs
 (`.claude/skills/tomtom-maps-sdk-js/`) that consumers' agents read. Until both move, every
 developer reading a guide and every agent loading the skill is told something the code no longer
 does — so treat a public-interface diff with no matching guide + skill change as **blocked**, not a
@@ -157,7 +194,7 @@ default.
 | a `services/` function, its parameters or response | `guides/services/**` | `docs/places.md`, `docs/routing.md`, `docs/traffic.md`, `docs/services-config.md` |
 | a map module's API, events or config | `guides/map/**` (a page per module) | `docs/map-setup.md`, `docs/map-styles.md`, `docs/user-events.md`, `docs/module-events.md`, `docs/custom.md`, `docs/maplibre.md` |
 | `plugins/agent-toolkit/` | `guides/plugins/agent-toolkit/*.mdx` (10 pages) | `docs/agent-toolkit.md` + `docs/agent-toolkit/*.md` |
-| `plugins/viewport-places/`, `plugins/landmarks-3d/` | `guides/plugins/viewport-places.mdx`, `guides/plugins/landmarks-3d.mdx` | `docs/places.md`, `docs/landmarks-3d.md` |
+| `plugins/viewport-places/`, `plugins/landmarks-3d/`, `plugins/map-effects/` | `guides/plugins/viewport-places.mdx`, `guides/plugins/landmarks-3d.mdx`, `guides/plugins/map-effects.mdx` | `docs/places.md`, `docs/landmarks-3d.md`, `docs/map-effects.md` |
 
 A **new** page or doc must reach its registry too: `navigation.yml` for guides; the
 `Topic → Filename` table plus the `description:` keyword list for the skill.

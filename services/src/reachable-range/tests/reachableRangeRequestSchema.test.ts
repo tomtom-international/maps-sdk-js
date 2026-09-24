@@ -207,6 +207,26 @@ describe('Reachable range parameter narrowing', () => {
         expect(validationCall).toThrow(/heading/);
     });
 
+    test('it should reject vehicle.preferences.chargingPreferences, which plans stops this endpoint has none of', () => {
+        const validationCall = () =>
+            validateRequestSchema<ReachableRangeParams>(
+                {
+                    ...base,
+                    budget: { type: 'timeMinutes', value: 30 },
+                    origin: [10, 20],
+                    vehicle: {
+                        engineType: 'electric',
+                        preferences: {
+                            chargingPreferences: { minChargeAtDestinationInkWh: 15, minChargeAtChargingStopsInkWh: 10 },
+                        },
+                    } as never,
+                },
+                config,
+            );
+
+        expect(validationCall).toThrow(/chargingPreferences/);
+    });
+
     test('it should accept the vehicle parameters the endpoint does support', () => {
         const validationCall = () =>
             validateRequestSchema<ReachableRangeParams>(

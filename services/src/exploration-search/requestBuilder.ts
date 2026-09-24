@@ -15,10 +15,12 @@ const buildUrlBasePath = (params: ExplorationSearchParams): string =>
     params.customServiceBaseURL ?? EXPLORATION_SEARCH_BASE_URL;
 
 const toNearPayload = (params: ExplorationSearchParams): ExplorationSearchPayloadAPI['near'] => {
-    const coordinates = getPosition(params.position);
+    const coordinates = getPosition(params.geoBias?.position);
     if (!coordinates) return undefined;
-    const radiusKm =
-        params.radiusMeters && params.radiusMeters > 0 ? params.radiusMeters / 1000 : DEFAULT_NEAR_RADIUS_KM;
+
+    const radiusMeters = params.geoBias?.radiusMeters;
+    const radiusKm = radiusMeters && radiusMeters > 0 ? radiusMeters / 1000 : DEFAULT_NEAR_RADIUS_KM;
+
     return { coordinates, radius_km: radiusKm };
 };
 
@@ -28,8 +30,9 @@ const toCategoriesPayload = (params: ExplorationSearchParams): string[] | undefi
         : undefined;
 
 const toBboxesPayload = (params: ExplorationSearchParams): BBox[] | undefined => {
-    const inputs = [...(params.boundingBox ? [params.boundingBox] : []), ...(params.boundingBoxes ?? [])];
-    const bboxes = inputs.map((input) => bboxFromGeoJSON(input)).filter((bbox): bbox is BBox => bbox !== undefined);
+    const bboxes = (params.boundingBoxes ?? [])
+        .map((input) => bboxFromGeoJSON(input))
+        .filter((bbox): bbox is BBox => bbox !== undefined);
     return bboxes.length ? bboxes : undefined;
 };
 

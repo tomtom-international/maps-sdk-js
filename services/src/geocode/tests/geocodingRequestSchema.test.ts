@@ -1,4 +1,3 @@
-import type { Polygon } from 'geojson';
 import { describe, expect, test } from 'vitest';
 import { bestExecutionTimeMS } from '../../../../core/src/util/tests/performanceTestUtils';
 import { geocodingReqObjects as geoCodingReqObjects } from '../../geocode/tests/requestBuilderPerf.data';
@@ -144,20 +143,8 @@ describe('Geocoding schema validation', () => {
     test('it should fail when radius is incorrect', () => {
         const invalidParams: GeocodingParams = {
             query: 'London',
-            boundingBox: {
-                type: 'Polygon',
-                coordinates: [
-                    [
-                        [5.16905, 52.44009],
-                        [5.16957, 52.44009],
-                        [5.16957, 51.85925],
-                        [5.16905, 51.85925],
-                        [5.16905, 52.44009],
-                    ],
-                ],
-            } as Polygon,
             // @ts-ignore
-            radiusMeters: '1000',
+            geoBias: { position: [4.9, 52.3], radiusMeters: '1000' },
             apiKey,
             commonBaseURL: commonBaseUrl,
         };
@@ -165,9 +152,9 @@ describe('Geocoding schema validation', () => {
             expect.objectContaining({
                 issues: [
                     expect.objectContaining({
-                        code: 'invalid_type',
-                        expected: 'number',
-                        path: ['radiusMeters'],
+                        // `geoBias` is a union, so a bad member surfaces as a union failure on it.
+                        code: 'invalid_union',
+                        path: ['geoBias'],
                     }),
                 ],
             }),
@@ -240,7 +227,7 @@ describe('Geocoding schema validation', () => {
     test('it should fail when position lat/lon is out of range', () => {
         const invalidParams: GeocodingParams = {
             query: 'Minnesota',
-            position: [46.6144, -93.1432], // Inverted coords for Minnesota
+            geoBias: { position: [46.6144, -93.1432] }, // Inverted coords for Minnesota
             apiKey,
             commonBaseURL: commonBaseUrl,
         };

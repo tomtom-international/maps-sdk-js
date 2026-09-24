@@ -28,6 +28,53 @@
                 </div>
 
                 <div class="ui-section">
+                    <span class="ui-subheading">border crossings</span>
+                    <div id="country-crossing-row" class="section-row enabled">
+                        <label class="ui-checkbox-label section-name">
+                            <input type="checkbox" data-crossing-knob="visible" checked>
+                            <span>countryCrossings</span>
+                        </label>
+                        <span class="section-count" title="border crossings on this route"></span>
+                        <span class="ui-color-swatch">
+                            <input type="color" data-crossing-knob="color" value="#1A2024">
+                        </span>
+                        <div class="section-knobs">
+                            <label class="section-knob">
+                                <span class="section-knob-name">alignment</span>
+                                <select class="ui-dropdown" data-crossing-knob="alignment">
+                                    <option value="viewport">viewport</option>
+                                    <option value="route">route</option>
+                                </select>
+                            </label>
+                            <label class="section-knob">
+                                <span class="section-knob-name">textColor</span>
+                                <span class="ui-color-swatch">
+                                    <input type="color" data-crossing-knob="textColor" value="#F1F3F5">
+                                </span>
+                            </label>
+                            <label class="section-knob section-knob-wide">
+                                <span class="section-knob-name">minzoom</span>
+                                <span class="ui-slider-container">
+                                    <input
+                                        type="range"
+                                        class="ui-slider"
+                                        data-crossing-knob="minzoom"
+                                        min="0"
+                                        max="14"
+                                        step="1"
+                                        value="4"
+                                    >
+                                    <span class="ui-slider-value" data-readout="countryCrossings-minzoom"></span>
+                                </span>
+                            </label>
+                            <span class="section-knob section-knob-wide crossing-detail" id="crossing-detail">
+                                click a plaque for the two sections it joins
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ui-section">
                     <span class="ui-subheading">sections — drawn by default</span>
                     <div id="drawn-section-rows" class="section-rows"></div>
                 </div>

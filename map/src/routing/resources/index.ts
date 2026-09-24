@@ -3,6 +3,7 @@ import { SVGIconStyleOptions } from '../../shared';
 import { isDOMImageSupported, svgToImg } from '../../shared/imageUtils';
 import { parseSvg, pinSvg } from '../../shared/resources';
 import type { SpeedLimitSignFace } from '../types/routeSections';
+import countryCrossingPlaqueSvgRaw from './country-crossing-plaque.svg?raw';
 import finishSvgRaw from './finish.svg?raw';
 import instructionArrowSvgRaw from './instruction-line-arrow.svg?raw';
 import speedLimitDiscSvgRaw from './speed-limit-disc.svg?raw';
@@ -51,6 +52,34 @@ export const summaryBubbleImageOptions: Partial<StyleImageMetadata> = {
     ],
     stretchY: [[20, 35]],
     content: [10, 10, 130, 45],
+};
+
+/**
+ * Options to stretch the crossing plaque around whatever label it carries.
+ * * They are tightly coupled with the SVG original dimensions: the stretchable bands are the middle
+ *   of the rounded rectangle, so the corners keep their radius at any width.
+ * @ignore
+ */
+export const countryCrossingPlaqueImageOptions: Partial<StyleImageMetadata> = {
+    pixelRatio: 2,
+    stretchX: [[30, 110]],
+    stretchY: [[25, 35]],
+    content: [10, 10, 130, 50],
+};
+
+/**
+ * The plaque a border crossing's label is written on. The country codes are drawn over it as text,
+ * so one image serves every crossing.
+ * @ignore
+ */
+export const countryCrossingPlaqueImg = (color: string): HTMLImageElement => {
+    // defensive check for SSR and node-test environments:
+    if (!isDOMImageSupported()) {
+        return undefined as never as HTMLImageElement;
+    }
+    const svg: SVGElement = parseSvg(countryCrossingPlaqueSvgRaw);
+    svg.querySelector('#plaque')?.setAttribute('fill', color);
+    return svgToImg(svg);
 };
 
 const SPEED_LIMIT_SIGN_SVGS: Record<SpeedLimitSignFace, string> = {

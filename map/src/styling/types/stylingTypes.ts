@@ -1,5 +1,6 @@
 import type { KnobDescriptor, KnobKind, KnobRange, MapModuleCommonConfig } from '../../shared';
 import type { StylingKnobId, StylingKnobValueOf } from '../knobCatalogue';
+import type { StylingPresetId } from '../presets';
 
 /**
  * What kind of value a styling knob takes — a subset of the shared {@link KnobKind} vocabulary.
@@ -8,10 +9,11 @@ import type { StylingKnobId, StylingKnobValueOf } from '../knobCatalogue';
  * - `number`: an absolute number with a range, e.g. a minimum zoom.
  * - `toggle`: `true`/`false`, e.g. whether exit numbers are shown.
  * - `color`: a CSS colour string (`#rrggbb`, `hsl(…)`, `rgb(…)`, a named colour).
+ * - `enum`: one of the knob's `options`, e.g. the projection.
  *
  * @group Map Styling
  */
-export const stylingKnobKinds = ['factor', 'number', 'toggle', 'color'] as const satisfies readonly KnobKind[];
+export const stylingKnobKinds = ['factor', 'number', 'toggle', 'color', 'enum'] as const satisfies readonly KnobKind[];
 
 /**
  * @group Map Styling
@@ -72,10 +74,13 @@ export type StylingKnobDescriptor = KnobDescriptor & {
     current: StylingKnobValue | undefined;
     /** The range of valid values, for `factor` and `number` knobs. */
     range?: StylingKnobRange;
+    /** The valid values, for `enum` knobs. */
+    options?: readonly string[];
     /**
      * Whether the knob has anything to work on in the loaded style. `false` means setting it would
-     * do nothing — the SDK also warns once in the console when that happens. Check this before
-     * offering the knob in a UI or to an agent.
+     * do nothing, and the SDK also warns once in the console when that happens. Check this before
+     * offering the knob in a UI or to an agent. Map-level knobs are always available bar
+     * `view.terrain`, which needs the style to carry an elevation source.
      */
     available: boolean;
     /** Which styles the knob works on; see {@link stylingKnobAppliesTo}. */
@@ -90,6 +95,23 @@ export type StylingKnobDescriptor = KnobDescriptor & {
  */
 export type StylingCatalogue = {
     knobs: StylingKnobDescriptor[];
+    /** The presets {@link StylingModule.applyPreset} accepts, with the settings each one applies. */
+    presets: StylingPresetDescriptor[];
+};
+
+/**
+ * A named bundle of knob settings — TomTom's cartographic opinions, in code. Apply one with
+ * {@link StylingModule.applyPreset}.
+ *
+ * @group Map Styling
+ */
+export type StylingPresetDescriptor = {
+    id: StylingPresetId;
+    name: string;
+    /** One line on the use case the preset serves. */
+    description: string;
+    /** The knob values the preset applies; the same shape {@link StylingModule.applyConfig} takes. */
+    settings: StylingSettings;
 };
 
 /**

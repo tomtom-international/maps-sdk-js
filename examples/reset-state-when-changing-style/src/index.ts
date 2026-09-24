@@ -40,9 +40,9 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'es-ES' });
     routingModule.showRoutes(await calculateRoute({ locations }));
 
     const position = map.mapLibreMap.getCenter().toArray();
-    (await PlacesModule.create(map)).show(await search({ query: 'London Eye', position, limit: 1 }));
+    (await PlacesModule.create(map)).show(await search({ query: 'London Eye', geoBias: { position }, limit: 1 }));
     (await PlacesModule.create(map)).show(
-        await search({ query: 'City Hall', position, poiCategories: ['GOVERNMENT_OFFICE'] }),
+        await search({ query: 'City Hall', geoBias: { position }, poiCategories: ['GOVERNMENT_OFFICE'] }),
     );
 
     const resetStateToggle = document.querySelector('#ui-resetState') as HTMLInputElement;

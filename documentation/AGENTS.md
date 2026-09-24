@@ -50,7 +50,8 @@ documentation/
 ### Getting Started
 1. Read [../CONTRIBUTING.md](../CONTRIBUTING.md) first
 2. Start with [development/GETTING_STARTED.md](development/GETTING_STARTED.md) to set up your environment
-3. Read [development/DESIGN_PRINCIPLES.md](development/DESIGN_PRINCIPLES.md) before making significant changes
+3. Read [../CODING_GUIDELINES.md](../CODING_GUIDELINES.md) before writing code — it is normative
+4. Read [development/DESIGN_PRINCIPLES.md](development/DESIGN_PRINCIPLES.md) before making significant changes
 
 ### Key Documents
 - **[development/README.md](development/README.md)** - Index of all development docs
@@ -59,6 +60,7 @@ documentation/
 - **[development/TESTING.md](development/TESTING.md)** - Testing philosophy and commands
 - **[development/QUALITY.md](development/QUALITY.md)** - Linting and formatting with Biome
 - **[development/DESIGN_PRINCIPLES.md](development/DESIGN_PRINCIPLES.md)** - The "why" behind the conventions
+- **[../CODING_GUIDELINES.md](../CODING_GUIDELINES.md)** (at root) - The coding rules themselves
 - **[../CONTRIBUTING.md](../CONTRIBUTING.md)** (at root) - Contribution process and guidelines
 
 ### Common Workflows

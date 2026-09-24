@@ -40,7 +40,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
     const updatePlaces = async () => {
         const results = await search({
             query: 'restaurant',
-            boundingBox: map.getBBox(),
+            geoBias: { boundingBox: map.getBBox() },
             limit: 25,
         });
 

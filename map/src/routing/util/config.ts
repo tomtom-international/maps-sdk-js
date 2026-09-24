@@ -1,5 +1,5 @@
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import type { ToBeAddedLayerSpecTemplate, ToBeAddedLayerSpecWithoutSource } from '../../shared';
+import type { LightDark, ToBeAddedLayerSpecTemplate, ToBeAddedLayerSpecWithoutSource } from '../../shared';
 import { prefixLayerID } from '../../shared/layers/utils';
 import { buildRoutingLayers } from '../layers/routingLayers';
 import {
@@ -53,6 +53,7 @@ export const createLayersSpecs = (
     instructionLines: mapLayerSpecs(layerConfigs.instructionLines, layerIDPrefix),
     instructionArrows: mapLayerSpecs(layerConfigs.instructionArrows, layerIDPrefix),
     summaryBubbles: mapLayerSpecs(layerConfigs.summaryBubbles, layerIDPrefix),
+    countryCrossings: mapLayerSpecs(layerConfigs.countryCrossings, layerIDPrefix),
 });
 
 /**
@@ -62,6 +63,7 @@ export const routeModuleConfigWithDefaults = (
     config: RoutingModuleConfig | undefined,
     layerIDPrefix: string,
     instanceIndex: number,
+    lightDark?: LightDark,
 ): RoutingModuleConfig => {
     const globalDisplayUnits = TomTomConfig.instance.get().displayUnits;
     const displayUnits = config?.displayUnits;
@@ -69,6 +71,6 @@ export const routeModuleConfigWithDefaults = (
         // First apply the provided configuration not to lose any properties:
         ...config,
         ...(displayUnits ? {} : { displayUnits: globalDisplayUnits }),
-        layers: buildRoutingLayers(config, layerIDPrefix, instanceIndex),
+        layers: buildRoutingLayers(config, layerIDPrefix, instanceIndex, lightDark),
     };
 };

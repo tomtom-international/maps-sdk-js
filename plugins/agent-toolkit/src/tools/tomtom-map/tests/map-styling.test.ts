@@ -20,10 +20,21 @@ const makeStylingMock = (catalogue: StylingCatalogue) => {
             else if (settings) delete settings[id as keyof StylingSettings];
         }),
         getConfig: vi.fn(() => settings && { ...settings }),
+        applyPreset: vi.fn((id: string) => {
+            settings = id === 'globe' ? { 'view.projection': 'globe', 'view.sky': true } : {};
+        }),
     };
 };
 
 const catalogue: StylingCatalogue = {
+    presets: [
+        {
+            id: 'globe',
+            name: 'Globe',
+            description: 'A globe with an atmosphere.',
+            settings: { 'view.projection': 'globe', 'view.sky': true },
+        },
+    ],
     knobs: [
         {
             id: 'labels.sizeFactor',
@@ -113,5 +124,16 @@ describe('executeSetMapStyling', () => {
         if ('error' in all) expect.fail('expected a result');
         expect(styling.reset).toHaveBeenCalledWith();
         expect(all.settings).toEqual({ 'buildings.3d': true });
+    });
+
+    it('applies a preset, with `set` layered on top', async () => {
+        const styling = makeStylingMock(catalogue);
+        const result = await executeSetMapStyling(
+            { preset: 'globe', set: { 'labels.sizeFactor': 1.2 } },
+            stateWithStyling(styling),
+        );
+        if ('error' in result) expect.fail('expected a result');
+        expect(styling.applyPreset).toHaveBeenCalledWith('globe');
+        expect(result.settings).toEqual({ 'view.projection': 'globe', 'view.sky': true, 'labels.sizeFactor': 1.2 });
     });
 });

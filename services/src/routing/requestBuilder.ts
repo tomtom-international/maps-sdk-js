@@ -13,22 +13,22 @@ import {
 } from '@tomtom-org/maps-sdk/core';
 import type { Feature, LineString, MultiPoint, Point } from 'geojson';
 import { isNil } from 'lodash-es';
-import type {
-    ChargingPreferencesKWH,
-    ChargingPreferencesPCT,
-    CombustionVehicleState,
-    ElectricVehicleParams,
-    ElectricVehicleStateKWH,
-    ElectricVehicleStatePCT,
-    FetchInput,
-    VehicleParameters,
-} from '../shared';
+import type { ElectricVehicleParams, FetchInput, VehicleParameters } from '../shared';
 import { buildCommonServiceRequestHeaders } from '../shared/request/requestBuildingUtils';
+import {
+    chargingPreferenceParams,
+    combustionConsumptionParams,
+    currentChargeParams,
+    currentFuelParams,
+    type EnergyQueryParams,
+    electricConsumptionParams,
+    maxChargeParams,
+    setEnergyParams,
+} from '../shared/request/vehicleEnergyParams';
 import type {
     CombustionEngineModel,
-    ConsumptionModelEfficiency,
     ElectricEngineModel,
-    SpeedToConsumptionRate,
+    VehicleEngineModel,
     VehicleEngineType,
 } from '../shared/types/vehicleEngineParams';
 import type { ExplicitVehicleModel } from '../shared/types/vehicleModel';
@@ -57,9 +57,6 @@ const toGuidanceBody = (
     guidance: 'instructions',
     instructionPhonetics: guidance.phonetics ? (guidance.phonetics.toLowerCase() as 'ipa' | 'lhp') : 'ipa',
 });
-
-const buildSpeedConsumptionString = (rates: SpeedToConsumptionRate[]): string =>
-    rates.map((rate) => `${rate.speedKMH},${rate.consumptionUnitsPer100KM}`).join(':');
 
 // Section types that are EXPLICIT — they must be individually listed in the Attributes header
 // to be included in the response, even when the parent `sections` is already requested.
@@ -128,170 +125,45 @@ const buildVehicleBody = (vehicle: VehicleParameters): Partial<CalculateRoutePOS
     return result;
 };
 
-const setEfficiencyParams = (url: URL, efficiency: ConsumptionModelEfficiency): void => {
-    if (!isNil(efficiency.acceleration))
-        url.searchParams.set('accelerationEfficiency', String(efficiency.acceleration));
+const electricEngineParams = (engine: ElectricEngineModel): EnergyQueryParams => ({
+    ...electricConsumptionParams(engine.consumption),
+    ...maxChargeParams(engine),
+});
 
-    if (!isNil(efficiency.deceleration))
-        url.searchParams.set('decelerationEfficiency', String(efficiency.deceleration));
+const explicitEngineOf = (vehicle: VehicleParameters): VehicleEngineModel<VehicleEngineType> | undefined => {
+    if (!vehicle.model || 'variantId' in vehicle.model) return undefined;
 
-    if (!isNil(efficiency.uphill)) url.searchParams.set('uphillEfficiency', String(efficiency.uphill));
-
-    if (!isNil(efficiency.downhill)) url.searchParams.set('downhillEfficiency', String(efficiency.downhill));
-};
-
-// Electric consumption + max-charge URL params shared by the regular (/routes/calculate) and LDEVR
-// (/calculateLongDistanceEVRoute) request builders.
-const appendElectricConsumptionParams = (url: URL, engine: ElectricEngineModel): void => {
-    const consumption = engine.consumption;
-    if (consumption.speedsToConsumptionsKWH?.length)
-        url.searchParams.set(
-            'constantSpeedConsumptionInkWhPerHundredkm',
-            buildSpeedConsumptionString(consumption.speedsToConsumptionsKWH),
-        );
-
-    if (!isNil(consumption.auxiliaryPowerInkW))
-        url.searchParams.set('auxiliaryPowerInkW', String(consumption.auxiliaryPowerInkW));
-
-    if (!isNil(consumption.consumptionInKWHPerKMAltitudeGain))
-        url.searchParams.set(
-            'consumptionInkWhPerkmAltitudeGain',
-            String(consumption.consumptionInKWHPerKMAltitudeGain),
-        );
-
-    if (!isNil(consumption.recuperationInKWHPerKMAltitudeLoss))
-        url.searchParams.set(
-            'recuperationInkWhPerkmAltitudeLoss',
-            String(consumption.recuperationInKWHPerKMAltitudeLoss),
-        );
-
-    if (consumption.efficiency) setEfficiencyParams(url, consumption.efficiency);
-
-    if (engine.charging?.maxChargeKWH) url.searchParams.set('maxChargeInkWh', String(engine.charging.maxChargeKWH));
-};
-
-const appendElectricParams = (url: URL, engine: ElectricEngineModel, vehicle: VehicleParameters): void => {
-    appendElectricConsumptionParams(url, engine);
-
-    const kwhState = vehicle.state as ElectricVehicleStateKWH;
-    const pctState = vehicle.state as ElectricVehicleStatePCT;
-    if (kwhState?.currentChargeInkWh) {
-        url.searchParams.set('currentChargeInkWh', String(kwhState.currentChargeInkWh));
-    } else if (pctState?.currentChargePCT && engine.charging?.maxChargeKWH) {
-        url.searchParams.set(
-            'currentChargeInkWh',
-            String((engine.charging.maxChargeKWH * pctState.currentChargePCT) / 100),
-        );
-    }
-};
-
-const appendCombustionParams = (url: URL, engine: CombustionEngineModel, vehicle: VehicleParameters): void => {
-    const consumption = engine.consumption;
-    if (consumption.speedsToConsumptionsLiters?.length)
-        url.searchParams.set(
-            'constantSpeedConsumptionInLitersPerHundredkm',
-            buildSpeedConsumptionString(consumption.speedsToConsumptionsLiters),
-        );
-
-    if (!isNil(consumption.auxiliaryPowerInLitersPerHour))
-        url.searchParams.set('auxiliaryPowerInLitersPerHour', String(consumption.auxiliaryPowerInLitersPerHour));
-
-    if (!isNil(consumption.fuelEnergyDensityInMJoulesPerLiter))
-        url.searchParams.set(
-            'fuelEnergyDensityInMJoulesPerLiter',
-            String(consumption.fuelEnergyDensityInMJoulesPerLiter),
-        );
-
-    if (consumption.efficiency) setEfficiencyParams(url, consumption.efficiency);
-
-    const combustionState = vehicle.state as CombustionVehicleState;
-    if (combustionState?.currentFuelInLiters)
-        url.searchParams.set('currentFuelInLiters', String(combustionState.currentFuelInLiters));
+    return (vehicle.model as ExplicitVehicleModel<VehicleEngineType>).engine;
 };
 
 const appendConsumptionParams = (url: URL, vehicle: VehicleParameters): void => {
-    if (!vehicle.model || 'variantId' in vehicle.model) return;
+    const engine = explicitEngineOf(vehicle);
+    if (!engine) return;
 
-    const model = vehicle.model as ExplicitVehicleModel<VehicleEngineType>;
-    if (!model.engine) return;
-
-    if ((vehicle as ElectricVehicleParams).engineType === 'electric') {
-        appendElectricParams(url, model.engine as ElectricEngineModel, vehicle);
-    } else {
-        appendCombustionParams(url, model.engine as CombustionEngineModel, vehicle);
-    }
+    const isElectric = (vehicle as ElectricVehicleParams).engineType === 'electric';
+    setEnergyParams(url.searchParams, {
+        ...(isElectric
+            ? { ...electricEngineParams(engine as ElectricEngineModel), ...currentChargeParams(vehicle) }
+            : { ...combustionConsumptionParams(engine as CombustionEngineModel), ...currentFuelParams(vehicle) }),
+    });
 };
 
 // ─── LDEVR (/calculateLongDistanceEVRoute) URL param helpers ─────────────────
 
-const getLDEVRMaxCharge = (vehicle: VehicleParameters): number | undefined => {
-    if (!vehicle.model || 'variantId' in vehicle.model) return undefined;
-
-    return ((vehicle.model as ExplicitVehicleModel<VehicleEngineType>).engine as ElectricEngineModel | undefined)
-        ?.charging?.maxChargeKWH;
-};
-
-const appendLDEVRStateParams = (url: URL, vehicle: VehicleParameters): void => {
-    if (!vehicle.state) return;
-
-    const kwhState = vehicle.state as ElectricVehicleStateKWH;
-    const pctState = vehicle.state as ElectricVehicleStatePCT;
-    if (kwhState.currentChargeInkWh) {
-        url.searchParams.set('currentChargeInkWh', String(kwhState.currentChargeInkWh));
-        return;
-    }
-
-    if (!pctState.currentChargePCT) return;
-
-    const maxCharge = getLDEVRMaxCharge(vehicle);
-    if (maxCharge) url.searchParams.set('currentChargeInkWh', String((maxCharge * pctState.currentChargePCT) / 100));
-};
-
-const appendLDEVRChargingPrefParams = (url: URL, vehicle: VehicleParameters): void => {
-    const chargingPrefs = (vehicle as ElectricVehicleParams).preferences?.chargingPreferences;
-    if (!chargingPrefs) return;
-
-    const kwhPrefs = chargingPrefs as ChargingPreferencesKWH;
-    const pctPrefs = chargingPrefs as ChargingPreferencesPCT;
-    if (!isNil(kwhPrefs.minChargeAtDestinationInkWh) || !isNil(kwhPrefs.minChargeAtChargingStopsInkWh)) {
-        if (!isNil(kwhPrefs.minChargeAtDestinationInkWh))
-            url.searchParams.set('minChargeAtDestinationInkWh', String(kwhPrefs.minChargeAtDestinationInkWh));
-
-        if (!isNil(kwhPrefs.minChargeAtChargingStopsInkWh))
-            url.searchParams.set('minChargeAtChargingStopsInkWh', String(kwhPrefs.minChargeAtChargingStopsInkWh));
-
-        return;
-    }
-
-    const maxCharge = getLDEVRMaxCharge(vehicle);
-    if (!maxCharge) return;
-
-    if (!isNil(pctPrefs.minChargeAtDestinationPCT))
-        url.searchParams.set(
-            'minChargeAtDestinationInkWh',
-            String((maxCharge * pctPrefs.minChargeAtDestinationPCT) / 100),
-        );
-
-    if (!isNil(pctPrefs.minChargeAtChargingStopsPCT))
-        url.searchParams.set(
-            'minChargeAtChargingStopsInkWh',
-            String((maxCharge * pctPrefs.minChargeAtChargingStopsPCT) / 100),
-        );
-};
-
 const appendLDEVRVehicleParams = (url: URL, vehicle: VehicleParameters | undefined): void => {
-    if (!vehicle) return;
-
-    if (!vehicle.model) return;
+    if (!vehicle?.model) return;
 
     if ('variantId' in vehicle.model) {
         url.searchParams.set('vehicleModelId', vehicle.model.variantId);
     } else {
-        const model = vehicle.model as ExplicitVehicleModel<VehicleEngineType>;
-        if (model.engine) appendElectricConsumptionParams(url, model.engine as ElectricEngineModel);
+        const engine = explicitEngineOf(vehicle);
+        if (engine) setEnergyParams(url.searchParams, electricEngineParams(engine as ElectricEngineModel));
     }
-    appendLDEVRStateParams(url, vehicle);
-    appendLDEVRChargingPrefParams(url, vehicle);
+
+    setEnergyParams(url.searchParams, {
+        ...(vehicle.state && currentChargeParams(vehicle)),
+        ...chargingPreferenceParams(vehicle),
+    });
 };
 
 // Charging preferences alone select this endpoint. `chargingStopsStrategy` deliberately does NOT:
@@ -394,14 +266,9 @@ const toEntryPointsMultiPoint = (entryPoints: HasLngLat[]): MultiPoint => ({
 });
 
 // Builds the `legs[]` entry for the leg *arriving at* `arrivingStop`, from that stop's options.
-const toLegRequest = (arrivingStop: Stop, isDestination: boolean): LegRequestAPI => {
+const toLegRequest = (arrivingStop: Stop): LegRequestAPI => {
     const options = arrivingStop.options;
     if (!options) return {};
-
-    if (isDestination && options.pauseDurationSeconds)
-        throw new Error(
-            'pauseDurationSeconds is not supported on the destination: the routing API requires the pause on the last leg to be 0.',
-        );
 
     const routeStop: RouteStopRequestAPI = {
         ...(options.pauseDurationSeconds && { pauseDurationInSeconds: options.pauseDurationSeconds }),
@@ -431,7 +298,7 @@ const buildLegs = (allStops: Stop[], hasPathLocations: boolean): LegRequestAPI[]
     const arrivingStops = allStops.slice(1);
     const legs = arrivingStops.map((arrivingStop, index) => ({
         ...allStops[index].legToNext,
-        ...toLegRequest(arrivingStop, index === arrivingStops.length - 1),
+        ...toLegRequest(arrivingStop),
     }));
 
     if (!hasPathLocations && legs.every((leg) => Object.keys(leg).length === 0)) return undefined;

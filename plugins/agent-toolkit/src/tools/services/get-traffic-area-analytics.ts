@@ -65,50 +65,59 @@ export const getTrafficAreaAnalyticsOutputSchema = z.union([
 /**
  * Tool schema for fetching traffic area analytics.
  */
-export const getTrafficAreaAnalyticsSchema = z.object({
-    location: locationInputSchema
-        .optional()
-        .describe(
-            'Named location (city, region, country) to fetch the boundary for. Resolved via geocoding + geometryData. Mutually exclusive with bbox and geometry.',
-        ),
-    bbox: z
-        .array(z.number())
-        .length(4)
-        .optional()
-        .describe(
-            '[minLng, minLat, maxLng, maxLat] — use a wide area (at least 5-10km across, city-level) for meaningful results. Mutually exclusive with location.',
-        ),
-    showOnMap: z
-        .boolean()
-        .optional()
-        .describe(
-            'Visualize the result immediately with default settings. Use `updateTrafficAreaAnalyticsDisplay` to customize.',
-        ),
-    startDate: z
-        .string()
-        .optional()
-        .describe("Start date 'YYYY-MM-DD'. Use with endDate for a continuous range (max 31 days)."),
-    endDate: z.string().optional().describe("End date 'YYYY-MM-DD' (inclusive). Defaults to today if omitted."),
-    days: z
-        .array(z.string())
-        .optional()
-        .describe(
-            "Specific dates 'YYYY-MM-DD' for non-consecutive analysis. Mutually exclusive with startDate/endDate.",
-        ),
-    metrics: z
-        .union([z.literal('all'), z.array(z.enum([...METRICS])).min(1)])
-        .describe(
-            "Traffic metrics to analyze. Use 'all' (preferred) or an explicit array like ['speed', 'congestionLevel', 'freeFlowSpeed', 'travelTime', 'networkLength'].",
-        ),
-    functionalRoadClasses: z
-        .union([z.literal('all'), z.array(z.enum([...FUNCTIONAL_ROAD_CLASSES]))])
-        .optional()
-        .describe("Road classes to include. 'all' (default) or array of specific classes."),
-    hours: z
-        .union([z.literal('all'), z.array(z.number().int().min(0).max(23))])
-        .optional()
-        .describe("Hours of the day (0-23) to include. 'all' (default) or array like [7,8,9,17,18] for rush hours."),
-});
+export const getTrafficAreaAnalyticsSchema = z
+    .object({
+        location: locationInputSchema
+            .optional()
+            .describe(
+                'Named location (city, region, country) to fetch the boundary for. Resolved via geocoding + geometryData. Provide this or bbox, never both.',
+            ),
+        bbox: z
+            .array(z.number())
+            .length(4)
+            .optional()
+            .describe(
+                '[minLng, minLat, maxLng, maxLat] — use a wide area (at least 5-10km across, city-level) for meaningful results. Provide this or location, never both.',
+            ),
+        showOnMap: z
+            .boolean()
+            .optional()
+            .describe(
+                'Visualize the result immediately with default settings. Use `updateTrafficAreaAnalyticsDisplay` to customize.',
+            ),
+        startDate: z
+            .string()
+            .optional()
+            .describe("Start date 'YYYY-MM-DD'. Use with endDate for a continuous range (max 31 days)."),
+        endDate: z.string().optional().describe("End date 'YYYY-MM-DD' (inclusive). Defaults to today if omitted."),
+        days: z
+            .array(z.string())
+            .optional()
+            .describe(
+                "Specific dates 'YYYY-MM-DD' for non-consecutive analysis. Mutually exclusive with startDate/endDate.",
+            ),
+        metrics: z
+            .union([z.literal('all'), z.array(z.enum([...METRICS])).min(1)])
+            .describe(
+                "Traffic metrics to analyze. Use 'all' (preferred) or an explicit array like ['speed', 'congestionLevel', 'freeFlowSpeed', 'travelTime', 'networkLength'].",
+            ),
+        functionalRoadClasses: z
+            .union([z.literal('all'), z.array(z.enum([...FUNCTIONAL_ROAD_CLASSES]))])
+            .optional()
+            .describe("Road classes to include. 'all' (default) or array of specific classes."),
+        hours: z
+            .union([z.literal('all'), z.array(z.number().int().min(0).max(23))])
+            .optional()
+            .describe(
+                "Hours of the day (0-23) to include. 'all' (default) or array like [7,8,9,17,18] for rush hours.",
+            ),
+    })
+    .refine((input) => (input.location === undefined) !== (input.bbox === undefined), {
+        message: 'Provide exactly one area: either `location` or `bbox`.',
+    })
+    .refine((input) => !(input.days?.length && (input.startDate || input.endDate)), {
+        message: 'Provide either `days` or a `startDate`/`endDate` range, not both.',
+    });
 
 export const getTrafficAreaAnalyticsDescription =
     'Fetch historical traffic analytics for an area (≤31 days) via location (named city/region) or bbox. ' +
@@ -163,7 +172,8 @@ const resolveGeometry = async (
         }
         return boundaryGeometry;
     }
-    if (!bbox) return { error: 'No area provided.' };
+    if (!bbox) return { error: 'Provide a location or bbox to define the analytics area.' };
+
     return bboxToPolygon(bbox);
 };
 
@@ -282,10 +292,6 @@ export const executeGetTrafficAreaAnalytics = async (
     options?: ToolExecuteOptions,
 ): Promise<z.infer<typeof getTrafficAreaAnalyticsOutputSchema>> => {
     const { location, bbox, showOnMap, startDate, endDate, days, metrics, functionalRoadClasses, hours } = params;
-
-    if (!location && !bbox) {
-        return { error: 'Provide a location or bbox to define the analytics area.' };
-    }
 
     // Move Portal API key (different from standard TomTom key)
     const apiKey = process.env.MOVE_PORTAL_KEY;

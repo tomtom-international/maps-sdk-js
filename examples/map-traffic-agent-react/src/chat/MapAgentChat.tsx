@@ -77,8 +77,17 @@ function WelcomeDisclaimer() {
                 <path d="M12 8h.01" strokeLinecap="round" />
             </svg>
             <span>
-                This tool is powered by AI and may produce mistakes. All chats are temporarily stored for learning
-                purposes only — we advise to avoid using personal information.
+                Your messages are stored for 30 days to monitor and improve the service, then deleted. Don't enter
+                personal details about yourself or anyone else. See our{' '}
+                <a
+                    href="https://www.tomtom.com/en-gb/privacy/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-inherit underline"
+                >
+                    Privacy Statement
+                </a>{' '}
+                for how we handle data.
             </span>
         </div>
     );

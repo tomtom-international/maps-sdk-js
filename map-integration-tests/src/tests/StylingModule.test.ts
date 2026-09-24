@@ -25,6 +25,10 @@ const getStylingConfig = async (page: import('@playwright/test').Page) =>
 const getLayerFilter = async (page: import('@playwright/test').Page, layerId: string): Promise<unknown> =>
     page.evaluate((id) => (globalThis as MapsSDKThis).mapLibreMap.getFilter(id) as unknown, layerId);
 
+// What actually shows behind the map, which is where `view.spaceColor` lands.
+const spaceColorOnPage = async (page: import('@playwright/test').Page): Promise<string> =>
+    page.evaluate(() => getComputedStyle(document.getElementById('map') as HTMLElement).backgroundColor);
+
 const filterPOICategories = async (
     page: import('@playwright/test').Page,
     categories: Parameters<POIsModule['filterCategories']>[0],
@@ -141,6 +145,32 @@ test.describe('StylingModule tests', () => {
         const outline = (await getPaintProperty(page, 'Traffic - Slow flow outline', 'line-color')) as string;
         expect(outline).toMatch(/^hsl\(200, /);
         expect(outline).not.toBe('hsl(200, 100%, 51%)');
+    });
+
+    // The page owns what shows behind the map where it says so, and only an unpainted container
+    // falls to the SDK's theme colour. The live check that the knob reads a background from a
+    // stylesheet, which `style` alone never sees — so a unit test on a mock container cannot cover it.
+    test('a background the page sets in CSS is the space default, through a set and a reset', async ({ page }) => {
+        await page.addStyleTag({ content: '#map { background-color: rgb(18, 52, 86); }' });
+        // The module from `beforeEach` already painted the container inline; clear it so this map
+        // starts as a page that never had a styling module would.
+        await page.evaluate(() => {
+            (document.getElementById('map') as HTMLElement).style.backgroundColor = '';
+        });
+        await mapEnv.loadMap(page, { zoom: 14, center: [-0.12621, 51.50394] });
+        await waitForMapReady(page);
+        await initStyling(page);
+
+        expect(await spaceColorOnPage(page)).toBe('rgb(18, 52, 86)');
+        const { knobs } = await describeStyling(page);
+        expect(knobs.find((knob) => knob.id === 'view.spaceColor')?.default).toBe('rgb(18, 52, 86)');
+
+        await setKnob(page, 'view.spaceColor', '#05070d');
+        expect(await spaceColorOnPage(page)).toBe('rgb(5, 7, 13)');
+
+        await resetKnob(page, 'view.spaceColor');
+        expect(await spaceColorOnPage(page)).toBe('rgb(18, 52, 86)');
+        expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
     test('a clean style switch drops the settings', async ({ page }) => {

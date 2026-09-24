@@ -33,7 +33,7 @@ const haversineMeters = (a: [number, number], b: [number, number]): number => {
 
     const stations = await search({
         poiCategories: ['ELECTRIC_VEHICLE_STATION'],
-        position: amsterdam,
+        geoBias: { position: amsterdam },
         minPowerKW: 150,
         limit: 1,
     });
@@ -44,7 +44,7 @@ const haversineMeters = (a: [number, number], b: [number, number]): number => {
 
     const cafes = await search({
         poiCategories: ['CAFE'],
-        position: station,
+        geoBias: { position: station },
         limit: 10,
     });
 

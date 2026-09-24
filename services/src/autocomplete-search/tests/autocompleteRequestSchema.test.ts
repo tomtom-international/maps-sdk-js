@@ -92,7 +92,12 @@ describe('Autocomplete Schema Validation', () => {
     test('it should fail when radiusMeters is of type string', () => {
         expect(() =>
             validateRequestSchema(
-                { commonBaseURL: commonBaseUrl, apiKey, query, radiusMeters: '600' },
+                {
+                    commonBaseURL: commonBaseUrl,
+                    apiKey,
+                    query,
+                    geoBias: { position: [4.9, 52.3], radiusMeters: '600' },
+                },
                 { schema: autocompleteSearchRequestSchema },
             ),
         ).toThrow(
@@ -101,7 +106,7 @@ describe('Autocomplete Schema Validation', () => {
                     expect.objectContaining({
                         code: 'invalid_type',
                         expected: 'number',
-                        path: ['radiusMeters'],
+                        path: ['geoBias', 'radiusMeters'],
                     }),
                 ],
             }),

@@ -197,7 +197,7 @@ export const packageTarget = (repositoryRoot: string, packageDirectory: string):
 const PLUGINS_DIRECTORY = 'plugins';
 
 // Which packages a build produces output for is what `pnpm -F './plugins/*' build` answers,
-// and it answers it by looking for the script. A directory without one — `map-effects`, the
+// and it answers it by looking for the script. A directory without one — shared plugin source, the
 // hoisted `node_modules` — has no bundle, so it has nothing to write a notice from.
 const hasBuildScript = (packageDirectory: string): boolean => {
     const manifest = path.join(packageDirectory, 'package.json');

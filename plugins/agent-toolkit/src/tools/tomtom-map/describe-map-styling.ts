@@ -7,26 +7,36 @@ import { z } from 'zod';
 import type { ToolState } from '../../types';
 import { toolErrorSchema } from '../shared-output-schemas';
 
-// The kinds and the applies-to values come from the SDK, so a knob kind added there (the `enum`
-// kind, say) cannot go missing from this tool's schema.
+const knobValueSchema = z.union([z.number(), z.boolean(), z.string()]);
+
+// The kinds and durabilities come from the SDK, so a knob kind added there cannot go missing here.
 const knobKindSchema = z.enum(stylingKnobKinds);
 
 const knobDescriptorSchema = z.object({
     id: z.string(),
     kind: knobKindSchema,
     description: z.string(),
-    default: z.union([z.number(), z.boolean(), z.string()]).optional(),
-    current: z.union([z.number(), z.boolean(), z.string()]).optional(),
+    default: knobValueSchema.optional(),
+    current: knobValueSchema.optional(),
     overridden: z.boolean(),
     range: z.object({ min: z.number(), max: z.number(), step: z.number() }).optional(),
+    options: z.array(z.string()).optional(),
     available: z.boolean(),
     appliesTo: z.enum(stylingKnobAppliesTo),
+});
+
+const presetDescriptorSchema = z.object({
+    id: z.string(),
+    name: z.string(),
+    description: z.string(),
+    settings: z.record(z.string(), knobValueSchema),
 });
 
 /** Output schema for the describe-map-styling tool. */
 export const describeMapStylingOutputSchema = z.union([
     z.object({
         knobs: z.array(knobDescriptorSchema),
+        presets: z.array(presetDescriptorSchema),
     }),
     toolErrorSchema,
 ]);
@@ -38,16 +48,18 @@ export const describeMapStylingSchema = z.object({
 
 export const describeMapStylingDescription =
     'List the semantic base-map styling knobs of the loaded style (label/icon/road sizes, feature toggles such as exit ' +
-    'numbers or 3D buildings, POI zoom and colours, traffic congestion colours) with kind, range, default and current ' +
-    'value. Call before setMapStyling to know valid ids and ranges.';
+    'numbers or 3D buildings, POI zoom and colours, traffic congestion colours, globe projection, sky and 3D terrain) ' +
+    'with kind, range, default and current value, plus the available presets. Call before setMapStyling to know valid ' +
+    'ids and ranges.';
 
 /** Execute describe-map-styling. */
 export const executeDescribeMapStyling = async (params: z.infer<typeof describeMapStylingSchema>, state: ToolState) => {
     try {
         const styling = await state.baseMap.getStylingModule();
-        const { knobs } = styling.describe();
+        const { knobs, presets } = styling.describe();
         return {
             knobs: params.kind ? knobs.filter((knob) => knob.kind === params.kind) : knobs,
+            presets,
         };
     } catch (error) {
         return {

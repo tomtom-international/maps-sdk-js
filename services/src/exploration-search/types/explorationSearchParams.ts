@@ -1,6 +1,6 @@
-import type { HasBBox, HasLngLat } from '@tomtom-org/maps-sdk/core';
+import type { HasBBox } from '@tomtom-org/maps-sdk/core';
 import type { SearchGeometryInput } from '../../geometry-search';
-import type { CommonGeocodeAndFuzzySearchParams, CommonSearchParams } from '../../shared';
+import type { CommonGeocodeAndFuzzySearchParams, CommonSearchParams, PointGeoBias } from '../../shared';
 import type { AreaTag } from './areaTags';
 import type { ExplorationSearchRequestAPI } from './explorationSearchRequestAPI';
 import type { ExplorationSearchResponseAPI } from './explorationSearchResponseAPI';
@@ -27,8 +27,8 @@ export type ExplorationRecordType = 'POI' | 'PointAddress' | 'Street';
  * - `countries[0]` → `country`
  * - `poiBrands[0]` → `brand`
  * - `poiCategories` → `categories` (mapped to TomTom numeric category ids)
- * - `position` + `radiusMeters` → `near.coordinates` + `near.radius_km`
- * - `boundingBox` / `boundingBoxes` → `bboxes`
+ * - `geoBias` → `near.coordinates` + `near.radius_km`
+ * - `boundingBoxes` → `bboxes`
  * - `geometries` → `geometries` (Polygon/MultiPolygon passed through; Circle
  *   buffered to a Polygon; FeatureCollection flattened to its features)
  * - `municipalities` → `municipalities`
@@ -41,15 +41,12 @@ export type ExplorationRecordType = 'POI' | 'PointAddress' | 'Street';
  * @experimental
  */
 export type ExplorationSearchParams = CommonSearchParams<ExplorationSearchRequestAPI, ExplorationSearchResponseAPI> &
-    CommonGeocodeAndFuzzySearchParams & {
+    Omit<CommonGeocodeAndFuzzySearchParams, 'geoBias'> & {
         /**
-         * Geographic position to restrict results around.
-         *
-         * Combined with {@link radiusMeters} this maps to the API's `near` filter.
-         * Accepts any {@link HasLngLat}-compatible value — a `[lon, lat]` tuple,
-         * a GeoJSON `Point`, or a `Feature<Point>`.
+         * The point to search around, and how far. Unlike the other search services, this endpoint
+         * takes a point and {@link boundingBoxes} as separate filters, so both may be given.
          */
-        position?: HasLngLat;
+        geoBias?: PointGeoBias;
 
         /**
          * Exact, case-sensitive municipality/city filters (e.g. `['Amsterdam', 'Utrecht']`).
@@ -57,9 +54,7 @@ export type ExplorationSearchParams = CommonSearchParams<ExplorationSearchReques
         municipalities?: string[];
 
         /**
-         * Additional bounding boxes to restrict results to.
-         *
-         * Merged with {@link boundingBox} and sent as the API's `bboxes` array.
+         * Bounding boxes to restrict results to, sent as the API's `bboxes` array.
          */
         boundingBoxes?: HasBBox[];
 

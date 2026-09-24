@@ -43,7 +43,7 @@ export const geocodeAreas = async (
         query,
         limit: opts.limit ?? 6,
         geographyTypes: AREA_GEOGRAPHY_TYPES,
-        ...(opts.bias ? { position: opts.bias } : {}),
+        ...(opts.bias ? { geoBias: { position: opts.bias } } : {}),
         signal: execOptions?.signal,
     });
     const result = await geocode(requestParams);

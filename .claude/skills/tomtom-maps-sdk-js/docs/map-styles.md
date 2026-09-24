@@ -49,7 +49,7 @@ map.setStyle({
     include: ['trafficFlow', 'trafficIncidents', 'hillshade'],
 });
 
-// Custom style (URL or inline JSON). Its light/dark theme is read from the loaded style.
+// Custom style — exactly one of `url` or `json`. Its light/dark theme is read from the loaded style.
 map.setStyle({ type: 'custom', url: 'https://example.com/my-style.json' });
 
 // Or declare the theme, and the SDK takes it at its word instead of reading the style
@@ -159,5 +159,6 @@ select.addEventListener('change', () =>
 - For lower-level style lifecycle hooks (initial load, any style-related event), use `map.mapLibreMap.on('styledata', ...)` — see [MapLibre MapEventType](https://maplibre.org/maplibre-gl-js/docs/API/interfaces/MapEventType/).
 - Handlers fire for a clean switch as well as for one that carries state over; read `context.resetState` to tell them apart. SDK modules reset to defaults on `true` and restore on `false`.
 - Multiple handlers run in registration order, after the SDK modules; a failing handler is caught and logged but does not block the rest.
+- A custom style carries **exactly one** of `url` or `json`. Passing both is a compile error, but one that reports the second field as `Type 'StyleSpecification' is not assignable to type 'undefined'` rather than saying to pick one; passing neither throws at map construction.
 - `map.styleLightDarkTheme` is `'light'` for a custom style until it has loaded, then reflects the style's background colour. A custom style that declares `lightDarkTheme` reports that from the start.
 - The SDK cannot add traffic/hillshade style parts to a custom style — `TrafficFlowModule.get(map)` on a custom style without a flow source throws. Build the custom style with those parts, or use a standard style.

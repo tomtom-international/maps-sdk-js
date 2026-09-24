@@ -1,3 +1,5 @@
+@import "../../src/templates/css/base/tokens.css";
+
 .ui-body {
     font-family: "Open Sans", Arial, sans-serif;
     font-size: 14px;
@@ -17,7 +19,7 @@
     border-radius: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     background-color: white;
-    font-family: Gilroy, sans-serif;
+    font-family: var(--ui-font-gilroy);
     color: #333;
     position: absolute;
     left: calc(50% - 200px);

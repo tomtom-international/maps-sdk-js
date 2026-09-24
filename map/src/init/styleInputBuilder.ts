@@ -1,4 +1,5 @@
 import type { StyleSpecification } from 'maplibre-gl';
+import { customStyleWithoutSource } from '../shared/errorMessages';
 import type { InternalTomTomMapParams, StandardStyle, StandardStyleID, StyleInput, StyleModule } from './types/mapInit';
 import { styleModules } from './types/mapInit';
 
@@ -118,9 +119,16 @@ export const buildStyleInput = (mapParams: InternalTomTomMapParams): StyleSpecif
         return buildStandardStyleUrl({ id: style }, baseUrl, apiKey);
     } else if (style?.type === 'standard') {
         return buildStandardStyleUrl(style, baseUrl, apiKey);
-    } else if (style?.type === 'custom' && style?.url) {
-        return withApiKey(style.url, apiKey);
-    } else if (style?.type === 'custom' && style?.json) {
+    } else if (style?.type === 'custom') {
+        if (style.url !== undefined) {
+            return withApiKey(style.url, apiKey);
+        }
+
+        // The union rejects a custom style with neither field, but an untyped caller reaches here.
+        if (style.json === undefined) {
+            throw customStyleWithoutSource();
+        }
+
         return style.json;
     }
 

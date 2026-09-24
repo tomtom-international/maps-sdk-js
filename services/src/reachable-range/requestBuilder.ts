@@ -1,33 +1,23 @@
 import { getPositionStrict } from '@tomtom-org/maps-sdk/core';
-import type { ElectricVehicleParams, ElectricVehicleStatePCT, FetchInput } from '../shared';
+import type { FetchInput } from '../shared';
+import { positionToCSVLatLon } from '../shared/geometry';
 import { appendCommonRoutingParams } from '../shared/request/commonRoutingRequestBuilder';
 import { appendCommonParams, appendOptionalParam } from '../shared/request/requestBuildingUtils';
+import { currentChargeParams, maxChargeKWHOf } from '../shared/request/vehicleEnergyParams';
 import type { ReachableRangeParams } from './types/reachableRangeParams';
 
 const buildUrlBasePath = (params: ReachableRangeParams, latLon: string): string =>
     params.customServiceBaseURL ?? `${params.commonBaseURL}/maps/orbis/routing/calculateReachableRange/${latLon}/json`;
 
-const getMaxChargeKWH = (params: ReachableRangeParams): number | undefined => {
-    const vehicle = params.vehicle as ElectricVehicleParams | undefined;
-    if (!vehicle?.model || !('engine' in vehicle.model)) {
-        return undefined;
-    }
-    return vehicle.model.engine?.charging?.maxChargeKWH;
-};
+const getMaxChargeKWH = (params: ReachableRangeParams): number | undefined =>
+    params.vehicle && maxChargeKWHOf(params.vehicle);
 
 const getCurrentChargeKWH = (params: ReachableRangeParams): number | undefined => {
-    const vehicle = params.vehicle as ElectricVehicleParams | undefined;
-    if (!vehicle?.state) {
-        return undefined;
-    }
-    const pctState = vehicle.state as ElectricVehicleStatePCT;
-    if (pctState.currentChargePCT != null) {
-        const maxChargeKWH = getMaxChargeKWH(params);
-        if (maxChargeKWH != null) {
-            return (maxChargeKWH * pctState.currentChargePCT) / 100;
-        }
-    }
-    return undefined;
+    if (!params.vehicle) return undefined;
+
+    const currentCharge = currentChargeParams(params.vehicle).currentChargeInkWh;
+
+    return currentCharge === undefined ? undefined : Number(currentCharge);
 };
 
 const appendBudget = (urlParams: URLSearchParams, params: ReachableRangeParams): void => {
@@ -64,17 +54,12 @@ const appendBudget = (urlParams: URLSearchParams, params: ReachableRangeParams):
     }
 };
 
-const buildLatLon = (params: ReachableRangeParams): string => {
-    const position = getPositionStrict(params.origin);
-    return `${position[1]},${position[0]}`;
-};
-
 /**
  * @param params
  * @returns
  */
 export const buildReachableRangeRequest = (params: ReachableRangeParams): FetchInput => {
-    const latLon = buildLatLon(params);
+    const latLon = positionToCSVLatLon(getPositionStrict(params.origin));
     const url = new URL(buildUrlBasePath(params, latLon));
     const urlParams = url.searchParams;
     appendCommonParams(urlParams, params);

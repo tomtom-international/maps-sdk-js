@@ -213,13 +213,16 @@ routes.features[0].properties.summary.travelTimeInSeconds; // driving + every st
 - `stopTimeInSeconds` is one number for the whole stop on purpose — a requested wait and charging at
   the same stop widen the same gap, so they are never two competing durations.
 - `pauseDurationSeconds` is rejected on the destination — the API requires the last leg's pause to
-  be 0, and the SDK throws before sending.
+  be 0, so request validation fails before anything is sent. Which stop is the destination is
+  positional and `locations` is an array callers build dynamically, so this is a validation rule
+  rather than something the type can carry.
 - `legCostModel` on the origin is ignored: the origin has no arriving leg.
 - Not called `entryPoints`: a `Place` already carries its own `entryPoints` from search, and those
   are never sent to the routing API.
-- `vehicle.model.variantId` only works on the EV-with-charging path, so it needs
-  `preferences.chargingPreferences` set; the SDK throws otherwise rather than silently routing for
-  a default vehicle.
+- `vehicle.model.variantId` only works on the EV-with-charging path, so `calculateRoute` fails
+  validation without `preferences.chargingPreferences` beside it. It is a validation rule and not a
+  type one because `calculateReachableRange` takes the same vehicle and accepts a variant alone.
+  A non-electric vehicle takes no `variantId` at all — that one does not compile.
 
 ---
 
@@ -272,9 +275,49 @@ routingModule.events.chargingStops.on('click', (feature) => { showChargerDetails
 ```
 
 `chargingStopsStrategy` only reaches the wire on the EV endpoint, which is selected by
-`vehicle.preferences.chargingPreferences`. Setting the strategy without the preferences throws at
-validation, before the request is sent — the endpoint also needs a minimum charge at the
-destination, and only the preferences supply it.
+`vehicle.preferences.chargingPreferences`, so the type requires the two together: a strategy needs a
+`vehicle` of type `ElectricVehicleParamsWithChargingStops`. The endpoint also needs a minimum charge
+at the destination, and only the preferences supply it.
+
+Annotate the vehicle with that type once it lives in its own variable, rather than inline in the
+call — otherwise the missing preferences are reported against the `calculateRoute` argument:
+
+```ts
+import type { ElectricVehicleParamsWithChargingStops } from '@tomtom-org/maps-sdk/services';
+
+const vehicle: ElectricVehicleParamsWithChargingStops = {
+    engineType: 'electric',
+    model: {
+        engine: {
+            charging: { maxChargeKWH: 75 },
+            consumption: { speedsToConsumptionsKWH: [{ speedKMH: 90, consumptionUnitsPer100KM: 18 }] },
+        },
+    },
+    state: { currentChargePCT: 80 },
+    // Required by the type, not optional as on a plain ElectricVehicleParams
+    preferences: {
+        chargingPreferences: { minChargeAtDestinationPCT: 20, minChargeAtChargingStopsPCT: 10 },
+    },
+};
+
+await calculateRoute({ locations, chargingStopsStrategy: 'manualFastest', vehicle });
+```
+
+A predefined `model.variantId` is bound to the same endpoint, so `calculateRoute` rejects one
+without charging preferences at validation. Give its charge and preferences in kWh: the percentage
+forms are converted against `maxChargeKWH`, which a predefined model does not declare — the service
+holds the battery model, not the caller.
+
+```ts
+const databaseVehicle: ElectricVehicleParamsWithChargingStops = {
+    engineType: 'electric',
+    model: { variantId: 'tesla-model-3-long-range-2023' },
+    state: { currentChargeInkWh: 60 },
+    preferences: {
+        chargingPreferences: { minChargeAtDestinationInkWh: 15, minChargeAtChargingStopsInkWh: 10 },
+    },
+};
+```
 
 Legs on an EV route do not line up with the requested stops, because the service inserts charging
 stops of its own. `leg.originalWaypointIndex` maps a leg back to the stop the caller asked for:
@@ -312,6 +355,24 @@ Palette options: `'fadedRainbow'` | `'rainbow'` | ... (see `ColorPaletteOptions`
 Themes: `'filled'` | `'inverted'` | `'outlined'` | ...
 
 Before-layer config: `'lowestLabel'` | `'lowestPlaceLabel'` | `'aboveRoads'` | ...
+
+`vehicle` is `ReachableRangeVehicleParameters` — the routing vehicle minus the two things this
+endpoint has no parameter for, both of which it answers with `400 parameter [x] not supported`:
+
+- `state.heading`.
+- `preferences`, whose only member is `chargingPreferences`. A range has no charging stops to plan,
+  so a predefined `model.variantId` stands on its own here, unlike on `calculateRoute`:
+
+```ts
+const ranges = await calculateReachableRanges([
+    {
+        origin: [4.9, 52.4],
+        budget: { type: 'remainingChargeCPT', value: 20 },
+        // The service holds this variant's battery model, so nothing else is needed to describe it
+        vehicle: { engineType: 'electric', model: { variantId: 'tesla-model-3-long-range-2023' } },
+    },
+]);
+```
 
 ### Abort in-flight requests
 
@@ -605,6 +666,35 @@ const routingModule = await RoutingModule.create(map, {
   in the unit it is posted in), `signFace` (`'whiteDisc' | 'yellowDisc' | 'plaque'`, which is what
   offsets the number clear of the plaque's own words) and `signNumeralsColor`.
 
+### Border crossings
+
+`country` sections partition a route end to end, each ending where the next begins, so every seam
+between two of them is a border. A crossing is that seam — a point rather than a stretch — and sits
+under `countryCrossings` rather than in the section catalogue. Each is a plaque naming both
+countries in the direction of travel by their ISO 3166-1 alpha-2 codes, `ES → FR`.
+
+```ts
+const routingModule = await RoutingModule.create(map, {
+    countryCrossings: { minzoom: 6, color: '#0B5FA5', alignment: 'route' },
+});
+
+const routes = await calculateRoute({ locations, sectionTypes: ['country'] });
+await routingModule.showRoutes(routes);   // the crossings draw themselves
+```
+
+- **Asking for `country` sections is the whole requirement.** A route that carries none draws no
+  crossings, and the module fetches nothing of its own.
+- **Colours follow the map's light/dark theme**: near-black plaque on a light map, near-white on a
+  dark one, and the label takes whichever of the two reads on the plaque. `color` and `textColor`
+  override either; setting `color` alone still gets a legible label.
+- **`alignment`** is `'viewport'` (level with the screen) or `'route'` (turned to the route's
+  bearing where it crosses, kept upright). **`visible`** defaults to `true`, **`minzoom`** to **4**.
+- **Re-entering a country is a second crossing**, back the way it came — `CH → FR` then `FR → CH`.
+- **Scope and shown data**: `events.countryCrossings` and `getShown().countryCrossings`. Each
+  feature carries `fromCountryCode`, `toCountryCode`, the composed `label` and the `bearing`; a
+  **clicked** one also carries `fromSection` and `toSection`, the two `CountrySectionProps` it joins.
+- The layer is `routeCountryCrossing`, overridable under `layers.countryCrossings`.
+
 Each section also gets an event scope and a `getShown()` entry. The eleven generated types are keyed
 `<type>Sections`; the other five keep their source names (`ferries`, `tollRoads`, `incidents`,
 `tunnels`, `vehicleRestricted`):
@@ -781,7 +871,7 @@ await geometriesModule.show(geometry as PolygonFeatures);
 - `showRoutes()` draws the line; `showWaypoints()` draws the pins — always call both
 - `maxAlternatives: 2` returns up to 3 routes; index 0 is the recommended route
 - EV charging stop insertion requires `chargingPreferences`; only `routeType: 'fast'` is supported
-- `chargingStopsStrategy` without `vehicle.preferences.chargingPreferences` fails validation — the strategy is an EV-endpoint parameter, and only the preferences select that endpoint
+- `chargingStopsStrategy` without `vehicle.preferences.chargingPreferences` does not compile — the strategy is an EV-endpoint parameter, and only the preferences select that endpoint
 - The `tollRoads` overlay draws the `tollRoad` sections, not the `toll` ones — every charged stretch, vignette motorways and city charge zones included, all with the toll-plaza icon
 - `leg.originalWaypointIndex` is `undefined` on the final leg and on legs ending at a service-inserted charging stop — handle it rather than assuming a number
 - `selectRoute(index)` highlights an alternative without recalculating

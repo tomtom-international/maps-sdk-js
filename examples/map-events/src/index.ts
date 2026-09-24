@@ -93,7 +93,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
         const places = await search({
             query: 'pharmacy',
             limit: 35,
-            boundingBox: map.getBBox(),
+            geoBias: { boundingBox: map.getBBox() },
         });
 
         placesModule.show(places);

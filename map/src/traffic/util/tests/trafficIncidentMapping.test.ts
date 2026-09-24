@@ -1,5 +1,6 @@
+import { fullTrafficIncidentCategories, trafficIncidentToIconCategory } from '@tomtom-org/maps-sdk/core';
 import { describe, expect, test } from 'vitest';
-import { incidentToIconCategoryMapping, trafficIncidentMapping } from '../trafficIncidentMapping';
+import { trafficIncidentMapping } from '../trafficIncidentMapping';
 
 const makeFeature = (properties: Record<string, unknown>, id?: string | number): any => ({
     type: 'Feature',
@@ -38,9 +39,13 @@ describe('trafficIncidentMapping', () => {
     });
 
     test('maps all icon category codes to the correct category name', () => {
-        Object.entries(incidentToIconCategoryMapping).forEach(([category, code]) => {
+        fullTrafficIncidentCategories.forEach((category) => {
             const result = trafficIncidentMapping(
-                makeFeature({ id: 'test', icon_category_0: code, magnitude_of_delay: 0 }),
+                makeFeature({
+                    id: 'test',
+                    icon_category_0: trafficIncidentToIconCategory(category),
+                    magnitude_of_delay: 0,
+                }),
             );
             expect(result.properties.category).toBe(category);
         });
@@ -97,32 +102,5 @@ describe('trafficIncidentMapping', () => {
         expect(result.geometry).toEqual({ type: 'Point', coordinates: [4.9, 52.37] });
         expect(result).not.toHaveProperty('properties.icon_category_0');
         expect(result).not.toHaveProperty('properties.magnitude_of_delay');
-    });
-});
-
-describe('incidentToIconCategoryMapping', () => {
-    test('all category codes are unique', () => {
-        const codes = Object.values(incidentToIconCategoryMapping);
-        expect(new Set(codes).size).toBe(codes.length);
-    });
-
-    test('contains all expected categories', () => {
-        expect(Object.keys(incidentToIconCategoryMapping).sort()).toEqual([
-            'accident',
-            'animals-on-road',
-            'broken-down-vehicle',
-            'danger',
-            'flooding',
-            'fog',
-            'frost',
-            'jam',
-            'lane-closed',
-            'narrow-lanes',
-            'other',
-            'rain',
-            'road-closed',
-            'roadworks',
-            'wind',
-        ]);
     });
 });

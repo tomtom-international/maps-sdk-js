@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.55.1](https://github.com/tomtom-international/maps-sdk-js/compare/v0.54.0...v0.55.1) (2026-09-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* **services:** replace flat geo-bias fields with a single geoBias option ([#2158](https://github.com/tomtom-international/maps-sdk-js/issues/2158))
+* **examples:** redesign the claim-validation demo UX per Figma ([#2145](https://github.com/tomtom-international/maps-sdk-js/issues/2145))
+* **map:** post speed limits as road signs rather than a band ([#2141](https://github.com/tomtom-international/maps-sdk-js/issues/2141))
+* **core:** fold reverse geocoding's access points into entryPoints ([#2151](https://github.com/tomtom-international/maps-sdk-js/issues/2151))
+* **map:** one config tier for every drawn route section type ([#2078](https://github.com/tomtom-international/maps-sdk-js/issues/2078))
+
+### Features
+
+* **core:** fold reverse geocoding's access points into entryPoints ([#2151](https://github.com/tomtom-international/maps-sdk-js/issues/2151)) ([6ff017f](https://github.com/tomtom-international/maps-sdk-js/commit/6ff017f3293f1d35f1432627a06c50efa4fe60de))
+* **examples:** gdpr demo compliance ([#2154](https://github.com/tomtom-international/maps-sdk-js/issues/2154)) ([03e4dd0](https://github.com/tomtom-international/maps-sdk-js/commit/03e4dd0ee0cf4dbade3cd12cf0dc05ef745446f3))
+* **examples:** put every reverseGeocode option on the rev-geo playground ([#2149](https://github.com/tomtom-international/maps-sdk-js/issues/2149)) ([313134c](https://github.com/tomtom-international/maps-sdk-js/commit/313134c5c54bc03c91cf317093836b3a6a7ec6e3))
+* **examples:** redesign the claim-validation demo UX per Figma ([#2145](https://github.com/tomtom-international/maps-sdk-js/issues/2145)) ([81fdb82](https://github.com/tomtom-international/maps-sdk-js/commit/81fdb8234329e425fd600cc150b0a944ecbcfec0))
+* **examples:** serve the brand faces the typography tokens name ([#2155](https://github.com/tomtom-international/maps-sdk-js/issues/2155)) ([1e630ce](https://github.com/tomtom-international/maps-sdk-js/commit/1e630ce3e5ce9ff1a5a3cad04f7d65f2ddf045b5))
+* **map:** one config tier for every drawn route section type ([#2078](https://github.com/tomtom-international/maps-sdk-js/issues/2078)) ([dcaec54](https://github.com/tomtom-international/maps-sdk-js/commit/dcaec543c11e1cf9514d430ef97d6befff8a9f19))
+* **map:** post speed limits as road signs rather than a band ([#2141](https://github.com/tomtom-international/maps-sdk-js/issues/2141)) ([ee2d6c0](https://github.com/tomtom-international/maps-sdk-js/commit/ee2d6c09c023804d4966f36440a74db699738d19))
+* **map:** styling GA phase 1 — StylingModule and the describe() catalogue ([#2089](https://github.com/tomtom-international/maps-sdk-js/issues/2089)) ([4379765](https://github.com/tomtom-international/maps-sdk-js/commit/437976535b976b33573002ade2d3611a3013ac28))
+* **services:** replace flat geo-bias fields with a single geoBias option ([#2158](https://github.com/tomtom-international/maps-sdk-js/issues/2158)) ([14fdb49](https://github.com/tomtom-international/maps-sdk-js/commit/14fdb491b1a481ea49e050bee399be570a5120e0))
+
+
+### Miscellaneous Chores
+
+* **release:** align package versions with the last shipped release ([#2167](https://github.com/tomtom-international/maps-sdk-js/issues/2167)) ([2c91530](https://github.com/tomtom-international/maps-sdk-js/commit/2c91530d663e022a7329010007f2d0d83bc361c3))
+
 ## [0.54.0](https://github.com/tomtom-international/maps-sdk-js/compare/v0.53.0...v0.54.0) (2026-09-17)
 
 

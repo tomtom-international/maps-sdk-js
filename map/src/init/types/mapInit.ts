@@ -155,9 +155,38 @@ export type StandardStyle = {
 };
 
 /**
- * Configuration for a custom map style.
+ * Where a custom style comes from: a URL to fetch it from, or the specification itself. Exactly one.
  *
- * Allows using your own map style either via URL or direct JSON specification.
+ * @example
+ * ```typescript
+ * const fromUrl: CustomStyleSource = { url: 'https://example.com/my-custom-style.json' };
+ *
+ * const fromJson: CustomStyleSource = {
+ *   json: { version: 8, sources: { ... }, layers: [ ... ] },
+ * };
+ * ```
+ *
+ * @group Map Style
+ */
+export type CustomStyleSource =
+    | {
+          /**
+           * URL to a MapLibre/Mapbox style JSON, without an API key — the SDK adds the configured one.
+           */
+          url: string;
+          json?: never;
+      }
+    | {
+          /**
+           * The complete style, as a
+           * [MapLibre Style Specification](https://maplibre.org/maplibre-style-spec/) object.
+           */
+          json: StyleSpecification;
+          url?: never;
+      };
+
+/**
+ * Configuration for a custom map style.
  *
  * @remarks
  * Use custom styles for:
@@ -184,41 +213,7 @@ export type StandardStyle = {
  *
  * @group Map Style
  */
-export type CustomStyle = {
-    /**
-     * URL to a MapLibre/Mapbox style JSON.
-     *
-     * The URL should not include the API key - it will be automatically added.
-     * Mutually exclusive with the `json` property.
-     *
-     * @example
-     * ```typescript
-     * url: 'https://api.tomtom.com/style/1/style/my-custom-style'
-     * ```
-     */
-    url?: string;
-    /**
-     * Direct style specification as JSON.
-     *
-     * Provide the complete MapLibre Style Specification object.
-     * Mutually exclusive with the `url` property.
-     *
-     * @see [MapLibre Style Specification](https://maplibre.org/maplibre-style-spec/)
-     *
-     * @example
-     * ```typescript
-     * json: {
-     *   version: 8,
-     *   sources: {
-     *     'my-source': { type: 'vector', url: '...' }
-     *   },
-     *   layers: [
-     *     { id: 'background', type: 'background', paint: { 'background-color': '#f0f0f0' } }
-     *   ]
-     * }
-     * ```
-     */
-    json?: StyleSpecification;
+export type CustomStyle = CustomStyleSource & {
     /**
      * Whether the style draws a light or a dark map.
      *

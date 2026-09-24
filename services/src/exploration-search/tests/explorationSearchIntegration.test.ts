@@ -43,7 +43,7 @@ describe.skip('Exploration Search service', () => {
     });
 
     test('basic search returns a FeatureCollection of matching places', async () => {
-        const response = await explorationSearch({ query: 'restaurant', boundingBox: AMSTERDAM_BBOX });
+        const response = await explorationSearch({ query: 'restaurant', boundingBoxes: [AMSTERDAM_BBOX] });
 
         expect(response).toEqual(
             expect.objectContaining({
@@ -75,7 +75,7 @@ describe.skip('Exploration Search service', () => {
 
     test('large page size returns the full requested number of features', async () => {
         const limit = 500;
-        const response = await explorationSearch({ query: 'restaurant', boundingBox: NL_WIDE_BBOX, limit });
+        const response = await explorationSearch({ query: 'restaurant', boundingBoxes: [NL_WIDE_BBOX], limit });
 
         expect(response.features).toHaveLength(limit);
     }, 30000);
@@ -83,8 +83,7 @@ describe.skip('Exploration Search service', () => {
     test('near + radiusMeters returns nearby places with distance + geoBias', async () => {
         const position: [number, number] = [4.9003, 52.3791];
         const response = await explorationSearch({
-            position,
-            radiusMeters: 5000,
+            geoBias: { position, radiusMeters: 5000 },
             poiCategories: ['RESTAURANT'],
             limit: 5,
         });
@@ -111,7 +110,7 @@ describe.skip('Exploration Search service', () => {
         const boundingBox: [number, number, number, number] = [4.85, 52.35, 4.95, 52.4];
         const response = await explorationSearch({
             query: 'cafe',
-            boundingBox,
+            boundingBoxes: [boundingBox],
             limit: 10,
         });
 
@@ -178,7 +177,7 @@ describe.skip('Exploration Search service', () => {
 
     test('placeTypes filter with "PointAddress" returns only address records', async () => {
         const response = await explorationSearch({
-            boundingBox: AMSTERDAM_BBOX,
+            boundingBoxes: [AMSTERDAM_BBOX],
             placeTypes: ['PointAddress'],
             limit: 20,
         });
@@ -193,7 +192,7 @@ describe.skip('Exploration Search service', () => {
 
     test('placeTypes filter with "Street" returns only street records with viewport bbox', async () => {
         const response = await explorationSearch({
-            boundingBox: AMSTERDAM_BBOX,
+            boundingBoxes: [AMSTERDAM_BBOX],
             placeTypes: ['Street'],
             limit: 10,
         });
@@ -212,7 +211,7 @@ describe.skip('Exploration Search service', () => {
 
     test('placeTypes filter with multiple values returns mixed records, each correctly discriminated', async () => {
         const response = await explorationSearch({
-            boundingBox: AMSTERDAM_BBOX,
+            boundingBoxes: [AMSTERDAM_BBOX],
             placeTypes: ['POI', 'PointAddress'],
             limit: 30,
         });
@@ -229,13 +228,13 @@ describe.skip('Exploration Search service', () => {
     test('offset + limit paginate through the result set', async () => {
         const page1 = await explorationSearch({
             query: 'restaurant',
-            boundingBox: AMSTERDAM_BBOX,
+            boundingBoxes: [AMSTERDAM_BBOX],
             offset: 0,
             limit: 5,
         });
         const page2 = await explorationSearch({
             query: 'restaurant',
-            boundingBox: AMSTERDAM_BBOX,
+            boundingBoxes: [AMSTERDAM_BBOX],
             offset: 5,
             limit: 5,
         });
@@ -254,7 +253,7 @@ describe.skip('Exploration Search service', () => {
         const response = await explorationSearch({
             query: 'cafe',
             countries: ['NL'],
-            boundingBox: NL_WIDE_BBOX,
+            boundingBoxes: [NL_WIDE_BBOX],
             limit: 10,
         });
 
@@ -292,7 +291,7 @@ describe.skip('Exploration Search service', () => {
         const response = await explorationSearch({
             countries: ['FR'],
             poiCategories: ['RESTAURANT'],
-            boundingBox: FR_WIDE_BBOX,
+            boundingBoxes: [FR_WIDE_BBOX],
             areaTags: ['coastal', 'atlantic_coast'],
             limit: 20,
         });
@@ -349,7 +348,7 @@ describe.skip('Exploration Search service', () => {
     test('schema validation rejects out-of-range limit before any request is sent', async () => {
         const fetchSpy = vi.spyOn(global, 'fetch');
         await expect(
-            explorationSearch({ query: 'restaurant', boundingBox: AMSTERDAM_BBOX, limit: 20000 }),
+            explorationSearch({ query: 'restaurant', boundingBoxes: [AMSTERDAM_BBOX], limit: 20000 }),
         ).rejects.toThrow();
         expect(fetchSpy).not.toHaveBeenCalled();
         fetchSpy.mockRestore();
@@ -380,7 +379,7 @@ describe.skip('Exploration Search service', () => {
         const onAPIResponse = vi.fn<(request: ExplorationSearchRequestAPI, response: unknown) => void>();
         await explorationSearch({
             query: 'cafe',
-            boundingBox: AMSTERDAM_BBOX,
+            boundingBoxes: [AMSTERDAM_BBOX],
             limit: 1,
             onAPIRequest,
             onAPIResponse,
@@ -397,7 +396,7 @@ describe.skip('Exploration Search service', () => {
 
     test('buildRequest hook can rewrite the body before it is sent', async () => {
         const response = await explorationSearch(
-            { query: 'cafe', boundingBox: AMSTERDAM_BBOX, limit: 3 },
+            { query: 'cafe', boundingBoxes: [AMSTERDAM_BBOX], limit: 3 },
             {
                 buildRequest: (params: ExplorationSearchParams) => {
                     const built = buildExplorationSearchRequest(params);
@@ -413,7 +412,7 @@ describe.skip('Exploration Search service', () => {
 
     test('parseResponse hook can override the final response', async () => {
         const response = await explorationSearch(
-            { query: 'cafe', boundingBox: AMSTERDAM_BBOX, limit: 1 },
+            { query: 'cafe', boundingBoxes: [AMSTERDAM_BBOX], limit: 1 },
             {
                 parseResponse: (apiResponse: ExplorationSearchResponseAPI, params: ExplorationSearchParams) => {
                     const parsed = parseExplorationSearchResponse(apiResponse, params);

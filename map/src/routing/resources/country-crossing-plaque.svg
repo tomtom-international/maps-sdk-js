@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="140" height="60">
+    <g filter="url(#shadow)">
+        <rect id="plaque" x="10" y="10" width="120" height="40" rx="8"/>
+    </g>
+    <defs>
+        <filter id="shadow">
+            <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity=".35"/>
+        </filter>
+    </defs>
+</svg>

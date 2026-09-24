@@ -17,7 +17,8 @@ export type WaypointProps = {
      *
      * @remarks
      * - The wait counts towards the route's `travelTimeInSeconds`, not only its arrival time
-     * - Not supported on the destination: the routing service requires the last leg's wait to be 0
+     * - Not supported on the destination: the routing service requires the last leg's wait to be 0,
+     *   and `calculateRoute` rejects it at validation
      *
      * @example
      * ```typescript

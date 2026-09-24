@@ -2,6 +2,8 @@
 
 The SDK maintains code quality through automated tools and standardized practices. This guide helps you understand and run quality checks when building from source.
 
+The rules those checks cannot express — reuse, type precision, comment density, naming, structure — are in [CODING_GUIDELINES.md](../../CODING_GUIDELINES.md) at the repository root.
+
 ## 🎨 Linting and Formatting
 
 The project uses **Biome** for both linting and formatting, providing fast and consistent code quality checks.
@@ -38,14 +40,34 @@ The project follows these formatting standards (configured in `biome.json`):
 
 ## 🚦 Linting Rules
 
-Key linting rules enforced:
+Biome's recommended set is off; `biome.json` enables an explicit list. Only the error-level rules fail CI — a warning is reported and passes, so treat warnings on lines you touched as yours to fix:
 
-- **No unused variables** - Error level
-- **No parameter reassignment** - Error level
-- **Use const assertions** - Warning level
-- **Use default parameter last** - Error level
-- **Use enum initializers** - Error level
-- **Self-closing elements** - Error level
+| Rule | Level |
+|---|---|
+| `noUnusedImports` | error |
+| `useArrowFunction` | error |
+| `noParameterAssign` | error |
+| `useDefaultParameterLast` | error |
+| `useEnumInitializers` | error |
+| `useSelfClosingElements` | error |
+| `useSingleVarDeclarator` | error |
+| `noUnusedTemplateLiteral` | error |
+| `useNumberNamespace` | error |
+| `noRestrictedImports` (`services`↛`map`, `map`↛`services`) | error |
+| `noUnusedVariables` | warn |
+| `noNonNullAssertion` | warn |
+| `useAsConstAssertion` | warn |
+| `noInferrableTypes` | warn |
+| `noExcessiveCognitiveComplexity` (max 25) | warn |
+| `noExcessiveLinesPerFunction` (max 50, blank lines skipped; off in tests) | warn |
+| `noExplicitAny` | warn |
+| `useConsistentTypeDefinitions` (`type`, not `interface`) | warn |
+
+`noExplicitAny`, `noExcessiveLinesPerFunction` and `useConsistentTypeDefinitions` each carry a backlog of existing
+hits, so `pnpm lint` is noisy at the repository level. Read them per file rather than as a total.
+
+`noExcessiveLinesPerFunction` is off under `**/tests/**`, `**/*.test.ts` and `**/e2e-tests/**`: a `describe` or
+`test` body is a function to the rule, so every suite of any length counts as one over-long one.
 
 ## ✅ Type Checking
 
@@ -72,37 +94,6 @@ Before committing code, run the complete quality check suite:
 # Full quality check workflow
 pnpm lint:fix && pnpm format:fix && pnpm type-check:sdk && pnpm test:sdk
 ```
-
-## 📂 Code Organization
-
-### 📁 File Structure Standards
-
-- Use descriptive file and directory names
-- Group related functionality together
-- Keep files focused on a single responsibility
-- Use consistent naming conventions
-
-### 📦 Import/Export Standards
-
-- Use named exports over default exports when possible
-- Group imports logically (external dependencies, internal modules, types)
-- Use absolute imports from workspace roots when possible
-
-## 📚 Documentation Standards
-
-### 📝 Code Comments
-
-- Use JSDoc for public APIs
-- Explain complex business logic
-- Document non-obvious behavior
-- Keep comments up-to-date with code changes
-
-### 🔤 Type Definitions
-
-- Use descriptive type names
-- Document complex types with comments
-- Prefer interfaces over type aliases for object shapes
-- Use generic types appropriately
 
 ## 🚪 Quality Gates
 
@@ -135,13 +126,3 @@ For the best development experience:
 - Enable format-on-save
 - Enable lint-on-type
 - Configure your editor to show type hints
-
-## 💡 Best Practices
-
-1. **Run quality checks early and often**
-2. **Fix issues as soon as they're detected**
-3. **Use consistent naming conventions**
-4. **Write self-documenting code**
-5. **Keep functions small and focused**
-6. **Use meaningful variable names**
-7. **Follow the established patterns in the codebase**

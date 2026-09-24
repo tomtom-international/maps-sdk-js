@@ -196,8 +196,14 @@ export const initControls = (
         }
         try {
             showResults(
-                (await search({ query, typeahead: true, limit: 5, position: map.mapLibreMap.getCenter().toArray() }))
-                    .features,
+                (
+                    await search({
+                        query,
+                        typeahead: true,
+                        limit: 5,
+                        geoBias: { position: map.mapLibreMap.getCenter().toArray() },
+                    })
+                ).features,
             );
         } catch {
             clearResults();

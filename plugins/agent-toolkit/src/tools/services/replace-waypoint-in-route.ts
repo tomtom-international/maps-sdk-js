@@ -2,10 +2,10 @@
  * @module agent-toolkit-tools
  */
 
-import type { Place, WaypointLike } from '@tomtom-org/maps-sdk/core';
+import type { WaypointLike } from '@tomtom-org/maps-sdk/core';
 import { z } from 'zod';
 import type { ToolExecuteOptions, ToolState } from '../../types';
-import { hidePreviousEntriesSchema, locationInputSchema } from '../shared';
+import { hidePreviousEntriesSchema, labelForLocationInput, locationInputSchema } from '../shared';
 import { routesWriteOutputSchema, toolErrorSchema } from '../shared-output-schemas';
 import { resolveLocationInput } from './resolve-location-input';
 import { calculateAndAddRoute, resolveRouteWaypoints } from './set-route';
@@ -45,12 +45,6 @@ const resolveTargetIndex = (target: z.infer<typeof waypointTargetSchema>, waypoi
     return target;
 };
 
-const labelForLocation = (location: z.infer<typeof locationInputSchema>): string => {
-    if ('query' in location) return `"${location.query}"`;
-    if ('placeIdOrEntryId' in location) return `placeIdOrEntryId "${location.placeIdOrEntryId}"`;
-    return JSON.stringify(location.position);
-};
-
 /** Standalone execute for ToolEntry format. */
 export const executeReplaceWaypointInRoute = async (
     params: z.infer<typeof replaceWaypointInRouteSchema>,
@@ -66,16 +60,16 @@ export const executeReplaceWaypointInRoute = async (
             };
         }
 
-        const idx = resolveTargetIndex(waypointIndex, current.length);
-        if (typeof idx === 'string') return { error: idx };
+        const targetIndex = resolveTargetIndex(waypointIndex, current.length);
+        if (typeof targetIndex === 'string') return { error: targetIndex };
 
         const resolved = await resolveLocationInput(location, state, options);
         if (!resolved) {
-            return { error: `Could not resolve location: ${labelForLocation(location)}` };
+            return { error: `Could not resolve location: ${labelForLocationInput(location)}` };
         }
 
         const updated: WaypointLike[] = [...current];
-        updated[idx] = resolved.place as Place | [number, number];
+        updated[targetIndex] = resolved.place;
 
         const waypoints = resolveRouteWaypoints(updated);
         if (!waypoints) {

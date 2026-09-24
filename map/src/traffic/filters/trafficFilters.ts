@@ -1,4 +1,4 @@
-import { indexedMagnitudes } from '@tomtom-org/maps-sdk/core';
+import { indexedMagnitudes, trafficIncidentToIconCategory } from '@tomtom-org/maps-sdk/core';
 import { isNil } from 'lodash-es';
 import type { ExpressionFilterSpecification, ExpressionSpecification, LayerSpecification } from 'maplibre-gl';
 import type { ValuesFilter } from '../../shared';
@@ -7,7 +7,6 @@ import { buildValuesFilter, getMergedAnyFilter } from '../../shared/mapLibreFilt
 import type { TrafficCommonFilter } from '../types/trafficCommonConfig';
 import type { TrafficFlowFilter, TrafficFlowFilters } from '../types/trafficFlowConfig';
 import type { DelayFilter, TrafficIncidentsFilter, TrafficIncidentsFilters } from '../types/trafficIncidentsConfig';
-import { incidentToIconCategoryMapping } from '../util/trafficIncidentMapping';
 
 const toAllFilter = (expressions: ExpressionFilterSpecification[]): ExpressionFilterSpecification | null => {
     if (!expressions.length) {
@@ -79,7 +78,7 @@ const buildMapLibreIncidentsFilter = (sdkFilter: TrafficIncidentsFilter): Expres
         const incidentCategoryFilter = buildValuesFilter(
             'icon_category_0',
             sdkFilter.incidentCategories,
-            (value) => incidentToIconCategoryMapping[value],
+            trafficIncidentToIconCategory,
         );
         addFilter(incidentCategoryFilter, expressions);
     }

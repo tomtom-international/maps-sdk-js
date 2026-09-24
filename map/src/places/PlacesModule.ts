@@ -1,4 +1,4 @@
-import type { Place, Places } from '@tomtom-org/maps-sdk/core';
+import type { CommonPlaceProps, Place, Places } from '@tomtom-org/maps-sdk/core';
 import type {
     LayerSpecification,
     LineLayerSpecification,
@@ -182,6 +182,15 @@ export type PlacesEvents = CombinedEvents<MapGeoJSONFeature, PlacesModuleConfig,
  *
  * @group Places
  */
+// A caller names the place shape their `extraFeatureProps` callbacks expect, which is narrower than
+// the `Place` the module hands them — so the config crosses into the module once, here. Narrowing a
+// callback's parameter is the caller asserting what they will be shown; the module reads nothing off
+// these values, it only invokes them and writes the result onto the feature.
+// `Place<never>` accepts a callback declared for any narrower place shape, which is what lets a
+// caller's config in; the cast then hands the module the shape it works in.
+const widenConfig = (config?: PlacesModuleConfig<never>): PlacesModuleConfig | undefined =>
+    config as PlacesModuleConfig | undefined;
+
 export class PlacesModule extends AbstractDataOwnedMapModule<PlacesSourcesAndLayers, PlacesModuleConfig> {
     // Cluster layers (`clusterBadge` in particular) aren't symbol layers, so the
     // record value is widened to the full layer-spec union.
@@ -216,9 +225,13 @@ export class PlacesModule extends AbstractDataOwnedMapModule<PlacesSourcesAndLay
      * @param config  The module optional configuration
      * @returns {Promise} Returns a promise with a new instance of this module
      */
-    static async create(tomtomMap: TomTomMap, config?: PlacesModuleConfig): Promise<PlacesModule> {
+    static async create<P extends CommonPlaceProps = CommonPlaceProps>(
+        tomtomMap: TomTomMap,
+        config?: PlacesModuleConfig<P>,
+    ): Promise<PlacesModule> {
         await waitUntilMapIsReady(tomtomMap);
-        return new PlacesModule(tomtomMap, config);
+
+        return new PlacesModule(tomtomMap, widenConfig(config));
     }
 
     private constructor(map: TomTomMap, config?: PlacesModuleConfig) {
@@ -518,8 +531,10 @@ export class PlacesModule extends AbstractDataOwnedMapModule<PlacesSourcesAndLay
      * });
      * ```
      */
-    applyExtraFeatureProps(extraFeatureProps: { [key: string]: any }): void {
-        const config = { ...this.config, extraFeatureProps };
+    applyExtraFeatureProps<P extends CommonPlaceProps = CommonPlaceProps>(
+        extraFeatureProps: NonNullable<PlacesModuleConfig<P>['extraFeatureProps']>,
+    ): void {
+        const config = { ...this.config, ...widenConfig({ extraFeatureProps }) };
         this.updateData(config);
         this.config = config;
         this.emitConfigChange();
