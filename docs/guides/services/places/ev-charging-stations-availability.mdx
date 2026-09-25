@@ -1,0 +1,188 @@
+---
+title: EV charging stations availability
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.57.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+<Button
+    label="Request Access"
+    href="https://www.tomtom.com/contact-sales/?source_app=docs-portal&source_product=ev-search"
+    target="_blank">
+    Request Access
+</Button>
+
+<Blockquote type="warning">
+**Important note**
+EV Charging Stations Availability is unavailable on a Freemium or Pay As You Grow (PAYG) basis.
+Click the **Request Access** button above to contact our Sales team.
+</Blockquote>
+
+The EV Charging Stations Availability service provides real-time information about electric vehicle charging points, including availability status, connector types, power levels, and charging network details.
+
+## Basic usage
+
+```javascript
+import { getPlacesWithEVAvailability } from '@tomtom-org/maps-sdk/services';
+import { search } from '@tomtom-org/maps-sdk/services';
+
+// First, search for EV charging stations
+const chargingStations = await search({
+    query: 'EV charging',
+    geoBias: { position: [4.9041, 52.3676] }, // Amsterdam
+    categorySet: ['ELECTRIC_VEHICLE_STATION'],
+    limit: 10
+});
+
+// Fetch real-time availability data
+const stationsWithAvailability = await getPlacesWithEVAvailability(chargingStations);
+```
+
+## Individual station availability
+
+Get availability for a specific charging station:
+
+```javascript
+import { getPlaceWithEVAvailability } from '@tomtom-org/maps-sdk/services';
+
+// Get a specific charging station (from search results)
+const station = chargingStations.features[0];
+
+// Get detailed availability information
+const stationWithAvailability = await getPlaceWithEVAvailability(station);
+
+// Access availability data
+const availability = stationWithAvailability.properties.evChargingStationAvailability;
+if (availability) {
+    console.log(`Total connectors: ${availability.totalConnectors}`);
+    console.log(`Available connectors: ${availability.availableConnectors}`);
+
+    // Check individual connector types
+    availability.connectorAvailability.forEach(connector => {
+        console.log(`${connector.connectorType}: ${connector.availableConnectors}/${connector.totalConnectors} available`);
+    });
+}
+```
+
+## Understanding availability data
+
+The availability response includes comprehensive charging station information:
+
+```javascript
+const stationWithAvailability = await getPlaceWithEVAvailability(station);
+const evData = stationWithAvailability.properties.evChargingStationAvailability;
+
+if (evData) {
+    // Overall availability
+    console.log(`Station Status: ${evData.availabilityStatus}`); // 'Available', 'Busy', 'OutOfService'
+    console.log(`Total Connectors: ${evData.totalConnectors}`);
+    console.log(`Available Connectors: ${evData.availableConnectors}`);
+
+    // Connector-specific availability
+    evData.connectorAvailability.forEach(connector => {
+        console.log(`Connector Type: ${connector.connectorType}`); // 'Type2', 'CCS', 'CHAdeMO', etc.
+        console.log(`Power Level: ${connector.powerKW} kW`);
+        console.log(`Available: ${connector.availableConnectors}/${connector.totalConnectors}`);
+        console.log(`Status: ${connector.status}`); // 'Available', 'Occupied', 'OutOfOrder'
+    });
+
+    // Charging park information
+    if (evData.chargingPark) {
+        console.log(`Charging Park: ${evData.chargingPark.name}`);
+        console.log(`Operator: ${evData.chargingPark.operator}`);
+    }
+}
+```
+
+## Integration with map display
+
+Display charging stations with availability indicators on your map:
+
+```javascript
+import { PlacesModule } from '@tomtom-org/maps-sdk/map';
+
+// Search and get availability data
+const stations = await search({
+    query: 'EV charging',
+    geoBias: { position: [4.9041, 52.3676] },
+    categorySet: ['ELECTRIC_VEHICLE_STATION'],
+    limit: 20
+});
+
+const stationsWithAvailability = await getPlacesWithEVAvailability(stations);
+
+// Display on map with custom styling based on availability
+const placesModule = await PlacesModule.create(map, {
+    iconConfig: {
+        customIcons: [
+            {
+                category: 'ELECTRIC_VEHICLE_STATION',
+                iconFunction: (place) => {
+                    const availability = place.properties.evChargingStationAvailability;
+
+                    if (!availability) return 'ev-charging-default';
+
+                    switch (availability.availabilityStatus) {
+                        case 'Available':
+                            return 'ev-charging-available'; // Green icon
+                        case 'Busy':
+                            return 'ev-charging-busy';      // Red icon
+                        case 'OutOfService':
+                            return 'ev-charging-offline';   // Gray icon
+                        default:
+                            return 'ev-charging-default';
+                    }
+                }
+            }
+        ]
+    }
+});
+
+await placesModule.show(stationsWithAvailability);
+```
+
+## Filtering by connector type
+
+Filter stations by specific connector types:
+
+```javascript
+const filterByConnectorType = (stationsWithAvailability, connectorTypes) => {
+    return {
+        ...stationsWithAvailability,
+        features: stationsWithAvailability.features.filter(station => {
+            const availability = station.properties.evChargingStationAvailability;
+
+            if (!availability) return false;
+
+            return availability.connectorAvailability.some(connector =>
+                connectorTypes.includes(connector.connectorType) &&
+                connector.availableConnectors > 0
+            );
+        })
+    };
+};
+
+// Find stations with available Type2 or CCS connectors
+const compatibleStations = filterByConnectorType(stationsWithAvailability, ['Type2', 'CCS']);
+```
+
+## Related guides and examples
+
+### Related guides
+- **[Places Search](./search.mdx)** - Find EV charging stations using category filters
+- **[Map Places](../../map/places.mdx)** - Display charging stations with custom availability icons
+- **[Long Distance EV Routing](../routing/long-distance-ev-routing.mdx)** - Plan routes with charging stops
+
+### Related examples
+- **[EV Charging Stations Search](../../../examples/ev-charging-stations-search)** - Interactive exploration of charging station availability
+- **[POI Filters](../../../examples/poi-filters)** - Filter places by categories including EV stations
+- **[Places customization playground](../../../examples/places-customize-playground)** - Custom styling for different availability states
+
+### Related services
+- **[Places Search](./search.mdx)** - Primary method for discovering EV charging locations
+- **[Route Planning Parameters](../routing/parameters.mdx)** - Comprehensive route planning with configuration options

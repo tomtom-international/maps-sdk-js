@@ -1,0 +1,109 @@
+---
+title: Reachable ranges
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.57.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+<Button
+    label="Request Access"
+    href="https://www.tomtom.com/contact-sales/?source_app=docs-portal&source_product=calculate-reachable-range"
+    target="_blank">
+    Request Access
+</Button>
+
+<Blockquote type="warning">
+**Important note**
+Calculate Reachable Range is unavailable on a Freemium or Pay As You Grow (PAYG) basis.
+Click the **Request Access** button above to contact our Sales team.
+</Blockquote>
+
+`calculateReachableRanges` computes the geographic area reachable from a given origin within a specified budget — such as travel time, distance, or EV charge — and returns GeoJSON polygon features representing the reachable area for each budget value. Multiple budgets in a single call produce concentric rings.
+
+## Budget types
+
+Each call requires a `budget` that defines what constrains the reachable area:
+
+- `timeMinutes` – Area reachable within a given travel time (minutes)
+- `distanceKM` – Area reachable within a given distance (kilometres)
+- `remainingChargeCPT` – Area reachable with at least X% charge remaining
+- `spentChargePCT` – Area reachable spending at most X% of charge
+- `spentFuelLiters` – Area reachable spending at most X litres of fuel
+
+EV budget types (`remainingChargeCPT`, `spentChargePCT`) require a full electric vehicle configuration. See [Vehicle Configuration](../../services/routing/vehicle.mdx).
+
+## Example
+
+```typescript
+import { GeometriesModule, TomTomMap, reachableRangeGeometryConfig } from '@tomtom-org/maps-sdk/map';
+import { calculateReachableRanges } from '@tomtom-org/maps-sdk/services';
+
+const origin: [number, number] = [4.9, 52.37];
+
+// Calculate three concentric time-budget rings
+const result = await calculateReachableRanges([
+    { origin, budget: { type: 'timeMinutes', value: 10 } },
+    { origin, budget: { type: 'timeMinutes', value: 20 } },
+    { origin, budget: { type: 'timeMinutes', value: 30 } },
+]);
+
+// result.features — one PolygonFeature per budget, ordered largest first
+// result.bbox     — bounding box covering all features
+
+// Display on map — labels ('30 min', '20 min', '10 min') applied automatically
+const map = new TomTomMap({ mapLibre: { container: 'map', center: origin, zoom: 9 } });
+const rangesModule = await GeometriesModule.create(map, reachableRangeGeometryConfig());
+await rangesModule.show(result);
+```
+
+`reachableRangeGeometryConfig` derives labels from each feature's `budget` property automatically and applies themed styling. Pass a palette and theme to customise:
+
+```typescript
+reachableRangeGeometryConfig('teal', 'outline')
+```
+
+Available themes: `'filled'` (default), `'outline'`, `'inverted'`. See [Geometry Module](../../map/geometries.mdx) for more on display configuration.
+
+### Manual control
+
+For full control, bypass `reachableRangeGeometryConfig` and set properties directly on each feature:
+
+```typescript
+import { GeometriesModule } from '@tomtom-org/maps-sdk/map';
+
+const features = result.features.map((f, i) => ({
+    ...f,
+    properties: {
+        ...f.properties,
+        title: `Zone ${i + 1}`,  // custom label
+        theme: 'inverted',       // 'filled' | 'outline' | 'inverted'
+    },
+}));
+
+const module = await GeometriesModule.create(map, { fill: { color: 'blues' } });
+await module.show({ type: 'FeatureCollection', features });
+```
+
+## Unsupported options
+
+All budgets in a single `calculateReachableRanges` call must share the same `origin` and budget `type`.
+
+## API reference
+
+- [calculateReachableRanges](/maps-sdk-js/api-reference/functions/services.calculateReachableRanges.html) – Service function
+- [ReachableRangeParams](/maps-sdk-js/api-reference/types/services.ReachableRangeParams.html) – Request parameters
+- [reachableRangeGeometryConfig](/maps-sdk-js/api-reference/functions/map.reachableRangeGeometryConfig.html) – Map display config factory
+- [Calculate Reachable Range API](https://developer.tomtom.com/routing-api/documentation/tomtom-orbis-maps/v2/calculate-reachable-range) – API documentation
+
+## Related guides and examples
+
+### Related guides
+
+- [Vehicle Configuration](../../services/routing/vehicle.mdx) – EV parameters for charge-based budgets
+- [Long Distance EV Routing](../../services/routing/long-distance-ev-routing.mdx) – Route calculation with charging stops
+- [Geometry Module](../../map/geometries.mdx) – Displaying polygon geometries on the map
