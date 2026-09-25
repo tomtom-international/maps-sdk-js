@@ -634,9 +634,6 @@ export type SectionIconConfig = {
      * - `center`: one icon at the middle of each section.
      * - `along`: icons repeated along the section.
      *
-     * A section is a stretch of line, so there is no placement at its start: MapLibre places
-     * symbols on a line either once at its centre or repeatedly along it.
-     *
      * @defaultValue `"center"`
      */
     placement?: 'center' | 'along';
@@ -707,6 +704,24 @@ type SectionKnobs = {
 export type SectionSignUnit = 'km/h' | 'mph';
 
 /**
+ * Where a section's signs are posted along the stretch they belong to.
+ *
+ * @remarks
+ * - `atChange`, the default — one sign where the value changes, and none after it, which is where
+ *   the road posts its own. Sections of a sign-posting type tile the route end to end and no two
+ *   consecutive ones carry the same value, so every section boundary is a change.
+ * - `along` — the sign repeated down the stretch at a fixed screen spacing, so a reader zoomed into
+ *   the middle of a long one still sees the value in force. A stretch too short on screen to fit a
+ *   sign draws none.
+ *
+ * A stretch can run 50 km, so under `atChange` a reader zoomed in past its start sees no sign until
+ * the next change — as on the road itself.
+ *
+ * @group Routing
+ */
+export type SectionSignPlacement = 'atChange' | 'along';
+
+/**
  * What a section's signs give way to when two symbols want the same spot.
  *
  * @remarks
@@ -714,9 +729,8 @@ export type SectionSignUnit = 'km/h' | 'mph';
  * one that gives way.
  *
  * - `belowMapLabels` — the signs give way to everything, the base map's own labels included, so a
- *   sign never lands on a street or place name. Sparse maps, and the price of a tidy one: in a city
- *   the labels take most of the room. Affordable because a sign repeats along its stretch, so one
- *   dropped where a label sits reappears further along.
+ *   sign never lands on a street or place name, at the cost of showing fewer in a city. Cheap under
+ *   `along` placement, where the dropped sign is posted again further down the stretch.
  * - `belowRouteIcons` — the signs give way to the route's own icons, each of which says something
  *   the road cannot, but take precedence over the base map's labels.
  * - `aboveRouteIcons` — the signs give way to nothing, for a map whose subject is the limits.
@@ -744,6 +758,7 @@ export type SectionSignPriority = 'belowMapLabels' | 'belowRouteIcons' | 'aboveR
  * `country` sections the display units decide the face and the unit, and an explicit {@link unit}
  * overrides both.
  *
+ * A sign stands where the limit changes; {@link placement} repeats it down the stretch instead.
  * Signs scale with the zoom, as the ferry and toll-road icons do; {@link minzoom} decides how early
  * they appear at all.
  *
@@ -751,17 +766,24 @@ export type SectionSignPriority = 'belowMapLabels' | 'belowRouteIcons' | 'aboveR
  */
 export type SectionSignConfig = {
     /**
+     * Where the signs are posted along the stretch.
+     *
+     * @defaultValue `'atChange'`, which is where the road posts its own.
+     */
+    placement?: SectionSignPlacement;
+    /**
      * The lowest zoom the signs are drawn at.
      *
-     * @defaultValue 9, the zoom at which a sign is about a stretch of road a reader can see. Over
-     * a whole country the stretches fall in the same few pixels, so the few signs that survive the
-     * collision are an arbitrary sample rather than the limits of the drive.
+     * @defaultValue 10, where a sign is about a stretch of road a reader can see. Further out the
+     * stretches fall in the same few pixels and the surviving signs are an arbitrary sample.
      */
     minzoom?: number;
     /**
-     * Whether a sign gives way to the other icons the route draws, or takes precedence over them.
+     * What a sign gives way to when another symbol wants the same spot.
      *
-     * @defaultValue `'belowRouteIcons'`
+     * @defaultValue follows {@link placement}: `'belowRouteIcons'` under `atChange`, where the sign
+     * is the only one posting that change; `'belowMapLabels'` under `along`, where the next repeat
+     * posts it again.
      */
     priority?: SectionSignPriority;
     /**

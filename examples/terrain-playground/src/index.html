@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>3D terrain playground</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">3D terrain</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <label class="ui-form-label" for="ui-viewpoint">Viewpoint</label>
+                    <select class="ui-dropdown" id="ui-viewpoint"></select>
+                </div>
+                <div class="ui-section">
+                    <label class="ui-form-label" for="ui-mapStyle">Map style</label>
+                    <select class="ui-dropdown" id="ui-mapStyle"></select>
+                </div>
+                <div class="ui-section">
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" id="ui-terrain" checked>
+                        <span class="ui-toggle-switch"></span>
+                        3D terrain
+                    </label>
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" id="ui-hillshade" checked>
+                        <span class="ui-toggle-switch"></span>
+                        Hillshade
+                    </label>
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" id="ui-sky" checked>
+                        <span class="ui-toggle-switch"></span>
+                        Sky and atmosphere
+                    </label>
+                </div>
+                <div class="ui-section">
+                    <label class="ui-form-label" for="ui-exaggeration">Terrain exaggeration</label>
+                    <div class="ui-slider-container">
+                        <input
+                            type="range"
+                            class="ui-slider"
+                            id="ui-exaggeration"
+                            min="0.5"
+                            max="3"
+                            step="0.1"
+                            value="1.4"
+                        >
+                        <span class="ui-slider-value" id="ui-exaggerationValue">1.4</span>
+                    </div>
+                    <label class="ui-form-label" for="ui-pitch">Camera pitch</label>
+                    <div class="ui-slider-container">
+                        <input type="range" class="ui-slider" id="ui-pitch" min="0" max="85" step="1" value="72">
+                        <span class="ui-slider-value" id="ui-pitchValue">72°</span>
+                    </div>
+                </div>
+                <div class="ui-section">
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" id="ui-depthOfField">
+                        <span class="ui-toggle-switch"></span>
+                        Depth of field
+                    </label>
+                    <p class="ui-note">
+                        Needs a tilted map: seen from straight above every part of the ground is the same distance away,
+                        and the effect ends there on its own.
+                    </p>
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" id="ui-followPointer">
+                        <span class="ui-toggle-switch"></span>
+                        Focus where I point
+                    </label>
+                    <label class="ui-form-label" for="ui-focus">Focus</label>
+                    <div class="ui-slider-container">
+                        <input type="range" class="ui-slider" id="ui-focus" min="0" max="1" step="0.05" value="0.55">
+                        <span class="ui-slider-value" id="ui-focusValue">Far</span>
+                    </div>
+                    <label class="ui-form-label" for="ui-band">In focus</label>
+                    <div class="ui-slider-container">
+                        <input type="range" class="ui-slider" id="ui-band" min="0" max="1" step="0.05" value="0.35">
+                        <span class="ui-slider-value" id="ui-bandValue">35%</span>
+                    </div>
+                    <label class="ui-form-label" for="ui-blur">Blur</label>
+                    <div class="ui-slider-container">
+                        <input type="range" class="ui-slider" id="ui-blur" min="1" max="30" step="1" value="7">
+                        <span class="ui-slider-value" id="ui-blurValue">7px</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

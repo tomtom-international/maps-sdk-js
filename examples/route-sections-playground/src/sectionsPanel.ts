@@ -4,7 +4,9 @@ import type {
     RouteWidth,
     SectionDrawStyle,
     SectionLinePattern,
+    SectionSignPlacement,
     SectionSignPriority,
+    SectionSignUnit,
     TomTomMap,
 } from '@tomtom-org/maps-sdk/map';
 import {
@@ -45,13 +47,22 @@ const selectKnob = (type: DrawnSectionType, knob: string, options: readonly [str
     </label>`;
 
 // The type that posts its number on a sign draws nothing else, so the row's own checkbox is its
-// on/off. What is left worth playing with is how early the signs appear, and what they give way to
-// when two symbols want the same spot.
+// on/off. What is left is the whole `sign` knob: placement, priority, unit and minzoom.
 const signKnobControls = (type: DrawnSectionType): string => `
+    ${selectKnob(type, 'sign.placement', [
+        ['atChange', 'at each change'],
+        ['along', 'along the stretch'],
+    ])}
     ${selectKnob(type, 'sign.priority', [
-        ['belowRouteIcons', 'below route icons'],
+        ['', 'default for placement'],
         ['belowMapLabels', 'below map labels'],
+        ['belowRouteIcons', 'below route icons'],
         ['aboveRouteIcons', 'above route icons'],
+    ])}
+    ${selectKnob(type, 'sign.unit', [
+        ['', "each sign's own country"],
+        ['km/h', 'km/h everywhere'],
+        ['mph', 'mph everywhere'],
     ])}
     <label class="section-knob section-knob-wide">
         <span class="section-knob-name">sign.minzoom</span>
@@ -185,11 +196,19 @@ const readSectionKnob = (target: HTMLInputElement | HTMLSelectElement, state: Pa
         case 'pattern':
             section.pattern = (target.value || undefined) as SectionLinePattern | undefined;
             break;
+        case 'sign.placement':
+            section.sign = { ...section.sign, placement: target.value as SectionSignPlacement };
+            break;
         case 'sign.priority':
-            section.sign = { ...section.sign, priority: target.value as SectionSignPriority };
+            // Left empty the knob is left out, so the placement's own default applies.
+            section.sign = { ...section.sign, priority: (target.value || undefined) as SectionSignPriority };
             break;
         case 'sign.minzoom':
             section.sign = { ...section.sign, minzoom: Number(target.value) };
+            break;
+        // Left empty each sign follows the country its stretch runs through.
+        case 'sign.unit':
+            section.sign = { ...section.sign, unit: (target.value || undefined) as SectionSignUnit | undefined };
             break;
     }
     syncRow(type, state);

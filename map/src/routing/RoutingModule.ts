@@ -15,7 +15,7 @@ import type { TomTomMap } from '../TomTomMap';
 import { COUNTRY_CROSSING_LAYER_ID, COUNTRY_CROSSING_PLAQUE_IMAGE_ID } from './layers/countryCrossingLayers';
 import { INSTRUCTION_ARROW_IMAGE_ID } from './layers/guidanceLayers';
 import { DESELECTED_SUMMARY_POPUP_IMAGE_ID, SELECTED_SUMMARY_POPUP_IMAGE_ID } from './layers/routeMainLineLayers';
-import { isSectionVisible, sectionSignLayerID } from './layers/sectionLayers';
+import { isSectionVisible, sectionSignLayerID, signPriority } from './layers/sectionLayers';
 import {
     drawnSectionTypes,
     type GeneratedSectionType,
@@ -654,7 +654,7 @@ export class RoutingModule extends AbstractDataOwnedMapModule<RoutingSourcesWith
      * sent under that would give way to every place name on the way.
      */
     private signAnchorLayerID(signLayerID: string, config?: SectionDisplayConfig): string | undefined {
-        const priority = config?.sign?.priority ?? 'belowRouteIcons';
+        const priority = signPriority(config);
         if (priority === 'aboveRouteIcons') return undefined;
 
         const layers = this.mapLibreMap.getStyle().layers;

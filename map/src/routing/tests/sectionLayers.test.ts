@@ -6,6 +6,7 @@ import {
     isSectionVisible,
     sectionLine,
     sectionLineLayerID,
+    sectionSign,
     sectionSignLayerID,
     sectionStyleAnchor,
     sectionSymbolLayerID,
@@ -341,6 +342,18 @@ describe('wiring into the module configuration', () => {
                 type,
             ).toEqual([`routes-1-${expectedID}`]);
         }
+    });
+
+    test('the placement is the whole of the difference between the two ways a sign is posted', () => {
+        // MapLibre puts a symbol on a line's first vertex under point placement, which is where
+        // the limit changes.
+        const atChange = sectionSign('speedLimit');
+        expect(atChange.layout?.['symbol-placement']).toBe('point');
+        expect(atChange.layout?.['symbol-spacing']).toBeUndefined();
+
+        const along = sectionSign('speedLimit', { sign: { placement: 'along' } });
+        expect(along.layout?.['symbol-placement']).toBe('line');
+        expect(along.layout?.['symbol-spacing']).toBeGreaterThan(0);
     });
 
     test('an icon adds a second spec to that section source, and nothing to the others', () => {

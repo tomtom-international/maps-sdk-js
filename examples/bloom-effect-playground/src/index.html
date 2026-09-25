@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Bloom Playground</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Bloom</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <label class="ui-form-label" for="ui-style">Map style:</label>
+                    <select class="ui-dropdown" id="ui-style"></select>
+                </div>
+                <div id="ui-knobs"></div>
+                <div class="ui-section">
+                    <button class="ui-button" id="ui-reset" type="button">Bloom off</button>
+                    <button class="ui-button" id="ui-capture" type="button">Capture at 2×</button>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

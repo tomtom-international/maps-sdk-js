@@ -41,9 +41,8 @@ const buildUpdateSitePreferencesSchema = (households: boolean) =>
 type UpdateSitePreferencesInput = z.infer<ReturnType<typeof buildUpdateSitePreferencesSchema>>;
 
 // BUILDER: the scoringWeights schema depends on the household signal, so it is assembled at
-// createMapAgent time — after buildSiteAgentOptions stored the flag — rather than at module load.
-// (Read from the store, not options.featureFlags: the toolkit's public FeatureFlags type strips the
-// internal experimentalSearch member.)
+// createMapAgent time rather than at module load. The signal is read from `householdsEnabled()`,
+// which now always reports false — see demographics/experimental-search.ts.
 export const updateSitePreferences: ToolEntryBuilder = () => ({
     description:
         'Set the session defaults the analysis tools inherit — default concept, travel mode, catchment size, ' +

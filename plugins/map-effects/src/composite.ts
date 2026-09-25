@@ -8,9 +8,10 @@
  */
 
 import type { LightDark } from '@tomtom-org/maps-sdk/map';
+import { applyScopeMask } from './bloomScope';
 import {
     bloomFilter,
-    EDGE_BLUR_SATURATE,
+    DEFOCUS_SATURATE,
     fogBlurPx,
     fogGradeFilter,
     fogVeilStops,
@@ -68,31 +69,54 @@ const fillEllipticalRadial = (
     context.restore();
 };
 
-// Blurs a copy of the canvas and keeps only its rim (transparent centre, opaque edges).
-const applyRimBlur = (
+const TRANSPARENT = 'rgba(0,0,0,0)';
+const OPAQUE = 'rgba(0,0,0,1)';
+
+// Blurs a copy of the canvas and keeps only where `paintMask` leaves it opaque — the capture
+// equivalent of a `backdrop-filter` overlay under a mask.
+const applyMaskedBlur = (
     context: Context,
     width: number,
     height: number,
     scale: number,
     blurCssPx: number,
-    reach: number,
     extraFilter: string,
+    paintMask: (target: Context) => void,
 ): void => {
     const blurred = filteredCopy(context, width, height, `blur(${blurCssPx * scale}px) ${extraFilter}`.trim());
     if (!blurred) return;
 
     blurred.globalCompositeOperation = 'destination-in';
-    fillEllipticalRadial(blurred, width, height, reach, 'rgba(0,0,0,0)', 'rgba(0,0,0,1)');
+    paintMask(blurred);
     context.drawImage(blurred.canvas, 0, 0);
 };
 
-// Draws the map's own glow back over it, the way the live bloom canvas blends in `screen` mode.
-const applyBloom = (context: Context, width: number, height: number, scale: number, values: EffectValues): void => {
+// Draws the map's own glow back over it, the way the live bloom canvas blends in `screen` mode. A
+// scope drops the pixels it does not cover first, as the live path does.
+const applyBloom = (
+    context: Context,
+    width: number,
+    height: number,
+    scale: number,
+    values: EffectValues,
+    scopeMask: Uint8Array | undefined,
+): void => {
     const filter = bloomFilter(values['bloom.radius'], values['bloom.threshold'], scale);
-    const glow = filteredCopy(context, width, height, filter);
+    const source = scopeMask ? scopedCopy(context, width, height, scopeMask) : context;
+    if (!source) return;
+
+    const glow = filteredCopy(source, width, height, filter);
     if (!glow) return;
 
     drawOver(context, glow, 'screen', values['bloom.intensity']);
+};
+
+// The capture's pixels with everything outside the scope blacked out, on a canvas of its own —
+// `none` because this copy is the unfiltered one the threshold has yet to run on.
+const scopedCopy = (context: Context, width: number, height: number, mask: Uint8Array): Context | undefined => {
+    const copy = filteredCopy(context, width, height, 'none');
+    if (copy) applyScopeMask(copy, mask);
+    return copy;
 };
 
 // The colour grade replaces the pixels underneath, as a `backdrop-filter` overlay does.
@@ -105,8 +129,9 @@ const applyGrade = (context: Context, width: number, height: number, filter: str
 
 /**
  * Applies every active effect to `context`, in the same order the live overlays stack: bloom, grade,
- * fog, edge blur, tint, vignette. `scale` is device pixels per CSS pixel, so blur radii stay in CSS
- * pixels at any capture resolution.
+ * fog, edge blur, tint, vignette — the overlays, that is; the depth of field is a GPU pass and has
+ * already run into `context` by the time this is called. `scale` is device pixels per CSS pixel, so
+ * blur radii stay in CSS pixels at any capture resolution.
  * @ignore
  */
 export const compositeEffects = (
@@ -116,29 +141,27 @@ export const compositeEffects = (
     scale: number,
     values: EffectValues,
     lightDark: LightDark,
+    scopeMask?: Uint8Array,
 ): void => {
-    if (values['bloom.intensity'] > 0) applyBloom(context, width, height, scale, values);
+    if (values['bloom.intensity'] > 0) applyBloom(context, width, height, scale, values, scopeMask);
 
     const grade = gradeFilter(values['grade.brightness'], values['grade.contrast'], values['grade.saturation']);
     if (grade) applyGrade(context, width, height, grade);
+
+    const rimMaskOf = (reach: number) => (target: Context) =>
+        fillEllipticalRadial(target, width, height, reach, TRANSPARENT, OPAQUE);
 
     if (values['fog.intensity'] > 0) {
         const intensity = values['fog.intensity'];
         const reach = values['fog.reach'];
         const { inner, outer } = fogVeilStops(intensity, lightDark);
-        applyRimBlur(context, width, height, scale, fogBlurPx(intensity), reach, fogGradeFilter(lightDark));
+        const blur = fogBlurPx(intensity);
+        applyMaskedBlur(context, width, height, scale, blur, fogGradeFilter(lightDark), rimMaskOf(reach));
         fillEllipticalRadial(context, width, height, reach, inner, outer);
     }
     if (values['edgeBlur.intensity'] > 0) {
-        applyRimBlur(
-            context,
-            width,
-            height,
-            scale,
-            values['edgeBlur.intensity'],
-            values['edgeBlur.reach'],
-            EDGE_BLUR_SATURATE,
-        );
+        const blur = values['edgeBlur.intensity'];
+        applyMaskedBlur(context, width, height, scale, blur, DEFOCUS_SATURATE, rimMaskOf(values['edgeBlur.reach']));
     }
     if (values['tint.opacity'] > 0) {
         context.save();

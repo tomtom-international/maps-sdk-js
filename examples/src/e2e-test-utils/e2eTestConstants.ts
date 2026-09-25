@@ -8,6 +8,9 @@ export const DEFAULT_MAP_LOAD_TIMEOUT = 60000;
  */
 export const DEFAULT_MAP_SELECTOR = '#sdk-map';
 
+/** Tolerance for the whole-page shots, which are dominated by the genuinely variable WebGL map. */
+export const WHOLE_PAGE_MAX_DIFF_RATIO = 0.15;
+
 /**
  * Test tag constants for filtering tests
  */

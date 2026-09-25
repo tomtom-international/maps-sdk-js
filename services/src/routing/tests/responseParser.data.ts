@@ -274,7 +274,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                         {
                             drivingSide: 'right',
                             maneuver: 'depart',
-                            maneuverPoint: { latitude: 52.38686, longitude: 4.87489 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.87489, 52.38686] },
                             nextRoadInformation: {
                                 properties: [],
                                 roadNames: [
@@ -303,7 +303,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 0,
-                                    point: { latitude: 52.38686, longitude: 4.87489 },
+                                    point: { type: 'Point', coordinates: [4.87489, 52.38686] },
                                     travelTimeFromRouteStartInSeconds: 0,
                                 },
                             ],
@@ -317,7 +317,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnRight',
-                            maneuverPoint: { latitude: 52.38654, longitude: 4.8749 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.8749, 52.38654] },
                             nextRoadInformation: {
                                 properties: [],
                                 roadNames: [
@@ -346,12 +346,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 35,
-                                    point: { latitude: 52.38654, longitude: 4.8749 },
+                                    point: { type: 'Point', coordinates: [4.8749, 52.38654] },
                                     travelTimeFromRouteStartInSeconds: 11,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 45,
-                                    point: { latitude: 52.38654, longitude: 4.87476 },
+                                    point: { type: 'Point', coordinates: [4.87476, 52.38654] },
                                     travelTimeFromRouteStartInSeconds: 15,
                                 },
                             ],
@@ -365,7 +365,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnLeft',
-                            maneuverPoint: { latitude: 52.38653, longitude: 4.8746 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.8746, 52.38653] },
                             nextRoadInformation: {
                                 properties: [],
                                 roadNames: [
@@ -392,12 +392,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 56,
-                                    point: { latitude: 52.38653, longitude: 4.8746 },
+                                    point: { type: 'Point', coordinates: [4.8746, 52.38653] },
                                     travelTimeFromRouteStartInSeconds: 18,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 66,
-                                    point: { latitude: 52.38644, longitude: 4.8746 },
+                                    point: { type: 'Point', coordinates: [4.8746, 52.38644] },
                                     travelTimeFromRouteStartInSeconds: 22,
                                 },
                             ],
@@ -411,7 +411,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnLeft',
-                            maneuverPoint: { latitude: 52.38602, longitude: 4.87461 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.87461, 52.38602] },
                             nextRoadInformation: {
                                 properties: [],
                                 roadNames: [
@@ -436,12 +436,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 114,
-                                    point: { latitude: 52.38602, longitude: 4.87461 },
+                                    point: { type: 'Point', coordinates: [4.87461, 52.38602] },
                                     travelTimeFromRouteStartInSeconds: 37,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 124,
-                                    point: { latitude: 52.38602, longitude: 4.87476 },
+                                    point: { type: 'Point', coordinates: [4.87476, 52.38602] },
                                     travelTimeFromRouteStartInSeconds: 41,
                                 },
                             ],
@@ -464,7 +464,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnRight',
-                            maneuverPoint: { latitude: 52.38602, longitude: 4.87485 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.87485, 52.38602] },
                             nextRoadInformation: {
                                 properties: [],
                                 roadNames: [
@@ -491,12 +491,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 130,
-                                    point: { latitude: 52.38602, longitude: 4.87485 },
+                                    point: { type: 'Point', coordinates: [4.87485, 52.38602] },
                                     travelTimeFromRouteStartInSeconds: 43,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 133,
-                                    point: { latitude: 52.38598, longitude: 4.87485 },
+                                    point: { type: 'Point', coordinates: [4.87485, 52.38598] },
                                     travelTimeFromRouteStartInSeconds: 46,
                                 },
                             ],
@@ -510,7 +510,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnLeft',
-                            maneuverPoint: { latitude: 52.38546, longitude: 4.87492 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.87492, 52.38546] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadShields: [
@@ -548,12 +548,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 193,
-                                    point: { latitude: 52.38546, longitude: 4.87492 },
+                                    point: { type: 'Point', coordinates: [4.87492, 52.38546] },
                                     travelTimeFromRouteStartInSeconds: 105,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 203,
-                                    point: { latitude: 52.38546, longitude: 4.87507 },
+                                    point: { type: 'Point', coordinates: [4.87507, 52.38546] },
                                     travelTimeFromRouteStartInSeconds: 106,
                                 },
                             ],
@@ -567,7 +567,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnRight',
-                            maneuverPoint: { latitude: 52.38519, longitude: 4.88384 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.88384, 52.38519] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadNames: [
@@ -596,17 +596,17 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 852,
-                                    point: { latitude: 52.38519, longitude: 4.88384 },
+                                    point: { type: 'Point', coordinates: [4.88384, 52.38519] },
                                     travelTimeFromRouteStartInSeconds: 247,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 860,
-                                    point: { latitude: 52.38523, longitude: 4.88393 },
+                                    point: { type: 'Point', coordinates: [4.88393, 52.38523] },
                                     travelTimeFromRouteStartInSeconds: 248,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 862,
-                                    point: { latitude: 52.38523, longitude: 4.88396 },
+                                    point: { type: 'Point', coordinates: [4.88396, 52.38523] },
                                     travelTimeFromRouteStartInSeconds: 248,
                                 },
                             ],
@@ -633,7 +633,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnSharpLeft',
-                            maneuverPoint: { latitude: 52.37977, longitude: 4.8948 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.8948, 52.37977] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadNames: [
@@ -662,42 +662,42 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 1822,
-                                    point: { latitude: 52.37993, longitude: 4.89454 },
+                                    point: { type: 'Point', coordinates: [4.89454, 52.37993] },
                                     travelTimeFromRouteStartInSeconds: 395,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 1831,
-                                    point: { latitude: 52.37985, longitude: 4.89458 },
+                                    point: { type: 'Point', coordinates: [4.89458, 52.37985] },
                                     travelTimeFromRouteStartInSeconds: 398,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 1837,
-                                    point: { latitude: 52.37981, longitude: 4.89464 },
+                                    point: { type: 'Point', coordinates: [4.89464, 52.37981] },
                                     travelTimeFromRouteStartInSeconds: 399,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 1843,
-                                    point: { latitude: 52.37978, longitude: 4.89471 },
+                                    point: { type: 'Point', coordinates: [4.89471, 52.37978] },
                                     travelTimeFromRouteStartInSeconds: 400,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 1849,
-                                    point: { latitude: 52.37977, longitude: 4.8948 },
+                                    point: { type: 'Point', coordinates: [4.8948, 52.37977] },
                                     travelTimeFromRouteStartInSeconds: 401,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 1854,
-                                    point: { latitude: 52.37977, longitude: 4.89487 },
+                                    point: { type: 'Point', coordinates: [4.89487, 52.37977] },
                                     travelTimeFromRouteStartInSeconds: 402,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 1861,
-                                    point: { latitude: 52.3798, longitude: 4.89496 },
+                                    point: { type: 'Point', coordinates: [4.89496, 52.3798] },
                                     travelTimeFromRouteStartInSeconds: 410,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 1871,
-                                    point: { latitude: 52.37987, longitude: 4.89505 },
+                                    point: { type: 'Point', coordinates: [4.89505, 52.37987] },
                                     travelTimeFromRouteStartInSeconds: 422,
                                 },
                             ],
@@ -728,7 +728,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnRight',
-                            maneuverPoint: { latitude: 52.38133, longitude: 4.89648 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.89648, 52.38133] },
                             nextRoadInformation: {
                                 properties: [],
                                 roadShields: [
@@ -766,32 +766,32 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 2038,
-                                    point: { latitude: 52.38117, longitude: 4.89622 },
+                                    point: { type: 'Point', coordinates: [4.89622, 52.38117] },
                                     travelTimeFromRouteStartInSeconds: 623,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 2050,
-                                    point: { latitude: 52.38127, longitude: 4.89629 },
+                                    point: { type: 'Point', coordinates: [4.89629, 52.38127] },
                                     travelTimeFromRouteStartInSeconds: 637,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 2056,
-                                    point: { latitude: 52.38131, longitude: 4.89634 },
+                                    point: { type: 'Point', coordinates: [4.89634, 52.38131] },
                                     travelTimeFromRouteStartInSeconds: 641,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 2060,
-                                    point: { latitude: 52.38132, longitude: 4.89639 },
+                                    point: { type: 'Point', coordinates: [4.89639, 52.38132] },
                                     travelTimeFromRouteStartInSeconds: 642,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 2066,
-                                    point: { latitude: 52.38133, longitude: 4.89648 },
+                                    point: { type: 'Point', coordinates: [4.89648, 52.38133] },
                                     travelTimeFromRouteStartInSeconds: 643,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 2072,
-                                    point: { latitude: 52.38129, longitude: 4.89654 },
+                                    point: { type: 'Point', coordinates: [4.89654, 52.38129] },
                                     travelTimeFromRouteStartInSeconds: 644,
                                 },
                             ],
@@ -805,7 +805,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'makeUTurn',
-                            maneuverPoint: { latitude: 52.37809, longitude: 4.90647 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.90647, 52.37809] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadShields: [
@@ -852,22 +852,22 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 2842,
-                                    point: { latitude: 52.37802, longitude: 4.9064 },
+                                    point: { type: 'Point', coordinates: [4.9064, 52.37802] },
                                     travelTimeFromRouteStartInSeconds: 769,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 2851,
-                                    point: { latitude: 52.37809, longitude: 4.90647 },
+                                    point: { type: 'Point', coordinates: [4.90647, 52.37809] },
                                     travelTimeFromRouteStartInSeconds: 772,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 2862,
-                                    point: { latitude: 52.37812, longitude: 4.90632 },
+                                    point: { type: 'Point', coordinates: [4.90632, 52.37812] },
                                     travelTimeFromRouteStartInSeconds: 774,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 2872,
-                                    point: { latitude: 52.37814, longitude: 4.90617 },
+                                    point: { type: 'Point', coordinates: [4.90617, 52.37814] },
                                     travelTimeFromRouteStartInSeconds: 781,
                                 },
                             ],
@@ -894,7 +894,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnSlightRight',
-                            maneuverPoint: { latitude: 52.37848, longitude: 4.9045 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.9045, 52.37848] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadNames: [
@@ -932,12 +932,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 2993,
-                                    point: { latitude: 52.37848, longitude: 4.9045 },
+                                    point: { type: 'Point', coordinates: [4.9045, 52.37848] },
                                     travelTimeFromRouteStartInSeconds: 823,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 3003,
-                                    point: { latitude: 52.37854, longitude: 4.90439 },
+                                    point: { type: 'Point', coordinates: [4.90439, 52.37854] },
                                     travelTimeFromRouteStartInSeconds: 825,
                                 },
                             ],
@@ -951,7 +951,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnRight',
-                            maneuverPoint: { latitude: 52.37906, longitude: 4.9026 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.9026, 52.37906] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadNames: [
@@ -980,12 +980,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 3145,
-                                    point: { latitude: 52.37906, longitude: 4.9026 },
+                                    point: { type: 'Point', coordinates: [4.9026, 52.37906] },
                                     travelTimeFromRouteStartInSeconds: 872,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 3155,
-                                    point: { latitude: 52.3791, longitude: 4.90247 },
+                                    point: { type: 'Point', coordinates: [4.90247, 52.3791] },
                                     travelTimeFromRouteStartInSeconds: 877,
                                 },
                             ],
@@ -999,7 +999,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnLeft',
-                            maneuverPoint: { latitude: 52.37922, longitude: 4.90213 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.90213, 52.37922] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadNames: [
@@ -1026,17 +1026,17 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 3182,
-                                    point: { latitude: 52.37922, longitude: 4.90213 },
+                                    point: { type: 'Point', coordinates: [4.90213, 52.37922] },
                                     travelTimeFromRouteStartInSeconds: 896,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 3191,
-                                    point: { latitude: 52.37915, longitude: 4.90207 },
+                                    point: { type: 'Point', coordinates: [4.90207, 52.37915] },
                                     travelTimeFromRouteStartInSeconds: 902,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 3191,
-                                    point: { latitude: 52.37914, longitude: 4.90206 },
+                                    point: { type: 'Point', coordinates: [4.90206, 52.37914] },
                                     travelTimeFromRouteStartInSeconds: 903,
                                 },
                             ],
@@ -1045,7 +1045,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                         {
                             drivingSide: 'right',
                             maneuver: 'arriveLeft',
-                            maneuverPoint: { latitude: 52.37943, longitude: 4.90127 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.90127, 52.37943] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadNames: [
@@ -1076,7 +1076,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 3254,
-                                    point: { latitude: 52.37943, longitude: 4.90127 },
+                                    point: { type: 'Point', coordinates: [4.90127, 52.37943] },
                                     travelTimeFromRouteStartInSeconds: 948,
                                 },
                             ],
@@ -1375,7 +1375,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                         {
                             drivingSide: 'right',
                             maneuver: 'depart',
-                            maneuverPoint: { latitude: 52.38686, longitude: 4.87489 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.87489, 52.38686] },
                             nextRoadInformation: {
                                 properties: [],
                                 roadNames: [
@@ -1404,7 +1404,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 0,
-                                    point: { latitude: 52.38686, longitude: 4.87489 },
+                                    point: { type: 'Point', coordinates: [4.87489, 52.38686] },
                                     travelTimeFromRouteStartInSeconds: 0,
                                 },
                             ],
@@ -1418,7 +1418,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnRight',
-                            maneuverPoint: { latitude: 52.38654, longitude: 4.8749 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.8749, 52.38654] },
                             nextRoadInformation: {
                                 properties: [],
                                 roadNames: [
@@ -1447,12 +1447,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 35,
-                                    point: { latitude: 52.38654, longitude: 4.8749 },
+                                    point: { type: 'Point', coordinates: [4.8749, 52.38654] },
                                     travelTimeFromRouteStartInSeconds: 11,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 45,
-                                    point: { latitude: 52.38654, longitude: 4.87476 },
+                                    point: { type: 'Point', coordinates: [4.87476, 52.38654] },
                                     travelTimeFromRouteStartInSeconds: 15,
                                 },
                             ],
@@ -1466,7 +1466,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnLeft',
-                            maneuverPoint: { latitude: 52.38653, longitude: 4.8746 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.8746, 52.38653] },
                             nextRoadInformation: {
                                 properties: [],
                                 roadNames: [
@@ -1493,12 +1493,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 56,
-                                    point: { latitude: 52.38653, longitude: 4.8746 },
+                                    point: { type: 'Point', coordinates: [4.8746, 52.38653] },
                                     travelTimeFromRouteStartInSeconds: 18,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 66,
-                                    point: { latitude: 52.38644, longitude: 4.8746 },
+                                    point: { type: 'Point', coordinates: [4.8746, 52.38644] },
                                     travelTimeFromRouteStartInSeconds: 22,
                                 },
                             ],
@@ -1512,7 +1512,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnLeft',
-                            maneuverPoint: { latitude: 52.38602, longitude: 4.87461 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.87461, 52.38602] },
                             nextRoadInformation: {
                                 properties: [],
                                 roadNames: [
@@ -1537,12 +1537,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 114,
-                                    point: { latitude: 52.38602, longitude: 4.87461 },
+                                    point: { type: 'Point', coordinates: [4.87461, 52.38602] },
                                     travelTimeFromRouteStartInSeconds: 37,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 124,
-                                    point: { latitude: 52.38602, longitude: 4.87476 },
+                                    point: { type: 'Point', coordinates: [4.87476, 52.38602] },
                                     travelTimeFromRouteStartInSeconds: 41,
                                 },
                             ],
@@ -1565,7 +1565,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnRight',
-                            maneuverPoint: { latitude: 52.38602, longitude: 4.87485 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.87485, 52.38602] },
                             nextRoadInformation: {
                                 properties: [],
                                 roadNames: [
@@ -1592,12 +1592,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 130,
-                                    point: { latitude: 52.38602, longitude: 4.87485 },
+                                    point: { type: 'Point', coordinates: [4.87485, 52.38602] },
                                     travelTimeFromRouteStartInSeconds: 43,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 133,
-                                    point: { latitude: 52.38598, longitude: 4.87485 },
+                                    point: { type: 'Point', coordinates: [4.87485, 52.38598] },
                                     travelTimeFromRouteStartInSeconds: 46,
                                 },
                             ],
@@ -1611,7 +1611,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnLeft',
-                            maneuverPoint: { latitude: 52.38546, longitude: 4.87492 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.87492, 52.38546] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadShields: [
@@ -1649,12 +1649,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 193,
-                                    point: { latitude: 52.38546, longitude: 4.87492 },
+                                    point: { type: 'Point', coordinates: [4.87492, 52.38546] },
                                     travelTimeFromRouteStartInSeconds: 105,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 203,
-                                    point: { latitude: 52.38546, longitude: 4.87507 },
+                                    point: { type: 'Point', coordinates: [4.87507, 52.38546] },
                                     travelTimeFromRouteStartInSeconds: 106,
                                 },
                             ],
@@ -1668,7 +1668,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnRight',
-                            maneuverPoint: { latitude: 52.38519, longitude: 4.88384 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.88384, 52.38519] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadNames: [
@@ -1697,17 +1697,17 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 852,
-                                    point: { latitude: 52.38519, longitude: 4.88384 },
+                                    point: { type: 'Point', coordinates: [4.88384, 52.38519] },
                                     travelTimeFromRouteStartInSeconds: 247,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 860,
-                                    point: { latitude: 52.38523, longitude: 4.88393 },
+                                    point: { type: 'Point', coordinates: [4.88393, 52.38523] },
                                     travelTimeFromRouteStartInSeconds: 248,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 862,
-                                    point: { latitude: 52.38523, longitude: 4.88396 },
+                                    point: { type: 'Point', coordinates: [4.88396, 52.38523] },
                                     travelTimeFromRouteStartInSeconds: 248,
                                 },
                             ],
@@ -1734,7 +1734,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnRight',
-                            maneuverPoint: { latitude: 52.38139, longitude: 4.89173 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.89173, 52.38139] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadNames: [
@@ -1764,12 +1764,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 1549,
-                                    point: { latitude: 52.38139, longitude: 4.89173 },
+                                    point: { type: 'Point', coordinates: [4.89173, 52.38139] },
                                     travelTimeFromRouteStartInSeconds: 337,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 1555,
-                                    point: { latitude: 52.38134, longitude: 4.89169 },
+                                    point: { type: 'Point', coordinates: [4.89169, 52.38134] },
                                     travelTimeFromRouteStartInSeconds: 338,
                                 },
                             ],
@@ -1792,7 +1792,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnRight',
-                            maneuverPoint: { latitude: 52.38114, longitude: 4.89155 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.89155, 52.38114] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadNames: [
@@ -1823,12 +1823,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 1578,
-                                    point: { latitude: 52.38114, longitude: 4.89155 },
+                                    point: { type: 'Point', coordinates: [4.89155, 52.38114] },
                                     travelTimeFromRouteStartInSeconds: 343,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 1588,
-                                    point: { latitude: 52.38121, longitude: 4.89144 },
+                                    point: { type: 'Point', coordinates: [4.89144, 52.38121] },
                                     travelTimeFromRouteStartInSeconds: 345,
                                 },
                             ],
@@ -1842,7 +1842,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnRight',
-                            maneuverPoint: { latitude: 52.38198, longitude: 4.89012 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.89012, 52.38198] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadNames: [
@@ -1872,12 +1872,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 1713,
-                                    point: { latitude: 52.38198, longitude: 4.89012 },
+                                    point: { type: 'Point', coordinates: [4.89012, 52.38198] },
                                     travelTimeFromRouteStartInSeconds: 374,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 1722,
-                                    point: { latitude: 52.38203, longitude: 4.89024 },
+                                    point: { type: 'Point', coordinates: [4.89024, 52.38203] },
                                     travelTimeFromRouteStartInSeconds: 375,
                                 },
                             ],
@@ -1891,7 +1891,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnRight',
-                            maneuverPoint: { latitude: 52.38283, longitude: 4.89339 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.89339, 52.38283] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadShields: [
@@ -1927,12 +1927,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 1974,
-                                    point: { latitude: 52.38283, longitude: 4.89339 },
+                                    point: { type: 'Point', coordinates: [4.89339, 52.38283] },
                                     travelTimeFromRouteStartInSeconds: 418,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 1984,
-                                    point: { latitude: 52.38283, longitude: 4.89354 },
+                                    point: { type: 'Point', coordinates: [4.89354, 52.38283] },
                                     travelTimeFromRouteStartInSeconds: 424,
                                 },
                             ],
@@ -1951,7 +1951,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'makeUTurn',
-                            maneuverPoint: { latitude: 52.37809, longitude: 4.90647 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.90647, 52.37809] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadShields: [
@@ -1998,22 +1998,22 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 3036,
-                                    point: { latitude: 52.37802, longitude: 4.9064 },
+                                    point: { type: 'Point', coordinates: [4.9064, 52.37802] },
                                     travelTimeFromRouteStartInSeconds: 726,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 3045,
-                                    point: { latitude: 52.37809, longitude: 4.90647 },
+                                    point: { type: 'Point', coordinates: [4.90647, 52.37809] },
                                     travelTimeFromRouteStartInSeconds: 729,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 3056,
-                                    point: { latitude: 52.37812, longitude: 4.90632 },
+                                    point: { type: 'Point', coordinates: [4.90632, 52.37812] },
                                     travelTimeFromRouteStartInSeconds: 730,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 3066,
-                                    point: { latitude: 52.37814, longitude: 4.90617 },
+                                    point: { type: 'Point', coordinates: [4.90617, 52.37814] },
                                     travelTimeFromRouteStartInSeconds: 740,
                                 },
                             ],
@@ -2052,7 +2052,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnSlightRight',
-                            maneuverPoint: { latitude: 52.37848, longitude: 4.9045 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.9045, 52.37848] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadNames: [
@@ -2090,12 +2090,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 3187,
-                                    point: { latitude: 52.37848, longitude: 4.9045 },
+                                    point: { type: 'Point', coordinates: [4.9045, 52.37848] },
                                     travelTimeFromRouteStartInSeconds: 780,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 3197,
-                                    point: { latitude: 52.37854, longitude: 4.90439 },
+                                    point: { type: 'Point', coordinates: [4.90439, 52.37854] },
                                     travelTimeFromRouteStartInSeconds: 783,
                                 },
                             ],
@@ -2109,7 +2109,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnRight',
-                            maneuverPoint: { latitude: 52.37906, longitude: 4.9026 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.9026, 52.37906] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadNames: [
@@ -2138,12 +2138,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 3339,
-                                    point: { latitude: 52.37906, longitude: 4.9026 },
+                                    point: { type: 'Point', coordinates: [4.9026, 52.37906] },
                                     travelTimeFromRouteStartInSeconds: 829,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 3349,
-                                    point: { latitude: 52.3791, longitude: 4.90247 },
+                                    point: { type: 'Point', coordinates: [4.90247, 52.3791] },
                                     travelTimeFromRouteStartInSeconds: 834,
                                 },
                             ],
@@ -2157,7 +2157,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnLeft',
-                            maneuverPoint: { latitude: 52.37922, longitude: 4.90213 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.90213, 52.37922] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadNames: [
@@ -2184,17 +2184,17 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 3375,
-                                    point: { latitude: 52.37922, longitude: 4.90213 },
+                                    point: { type: 'Point', coordinates: [4.90213, 52.37922] },
                                     travelTimeFromRouteStartInSeconds: 854,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 3384,
-                                    point: { latitude: 52.37915, longitude: 4.90207 },
+                                    point: { type: 'Point', coordinates: [4.90207, 52.37915] },
                                     travelTimeFromRouteStartInSeconds: 860,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 3385,
-                                    point: { latitude: 52.37914, longitude: 4.90206 },
+                                    point: { type: 'Point', coordinates: [4.90206, 52.37914] },
                                     travelTimeFromRouteStartInSeconds: 860,
                                 },
                             ],
@@ -2203,7 +2203,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                         {
                             drivingSide: 'right',
                             maneuver: 'arriveLeft',
-                            maneuverPoint: { latitude: 52.37943, longitude: 4.90127 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.90127, 52.37943] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadNames: [
@@ -2234,7 +2234,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 3448,
-                                    point: { latitude: 52.37943, longitude: 4.90127 },
+                                    point: { type: 'Point', coordinates: [4.90127, 52.37943] },
                                     travelTimeFromRouteStartInSeconds: 906,
                                 },
                             ],
@@ -2802,7 +2802,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                         {
                             drivingSide: 'right',
                             maneuver: 'depart',
-                            maneuverPoint: { latitude: 52.38686, longitude: 4.87489 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.87489, 52.38686] },
                             nextRoadInformation: {
                                 properties: [],
                                 roadNames: [
@@ -2831,7 +2831,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 0,
-                                    point: { latitude: 52.38686, longitude: 4.87489 },
+                                    point: { type: 'Point', coordinates: [4.87489, 52.38686] },
                                     travelTimeFromRouteStartInSeconds: 0,
                                 },
                             ],
@@ -2845,7 +2845,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnRight',
-                            maneuverPoint: { latitude: 52.38654, longitude: 4.8749 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.8749, 52.38654] },
                             nextRoadInformation: {
                                 properties: [],
                                 roadNames: [
@@ -2874,12 +2874,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 35,
-                                    point: { latitude: 52.38654, longitude: 4.8749 },
+                                    point: { type: 'Point', coordinates: [4.8749, 52.38654] },
                                     travelTimeFromRouteStartInSeconds: 11,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 45,
-                                    point: { latitude: 52.38654, longitude: 4.87476 },
+                                    point: { type: 'Point', coordinates: [4.87476, 52.38654] },
                                     travelTimeFromRouteStartInSeconds: 15,
                                 },
                             ],
@@ -2893,7 +2893,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnLeft',
-                            maneuverPoint: { latitude: 52.38653, longitude: 4.8746 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.8746, 52.38653] },
                             nextRoadInformation: {
                                 properties: [],
                                 roadNames: [
@@ -2920,12 +2920,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 56,
-                                    point: { latitude: 52.38653, longitude: 4.8746 },
+                                    point: { type: 'Point', coordinates: [4.8746, 52.38653] },
                                     travelTimeFromRouteStartInSeconds: 18,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 66,
-                                    point: { latitude: 52.38644, longitude: 4.8746 },
+                                    point: { type: 'Point', coordinates: [4.8746, 52.38644] },
                                     travelTimeFromRouteStartInSeconds: 22,
                                 },
                             ],
@@ -2939,7 +2939,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnLeft',
-                            maneuverPoint: { latitude: 52.38602, longitude: 4.87461 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.87461, 52.38602] },
                             nextRoadInformation: {
                                 properties: [],
                                 roadNames: [
@@ -2964,12 +2964,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 114,
-                                    point: { latitude: 52.38602, longitude: 4.87461 },
+                                    point: { type: 'Point', coordinates: [4.87461, 52.38602] },
                                     travelTimeFromRouteStartInSeconds: 37,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 124,
-                                    point: { latitude: 52.38602, longitude: 4.87476 },
+                                    point: { type: 'Point', coordinates: [4.87476, 52.38602] },
                                     travelTimeFromRouteStartInSeconds: 41,
                                 },
                             ],
@@ -2992,7 +2992,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnRight',
-                            maneuverPoint: { latitude: 52.38602, longitude: 4.87485 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.87485, 52.38602] },
                             nextRoadInformation: {
                                 properties: [],
                                 roadNames: [
@@ -3019,12 +3019,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 130,
-                                    point: { latitude: 52.38602, longitude: 4.87485 },
+                                    point: { type: 'Point', coordinates: [4.87485, 52.38602] },
                                     travelTimeFromRouteStartInSeconds: 43,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 133,
-                                    point: { latitude: 52.38598, longitude: 4.87485 },
+                                    point: { type: 'Point', coordinates: [4.87485, 52.38598] },
                                     travelTimeFromRouteStartInSeconds: 46,
                                 },
                             ],
@@ -3038,7 +3038,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnRight',
-                            maneuverPoint: { latitude: 52.38546, longitude: 4.87492 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.87492, 52.38546] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadShields: [
@@ -3076,12 +3076,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 193,
-                                    point: { latitude: 52.38546, longitude: 4.87492 },
+                                    point: { type: 'Point', coordinates: [4.87492, 52.38546] },
                                     travelTimeFromRouteStartInSeconds: 105,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 203,
-                                    point: { latitude: 52.38546, longitude: 4.87477 },
+                                    point: { type: 'Point', coordinates: [4.87477, 52.38546] },
                                     travelTimeFromRouteStartInSeconds: 106,
                                 },
                             ],
@@ -3095,7 +3095,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnLeft',
-                            maneuverPoint: { latitude: 52.38533, longitude: 4.86953 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.86953, 52.38533] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadNames: [
@@ -3133,12 +3133,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 561,
-                                    point: { latitude: 52.38533, longitude: 4.86953 },
+                                    point: { type: 'Point', coordinates: [4.86953, 52.38533] },
                                     travelTimeFromRouteStartInSeconds: 157,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 571,
-                                    point: { latitude: 52.38525, longitude: 4.86951 },
+                                    point: { type: 'Point', coordinates: [4.86951, 52.38525] },
                                     travelTimeFromRouteStartInSeconds: 159,
                                 },
                             ],
@@ -3152,7 +3152,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: true,
                             maneuver: 'turnRight',
-                            maneuverPoint: { latitude: 52.37902, longitude: 4.87513 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.87513, 52.37902] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadNames: [
@@ -3182,12 +3182,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 1494,
-                                    point: { latitude: 52.37902, longitude: 4.87513 },
+                                    point: { type: 'Point', coordinates: [4.87513, 52.37902] },
                                     travelTimeFromRouteStartInSeconds: 283,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 1504,
-                                    point: { latitude: 52.37895, longitude: 4.87521 },
+                                    point: { type: 'Point', coordinates: [4.87521, 52.37895] },
                                     travelTimeFromRouteStartInSeconds: 284,
                                 },
                             ],
@@ -3238,7 +3238,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnRight',
-                            maneuverPoint: { latitude: 52.37877, longitude: 4.87542 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.87542, 52.37877] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadNames: [
@@ -3269,12 +3269,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 1529,
-                                    point: { latitude: 52.37877, longitude: 4.87542 },
+                                    point: { type: 'Point', coordinates: [4.87542, 52.37877] },
                                     travelTimeFromRouteStartInSeconds: 287,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 1533,
-                                    point: { latitude: 52.37874, longitude: 4.8754 },
+                                    point: { type: 'Point', coordinates: [4.8754, 52.37874] },
                                     travelTimeFromRouteStartInSeconds: 288,
                                 },
                             ],
@@ -3284,7 +3284,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             changeOfAngleInDegrees: 3,
                             drivingSide: 'right',
                             maneuver: 'roundaboutStraight',
-                            maneuverPoint: { latitude: 52.37456, longitude: 4.87254 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.87254, 52.37456] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadNames: [
@@ -3314,52 +3314,52 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 2005,
-                                    point: { latitude: 52.37482, longitude: 4.87275 },
+                                    point: { type: 'Point', coordinates: [4.87275, 52.37482] },
                                     travelTimeFromRouteStartInSeconds: 359,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 2010,
-                                    point: { latitude: 52.37482, longitude: 4.87268 },
+                                    point: { type: 'Point', coordinates: [4.87268, 52.37482] },
                                     travelTimeFromRouteStartInSeconds: 361,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 2015,
-                                    point: { latitude: 52.3748, longitude: 4.87261 },
+                                    point: { type: 'Point', coordinates: [4.87261, 52.3748] },
                                     travelTimeFromRouteStartInSeconds: 363,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 2020,
-                                    point: { latitude: 52.37477, longitude: 4.87255 },
+                                    point: { type: 'Point', coordinates: [4.87255, 52.37477] },
                                     travelTimeFromRouteStartInSeconds: 365,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 2024,
-                                    point: { latitude: 52.37473, longitude: 4.87252 },
+                                    point: { type: 'Point', coordinates: [4.87252, 52.37473] },
                                     travelTimeFromRouteStartInSeconds: 366,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 2029,
-                                    point: { latitude: 52.3747, longitude: 4.8725 },
+                                    point: { type: 'Point', coordinates: [4.8725, 52.3747] },
                                     travelTimeFromRouteStartInSeconds: 368,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 2033,
-                                    point: { latitude: 52.37466, longitude: 4.87249 },
+                                    point: { type: 'Point', coordinates: [4.87249, 52.37466] },
                                     travelTimeFromRouteStartInSeconds: 369,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 2037,
-                                    point: { latitude: 52.37463, longitude: 4.8725 },
+                                    point: { type: 'Point', coordinates: [4.8725, 52.37463] },
                                     travelTimeFromRouteStartInSeconds: 371,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 2040,
-                                    point: { latitude: 52.37459, longitude: 4.87251 },
+                                    point: { type: 'Point', coordinates: [4.87251, 52.37459] },
                                     travelTimeFromRouteStartInSeconds: 374,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 2044,
-                                    point: { latitude: 52.37456, longitude: 4.87254 },
+                                    point: { type: 'Point', coordinates: [4.87254, 52.37456] },
                                     travelTimeFromRouteStartInSeconds: 377,
                                 },
                             ],
@@ -3382,7 +3382,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnLeft',
-                            maneuverPoint: { latitude: 52.36717, longitude: 4.87213 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.87213, 52.36717] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadNames: [
@@ -3411,22 +3411,22 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 2918,
-                                    point: { latitude: 52.36717, longitude: 4.87213 },
+                                    point: { type: 'Point', coordinates: [4.87213, 52.36717] },
                                     travelTimeFromRouteStartInSeconds: 530,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 2924,
-                                    point: { latitude: 52.36722, longitude: 4.87218 },
+                                    point: { type: 'Point', coordinates: [4.87218, 52.36722] },
                                     travelTimeFromRouteStartInSeconds: 531,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 2930,
-                                    point: { latitude: 52.36726, longitude: 4.87224 },
+                                    point: { type: 'Point', coordinates: [4.87224, 52.36726] },
                                     travelTimeFromRouteStartInSeconds: 533,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 2936,
-                                    point: { latitude: 52.36728, longitude: 4.87231 },
+                                    point: { type: 'Point', coordinates: [4.87231, 52.36728] },
                                     travelTimeFromRouteStartInSeconds: 533,
                                 },
                             ],
@@ -3461,7 +3461,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnRight',
-                            maneuverPoint: { latitude: 52.36837, longitude: 4.8763 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.8763, 52.36837] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadShields: [
@@ -3499,17 +3499,17 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 3233,
-                                    point: { latitude: 52.36837, longitude: 4.8763 },
+                                    point: { type: 'Point', coordinates: [4.8763, 52.36837] },
                                     travelTimeFromRouteStartInSeconds: 601,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 3241,
-                                    point: { latitude: 52.36832, longitude: 4.87639 },
+                                    point: { type: 'Point', coordinates: [4.87639, 52.36832] },
                                     travelTimeFromRouteStartInSeconds: 602,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 3243,
-                                    point: { latitude: 52.36831, longitude: 4.87641 },
+                                    point: { type: 'Point', coordinates: [4.87641, 52.36831] },
                                     travelTimeFromRouteStartInSeconds: 602,
                                 },
                             ],
@@ -3532,7 +3532,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             changeOfAngleInDegrees: -45,
                             drivingSide: 'right',
                             maneuver: 'roundaboutSlightLeft',
-                            maneuverPoint: { latitude: 52.36357, longitude: 4.92331 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.92331, 52.36357] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadShields: [
@@ -3580,47 +3580,47 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 7191,
-                                    point: { latitude: 52.36307, longitude: 4.92251 },
+                                    point: { type: 'Point', coordinates: [4.92251, 52.36307] },
                                     travelTimeFromRouteStartInSeconds: 1260,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 7225,
-                                    point: { latitude: 52.36308, longitude: 4.92301 },
+                                    point: { type: 'Point', coordinates: [4.92301, 52.36308] },
                                     travelTimeFromRouteStartInSeconds: 1265,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 7233,
-                                    point: { latitude: 52.3631, longitude: 4.92311 },
+                                    point: { type: 'Point', coordinates: [4.92311, 52.3631] },
                                     travelTimeFromRouteStartInSeconds: 1266,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 7234,
-                                    point: { latitude: 52.3631, longitude: 4.92313 },
+                                    point: { type: 'Point', coordinates: [4.92313, 52.3631] },
                                     travelTimeFromRouteStartInSeconds: 1266,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 7243,
-                                    point: { latitude: 52.36314, longitude: 4.92325 },
+                                    point: { type: 'Point', coordinates: [4.92325, 52.36314] },
                                     travelTimeFromRouteStartInSeconds: 1267,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 7251,
-                                    point: { latitude: 52.3632, longitude: 4.92333 },
+                                    point: { type: 'Point', coordinates: [4.92333, 52.3632] },
                                     travelTimeFromRouteStartInSeconds: 1268,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 7258,
-                                    point: { latitude: 52.36326, longitude: 4.92337 },
+                                    point: { type: 'Point', coordinates: [4.92337, 52.36326] },
                                     travelTimeFromRouteStartInSeconds: 1269,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 7272,
-                                    point: { latitude: 52.36337, longitude: 4.92342 },
+                                    point: { type: 'Point', coordinates: [4.92342, 52.36337] },
                                     travelTimeFromRouteStartInSeconds: 1270,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 7295,
-                                    point: { latitude: 52.36357, longitude: 4.92331 },
+                                    point: { type: 'Point', coordinates: [4.92331, 52.36357] },
                                     travelTimeFromRouteStartInSeconds: 1274,
                                 },
                             ],
@@ -3650,7 +3650,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                         {
                             drivingSide: 'right',
                             maneuver: 'exitRoundabout',
-                            maneuverPoint: { latitude: 52.36357, longitude: 4.92331 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.92331, 52.36357] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadShields: [
@@ -3698,7 +3698,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 7295,
-                                    point: { latitude: 52.36357, longitude: 4.92331 },
+                                    point: { type: 'Point', coordinates: [4.92331, 52.36357] },
                                     travelTimeFromRouteStartInSeconds: 1274,
                                 },
                             ],
@@ -3712,7 +3712,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnSlightRight',
-                            maneuverPoint: { latitude: 52.37848, longitude: 4.9045 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.9045, 52.37848] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadNames: [
@@ -3750,12 +3750,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 11005,
-                                    point: { latitude: 52.37848, longitude: 4.9045 },
+                                    point: { type: 'Point', coordinates: [4.9045, 52.37848] },
                                     travelTimeFromRouteStartInSeconds: 1774,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 11015,
-                                    point: { latitude: 52.37854, longitude: 4.90439 },
+                                    point: { type: 'Point', coordinates: [4.90439, 52.37854] },
                                     travelTimeFromRouteStartInSeconds: 1777,
                                 },
                             ],
@@ -3778,7 +3778,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnRight',
-                            maneuverPoint: { latitude: 52.37906, longitude: 4.9026 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.9026, 52.37906] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadNames: [
@@ -3807,12 +3807,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 11157,
-                                    point: { latitude: 52.37906, longitude: 4.9026 },
+                                    point: { type: 'Point', coordinates: [4.9026, 52.37906] },
                                     travelTimeFromRouteStartInSeconds: 1823,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 11167,
-                                    point: { latitude: 52.3791, longitude: 4.90247 },
+                                    point: { type: 'Point', coordinates: [4.90247, 52.3791] },
                                     travelTimeFromRouteStartInSeconds: 1830,
                                 },
                             ],
@@ -3826,7 +3826,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnLeft',
-                            maneuverPoint: { latitude: 52.37922, longitude: 4.90213 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.90213, 52.37922] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadNames: [
@@ -3853,17 +3853,17 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 11193,
-                                    point: { latitude: 52.37922, longitude: 4.90213 },
+                                    point: { type: 'Point', coordinates: [4.90213, 52.37922] },
                                     travelTimeFromRouteStartInSeconds: 1849,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 11202,
-                                    point: { latitude: 52.37915, longitude: 4.90207 },
+                                    point: { type: 'Point', coordinates: [4.90207, 52.37915] },
                                     travelTimeFromRouteStartInSeconds: 1855,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 11202,
-                                    point: { latitude: 52.37914, longitude: 4.90206 },
+                                    point: { type: 'Point', coordinates: [4.90206, 52.37914] },
                                     travelTimeFromRouteStartInSeconds: 1856,
                                 },
                             ],
@@ -3872,7 +3872,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                         {
                             drivingSide: 'right',
                             maneuver: 'arriveLeft',
-                            maneuverPoint: { latitude: 52.37943, longitude: 4.90127 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.90127, 52.37943] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadNames: [
@@ -3903,7 +3903,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 11265,
-                                    point: { latitude: 52.37943, longitude: 4.90127 },
+                                    point: { type: 'Point', coordinates: [4.90127, 52.37943] },
                                     travelTimeFromRouteStartInSeconds: 1901,
                                 },
                             ],
@@ -7703,7 +7703,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                         {
                             drivingSide: 'right',
                             maneuver: 'depart',
-                            maneuverPoint: { latitude: 52.47157, longitude: 4.81034 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.81034, 52.47157] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadShields: [
@@ -7750,7 +7750,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 0,
-                                    point: { latitude: 52.47157, longitude: 4.81034 },
+                                    point: { type: 'Point', coordinates: [4.81034, 52.47157] },
                                     travelTimeFromRouteStartInSeconds: 0,
                                 },
                             ],
@@ -7759,7 +7759,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                         {
                             drivingSide: 'right',
                             maneuver: 'waypointRight',
-                            maneuverPoint: { latitude: 52.47148, longitude: 4.81609 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.81609, 52.47148] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadShields: [
@@ -7820,7 +7820,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 395,
-                                    point: { latitude: 52.47148, longitude: 4.81609 },
+                                    point: { type: 'Point', coordinates: [4.81609, 52.47148] },
                                     travelTimeFromRouteStartInSeconds: 46,
                                 },
                             ],
@@ -7835,7 +7835,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             changeOfAngleInDegrees: -88,
                             drivingSide: 'right',
                             maneuver: 'roundaboutLeft',
-                            maneuverPoint: { latitude: 52.4728, longitude: 4.82201 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.82201, 52.4728] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadNames: [
@@ -7879,67 +7879,67 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 803,
-                                    point: { latitude: 52.47256, longitude: 4.82182 },
+                                    point: { type: 'Point', coordinates: [4.82182, 52.47256] },
                                     travelTimeFromRouteStartInSeconds: 77,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 806,
-                                    point: { latitude: 52.47254, longitude: 4.82186 },
+                                    point: { type: 'Point', coordinates: [4.82186, 52.47254] },
                                     travelTimeFromRouteStartInSeconds: 77,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 810,
-                                    point: { latitude: 52.47253, longitude: 4.8219 },
+                                    point: { type: 'Point', coordinates: [4.8219, 52.47253] },
                                     travelTimeFromRouteStartInSeconds: 78,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 814,
-                                    point: { latitude: 52.47252, longitude: 4.82196 },
+                                    point: { type: 'Point', coordinates: [4.82196, 52.47252] },
                                     travelTimeFromRouteStartInSeconds: 78,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 821,
-                                    point: { latitude: 52.47253, longitude: 4.82205 },
+                                    point: { type: 'Point', coordinates: [4.82205, 52.47253] },
                                     travelTimeFromRouteStartInSeconds: 79,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 827,
-                                    point: { latitude: 52.47256, longitude: 4.82214 },
+                                    point: { type: 'Point', coordinates: [4.82214, 52.47256] },
                                     travelTimeFromRouteStartInSeconds: 80,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 832,
-                                    point: { latitude: 52.47259, longitude: 4.82219 },
+                                    point: { type: 'Point', coordinates: [4.82219, 52.47259] },
                                     travelTimeFromRouteStartInSeconds: 81,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 838,
-                                    point: { latitude: 52.47264, longitude: 4.82221 },
+                                    point: { type: 'Point', coordinates: [4.82221, 52.47264] },
                                     travelTimeFromRouteStartInSeconds: 81,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 844,
-                                    point: { latitude: 52.4727, longitude: 4.8222 },
+                                    point: { type: 'Point', coordinates: [4.8222, 52.4727] },
                                     travelTimeFromRouteStartInSeconds: 82,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 851,
-                                    point: { latitude: 52.47276, longitude: 4.82215 },
+                                    point: { type: 'Point', coordinates: [4.82215, 52.47276] },
                                     travelTimeFromRouteStartInSeconds: 84,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 855,
-                                    point: { latitude: 52.47278, longitude: 4.82211 },
+                                    point: { type: 'Point', coordinates: [4.82211, 52.47278] },
                                     travelTimeFromRouteStartInSeconds: 84,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 859,
-                                    point: { latitude: 52.47279, longitude: 4.82206 },
+                                    point: { type: 'Point', coordinates: [4.82206, 52.47279] },
                                     travelTimeFromRouteStartInSeconds: 85,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 862,
-                                    point: { latitude: 52.4728, longitude: 4.82201 },
+                                    point: { type: 'Point', coordinates: [4.82201, 52.4728] },
                                     travelTimeFromRouteStartInSeconds: 86,
                                 },
                             ],
@@ -7953,7 +7953,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnRight',
-                            maneuverPoint: { latitude: 52.47362, longitude: 4.82161 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.82161, 52.47362] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadNames: [
@@ -7980,12 +7980,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 959,
-                                    point: { latitude: 52.47362, longitude: 4.82161 },
+                                    point: { type: 'Point', coordinates: [4.82161, 52.47362] },
                                     travelTimeFromRouteStartInSeconds: 156,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 969,
-                                    point: { latitude: 52.47365, longitude: 4.82175 },
+                                    point: { type: 'Point', coordinates: [4.82175, 52.47365] },
                                     travelTimeFromRouteStartInSeconds: 164,
                                 },
                             ],
@@ -8004,7 +8004,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: true,
                             maneuver: 'turnRight',
-                            maneuverPoint: { latitude: 52.47365, longitude: 4.82185 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.82185, 52.47365] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadNames: [
@@ -8033,17 +8033,17 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 975,
-                                    point: { latitude: 52.47365, longitude: 4.82185 },
+                                    point: { type: 'Point', coordinates: [4.82185, 52.47365] },
                                     travelTimeFromRouteStartInSeconds: 169,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 977,
-                                    point: { latitude: 52.47364, longitude: 4.82187 },
+                                    point: { type: 'Point', coordinates: [4.82187, 52.47364] },
                                     travelTimeFromRouteStartInSeconds: 170,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 985,
-                                    point: { latitude: 52.47358, longitude: 4.82193 },
+                                    point: { type: 'Point', coordinates: [4.82193, 52.47358] },
                                     travelTimeFromRouteStartInSeconds: 176,
                                 },
                             ],
@@ -8057,7 +8057,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnLeft',
-                            maneuverPoint: { latitude: 52.47318, longitude: 4.82227 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.82227, 52.47318] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadNames: [
@@ -8086,17 +8086,17 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 1035,
-                                    point: { latitude: 52.47318, longitude: 4.82227 },
+                                    point: { type: 'Point', coordinates: [4.82227, 52.47318] },
                                     travelTimeFromRouteStartInSeconds: 212,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 1038,
-                                    point: { latitude: 52.47317, longitude: 4.82231 },
+                                    point: { type: 'Point', coordinates: [4.82231, 52.47317] },
                                     travelTimeFromRouteStartInSeconds: 214,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 1042,
-                                    point: { latitude: 52.47317, longitude: 4.82236 },
+                                    point: { type: 'Point', coordinates: [4.82236, 52.47317] },
                                     travelTimeFromRouteStartInSeconds: 216,
                                 },
                             ],
@@ -8123,7 +8123,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnLeft',
-                            maneuverPoint: { latitude: 52.47332, longitude: 4.82325 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.82325, 52.47332] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadNames: [
@@ -8152,12 +8152,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 1104,
-                                    point: { latitude: 52.47332, longitude: 4.82325 },
+                                    point: { type: 'Point', coordinates: [4.82325, 52.47332] },
                                     travelTimeFromRouteStartInSeconds: 262,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 1114,
-                                    point: { latitude: 52.4734, longitude: 4.8232 },
+                                    point: { type: 'Point', coordinates: [4.8232, 52.4734] },
                                     travelTimeFromRouteStartInSeconds: 269,
                                 },
                             ],
@@ -8176,7 +8176,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnLeft',
-                            maneuverPoint: { latitude: 52.4741, longitude: 4.82288 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.82288, 52.4741] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadNames: [
@@ -8203,12 +8203,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 1197,
-                                    point: { latitude: 52.4741, longitude: 4.82288 },
+                                    point: { type: 'Point', coordinates: [4.82288, 52.4741] },
                                     travelTimeFromRouteStartInSeconds: 328,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 1207,
-                                    point: { latitude: 52.47416, longitude: 4.82278 },
+                                    point: { type: 'Point', coordinates: [4.82278, 52.47416] },
                                     travelTimeFromRouteStartInSeconds: 335,
                                 },
                             ],
@@ -8222,7 +8222,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isManeuverObligatory: false,
                             maneuver: 'turnSlightRight',
-                            maneuverPoint: { latitude: 52.47427, longitude: 4.82261 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.82261, 52.47427] },
                             nextRoadInformation: {
                                 properties: [],
                                 roadNames: [
@@ -8247,12 +8247,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 1223,
-                                    point: { latitude: 52.47427, longitude: 4.82261 },
+                                    point: { type: 'Point', coordinates: [4.82261, 52.47427] },
                                     travelTimeFromRouteStartInSeconds: 347,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 1228,
-                                    point: { latitude: 52.47431, longitude: 4.82259 },
+                                    point: { type: 'Point', coordinates: [4.82259, 52.47431] },
                                     travelTimeFromRouteStartInSeconds: 350,
                                 },
                             ],
@@ -8261,7 +8261,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                         {
                             drivingSide: 'right',
                             maneuver: 'arriveAhead',
-                            maneuverPoint: { latitude: 52.47553, longitude: 4.82164 },
+                            maneuverPoint: { type: 'Point', coordinates: [4.82164, 52.47553] },
                             nextRoadInformation: {
                                 properties: [],
                                 roadNames: [
@@ -8286,7 +8286,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 1379,
-                                    point: { latitude: 52.47553, longitude: 4.82164 },
+                                    point: { type: 'Point', coordinates: [4.82164, 52.47553] },
                                     travelTimeFromRouteStartInSeconds: 459,
                                 },
                             ],
@@ -10214,7 +10214,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             drivingSide: 'right',
                             isEnforcedAtForkPoint: false,
                             maneuver: 'depart',
-                            maneuverPoint: { latitude: 41.3850457, longitude: 2.173445 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.173445, 41.3850457] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadNames: [
@@ -10245,7 +10245,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 0,
-                                    point: { latitude: 41.3850457, longitude: 2.173445 },
+                                    point: { type: 'Point', coordinates: [2.173445, 41.3850457] },
                                     travelTimeFromRouteStartInSeconds: 0,
                                 },
                             ],
@@ -10260,7 +10260,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             isEnforcedAtForkPoint: false,
                             isManeuverObligatory: false,
                             maneuver: 'turnRight',
-                            maneuverPoint: { latitude: 41.385144, longitude: 2.1736944 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.1736944, 41.385144] },
                             maneuverView: {
                                 offRouteAngles: [],
                                 onRouteAngle: 'RIGHT',
@@ -10295,17 +10295,17 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 24,
-                                    point: { latitude: 41.385144, longitude: 2.1736944 },
+                                    point: { type: 'Point', coordinates: [2.1736944, 41.385144] },
                                     travelTimeFromRouteStartInSeconds: 18,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 28,
-                                    point: { latitude: 41.3851064, longitude: 2.1737078 },
+                                    point: { type: 'Point', coordinates: [2.1737078, 41.3851064] },
                                     travelTimeFromRouteStartInSeconds: 21,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 34,
-                                    point: { latitude: 41.3850632, longitude: 2.1737441 },
+                                    point: { type: 'Point', coordinates: [2.1737441, 41.3850632] },
                                     travelTimeFromRouteStartInSeconds: 25,
                                 },
                             ],
@@ -10320,7 +10320,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             isEnforcedAtForkPoint: false,
                             isManeuverObligatory: false,
                             maneuver: 'turnLeft',
-                            maneuverPoint: { latitude: 41.3846666, longitude: 2.1740645 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.1740645, 41.3846666] },
                             maneuverView: {
                                 offRouteAngles: [],
                                 onRouteAngle: 'LEFT',
@@ -10355,12 +10355,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 86,
-                                    point: { latitude: 41.3846666, longitude: 2.1740645 },
+                                    point: { type: 'Point', coordinates: [2.1740645, 41.3846666] },
                                     travelTimeFromRouteStartInSeconds: 64,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 96,
-                                    point: { latitude: 41.3846831, longitude: 2.1741825 },
+                                    point: { type: 'Point', coordinates: [2.1741825, 41.3846831] },
                                     travelTimeFromRouteStartInSeconds: 72,
                                 },
                             ],
@@ -10375,7 +10375,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             isEnforcedAtForkPoint: false,
                             isManeuverObligatory: false,
                             maneuver: 'turnLeft',
-                            maneuverPoint: { latitude: 41.3842133, longitude: 2.1752366 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.1752366, 41.3842133] },
                             maneuverView: {
                                 offRouteAngles: [],
                                 onRouteAngle: 'SLIGHT_LEFT',
@@ -10407,7 +10407,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 203,
-                                    point: { latitude: 41.3842133, longitude: 2.1752366 },
+                                    point: { type: 'Point', coordinates: [2.1752366, 41.3842133] },
                                     travelTimeFromRouteStartInSeconds: 152,
                                 },
                             ],
@@ -10422,7 +10422,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             isEnforcedAtForkPoint: false,
                             isManeuverObligatory: false,
                             maneuver: 'turnLeft',
-                            maneuverPoint: { latitude: 41.3842374, longitude: 2.1752903 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.1752903, 41.3842374] },
                             maneuverView: {
                                 offRouteAngles: [],
                                 onRouteAngle: 'LEFT',
@@ -10454,12 +10454,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 208,
-                                    point: { latitude: 41.3842374, longitude: 2.1752903 },
+                                    point: { type: 'Point', coordinates: [2.1752903, 41.3842374] },
                                     travelTimeFromRouteStartInSeconds: 156,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 218,
-                                    point: { latitude: 41.3843198, longitude: 2.1752424 },
+                                    point: { type: 'Point', coordinates: [2.1752424, 41.3843198] },
                                     travelTimeFromRouteStartInSeconds: 164,
                                 },
                             ],
@@ -10474,7 +10474,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             isEnforcedAtForkPoint: false,
                             isManeuverObligatory: true,
                             maneuver: 'turnRight',
-                            maneuverPoint: { latitude: 41.3864368, longitude: 2.175411 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.175411, 41.3864368] },
                             maneuverView: {
                                 offRouteAngles: [],
                                 onRouteAngle: 'SHARP_RIGHT',
@@ -10505,12 +10505,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 503,
-                                    point: { latitude: 41.3864368, longitude: 2.175411 },
+                                    point: { type: 'Point', coordinates: [2.175411, 41.3864368] },
                                     travelTimeFromRouteStartInSeconds: 342,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 513,
-                                    point: { latitude: 41.3863725, longitude: 2.1754945 },
+                                    point: { type: 'Point', coordinates: [2.1754945, 41.3863725] },
                                     travelTimeFromRouteStartInSeconds: 349,
                                 },
                             ],
@@ -10529,7 +10529,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isEnforcedAtForkPoint: false,
                             maneuver: 'keepLeft',
-                            maneuverPoint: { latitude: 41.3835803, longitude: 2.1896911 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.1896911, 41.3835803] },
                             maneuverView: {
                                 offRouteAngles: ['STRAIGHT'],
                                 onRouteAngle: 'SLIGHT_LEFT',
@@ -10564,7 +10564,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 2033,
-                                    point: { latitude: 41.3835803, longitude: 2.1896911 },
+                                    point: { type: 'Point', coordinates: [2.1896911, 41.3835803] },
                                     travelTimeFromRouteStartInSeconds: 1025,
                                 },
                             ],
@@ -10660,7 +10660,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             drivingSide: 'right',
                             isEnforcedAtForkPoint: false,
                             maneuver: 'mergeRightLane',
-                            maneuverPoint: { latitude: 41.3857207, longitude: 2.1934864 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.1934864, 41.3857207] },
                             nextRoadInformation: {
                                 properties: ['URBAN', 'CONTROLLED_ACCESS'],
                                 roadShields: [
@@ -10703,7 +10703,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 2433,
-                                    point: { latitude: 41.3857207, longitude: 2.1934864 },
+                                    point: { type: 'Point', coordinates: [2.1934864, 41.3857207] },
                                     travelTimeFromRouteStartInSeconds: 1058,
                                 },
                             ],
@@ -10716,7 +10716,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isEnforcedAtForkPoint: false,
                             maneuver: 'keepLeft',
-                            maneuverPoint: { latitude: 41.4492086, longitude: 2.1996582 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.1996582, 41.4492086] },
                             maneuverView: {
                                 offRouteAngles: ['SLIGHT_RIGHT'],
                                 onRouteAngle: 'STRAIGHT',
@@ -10778,7 +10778,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 11215,
-                                    point: { latitude: 41.4492086, longitude: 2.1996582 },
+                                    point: { type: 'Point', coordinates: [2.1996582, 41.4492086] },
                                     travelTimeFromRouteStartInSeconds: 1588,
                                 },
                             ],
@@ -10815,7 +10815,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isEnforcedAtForkPoint: false,
                             maneuver: 'keepRight',
-                            maneuverPoint: { latitude: 41.4570916, longitude: 2.1879101 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.1879101, 41.4570916] },
                             maneuverView: {
                                 offRouteAngles: ['SLIGHT_LEFT'],
                                 onRouteAngle: 'SLIGHT_RIGHT',
@@ -10862,7 +10862,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 12661,
-                                    point: { latitude: 41.4570916, longitude: 2.1879101 },
+                                    point: { type: 'Point', coordinates: [2.1879101, 41.4570916] },
                                     travelTimeFromRouteStartInSeconds: 1660,
                                 },
                             ],
@@ -10899,7 +10899,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isEnforcedAtForkPoint: false,
                             maneuver: 'keepLeft',
-                            maneuverPoint: { latitude: 41.5490913, longitude: 2.2356266 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.2356266, 41.5490913] },
                             maneuverView: {
                                 offRouteAngles: ['SLIGHT_RIGHT'],
                                 onRouteAngle: 'STRAIGHT',
@@ -10944,7 +10944,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 24680,
-                                    point: { latitude: 41.5490913, longitude: 2.2356266 },
+                                    point: { type: 'Point', coordinates: [2.2356266, 41.5490913] },
                                     travelTimeFromRouteStartInSeconds: 2068,
                                 },
                             ],
@@ -10970,7 +10970,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isEnforcedAtForkPoint: false,
                             maneuver: 'exitMotorwayRight',
-                            maneuverPoint: { latitude: 41.8932804, longitude: 2.7750912 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.7750912, 41.8932804] },
                             maneuverView: {
                                 offRouteAngles: ['STRAIGHT'],
                                 onRouteAngle: 'SLIGHT_RIGHT',
@@ -11045,7 +11045,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 90058,
-                                    point: { latitude: 41.8932804, longitude: 2.7750912 },
+                                    point: { type: 'Point', coordinates: [2.7750912, 41.8932804] },
                                     travelTimeFromRouteStartInSeconds: 4096,
                                 },
                             ],
@@ -11074,7 +11074,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             drivingSide: 'right',
                             isEnforcedAtForkPoint: false,
                             maneuver: 'roundaboutSharpRight',
-                            maneuverPoint: { latitude: 41.8932778, longitude: 2.7790877 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.7790877, 41.8932778] },
                             maneuverView: {
                                 offRouteAngles: ['SHARP_LEFT', 'SLIGHT_LEFT', 'RIGHT'],
                                 onRouteAngle: 'SHARP_RIGHT',
@@ -11120,12 +11120,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 90774,
-                                    point: { latitude: 41.8933287, longitude: 2.779195 },
+                                    point: { type: 'Point', coordinates: [2.779195, 41.8933287] },
                                     travelTimeFromRouteStartInSeconds: 4141,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 90785,
-                                    point: { latitude: 41.8932778, longitude: 2.7790877 },
+                                    point: { type: 'Point', coordinates: [2.7790877, 41.8932778] },
                                     travelTimeFromRouteStartInSeconds: 4142,
                                 },
                             ],
@@ -11155,7 +11155,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             drivingSide: 'right',
                             isEnforcedAtForkPoint: false,
                             maneuver: 'roundaboutSlightRight',
-                            maneuverPoint: { latitude: 41.8984571, longitude: 2.7704725 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.7704725, 41.8984571] },
                             maneuverView: {
                                 offRouteAngles: ['LEFT', 'STRAIGHT', 'RIGHT'],
                                 onRouteAngle: 'SLIGHT_RIGHT',
@@ -11204,47 +11204,47 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 91678,
-                                    point: { latitude: 41.8980896, longitude: 2.7706146 },
+                                    point: { type: 'Point', coordinates: [2.7706146, 41.8980896] },
                                     travelTimeFromRouteStartInSeconds: 4202,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 91686,
-                                    point: { latitude: 41.8981433, longitude: 2.7706629 },
+                                    point: { type: 'Point', coordinates: [2.7706629, 41.8981433] },
                                     travelTimeFromRouteStartInSeconds: 4203,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 91693,
-                                    point: { latitude: 41.898205, longitude: 2.770687 },
+                                    point: { type: 'Point', coordinates: [2.770687, 41.898205] },
                                     travelTimeFromRouteStartInSeconds: 4204,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 91700,
-                                    point: { latitude: 41.8982694, longitude: 2.770687 },
+                                    point: { type: 'Point', coordinates: [2.770687, 41.8982694] },
                                     travelTimeFromRouteStartInSeconds: 4204,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 91707,
-                                    point: { latitude: 41.898331, longitude: 2.7706629 },
+                                    point: { type: 'Point', coordinates: [2.7706629, 41.898331] },
                                     travelTimeFromRouteStartInSeconds: 4205,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 91712,
-                                    point: { latitude: 41.898374, longitude: 2.7706307 },
+                                    point: { type: 'Point', coordinates: [2.7706307, 41.898374] },
                                     travelTimeFromRouteStartInSeconds: 4206,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 91718,
-                                    point: { latitude: 41.8984088, longitude: 2.7705878 },
+                                    point: { type: 'Point', coordinates: [2.7705878, 41.8984088] },
                                     travelTimeFromRouteStartInSeconds: 4206,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 91723,
-                                    point: { latitude: 41.8984383, longitude: 2.7705315 },
+                                    point: { type: 'Point', coordinates: [2.7705315, 41.8984383] },
                                     travelTimeFromRouteStartInSeconds: 4207,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 91729,
-                                    point: { latitude: 41.8984571, longitude: 2.7704725 },
+                                    point: { type: 'Point', coordinates: [2.7704725, 41.8984571] },
                                     travelTimeFromRouteStartInSeconds: 4208,
                                 },
                             ],
@@ -11275,7 +11275,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             isEnforcedAtForkPoint: false,
                             isManeuverObligatory: true,
                             maneuver: 'turnLeft',
-                            maneuverPoint: { latitude: 41.8985751, longitude: 2.770679 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.770679, 41.8985751] },
                             maneuverView: {
                                 offRouteAngles: [],
                                 onRouteAngle: 'LEFT',
@@ -11307,12 +11307,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 91750,
-                                    point: { latitude: 41.8985751, longitude: 2.770679 },
+                                    point: { type: 'Point', coordinates: [2.770679, 41.8985751] },
                                     travelTimeFromRouteStartInSeconds: 4227,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 91760,
-                                    point: { latitude: 41.8986308, longitude: 2.770585 },
+                                    point: { type: 'Point', coordinates: [2.770585, 41.8986308] },
                                     travelTimeFromRouteStartInSeconds: 4237,
                                 },
                             ],
@@ -11322,7 +11322,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             drivingSide: 'right',
                             isEnforcedAtForkPoint: false,
                             maneuver: 'waypointRight',
-                            maneuverPoint: { latitude: 41.8986965, longitude: 2.770474 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.770474, 41.8986965] },
                             nextRoadInformation: {
                                 properties: [],
                                 roadNames: [
@@ -11347,7 +11347,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 91772,
-                                    point: { latitude: 41.8986965, longitude: 2.770474 },
+                                    point: { type: 'Point', coordinates: [2.770474, 41.8986965] },
                                     travelTimeFromRouteStartInSeconds: 4614,
                                 },
                             ],
@@ -11362,7 +11362,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             isEnforcedAtForkPoint: false,
                             isManeuverObligatory: false,
                             maneuver: 'makeUTurn',
-                            maneuverPoint: { latitude: 41.8986965, longitude: 2.770474 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.770474, 41.8986965] },
                             maneuverView: {
                                 offRouteAngles: [],
                                 onRouteAngle: 'BACK',
@@ -11391,12 +11391,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 91772,
-                                    point: { latitude: 41.8986965, longitude: 2.770474 },
+                                    point: { type: 'Point', coordinates: [2.770474, 41.8986965] },
                                     travelTimeFromRouteStartInSeconds: 4614,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 91782,
-                                    point: { latitude: 41.8986408, longitude: 2.7705679 },
+                                    point: { type: 'Point', coordinates: [2.7705679, 41.8986408] },
                                     travelTimeFromRouteStartInSeconds: 4627,
                                 },
                             ],
@@ -11411,7 +11411,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             isEnforcedAtForkPoint: false,
                             isManeuverObligatory: true,
                             maneuver: 'turnRight',
-                            maneuverPoint: { latitude: 41.8985751, longitude: 2.770679 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.770679, 41.8985751] },
                             maneuverView: {
                                 offRouteAngles: [],
                                 onRouteAngle: 'RIGHT',
@@ -11443,22 +11443,22 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 91794,
-                                    point: { latitude: 41.8985751, longitude: 2.770679 },
+                                    point: { type: 'Point', coordinates: [2.770679, 41.8985751] },
                                     travelTimeFromRouteStartInSeconds: 4641,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 91798,
-                                    point: { latitude: 41.8985483, longitude: 2.7706468 },
+                                    point: { type: 'Point', coordinates: [2.7706468, 41.8985483] },
                                     travelTimeFromRouteStartInSeconds: 4642,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 91804,
-                                    point: { latitude: 41.8985188, longitude: 2.7705878 },
+                                    point: { type: 'Point', coordinates: [2.7705878, 41.8985188] },
                                     travelTimeFromRouteStartInSeconds: 4644,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 91804,
-                                    point: { latitude: 41.8985186, longitude: 2.7705876 },
+                                    point: { type: 'Point', coordinates: [2.7705876, 41.8985186] },
                                     travelTimeFromRouteStartInSeconds: 4644,
                                 },
                             ],
@@ -11469,7 +11469,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             drivingSide: 'right',
                             isEnforcedAtForkPoint: false,
                             maneuver: 'roundaboutLeft',
-                            maneuverPoint: { latitude: 41.8980896, longitude: 2.7706146 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.7706146, 41.8980896] },
                             maneuverView: {
                                 offRouteAngles: ['SHARP_LEFT', 'STRAIGHT', 'RIGHT'],
                                 onRouteAngle: 'LEFT',
@@ -11518,82 +11518,82 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 91816,
-                                    point: { latitude: 41.8984571, longitude: 2.7704725 },
+                                    point: { type: 'Point', coordinates: [2.7704725, 41.8984571] },
                                     travelTimeFromRouteStartInSeconds: 4648,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 91822,
-                                    point: { latitude: 41.8984652, longitude: 2.7704027 },
+                                    point: { type: 'Point', coordinates: [2.7704027, 41.8984652] },
                                     travelTimeFromRouteStartInSeconds: 4648,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 91828,
-                                    point: { latitude: 41.8984625, longitude: 2.7703303 },
+                                    point: { type: 'Point', coordinates: [2.7703303, 41.8984625] },
                                     travelTimeFromRouteStartInSeconds: 4649,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 91834,
-                                    point: { latitude: 41.8984464, longitude: 2.7702633 },
+                                    point: { type: 'Point', coordinates: [2.7702633, 41.8984464] },
                                     travelTimeFromRouteStartInSeconds: 4650,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 91842,
-                                    point: { latitude: 41.8984061, longitude: 2.7701774 },
+                                    point: { type: 'Point', coordinates: [2.7701774, 41.8984061] },
                                     travelTimeFromRouteStartInSeconds: 4651,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 91851,
-                                    point: { latitude: 41.8983445, longitude: 2.7701157 },
+                                    point: { type: 'Point', coordinates: [2.7701157, 41.8983445] },
                                     travelTimeFromRouteStartInSeconds: 4652,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 91859,
-                                    point: { latitude: 41.898272, longitude: 2.7700835 },
+                                    point: { type: 'Point', coordinates: [2.7700835, 41.898272] },
                                     travelTimeFromRouteStartInSeconds: 4653,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 91864,
-                                    point: { latitude: 41.8982238, longitude: 2.7700809 },
+                                    point: { type: 'Point', coordinates: [2.7700809, 41.8982238] },
                                     travelTimeFromRouteStartInSeconds: 4653,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 91870,
-                                    point: { latitude: 41.8981755, longitude: 2.7700916 },
+                                    point: { type: 'Point', coordinates: [2.7700916, 41.8981755] },
                                     travelTimeFromRouteStartInSeconds: 4654,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 91875,
-                                    point: { latitude: 41.8981299, longitude: 2.7701184 },
+                                    point: { type: 'Point', coordinates: [2.7701184, 41.8981299] },
                                     travelTimeFromRouteStartInSeconds: 4655,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 91881,
-                                    point: { latitude: 41.8980896, longitude: 2.770156 },
+                                    point: { type: 'Point', coordinates: [2.770156, 41.8980896] },
                                     travelTimeFromRouteStartInSeconds: 4655,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 91887,
-                                    point: { latitude: 41.8980548, longitude: 2.7702042 },
+                                    point: { type: 'Point', coordinates: [2.7702042, 41.8980548] },
                                     travelTimeFromRouteStartInSeconds: 4656,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 91896,
-                                    point: { latitude: 41.8980199, longitude: 2.7703062 },
+                                    point: { type: 'Point', coordinates: [2.7703062, 41.8980199] },
                                     travelTimeFromRouteStartInSeconds: 4657,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 91905,
-                                    point: { latitude: 41.8980119, longitude: 2.7704188 },
+                                    point: { type: 'Point', coordinates: [2.7704188, 41.8980119] },
                                     travelTimeFromRouteStartInSeconds: 4658,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 91915,
-                                    point: { latitude: 41.8980387, longitude: 2.7705288 },
+                                    point: { type: 'Point', coordinates: [2.7705288, 41.8980387] },
                                     travelTimeFromRouteStartInSeconds: 4659,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 91924,
-                                    point: { latitude: 41.8980896, longitude: 2.7706146 },
+                                    point: { type: 'Point', coordinates: [2.7706146, 41.8980896] },
                                     travelTimeFromRouteStartInSeconds: 4659,
                                 },
                             ],
@@ -11604,7 +11604,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             drivingSide: 'right',
                             isEnforcedAtForkPoint: false,
                             maneuver: 'exitRoundabout',
-                            maneuverPoint: { latitude: 41.8980896, longitude: 2.7706146 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.7706146, 41.8980896] },
                             maneuverView: {
                                 offRouteAngles: ['STRAIGHT'],
                                 onRouteAngle: 'RIGHT',
@@ -11654,7 +11654,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 91924,
-                                    point: { latitude: 41.8980896, longitude: 2.7706146 },
+                                    point: { type: 'Point', coordinates: [2.7706146, 41.8980896] },
                                     travelTimeFromRouteStartInSeconds: 4659,
                                 },
                             ],
@@ -11665,7 +11665,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             drivingSide: 'right',
                             isEnforcedAtForkPoint: false,
                             maneuver: 'roundaboutSharpLeft',
-                            maneuverPoint: { latitude: 41.8933448, longitude: 2.7795035 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.7795035, 41.8933448] },
                             maneuverView: {
                                 offRouteAngles: ['SLIGHT_LEFT', 'SLIGHT_RIGHT', 'SHARP_RIGHT'],
                                 onRouteAngle: 'SHARP_LEFT',
@@ -11739,102 +11739,102 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 92816,
-                                    point: { latitude: 41.8930042, longitude: 2.7789187 },
+                                    point: { type: 'Point', coordinates: [2.7789187, 41.8930042] },
                                     travelTimeFromRouteStartInSeconds: 4718,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 92823,
-                                    point: { latitude: 41.8929398, longitude: 2.7789322 },
+                                    point: { type: 'Point', coordinates: [2.7789322, 41.8929398] },
                                     travelTimeFromRouteStartInSeconds: 4718,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 92826,
-                                    point: { latitude: 41.892913, longitude: 2.7789375 },
+                                    point: { type: 'Point', coordinates: [2.7789375, 41.892913] },
                                     travelTimeFromRouteStartInSeconds: 4719,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 92836,
-                                    point: { latitude: 41.8928272, longitude: 2.7789858 },
+                                    point: { type: 'Point', coordinates: [2.7789858, 41.8928272] },
                                     travelTimeFromRouteStartInSeconds: 4720,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 92846,
-                                    point: { latitude: 41.8927574, longitude: 2.7790636 },
+                                    point: { type: 'Point', coordinates: [2.7790636, 41.8927574] },
                                     travelTimeFromRouteStartInSeconds: 4721,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 92856,
-                                    point: { latitude: 41.8927011, longitude: 2.7791601 },
+                                    point: { type: 'Point', coordinates: [2.7791601, 41.8927011] },
                                     travelTimeFromRouteStartInSeconds: 4722,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 92867,
-                                    point: { latitude: 41.8926689, longitude: 2.7792755 },
+                                    point: { type: 'Point', coordinates: [2.7792755, 41.8926689] },
                                     travelTimeFromRouteStartInSeconds: 4723,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 92877,
-                                    point: { latitude: 41.8926582, longitude: 2.7793962 },
+                                    point: { type: 'Point', coordinates: [2.7793962, 41.8926582] },
                                     travelTimeFromRouteStartInSeconds: 4724,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 92887,
-                                    point: { latitude: 41.8926716, longitude: 2.7795196 },
+                                    point: { type: 'Point', coordinates: [2.7795196, 41.8926716] },
                                     travelTimeFromRouteStartInSeconds: 4725,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 92897,
-                                    point: { latitude: 41.8927091, longitude: 2.7796322 },
+                                    point: { type: 'Point', coordinates: [2.7796322, 41.8927091] },
                                     travelTimeFromRouteStartInSeconds: 4726,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 92907,
-                                    point: { latitude: 41.8927655, longitude: 2.7797261 },
+                                    point: { type: 'Point', coordinates: [2.7797261, 41.8927655] },
                                     travelTimeFromRouteStartInSeconds: 4727,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 92917,
-                                    point: { latitude: 41.8928379, longitude: 2.7798012 },
+                                    point: { type: 'Point', coordinates: [2.7798012, 41.8928379] },
                                     travelTimeFromRouteStartInSeconds: 4728,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 92928,
-                                    point: { latitude: 41.8929237, longitude: 2.7798441 },
+                                    point: { type: 'Point', coordinates: [2.7798441, 41.8929237] },
                                     travelTimeFromRouteStartInSeconds: 4729,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 92938,
-                                    point: { latitude: 41.8930149, longitude: 2.7798575 },
+                                    point: { type: 'Point', coordinates: [2.7798575, 41.8930149] },
                                     travelTimeFromRouteStartInSeconds: 4730,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 92948,
-                                    point: { latitude: 41.8931034, longitude: 2.7798414 },
+                                    point: { type: 'Point', coordinates: [2.7798414, 41.8931034] },
                                     travelTimeFromRouteStartInSeconds: 4731,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 92958,
-                                    point: { latitude: 41.8931866, longitude: 2.7797905 },
+                                    point: { type: 'Point', coordinates: [2.7797905, 41.8931866] },
                                     travelTimeFromRouteStartInSeconds: 4732,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 92964,
-                                    point: { latitude: 41.8932322, longitude: 2.7797475 },
+                                    point: { type: 'Point', coordinates: [2.7797475, 41.8932322] },
                                     travelTimeFromRouteStartInSeconds: 4733,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 92969,
-                                    point: { latitude: 41.8932644, longitude: 2.7797046 },
+                                    point: { type: 'Point', coordinates: [2.7797046, 41.8932644] },
                                     travelTimeFromRouteStartInSeconds: 4733,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 92978,
-                                    point: { latitude: 41.8933126, longitude: 2.7796161 },
+                                    point: { type: 'Point', coordinates: [2.7796161, 41.8933126] },
                                     travelTimeFromRouteStartInSeconds: 4734,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 92988,
-                                    point: { latitude: 41.8933448, longitude: 2.7795035 },
+                                    point: { type: 'Point', coordinates: [2.7795035, 41.8933448] },
                                     travelTimeFromRouteStartInSeconds: 4735,
                                 },
                             ],
@@ -11874,7 +11874,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             drivingSide: 'right',
                             isEnforcedAtForkPoint: false,
                             maneuver: 'exitRoundabout',
-                            maneuverPoint: { latitude: 41.8933448, longitude: 2.7795035 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.7795035, 41.8933448] },
                             maneuverView: {
                                 offRouteAngles: ['STRAIGHT'],
                                 onRouteAngle: 'RIGHT',
@@ -11949,7 +11949,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 92988,
-                                    point: { latitude: 41.8933448, longitude: 2.7795035 },
+                                    point: { type: 'Point', coordinates: [2.7795035, 41.8933448] },
                                     travelTimeFromRouteStartInSeconds: 4735,
                                 },
                             ],
@@ -11962,7 +11962,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isEnforcedAtForkPoint: false,
                             maneuver: 'keepRight',
-                            maneuverPoint: { latitude: 41.8957695, longitude: 2.7769151 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.7769151, 41.8957695] },
                             maneuverView: {
                                 offRouteAngles: ['SLIGHT_LEFT'],
                                 onRouteAngle: 'SLIGHT_RIGHT',
@@ -12019,7 +12019,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 93346,
-                                    point: { latitude: 41.8957695, longitude: 2.7769151 },
+                                    point: { type: 'Point', coordinates: [2.7769151, 41.8957695] },
                                     travelTimeFromRouteStartInSeconds: 4757,
                                 },
                             ],
@@ -12042,7 +12042,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             drivingSide: 'right',
                             isEnforcedAtForkPoint: false,
                             maneuver: 'mergeRightLane',
-                            maneuverPoint: { latitude: 41.8985215, longitude: 2.7749035 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.7749035, 41.8985215] },
                             nextRoadInformation: {
                                 properties: ['MOTORWAY', 'CONTROLLED_ACCESS'],
                                 roadShields: [
@@ -12098,7 +12098,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 93713,
-                                    point: { latitude: 41.8985215, longitude: 2.7749035 },
+                                    point: { type: 'Point', coordinates: [2.7749035, 41.8985215] },
                                     travelTimeFromRouteStartInSeconds: 4775,
                                 },
                             ],
@@ -12111,7 +12111,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isEnforcedAtForkPoint: false,
                             maneuver: 'keepLeft',
-                            maneuverPoint: { latitude: 41.9042695, longitude: 2.7733102 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.7733102, 41.9042695] },
                             maneuverView: {
                                 offRouteAngles: ['SLIGHT_RIGHT'],
                                 onRouteAngle: 'STRAIGHT',
@@ -12202,7 +12202,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 94365,
-                                    point: { latitude: 41.9042695, longitude: 2.7733102 },
+                                    point: { type: 'Point', coordinates: [2.7733102, 41.9042695] },
                                     travelTimeFromRouteStartInSeconds: 4796,
                                 },
                             ],
@@ -12215,7 +12215,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isEnforcedAtForkPoint: false,
                             maneuver: 'exitMotorwayRight',
-                            maneuverPoint: { latitude: 41.9564304, longitude: 2.7853534 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.7853534, 41.9564304] },
                             maneuverView: {
                                 offRouteAngles: ['STRAIGHT'],
                                 onRouteAngle: 'SLIGHT_RIGHT',
@@ -12275,7 +12275,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 100513,
-                                    point: { latitude: 41.9564304, longitude: 2.7853534 },
+                                    point: { type: 'Point', coordinates: [2.7853534, 41.9564304] },
                                     travelTimeFromRouteStartInSeconds: 4991,
                                 },
                             ],
@@ -12307,7 +12307,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isEnforcedAtForkPoint: false,
                             maneuver: 'continueStraight',
-                            maneuverPoint: { latitude: 41.9616553, longitude: 2.7891889 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.7891889, 41.9616553] },
                             maneuverView: {
                                 offRouteAngles: ['SLIGHT_RIGHT'],
                                 onRouteAngle: 'STRAIGHT',
@@ -12336,12 +12336,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 101318,
-                                    point: { latitude: 41.9616553, longitude: 2.7891889 },
+                                    point: { type: 'Point', coordinates: [2.7891889, 41.9616553] },
                                     travelTimeFromRouteStartInSeconds: 5044,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 101328,
-                                    point: { latitude: 41.9616871, longitude: 2.7893019 },
+                                    point: { type: 'Point', coordinates: [2.7893019, 41.9616871] },
                                     travelTimeFromRouteStartInSeconds: 5045,
                                 },
                             ],
@@ -12357,7 +12357,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             drivingSide: 'right',
                             isEnforcedAtForkPoint: false,
                             maneuver: 'mergeRightLane',
-                            maneuverPoint: { latitude: 41.962401, longitude: 2.791324 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.791324, 41.962401] },
                             nextRoadInformation: {
                                 properties: [],
                                 roadNames: [
@@ -12382,7 +12382,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 101533,
-                                    point: { latitude: 41.962401, longitude: 2.791324 },
+                                    point: { type: 'Point', coordinates: [2.791324, 41.962401] },
                                     travelTimeFromRouteStartInSeconds: 5064,
                                 },
                             ],
@@ -12409,7 +12409,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isEnforcedAtForkPoint: false,
                             maneuver: 'keepLeft',
-                            maneuverPoint: { latitude: 41.9614005, longitude: 2.8008378 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.8008378, 41.9614005] },
                             maneuverView: {
                                 offRouteAngles: ['SLIGHT_RIGHT'],
                                 onRouteAngle: 'STRAIGHT',
@@ -12468,7 +12468,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 102404,
-                                    point: { latitude: 41.9614005, longitude: 2.8008378 },
+                                    point: { type: 'Point', coordinates: [2.8008378, 41.9614005] },
                                     travelTimeFromRouteStartInSeconds: 5110,
                                 },
                             ],
@@ -12481,7 +12481,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isEnforcedAtForkPoint: false,
                             maneuver: 'keepRight',
-                            maneuverPoint: { latitude: 41.957463, longitude: 2.8073367 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.8073367, 41.957463] },
                             maneuverView: {
                                 offRouteAngles: ['STRAIGHT'],
                                 onRouteAngle: 'SLIGHT_RIGHT',
@@ -12525,7 +12525,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 103109,
-                                    point: { latitude: 41.957463, longitude: 2.8073367 },
+                                    point: { type: 'Point', coordinates: [2.8073367, 41.957463] },
                                     travelTimeFromRouteStartInSeconds: 5144,
                                 },
                             ],
@@ -12544,7 +12544,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isEnforcedAtForkPoint: false,
                             maneuver: 'keepLeft',
-                            maneuverPoint: { latitude: 41.9568434, longitude: 2.8088227 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.8088227, 41.9568434] },
                             maneuverView: {
                                 offRouteAngles: ['SLIGHT_RIGHT'],
                                 onRouteAngle: 'STRAIGHT',
@@ -12573,7 +12573,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 103250,
-                                    point: { latitude: 41.9568434, longitude: 2.8088227 },
+                                    point: { type: 'Point', coordinates: [2.8088227, 41.9568434] },
                                     travelTimeFromRouteStartInSeconds: 5155,
                                 },
                             ],
@@ -12584,7 +12584,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             drivingSide: 'right',
                             isEnforcedAtForkPoint: false,
                             maneuver: 'roundaboutSharpLeft',
-                            maneuverPoint: { latitude: 41.956763, longitude: 2.8103408 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.8103408, 41.956763] },
                             maneuverView: {
                                 offRouteAngles: ['LEFT', 'STRAIGHT', 'RIGHT'],
                                 onRouteAngle: 'SHARP_LEFT',
@@ -12633,132 +12633,132 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 103346,
-                                    point: { latitude: 41.9562909, longitude: 2.8096998 },
+                                    point: { type: 'Point', coordinates: [2.8096998, 41.9562909] },
                                     travelTimeFromRouteStartInSeconds: 5175,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 103349,
-                                    point: { latitude: 41.9562668, longitude: 2.8097159 },
+                                    point: { type: 'Point', coordinates: [2.8097159, 41.9562668] },
                                     travelTimeFromRouteStartInSeconds: 5175,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 103360,
-                                    point: { latitude: 41.9561917, longitude: 2.8097963 },
+                                    point: { type: 'Point', coordinates: [2.8097963, 41.9561917] },
                                     travelTimeFromRouteStartInSeconds: 5177,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 103363,
-                                    point: { latitude: 41.9561702, longitude: 2.8098258 },
+                                    point: { type: 'Point', coordinates: [2.8098258, 41.9561702] },
                                     travelTimeFromRouteStartInSeconds: 5177,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 103374,
-                                    point: { latitude: 41.9561192, longitude: 2.8099358 },
+                                    point: { type: 'Point', coordinates: [2.8099358, 41.9561192] },
                                     travelTimeFromRouteStartInSeconds: 5178,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 103382,
-                                    point: { latitude: 41.9560978, longitude: 2.8100324 },
+                                    point: { type: 'Point', coordinates: [2.8100324, 41.9560978] },
                                     travelTimeFromRouteStartInSeconds: 5179,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 103386,
-                                    point: { latitude: 41.9560924, longitude: 2.8100753 },
+                                    point: { type: 'Point', coordinates: [2.8100753, 41.9560924] },
                                     travelTimeFromRouteStartInSeconds: 5180,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 103394,
-                                    point: { latitude: 41.9560924, longitude: 2.8101745 },
+                                    point: { type: 'Point', coordinates: [2.8101745, 41.9560924] },
                                     travelTimeFromRouteStartInSeconds: 5181,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 103403,
-                                    point: { latitude: 41.9561085, longitude: 2.8102738 },
+                                    point: { type: 'Point', coordinates: [2.8102738, 41.9561085] },
                                     travelTimeFromRouteStartInSeconds: 5182,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 103406,
-                                    point: { latitude: 41.9561192, longitude: 2.810314 },
+                                    point: { type: 'Point', coordinates: [2.810314, 41.9561192] },
                                     travelTimeFromRouteStartInSeconds: 5182,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 103417,
-                                    point: { latitude: 41.9561675, longitude: 2.8104267 },
+                                    point: { type: 'Point', coordinates: [2.8104267, 41.9561675] },
                                     travelTimeFromRouteStartInSeconds: 5183,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 103420,
-                                    point: { latitude: 41.9561863, longitude: 2.8104508 },
+                                    point: { type: 'Point', coordinates: [2.8104508, 41.9561863] },
                                     travelTimeFromRouteStartInSeconds: 5184,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 103420,
-                                    point: { latitude: 41.956189, longitude: 2.8104588 },
+                                    point: { type: 'Point', coordinates: [2.8104588, 41.956189] },
                                     travelTimeFromRouteStartInSeconds: 5184,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 103429,
-                                    point: { latitude: 41.9562507, longitude: 2.8105259 },
+                                    point: { type: 'Point', coordinates: [2.8105259, 41.9562507] },
                                     travelTimeFromRouteStartInSeconds: 5185,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 103433,
-                                    point: { latitude: 41.9562829, longitude: 2.8105527 },
+                                    point: { type: 'Point', coordinates: [2.8105527, 41.9562829] },
                                     travelTimeFromRouteStartInSeconds: 5185,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 103444,
-                                    point: { latitude: 41.9563687, longitude: 2.8105929 },
+                                    point: { type: 'Point', coordinates: [2.8105929, 41.9563687] },
                                     travelTimeFromRouteStartInSeconds: 5186,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 103447,
-                                    point: { latitude: 41.9563955, longitude: 2.810601 },
+                                    point: { type: 'Point', coordinates: [2.810601, 41.9563955] },
                                     travelTimeFromRouteStartInSeconds: 5186,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 103456,
-                                    point: { latitude: 41.9564813, longitude: 2.8106037 },
+                                    point: { type: 'Point', coordinates: [2.8106037, 41.9564813] },
                                     travelTimeFromRouteStartInSeconds: 5187,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 103459,
-                                    point: { latitude: 41.9565055, longitude: 2.8105983 },
+                                    point: { type: 'Point', coordinates: [2.8105983, 41.9565055] },
                                     travelTimeFromRouteStartInSeconds: 5188,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 103466,
-                                    point: { latitude: 41.9565672, longitude: 2.8105769 },
+                                    point: { type: 'Point', coordinates: [2.8105769, 41.9565672] },
                                     travelTimeFromRouteStartInSeconds: 5188,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 103471,
-                                    point: { latitude: 41.9566074, longitude: 2.8105527 },
+                                    point: { type: 'Point', coordinates: [2.8105527, 41.9566074] },
                                     travelTimeFromRouteStartInSeconds: 5189,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 103478,
-                                    point: { latitude: 41.956661, longitude: 2.8105071 },
+                                    point: { type: 'Point', coordinates: [2.8105071, 41.956661] },
                                     travelTimeFromRouteStartInSeconds: 5190,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 103480,
-                                    point: { latitude: 41.9566771, longitude: 2.8104883 },
+                                    point: { type: 'Point', coordinates: [2.8104883, 41.9566771] },
                                     travelTimeFromRouteStartInSeconds: 5190,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 103487,
-                                    point: { latitude: 41.9567227, longitude: 2.8104267 },
+                                    point: { type: 'Point', coordinates: [2.8104267, 41.9567227] },
                                     travelTimeFromRouteStartInSeconds: 5191,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 103492,
-                                    point: { latitude: 41.9567469, longitude: 2.8103784 },
+                                    point: { type: 'Point', coordinates: [2.8103784, 41.9567469] },
                                     travelTimeFromRouteStartInSeconds: 5191,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 103496,
-                                    point: { latitude: 41.956763, longitude: 2.8103408 },
+                                    point: { type: 'Point', coordinates: [2.8103408, 41.956763] },
                                     travelTimeFromRouteStartInSeconds: 5192,
                                 },
                             ],
@@ -12769,7 +12769,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             drivingSide: 'right',
                             isEnforcedAtForkPoint: false,
                             maneuver: 'exitRoundabout',
-                            maneuverPoint: { latitude: 41.956763, longitude: 2.8103408 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.8103408, 41.956763] },
                             maneuverView: {
                                 offRouteAngles: ['STRAIGHT'],
                                 onRouteAngle: 'RIGHT',
@@ -12819,7 +12819,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 103496,
-                                    point: { latitude: 41.956763, longitude: 2.8103408 },
+                                    point: { type: 'Point', coordinates: [2.8103408, 41.956763] },
                                     travelTimeFromRouteStartInSeconds: 5192,
                                 },
                             ],
@@ -12830,7 +12830,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             drivingSide: 'right',
                             isEnforcedAtForkPoint: false,
                             maneuver: 'roundaboutStraight',
-                            maneuverPoint: { latitude: 41.96132, longitude: 2.8109872 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.8109872, 41.96132] },
                             maneuverView: {
                                 offRouteAngles: ['SLIGHT_RIGHT', 'RIGHT'],
                                 onRouteAngle: 'STRAIGHT',
@@ -12897,47 +12897,47 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 103944,
-                                    point: { latitude: 41.9605342, longitude: 2.8107861 },
+                                    point: { type: 'Point', coordinates: [2.8107861, 41.9605342] },
                                     travelTimeFromRouteStartInSeconds: 5238,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 103966,
-                                    point: { latitude: 41.960687, longitude: 2.8109577 },
+                                    point: { type: 'Point', coordinates: [2.8109577, 41.960687] },
                                     travelTimeFromRouteStartInSeconds: 5241,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 103986,
-                                    point: { latitude: 41.9608507, longitude: 2.8110489 },
+                                    point: { type: 'Point', coordinates: [2.8110489, 41.9608507] },
                                     travelTimeFromRouteStartInSeconds: 5244,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 103998,
-                                    point: { latitude: 41.9609606, longitude: 2.8110811 },
+                                    point: { type: 'Point', coordinates: [2.8110811, 41.9609606] },
                                     travelTimeFromRouteStartInSeconds: 5245,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 104016,
-                                    point: { latitude: 41.9611189, longitude: 2.8110892 },
+                                    point: { type: 'Point', coordinates: [2.8110892, 41.9611189] },
                                     travelTimeFromRouteStartInSeconds: 5249,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 104021,
-                                    point: { latitude: 41.9611618, longitude: 2.8110784 },
+                                    point: { type: 'Point', coordinates: [2.8110784, 41.9611618] },
                                     travelTimeFromRouteStartInSeconds: 5249,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 104035,
-                                    point: { latitude: 41.9612825, longitude: 2.8110301 },
+                                    point: { type: 'Point', coordinates: [2.8110301, 41.9612825] },
                                     travelTimeFromRouteStartInSeconds: 5251,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 104038,
-                                    point: { latitude: 41.9613093, longitude: 2.8110087 },
+                                    point: { type: 'Point', coordinates: [2.8110087, 41.9613093] },
                                     travelTimeFromRouteStartInSeconds: 5252,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 104040,
-                                    point: { latitude: 41.96132, longitude: 2.8109872 },
+                                    point: { type: 'Point', coordinates: [2.8109872, 41.96132] },
                                     travelTimeFromRouteStartInSeconds: 5252,
                                 },
                             ],
@@ -12954,7 +12954,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             drivingSide: 'right',
                             isEnforcedAtForkPoint: false,
                             maneuver: 'exitRoundabout',
-                            maneuverPoint: { latitude: 41.96132, longitude: 2.8109872 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.8109872, 41.96132] },
                             maneuverView: {
                                 offRouteAngles: ['STRAIGHT'],
                                 onRouteAngle: 'RIGHT',
@@ -13022,7 +13022,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 104040,
-                                    point: { latitude: 41.96132, longitude: 2.8109872 },
+                                    point: { type: 'Point', coordinates: [2.8109872, 41.96132] },
                                     travelTimeFromRouteStartInSeconds: 5252,
                                 },
                             ],
@@ -13036,7 +13036,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             },
                             isEnforcedAtForkPoint: false,
                             maneuver: 'continueStraight',
-                            maneuverPoint: { latitude: 41.975584, longitude: 2.8166226 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.8166226, 41.975584] },
                             maneuverView: {
                                 offRouteAngles: ['RIGHT'],
                                 onRouteAngle: 'STRAIGHT',
@@ -13101,17 +13101,17 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 105694,
-                                    point: { latitude: 41.975584, longitude: 2.8166226 },
+                                    point: { type: 'Point', coordinates: [2.8166226, 41.975584] },
                                     travelTimeFromRouteStartInSeconds: 5550,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 105703,
-                                    point: { latitude: 41.9756591, longitude: 2.8166547 },
+                                    point: { type: 'Point', coordinates: [2.8166547, 41.9756591] },
                                     travelTimeFromRouteStartInSeconds: 5551,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 105711,
-                                    point: { latitude: 41.9757262, longitude: 2.8166842 },
+                                    point: { type: 'Point', coordinates: [2.8166842, 41.9757262] },
                                     travelTimeFromRouteStartInSeconds: 5552,
                                 },
                             ],
@@ -13227,7 +13227,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             isEnforcedAtForkPoint: false,
                             isManeuverObligatory: false,
                             maneuver: 'turnRight',
-                            maneuverPoint: { latitude: 41.9780919, longitude: 2.8176391 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.8176391, 41.9780919] },
                             maneuverView: {
                                 offRouteAngles: ['STRAIGHT'],
                                 onRouteAngle: 'RIGHT',
@@ -13278,12 +13278,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 105985,
-                                    point: { latitude: 41.9780919, longitude: 2.8176391 },
+                                    point: { type: 'Point', coordinates: [2.8176391, 41.9780919] },
                                     travelTimeFromRouteStartInSeconds: 5592,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 105995,
-                                    point: { latitude: 41.9780681, longitude: 2.8177556 },
+                                    point: { type: 'Point', coordinates: [2.8177556, 41.9780681] },
                                     travelTimeFromRouteStartInSeconds: 5594,
                                 },
                             ],
@@ -13309,7 +13309,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             isEnforcedAtForkPoint: false,
                             isManeuverObligatory: false,
                             maneuver: 'turnLeft',
-                            maneuverPoint: { latitude: 41.9776225, longitude: 2.8199726 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.8199726, 41.9776225] },
                             maneuverView: {
                                 offRouteAngles: ['STRAIGHT'],
                                 onRouteAngle: 'LEFT',
@@ -13345,12 +13345,12 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 106185,
-                                    point: { latitude: 41.9776225, longitude: 2.8199726 },
+                                    point: { type: 'Point', coordinates: [2.8199726, 41.9776225] },
                                     travelTimeFromRouteStartInSeconds: 5660,
                                 },
                                 {
                                     distanceFromRouteStartInMeters: 106195,
-                                    point: { latitude: 41.9777062, longitude: 2.8200136 },
+                                    point: { type: 'Point', coordinates: [2.8200136, 41.9777062] },
                                     travelTimeFromRouteStartInSeconds: 5665,
                                 },
                             ],
@@ -13376,7 +13376,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             isEnforcedAtForkPoint: false,
                             isManeuverObligatory: false,
                             maneuver: 'turnRight',
-                            maneuverPoint: { latitude: 41.9794062, longitude: 2.8212118 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.8212118, 41.9794062] },
                             maneuverView: {
                                 offRouteAngles: ['STRAIGHT'],
                                 onRouteAngle: 'RIGHT',
@@ -13412,7 +13412,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 106410,
-                                    point: { latitude: 41.9794062, longitude: 2.8212118 },
+                                    point: { type: 'Point', coordinates: [2.8212118, 41.9794062] },
                                     travelTimeFromRouteStartInSeconds: 5748,
                                 },
                             ],
@@ -13432,7 +13432,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                         {
                             drivingSide: 'right',
                             maneuver: 'arriveLeft',
-                            maneuverPoint: { latitude: 41.9793422, longitude: 2.8213479 },
+                            maneuverPoint: { type: 'Point', coordinates: [2.8213479, 41.9793422] },
                             nextRoadInformation: {
                                 properties: ['URBAN'],
                                 roadNames: [
@@ -13463,7 +13463,7 @@ export const apiAndParsedResponses: [string, CalculateRouteResponseAPI, Calculat
                             routePath: [
                                 {
                                     distanceFromRouteStartInMeters: 106424,
-                                    point: { latitude: 41.9793422, longitude: 2.8213479 },
+                                    point: { type: 'Point', coordinates: [2.8213479, 41.9793422] },
                                     travelTimeFromRouteStartInSeconds: 5755,
                                 },
                             ],

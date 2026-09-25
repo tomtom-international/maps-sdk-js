@@ -1,12 +1,13 @@
 import { baseMapLayerGroupSelector } from '../base/layerGroups';
 import type { LayerSelector } from '../shared/layers/layerSelector';
 import { TRAFFIC_FLOW_SOURCE_ID, TRAFFIC_INCIDENTS_SOURCE_ID } from '../shared/layers/sourcesIDs';
+import { type MapColorName, mapColorDefinitions, type PaintColorProperty } from './mapColorCatalogue';
 import type { StylingKnobAppliesTo, StylingKnobKind, StylingKnobRange } from './types/stylingTypes';
 
 /** @ignore */
 export type ScalableProperty = 'text-size' | 'icon-size' | 'line-width';
 /** @ignore */
-export type ColorProperty = 'line-color' | 'text-color' | 'text-halo-color';
+export type ColorProperty = Extract<PaintColorProperty, 'line-color' | 'text-color' | 'text-halo-color'>;
 
 /**
  * How a knob reaches the style. A knob may use several (e.g. text and icon size together).
@@ -33,7 +34,12 @@ export type KnobMechanism =
     /** Map-level: 3D terrain from the style's raster-dem source (exaggeration from the sibling knob). */
     | { type: 'terrain' }
     /** Map-level: the colour behind the map canvas, which a globe leaves visible around the planet. */
-    | { type: 'space' };
+    | { type: 'space' }
+    /**
+     * One of the ten semantic map colours: re-derives every literal it governs from the new colour,
+     * keeping each one's HSL offset from the style's own base (the anchor).
+     */
+    | { type: 'mapColor'; color: MapColorName };
 
 /** @ignore */
 export type KnobDefinition = {
@@ -45,6 +51,9 @@ export type KnobDefinition = {
     appliesTo: StylingKnobAppliesTo;
     mechanisms: KnobMechanism[];
 };
+
+// A definition whose kind the catalogue's types keep, so they can tell a colour knob from a toggle.
+type KnobDefinitionOf<KIND extends StylingKnobKind> = KnobDefinition & { kind: KIND };
 
 const FACTOR_RANGE: StylingKnobRange = { min: 0.5, max: 1.5, step: 0.1 };
 const WIDE_FACTOR_RANGE: StylingKnobRange = { min: 0.5, max: 2, step: 0.1 };
@@ -71,7 +80,11 @@ const trafficLayers =
 const flowLayers = trafficLayers(TRAFFIC_FLOW_SOURCE_ID);
 const incidentLayers = trafficLayers(TRAFFIC_INCIDENTS_SOURCE_ID);
 
-const factor = (description: string, mechanisms: KnobMechanism[], range = FACTOR_RANGE): KnobDefinition => ({
+const factor = (
+    description: string,
+    mechanisms: KnobMechanism[],
+    range = FACTOR_RANGE,
+): KnobDefinitionOf<'factor'> => ({
     kind: 'factor',
     description,
     range,
@@ -79,7 +92,7 @@ const factor = (description: string, mechanisms: KnobMechanism[], range = FACTOR
     mechanisms,
 });
 
-const toggle = (description: string, layers: LayerSelector[]): KnobDefinition => ({
+const toggle = (description: string, layers: LayerSelector[]): KnobDefinitionOf<'toggle'> => ({
     kind: 'toggle',
     description,
     appliesTo: 'tomtom-styles',
@@ -91,18 +104,25 @@ const color = (
     property: ColorProperty,
     layers: LayerSelector[],
     shades?: LayerSelector[],
-): KnobDefinition => ({
+): KnobDefinitionOf<'color'> => ({
     kind: 'color',
     description,
     appliesTo: 'tomtom-styles',
     mechanisms: [{ type: 'color', property, layers, shades }],
 });
 
+const mapColor = (color: MapColorName): KnobDefinitionOf<'color'> => ({
+    kind: 'color',
+    description: mapColorDefinitions[color].description,
+    appliesTo: 'tomtom-styles',
+    mechanisms: [{ type: 'mapColor', color }],
+});
+
 // A congestion class: the inner line is the knob, the outline is re-derived as the shade the style
 // made of it.
 const trafficColor =
     (layers: ReturnType<typeof trafficLayers>) =>
-    (description: string, fragment: string): KnobDefinition =>
+    (description: string, fragment: string): KnobDefinitionOf<'color'> =>
         color(description, 'line-color', [layers(fragment, false)], [layers(fragment, true)]);
 
 const flowColor = trafficColor(flowLayers);
@@ -218,6 +238,19 @@ export const knobDefinitions = {
         WIDE_FACTOR_RANGE,
     ),
 
+    // Map colours — Map Maker's ten Foundations colours in its own order, each carrying Map Maker's
+    // summary of what it reaches. `setMapColors` is the typed front door to these knobs.
+    'colors.land': mapColor('land'),
+    'colors.water': mapColor('water'),
+    'colors.vegetation': mapColor('vegetation'),
+    'colors.park': mapColor('park'),
+    'colors.artificial': mapColor('artificial'),
+    'colors.roadMajor': mapColor('roadMajor'),
+    'colors.road': mapColor('road'),
+    'colors.roadOutline': mapColor('roadOutline'),
+    'colors.label': mapColor('label'),
+    'colors.labelOutline': mapColor('labelOutline'),
+
     // View — projection, atmosphere and terrain. Map-level MapLibre state the SDK owns here so it
     // survives style switches (MapLibre resets all three on every `setStyle`).
     'view.projection': {
@@ -287,6 +320,25 @@ export type StylingKnobId = keyof typeof knobDefinitions;
  * @group Map Styling
  */
 export const stylingKnobIds = Object.keys(knobDefinitions) as StylingKnobId[];
+
+/**
+ * The id of a styling knob that holds a colour — every colour the styling module can name, and so
+ * resolve against whichever style is loaded.
+ *
+ * @group Map Styling
+ */
+export type StylingColorKnobId = {
+    [ID in StylingKnobId]: (typeof knobDefinitions)[ID]['kind'] extends 'color' ? ID : never;
+}[StylingKnobId];
+
+/**
+ * Every colour knob id, in catalogue order.
+ *
+ * @group Map Styling
+ */
+export const stylingColorKnobIds = stylingKnobIds.filter(
+    (id): id is StylingColorKnobId => knobDefinitions[id].kind === 'color',
+);
 
 type ValueOfKind<KIND extends StylingKnobKind> = KIND extends 'toggle'
     ? boolean

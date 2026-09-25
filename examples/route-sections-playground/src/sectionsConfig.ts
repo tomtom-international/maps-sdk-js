@@ -5,7 +5,7 @@ import type {
     SectionDisplayConfig,
     SectionsDisplayConfig,
 } from '@tomtom-org/maps-sdk/map';
-import { drawnSectionTypes } from '@tomtom-org/maps-sdk/map';
+import { defaultRoutingLayers, drawnSectionTypes } from '@tomtom-org/maps-sdk/map';
 
 /**
  * The panel's state is the config itself: one `SectionDisplayConfig` per section type, exactly as
@@ -18,11 +18,11 @@ export type PanelState = {
 };
 
 /**
- * Where the `sign.minzoom` slider starts, which is the module's own default. Lowering it does less
- * than it looks: a sign is repeated along its stretch and none is drawn where the stretch is too
- * short on screen to carry one, so the zoom floor only matters once the stretches are long enough.
+ * Where the `sign.minzoom` slider starts: the module's own default, read off the layer the SDK
+ * built, so the slider cannot drift from it. The fallback only satisfies the optional type.
  */
-export const PLAYGROUND_SIGN_MINZOOM = 9;
+export const PLAYGROUND_SIGN_MINZOOM =
+    defaultRoutingLayers.sections.speedLimit?.routeSectionSpeedLimitSign?.minzoom ?? 10;
 
 export const buildInitialState = (): PanelState => ({
     sections: Object.fromEntries(drawnSectionTypes.map((type) => [type, {}])) as Record<

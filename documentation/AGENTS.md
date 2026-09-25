@@ -32,7 +32,6 @@ documentation/
 │   ├── DESIGN_PRINCIPLES.md    # SDK design principles & strategy
 │   └── internal/               # TomTom-internal-only docs
 │       ├── CI_CD.md
-│       ├── CREATING_EXAMPLES.md
 │       ├── INTERNAL_DEMOS.md
 │       └── releasing.md
 ├── docs-portal/                # Documentation site source

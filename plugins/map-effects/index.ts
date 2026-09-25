@@ -1,3 +1,4 @@
+export type { BloomScope, BloomScopeEntry, StylingColorKnobGroup } from './src/bloomScope';
 export {
     type EffectKnobId,
     type EffectKnobRange,

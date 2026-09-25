@@ -10,7 +10,9 @@ import {
     type StylingKnobId,
     type StylingKnobDescriptor,
     type StylingSettings,
+    type StylingColorKnobId,
     stylingKnobIds,
+    stylingColorKnobIds,
 } from '@tomtom-org/maps-sdk/map';
 ```
 
@@ -56,12 +58,44 @@ Invalid values throw `RangeError` naming the knob and its range; unknown ids thr
 | | `traffic.flow.widthFactor` | factor 0.5–2 |
 | Traffic incidents | `traffic.incidents.minorColor`, `traffic.incidents.moderateColor`, `traffic.incidents.majorColor`, `traffic.incidents.closedColor` | color |
 | | `traffic.incidents.widthFactor` | factor 0.5–2 |
+| Map colours | `colors.land`, `colors.water`, `colors.vegetation`, `colors.park`, `colors.artificial`, `colors.roadMajor`, `colors.road`, `colors.roadOutline`, `colors.label`, `colors.labelOutline` (see `setMapColors`) | color |
 | View | `view.projection` (`'mercator'` \| `'globe'`) | enum |
 | | `view.sky`, `view.terrain` | toggle |
 | | `view.skyColor`, `view.horizonColor`, `view.spaceColor` | color |
 | | `view.terrainExaggeration` (0.5–3) | number |
 
 Traffic knobs need the traffic style part loaded (`TrafficFlowModule.get(map, { visible: true })`) to show anything.
+
+`stylingKnobIds` lists every id and `stylingColorKnobIds` (type `StylingColorKnobId`) the `color` ones, as constants needing no module: name a map colour through them rather than hard-coding it (the map-effects plugin's `bloom.only` takes them).
+
+## Map colours — `setMapColors(colors)`
+
+Ten semantic colours — Map Maker's Foundations, under its names and in its order. Partial objects OK. One name recolours every layer and shade derived from it (outlines, tunnels, bridges, trunk vs motorway) by the style's own HSL offsets — coherent, not a flat fill.
+
+| Name | Map Maker | Reaches |
+|---|---|---|
+| `land` | Land (base) | Map background and bare land; influences admin borders/labels, and derives any colour left unset |
+| `water` | Water | Waterbodies and waterways; also glaciers, water labels, ferry lines |
+| `vegetation` | Vegetation | Forests, grass, shrubland; also earth cover at smaller scales |
+| `park` | Park & Recreation | City parks and sport/recreation grounds; also National Parks and protected areas |
+| `artificial` | Artificial | Built-up areas, landuse grounds, buildings; also railways |
+| `roadMajor` | Major Road | Motorways, trunks, primary roads; also their outlines and tunnels |
+| `road` | Road | Secondary/tertiary down to streets and service roads; also their tunnels |
+| `roadOutline` | Road Outline | Outlines of secondary/tertiary and minor roads; also road labels and all other outlines |
+| `label` | Label | Capital and other place/admin labels; also borders and all other label colours |
+| `labelOutline` | Label Outline | Halos of place and admin labels; also border outlines and all other label halos |
+
+```ts
+import { type MapColors, mapColorNames } from '@tomtom-org/maps-sdk/map';
+styling.setMapColors({ land: '#f3f5f7', water: '#accbe2', roadMajor: '#a1b8ce', label: '#364659' });
+styling.get('colors.roadMajor');        // the style's base literal until set, e.g. 'hsl(47, 100%, 55%)'
+styling.reset('colors.roadMajor');      // the colours are the `colors.*` knobs
+styling.exportStyle();                  // StyleSpecification as rendered (knobs applied); tile URLs carry the API key
+```
+
+Prefer `setMapColors` over `setPaintProperty` on road/water/label layers: the recolour reaches ~150 layers' literals inside match/interpolate expressions and re-applies after `setStyle`.
+
+A palette is a recolour, not an inversion — the offsets come off the loaded style. Keep it near that style's lightness; for a dark palette `await map.setStyle('standardDark')` first, then recolour, or the derived shades clamp and the road hierarchy washes out.
 
 ## Globe, sky, 3D terrain — the `view` knobs
 
@@ -106,7 +140,7 @@ Ground before generating: read what the loaded style actually exposes instead of
 
 ```ts
 const { knobs } = styling.describe();
-// knobs: StylingKnobDescriptor[] — { id, kind, description, default, current, overridden, range?, available, appliesTo }
+// knobs: StylingKnobDescriptor[] — { id, kind, description, default, current, overridden, range?, options?, available, appliesTo }
 const sliders = knobs.filter((knob) => knob.available && (knob.kind === 'factor' || knob.kind === 'number'));
 ```
 

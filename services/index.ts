@@ -7,9 +7,7 @@ export * from './src/along-route-search';
 export * from './src/autocomplete-search';
 export * from './src/customize';
 export * from './src/ev-charging-stations-availability';
-export * from './src/exploration-search';
 export * from './src/geocode';
-export * from './src/geometry-data';
 export * from './src/geometry-data';
 export type * from './src/geometry-search';
 // TODO: deprecated and not supported in Orbis

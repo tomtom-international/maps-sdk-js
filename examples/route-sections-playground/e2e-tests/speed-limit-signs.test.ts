@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
-import { PROD_TEST_SERVER_PORT } from '../../playwright.config';
 import { TAG_PROD } from '../../src/e2e-test-utils/e2eTestConstants';
+import { EXTRA_SHOT_OPTIONS, loadProdExample } from '../../src/e2e-test-utils/loadProdExample';
 
 /**
  * The speed limit signs this playground draws without configuring them.
@@ -12,19 +12,9 @@ import { TAG_PROD } from '../../src/e2e-test-utils/e2eTestConstants';
  * catch them disappearing from the playground.
  */
 test('speed limit signs at the zoom a stretch is readable', { tag: TAG_PROD }, async ({ page }) => {
-    const consoleErrors: string[] = [];
-    page.on('console', (message) => {
-        if (message.type() === 'error') consoleErrors.push(message.text());
-    });
+    // A stretch of the Munich-to-Milan route through the Alps, in `zoom/lat/lng`.
+    const consoleErrors = await loadProdExample(page, 'route-sections-playground', '11/46.22/9.02');
 
-    // A stretch of the Munich-to-Milan route through the Alps, in `#zoom/lat/lng`.
-    await page.goto(
-        `http://localhost:${PROD_TEST_SERVER_PORT}/route-sections-playground/dist/prod/index.html#11/46.22/9.02`,
-    );
-    await page.waitForSelector('#sdk-map canvas', { timeout: 30000 });
-    await page.waitForLoadState('networkidle', { timeout: 30000 });
-    await page.waitForTimeout(6000);
-
-    await expect(page).toHaveScreenshot('speed-limit-signs.png', { maxDiffPixelRatio: 0.15, timeout: 30000 });
+    await expect(page).toHaveScreenshot('speed-limit-signs.png', EXTRA_SHOT_OPTIONS);
     expect(consoleErrors).toHaveLength(0);
 });

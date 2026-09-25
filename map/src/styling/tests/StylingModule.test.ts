@@ -5,7 +5,8 @@ import { beforeEach, describe, expect, type Mock, test, vi } from 'vitest';
 import { knobSettings } from '../../shared';
 import { LayerFilterComposer } from '../../shared/layers/layerFilterComposer';
 import type { StyleChangeHandler, TomTomMap } from '../../TomTomMap';
-import { stylingKnobIds } from '../knobCatalogue';
+import { type StylingColorKnobId, stylingColorKnobIds, stylingKnobIds } from '../knobCatalogue';
+import { mapColorNames } from '../mapColorCatalogue';
 import { StylingModule } from '../StylingModule';
 import { orbisStreetLightLayers } from './data/orbisStreetLightLayers.data';
 
@@ -126,6 +127,18 @@ describe('StylingModule', () => {
             expect(styling.describe().presets.map((preset) => preset.id)).toContain('data-viz');
         });
 
+        test('the colour knob ids are exactly the knobs the catalogue describes as colours', async () => {
+            const styling = await StylingModule.get(tomtomMap);
+            const colorKnobs = styling.describe().knobs.filter((knob) => knob.kind === 'color');
+            expect(stylingColorKnobIds).toStrictEqual(colorKnobs.map((knob) => knob.id));
+
+            const colorKnob: StylingColorKnobId = 'traffic.incidents.majorColor';
+            // @ts-expect-error a toggle is not a colour knob
+            const toggle: StylingColorKnobId = 'buildings.3d';
+            expect(stylingColorKnobIds).toContain(colorKnob);
+            expect(stylingColorKnobIds).not.toContain(toggle);
+        });
+
         test('reads defaults off the style: toggle visibility, POIs from zoom 6, free flow is green', async () => {
             const styling = await StylingModule.get(tomtomMap);
             const shippedVisible = (layerId: string) => {
@@ -195,8 +208,8 @@ describe('StylingModule', () => {
             const styling = await StylingModule.get(tomtomMap);
             mapLibre.setPaintProperty.mockClear();
             expect(() => styling.set('roads.widthFactor', 3)).toThrow(RangeError);
-            expect(() => styling.set('roads.widthFactor', 'wide')).toThrow(RangeError);
-            expect(() => styling.set('buildings.3d', 1)).toThrow(RangeError);
+            expect(() => styling.set('roads.widthFactor', 'wide' as never)).toThrow(RangeError);
+            expect(() => styling.set('buildings.3d', 1 as never)).toThrow(RangeError);
             expect(() => styling.set('traffic.flow.slowColor', 'not-a-colour')).toThrow(RangeError);
             expect(() => styling.set('no.such.knob' as never, 1 as never)).toThrow(/Unknown styling knob/);
             expect(mapLibre.setPaintProperty).not.toHaveBeenCalled();
@@ -395,6 +408,118 @@ describe('StylingModule', () => {
             expect(mapLibre.setTerrain).toHaveBeenLastCalledWith({ source: 'hillshade', exaggeration: 1.5 });
             styling.set('view.terrain', false);
             expect(mapLibre.setTerrain).toHaveBeenLastCalledWith(null);
+        });
+    });
+
+    describe('map colours', () => {
+        test('defaults are the style’s own base literals, read off the anchor layers', async () => {
+            const styling = await StylingModule.get(tomtomMap);
+            expect(styling.get('colors.roadMajor')).toBe('hsl(47, 100%, 55%)');
+            expect(styling.get('colors.water')).toBe('hsl(196, 80%, 73%)');
+            expect(styling.get('colors.label')).toBe('hsl(0, 0%, 10%)');
+            expect(styling.get('colors.land')).toBe('hsl(45, 35%, 92%)');
+            for (const name of mapColorNames) {
+                expect(styling.describe().knobs.find((knob) => knob.id === `colors.${name}`)?.available).toBe(true);
+            }
+        });
+
+        test('setMapColors recolours the whole road class family and keeps shade relationships', async () => {
+            const styling = await StylingModule.get(tomtomMap);
+            styling.setMapColors({ roadMajor: 'hsl(200, 100%, 55%)' });
+
+            const line = JSON.stringify(
+                lastValueSetFor(mapLibre.setPaintProperty, 'Surface - Motorway & Trunk', 'line-color'),
+            );
+            expect(line).toContain('hsl(200, 100%, 55%)'); // motorway
+            expect(line).toContain('hsl(200, 92%, 63%)'); // trunk: same offset as the style's
+            // The restricted-access grey is re-derived too, but a 0%-saturation shade stays grey.
+            expect(line).toMatch(/hsl\(\d+, 0%, 91%\)/);
+            // The outline is a darker shade of the same base, re-derived by its own offset.
+            const outline = JSON.stringify(
+                lastValueSetFor(mapLibre.setPaintProperty, 'Surface - Motorway & Trunk outline', 'line-color'),
+            );
+            expect(outline).toContain('hsl(200, 83%, 35%)');
+            // Tunnels draw every class in one expression: only the major branches moved.
+            const tunnel = JSON.stringify(
+                lastValueSetFor(mapLibre.setPaintProperty, 'Tunnel - Road line', 'line-color'),
+            );
+            expect(tunnel).toContain('hsl(200,');
+            // Secondary roads belong to `road`, not `roadMajor`.
+            expect(valuesSetFor(mapLibre.setPaintProperty, 'Surface - Secondary road', 'line-color')).toHaveLength(0);
+            expect(styling.getConfig()).toStrictEqual({ 'colors.roadMajor': 'hsl(200, 100%, 55%)' });
+        });
+
+        test('two colours meeting in one expression compose, and reset restores the style', async () => {
+            const styling = await StylingModule.get(tomtomMap);
+            styling.setMapColors({ roadMajor: 'hsl(200, 100%, 55%)', road: 'hsl(300, 20%, 60%)' });
+            const tunnel = JSON.stringify(
+                lastValueSetFor(mapLibre.setPaintProperty, 'Tunnel - Road line', 'line-color'),
+            );
+            expect(tunnel).toContain('hsl(200,');
+            expect(tunnel).toContain('hsl(300,');
+
+            styling.reset('colors.road');
+            const partlyRestored = JSON.stringify(
+                lastValueSetFor(mapLibre.setPaintProperty, 'Tunnel - Road line', 'line-color'),
+            );
+            expect(partlyRestored).toContain('hsl(200,');
+            expect(partlyRestored).not.toContain('hsl(300,');
+
+            styling.reset();
+            const originalLayer = orbisStreetLightLayers.find((layer) => layer.id === 'Tunnel - Road line') as {
+                paint: Record<string, unknown>;
+            };
+            expect(lastValueSetFor(mapLibre.setPaintProperty, 'Tunnel - Road line', 'line-color')).toStrictEqual(
+                originalLayer.paint['line-color'],
+            );
+        });
+
+        test('land reaches the ground the background never shows through', async () => {
+            const styling = await StylingModule.get(tomtomMap);
+            styling.setMapColors({ land: 'hsl(120, 50%, 50%)' });
+
+            // The greens in the landcover expression stay `vegetation`'s; only the earth tones move.
+            const landcover = JSON.stringify(
+                lastValueSetFor(mapLibre.setPaintProperty, 'LULC - Landcover', 'fill-color'),
+            );
+            expect(landcover).toContain('hsl(110, 45%, 75%)');
+            expect(landcover).toContain('hsl(120,');
+        });
+
+        test('artificial reaches the man-made surfaces laid over the ground', async () => {
+            const styling = await StylingModule.get(tomtomMap);
+            styling.setMapColors({ artificial: 'hsl(120, 50%, 50%)' });
+
+            // Each surface keeps its own offset from the built-up anchor, so it lands in the new
+            // colour's hue family rather than exactly on it.
+            for (const layerId of ['Structure - Bridge & Pier area', 'Areas - Pedestrian']) {
+                const recoloured = JSON.stringify(lastValueSetFor(mapLibre.setPaintProperty, layerId, 'fill-color'));
+                const hues = [...recoloured.matchAll(/hsla?\((\d+),/g)].map(([, hue]) => Number(hue));
+                expect(hues).not.toHaveLength(0);
+                for (const hue of hues) expect(Math.abs(hue - 120)).toBeLessThanOrEqual(40);
+            }
+        });
+
+        test('water and labels reach their derived layers; unknown names and non-colours are refused', async () => {
+            const styling = await StylingModule.get(tomtomMap);
+            styling.setMapColors({ water: '#ff0000', label: '#00ff00' });
+            expect(JSON.stringify(lastValueSetFor(mapLibre.setPaintProperty, 'Water - Fill', 'fill-color'))).toContain(
+                'hsl(0,',
+            );
+            expect(lastValueSetFor(mapLibre.setPaintProperty, 'Water - Line', 'line-color')).toMatch(/^hsl\(0, /);
+            expect(lastValueSetFor(mapLibre.setPaintProperty, 'Places - City', 'text-color')).toMatch(/^hsl\(120, /);
+            expect(lastValueSetFor(mapLibre.setPaintProperty, 'Borders - Country', 'line-color')).toMatch(
+                /^hsl\(120, /,
+            );
+            expect(() => styling.setMapColors({ sky: '#fff' } as never)).toThrow(/Unknown map colour/);
+            expect(() => styling.setMapColors({ water: 'wet' })).toThrow(RangeError);
+        });
+
+        test('exportStyle returns the rendered style as a specification', async () => {
+            const styling = await StylingModule.get(tomtomMap);
+            const exported = styling.exportStyle();
+            expect(exported.layers).toHaveLength(orbisStreetLightLayers.length);
+            expect(exported.layers).not.toBe(mapLibre.state.layers);
         });
     });
 

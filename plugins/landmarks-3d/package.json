@@ -2,7 +2,7 @@
   "name": "@tomtom-org/maps-sdk-plugin-landmarks-3d",
   "author": "TomTom International B.V.",
   "license": "See in LICENSE.txt",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "type": "module",
   "description": "Plugin to render TomTom Orbis 3D Landmarks (GLB tiles) on a TomTomMap with Three.js",
   "types": "dist/index.d.ts",
@@ -14,10 +14,11 @@
     "type-check": "tsc --noEmit"
   },
   "peerDependencies": {
-    "@tomtom-org/maps-sdk": "workspace:*",
+    "@tomtom-org/maps-sdk": ">=0.56.0 <1.0.0",
     "three": "catalog:"
   },
   "devDependencies": {
+    "@tomtom-org/maps-sdk": "workspace:*",
     "@tsconfig/recommended": "catalog:",
     "@types/node": "catalog:",
     "@types/three": "catalog:",

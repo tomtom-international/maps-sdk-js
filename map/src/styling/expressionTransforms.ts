@@ -16,9 +16,15 @@ const roundScaled = (value: number): number => Math.round(value * 1000) / 1000;
 
 const mentionsZoom = (value: unknown): boolean => JSON.stringify(value).includes('"zoom"');
 
-type LegacyFunction = { stops: [unknown, unknown][]; base?: number; property?: string };
+/**
+ * A pre-expression style function: `{ stops: [[input, output], …] }`, still used by compiled styles
+ * for zoom ramps.
+ * @ignore
+ */
+export type LegacyFunction = { stops: [unknown, unknown][]; base?: number; property?: string };
 
-const isLegacyFunction = (value: unknown): value is LegacyFunction =>
+/** @ignore */
+export const isLegacyFunction = (value: unknown): value is LegacyFunction =>
     typeof value === 'object' &&
     value !== null &&
     !Array.isArray(value) &&

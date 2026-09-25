@@ -20,6 +20,10 @@ export default defineConfig({
                 '**/node_modules/**',
                 '**/dist/**',
                 '**/vite.*',
+                // Shader sources. `src/**/*` matches them and a `?raw` import puts them in the
+                // module graph, so v8 reports one uncoverable record per file — nothing a unit test
+                // could ever cover, and a file Sonar then indexes off the lcov.
+                '**/*.glsl',
             ],
             include: ['src/**/*'],
             provider: 'v8',

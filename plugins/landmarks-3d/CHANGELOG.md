@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.0.5
+
+### Patch Changes
+
+- 9e1d080: Bug fixes:
+  - Read the camera transform from the composed camera of maplibre-gl v6 (#2035)
+  - Compose the basemap building filter through the SDK `LayerFilterComposer` instead of editing the layer filter in place (#2089)
+  
+  Peer dependency:
+  - Accept every SDK release below 1.0: the peer dependency on `@tomtom-org/maps-sdk` is the range `>=0.55.1 <1.0.0` instead of an exact version
+- Updated dependencies [9e1d080]
+- Updated dependencies [1bea71f]
+  - @tomtom-org/maps-sdk@0.56.0
+
 ## [0.0.4](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-landmarks-3d-v0.0.3...maps-sdk-plugin-landmarks-3d-v0.0.4) (2026-07-24)
 
 

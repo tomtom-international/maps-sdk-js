@@ -12,6 +12,10 @@ import type { GeometrySearchResponseAPI } from './geometrySearchResponseAPI';
  * like "restaurants in this neighborhood" or "hotels within these city boundaries".
  *
  * @remarks
+ * Pass these to {@link search}, which selects the request variant from the params it is given:
+ * a `route` property dispatches to along-route search, a `geometries` property to geometry search,
+ * and neither to fuzzy search. There is no separate exported function for geometry search.
+ *
  * **Key Features:**
  * - Search within multiple geometries simultaneously
  * - Supports polygons, multipolygons, and circles

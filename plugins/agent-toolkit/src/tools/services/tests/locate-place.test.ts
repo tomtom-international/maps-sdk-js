@@ -12,7 +12,6 @@ vi.mock('@tomtom-org/maps-sdk/services', async (importOriginal) => {
     const actual = await importOriginal<typeof import('@tomtom-org/maps-sdk/services')>();
     return {
         ...actual,
-        explorationSearch: vi.fn(),
         search: vi.fn(),
         geocode: vi.fn(),
         geometryData: vi.fn(),

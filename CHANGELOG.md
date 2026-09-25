@@ -1,6 +1,28 @@
 # Changelog
 
-All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+## 0.56.0
+
+### Minor Changes
+
+- 9e1d080: Breaking changes:
+  - map: precise types for custom styles, places props and traffic data (#2161)
+  - services: deduplicate vehicle energy encoding, tighten EV types (#2159)
+  
+  Features:
+  - map: label a route's border crossings with the countries they join (#2153)
+  - map: post speed limit signs where the limit changes (#2183)
+  - map: styling GA phase 2 - view knobs, presets, map-effects plugin (#2090)
+  - map: styling GA phase 3 - setMapColors map colours and exportStyle (#2091)
+  - routing: phase 6 - show what the SDK adds over calling the API directly (#2080)
+  - services: places GA phase 1 - remove the experimentalSearch export (#2152)
+  
+  Bug fixes:
+  - map: draw border crossings under the waypoint pins (#2187)
+- 1bea71f: Breaking changes:
+  - map: `StylingKnobValueOf` narrows to each knob's kind, so `StylingModule.set` rejects a value of the wrong kind at compile time (#2175)
+  
+  Features:
+  - map: `stylingColorKnobIds` and `StylingColorKnobId` name every styling colour knob, and `KnobKind` gains `colors` (#2175)
 
 ## [0.55.1](https://github.com/tomtom-international/maps-sdk-js/compare/v0.54.0...v0.55.1) (2026-09-21)
 

@@ -45,6 +45,10 @@ export type PlaceByIdOptionalParams = {
      * - `RU`: Russia
      * - `TR`: Turkey
      * - `CN`: China
+     * - `TW`: Taiwan
+     * - `RS`: Serbia
+     *
+     * `MA` is accepted by this type but is not supported by the current backend.
      *
      * @default 'Unified'
      *

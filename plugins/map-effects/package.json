@@ -2,22 +2,29 @@
   "name": "@tomtom-org/maps-sdk-plugin-map-effects",
   "author": "TomTom International B.V.",
   "license": "See in LICENSE.txt",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "type": "module",
-  "description": "Practical post-processing for a TomTomMap: bloom for emphasis, tint/grade/vignette to mute the base map under data, fog and edge blur for focus — plus high-DPI capture",
+  "description": "Practical post-processing for a TomTomMap: bloom for emphasis, tint/grade/vignette to mute the base map under data, fog and edge blur for focus, a WebGL depth of field with bokeh for a tilted 3D view — plus high-DPI capture",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "vite build --config ../plugin-vite-config.ts",
     "build:watch": "vite build --watch --config ../plugin-vite-config.ts",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test --config e2e-tests/playwright.config.ts",
+    "test:e2e:ui": "playwright test --config e2e-tests/playwright.config.ts --ui",
+    "test:e2e:update-snapshots": "playwright test --config e2e-tests/playwright.config.ts --update-snapshots",
+    "test:e2e:server": "vite --config e2e-tests/vite.config.ts",
+    "test:e2e:install": "playwright install chromium",
     "type-check": "tsc --noEmit"
   },
   "peerDependencies": {
-    "@tomtom-org/maps-sdk": "workspace:*",
+    "@tomtom-org/maps-sdk": ">=0.56.0 <1.0.0",
     "maplibre-gl": "catalog:"
   },
   "devDependencies": {
+    "@playwright/test": "catalog:",
+    "@tomtom-org/maps-sdk": "workspace:*",
     "@tsconfig/recommended": "catalog:",
     "@types/node": "catalog:",
     "@vitest/coverage-v8": "catalog:",

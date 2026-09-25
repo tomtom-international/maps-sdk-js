@@ -59,13 +59,13 @@ export const longApiResponse: [CalculateRouteResponseAPI, CalculateRouteParams] 
                     let maneuver = 'TURN_RIGHT';
                     if (index === 0) maneuver = 'DEPART';
                     else if (index === NUM_INSTRUCTIONS - 1) maneuver = 'ARRIVE';
-                    // maneuverPoint follows the API's LatLonPointAPI shape ({ latitude, longitude }),
-                    // sourced from a real on-path coordinate ([longitude, latitude]) so the guidance
-                    // parser's path-matching scan finds each point and advances along the route.
-                    const [longitude, latitude] = coordinates[index * Math.floor(COORDINATE_COUNT / NUM_INSTRUCTIONS)];
+                    // maneuverPoint is a GeoJSON point, as every point in this response is, taken
+                    // from a real on-path coordinate so the guidance parser's path-matching scan
+                    // finds each one and advances along the route.
+                    const coordinate = coordinates[index * Math.floor(COORDINATE_COUNT / NUM_INSTRUCTIONS)];
                     return {
                         maneuver,
-                        maneuverPoint: { latitude, longitude },
+                        maneuverPoint: { type: 'Point', coordinates: coordinate },
                         drivingSide: 'right',
                         routeOffsetInMeters: index * 100000,
                         routePath: [],

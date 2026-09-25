@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Routing Composite</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">One route, four services</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <p class="ui-instructions">
+                        Each step feeds the next: the geocoded stops go into the router, the route goes into the search,
+                        and the destination goes into the reachable range. Every output is GeoJSON that a map module
+                        takes as-is.
+                    </p>
+                </div>
+
+                <div class="ui-section">
+                    <ol class="ui-steps" id="ui-steps"></ol>
+                </div>
+
+                <div class="ui-section">
+                    <h4 class="ui-subheading">Legs, and the time spent at each stop</h4>
+                    <ul class="ui-legs" id="ui-legs"></ul>
+                    <p class="ui-status" id="ui-status" role="status"></p>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

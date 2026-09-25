@@ -8,6 +8,10 @@ import type { FuzzySearchResponseAPI } from './fuzzySearchResponseAPI';
  * It's designed to handle typos, abbreviations, and incomplete input gracefully.
  *
  * @remarks
+ * Pass these to {@link search}, which selects the request variant from the params it is given:
+ * a `route` property dispatches to along-route search, a `geometries` property to geometry search,
+ * and neither to fuzzy search. There is no separate exported function for fuzzy search.
+ *
  * **Key Features:**
  * - Tolerates typos and spelling mistakes
  * - Handles partial queries and abbreviations

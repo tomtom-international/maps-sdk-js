@@ -88,6 +88,10 @@ workspace export), so **`pnpm build:sdk` first** or the browser runs the previou
 self-loads from `shared-configs/.env*` outside CI. Pass `--reporter=list` (the local default `html`
 prints nothing until it opens a server); `@flaky` tests need `INCLUDE_FLAKY=1`.
 
+**`pnpm e2e-test:map-effects`** when the diff touches `plugins/map-effects/`: the visual suite over a
+synthetic map, no key and no build, about ten seconds. A new effect or knob without a measured case
+there is a Step 6 finding — `plugins/map-effects/AGENTS.md` makes it part of done.
+
 **Example E2E needs three builds** — `@prod` serves `dist/prod`, `@sandpack` serves
 `dist/sandpack`, neither from a dev server: `pnpm -F map build`, `pnpm -F @examples/<name> build`
 **and** `… build:sandpack`, else a half serves stale or missing assets. Same before
@@ -202,16 +206,16 @@ A **new** page or doc must reach its registry too: `navigation.yml` for guides; 
 Start every rename or removal with `git grep -l '<oldName>'` from the root, then walk:
 
 1. **The package's own `src/**`** — barrels, registries, schemas, tests, mocks, fixtures.
-2. **`AGENTS.md` of every touched directory** (`git ls-files '*AGENTS.md'` lists all 11). Their
+2. **`AGENTS.md` of every touched directory** (`git ls-files '*AGENTS.md'` lists all 12). Their
    command lists, module tables and "Important Notes" describe *behaviour*: fix a sentence the diff
    falsified, report one needing new explanation. A new top-level workspace needs a row in the root
    tables.
 3. **Every guide and skill doc naming the symbol**, not just the feature's owner. Two traps: guides
-   embed examples **by directory name** (`<SDKGuideLiveCodingExample exampleDirectory="…" />`), so
-   renaming an example breaks a guide with no compile error — `grep -rn
-   'exampleDirectory="<name>"' documentation/docs-portal/` first; and in the consumer skill a new
-   API name must reach the `Topic → Filename` **keyword column** and the `description:`
-   **keyword list**, or the skill stops auto-loading on that name.
+   embed examples **by directory name** (`<GuideDemo demo="…" />`, or `<SDKGuideLiveCodingExample
+   exampleDirectory="…" />` for a `nodejs-*` one), so renaming an example breaks a guide with no
+   compile error — `grep -rn '<name>"' documentation/docs-portal/` first; and in
+   the consumer skill a new API name must reach the `Topic → Filename` **keyword column** and the
+   `description:` **keyword list**, or the skill stops auto-loading on that name.
 4. **`tomtom-maps-sdk-js-contribution` and this skill** — when a *command*, *convention* or
    *workflow* changed, not for ordinary API changes. A skill **directory name** is a public install
    identifier, so adding or renaming one must also reach the guides enumerating the family.
@@ -230,8 +234,8 @@ Release surface:
   whether consumers need a deprecated alias.
 - **Breaking public API** — the PR **title** carries the conventional-commit `!` (`feat(map)!: …`).
   `commisery.yml` validates the title, not the commits, because the repo squash-merges, and it
-  caps the title at **80 characters** — the one failure with nothing to do with the code. Check
-  `.release-please-manifest.json` for a coordinated bump.
+  caps the title at **80 characters** — the one failure with nothing to do with the code. The PR's
+  changeset carries the bump: `minor` pre-1.0.
 - **Added external-resource fetching** — confirm bounded handling: protocol allowlist,
   `AbortController` timeout, streamed size cap. `new URL()` alone is not validation.
 

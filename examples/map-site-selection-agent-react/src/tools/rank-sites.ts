@@ -350,9 +350,8 @@ const buildRankedOverlay = (collected: CollectedSite[]): { points: OverlayPoint[
 };
 
 // BUILDER: the model-facing surface (weights schema + description) depends on the household signal,
-// so it is assembled at createMapAgent time — after buildSiteAgentOptions stored the flag — rather
-// than at module load. (Read from the store, not options.featureFlags: the toolkit's public
-// FeatureFlags type strips the internal experimentalSearch member.)
+// so it is assembled at createMapAgent time rather than at module load. The signal is read from
+// `householdsEnabled()`, which now always reports false — see demographics/experimental-search.ts.
 export const rankSites: ToolEntryBuilder = () => {
     const households = householdsEnabled();
     return {

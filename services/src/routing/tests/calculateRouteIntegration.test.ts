@@ -1,11 +1,14 @@
 import type {
     BBox,
+    Guidance,
     LegSectionProps,
+    Route,
     SectionProps,
     SectionsProps,
     SectionType,
     SummaryBase,
 } from '@tomtom-org/maps-sdk/core';
+import { bboxFromGeoJSON } from '@tomtom-org/maps-sdk/core';
 import { beforeAll, describe, expect, test, vi } from 'vitest';
 import type { ElectricVehicleParamsWithChargingStops } from '../../shared';
 import { putIntegrationTestsAPIKey } from '../../shared/tests/integrationTestUtils';
@@ -57,6 +60,49 @@ const assertDefaultSectionsReturnsAll = (sections: SectionsProps): void => {
     expect(sections.country?.length).toBeGreaterThan(0);
     expect(sections.urban?.length).toBeGreaterThan(0);
     expect(sections.speedLimit?.length).toBeGreaterThan(0);
+};
+
+// How far a maneuver point may sit outside the bbox of the path it belongs to — about 100 m.
+const BBOX_MARGIN_DEGREES = 0.001;
+
+// What guidance has to carry to be usable at all, asserted against the live response rather than a
+// fixture: a fixture only proves the parser agrees with whatever shape we wrote down last, and the
+// shape of a point in this response has already changed once under us.
+const assertGuidanceBasics = (guidance: Guidance | undefined, route: Route): void => {
+    expect(guidance?.instructions.length).toBeGreaterThan(1);
+    const instructions = guidance?.instructions ?? [];
+
+    // Coordinates, not a pair of undefineds — and in [longitude, latitude] order, within reach of
+    // the route they belong to. The margin is for the junction the router names sitting a few
+    // metres off the sampled path (8 m on Roses to Olot); a swapped axis or an unread point misses
+    // by degrees.
+    const bbox = bboxFromGeoJSON(route);
+    if (!bbox) throw new Error('the route came back with no geometry to place its maneuver points against');
+
+    const [west, south, east, north] = bbox;
+    const offRoute = instructions
+        .map(({ maneuverPoint }) => maneuverPoint)
+        .filter(
+            ([longitude, latitude]) =>
+                !(
+                    longitude >= west - BBOX_MARGIN_DEGREES &&
+                    longitude <= east + BBOX_MARGIN_DEGREES &&
+                    latitude >= south - BBOX_MARGIN_DEGREES &&
+                    latitude <= north + BBOX_MARGIN_DEGREES
+                ),
+        );
+    expect(offRoute).toEqual([]);
+
+    // Each instruction sits further along the route than the one before it, and is located on the
+    // route path — an index every instruction shares is the tell that the point was not read.
+    const offsets = instructions.map((instruction) => instruction.routeOffsetInMeters);
+    expect(offsets.every((offset, index) => index === 0 || offset >= offsets[index - 1])).toBe(true);
+    expect(new Set(instructions.map((instruction) => instruction.pathPointIndex)).size).toBeGreaterThan(1);
+    expect(instructions.at(-1)?.pathPointIndex).toBeLessThan(route.geometry.coordinates.length);
+
+    for (const { point } of instructions.flatMap((instruction) => instruction.routePath)) {
+        expect(point.every(Number.isFinite)).toBe(true);
+    }
 };
 
 describe('Calculate route integration tests', () => {
@@ -538,6 +584,7 @@ describe('Calculate route integration tests', () => {
             // shaped the plan - ignoring it entirely would put the arrival a day off.
             expect(Math.abs(routeProperties.summary.arrivalTime.getTime() - arriveBy.getTime())).toBeLessThan(120_000);
             expect(routeProperties.guidance).toBeDefined();
+            assertGuidanceBasics(routeProperties.guidance, routeFeature);
             expect(routeProperties.progress?.length).toBeGreaterThan(0);
             // computeTravelTimeFor: 'all' was requested, so the three traffic variant
             // times must come back. The v2->v3 migration guide claims `computeTravelTimeFor` and
@@ -896,6 +943,7 @@ describe('Calculate route integration tests', () => {
 
         const guidance = result.features[0].properties.guidance;
         expect(guidance).toBeDefined();
+        assertGuidanceBasics(guidance, result.features[0]);
         const instructions = guidance?.instructions ?? [];
         expect(instructions.length).toBeGreaterThan(5);
 

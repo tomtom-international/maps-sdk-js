@@ -33,3 +33,6 @@ agent-eval/benchmark/results/
 
 # Nx
 .nx/
+
+# Local git worktrees (each is a full checkout; keep them out of the nx graph and Biome)
+.worktrees/

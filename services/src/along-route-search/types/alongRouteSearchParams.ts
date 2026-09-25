@@ -10,6 +10,10 @@ import type { AlongRouteSearchResponseAPI } from './alongRouteSearchResponseAPI'
  * Controls how the returned POIs are ordered relative to the route.
  *
  * @remarks
+ * Pass these to {@link search}, which selects the request variant from the params it is given:
+ * a `route` property dispatches to along-route search, a `geometries` property to geometry search,
+ * and neither to fuzzy search. {@link alongRouteSearch} is also exported directly.
+ *
  * - `detourTime`: Sort by additional travel time required to visit the POI (default)
  * - `detourOffset`: Sort by how far along the route the detour point falls
  *

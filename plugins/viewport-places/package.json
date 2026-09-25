@@ -2,7 +2,7 @@
   "name": "@tomtom-org/maps-sdk-plugin-viewport-places",
   "author": "TomTom International B.V.",
   "license": "See in LICENSE.txt",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "type": "module",
   "description": "Plugin to leverage search to show places on the current viewport that refresh as the map moves",
   "types": "dist/index.d.ts",
@@ -14,9 +14,10 @@
     "type-check": "tsc --noEmit"
   },
   "peerDependencies": {
-    "@tomtom-org/maps-sdk": "workspace:*"
+    "@tomtom-org/maps-sdk": ">=0.56.0 <1.0.0"
   },
   "devDependencies": {
+    "@tomtom-org/maps-sdk": "workspace:*",
     "@tsconfig/recommended": "catalog:",
     "@types/node": "catalog:",
     "@vitest/coverage-v8": "catalog:",

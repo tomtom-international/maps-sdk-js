@@ -8,14 +8,17 @@
  */
 
 import type { LightDark } from '@tomtom-org/maps-sdk/map';
+import type { DefocusUniforms } from './gpu/defocusShader';
 
 // The threshold's usable ceiling: at 1 the contrast term would divide by zero.
 const BLOOM_CUT_MAX = 0.92;
 const BLOOM_SATURATE = 1.35;
 
+const clamp = (value: number, min: number, max: number): number => Math.min(Math.max(value, min), max);
+
 // Knob values arrive validated against the catalogue, so this only guards the maths against a
 // caller reaching these functions directly.
-const asFraction = (value: number): number => Math.min(Math.max(value, 0), 1);
+const asFraction = (value: number): number => clamp(value, 0, 1);
 
 /**
  * The filter chain that turns the map underneath into its own glow: cut, spread, saturate.
@@ -88,6 +91,79 @@ export const vignetteStops = (intensity: number): { inner: string; outer: string
  */
 export const rimMask = (reach: number): string => rimGradient('transparent', 'black', reach);
 
+/** The camera a depth of field needs, and all it needs: two angles, in degrees. @ignore */
+export type CameraAngles = { pitch: number; verticalFieldOfView: number };
+
+// A tangent runs away at 90°, and a pitch restored from a saved view is not the map's to promise.
+const MAX_PITCH_DEGREES = 89;
+
+// The same guard on the other angle: a field of view of 0 or 180 has no half-tangent to take.
+const MIN_FIELD_OF_VIEW_DEGREES = 1;
+const MAX_FIELD_OF_VIEW_DEGREES = 175;
+
+// The most of the frame's depth the band may hold sharp. Half, so the knob's top end is a deep
+// field rather than a switched-off effect.
+const MAX_BAND = 0.5;
+
+const toRadians = (degrees: number) => (degrees * Math.PI) / 180;
+
+/**
+ * **How much nearer the bottom of the frame is than the top**, in reciprocal distance normalised so
+ * that 0 is the nearest ground in shot: 0 seen from straight above, 0.5 at a 45° tilt, past 1 once
+ * the horizon is on screen.
+ *
+ * A ray through a row `y` of a plane seen by a perspective camera meets it at `1/z = 1/D − y·tanθ/D²`
+ * — *affine in the row* — so one number describes the whole depth of the picture, and the viewport
+ * cancels against the camera distance that defines it. Which is why this needs no depth buffer:
+ * MapLibre hands out none, and for a plane none is necessary.
+ *
+ * A flat map is not a special case but `ramp = 0`: every part of the ground is the same distance
+ * away, so there is no depth to be shallow in and the effect ends on its own.
+ * @ignore
+ */
+export const depthRamp = ({ pitch, verticalFieldOfView }: CameraAngles): number => {
+    const tilt = Math.tan(toRadians(clamp(pitch, 0, MAX_PITCH_DEGREES)));
+    const spread = Math.tan(
+        toRadians(clamp(verticalFieldOfView, MIN_FIELD_OF_VIEW_DEGREES, MAX_FIELD_OF_VIEW_DEGREES)) / 2,
+    );
+    const span = 2 * spread * tilt;
+    return span / (1 + span / 2);
+};
+
+/**
+ * The depth-of-field pass' uniforms for a camera, a set of knobs and a raster: the optics as
+ * numbers, with no GPU in sight — which is what makes them testable, and they are the half most
+ * likely to be quietly wrong.
+ *
+ * `scale` is device pixels per CSS pixel. **Only the blur takes it**, and that asymmetry is the
+ * whole of how a capture matches the screen: a circle of confusion is a length, while the depth
+ * ramp and the plane of focus are angles and ratios and read the same at any resolution.
+ *
+ * `undefined` when there is nothing to defocus — a map with no tilt has no depth to be shallow in,
+ * so the geometry ends the effect rather than a check on the pitch.
+ * @ignore
+ */
+export const defocusUniforms = (
+    values: { focus: number; band: number; blurCssPx: number; bokeh: number },
+    camera: CameraAngles,
+    raster: { width: number; height: number; scale: number },
+): DefocusUniforms | undefined => {
+    const ramp = depthRamp(camera);
+    if (ramp <= 0 || values.blurCssPx <= 0) return undefined;
+
+    return {
+        uDepth: ramp,
+        // Read across what the frame actually shows rather than to infinity: a gently tilted map
+        // spans only the nearest part of that scale, and a knob whose top end landed beyond the top
+        // of the picture would be dead at exactly the pitch a flight uses. Held at the horizon.
+        uFocus: Math.min(asFraction(values.focus) * ramp, 1),
+        uBand: asFraction(values.band) * MAX_BAND,
+        uBlur: Math.max(values.blurCssPx, 0) * raster.scale,
+        uBokeh: asFraction(values.bokeh),
+        uTexel: [1 / Math.max(raster.width, 1), 1 / Math.max(raster.height, 1)],
+    };
+};
+
 // How opaque the fog veil gets at the corners, per unit of intensity.
 const FOG_VEIL_ALPHA = 0.65;
 
@@ -105,7 +181,7 @@ const FOG_BY_THEME: Record<LightDark, { rgb: string; grade: string }> = {
 };
 
 /** Keeps blurred colours from greying out; used by both the live filter and the capture. @ignore */
-export const EDGE_BLUR_SATURATE = 'saturate(1.08)';
+export const DEFOCUS_SATURATE = 'saturate(1.08)';
 
 /**
  * The grade under the fog blur, which washes the rim out towards the colour of the air.
@@ -145,9 +221,10 @@ export const fogVeil = (intensity: number, reach: number, lightDark: LightDark):
 };
 
 /**
- * The edge blur's filter: blur alone, with a slight saturation lift so blurred colours do not grey
- * out. Unlike {@link fogFilter} it neither washes the rim out nor lays a veil over it, so the rim
- * keeps its own colours and only loses its detail.
+ * The filter both defocusing effects use — edge blur and depth of field: blur alone, with a slight
+ * saturation lift so blurred colours do not grey out. Unlike {@link fogFilter} it neither washes
+ * what it blurs out nor lays a veil over it, so those pixels keep their colours and lose only their
+ * detail. What differs between the two effects is the mask, not the filter.
  * @ignore
  */
-export const edgeBlurFilter = (intensity: number): string => `blur(${intensity}px) ${EDGE_BLUR_SATURATE}`;
+export const defocusFilter = (blurCssPx: number): string => `blur(${blurCssPx}px) ${DEFOCUS_SATURATE}`;

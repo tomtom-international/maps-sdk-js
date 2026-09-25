@@ -87,7 +87,7 @@ export const buildRecallStateOutputSchema = (flags: FeatureFlags) =>
         toolErrorSchema,
     ]);
 
-/** Default-flag (`experimentalSearch: false`) output schema. */
+/** Output schema built with no feature flags set. */
 export const recallStateOutputSchema = buildRecallStateOutputSchema({});
 
 // LLM-facing kinds recallState can list/inspect — every entry-bearing slice. DERIVED from the
@@ -224,7 +224,7 @@ export const buildExecuteRecallState =
         }
     };
 
-/** Default-flag (`experimentalSearch: false`) executor. */
+/** Executor built with no feature flags set. */
 export const executeRecallState = buildExecuteRecallState({});
 
 const recallStateMetadata = {

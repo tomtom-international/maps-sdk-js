@@ -1,4 +1,6 @@
 packages:
+  # Changesets discovers the root package through this glob.
+  - .
   - shared-configs
   - testing/core-utils
   - testing/agent-tool-calling
@@ -24,13 +26,32 @@ overrides:
   "@assistant-ui/store": 0.2.14
   "@assistant-ui/tap": 0.6.0
   "@codesandbox/nodebox": link:./stubs/nodebox
+  # TODO(LSI-1157): drop the `@opentelemetry/*` and `langsmith` pins below once
+  # `@langwatch/scenario` (agent tool-calling tests) ships the fixed ranges itself —
+  # they lift Dependabot-flagged transitive versions it holds back.
+  "@opentelemetry/exporter-prometheus": ^0.222.0
+  "@opentelemetry/propagator-jaeger": ^2.11.0
+  "@opentelemetry/sdk-node": ^0.222.0
   ajv: ^8.20.0
+  "brace-expansion@2": ^2.1.7
+  "brace-expansion@5": ^5.0.12
   fsevents: ^2.3.3
+  immutable: ^5.1.9
+  "js-yaml@4": ^4.3.2
+  langsmith: ^0.6.2
   "minimatch@10": ^10.2.5
   nanoid: ^5.1.11
   sax: ^1.6.0
   "semver@7": ^7.8.3
+  smol-toml: ^1.8.0
   typescript: "catalog:"
+  "undici@7": ^7.29.1
+
+# `image-size@0.5` reaches the tree only as an optional dependency of `less`, itself
+# an optional Vite peer `autoInstallPeers` pulls in although no workspace compiles
+# `.less`. Its parser DoS advisories have no fix in that line, hence the skip.
+ignoredOptionalDependencies:
+  - image-size
 
 # Dependency build scripts (replaces the removed `pnpm.onlyBuiltDependencies`).
 # In pnpm 11 packages not listed here are NOT built, and `strictDepBuilds`

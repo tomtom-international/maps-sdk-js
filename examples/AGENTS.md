@@ -1,6 +1,6 @@
 # AGENTS.md - Examples
 
-**Live examples demonstrating SDK features** - 50+ working examples showcasing maps, search, routing, and more.
+**Live examples demonstrating SDK features** — each a standalone Vite app, published to the docs portal.
 
 ## For External Developers (Using the SDK)
 
@@ -37,37 +37,24 @@ When an example needs an SDK constant or type (style IDs, layer IDs, config
 types, etc.), import it from `@tomtom-org/maps-sdk/...` rather than hardcoding
 or re-deriving it locally.
 
-### Overview
-
-This directory contains 50+ runnable examples demonstrating SDK features:
-
-- Map display and interaction
-- Search and geocoding
-- Routing and navigation
-- Traffic visualization
-- Places and POI management
-- Custom styling and theming
-
-Each example is a standalone application you can run and modify.
-
 ### Development Setup
 
 ```bash
-# From repo root
+# From the repo root
 pnpm install
-pnpm build
+pnpm build:sdk                  # examples resolve the SDK through core/services/map dist
+cp examples/.env.example examples/.env   # then set API_KEY_EXAMPLES
 
-# Run an example in development mode
 cd examples/<example-name>
-pnpm develop
-# Open browser to http://localhost:5173/<example-name>
-
-# Or run with Sandpack live coding preview
-pnpm develop:sandpack
-# Open browser to see interactive code editor with live preview
+pnpm develop                    # plain Vite app, on Vite's default port
+pnpm develop:sandpack           # the Sandpack live-editor preview of the same files
 ```
 
-See [../CONTRIBUTING.md](../CONTRIBUTING.md) for detailed setup.
+Both dev servers take the same port, so run one at a time. Examples call the
+real TomTom APIs and spend quota. A few need more than the one key —
+`examples/.env.example` documents each extra (Azure for the agent examples, the
+Move Portal key for traffic area analytics). [`../CONTRIBUTING.md`](../CONTRIBUTING.md)
+covers the wider repo setup.
 
 ### Minimum Ingredients — Web Example
 
@@ -267,6 +254,51 @@ TomTomConfig.instance.put({ apiKey: API_KEY });
 
 ---
 
+### Styling: the shared templates
+
+`examples/src/templates/` holds the UI an example's chrome is built from. Both
+halves are **reference material**: copy what you need into the example, never
+import the HTML or extend the CSS in place.
+
+- **`html/`** — component snippets (panels, search panel, dropdowns, sliders,
+  toggles, radio groups, colour selectors, spinner) plus `complete-example.html`
+  composing them.
+- **`examples/`** — whole pages under `templates/` (`minimal-example.html`,
+  `complex-panel-example.html`, `form-controls-showcase.html`) to build from.
+- **`css/`** — granular stylesheets by concern: `base/`, `panel/`, `button/`,
+  `form/`, `feedback/`, `maplibre/`, the two `agent-*.css` shells, and
+  `styles.css` importing everything.
+
+An example's `src/style.css` `@import`s only the files it uses:
+
+```css
+@import '../../src/templates/css/base/tokens.css';
+@import '../../src/templates/css/base/global.css';
+@import '../../src/templates/css/base/typography.css';
+@import '../../src/templates/css/panel/custom-panel.css';
+```
+
+- **`base/tokens.css` comes first and is never optional.** It declares the
+  `--ui-*` custom properties every other template file reads, and it imports
+  `base/fonts.css`, which carries the `@font-face` rules for Gilroy and Proxima
+  Nova. An example that names a brand face without importing it renders in the
+  fallback system face — so reach for `var(--ui-font-gilroy)` rather than
+  spelling the family out.
+- The other two `base/` files (`global.css` for the box-sizing reset, body
+  defaults and `#sdk-map`; `typography.css` for headings and labels) are
+  required in practice for anything with chrome.
+- Import a `panel/`, `button/`, `form/`, `feedback/` or `maplibre/` file only
+  when the example actually uses that component.
+
+**Sandpack sees fully expanded CSS.** Vite resolves these `@import`s normally at
+build time, but for the portal's live editor `inlineTemplateCSSImports`
+(`src/sandpack/sandpackUtils.ts`) inlines them recursively, so a reader browsing
+the example gets the real classes rather than an unresolvable path. The tradeoff
+is that some inlined rules go unused in a given example, which is cheap next to
+keeping one source of truth for shared styles.
+
+---
+
 ### The page.mdx body
 
 Every example page on the portal (`/maps-sdk-js/examples/<name>`) renders the
@@ -275,16 +307,22 @@ examples"**. `title` and `description` are already printed above the demo, so
 the reader reaches the body having watched the example run.
 
 The body has exactly two jobs: **name what the example showcases**, and show
-**how little SDK surface it took**. It is not a tutorial — no setup steps, no
+**how little SDK surface it took**. It is not a tutorial: no setup steps, no
 API-key instructions, no parameter tables, no "in this example we will…", and no
 restating the `description`.
 
-**Shape** — around 90 words, 120 at the outside:
+Two readers get the same copy. A developer skims it seconds after watching the
+demo, and an AI agent reads it as the prose description of what these calls do.
+Both are served by the same thing: plain declarative sentences, symbols spelled
+as they are exported, and claims that hold on their own.
 
-1. A lead of one or two sentences: the outcome the reader just watched.
-2. Two to four bullets, one line each. Each names the SDK symbol doing the work,
-   and what that call spares the caller. When a guide explains that symbol or
-   concept, its first mention links to the narrowest applicable guide section.
+**Shape** — around 70 words, 100 at the outside:
+
+1. A lead of one sentence: the outcome the reader just watched.
+2. Two to four bullets, one or two lines each. Each names the SDK symbol doing
+   the work, and what that call spares the caller. When a guide explains that
+   symbol or concept, its first mention links to the narrowest applicable guide
+   section.
 
 Past that ceiling the copy has started explaining the domain instead of the SDK,
 or the example is demonstrating more than one idea.
@@ -294,17 +332,34 @@ or the example is demonstrating more than one idea.
 - **No headings.** `##` renders at the same weight as the page's own "Related
   examples" heading, so it reads as a new page section rather than as part of
   the example.
-- **Concrete over adjectives** — "one call", "no layer wiring", "the response is
+- **No dash as punctuation.** Em dash and en dash are both out: use a comma, a
+  colon, a full stop or brackets, and write a range as "Paris to Amsterdam".
+  Hyphenated compounds (`along-route`, `high-power`) are unaffected.
+- **Never say what the example leaves out.** No limitations, no "this example
+  does not handle…", no "a production app would also…", no scope notes. Saying
+  what a *call* spares its caller ("the response is already GeoJSON, so `show`
+  takes it unchanged") is the opposite move, and is the point of every bullet.
+- **Self-contained.** The reader arrives from a gallery card, not from another
+  example: no "as in the routing example", and no SDK or domain term (inverted
+  theme, BYOD, long-distance EV routing, hexgrid, geobias) used before the
+  sentence around it says what it is.
+- **Earn the bullet against the code.** The Sandpack sits directly above, so
+  anything a reader picks up by glancing at `src/` is a wasted line: no
+  restating `center` and `zoom`, no listing a panel's controls one by one, no
+  walking a call's options in order. Name the call, then say what the code does
+  not show: what it returns, what it decides for you, what it replaces.
+- **Concrete over adjectives**: "one call", "no layer wiring", "the response is
   already GeoJSON"; never "powerful", "seamless", "effortless", "simply",
   "just".
 - **Name the exported symbol**, spelled as it is exported:
   `withInsertedWaypoints`, `RoutingModule.create`, `calculateRoute`.
-- **Embed guide links in the key code words** — for example,
-  [`withInsertedWaypoints`](/maps-sdk-js/guides/core/utilities/routes#withinsertedwaypoints).
-  Prefer the section that explains the exact call or concept over the top of its
-  guide. Link every principal call that has useful guide coverage; do not impose
-  a one-link quota or add a detached "More in…" line.
-- **Links are root-relative and carry no `.mdx`** —
+- **Embed guide links in the key code words**, for example
+  [`withInsertedWaypoints`](/maps-sdk-js/guides/core/utilities/routes#withinsertedwaypoints),
+  and prefer the section that explains the exact call over the top of its guide.
+- **One link per idea, and no anchor twice.** Link a symbol on its first mention
+  only, and drop a link whose best section is one this body already points at.
+  Roughly one link per bullet; past four the copy reads as a link list.
+- **Links are root-relative and carry no `.mdx`**:
   [`RoutingModule.showRoutes`](/maps-sdk-js/guides/map/routes#displaying-routes),
   `[TomTomMap](/maps-sdk-js/api-reference/classes/map.TomTomMap.html)`. The
   relative-link convention the guides use does not apply here: an example page's
@@ -318,19 +373,24 @@ than a map.
 **Worked example** — `add-stops-to-route`:
 
 ```mdx
-Two waypoints go in, a route comes back, and the chargers beside it land on the map as extra
-stops, in along-route order, on a single recalculation.
+Two waypoints go in, a route comes back, and the chargers beside it join it as extra stops, in
+along-route order, on a single recalculation.
 
 - [`search`](/maps-sdk-js/guides/services/places/search#along-route-search) takes the route
   itself as an input, so "along this route, within this detour" is a query rather than a
   post-filter.
 - [`withInsertedWaypoints`](/maps-sdk-js/guides/core/utilities/routes#withinsertedwaypoints)
-  projects old and new stops onto the route once and orders them, so the insert positions are
-  not yours to work out.
+  projects old and new stops onto the route and orders them, so the insert positions are not
+  yours to work out.
 - [`RoutingModule.showRoutes`](/maps-sdk-js/guides/map/routes#displaying-routes) and
-  [`showWaypoints`](/maps-sdk-js/guides/map/routes#waypoints) redraw the updated journey
-  straight from the service response, with no layer bookkeeping.
+  `showWaypoints` redraw the updated journey straight from the service response, with no layer
+  bookkeeping.
 ```
+
+`showWaypoints` stays unlinked on purpose: it is one section away in the guide
+the bullet already opened, so a second link buys the reader nothing. The words
+go the same way. The second bullet lost its "once" because the lead had already
+promised a single recalculation.
 
 The `tomtom-maps-sdk-js-example-authoring` skill carries the drafting pass that
 gets you there.
@@ -340,15 +400,17 @@ gets you there.
 ### Creating a New Example
 
 ```bash
-# Copy an existing example as template
-cp -r default-map my-new-example      # web
-cp -r nodejs-geocode nodejs-my-example  # Node.js
-
-# Edit files in my-new-example/src/
-# Test your example
-pnpm develop
-# Navigate to http://localhost:5173/my-new-example
+cp -r examples/default-map examples/my-new-example        # web
+cp -r examples/nodejs-geocode examples/nodejs-my-example  # Node.js
 ```
+
+Copying is the supported route: an example's `package.json` scripts,
+`playwright.config.ts` and `tsconfig.json` all delegate to the shared configs,
+and several of those files fail silently rather than loudly when they are
+missing or wrong. What the result must contain is the two "Minimum Ingredients"
+sections above; the order to fill it in is the
+`tomtom-maps-sdk-js-example-authoring` skill; the last step is a bullet under
+the right heading in the [Example Catalog](#example-catalog) below.
 
 ### Sandpack Live Coding Preview
 
@@ -408,139 +470,89 @@ The Sandpack preview:
 
 ### Testing SDK Changes
 
+Examples resolve `@tomtom-org/maps-sdk/*` through `core/dist`, `services/dist`
+and `map/dist`, so an SDK edit only reaches them once it is built:
+
 ```bash
-# 1. Make changes in ../map or ../services
-cd ../map
-pnpm build
-
-# 2. Return to examples and test
-cd ../examples
-pnpm dev
-
-# Examples automatically use the built SDK from workspace
+pnpm build:sdk                       # or pnpm -F map build for a map-only change
+cd examples/<example-name> && pnpm develop
 ```
 
+### End-to-End (E2E) Testing and snapshots
 
-### End-to-End (E2E) Testing
+Web examples have E2E tests; Node.js examples do not.
 
-Web examples have E2E tests (Node.js examples do not).
+> **Build first, twice.** The sanity test loads the example from `dist/`, never
+> from a dev server, and it runs as **two tagged tests**: `@prod` serves
+> `dist/prod` on port 9050, `@sandpack` serves `dist/sandpack` on 9051.
+> Playwright starts both servers but builds neither, so a missing build leaves
+> that half serving a blank or 404 page — failing identically to a real
+> regression. This applies to every command below, the root-level
+> `e2e-test:examples:update-snapshot` and `generate-thumbnails:examples`
+> included.
 
-> **Build first.** The sanity E2E test loads the example from its `dist/`
-> output, not from the dev server. Run `pnpm -F map build` and
-> `pnpm -F @examples/<example-name> build` **before** any
-> `test:e2e` / `test:e2e:update-snapshots` invocation, otherwise the run will
-> serve stale or missing assets. The same applies to the root-level
-> `pnpm e2e-test:examples:update-snapshot` and `pnpm generate-thumbnails:examples`
-> commands further down.
-
-**Quick commands:**
 ```bash
-# 1. Build the SDK and BOTH bundles of the example you're targeting
+# 1. The SDK, then BOTH bundles of the example
 pnpm -F map build
-pnpm -F @examples/<example-name> build            # → dist/prod, served on 9050 for the @prod test
-pnpm -F @examples/<example-name> build:sandpack   # → dist/sandpack, served on 9051 for @sandpack
+pnpm -F @examples/<example-name> build            # → dist/prod  (@prod, 9050)
+pnpm -F @examples/<example-name> build:sandpack   # → dist/sandpack (@sandpack, 9051)
 
-# 2. Then run E2E from inside the example
+# 2. From inside the example
 cd examples/<example-name>
-pnpm test:e2e                    # Run tests
-pnpm test:e2e:update-snapshots   # Regenerate the snapshots
-pnpm test:e2e:ui                 # Interactive UI mode
-```
+pnpm test:e2e                    # run
+pnpm test:e2e:update-snapshots   # regenerate its baselines
+pnpm test:e2e:ui                 # interactive
 
-Playwright starts both servers but builds neither: skip a build and that half serves a blank page,
-failing identically to a real regression.
-
-**New example checklist.** When you add a brand-new example, the snapshot and
-thumbnail don't exist yet — the first `pnpm test:e2e:update-snapshots` writes
-`e2e-tests/snapshots/upon-load.png`, and `pnpm generate-thumbnails:examples
-<example-name>` then derives `content/thumbnail.png` from it. Commit both
-files alongside the example source.
-
-A web example's snapshots under `e2e-tests/snapshots/` (all committed):
-- `upon-load.png` — the `@prod` test's whole-page shot of `dist/prod`, at `maxDiffPixelRatio: 0.15`
-- `upon-load-sandpack.png` — the `@sandpack` test's shot of the Sandpack preview of `dist/sandpack`
-- `ui-temp-upon-load.png` — TEMPORARY (`src/e2e-test-utils/tempUiSnapshot.ts`): the example's own
-  chrome with the map hidden, at zero tolerance, on the examples that have chrome. The baseline is
-  a Linux capture and the check **self-skips outside CI**, so it can only be regenerated from the
-  CI job's `ui-temp-baselines` artifact — never locally.
-
-The `tomtom-maps-sdk-js-example-authoring` skill carries this workflow as an ordered procedure.
-
-### Snapshot & Thumbnail Workflow
-
-Each browser example has two image artifacts that must be kept in sync when example output changes:
-
-| File | Purpose | How generated |
-|---|---|---|
-| `e2e-tests/snapshots/upon-load.png` | Playwright visual regression baseline | `pnpm test:e2e:update-snapshots` (per-example) or root scripts below |
-| `content/thumbnail.png` | Shown in docs portal example gallery | `generate-thumbnails.sh` — resizes the snapshot to 1000×500 |
-
-**Update snapshots for specific examples** (from repo root):
-```bash
+# Or, from the repo root, per example or across all of them
 pnpm e2e-test:examples:update-snapshot <example-name>
-
-# Then regenerate the thumbnail from the fresh snapshot:
-pnpm generate-thumbnails:examples <example-name>
-```
-
-**Update all snapshots at once** (from repo root):
-```bash
 pnpm e2e-test:examples:update-all-snapshots
-
-# Then regenerate all thumbnails:
-pnpm generate-thumbnails:examples
 ```
 
-**Prerequisites:**
-- The map package and the affected examples must be built before running snapshot/thumbnail commands:
-  ```bash
-  pnpm -F map build
-  pnpm -F @examples/<example-name> build
-  pnpm -F @examples/<example-name> build:sandpack
-  ```
-- The Playwright test servers serve from `dist/prod` (`start-test-server:prod`, port 9050) and
-  `dist/sandpack` (`start-test-server:sandpack`, port 9051) — both bundles must be built first.
-- CORS-header tests in some examples require a live API key and will fail in offline/CI environments — this is expected and does not block snapshot updates.
-- Commit both `upon-load.png` and `thumbnail.png` after updating.
+Some examples assert CORS headers against a live API key and fail offline; that
+is expected and does not block a snapshot update.
+
+**The committed artifacts**, all under `e2e-tests/snapshots/` except the
+thumbnail:
+
+| File | What it is | Regenerated by |
+|---|---|---|
+| `upon-load.png` | the `@prod` whole-page shot of `dist/prod`, at `maxDiffPixelRatio: 0.15` | `test:e2e:update-snapshots`, or the root scripts above |
+| `upon-load-sandpack.png` | the `@sandpack` shot of the Sandpack preview of `dist/sandpack` | same |
+| `ui-temp-upon-load.png` | TEMPORARY (`src/e2e-test-utils/tempUiSnapshot.ts`): the example's own chrome with the map hidden, at zero tolerance, on the examples that have chrome | **CI only** — the baseline is a Linux capture and the check self-skips elsewhere, so it comes from the CI job's `ui-temp-baselines` artifact |
+| `content/thumbnail.png` | the docs-portal gallery image | `pnpm generate-thumbnails:examples <example-name>` (omit the name for all), which resizes `upon-load.png` to 1000×500 |
+
+Order matters: snapshot first, thumbnail second, commit both. A thumbnail
+derived from a stale snapshot is the usual cause of a gallery image that no
+longer matches the example. A brand-new example has neither file until the first
+update run writes them.
+
+The `tomtom-maps-sdk-js-example-authoring` skill carries this workflow as an
+ordered procedure, plus the diagnosis when a run looks wrong.
 
 ### Example Structure
 
+Per-example contents are the two "Minimum Ingredients" sections above. What sits
+at the `examples/` root, shared by all of them:
+
 ```
 examples/
-├── vite.config.ts                   # Vite configuration for all examples
-├── example-vite.config.ts           # Individual example config
-├── example-sandpack-vite.config.ts  # Sandpack preview config
+├── vite.config.ts                   # the gallery app itself
+├── example-vite.config.ts           # per-example dev + prod build
+├── example-sandpack-vite.config.ts  # per-example Sandpack build
+├── exampleBuildEnv.ts               # EXAMPLE_ENV_VARS — the build-time env allowlist
+├── playwright.config.ts             # buildPlaywrightConfig + the 9050 / 9051 port constants
 ├── src/
-│   └── sandpack/
-│       ├── LiveCodingExample.tsx    # Sandpack component
-│       └── localPreview/           # Local preview app
-├── default-map/                    # Web example
-│   ├── src/
-│   │   ├── index.html
-│   │   ├── index.ts
-│   │   ├── style.css
-│   │   └── config.ts
-│   ├── content/
-│   │   ├── page.mdx
-│   │   └── thumbnail.png
-│   ├── e2e-tests/
-│   │   ├── sanity.test.ts
-│   │   └── snapshots/upon-load.png
-│   ├── sandpack.ts
-│   ├── package.json
-│   ├── playwright.config.ts
-│   └── tsconfig.json
-└── nodejs-geocode/                 # Node.js example (no HTML, no CSS, no e2e)
-    ├── src/
-    │   ├── index.ts
-    │   └── config.ts
-    ├── content/
-    │   ├── page.mdx
-    │   └── thumbnail.png
-    ├── sandpack.ts
-    ├── package.json
-    └── tsconfig.json
+│   ├── constants/tags.ts            # the closed tag vocabulary
+│   ├── e2e-test-utils/              # sanityE2ETest, tempUiSnapshot, shared test constants
+│   ├── sandpack/                    # LiveCodingExample, sandpackUtils, local preview
+│   ├── demos-proxy/                 # the session bootstrap injected in demos-proxy mode
+│   └── templates/                   # the shared HTML and CSS above
+└── scripts/generate-thumbnails.sh   # snapshot → 1000×500 thumbnail
 ```
+
+An example's own `package.json` scripts, `playwright.config.ts` and
+`tsconfig.json` are one-liners delegating here, which is why copying
+`default-map` gets them right and hand-writing them does not.
 
 ## Contributor Workflows
 
@@ -550,9 +562,8 @@ examples/
 - **Verify bug fix** → Run affected examples to validate fix
 - **Document API usage** → Create example showing best practices
 - **Change what an example does** → Update its `content/page.mdx` body in the same pass (see [The page.mdx body](#the-pagemdx-body))
-- **Generate thumbnails** → Run `pnpm generate-thumbnails` (see scripts)
+- **Regenerate a gallery image** → `pnpm generate-thumbnails:examples <example-name>`, after refreshing its snapshot
 - **Test example interactively** → Use `pnpm develop:sandpack` for live code editing
-- **Share interactive demo** → Create sandpack.ts to customize the preview experience
 
 ## Example Catalog
 
@@ -570,7 +581,9 @@ examples/
 - **layer-group-toggling** - Toggle layer groups on/off
 - **map-styling-playground** - Semantic styling knobs (sizes, toggles, POI and traffic colours, view, presets) from a panel built off `StylingModule.describe()`
 - **globe-terrain** - Globe projection, sky/atmosphere and 3D terrain through the styling module's `view.*` knobs
-- **map-effects-playground** - The map-effects plugin: bloom, grade, tint, fog, edge blur, vignette and high-DPI capture
+- **map-colors** - Recolour the base map with the ten semantic colours (`setMapColors`) and export the rendered style
+- **terrain-playground** - A pitched satellite map over four mountain viewpoints; terrain, sky and exaggeration survive a style switch, with a depth-of-field toggle
+- **map-effects-playground** - The map-effects plugin: bloom, grade, tint, fog, edge blur, depth of field, vignette and high-DPI capture
 - **layer-groups-visibility-animation** - Animate layer visibility changes
 
 ### Search & Geocoding
@@ -602,6 +615,7 @@ examples/
 - **route-geometry-searches** - Find POIs along a route
 - **route-leg-options-playground** - Per-leg route type and avoid list on a multi-stop route
 - **route-stop-wait-playground** - How long a route waits at a stop, on the pin and in the journey time
+- **routing-composite** - Geocode, EV route, search along it and reachable range, chained so each call feeds the next
 
 ### Routing Customization
 
@@ -641,6 +655,8 @@ examples/
 ### Traffic
 
 - **traffic-flow** - Display traffic flow on roads
+- **traffic-bloom-effect** - Live traffic glowing over a mono dark map, with bloom scoped by colour (`bloom.only`) to all traffic or to major jams
+- **bloom-effect-playground** - Every bloom knob on one panel, `bloom.only` included, across all seven styles
 - **traffic-incidents** - Show traffic incidents and alerts
 - **traffic-area-analytics** - Visualize traffic area analytics with hexgrid and heatmap modes
 - **traffic-config-playground** - Configure traffic display options
@@ -665,21 +681,3 @@ examples/
 - **nodejs-rev-geo** - Server-side reverse geocoding
 - **nodejs-routing** - Server-side route calculation
 - **nodejs-geometry-search** - Server-side geometry search
-
-## Common Example Patterns
-
-See "Minimum Ingredients" sections above for the canonical file contents. The key patterns are:
-
-- `config.ts` exports `API_KEY` from `process.env.API_KEY_EXAMPLES` — never hardcode keys
-- `TomTomConfig.instance.put({ apiKey: API_KEY })` is always the first SDK call
-- Map container div id is `sdk-map` (not `map`)
-- All source files live under `src/` inside each example directory
-
-## Important Notes
-
-- **Requires API key** - Set `apiKey` in examples (most use placeholder)
-- **Hot reload** - Examples auto-reload when you edit code
-- **Workspace packages** - Examples use local SDK build, not npm
-- **Real APIs** - Examples make real API calls to TomTom services
-- **Browser only** - These are web examples (for Node.js examples, see those prefixed with `nodejs-`)
-- **Live examples online** - View at https://docs.tomtom.com/maps-sdk-js/examples/

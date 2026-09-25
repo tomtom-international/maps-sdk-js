@@ -58,7 +58,11 @@ Then, in order:
    `traffic`, `places`, `ev`, `geometry`, `byod`, `map-style`, `base-map`, `user-interaction`,
    `utilities`, `plugins`, `ai`), one platform (`web` / `nodejs`). A tag outside the list silently
    fails to filter in the gallery.
-3. **`src/`** — one idea, visibly demonstrated.
+3. **`src/`** — one idea, visibly demonstrated. Any chrome around the map is composed from
+   `examples/src/templates/` rather than hand-written
+   ([`examples/AGENTS.md` § Styling](../../../examples/AGENTS.md#styling-the-shared-templates));
+   `base/tokens.css` is the import that is never optional, since it carries the `--ui-*`
+   properties and the brand `@font-face` rules.
 4. **`content/page.mdx` body** — the same file again, once `src/` is final: the portal prints it
    *after* the demo, so it claims what the reader has just watched. Contract and ceiling in
    [`examples/AGENTS.md` § The page.mdx body](../../../examples/AGENTS.md#the-pagemdx-body),
@@ -72,15 +76,11 @@ Then, in order:
 
 ## Running it
 
-```bash
-pnpm build:sdk                       # examples resolve the SDK through core/services/map dist
-cd examples/my-new-example
-pnpm develop                         # plain Vite app; open the URL Vite prints
-pnpm develop:sandpack                # the Sandpack live-editor preview of the same files
-```
-
-Both take Vite's default port, so run one at a time. `examples/.env` supplies `API_KEY_EXAMPLES`.
-After changing SDK source, rebuild it — examples consume `dist/`.
+`pnpm develop` for the plain Vite app, `pnpm develop:sandpack` for the live-editor preview of the
+same files; they share Vite's default port, so run one at a time
+([`examples/AGENTS.md` § Development Setup](../../../examples/AGENTS.md#development-setup) for the
+full setup). Examples consume `dist/`, so **`pnpm build:sdk` after every SDK source change** or the
+page keeps running the previous build — the commonest reason an edit appears to do nothing.
 
 ## Writing the page body
 
@@ -96,27 +96,45 @@ watches, and a claim that drifts from the code is the one defect here that no ga
    the call that removes work the reader would otherwise write themselves, and the one whose input
    is unusual (a route handed to a search, a service response handed straight to a module).
 3. **Link the calls.** For each principal call, search `documentation/docs-portal/guides/` and link
-   its first mention to the narrowest section that explains it. No link beats a link to a section
-   that does not actually cover it.
+   its first mention to the narrowest section that explains it. One link per idea and no anchor
+   twice in a body: a symbol whose best section is one an earlier bullet already opened stays
+   plain. No link beats a link to a section that does not actually cover it.
 4. **Cut against the frontmatter.** Read `description` and the body back to back and delete every
    clause that survives in both. The description sells the gallery card; the body sells the SDK.
+5. **Cut against the code.** The Sandpack is directly above the body, so delete every line the
+   reader gets by glancing at it: the constructor options, the panel's controls listed one by one,
+   a call's parameters walked in order. What survives is what the code cannot say: what a call
+   returns, what it decides for you, what it replaces.
+6. **Cut the prose.** Reread with `examples/AGENTS.md` § The page.mdx body open and strip what it
+   bans: every em dash and en dash, every sentence about what the example leaves out or would need
+   in production, every term (inverted theme, BYOD, hexgrid) the body uses before saying what it
+   is, and every borrowed context ("as in the routing example") that a reader arriving from the
+   gallery does not have. Around 70 words when you stop, 100 at the outside.
 
 Two checks before committing, and again whenever an example changes what it does: could a reader
 who skipped the code name the call that carries the example, and does every sentence still hold
 when the services answer differently tomorrow — no pin counts, no place names lifted from one run?
 
-## Two builds, two servers, two snapshots
+The bannable defects are greppable; run this over the examples you touched before the eye pass:
 
-The part that trips everyone: a web example's e2e run has **two tagged tests**, each needing its
-own build.
+```bash
+rg -n '[—–]' examples/*/content/page.mdx                      # dash as punctuation
+rg -n 'this example|in production|for brevity|out of scope' examples/*/content/page.mdx
+```
 
-| Test tag | Served from | Port | Snapshot |
-|---|---|---|---|
-| `@prod` | `dist/prod` (`pnpm build`) | 9050 | `upon-load.png` |
-| `@sandpack` | `dist/sandpack` (`pnpm build:sandpack`) | 9051 | `upon-load-sandpack.png` |
+## Two builds, two servers, three artifacts
 
-Playwright starts both servers itself but builds neither, so a missing build leaves that half
-serving a blank or 404 page — indistinguishable from a regression.
+The part that trips everyone: a web example's e2e run is **two tagged tests**, each needing its own
+build — `@prod` over `dist/prod` on port 9050, `@sandpack` over `dist/sandpack` on 9051. Playwright
+starts both servers itself but builds neither, so a missing build leaves that half serving a blank
+or 404 page — indistinguishable from a regression. Run all three builds, in this order:
+
+Before it compares anything, the `@prod` test waits for the map to have **drawn**, by reading the
+variance of the MapLibre canvas (`mapPaint.ts`). `networkidle` cannot stand in for that: MapLibre
+fetches tiles from a web worker and Playwright does not count worker traffic towards the page being
+idle. An example that draws no map at all — one that only prints a service response — has to say so
+with `rendersMap: false`, because a page with no canvas is otherwise how a map that failed to load
+presents itself.
 
 ```bash
 pnpm -F map build
@@ -126,36 +144,33 @@ cd examples/my-new-example && pnpm test:e2e     # or test:e2e:update-snapshots, 
 ```
 
 From the root, `pnpm e2e-test:examples:prod` / `:sandpack` run one tag across all examples, and
-`pnpm e2e-test:examples:update-snapshot <name>` updates a single example's baselines.
-
-A **third** artifact exists on the 42 examples that have their own chrome:
-`ui-temp-upon-load.png`, a zero-tolerance shot of that chrome with the map hidden
-(`tempUiSnapshot.ts`). Its baseline is a **Linux CI capture** and the check self-skips outside CI,
-so you can neither verify nor regenerate it locally — macOS text rasterisation alone would fail it.
-To refresh one, let the CI e2e job fail and take the file from its `ui-temp-baselines` artifact.
-It's temporary, tied to a CSS rename; don't build on it.
-
-## Thumbnails
-
-`content/thumbnail.png` is **derived from `upon-load.png`** —
-`examples/scripts/generate-thumbnails.sh` resizes it to 1000×500 (`fit: cover`, anchored right top)
-with sharp. Always snapshot first, thumbnail second, and commit both; a thumbnail regenerated from
-a stale snapshot is the usual cause of a gallery image that doesn't match the example.
-
-The file alone is not enough: the gallery reaches it through the **`thumbnail: "./thumbnail.png"`
-frontmatter key** in `content/page.mdx`. Nothing in the repo compiles or tests that key, so a
-committed `thumbnail.png` that no frontmatter names is simply never read. Add the key with the
-rest of the frontmatter, not with the image.
+`pnpm e2e-test:examples:update-snapshot <name>` updates a single example's baselines. Then the
+thumbnail, always second, because it is derived from the snapshot you just wrote:
 
 ```bash
-pnpm e2e-test:examples:update-snapshot my-new-example
 pnpm generate-thumbnails:examples my-new-example      # omit the name to redo every example
 ```
 
+Two things that catch people out and that nothing in the repo checks:
+
+- `generate-thumbnails.sh` crops to 1000×500 anchored **right top**, so the left edge of the shot
+  is what gets cut — worth a look before committing, especially on an example whose chrome sits
+  left.
+- The image is reached through the **`thumbnail: "./thumbnail.png"` frontmatter key** in
+  `content/page.mdx`. Nothing compiles or tests that key, so a committed `thumbnail.png` no
+  frontmatter names is simply never read.
+
+The **third** artifact, on the examples that have their own chrome: `ui-temp-upon-load.png`, a
+zero-tolerance shot of that chrome with the map hidden (`tempUiSnapshot.ts`). Its baseline is a
+**Linux CI capture** and the check self-skips outside CI, so you can neither verify nor regenerate
+it locally — macOS text rasterisation alone would fail it. To refresh one, let the CI e2e job fail
+and take the file from its `ui-temp-baselines` artifact. It's temporary, tied to a CSS rename;
+don't build on it.
+
 ## When a snapshot run looks wrong
 
-- **Every example blank, all snapshots failing at the 60s timeout** — the local key lacks
-  Orbis-style entitlement, not a regression. **Never** run
+- **Every example blank, every `@prod` test failing that the map drew nothing** — the local key
+  lacks Orbis-style entitlement, not a regression. **Never** run
   `pnpm e2e-test:examples:update-all-snapshots` in that state: it overwrites every committed
   baseline (160-plus) with blank maps. Treat CI as authoritative (`gh pr checks <n>`).
 - **One example differs slightly** — baselines allow `maxDiffPixelRatio: 0.15`
@@ -172,9 +187,10 @@ pnpm generate-thumbnails:examples my-new-example      # omit the name to redo ev
 `pnpm type-check:examples` and `pnpm test:examples` from the root (the latter asserts every built
 example's prod bundle is in the packed tarball). Then `/tomtom-maps-sdk-js-preflight`, which covers
 lint, the committed-artifact checklist and the docs surfaces — including the trap that guides embed
-examples **by directory name** (`<SDKGuideLiveCodingExample exampleDirectory="…" />`), so renaming
-or removing one breaks a guide with no compile error:
+examples **by directory name** (`<GuideDemo demo="…" />` for a map example, `<SDKGuideLiveCodingExample
+exampleDirectory="…" />` for a `nodejs-*` one), so renaming or removing one breaks a guide with no
+compile error:
 
 ```bash
-grep -rn 'exampleDirectory="my-new-example"' documentation/docs-portal/
+grep -rn 'my-new-example"' documentation/docs-portal/
 ```

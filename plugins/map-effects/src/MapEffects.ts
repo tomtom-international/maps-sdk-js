@@ -1,8 +1,18 @@
-import { type KnobDescriptor, knob, type TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { type KnobDescriptor, knob, StylingModule, type TomTomMap } from '@tomtom-org/maps-sdk/map';
+import {
+    applyScopeMask,
+    type BloomScope,
+    buildScopeMask,
+    invalidScopeEntry,
+    scopeColors,
+    scopeReadsStyling,
+} from './bloomScope';
 import { compositeEffects } from './composite';
 import {
     bloomFilter,
-    edgeBlurFilter,
+    type CameraAngles,
+    defocusFilter,
+    defocusUniforms,
     fogFilter,
     fogVeil,
     gradeFilter,
@@ -17,7 +27,11 @@ import {
     effectKnobDefinitions,
     effectKnobIds,
 } from './effectsCatalogue';
+import type { EffectValues } from './effectValues';
 import { withDefaults } from './effectValues';
+import { DEFOCUS_SHADER } from './gpu/defocusShader';
+import type { PassStage } from './gpu/screenPass';
+import { resizeCanvas, ScreenPassRenderer } from './gpu/screenPass';
 
 /**
  * The effect knob values an app sets — only the overridden ones, serializable like the SDK's
@@ -33,10 +47,10 @@ export type MapEffectsSettings = { [ID in EffectKnobId]?: EffectKnobValueOf<ID> 
  *
  * @group Map Effects
  */
-export type MapEffectsKnobDescriptor = KnobDescriptor<number | string> & {
+export type MapEffectsKnobDescriptor = KnobDescriptor<EffectKnobValueOf<EffectKnobId>> & {
     /** The knob's id, as accepted by {@link MapEffects.set}. */
     id: EffectKnobId;
-    /** The range of valid values, for every knob but `tint.color`. */
+    /** The range of valid values, for a numeric knob. */
     range?: EffectKnobRange;
     /** Always `true`: an effect reads the rendered pixels, so it has something to work on anywhere. */
     available: boolean;
@@ -69,6 +83,8 @@ export type CaptureOptions = {
 };
 
 // Overlay layers in compositing order; each is one absolutely positioned element over the canvas.
+// The GPU chain is not among them: it renders the picture the rest of these read, so it sits under
+// all of them — see `artworkCanvas`.
 const OVERLAYS = ['bloom', 'grade', 'fog', 'edgeBlur', 'tint', 'vignette'] as const;
 type OverlayName = (typeof OVERLAYS)[number];
 
@@ -81,6 +97,43 @@ const backdropFilterStyle = (filter: string): OverlayStyle => ({
     webkitBackdropFilter: filter,
 });
 const maskStyle = (mask: string): OverlayStyle => ({ maskImage: mask, webkitMaskImage: mask });
+
+// Every layer the plugin hangs over the map — the overlays and the chain's own canvas — covers the
+// container exactly, takes no pointer events, and starts hidden.
+const LAYER_STYLE = {
+    position: 'absolute',
+    inset: '0',
+    width: '100%',
+    height: '100%',
+    pointerEvents: 'none',
+    display: 'none',
+} satisfies Partial<CSSStyleDeclaration>;
+
+// Device pixels per CSS pixel of a canvas — what keeps a radius in CSS pixels wherever it is used.
+const rasterScaleOf = (canvas: HTMLCanvasElement): number => canvas.width / Math.max(canvas.clientWidth, 1);
+
+/**
+ * Coalesces however many requests arrive into one `draw` per animation frame. Both the chain and
+ * the bloom are made out of the map's pixels and follow its `render` event, which fires more often
+ * than a frame can be drawn.
+ */
+const drawOncePerFrame = (draw: () => void) => {
+    let frame: number | undefined;
+    return {
+        schedule: () => {
+            if (frame !== undefined) return;
+
+            frame = requestAnimationFrame(() => {
+                frame = undefined;
+                draw();
+            });
+        },
+        cancel: () => {
+            if (frame !== undefined) cancelAnimationFrame(frame);
+            frame = undefined;
+        },
+    };
+};
 
 // The bloom canvas renders at a quarter of the pixels; its blur radius is divided to match.
 const BLOOM_SCALE = 0.5;
@@ -106,11 +159,14 @@ type PixelRatioSetter = { setPixelRatio(pixelRatio: number | null): void };
  *   map's light/dark theme;
  * - **edge blur** — focus: the rim is blurred and keeps its colour, so it reads as a lens rather than
  *   as distance;
+ * - **depth of field** — depth on a tilted map: one band of *distance* stays sharp and the rest
+ *   defocuses, worked out from the camera's pitch and field of view, so a flat map ends it;
  * - **vignette** — focus too, by darkening or lightening the edges.
  *
- * Effects render live as layers over the map canvas (`backdrop-filter` overlays; bloom is a small
- * canvas blended in `screen` mode) and are composited the same way into {@link capture}, so what is
- * captured is what was on screen. Bloom and capture read the map canvas, which needs
+ * Effects render live as layers over the map canvas (a WebGL2 chain under `backdrop-filter`
+ * overlays; bloom is a small canvas blended in `screen` mode) and are composited the same way into
+ * {@link capture}, so what is captured is what was on screen. Bloom, the depth of field and capture
+ * read the map canvas, which needs
  * `mapLibre: { canvasContextAttributes: { preserveDrawingBuffer: true } }` when creating the map;
  * the plugin warns once when it is missing.
  *
@@ -137,9 +193,25 @@ export class MapEffects {
     private readonly container: HTMLDivElement;
     private readonly overlays: Record<OverlayName, HTMLElement>;
     private readonly bloomCanvas: HTMLCanvasElement;
-    private bloomFrame: number | undefined;
+    private readonly artworkCanvas: HTMLCanvasElement;
+    private readonly chain = new ScreenPassRenderer();
+    private readonly chainDraw = drawOncePerFrame(() => this.drawChain());
+    private readonly bloomDraw = drawOncePerFrame(() => this.drawBloom());
+    // What a scope's named entries resolve through, requested only once a scope names one. The SDK
+    // memoizes it per map, so it is the instance the app styles the map with.
+    private styling: StylingModule | undefined;
+    private stylingRequest: Promise<void> | undefined;
+    // Keyed on the scope's entries, since `set` replaces the array even when it is unchanged.
+    private scopeMask: { key: string; tolerance: number; mask: Uint8Array | undefined } | undefined;
+    private scopeCanvas: HTMLCanvasElement | undefined;
     private warnedBuffer = false;
-    private readonly onRender = () => this.scheduleBloom();
+    private warnedScope = false;
+    // A style switch or a `StylingModule` recolour moves the colours a scope resolves to.
+    private readonly onStyleData = () => this.dropScopeMask();
+    private readonly onRender = () => {
+        this.chainDraw.schedule();
+        this.scheduleBloom();
+    };
 
     /**
      * Attaches the effects to a map. Nothing is visible until {@link set} turns an effect on.
@@ -169,22 +241,29 @@ export class MapEffects {
             OVERLAYS.map((name) => {
                 const element = name === 'bloom' ? this.bloomCanvas : document.createElement('div');
                 element.dataset.effect = name;
-                Object.assign(element.style, {
-                    position: 'absolute',
-                    inset: '0',
-                    width: '100%',
-                    height: '100%',
-                    pointerEvents: 'none',
-                    display: 'none',
-                } satisfies Partial<CSSStyleDeclaration>);
+                Object.assign(element.style, LAYER_STYLE);
                 this.container.appendChild(element);
                 return [name, element];
             }),
         ) as unknown as Record<OverlayName, HTMLElement>;
         this.bloomCanvas.style.mixBlendMode = 'screen';
 
+        // The chain's own canvas goes under every overlay: it replaces the picture rather than
+        // filtering it, so the `backdrop-filter` layers above read its result and not the map's.
+        this.artworkCanvas = this.chain.canvas;
+        this.artworkCanvas.dataset.effect = 'artwork';
+        Object.assign(this.artworkCanvas.style, LAYER_STYLE);
+        this.container.insertAdjacentElement('afterbegin', this.artworkCanvas);
+
         this.map.mapLibreMap.on('render', this.onRender);
+        this.map.mapLibreMap.on('styledata', this.onStyleData);
         this.set(settings);
+    }
+
+    // The two angles a depth of field is a function of; nothing else about the camera changes it.
+    private cameraAngles(): CameraAngles {
+        const mapLibreMap = this.map.mapLibreMap;
+        return { pitch: mapLibreMap.getPitch(), verticalFieldOfView: mapLibreMap.getVerticalFieldOfView() };
     }
 
     /**
@@ -254,6 +333,7 @@ export class MapEffects {
                 const definition = effectKnobDefinitions[id];
                 return knob(id, definition.kind, definition.description, definition.default, this.settings[id], {
                     ...('range' in definition && { range: definition.range }),
+                    ...('options' in definition && { options: definition.options }),
                     available: true,
                     appliesTo: 'any-style',
                     useCase: definition.useCase,
@@ -292,11 +372,16 @@ export class MapEffects {
     }
 
     /**
-     * Detaches the effects from the map and removes their elements.
+     * Detaches the effects from the map, removes their elements and releases the WebGL context the
+     * chain holds — which a page with several maps on it needs, since a browser caps how many it
+     * may keep alive.
      */
     remove(): void {
         this.map.mapLibreMap.off('render', this.onRender);
-        if (this.bloomFrame !== undefined) cancelAnimationFrame(this.bloomFrame);
+        this.map.mapLibreMap.off('styledata', this.onStyleData);
+        this.bloomDraw.cancel();
+        this.chainDraw.cancel();
+        this.chain.remove();
         this.container.remove();
     }
 
@@ -321,9 +406,12 @@ export class MapEffects {
         });
 
         show('edgeBlur', values['edgeBlur.intensity'] > 0, {
-            ...backdropFilterStyle(edgeBlurFilter(values['edgeBlur.intensity'])),
+            ...backdropFilterStyle(defocusFilter(values['edgeBlur.intensity'])),
             ...maskStyle(rimMask(values['edgeBlur.reach'])),
         });
+
+        if (values['depthOfField.intensity'] > 0) this.warnIfBufferNotPreserved();
+        this.drawChain(values);
 
         show('tint', values['tint.opacity'] > 0, {
             backgroundColor: values['tint.color'],
@@ -342,31 +430,116 @@ export class MapEffects {
         }
     }
 
-    // Bloom follows the map frame by frame; `render` events are coalesced to one draw per animation
-    // frame so a pan does not draw the glow more often than the map itself.
-    private scheduleBloom(): void {
-        if (this.get('bloom.intensity') <= 0 || this.bloomFrame !== undefined) return;
+    /**
+     * The passes the chain runs over the map's pixels, in order. One so far — the defocus — but the
+     * substrate ping-pongs between render targets, so a second reads what the first left without
+     * the picture leaving the GPU.
+     */
+    private chainStages(values: EffectValues): PassStage[] {
+        const source = this.map.mapLibreMap.getCanvas();
+        const uniforms = defocusUniforms(
+            {
+                focus: values['depthOfField.focus'],
+                band: values['depthOfField.band'],
+                blurCssPx: values['depthOfField.intensity'],
+                bokeh: values['depthOfField.bokeh'],
+            },
+            this.cameraAngles(),
+            { width: source.width, height: source.height, scale: rasterScaleOf(source) },
+        );
+        return uniforms ? [{ fragment: DEFOCUS_SHADER, uniforms, mipmapped: true }] : [];
+    }
 
-        this.bloomFrame = requestAnimationFrame(() => {
-            this.bloomFrame = undefined;
-            this.drawBloom();
-        });
+    private drawChain(values: EffectValues = withDefaults(this.settings)): void {
+        const stages = this.chainStages(values);
+        const rendered = stages.length ? this.chain.render(this.map.mapLibreMap.getCanvas(), stages) : undefined;
+        this.artworkCanvas.style.display = rendered ? 'block' : 'none';
+    }
+
+    private scheduleBloom(): void {
+        if (this.get('bloom.intensity') > 0) this.bloomDraw.schedule();
     }
 
     private drawBloom(): void {
-        const source = this.map.mapLibreMap.getCanvas();
+        // The finished artwork when the chain drew one, so a defocused highlight glows as the wide
+        // soft disc a photograph gives it rather than as the pinpoint it was before the lens.
+        const source =
+            this.artworkCanvas.style.display === 'block' ? this.artworkCanvas : this.map.mapLibreMap.getCanvas();
         const width = Math.max(1, Math.round(source.width * BLOOM_SCALE));
         const height = Math.max(1, Math.round(source.height * BLOOM_SCALE));
-        if (this.bloomCanvas.width !== width || this.bloomCanvas.height !== height) {
-            this.bloomCanvas.width = width;
-            this.bloomCanvas.height = height;
-        }
+        resizeCanvas(this.bloomCanvas, width, height);
         const context = this.bloomCanvas.getContext('2d');
         if (!context) return;
 
+        // The scope drops its uncovered pixels before the threshold, so the blur spreads only its colours.
+        const glowSource = this.scopedSource(source, width, height) ?? source;
         context.filter = bloomFilter(this.get('bloom.radius'), this.get('bloom.threshold'), BLOOM_SCALE);
         context.clearRect(0, 0, width, height);
+        context.drawImage(glowSource, 0, 0, width, height);
+    }
+
+    // The map's pixels with everything outside the scope blacked out; undefined when bloom lights the whole frame.
+    private scopedSource(source: HTMLCanvasElement, width: number, height: number): HTMLCanvasElement | undefined {
+        const mask = this.currentScopeMask();
+        if (!mask) return undefined;
+
+        this.scopeCanvas ??= document.createElement('canvas');
+        const canvas = this.scopeCanvas;
+        resizeCanvas(canvas, width, height);
+        const context = canvas.getContext('2d', { willReadFrequently: true });
+        if (!context) return undefined;
+
+        context.clearRect(0, 0, width, height);
         context.drawImage(source, 0, 0, width, height);
+        applyScopeMask(context, mask);
+        return canvas;
+    }
+
+    // Cached: resolving the colours reads the styling catalogue and building the cube visits 32³ colours.
+    private currentScopeMask(): Uint8Array | undefined {
+        const scope = this.get('bloom.only');
+        if (scope.length === 0) return undefined;
+
+        const key = scope.join('\n');
+        const tolerance = this.get('bloom.onlyTolerance');
+        if (this.scopeMask?.key !== key || this.scopeMask.tolerance !== tolerance) {
+            this.scopeMask = { key, tolerance, mask: this.buildScopeMaskFor(scope, tolerance) };
+        }
+        return this.scopeMask.mask;
+    }
+
+    private buildScopeMaskFor(scope: BloomScope, tolerance: number): Uint8Array | undefined {
+        const readsStyling = scopeReadsStyling(scope);
+        if (readsStyling) this.requestStyling();
+
+        const colors = scopeColors(this.styling, scope);
+        if (colors.length === 0 && (!readsStyling || this.styling)) this.warnScopeEmpty(scope);
+        return buildScopeMask(colors, tolerance);
+    }
+
+    // An empty scope lights the whole frame, which passes for a working one. The caller skips the
+    // warning while the styling module is still on its way.
+    private warnScopeEmpty(scope: BloomScope): void {
+        if (this.warnedScope) return;
+
+        this.warnedScope = true;
+        console.warn(
+            `[MapEffects] 'bloom.only: ${scope.join(', ')}' found no colour to key on in the loaded style, so bloom is lighting the whole frame.`,
+        );
+    }
+
+    // Until the module arrives, named entries key on nothing and bloom lights the whole frame.
+    private requestStyling(): void {
+        this.stylingRequest ??= StylingModule.get(this.map).then((styling) => {
+            this.styling = styling;
+            this.dropScopeMask();
+        });
+    }
+
+    // The redraw is required: an idle map fires no `render`, so the stale glow would stay until the map moved.
+    private dropScopeMask(): void {
+        this.scopeMask = undefined;
+        this.scheduleBloom();
     }
 
     // ── Capture ───────────────────────────────────────────────────────────────────────────────
@@ -376,20 +549,24 @@ export class MapEffects {
         return new Promise((resolve) => {
             mapLibreMap.once('render', () => {
                 const source = mapLibreMap.getCanvas();
+                const values = withDefaults(this.settings);
                 const composite = document.createElement('canvas');
                 composite.width = source.width;
                 composite.height = source.height;
                 const context = composite.getContext('2d');
                 if (context) {
-                    context.drawImage(source, 0, 0);
-                    const scale = source.width / Math.max(1, source.clientWidth);
+                    // The same chain the screen is showing, re-run at the capture's own raster —
+                    // one implementation rather than a live half and an export half.
+                    const stages = this.chainStages(values);
+                    context.drawImage(this.chain.render(source, stages) ?? source, 0, 0);
                     compositeEffects(
                         context,
                         source.width,
                         source.height,
-                        scale,
-                        withDefaults(this.settings),
+                        rasterScaleOf(source),
+                        values,
                         this.map.styleLightDarkTheme,
+                        this.currentScopeMask(),
                     );
                 }
                 resolve(composite);
@@ -421,7 +598,7 @@ export class MapEffects {
         if (attributes && !attributes.preserveDrawingBuffer) {
             this.warnedBuffer = true;
             console.warn(
-                '[MapEffects] bloom and capture read the map canvas, which needs ' +
+                '[MapEffects] bloom, the depth of field and capture read the map canvas, which needs ' +
                     "`mapLibre: { canvasContextAttributes: { preserveDrawingBuffer: true } }` on the map's options.",
             );
         }
@@ -437,16 +614,25 @@ export class MapEffects {
 
     private validate(id: string, value: unknown): void {
         this.assertKnob(id);
-        const { kind, range }: EffectKnobDefinition = effectKnobDefinitions[id];
-        if (kind === 'color') {
+        const definition: EffectKnobDefinition = effectKnobDefinitions[id];
+        if (definition.kind === 'colors') {
+            if (!Array.isArray(value))
+                throw new RangeError(`Knob '${id}' expects a list of colours; got ${String(value)}.`);
+
+            const reason = value.map(invalidScopeEntry).find((invalid) => invalid !== undefined);
+            if (reason) throw new RangeError(`Knob '${id}': ${reason}. Call describe() for the names it accepts.`);
+            return;
+        }
+        if (definition.kind === 'color') {
             if (typeof value !== 'string' || !value)
                 throw new RangeError(`Knob '${id}' expects a CSS colour; got ${String(value)}.`);
             return;
         }
+        const { range } = definition;
         if (typeof value !== 'number' || !Number.isFinite(value)) {
             throw new RangeError(`Knob '${id}' expects a number; got ${String(value)}.`);
         }
-        if (range && (value < range.min || value > range.max)) {
+        if (value < range.min || value > range.max) {
             throw new RangeError(`Knob '${id}' expects a number between ${range.min} and ${range.max}; got ${value}.`);
         }
     }

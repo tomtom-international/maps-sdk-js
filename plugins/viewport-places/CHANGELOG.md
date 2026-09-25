@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.3.0
+
+### Minor Changes
+
+- 9e1d080: Breaking changes:
+  - `searchOptions` no longer accepts `geoBias`; each module always searches the current viewport (#2158)
+  
+  Features:
+  - A new viewport cancels the search a module still has in flight (#2136)
+  
+  Peer dependency:
+  - Accept every SDK release below 1.0: the peer dependency on `@tomtom-org/maps-sdk` is the range `>=0.55.1 <1.0.0` instead of an exact version
+
+### Patch Changes
+
+- Updated dependencies [9e1d080]
+- Updated dependencies [1bea71f]
+  - @tomtom-org/maps-sdk@0.56.0
+
 ## [0.2.1](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-viewport-places-v0.2.0...maps-sdk-plugin-viewport-places-v0.2.1) (2026-04-30)
 
 

@@ -7,6 +7,8 @@ import type {
     SectionDisplayConfig,
     SectionLineLayerName,
     SectionSignLayerName,
+    SectionSignPlacement,
+    SectionSignPriority,
     SectionSymbolLayerName,
 } from '../types/routeModuleConfig';
 import type {
@@ -243,18 +245,14 @@ export const sectionSymbol = (
 };
 
 /**
- * The zoom a speed limit sign starts drawing at.
- *
- * Chosen for where a sign starts meaning something: a limit is about one stretch of road, and a
- * route splits into a section at nearly every junction. Further out than this, neighbouring
- * stretches fall in the same few pixels, so the handful that survive the collision are an arbitrary
- * sample of the drive rather than its limits — and they survive by pushing against the stops and
- * incidents, which say things the road cannot.
+ * The zoom a speed limit sign starts drawing at, which is the bottom of {@link SIGN_ICON_SIZE}'s
+ * ramp. Further out, neighbouring stretches fall in the same few pixels, so the handful that
+ * survive the collision are an arbitrary sample of the drive.
  */
-const SIGN_DEFAULT_MINZOOM = 9;
+const SIGN_DEFAULT_MINZOOM = 10;
 
 /**
- * Screen pixels between one sign and the next along a stretch.
+ * Screen pixels between one sign and the next along a stretch, under `along` placement.
  *
  * Wide enough that a run of them reads as the same limit repeated rather than as a row of separate
  * facts, and close enough that a reader zoomed into a long stretch still has one in view.
@@ -289,12 +287,37 @@ const SIGN_TEXT_OFFSET: ExpressionSpecification = [
     ['literal', [0, 0]],
 ];
 
+const signPlacement = (config?: SectionDisplayConfig): SectionSignPlacement => config?.sign?.placement ?? 'atChange';
+
+/**
+ * What a section type's signs give way to: the configured `sign.priority`, or the default of the
+ * placement in force.
+ *
+ * @ignore
+ */
+export const signPriority = (config?: SectionDisplayConfig): SectionSignPriority =>
+    config?.sign?.priority ?? (signPlacement(config) === 'atChange' ? 'belowRouteIcons' : 'belowMapLabels');
+
+/**
+ * How the sign layer is anchored, per the placement it is drawn for.
+ *
+ * @remarks
+ * Both read the section's own line, so this is the whole of the difference. MapLibre anchors a
+ * symbol on a line at its **first vertex** under `point` placement, which is where the section
+ * starts and so where its value begins to apply.
+ */
+const signAnchorLayout = (
+    placement: SectionSignPlacement,
+): Pick<NonNullable<SymbolLayerSpecification['layout']>, 'symbol-placement' | 'symbol-spacing'> =>
+    placement === 'atChange'
+        ? { 'symbol-placement': 'point' }
+        : { 'symbol-placement': 'line', 'symbol-spacing': SIGN_SPACING };
+
 /**
  * Builds the sign layer of a section type whose information is its own number rather than the
  * stretch it covers, which is the whole of what that type draws.
  *
  * @remarks
- * Repeated along the stretch, so a reader zoomed into the middle of a long limit still sees it.
  * The face and the number both come from the feature, so one layer draws every country's sign.
  *
  * Overlap stays disallowed. A route splits into a section wherever its geometry does, so a route
@@ -310,13 +333,7 @@ export const sectionSign = (
         type: 'symbol',
         minzoom: config?.sign?.minzoom ?? SIGN_DEFAULT_MINZOOM,
         layout: {
-            // Repeated along the stretch rather than once at its anchor. A limit applies to a
-            // length of road, so a reader who has zoomed into the middle of one has to see it —
-            // with a single symbol per section, every anchor is off screen the moment the reader
-            // is close enough to care. It also thins itself: a section too short on screen to fit
-            // a sign draws none, so what shows is the stretches long enough to be worth reading.
-            'symbol-placement': 'line',
-            'symbol-spacing': SIGN_SPACING,
+            ...signAnchorLayout(signPlacement(config)),
             'icon-image': ['get', 'signImageID'],
             'icon-size': SIGN_ICON_SIZE,
             'icon-rotation-alignment': 'viewport',

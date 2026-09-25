@@ -1,6 +1,12 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "parallel": 10,
+  "azure": {
+    "accountName": "jssdkmapagent",
+    "container": "nx-cache",
+    "localMode": "no-cache",
+    "ciMode": "read-write"
+  },
   "namedInputs": {
     "sharedGlobals": [
       "{workspaceRoot}/package.json",

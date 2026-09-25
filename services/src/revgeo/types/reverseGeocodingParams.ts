@@ -94,6 +94,8 @@ export type ReverseGeocodingOptionalParams = {
      * - `TR` - Turkey
      * - `TW` - Taiwan
      *
+     * `MA` is accepted by this type but is not supported by the current backend.
+     *
      * @defaultValue `"Unified"`
      */
     view?: View;

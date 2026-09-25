@@ -13,7 +13,8 @@ import { AbstractStyleOwnedMapModule, type CombinedEvents, knob, type LightDark,
 import { matchesAnyLayerSelector } from '../shared/layers/layerSelector';
 import { waitUntilMapIsReady } from '../shared/mapUtils';
 import type { TomTomMap } from '../TomTomMap';
-import { hslShiftBetween, shiftHsl, toHsl } from '../utils/colorUtils';
+import { hslShiftBetween, isColorLiteral, shiftHsl } from '../utils/colorUtils';
+import { type LiteralOwnership, type MapColorBid, pickAnchorLiteral, recolorValue } from './colorRewrite';
 import { scaleNumericValue, shiftZoomOffset } from './expressionTransforms';
 import {
     type ColorProperty,
@@ -25,6 +26,16 @@ import {
     type StylingKnobValueOf,
     stylingKnobIds,
 } from './knobCatalogue';
+import {
+    isMapColorName,
+    type MapColorName,
+    type MapColors,
+    type MapColorTarget,
+    mapColorDefinitions,
+    mapColorNames,
+    type PaintColorProperty,
+    paintColorProperties,
+} from './mapColorCatalogue';
 import { type StylingPresetId, stylingPresetIds, stylingPresets } from './presets';
 import type {
     StylingCatalogue,
@@ -45,7 +56,7 @@ export type StylingEvents = CombinedEvents<MapGeoJSONFeature, StylingSettings, n
 // Layer properties the knobs read at style load and rewrite afterwards. A layer's filter is not
 // among them: the knob that rewrites it goes through the shared `LayerFilterComposer`, which holds
 // the style's own filter for every contributor that narrows the same layer.
-type LayerProperty = ScalableProperty | ColorProperty | 'visibility' | 'minzoom' | 'maxzoom';
+type LayerProperty = ScalableProperty | PaintColorProperty | 'visibility' | 'minzoom' | 'maxzoom';
 
 // MapLibre types each setter's value against the literal property name it is given, and neither
 // setter's name parameter accepts `LayerProperty`'s zoom keys at all — a pairing a name picked at
@@ -65,13 +76,21 @@ type LayerPropertyValue<PROPERTY extends LayerProperty> = PROPERTY extends ZoomP
 // This module's key with the filter composer — one per mechanism that writes a filter.
 const ZOOM_SHIFT_CONTRIBUTOR = 'styling.zoomShift';
 
+// Which of MapLibre's two setters a property goes through. A property in neither set is written
+// nowhere, so the colour half comes off `paintColorProperties` rather than being listed again.
 const LAYOUT_PROPERTIES: ReadonlySet<LayerProperty> = new Set(['text-size', 'icon-size', 'visibility']);
-const PAINT_PROPERTIES: ReadonlySet<LayerProperty> = new Set([
-    'line-width',
-    'line-color',
-    'text-color',
-    'text-halo-color',
-]);
+const PAINT_PROPERTIES: ReadonlySet<LayerProperty> = new Set<LayerProperty>(['line-width', ...paintColorProperties]);
+
+// The ten knob ids the map colours own, one per semantic colour. Taken out of the knob ids rather
+// than spelled again, so a colour the catalogue never gave a knob stops compiling here.
+type MapColorKnobId = Extract<StylingKnobId, `colors.${MapColorName}`>;
+// One (layer, property) a map-colour knob rewrites, with the ownership rule for literals inside it.
+type MapColorTargetInstance = {
+    knobId: MapColorKnobId;
+    layerId: string;
+    property: PaintColorProperty;
+    owns: LiteralOwnership;
+};
 
 // The style spec's own defaults, used when a layer relies on them instead of spelling the value out.
 // `satisfies` rather than an annotation, so the zoom defaults read back as numbers and the callers
@@ -207,7 +226,15 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
     private resolved!: Map<StylingKnobId, ResolvedKnob>;
     // Scale knobs compose: a (layer, property) reached by several of them gets their product.
     private scaleKnobsByTarget!: Map<string, StylingKnobId[]>;
+    // Map-colour knobs compose too: tunnels draw major and minor roads in one expression.
+    private mapColorTargetsByKey!: Map<string, MapColorTargetInstance[]>;
+    private mapColorTargetsByKnob!: Map<StylingKnobId, MapColorTargetInstance[]>;
+    // Per colour, the style's own literal its shades are measured from.
+    private mapColorAnchors!: Map<StylingKnobId, string>;
     private warned!: Set<string>;
+    // Set while the style has just been indexed, so the next `_applyConfig` re-applies every knob
+    // rather than only the ones whose value moved.
+    private reindexed!: boolean;
     // What the page painted behind the map before this module first painted over it: the value
     // `view.spaceColor` reports as its default and resets to, empty when the page painted nothing.
     // Captured once — by the second style load the container already carries this module's colour.
@@ -269,7 +296,11 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
      */
     protected _applyConfig(settings: StylingSettings | undefined) {
         const next = withoutUndefined(settings);
-        const touched = new Set<StylingKnobId>([...knobIdsIn(this.config), ...knobIdsIn(next)]);
+        const ids = new Set<StylingKnobId>([...knobIdsIn(this.config), ...knobIdsIn(next)]);
+        // Only the knobs whose value moved, or dragging one picker with a palette set re-derives all
+        // ten per frame. A freshly indexed style is the exception: every knob has to land again.
+        const touched = this.reindexed ? ids : [...ids].filter((id) => this.config?.[id] !== next[id]);
+        this.reindexed = false;
         for (const id of touched) {
             this.refreshKnob(id, next);
         }
@@ -395,6 +426,56 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
     }
 
     /**
+     * Recolours the whole base map with up to ten semantic colours in one call — Map Maker's
+     * Foundations palette, each listed with what it reaches under {@link MapColorName}. Partial
+     * objects are fine; colours not given stay as they are.
+     *
+     * @remarks
+     * Each colour re-derives every shade the style built from it — a trunk variant, an outline, a
+     * tunnel — at the style's own HSL offset, so those relationships survive the recolour. The ten
+     * are also the `colors.*` knobs, so `describe()`, `reset` and settings persistence apply.
+     *
+     * Those offsets come off the loaded style, which makes a palette a recolour and not an
+     * inversion: dark land over `standardLight` pushes the derived shades to the ends of their
+     * range, so switch to `standardDark` first.
+     *
+     * @param colors - The colours to set, as CSS colour strings.
+     * @throws `RangeError` for a value that is not a colour; `Error` for an unknown colour name.
+     *
+     * @example
+     * ```typescript
+     * styling.setMapColors({ land: '#f3f5f7', water: '#accbe2', roadMajor: '#a1b8ce', label: '#364659' });
+     * styling.reset('colors.roadMajor'); // one colour back to the style
+     * ```
+     */
+    setMapColors(colors: MapColors): void {
+        const settings: Partial<Record<MapColorKnobId, string>> = {};
+        for (const [name, value] of Object.entries(colors)) {
+            if (!isMapColorName(name)) {
+                throw new Error(`Unknown map colour '${name}'. Known colours: ${mapColorNames.join(', ')}.`);
+            }
+            if (value === undefined) continue;
+
+            const id = mapColorKnobId(name);
+            this.validate(id, value);
+            settings[id] = value;
+        }
+        this.applyConfig({ ...this.config, ...settings });
+    }
+
+    /**
+     * The style as currently rendered — the loaded style with every knob applied — as a MapLibre
+     * style specification, to save, diff, serve yourself, or load back as a custom style.
+     *
+     * @remarks
+     * It includes whatever the SDK's data modules (places, routes) have on the map, and its tile
+     * URLs carry the API key the map was created with: strip or rotate it before publishing.
+     */
+    exportStyle(): StyleSpecification {
+        return structuredClone(this.mapLibreMap.getStyle());
+    }
+
+    /**
      * Lifecycle events of this module. The module owns no map features, so there are no user
      * interaction events; `config-change` fires with the full settings after every knob change.
      *
@@ -415,7 +496,11 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
         this.styleSources = style?.sources ?? {};
         this.resolved = new Map();
         this.scaleKnobsByTarget = new Map();
+        this.mapColorTargetsByKey = new Map();
+        this.mapColorTargetsByKnob = new Map();
+        this.mapColorAnchors = new Map();
         this.warned = new Set();
+        this.reindexed = true;
         this.mapLevelState = {
             projection: style?.projection?.type ?? 'mercator',
             sky: style?.sky,
@@ -441,6 +526,9 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
         mechanism: KnobMechanism,
         layers: LayerSpecification[],
     ): ResolvedMechanism {
+        if (mechanism.type === 'mapColor') {
+            return { mechanism, layerIds: this.resolveMapColor(mechanism.color, layers), shadeLayerIds: [] };
+        }
         if (!('layers' in mechanism)) {
             // Map-level: one target when the map can honour it — terrain needs an elevation source.
             const reachable = mechanism.type !== 'terrain' || this.demSourceId() !== undefined;
@@ -507,6 +595,44 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
         return this.originalValues.get(targetKey(layerId, property)) as LayerPropertyValue<PROPERTY> | undefined;
     }
 
+    // Indexes one semantic colour: the (layer, property) pairs it rewrites with the ownership rule
+    // for each, and the anchor its shades are measured from. A layer reached by several targets — a
+    // tunnel drawing every road class — is registered once per rule.
+    private resolveMapColor(color: MapColorName, layers: LayerSpecification[]): string[] {
+        const knobId = mapColorKnobId(color);
+        const definition = mapColorDefinitions[color];
+        const instances: MapColorTargetInstance[] = [];
+        for (const target of definition.targets) {
+            for (const layer of layers.filter((candidate) =>
+                matchesAnyLayerSelector(target.layers, candidate, this.styleSources),
+            )) {
+                for (const property of target.properties) {
+                    if (!this.capture(layer, property)) continue;
+
+                    const instance = { knobId, layerId: layer.id, property, owns: ownershipOf(target) };
+                    instances.push(instance);
+                    const key = targetKey(layer.id, property);
+                    this.mapColorTargetsByKey.set(key, [...(this.mapColorTargetsByKey.get(key) ?? []), instance]);
+                }
+            }
+        }
+        this.mapColorTargetsByKnob.set(knobId, instances);
+
+        const { anchor } = definition;
+        const anchorLayer = layers.find(
+            (candidate) =>
+                matchesAnyLayerSelector(anchor.layers, candidate, this.styleSources) &&
+                styleValueOf(candidate, anchor.property) !== undefined,
+        );
+        const literal =
+            anchorLayer &&
+            pickAnchorLiteral(styleValueOf(anchorLayer, anchor.property), ownershipOf({ roadClass: anchor.roadClass }));
+        if (literal) this.mapColorAnchors.set(knobId, literal);
+
+        // Without an anchor there is nothing to measure shades from: the colour is unreachable.
+        return literal ? [...new Set(instances.map((instance) => instance.layerId))] : [];
+    }
+
     // The style's elevation source, if it has one (the hillshade style part ships a raster-dem).
     private demSourceId(): string | undefined {
         return Object.entries(this.styleSources).find(([, source]) => source.type === 'raster-dem')?.[0];
@@ -521,16 +647,17 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
         if (!resolvedKnob || !this.tomtomMap.mapReady) return;
 
         for (const resolvedMechanism of resolvedKnob.mechanisms) {
-            this.refreshMechanism(resolvedMechanism, settings[id], settings);
+            this.refreshMechanism(id, resolvedMechanism, settings);
         }
     }
 
     // One mechanism of one knob: every mechanism type reaches its layers its own way.
     private refreshMechanism(
+        id: StylingKnobId,
         { mechanism, layerIds, shadeLayerIds }: ResolvedMechanism,
-        value: StylingKnobValue | undefined,
         settings: StylingSettings,
     ): void {
+        const value = settings[id];
         switch (mechanism.type) {
             case 'scale':
                 for (const layerId of layerIds) this.refreshScaledProperty(layerId, mechanism.property, settings);
@@ -559,6 +686,11 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
             case 'space':
                 this.refreshSpace(settings);
                 break;
+            case 'mapColor':
+                for (const { layerId, property } of this.mapColorTargetsByKnob.get(id) ?? []) {
+                    this.refreshMapColorProperty(layerId, property, settings);
+                }
+                break;
         }
     }
 
@@ -576,6 +708,22 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
     // nothing at all paints behind the canvas.
     private defaultSpaceColor(): string {
         return this.originalSpaceColor || SPACE_COLOR_DEFAULTS[this.tomtomMap.styleLightDarkTheme];
+    }
+
+    // Re-derives one (layer, property) from the style's own value through every map-colour knob that
+    // reaches it. The knobs bid together rather than in turn, so each judges the literals the style
+    // shipped instead of what the previous knob left behind.
+    private refreshMapColorProperty(layerId: string, property: PaintColorProperty, settings: StylingSettings): void {
+        const originalValue = this.originalValueOf(layerId, property);
+        const bids: MapColorBid[] = [];
+        for (const { knobId, owns } of this.mapColorTargetsByKey.get(targetKey(layerId, property)) ?? []) {
+            const newColor = settings[knobId];
+            const anchorColor = this.mapColorAnchors.get(knobId);
+            if (typeof newColor !== 'string' || !anchorColor) continue;
+
+            bids.push({ anchorColor, newColor, owns });
+        }
+        this.setProperty(layerId, property, bids.length ? recolorValue(originalValue, bids) : originalValue);
     }
 
     private refreshProjection(settings: StylingSettings): void {
@@ -728,6 +876,7 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
         const [layerId] = first?.layerIds ?? [];
         if (layerId === undefined) return undefined;
 
+        if (first.mechanism.type === 'mapColor') return this.mapColorAnchors.get(id);
         if (!('layers' in first.mechanism)) return this.mapLevelDefaultOf(id);
 
         switch (first.mechanism.type) {
@@ -796,7 +945,7 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
                 }
                 break;
             case 'color':
-                if (typeof value !== 'string' || !toHsl(value)) {
+                if (!isColorLiteral(value)) {
                     throw new RangeError(
                         `Knob '${id}' expects a CSS colour (#rrggbb, hsl(), rgb() or a named colour); got ${describe(value)}.`,
                     );
@@ -822,7 +971,15 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
     }
 }
 
-const isColorLiteral = (value: unknown): value is string => typeof value === 'string' && toHsl(value) !== undefined;
+const mapColorKnobId = (name: MapColorName): MapColorKnobId => `colors.${name}`;
+
+// Which literals a map-colour target owns: all of them, or only those on one side of the major/minor
+// road split — where "minor" also takes the literals outside any road-class match.
+const ownershipOf = (target: Pick<MapColorTarget, 'roadClass'>): LiteralOwnership => {
+    if (target.roadClass === 'major') return (roadClass) => roadClass === 'major';
+    if (target.roadClass === 'minor') return (roadClass) => roadClass !== 'major';
+    return () => true;
+};
 
 const describe = (value: unknown): string => (typeof value === 'string' ? `'${value}'` : String(value));
 

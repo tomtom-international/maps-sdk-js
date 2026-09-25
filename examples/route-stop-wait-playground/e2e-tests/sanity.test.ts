@@ -26,6 +26,9 @@ test.describe('the wait reaches the request', () => {
             waits.push(body.legs?.[0]?.routeStop?.pauseDurationInSeconds);
         });
 
+        // Scoped to its row: driving this route takes about as long as the waits the test sets.
+        const waiting = page.locator('#ui-summary dt:text-is("Waiting") + dd');
+
         await page.goto(`http://localhost:${PROD_TEST_SERVER_PORT}/route-stop-wait-playground/dist/prod`);
         await expect(page.locator('#ui-summary .ui-summary-value').first()).toBeVisible({
             timeout: DEFAULT_MAP_LOAD_TIMEOUT,
@@ -37,12 +40,12 @@ test.describe('the wait reaches the request', () => {
         const slider = page.locator('#ui-waitSlider');
         await slider.fill('90');
         await slider.dispatchEvent('change');
-        await expect(page.getByText('1 hr 30 min')).toBeVisible({ timeout: DEFAULT_MAP_LOAD_TIMEOUT });
+        await expect(waiting).toHaveText('1 hr 30 min', { timeout: DEFAULT_MAP_LOAD_TIMEOUT });
         expect(waits.at(-1)).toBe(90 * 60);
 
         await slider.fill('0');
         await slider.dispatchEvent('change');
-        await expect(page.getByText('none')).toBeVisible({ timeout: DEFAULT_MAP_LOAD_TIMEOUT });
+        await expect(waiting).toHaveText('none', { timeout: DEFAULT_MAP_LOAD_TIMEOUT });
         // A wait of zero is left out of the request entirely rather than sent as 0.
         expect(waits.at(-1)).toBeUndefined();
     });

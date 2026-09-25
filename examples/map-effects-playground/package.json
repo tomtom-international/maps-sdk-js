@@ -1,6 +1,6 @@
 {
   "name": "@examples/map-effects-playground",
-  "description": "Example showing the map effects plugin: bloom, grade, tint, fog, edge blur and vignette over a TomTomMap, with capture.",
+  "description": "Example showing the map effects plugin: bloom, grade, tint, fog, edge blur, depth of field and vignette over a TomTomMap, with capture.",
   "type": "module",
   "scripts": {
     "build": "vite build --config ../example-vite.config.ts",

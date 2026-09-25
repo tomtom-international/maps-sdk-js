@@ -33,7 +33,7 @@ const BASE_PARAMS: CalculateRouteParams = {
 const INSTRUCTION: InstructionAPI = {
     routeOffsetInMeters: 0,
     maneuver: 'turnRight',
-    maneuverPoint: { latitude: 0, longitude: 0 },
+    maneuverPoint: { type: 'Point', coordinates: [0, 0] },
 };
 
 const responseWith = (instructions: InstructionAPI[]): CalculateRouteResponseAPI => ({
@@ -47,6 +47,52 @@ const parseFirstInstruction = (instruction: InstructionAPI, params: CalculateRou
 
     return guidance.instructions[0];
 };
+
+describe('instruction geometry', () => {
+    // Every point in this response is a GeoJSON `Point`, instructions included. Reading it as a
+    // `{latitude, longitude}` pair costs no type error and no failing unit test — it simply lands
+    // `[undefined, undefined]` on every instruction of every live route.
+    test('takes the maneuver point from the GeoJSON point the API sends', () => {
+        const instruction = parseFirstInstruction({
+            ...INSTRUCTION,
+            maneuverPoint: { type: 'Point', coordinates: [4.87489, 52.38686] },
+        });
+        expect(instruction.maneuverPoint).toEqual([4.87489, 52.38686]);
+        expect(instruction.maneuverPoint.every(Number.isFinite)).toBe(true);
+    });
+
+    test('carries the route path points through in the same order and shape', () => {
+        const instruction = parseFirstInstruction({
+            ...INSTRUCTION,
+            routePath: [
+                {
+                    point: { type: 'Point', coordinates: [4.87489, 52.38686] },
+                    distanceFromRouteStartInMeters: 0,
+                    travelTimeFromRouteStartInSeconds: 0,
+                },
+                {
+                    point: { type: 'Point', coordinates: [4.8749, 52.38654] },
+                    distanceFromRouteStartInMeters: 36,
+                    travelTimeFromRouteStartInSeconds: 4,
+                },
+            ],
+        });
+        expect(instruction.routePath.map(({ point }) => point)).toEqual([
+            [4.87489, 52.38686],
+            [4.8749, 52.38654],
+        ]);
+    });
+
+    test('locates the maneuver on the route path, which a mis-read point silently cannot', () => {
+        // `pathPointIndex` is found by walking the path for the maneuver point, so a point the
+        // parser failed to read leaves every instruction pinned to index 0.
+        const instruction = parseFirstInstruction({
+            ...INSTRUCTION,
+            maneuverPoint: { type: 'Point', coordinates: [1, 1] },
+        });
+        expect(instruction.pathPointIndex).toBe(1);
+    });
+});
 
 describe('instruction message', () => {
     test('carries the generated, localised instruction text through unchanged', () => {

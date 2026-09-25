@@ -2,21 +2,13 @@
  * @module agent-toolkit-tools
  */
 
-import { type HasBBox, type POICategory } from '@tomtom-org/maps-sdk/core';
-import {
-    alongRouteSearch,
-    explorationSearch,
-    type GeoBias,
-    POPULATED_AREA_TAGS,
-    type PopulatedAreaTag,
-    search,
-} from '@tomtom-org/maps-sdk/services';
+import { bboxFromBBoxes, type HasBBox, type POICategory } from '@tomtom-org/maps-sdk/core';
+import { alongRouteSearch, type GeoBias, search } from '@tomtom-org/maps-sdk/services';
 import type { MultiPolygon, Polygon, Position } from 'geojson';
 import { z } from 'zod';
 import type { FeatureFlags, ToolEntry, ToolEntryBuilder, ToolExecuteOptions, ToolState } from '../../types';
 import { makePlacesLabel, summarizePlaces } from '../../utils';
 import {
-    geoJsonBBoxSchema,
     getRangePolygons,
     getViewportBoundingBox,
     globalWhereSchema,
@@ -58,79 +50,35 @@ export const buildDiscoverPlacesOutputSchema = (flags: FeatureFlags) =>
         toolErrorSchema,
     ]);
 
-/** Default-flag (`experimentalSearch: false`) output schema. */
+/** Output schema built with no feature flags set. */
 export const discoverPlacesOutputSchema = buildDiscoverPlacesOutputSchema({});
 
 // --- schema builders ---
 //
-// The `discoverPlaces` schema differs slightly between the stable default search backend and the
-// experimental exploration-search backend. To keep the two variants in lockstep, every shared
-// piece is defined ONCE below and composed into either variant via the `experimentalSearch` flag.
-// Only the explorationSearch-only fields (`municipalities`, `boundingBoxes`, top-level
-// `placeTypes`) live behind the flag.
-
-// `within` fields shared between both variants — imported from schema.ts. `experimentalWithinFields`
-// (explorationSearch-only) stays local to discover-places.
-
-// explorationSearch-only `within` fields. The default search backend has no equivalent for these.
-const experimentalWithinFields = {
-    boundingBoxes: z
-        .array(geoJsonBBoxSchema)
-        .min(1)
-        .optional()
-        .describe(
-            'Bboxes [W,S,E,N] — results in the union. ' +
-                'Last-resort: prefer `municipalities` / `queries` / `placeIds` / `geometries` when polygons are resolvable. ' +
-                'EXCLUSIVE with viewport; composes with other multi-region fields.',
-        ),
-    municipalities: z
-        .array(z.string())
-        .min(1)
-        .optional()
-        .describe(
-            'Exact, case-sensitive municipality names (e.g. ["Amsterdam", "Utrecht"]). ' +
-                'EXCLUSIVE with viewport; composes with other multi-region fields.',
-        ),
-    areaId: z
-        .string()
-        .min(1)
-        .optional()
-        .describe(
-            'Id of a small area polygon (few km², not a whole municipality) — restricts results to that single area. ' +
-                'Typically chained from a previous hit\'s `areaId` ("what else is in this same area?"). ' +
-                'EXCLUSIVE with viewport; composes with other multi-region fields.',
-        ),
-};
+// `within` fields are shared with getTrafficIncidents and are imported from schema.ts, so both
+// tools build their `within` schemas from the same field definitions.
 
 // `within` mode for discoverPlaces — plural-form fields. Either `viewport` alone, or any
 // combination of the multi-region fields. `viewport` is mutually exclusive with everything else.
-const buildDiscoverWithinWhereSchema = (flags: FeatureFlags) =>
-    z
-        .object(flags.experimentalSearch ? { ...sharedWithinFields, ...experimentalWithinFields } : sharedWithinFields)
-        .refine(
-            (data) => {
-                const hasViewport = data.viewport === true;
-                const exp = data as { municipalities?: string[]; boundingBoxes?: number[][]; areaId?: string };
-                const hasMulti =
-                    data.queries !== undefined ||
-                    data.placeIds !== undefined ||
-                    data.geometries !== undefined ||
-                    data.range !== undefined ||
-                    data.route !== undefined ||
-                    exp.boundingBoxes !== undefined ||
-                    exp.municipalities !== undefined ||
-                    exp.areaId !== undefined;
-                if (hasViewport && hasMulti) return false;
-                return hasViewport || hasMulti;
-            },
-            {
-                message:
-                    '`within` requires EITHER `viewport: true` OR one or more multi-region fields ' +
-                    '(queries / placeIds / geometries / range / route' +
-                    (flags.experimentalSearch ? ' / boundingBoxes / municipalities / areaId' : '') +
-                    '), not both.',
-            },
-        );
+const buildDiscoverWithinWhereSchema = (_flags: FeatureFlags) =>
+    z.object(sharedWithinFields).refine(
+        (data) => {
+            const hasViewport = data.viewport === true;
+            const hasMulti =
+                data.queries !== undefined ||
+                data.placeIds !== undefined ||
+                data.geometries !== undefined ||
+                data.range !== undefined ||
+                data.route !== undefined;
+            if (hasViewport && hasMulti) return false;
+            return hasViewport || hasMulti;
+        },
+        {
+            message:
+                '`within` requires EITHER `viewport: true` OR one or more multi-region fields ' +
+                '(queries / placeIds / geometries / range / route), not both.',
+        },
+    );
 
 // Route-relative ranked-detour scope. Dispatches to a different SDK endpoint (alongRouteSearch).
 const maxDetourWhereSchema = z.object({
@@ -155,9 +103,7 @@ const maxDetourWhereSchema = z.object({
 });
 
 export const buildDiscoverPlacesWhereSchema = (flags: FeatureFlags) => {
-    const withinFieldList = flags.experimentalSearch
-        ? 'boundingBoxes/queries/placeIds/municipalities/areaId/geometries/range/route'
-        : 'queries/placeIds/geometries/range/route';
+    const withinFieldList = 'queries/placeIds/geometries/range/route';
     return z
         .union([buildDiscoverWithinWhereSchema(flags), nearbyWhereSchema, maxDetourWhereSchema, globalWhereSchema])
         .describe(
@@ -205,48 +151,16 @@ export const buildDiscoverPlacesSchema = (flags: FeatureFlags) => {
         geometries: showPlaceGeometriesSchema,
     };
 
-    const shape = flags.experimentalSearch
-        ? {
-              ...baseShape,
-              placeTypes: z
-                  .array(z.enum(['POI', 'PointAddress', 'Street']))
-                  .optional()
-                  .describe(
-                      'Restrict to record types (default: all). ' +
-                          'POI = businesses/landmarks/amenities; PointAddress = numbered addresses; Street = unnumbered streets.',
-                  ),
-              areaTags: z
-                  .array(z.enum(POPULATED_AREA_TAGS))
-                  .optional()
-                  .describe(
-                      'Tokens describing a small surrounding area (few km², not a whole municipality). ' +
-                          'Enum drawn from the SDK canonical vocabulary — e.g. "coastal", "walkable", "alpine", ' +
-                          '"transit_connected", "village", "tourism_economy". ' +
-                          'OR semantics — matches places in areas tagged with ANY token. ' +
-                          'Filter works on any `where` scope (including global), but area data is currently ' +
-                          'populated only for DE / NL / FR — zero hits where data is absent. ' +
-                          'Filter, not a geo-bias — pair with a `where` mode that supplies one.',
-                  ),
-          }
-        : baseShape;
-
-    return z.object(shape).refine((data) => !!data.query || !!data.poiCategories?.length, {
+    return z.object(baseShape).refine((data) => !!data.query || !!data.poiCategories?.length, {
         message:
             'discoverPlaces needs a search subject: set `query` (free-text) or `poiCategories`. ' +
             'For a single named place (no filter), use locatePlace — including for its boundary polygon (`geometry`).',
     });
 };
 
-export const buildDiscoverPlacesDescription = (flags: FeatureFlags): string => {
-    const withinFieldList = flags.experimentalSearch
-        ? 'boundingBoxes/queries/placeIds/municipalities/areaId/geometries/range/route'
-        : 'queries/placeIds/geometries/range/route';
-    const preferLine = flags.experimentalSearch
-        ? 'Prefer `municipalities` / `areaId` / `queries` / `placeIds` (precise) over `boundingBoxes` (coarse). '
-        : 'Prefer `queries` / `placeIds` (resolve to precise polygons) over raw `geometries`. ';
-    const areaTagsLine = flags.experimentalSearch
-        ? 'Top-level `areaTags` narrows hits by small-area character ("coastal", "walkable", …) — area data currently populated only in DE/NL/FR. '
-        : '';
+export const buildDiscoverPlacesDescription = (_flags: FeatureFlags): string => {
+    const withinFieldList = 'queries/placeIds/geometries/range/route';
+    const preferLine = 'Prefer `queries` / `placeIds` (resolve to precise polygons) over raw `geometries`. ';
     return (
         'Search for MULTIPLE places in a region — REQUIRES a search subject (`query` and/or `poiCategories`). ' +
         'NOT for a single named place — use locatePlace for that (including its polygon/boundary via `geometry`). ' +
@@ -255,24 +169,23 @@ export const buildDiscoverPlacesDescription = (flags: FeatureFlags): string => {
         `\`where.mode\`: \`within\` (\`viewport\` OR any combo of ${withinFieldList}), ` +
         '`nearby` (position/viewport/query + optional radiusMeters), `maxDetour` (≤100 ranked detours off a route), `global`. ' +
         preferLine +
-        areaTagsLine +
-        'Route: `within.route` = bulk corridor (≤10000); `maxDetour` = short ranked list (≤100). ' +
+        'Route: `within.route` = corridor scan; `maxDetour` = ranked detour list. Both cap at 100 results. ' +
         'Default: `{ mode: "within", viewport: true }`. ' +
         'Never call this with empty `query` AND empty `poiCategories` — that is locatePlace territory.'
     );
 };
 
-// Default-flag (stable, non-experimental) instances — used by the registry's static
-// {@link DEFAULT_TOOLS} and re-exported for any direct consumers.
+// Instances used by the registry's static {@link DEFAULT_TOOLS} and re-exported for any direct
+// consumers.
 const DEFAULT_FLAGS: FeatureFlags = {};
 
 /**
- * Default-flag (`experimentalSearch: false`) input schema for the discover-places tool.
+ * Input schema for the discover-places tool.
  * Use {@link buildDiscoverPlacesSchema} to build a flag-aware variant.
  */
 export const discoverPlacesSchema = buildDiscoverPlacesSchema(DEFAULT_FLAGS);
 
-/** Default-flag (`experimentalSearch: false`) tool description. */
+/** Tool description for the discover-places tool. */
 export const discoverPlacesDescription = buildDiscoverPlacesDescription(DEFAULT_FLAGS);
 
 // What the `where` resolvers produce before a backend is picked: at most one of the two, but which
@@ -286,17 +199,8 @@ const toGeoBias = (bias: WhereBias | undefined, radiusMeters: number | undefined
 };
 
 type MultiFilters = {
-    municipalities?: string[];
     boundingBoxes?: HasBBox[];
     geometries?: (Polygon | MultiPolygon)[];
-    // `areaId` is a single-municipality geo-bias on the underlying explorationSearch — like
-    // `municipalities` but matches by polygon id instead of name (faster + unambiguous).
-    areaId?: string;
-    // Not a geographic restriction — deliberately excluded from `hasMultiFilters`
-    // so passing it alone still triggers the viewport-bounds default.
-    placeTypes?: ('POI' | 'PointAddress' | 'Street')[];
-    // Filter (not a geo-bias). Composes with any `where` scope.
-    areaTags?: PopulatedAreaTag[];
 };
 
 type DiscoverPlacesWhere = z.infer<ReturnType<typeof buildDiscoverPlacesWhereSchema>>;
@@ -343,19 +247,16 @@ const searchByDetour = async (
     return { result, placesEntryId };
 };
 
-// Some `MultiFilters` keys (`municipalities`, `boundingBoxes`, `placeTypes`, `areaId`,
-// `areaTags`) only exist on the experimental exploration-search backend. Strip them when
-// calling the default `search`.
-const stripExperimentalFilters = (filters: MultiFilters): { geometries?: (Polygon | MultiPolygon)[] } => {
+// `search` consumes only `geometries` out of `MultiFilters`; `boundingBoxes` are merged into the
+// bias by the callers that collect them.
+const searchGeometries = (filters: MultiFilters): { geometries?: (Polygon | MultiPolygon)[] } => {
     const { geometries } = filters;
     return geometries?.length ? { geometries } : {};
 };
 
-// Single dispatch point for the experimental vs stable search backends. Backends differ in:
-// - `limit` cap (10000 for explorationSearch, 100 for search);
-// - which MultiFilters keys are accepted (search only consumes `geometries`).
+// Single dispatch point for the places search backend, so every caller shares one `limit` cap and
+// one filter projection.
 const dispatchPlacesSearch = (
-    useExperimental: boolean,
     params: {
         query: string | undefined;
         poiCategories: POICategory[] | undefined;
@@ -364,51 +265,42 @@ const dispatchPlacesSearch = (
         multiFilters: MultiFilters;
     },
     options?: ToolExecuteOptions,
-): Promise<Awaited<ReturnType<typeof explorationSearch>>> => {
+): Promise<Awaited<ReturnType<typeof search>>> => {
     const { query, poiCategories, bias, radiusMeters, multiFilters } = params;
-    const common = { query, poiCategories, signal: options?.signal };
-    if (useExperimental) {
-        // explorationSearch biases by point only, and takes rectangles as its own `boundingBoxes`.
-        const boundingBoxes = [...(multiFilters.boundingBoxes ?? []), ...(bias?.boundingBox ? [bias.boundingBox] : [])];
-        const requestParams = withAgentToolkitHeaders({
-            ...common,
-            limit: 10000,
-            ...multiFilters,
-            ...(boundingBoxes.length && { boundingBoxes }),
-            ...(bias?.position && { geoBias: { position: bias.position, radiusMeters } }),
-        });
-
-        return explorationSearch(requestParams);
-    }
-
     const geoBias = toGeoBias(bias, radiusMeters);
     const requestParams = withAgentToolkitHeaders({
-        ...common,
+        query,
+        poiCategories,
+        signal: options?.signal,
         limit: 100,
-        ...stripExperimentalFilters(multiFilters),
+        ...searchGeometries(multiFilters),
         ...(geoBias && { geoBias }),
     });
     return search(requestParams);
 };
 
+// What both dispatch branches need. Each branch adds its own on top: `searchInRange`
+// a range id, `searchWithBias` the bias it resolved.
+type DispatchBranchParams = {
+    state: ToolState;
+    query: string | undefined;
+    resolvedPoiCategories: POICategory[] | undefined;
+    multiFilters: MultiFilters;
+    entryId: string | undefined;
+    routeLabel: string | undefined;
+};
+
 const searchInRange = async (
-    state: ToolState,
-    range: string,
-    query: string | undefined,
-    resolvedPoiCategories: POICategory[] | undefined,
-    multiFilters: MultiFilters,
-    entryId: string | undefined,
-    routeLabel: string | undefined,
-    useExperimental: boolean,
+    params: DispatchBranchParams & { range: string },
     options?: ToolExecuteOptions,
-): Promise<{ result: Awaited<ReturnType<typeof explorationSearch>>; placesEntryId: string } | { error: string }> => {
+): Promise<{ result: Awaited<ReturnType<typeof search>>; placesEntryId: string } | { error: string }> => {
+    const { state, range, query, resolvedPoiCategories, multiFilters, entryId, routeLabel } = params;
     // Combine every range's polygon into the search bias so multi-origin entries search the union
     // of their reachable areas.
     const ranged = getRangePolygons(state, range);
     if ('error' in ranged) return ranged;
     const combinedGeometries = [...ranged.polygons, ...(multiFilters.geometries ?? [])];
     const result = await dispatchPlacesSearch(
-        useExperimental,
         {
             query,
             poiCategories: resolvedPoiCategories,
@@ -429,9 +321,9 @@ const searchInRange = async (
 };
 
 // Resolves a discoverPlaces `within` mode to the search params it should run with. Either the
-// `viewport` bias path, or the multi-region path (any combo of boundingBoxes / queries / placeIds /
-// municipalities / geometries / range / route). The two paths are mutually exclusive at the schema
-// level — see the refinement on `buildDiscoverWithinWhereSchema`.
+// `viewport` bias path, or the multi-region path (any combo of queries / placeIds / geometries /
+// range / route). The two paths are mutually exclusive at the schema level — see the refinement on
+// `buildDiscoverWithinWhereSchema`.
 type WithinResolution = {
     bias: WhereBias;
     multiFilters: MultiFilters;
@@ -457,9 +349,8 @@ const resolveDiscoverWithin = async (
     }
 
     // Resolve queries / placeIds / geometries / route via the shared resolver. resolveWithin returns
-    // an empty area set (not an error) when nothing resolved, so a range-only or experimental-only
-    // (`municipalities` / `areaId` / `boundingBoxes`) within — whose scope is carried below — composes
-    // fine here. Experimental `boundingBoxes` stay local (only explorationSearch consumes them).
+    // an empty area set (not an error) when nothing resolved, so a range-only within — whose scope is
+    // carried below — composes fine here.
     const within = await resolveWithin(
         {
             boundingBox: undefined,
@@ -480,30 +371,24 @@ const resolveDiscoverWithin = async (
         .filter((a) => a.source === 'query' && a.label)
         .map((a) => ({ matched: a.label as string, ...(a.query !== undefined && { query: a.query }) }));
 
-    // `boundingBoxes`, `municipalities`, and `areaId` only exist on the experimental schema;
-    // treat them as absent on the default schema.
-    const experimentalWhere = where as DiscoverWithinWhere & {
-        boundingBoxes?: HasBBox[];
-        municipalities?: string[];
-        areaId?: string;
-    };
-
-    const mergedBoundingBoxes: HasBBox[] = [
-        ...(experimentalWhere.boundingBoxes ?? []),
-        ...(resolvedBoundingBoxes as HasBBox[]),
-    ];
+    const mergedBoundingBoxes: HasBBox[] = [...(resolvedBoundingBoxes as HasBBox[])];
     const mergedGeometries: (Polygon | MultiPolygon)[] = [...resolvedGeometries];
 
     const multiFilters: MultiFilters = {
         ...baseFilters,
-        ...(experimentalWhere.municipalities?.length && { municipalities: experimentalWhere.municipalities }),
-        ...(experimentalWhere.areaId && { areaId: experimentalWhere.areaId }),
         ...(mergedBoundingBoxes.length && { boundingBoxes: mergedBoundingBoxes }),
         ...(mergedGeometries.length && { geometries: mergedGeometries }),
     };
 
+    // An area that resolves without a boundary polygon contributes only a bbox, and the search
+    // dispatch consumes `geometries` alone. Without a bbox bias here a bbox-only resolution would
+    // run unscoped — a global search wearing the label of the area the user named. When polygons
+    // did resolve they carry the scope instead, and any bbox-only area alongside them is dropped:
+    // narrower than asked for, which is the safer of the two ways to be wrong.
+    const scopeBoundingBox = mergedGeometries.length ? undefined : bboxFromBBoxes(resolvedBoundingBoxes);
+
     return {
-        bias: {},
+        bias: scopeBoundingBox ? { boundingBox: scopeBoundingBox } : {},
         multiFilters,
         range: where.range,
         routeLabel,
@@ -590,20 +475,16 @@ const resolveWhereLabel = (where: DiscoverPlacesWhere | undefined): string | und
 };
 
 const searchWithBias = async (
-    state: ToolState,
-    query: string | undefined,
-    bias: WhereBias,
-    resolvedPoiCategories: POICategory[] | undefined,
-    radiusMeters: number | undefined,
-    multiFilters: MultiFilters,
-    entryId: string | undefined,
-    whereLabel: string | undefined,
-    routeLabel: string | undefined,
-    useExperimental: boolean,
+    params: DispatchBranchParams & {
+        bias: WhereBias;
+        radiusMeters: number | undefined;
+        whereLabel: string | undefined;
+    },
     options?: ToolExecuteOptions,
-): Promise<{ result: Awaited<ReturnType<typeof explorationSearch>>; placesEntryId: string }> => {
+): Promise<{ result: Awaited<ReturnType<typeof search>>; placesEntryId: string }> => {
+    const { state, query, bias, resolvedPoiCategories, radiusMeters, multiFilters, entryId, whereLabel, routeLabel } =
+        params;
     const result = await dispatchPlacesSearch(
-        useExperimental,
         {
             query,
             poiCategories: resolvedPoiCategories,
@@ -629,7 +510,7 @@ const searchWithBias = async (
 // Render-on-map + boundary-geometry post-processing shared by every dispatch branch.
 const finalizeDiscoverResult = async (
     state: ToolState,
-    result: Awaited<ReturnType<typeof explorationSearch>>,
+    result: Awaited<ReturnType<typeof search>>,
     placesEntryId: string,
     show: z.infer<ReturnType<typeof buildDiscoverPlacesSchema>>['show'],
     geometries: z.infer<ReturnType<typeof buildDiscoverPlacesSchema>>['geometries'],
@@ -650,7 +531,7 @@ const finalizeDiscoverResult = async (
     const label = state.places.entries.find((entry) => entry.id === placesEntryId)?.label;
 
     return {
-        ...summarizePlaces(result, flags),
+        ...summarizePlaces(result),
         placesEntryId,
         ...(label && { label }),
         ...(shown && { shown }),
@@ -661,26 +542,16 @@ const finalizeDiscoverResult = async (
 };
 
 /**
- * Build the discoverPlaces executor for a given {@link FeatureFlags} bag. When
- * `experimentalSearch` is on, the underlying search calls dispatch to {@link explorationSearch}
- * (the unstable backend with a richer input surface). Otherwise they go through the stable
- * {@link search} router.
+ * Build the discoverPlaces executor for a given {@link FeatureFlags} bag. Every search call goes
+ * through the {@link search} router.
  */
 export const buildExecuteDiscoverPlaces = (flags: FeatureFlags) => {
-    const useExperimental = flags.experimentalSearch === true;
     return async (
         params: z.infer<ReturnType<typeof buildDiscoverPlacesSchema>>,
         state: ToolState,
         options?: ToolExecuteOptions,
     ): Promise<z.infer<typeof discoverPlacesOutputSchema>> => {
         const { query, where, poiCategories, show, entryId, geometries } = params;
-        // `placeTypes` and `areaTags` only exist on the experimental schema.
-        const experimentalParams = params as {
-            placeTypes?: ('POI' | 'PointAddress' | 'Street')[];
-            areaTags?: PopulatedAreaTag[];
-        };
-        const placeTypes = experimentalParams.placeTypes;
-        const areaTags = experimentalParams.areaTags;
 
         // Resolve once upstream — exact catalog codes pass through, natural-language terms are
         // synonym-resolved via getPOICategoryCodes. We only error when the LLM passed inputs and
@@ -700,11 +571,7 @@ export const buildExecuteDiscoverPlaces = (flags: FeatureFlags) => {
 
         // Default to viewport-bounded when no `where` was supplied.
         const effectiveWhere: DiscoverPlacesWhere = where ?? { mode: 'within', viewport: true };
-        // Top-level filters that compose with any `where` scope (not geo-biases on their own).
-        const baseMultiFilters: MultiFilters = {
-            ...(placeTypes?.length && { placeTypes }),
-            ...(areaTags?.length && { areaTags }),
-        };
+        const baseMultiFilters: MultiFilters = {};
 
         try {
             // maxDetour dispatches to a different SDK endpoint and shares no params with the rest.
@@ -736,14 +603,7 @@ export const buildExecuteDiscoverPlaces = (flags: FeatureFlags) => {
 
             if (range) {
                 const rangeResult = await searchInRange(
-                    state,
-                    range,
-                    query,
-                    resolvedPoiCategories,
-                    multiFilters,
-                    entryId,
-                    routeLabel,
-                    useExperimental,
+                    { state, range, query, resolvedPoiCategories, multiFilters, entryId, routeLabel },
                     options,
                 );
                 if ('error' in rangeResult) return rangeResult;
@@ -764,16 +624,17 @@ export const buildExecuteDiscoverPlaces = (flags: FeatureFlags) => {
             const groundedLabel = resolvedAreas?.length ? resolvedAreas.map((a) => a.matched).join(', ') : undefined;
             const whereLabel = groundedLabel ?? resolveWhereLabel(effectiveWhere);
             const biasResult = await searchWithBias(
-                state,
-                query,
-                bias,
-                resolvedPoiCategories,
-                radiusMeters,
-                multiFilters,
-                entryId,
-                whereLabel,
-                routeLabel,
-                useExperimental,
+                {
+                    state,
+                    query,
+                    bias,
+                    resolvedPoiCategories,
+                    radiusMeters,
+                    multiFilters,
+                    entryId,
+                    whereLabel,
+                    routeLabel,
+                },
                 options,
             );
             return finalizeDiscoverResult(
@@ -792,7 +653,7 @@ export const buildExecuteDiscoverPlaces = (flags: FeatureFlags) => {
     };
 };
 
-/** Default-flag (`experimentalSearch: false`) executor for the discover-places tool. */
+/** Executor for the discover-places tool, built with no feature flags set. */
 export const executeDiscoverPlaces = buildExecuteDiscoverPlaces(DEFAULT_FLAGS);
 
 /**
@@ -821,7 +682,7 @@ const discoverPlacesMetadata = {
         '`query` filters POI names ONLY — area names go in `where`. ' +
         '`where.mode`: within (area) / nearby (point bias) / maxDetour (route-relative ranked) / global. ' +
         'For "X in [named area]", put X in top-level `query`/`poiCategories` and the area in `where.queries: [{query: "..."}]` — geocoded in one step, no precursor locatePlace. ' +
-        'Within-mode: route → corridor. Prefer geometries/municipalities/placeIds over bbox. ' +
+        'Within-mode: route → corridor. Prefer geometries/placeIds over bbox. ' +
         'Also OWNS outlining the SUB-AREAS of a place — the neighbourhoods/districts of a city ("outline the ' +
         'Amsterdam neighbourhoods"); a SINGLE named place\'s own boundary is locatePlace, and incrementally ' +
         'adding/removing outlines among already-shown places is updatePlacesDisplay. ' +
@@ -832,11 +693,11 @@ const discoverPlacesMetadata = {
         'discoverPlaces({ query: "coffee", where: { mode: "nearby", position: [4.9, 52.4], radiusMeters: 500 } })',
         'discoverPlaces({ query: "parking", where: { mode: "within", queries: [{ query: "De Jordaan, Amsterdam", queryAs: "place" }] } })  // area name goes in `where.queries`, NOT top-level `query`',
         'discoverPlaces({ query: "coffee", where: { mode: "nearby", query: "Schiphol Airport", queryAs: "poi", radiusMeters: 2000 } })  // POI-resolved bias point',
-        'discoverPlaces({ poiCategories: ["HOTEL"], where: { mode: "within", municipalities: ["Amsterdam", "Utrecht"] }, entryId: "ams-utrecht-hotels" })',
+        'discoverPlaces({ poiCategories: ["HOTEL"], where: { mode: "within", queries: [{ query: "Amsterdam" }, { query: "Utrecht" }] }, entryId: "ams-utrecht-hotels" })',
         'discoverPlaces({ query: "bakery", where: { mode: "within", range: "ranges-0" } })',
         'discoverPlaces({ poiCategories: ["CAFE"], show: { markerType: "pin", zoomMode: "auto" } })  // omit `where` → defaults to viewport',
         'discoverPlaces({ poiCategories: ["RESTAURANT"], where: { mode: "within", queries: [{ query: "Paris" }] } })  // "restaurants in Paris" — subject in `poiCategories`, area in `where.queries`',
-        'discoverPlaces({ poiCategories: ["ELECTRIC_VEHICLE_STATION"], where: { mode: "within", route: { routeId: "routes-0", widthMeters: 1000 } } })  // bulk corridor scan along the route',
+        'discoverPlaces({ poiCategories: ["ELECTRIC_VEHICLE_STATION"], where: { mode: "within", route: { routeId: "routes-0", widthMeters: 1000 } } })  // corridor scan along the route',
         'discoverPlaces({ query: "coffee", where: { mode: "maxDetour", maxDetourTimeSeconds: 300, limit: 5 } })  // top 5 coffee detours within 5 min off the latest route',
         'discoverPlaces({ poiCategories: ["ELECTRIC_VEHICLE_STATION"], where: { mode: "maxDetour", routeId: "routes-1", maxDetourTimeSeconds: 600, sortBy: "detourOffset" } })  // ranked EV detours on a specific route',
         'discoverPlaces({ query: "bakery", where: { mode: "within", placeIds: ["G55fc4abe-..."] } })  // search inside stored place polygons (auto-fetched if needed)',

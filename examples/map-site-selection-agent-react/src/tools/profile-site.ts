@@ -315,10 +315,9 @@ const buildSteps = (n: number): string[] => [
 const stepCompetitors = (): number => (householdsEnabled() ? 3 : 2);
 const stepFinish = (): number => (householdsEnabled() ? 4 : 3);
 
-// BUILDER: the description mentions households only when the flag enables them, so it is assembled
-// at createMapAgent time — after buildSiteAgentOptions stored the flag — rather than at module load.
-// (Read from the store, not options.featureFlags: the toolkit's public FeatureFlags type strips the
-// internal experimentalSearch member.) The executor reads the same stored flag at runtime.
+// BUILDER: the description mentions households only when the household signal is available, so it
+// is assembled at createMapAgent time rather than at module load. The signal is read from
+// `householdsEnabled()`, which now always reports false — see demographics/experimental-search.ts.
 export const profileSite: ToolEntryBuilder = () => {
     const households = householdsEnabled();
     return {

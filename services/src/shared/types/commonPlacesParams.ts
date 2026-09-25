@@ -186,6 +186,10 @@ export type CommonPlacesParams<ApiRequest, ApiResponse> = CommonServiceParams<Ap
      * - `RU`: Russia's perspective
      * - `TR`: Turkey's perspective
      * - `CN`: China's perspective
+     * - `TW`: Taiwan's perspective
+     * - `RS`: Serbia's perspective
+     *
+     * `MA` is accepted by this type but is not supported by the current backend.
      *
      * **Affected Elements:**
      * - Border lines on maps

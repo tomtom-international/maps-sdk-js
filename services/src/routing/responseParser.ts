@@ -723,7 +723,7 @@ const parseInstruction = (
     routeOffsetInMeters: a.routeOffsetInMeters,
     maneuver: (a.maneuver ? (MANEUVER_MAP[a.maneuver] ?? a.maneuver) : a.maneuver) as Maneuver,
     routePath: (a.routePath ?? []).map((rp) => ({
-        point: [rp.point.longitude, rp.point.latitude] as [number, number],
+        point: rp.point.coordinates,
         distanceInMeters: rp.distanceFromRouteStartInMeters,
         travelTimeInSeconds: rp.travelTimeFromRouteStartInSeconds,
     })),
@@ -745,11 +745,7 @@ const parseGuidance = (
     let lastPathIndex = 0;
 
     for (const apiInstruction of instructions) {
-        // Instructions use {latitude, longitude}, convert to GeoJSON [longitude, latitude] Position.
-        const maneuverPoint: [number, number] = [
-            apiInstruction.maneuverPoint.longitude,
-            apiInstruction.maneuverPoint.latitude,
-        ];
+        const maneuverPoint = apiInstruction.maneuverPoint.coordinates;
 
         for (let pathIndex = lastPathIndex; pathIndex < path.length; pathIndex++) {
             if (similar(path[pathIndex], maneuverPoint)) {

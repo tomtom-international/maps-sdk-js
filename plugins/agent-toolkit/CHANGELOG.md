@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.6.1
+
+### Patch Changes
+
+- 9e1d080: Features:
+  - setMapStyling: the tool describes and demonstrates the ten map colours (`colors.*`) of the SDK styling API (#2091)
+  - discoverPlaces and the shared place schemas follow the places GA search API (#2152)
+  
+  Peer dependency:
+  - Accept every SDK release below 1.0: the peer dependency on `@tomtom-org/maps-sdk` is the range `>=0.55.1 <1.0.0` instead of an exact version
+- Updated dependencies [9e1d080]
+- Updated dependencies [1bea71f]
+  - @tomtom-org/maps-sdk@0.56.0
+
 ## [0.6.0](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-agent-toolkit-v0.5.4...maps-sdk-plugin-agent-toolkit-v0.6.0) (2026-09-21)
 
 

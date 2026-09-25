@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import type { POIsModule, StylingCatalogue, StylingKnobId, StylingSettings } from 'map';
+import type { MapColors, POIsModule, StylingCatalogue, StylingKnobId, StylingSettings } from 'map';
 import { MapsSDKThis } from './types/MapsSDKThis';
 import { MapTestEnv } from './util/MapTestEnv';
 import { getLayerById, getPaintProperty, initPOIs, isLayerVisible, setStyle, waitForMapReady } from './util/TestUtils';
@@ -15,6 +15,9 @@ const describeStyling = async (page: import('@playwright/test').Page): Promise<S
 
 const setKnob = async (page: import('@playwright/test').Page, id: StylingKnobId, value: unknown) =>
     page.evaluate(({ id, value }) => (globalThis as MapsSDKThis).styling?.set(id, value as never), { id, value });
+
+const setMapColors = async (page: import('@playwright/test').Page, colors: MapColors) =>
+    page.evaluate((input) => (globalThis as MapsSDKThis).styling?.setMapColors(input), colors);
 
 const resetKnob = async (page: import('@playwright/test').Page, id?: StylingKnobId) =>
     page.evaluate((inputId) => (globalThis as MapsSDKThis).styling?.reset(inputId), id);
@@ -170,6 +173,33 @@ test.describe('StylingModule tests', () => {
 
         await resetKnob(page, 'view.spaceColor');
         expect(await spaceColorOnPage(page)).toBe('rgb(18, 52, 86)');
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    // The phase-3 exit criterion of the GA plan: one call recolours the motorway family — surface,
+    // outline, tunnel — with the style's zoom curves intact, and survives a style switch.
+    test('setMapColors recolours the major-road family, zoom curves intact, across a style switch', async ({
+        page,
+    }) => {
+        const before = (await getPaintProperty(page, 'Surface - Motorway & Trunk', 'line-color')) as unknown[];
+        await setMapColors(page, { roadMajor: 'hsl(200, 100%, 50%)' });
+
+        const surface = (await getPaintProperty(page, 'Surface - Motorway & Trunk', 'line-color')) as unknown[];
+        expect(JSON.stringify(surface)).toContain('hsl(200,');
+        expect(JSON.stringify(surface)).not.toContain('hsl(47,');
+        // Same expression shape: the zoom interpolation and its stops are untouched.
+        expect(surface[0]).toBe(before[0]);
+        expect(surface.length).toBe(before.length);
+        expect(
+            JSON.stringify(await getPaintProperty(page, 'Surface - Motorway & Trunk outline', 'line-color')),
+        ).toContain('hsl(200,');
+        expect(JSON.stringify(await getPaintProperty(page, 'Tunnel - Road line', 'line-color'))).toContain('hsl(200,');
+
+        await setStyle(page, 'standardDark');
+        await waitForMapReady(page);
+        expect(JSON.stringify(await getPaintProperty(page, 'Surface - Motorway & Trunk', 'line-color'))).toContain(
+            'hsl(200,',
+        );
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 

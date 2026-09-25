@@ -369,11 +369,16 @@ export const buildRoutingLayers = (
         },
         countryCrossings: {
             [COUNTRY_CROSSING_LAYER_ID]: mergeLayer(
-                countryCrossingSymbol(
-                    instanceIndex,
-                    config.countryCrossings,
-                    resolveCountryCrossingColors(config.countryCrossings, lightDark),
-                ),
+                {
+                    ...countryCrossingSymbol(
+                        instanceIndex,
+                        config.countryCrossings,
+                        resolveCountryCrossingColors(config.countryCrossings, lightDark),
+                    ),
+                    // A crossing draws whatever else is in its place, so it sits under the waypoint
+                    // pins: a plaque naming a border is never worth the stop it would cover.
+                    beforeID: prefixBeforeID('routeWaypointSymbol', layerIDPrefix),
+                },
                 configLayers?.countryCrossings?.[COUNTRY_CROSSING_LAYER_ID],
             ),
             ...prefixBeforeIDs(configLayers?.countryCrossings?.additional, layerIDPrefix),

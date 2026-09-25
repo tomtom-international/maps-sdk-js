@@ -88,7 +88,7 @@ hit the compiler *does* give you is `src/tests/scenarios/` — an orphan `getExa
 argument is a type error, so `pnpm type-check:plugins` finds it; locate the owning file with
 `grep -rl "getExamplePrompts('<name>')" src/tests/scenarios`, since files are per-tool only where
 one tool warranted a file. Removing a public export is **breaking**: decide on a deprecated alias
-or a major bump (`.release-please-manifest.json`), and mark the PR title `!`.
+or a `minor` changeset (the pre-1.0 breaking bump), and mark the PR title `!`.
 
 ## The registry is the test corpus
 

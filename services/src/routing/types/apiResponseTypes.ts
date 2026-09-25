@@ -86,7 +86,7 @@ export type SummaryAPI = {
     arrivalDateTime: string;
     deviationDistanceInMeters?: number;
     deviationDurationInSeconds?: number;
-    deviationPoint?: Point;
+    deviationPoint?: RoutePointAPI;
     // Leg-only: the index, among the requested locations, of the waypoint the leg ends at. Returned
     // without asking for anything extra in `Attributes`; absent on the final leg.
     originalWaypointIndexAtEndOfLeg?: number;
@@ -203,20 +203,19 @@ export type SectionsAPI = {
 };
 
 /**
- * Lat/lon point used in guidance instructions (different from the GeoJSON used elsewhere).
+ * Every point in a routing response — `deviationPoint`, a route-path point, an instruction's
+ * `maneuverPoint` — is a two-dimensional GeoJSON `Point`, so its coordinates are already
+ * `[longitude, latitude]` and the parser needs no narrowing of its own.
  * @ignore
  */
-export type LatLonPointAPI = {
-    latitude: number;
-    longitude: number;
-};
+export type RoutePointAPI = Omit<Point, 'coordinates'> & { coordinates: [number, number] };
 
 /**
  * A point on the route path.
  * @ignore
  */
 export type RoutePathPointAPI = {
-    point: LatLonPointAPI;
+    point: RoutePointAPI;
     distanceFromRouteStartInMeters: number;
     travelTimeFromRouteStartInSeconds: number;
 };
@@ -296,7 +295,7 @@ export type SignpostAPI = {
 export type InstructionAPI = {
     routeOffsetInMeters: number;
     maneuver?: string;
-    maneuverPoint: LatLonPointAPI;
+    maneuverPoint: RoutePointAPI;
     routePath?: RoutePathPointAPI[];
     nextRoadInformation?: InstructionRoadInformationAPI;
     previousRoadInformation?: InstructionRoadInformationAPI;

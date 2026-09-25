@@ -1,4 +1,9 @@
-type RGBColor = [number, number, number, number];
+/**
+ * Red, green, blue and alpha of a colour, each 0–1.
+ * @ignore
+ */
+export type RGBAColor = [number, number, number, number];
+
 type HSLColor = [number, number, number, number];
 
 const normalizeAngle = (angle: number): number => {
@@ -6,7 +11,7 @@ const normalizeAngle = (angle: number): number => {
     return normalized < 0 ? normalized + 360 : normalized;
 };
 
-const hslToRgb = ([h, s, l, alpha]: HSLColor): RGBColor => {
+const hslToRgb = ([h, s, l, alpha]: HSLColor): RGBAColor => {
     const hue = normalizeAngle(h);
     const sat = s / 100;
     const lig = l / 100;
@@ -26,7 +31,7 @@ const parseHex = (hex: string): number => Number.parseInt(hex.padEnd(2, hex), 16
 
 const parseAlpha = (a: number, asPercentage: string | undefined): number => clamp(asPercentage ? a / 100 : a, 0, 1);
 
-const parseHexColor = (input: string): RGBColor | undefined => {
+const parseHexColor = (input: string): RGBAColor | undefined => {
     const hexRegexp = /^#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/;
     if (!hexRegexp.test(input)) {
         return undefined;
@@ -42,7 +47,7 @@ const parseHexColor = (input: string): RGBColor | undefined => {
 const RGB_REGEXP =
     /^rgba?\(\s*([\de.+-]+)(%)?(?:\s+|\s*(,)\s*)([\de.+-]+)(%)?(?:\s+|\s*(,)\s*)([\de.+-]+)(%)?(?:\s*([,/])\s*([\de.+-]+)(%)?)?\s*\)$/;
 
-const parseRgbColor = (input: string): RGBColor | undefined => {
+const parseRgbColor = (input: string): RGBAColor | undefined => {
     const rgbMatch = RGB_REGEXP.exec(input);
     if (!rgbMatch) {
         return undefined;
@@ -57,7 +62,7 @@ const parseRgbColor = (input: string): RGBColor | undefined => {
     if (!maxValue) {
         return undefined;
     }
-    const rgba: RGBColor = [
+    const rgba: RGBAColor = [
         clamp(+r / maxValue, 0, 1),
         clamp(+g / maxValue, 0, 1),
         clamp(+b / maxValue, 0, 1),
@@ -69,7 +74,7 @@ const parseRgbColor = (input: string): RGBColor | undefined => {
 const HSL_REGEXP =
     /^hsla?\(\s*([\de.+-]+)(?:deg)?(?:\s+|\s*(,)\s*)([\de.+-]+)%(?:\s+|\s*(,)\s*)([\de.+-]+)%(?:\s*([,/])\s*([\de.+-]+)(%)?)?\s*\)$/;
 
-const parseHslColor = (input: string): RGBColor | undefined => {
+const parseHslColor = (input: string): RGBAColor | undefined => {
     const hslMatch = HSL_REGEXP.exec(input);
     if (!hslMatch) {
         return undefined;
@@ -83,7 +88,13 @@ const parseHslColor = (input: string): RGBColor | undefined => {
     return validateNumbers(hsla) ? hslToRgb(hsla) : undefined;
 };
 
-const parseCssColor = (cssColor: string): RGBColor | undefined => {
+/**
+ * Parses any CSS colour a map style writes — `#rgb`, `#rrggbb(aa)`, `rgb()`/`rgba()` in numbers or
+ * percentages, `hsl()`/`hsla()`, `transparent` and the named colours — or `undefined` for a string
+ * that is not one.
+ * @ignore
+ */
+export const parseCssColor = (cssColor: string): RGBAColor | undefined => {
     const input = cssColor.toLowerCase().trim();
 
     if (input === 'transparent') {
@@ -107,7 +118,7 @@ const parseCssColor = (cssColor: string): RGBColor | undefined => {
     return parseHslColor(input);
 };
 
-const rgbToHsl = ([r, g, b, alpha]: RGBColor): HSLColor => {
+const rgbToHsl = ([r, g, b, alpha]: RGBAColor): HSLColor => {
     const max = Math.max(r, g, b);
     const min = Math.min(r, g, b);
     const lightness = (max + min) / 2;
@@ -135,6 +146,23 @@ const rgbToHsl = ([r, g, b, alpha]: RGBColor): HSLColor => {
 export const toHsl = (cssColor: string): HSLColor | undefined => {
     const parsed = parseCssColor(cssColor);
     return parsed && rgbToHsl(parsed);
+};
+
+/**
+ * Whether a style value is a CSS colour outright, rather than an expression that produces one.
+ * @ignore
+ */
+export const isColorLiteral = (value: unknown): value is string =>
+    typeof value === 'string' && toHsl(value) !== undefined;
+
+/**
+ * Whether a style value is a colour literal that paints something. A fully transparent one is how a
+ * style hides a feature, so it is no shade of any colour and nothing to re-derive.
+ * @ignore
+ */
+export const isOpaqueColorLiteral = (value: unknown): value is string => {
+    const hsl = typeof value === 'string' ? toHsl(value) : undefined;
+    return hsl !== undefined && hsl[3] > 0;
 };
 
 /**
@@ -214,10 +242,7 @@ export const darkenColor = (cssColor: string, darkenFactor: number): string | un
         return undefined;
     }
     const brightnessScale = 1 - darkenFactor;
-    const red = Math.round(parsed[0] * 255 * brightnessScale);
-    const green = Math.round(parsed[1] * 255 * brightnessScale);
-    const blue = Math.round(parsed[2] * 255 * brightnessScale);
-    return `#${[red, green, blue].map((channel) => channel.toString(16).padStart(2, '0')).join('')}`;
+    return rgbToHex(parsed.slice(0, 3).map((channel) => channel * 255 * brightnessScale));
 };
 
 /**
@@ -231,12 +256,35 @@ export const lightenColor = (cssColor: string, lightenFactor: number): string | 
     if (!parsed) {
         return undefined;
     }
-    const toChannel = (value: number) => Math.round((value + (1 - value) * lightenFactor) * 255);
-    const red = toChannel(parsed[0]);
-    const green = toChannel(parsed[1]);
-    const blue = toChannel(parsed[2]);
-    return `#${[red, green, blue].map((channel) => channel.toString(16).padStart(2, '0')).join('')}`;
+    return rgbToHex(parsed.slice(0, 3).map((channel) => (channel + (1 - channel) * lightenFactor) * 255));
 };
+
+/**
+ * Formats red/green/blue channels (0–255, clamped and rounded) as a `#rrggbb` string.
+ * @ignore
+ */
+export const rgbToHex = (rgb: number[]): string =>
+    `#${rgb
+        .map((channel) =>
+            Math.round(clamp(channel, 0, 255))
+                .toString(16)
+                .padStart(2, '0'),
+        )
+        .join('')}`;
+
+/**
+ * The shortest distance between two hues, in degrees (0–180). Two colours more than a hue family
+ * apart are different colours rather than shades of one another.
+ * @ignore
+ */
+export const hueDistance = (hue: number, otherHue: number): number => Math.abs(((hue - otherHue + 540) % 360) - 180);
+
+/**
+ * Below this saturation a colour reads as grey, and its hue carries no meaning — so a grey counts
+ * as a shade of any colour.
+ * @ignore
+ */
+export const GREY_SATURATION = 8;
 
 const namedColors: Record<string, [number, number, number]> = {
     aliceblue: [240, 248, 255],

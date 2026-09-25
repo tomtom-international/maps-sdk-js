@@ -85,6 +85,7 @@ pnpm type-check:examples   # examples workspace
 
 # E2E tests
 pnpm e2e-test:sdk       # map integration tests (Playwright, browser required)
+pnpm e2e-test:map-effects # map-effects visual suite over a synthetic map (no API key, ~7s)
 pnpm e2e-test:examples  # each example's Playwright smoke tests
 pnpm e2e-test:examples:update-all-snapshots  # regenerate all upon-load.png snapshots
 
@@ -124,7 +125,7 @@ code; a workspace's own `AGENTS.md` adds only what is specific to that workspace
 | `plugins/agent-toolkit/` | AI agent plugin; see its `AGENTS.md` + `ENGINEERING-GUIDELINES.md` |
 | `plugins/viewport-places/` | Plugin: continuously shows POIs in the visible map viewport |
 | `plugins/landmarks-3d/` | Plugin: renders Orbis 3D landmark GLB tiles via a Three.js MapLibre custom layer |
-| `plugins/map-effects/` | Plugin: post-processing over the rendered map (bloom, grade, tint, fog, edge blur, vignette) and high-DPI capture |
+| `plugins/map-effects/` | Plugin: post-processing over the rendered map (bloom, grade, tint, fog, edge blur, WebGL depth of field, vignette) and high-DPI capture |
 | `plugins/plugin-vite-config.ts` | Shared Vite library-mode config for all plugins |
 | `shared-configs/` | Shared Vite, TypeScript, Vitest configs for all packages |
 | `testing/ai-eval/` | Map-agent eval harness: LLM judge, eval cases, scoring |

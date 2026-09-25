@@ -318,21 +318,14 @@ export type Classifier = (context: ClassifierContext) => Promise<ClassificationR
  */
 export type FeatureFlags = {
     /**
-     * Route `discoverPlaces` through the experimental exploration search
-     * backend (and expose its richer input surface — `municipalities`,
-     * multiple `boundingBoxes`, `placeTypes`, `areaId`, `areaTags`). When
-     * `false`/unset, `discoverPlaces` uses the stable default search
-     * service and a reduced input schema that matches what the default
-     * service supports.
+     * No feature flags are currently defined.
      *
-     * **Internal experiment.** Not part of the public agent-toolkit
-     * contract; subject to removal at any time.
-     *
-     * @internal
-     * @experimental
-     * @default false
+     * @remarks
+     * The bag is kept because the tool builders (`ToolEntryBuilder`,
+     * `buildDiscoverPlacesSchema`, …) thread it through as their extension
+     * point for schema and description variation. A future flag is added here.
      */
-    experimentalSearch?: boolean;
+    readonly [flag: string]: never;
 };
 
 /**

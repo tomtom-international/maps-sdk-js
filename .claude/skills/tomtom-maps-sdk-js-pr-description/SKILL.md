@@ -83,8 +83,8 @@ commit message on `main` and the feature-branch commits are discarded
 - **80 characters, subject line included** (commisery's default rule C014; this repo adds no
   `.commisery.yml` override). It's the one CI failure with nothing to do with the code, so count it
   before pushing.
-- `!` before the colon for a breaking public change — `feat(map)!: …`. Check
-  `.release-please-manifest.json` for a coordinated bump.
+- `!` before the colon for a breaking public change — `feat(map)!: …`. The PR's
+  changeset carries the bump: `minor` pre-1.0.
 - Fix a title with `gh pr edit <n> --title '…'`.
 
 ## Section order

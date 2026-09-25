@@ -105,40 +105,18 @@ const basePlaceShape = {
     position: z.array(z.number()).length(2).describe('[longitude, latitude]'),
 };
 
-// Experimental-only fields propagated from the exploration-search backend's area-tag
-// pipeline. Area data currently populated only in DE / NL / FR. Gated by `experimentalSearch`
-// so the LLM doesn't see them on tool runs that can't produce them.
-const experimentalPlaceShape = {
-    areaId: z
-        .string()
-        .optional()
-        .describe(
-            'Id of the small area polygon this place sits in (few km², not a whole municipality). ' +
-                'Round-trip into `discoverPlaces.where.areaId` for "what else is in this same area?". ' +
-                'Only set on explorationSearch results in DE / NL / FR.',
-        ),
-    areaCountry: z.string().optional().describe('ISO 3166-1 alpha-2 country code of the surrounding area polygon.'),
-    areaTags: z
-        .array(z.string())
-        .optional()
-        .describe(
-            'Tokens describing the surrounding small area (few km², not a whole municipality) ' +
-                '(e.g. "coastal", "walkable", "transit_connected"). Useful for downstream `areaTags` filters.',
-        ),
-};
-
 /**
- * Build a flag-aware compact place summary schema. When `experimentalSearch`
- * is true, the schema also documents the exploration-search-only `areaId` /
- * `areaCountry` / `areaTags` fields propagated from the surrounding small-area polygon.
+ * Build a compact place summary schema.
+ *
+ * @remarks
+ * Takes {@link FeatureFlags} so a future flag can vary the shape; no flag
+ * currently does, so every caller gets the same schema.
  */
-export const buildPlaceOutputSchema = (flags: FeatureFlags) =>
-    z
-        .object(flags.experimentalSearch ? { ...basePlaceShape, ...experimentalPlaceShape } : basePlaceShape)
-        .describe('Compact place summary');
+export const buildPlaceOutputSchema = (_flags: FeatureFlags) =>
+    z.object(basePlaceShape).describe('Compact place summary');
 
 /**
- * Build a flag-aware compact places-collection summary. Mirrors
+ * Build a compact places-collection summary. Mirrors
  * {@link buildPlaceOutputSchema} for `features[]`.
  */
 export const buildPlacesOutputSchema = (flags: FeatureFlags) =>
@@ -149,16 +127,10 @@ export const buildPlacesOutputSchema = (flags: FeatureFlags) =>
         })
         .describe('Compact places summary');
 
-/**
- * Token-efficient summary of a single place — default flags
- * (`experimentalSearch: false`).
- */
+/** Token-efficient summary of a single place. */
 export const placeOutputSchema = buildPlaceOutputSchema({});
 
-/**
- * Token-efficient summary of a places collection — default flags
- * (`experimentalSearch: false`).
- */
+/** Token-efficient summary of a places collection. */
 export const placesOutputSchema = buildPlacesOutputSchema({});
 
 // ---------------------------------------------------------------------------

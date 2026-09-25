@@ -1,0 +1,107 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+
+/* CUSTOM STYLES (example-specific) */
+
+.ui-customPanel {
+    width: 320px;
+}
+
+.ui-instructions {
+    margin: 0;
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-s);
+    line-height: var(--ui-font-body-s-lh);
+    color: var(--ui-text-med-em);
+}
+
+.ui-subheading {
+    margin: 0 0 var(--ui-space-2);
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-caption-m);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ui-text-med-em);
+}
+
+.ui-steps {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: step;
+}
+
+.ui-step {
+    counter-increment: step;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--ui-space-2) 0 var(--ui-space-2) var(--ui-space-5);
+    border-bottom: 1px solid var(--ui-border-low-em);
+}
+
+.ui-step::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: var(--ui-space-2);
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--ui-bg-low-em);
+    color: var(--ui-text-med-em);
+    font-family: var(--ui-font-gilroy);
+    font-size: 11px;
+    line-height: 18px;
+    text-align: center;
+}
+
+.ui-step-label {
+    font-family: var(--ui-font-monospace, monospace);
+    font-size: var(--ui-font-body-s);
+    color: var(--ui-text-high-em);
+}
+
+.ui-step-detail {
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-caption-m);
+    color: var(--ui-text-med-em);
+}
+
+.ui-legs {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.ui-leg {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--ui-space-2) 0;
+    border-bottom: 1px solid var(--ui-border-low-em);
+}
+
+.ui-leg-drive {
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-s);
+    font-variant-numeric: tabular-nums;
+    color: var(--ui-text-high-em);
+}
+
+.ui-leg-stop {
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-caption-m);
+    color: var(--ui-text-med-em);
+}
+
+.ui-status {
+    margin: var(--ui-space-2) 0 0;
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-caption-m);
+    color: var(--ui-text-med-em);
+    min-height: 1.2em;
+}

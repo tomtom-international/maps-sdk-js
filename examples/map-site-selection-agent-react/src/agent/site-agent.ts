@@ -9,7 +9,6 @@ import {
     type ToolEntryBuilder,
 } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
 import type { LanguageModel } from 'ai';
-import { setExperimentalSearch } from '../demographics/experimental-search';
 import { clarifyIntent } from '../tools/clarify-intent';
 import { compareCatchments } from '../tools/compare-catchments';
 import { findWhitespace } from '../tools/find-whitespace';
@@ -195,7 +194,7 @@ export const SITE_AGENT_MAX_STEPS = 10;
 // findReachableAreas overlaps the domain tools' reach internals, so it (and out-of-scope routing/
 // traffic) stays out.
 // The four household-aware domain tools are BUILDERS: setupTools invokes them with the agent's
-// featureFlags so their model-facing schema/description match the experimentalSearch switch.
+// featureFlags so their model-facing schema/description stay in step with the toolkit's.
 export const buildSiteTools = (): Record<string, ToolEntry | ToolEntryBuilder> => ({
     profileSite,
     rankSites,
@@ -245,17 +244,15 @@ export const buildSiteTools = (): Record<string, ToolEntry | ToolEntryBuilder> =
     calculateBBox: builtin.calculateBBox,
 });
 
-/** The example's own feature switches, decided by whoever creates the agent. */
-export type SiteAgentFlags = {
-    /**
-     * Route search through the experimental backend (10 000-result cap instead of 100) and enable
-     * every household ("Reach" / residential-density) surface — the Reach ranking factor, the
-     * whitespace householdDemand blend, and the household rows in panels/report/methodology. Off by
-     * default: the households concept is then hidden everywhere. Forwarded to createMapAgent as
-     * `featureFlags: { experimentalSearch }` so the toolkit's built-in tools follow the same switch.
-     */
-    experimentalSearch?: boolean;
-};
+/**
+ * The example's own feature switches, decided by whoever creates the agent.
+ *
+ * @remarks
+ * None are currently defined. The household ("Reach" / residential-density) surfaces used to be
+ * switched on here; the backend that fed them has been removed from the SDK, so they are
+ * permanently off. See `demographics/experimental-search.ts`.
+ */
+export type SiteAgentFlags = Record<string, never>;
 
 /**
  * Builds the full {@link MapAgentOptions} for the Site Selection agent from a bare model. The React
@@ -265,20 +262,14 @@ export type SiteAgentFlags = {
  */
 export const buildSiteAgentOptions = (
     model: LanguageModel,
-    { experimentalSearch = false }: SiteAgentFlags = {},
+    _flags: SiteAgentFlags = {},
 ): MapAgentOptions<SiteToolState> => {
-    // Store the flag BEFORE assembling the options: the system-prompt suffix (methodology) is built
-    // below, and tool executors / panels / the report read the stored value at runtime, while the
-    // ToolEntryBuilders in buildSiteTools receive the same value via featureFlags at createMapAgent
-    // time — one switch, no way to disagree.
-    setExperimentalSearch(experimentalSearch);
     return {
         model,
         maxSteps: SITE_AGENT_MAX_STEPS,
         systemPrompt: siteSystemPromptSections,
         systemPromptSuffix: buildSiteSystemPromptSuffix(),
         classifier: keepGenericToolsActive(createDefaultClassifier({ model })),
-        featureFlags: { experimentalSearch },
         includeDefaultTools: false,
         // The cast mirrors the `builtin` one above: builders are legal tool values (setupTools
         // resolves them), the options type just doesn't say so.

@@ -21,7 +21,12 @@ const map = new TomTomMap({
         container: 'sdk-map',
         center: [4.8952, 52.3702],
         zoom: 13,
-        // Bloom and capture read the map canvas back; MapLibre keeps it readable only when asked.
+        // Tilted, because the depth of field is a function of the camera: seen from straight above
+        // every part of the ground is the same distance away and that knob has nothing to do.
+        pitch: 60,
+        maxPitch: 85,
+        // Bloom, the depth of field and capture all read the map canvas back; MapLibre keeps it
+        // readable only when asked.
         canvasContextAttributes: { preserveDrawingBuffer: true },
     },
 });
@@ -52,6 +57,16 @@ const renderPanel = () => {
             field.innerHTML = `<span class="ui-form-label">${name}</span><span class="ui-color-swatch"><input type="color" value="${knob.current}"></span>`;
             const input = field.querySelector('input') as HTMLInputElement;
             input.addEventListener('input', () => effects.set({ [knob.id]: input.value }));
+        } else if (knob.kind === 'colors' && knob.options) {
+            // One named source at a time; '' stands for the empty list, the whole frame.
+            const current = Array.isArray(knob.current) ? (knob.current[0] ?? '') : '';
+            const options = ['', ...knob.options].map(
+                (option) =>
+                    `<option value="${option}"${option === current ? ' selected' : ''}>${option || 'everything'}</option>`,
+            );
+            field.innerHTML = `<span class="ui-form-label">${name}</span><select class="ui-dropdown">${options.join('')}</select>`;
+            const select = field.querySelector('select') as HTMLSelectElement;
+            select.addEventListener('change', () => effects.set({ [knob.id]: select.value ? [select.value] : [] }));
         } else if (knob.range) {
             const { min, max, step } = knob.range;
             field.innerHTML = `<span class="ui-form-label">${name}</span>

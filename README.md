@@ -57,7 +57,7 @@ echo "auto-install-peers=true" >> .npmrc && pnpm add @tomtom-org/maps-sdk
 
 **Services** (`@tomtom-org/maps-sdk/services`, browser + Node.js + React Native) — typed [GeoJSON](https://geojson.org/) from TomTom APIs, usable with or without a map:
 
-- **Search** — `search`, `searchOne`, `autocompleteSearch`, `alongRouteSearch`, `explorationSearch`, `placeById`, `getPOICategories`
+- **Search** — `search`, `searchOne`, `autocompleteSearch`, `alongRouteSearch`, `placeById`, `getPOICategories`
 - **Geocoding and reverse geocoding** — `geocode`, `geocodeOne`, `reverseGeocode`
 - **Routing** — `calculateRoute`, with up to five alternatives, turn-by-turn guidance, toll/ferry/traffic sections and vehicle restrictions
 - **Isochrones (reachable range)** — `calculateReachableRange`, `calculateReachableRanges`, by time, distance, fuel or electric-energy budget

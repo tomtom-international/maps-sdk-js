@@ -30,10 +30,10 @@ them — **it does not restate them.**
    | `plugins/agent-toolkit/` | `plugins/agent-toolkit/AGENTS.md` + `ENGINEERING-GUIDELINES.md` |
    | `plugins/viewport-places/` | `plugins/AGENTS.md` (no dedicated file; see `src/viewportPlaces.ts`) |
    | `plugins/landmarks-3d/` | `plugins/AGENTS.md` (no dedicated file; see `src/Landmarks3D.ts`) |
-   | `plugins/map-effects/` | `plugins/AGENTS.md` (no dedicated file; see `src/MapEffects.ts`) |
+   | `plugins/map-effects/` | `plugins/AGENTS.md` + `plugins/map-effects/AGENTS.md` (every effect ships a measured visual case) |
    | `shared-configs/` | `shared-configs/AGENTS.md` |
    | `documentation/` | `documentation/AGENTS.md` |
-   | `documentation/docs-portal/` | `documentation/docs-portal/AGENTS.md` (guide writing with `SDKGuideLiveCodingExample`) |
+   | `documentation/docs-portal/` | `documentation/docs-portal/AGENTS.md` (guide writing, and which demo component an example gets) |
 
    If the area is unclear, read all package-level `AGENTS.md` files before acting.
 

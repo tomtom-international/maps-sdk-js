@@ -5,6 +5,7 @@ import {
     DisplayRouteSummaryProps,
     defaultRoutingLayers,
     HILLSHADE_SOURCE_ID,
+    mapStyleLayerIDs,
     RoutingModuleConfig,
     TRAFFIC_FLOW_SOURCE_ID,
     TRAFFIC_INCIDENTS_SOURCE_ID,
@@ -1002,6 +1003,21 @@ test.describe('Route section display configuration', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
+    /**
+     * The coordinate a speed limit change stands on, which is where `atChange` posts its sign.
+     *
+     * @remarks
+     * The route's own midpoint frames no sign, since a stretch here runs up to 50 km. Consecutive
+     * sections never share a limit, so any section's start is a change.
+     */
+    const aSpeedLimitChange = (nth: number): [number, number] => {
+        const route = ldevrTestRoutes.features[0];
+        const section = (route.properties.sections.speedLimit ?? [])[nth];
+        if (!section) throw new Error('The fixture carries no speed limit sections to frame.');
+
+        return route.geometry.coordinates[section.startPointIndex] as [number, number];
+    };
+
     test('Speed limits post a sign per section without being asked, and no line at all', async ({ page }) => {
         const mapEnv = await MapTestEnv.loadPageAndMap(page, {
             bounds: ldevrTestRoutes.bbox,
@@ -1010,9 +1026,8 @@ test.describe('Route section display configuration', () => {
         await initRouting(page);
         await showRoutes(page, ldevrTestRoutes);
         // Signs start at zoom 10, where one is about one stretch of road, and the whole of this
-        // route fits well below that — so the map moves onto the route and in.
-        const routeLine = ldevrTestRoutes.features[0].geometry.coordinates as [number, number][];
-        await moveAndZoomTo(page, { center: routeLine[Math.floor(routeLine.length / 2)], zoom: 12 });
+        // route fits well below that — so the map moves onto a limit change and in.
+        await moveAndZoomTo(page, { center: aSpeedLimitChange(1), zoom: 12 });
         await waitForMapIdle(page);
 
         const signLayer = layerID('routeSectionSpeedLimitSign');
@@ -1053,8 +1068,7 @@ test.describe('Route section display configuration', () => {
         });
         await initRouting(page);
         await showRoutes(page, ldevrTestRoutes);
-        const routeLine = ldevrTestRoutes.features[0].geometry.coordinates as [number, number][];
-        await moveAndZoomTo(page, { center: routeLine[Math.floor(routeLine.length / 2)], zoom: 12 });
+        await moveAndZoomTo(page, { center: aSpeedLimitChange(1), zoom: 12 });
         await waitForMapIdle(page);
 
         const signLayer = layerID('routeSectionSpeedLimitSign');
@@ -1077,7 +1091,7 @@ test.describe('Route section display configuration', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test('A sign gives way to the route icons, unless asked to take precedence', async ({ page }) => {
+    test('What a sign gives way to follows its placement, until the knob says otherwise', async ({ page }) => {
         const mapEnv = await MapTestEnv.loadPageAndMap(page, {
             bounds: ldevrTestRoutes.bbox,
             fitBoundsOptions: { padding: 150 },
@@ -1090,13 +1104,27 @@ test.describe('Route section display configuration', () => {
         await showWaypoints(page, [routeLine[0], routeLine.at(-1) ?? routeLine[0]]);
         await waitForMapIdle(page);
 
-        // MapLibre places symbols from the topmost layer down, so giving way means sitting under
-        // the route's own icons — and taking precedence means sitting over them.
+        // MapLibre places symbols from the topmost layer down, so giving way means sitting under the
+        // layer whose symbols win. Every index is read fresh: moving the sign layer shifts the rest.
         const signLayer = layerID('routeSectionSpeedLimitSign');
         const waypointLayer = layerID('routeWaypointSymbol');
+        const labelIndex = () => getLayerIndex(page, mapStyleLayerIDs.lowestLabel);
+
+        // `atChange`, the default: each sign is the only one posting its change, so it yields to
+        // the route's icons and outranks the map's labels.
+        expect(await getLayerIndex(page, signLayer)).toBeGreaterThan(await labelIndex());
         expect(await getLayerIndex(page, signLayer)).toBeLessThan(await getLayerIndex(page, waypointLayer));
 
-        await applyConfig(page, { sections: { speedLimit: { sign: { priority: 'aboveRouteIcons' } } } });
+        // `along` repeats each sign, so one lost to a place name is posted again further along —
+        // hence yielding to the labels by default there.
+        await applyConfig(page, { sections: { speedLimit: { sign: { placement: 'along' } } } });
+        await waitForMapIdle(page);
+        expect(await getLayerIndex(page, signLayer)).toBeLessThan(await labelIndex());
+
+        // And the knob outranks the placement's default either way.
+        await applyConfig(page, {
+            sections: { speedLimit: { sign: { placement: 'along', priority: 'aboveRouteIcons' } } },
+        });
         await waitForMapIdle(page);
         expect(await getLayerIndex(page, signLayer)).toBeGreaterThan(await getLayerIndex(page, waypointLayer));
 
@@ -1142,6 +1170,23 @@ test.describe('Route section display configuration', () => {
         // Map-aligned, and turned by the bearing the feature carries rather than by a constant.
         expect(await layoutProperty(page, crossingLayer, 'text-rotation-alignment')).toBe('map');
         expect(JSON.stringify(await layoutProperty(page, crossingLayer, 'text-rotate'))).toContain('bearing');
+
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
+    test('A border crossing draws under the waypoint pins', async ({ page }) => {
+        const mapEnv = await MapTestEnv.loadPageAndMap(page, { bounds: spainToFranceAlternatives.bbox });
+        await initRouting(page);
+        await showRoutes(page, spainToFranceAlternatives);
+        // A plaque draws whatever is in its place, so the pins have to be on the map for the
+        // ordering to mean anything. Where they sit along the route does not matter to it.
+        const routeLine = spainToFranceAlternatives.features[0].geometry.coordinates;
+        await showWaypoints(page, [routeLine[0], routeLine.at(-1) ?? routeLine[0]]);
+        await waitForMapIdle(page);
+
+        expect(await getLayerIndex(page, layerID('routeCountryCrossing'))).toBeLessThan(
+            await getLayerIndex(page, layerID('routeWaypointSymbol')),
+        );
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });

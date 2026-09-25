@@ -3,12 +3,15 @@ import { validateRequestSchema } from '../../shared/schema/validation';
 import { reachableRangeRequestValidationConfig } from '../reachableRangeRequestSchema';
 import type { ReachableRangeParams } from '../types/reachableRangeParams';
 
-describe.skip('Reachable range request schema validation', () => {
+describe('Reachable range request schema validation', () => {
     const apiKey = 'APIKEY';
     const commonBaseUrl = 'https://api-test.tomtom.com';
     const config = reachableRangeRequestValidationConfig;
 
-    test("it should fail when api Key isn't defined", () => {
+    // Skipped: `apiKey` and `commonBaseURL` are deliberately optional on
+    // `commonServiceRequestSchema` so proxy deployments can omit the key entirely
+    // (see `isProxyCredentialsMode`). Validation is not expected to reject either.
+    test.skip("it should fail when api Key isn't defined", () => {
         const validationCall = () =>
             validateRequestSchema<ReachableRangeParams>(
                 { budget: { type: 'timeMinutes', value: 30 }, origin: [10, 20], commonBaseURL: commonBaseUrl },
@@ -22,7 +25,10 @@ describe.skip('Reachable range request schema validation', () => {
         );
     });
 
-    test("it should fail when common base URL isn't defined", () => {
+    // Skipped: `apiKey` and `commonBaseURL` are deliberately optional on
+    // `commonServiceRequestSchema` so proxy deployments can omit the key entirely
+    // (see `isProxyCredentialsMode`). Validation is not expected to reject either.
+    test.skip("it should fail when common base URL isn't defined", () => {
         const validationCall = () =>
             validateRequestSchema<ReachableRangeParams>(
                 { budget: { type: 'timeMinutes', value: 30 }, origin: [10, 20], apiKey },
@@ -79,7 +85,10 @@ describe.skip('Reachable range request schema validation', () => {
         );
     });
 
-    test('it should fail when trying to input arrival time (only departAt allowed)', () => {
+    // Skipped: the refinement this asserts is commented out in
+    // `reachableRangeRequestSchema.ts` (`refinements: [evRangeRefinement,
+    // fuelRangeRefinement, departArriveRefinement]`). Restore the refinement to re-enable.
+    test.skip('it should fail when trying to input arrival time (only departAt allowed)', () => {
         const validationCall = () =>
             validateRequestSchema<ReachableRangeParams>(
                 {
@@ -104,7 +113,10 @@ describe.skip('Reachable range request schema validation', () => {
         );
     });
 
-    test("it should fail when budget is EV but vehicle params aren't defined", () => {
+    // Skipped: the refinement this asserts is commented out in
+    // `reachableRangeRequestSchema.ts` (`refinements: [evRangeRefinement,
+    // fuelRangeRefinement, departArriveRefinement]`). Restore the refinement to re-enable.
+    test.skip("it should fail when budget is EV but vehicle params aren't defined", () => {
         const validationCall = () =>
             validateRequestSchema<ReachableRangeParams>(
                 {
@@ -119,7 +131,10 @@ describe.skip('Reachable range request schema validation', () => {
         expect(validationCall).toThrow(expect.objectContaining({}));
     });
 
-    test("it should fail when budget is EV but vehicle params aren't fully defined", () => {
+    // Skipped: the refinement this asserts is commented out in
+    // `reachableRangeRequestSchema.ts` (`refinements: [evRangeRefinement,
+    // fuelRangeRefinement, departArriveRefinement]`). Restore the refinement to re-enable.
+    test.skip("it should fail when budget is EV but vehicle params aren't fully defined", () => {
         const validationCall = () =>
             validateRequestSchema<ReachableRangeParams>(
                 {
@@ -141,7 +156,10 @@ describe.skip('Reachable range request schema validation', () => {
         );
     });
 
-    test('it should fail when budget is EV but vehicle params are for combustion', () => {
+    // Skipped: the refinement this asserts is commented out in
+    // `reachableRangeRequestSchema.ts` (`refinements: [evRangeRefinement,
+    // fuelRangeRefinement, departArriveRefinement]`). Restore the refinement to re-enable.
+    test.skip('it should fail when budget is EV but vehicle params are for combustion', () => {
         const validationCall = () =>
             validateRequestSchema<ReachableRangeParams>(
                 {
@@ -167,7 +185,10 @@ describe.skip('Reachable range request schema validation', () => {
         expect(validationCall).toThrow(expect.objectContaining({}));
     });
 
-    test("it should fail when budget is about fuel but vehicle params aren't defined", () => {
+    // Skipped: the refinement this asserts is commented out in
+    // `reachableRangeRequestSchema.ts` (`refinements: [evRangeRefinement,
+    // fuelRangeRefinement, departArriveRefinement]`). Restore the refinement to re-enable.
+    test.skip("it should fail when budget is about fuel but vehicle params aren't defined", () => {
         const validationCall = () =>
             validateRequestSchema<ReachableRangeParams>(
                 {

@@ -6,11 +6,12 @@ Every effect is named by the problem it solves, and off by default:
 
 | Effect | Knobs | Solves |
 | --- | --- | --- |
-| Bloom | `bloom.intensity`, `bloom.radius`, `bloom.threshold` | Emphasis on dark and driving styles — lit roads, traffic tubes, route lines glow |
+| Bloom | `bloom.intensity`, `bloom.radius`, `bloom.threshold`, `bloom.only`, `bloom.onlyTolerance` | Emphasis on dark and driving styles — lit roads, traffic tubes, route lines glow, optionally only in the colours `bloom.only` lists |
 | Grade | `grade.brightness`, `grade.contrast`, `grade.saturation` | Muting the base map under a data overlay |
 | Tint | `tint.color`, `tint.opacity` | Muting the base map; matching a brand |
 | Fog | `fog.intensity`, `fog.reach` | Depth cue and de-emphasis of far context |
 | Edge blur | `edgeBlur.intensity`, `edgeBlur.reach` | Focus on the centre of the view |
+| Depth of field | `depthOfField.intensity`, `depthOfField.focus`, `depthOfField.band`, `depthOfField.bokeh` | Depth on a tilted map — a GPU pass whose blur grows with distance, with highlights returning as discs; a flat map has no depth, and the effect ends there |
 | Vignette | `vignette.intensity`, `vignette.reach` | Focus on the centre of the view |
 
 ## Docs & examples
@@ -26,7 +27,7 @@ Note: this plugin declares `@tomtom-org/maps-sdk` and `maplibre-gl` as peer depe
 npm install @tomtom-org/maps-sdk maplibre-gl @tomtom-org/maps-sdk-plugin-map-effects
 ```
 
-1. Follow the SDK [Project setup](https://docs.tomtom.com/maps-sdk-js/guides/introduction/project-setup) or the Map [quickstart](https://docs.tomtom.com/maps-sdk-js/guides/map/quickstart) to create and initialize a `TomTomMap`. For bloom and capture, create it with `mapLibre: { canvasContextAttributes: { preserveDrawingBuffer: true } }`.
+1. Follow the SDK [Project setup](https://docs.tomtom.com/maps-sdk-js/guides/introduction/project-setup) or the Map [quickstart](https://docs.tomtom.com/maps-sdk-js/guides/map/quickstart) to create and initialize a `TomTomMap`. For bloom, the depth of field and capture, create it with `mapLibre: { canvasContextAttributes: { preserveDrawingBuffer: true } }`.
 
 2. Import and use the plugin:
 

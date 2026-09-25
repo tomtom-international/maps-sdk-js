@@ -11,21 +11,18 @@
 
 import type { FeatureFlags } from '../../types';
 
-const EXPERIMENTAL_AREA_FIELDS_DOC =
-    '  // Experimental — populated only when `experimentalSearch` is on and the place came from\n' +
-    '  // the exploration-search backend (DE / NL / FR area-tag pipeline).\n' +
-    '  areaId?: string;       // id of the surrounding small-area polygon (few km², not a whole municipality)\n' +
-    '  areaCountry?: string;  // ISO2 country of the area polygon\n' +
-    '  areaTags?: string[];   // e.g. "coastal", "walkable", "transit_connected"\n';
-
 /**
  * Build the Place properties schema doc embedded in tool descriptions for
  * sandboxed code. `Places` is a FeatureCollection of Point Features; only the
  * `properties` shape (the TomTom-specific bit) is documented here.
  *
+ * @remarks
+ * Takes {@link FeatureFlags} so a future flag can vary the doc; no flag
+ * currently does, so every caller gets the same text.
+ *
  * @ignore
  */
-export const buildPlacesSchemaDoc = (flags: FeatureFlags): string =>
+export const buildPlacesSchemaDoc = (_flags: FeatureFlags): string =>
     'Each `placesByEntry[id]` is a FeatureCollection of Point Features. `Place.properties` shape:\n' +
     '```ts\n' +
     'type PlaceProperties = {\n' +
@@ -54,7 +51,6 @@ export const buildPlacesSchemaDoc = (flags: FeatureFlags): string =>
     '  info?: string;\n' +
     '  // Geography hits also carry:\n' +
     '  geographyType?: Array<"Country"|"CountrySubdivision"|"CountrySecondarySubdivision"|"CountryTertiarySubdivision"|"Municipality"|"MunicipalitySubdivision"|"Neighbourhood"|"PostalCodeArea">;\n' +
-    (flags.experimentalSearch ? EXPERIMENTAL_AREA_FIELDS_DOC : '') +
     '  // Optional: mapcodes, entryPoints, addressRanges, relatedPois, chargingPark, dataSources.\n' +
     '};\n' +
     '```\n' +
@@ -69,8 +65,8 @@ export const buildPlacesSchemaDoc = (flags: FeatureFlags): string =>
     'such data behind it.';
 
 /**
- * Default-flag (`experimentalSearch: false`) Places schema doc — preserved as a
- * named constant so non-flag-aware tools keep working.
+ * Places schema doc — preserved as a named constant so non-flag-aware tools
+ * keep working.
  *
  * @ignore
  */

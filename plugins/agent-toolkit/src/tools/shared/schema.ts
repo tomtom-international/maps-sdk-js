@@ -372,7 +372,7 @@ export const whereSchema = z.union([withinWhereSchema, nearbyWhereSchema, global
 
 // --- Shared `within` fields (plural form) for discoverPlaces + getTrafficIncidents ---------------
 // Lifted from discover-places.ts so both tools build their `within` schemas from the same field
-// definitions. `experimentalWithinFields` (explorationSearch-only) stays local to discover-places.
+// definitions.
 
 /**
  * The multi-region `within` field block shared by discoverPlaces and getTrafficIncidents.

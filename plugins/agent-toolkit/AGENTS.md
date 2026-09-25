@@ -140,7 +140,7 @@ The toolkit's "tool" + "state slice" abstractions appear in many places that are
 **Removed or renamed a public tool / type / slice** — in addition to the root-level surfaces in `.claude/skills/tomtom-maps-sdk-js-preflight`, also sweep:
 - `system-prompt.ts` and every per-tool `description` / `classificationPrompt` for stale name references
 - `documentation/docs-portal/guides/plugins/agent-toolkit/*.mdx` and the `navigation.yml` entry that exposes the affected page
-- decide on a deprecated alias or a major-version bump in `.release-please-manifest.json` — silently dropping a public export is a breaking release
+- decide on a deprecated alias or a `minor` changeset (the pre-1.0 breaking bump) — silently dropping a public export is a breaking release
 - `src/tests/scenarios/` — update the `getExamplePrompts('<oldName>')` argument in the owning file (find it with `grep -rl`), and rename or delete that file if it covered only this tool
 
 ## Scenario tests

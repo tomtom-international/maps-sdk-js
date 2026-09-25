@@ -11,9 +11,11 @@
  * - `number`: an absolute number with a range.
  * - `color`: a CSS colour string.
  * - `enum`: one of the knob's `options`.
+ * - `colors`: a list of colours, each a CSS colour string or one of the knob's `options` — names
+ *   the module resolves to colours, such as styling knob ids. An empty list is the knob's default.
  * @group Shared
  */
-export type KnobKind = 'toggle' | 'factor' | 'number' | 'color' | 'enum';
+export type KnobKind = 'toggle' | 'factor' | 'number' | 'color' | 'enum' | 'colors';
 
 /**
  * Inclusive bounds for a `factor` or `number` knob. `step` is what a slider would use; some ranges
@@ -62,7 +64,7 @@ export type KnobDescriptor<T = unknown> = {
     overridden: boolean;
     /** Inclusive bounds, for `factor` and `number` knobs. */
     range?: KnobRange;
-    /** The allowed values, for `enum` knobs. */
+    /** The allowed values, for `enum` knobs; the names accepted besides CSS colours, for `colors` knobs. */
     options?: readonly string[];
     /**
      * Whether the knob has anything to work on in the loaded style. Omitted by modules whose knobs

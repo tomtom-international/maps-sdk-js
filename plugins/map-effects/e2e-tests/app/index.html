@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Map effects visual harness</title>
+        <style>
+            body {
+                margin: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+                background: #666;
+            }
+            /* `isolation` keeps the bloom canvas' `screen` blend inside the case: without it the
+               glow blends with the page behind, and a shot of one case would depend on the
+               harness' own background. */
+            #case {
+                position: relative;
+                isolation: isolate;
+                overflow: hidden;
+                width: 240px;
+                height: 240px;
+            }
+            /* The class the plugin looks for to insert its overlays after the map's canvas. */
+            .maplibregl-canvas-container,
+            #subject {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="case" data-testid="case">
+            <div class="maplibregl-canvas-container"><canvas id="subject"></canvas></div>
+        </div>
+        <script type="module" src="./main.ts"></script>
+    </body>
+</html>

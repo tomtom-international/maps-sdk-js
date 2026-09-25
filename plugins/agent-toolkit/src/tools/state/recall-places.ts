@@ -53,7 +53,7 @@ export const buildRecallPlacesOutputSchema = (flags: FeatureFlags) => {
     ]);
 };
 
-/** Default-flag (`experimentalSearch: false`) output schema. */
+/** Output schema built with no feature flags set. */
 export const recallPlacesOutputSchema = buildRecallPlacesOutputSchema({});
 
 export const recallPlacesDescription =
@@ -110,7 +110,7 @@ export const buildExecuteRecallPlaces =
             return { error: `No entry found with id "${id}"` };
         }
 
-        const places = summarizePlaces(entry.data, flags);
+        const places = summarizePlaces(entry.data);
 
         return {
             id: entry.id,
@@ -121,7 +121,7 @@ export const buildExecuteRecallPlaces =
         };
     };
 
-/** Default-flag (`experimentalSearch: false`) executor. */
+/** Executor built with no feature flags set. */
 export const executeRecallPlaces = buildExecuteRecallPlaces({});
 
 /**

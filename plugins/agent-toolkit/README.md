@@ -262,9 +262,6 @@ const agent = createMapAgent<MyState>(map, {
     // Max tool-loop iterations (default: 10)
     maxSteps: 15,
 
-    // Opt into experimental features (subject to change without notice)
-    featureFlags: { experimentalSearch: true },
-
     // Provider-specific options forwarded to the AI SDK on every step
     providerOptions: {
         openai: { reasoningEffort: 'low', reasoningSummary: 'auto' },

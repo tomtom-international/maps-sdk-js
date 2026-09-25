@@ -251,7 +251,7 @@ describe('wire → SDK guidance/section conversions', () => {
                     {
                         routeOffsetInMeters: 0,
                         maneuver: 'passTollgate',
-                        maneuverPoint: { latitude: 0, longitude: 0 },
+                        maneuverPoint: { type: 'Point', coordinates: [0, 0] },
                         drivingSide: 'left',
                         landmark: 'atTrafficLight',
                         distanceToPreviousTrafficLightInMeters: 12,

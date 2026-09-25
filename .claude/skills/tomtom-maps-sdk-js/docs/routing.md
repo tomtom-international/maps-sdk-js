@@ -609,7 +609,8 @@ ferry layer, so an absent layer reads the same as a type switched off.
 ### Speed limits are posted as signs, not banded
 
 `speedLimit` is the one type whose information is a number rather than a stretch, so the module
-posts a **road sign per section** and draws no line at all. Nothing has to be configured for it:
+posts a **road sign where the limit changes** and draws no line at all. Nothing has to be
+configured for it:
 
 ```ts
 // Ask for `country` as well and every sign takes the face and unit of the country it stands in.
@@ -639,7 +640,7 @@ is not configurable — `sign.minzoom` is the knob for how early they appear at 
 const routingModule = await RoutingModule.create(map, {
     sections: {
         speedLimit: {
-            sign: { minzoom: 8, priority: 'aboveRouteIcons', unit: 'mph' },
+            sign: { placement: 'along', minzoom: 9, priority: 'aboveRouteIcons', unit: 'mph' },
         },
     },
 });
@@ -647,18 +648,22 @@ const routingModule = await RoutingModule.create(map, {
 
 - **`visible` switches the signs**, because they are the whole of what the type draws — there is no
   second switch, and none of the line knobs (`color`, `width`, `style`, `pattern`, `icon`) apply.
-- **A sign is repeated along its stretch**, not drawn once, so a reader zoomed into the middle of a
-  long stretch still sees the limit they are on. A stretch too short on screen to fit a sign draws
-  none, which is what thins a dense route; where two compete, the longer stretch wins.
-- **`sign.minzoom` defaults to 9.** Further out, a route's stretches fall in the same few pixels, so
-  the signs that survive are an arbitrary sample of the drive rather than its limits — and they
-  survive by pushing against the waypoints and incidents. Lower it for a map about the limits.
+- **`sign.placement` defaults to `'atChange'`**: one sign where the limit changes, and none after
+  it. That is exact — the sections tile the route end to end and no two consecutive ones share a
+  limit, so every boundary is a change. `'along'` repeats the sign down the stretch instead.
+  - A stretch can run 50 km, so use `'along'`, or your own readout, when the limit in force has to
+    be on screen at any zoom.
+- **`sign.minzoom` defaults to 10**, where the signs stop shrinking. Further out, a route's changes
+  fall in the same few pixels and the survivors are an arbitrary sample of the drive.
 - **`sign.priority` decides which symbol survives a collision**, since MapLibre resolves them from
-  the topmost layer down and the lower layer gives way. `belowRouteIcons` (the default) yields to
-  waypoint pins, charging stops and incident icons — each saying something the road cannot — while
-  taking precedence over the base map's labels. `belowMapLabels` yields to those labels as well, so
-  a sign never lands on a place name, at the cost of showing fewer of them in a city.
+  the topmost layer down and the lower layer gives way. `belowMapLabels` yields to the base map's
+  labels as well as the route's icons; `belowRouteIcons` yields to the route's icons only;
   `aboveRouteIcons` yields to nothing.
+  - **The default follows the placement**: `belowRouteIcons` under `'atChange'`, where that sign is
+    the only one posting its change; `belowMapLabels` under `'along'`, where the next repeat posts
+    the same limit again.
+- **Both placements read the section's own line**, so `getShown().speedLimitSections` and
+  `events.speedLimitSections` are the surface either way.
 - **A route carries more sections than fit**, since it splits wherever its geometry does. The signs
   that fit are drawn; the rest are dropped by collision rather than thinned by configuration.
 - The sign layer is `routeSectionSpeedLimitSign`, and every derived fact is on the feature for a
@@ -693,7 +698,9 @@ await routingModule.showRoutes(routes);   // the crossings draw themselves
 - **Scope and shown data**: `events.countryCrossings` and `getShown().countryCrossings`. Each
   feature carries `fromCountryCode`, `toCountryCode`, the composed `label` and the `bearing`; a
   **clicked** one also carries `fromSection` and `toSection`, the two `CountrySectionProps` it joins.
-- The layer is `routeCountryCrossing`, overridable under `layers.countryCrossings`.
+- The layer is `routeCountryCrossing`, overridable under `layers.countryCrossings`. It is anchored
+  under the waypoint pins and the summary bubbles, so a plaque never covers a stop; a `beforeID` on
+  that override restacks it.
 
 Each section also gets an event scope and a `getShown()` entry. The eleven generated types are keyed
 `<type>Sections`; the other five keep their source names (`ferries`, `tollRoads`, `incidents`,

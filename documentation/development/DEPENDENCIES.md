@@ -185,17 +185,22 @@ pnpm install
 
 # Update pnpm lockfile
 pnpm install --no-frozen-lockfile
-
-# Force resolution of specific version
-# Add to package.json:
-{
-  "pnpm": {
-    "overrides": {
-      "package-name": "^1.0.0"
-    }
-  }
-}
 ```
+
+Force the resolution of a transitive dependency — for example to lift one past a security
+advisory its parent has not picked up yet — from the `overrides` block of `pnpm-workspace.yaml`
+(pnpm 11 no longer reads the `pnpm.overrides` field of `package.json`). Suffix the key with a
+major version to scope the override to one line of the package:
+
+```yaml
+overrides:
+  package-name: ^1.0.0
+  "other-package@7": ^7.29.1
+```
+
+An advisory with no fixed release at all leaves neither an override nor a bump to reach for. Where
+the package arrives through something the repository does not need, drop that instead —
+`ignoredOptionalDependencies` in the same file skips one optional dependency of a transitive parent.
 
 ## Dependency Categories
 

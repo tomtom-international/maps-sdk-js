@@ -1,6 +1,6 @@
 import { expect, type Page, test } from '@playwright/test';
-import { PROD_TEST_SERVER_PORT } from '../../playwright.config';
 import { TAG_PROD } from '../../src/e2e-test-utils/e2eTestConstants';
+import { EXTRA_SHOT_OPTIONS, loadProdExample } from '../../src/e2e-test-utils/loadProdExample';
 
 /**
  * What each use case this playground ships actually does to the map.
@@ -14,6 +14,10 @@ import { TAG_PROD } from '../../src/e2e-test-utils/e2eTestConstants';
  * The tolerance is wide because an effect is a full-canvas composite: traffic tubes move through the
  * day and the whole frame shifts with them. What a shot here has to catch is an effect not landing
  * at all, which changes far more of the frame than that.
+ *
+ * What each effect *does* is measured in the plugin instead — `plugins/map-effects/e2e-tests`, over
+ * a drawn map that holds still, where a claim like "the near ground stayed sharp and the far ground
+ * did not" can be asserted rather than eyeballed. These shots are the half that needs a real map.
  */
 
 /** The dropdown values, which are the keys of the `useCases` table in the example's own source. */
@@ -22,9 +26,6 @@ const USE_CASES = [
     { value: 'night-driving', shot: 'use-case-night-driving.png' },
     { value: 'focus', shot: 'use-case-focus.png' },
 ] as const;
-
-/** Enough of the frame may differ that traffic moving through the day does not fail the run. */
-const SHOT_TOLERANCE = { maxDiffPixelRatio: 0.15, timeout: 30000 } as const;
 
 /**
  * One shot per effect, each alone and turned up far enough to read.
@@ -63,28 +64,20 @@ const ISOLATED_EFFECTS = [
         shot: 'effect-vignette.png',
         knobs: [{ group: 'vignette', knob: 'intensity', value: -1 }],
     },
+    {
+        // The one effect that runs on the GPU, and the one no jsdom test can reach: a shader that
+        // fails to compile, or a uniform bound to the wrong name, shows up here as the map
+        // unchanged. A narrow band and full bokeh so both halves of it are legible.
+        shot: 'effect-depth-of-field.png',
+        knobs: [
+            { group: 'depthOfField', knob: 'intensity', value: 28 },
+            { group: 'depthOfField', knob: 'band', value: 0.1 },
+            { group: 'depthOfField', knob: 'bokeh', value: 1 },
+        ],
+    },
 ] as const;
 
-/**
- * Loads the playground and waits for the map, the traffic tubes and the first composite.
- *
- * @remarks
- * Bloom reads the canvas back, so the shot has to wait for traffic to have drawn — an empty dark
- * street map composites to something very close to itself, and the shot would say nothing.
- */
-const loadPlayground = async (page: Page): Promise<string[]> => {
-    const consoleErrors: string[] = [];
-    page.on('console', (message) => {
-        if (message.type() === 'error') consoleErrors.push(message.text());
-    });
-
-    await page.goto(`http://localhost:${PROD_TEST_SERVER_PORT}/map-effects-playground/dist/prod/index.html`);
-    await page.waitForSelector('#sdk-map canvas', { timeout: 30000 });
-    await page.waitForLoadState('networkidle', { timeout: 30000 });
-    await page.waitForTimeout(6000);
-
-    return consoleErrors;
-};
+const loadPlayground = (page: Page): Promise<string[]> => loadProdExample(page, 'map-effects-playground');
 
 /** Applies one use case through the dropdown the example builds its panel from. */
 const applyUseCase = async (page: Page, value: string): Promise<void> => {
@@ -113,7 +106,7 @@ test.describe('map effects use cases', () => {
     test('every effect off is the map the other shots are compared against', { tag: TAG_PROD }, async ({ page }) => {
         const consoleErrors = await loadPlayground(page);
 
-        await expect(page).toHaveScreenshot('use-case-none.png', SHOT_TOLERANCE);
+        await expect(page).toHaveScreenshot('use-case-none.png', EXTRA_SHOT_OPTIONS);
         expect(consoleErrors).toHaveLength(0);
     });
 
@@ -122,7 +115,7 @@ test.describe('map effects use cases', () => {
             const consoleErrors = await loadPlayground(page);
             await applyUseCase(page, useCase.value);
 
-            await expect(page).toHaveScreenshot(useCase.shot, SHOT_TOLERANCE);
+            await expect(page).toHaveScreenshot(useCase.shot, EXTRA_SHOT_OPTIONS);
             expect(consoleErrors).toHaveLength(0);
         });
     }
@@ -138,7 +131,7 @@ test.describe('map effects use cases', () => {
                 await setKnob(page, knob.group, knob.knob, knob.value);
             }
 
-            await expect(page).toHaveScreenshot(effect.shot, SHOT_TOLERANCE);
+            await expect(page).toHaveScreenshot(effect.shot, EXTRA_SHOT_OPTIONS);
             expect(consoleErrors).toHaveLength(0);
         });
     }
@@ -152,7 +145,7 @@ test.describe('map effects use cases', () => {
         await setKnob(page, 'bloom', 'intensity', 1);
         await setKnob(page, 'bloom', 'threshold', 0.2);
 
-        await expect(page).toHaveScreenshot('effect-bloom-strong.png', SHOT_TOLERANCE);
+        await expect(page).toHaveScreenshot('effect-bloom-strong.png', EXTRA_SHOT_OPTIONS);
         expect(consoleErrors).toHaveLength(0);
     });
 });
