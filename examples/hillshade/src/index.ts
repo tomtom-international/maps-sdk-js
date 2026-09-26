@@ -1,5 +1,5 @@
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import { HillshadeModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { TerrainModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import './style.css';
 import { API_KEY } from './config';
 
@@ -14,5 +14,5 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
             zoom: 7,
         },
     });
-    await HillshadeModule.get(map, { visible: true });
+    await TerrainModule.get(map, { hillshade: true });
 })();

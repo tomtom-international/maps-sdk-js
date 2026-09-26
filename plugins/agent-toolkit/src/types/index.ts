@@ -101,7 +101,7 @@ export type ToolState = {
     mapPOIs: MapPOIsState;
     /** Route calculation, waypoint management, and planning parameter state. */
     routing: RoutingState;
-    /** Base map display: style, language, viewport, layers, and hillshade. */
+    /** Base map display: style, language, viewport and layers. */
     baseMap: BaseMapState;
     /** Traffic tile overlays: flow tiles + incident overlay tiles. */
     trafficTiles: TrafficTilesState;

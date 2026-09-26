@@ -36,7 +36,7 @@ type SummaryQueryType = 'NEARBY' | 'NON_NEAR';
  * });
  *
  * const summary = results.summary;
- * console.log(`Found ${summary.totalResults} total results`);
+ * console.log(`Found ${summary.totalResults ?? 'an unknown number of'} total results`);
  * console.log(`Showing ${summary.numResults} results`);
  * console.log(`Query type: ${summary.queryType}`); // 'NEARBY'
  * console.log(`Search took ${summary.queryTime}ms`);
@@ -86,7 +86,8 @@ export type SearchSummary = {
      * Number of results included in this response.
      *
      * This is the actual count of features in the results array,
-     * which may be less than `totalResults` due to pagination limits.
+     * which may be less than `totalResults` due to pagination limits. Unlike `totalResults` this
+     * is always present — it is the length of the array you were given.
      *
      * @remarks
      * Controlled by the `limit` parameter in the search request.
@@ -130,10 +131,11 @@ export type SearchSummary = {
      * regardless of pagination limits.
      *
      * @remarks
-     * Use this with `offset` and `numResults` to implement pagination:
+     * Optional — a total is not guaranteed, so guard it rather than assuming a number. Where it
+     * is present, use it with `offset` and `numResults` to paginate:
      * - Current page: `offset / limit + 1`
-     * - Total pages: `Math.ceil(totalResults / limit)`
-     * - Has more results: `offset + numResults < totalResults`
+     * - Total pages: `totalResults === undefined ? undefined : Math.ceil(totalResults / limit)`
+     * - Has more results: `totalResults !== undefined && offset + numResults < totalResults`
      *
      * @example
      * ```typescript
@@ -144,7 +146,7 @@ export type SearchSummary = {
      * // Can fetch more with offset: 10, 20, 30, 40
      * ```
      */
-    totalResults: number;
+    totalResults?: number;
 
     /**
      * Maximum fuzzy matching level used to find results.
@@ -162,6 +164,9 @@ export type SearchSummary = {
      * If results are found with exact or near-exact matching, this will be low.
      * If the query has typos, this increases to find matches.
      *
+     * Optional — where match strictness is not reported the field is absent rather than `0`, so
+     * read a missing value as "not reported" rather than as an exact match.
+     *
      * @example
      * ```typescript
      * // Query: "amstrdam" (typo)
@@ -171,7 +176,7 @@ export type SearchSummary = {
      * fuzzyLevel: 0  // Exact match, no fuzzy matching needed
      * ```
      */
-    fuzzyLevel: number;
+    fuzzyLevel?: number;
 
     /**
      * Geographic position used to bias search results.

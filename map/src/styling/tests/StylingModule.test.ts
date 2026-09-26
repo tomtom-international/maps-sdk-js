@@ -37,6 +37,8 @@ const makeMapLibreMock = (
         getLayer: vi.fn((id: string) => state.layers.find((layer) => layer.id === id)),
         setLayoutProperty: vi.fn(),
         setPaintProperty: vi.fn(),
+        getPaintProperty: vi.fn(),
+        getLayoutProperty: vi.fn(),
         setLayerZoomRange: vi.fn(),
         getFilter: vi.fn((id: string) => {
             const layer = state.layers.find((candidate) => candidate.id === id);
@@ -45,7 +47,6 @@ const makeMapLibreMock = (
         setFilter: vi.fn(),
         setProjection: vi.fn(),
         setSky: vi.fn(),
-        setTerrain: vi.fn(),
         // The module paints the container behind the canvas, which a globe leaves visible.
         getContainer: vi.fn(() => container),
         isStyleLoaded: vi.fn().mockReturnValue(true),
@@ -91,6 +92,8 @@ describe('StylingModule', () => {
     let warn: ReturnType<typeof vi.spyOn>;
 
     beforeEach(() => {
+        // A fresh spy per test: spying on an already spied console.warn would keep the old counts.
+        vi.restoreAllMocks();
         mapLibre = makeMapLibreMock(orbisStreetLightLayers);
         ({ tomtomMap, styleChangeHandlers } = makeTomTomMapMock(mapLibre));
         warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
@@ -289,14 +292,10 @@ describe('StylingModule', () => {
     });
 
     describe('view knobs (map-level)', () => {
-        test('projection, sky and terrain default to what the style declares', async () => {
+        test('projection and sky default to what the style declares', async () => {
             const styling = await StylingModule.get(tomtomMap);
             expect(styling.get('view.projection')).toBe('mercator');
             expect(styling.get('view.sky')).toBe(false);
-            expect(styling.get('view.terrain')).toBe(false);
-            expect(styling.get('view.terrainExaggeration')).toBe(1);
-            // The hillshade raster-dem source is what makes terrain reachable.
-            expect(styling.describe().knobs.find((knob) => knob.id === 'view.terrain')?.available).toBe(true);
         });
 
         test('a globe with a sky: the sky is written with atmosphere, coloured by the colour knobs', async () => {
@@ -398,16 +397,6 @@ describe('StylingModule', () => {
             // Had the capture run again it would have read '#05070d' and reset would never come back.
             styling.reset('view.spaceColor');
             expect(painted.container.style.backgroundColor).toBe('rgb(18, 52, 86)');
-        });
-
-        test('terrain hangs off the raster-dem source with the exaggeration knob', async () => {
-            const styling = await StylingModule.get(tomtomMap);
-            styling.set('view.terrain', true);
-            expect(mapLibre.setTerrain).toHaveBeenLastCalledWith({ source: 'hillshade', exaggeration: 1 });
-            styling.set('view.terrainExaggeration', 1.5);
-            expect(mapLibre.setTerrain).toHaveBeenLastCalledWith({ source: 'hillshade', exaggeration: 1.5 });
-            styling.set('view.terrain', false);
-            expect(mapLibre.setTerrain).toHaveBeenLastCalledWith(null);
         });
     });
 
@@ -523,6 +512,70 @@ describe('StylingModule', () => {
         });
     });
 
+    describe('hillshade appearance and base-map group toggles', () => {
+        test('hillshade knobs set the shading paint literals and lift the zoom cap', async () => {
+            const styling = await StylingModule.get(tomtomMap);
+            expect(styling.get('hillshade.method')).toBe('standard');
+            expect(styling.get('hillshade.maxZoom')).toBe(13);
+
+            styling.set('hillshade.method', 'multidirectional');
+            styling.set('hillshade.shadowColor', '#112233');
+            styling.set('hillshade.exaggeration', 0.6);
+            styling.set('hillshade.maxZoom', 22);
+            expect(lastValueSetFor(mapLibre.setPaintProperty, 'Hillshade', 'hillshade-method')).toBe(
+                'multidirectional',
+            );
+            expect(lastValueSetFor(mapLibre.setPaintProperty, 'Hillshade', 'hillshade-shadow-color')).toBe('#112233');
+            expect(lastValueSetFor(mapLibre.setPaintProperty, 'Hillshade', 'hillshade-exaggeration')).toBe(0.6);
+            expect(mapLibre.setLayerZoomRange).toHaveBeenLastCalledWith('Hillshade', 0, 22);
+
+            styling.reset('hillshade.exaggeration');
+            const restored = lastValueSetFor(
+                mapLibre.setPaintProperty,
+                'Hillshade',
+                'hillshade-exaggeration',
+            ) as unknown[];
+            expect(restored[0]).toBe('interpolate');
+            expect(() => styling.set('hillshade.method', 'fancy' as never)).toThrow(RangeError);
+        });
+
+        test('every base-map layer group is a toggle with the group’s shipped visibility as default', async () => {
+            const styling = await StylingModule.get(tomtomMap);
+            // The building groups are the `buildings.*` knobs, so they have no `basemap.*` twin that
+            // could disagree with them about what is shown.
+            const ids = styling.describe().knobs.map((knob) => knob.id);
+            expect(ids).not.toContain('basemap.buildings2D');
+            expect(ids).not.toContain('basemap.buildings3D');
+            expect(ids).toEqual(expect.arrayContaining(['buildings.footprints', 'buildings.3d']));
+            expect(styling.get('basemap.water')).toBe(true);
+            styling.set('basemap.railways', false);
+            expect(lastValueSetFor(mapLibre.setLayoutProperty, 'Surface - Railway outline', 'visibility')).toBe('none');
+            expect(valuesSetFor(mapLibre.setLayoutProperty, 'Surface - Motorway & Trunk', 'visibility')).toHaveLength(
+                0,
+            );
+        });
+    });
+
+    describe('advanced layer API', () => {
+        test('raw overrides land on top of the knobs and are re-applied after a style change', async () => {
+            const styling = await StylingModule.get(tomtomMap);
+            styling.set('labels.sizeFactor', 1.2);
+            styling.layers.query({ group: 'roadLabels' }).setPaint({ 'text-color': '#93c5fd' });
+            expect(lastValueSetFor(mapLibre.setPaintProperty, 'TransitLabels - Road', 'text-color')).toBe('#93c5fd');
+            // Not a setting: the override is an edit to this style, not portable configuration.
+            expect(styling.getConfig()).toStrictEqual({ 'labels.sizeFactor': 1.2 });
+
+            mapLibre.setPaintProperty.mockClear();
+            stylingHandlerIn(styleChangeHandlers)?.onStyleChanged?.({ resetState: false });
+            expect(lastValueSetFor(mapLibre.setPaintProperty, 'TransitLabels - Road', 'text-color')).toBe('#93c5fd');
+
+            // A clean switch drops it with everything else.
+            mapLibre.setPaintProperty.mockClear();
+            stylingHandlerIn(styleChangeHandlers)?.onStyleChanged?.({ resetState: true });
+            expect(valuesSetFor(mapLibre.setPaintProperty, 'TransitLabels - Road', 'text-color')).toHaveLength(0);
+        });
+    });
+
     describe('presets', () => {
         test('applyPreset replaces the settings by default and merges on request', async () => {
             const styling = await StylingModule.get(tomtomMap);
@@ -601,12 +654,10 @@ describe('StylingModule', () => {
 
             const unreached = styling.describe().knobs.filter((knob) => !knob.available);
             const unreachedIds = unreached.map((knob) => knob.id);
-            // Transforms and map-level view knobs still apply; curated tables and terrain (no
-            // elevation source here) do not.
+            // Transforms and map-level view knobs still apply; curated tables do not.
             expect(unreachedIds).not.toContain('labels.sizeFactor');
             expect(unreachedIds).not.toContain('view.projection');
             expect(unreachedIds).toContain('roads.exitNumbers');
-            expect(unreachedIds).toContain('view.terrain');
             expect(warn).toHaveBeenCalledTimes(unreached.length);
             // The one transform that still applies: the custom style's own labels.
             styling.set('labels.sizeFactor', 1.5);

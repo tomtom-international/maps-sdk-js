@@ -5,6 +5,7 @@ import {
     evStationWithOpeningHoursTestProps,
     expectPlaceTestFeature,
 } from '../../shared/tests/integrationTestUtils';
+import type { GetObject } from '../../shared/types/fetch';
 import type { PlaceByIdResponseAPI } from '..';
 import { placeById } from '..';
 
@@ -43,8 +44,8 @@ describe('Place By Id API', () => {
 
     test('placeById with API request and response callbacks', async () => {
         const entityId = 'FD3yZ3ADZ4h2w_Fl9Acm0w';
-        const onApiRequest = vi.fn() as (request: URL) => void;
-        const onApiResponse = vi.fn() as (request: URL, response: PlaceByIdResponseAPI) => void;
+        const onApiRequest = vi.fn() as (request: GetObject) => void;
+        const onApiResponse = vi.fn() as (request: GetObject, response: PlaceByIdResponseAPI) => void;
         const place = await placeById({ entityId, onAPIRequest: onApiRequest, onAPIResponse: onApiResponse });
         expect(place).toBeDefined();
         expect(onApiResponse).toHaveBeenCalledWith(expect.anything(), expect.anything());
@@ -52,8 +53,8 @@ describe('Place By Id API', () => {
 
     test('placeById with API request and error response callbacks', async () => {
         const entityId = 'FD3yZ3ADZ4h2w_Fl9Acm0w';
-        const onApiRequest = vi.fn() as (request: URL) => void;
-        const onApiResponse = vi.fn() as (request: URL, response: PlaceByIdResponseAPI) => void;
+        const onApiRequest = vi.fn() as (request: GetObject) => void;
+        const onApiResponse = vi.fn() as (request: GetObject, response: PlaceByIdResponseAPI) => void;
         await expect(() =>
             placeById({
                 entityId,
@@ -63,6 +64,9 @@ describe('Place By Id API', () => {
                 onAPIResponse: onApiResponse,
             }),
         ).rejects.toThrow(expect.objectContaining({ status: 400 }));
-        expect(onApiResponse).toHaveBeenCalledWith(expect.any(URL), expect.objectContaining({ status: 400 }));
+        expect(onApiResponse).toHaveBeenCalledWith(
+            expect.objectContaining({ url: expect.any(URL) }),
+            expect.objectContaining({ status: 400 }),
+        );
     });
 });

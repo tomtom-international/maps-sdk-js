@@ -1,19 +1,22 @@
-import { appendCommonSearchParams, PLACES_URL_PATH } from '../shared/request/commonSearchRequestBuilder';
+import type { GetObject } from '../shared';
+import { appendCommonSearchParams } from '../shared/request/commonSearchRequestBuilder';
+import { resolvePlacesEndpointUrl } from '../shared/request/placesEndpoint';
 import {
     appendByJoiningParamValue,
     appendGeoBiasParams,
     appendOptionalParam,
+    buildPlacesRequestHeaders,
 } from '../shared/request/requestBuildingUtils';
 import type { FuzzySearchParams } from './types';
 
 const buildUrlBasePath = (params: FuzzySearchParams): string =>
-    params.customServiceBaseURL ?? `${params.commonBaseURL}${PLACES_URL_PATH}/search/${params.query ?? ''}.json`;
+    resolvePlacesEndpointUrl(params, `search/${params.query ?? ''}.json`);
 
 /**
  * Default function for building a fuzzy search request from {@link FuzzySearchParams}
  * @param params The fuzzy search parameters, with global configuration already merged into them.
  */
-export const buildFuzzySearchRequest = (params: FuzzySearchParams): URL => {
+export const buildFuzzySearchRequest = (params: FuzzySearchParams): GetObject => {
     const url = new URL(`${buildUrlBasePath(params)}`);
     appendCommonSearchParams(url, params);
     const urlParams = url.searchParams;
@@ -23,5 +26,5 @@ export const buildFuzzySearchRequest = (params: FuzzySearchParams): URL => {
     appendGeoBiasParams(urlParams, params.geoBias);
     appendOptionalParam(urlParams, 'minFuzzyLevel', params.minFuzzyLevel);
     appendOptionalParam(urlParams, 'maxFuzzyLevel', params.maxFuzzyLevel);
-    return url;
+    return { url, headers: buildPlacesRequestHeaders(params) };
 };

@@ -4,9 +4,7 @@ import type {
     ProjectionSpecification,
     SkySpecification,
     SourceSpecification,
-    StyleSetterOptions,
     StyleSpecification,
-    TerrainSpecification,
 } from 'maplibre-gl';
 import { DEFAULT_STYLE_VERSION } from '../init';
 import { AbstractStyleOwnedMapModule, type CombinedEvents, knob, type LightDark, sharedInstance } from '../shared';
@@ -21,11 +19,14 @@ import {
     type KnobDefinition,
     type KnobMechanism,
     knobDefinitions,
+    type LiteralProperty,
+    literalPaintProperties,
     type ScalableProperty,
     type StylingKnobId,
     type StylingKnobValueOf,
     stylingKnobIds,
 } from './knobCatalogue';
+import { LayerOverrides, type LayerQuery, LayerSelection, type RuntimeLayerProperties } from './layerQuery';
 import {
     isMapColorName,
     type MapColorName,
@@ -56,16 +57,7 @@ export type StylingEvents = CombinedEvents<MapGeoJSONFeature, StylingSettings, n
 // Layer properties the knobs read at style load and rewrite afterwards. A layer's filter is not
 // among them: the knob that rewrites it goes through the shared `LayerFilterComposer`, which holds
 // the style's own filter for every contributor that narrows the same layer.
-type LayerProperty = ScalableProperty | PaintColorProperty | 'visibility' | 'minzoom' | 'maxzoom';
-
-// MapLibre types each setter's value against the literal property name it is given, and neither
-// setter's name parameter accepts `LayerProperty`'s zoom keys at all — a pairing a name picked at
-// runtime cannot express. The knobs write through this view of the same two setters, carrying values
-// that are either the style's own or an expression wrapped around them.
-type RuntimePropertyWriter = {
-    setLayoutProperty(layerId: string, property: string, value: unknown, options: StyleSetterOptions): unknown;
-    setPaintProperty(layerId: string, property: string, value: unknown, options: StyleSetterOptions): unknown;
-};
+type LayerProperty = ScalableProperty | PaintColorProperty | LiteralProperty | 'visibility' | 'minzoom' | 'maxzoom';
 
 // A layer's zoom range is always a number in the style spec, while every other property can hold an
 // expression the knobs pass through untouched — so those stay `unknown` and only the zoom keys carry
@@ -73,13 +65,23 @@ type RuntimePropertyWriter = {
 type ZoomProperty = 'minzoom' | 'maxzoom';
 type LayerPropertyValue<PROPERTY extends LayerProperty> = PROPERTY extends ZoomProperty ? number : unknown;
 
+// The end of a layer's zoom range each zoom mechanism sets.
+const ZOOM_BOUNDS = { minZoom: 'minzoom', maxZoom: 'maxzoom' } as const satisfies Record<
+    Extract<KnobMechanism['type'], 'minZoom' | 'maxZoom'>,
+    ZoomProperty
+>;
+
 // This module's key with the filter composer — one per mechanism that writes a filter.
 const ZOOM_SHIFT_CONTRIBUTOR = 'styling.zoomShift';
 
 // Which of MapLibre's two setters a property goes through. A property in neither set is written
-// nowhere, so the colour half comes off `paintColorProperties` rather than being listed again.
+// nowhere, so the colour and literal halves come off their catalogues rather than being listed again.
 const LAYOUT_PROPERTIES: ReadonlySet<LayerProperty> = new Set(['text-size', 'icon-size', 'visibility']);
-const PAINT_PROPERTIES: ReadonlySet<LayerProperty> = new Set<LayerProperty>(['line-width', ...paintColorProperties]);
+const PAINT_PROPERTIES: ReadonlySet<LayerProperty> = new Set<LayerProperty>([
+    'line-width',
+    ...paintColorProperties,
+    ...literalPaintProperties,
+]);
 
 // The ten knob ids the map colours own, one per semantic colour. Taken out of the knob ids rather
 // than spelled again, so a colour the catalogue never gave a knob stops compiling here.
@@ -102,7 +104,21 @@ const SPEC_DEFAULTS = {
     visibility: 'visible',
     minzoom: 0,
     maxzoom: 24,
+    'hillshade-method': 'standard',
+    'hillshade-illumination-direction': 335,
+    'hillshade-exaggeration': 0.5,
+    'hillshade-shadow-color': '#000000',
+    'hillshade-highlight-color': '#FFFFFF',
+    'hillshade-accent-color': '#000000',
 } satisfies { [PROPERTY in LayerProperty]?: LayerPropertyValue<PROPERTY> };
+
+const hasSpecDefault = (property: LayerProperty): property is keyof typeof SPEC_DEFAULTS => property in SPEC_DEFAULTS;
+
+// The mechanisms that rewrite each of their layers on its own, whatever the others hold.
+type LayerByLayerMechanism = Extract<
+    KnobMechanism,
+    { type: 'scale' | 'visibility' | 'minZoom' | 'maxZoom' | 'paintLiteral' | 'zoomOffset' }
+>;
 
 // Which layers a mechanism reaches in the loaded style.
 type ResolvedMechanism = { mechanism: KnobMechanism; layerIds: string[]; shadeLayerIds: string[] };
@@ -121,7 +137,6 @@ type ProjectionValue = ProjectionSpecification['type'];
 type MapLevelState = {
     projection: ProjectionValue;
     sky: SkySpecification | undefined;
-    terrain: TerrainSpecification | undefined;
 };
 
 // Our own sky, with both colours as literals rather than expressions — which is what lets
@@ -239,6 +254,7 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
     // `view.spaceColor` reports as its default and resets to, empty when the page painted nothing.
     // Captured once — by the second style load the container already carries this module's colour.
     private originalSpaceColor: string | undefined;
+    private layerOverrides!: LayerOverrides;
 
     /**
      * Retrieves the styling module of the given map, creating it on first use.
@@ -263,7 +279,7 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
             map,
             StylingModule,
             () => new StylingModule(map, settings),
-            settings && ((existing) => existing.applyConfig({ ...existing.config, ...settings })),
+            settings && ((existing) => existing.updateConfig(settings)),
         );
     }
 
@@ -304,7 +320,32 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
         for (const id of touched) {
             this.refreshKnob(id, next);
         }
+        // Raw layer overrides land on top of the knobs, as they did when they were made.
+        if (this.tomtomMap.mapReady) this.layerOverrides.reapply();
+
         return Object.keys(next).length ? next : undefined;
+    }
+
+    /**
+     * @ignore
+     */
+    protected discardShownData(): void {
+        // A clean style switch drops the raw layer edits along with the settings.
+        this.layerOverrides.clear();
+    }
+
+    /**
+     * The advanced tier: raw MapLibre paint, layout and filter edits over a query of style layers,
+     * re-applied across style switches. Version-coupled by nature — see {@link LayerSelection} for
+     * the terms — so prefer a knob or {@link setMapColors} wherever one covers the intent.
+     *
+     * @example
+     * ```typescript
+     * styling.layers.query({ group: 'roadLabels' }).setPaint({ 'text-color': '#93c5fd' });
+     * ```
+     */
+    get layers(): { query: (query: LayerQuery) => LayerSelection } {
+        return { query: (query) => new LayerSelection(this.layerOverrides, query) };
     }
 
     /**
@@ -336,7 +377,7 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
 
     /**
      * Applies a preset: a named bundle of knob settings the SDK ships for a common intent
-     * (`data-viz`, `night-driving`, `minimal`, `globe`, `terrain`). See `describe().presets` for
+     * (`data-viz`, `night-driving`, `minimal`, `globe`). See `describe().presets` for
      * what each one sets.
      *
      * @param id - The preset to apply.
@@ -357,7 +398,8 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
         if (!preset) {
             throw new Error(`Unknown styling preset '${id}'. Known presets: ${stylingPresetIds.join(', ')}.`);
         }
-        this.applyConfig(options.merge ? { ...this.config, ...preset.settings } : { ...preset.settings });
+        if (options.merge) this.updateConfig(preset.settings);
+        else this.applyConfig({ ...preset.settings });
     }
 
     /**
@@ -460,7 +502,7 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
             this.validate(id, value);
             settings[id] = value;
         }
-        this.applyConfig({ ...this.config, ...settings });
+        this.updateConfig(settings);
     }
 
     /**
@@ -501,10 +543,13 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
         this.mapColorAnchors = new Map();
         this.warned = new Set();
         this.reindexed = true;
+        this.layerOverrides ??= new LayerOverrides(this.mapLibreMap, this.filterComposer, (key, message) =>
+            this.warnOnce(key, message),
+        );
+        this.layerOverrides.index(layers, this.styleSources);
         this.mapLevelState = {
             projection: style?.projection?.type ?? 'mercator',
             sky: style?.sky,
-            terrain: style?.terrain ?? undefined,
         };
 
         for (const id of stylingKnobIds) {
@@ -530,9 +575,7 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
             return { mechanism, layerIds: this.resolveMapColor(mechanism.color, layers), shadeLayerIds: [] };
         }
         if (!('layers' in mechanism)) {
-            // Map-level: one target when the map can honour it — terrain needs an elevation source.
-            const reachable = mechanism.type !== 'terrain' || this.demSourceId() !== undefined;
-            return { mechanism, layerIds: reachable ? [MAP_LEVEL] : [], shadeLayerIds: [] };
+            return { mechanism, layerIds: [MAP_LEVEL], shadeLayerIds: [] };
         }
 
         const matched = layers.filter((layer) => matchesAnyLayerSelector(mechanism.layers, layer, this.styleSources));
@@ -561,11 +604,17 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
                 layerIds = matched.filter((layer) => this.capture(layer, 'visibility')).map((layer) => layer.id);
                 break;
             case 'minZoom':
+            case 'maxZoom':
                 layerIds = matched.map((layer) => layer.id);
                 for (const layer of matched) {
                     this.capture(layer, 'minzoom');
                     this.capture(layer, 'maxzoom');
                 }
+                break;
+            case 'paintLiteral':
+                // A layer without the property still takes it (the style relies on the spec default).
+                layerIds = matched.map((layer) => layer.id);
+                for (const layer of matched) this.capture(layer, mechanism.property);
                 break;
             case 'zoomOffset':
                 layerIds = matched
@@ -633,11 +682,6 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
         return literal ? [...new Set(instances.map((instance) => instance.layerId))] : [];
     }
 
-    // The style's elevation source, if it has one (the hillshade style part ships a raster-dem).
-    private demSourceId(): string | undefined {
-        return Object.entries(this.styleSources).find(([, source]) => source.type === 'raster-dem')?.[0];
-    }
-
     // ── Applying knobs ────────────────────────────────────────────────────────────────────────
 
     // Brings every layer the knob reaches in line with `settings`: the knob's value when set, the
@@ -651,37 +695,21 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
         }
     }
 
-    // One mechanism of one knob: every mechanism type reaches its layers its own way.
+    // One mechanism of one knob: the map-level and multi-layer ones here, the rest layer by layer.
     private refreshMechanism(
         id: StylingKnobId,
         { mechanism, layerIds, shadeLayerIds }: ResolvedMechanism,
         settings: StylingSettings,
     ): void {
-        const value = settings[id];
         switch (mechanism.type) {
-            case 'scale':
-                for (const layerId of layerIds) this.refreshScaledProperty(layerId, mechanism.property, settings);
-                break;
-            case 'visibility':
-                for (const layerId of layerIds) this.refreshVisibility(layerId, value as boolean | undefined);
-                break;
             case 'color':
-                this.refreshColor(mechanism.property, layerIds, shadeLayerIds, value as string | undefined);
-                break;
-            case 'minZoom':
-                for (const layerId of layerIds) this.refreshMinZoom(layerId, value as number | undefined);
-                break;
-            case 'zoomOffset':
-                for (const layerId of layerIds) this.refreshZoomOffset(layerId, value as number | undefined);
+                this.refreshColor(mechanism.property, layerIds, shadeLayerIds, settings[id] as string | undefined);
                 break;
             case 'projection':
                 this.refreshProjection(settings);
                 break;
             case 'sky':
                 this.refreshSky(settings);
-                break;
-            case 'terrain':
-                if (layerIds.length) this.refreshTerrain(settings);
                 break;
             case 'space':
                 this.refreshSpace(settings);
@@ -690,6 +718,38 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
                 for (const { layerId, property } of this.mapColorTargetsByKnob.get(id) ?? []) {
                     this.refreshMapColorProperty(layerId, property, settings);
                 }
+                break;
+            default:
+                for (const layerId of layerIds) this.refreshLayer(mechanism, layerId, settings[id], settings);
+        }
+    }
+
+    private refreshLayer(
+        mechanism: LayerByLayerMechanism,
+        layerId: string,
+        value: StylingKnobValue | undefined,
+        settings: StylingSettings,
+    ): void {
+        switch (mechanism.type) {
+            case 'scale':
+                this.refreshScaledProperty(layerId, mechanism.property, settings);
+                break;
+            case 'visibility':
+                this.refreshVisibility(layerId, value as boolean | undefined);
+                break;
+            case 'minZoom':
+            case 'maxZoom':
+                this.refreshZoomBound(layerId, ZOOM_BOUNDS[mechanism.type], value as number | undefined);
+                break;
+            case 'paintLiteral':
+                this.setProperty(
+                    layerId,
+                    mechanism.property,
+                    value ?? this.originalValueOf(layerId, mechanism.property),
+                );
+                break;
+            case 'zoomOffset':
+                this.refreshZoomOffset(layerId, value as number | undefined);
                 break;
         }
     }
@@ -752,21 +812,6 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
         this.mapLibreMap.setSky(sky, { validate: false });
     }
 
-    private refreshTerrain(settings: StylingSettings): void {
-        const styleTerrain = this.mapLevelState.terrain;
-        const styleHasTerrain = styleTerrain !== undefined;
-        const wanted = settings['view.terrain'] ?? styleHasTerrain;
-        if (!wanted) {
-            this.mapLibreMap.setTerrain(null);
-            return;
-        }
-        const source = styleTerrain?.source ?? this.demSourceId();
-        if (!source) return;
-
-        const exaggeration = settings['view.terrainExaggeration'] ?? styleTerrain?.exaggeration ?? 1;
-        this.mapLibreMap.setTerrain({ source, exaggeration });
-    }
-
     private refreshVisibility(layerId: string, visible: boolean | undefined): void {
         if (visible === undefined) {
             this.setProperty(layerId, 'visibility', this.originalValueOf(layerId, 'visibility'));
@@ -776,12 +821,20 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
         this.setProperty(layerId, 'visibility', visible ? 'visible' : 'none');
     }
 
-    private refreshMinZoom(layerId: string, minZoom: number | undefined): void {
+    // Sets one end of the layer's zoom range, or restores it; the other end stays as the style has it.
+    private refreshZoomBound(layerId: string, bound: ZoomProperty, value: number | undefined): void {
         if (!this.mapLibreMap.getLayer(layerId)) return;
 
-        const minzoom = minZoom ?? this.originalValueOf(layerId, 'minzoom') ?? SPEC_DEFAULTS.minzoom;
-        const maxzoom = this.originalValueOf(layerId, 'maxzoom') ?? SPEC_DEFAULTS.maxzoom;
-        this.mapLibreMap.setLayerZoomRange(layerId, minzoom, maxzoom);
+        const range = {
+            minzoom: this.styleZoomBound(layerId, 'minzoom'),
+            maxzoom: this.styleZoomBound(layerId, 'maxzoom'),
+        };
+        range[bound] = value ?? range[bound];
+        this.mapLibreMap.setLayerZoomRange(layerId, range.minzoom, range.maxzoom);
+    }
+
+    private styleZoomBound(layerId: string, bound: ZoomProperty): number {
+        return this.originalValueOf(layerId, bound) ?? SPEC_DEFAULTS[bound];
     }
 
     private refreshZoomOffset(layerId: string, shift: number | undefined): void {
@@ -840,7 +893,7 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
     private setProperty(layerId: string, property: LayerProperty, value: unknown): void {
         if (!this.mapLibreMap.getLayer(layerId)) return;
 
-        const writer: RuntimePropertyWriter = this.mapLibreMap;
+        const writer: RuntimeLayerProperties = this.mapLibreMap;
         if (LAYOUT_PROPERTIES.has(property)) {
             writer.setLayoutProperty(layerId, property, value, { validate: false });
         } else if (PAINT_PROPERTIES.has(property)) {
@@ -887,7 +940,12 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
                 return isColorLiteral(original) ? original : undefined;
             }
             case 'minZoom':
-                return this.originalValueOf(layerId, 'minzoom') ?? SPEC_DEFAULTS.minzoom;
+            case 'maxZoom':
+                return this.styleZoomBound(layerId, ZOOM_BOUNDS[first.mechanism.type]);
+            case 'paintLiteral': {
+                const original = this.originalValueOf(layerId, first.mechanism.property);
+                return typeof original === 'string' || typeof original === 'number' ? original : undefined;
+            }
             case 'zoomOffset':
                 return 0;
             default:
@@ -897,7 +955,7 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
 
     // What the loaded style declares for the view knobs.
     private mapLevelDefaultOf(id: StylingKnobId): StylingKnobValue | undefined {
-        const { projection, sky, terrain } = this.mapLevelState;
+        const { projection, sky } = this.mapLevelState;
         switch (id) {
             case 'view.projection':
                 // A style that drives its projection from an expression has no one value to report.
@@ -915,10 +973,6 @@ export class StylingModule extends AbstractStyleOwnedMapModule<Record<string, ne
                     : SKY_DEFAULTS[this.tomtomMap.styleLightDarkTheme]['horizon-color'];
             case 'view.spaceColor':
                 return this.defaultSpaceColor();
-            case 'view.terrain':
-                return terrain !== undefined;
-            case 'view.terrainExaggeration':
-                return terrain?.exaggeration ?? 1;
             default:
                 return undefined;
         }
@@ -1022,6 +1076,10 @@ const styleValueOf = (layer: LayerSpecification, property: LayerProperty): unkno
         case 'maxzoom':
             return layer.maxzoom;
         default:
-            return paint?.[property];
+            return paintValueOf(layer, property, paint);
     }
 };
+
+// Hillshade layers lean on the spec defaults for whatever paint they leave unset.
+const paintValueOf = (layer: LayerSpecification, property: LayerProperty, paint?: Record<string, unknown>): unknown =>
+    paint?.[property] ?? (layer.type === 'hillshade' && hasSpecDefault(property) ? SPEC_DEFAULTS[property] : undefined);

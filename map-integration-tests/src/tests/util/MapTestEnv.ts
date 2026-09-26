@@ -20,8 +20,8 @@ const resetMapModules = async (page: Page) =>
         mapSdkThis.trafficIncidentOverlay = undefined;
         mapSdkThis.trafficFlow = undefined;
         mapSdkThis.pois = undefined;
-        mapSdkThis.hillshade = undefined;
         mapSdkThis.styling = undefined;
+        mapSdkThis.terrain = undefined;
         mapSdkThis.places = undefined;
         mapSdkThis.places2 = undefined;
         mapSdkThis.geometries = undefined;

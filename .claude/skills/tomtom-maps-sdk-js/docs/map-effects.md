@@ -58,7 +58,7 @@ Out-of-range values throw `RangeError`; unknown ids throw `Error`. Nothing is to
 **depthOfField** — the only **GPU** effect (a WebGL2 full-screen pass) and the only one that reads the map's **camera**. For a plane, `1/z` is affine in the screen row, so pitch + vertical FOV give the whole depth of the frame as one ramp (`2·tan(fov/2)·tan(pitch)`, normalised); the circle of confusion then grows with distance from the plane of focus, per pixel. `focus` runs 0 = nearest ground (bottom) → 1 = farthest the frame shows (top); `band` is the share of that depth held sharp; `intensity` is the widest circle of confusion in CSS px; `bokeh` decides whether a defocused highlight fades or returns as a disc.
 
 ```ts
-styling.set('view.terrain', true);   // the relief to defocus
+await TerrainModule.get(map, { elevation: true });   // the relief to defocus
 effects.set({ 'depthOfField.intensity': 18, 'depthOfField.focus': 0, 'depthOfField.band': 0.3, 'depthOfField.bokeh': 0.5 });
 ```
 

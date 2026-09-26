@@ -58,6 +58,9 @@ export const paintColorProperties = [
     'text-halo-color',
     'fill-extrusion-color',
     'background-color',
+    'hillshade-shadow-color',
+    'hillshade-highlight-color',
+    'hillshade-accent-color',
 ] as const;
 
 /** @ignore */

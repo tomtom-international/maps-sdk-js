@@ -162,7 +162,7 @@ describe('Along Route Search service', () => {
         });
 
         expect(result).toBeDefined();
-        const expectedApiRequest = { url: expect.any(URL), data: expect.anything() };
+        const expectedApiRequest = expect.objectContaining({ url: expect.any(URL), data: expect.anything() });
         expect(onApiRequest).toHaveBeenCalledWith(expectedApiRequest);
         expect(onApiResponse).toHaveBeenCalledWith(expectedApiRequest, expect.anything());
     });
@@ -184,7 +184,7 @@ describe('Along Route Search service', () => {
             }),
         ).rejects.toThrow(expect.objectContaining({ status: 400 }));
 
-        const expectedApiRequest = { url: expect.any(URL), data: expect.anything() };
+        const expectedApiRequest = expect.objectContaining({ url: expect.any(URL), data: expect.anything() });
         expect(onApiRequest).toHaveBeenCalledWith(expectedApiRequest);
         expect(onApiResponse).toHaveBeenCalledWith(expectedApiRequest, expect.objectContaining({ status: 400 }));
     });

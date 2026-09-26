@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.0.6
+
+### Patch Changes
+
+- 892139d: Features:
+  - Landmarks stand on 3D terrain: each one is lowered onto the lowest ground under its footprint (#2056)
+  - `inherited` mode mirrors the opacity and vertical gradient of the basemap 3D buildings too, and shades like them from every angle (#2056)
+  
+  Bug fixes:
+  - Landmark edges no longer tremble while zooming: mesh positions are kept relative to a scene origin (#2056)
+  - Landmarks leave the screen together with the basemap buildings of the same area (#2056)
+  
+  Dependencies:
+  - `maplibre-gl` is a declared peer dependency, the one the SDK already requires (#2056)
+- Updated dependencies [669dc17]
+- Updated dependencies [a8d3fde]
+- Updated dependencies [892139d]
+- Updated dependencies [2f9aa90]
+  - @tomtom-org/maps-sdk@0.57.0
+
 ## 0.0.5
 
 ### Patch Changes

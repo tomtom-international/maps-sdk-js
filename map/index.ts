@@ -6,7 +6,6 @@
 export * from './src/base';
 export * from './src/custom';
 export * from './src/geometry';
-export * from './src/hillshade';
 export * from './src/init';
 export * from './src/places';
 export * from './src/pois';
@@ -14,5 +13,6 @@ export * from './src/routing';
 export * from './src/shared';
 export * from './src/styling';
 export * from './src/TomTomMap';
+export * from './src/terrain';
 export * from './src/traffic';
 export * from './src/utils';

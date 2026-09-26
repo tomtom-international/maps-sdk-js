@@ -4,12 +4,12 @@ import type {
     BaseMapModule,
     CustomGeoJSONModule,
     GeometriesModule,
-    HillshadeModule,
     PlacesModule,
     POIsModule,
     RoutingModule,
     SourceWithLayers,
     StylingModule,
+    TerrainModule,
     TomTomMap,
     TrafficAreaAnalyticsModule,
     TrafficFlowModule,
@@ -38,8 +38,8 @@ export type MapsSDKThis = typeof globalThis & {
     trafficIncidentOverlay?: TrafficIncidentOverlayModule;
     trafficFlow?: TrafficFlowModule;
     pois?: POIsModule;
-    hillshade?: HillshadeModule;
     styling?: StylingModule;
+    terrain?: TerrainModule;
     places?: PlacesModule;
     places2?: PlacesModule;
     geometries?: GeometriesModule;

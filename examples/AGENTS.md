@@ -579,8 +579,8 @@ An example's own `package.json` scripts, `playwright.config.ts` and
 - **multiple-geometries** - Show multiple geometric shapes on one map
 - **byod-geojson-heatmap** - Create heatmaps from GeoJSON data
 - **layer-group-toggling** - Toggle layer groups on/off
-- **map-styling-playground** - Semantic styling knobs (sizes, toggles, POI and traffic colours, view, presets) from a panel built off `StylingModule.describe()`
-- **globe-terrain** - Globe projection, sky/atmosphere and 3D terrain through the styling module's `view.*` knobs
+- **map-styling-playground** - Semantic styling knobs (sizes, toggles, base-map groups, hillshade, POI and traffic colours, view, presets) from a panel built off `StylingModule.describe()`, plus one `styling.layers.query` edit
+- **globe-terrain** - Globe projection and sky/atmosphere through the styling module's `view.*` knobs, 3D terrain through `TerrainModule`
 - **map-colors** - Recolour the base map with the ten semantic colours (`setMapColors`) and export the rendered style
 - **terrain-playground** - A pitched satellite map over four mountain viewpoints; terrain, sky and exaggeration survive a style switch, with a depth-of-field toggle
 - **map-effects-playground** - The map-effects plugin: bloom, grade, tint, fog, edge blur, depth of field, vignette and high-DPI capture
@@ -668,7 +668,8 @@ An example's own `package.json` scripts, `playwright.config.ts` and
 
 ### Terrain
 
-- **hillshade** - Display terrain with hillshading
+- **hillshade** - Shade the relief with `TerrainModule`'s hillshade
+- **3d-terrain** - Raise the map surface in 3D with 3D buildings and landmarks standing on it
 
 ### Plugins
 

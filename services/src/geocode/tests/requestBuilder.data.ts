@@ -11,7 +11,7 @@ export const geocodingReqObjectsAndUrLs: Array<[string, GeocodingParams, string]
             language: 'es-ES',
             query: 'amsterdam centrale',
         },
-        'https://api-test.tomtom.com/maps/orbis/places/geocode/amsterdam%20centrale.json?apiVersion=1&key=GLOBAL_API_KEY&language=es-ES',
+        'https://api-test.tomtom.com/maps/orbis/places/geocode/amsterdam%20centrale.json?language=es-ES',
     ],
     [
         'Geocoding Request with mandatory & an optional Param - Example 2',
@@ -22,7 +22,7 @@ export const geocodingReqObjectsAndUrLs: Array<[string, GeocodingParams, string]
             language: 'es-ES',
             query: 'amsterdam centrale',
         },
-        'https://api-test.tomtom.com/maps/orbis/places/geocode/amsterdam%20centrale.json?apiVersion=1&key=ANOTHER_API_KEY&language=es-ES',
+        'https://api-test.tomtom.com/maps/orbis/places/geocode/amsterdam%20centrale.json?language=es-ES',
     ],
     [
         'Geocoding Request with mandatory & an optional Param - Example 3',
@@ -33,7 +33,7 @@ export const geocodingReqObjectsAndUrLs: Array<[string, GeocodingParams, string]
             language: 'en-US',
             query: 'amsterdam centrale',
         },
-        'https://api-test.tomtom.com/maps/orbis/places/geocode/amsterdam%20centrale.json?apiVersion=1&key=GLOBAL_API_KEY&language=en-US',
+        'https://api-test.tomtom.com/maps/orbis/places/geocode/amsterdam%20centrale.json?language=en-US',
     ],
     [
         'Geocoding Request with mandatory & an optional Param - Example 4',
@@ -44,7 +44,7 @@ export const geocodingReqObjectsAndUrLs: Array<[string, GeocodingParams, string]
             apiKey: 'GIVEN_API_KEY',
             language: 'en-GB',
         },
-        'https://api.tomtom.com/maps/orbis/places/geocode/4%20north%202nd%20street%20san%20jose.json?apiVersion=1&key=GIVEN_API_KEY&language=en-GB',
+        'https://api.tomtom.com/maps/orbis/places/geocode/4%20north%202nd%20street%20san%20jose.json?language=en-GB',
     ],
     [
         'Geocoding Request with mandatory & optional Params',
@@ -64,7 +64,7 @@ export const geocodingReqObjectsAndUrLs: Array<[string, GeocodingParams, string]
             geoBias: { position: [4.78, 51.43], radiusMeters: 30 },
             extendedPostalCodesFor: ['Addr', 'Str'],
         },
-        'https://kr-api.tomtom.com/search/3/geocodeCustom/amsterdam%20central%20station.json?apiVersion=1&key=ANOTHER_API_KEY&language=en-US&typeahead=true&limit=20&ofs=100&lat=51.43&lon=4.78&radius=30&countrySet=NLD%2CESP&extendedPostalCodesFor=Addr%2CStr&mapcodes=Local%2CInternational&entityTypeSet=Country%2CCountrySubdivision',
+        'https://kr-api.tomtom.com/search/3/geocodeCustom/amsterdam%20central%20station.json?language=en-US&typeahead=true&limit=20&ofs=100&lat=51.43&lon=4.78&radius=30&countrySet=NLD%2CESP&extendedPostalCodesFor=Addr%2CStr&mapcodes=Local%2CInternational&entityTypeSet=Country%2CCountrySubdivision',
     ],
     [
         'Geocoding Request with BB Param - Example 1',
@@ -76,7 +76,7 @@ export const geocodingReqObjectsAndUrLs: Array<[string, GeocodingParams, string]
             language: 'en-US',
             geoBias: { boundingBox: [5.16905, 51.85925, 5.16957, 52.44009] },
         },
-        'https://api-test.tomtom.com/maps/orbis/places/geocode/amsterdam%20central%20station.json?apiVersion=1&key=ANOTHER_API_KEY&language=en-US&topLeft=52.44009%2C5.16905&btmRight=51.85925%2C5.16957',
+        'https://api-test.tomtom.com/maps/orbis/places/geocode/amsterdam%20central%20station.json?language=en-US&topLeft=52.44009%2C5.16905&btmRight=51.85925%2C5.16957',
     ],
     [
         'Geocoding Request with BB Param - Example 2',
@@ -101,7 +101,7 @@ export const geocodingReqObjectsAndUrLs: Array<[string, GeocodingParams, string]
                 } as Polygon,
             },
         },
-        'https://api-test.tomtom.com/maps/orbis/places/geocode/amsterdam%20central%20station.json?apiVersion=1&key=ANOTHER_API_KEY&language=en-US&topLeft=52.44009%2C5.16905&btmRight=51.85925%2C5.16957',
+        'https://api-test.tomtom.com/maps/orbis/places/geocode/amsterdam%20central%20station.json?language=en-US&topLeft=52.44009%2C5.16905&btmRight=51.85925%2C5.16957',
     ],
     [
         'Geocoding Request without API Key nor version',
@@ -109,7 +109,7 @@ export const geocodingReqObjectsAndUrLs: Array<[string, GeocodingParams, string]
             commonBaseURL: 'https://api.tomtom.com',
             query: '4 north 2nd street san jose',
         },
-        'https://api.tomtom.com/maps/orbis/places/geocode/4%20north%202nd%20street%20san%20jose.json?apiVersion=undefined',
+        'https://api.tomtom.com/maps/orbis/places/geocode/4%20north%202nd%20street%20san%20jose.json',
     ],
     [
         'Geocoding Request with optional params',
@@ -125,6 +125,6 @@ export const geocodingReqObjectsAndUrLs: Array<[string, GeocodingParams, string]
             view: 'AR',
             extendedPostalCodesFor: ['Addr', 'Str'],
         },
-        'https://api.tomtom.com/maps/orbis/places/geocode/4%20north%202nd%20street%20san%20jose.json?apiVersion=2&key=GIVEN_API_KEY&language=en-GB&typeahead=true&limit=10&lat=52.5&lon=5.32&radius=50&extendedPostalCodesFor=Addr%2CStr&view=AR',
+        'https://api.tomtom.com/maps/orbis/places/geocode/4%20north%202nd%20street%20san%20jose.json?language=en-GB&typeahead=true&limit=10&lat=52.5&lon=5.32&radius=50&extendedPostalCodesFor=Addr%2CStr&view=AR',
     ],
 ];

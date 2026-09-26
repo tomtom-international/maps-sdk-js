@@ -9,10 +9,10 @@ import { MapTestEnv } from './util/MapTestEnv';
 import {
     initBasemap,
     initGeometries,
-    initHillshade,
     initPlaces,
     initPOIs,
     initRouting,
+    initTerrain,
     initTrafficAreaAnalytics,
     initTrafficFlow,
     initTrafficIncidents,
@@ -229,16 +229,16 @@ test.describe('ModuleEvents — config-change events', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test('HillshadeModule fires config-change when setVisible is called', async ({ page }) => {
+    test('TerrainModule fires config-change when setHillshadeVisible is called', async ({ page }) => {
         await mapEnv.loadPageAndMap(page, { zoom: 10, center: [10.0, 47.0] });
-        await initHillshade(page, { visible: false });
+        await initTerrain(page, { hillshade: false });
 
-        await page.evaluate(setupConfigChangeHandler('hillshade'));
-        await page.evaluate(() => (globalThis as MapsSDKThis).hillshade?.setVisible(true));
+        await page.evaluate(setupConfigChangeHandler('terrain'));
+        await page.evaluate(() => (globalThis as MapsSDKThis).terrain?.setHillshadeVisible(true));
 
         await page.waitForFunction(() => (globalThis as any)._configChangeCount > 0, undefined, { timeout: 5000 });
         const config = await page.evaluate(() => (globalThis as any)._configChangeResult);
-        expect(config?.visible).toBe(true);
+        expect(config?.hillshade).toBe(true);
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });

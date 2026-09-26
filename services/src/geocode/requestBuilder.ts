@@ -1,20 +1,24 @@
 import { isNil } from 'lodash-es';
+import type { GetObject } from '../shared';
 import { arrayToCSV } from '../shared/arrays';
-import { PLACES_URL_PATH } from '../shared/request/commonSearchRequestBuilder';
-import { appendCommonParams, appendGeoBiasParams } from '../shared/request/requestBuildingUtils';
+import { resolvePlacesEndpointUrl } from '../shared/request/placesEndpoint';
+import {
+    appendGeoBiasParams,
+    appendPlacesLanguageParam,
+    buildPlacesRequestHeaders,
+} from '../shared/request/requestBuildingUtils';
 import type { GeocodingParams } from './types/geocodingParams';
 
-const buildUrlBasePath = (params: GeocodingParams): string =>
-    params.customServiceBaseURL || `${params.commonBaseURL}${PLACES_URL_PATH}/geocode`;
+const buildUrlBasePath = (params: GeocodingParams): string => resolvePlacesEndpointUrl(params, 'geocode');
 
 /**
  * Default method for building geocoding request from {@link GeocodingParams}
  * @param params The geocoding parameters, with global configuration already merged into them.
  */
-export const buildGeocodingRequest = (params: GeocodingParams): URL => {
+export const buildGeocodingRequest = (params: GeocodingParams): GetObject => {
     const url = new URL(`${buildUrlBasePath(params)}/${params.query}.json`);
     const urlParams = url.searchParams;
-    appendCommonParams(urlParams, params);
+    appendPlacesLanguageParam(urlParams, params);
     // geocoding specific parameters:
     params.typeahead && urlParams.append('typeahead', String(params.typeahead));
     !isNil(params.limit) && urlParams.append('limit', String(params.limit));
@@ -26,5 +30,5 @@ export const buildGeocodingRequest = (params: GeocodingParams): URL => {
     params.mapcodes && urlParams.append('mapcodes', arrayToCSV(params.mapcodes));
     params.view && urlParams.append('view', params.view);
     params.geographyTypes && urlParams.append('entityTypeSet', arrayToCSV(params.geographyTypes));
-    return url;
+    return { url, headers: buildPlacesRequestHeaders(params) };
 };

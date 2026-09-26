@@ -10,15 +10,26 @@
 export const POI_SOURCE_ID = 'vectorTiles';
 
 /**
- * Source identifier for hillshade terrain visualization.
+ * Source identifier of the style's elevation data, added by the `hillshade` style part.
  *
  * @remarks
- * References the raster source that provides terrain shading to visualize
- * elevation and topography on the map.
+ * A raster-dem source, drawn as the hillshade layer. {@link TerrainModule} raises the 3D surface
+ * from a copy of it, {@link TERRAIN_SOURCE_ID}.
  *
- * @group Hillshade
+ * @group Terrain
  */
 export const HILLSHADE_SOURCE_ID = 'hillshade';
+
+/**
+ * Source identifier of the 3D terrain surface: a copy of {@link HILLSHADE_SOURCE_ID} that
+ * {@link TerrainModule} adds when elevation is first enabled.
+ *
+ * @remarks
+ * MapLibre renders hillshade and 3D terrain at a lower quality when both share one source.
+ *
+ * @group Terrain
+ */
+export const TERRAIN_SOURCE_ID = 'hillshade-terrain';
 
 /**
  * Source identifier for base map vector tiles.

@@ -175,7 +175,6 @@ const agent = createMapAgent(map, {
 | `getStandardMapStyles` | List available standard map style presets |
 | `setMapStandardStyle` | Switch map style (light, dark, satellite, driving, etc.) |
 | `setLanguage` | Change the language for map labels and API responses |
-| `toggleTilesBaseMapLayerGroups` | Show/hide named layer groups (buildings3D, roadLabels, water, etc.) |
 | `toggleTilesPOIs` | Show/hide built-in map POI icons with optional category filtering |
 
 ### MapLibre direct access
@@ -511,7 +510,7 @@ const agent = createMapAgent(map, {
         setLanguage: false,
         setLayoutProperties: false,
         setPaintProperties: false,
-        toggleTilesBaseMapLayerGroups: false,
+        toggleTilesPOIs: false,
     },
 });
 ```

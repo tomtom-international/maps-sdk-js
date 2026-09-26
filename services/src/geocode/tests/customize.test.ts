@@ -11,7 +11,7 @@ describe('Using customize obj', () => {
                     commonBaseURL: 'https://api.tomtom.com',
                     query: 'amsterdam',
                 })
-                .toString(),
-        ).toStrictEqual('https://api.tomtom.com/maps/orbis/places/geocode/amsterdam.json?apiVersion=2&key=API_KEY');
+                .url.toString(),
+        ).toStrictEqual('https://api.tomtom.com/maps/orbis/places/geocode/amsterdam.json');
     });
 });

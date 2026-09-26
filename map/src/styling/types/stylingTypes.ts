@@ -79,8 +79,7 @@ export type StylingKnobDescriptor = KnobDescriptor & {
     /**
      * Whether the knob has anything to work on in the loaded style. `false` means setting it would
      * do nothing, and the SDK also warns once in the console when that happens. Check this before
-     * offering the knob in a UI or to an agent. Map-level knobs are always available bar
-     * `view.terrain`, which needs the style to carry an elevation source.
+     * offering the knob in a UI or to an agent. Map-level knobs are always available.
      */
     available: boolean;
     /** Which styles the knob works on; see {@link stylingKnobAppliesTo}. */

@@ -31,7 +31,7 @@ mapLibreMap.addSource('my-data', { type: 'geojson', data: myGeoJSON });
 | `geojson`    | Your own data — points, lines, polygons; no tile server needed  |
 | `vector`     | Large datasets or zoom-dependent overlays (PMTiles, tile server)|
 | `raster`     | Satellite imagery, WMS/WMTS, weather radar                      |
-| `raster-dem` | Terrain / hillshade (TomTom SDK: use `HillshadeModule` instead) |
+| `raster-dem` | Terrain / hillshade (TomTom SDK: use `TerrainModule` instead)   |
 
 ---
 

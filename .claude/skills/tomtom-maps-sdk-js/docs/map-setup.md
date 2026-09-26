@@ -4,7 +4,7 @@
 
 ```ts
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import { TomTomMap, BaseMapModule, HillshadeModule, PlacesModule } from '@tomtom-org/maps-sdk/map';
+import { TomTomMap, BaseMapModule, TerrainModule, PlacesModule } from '@tomtom-org/maps-sdk/map';
 import { calculatePaddedBBox, calculatePaddedCenter, calculateFittingBBox } from '@tomtom-org/maps-sdk/map';
 import { type StandardStyleID, standardStyleIDs } from '@tomtom-org/maps-sdk/map';
 ```
@@ -134,7 +134,7 @@ const trafficFlow = await TrafficFlowModule.get(map, { visible: true });
 All map modules are async, and the factory name tells you who owns the layers being controlled:
 
 - **Data-owned** (`PlacesModule`, `RoutingModule`, `GeometriesModule`, `CustomGeoJSONModule`, `TrafficIncidentOverlayModule`, `TrafficAreaAnalyticsModule`) — `await Module.create(map, optionalConfig)`. Each call returns a **new independent instance** owning its own sources, layers and images, so several can coexist on one map, each managing its own data.
-- **Style-owned** (`BaseMapModule`, `POIsModule`, `TrafficFlowModule`, `TrafficIncidentsModule`, `HillshadeModule`) — `await Module.get(map, optionalConfig)`. These control layers the style already provides under fixed global IDs, so every instance is a handle on the **same shared state**.
+- **Style-owned** (`BaseMapModule`, `POIsModule`, `TrafficFlowModule`, `TrafficIncidentsModule`, `TerrainModule`) — `await Module.get(map, optionalConfig)`. These control layers the style already provides under fixed global IDs, so every instance is a handle on the **same shared state**.
 
 ```ts
 const placesModule = await PlacesModule.create(map, optionalConfig);   // data-owned
@@ -282,8 +282,22 @@ All three return `null` if the visible area is too small to be usable.
 
 ---
 
-## HillshadeModule
+## TerrainModule
+
+Hillshade shading and 3D elevation, both drawn from the elevation data of the `hillshade` style part. `get()` adds that part when the style lacks it. Without a config the hillshade is hidden and the surface stays as the style draws it (flat on TomTom styles; a custom style's own `terrain` is kept until `elevation` is set). Both are re-applied after `setStyle`.
 
 ```ts
-await HillshadeModule.get(map, { visible: true });
+const terrain = await TerrainModule.get(map, { hillshade: true, elevation: true, elevationExaggeration: 1.5 });
+
+terrain.setHillshadeVisible(false);
+terrain.setElevationEnabled(false);   // flat again; the exaggeration is kept for next time
+terrain.setElevationExaggeration(2);  // 1 = true elevation
+terrain.isHillshadeVisible();
+terrain.isElevationEnabled();
+terrain.events.on('config-change', (config) => { });   // lifecycle events only: the raster relief has no features
 ```
+
+- 3D elevation needs a pitched camera: `mapLibre: { pitch: 70, maxPitch: 85 }` (MapLibre's default `maxPitch` is 60).
+- The surface reads `TERRAIN_SOURCE_ID`, a copy of `HILLSHADE_SOURCE_ID` the module adds when elevation is first enabled (MapLibre degrades both when they share one source). Don't `setTerrain` on `HILLSHADE_SOURCE_ID` yourself.
+- The shading's look (method, light, strength, max zoom, colours) is the `hillshade.*` styling knobs, and the sky above a tilted horizon is `view.sky` (`map-styling.md`). `hillshade.exaggeration` is shading strength, not the surface height `elevationExaggeration` sets.
+- Basemap 3D buildings (`buildings3D` layer group) and the Landmarks 3D plugin stand on the raised surface.

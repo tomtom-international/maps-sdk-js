@@ -3,7 +3,9 @@ import type { MultiPolygon, Position } from 'geojson';
 import type { PostObject } from '../shared';
 import { sampleWithinMaxLength } from '../shared/arrays';
 import { positionToCSVLatLon } from '../shared/geometry';
-import { appendCommonSearchParams, PLACES_URL_PATH } from '../shared/request/commonSearchRequestBuilder';
+import { appendCommonSearchParams } from '../shared/request/commonSearchRequestBuilder';
+import { resolvePlacesEndpointUrl } from '../shared/request/placesEndpoint';
+import { buildPlacesRequestHeaders } from '../shared/request/requestBuildingUtils';
 import type { GeometryAPI, GeometrySearchParams, GeometrySearchPayloadAPI, SearchGeometryInput } from './types';
 
 const findFiftyLargestPolygons = (searchGeometry: MultiPolygon): Position[][][] => {
@@ -61,8 +63,7 @@ const sdkGeometryToApiGeometries = (searchGeometry: SearchGeometryInput): Geomet
 };
 
 const buildUrlBasePath = (mergedOptions: GeometrySearchParams): string =>
-    mergedOptions.customServiceBaseURL ??
-    `${mergedOptions.commonBaseURL}${PLACES_URL_PATH}/geometrySearch/${mergedOptions.query ?? ''}.json`;
+    resolvePlacesEndpointUrl(mergedOptions, `geometrySearch/${mergedOptions.query ?? ''}.json`);
 
 /**
  * Default function for building a geometry search request from {@link GeometrySearchParams}
@@ -74,6 +75,7 @@ export const buildGeometrySearchRequest = (params: GeometrySearchParams): PostOb
 
     return {
         url,
+        headers: buildPlacesRequestHeaders(params),
         data: {
             geometryList: params.geometries.flatMap(sdkGeometryToApiGeometries),
         },

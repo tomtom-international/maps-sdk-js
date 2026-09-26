@@ -31,6 +31,17 @@
                 </div>
                 <!-- One section per knob group, generated from styling.describe() -->
                 <div id="ui-knobs"></div>
+                <!-- A raw layer edit through styling.layers.query, below the knobs it lands on top of -->
+                <div class="ui-section">
+                    <h4 class="ui-subheading">Layer edits</h4>
+                    <label
+                        class="ui-toggle-label"
+                        title="styling.layers.query({ group: 'roadLabels' }).setPaint(…): kept across style switches, not by the reset button"
+                    >
+                        <input type="checkbox" class="ui-toggle-input" id="ui-roadLabelsEdit">
+                        <span class="ui-toggle-switch"></span>Road labels in magenta
+                    </label>
+                </div>
                 <div class="ui-section">
                     <button class="ui-button" id="ui-reset" type="button">Reset to style defaults</button>
                 </div>

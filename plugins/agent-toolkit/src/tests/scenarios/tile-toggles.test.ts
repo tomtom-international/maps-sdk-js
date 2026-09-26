@@ -9,27 +9,6 @@ import { getExamplePrompts, runToolScenario } from './helpers';
 // PR description's overlaps notes). The traffic-flow / traffic-incident overlays have no such
 // low-level equivalent and stay strict.
 
-describe.skipIf(!MODEL)('toggleTilesBaseMapLayerGroups scenarios', { timeout: 180_000, retry: 3 }, () => {
-    const acceptedAlternatives = ['setLayoutProperties'] as const;
-    const [canonical, ...rest] = getExamplePrompts('toggleTilesBaseMapLayerGroups');
-    it(`classifies the canonical prompt: ${canonical}`, async () => {
-        const outcome = await runToolScenario({
-            expectedTool: 'toggleTilesBaseMapLayerGroups',
-            prompt: canonical,
-            acceptedAlternatives,
-        });
-        expect(outcome.success, outcome.failureReason).toBe(true);
-    });
-    it.skipIf(!FULL_SCENARIOS).each(rest)('handles registry examplePrompt: %s', async (prompt) => {
-        const outcome = await runToolScenario({
-            expectedTool: 'toggleTilesBaseMapLayerGroups',
-            prompt,
-            acceptedAlternatives,
-        });
-        expect(outcome.success, outcome.failureReason).toBe(true);
-    });
-});
-
 describe.skipIf(!MODEL)('toggleTilesPOIs scenarios', { timeout: 180_000, retry: 3 }, () => {
     const acceptedAlternatives = ['setLayoutProperties'] as const;
     const [canonical, ...rest] = getExamplePrompts('toggleTilesPOIs');

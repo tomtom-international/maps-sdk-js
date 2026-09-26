@@ -56,7 +56,6 @@ export const apiAndParsedResponses: Array<
                 numResults: 1,
                 offset: 0,
                 totalResults: 2114,
-                fuzzyLevel: 0,
             },
             features: [
                 {
@@ -124,7 +123,6 @@ export const apiAndParsedResponses: Array<
                 numResults: 1,
                 offset: 0,
                 totalResults: 1,
-                fuzzyLevel: 0,
             },
             features: [
                 {
@@ -186,7 +184,6 @@ export const apiAndParsedResponses: Array<
                 numResults: 1,
                 offset: 0,
                 totalResults: 1,
-                fuzzyLevel: 0,
             },
             features: [
                 {
@@ -260,7 +257,6 @@ export const apiAndParsedResponses: Array<
                 numResults: 2,
                 offset: 0,
                 totalResults: 2,
-                fuzzyLevel: 0,
                 geoBias: [4.9003, 52.3791],
             },
             bbox: [4.9, 52.38, 4.91, 52.39],
@@ -344,7 +340,6 @@ export const apiAndParsedResponses: Array<
                 numResults: 1,
                 offset: 0,
                 totalResults: 1,
-                fuzzyLevel: 0,
             },
             features: [
                 {
@@ -385,7 +380,6 @@ export const apiAndParsedResponses: Array<
                 numResults: 0,
                 offset: 40,
                 totalResults: 0,
-                fuzzyLevel: 0,
             },
             features: [],
         },

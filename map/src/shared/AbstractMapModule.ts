@@ -239,8 +239,7 @@ export abstract class AbstractMapModule<
      * module behavior even when the map's base style is modified.
      *
      * Unless a module documents otherwise, the given configuration **replaces** the current one
-     * rather than being merged into it. To change one part of it, spread the current
-     * configuration into the new one: `myModule.applyConfig({ ...myModule.getConfig(), theme })`.
+     * rather than being merged into it. To change one part of it, use {@link updateConfig}.
      *
      * @example
      * ```typescript
@@ -257,6 +256,28 @@ export abstract class AbstractMapModule<
     applyConfig(config: CFG | undefined) {
         this.config = this._applyConfig(config);
         this.emitConfigChange();
+    }
+
+    /**
+     * Changes part of the configuration and keeps the rest.
+     *
+     * The given properties are laid over the current configuration — one level deep, so a nested
+     * object you pass replaces the nested object that was there — and the result is applied with
+     * {@link applyConfig}. This is the same on every module, whatever its `applyConfig` does with a
+     * whole configuration.
+     *
+     * @param partial - The properties to change.
+     *
+     * @example
+     * ```typescript
+     * routing.applyConfig({ displayUnits: 'imperial', theme: { mainColor: '#0a3653' } });
+     * routing.updateConfig({ theme: { mainColor: '#c2185b' } }); // displayUnits stays imperial
+     * ```
+     *
+     * @see {@link applyConfig} to apply a whole configuration
+     */
+    updateConfig(partial: Partial<NonNullable<CFG>>): void {
+        this.applyConfig({ ...this.config, ...partial } as CFG);
     }
 
     /**
@@ -319,14 +340,15 @@ export abstract class AbstractMapModule<
     }
 
     // The clean-switch counterpart of restoreDataAndConfig (`setStyle(style, { resetState: true })`):
-    // the module re-binds to the new style with default configuration and nothing shown, so it
-    // stays usable — a stale module over a style that no longer has its layers would not be.
+    // the module re-binds to the new style with the configuration `resetConfig()` returns to and
+    // nothing shown, so it stays usable — a stale module over a style that no longer has its layers
+    // would not be.
     private resetOnNewStyle(): void {
         this.moduleReady = false;
         this.config = undefined;
         this.discardShownData();
         this.initSourcesWithLayers(undefined, true);
-        this._applyConfig(undefined);
+        this.config = this._applyConfig(undefined);
         this.emitConfigChange();
     }
 
@@ -462,6 +484,15 @@ export abstract class AbstractMapModule<
     }
 
     /**
+     * `config-change` alone: the event surface of a module with no `show` and nothing on the map a
+     * user can interact with, and the lifecycle half of {@link moduleEvents}.
+     * @ignore
+     */
+    protected lifecycleEvents(): ModuleEvents<CFG, never> {
+        return new ModuleEvents<CFG, never>(this.configChangeHandlers, []);
+    }
+
+    /**
      * The event surface of a module with no `show`: user events over the named sources, plus
      * `config-change`. `shown-features` is not subscribable here — `TShown` is `never`, which
      * makes the overload uncallable.
@@ -473,7 +504,7 @@ export abstract class AbstractMapModule<
     ): CombinedEvents<T, CFG, never, WHERE_SCOPE> {
         return new CombinedEvents<T, CFG, never, WHERE_SCOPE>(
             this.userEvents<T, WHERE_SCOPE>(sourceNames, options),
-            new ModuleEvents<CFG, never>(this.configChangeHandlers, []),
+            this.lifecycleEvents(),
         );
     }
 

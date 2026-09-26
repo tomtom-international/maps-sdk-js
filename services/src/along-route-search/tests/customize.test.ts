@@ -25,7 +25,8 @@ describe('Along Route Search customize obj', () => {
         ).toStrictEqual(
             JSON.parse(
                 JSON.stringify({
-                    url: 'https://api.tomtom.com/maps/orbis/places/searchAlongRoute/coffee.json?apiVersion=1&key=API_KEY&maxDetourTime=300&spreadingMode=plan',
+                    url: 'https://api.tomtom.com/maps/orbis/places/searchAlongRoute/coffee.json?maxDetourTime=300&spreadingMode=plan',
+                    headers: { 'TomTom-Api-Key': 'API_KEY', 'TomTom-Api-Version': '1' },
                     data: {
                         route: {
                             points: [

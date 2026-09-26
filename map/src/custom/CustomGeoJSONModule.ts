@@ -166,8 +166,9 @@ export class CustomGeoJSONModule<
         config: CustomGeoJSONModuleConfig<TSources> | undefined,
         restore?: boolean,
     ): CustomGeoJSONSourcesWithLayers<TSources> {
-        // config is required by the public API; the base-class signature allows undefined.
-        const effectiveConfig = config ?? (this.config as CustomGeoJSONModuleConfig<TSources>);
+        // config is required by the public API; only a clean style switch re-initialises without one,
+        // and that resets to the creation config like `resetConfig()` does.
+        const effectiveConfig = config ?? this.initialConfig;
         if (!restore) {
             this.lastShown = {};
         }

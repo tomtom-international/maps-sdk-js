@@ -1,23 +1,36 @@
 import type { Map as MapLibreMap } from 'maplibre-gl';
-import { DoubleSide, Group, LoaderUtils, type MeshStandardMaterial, REVISION, type WebGLRenderer } from 'three';
+import {
+    BufferAttribute,
+    DoubleSide,
+    Group,
+    LoaderUtils,
+    type Mesh,
+    type MeshStandardMaterial,
+    REVISION,
+    type WebGLRenderer,
+} from 'three';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader.js';
 import { toCreasedNormals } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+import { GRADIENT_ATTRIBUTE } from './FillExtrusionMaterial';
 import type { ModelsSourceSpecification } from './types/modelsSpecifications';
 import { isMesh } from './utils';
 
 // Edges sharper than 30° keep their own normals (crisp corners); smoother ones share one (no grain).
 const CREASE_ANGLE_RADIANS = Math.PI / 6;
 
+// When a new tile lands this far from the scene origin, rebase the origin so relative
+// coordinates stay within float32 precision.
+const REBASE_DISTANCE_METRES = 100_000;
+
 const DEFAULT_TRANSCODER_PATH = `https://unpkg.com/three@0.${REVISION}.x/examples/jsm/libs/basis/`;
 
 // Private maplibre-gl internals this source needs, reached via an `unknown` cast.
-// v6 stopped having `Map` extend `Camera`, so the transform hangs off the composed `_camera`
-// rather than the map itself (see the same note in ModelsLayer).
-interface MapLibreTransformInternals {
+// The transform hangs off the composed `_camera`, not the map itself.
+type MapLibreTransformInternals = {
     _camera: { transform: { tileSize: number } };
-}
+};
 
 // Element of maplibre's coveringTiles() result; exposes `.key`, `.canonical.{z,url}` and `.toString()`.
 type CoveringTile = ReturnType<MapLibreMap['coveringTiles']>[number];
@@ -39,6 +52,12 @@ export class ModelsSource {
     tiles: Array<string>;
     scene: Group;
     loadedTiles = new Set<string>();
+    /**
+     * EPSG:3857 origin subtracted from all mesh positions: absolute coordinates (~6·10⁶ m) exceed
+     * float32 precision (~0.5 m), which makes landmark edges tremble while zooming. `null` until the
+     * first tile with meshes loads.
+     */
+    sceneOrigin: { x: number; y: number } | null = null;
     /** Optional consumer callback fired once per successful tile load. */
     onTileLoaded?: (scene: Group, key: string) => void;
 
@@ -71,21 +90,38 @@ export class ModelsSource {
             return;
         }
 
+        const coveringTileKeys = new Set<string>();
         for (const tile of this.coveringTiles()) {
+            coveringTileKeys.add(tile.key);
             this.loadTile(tile);
+        }
+        this.showCoveringTilesOnly(coveringTileKeys);
+    }
+
+    // Renders only the tiles that cover the viewport, so landmarks leave the screen together with
+    // the basemap buildings of the same area. Tiles that fall outside stay in memory, ready to
+    // render again without a refetch.
+    private showCoveringTilesOnly(coveringTileKeys: Set<string>): void {
+        for (const tile of this.scene.children) {
+            tile.visible = coveringTileKeys.has(tile.userData.key as string);
         }
     }
 
+    // With 3D terrain, a tile on a hill is in view before its sea-level footprint is: MapLibre's own
+    // sources pass the terrain so tiles are bounded by their elevation range. The public options type
+    // leaves `terrain` out, but `coveringTiles` forwards it, so the options go in as a variable.
     private coveringTiles(): CoveringTile[] {
         const transform = (this.map as unknown as MapLibreTransformInternals)._camera.transform;
-        return this.map.coveringTiles({
+        const options = {
             tileSize: transform.tileSize,
             minzoom: this.minzoom,
             maxzoom: this.maxzoom,
-        });
+            terrain: this.map.terrain,
+        };
+        return this.map.coveringTiles(options);
     }
 
-    // The source loads a single zoom level, so tiles never overlap; each is kept on screen once loaded.
+    // The source loads a single zoom level, so tiles never overlap; each is fetched once.
     private loadTile(tile: CoveringTile): void {
         if (this.loadedTiles.has(tile.key)) {
             return;
@@ -99,6 +135,7 @@ export class ModelsSource {
                     return; // expected empty tile (no landmark / not produced)
                 }
                 prepareTileMeshes(scene);
+                this.rebaseToSceneOrigin(scene);
                 scene.userData = { isTile: true, key: tile.key };
                 this.scene.add(scene);
                 this.onTileLoaded?.(scene, tile.key);
@@ -106,6 +143,42 @@ export class ModelsSource {
             .catch((error: { message?: string }) => {
                 console.warn(`Problem with loading ${tile.toString()}: ${error?.message ?? 'unknown'}`);
             });
+    }
+
+    // Rewrites the tile's meshes from absolute EPSG:3857 positions to positions relative to
+    // `sceneOrigin`, which ModelsLayer.alignCameraToMap folds back in.
+    private rebaseToSceneOrigin(tileScene: Group): void {
+        const meshes: Mesh[] = [];
+        tileScene.traverse((child) => {
+            if (isMesh(child)) {
+                meshes.push(child);
+            }
+        });
+        if (meshes.length === 0) {
+            return;
+        }
+
+        const anchor = meshes[0].position;
+        const anchorOrigin = { x: Math.round(anchor.x), y: Math.round(anchor.y) };
+        if (!this.sceneOrigin) {
+            this.sceneOrigin = anchorOrigin;
+        } else if (Math.hypot(anchor.x - this.sceneOrigin.x, anchor.y - this.sceneOrigin.y) > REBASE_DISTANCE_METRES) {
+            // The viewport moved far from the origin (e.g. a fly-to across cities): move the
+            // origin and shift the already-loaded meshes accordingly.
+            const deltaX = anchorOrigin.x - this.sceneOrigin.x;
+            const deltaY = anchorOrigin.y - this.sceneOrigin.y;
+            this.scene.traverse((child) => {
+                if (isMesh(child)) {
+                    child.position.x -= deltaX;
+                    child.position.y -= deltaY;
+                }
+            });
+            this.sceneOrigin = anchorOrigin;
+        }
+        for (const mesh of meshes) {
+            mesh.position.x -= this.sceneOrigin.x;
+            mesh.position.y -= this.sceneOrigin.y;
+        }
     }
 
     // Fetch via the global `fetch` (not three.js' XHR) so it rides any installed
@@ -138,5 +211,20 @@ const prepareTileMeshes = (scene: Group): void => {
         material.side = DoubleSide;
         child.userData.originalMaterial = material;
         child.geometry = toCreasedNormals(child.geometry, CREASE_ANGLE_RADIANS);
+        bakeGradientAttribute(child);
     });
+};
+
+// Bakes the GRADIENT_ATTRIBUTE term per vertex, with base = 0 and t = z / height.
+const bakeGradientAttribute = (mesh: Mesh): void => {
+    const geometry = mesh.geometry;
+    const positions = geometry.getAttribute('position');
+    geometry.computeBoundingBox();
+    const height = geometry.boundingBox?.max.z ?? 0;
+    const gradientScale = height > 0 ? Math.sqrt(height / 150) / height : 0;
+    const gradient = new Float32Array(positions.count);
+    for (let index = 0; index < positions.count; index++) {
+        gradient[index] = positions.getZ(index) * gradientScale;
+    }
+    geometry.setAttribute(GRADIENT_ATTRIBUTE, new BufferAttribute(gradient, 1));
 };

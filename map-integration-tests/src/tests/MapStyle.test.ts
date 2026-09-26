@@ -80,7 +80,7 @@ const initModules = async (page: Page) =>
         const mapsSdkThis = globalThis as MapsSDKThis;
         await mapsSdkThis.MapsSDK.TrafficIncidentsModule.get(mapsSdkThis.tomtomMap, { visible: true });
         await mapsSdkThis.MapsSDK.TrafficFlowModule.get(mapsSdkThis.tomtomMap, { visible: true });
-        await mapsSdkThis.MapsSDK.HillshadeModule.get(mapsSdkThis.tomtomMap, { visible: true });
+        await mapsSdkThis.MapsSDK.TerrainModule.get(mapsSdkThis.tomtomMap, { hillshade: true });
     });
 
 test.describe('Map Style tests', () => {

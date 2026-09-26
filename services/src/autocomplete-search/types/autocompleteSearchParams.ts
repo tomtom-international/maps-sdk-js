@@ -1,4 +1,4 @@
-import type { CommonServiceParams, PointGeoBias } from '../../shared';
+import type { CommonServiceParams, GetObject, PointGeoBias } from '../../shared';
 import type { AutocompleteSearchResponseAPI } from './autocompleteSearchResponseAPI';
 
 /**
@@ -74,7 +74,7 @@ export type AutocompleteSearchSegmentType = 'brand' | 'category' | 'plaintext';
  *
  * @group Autocomplete Search
  */
-export type AutocompleteSearchParams = CommonServiceParams<URL, AutocompleteSearchResponseAPI> & {
+export type AutocompleteSearchParams = CommonServiceParams<GetObject, AutocompleteSearchResponseAPI> & {
     /**
      * Search query string (partial user input).
      *

@@ -203,7 +203,7 @@ describe('Geometry Search service', () => {
             onAPIResponse: onApiResponse,
         });
         expect(result).toBeDefined();
-        const expectedApiRequest = { url: expect.any(URL), data: expect.anything() };
+        const expectedApiRequest = expect.objectContaining({ url: expect.any(URL), data: expect.anything() });
         expect(onApiRequest).toHaveBeenCalledWith(expectedApiRequest);
         expect(onApiResponse).toHaveBeenCalledWith(expectedApiRequest, expect.anything());
     });
@@ -224,7 +224,7 @@ describe('Geometry Search service', () => {
                 onAPIResponse: onApiResponse,
             }),
         ).rejects.toThrow(expect.objectContaining({ status: 400 }));
-        const expectedApiRequest = { url: expect.any(URL), data: expect.anything() };
+        const expectedApiRequest = expect.objectContaining({ url: expect.any(URL), data: expect.anything() });
         expect(onApiRequest).toHaveBeenCalledWith(expectedApiRequest);
         expect(onApiResponse).toHaveBeenCalledWith(expectedApiRequest, expect.objectContaining({ status: 400 }));
     });

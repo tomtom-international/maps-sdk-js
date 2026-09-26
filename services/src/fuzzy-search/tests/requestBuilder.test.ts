@@ -7,7 +7,7 @@ import { fuzzySearchReqObjects } from './requestBuilderPerf.data';
 
 describe('Calculate Fuzzy Search request URL building tests', () => {
     test.each(fuzzySearchReqObjectsAndUrLs)("'%s'", (_name, params, requestUrl) => {
-        expect(buildFuzzySearchRequest(params).toString()).toStrictEqual(requestUrl);
+        expect(buildFuzzySearchRequest(params).url.toString()).toStrictEqual(requestUrl);
     });
 });
 

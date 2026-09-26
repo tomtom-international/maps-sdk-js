@@ -1,13 +1,13 @@
-import type { Map } from 'maplibre-gl';
-import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test } from 'vitest';
 import { BaseMapModule } from '../../base';
 import { CustomGeoJSONModule } from '../../custom';
 import { GeometriesModule } from '../../geometry';
-import { HillshadeModule } from '../../hillshade';
 import { PlacesModule } from '../../places';
 import { POIsModule } from '../../pois';
 import { RoutingModule } from '../../routing';
+import { StylingModule } from '../../styling';
 import type { TomTomMap } from '../../TomTomMap';
+import { TerrainModule } from '../../terrain';
 import {
     TrafficAreaAnalyticsModule,
     TrafficFlowModule,
@@ -16,6 +16,7 @@ import {
 } from '../../traffic';
 import { AbstractDataOwnedMapModule } from '../AbstractDataOwnedMapModule';
 import { AbstractStyleOwnedMapModule } from '../AbstractStyleOwnedMapModule';
+import { mockTomTomMap } from './mockTomTomMap';
 
 // TypeScript has no `abstract static`, so AbstractMapModule cannot demand a factory from its
 // subclasses. These two static-side contracts state it instead, and the `satisfies` below applies
@@ -48,33 +49,14 @@ describe('Map module factories by kind', () => {
         POIsModule,
         TrafficFlowModule,
         TrafficIncidentsModule,
-        HillshadeModule,
+        StylingModule,
+        TerrainModule,
     ] satisfies StyleOwnedModuleFactory[];
 
     let tomtomMapMock: TomTomMap;
 
     beforeEach(() => {
-        tomtomMapMock = {
-            mapLibreMap: {
-                once: vi.fn().mockReturnValue(Promise.resolve()),
-                getSource: vi.fn().mockReturnValue({ id: 'sourceID', setData: vi.fn() }),
-                getStyle: vi.fn().mockReturnValue({ layers: [{}], sources: { sourceID: {} } }),
-                getLayer: vi.fn(),
-                addLayer: vi.fn(),
-                isStyleLoaded: vi.fn().mockReturnValue(true),
-                setLayoutProperty: vi.fn(),
-                setPaintProperty: vi.fn(),
-                setFilter: vi.fn(),
-                moveLayer: vi.fn(),
-            } as unknown as Map,
-            _eventsProxy: {
-                add: vi.fn(),
-                ensureAdded: vi.fn(),
-                updateIfRegistered: vi.fn(),
-            },
-            addStyleChangeHandler: vi.fn(),
-            mapReady: vi.fn().mockReturnValue(true),
-        } as unknown as TomTomMap;
+        tomtomMapMock = mockTomTomMap().tomtomMap;
     });
 
     test('data-owned modules are built with create() and have no get()', () => {

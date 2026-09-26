@@ -12,7 +12,7 @@ import { PlacesModule, GeometriesModule, RoutingModule, TrafficFlowModule } from
 
 | Event | Fires when | Available on |
 |-------|-----------|-------------|
-| `config-change` | Any config mutation (`applyConfig`, `setVisible`, any setter) | All modules |
+| `config-change` | Any config mutation (`applyConfig`, `updateConfig`, `resetConfig`, `setVisible`, any setter) | All modules |
 | `shown-features` | After any of a module's `show*()` operations completes | PlacesModule, GeometriesModule, RoutingModule, CustomGeoJSONModule, TrafficIncidentOverlayModule, TrafficAreaAnalyticsModule |
 
 Both live on the module, never on a named scope: a module has one configuration and one `show`
@@ -31,7 +31,13 @@ const unsub = trafficFlow.events.on('config-change', (config) => {
 unsub(); // unsubscribe when done
 ```
 
-Common triggers: `setVisible`, `applyConfig`, `applyTheme`, `moveBeforeLayer`, `filterCategories`, `setMode`, `setMetric`, `setLayerGroupsVisibility`.
+Common triggers: `setVisible`, `applyConfig`, `updateConfig`, `applyTheme`, `moveBeforeLayer`, `filterCategories`, `setMode`, `setMetric`, `setLayerGroupsVisibility`.
+
+`applyConfig(config)` takes a whole configuration and, on most modules, **replaces** the current one. To change part of it, use `updateConfig(partial)` — it lays the given properties over the current configuration one level deep (a nested object you pass replaces the one that was there) and is the same on every module:
+
+```ts
+routing.updateConfig({ theme: { mainColor: '#c2185b' } }); // everything else stays
+```
 
 ---
 
@@ -69,8 +75,8 @@ trafficAreaAnalytics.events.on('shown-features', (data) => {
 
 A module that manages several surfaces also exposes one named scope per surface, covering that
 surface's **user** events — `on` / `off` / `where`. Lifecycle events are not on a scope. Modules with
-a single surface — BaseMap, POIs, Hillshade, both traffic tile modules, TrafficIncidentOverlay —
-have no named scopes; `events` already is that scope.
+a single surface — BaseMap, POIs, both traffic tile modules, TrafficIncidentOverlay —
+have no named scopes; `events` already is that scope. `TerrainModule` has lifecycle events only.
 
 ```ts
 // Module lifecycle events, module-wide
@@ -116,7 +122,7 @@ unsubA(); // only removes handlerA
 
 ## Modules that do NOT emit `shown-features`
 
-`TrafficFlowModule`, `TrafficIncidentsModule`, `HillshadeModule`, `BaseMapModule`, `POIsModule` — these control existing map data and have no `show()` method, so `events.on('shown-features', …)` does not compile on them.
+`TrafficFlowModule`, `TrafficIncidentsModule`, `TerrainModule`, `BaseMapModule`, `POIsModule` — these control existing map data and have no `show()` method, so `events.on('shown-features', …)` does not compile on them.
 
 ---
 

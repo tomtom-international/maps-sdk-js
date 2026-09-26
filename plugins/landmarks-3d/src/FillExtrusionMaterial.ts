@@ -11,14 +11,25 @@ import {
     Vector3,
 } from 'three';
 
+/**
+ * Name of the per-vertex gradient attribute baked into landmark geometry: maplibre's
+ * `(t + base) * pow(height / 150.0, 0.5)` vertical-gradient term, precomputed per vertex.
+ *
+ * @group Landmarks 3D
+ */
+export const GRADIENT_ATTRIBUTE = 'fillExtrusionGradient';
+
 const VERTEX_SHADER = /* glsl */ `
+    attribute float ${GRADIENT_ATTRIBUTE};
     varying vec3 vWorldNormal;
+    varying float vGradient;
     #ifdef USE_ALPHA_MASK
     varying vec2 vUv;
     #endif
 
     void main() {
         vWorldNormal = normalize(mat3(modelMatrix) * normal);
+        vGradient = ${GRADIENT_ATTRIBUTE};
         #ifdef USE_ALPHA_MASK
         vUv = uv;
         #endif
@@ -43,27 +54,44 @@ const ALPHA_MASK_MAIN_CHUNK = /* glsl */ `
         #endif
 `;
 
-// Per-fragment replica of maplibre's fill_extrusion shading, in sRGB on the raw paint colour (no tone-mapping).
+// Term-for-term replica of maplibre's fill_extrusion shading, in sRGB on the raw paint colour, so
+// facades match the basemap buildings from every angle. Like maplibre, the vertical gradient only
+// darkens walls with a y normal component.
 const FRAGMENT_SHADER = /* glsl */ `
     uniform vec3 diffuseColor;
     uniform vec3 lightPosition;
     uniform float lightIntensity;
     uniform vec3 lightColor;
     uniform float layerOpacity;
+    uniform float verticalGradient;
     varying vec3 vWorldNormal;
+    varying float vGradient;
     ${ALPHA_MASK_FRAGMENT_CHUNK}
 
     void main() {
         ${ALPHA_MASK_MAIN_CHUNK}
         vec3 normal = normalize(vWorldNormal);
+        // Double-sided (alpha-masked) surfaces show their interior through carved openings;
+        // flip backface normals so those interiors shade like the facade instead of going dark.
+        if (!gl_FrontFacing) {
+            normal = -normal;
+        }
+        // Extrusions have only vertical walls and flat roofs, so a sloped landmark roof would shade
+        // darker than every basemap roof around it: up-facing normals light like a flat roof, the
+        // rest like a wall, blended for curved surfaces.
+        vec3 flattened = vec3(normal.xy, 0.0);
+        vec3 wallNormal = flattened / max(length(flattened), 1e-5);
+        float upness = smoothstep(0.4, 0.8, normal.z);
+        normal = normalize(mix(wallNormal, vec3(0.0, 0.0, 1.0), upness));
         float colorValue = dot(diffuseColor, vec3(0.2126, 0.7152, 0.0722));
-        // Flat ambient term lifting the paint colour, tuned to match the basemap buildings.
-        vec3 color = diffuseColor + vec3(0.145);
+        vec3 color = diffuseColor + vec3(0.03);
         float directional = clamp(dot(normal, lightPosition), 0.0, 1.0);
         directional = mix(1.0 - lightIntensity, max(1.0 - colorValue + lightIntensity, 1.0), directional);
-        // Side faces (walls) darken to 0.9; roofs (normal +Z) stay full bright.
-        float wallFactor = 1.0 - abs(normal.z);
-        directional *= mix(1.0, 0.9, wallFactor);
+        if (abs(normal.y) > 0.001) {
+            directional *=
+                (1.0 - verticalGradient) +
+                verticalGradient * clamp(vGradient, mix(0.7, 0.98, 1.0 - lightIntensity), 1.0);
+        }
         vec3 shaded = clamp(
             color * directional * lightColor,
             mix(vec3(0.0), vec3(0.3), vec3(1.0) - lightColor),
@@ -117,6 +145,7 @@ export class FillExtrusionMaterial extends ShaderMaterial {
                 lightIntensity: { value: 0.5 },
                 lightColor: { value: new Vector3(1, 1, 1) },
                 layerOpacity: { value: 1 },
+                verticalGradient: { value: 1 },
                 ...(alphaMask && {
                     alphaMask: { value: alphaMask.map },
                     alphaMaskCutoff: { value: alphaMask.cutoff },
@@ -134,8 +163,8 @@ export class FillExtrusionMaterial extends ShaderMaterial {
     }
 
     /**
-     * Copies the shading uniforms (colour, light, layer opacity) from another instance,
-     * bringing a freshly created alpha-masked variant up to date with the shared material.
+     * Copies the shading uniforms (colour, light, layer opacity, vertical gradient) from another
+     * instance, bringing a freshly created alpha-masked variant up to date with the shared material.
      */
     copyShadingFrom(source: FillExtrusionMaterial): void {
         (this.uniforms.diffuseColor.value as Vector3).copy(source.uniforms.diffuseColor.value as Vector3);
@@ -143,6 +172,7 @@ export class FillExtrusionMaterial extends ShaderMaterial {
         this.uniforms.lightIntensity.value = source.uniforms.lightIntensity.value;
         (this.uniforms.lightColor.value as Vector3).copy(source.uniforms.lightColor.value as Vector3);
         this.uniforms.layerOpacity.value = source.uniforms.layerOpacity.value;
+        this.uniforms.verticalGradient.value = source.uniforms.verticalGradient.value;
     }
 
     /**
@@ -157,6 +187,11 @@ export class FillExtrusionMaterial extends ShaderMaterial {
 
     setLayerOpacity(opacity: number): void {
         this.uniforms.layerOpacity.value = opacity;
+    }
+
+    /** Enables or disables maplibre's `fill-extrusion-vertical-gradient` wall darkening. */
+    setVerticalGradient(enabled: boolean): void {
+        this.uniforms.verticalGradient.value = enabled ? 1 : 0;
     }
 
     /**

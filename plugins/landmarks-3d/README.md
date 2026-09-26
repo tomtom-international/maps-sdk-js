@@ -19,7 +19,7 @@ Plugin for the [TomTom Maps SDK for Javascript](https://docs.tomtom.com/maps-sdk
 
 ## Quickstart
 
-Note: this plugin declares `@tomtom-org/maps-sdk` and `three` as peer dependencies — ensure both are installed in your project.
+Note: this plugin declares `@tomtom-org/maps-sdk`, `maplibre-gl` and `three` as peer dependencies — ensure all three are installed in your project.
 
 ```bash
 npm install @tomtom-org/maps-sdk maplibre-gl three @tomtom-org/maps-sdk-plugin-landmarks-3d

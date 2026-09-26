@@ -1,21 +1,22 @@
-import { PLACES_URL_PATH } from '../shared/request/commonSearchRequestBuilder';
+import type { GetObject } from '../shared';
+import { resolvePlacesEndpointUrl } from '../shared/request/placesEndpoint';
 import {
     appendByJoiningParamValue,
-    appendCommonParams,
     appendGeoBiasParams,
     appendOptionalParam,
+    appendPlacesLanguageParam,
+    buildPlacesRequestHeaders,
 } from '../shared/request/requestBuildingUtils';
 import type { AutocompleteSearchParams } from './types';
 
 const buildUrlBasePath = (mergedOptions: AutocompleteSearchParams): string =>
-    mergedOptions.customServiceBaseURL ||
-    `${mergedOptions.commonBaseURL}${PLACES_URL_PATH}/autocomplete/${mergedOptions.query}.json`;
+    resolvePlacesEndpointUrl(mergedOptions, `autocomplete/${mergedOptions.query}.json`);
 
 /**
  * Default function for building autocomplete request from {@link AutocompleteSearchParams}
  * @param params The autocomplete parameters, with global configuration already merged into them.
  */
-export const buildAutocompleteSearchRequest = (params: AutocompleteSearchParams): URL => {
+export const buildAutocompleteSearchRequest = (params: AutocompleteSearchParams): GetObject => {
     const url = new URL(`${buildUrlBasePath(params)}`);
     const urlParams = url.searchParams;
     /**
@@ -23,11 +24,11 @@ export const buildAutocompleteSearchRequest = (params: AutocompleteSearchParams)
      * Or global config
      */
     params.language = params.language ?? 'en-GB';
-    appendCommonParams(urlParams, params);
+    appendPlacesLanguageParam(urlParams, params);
     appendOptionalParam(urlParams, 'limit', params.limit);
     appendGeoBiasParams(urlParams, params.geoBias);
     appendByJoiningParamValue(urlParams, 'countrySet', params.countries);
     appendByJoiningParamValue(urlParams, 'resultSet', params.resultType);
 
-    return url;
+    return { url, headers: buildPlacesRequestHeaders(params) };
 };

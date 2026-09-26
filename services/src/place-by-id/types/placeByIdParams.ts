@@ -1,5 +1,5 @@
 import type { MapcodeType, OpeningHoursMode, View } from '@tomtom-org/maps-sdk/core';
-import type { CommonServiceParams, RelatedPoisRequest, TimeZoneRequest } from '../../shared';
+import type { CommonServiceParams, GetObject, RelatedPoisRequest, TimeZoneRequest } from '../../shared';
 import type { PlaceByIdResponseAPI } from './placeByIdResponseAPI';
 
 /**
@@ -166,6 +166,6 @@ export type PlaceByIdMandatoryParams = {
  *
  * @group Place
  */
-export type PlaceByIdParams = CommonServiceParams<URL, PlaceByIdResponseAPI> &
+export type PlaceByIdParams = CommonServiceParams<GetObject, PlaceByIdResponseAPI> &
     PlaceByIdMandatoryParams &
     PlaceByIdOptionalParams;

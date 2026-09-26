@@ -41,17 +41,18 @@ export const setMapStylingSchema = z.object({
         .describe(
             'Apply a named preset (replaces the current knobs; `set` is applied on top). ' +
                 'data-viz: quiet base for data overlays · night-driving: bigger labels, wider roads · minimal: bare map · ' +
-                'globe: globe projection with atmosphere · terrain: 3D terrain with sky.',
+                'globe: globe projection with atmosphere.',
         ),
 });
 
 export const setMapStylingDescription =
     'Restyle the base map semantically: label/icon/road size factors, feature toggles (exit numbers, shields, road ' +
-    'arrows, 3D buildings, POI micro markers…), POI zoom and label colours, traffic congestion and incident colours, ' +
+    'arrows, 3D buildings, POI micro markers…), the base-map layer groups (basemap.water, basemap.roadLabels…; ' +
+    'buildings are buildings.footprints/buildings.3d), hillshade shading, POI zoom and label colours, traffic colours, ' +
     'the ten map colours (colors.land/water/vegetation/park/artificial/roadMajor/road/roadOutline/label/labelOutline — ' +
     'one name recolours every derived shade, so for a dark palette switch to a dark standard style first and recolour ' +
-    'from there), globe projection, sky and 3D terrain, or a whole preset ' +
-    '(data-viz, night-driving, minimal, globe, terrain). ' +
+    'from there), globe projection and sky, or a whole preset ' +
+    '(data-viz, night-driving, minimal, globe). ' +
     'Durable across style switches. Not for layers the agent drew (places, routes, BYOD) — use their update*Display tools.';
 
 /** Execute set-map-styling. */

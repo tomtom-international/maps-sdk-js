@@ -27,7 +27,7 @@ This section is for developers working on the SDK codebase itself.
   - `maplibre-gl` — Map rendering engine (required)
   - `lodash-es` — Utility functions (required)
 - **Entry Point**: `index.ts`
-- **Key Modules**: `base`, `custom`, `geometry`, `hillshade`, `init`, `places`, `pois`, `routing`, `styling`, `traffic`, `TomTomMap`
+- **Key Modules**: `base`, `custom`, `geometry`, `init`, `places`, `pois`, `routing`, `styling`, `terrain`, `traffic`, `TomTomMap`
 
 **Installation Note**: When using npm (v7+) or Yarn, peer dependencies are installed automatically. When using pnpm, install peer dependencies manually: `pnpm install maplibre-gl lodash-es`
 

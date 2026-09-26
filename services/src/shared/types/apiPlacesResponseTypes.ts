@@ -85,11 +85,20 @@ export type AddressRangesAPI = {
 };
 
 /**
+ * The summary envelope as the places endpoints send it.
+ *
+ * @remarks
+ * Derived from {@link SearchSummary}, but `totalResults` and `fuzzyLevel` are pinned back to
+ * required here. They are optional on the public type so that consumers guard them; the endpoints
+ * we call always send them, and this type is what asserts that. Relaxing it would let a parser
+ * silently stop populating them.
+ *
  * @ignore
  */
-export type SummaryAPI = Omit<SearchSummary, 'geoBias'> & {
-    geoBias?: LatLonAPI;
-};
+export type SummaryAPI = Omit<SearchSummary, 'geoBias'> &
+    Required<Pick<SearchSummary, 'totalResults' | 'fuzzyLevel'>> & {
+        geoBias?: LatLonAPI;
+    };
 
 /**
  * @ignore

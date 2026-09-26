@@ -3,6 +3,7 @@ import type { Map } from 'maplibre-gl';
 import { describe, expect, test, vi } from 'vitest';
 import type { TomTomMap } from '../../TomTomMap';
 import { TrafficAreaAnalyticsModule } from '../TrafficAreaAnalyticsModule';
+import { AREA_ANALYTICS_DEFAULTS } from '../types/trafficAreaAnalyticsConfig';
 
 // NOTE: these tests are heavily mocked and are mostly used to keep coverage numbers high.
 // For real testing of such modules, refer to map-integration-tests.
@@ -251,11 +252,36 @@ describe('Traffic area analytics module tests', () => {
         expect(module.events).toBeDefined();
     });
 
-    test('applyConfig with undefined resets', async () => {
+    test('applyConfig with undefined resets to the defaults, layer positions included', async () => {
         const mockMap = createMockMap();
-        const module = await TrafficAreaAnalyticsModule.create(mockMap, { displayMode: 'heatmap' });
+        const module = await TrafficAreaAnalyticsModule.create(mockMap, {
+            displayMode: 'heatmap',
+            activeMetric: 'speed',
+            beforeLayerConfig: { heatmap: 'top' },
+        });
+        const moveLayer = vi.mocked(mockMap.mapLibreMap.moveLayer);
+        moveLayer.mockClear();
+
         module.applyConfig(undefined);
-        expect(module.getConfig()).toBeUndefined();
+
+        expect(module.getConfig()).toMatchObject({
+            displayMode: AREA_ANALYTICS_DEFAULTS.displayMode,
+            activeMetric: AREA_ANALYTICS_DEFAULTS.activeMetric,
+        });
+        expect(module.getConfig()?.beforeLayerConfig).toBeUndefined();
+        // The heatmap, and the flat and extruded hexgrid and square layers.
+        expect(moveLayer).toHaveBeenCalledTimes(5);
+    });
+
+    test('applyConfig filters on the metric it switches to', async () => {
+        const mockMap = createMockMap();
+        const module = await TrafficAreaAnalyticsModule.create(mockMap);
+        const setFilter = vi.mocked(mockMap.mapLibreMap.setFilter);
+        setFilter.mockClear();
+
+        module.applyConfig({ activeMetric: 'speed', metricConfig: { speed: { filters: { min: 10 } } } });
+
+        expect(setFilter).toHaveBeenCalledWith(expect.any(String), ['>=', ['get', 'speed'], 10]);
     });
 
     test('restoreDataAndConfigImpl keeps source and layer IDs stable across a style change', async () => {

@@ -3,10 +3,10 @@ import type { MapModuleCommonConfig, StyleSourcesWithLayers } from './types';
 
 /**
  * Base class for the map modules that control sources and layers the loaded map style already
- * provides, under fixed global IDs: the base map, POIs, the traffic tiles and hillshade.
+ * provides, under fixed global IDs: the base map, POIs, the traffic tiles and the terrain.
  *
  * @remarks
- * The style owns the data, so such a module adds no sources of its own and shows nothing by
+ * The style owns the data, so such a module brings no data of its own and shows nothing by
  * itself. It changes how the parts the style provides are drawn, filtered and made visible.
  * The SDK memoizes one instance per map, obtained with `get(map, config?)`, so every handle on it
  * sees the same state.

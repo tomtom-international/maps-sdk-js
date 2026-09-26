@@ -1,6 +1,7 @@
 import type { LineString } from 'geojson';
-import { appendCommonSearchParams, PLACES_URL_PATH } from '../shared/request/commonSearchRequestBuilder';
-import { appendOptionalParam } from '../shared/request/requestBuildingUtils';
+import { appendCommonSearchParams } from '../shared/request/commonSearchRequestBuilder';
+import { resolvePlacesEndpointUrl } from '../shared/request/placesEndpoint';
+import { appendOptionalParam, buildPlacesRequestHeaders } from '../shared/request/requestBuildingUtils';
 import type { AlongRouteSearchParams, AlongRouteSearchRequestAPI } from './types';
 
 const toLineString = (route: AlongRouteSearchParams['route']): LineString => {
@@ -11,8 +12,7 @@ const toLineString = (route: AlongRouteSearchParams['route']): LineString => {
 };
 
 const buildUrlBasePath = (params: AlongRouteSearchParams): string =>
-    params.customServiceBaseURL ??
-    `${params.commonBaseURL}${PLACES_URL_PATH}/searchAlongRoute/${params.query ?? ''}.json`;
+    resolvePlacesEndpointUrl(params, `searchAlongRoute/${params.query ?? ''}.json`);
 
 /**
  * Default function for building an along-route search request from {@link AlongRouteSearchParams}.
@@ -28,6 +28,7 @@ export const buildAlongRouteSearchRequest = (params: AlongRouteSearchParams): Al
 
     return {
         url,
+        headers: buildPlacesRequestHeaders(params),
         data: {
             route: {
                 points: toLineString(params.route).coordinates.map((coord) => ({

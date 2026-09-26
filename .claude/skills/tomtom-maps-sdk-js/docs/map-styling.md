@@ -59,10 +59,13 @@ Invalid values throw `RangeError` naming the knob and its range; unknown ids thr
 | Traffic incidents | `traffic.incidents.minorColor`, `traffic.incidents.moderateColor`, `traffic.incidents.majorColor`, `traffic.incidents.closedColor` | color |
 | | `traffic.incidents.widthFactor` | factor 0.5–2 |
 | Map colours | `colors.land`, `colors.water`, `colors.vegetation`, `colors.park`, `colors.artificial`, `colors.roadMajor`, `colors.road`, `colors.roadOutline`, `colors.label`, `colors.labelOutline` (see `setMapColors`) | color |
+| Base-map groups | `basemap.land`, `basemap.water`, `basemap.roads`, `basemap.railways`, `basemap.ferries`, `basemap.borders`, `basemap.natureLabels`, `basemap.roadLabels`, `basemap.roadShields`, `basemap.houseNumbers`, `basemap.smallerTownLabels`, `basemap.stateLabels`, `basemap.cityLabels`, `basemap.allPlaceLabels`, `basemap.capitalLabels`, `basemap.countryLabels` (the two building groups are `buildings.footprints` / `buildings.3d` above) | toggle |
+| Hillshade | `hillshade.method` | enum |
+| | `hillshade.lightDirection` (0–359), `hillshade.exaggeration` (0–1), `hillshade.maxZoom` (10–22) | number |
+| | `hillshade.shadowColor`, `hillshade.highlightColor`, `hillshade.accentColor` | color |
 | View | `view.projection` (`'mercator'` \| `'globe'`) | enum |
-| | `view.sky`, `view.terrain` | toggle |
+| | `view.sky` | toggle |
 | | `view.skyColor`, `view.horizonColor`, `view.spaceColor` | color |
-| | `view.terrainExaggeration` (0.5–3) | number |
 
 Traffic knobs need the traffic style part loaded (`TrafficFlowModule.get(map, { visible: true })`) to show anything.
 
@@ -97,23 +100,23 @@ Prefer `setMapColors` over `setPaintProperty` on road/water/label layers: the re
 
 A palette is a recolour, not an inversion — the offsets come off the loaded style. Keep it near that style's lightness; for a dark palette `await map.setStyle('standardDark')` first, then recolour, or the derived shades clamp and the road hierarchy washes out.
 
-## Globe, sky, 3D terrain — the `view` knobs
+## Globe and sky — the `view` knobs
 
 Map-level MapLibre state a `setStyle` would reset; owned here so it survives style switches.
 
 ```ts
 styling.set('view.projection', 'globe');
 styling.set('view.sky', true);              // without it a globe has NO atmosphere (MapLibre's default sky is transparent)
-styling.set('view.terrain', true);          // needs the hillshade style part (default) and a tilted camera
-styling.set('view.terrainExaggeration', 1.5);
-map.mapLibreMap.setMaxPitch(75);            // terrain fog starts at pitch 60 = MapLibre's default maxPitch
+map.mapLibreMap.setMaxPitch(75);            // fog over a tilted view starts at pitch 60 = MapLibre's default maxPitch
 ```
+
+3D terrain is **not** a knob — it needs the elevation style part loaded first, which `TerrainModule.get(map, { elevation: true })` does (see `map-setup.md` § TerrainModule).
 
 The sky defaults follow `map.styleLightDarkTheme` — daylit blue + white horizon on a light style, night blue + dim horizon on a dark one. `view.skyColor` / `view.horizonColor` override; a style's own `sky` wins over both.
 
 `view.spaceColor` is the colour **behind** the map, which a globe leaves visible around the planet. The map canvas is transparent there, so something has to fill it. A background your page already gives the map container is the knob's default and what `reset` returns to — the SDK does not paint over it. Otherwise it follows the theme (white on light, near-black on dark) and is re-applied after a `setStyle`, so a light→dark switch carries it.
 
-Gotchas: the globe flattens to Mercator between zoom 11–12 by design; `view.terrain` reports `available: false` (warns, no-op) on a style without a raster-dem source (e.g. `include: []` without `'hillshade'`).
+Gotcha: the globe flattens to Mercator between zoom 11–12 by design.
 
 ## Presets — `applyPreset(id, { merge? })`
 
@@ -125,7 +128,6 @@ Named bundles of knob settings; `describe().presets` lists them with their setti
 | `'night-driving'` | bigger labels/shields, wider roads and traffic tubes, POIs from z13 |
 | `'minimal'` | bare map: everything decorative off |
 | `'globe'` | `view.projection: 'globe'` + `view.sky: true` |
-| `'terrain'` | `view.terrain: true`, exaggeration 1.2, sky on |
 
 ```ts
 styling.applyPreset('data-viz');                // replaces current settings
@@ -153,7 +155,8 @@ const sliders = knobs.filter((knob) => knob.available && (knob.kind === 'factor'
 ```ts
 const settings: StylingSettings | undefined = styling.getConfig(); // only overridden knobs, plain JSON
 styling.applyConfig(settings);                                       // replace all knobs with these
-styling.events.on('config-change', (settings) => save(settings));   // fires after every set/reset/applyConfig
+styling.updateConfig(settings);                                      // set these, keep the other knobs
+styling.events.on('config-change', (settings) => save(settings));   // fires after every set/reset/applyConfig/updateConfig
 ```
 
 ## Build a UI from the catalogue
@@ -191,10 +194,28 @@ the event, so rebuilding replaces the input the pointer is dragging and the cont
 Rebuild only on external changes (a `reset`, a `setStyle`, an agent) — keep a flag around your own
 `set` calls and skip the rebuild while it is up. `examples/map-styling-playground` does both.
 
+## Base-map groups and hillshade as knobs
+
+- `basemap.<group>` toggles for the BaseMapModule groups (`basemap.roadLabels`, `basemap.water`, …) — one catalogue for all visibility, and `setMapStyling` is the agent tool for them. The two building groups are the `buildings.footprints` / `buildings.3d` knobs, not `basemap.*` ids.
+- `hillshade.method` (`standard|basic|igor|combined|multidirectional`), `hillshade.lightDirection` (0–359, 335 = default), `hillshade.exaggeration` (0–1), `hillshade.maxZoom` (10–22), `hillshade.shadowColor|highlightColor|accentColor`. Show the shading first: `TerrainModule.get(map, { hillshade: true })` (see `map-setup.md` § TerrainModule). **Standard styles ramp exaggeration to 0 and stop at zoom 13** → at city zoom set `hillshade.exaggeration: 0.5` and `hillshade.maxZoom: 22` to see anything.
+
+## Advanced tier — `styling.layers.query(...)` (version-coupled)
+
+```ts
+styling.layers.query({ group: 'roadLabels' }).setPaint({ 'text-color': '#93c5fd' });        // by base-map group
+styling.layers.query({ metadataGroups: ['water'], layerTypes: ['fill'] }).setPaint({ 'fill-opacity': 0.6 });
+styling.layers.query({ idIncludes: ['railway'] }).setVisible(false).setLayout({ 'line-cap': 'round' });
+styling.layers.query({ sourceLayers: ['poi'] }).setFilter(['==', ['get', 'group'], 'transport']);
+styling.layers.query({ group: 'roadLabels' }).reset();                                       // undo those edits
+styling.layers.query({ group: 'railways' }).layerIds;                                        // what matched, in draw order
+```
+
+Every constraint given must hold, so the other fields narrow `group`. `setPaint`/`setLayout` take MapLibre's typed paint/layout properties; `setFilter` replaces the style's own filter, and module filters (POI categories, traffic) still narrow it. Re-applied after `setStyle` while the layers exist; dropped on `resetState: true`; **not** in `getConfig()`. Layer ids/expressions belong to the style version — prefer knobs/`setMapColors` where they cover the intent. An empty match warns once.
+
 ## Gotchas
 
 - Settings survive `map.setStyle(style)` (re-applied last, after the other modules restore) and are dropped by `setStyle(style, { resetState: true })`.
-- Module boundaries: `StylingModule` owns *how the style draws* every style part (base map, traffic tiles, POIs, hillshade, view state); `BaseMapModule` / `TrafficFlowModule` / `TrafficIncidentsModule` / `POIsModule` / `HillshadeModule` own *what is shown* (visibility, category filters) of one part each. Look for appearance knobs on `StylingModule`, never on the per-part modules.
+- Module boundaries: `StylingModule` owns *how the style draws* every style part (base map, traffic tiles, POIs, hillshade, projection and sky); `BaseMapModule` / `TrafficFlowModule` / `TrafficIncidentsModule` / `POIsModule` / `TerrainModule` own *what is shown* (visibility, category filters, hillshade and 3D elevation) of one part each. Look for appearance knobs on `StylingModule`, never on the per-part modules.
 - Toggles and `BaseMapModule.setVisible` / `POIsModule.setVisible` both write layer visibility: the later call wins.
 - `pois.zoomShift` rewrites the POI layer filter that `POIsModule.filterCategories` also narrows; the two compose, in either order.
 - Knobs never touch the SDK's own overlays (PlacesModule pins, routes, geometries, BYOD) — those have their own display config.

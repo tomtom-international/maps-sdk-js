@@ -123,7 +123,7 @@ export type StandardStyle = {
      * Available modules:
      * - `trafficIncidents`: Real-time traffic incidents (accidents, closures)
      * - `trafficFlow`: Real-time traffic flow visualization
-     * - `hillshade`: Terrain elevation shading
+     * - `hillshade`: Terrain elevation data, for hillshade shading and 3D terrain
      *
      * @example
      * ```typescript
@@ -250,7 +250,7 @@ export const styleModules = ['trafficIncidents', 'trafficFlow', 'hillshade'] as 
  * @remarks
  * - `trafficIncidents`: Shows real-time traffic incidents on the map
  * - `trafficFlow`: Shows real-time traffic flow with color-coded speeds
- * - `hillshade`: Adds terrain elevation shading for topographic context
+ * - `hillshade`: Adds terrain elevation data, drawn by {@link TerrainModule} as hillshade shading and 3D terrain
  *
  * @group Map Style
  */
@@ -396,7 +396,6 @@ export type TomTomMapParams = Partial<GlobalConfig> & {
      *   zoom: 12,
      *   pitch: 45,
      *   bearing: -17.6,
-     *   antialias: true,
      *   maxZoom: 18,
      *   minZoom: 8
      * }

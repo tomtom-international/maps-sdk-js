@@ -453,6 +453,29 @@ for (const result of response.results) {
 
 ---
 
+## Fields that may be absent
+
+Not guaranteed — the type is the contract, so guard an optional property rather than assuming a
+value.
+
+| Field | What it carries |
+| --- | --- |
+| `places.properties.totalResults` | Total matches beyond the page returned |
+| `places.properties.fuzzyLevel` | How loosely the query was matched |
+| `places.properties.geoBias` | The position results were biased towards |
+| `places.properties.queryIntent` (fuzzy search) | Coordinates, what3words and "near X" detection |
+| `place.properties.score` | Relevance score, for thresholding and merging |
+| `places.bbox` | Bounding box, on results covering an area |
+
+```ts
+const { offset, numResults, totalResults } = results.properties;
+const hasMore = totalResults !== undefined && offset + numResults < totalResults;
+```
+
+`fuzzyLevel` absent means "not reported", **not** `0`/exact match.
+
+---
+
 ## Gotchas
 
 - `boundingBox`: `[west, south, east, north]`
@@ -463,3 +486,5 @@ for (const result of response.results) {
   callbacks typed for a narrower place shape, name it on the config:
   `PlacesModuleConfig<EVChargingStationWithAvailabilityPlaceProps>`
 - `applyTextConfig` / `applyIconConfig` / `applyTheme` are runtime methods — apply after `get()`
+- Guard the optional fields rather than assuming them: `place.properties.score`, `places.bbox`,
+  and `places.properties.totalResults` / `.fuzzyLevel` / `.geoBias` / `.queryIntent`

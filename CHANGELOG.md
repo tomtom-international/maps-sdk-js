@@ -1,5 +1,37 @@
 # Changelog
 
+## 0.57.0
+
+### Minor Changes
+
+- 669dc17: Breaking changes:
+  - services: the places services send the API key and API version as `TomTom-Api-Key` / `TomTom-Api-Version` headers instead of `key=` in the URL, so a request builder now returns `{ url, headers }` and a proxy has to forward those headers (#2185)
+  - services: `SearchSummary.totalResults` and `SearchSummary.fuzzyLevel` are optional — guard them rather than assuming a number (#2185)
+  
+  Features:
+  - services: `customizeService` builders document how to send the credential yourself, including `credentials: 'include'` under a credentials proxy via `isProxyCredentialsMode(config)` (#2185)
+- 892139d: Breaking changes:
+  - map: `TerrainModule` replaces `HillshadeModule` — `TerrainModule.get(map, { hillshade: true })` for what `HillshadeModule.get(map, { visible: true })` did, `setHillshadeVisible` for `setVisible` (#2056)
+  - map: the `view.terrain` and `view.terrainExaggeration` styling knobs and the `terrain` preset are removed — `TerrainModule.get(map, { elevation: true, elevationExaggeration })` raises the terrain instead, and loads the elevation style part the knob could not (#2056)
+  
+  Features:
+  - map: 3D terrain with `TerrainModule` — `elevation` and `elevationExaggeration` raise the map surface from the same elevation data the hillshade shades, restored after every style change (#2056)
+
+### Patch Changes
+
+- a8d3fde: Features:
+  - map: `basemap.<group>` styling knobs toggle every base-map layer group `BaseMapModule` knows, bar the two building groups the `buildings.*` knobs already cover (#2092)
+  - map: `hillshade.*` styling knobs set the shading's method, light direction, strength, maximum zoom and colours (#2092)
+  - map: `styling.layers.query(…)` edits the paint, layout, filter or visibility of the style layers a query selects, re-applied after every style change and undone by `reset()` (#2092)
+- 2f9aa90: Features:
+  - map: every module has `updateConfig(partial)`, which changes the given properties and keeps the rest of the configuration, whatever that module's `applyConfig` does with a whole one (#2100)
+  
+  Fixes:
+  - map: `BaseMapModule.resetConfig()` empties the configuration instead of keeping the previous one (#2100)
+  - map: `TrafficAreaAnalyticsModule.resetConfig()` returns the display mode, metric, colours, filters, region and layer positions to their defaults, instead of only clearing `getConfig()` (#2100)
+  - map: `TrafficAreaAnalyticsModule.applyConfig` with a new `activeMetric` filters and scales the layers by that metric rather than the previous one (#2100)
+  - map: a clean style switch (`setStyle(style, { resetState: true })`) leaves every module on the configuration `resetConfig()` returns to, and `CustomGeoJSONModule` survives it instead of throwing (#2100)
+
 ## 0.56.0
 
 ### Minor Changes

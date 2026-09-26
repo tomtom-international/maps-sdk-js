@@ -1,4 +1,5 @@
 import { baseMapLayerGroupSelector } from '../base/layerGroups';
+import { type BaseMapLayerGroupName, baseMapLayerGroupNames } from '../base/types/baseMapModuleConfig';
 import type { LayerSelector } from '../shared/layers/layerSelector';
 import { TRAFFIC_FLOW_SOURCE_ID, TRAFFIC_INCIDENTS_SOURCE_ID } from '../shared/layers/sourcesIDs';
 import { type MapColorName, mapColorDefinitions, type PaintColorProperty } from './mapColorCatalogue';
@@ -7,7 +8,27 @@ import type { StylingKnobAppliesTo, StylingKnobKind, StylingKnobRange } from './
 /** @ignore */
 export type ScalableProperty = 'text-size' | 'icon-size' | 'line-width';
 /** @ignore */
-export type ColorProperty = Extract<PaintColorProperty, 'line-color' | 'text-color' | 'text-halo-color'>;
+export type ColorProperty = Extract<
+    PaintColorProperty,
+    | 'line-color'
+    | 'text-color'
+    | 'text-halo-color'
+    | 'hillshade-shadow-color'
+    | 'hillshade-highlight-color'
+    | 'hillshade-accent-color'
+>;
+/**
+ * Paint properties set as plain literals by the `paintLiteral` mechanism. Listed as values for the
+ * same reason as `paintColorProperties`.
+ * @ignore
+ */
+export const literalPaintProperties = [
+    'hillshade-method',
+    'hillshade-illumination-direction',
+    'hillshade-exaggeration',
+] as const;
+/** @ignore */
+export type LiteralProperty = (typeof literalPaintProperties)[number];
 
 /**
  * How a knob reaches the style. A knob may use several (e.g. text and icon size together).
@@ -25,14 +46,16 @@ export type KnobMechanism =
     | { type: 'color'; property: ColorProperty; layers: LayerSelector[]; shades?: LayerSelector[] }
     /** Sets the minimum zoom of the matched layers. */
     | { type: 'minZoom'; layers: LayerSelector[] }
+    /** Sets the maximum zoom of the matched layers. */
+    | { type: 'maxZoom'; layers: LayerSelector[] }
+    /** M2 — sets a paint property to the knob's value as a plain literal on the matched layers. */
+    | { type: 'paintLiteral'; property: LiteralProperty; layers: LayerSelector[] }
     /** Shifts the `["-", ["zoom"], offset]` density term inside the matched layers' filters. */
     | { type: 'zoomOffset'; layers: LayerSelector[] }
     /** Map-level: the projection the whole map is drawn in. */
     | { type: 'projection' }
     /** Map-level: the sky/atmosphere (its colours come from the sibling colour knobs). */
     | { type: 'sky' }
-    /** Map-level: 3D terrain from the style's raster-dem source (exaggeration from the sibling knob). */
-    | { type: 'terrain' }
     /** Map-level: the colour behind the map canvas, which a globe leaves visible around the planet. */
     | { type: 'space' }
     /**
@@ -110,6 +133,31 @@ const color = (
     appliesTo: 'tomtom-styles',
     mechanisms: [{ type: 'color', property, layers, shades }],
 });
+
+const hillshadeLayers: LayerSelector = { layerTypes: ['hillshade'] };
+
+// The two building groups already have knobs of their own — `buildings.footprints` and
+// `buildings.3d`, which the presets and the agent tools use — and a second id for the same layers
+// would let the two disagree about what is shown.
+const BUILDING_GROUPS = ['buildings2D', 'buildings3D'] as const;
+type BuildingGroup = (typeof BUILDING_GROUPS)[number];
+type ToggleableGroup = Exclude<BaseMapLayerGroupName, BuildingGroup>;
+
+const buildingGroups: ReadonlySet<BaseMapLayerGroupName> = new Set(BUILDING_GROUPS);
+const isBuildingGroup = (group: BaseMapLayerGroupName): group is BuildingGroup => buildingGroups.has(group);
+
+// The rest of the SDK's base-map layer groups as toggles, so the whole visibility vocabulary is in
+// one catalogue (and one agent tool) with the rest of the styling.
+const basemapToggles = Object.fromEntries(
+    baseMapLayerGroupNames
+        .filter((group) => !isBuildingGroup(group))
+        .map((group) => [
+            `basemap.${group}`,
+            toggle(`The base-map layer group '${group}' (the same as BaseMapModule's).`, [
+                baseMapLayerGroupSelector(group),
+            ]),
+        ]),
+) as { [GROUP in ToggleableGroup as `basemap.${GROUP}`]: KnobDefinitionOf<'toggle'> };
 
 const mapColor = (color: MapColorName): KnobDefinitionOf<'color'> => ({
     kind: 'color',
@@ -251,8 +299,52 @@ export const knobDefinitions = {
     'colors.label': mapColor('label'),
     'colors.labelOutline': mapColor('labelOutline'),
 
-    // View — projection, atmosphere and terrain. Map-level MapLibre state the SDK owns here so it
-    // survives style switches (MapLibre resets all three on every `setStyle`).
+    // Base-map layer groups — the groups BaseMapModule toggles, bar the two building ones, as knobs.
+    ...basemapToggles,
+
+    // Hillshade appearance — the terrain shading's method, light and tones. Visibility stays with
+    // TerrainModule; these knobs only do something once it shows the hillshade.
+    'hillshade.method': {
+        kind: 'enum',
+        description:
+            'How the relief is shaded: standard (one light), basic, igor (softer), combined, or multidirectional (four lights).',
+        options: ['standard', 'basic', 'igor', 'combined', 'multidirectional'],
+        appliesTo: 'tomtom-styles',
+        mechanisms: [{ type: 'paintLiteral', property: 'hillshade-method', layers: [hillshadeLayers] }],
+    },
+    'hillshade.lightDirection': {
+        kind: 'number',
+        description:
+            'Direction the light comes from, in degrees clockwise from north (335 is the cartographic default).',
+        range: { min: 0, max: 359, step: 1 },
+        appliesTo: 'tomtom-styles',
+        mechanisms: [{ type: 'paintLiteral', property: 'hillshade-illumination-direction', layers: [hillshadeLayers] }],
+    },
+    'hillshade.exaggeration': {
+        kind: 'number',
+        description:
+            'Strength of the shading (0 = flat). The standard styles ramp it to zero by zoom 13; setting it replaces the ramp with a constant.',
+        range: { min: 0, max: 1, step: 0.05 },
+        appliesTo: 'tomtom-styles',
+        mechanisms: [{ type: 'paintLiteral', property: 'hillshade-exaggeration', layers: [hillshadeLayers] }],
+    },
+    'hillshade.maxZoom': {
+        kind: 'number',
+        description:
+            'Zoom level up to which the shading is drawn (the standard styles stop at 13; 22 keeps it at every zoom).',
+        range: { min: 10, max: 22, step: 1 },
+        appliesTo: 'tomtom-styles',
+        mechanisms: [{ type: 'maxZoom', layers: [hillshadeLayers] }],
+    },
+    'hillshade.shadowColor': color('Colour of the shaded slopes.', 'hillshade-shadow-color', [hillshadeLayers]),
+    'hillshade.highlightColor': color('Colour of the lit slopes.', 'hillshade-highlight-color', [hillshadeLayers]),
+    'hillshade.accentColor': color('Colour accentuating the steepest terrain.', 'hillshade-accent-color', [
+        hillshadeLayers,
+    ]),
+
+    // View — projection and atmosphere. Map-level MapLibre state the SDK owns here so it survives
+    // style switches (MapLibre resets both on every `setStyle`). 3D terrain needs the elevation
+    // style part loaded first, which a synchronous knob cannot do: it is `TerrainModule`'s.
     'view.projection': {
         kind: 'enum',
         description:
@@ -288,22 +380,6 @@ export const knobDefinitions = {
             'Colour behind the map, which a globe leaves visible around the planet. The map canvas is transparent, so without this the page background shows through. Defaults with the style theme: white on a light style, near-black on a dark one.',
         appliesTo: 'any-style',
         mechanisms: [{ type: 'space' }],
-    },
-    // Terrain works on any style that carries an elevation source — the TomTom hillshade style part,
-    // or a custom style's own raster-dem — and reports itself unavailable on one that carries none.
-    'view.terrain': {
-        kind: 'toggle',
-        description:
-            "3D terrain from the style's elevation source (the hillshade style part). Needs a tilted camera to show; MapLibre's terrain fog starts at pitch 60, which is also its default maxPitch.",
-        appliesTo: 'any-style',
-        mechanisms: [{ type: 'terrain' }],
-    },
-    'view.terrainExaggeration': {
-        kind: 'number',
-        description: 'Vertical exaggeration of the 3D terrain (1 = true elevation).',
-        range: { min: 0.5, max: 3, step: 0.1 },
-        appliesTo: 'any-style',
-        mechanisms: [{ type: 'terrain' }],
     },
 } as const satisfies Record<string, KnobDefinition>;
 

@@ -14,7 +14,6 @@ import type {
     EventType,
     FlowConfig,
     GeometriesModuleConfig,
-    HillshadeModuleConfig,
     IncidentsConfig,
     PlaceIconConfig,
     PlacesModuleConfig,
@@ -24,6 +23,7 @@ import type {
     SetStyleOptions,
     SourceWithLayerIDs,
     StyleInput,
+    TerrainModuleConfig,
     TrafficAreaAnalyticsConfig,
     TrafficIncidentOverlayConfig,
     WaypointDisplayProps,
@@ -222,10 +222,10 @@ export const initPOIs = async (page: Page, config?: POIsModuleConfig) =>
         mapsSdkThis.pois = await mapsSdkThis.MapsSDK.POIsModule.get(mapsSdkThis.tomtomMap, inputConfig);
     }, config);
 
-export const initHillshade = async (page: Page, config?: HillshadeModuleConfig) =>
+export const initTerrain = async (page: Page, config?: TerrainModuleConfig) =>
     page.evaluate(async (inputConfig) => {
         const mapsSdkThis = globalThis as MapsSDKThis;
-        mapsSdkThis.hillshade = await mapsSdkThis.MapsSDK.HillshadeModule.get(mapsSdkThis.tomtomMap, inputConfig);
+        mapsSdkThis.terrain = await mapsSdkThis.MapsSDK.TerrainModule.get(mapsSdkThis.tomtomMap, inputConfig);
     }, config);
 
 export const setStyle = async (page: Page, style: StyleInput, options?: SetStyleOptions) =>

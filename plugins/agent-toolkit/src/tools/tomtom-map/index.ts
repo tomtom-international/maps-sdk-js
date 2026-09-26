@@ -41,12 +41,6 @@ export {
     setMapStylingSchema,
 } from './set-map-styling';
 export {
-    executeToggleTilesBaseMapLayerGroups,
-    toggleTilesBaseMapLayerGroupsDescription,
-    toggleTilesBaseMapLayerGroupsOutputSchema,
-    toggleTilesBaseMapLayerGroupsSchema,
-} from './toggle-tiles-base-map-layer-groups';
-export {
     executeToggleTilesPOIs,
     toggleTilesPOIsDescription,
     toggleTilesPOIsOutputSchema,

@@ -4,11 +4,13 @@ import {
     StylingModule,
     StylingPresetId,
     standardStyleIDs,
+    TerrainModule,
     TomTomMap,
     TrafficFlowModule,
 } from '@tomtom-org/maps-sdk/map';
 import './style.css';
 import { API_KEY } from './config';
+import { initLayerEdits } from './layerEdits';
 import { initStylingPanel } from './stylingPanel';
 import { initTogglePanel } from './togglePanel';
 
@@ -16,14 +18,22 @@ import { initTogglePanel } from './togglePanel';
 TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
 
 (async () => {
+    // San Francisco: hills for the shading knobs, traffic for the congestion colours, and water,
+    // ferries and rail for the base-map groups.
     const map = new TomTomMap({
-        mapLibre: { container: 'sdk-map', center: [4.8952, 52.3702], zoom: 13 },
+        mapLibre: { container: 'sdk-map', center: [-122.4372, 37.7652], zoom: 12.6 },
     });
-    // Traffic flow on, so the congestion colour knobs have something to colour.
     await TrafficFlowModule.get(map, { visible: true });
+    await TerrainModule.get(map, { hillshade: true });
 
-    const styling = await StylingModule.get(map, { 'labels.sizeFactor': 1.2 });
+    // The standard styles fade the shading out by zoom 13; these keep it at every zoom.
+    const styling = await StylingModule.get(map, {
+        'labels.sizeFactor': 1.2,
+        'hillshade.exaggeration': 0.5,
+        'hillshade.maxZoom': 22,
+    });
     const panel = initStylingPanel(styling);
+    initLayerEdits(styling);
 
     document.querySelector('#ui-reset')?.addEventListener('click', () => styling.reset());
 

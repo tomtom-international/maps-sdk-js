@@ -17,10 +17,10 @@ import {
 ## Installation
 
 ```bash
-npm i @tomtom-org/maps-sdk @tomtom-org/maps-sdk-plugin-landmarks-3d three
+npm i @tomtom-org/maps-sdk maplibre-gl @tomtom-org/maps-sdk-plugin-landmarks-3d three
 ```
 
-`three` and `@tomtom-org/maps-sdk` are peer dependencies — the app installs both; the plugin never bundles them.
+`three`, `maplibre-gl` and `@tomtom-org/maps-sdk` are peer dependencies — the app installs them (the SDK already requires `maplibre-gl`); the plugin never bundles them.
 
 ## Quick start
 
@@ -58,7 +58,7 @@ When `minZoom`/`maxZoom` are omitted the range tracks the basemap 3D building la
 
 Every mode renders landmarks as maplibre-style fill-extrusion buildings.
 
-- `inherited` (default) — mirrors the **colour** of the basemap 3D building layer, so landmarks blend in.
+- `inherited` (default) — mirrors the **colour, opacity and vertical gradient** of the basemap 3D building layer, so landmarks blend in.
 - `dark` — the 3D-building look of the standard dark style.
 - `light` — the 3D-building look of the standard light style.
 
@@ -79,6 +79,7 @@ landmarks.layer;                        // the underlying ModelsLayer (advanced 
 - Adds a MapLibre **custom layer** (`ModelsLayer`) that fetches the GLB tiles covering the viewport and renders them with Three.js, keeping lighting in sync with the map style light.
 - Shows the standard style's hidden `3D - Building` layer for city context, and filters basemap extrusions flagged `has_landmark` out of that layer so they don't clip through the high-detail meshes.
 - The layer, its visibility, and the filter are all re-applied after map style changes.
+- **3D terrain**: with `TerrainModule` elevation on, each landmark is lowered onto the lowest terrain under its footprint every frame, so it follows terrain tiles as they load and exaggeration changes. Nothing to configure.
 
 ## Gotchas
 

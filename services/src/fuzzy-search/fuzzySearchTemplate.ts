@@ -1,4 +1,4 @@
-import type { ServiceTemplate } from '../shared';
+import type { GetObject, ServiceTemplate } from '../shared';
 import { get } from '../shared/fetch';
 import { fuzzySearchRequestSchema } from './fuzzySearchRequestSchema';
 import { buildFuzzySearchRequest } from './requestBuilder';
@@ -9,7 +9,12 @@ import type { FuzzySearchParams, FuzzySearchResponse, FuzzySearchResponseAPI } f
  * Fuzzy search service template type.
  * @ignore
  */
-export type FuzzySearchTemplate = ServiceTemplate<FuzzySearchParams, URL, FuzzySearchResponseAPI, FuzzySearchResponse>;
+export type FuzzySearchTemplate = ServiceTemplate<
+    FuzzySearchParams,
+    GetObject,
+    FuzzySearchResponseAPI,
+    FuzzySearchResponse
+>;
 
 /**
  * Fuzzy search service template main implementation.

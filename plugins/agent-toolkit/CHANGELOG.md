@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.7.0
+
+### Minor Changes
+
+- a8d3fde: Breaking changes:
+  - `toggleTilesBaseMapLayerGroups` is removed: `setMapStyling` covers the base-map layer groups as `basemap.<group>` knobs, and the building groups as `buildings.footprints` / `buildings.3d` (#2092)
+- 892139d: Breaking changes:
+  - `BaseMapState.getHillshadeModule` is removed, with the SDK's `HillshadeModule` (#2056)
+
+### Patch Changes
+
+- 2f9aa90: Recolouring a shown route or hiding its summary bubbles goes through the SDK's `updateConfig`, so it needs the SDK release that ships it (#2100)
+- Updated dependencies [669dc17]
+- Updated dependencies [a8d3fde]
+- Updated dependencies [892139d]
+- Updated dependencies [2f9aa90]
+  - @tomtom-org/maps-sdk@0.57.0
+
 ## 0.6.1
 
 ### Patch Changes

@@ -52,7 +52,7 @@ echo "auto-install-peers=true" >> .npmrc && pnpm add @tomtom-org/maps-sdk
 - **Polygons, administrative boundaries and reachable-range areas** — `GeometriesModule`
 - **Your own GeoJSON (BYOD)** — `CustomGeoJSONModule`
 - **Traffic** — flow (`TrafficFlowModule`), incidents (`TrafficIncidentsModule`, `TrafficIncidentOverlayModule`) and area analytics (`TrafficAreaAnalyticsModule`)
-- **Terrain shading** — `HillshadeModule`
+- **Terrain** — hillshade shading and 3D elevation, `TerrainModule`
 - **Click, hover and context-menu events**, one typed surface per module — `module.events.on(…)`
 
 **Services** (`@tomtom-org/maps-sdk/services`, browser + Node.js + React Native) — typed [GeoJSON](https://geojson.org/) from TomTom APIs, usable with or without a map:

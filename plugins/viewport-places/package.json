@@ -14,7 +14,7 @@
     "type-check": "tsc --noEmit"
   },
   "peerDependencies": {
-    "@tomtom-org/maps-sdk": ">=0.56.0 <1.0.0"
+    "@tomtom-org/maps-sdk": ">=0.57.0 <1.0.0"
   },
   "devDependencies": {
     "@tomtom-org/maps-sdk": "workspace:*",

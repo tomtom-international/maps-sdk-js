@@ -1,6 +1,7 @@
 import { beforeAll, describe, expect, test, vi } from 'vitest';
 import { SDKServiceError } from '../../shared';
 import { putIntegrationTestsAPIKey } from '../../shared/tests/integrationTestUtils';
+import type { GetObject } from '../../shared/types/fetch';
 import { geocode } from '../geocoding';
 import type { GeocodingResponseAPI } from '../types/apiTypes';
 
@@ -128,17 +129,20 @@ describe('Geocoding integration tests', () => {
     });
 
     test('Geocoding with API request and response callbacks', async () => {
-        const onApiRequest = vi.fn() as (request: URL) => void;
-        const onApiResponse = vi.fn() as (request: URL, response: GeocodingResponseAPI) => void;
+        const onApiRequest = vi.fn() as (request: GetObject) => void;
+        const onApiResponse = vi.fn() as (request: GetObject, response: GeocodingResponseAPI) => void;
         const result = await geocode({ query: 'Amsterdam', onAPIRequest: onApiRequest, onAPIResponse: onApiResponse });
         expect(result).toBeDefined();
-        expect(onApiRequest).toHaveBeenCalledWith(expect.any(URL));
-        expect(onApiResponse).toHaveBeenCalledWith(expect.any(URL), expect.anything());
+        expect(onApiRequest).toHaveBeenCalledWith(expect.objectContaining({ url: expect.any(URL) }));
+        expect(onApiResponse).toHaveBeenCalledWith(
+            expect.objectContaining({ url: expect.any(URL) }),
+            expect.anything(),
+        );
     });
 
     test('Geocoding with API request and response error callbacks', async () => {
-        const onApiRequest = vi.fn() as (request: URL) => void;
-        const onApiResponse = vi.fn() as (request: URL, response: GeocodingResponseAPI) => void;
+        const onApiRequest = vi.fn() as (request: GetObject) => void;
+        const onApiResponse = vi.fn() as (request: GetObject, response: GeocodingResponseAPI) => void;
         await expect(() =>
             geocode({
                 query: 'Amsterdam',
@@ -147,7 +151,10 @@ describe('Geocoding integration tests', () => {
                 onAPIResponse: onApiResponse,
             }),
         ).rejects.toThrow();
-        expect(onApiRequest).toHaveBeenCalledWith(expect.any(URL));
-        expect(onApiResponse).toHaveBeenCalledWith(expect.any(URL), expect.anything());
+        expect(onApiRequest).toHaveBeenCalledWith(expect.objectContaining({ url: expect.any(URL) }));
+        expect(onApiResponse).toHaveBeenCalledWith(
+            expect.objectContaining({ url: expect.any(URL) }),
+            expect.anything(),
+        );
     });
 });

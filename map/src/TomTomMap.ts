@@ -378,7 +378,6 @@ export class TomTomMap {
      *     zoom: 13,
      *     pitch: 45,
      *     bearing: -17.6,
-     *     antialias: true,
      *     maxZoom: 18,
      *     minZoom: 8
      *   }

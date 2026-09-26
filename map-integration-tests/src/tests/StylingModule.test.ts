@@ -203,6 +203,38 @@ test.describe('StylingModule tests', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
+    test('hillshade knobs, base-map group toggles and raw layer edits reach the live style', async ({ page }) => {
+        await page.evaluate(async () => {
+            const mapsSdkThis = globalThis as MapsSDKThis;
+            await mapsSdkThis.MapsSDK.TerrainModule.get(mapsSdkThis.tomtomMap, { hillshade: true });
+        });
+        await setKnob(page, 'hillshade.method', 'multidirectional');
+        await setKnob(page, 'hillshade.maxZoom', 22);
+        expect(await getPaintProperty(page, 'Hillshade', 'hillshade-method')).toBe('multidirectional');
+        expect((await getLayerById(page, 'Hillshade')).maxzoom).toBe(22);
+
+        await setKnob(page, 'basemap.railways', false);
+        expect(await isLayerVisible(page, 'Surface - Railway outline')).toBe(false);
+        expect(await isLayerVisible(page, 'Surface - Motorway & Trunk')).toBe(true);
+
+        await page.evaluate(() =>
+            (globalThis as MapsSDKThis).styling?.layers
+                .query({ group: 'roadLabels' })
+                .setPaint({ 'text-color': '#93c5fd' }),
+        );
+        expect(await getPaintProperty(page, 'TransitLabels - Road', 'text-color')).toBe('#93c5fd');
+        await setStyle(page, 'standardDark');
+        await waitForMapReady(page);
+        // The raw edit is re-applied on the new style; it is not a setting.
+        expect(await getPaintProperty(page, 'TransitLabels - Road', 'text-color')).toBe('#93c5fd');
+        expect(await getStylingConfig(page)).toEqual({
+            'hillshade.method': 'multidirectional',
+            'hillshade.maxZoom': 22,
+            'basemap.railways': false,
+        });
+        expect(mapEnv.consoleErrors).toHaveLength(0);
+    });
+
     test('a clean style switch drops the settings', async ({ page }) => {
         await setKnob(page, 'labels.sizeFactor', 1.3);
         await page.evaluate(async () => {

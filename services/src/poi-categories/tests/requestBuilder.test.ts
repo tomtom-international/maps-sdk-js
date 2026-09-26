@@ -5,52 +5,61 @@ import { buildPoiCategoriesRequest } from '../requestBuilder';
 import type { POICategoriesParams } from '../types';
 import { poiCategoriesReqObjects } from './requestBuilderPerf.data';
 
-describe('POI categories request URL building tests', () => {
-    test('builds URL with mandatory parameters only', () => {
-        expect(
-            buildPoiCategoriesRequest({
-                commonBaseURL: 'https://api-test.tomtom.com',
-                apiKey: 'testKey',
-                apiVersion: 1,
-            }).toString(),
-        ).toStrictEqual('https://api-test.tomtom.com/maps/orbis/places/poiCategories.json?apiVersion=1&key=testKey');
+// The key and version travel as headers; `language` stays in the query because the
+// `apiVersion=1` places endpoints ignore `Accept-Language`.
+const HEADERS = { 'TomTom-Api-Key': 'testKey', 'TomTom-Api-Version': '1' };
+
+describe('POI categories request building tests', () => {
+    test('builds the URL and credential headers with mandatory parameters only', () => {
+        const request = buildPoiCategoriesRequest({
+            commonBaseURL: 'https://api-test.tomtom.com',
+            apiKey: 'testKey',
+            apiVersion: 1,
+        });
+
+        expect(request.url.toString()).toStrictEqual(
+            'https://api-test.tomtom.com/maps/orbis/places/poiCategories.json',
+        );
+        expect(request.headers).toStrictEqual(HEADERS);
     });
 
-    test('builds URL with language', () => {
-        expect(
-            buildPoiCategoriesRequest({
-                commonBaseURL: 'https://api-test.tomtom.com',
-                apiKey: 'testKey',
-                apiVersion: 1,
-                language: 'fr-FR',
-            }).toString(),
-        ).toStrictEqual(
-            'https://api-test.tomtom.com/maps/orbis/places/poiCategories.json?apiVersion=1&key=testKey&language=fr-FR',
+    test('language stays in the query string, not in a header', () => {
+        const request = buildPoiCategoriesRequest({
+            commonBaseURL: 'https://api-test.tomtom.com',
+            apiKey: 'testKey',
+            apiVersion: 1,
+            language: 'fr-FR',
+        });
+
+        expect(request.url.toString()).toStrictEqual(
+            'https://api-test.tomtom.com/maps/orbis/places/poiCategories.json?language=fr-FR',
         );
+        expect(request.headers).toStrictEqual(HEADERS);
     });
 
     test('filters is not included in the URL (it is applied client-side)', () => {
-        const url = buildPoiCategoriesRequest({
+        const request = buildPoiCategoriesRequest({
             commonBaseURL: 'https://api-test.tomtom.com',
             apiKey: 'testKey',
             apiVersion: 1,
             filters: ['restaurant'],
-        } as POICategoriesParams & { apiVersion: number }).toString();
+        } as POICategoriesParams & { apiVersion: number });
 
-        expect(url).not.toContain('filter');
-        expect(url).toStrictEqual(
-            'https://api-test.tomtom.com/maps/orbis/places/poiCategories.json?apiVersion=1&key=testKey',
+        expect(request.url.toString()).not.toContain('filter');
+        expect(request.url.toString()).toStrictEqual(
+            'https://api-test.tomtom.com/maps/orbis/places/poiCategories.json',
         );
     });
 
     test('uses customServiceBaseURL when provided', () => {
-        expect(
-            buildPoiCategoriesRequest({
-                customServiceBaseURL: 'https://custom-api.example.com/categories',
-                apiKey: 'testKey',
-                apiVersion: 1,
-            }).toString(),
-        ).toStrictEqual('https://custom-api.example.com/categories?apiVersion=1&key=testKey');
+        const request = buildPoiCategoriesRequest({
+            customServiceBaseURL: 'https://custom-api.example.com/categories',
+            apiKey: 'testKey',
+            apiVersion: 1,
+        });
+
+        expect(request.url.toString()).toStrictEqual('https://custom-api.example.com/categories');
+        expect(request.headers).toStrictEqual(HEADERS);
     });
 });
 

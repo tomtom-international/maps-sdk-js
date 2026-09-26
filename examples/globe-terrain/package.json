@@ -1,6 +1,6 @@
 {
   "name": "@examples/globe-terrain",
-  "description": "Example showing the globe projection, sky and 3D terrain through the styling module.",
+  "description": "Example showing the globe projection and sky through the styling module, and 3D terrain through the terrain module.",
   "type": "module",
   "scripts": {
     "build": "vite build --config ../example-vite.config.ts",

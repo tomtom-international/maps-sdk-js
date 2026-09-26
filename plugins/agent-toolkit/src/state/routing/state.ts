@@ -44,12 +44,6 @@ export type RoutingStateEvents = {
     'monitor-error': { entryId: string; error: string };
 };
 
-// `RoutingModule.applyConfig` replaces the whole config, so a partial update has to be merged over
-// the module's current one — otherwise recolouring a route would also bring back bubbles the
-// caller had hidden, and drop any custom layers.
-const updateModuleConfig = (module: RoutingModule, partial: RoutingModuleConfig) =>
-    module.applyConfig({ ...module.getConfig(), ...partial });
-
 /**
  * State for route calculation, waypoint management, and route planning parameters.
  *
@@ -144,14 +138,14 @@ export class RoutingState implements ShownEntriesSlice {
             for (const other of others) await this.hideEntry(other.id);
         }
         const module = await this.getEntryRoutingModule(entryId);
-        // Apply the sticky main color + bubble visibility in ONE config BEFORE showing, so the first
-        // paint already has the theme (no flash) and a single applyConfig doesn't clobber the other.
+        // Apply the sticky main color + bubble visibility in ONE update BEFORE showing, so the first
+        // paint already has the theme (no flash); `updateConfig` keeps whatever else the module holds.
         const partial: RoutingModuleConfig = {};
         if (this._mainColor !== undefined) partial.theme = { mainColor: this._mainColor };
         // showRoutes gates the ETA bubbles on the top-level `summaryBubbles.visible` flag (NOT a
         // layer visibility), so that's what we set to drop them.
         if (opts?.showSummaryBubbles === false) partial.summaryBubbles = { visible: false };
-        if (partial.theme || partial.summaryBubbles) updateModuleConfig(module, partial);
+        if (partial.theme || partial.summaryBubbles) module.updateConfig(partial);
         await module.showRoutes(entry.data);
         if (opts?.showWaypoints === false) {
             await module.clearWaypoints();
@@ -180,7 +174,7 @@ export class RoutingState implements ShownEntriesSlice {
         if (color === undefined) return;
         for (const entry of this._entries) {
             if (entry._shown && entry._module) {
-                updateModuleConfig(entry._module, { theme: { mainColor: color } });
+                entry._module.updateConfig({ theme: { mainColor: color } });
             }
         }
     }

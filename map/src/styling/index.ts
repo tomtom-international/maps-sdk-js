@@ -9,6 +9,7 @@ export {
     stylingColorKnobIds,
     stylingKnobIds,
 } from './knobCatalogue';
+export { type LayerQuery, LayerSelection } from './layerQuery';
 export { type MapColorName, type MapColors, mapColorNames } from './mapColorCatalogue';
 export { type StylingPresetId, stylingPresetIds } from './presets';
 export * from './StylingModule';

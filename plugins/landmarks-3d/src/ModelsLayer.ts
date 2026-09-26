@@ -14,34 +14,34 @@ import {
 import { FillExtrusionDepthMaterial, FillExtrusionMaterial } from './FillExtrusionMaterial';
 import { ModelsSource } from './ModelsSource';
 import type { ModelsLayerSpecification, ModelsSourceSpecification } from './types/modelsSpecifications';
-import { isMesh } from './utils';
+import { isMesh, MERCATOR_UNITS_PER_METRE, mercatorMetresToLngLat } from './utils';
 
-// EPSG:3857 metres → mercator [0..1]; Z additionally scales by 1/cos(lat) per frame in render().
-const TILE_SCALE = 1 / (2 * 20037508.34);
 const TRANSLATE_X = 0.5;
 const TRANSLATE_Y = 0.5;
 
 const toRadians = (degrees: number): number => (degrees * Math.PI) / 180;
 
-// Directional light strength for the landmark shading, tuned to blend with the basemap buildings.
-const LANDMARK_LIGHT_INTENSITY = 0.5;
+// Extra sinking below the sampled terrain: keeps walls grounded across unsampled dips and
+// the flat bottom cap below the surface, where it cannot z-fight with the ground.
+const TERRAIN_BURIAL_MARGIN_METRES = 0.5;
 
 // Subset of the private maplibre-gl internals this layer needs, reached via an `unknown` cast.
-// v6 stopped having `Map` extend `Camera`, so the transform is no longer a property of the map —
-// it hangs off the composed `_camera` instead. Reading `map.transform` there yields `undefined`.
-interface MapLibreRenderInternals {
+// The transform hangs off the composed `_camera`, not the map itself.
+type MapLibreRenderInternals = {
     _camera: { transform: { tileZoom: number; bearingInRadians?: number } };
     style: {
         light?: {
+            // The evaluated 'position' property is the raw spherical [radial, azimuthal, polar]
+            // array; this getter converts it to cartesian [x, y, z].
+            getCartesianPosition?(): [number, number, number];
             properties?: {
                 get(key: 'intensity'): number;
-                get(key: 'position'): { x: number; y: number; z: number };
                 get(key: 'anchor'): 'map' | 'viewport';
                 get(key: 'color'): { r: number; g: number; b: number };
             };
         };
     };
-}
+};
 
 /**
  * MapLibre custom layer that renders tiled glTF/GLB models with Three.js.
@@ -135,6 +135,7 @@ export class ModelsLayer implements CustomLayerInterface {
 
         this.syncLighting();
         this.source.updateTiles();
+        this.groundLandmarksOnTerrain();
         this.alignCameraToMap(options);
 
         this.renderer.resetState();
@@ -147,17 +148,117 @@ export class ModelsLayer implements CustomLayerInterface {
         this.map.triggerRepaint();
     }
 
+    // Landmarks are authored with their base at sea level; with 3D terrain the ground rises to
+    // the (exaggeration-scaled) elevation. Grounds every landmark each frame, since terrain tiles
+    // load progressively and exaggeration can change at runtime.
+    private groundLandmarksOnTerrain() {
+        for (const tile of this.tiles.children) {
+            if (!tile.visible) {
+                continue; // off-viewport tiles stay loaded; grounding them each frame costs terrain queries
+            }
+            tile.traverse((child) => {
+                if (isMesh(child)) {
+                    this.groundMeshOnTerrain(child);
+                }
+            });
+        }
+    }
+
+    // Lifts one landmark to the LOWEST terrain elevation across its footprint, minus a small
+    // burial margin: no wall ever floats, and the bottom cap stays below the surface. Grounding is
+    // per landmark because terrain can vary by tens of metres across a tile.
+    private groundMeshOnTerrain(mesh: Mesh) {
+        const samplePoints = this.terrainSamplePoints(mesh);
+        if (!samplePoints) {
+            return;
+        }
+
+        let lowestElevation: number | null = null;
+        for (const samplePoint of samplePoints) {
+            const elevation = this.map.queryTerrainElevation(samplePoint);
+            if (elevation === null) {
+                // Terrain is disabled — restore the authored sea-level base.
+                mesh.position.z = 0;
+                return;
+            }
+            if (lowestElevation === null || elevation < lowestElevation) {
+                lowestElevation = elevation;
+            }
+        }
+        if (lowestElevation !== null) {
+            mesh.position.z = lowestElevation - TERRAIN_BURIAL_MARGIN_METRES;
+        }
+    }
+
+    // `[longitude, latitude]` points spread over the mesh footprint (center, corners, edge
+    // midpoints — long walls can dip between corners), derived once from its bounding box.
+    private terrainSamplePoints(mesh: Mesh): [number, number][] | null {
+        let samplePoints = mesh.userData.terrainSamplePoints as [number, number][] | undefined;
+        if (!samplePoints) {
+            if (!mesh.geometry.boundingBox) {
+                mesh.geometry.computeBoundingBox();
+            }
+            const bounds = mesh.geometry.boundingBox;
+            if (!bounds || bounds.isEmpty()) {
+                return null;
+            }
+
+            // Mesh positions are relative to the scene origin; the samples need absolute coordinates.
+            const anchorX = mesh.position.x + this.sceneOrigin.x;
+            const anchorY = mesh.position.y + this.sceneOrigin.y;
+            const centerX = (bounds.min.x + bounds.max.x) / 2;
+            const centerY = (bounds.min.y + bounds.max.y) / 2;
+            samplePoints = [
+                [centerX, centerY],
+                [bounds.min.x, bounds.min.y],
+                [bounds.min.x, bounds.max.y],
+                [bounds.max.x, bounds.min.y],
+                [bounds.max.x, bounds.max.y],
+                [centerX, bounds.min.y],
+                [centerX, bounds.max.y],
+                [bounds.min.x, centerY],
+                [bounds.max.x, centerY],
+            ].map(([offsetX, offsetY]) => mercatorMetresToLngLat(anchorX + offsetX, anchorY + offsetY));
+            mesh.userData.terrainSamplePoints = samplePoints;
+        }
+        return samplePoints;
+    }
+
     // maplibre hands custom layers `defaultProjectionData.mainMatrix`, which takes mercator 0..1 for x/y
     // and — in `3d` rendering mode — a conformal z in those same mercator units, not metres. Metre
     // altitudes therefore need the mercator scale factor at the current latitude, hence the extra
     // 1/cos(lat) that z carries and x/y don't.
     private alignCameraToMap(options: CustomRenderMethodInput) {
-        const latitudeInRadians = (this.map.getCenter().lat * Math.PI) / 180;
-        const zScale = TILE_SCALE / Math.cos(latitudeInRadians);
+        const zScale = MERCATOR_UNITS_PER_METRE / Math.cos(toRadians(this.map.getCenter().lat));
+        // The scene origin (see ModelsSource.sceneOrigin) is folded in here, in float64.
+        const translateX = TRANSLATE_X + MERCATOR_UNITS_PER_METRE * this.sceneOrigin.x;
+        const translateY = TRANSLATE_Y - MERCATOR_UNITS_PER_METRE * this.sceneOrigin.y;
         const mapLibreScale = new Matrix4();
-        mapLibreScale.set(TILE_SCALE, 0, 0, TRANSLATE_X, 0, -TILE_SCALE, 0, TRANSLATE_Y, 0, 0, zScale, 0, 0, 0, 0, 1);
+        mapLibreScale.set(
+            MERCATOR_UNITS_PER_METRE,
+            0,
+            0,
+            translateX,
+            0,
+            -MERCATOR_UNITS_PER_METRE,
+            0,
+            translateY,
+            0,
+            0,
+            zScale,
+            0,
+            0,
+            0,
+            0,
+            1,
+        );
         const projection = new Matrix4().fromArray(options.defaultProjectionData.mainMatrix as ArrayLike<number>);
         this.camera.projectionMatrix.copy(projection).multiply(mapLibreScale);
+    }
+
+    // Zero until the first tile with meshes sets the source's origin.
+    private get sceneOrigin(): NonNullable<ModelsSource['sceneOrigin']> {
+        return this.source.sceneOrigin ?? { x: 0, y: 0 };
     }
 
     // Translucent shading needs a depth pass so overlapping walls blend with the basemap once per pixel.
@@ -178,6 +279,11 @@ export class ModelsLayer implements CustomLayerInterface {
 
     setOpacity(value: number) {
         this.forEachFillExtrusionMaterial((material) => material.setLayerOpacity(value));
+    }
+
+    /** Mirrors the basemap's fill-extrusion-vertical-gradient on the landmark shading. */
+    setVerticalGradient(enabled: boolean) {
+        this.forEachFillExtrusionMaterial((material) => material.setVerticalGradient(enabled));
     }
 
     getMaterial(mesh: Mesh): FillExtrusionMaterial {
@@ -213,24 +319,27 @@ export class ModelsLayer implements CustomLayerInterface {
     private syncLighting() {
         // The maplibre style light is private API; fall back to the onAdd defaults when absent.
         const internals = this.map as unknown as MapLibreRenderInternals;
-        const properties = internals.style?.light?.properties;
-        if (!properties) {
+        const light = internals.style?.light;
+        const properties = light?.properties;
+        const cartesianPosition = light?.getCartesianPosition?.();
+        if (!properties || !cartesianPosition) {
             return;
         }
 
         try {
-            // Fixed strength tuned to match the basemap buildings (the standard styles light at ~0.5).
-            const intensity = LANDMARK_LIGHT_INTENSITY;
+            const intensity = properties.get('intensity');
             // `* π` cancels Three.js's internal 1/π Lambert factor, matching maplibre's shading range.
             this.directionalLight.intensity = intensity * Math.PI;
             this.ambientLight.intensity = (1 - intensity) * Math.PI;
 
-            const position = properties.get('position');
+            // The cartesian style light maps into the scene's x-east/y-north frame with x negated.
+            const position = { x: -cartesianPosition[0], y: cartesianPosition[1], z: cartesianPosition[2] };
             this.directionalLight.position.set(position.x, position.y, position.z);
 
-            // Viewport-anchored lights rotate with the map bearing, like maplibre's painter.
+            // Viewport-anchored lights counter-rotate with the bearing so camera-facing walls
+            // stay lit at every bearing, matching maplibre's rendered output.
             const anchor = properties.get('anchor');
-            const bearingInRadians = anchor === 'viewport' ? (internals._camera.transform.bearingInRadians ?? 0) : 0;
+            const bearingInRadians = anchor === 'viewport' ? -(internals._camera.transform.bearingInRadians ?? 0) : 0;
             const color = properties.get('color');
             this.forEachFillExtrusionMaterial((material) =>
                 material.setLight(position, bearingInRadians, intensity, color),

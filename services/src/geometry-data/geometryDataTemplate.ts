@@ -1,5 +1,5 @@
 import type { PolygonFeatures } from '@tomtom-org/maps-sdk/core';
-import type { ServiceTemplate } from '../shared';
+import type { GetObject, ServiceTemplate } from '../shared';
 import { get } from '../shared/fetch';
 import { geometryDataRequestSchema } from './geometryDataRequestSchema';
 import { buildGeometryDataRequest } from './requestBuilder';
@@ -10,7 +10,7 @@ import type { GeometryParams } from './types/geometryDataParams';
 /**
  * @ignore
  */
-export type GeometryDataTemplate = ServiceTemplate<GeometryParams, URL, GeometryDataResponseAPI, PolygonFeatures>;
+export type GeometryDataTemplate = ServiceTemplate<GeometryParams, GetObject, GeometryDataResponseAPI, PolygonFeatures>;
 
 /**
  * @ignore

@@ -36,12 +36,12 @@ All map modules extend `AbstractMapModule` (`map/src/shared/AbstractMapModule.ts
 
 | Module | Kind | Factory | Key methods |
 |---|---|---|---|
-| `BaseMapModule` | Style-owned | `get()` | `setVisible`, `setLayerGroupVisible` |
+| `BaseMapModule` | Style-owned | `get()` | `setVisible`, `isVisible`, `getLayers`, `getLayerIds` |
 | `POIsModule` | Style-owned | `get()` | `setVisible` |
-| `HillshadeModule` | Style-owned | `get()` | `setVisible` |
+| `TerrainModule` | Style-owned | `get()` | `setHillshadeVisible`, `setElevationEnabled`, `setElevationExaggeration` |
 | `TrafficFlowModule` | Style-owned | `get()` | `setVisible`, `applyConfig` |
 | `TrafficIncidentsModule` | Style-owned | `get()` | `setVisible`, `applyConfig` |
-| `StylingModule` | Style-owned | `get()` | `set`, `reset`, `applyPreset`, `describe` |
+| `StylingModule` | Style-owned | `get()` | `set`, `reset`, `applyPreset`, `describe`, `setMapColors`, `layers.query`, `exportStyle` |
 | `PlacesModule` | Data-owned | `create()` | `show`, `clear`, `applyTheme`, `applyIconConfig` |
 | `RoutingModule` | Data-owned | `create()` | `showRoutes`, `showWaypoints`, `clear` |
 | `GeometriesModule` | Data-owned | `create()` | `show`, `clear` |

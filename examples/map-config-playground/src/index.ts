@@ -1,9 +1,9 @@
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import {
-    HillshadeModule,
     POIsModule,
     StandardStyleID,
     standardStyleIDs,
+    TerrainModule,
     TomTomMap,
     TrafficFlowModule,
     TrafficIncidentsModule,
@@ -46,14 +46,14 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     poisModule.setVisible(false);
 
     // Hillshade
-    const hillshadeModule = await HillshadeModule.get(map);
+    const terrainModule = await TerrainModule.get(map);
 
     setupToggle('#ui-toggleTraffic', (checked) => {
         trafficIncidentsModule.setVisible(checked);
         trafficIncidentsModule.setIconsVisible(checked);
         trafficFlowModule.setVisible(checked);
         poisModule.setVisible(checked);
-        hillshadeModule.setVisible(checked);
+        terrainModule.setHillshadeVisible(checked);
         setChecked('#ui-toggleIncidents', checked);
         setChecked('#ui-toggleIncidentIcons', checked);
         setChecked('#ui-toggleFlow', checked);
@@ -64,7 +64,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     setupToggle('#ui-toggleIncidentIcons', (checked) => trafficIncidentsModule.setIconsVisible(checked));
     setupToggle('#ui-toggleFlow', (checked) => trafficFlowModule.setVisible(checked));
     setupToggle('#ui-togglePOIs', (checked) => poisModule.setVisible(checked));
-    setupToggle('#ui-toggleHillshade', (checked) => hillshadeModule.setVisible(checked));
+    setupToggle('#ui-toggleHillshade', (checked) => terrainModule.setHillshadeVisible(checked));
 
     // Styles selector
     const stylesSelector = document.querySelector('#ui-mapStyles') as HTMLSelectElement;

@@ -45,6 +45,7 @@ describe('FillExtrusionMaterial', () => {
         source.setDiffuseColor('#336699');
         source.setLight({ x: 1, y: 2, z: 3 }, 0, 0.8, { r: 0.1, g: 0.2, b: 0.3 });
         source.setLayerOpacity(0.7);
+        source.setVerticalGradient(false);
 
         const variant = new FillExtrusionMaterial(alphaMask);
         variant.copyShadingFrom(source);
@@ -54,5 +55,6 @@ describe('FillExtrusionMaterial', () => {
         expect((variant.uniforms.lightPosition.value as Vector3).toArray()).toEqual([1, 2, 3]);
         expect(variant.uniforms.lightIntensity.value).toBe(0.8);
         expect(variant.uniforms.layerOpacity.value).toBe(0.7);
+        expect(variant.uniforms.verticalGradient.value).toBe(0);
     });
 });

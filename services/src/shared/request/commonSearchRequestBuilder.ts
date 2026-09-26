@@ -3,15 +3,10 @@ import type { FuzzySearchParams } from '../../fuzzy-search';
 import type { GeometrySearchParams } from '../../geometry-search';
 import {
     appendByJoiningParamValue,
-    appendCommonParams,
     appendOptionalParam,
+    appendPlacesLanguageParam,
     mapPOICategoriesToIDs,
 } from './requestBuildingUtils';
-
-/**
- * @ignore
- */
-export const PLACES_URL_PATH = '/maps/orbis/places';
 
 /**
  * Appends request parameters common to search APIs such as fuzzy + geometry search.
@@ -24,7 +19,7 @@ export const appendCommonSearchParams = (
     params: FuzzySearchParams | GeometrySearchParams | AlongRouteSearchParams,
 ): void => {
     const urlParams = searchUrl.searchParams;
-    appendCommonParams(urlParams, params);
+    appendPlacesLanguageParam(urlParams, params);
     appendOptionalParam(urlParams, 'limit', params.limit);
     appendByJoiningParamValue(urlParams, 'fuelSet', params.fuelTypes);
     appendByJoiningParamValue(urlParams, 'idxSet', params.indexes);

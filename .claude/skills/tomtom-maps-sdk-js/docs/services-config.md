@@ -122,15 +122,24 @@ try {
 For low-level request/response control — use only when standard options are insufficient:
 
 ```ts
+import { isProxyCredentialsMode, mergeFromGlobal } from '@tomtom-org/maps-sdk/core';
 import { customizeService } from '@tomtom-org/maps-sdk/services';
 
-// Build a request without sending it (e.g. to proxy through your backend)
-const { buildGeocodingRequest } = customizeService.geocode;
-const url = buildGeocodingRequest({ apiKey: 'YOUR_API_KEY', query: 'Amsterdam' });
-const rawResponse = await fetch(url);
+// Build a request without sending it (e.g. to proxy through your backend).
+// Builders expect the global config merged in and return `{ url, headers }`:
+// the API key travels in `headers`, not in the URL.
+const { buildGeocodingRequest, parseGeocodingResponse } = customizeService.geocode;
+const config = mergeFromGlobal({ query: 'Amsterdam' });
+const { url, headers } = buildGeocodingRequest(config);
+
+// Pass `headers` on or the request is unauthenticated. With a credentials proxy
+// (no `apiKey`, custom `commonBaseURL`) send the session cookie instead, like the SDK does.
+const rawResponse = await fetch(url, {
+    headers,
+    ...(isProxyCredentialsMode(config) && { credentials: 'include' }),
+});
 
 // Parse a raw API response into SDK GeoJSON
-const { parseGeocodingResponse } = customizeService.geocode;
 const parsedData = parseGeocodingResponse(await rawResponse.json());
 ```
 

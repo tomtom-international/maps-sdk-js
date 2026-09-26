@@ -1,4 +1,4 @@
-import type { ServiceTemplate } from '../shared';
+import type { GetObject, ServiceTemplate } from '../shared';
 import { get } from '../shared/fetch';
 import { placeByIdRequestSchema } from './placeByIdSchema';
 import { buildPlaceByIdRequest } from './requestBuilder';
@@ -9,7 +9,7 @@ import type { PlaceByIdParams, PlaceByIdResponse, PlaceByIdResponseAPI } from '.
  * Place By Is template type.
  * @ignore
  */
-export type PlaceByIdTemplate = ServiceTemplate<PlaceByIdParams, URL, PlaceByIdResponseAPI, PlaceByIdResponse>;
+export type PlaceByIdTemplate = ServiceTemplate<PlaceByIdParams, GetObject, PlaceByIdResponseAPI, PlaceByIdResponse>;
 
 /**
  * Place By Id template main implementation.

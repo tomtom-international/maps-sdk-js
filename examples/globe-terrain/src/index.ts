@@ -1,5 +1,5 @@
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
-import { StylingModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { StylingModule, TerrainModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
 import './style.css';
 import { API_KEY } from './config';
 import { initTogglePanel } from './togglePanel';
@@ -19,26 +19,29 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         },
     });
 
-    const styling = await StylingModule.get(map, { 'view.projection': 'globe', 'view.sky': true });
-
     const globe = document.querySelector('#ui-globe') as HTMLInputElement;
     const sky = document.querySelector('#ui-sky') as HTMLInputElement;
     const terrain = document.querySelector('#ui-terrain') as HTMLInputElement;
     const exaggeration = document.querySelector('#ui-exaggeration') as HTMLInputElement;
     const exaggerationValue = document.querySelector('#ui-exaggerationValue') as HTMLElement;
 
+    const [styling, terrainModule] = await Promise.all([
+        StylingModule.get(map, { 'view.projection': 'globe', 'view.sky': true }),
+        TerrainModule.get(map, { elevationExaggeration: Number(exaggeration.value) }),
+    ]);
+
     globe.addEventListener('change', () => styling.set('view.projection', globe.checked ? 'globe' : 'mercator'));
     sky.addEventListener('change', () => styling.set('view.sky', sky.checked));
-    terrain.addEventListener('change', () => styling.set('view.terrain', terrain.checked));
+    terrain.addEventListener('change', () => terrainModule.setElevationEnabled(terrain.checked));
     exaggeration.addEventListener('input', () => {
         exaggerationValue.textContent = exaggeration.value;
-        styling.set('view.terrainExaggeration', Number(exaggeration.value));
+        terrainModule.setElevationExaggeration(Number(exaggeration.value));
     });
 
     // Terrain needs a close, tilted camera to show.
     document.querySelector('#ui-flyToAlps')?.addEventListener('click', () => {
         terrain.checked = true;
-        styling.set('view.terrain', true);
+        terrainModule.setElevationEnabled(true);
         map.mapLibreMap.flyTo({ center: [7.66, 45.98], zoom: 12.5, pitch: 70, bearing: 20, duration: 4000 });
     });
 

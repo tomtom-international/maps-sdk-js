@@ -1,6 +1,7 @@
 import type { Places } from '@tomtom-org/maps-sdk/core';
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
+import type { GetObject } from '../../shared/types/fetch';
 import { geometryData } from '../geometryData';
 import type { GeometryDataResponseAPI } from '../types/apiTypes';
 import places from './geometryDataIntegration.data';
@@ -170,8 +171,8 @@ describe('Geometry data integration tests', () => {
 
     test('Geometry Data with API response callback', async () => {
         const geometries = ['10794339'];
-        const onApiRequest = vi.fn() as (request: URL) => void;
-        const onApiResponse = vi.fn() as (request: URL, response: GeometryDataResponseAPI) => void;
+        const onApiRequest = vi.fn() as (request: GetObject) => void;
+        const onApiResponse = vi.fn() as (request: GetObject, response: GeometryDataResponseAPI) => void;
         const result = await geometryData({
             geometries,
             zoom: 10,
@@ -180,14 +181,17 @@ describe('Geometry data integration tests', () => {
         });
         expect(result).toBeDefined();
         expect(result.features.length).toBeGreaterThan(0);
-        expect(onApiRequest).toHaveBeenCalledWith(expect.any(URL));
-        expect(onApiResponse).toHaveBeenCalledWith(expect.any(URL), expect.anything());
+        expect(onApiRequest).toHaveBeenCalledWith(expect.objectContaining({ url: expect.any(URL) }));
+        expect(onApiResponse).toHaveBeenCalledWith(
+            expect.objectContaining({ url: expect.any(URL) }),
+            expect.anything(),
+        );
     });
 
     test('Geometry Data with API error response callback', async () => {
         const geometries = ['10794339'];
-        const onApiRequest = vi.fn() as (request: URL) => void;
-        const onApiResponse = vi.fn() as (request: URL, response: GeometryDataResponseAPI) => void;
+        const onApiRequest = vi.fn() as (request: GetObject) => void;
+        const onApiResponse = vi.fn() as (request: GetObject, response: GeometryDataResponseAPI) => void;
         await expect(() =>
             geometryData({
                 geometries,
@@ -197,8 +201,11 @@ describe('Geometry data integration tests', () => {
                 onAPIResponse: onApiResponse,
             }),
         ).rejects.toMatchObject({ status: 400 });
-        expect(onApiRequest).toHaveBeenCalledWith(expect.any(URL));
-        expect(onApiResponse).toHaveBeenCalledWith(expect.any(URL), expect.objectContaining({ status: 400 }));
+        expect(onApiRequest).toHaveBeenCalledWith(expect.objectContaining({ url: expect.any(URL) }));
+        expect(onApiResponse).toHaveBeenCalledWith(
+            expect.objectContaining({ url: expect.any(URL) }),
+            expect.objectContaining({ status: 400 }),
+        );
     });
 });
 

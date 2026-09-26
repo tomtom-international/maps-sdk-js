@@ -1,8 +1,8 @@
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import {
-    HillshadeModule,
     StandardStyleID,
     standardStyleIDs,
+    TerrainModule,
     TomTomMap,
     TrafficFlowModule,
     TrafficIncidentsModule,
@@ -39,7 +39,10 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
 
     setupLazyToggle('#ui-toggleIncidents', () => TrafficIncidentsModule.get(map, { visible: true }));
     setupLazyToggle('#ui-toggleFlow', () => TrafficFlowModule.get(map, { visible: true }));
-    setupLazyToggle('#ui-toggleHillshade', () => HillshadeModule.get(map, { visible: true }));
+    setupLazyToggle('#ui-toggleHillshade', async () => {
+        const terrain = await TerrainModule.get(map, { hillshade: true });
+        return { setVisible: (visible) => terrain.setHillshadeVisible(visible) };
+    });
 
     const stylesSelector = document.querySelector('#ui-mapStyles') as HTMLSelectElement;
     standardStyleIDs.forEach((id) => stylesSelector.add(new Option(id)));

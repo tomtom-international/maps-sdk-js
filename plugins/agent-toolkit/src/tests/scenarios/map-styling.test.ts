@@ -4,15 +4,10 @@ import { getExamplePrompts, runToolScenario } from './helpers';
 
 // Semantic base-map styling. `setMapStyling` overlaps by design with the lower-level
 // getMapStyleLayers → setPaintProperties / setLayoutProperties path (an agent can make labels bigger
-// either way), and "show 3D buildings" is also a base-map layer-group toggle. Those routes are
-// accepted; a whole-style switch (setMapStandardStyle) is not.
+// either way). Those routes are accepted; a whole-style switch (setMapStandardStyle) is not.
 
 describe.skipIf(!MODEL)('setMapStyling scenarios', { timeout: 180_000, retry: 3 }, () => {
-    const acceptedAlternatives = [
-        'setPaintProperties',
-        'setLayoutProperties',
-        'toggleTilesBaseMapLayerGroups',
-    ] as const;
+    const acceptedAlternatives = ['setPaintProperties', 'setLayoutProperties'] as const;
     const [canonical, ...rest] = getExamplePrompts('setMapStyling');
     it(`classifies the canonical prompt: ${canonical}`, async () => {
         const outcome = await runToolScenario({

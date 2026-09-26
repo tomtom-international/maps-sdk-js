@@ -1,5 +1,6 @@
-import { PLACES_URL_PATH } from '../shared/request/commonSearchRequestBuilder';
-import { appendCommonParams } from '../shared/request/requestBuildingUtils';
+import type { GetObject } from '../shared';
+import { resolvePlacesEndpointUrl } from '../shared/request/placesEndpoint';
+import { appendPlacesLanguageParam, buildPlacesRequestHeaders } from '../shared/request/requestBuildingUtils';
 import type { POICategoriesParams } from './types';
 
 /**
@@ -7,9 +8,9 @@ import type { POICategoriesParams } from './types';
  * The `filters` param is intentionally omitted — it is applied client-side.
  * @ignore
  */
-export const buildPoiCategoriesRequest = (params: POICategoriesParams): URL => {
-    const baseUrl = params.customServiceBaseURL ?? `${params.commonBaseURL}${PLACES_URL_PATH}/poiCategories.json`;
+export const buildPoiCategoriesRequest = (params: POICategoriesParams): GetObject => {
+    const baseUrl = resolvePlacesEndpointUrl(params, 'poiCategories.json');
     const url = new URL(baseUrl);
-    appendCommonParams(url.searchParams, params);
-    return url;
+    appendPlacesLanguageParam(url.searchParams, params);
+    return { url, headers: buildPlacesRequestHeaders(params) };
 };

@@ -1,4 +1,4 @@
-import type { ServiceTemplate } from '../shared';
+import type { GetObject, ServiceTemplate } from '../shared';
 import { get } from '../shared/fetch';
 import { geocodingRequestSchema } from './geocodingRequestSchema';
 import { buildGeocodingRequest } from './requestBuilder';
@@ -11,7 +11,7 @@ import type { GeocodingResponse } from './types/geocodingResponse';
  * Geocoding service template type.
  * @ignore
  */
-export type GeocodingTemplate = ServiceTemplate<GeocodingParams, URL, GeocodingResponseAPI, GeocodingResponse>;
+export type GeocodingTemplate = ServiceTemplate<GeocodingParams, GetObject, GeocodingResponseAPI, GeocodingResponse>;
 
 /**
  * Geocoding service template main implementation.

@@ -9,7 +9,7 @@ describe('Autocomplete Search request URL building tests', () => {
     // @ts-ignore - test.each has tuple type inference limitations
     test.each(autocompleteSearchReqObjectsAndUrLs)("'%s'", (_name, params, requestUrl) => {
         // @ts-ignore
-        expect(buildAutocompleteSearchRequest(params).toString()).toStrictEqual(requestUrl);
+        expect(buildAutocompleteSearchRequest(params).url.toString()).toStrictEqual(requestUrl);
     });
 });
 

@@ -1,4 +1,4 @@
-import type { CommonServiceParams } from '../../shared';
+import type { CommonServiceParams, GetObject } from '../../shared';
 import type { PoiCategoriesResponseAPI } from './poiCategoriesResponseAPI';
 
 /**
@@ -9,7 +9,7 @@ import type { PoiCategoriesResponseAPI } from './poiCategoriesResponseAPI';
  *
  * @group POI Categories
  */
-export type POICategoriesParams = CommonServiceParams<URL, PoiCategoriesResponseAPI> & {
+export type POICategoriesParams = CommonServiceParams<GetObject, PoiCategoriesResponseAPI> & {
     /**
      * One or more filter strings applied client-side against the text index.
      *

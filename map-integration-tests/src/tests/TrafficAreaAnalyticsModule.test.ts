@@ -682,14 +682,14 @@ test.describe('Traffic Area Analytics module integration tests', () => {
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });
 
-    test('applyConfig(undefined) resets config to undefined', async ({ page }) => {
+    test('applyConfig(undefined) resets config to the defaults', async ({ page }) => {
         const mapEnv = await MapTestEnv.loadPageAndMap(page, { center: madridCenter, zoom: 13 });
         await initTrafficAreaAnalytics(page, { displayMode: 'heatmap', activeMetric: 'speed' });
 
         await page.evaluate(() => (globalThis as MapsSDKThis).trafficAreaAnalytics?.applyConfig(undefined));
 
         const config = await page.evaluate(() => (globalThis as MapsSDKThis).trafficAreaAnalytics?.getConfig());
-        expect(config).toBeUndefined();
+        expect(config).toMatchObject({ displayMode: 'hexgrid-3d', activeMetric: 'congestionLevel' });
 
         expect(mapEnv.consoleErrors).toHaveLength(0);
     });

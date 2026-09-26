@@ -13,10 +13,8 @@ describe('Place by ID request URL building functional tests', () => {
                 apiKey: 'testKey',
                 apiVersion: 1,
                 entityId: 'testEntity',
-            }).toString(),
-        ).toStrictEqual(
-            'https://api-test.tomtom.com/maps/orbis/places/place.json?apiVersion=1&key=testKey&entityId=testEntity',
-        );
+            }).url.toString(),
+        ).toStrictEqual('https://api-test.tomtom.com/maps/orbis/places/place.json?entityId=testEntity');
     });
     test('Place by ID request URL building optional parameters request', () => {
         expect(
@@ -31,9 +29,9 @@ describe('Place by ID request URL building functional tests', () => {
                 openingHours: 'nextSevenDays',
                 timeZone: 'iana',
                 relatedPois: 'off',
-            }).toString(),
+            }).url.toString(),
         ).toStrictEqual(
-            'https://api-test.tomtom.com/maps/orbis/places/place.json?apiVersion=2&key=testKey&language=es-ES&entityId=testEntity&mapcodes=Local&view=Unified&openingHours=nextSevenDays&timeZone=iana&relatedPois=off',
+            'https://api-test.tomtom.com/maps/orbis/places/place.json?language=es-ES&entityId=testEntity&mapcodes=Local&view=Unified&openingHours=nextSevenDays&timeZone=iana&relatedPois=off',
         );
     });
 });

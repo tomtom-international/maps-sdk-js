@@ -20,7 +20,7 @@ const requestBuilderData: [string, AlongRouteSearchParams, PostObject<AlongRoute
         },
         {
             url: new URL(
-                'https://api.tomtom.com/maps/orbis/places/searchAlongRoute/.json?apiVersion=1&key=GLOBAL_API_KEY&maxDetourTime=300&spreadingMode=plan',
+                'https://api.tomtom.com/maps/orbis/places/searchAlongRoute/.json?maxDetourTime=300&spreadingMode=plan',
             ),
             data: {
                 route: {
@@ -55,7 +55,7 @@ const requestBuilderData: [string, AlongRouteSearchParams, PostObject<AlongRoute
         },
         {
             url: new URL(
-                'https://api-test.tomtom.com/maps/orbis/places/searchAlongRoute/coffee.json?apiVersion=2&key=GLOBAL_API_KEY_2&language=en-GB&limit=20&maxDetourTime=600&sortBy=detourOffset&spreadingMode=plan',
+                'https://api-test.tomtom.com/maps/orbis/places/searchAlongRoute/coffee.json?language=en-GB&limit=20&maxDetourTime=600&sortBy=detourOffset&spreadingMode=plan',
             ),
             data: {
                 route: {
@@ -92,7 +92,7 @@ const requestBuilderData: [string, AlongRouteSearchParams, PostObject<AlongRoute
         },
         {
             url: new URL(
-                'https://api.tomtom.com/maps/orbis/places/searchAlongRoute/.json?apiVersion=1&key=GLOBAL_API_KEY&maxDetourTime=300&spreadingMode=plan',
+                'https://api.tomtom.com/maps/orbis/places/searchAlongRoute/.json?maxDetourTime=300&spreadingMode=plan',
             ),
             data: {
                 route: {
@@ -120,7 +120,7 @@ const requestBuilderData: [string, AlongRouteSearchParams, PostObject<AlongRoute
         },
         {
             url: new URL(
-                'https://api.tomtom.com/maps/orbis/places/searchAlongRoute/.json?apiVersion=1&key=GLOBAL_API_KEY&maxDetourTime=300&spreadingMode=plan',
+                'https://api.tomtom.com/maps/orbis/places/searchAlongRoute/.json?maxDetourTime=300&spreadingMode=plan',
             ),
             data: {
                 route: {
@@ -152,7 +152,7 @@ const requestBuilderData: [string, AlongRouteSearchParams, PostObject<AlongRoute
         },
         {
             url: new URL(
-                'https://api.tomtom.com/maps/orbis/places/searchAlongRoute/.json?apiVersion=1&key=GLOBAL_API_KEY&categorySet=7309&maxDetourTime=600&sortBy=detourTime&spreadingMode=plan',
+                'https://api.tomtom.com/maps/orbis/places/searchAlongRoute/.json?categorySet=7309&maxDetourTime=600&sortBy=detourTime&spreadingMode=plan',
             ),
             data: {
                 route: {

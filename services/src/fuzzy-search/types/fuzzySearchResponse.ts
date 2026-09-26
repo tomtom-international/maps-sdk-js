@@ -26,8 +26,12 @@ type FuzzySearchFeatureCollectionProps = SearchSummary & {
      *
      * Indicates how the search engine interpreted the query
      * (e.g., as coordinates, nearby search, what3words, or bookmark).
+     *
+     * @remarks
+     * Optional — query-intent detection is not guaranteed, so guard it rather than assuming it is
+     * present.
      */
-    queryIntent: QueryIntent[];
+    queryIntent?: QueryIntent[];
 };
 
 /**

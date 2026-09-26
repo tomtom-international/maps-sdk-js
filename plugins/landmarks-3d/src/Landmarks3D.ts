@@ -1,12 +1,7 @@
 import { isProxyCredentialsMode } from '@tomtom-org/maps-sdk/core';
 import { LayerFilterComposer, mapStyleLayerIDs, type TomTomMap } from '@tomtom-org/maps-sdk/map';
 import type { ExpressionFilterSpecification } from 'maplibre-gl';
-import {
-    type BasemapBuildingMaterial,
-    type Landmarks3DDisplayMode,
-    type LandmarksMaterialState,
-    resolveDisplayMode,
-} from './displayMode';
+import { type BuildingMaterial, type Landmarks3DDisplayMode, resolveDisplayMode } from './displayMode';
 import { buildLandmarksTileURL } from './landmarksTileURL';
 import { ModelsLayer } from './ModelsLayer';
 import type { ModelsLayerSpecification, ModelsSourceSpecification } from './types/modelsSpecifications';
@@ -266,23 +261,33 @@ export class Landmarks3D {
         );
     }
 
-    // Reads the basemap building colour for `inherited` mode; null when absent or not resolvable to one colour.
-    private readBasemapBuildingMaterial(): BasemapBuildingMaterial | null {
+    // Reads the basemap building look for `inherited` mode, leaving out what does not resolve to one
+    // value; null when the layer is absent or its colour does not resolve.
+    private readBasemapBuildingMaterial(): Partial<BuildingMaterial> | null {
         const mapLibreMap = this.map.mapLibreMap;
         if (!mapLibreMap.getLayer(this.basemapBuildingLayerID)) {
             return null;
         }
 
         const paintColor = mapLibreMap.getPaintProperty(this.basemapBuildingLayerID, 'fill-extrusion-color');
-        const diffuse = extractColorFromPaint(paintColor);
-        if (!diffuse) {
+        const diffuseColor = extractColorFromPaint(paintColor);
+        if (!diffuseColor) {
             return null;
         }
 
-        return { diffuse };
+        const opacity = mapLibreMap.getPaintProperty(this.basemapBuildingLayerID, 'fill-extrusion-opacity');
+        const verticalGradient = mapLibreMap.getPaintProperty(
+            this.basemapBuildingLayerID,
+            'fill-extrusion-vertical-gradient',
+        );
+        return {
+            diffuseColor,
+            ...(typeof opacity === 'number' && { opacity }),
+            ...(typeof verticalGradient === 'boolean' && { verticalGradient }),
+        };
     }
 
-    private resolveCurrentMaterialState(): LandmarksMaterialState {
+    private resolveCurrentMaterialState(): BuildingMaterial {
         const basemapMaterial = this.displayMode === 'inherited' ? this.readBasemapBuildingMaterial() : null;
         return resolveDisplayMode(this.displayMode, basemapMaterial);
     }
@@ -291,6 +296,7 @@ export class Landmarks3D {
         const state = this.resolveCurrentMaterialState();
         this.modelsLayer.diffuseColor = state.diffuseColor;
         this.modelsLayer.setOpacity(state.opacity);
+        this.modelsLayer.setVerticalGradient(state.verticalGradient);
         this.map.mapLibreMap.triggerRepaint();
     }
 }

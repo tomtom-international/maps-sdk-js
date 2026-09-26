@@ -1,5 +1,5 @@
 import type { Place, Places } from '@tomtom-org/maps-sdk/core';
-import type { CommonServiceParams } from '../../shared';
+import type { CommonServiceParams, GetObject } from '../../shared';
 import type { GeometryDataResponseAPI } from './apiTypes';
 
 /**
@@ -25,7 +25,7 @@ export type GeometriesInput = string[];
  *
  * @group Geometry
  */
-export type CommonServiceParamsWithZoom = CommonServiceParams<URL, GeometryDataResponseAPI> & {
+export type CommonServiceParamsWithZoom = CommonServiceParams<GetObject, GeometryDataResponseAPI> & {
     /**
      * Optional zoom level for geometry detail.
      *

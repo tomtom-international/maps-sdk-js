@@ -109,6 +109,8 @@ const parseResult = (result: ExplorationSearchResultAPI): Place<ExplorationPlace
 
 const buildSummary = (apiResponse: ExplorationSearchResponseAPI, params: ExplorationSearchParams): SearchSummary => {
     const geoBias = getPosition(params.geoBias?.position);
+    // `fuzzyLevel` is omitted rather than synthesised: this service has no fuzzy matching, and the
+    // field is optional precisely so an absent value reads as absent instead of as a zero.
     return {
         query: params.query ?? '',
         queryType: geoBias ? 'NEARBY' : 'NON_NEAR',
@@ -116,7 +118,6 @@ const buildSummary = (apiResponse: ExplorationSearchResponseAPI, params: Explora
         numResults: apiResponse.hits.length,
         offset: params.offset ?? 0,
         totalResults: apiResponse.total,
-        fuzzyLevel: 0,
         ...(geoBias && { geoBias }),
     };
 };

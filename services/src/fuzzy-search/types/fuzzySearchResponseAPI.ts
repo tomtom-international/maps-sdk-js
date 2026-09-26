@@ -14,7 +14,7 @@ export type FuzzySearchResponseAPI = {
      * Summary information about the search that was performed.
      */
     summary: SummaryAPI & {
-        queryIntent: QueryIntentAPI[];
+        queryIntent?: QueryIntentAPI[];
     };
     /**
      * The result list, sorted in descending order by score.

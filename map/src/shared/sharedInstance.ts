@@ -17,7 +17,7 @@ const instancesByMap = new WeakMap<TomTomMap, Map<Function, Promise<unknown>>>()
  *
  * Style-owned modules control sources and layers the map style already provides, under fixed
  * global IDs, so a second instance would be a second controller over one piece of shared state.
- * Callers get the same instance instead — two components each asking for hillshade is reasonable
+ * Callers get the same instance instead — two components each asking for the terrain is reasonable
  * code, and making them hoist a shared reference would be work pushed onto them for no benefit.
  *
  * @param map The map the module belongs to.

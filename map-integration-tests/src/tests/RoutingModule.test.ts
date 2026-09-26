@@ -25,9 +25,9 @@ import {
     getLayerIndex,
     getNumVisibleLayersBySource,
     getPaintProperty,
-    initHillshade,
     initRouting,
     initRouting2,
+    initTerrain,
     isLayerVisible,
     moveAndZoomTo,
     putGlobalConfig,
@@ -220,7 +220,7 @@ test.describe('Routing and waypoint display tests', () => {
         await waitUntilRenderedFeatures(page, [ROUTE_TOLL_ROADS_OUTLINE_LAYER_ID], 1, 2000);
 
         // Adding hillshade to style, asserting that the route stays the same:
-        await initHillshade(page, { visible: true });
+        await initTerrain(page, { hillshade: true });
         await waitForMapIdle(page);
         await waitForRenderedWaypoints(page, 2);
         await waitUntilRenderedFeatures(page, [ROUTE_LINE_LAYER_ID], 1, 2000);

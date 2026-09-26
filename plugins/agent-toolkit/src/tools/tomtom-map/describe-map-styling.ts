@@ -48,7 +48,7 @@ export const describeMapStylingSchema = z.object({
 
 export const describeMapStylingDescription =
     'List the semantic base-map styling knobs of the loaded style (label/icon/road sizes, feature toggles such as exit ' +
-    'numbers or 3D buildings, POI zoom and colours, traffic congestion colours, globe projection, sky and 3D terrain) ' +
+    'numbers or 3D buildings, POI zoom and colours, traffic congestion colours, globe projection and sky) ' +
     'with kind, range, default and current value, plus the available presets. Call before setMapStyling to know valid ' +
     'ids and ranges.';
 

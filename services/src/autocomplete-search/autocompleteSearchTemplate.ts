@@ -1,4 +1,4 @@
-import type { ServiceTemplate } from '../shared';
+import type { GetObject, ServiceTemplate } from '../shared';
 import { get } from '../shared/fetch';
 import { autocompleteSearchRequestSchema } from './autocompleteSearchRequestSchema';
 import { buildAutocompleteSearchRequest } from './requestBuilder';
@@ -11,7 +11,7 @@ import type { AutocompleteSearchParams, AutocompleteSearchResponse, Autocomplete
  */
 export type AutocompleteSearchTemplate = ServiceTemplate<
     AutocompleteSearchParams,
-    URL,
+    GetObject,
     AutocompleteSearchResponseAPI,
     AutocompleteSearchResponse
 >;

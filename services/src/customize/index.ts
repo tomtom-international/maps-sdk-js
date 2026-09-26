@@ -41,16 +41,23 @@ import trafficIncidentDetailsCustomize from '../traffic-incident-details/customi
  *
  * @example
  * ```typescript
- * import { mergeFromGlobal } from '@tomtom-org/maps-sdk/core';
+ * import { isProxyCredentialsMode, mergeFromGlobal } from '@tomtom-org/maps-sdk/core';
  * import { customizeService } from '@tomtom-org/maps-sdk/services';
  *
  * const { buildGeocodingRequest, parseGeocodingResponse } = customizeService.geocode;
  *
  * // Request builders expect the global configuration to be merged in already
- * const url = buildGeocodingRequest(mergeFromGlobal({ query: 'Amsterdam' }));
+ * const config = mergeFromGlobal({ query: 'Amsterdam' });
+ * const { url, headers } = buildGeocodingRequest(config);
  *
- * // Send the request yourself, then parse the raw API payload
- * const apiResponse = await fetch(url);
+ * // Send the request yourself, then parse the raw API payload. The credential travels in
+ * // `headers` — pass them on, or the request is unauthenticated. With a credentials proxy
+ * // (no `apiKey`, custom `commonBaseURL`) the proxy's session cookie has to travel instead,
+ * // so send `credentials: 'include'` the way the SDK's own fetch does.
+ * const apiResponse = await fetch(url, {
+ *     headers,
+ *     ...(isProxyCredentialsMode(config) && { credentials: 'include' }),
+ * });
  * const places = parseGeocodingResponse(await apiResponse.json());
  * ```
  *

@@ -58,7 +58,7 @@ export type BaseMapEvents = CombinedEvents<MapGeoJSONFeature, BaseMapModuleConfi
  *
  * @remarks
  * **Managed Layers:**
- * - Background and terrain
+ * - Background and land cover
  * - Water bodies and coastlines
  * - Country and administrative borders
  * - Buildings (2D and 3D)
@@ -69,7 +69,7 @@ export type BaseMapEvents = CombinedEvents<MapGeoJSONFeature, BaseMapModuleConfi
  * **Does NOT Include:**
  * - Traffic flow/incidents (use {@link TrafficFlowModule} or {@link TrafficIncidentsModule})
  * - Points of Interest/POIs (use {@link POIsModule})
- * - Hillshade/terrain shading (use {@link HillshadeModule})
+ * - Hillshade and 3D terrain (use {@link TerrainModule})
  *
  * **Use Cases:**
  * - Toggle base map visibility on/off
@@ -239,9 +239,9 @@ export class BaseMapModule extends AbstractStyleOwnedMapModule<BaseSourceAndLaye
             );
         }
 
-        // We merge the given config with the previous one to ensure init config parameters are kept:
-        // (the init config can have more parameters than the runtime one)
-        return this.config || config ? { ...this.config, ...config } : undefined;
+        // We merge the given config with the previous one to ensure init config parameters are kept
+        // (the init config can have more parameters than the runtime one); no config is a reset.
+        return config ? { ...this.config, ...config } : undefined;
     }
 
     /**

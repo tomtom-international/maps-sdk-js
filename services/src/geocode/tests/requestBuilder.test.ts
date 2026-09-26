@@ -7,7 +7,7 @@ import { geocodingReqObjects } from './requestBuilderPerf.data';
 
 describe('Geocoding service URL building functional tests', () => {
     test.each(geocodingReqObjectsAndUrLs)(`'%s`, (_name, params, url) => {
-        expect(buildGeocodingRequest(params).toString()).toStrictEqual(url);
+        expect(buildGeocodingRequest(params).url.toString()).toStrictEqual(url);
     });
 });
 

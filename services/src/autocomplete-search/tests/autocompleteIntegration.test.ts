@@ -1,5 +1,6 @@
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
+import type { GetObject } from '../../shared/types/fetch';
 import { autocompleteSearch } from '../autocompleteSearch';
 import type {
     AutocompleteSearchResponse,
@@ -97,8 +98,8 @@ describe('Autocomplete service', () => {
     });
 
     test('Autocomplete with API request and response callbacks', async () => {
-        const onApiRequest = vi.fn() as (request: URL) => void;
-        const onApiResponse = vi.fn() as (request: URL, response: AutocompleteSearchResponseAPI) => void;
+        const onApiRequest = vi.fn() as (request: GetObject) => void;
+        const onApiResponse = vi.fn() as (request: GetObject, response: AutocompleteSearchResponseAPI) => void;
         const query = 'cafe';
         const language = 'en-GB';
         const result = await autocompleteSearch({
@@ -108,13 +109,16 @@ describe('Autocomplete service', () => {
             onAPIResponse: onApiResponse,
         });
         expect(result).toEqual(basicResponse);
-        expect(onApiRequest).toHaveBeenCalledWith(expect.any(URL));
-        expect(onApiResponse).toHaveBeenCalledWith(expect.any(URL), expect.anything());
+        expect(onApiRequest).toHaveBeenCalledWith(expect.objectContaining({ url: expect.any(URL) }));
+        expect(onApiResponse).toHaveBeenCalledWith(
+            expect.objectContaining({ url: expect.any(URL) }),
+            expect.anything(),
+        );
     });
 
     test('Autocomplete with API request and error response callbacks', async () => {
-        const onApiRequest = vi.fn() as (request: URL) => void;
-        const onApiResponse = vi.fn() as (request: URL, response: AutocompleteSearchResponseAPI) => void;
+        const onApiRequest = vi.fn() as (request: GetObject) => void;
+        const onApiResponse = vi.fn() as (request: GetObject, response: AutocompleteSearchResponseAPI) => void;
         const query = 'cafe';
         // The service resolves `resultSet` against an enum, so an unknown segment type is always a
         // 400. An unknown `language` is not: the service ignores it and answers 200.
@@ -122,7 +126,10 @@ describe('Autocomplete service', () => {
         await expect(() =>
             autocompleteSearch({ query, resultType, onAPIRequest: onApiRequest, onAPIResponse: onApiResponse }),
         ).rejects.toThrow(expect.objectContaining({ status: 400 }));
-        expect(onApiRequest).toHaveBeenCalledWith(expect.any(URL));
-        expect(onApiResponse).toHaveBeenCalledWith(expect.any(URL), expect.objectContaining({ status: 400 }));
+        expect(onApiRequest).toHaveBeenCalledWith(expect.objectContaining({ url: expect.any(URL) }));
+        expect(onApiResponse).toHaveBeenCalledWith(
+            expect.objectContaining({ url: expect.any(URL) }),
+            expect.objectContaining({ status: 400 }),
+        );
     });
 });

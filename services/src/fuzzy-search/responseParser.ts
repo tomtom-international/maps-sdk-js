@@ -33,11 +33,12 @@ const queryIntentApiToSdk = (intentApi: QueryIntentAPI): QueryIntent => {
 export const parseFuzzySearchResponse = (apiResponse: FuzzySearchResponseAPI): FuzzySearchResponse => {
     const features = apiResponse.results.map(parseSearchAPIResult);
     const bbox = bboxOnlyIfWithArea(bboxFromGeoJSON(features));
+    const queryIntent = apiResponse.summary.queryIntent?.map(queryIntentApiToSdk);
     return {
         type: 'FeatureCollection',
         properties: {
             ...parseSummaryAPI(apiResponse.summary),
-            queryIntent: apiResponse.summary.queryIntent.map(queryIntentApiToSdk),
+            ...(queryIntent && { queryIntent }),
         },
         features,
         ...(bbox && { bbox }),

@@ -67,15 +67,6 @@ export const stylingPresets = {
             'view.sky': true,
         },
     },
-    terrain: {
-        name: 'Terrain',
-        description: '3D terrain with a sky for tilted views. Needs the hillshade style part and a pitched camera.',
-        settings: {
-            'view.terrain': true,
-            'view.terrainExaggeration': 1.2,
-            'view.sky': true,
-        },
-    },
 } as const satisfies Record<string, PresetDefinition>;
 
 /**

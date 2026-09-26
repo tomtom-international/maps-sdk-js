@@ -228,15 +228,19 @@ export class TrafficAreaAnalyticsModule extends AbstractDataOwnedMapModule<
 
     /** @ignore */
     protected _applyConfig(config: TrafficAreaAnalyticsConfig | undefined): TrafficAreaAnalyticsConfig | undefined {
-        if (config === undefined) return;
+        const previous = this.config;
+        // No config is a reset: back to what a module created without one shows, rather than merged
+        // over the previous config.
+        const base = config === undefined ? undefined : previous;
+        const given = config ?? {};
 
         // Deep-merge the metricConfig record at the per-metric-key level so that
         // passing { metricConfig: { congestionLevel: { color: 'heat' } } } does
         // not wipe out configs for other metrics.
         const mergedMetricConfig: TrafficAreaAnalyticsConfig['metricConfig'] =
-            config.metricConfig && this.config?.metricConfig
-                ? { ...this.config.metricConfig, ...config.metricConfig }
-                : (config.metricConfig ?? this.config?.metricConfig);
+            given.metricConfig && base?.metricConfig
+                ? { ...base.metricConfig, ...given.metricConfig }
+                : (given.metricConfig ?? base?.metricConfig);
 
         // Ensure every metric has an explicit config entry so getConfig() always
         // returns fully-populated stops (callers never need to fall back to defaults).
@@ -251,27 +255,43 @@ export class TrafficAreaAnalyticsModule extends AbstractDataOwnedMapModule<
         const merged: TrafficAreaAnalyticsConfig = {
             activeMetric: AREA_ANALYTICS_DEFAULTS.activeMetric,
             displayMode: AREA_ANALYTICS_DEFAULTS.displayMode,
-            ...this.config,
-            ...config,
+            ...base,
+            ...given,
             metricConfig: filledMetricConfig,
         };
 
+        // Set before anything below reads `this.config` — the active metric and its filters, `visible`,
+        // `displayMode`. The parent's applyConfig assigns the same value after we return, and emits
+        // config-change exactly once.
+        this.config = merged;
         this.applyLayerConfig(merged);
 
-        if (merged.regionPolygon) {
+        if (merged.regionPolygon || previous?.regionPolygon) {
             this.applyRegionConfig(merged);
         }
 
         if (merged.beforeLayerConfig) {
             this._moveBeforeLayer(merged.beforeLayerConfig, false);
+        } else if (previous?.beforeLayerConfig) {
+            this.moveLayersToSpecPositions();
         }
 
-        // Set config before applyModeVisibility, which reads `this.config.visible` and
-        // `this.config.displayMode`. The parent's applyConfig will overwrite this.config
-        // with the same value after we return, and emit config-change exactly once.
-        this.config = merged;
         this.applyModeVisibility();
         return merged;
+    }
+
+    // Back to where each data layer's spec places it: built without a before-layer config, that is
+    // the default position.
+    private moveLayersToSpecPositions(): void {
+        for (const spec of [
+            this.heatmapLayerSpec,
+            this.hexFillLayerSpec,
+            this.hexExtrusionLayerSpec,
+            this.squareFillLayerSpec,
+            this.squareExtrusionLayerSpec,
+        ]) {
+            moveLayerBefore(this.mapLibreMap, spec.id, spec.beforeID);
+        }
     }
 
     /** @ignore */

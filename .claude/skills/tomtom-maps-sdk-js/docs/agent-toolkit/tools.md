@@ -21,8 +21,8 @@ Categories (representative names — see `DEFAULT_TOOLS` for the full list and `
 - **Trackers (geofence / proximity alerts)**: `createTracker`, `getTrackers`, `getTrackerHistory`, `clearTracker`
 - **Unified data tools (scope-aware)**: `analyseData`, `processData` — see [data-tools.md](./data-tools.md)
 - **Map display**: `updatePlacesDisplay`, `updateRoutesDisplay` (replaces the old `setRouteTheme`), `updateWaypointsDisplay`, `updateTrafficAreaAnalyticsDisplay`, `updateByodDisplay`, `setByodLayers` (BYOD restyle), `clearMap`
-- **Map control**: `flyTo`, `zoomInOrOut`, `setMapStandardStyle`, `setLanguage`, `toggleTilesPOIs`, `toggleTilesBaseMapLayerGroups`, `setPitchBearing`, `getStandardMapStyles`
-- **Map styling**: `describeMapStyling` (the knob catalogue: ids, kinds, ranges, defaults, current values), `setMapStyling` (set/reset knobs — `labels.sizeFactor`, `roads.exitNumbers`, `buildings.3d`, `traffic.flow.slowColor`, …). Backed by `StylingModule`; see [map-styling.md](../map-styling.md)
+- **Map control**: `flyTo`, `zoomInOrOut`, `setMapStandardStyle`, `setLanguage`, `toggleTilesPOIs`, `setPitchBearing`, `getStandardMapStyles`
+- **Map styling**: `describeMapStyling` (the knob catalogue: ids, kinds, ranges, defaults, current values, presets), `setMapStyling` (set/reset knobs or apply a preset — `labels.sizeFactor`, `roads.exitNumbers`, `basemap.roadLabels`, `buildings.3d`, `colors.water`, `view.projection`, `hillshade.method`, `traffic.flow.slowColor`, …). Backed by `StylingModule`; see [map-styling.md](../map-styling.md). Base-map group visibility is a `basemap.<group>` knob here (there is no separate toggle tool).
 - **MapLibre direct**: `executeMaplibreCode`, `setLayoutProperties`, `setPaintProperties`, `getMapStyleLayers`
 - **State / recall**: `recallState` (scope-aware `{ kind, id }` over `places` / `routes` / `ranges` / `geometries` / `byod` / `incidents` / `trafficAreaAnalytics`), `setEntryMode`, `resetState`
 - **Utilities**: `clarifyIntent`, `calculateBBox`, `help`

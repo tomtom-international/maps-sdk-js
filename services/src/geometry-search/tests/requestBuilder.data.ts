@@ -18,9 +18,7 @@ const requestBuilderData: [string, GeometrySearchParams, PostObject<GeometrySear
             query: 'Electric Charging Station',
         },
         {
-            url: new URL(
-                'https://api.tomtom.com/maps/orbis/places/geometrySearch/Electric%20Charging%20Station.json?apiVersion=1&key=GLOBAL_API_KEY',
-            ),
+            url: new URL('https://api.tomtom.com/maps/orbis/places/geometrySearch/Electric%20Charging%20Station.json'),
             data: {
                 geometryList: [
                     {
@@ -63,7 +61,7 @@ const requestBuilderData: [string, GeometrySearchParams, PostObject<GeometrySear
         },
         {
             url: new URL(
-                'https://api-test.tomtom.com/maps/orbis/places/geometrySearch/24x7%20restaurant.json?apiVersion=2&key=GLOBAL_API_KEY_2&language=fr-FR&limit=25&categorySet=7315148%2C7315025&mapcodes=Local%2CAlternative%2CInternational&extendedPostalCodesFor=POI&view=Unified&openingHours=nextSevenDays&timeZone=iana',
+                'https://api-test.tomtom.com/maps/orbis/places/geometrySearch/24x7%20restaurant.json?language=fr-FR&limit=25&categorySet=7315148%2C7315025&mapcodes=Local%2CAlternative%2CInternational&extendedPostalCodesFor=POI&view=Unified&openingHours=nextSevenDays&timeZone=iana',
             ),
             data: {
                 geometryList: [
@@ -111,7 +109,7 @@ const requestBuilderData: [string, GeometrySearchParams, PostObject<GeometrySear
         },
         {
             url: new URL(
-                'https://test.api.tomtom.com/maps/orbis/places/geometrySearch/London.json?apiVersion=1&key=GLOBAL_API_KEY&limit=20&idxSet=Geo%2CStr&entityTypeSet=Municipality%2CMunicipalitySubdivision%2CNeighbourhood',
+                'https://test.api.tomtom.com/maps/orbis/places/geometrySearch/London.json?limit=20&idxSet=Geo%2CStr&entityTypeSet=Municipality%2CMunicipalitySubdivision%2CNeighbourhood',
             ),
             data: {
                 geometryList: [
@@ -175,7 +173,7 @@ const requestBuilderData: [string, GeometrySearchParams, PostObject<GeometrySear
         },
         {
             url: new URL(
-                'https://test.api.tomtom.com/maps/orbis/places/geometrySearch/EV%20charging%20points.json?apiVersion=1&key=GLOBAL_API_KEY&connectorSet=IEC62196Type2Outlet%2CStandardHouseholdCountrySpecific%2CIEC62196Type2CableAttached%2CIEC62196Type3%2CIEC62196Type2CCS%2CIEC60309AC1PhaseBlue%2CIEC60309AC3PhaseRed%2CIEC60309DCWhite%2CIEC62196Type1%2CIEC62196Type1CCS&minPowerKW=20&maxPowerKW=43.2',
+                'https://test.api.tomtom.com/maps/orbis/places/geometrySearch/EV%20charging%20points.json?connectorSet=IEC62196Type2Outlet%2CStandardHouseholdCountrySpecific%2CIEC62196Type2CableAttached%2CIEC62196Type3%2CIEC62196Type2CCS%2CIEC60309AC1PhaseBlue%2CIEC60309AC3PhaseRed%2CIEC60309DCWhite%2CIEC62196Type1%2CIEC62196Type1CCS&minPowerKW=20&maxPowerKW=43.2',
             ),
             data: {
                 geometryList: [
@@ -227,7 +225,7 @@ const requestBuilderData: [string, GeometrySearchParams, PostObject<GeometrySear
         },
         {
             url: new URL(
-                'https://test.api.tomtom.com/maps/orbis/places/geometrySearch/Fuel%20Station.json?apiVersion=1&key=GLOBAL_API_KEY&fuelSet=Petrol%2CDiesel%2CLPG%2CBiodiesel%2CAdBlue%2CDieselForCommercialVehicles&brandSet=Circle+K%2CX+Fuel%2CSia+Fuel%2CEasy+Fuel',
+                'https://test.api.tomtom.com/maps/orbis/places/geometrySearch/Fuel%20Station.json?fuelSet=Petrol%2CDiesel%2CLPG%2CBiodiesel%2CAdBlue%2CDieselForCommercialVehicles&brandSet=Circle+K%2CX+Fuel%2CSia+Fuel%2CEasy+Fuel',
             ),
             data: {
                 geometryList: [
@@ -478,9 +476,7 @@ const requestBuilderData: [string, GeometrySearchParams, PostObject<GeometrySear
                     },
                 ],
             },
-            url: new URL(
-                'https://api.tomtom.com/maps/orbis/places/geometrySearch/university.json?apiVersion=1&key=GLOBAL_API_KEY',
-            ),
+            url: new URL('https://api.tomtom.com/maps/orbis/places/geometrySearch/university.json'),
         },
     ],
 ];

@@ -2,7 +2,7 @@ import type { GeographyType } from '@tomtom-org/maps-sdk/core';
 import { getPositionStrict } from '@tomtom-org/maps-sdk/core';
 import { isNil } from 'lodash-es';
 import type { GetObject } from '../shared';
-import { PLACES_URL_PATH } from '../shared/request/commonSearchRequestBuilder';
+import { resolvePlacesEndpointUrl } from '../shared/request/placesEndpoint';
 import { buildCommonServiceRequestHeaders } from '../shared/request/requestBuildingUtils';
 import type { ReverseGeocodingAreaTypeAPI } from './types/apiTypes';
 import type { ReverseGeocodingParams } from './types/reverseGeocodingParams';
@@ -24,8 +24,7 @@ export const AREA_TYPE_BY_GEOGRAPHY_TYPE: Record<GeographyType, ReverseGeocoding
 // complete place without having to specify a projection themselves.
 const DEFAULT_ATTRIBUTES = 'results(*)';
 
-const buildUrlBasePath = (params: ReverseGeocodingParams): string =>
-    params.customServiceBaseURL ?? `${params.commonBaseURL}${PLACES_URL_PATH}/reverseGeocode`;
+const buildUrlBasePath = (params: ReverseGeocodingParams): string => resolvePlacesEndpointUrl(params, 'reverseGeocode');
 
 /**
  * Default function for building a reverse geocoding request from {@link ReverseGeocodingParams}

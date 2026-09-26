@@ -1,9 +1,9 @@
 import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
 import {
-    HillshadeModule,
     type StandardStyleID,
     StylingModule,
     standardStyleIDs,
+    TerrainModule,
     TomTomMap,
 } from '@tomtom-org/maps-sdk/map';
 import { MapEffects } from '@tomtom-org/maps-sdk-plugin-map-effects';
@@ -66,11 +66,11 @@ const focusLabel = (focus: number) => {
         },
     });
 
-    const [styling, hillshading] = await Promise.all([
-        StylingModule.get(map, { 'view.terrain': true, 'view.terrainExaggeration': 1.4, 'view.sky': true }),
-        // The relief the terrain is raised from, shaded: the same elevation source, drawn rather
-        // than displaced, which is what keeps a slope readable where the camera flattens it.
-        HillshadeModule.get(map, { visible: true }),
+    const [styling, terrainModule] = await Promise.all([
+        StylingModule.get(map, { 'view.sky': true }),
+        // The hillshade shades the same elevation the surface is raised from, which keeps a slope
+        // readable where the camera flattens it.
+        TerrainModule.get(map, { elevation: true, elevationExaggeration: 1.4, hillshade: true }),
     ]);
 
     // The effects plugin works on the rendered pixels, so it needs nothing from the style and
@@ -125,17 +125,17 @@ const focusLabel = (focus: number) => {
         map.mapLibreMap.flyTo({ center, zoom, bearing, pitch: Number(pitch.value), duration: 4000 });
     });
 
-    // The terrain, its exaggeration and the sky are styling settings rather than camera state, so
-    // they survive this switch: the module re-applies them on top of every style it loads.
+    // The terrain, its exaggeration and the sky are module settings rather than camera state, so
+    // they survive this switch: both modules re-apply them on top of every style the map loads.
     styleSelector.addEventListener('change', () => {
         const styleId = styleSelector.value as StandardStyleID;
         map.setStyle(styleId);
         applySkyOf(styleId);
     });
 
-    terrain.addEventListener('change', () => styling.set('view.terrain', terrain.checked));
+    terrain.addEventListener('change', () => terrainModule.setElevationEnabled(terrain.checked));
     sky.addEventListener('change', () => styling.set('view.sky', sky.checked));
-    hillshade.addEventListener('change', () => hillshading.setVisible(hillshade.checked));
+    hillshade.addEventListener('change', () => terrainModule.setHillshadeVisible(hillshade.checked));
 
     depthOfField.addEventListener('change', applyDepthOfField);
 
@@ -175,7 +175,7 @@ const focusLabel = (focus: number) => {
 
     exaggeration.addEventListener('input', () => {
         exaggerationValue.textContent = exaggeration.value;
-        styling.set('view.terrainExaggeration', Number(exaggeration.value));
+        terrainModule.setElevationExaggeration(Number(exaggeration.value));
     });
 
     pitch.addEventListener('input', () => {

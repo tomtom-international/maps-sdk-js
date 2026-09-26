@@ -80,7 +80,7 @@ test.describe('Loading map style parts', () => {
 
         await page.evaluate(async () => {
             const mapsSdkThis = globalThis as MapsSDKThis;
-            await mapsSdkThis.MapsSDK.HillshadeModule.get(mapsSdkThis.tomtomMap, { visible: true });
+            await mapsSdkThis.MapsSDK.TerrainModule.get(mapsSdkThis.tomtomMap, { hillshade: true });
         });
         expect(await getNumVisibleLayersBySource(page, HILLSHADE_SOURCE_ID)).toBeGreaterThan(0);
 
@@ -112,7 +112,7 @@ test.describe('Loading map style parts', () => {
         // Right after triggering the map initialization, we add multiple modules to the map, which should trigger reloading its style multiple times:
         await page.evaluate(async () => {
             const mapsSdkThis = globalThis as MapsSDKThis;
-            await mapsSdkThis.MapsSDK.HillshadeModule.get(mapsSdkThis.tomtomMap);
+            await mapsSdkThis.MapsSDK.TerrainModule.get(mapsSdkThis.tomtomMap);
             await mapsSdkThis.MapsSDK.TrafficIncidentsModule.get(mapsSdkThis.tomtomMap);
             await mapsSdkThis.MapsSDK.TrafficFlowModule.get(mapsSdkThis.tomtomMap);
         });

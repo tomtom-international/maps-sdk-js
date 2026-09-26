@@ -211,48 +211,45 @@ describe('RoutingState — route monitoring', () => {
 });
 
 describe('RoutingState — partial display updates', () => {
-    // RoutingModule.applyConfig replaces the config wholesale; these guard the merge the state does
-    // on top so a partial update never wipes what the module already had.
-    const stubModule = (config: Record<string, unknown>) => ({
+    // `RoutingModule.applyConfig` replaces the config wholesale, so a partial change has to go through
+    // `updateConfig` — otherwise recolouring a route would bring back hidden bubbles and drop layers.
+    const stubModule = () => ({
         applyConfig: vi.fn(),
-        getConfig: vi.fn().mockReturnValue(config),
+        updateConfig: vi.fn(),
         showRoutes: vi.fn().mockResolvedValue(undefined),
         showWaypoints: vi.fn().mockResolvedValue(undefined),
         clearWaypoints: vi.fn().mockResolvedValue(undefined),
     });
 
-    it('setMainColor keeps hidden bubbles and custom layers on a shown module', async () => {
+    it('setMainColor updates the theme on a shown module without replacing its config', async () => {
         const state = new RoutingState(mockMap);
         await state.addRoutes({} as any, [] as any, 'A to B');
         const entry = state.entries[0] as any;
-        const module = stubModule({ summaryBubbles: { visible: false }, layers: { mainLines: {} } });
+        const module = stubModule();
         entry._module = module;
         entry._shown = true;
 
         state.setMainColor('#ff0000');
 
-        expect(module.applyConfig).toHaveBeenCalledWith({
-            summaryBubbles: { visible: false },
-            layers: { mainLines: {} },
-            theme: { mainColor: '#ff0000' },
-        });
+        expect(module.updateConfig).toHaveBeenCalledWith({ theme: { mainColor: '#ff0000' } });
+        expect(module.applyConfig).not.toHaveBeenCalled();
     });
 
-    it('showEntry merges the sticky colour over the module config instead of replacing it', async () => {
+    it('showEntry applies the sticky colour and bubble visibility as one update', async () => {
         const state = new RoutingState(mockMap);
         await state.addRoutes({} as any, [] as any, 'A to B');
         const entry = state.entries[0] as any;
-        const module = stubModule({ layers: { mainLines: {} } });
+        const module = stubModule();
         entry._module = module;
         state.setMainColor('#00ff00');
 
         await state.showEntry(entry.id, { showSummaryBubbles: false });
 
-        expect(module.applyConfig).toHaveBeenCalledWith({
-            layers: { mainLines: {} },
+        expect(module.updateConfig).toHaveBeenCalledWith({
             theme: { mainColor: '#00ff00' },
             summaryBubbles: { visible: false },
         });
+        expect(module.applyConfig).not.toHaveBeenCalled();
     });
 });
 

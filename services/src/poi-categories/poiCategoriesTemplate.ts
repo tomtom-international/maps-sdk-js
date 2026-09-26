@@ -1,4 +1,4 @@
-import type { ServiceTemplate } from '../shared';
+import type { GetObject, ServiceTemplate } from '../shared';
 import { get } from '../shared/fetch';
 import { poiCategoriesRequestSchema } from './poiCategoriesRequestSchema';
 import { buildPoiCategoriesRequest } from './requestBuilder';
@@ -10,7 +10,7 @@ import type { POICategoriesParams, POICategoriesResponse, PoiCategoriesResponseA
  */
 export type PoiCategoriesTemplate = ServiceTemplate<
     POICategoriesParams,
-    URL,
+    GetObject,
     PoiCategoriesResponseAPI,
     POICategoriesResponse
 >;

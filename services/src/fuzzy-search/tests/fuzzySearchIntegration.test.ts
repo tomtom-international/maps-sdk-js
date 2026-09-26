@@ -8,6 +8,7 @@ import {
     expectPlaceTestFeature,
     putIntegrationTestsAPIKey,
 } from '../../shared/tests/integrationTestUtils';
+import type { GetObject } from '../../shared/types/fetch';
 import { buildFuzzySearchRequest } from '../requestBuilder';
 import { parseFuzzySearchResponse } from '../responseParser';
 import type { FuzzySearchParams, FuzzySearchResponse, FuzzySearchResponseAPI } from '../types';
@@ -111,7 +112,7 @@ describe('Fuzzy Search service', () => {
             {
                 buildRequest: (params: FuzzySearchParams) => {
                     const req = buildFuzzySearchRequest(params);
-                    req.pathname = req.pathname.replace(`${query}.json`, `${newQuery}.json`);
+                    req.url.pathname = req.url.pathname.replace(`${query}.json`, `${newQuery}.json`);
                     return req;
                 },
             },
@@ -162,17 +163,20 @@ describe('Fuzzy Search service', () => {
     });
 
     test('Fuzzy search with API request and response callbacks', async () => {
-        const onApiRequest = vi.fn() as (request: URL) => void;
-        const onApiResponse = vi.fn() as (request: URL, response: FuzzySearchResponseAPI) => void;
+        const onApiRequest = vi.fn() as (request: GetObject) => void;
+        const onApiResponse = vi.fn() as (request: GetObject, response: FuzzySearchResponseAPI) => void;
         const result = await search({ query: 'restaurant', onAPIRequest: onApiRequest, onAPIResponse: onApiResponse });
         expect(result).toBeDefined();
-        expect(onApiRequest).toHaveBeenCalledWith(expect.any(URL));
-        expect(onApiResponse).toHaveBeenCalledWith(expect.any(URL), expect.anything());
+        expect(onApiRequest).toHaveBeenCalledWith(expect.objectContaining({ url: expect.any(URL) }));
+        expect(onApiResponse).toHaveBeenCalledWith(
+            expect.objectContaining({ url: expect.any(URL) }),
+            expect.anything(),
+        );
     });
 
     test('Fuzzy search with API request and error response callbacks', async () => {
-        const onApiRequest = vi.fn() as (request: URL) => void;
-        const onApiResponse = vi.fn() as (request: URL, response: FuzzySearchResponseAPI) => void;
+        const onApiRequest = vi.fn() as (request: GetObject) => void;
+        const onApiResponse = vi.fn() as (request: GetObject, response: FuzzySearchResponseAPI) => void;
         await expect(() =>
             search({
                 query: 'restaurant',
@@ -182,7 +186,10 @@ describe('Fuzzy Search service', () => {
                 onAPIResponse: onApiResponse,
             }),
         ).rejects.toThrow(expect.objectContaining({ status: 400 }));
-        expect(onApiRequest).toHaveBeenCalledWith(expect.any(URL));
-        expect(onApiResponse).toHaveBeenCalledWith(expect.any(URL), expect.objectContaining({ status: 400 }));
+        expect(onApiRequest).toHaveBeenCalledWith(expect.objectContaining({ url: expect.any(URL) }));
+        expect(onApiResponse).toHaveBeenCalledWith(
+            expect.objectContaining({ url: expect.any(URL) }),
+            expect.objectContaining({ status: 400 }),
+        );
     });
 });

@@ -2,7 +2,7 @@
   "name": "@tomtom-org/maps-sdk-plugin-agent-toolkit",
   "author": "TomTom International B.V.",
   "license": "See in LICENSE.txt",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "type": "module",
   "description": "Agent toolkit plugin for TomTom Maps SDK JS using Vercel AI SDK",
   "types": "dist/index.d.ts",
@@ -22,7 +22,7 @@
     "test:e2e:install": "playwright install chromium"
   },
   "peerDependencies": {
-    "@tomtom-org/maps-sdk": ">=0.56.0 <1.0.0",
+    "@tomtom-org/maps-sdk": ">=0.57.0 <1.0.0",
     "@turf/turf": "catalog:",
     "ai": "catalog:",
     "chart.js": "catalog:",
