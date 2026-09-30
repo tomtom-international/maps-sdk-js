@@ -1,0 +1,214 @@
+---
+title: Customizing services
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.58.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The TomTom Maps SDK provides extensive configuration options to customize service behavior, optimize performance, and handle different application requirements. This guide covers request validation, lifecycle hooks, cancellation, global configuration, error handling and deadlines.
+
+## Request validation
+
+The SDK includes built-in request validation that verifies each service request adheres to the expected structure before sending it to the API. This validation system helps developers catch errors early and prevents faulty API calls that could result in unnecessary costs.
+
+**Benefits of Request Validation:**
+- Contextual error messages relevant to SDK types (easier debugging)
+- Prevention of malformed API calls (cost optimization)
+- Early error detection in development
+
+**Performance Considerations:**
+If you're confident about your inputs and want to optimize CPU usage, you can disable validation on a per-service basis:
+
+```javascript
+import { discoverPlaces, geocode, calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+// Disable validation for specific services
+await discoverPlaces({
+    query: "Eiffel Tower",
+    validateRequest: false
+});
+
+await geocode({
+    query: "Amsterdam",
+    validateRequest: false
+});
+```
+
+**Recommendation:** Keep validation enabled during development and testing phases. Only disable it in production when you're confident about input quality.
+
+## Service lifecycle hooks: onAPIRequest and onAPIResponse
+
+The SDK allows you to hook into the service request lifecycle for advanced debugging, logging, or analytics. You can use the `onAPIRequest` and `onAPIResponse` callbacks to observe outgoing requests and incoming responses.
+
+- **onAPIRequest**: Called immediately before the request is sent to the API.
+- **onAPIResponse**: Called as soon as the raw response is received from the API, before parsing.
+
+**Example:**
+
+```javascript
+await discoverPlaces({
+    query: "Eiffel Tower",
+    onAPIRequest: (apiRequest) => {
+        console.debug('API Request:', apiRequest);
+    },
+    onAPIResponse: (apiRequest, apiResponse) => {
+        console.debug('API Response:', apiResponse);
+    }
+});
+```
+
+These hooks are useful for debugging, analytics, or custom logging. They do not modify the request or response.
+
+`apiRequest` is what the SDK sends: `{ url, headers }`, plus `data` on a `POST` (EV charging availability passes a bare `URL`). Routing, traffic incident details and the places services carry the API key in `headers['TomTom-Api-Key']` rather than the URL, so redact that header as well as any `key=` parameter before logging. [Proxying your API calls](../security/proxying-api-calls.mdx#inject-the-key-in-exactly-one-place) lists which service sends which.
+
+## Cancelling a request
+
+Every service that takes a parameters object accepts a `signal`, an
+[`AbortSignal`](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal). Aborting it cancels
+the underlying HTTP request and rejects the call with an `SDKAbortError`, whose `name` is
+`'AbortError'`.
+
+The single-result helpers `discoverOnePlace` and `geocodeOne` take the signal in their params form:
+`discoverOnePlace({ query, signal })`.
+
+This matters most when a new request supersedes an older one — a search-as-you-type box, or a
+search re-run on every map move. Without cancellation, a slow earlier response can arrive after a
+faster later one and overwrite it.
+
+```javascript
+import { discoverPlaces, SDKAbortError } from '@tomtom-org/maps-sdk/services';
+
+let controller;
+
+const searchForQuery = async (query) => {
+    // Cancel whatever is still in flight from the previous keystroke
+    controller?.abort();
+    controller = new AbortController();
+
+    try {
+        return await discoverPlaces({ query, signal: controller.signal });
+    } catch (error) {
+        if (error instanceof SDKAbortError) return; // superseded, not a failure
+        throw error;
+    }
+};
+```
+
+Aborting also interrupts the SDK while it waits to retry a rate-limited (`429`) response, so a
+cancelled call never sits out a pending backoff.
+
+To put a deadline on a call, compose it onto the same signal — see [Deadlines](#deadlines).
+
+## Global service configuration
+
+The `TomTomConfig` class provides centralized configuration management for all SDK services. This approach ensures consistent behavior across your application and simplifies configuration management.
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+
+TomTomConfig.instance.put({
+    apiKey: 'YOUR_API_KEY',
+    language: 'en-GB',                          // Default language for all responses
+    retry: { timeoutMs: 40000 }                 // Budget for retrying rate-limited requests
+});
+```
+
+**Configuration Options:**
+- **apiKey**: Your TomTom API key (required)
+- **language**: ISO language code for response localization
+- **commonBaseURL**: Base URL of every request, changed only to route requests through your own proxy (see below)
+- **displayUnits**: Unit system used when formatting distances and durations
+- **retry**: Automatic retry of `429` responses. See [Global configuration](../core/global-config.mdx)
+
+`validateRequest` is a per-call option rather than a global one — see
+[Request validation](#request-validation) above.
+
+To route service traffic through a proxy that holds your API key server-side — so the key never reaches the browser — see [Proxying your API calls](../security/proxying-api-calls.mdx).
+
+## Comprehensive error handling
+
+Robust error handling is crucial for production applications. The SDK provides structured error responses that help you implement appropriate user feedback and fallback strategies:
+
+```javascript
+import { discoverPlaces, SDKAbortError } from '@tomtom-org/maps-sdk/services';
+
+try {
+    const results = await discoverPlaces({
+        query: "coffee",
+        position: [4.9041, 52.3676]
+    });
+
+    console.log(results);
+} catch (error) {
+    // A cancelled call carries no status, so match it before the status checks
+    if (error instanceof SDKAbortError) {
+        return; // superseded by a newer request — not a failure
+    }
+    // Handle specific error types
+    if (error.status === 401) {
+        console.error('Authentication failed - check API key');
+        // Redirect to login or show API key configuration
+    } else if (error.status === 429) {
+        console.error('Rate limit exceeded - implement retry logic');
+        // Implement exponential backoff retry
+    } else if (error.status >= 500) {
+        console.error('Server error - implement fallback');
+        // Use cached data or alternative service
+    } else {
+        console.error('Request failed:', error.message);
+        // Show user-friendly error message
+    }
+}
+```
+
+**Common Error Codes:**
+- **400**: Bad Request - Invalid parameters or malformed request
+- **401**: Unauthorized - Invalid or missing API key
+- **403**: Forbidden - API key lacks required permissions
+- **429**: Too Many Requests - Rate limit exceeded
+- **500**: Internal Server Error - Service temporarily unavailable
+
+## Deadlines
+
+There is no per-call `timeout` option. Compose a deadline onto the `signal` instead, which
+lets one call carry both a deadline and your own cancellation:
+
+```javascript
+// Give a search box a short deadline — a fast response is expected
+await getSearchSuggestions({
+    query: "coffee",
+    origin: [4.9041, 52.3676],
+    signal: AbortSignal.timeout(3000)
+});
+
+// A longer one for complex routing, still cancellable by hand
+await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    signal: AbortSignal.any([controller.signal, AbortSignal.timeout(15000)])
+});
+```
+
+A deadline that fires rejects with `SDKAbortError`, the same as a manual abort. Check
+`error.cause` if you need to tell the two apart.
+
+The `retry.timeoutMs` global setting is unrelated. It caps how long the SDK keeps retrying a
+rate-limited (`429`) response, and is not a limit on any single request. See
+[Global configuration](../core/global-config.mdx).
+
+## Related guides and examples
+
+### Related guides
+- **[Services Quickstart](./quickstart.mdx)** - Basic setup and usage patterns
+- **[Places Services Quickstart](./places/quickstart.mdx)** - Places-specific configuration
+- **[Routing Services Quickstart](./routing/quickstart.mdx)** - Routing-specific configuration
+- **[Core SDK Quickstart](../core/quickstart.mdx)** - Core configuration and setup
+
+### Configuration examples
+- **[Map Config Playground](../../examples/map-config-playground)** - Interactive configuration exploration
+- **[Traffic Config Playground](../../examples/traffic-config-playground)** - Traffic service customization
+- **[Node.js Examples](../../examples/nodejs-geocode)** - Server-side configuration patterns
