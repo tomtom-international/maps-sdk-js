@@ -1,0 +1,132 @@
+---
+title: Traffic incident overlay module
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.58.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Traffic Incident Overlay Module renders incidents fetched from the
+[`trafficIncidentDetails()`](../services/traffic/traffic-incident-details.mdx) REST
+service as a developer-controlled overlay. Use this module when you need typed
+incident objects in your app code — for popups, list views, route correlation,
+or interactive focus — and want to control exactly when incidents render.
+
+**What this module owns:** the incident lines and icons it draws from the details you fetched, and how they look — including the focus treatment below. The live incident tiles belong to the [Traffic Incidents Module](./traffic-incidents.mdx), and their colours to the [Styling module](./styling.mdx); neither touches this overlay. See [Who owns what](./modules.mdx#who-owns-what).
+
+<GuideDemo demo="traffic-incident-overlay" />
+
+> **Looking for something else?**
+> - The default vector-tile [Traffic Incidents Module](./traffic-incidents.mdx) is the
+>   recommended default. It auto-renders all incidents on the map, with full
+>   road-class-aware styling and declutter.
+> - Use the **overlay module** when your application already fetches incidents
+>   via the REST service and you want the on-map rendering to mirror that exact
+>   set — no more, no less.
+
+## When to use the overlay vs `TrafficIncidentsModule`
+
+| You need… | Use |
+|---|---|
+| Live, full-coverage incidents with no fetch | `TrafficIncidentsModule` |
+| Typed incident objects in your app code | `TrafficIncidentOverlayModule` |
+| Render exactly the result of a single REST call | `TrafficIncidentOverlayModule` |
+| Per-feature focus / highlight a subset | `TrafficIncidentOverlayModule` |
+| Maximum visual fidelity (per-road-class styling, declutter) | `TrafficIncidentsModule` |
+
+The vector-tile incidents are hidden in the default style, so the overlay
+does not collide with them out of the box. If you've explicitly enabled
+`TrafficIncidentsModule` elsewhere in your app, hide it again before using
+the overlay to avoid rendering the same incidents twice.
+
+## Initialization
+
+```javascript
+import { TomTomMap, TrafficIncidentOverlayModule } from '@tomtom-org/maps-sdk/map';
+
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+const overlay = await TrafficIncidentOverlayModule.create(map);
+```
+
+## Rendering incidents
+
+Fetch incidents with the service, then pass the result to `show()`:
+
+```javascript
+import { trafficIncidentDetails } from '@tomtom-org/maps-sdk/services';
+
+const result = await trafficIncidentDetails({
+    bbox: [4.85, 52.34, 4.95, 52.40],
+    timeValidityFilter: ['present'],
+});
+await overlay.show(result);
+```
+
+`show()` replaces any previously rendered snapshot. Call `clear()` to remove
+all incidents.
+
+## Focusing a subset
+
+`setFocus(ids)` writes MapLibre feature-state on each rendered incident.
+The default visual treatment widens focused incidents and paints a black
+outline beneath them; unfocused incidents are unchanged — the focus
+treatment adds emphasis, it does not dim the rest of the overlay. Pass
+`null` to clear focus.
+
+```javascript
+overlay.setFocus(['incident-id-1', 'incident-id-2']);
+overlay.setFocus(null); // clear
+```
+
+### Customising or disabling the focus treatment
+
+The default visual is opinionated but not baked in — pass a `focus` config to
+`TrafficIncidentOverlayModule.create(map, …)`:
+
+```javascript
+// Override individual fields (the others fall back to defaults).
+const overlay = await TrafficIncidentOverlayModule.create(map, {
+    focus: { outlineColor: '#1976d2', widthScale: 2 },
+});
+```
+
+```javascript
+// Disable the visual entirely. setFocus() still writes
+// `feature-state.focused`, so you can drive your own styling — e.g. extra
+// MapLibre layers reading the same feature-state, or a sidebar overlay.
+const overlay = await TrafficIncidentOverlayModule.create(map, { focus: false });
+```
+
+## Visibility and layer ordering
+
+```javascript
+overlay.setVisible(false);
+overlay.setVisible(true);
+
+// Place the overlay above all other layers (default: below labels):
+overlay.moveBeforeLayer('top');
+```
+
+## Limitations
+
+The Incident Details REST API returns a feature list, not a rendering-ready
+tile. Several tags that the vector-tile pipeline injects per-feature are
+absent from the REST response, so the overlay renders with reduced visual
+fidelity:
+
+- No road-class-aware width/offset (every incident is a uniform stripe centred
+  on the road).
+- No declutter — every incident shows above the layer minzoom.
+- No secondary cause icon overlay (only the primary category icon renders).
+
+If you need full visual fidelity, use `TrafficIncidentsModule`.
+
+**Overlapping incidents:** when multiple incidents share the same point or
+stack along the same road segment, MapLibre's symbol collision culling keeps
+only the highest-sort-key feature. Culled features are not reachable via
+`queryRenderedFeatures`. If you need to surface multiple incidents at one
+location, work directly with the `FeatureCollection` you passed to `show()`.

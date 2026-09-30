@@ -1,0 +1,88 @@
+---
+title: AI coding with the SDK
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.58.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+AI coding agents (Claude Code, Cursor, GitHub Copilot, Windsurf, and others) are powerful but work best when they understand the library you're building with.
+The SDK ships a `/tomtom-maps-sdk-js` skill that gives your coding agent the right context — module patterns, coordinate conventions, service APIs, and common gotchas — so it can write accurate, idiomatic code on the first try.
+
+## What is a skill?
+
+A skill is a compact, curated knowledge document that you install into your project once.
+When invoked, it loads SDK-specific guidance directly into the agent's context window — no web search, no hallucinated APIs.
+
+The `tomtom-maps-sdk-js` skill covers:
+
+| Topic | What the agent learns |
+|---|---|
+| **Map setup** | `TomTomMap`, modules, styles, MapLibre integration, layer/event patterns |
+| **Places & search** | Fuzzy search, geocoding, reverse geocoding, search suggestions, POI categories, geometry search, `ViewportPlaces` |
+| **Routing** | `calculateRoute`, waypoints, alternatives, guidance, EV routing, reachable ranges |
+| **Traffic** | Flow, incidents, area analytics |
+| **Core types** | `Place`, `Route`, typed properties, section types |
+| **Core utilities** | `bboxFromGeoJSON`, `getPosition`, `formatDistance`, `formatDuration`, route progress |
+| **Services config** | API key setup, language, request hooks, request cancellation with `AbortSignal`, error classes |
+| **MapLibre direct access** | Adding sources/layers, paint/layout properties, querying features |
+
+## Installing the skill
+
+Run this once in your project root:
+
+```bash
+npx skills add tomtom-international/maps-sdk-js --skill tomtom-maps-sdk-js
+```
+
+This writes the skill files into `.claude/skills/` (or the equivalent directory for your agent).
+Commit the result so the whole team benefits.
+
+## Invoking the skill
+
+Trigger it in your agent with a topic:
+
+```
+/tomtom-maps-sdk-js map-setup
+/tomtom-maps-sdk-js places
+/tomtom-maps-sdk-js routing
+/tomtom-maps-sdk-js traffic
+```
+
+For multi-topic tasks, name both:
+
+```
+/tomtom-maps-sdk-js places routing
+```
+
+The agent reads the relevant reference doc and answers in the context of your current code.
+
+## What to expect
+
+With the skill active, the agent will:
+
+- Use the `[longitude, latitude]` coordinate order consistently (a common source of bugs)
+- `await Module.create(map)` for data-owned modules and `await Module.get(map)` for style-owned ones before calling module methods, since all modules are async — see [Map modules](./map/modules.mdx)
+- Return `geocode()` when the result count is uncertain, and `geocodeOne()` when exactly one result is expected
+- Include complete HTML + CSS alongside TypeScript, since the map container requires explicit dimensions
+- Write idiomatic patterns from the SDK rather than inventing alternatives
+
+## Tips for best results
+
+**Describe what you want to display, not which API to call.** The skill gives the agent enough context to choose the right service and module — you don't need to specify them.
+
+> *"Show a route from Amsterdam to Utrecht with a stop at a gas station, displaying traffic incidents along the way"*
+
+**Mention the target environment when relevant.** The Services bundle works in Node.js and React Native; the Map bundle is browser-only. Saying "this is a Node.js script" or "this is a React app" helps the agent pick the right imports.
+
+**Refer back to the skill if the agent drifts.** In long sessions, re-invoke with a topic to reload the reference into context.
+
+## Related guides
+
+- [Project Setup](../introduction/project-setup.mdx) — install the SDK and configure your API key
+- [How the SDK works](./how-the-sdk-works.mdx) — understand the Map, Services, and Core bundles
+- [AI in the SDK](../introduction/ai.mdx) — overview of AI capabilities in and around the SDK

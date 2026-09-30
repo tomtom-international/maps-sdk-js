@@ -1,0 +1,603 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>TomTomMap | TomTom Maps for JavaScript</title><meta name="description" content="Documentation for TomTom Maps for JavaScript"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container"><a href="../index.html" class="title">TomTom Maps for JavaScript</a>
+<div id="tsd-toolbar-links"></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/>
+<ul role="listbox" id="tsd-search-results"></ul>
+<div id="tsd-search-status" aria-live="polite" aria-atomic="true">
+<div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header>
+<div class="container container-main">
+<div class="col-content">
+<div class="tsd-page-title">
+<ul class="tsd-breadcrumb" aria-label="Breadcrumb">
+<li><a href="../modules/map.html">map</a></li>
+<li><a href="" aria-current="page">TomTomMap</a></li></ul>
+<h1>Class TomTomMap</h1></div>
+<section class="tsd-panel tsd-comment">
+<div class="tsd-comment tsd-typography"><p>Main TomTom Map class for displaying interactive maps in web applications.</p>
+<p>This is the entry point for rendering TomTom maps. It wraps MapLibre GL JS and provides
+a simplified, enhanced API for common mapping tasks.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks">Remarks<a href="#remarks" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><strong>Key Features:</strong></p>
+<ul>
+<li>Built on MapLibre GL JS for high-performance rendering</li>
+<li>Seamless style switching without map reload</li>
+<li>Integrated event handling system</li>
+<li>Multi-language support with dynamic switching</li>
+<li>Compatible with TomTom map modules (traffic, POIs, routing, etc.)</li>
+</ul>
+<p><strong>Architecture:</strong></p>
+<ul>
+<li>Exposes the underlying MapLibre Map instance via <a href="#maplibremap" class="tsd-kind-property">mapLibreMap</a></li>
+<li>Manages map lifecycle and style transitions</li>
+<li>Coordinates with map modules for data visualization</li>
+</ul>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example">Example<a href="#example" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Basic map initialization:</p>
+<pre><code class="typescript"><span class="hl-10">import</span><span class="hl-2"> { </span><span class="hl-1">TomTomMap</span><span class="hl-2"> } </span><span class="hl-10">from</span><span class="hl-2"> </span><span class="hl-4">&#39;@tomtom-org/maps-sdk/map&#39;</span><span class="hl-2">;</span><br/><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">map</span><span class="hl-2"> = </span><span class="hl-5">new</span><span class="hl-2"> </span><span class="hl-3">TomTomMap</span><span class="hl-2">({</span><br/><span class="hl-2">  </span><span class="hl-1">key:</span><span class="hl-2"> </span><span class="hl-4">&#39;YOUR_API_KEY&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-1">style:</span><span class="hl-2"> </span><span class="hl-4">&#39;standardLight&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-1">mapLibre:</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-1">container:</span><span class="hl-2"> </span><span class="hl-4">&#39;map&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">center:</span><span class="hl-2"> [</span><span class="hl-8">4.9041</span><span class="hl-2">, </span><span class="hl-8">52.3676</span><span class="hl-2">],</span><br/><span class="hl-2">    </span><span class="hl-1">zoom:</span><span class="hl-2"> </span><span class="hl-8">10</span><br/><span class="hl-2">  }</span><br/><span class="hl-2">});</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-1">Example<a href="#example-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>With modules and configuration:</p>
+<pre><code class="typescript"><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">map</span><span class="hl-2"> = </span><span class="hl-5">new</span><span class="hl-2"> </span><span class="hl-3">TomTomMap</span><span class="hl-2">({</span><br/><span class="hl-2">  </span><span class="hl-1">key:</span><span class="hl-2"> </span><span class="hl-4">&#39;YOUR_API_KEY&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-1">style:</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-1">type:</span><span class="hl-2"> </span><span class="hl-4">&#39;standard&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">id:</span><span class="hl-2"> </span><span class="hl-4">&#39;standardDark&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">include:</span><span class="hl-2"> [</span><span class="hl-4">&#39;trafficFlow&#39;</span><span class="hl-2">, </span><span class="hl-4">&#39;trafficIncidents&#39;</span><span class="hl-2">]</span><br/><span class="hl-2">  },</span><br/><span class="hl-2">  </span><span class="hl-1">language:</span><span class="hl-2"> </span><span class="hl-4">&#39;en-US&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-1">events:</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-1">precisionMode:</span><span class="hl-2"> </span><span class="hl-4">&#39;point-then-box&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">cursorOnHover:</span><span class="hl-2"> </span><span class="hl-4">&#39;pointer&#39;</span><br/><span class="hl-2">  },</span><br/><span class="hl-2">  </span><span class="hl-1">mapLibre:</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-1">container:</span><span class="hl-2"> </span><span class="hl-4">&#39;map&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">center:</span><span class="hl-2"> [-</span><span class="hl-8">74.006</span><span class="hl-2">, </span><span class="hl-8">40.7128</span><span class="hl-2">],</span><br/><span class="hl-2">    </span><span class="hl-1">zoom:</span><span class="hl-2"> </span><span class="hl-8">12</span><br/><span class="hl-2">  }</span><br/><span class="hl-2">});</span><br/><br/><span class="hl-0">// Access MapLibre functionality directly</span><br/><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-1">mapLibreMap</span><span class="hl-2">.</span><span class="hl-3">on</span><span class="hl-2">(</span><span class="hl-4">&#39;load&#39;</span><span class="hl-2">, () </span><span class="hl-5">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">  </span><span class="hl-1">console</span><span class="hl-2">.</span><span class="hl-3">log</span><span class="hl-2">(</span><span class="hl-4">&#39;Map loaded&#39;</span><span class="hl-2">);</span><br/><span class="hl-2">});</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></section>
+<section class="tsd-panel-group tsd-index-group">
+<section class="tsd-panel tsd-index-panel">
+<details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h5 class="tsd-index-heading uppercase">Index</h5></summary>
+<div class="tsd-accordion-details">
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="constructors">Constructors<a href="#constructors" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#constructor" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Constructor"><use href="../assets/icons.svg#icon-512"></use></svg><span>constructor</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="properties">Properties<a href="#properties" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#maplibremap" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>map<wbr/>Libre<wbr/>Map</span></a>
+<a href="#mapready" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>map<wbr/>Ready</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="accessors">Accessors<a href="#accessors" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#stylelightdarktheme" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>style<wbr/>Light<wbr/>Dark<wbr/>Theme</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="methods">Methods<a href="#methods" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#addstylechangehandler" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Style<wbr/>Change<wbr/>Handler</span></a>
+<a href="#getbbox" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>B<wbr/>Box</span></a>
+<a href="#getstyle" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Style</span></a>
+<a href="#setlanguage" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Language</span></a>
+<a href="#setstyle" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Style</span></a>
+<a href="#updateeventsconfig" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>Events<wbr/>Config</span></a>
+</div></section></div></details></section></section>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="constructors-1">Constructors<a href="#constructors-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="constructor"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="constructortomtommap"><span class="tsd-signature-keyword">new</span> <span class="tsd-kind-constructor-signature">TomTomMap</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">mapParams</span><span class="tsd-signature-symbol">:</span> <a href="../types/map.TomTomMapParams.html" class="tsd-signature-type tsd-kind-type-alias">TomTomMapParams</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">TomTomMap</a><a href="#constructortomtommap" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Constructs a new TomTom Map instance and attaches it to a DOM element.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">mapParams</span>: <a href="../types/map.TomTomMapParams.html" class="tsd-signature-type tsd-kind-type-alias">TomTomMapParams</a></span>
+<div class="tsd-comment tsd-typography"><p>Combined TomTom and MapLibre parameters for map initialization.
+Includes API key, style, events, and MapLibre options like container, center, zoom, etc.
+See <a href="../types/map.TomTomMapParams.html" class="tsd-kind-type-alias">TomTomMapParams</a> for all available parameters.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">TomTomMap</a></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-1">Remarks<a href="#remarks-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><strong>Initialization Process:</strong></p>
+<ol>
+<li>Merges <code>mapParams</code> with global configuration</li>
+<li>Creates underlying MapLibre map instance</li>
+<li>Loads specified style asynchronously</li>
+<li>Sets <code>mapReady</code> to <code>true</code> when complete</li>
+</ol>
+<p><strong>Configuration Priority:</strong></p>
+<ul>
+<li>Parameters passed here override global configuration</li>
+<li>Allows per-map customization while sharing common settings</li>
+</ul>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-2">Example<a href="#example-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Minimal initialization:</p>
+<pre><code class="typescript"><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">map</span><span class="hl-2"> = </span><span class="hl-5">new</span><span class="hl-2"> </span><span class="hl-3">TomTomMap</span><span class="hl-2">({</span><br/><span class="hl-2">  </span><span class="hl-1">key:</span><span class="hl-2"> </span><span class="hl-4">&#39;YOUR_API_KEY&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-1">mapLibre:</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-1">container:</span><span class="hl-2"> </span><span class="hl-4">&#39;map&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">center:</span><span class="hl-2"> [</span><span class="hl-8">0</span><span class="hl-2">, </span><span class="hl-8">0</span><span class="hl-2">],</span><br/><span class="hl-2">    </span><span class="hl-1">zoom:</span><span class="hl-2"> </span><span class="hl-8">2</span><br/><span class="hl-2">  }</span><br/><span class="hl-2">});</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-3">Example<a href="#example-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Full configuration:</p>
+<pre><code class="typescript"><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">map</span><span class="hl-2"> = </span><span class="hl-5">new</span><span class="hl-2"> </span><span class="hl-3">TomTomMap</span><span class="hl-2">({</span><br/><span class="hl-2">  </span><span class="hl-1">key:</span><span class="hl-2"> </span><span class="hl-4">&#39;YOUR_API_KEY&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-1">style:</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-1">type:</span><span class="hl-2"> </span><span class="hl-4">&#39;standard&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">id:</span><span class="hl-2"> </span><span class="hl-4">&#39;standardLight&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">include:</span><span class="hl-2"> [</span><span class="hl-4">&#39;trafficFlow&#39;</span><span class="hl-2">, </span><span class="hl-4">&#39;hillshade&#39;</span><span class="hl-2">]</span><br/><span class="hl-2">  },</span><br/><span class="hl-2">  </span><span class="hl-1">language:</span><span class="hl-2"> </span><span class="hl-4">&#39;en-US&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-1">events:</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-1">precisionMode:</span><span class="hl-2"> </span><span class="hl-4">&#39;point-then-box&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">paddingBoxPx:</span><span class="hl-2"> </span><span class="hl-8">10</span><br/><span class="hl-2">  },</span><br/><span class="hl-2">  </span><span class="hl-1">mapLibre:</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-1">container:</span><span class="hl-2"> </span><span class="hl-4">&#39;map&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">center:</span><span class="hl-2"> [-</span><span class="hl-8">122.4194</span><span class="hl-2">, </span><span class="hl-8">37.7749</span><span class="hl-2">],</span><br/><span class="hl-2">    </span><span class="hl-1">zoom:</span><span class="hl-2"> </span><span class="hl-8">13</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">pitch:</span><span class="hl-2"> </span><span class="hl-8">45</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">bearing:</span><span class="hl-2"> -</span><span class="hl-8">17.6</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">maxZoom:</span><span class="hl-2"> </span><span class="hl-8">18</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-1">minZoom:</span><span class="hl-2"> </span><span class="hl-8">8</span><br/><span class="hl-2">  }</span><br/><span class="hl-2">});</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws">Throws<a href="#throws" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Will log errors if RTL text plugin fails to load (non-blocking)</p>
+</div>
+<div class="tsd-tag-see">
+<h4 class="tsd-anchor-link" id="see">See<a href="#see" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><ul>
+<li><a href="../types/map.MapLibreOptions.html" class="tsd-kind-type-alias">MapLibreOptions</a></li>
+<li><a href="../types/map.TomTomMapParams.html" class="tsd-kind-type-alias">TomTomMapParams</a></li>
+<li><a href="https://maplibre.org/maplibre-gl-js/docs/API/classes/Map/">MapLibre Map Parameters</a></li>
+<li><a href="https://docs.tomtom.com/maps-sdk-js/guides/map/quickstart">Map Quickstart Guide</a></li>
+<li><a href="https://docs.tomtom.com/maps-sdk-js/guides/map/styles">Map Styles Guide</a></li>
+<li><a href="https://docs.tomtom.com/maps-sdk-js/guides/map/user-events">User Interaction Events Guide</a></li>
+</ul>
+</div></div></div></li></ul></section></section></details>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="properties-1">Properties<a href="#properties-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="maplibremap"><code class="tsd-tag">Readonly</code><span>map<wbr/>Libre<wbr/>Map</span><a href="#maplibremap" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">mapLibreMap</span><span class="tsd-signature-symbol">:</span> <a href="https://maplibre.org/maplibre-gl-js/docs/API/" class="tsd-signature-type external" target="_blank">Map$1</a></div>
+<div class="tsd-comment tsd-typography"><p>The underlying MapLibre GL JS Map instance.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-2">Remarks<a href="#remarks-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><strong>When to Use:</strong></p>
+<ul>
+<li>Access advanced MapLibre functionality not exposed by TomTomMap</li>
+<li>Add custom layers, sources, or controls</li>
+<li>Listen to MapLibre-specific events</li>
+<li>Integrate third-party MapLibre plugins</li>
+</ul>
+<p><strong>Important:</strong></p>
+<ul>
+<li>Available immediately after TomTomMap construction</li>
+<li>Direct modifications may affect SDK module behavior</li>
+<li>Coordinate with SDK modules to avoid conflicts</li>
+</ul>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-4">Example<a href="#example-4" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Add custom layer:</p>
+<pre><code class="typescript"><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-1">mapLibreMap</span><span class="hl-2">.</span><span class="hl-3">addLayer</span><span class="hl-2">({</span><br/><span class="hl-2">  </span><span class="hl-1">id:</span><span class="hl-2"> </span><span class="hl-4">&#39;custom-layer&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-1">type:</span><span class="hl-2"> </span><span class="hl-4">&#39;circle&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-1">source:</span><span class="hl-2"> </span><span class="hl-4">&#39;my-data&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-1">paint:</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-4">&#39;circle-radius&#39;</span><span class="hl-1">:</span><span class="hl-2"> </span><span class="hl-8">6</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-4">&#39;circle-color&#39;</span><span class="hl-1">:</span><span class="hl-2"> </span><span class="hl-4">&#39;#ff0000&#39;</span><br/><span class="hl-2">  }</span><br/><span class="hl-2">});</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-5">Example<a href="#example-5" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Listen to events:</p>
+<pre><code class="typescript"><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-1">mapLibreMap</span><span class="hl-2">.</span><span class="hl-3">on</span><span class="hl-2">(</span><span class="hl-4">&#39;moveend&#39;</span><span class="hl-2">, () </span><span class="hl-5">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">  </span><span class="hl-1">console</span><span class="hl-2">.</span><span class="hl-3">log</span><span class="hl-2">(</span><span class="hl-4">&#39;Camera position:&#39;</span><span class="hl-2">, </span><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-1">mapLibreMap</span><span class="hl-2">.</span><span class="hl-3">getCenter</span><span class="hl-2">());</span><br/><span class="hl-2">});</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-see">
+<h4 class="tsd-anchor-link" id="see-1">See<a href="#see-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><a href="https://maplibre.org/maplibre-gl-js/docs/API/classes/Map/">MapLibre Map Documentation</a></p>
+</div></div></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="mapready"><span>map<wbr/>Ready</span><a href="#mapready" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">mapReady</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></div>
+<div class="tsd-comment tsd-typography"><p>Indicates whether the map style has been fully loaded and is ready for interaction.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-3">Remarks<a href="#remarks-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><ul>
+<li><code>true</code> when the style is loaded and modules can be safely initialized</li>
+<li><code>false</code> during map construction or style changes</li>
+<li>Check this before performing style-dependent operations</li>
+</ul>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-6">Example<a href="#example-6" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-10">if</span><span class="hl-2"> (</span><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-1">mapReady</span><span class="hl-2">) {</span><br/><span class="hl-2">  </span><span class="hl-0">// Safe to initialize modules</span><br/><span class="hl-2">  </span><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">trafficFlowModule</span><span class="hl-2"> = </span><span class="hl-10">await</span><span class="hl-2"> </span><span class="hl-1">TrafficFlowModule</span><span class="hl-2">.</span><span class="hl-3">get</span><span class="hl-2">(</span><span class="hl-1">map</span><span class="hl-2">);</span><br/><span class="hl-2">}</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></section></section></details>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Accessors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="accessors-1">Accessors<a href="#accessors-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="stylelightdarktheme"><span>style<wbr/>Light<wbr/>Dark<wbr/>Theme</span><a href="#stylelightdarktheme" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li>
+<div class="tsd-signature" id="stylelightdarkthemestylelightdarktheme"><span class="tsd-signature-keyword">get</span> <span class="tsd-kind-get-signature">styleLightDarkTheme</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="../types/map.LightDark.html" class="tsd-signature-type tsd-kind-type-alias">LightDark</a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Whether the loaded style draws a light or a dark map.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="../types/map.LightDark.html" class="tsd-signature-type tsd-kind-type-alias">LightDark</a></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-4">Remarks<a href="#remarks-4" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>The SDK's own overlays read it to pick text and halo colours that stay legible over the
+base map, and it is the property to bind your own UI to rather than parsing the style ID.</p>
+<p>A standard style is classified from its ID. A custom style reads <code>'light'</code> until it has
+loaded — nothing about it is known before that — and is then classified from the colour its
+<code>background</code> layer paints the canvas with; a custom style with no readable background colour
+stays <code>'light'</code>. So read it inside an
+<a href="#addstylechangehandler" class="tsd-kind-method">onStyleChanged</a> handler, or after awaiting
+<a href="#setstyle" class="tsd-kind-method">setStyle</a>, rather than right after calling it.</p>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-7">Example<a href="#example-7" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-10">await</span><span class="hl-2"> </span><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-3">setStyle</span><span class="hl-2">({ </span><span class="hl-1">type:</span><span class="hl-2"> </span><span class="hl-4">&#39;custom&#39;</span><span class="hl-2">, </span><span class="hl-1">url:</span><span class="hl-2"> </span><span class="hl-4">&#39;https://example.com/my-style.json&#39;</span><span class="hl-2"> });</span><br/><span class="hl-1">document</span><span class="hl-2">.</span><span class="hl-1">body</span><span class="hl-2">.</span><span class="hl-1">classList</span><span class="hl-2">.</span><span class="hl-3">toggle</span><span class="hl-2">(</span><span class="hl-4">&#39;dark-mode&#39;</span><span class="hl-2">, </span><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-1">styleLightDarkTheme</span><span class="hl-2"> === </span><span class="hl-4">&#39;dark&#39;</span><span class="hl-2">);</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></div></li></ul></section></section></details>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="addstylechangehandler"><span>add<wbr/>Style<wbr/>Change<wbr/>Handler</span><a href="#addstylechangehandler" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="addstylechangehandler-1"><span class="tsd-kind-call-signature">addStyleChangeHandler</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">handler</span><span class="tsd-signature-symbol">:</span> <a href="../types/map.StyleChangeHandler.html" class="tsd-signature-type tsd-kind-type-alias">StyleChangeHandler</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">()</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span><a href="#addstylechangehandler-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Registers a handler to be notified when the map style changes.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">handler</span>: <a href="../types/map.StyleChangeHandler.html" class="tsd-signature-type tsd-kind-type-alias">StyleChangeHandler</a></span>
+<div class="tsd-comment tsd-typography"><p>A <a href="../types/map.StyleChangeHandler.html" class="tsd-kind-type-alias">StyleChangeHandler</a> object with callbacks for style change events.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">()</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span></h4><p>An unsubscribe function that removes this handler. Call it when the
+handler's owner (e.g. a custom overlay) is torn down — otherwise the handler,
+and everything it closes over, lives for the lifetime of the map. Mirrors the
+disposer returned by module event handlers (<code>module.events.on(...)</code>).</p>
+
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-5">Remarks<a href="#remarks-5" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><strong>When to Use:</strong></p>
+<ul>
+<li>You have custom layers or sources that need to be recreated after style changes</li>
+<li>Your application needs to respond to style switches (e.g., light/dark mode transitions)</li>
+<li>You need to save and restore state during style changes</li>
+<li>Map modules need to reinitialize when styles change</li>
+</ul>
+<p><strong>Handler Lifecycle:</strong></p>
+<ol>
+<li><code>onStyleAboutToChange()</code> - Called before the style change begins</li>
+<li>Style change occurs</li>
+<li><code>onStyleChanged()</code> - Called after the new style has been fully loaded</li>
+</ol>
+<p><strong>Multiple Handlers:</strong></p>
+<ul>
+<li>Multiple handlers can be registered and will all be called in registration order</li>
+<li>Async callbacks are awaited one after the other; the promise returned by <a href="#setstyle" class="tsd-kind-method">setStyle</a>
+resolves once the last one has finished</li>
+<li>Each handler's errors are caught independently and logged to the console</li>
+<li>One failing handler won't prevent others from executing</li>
+</ul>
+<p><strong>Important Notes:</strong></p>
+<ul>
+<li>Handlers are only triggered by <a href="#setstyle" class="tsd-kind-method">setStyle</a> calls, not initial map construction</li>
+<li>Handlers run for a clean switch as well as for one that carries state over, and receive
+which one it is in their <a href="../types/map.StyleChangeContext.html" class="tsd-kind-type-alias">StyleChangeContext</a></li>
+<li>Handlers persist for the lifetime of the TomTomMap instance unless unsubscribed</li>
+</ul>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-8">Example<a href="#example-8" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Basic usage:</p>
+<pre><code class="typescript"><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-3">addStyleChangeHandler</span><span class="hl-2">({</span><br/><span class="hl-2">  </span><span class="hl-3">onStyleAboutToChange</span><span class="hl-1">:</span><span class="hl-2"> () </span><span class="hl-5">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-1">console</span><span class="hl-2">.</span><span class="hl-3">log</span><span class="hl-2">(</span><span class="hl-4">&#39;Style is changing...&#39;</span><span class="hl-2">);</span><br/><span class="hl-2">  },</span><br/><span class="hl-2">  </span><span class="hl-3">onStyleChanged</span><span class="hl-1">:</span><span class="hl-2"> () </span><span class="hl-5">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-1">console</span><span class="hl-2">.</span><span class="hl-3">log</span><span class="hl-2">(</span><span class="hl-4">&#39;Style changed successfully!&#39;</span><span class="hl-2">);</span><br/><span class="hl-2">  }</span><br/><span class="hl-2">});</span><br/><br/><span class="hl-0">// Later trigger the handlers</span><br/><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-3">setStyle</span><span class="hl-2">(</span><span class="hl-4">&#39;standardDark&#39;</span><span class="hl-2">);</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-9">Example<a href="#example-9" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Unsubscribe when the owner is torn down:</p>
+<pre><code class="typescript"><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">unsubscribe</span><span class="hl-2"> = </span><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-3">addStyleChangeHandler</span><span class="hl-2">({</span><br/><span class="hl-2">  </span><span class="hl-3">onStyleChanged</span><span class="hl-1">:</span><span class="hl-2"> () </span><span class="hl-5">=&gt;</span><span class="hl-2"> </span><span class="hl-3">reattachCustomLayers</span><span class="hl-2">(),</span><br/><span class="hl-2">});</span><br/><br/><span class="hl-0">// Later, when the overlay is removed:</span><br/><span class="hl-3">unsubscribe</span><span class="hl-2">();</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-10">Example<a href="#example-10" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Preserve custom layers across style changes:</p>
+<pre><code class="typescript"><span class="hl-5">let</span><span class="hl-2"> </span><span class="hl-1">customLayerData</span><span class="hl-2"> = </span><span class="hl-5">null</span><span class="hl-2">;</span><br/><br/><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-3">addStyleChangeHandler</span><span class="hl-2">({</span><br/><span class="hl-2">  </span><span class="hl-3">onStyleAboutToChange</span><span class="hl-1">:</span><span class="hl-2"> () </span><span class="hl-5">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-0">// Save custom layer data before style changes</span><br/><span class="hl-2">    </span><span class="hl-10">if</span><span class="hl-2"> (</span><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-1">mapLibreMap</span><span class="hl-2">.</span><span class="hl-3">getLayer</span><span class="hl-2">(</span><span class="hl-4">&#39;my-custom-layer&#39;</span><span class="hl-2">)) {</span><br/><span class="hl-2">      </span><span class="hl-1">customLayerData</span><span class="hl-2"> = </span><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-1">mapLibreMap</span><span class="hl-2">.</span><span class="hl-3">getSource</span><span class="hl-2">(</span><span class="hl-4">&#39;my-data&#39;</span><span class="hl-2">).</span><span class="hl-1">_data</span><span class="hl-2">;</span><br/><span class="hl-2">      </span><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-1">mapLibreMap</span><span class="hl-2">.</span><span class="hl-3">removeLayer</span><span class="hl-2">(</span><span class="hl-4">&#39;my-custom-layer&#39;</span><span class="hl-2">);</span><br/><span class="hl-2">      </span><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-1">mapLibreMap</span><span class="hl-2">.</span><span class="hl-3">removeSource</span><span class="hl-2">(</span><span class="hl-4">&#39;my-data&#39;</span><span class="hl-2">);</span><br/><span class="hl-2">    }</span><br/><span class="hl-2">  },</span><br/><span class="hl-2">  </span><span class="hl-3">onStyleChanged</span><span class="hl-1">:</span><span class="hl-2"> () </span><span class="hl-5">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-0">// Restore custom layer after new style is loaded</span><br/><span class="hl-2">    </span><span class="hl-10">if</span><span class="hl-2"> (</span><span class="hl-1">customLayerData</span><span class="hl-2">) {</span><br/><span class="hl-2">      </span><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-1">mapLibreMap</span><span class="hl-2">.</span><span class="hl-3">addSource</span><span class="hl-2">(</span><span class="hl-4">&#39;my-data&#39;</span><span class="hl-2">, {</span><br/><span class="hl-2">        </span><span class="hl-1">type:</span><span class="hl-2"> </span><span class="hl-4">&#39;geojson&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">        </span><span class="hl-1">data:</span><span class="hl-2"> </span><span class="hl-1">customLayerData</span><br/><span class="hl-2">      });</span><br/><span class="hl-2">      </span><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-1">mapLibreMap</span><span class="hl-2">.</span><span class="hl-3">addLayer</span><span class="hl-2">({</span><br/><span class="hl-2">        </span><span class="hl-1">id:</span><span class="hl-2"> </span><span class="hl-4">&#39;my-custom-layer&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">        </span><span class="hl-1">type:</span><span class="hl-2"> </span><span class="hl-4">&#39;circle&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">        </span><span class="hl-1">source:</span><span class="hl-2"> </span><span class="hl-4">&#39;my-data&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">        </span><span class="hl-1">paint:</span><span class="hl-2"> { </span><span class="hl-4">&#39;circle-radius&#39;</span><span class="hl-1">:</span><span class="hl-2"> </span><span class="hl-8">6</span><span class="hl-2">, </span><span class="hl-4">&#39;circle-color&#39;</span><span class="hl-1">:</span><span class="hl-2"> </span><span class="hl-4">&#39;#007cbf&#39;</span><span class="hl-2"> }</span><br/><span class="hl-2">      });</span><br/><span class="hl-2">    }</span><br/><span class="hl-2">  }</span><br/><span class="hl-2">});</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-11">Example<a href="#example-11" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Async handler for external API calls:</p>
+<pre><code class="typescript"><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-3">addStyleChangeHandler</span><span class="hl-2">({</span><br/><span class="hl-2">  </span><span class="hl-3">onStyleAboutToChange</span><span class="hl-1">:</span><span class="hl-2"> </span><span class="hl-5">async</span><span class="hl-2"> () </span><span class="hl-5">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-10">await</span><span class="hl-2"> </span><span class="hl-3">saveStateToAPI</span><span class="hl-2">(</span><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-3">getStyle</span><span class="hl-2">());</span><br/><span class="hl-2">  },</span><br/><span class="hl-2">  </span><span class="hl-3">onStyleChanged</span><span class="hl-1">:</span><span class="hl-2"> </span><span class="hl-5">async</span><span class="hl-2"> () </span><span class="hl-5">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-10">await</span><span class="hl-2"> </span><span class="hl-3">loadStateFromAPI</span><span class="hl-2">();</span><br/><span class="hl-2">  }</span><br/><span class="hl-2">});</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-12">Example<a href="#example-12" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Update UI based on style:</p>
+<pre><code class="typescript"><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-3">addStyleChangeHandler</span><span class="hl-2">({</span><br/><span class="hl-2">  </span><span class="hl-3">onStyleAboutToChange</span><span class="hl-1">:</span><span class="hl-2"> () </span><span class="hl-5">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-1">document</span><span class="hl-2">.</span><span class="hl-1">body</span><span class="hl-2">.</span><span class="hl-1">classList</span><span class="hl-2">.</span><span class="hl-3">add</span><span class="hl-2">(</span><span class="hl-4">&#39;style-changing&#39;</span><span class="hl-2">);</span><br/><span class="hl-2">  },</span><br/><span class="hl-2">  </span><span class="hl-3">onStyleChanged</span><span class="hl-1">:</span><span class="hl-2"> () </span><span class="hl-5">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-1">document</span><span class="hl-2">.</span><span class="hl-1">body</span><span class="hl-2">.</span><span class="hl-1">classList</span><span class="hl-2">.</span><span class="hl-3">remove</span><span class="hl-2">(</span><span class="hl-4">&#39;style-changing&#39;</span><span class="hl-2">);</span><br/><span class="hl-2">    </span><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">style</span><span class="hl-2"> = </span><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-3">getStyle</span><span class="hl-2">();</span><br/><span class="hl-2">    </span><span class="hl-10">if</span><span class="hl-2"> (</span><span class="hl-5">typeof</span><span class="hl-2"> </span><span class="hl-1">style</span><span class="hl-2"> === </span><span class="hl-4">&#39;string&#39;</span><span class="hl-2"> &amp;&amp; </span><span class="hl-1">style</span><span class="hl-2">.</span><span class="hl-3">includes</span><span class="hl-2">(</span><span class="hl-4">&#39;Dark&#39;</span><span class="hl-2">)) {</span><br/><span class="hl-2">      </span><span class="hl-1">document</span><span class="hl-2">.</span><span class="hl-1">body</span><span class="hl-2">.</span><span class="hl-1">classList</span><span class="hl-2">.</span><span class="hl-3">add</span><span class="hl-2">(</span><span class="hl-4">&#39;dark-mode&#39;</span><span class="hl-2">);</span><br/><span class="hl-2">    } </span><span class="hl-10">else</span><span class="hl-2"> {</span><br/><span class="hl-2">      </span><span class="hl-1">document</span><span class="hl-2">.</span><span class="hl-1">body</span><span class="hl-2">.</span><span class="hl-1">classList</span><span class="hl-2">.</span><span class="hl-3">remove</span><span class="hl-2">(</span><span class="hl-4">&#39;dark-mode&#39;</span><span class="hl-2">);</span><br/><span class="hl-2">    }</span><br/><span class="hl-2">  }</span><br/><span class="hl-2">});</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-see">
+<h4 class="tsd-anchor-link" id="see-2">See<a href="#see-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><ul>
+<li><a href="../types/map.StyleChangeHandler.html" class="tsd-kind-type-alias">StyleChangeHandler</a> - Handler interface definition</li>
+<li><a href="#setstyle" class="tsd-kind-method">setStyle</a> - Method that triggers the handlers</li>
+</ul>
+</div></div></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="getbbox"><span>get<wbr/>B<wbr/>Box</span><a href="#getbbox" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="getbbox-1"><span class="tsd-kind-call-signature">getBBox</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="../types/core.BBox.html" class="tsd-signature-type tsd-kind-type-alias">BBox</a><a href="#getbbox-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Retrieves the current visible map area as a GeoJSON bounding box.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="../types/core.BBox.html" class="tsd-signature-type tsd-kind-type-alias">BBox</a></h4><p>A <a href="https://datatracker.ietf.org/doc/html/rfc7946#section-5">GeoJSON BBox</a> array
+in the format <code>[west, south, east, north]</code> representing the map's current viewport bounds.</p>
+
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-6">Remarks<a href="#remarks-6" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><strong>Return Format:</strong></p>
+<ul>
+<li>Array of four numbers: <code>[minLongitude, minLatitude, maxLongitude, maxLatitude]</code></li>
+<li>Coordinates are in WGS84 decimal degrees</li>
+<li>West/East values range from -180 to 180</li>
+<li>South/North values range from -90 to 90</li>
+</ul>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-13">Example<a href="#example-13" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Get current bounds:</p>
+<pre><code class="typescript"><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">bbox</span><span class="hl-2"> = </span><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-3">getBBox</span><span class="hl-2">();</span><br/><span class="hl-1">console</span><span class="hl-2">.</span><span class="hl-3">log</span><span class="hl-2">(</span><span class="hl-4">&#39;Bounds:&#39;</span><span class="hl-2">, </span><span class="hl-1">bbox</span><span class="hl-2">);</span><br/><span class="hl-0">// Output: [-122.5, 37.7, -122.3, 37.8]</span><br/><span class="hl-0">// [west, south, east, north]</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-14">Example<a href="#example-14" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Use bounds for spatial query:</p>
+<pre><code class="typescript"><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">bbox</span><span class="hl-2"> = </span><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-3">getBBox</span><span class="hl-2">();</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">results</span><span class="hl-2"> = </span><span class="hl-10">await</span><span class="hl-2"> </span><span class="hl-1">searchAPI</span><span class="hl-2">.</span><span class="hl-3">searchInBoundingBox</span><span class="hl-2">({</span><br/><span class="hl-2">  </span><span class="hl-1">bbox:</span><span class="hl-2"> </span><span class="hl-1">bbox</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-1">query:</span><span class="hl-2"> </span><span class="hl-4">&#39;restaurants&#39;</span><br/><span class="hl-2">});</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-15">Example<a href="#example-15" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Save and restore map view:</p>
+<pre><code class="typescript"><span class="hl-0">// Save current view</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">savedBounds</span><span class="hl-2"> = </span><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-3">getBBox</span><span class="hl-2">();</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">savedZoom</span><span class="hl-2"> = </span><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-1">mapLibreMap</span><span class="hl-2">.</span><span class="hl-3">getZoom</span><span class="hl-2">();</span><br/><br/><span class="hl-0">// Later, restore the view</span><br/><span class="hl-5">const</span><span class="hl-2"> [</span><span class="hl-6">west</span><span class="hl-2">, </span><span class="hl-6">south</span><span class="hl-2">, </span><span class="hl-6">east</span><span class="hl-2">, </span><span class="hl-6">north</span><span class="hl-2">] = </span><span class="hl-1">savedBounds</span><span class="hl-2">;</span><br/><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-1">mapLibreMap</span><span class="hl-2">.</span><span class="hl-3">fitBounds</span><span class="hl-2">([[</span><span class="hl-1">west</span><span class="hl-2">, </span><span class="hl-1">south</span><span class="hl-2">], [</span><span class="hl-1">east</span><span class="hl-2">, </span><span class="hl-1">north</span><span class="hl-2">]]);</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-see">
+<h4 class="tsd-anchor-link" id="see-3">See<a href="#see-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><ul>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc7946#section-5">GeoJSON BBox Specification</a></li>
+<li><a href="https://maplibre.org/maplibre-gl-js/docs/API/classes/LngLatBounds/">MapLibre LngLatBounds</a></li>
+</ul>
+</div></div></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="getstyle"><span>get<wbr/>Style</span><a href="#getstyle" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="getstyle-1"><span class="tsd-kind-call-signature">getStyle</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="../types/map.StyleInput.html" class="tsd-signature-type tsd-kind-type-alias">StyleInput</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><a href="#getstyle-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Retrieves the current style configuration of the map.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="../types/map.StyleInput.html" class="tsd-signature-type tsd-kind-type-alias">StyleInput</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span></h4><p>The current <a href="../types/map.StyleInput.html" class="tsd-kind-type-alias">StyleInput</a> configuration, or <code>undefined</code> if no style is set.</p>
+
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-7">Remarks<a href="#remarks-7" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Returns the style configuration as it was set, not the fully resolved MapLibre style object.
+Use this to inspect or store the current style configuration for later restoration.</p>
+<p><strong>Return Value:</strong></p>
+<ul>
+<li>String ID (e.g., <code>'standardLight'</code>) for simple style configurations</li>
+<li>Style object with <code>type</code>, <code>id</code>, and optional <code>include</code> properties for detailed configurations</li>
+<li><code>undefined</code> if no style has been explicitly set</li>
+</ul>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-16">Example<a href="#example-16" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">currentStyle</span><span class="hl-2"> = </span><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-3">getStyle</span><span class="hl-2">();</span><br/><span class="hl-1">console</span><span class="hl-2">.</span><span class="hl-3">log</span><span class="hl-2">(</span><span class="hl-4">&#39;Current style:&#39;</span><span class="hl-2">, </span><span class="hl-1">currentStyle</span><span class="hl-2">);</span><br/><br/><span class="hl-0">// Save style for later</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">savedStyle</span><span class="hl-2"> = </span><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-3">getStyle</span><span class="hl-2">();</span><br/><br/><span class="hl-0">// Later, restore it</span><br/><span class="hl-10">if</span><span class="hl-2"> (</span><span class="hl-1">savedStyle</span><span class="hl-2">) {</span><br/><span class="hl-2">  </span><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-3">setStyle</span><span class="hl-2">(</span><span class="hl-1">savedStyle</span><span class="hl-2">);</span><br/><span class="hl-2">}</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-17">Example<a href="#example-17" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Conditional logic based on current style:</p>
+<pre><code class="typescript"><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">style</span><span class="hl-2"> = </span><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-3">getStyle</span><span class="hl-2">();</span><br/><span class="hl-10">if</span><span class="hl-2"> (</span><span class="hl-5">typeof</span><span class="hl-2"> </span><span class="hl-1">style</span><span class="hl-2"> === </span><span class="hl-4">&#39;string&#39;</span><span class="hl-2"> &amp;&amp; </span><span class="hl-1">style</span><span class="hl-2">.</span><span class="hl-3">includes</span><span class="hl-2">(</span><span class="hl-4">&#39;Dark&#39;</span><span class="hl-2">)) {</span><br/><span class="hl-2">  </span><span class="hl-1">console</span><span class="hl-2">.</span><span class="hl-3">log</span><span class="hl-2">(</span><span class="hl-4">&#39;Dark mode is active&#39;</span><span class="hl-2">);</span><br/><span class="hl-2">}</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-see">
+<h4 class="tsd-anchor-link" id="see-4">See<a href="#see-4" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><ul>
+<li><a href="#setstyle" class="tsd-kind-method">setStyle</a> - For changing the map style</li>
+<li><a href="../types/map.StyleInput.html" class="tsd-kind-type-alias">StyleInput</a> - For available style configuration options</li>
+</ul>
+</div></div></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="setlanguage"><span>set<wbr/>Language</span><a href="#setlanguage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="setlanguage-1"><span class="tsd-kind-call-signature">setLanguage</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">language</span><span class="tsd-signature-symbol">:</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;ngt&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;ngt-Latn&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;ar&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;bg-BG&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;zh-Hant&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;zh-Hans&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;cs-CZ&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;da-DK&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;nl-NL&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;en-AU&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;en-CA&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;en-GB&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;en-NZ&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;en-US&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;fi-FI&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;fr-FR&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;de-DE&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;el-GR&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;hu-HU&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;id-ID&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;it-IT&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;ko-KR&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;ko-Latn-KR&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;lt-LT&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;ms-MY&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;nb-NO&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pl-PL&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pt-BR&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pt-PT&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;ru-RU&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;ru-Latn-RU&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;ru-Cyrl-RU&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;sk-SK&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;sl-SI&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;es-ES&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;es-MX&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;sv-SE&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;th-TH&quot;</span><br/>        <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;tr-TR&quot;</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#setlanguage-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Changes the language of the map.</p>
+<ul>
+<li>You can use this method to change the language at runtime.</li>
+<li>To set the language upon initialization, you can better do it via <a href="core.TomTomConfig.html" class="tsd-kind-class">global config</a>
+or <a href="../types/map.TomTomMapParams.html" class="tsd-kind-type-alias">TomTomMapParams</a>.</li>
+</ul>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">language</span>: <br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;ngt&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;ngt-Latn&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;ar&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;bg-BG&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;zh-Hant&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;zh-Hans&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;cs-CZ&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;da-DK&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;nl-NL&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;en-AU&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;en-CA&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;en-GB&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;en-NZ&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;en-US&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;fi-FI&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;fr-FR&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;de-DE&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;el-GR&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;hu-HU&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;id-ID&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;it-IT&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;ko-KR&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;ko-Latn-KR&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;lt-LT&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;ms-MY&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;nb-NO&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pl-PL&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pt-BR&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;pt-PT&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;ru-RU&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;ru-Latn-RU&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;ru-Cyrl-RU&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;sk-SK&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;sl-SI&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;es-ES&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;es-MX&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;sv-SE&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;th-TH&quot;</span><br/>    <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;tr-TR&quot;</span></span>
+<div class="tsd-comment tsd-typography"><p>The language to be used in map translations.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-8">Remarks<a href="#remarks-8" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><strong>Behavior:</strong></p>
+<ul>
+<li>Updates all localizable map labels to the specified language</li>
+<li>Falls back to the default label name if the requested language is unavailable</li>
+<li>Can be called before or after the map is fully loaded</li>
+<li>If called before map is ready, will apply once the style loads</li>
+</ul>
+<p><strong>Language Format:</strong></p>
+<ul>
+<li>Simple language codes: <code>'en'</code>, <code>'fr'</code>, <code>'de'</code>, <code>'ja'</code>, <code>'zh'</code></li>
+<li>Locale-specific codes: <code>'en-US'</code>, <code>'en-GB'</code>, <code>'zh-CN'</code>, <code>'pt-BR'</code></li>
+<li>When using locale codes (with <code>-</code>), only the language portion is used for labels</li>
+</ul>
+<p><strong>Persistence:</strong></p>
+<ul>
+<li>The language persists across every style change, a clean switch
+(<a href="../types/map.SetStyleOptions.html#resetstate" class="tsd-kind-property">SetStyleOptions.resetState</a>) included: it is map configuration rather than SDK
+state, and this method is the only thing that changes it</li>
+<li>Set during initialization via TomTomMapParams.language for immediate application</li>
+</ul>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-18">Example<a href="#example-18" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Change language at runtime:</p>
+<pre><code class="typescript"><span class="hl-0">// Switch to French</span><br/><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-3">setLanguage</span><span class="hl-2">(</span><span class="hl-4">&#39;fr&#39;</span><span class="hl-2">);</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-19">Example<a href="#example-19" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Use locale-specific codes:</p>
+<pre><code class="typescript"><span class="hl-0">// Use Simplified Chinese</span><br/><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-3">setLanguage</span><span class="hl-2">(</span><span class="hl-4">&#39;zh-CN&#39;</span><span class="hl-2">);</span><br/><br/><span class="hl-0">// Use Brazilian Portuguese</span><br/><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-3">setLanguage</span><span class="hl-2">(</span><span class="hl-4">&#39;pt-BR&#39;</span><span class="hl-2">);</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-20">Example<a href="#example-20" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Language switcher UI:</p>
+<pre><code class="typescript"><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">languageSelector</span><span class="hl-2"> = </span><span class="hl-1">document</span><span class="hl-2">.</span><span class="hl-3">getElementById</span><span class="hl-2">(</span><span class="hl-4">&#39;lang-select&#39;</span><span class="hl-2">);</span><br/><span class="hl-1">languageSelector</span><span class="hl-2">.</span><span class="hl-3">addEventListener</span><span class="hl-2">(</span><span class="hl-4">&#39;change&#39;</span><span class="hl-2">, (</span><span class="hl-1">e</span><span class="hl-2">) </span><span class="hl-5">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">  </span><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-3">setLanguage</span><span class="hl-2">(</span><span class="hl-1">e</span><span class="hl-2">.</span><span class="hl-1">target</span><span class="hl-2">.</span><span class="hl-1">value</span><span class="hl-2">);</span><br/><span class="hl-2">});</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-see">
+<h4 class="tsd-anchor-link" id="see-5">See<a href="#see-5" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><ul>
+<li>TomTomMapParams.language - For setting language during initialization</li>
+<li><a href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes">ISO 639-1 Language Codes</a></li>
+</ul>
+</div></div></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="setstyle"><span>set<wbr/>Style</span><a href="#setstyle" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="setstyle-1"><span class="tsd-kind-call-signature">setStyle</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">style</span><span class="tsd-signature-symbol">:</span> <a href="../types/map.StyleInput.html" class="tsd-signature-type tsd-kind-type-alias">StyleInput</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">options</span><span class="tsd-signature-symbol">?:</span> <a href="../types/map.SetStyleOptions.html" class="tsd-signature-type tsd-kind-type-alias">SetStyleOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#setstyle-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Changes the map style dynamically without reloading the entire map.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">style</span>: <a href="../types/map.StyleInput.html" class="tsd-signature-type tsd-kind-type-alias">StyleInput</a></span>
+<div class="tsd-comment tsd-typography"><p>The new style to apply. Can be a string ID or a detailed style configuration.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">options</span>: <a href="../types/map.SetStyleOptions.html" class="tsd-signature-type tsd-kind-type-alias">SetStyleOptions</a><span class="tsd-signature-symbol"> = {}</span></span>
+<div class="tsd-comment tsd-typography"><p>Configuration options for the style change behavior, see <a href="../types/map.SetStyleOptions.html" class="tsd-kind-type-alias">SetStyleOptions</a>.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><p>A promise that resolves once the new style is loaded and every registered
+<a href="../types/map.StyleChangeHandler.html" class="tsd-kind-type-alias">StyleChangeHandler</a> has finished — including the SDK modules restoring themselves.
+Awaiting it is optional; it is the moment after which the map is safe to read and draw on again.</p>
+
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws-1">Throws<a href="#throws-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If the style itself fails to load, leaving <a href="#mapready" class="tsd-kind-property">mapReady</a> <code>false</code> and the map on
+the style it had. A tile or source that fails to load does not fail the switch.</p>
+</div>
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-9">Remarks<a href="#remarks-9" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><strong>Carried-over state (the default):</strong></p>
+<ul>
+<li>Merges style parts from the previous style with the new one</li>
+<li>Restores SDK module data and configuration (traffic, routes, POIs, etc.)</li>
+</ul>
+<p><strong>Clean switch (resetState: true):</strong></p>
+<ul>
+<li>Applies exactly the style you passed, without merging previous style parts</li>
+<li>SDK modules re-bind to the new style with default configuration and nothing shown</li>
+<li>Useful for complete style resets</li>
+</ul>
+<p>Both keep the map language: it is configuration, not state, and it survives every style
+change until <a href="#setlanguage" class="tsd-kind-method">setLanguage</a> changes it.</p>
+<p><strong>Behavior:</strong></p>
+<ul>
+<li>Sets <a href="#mapready" class="tsd-kind-property">mapReady</a> to <code>false</code> for the duration of the transition</li>
+<li>Awaits every <code>onStyleAboutToChange</code> handler, then hands the new style to MapLibre</li>
+<li>Once the style has loaded, sets <a href="#mapready" class="tsd-kind-property">mapReady</a> back to <code>true</code> and awaits every
+<code>onStyleChanged</code> handler in registration order</li>
+<li>A <code>setStyle</code> call made while another one is still in flight supersedes it: the older
+call's style is never applied and its promise resolves as soon as that is known</li>
+<li>Passing the style already loaded runs the whole lifecycle without reloading it, which is
+how <code>resetState: true</code> doubles as a reset of the SDK modules over the current style</li>
+</ul>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-21">Example<a href="#example-21" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Simple style change:</p>
+<pre><code class="typescript"><span class="hl-0">// Switch to dark mode</span><br/><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-3">setStyle</span><span class="hl-2">(</span><span class="hl-4">&#39;standardDark&#39;</span><span class="hl-2">);</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-22">Example<a href="#example-22" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Wait for the switch to complete before drawing on the map:</p>
+<pre><code class="typescript"><span class="hl-10">await</span><span class="hl-2"> </span><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-3">setStyle</span><span class="hl-2">(</span><span class="hl-4">&#39;standardDark&#39;</span><span class="hl-2">);</span><br/><span class="hl-0">// modules have restored themselves; map.mapReady is true again</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-23">Example<a href="#example-23" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Style change with detailed configuration:</p>
+<pre><code class="typescript"><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-3">setStyle</span><span class="hl-2">({</span><br/><span class="hl-2">  </span><span class="hl-1">type:</span><span class="hl-2"> </span><span class="hl-4">&#39;standard&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-1">id:</span><span class="hl-2"> </span><span class="hl-4">&#39;standardLight&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-1">include:</span><span class="hl-2"> [</span><span class="hl-4">&#39;trafficFlow&#39;</span><span class="hl-2">, </span><span class="hl-4">&#39;hillshade&#39;</span><span class="hl-2">]</span><br/><span class="hl-2">});</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-24">Example<a href="#example-24" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Clean style switch without state preservation:</p>
+<pre><code class="typescript"><span class="hl-0">// Complete reset - removes all SDK layers and modules</span><br/><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-3">setStyle</span><span class="hl-2">(</span><span class="hl-4">&#39;standardDark&#39;</span><span class="hl-2">, { </span><span class="hl-1">resetState:</span><span class="hl-2"> </span><span class="hl-5">true</span><span class="hl-2"> });</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-25">Example<a href="#example-25" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>With style change handlers:</p>
+<pre><code class="typescript"><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-3">addStyleChangeHandler</span><span class="hl-2">({</span><br/><span class="hl-2">  </span><span class="hl-3">onStyleAboutToChange</span><span class="hl-1">:</span><span class="hl-2"> () </span><span class="hl-5">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-1">console</span><span class="hl-2">.</span><span class="hl-3">log</span><span class="hl-2">(</span><span class="hl-4">&#39;Preparing for style change...&#39;</span><span class="hl-2">);</span><br/><span class="hl-2">  },</span><br/><span class="hl-2">  </span><span class="hl-3">onStyleChanged</span><span class="hl-1">:</span><span class="hl-2"> () </span><span class="hl-5">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-1">console</span><span class="hl-2">.</span><span class="hl-3">log</span><span class="hl-2">(</span><span class="hl-4">&#39;New style applied!&#39;</span><span class="hl-2">);</span><br/><span class="hl-2">  }</span><br/><span class="hl-2">});</span><br/><br/><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-3">setStyle</span><span class="hl-2">(</span><span class="hl-4">&#39;standardDark&#39;</span><span class="hl-2">);</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-see">
+<h4 class="tsd-anchor-link" id="see-6">See<a href="#see-6" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><ul>
+<li><a href="../types/map.TomTomMapParams.html" class="tsd-kind-property">TomTomMapParams.style</a> - For setting style during initialization</li>
+<li><a href="../types/map.StyleChangeHandler.html" class="tsd-kind-type-alias">StyleChangeHandler</a> - For handling style change events</li>
+<li><a href="#getstyle" class="tsd-kind-method">getStyle</a> - For retrieving the current style</li>
+<li><a href="https://docs.tomtom.com/maps-sdk-js/guides/map/styles">Map Styles Guide</a></li>
+</ul>
+</div></div></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="updateeventsconfig"><span>update<wbr/>Events<wbr/>Config</span><a href="#updateeventsconfig" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="updateeventsconfig-1"><span class="tsd-kind-call-signature">updateEventsConfig</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">config</span><span class="tsd-signature-symbol">:</span> <a href="../types/map.MapEventsConfig.html" class="tsd-signature-type tsd-kind-type-alias">MapEventsConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#updateeventsconfig-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Changes the map's user events configuration at runtime.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">config</span>: <a href="../types/map.MapEventsConfig.html" class="tsd-signature-type tsd-kind-type-alias">MapEventsConfig</a></span>
+<div class="tsd-comment tsd-typography"><p>Merged into the current configuration, set at construction through
+<a href="../types/map.TomTomMapParams.html" class="tsd-kind-property">TomTomMapParams.events</a>: what it leaves out, or sets <code>undefined</code>, keeps its value.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-10">Remarks<a href="#remarks-10" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>A module's own <code>events</code> config still overrides the cursor and <code>hoverGracePeriodMS</code> for its
+features. A long hover or a grace period already running keeps the delay it started with.</p>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-26">Example<a href="#example-26" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-3">updateEventsConfig</span><span class="hl-2">({ </span><span class="hl-1">longHoverDelayOnStillMapMS:</span><span class="hl-2"> </span><span class="hl-8">600</span><span class="hl-2">, </span><span class="hl-1">hoverGracePeriodMS:</span><span class="hl-2"> </span><span class="hl-8">1000</span><span class="hl-2"> });</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></div></li></ul></section></section></details></div>
+<div class="col-sidebar">
+<div class="page-menu">
+<div class="tsd-navigation settings">
+<details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div>
+<div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
+<details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>On This Page</h3></summary>
+<div class="tsd-accordion-details">
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Constructors</summary>
+<div><a href="#constructor"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Constructor"><use href="../assets/icons.svg#icon-512"></use></svg><span>constructor</span></a></div></details>
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Properties</summary>
+<div><a href="#maplibremap"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>map<wbr/>Libre<wbr/>Map</span></a><a href="#mapready"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>map<wbr/>Ready</span></a></div></details>
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Accessors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Accessors</summary>
+<div><a href="#stylelightdarktheme"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>style<wbr/>Light<wbr/>Dark<wbr/>Theme</span></a></div></details>
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Methods</summary>
+<div><a href="#addstylechangehandler"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Style<wbr/>Change<wbr/>Handler</span></a><a href="#getbbox"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>B<wbr/>Box</span></a><a href="#getstyle"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Style</span></a><a href="#setlanguage"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Language</span></a><a href="#setstyle"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Style</span></a><a href="#updateeventsconfig"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>Events<wbr/>Config</span></a></div></details></div></details></div>
+<div class="site-menu">
+<nav class="tsd-navigation"><a href="../index.html">TomTom Maps for JavaScript</a>
+<ul class="tsd-small-nested-navigation" id="tsd-nav-container">
+<li>Loading...</li></ul></nav></div></div></div><footer>
+<p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer>
+<div class="overlay"></div></body></html>
