@@ -1,0 +1,10 @@
+[
+  {
+    "source": "/maps-sdk-js",
+    "destination": "/maps-sdk-js/introduction/overview"
+  },
+  {
+    "source": "/maps-sdk-js/guides/services/customizing-services",
+    "destination": "/maps-sdk-js/guides/services/request-options-and-errors"
+  }
+]

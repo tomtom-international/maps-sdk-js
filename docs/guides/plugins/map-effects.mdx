@@ -1,0 +1,218 @@
+---
+title: Map effects plugin
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.1.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Map Effects plugin adds **practical post-processing** to a `TomTomMap`: effects computed from the rendered map's own pixels rather than from its style. They work on every style, custom ones included, survive every style release, and cannot be reproduced by editing the style at all — MapLibre has no post-processing surface.
+
+<GuideDemo demo="map-effects-playground" />
+
+## What it is for
+
+Every effect is named by the problem it solves, and is off by default. The SDK ships practical foundations, not looks.
+
+| Effect | Solves |
+| --- | --- |
+| **Bloom** | Emphasis on dark and driving styles: lit roads, traffic tubes and route lines glow |
+| **Grade** (brightness, contrast, saturation) and **tint** | Muting the base map so your data overlay reads first — the other half of the `data-viz` styling preset |
+| **Fog** | Depth: the rim recedes as if seen through air |
+| **Edge blur** | Focus: the rim loses its detail, keeping its colour |
+| **Depth of field** | Depth on a tilted map: one band of distance stays sharp, the rest defocuses |
+| **Vignette** | Focus, by darkening or lightening the edges |
+
+### Depth of field on a pitched map
+
+`depthOfField` holds one **distance** sharp and defocuses the rest, the way a lens focused there would. It is the one effect that reads the map's camera:
+
+```javascript
+effects.set({
+    'depthOfField.intensity': 18,  // the widest circle of confusion, in CSS pixels
+    'depthOfField.focus': 0,       // 0 = the nearest ground, 1 = the farthest the frame shows
+    'depthOfField.band': 0.3,      // how much of that depth stays sharp
+    'depthOfField.bokeh': 0.5,     // whether a defocused highlight fades or returns as a disc
+});
+```
+
+It is the one effect that runs on the **GPU**: a full-screen pass that gathers a disc of the map's own pixels per fragment, at a radius that grows with distance. That is what a `backdrop-filter` cannot do — one radius for the whole layer, blended over the sharp original, reads as haze rather than as a lens. Because the pass reads the rendered map back as a texture, it needs `canvasContextAttributes: { preserveDrawingBuffer: true }` on the map, the same attribute bloom and `capture()` already require.
+
+**Bokeh is what separates a defocus from a blur.** A lens does not average the light it cannot resolve, it spreads it, so each point arrives as an image of the aperture at its own brightness. Weighting every sample by the fourth power of its brightness keeps a lit road or a traffic tube bright across the whole circle it is spread over; at 0 the light is averaged away, as a blur does. It is deliberately not energy-conserving — normalising that away leaves you with the blur again.
+
+**No depth buffer is involved, and none is needed.** MapLibre hands none out, but the map is a *plane*: a ray through row `y` meets it at `1/z = 1/D − y·tanθ/D²`, so reciprocal distance — which is what a lens actually defocuses by — is affine in the row of the picture. The whole depth of a frame is then one number, `span = 2·tan(fov/2)·tan(pitch)` with `ramp = span/(1 + span/2)`: 0 seen from straight above, 0.5 at a 45° tilt, past 1 once the horizon is on screen.
+
+Two consequences are worth planning around:
+
+- **A flat map ends the effect, and nothing checks the pitch.** Every part of the ground is the same distance away, `ramp` is 0, so the pass is not run and its canvas stays hidden. Tilt the map and it comes back.
+- **The same `band` covers more of the view at a gentle tilt**, because it is a share of the frame's depth rather than of its height. That is the point: a shallow tilt has little depth for a field to be shallow in.
+
+`focus: 0` is the automatic answer rather than a neutral middle — the nearest thing in a tilted shot is the bottom edge, so switching the effect on over a tilted city needs nothing set. Raise it and the middle distance is sharp with the foreground *and* the horizon thrown off, which is the tilt-shift picture.
+
+It pairs with [3D terrain](../map/terrain.mdx#3d-elevation), which gives the view relief to defocus — see the [3D terrain playground](../../examples/terrain-playground), where the band holds one run of the valley in focus and lets the ridges behind it soften, and the [route fly-over playground](../../examples/route-flyover-playground), where it holds the road ahead in focus through the whole flight.
+
+### Fog or edge blur?
+
+Both blur the rim of the view and both take a `reach`, so they are easy to confuse. The difference is what happens to the rim's colour:
+
+- **Fog** blurs *and* washes the rim out, towards the colour of the air — pale over a light style, dark over a dark one. It reads as distance, and it follows the map's light/dark theme so a night map hazes dark rather than glowing.
+- **Edge blur** blurs and nothing else. Colours stay as they are, so it reads as a lens rather than as atmosphere, and it is the one to use when the rim's colour still carries data.
+
+Use fog for depth, edge blur for focus. Together they compound, which is rarely what you want.
+
+## Installation
+
+```bash
+npm install @tomtom-org/maps-sdk maplibre-gl @tomtom-org/maps-sdk-plugin-map-effects
+```
+
+`@tomtom-org/maps-sdk` and `maplibre-gl` are peer dependencies.
+
+## Usage
+
+```javascript
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { MapEffects } from '@tomtom-org/maps-sdk-plugin-map-effects';
+
+const map = new TomTomMap({
+    style: 'standardDark',
+    mapLibre: {
+        container: 'map',
+        // Bloom, the depth of field, your own passes and capture all read the map canvas back;
+        // MapLibre keeps it readable only when asked.
+        canvasContextAttributes: { preserveDrawingBuffer: true },
+    },
+});
+
+const effects = new MapEffects(map);
+
+// A quiet base under your own data layers:
+effects.set({ 'grade.saturation': 0.4, 'grade.brightness': 0.85, 'tint.opacity': 0.15 });
+
+// Emphasis on a dark style — traffic tubes and lit roads glow:
+effects.set({ 'bloom.intensity': 0.5, 'bloom.threshold': 0.6 });
+
+effects.reset('bloom.intensity'); // one effect off
+effects.reset();                  // everything off
+```
+
+Knobs not mentioned in `set` keep their values; `applyConfig(settings)` replaces them all, `getConfig()` returns the overridden ones as a plain object, and `get(id)` reads one — the override, or the catalogue default.
+
+`remove()` detaches the effects from the map, takes their layers out of the page and releases the WebGL context the chain holds — which matters because a browser caps how many a page may have, and the map already holds one.
+
+A value is validated against the catalogue before anything is touched, so a knob outside its range throws `RangeError` and an unknown id throws `Error` — and the picture on screen never half-changes.
+
+### Scoping bloom by colour
+
+`bloom.only` lists the colours bloom may light. Entries mix freely, and the default `[]` lights the whole frame:
+
+```javascript
+effects.set({ 'bloom.intensity': 0.9, 'bloom.only': ['traffic'] }); // a group of styling colours
+effects.set({ 'bloom.only': ['traffic.incidents.majorColor', 'traffic.incidents.closedColor'] }); // single knobs
+
+const routeColor = '#1a73e8'; // the color your RoutingModule draws routes in
+effects.set({ 'bloom.only': ['traffic', routeColor] }); // plus a CSS colour of your own
+```
+
+| Entry | Resolves to |
+| --- | --- |
+| A [styling colour knob](../map/styling.mdx#knobs), e.g. `colors.roadMajor` | the colour the loaded style paints it in |
+| A group of them, e.g. `traffic`, `traffic.incidents`, `colors` | every colour knob whose id starts with it |
+| A CSS colour, e.g. `'#1a73e8'` | itself — for what the styling module does not paint, such as a route in the `color` you gave `RoutingModule` |
+
+- **The names come from the SDK's [`stylingColorKnobIds`](../map/styling.mdx#the-knob-catalogue)**, so a colour knob the styling module gains is scopable with no change here. `effectKnobCatalogue` lists them in the knob's `options`, and `set` throws `RangeError` on an entry that is neither a name nor a CSS colour.
+- **A scope keys on colour, not on layers**: the effects see the rendered map as one flat image, so bloom keeps the pixels wearing a listed colour.
+  - **It follows the style**: a `StylingModule` recolour or a style switch moves the scope, with nothing in your app to keep in sync.
+  - **Anything else wearing those colours glows too**, since a colour key cannot tell it from traffic.
+  - **Only what the style paints differently separates**: the TomTom styles give flow and incidents one palette (`traffic.flow.stationaryColor` is `traffic.incidents.majorColor`), so `traffic.flow` also keys those incidents.
+  - **A colour no literal stands for scopes to nothing** (a custom style, a data-driven expression), and bloom lights the whole frame, with one console warning.
+- **Brightness is not compared**: an antialiased edge and its lit centre are one colour at two levels, and `bloom.threshold` judges level.
+  - `bloom.onlyTolerance` covers the blending an edge picks up: raise it if edges drop out, lower it if a neighbouring severity lights up.
+  - Its `0.15` default keeps a moderate jam, `0.217` from a major one, out of a `traffic.incidents.majorColor` scope.
+- **A scope lets you lower the cut**: with the city keyed out by colour, `bloom.threshold` can sit under the darkest thing worth lighting.
+  - `monoDark` paints a major jam `hsl(0, 100%, 28%)`: 64/255 of it survives a `0.45` cut, 110/255 a `0.25` one.
+  - The [Traffic flow with bloom](../../examples/traffic-bloom-effect) example cuts at `0.25`, with a grade deepening the city the [traffic](../map/traffic-flow.mdx) glows against.
+
+## The catalogue
+
+`effectKnobCatalogue` lists every knob with kind, range, default and the use case it serves, as static data like the SDK's [`stylingKnobCatalogue`](../map/styling.mdx#the-knob-catalogue); `effects.get(id)` reads the value in force. The playground above generates its panel this way.
+
+| Knob | Range | Default |
+| --- | --- | --- |
+| `bloom.intensity`, `bloom.threshold` | 0–1 | 0 (off), 0.55 |
+| `bloom.radius` (CSS px) | 2–40 | 12 |
+| `bloom.only` | list of styling colour knobs, groups and CSS colours | `[]` (the whole frame) |
+| `bloom.onlyTolerance` | 0–1 | 0.15 |
+| `grade.brightness`, `grade.contrast` | 0.5–1.5 | 1 |
+| `grade.saturation` | 0–1.5 | 1 |
+| `fog.intensity`, `fog.reach` | 0–1 | 0 (off), 0.4 |
+| `edgeBlur.intensity` (CSS px), `edgeBlur.reach` | 0–30, 0–1 | 0 (off), 0.5 |
+| `depthOfField.intensity` (CSS px) | 0–30 | 0 (off) |
+| `depthOfField.focus` (0 = nearest, 1 = farthest shown), `depthOfField.band` | 0–1 | 0, 0.3 |
+| `depthOfField.bokeh` | 0–1 | 0.5 |
+| `tint.color`, `tint.opacity` | colour, 0–1 | `#1f2937`, 0 (off) |
+| `vignette.intensity` (negative darkens, positive lightens), `vignette.reach` | −1–1, 0–1 | 0 (off), 0.45 |
+
+## Capture
+
+`capture({ pixelRatio })` renders the current view — map and effects — into one canvas. The map is re-rendered at the requested ratio (never resampled), read back once every tile is drawn, and restored to follow the device afterwards. MapLibre clamps to its `maxCanvasSize`, so measure the ratio you got from the returned canvas rather than assuming.
+
+```javascript
+const canvas = await effects.capture({ pixelRatio: 3 });
+canvas.toBlob((blob) => upload(blob), 'image/png');
+```
+
+## How it renders
+
+Three kinds of layer, in one order. **A GPU chain** runs first, on the map's own pixels: a WebGL2 canvas under everything else, holding the picture the rest then read. It runs [your own passes](#your-own-gpu-passes) and the depth of field, ping-ponging between render targets so each pass reads what the one before left without the picture leaving the GPU. **Overlays** stack over that result — `backdrop-filter` for grade, fog and edge blur, a gradient for vignette, a flat layer for tint. **Bloom** is neither: a small canvas (a quarter of the pixels) redrawn from the finished artwork every frame and blended in `screen` mode, because a glow needs the original *and* its blur, which a `backdrop-filter` cannot give.
+
+Two consequences of that order are worth knowing:
+
+- **Bloom reads the chain's output, not the raw map.** A defocused highlight therefore glows as the wide soft disc a photograph gives it, rather than as the pinpoint it was before the lens reached it.
+- **Capture runs the same chain**, at the requested pixel ratio, then composites the same overlays — one implementation rather than a live half and an export half.
+
+The chain and bloom both redraw on the map's own `render` event, coalesced to one draw per animation frame: they are made out of the map's pixels, so a pan changes what they have to draw. The other overlays are CSS and need no redrawing at all.
+
+The overlays never take pointer events and sit below the map's controls.
+
+## Your own GPU passes
+
+`addPass` runs a full-screen fragment shader of yours inside the chain, so every effect the plugin draws over the chain — bloom, grade, fog, edge blur, tint, vignette — then works on your picture. That is the slot for a stylisation: a watercolour, a posterise, a colour lookup. The demo below paints the map in watercolour, then lets bloom, a contrast grade and a vignette work on the painting.
+
+<GuideDemo demo="mixed-map-effects" />
+
+```javascript
+effects.addPass({
+    id: 'posterise',
+    fragment: `uniform float uLevels;
+        void main() {
+            vec4 colour = texture(uSource, vUv);
+            fragColor = vec4(floor(colour.rgb * uLevels) / uLevels, colour.a);
+        }`,
+    uniforms: { uLevels: 5 },
+});
+
+effects.removePass('posterise');
+```
+
+- **The shader is GLSL ES 3.00, minus its preamble.** The plugin declares the version, the precisions, `uSource` (the picture so far), `vUv` and `fragColor`; you declare your own uniforms and `main`. A shader that does not compile is refused by `addPass`, with the compiler's log in the error. A browser without WebGL2 runs no pass, and the plugin warns once.
+- **`uniforms`** takes `float` and `vec2` values by name, or a function returning them, which is called on every draw. An `int` or `bool` uniform cannot be set, so declare numbers as `float`. A function that throws skips its pass for that draw, with one warning. The chain redraws with the map, so a pass animating on its own asks for frames with `map.mapLibreMap.triggerRepaint()`.
+- **`placement`** puts the pass `before-depth-of-field` (the default) or `after-depth-of-field`, and `addPass` refuses any other value: a stylisation the lens should then blur goes before it, one that should stay crisp across the frame after it. Passes run in the order they were added, and a pass added under an id already in use replaces it where it stands.
+- **`capture()` runs your passes too**, at the capture's own resolution.
+- **A pass that shifts hues runs before bloom's colour key**, so a [`bloom.only`](#scoping-bloom-by-colour) scope may need a wider `bloom.onlyTolerance` to find its colours.
+
+An effect that belongs *on top* of everything — film grain, scanlines, a watermark — needs no pass: lay your own element over the map, above the effects container.
+
+Passes are code rather than settings, so `getConfig()` does not list them.
+
+## Relation to the styling module
+
+The [styling module](../map/styling.mdx) changes the *style* — what the map draws. Effects change the *frame* — how the drawn map looks. They compose: the `data-viz` styling preset quiets the map's content; `grade.saturation` and `tint.opacity` mute what remains.
+
+## API reference
+
+For complete documentation see the **[MapEffects API Reference](/maps-sdk-js/api-reference/classes/plugins.MapEffects.html)**.

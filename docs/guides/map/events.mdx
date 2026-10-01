@@ -1,0 +1,109 @@
+---
+title: Events
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.60.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The TomTom Maps SDK provides three distinct event systems, each addressing a different layer of interaction:
+
+| Category | What it covers | Entry point |
+|----------|---------------|-------------|
+| **User interaction events** | Click, hover, long-hover, and contextmenu on map features | `module.events.on('click', ...)` |
+| **Module lifecycle events** | Config changes and feature rendering inside a module | `module.events.on('config-change', ...)` |
+| **Style change events** | Map style transitions (`setStyle`) | `map.addStyleChangeHandler(...)` |
+
+---
+
+## User interaction events
+
+User interaction events fire when the map's end users interact with features rendered by a module — clicks, hovers, long-hovers, and right-clicks. The SDK enhances MapLibre's raw mouse events with built-in hover state management, configurable precision, and automatic mapping back to the original typed data.
+
+```javascript
+// Most modules expose user interaction events via events.on(...)
+placesModule.events.on('click', (feature, lngLat) => { /* ... */ });
+trafficModule.events.on('hover', (feature, lngLat) => { /* ... */ });
+baseMap.events.on('contextmenu', (feature, lngLat) => { /* ... */ });
+
+// RoutingModule is namespaced differently
+routing.events.click((feature, lngLat) => { /* ... */ });
+```
+
+**[User Interaction Events guide →](./user-events.mdx)**
+
+---
+
+## Module lifecycle events
+
+Module lifecycle events fire when a module's internal state changes — either because configuration was updated or because new features were rendered on the map. These events are independent of any user gesture.
+
+- **`config-change`** — emitted by every module whenever its config is mutated (via `applyConfig`, `setVisible`, or any module-specific setter).
+- **`shown-features`** — emitted by modules that have a `show` method (PlacesModule, GeometriesModule, RoutingModule, TrafficAreaAnalyticsModule), immediately after features are displayed.
+
+```javascript
+// Fires on any config mutation
+trafficFlow.events.on('config-change', (config) => {
+    syncToggle(config?.visible);
+});
+
+// Fires after any of the module's show operations; the payload says which
+places.events.on('shown-features', (features) => {
+    if ('places' in features) fitMapToResults(features.places);
+});
+```
+
+**[Module Lifecycle Events guide →](./module-events.mdx)**
+
+---
+
+## Style change events
+
+Style change events let you hook into the `setStyle` transition lifecycle — before the old style is torn down and after the new style is fully loaded. Use these to preserve custom MapLibre layers, sync UI state (e.g. dark mode), or run async teardown/setup logic.
+
+```javascript
+map.addStyleChangeHandler({
+    onStyleAboutToChange: () => {
+        saveCustomLayers();
+    },
+    onStyleChanged: () => {
+        restoreCustomLayers();
+        syncDarkModeClass();
+    },
+});
+```
+
+**[Style Change Events section →](./styles.mdx#listening-to-style-changes)**
+
+---
+
+## MapLibre events
+
+Because `TomTomMap` exposes the underlying MapLibre instance via `map.mapLibreMap`, the full [MapLibre `Map` event API](https://maplibre.org/maplibre-gl-js/docs/API/classes/Map/#events) is also available — `load`, `moveend`, `zoom`, `styledata`, and many more.
+
+```javascript
+map.mapLibreMap.on('moveend', () => {
+    console.log('Viewport changed:', map.mapLibreMap.getBounds());
+});
+```
+
+Prefer the SDK's own event systems for anything involving SDK-managed features. Use `map.mapLibreMap` events for low-level map lifecycle hooks that the SDK does not expose directly.
+
+---
+
+## Choosing the right event
+
+| Scenario | Use |
+|---|---|
+| Low-level map lifecycle (`load`, `zoom`, `moveend`) | MapLibre event (`map.mapLibreMap.on(...)`) |
+| Respond when a user clicks a place, route, or traffic feature | User interaction event (`'click'`) |
+| Respond when a user hovers over map features | User interaction event (`'hover'` / `'long-hover'`) |
+| Detect clicks on the background map (outside features) | `BaseMapModule` user event |
+| Keep external UI in sync with a module's config | Module lifecycle event (`'config-change'`) |
+| React after new data is displayed on the map | Module lifecycle event (`'shown-features'`) |
+| Preserve custom layers when the map style changes | Style change handler (`addStyleChangeHandler`) |
+| Update UI for light/dark style switch | Style change handler (`addStyleChangeHandler`) |
