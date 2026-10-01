@@ -1,0 +1,129 @@
+---
+title: Viewport places plugin
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.5.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Viewport Places plugin enables dynamic display of places on the map viewport, automatically updating as the map moves.
+It wires the SDK search service to the SDK PlacesModule and provides a small, composable API to manage multiple viewport-driven place layers.
+
+<GuideDemo demo="viewport-places-plugin" />
+
+## Use cases
+
+- **Customize your map POIs** — control which POI categories are shown at which zoom levels and with which visual theme.
+- **Search this area** — keep search results (fuzzy/geometry) limited to the current viewport and refresh them automatically when the user pans or zooms.
+- **Layered overlays** — stack multiple place modules (base-map POIs, brand search results, availability overlays) and control their priority.
+
+## How it works
+
+Each time the map moves, the plugins queries the search service for places within the current viewport bounding box and displays them using a dedicated PlacesModule.
+
+This can be done for multiple place modules, each with its own search options (query string, POI categories, limits) and visual configuration (theme, clustering, etc).
+
+### API reference:
+
+[Viewport Places Plugin API Reference](/maps-sdk-js/api-reference/classes/plugins.ViewportPlaces.html)
+
+### Guides to the underlying components
+
+- Search service: [Search (fuzzy / geometry / along-route)](../services/places/search.mdx)
+- Display places on the map: [Places module](../map/places.mdx)
+- Map motion and events: [About MapLibre](../map/about-maplibre.mdx)
+
+## Installation
+
+<Blockquote>
+    All plugins use `@tomtom-org/maps-sdk` as a peer dependency — ensure the SDK is installed in your project.
+</Blockquote>
+
+1. Follow the [SDK Project Setup](../../introduction/project-setup.mdx) to create a working SDK project and initialize a `TomTomMap` instance.
+
+2. Import and initialize the plugin (plugin-specific steps only):
+
+```text
+// assume `map` is your initialized TomTomMap instance
+// import the plugin in your application code:
+// import { ViewportPlaces } from '@tomtom-org/maps-sdk-plugin-viewport-places';
+
+const viewportPlaces = new ViewportPlaces(map);
+```
+
+3. Try it: add a simple viewport-driven place module:
+
+```text
+await viewportPlaces.addPOICategories({
+  id: 'restaurants',
+  categories: ['RESTAURANT'],
+  minZoom: 10
+});
+```
+
+The plugin will keep the `restaurants` place module in sync with the visible map bounds.
+
+<Blockquote>
+    Place modules are rendered bottom-up in the order they are added: the first added module is displayed at the bottom, and later modules are stacked on top.
+</Blockquote>
+
+For a complete working example, see the `viewport-places-plugin` example in the SDK repository (live coding example above).
+
+## Usage examples
+
+### Add base-map POI categories (styled like the base map)
+
+Use when you want to surface additional base map categories or override visibility at specific zooms:
+
+```javascript
+await viewportPlaces.addPOICategories({
+  id: 'base-pois',
+  categories: ['PARKING_GARAGE', 'CHARGING_LOCATION'],
+  minZoom: 10
+});
+```
+
+### Add a branded search place module (custom theme)
+
+Use `placesModuleConfig` to apply a visual theme (for example `pin` vs `base-map`):
+
+```javascript
+await viewportPlaces.add({
+  id: 'brand-search',
+  searchOptions: { query: 'Lidl', filters: { poiCategories: ['SUPERMARKET'] }, limit: 20 },
+  minZoom: 8,
+  placesModuleConfig: { theme: 'pin' }
+});
+```
+
+### Update an existing place module
+
+Change query, categories, limits or visual config for an existing place module. The new
+`searchOptions` merge into the current ones, `filters` member by member:
+
+```javascript
+await viewportPlaces.update({
+  id: 'brand-search',
+  searchOptions: { query: 'Aldi', limit: 30 },
+  placesModuleConfig: { theme: 'base-map' }
+});
+```
+
+### Remove a place module
+
+```javascript
+viewportPlaces.remove('brand-search');
+```
+
+`remove` and `update` both throw for an unknown ID.
+
+### Remove all place modules
+
+```javascript
+viewportPlaces.removeAll();
+```
+

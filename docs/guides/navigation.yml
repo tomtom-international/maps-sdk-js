@@ -1,0 +1,181 @@
+group: maps-sdk-js
+isPrivate: false
+productName: TomTom Maps SDK for JavaScript
+isMenuOpened: false
+menu:
+  - title: How the SDK works
+    fileId: how-the-sdk-works
+  - title: AI coding with the SDK
+    fileId: ai-coding
+  - title: Map
+    items:
+      - fileId: map/quickstart
+        title: Quickstart
+      - fileId: map/introduction
+        title: Introduction
+      - fileId: map/tomtom-map
+        title: TomTom map object
+      - fileId: map/modules
+        title: Map modules
+      - fileId: map/styles
+        title: Map styles
+      - fileId: map/styling
+        title: Map styling
+      - fileId: map/traffic
+        title: Traffic
+      - fileId: map/about-maplibre
+        title: About MapLibre
+      - title: Modules
+        items:
+          - fileId: map/base-map
+            title: Base map
+          - fileId: map/pois
+            title: POIs
+          - fileId: map/places
+            title: Places
+          - fileId: map/routes
+            title: Routes
+          - fileId: map/geometries
+            title: Geometries
+          - fileId: map/custom
+            title: Custom GeoJSON
+          - fileId: map/traffic-incidents
+            title: Traffic incidents
+          - fileId: map/traffic-incident-overlay
+            title: Traffic incident overlay
+          - fileId: map/traffic-flow
+            title: Traffic flow
+          - fileId: map/traffic-area-analytics-module
+            title: Traffic area analytics
+          - fileId: map/terrain
+            title: Terrain
+      - title: Events
+        items:
+          - fileId: map/events
+            title: Overview
+          - fileId: map/user-events
+            title: User events
+          - fileId: map/module-events
+            title: Module events
+      - fileId: map/utilities
+        title: Utilities
+
+  - title: Services
+    items:
+      - fileId: services/quickstart
+        title: Quickstart
+      - title: Places
+        items:
+          - fileId: services/places/quickstart
+            title: Overview
+          - fileId: services/places/search
+            title: Discover places
+          - fileId: services/places/suggest
+            title: Search suggestions
+          - fileId: services/places/geocoding
+            title: Geocoding
+          - fileId: services/places/reverse-geocoding
+            title: Reverse geocoding
+          - fileId: services/places/geometry-data
+            title: Geometry data
+          - fileId: services/places/ev-charging-stations-availability
+            title: EV charging stations availability
+          - fileId: services/places/place-by-id
+            title: Place details
+          - fileId: services/places/poi-categories
+            title: POI categories
+      - title: Routing
+        items:
+          - fileId: services/routing/quickstart
+            title: Quickstart
+          - fileId: services/routing/what-the-sdk-adds
+            title: What the routing SDK adds
+          - fileId: services/routing/parameters
+            title: Planning a route
+          - fileId: services/routing/locations
+            title: Locations
+          - fileId: services/routing/guidance
+            title: Guidance
+          - fileId: services/routing/vehicle
+            title: Vehicle configuration
+          - fileId: services/routing/long-distance-ev-routing
+            title: Long distance EV routing
+          - fileId: services/routing/reachable-ranges
+            title: Reachable ranges
+      - title: Traffic
+        items:
+          - fileId: services/traffic/traffic-incident-details
+            title: Incident details
+          - fileId: services/traffic/traffic-area-analytics
+            title: Area analytics
+      - fileId: services/request-options-and-errors
+        title: Request options and errors
+  - title: Core
+    items:
+      - fileId: core/quickstart
+        title: Quickstart
+      - fileId: core/global-config
+        title: Global configuration
+      - fileId: core/places
+        title: Places
+      - fileId: core/routes
+        title: Routes
+      - fileId: core/traffic
+        title: Traffic
+      - title: Utilities
+        items:
+          - fileId: core/utilities/coordinates
+            title: Coordinates
+          - fileId: core/utilities/bounding-boxes
+            title: Bounding boxes
+          - fileId: core/utilities/routes
+            title: Routes
+          - fileId: core/utilities/formatting
+            title: Formatting
+  - title: Security
+    items:
+      - fileId: security/where-your-api-key-runs
+        title: Where your API key runs
+      - fileId: security/proxying-api-calls
+        title: Proxying your API calls
+      - fileId: security/hardening-your-proxy
+        title: Hardening your proxy
+  - title: Plugins
+    items:
+      - fileId: plugins/landmarks-3d
+        title: Landmarks 3D
+      - fileId: plugins/viewport-places
+        title: Viewport places
+      - fileId: plugins/map-effects
+        title: Map effects
+      - fileId: plugins/map-theme
+        title: Map theme
+      - fileId: plugins/flyover
+        title: Fly-over
+      - title: Agent Toolkit
+        items:
+          - fileId: plugins/agent-toolkit/overview
+            title: Overview
+          - fileId: plugins/agent-toolkit/how-it-works
+            title: How it works
+          - fileId: plugins/agent-toolkit/state
+            title: State
+          - fileId: plugins/agent-toolkit/tools
+            title: Tool registry
+          - fileId: plugins/agent-toolkit/customizing-tools
+            title: Customizing tools
+          - fileId: plugins/agent-toolkit/customizing-system-prompt
+            title: Customizing the system prompt
+          - fileId: plugins/agent-toolkit/byod
+            title: Bring your own data
+          - fileId: plugins/agent-toolkit/scope-aware-data-tools
+            title: Scope-aware data tools
+          - fileId: plugins/agent-toolkit/code-generation
+            title: Code generation
+          - fileId: plugins/agent-toolkit/securing-your-agent
+            title: Securing your agent
+
+  - title: Migration
+    items:
+      - fileId: migration/v6-to-new-sdk
+        title: Migrating from V6
