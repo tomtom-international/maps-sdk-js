@@ -1,0 +1,112 @@
+---
+title: About Maps SDK for JavaScript
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.61.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+<Blockquote>
+	We have released some capabilities in the Maps SDK under [Public Preview](https://docs.tomtom.com/legal/public-preview) to collect feedback from the community.\
+	While our goal is to keep the design of the interface stable, breaking changes will occur, particularly in the earlier versions.\
+    The versions will follow a 0.MAJOR.MINOR pattern for the time being.\
+    Stay tuned with our release `CHANGELOG.md` files.
+</Blockquote>
+
+<GuideDemo demo="default-map" />
+
+The map above is the [default map example](../examples/default-map), and this is its code:
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+
+TomTomConfig.instance.put({ apiKey: 'YOUR_API_KEY', language: 'en-GB' });
+
+new TomTomMap({
+    mapLibre: {
+        container: 'map',
+        center: [4.8156, 52.4414],
+        zoom: 8,
+    },
+});
+```
+
+`container` is the id of the page element the map fills, so give that element a height.
+
+## Quickstart
+
+1. **Get your TomTom API key:**
+
+- Sign up or log in at [my.tomtom.com](https://my.tomtom.com/).
+
+- Create an API key following these [instructions](https://docs.tomtom.com/platform/documentation/dashboard/api-key-management).
+
+<Blockquote>
+    **Before you ship, decide where this key will live.** A key used from the browser can be read by anyone who opens the page. A key used from Node.js cannot. See [Where your API key runs](../guides/security/where-your-api-key-runs.mdx) for which case you are in and what to do about it, and TomTom's [API key management best practices](https://docs.tomtom.com/platform/documentation/api-best-practices/api-key-management-best-practices) for key restrictions, rotation and monitoring.
+</Blockquote>
+
+2. **Install the SDK:**
+```sh
+# npm and Yarn install the peer dependencies for you
+npm install @tomtom-org/maps-sdk
+
+# pnpm does not, unless you ask it to
+echo "auto-install-peers=true" >> .npmrc && pnpm add @tomtom-org/maps-sdk
+```
+
+3. **Start building:**
+- **Using an [AI](./ai.mdx) coding agent?** Install the `/tomtom-maps-sdk-js` skill for SDK-specific assistance:
+```bash
+npx skills add tomtom-international/maps-sdk-js --skill tomtom-maps-sdk-js
+```
+- Follow the [Map Quickstart](../guides/map/quickstart.mdx) to display your first map.
+- Or try the [Services Quickstart](../guides/services/quickstart.mdx) to call search, geocoding, or routing APIs.
+- Or start from a runnable app in the [Examples](../examples/) gallery and adapt it.
+
+For more project setup details, see the [Project Setup Guide](./project-setup.mdx).
+
+For AI agents, project setup and the quickstarts are also published as Markdown: [project setup](https://docs.tomtom.com/maps-sdk-js/introduction/project-setup.md), and the [map](https://docs.tomtom.com/maps-sdk-js/guides/map/quickstart.md), [services](https://docs.tomtom.com/maps-sdk-js/guides/services/quickstart.md) and [core](https://docs.tomtom.com/maps-sdk-js/guides/core/quickstart.md) quickstarts.
+
+## AI coding agent skill
+
+The SDK ships a `/tomtom-maps-sdk-js` skill with SDK-specific knowledge for AI coding agents (Claude Code, Cursor, GitHub Copilot, Windsurf, and [many more](https://www.npmjs.com/package/skills#available-agents)). Install it with the command above, then see [AI coding with the SDK](../guides/ai-coding.mdx) for the topics it covers and how to invoke them.
+
+## Overview
+
+**Maps SDK for JavaScript** is a **JavaScript/TypeScript** library for building applications using **TomTom** map display and geolocation APIs.
+
+It leverages the power of [MapLibre GL JS](../guides/map/about-maplibre.mdx) and [GeoJSON](https://geojson.org/)
+to seamlessly integrate TomTom maps and services with convenient out-of-the-box support, while staying highly customizable and extensible.
+
+## Key features
+
+- **Interactive Maps**: MapLibre-powered library for styled, service-compatible TomTom Maps
+- **Comprehensive Services**: Easy access to TomTom's location APIs including search, routing, and geocoding
+- **GeoJSON Support**: Built-in compatibility with the widely-used geospatial data format
+- **TypeScript Ready**: Full TypeScript support with comprehensive type definitions
+- **Modular Architecture**: Use only the features you need with tree-shaking support
+
+## Where can you run it?
+
+- **Web**: Display and configure maps, search for places, plan routes, and interact with location data
+- **Node.js**: Server-side geocoding, route calculation, and data enrichment capabilities
+- **React Native**: Leverage TomTom location services from a single codebase
+
+## Bundles
+
+The Maps SDK is made up of three bundles:
+
+-   [**Map**](../guides/map/quickstart.mdx): MapLibre-powered library for interactive TomTom Maps with modules for places, routes, traffic, and more.
+-   [**Services**](../guides/services/quickstart.mdx): GeoJSON services for TomTom location APIs: search, routing, geocoding, EV charging availability, and geometry data.
+-   [**Core**](../guides/core/quickstart.mdx): Shared configuration, types, and utilities used across Map and Services bundles.
+
+## Next steps
+
+- [Project Setup Guide](./project-setup.mdx)
+- [Learn how the SDK works](../guides/how-the-sdk-works.mdx)
+- [API reference](/maps-sdk-js/api-reference/index.html) — every exported symbol, its signature and its types

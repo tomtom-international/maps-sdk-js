@@ -1,0 +1,150 @@
+---
+title: Map theme plugin
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.2.2"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Map Theme plugin themes a `TomTomMap` from **wherever a look comes from**: a brand's swatches, your page's CSS, a logo or a photo, a mood, an artist. It turns any of them into the ten [map colours](../map/styling.mdx#map-colours-setmapcolors) — land, water, roads, labels — plus the [accent](../map/styling.mdx#the-accent-what-a-theme-reaches-beyond-the-base-map) that routes, geometries and pins take, and `setMapColors` applies them to the whole map.
+
+<GuideDemo demo="map-theme" />
+
+## What it is for
+
+Every source comes down to a handful of colours, and one call assigns them their roles:
+
+| The look comes from | Call |
+| --- | --- |
+| A brand guide, a palette, colours a user picked | [`deriveMapColors(colors)`](#from-colours) |
+| Your own page's CSS | [`deriveMapColors`](#from-your-pages-css) over its custom properties |
+| A stylesheet: a website's, a design system's tokens | [`deriveMapColorsFromCss(cssText)`](#from-a-stylesheet) |
+| A logo, a photo, a poster | [`deriveMapColorsFromImage(image)`](#from-an-image) |
+| A mood, an artist | a coding agent or the Agent Toolkit writes the colours, [then `deriveMapColors`](#from-a-mood-an-artist-or-a-website-you-cannot-read) |
+
+## Installation
+
+```bash
+npm install @tomtom-org/maps-sdk maplibre-gl @tomtom-org/maps-sdk-plugin-map-theme
+```
+
+`@tomtom-org/maps-sdk` and `culori` are peer dependencies.
+
+## From colours
+
+```javascript
+import { StylingModule } from '@tomtom-org/maps-sdk/map';
+import { deriveMapColors } from '@tomtom-org/maps-sdk-plugin-map-theme';
+
+const styling = await StylingModule.get(map);
+const colors = deriveMapColors(['#1d3f8a', '#e63312', '#f5d000', '#111111', '#f4f1ea']);
+styling.setMapColors(colors);
+```
+
+`deriveMapColors` returns every role, the accent included, so a UI can show what became what, and `styling.set('colors.water', …)` corrects one role. Applied through `setMapColors`, a theme is `colors.*` knobs: it survives `setStyle` and serialises with `getConfig()`.
+
+To [theme the base map alone](../map/styling.mdx#the-accent-what-a-theme-reaches-beyond-the-base-map), leave `accent` out of the object before `setMapColors`.
+
+## How colours get their roles
+
+The assignment is deterministic; order does not matter and near-duplicates count once.
+
+| Role | Gets |
+| --- | --- |
+| `land` | The lightest low-saturation colour — the darkest one on a dark theme — toned down to a neutral |
+| `roadMajor` | The most colourful (highest OKLCH chroma) colour, preferring one that is not a blue or a green |
+| `water`, `vegetation` | A blue or cyan, and a green |
+| `label` | The colour contrasting most with `land`, if it reaches 4.5:1 |
+| `accent` | The most colourful colour left that reads 3:1 on `land` and sits 30° of hue or more from `roadMajor`; else `roadMajor`'s complement |
+
+Roles no colour fits are derived from `land` — roads and outlines as shades of it, water and vegetation as muted hues — so one to eight colours always give a complete palette. `mode: 'auto'`, the default, reads light or dark off the colours; pass `{ mode: 'light' }` or `{ mode: 'dark' }` to force it.
+
+## Light and dark styles
+
+`setMapColors` re-derives each style's own shades at that style's offsets, so a dark theme over `standardLight` pushes them to black. `mapColorsLightDark(colors)` tells a dark theme from a light one — whether `auto` or the source decided it — so the map can switch first:
+
+```javascript
+import { mapColorsLightDark } from '@tomtom-org/maps-sdk-plugin-map-theme';
+
+const lightDark = mapColorsLightDark(colors);
+if (lightDark !== map.styleLightDarkTheme) {
+    await map.setStyle(lightDark === 'dark' ? 'standardDark' : 'standardLight');
+}
+styling.setMapColors(colors);
+```
+
+## From your page's CSS
+
+A map embedded in your own app can wear the app's brand: read the page's custom properties and its `theme-color`, and theme from those.
+
+```javascript
+const css = getComputedStyle(document.documentElement);
+const brand = ['--color-primary', '--color-accent', '--color-surface', '--color-text']
+    .map((name) => css.getPropertyValue(name).trim())
+    .concat(document.querySelector('meta[name="theme-color"]')?.content ?? [])
+    .filter(Boolean);
+
+styling.setMapColors(deriveMapColors(brand));
+```
+
+Use your design system's own property names. Colours in hex, `rgb()`, `hsl()` or a CSS name are read; anything else is skipped.
+
+## From a stylesheet
+
+A whole stylesheet works too: a website's CSS, a design system's tokens, a file a user uploads. `deriveMapColorsFromCss` reads the colours it paints with and assigns them roles; it takes the CSS as text, so it needs no DOM.
+
+```javascript
+import { deriveMapColorsFromCss } from '@tomtom-org/maps-sdk-plugin-map-theme';
+
+// A File from an <input type="file" accept=".css">, or CSS a server fetched
+styling.setMapColors(deriveMapColorsFromCss(await fileInput.files[0].text()));
+```
+
+- **Most used wins**: a colour counts every time a rule fills with it; borders and shadows count for less, translucent colours, a colour's own shades (a button's hover) and words in `url()` paths not at all.
+- **`var()` resolves as the page does**: against the rule's own custom properties or the page root's, not one set on another selector (`.inverse { --bg: … }`).
+- **Greys don't crowd out the brand**: the six colours (`colorCount` changes that) hold at most two greys, a background and a text colour, while colourful ones remain.
+- **Light or dark as the page is**: the background on `:root`, `html` or `body`, or else the grey most rules fill with. Rules for one colour scheme (`prefers-color-scheme`, a `.dark` or `.light` class, `data-theme="dark"`) are read only with that `mode`, and then override the defaults; `auto` reads the page as it is without them.
+
+`cssColors(cssText)` returns the colours without assigning roles, for a UI that lets the user edit them first.
+
+## From an image
+
+```javascript
+import { deriveMapColorsFromImage } from '@tomtom-org/maps-sdk-plugin-map-theme';
+
+// A File from an <input type="file">, a Blob, an <img>, an ImageBitmap or a CORS-readable URL
+styling.setMapColors(await deriveMapColorsFromImage(fileInput.files[0], { mode: 'dark' }));
+```
+
+The image is drawn into a 64×64 canvas; its six dominant colours (`colorCount` changes that) are assigned roles. A URL must be served with `Access-Control-Allow-Origin`; otherwise pass the `File` or `Blob`.
+
+Without a DOM — a worker, a test, a server — decode the image yourself and pass `{ data, width, height }` (`ImagePixels`, shaped like `ImageData`), or call `dominantColors(pixels)` and hand the result to `deriveMapColors`. Busy photos average into muted colours; pick from `dominantColors` by hand when that happens.
+
+## From a mood, an artist or a website you cannot read
+
+A mood has no colours to read, and a page cannot fetch another origin's CSS (a server can, then hand it to [`deriveMapColorsFromCss`](#from-a-stylesheet)), so these start with a model rather than a function:
+
+- **A coding agent** reads the site's `theme-color`, `:root` custom properties and logo, or turns "warm earthy tones" or "like a Miró" into three to six hex colours, then writes the `deriveMapColors` call. The `/tomtom-maps-sdk-js` skill carries the recipes.
+- **In a conversation**, the [Agent Toolkit](./agent-toolkit/overview.mdx)'s `setMapStyling({ theme: { colors } })` does the same at run time, and `theme: { imageUrl }` themes from an image. It switches to the light or dark variant of the standard style the theme needs.
+
+## Limits
+
+- **The assignment is a heuristic**: it makes calls a designer wouldn't, which is why every role comes back for correction.
+- **Only the label contrast is guaranteed**: a palette of near-equal lightness gives roads barely separable from land, and a label derived for a mid-lightness land takes whichever side reads, even against the `mode`.
+- **The image is sampled at 64×64**: cheap and in-browser, and a small but striking colour can go missing.
+- **No colour, no theme**: `deriveMapColorsFromCss` throws and `deriveMapColorsFromImage` rejects with a `RangeError` when the source has no opaque colour; an image that cannot be read (not CORS-readable, no DOM to decode it) rejects too. Catch it to keep the current colours.
+- **A theme recolours a TomTom style**: for a style designed layer by layer, use [TomTom Map Maker](https://docs.tomtom.com/map-maker) and load it as a [custom style](../map/styles.mdx#styles-from-map-maker).
+
+## API reference
+
+[`deriveMapColors`](/maps-sdk-js/api-reference/functions/plugins.deriveMapColors.html) · [`mapColorsLightDark`](/maps-sdk-js/api-reference/functions/plugins.mapColorsLightDark.html) · [`deriveMapColorsFromCss`](/maps-sdk-js/api-reference/functions/plugins.deriveMapColorsFromCss.html) · [`cssColors`](/maps-sdk-js/api-reference/functions/plugins.cssColors.html) · [`deriveMapColorsFromImage`](/maps-sdk-js/api-reference/functions/plugins.deriveMapColorsFromImage.html) · [`dominantColors`](/maps-sdk-js/api-reference/functions/plugins.dominantColors.html)
+
+## Related guides and examples
+
+- [Map styling](../map/styling.mdx) — `setMapColors`, the ten colours and the accent
+- [Map theme from colours, an image or CSS](../../examples/map-theme)
+- [TomTom Map Maker](https://docs.tomtom.com/map-maker) — edit and host your own map styles, reusable across TomTom SDKs

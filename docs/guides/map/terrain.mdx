@@ -1,0 +1,144 @@
+---
+title: Terrain module
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.61.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Terrain Module draws the relief of the map from the elevation data of the [map style](./styles.mdx), in two ways that combine freely:
+
+- **Hillshade** shades slopes with light and shadow, so hills, valleys and mountains read at any camera pitch.
+- **3D elevation** raises the map surface itself, which a pitched camera shows.
+
+**What this module owns:** whether the hillshade is shown, and whether and how high the surface is raised. How the shading looks is a [Styling module](./styling.mdx) knob (`hillshade.*`) — see [Appearance](#appearance) below. See [Who owns what](./modules.mdx#who-owns-what).
+
+<GuideDemo demo="3d-terrain" />
+
+## Initialization
+
+```javascript
+import { TomTomMap, TerrainModule } from '@tomtom-org/maps-sdk/map';
+
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+const terrain = await TerrainModule.get(map, { hillshade: true, elevation: true });
+```
+
+`get()` adds the `hillshade` [style part](./styles.mdx#available-style-parts), which carries the elevation data, when the style does not include it yet. The SDK keeps one terrain module per map, so a second `get()` returns the same instance.
+
+`TerrainModule.get(map)` on its own changes nothing on screen. The style parts the SDK adds — traffic flow, traffic incidents and the hillshade — are hidden until you show them, and the surface stays as the style draws it. On a TomTom style that is flat, which is also where `resetConfig()` returns it; a terrain your own style or MapLibre code raised stays until you set `elevation`.
+
+## Hillshade
+
+Show the shading at initialization, or toggle it later:
+
+```javascript
+const terrain = await TerrainModule.get(map, { hillshade: true });
+
+terrain.setHillshadeVisible(false);
+terrain.isHillshadeVisible(); // false
+```
+
+`isHillshadeVisible()` reads the `hillshade` setting back, `false` until something shows it.
+
+### Appearance
+
+The shading's method, light direction, strength, zoom range and colours are knobs of the [Styling module](./styling.mdx): `hillshade.method`, `hillshade.lightDirection`, `hillshade.exaggeration`, `hillshade.maxZoom`, `hillshade.shadowColor`, `hillshade.highlightColor`, `hillshade.accentColor`. They shape the shading once this module shows it.
+
+The standard styles ramp the shading's exaggeration to zero by zoom 13 and stop drawing it there, so on a city-zoom map the shading shows nothing until both are set. The light comes from 335° (north-west) by cartographic convention: relief lit from the south reads inside-out to most people.
+
+```javascript
+const styling = await StylingModule.get(map);
+styling.set('hillshade.method', 'multidirectional');
+// Keep the shading at every zoom:
+styling.set('hillshade.exaggeration', 0.5);
+styling.set('hillshade.maxZoom', 22);
+```
+
+`hillshade.exaggeration` is how strongly the slopes are shaded and raises nothing; to exaggerate the height of the 3D surface, use `elevationExaggeration` below.
+
+## 3D elevation
+
+Raise the surface, and scale the relief with `elevationExaggeration` (`1` is true elevation). It scales height only; the shading's strength is the [`hillshade.exaggeration`](#appearance) knob:
+
+```javascript
+const map = new TomTomMap({
+    mapLibre: { container: 'map', center: [7.66, 45.98], zoom: 12.5, pitch: 70, maxPitch: 85 },
+});
+const terrain = await TerrainModule.get(map, { elevation: true, elevationExaggeration: 1.5, hillshade: true });
+
+terrain.setElevationExaggeration(2);
+terrain.setElevationEnabled(false); // flat again, still shaded
+terrain.isElevationEnabled(); // false
+```
+
+`isElevationEnabled()` reads the `elevation` setting back. Until something sets it, it reports
+whether the map's own terrain raises the surface.
+
+- **Pitch the camera.** Seen from straight above, a raised surface looks flat. MapLibre's default `maxPitch` is 60°; raise it to look along a valley.
+- **Combine it with the hillshade.** The shading keeps a slope readable where the camera flattens it.
+- **The exaggeration is kept while elevation is off**, so turning it back on restores the relief you had.
+- **The surface reads its own elevation source**, `TERRAIN_SOURCE_ID`: a copy of the hillshade's `HILLSHADE_SOURCE_ID` that the module adds the first time elevation is enabled, since MapLibre draws both at a lower quality from one source. With both on, each elevation tile loads twice.
+
+The 3D buildings of the base map ([`BaseMapModule`](./base-map.mdx) layer group `buildings3D`) and the [Landmarks 3D plugin](../plugins/landmarks-3d.mdx) stand on the raised surface.
+
+## Every setting as data
+
+`terrainKnobCatalogue` lists every setting of the module's configuration with its kind, a
+description, the range of the number and, where one value holds everywhere, its default. Each id is
+the setting's path in the config, so a UI can build its controls from it, with no map loaded:
+
+```javascript
+import { terrainKnobCatalogue } from '@tomtom-org/maps-sdk/map';
+
+const exaggeration = terrainKnobCatalogue.find(({ id }) => id === 'elevationExaggeration');
+// { id: 'elevationExaggeration', kind: 'number', description: '…', range: { min: 0.5, max: 3, step: 0.1, bounds: 'hard-min' }, default: 1 }
+```
+
+| Id | Kind | Default |
+|---|---|---|
+| `hillshade` | toggle | `false` |
+| `elevation` | toggle | none: the terrain your style or MapLibre code raised; flat on TomTom styles |
+| `elevationExaggeration` | number, at least 0.5 (`hard-min`) | `1` |
+
+- `terrainKnobIds` lists the ids in catalogue order, `TerrainKnobId` is their union, and
+  `TerrainKnobValueOf<ID>` the plain value one takes. The entries share their shape, `KnobEntry`,
+  with every [module's catalogue](./modules.mdx#every-setting-as-data), and
+  [`setKnob`](./modules.mdx#setting-a-knob-by-its-id) sets one by id.
+- How the shading looks is the [`hillshade.*` knobs](#appearance) of the
+  [styling catalogue](./styling.mdx#the-knob-catalogue).
+
+## Style changes
+
+Both parts are map configuration, not style content: the module re-applies them on top of every style that [`setStyle`](./styles.mdx#dynamic-style-switching) loads, and a clean switch (`resetState: true`) turns them off. The sky above a tilted horizon is a [styling knob](./styling.mdx#globe-and-sky), `view.sky`.
+
+## Events
+
+The hillshade is a raster layer with no features to click or hover, so the module has lifecycle events only:
+
+```javascript
+terrain.events.on('config-change', (config) => {
+    console.log('Terrain config changed:', config);
+});
+```
+
+## API reference
+
+For complete documentation of all Terrain Module properties, methods, and types, see the **[TerrainModule API Reference](/maps-sdk-js/api-reference/classes/map.TerrainModule.html)**.
+
+## Related guides and examples
+
+### Related examples
+- **[3D terrain map](../../examples/3d-terrain)** - Terrain, hillshade, 3D buildings and Ljubljana Castle on its hill
+- **[Hillshade](../../examples/hillshade)** - Hillshade shading on a flat map
+- **[3D terrain playground](../../examples/terrain-playground)** - Terrain, sky and exaggeration that outlive a style switch
+- **[Globe and 3D terrain](../../examples/globe-terrain)** - A globe that zooms into 3D terrain
+- **[Route fly-over playground](../../examples/route-flyover-playground)** - A camera flying a mountain route, clear of the relief it crosses
+
+### Related map modules
+- **[Map styling](./styling.mdx)** - Globe projection and sky for a tilted view
+- **[Base map module](./base-map.mdx)** - 3D buildings on top of the terrain
