@@ -1,0 +1,107 @@
+---
+title: What the routing SDK adds
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.62.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The routing services, the map modules and the core types are one surface: every response is GeoJSON
+that the next call and the map take unchanged. This is what that buys you.
+
+<GuideDemo demo="routing-composite" />
+
+## What you get
+
+- **One function per job, across several endpoints** — `calculateRoute()` picks the right one and
+  keeps your parameters valid whichever it picks.
+- **Fields the API does not return**, computed from the ones it does.
+- **Eighteen section types drawn and styled by config**, not by layer specs.
+- **Every output is the next call's input** — no adapters, one API key.
+- **The MapLibre escape hatch stays open**: `map.mapLibreMap`, and a full layer spec per section
+  whenever you want one.
+
+## One function, two endpoints
+
+`calculateRoute()` serves both the regular routing endpoint and the long-distance EV one, picking
+between them on whether you passed `vehicle.preferences.chargingPreferences`.
+
+- **You never choose, and never have to detect which ran.**
+- **Parameter support is the intersection of both, never the union** — so adding charging
+  preferences cannot quietly stop another parameter being honoured.
+- Hand-written, this is two clients, and you learn which parameters the other endpoint ignores from
+  a customer reporting a wrong answer.
+
+## Fields the API does not return
+
+| Field | Why it is derived |
+|---|---|
+| `LegSummary.stopTimeInSeconds` | The API has no wait-time field. Time at a stop is only visible as the gap between one leg's `arrivalDateTime` and the next leg's `departureDateTime`, so it takes the leg *pair* to see it. Covers a requested wait, EV charging, or both at one stop. |
+| Route versus leg `travelTimeInSeconds` | The route total **includes** time at stops; per-leg values are driving-only. Comparing the two is how the stops become visible. |
+
+## Sections, drawn and styled
+
+A route can carry eighteen kinds of *section* — stretches with a property worth showing: traffic
+delays, tunnels, ferries, toll roads, low-emission zones, unpaved surfaces, speed limits and more.
+
+- **Leaving `sectionTypes` unset asks for all eighteen.** Naming a list narrows it, and a type you
+  leave out does not come back.
+- **`RoutingModule` draws them**, and restyling one is config rather than a layer spec:
+
+```ts
+const routing = await RoutingModule.create(map, {
+  sections: {
+    urban: { visible: true },
+    lowEmissionZone: { color: '#1B7A43', opacity: 0.8 },
+  },
+});
+```
+
+- **The stretches worth seeing at a glance draw themselves** — tunnels, ferries, toll roads,
+  traffic. `urban` is opt-in because it runs most of a route and would bury the line.
+- **What the module keeps right** is what rots in a hand-rolled version: z-order between the
+  selected route and its alternatives, surviving a `setStyle`, keeping two route modules on one map
+  from colliding, and hit-testing.
+
+## Every output is the next call's input
+
+Each step takes the previous step's response as it stands:
+
+```ts
+const waypoints = await Promise.all(['Munich, DE', 'Verona, IT'].map(geocodeOne));
+const routes = await calculateRoute({ locations: waypoints, vehicle: evVehicle });
+
+// The route feature goes straight into the search
+const alongRoute = await discoverPlaces({
+  filters: { poiCategories: ['CHARGING_LOCATION'] },
+  route: routes.features[0],
+  maxDetourTimeSeconds: 300,
+});
+
+// The destination waypoint goes straight into the range
+const ranges = await calculateReachableRanges([
+  { origin: waypoints.at(-1), budget: { type: 'timeMinutes', value: 20 } },
+]);
+```
+
+- **One key and one configuration** for all four calls, and the results go to the map modules
+  unchanged.
+- Written from scratch, that is four clients, four response shapes, and every join is yours.
+- The demo above is this chain, on a map.
+
+## Where a reachable range goes
+
+A reachable range is a polygon rather than a route, so `RoutingModule` does not draw it. Pass it to
+`ReachableRangesModule`, which titles each band from its budget and nests each origin's bands — see
+[Reachable ranges](./reachable-ranges.mdx#display-on-the-map).
+
+## Related guides and examples
+
+- [Route planning parameters](./parameters.mdx) — every parameter the three endpoints take.
+- [Long distance EV routing](./long-distance-ev-routing.mdx) — charging preferences, and the endpoint they switch on.
+- [Displaying routes](../../map/routes.mdx) — `RoutingModule`, section styling and route events.
+- [Routing Composite](../../../examples/routing-composite) — the four-service chain above.

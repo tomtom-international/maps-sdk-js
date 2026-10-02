@@ -1,0 +1,247 @@
+---
+title: Reachable ranges
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.62.0"
+  color: "grey5"
+- label: "PRIVATE PREVIEW"
+  color: "grey5"
+---
+
+<Button
+    label="Request Access"
+    href="https://www.tomtom.com/contact-sales/?source_app=docs-portal&source_product=calculate-reachable-range"
+    target="_blank">
+    Request Access
+</Button>
+
+<Blockquote type="warning">
+**Important note**
+Calculate Reachable Range is in Private Preview and unavailable on a Freemium or Pay As You Grow (PAYG) basis.
+Your API key needs access to it, and its API documentation requires a TomTom enterprise login.
+Click the **Request Access** button above to contact our Sales team.
+</Blockquote>
+
+`calculateReachableRanges` computes the geographic area reachable from a given origin within a specified budget — such as travel time, distance, or EV charge — and returns GeoJSON polygon features representing the reachable area for each budget value. Multiple budgets in a single call produce concentric rings.
+
+The demo below shows 10, 20 and 30 minutes of driving from two stations, drawn by
+`ReachableRangesModule` in the map's own colours; [Display on the map](#display-on-the-map) covers how.
+
+<GuideDemo demo="reachable-ranges-playground" />
+
+## Budget types
+
+Each call requires a `budget` that defines what constrains the reachable area:
+
+- `timeMinutes` – Area reachable within a given travel time (minutes)
+- `distanceKM` – Area reachable within a given distance (kilometres)
+- `remainingChargePCT` – Area reachable with at least X% charge remaining
+- `spentChargePCT` – Area reachable spending at most X% of charge
+- `spentFuelLiters` – Area reachable spending at most X litres of fuel
+
+`budgetTypes` lists them, as the `BudgetType` type does, and `budgetUnits` holds the unit each counts in.
+All three come from `@tomtom-org/maps-sdk/core`, so labelling a range of your own reads as the module's titles do:
+
+```ts
+import { budgetUnits } from '@tomtom-org/maps-sdk/core';
+
+const title = `${budget.value} ${budgetUnits[budget.type]}`; // '30 min', '20 % remaining'
+```
+
+Both charge budgets are a percentage of the battery, so they need a capacity to convert against
+(see [Vehicle Configuration](../../services/routing/vehicle.mdx)):
+
+- `vehicle.engineType: 'electric'` and `vehicle.model.engine.charging.maxChargeKWH`. A predefined
+  `model.variantId` keeps its battery model on the service, so budget a variant by time or distance.
+- For `remainingChargePCT`, also the charge the vehicle sets off with, in `vehicle.state`.
+
+## Example
+
+```typescript
+import { ReachableRangesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { calculateReachableRanges } from '@tomtom-org/maps-sdk/services';
+
+const origin: [number, number] = [4.9041, 52.3676];
+
+// Calculate three concentric time-budget rings
+const result = await calculateReachableRanges([
+    { origin, budget: { type: 'timeMinutes', value: 10 } },
+    { origin, budget: { type: 'timeMinutes', value: 20 } },
+    { origin, budget: { type: 'timeMinutes', value: 30 } },
+]);
+
+// result.features — one PolygonFeature per range the service could calculate, in request order
+// result.bbox     — bounding box covering all features
+// feature.properties — the request it was calculated with (origin, budget, …), minus the API key and other common service params
+
+// Display on map — labels ('30 min', '20 min', '10 min') applied automatically
+const map = new TomTomMap({ mapLibre: { container: 'map', center: origin, zoom: 9 } });
+const rangesModule = await ReachableRangesModule.create(map);
+await rangesModule.show(result);
+```
+
+## Display on the map
+
+`ReachableRangesModule` draws what `calculateReachableRanges` returns, unchanged:
+
+- **Titles.** Each band's border is labelled from its `budget`: `10 min`, `5 km`, `20% spent`. A
+  `title` function of your own replaces them.
+- **Origins.** Ranges are grouped by their `origin`, so one `show` can hold the bands of several
+  places, each nested around its own; a smaller band draws over the larger ones around it.
+- **Fill styles.** `fillStyle` is `'filled'` (default), `'outline'` or `'inverted'`, which shades
+  what lies **out** of reach: the world beyond the largest range, then a ring outside each smaller
+  one. See [fill styles](../../map/geometries.mdx#fill-styles).
+- **Layer position.** Below the map's labels unless `beforeLayerConfig` says otherwise.
+
+```typescript
+const origins: [number, number][] = [[4.9003, 52.3791], [5.1109, 52.0894]];
+const ranges = await ReachableRangesModule.create(map, { fillStyle: 'inverted' });
+await ranges.show(
+    await calculateReachableRanges(
+        origins.flatMap((origin) => [10, 20, 30].map((value) => ({ origin, budget: { type: 'timeMinutes', value } }))),
+    ),
+);
+
+ranges.updateConfig({ fillStyle: 'outline', label: { size: 13 } }); // restyles the bands shown
+ranges.updateConfig({ title: (feature, index) => `Zone ${index + 1}` });
+```
+
+The module is data-owned: each instance has its own sources and layers, so two can show two sets
+of ranges side by side, apart from any `GeometriesModule` on the same map.
+
+### Band colours
+
+Left to the map, the bands ramp from its [accent](../../map/styling.mdx#the-accent-what-a-theme-reaches-beyond-the-base-map)
+on the innermost band toward its land colour on the outermost, both read from `map.mapColors`.
+`'inverted'` ramps the other way, deepening away from the origin. On a map no theme has coloured,
+the ramp follows the style's light or dark side instead: navy `#0A3653` toward white on light
+styles, sky blue `#5FA8D8` toward `#333333` on dark ones, and it repaints when you switch between
+them. Theme the map and the bands repaint with it, such as with the
+[map-theme plugin](../../plugins/map-theme.mdx):
+
+```typescript
+import { StylingModule } from '@tomtom-org/maps-sdk/map';
+import { deriveMapColors } from '@tomtom-org/maps-sdk-plugin-map-theme';
+
+const styling = await StylingModule.get(map);
+styling.setMapColors(deriveMapColors(['#1d3f8a', '#e63312', '#f5d000', '#f4f1ea'])); // the bands follow
+```
+
+`palette` sets colours of your own instead, innermost band first, starting over after the last.
+No map colour change touches them, and an empty list hands the colours back to the map:
+
+```typescript
+ranges.applyConfig({ palette: ['#b3001b', '#e85d04', '#faa307'] });
+ranges.updateConfig({ palette: [] });
+```
+
+Bands are ranked per origin, so with several origins the ranges of the same rank share a colour.
+
+### Every setting as data
+
+`reachableRangesKnobCatalogue` lists every plain-valued setting of the module with its kind, its
+range or options and, where one value holds everywhere, its default. Each id is the setting's path
+in the config, so a panel can build its controls from it and set each with `setKnob`:
+
+```typescript
+import { reachableRangesKnobCatalogue, setKnob } from '@tomtom-org/maps-sdk/map';
+
+setKnob(ranges, reachableRangesKnobCatalogue, 'label.size', 13);
+```
+
+| Id | Kind |
+|---|---|
+| `visible`, `fillStyle`, `palette` | toggle, enum, colours |
+| `highlight.fillOpacityFactor`, `highlight.lineWidthFactor` | factor, 1 to 4 and 1 to 3 |
+| `label.size`, `label.color`, `label.haloColor`, `label.haloWidth`, `label.opacity`, `label.font` | number, colour, colour, number, number, enums |
+
+- `reachableRangesKnobIds` lists the ids in catalogue order, `ReachableRangesKnobId` is their
+  union, and `ReachableRangesKnobValueOf<ID>` the plain value one takes.
+- Not in it: `beforeLayerConfig` and `title`, which take structured or function values; and
+  `events`.
+- Its entries share their shape, `KnobEntry`, with every
+  [module's catalogue](../../map/modules.mdx#every-setting-as-data).
+
+## Ranges that can't be calculated
+
+`calculateReachableRanges` skips a range the service answers with an error rather than rejecting
+the batch. An origin the service can't match to a drivable road, such as a pedestrian square or a
+point on water, answers `NO_RANGE_FOUND`:
+
+- `result.features` can be shorter than the request array, or empty. Match each feature to its
+  request through `properties.budget` and `properties.origin`, and treat an empty result as "no
+  range from this origin".
+- `calculateReachableRange`, for a single range, rejects with that error instead.
+- A `401`, `403` or `429` response, an aborted signal and an invalid request reject the batch.
+
+## Cancelling a batch
+
+`calculateReachableRanges` takes one signal for the whole batch as its second argument. When a new
+origin replaces the previous one, run the batch through `createLatestRequest`, as the
+[reachable ranges example](../../../examples/reachable-ranges) does on every map click:
+
+```typescript
+import type { HasLngLat } from '@tomtom-org/maps-sdk/core';
+import { calculateReachableRanges, createLatestRequest } from '@tomtom-org/maps-sdk/services';
+
+const latestRanges = createLatestRequest();
+
+const showRanges = async (origin: HasLngLat) => {
+    const ranges = await latestRanges.run((signal) =>
+        calculateReachableRanges(
+            [10, 20, 30].map((value) => ({ origin, budget: { type: 'timeMinutes', value } })),
+            { signal },
+        ),
+    );
+    if (!ranges.current) return; // a newer origin retired this batch
+
+    await rangesModule.show(ranges.value);
+};
+```
+
+See [Keeping only the latest request](../request-options-and-errors.mdx#keeping-only-the-latest-request)
+for what a retired batch resolves to.
+
+<GuideDemo demo="reachable-ranges" />
+
+## Unsupported options
+
+The SDK rejects these routing parameters at the call, rather than returning a range computed
+without them:
+
+| Parameter | Use instead |
+|---|---|
+| `vehicle.state.heading` | Omit it, or use `calculateRoute`, which accepts it |
+| `vehicle.preferences.chargingPreferences` | Omit them, or use `calculateRoute`, which plans charging stops |
+| `costModel.avoid: 'alreadyUsedRoads'` | Drop that one entry — the other avoidables are accepted |
+| `costModel.avoidAreas` | Omit it; this endpoint cannot avoid areas |
+| `when.arriveBy` | Use `when.departAt`, or omit `when` entirely |
+
+The rest of `vehicle`, `costModel` and `when` works as it does in `calculateRoute`.
+
+## API reference
+
+- [calculateReachableRanges](/maps-sdk-js/api-reference/functions/services.calculateReachableRanges.html) – Service function
+- [ReachableRangeParams](/maps-sdk-js/api-reference/types/services.ReachableRangeParams.html) – Request parameters
+- [ReachableRangeProperties](/maps-sdk-js/api-reference/types/services.ReachableRangeProperties.html) – Properties of each result polygon
+- [ReachableRangesModule](/maps-sdk-js/api-reference/classes/map.ReachableRangesModule.html) – Displays the ranges on the map
+- [ReachableRangesModuleConfig](/maps-sdk-js/api-reference/types/map.ReachableRangesModuleConfig.html) – Its configuration
+- [Calculate Reachable Range API](https://developer.tomtom.com/routing-api/documentation/tomtom-orbis-maps/v3/calculate-reachable-range) – API documentation (requires an enterprise login)
+
+## Related guides and examples
+
+### Related guides
+
+- [Vehicle Configuration](../../services/routing/vehicle.mdx) – EV parameters for charge-based budgets
+- [Long Distance EV Routing](../../services/routing/long-distance-ev-routing.mdx) – Route calculation with charging stops
+- [Map modules](../../map/modules.mdx#reachable-ranges-module) – `ReachableRangesModule` beside the other data modules
+- [Geometries](../../map/geometries.mdx) – Polygons of your own, styled per feature rather than as bands
+- [Map theme plugin](../../plugins/map-theme.mdx) – The map colours the bands follow
+
+### Related examples
+
+- [Reachable ranges](../../../examples/reachable-ranges) – Ranges around the clicked point, by time, distance, fuel or charge
+- [Reachable ranges playground](../../../examples/reachable-ranges-playground) – Every knob of the module, and bands following a map theme
+- [Routing composite](../../../examples/routing-composite) – Ranges alongside a route and its places

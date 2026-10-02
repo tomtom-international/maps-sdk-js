@@ -1,0 +1,419 @@
+---
+title: Geometry module
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.62.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Geometry Module in the TomTom Maps SDK enables displaying and visualizing geographic shapes and polygons on maps. This module provides comprehensive functionality for rendering complex geometries, administrative boundaries, and custom geographic data with customizable styling.
+
+**What this module owns:** the fills, outlines and labels it draws, and how they look — the `color`, `fill`, `line`, label, fill style and palette configuration below. It never restyles the base map underneath, which belongs to the [Styling module](./styling.mdx), and styling knobs never touch geometry layers: geometries given no colour read the map's [accent](./styling.mdx#the-accent-what-a-theme-reaches-beyond-the-base-map) as their default. See [Who owns what](./modules.mdx#who-owns-what).
+
+<GuideDemo demo="multiple-geometries" />
+
+## Purpose and functionality
+
+The Geometry Module serves as the primary interface for:
+- **Displaying polygon geometries** from TomTom services and custom data
+- **Visualizing administrative boundaries** such as countries, states, and cities
+- **Rendering custom geographic shapes** with configurable styling options
+- **Managing geometry layers** with visibility controls and interaction handling
+- **Integrating geometry data** from search results and external sources
+
+## Core concepts
+
+### Geometry data types
+The module supports various types of geographic geometries:
+
+**Supported Geometry Types:**
+- **Polygons**: Closed shapes representing areas like administrative boundaries
+- **MultiPolygons**: Complex shapes with multiple disconnected areas
+- **Administrative boundaries**: Country, state, city, and district boundaries
+- **Custom shapes**: User-defined geographic areas and regions
+
+### Data sources
+Geometries can come from multiple sources:
+- **TomTom Geometry Data Service**: Official administrative boundaries and places
+- **Search results**: Geographic data from place searches
+- **Custom GeoJSON**: User-provided geometric data
+- **External APIs**: Third-party geographic data sources
+
+## Basic geometry display
+
+### Initializing geometry module
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { TomTomMap, GeometriesModule } from '@tomtom-org/maps-sdk/map';
+
+// Configure SDK and create map
+TomTomConfig.instance.put({ apiKey: 'YOUR_API_KEY' });
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+
+// Initialize geometry module with default styling
+const geometryModule = await GeometriesModule.create(map);
+```
+
+### Displaying administrative boundaries
+
+```javascript
+import { geocode, geometryData } from '@tomtom-org/maps-sdk/services';
+
+// Get geometry for a specific place
+const place = (await geocode({ query: 'Amsterdam, Netherlands' })).features[0];
+const geometryResponse = await geometryData({ geometries: [place] });
+
+// Display the geometry on the map
+await geometryModule.show(geometryResponse);
+```
+
+### Custom styling configuration
+
+One top-level `color` sets the fill and the border together:
+
+```javascript
+const geometryModule = await GeometriesModule.create(map, { color: '#E63312' });
+```
+
+The colours resolve in this order, first match wins:
+
+| Part | Precedence |
+|---|---|
+| Fill | a feature's own `color` property → `fill.color` → [`fill.palette`](#color-palettes) → `color` → the map's [accent](./styling.mdx#the-accent-what-a-theme-reaches-beyond-the-base-map) → the default |
+| Border | `line.color` → a feature's own `color` property → `fill.color` → `fill.palette` → `color` → the map's accent → the default |
+
+The accent applies when a theme sets one. The default adapts to the map style: navy `#0A3653` on
+light styles, sky blue `#5FA8D8` on dark ones. With [`fillStyle: 'outline'`](#fill-styles), the
+border ends on a neutral grey instead of the accent or the default.
+
+Fill and border are configured independently via `fill` and `line`. Each exposes concise
+curated fields for the common cases — `fill: { color, opacity }` (or a
+[`palette`](#color-palettes) of colours instead of one) and `line: { color, width, opacity }`:
+
+```javascript
+// Initialize with custom styling
+const geometryModule = await GeometriesModule.create(map, {
+    fill: {
+        color: '#007cbf',   // Fill color for polygons
+        opacity: 0.3        // Fill transparency
+    },
+    line: {
+        color: '#005a8b',   // Border color
+        width: 2,           // Border width
+        opacity: 0.8        // Border transparency
+    },
+    beforeLayerConfig: 'lowestLabel' // Layer positioning (below all labels)
+});
+```
+
+For border properties the curated fields don't cover, the `line.layer` escape hatch accepts a
+partial MapLibre [`LineLayerSpecification`](https://maplibre.org/maplibre-style-spec/layers/#line)
+(without `id`/`source`) and can set **any** line property — an inset/outset border
+(`line-offset`), a soft glow (`line-blur`), a dashed border (`line-dasharray`), a hollow casing
+(`line-gap-width`), `line-cap`, `line-join`, `line-pattern`, and more. The curated
+`color`/`width`/`opacity` fields take precedence over the same `paint` property set via `layer`:
+
+```javascript
+const geometryModule = await GeometriesModule.create(map, {
+    line: {
+        color: '#00A65E',
+        width: 2,
+        layer: {
+            paint: {
+                'line-offset': 2,          // Lateral offset in pixels (inset/outset border)
+                'line-blur': 4,            // Edge blur in pixels (glow/halo effect)
+                'line-dasharray': [2, 2],  // Dash pattern in line-width units ([dash, gap, …])
+                'line-gap-width': 3        // Hollow casing
+            },
+            layout: { 'line-cap': 'round' }
+        }
+    }
+});
+```
+
+## Advanced geometry features
+
+### Multiple geometry layers
+
+```javascript
+// Create multiple geometry modules for different data sets
+const countryGeometryModule = await GeometriesModule.create(map, {
+    fill: { color: '#ff6b6b', opacity: 0.2 },
+    line: { color: '#ff0000', width: 3 }
+});
+
+const cityGeometryModule = await GeometriesModule.create(map, {
+    fill: { color: '#4ecdc4', opacity: 0.4 },
+    line: { color: '#00a896', width: 2 }
+});
+
+// Display different geometry types
+await countryGeometryModule.show(countryBoundaries);
+await cityGeometryModule.show(cityBoundaries);
+```
+
+### Dynamic geometry management
+
+```javascript
+// Add and remove geometries dynamically
+const geometryModule = await GeometriesModule.create(map);
+
+// Show new geometry data
+async function displayGeometry(newGeometryData) {
+    await geometryModule.clear(); // Clear existing geometries
+    await geometryModule.show(newGeometryData);
+}
+```
+
+### Restyling shown geometries
+
+A config change reaches the geometries already on the map — their colours, fill style, labels and
+`transformFeaturesForDisplay` — without calling `show()` again. `applyConfig` replaces the whole
+config, so whatever it leaves out returns to the default; `updateConfig` changes only what it is
+given, and `resetConfig` returns to the defaults.
+
+```javascript
+await geometryModule.show(cityBoundaries);
+
+geometryModule.updateConfig({ fill: { palette: ['#e63312', '#f5a000'] }, fillStyle: 'outline' });
+geometryModule.updateConfig({ label: { text: ['get', 'name'] } }); // keeps the palette and fill style
+geometryModule.resetConfig(); // default colours, fill style and labels
+```
+
+### Hovered and clicked geometries
+
+Once a handler covers the geometries, the one under the pointer draws a denser fill and a wider
+border, in its own colour, and so does a clicked one. Put that state from your own UI with the
+module's [event state methods](./user-events.mdx#event-states):
+
+```javascript
+geometryModule.events.on('click', (geometry) => console.log(geometry.properties.name));
+geometryModule.putEventState({ id: 'amsterdam', state: 'click' });
+```
+
+`highlight` sets how much denser and wider, live on the geometry config playground:
+
+<GuideDemo demo="geometry-config-playground" />
+
+Unset, the fill opacity
+doubles, at most opaque, and the border width grows 1.75 times. The factors multiply whatever
+opacity and width are in force, a `fill.opacity` or `line.width` you configure included, and `1`
+draws a hovered geometry as any other, which is how to keep its look fixed:
+
+```javascript
+geometryModule.applyConfig({
+    fill: { opacity: 0.3 },
+    highlight: { fillOpacityFactor: 3, lineWidthFactor: 1 }, // 0.9 while hovered, the border as is
+});
+```
+
+A width you give the border through `line.layer` is drawn as given, in every state.
+
+### Showing and hiding
+
+`setVisible` hides and shows the fills, borders, center labels and border labels together, and
+`visible: false` at creation starts the module hidden. `show()` and `clear()` never change it:
+geometries shown while hidden appear on `setVisible(true)`, and the state survives a style change.
+
+```javascript
+// Toggle geometry visibility, keeping the data
+function toggleGeometry() {
+    geometryModule.setVisible(!geometryModule.isVisible());
+}
+```
+
+### Layer positioning and styling
+
+A single `beforeLayerConfig` positions all geometry layers together. To place the fill and
+border at **different** points in the stack, pass the record form `{ all?, fill?, line? }`: a part
+takes its own entry, else `all`, else its default place just below the geometry titles. `'top'`
+keeps the titles above everything else. `updateConfig({ beforeLayerConfig })` moves the layers by
+the same rules, so a part the new value names no target for goes back to its default place.
+
+```javascript
+const geometryModule = await GeometriesModule.create(map, {
+    fill: { color: '#87CEEB', opacity: 0.5 },
+    line: { color: '#4682B4', width: 1.5 },
+    // Fill slips below the road network while the border stays above the labels
+    beforeLayerConfig: { fill: 'lowestRoadLine', line: 'lowestLabel' }
+});
+```
+
+## Labels
+
+A center label is shown for each polygon whenever the feature carries a `title` property. `label`
+styles it; `lineLabel` repeats it along the border, and is drawn only when set (`{}` for the
+defaults). Both take a `text` — a string or a MapLibre expression, the feature's `title` when unset —
+and the same styling fields as every module's labels: `size`, `color`, `haloColor`, `haloWidth`,
+`opacity` and `font`. `lineLabel` adds `minZoom`, `symbolSpacing` and `offset`:
+
+```typescript
+const module = await GeometriesModule.create(map, {
+    label: { text: ['get', 'name'], size: 18, color: '#FFFFFF', haloColor: '#000000' },
+    lineLabel: { text: ['get', 'name'], minZoom: 10, size: 13, offset: [0, 1], symbolSpacing: 350 },
+});
+
+// Later: restyle the center labels of the shown geometries, keeping their other settings
+module.updateConfig({ label: { ...module.getConfig()?.label, size: 20 } });
+```
+
+Unset label fields keep colours that adapt to the map style: dark text with a white halo on light
+styles, the reverse on dark ones.
+
+## Fill styles
+
+The SDK supports three fill styles for polygon display:
+
+| Fill style | Effect |
+|---|---|
+| `'filled'` | Semi-transparent fill (default) |
+| `'outline'` | Transparent fill with a thick border |
+| `'inverted'` | Semi-transparent area **outside** the polygon |
+
+### Setting the fill style at config level
+
+The simplest way to apply a fill style is via the `fillStyle` option in `GeometriesModuleConfig`:
+
+```typescript
+import { GeometriesModule } from '@tomtom-org/maps-sdk/map';
+
+// Highlight "rest of the world" outside a country
+const module = await GeometriesModule.create(map, {
+    fillStyle: 'inverted',
+    fill: { color: 'black', opacity: 0.5 },
+});
+await module.show(countryGeometry);
+```
+
+Individual features can override the config-level fill style by setting `fillStyle` in their own properties.
+
+### Using `fillStyledGeometryConfig` for mixed fill styles
+
+When features in the same layer need **different** fill styles, use `fillStyledGeometryConfig({ palette?, beforeLayerConfig? })`. It returns a config with MapLibre expressions that read each feature's `fillStyle` property and apply the appropriate style:
+
+```typescript
+import { GeometriesModule, fillStyledGeometryConfig } from '@tomtom-org/maps-sdk/map';
+
+const module = await GeometriesModule.create(map, fillStyledGeometryConfig({ palette: ['#0077b6', '#90e0ef'] }));
+
+// Features carry their own fill style — styling adapts per feature
+await module.show({
+    type: 'FeatureCollection',
+    features: [
+        { ...featureA, properties: { fillStyle: 'filled', title: 'Zone A' } },
+        { ...featureB, properties: { fillStyle: 'outline', title: 'Zone B' } },
+    ],
+});
+```
+
+### Color palettes
+
+`fill.palette` is a list of CSS colours the features take in turn, starting over after the last, so neighbouring polygons stay apart without assigning a colour to each. An empty list counts as unset, and with no palette every feature draws in one colour: the map's [accent](./styling.mdx#the-accent-what-a-theme-reaches-beyond-the-base-map), or the default.
+
+To match a palette to the map, take it from the same colours the map is themed from: the [map-theme plugin](../plugins/map-theme.mdx)'s `deriveMapColors` returns them by role.
+
+```typescript
+import { fillStyledGeometryConfig, GeometriesModule } from '@tomtom-org/maps-sdk/map';
+import { deriveMapColors } from '@tomtom-org/maps-sdk-plugin-map-theme';
+
+const regions = await GeometriesModule.create(map, {
+    fill: { palette: ['#ffadad', '#ffd6a5', '#caffbf', '#a0c4ff'], opacity: 0.3 },
+});
+
+// fillStyledGeometryConfig takes it as its `palette` option
+const { accent, water, roadMajor } = deriveMapColors(['#1d3f8a', '#e63312', '#f5d000', '#f4f1ea']);
+const zones = await GeometriesModule.create(map, fillStyledGeometryConfig({ palette: [accent, water, roadMajor] }));
+```
+
+`fill.color` takes a colour or an expression, `fill.palette` a list of colours; where each sits in the order is the [precedence table](#custom-styling-configuration) above.
+
+Reachable ranges have a module of their own, `ReachableRangesModule`, which titles each band from its budget, nests each origin's bands and colours them from the map. See [Reachable Ranges](../services/routing/reachable-ranges.mdx#display-on-the-map).
+
+## Every setting as data
+
+`geometriesKnobCatalogue` lists every plain-valued display setting of the module with its kind, its
+range or options and, where one value holds everywhere, its default. Each id is the setting's path
+in the config, so a UI can build its controls from it, with no map loaded:
+
+```javascript
+import { geometriesKnobCatalogue } from '@tomtom-org/maps-sdk/map';
+
+const borderKnobs = geometriesKnobCatalogue.filter(({ id }) => id.startsWith('line.'));
+// [{ id: 'line.color', kind: 'color', description: '…' }, …,
+//  { id: 'line.width', kind: 'number', description: '…', range: { min: 0, max: 20, step: 0.5, bounds: 'hard-min' } }]
+```
+
+| Id | Kind |
+|---|---|
+| `color`, `visible`, `fillStyle` | colour, toggle, enum |
+| `fill.color`, `fill.palette`, `fill.opacity` | colour, colours, number |
+| `line.color`, `line.opacity`, `line.width` | colour, number, number |
+| `highlight.fillOpacityFactor`, `highlight.lineWidthFactor` | factor, 1 to 4 and 1 to 3 |
+| `label.size`, `label.color`, `label.haloColor`, `label.haloWidth`, `label.opacity`, `label.font` | number, colour, colour, number, number, enums |
+| `lineLabel.size`, `lineLabel.color`, `lineLabel.haloColor`, `lineLabel.haloWidth`, `lineLabel.opacity`, `lineLabel.font`, `lineLabel.minZoom`, `lineLabel.symbolSpacing`, `lineLabel.offset` | the label knobs, then number, number, offset |
+
+- Opacities and widths have no `default` entry where the [fill style](#fill-styles) decides it, and
+  colours none where the accent or the map style does.
+- Setting any `lineLabel` knob draws the border labels.
+- A `font` knob's options are `mapFonts`; its order matters, since the first font the map has wins.
+- `lineLabel.offset` is in ems, x along the line and y across it, `[0, 1]` unless set.
+- `geometriesKnobIds` lists the ids in catalogue order, `GeometriesKnobId` is their union, and
+  `GeometriesKnobValueOf<ID>` the plain value one takes.
+- Not in it: `beforeLayerConfig`, the border line's full MapLibre layer, the labels' `text`, and
+  `transformFeaturesForDisplay`, which take structured, MapLibre or function values; and `events`.
+- Its entries share their shape, `KnobEntry`, with every
+  [module's catalogue](./modules.mdx#every-setting-as-data).
+
+## Multiple module instances
+
+You can create multiple independent instances of the Geometry module, each with its own configuration and styling. This is useful for displaying different geometry layers with distinct visual styles.
+
+```javascript
+// Create separate instances for different geometry types
+const countryBorders = await GeometriesModule.create(map, {
+    fill: { color: '#E74C3C', opacity: 0.2 },
+    line: { color: '#C0392B', width: 3 }
+});
+
+const cityBounds = await GeometriesModule.create(map, {
+    fill: { color: '#3498DB', opacity: 0.3 },
+    line: { color: '#2980B9', width: 2 }
+});
+
+// Each instance manages its own geometries independently
+await countryBorders.show(countryData);
+await cityBounds.show(cityData);
+```
+
+## Reading shown data
+
+Use `getShown()` to retrieve the geometries currently displayed on the map. This returns the exact data previously passed to `show()`:
+
+```javascript
+const shown = geometriesModule.getShown();
+console.log(`Geometries: ${shown.geometry.features.length}`);
+```
+
+## Related guides and examples
+
+### Services integration
+- **[Geometry Data Service](../services/places/geometry-data.mdx)** - Fetch detailed boundary and shape data for administrative areas and places
+- **[Search Services](../services/places/search.mdx)** - Find places and administrative areas that have associated geometry data
+
+### Related examples
+- **[Basic Geometry](../../examples/basic-geometry)** - Simple geometry display and styling examples
+- **[Multiple Geometries](../../examples/multiple-geometries)** - Working with multiple geometry layers and data sets
+- **[Multiple Geometry Modules](../../examples/multiple-geometry-modules)** - Advanced geometry module management and organization
+- **[Geometry Config Playground](../../examples/geometry-config-playground)** - Fill and border colours, layer-stack positions, visibility and the clicked look
+- **[Places in Geometry](../../examples/places-in-geometry)** - Combining geometry boundaries with place markers
+- **[Geometry Search Playground](../../examples/geometry-search-playground)** - Interactive geometry-based search and discovery
+
+### Related map modules
+- **[Places Module](./places.mdx)** - Display places and POIs within or related to geometric boundaries
+- **[Routing Module](./routes.mdx)** - Show routes that intersect or travel through geometric areas
+- **[User Interaction Events](./user-events.mdx)** - Handle user interactions with geometric shapes and boundaries

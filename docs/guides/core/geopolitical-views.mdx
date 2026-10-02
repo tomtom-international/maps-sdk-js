@@ -1,0 +1,97 @@
+---
+title: Geopolitical views
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.62.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+Borders, names and addresses are disputed in many places, and what is correct depends on who is looking. A geopolitical view picks whose perspective the SDK shows: the borders and names the map draws, and the country a search or reverse geocoding result reports. One setting drives both, so the map and your results never contradict each other.
+
+Pick a territory and a view below: the borders redraw, and the address of the pinned place follows.
+
+<GuideDemo demo="geopolitical-views-playground" />
+
+## Supported views
+
+`geopoliticalViews`, exported from the Core bundle, lists every view as the `GeopoliticalView` type:
+
+| View | Perspective |
+| --- | --- |
+| `Unified` | International: disputed borders drawn as disputed |
+| `AE` | Arabic: Bahrain, Kuwait, Oman, Qatar, Saudi Arabia and the United Arab Emirates |
+| `AR`, `BN`, `CL`, `CN`, `DZ`, `IL`, `IN`, `KR`, `MA`, `MY`, `PH`, `PK`, `RS`, `RU`, `TR`, `TW`, `US`, `VN` | The country with that ISO 3166-1 code |
+
+A few of what the views change:
+
+- **`IN`, `PK`, `CN`**: the borders of Kashmir, Aksai Chin and Arunachal Pradesh, and the country of their addresses.
+- **`MA`, `DZ`**: Western Sahara, as part of Morocco or as a territory of its own.
+- **`KR`**: the East Sea and Dokdo. **`US`**: the Gulf of America. **`AE`**: the Arabian Gulf.
+- **`VN`, `PH`, `MY`**: the Paracel and Spratly Islands.
+
+Not every TomTom API serves every view:
+
+| API | Views it does not serve |
+| --- | --- |
+| Map vector tiles | `CN`, `RU` |
+| Search, place details, reverse geocoding | `KR`, `US` |
+| Geocoding | `AE`, `BN`, `CL`, `DZ`, `KR`, `MY`, `PH`, `US`, `VN` |
+
+The SDK leaves a view out of the requests to an API that does not serve it, so the call still succeeds, in that API's default view (see below).
+
+## Setting the view
+
+Set the view once in the [global configuration](./global-config.mdx), and it applies to the map and to every service call:
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+
+TomTomConfig.instance.put({ apiKey: 'YOUR_API_KEY', geopoliticalView: 'IN' });
+```
+
+Like every global option, a map or a single call can override it:
+
+```javascript
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { reverseGeocode } from '@tomtom-org/maps-sdk/services';
+
+const map = new TomTomMap({ mapLibre: { container: 'map' }, geopoliticalView: 'PK' });
+
+const address = await reverseGeocode({ position: [74.31, 35.92], geopoliticalView: 'Unified' });
+```
+
+### When no view is set
+
+With no view, each TomTom API applies the default view for the country the request comes from, as local law there requires. Requests from India are served only the `IN` view, whatever view you set.
+
+## Switching the view on a map
+
+`setGeopoliticalView` changes the view of a map that is already showing:
+
+```javascript
+map.setGeopoliticalView('IN');
+
+// Back to the default view for the viewer's country
+map.setGeopoliticalView(undefined);
+```
+
+- The visible tiles reload in place: the camera, the style and every module stay as they are.
+- The view persists across [style changes](../map/styles.mdx), like the map language.
+- It applies to the TomTom Orbis vector tiles, those of a custom style included.
+- It changes the map only. To move services to the same view, put it in the global configuration too:
+
+```javascript
+TomTomConfig.instance.put({ geopoliticalView: 'IN' });
+map.setGeopoliticalView('IN');
+```
+
+## Related guides and examples
+
+- [Global configuration](./global-config.mdx)
+- [TomTomMap](../map/tomtom-map.mdx)
+- [Reverse geocoding](../services/places/reverse-geocoding.mdx)
+- [Geopolitical views playground](../../examples/geopolitical-views-playground)

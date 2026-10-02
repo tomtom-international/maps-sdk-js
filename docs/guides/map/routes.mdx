@@ -1,0 +1,789 @@
+---
+title: Routing module
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.62.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Routing Module enables displaying calculated routes and waypoints on maps with comprehensive functionality for visualizing navigation routes, alternative routes, turn-by-turn guidance, traffic incidents that occur along the calculated path, and route-related interactions.
+
+**What this module owns:** the route lines, waypoints, section overlays, instruction arrows and summary bubbles it draws, and how they look — the `color`, `width`, `waypointSize` and `layers` configuration below. It never restyles the roads underneath, which belong to the [Styling module](./styling.mdx). A route given no `color` reads the map's [accent](./styling.mdx#the-accent-what-a-theme-reaches-beyond-the-base-map) as its default, and its traffic sections follow the `traffic.incidents.*Color` knobs ([Borrowed looks](./styling.mdx#borrowed-looks)). No other knob reaches route layers. See [Who owns what](./modules.mdx#who-owns-what).
+
+<GuideDemo demo="route" />
+
+## Initialization
+
+```javascript
+import { TomTomMap, RoutingModule } from '@tomtom-org/maps-sdk/map';
+
+// Initialize map
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+
+// Initialize Routes module with default configuration
+const routingModule = await RoutingModule.create(map);
+
+// Or with custom configuration
+const routingModule = await RoutingModule.create(map, {
+    displayUnits: {
+        distance: { type: 'metric' }
+    },
+    waypoints: {
+        entryPoints: 'main-when-available'
+    }
+});
+```
+
+Without `displayUnits`, the labels follow the global units (`TomTomConfig.instance.put({ displayUnits })`)
+in force when they are drawn: a change reaches routes already shown on their next `showRoutes` or
+configuration change. `getConfig()` returns only what you passed, never the global units.
+
+## Displaying routes
+
+Display calculated routes on the map:
+
+```javascript
+import { calculateRoute, geocodeOne } from '@tomtom-org/maps-sdk/services';
+
+// Calculate a route with coordinates
+const route = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676], // Amsterdam
+        [4.4777, 51.9244]  // Rotterdam
+    ],
+});
+
+// Or calculate a route with geocoded locations
+const waypoints = await Promise.all([
+    geocodeOne('Amsterdam, Netherlands'),
+    geocodeOne('Rotterdam, Netherlands')
+]);
+
+const routes = await calculateRoute({ locations: waypoints });
+
+// Show the route
+await routingModule.showRoutes(route);
+```
+
+> **Note:** `showRoutes` draws the route line but does **not** show waypoint markers (start, stop, destination pins). Call `showWaypoints` separately to display them — see [Waypoints](#waypoints) below.
+
+## Displaying guidance on map
+
+Request guidance instructions when calculating a route to show them visually:
+
+```javascript
+import { calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+const route = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676], // Amsterdam
+        [4.4777, 51.9244]  // Rotterdam
+    ],
+    guidance: {
+        type: 'coded'
+    }
+});
+
+// Display route with guidance on map
+await routingModule.showRoutes(route);
+```
+
+## Route selection
+
+Change which route appears as selected when displaying multiple routes:
+
+```javascript
+import { calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+// Calculate route with alternatives
+const routes = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676], // Amsterdam
+        [4.4777, 51.9244]  // Rotterdam
+    ],
+    maxAlternatives: 2,
+});
+
+// Show the routes (first route selected by default)
+await routingModule.showRoutes(routes);
+
+// Show the routes with specific selection
+await routingModule.showRoutes(routes, { selectedIndex: 1 });
+
+// Switch to second route
+await routingModule.selectRoute(1);
+
+// Switch back to first route
+await routingModule.selectRoute(0);
+```
+
+## Waypoints
+
+`showRoutes` only draws route lines — waypoint markers (start, stop, and destination pins) are **not** included. You must call `showWaypoints` separately:
+
+```javascript
+const locations = [
+    [4.9041, 52.3676], // Amsterdam
+    [4.4777, 51.9244]  // Rotterdam
+];
+
+const route = await calculateRoute({ locations });
+
+// Draw the route line
+await routingModule.showRoutes(route);
+
+// Waypoint markers must be shown separately
+await routingModule.showWaypoints(locations);
+
+// Clear waypoints independently from routes
+await routingModule.clearWaypoints();
+```
+
+A stop's pin is labelled with its name, and — when the stop carries a `pauseDurationSeconds` — with
+how long the route waits there:
+
+```javascript
+const locations = [
+    [2.1734, 41.3851],
+    {
+        type: 'Feature',
+        geometry: { type: 'Point', coordinates: [2.4467, 41.5381] },
+        // the pin reads "30 min" under the stop name
+        properties: { pauseDurationSeconds: 30 * 60 }
+    },
+    [2.8214, 41.9794]
+];
+
+await routingModule.showRoutes(await calculateRoute({ locations }));
+await routingModule.showWaypoints(locations);
+```
+
+The wait is formatted with the SDK's display units, and the label is the `routeWaypointLabel` layer —
+restyle or replace it through `layers.waypoints.routeWaypointLabel` like any other routing layer.
+
+Charging stop pins say the same thing in the same way: their label carries the whole time spent at
+the stop, which is the charging plus any wait asked for at the same place. A label that wants only
+the charging part can still read `chargingDuration`:
+
+```javascript
+const routingModule = await RoutingModule.create(map, {
+    chargingStops: { label: { title: ['format', ['get', 'chargingDuration'], {}] } }
+});
+```
+
+For more control over marker appearance and behavior (custom icons, popups, click handlers), use the [Places Module](../map/places.mdx) to render waypoints as place markers instead.
+
+## Showing and hiding
+
+`setVisible(false)` hides everything the module draws (route lines, waypoints, sections, guidance,
+charging stops, summary bubbles and border crossings) and keeps what it shows. `showRoutes`,
+`showWaypoints`, the clear methods and a style change leave a hidden module hidden, and
+`setVisible(true)` draws the routes and waypoints it holds again:
+
+```javascript
+const routingModule = await RoutingModule.create(map, { visible: false }); // starts hidden
+await routingModule.showRoutes(route);   // kept, not drawn
+routingModule.setVisible(true);          // draws the route
+routingModule.isVisible();               // true
+```
+
+It is the config's `visible`, so `isVisible()` reads the setting back and `config-change` reports
+it. While the module is shown, each part's own `visible` (`sections.<type>.visible`,
+`summaryBubbles.visible`, …) still decides whether that part draws. The
+[route style playground](../../examples/route-styling-playground) toggles it.
+
+## Custom styling
+
+Customize route appearance through the top-level `color`, `width` and `waypointSize` for the whole
+route, `waypoints.label` for the waypoint labels, or `layers` per layer, all live on the route style
+playground:
+
+<GuideDemo demo="route-styling-playground" />
+
+```javascript
+import { RoutingModule } from '@tomtom-org/maps-sdk/map';
+
+const routingModule = await RoutingModule.create(map, {
+    color: '#DF1B12',        // the route line, its outline (a darker shade) and the waypoint pins
+    width: 'l',              // 's' | 'm' | 'l'
+    widthFactor: 1.2,        // multiplies the preset, 0.5 to 2
+    waypointSize: 's',       // 's' | 'm' | 'l'
+    waypointSizeFactor: 1.5  // multiplies the preset, 0.5 to 2
+});
+```
+
+A factor composes with its preset rather than replacing it, and is clamped to the range published
+as `ROUTE_WIDTH_FACTOR_RANGE` and `ROUTE_WAYPOINT_SIZE_FACTOR_RANGE`. The instruction arrows keep
+one size across the `width` presets and follow only `widthFactor`; the stop numbers scale with
+their pins, preset and factor alike. The waypoint labels follow the map's light/dark theme, like
+the labels of places and geometries: dark text on a white halo on a light map, the two swapped on
+a dark one. `waypoints.label` sets their colour, halo and size, as `label` does for places.
+
+```javascript
+// Override paint properties on specific route layers.
+// Each entry under `layers` is keyed by layer group (mainLines, sections, …),
+// and each layer accepts partial `paint`/`layout` overrides that are merged
+// onto the SDK defaults.
+const routingModule = await RoutingModule.create(map, {
+    layers: {
+        mainLines: {
+            routeLine: {
+                paint: {
+                    'line-color': '#FF0000', // Red main route line
+                    'line-width': 6
+                }
+            }
+        }
+    }
+});
+```
+
+`color` colours the route line, its outline and the waypoint icons in one go. Leave it out and routes take the map's [accent](./styling.mdx#the-accent-what-a-theme-reaches-beyond-the-base-map) when a theme sets one, and the SDK's route blue otherwise:
+
+```javascript
+const brandedRoutes = await RoutingModule.create(map, { color: '#DF1B12' }); // stays red through any theme
+const themedRoutes = await RoutingModule.create(map); // follows map.mapColors.accent
+```
+
+### Every setting as data
+
+`routingKnobCatalogue` lists every plain-valued display setting of the module with its kind, its
+range or options and, where one value holds everywhere, its default. Each id is the setting's path
+in the config, so a UI can build its controls from it, with no map loaded:
+
+```javascript
+import { routingKnobCatalogue } from '@tomtom-org/maps-sdk/map';
+
+const tunnelKnobs = routingKnobCatalogue.filter(({ id }) => id.startsWith('sections.tunnel.'));
+// [{ id: 'sections.tunnel.visible', kind: 'toggle', description: '…', default: true }, …,
+//  { id: 'sections.tunnel.style', kind: 'enum', description: '…', options: ['halo', 'inline'], default: 'inline' }, …]
+```
+
+The route-wide knobs come first, then each [section type](#route-sections)'s, `<type>` standing for
+any of `drawnSectionTypes`:
+
+| Id | Kind |
+|---|---|
+| `visible` | toggle |
+| `color` | color |
+| `width`, `waypointSize` | enum: `s`, `m` or `l` |
+| `widthFactor`, `waypointSizeFactor` | factor, 0.5 to 2 |
+| `highlight.outlineWidthFactor` | factor, 1 to 1.25 |
+| `waypoints.icon.style.fillColor`, `waypoints.icon.style.outlineColor` | color |
+| `waypoints.icon.style.outlineOpacity` | number, 0 to 1 |
+| `waypoints.label.color`, `waypoints.label.haloColor` | color |
+| `waypoints.entryPoints` | enum |
+| `displayUnits.distance.type` | enum |
+| `displayUnits.distance.kilometers`, `displayUnits.distance.meters`, `displayUnits.distance.miles`, `displayUnits.distance.feet`, `displayUnits.distance.yards` | text |
+| `displayUnits.time.hours`, `displayUnits.time.minutes` | text |
+| `chargingStops.visible`, `chargingStops.label.visible`, `summaryBubbles.visible` | toggle |
+| `countryCrossings.visible` | toggle |
+| `countryCrossings.minZoom` | number, 0 to 22 |
+| `countryCrossings.color`, `countryCrossings.textColor` | color |
+| `countryCrossings.alignment` | enum |
+| `sections.<type>.visible` | toggle |
+| `sections.<type>.color` | color |
+| `sections.<type>.opacity` | number, 0 to 1 |
+| `sections.<type>.width` | enum: `s`, `m` or `l` |
+| `sections.<type>.widthFactor` | factor, 0.5 to 2 |
+| `sections.<type>.style`, `sections.<type>.pattern` | enum |
+| `sections.<type>.icon.image` | image |
+| `sections.<type>.icon.placement` | enum |
+| `sections.<type>.icon.sizeFactor` | factor, 0.25 to 2 |
+| `sections.speedLimit.sign.placement`, `sections.speedLimit.sign.priority`, `sections.speedLimit.sign.unit` | enum |
+| `sections.speedLimit.sign.minZoom` | number, 0 to 22 |
+
+- A section type lists only the knobs it answers to: `speedLimit` takes only `visible` and `sign`,
+  and `traffic`, which colours its line by delay, has no `color`, `pattern` or `icon` entry.
+- `routingKnobIds` lists the ids in catalogue order, `RoutingKnobId` is their union, and
+  `RoutingKnobValueOf<ID>` the plain value one takes.
+- The unit labels after distances and durations are `text` entries with no default. A `displayUnits`
+  knob left unset takes its value from the [global configuration](../core/global-config.mdx).
+- Not in it: `layers`, `beforeLayerConfig` and the charging stop icons and title, which take
+  structured or MapLibre values, and `events`.
+- Its entries share their shape, `KnobEntry`, with every [module's catalogue](./modules.mdx#every-setting-as-data).
+
+### Layer positioning
+
+By default the route lines sit below the map's labels, and most route icons above them.
+`beforeLayerConfig` moves them: one target for the whole route — `'top'` or a key of
+`mapStyleLayerIDs` — or a record keyed by part, plus `all` for the parts it leaves out:
+
+- `mainLines` — the route lines, and every section line drawn with them.
+- `instructionLines` — the guidance lines and their arrows, above the route lines by default.
+- `icons` — waypoints, summary bubbles, charging stops, border crossings and section icons. A target
+  puts them all beneath it, the section icons and tunnel sign that sit below the labels by default
+  lowest.
+
+```javascript
+// Route lines under the road network; instruction lines and icons stay where they are
+routingModule.updateConfig({ beforeLayerConfig: { mainLines: 'lowestRoadLine' } });
+```
+
+Each part keeps its own layers in order wherever it goes, and `applyConfig` or `updateConfig`
+restacks them at runtime. A target the style lacks — the satellite style has no `lowestRoadLine` —
+puts the part on top. `getLayerToRenderLinesUnder()` follows `mainLines`, and returns `undefined`
+when the lines are on top.
+
+Section signs are not a part: their [`priority`](#speed-limits-are-posted-not-banded) settles which
+symbols they give way to, wherever the parts are.
+
+### Charging stop icons
+
+Long-distance EV routes place a charging stop at the end of each leg. Supply your own sprites with
+`chargingStops.icon.customIcons`, then pick one per stop with `mapping`:
+
+```javascript
+const routingModule = await RoutingModule.create(map, {
+  chargingStops: {
+    icon: {
+      customIcons: [
+        { id: 'slow-charger', image: chargerSlowSVG },
+        { id: 'fast-charger', image: chargerFastSVG, offsetX: 0, offsetY: -10 }
+      ],
+      mapping: {
+        basedOn: 'chargingSpeed',
+        value: { slow: 'slow-charger', regular: 'slow-charger', fast: 'fast-charger', 'ultra-fast': 'fast-charger' }
+      }
+    }
+  }
+});
+```
+
+`mapping` can also be `{ basedOn: 'custom', fn: (stop) => spriteID }` for any other rule, and it
+works without `customIcons` if you only want to point at sprites the style already ships.
+
+`offsetX`/`offsetY` (pixels) shift an icon from its coordinate, for icons whose visual tip isn't at
+their own geometric bottom. Positive `offsetX` moves right, positive `offsetY` moves down. They
+only apply to a `customIcons` entry that also provides an `image` — an entry naming an existing
+sprite by `id` alone ignores them.
+
+## Route sections
+
+`showRoutes()` draws a separate overlay for each stretch of road the response describes: urban
+stretches, motorways, low-emission zones, tunnels, ferries, traffic jams, toll roads and so on.
+Every one of them is configured under `sections`, keyed by section type, on the same set of knobs.
+
+```javascript
+const routingModule = await RoutingModule.create(map, {
+    sections: {
+        urban: { visible: true },                                            // draw a type nothing draws by default
+        lowEmissionZone: { color: '#1B7A43', opacity: 0.8 },                 // deepen the green of one that is
+        tunnel: { color: '#402060', style: 'halo' },                         // restyle one that is drawn already
+        tollRoad: { icon: { image: 'poi-toll_plaza', placement: 'along' } },  // put an icon on another
+        traffic: { visible: false }                                          // and drop one
+    }
+});
+```
+
+Whether a type is drawn when you configure nothing is per type, and follows one rule: a type draws
+itself when its stretches are **sparse** along a route and **consequential** for the driver.
+`carTrain`, `ferry`, `lowEmissionZone`, `tollRoad`, `tollVignette`, `traffic`, `tunnel` and
+`vehicleRestricted` qualify — money to pay, a permit to hold, a road the vehicle may not use, or the
+vehicle going onto a train — and switch off with `{ visible: false }`.
+
+`speedLimit` draws itself too, and it is the one type that does so while running nearly a route's
+whole length — it can, because it posts a sign per section rather than banding the route. See
+below.
+
+The other six are **opt-in** and switch on with `{ visible: true }`. `motorway` and `urban` each
+run nearly a route's whole length, so a band drawn for them says nothing and buries the route line
+— and both are already legible from the base map underneath.
+
+`sectionDrawsByDefault(type)` reports which side of that a type falls on, for a UI that shows the
+types as switches. Reading the map instead cannot answer it: a route carrying no ferry sections
+draws no ferry layer, so an absent layer looks the same as a type switched off.
+
+The knobs:
+
+| Knob | What it does |
+|---|---|
+| `visible` | Whether the section is drawn at all. |
+| `color` | Line colour. On a type drawn with more than one line, this sets the principal one and the rest are derived from it. |
+| `sign` | The road sign a section posts its own value on, for the one type drawn that way: `speedLimit` — see below. |
+| `opacity` | Line opacity, 0 to 1. |
+| `width` | Line width preset, `s`, `m` or `l`. Defaults to the route's own width. |
+| `widthFactor` | Multiplier over `width`, 0.5 to 2 (`ROUTE_WIDTH_FACTOR_RANGE`). Defaults to the route's own `widthFactor`. |
+| `style` | `halo` or `inline` — see below. |
+| `pattern` | `solid`, `dashed` or `dotted`. |
+| `icon` | An icon on the section: `{ image, placement, sizeFactor }`, where `image` is a sprite id, `placement` is `center` or `along`, and `sizeFactor` multiplies the size the type draws its icon at, 0.25 to 2 (`SECTION_ICON_SIZE_FACTOR_RANGE`). On `ferry`, `tollRoad`, `tunnel` and `vehicleRestricted` it replaces the icon they draw where each section starts — see [tunnel and closed-road signs](#tunnels-and-closed-roads-post-a-sign-where-they-start). |
+
+`style` chooses between the two ways a section can mark a stretch of the route, and sets both the
+layer order and the width, since neither reads as intended without the other:
+
+- `halo` puts the section **beneath** the route's own lines and **wider** than its outline, so it
+  shows as a band hugging the route on both sides. The route keeps its colour. This is the default
+  for the ten generated types that band the route and for `tollRoad` — so a low-emission zone reads
+  as a green outline around the route.
+- `inline` puts the section **over** the route line at the **route's own width**, so the route
+  itself appears in the section's colour along that stretch. This is the default for `ferry`,
+  `traffic`, `tunnel` and `vehicleRestricted` — it is why a route goes grey through a tunnel.
+
+Switching a type's `style` at runtime restacks its layers, so `applyConfig` is enough to move a
+section from one side of the route line to the other.
+
+Not every type answers to every knob, and which knobs a type takes is part of its type: `traffic`
+colours its line by `magnitudeOfDelay` and takes its icons from the incident data, so
+`sections.traffic.color` does not compile rather than compiling and drawing nothing. `speedLimit`
+draws no line at all, so it takes `visible` and `sign` and none of the line knobs. For a UI that
+builds controls from a section type, `sectionSupportsKnob(type, knob)` answers the same question at
+runtime.
+
+The types covered: `carpool`, `carTrain`, `ferry`, `importantRoadStretch`, `lowEmissionZone`,
+`motorway`, `pedestrian`, `speedLimit`, `tollRoad`, `tollVignette`, `traffic`, `tunnel`, `unpaved`,
+`urban` and `vehicleRestricted` — every one live on the
+[route sections playground](../../examples/route-sections-playground).
+
+When the knobs are not enough, the full layer spec is reachable under `layers.sections`, keyed by
+the same types. For the generated types the layer id is derived from the section type, so
+`motorway` is drawn by `routeSectionMotorwayLine` and `speedLimit` by `routeSectionSpeedLimitSign`:
+
+```javascript
+const routingModule = await RoutingModule.create(map, {
+    layers: {
+        sections: {
+            motorway: {
+                routeSectionMotorwayLine: {
+                    paint: { 'line-color': '#1F6FB2', 'line-dasharray': [2, 1] }
+                }
+            },
+            tunnel: {
+                routeTunnelLine: { paint: { 'line-blur': 2 } }
+            }
+        }
+    }
+});
+```
+
+A `traffic` section is drawn in the colour of its delay (minor, moderate or major), and those
+colours follow the map's incident colour knobs: see [Borrowed looks](./styling.mdx#borrowed-looks).
+
+### Tunnels and closed roads post a sign where they start
+
+`tunnel` and `vehicleRestricted` post a road sign where each of their sections starts, in the
+direction of travel. A `vehicleRestricted` stretch is one the requested vehicle is not permitted to
+use, which the route still takes. Asking for the sections is all it takes:
+
+```javascript
+const routes = await calculateRoute({ locations, sectionTypes: ['tunnel', 'vehicleRestricted'] });
+await routingModule.showRoutes(routes);
+```
+
+- **The tunnel sign**, a white portal on a blue tile, is context: it sits under the map's labels and
+  drops out where space is short.
+- **The "closed to vehicles" sign**, an empty red ring, is something to act on: it sits just under
+  the traffic icons and wins the space over the ferry icons, the map's labels and, at their default
+  `sign.priority`, the speed limit signs.
+
+Both draw from zoom 10 on the selected route, and scale with the zoom as the speed limit signs do.
+The section knobs reach them: `{ visible: false }` drops the sign with the rest of the section, and
+`icon` replaces it with a sprite image.
+
+The sign layers themselves are `routeTunnelSymbol` and `routeVehicleRestrictedSymbol`, under
+`layers.sections`. They take any MapLibre layer property but `visibility`, which the module sets
+itself each time it shows a route:
+
+```javascript
+const routingModule = await RoutingModule.create(map, {
+    layers: {
+        sections: {
+            tunnel: { routeTunnelSymbol: { minzoom: 13 } },                    // post tunnel signs only close in
+            vehicleRestricted: { routeVehicleRestrictedSymbol: { minzoom: 8 } } // post the closed sign earlier
+        }
+    }
+});
+```
+
+A click on a sign reaches the same scope as a click on its stretch, and hands over the section:
+
+```javascript
+routingModule.events.vehicleRestricted.on('click', (section) => {
+    console.log('Closed to vehicles from route point', section.properties.startPointIndex);
+});
+```
+
+Both signs are live on the [route sections playground](../../examples/route-sections-playground),
+where clicking the `tunnel` or `vehicleRestricted` count flies to the next sign.
+
+### Speed limits are posted, not banded
+
+`speedLimit` is the one type whose information is a number rather than a stretch, and it is drawn
+accordingly: the module posts a **road sign per section**, and that is the whole of what the type
+draws. Asking for the sections is all it takes.
+
+```javascript
+// The signs need no configuration — asking for the sections is enough.
+const routes = await calculateRoute({ locations, sectionTypes: ['speedLimit', 'country'] });
+await routingModule.showRoutes(routes);
+```
+
+The sign follows the road rather than the reader. Ask for `country` sections alongside the speed
+limits and each sign takes the convention of the country its stretch runs through:
+
+| Country | Face | Unit | Numerals |
+|---|---|---|---|
+| most of Europe | white disc | km/h | near-black |
+| Sweden, Finland, Iceland | yellow disc | km/h | near-black |
+| United Kingdom | white disc | mph | near-black |
+| United States | `SPEED LIMIT` plaque | mph | near-black |
+| Japan | white disc | km/h | blue |
+
+A country the SDK has no entry for posts the white disc in km/h. Where mph is posted the number is
+converted and rounded to the step signs come in, so a London stretch reads `30` and a Californian
+one `65`, both from the same `maxSpeedLimitInKmh`. Without `country` sections the display units
+decide the face and the unit, and `sign.unit` overrides both.
+
+A sign stands **where the limit changes**, as the road's own does. That is exact: speed limit
+sections tile a route end to end and no two consecutive ones carry the same limit, so every section
+boundary is a change. Signs scale with the zoom as the ferry and toll-road icons do.
+
+`sign.placement: 'along'` repeats the sign down the stretch instead, at a fixed screen spacing.
+Nothing then marks where the limit changed, but a reader zoomed into the middle of a 50 km stretch
+still sees the limit in force; the default posts nothing between one change and the next.
+
+`sign.minZoom` defaults to **10**, where the signs stop shrinking. Further out, a route's changes
+fall in the same few pixels and the handful that survive are an arbitrary sample of the drive. Lower
+it if your map is about the limits themselves.
+
+Since the signs are all the type draws, `{ visible: false }` switches them off the way it switches
+off any other section. The `sign` knob carries the rest:
+
+| Knob | What it does |
+|---|---|
+| `sign.placement` | `atChange` (the default) posts one sign per limit change; `along` repeats it down the stretch instead. |
+| `sign.minZoom` | The lowest zoom they draw at. Defaults to 10 — see above. |
+| `sign.priority` | What the signs give way to: `belowMapLabels`, `belowRouteIcons` or `aboveRouteIcons`. The default follows the placement — see below. |
+| `sign.unit` | `'km/h'` or `'mph'` for every sign, whatever the road posts. |
+
+```javascript
+const routingModule = await RoutingModule.create(map, {
+    sections: {
+        speedLimit: {
+            sign: { minZoom: 8, priority: 'aboveRouteIcons' }
+        }
+    }
+});
+```
+
+`priority` settles which symbol survives when two want the same spot. MapLibre resolves collisions
+from the topmost layer down, so the layer underneath gives way:
+
+- `belowMapLabels` — a sign yields to everything, so it never lands on a street or place name, at
+  the cost of showing fewer in a city.
+- `belowRouteIcons` — a sign yields to the route's own icons, but takes precedence over the base
+  map's labels.
+- `aboveRouteIcons` — a sign yields to nothing, for a map whose subject is the limits.
+
+**The default follows `placement`, because what a dropped sign costs does**: `belowRouteIcons` under
+`atChange`, where that sign is the only one posting its change, and `belowMapLabels` under `along`,
+where the next repeat posts the same limit again.
+
+Both knobs are live on the [route sections playground](../../examples/route-sections-playground);
+[speed limit signs by country](../../examples/route-speed-signs) posts one limit four ways.
+
+Each section also gets its own event scope and `getShown()` entry. The generated types are keyed
+`<type>Sections`; the other five keep the names their sources have always had (`ferries`,
+`tollRoads`, `incidents`, `tunnels`, `vehicleRestricted`):
+
+```javascript
+routingModule.events.lowEmissionZoneSections.on('click', (feature, lngLat) => {
+    console.log('Low-emission zone section');
+});
+
+const urbanSections = routingModule.getShown().urbanSections;
+```
+
+### Border crossings
+
+`country` sections partition a route end to end, each ending where the next begins, so every seam
+between two of them is a border. A crossing is that seam — a point rather than a stretch, which is
+why it takes knobs of its own rather than a place in the catalogue above. Each one is a plaque
+naming both countries in the direction of travel by their ISO 3166-1 alpha-2 codes, `ES → FR`. Ask
+for `country` sections and the crossings draw themselves:
+
+```javascript
+const routes = await calculateRoute({ locations, sectionTypes: ['country'] });
+await routingModule.showRoutes(routes);
+```
+
+The module reads the route it was given, so a route that stays inside one country, or that was never
+asked for its `country` sections, draws none. Re-entering a country counts as a second crossing,
+back the way it came — Geneva to Lausanne via Annecy draws `CH → FR` and then `FR → CH`.
+
+| Knob | What it does |
+|---|---|
+| `visible` | Whether the crossings draw. Defaults to `true`. |
+| `minZoom` | The lowest zoom a crossing draws at. Defaults to **4**, low enough for a continental route to show its borders while framed whole. |
+| `color` | The plaque colour. Defaults to the SDK's near-black on a light map and its near-white on a dark one. |
+| `textColor` | The label colour. Defaults to whichever of the two reads on the plaque, so setting `color` alone stays legible. |
+| `alignment` | `'viewport'` (default) keeps the plaque level with the screen; `'route'` turns it to the route's bearing, kept upright. |
+
+```javascript
+const routingModule = await RoutingModule.create(map, {
+    countryCrossings: { minZoom: 6, color: '#0B5FA5' }
+});
+```
+
+Crossings get an event scope and a `getShown()` entry like the rest of the route. A clicked crossing
+also hands over the two `country` sections it joins, so you can reach the stretch either side of the
+border rather than only the pair of codes on the plaque:
+
+```javascript
+routingModule.events.countryCrossings.on('click', (crossing) => {
+    const { label, fromSection, toSection } = crossing.properties;
+    console.log(label, fromSection.endPointIndex, toSection.startPointIndex); // 'ES → FR' 1941 1941
+});
+```
+
+Anything these knobs cannot express is a `layers.countryCrossings.routeCountryCrossing` override,
+which merges into the layer like any other. Crossings draw under the waypoint pins and the summary
+bubbles, so a plaque never covers a stop the drive was planned around; a `beforeID` on that override
+puts them anywhere else in the stack.
+
+## Events
+
+Handle user interactions with routes and waypoints:
+
+```javascript
+// Route click events
+routingModule.events.mainLines.on('click', (feature, lngLat) => {
+    console.log('Route clicked:', feature.properties);
+    console.log('Coordinates:', lngLat);
+});
+
+// Waypoint events
+routingModule.events.waypoints.on('click', (feature, lngLat) => {
+    console.log('Waypoint:', feature.properties);
+});
+
+// Traffic incident events
+routingModule.events.incidents.on('hover', (feature, lngLat) => {
+    console.log('Traffic delay:', feature.properties.delayInSeconds);
+});
+
+// Turn-by-turn instruction events
+routingModule.events.instructionLines.on('click', (feature, lngLat) => {
+    console.log('Instruction properties:', feature.properties);
+});
+
+// Summary bubble events
+routingModule.events.summaryBubbles.on('click', (feature, lngLat) => {
+    console.log('Route summary:', feature.properties);
+});
+
+// Route section events
+routingModule.events.ferries.on('click', (feature, lngLat) => {
+    console.log('Ferry section');
+});
+
+// The `tollRoads` overlay draws the `tollRoad` sections — every stretch that costs money to drive,
+// per-use tolls plus vignette-only motorways and urban charge zones
+routingModule.events.tollRoads.on('click', (feature, lngLat) => {
+    console.log('Charged road section');
+});
+
+routingModule.events.tunnels.on('click', (feature, lngLat) => {
+    console.log('Tunnel section');
+});
+
+routingModule.events.vehicleRestricted.on('click', (feature, lngLat) => {
+    console.log('Vehicle restricted section');
+});
+
+routingModule.events.chargingStops.on('click', (feature, lngLat) => {
+    console.log('EV charging station');
+});
+
+// Remove event listeners
+routingModule.events.mainLines.off('click', handler);
+```
+
+A hovered or clicked route draws its outline wider, selected or not, once a handler covers the
+routes. Put that state from your own UI with the module's
+[event state methods](./user-events.mdx#event-states), which act on the routes; the named scopes
+have them too, for their own features. A click marks the route, while `selectRoute` makes it the
+selected one:
+
+```javascript
+routingModule.events.mainLines.on('click', (route) => routingModule.selectRoute(route.properties.index));
+
+routingModule.putEventState({ index: 1, state: 'hover' });
+const { click: [clickedRouteID] = [] } = routingModule.getEventStates();
+```
+
+`highlight.outlineWidthFactor` sets how much wider, 1.2 times unless set, live on the
+[route style playground](../../examples/route-styling-playground). It is clamped to
+`ROUTE_HIGHLIGHT_OUTLINE_WIDTH_FACTOR_RANGE`, 1 to 1.25, so the outline never covers a section
+[halo](#route-sections) drawn beneath the route, and `1` draws a hovered route as any other:
+
+```javascript
+routingModule.applyConfig({ highlight: { outlineWidthFactor: 1.25 } });
+```
+
+A width you give the outline through `layers.mainLines.routeOutline` is drawn as given, in every
+state.
+
+## Multiple module instances
+
+You can create multiple independent instances of the Routing module, each with its own configuration and styling. This is useful for comparing different route types or displaying routes for multiple users.
+
+```javascript
+// Create separate instances for different route types
+const carRoutes = await RoutingModule.create(map, { color: '#2ECC71' });
+const truckRoutes = await RoutingModule.create(map, { color: '#E67E22' });
+
+// Each instance manages its own routes independently
+await carRoutes.showRoutes(carRoute);
+await truckRoutes.showRoutes(truckRoute);
+```
+
+## Reading shown data
+
+Use `getShown()` to retrieve all routing data currently displayed on the map. This returns the exact data previously passed to `showRoutes()` and `showWaypoints()`:
+
+```javascript
+const shown = routingModule.getShown();
+console.log(`Showing ${shown.mainLines.features.length} routes`);
+console.log(`Showing ${shown.waypoints.features.length} waypoints`);
+```
+
+Check whether any routes are currently displayed:
+
+```javascript
+const shown = routingModule.getShown();
+if (shown.mainLines.features.length > 0) {
+    console.log('Routes are displayed');
+}
+```
+
+The returned object includes: `mainLines`, `waypoints`, `incidents`, `ferries`, `chargingStops`, `tollRoads`, `tunnels`, `vehicleRestricted`, `instructionLines`, `instructionArrows`, `summaryBubbles`, and `countryCrossings`, plus one `<type>Sections` entry per [generated section type](#route-sections) — `urbanSections`, `motorwaySections` and the rest.
+
+## API reference
+
+For complete documentation of all Routing Module properties, methods, and types, see the **[RoutingModule API Reference](/maps-sdk-js/api-reference/classes/map.RoutingModule.html)**.
+
+## Related guides and examples
+
+### Services integration
+- [Route Planning Parameters](../services/routing/parameters.mdx) - Comprehensive route planning with configuration options
+- [Locations](../services/routing/locations.mdx) - Specifying route planning locations
+- [Geocoding](../services/places/geocoding.mdx) - Convert addresses to coordinates for route waypoints and destinations
+
+### Related examples
+- [Route](../../examples/route) - Basic route calculation and display on the map
+- [Route with Alternatives](../../examples/route-with-alternatives) - Display multiple route options for comparison
+- [Waypoints](../../examples/waypoints) - Multi-stop route visualization with interactive waypoints
+- [Map route reconstruction playground](../../examples/route-reconstruction) - Interactive route building and editing
+- [Route stop wait playground](../../examples/route-stop-wait-playground) - A stop's wait on its pin, and in the journey time
+- [Route style playground](../../examples/route-styling-playground) - The route's colour, width, waypoint size, waypoint label colour and clicked outline on knobs, and a toggle that hides it
+- [Route sections playground](../../examples/route-sections-playground) - Every section type on one set of knobs, and the speed-limit sign controls
+- [Speed limit signs by country](../../examples/route-speed-signs) - A section's number posted as the road sign its country uses
+- [Borrowed looks](../../examples/styling-borrowed-looks) - A route's traffic sections recoloured live by the incident colour knobs
+
+### Related map modules
+- [Places Module](../map/places.mdx) - Display route waypoints and destinations as interactive markers
+- [User Interaction Events](../map/user-events.mdx) - Handle user interactions with routes and route segments
