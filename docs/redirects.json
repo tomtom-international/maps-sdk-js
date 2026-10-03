@@ -1,0 +1,18 @@
+[
+  {
+    "source": "/maps-sdk-js",
+    "destination": "/maps-sdk-js/introduction/overview"
+  },
+  {
+    "source": "/maps-sdk-js/guides/services/customizing-services",
+    "destination": "/maps-sdk-js/guides/services/request-options-and-errors"
+  },
+  {
+    "source": "/maps-sdk-js/guides/map/traffic-incident-overlay",
+    "destination": "/maps-sdk-js/guides/map/traffic-incident-details"
+  },
+  {
+    "source": "/maps-sdk-js/examples/traffic-incident-overlay",
+    "destination": "/maps-sdk-js/examples/traffic-incident-details"
+  }
+]

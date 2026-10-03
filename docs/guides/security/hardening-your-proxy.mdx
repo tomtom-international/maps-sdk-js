@@ -1,0 +1,290 @@
+---
+title: Hardening your proxy
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.62.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+Once you have [a proxy in front of TomTom](./proxying-api-calls.mdx), the key is off the page. But the proxy has a public URL, and it will happily use your key for whoever calls it. A proxy anyone can call is your key with extra steps.
+
+This guide covers the checks that fix that, and the operational habits that keep the whole thing predictable.
+
+## Four checks, in order
+
+A request should meet these in sequence, so the cheapest rejection happens first.
+
+```d2
+direction: down
+
+Gate: POST /session {
+  style: {
+    stroke: "#1565c0"
+    stroke-width: 3
+    fill: "#e3f2fd"
+    border-radius: 8
+    font-size: 18
+    font-color: "#333"
+  }
+
+  Verify: Verify challenge token, check reported hostname {
+    style: {
+      fill: "white"
+      stroke: "#1565c0"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 14
+    }
+  }
+
+  Cookie: Set short-lived session cookie {
+    style: {
+      fill: "white"
+      stroke: "#1565c0"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 14
+    }
+  }
+
+  Verify -> Cookie: "success" {
+    style: {
+      stroke-width: 2
+    }
+  }
+}
+
+Data: "ALL /map/*, in order" {
+  style: {
+    stroke: "#333"
+    stroke-width: 3
+    fill: "#f8f8f8"
+    border-radius: 8
+    font-size: 18
+    font-color: "#333"
+  }
+
+  C1: 1. Origin allowlist {
+    style: {
+      fill: "#fffde7"
+      stroke: "#ff6f00"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 14
+    }
+  }
+
+  C2: 2. Session cookie {
+    style: {
+      fill: "#fffde7"
+      stroke: "#ff6f00"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 14
+    }
+  }
+
+  C3: 3. Rate limit {
+    style: {
+      fill: "#fffde7"
+      stroke: "#ff6f00"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 14
+    }
+  }
+
+  Forward: 4. Inject key and forward {
+    style: {
+      fill: "#e8f5e9"
+      stroke: "#1b5e20"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 14
+    }
+  }
+
+  C1 -> C2: "claims one of your pages" {
+    style: {
+      stroke-width: 2
+    }
+  }
+  C2 -> C3: "cookie is valid" {
+    style: {
+      stroke-width: 2
+    }
+  }
+  C3 -> Forward: "within budget" {
+    style: {
+      stroke-width: 2
+    }
+  }
+}
+
+Refused: Refused, nothing reaches TomTom {
+  style: {
+    fill: "#fef2f2"
+    stroke: "#f87171"
+    stroke-width: 3
+    font-color: "#333"
+    border-radius: 8
+    font-size: 16
+  }
+}
+
+Gate.Cookie -> Data.C2: "the cookie the browser then sends" {
+  style: {
+    stroke-dash: 3
+    stroke-width: 2
+  }
+}
+Gate.Verify -> Refused: "403" {
+  style: {
+    stroke: "#f87171"
+    stroke-dash: 3
+    stroke-width: 2
+  }
+}
+Data.C1 -> Refused: "403" {
+  style: {
+    stroke: "#f87171"
+    stroke-dash: 3
+    stroke-width: 2
+  }
+}
+Data.C2 -> Refused: "401" {
+  style: {
+    stroke: "#f87171"
+    stroke-dash: 3
+    stroke-width: 2
+  }
+}
+Data.C3 -> Refused: "429" {
+  style: {
+    stroke: "#f87171"
+    stroke-dash: 3
+    stroke-width: 2
+  }
+}
+```
+
+### 1. Origin allowlist
+
+Require that a request claims one of your pages. Cross-origin requests carry `Origin`. Same-origin `GET`s do not, so when the proxy shares your app's hostname you fall back to `Referer`.
+
+Refuse requests that claim neither. That refusal is what makes this more than decoration, because it turns away the simplest scripted attempt.
+
+Be clear about the ceiling. Both headers are set by browsers and easily set by anything else. This stops casual `curl` and other people's pages hotlinking your tiles. It does not stop someone who reads your JavaScript.
+
+For local development, allow loopback origins on any port. A dev server that hops to the next free port will otherwise have you editing the allowlist constantly, and an allowlist you edit constantly is one that gets switched off.
+
+### 2. A challenge gate
+
+This is the check that a set header cannot pass. Have a `POST /session` endpoint that verifies an invisible challenge (hCaptcha, Cloudflare Turnstile, or equivalent) and, on success, sets a short-lived cookie. Every data-plane route then refuses requests without one.
+
+Verification happens server-side: your endpoint posts the token and your secret to the provider's verify endpoint, and reads the result. The result carries one field that is easy to overlook.
+
+Alongside `success`, the verifier reports the **hostname where the challenge was actually solved**. That is the one claim in the exchange the client does not control, and checking it is what stops a token solved on somebody else's page from working on yours, since the sitekey is public. Accept the session only when both `success` and the reported hostname pass, and derive the expected hostnames from the same allowlist as check 1 so the two cannot drift apart.
+
+Two rules that are easy to get backwards:
+
+- **A failure to verify is not a pass.** If the verifier is unreachable, refuse the session rather than falling through. Otherwise anyone who can make that one outbound call fail is granted access.
+- **Rate-limit the session endpoint separately**, and more tightly. It is your one unauthenticated route, and every attempt costs you an outbound call.
+
+The honest ceiling here too: a real browser driven by automation still solves the challenge, and solving services are inexpensive. What changes is the cost curve, from a shell loop to per-session CPU and a per-session budget.
+
+### 3. The session cookie
+
+The cookie is what saves you from challenging on every request. Its attributes are not incidental detail:
+
+| Attribute | Why |
+| --- | --- |
+| `HttpOnly` | JavaScript, yours or anything injected into the page, cannot read it |
+| `Secure` | Never travels in the clear |
+| `SameSite` | `Strict` or `Lax` when the proxy is same-origin with your app. Cross-site setups need `SameSite=None`, which then requires `Secure` and, in browsers enforcing cookie partitioning, `Partitioned`. Otherwise the cookie is silently dropped and every request looks unauthenticated |
+| Short lifetime | 15 to 30 minutes bounds how long a copied cookie is useful and how much any one challenge solve is worth |
+| Authenticated encryption | Seal the payload with AEAD (AES-256-GCM) or sign it (HMAC), so the client cannot forge or edit it |
+| A key id in the payload | Lets you rotate the sealing key: sign new cookies with the new key while the old one still opens existing cookies, then retire it |
+
+A stateless design is worth considering: **make the cookie the session**, an encrypted or signed blob carrying an id and an expiry, with nothing stored server-side.
+
+It costs you the ability to say "this session has spent N of M requests" and to revoke a session instantly. It buys horizontal scaling with no shared state, and no session store to evaporate when your service scales to zero. If you later need true per-session counters, add a small cache for the counters alone. The cookie design does not have to change.
+
+### 4. Rate limits
+
+This is the layer that actually bounds your bill. Key the limit on the **session** when there is one and the client IP otherwise, so a single challenge solve cannot buy the whole budget.
+
+Set the ceiling generously. One map load is tens of requests, and a busy page multiplies that. This limit exists to cap spend, not to queue users fairly.
+
+Put it *behind* the origin check and the gate, so a refused origin or an unauthenticated caller can never consume a real user's allowance.
+
+<Blockquote type="warning">
+    Only trust `X-Forwarded-For` if something you control overwrites it. On a directly reachable service it is client-supplied, so believing it lets one script present a fresh address per request and never reach any ceiling.
+</Blockquote>
+
+An in-process limit only bounds one replica. The durable limit belongs at the edge, in a WAF or CDN rule, where a rejected request costs you nothing at all.
+
+## Operating it
+
+The proxy is infrastructure now, and its failure modes are yours.
+
+- **Cap the spend, twice.** A hard maximum on replicas or instances keeps a surprising night bounded. Add a billing alert on top. It costs nothing and is the one layer that notices something you did not anticipate.
+- **Cache what is immutable.** Tiles, styles, sprites and glyphs barely change. Caching them at the edge is the single largest lever on both your bill and your latency, and it takes load off the proxy at the same time.
+- **Fail closed on missing configuration.** A production process that starts with no key, or with the challenge gate silently unconfigured, is worse than one that refuses to start. If you need to run without the gate deliberately, make that an explicit, clearly logged setting rather than the default.
+- **Keep the domain whitelist on the upstream key** in the dashboard ([how to set one](https://docs.tomtom.com/platform/documentation/api-best-practices/api-key-management-best-practices)), even though the key now lives only on your server. It limits what the key can do if it ever leaves, and it does not depend on any of the above being correct. If TomTom answers `403 InvalidReferer`, set a fixed referrer on the outgoing request from your proxy, and never forward the browser's.
+- **Watch the shape of your traffic, not just its volume.** Requests per session, sessions per IP, and the ratio of `/session` calls to data-plane calls will show you a pattern long before the invoice does.
+- **Test what you cannot see.** The valuable assertions are about what left your building: that a refused request never reached TomTom at all, that the key went upstream, and that neither the key nor the browser's cookie came back. A test that only inspects what the browser receives will pass on a proxy that leaks the key into a style document.
+
+## Checklist
+
+Everything from this guide and the previous one, in one place.
+
+- No API key in any browser-delivered file, including the built bundle and any config endpoint it calls
+- SDK configured with `commonBaseURL` pointing at the proxy and **no** `apiKey`
+- Key injected server-side, from an environment variable or secret store, in one place, **as both the `key=` query parameter and the `TomTom-Api-Key` header**, since routing, traffic incident details and the places services use the header and everything else the parameter
+- Key stripped from `json` and `text/*` response bodies on the way out
+- Binary bodies streamed, never buffered
+- Browser `Cookie`, `Referer`, `Origin`, `Authorization` and `TomTom-Api-Key` dropped before the upstream call
+- Upstream `Set-Cookie`, CORS and encoding headers dropped before the response
+- `Access-Control-Allow-Origin` names a specific allowlisted origin, with `Allow-Credentials: true` and `Vary: Origin`
+- `OPTIONS` preflights answered, with `Access-Control-Allow-Headers` covering `tomtom-user-agent`, `Content-Type`, `TomTom-Api-Key`, `TomTom-Api-Version`, `Accept-Language` and `Attributes`
+- Origin allowlist refuses requests that claim no origin at all
+- Challenge gate on `POST /session`, checking the `hostname` the verifier reports and failing closed when the verifier is unreachable
+- Session cookie `HttpOnly`, `Secure`, correct `SameSite` (plus `Partitioned` if cross-site), short-lived, authenticated, with a rotatable key id
+- Rate limit keyed on session then IP, behind the origin check and the gate, with a tighter separate limit on `/session`
+- `X-Forwarded-For` trusted only if something in front of the proxy overwrites it
+- Hard replica cap, spend alert, and edge caching for immutable assets
+- Referrer restriction still set on the upstream key
+- Production refuses to start without its key and gate configuration
+
+## Things that look like solutions
+
+- **Obfuscating the key in JavaScript.** Splitting it, encoding it, or assembling it at runtime. The network tab shows the request either way.
+- **Serving the key from your own endpoint at startup.** The key is now in a second place and still reaches the browser. This is the first half of a proxy without the half that helps.
+- **A proxy with no gate.** Your key with extra steps, and slightly worse than the key alone, because the traffic now also costs you compute.
+- **`Access-Control-Allow-Origin: *` with credentials.** Browsers reject it, so nothing works. Reflecting any origin unconditionally is the same gap with a better disguise.
+- **Forwarding the browser's `Referer` upstream.** Discloses your users' URLs to TomTom and lets any client satisfy your key's referrer restriction.
+- **Trusting `X-Forwarded-For` on a directly reachable service.** Every rate limit keyed on it becomes advisory.
+- **Handing the key to the browser once a user signs in.** The exposure you removed comes back, now attached to an account.
+
+## What to expect from it
+
+A proxy keeps the key off the page and puts a ceiling on the bill. It does not make your API usage private: anyone can open your application, watch what it requests, and replay those requests inside a real session at whatever rate you allow.
+
+That is the right trade. Each layer is inexpensive, and together they move the effort from one afternoon, once, to an ongoing cost, which is the point at which getting an API key of one's own becomes the easier path.
+
+## Related guides
+
+- [Proxying your API calls](./proxying-api-calls.mdx) - The proxy this guide hardens, and how to point the SDK at it.
+- [Where your API key runs](./where-your-api-key-runs.mdx) - Which applications need any of this, and what changes for Node.js.
+- [Global configuration](../core/global-config.mdx) - `apiKey`, `commonBaseURL` and the rest of the shared configuration.

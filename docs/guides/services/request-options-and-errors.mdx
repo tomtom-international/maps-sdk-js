@@ -1,0 +1,224 @@
+---
+title: Request options and errors
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.62.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+Every service call accepts the same options on top of its own parameters: request validation,
+lifecycle hooks, per-call overrides of the global configuration, and a signal to cancel it. This
+guide covers those options, keeping only the latest of a series of requests, deadlines, and the
+errors a call rejects with.
+
+## Request validation
+
+The SDK includes built-in request validation that verifies each service request adheres to the expected structure before sending it to the API. This validation system helps developers catch errors early and prevents faulty API calls that could result in unnecessary costs.
+
+**Benefits of request validation:**
+- Contextual error messages relevant to SDK types (easier debugging)
+- Prevention of malformed API calls (cost optimization)
+- Early error detection in development
+
+**Performance considerations:**
+If you're confident about your inputs and want to optimize CPU usage, you can disable validation on a per-service basis:
+
+```javascript
+import { discoverPlaces, geocode, calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+// Disable validation for specific services
+await discoverPlaces({
+    query: "Eiffel Tower",
+    validateRequest: false
+});
+
+await geocode({
+    query: "Amsterdam",
+    validateRequest: false
+});
+```
+
+**Recommendation:** Keep validation enabled during development and testing phases. Only disable it in production when you're confident about input quality.
+
+## Service lifecycle hooks: onAPIRequest and onAPIResponse
+
+The SDK allows you to hook into the service request lifecycle for advanced debugging, logging, or analytics. You can use the `onAPIRequest` and `onAPIResponse` callbacks to observe outgoing requests and incoming responses.
+
+- **onAPIRequest**: Called immediately before the request is sent to the API.
+- **onAPIResponse**: Called as soon as the raw response is received from the API, before parsing.
+
+**Example:**
+
+```javascript
+await discoverPlaces({
+    query: "Eiffel Tower",
+    onAPIRequest: (apiRequest) => {
+        console.debug('API Request:', apiRequest);
+    },
+    onAPIResponse: (apiRequest, apiResponse) => {
+        console.debug('API Response:', apiResponse);
+    }
+});
+```
+
+These hooks are useful for debugging, analytics, or custom logging. They do not modify the request or response.
+
+`apiRequest` is what the SDK sends: `{ url, headers }`, plus `data` on a `POST` (EV charging availability passes a bare `URL`). Routing, traffic incident details and the places services carry the API key in `headers['TomTom-Api-Key']` rather than the URL, so redact that header as well as any `key=` parameter before logging. [Proxying your API calls](../security/proxying-api-calls.mdx#inject-the-key-in-exactly-one-place) lists which service sends which.
+
+## Per-call overrides
+
+The API key, language, base URL, display units and retry behaviour are set once for the whole
+application with `TomTomConfig` — see [Global configuration](../core/global-config.mdx). Any of
+them can be passed to a single call instead, which wins over the global value for that call only.
+
+```javascript
+import { discoverPlaces } from '@tomtom-org/maps-sdk/services';
+
+// Answers in French for this call only; later calls keep the global language
+await discoverPlaces({ query: "restaurants", language: 'fr-FR' });
+```
+
+Each service picks its own endpoint path and API version; neither can be overridden. To route every
+service through a proxy that holds your API key server-side, set the global `commonBaseURL` — see
+[Proxying your API calls](../security/proxying-api-calls.mdx).
+
+## Cancelling a request
+
+Every service that takes a parameters object accepts a `signal`, an
+[`AbortSignal`](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal). Aborting it cancels
+the underlying HTTP request and rejects the call with an `SDKAbortError`, whose `name` is
+`'AbortError'`.
+
+The single-result helpers `discoverOnePlace` and `geocodeOne` take the signal in their params form:
+`discoverOnePlace({ query, signal })`.
+
+Aborting also interrupts the SDK while it waits to retry a rate-limited (`429`) response, so a
+cancelled call never sits out a pending backoff.
+
+### Keeping only the latest request
+
+Cancellation matters most when a new request supersedes an older one: a click lookup, a
+search-as-you-type box, a search re-run on every map move. Without it, a slow earlier response can
+arrive after a faster later one and overwrite it.
+
+`createLatestRequest` holds one such request at a time. Each `run` aborts the one before it and
+hands your callback a fresh signal; `cancel` aborts without starting another.
+
+```javascript
+import { createLatestRequest, reverseGeocode } from '@tomtom-org/maps-sdk/services';
+
+const latestLookup = createLatestRequest();
+
+map.mapLibreMap.on('click', async (event) => {
+    const lookup = await latestLookup.run((signal) =>
+        reverseGeocode({ position: event.lngLat.toArray(), signal })
+    );
+    if (!lookup.current) return; // a newer click or a cancel retired it
+    showAddress(lookup.value);
+});
+
+clearButton.addEventListener('click', latestLookup.cancel);
+```
+
+- **A retired request resolves `{ current: false }`**, never rejects, so there is no
+  `SDKAbortError` to catch for it.
+- **An answer that lands after a `cancel` is dropped too**, which a bare `signal` cannot do once
+  the response is in.
+- **Errors of the current request are rethrown**, a deadline composed onto the signal included, so
+  a timeout still reads as a failure rather than as a superseded call.
+- One callback can chain several calls on the same signal, so a newer run drops the whole chain
+  wherever it got to. `isRunning()` reports whether a request is in flight.
+- **It cancels, it does not debounce**: every `run` still sends its request. To send fewer while
+  the user types or drags, debounce the input and call `run` from the debounced handler.
+
+### Deadlines
+
+There is no per-call `timeout` option. Compose a deadline onto the `signal` instead, which
+lets one call carry both a deadline and your own cancellation:
+
+```javascript
+// Give a search box a short deadline — a fast response is expected
+await getSearchSuggestions({
+    query: "coffee",
+    origin: [4.9041, 52.3676],
+    signal: AbortSignal.timeout(3000)
+});
+
+// A longer one for complex routing, still retired by the next run
+const latestRoute = createLatestRequest();
+const route = await latestRoute.run((signal) =>
+    calculateRoute({
+        locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+        signal: AbortSignal.any([signal, AbortSignal.timeout(15000)])
+    })
+);
+```
+
+A deadline that fires rejects with `SDKAbortError`, the same as a manual abort; check `error.cause`
+to tell the two apart. Under `createLatestRequest` the deadline is the only abort that rejects,
+since a retired run resolves `{ current: false }` instead.
+
+The `retry.timeoutMs` global setting is unrelated. It caps how long the SDK keeps retrying a
+rate-limited (`429`) response, and is not a limit on any single request. See
+[Global configuration](../core/global-config.mdx).
+
+## Error handling
+
+Every rejection is an `SDKError`. An HTTP failure is an `SDKServiceError`, carrying the response's
+`status`, and a cancelled call is an `SDKAbortError`, which carries none:
+
+```javascript
+import { discoverPlaces, SDKAbortError } from '@tomtom-org/maps-sdk/services';
+
+try {
+    const results = await discoverPlaces({
+        query: "coffee",
+        geoBias: { position: [4.9041, 52.3676] },
+        signal: AbortSignal.timeout(5000)
+    });
+
+    console.log(results);
+} catch (error) {
+    // A cancelled call carries no status, so match it before the status checks
+    if (error instanceof SDKAbortError) {
+        console.error('Search timed out');
+    } else if (error.status === 401) {
+        console.error('Authentication failed - check API key');
+        // Redirect to login or show API key configuration
+    } else if (error.status === 429) {
+        console.error('Rate limit exceeded - implement retry logic');
+        // Implement exponential backoff retry
+    } else if (error.status >= 500) {
+        console.error('Server error - implement fallback');
+        // Use cached data or alternative service
+    } else {
+        console.error('Request failed:', error.message);
+        // Show user-friendly error message
+    }
+}
+```
+
+**Common error codes:**
+- **400**: Bad Request - Invalid parameters or malformed request
+- **401**: Unauthorized - Invalid or missing API key
+- **403**: Forbidden - API key lacks required permissions
+- **429**: Too Many Requests - Rate limit exceeded
+- **500**: Internal Server Error - Service temporarily unavailable
+
+## Related guides and examples
+
+### Related guides
+- **[Services quickstart](./quickstart.mdx)** - Basic setup and usage patterns
+- **[Global configuration](../core/global-config.mdx)** - The settings every call inherits, and how a call overrides them
+- **[Places services quickstart](./places/quickstart.mdx)** - Places-specific configuration
+- **[Routing services quickstart](./routing/quickstart.mdx)** - Routing-specific configuration
+- **[Proxying your API calls](../security/proxying-api-calls.mdx)** - Keeping the API key server-side
+
+### Related examples
+- **[Search playground](../../examples/search-playground)** - One `createLatestRequest` behind every keystroke, pick and page
+- **[Reverse geocoding playground](../../examples/rev-geo-playground)** - A click lookup that retires the previous click's request
+- **[Node.js geocoding](../../examples/nodejs-geocode)** - Server-side service calls

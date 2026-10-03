@@ -1,0 +1,119 @@
+---
+title: About MapLibre
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.62.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The TomTom Maps SDK for JavaScript renders through [MapLibre GL JS](https://maplibre.org/maplibre-gl-js/docs/), the open-source map renderer, and exposes it as is. This guide covers what that gives you, what the SDK adds on top, and when to use MapLibre directly.
+
+## MapLibre underneath, fully exposed
+
+MapLibre is a **peer dependency**: you install it next to the SDK. `TomTomMap` does not hide it. `map.mapLibreMap` is the MapLibre `Map` itself, and the `mapLibre` constructor option takes [MapLibre's map options](https://maplibre.org/maplibre-gl-js/docs/API/type-aliases/MapOptions/) unchanged:
+
+- **Compatibility**: MapLibre controls, markers, popups, community plugins and [examples](https://maplibre.org/maplibre-gl-js/docs/examples/) work on a TomTom map as they are, and so does code written for MapLibre.
+- **Customization**: whatever the SDK does not offer, MapLibre's full API still can, so you never hit a dead end.
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { NavigationControl } from 'maplibre-gl';
+
+TomTomConfig.instance.put({ apiKey: 'YOUR_API_KEY' });
+
+const map = new TomTomMap({ mapLibre: { container: 'map', pitch: 45 /* any MapLibre option */ } });
+
+map.mapLibreMap.addControl(new NavigationControl(), 'top-right');
+map.mapLibreMap.on('moveend', () => console.log('Viewport:', map.mapLibreMap.getBounds()));
+```
+
+## What the SDK adds over raw MapLibre
+
+Anything MapLibre can draw, the SDK's own features draw with less code and fewer ways to break:
+
+- **They survive style switches.** Module data, configuration, layer placement and styling knobs are re-applied after every [`setStyle`](./styles.mdx#dynamic-style-switching). MapLibre drops the sources, layers and images you added yourself.
+- **They survive style upgrades.** Knobs and module settings are semantic, such as `labels.sizeFactor` or a route's `color`, and the SDK re-verifies them against every TomTom style release. Raw layer ids and paint expressions belong to one style version and are not a contract. See [How durable is this?](./styling.mdx#how-durable-is-this)
+- **Their user events are smarter.** One pipeline serves every module: the top-most feature receives the event instead of every overlapping layer, the cursor has one state, hover and long-hover have timing built in, clicks have tolerance, and handlers receive your original typed data. See [User interaction events](./user-events.mdx).
+- **They follow the map's theme.** Routes, places, geometries and reachable ranges take the map's [accent colour](./styling.mdx#the-accent-what-a-theme-reaches-beyond-the-base-map), so one `setMapColors` call restyles them along with the base map.
+- **Their settings are data.** Every module lists its settings in a [knob catalogue](./modules.mdx#every-setting-as-data), validates what it is given, and [saves and replays](./modules.mdx#saving-and-replaying-a-configuration) its configuration as JSON.
+
+## When to use TomTom SDK vs direct MapLibre
+
+Use the SDK feature wherever one covers what you need:
+
+| To… | Use |
+|---|---|
+| Switch or load a style | [`setStyle`](./styles.mdx#dynamic-style-switching) |
+| Restyle the TomTom map: sizes, colours, features | [`StylingModule`](./styling.mdx) knobs and `setMapColors`; [`styling.layers`](./styling.mdx#the-advanced-tier-stylinglayers) for a style layer no knob reaches |
+| Show or hide base map, POI, traffic and terrain parts | [`BaseMapModule`](./base-map.mdx), [`POIsModule`](./pois.mdx), [`TrafficFlowModule`](./traffic-flow.mdx), [`TrafficIncidentsModule`](./traffic-incidents.mdx), [`TerrainModule`](./terrain.mdx) |
+| Show places, routes, geometries and reachable ranges | [`PlacesModule`](./places.mdx), [`RoutingModule`](./routes.mdx), [`GeometriesModule`](./geometries.mdx), [`ReachableRangesModule`](../services/routing/reachable-ranges.mdx#display-on-the-map), each styled through its own config |
+| Draw your own GeoJSON data, styled any way | [`CustomGeoJSONModule`](./custom.mdx) |
+| React to clicks and hovers, including on the empty map | Module [`events`](./user-events.mdx), and [`BaseMapModule`](./user-events.mdx#handling-events-on-the-rest-of-the-map) for the rest of the map |
+
+**Your own data belongs in `CustomGeoJSONModule` too, even a single layer.** It takes the same layer specs as MapLibre's `addLayer`, so you keep MapLibre's full styling and gain the restoration and events above.
+
+Use `map.mapLibreMap` for what none of these covers:
+
+- Controls, markers and popups.
+- Camera moves (`flyTo`, `fitBounds`) and map lifecycle events (`load`, `moveend`, `zoom`).
+- Tile overlays: vector, raster and other non-GeoJSON sources.
+- Third-party MapLibre plugins.
+
+Sources, layers and images you add through `map.mapLibreMap` are yours to [restore after `setStyle`](./styles.mdx#preserving-custom-maplibre-layers), and sit outside the SDK's event coordination.
+
+## Combining both
+
+SDK modules and the MapLibre API share one map:
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { discoverPlaces } from '@tomtom-org/maps-sdk/services';
+import { Marker, Popup } from 'maplibre-gl';
+
+TomTomConfig.instance.put({ apiKey: 'YOUR_API_KEY' });
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+
+// SDK: places that survive style switches, with coordinated events
+const restaurants = await discoverPlaces({ query: 'restaurants' });
+const placesModule = await PlacesModule.create(map);
+await placesModule.show(restaurants);
+placesModule.events.on('click', (feature) => console.log('Place clicked:', feature.properties.title));
+
+// MapLibre: a marker with a popup
+new Marker({ color: '#ff0000' })
+    .setLngLat([4.9, 52.3])
+    .setPopup(new Popup().setText('Custom Location'))
+    .addTo(map.mapLibreMap);
+```
+
+## MapLibre CSS
+
+**The SDK applies the MapLibre CSS itself unless your page already has it, so you do not need to import anything.**
+
+The stylesheet ships with the SDK:
+
+- It is served from wherever your app serves the SDK, never from a third party.
+- A strict Content Security Policy (`style-src 'self'`) does not block it.
+- It sits in a cascade layer, so your own CSS overrides it whatever order the two load in.
+
+The bundled copy matches the MapLibre version the SDK was built with. To use the CSS of the MapLibre version you installed instead, import it in your JavaScript/TypeScript files:
+
+```javascript
+import 'maplibre-gl/dist/maplibre-gl.css';
+```
+
+Prefer this import, which your bundler serves alongside your app, to a `<link>` to a public CDN such as unpkg.com: a CDN link sends every end user's IP address to that third party.
+
+## Related resources
+
+- [MapLibre GL JS documentation](https://maplibre.org/maplibre-gl-js/docs/API/)
+- [Custom GeoJSON module](./custom.mdx)
+- [User interaction events](./user-events.mdx)
+- [Styling module](./styling.mdx)
+- [Map styles](./styles.mdx)

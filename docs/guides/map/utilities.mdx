@@ -1,0 +1,88 @@
+---
+title: Map utilities
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.62.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+Standalone functions exported from `@tomtom-org/maps-sdk/map`, tree-shaken out of your bundle unless you import them.
+
+## Padded bounds
+
+Panels, sidebars and headers drawn over the map hide part of it. These utilities measure the part that stays visible, so you can centre on it or fit an area inside it.
+
+| Function | Returns |
+| --- | --- |
+| `calculatePaddedBBox` | The bounding box of the visible area |
+| `calculatePaddedCenter` | The centre of the visible area |
+| `calculateFittingBBox` | A larger bounding box that, zoomed to, shows a target area inside the visible part |
+
+Each returns `null` when the visible area is too small.
+
+### calculatePaddedBBox
+
+The `[west, south, east, north]` bounding box of the map area no given element overlaps.
+
+- `map` — a `TomTomMap` or a MapLibre map
+- `surroundingElements` — the elements over the map, or their DOM selectors
+- `paddingPX` — optional extra padding around them and the map edges, default 0
+
+The red box below is the area left free by the left, top and right panels.
+
+### calculatePaddedCenter
+
+The `[longitude, latitude]` centre of that same area — the centre of `calculatePaddedBBox`'s box — for centring the map where it looks balanced against the panels. Takes `map` and `surroundingElements`.
+
+<GuideDemo demo="padded-bbox" />
+
+### calculateFittingBBox
+
+An expanded bounding box that, when the map zooms to it, shows `toBeContainedBBox` entirely inside the visible area. Takes `map`, `toBeContainedBBox`, `surroundingElements` and `paddingPX`. **[API Reference →](/maps-sdk-js/api-reference/modules/map.html#calculateFittingBBox)**
+
+<GuideDemo demo="padded-fitting-bbox" />
+
+The target area is blue; the red box is what the map zooms to so the target clears the panels.
+
+```javascript
+import { calculateFittingBBox, TomTomMap } from '@tomtom-org/maps-sdk/map';
+
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+
+const fittingBBox = calculateFittingBBox({
+    map,
+    toBeContainedBBox: [4.8, 52.3, 4.95, 52.4],
+    surroundingElements: ['#panel-left', '#panel-top', '#panel-right'],
+    paddingPX: 20,
+});
+
+if (fittingBBox) {
+    map.mapLibreMap.fitBounds(fittingBBox);
+}
+```
+
+### Selectors or elements
+
+`surroundingElements` takes element references, DOM selectors, or a mix:
+
+```javascript
+calculatePaddedBBox({ map, surroundingElements: [document.getElementById('sidebar'), '#header'] });
+```
+
+### How it works
+
+1. Each element's bounds are measured relative to the map container; elements outside it are ignored.
+2. The visible area shrinks past each one, plus `paddingPX`, from the map edge it sits closest to: top or bottom for a full-width bar, left or right for a full-height bar, any edge for a floating or corner element.
+
+## API reference
+
+Signatures and types: the **[Map Utilities API Reference](/maps-sdk-js/api-reference/modules/map.html#Utils)**.
+
+## Related guides and examples
+
+- [Calculate map bounds that exclude surrounding UI panels](../../examples/padded-bbox)
+- [Ensure a bounding box is visible between UI panels](../../examples/padded-fitting-bbox)

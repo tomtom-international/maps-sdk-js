@@ -1,0 +1,211 @@
+---
+title: POIs module
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.62.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The POIs Module controls Points of Interest displayed on the map, allowing you to show/hide POIs and filter them by category.
+
+**What this module owns:** whether the style's POI layers are shown, and which categories — visibility and filters. How POIs look — icon size, the zoom they appear at, label colours, micro markers — is a [Styling module](./styling.mdx) knob (`pois.*`). `pois.microMarkers` can only hide micro markers within what this module shows, and `pois.zoomShift` composes with the category filters. See [Who owns what](./modules.mdx#who-owns-what).
+
+<GuideDemo demo="poi-filters" />
+
+## Initialization
+
+```javascript
+import { TomTomMap, POIsModule } from '@tomtom-org/maps-sdk/map';
+
+// Initialize map
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+
+// Get POIs module
+const poisModule = await POIsModule.get(map);
+```
+
+## Visibility control
+
+Control POI layer visibility on the map:
+
+```javascript
+// Initialize with hidden POIs
+const poisModule = await POIsModule.get(map, {
+    visible: false
+});
+
+// Hide all POIs
+poisModule.setVisible(false);
+
+// Show all POIs
+poisModule.setVisible(true);
+
+// Read the setting back: true
+const visible = poisModule.isVisible();
+```
+
+`isVisible()` returns the `visible` setting. Until something sets it, it reports whether the style
+draws any POI layer.
+
+### Every setting as data
+
+`poisKnobCatalogue` lists the settings of the module's configuration that a single control can
+hold, with their kind, a description and, where one holds, their default, readable with no map loaded:
+
+```javascript
+import { poisKnobCatalogue } from '@tomtom-org/maps-sdk/map';
+
+const visible = poisKnobCatalogue.find(({ id }) => id === 'visible');
+// { id: 'visible', kind: 'toggle', description: 'The POIs the map style draws.', default: true }
+const values = poisKnobCatalogue.find(({ id }) => id === 'filters.categories.values');
+// { id: 'filters.categories.values', kind: 'enums', description: '…', options: ['FOOD_DRINKS_GROUP', …, 'RESTAURANT', …] }
+```
+
+- `filters.categories.show` and `filters.categories.values` are the [category filter](#filtering),
+  which applies once both are set. The options of `filters.categories.values` are the
+  [category groups](#available-category-groups), then every individual category.
+- `poisKnobIds` lists the ids, `POIsKnobId` is their union, and `POIsKnobValueOf<ID>` the plain value
+  one takes. The entries share their shape, `KnobEntry`, with every
+  [module's catalogue](./modules.mdx#every-setting-as-data); the
+  [styling catalogue](./styling.mdx#the-knob-catalogue)'s `pois.*` knobs set how POIs look.
+
+## Filtering
+
+Filter POIs by individual categories or category groups:
+
+```javascript
+// Filter on initialization
+const poisModule = await POIsModule.get(map, {
+    visible: true,
+    filters: {
+        categories: {
+            show: 'only',
+            values: ['RESTAURANT', 'CAFE_PUB']
+        }
+    }
+});
+
+// Show categories
+poisModule.updateConfig({
+    filters: { categories: { show: 'only', values: ['RESTAURANT', 'CAFE_PUB', 'HOTEL_OR_MOTEL'] } }
+});
+
+// Hide categories
+poisModule.updateConfig({
+    filters: { categories: { show: 'all-except', values: ['PARKING_GARAGE', 'OPEN_CAR_PARKING_AREA'] } }
+});
+
+// Show category groups
+poisModule.updateConfig({
+    filters: { categories: { show: 'only', values: ['FOOD_DRINKS_GROUP', 'SHOPPING_GROUP'] } }
+});
+
+// Hide category groups
+poisModule.updateConfig({
+    filters: { categories: { show: 'all-except', values: ['PARKING_GROUP', 'GAS_STATIONS_GROUP'] } }
+});
+
+// Reset filter and show all categories
+poisModule.updateConfig({ filters: undefined });
+```
+
+`show` takes one of `filterShowModes` (`'only'`, `'all-except'`), exported from `@tomtom-org/maps-sdk/map` for building a mode picker or a schema.
+
+### Available category groups
+
+The module supports predefined category groups for convenient filtering:
+
+- **FOOD_DRINKS_GROUP** - Restaurants, cafes, fast food, pubs, wineries
+- **SHOPPING_GROUP** - Stores, malls, markets, supermarkets
+- **TRANSPORTATION_GROUP** - Airports, train stations, bus stops, ferry terminals
+- **HEALTH_GROUP** - Hospitals, clinics, pharmacies, doctors, dentists
+- **PARKING_GROUP** - Parking garages and open parking areas
+- **HOLIDAY_TOURISM_GROUP** - Tourist attractions, museums, beaches, scenic views
+- **EV_CHARGING_STATIONS_GROUP** - Electric vehicle charging stations
+- **GAS_STATIONS_GROUP** - Gas and petrol stations
+- **ACCOMMODATION_GROUP** - Hotels, motels, camping grounds
+- **ENTERTAINMENT_GROUP** - Cinemas, theaters, nightlife, casinos
+- **SPORTS_LEISURE_GROUP** - Stadiums, sports centers, swimming pools, golf courses
+- **EDUCATION_GROUP** - Schools, universities, libraries, cultural centers
+- **GOVERNMENT_GROUP** - Government offices, courthouses, embassies, police, fire stations
+
+## Events
+
+<GuideDemo demo="interactive-map-pois" />
+
+Handle user interactions with POIs:
+
+```javascript
+// Click events
+poisModule.events.on('click', (feature, lngLat) => {
+    console.log('POI name:', feature.properties.name);
+    console.log('Category:', feature.properties.category);
+    console.log('ID:', feature.properties.id);
+    console.log('Click coordinates:', lngLat);
+});
+
+// Hover events
+poisModule.events.on('hover', (feature, lngLat) => {
+    console.log('Hovering over:', feature.properties.name);
+});
+
+// Context menu (right-click)
+poisModule.events.on('contextmenu', (feature, lngLat) => {
+    console.log('Right-clicked POI:', feature.properties.name);
+});
+
+// Long hover
+poisModule.events.on('long-hover', (feature, lngLat) => {
+    console.log('Long hover on:', feature.properties.name);
+});
+
+// Remove event listeners
+poisModule.events.off('click', handler);
+```
+
+## POI feature properties
+
+POI features include the following properties in events:
+
+- `id` - Unique POI identifier
+- `name` - POI name in native language
+- `category` - POI category (e.g., 'RESTAURANT', 'HOTEL_OR_MOTEL')
+- `iconID` - Icon sprite ID used for rendering
+- `group` - Category group the POI belongs to
+- `priority` - Importance level (lower number = more important)
+
+## Querying visible features
+
+Use `getShown()` to retrieve all POI features currently rendered in the visible map area:
+
+```javascript
+const shown = poisModule.getShown();
+console.log(`Visible POIs: ${shown.pois.length}`);
+shown.pois.forEach(poi => {
+    console.log(poi.properties.name, poi.properties.category);
+});
+```
+
+## API reference
+
+For complete documentation of all POIs Module properties, methods, and types, see the **[POIsModule API Reference](/maps-sdk-js/api-reference/classes/map.POIsModule.html)**.
+
+## Related guides and examples
+
+### Services integration
+- **[Place details](../services/places/place-by-id.mdx)** - Fetch full place details (opening hours, phone, URL) when a POI is clicked on the map
+- **[Search Services](../services/places/search.mdx)** - Find places and display them with the Places Module alongside filtered POIs
+
+### Related examples
+- **[POI Filters](../../examples/poi-filters)** - Interactive POI category filtering
+- **[Places by Category in Words](../../examples/geometry-search-with-poi-categories)** - A category named in words, in five languages, searched inside a city outline
+- **[Places customization playground](../../examples/places-customize-playground)** - Combining POIs with custom place markers
+
+### Related map modules
+- **[Map styling](./styling.mdx)** - POI size, the zoom POIs appear from, label colours and micro markers, as `pois.*` knobs
+- **[Places Module](./places.mdx)** - Display custom places and search results on the map
+- **[User Interaction Events](./user-events.mdx)** - Handle user interactions with map features including POIs

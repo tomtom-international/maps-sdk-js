@@ -1,0 +1,90 @@
+---
+title: What the SDK sends, and where
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.62.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+This page lists the data the SDK sends from your users' browsers, and where it goes. Use it for your privacy notice and your records of processing (GDPR Articles 13 and 30).
+
+In short: the SDK talks to `api.tomtom.com`, or to your proxy if you set one up. It sends what each map view and each service call needs, and nothing else.
+
+## What the SDK does not do
+
+- **No telemetry.** The SDK sends no analytics, beacons or usage reports of its own.
+- **No browser storage.** It writes nothing to cookies, `localStorage`, `sessionStorage`, IndexedDB or the Cache API.
+- **No location lookup.** Core, Services and Map never call `navigator.geolocation`. A position only reaches the SDK when your code passes one in.
+- **No fingerprinting.** It does not read the user agent, screen, hardware or WebGL details to identify a device.
+
+## What goes to api.tomtom.com
+
+When the browser calls TomTom directly, every request reaches TomTom with the user's IP address, as any HTTP request does. In [proxy mode](#proxy-mode-and-cookies) the same data passes through your proxy first, which changes the address TomTom sees. On top of that:
+
+| When | What TomTom receives |
+| --- | --- |
+| Every map view | The style document, then the tiles, sprites and glyphs for the area on screen. Tile coordinates (`z/x/y`) show roughly which area the user is looking at. |
+| Search, geocoding and autocomplete | The query text, and any position or area you bias the results with |
+| Reverse geocoding | The position, and the heading if you pass one |
+| Routing and reachable range | The origin, destination and waypoints, plus the vehicle and EV parameters you set: weight, speed, engine type, consumption model, charge or fuel level |
+| Traffic incident details | The bounding box or incident IDs |
+| EV charging availability, place details, geometry data | The station, place or geometry IDs |
+| Every request | A `tomtom-user-agent` header holding the SDK name and version (`MapsSDKJS/<version>`) |
+| Every request, except in proxy mode | Your API key, in its own `TomTom-Api-Key` header or a `key=` URL parameter |
+
+The two are separate:
+
+- **The `tomtom-user-agent` header** carries no API key and nothing about the user. Every user of a given SDK version sends the same value.
+- **The API key** identifies your application, not the end user. In proxy mode the browser sends no key at all: your proxy adds it on the way to TomTom.
+
+## What travels in URLs
+
+Some of this data goes in the URL rather than the request body. In the path:
+
+- the geocoding, search and autocomplete query text, as the last segment (`…/search/<query>.json`)
+- the tile coordinates (`z/x/y`)
+
+In the query string:
+
+- the reverse geocoding position
+- geo-bias `lat` and `lon`, or the bias area
+- the traffic incident bounding box or IDs
+- the place, EV station and geometry IDs
+- routing and reachable range energy parameters, such as consumption model and current charge
+- the `key=` parameter on map resources, traffic area analytics and EV charging availability, unless you use proxy mode
+
+URLs end up in places a request body does not: server access logs, CDN logs, proxy logs and error trackers. **Strip query strings, and the path segments above, from any logs you keep**, or redact these values before they are stored.
+
+## onAPIRequest and onAPIResponse
+
+The [service lifecycle hooks](../services/request-options-and-errors.mdx#service-lifecycle-hooks-onapirequest-and-onapiresponse) receive the full request: the URL, the body and the headers. Outside proxy mode that includes the API key, in the `TomTom-Api-Key` header or the `key=` parameter depending on the service. `onAPIResponse` also receives the response data.
+
+The SDK sends none of this anywhere. If you forward it to a logging or monitoring service, **redact positions, queries and the API key first**.
+
+## Proxy mode and cookies
+
+In [proxy mode](./proxying-api-calls.mdx), the SDK sends every request with `credentials: 'include'`. The session cookie your proxy issues then travels with every service call and tile request.
+
+The SDK never sets or reads that cookie. Your proxy does, so **list it in your cookie notice** as one of yours.
+
+TomTom then sees your proxy's IP address rather than the user's, unless your proxy forwards it, for example in an `X-Forwarded-For` header. The rest of what this page lists still reaches TomTom, through your proxy.
+
+## Third parties
+
+Core, Services and Map contact no third party. These cases depend on you:
+
+- **Assets you choose.** If you load the MapLibre CSS, an image or a marker icon from a CDN, that CDN sees your users' IP addresses. Serve these from your own origin, or bundle them, to avoid it.
+- **The Landmarks 3D transcoder.** The Landmarks 3D plugin loads its KTX2 texture transcoder from `unpkg.com` by default, which sees your users' IP addresses. Host the transcoder files yourself and point `transcoderPath` at them.
+- **Images you theme from.** Map Theme's `deriveMapColorsFromImage` loads the image URL you pass it, so that image's host sees your users' IP addresses.
+
+The Agent Toolkit plugin sends data to more places than these. [What the agent sends, and where](../plugins/agent-toolkit/what-the-agent-sends.mdx) covers it.
+
+## Next steps
+
+- [Proxying your API calls](./proxying-api-calls.mdx) - Keep the API key and TomTom's address off the page.
+- [Request options and errors](../services/request-options-and-errors.mdx) - The lifecycle hooks and their payloads.
+- [Where your API key runs](./where-your-api-key-runs.mdx) - Which data stays on your server and which reaches the browser.
