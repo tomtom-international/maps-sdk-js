@@ -1,0 +1,62 @@
+---
+title: Depth of field
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.62.2"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The [map effects plugin](./map-effects.mdx)'s `depthOfField` holds one **distance** sharp on a pitched map and defocuses the rest, the way a lens focused there would. It is the one effect that reads the map's camera. In the playground below, the band holds one run of the valley in focus and lets the ridges behind it soften:
+
+<GuideDemo demo="terrain-playground" />
+
+## Turning it on
+
+```javascript
+effects.set({
+    'depthOfField.intensity': 18,  // the widest circle of confusion, in CSS pixels
+    'depthOfField.focus': 0,       // 0 = the nearest ground, 1 = the farthest the frame shows
+    'depthOfField.band': 0.3,      // how much of that depth stays sharp
+    'depthOfField.bokeh': 0.5,     // whether a defocused highlight fades or returns as a disc
+});
+```
+
+| Knob | Range | Default |
+| --- | --- | --- |
+| `depthOfField.intensity` (CSS px) | 0–30 | 0 (off) |
+| `depthOfField.focus` (0 = nearest, 1 = farthest shown), `depthOfField.band` | 0–1 | 0, 0.3 |
+| `depthOfField.bokeh` | 0–1 | 0.5 |
+
+`focus: 0` is the automatic answer rather than a neutral middle — the nearest thing in a tilted shot is the bottom edge, so switching the effect on over a tilted city needs nothing set. Raise it and the middle distance is sharp with the foreground *and* the horizon thrown off, which is the tilt-shift picture.
+
+## How it works
+
+It is the one effect that runs on the **GPU**: a full-screen pass that gathers a disc of the map's own pixels per fragment, at a radius that grows with distance. That is what a `backdrop-filter` cannot do — one radius for the whole layer, blended over the sharp original, reads as haze rather than as a lens. Because the pass reads the rendered map back as a texture, it needs `canvasContextAttributes: { preserveDrawingBuffer: true }` on the map, the same attribute bloom and `capture()` already require.
+
+**Bokeh is what separates a defocus from a blur.** A lens does not average the light it cannot resolve, it spreads it, so each point arrives as an image of the aperture at its own brightness. Weighting every sample by the fourth power of its brightness keeps a lit road or a traffic tube bright across the whole circle it is spread over; at 0 the light is averaged away, as a blur does. It is deliberately not energy-conserving — normalising that away leaves you with the blur again.
+
+**No depth buffer is involved, and none is needed.** MapLibre hands none out, but the map is a *plane*: a ray through row `y` meets it at `1/z = 1/D − y·tanθ/D²`, so reciprocal distance — which is what a lens actually defocuses by — is affine in the row of the picture. The whole depth of a frame is then one number, `span = 2·tan(fov/2)·tan(pitch)` with `ramp = span/(1 + span/2)`: 0 seen from straight above, 0.5 at a 45° tilt, past 1 once the horizon is on screen.
+
+## Planning around it
+
+- **A flat map ends the effect, and nothing checks the pitch.** Every part of the ground is the same distance away, `ramp` is 0, so the pass is not run and its canvas stays hidden. Tilt the map and it comes back.
+- **The same `band` covers more of the view at a gentle tilt**, because it is a share of the frame's depth rather than of its height. That is the point: a shallow tilt has little depth for a field to be shallow in.
+- **Bloom works on the defocused picture**: it reads the GPU chain's output, so a defocused highlight glows as a wide soft disc ([How it renders](./map-effects.mdx#how-it-renders)).
+
+It pairs with [3D terrain](../map/terrain.mdx#3d-elevation), which gives the view relief to defocus — see the [3D terrain playground](../../examples/terrain-playground) above, and the [route fly-over playground](../../examples/route-flyover-playground), where it holds the road ahead in focus through the whole flight.
+
+## Related guides and examples
+
+### Related guides
+- **[Map effects plugin](./map-effects.mdx)** - Setup, how the effects render, and every knob
+- **[Terrain](../map/terrain.mdx)** - The relief a depth of field defocuses
+- **[Globe and sky](../map/styling-globe-and-sky.mdx)** - The sky above a tilted view
+- **[Fly-over plugin](./flyover.mdx)** - A camera flying a route, with the road ahead in focus
+
+### Related examples
+- **[3D terrain playground](../../examples/terrain-playground)** - A depth of field over a valley
+- **[Route fly-over playground](../../examples/route-flyover-playground)** - A depth of field holding the road ahead in focus

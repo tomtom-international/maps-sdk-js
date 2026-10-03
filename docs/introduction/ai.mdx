@@ -1,0 +1,60 @@
+---
+title: AI and the SDK
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.62.2"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Maps SDK for JavaScript has AI capabilities at two levels: one for the developers building with it, and one for the end-users of the applications they build.
+
+## For developers — AI coding assistance
+
+Building with any SDK is faster when your coding agent understands the library.
+The SDK ships a `/tomtom-maps-sdk-js` skill that loads SDK-specific knowledge directly into AI coding agents like Claude Code, Cursor, GitHub Copilot, and Windsurf.
+
+With the skill installed, your agent knows the right module patterns, coordinate conventions (`[longitude, latitude]` — always), service APIs, and common pitfalls — so it writes idiomatic SDK code on the first try rather than inventing its own.
+
+Install it once:
+
+```bash
+npx skills add tomtom-international/maps-sdk-js --skill tomtom-maps-sdk-js
+```
+
+Then invoke it with a topic:
+
+```
+/tomtom-maps-sdk-js map-setup
+/tomtom-maps-sdk-js routing
+/tomtom-maps-sdk-js traffic
+```
+
+**[Learn more about AI coding with the SDK →](../guides/ai-coding.mdx)**
+
+## For end-users — conversational map control
+
+The `@tomtom-org/maps-sdk-plugin-agent-toolkit` plugin turns a TomTom map into a conversational interface.
+Users can type or speak natural language — *"Route from Berlin to Munich avoiding tolls"*, *"Show coffee shops near me"*, *"What's the traffic like on this route?"* — and the agent takes care of the geocoding, routing, and map display.
+
+The plugin is headless: you bring your own LLM (any Vercel AI SDK provider) and chat UI.
+It ships 60+ built-in tools covering location, routing, places, traffic, isochrones, MapLibre access, and an experimental JavaScript-as-input pattern for open-ended analysis and aggregation — with an intent classifier that keeps token usage lean.
+
+```typescript
+import { createMapAgent } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+import { openai } from '@ai-sdk/openai';
+
+const agent = createMapAgent(map, { model: openai('gpt-4o') });
+```
+
+**[Learn more about the Agent Toolkit plugin →](../guides/plugins/agent-toolkit/overview.mdx)**
+
+## Summary
+
+| | What it does | Who benefits |
+|---|---|---|
+| **[Coding skill](../guides/ai-coding.mdx)** | Loads SDK knowledge into your coding agent | Developers building with the SDK |
+| **[Agent Toolkit plugin](../guides/plugins/agent-toolkit/overview.mdx)** | Gives end-users conversational map control | End-users of your application |

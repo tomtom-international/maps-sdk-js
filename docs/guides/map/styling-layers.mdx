@@ -1,0 +1,68 @@
+---
+title: Editing style layers
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.62.2"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+For what the [Styling module](./styling.mdx)'s knobs do not cover, `styling.layers` edits the loaded style's layers directly. It is the advanced, version-coupled tier: prefer a knob or [`setMapColors`](./styling-map-colors.mdx) wherever one covers the intent.
+
+## The advanced tier: `styling.layers`
+
+`styling.layers.query(...)` selects style layers by the base-map group taxonomy, layer type, source layer or id fragment — every constraint given must hold, so the others narrow a `group` — and edits their paint, layout, filter or visibility directly:
+
+```javascript
+styling.layers.query({ group: 'roadLabels' }).setPaint({ 'text-color': '#93c5fd' });
+styling.layers.query({ metadataGroups: ['water'], layerTypes: ['fill'] }).setPaint({ 'fill-opacity': 0.6 });
+styling.layers.query({ idIncludes: ['railway'] }).setVisible(false);
+styling.layers.query({ group: 'trafficFlow', layerTypes: ['line'] }).setPaint({ 'line-opacity': 0.6 });
+styling.layers.query({ group: 'roadLabels' }).reset();
+```
+
+A `group` is either a base-map group, the same names [`BaseMapModule`](./base-map.mdx) takes, or the layers of another style-owned module: `pois`, `trafficFlow`, `trafficIncidents` and `hillshade`. One query covers every style layer, whichever module shows or hides it.
+
+## Only the style's own layers
+
+`styling.layers` and the knobs reach the layers the loaded style declares, nothing added on top of it. The layers a data-owned module adds take their overrides through that module's own `layers` configuration, merged over its defaults and kept across style switches:
+
+| Module | Its `layers` entries |
+|---|---|
+| [Places](./places-styling.mdx) | `main`, `micro`, `selected`, the cluster layers, and its connections' and entry points' own |
+| [Routing](./routes-styling.mdx) | the route lines, waypoints, sections and their labels, by group (`mainLines`, `sections`, …) |
+| [Geometries](./geometries.mdx), [Reachable ranges](./reachable-ranges.mdx) | `fill`, `line`, `label`, `lineLabel` |
+| [Traffic incident details](./traffic-incident-details.mdx) | the incident lines, from `focusHalo` to `innerPattern`, and the three markers |
+| [Traffic area analytics](./traffic-area-analytics-module.mdx) | `heatmap`, each grid's fill, outline, extrusion and highlight, and the region |
+
+The layers you add through `map.mapLibreMap` are yours to style.
+
+The two reach together: below, one switch fades the traffic flow, POIs and road labels through `styling.layers` groups, and brings a city's incidents and boundary forward through their modules' `layers` configs.
+
+<GuideDemo demo="traffic-incident-focus" />
+
+## What an edit keeps
+
+- **Re-applied after a style switch** for as long as the layers still exist, and landing on top of the knobs.
+- **`setFilter` replaces the filter the style gave a layer**, and the filters other modules add, such as POI categories, still narrow it.
+- **Not part of `getConfig()`**: edits are edits to this style, not portable settings.
+
+## How durable is it?
+
+This is the version-coupled tier, framed the way Map Maker frames [raw layer editing](https://docs.tomtom.com/map-maker/documentation/layers/layers): layer ids, property expressions and even which layers exist belong to the style version the map loads. A query that matches nothing warns once and does nothing.
+
+`map.mapLibreMap` remains available below all of this ([which to use when](./about-maplibre.mdx#when-to-use-tomtom-sdk-vs-direct-maplibre)), though `setPaintProperty` on a style layer there is not re-applied after a style switch.
+
+## Related guides and examples
+
+### Related guides
+- **[Map styling](./styling.mdx#how-durable-is-this)** — the knobs, and which of them depend on the TomTom styles
+- **[Base map](./base-map.mdx)** — the layer groups a `group` query selects
+- **[About MapLibre](./about-maplibre.mdx)** — the raw MapLibre map underneath
+
+### Related examples
+- **[Map styling playground](../../examples/map-styling-playground)** — every knob on a panel built from the catalogue
+- **[Traffic incident focus](../../examples/traffic-incident-focus)** — `styling.layers` groups and module `layers` configs applied and reset by one switch

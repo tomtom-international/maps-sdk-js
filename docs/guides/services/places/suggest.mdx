@@ -1,0 +1,149 @@
+---
+title: Search suggestions (places, brands and categories)
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.62.2"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+`getSearchSuggestions()` answers one question — "what might the user mean?" — with one call. A query like
+`"italian"` means both a cuisine *category* and *Ristorante Italiano down the road*, and `getSearchSuggestions`
+returns both in a single ranked list.
+
+## Basic usage
+
+```javascript
+import { getSearchSuggestions } from '@tomtom-org/maps-sdk/services';
+
+const { suggestions } = await getSearchSuggestions({ query: 'italian' });
+
+for (const result of suggestions) {
+    if (result.kind === 'brand' || result.kind === 'category') {
+        console.log(`Refine by ${result.kind}: ${result.title}`);
+    } else {
+        console.log(result.title, result.subtitles);
+    }
+}
+```
+
+It is not typeahead-only. A complete query works as well as a partial one.
+
+## Result kinds
+
+Every result carries a `kind`, and narrowing on it tells you what else it carries.
+
+| Kind | What it is | Carries |
+| --- | --- | --- |
+| `place`, `address`, `street`, `area` | A location | `id`, `title`, `subtitles`, `distanceInMeters`, `resolve()` |
+| `brand`, `category` | A *refinement*: a narrowing for the next query | `title`, `refineParams`, `refine()` |
+
+A location suggestion carries what a list needs, not the place itself. Call `resolve()` on the one
+the user picks to get the full place, geometry included:
+
+```javascript
+const place = await result.resolve();
+map.flyTo({ center: place.geometry.coordinates });
+```
+
+## Acting on a refinement
+
+Refinement results carry `refine()`, which runs the correct follow-up query for you. A brand hit
+searches that brand, a category hit that category, both inside the original call's scope. You act
+on the result without knowing which endpoint produced it:
+
+```javascript
+const { suggestions } = await getSearchSuggestions({ query: 'shell' });
+const brand = suggestions.find(result => result.kind === 'brand');
+
+if (brand) {
+    const stations = await brand.refine();
+}
+```
+
+`refine()` takes an optional `AbortSignal`. The signal you gave `getSearchSuggestions` is not reused, because
+that call has already settled by the time a refinement is acted on.
+
+The same result also carries `refineParams`, the parameter object `refine()` runs. Use it when you
+want to inspect or adjust the follow-up before sending it:
+
+```javascript
+const stations = await discoverPlaces({ ...brand.refineParams, limit: 50 });
+```
+
+## Cost
+
+`getSearchSuggestions` makes **two requests** per call by default, one per arm. Narrowing `filters.kinds`
+to refinement kinds only, or to location kinds only, skips the other arm. Treat `resolve()` as a
+lookup and call it for the suggestion the user picks, not for the whole list.
+
+Debouncing and caching are deliberately **not** built in. A search box wants them per keystroke,
+which belongs in your input loop rather than in the service call.
+
+## Ranking
+
+The list is blended the way Places Search v3's `suggest` blends it:
+
+- **At most one brand or category, and it leads.** It is offered only when the whole query names it
+  from the start of a word: `pizz` offers *Pizzeria*, while `baker st` and `amster` offer none.
+- **A brand must be borne out by the places.** One that merely starts like the query is dropped
+  unless a leading place carries it, so `londo` does not offer *London Fire Brigade*.
+- **Places follow in search order.** When the query names a brand or category, places whose names
+  carry the typed words move up, since the suggestion above them already stands for the category.
+
+Neither backend returns a score comparable with the other's, so this blend is a heuristic the SDK
+owns, not something the API decides.
+
+## Parameters
+
+Shaped after Places Search v3's `suggest` body, so the vocabulary survives a future backend change.
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `query` | `string` | What the user typed. Required. |
+| `maxResults` | `number` | Size of the merged list. Default 5, capped at 10. |
+| `filters.kinds` | `SearchSuggestionKind[]` | Which kinds of result to return. Also decides which arms run: refinement kinds alone skip the search call and return every recognised refinement, located kinds alone skip the autocomplete call. |
+| `filters.boundingBox` | `HasBBox` | Restricts results to a box. Search arm only. Applies together with `origin`, which then measures distances but no longer ranks the places. A refinement keeps the box. |
+| `filters.countries` | `string[]` | Restricts results by country. Both arms. |
+| `filters.poiTypes` | `POICategory[]` | Restricts results by POI category. Search arm only. |
+| `filters.areaTypes` | `GeographyType[]` | Restricts which administrative levels area results come from. Search arm only. |
+| `origin` | `HasLngLat` | The point to search around. Ranks nearer results higher on both arms, unless a `filters.boundingBox` confines the search, and is what distances are measured from. |
+| `geopoliticalView` | `GeopoliticalView` | Geopolitical view. Defaults to the global `geopoliticalView`. See [Geopolitical views](../../core/geopolitical-views.mdx). |
+
+<Blockquote type="info">
+The autocomplete arm accepts no category filter and no bounding box, so those reach the search arm
+only. A `brand` or `category` suggestion is therefore not category-filtered — it is a concept, not a
+place.
+</Blockquote>
+
+## Cancellation
+
+Both calls share one signal, so aborting drops the pair rather than letting a slow arm resolve on
+its own and repopulate the list under a newer query.
+
+[`createLatestRequest`](../request-options-and-errors.mdx#keeping-only-the-latest-request)
+keeps only the newest keystroke's pair: starting one aborts the one before it.
+
+```javascript
+import { createLatestRequest, getSearchSuggestions } from '@tomtom-org/maps-sdk/services';
+
+const latestSuggestions = createLatestRequest();
+
+searchBox.addEventListener('input', async () => {
+    const response = await latestSuggestions.run((signal) =>
+        getSearchSuggestions({ query: searchBox.value, signal })
+    );
+    if (response.current) showSuggestions(response.value.suggestions);
+});
+```
+
+A failure on either arm rejects the call, rather than returning half a list, and the error names `SearchSuggestions` as its service.
+
+## Related guides and examples
+
+- [Discover places](./search.mdx) — where a brand or category refinement's follow-up runs
+- [POI categories](./poi-categories.mdx) — the category vocabulary behind `category` results
+- [Search playground](../../../examples/search-playground) — `getSearchSuggestions()` behind a search box
