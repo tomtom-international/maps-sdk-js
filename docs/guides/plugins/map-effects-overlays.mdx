@@ -1,0 +1,69 @@
+---
+title: Grade, tint, fog, edge blur and vignette
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.62.3"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+Five of the [map effects plugin](./map-effects.mdx)'s effects are overlays laid over the map: grade and tint mute the base map so your data reads first, fog and edge blur give the rim of the view depth or focus, and vignette darkens or lightens the edges. Each is off by default. The playground below puts them on one panel with the other effects:
+
+<GuideDemo demo="map-effects-playground" />
+
+## Muting the base map: grade and tint
+
+`grade` sets the brightness, contrast and saturation of the whole frame, and `tint` lays a colour over it. Together they quiet the base map under your own data layers — the visual half of the [`data-viz` styling preset](../map/styling.mdx#presets), which quiets the map's content:
+
+```javascript
+effects.set({ 'grade.saturation': 0.4, 'grade.brightness': 0.85, 'tint.opacity': 0.15 });
+```
+
+## Fog or edge blur?
+
+Both blur the rim of the view and both take a `reach`, so they are easy to confuse. The difference is what happens to the rim's colour:
+
+- **Fog** blurs *and* washes the rim out, towards the colour of the air — pale over a light style, dark over a dark one. It reads as distance, and it follows the map's light/dark theme so a night map hazes dark rather than glowing.
+- **Edge blur** blurs and nothing else. Colours stay as they are, so it reads as a lens rather than as atmosphere, and it is the one to use when the rim's colour still carries data.
+
+Use fog for depth, edge blur for focus. Together they compound, which is rarely what you want.
+
+```javascript
+effects.set({ 'fog.intensity': 0.6, 'fog.reach': 0.4 });
+```
+
+## Vignette
+
+`vignette.intensity` darkens the edges of the frame when negative and lightens them when positive, and `vignette.reach` sets how far in it reaches:
+
+```javascript
+effects.set({ 'vignette.intensity': -0.5 });
+```
+
+## The knobs
+
+| Knob | Range | Default |
+| --- | --- | --- |
+| `grade.brightness`, `grade.contrast` | 0.5–1.5 | 1 |
+| `grade.saturation` | 0–1.5 | 1 |
+| `tint.color`, `tint.opacity` | colour, 0–1 | `#1f2937`, 0 (off) |
+| `fog.intensity`, `fog.reach` | 0–1 | 0 (off), 0.4 |
+| `edgeBlur.intensity` (CSS px), `edgeBlur.reach` | 0–30, 0–1 | 0 (off), 0.5 |
+| `vignette.intensity` (negative darkens, positive lightens), `vignette.reach` | −1–1, 0–1 | 0 (off), 0.45 |
+
+## How they render
+
+The overlays stack over the result of the GPU chain: `backdrop-filter` for grade, fog and edge blur, a gradient for vignette, a flat layer for tint. They are CSS, so they need no redrawing as the map moves and need no readable map canvas. They never take pointer events and sit below the map's controls. The [overview](./map-effects.mdx#how-it-renders) shows where they sit relative to bloom and the GPU chain.
+
+## Related guides and examples
+
+### Related guides
+- **[Map effects plugin](./map-effects.mdx)** - Setup, how the effects render, and every knob
+- **[Map styling](../map/styling.mdx#presets)** - The `data-viz` preset these effects complete
+
+### Related examples
+- **[Map effects playground](../../examples/map-effects-playground)** - Every effect on one panel
+- **[Mixed map effects](../../examples/mixed-map-effects)** - A contrast grade and a vignette over a watercolour pass

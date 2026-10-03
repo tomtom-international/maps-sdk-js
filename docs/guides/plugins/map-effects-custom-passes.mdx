@@ -1,0 +1,55 @@
+---
+title: Custom GPU passes
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.62.3"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+`addPass` runs a full-screen fragment shader of yours inside the [map effects plugin](./map-effects.mdx)'s GPU chain, so every effect the plugin draws over the chain — bloom, grade, fog, edge blur, tint, vignette — then works on your picture. That is the slot for a stylisation: a watercolour, a posterise, a colour lookup. The demo below paints the map in watercolour, then lets bloom, a contrast grade and a vignette work on the painting.
+
+<GuideDemo demo="mixed-map-effects" />
+
+## Your own GPU passes
+
+```javascript
+effects.addPass({
+    id: 'posterise',
+    fragment: `uniform float uLevels;
+        void main() {
+            vec4 colour = texture(uSource, vUv);
+            fragColor = vec4(floor(colour.rgb * uLevels) / uLevels, colour.a);
+        }`,
+    uniforms: { uLevels: 5 },
+});
+
+effects.removePass('posterise');
+```
+
+- **The shader is GLSL ES 3.00, minus its preamble.** The plugin declares the version, the precisions, `uSource` (the picture so far), `vUv` and `fragColor`; you declare your own uniforms and `main`. A shader that does not compile is refused by `addPass`, with the compiler's log in the error. A browser without WebGL2 runs no pass, and the plugin warns once.
+- **`uniforms`** takes `float` and `vec2` values by name, or a function returning them, which is called on every draw. An `int` or `bool` uniform cannot be set, so declare numbers as `float`. A function that throws skips its pass for that draw, with one warning. The chain redraws with the map, so a pass animating on its own asks for frames with `map.mapLibreMap.triggerRepaint()`.
+- **`placement`** puts the pass `before-depth-of-field` (the default) or `after-depth-of-field`, and `addPass` refuses any other value: a stylisation the lens should then blur goes before it, one that should stay crisp across the frame after it. Passes run in the order they were added, and a pass added under an id already in use replaces it where it stands.
+- **`capture()` runs your passes too**, at the capture's own resolution.
+- **A pass that shifts hues runs before bloom's colour key**, so a [`bloom.only`](./map-effects-bloom.mdx#scoping-bloom-by-colour) scope may need a wider `bloom.onlyTolerance` to find its colours.
+
+The map needs `canvasContextAttributes: { preserveDrawingBuffer: true }`, since the chain reads the map canvas back ([Usage](./map-effects.mdx#usage)).
+
+## Effects on top of everything
+
+An effect that belongs *on top* of everything — film grain, scanlines, a watermark — needs no pass: lay your own element over the map, above the effects container.
+
+Passes are code rather than settings, so `getConfig()` does not list them.
+
+## Related guides and examples
+
+### Related guides
+- **[Map effects plugin](./map-effects.mdx)** - Setup, how the effects render, and every knob
+- **[Depth of field](./map-effects-depth-of-field.mdx)** - The lens a pass runs before or after
+- **[Bloom](./map-effects-bloom.mdx)** - The glow that works on your pass's picture
+
+### Related examples
+- **[Mixed map effects](../../examples/mixed-map-effects)** - A watercolour pass of your own, with bloom, grade and vignette over it

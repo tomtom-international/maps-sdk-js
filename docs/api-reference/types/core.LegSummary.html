@@ -1,0 +1,93 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>LegSummary | TomTom Maps for JavaScript</title><meta name="description" content="Documentation for TomTom Maps for JavaScript"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container"><a href="../index.html" class="title">TomTom Maps for JavaScript</a>
+<div id="tsd-toolbar-links"></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/>
+<ul role="listbox" id="tsd-search-results"></ul>
+<div id="tsd-search-status" aria-live="polite" aria-atomic="true">
+<div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header>
+<div class="container container-main">
+<div class="col-content">
+<div class="tsd-page-title">
+<ul class="tsd-breadcrumb" aria-label="Breadcrumb">
+<li><a href="../modules/core.html">core</a></li>
+<li><a href="" aria-current="page">LegSummary</a></li></ul>
+<h1>Type Alias LegSummary</h1></div>
+<div class="tsd-signature"><span class="tsd-kind-type-alias">LegSummary</span><span class="tsd-signature-symbol">:</span> <a href="core.SummaryWithConsumption.html" class="tsd-signature-type tsd-kind-type-alias">SummaryWithConsumption</a> <span class="tsd-signature-symbol">&amp;</span> <span class="tsd-signature-symbol">{</span><br/>    <span class="tsd-kind-property">chargingInformationAtEndOfLeg</span><span class="tsd-signature-symbol">?:</span> <a href="core.ChargingStop.html" class="tsd-signature-type tsd-kind-type-alias">ChargingStop</a><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">stopTimeInSeconds</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div>
+<div class="tsd-comment tsd-typography"><p>Summary information for a single route leg.</p>
+<p>A leg is the portion of the route between two consecutive waypoints.</p>
+</div>
+<div class="tsd-type-declaration">
+<h4>Type Declaration</h4>
+<ul class="tsd-parameters">
+<li class="tsd-parameter">
+<h5><code class="tsd-tag">Optional</code><span class="tsd-kind-property">chargingInformationAtEndOfLeg</span><span class="tsd-signature-symbol">?: </span><a href="core.ChargingStop.html" class="tsd-signature-type tsd-kind-type-alias">ChargingStop</a></h5>
+<div class="tsd-comment tsd-typography"><p>Charging information at the end of this leg.</p>
+<p>Present only if this leg ends at a charging stop, indicating the vehicle
+will charge at this waypoint before continuing to the next leg.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks">Remarks<a href="#remarks" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Contains details about:</p>
+<ul>
+<li>Charging park location and facilities</li>
+<li>Required charging time</li>
+<li>Target charge level after charging</li>
+</ul>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example">Example<a href="#example" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-9">chargingInformationAtEndOfLeg</span><span class="hl-2">: {</span><br/><span class="hl-2">  </span><span class="hl-9">chargingParkId</span><span class="hl-2">: </span><span class="hl-4">&#39;park-123&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-9">chargingTimeInSeconds</span><span class="hl-2">: </span><span class="hl-8">1200</span><span class="hl-2">,  </span><span class="hl-0">// 20 minutes</span><br/><span class="hl-2">  </span><span class="hl-9">targetChargeInkWh</span><span class="hl-2">: </span><span class="hl-8">80</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-9">targetChargeInPCT</span><span class="hl-2">: </span><span class="hl-8">80</span><br/><span class="hl-2">}</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></li>
+<li class="tsd-parameter">
+<h5><code class="tsd-tag">Optional</code><span class="tsd-kind-property">stopTimeInSeconds</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span></h5>
+<div class="tsd-comment tsd-typography"><p>Time in seconds the vehicle stands still at the stop this leg arrives at.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-1">Remarks<a href="#remarks-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>One number for the whole stop, whatever it is spent on — a
+<a href="core.WaypointProps.html#pausedurationseconds" class="tsd-kind-property">WaypointProps.pauseDurationSeconds</a> the caller asked for, charging the routing service
+planned on an EV route, or both at one stop. It is what the service actually planned rather
+than an echo of the request: the gap between this leg's <code>arrivalTime</code> and the next leg's
+<code>departureTime</code>.</p>
+<p>For the breakdown, <a href="#" class="tsd-kind-property">LegSummary.chargingInformationAtEndOfLeg</a> carries the charging part;
+whatever is left is waiting.</p>
+<ul>
+<li>Absent when the vehicle does not stop at the end of this leg</li>
+<li>Absent on the last leg, which has no following departure — and the routing service does not
+accept a wait at the destination anyway</li>
+<li>This leg's own <code>travelTimeInSeconds</code> is driving only and <em>excludes</em> the stop, while the
+route's total <em>includes</em> every stop. So driving time is the sum of the legs, and the time
+spent standing still is the difference.</li>
+</ul>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-1">Example<a href="#example-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-0">// Half an hour at this stop, twenty minutes of it charging</span><br/><span class="hl-9">stopTimeInSeconds</span><span class="hl-2">: </span><span class="hl-8">1800</span><br/><span class="hl-9">chargingInformationAtEndOfLeg</span><span class="hl-2">: { </span><span class="hl-9">properties</span><span class="hl-2">: { </span><span class="hl-9">chargingTimeInSeconds</span><span class="hl-2">: </span><span class="hl-8">1200</span><span class="hl-2"> } }</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></li></ul></div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-2">Remarks<a href="#remarks-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><ul>
+<li>An A→B route has 1 leg</li>
+<li>An A→B→C route has 2 legs (A→B, B→C)</li>
+<li>An EV route can hold more legs than the stops asked for, one per charging stop the service adds</li>
+</ul>
+</div></div></div>
+<div class="col-sidebar">
+<div class="page-menu">
+<div class="tsd-navigation settings">
+<details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div>
+<div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div></div>
+<div class="site-menu">
+<nav class="tsd-navigation"><a href="../index.html">TomTom Maps for JavaScript</a>
+<ul class="tsd-small-nested-navigation" id="tsd-nav-container">
+<li>Loading...</li></ul></nav></div></div></div><footer>
+<p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer>
+<div class="overlay"></div></body></html>

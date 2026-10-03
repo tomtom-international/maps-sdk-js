@@ -1,0 +1,179 @@
+---
+title: Routes
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.62.3"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+A route is a GeoJSON Feature with LineString geometry containing the path coordinates. The feature properties contain route information including summary statistics, sections, guidance, and progress data.
+
+## Where routes are used
+
+Routes are returned by routing services and can be displayed on the map:
+
+**Services that return routes:**
+- [Routing](../services/routing/quickstart.mdx) – Calculate routes between waypoints with customizable parameters
+- [Route Planning Parameters](../services/routing/parameters.mdx) – Configure routing options (traffic, alternatives, vehicle profiles, etc.)
+- [Long Distance EV Routing](../services/routing/long-distance-ev-routing.mdx) – Plan routes with charging stops for electric vehicles
+
+**Displaying routes on the map:**
+- [Routing Module](../map/routes.mdx) – Display routes with visual styling, alternatives, and interaction
+
+## Route object structure
+
+The route object contains the following properties:
+
+`geometry`
+- `coordinates` – Path coordinates as an array of `[longitude, latitude]` pairs
+
+`properties`
+- `id` – Unique route identifier
+- `summary` – Route summary statistics
+- `sections` – Route sections with specific characteristics
+- `guidance` – Turn-by-turn instructions (if requested)
+- `progress` – Progress points along the route (if requested)
+- `index` – Route index (0 = main route, 1+ = alternatives)
+
+## Summary
+
+The summary contains overall route statistics including departure/arrival times, distance, duration, and consumption estimates. Access it via `route.properties.summary`:
+
+**Time and distance:**
+- `departureTime` – Departure date and time
+- `arrivalTime` – Arrival date and time
+- `lengthInMeters` – Total route distance
+- `travelTimeInSeconds` – Total travel duration
+
+**Traffic information:**
+- `trafficDelayInSeconds` – Extra time due to traffic
+- `trafficLengthInMeters` – Distance affected by traffic
+
+**Alternative travel times (if requested):**
+- `noTrafficTravelTimeInSeconds` – Free-flow time without traffic
+- `historicTrafficTravelTimeInSeconds` – Historical average based on typical patterns
+- `liveTrafficIncidentsTravelTimeInSeconds` – Current live traffic conditions
+
+**Electric vehicles (if applicable):**
+- `batteryConsumptionInkWh` – Energy consumption in kilowatt-hours
+- `remainingChargeAtArrivalInkWh` – Battery level at destination
+- `totalChargingTimeInSeconds` – Total time spent at charging stops
+
+**Combustion vehicles (if applicable):**
+- `fuelConsumptionInLiters` – Fuel consumption in liters
+
+## Sections
+
+Sections divide the route into portions with specific characteristics. Each section references a range of coordinate indices in the route geometry. Access them via `route.properties.sections`:
+
+### Section types
+
+Sections are grouped by type in the `sections` property:
+
+**Route characteristics:**
+- `leg` - Portion between two consecutive waypoints, includes leg summary
+- `country` - Passage through a country (includes ISO3 country code)
+- `importantRoadStretch` - Major road segments with street names and numbers
+
+**Road types:**
+- `motorway` - Highway/motorway sections
+- `ferry` - Ferry crossings
+- `carTrain` - Car train transport
+- `tunnel` - Tunnel sections
+- `pedestrian` - Pedestrian areas
+- `urban` - Urban area sections
+- `unpaved` - Unpaved road sections
+
+**Restrictions:**
+- `toll` - Sections where a per-use road toll is charged (a ticket or barrier motorway, or a free-flow tolling point)
+- `tollRoad` - Sections that cost money to drive by any scheme: every `toll` section, plus vignette-only motorways and urban charge zones
+- `tollVignette` - Toll vignette required (includes country code)
+- `carpool` - Carpool/HOV lane sections
+- `lowEmissionZone` - Low emission zone sections
+- `vehicleRestricted` - Vehicle restriction sections
+
+**Traffic and guidance:**
+- `traffic` - Traffic incidents and congestion (includes delay, category, speed)
+- `lanes` - Lane guidance information (includes directions and separators); only returned when guidance is requested
+- `speedLimit` - Speed limit information
+- `roadShields` - Road shield references
+
+Leaving `sectionTypes` unset requests every type above; passing a list requests only the types it names. A requested section type only appears in the response if the route actually traverses it (for example, `ferry` is omitted on a route with no water crossing).
+
+### Section properties
+
+All section types share base properties, with additional fields specific to each type:
+
+**Base properties (all sections):**
+- `id` – Unique identifier
+- `startPointIndex` – Start coordinate index
+- `endPointIndex` – End coordinate index
+
+**Leg sections** (`sections.leg`):
+- `summary` – Leg-specific summary statistics
+- `originalWaypointIndex` – Which entry of the request's `locations` this leg arrives at. `legs[i]` is not reliably the leg arriving at `locations[i + 1]`, because an EV route gains charging stops the service inserted. Absent on the final leg and on legs ending at an inserted stop, so handle `undefined` rather than assuming a number
+
+**Traffic incidents** (`sections.traffic`):
+- `categories` – Incident categories (e.g., `['jam', 'accident']`)
+- `magnitudeOfDelay` – Severity level (`'minor'`, `'moderate'`, `'major'`, etc.)
+- `delayInSeconds` – Extra delay caused by incident
+- `effectiveSpeedInKmh` – Current speed through incident
+- `eventId` – Identifier of the incident behind the section. Pass it to the traffic incident details service to get the whole record, rather than re-deriving it from the section's geometry
+- `tec` – TPEG2-TEC standard codes for incident classification
+
+**Country sections** (`sections.country`):
+- `countryCodeISO2` – Two-letter country code (e.g., `'NL'`)
+- `countryCodeISO3` – Three-letter country code (e.g., `'NLD'`)
+
+These sections tile a route end to end, so the country of any point is whichever section holds it.
+
+**Important road stretches** (`sections.importantRoadStretch`):
+- `index` – Importance ranking (0 = most important)
+- `streetName` – Street name
+- `roadNumbers` – Road numbers (e.g., `['A1', 'E30']`)
+
+**Lane guidance** (`sections.lanes`):
+- `lanes` – Array of lane information
+  - `directions` – Possible directions from this lane
+  - `follow` – Direction to follow for route
+- `laneSeparators` – Lane separator types
+
+**Speed limits** (`sections.speedLimit`):
+- `maxSpeedLimitInKmh` – Speed limit in kilometers per hour
+
+## Progress
+
+Progress points provide cumulative distance and time at specific coordinates along the route. Available when extended route representations are requested. Access them via `route.properties.progress`:
+
+- `pointIndex` – Index in geometry coordinates
+- `distanceInMeters` – Distance from start
+- `travelTimeInSeconds` – Time from start
+
+## Guidance
+
+Turn-by-turn navigation instructions. Available when guidance is requested. Access them via `route.properties.guidance.instructions`:
+
+- `message` – Human-readable instruction
+- `maneuver` – Maneuver type
+- `point` – Coordinate of maneuver
+
+## API reference
+
+For complete type documentation, see the complete route feature type [Route](/maps-sdk-js/api-reference/types/core.Route.html)
+
+## Related guides and examples
+
+### Related guides
+- [Routing Quickstart](../services/routing/quickstart.mdx) - Calculate and display routes
+- [Route Planning Parameters](../services/routing/parameters.mdx) - Comprehensive route planning with configuration options
+
+### Map integration
+- [Routing Module](../map/routes.mdx) - Display routes on the map with visual styling
+
+### Related examples
+- [Route with waypoints](../../examples/route) - Basic route calculation and display
+- [Route with alternatives](../../examples/route-with-alternatives) - Multiple route options

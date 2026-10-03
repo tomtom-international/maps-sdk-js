@@ -1,0 +1,200 @@
+---
+title: Route styling
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.62.3"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The [Routing module](./routes.mdx) draws its routes in a look of its own: the top-level `color`, `width` and `waypointSize` for the whole
+route, `waypoints.label` for the waypoint labels, or `layers` per layer, all live on the route style
+playground. The look belongs to the module alone: no styling knob reaches route layers, except the
+[accent](./styling-map-colors.mdx#the-accent-what-a-theme-reaches-beyond-the-base-map) a route given no `color` defaults to, and the delay colours of its
+[traffic sections](./routes-sections.mdx).
+
+<GuideDemo demo="route-styling-playground" />
+
+## Colour, width and waypoint size
+
+```javascript
+import { RoutingModule } from '@tomtom-org/maps-sdk/map';
+
+const routingModule = await RoutingModule.create(map, {
+    color: '#DF1B12',        // the route line, its outline (a darker shade) and the waypoint pins
+    width: 'l',              // 's' | 'm' | 'l'
+    widthFactor: 1.2,        // multiplies the preset, 0.5 to 2
+    waypointSize: 's',       // 's' | 'm' | 'l'
+    waypointSizeFactor: 1.5  // multiplies the preset, 0.5 to 2
+});
+```
+
+A factor composes with its preset rather than replacing it, and is clamped to the range published
+as `ROUTE_WIDTH_FACTOR_RANGE` and `ROUTE_WAYPOINT_SIZE_FACTOR_RANGE`. The instruction arrows keep
+one size across the `width` presets and follow only `widthFactor`; the [stop marks](./routes.mdx#stop-marks)
+scale with their pins, preset and factor alike, and stay centred in the pin head at every zoom. The
+waypoint labels follow the map's light/dark theme, like the labels of places and geometries: dark
+text on a white halo on a light map, the two swapped on a dark one. `waypoints.label` sets their
+colour, halo and size, as `label` does for places. Pins per role, labels of your own and icons per
+waypoint are in [Waypoints](./routes.mdx#pins-per-role).
+
+`color` colours the route line, its outline and the waypoint icons in one go. Leave it out and routes take the map's [accent](./styling-map-colors.mdx#the-accent-what-a-theme-reaches-beyond-the-base-map) when a theme sets one, and the SDK's route blue otherwise:
+
+```javascript
+const brandedRoutes = await RoutingModule.create(map, { color: '#DF1B12' }); // stays red through any theme
+const themedRoutes = await RoutingModule.create(map); // follows map.mapColors.accent
+```
+
+## Layer overrides
+
+```javascript
+// Override paint properties on specific route layers.
+// Each entry under `layers` is keyed by layer group (mainLines, sections, …),
+// and each layer accepts partial `paint`/`layout` overrides that are merged
+// onto the SDK defaults.
+const routingModule = await RoutingModule.create(map, {
+    layers: {
+        mainLines: {
+            routeLine: {
+                paint: {
+                    'line-color': '#FF0000', // Red main route line
+                    'line-width': 6
+                }
+            }
+        }
+    }
+});
+```
+
+## Every setting as data
+
+`routingKnobCatalogue` lists every plain-valued display setting of the module with its kind, its
+range or options and, where one value holds everywhere, its default. Each id is the setting's path
+in the config, so a UI can build its controls from it, with no map loaded:
+
+```javascript
+import { routingKnobCatalogue } from '@tomtom-org/maps-sdk/map';
+
+const tunnelKnobs = routingKnobCatalogue.filter(({ id }) => id.startsWith('sections.tunnel.'));
+// [{ id: 'sections.tunnel.visible', kind: 'toggle', description: '…', default: true }, …,
+//  { id: 'sections.tunnel.style', kind: 'enum', description: '…', options: ['halo', 'inline'], default: 'inline' }, …]
+```
+
+The route-wide knobs come first, then each [section type](./routes-sections.mdx)'s, `<type>` standing for
+any of `drawnSectionTypes`:
+
+| Id | Kind |
+|---|---|
+| `visible` | toggle |
+| `color` | color |
+| `width`, `waypointSize` | enum: `s`, `m` or `l` |
+| `widthFactor`, `waypointSizeFactor` | factor, 0.5 to 2 |
+| `highlight.outlineWidthFactor` | factor, 1 to 1.25 |
+| `waypoints.icon.style.fillColor`, `waypoints.icon.style.outlineColor` | color |
+| `waypoints.icon.style.outlineOpacity` | number, 0 to 1 |
+| `waypoints.icon.start.style.fillColor`, `waypoints.icon.start.style.outlineColor`, `waypoints.icon.middle.style.fillColor`, `waypoints.icon.middle.style.outlineColor`, `waypoints.icon.finish.style.fillColor`, `waypoints.icon.finish.style.outlineColor` | color |
+| `waypoints.icon.start.style.outlineOpacity`, `waypoints.icon.middle.style.outlineOpacity`, `waypoints.icon.finish.style.outlineOpacity` | number, 0 to 1 |
+| `waypoints.stopNumbering` | enum: `numbers`, `letters` or `none` |
+| `waypoints.highlight.sizeFactor` | factor, 1 to 1.5 |
+| `waypoints.label.visible` | toggle |
+| `waypoints.label.color`, `waypoints.label.haloColor` | color |
+| `waypoints.entryPoints` | enum |
+| `displayUnits.distance.type` | enum |
+| `displayUnits.distance.kilometers`, `displayUnits.distance.meters`, `displayUnits.distance.miles`, `displayUnits.distance.feet`, `displayUnits.distance.yards` | text |
+| `displayUnits.time.hours`, `displayUnits.time.minutes` | text |
+| `chargingStops.visible`, `chargingStops.label.visible`, `summaryBubbles.visible` | toggle |
+| `countryCrossings.visible` | toggle |
+| `countryCrossings.minZoom` | number, 0 to 22 |
+| `countryCrossings.color`, `countryCrossings.textColor` | color |
+| `countryCrossings.alignment` | enum |
+| `sections.<type>.visible` | toggle |
+| `sections.<type>.color` | color |
+| `sections.<type>.opacity` | number, 0 to 1 |
+| `sections.<type>.width` | enum: `s`, `m` or `l` |
+| `sections.<type>.widthFactor` | factor, 0.5 to 2 |
+| `sections.<type>.style`, `sections.<type>.pattern` | enum |
+| `sections.<type>.icon.image` | image |
+| `sections.<type>.icon.placement` | enum |
+| `sections.<type>.icon.sizeFactor` | factor, 0.25 to 2 |
+| `sections.speedLimit.sign.placement`, `sections.speedLimit.sign.priority`, `sections.speedLimit.sign.unit` | enum |
+| `sections.speedLimit.sign.minZoom` | number, 0 to 22 |
+
+- A section type lists only the knobs it answers to: `speedLimit` takes only `visible` and `sign`,
+  and `traffic`, which colours its line by delay, has no `color`, `pattern` or `icon` entry.
+- `routingKnobIds` lists the ids in catalogue order, `RoutingKnobId` is their union, and
+  `RoutingKnobValueOf<ID>` the plain value one takes.
+- The unit labels after distances and durations are `text` entries with no default. A `displayUnits`
+  knob left unset takes its value from the [global configuration](../core/global-config.mdx).
+- Not in it: `layers`, `beforeLayerConfig`, the charging stop icons and title, and the waypoint
+  images, `mapping` and `title`, which take structured, MapLibre or function values, and `events`.
+- Its entries share their shape, `KnobEntry`, with every [module's catalogue](./modules.mdx#every-setting-as-data).
+
+## Layer positioning
+
+By default the route lines sit below the map's labels, and most route icons above them.
+`beforeLayerConfig` moves them: one target for the whole route — `'top'` or a key of
+`mapStyleLayerIDs` — or a record keyed by part, plus `all` for the parts it leaves out:
+
+- `mainLines` — the route lines, and every section line drawn with them.
+- `instructionLines` — the guidance lines and their arrows, above the route lines by default.
+- `icons` — waypoints, summary bubbles, charging stops, border crossings and section icons. A target
+  puts them all beneath it, the section icons and tunnel sign that sit below the labels by default
+  lowest.
+
+```javascript
+// Route lines under the road network; instruction lines and icons stay where they are
+routingModule.updateConfig({ beforeLayerConfig: { mainLines: 'lowestRoadLine' } });
+```
+
+Each part keeps its own layers in order wherever it goes, and `applyConfig` or `updateConfig`
+restacks them at runtime. A target the style lacks — the satellite style has no `lowestRoadLine` —
+puts the part on top. `getLayerToRenderLinesUnder()` follows `mainLines`, and returns `undefined`
+when the lines are on top.
+
+Section signs are not a part: their [`priority`](./routes-sections.mdx#speed-limits-are-posted-not-banded) settles which
+symbols they give way to, wherever the parts are.
+
+## Charging stop icons
+
+Long-distance EV routes place a charging stop at the end of each leg. Supply your own sprites with
+`chargingStops.icon.customIcons`, then pick one per stop with `mapping`:
+
+```javascript
+const routingModule = await RoutingModule.create(map, {
+  chargingStops: {
+    icon: {
+      customIcons: [
+        { id: 'slow-charger', image: chargerSlowSVG },
+        { id: 'fast-charger', image: chargerFastSVG, offsetX: 0, offsetY: -10 }
+      ],
+      mapping: {
+        basedOn: 'chargingSpeed',
+        value: { slow: 'slow-charger', regular: 'slow-charger', fast: 'fast-charger', 'ultra-fast': 'fast-charger' }
+      }
+    }
+  }
+});
+```
+
+`mapping` can also be `{ basedOn: 'custom', fn: (stop) => spriteID }` for any other rule, and it
+works without `customIcons` if you only want to point at sprites the style already ships.
+
+`offsetX`/`offsetY` (pixels) shift an icon from its coordinate, for icons whose visual tip isn't at
+their own geometric bottom. Positive `offsetX` moves right, positive `offsetY` moves down. They
+only apply to a `customIcons` entry that also provides an `image` — an entry naming an existing
+sprite by `id` alone ignores them.
+
+## Related guides and examples
+
+### Related guides
+- [Routing module](./routes.mdx) - Showing routes and waypoints, events and shown data
+- [Route sections](./routes-sections.mdx) - The overlays drawn per stretch of road, on the same set of knobs
+- [Map modules](./modules.mdx#every-setting-as-data) - The knob kinds every catalogue shares
+
+### Related examples
+- [Route style playground](../../examples/route-styling-playground) - The route's colour, width, waypoint size, waypoint label colour and clicked outline on knobs, and a toggle that hides it
+- [Route waypoints playground](../../examples/route-waypoints-playground) - Per-role pins, stop numbering, labels, hover growth, a category pin per stop and a finish image of your own
+- [Map theme](../../examples/map-theme) - A route following the accent of a theme

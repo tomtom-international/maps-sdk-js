@@ -1,0 +1,80 @@
+---
+title: Bloom
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.62.3"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+Bloom is the [map effects plugin](./map-effects.mdx)'s emphasis for dark and driving styles: lit roads, traffic tubes and route lines glow. The playground below puts every bloom knob on one panel, the colour scope included:
+
+<GuideDemo demo="bloom-effect-playground" />
+
+## Turning it on
+
+Bloom is off until `bloom.intensity` is above 0. `bloom.threshold` decides how bright a pixel must be to glow, and `bloom.radius` how far the glow spreads:
+
+```javascript
+const effects = new MapEffects(map);
+
+effects.set({ 'bloom.intensity': 0.5, 'bloom.threshold': 0.6 });
+```
+
+Bloom reads the map canvas back, so the map needs `canvasContextAttributes: { preserveDrawingBuffer: true }` ([Usage](./map-effects.mdx#usage)).
+
+| Knob | Range | Default |
+| --- | --- | --- |
+| `bloom.intensity`, `bloom.threshold` | 0–1 | 0 (off), 0.55 |
+| `bloom.radius` (CSS px) | 2–40 | 12 |
+| `bloom.only` | list of styling colour knobs, groups and CSS colours | `[]` (the whole frame) |
+| `bloom.onlyTolerance` | 0–1 | 0.15 |
+
+## Scoping bloom by colour
+
+`bloom.only` lists the colours bloom may light. Entries mix freely, and the default `[]` lights the whole frame.
+
+```javascript
+effects.set({ 'bloom.intensity': 0.9, 'bloom.only': ['traffic'] }); // a group of styling colours
+effects.set({ 'bloom.only': ['traffic.incidents.majorColor', 'traffic.incidents.closedColor'] }); // single knobs
+
+const routeColor = '#1a73e8'; // the color your RoutingModule draws routes in
+effects.set({ 'bloom.only': ['traffic', routeColor] }); // plus a CSS colour of your own
+```
+
+| Entry | Resolves to |
+| --- | --- |
+| A [styling colour knob](../map/styling.mdx#knobs), e.g. `colors.roadMajor` | the colour the loaded style paints it in |
+| A group of them, e.g. `traffic`, `traffic.incidents`, `colors` | every colour knob whose id starts with it |
+| A CSS colour, e.g. `'#1a73e8'` | itself — for what the styling module does not paint, such as a route in the `color` you gave `RoutingModule` |
+
+- **The names come from the SDK's [`stylingColorKnobIds`](../map/styling.mdx#the-knob-catalogue)**, so a colour knob the styling module gains is scopable with no change here. `effectKnobCatalogue` lists them in the knob's `options`, and `set` throws `RangeError` on an entry that is neither a name nor a CSS colour.
+- **A scope keys on colour, not on layers**: the effects see the rendered map as one flat image, so bloom keeps the pixels wearing a listed colour.
+  - **It follows the style**: a `StylingModule` recolour or a style switch moves the scope, with nothing in your app to keep in sync.
+  - **Anything else wearing those colours glows too**, since a colour key cannot tell it from traffic.
+  - **Only what the style paints differently separates**: the TomTom styles give flow and incidents one palette (`traffic.flow.stationaryColor` is `traffic.incidents.majorColor`), so `traffic.flow` also keys those incidents.
+  - **A colour no literal stands for scopes to nothing** (a custom style, a data-driven expression), and bloom lights the whole frame, with one console warning.
+- **Brightness is not compared**: an antialiased edge and its lit centre are one colour at two levels, and `bloom.threshold` judges level.
+  - `bloom.onlyTolerance` covers the blending an edge picks up: raise it if edges drop out, lower it if a neighbouring severity lights up.
+  - Its `0.15` default keeps a moderate jam, `0.217` from a major one, out of a `traffic.incidents.majorColor` scope.
+- **A scope lets you lower the cut**: with the city keyed out by colour, `bloom.threshold` can sit under the darkest thing worth lighting.
+  - `monoDark` paints a major jam `hsl(0, 100%, 28%)`: 64/255 of it survives a `0.45` cut, 110/255 a `0.25` one.
+  - The [Traffic flow with bloom](../../examples/traffic-bloom-effect) example cuts at `0.25`, with a grade deepening the city the [traffic](../map/traffic-flow.mdx) glows against.
+
+## How it renders
+
+Bloom is neither a GPU pass nor a CSS overlay: a small canvas (a quarter of the pixels) redrawn from the finished artwork every frame and blended in `screen` mode, because a glow needs the original *and* its blur, which a `backdrop-filter` cannot give. It reads the output of the GPU chain rather than the raw map, so a highlight the [depth of field](./map-effects-depth-of-field.mdx) defocused glows as the wide soft disc a photograph gives it. A [pass of your own](./map-effects-custom-passes.mdx) that shifts hues runs before bloom's colour key, so a `bloom.only` scope may need a wider `bloom.onlyTolerance` to find its colours. The [overview](./map-effects.mdx#how-it-renders) shows the whole order.
+
+## Related guides and examples
+
+### Related guides
+- **[Map effects plugin](./map-effects.mdx)** - Setup, how the effects render, and every knob
+- **[Map styling](../map/styling.mdx#the-knob-catalogue)** - The colour knobs `bloom.only` names
+- **[Traffic flow](../map/traffic-flow.mdx)** - The traffic a scoped bloom lights
+
+### Related examples
+- **[Bloom playground](../../examples/bloom-effect-playground)** - Every bloom knob, the colour scope included
+- **[Traffic flow with bloom](../../examples/traffic-bloom-effect)** - Live traffic glowing over a dark map

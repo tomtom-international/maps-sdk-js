@@ -1,0 +1,45 @@
+---
+title: Borrowed looks
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.62.3"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+A few parts the modules draw are made to look like part of the style, so they read their look off it. They follow the [Styling module](./styling.mdx) knobs that restyle what they borrow, live, whether the knob was set before the module was created or after, and across a `setStyle`:
+
+<GuideDemo demo="styling-borrowed-looks" />
+
+## What each module borrows
+
+| Module | What it borrows | The knobs it follows | Your own look instead |
+| --- | --- | --- | --- |
+| [`PlacesModule`](./places-styling.mdx#marker-type), `base-map` marker type | the POI labels and icons | `pois.labelColor`, `pois.labelOutlineColor`, `labels.sizeFactor`, `symbols.sizeFactor`, `pois.sizeFactor` | `label`, or a `layers` override |
+| `PlacesModule`, `circle-icon` marker type | the icon size | `symbols.sizeFactor`, `pois.sizeFactor` | a `layers` override |
+| `PlacesModule`, `pin-clustered` marker type | the micro markers | `symbols.sizeFactor`, `pois.sizeFactor` | a `layers` override |
+| [`RoutingModule`](./routes-sections.mdx) | the delay colour of a `traffic` section | `traffic.incidents.minorColor`, `moderateColor`, `majorColor` | a `line-color` under `layers.sections.traffic.routeIncidentBackgroundLine` |
+| [`TrafficIncidentDetailsModule`](./traffic-incident-details.mdx) | the line colour of each incident magnitude | `traffic.incidents.minorColor`, `moderateColor`, `majorColor`, `closedColor` | none: the module always draws the style's incident colours |
+
+```javascript
+const places = await PlacesModule.create(map, { markerType: 'base-map' });
+styling.set('pois.labelColor', '#be185d'); // the places' labels turn with the map's POIs
+```
+
+## Who wins
+
+A look of your own wins over the knob. With none of its knobs set, a route keeps the SDK's own delay colours, which match the incidents of the light styles. The `pin` marker type borrows nothing, and no knob reaches it. The knob still writes only the style's layers: the module reads the new look and redraws its own ([Who owns what](./modules.mdx#who-owns-what)).
+
+## Related guides and examples
+
+### Related guides
+- **[Map styling](./styling.mdx)** — the knobs these parts follow
+- **[Map colours and the accent](./styling-map-colors.mdx#the-accent-what-a-theme-reaches-beyond-the-base-map)** — the colour the modules' own parts default to
+- **[Place styling](./places-styling.mdx#marker-type)** — the marker types and what each draws
+- **[Route sections](./routes-sections.mdx)** — the `traffic` section and its delay colours
+
+### Related examples
+- **[Borrowed looks](../../examples/styling-borrowed-looks)** — places, a route and fetched traffic incidents following the knobs that restyle the style's POIs and incidents
