@@ -1,0 +1,252 @@
+---
+title: Map styles
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.64.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+A map style is the document the map loads: its sources and layers. This guide covers *which* style loads — a built-in one or your own, its optional traffic and terrain parts, its label language — and switching it at runtime. To adjust the style that is loaded — label sizes, road widths, colours, a globe — see [Map styling](./styling.mdx).
+
+The demo below switches between the built-in styles:
+
+<GuideDemo demo="map-style-switcher" />
+
+## Built-in styles
+
+### Basic styles
+
+```javascript
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+
+const map = new TomTomMap({
+    mapLibre: { container: 'map' },
+    style: 'monoDark', // 'standardLight' when left out
+});
+```
+
+| Style ID | Look |
+| --- | --- |
+| `standardLight` (default), `standardDark` | Full-detail map, light or dark |
+| `drivingLight`, `drivingDark` | Tuned for in-car navigation |
+| `monoLight`, `monoDark` | Minimal monochrome |
+| `satellite` | Satellite imagery, with the vector roads and labels drawn over it |
+
+[`standardStyleIDs`](/maps-sdk-js/api-reference/variables/map.standardStyleIDs.html) lists them all, typed `StandardStyleID` — use it to fill a style picker.
+
+## Custom styles
+
+A custom style (`style: { type: 'custom', url }` or `{ type: 'custom', json }`) loads as-is:
+
+- **Exactly one** of `url` or `json`; passing neither throws.
+- **Light/dark theme**: read from the style's background colour once loaded, so places and routes pick legible text colours on a dark custom style too.
+- **`lightDarkTheme: 'light' | 'dark'`** declares the theme instead, and the SDK takes it at its word: worth doing when full-coverage imagery hides the background, or its colour misrepresents the map. Either way, `map.styleLightDarkTheme` reports the theme in effect.
+- **Style parts**: the traffic and terrain modules work when the style already ships the matching source. The SDK cannot add a [style part](#available-style-parts) to a custom style, and throws if a module asks it to.
+- **Styling knobs**: the ten map colours need the TomTom styles; every other knob works on a custom style too ([How durable is this?](./styling.mdx#how-durable-is-this)).
+
+### Styles from Map Maker
+
+[TomTom Map Maker](https://docs.tomtom.com/map-maker) is the tool to edit and host your own map styles:
+
+- **Edit**: start from a TomTom template, then restyle its [colours](https://docs.tomtom.com/map-maker/documentation/basics/foundations-map-colors), its [layer groups](https://docs.tomtom.com/map-maker/documentation/basics/modules) or single [layers](https://docs.tomtom.com/map-maker/documentation/layers/layers).
+- **Host**: TomTom serves the style from its cloud. Publishing again updates every app using it, with no redeploy.
+- **Reuse**: the same style serves this SDK, the TomTom Maps SDKs for Android and iOS, and MapLibre GL JS apps.
+
+```javascript
+const map = new TomTomMap({
+    mapLibre: { container: 'map' },
+    style: { type: 'custom', url: 'YOUR_MAP_MAKER_STYLE_URL' },
+});
+```
+
+- **Style URL**: in Map Maker's **Share** panel, copy the **Production** style URL with the **Style URL only** option. The SDK adds the API key you configured; a `key` already in the URL takes priority, with a console warning.
+- **Renderer**: create the style for **Standard Map Display**, the one suited to MapLibre. See [Choose the SDK target and map display renderer](https://docs.tomtom.com/map-maker/documentation/basics/choose-platform-and-display-type).
+- **Style file**: a downloaded style loads as `{ type: 'custom', json }`. The SDK adds no key to it, so download it **With API Key**. A file does not update when you publish again.
+
+See [Introduction to the map style](https://docs.tomtom.com/map-maker/documentation/basics/introduction-to-map-style) for sources and layers, then [Publish and share style](https://docs.tomtom.com/map-maker/documentation/cloud-styles/publish-and-share-style) and [Using style in the application](https://docs.tomtom.com/map-maker/documentation/cloud-styles/using-style-in-the-application).
+
+## Dynamic style switching
+
+```javascript
+await map.setStyle('standardDark');
+// map.mapReady is true again; routes, places and traffic are back on the new style
+```
+
+`setStyle` returns a promise:
+
+- **Resolves** once the new style has loaded and every [style change handler](#listening-to-style-changes), the SDK modules' included, has finished. Awaiting it is optional, but after it the map is safe to read and draw on again.
+- **Rejects** if the style itself fails to load: the map stays on the style it had, with `map.mapReady` left `false`. A tile or source that fails to load does not fail the switch.
+- **Superseded** by a later `setStyle` made while it is in flight: only the last style is applied, and both promises resolve.
+
+`map.getStyleInput()` returns the style id or object the map was last given — not the resolved MapLibre style, which [`exportStyle`](./styling.mdx#exporting-the-style) gives with the knobs applied.
+
+### Keeping or dropping state
+
+By default a style switch carries everything over: module data and configuration (routes, places, POI filters, traffic visibility…) and the style parts of the previous style (traffic, terrain). Pass `resetState: true` for a clean switch instead:
+
+```javascript
+// Carry everything over (default)
+map.setStyle('standardDark');
+
+// Clean switch: modules re-bind to the new style with default configuration and nothing shown,
+// and only the style parts named in the new style are loaded
+map.setStyle('standardDark', { resetState: true });
+```
+
+- **Nothing blinks out**: in a switch that carries state, what the modules show stays drawn while the new style loads and takes on its look in place. A clean switch removes it along with the old style.
+- **Handlers run either way**, and learn which kind of switch it is from their `context.resetState` argument ([below](#listening-to-style-changes)).
+- **Not SDK state**: the [map language](#map-language) and the [geopolitical view](../core/geopolitical-views.mdx#switching-the-view-on-a-map) are re-applied to the new style either way; only `setLanguage` and `setGeopoliticalView` change them.
+- **Resetting in place**: passing the style that is already loaded runs the same lifecycle without reloading it, so `setStyle(currentStyle, { resetState: true })` resets the SDK modules over the map you are looking at.
+
+The demo below switches styles either way, over a map with places, a route and traffic on it:
+
+<GuideDemo demo="reset-state-when-changing-style" />
+
+## Listening to style changes
+
+`addStyleChangeHandler` reacts when a style switch triggered by `map.setStyle()` begins or completes: the hook for preserving custom layers, syncing UI state, or re-creating anything tied to the current style. It returns an unsubscribe function.
+
+:::note
+This handler only fires for `setStyle` calls on `TomTomMap`, **not** on the initial style load. For lower-level hooks — the initial load, or any style-related MapLibre event — use [`map.mapLibreMap.on('styledata', ...)`](https://maplibre.org/maplibre-gl-js/docs/API/interfaces/MapEventType/) directly.
+:::
+
+```typescript
+import { TomTomMap, type StyleChangeHandler } from '@tomtom-org/maps-sdk/map';
+
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+
+const handler: StyleChangeHandler = {
+    onStyleAboutToChange: (context) => {
+        // Before the switch — clean up anything tied to the current style
+    },
+    onStyleChanged: (context) => {
+        // After the new style has loaded — restore state, re-add layers, update UI.
+        // context.resetState tells you whether this is a clean switch.
+    },
+};
+const unsubscribe = map.addStyleChangeHandler(handler);
+
+// Later, when the handler's owner is torn down:
+unsubscribe();
+```
+
+- **Both callbacks are optional.**
+- **Order**: handlers run one after the other, by ascending `priority` (default `0`), then in registration order. The SDK modules restore themselves at `0` — so a module created after your handler restores after it — the [styling knobs](./styling.mdx#style-changes) land at `90` and raw [layer edits](./styling-layers.mdx) at `100`. Give your handler a `priority` above `100` to run after all of them.
+- **A failing handler** is caught and logged, and does not stop the others.
+
+### Preserving custom MapLibre layers
+
+For your own GeoJSON data, prefer [`CustomGeoJSONModule`](./custom.mdx): it restores its sources, layers and images after every style change, and gives them SDK events, with no handler to write.
+
+Sources and layers added via `map.mapLibreMap` are removed when the style changes. Use `onStyleAboutToChange` to save their data and `onStyleChanged` to restore them:
+
+```typescript
+import type { GeoJSONSource } from 'maplibre-gl';
+
+let savedData: GeoJSON.FeatureCollection | null = null;
+
+map.addStyleChangeHandler({
+    onStyleAboutToChange: () => {
+        const source = map.mapLibreMap.getSource('my-data') as GeoJSONSource | undefined;
+        if (source) {
+            savedData = source._data as GeoJSON.FeatureCollection;
+        }
+    },
+    onStyleChanged: ({ resetState }) => {
+        if (savedData && !resetState) {
+            map.mapLibreMap.addSource('my-data', { type: 'geojson', data: savedData });
+            map.mapLibreMap.addLayer({
+                id: 'my-layer',
+                type: 'circle',
+                source: 'my-data',
+                paint: { 'circle-radius': 6, 'circle-color': '#007cbf' },
+            });
+        }
+    },
+});
+```
+
+### Updating UI based on the active style
+
+`map.styleLightDarkTheme` reports the theme of the loaded style, custom ones included once loaded:
+
+```typescript
+map.addStyleChangeHandler({
+    onStyleChanged: () => {
+        document.body.classList.toggle('dark-mode', map.styleLightDarkTheme === 'dark');
+    },
+});
+```
+
+### Async handlers
+
+Both callbacks can be `async`. The SDK awaits each one before continuing: `onStyleAboutToChange` handlers finish before the new style is handed to MapLibre, and the promise returned by `setStyle` resolves only after the last `onStyleChanged` handler has finished.
+
+```typescript
+map.addStyleChangeHandler({
+    onStyleAboutToChange: async () => {
+        await persistStateToServer(map.getStyleInput());
+    },
+    onStyleChanged: async () => {
+        await restoreStateFromServer();
+    },
+});
+```
+
+## Available style parts
+
+<GuideDemo demo="load-style-parts" />
+
+A standard style has optional parts, each from its own data source. The base map and POIs are always part of it, controlled by [`BaseMapModule`](./base-map.mdx) and [`POIsModule`](./pois.mdx); the others, listed in `styleParts`, are loaded but hidden until their module shows them:
+
+| Style part | Data | Shown by |
+| --- | --- | --- |
+| `trafficIncidents` | Real-time traffic incidents | [`TrafficIncidentsModule`](./traffic-incidents.mdx) |
+| `trafficFlow` | Real-time traffic flow | [`TrafficFlowModule`](./traffic-flow.mdx) |
+| `terrain` | Elevation data, for hillshade and 3D terrain | [`TerrainModule`](./terrain.mdx) |
+
+`include` picks them; leave it out for all of them, pass `[]` for none:
+
+```javascript
+const map = new TomTomMap({
+    mapLibre: { container: 'map' },
+    style: { type: 'standard', id: 'standardLight', include: ['trafficFlow', 'terrain'] },
+});
+```
+
+- **Loaded on demand**: the module of a part left out adds it when created, by reloading the style with it — so leave out what you do not need at startup.
+- **Kept across switches**: a switch that carries state, to a style naming no `include`, keeps the parts of the previous one.
+
+## Map language
+
+<GuideDemo demo="map-language" />
+
+```javascript
+const map = new TomTomMap({
+    mapLibre: { container: 'map' },
+    language: 'de-DE', // German labels
+});
+
+map.setLanguage('nl-NL'); // at runtime
+```
+
+Set it once — here, or in the [global configuration](../core/global-config.mdx) — and it holds for the life of the map. Every style arrives with local-language labels, so the SDK re-applies the language after each style load, whether or not the switch [carries state over](#keeping-or-dropping-state); only `setLanguage` changes it.
+
+## Related guides and examples
+
+### Core map setup
+- **[Map quickstart](./quickstart.mdx)** - Basic map creation and style configuration
+- **[Map styling](./styling.mdx)** - Adjust sizes, colours and features of the loaded style
+- **[About MapLibre](./about-maplibre.mdx)** - Understanding the underlying mapping technology
+- **[TomTom Map Maker](https://docs.tomtom.com/map-maker)** - Edit and host your own map styles, reusable across TomTom SDKs
+
+### Practical examples
+- **[Map style switcher](../../examples/map-style-switcher)** - Every built-in style, one click apart
+- **[Reset state when changing style](../../examples/reset-state-when-changing-style)** - Carry the map state across a style switch, or drop it
+- **[Load style parts](../../examples/load-style-parts)** - Dynamic style component loading
+- **[Map language](../../examples/map-language)** - Language switching and localization
+- **[Default map](../../examples/default-map)** - Simple style implementation

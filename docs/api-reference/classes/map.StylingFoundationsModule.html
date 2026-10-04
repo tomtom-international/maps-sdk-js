@@ -1,0 +1,387 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>StylingFoundationsModule | TomTom Maps for JavaScript</title><meta name="description" content="Documentation for TomTom Maps for JavaScript"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container"><a href="../index.html" class="title">TomTom Maps for JavaScript</a>
+<div id="tsd-toolbar-links"></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/>
+<ul role="listbox" id="tsd-search-results"></ul>
+<div id="tsd-search-status" aria-live="polite" aria-atomic="true">
+<div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header>
+<div class="container container-main">
+<div class="col-content">
+<div class="tsd-page-title">
+<ul class="tsd-breadcrumb" aria-label="Breadcrumb">
+<li><a href="../modules/map.html">map</a></li>
+<li><a href="" aria-current="page">StylingFoundationsModule</a></li></ul>
+<h1>Class StylingFoundationsModule</h1></div>
+<section class="tsd-panel tsd-comment">
+<div class="tsd-comment tsd-typography"><p>The foundations of the whole map's look — the tier between showing or hiding a part of it and
+hand-editing MapLibre layers: sizes across every part of the style, the ten map colours and the
+accent, the projection and the sky.</p>
+<p>Every adjustable thing is a <strong>knob</strong> with a stable id, a kind, a range and a default read from the
+loaded style. The ids form the <a href="../types/map.StylingFoundationsKnobId.html" class="tsd-kind-type-alias">StylingFoundationsKnobId</a> union, and <a href="../variables/map.stylingFoundationsKnobCatalogue.html" class="tsd-kind-variable">stylingFoundationsKnobCatalogue</a> lists
+each one's kind, range and description as data, with no map needed to read it. <a href="../functions/map.setKnob.html" class="tsd-kind-function">setKnob</a>,
+<a href="../functions/map.getKnob.html" class="tsd-kind-function">getKnob</a> and <a href="../functions/map.resetKnob.html" class="tsd-kind-function">resetKnob</a> set, read and unset a knob by its id, as on every module.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks">Remarks<a href="#remarks" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><strong>Which styles a knob works on</strong> is <code>appliesTo</code> in the catalogue. <code>any-style</code> knobs (sizes,
+widths) wrap whatever the style already does — <code>text-size: E</code> becomes <code>[&quot;*&quot;, 1.3, E]</code> — so they
+work on a custom style too. <code>tomtom-styles</code> knobs (the map colours) reach their layers through
+the TomTom styles this SDK version is verified against; on any other style setting one warns once
+and does nothing, rather than failing silently.</p>
+<p><strong>Style changes.</strong> Settings are re-applied after every <code>setStyle</code> that carries state over, on top of
+whatever the other modules restored, and dropped on a clean switch (<code>resetState: true</code>).</p>
+<p><strong>Interplay with other modules.</strong> One part of the map's look is that part's module's:
+<a href="map.POIsModule.html" class="tsd-kind-class">POIsModule</a> sizes and colours the POIs, <a href="map.TrafficFlowModule.html" class="tsd-kind-class">TrafficFlowModule</a> and
+<a href="map.TrafficIncidentsModule.html" class="tsd-kind-class">TrafficIncidentsModule</a> the traffic lines, <a href="map.TerrainModule.html" class="tsd-kind-class">TerrainModule</a> the hillshade, and
+<a href="map.BaseMapModule.html" class="tsd-kind-class">BaseMapModule</a> shows and hides the layer groups and the road markings within them. The
+sizes here compose with theirs: <code>labels.sizeFactor</code> and the POIs' <code>sizeFactor</code> multiply on the
+POI labels.</p>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example">Example<a href="#example" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-10">import</span><span class="hl-2"> { </span><span class="hl-1">getKnob</span><span class="hl-2">, </span><span class="hl-1">setKnob</span><span class="hl-2">, </span><span class="hl-1">StylingFoundationsModule</span><span class="hl-2">, </span><span class="hl-1">stylingFoundationsKnobCatalogue</span><span class="hl-2"> } </span><span class="hl-10">from</span><span class="hl-2"> </span><span class="hl-4">&#39;@tomtom-org/maps-sdk/map&#39;</span><span class="hl-2">;</span><br/><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">styling</span><span class="hl-2"> = </span><span class="hl-10">await</span><span class="hl-2"> </span><span class="hl-1">StylingFoundationsModule</span><span class="hl-2">.</span><span class="hl-3">get</span><span class="hl-2">(</span><span class="hl-1">map</span><span class="hl-2">);</span><br/><span class="hl-3">setKnob</span><span class="hl-2">(</span><span class="hl-1">styling</span><span class="hl-2">, </span><span class="hl-1">stylingFoundationsKnobCatalogue</span><span class="hl-2">, </span><span class="hl-4">&#39;labels.sizeFactor&#39;</span><span class="hl-2">, </span><span class="hl-8">1.2</span><span class="hl-2">);</span><br/><span class="hl-3">setKnob</span><span class="hl-2">(</span><span class="hl-1">styling</span><span class="hl-2">, </span><span class="hl-1">stylingFoundationsKnobCatalogue</span><span class="hl-2">, </span><span class="hl-4">&#39;colors.water&#39;</span><span class="hl-2">, </span><span class="hl-4">&#39;#7cc4e8&#39;</span><span class="hl-2">);</span><br/><br/><span class="hl-0">// The catalogue as data, and each knob&#39;s value in force:</span><br/><span class="hl-10">for</span><span class="hl-2"> (</span><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">knob</span><span class="hl-2"> </span><span class="hl-5">of</span><span class="hl-2"> </span><span class="hl-1">stylingFoundationsKnobCatalogue</span><span class="hl-2">) {</span><br/><span class="hl-2">  </span><span class="hl-1">console</span><span class="hl-2">.</span><span class="hl-3">log</span><span class="hl-2">(</span><span class="hl-1">knob</span><span class="hl-2">.</span><span class="hl-1">id</span><span class="hl-2">, </span><span class="hl-1">knob</span><span class="hl-2">.</span><span class="hl-1">kind</span><span class="hl-2">, </span><span class="hl-1">knob</span><span class="hl-2">.</span><span class="hl-1">range</span><span class="hl-2">, </span><span class="hl-3">getKnob</span><span class="hl-2">(</span><span class="hl-1">styling</span><span class="hl-2">, </span><span class="hl-1">stylingFoundationsKnobCatalogue</span><span class="hl-2">, </span><span class="hl-1">knob</span><span class="hl-2">.</span><span class="hl-1">id</span><span class="hl-2">));</span><br/><span class="hl-2">}</span><br/><br/><span class="hl-0">// Serializable, diffable, re-applicable:</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">saved</span><span class="hl-2"> = </span><span class="hl-1">styling</span><span class="hl-2">.</span><span class="hl-3">getConfig</span><span class="hl-2">();</span><br/><span class="hl-1">styling</span><span class="hl-2">.</span><span class="hl-3">resetConfig</span><span class="hl-2">();</span><br/><span class="hl-1">styling</span><span class="hl-2">.</span><span class="hl-3">applyConfig</span><span class="hl-2">(</span><span class="hl-1">saved</span><span class="hl-2">);</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-see">
+<h4 class="tsd-anchor-link" id="see">See<a href="#see" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><a href="https://docs.tomtom.com/maps-sdk-js/guides/map/styling">Map Styling Guide</a></p>
+</div></div></section>
+<section class="tsd-panel tsd-hierarchy" data-refl="3500">
+<h4>Hierarchy (<a href="../hierarchy.html#map.StylingFoundationsModule">View Summary</a>)</h4>
+<ul class="tsd-hierarchy">
+<li class="tsd-hierarchy-item"><a href="map.AbstractStyleOwnedMapModule.html" class="tsd-signature-type tsd-kind-class">AbstractStyleOwnedMapModule</a><span class="tsd-signature-symbol">&lt;</span><br/>    <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">never</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">,</span><br/>    <a href="../types/map.StylingFoundationsModuleConfig.html" class="tsd-signature-type tsd-kind-type-alias">StylingFoundationsModuleConfig</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">&gt;</span>
+<ul class="tsd-hierarchy">
+<li class="tsd-hierarchy-item"><span class="tsd-hierarchy-target">StylingFoundationsModule</span></li></ul></li></ul></section>
+<section class="tsd-panel-group tsd-index-group">
+<section class="tsd-panel tsd-index-panel">
+<details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h5 class="tsd-index-heading uppercase">Index</h5></summary>
+<div class="tsd-accordion-details">
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="accessors">Accessors<a href="#accessors" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#events" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>events</span></a>
+<a href="#layers" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>layers</span></a>
+<a href="#sourceandlayerids" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>source<wbr/>And<wbr/>Layer<wbr/>I<wbr/>Ds</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="methods">Methods<a href="#methods" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#applyconfig" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>apply<wbr/>Config</span></a>
+<a href="#exportstyle" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>export<wbr/>Style</span></a>
+<a href="#getconfig" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Config</span></a>
+<a href="#resetconfig" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reset<wbr/>Config</span></a>
+<a href="#setmapcolors" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Map<wbr/>Colors</span></a>
+<a href="#updateconfig" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>Config</span></a>
+<a href="#waituntilmoduleready" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>wait<wbr/>Until<wbr/>Module<wbr/>Ready</span></a>
+<a href="#get" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get</span></a>
+</div></section></div></details></section></section>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Accessors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="accessors-1">Accessors<a href="#accessors-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="events"><span>events</span><a href="#events" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li>
+<div class="tsd-signature" id="eventsevents"><span class="tsd-signature-keyword">get</span> <span class="tsd-kind-get-signature">events</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="../types/map.StylingFoundationsEvents.html" class="tsd-signature-type tsd-kind-type-alias">StylingFoundationsEvents</a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Lifecycle events of this module. The module owns no map features, so there are no user
+interaction events; <code>config-change</code> fires with the full settings after every knob change.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="../types/map.StylingFoundationsEvents.html" class="tsd-signature-type tsd-kind-type-alias">StylingFoundationsEvents</a></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-1">Example<a href="#example-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-1">styling</span><span class="hl-2">.</span><span class="hl-1">events</span><span class="hl-2">.</span><span class="hl-3">on</span><span class="hl-2">(</span><span class="hl-4">&#39;config-change&#39;</span><span class="hl-2">, (</span><span class="hl-1">settings</span><span class="hl-2">) </span><span class="hl-5">=&gt;</span><span class="hl-2"> </span><span class="hl-1">localStorage</span><span class="hl-2">.</span><span class="hl-3">setItem</span><span class="hl-2">(</span><span class="hl-4">&#39;styling&#39;</span><span class="hl-2">, </span><span class="hl-6">JSON</span><span class="hl-2">.</span><span class="hl-3">stringify</span><span class="hl-2">(</span><span class="hl-1">settings</span><span class="hl-2">)));</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="layers"><span>layers</span><a href="#layers" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li>
+<div class="tsd-signature" id="layerslayers"><span class="tsd-signature-keyword">get</span> <span class="tsd-kind-get-signature">layers</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">query</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">query</span><span class="tsd-signature-symbol">:</span> <a href="../types/map.LayerQuery.html" class="tsd-signature-type tsd-kind-type-alias">LayerQuery</a><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <a href="map.LayerSelection.html" class="tsd-signature-type tsd-kind-class">LayerSelection</a> <span class="tsd-signature-symbol">}</span></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>The advanced tier: raw MapLibre paint, layout and filter edits over a query of the style's own
+layers, re-applied across style switches. Version-coupled by nature — see <a href="map.LayerSelection.html" class="tsd-kind-class">LayerSelection</a> for
+the terms — so prefer a knob or <a href="#setmapcolors" class="tsd-kind-method">setMapColors</a> wherever one covers the intent.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">query</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">query</span><span class="tsd-signature-symbol">:</span> <a href="../types/map.LayerQuery.html" class="tsd-signature-type tsd-kind-type-alias">LayerQuery</a><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <a href="map.LayerSelection.html" class="tsd-signature-type tsd-kind-class">LayerSelection</a> <span class="tsd-signature-symbol">}</span></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-2">Example<a href="#example-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-1">styling</span><span class="hl-2">.</span><span class="hl-1">layers</span><span class="hl-2">.</span><span class="hl-3">query</span><span class="hl-2">({ </span><span class="hl-1">group:</span><span class="hl-2"> </span><span class="hl-4">&#39;roadLabels&#39;</span><span class="hl-2"> }).</span><span class="hl-3">setPaint</span><span class="hl-2">({ </span><span class="hl-4">&#39;text-color&#39;</span><span class="hl-1">:</span><span class="hl-2"> </span><span class="hl-4">&#39;#93c5fd&#39;</span><span class="hl-2"> });</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="sourceandlayerids"><span>source<wbr/>And<wbr/>Layer<wbr/>I<wbr/>Ds</span><a href="#sourceandlayerids" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li>
+<div class="tsd-signature" id="sourceandlayeridssourceandlayerids"><span class="tsd-signature-keyword">get</span> <span class="tsd-kind-get-signature">sourceAndLayerIDs</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-keyword">keyof</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="map.AbstractMapModule.html#sources_with_layers">SOURCES_WITH_LAYERS</a><span class="tsd-signature-symbol">,</span> <a href="../types/map.SourceWithLayerIDs.html" class="tsd-signature-type tsd-kind-type-alias">SourceWithLayerIDs</a><span class="tsd-signature-symbol">&gt;</span></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Gets the source and layer identifiers for all sources managed by this module.</p>
+<p>This property provides access to the MapLibre source and layer IDs that were created
+and are managed by this module. These IDs can be used to interact directly with
+MapLibre's API or to identify which layers belong to this module.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-keyword">keyof</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="map.AbstractMapModule.html#sources_with_layers">SOURCES_WITH_LAYERS</a><span class="tsd-signature-symbol">,</span> <a href="../types/map.SourceWithLayerIDs.html" class="tsd-signature-type tsd-kind-type-alias">SourceWithLayerIDs</a><span class="tsd-signature-symbol">&gt;</span></h4><p>A record mapping each source name to its corresponding source ID and layer IDs.
+Each entry contains the MapLibre source identifier and an array of layer identifiers
+associated with that source.</p>
+
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-1">Remarks<a href="#remarks-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>The returned IDs are useful when you need to:</p>
+<ul>
+<li>Directly manipulate layers using MapLibre's native API</li>
+<li>Identify which layers on the map belong to this module</li>
+<li>Set layer ordering or positioning relative to other layers</li>
+<li>Access source or layer properties through MapLibre methods</li>
+</ul>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-3">Example<a href="#example-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">ids</span><span class="hl-2"> = </span><span class="hl-1">myModule</span><span class="hl-2">.</span><span class="hl-1">sourceAndLayerIDs</span><span class="hl-2">;</span><br/><span class="hl-1">console</span><span class="hl-2">.</span><span class="hl-3">log</span><span class="hl-2">(</span><span class="hl-1">ids</span><span class="hl-2">);</span><br/><span class="hl-0">// {</span><br/><span class="hl-0">//   mySource: {</span><br/><span class="hl-0">//     sourceID: &#39;my-source-id&#39;,</span><br/><span class="hl-0">//     layerIDs: [&#39;layer-1&#39;, &#39;layer-2&#39;]</span><br/><span class="hl-0">//   }</span><br/><span class="hl-0">// }</span><br/><br/><span class="hl-0">// Use with MapLibre API</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">map</span><span class="hl-2"> = </span><span class="hl-1">myModule</span><span class="hl-2">.</span><span class="hl-1">mapLibreMap</span><span class="hl-2">;</span><br/><span class="hl-1">ids</span><span class="hl-2">.</span><span class="hl-1">mySource</span><span class="hl-2">.</span><span class="hl-1">layerIDs</span><span class="hl-2">.</span><span class="hl-3">forEach</span><span class="hl-2">(</span><span class="hl-1">layerId</span><span class="hl-2"> </span><span class="hl-5">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">  </span><span class="hl-1">map</span><span class="hl-2">.</span><span class="hl-3">setLayoutProperty</span><span class="hl-2">(</span><span class="hl-1">layerId</span><span class="hl-2">, </span><span class="hl-4">&#39;visibility&#39;</span><span class="hl-2">, </span><span class="hl-4">&#39;visible&#39;</span><span class="hl-2">);</span><br/><span class="hl-2">});</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div><aside class="tsd-sources">
+<p>Inherited from AbstractStyleOwnedMapModule.sourceAndLayerIDs</p></aside></div></li></ul></section></section></details>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="applyconfig"><span>apply<wbr/>Config</span><a href="#applyconfig" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="applyconfig-1"><span class="tsd-kind-call-signature">applyConfig</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">config</span><span class="tsd-signature-symbol">:</span> <a href="../types/map.StylingFoundationsModuleConfig.html" class="tsd-signature-type tsd-kind-type-alias">StylingFoundationsModuleConfig</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#applyconfig-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Applies a configuration to this module.</p>
+<p>This method updates the module's behavior and appearance based on the provided configuration.
+The configuration is stored internally and will be automatically reapplied if the map style changes.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">config</span>: <a href="../types/map.StylingFoundationsModuleConfig.html" class="tsd-signature-type tsd-kind-type-alias">StylingFoundationsModuleConfig</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span></span>
+<div class="tsd-comment tsd-typography"><p>The configuration object to apply to the module. Pass <code>undefined</code> to reset
+the configuration to default values.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-2">Remarks<a href="#remarks-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>When a configuration is applied, the module updates its visual representation and behavior
+accordingly. The configuration persists across map style changes, ensuring consistent
+module behavior even when the map's base style is modified.</p>
+<p>The given configuration <strong>replaces</strong> the current one
+rather than being merged into it. To change one part of it, use <a href="#updateconfig" class="tsd-kind-method">updateConfig</a>.</p>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-4">Example<a href="#example-4" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-0">// Apply a new configuration</span><br/><span class="hl-1">myModule</span><span class="hl-2">.</span><span class="hl-3">applyConfig</span><span class="hl-2">({ </span><span class="hl-1">visible:</span><span class="hl-2"> </span><span class="hl-5">true</span><span class="hl-2">, </span><span class="hl-1">color:</span><span class="hl-2"> </span><span class="hl-4">&#39;#E63312&#39;</span><span class="hl-2"> });</span><br/><br/><span class="hl-0">// Reset to default configuration</span><br/><span class="hl-1">myModule</span><span class="hl-2">.</span><span class="hl-3">applyConfig</span><span class="hl-2">(</span><span class="hl-5">undefined</span><span class="hl-2">);</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-see">
+<h4 class="tsd-anchor-link" id="see-1">See<a href="#see-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><ul>
+<li><a href="#resetconfig" class="tsd-kind-method">resetConfig</a> for a convenience method to reset configuration</li>
+<li><a href="#getconfig" class="tsd-kind-method">getConfig</a> to retrieve the current configuration</li>
+</ul>
+</div></div><aside class="tsd-sources">
+<p>Inherited from <a href="map.AbstractStyleOwnedMapModule.html">AbstractStyleOwnedMapModule</a>.<a href="map.AbstractStyleOwnedMapModule.html#applyconfig">applyConfig</a></p></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="exportstyle"><span>export<wbr/>Style</span><a href="#exportstyle" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="exportstyle-1"><span class="tsd-kind-call-signature">exportStyle</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">StyleSpecification</span><a href="#exportstyle-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>The style as currently rendered — the loaded style with every knob applied — as a MapLibre
+style specification, to save, diff, serve yourself, or load back as a custom style.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">StyleSpecification</span></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-3">Remarks<a href="#remarks-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>It includes whatever the SDK's data modules (places, routes) have on the map, and its tile
+URLs carry the API key the map was created with: strip or rotate it before publishing.</p>
+</div></div></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="getconfig"><span>get<wbr/>Config</span><a href="#getconfig" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="getconfig-1"><span class="tsd-kind-call-signature">getConfig</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/map.StylingFoundationsModuleConfig.html" class="tsd-signature-type tsd-kind-type-alias">StylingFoundationsModuleConfig</a><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><a href="#getconfig-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Retrieves a copy of the current module configuration.</p>
+<p>This method returns a shallow copy of the configuration object that is currently
+applied to the module. If no configuration has been applied, it returns <code>undefined</code>.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/map.StylingFoundationsModuleConfig.html" class="tsd-signature-type tsd-kind-type-alias">StylingFoundationsModuleConfig</a><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span></h4><p>A shallow copy of the current configuration object, or <code>undefined</code> if no
+configuration is currently applied. The returned object is a copy to prevent
+unintended modifications to the internal state.</p>
+
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-4">Remarks<a href="#remarks-4" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>The returned configuration object is a shallow copy, which means that while the
+top-level properties are copied, any nested objects or arrays are still referenced
+from the original configuration. This is sufficient for most use cases but should
+be kept in mind when dealing with complex configurations.</p>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-5">Example<a href="#example-5" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-0">// Apply a configuration</span><br/><span class="hl-1">myModule</span><span class="hl-2">.</span><span class="hl-3">applyConfig</span><span class="hl-2">({ </span><span class="hl-1">visible:</span><span class="hl-2"> </span><span class="hl-5">true</span><span class="hl-2">, </span><span class="hl-1">color:</span><span class="hl-2"> </span><span class="hl-4">&#39;#E63312&#39;</span><span class="hl-2"> });</span><br/><br/><span class="hl-0">// Later, retrieve the current configuration</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">currentConfig</span><span class="hl-2"> = </span><span class="hl-1">myModule</span><span class="hl-2">.</span><span class="hl-3">getConfig</span><span class="hl-2">();</span><br/><span class="hl-1">console</span><span class="hl-2">.</span><span class="hl-3">log</span><span class="hl-2">(</span><span class="hl-1">currentConfig</span><span class="hl-2">); </span><span class="hl-0">// { visible: true, color: &#39;#E63312&#39; }</span><br/><br/><span class="hl-0">// When no config is applied</span><br/><span class="hl-1">myModule</span><span class="hl-2">.</span><span class="hl-3">resetConfig</span><span class="hl-2">();</span><br/><span class="hl-1">console</span><span class="hl-2">.</span><span class="hl-3">log</span><span class="hl-2">(</span><span class="hl-1">myModule</span><span class="hl-2">.</span><span class="hl-3">getConfig</span><span class="hl-2">()); </span><span class="hl-0">// undefined</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-see">
+<h4 class="tsd-anchor-link" id="see-2">See<a href="#see-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><ul>
+<li><a href="#applyconfig" class="tsd-kind-method">applyConfig</a> to modify the configuration</li>
+<li><a href="#resetconfig" class="tsd-kind-method">resetConfig</a> to clear the configuration</li>
+</ul>
+</div></div><aside class="tsd-sources">
+<p>Inherited from <a href="map.AbstractStyleOwnedMapModule.html">AbstractStyleOwnedMapModule</a>.<a href="map.AbstractStyleOwnedMapModule.html#getconfig">getConfig</a></p></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="resetconfig"><span>reset<wbr/>Config</span><a href="#resetconfig" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="resetconfig-1"><span class="tsd-kind-call-signature">resetConfig</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#resetconfig-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Resets the configuration of this module to its default values.</p>
+<p>This is a convenience method that clears any previously applied configuration
+and restores the module to its initial state. This is equivalent to calling
+<code>applyConfig(undefined)</code>.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-5">Remarks<a href="#remarks-5" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>After calling this method, the module will behave as if no configuration was ever applied.
+Any custom settings, styling, or behavior modifications will be removed and replaced
+with default values.</p>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-6">Example<a href="#example-6" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-0">// Apply some configuration</span><br/><span class="hl-1">myModule</span><span class="hl-2">.</span><span class="hl-3">applyConfig</span><span class="hl-2">({ </span><span class="hl-1">visible:</span><span class="hl-2"> </span><span class="hl-5">true</span><span class="hl-2">, </span><span class="hl-1">color:</span><span class="hl-2"> </span><span class="hl-4">&#39;#E63312&#39;</span><span class="hl-2"> });</span><br/><br/><span class="hl-0">// Later, reset to defaults</span><br/><span class="hl-1">myModule</span><span class="hl-2">.</span><span class="hl-3">resetConfig</span><span class="hl-2">();</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-see">
+<h4 class="tsd-anchor-link" id="see-3">See<a href="#see-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><ul>
+<li><a href="#applyconfig" class="tsd-kind-method">applyConfig</a> to apply a new configuration</li>
+<li><a href="#getconfig" class="tsd-kind-method">getConfig</a> to retrieve the current configuration before resetting</li>
+</ul>
+</div></div><aside class="tsd-sources">
+<p>Inherited from <a href="map.AbstractStyleOwnedMapModule.html">AbstractStyleOwnedMapModule</a>.<a href="map.AbstractStyleOwnedMapModule.html#resetconfig">resetConfig</a></p></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="setmapcolors"><span>set<wbr/>Map<wbr/>Colors</span><a href="#setmapcolors" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="setmapcolors-1"><span class="tsd-kind-call-signature">setMapColors</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">colors</span><span class="tsd-signature-symbol">:</span> <a href="../types/map.MapColors.html" class="tsd-signature-type tsd-kind-type-alias">MapColors</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#setmapcolors-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Recolours the whole base map with up to ten semantic colours in one call — the style themes'
+Foundations palette, each listed with what it reaches under <a href="../types/map.MapColorName.html" class="tsd-kind-type-alias">MapColorName</a> — and sets
+<code>accent</code>, the default colour of routes, geometries and places (<a href="map.TomTomMap.html#mapcolors" class="tsd-kind-accessor">TomTomMap.mapColors</a>).</p>
+<p>Partial objects are fine; colours not given stay as they are, except on the mono styles, which
+derive the other nine from <code>land</code> as their theme does: there the theme's own formulas re-derive
+them from the <code>land</code> given.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">colors</span>: <a href="../types/map.MapColors.html" class="tsd-signature-type tsd-kind-type-alias">MapColors</a></span>
+<div class="tsd-comment tsd-typography"><p>The colours to set, as CSS colour strings.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-6">Remarks<a href="#remarks-6" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Each colour re-derives every shade the style built from it — a trunk variant, an outline, a
+tunnel — at the style's own HSL offset, so those relationships survive the recolour. The colours
+are also the <code>colors.*</code> knobs, so <code>getKnob</code>, <code>resetKnob</code> and settings persistence apply.</p>
+<p>Those offsets come off the loaded style, which makes a palette a recolour and not an
+inversion: dark land over <code>standardLight</code> pushes the derived shades to the ends of their
+range, so switch to <code>standardDark</code> first.</p>
+</div>
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws">Throws<a href="#throws" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><code>RangeError</code> for a value that is not a colour; <code>Error</code> for an unknown colour name.</p>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-7">Example<a href="#example-7" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-1">styling</span><span class="hl-2">.</span><span class="hl-3">setMapColors</span><span class="hl-2">({ </span><span class="hl-1">land:</span><span class="hl-2"> </span><span class="hl-4">&#39;#f3f5f7&#39;</span><span class="hl-2">, </span><span class="hl-1">water:</span><span class="hl-2"> </span><span class="hl-4">&#39;#accbe2&#39;</span><span class="hl-2">, </span><span class="hl-1">roadMajor:</span><span class="hl-2"> </span><span class="hl-4">&#39;#a1b8ce&#39;</span><span class="hl-2">, </span><span class="hl-1">label:</span><span class="hl-2"> </span><span class="hl-4">&#39;#364659&#39;</span><span class="hl-2"> });</span><br/><span class="hl-3">resetKnob</span><span class="hl-2">(</span><span class="hl-1">styling</span><span class="hl-2">, </span><span class="hl-1">stylingFoundationsKnobCatalogue</span><span class="hl-2">, </span><span class="hl-4">&#39;colors.roadMajor&#39;</span><span class="hl-2">); </span><span class="hl-0">// one colour back to the style</span><br/><span class="hl-1">styling</span><span class="hl-2">.</span><span class="hl-3">setMapColors</span><span class="hl-2">(</span><span class="hl-3">deriveMapColors</span><span class="hl-2">([</span><span class="hl-4">&#39;#0b2a3a&#39;</span><span class="hl-2">, </span><span class="hl-4">&#39;#0fa8c8&#39;</span><span class="hl-2">, </span><span class="hl-4">&#39;#f6efe3&#39;</span><span class="hl-2">])); </span><span class="hl-0">// map-theme plugin assigns the roles</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="updateconfig"><span>update<wbr/>Config</span><a href="#updateconfig" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="updateconfig-1"><span class="tsd-kind-call-signature">updateConfig</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">partial</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="map.AbstractMapModule.html#cfg">CFG</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#updateconfig-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Changes part of the configuration and keeps the rest.</p>
+<p>The given properties are laid over the current configuration — one level deep, so a nested
+object you pass replaces the nested object that was there — and the result is applied with
+<a href="#applyconfig" class="tsd-kind-method">applyConfig</a>. This is the same on every module, whatever its <code>applyConfig</code> does with a
+whole configuration.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">partial</span>: <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">NonNullable</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="map.AbstractMapModule.html#cfg">CFG</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></span>
+<div class="tsd-comment tsd-typography"><p>The properties to change.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-8">Example<a href="#example-8" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-1">routing</span><span class="hl-2">.</span><span class="hl-3">applyConfig</span><span class="hl-2">({ </span><span class="hl-1">displayUnits:</span><span class="hl-2"> { </span><span class="hl-1">distance:</span><span class="hl-2"> { </span><span class="hl-1">type:</span><span class="hl-2"> </span><span class="hl-4">&#39;imperial_us&#39;</span><span class="hl-2"> } }, </span><span class="hl-1">color:</span><span class="hl-2"> </span><span class="hl-4">&#39;#0a3653&#39;</span><span class="hl-2"> });</span><br/><span class="hl-1">routing</span><span class="hl-2">.</span><span class="hl-3">updateConfig</span><span class="hl-2">({ </span><span class="hl-1">color:</span><span class="hl-2"> </span><span class="hl-4">&#39;#c2185b&#39;</span><span class="hl-2"> }); </span><span class="hl-0">// displayUnits stays imperial</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-see">
+<h4 class="tsd-anchor-link" id="see-4">See<a href="#see-4" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><a href="#applyconfig" class="tsd-kind-method">applyConfig</a> to apply a whole configuration</p>
+</div></div><aside class="tsd-sources">
+<p>Inherited from <a href="map.AbstractStyleOwnedMapModule.html">AbstractStyleOwnedMapModule</a>.<a href="map.AbstractStyleOwnedMapModule.html#updateconfig">updateConfig</a></p></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="waituntilmoduleready"><code class="tsd-tag">Protected</code><span>wait<wbr/>Until<wbr/>Module<wbr/>Ready</span><a href="#waituntilmoduleready" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="waituntilmoduleready-1"><span class="tsd-kind-call-signature">waitUntilModuleReady</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#waituntilmoduleready-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="map.AbstractStyleOwnedMapModule.html">AbstractStyleOwnedMapModule</a>.<a href="map.AbstractStyleOwnedMapModule.html#waituntilmoduleready">waitUntilModuleReady</a></p></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="get"><code class="tsd-tag">Static</code><span>get</span><a href="#get" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="get-1"><span class="tsd-kind-call-signature">get</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">map</span><span class="tsd-signature-symbol">:</span> <a href="map.TomTomMap.html" class="tsd-signature-type tsd-kind-class">TomTomMap</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">settings</span><span class="tsd-signature-symbol">?:</span> <a href="../types/map.StylingFoundationsModuleConfig.html" class="tsd-signature-type tsd-kind-type-alias">StylingFoundationsModuleConfig</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="" class="tsd-signature-type tsd-kind-class">StylingFoundationsModule</a><span class="tsd-signature-symbol">&gt;</span><a href="#get-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Retrieves the styling foundations module of the given map, creating it on first use.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">map</span>: <a href="map.TomTomMap.html" class="tsd-signature-type tsd-kind-class">TomTomMap</a></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">settings</span>: <a href="../types/map.StylingFoundationsModuleConfig.html" class="tsd-signature-type tsd-kind-type-alias">StylingFoundationsModuleConfig</a></span>
+<div class="tsd-comment tsd-typography"><p>Knob values to apply right away, e.g. restored from storage.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="" class="tsd-signature-type tsd-kind-class">StylingFoundationsModule</a><span class="tsd-signature-symbol">&gt;</span></h4><p>A promise that resolves once the map style is loaded and the settings are applied.</p>
+
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-7">Remarks<a href="#remarks-7" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p><strong>Instances:</strong> the module styles the sources and layers the map style already provides, so
+every map has exactly one — a second <code>get()</code> returns the same instance, with the given
+settings applied on top of what it already holds.</p>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-9">Example<a href="#example-9" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">styling</span><span class="hl-2"> = </span><span class="hl-10">await</span><span class="hl-2"> </span><span class="hl-1">StylingFoundationsModule</span><span class="hl-2">.</span><span class="hl-3">get</span><span class="hl-2">(</span><span class="hl-1">map</span><span class="hl-2">, { </span><span class="hl-4">&#39;labels.sizeFactor&#39;</span><span class="hl-1">:</span><span class="hl-2"> </span><span class="hl-8">1.2</span><span class="hl-2"> });</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></div></li></ul></section></section></details></div>
+<div class="col-sidebar">
+<div class="page-menu">
+<div class="tsd-navigation settings">
+<details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div>
+<div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
+<details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>On This Page</h3></summary>
+<div class="tsd-accordion-details">
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Accessors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Accessors</summary>
+<div><a href="#events"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>events</span></a><a href="#layers"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>layers</span></a><a href="#sourceandlayerids" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>source<wbr/>And<wbr/>Layer<wbr/>I<wbr/>Ds</span></a></div></details>
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Methods</summary>
+<div><a href="#applyconfig" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>apply<wbr/>Config</span></a><a href="#exportstyle"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>export<wbr/>Style</span></a><a href="#getconfig" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Config</span></a><a href="#resetconfig" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reset<wbr/>Config</span></a><a href="#setmapcolors"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Map<wbr/>Colors</span></a><a href="#updateconfig" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>Config</span></a><a href="#waituntilmoduleready" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>wait<wbr/>Until<wbr/>Module<wbr/>Ready</span></a><a href="#get"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get</span></a></div></details></div></details></div>
+<div class="site-menu">
+<nav class="tsd-navigation"><a href="../index.html">TomTom Maps for JavaScript</a>
+<ul class="tsd-small-nested-navigation" id="tsd-nav-container">
+<li>Loading...</li></ul></nav></div></div></div><footer>
+<p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer>
+<div class="overlay"></div></body></html>

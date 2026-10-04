@@ -1,0 +1,85 @@
+---
+title: Guidance
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.64.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+`guidance` adds turn-by-turn instructions to each route: maneuvers, ready-made instruction text,
+road names, road shields and junction layouts.
+
+## Basic usage
+
+`'coded'` is the only instruction format:
+
+```javascript
+import { calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+const routes = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    guidance: { type: 'coded' }
+});
+
+const instructions = routes.features[0].properties.guidance?.instructions;
+```
+
+- **Lane guidance comes with it**: requesting guidance also returns the `lanes`
+  [section](../../core/routes.mdx#section-types), which no request returns without it.
+- **On the map**, `RoutingModule` draws the instructions as arrows — see
+  [Displaying guidance on map](../../map/routes.mdx#displaying-guidance-on-map).
+
+## What each instruction carries
+
+- `message` – The ready-made instruction text, for example `'Turn right onto Damrak'`, generated and
+  localised by the service in the request's language, so a turn list needs no translation table.
+- `maneuver` – The maneuver code, for example `'TURN_RIGHT'`.
+- `maneuverPoint` / `pathPointIndex` – Where the maneuver happens: a `[longitude, latitude]`
+  position, and its index into the route's `geometry.coordinates`. The point is the junction as the
+  router names it, so it can sit a few metres off the sampled path.
+- `routeOffsetInMeters` – Distance from the start of the route to the maneuver.
+- `maneuverView` – The junction layout: `onRouteAngle` is the direction the route takes,
+  `offRouteAngles` the ones it passes up. Both are relative directions (`'STRAIGHT'`,
+  `'SLIGHT_RIGHT'`, `'BACK'`, …), not degrees — enough to draw a junction diagram.
+- `roundaboutType` – `'REGULAR'` or `'SMALL'`, on roundabout maneuvers.
+- `sideRoads` – Roads joining the route near the maneuver, each with its `side`
+  (`'LEFT' | 'RIGHT' | 'LEFT_AND_RIGHT'`), `offsetFromManeuverInMeters` and `isDrivable`.
+  - A non-drivable side road still belongs in a junction diagram; it just cannot be taken by mistake.
+- `nextRoadInfo` / `previousRoadInfo` – The road after and before the maneuver, with `streetName`,
+  `roadShields` and an ISO 3166-1 alpha-3 `countryCode`.
+- `signpost`, `tollgateName`, `countryCrossingFromName` / `countryCrossingToName` – On the maneuvers
+  they apply to.
+
+Name fields (street names, road numbers, signpost exits, intersections, tollgates and countries) are
+`InstructionText` objects, carrying the name as `text`:
+
+```javascript
+instructions?.forEach((instruction) => {
+    console.log(instruction.message, instruction.nextRoadInfo.streetName?.text);
+});
+```
+
+## Road shield references
+
+Road shield images come from the TomTom Road Shield API. Each instruction carries the references:
+`roadShieldReferences` for the instruction, `signpostRoadShieldReferences` for its signpost, and
+`roadShieldAtlasReference`, the base URL they resolve against.
+
+## API reference
+
+- [GuidanceParams](/maps-sdk-js/api-reference/types/services.GuidanceParams.html) – The request parameter
+- [Instruction](/maps-sdk-js/api-reference/types/core.Instruction.html) – Every field of an instruction
+
+## Related guides and examples
+
+### Related guides
+- [Routing quickstart](./quickstart.mdx) – Getting started with route calculation
+- [Route planning parameters](./parameters.mdx) – Every other option
+- [Route object](../../core/routes.mdx) – Where guidance sits in the response
+
+### Related examples
+- [Route with guidance](../../../examples/route-with-guidance) – A route with its guidance arrows

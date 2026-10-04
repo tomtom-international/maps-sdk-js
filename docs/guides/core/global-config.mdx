@@ -1,0 +1,164 @@
+---
+title: Global configuration
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.64.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The SDK keeps one application-wide configuration: API key, language, geopolitical view, base URL, display units and retry behaviour. Every map and service call reads it, so none of them needs the API key passed in.
+
+- **Global values are defaults, not locks.** A map or a single service call can set any of them for itself; see [how global and per-request configuration combine](#how-global-and-per-request-configuration-combine).
+- **Set it once, at startup**, before creating a map or calling a service. The same singleton works in the browser and in Node.js.
+
+## The `TomTomConfig` singleton
+
+`TomTomConfig.instance`, exported from the Core bundle, is the one configuration shared across the application:
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+
+TomTomConfig.instance.put({
+    apiKey: 'YOUR_API_KEY',
+    language: 'en-GB'
+});
+```
+
+In Node.js, read the key from the environment rather than from source: `TomTomConfig.instance.put({ apiKey: process.env.TOMTOM_API_KEY })`. [Where your API key runs](../security/where-your-api-key-runs.mdx) covers when that keeps it private.
+
+### The three methods
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+
+TomTomConfig.instance.put({ apiKey: 'YOUR_API_KEY' }); // merge values in
+const config = TomTomConfig.instance.get();            // read the current values
+TomTomConfig.instance.reset();                         // restore the defaults
+```
+
+- **`put(config)`** merges the given keys over the current ones; keys you omit keep their value.
+- **`get()`** returns the current configuration object.
+- **`reset()`** restores the defaults, whose `apiKey` is an empty string: set a key again afterwards.
+
+### `put` performs a shallow merge
+
+`put` merges top-level keys only. A nested object such as `displayUnits` is **replaced whole** (`retry` is the [one exception](#retry)):
+
+```javascript
+TomTomConfig.instance.put({ displayUnits: { distance: { type: 'metric' } } });
+
+// Replaces displayUnits: the distance setting above is gone
+TomTomConfig.instance.put({ displayUnits: { time: { hours: 'hrs' } } });
+```
+
+To change one nested field, pass the whole nested object again in one call.
+
+## Configuration options
+
+| Option | Default | What it sets |
+| --- | --- | --- |
+| [`apiKey`](#apikey) | `''` | The key every request authenticates with |
+| [`commonBaseURL`](#commonbaseurl) | `'https://api.tomtom.com'` | The host every TomTom request goes to |
+| [`language`](#language) | unset: `NGT` | The language of service results and map labels |
+| [`geopoliticalView`](#geopoliticalview) | unset: the caller's country | Whose perspective disputed territories are shown from |
+| [`sendUserAgentHeader`](#senduseragentheader) | `true` | Whether requests carry the `tomtom-user-agent` header |
+| [`displayUnits`](#displayunits) | unset: metric, default labels | The units and labels of the formatting utilities |
+| [`retry`](#retry) | `{ initialWaitMs: 0.447, backoffFactor: 1.618, timeoutMs: 40000 }` | Retrying rate-limited (`429`) responses |
+
+### `apiKey`
+
+Your TomTom API key, from [my.tomtom.com](https://my.tomtom.com/). Where to keep it: [Where your API key runs](../security/where-your-api-key-runs.mdx) and TomTom's [API key management best practices](https://docs.tomtom.com/platform/documentation/api-best-practices/api-key-management-best-practices).
+
+### `commonBaseURL`
+
+The base URL of every TomTom request: service calls, and the style, tile, sprite and glyph URLs the map fetches. Change it only to route those requests through a proxy of your own.
+
+| `commonBaseURL` | `apiKey` | Behaviour |
+| --- | --- | --- |
+| Default | Set | Requests go to `api.tomtom.com` with your key. |
+| Your own host | Set | URLs are rewritten to your host and the key travels with each request. |
+| Your own host | Unset | **Proxy mode.** URLs are rewritten (the tile, sprite and glyph URLs inside the style included), no key is sent, and requests carry `credentials: 'include'` so your proxy's session cookie travels with them. |
+
+Proxy mode is inferred from the missing `apiKey`, so a key left set is the usual reason a proxy setup still sends one. [Proxying your API calls](../security/proxying-api-calls.mdx) covers the proxy side.
+
+The URL must be `https:`, or relative to the page (`'/api'`). `http:` is accepted only for a loopback address (`localhost`, `127.0.0.0/8`, `[::1]`), for local development. Any other `http:` URL would carry your key and requests in the clear, so service calls reject and the map constructor throws, with the code `INSECURE_BASE_URL`; `validateRequest: false` does not skip this check.
+
+### `language`
+
+An IETF language code (case-insensitive) for search results, routing instructions and map labels. Unset, the APIs answer in `NGT` (Neutral Ground Truth): each place in its local language. Supported languages: [Search](https://docs.tomtom.com/search-api/documentation/product-information/supported-languages), [Routing](https://docs.tomtom.com/routing-api/documentation/product-information/supported-languages).
+
+### `geopoliticalView`
+
+Whose perspective disputed territories are shown from, on the map and in search and geocoding results. Unset, each TomTom API applies the default view for the country the request comes from. The views and which API serves which: [Geopolitical views](./geopolitical-views.mdx).
+
+### `sendUserAgentHeader`
+
+Every service call, and every map request except images, carries a `tomtom-user-agent` header naming the SDK and its version (`MapsSDKJS/<version>`). TomTom reads it to tell which SDK versions are in use; it carries nothing about your app or its users.
+
+```javascript
+TomTomConfig.instance.put({ sendUserAgentHeader: false });
+```
+
+- **Turn it off** when the header must not leave the page, or when a [proxy of yours](../security/proxying-api-calls.mdx#get-cors-right) should not have to allow it.
+- It is read when a request is made, so a `TomTomMap` takes the value it was created with: pass `sendUserAgentHeader: false` before creating the map, or in its params.
+
+### `displayUnits`
+
+The unit system (`'metric'`, `'imperial_us'` or `'imperial_uk'`) and unit labels that [`formatDistance` and `formatDuration`](./utilities/formatting.mdx#global-configuration) use, and with them every distance and duration the SDK displays.
+
+```javascript
+TomTomConfig.instance.put({
+    displayUnits: {
+        distance: { type: 'imperial_us', miles: 'miles' },
+        time: { hours: 'hrs', minutes: 'mins' }
+    }
+});
+```
+
+### `retry`
+
+When a service request gets a rate-limited (`429`) response, the SDK retries it with exponential backoff, waiting what the response's `Retry-After` header asks for when it carries one.
+
+```javascript
+TomTomConfig.instance.put({
+    retry: {
+        initialWaitMs: 0.447, // first wait, when there is no Retry-After header
+        backoffFactor: 1.618, // multiplier applied to the wait after each retry
+        timeoutMs: 40000      // give up once the next wait would pass this, counted from the first request
+    }
+});
+```
+
+- **A field you leave out takes its default**, not the value of an earlier `put`: `put({ retry: { timeoutMs: 10000 } })` keeps the default wait and factor.
+- **`retry: undefined` turns retrying off**: the first `429` rejects the call.
+- Once `timeoutMs` would be exceeded, the call rejects with the `429` as an [`SDKServiceError`](../services/request-options-and-errors.mdx#error-handling).
+- `timeoutMs` bounds the retrying only, not a single request; a per-call deadline is a [signal](../services/request-options-and-errors.mdx#deadlines).
+
+## How global and per-request configuration combine
+
+Every service call merges the global configuration under its own parameters, so **the per-call value wins**, for that call only:
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { discoverPlaces } from '@tomtom-org/maps-sdk/services';
+
+TomTomConfig.instance.put({ apiKey: 'YOUR_API_KEY', language: 'en-GB' });
+
+// Uses the global language ('en-GB')
+const ukResults = await discoverPlaces({ query: 'restaurants', geoBias: { position: [4.9041, 52.3676] } });
+
+// French for this call only; the global configuration stays 'en-GB'
+const frResults = await discoverPlaces({
+    query: 'restaurants',
+    geoBias: { position: [4.9041, 52.3676] },
+    language: 'fr-FR'
+});
+```
+
+- A `TomTomMap` takes the same keys in its constructor parameters, which win over the global values for that map.
+- `retry` is read from the global configuration only. `displayUnits` is overridden where units are displayed instead: as the formatters' second argument, or in `RoutingModule`'s own config.
+- The options that exist only per call (validation, lifecycle hooks, cancellation) are in [Request options and errors](../services/request-options-and-errors.mdx).

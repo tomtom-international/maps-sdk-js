@@ -1,0 +1,136 @@
+---
+title: Place details
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.64.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+[`getPlaceDetails()`](/maps-sdk-js/api-reference/functions/services.getPlaceDetails.html) fetches
+one place by its ID, with the opening hours, related POIs and EV charging hardware a search result
+can carry. The ID comes from:
+
+- a search result's `id`, or its `properties.dataSources.poiDetails.id`
+- a [related POI](../../core/places.mdx#related-pois)'s `id`
+- a [search suggestion](./suggest.mdx)'s `id`
+- a click on the map's own POIs, below
+
+## Basic usage
+
+The call resolves to a `Place`, or to `undefined` when the ID matches nothing:
+
+```javascript
+import { getPlaceDetails } from '@tomtom-org/maps-sdk/services';
+
+const place = await getPlaceDetails({ entityId: '528009002822995' });
+
+if (place) {
+    console.log(place.properties.poi?.name);
+    console.log(place.properties.address.freeformAddress);
+}
+```
+
+The place has the same `SearchPlaceProps` as a search result; [Places](../../core/places.mdx)
+describes every property.
+
+## Opening hours
+
+```javascript
+const place = await getPlaceDetails({ entityId: '528009002822995', openingHours: 'nextSevenDays' });
+
+const hours = place?.properties.poi?.openingHours;
+if (hours?.alwaysOpenThisPeriod) {
+    console.log('Open 24/7');
+} else {
+    hours?.timeRanges.forEach(({ start, end }) => {
+        console.log(`Open ${start.date.toLocaleString()} – ${end.date.toLocaleString()}`);
+    });
+}
+```
+
+## Related POIs
+
+`relatedPois` takes `'child'` (such as the terminals of an airport), `'parent'`, `'all'` or `'off'`,
+the default:
+
+```javascript
+const place = await getPlaceDetails({ entityId: '528009002822995', relatedPois: 'child' });
+
+place?.properties.relatedPois?.forEach((related) => {
+    console.log(related.id, related.relationType);
+});
+```
+
+## Additional options
+
+```javascript
+const place = await getPlaceDetails({
+    entityId: '528009002822995',
+    timeZone: 'iana',                     // the POI's IANA time zone, in poi.timeZone
+    mapcodes: ['Local', 'International'], // short location codes, in mapcodes
+    geopoliticalView: 'Unified',          // overrides the global view for this call
+});
+```
+
+- [Geopolitical views](../../core/geopolitical-views.mdx) lists the views place details serve.
+- The call also takes the [options every service call takes](../request-options-and-errors.mdx),
+  `signal` and `language` among them.
+
+## Displaying on the map
+
+The [Places module](../../map/places.mdx) shows the place as it is:
+
+```javascript
+import { TomTomMap, PlacesModule } from '@tomtom-org/maps-sdk/map';
+import { getPlaceDetails } from '@tomtom-org/maps-sdk/services';
+
+const map = new TomTomMap({ mapLibre: { container: 'sdk-map' } });
+const placesModule = await PlacesModule.create(map);
+
+const place = await getPlaceDetails({ entityId: '528009002822995' });
+if (place) await placesModule.show(place);
+```
+
+## Integration with POIs module
+
+<GuideDemo demo="interactive-map-pois" />
+
+A click on one of the map's own POIs carries the `id` the lookup takes. Clicks can come faster than
+answers, so run each lookup through
+[`createLatestRequest`](../request-options-and-errors.mdx#keeping-only-the-latest-request), as the
+demo above does:
+
+```javascript
+import { POIsModule } from '@tomtom-org/maps-sdk/map';
+import { createLatestRequest, getPlaceDetails } from '@tomtom-org/maps-sdk/services';
+
+const poisModule = await POIsModule.get(map);
+const latestLookup = createLatestRequest();
+
+poisModule.events.on('click', async (feature) => {
+    const lookup = await latestLookup.run((signal) =>
+        getPlaceDetails({ entityId: feature.properties.id, openingHours: 'nextSevenDays', signal })
+    );
+    if (!lookup.current || !lookup.value) return;
+    showDetailsPanel(lookup.value);
+});
+```
+
+The [POIs module guide](../../map/pois.mdx#events) covers the click event and what its feature carries.
+
+## Related guides and examples
+
+### Map integration
+- **[POIs module](../../map/pois.mdx)** - The map's own POIs, whose clicks carry the ID `getPlaceDetails()` takes
+- **[Places module](../../map/places.mdx)** - The retrieved place on the map
+
+### Related examples
+- **[Interactive map POIs](../../../examples/interactive-map-pois)** - A clicked POI's details from `getPlaceDetails()`
+
+### Related services
+- **[Discover places](./search.mdx)** - Finding places, whose IDs `getPlaceDetails()` takes
+- **[Search suggestions](./suggest.mdx)** - A suggestion's `id` is a place ID too

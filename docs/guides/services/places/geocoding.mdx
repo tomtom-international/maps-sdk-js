@@ -1,0 +1,190 @@
+---
+title: Geocoding
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.64.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+[`geocode()`](/maps-sdk-js/api-reference/functions/services.geocode.html) turns an address or a
+place name into coordinates. It tolerates typos and partial addresses, and covers street addresses,
+intersections and areas from neighbourhoods to countries. It returns no POIs: to find a business or
+a landmark, use [`discoverPlaces()`](./search.mdx).
+
+<SDKGuideLiveCodingExample exampleDirectory="nodejs-geocode" />
+
+## Basic geocoding usage
+
+### Simplest single address geocoding
+
+`geocodeOne` returns the best match, and throws an `Error` when there is none:
+
+```javascript
+import { geocodeOne } from '@tomtom-org/maps-sdk/services';
+
+const place = await geocodeOne('Dam Square, Amsterdam, Netherlands');
+const coordinates = place.geometry.coordinates; // [longitude, latitude]
+
+// The params form takes everything `geocode` does except `limit`
+const biased = await geocodeOne({ query: 'Main Street', geoBias: { position: [4.9041, 52.3676] } });
+```
+
+### Standard address geocoding
+
+`geocode` returns every candidate, and an empty collection rather than an error when nothing matches:
+
+```javascript
+import { geocode } from '@tomtom-org/maps-sdk/services';
+
+const result = await geocode({ query: 'Dam Square, Amsterdam, Netherlands' });
+
+const coordinates = result.features[0]?.geometry.coordinates; // [longitude, latitude]
+```
+
+### Filtering results
+
+Everything that drops results lives under `filters`: the countries a result may come from, and the
+geography types it may be.
+
+```javascript
+const result = await geocode({
+    query: 'Utrecht',
+    filters: { countries: ['NL'], geographyTypes: ['Municipality'] },
+});
+```
+
+- **`countries`** takes ISO 3166-1 alpha-2 or alpha-3 codes.
+- **`geographyTypes`** restricts `Geography` results, such as `Municipality` or `PostalCodeArea`.
+- **No POI filters.** Geocoding has no notion of POIs, so the rest of
+  [search's `filters`](./search.mdx#filters) does not apply.
+
+## Advanced geocoding configuration
+
+### Geographic constraints and biasing
+
+`geoBias` takes a point or a rectangle, as it does for [search](./search.mdx#geographic-bias): a
+point ranks nearer results higher, and confines them to a circle with `radiusMeters`; a rectangle
+confines them to it.
+
+```javascript
+const nearAmsterdam = await geocode({
+    query: 'Central Station',
+    geoBias: { position: [4.9041, 52.3676] },
+    filters: { countries: ['NL'] },
+});
+
+const inBox = await geocode({
+    query: 'Main Street',
+    geoBias: { boundingBox: [4.7, 52.2, 5.1, 52.5] }, // [minLng, minLat, maxLng, maxLat]
+});
+```
+
+### Other parameters
+
+On top of `query`, `limit` (up to 100, default `10`), `filters`, `geoBias` and `cursor`, geocoding
+takes these, and the [options every service call takes](../request-options-and-errors.mdx):
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `typeahead` | `boolean` | Treat the query as partial input. Default `false`. |
+| `extendedPostalCodesFor` | `('Geo' \| 'PAD' \| 'Addr' \| 'Str' \| 'XStr')[]` | Indexes to return extended postal codes for. Default: all except `'Geo'`. |
+| `mapcodes` | `MapcodeType[]` | Adds [mapcodes](../../core/places.mdx#mapcodes): `'Local'`, `'International'`, `'Alternative'`. |
+| `geopoliticalView` | `GeopoliticalView` | See [Geopolitical view](#geopolitical-view). |
+
+The full type is [`GeocodingParams`](/maps-sdk-js/api-reference/types/services.GeocodingParams.html).
+
+### Geopolitical view
+
+`geopoliticalView` decides which country an address in a disputed territory belongs to, and defaults
+to the global one. Geocoding serves fewer views than the other places services; a view it does not
+serve leaves the default for the caller's country. [Geopolitical views](../../core/geopolitical-views.mdx)
+lists them.
+
+```javascript
+const result = await geocode({ query: 'Laayoune', geopoliticalView: 'MA' });
+```
+
+### Multiple result handling
+
+An ambiguous name returns several candidates, to let the user pick one:
+
+```javascript
+const results = await geocode({ query: 'Paris', limit: 5 });
+
+results.features.forEach((place) => {
+    const { municipality, country } = place.properties.address;
+    console.log(`${municipality}, ${country}`, place.geometry.coordinates);
+});
+
+// The next five, if there are any
+const nextCursor = results.properties?.nextCursor;
+const more = nextCursor && (await geocode({ query: 'Paris', limit: 5, cursor: nextCursor }));
+```
+
+The response's `properties.nextCursor`, passed back as `cursor` with the same parameters, fetches
+the next page, as in [search pagination](./search.mdx#pagination).
+
+## Working with geocoding results
+
+### Result data structure
+
+Each feature is a `Place` whose `type` is an address, a street, a cross street or a `Geography`,
+never a POI. Besides the [place properties](../../core/places.mdx) it carries `matchConfidence.score`,
+how well the result's text matches the query:
+
+```javascript
+const result = await geocode({ query: 'Damrak 1, Amsterdam' });
+const place = result.features[0];
+
+const [longitude, latitude] = place.geometry.coordinates;
+const { freeformAddress, streetName, streetNumber, municipality, postalCode, country } = place.properties.address;
+
+console.log(place.properties.type);                  // e.g. 'Point Address'
+console.log(place.properties.matchConfidence.score); // higher is a closer textual match
+```
+
+[Address](../../core/places.mdx#address) lists every address component.
+
+### Integration with mapping
+
+The [Places module](../../map/places.mdx) shows the result as it is:
+
+```javascript
+import { TomTomMap, PlacesModule } from '@tomtom-org/maps-sdk/map';
+import { geocode } from '@tomtom-org/maps-sdk/services';
+
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+const placesModule = await PlacesModule.create(map);
+
+await placesModule.show(await geocode({ query: 'Museumplein, Amsterdam' }));
+```
+
+## Performance and best practices
+
+- **Narrow the search** with [`filters`](#filtering-results) and a [`geoBias`](#geographic-constraints-and-biasing)
+  when you know the country or the area: results get more relevant and ambiguous names resolve.
+- **Cache frequent lookups** yourself; the SDK does not.
+- **Handle no match** as an empty collection from `geocode`, or a thrown `Error` from `geocodeOne`. A
+  failed request rejects with an `SDKError`; [Error handling](../request-options-and-errors.mdx#error-handling)
+  covers its kinds.
+
+## Related guides and examples
+
+### Map integration
+- **[Places module](../../map/places.mdx)** - Geocoded locations on the map
+- **[Routing module](../../map/routes.mdx)** - Geocoded addresses as route waypoints
+
+### Related examples
+- **[Geocode](../../../examples/geocode)** - An address to coordinates, on the map
+- **[Geocode start location](../../../examples/geocode-init)** - A map opened on a geocoded region's `bbox`
+- **[Waypoints](../../../examples/waypoints)** - Geocoded addresses as route waypoints
+- **[Map route reconstruction playground](../../../examples/route-reconstruction)** - A route between geocoded locations, reshaped by a drawn trail
+
+### Related services
+- **[Reverse geocoding](./reverse-geocoding.mdx)** - Coordinates to an address
+- **[Discover places](./search.mdx)** - POIs and free-text search
+- **[Route planning parameters](../routing/parameters.mdx)** - Routes between geocoded locations

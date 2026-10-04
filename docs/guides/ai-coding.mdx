@@ -1,0 +1,75 @@
+---
+title: AI coding with the SDK
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.64.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The SDK ships a skill, `tomtom-maps-sdk-js`, for AI coding agents such as Claude Code, Cursor, GitHub Copilot, Windsurf and [many more](https://www.npmjs.com/package/skills#available-agents). It loads the SDK's patterns, coordinate conventions, service APIs and pitfalls into the agent's context, so the agent writes code against the real API instead of guessing it.
+
+## What the skill covers
+
+A skill is a set of curated reference documents the agent reads when a task needs them, rather than searching the web. This one has a document per area:
+
+| Area | What the agent learns |
+| --- | --- |
+| **Map setup** | `TomTomMap`, the two kinds of [modules](./map/modules.mdx), the base map, terrain, geopolitical views |
+| **Styles and styling** | `setStyle` and style switching, styling knobs, map colours, presets, theming from a website or an image |
+| **Events** | User events on each module, and module lifecycle events such as `config-change` |
+| **Places and search** | `discoverPlaces`, geocoding, reverse geocoding, `getSearchSuggestions`, POI categories, EV availability, `PlacesModule` |
+| **Routing** | `calculateRoute`, waypoints, alternatives, guidance, EV routing, reachable ranges, `RoutingModule` |
+| **Traffic** | Flow, incidents, incident details, area analytics |
+| **Core types and utilities** | `Place`, `Route`, section types, `bboxFromGeoJSON`, `getPosition`, `formatDistance`, `formatDuration`, route progress |
+| **Services config** | API key, language, request validation, lifecycle hooks, cancellation with `AbortSignal` and `createLatestRequest`, error classes |
+| **MapLibre and custom data** | When to use an SDK feature or raw MapLibre, layer placement, `CustomGeoJSONModule` |
+| **Plugins** | Map effects, fly-over, landmarks 3D, Map Theme, and the [Agent Toolkit](./plugins/agent-toolkit/overview.mdx) |
+
+## Installing the skill
+
+Run this once in your project root:
+
+```bash
+npx skills add tomtom-international/maps-sdk-js --skill tomtom-maps-sdk-js
+```
+
+- It writes the skill into your agent's skills directory, such as `.claude/skills/`. Commit it so the whole team gets it.
+- From 1.0, the identifier `tomtom-maps-sdk-js` follows the SDK's [release versioning](../introduction/release-notes.mdx#understanding-release-versioning) like any export: it changes only in a major release.
+
+## Invoking the skill
+
+The agent loads the skill on its own when a task mentions the SDK. To load it explicitly, name it with one or more topics:
+
+```
+/tomtom-maps-sdk-js map-setup
+/tomtom-maps-sdk-js places routing
+```
+
+## What to expect
+
+With the skill loaded, the agent:
+
+- Writes positions as `[longitude, latitude]`, the order the whole SDK uses.
+- Awaits `Module.create(map)` for data-owned modules and `Module.get(map)` for style-owned ones before calling them ([Types of modules](./map/modules.mdx#types-of-modules)).
+- Calls `geocode()` when the number of results is open, and `geocodeOne()` when one result is expected.
+- Gives the map container explicit dimensions in the HTML and CSS it writes alongside the TypeScript.
+- Prefers an SDK feature over hand-written MapLibre layers where one exists.
+
+## Tips for best results
+
+- **Describe what to show, not which API to call**, and let the skill pick the services and modules:
+
+  > *"Show a route from Amsterdam to Utrecht with a stop at a fuel station, and the traffic incidents along it"*
+
+- **Name the target environment.** Services run in Node.js and React Native, Map in the browser only: "this is a Node.js script" or "this is a React app" picks the right imports.
+- **Invoke it again if the agent drifts** in a long session, to reload the reference.
+
+## Related guides
+
+- [AI and the SDK](../introduction/ai.mdx), for the Agent Toolkit that puts an LLM in front of your users
+- [Project setup](../introduction/project-setup.mdx), to install the SDK and set your API key
+- [How the SDK works](./how-the-sdk-works.mdx), for the Map, Services and Core bundles

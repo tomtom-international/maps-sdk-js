@@ -1,0 +1,172 @@
+---
+title: TomTom map object
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.64.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+## Overview
+
+**[TomTomMap](/maps-sdk-js/api-reference/classes/map.TomTomMap.html)** wraps a MapLibre GL JS map: it loads a TomTom style with your API key, coordinates the user events of every [module](./modules.mdx), and keeps the SDK's state through style switches. The MapLibre map stays [fully exposed](#accessing-maplibre).
+
+## Initialization
+
+### Basic setup
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+
+TomTomConfig.instance.put({ apiKey: 'YOUR_API_KEY' });
+
+const map = new TomTomMap({
+    mapLibre: {
+        container: 'map-container',
+        center: [4.9041, 52.3676],
+        zoom: 12
+    },
+    style: 'standardDark',
+    language: 'en-US'
+});
+```
+
+### Constructor parameters
+
+`TomTomMap` takes one **[TomTomMapParams](/maps-sdk-js/api-reference/types/map.TomTomMapParams.html)** object. Only `mapLibre.container` is required.
+
+| Property | Default | Sets |
+| --- | --- | --- |
+| `mapLibre` | — | [MapLibre's map options](https://maplibre.org/maplibre-gl-js/docs/API/type-aliases/MapOptions/) (`container`, `center`, `zoom`, `bounds`, `pitch`, `interactive`…), typed [MapLibreOptions](/maps-sdk-js/api-reference/types/map.MapLibreOptions.html) |
+| `style` | `'standardLight'` | The [map style](./styles.mdx): a standard style id, a standard style with the parts it includes, or a custom style |
+| `events` | — | How user events are detected and timed, and the cursors they show: [map-level event configuration](./user-events.mdx#map-level-configuration) |
+| `apiKey`, `language`, `geopoliticalView`, … | The [global configuration](../core/global-config.mdx) | Any global configuration property, for this map only |
+
+- Properties given here override the global configuration set with `TomTomConfig.instance.put()`.
+- The SDK sets MapLibre's `style`, `attributionControl` and `transformRequest` itself, so `MapLibreOptions` leaves them out. To route TomTom requests through a proxy of your own, set [`commonBaseURL`](../security/proxying-api-calls.mdx).
+
+## Map styles
+
+`style` picks the style the map opens with, and `map.setStyle(style)` switches it at runtime, carrying every module's data and configuration over by default. `setStyle` returns a promise that resolves once every module has restored itself, and `getStyleInput()` returns the style last given. The [Map styles](./styles.mdx) guide covers the standard styles, custom styles, style parts, [keeping or dropping state](./styles.mdx#keeping-or-dropping-state) and [listening to style changes](./styles.mdx#listening-to-style-changes).
+
+## Event configuration
+
+`events` configures how user events behave for every module — precision mode, hit-box padding, hover timing, cursors — and `map.updateEventsConfig(config)` changes it at runtime:
+
+```javascript
+const map = new TomTomMap({
+    mapLibre: { container: 'map' },
+    events: { precisionMode: 'point-then-box', paddingBoxPx: 10, cursorOnHover: 'pointer' },
+});
+
+map.updateEventsConfig({ longHoverDelayOnStillMapMS: 600 });
+```
+
+Every option and its default: [map-level event configuration](./user-events.mdx#map-level-configuration). A module's own `events` overrides the cursor and hover settings for its features.
+
+## Accessing MapLibre
+
+`map.mapLibreMap` is the MapLibre `Map` itself, so any MapLibre API, control or plugin works on a TomTom map:
+
+```javascript
+import { NavigationControl } from 'maplibre-gl';
+
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+
+map.mapLibreMap.addControl(new NavigationControl(), 'top-right');
+map.mapLibreMap.on('moveend', () => {
+    console.log('Camera:', map.mapLibreMap.getCenter());
+});
+```
+
+Use it for controls, markers, popups, camera moves, tile overlays and third-party plugins. For your own GeoJSON data, use the [Custom GeoJSON module](./custom.mdx), which keeps it on the map across style switches. [About MapLibre](./about-maplibre.mdx#when-to-use-tomtom-sdk-vs-direct-maplibre) lists which SDK feature replaces which raw MapLibre call.
+
+## Map readiness
+
+`map.mapReady` is `true` once the style has loaded, and `false` again for the duration of every style switch.
+
+- Module factories (`get()`, `create()`) wait for the map themselves: call them right after constructing it.
+- For your own code, await `setStyle`, or register a [style change handler](./styles.mdx#listening-to-style-changes).
+
+## Map errors
+
+The map reports its failures as a `TomTomMapError`, whose `code` is one of the codes [service errors](../services/request-options-and-errors.mdx#error-handling) use, with `sdkVersion` for bug reports:
+
+| When | How it arrives | `code` |
+| --- | --- | --- |
+| The browser cannot create a WebGL2 context | The constructor throws | `WEBGL_UNSUPPORTED` |
+| The style fails to load | `setStyle` rejects, and the error handlers get it | The HTTP status's (`API_KEY_REJECTED`, `RATE_LIMITED`, …), else `STYLE_LOAD_FAILED` |
+| A tile, sprite or glyph fails to load | The error handlers get it, with the source in `sourceId` | The HTTP status's, `NETWORK_ERROR` with no response, else `UNEXPECTED` |
+| The browser takes the WebGL context away | The error handlers get it | `WEBGL_CONTEXT_LOST` |
+
+```javascript
+import { TomTomMap, TomTomMapError } from '@tomtom-org/maps-sdk/map';
+
+let map;
+try {
+    map = new TomTomMap({ mapLibre: { container: 'map' } });
+} catch (error) {
+    if (error instanceof TomTomMapError && error.code === 'WEBGL_UNSUPPORTED') showStaticImage();
+    else throw error;
+}
+
+const removeErrorHandler = map.addErrorHandler((error) => {
+    if (error.code === 'API_KEY_REJECTED') showMessage('The map could not load: check the API key');
+});
+```
+
+- **While no handler is registered, each failure is logged** with `console.error`, as MapLibre does.
+- **A failed tile does not stop the map**: MapLibre keeps drawing the others, so log it rather than tearing the map down.
+
+## Language configuration
+
+`language` sets the language of the map labels; `map.setLanguage('fr-FR')` changes it at runtime. Without one, each label is in its local language. Either survives every style switch: see [Map language](./styles.mdx#map-language).
+
+```javascript
+const map = new TomTomMap({
+    mapLibre: { container: 'map' },
+    language: 'fr-FR'
+});
+```
+
+## Geopolitical view
+
+`geopoliticalView` sets whose perspective the map draws disputed borders and names from, and `map.setGeopoliticalView(view)` switches it at runtime. Set in the global configuration, it applies to services too: see [Geopolitical views](../core/geopolitical-views.mdx).
+
+```javascript
+const map = new TomTomMap({
+    mapLibre: { container: 'map' },
+    geopoliticalView: 'IN'
+});
+
+map.setGeopoliticalView('PK');
+```
+
+## API reference
+
+**[TomTomMap API reference](/maps-sdk-js/api-reference/classes/map.TomTomMap.html)**
+
+### Key methods summary
+
+- **`mapLibreMap`**: the underlying MapLibre map
+- **`mapReady`**: whether the style has loaded
+- **`setStyle(style, options?)`**: switch the style; resolves once the modules are restored
+- **`getStyleInput()`**: the style last given
+- **`addStyleChangeHandler(handler)`**: run code around a style switch; returns a function that unsubscribes it
+- **`addErrorHandler(handler)`**: receive every [map failure](#map-errors) as a `TomTomMapError`; returns a function that unsubscribes it
+- **`setLanguage(language)`**, **`setGeopoliticalView(geopoliticalView)`**: relabel and redraw the map already on screen
+- **`updateEventsConfig(config)`**: change the map-level event configuration
+- **`getBBox()`**: the visible area as `[west, south, east, north]`
+- **`styleLightDarkTheme`**: whether the loaded style is `'light'` or `'dark'`, to bind your own UI to
+- **`mapColors`**: the map's [semantic colours and accent](./styling-map-colors.mdx), as the Styling Foundations module last published them
+
+## Next steps
+
+- **[Modules](./modules.mdx)**: add functionality with modules
+- **[Map styles](./styles.mdx)**: standard and custom styles, and switching them
+- **[User interaction events](./user-events.mdx)**: handle interactions
+- **[Services quickstart](../services/quickstart.mdx)**: connect TomTom services

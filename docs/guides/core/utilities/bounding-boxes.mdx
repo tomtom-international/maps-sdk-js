@@ -1,0 +1,111 @@
+---
+title: Bounding boxes
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.64.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+A bounding box (`BBox`) is `[minLng, minLat, maxLng, maxLat]`, i.e. `[west, south, east, north]`. Fitting the map to one with padding is a map utility: [padded bounds](../../map/utilities.mdx).
+
+## bboxFromGeoJSON
+
+Returns the bounding box of any GeoJSON object, or of an array of them:
+
+- **An existing `bbox` wins.** A place covering an area (a city, a country) comes with one wider than its point, and that is what you get.
+- **Otherwise it is calculated** from the geometry; a collection or an array combines its members' boxes.
+- **Long lines are sampled**: a line or ring with more than 1000 points is read at intervals, its last point always included.
+
+```javascript
+import { bboxFromGeoJSON } from '@tomtom-org/maps-sdk/core';
+import { calculateRoute, discoverPlaces, geocodeOne } from '@tomtom-org/maps-sdk/services';
+
+const city = await geocodeOne('Amsterdam');
+bboxFromGeoJSON(city); // the city's own bbox, not a point
+
+const cafes = await discoverPlaces({ query: 'coffee', geoBias: { position: [4.9, 52.37] } });
+bboxFromGeoJSON(cafes); // around every result
+
+const routes = await calculateRoute({ locations: [[4.9, 52.3], [4.5, 51.9]] });
+bboxFromGeoJSON(routes.features[0].geometry); // around the path
+
+bboxFromGeoJSON([city, ...cafes.features]); // around all of them
+```
+
+**Returns** `BBox | undefined`: `undefined` for an input it cannot read.
+
+## bboxFromCoordsArray
+
+Returns the bounding box of raw `[longitude, latitude]` positions, for coordinates you hold before any GeoJSON exists, such as the endpoints of routes not yet calculated. An array of more than 1000 positions is sampled the way `bboxFromGeoJSON` samples a long line:
+
+```javascript
+import { bboxFromCoordsArray } from '@tomtom-org/maps-sdk/core';
+
+bboxFromCoordsArray([[4.9, 52.4], [2.3, 48.8], [13.4, 52.5]]); // [2.3, 48.8, 13.4, 52.5]
+```
+
+**Returns** `BBox | undefined`: `undefined` for an empty or missing array.
+
+## bboxFromBBoxes
+
+Returns the bounding box containing every given one, skipping `undefined` entries, so the results of `bboxFromGeoJSON` combine without checks:
+
+```javascript
+import { bboxFromBBoxes, bboxFromGeoJSON } from '@tomtom-org/maps-sdk/core';
+
+bboxFromBBoxes([bboxFromGeoJSON(city), bboxFromGeoJSON(cafes)]);
+```
+
+**Returns** `BBox | undefined`: `undefined` for an empty array, or when every entry is `undefined`.
+
+## isBBoxWithArea
+
+Whether a bounding box has both a width and a height. A single point, or a line along one meridian or parallel, has a box with no area: fitting the map to it zooms in as far as the map goes, so check first and centre on the position instead:
+
+```javascript
+import { bboxCenter, bboxFromGeoJSON, isBBoxWithArea } from '@tomtom-org/maps-sdk/core';
+
+const bbox = bboxFromGeoJSON(places);
+if (isBBoxWithArea(bbox)) {
+    map.mapLibreMap.fitBounds(bbox, { padding: 50 });
+} else if (bbox) {
+    map.mapLibreMap.jumpTo({ center: bboxCenter(bbox), zoom: 15 });
+}
+```
+
+**Returns** `boolean`: `false` for `undefined` too.
+
+## bboxCenter
+
+Returns the `[longitude, latitude]` centre of a bounding box: the midpoint of its west and east edges, and of its south and north ones.
+
+```javascript
+import { bboxCenter } from '@tomtom-org/maps-sdk/core';
+
+bboxCenter([4.7, 52.2, 5.1, 52.5]); // [4.9, 52.35]
+```
+
+**Returns** `Position`.
+
+## polygonFromBBox
+
+Turns a bounding box into a GeoJSON `Feature<Polygon>`, to draw the area on the map:
+
+```javascript
+import { bboxFromGeoJSON, polygonFromBBox } from '@tomtom-org/maps-sdk/core';
+
+const bbox = bboxFromGeoJSON(cafes);
+if (bbox) {
+    map.mapLibreMap.addSource('search-area', { type: 'geojson', data: polygonFromBBox(bbox) });
+    map.mapLibreMap.addLayer({
+        id: 'search-area-outline',
+        type: 'line',
+        source: 'search-area',
+        paint: { 'line-color': '#3887be', 'line-width': 2 }
+    });
+}
+```

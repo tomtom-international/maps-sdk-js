@@ -1,0 +1,98 @@
+---
+title: Module lifecycle events
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.64.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+Module lifecycle events fire when a module changes, whatever caused it — not when a user interacts with the map, which [user interaction events](./user-events.mdx) cover.
+
+- **`config-change`** — the module's configuration changed. Every module has it.
+- **`shown-features`** — the module drew data you passed to one of its `show` methods.
+
+Both live on the module's own `events`, next to its user events, and never on a [named scope](./user-events.mdx#module-event-scopes): a module has one configuration and one stream of shown data.
+
+## `config-change`
+
+The handler receives the module's whole configuration after the change, as `getConfig()` returns it, which can be `undefined` after `resetConfig()`. Use it to keep your UI in sync whichever code made the change:
+
+```javascript
+import { TerrainModule } from '@tomtom-org/maps-sdk/map';
+
+const terrain = await TerrainModule.get(map);
+const toggle = document.querySelector('#hillshade-toggle');
+
+terrain.events.on('config-change', (config) => {
+    toggle.checked = config?.hillshade?.visible ?? false;
+});
+
+toggle.addEventListener('change', () => terrain.setHillshadeVisible(toggle.checked));
+```
+
+### What triggers `config-change`
+
+| Call | Modules |
+|------|--------|
+| [`applyConfig`, `updateConfig`, `resetConfig`](./modules.mdx#changing-a-setting) | All |
+| [`setKnob`, `resetKnob`](./modules.mdx#setting-a-knob-by-its-id) | Every module with a knob catalogue |
+| `setVisible` | Every module with `visible`; `BaseMapModule`'s with `{ layerGroups }` too |
+| `setHillshadeVisible`, `setElevationVisible` | `TerrainModule` |
+| `setPalette`, `setColorStops`, `setHeight`, `setFilters` | `TrafficAreaAnalyticsModule` |
+| `get(map, config)` on a module the map already has | Style-owned modules |
+| [`setStyle(style, { resetState: true })`](./styles.mdx#keeping-or-dropping-state), which resets every module | All |
+
+The configuration a module is created with fires nothing. To save what the handler receives and replay it later, see [Saving and replaying a configuration](./modules.mdx#saving-and-replaying-a-configuration).
+
+## `shown-features`
+
+The handler receives the data a `show` method drew. A module with several `show` methods reports them all on one stream, and the payload says which ran:
+
+```javascript
+import { PlacesModule } from '@tomtom-org/maps-sdk/map';
+
+const places = await PlacesModule.create(map);
+
+places.events.on('shown-features', (features) => {
+    if ('places' in features) {
+        updateResultsPanel(features.places);
+    } else {
+        updateConnectionsPanel(features.connections);
+    }
+});
+```
+
+| Module | Triggered by | Payload |
+|--------|-------------|--------------|
+| `PlacesModule` | `show` / `showConnections` | `{ places }` / `{ connections }` |
+| `RoutingModule` | `showRoutes` / `showWaypoints` | `{ routes }` / `{ waypoints }` |
+| `GeometriesModule`, `ReachableRangesModule` | `show` | the `PolygonFeatures` given |
+| `CustomGeoJSONModule` | `show(data, sourceName)` | `{ sourceName, data }`, once per source when `show` names none |
+| `TrafficIncidentDetailsModule` | `show` | the `TrafficIncidentDetails` given |
+| `TrafficAreaAnalyticsModule` | `show` | the `TrafficAreaAnalytics` given |
+
+- It fires once the data is on the map, before the `show` promise resolves, so `getShown()` already returns it.
+- Modules with no `show` — `BaseMapModule`, `POIsModule`, `TrafficFlowModule`, `TrafficIncidentsModule`, `TerrainModule`, `StylingFoundationsModule` — do not accept a `shown-features` handler: `events.on('shown-features', …)` does not compile on them.
+
+## Cleanup
+
+`events.on` returns a function that removes that handler alone; `events.off(type)` removes every handler of a type, user events included:
+
+```javascript
+const unsubscribe = places.events.on('config-change', saveSettings);
+unsubscribe(); // other config-change handlers keep firing
+
+places.events.off('shown-features');
+places.events.off('click');
+```
+
+## Related guides
+
+- **[Events](./events.mdx)** - Which event to use for what
+- **[User interaction events](./user-events.mdx)** - Clicks, hovers and event states
+- **[Map modules](./modules.mdx)** - Changing, saving and replaying a configuration
+- **[Map styles](./styles.mdx#listening-to-style-changes)** - Reacting to a style switch with `addStyleChangeHandler`

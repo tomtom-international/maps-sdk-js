@@ -1,0 +1,56 @@
+---
+title: Traffic
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.64.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The SDK draws traffic in five ways, each owned by one module. The playground below switches flow and incidents between presets:
+
+<GuideDemo demo="traffic-config-playground" />
+
+| You need… | Use | Data |
+|---|---|---|
+| Live speed on every road | [`TrafficFlowModule`](./traffic-flow.mdx) | the style's flow tiles |
+| Live incidents across the map, filtered | [`TrafficIncidentsModule`](./traffic-incidents.mdx) | the style's incident tiles |
+| Exactly the incidents you fetched, with focus | [`TrafficIncidentDetailsModule`](./traffic-incident-details.mdx) | a [`trafficIncidentDetails`](../services/traffic/traffic-incident-details.mdx) response |
+| The incidents on one route | [`RoutingModule`](./routes-sections.mdx) | the route's `traffic` sections |
+| Historical speed and congestion over a region | [`TrafficAreaAnalyticsModule`](./traffic-area-analytics-module.mdx) | a [`trafficAreaAnalytics`](../services/traffic/traffic-area-analytics.mdx) response |
+
+The flow and incident tiles are [style parts](./styles.mdx#available-style-parts), hidden until a module shows them.
+
+## Traffic incidents
+
+[`TrafficIncidentsModule`](./traffic-incidents.mdx) shows the live incidents of the whole map — accidents, closures, roadworks, weather — as lines and category icons, filtered by category, severity, delay and road type. No request is needed.
+
+## Traffic flow
+
+[`TrafficFlowModule`](./traffic-flow.mdx) colours every road by its speed relative to free flow, from free-flowing to stationary, with closed roads outlined.
+
+## Traffic flow as data
+
+Orbis flow is vector tiles only: `TrafficFlowModule.getRenderedFeatures()` over the current viewport is the only way to read it. [What the flow data can and cannot tell you](./traffic-flow.mdx#what-the-flow-data-can-and-cannot-tell-you) lists what each segment carries; historical speed and congestion over an area come from [Traffic Area Analytics](../services/traffic/traffic-area-analytics.mdx).
+
+## Traffic incident details
+
+[`TrafficIncidentDetailsModule`](./traffic-incident-details.mdx) draws the incidents a [`trafficIncidentDetails`](../services/traffic/traffic-incident-details.mdx) call returned — no more, no less — and highlights a subset with `setFocus`. Use it when your app needs the typed incidents too, for a list, a popup or a route.
+
+## Traffic along routes
+
+[`RoutingModule`](./routes-sections.mdx) draws the incidents of a calculated route as its `traffic` sections, in the [incident colours](./traffic-incidents.mdx#appearance).
+
+## Traffic area analytics
+
+[`TrafficAreaAnalyticsModule`](./traffic-area-analytics-module.mdx) draws a region's historical traffic as hexagon or square grids, flat or extruded, or as a heatmap, coloured by congestion, speed, travel time or network length.
+
+## Related guides and examples
+
+- **[Traffic config playground](../../examples/traffic-config-playground)** - Flow and incident presets, with every setting from the knob catalogues
+- **[Route with traffic monitoring](../../examples/route-monitor-traffic)** - A route replanned every minute, its live delays redrawn
+- **[Traffic incident focus](../../examples/traffic-incident-focus)** - A city's incidents brought forward and the rest of the map pushed back
+- **[Core traffic types](../core/traffic.mdx)** - The incident categories and delay magnitudes every traffic API shares

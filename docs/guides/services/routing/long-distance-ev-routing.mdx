@@ -1,0 +1,201 @@
+---
+title: Long distance EV routing
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.64.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+<Button
+    label="Request Access"
+    href="https://www.tomtom.com/contact-sales/?source_app=docs-portal&source_product=long-distance-ev-routing"
+    target="_blank">
+    Request Access
+</Button>
+
+<Blockquote type="warning">
+**Important note**
+Long Distance EV Routing is unavailable on a Freemium or Pay As You Grow (PAYG) basis.
+Click the **Request Access** button above to contact our Sales team.
+</Blockquote>
+
+Given an electric vehicle with charging preferences, `calculateRoute` plans the charging stops a
+long journey needs: where to stop, how long to charge, and the battery level on every leg. Each
+stop the service inserts ends a leg of its own.
+
+## Activation
+
+`vehicle.preferences.chargingPreferences` switches `calculateRoute` to the Long Distance EV Routing
+endpoint — there is nothing else to call, as
+[What the routing SDK adds](./what-the-sdk-adds.mdx#one-function-two-endpoints) explains. The
+preferences set the minimum charge to keep, as a percentage or in kWh:
+
+- `minChargeAtDestinationPCT` and `minChargeAtChargingStopsPCT` (at most 50), or
+- `minChargeAtDestinationInkWh` and `minChargeAtChargingStopsInkWh`.
+
+The vehicle must describe its charging, under `vehicle.model.engine.charging` (every field is in
+[Vehicle configuration](./vehicle.mdx#parameters)):
+
+- `chargingConnectors` – The call throws without them.
+- `batteryCurve` – The service rejects the request without it.
+- `maxChargeKWH` – Which the percentage forms are converted against.
+
+A predefined `vehicle.model.variantId` replaces all three, since the service holds that vehicle's
+charging model — give its charge and preferences in kWh, as no capacity is declared to convert
+percentages against. A variant is accepted on this endpoint only: `calculateRoute` rejects one
+without charging preferences.
+
+### Charging stops strategy
+
+The top-level `chargingStopsStrategy` chooses how stops are planned, one of the importable
+`chargingStopsStrategies`:
+
+- `'automaticFastest'` (the service's default) – The service picks the stops for the fastest journey.
+- `'manualFastest'` – The service plans no stops of its own; only the stops you pass as waypoints
+  are charged at.
+- `'automaticFastestWithFallbackToManual'` – Automatic, falling back to manual when no chargeable
+  route exists.
+
+It is only accepted alongside `vehicle.preferences.chargingPreferences`, and the types enforce it:
+a strategy requires a `vehicle` of type `ElectricVehicleParamsWithChargingStops`.
+
+## Example
+
+```javascript
+import { calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+const routes = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676],  // Amsterdam
+        [13.4050, 52.5200]  // Berlin
+    ],
+    vehicle: {
+        engineType: 'electric',
+        model: {
+            engine: {
+                charging: {
+                    maxChargeKWH: 75,
+                    batteryCurve: [
+                        { stateOfChargeInkWh: 50, maxPowerInkW: 200 },
+                        { stateOfChargeInkWh: 70, maxPowerInkW: 100 },
+                        { stateOfChargeInkWh: 80, maxPowerInkW: 40 },
+                    ],
+                    chargingConnectors: [
+                        {
+                            currentType: 'DC',
+                            plugTypes: ['Combo_to_IEC_62196_Type_2_Base'],
+                            efficiency: 0.9,
+                            maxPowerInkW: 150
+                        }
+                    ]
+                },
+                consumption: {
+                    speedsToConsumptionsKWH: [
+                        { speedKMH: 50, consumptionUnitsPer100KM: 15 },
+                        { speedKMH: 90, consumptionUnitsPer100KM: 18 },
+                        { speedKMH: 120, consumptionUnitsPer100KM: 23 }
+                    ]
+                }
+            }
+        },
+        state: { currentChargePCT: 80 },
+        preferences: {
+            chargingPreferences: {
+                minChargeAtDestinationPCT: 20,
+                minChargeAtChargingStopsPCT: 10
+            }
+        }
+    }
+});
+
+const { summary, sections } = routes.features[0].properties;
+console.log(`Legs: ${sections.leg.length}, charging: ${summary.totalChargingTimeInSeconds} s`);
+```
+
+## Response structure
+
+On top of the [route object](../../core/routes.mdx), a route with charging stops carries:
+
+- **Route summary**
+  - `totalChargingTimeInSeconds` – The time spent at every charging stop together.
+  - `remainingChargeAtArrivalInkWh` / `remainingChargeAtArrivalInPCT` – Battery left at the
+    destination.
+- **Each leg** (`sections.leg`)
+  - `originalWaypointIndex` – Which entry of the request's `locations` the leg arrives at. The
+    service inserts stops of its own, so `legs[i]` is not reliably the leg arriving at
+    `locations[i + 1]`. Absent on the final leg and on legs ending at an inserted stop, so handle
+    `undefined`.
+  - `summary.remainingChargeAtArrivalInkWh` / `summary.remainingChargeAtArrivalInPCT` – Battery left
+    at the end of the leg.
+- **A leg ending at a charging stop**: `summary.chargingInformationAtEndOfLeg`, a
+  [`ChargingStop`](/maps-sdk-js/api-reference/types/core.ChargingStop.html) — a place feature at the
+  charging park, whose `properties` hold:
+  - `chargingTimeInSeconds` – Time at the stop, including the
+    [fixed offset](#time-spent-at-a-charging-stop).
+  - `targetChargeInkWh` / `targetChargeInPCT` – Battery level after charging.
+  - `chargingConnectionInfo` – The connection to use: `plugType`, `currentType`, `voltageInV`,
+    `currentInA`, `chargingPowerInkW` and its `chargingSpeed`.
+  - `chargingParkName`, `chargingParkOperatorName`, `chargingParkId`, `chargingParkUuid`,
+    `chargingParkPowerInkW` and `chargingParkSpeed` (`'slow'`, `'regular'`, `'fast'` or
+    `'ultra-fast'`).
+  - `chargingStopType` – `'Auto_Generated'` or `'User_Defined'`.
+  - `address`, and `dataSources.chargingAvailability.id`: pass the stop to
+    [`getPlaceWithEVAvailability`](../places/ev-charging-stations-availability.mdx) for its charging
+    stations and their real-time status.
+
+The percentage fields are converted against your `maxChargeKWH`, so a predefined `variantId` gets
+the kWh ones only. On the map, `RoutingModule` pins each charging stop — see
+[Charging stop icons](../../map/routes-styling.mdx#charging-stop-icons).
+
+### Time spent at a charging stop
+
+Charging stops are chosen by the service, so they take no per-stop options —
+[`pauseDurationSeconds`](./parameters.mdx#per-stop-options) applies to *your* stops. What you can set
+is the time every charging stop takes on top of the charging itself — parking, plugging in, paying —
+on the charging model:
+
+```javascript
+const charging = {
+    maxChargeKWH: 75,
+    // … battery curve and connectors as in the example above
+    chargingTimeOffsetInSec: 900, // 15 minutes per stop (default 60 seconds)
+};
+```
+
+- The offset is included in each stop's `chargingTimeInSeconds` and in `totalChargingTimeInSeconds`.
+- The charging itself follows from the battery curve, the connectors and the minimum charge at stops:
+  raising that minimum takes more energy on board, and so more time.
+- A leg ending at a charging stop reports the whole time there as `stopTimeInSeconds`, the same field
+  a leg ending at one of your own waiting stops uses. Where nothing else waits, it equals the stop's
+  `chargingTimeInSeconds`.
+
+## Unsupported options
+
+- `costModel.routeType` – Only `'fast'` (the default) is supported.
+
+## API reference
+
+- [CalculateRouteParams](/maps-sdk-js/api-reference/types/services.CalculateRouteParams.html) – Route calculation parameters
+- [ElectricVehicleParamsWithChargingStops](/maps-sdk-js/api-reference/types/services.ElectricVehicleParamsWithChargingStops.html) – The vehicle a charging stops strategy requires
+- [ChargingStopsStrategy](/maps-sdk-js/api-reference/types/services.ChargingStopsStrategy.html) – The strategies
+- [ChargingStop](/maps-sdk-js/api-reference/types/core.ChargingStop.html) – Charging stop details
+- [Long Distance EV Routing API](https://docs.tomtom.com/long-distance-ev-routing-api/documentation/tomtom-maps/long-distance-ev-routing) – API documentation
+
+## Related guides and examples
+
+### Related guides
+
+- [Vehicle configuration](./vehicle.mdx) – Every EV parameter
+- [Route planning parameters](./parameters.mdx) – Every other routing option
+- [Route object](../../core/routes.mdx) – The base route structure
+
+### Related examples
+
+- [LDEVR preferences playground](../../../examples/ldevr-preferences-playground) – Tune the charging preferences and see where the charging time goes
+- [Long Distance EV Routing with detailed vehicle](../../../examples/ldevr-detailed-vehicle) – A fully described vehicle
+- [Long Distance EV Routing with model ID](../../../examples/ldevr-model-id) – A predefined `variantId`
+- [Long Distance EV Routing charging stops customization](../../../examples/ldevr-custom-charging-stops) – Charging stop pins with icons and text of their own

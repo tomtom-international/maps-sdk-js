@@ -1,0 +1,211 @@
+---
+title: Tool registry
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.13.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+Tools are what the agent acts with. Each turn the [intent classifier](./how-it-works.mdx#1-intent-classification) picks a
+subset, and the [tool loop](./how-it-works.mdx#2-tool-loop) lets the model call them until it can answer. This page lists
+the built-in registry and the tools with behaviour worth knowing; [Customizing tools](./customizing-tools.mdx) covers
+removing, replacing and adding them.
+
+## The `ToolEntry` shape
+
+`DEFAULT_TOOLS` is a flat record of named tools. Each `ToolEntry` defines what a tool does and how the agent uses it:
+
+```typescript
+{
+    description: string;          // Full tool description for the model
+    inputSchema: ZodType;         // Validated input parameters
+    outputSchema?: ZodType;       // Structured output (improves reliability)
+    execute: (input, state, options?) => Promise<any>; // never throws — returns { error } instead
+
+    // Classifier and help metadata
+    classificationPrompt?: string; // One line: when to activate this tool — what the classifier reads
+    tags?: string[];               // Category labels (e.g. 'route', 'traffic')
+    examples?: string[];           // Usage examples shown by the help tool
+    examplePrompts?: string[];     // Natural-language prompts shown by the help tool
+    relatedTools?: string[];       // Tools often used together, listed by help
+    dependsOn?: string[];          // Tools that must run first, shown to the classifier
+
+    // Loop control
+    alwaysActive?: boolean;        // Offered every step, whatever the classifier picked
+    endsTurnOnCall?: boolean;      // Calling it ends the turn
+
+    // Per-turn scope — see Scope-aware data tools
+    scopeSchema?: ZodType;         // Shape of `toolScopes[<name>]` the classifier emits
+    scopePrompt?: string;          // Explains the scope shape to the classifier
+}
+```
+
+A tool can also be a **`ToolEntryBuilder`** — a function from `ToolBuildOptions` to `ToolEntry` — when the entry must be
+rebuilt per turn; [add a scopable custom tool](./scope-aware-data-tools.mdx#add-a-scopable-custom-tool) shows one.
+
+### Cancellation
+
+`execute`'s third argument carries the AI SDK's `abortSignal` for the call, which fires when the turn is cancelled:
+
+```typescript
+type ToolExecuteOptions = { signal?: AbortSignal };
+```
+
+Forward it to every service call your tool makes, so a cancelled turn also cancels the HTTP request. An aborted call
+rejects with `SDKAbortError`; since `execute` must never throw, catch it and return an error shape:
+
+```typescript
+import { SDKAbortError, discoverPlaces } from '@tomtom-org/maps-sdk/services';
+
+execute: async ({ query }, state, options) => {
+    try {
+        const results = await discoverPlaces({ query, signal: options?.signal });
+        return { count: results.features.length };
+    } catch (error) {
+        if (error instanceof SDKAbortError) return { error: 'Cancelled.' };
+        return { error: `Search failed: ${error instanceof Error ? error.message : String(error)}` };
+    }
+},
+```
+
+Do **not** forward it into work that outlives the turn, such as a monitor's recurring tick. That work runs after the
+signal has aborted, and a monitor treats a rejected tick as fatal and clears its interval — so a leaked signal stops the
+monitor.
+
+## What's in the registry
+
+| Category | Tools |
+|---|---|
+| **Location** | `locatePlace`, `reverseGeocode`, `getCurrentLocation`, `getViewport`, `calculateBBox` |
+| **Places & search** | `discoverPlaces`, `getPOICategoryCodes` |
+| **Routing** | `setRoute`, `addWaypointsToRoute`, `removeWaypointsFromRoute`, `replaceWaypointInRoute`, `getCurrentWaypoints`, `startRouteMonitor`, `stopRouteMonitor` |
+| **Reachable areas** | `findReachableAreas` — isochrones and isodistances; needs an API key with [Calculate Reachable Range](../../services/routing/reachable-ranges.mdx) access, in private preview |
+| **Your own data** | `addByodSource`, `setByodLayers`, `updateByodDisplay` — see [Bring your own data](./byod.mdx) |
+| **Traffic tiles** | `toggleTilesTrafficFlow`, `toggleTilesTrafficIncidents` |
+| **Traffic incidents** | `getTrafficIncidents`, `setTrafficIncidentsMonitor`, `clusterIncidents`, `focusIncidents` |
+| **Traffic area analytics** | `getTrafficAreaAnalytics`, `updateTrafficAreaAnalyticsDisplay` |
+| **Trackers** (geofence and proximity alerts) | `createTracker`, `getTrackers`, `getTrackerHistory`, `clearTracker` |
+| **Data tools** | `analyseData`, `processData`, `monitorAnalysis` — see [Scope-aware data tools](./scope-aware-data-tools.mdx) |
+| **Map display** | `updatePlacesDisplay`, `updateRoutesDisplay`, `updateWaypointsDisplay`, `clearMap` |
+| **Map control** | `flyTo`, `zoomInOrOut`, `setPitchBearing`, `setMapStandardStyle`, `getStandardMapStyles`, `setLanguage`, `toggleTilesPOIs`, `toggleTilesBaseMapLayerGroups` (whole [base-map layer groups](../../map/base-map.mdx) such as 3D buildings or road shields) |
+| **Map styling** | `setMapStyling` — every look knob by its map-wide id ([Styling Foundations](../../map/styling.mdx), POIs `pois.`, traffic `traffic.flow.` / `traffic.incidents.`, hillshade `terrain.hillshade.`), a [map preset](../../map/styling.mdx#presets), a reset, or a theme from a few colours or an image whose [accent](../../map/styling-map-colors.mdx#the-accent-what-a-theme-reaches-beyond-the-base-map) also recolours routes and place pins |
+| **MapLibre direct** | `executeMaplibreCode`, `getMapStyleLayers`, `setLayoutProperties`, `setPaintProperties` |
+| **State** | `recallState`, `setEntryMode`, `resetState` |
+| **Utilities** | `clarifyIntent`, `help` |
+
+`analyseData` and `processData` take **JavaScript** as a parameter instead of a fixed argument list — see
+[Code generation](./code-generation.mdx). Every tool's input and output schema is in the
+[Agent Toolkit Plugin API Reference](/maps-sdk-js/api-reference/variables/plugins.createMapAgent.html).
+
+## The `help` tool
+
+When a user asks *"what can you do?"* or *"show me routing examples"*, the model calls `help` (summary or detail, filtered
+by tag or query) to surface tool descriptions, examples and example prompts.
+
+From your own code, `getDefaultToolPrompts()` returns every tool's `examplePrompts` as a `Record<ToolName, readonly string[]>`
+— starter suggestions for your chat UI that stay in sync with the registry.
+
+## Tools that read state vs. fetch data
+
+Some tools fetch fresh data from TomTom services; others read [state](./state.mdx). `recallState` reads and never
+fetches:
+
+- No arguments — a snapshot of the session: the places, routes and ranges loaded, entry modes, map style, POIs and traffic.
+- `{ kind }` — the index of one kind: `places`, `routes`, `ranges`, `geometries`, `byod`, `incidents` or
+  `trafficAreaAnalytics`.
+- `{ kind, id }` — one entry, summarised.
+
+When a user asks *"what were those places?"* an hour into a session, the model calls `recallState` instead of guessing.
+
+## Asking the user with `clarifyIntent`
+
+`clarifyIntent` asks the user to choose among a few options before the agent acts. It is `alwaysActive`, so the model can
+ask mid-task. By default the model also writes the questions as prose, for UIs without a form. If your UI renders the
+tool call's questions as a form, build the tool with `rendersForm: true`:
+
+```typescript
+import { createClarifyIntentTool, createMapAgent } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+
+createMapAgent(map, {
+    model,
+    tools: { clarifyIntent: createClarifyIntentTool({ rendersForm: true }) },
+});
+```
+
+- The turn then ends on the call with no prose. Render the call's `intro` and `questions` (each with `id`, `question`,
+  `options` and `multiSelect`), and send the user's choices as the next message.
+- `createClarifyIntentTool` also overrides `description`, `classificationPrompt`, `examples`, `examplePrompts` and
+  `alwaysActive`.
+
+## What `getCurrentLocation` sends
+
+`getCurrentLocation` asks the browser for the user's position, which shows the browser's permission prompt, and returns
+it to the model. The model provider you configured receives it with the rest of the conversation. That prompt only names
+your site, not the model, so say in your own UI that the position goes to the assistant.
+
+By default the tool sends as little as a "near me" query needs:
+
+| Field | Default | With `fullPrecision: true` |
+|---|---|---|
+| `position` | `[lng, lat]` rounded to 3 decimals (about 100 m) | the exact fix |
+| `accuracy` | 111 m, or the device's accuracy when that is coarser | the device's accuracy |
+| `timestamp` | not sent | the fix's timestamp |
+| Fix requested | `enableHighAccuracy: false`, a fix up to 60 s old | `enableHighAccuracy: true`, a fresh fix |
+
+To send the exact position, replace the default with `createGetCurrentLocationTool`:
+
+```typescript
+import { createGetCurrentLocationTool, createMapAgent } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+
+createMapAgent(map, {
+    model,
+    tools: { getCurrentLocation: createGetCurrentLocationTool({ fullPrecision: true }) },
+});
+```
+
+To never ask for the position, remove the tool. "Near me" queries then fall back to the map view:
+
+```typescript
+createMapAgent(map, { model, tools: { getCurrentLocation: false } });
+```
+
+## `getTrafficIncidents` `where` schema
+
+`getTrafficIncidents` takes its area as `where: { mode: 'within', … }`, with the same multi-region fields as
+`discoverPlaces`: `viewport`, `boundingBox`, `queries`, `placeIds`, `geometries`, `range`, `route`. They resolve to
+bounding boxes, unioned into one of at most 10,000 km². Without `where`, the tool uses the viewport.
+
+```typescript
+// Current viewport
+getTrafficIncidents({});
+
+// Named area (geocoded → polygon bbox)
+getTrafficIncidents({ where: { mode: 'within', queries: [{ query: 'Paris', queryAs: 'place' }] } });
+
+// Buffered corridor around the latest route
+getTrafficIncidents({ where: { mode: 'within', route: { widthMeters: 1000 } } });
+
+// Multi-source union
+getTrafficIncidents({
+    where: { mode: 'within', queries: [{ query: 'Amsterdam' }], placeIds: ['G55fc4abe-...'] },
+});
+```
+
+- A named area wins over `viewport: true` when the model sends both — strict-mode providers such as Azure and OpenAI
+  fill every field.
+- Incidents shown on the map are monitored by default (`monitor`, every 60 s via `monitorIntervalMs`); only present
+  incidents are fetched unless `timeValidityFilter` says otherwise.
+
+## Related
+
+- **[Customizing tools](./customizing-tools.mdx)** — remove, replace or add tools.
+- **[Bring your own data](./byod.mdx)** — your GeoJSON as agent layers.
+- **[Scope-aware data tools](./scope-aware-data-tools.mdx)** — `analyseData` / `processData` per-turn scope.
+- **[Code generation](./code-generation.mdx)** — JavaScript-as-parameter tools and their threat model.
+- **[State](./state.mdx)** — what each tool reads from and writes to.
+- **[How it works](./how-it-works.mdx)** — the classifier and tool loop.
+- **[Securing your agent](./securing-your-agent.mdx)** — the caps on tool arguments, and what bounds a turn.

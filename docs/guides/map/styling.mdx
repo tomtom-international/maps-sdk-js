@@ -1,0 +1,384 @@
+---
+title: Map styling
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.64.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Styling Foundations Module holds what every part of the map shares, as **semantic knobs**: label, icon and road sizes, the ten map colours and the accent, a globe with a sky.
+
+- **Map-wide**: one knob reaches across the whole style — `labels.sizeFactor` resizes every label, POIs and road shields included; `colors.roadMajor` recolours every shade of the major roads. The other style-owned modules each hold the look of [one part](#every-knob).
+- **Semantic, not layer ids**: like every module's settings, the knobs are validated and listed as data in a [knob catalogue](#the-knob-catalogue). Hand-edited MapLibre layers — through [`styling.layers`](./styling-layers.mdx) or `map.mapLibreMap` — have no catalogue, and depend on the layer ids of one style version.
+
+The playground below is built from the catalogues of this module and the other style-owned ones: one control per knob.
+
+<GuideDemo demo="map-styling-playground" />
+
+The features built on the knobs each have a guide of their own:
+
+| Guide | Covers |
+| --- | --- |
+| [Map colours and the accent](./styling-map-colors.mdx) | `setMapColors` over the ten map colours, and the accent the modules' own drawing defaults to |
+| [Globe and sky](./styling-globe-and-sky.mdx) | The `view` knobs: globe projection, sky, horizon and the colour behind the map |
+| [Borrowed looks](./styling-borrowed-looks.mdx) | The parts of places, routes and fetched incidents that follow the style's own looks |
+| [Editing style layers](./styling-layers.mdx) | `styling.layers`, for what no knob covers |
+
+## Initialization
+
+```javascript
+import { TomTomMap, StylingFoundationsModule } from '@tomtom-org/maps-sdk/map';
+
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+const styling = await StylingFoundationsModule.get(map);
+```
+
+Pass settings to apply them right away, for instance restored from storage:
+
+```javascript
+const styling = await StylingFoundationsModule.get(map, { 'labels.sizeFactor': 1.2, 'colors.water': '#0fa8c8' });
+```
+
+- **One per map**: a second `get()` returns the same instance, and merges the settings passed to it over what it holds.
+- **Themed from the first frame**: `get` resolves once the style has loaded, before the map draws it. Knobs set by then, passed to `get` or set right after it, land on that frame instead of fading in from the style's own look ([Themed map](../../examples/themed-map)).
+
+## Knobs
+
+Every adjustable thing is a knob with a stable id. Set one with `setKnob`, read it with `getKnob`, restore the style's own value with `resetKnob` — the [same three functions](./modules.mdx#setting-a-knob-by-its-id) as on every module:
+
+```javascript
+import { getKnob, resetKnob, setKnob, stylingFoundationsKnobCatalogue } from '@tomtom-org/maps-sdk/map';
+
+const knobs = stylingFoundationsKnobCatalogue;
+setKnob(styling, knobs, 'labels.sizeFactor', 1.3);    // every base-map label 30% bigger
+setKnob(styling, knobs, 'roads.widthFactor', 0.8);    // thinner roads, hierarchy kept
+setKnob(styling, knobs, 'colors.roadMajor', '#f59e0b');
+setKnob(styling, knobs, 'view.projection', 'globe');
+
+getKnob(styling, knobs, 'roads.widthFactor');   // 0.8
+resetKnob(styling, knobs, 'roads.widthFactor'); // back to the style's width
+styling.resetConfig();                          // everything back to the style as shipped
+```
+
+### How knobs work
+
+- **What a knob writes**: most write the loaded style's layers; the `view` knobs write the map itself, and `colors.accent` writes nothing, for the modules that draw their own layers to read.
+- **One engine per map**: the look knobs of the POIs, traffic and terrain modules restyle the same loaded style through it. Knobs on one layer property compose, whichever module set them — `labels.sizeFactor` here and `sizeFactor` on `POIsModule` multiply on the POI labels — and all of them land again after a style switch.
+- **No knob shows or hides a layer group** (water, 3D buildings, road shields): that is the [Base Map Module](./base-map.mdx)'s.
+
+```d2
+direction: down
+
+Calls: "setKnob · applyMapPreset · setMapColors · applyConfig" {
+  style: {
+    fill: "#fef2f2"
+    stroke: "#f87171"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 14
+  }
+}
+
+SetStyle: "map.setStyle(…)" {
+  style: {
+    fill: "#fef2f2"
+    stroke: "#f87171"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 14
+  }
+}
+
+Styling: "StylingFoundationsModule: the knobs you set, by kind" {
+  style: {
+    fill: "#fff3e0"
+    stroke: "#e65100"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 16
+  }
+
+  Factor: "factor\nwraps the style's own expression\na style expression E becomes 1.3 × E" {
+    style: {
+      fill: "#ffffff"
+      stroke: "#e65100"
+      font-color: "#333"
+      border-radius: 4
+      font-size: 13
+    }
+  }
+  Colour: "colour\nthe colour, and every shade\nthe style derived from it" {
+    style: {
+      fill: "#ffffff"
+      stroke: "#e65100"
+      font-color: "#333"
+      border-radius: 4
+      font-size: 13
+    }
+  }
+  View: "view.*\nprojection · sky · space colour" {
+    style: {
+      fill: "#ffffff"
+      stroke: "#e65100"
+      font-color: "#333"
+      border-radius: 4
+      font-size: 13
+    }
+  }
+  Accent: "colors.accent\npaints no layer" {
+    style: {
+      fill: "#ffffff"
+      stroke: "#e65100"
+      font-color: "#333"
+      border-radius: 4
+      font-size: 13
+    }
+  }
+}
+
+Looks: "POIsModule · TrafficFlowModule\nTrafficIncidentsModule · TerrainModule\ntheir look knobs: size · zoom · colours · width" {
+  style: {
+    fill: "#fffde7"
+    stroke: "#ff6f00"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 14
+  }
+}
+
+DataOwned: "map.mapColors.accent\nread by routes, places,\ngeometries and ranges" {
+  style: {
+    fill: "#e0f2f1"
+    stroke: "#00695c"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 14
+  }
+}
+
+MapLibre: MapLibre map {
+  style: {
+    fill: "#e8eef8"
+    stroke: "#295DAA"
+    stroke-width: 2
+    font-color: "#295DAA"
+    border-radius: 8
+    font-size: 16
+  }
+
+  StyleLayers: "The loaded style's layers\npaint · layout · filters · visibility" {
+    style: {
+      fill: "#295DAA"
+      stroke: "#295DAA"
+      font-color: white
+      border-radius: 4
+      font-size: 14
+    }
+  }
+  MapView: "Map view\nprojection · sky · background" {
+    style: {
+      fill: "#295DAA"
+      stroke: "#295DAA"
+      font-color: white
+      border-radius: 4
+      font-size: 14
+    }
+  }
+}
+
+Calls -> Styling {
+  style.stroke-width: 2
+}
+SetStyle -> Styling: "re-applied last, after every switch" {
+  style.stroke-dash: 3
+}
+Styling.Factor -> MapLibre.StyleLayers {
+  style.stroke-width: 2
+}
+Styling.Colour -> MapLibre.StyleLayers {
+  style.stroke-width: 2
+}
+Looks -> MapLibre.StyleLayers: "same engine:\nfactors multiply with the ones here" {
+  style.stroke-width: 2
+}
+Styling.View -> MapLibre.MapView {
+  style.stroke-width: 2
+}
+Styling.Accent -> DataOwned {
+  style.stroke-dash: 3
+}
+```
+
+| Kind | Takes | What it does |
+| --- | --- | --- |
+| factor | a multiplier, `1` = as the style ships | multiplies the style's own expression — `text-size: E` becomes `["*", 1.3, E]` — so zoom ramps and the road hierarchy are kept |
+| colour | any CSS colour | replaces the colour, and re-derives the shades the style built from it: recolouring the major roads recolours their darker outline by the same offset. `colors.accent` paints no layer: the modules read it |
+| toggle | `true` / `false` | `view.sky` turns the sky on or off |
+| enum | one of the knob's options | picks a mode: the projection |
+
+Every knob also follows the same rules:
+
+- **Validated first.** A value outside its range or of the wrong kind throws a `RangeError` naming the knob and what it takes, an unknown id throws an `Error`, and nothing is touched on a failed call. Ranges follow TomTom Map Maker's validated grammar.
+- **`getKnob` reads the value in force**: the one you set, or the loaded style's own — `undefined` where the style computes it from the data, which `resetKnob` still restores.
+- **Kept across style switches**, re-applied after every `setStyle` and dropped by a clean one ([Style changes](#style-changes)).
+- **Plain data**: `getConfig()` returns the knobs you set, ready to store and re-apply ([Settings](#settings-persist-share-re-apply)).
+- **The ten map colours need the TomTom styles**; every other knob works on any style ([How durable is this?](#how-durable-is-this)).
+- **Only the style's layers and the map's view.** What the SDK draws itself — routes, places, geometries — is configured on its own module; it defaults to [the accent](./styling-map-colors.mdx#the-accent-what-a-theme-reaches-beyond-the-base-map), and a few of its parts [borrow a look](./styling-borrowed-looks.mdx) from the style.
+
+### Every knob
+
+| Group | Knobs | Kind |
+| --- | --- | --- |
+| Sizes | `labels.sizeFactor`, `symbols.sizeFactor`, `roads.widthFactor` | factor 0.5–1.5 |
+| [Map colours](./styling-map-colors.mdx) | `colors.land`, `colors.water`, `colors.vegetation`, `colors.park`, `colors.artificial`, `colors.roadMajor`, `colors.road`, `colors.roadOutline`, `colors.label`, `colors.labelHalo`, and [`colors.accent`](./styling-map-colors.mdx#the-accent-what-a-theme-reaches-beyond-the-base-map) | colour |
+| [View](./styling-globe-and-sky.mdx) | `view.projection` (`mercator` \| `globe`) | enum |
+| | `view.sky` | toggle |
+| | `view.skyColor`, `view.horizonColor`, `view.spaceColor` | colour |
+
+The look of one part is held by the module that shows it, set with the same `setKnob`:
+
+| Part | Module | Its look knobs |
+| --- | --- | --- |
+| Road markings | [`BaseMapModule`](./base-map.mdx#road-parts) | the exit numbers, arrows, restricted and under-construction roads, each shown or hidden |
+| POIs | [`POIsModule`](./pois.mdx#appearance) | size, the zoom they appear at, zoom shift, label colours, micro markers |
+| Traffic flow | [`TrafficFlowModule`](./traffic-flow.mdx#appearance) | the colour of each flow level, the line width |
+| Traffic incidents | [`TrafficIncidentsModule`](./traffic-incidents.mdx#appearance) | the colour of each severity, the line width |
+| Hillshade | [`TerrainModule`](./terrain.mdx#appearance) | method, light direction, strength, zoom range and colours |
+
+### The knob catalogue
+
+[`stylingFoundationsKnobCatalogue`](/maps-sdk-js/api-reference/variables/map.stylingFoundationsKnobCatalogue.html) lists every knob as static data, readable with no map loaded. Its entries share the shape of every module's catalogue ([Every setting as data](./modules.mdx#every-setting-as-data)):
+
+```javascript
+import { getKnob, stylingFoundationsKnobCatalogue } from '@tomtom-org/maps-sdk/map';
+
+for (const knob of stylingFoundationsKnobCatalogue) {
+    // knob.id, knob.kind ('factor' | 'toggle' | 'color' | 'enum'), knob.description,
+    // knob.range (factor), knob.options (enum), knob.appliesTo
+    const current = getKnob(styling, stylingFoundationsKnobCatalogue, knob.id);
+}
+```
+
+- **No `default`**: the loaded style decides; `getKnob` reads the value in force on a live map.
+- **The ids on their own**: `stylingFoundationsKnobIds`, typed `StylingFoundationsKnobId`; `StylingFoundationsKnobValueOf<ID>` is the value one takes, and `stylingFoundationsKnobKinds` the kinds.
+- **The playground** at the top of this guide builds its panel from this catalogue and the other modules' look knobs, each control showing the value `getKnob` reads.
+
+Every colour a knob sets on the loaded style, whichever module holds it, also has a **map-wide id**: the module's prefix, then its id in that module's catalogue. The Styling knobs keep their own ids (`colors.water`); the others take `pois.`, `traffic.flow.`, `traffic.incidents.` or `terrain.` (`pois.label.color`, `traffic.flow.colors.slow`, `terrain.hillshade.shadowColor`). `styleColorKnobIds` lists them, typed `StyleColorKnobId`, and [`getStyleColor`](/maps-sdk-js/api-reference/functions/map.getStyleColor.html) reads the colour one is at — the one set, one the style derives from the map colours, or the style's own — whether or not its module exists:
+
+```javascript
+import { getStyleColor } from '@tomtom-org/maps-sdk/map';
+
+getStyleColor(map, 'colors.water');
+getStyleColor(map, 'traffic.incidents.colors.major'); // undefined where the style colours it by an expression
+```
+
+Name a map colour through them rather than hard-coding it, as the [map effects plugin](../plugins/map-effects-bloom.mdx#scoping-bloom-by-colour) does to scope its bloom. `StyleKnobId` and `StyleKnobValueOf<ID>` type every style knob by its map-wide id.
+
+Two things worth copying from the playground when you wire controls to the catalogue:
+
+- **One `setKnob` per animation frame.** A slider or a colour picker fires `input` far faster than a restyle runs: coalesce the calls (last value wins) and apply the final value on `change`.
+- **Rebuild the panel on external changes only.** `setKnob` emits `config-change`, so rebuilding from it mid-drag replaces the input under the pointer. Skip the changes your own controls made; rebuild on a reset, a `setStyle` or an agent.
+
+## Presets
+
+A map preset is a named bundle of knob settings for a common intent. It sets knobs across the modules that hold the look of the map: this one, `BaseMapModule`'s road parts and `POIsModule`'s look. [`mapPresetCatalogue`](/maps-sdk-js/api-reference/variables/map.mapPresetCatalogue.html) lists them with the settings each one applies, per module, by that module's catalogue ids (`MapPresetSettings`):
+
+| Preset | Intent |
+| --- | --- |
+| `data-viz` | A quiet base for your own data on top: smaller labels and icons, thinner roads, no exit badges or road arrows, no POI dots, POIs from zoom 14 |
+| `night-driving` | Bigger labels and icons, wider roads, exit badges and road arrows shown, no POI dots, POIs from zoom 13 |
+| `minimal` | The bare map: smaller labels, no road markings or exit badges, no POI dots, POIs from zoom 16 |
+| `globe` | Globe projection with a sky |
+
+```javascript
+import { applyMapPreset, setKnob, stylingFoundationsKnobCatalogue } from '@tomtom-org/maps-sdk/map';
+
+await applyMapPreset(map, 'data-viz');                            // replaces what the other presets set
+setKnob(styling, stylingFoundationsKnobCatalogue, 'labels.sizeFactor', 1.1); // then adjust
+await applyMapPreset(map, 'globe', { merge: true });              // lay a preset over what is there
+```
+
+- **Async, and the modules come with it**: [`applyMapPreset`](/maps-sdk-js/api-reference/functions/map.applyMapPreset.html) creates the Styling, Base Map and POIs modules where the map has none yet; their `get()` returns those same instances.
+- **Switching resets first**: by default, the knobs any preset sets are reset before this one applies, so nothing of the last preset stays; every other knob keeps its value. `{ merge: true }` skips the reset.
+- **Whole layer groups stay as the style ships them**: hide buildings or shields with [`BaseMapModule`](./base-map.mdx).
+- **An unknown id throws** an `Error` listing the known ones, `mapPresetIds`; `MapPresetId` is their union and `MapPreset` an entry of the catalogue.
+
+A preset is exactly as durable as the knobs it sets. For the visual half of the `data-viz` intent — dimming and desaturating what remains — pair it with the map effects plugin's [grade and tint](../plugins/map-effects-overlays.mdx).
+
+## Exporting the style
+
+`exportStyle()` returns the map's style as currently rendered, as a MapLibre style specification: the loaded style with every knob applied, and whatever the SDK's data modules (places, routes) have added to it. Save it, diff it, serve it yourself, or load it back as a custom style.
+
+- **Tile URLs carry the API key** the map was created with: strip or rotate it before publishing the file.
+- **Not the style input**: `map.getStyleInput()` returns the style id or object the map was given ([Map styles](./styles.mdx)).
+
+## Settings: persist, share, re-apply
+
+`getConfig()` returns the overridden knobs as a plain object (`StylingFoundationsModuleConfig`); `applyConfig()` replaces every knob with one, `updateConfig()` sets the ones given and keeps the rest. It serializes cleanly, so styling can live in local storage, a URL or a pull request, and keeps working on a later SDK version for as long as the knob ids do:
+
+```javascript
+localStorage.setItem('map-styling', JSON.stringify(styling.getConfig()));
+// …later
+styling.applyConfig(JSON.parse(localStorage.getItem('map-styling')));
+
+styling.events.on('config-change', (settings) => save(settings));
+```
+
+## Style changes
+
+The style (`style` on the map, or `setStyle`) is which map document loads; knobs adjust whichever one is loaded.
+
+- **Kept by `map.setStyle(...)`**: the knobs are re-applied once the new style has loaded, after the other modules have restored themselves, so they land on top, on the new style's first frame.
+- **Dropped by a clean switch** (`resetState: true`), with the rest of the SDK state ([Keeping or dropping state](./styles.mdx#keeping-or-dropping-state)).
+
+## How durable is this?
+
+Two kinds of knobs, told apart by `appliesTo` in the catalogue:
+
+- **`any-style`** knobs need no knowledge of the style, so they work on a custom style of your own too, such as one designed and hosted in [TomTom Map Maker](https://docs.tomtom.com/map-maker) ([Styles from Map Maker](./styles.mdx#styles-from-map-maker)):
+  - the factors, which wrap whatever the style already does;
+  - the `view` knobs, which set the map's projection, sky and background rather than a layer;
+  - `colors.accent`, which paints no layer at all.
+- **`tomtom-styles`** knobs — the ten map colours — reach their layers through a taxonomy the TomTom styles declare, and the SDK re-verifies them against the styles it ships with. On a style that does not declare it, setting the knob warns once in the console and does nothing.
+
+A `setPaintProperty` against a layer id is re-tested by nobody when the style changes version; a knob is re-verified on every style release the SDK ships.
+
+## Interplay with other modules
+
+Who owns which layers is stated once, in [Who owns what](./modules.mdx#who-owns-what). In short:
+
+- **This module** holds the foundations that reach across every part: label, icon and road sizes, the ten map colours and the accent, the projection and sky.
+- **The other style-owned modules** each hold one part — whether it is shown, which of it, and its look ([Every knob](#every-knob)). Where a foundation and a part's own knob reach the same layer they compose, and a [map preset](#presets) sets both at once.
+- **Data-owned modules** (routes, places, geometries, [your own GeoJSON](./custom.mdx)) draw their own layers, styled through their own configuration; no knob writes them.
+
+## API reference
+
+For complete documentation see the **[StylingFoundationsModule API Reference](/maps-sdk-js/api-reference/classes/map.StylingFoundationsModule.html)**.
+
+## Related guides and examples
+
+### Related guides
+- **[Map colours and the accent](./styling-map-colors.mdx)**, **[Globe and sky](./styling-globe-and-sky.mdx)**, **[Borrowed looks](./styling-borrowed-looks.mdx)** and **[Editing style layers](./styling-layers.mdx)** — the features built on the knobs
+- **[Map styles](./styles.mdx)** — which style loads, switching styles, `resetState`, custom styles
+- **[Map modules](./modules.mdx#who-owns-what)** — which module owns what, and the knob catalogues every module shares
+- **[Map Theme plugin](../plugins/map-theme.mdx)** — the map colours, accent included, from a few colours or an image
+- **[Map effects plugin](../plugins/map-effects.mdx)** — post-processing over the frame the knobs style
+- **[Agent Toolkit tools](../plugins/agent-toolkit/tools.mdx)** — the look knobs of every module as the `setMapStyling` tool, presets included
+
+### Related examples
+- **[Map styling playground](../../examples/map-styling-playground)** — every look knob of the map on a panel built from the catalogues, and the map presets
+- **[Themed map](../../examples/themed-map)** — a map that opens in its own colours, themed from the first frame
+- **[Map colours](../../examples/map-colors)** — the ten map colours, each recolouring every shade derived from it
+- **[Map theme](../../examples/map-theme)** — the base map, an area, pins and a route themed in one call
+- **[Borrowed looks](../../examples/styling-borrowed-looks)** — places, a route and fetched traffic incidents following the knobs that restyle the style's POIs and incidents
+- **[Globe and 3D terrain](../../examples/globe-terrain)** — the `view` knobs, then 3D terrain as you zoom in
+- **[3D terrain playground](../../examples/terrain-playground)** — sky and relief that outlive a style switch

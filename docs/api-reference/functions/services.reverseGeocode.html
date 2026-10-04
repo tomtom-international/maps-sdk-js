@@ -1,0 +1,79 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>reverseGeocode | TomTom Maps for JavaScript</title><meta name="description" content="Documentation for TomTom Maps for JavaScript"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container"><a href="../index.html" class="title">TomTom Maps for JavaScript</a>
+<div id="tsd-toolbar-links"></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/>
+<ul role="listbox" id="tsd-search-results"></ul>
+<div id="tsd-search-status" aria-live="polite" aria-atomic="true">
+<div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header>
+<div class="container container-main">
+<div class="col-content">
+<div class="tsd-page-title">
+<ul class="tsd-breadcrumb" aria-label="Breadcrumb">
+<li><a href="../modules/services.html">services</a></li>
+<li><a href="" aria-current="page">reverseGeocode</a></li></ul>
+<h1>Function reverseGeocode</h1></div>
+<section class="tsd-panel">
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="reversegeocode"><span class="tsd-kind-call-signature">reverseGeocode</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">params</span><span class="tsd-signature-symbol">:</span> <a href="../types/services.ReverseGeocodingParams.html" class="tsd-signature-type tsd-kind-type-alias">ReverseGeocodingParams</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/services.ReverseGeocodingResponse.html" class="tsd-signature-type tsd-kind-type-alias">ReverseGeocodingResponse</a><span class="tsd-signature-symbol">&gt;</span><a href="#reversegeocode" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Convert geographic coordinates into human-readable addresses (reverse geocoding).</p>
+<p>Reverse geocoding translates latitude/longitude coordinates into street addresses,
+which is essential for location-based applications that need to display addresses
+from GPS coordinates or map clicks.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">params</span>: <a href="../types/services.ReverseGeocodingParams.html" class="tsd-signature-type tsd-kind-type-alias">ReverseGeocodingParams</a></span>
+<div class="tsd-comment tsd-typography"><p>Reverse geocoding parameters including coordinates</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/services.ReverseGeocodingResponse.html" class="tsd-signature-type tsd-kind-type-alias">ReverseGeocodingResponse</a><span class="tsd-signature-symbol">&gt;</span></h4><p>Promise resolving to the address for the given coordinates</p>
+
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks">Remarks<a href="#remarks" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Common use cases:</p>
+<ul>
+<li><strong>Tracking applications</strong>: Convert GPS coordinates from devices into addresses</li>
+<li><strong>Map interactions</strong>: Display address when user clicks on map</li>
+<li><strong>Location sharing</strong>: Show readable location instead of coordinates</li>
+<li><strong>Delivery apps</strong>: Confirm pickup/dropoff addresses from driver location</li>
+<li><strong>Asset tracking</strong>: Display current location of vehicles or equipment</li>
+</ul>
+<p>Features:</p>
+<ul>
+<li>Returns complete address hierarchy (street, city, state, country)</li>
+<li>Returns the result type (address, street, or geography)</li>
+<li>Narrows results to administrative areas with <code>geographyTypes</code></li>
+<li>Direction-aware street matching with <code>heading</code></li>
+</ul>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example">Example<a href="#example" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-0">// Get address for coordinates</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">address</span><span class="hl-2"> = </span><span class="hl-10">await</span><span class="hl-2"> </span><span class="hl-3">reverseGeocode</span><span class="hl-2">({</span><br/><span class="hl-2">  </span><span class="hl-1">position:</span><span class="hl-2"> [</span><span class="hl-8">4.9041</span><span class="hl-2">, </span><span class="hl-8">52.3676</span><span class="hl-2">]  </span><span class="hl-0">// Amsterdam coordinates</span><br/><span class="hl-2">});</span><br/><span class="hl-0">// Returns: Dam, 1012 Amsterdam, Netherlands</span><br/><br/><span class="hl-0">// Get the address matched along a given travel direction</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">specificAddress</span><span class="hl-2"> = </span><span class="hl-10">await</span><span class="hl-2"> </span><span class="hl-3">reverseGeocode</span><span class="hl-2">({</span><br/><span class="hl-2">  </span><span class="hl-1">position:</span><span class="hl-2"> [-</span><span class="hl-8">77.0369</span><span class="hl-2">, </span><span class="hl-8">38.8977</span><span class="hl-2">],  </span><span class="hl-0">// Washington DC</span><br/><span class="hl-2">  </span><span class="hl-1">heading:</span><span class="hl-2"> </span><span class="hl-8">90</span><span class="hl-2">                     </span><span class="hl-0">// Traveling east</span><br/><span class="hl-2">});</span><br/><br/><span class="hl-0">// Get the containing municipality instead of the street</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">municipality</span><span class="hl-2"> = </span><span class="hl-10">await</span><span class="hl-2"> </span><span class="hl-3">reverseGeocode</span><span class="hl-2">({</span><br/><span class="hl-2">  </span><span class="hl-1">position:</span><span class="hl-2"> [-</span><span class="hl-8">74.0060</span><span class="hl-2">, </span><span class="hl-8">40.7128</span><span class="hl-2">],  </span><span class="hl-0">// New York</span><br/><span class="hl-2">  </span><span class="hl-1">geographyTypes:</span><span class="hl-2"> [</span><span class="hl-4">&#39;Municipality&#39;</span><span class="hl-2">]</span><br/><span class="hl-2">});</span>
+</code><button type="button">Copy</button></pre>
+
+</div>
+<div class="tsd-tag-see">
+<h4 class="tsd-anchor-link" id="see">See<a href="#see" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><ul>
+<li><a href="https://docs.tomtom.com/search-api/documentation/reverse-geocoding-service/reverse-geocode">Reverse Geocode API Documentation</a></li>
+<li><a href="https://docs.tomtom.com/maps-sdk-js/guides/services/places/quickstart">Places Quickstart Guide</a></li>
+<li><a href="https://docs.tomtom.com/maps-sdk-js/guides/services/places/reverse-geocoding">Reverse Geocoding Guide</a></li>
+</ul>
+</div></div></div></li></ul></section></div>
+<div class="col-sidebar">
+<div class="page-menu">
+<div class="tsd-navigation settings">
+<details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div>
+<div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div></div>
+<div class="site-menu">
+<nav class="tsd-navigation"><a href="../index.html">TomTom Maps for JavaScript</a>
+<ul class="tsd-small-nested-navigation" id="tsd-nav-container">
+<li>Loading...</li></ul></nav></div></div></div><footer>
+<p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer>
+<div class="overlay"></div></body></html>

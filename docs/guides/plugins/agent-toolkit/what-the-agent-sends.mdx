@@ -1,0 +1,61 @@
+---
+title: What the agent sends, and where
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.13.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+This page lists the data an Agent Toolkit agent sends from your users' browsers, and where it goes. Use it for your privacy notice and your records of processing (GDPR Articles 13 and 30).
+
+The agent's tools call TomTom through the SDK, so everything in [What the SDK sends, and where](../../security/what-the-sdk-sends.mdx) applies to them too. This page covers what the toolkit adds: the model provider, the user's location, and the URLs the model asks it to load.
+
+## What goes to your model provider
+
+Every turn sends the model:
+
+- the system prompt and the tool definitions
+- the conversation so far: the user's messages and the model's earlier replies
+- the result of every tool call: place names, addresses and positions, route summaries, traffic incidents and anything your custom tools return
+
+With the default classifier, each turn makes one more call to the same model before the tool loop, carrying the user's message, up to 8 earlier messages cut to 300 characters each, and each tool's name and `classificationPrompt`.
+
+Some data reaches the model only through a tool:
+
+- **The map view.** It is not sent with each turn. The model reads it by calling `getViewport`, and search tools send it to TomTom as a geo-bias.
+- **Your data.** [Bring-your-own-data](./byod.mdx) layers reach the model as a profile of their shape. String property values are withheld.
+- **Generated code.** `analyseData` and `processData` code [runs in the browser](./code-generation.mdx#data-tool-execution-isolation-experimental), in a sandbox with no network access; only its result goes back to the model. `executeMaplibreCode` code runs in the page itself, with the page's network access.
+
+The provider is yours to choose, so **list it in your privacy notice** as a recipient of what your users type. If you [proxy the model](./securing-your-agent.mdx#proxy-the-model-too), these calls go through your proxy first, and the provider sees your proxy's IP address rather than the user's.
+
+## The user's location
+
+The `getCurrentLocation` tool calls `navigator.geolocation` when the model picks it, for example for a "near me" request. The browser asks the user for permission first.
+
+When the user allows it, the tool result gives the model the position rounded to about 100 m and an accuracy of at least 111 m, with no timestamp, from a fix up to a minute old. `createGetCurrentLocationTool({ fullPrecision: true })` sends the exact position, the device's accuracy and the fix's timestamp instead: [What `getCurrentLocation` sends](./tools.mdx#what-getcurrentlocation-sends) compares the two. From there the position reaches TomTom in any search or route the model builds around it.
+
+No other part of the toolkit or the SDK reads the user's location. To stop it, [remove or replace the tool](./customizing-tools.mdx#remove-a-default-tool).
+
+## URLs the model asks for
+
+Two tools load a URL from the user's browser, so that URL's host sees your users' IP addresses:
+
+- **`addByodSource`** fetches a GeoJSON URL the user gives the model. Restrict the hosts it may reach with [`byod.validateSourceUrl`](./byod.mdx#restricting-which-urls-may-be-fetched).
+- **`setMapStyling`** loads the image of an image-based theme, through Map Theme's `deriveMapColorsFromImage`. No hook restricts its host, so replace the tool if that matters to you.
+
+## What the toolkit does not do
+
+- **No browser storage.** The toolkit keeps the agent's state in memory, in the page, and writes nothing to cookies, `localStorage`, `sessionStorage` or IndexedDB.
+- **No telemetry.** `onClassify` and `onToolExecute` report to your code, and the toolkit sends nothing on its own.
+- **No other hosts.** The sandbox's libraries ship inside the plugin's own bundle, unless you load your own with `codeExecution.loadWorkerLibrarySource`.
+
+## Related guides
+
+- [What the SDK sends, and where](../../security/what-the-sdk-sends.mdx) - The TomTom requests the agent's tools make, and what travels in their URLs.
+- [Securing your agent](./securing-your-agent.mdx) - The model provider key, and proxying the model.
+- [Customizing tools](./customizing-tools.mdx) - Removing or replacing `getCurrentLocation`, `addByodSource` or `setMapStyling`.
+- [Bring your own data](./byod.mdx) - How BYOD layers are fetched and profiled.

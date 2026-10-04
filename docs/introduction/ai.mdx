@@ -1,0 +1,44 @@
+---
+title: AI and the SDK
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.64.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The SDK brings AI in at two levels: for the developers building with it, and for the users of the applications they build.
+
+| | What it does | Who benefits |
+| --- | --- | --- |
+| **[Coding skill](../guides/ai-coding.mdx)** | Loads SDK knowledge into your coding agent | Developers building with the SDK |
+| **[Agent Toolkit plugin](../guides/plugins/agent-toolkit/overview.mdx)** | Lets users drive the map in natural language | Users of your application |
+
+## For developers: the coding skill
+
+The `tomtom-maps-sdk-js` skill teaches AI coding agents such as Claude Code, Cursor, GitHub Copilot and Windsurf the SDK's module patterns, `[longitude, latitude]` coordinates, service APIs and pitfalls. Install it once in your project:
+
+```bash
+npx skills add tomtom-international/maps-sdk-js --skill tomtom-maps-sdk-js
+```
+
+[AI coding with the SDK](../guides/ai-coding.mdx) lists the topics it covers and how to invoke them.
+
+## For end users: conversational map control
+
+The `@tomtom-org/maps-sdk-plugin-agent-toolkit` plugin turns a TomTom map into something a user can talk to: *"Route from Berlin to Munich avoiding tolls"*, *"Show coffee shops near me"*, *"What's the traffic like on this route?"*. The agent does the geocoding, routing and map display.
+
+- **Headless**: you bring the LLM, any Vercel AI SDK provider, and the chat UI.
+- **Tools built in** for location, routing, places, traffic, reachable ranges and direct MapLibre access, with an intent classifier that keeps each prompt small.
+
+```typescript
+import { createMapAgent } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+import { openai } from '@ai-sdk/openai';
+
+const agent = createMapAgent(map, { model: openai('gpt-4o') });
+```
+
+The [Agent Toolkit overview](../guides/plugins/agent-toolkit/overview.mdx) wires it to a chat UI.

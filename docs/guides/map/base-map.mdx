@@ -1,0 +1,207 @@
+---
+title: Base map module
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.64.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Base Map Module shows and hides the base map — land, water, buildings, roads, borders and their labels — by layer group, and reports the user events on it. The demo below toggles each group:
+
+**What this module owns:** whether each base-map layer group is shown — 3D buildings and road shields included — and the [road parts](#road-parts) within them (road arrows, exit numbers…), and the user events on them. How the base map looks — label and road sizes, the ten map colours, projection and sky — belongs to the [Styling Foundations module](./styling.mdx). See [Who owns what](./modules.mdx#who-owns-what).
+
+<GuideDemo demo="layer-group-toggling" />
+
+## Layer groups
+
+The module sorts the base-map layers into the [groups](/maps-sdk-js/api-reference/types/map.BaseMapLayerGroupName.html) listed in `baseMapLayerGroupNames`, from the lowest drawn to the highest:
+
+`land`, `water`, `buildings2D`, `roads`, `railways`, `ferries`, `borders`, `buildings3D`, `natureLabels`, `roadLabels`, `roadShields`, `houseNumbers`, `smallerTownLabels`, `stateLabels`, `cityLabels`, `allPlaceLabels`, `capitalLabels`, `countryLabels`
+
+- Groups can overlap: `allPlaceLabels` holds every place label, the other place-label groups included.
+- `getLayers()` returns the style layer ids of every group, and `getLayerIds(group)` those of one.
+
+### Every setting as data
+
+`baseMapKnobCatalogue` lists every setting of the module's configuration as a [knob](./modules.mdx#every-setting-as-data), readable with no map loaded, so a UI can build its controls from it:
+
+```javascript
+import { baseMapKnobCatalogue } from '@tomtom-org/maps-sdk/map';
+
+const groupToggles = baseMapKnobCatalogue.filter(({ id }) => id.startsWith('groups.'));
+// [{ id: 'groups.land.visible', kind: 'toggle', description: 'The `land` layer group: …' }, …]
+```
+
+- The ids are `visible`, then `groups.<group>.visible` for each group above, in the order of
+  `baseMapLayerGroupNames`, then the [road parts](#road-parts): `roads.exitNumbers.visible`,
+  `roads.arrows.visible`, `roads.restricted.visible`, `roads.underConstruction.visible`.
+- All are toggles, and none carries a default: unset, a layer is drawn as the style ships it, and some groups, such
+  as `buildings3D`, ship hidden.
+- `baseMapKnobIds` lists the ids in catalogue order, `BaseMapKnobId` is their union, and
+  `BaseMapKnobValueOf<ID>` the plain value one takes. [`setKnob`](./modules.mdx#setting-a-knob-by-its-id) sets one by id.
+
+## Basic setup
+
+Set up a map first with the [Map quickstart](./quickstart.mdx).
+
+### Standard base map initialization
+
+```javascript
+import { BaseMapModule } from '@tomtom-org/maps-sdk/map';
+
+const baseMap = await BaseMapModule.get(map);
+```
+
+Every map has one base map module: a second `get()` returns the same instance ([style-owned modules](./modules.mdx#types-of-modules)).
+
+### Initializing with a layer group hidden
+
+`groups` sets the initial state of each layer group; [`setVisible`](#changing-visibility) changes it later:
+
+```javascript
+const baseMap = await BaseMapModule.get(map, {
+    groups: { buildings2D: { visible: false }, buildings3D: { visible: false } }
+});
+```
+
+- `visible` applies to every layer first, then each entry of `groups` in the order given, so a later entry wins where two groups share layers (`allPlaceLabels` and `cityLabels`).
+- Whatever neither sets is drawn as the style ships it — and so is a group whose entry leaves `visible` out, which keeps a few groups exactly as the style draws them:
+
+  ```javascript
+  // Only land, water and roads, each as the style ships it
+  await BaseMapModule.get(map, { visible: false, groups: { land: {}, water: {}, roads: {} } });
+  ```
+
+- Showing a group shows every layer in it, including the ones the style ships hidden, such as detailed road markings.
+
+### Road parts
+
+`roads` shows or hides four parts of the roads on their own, finer than the layer groups: `exitNumbers` (motorway exit number badges), `arrows` (one-way arrows), `restricted` (the dashed marking of restricted roads) and `underConstruction`.
+
+```javascript
+import { BaseMapModule, baseMapKnobCatalogue, setKnob } from '@tomtom-org/maps-sdk/map';
+
+const baseMap = await BaseMapModule.get(map, {
+    roads: { exitNumbers: { visible: false }, arrows: { visible: false } },
+});
+setKnob(baseMap, baseMapKnobCatalogue, 'roads.underConstruction.visible', false);
+```
+
+A part never shows while its layer group is hidden, and showing the group again keeps a part's `false`. Unset, a part is drawn as the style ships it.
+
+### Layer group modes
+
+`setVisible`, `isVisible` and [`events.where`](./user-events.mdx#scoping-events) take the layer groups to act on as a `{ show, values }` [value filter](./modules.mdx#appearance-vocabulary):
+
+- **`show: 'only'`**: acts only on the layers in the `values` groups
+- **`show: 'all-except'`**: acts on every layer *except* those in the `values` groups, which `setVisible` leaves as they were
+
+```javascript
+// Show only land, water and borders
+baseMap.setVisible(false);
+baseMap.setVisible(true, { layerGroups: { show: 'only', values: ['land', 'water', 'borders'] } });
+
+// Hide the buildings, leaving the rest as it is
+baseMap.setVisible(false, { layerGroups: { show: 'only', values: ['buildings2D', 'buildings3D'] } });
+
+// Show everything except the labels
+baseMap.setVisible(true, {
+    layerGroups: { show: 'all-except', values: ['allPlaceLabels', 'roadLabels', 'cityLabels'] }
+});
+```
+
+## Dynamic control
+
+### Changing visibility
+
+```javascript
+baseMap.setVisible(false); // the whole base map
+
+const layerGroups = { show: 'only', values: ['buildings3D'] };
+
+// Until a call sets the group, this is what the style ships (buildings3D usually starts hidden)
+checkbox.checked = baseMap.isVisible({ layerGroups });
+checkbox.addEventListener('change', () => baseMap.setVisible(checkbox.checked, { layerGroups }));
+```
+
+- `isVisible()` reads the settings rather than the layers: `visible`, then the `groups` over it, the later winning. A layer none of them reaches reports what the style draws.
+- Every `setVisible` call is kept in `getConfig().groups` (a call without groups replaces the record with `visible`), so a `setStyle` restores all of them, in order. The road parts stay set.
+
+### Applying configuration updates
+
+`applyConfig` replaces the whole configuration: what the new one leaves out goes back to how the style ships it. `updateConfig` merges [one level deep](./modules.mdx#changing-a-setting), so spread `groups` to add to it:
+
+```javascript
+// Hides the house numbers; every other group goes back to the style
+baseMap.applyConfig({ groups: { houseNumbers: { visible: false } } });
+
+// Also hides the ferries, keeping the house numbers hidden
+baseMap.updateConfig({ groups: { ...baseMap.getConfig()?.groups, ferries: { visible: false } } });
+```
+
+## Building a map up group by group
+
+The demo below hides everything, then shows one layer group per second — borders, buildings, land, roads, labels — and the traffic and POI layers after them.
+
+<GuideDemo demo="layer-groups-visibility-animation" />
+
+To restyle groups of layers in a style of your own rather than hide them, use [Map Maker's modules](https://docs.tomtom.com/map-maker/documentation/basics/modules) and load the result as a [custom style](./styles.mdx#styles-from-map-maker).
+
+## Event handling
+
+The module's [events](/maps-sdk-js/api-reference/classes/map.BaseMapModule.html#events) fire on the base map wherever no other module's feature is on top, which makes them the place to [handle clicks on the rest of the map](./user-events.mdx#handling-events-on-the-rest-of-the-map), such as clearing a selection:
+
+```javascript
+const baseMap = await BaseMapModule.get(map);
+
+baseMap.events.on('click', (feature, lngLat) => {
+    console.log('Base map clicked at', lngLat, 'on layer', feature.layer.id);
+});
+
+// Only the road labels and shields, with a pointer cursor
+baseMap.events
+    .where({ layerGroups: { show: 'only', values: ['roadLabels', 'roadShields'] } }, { cursorOnHover: 'pointer' })
+    .on('click', (feature) => console.log(feature.properties.name));
+```
+
+## Combining with other modules
+
+The base map, the POIs and the traffic layers are separate modules over one style, so a focused view sets each of them:
+
+```javascript
+import { BaseMapModule, POIsModule, TrafficIncidentsModule } from '@tomtom-org/maps-sdk/map';
+
+const baseMap = await BaseMapModule.get(map);
+const poisModule = await POIsModule.get(map);
+const trafficIncidentsModule = await TrafficIncidentsModule.get(map);
+
+// A navigation view: roads and their labels, live incidents, no POIs
+baseMap.setVisible(false);
+baseMap.setVisible(true, {
+    layerGroups: { show: 'only', values: ['land', 'water', 'roads', 'roadLabels', 'roadShields'] }
+});
+trafficIncidentsModule.setVisible(true);
+poisModule.setVisible(false);
+```
+
+## API reference
+
+**[BaseMapModule API reference](/maps-sdk-js/api-reference/classes/map.BaseMapModule.html)**
+
+## Related guides and examples
+
+### Related guides
+- **[Map styling](./styling.mdx)** - Restyle what the layer groups draw: sizes, widths, colours
+- **[POIs module](./pois.mdx)** - Show, hide and filter the style's POIs
+- **[Map styles](./styles.mdx)** - Which style the layer groups come from
+- **[User interaction events](./user-events.mdx#scoping-events)** - Events on some layer groups only
+
+### Related examples
+- **[Layer group toggling](../../examples/layer-group-toggling)** - One control per layer group
+- **[Map layer groups visibility animation](../../examples/layer-groups-visibility-animation)** - The map built up one group at a time
+- **[Map styling playground](../../examples/map-styling-playground)** - The layer groups and road parts, next to every look knob of the map
+- **[Interactive roads and numbers](../../examples/interactive-roads-and-numbers)** - Hover and click events scoped to the roads and house numbers

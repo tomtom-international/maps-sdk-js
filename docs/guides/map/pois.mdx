@@ -1,0 +1,238 @@
+---
+title: POIs module
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.64.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The POIs module controls the points of interest the map style draws. To draw search results or your
+own points, use the [Places module](./places.mdx).
+
+**What this module owns:** whether the style's POI layers are shown, which categories, how they look — icon size, the zoom they appear at, label colours, micro markers ([Appearance](#appearance)) — and any [custom icon](#custom-icons-per-category) a category is drawn with. [Who owns what](./modules.mdx#who-owns-what) compares every module.
+
+<GuideDemo demo="poi-filters" />
+
+## Initialization
+
+```javascript
+import { TomTomMap, POIsModule } from '@tomtom-org/maps-sdk/map';
+
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+const poisModule = await POIsModule.get(map);
+```
+
+The POIs belong to the style, so `POIsModule.get` returns the one instance a map has: settings
+applied through one handle show through every other.
+
+## Visibility control
+
+```javascript
+const poisModule = await POIsModule.get(map, { visible: false });
+
+poisModule.setVisible(true);
+poisModule.isVisible(); // true
+```
+
+`isVisible()` returns the `visible` setting. Until something sets it, it reports whether the style
+draws any POI layer.
+
+### Every setting as data
+
+`poisKnobCatalogue` lists the settings of the module's configuration that a single control can
+hold, with their kind, a description and, where one holds, their default, readable with no map loaded:
+
+```javascript
+import { poisKnobCatalogue } from '@tomtom-org/maps-sdk/map';
+
+const visible = poisKnobCatalogue.find(({ id }) => id === 'visible');
+// { id: 'visible', kind: 'toggle', description: 'The POIs the map style draws.', default: true }
+const values = poisKnobCatalogue.find(({ id }) => id === 'filters.categories.values');
+// { id: 'filters.categories.values', kind: 'enums', description: '…', options: ['FOOD_DRINKS_GROUP', …, 'RESTAURANT', …] }
+```
+
+| Id | Kind | Default |
+|---|---|---|
+| `visible` | toggle | `true` |
+| `filters.categories.show` | enum: `only`, `all-except` | none |
+| `filters.categories.values` | enums: the category groups, then every category | none |
+| `sizeFactor` | factor 0.5–1.5 | `1` |
+| `minZoom` | number 3–18 | none: the style's own, 6 on TomTom styles |
+| `zoomShift` | number −3–3 | `0` |
+| `label.color`, `label.haloColor` | colour | none: the style's own |
+| `microMarkers.visible` | toggle | none: as the style ships them |
+
+- `filters.categories.show` and `filters.categories.values` are the [category filter](#filtering),
+  which applies once both are set. The options of `filters.categories.values` are the
+  [category groups](#available-category-groups), then every individual category.
+- The rest set how POIs look ([Appearance](#appearance)).
+- `icon.categoryIcons` is not in it: it takes images.
+- `setKnob`, `getKnob` and `resetKnob` set, read and reset one by its id
+  ([Setting a knob by its id](./modules.mdx#setting-a-knob-by-its-id)).
+- `poisKnobIds` lists the ids, `POIsKnobId` is their union, and `POIsKnobValueOf<ID>` the plain value
+  one takes. The entries share their shape, `KnobEntry`, with every
+  [module's catalogue](./modules.mdx#every-setting-as-data).
+
+## Filtering
+
+`filters.categories` shows `only` the categories and category groups it lists, or `all-except` them:
+
+```javascript
+const poisModule = await POIsModule.get(map, {
+    filters: { categories: { show: 'only', values: ['RESTAURANT', 'CAFE_PUB'] } },
+});
+
+poisModule.updateConfig({
+    filters: { categories: { show: 'all-except', values: ['PARKING_GROUP', 'OPEN_CAR_PARKING_AREA'] } },
+});
+
+// Every category again
+poisModule.updateConfig({ filters: undefined });
+```
+
+- Categories and [groups](#available-category-groups) mix in one list; a group stands for each of its categories.
+- `show` takes one of `filterShowModes` (`'only'`, `'all-except'`), exported from
+  `@tomtom-org/maps-sdk/map` for building a mode picker or a schema.
+- `poiCategoryGroups` maps each group name to its categories.
+
+### Available category groups
+
+- **FOOD_DRINKS_GROUP** - Restaurants, cafes, fast food, pubs, wineries
+- **SHOPPING_GROUP** - Stores, malls, markets, supermarkets
+- **TRANSPORTATION_GROUP** - Airports, train stations, bus stops, ferry terminals
+- **HEALTH_GROUP** - Hospitals, clinics, pharmacies, doctors, dentists
+- **PARKING_GROUP** - Parking garages and open parking areas
+- **HOLIDAY_TOURISM_GROUP** - Tourist attractions, museums, beaches, scenic views
+- **EV_CHARGING_STATIONS_GROUP** - Electric vehicle charging stations
+- **GAS_STATIONS_GROUP** - Gas and petrol stations
+- **ACCOMMODATION_GROUP** - Hotels, motels, camping grounds
+- **ENTERTAINMENT_GROUP** - Cinemas, theaters, nightlife, casinos
+- **SPORTS_LEISURE_GROUP** - Stadiums, sports centers, swimming pools, golf courses
+- **EDUCATION_GROUP** - Schools, universities, libraries, cultural centers
+- **GOVERNMENT_GROUP** - Government offices, courthouses, embassies, police, fire stations
+
+## Appearance
+
+The size of the POIs, the zoom they appear at, their label colours and the micro markers restyle the
+style's own POI layers, each reading the style's own value while unset:
+
+```javascript
+import { POIsModule, poisKnobCatalogue, setKnob } from '@tomtom-org/maps-sdk/map';
+
+const poisModule = await POIsModule.get(map, {
+    sizeFactor: 1.2,
+    minZoom: 12,
+    label: { color: '#334155', haloColor: '#ffffff' },
+    microMarkers: { visible: false },
+});
+setKnob(poisModule, poisKnobCatalogue, 'zoomShift', 1); // later and sparser
+```
+
+- **`sizeFactor` composes** with the [Styling Foundations module](./styling.mdx)'s `labels.sizeFactor` and
+  `symbols.sizeFactor`, which reach the POIs too: the factors multiply.
+- **`zoomShift` composes with the category filter**, in either order: it rewrites the same layer
+  filters `filters.categories` narrows.
+- **`microMarkers.visible` only hides**: the micro markers never show while the POIs are hidden, and
+  `setVisible(true)` keeps a `false`.
+- Places drawn with the `base-map` marker type [borrow this look](./styling-borrowed-looks.mdx), and
+  [`getStyleColor`](./styling.mdx#the-knob-catalogue) reads the label colours as `pois.label.color`
+  and `pois.label.haloColor`.
+
+## Custom icons per category
+
+`icon.categoryIcons` draws the POIs of a category with an image of your own, while every other
+category keeps the style's icon. It takes the entries a [Places module](./places-styling.mdx#icon-styling)
+takes, so one list restyles the map's POIs and the places you show alike:
+
+<GuideDemo demo="poi-category-icons-playground" />
+
+```javascript
+import { PlacesModule, POIsModule } from '@tomtom-org/maps-sdk/map';
+
+const categoryIcons = [
+    { id: 'RESTAURANT', image: restaurantSvg },
+    { id: 'HOTEL_OR_MOTEL', image: '/icons/hotel-pin.png', offsetY: -17 },
+];
+
+const poisModule = await POIsModule.get(map, { icon: { categoryIcons } });
+const searchResults = await PlacesModule.create(map, { markerType: 'base-map', icon: { categoryIcons } });
+
+// The style's own icons again
+poisModule.updateConfig({ icon: undefined });
+```
+
+- An entry reaches its whole map category: the map knows fewer categories than search does, so
+  `CAFE` and `CAFE_PUB` are both cafés on the map, and the first entry listed wins.
+- The image is drawn centred on the POI at the style's icon size, `sizeFactor` included: an
+  image as large as a POI icon keeps the map's density. `offsetX` and `offsetY` move it, in pixels,
+  which stands a pin's tip on its POI.
+- Entries without an `image`, and those with an `availabilityLevel`, change nothing, and the micro
+  markers of minor POIs keep the style's dots.
+- The icons survive a [style change](./styles.mdx), and a switch that resets the map's state drops
+  them.
+
+## Events
+
+<GuideDemo demo="interactive-map-pois" />
+
+`click`, `contextmenu`, `hover` and `long-hover` hand over the POI under the pointer
+([event types](./user-events.mdx#event-types)):
+
+```javascript
+import { getPlaceDetails } from '@tomtom-org/maps-sdk/services';
+
+const stopListening = poisModule.events.on('click', async (feature, lngLat) => {
+    console.log(feature.properties.name, feature.properties.category, lngLat);
+    // The POI id is a place id: fetch its opening hours, phone and more
+    const place = await getPlaceDetails({ entityId: feature.properties.id });
+});
+poisModule.events.on('hover', (feature) => console.log(feature.properties.name));
+
+stopListening(); // removes this handler alone
+poisModule.events.off('hover'); // removes every hover handler
+```
+
+## POI feature properties
+
+A POI feature (`POIsModuleFeature`) carries the style's own values:
+
+- `id` — the POI's id, which [`getPlaceDetails`](../services/places/place-by-id.mdx) takes as `entityId`.
+- `name` — the name in the country's own language.
+- `category` — the style's category, in lower case (`'restaurant'`, `'hotel_or_motel'`), not the
+  upper-case category code the filters and `categoryIcons` take.
+- `group` — the style's category group (`'eat_and_drink'`, …).
+- `priority` — importance: a lower number is more important.
+
+## Querying visible features
+
+`getRenderedFeatures()` returns the POI features rendered in the viewport:
+
+```javascript
+const { pois } = poisModule.getRenderedFeatures();
+pois.forEach((poi) => console.log(poi.properties.name, poi.properties.category));
+```
+
+## API reference
+
+[`POIsModule`](/maps-sdk-js/api-reference/classes/map.POIsModule.html) lists every method, and
+[`POIsModuleConfig`](/maps-sdk-js/api-reference/types/map.POIsModuleConfig.html) every setting.
+
+## Related guides and examples
+
+### Services integration
+- **[Place details](../services/places/place-by-id.mdx)** - Full details (opening hours, phone, URL) of a clicked POI
+- **[POI categories](../services/places/poi-categories.mdx)** - The category codes search and these filters share
+
+### Related examples
+- **[POI filters](../../examples/poi-filters)** - Interactive POI category filtering
+- **[Interactive map POIs](../../examples/interactive-map-pois)** - Clicks and hovers on the map's own POIs
+- **[POI category icons playground](../../examples/poi-category-icons-playground)** - A circle, square, diamond or pin per category, on the map's POIs and on searched places alike
+
+### Related map modules
+- **[Map styling](./styling.mdx)** - Label and icon sizes across the whole map, which compose with the POIs' own `sizeFactor`, and the [map presets](./styling.mdx#presets) that set POI knobs too
+- **[Places module](./places.mdx)** - Search results and your own points, drawn as markers
+- **[User interaction events](./user-events.mdx)** - Event types, cursors and event states across modules

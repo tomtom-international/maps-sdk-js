@@ -1,0 +1,437 @@
+---
+title: Upgrading to 1.0 from a 0.x release
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.64.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+Before 1.0, a minor release can carry a breaking change: a rename takes effect in one release, with no deprecated alias and no runtime warning. Every breaking change on the way to 1.0 is listed below, each as one line from what your code does now to what it does after.
+
+**Covered: from 0.51.x up to 0.64.0** (0.52.0, 0.53.0, 0.54.0, 0.55.1, 0.56.0, 0.57.0, 0.58.0, 0.59.0, 0.60.0, 0.61.0, 0.62.0, 0.62.2, 0.63.0 and 0.64.0, not yet released). Breaking changes before 0.52.0 are in the package's `CHANGELOG.md`. The list grows with each pre-1.0 minor until 1.0 ships.
+
+## How to use this guide
+
+- Find the release you are on, and apply every row with a later **Since** release, in order.
+- The compiler finds most rows for you: a removed or renamed name is a type error. The rows marked **behaviour** compile unchanged and draw or answer differently, so check those by hand.
+- Upgrade the plugins with the SDK. Each one declares the first SDK release it needs, listed under [Plugins](#plugins).
+
+## Installing
+
+| Since | Before | After |
+| --- | --- | --- |
+| 0.58.0 | the SDK parsed colours itself | `culori` v4 is a peer dependency: npm 7+ and Yarn install it, pnpm needs `auto-install-peers=true` or `pnpm add culori` |
+| 0.58.0 | `maplibre-gl` `^6.9.0`, `zod` `^4.4.3` | `maplibre-gl` `^6.11.2`, `zod` `^4.6.5` |
+
+## Core
+
+| Since | Before | After |
+| --- | --- | --- |
+| 0.52.0 | `asSoftWaypoint(position, radiusMeters)` | removed: every waypoint is a stop, and `WaypointProps.radiusMeters` is gone |
+| 0.55.1 | a reverse geocoding result's `properties.accessPoints` | `properties.entryPoints`, an `EntryPoint[]` whose `type` is optional |
+| 0.58.0 | `TomTomConfig.instance.put({ trackingId })` | removed, with the `Tracking-ID` header |
+| 0.58.0 | `apiVersion` on `TomTomConfig` or on a routing call | removed: each service calls the API version it pins |
+| 0.58.0 | `TextWithPhonetics`, with `phonetic` and `phoneticLanguageCode` | `InstructionText`, with `text` only |
+| 0.58.0 | `POICategory` V2 names: `GAS_STATION`, `ELECTRIC_VEHICLE_STATION`, `HOTEL_MOTEL`, `SHOPPING_CENTER`, `SUPERMARKETS_HYPERMARKETS`, and 62 more | their Places Search v3 names: `FUEL_STATION`, `CHARGING_LOCATION`, `HOTEL_OR_MOTEL`, `MALL`, `SUPERMARKET`, … |
+| 0.58.0 | `COLLEGE_UNIVERSITY`, `LEISURE_SPORTS_CENTER`, `OPEN_PARKING_AREA`, `PERFORMING_ARTS_THEATER`, `ROAD_TRAFFIC_CONTROL_CENTER` | `COLLEGE_OR_UNIVERSITY`, `SPORTS_CENTER`, `OPEN_CAR_PARKING_AREA`, `THEATER`, `TRAFFIC_CONTROL_DEPARTMENT` |
+| 0.58.0 | `PUB_FOOD`, `POLYNESIAN_RESTAURANT`, `OTHER_WINTER_SPORT`, `SNOOKER_POOL_BILLIARD` | removed: filtering on one already matched nothing |
+| 0.58.0 | `TrafficIncidentTMC`, `TrafficIncidentTMCPoint`, `properties.tmc` on an incident | removed: Traffic Incident Details v2 carries no TMC data |
+| 0.58.0 | one `AreaAnalyticsTimedEntry` type | one entry type per granularity, `AreaAnalyticsYearlyEntry` to `AreaAnalyticsHourlyEntry` and `AreaAnalyticsAverageEntry`, with their time fields required |
+| 0.58.0 | `AreaAnalyticsFeatureProperties.timezone` always set | optional |
+| 0.59.0 | `AreaAnalyticsFeatureProperties.name` always set | optional, and absent from the SDK's requests |
+| 0.59.0 | `ChargingPoint.evseId` always set | optional: some operators publish none |
+| 0.61.0 | `View`, `views` | `GeopoliticalView`, `geopoliticalViews` ([Geopolitical views](../core/geopolitical-views.mdx)) |
+| 0.62.2 | **behaviour**: the route progress helpers placed a point between two `progress` entries by vertex count | by the line's length: between entries on a winding route, a distance or time moves by up to a couple of kilometres or minutes |
+| 0.64.0 | `bboxExpandedWithPosition`, `bboxExpandedWithBBox`, `bboxExpandedWithGeoJSON`, `toPointFeature` | no longer exported: they were internal; `bboxFromGeoJSON` and `bboxFromBBoxes` build a bounding box |
+| 0.64.0 | `mergeFromGlobal`, `TomTomHeaders`, `generateTomTomHeaders`, `bboxOnlyIfWithArea`, `getPositionStrict`, `toPointGeometry`, `poiCategoriesToID`, `poiCategoriesToIDs`, `poiIDsToCategories`, `getRoutePlanningLocationType`, `iconToTrafficIncidentCategory`, `trafficIncidentToIconCategory`, `MILE_IN_METERS` | not in the published types: they are internal to the SDK's packages; `isBBoxWithArea` tells a bounding box with area, `getPosition` reads a position |
+
+## Services
+
+### Configuration and requests
+
+| Since | Before | After |
+| --- | --- | --- |
+| 0.57.0 | the places services sent `key=` in the URL | they send `TomTom-Api-Key` and `TomTom-Api-Version` headers, which a [proxy](../security/proxying-api-calls.mdx) has to forward |
+| 0.58.0 | `calculateReachableRange` and `trafficIncidentDetails` sent `GET` URLs | they send the key, version and language as headers, a `POST` for reachable ranges |
+| 0.58.0 | `customizeService`, and a service function's second argument overriding its request or response handling | removed; `calculateReachableRanges` keeps its `options` argument |
+| 0.59.0 | `customServiceBaseURL` on a call | removed: every service builds its URL from the global `commonBaseURL` |
+| 0.59.0 | `apiVersion` passed per call or through `TomTomConfig.put` | ignored |
+| 0.64.0 | `error instanceof SDKServiceError && error.status === 403`, and the other status checks | `error.code === 'API_KEY_REJECTED'`, one of the [error codes](../services/request-options-and-errors.mdx#error-handling) every `SDKError` carries; `status` stays |
+| 0.64.0 | `new SDKError(message, service, issues)` | `new SDKError(message, service, { code, issues })` |
+| 0.64.0 | `ServiceTemplate`, `ParseResponseError`, `ParsedFetchResponse`, `RequestOptions`, `parseDefaultResponseError`, `buildResponseError`, `buildValidationError` | no longer exported: they were internal to the service call pipeline |
+| 0.64.0 | a `commonBaseURL` on `http:`, such as `http://proxy.example.com` | serve it on `https:`: service calls reject and `new TomTomMap` throws with `INSECURE_BASE_URL`; only loopback addresses keep `http:` ([`commonBaseURL`](../core/global-config.mdx#commonbaseurl)) |
+
+### Search and places
+
+| Since | Before | After |
+| --- | --- | --- |
+| 0.52.0 | `reverseGeocode` with `allowFreeformNewline`, `mapcodes`, `number`, `returnMatchType`, `returnRoadUse`, `returnSpeedLimit` or `roadUses` | removed, with the `RoadUse` type: reverse geocoding calls Orbis v2 |
+| 0.52.0 | a reverse geocoding result's bounding box, side of street, offset position, mapcodes, data sources, road class and use, speed limit | not returned |
+| 0.55.1 | `{ position, radiusMeters }` on a search | `{ geoBias: { position, radiusMeters } }` |
+| 0.55.1 | `{ boundingBox }` on a search | `{ geoBias: { boundingBox } }` |
+| 0.56.0 | `explorationSearch`, `POPULATED_AREA_TAGS`, `RESERVED_AREA_TAGS` | no longer exported |
+| 0.57.0 | `SearchSummary.totalResults` and `fuzzyLevel` always numbers | optional |
+| 0.58.0 | `search()`, `searchOne()`, `placeById()` | `discoverPlaces()`, `discoverOnePlace()`, `getPlaceDetails()` |
+| 0.58.0 | `SearchResponse`, `PlaceByIdParams`, `PlaceByIdResponse` | `DiscoverPlacesResponse`, `PlaceDetailsParams`, `PlaceDetailsResponse` |
+| 0.58.0 | `autocompleteSearch()` | `getSearchSuggestions({ query, filters: { kinds: ['brand', 'category'] } })`, or without `kinds` for brands, categories and places ranked together |
+| 0.58.0 | `reverseGeocode({ geographyType })` | `reverseGeocode({ geographyTypes })` |
+| 0.59.0 | `poiCategories`, `poiBrands`, `indexes`, `geographyTypes`, `connectors`, `fuelTypes`, `minPowerKW`, `maxPowerKW`, `countries` at the top level of a search | under `filters`: `{ filters: { poiCategories: ['CAFE_PUB'] } }` |
+| 0.59.0 | `{ offset }` for the next page, `SearchSummary.offset` | `{ cursor }` set to the previous response's `properties.nextCursor`, unchanged |
+| 0.59.0 | `getPlaceWithEVAvailability` and `getPlacesWithEVAvailability` resolved an aborted call as missing availability | they reject with `SDKAbortError` |
+| 0.61.0 | **behaviour**: `getPOICategories` and `getPOICategoryCodes` returned every category whose name contained a filter | they return each filter's strongest matches: `'bar'` gives Bar, not 15 categories |
+| 0.61.0 | `{ view: 'IN' }` on a search, suggestions, geocoding, reverse geocoding or place details call | `{ geopoliticalView: 'IN' }`, or once for every call with `TomTomConfig.instance.put({ geopoliticalView })` |
+| 0.61.0 | `alongRouteSearch({ route, maxDetourTimeSeconds, query, … })` | `discoverPlaces({ route, maxDetourTimeSeconds, query, … })`, resolving to a `DiscoverPlacesResponse` |
+| 0.61.0 | `AlongRouteSearchResponse`, `FuzzySearchResponse`, `GeometrySearchResponse`, `GeometrySearchFeatureCollectionProps` | `DiscoverPlacesResponse`, and `SearchSummary` for the collection properties |
+| 0.61.0 | the wire-format types of along-route, fuzzy and geometry search, such as `FuzzySearchResponseAPI` or `GeometryAPI` | no longer exported, with no replacement |
+| 0.64.0 | `getSearchSuggestions({ maxResults, origin })` | `getSearchSuggestions({ limit, geoBias: { position } })`, as the other searches name them |
+| 0.64.0 | the geometry data wire-format types `GeometryDataResponseAPI`, `AdditionalDataAPI` | no longer exported, with no replacement |
+
+### Routing and reachable ranges
+
+| Since | Before | After |
+| --- | --- | --- |
+| 0.52.0 | `VehicleDimensions` with `lengthMeters`, `widthMeters`, `heightMeters`, `axleWeightKG` | `weightKG` only |
+| 0.52.0 | `VehicleRestrictions` with `loadTypes`, `adrCode`, `commercial`; `LoadType`, `loadTypes` | `maxSpeedKMH` only |
+| 0.52.0 | `guidance: { version }` | `guidance: { type: 'coded' }` |
+| 0.52.0 | a reachable range's `costModel.avoidAreas`, `avoid: ['alreadyUsedRoads']` or `vehicle.state.heading` | rejected: that endpoint takes none of them |
+| 0.56.0 | `chargingStopsStrategy` on any vehicle | needs `vehicle.preferences.chargingPreferences` |
+| 0.56.0 | `model.variantId` on any vehicle | electric vehicles only, and on `calculateRoute` only with charging preferences |
+| 0.58.0 | `guidance: { phonetics }`, the `Phonetics` type | removed |
+| 0.58.0 | the reachable-range budget `remainingChargeCPT` | `remainingChargePCT` |
+| 0.58.0 | `preferences` on a generic or combustion vehicle, `VehiclePreferences` | electric vehicles only, as `ElectricVehiclePreferences` |
+| 0.58.0 | `calculateReachableRange` dropped `when.arriveBy` and a charge budget it could not convert | it rejects them |
+| 0.62.0 | `import { budgetTypes, type BudgetType, type ReachableRangeBudget } from '@tomtom-org/maps-sdk/services'` | `from '@tomtom-org/maps-sdk/core'`, beside the new `budgetUnits` |
+
+### Traffic
+
+| Since | Before | After |
+| --- | --- | --- |
+| 0.58.0 | `trafficIncidentDetails({ trafficModelId })` | removed: v2 always serves the latest traffic state |
+| 0.58.0 | `metricKeyToApiDataType` | no longer exported |
+
+## Map
+
+### TomTomMap and styles
+
+| Since | Before | After |
+| --- | --- | --- |
+| 0.53.0 | `map.setStyle(style, { keepState: false })` | `await map.setStyle(style, { resetState: true })`; state is kept by default, as before |
+| 0.53.0 | `setStyle` returned nothing | it returns a promise that settles once the modules are restored |
+| 0.53.0 | a `StyleChangeHandler` callback received `{ keepState }` | it receives `{ resetState }` |
+| 0.53.0 | **behaviour**: overlays drew fixed colours on every style | on dark styles, geometry fills and labels, palettes, places connections, the area-analytics region boundary and the incident focus outline take dark-style colours; set a colour to keep one |
+| 0.56.0 | a `CustomStyle` with both `url` and `json` | exactly one of the two |
+| 0.58.0 | `eventState` held a user event type, such as `hover` or `click` | it also holds `recently-hovered` for `hoverGracePeriodMS` (400 ms): exclude it from your own `['has', 'eventState']` expressions, or set `hoverGracePeriodMS: 0` |
+| 0.59.0 | `{ version }` on a standard style; `DEFAULT_STYLE_VERSION` | removed: standard styles load the Orbis style version the SDK is verified against |
+| 0.59.0 | a `Record<MapColorName, …>` over nine colours | it needs an `accent` entry too |
+| 0.62.0 | `map.getStyle()` | `map.getStyleInput()`, the `StyleInput` as given; `map.mapLibreMap.getStyle()` returns the style specification |
+| 0.62.0 | `StyleModule`, `styleModules` | `StylePart`, `styleParts` |
+| 0.62.0 | `{ type: 'standard', include: ['hillshade'] }` | `{ type: 'standard', include: ['terrain'] }` |
+| 0.64.0 | `TomTomMap({ mapLibre: { transformRequest } })` | a type error: the SDK sets `transformRequest` itself, so the value never took effect; route requests through a proxy with [`commonBaseURL`](../security/proxying-api-calls.mdx) |
+
+### Every module
+
+| Since | Before | After |
+| --- | --- | --- |
+| 0.52.0 | `PlacesModule.get(map)`, likewise for `RoutingModule`, `GeometriesModule`, `CustomGeoJSONModule`, `TrafficIncidentOverlayModule`, `TrafficAreaAnalyticsModule` | `PlacesModule.create(map)`; style-owned modules keep `get()` ([Map modules](../map/modules.mdx#types-of-modules)) |
+| 0.52.0 | **behaviour**: each `get()` of a style-owned module built a new instance | it returns the map's one instance |
+| 0.52.0 | `module.events.<scope>.on('config-change' or 'shown-features', …)` | `module.events.on(…)`: a named scope carries user events only |
+| 0.52.0 | `module.events` covered the main surface | it covers every surface: `places.events.places` for pins typed as `Place`, `geometries.events` includes the labels |
+| 0.58.0 | `FlowConfig`, `IncidentsConfig`, `TrafficIncidentOverlayConfig`, `TrafficAreaAnalyticsConfig` | `TrafficFlowModuleConfig`, `TrafficIncidentsModuleConfig`, `TrafficIncidentOverlayModuleConfig`, `TrafficAreaAnalyticsModuleConfig` |
+| 0.58.0 | the filter mode `'all_except'` | `'all-except'`, in the POI, traffic flow and traffic incident filters |
+| 0.61.0 | **behaviour**: `isVisible()` on `POIsModule`, `BaseMapModule`, `TrafficFlowModule` and `TrafficIncidentsModule` reported whether a layer draws | it returns the `visible` setting; until something sets it, POIs and the base map report what the style draws and the traffic modules `false`. Read a layer with `map.mapLibreMap.getLayoutProperty(layerId, 'visibility')` |
+| 0.61.0 | a subclass of `AbstractDataOwnedMapModule` with its own `setVisible` | it implements `applyVisibility(config)` instead, and the base class provides `setVisible` and `isVisible`; its config type takes `visible?: boolean` |
+| 0.62.0 | **behaviour**: a hovered or clicked route, geometry or incident details incident drew as any other | it stands out: a wider route outline, a denser geometry fill and wider border, the incident `focus` treatment. `highlight.outlineWidthFactor: 1` on routes, `highlight: { fillOpacityFactor: 1, lineWidthFactor: 1 }` on geometries and `focus: false` on incident details keep the old look |
+| 0.62.0 | **behaviour**: an event state wrote `properties.eventState` into the feature objects you passed to `show` | your objects stay as given; read states with `getEventStates()`, or from `getShown()`, which returns a new collection after each state change |
+| 0.62.0 | **behaviour**: a user click or hover left the state `putEventState` gave another feature | it moves the state: a click takes `click` and `contextmenu` off the other features of its source, a hover takes `hover`, `hover-move` and `long-hover` |
+| 0.63.0 | `mapDisplayPoiCategoryMappings`, `toBaseMapPOICategory`, `toBaseMapPOIGroup`, `baseMapPOICategoryValues`, `sharedInstanceIfCreated`, `SymbolLayerSpecWithoutSource` | no longer exported: they were internal; `MapStylePOICategory` stays |
+| 0.64.0 | `putEventState`, `cleanEventState`, `cleanEventStates` on a data-owned module and its named scopes; `PutEventStateOptions`, `CleanEventStateOptions`, `CleanEventStatesOptions` | `setEventState`, `clearEventState`, `clearEventStates`; `SetEventStateOptions`, `ClearEventStateOptions`, `ClearEventStatesOptions` |
+| 0.64.0 | `getShown()` on `POIsModule`, `TrafficFlowModule` and `TrafficIncidentsModule` | `getRenderedFeatures()`: what the style's tiles render in view; `getShown()` stays on the data-owned modules, the data `show` was given |
+| 0.64.0 | `EventsProxy`, `sharedInstance`, `TomTomMapSource`, `InternalTomTomMapParams`, `poiLayerIDs`, `buildRoutingLayers`, `ROUTE_LINE_OUTLINE_COLOR` | no longer exported: they were internal; `ROUTE_LINE_OUTLINE_COLOR` was `'#105287'` |
+| 0.64.0 | `renderedRefId`, `findFeatureByRefId`, `filterLayersBySources`, `withEventState`, `combineEventScopes`, `scopedLayerSpecs`, `reservedScopeNames`, `assertNoReservedScopeNames`, `getIconIDForPlace`, `getPOIGroupForPlace`, `getPOILayerCategoryForPlace`, `STOP_DISPLAY_LABEL` | no longer exported: they were internal; a module's `findById` looks a shown feature up by id |
+
+### Knob catalogues
+
+| Since | Before | After |
+| --- | --- | --- |
+| 0.61.0 | `KnobKind` with `toggle`, `factor`, `number`, `color`, `enum`, `colors` | it adds `image`, `offset`, `enums` and `text`: an exhaustive `switch` needs a case for each |
+| 0.61.0 | a `KnobRange` you declare as `{ min, max, step }` | it needs `bounds`: `'hard'`, `'hard-min'` or `'soft'`, the ends `validateKnobValue` holds a value to |
+| 0.61.0 | a `StylingKnob` with `range` and `options` optional on every kind | one member per kind: a `factor` or `number` knob carries its `range`, an `enum` knob its `options`, and no other kind either |
+| 0.61.0 | a module's `…KnobValueOf<id>` took the expressions and objects the config also takes at that path | the plain value the knob holds |
+
+### BaseMapModule
+
+| Since | Before | After |
+| --- | --- | --- |
+| 0.52.0 | `BaseMapModule.get(map, { layerGroupsFilter })`, `BaseMapModuleInitConfig` | name the groups per call: `setVisible(visible, { layerGroups })`, `events.where({ layerGroups })` |
+| 0.59.0 | `layerGroupsVisibility: { mode: 'include', names: ['water', 'ferries'], visible: false }` | `groups: { water: { visible: false }, ferries: { visible: false } }` |
+| 0.59.0 | `layerGroupsVisibility: { mode: 'exclude', names: ['land', 'roads'], visible: false }` | `visible: false, groups: { land: {}, roads: {} }` |
+| 0.59.0 | **behaviour**: `applyConfig` merged into the current configuration | it replaces it; merge with `updateConfig` |
+| 0.59.0 | **behaviour**: `resetConfig` left hidden groups hidden | it puts every layer back as the style ships it |
+| 0.63.0 | `setVisible(visible, { layerGroups: { mode: 'include', names } })`, `mode: 'exclude'`, also in `isVisible` and `events.where` | `{ layerGroups: { show: 'only', values } }`, `show: 'all-except'`: the `ValuesFilter` POIs and traffic filter by |
+
+### POIsModule
+
+| Since | Before | After |
+| --- | --- | --- |
+| 0.61.0 | `POICategoryGroup` was `string` | it is the union of the `poiCategoryGroups` names, such as `'FOOD_DRINKS_GROUP'`: a `filterCategories` value that names no group or category is a type error |
+| 0.62.0 | `pois.filterCategories(filter)` | `pois.updateConfig({ filters: { categories: filter } })`, and `updateConfig({ filters: undefined })` to show every POI |
+| 0.62.0 | `pois.getShown().poi` | `pois.getShown().pois` |
+| 0.64.0 | `getStyleCategories` | no longer exported: it was internal; `pois.updateConfig({ filters: { categories } })` filters the POIs by category or group |
+
+### StylingModule
+
+| Since | Before | After |
+| --- | --- | --- |
+| 0.56.0 | `styling.set(id, value)` accepted any knob value type | a value of the wrong kind for that knob is a compile error |
+| 0.57.0 | the `view.terrain` and `view.terrainExaggeration` knobs, the `terrain` preset | `TerrainModule.get(map, { elevation: true, elevationExaggeration })` |
+| 0.58.0 | `styling.describe()`, `StylingCatalogue`, `StylingKnobDescriptor`, `StylingPresetDescriptor`, `KnobDescriptor` | the static `stylingKnobCatalogue` and `stylingPresetCatalogue`, and `styling.get(id)` for the value in force |
+| 0.59.0 | the `basemap.roadShields` knob | `roads.shields` |
+| 0.62.2 | **behaviour**: `styling.layers` queries also reached the layers modules add, such as route lines | they reach only the style's own layers: restyle a module's layers through its `layers` config |
+| 0.63.0 | `StylingModule.get(map)`, `StylingModuleConfig`, `StylingEvents` | `StylingFoundationsModule.get(map)`, `StylingFoundationsModuleConfig`, `StylingFoundationsEvents`: it holds the foundations of the look, and every other part's look is the module drawing it ([Map styling](../map/styling.mdx)) |
+| 0.63.0 | `stylingKnobCatalogue`, `stylingKnobIds`, `StylingKnob`, `StylingKnobId`, `StylingKnobValueOf`, `StylingKnobValue`, `StylingKnobKind`, `StylingKnobRange`, `StylingKnobAppliesTo`, `stylingKnobKinds`, `stylingKnobAppliesTo` | `stylingFoundationsKnobCatalogue`, `stylingFoundationsKnobIds`, `StylingFoundationsKnob`, `StylingFoundationsKnobId`, `StylingFoundationsKnobValueOf`, `StylingFoundationsKnobValue`, `StylingFoundationsKnobKind`, `StylingFoundationsKnobRange`, `StylingFoundationsKnobAppliesTo`, `stylingFoundationsKnobKinds`, `stylingFoundationsKnobAppliesTo` |
+| 0.63.0 | `styling.set(id, value)`, `styling.get(id)`, `styling.reset(id)` | `setKnob(styling, stylingFoundationsKnobCatalogue, id, value)`, `getKnob(styling, stylingFoundationsKnobCatalogue, id)`, `resetKnob(styling, stylingFoundationsKnobCatalogue, id)`, as on every module ([Setting a knob by its id](../map/modules.mdx#setting-a-knob-by-its-id)) |
+| 0.63.0 | `styling.reset()` | `styling.resetConfig()` |
+| 0.63.0 | `StylingSettings` | `StylingFoundationsModuleConfig`, as every other module names its configuration |
+| 0.63.0 | the knobs `basemap.<group>`, `buildings.footprints`, `buildings.3d` and `roads.shields` | the [Base Map Module](../map/base-map.mdx)'s groups: `baseMap.setVisible(true, { layerGroups: { show: 'only', values: ['buildings3D'] } })`, or `setKnob(baseMap, baseMapKnobCatalogue, 'groups.buildings3D.visible', true)`; `buildings2D` and `roadShields` are the other two |
+| 0.63.0 | the knobs `roads.exitNumbers`, `roads.arrows`, `roads.restricted`, `roads.underConstruction` | the [Base Map Module](../map/base-map.mdx#road-parts)'s `roads.exitNumbers.visible`, `roads.arrows.visible`, `roads.restricted.visible`, `roads.underConstruction.visible`: `BaseMapModule.get(map, { roads: { arrows: { visible: false } } })` |
+| 0.63.0 | the knobs `pois.sizeFactor`, `pois.minZoom`, `pois.zoomShift` | the [POIs Module](../map/pois.mdx#appearance)'s `sizeFactor`, `minZoom`, `zoomShift`: `POIsModule.get(map, { sizeFactor: 1.2 })` |
+| 0.63.0 | the knobs `pois.labelColor`, `pois.labelOutlineColor` | `POIsModule`'s `label.color`, `label.haloColor`: `POIsModule.get(map, { label: { color, haloColor } })` |
+| 0.63.0 | the knob `pois.microMarkers` | `POIsModule`'s `microMarkers.visible` |
+| 0.63.0 | the knobs `traffic.flow.freeColor`, `slowColor`, `queueingColor`, `stationaryColor`, `closedColor` and `traffic.flow.widthFactor` | the [Traffic Flow Module](../map/traffic-flow.mdx#appearance)'s `colors.free`, `colors.slow`, `colors.queueing`, `colors.stationary`, `colors.closed` and `widthFactor`: `TrafficFlowModule.get(map, { colors: { slow: '#f59e0b' } })` |
+| 0.63.0 | the knobs `traffic.incidents.minorColor`, `moderateColor`, `majorColor`, `closedColor` and `traffic.incidents.widthFactor` | the [Traffic Incidents Module](../map/traffic-incidents.mdx#appearance)'s `colors.minor`, `colors.moderate`, `colors.major`, `colors.closed` and `widthFactor`, which route traffic sections and incident details follow |
+| 0.63.0 | the knobs `hillshade.method`, `hillshade.lightDirection`, `hillshade.exaggeration`, `hillshade.maxZoom`, `hillshade.shadowColor`, `hillshade.highlightColor`, `hillshade.accentColor` | the same ids on the [Terrain Module](../map/terrain.mdx#appearance): `TerrainModule.get(map, { hillshade: { visible: true, exaggeration: 0.5 } })` |
+| 0.63.0 | `StylingColorKnobId`, `stylingColorKnobIds` | `StyleColorKnobId`, `styleColorKnobIds`: the colour knobs of every module by their map-wide ids, such as `'colors.water'`, `'pois.label.color'` and `'traffic.incidents.colors.major'`, which `getStyleColor(map, id)` reads ([The knob catalogue](../map/styling.mdx#the-knob-catalogue)) |
+| 0.63.0 | `styling.applyPreset(id)`, `styling.applyPreset(id, { merge: true })` | `await applyMapPreset(map, id)`, `{ merge: true }`: it sets the Styling Foundations, Base Map and POIs knobs each preset names, creating the modules the map lacks, and throws an `Error` for an unknown id ([Presets](../map/styling.mdx#presets)) |
+| 0.63.0 | `stylingPresetIds`, `stylingPresetCatalogue`, `StylingPresetId`, `StylingPreset` | `mapPresetIds`, `mapPresetCatalogue`, `MapPresetId`, `MapPreset`; `MapPresetSettings` gives each module's values by its own catalogue ids |
+| 0.63.0 | **behaviour**: the `data-viz` preset hid road shields and 3D buildings, `night-driving` showed the shields and hid 3D buildings, and `minimal` hid both building groups and the shields | presets leave whole groups as the style ships them; hide those with `BaseMapModule` |
+| 0.64.0 | the map colour `labelOutline`, its knob `colors.labelOutline` | `labelHalo`, `colors.labelHalo`: the band around a label's text is its halo, as in every module's `haloColor` and `haloWidth` |
+
+### TerrainModule
+
+| Since | Before | After |
+| --- | --- | --- |
+| 0.57.0 | `HillshadeModule.get(map, { visible: true })` | `TerrainModule.get(map, { hillshade: true })` |
+| 0.57.0 | `hillshadeModule.setVisible(visible)` | `terrain.setHillshadeVisible(visible)` |
+| 0.61.0 | **behaviour**: `isHillshadeVisible()` reported whether a hillshade layer draws | it returns the `hillshade` setting, `false` until something sets it |
+| 0.61.0 | **behaviour**: `isElevationEnabled()` reported whether the map's terrain is raised | it returns the `elevation` setting, and the map's own terrain until something sets it. Read the map with `map.mapLibreMap.getTerrain()` |
+| 0.62.0 | `terrain.setElevationExaggeration(2)` | `terrain.updateConfig({ elevationExaggeration: 2 })` |
+| 0.63.0 | `TerrainModule.get(map, { hillshade: true, elevation: true, elevationExaggeration: 2 })` | `TerrainModule.get(map, { hillshade: { visible: true }, elevation: { visible: true, exaggeration: 2 } })` |
+| 0.63.0 | the knob ids `hillshade`, `elevation`, `elevationExaggeration` | `hillshade.visible`, `elevation.visible`, `elevation.exaggeration` |
+| 0.63.0 | `terrain.updateConfig({ elevationExaggeration: 2 })` | `setKnob(terrain, terrainKnobCatalogue, 'elevation.exaggeration', 2)`: `updateConfig({ elevation: { exaggeration: 2 } })` replaces the whole `elevation` object, dropping `visible` |
+| 0.63.0 | `terrain.setElevationEnabled(visible)`, `terrain.isElevationEnabled()` | `terrain.setElevationVisible(visible)`, `terrain.isElevationVisible()` |
+
+### PlacesModule
+
+| Since | Before | After |
+| --- | --- | --- |
+| 0.52.0 | the `shown-features` payload held the places | it is either `{ places }` or `{ connections }`, and `showConnections` emits it too |
+| 0.61.0 | `PlacesModule.create(map, { theme: 'base-map' })` | `PlacesModule.create(map, { markerType: 'base-map' })` |
+| 0.61.0 | `places.applyTheme('pin')` | `places.applyMarkerType('pin')` |
+| 0.61.0 | `PlacesTheme`, `placesThemes` | `PlacesMarkerType`, `placesMarkerTypes` |
+| 0.61.0 | `PlacesModule.create(map, { text: { title, color } })` | `PlacesModule.create(map, { label: { title, color } })` |
+| 0.61.0 | `places.applyTextConfig({ color })`, `PlaceTextConfig` | `places.applyLabelConfig({ color })`, `PlaceLabelConfig` |
+| 0.61.0 | **behaviour**: the EV availability label defaulted to a `threshold` of `0`, drawing every station green, while the pin used `0.3` | both default to `0.3`: set `evAvailability: { threshold: 0 }` to keep the old label colour |
+| 0.62.0 | `places.applyMarkerType(type)`, `applyIconConfig(icon)`, `applyLabelConfig(label)`, `applyExtraFeatureProps(props)` | `places.updateConfig({ markerType, icon, label, extraFeatureProps })`, typed by your place shape with `updateConfig<MyPlaceProps>(…)` |
+| 0.62.0 | **behaviour**: on a dark map, connection labels and entry points had a near-black halo, and a `color` gave connection labels its darker shade | they take the dark grey halo of place labels, and a lighter shade of the colour; `connections.textColor` and `connections.haloColor` set either |
+| 0.62.2 | **behaviour**: a `categoryIcons` entry drew only the places of its own category | it also draws the places of its map category that no entry names: `RESTAURANT` reaches an `ITALIAN_RESTAURANT` |
+| 0.63.0 | `PlacesModule.create(map, { evAvailability: { enabled: true } })`, the knob `evAvailability.enabled` | `PlacesModule.create(map, { evAvailability: { visible: true } })`, `evAvailability.visible` |
+| 0.63.0 | `connections: { label: (connection) => text, textColor, haloColor }`, the knob ids `connections.textColor`, `connections.haloColor` | `connections: { label: { title: (connection) => text, color, haloColor } }`, `connections.label.color`, `connections.label.haloColor`: the `label` of places, waypoints and geometries |
+| 0.63.0 | `cluster: { badge: { textColor, textSize } }`, the knob ids `cluster.badge.textColor`, `cluster.badge.textSize` | `cluster: { badge: { label: { color, size } } }`, `cluster.badge.label.color`, `cluster.badge.label.size` |
+| 0.64.0 | `cluster.badge.strokeColor`, `cluster.badge.strokeWidth`, and their knob ids | `cluster.badge.outlineColor`, `cluster.badge.outlineWidth`: the edge of a shape is its outline across the modules |
+
+### RoutingModule
+
+| Since | Before | After |
+| --- | --- | --- |
+| 0.52.0 | `routing.events.user.on('click', …)` | `routing.events.on('click', …)` |
+| 0.52.0 | `routing.events.module.on(…)` | `routing.events.on(…)` |
+| 0.52.0 | `WAYPOINT_SOFT_IMAGE_ID`, `softWaypointIcon`: a circle for a soft waypoint | removed: every waypoint draws a numbered pin |
+| 0.54.0 | **behaviour**: the `tollRoad` section covered per-use tolls only | it covers every stretch that costs money to drive |
+| 0.55.1 | `layers.sections.incident` | `layers.sections.traffic` |
+| 0.55.1 | **behaviour**: `sections.speedLimit` drew a band, behind `{ visible: true }` | it posts speed-limit signs, by default |
+| 0.55.1 | `sections.speedLimit` `color`, `opacity`, `width`, `style`, `pattern`, `icon` | removed: it takes `visible` and `sign` |
+| 0.55.1 | a `layers.sections.speedLimit` override of `routeSectionSpeedLimitLine` | of `routeSectionSpeedLimitSign` |
+| 0.55.1 | `sections.country`, the `countrySections` source, its events scope and `getShown()` entry | removed: border crossings are labelled with `countryCrossings` |
+| 0.59.0 | `sections.<type>.sign.minzoom`, `countryCrossings.minzoom` | `minZoom` |
+| 0.60.0 | `{ theme: { mainColor: '#f00', routeWidth: 'l', waypointSize: 's' } }` | `{ color: '#f00', width: 'l', waypointSize: 's' }`; `RouteTheme` is removed |
+| 0.60.0 | `sections.<type>.icon.size` | `sections.<type>.icon.sizeFactor`, clamped to 0.25–2 |
+| 0.60.0 | `getLayerToRenderLinesUnder()` always returned a layer id | it follows `beforeLayerConfig`, and returns `undefined` when the route lines are on top |
+| 0.61.0 | **behaviour**: `icon.sizeFactor: 0.8` set the icon size | it multiplies the size the section type draws: `ferry`, `tollRoad`, `tunnel` and `vehicleRestricted` keep their zoom ramp |
+| 0.61.0 | `{ chargingStops: { text: { title } } }`, `ChargingStopTextConfig`, the knob id `chargingStops.text.visible` | `{ chargingStops: { label: { title } } }`, `ChargingStopLabelConfig`, `chargingStops.label.visible` |
+| 0.61.0 | **behaviour**: `getConfig()` filled in the global `displayUnits` when the module set none | it returns the configuration as given, and `undefined` after `RoutingModule.create(map)` or `resetConfig()`: read `TomTomConfig.instance.get().displayUnits` for the units in force |
+| 0.62.0 | **behaviour**: waypoint labels were black on a white halo on every map | they follow the light/dark theme; `waypoints: { label: { color: 'black', haloColor: '#ffffff' } }` keeps the old look |
+| 0.62.2 | **behaviour**: a hovered or clicked waypoint drew as any other | once a handler covers the waypoints, its pin grows 1.2 times with its stop mark; `waypoints: { highlight: { sizeFactor: 1 } }` keeps the old look |
+| 0.63.0 | `RoutingModule.create(map, { waypointSize: 's', waypointSizeFactor: 1.5 })`, the knob ids `waypointSize`, `waypointSizeFactor` | `RoutingModule.create(map, { waypoints: { size: 's', sizeFactor: 1.5 } })`, `waypoints.size`, `waypoints.sizeFactor` |
+| 0.63.0 | `countryCrossings: { textColor }`, the knob id `countryCrossings.textColor` | `countryCrossings: { label: { color } }`, `countryCrossings.label.color` |
+| 0.63.0 | `ROUTE_WIDTH_FACTOR_RANGE`, `ROUTE_WAYPOINT_SIZE_FACTOR_RANGE`, `ROUTE_WAYPOINT_HIGHLIGHT_SIZE_FACTOR_RANGE`, `SECTION_ICON_SIZE_FACTOR_RANGE`, `ROUTE_HIGHLIGHT_OUTLINE_WIDTH_FACTOR_RANGE` | the knob's `range` in `routingKnobCatalogue`: `knobEntryOf(routingKnobCatalogue, 'widthFactor').range` |
+| 0.63.0 | the undocumented route layer colours, widths and size helpers, such as `ROUTE_LINE_FOREGROUND_COLOR` or `getWaypointIconSize` | no longer exported; `SELECTED_ROUTE_FILTER` and `DESELECTED_ROUTE_FILTER` stay |
+| 0.64.0 | `highlight: { outlineWidthFactor }`, the knob `highlight.outlineWidthFactor` | `highlight: { outline: { widthFactor } }`, `highlight.outline.widthFactor`: each module's highlight names the part it changes, then the property |
+
+### GeometriesModule
+
+| Since | Before | After |
+| --- | --- | --- |
+| 0.59.0 | `{ theme: 'inverted' }`, `GeometryTheme`, `geometryThemes` | `{ fillStyle: 'inverted' }`, `GeometryFillStyle`, `geometryFillStyles` |
+| 0.59.0 | a feature's `properties.theme` | `properties.fillStyle` |
+| 0.59.0 | `themedGeometryConfig` | `fillStyledGeometryConfig`, which takes an options object from 0.61.0 |
+| 0.59.0 | `textConfig: { textField }`, `GeometryTextConfig` | `label: { text }`, `GeometryLabel`; `applyTextConfig({ text })`. All three are renamed again in 0.61.0 |
+| 0.59.0 | `lineLabelConfig: { textSize, textColor, textHaloColor, textHaloWidth, textOpacity, textOffset }`, `GeometryLineLabelConfig` | `lineLabel: { size, color, haloColor, haloWidth, opacity, offset }`, `GeometryLineLabel`, which is `GeometryLineLabelConfig` again from 0.61.0 |
+| 0.59.0 | `fill.color` as a legacy MapLibre function object (`{ stops }`) | a colour or a MapLibre expression |
+| 0.60.0 | `fill: { beforeLayerConfig }`, `line: { beforeLayerConfig }`, `GeometryBeforeLayerTargets` | `beforeLayerConfig: { fill, line }` on the module, `all` covering the part it leaves out |
+| 0.60.0 | **behaviour**: `applyConfig` without a target for a part left it where it was | it puts that part back in its default place; `moveBeforeLayer` still leaves it |
+| 0.61.0 | `fill: { color: 'warm' }`, a palette name | `fill: { palette: 'warm' }` |
+| 0.61.0 | `geometries.applyTextConfig({ text })` | `geometries.applyLabelConfig({ text })` |
+| 0.61.0 | `GeometryLabel`, `GeometryLineLabel` | `GeometryLabelConfig`, `GeometryLineLabelConfig` |
+| 0.61.0 | `fillStyledGeometryConfig('retro', 'top')` | `fillStyledGeometryConfig({ palette: 'retro', beforeLayerConfig: 'top' })` |
+| 0.61.0 | `reachableRangeGeometryConfig('cold', 'inverted', 'top', fn)` | `reachableRangeGeometryConfig({ palette: 'cold', fillStyle: 'inverted', beforeLayerConfig: 'top', title: fn })` |
+| 0.61.0 | `prepareReachableRangesForDisplay(result, 'inverted', fn)`, `ReachableRangeLabelFn` | `prepareReachableRangesForDisplay(result, { fillStyle: 'inverted', title: fn })`, `ReachableRangeTitleFn` |
+| 0.62.0 | `geometries.applyLabelConfig({ text })` | `geometries.updateConfig({ label: { text } })` |
+| 0.62.0 | `geometries.moveBeforeLayer(target)`, leaving a part the record names no target for where it was | `geometries.updateConfig({ beforeLayerConfig: target })`, which puts that part back in its default place |
+| 0.62.0 | `fill: { palette: 'warm' }`, a palette name; `colorPalettes`, `colorPaletteIDs`, `ColorPaletteOptions` | `fill: { palette: ['#793F0D', '#AC703D', …] }`, a list of your own CSS colours, such as the ones the map-theme plugin's `deriveMapColors` returns |
+| 0.62.0 | the `fill.palette` knob of `geometriesKnobCatalogue`, of kind `enum` | of kind `colors` |
+| 0.62.0 | **behaviour**: a palette name adapted its colours to dark map styles | the colours you give are drawn as given |
+| 0.62.0 | **behaviour**: `fillStyledGeometryConfig()` without a `palette` coloured the features with `fadedRainbow` | they draw in one colour, the map's accent or the default |
+| 0.62.0 | `GeometriesModule.create(map, reachableRangeGeometryConfig(options))`, `ReachableRangeGeometryConfigOptions` | `ReachableRangesModule.create(map, options)`, `ReachableRangesModuleConfig`; without a `palette`, its bands ramp from the map's accent toward its land colour |
+| 0.62.0 | `prepareReachableRangesForDisplay`, `buildReachableRangeFeatures`, `ReachableRangesDisplayOptions` | `ReachableRangesModule.show(result)`, which prepares the ranges itself |
+| 0.62.2 | `line: { layer }`, drawn under the curated `line` fields | deprecated: `layers.line`, which wins over them |
+| 0.63.0 | `line: { layer: { paint, layout } }` | removed: `layers: { line: { paint, layout } }`, which wins over the curated `line` fields; set a `line-width` there and it is drawn as given in every state |
+| 0.63.0 | `label: { text }`, `lineLabel: { text }` | `label: { title }`, `lineLabel: { title }`: the field that names a label's content on every module |
+| 0.63.0 | `ReachableRangesModule.create(map, { title: fn })` | `ReachableRangesModule.create(map, { label: { title: fn } })`; `ReachableRangesModuleSerializableConfig` leaves out `label.title` |
+| 0.63.0 | `ReachableRangesModule.create(map, { palette })`, the knob id `palette` | `ReachableRangesModule.create(map, { fill: { palette } })`, `fill.palette`, as `GeometriesModule` takes it |
+| 0.64.0 | `highlight: { fillOpacityFactor, lineWidthFactor }`, the knobs `highlight.fillOpacityFactor`, `highlight.lineWidthFactor`, also on `ReachableRangesModule` | `highlight: { fill: { opacityFactor }, line: { widthFactor } }`, `highlight.fill.opacityFactor`, `highlight.line.widthFactor` |
+| 0.64.0 | `ReachableRangesModule`'s `label`, its knobs `label.*`, `ReachableRangeLabelConfig` | `lineLabel`, `lineLabel.*`, `ReachableRangeLineLabelConfig`: the labels run along the borders, as `GeometriesModule`'s `lineLabel` |
+
+### TrafficFlowModule
+
+| Since | Before | After |
+| --- | --- | --- |
+| 0.62.0 | `trafficFlow.filter(filters)`, `trafficFlow.filter()` | `trafficFlow.updateConfig({ filters })`, `updateConfig({ filters: undefined })` |
+| 0.63.0 | `filters: { any: [{ roadCategories }] }`, the knob ids `filters.any.0.*` | `filters: { roadCategories }`, `filters.*`: the fields of `filters` are one filter, and `any` adds the further ones a road may match instead; `TrafficFlowFilters` is `FiltersWithAlternatives<TrafficFlowFilter>` |
+| 0.63.0 | `showRoadClosures`, the knob id `filters.any.0.showRoadClosures` | `roadClosures`, `filters.roadClosures` |
+
+### TrafficIncidentsModule
+
+| Since | Before | After |
+| --- | --- | --- |
+| 0.59.0 | `icons: { filters }`, or a second argument to `filter(lines, icons)` | the root `filters`, for lines and icons alike; `icons` takes `{ visible }` only |
+| 0.59.0 | `IncidentsCommonConfig` | removed: `IncidentIconsConfig` is `{ visible }` |
+| 0.61.0 | **behaviour**: `isVisible()` was `true` while `icons: { visible: true }` drew the icons of hidden incidents | it is `false` whenever the incidents are set hidden: `anyIconLayersVisible()` reads the icons, and `isIconsVisible()` from 0.62.0 |
+| 0.62.0 | `incidents.anyIconLayersVisible()`, whether an icon layer draws | `incidents.isIconsVisible()`, the `icons.visible` setting, or `isVisible()` while it is unset. Read a layer with `map.mapLibreMap.getLayoutProperty(layerId, 'visibility')` |
+| 0.62.0 | `incidents.filter(filters)`, `incidents.filter()` | `incidents.updateConfig({ filters })`, `updateConfig({ filters: undefined })` |
+| 0.63.0 | `filters: { any: [{ magnitudes }] }`, the knob ids `filters.any.0.*` | `filters: { magnitudes }`, `filters.*`: the fields of `filters` are one filter, and `any` adds the further ones an incident may match instead; `TrafficIncidentsFilters` is `FiltersWithAlternatives<TrafficIncidentsFilter>` |
+
+### TrafficIncidentDetailsModule
+
+| Since | Before | After |
+| --- | --- | --- |
+| 0.59.0 | `focus: { widthScale: 1.6 }` | `focus: { widthFactor: 1.6 }`, clamped to 1–1.8 |
+| 0.59.0 | **behaviour**: `isVisible()` reported whether anything was drawn | it reports the `visible` setting; `overlay.getShown().incidents.features.length > 0` says whether anything is drawn |
+| 0.62.0 | `overlay.moveBeforeLayer(target)` | `overlay.updateConfig({ beforeLayerConfig: target })` |
+| 0.62.0 | `TrafficIncidentOverlayModule`, `TrafficIncidentOverlayModuleConfig`, `trafficIncidentOverlayKnobCatalogue`, `trafficIncidentOverlayKnobIds`, `TrafficIncidentOverlayKnob`, `TrafficIncidentOverlayKnobId`, `TrafficIncidentOverlayKnobValueOf` | `TrafficIncidentDetailsModule`, `TrafficIncidentDetailsModuleConfig`, `trafficIncidentDetailsKnobCatalogue`, `trafficIncidentDetailsKnobIds`, `TrafficIncidentDetailsKnob`, `TrafficIncidentDetailsKnobId`, `TrafficIncidentDetailsKnobValueOf` |
+| 0.62.0 | sources and layers suffixed `traffic-incident-overlay-N` | `traffic-incident-details-N` |
+| 0.63.0 | `INCIDENT_FOCUS_WIDTH_FACTOR_RANGE` | `knobEntryOf(trafficIncidentDetailsKnobCatalogue, 'highlight.widthFactor').range` |
+| 0.63.0 | `focus: { outlineColor, widthFactor }` or `focus: false`, `IncidentFocusStyle`, the knob ids `focus.outlineColor` and `focus.widthFactor` | `highlight: { outlineColor, widthFactor }` or `highlight: false`, `IncidentHighlightConfig`, `highlight.outlineColor` and `highlight.widthFactor`: the look of a focused, hovered or clicked incident, not the `setFocus` subset itself |
+| 0.63.0 | `layers.focusHalo`, the layer id suffix `-focus-halo` | `layers.highlightHalo`, `-highlight-halo` |
+| 0.64.0 | `highlight: { outlineColor, widthFactor }`, the knobs `highlight.outlineColor`, `highlight.widthFactor` | `highlight: { outline: { color }, line: { widthFactor } }`, `highlight.outline.color`, `highlight.line.widthFactor` |
+
+### TrafficAreaAnalyticsModule
+
+| Since | Before | After |
+| --- | --- | --- |
+| 0.59.0 | **behaviour**: `applyConfig` merged into the current configuration | it replaces it: merge with `updateConfig`, change one metric with `setColor`, `setHeight` or `filter` given that metric |
+| 0.59.0 | **behaviour**: `isVisible()` reported whether anything was drawn | it reports the `visible` setting; read the `heatmap`, `hexgrid` and `square` collections of `getShown()` for what is drawn |
+| 0.60.0 | `beforeLayerConfig: { heatmap, hexgrid: { flat2D, extrusion3D }, square: { flat2D, extrusion3D } }` | keyed by display mode, `'hexgrid-2d'`, `'hexgrid-3d'`, `'square-2d'`, `'square-3d'` and `heatmap`, plus `all` for the rest |
+| 0.62.0 | `analytics.setMode(mode)`, `analytics.setMetric(metric)`, `analytics.mode` | `analytics.updateConfig({ displayMode: mode })`, `updateConfig({ activeMetric: metric })`, `analytics.getConfig()?.displayMode` |
+| 0.62.0 | **behaviour**: a style change emitted `shown-features` | it no longer does, as on the other modules |
+| 0.62.0 | `analytics.filter(filters, metrics)`, `analytics.clearFilter(metrics)` | `analytics.setFilters(filters, metrics)`, `setFilters(undefined, metrics)` |
+| 0.62.0 | `analytics.moveBeforeLayer(target)`, leaving a display mode the record names no target for where it was | `analytics.updateConfig({ beforeLayerConfig: target })`, which puts that mode back in its default place |
+| 0.62.0 | `AreaAnalyticsColorTheme` | `AreaAnalyticsPalette`; `areaAnalyticsPalettes` lists its names |
+| 0.62.0 | `metricConfig.<metric>.color: 'heat'` | `metricConfig.<metric>.palette: 'heat'`; a custom `{ valueType, stops }` moves to `colorStops` |
+| 0.62.0 | `analytics.setColor('heat', metrics)` | `analytics.setPalette('heat', metrics)`; use `setColorStops(colorStops, metrics)` for custom stops, and pass `undefined` to clear either |
+| 0.62.0 | `resolveColorStops('heat')` | `resolveColorStops(metric, { palette: 'heat' })`, which returns a `{ valueType, stops }` config |
+| 0.62.0 | `getConfig().metricConfig.speed.color` held the stops `setColor('heat')` expanded to | `getConfig().metricConfig.speed.palette` holds `'heat'`; read the stops with `resolveColorStops` |
+| 0.62.0 | **behaviour**: a `networkLength` palette spanned the fixed 0–5,000 m range | it spans the loaded range; set `colorStops` with `valueType: 'relativeToPredefinedRangePCT'` to keep the fixed range |
+| 0.62.0 | a raw height's `scaleFactor` | `metersPerUnit`, the metres of height per unit of the metric |
+| 0.62.0 | the knob ids `metricConfig.<metric>.color` and `metricConfig.<metric>.height.scaleFactor` | `metricConfig.<metric>.palette` and `metricConfig.<metric>.height.metersPerUnit` |
+| 0.62.2 | **behaviour**: a metric filter with both `min` and `max` kept the cells within either | it keeps the cells within both |
+| 0.63.0 | `metricConfig`, its knob ids `metricConfig.<metric>.*` | `metrics`, `metrics.<metric>.*`, as routing's `sections.<type>` |
+| 0.63.0 | `colorStops: { valueType: 'relativeToPredefinedRangePCT' }`, `'relativeToActualRangePCT'`, `AreaAnalyticsValueType` | `colorStops: { scaleMode: 'predefinedRange' }`, `'currentRange'`, `AreaAnalyticsScaleMode`: the vocabulary of the height's `scaleMode` |
+| 0.63.0 | `regionPolygon: { fillOpacity, outlineOpacity, outlineWidth, inverted: true }` | `regionPolygon: { fill: { opacity }, line: { opacity, width }, fillStyle: 'inverted' }`, as `GeometriesModule` names them; the knob ids follow |
+
+### CustomGeoJSONModule
+
+| Since | Before | After |
+| --- | --- | --- |
+| 0.52.0 | `shown-features` subscribed per source scope | `customModule.events.on('shown-features', ({ sourceName, data }) => …)` on the module |
+| 0.52.0 | a source named `on`, `off` or `where` | not allowed: rename the source |
+| 0.61.0 | **behaviour**: `show()` drew the layers of a module hidden with `setVisible(false)` or `visible: false` | they stay hidden, and the data draws on `setVisible(true)`: call it where `show()` used to reveal them |
+| 0.64.0 | `beforeID` on a layer, a raw MapLibre layer id | `beforeLayerConfig`: `'top'`, a style layer such as `'lowestLabel'`, or `{ layerID }` for a layer outside the style; `beforeLayerConfig` on the module places the layers that set none |
+
+## Plugins
+
+Each plugin declares the first SDK release it needs, up to `<1.0.0`. Upgrade them with the SDK:
+
+| First SDK release needed | Plugin releases |
+| --- | --- |
+| 0.61.0 | Map Effects 0.1.2, Viewport Places 0.5.1, Map Theme 0.2.2, Flyover 0.0.2 |
+| 0.62.0 | Agent Toolkit 0.11.0, Landmarks 3D 0.0.8 |
+| 0.63.0 | Agent Toolkit 0.12.0, Map Effects 0.2.0, Map Theme 0.2.3, and the next release of every other plugin |
+| 0.64.0 | Agent Toolkit 0.13.0, Map Theme 0.3.0 |
+
+The **Since** column below is the plugin's own version.
+
+### Agent Toolkit
+
+| Since | Before | After |
+| --- | --- | --- |
+| 0.6.1 | `FeatureFlags.experimentalSearch`; `summarizePlace(place, flags)`, `summarizePlaces(places, flags)` | removed; `summarizePlace(place)`, `summarizePlaces(places)` |
+| 0.7.0 | the `toggleTilesBaseMapLayerGroups` tool | `setMapStyling` with the `basemap.<group>`, `buildings.footprints` and `buildings.3d` knobs |
+| 0.7.0 | `BaseMapState.getHillshadeModule` | removed, with `HillshadeModule` |
+| 0.8.0 | the `describeMapStyling` tool | removed: `setMapStyling`'s schema names every knob with its range or values |
+| 0.8.0 | `'all_except'` in `toggleTilesPOIs` and `recallState` | `'all-except'` |
+| 0.9.0 | `theme` on `findReachableAreas`, `processData`, `updatePlacesDisplay`, `locatePlace`, `discoverPlaces` geometries; `_shownTheme` | `fillStyle`; `_shownFillStyle` |
+| 0.10.0 | `updateRoutesDisplay({ mainColor })`, `RoutingState.mainColor`, `RoutingState.setMainColor` | `updateRoutesDisplay({ color })`, `RoutingState.color`, `RoutingState.setColor` |
+| 0.11.0 | **behaviour**: `getCurrentLocation` sent the model the exact position, the device's accuracy and the timestamp of a fresh high-accuracy fix | it sends the position rounded to 3 decimals (about 100 m), `accuracy` of at least 111 m and no `timestamp`: `tools: { getCurrentLocation: createGetCurrentLocationTool({ fullPrecision: true }) }` keeps the exact one ([Tools](../plugins/agent-toolkit/tools.mdx#what-getcurrentlocation-sends)) |
+| 0.11.0 | `RangeState.getEntryGeometriesModule(id)` drew the entry's reachable ranges | `RangeState.getEntryRangesModule(id)` returns its `ReachableRangesModule`; `getEntryGeometriesModule` returns a plain `GeometriesModule` for polygons in a style of your own |
+| 0.11.0 | `updateTrafficAreaAnalyticsDisplay({ colorTheme: 'heat' })` | `updateTrafficAreaAnalyticsDisplay({ palette: 'heat' })` |
+| 0.11.0 | `updateTrafficAreaAnalyticsDisplay({ heightScale: 200 })` | `{ maxHeightMeters: 200 }` for `predefinedRange` or `currentRange`; `{ metersPerUnit: 200 }` selects `raw` |
+| 0.11.0 | **behaviour**: place boundaries and custom geometries drew one rainbow colour each | they draw in the map's accent; outlined ones keep a neutral grey border |
+| 0.12.0 | `setMapStyling` with the `basemap.<group>`, `buildings.footprints`, `buildings.3d` and `roads.shields` knobs | `toggleTilesBaseMapLayerGroups({ visible, layerGroups })`, which also reports the groups hidden afterwards |
+| 0.12.0 | `setMapStyling` with `pois.labelColor`, `traffic.flow.slowColor`, `roads.arrows` and the other knobs that left `StylingModule` | the map-wide ids of the module owning each: `pois.label.color`, `traffic.flow.colors.slow`, `roads.arrows.visible`, `terrain.hillshade.exaggeration`; `preset` applies a [map preset](../map/styling.mdx#presets), and `reset: true` resets the look knobs of every module the map has |
+| 0.12.0 | `BaseMapState.getStylingModule()` | `BaseMapState.getStylingFoundationsModule()` |
+
+### Map Effects
+
+| Since | Before | After |
+| --- | --- | --- |
+| 0.1.0 | `effects.describe()`, `MapEffectsCatalogue`, `MapEffectsKnobDescriptor` | the static `effectKnobCatalogue`, and `getKnob(effects, effectKnobCatalogue, id)` for the value in force |
+| 0.2.0 | `effects.set(settings)` | `effects.updateConfig(settings)`, or `setKnob(effects, effectKnobCatalogue, id, value)` for one knob |
+| 0.2.0 | `effects.get(id)`, `effects.reset(id)` | `getKnob(effects, effectKnobCatalogue, id)`, `resetKnob(effects, effectKnobCatalogue, id)` |
+| 0.2.0 | `effects.reset()` | `effects.resetConfig()` |
+| 0.2.0 | `bloom.only` naming `'traffic.incidents.majorColor'`, `'pois.labelColor'` | the map-wide ids `'traffic.incidents.colors.major'`, `'pois.label.color'` ([Bloom](../plugins/map-effects-bloom.mdx)) |
+| 0.2.0 | `StylingColorKnobGroup` | `StyleColorKnobGroup` |
+
+### Map Theme
+
+| Since | Before | After |
+| --- | --- | --- |
+| 0.2.0 | `deriveMapColors`, `deriveMapColorsFromCss` and `deriveMapColorsFromImage` returned nine colours | they also return `accent`, which `setMapColors` rejects before SDK 0.59.0: upgrade both together |
+| 0.3.0 | `deriveMapColors`, `deriveMapColorsFromCss` and `deriveMapColorsFromImage` returned `labelOutline` | they return `labelHalo`, the name SDK 0.64.0 takes |
+
+### Viewport Places
+
+| Since | Before | After |
+| --- | --- | --- |
+| 0.3.0 | `searchOptions: { geoBias }` | removed: each module searches the current viewport |
+| 0.4.0 | `remove(id)` logged an unknown id | it throws, as `update` does |
+| 0.5.0 | `searchOptions: { poiCategories }` | `searchOptions: { filters: { poiCategories } }`; no `cursor` |
+
+## Related guides
+
+- [Map modules](../map/modules.mdx), for the two kinds of module and who owns what
+- [Proxying API calls](../security/proxying-api-calls.mdx), for the headers the services send
+- [Migrating from V6](./v6-to-new-sdk.mdx)

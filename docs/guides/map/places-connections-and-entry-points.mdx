@@ -1,0 +1,100 @@
+---
+title: Connections and entry points
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.64.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+Besides the markers, the [Places module](./places.mdx) draws two things around the places it shows: labelled connection lines between pairs of them, and the entrances a place's data carries. Both take the module's [colour](./places-styling.mdx#colour), hide with it, and have an [event scope](./places.mdx#user-events) of their own.
+
+## Connections
+
+[`showConnections`](/maps-sdk-js/api-reference/classes/map.PlacesModule.html#showconnections) draws
+a dashed line between each pair of places it is given, labelled by `connections.label.title`.
+
+<GuideDemo demo="place-connection-lines" />
+
+```javascript
+const placesModule = await PlacesModule.create(map, {
+    connections: { color: '#1F9D6B', label: { title: (connection) => `${connection.minutes} min` } },
+});
+await placesModule.show(places);
+await placesModule.showConnections([{ from: 'station', to: 'cafe', minutes: 4 }]);
+
+await placesModule.clearConnections(); // the lines go, the places stay
+```
+
+- An endpoint is a `Place` or the id of a shown place. An id matching none is skipped, and resolves
+  again on every redraw ([Identity across show, clear and style changes](./places.mdx#identity-across-show-clear-and-style-changes)).
+- Every other property of a connection reaches the `label.title` function. Without one, no label is drawn.
+- `showConnections` replaces the connections shown, and `show()` or `clear()` drops them.
+- `connections.color`, `connections.label.color` and `connections.label.haloColor` set the line,
+  label and halo colours over the module's [`color`](./places-styling.mdx#colour). Unset, the label
+  takes a shade of the line's colour that reads on the map's light or dark theme.
+- `connections.layers.line` and `connections.layers.label` take MapLibre overrides.
+
+## Entry points
+
+Search, geocoding and reverse geocoding fill a place's [entrances](../core/places.mdx#entry-points)
+in `properties.entryPoints`. Set `entryPoints` on the module config to draw them: a dot per
+entrance, larger for the main one, with a dotted line back to the place.
+
+<GuideDemo demo="place-entry-points-playground" />
+
+```javascript
+const placesModule = await PlacesModule.create(map, {
+    entryPoints: {
+        showFor: 'clicked', // 'all' | 'selected' (hovered or clicked, the default) | 'clicked'
+        minZoom: 16,        // default 15
+        layers: { line: { layout: { visibility: 'none' } } }, // MapLibre overrides for `point` and `line`
+    },
+});
+
+// Only places with an event handler reach the hover and click states
+placesModule.events.on('click', (feature) => console.log(feature.properties.title));
+
+placesModule.updateConfig({ entryPoints: { showFor: 'all' } });
+placesModule.updateConfig({ entryPoints: undefined }); // stops drawing them
+```
+
+- `selected` and `clicked` follow the module's [event states](./places.mdx#programmatic-event-states), so
+  `setEventState` draws them too.
+- Hovering or clicking an entry point keeps its place's entry points drawn when a handler covers
+  them: one on `events` or `events.entryPoints`, not on `events.places` alone. Under `selected`, a
+  [recently hovered](./user-events.mdx#recently-hovered-features) place counts too, so they stay
+  while the pointer crosses to an entrance.
+- `events.entryPoints` hands over a point at the entrance, whether its dot or its line was hit, with
+  `type`, `functions`, `placeID`, `entryPointIndex` and the shown `place` in its properties. It is a
+  valid route location, as the [events example](./places.mdx#user-events) shows.
+- The dots draw over the pins and the lines under them.
+- Under the `pin-clustered` marker type they start at the first zoom without clusters:
+  `cluster.source.clusterMaxZoom` plus one, 18 by default.
+
+A reverse geocoding result's geometry is the queried point; move it to `properties.originalPosition`,
+the matched address, before showing it. A result with no match has no `properties`:
+
+```javascript
+const address = await reverseGeocode({ position: clickedPosition });
+if (address.properties) {
+    await placesModule.show({
+        ...address,
+        geometry: { ...address.geometry, coordinates: address.properties.originalPosition },
+    });
+}
+```
+
+## Related guides and examples
+
+### Related guides
+- **[Places module](./places.mdx)** - Showing places, events and the data shown
+- **[Place styling](./places-styling.mdx)** - Marker types, colour, labels and icons
+- **[Core places](../core/places.mdx#entry-points)** - The entry points a place carries
+
+### Related examples
+- **[Place connection lines](../../examples/place-connection-lines)** - Labelled lines from a charging station to the cafés around it, in a colour of their own
+- **[Place entry points playground](../../examples/place-entry-points-playground)** - When and how the entrances of places are drawn, and what clicking one returns

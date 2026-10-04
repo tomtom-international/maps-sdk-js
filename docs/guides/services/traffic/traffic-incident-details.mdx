@@ -1,0 +1,194 @@
+---
+title: Incident details
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.64.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+`trafficIncidentDetails` returns the current and planned traffic incidents of an area, or of a list of known incident IDs, as a GeoJSON `FeatureCollection` (`TrafficIncidentDetails`). Each incident is a `Point` or `LineString` feature, ready to process server-side or to draw with the [Traffic Incident Details Module](../../map/traffic-incident-details.mdx).
+
+<SDKGuideLiveCodingExample exampleDirectory="nodejs-traffic-incident-details" />
+
+## Core concepts
+
+An incident (`TrafficIncident`) carries:
+
+- **Category** (`category`): what happened — `accident`, `jam`, `roadworks`, `road-closed`, … ([`TrafficIncidentCategory`](../../core/traffic.mdx#trafficincidentcategory)).
+- **Delay magnitude** (`magnitudeOfDelay`): `unknown`, `minor`, `moderate`, `major`, or `indefinite` for road closures ([`DelayMagnitude`](../../core/traffic.mdx#delaymagnitude)).
+- **Geometry**: a `Point` for a localised incident, a `LineString` for one spanning a stretch of road.
+- **Time validity** (`timeValidity`): `present`, active now, or `future`, planned.
+- **Events** (`events`): one or more descriptions of what is happening there.
+
+## Basic usage
+
+A call takes exactly one of `bbox`, `polygon` or `ids`.
+
+### Query by bounding box
+
+`bbox` takes a `[minLon, minLat, maxLon, maxLat]` tuple, or any GeoJSON object, whose bounding box the SDK computes:
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { geocodeOne, trafficIncidentDetails } from '@tomtom-org/maps-sdk/services';
+
+TomTomConfig.instance.put({ apiKey: 'YOUR_API_KEY' });
+
+const place = await geocodeOne('Amsterdam');
+const result = await trafficIncidentDetails({ bbox: place });
+
+result.features.forEach((incident) => {
+    const { category, magnitudeOfDelay, from, to } = incident.properties;
+    console.log(`${category} — ${magnitudeOfDelay} delay: ${from} → ${to}`);
+});
+
+const inBox = await trafficIncidentDetails({ bbox: [4.728, 52.278, 5.08, 52.479] });
+```
+
+The bounding box covers at most 10,000 km².
+
+### Query by polygon
+
+A bounding box over-covers any place that is not a rectangle. Pass the place's boundary as `polygon` instead, such as the one [`geometryData`](../places/geometry-data.mdx) returns:
+
+```javascript
+import { geocodeOne, geometryData, trafficIncidentDetails } from '@tomtom-org/maps-sdk/services';
+
+const place = await geocodeOne('Amsterdam');
+const boundary = await geometryData({ geometries: [place] });
+const result = await trafficIncidentDetails({ polygon: boundary });
+```
+
+- `polygon` takes a `Polygon` or `MultiPolygon`, a `Feature` wrapping one, or a `FeatureCollection` of them.
+- The API only takes a bounding box, so the request covers the polygon's, and the response keeps the incidents intersecting the polygon. A `LineString` incident crossing the boundary is kept.
+- The 10,000 km² limit applies to the polygon's bounding box.
+
+### Query by incident IDs
+
+```javascript
+const result = await trafficIncidentDetails({
+    ids: ['incident-id-1', 'incident-id-2', 'incident-id-3'],
+});
+```
+
+- Up to 100 IDs; more than 5 are sent as a POST, which the SDK picks.
+- A live incident tile's `id` from the [Traffic Incidents Module](../../map/traffic-incidents.mdx#events), and a route traffic section's `eventId` ([`TrafficSectionProps`](../../core/traffic.mdx#trafficsectionprops)), look the full record up here.
+
+## Filtering results
+
+### By category
+
+`categoryFilter` keeps the given categories:
+
+```javascript
+const result = await trafficIncidentDetails({
+    bbox: [4.728, 52.278, 5.08, 52.479],
+    categoryFilter: ['accident', 'road-closed'],
+});
+```
+
+It takes the `trafficIncidentRequestCategories` (`TrafficIncidentRequestCategory`). The two other values of `fullTrafficIncidentCategories`, `'animals-on-road'` and `'narrow-lanes'`, occur only on the traffic vector tiles, so they are neither accepted nor returned here.
+
+| Value | Description |
+|-------|-------------|
+| `'accident'` | Traffic accident or collision |
+| `'broken-down-vehicle'` | Vehicle breakdown causing obstruction |
+| `'danger'` | Dangerous situation on the road |
+| `'flooding'` | Flooded road section |
+| `'fog'` | Fog reducing visibility |
+| `'frost'` | Frost or ice on the road |
+| `'jam'` | Traffic congestion or slow-moving traffic |
+| `'lane-closed'` | One or more lanes closed |
+| `'other'` | Other types of incidents |
+| `'rain'` | Heavy rain affecting driving conditions |
+| `'road-closed'` | Road is closed or blocked |
+| `'roadworks'` | Construction or maintenance work |
+| `'wind'` | Strong wind conditions affecting traffic |
+
+### By time validity
+
+Only `'present'` incidents come back by default. Add `'future'` for planned works and scheduled events:
+
+```javascript
+const result = await trafficIncidentDetails({
+    bbox: [4.728, 52.278, 5.08, 52.479],
+    timeValidityFilter: ['present', 'future'],
+});
+```
+
+### By severity
+
+The request takes no magnitude; filter the response on `magnitudeOfDelay`:
+
+```javascript
+const severeIncidents = result.features.filter(({ properties }) =>
+    properties.magnitudeOfDelay === 'major' || properties.magnitudeOfDelay === 'indefinite',
+);
+```
+
+## Working with incident data
+
+### Reading incident properties
+
+```javascript
+const incident = result.features[0];
+
+incident.geometry.type; // 'Point' | 'LineString'
+
+const {
+    id,
+    category,
+    magnitudeOfDelay,
+    events,                  // [{ description, code, category }]
+    from,
+    to,
+    lengthInMeters,
+    delayInSeconds,
+    roadNumbers,             // e.g. ['A10']
+    timeValidity,            // 'present' | 'future'
+    probabilityOfOccurrence, // 'certain' | 'probable' | 'risk_of' | 'improbable'
+    startTime,               // Date | undefined
+    endTime,                 // Date | undefined
+    numberOfReports,
+    lastReportTime,          // Date | undefined
+} = incident.properties;
+```
+
+[`TrafficIncidentProperties`](../../core/traffic.mdx#trafficincidentproperties) lists which are always present.
+
+### Displaying on a map
+
+The [Traffic Incident Details Module](../../map/traffic-incident-details.mdx) draws the response in the style's incident look, and highlights a subset with `setFocus`:
+
+```javascript
+import { TrafficIncidentDetailsModule } from '@tomtom-org/maps-sdk/map';
+
+const incidentDetailsModule = await TrafficIncidentDetailsModule.create(map);
+await incidentDetailsModule.show(result);
+```
+
+## Error handling
+
+A failed call rejects with an `SDKServiceError`, carrying the HTTP `status` and the `service`; an invalid request, such as one with both `bbox` and `ids`, rejects before it is sent ([Error handling](../request-options-and-errors.mdx#error-handling)).
+
+## API reference
+
+- [`trafficIncidentDetails`](/maps-sdk-js/api-reference/functions/services.trafficIncidentDetails.html)
+- [`TrafficIncidentDetailsParams`](/maps-sdk-js/api-reference/types/services.TrafficIncidentDetailsParams.html) – Request parameters
+- [`TrafficIncidentDetails`](/maps-sdk-js/api-reference/types/core.TrafficIncidentDetails.html) – Response type
+
+## Related guides and examples
+
+### Related examples
+- **[Traffic incident details NodeJS](../../../examples/nodejs-traffic-incident-details)** - A city's incidents, printed
+- **[Traffic incident details](../../../examples/traffic-incident-details)** - A city's incidents clipped to its boundary, on a map
+- **[Traffic incidents](../../../examples/traffic-incidents)** - The live incident tiles, with no request
+
+### Related guides
+- **[Core traffic types](../../core/traffic.mdx)** - The incident types this service returns
+- **[Traffic incident details module](../../map/traffic-incident-details.mdx)** - Draw the response on a map
+- **[Routing parameters](../routing/parameters.mdx#traffic-based-travel-times)** - Routes whose travel times account for live traffic

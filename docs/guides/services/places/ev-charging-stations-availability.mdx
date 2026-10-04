@@ -1,0 +1,233 @@
+---
+title: EV charging stations availability
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.64.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+<Button
+    label="Request Access"
+    href="https://www.tomtom.com/contact-sales/?source_app=docs-portal&source_product=ev-search"
+    target="_blank">
+    Request Access
+</Button>
+
+<Blockquote type="warning">
+**Important note**
+EV Charging Stations Availability is unavailable on a Freemium or Pay As You Grow (PAYG) basis.
+Click the **Request Access** button above to contact our Sales team.
+</Blockquote>
+
+The EV Charging Stations Availability service adds real-time status to the charging stations the
+[search services](./search.mdx) return: the status of each charging point, and counts per connector
+type and power level. Searching for stations needs no such access.
+
+In the demo below, each searched station shows its free and total charging points under its pin;
+click one to list its connectors and charging points.
+
+<GuideDemo demo="ev-charging-stations-search" />
+
+## Basic usage
+
+```javascript
+import { discoverPlaces, getPlacesWithEVAvailability } from '@tomtom-org/maps-sdk/services';
+
+const stations = await discoverPlaces({
+    geoBias: { position: [4.9041, 52.3676] }, // Amsterdam
+    filters: { poiCategories: ['CHARGING_LOCATION'] },
+    limit: 10,
+});
+
+const stationsWithAvailability = await getPlacesWithEVAvailability(stations);
+```
+
+| Function | Takes | Resolves to |
+| --- | --- | --- |
+| [`getPlacesWithEVAvailability`](/maps-sdk-js/api-reference/functions/services.getPlacesWithEVAvailability.html) | A `Places` collection | The same places, in order, each with availability where known |
+| [`getPlaceWithEVAvailability`](/maps-sdk-js/api-reference/functions/services.getPlaceWithEVAvailability.html) | One place | The place with availability, or `undefined` |
+| [`evChargingStationsAvailability`](/maps-sdk-js/api-reference/functions/services.evChargingStationsAvailability.html) | `{ id }`, a place's `dataSources.chargingAvailability.id` | The availability record alone, no place |
+
+- **A failed request does not fail the call.** `getPlacesWithEVAvailability` leaves that station
+  unchanged and `getPlaceWithEVAvailability` resolves `undefined`, so a key without access shows up
+  as stations with unknown availability, not as an error.
+- **`excludeIfAvailabilityUnknown: true`** drops those stations from the collection instead, and
+  types every remaining one as carrying availability.
+- Both functions also take the [options every service call takes](../request-options-and-errors.mdx)
+  in their second argument, forwarded to each availability request.
+
+## How many requests it sends
+
+`getPlacesWithEVAvailability` sends one request per station, one after the other by default.
+`maxConcurrentRequests` lets more of them run at once; the places come back in their input order
+either way.
+
+Each request counts against your API key's queries-per-second limit, so raise it only as far as your
+key allows. The SDK retries a rate-limited (`429`) request with backoff bounded by
+[`retry.timeoutMs`](../../core/global-config.mdx#retry), and a request still failing after that
+leaves its station with unknown availability.
+
+```javascript
+const stationsWithAvailability = await getPlacesWithEVAvailability(stations, { maxConcurrentRequests: 4 });
+```
+
+## Cancelling the availability calls
+
+Pass a `signal` in the options when a newer search or a map move supersedes the run: aborting
+cancels the in-flight requests, skips the remaining stations and rejects the call with an
+`SDKAbortError`, as for [any other service call](../request-options-and-errors.mdx#cancelling-a-request).
+A cancellation is the one failure that rejects.
+
+[`createLatestRequest`](../request-options-and-errors.mdx#keeping-only-the-latest-request)
+keeps only the newest run: starting one stops the previous one working through its list.
+
+```javascript
+import { createLatestRequest, getPlacesWithEVAvailability } from '@tomtom-org/maps-sdk/services';
+
+const latestAvailability = createLatestRequest();
+
+const showAvailability = async (stations) => {
+    const availability = await latestAvailability.run((signal) =>
+        getPlacesWithEVAvailability(stations, { signal })
+    );
+    if (availability.current) await placesModule.show(availability.value);
+};
+```
+
+## Individual station availability
+
+`getPlaceWithEVAvailability` takes one station, such as the one a user clicked:
+
+```javascript
+import { getPlaceWithEVAvailability } from '@tomtom-org/maps-sdk/services';
+
+const stationWithAvailability = await getPlaceWithEVAvailability(stations.features[0]);
+if (stationWithAvailability) {
+    const { count, statusCounts } = stationWithAvailability.properties.chargingPark.availability.chargingPointAvailability;
+    console.log(`${statusCounts.Available ?? 0} of ${count} charging points available`);
+}
+```
+
+- A place without a `dataSources.chargingAvailability.id` resolves to `undefined` without a request.
+- An aborted `signal` rejects; every other failure resolves to `undefined`.
+
+## Charging stations and points on search results
+
+An EV search result already describes its hardware in `place.properties.chargingPark`, without
+real-time status; [EV charging stations](../../core/places.mdx#ev-charging-stations) lists its
+fields. Only one of a charging point's connectors can charge at a time.
+
+```javascript
+const { chargingPark } = stations.features[0].properties;
+
+chargingPark?.connectors.forEach(({ connector, count }) => {
+    console.log(`${count} × ${connector.type}, ${connector.ratedPowerKW} kW (${connector.chargingSpeed})`);
+});
+
+chargingPark?.chargingStations?.forEach((chargingStation) => {
+    chargingStation.chargingPoints.forEach((point) => {
+        const plugs = point.connectors?.map((connector) => connector.type).join(' or ');
+        console.log(`${point.evseId ?? chargingStation.id}: ${plugs}`);
+        if (point.capabilities.includes('PlugAndCharge')) console.log('  Plug & Charge');
+        if (point.restrictions.includes('Customers')) console.log('  customers only');
+    });
+});
+```
+
+## Understanding availability data
+
+The availability lands in `chargingPark.availability`. A place with no `chargingPark` of its own,
+such as a [route charging stop](../routing/long-distance-ev-routing.mdx), also gets
+`chargingPark.connectors`, counted from the availability, but no static `chargingStations`:
+
+- `chargingPointAvailability` – The `count` of charging points and their `statusCounts` by `Available`, `Reserved`, `Occupied`, `OutOfService` or `Unknown`; a status appears only when a point has it
+- `connectorAvailabilities` – Connectors counted per type and power, each with its `connector`, `count` and `statusCounts` by the status of its charging point
+- `chargingStations` – The station → charging point → connector hierarchy, each charging point with its `status`
+- `accessType` – `Public`, `Authorized`, `Restricted`, `Private` or `Unknown`
+- `openingHours` – When the park is open; it also replaces `poi.openingHours`
+
+Guard each station of a `getPlacesWithEVAvailability` result with `hasChargingAvailability`, since
+one whose availability is unknown comes back unchanged:
+
+```javascript
+import { hasChargingAvailability } from '@tomtom-org/maps-sdk/services';
+
+stationsWithAvailability.features.forEach((station) => {
+    const { chargingPark } = station.properties;
+    if (!hasChargingAvailability(chargingPark)) return;
+
+    const { accessType, connectorAvailabilities, chargingStations } = chargingPark.availability;
+    console.log(`Access: ${accessType}`);
+
+    connectorAvailabilities.forEach(({ connector, count, statusCounts }) => {
+        console.log(`${connector.type}, ${connector.ratedPowerKW} kW: ${statusCounts.Available ?? 0}/${count} available`);
+    });
+
+    chargingStations.forEach((chargingStation) => {
+        chargingStation.chargingPoints.forEach((point) => {
+            console.log(`${point.evseId ?? chargingStation.id}: ${point.status}`);
+        });
+    });
+});
+```
+
+## Integration with map display
+
+The [Places module](../../map/places.mdx) shows the result as it is. With `evAvailability.visible`
+set, it labels each station with its available and total charging points, green when the available
+share reaches `threshold` (default `0.3`) and red below it; the station's pin follows the same
+threshold. Both are knobs in the [places knob catalogue](../../map/places-styling.mdx#every-setting-as-data).
+
+```javascript
+import { PlacesModule } from '@tomtom-org/maps-sdk/map';
+
+const placesModule = await PlacesModule.create(map, {
+    evAvailability: {
+        visible: true,
+        threshold: 0.3,
+        formatText: (available, total) => `${available} of ${total} free`, // default: `${available}/${total}`
+    },
+});
+
+await placesModule.show(stationsWithAvailability);
+```
+
+## Filtering by connector type
+
+Keep the stations with a free connector of the types your vehicle takes:
+
+```javascript
+import { hasChargingAvailability } from '@tomtom-org/maps-sdk/services';
+
+const hasFreeConnector = (station, connectorTypes) =>
+    hasChargingAvailability(station.properties.chargingPark) &&
+    station.properties.chargingPark.availability.connectorAvailabilities.some(
+        ({ connector, statusCounts }) => connectorTypes.includes(connector.type) && (statusCounts.Available ?? 0) > 0,
+    );
+
+const compatibleStations = {
+    ...stationsWithAvailability,
+    features: stationsWithAvailability.features.filter((station) =>
+        hasFreeConnector(station, ['IEC62196Type2CCS', 'Chademo']),
+    ),
+};
+```
+
+To search only for stations with those connectors in the first place, pass them as the search's
+[`filters.connectors`](./search.mdx#filters).
+
+## Related guides and examples
+
+### Related guides
+- **[Discover places](./search.mdx)** - Finding charging stations by category, connector and power
+- **[Places module](../../map/places.mdx)** - Charging stations on the map
+- **[Long distance EV routing](../routing/long-distance-ev-routing.mdx)** - Routes with charging stops
+
+### Related examples
+- **[EV charging stations search](../../../examples/ev-charging-stations-search)** - Charging station availability, with each station's charging points and their status
+- **[EV charging stations custom display](../../../examples/ev-charging-stations-custom-display)** - Connectors with and without availability, with custom icons and text
+- **[Places customization playground](../../../examples/places-customize-playground)** - Custom icons and labels, charging locations among them

@@ -1,0 +1,158 @@
+---
+title: Reverse geocoding
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.64.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+[`reverseGeocode()`](/maps-sdk-js/api-reference/functions/services.reverseGeocode.html) turns
+coordinates, such as a map click or a GPS fix, into the address at that point.
+
+<SDKGuideLiveCodingExample exampleDirectory="nodejs-rev-geo" />
+
+## Basic reverse geocoding usage
+
+### Simple coordinate to address conversion
+
+```javascript
+import { reverseGeocode } from '@tomtom-org/maps-sdk/services';
+
+const place = await reverseGeocode({ position: [4.9041, 52.3676] }); // [longitude, latitude]
+
+console.log(place.properties?.address?.freeformAddress); // e.g. "Dam, 1012 Amsterdam, Netherlands"
+```
+
+`position` takes `[longitude, latitude]` or any GeoJSON carrying a point. The call resolves one
+`Place`, the nearest addressable location:
+
+- **`geometry` is the point you queried.** The point the service matched it to is
+  `properties.originalPosition`, as [Reverse geocoding properties](../../core/places.mdx#reverse-geocoding-properties) describes.
+- **`properties.type`** is `'Point Address'`, `'Street'` or `'Geography'`; a `Geography` result also
+  carries its `geographyType`.
+- **`properties.entryPoints`** lists the address's [entrances](../../core/places.mdx#entry-points), unclassified.
+- **No match leaves `properties` out**, so guard it as above.
+- **No `dataSources`**: a reverse geocoded area has no ID [geometry data](./geometry-data.mdx) takes.
+  Geocode or search for the area to get its outline.
+
+### Enhanced result processing
+
+Address components depend on the location and the data there: a city address is detailed, a remote
+point may only name its region. [Address](../../core/places.mdx#address) lists every component.
+
+```javascript
+const address = place.properties?.address;
+if (address) {
+    console.log(address.streetName, address.streetNumber, address.municipality, address.country);
+}
+```
+
+## Advanced configuration options
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `position` | `HasLngLat` | **Required.** The point to look up. |
+| `radiusMeters` | `number` | How far from `position` to look for an address, in metres. Positive. |
+| `geographyTypes` | `GeographyType[]` | Return the containing area of these types instead of the street address, e.g. `['Municipality']`. |
+| `heading` | `number` | Travel direction in degrees, −360 to 360 (`0` north, `90` east), for a direction-aware street match. Ignored with `geographyTypes`. |
+| `geopoliticalView` | `GeopoliticalView` | See [Geopolitical view](#geopolitical-view). |
+
+It also takes the [options every service call takes](../request-options-and-errors.mdx), `language`
+among them. The full type is [`ReverseGeocodingParams`](/maps-sdk-js/api-reference/types/services.ReverseGeocodingParams.html).
+
+```javascript
+// The nearest address within 100 m, in English
+const nearby = await reverseGeocode({ position: [4.9041, 52.3676], radiusMeters: 100, language: 'en-GB' });
+
+// The municipality the point is in
+const municipality = await reverseGeocode({ position: [4.9041, 52.3676], geographyTypes: ['Municipality'] });
+
+// The street matched along an eastward heading
+const onTheRoad = await reverseGeocode({ position: [4.9041, 52.3676], heading: 90 });
+```
+
+A small `radiusMeters` is more precise but may find nothing in sparse areas.
+
+### Geopolitical view
+
+In a disputed territory, the country an address belongs to depends on the geopolitical view. The same
+point in Gilgit is in Pakistan from the international view and in India from the Indian one:
+
+```javascript
+const unified = await reverseGeocode({ position: [74.31, 35.92], geopoliticalView: 'Unified' });
+const indian = await reverseGeocode({ position: [74.31, 35.92], geopoliticalView: 'IN' });
+// unified.properties.address.country: 'Pakistan', indian.properties.address.country: 'India'
+```
+
+`geopoliticalView` defaults to the global one, which the map follows too; see
+[Geopolitical views](../../core/geopolitical-views.mdx).
+
+## Integration patterns
+
+### Map click integration
+
+Clicks can come faster than answers, so run each lookup through
+[`createLatestRequest`](../request-options-and-errors.mdx#keeping-only-the-latest-request), which
+also covers what a retired lookup resolves to, `cancel()` and deadlines:
+
+```javascript
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { createLatestRequest, reverseGeocode } from '@tomtom-org/maps-sdk/services';
+
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+const latestLookup = createLatestRequest();
+
+map.mapLibreMap.on('click', async (event) => {
+    const lookup = await latestLookup.run((signal) =>
+        reverseGeocode({ position: event.lngLat.toArray(), signal })
+    );
+    if (!lookup.current) return; // a newer click retired this lookup
+
+    const address = lookup.value.properties?.address?.freeformAddress;
+    if (address) showAddress(address);
+});
+```
+
+The [reverse geocoding playground](../../../examples/rev-geo-playground) adds a pin and an address
+popup. To show the result with the [Places module](../../map/places.mdx), the pin sits on the queried
+point; set `geometry.coordinates` to `properties.originalPosition` first to place it on the address.
+
+### GPS location processing
+
+```javascript
+navigator.geolocation.getCurrentPosition(async ({ coords }) => {
+    const place = await reverseGeocode({ position: [coords.longitude, coords.latitude], radiusMeters: 50 });
+
+    const currentAddress = place.properties?.address;
+    if (currentAddress) displayCurrentLocation(currentAddress.freeformAddress);
+});
+```
+
+## Error handling and edge cases
+
+- **No address found** resolves a place without `properties`, not an error.
+- **A failed request** rejects with an `SDKError`; [Error handling](../request-options-and-errors.mdx#error-handling)
+  covers its kinds, cancellation included.
+- **Ocean and remote points** may return only a region or a country.
+- **Many points at once** cost one request each: send them at a pace your key's rate limit allows,
+  and cache answers for points you look up repeatedly, rounding the coordinates for the cache key.
+
+## Related guides and examples
+
+### Map integration
+- **[Places module](../../map/places.mdx)** - Reverse geocoded locations on the map
+- **[User interaction events](../../map/user-events.mdx)** - The map clicks that trigger a lookup
+
+### Related examples
+- **[Reverse geocoding playground](../../../examples/rev-geo-playground)** - A lookup per map click, with a pin and an address popup
+- **[Geopolitical views playground](../../../examples/geopolitical-views-playground)** - The address of a place in a disputed territory, from each geopolitical view
+- **[Reverse geocoding JSON](../../../examples/rev-geo-json)** - The raw response data
+- **[Pin interaction](../../../examples/pin-interaction)** - Pins that show their address on click
+
+### Related services
+- **[Geocoding](./geocoding.mdx)** - Addresses to coordinates
+- **[Discover places](./search.mdx)** - Places around a point

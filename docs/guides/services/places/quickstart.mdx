@@ -1,0 +1,85 @@
+---
+title: Places quickstart
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.64.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The places services find places by text, area or route, turn addresses into coordinates and back,
+and return each result as a GeoJSON [place](../../core/places.mdx) that the
+[Places module](../../map/places.mdx) shows without mapping fields first.
+
+## Basic setup
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+
+TomTomConfig.instance.put({ apiKey: 'YOUR_API_KEY' });
+```
+
+The [global configuration](../../core/global-config.mdx) also sets the language and the
+geopolitical view every call inherits; a single call overrides them as in
+[Request options and errors](../request-options-and-errors.mdx#per-call-overrides).
+
+## Quick examples
+
+### Search for places
+
+```javascript
+import { discoverPlaces } from '@tomtom-org/maps-sdk/services';
+
+const results = await discoverPlaces({
+    query: 'coffee shops',
+    geoBias: { position: [4.9041, 52.3676] }, // Amsterdam
+});
+
+console.log(results.features[0].properties.poi?.name);
+```
+
+### Geocode an address
+
+```javascript
+import { geocodeOne } from '@tomtom-org/maps-sdk/services';
+
+const place = await geocodeOne('Dam Square, Amsterdam');
+const coordinates = place.geometry.coordinates; // [lng, lat]
+```
+
+### Reverse geocode coordinates
+
+```javascript
+import { reverseGeocode } from '@tomtom-org/maps-sdk/services';
+
+const place = await reverseGeocode({ position: [4.9041, 52.3676] });
+console.log(place.properties?.address?.freeformAddress);
+```
+
+## Next steps
+
+| Guide | Covers |
+| --- | --- |
+| [Discover places](./search.mdx) | Fuzzy, geometry and along-route search, filters, pagination |
+| [Search suggestions](./suggest.mdx) | Places, brands and categories for a search box |
+| [Place details](./place-by-id.mdx) | A place's full details by its ID |
+| [POI categories](./poi-categories.mdx) | The category codes, found by name or synonym |
+| [Geocoding](./geocoding.mdx) | Addresses to coordinates |
+| [Reverse geocoding](./reverse-geocoding.mdx) | Coordinates to an address |
+| [Geometry data](./geometry-data.mdx) | The outlines of areas |
+| [EV charging stations availability](./ev-charging-stations-availability.mdx) | Real-time charging point status |
+
+## Related guides and examples
+
+### Related examples
+- **[Geocode](../../../examples/geocode)** - A geocoded address on the map
+- **[Reverse geocode](../../../examples/reverse-geocode)** - The address of a point
+- **[Search playground](../../../examples/search-playground)** - Search-as-you-type with `getSearchSuggestions()`
+- **[Geometry search playground](../../../examples/geometry-search-playground)** - Searching inside area boundaries
+
+### Map integration
+- **[Places module](../../map/places.mdx)** - Search results on the map
+- **[Geometries module](../../map/geometries.mdx)** - Area outlines from geometry data
