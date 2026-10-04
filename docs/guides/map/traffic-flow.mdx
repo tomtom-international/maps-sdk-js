@@ -1,0 +1,275 @@
+---
+title: Traffic flow module
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.63.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Traffic Flow Module controls the [map layers](./styles.mdx) that display real-time traffic speed conditions across the entire road network using color-coded road segments.
+Green indicates free-flowing traffic, yellow/orange represents moderate speeds, and red shows congestion. Dark gray indicates road closures.
+
+**What this module owns:** whether the style's traffic-flow layers are shown, for which roads, and how they look — visibility, filters, and the [colour of each flow level and the line width](#appearance). See [Who owns what](./modules.mdx#who-owns-what).
+
+<GuideDemo demo="traffic-flow" />
+
+**Looking for something else?**
+- For traffic **events** (accidents, closures, construction) across the map, see [Traffic Incidents Module](./traffic-incidents.mdx)
+- For traffic **incidents along a specific route**, see [Routing Module](./routes.mdx)
+
+## Initialization
+
+```javascript
+import { TomTomMap, TrafficFlowModule } from '@tomtom-org/maps-sdk/map';
+
+const map = new TomTomMap( { mapLibre: { container: 'map' } });
+const trafficFlowModule = await TrafficFlowModule.get(map);
+```
+
+## Visibility
+
+Traffic flow is hidden by default: the style parts the SDK adds — traffic flow, traffic incidents and the hillshade — are hidden until you show them.
+
+You can make it visible during initialization:
+```javascript
+const trafficFlowModule = await TrafficFlowModule.get(map, { visible: true });
+```
+
+You can change visibility later using the `setVisible` method, and read the setting back with
+`isVisible()`, which is `false` until something shows the flow.
+```javascript
+trafficFlowModule.setVisible(true);
+trafficFlowModule.isVisible(); // true
+```
+
+## Filtering
+
+A filter can be applied either during module initialization or later through `updateConfig`.
+
+```javascript
+// Initialize with filter
+const trafficFlowModule = await TrafficFlowModule.get(map, {
+    filters: ...,
+});
+
+// Apply or update filter later
+trafficFlowModule.updateConfig({ filters: ... });
+```
+
+### Road category
+
+Display traffic flow only for specific road types. The playground below filters by road category from checkboxes:
+
+<GuideDemo demo="traffic-flow-playground" />
+
+```javascript
+// Show only major highways
+trafficFlowModule.updateConfig({
+    filters: {
+        roadCategories: {
+            show: 'only',
+            values: ['motorway', 'trunk']
+        }
+    }
+});
+
+// Hide local streets
+trafficFlow.updateConfig({
+    filters: {
+        roadCategories: {
+            show: 'all-except',
+            values: ['street']
+        }
+    }
+});
+
+// Show only major local roads within tertiary category
+trafficFlow.updateConfig({
+    filters: {
+        roadCategories: {
+            show: 'only',
+            values: ['tertiary']
+        },
+        roadSubCategories: {
+            show: 'only',
+            values: ['major_local']
+        }
+    }
+});
+```
+
+**Available Road Categories:**
+- `motorway` - Major highways
+- `trunk` - Major roads
+- `primary` - Primary roads
+- `secondary` - Secondary roads
+- `tertiary` - Tertiary roads
+- `street` - Local streets
+
+**Available Road Subcategories:**
+- `tertiary`
+  - `connecting` - Roads connecting different areas
+  - `major_local` - Major roads within local areas
+- `street`
+  - `local` - Standard local streets
+  - `minor_local` - Minor residential streets
+
+### Road closures
+
+Display or exclude road closures:
+
+```javascript
+// Show only road closures
+trafficFlow.updateConfig({
+    filters: { roadClosures: 'only' }
+});
+
+// Exclude road closures
+trafficFlow.updateConfig({
+    filters: { roadClosures: 'all-except' }
+});
+```
+
+### Multiple filters
+
+The criteria of one filter all apply. `any` adds further filters a road may match instead:
+
+```javascript
+// Show motorways OR road closures
+trafficFlow.updateConfig({
+    filters: {
+        roadCategories: { show: 'only', values: ['motorway'] },
+        any: [{ roadClosures: 'only' }]
+    }
+});
+```
+
+### Reset filters
+
+Remove all filters and show all traffic flow:
+
+```javascript
+trafficFlow.updateConfig({ filters: undefined });
+```
+
+## Appearance
+
+`colors` recolours each flow level, and `widthFactor` (0.5 to 2) multiplies the width of the flow lines. Each restyles the style's own flow layers and reads the style's own value while unset; the outline of a level follows its colour, as the darker rim the style designed.
+
+```javascript
+const trafficFlowModule = await TrafficFlowModule.get(map, {
+    visible: true,
+    colors: { slow: '#f59e0b', stationary: '#7f1d1d' },
+    widthFactor: 1.5,
+});
+setKnob(trafficFlowModule, trafficFlowKnobCatalogue, 'colors.free', '#16a34a');
+```
+
+The levels are `free`, `slow`, `queueing`, `stationary`, and `closed`, the outline of closed roads. [`getStyleColor`](./styling.mdx#the-knob-catalogue) reads them by their map-wide ids, such as `traffic.flow.colors.slow`, with or without the module, and so does the [map effects plugin](../plugins/map-effects-bloom.mdx#scoping-bloom-by-colour)'s bloom scope.
+
+## Events
+
+Handle user interactions with traffic flow segments:
+
+```javascript
+// Click events
+trafficFlow.events.on('click', (feature) => {
+    ...
+});
+
+// Hover events
+trafficFlow.events.on('hover', (feature) => {
+    ...
+});
+
+// Long hover events
+trafficFlow.events.on('long-hover', (feature) => {
+    ...
+});
+
+// Remove event listeners
+trafficFlow.events.off('click', handler);
+```
+
+## Querying visible features
+
+Use `getShown()` to retrieve all traffic flow features currently rendered in the visible map area:
+
+```javascript
+const shown = trafficFlowModule.getShown();
+console.log(`Visible flow segments: ${shown.trafficFlow.length}`);
+shown.trafficFlow.forEach(segment => {
+    console.log('Road segment:', segment.properties);
+});
+```
+
+This is useful for analyzing traffic conditions in the current viewport:
+
+```javascript
+const { trafficFlow } = trafficFlowModule.getShown();
+const closedRoads = trafficFlow.filter(segment => segment.properties.roadClosure);
+console.log(`Road closures in view: ${closedRoads.length}`);
+```
+
+### What the flow data can and cannot tell you
+
+Orbis traffic flow is vector tiles only, so `getShown()` is the whole of flow as data: there is no service for a road, a point or an area.
+
+- **Carried:** `relativeSpeed` (0 to 1, current speed relative to free flow), `roadCategory`, `roadSubcategory`, `roadClosure`, `leftHandTraffic` and `displayClass`.
+- **Empty with the standard styles:** `absoluteSpeed`, `partOfTwoWayRoad` and `openlr`. The styles don't request the `absolute_speed`, `part_of_two_way_road` or `openlr` tile tags; a custom style's flow source can.
+- **On no Orbis flow tile:** free-flow speed, travel time, delay in seconds and confidence.
+- **Scope:** the current viewport and zoom. A segment crossing a tile boundary appears once per tile.
+
+For historical speed and congestion aggregated over an area, use the [Traffic Area Analytics](../services/traffic/traffic-area-analytics.mdx) service.
+
+## Every setting as data
+
+`trafficFlowKnobCatalogue` lists the module's plain-valued settings with their kind, options and, where one holds, their default, readable with no map loaded:
+
+```javascript
+import { trafficFlowKnobCatalogue } from '@tomtom-org/maps-sdk/map';
+
+// [{ id: 'visible', kind: 'toggle', description: '…', default: false },
+//  { id: 'filters.roadCategories.show', kind: 'enum', description: '…', options: ['only', 'all-except'] },
+//  { id: 'filters.roadCategories.values', kind: 'enums', description: '…', options: ['motorway', …, 'track'] }, …]
+```
+
+| Id | Kind |
+|---|---|
+| `visible` | toggle, `false` by default |
+| `filters.roadCategories.show`, `filters.roadSubCategories.show`, `filters.roadClosures` | enum: `only` or `all-except` |
+| `filters.roadCategories.values` | enums: the road categories |
+| `filters.roadSubCategories.values` | enums: the street, then the service road subcategories |
+| `colors.free`, `colors.slow`, `colors.queueing`, `colors.stationary`, `colors.closed` | colour, the style's own while unset |
+| `widthFactor` | factor 0.5–2, `1` by default |
+
+- The `filters` knobs set the fields of the [filter](#filtering); a road matching one of its `any` alternatives, which only the configuration sets, shows too. Each `show` knob goes with its `values` knob, and unset, nothing is filtered.
+- The `colors` and `widthFactor` knobs set the [look of the flow lines](#appearance).
+- `trafficFlowKnobIds` lists the ids, `TrafficFlowKnobId` is their union, and `TrafficFlowKnobValueOf<ID>` the plain value one takes. The entry shape and its kinds are the [modules guide](./modules.mdx#every-setting-as-data)'s.
+- Not in it: `events`.
+- The [traffic config playground](../../examples/traffic-config-playground) builds its flow and incidents controls, the filters included, from the two catalogues and sets each with [`setKnob`](./modules.mdx#setting-a-knob-by-its-id).
+
+## API reference
+
+For complete documentation of all Traffic Flow Module properties, methods, and types, see the **[TrafficFlowModule API Reference](/maps-sdk-js/api-reference/classes/map.TrafficFlowModule.html)**.
+
+## Related guides and examples
+
+### Traffic overview
+- **[Traffic Overview](./traffic.mdx)** - Overview of all traffic visualization options including flow, incidents, and route-specific traffic
+
+### Related traffic modules
+- **[Traffic Incidents Module](./traffic-incidents.mdx)** - Display real-time traffic events and incidents
+- **[Routing Module](./routes.mdx)** - Display routes with traffic incidents along the path
+
+### Related examples
+- **[Traffic Flow](../../examples/traffic-flow)** - Interactive traffic flow visualization with filtering
+- **[Traffic Config Playground](../../examples/traffic-config-playground)** - Explore traffic configuration options
+- **[Traffic flow playground](../../examples/traffic-flow-playground)** - Flow filtered by road category, with a popup per segment
+- **[Map styling playground](../../examples/map-styling-playground)** - The flow colour and width knobs, next to every other look knob of the map
+- **[Traffic flow with bloom](../../examples/traffic-bloom-effect)** - Flow tubes glowing over a mono dark map, through the [map effects plugin](../plugins/map-effects.mdx)
+

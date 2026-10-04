@@ -1,0 +1,266 @@
+---
+title: Reachable ranges module
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.63.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+`ReachableRangesModule` draws the areas reachable from one or more origins within a budget of time,
+distance, fuel or charge, as [`calculateReachableRanges`](../services/routing/reachable-ranges.mdx)
+returns them: one band per range, titled from its budget, nested around its own origin and coloured
+from the map. Calculating the ranges needs an API key with Calculate Reachable Range access, which is
+in private preview; the module draws them on any map.
+
+**What this module owns:** the bands, their borders and the labels along them, and how they look —
+the fill style, palette, labels and highlight below. It never restyles the base map underneath, which
+belongs to the [Styling Foundations module](./styling.mdx), and styling knobs never touch its layers: bands left
+without a `palette` read the map's [accent and land colours](#band-colours). See
+[Who owns what](./modules.mdx#who-owns-what).
+
+The demo below shows 10, 20 and 30 minutes of driving from two stations, with every setting of the
+module on its panel:
+
+<GuideDemo demo="reachable-ranges-playground" />
+
+## Showing ranges
+
+```typescript
+import { ReachableRangesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { calculateReachableRanges } from '@tomtom-org/maps-sdk/services';
+
+const origin: [number, number] = [4.9041, 52.3676];
+const map = new TomTomMap({ mapLibre: { container: 'map', center: origin, zoom: 9 } });
+const rangesModule = await ReachableRangesModule.create(map);
+
+await rangesModule.show(
+    await calculateReachableRanges([10, 20, 30].map((value) => ({ origin, budget: { type: 'timeMinutes', value } }))),
+);
+```
+
+`show` replaces the ranges shown, and `clear` removes them. The module draws what
+`calculateReachableRanges` returns unchanged:
+
+- **Origins.** Ranges are grouped by their `origin`, so one `show` can hold the bands of several
+  places, each nested around its own, and one request may mix origins.
+- **Order.** Ranges can come in any order: a smaller range always draws over the larger ones around it.
+- **Titles.** Each band's border is labelled from its budget, as described [below](#titles).
+
+```typescript
+const origins: [number, number][] = [[4.9003, 52.3791], [5.1109, 52.0894]];
+await rangesModule.show(
+    await calculateReachableRanges(
+        origins.flatMap((origin) => [10, 20, 30].map((value) => ({ origin, budget: { type: 'timeMinutes', value } }))),
+    ),
+);
+```
+
+## Titles
+
+A range's title is the text of the labels along its border. Unset, it is the range's `budget` with
+its unit — `10 min`, `5 km`, `20 % spent` — else its position in what `show` was given, from 1. A
+`label.title` function of your own replaces it, and changing it relabels the bands shown:
+
+```typescript
+rangesModule.updateConfig({ label: { title: (feature, index) => `Zone ${index + 1}` } });
+```
+
+`label` also styles the labels with the fields every module's labels take: `size`, `color`,
+`haloColor`, `haloWidth`, `opacity` and `font`. Unset colours adapt to the map style: dark text with a
+white halo on light styles, the reverse on dark ones. `updateConfig` replaces the whole `label`, so
+spread the current one to keep a title, or set one field with `setKnob`:
+
+```typescript
+rangesModule.updateConfig({ label: { ...rangesModule.getConfig()?.label, size: 13, color: '#1d3f8a' } });
+```
+
+## Fill styles
+
+| `fillStyle` | Draws |
+|---|---|
+| `'filled'` (default) | each band coloured, the innermost on top |
+| `'outline'` | only each range's border, thick and coloured |
+| `'inverted'` | what lies **out** of reach: the world beyond the largest range of every origin, then a ring outside each smaller one |
+
+```typescript
+const outOfReach = await ReachableRangesModule.create(map, { fillStyle: 'inverted' });
+```
+
+The three are the [geometries module's fill styles](./geometries.mdx#fill-styles), applied per band.
+
+## Band colours
+
+Left to the map, the bands ramp from its [accent](./styling-map-colors.mdx#the-accent-what-a-theme-reaches-beyond-the-base-map)
+on the innermost band toward its land colour on the outermost, both read from `map.mapColors`.
+`'inverted'` ramps the other way, deepening away from the origin. On a map no theme has coloured,
+the ramp follows the style's light or dark side instead: navy `#0A3653` toward white on light
+styles, sky blue `#5FA8D8` toward `#333333` on dark ones, and it repaints when you switch between
+them. Theme the map and the bands repaint with it, such as with the
+[map-theme plugin](../plugins/map-theme.mdx):
+
+```typescript
+import { StylingFoundationsModule } from '@tomtom-org/maps-sdk/map';
+import { deriveMapColors } from '@tomtom-org/maps-sdk-plugin-map-theme';
+
+const styling = await StylingFoundationsModule.get(map);
+styling.setMapColors(deriveMapColors(['#1d3f8a', '#e63312', '#f5d000', '#f4f1ea'])); // the bands follow
+```
+
+`fill.palette` sets colours of your own instead, innermost band first, starting over after the last.
+No map colour change touches them, and an empty list hands the colours back to the map:
+
+```typescript
+rangesModule.applyConfig({ fill: { palette: ['#b3001b', '#e85d04', '#faa307'] } });
+rangesModule.updateConfig({ fill: { palette: [] } });
+```
+
+Bands are ranked per origin, so with several origins the ranges of the same rank share a colour.
+
+## Hovered and clicked bands
+
+Once a handler covers the bands, the one under the pointer draws a denser fill and a wider border,
+in its own colour, and so does a clicked one. `highlight` sets how much: unset, the fill opacity
+doubles, at most opaque, and the border width grows 1.75 times. A factor of `1` draws a hovered band
+as any other:
+
+```typescript
+rangesModule.updateConfig({ highlight: { fillOpacityFactor: 1, lineWidthFactor: 2.5 } }); // a bolder border alone
+```
+
+Put that state from your own UI with the module's [event state methods](./user-events.mdx#event-states).
+
+## Events
+
+`events` covers the bands and their labels. A handler receives the band as drawn, with the `title`
+and `color` the module gave it among its `properties`:
+
+```typescript
+rangesModule.events.on('click', (band) => console.log(band.properties.title)); // '20 min'
+```
+
+Two named scopes single one surface out: `events.geometry` for the bands, `events.geometryLabel`
+for their labels. Both take the same handlers and [event states](./user-events.mdx#event-states):
+
+```typescript
+rangesModule.events.geometry.on('hover', (band) => showTooltip(band.properties.title));
+```
+
+The [user events guide](./user-events.mdx) covers the event types and their timings.
+
+## Showing and hiding
+
+`setVisible` hides and shows the bands, borders and labels together, and `visible: false` at
+creation starts the module hidden. `show()` and `clear()` never change it: ranges shown while hidden
+appear on `setVisible(true)`, and the state survives a style change.
+
+```typescript
+rangesModule.setVisible(!rangesModule.isVisible());
+```
+
+## Layer position
+
+The bands sit below the map's labels unless `beforeLayerConfig` says otherwise. A single target
+places the fill and the borders together; the record form `{ all?, fill?, line? }` places them apart,
+as on the [geometries module](./geometries.mdx#layer-positioning-and-styling):
+
+```typescript
+const ranges = await ReachableRangesModule.create(map, {
+    beforeLayerConfig: { fill: 'lowestRoadLine', line: 'lowestLabel' }, // fill under the roads
+});
+```
+
+## Layer overrides
+
+For what the settings don't cover, `layers` takes a partial MapLibre layer for the bands (`fill`),
+their borders (`line`) and labels (`label`, `lineLabel`), the same entries as
+[the geometries module's](./geometries.mdx#custom-styling-configuration). `paint` and `layout` merge
+per property onto the module's own, in every fill style:
+
+```typescript
+ranges.updateConfig({ layers: { line: { paint: { 'line-dasharray': [2, 1] } } } });
+```
+
+## Restyling and saving the settings
+
+A config change restyles the bands already shown, without calculating the ranges again:
+`updateConfig` changes only what it is given, `applyConfig` replaces the whole config, and
+`resetConfig` returns to the defaults.
+
+`getConfig()` returns the settings to store. Everything in it survives JSON except `label.title`, a
+function, so `ReachableRangesModuleSerializableConfig` types what you parse back, and a replay adds
+`label.title` again in code:
+
+```typescript
+import type { ReachableRangesModuleSerializableConfig } from '@tomtom-org/maps-sdk/map';
+
+localStorage.setItem('ranges', JSON.stringify(rangesModule.getConfig()));
+
+const saved: ReachableRangesModuleSerializableConfig = JSON.parse(localStorage.getItem('ranges') ?? '{}');
+rangesModule.applyConfig({ ...saved, label: { ...saved.label, title: (feature, index) => `Zone ${index + 1}` } });
+```
+
+## Every setting as data
+
+`reachableRangesKnobCatalogue` lists every plain-valued setting of the module with its kind, its
+range or options and, where one value holds everywhere, its default. Each id is the setting's path
+in the config, so a panel can build its controls from it and set each with `setKnob`:
+
+```typescript
+import { reachableRangesKnobCatalogue, setKnob } from '@tomtom-org/maps-sdk/map';
+
+setKnob(rangesModule, reachableRangesKnobCatalogue, 'label.size', 13);
+```
+
+| Id | Kind |
+|---|---|
+| `visible`, `fillStyle`, `fill.palette` | toggle, enum, colours |
+| `highlight.fillOpacityFactor`, `highlight.lineWidthFactor` | factor, 1 to 4 and 1 to 3 |
+| `label.size`, `label.color`, `label.haloColor`, `label.haloWidth`, `label.opacity`, `label.font` | number, colour, colour, number, number, enums |
+
+- `reachableRangesKnobIds` lists the ids in catalogue order, `ReachableRangesKnobId` is their
+  union, and `ReachableRangesKnobValueOf<ID>` the plain value one takes.
+- Not in it: `beforeLayerConfig`, `layers` and `title`, which take structured, MapLibre or function
+  values; and `events`.
+- Its entries share their shape, `KnobEntry`, with every
+  [module's catalogue](./modules.mdx#every-setting-as-data).
+
+## Reading shown data
+
+`getShown()` returns what the module draws, as prepared for display: `geometry`, the bands with their
+titles and colours, and `geometryLabel`, the label points derived from them. With `fillStyle: 'inverted'`,
+`geometry` holds the shaded rings and a copy of each range for its border.
+
+```typescript
+const { geometry } = rangesModule.getShown();
+console.log(`Bands: ${geometry.features.length}`);
+```
+
+## Multiple module instances
+
+The module is data-owned: each instance has its own sources and layers, so two can show two sets of
+ranges side by side, apart from any `GeometriesModule` on the same map.
+
+```typescript
+const byCar = await ReachableRangesModule.create(map);
+const byBike = await ReachableRangesModule.create(map, { fillStyle: 'outline' });
+```
+
+## Related guides and examples
+
+### Related guides
+- **[Reachable ranges](../services/routing/reachable-ranges.mdx)** - Calculating the ranges: budget types, vehicles, ranges that can't be calculated and cancelling a batch
+- **[Geometries module](./geometries.mdx)** - Polygons of your own, styled per feature rather than as bands
+- **[Map theme plugin](../plugins/map-theme.mdx)** - The map colours the bands follow
+
+### Related examples
+- **[Reachable ranges playground](../../examples/reachable-ranges-playground)** - Every knob of the module, and bands following a map theme
+- **[Reachable ranges](../../examples/reachable-ranges)** - Ranges around the clicked point, by time, distance, fuel or charge
+- **[Routing composite](../../examples/routing-composite)** - Ranges alongside a route and its places
+
+### Related map modules
+- **[Geometries module](./geometries.mdx)** - The fill styles and layer positioning the bands share
+- **[User interaction events](./user-events.mdx)** - Handling clicks and hovers on the bands

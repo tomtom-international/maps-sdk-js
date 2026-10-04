@@ -1,0 +1,238 @@
+---
+title: Incident details
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.63.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Incident Details service provides real-time and scheduled traffic incident data for a geographic area or a list of known incident IDs. Each incident is a GeoJSON Feature with a `Point` or `LineString` geometry, making results easy to display on a map or process server-side.
+
+<SDKGuideLiveCodingExample exampleDirectory="nodejs-traffic-incident-details" />
+
+## Core concepts
+
+Traffic incidents are described by:
+
+- **Category** (`category`): the type of incident — `accident`, `roadworks`, `jam`, `road-closed`, etc.
+- **Delay magnitude**: how severe the delay is — `minor`, `moderate`, `major`, or `indefinite` (road closures).
+- **Geometry**: a `Point` for localised incidents, or a `LineString` for incidents spanning a road stretch.
+- **Time validity**: whether the incident is `present` (active now) or `future` (scheduled).
+- **Events**: one or more descriptions of what is happening at the incident location.
+
+## Basic usage
+
+### Query by bounding box
+
+The `bbox` parameter accepts a raw `[minLon, minLat, maxLon, maxLat]` tuple, or any GeoJSON object — the bounding box is calculated automatically from the geometry:
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { geocodeOne, trafficIncidentDetails } from '@tomtom-org/maps-sdk/services';
+
+TomTomConfig.instance.put({ apiKey: 'YOUR_API_KEY' });
+
+// Pass a geocoded place directly — no manual bbox extraction needed
+const place = await geocodeOne('Amsterdam');
+const result = await trafficIncidentDetails({ bbox: place });
+
+result.features.forEach(incident => {
+    const { category, magnitudeOfDelay, from, to } = incident.properties;
+    console.log(`${category} — ${magnitudeOfDelay} delay: ${from} → ${to}`);
+});
+```
+
+You can also pass a raw tuple when you already have the coordinates:
+
+```javascript
+const result = await trafficIncidentDetails({
+    bbox: [4.728, 52.278, 5.08, 52.479]  // [minLon, minLat, maxLon, maxLat]
+});
+```
+
+### Query by polygon
+
+A bounding box over-covers any place that is not a rectangle. Pass the place's boundary as `polygon` instead, such as the one [`geometryData`](../places/geometry-data.mdx) returns:
+
+```javascript
+import { geocodeOne, geometryData, trafficIncidentDetails } from '@tomtom-org/maps-sdk/services';
+
+const place = await geocodeOne('Amsterdam');
+const boundary = await geometryData({ geometries: [place] });
+const result = await trafficIncidentDetails({ polygon: boundary });
+```
+
+The API only accepts a bounding box, so the request covers the polygon's bounding box and the response keeps the incidents that intersect the polygon. A `LineString` incident crossing the boundary is kept. `polygon` accepts a `Polygon` or `MultiPolygon`, a `Feature` wrapping one, or a `FeatureCollection` of them, and can't be combined with `bbox` or `ids`.
+
+### Query by incident IDs
+
+When you already know the IDs of the incidents you are interested in, look them up directly:
+
+```javascript
+const result = await trafficIncidentDetails({
+    ids: ['incident-id-1', 'incident-id-2', 'incident-id-3']
+});
+```
+
+## Filtering results
+
+### By category
+
+Use `categoryFilter` to restrict results to specific incident types:
+
+```javascript
+const result = await trafficIncidentDetails({
+    bbox: [4.728, 52.278, 5.08, 52.479],
+    categoryFilter: ['accident', 'road-closed']
+});
+```
+
+Available category values (`'animals-on-road'` and `'narrow-lanes'` only occur on the traffic vector tiles, so they are neither accepted nor returned here):
+
+| Value | Description |
+|-------|-------------|
+| `'accident'` | Traffic accident or collision |
+| `'broken-down-vehicle'` | Vehicle breakdown causing obstruction |
+| `'danger'` | Dangerous situation on the road |
+| `'flooding'` | Flooded road section |
+| `'fog'` | Fog reducing visibility |
+| `'frost'` | Frost or ice on the road |
+| `'jam'` | Traffic congestion or slow-moving traffic |
+| `'lane-closed'` | One or more lanes closed |
+| `'other'` | Other types of incidents |
+| `'rain'` | Heavy rain affecting driving conditions |
+| `'road-closed'` | Road is closed or blocked |
+| `'roadworks'` | Construction or maintenance work |
+| `'wind'` | Strong wind conditions affecting traffic |
+
+### By time validity
+
+By default only `'present'` (currently active) incidents are returned. Include `'future'` incidents to see planned works and scheduled events:
+
+```javascript
+const result = await trafficIncidentDetails({
+    bbox: [4.728, 52.278, 5.08, 52.479],
+    timeValidityFilter: ['present', 'future']
+});
+```
+
+## Working with incident data
+
+### Reading incident properties
+
+```javascript
+const incident = result.features[0];
+
+// Geometry — Point or LineString
+console.log(incident.geometry.type);        // 'Point' | 'LineString'
+console.log(incident.geometry.coordinates); // [lon, lat] or [[lon, lat], ...]
+
+const {
+    id,
+    category,            // 'accident' | 'jam' | 'roadworks' | 'road-closed' | …
+    magnitudeOfDelay,    // 'minor' | 'moderate' | 'major' | 'indefinite' | 'unknown'
+    events,
+    from,
+    to,
+    lengthInMeters,
+    delayInSeconds,
+    roadNumbers,
+    timeValidity,        // 'present' | 'future'
+    probabilityOfOccurrence,  // 'certain' | 'probable' | 'risk_of' | 'improbable'
+    startTime,           // Date | undefined
+    endTime,             // Date | undefined
+} = incident.properties;
+```
+
+### Displaying on a map
+
+Incident results are standard GeoJSON features and integrate directly with the TomTom Maps SDK:
+
+```javascript
+const result = await trafficIncidentDetails({
+    bbox: [4.728, 52.278, 5.08, 52.479]
+});
+
+// Add incidents as a GeoJSON source
+map.addSource('incidents', {
+    type: 'geojson',
+    data: {
+        type: 'FeatureCollection',
+        features: result.features
+    }
+});
+
+// Style Point incidents as circles
+map.addLayer({
+    id: 'incident-points',
+    type: 'circle',
+    source: 'incidents',
+    filter: ['==', ['geometry-type'], 'Point'],
+    paint: {
+        'circle-radius': 8,
+        'circle-color': [
+            'match', ['get', 'category'],
+            'accident',   '#e74c3c',
+            'jam',        '#e67e22',
+            'road-closed','#c0392b',
+            'roadworks',  '#f39c12',
+            '#3498db'  // default
+        ]
+    }
+});
+
+// Style LineString incidents as lines
+map.addLayer({
+    id: 'incident-lines',
+    type: 'line',
+    source: 'incidents',
+    filter: ['==', ['geometry-type'], 'LineString'],
+    paint: {
+        'line-width': 4,
+        'line-color': '#e74c3c'
+    }
+});
+```
+
+### Filtering by severity
+
+Focus on the most impactful incidents by filtering client-side on `magnitudeOfDelay`:
+
+```javascript
+const severeIncidents = result.features.filter(incident =>
+    incident.properties.magnitudeOfDelay === 'major' ||
+    incident.properties.magnitudeOfDelay === 'indefinite'
+);
+```
+
+## Error handling
+
+```javascript
+try {
+    const result = await trafficIncidentDetails({
+        bbox: [4.728, 52.278, 5.08, 52.479]
+    });
+
+    if (result.features.length === 0) {
+        console.log('No incidents in this area');
+    }
+} catch (error) {
+    // SDKServiceError contains .status (HTTP code) and .service
+    console.error('Incident Details request failed:', error.message);
+}
+```
+
+## Related guides and examples
+
+### Related examples
+- **[Traffic Incidents](../../../examples/traffic-incidents)** - Visualise incidents on an interactive map
+- **[Traffic Incident Details](../../../examples/traffic-incident-details)** - Show a city's incidents clipped to its boundary
+- **[Traffic Flow](../../../examples/traffic-flow)** - Display live traffic flow alongside incidents
+
+### Related services
+- **[Routing with Traffic](../routing/parameters.mdx)** - Plan routes that avoid live incidents
+- **[Routing Quickstart](../routing/quickstart.mdx)** - Get started with route planning

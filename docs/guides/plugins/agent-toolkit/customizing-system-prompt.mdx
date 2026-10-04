@@ -1,0 +1,241 @@
+---
+title: Customizing the system prompt
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.12.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The base system prompt teaches the LLM how to behave as a map assistant: who it is, what it can
+do, how to decline out-of-scope asks, how to format answers, how to read incomplete data, how to
+call tools, and how session state works. You rarely need to replace it wholesale — instead you
+can prepend a preamble, append instructions, or override individual **sections** while every
+other section keeps its default.
+
+## How a prompt is assembled
+
+The base prompt is split into seven named sections (exported as `SYSTEM_PROMPT_SECTIONS`).
+`createMapAgent` assembles the final prompt top-to-bottom: your optional `systemPromptPrefix`, then
+the (possibly overridden) base sections, then your optional `systemPromptSuffix` under an
+`ADDITIONAL INSTRUCTIONS:` heading.
+
+```d2
+direction: down
+
+Options: MapAgentOptions (you supply) {
+  style: {
+    fill: "#fef2f2"
+    stroke: "#f87171"
+    stroke-width: 2
+    border-radius: 8
+    font-size: 16
+    font-color: "#333"
+  }
+
+  Prefix: systemPromptPrefix {
+    style: { fill: "#fff"; stroke: "#f87171"; stroke-width: 1; border-radius: 4; font-size: 13; font-color: "#333" }
+  }
+  Overrides: "systemPrompt:\nSystemPromptSectionOverrides" {
+    style: { fill: "#fff"; stroke: "#f87171"; stroke-width: 1; border-radius: 4; font-size: 13; font-color: "#333" }
+  }
+  Suffix: systemPromptSuffix {
+    style: { fill: "#fff"; stroke: "#f87171"; stroke-width: 1; border-radius: 4; font-size: 13; font-color: "#333" }
+  }
+}
+
+Prompt: Assembled system prompt {
+  direction: down
+  style: {
+    stroke: "#333"
+    stroke-width: 3
+    fill: "#f5f5f5"
+    border-radius: 8
+    font-size: 20
+    font-color: "#333"
+  }
+
+  PrefixBlock: "systemPromptPrefix — optional preamble, no heading" {
+    style: { fill: "#fef2f2"; stroke: "#f87171"; stroke-width: 2; stroke-dash: 3; border-radius: 6; font-size: 14; font-color: "#333" }
+  }
+
+  Base: "BASE_SYSTEM_PROMPT — composeSystemPrompt(): each section overridable" {
+    direction: down
+    style: { fill: "#ffffff"; stroke: "#1b5e20"; stroke-width: 2; border-radius: 6; font-size: 15; font-color: "#333" }
+
+    identity: "identity (no heading)" {
+      style: { fill: "#e8f5e9"; stroke: "#1b5e20"; stroke-width: 1; border-radius: 4; font-size: 13; font-color: "#333" }
+    }
+    capabilities: "capabilities (no heading)" {
+      style: { fill: "#e8f5e9"; stroke: "#1b5e20"; stroke-width: 1; border-radius: 4; font-size: 13; font-color: "#333" }
+    }
+    rejectionRules: "rejectionRules → SCOPE & REJECTIONS:" {
+      style: { fill: "#e8f5e9"; stroke: "#1b5e20"; stroke-width: 1; border-radius: 4; font-size: 13; font-color: "#333" }
+    }
+    responseFormatting: "responseFormatting → RESPONSE FORMATTING:" {
+      style: { fill: "#e8f5e9"; stroke: "#1b5e20"; stroke-width: 1; border-radius: 4; font-size: 13; font-color: "#333" }
+    }
+    dataConfidence: "dataConfidence → DATA CONFIDENCE:" {
+      style: { fill: "#e8f5e9"; stroke: "#1b5e20"; stroke-width: 1; border-radius: 4; font-size: 13; font-color: "#333" }
+    }
+    toolExecution: "toolExecution → TOOL EXECUTION:" {
+      style: { fill: "#e8f5e9"; stroke: "#1b5e20"; stroke-width: 1; border-radius: 4; font-size: 13; font-color: "#333" }
+    }
+    sessionState: "sessionState → SESSION STATE:" {
+      style: { fill: "#e8f5e9"; stroke: "#1b5e20"; stroke-width: 1; border-radius: 4; font-size: 13; font-color: "#333" }
+    }
+
+    identity -> capabilities -> rejectionRules -> responseFormatting -> dataConfidence -> toolExecution -> sessionState: {
+      target-arrowhead.shape: none
+      style: { stroke: "#bbb"; stroke-width: 1 }
+    }
+  }
+
+  SuffixBlock: "ADDITIONAL INSTRUCTIONS:  ← systemPromptSuffix (optional)" {
+    style: { fill: "#fef2f2"; stroke: "#f87171"; stroke-width: 2; stroke-dash: 3; border-radius: 6; font-size: 14; font-color: "#333" }
+  }
+
+  PrefixBlock -> Base -> SuffixBlock: {
+    target-arrowhead.shape: none
+    style: { stroke: "#333"; stroke-width: 2 }
+  }
+}
+
+Options.Prefix -> Prompt.PrefixBlock: prepends {
+  style: { stroke: "#f87171"; stroke-width: 2; font-size: 13 }
+}
+Options.Overrides -> Prompt.Base: "replaces any section body\n(heading kept)" {
+  style: { stroke: "#f87171"; stroke-width: 2; font-size: 13 }
+}
+Options.Suffix -> Prompt.SuffixBlock: appends {
+  style: { stroke: "#f87171"; stroke-width: 2; font-size: 13 }
+}
+```
+
+A full-string `systemPrompt` replaces the entire grey box (and ignores the prefix and suffix); the
+prefix, suffix, and section overrides otherwise all compose together.
+
+## The sections
+
+| Section | Heading in prompt | Default governs |
+| --- | --- | --- |
+| `identity` | _(none — opening line)_ | Who the assistant is and its tone of voice. The natural hook to rebrand or set a persona. |
+| `capabilities` | _(none)_ | A compact summary of what the toolkit can do (search, routing, ranges, traffic, analysis, BYOD, map control). Anchors what `rejectionRules` steers users back toward. |
+| `rejectionRules` | `SCOPE & REJECTIONS:` | How to handle in-scope / mixed / out-of-scope / illegal requests, and that every rejection explains why and offers an in-scope next step. |
+| `responseFormatting` | `RESPONSE FORMATTING:` | Markdown usage, bolding key info, bullet lists, conciseness. |
+| `dataConfidence` | `DATA CONFIDENCE:` | Surfacing incomplete, partial, stale, or conflicting data honestly instead of presenting it as complete. |
+| `toolExecution` | `TOOL EXECUTION:` | Calling context-independent tools in parallel and using a tool's own `show` / `showOnMap` in the same step. |
+| `sessionState` | `SESSION STATE:` | The append-only entry model (`places-3`, `routes-1`), checking `recallState` before referencing an id, and never inventing ids. |
+
+Per-tool mechanics — coordinate order, `"near me"` vs `"in this area"` routing — deliberately live
+in the tool descriptions and the classifier prompt, not the base prompt, so they stay correct as
+tools change.
+
+## What the prompt doesn't reach
+
+The system prompt goes to the main model only, never to the intent classifier. The classifier sees
+the conversation and each tool's metadata (`ClassifierContext`), and picks the tools offered on a
+turn from their `classificationPrompt`. So an instruction such as "always also call
+`toggleTilesTrafficFlow`" has no effect on a turn where the classifier didn't pick that tool:
+
+- **To change when a tool is offered**, extend its `classificationPrompt` (see
+  [Per-tool classification prompts](./how-it-works.mdx#per-tool-classification-prompts)).
+- **To offer it on every turn**, set `alwaysActive: true` on its entry.
+- **Then use the prompt** to tell the model when to call it.
+
+## Four ways to shape it
+
+Prefer the least invasive option that does the job: nudge with the prefix/suffix, retune with
+section overrides, and reach for a full replacement only when you must remove base behaviour.
+
+### Prepend or append
+
+`systemPromptPrefix` and `systemPromptSuffix` keep the whole base prompt live — future SDK releases
+can refine the base sections and your agent picks them up on upgrade.
+
+```typescript
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    systemPromptPrefix: 'You work for Acme Logistics.',
+    systemPromptSuffix: 'Always respond in Spanish. Never show more than 5 places at once.',
+});
+```
+
+### Override individual sections
+
+Pass a `SystemPromptSectionOverrides` object as `systemPrompt`. Each key replaces just that
+section's **body** — the heading is added for you — and omitted sections keep their defaults:
+
+```typescript
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    systemPrompt: {
+        identity: 'You are a delivery fleet dispatcher built on the TomTom map.',
+        responseFormatting: 'Reply in Dutch, metric units, one short paragraph.',
+        // capabilities, rejectionRules, dataConfidence, toolExecution, sessionState stay default
+    },
+});
+```
+
+### Extend a default section
+
+To add to a section rather than replace it, read its default from `SYSTEM_PROMPT_SECTIONS` and
+derive a new value — handy for appending one rule, or for handing the default to a coding agent to
+rewrite under some criteria:
+
+```typescript
+import { createMapAgent, SYSTEM_PROMPT_SECTIONS } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    systemPrompt: {
+        rejectionRules: `${SYSTEM_PROMPT_SECTIONS.rejectionRules}\n- Decline weather questions.`,
+    },
+});
+```
+
+`composeSystemPrompt(overrides)` performs the same composition explicitly if you need the assembled
+string elsewhere — logging, diffing, or a token-budget check.
+
+### Full replacement
+
+The escape hatch: you own the entire prompt and re-check the base on each SDK upgrade. Import
+`BASE_SYSTEM_PROMPT` as a baseline to extend rather than starting from scratch — it carries the
+identity, capability summary, scope/rejection, formatting, data-confidence, tool-execution, and
+session-state guidance that matter for reliability.
+
+```typescript
+import { createMapAgent, BASE_SYSTEM_PROMPT } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    systemPrompt: BASE_SYSTEM_PROMPT + `
+
+ADDITIONAL INSTRUCTIONS:
+- This is a logistics application. Prioritize route efficiency over scenery.
+- Always show estimated arrival times in responses.
+- When a vehicle ID is mentioned, call getFleetVehicle before anything else.
+`,
+});
+```
+
+A full-string `systemPrompt` ignores `systemPromptPrefix` and `systemPromptSuffix` — the caller
+owns the whole prompt.
+
+## Keeping a persona prompt lean
+
+Section overrides add the base scope/formatting scaffolding around your persona text, so an
+override object can assemble into a larger prompt than an equivalent full-string version. If prompt
+size matters, lean on the base sections (don't restate what they already cover) and override only
+where the persona genuinely differs — overriding `rejectionRules` with a one-liner, for instance,
+instead of inheriting the multi-bullet default. `composeSystemPrompt(overrides).length` gives you
+the assembled character count to compare against.
+
+## Related
+
+- **[Securing your agent](./securing-your-agent.mdx)** — why the prompt is public, and why it is not the place for credentials, internal detail or a spending rule.
+- **[How it works](./how-it-works.mdx)** — where the assembled prompt is used in a turn.
+- **[Customizing tools](./customizing-tools.mdx)** — shaping the registry the prompt describes.

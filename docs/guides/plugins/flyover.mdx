@@ -1,0 +1,162 @@
+---
+title: Fly-over plugin
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.0.2"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+A camera that flies a route: it aims at the junctions ahead, frames them, keeps clear of the
+terrain, and parks the followed position, marked with an arrow, where you want it on screen.
+
+<GuideDemo demo="route-flyover-playground" />
+
+```bash
+npm install @tomtom-org/maps-sdk maplibre-gl @tomtom-org/maps-sdk-plugin-flyover
+```
+
+```javascript
+import { calculateRoute } from '@tomtom-org/maps-sdk/services';
+import { RouteFlyover } from '@tomtom-org/maps-sdk-plugin-flyover';
+
+const routes = await calculateRoute({ locations, guidance: { type: 'coded' } });
+const flyover = new RouteFlyover(map, {
+    route: routes.features[0],
+    camera: { speedKMH: 300, pitch: 76 },
+    onProgress: ({ traveledDistanceInMeters }) => showProgress(traveledDistanceInMeters),
+});
+
+flyover.start();
+```
+
+## Use cases
+
+- **Preview a drive** before it is driven: a scenic route, a delivery round, a race stage.
+- **Present a corridor** (roadworks, a new line, an itinerary) without authoring a camera path.
+- **Show a long route in a short loop**: the flight wraps at the destination and never lands.
+
+## What it needs from the route
+
+The line and its `progress`, which a calculated route carries by default. Ask for
+`guidance: { type: 'coded' }` too to unlock the `instruction` aim and the `instructions` framing;
+without guidance, both fall back to distances.
+
+## The camera
+
+Every field has a default and can be changed mid-flight with `setCamera()`.
+
+| Field | What it does | Default |
+|---|---|---|
+| `speedKMH` | ground speed of the camera | `200` |
+| `pitch` | camera tilt in degrees; the map's `maxPitch` is the ceiling | `70` |
+| `aim` | what the camera looks at down the road | next instruction, 250 m fallback |
+| `zoom` | what sets the camera's height | framed on the next 2 instructions |
+| `anchor` | where the followed position sits on screen | follows the pitch |
+
+### Aim: what the camera looks at
+
+The camera points *ahead of itself*, so it turns into a bend before reaching it.
+
+- `{ mode: 'instruction', fallbackMetersAhead }`: the next guidance instruction, the junction it is heading for. The default.
+- `{ mode: 'distance', metersAhead }`: a fixed distance down the road.
+- `{ mode: 'points', pointsAhead }`: a number of route vertices, which are denser through bends, so
+  the aim shortens where the road turns.
+
+### Zoom: how high it rides
+
+- `{ mode: 'instructions', instructionsAhead }`: fits the next N junctions in view, so hairpins
+  pull back and straights close in. The default.
+- `{ mode: 'speed' }`: lifts with the ground speed.
+- `{ mode: 'fixed', zoom }`: one zoom.
+
+In every mode the camera pulls back further where [terrain](#terrain) would block its view of the road.
+
+### Anchor: where the position sits on screen
+
+A level map is a plan, so the position belongs in the middle; a tilted one shows mostly what lies
+ahead, so the position belongs low. Absent an `anchor`, it slides down with the pitch to two thirds
+at 60°, so a top-down pass needs no mode of its own.
+
+```javascript
+import { anchorForPitch } from '@tomtom-org/maps-sdk-plugin-flyover';
+
+flyover.setCamera({ anchor: { x: 0.5, y: 0.67 } }); // fractions of the viewport
+const anchor = anchorForPitch(76); // what a pitch would choose
+```
+
+The camera looks at the road on the ground, so the anchor holds over terrain at any pitch and zoom.
+A changed anchor is eased onto, not jumped to.
+
+## The marker
+
+An arrow lies on the road at the followed position, facing along it. Restyle it, replace it or hide
+it with `marker`, and change it mid-flight with `setMarker()`.
+
+```javascript
+// The arrow, recoloured with the SDK's SVG icon options.
+new RouteFlyover(map, { route, marker: { image: { type: 'arrow', fillColor: '#e2231a', outlineColor: 'white' } } });
+
+// An image of your own, drawn pointing up: a URL, raw SVG markup, a data URI or a loaded <img>.
+flyover.setMarker({ image: { type: 'custom', image: '/icons/car-top-down.png' }, size: 56 });
+
+flyover.setMarker({ visible: false });
+```
+
+| Field | What it does | Default |
+|---|---|---|
+| `visible` | whether the marker is shown | `true` |
+| `image` | `{ type: 'arrow', fillColor?, outlineColor?, outlineOpacity? }` or `{ type: 'custom', image }` | the arrow, in the SDK's default route colours |
+| `size` | width and height in pixels, before the pitch foreshortens it | `44` |
+
+- **Drawn by the map**, in a custom layer: [`MapEffects`](./map-effects.mdx), depth of field
+  included, and captures take it along.
+- **Placed as each frame is drawn**, on the terrain under its route point, so it never trails the
+  camera the way a symbol layer, updated through a worker, would.
+- **Not themed**: a map theme's accent recolours the route, not the arrow. Pass
+  `fillColor: map.mapColors.accent` to match a themed route.
+- **Mercator projection only**, and a custom image on another origin needs CORS, since it becomes
+  a WebGL texture.
+
+## Terrain
+
+- **Clearance**: where a ridge behind the road would block the view, the camera zooms out along
+  the same line of sight until it is 200 m above the ground. Pitch and anchor stay put.
+- **Altitude**: while running, the flight sets the altitude of the point it looks at, the ground
+  under the road, eased so the camera doesn't step as elevation tiles load. It turns MapLibre's
+  centre clamping off for that and back to your setting when it stops, so a paused map behaves as
+  usual.
+- **No terrain**: [`TerrainModule`](../map/terrain.mdx#3d-elevation) raises it. Without it there
+  is nothing to clear, and the camera looks at sea level.
+
+## Smoothness, and what it costs
+
+- **Critically damped springs** move the heading, zoom, pitch, anchor and altitude: no overshoot,
+  no kick when a target changes, and a start ramps the speed up. Each step is solved exactly, so a
+  flight looks the same at 30, 60 or 120 fps.
+- **The heading is decided five times a second.** Changes under 2.5°, which come from the line's
+  sampling rather than the road, are ignored; real turns are capped at 22°/s.
+- **Expensive work runs on that tick**: the route lookups, the framing and the terrain queries. Per
+  frame the flight only steps its springs and moves the camera, so cost doesn't grow with the
+  refresh rate.
+
+## Controlling the flight
+
+```javascript
+flyover.start();              // or resume, ramping up to speed
+flyover.stop();               // freeze where it is
+flyover.seek(0.5);            // jump to half way along
+flyover.setRoute(nextRoute);  // fly a different route, from its start
+flyover.setCamera({ pitch: 45 });
+flyover.setMarker({ visible: false });
+flyover.remove();             // stop, take the marker off, and restore your padding
+```
+
+`onProgress` reports the distance and time travelled five times a second.
+
+## API reference
+
+For complete documentation see the **[RouteFlyover API Reference](/maps-sdk-js/api-reference/classes/plugins.RouteFlyover.html)**.

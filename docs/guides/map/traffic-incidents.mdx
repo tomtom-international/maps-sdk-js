@@ -1,0 +1,357 @@
+---
+title: Traffic incidents module
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.63.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Traffic Incidents Module controls the [map layers](./styles.mdx) that display real-time traffic events, such as accidents, road closures, construction, and weather disruptions.
+Events are displayed across the entire map area and each incident shows its type, severity, affected road segments, and expected delay impact.
+
+**What this module owns:** whether the style's incident layers and icons are shown, which incidents, and how they look — visibility, filters, and the [colour of each severity and the line width](#appearance). Incidents you fetched yourself are drawn by the [Traffic Incident Details Module](./traffic-incident-details.mdx) instead. See [Who owns what](./modules.mdx#who-owns-what).
+
+<GuideDemo demo="traffic-incidents" />
+
+> **Looking for something else?**
+> - For traffic **speed conditions** (color-coded congestion) across the map, see [Traffic Flow Module](./traffic-flow.mdx)
+> - For traffic **incidents along a specific route**, see [Routing Module](./routes.mdx)
+> - For rendering incidents you fetched via the `trafficIncidentDetails()` REST
+>   service as a developer-controlled overlay, see
+>   [Traffic Incident Details Module](./traffic-incident-details.mdx)
+
+## Initialization
+
+```javascript
+import { TomTomMap, TrafficIncidentsModule } from '@tomtom-org/maps-sdk/map';
+
+const map = new TomTomMap( { mapLibre: { container: 'map' } } );
+const trafficIncidentsModule = await TrafficIncidentsModule.get(map);
+```
+
+## Visibility
+
+Traffic incidents are hidden by default: the style parts the SDK adds — traffic flow, traffic incidents and the hillshade — are hidden until you show them.
+
+You can make them visible during initialization:
+```javascript
+const trafficIncidentsModule = await TrafficIncidentsModule.get(map, { visible: true });
+```
+
+You can change visibility later using the `setVisible` method, and read the setting back with
+`isVisible()`, which is `false` until something shows the incidents.
+```javascript
+trafficIncidentsModule.setVisible(true);
+trafficIncidentsModule.isVisible(); // true
+```
+
+## Icon visibility
+
+Icons can be shown or hidden separately from incident areas, so you can show only the icons, or only the lines, at any time. They always show the same incidents as the lines: the module's [filters](#filtering) apply to both.
+
+- `icons.visible`, which `setIconsVisible` sets, overrides `visible` for the icons. `isIconsVisible()` reads it back and, while it is unset, returns `isVisible()`.
+- `setVisible` clears `icons.visible`, so the icons follow `visible` again. To show only the icons, configure `{ visible: false, icons: { visible: true } }`, or call `setVisible(false)` and then `setIconsVisible(true)`.
+
+```javascript
+// Initialize with the lines shown and the icons hidden
+const trafficIncidentsModule = await TrafficIncidentsModule.get(map, {
+    visible: true,
+    icons: {
+        visible: false,
+    },
+});
+trafficIncidentsModule.isIconsVisible(); // false
+
+// Show/hide incident icons but keep incident areas visible
+trafficIncidentsModule.setIconsVisible(true);
+trafficIncidentsModule.setIconsVisible(false);
+
+// Show only the icons
+trafficIncidentsModule.setVisible(false);
+trafficIncidentsModule.setIconsVisible(true);
+trafficIncidentsModule.isIconsVisible(); // true
+
+// setVisible clears icons.visible: the icons follow visible again
+trafficIncidentsModule.setVisible(true);
+trafficIncidentsModule.getConfig(); // { visible: true }
+```
+
+`isIconsVisible()` reports the setting. To read whether a style layer itself is shown, use `map.mapLibreMap.getLayoutProperty(layerId, 'visibility')`.
+
+## Filtering
+
+A filter can be applied either during module initialization or later through `updateConfig`. It narrows the incident lines and their icons alike.
+
+```javascript
+// Initialize with filter
+const trafficIncidentsModule = await TrafficIncidentsModule.get(map, {
+    filters: ...,
+});
+
+// Apply or update filter later
+trafficIncidentsModule.updateConfig({ filters: ... });
+```
+
+### Incident category
+
+Display only specific types of incidents:
+
+```javascript
+// Show only accidents and road closures
+trafficIncidentsModule.updateConfig({
+    filters: {
+        incidentCategories: {
+            show: 'only',
+            values: ['accident', 'road-closed']
+        }
+    }
+});
+
+// Hide weather-related incidents
+incidents.updateConfig({
+    filters: {
+        incidentCategories: {
+            show: 'all-except',
+            values: ['rain', 'fog', 'frost', 'wind']
+        }
+    }
+});
+```
+
+**Available Incident Categories:**
+- `accident` - Traffic accidents
+- `road_closed` - Complete road closures
+- `lane_closed` - Lane closures
+- `road_works` - Construction and maintenance
+- `jam` - Traffic jams
+- `fog`, `rain`, `ice`, `wind`, `flooding` - Weather conditions
+- `dangerous_conditions` - Hazardous road conditions
+- `broken_down_vehicle` - Vehicle breakdowns
+- `unknown` - Incidents with unknown type
+
+### Severity
+
+Filter incidents based on their delay magnitude. The playground below filters by magnitude from checkboxes:
+
+<GuideDemo demo="traffic-incidents-playground" />
+
+```javascript
+// Show moderate and major delays
+incidents.updateConfig({
+    filters: {
+        magnitudes: {
+            show: 'only',
+            values: ['major', 'moderate']
+        }
+    }
+});
+```
+
+**Available Magnitudes:**
+- `minor` - Small delays
+- `moderate` - Moderate delays
+- `major` - Significant delays
+- `indefinite` - Road closures with no estimated delay
+- `unknown` - Unknown or no delay information
+
+### Delay duration
+
+Filter incidents by minimum delay:
+
+```javascript
+// Show incidents with at least 5 minutes delay
+incidents.updateConfig({
+    filters: {
+        delays: {
+            mustHaveDelay: true,
+            minDelayMinutes: 5
+        }
+    }
+});
+```
+
+### Road category
+
+Display incidents only on specific road types:
+
+```javascript
+// Show incidents only on highways
+incidents.updateConfig({
+    filters: {
+        roadCategories: {
+            show: 'only',
+            values: ['motorway', 'trunk']
+        }
+    }
+});
+
+// Show incidents only on major local roads within tertiary category
+incidents.updateConfig({
+    filters: {
+        roadCategories: {
+            show: 'only',
+            values: ['tertiary']
+        },
+        roadSubCategories: {
+            show: 'only',
+            values: ['major_local']
+        }
+    }
+});
+```
+
+**Available Road Categories:**
+- `motorway` - Major highways
+- `trunk` - Major roads
+- `primary` - Primary roads
+- `secondary` - Secondary roads
+- `tertiary` - Tertiary roads
+- `street` - Local streets
+
+**Available Road Subcategories:**
+- `tertiary`
+  - `connecting` - Roads connecting different areas
+  - `major_local` - Major roads within local areas
+- `street`
+  - `local` - Standard local streets
+  - `minor_local` - Minor residential streets
+
+### Multiple filters
+
+The criteria of one filter all apply. `any` adds further filters an incident may match instead:
+
+```javascript
+// Show major accidents OR road closures
+incidents.updateConfig({
+    filters: {
+        incidentCategories: { show: 'only', values: ['accident'] },
+        magnitudes: { show: 'only', values: ['major'] },
+        any: [{ incidentCategories: { show: 'only', values: ['road-closed'] } }]
+    }
+});
+```
+
+### Reset filters
+
+Remove all filters and show all incidents:
+
+```javascript
+incidents.updateConfig({ filters: undefined });
+```
+
+## Appearance
+
+`colors` recolours the incident lines per delay severity, and `widthFactor` (0.5 to 2) multiplies their width. Each restyles the style's own incident layers and reads the style's own value while unset; the outline of a severity follows its colour.
+
+```javascript
+const trafficIncidentsModule = await TrafficIncidentsModule.get(map, {
+    visible: true,
+    colors: { major: '#b91c1c', closed: '#111827' },
+    widthFactor: 1.5,
+});
+setKnob(trafficIncidentsModule, trafficIncidentsKnobCatalogue, 'colors.minor', '#facc15');
+```
+
+The severities are `minor`, `moderate`, `major`, and `closed`, the outline of closed roads. The [traffic sections of a route](./routes-sections.mdx) and the [incidents you fetch yourself](./traffic-incident-details.mdx) [borrow these colours](./styling-borrowed-looks.mdx). [`getStyleColor`](./styling.mdx#the-knob-catalogue) reads them by their map-wide ids, such as `traffic.incidents.colors.major`, with or without the module, and so does the [map effects plugin](../plugins/map-effects-bloom.mdx#scoping-bloom-by-colour)'s bloom scope.
+
+## Events
+
+Handle user interactions with traffic incidents:
+
+```javascript
+// Click events
+incidents.events.on('click', (feature) => {
+    ...
+});
+
+// Hover events
+incidents.events.on('hover', (feature) => {
+    ...
+});
+
+// Long hover events
+incidents.events.on('long-hover', (feature) => {
+    ...
+});
+
+// Remove event listeners
+incidents.events.off('click', handler);
+```
+
+## Querying visible features
+
+Use `getShown()` to retrieve all traffic incident features currently rendered in the visible map area, including both incident areas/lines and icon markers:
+
+```javascript
+const shown = trafficIncidentsModule.getShown();
+console.log(`Visible incidents: ${shown.trafficIncidents.length}`);
+shown.trafficIncidents.forEach(incident => {
+    console.log('Incident:', incident.properties.category, '-', incident.properties.magnitudeOfDelay);
+});
+```
+
+Filter and analyze visible incidents by category or severity:
+
+```javascript
+const { trafficIncidents } = trafficIncidentsModule.getShown();
+const accidents = trafficIncidents.filter(
+    incident => incident.properties.category === 'accident'
+);
+console.log(`Accidents in view: ${accidents.length}`);
+```
+
+## Every setting as data
+
+`trafficIncidentsKnobCatalogue` lists the module's plain-valued settings with their kind, range or options and, where one value holds everywhere, their default, readable with no map loaded:
+
+```javascript
+import { trafficIncidentsKnobCatalogue } from '@tomtom-org/maps-sdk/map';
+
+// [{ id: 'visible', kind: 'toggle', description: '…', default: false },
+//  { id: 'icons.visible', kind: 'toggle', description: '…' }, …,
+//  { id: 'filters.magnitudes.values', kind: 'enums', description: '…', options: ['unknown', 'minor', 'moderate', 'major', 'indefinite'] }, …]
+```
+
+| Id | Kind |
+|---|---|
+| `visible` | toggle, `false` by default |
+| `icons.visible` | toggle; unset, the icons follow `visible` |
+| `filters.roadCategories.show`, `filters.roadSubCategories.show`, `filters.incidentCategories.show`, `filters.magnitudes.show` | enum: `only` or `all-except` |
+| `filters.roadCategories.values` | enums: the road categories |
+| `filters.roadSubCategories.values` | enums: the street, then the service road subcategories |
+| `filters.incidentCategories.values` | enums: `fullTrafficIncidentCategories` |
+| `filters.magnitudes.values` | enums: the delay magnitudes |
+| `filters.delays.mustHaveDelay` | toggle, `false` by default |
+| `filters.delays.minDelayMinutes` | number, 0 to 120 minutes |
+| `colors.minor`, `colors.moderate`, `colors.major`, `colors.closed` | colour, the style's own while unset |
+| `widthFactor` | factor 0.5–2, `1` by default |
+
+- The `filters` knobs set the fields of the [filter](#filtering); an incident matching one of its `any` alternatives, which only the configuration sets, shows too. Each `show` knob goes with its `values` knob, and unset, nothing is filtered.
+- The `colors` and `widthFactor` knobs set the [look of the incidents](#appearance).
+- `trafficIncidentsKnobIds` lists the ids, `TrafficIncidentsKnobId` is their union, and `TrafficIncidentsKnobValueOf<ID>` the plain value one takes. The entry shape and its kinds are the [modules guide](./modules.mdx#every-setting-as-data)'s.
+- Not in it: `events`.
+- The [traffic config playground](../../examples/traffic-config-playground) builds its flow and incidents controls, the filters included, from the two catalogues and sets each with [`setKnob`](./modules.mdx#setting-a-knob-by-its-id).
+
+## API reference
+
+For complete documentation of all Traffic Incidents Module properties, methods, and types, see the **[TrafficIncidentsModule API Reference](/maps-sdk-js/api-reference/classes/map.TrafficIncidentsModule.html)**.
+
+## Related guides and examples
+
+### Traffic overview
+- **[Traffic Overview](./traffic.mdx)** - Overview of all traffic visualization options including flow, incidents, and route-specific traffic
+
+### Related traffic modules
+- **[Traffic Flow Module](./traffic-flow.mdx)** - Display real-time traffic speed conditions
+- **[Routing Module](./routes.mdx)** - Display routes with traffic incidents along the path
+
+### Related examples
+- **[Traffic Incidents](../../examples/traffic-incidents)** - Interactive traffic incidents visualization with filtering
+- **[Traffic Config Playground](../../examples/traffic-config-playground)** - Explore traffic configuration options
+- **[Traffic incidents playground](../../examples/traffic-incidents-playground)** - Incidents filtered by severity, with a popup per incident
+- **[Map styling playground](../../examples/map-styling-playground)** - The incident colour and width knobs, next to every other look knob of the map
+

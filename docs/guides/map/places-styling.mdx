@@ -1,0 +1,318 @@
+---
+title: Place styling
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.63.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The [Places module](./places.mdx) draws its places in a look of its own — the marker type, colour, icon and label configuration below — and every plain-valued part of it is a knob in `placesKnobCatalogue`. No styling knob reaches these layers, except the [accent](./styling-map-colors.mdx#the-accent-what-a-theme-reaches-beyond-the-base-map) markers given no colour default to, and the knobs that restyle the style's own POIs, which the marker types borrowing their look follow ([Borrowed looks](./styling-borrowed-looks.mdx)).
+
+<GuideDemo demo="places-customize-playground" />
+
+## Marker type
+
+The marker type sets the kind of marker places are drawn with. Choose one at initialization or
+swap at runtime:
+
+- `pin` (default): traditional teardrop pin markers
+- `circle-icon`: circular markers with a centered category icon
+- `base-map`: mimics the base map style's POI layer, combining `main`, `selected`, and
+  `micro` layers so places blend in with the style's built-in POIs. To render exclusively
+  through the lightweight `POI - Micro` layer — ideal for dense results where a full POI
+  treatment would be too heavy — hide the `main` layer via
+  `layers.main.layout.visibility = 'none'`.
+- `pin-clustered`: pins that merge into a cluster with a count badge while zoomed out — see
+  [Clusters](#clusters).
+
+```javascript
+// Initialize with a specific marker type
+const placesModule = await PlacesModule.create(map, { markerType: 'base-map' });
+
+// Or swap at runtime
+placesModule.updateConfig({ markerType: 'circle-icon' });
+
+// Micro-only rendering: combine `base-map` with a hidden `main` layer
+const placesModule = await PlacesModule.create(map, {
+    markerType: 'base-map',
+    layers: { main: { layout: { visibility: 'none' } } },
+});
+```
+
+`base-map`, `circle-icon` and `pin-clustered` borrow the look of the style's POIs, so the styling
+knobs that restyle those POIs restyle them too; which knobs per marker type is in
+[Borrowed looks](./styling-borrowed-looks.mdx).
+
+## Clusters
+
+Under the `pin-clustered` marker type, `cluster` sets how places cluster and how the count badge looks.
+`badge` styles the badge of single-category and mixed-category clusters together, and `source`
+takes MapLibre's cluster options:
+
+<GuideDemo demo="places-clustering-playground" />
+
+```javascript
+const placesModule = await PlacesModule.create(map, {
+    markerType: 'pin-clustered',
+    // The per-place value the cluster aggregates
+    extraFeatureProps: {
+        connectorCount: (place) =>
+            place.properties.chargingPark?.connectors.reduce((total, { count }) => total + count, 0) ?? 0,
+    },
+    cluster: {
+        badge: { color: '#3f9cd9', radius: { single: 13, mixed: 18 } },
+        source: {
+            clusterRadius: 100, // default 60
+            clusterMaxZoom: 14, // default 17
+            // Total charging points across each cluster
+            clusterProperties: { connectors: ['+', ['get', 'connectorCount']] },
+        },
+    },
+    // An aggregated value lands on the cluster feature's properties
+    layers: { clusterCount: { layout: { 'text-field': ['get', 'connectors'] } } },
+});
+```
+
+- A `layers` override of `clusterBadge`, `clusterCount`, `clusterMixedBadge` or `clusterMixedCount`
+  wins over `badge` for the paint and layout properties it names, and keeps the rest.
+- Changing `source` with `applyConfig` recreates the places source.
+- The `clusterBaseMapIconIDs` key of `clusterProperties` is reserved for the module's own aggregator.
+
+## Colour
+
+`color` is the colour of the module's own drawing: the default pin fill, the label of a hovered
+or clicked place, [connection](./places-connections-and-entry-points.mdx#connections)
+lines and [entry points](./places-connections-and-entry-points.mdx#entry-points). Connection labels take a darker shade of it on a light
+map and a lighter one on a dark map; entry points take the darker one on a light map.
+
+<GuideDemo demo="places-default-icon-styling" />
+
+```javascript
+const placesModule = await PlacesModule.create(map, { color: '#2A9D8F' });
+```
+
+- A more specific setting wins for its element: `icon.default.style.fillColor` for the pin,
+  `label.color` or a `layers.*` paint override for a label or layer.
+- Unset, it is the map's [accent](./styling-map-colors.mdx#the-accent-what-a-theme-reaches-beyond-the-base-map),
+  and the markers repaint when the accent changes. Once set, an accent change leaves them as they are.
+- Cluster badges do not take it: [`cluster.badge.color`](#clusters) sets them.
+
+## Label styling
+
+Customize the labels next to place markers with the `label` configuration:
+
+```javascript
+// Make POI names red and other places blue
+const customLabelConfig: PlaceLabelConfig = {
+    color: ['match', ['get', 'type'], 'POI', '#D32F2F', '#1976D2']
+};
+
+// Initialize with custom label styling
+const placesModule = await PlacesModule.create(map, {
+    label: customLabelConfig,
+});
+
+// Or change after initialization
+placesModule.updateConfig({ label: customLabelConfig });
+```
+
+`PlaceLabelConfig` takes the label settings shared across modules (`size`, `color`, `haloColor`,
+`haloWidth`, `opacity` and `font`) plus the place's own `title` and `offset`. The `label` given to
+`updateConfig` replaces the whole label ([changing one field](./modules.mdx#changing-a-setting)):
+
+```javascript
+placesModule.updateConfig({
+    label: {
+        title: (place) => place.properties.poi?.name,
+        opacity: 0.8,
+        haloWidth: 2,
+    },
+});
+```
+
+Set labels through `label` rather than with MapLibre's `setPaintProperty` on the module's layers. A
+[style change](./styles.mdx) and a marker type change rebuild those layers from the module's
+configuration, so the label configuration carries over while a paint property written on a layer is
+lost. A `title` computed from each place has no MapLibre equivalent at all.
+
+A `layers.*` override, such as `layers.main.layout['text-size']`, wins over `label` for the
+properties it names.
+
+## Icon styling
+
+Customize place icons and markers. Custom icons work under every marker type: when a category
+is mapped, features in that category use the provided sprite; otherwise the marker type's
+default icon (the base-map style's category/group expression or the default pin) still
+renders.
+
+```javascript
+// Per-category custom images — layered on top of any marker type
+const customIconConfig: PlaceIconConfig = {
+  categoryIcons: [
+    { id: 'RESTAURANT', image: '/icons/food.png', pixelRatio: 2 },
+    { id: 'HOTEL_OR_MOTEL', image: '/icons/hotel.png', pixelRatio: 2 }
+  ]
+};
+
+// Initialize with custom icon styling
+const placesModule = await PlacesModule.create(map, {
+  markerType: 'pin',
+  icon: customIconConfig
+});
+
+// Or change after initialization
+placesModule.updateConfig({ icon: customIconConfig });
+```
+
+A place takes the entry for its own category, else the first entry for the map category its own
+falls in: `RESTAURANT` reaches an `ITALIAN_RESTAURANT` a search returns, and `CAFE` a `CAFE_PUB`.
+That broader match takes only entries with an `image` and no `availabilityLevel`, the ones the
+[POIs module](./pois.mdx#custom-icons-per-category) applies, so one list restyles these places and
+the map's own POIs alike.
+
+Use `offsetX`/`offsetY` (pixels) on a `categoryIcons` entry to shift a custom icon from its
+coordinate — useful when the icon's visual tip isn't at its own geometric bottom or center:
+
+```javascript
+const customIconConfig: PlaceIconConfig = {
+  categoryIcons: [
+    { id: 'RESTAURANT', image: '/icons/food.png', pixelRatio: 2, offsetX: 0, offsetY: -10 }
+  ]
+};
+```
+
+`offsetX`/`offsetY` only apply to `categoryIcons` entries that also provide an `image` — an
+entry that references an existing sprite icon by `id` alone ignores them. Setting them on
+`PlaceIconConfig.default.image` has no effect. `RoutingModule` charging stop icons support the
+same two fields; see [charging stop icons](./routes-styling.mdx#charging-stop-icons).
+
+## Extra properties
+
+Add custom properties to places for advanced styling or filtering:
+
+```javascript
+placesModule.updateConfig({
+    extraFeatureProps: {
+        category: (place) => place.properties.poi?.categories?.[0],
+        brand: (place) => place.properties.poi?.brands?.[0] ?? '',
+        isOpen: true,
+    },
+});
+```
+
+A callback receives a `Place` and must return a JSON value. When the places you show carry a
+narrower shape — EV charging stations with availability, say — name it on the config, or as the
+type parameter of `applyConfig` / `updateConfig`, and the callbacks are typed for it, along with
+`label.title` and `icon.mapping`:
+
+```typescript
+const config: PlacesModuleConfig<EVChargingStationWithAvailabilityPlaceProps> = {
+    extraFeatureProps: {
+        availabilityRatio: (place) => getChargingPointAvailability(place)?.ratio ?? 0,
+    },
+};
+```
+
+## Layer positioning
+
+By default the markers sit above the map's layers, and the connection lines below its labels.
+`beforeLayerConfig` moves them: one target for everything the module draws — `'top'` or a key of
+`mapStyleLayerIDs` — or a record keyed by part, plus `all` for the parts it leaves out. The parts
+are named after the [event scopes](./places.mdx#user-events):
+
+- `places` — the markers and their labels, selected places, clusters with their badges and counts,
+  and [entry points](./places-connections-and-entry-points.mdx#entry-points). The small POI dots of the `base-map` and `pin-clustered` marker
+  types sit below the map's place labels by default; a target puts them right under the markers.
+- `connections` — the lines drawn by [`showConnections`](/maps-sdk-js/api-reference/classes/map.PlacesModule.html#showconnections)
+  and their labels.
+
+```javascript
+// The markers under the map's labels; the connections stay where they are
+placesModule.updateConfig({ beforeLayerConfig: { places: 'lowestLabel' } });
+```
+
+Each part keeps its own layers in order wherever it goes, and `applyConfig` or `updateConfig`
+restacks them at runtime; `resetConfig()` puts them back. Given the same target, the connections
+stay under the markers. A target the style lacks — the satellite style has no `lowestRoadLine` —
+puts the part on top.
+
+## Every setting as data
+
+`placesKnobCatalogue` lists every plain-valued display setting of the module with its kind, its
+range or options and, where one value holds everywhere, its default. Each id is the setting's path
+in the config, so a UI can build its controls from it, with no map loaded:
+
+```javascript
+import { placesKnobCatalogue } from '@tomtom-org/maps-sdk/map';
+
+const badgeKnobs = placesKnobCatalogue.filter(({ id }) => id.startsWith('cluster.badge.'));
+// [{ id: 'cluster.badge.color', kind: 'color', description: '…', default: '#000000' }, …,
+//  { id: 'cluster.badge.radius.single', kind: 'number', description: '…', range: { min: 4, max: 32, step: 1, bounds: 'hard-min' }, default: 11 }, …]
+```
+
+| Knob | Kind | Default |
+|---|---|---|
+| `markerType` | enum | `'pin'` |
+| `color` | color | the map's accent |
+| `visible` | toggle | `true` |
+| `icon.default.style.fillColor` | color | `color` |
+| `icon.default.style.outlineColor` | color | |
+| `icon.default.style.outlineOpacity` | number | |
+| `label.size` | number | 14 to 16 pixels by zoom |
+| `label.color` | color | by the map's light/dark theme |
+| `label.haloColor` | color | by the map's light/dark theme |
+| `label.haloWidth` | number | 1 to 1.5 pixels by zoom |
+| `label.opacity` | number | |
+| `label.offset` | number | from the icon's size |
+| `label.font` | enums | `Noto-Bold`, or the style's under `base-map` |
+| `cluster.badge.color` | color | `'#000000'` |
+| `cluster.badge.strokeColor` | color | `'#FFFFFF'` |
+| `cluster.badge.strokeWidth` | number | `1.5` |
+| `cluster.badge.label.color` | color | `'#FFFFFF'` |
+| `cluster.badge.label.size` | number | `12` |
+| `cluster.badge.radius.single` | number | `11` |
+| `cluster.badge.radius.mixed` | number | `15` |
+| `cluster.badge.offset` | offset | `[12, -14]` |
+| `cluster.source.clusterRadius` | number | `60` |
+| `cluster.source.clusterMaxZoom` | number | `17` |
+| `cluster.source.clusterMinPoints` | number | MapLibre's, 2 |
+| `evAvailability.visible` | toggle | `false` |
+| `evAvailability.threshold` | number | `0.3` |
+| `entryPoints.showFor` | enum | `'selected'` |
+| `entryPoints.minZoom` | number | `15` |
+| `connections.color` | color | the module's `color`, else by the map's light/dark theme |
+| `connections.label.color` | color | a shade of the line's colour for the map's light/dark theme |
+| `connections.label.haloColor` | color | by the map's light/dark theme |
+
+- A default in words is not in the entry: the accent, the theme, the zoom or the marker type decides it.
+- `label.font` offers `mapFonts`; its order matters, since the first font the map has wins.
+- `cluster.badge.offset` shifts a single-category cluster's badge, in pixels; mixed-category badges stay centred.
+- `placesKnobIds` lists the ids in catalogue order, `PlacesKnobId` is their union, and
+  `PlacesKnobValueOf<ID>` the plain value one takes. The MapLibre expression a label or badge
+  setting also accepts is not a knob value.
+- Not in it: the label's `title`, the cluster source's `clusterProperties`, the EV availability's
+  `formatText`, the `icon` images and mapping, the connections' `label`, `layers`, `beforeLayerConfig`,
+  `extraFeatureProps` and `events`, which take callbacks, images, structured or MapLibre values.
+- [Entry points](./places-connections-and-entry-points.mdx#entry-points) draw nothing until `entryPoints` is set, EV availability until
+  `evAvailability.visible` is `true`, and [`cluster`](#clusters) applies under `pin-clustered` only.
+- Its entries share their shape, `KnobEntry`, with every
+  [module's catalogue](./modules.mdx#every-setting-as-data).
+
+## Related guides and examples
+
+### Related guides
+- **[Places module](./places.mdx)** - Showing places, events and the data shown
+- **[Connections and entry points](./places-connections-and-entry-points.mdx)** - The lines and entrances drawn around places
+- **[Map modules](./modules.mdx#every-setting-as-data)** - The knob kinds every catalogue shares
+- **[POIs](./pois.mdx#custom-icons-per-category)** - The same `categoryIcons` list on the map's own POIs
+
+### Related examples
+- **[Places customization playground](../../examples/places-customize-playground)** - Advanced place styling and customization techniques, with the pins drawn over or under the map's labels
+- **[Places default icon styling](../../examples/places-default-icon-styling)** - One `color` per module instance, with the default pin's outline set alongside
+- **[POI category icons playground](../../examples/poi-category-icons-playground)** - One `categoryIcons` list restyling searched places and the map's own POIs together
+- **[Places clustering playground](../../examples/places-clustering-playground)** - How places cluster, how the count badge looks and what it counts
+- **[Borrowed looks](../../examples/styling-borrowed-looks)** - `base-map` places restyled live by the knobs that restyle the style's POIs

@@ -1,0 +1,341 @@
+---
+title: Places module
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.63.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Places Module allows you to display and interact with [places](../core/places.mdx) on your TomTom map. You can add search results, custom locations, and handle user interactions.
+
+**What this module owns:** the place markers and labels it draws, and how they look — the marker type, colour, icon and label configuration in [Place styling](./places-styling.mdx). A place that joins a route becomes one of the route's [waypoints](./routes.mdx#waypoints-or-places), drawn by the Routing module instead. It never restyles the base map underneath, which belongs to the [Styling Foundations module](./styling.mdx). Markers given no [colour](./places-styling.mdx#colour) read the map's [accent](./styling-map-colors.mdx#the-accent-what-a-theme-reaches-beyond-the-base-map) as their default, and the marker types that borrow the look of the style's own POIs follow the knobs that restyle them ([Borrowed looks](./styling-borrowed-looks.mdx)). See [Who owns what](./modules.mdx#who-owns-what).
+
+<GuideDemo demo="search-places-nearby-location" />
+
+This guide covers showing places, events and the data shown. Two features of the module have a guide of their own:
+
+| Guide | Covers |
+| --- | --- |
+| [Place styling](./places-styling.mdx) | Marker types and clusters, colour, labels, icons, extra properties, layer positioning and the knob catalogue |
+| [Connections and entry points](./places-connections-and-entry-points.mdx) | Labelled lines between places, and the entrances a place's data carries |
+
+## Initialization
+
+```javascript
+import { TomTomMap, PlacesModule } from '@tomtom-org/maps-sdk/map';
+
+// Initialize map
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+
+// Initialize Places module with default configuration
+const placesModule = await PlacesModule.create(map);
+```
+
+## Displaying places
+
+Display one or multiple places on the map:
+
+```javascript
+import { discoverPlaces } from '@tomtom-org/maps-sdk/services';
+
+// Show single place
+await placesModule.show({
+  id: 'custom-place-1',
+  type: 'Feature',
+  geometry: { type: 'Point', coordinates: [4.9041, 52.3676] },
+  properties: {
+    type: 'POI',
+    address: { freeformAddress: 'Custom Place 1, Amsterdam' },
+    poi: { name: 'Custom Place' }
+  }
+});
+
+// Show multiple places
+await placesModule.show([place1, place2, place3]);
+
+const searchResults = await discoverPlaces({
+    query: 'restaurants',
+    geoBias: { position: [4.9041, 52.3676] }, // Amsterdam
+    limit: 10
+});
+
+// Show search results
+await placesModule.show(searchResults);
+
+// Remove all places from the map:
+await placesModule.clear();
+```
+
+### What `show()` takes
+
+`show()` takes a place, an array of places or a `Places` collection as the service returns it:
+search, geocoding, reverse geocoding, place details and EV availability results, or your own GeoJSON
+points. There are no fields to map first. Three places services return something else:
+
+| Result | Not showable because | Show instead |
+| --- | --- | --- |
+| [`getSearchSuggestions`](../services/places/suggest.mdx) | Suggestions to choose from, without geometry | A place suggestion's `resolve()`, or a brand or category suggestion's `refine()` |
+| [`geometryData`](../services/places/geometry-data.mdx) | Polygons | The [Geometries module](./geometries.mdx) |
+| [`evChargingStationsAvailability`](../services/places/ev-charging-stations-availability.mdx) | Availability alone, no place | `getPlacesWithEVAvailability`, over the stations a search found |
+
+[`preparePlacesForDisplay`](/maps-sdk-js/api-reference/functions/map.preparePlacesForDisplay.html) is
+what `show()` does to each place before drawing it. Call it to see the properties your
+[layer overrides](./places-styling.mdx), [extra properties](./places-styling.mdx#extra-properties) and event handlers read:
+
+```javascript
+import { preparePlacesForDisplay } from '@tomtom-org/maps-sdk/map';
+
+const [first] = preparePlacesForDisplay(searchResults, { markerType: 'base-map' }).features;
+console.log(first.properties.title, first.properties.iconID, first.properties.category);
+```
+
+- Every property of the place is kept. `id` is copied into `properties`, and `title`, `iconID`,
+  the extra properties and, under `base-map` and `pin-clustered`, `category` and `group` are added.
+- `buildPlaceTitle` is the default label — the POI name, else the address — to fall back on in a
+  `label.title` function of your own.
+- `toPlaces` turns any of the three shapes `show()` accepts into one collection, such as the one a
+  `shown-features` handler receives.
+- An `iconID` naming an image the module adds, the default pin or a custom icon, is the first
+  module's name for it. [`getShown()`](#reading-shown-data) returns what a given module drew.
+
+### Your own data
+
+Your own GeoJSON points go to `show()` as they are, and draw like the places a search returns. Each
+keeps its own properties, which `label.title`, layer overrides and click handlers read back. Name
+their shape on `create` to have the `label.title` and `icon.mapping` callbacks typed for it:
+
+```typescript
+type Store = CommonPlaceProps & { storeName: string };
+const stores: Places<Store> = await (await fetch('https://your-api.com/stores.json')).json();
+
+const placesModule = await PlacesModule.create<Store>(map, {
+    markerType: 'base-map', // drawn like the map style's own POIs
+    icon: { mapping: { to: 'poiCategory', fn: () => 'COFFEE_SHOP' } },
+    label: { title: (place) => place.properties.storeName },
+});
+
+await placesModule.show(stores);
+```
+
+- **Draw them through the module, not a layer of your own** fed by `preparePlacesForDisplay`. The
+  module adds the images its icons name, and brings the events, clustering and restoration after a
+  [style change](./styles.mdx) with it.
+- `icon.mapping` gives every point the base map's icon and label colour for the POI category it
+  returns, so your points sit among the style's POIs as if they were its own. A point it returns
+  `undefined` for keeps the icon it would have without a mapping. Route waypoints take the same
+  [`mapping`](./routes.mdx#icons-of-your-own) and `label.title`.
+- The default label is `poi.name`, else `address.freeformAddress`. Points carrying neither need a
+  `label.title` function.
+
+## Showing and hiding
+
+`setVisible` hides and shows everything the module draws — places, [connections](./places-connections-and-entry-points.mdx#connections)
+and [entry points](./places-connections-and-entry-points.mdx#entry-points) — while keeping its data. `visible: false` at creation starts it hidden.
+
+```javascript
+const placesModule = await PlacesModule.create(map, { visible: false });
+await placesModule.show(searchResults); // loaded, not drawn
+
+placesModule.setVisible(true);
+placesModule.isVisible(); // true
+```
+
+- `show()` and `clear()` never change it, and it survives a style change.
+- Showing the module leaves hidden the layers its marker type does not use, and any layer you hid
+  through `layers.*.layout.visibility`, such as `main` in [micro-only rendering](./places-styling.mdx#marker-type).
+
+## Events
+
+### User events
+
+Handle user interactions with places:
+
+```javascript
+// Click events
+placesModule.events.on('click', (feature, lngLat) => {
+    console.log('Click coordinates:', lngLat);
+    console.log('Place title:', feature.properties.title);
+    console.log('Place coordinates:', feature.geometry.coordinates);
+});
+
+// Hover events
+placesModule.events.on('hover', (feature, lngLat) => {
+    console.log('Hovering over:', feature.properties.poi?.name);
+});
+
+// Remove event listeners
+placesModule.events.off('click', handler);
+```
+
+`events` covers every surface the module draws. Three named scopes narrow it: `events.places` for the
+pins alone — typed as `Place`, which is what you want in TypeScript — `events.connections` for
+the lines and labels drawn by [showConnections](/maps-sdk-js/api-reference/classes/map.PlacesModule.html#showconnections),
+and `events.entryPoints` for the [entry points](./places-connections-and-entry-points.mdx#entry-points):
+
+```javascript
+placesModule.events.places.on('click', (place) => console.log(place.properties.poi?.name));
+placesModule.events.connections.on('click', () => console.log('connection line clicked'));
+placesModule.events.entryPoints.on('click', (entryPoint) => {
+    // A point at the entrance, whether its dot or its line was hit, with its place attached
+    console.log(entryPoint.properties.type, entryPoint.properties.place?.properties.title);
+    // It is a valid route location
+    calculateRoute({ locations: [origin, entryPoint] });
+});
+```
+
+### Result cards and popups
+
+The module tells you which place was clicked or hovered, and does the hit-testing behind it. It
+draws no result card, popup or info window for a place: open your own from the event.
+
+<GuideDemo demo="pin-interaction" />
+
+```javascript
+import { Popup } from 'maplibre-gl';
+
+const popup = new Popup({ closeButton: false, offset: 35 });
+
+placesModule.events.places.on('click', (place) => {
+    popup
+        .setLngLat(place.geometry.coordinates)
+        .setText(place.properties.poi?.name ?? place.properties.address.freeformAddress)
+        .addTo(map.mapLibreMap);
+});
+
+// The popup is yours, so close it when the places change
+popup.remove();
+await placesModule.show(newResults);
+```
+
+- **A card is application chrome.** What it shows, how it looks and how it closes are your app's,
+  so the SDK leaves them to it: a MapLibre `Popup`, or a panel of your own beside the map.
+- **A place already has its anchor.** The click hands over the place, whose coordinates a `Popup`
+  sits on. The [Routing module](./routes.mdx) draws its own route summary bubbles because a route
+  has no single point to anchor one to: placing them along the line takes the module.
+- For the full details of a clicked place, such as opening hours, fetch them in the handler with
+  [`getPlaceDetails`](../services/places/place-by-id.mdx).
+
+### Programmatic event states
+
+Put, clean and read the states of places the way you do on every module that draws your data — see
+[event states](./user-events.mdx#event-states). They act on the places, whichever marker type draws
+them, clustered or not; `events.connections` and `events.entryPoints` carry their own.
+
+```javascript
+// Highlight the first place as if clicked
+placesModule.putEventState({ index: 0, state: 'click' });
+
+const { click: [selectedID] = [], hover = [] } = placesModule.getEventStates();
+
+placesModule.cleanEventStates({ states: ['hover'] });
+```
+
+A pin draws its state, and so do its [entry points](./places-connections-and-entry-points.mdx#entry-points). A `show()` of new results drops
+the states; to keep a selection across a re-show, read it first and put it back:
+
+```javascript
+const [selectedID] = placesModule.getEventStates().click ?? [];
+await placesModule.show(morePlaces);
+if (selectedID) placesModule.putEventState({ id: selectedID, state: 'click' });
+```
+
+<GuideDemo demo="search-playground" />
+
+## Multiple module instances
+
+You can create multiple independent instances of the Places module, each with its own configuration and data. This is useful for displaying different sets of places with distinct styling or behavior.
+
+```javascript
+// Create separate instances for different purposes
+const restaurantPlaces = await PlacesModule.create(map, {
+    markerType: 'pin',
+    icon: {
+        categoryIcons: [{ id: 'RESTAURANT', image: '/icons/restaurant.png', pixelRatio: 2 }]
+    }
+});
+
+const hotelPlaces = await PlacesModule.create(map, {
+    markerType: 'circle-icon',
+    icon: {
+        categoryIcons: [{ id: 'HOTEL_OR_MOTEL', image: '/icons/hotel.png', pixelRatio: 2 }]
+    }
+});
+
+// Each instance manages its own places independently
+await restaurantPlaces.show(restaurantResults);
+await hotelPlaces.show(hotelResults);
+```
+
+## Reading shown data
+
+Use `getShown()` to retrieve the places currently displayed on the map: the places passed to
+`show()` as drawn, each with its display properties (`title`, `iconID`…) and current `eventState`,
+and the connections passed to `showConnections()`:
+
+```javascript
+const shown = placesModule.getShown();
+console.log(`Showing ${shown.places.features.length} places`);
+```
+
+## Identity across show, clear and style changes
+
+What happens to the shown places, their [event states](#programmatic-event-states) and their
+connections when you show again, clear or change the style:
+
+| Call | Places | Event states | Connections |
+| --- | --- | --- | --- |
+| `show(results)` | Replaced, never merged | Dropped, even for a place shown again under the same id | Dropped |
+| `show(placesModule.getShown().places)` | Shown again | Kept: they travel on each feature's `properties.eventState` | Dropped |
+| `clear()` | Removed | Removed | Dropped |
+| `applyConfig`, `updateConfig`, `setKnob`, `resetKnob` | Kept | Kept | Kept, ids resolved again |
+| [`setStyle`](./styles.mdx) | Kept | Kept | Kept, ids resolved again |
+| `setStyle(style, { resetState: true })` | Removed | Removed | Removed |
+
+So in a search, select, search again loop, put the selection back by id after the new `show()`:
+
+```javascript
+// `selectedID` is the id your app kept when the place was clicked
+await placesModule.show(await discoverPlaces({ query: 'coffee', geoBias: { position } }));
+placesModule.putEventState({ id: selectedID, state: 'click' }); // does nothing if the id is gone
+```
+
+- A connection endpoint given as a place id resolves against the places shown each time the
+  connections are drawn; one that matches no shown place is skipped, yet stays in
+  `getShown().connections`.
+- Since `show()` and `clear()` drop the connections, none outlives the places it referred to, and
+  none comes back when those places are shown again: call `showConnections()` after `show()`.
+
+## API reference
+
+For complete documentation of all Places Module properties, methods, and types, see the **[PlacesModule API Reference](/maps-sdk-js/api-reference/classes/map.PlacesModule.html)**.
+
+## Related guides and examples
+
+### Services integration
+- **[Search Services](../services/places/search.mdx)** - Find places and POIs to display using the Places Module with fuzzy, geometry and along-route search
+- **[Geocoding](../services/places/geocoding.mdx)** - Convert addresses to coordinates for precise place positioning on the map
+- **[Reverse Geocoding](../services/places/reverse-geocoding.mdx)** - Get address information for places and display them with rich location context
+
+### Related examples
+- **[Places customization playground](../../examples/places-customize-playground)** - Advanced place styling and customization techniques, with the pins drawn over or under the map's labels
+- **[Places default icon styling](../../examples/places-default-icon-styling)** - One `color` per module instance, with the default pin's outline set alongside
+- **[POI category icons playground](../../examples/poi-category-icons-playground)** - One `categoryIcons` list restyling searched places and the map's own POIs together
+- **[Place connection lines](../../examples/place-connection-lines)** - Labelled lines from a charging station to the cafés around it, in a colour of their own
+- **[Place entry points playground](../../examples/place-entry-points-playground)** - When and how the entrances of places are drawn, and what clicking one returns
+- **[Places clustering playground](../../examples/places-clustering-playground)** - How places cluster, how the count badge looks and what it counts
+- **[Places in Geometry](../../examples/places-in-geometry)** - Display places within specific geographic boundaries
+- **[Search playground](../../examples/search-playground)** - Search for places and display results interactively
+- **[Places by Category in Words](../../examples/geometry-search-with-poi-categories)** - A category named in words, in five languages, searched inside a city outline
+- **[Pin Interaction](../../examples/pin-interaction)** - Interactive place markers with click events and popups
+- **[Bring your own data: Yorkshire heatmap](../../examples/byod-geojson-heatmap)** - An open-data GeoJSON file drawn as base-map places, with `icon.mapping` and a `label.title` of its own
+- **[Borrowed looks](../../examples/styling-borrowed-looks)** - `base-map` places restyled live by the knobs that restyle the style's POIs
+
+### Related map modules
+- **[Place styling](./places-styling.mdx)** - Marker types, colour, labels, icons and the knob catalogue
+- **[Connections and entry points](./places-connections-and-entry-points.mdx)** - The lines and entrances drawn around places
+- **[POIs](./pois.mdx)** - Filter the map's own POIs by category, and draw a category with an icon of your own
+- **[User Interaction Events](./user-events.mdx)** - Handle user interactions with places on the map

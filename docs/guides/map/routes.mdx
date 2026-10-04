@@ -1,0 +1,459 @@
+---
+title: Routing module
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.63.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Routing Module enables displaying calculated routes and waypoints on maps with comprehensive functionality for visualizing navigation routes, alternative routes, turn-by-turn guidance, traffic incidents that occur along the calculated path, and route-related interactions.
+
+**What this module owns:** the route lines, waypoints, section overlays, instruction arrows and summary bubbles it draws, and how they look — the `color`, `width`, `waypoints.size` and `layers` configuration in [Route styling](./routes-styling.mdx). It never restyles the roads underneath, which belong to the [Styling Foundations module](./styling.mdx). A route given no `color` reads the map's [accent](./styling-map-colors.mdx#the-accent-what-a-theme-reaches-beyond-the-base-map) as its default, and its traffic sections follow the [Traffic Incidents Module](./traffic-incidents.mdx#appearance)'s `colors.*` knobs ([Borrowed looks](./styling-borrowed-looks.mdx)). No other knob reaches route layers. See [Who owns what](./modules.mdx#who-owns-what).
+
+<GuideDemo demo="route" />
+
+This guide covers showing routes and waypoints, events and the data shown. Two features of the module have a guide of their own:
+
+| Guide | Covers |
+| --- | --- |
+| [Route styling](./routes-styling.mdx) | The route's colour, width, waypoint size and layers, its knob catalogue, layer positioning and charging stop icons |
+| [Route sections](./routes-sections.mdx) | The overlays drawn per stretch of road: tunnels, ferries, traffic, speed limit signs, border crossings and the rest |
+
+## Initialization
+
+```javascript
+import { TomTomMap, RoutingModule } from '@tomtom-org/maps-sdk/map';
+
+// Initialize map
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+
+// Initialize Routes module with default configuration
+const routingModule = await RoutingModule.create(map);
+
+// Or with custom configuration
+const routingModule = await RoutingModule.create(map, {
+    displayUnits: {
+        distance: { type: 'metric' }
+    },
+    waypoints: {
+        entryPoints: 'main-when-available'
+    }
+});
+```
+
+Without `displayUnits`, the labels follow the global units (`TomTomConfig.instance.put({ displayUnits })`)
+in force when they are drawn: a change reaches routes already shown on their next `showRoutes` or
+configuration change. `getConfig()` returns only what you passed, never the global units.
+
+## Displaying routes
+
+Display calculated routes on the map:
+
+```javascript
+import { calculateRoute, geocodeOne } from '@tomtom-org/maps-sdk/services';
+
+// Calculate a route with coordinates
+const route = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676], // Amsterdam
+        [4.4777, 51.9244]  // Rotterdam
+    ],
+});
+
+// Or calculate a route with geocoded locations
+const waypoints = await Promise.all([
+    geocodeOne('Amsterdam, Netherlands'),
+    geocodeOne('Rotterdam, Netherlands')
+]);
+
+const routes = await calculateRoute({ locations: waypoints });
+
+// Show the route
+await routingModule.showRoutes(route);
+```
+
+> **Note:** `showRoutes` draws the route line but does **not** show waypoint markers (start, stop, destination pins). Call `showWaypoints` separately to display them — see [Waypoints](#waypoints) below.
+
+## Displaying guidance on map
+
+Request guidance instructions when calculating a route to show them visually:
+
+```javascript
+import { calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+const route = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676], // Amsterdam
+        [4.4777, 51.9244]  // Rotterdam
+    ],
+    guidance: {
+        type: 'coded'
+    }
+});
+
+// Display route with guidance on map
+await routingModule.showRoutes(route);
+```
+
+## Route selection
+
+Change which route appears as selected when displaying multiple routes:
+
+```javascript
+import { calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+// Calculate route with alternatives
+const routes = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676], // Amsterdam
+        [4.4777, 51.9244]  // Rotterdam
+    ],
+    maxAlternatives: 2,
+});
+
+// Show the routes (first route selected by default)
+await routingModule.showRoutes(routes);
+
+// Show the routes with specific selection
+await routingModule.showRoutes(routes, { selectedIndex: 1 });
+
+// Switch to second route
+await routingModule.selectRoute(1);
+
+// Switch back to first route
+await routingModule.selectRoute(0);
+```
+
+## Waypoints
+
+`showRoutes` only draws route lines — waypoint markers (start, stop, and destination pins) are **not** included. You must call `showWaypoints` separately:
+
+```javascript
+const locations = [
+    [4.9041, 52.3676], // Amsterdam
+    [4.4777, 51.9244]  // Rotterdam
+];
+
+const route = await calculateRoute({ locations });
+
+// Draw the route line
+await routingModule.showRoutes(route);
+
+// Waypoint markers must be shown separately
+await routingModule.showWaypoints(locations);
+
+// Clear waypoints independently from routes
+await routingModule.clearWaypoints();
+```
+
+A stop's pin is labelled with its name, and — when the stop carries a `pauseDurationSeconds` — with
+how long the route waits there:
+
+```javascript
+const locations = [
+    [2.1734, 41.3851],
+    {
+        type: 'Feature',
+        geometry: { type: 'Point', coordinates: [2.4467, 41.5381] },
+        // the pin reads "30 min" under the stop name
+        properties: { pauseDurationSeconds: 30 * 60 }
+    },
+    [2.8214, 41.9794]
+];
+
+await routingModule.showRoutes(await calculateRoute({ locations }));
+await routingModule.showWaypoints(locations);
+```
+
+The wait is formatted with the SDK's display units, and the label is the `routeWaypointLabel` layer —
+restyle or replace it through `layers.waypoints.routeWaypointLabel` like any other routing layer.
+
+Charging stop pins say the same thing in the same way: their label carries the whole time spent at
+the stop, which is the charging plus any wait asked for at the same place. A label that wants only
+the charging part can still read `chargingDuration`:
+
+```javascript
+const routingModule = await RoutingModule.create(map, {
+    chargingStops: { label: { title: ['format', ['get', 'chargingDuration'], {}] } }
+});
+```
+
+### Waypoints or places
+
+Every location a route is calculated through is a waypoint: `showWaypoints` draws it with its role
+(start, stop or finish), its stop mark and the module's `waypoints` events. A place the user is
+still choosing among, such as a search result or a candidate stop, belongs to the
+[Places module](./places.mdx). Once it joins the route, clear it there and hand it to
+`showWaypoints`, so one location is never drawn twice:
+
+```javascript
+places.events.on('click', async (place) => {
+    const locations = [origin, place, destination];
+    await places.clear();
+    await routingModule.showRoutes(await calculateRoute({ locations }));
+    await routingModule.showWaypoints(locations);
+});
+```
+
+A location several routing modules share, such as the one destination of
+[routes from several origins](../../examples/route-multiple-origins), can be marked once by a
+Places module instead of once per route.
+
+Everything below reaches the waypoints already shown when it changes through `applyConfig`, and
+they keep their ids and event states. It is all live on the waypoints playground:
+
+<GuideDemo demo="route-waypoints-playground" />
+
+### Pins per role
+
+`waypoints.icon.style` styles every pin; `waypoints.icon.start`, `waypoints.icon.middle` and
+`waypoints.icon.finish` style one role each, over it. A pin left without a `fillColor` takes the
+route's `color`:
+
+```javascript
+const routingModule = await RoutingModule.create(map, {
+    waypoints: {
+        icon: {
+            style: { outlineColor: '#FFFFFF' },
+            start: { style: { fillColor: '#1B7A3E' } },
+            finish: { style: { fillColor: '#C0392B' } }
+        }
+    }
+});
+```
+
+### Stop marks
+
+A stop's pin carries its number among the stops, 1 for the first. `waypoints.stopNumbering` sets
+`'letters'` (A to Z, then AA) or `'none'`. The count includes every stop, those whose pin a
+[mapping](#icons-of-your-own) replaces too, so the marks keep matching the stop order. The start
+and finish pins draw their own glyph instead. The mark is the waypoint's `stopDisplayLabel`
+property, which `events.waypoints` handlers receive.
+
+### Labels
+
+Each pin is labelled with its POI name, else its address, and how long the route waits there.
+`waypoints.label.visible: false` drops the labels, and
+`waypoints.label.title` writes your own, as `label.title` does for
+[places](./places-styling.mdx#label-styling): a function of the waypoint, or a MapLibre expression:
+
+```javascript
+routingModule.applyConfig({
+    waypoints: {
+        label: {
+            title: (waypoint) => (waypoint.properties.indexType === 'finish' ? 'Home' : buildWaypointTitle(waypoint) ?? '')
+        }
+    }
+});
+```
+
+### Hover and click
+
+Once a handler covers the waypoints, a hovered or clicked pin grows by
+`waypoints.highlight.sizeFactor`, 1.2 times unless set, its stop mark with it. It is clamped to
+its catalogue range, 1 to 1.5, and `1` draws a hovered pin as any other.
+The `waypoints` scope has the [event state methods](./user-events.mdx#event-states) to put that
+state from your own UI:
+
+```javascript
+routingModule.events.waypoints.on('hover', (waypoint) => showStopCard(waypoint.properties));
+routingModule.events.waypoints.putEventState({ index: 1, state: 'click' });
+```
+
+### Icons of your own
+
+A role's `image` replaces its pin, and `waypoints.icon.mapping` picks a pin per waypoint from its
+data, as `icon.mapping` does for places:
+
+- `to: 'poiCategory'` draws the SDK's pin for the category `fn` returns, so a stop that came from
+  search can show what kind of place it is.
+- `to: 'imageID'` draws the image `fn` names: one in the style's sprite, or one of the module's
+  `waypoints.icon.customIcons`.
+
+A waypoint `fn` returns `undefined` for keeps its role's pin and stop mark:
+
+```javascript
+const routingModule = await RoutingModule.create(map, {
+    waypoints: {
+        icon: {
+            finish: { image: { image: chequeredFlagSVG } },
+            mapping: { to: 'poiCategory', fn: (waypoint) => waypoint.properties.poi?.categories?.[0] }
+        }
+    }
+});
+```
+
+An image is drawn at pixel ratio 2 unless it sets `pixelRatio`, standing on the waypoint by its
+bottom middle as the SDK's pins do, which are 120 × 140 pixels. Images, styles and the stop
+numbering serialize; `mapping` and a function `title` do not, and
+`RoutingModuleSerializableConfig` leaves them out.
+
+## Showing and hiding
+
+`setVisible(false)` hides everything the module draws (route lines, waypoints, sections, guidance,
+charging stops, summary bubbles and border crossings) and keeps what it shows. `showRoutes`,
+`showWaypoints`, the clear methods and a style change leave a hidden module hidden, and
+`setVisible(true)` draws the routes and waypoints it holds again:
+
+```javascript
+const routingModule = await RoutingModule.create(map, { visible: false }); // starts hidden
+await routingModule.showRoutes(route);   // kept, not drawn
+routingModule.setVisible(true);          // draws the route
+routingModule.isVisible();               // true
+```
+
+It is the config's `visible`, so `isVisible()` reads the setting back and `config-change` reports
+it. While the module is shown, each part's own `visible` (`sections.<type>.visible`,
+`summaryBubbles.visible`, …) still decides whether that part draws. The
+[route style playground](../../examples/route-styling-playground) toggles it.
+
+## Events
+
+Handle user interactions with routes and waypoints:
+
+```javascript
+// Route click events
+routingModule.events.mainLines.on('click', (feature, lngLat) => {
+    console.log('Route clicked:', feature.properties);
+    console.log('Coordinates:', lngLat);
+});
+
+// Waypoint events
+routingModule.events.waypoints.on('click', (feature, lngLat) => {
+    console.log('Waypoint:', feature.properties);
+});
+
+// Traffic incident events
+routingModule.events.incidents.on('hover', (feature, lngLat) => {
+    console.log('Traffic delay:', feature.properties.delayInSeconds);
+});
+
+// Turn-by-turn instruction events
+routingModule.events.instructionLines.on('click', (feature, lngLat) => {
+    console.log('Instruction properties:', feature.properties);
+});
+
+// Summary bubble events
+routingModule.events.summaryBubbles.on('click', (feature, lngLat) => {
+    console.log('Route summary:', feature.properties);
+});
+
+// Route section events
+routingModule.events.ferries.on('click', (feature, lngLat) => {
+    console.log('Ferry section');
+});
+
+// The `tollRoads` overlay draws the `tollRoad` sections — every stretch that costs money to drive,
+// per-use tolls plus vignette-only motorways and urban charge zones
+routingModule.events.tollRoads.on('click', (feature, lngLat) => {
+    console.log('Charged road section');
+});
+
+routingModule.events.tunnels.on('click', (feature, lngLat) => {
+    console.log('Tunnel section');
+});
+
+routingModule.events.vehicleRestricted.on('click', (feature, lngLat) => {
+    console.log('Vehicle restricted section');
+});
+
+routingModule.events.chargingStops.on('click', (feature, lngLat) => {
+    console.log('EV charging station');
+});
+
+// Remove event listeners
+routingModule.events.mainLines.off('click', handler);
+```
+
+A hovered or clicked route draws its outline wider, selected or not, once a handler covers the
+routes. Put that state from your own UI with the module's
+[event state methods](./user-events.mdx#event-states), which act on the routes; the named scopes
+have them too, for their own features. A click marks the route, while `selectRoute` makes it the
+selected one:
+
+```javascript
+routingModule.events.mainLines.on('click', (route) => routingModule.selectRoute(route.properties.index));
+
+routingModule.putEventState({ index: 1, state: 'hover' });
+const { click: [clickedRouteID] = [] } = routingModule.getEventStates();
+```
+
+`highlight.outlineWidthFactor` sets how much wider, 1.2 times unless set, live on the
+[route style playground](../../examples/route-styling-playground). It is clamped to
+its catalogue range, 1 to 1.25, so the outline never covers a section
+[halo](./routes-sections.mdx#section-knobs) drawn beneath the route, and `1` draws a hovered route as any other:
+
+```javascript
+routingModule.applyConfig({ highlight: { outlineWidthFactor: 1.25 } });
+```
+
+A width you give the outline through `layers.mainLines.routeOutline` is drawn as given, in every
+state.
+
+## Multiple module instances
+
+You can create multiple independent instances of the Routing module, each with its own configuration and styling. This is useful for comparing different route types or displaying routes for multiple users.
+
+```javascript
+// Create separate instances for different route types
+const carRoutes = await RoutingModule.create(map, { color: '#2ECC71' });
+const truckRoutes = await RoutingModule.create(map, { color: '#E67E22' });
+
+// Each instance manages its own routes independently
+await carRoutes.showRoutes(carRoute);
+await truckRoutes.showRoutes(truckRoute);
+```
+
+## Reading shown data
+
+`getShown()` returns what the module draws, as prepared for display and split by what draws it: the routes, the waypoints, and each section and overlay type:
+
+```javascript
+const shown = routingModule.getShown();
+console.log(`Showing ${shown.mainLines.features.length} routes`);
+console.log(`Showing ${shown.waypoints.features.length} waypoints`);
+```
+
+Check whether any routes are currently displayed:
+
+```javascript
+const shown = routingModule.getShown();
+if (shown.mainLines.features.length > 0) {
+    console.log('Routes are displayed');
+}
+```
+
+The returned object includes: `mainLines`, `waypoints`, `incidents`, `ferries`, `chargingStops`, `tollRoads`, `tunnels`, `vehicleRestricted`, `instructionLines`, `instructionArrows`, `summaryBubbles`, and `countryCrossings`, plus one `<type>Sections` entry per [generated section type](./routes-sections.mdx) — `urbanSections`, `motorwaySections` and the rest.
+
+## API reference
+
+For complete documentation of all Routing Module properties, methods, and types, see the **[RoutingModule API Reference](/maps-sdk-js/api-reference/classes/map.RoutingModule.html)**.
+
+## Related guides and examples
+
+### Services integration
+- [Route Planning Parameters](../services/routing/parameters.mdx) - Comprehensive route planning with configuration options
+- [Locations](../services/routing/locations.mdx) - Specifying route planning locations
+- [Geocoding](../services/places/geocoding.mdx) - Convert addresses to coordinates for route waypoints and destinations
+
+### Related examples
+- [Route](../../examples/route) - Basic route calculation and display on the map
+- [Route with Alternatives](../../examples/route-with-alternatives) - Display multiple route options for comparison
+- [Waypoints](../../examples/waypoints) - Multi-stop route visualization with interactive waypoints
+- [Map route reconstruction playground](../../examples/route-reconstruction) - Interactive route building and editing
+- [Route stop wait playground](../../examples/route-stop-wait-playground) - A stop's wait on its pin, and in the journey time
+- [Route style playground](../../examples/route-styling-playground) - The route's colour, width, waypoint size, waypoint label colour and clicked outline on knobs, and a toggle that hides it
+- [Route sections playground](../../examples/route-sections-playground) - Every section type on one set of knobs, and the speed-limit sign controls
+- [Route waypoints playground](../../examples/route-waypoints-playground) - Per-role pins, stop numbering, labels, hover growth, a category pin per stop and a finish image of your own
+- [Speed limit signs by country](../../examples/route-speed-signs) - A section's number posted as the road sign its country uses
+- [Borrowed looks](../../examples/styling-borrowed-looks) - A route's traffic sections recoloured live by the incident colour knobs
+
+### Related map modules
+- [Route styling](./routes-styling.mdx) - The route's own look and its knob catalogue
+- [Route sections](./routes-sections.mdx) - The overlays drawn per stretch of road
+- [Places Module](../map/places.mdx) - The places a user is still choosing among, before one joins the route as a waypoint
+- [User Interaction Events](../map/user-events.mdx) - Handle user interactions with routes and route segments

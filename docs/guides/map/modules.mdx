@@ -1,0 +1,715 @@
+---
+title: Map modules
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.63.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+Map Modules are self-contained extensions that add specialized functionality to a [TomTomMap](./tomtom-map.mdx) instance.
+
+Each module provides focused capabilities for different mapping needs — from displaying traffic information to handling user-generated content — while following a consistent pattern for initialization, configuration, and lifecycle management that makes them easy to integrate and use together.
+
+## Key features
+
+- **Composition**: Modules can be combined to work together seamlessly. Whether a given module type can be instantiated more than once on the same map depends on who owns the layers it controls — see [Types of modules](#types-of-modules) below.
+- **Data management**: Modules handle their own data sources and rendering
+- **Style integration**: Modules automatically integrate with map styles and themes
+- **Statefulness**: Modules maintain their own state and configuration independently. Modules restore their state when the map style changes.
+- **One configuration surface**: every module takes its configuration at creation and through `applyConfig(config)` (a whole configuration, replacing the current one), `updateConfig(partial)` (changes the given properties and keeps the rest, the same on every module) and `resetConfig()`; `getConfig()` reads it back and `events.on('config-change', …)` reports every change. See [Changing a setting](#changing-a-setting).
+- **Smart event handling**: Modules provide their own event systems for user interactions with seamless mapping to the original typed data.
+- **Service integration**: Seamless integration with TomTom services for added data such as places, routes and geometries
+- **Lazy loading**: Modules are loaded only when needed for optimal performance
+
+## Types of modules
+
+There are two types of modules in the TomTom Maps SDK, depending on **who owns the sources and layers the module controls**. Ownership decides both the factory you call and how many instances make sense on one map.
+
+### Style-owned modules — `get(map, config?)`
+
+These modules do not display data of their own. They control sources and layers that the map style already provides — the base map, POI symbols, the traffic tile layers, the terrain elevation — under source and layer IDs that are fixed and global to the style.
+
+A style-owned module is therefore a **shared controller**, not a piece of content. `get()` is a lookup, and quite literally so: the SDK keeps one instance per map, so calling it twice returns the *same* module. Two components can each ask for the terrain without coordinating, and neither has to hoist a shared reference.
+
+Calling `get(map)` with no configuration is a plain accessor — it changes nothing. Calling it with a configuration applies that configuration to the instance that already exists.
+
+To handle events for only part of what a style-owned module covers, scope the events rather than creating a second module — see [Scoped events](./user-events.mdx#scoping-events).
+
+### Data-owned modules — `create(map, config?)`
+
+These modules bring their own data. They add the GeoJSON sources, layers and sprite images they need and own them for their whole lifetime, with every identifier suffixed per instance.
+
+Instances are therefore fully independent: `create()` builds a **new module every time**, and stacking several of them on one map — one set of places per search, one route per plan — is a supported thing to do. Nothing is shared or reused between them.
+
+### Per-module reference
+
+| Module | Kind | Factory | Instances per map | Why |
+| --- | --- | --- | --- | --- |
+| [BaseMapModule](./base-map.mdx) | Style-owned | `get()` | One per map | One global vector-tile source. To act on part of the map, scope its events with `events.where({ layerGroups })` rather than creating a second module. |
+| [POIsModule](./pois.mdx) | Style-owned | `get()` | One per map | Fixed POI source and layer IDs; visibility, category filters and category icons are global to the map. |
+| [TrafficFlowModule](./traffic-flow.mdx) | Style-owned | `get()` | One per map | Fixed traffic-flow source; visibility and filters are global to the map. |
+| [TrafficIncidentsModule](./traffic-incidents.mdx) | Style-owned | `get()` | One per map | Fixed traffic-incident source; visibility and filters are global to the map. |
+| [TerrainModule](./terrain.mdx) | Style-owned | `get()` | One per map | Fixed elevation source; hillshade visibility and the 3D surface are global to the map. |
+| [PlacesModule](./places.mdx) | Data-owned | `create()` | Multiple | Owns its own place source, layers and pin images, suffixed per instance. |
+| [RoutingModule](./routes.mdx) | Data-owned | `create()` | Multiple | Owns its own route, waypoint and section sources and layers, suffixed per instance. |
+| [GeometriesModule](./geometries.mdx) | Data-owned | `create()` | Multiple | Owns its own geometry and label sources, suffixed per instance. |
+| [ReachableRangesModule](./reachable-ranges.mdx) | Data-owned | `create()` | Multiple | Owns its own range and label sources, suffixed per instance. |
+| [CustomGeoJSONModule](./custom.mdx) | Data-owned | `create()` | Multiple | Owns the sources and layers declared in its own `sources` config, suffixed per instance. |
+| [TrafficIncidentDetailsModule](./traffic-incident-details.mdx) | Data-owned | `create()` | Multiple | Owns the GeoJSON source and layers for the incidents you fetched yourself. |
+| [TrafficAreaAnalyticsModule](./traffic-area-analytics-module.mdx) | Data-owned | `create()` | Multiple | Owns the grid/heatmap source and layers it renders your analytics into. |
+
+## Who owns what
+
+Everything visible on the map has exactly one owner, and the owner follows from who owns the layers. Every module has knobs of its own: each style-owned module decides **whether and how** its part of the loaded style shows, the Styling Foundations module the **foundations** that reach across every part — sizes, the map colours, projection and sky — and each data-owned instance everything about the layers it adds itself. The dashed line is the only place a knob reaches past its module: the data-owned modules read the accent as their default colour.
+
+```d2
+direction: down
+
+StyleOwned: "Style-owned modules: get(), one per map" {
+  style: {
+    fill: "#fffde7"
+    stroke: "#ff6f00"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 16
+  }
+
+  Modules: "BaseMapModule · POIsModule\nTrafficFlowModule · TrafficIncidentsModule\nTerrainModule" {
+    style: {
+      fill: "#ffffff"
+      stroke: "#ff6f00"
+      stroke-width: 1
+      font-color: "#333"
+      border-radius: 4
+      font-size: 14
+    }
+  }
+  Knobs: "Their knobs: what is shown, and how\nvisible · filters · road parts\nPOI, traffic and hillshade looks" {
+    style: {
+      fill: "#fffde7"
+      stroke: "#ff6f00"
+      stroke-dash: 3
+      font-color: "#333"
+      border-radius: 4
+      font-size: 13
+    }
+  }
+}
+
+Styling: "StylingFoundationsModule: get(), one per map" {
+  style: {
+    fill: "#fff3e0"
+    stroke: "#e65100"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 16
+  }
+
+  Knobs: "Its knobs: the foundations of the whole map\nsizes · map colours · projection · sky" {
+    style: {
+      fill: "#fff3e0"
+      stroke: "#e65100"
+      stroke-dash: 3
+      font-color: "#333"
+      border-radius: 4
+      font-size: 13
+    }
+  }
+  Accent: "colors.accent" {
+    style: {
+      fill: "#ffffff"
+      stroke: "#e65100"
+      font-color: "#333"
+      border-radius: 4
+      font-size: 13
+    }
+  }
+}
+
+DataOwned: "Data-owned modules: create(), many per map" {
+  style: {
+    fill: "#e0f2f1"
+    stroke: "#00695c"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 16
+  }
+
+  Modules: "PlacesModule · RoutingModule · GeometriesModule\nReachableRangesModule · CustomGeoJSONModule\nTrafficIncidentDetailsModule · TrafficAreaAnalyticsModule" {
+    style: {
+      fill: "#ffffff"
+      stroke: "#00695c"
+      stroke-width: 1
+      font-color: "#333"
+      border-radius: 4
+      font-size: 14
+    }
+  }
+  Knobs: "Each instance's own knobs\ncolor · label · width · markerType · …" {
+    style: {
+      fill: "#e0f2f1"
+      stroke: "#00695c"
+      stroke-dash: 3
+      font-color: "#333"
+      border-radius: 4
+      font-size: 13
+    }
+  }
+}
+
+MapLibre: MapLibre map {
+  style: {
+    fill: "#e8eef8"
+    stroke: "#295DAA"
+    stroke-width: 2
+    font-color: "#295DAA"
+    border-radius: 8
+    font-size: 16
+  }
+
+  StyleLayers: "The loaded style's layers\nbase map · POIs · traffic tiles · hillshade" {
+    style: {
+      fill: "#295DAA"
+      stroke: "#295DAA"
+      font-color: white
+      border-radius: 4
+      font-size: 14
+    }
+  }
+  View: "Map view\nprojection · sky" {
+    style: {
+      fill: "#295DAA"
+      stroke: "#295DAA"
+      font-color: white
+      border-radius: 4
+      font-size: 14
+    }
+  }
+  OwnLayers: "Sources and layers each instance adds\n(ids suffixed per instance)" {
+    style: {
+      fill: "#295DAA"
+      stroke: "#295DAA"
+      font-color: white
+      border-radius: 4
+      font-size: 14
+    }
+  }
+}
+
+StyleOwned -> MapLibre.StyleLayers: "show, hide, filter, restyle" {
+  style.stroke-width: 2
+}
+Styling -> MapLibre.StyleLayers: "restyle every part" {
+  style.stroke-width: 2
+}
+Styling -> MapLibre.View: "view.* knobs" {
+  style.stroke-width: 2
+}
+Styling.Accent -> DataOwned.Knobs: "default colour, read" {
+  style.stroke-dash: 3
+}
+DataOwned -> MapLibre.OwnLayers: "draw and style" {
+  style.stroke-width: 2
+}
+```
+
+In detail:
+
+| You want to change… | Owner | How |
+| --- | --- | --- |
+| **Whether** something the loaded style draws is shown — a base-map layer group or road part, the traffic tiles, a POI category, the hillshade, the 3D surface | The style-owned module for that part | `setVisible`, `updateConfig({ filters })`, `setHillshadeVisible`, `setElevationVisible`, `setKnob` |
+| **How one part** looks — POI size and label colours, traffic colours and widths, hillshade lighting | The style-owned module for that part: [POIs](./pois.mdx#appearance), [traffic flow](./traffic-flow.mdx#appearance), [traffic incidents](./traffic-incidents.mdx#appearance), [terrain](./terrain.mdx#appearance) | `setKnob`, `updateConfig` |
+| **The foundations** across every part — label, icon and road sizes, the ten map colours, projection and sky | The [Styling Foundations module](./styling.mdx) | `setKnob`, `setMapColors` |
+| A named bundle of looks across those modules | [`applyMapPreset`](./styling.mdx#presets) | `applyMapPreset(map, id)` |
+| Anything a data-owned module draws itself — routes, places, geometries, your GeoJSON, fetched traffic incidents, area analytics | That module, through its own configuration | `create(map, config)`, `applyConfig` / `updateConfig`, `setKnob` and `setVisible` |
+| The map's colour identity — the [accent](./styling-map-colors.mdx#the-accent-what-a-theme-reaches-beyond-the-base-map) routes, places and geometries default to | The Styling Foundations module publishes it; each data-owned module reads it | `setMapColors`, the `colors.accent` knob; a colour set on the module always wins |
+| A look a data-owned module [borrows from the style](./styling-borrowed-looks.mdx), such as POI-looking places or the colours of fetched traffic incidents | The module whose knob restyles it sets it on the style; the data-owned module reads it and redraws its own layers | The knobs that restyle what it borrows; a setting given to the module always wins |
+
+Two consequences:
+
+- The rows do not cross. Knobs on the loaded style never write a data-owned module's layers, and a data-owned module never restyles the base map under it: recolouring a route is `RoutingModule` configuration, recolouring the roads it runs on is `colors.roadMajor`. The accent and the borrowed looks are read, not written.
+- The foundations and a part's own look meet on the same layers, and **compose**: one engine per map applies every style knob, whichever module holds it, so `labels.sizeFactor` and the POIs' `sizeFactor` multiply on the POI labels, and all of them land on top after a style switch.
+
+Within a style-owned module, the finer settings only narrow what its coarser ones show. A road part or the POI micro markers never show while their layer group or the POIs are hidden, and showing those again keeps a part's `false`; the POIs' `zoomShift` rewrites the same layer filters `filters.categories` narrows, in either order.
+
+Each module guide opens with a *What this module owns* line that applies this rule to that module.
+
+## Changing a setting
+
+Every setting changes through three calls each module has: `applyConfig(config)` replaces the whole configuration, `updateConfig(partial)` changes the top-level properties it is given, and `setKnob` sets one setting by its [catalogue id](#setting-a-knob-by-its-id).
+
+- **`updateConfig` merges one level deep.** A nested object it is given replaces the one there, so to change one nested field, spread the current part or set its knob:
+
+  ```javascript
+  placesModule.updateConfig({ label: { ...placesModule.getConfig()?.label, color: '#c2185b' } });
+  setKnob(placesModule, placesKnobCatalogue, 'label.color', '#c2185b');
+  ```
+
+- **Named setters are for visibility**: `setVisible` / `isVisible` and the parts that hide on their own (see *Visibility* under [Appearance vocabulary](#appearance-vocabulary)). The only others are `TrafficAreaAnalyticsModule`'s per-metric `setPalette`, `setColorStops`, `setHeight` and `setFilters`. A named setter is always `set<Setting>`.
+
+## Saving and replaying a configuration
+
+`getConfig()` is the export and `applyConfig()` the import: a module's configuration that went through JSON, given back to `applyConfig`, holds the same configuration and draws the same layers. Keep one to restore a user's map, attach it to a support report, or replay it in a test.
+
+```javascript
+localStorage.setItem('places', JSON.stringify(placesModule.getConfig()));
+
+// Later, on the same module or a new one
+placesModule.applyConfig(JSON.parse(localStorage.getItem('places')));
+```
+
+Most modules' configurations are JSON whole, styling's knobs included. Five modules also take functions or image elements, which JSON cannot carry. Each has a type for the part that survives, which its reference page details; a replay adds the rest back in code:
+
+| Module | Serializable part | Left out |
+| --- | --- | --- |
+| `PlacesModule` | `PlacesModuleSerializableConfig` | `label.title` as a function, `connections.label.title`, `evAvailability.formatText`, `icon.mapping`, `extraFeatureProps` functions, image elements in `icon` |
+| `RoutingModule` | `RoutingModuleSerializableConfig` | a `custom` `chargingStops.icon.mapping`, `waypoints.icon.mapping`, `waypoints.label.title` as a function, image elements in `chargingStops.icon` and `waypoints.icon` |
+| `GeometriesModule` | `GeometriesModuleSerializableConfig` | `transformFeaturesForDisplay` |
+| `ReachableRangesModule` | `ReachableRangesModuleSerializableConfig` | `label.title` |
+| `CustomGeoJSONModule` | `CustomGeoJSONModuleSerializableConfig` | `images` |
+
+`JSON.stringify` drops a function without a trace, but turns an image element into `{}`, which does not replay. Give icon images as URLs, data URIs or SVG text, and a place or waypoint title as a MapLibre expression, to keep the whole configuration serializable. `POIsModule`'s `icon.categoryIcons` takes image elements too, with no type to leave them out.
+
+```javascript
+const state = JSON.parse(saved); // PlacesModuleSerializableConfig
+placesModule.applyConfig({
+    ...state,
+    connections: { ...state.connections, label: { ...state.connections?.label, title: (connection) => connection.name } },
+});
+```
+
+The configuration is what a module draws with, not the data it shows: replay `show()` with the data too.
+
+## Appearance vocabulary
+
+A concept has one name on every module that has it. The table lists the shared appearance terms, the rule each follows, and the exact properties that carry it; a module missing from a row does not have that concept.
+
+| Concept | The rule | Modules and properties |
+| --- | --- | --- |
+| **The module's colour** | A top-level `color` is the colour of what the module draws. Unset, it is the map's [accent](./styling-map-colors.mdx#the-accent-what-a-theme-reaches-beyond-the-base-map) (`colors.accent`, published as `map.mapColors.accent`), then the module's own default. A part-level colour overrides it. | `RoutingModule`: `color`, under `layers.*` paint overrides · `GeometriesModule`: `color`, under `fill.palette`, `fill.color`, `line.color` and a feature's `color` property ([order](./geometries.mdx#custom-styling-configuration)) · `PlacesModule`: `color`, under `icon.default.style.fillColor`, `label.color` and `layers.*` |
+| **Labels** | One label shape, `LabelConfig`: `size`, `color`, `haloColor`, `haloWidth`, `opacity`, `font`. Each module adds the label's content and its own `offset`. | `PlacesModule`: `label` (`PlaceLabelConfig`, adds `title`, and `offset` as one number of ems away from the icon) · `GeometriesModule`: `label` (`GeometryLabelConfig`, adds `text`, a string or expression that defaults to the feature's `title`), and `lineLabel` (`GeometryLineLabelConfig`, the same `text` plus `minZoom`, `symbolSpacing`, and `offset` as `[x, y]` ems) · `RoutingModule`: `chargingStops.label` (`ChargingStopLabelConfig`: `visible` and a `title` expression, without the `LabelConfig` styling) |
+| **Multipliers** | A `*Factor` multiplies a default and is clamped to its catalogue entry's `range`, which `knobEntryOf(catalogue, id)` reads. Where a size also has presets (`'s'`, `'m'`, `'l'`), the preset picks the base and the factor multiplies it. | `RoutingModule`: `width` and `widthFactor` (0.5 to 2), `waypoints.size` and `waypoints.sizeFactor` (0.5 to 2), `sections.<type>.width` and `sections.<type>.widthFactor`, `sections.<type>.icon.sizeFactor` (0.25 to 2), `highlight.outlineWidthFactor` (1 to 1.25) · `GeometriesModule`: `highlight.fillOpacityFactor` (1 to 4) and `highlight.lineWidthFactor` (1 to 3) · `TrafficIncidentDetailsModule`: `highlight.widthFactor` (1 to 1.8) · `POIsModule`: `sizeFactor` (0.5 to 1.5) · `TrafficFlowModule` and `TrafficIncidentsModule`: `widthFactor` (0.5 to 2) · Styling knobs: `labels.sizeFactor`, `symbols.sizeFactor`, `roads.widthFactor` |
+| **Hovered and clicked look** | A feature a handler covers, or one `putEventState` puts a state on, draws one look whether hovered or clicked. `highlight` holds the factors that look multiplies by; a factor of `1` draws the feature as any other. A MapLibre layer you give in place of the default draws as given. | `RoutingModule`: `highlight.outlineWidthFactor` · `GeometriesModule`: `highlight.fillOpacityFactor`, `highlight.lineWidthFactor` · `TrafficIncidentDetailsModule`: `highlight.outlineColor`, `highlight.widthFactor`, also drawn on the incidents `setFocus` marks, `highlight: false` to turn it off · `PlacesModule`: `layers.selected` |
+| **Absolute units** | A value that mirrors a MapLibre property keeps MapLibre's name and is in pixels. Any other unit is in the name. Opacities run from 0 to 1, label offsets are in ems. | Pixels: `LabelConfig` `size` and `haloWidth`, `GeometriesModule` `line.width` and `lineLabel.symbolSpacing`, `PlacesModule` `cluster.badge.strokeWidth` and `cluster.badge.radius` · Metres: `TrafficAreaAnalyticsModule` `maxHeightMeters`, `minHeightMeters` and, per unit of the metric, `metersPerUnit` · Two exaggerations: `TerrainModule` `elevation.exaggeration` scales the raised surface, its `hillshade.exaggeration` sets the shading strength |
+| **Marker type, fill style, map theme** | *Theme* means only the map-wide look. How one module draws its own features has a name of its own. | `PlacesModule`: `markerType` (`PlacesMarkerType`; `placesMarkerTypes` lists `pin`, `circle-icon`, `base-map`, `pin-clustered`) · `GeometriesModule`: `fillStyle` (`GeometryFillStyle`; `geometryFillStyles` lists `filled`, `outline`, `inverted`), per feature `properties.fillStyle` · `ReachableRangesModule`: `fillStyle`, the same values · Map theme: `StylingFoundationsModule.setMapColors`, fed by the [Map Theme plugin](../plugins/map-theme.mdx)'s `deriveMapColors`, `deriveMapColorsFromCss`, `deriveMapColorsFromImage` and `mapColorsLightDark` |
+| **Fill colour or palette** | A colour field takes a colour or a MapLibre expression, never a palette name. A palette is its own field: on geometries and reachable ranges a list of your own CSS colours, which the features or bands take one after another; on area analytics a name, ramped over the metric's value. | `GeometriesModule`: `fill.color`, `fill.palette`, unset drawing one colour, the accent · `ReachableRangesModule`: `fill.palette`, unset ramping from the accent toward the map's land colour · `TrafficAreaAnalyticsModule`: `metrics.<metric>.palette` (`AreaAnalyticsPalette`; `areaAnalyticsPalettes` lists the names), and `metrics.<metric>.colorStops`, which wins over it |
+| **Zoom thresholds** | `minZoom` and `maxZoom`. | `PlacesModule`: `entryPoints.minZoom` · `GeometriesModule`: `lineLabel.minZoom` · `RoutingModule`: `sections.<type>.sign.minZoom`, `countryCrossings.minZoom` · `POIsModule`: `minZoom` · `TerrainModule`: `hillshade.maxZoom` |
+| **Borrowed looks** | A part drawn to look like the style follows the knobs that restyle what it borrows. A look set on the module wins. | `PlacesModule` with `markerType` `base-map`, `circle-icon` or `pin-clustered` · `RoutingModule` `sections.traffic` · `TrafficIncidentDetailsModule` line colours. The knobs each one follows: [Borrowed looks](./styling-borrowed-looks.mdx) |
+| **Visibility** | `visible` in the config, `setVisible(visible)` to change it, `isVisible()` to read it back. `isVisible()` returns the setting, the same value as the module's `visible` knob. On a data-owned module, hiding keeps the data, `show()` and `clear()` leave it hidden, and `getShown()` returns what is shown. On a style-owned module that nothing has set, `isVisible()` reads what the style draws, and the traffic modules are hidden until shown. A part that hides on its own has its own `visible`. | All three on `PlacesModule`, `RoutingModule`, `GeometriesModule`, `CustomGeoJSONModule`, `TrafficIncidentDetailsModule`, `TrafficAreaAnalyticsModule`, `POIsModule`, `TrafficFlowModule` and `TrafficIncidentsModule` (plus `icons.visible` with `setIconsVisible` / `isIconsVisible`) · `BaseMapModule`: `visible`, `groups.<group>.visible`, `setVisible` and `isVisible` with `{ layerGroups }` · `RoutingModule` per part: `chargingStops.visible`, `chargingStops.label.visible`, `summaryBubbles.visible`, `countryCrossings.visible`, `sections.<type>.visible` · `TerrainModule`: `hillshade` with `setHillshadeVisible` / `isHillshadeVisible`, `elevation` with `setElevationVisible` / `isElevationVisible` |
+| **Layer position** | `beforeLayerConfig` takes `'top'` or a named style layer such as `'lowestLabel'` (`BeforeLayerConfig`) for all of a module's layers. A module drawing several parts also takes a record keyed by its part names, `all` covering the parts it leaves out (`PartsBeforeLayerConfig`). | `GeometriesModule`: `GeometryBeforeLayerConfig`, parts `fill`, `line` · `RoutingModule`: `RoutingBeforeLayerConfig`, parts `mainLines`, `instructionLines`, `icons` · `PlacesModule`: `PlacesBeforeLayerConfig`, parts `places`, `connections` · `TrafficAreaAnalyticsModule`: `AreaAnalyticsBeforeLayerConfig`, one part per display mode · `TrafficIncidentDetailsModule`: `BeforeLayerConfig` alone · `CustomGeoJSONModule`: MapLibre's `beforeID` on each layer |
+
+## Every setting as data
+
+A module's display settings are also published as a knob catalogue: static data, readable with no map loaded, that a control panel builds its controls from and an agent checks a value against. An entry's `id` is the setting's path in the module's configuration, where a number indexes a list (`filters.any.0`), and its `kind` says which value it takes and which fields come with it. The entry type is `KnobEntry`, and the kinds are `KnobKind`:
+
+| Kind | Value | Fields |
+| --- | --- | --- |
+| `toggle` | `true` or `false` | |
+| `factor` | a multiplier, `1` keeping what the style does | `range` |
+| `number` | a number | `range` |
+| `offset` | an `[x, y]` displacement, x to the right and y down, in the unit the description names | `range`, for x and y each |
+| `color` | a CSS colour | |
+| `enum` | one of the options | `options` |
+| `enums` | a list of the options; the description says when their order matters | `options` |
+| `colors` | a list of CSS colours or of the names in `options` | `options`, where there are names |
+| `image` | the id of an image in the style's sprite | |
+| `text` | any string | |
+
+- `range` is the span a control offers, with the `step` a slider uses. Its `bounds` say which ends a value must keep to:
+
+  | `bounds` | A value must be | For example |
+  | --- | --- | --- |
+  | `hard` | between `min` and `max` | an opacity, a `*Factor` |
+  | `hard-min` | at least `min`; above `max` it still applies | a height in metres |
+  | `soft` | any number | an offset |
+
+- `default` is present where one value holds everywhere. Without it, the description says what decides: the style, the accent, the global configuration.
+- A setting that takes a MapLibre expression, a callback or a structured object stays in the configuration. The plain-value alternatives of a setting that also takes an expression are in its entry, and they are what the module's `…KnobValueOf<ID>` type names.
+- The [styling catalogue](./styling.mdx#the-knob-catalogue) and the [map effects plugin](../plugins/map-effects.mdx)'s use the same kinds.
+
+### Setting a knob by its id
+
+Three functions work a knob by its catalogue id, on every module, the [Styling Foundations module](./styling.mdx) and the [map effects plugin](../plugins/map-effects.mdx)'s `MapEffects` included:
+
+- **`setKnob(module, catalogue, id, value)`** sets one setting and keeps every other one; a value its entry refuses changes nothing.
+- **`getKnob(module, catalogue, id)`** reads the value in force: the one set, else what the module knows it to be (a look knob of a style-owned module reads the loaded style), else the entry's `default`.
+- **`resetKnob(module, catalogue, id)`** unsets one, and drops the objects it leaves empty, so a knob set and then reset leaves the configuration as it was. `resetConfig()` unsets them all.
+
+`knobEntryOf(catalogue, id)` reads one entry, its range or options among them, and `validateKnobValue` is the check alone, for a value from a form or a language model. It and `setKnob` throw a `RangeError` naming the knob and what it expects; all of them throw an `Error` for an id the catalogue lacks. A literal id types the value it takes; an id held as any `string`, as in a panel looping over a catalogue, takes any value and is checked when set.
+
+The path is the same for every module, and a knob only ever redraws what its own module draws:
+
+```d2
+direction: right
+
+Catalogues: "One catalogue per module\nstatic data, no map needed" {
+  style: {
+    fill: "#e8f5e9"
+    stroke: "#1b5e20"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 16
+  }
+
+  List: "placesKnobCatalogue\nroutingKnobCatalogue\ntrafficFlowKnobCatalogue\n…\nstylingFoundationsKnobCatalogue\neffectKnobCatalogue (map effects plugin)" {
+    style: {
+      fill: "#ffffff"
+      stroke: "#1b5e20"
+      stroke-width: 1
+      font-color: "#333"
+      border-radius: 4
+      font-size: 13
+    }
+  }
+  Entry: "Each entry: id · kind · range or options · default\nkinds shared by every catalogue" {
+    style: {
+      fill: "#e8f5e9"
+      stroke: "#1b5e20"
+      stroke-dash: 3
+      font-color: "#333"
+      border-radius: 4
+      font-size: 13
+    }
+  }
+}
+
+Caller: "A value\nfrom a control, saved settings or an agent" {
+  style: {
+    fill: "#fef2f2"
+    stroke: "#f87171"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 14
+  }
+}
+
+Set: "Set one knob by id" {
+  style: {
+    fill: "#fffde7"
+    stroke: "#ff6f00"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 16
+  }
+
+  SetKnob: "setKnob(module, catalogue, id, value)" {
+    style: {
+      fill: "#ffffff"
+      stroke: "#ff6f00"
+      font-color: "#333"
+      border-radius: 4
+      font-size: 13
+    }
+  }
+}
+
+Validate: "validateKnobValue\nagainst the entry" {
+  style: {
+    fill: "#fffde7"
+    stroke: "#ff6f00"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 14
+  }
+}
+
+Refused: "RangeError\nnothing changes" {
+  style: {
+    fill: "#fef2f2"
+    stroke: "#b91c1c"
+    stroke-width: 2
+    font-color: "#b91c1c"
+    border-radius: 8
+    font-size: 14
+  }
+}
+
+Module: "That module's configuration\none setting changed, the rest kept" {
+  style: {
+    fill: "#fffde7"
+    stroke: "#ff6f00"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 14
+  }
+}
+
+MapLibre: "What that module draws, and nothing else" {
+  style: {
+    fill: "#295DAA"
+    stroke: "#295DAA"
+    font-color: white
+    border-radius: 8
+    font-size: 14
+  }
+}
+
+Event: "events: 'config-change'" {
+  style: {
+    fill: "#ffffff"
+    stroke: "#ff6f00"
+    font-color: "#333"
+    border-radius: 8
+    font-size: 13
+  }
+}
+
+Caller -> Set {
+  style.stroke-width: 2
+}
+Catalogues -> Set: "the entry for the id" {
+  style.stroke-dash: 3
+}
+Set -> Validate {
+  style.stroke-width: 2
+}
+Validate -> Refused: "invalid" {
+  style.stroke: "#b91c1c"
+}
+Validate -> Module: "valid" {
+  style.stroke-width: 2
+}
+Module -> MapLibre: "redraw" {
+  style.stroke-width: 2
+}
+Module -> Event
+```
+
+```javascript
+import { getKnob, knobEntryOf, resetKnob, setKnob, trafficFlowKnobCatalogue, validateKnobValue } from '@tomtom-org/maps-sdk/map';
+
+setKnob(trafficFlow, trafficFlowKnobCatalogue, 'filters.roadCategories.values', ['motorway', 'trunk']);
+getKnob(trafficFlow, trafficFlowKnobCatalogue, 'visible'); // false until set: the entry's default
+resetKnob(trafficFlow, trafficFlowKnobCatalogue, 'filters.roadCategories.values');
+
+const knob = knobEntryOf(trafficFlowKnobCatalogue, 'filters.roadCategories.values'); // kind, range or options, default
+validateKnobValue(knob, ['motorway', 'cart track']); // RangeError: … 'cart track' is not
+```
+
+The [traffic config playground](../../examples/traffic-config-playground) sets every flow and incidents knob this way, from controls built off the two catalogues.
+
+## List of modules
+
+### Base map module
+
+A **BaseMapModule** provides visibility and events for layer groups of the base map.
+
+```javascript
+import { BaseMapModule } from '@tomtom-org/maps-sdk/map';
+
+const baseMapModule = await BaseMapModule.get(map);
+
+// Toggle visibility, for the whole base map or for specific layer groups
+baseMapModule.setVisible(true);
+baseMapModule.setVisible(false, { layerGroups: { show: 'only', values: ['borders', 'buildings2D'] } });
+```
+
+**[Learn more about Base Map Module →](./base-map.mdx)**
+
+### Places module
+
+A **PlacesModule** handles search results visualization and place information display.
+
+```javascript
+import { PlacesModule } from '@tomtom-org/maps-sdk/map';
+import { discoverPlaces } from '@tomtom-org/maps-sdk/services';
+
+// Initialize places module
+const placesModule = await PlacesModule.create(map);
+
+// Search and display results
+const results = await discoverPlaces({ query: 'restaurants near me' });
+await placesModule.show(results);
+
+// Handle place interactions — `events.places` is the pins alone, typed as Place
+placesModule.events.places.on('click', (place) => {
+    console.log('Selected place:', place.properties.title);
+});
+```
+
+**[Learn more about Places Module →](./places.mdx)**
+
+### POIs module
+
+A **POIsModule** controls the display and events for Points of Interest with category-based filtering and styling.
+
+```javascript
+import { POIsModule } from '@tomtom-org/maps-sdk/map';
+
+// Display specific POI categories
+const poisModule = await POIsModule.get(map, {
+    filters: {
+        categories: { show: 'all-except', values: ['CHARGING_LOCATION'] },
+    },
+});
+```
+
+**[Learn more about POIs Module →](./pois.mdx)**
+
+### Routing module
+
+A **RoutingModule** controls the display of routes, waypoints, and navigation instructions, and user events on such parts.
+
+```javascript
+import { RoutingModule } from '@tomtom-org/maps-sdk/map';
+import { calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+// Initialize routing module
+const routingModule = await RoutingModule.create(map);
+
+// Calculate and display route
+const route = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676], // Amsterdam
+        [4.4777, 51.9244]  // Rotterdam
+    ],
+});
+await routingModule.showRoutes(route);
+```
+
+**[Learn more about Routing Module →](./routes.mdx)**
+
+### Traffic flow module
+
+The **TrafficFlowModule** displays real-time traffic flow information with color-coded speed indicators.
+
+```javascript
+import { TrafficFlowModule } from '@tomtom-org/maps-sdk/map';
+
+// Add traffic flow visualization
+const trafficFlowModule = await TrafficFlowModule.get(map);
+
+// Control traffic display
+trafficFlowModule.setVisible(true);
+
+// Show road closures only
+trafficFlowModule.updateConfig({
+    filters: { roadClosures: 'only' },
+});
+```
+
+**[Learn more about Traffic Flow Module →](./traffic-flow.mdx)**
+
+### Traffic incidents module
+
+The **TrafficIncidentsModule** shows traffic incidents like accidents, road closures, and construction.
+
+```javascript
+import { TrafficIncidentsModule } from '@tomtom-org/maps-sdk/map';
+
+// Display traffic incidents
+const trafficIncidentsModule = await TrafficIncidentsModule.get(map, {
+    icons: { visible: false },
+    filters: { magnitudes: { show: 'all-except', values: ['minor'] } },
+});
+```
+
+**[Learn more about Traffic Incidents Module →](./traffic-incidents.mdx)**
+
+### Geometries module
+
+The **GeometriesModule** displays custom geometric data like polygons, lines, and markers.
+
+```javascript
+import { GeometriesModule } from '@tomtom-org/maps-sdk/map';
+
+// Initialize geometries module
+const geometryModule = await GeometriesModule.create(map);
+
+const geometryToSearch = await geometryData({ geometries: location });
+await geometryModule.show(geometryToSearch);
+```
+
+**[Learn more about Geometries Module →](./geometries.mdx)**
+
+### Reachable ranges module
+
+The **ReachableRangesModule** displays what `calculateReachableRanges` returns: each band titled from its budget, each origin's bands nested, coloured from the map.
+
+```javascript
+import { ReachableRangesModule } from '@tomtom-org/maps-sdk/map';
+
+const rangesModule = await ReachableRangesModule.create(map, { fillStyle: 'outline' });
+await rangesModule.show(await calculateReachableRanges([10, 20].map((value) => ({ origin, budget: { type: 'timeMinutes', value } }))));
+```
+
+**[Learn more about displaying reachable ranges →](./reachable-ranges.mdx)**
+
+### Custom GeoJSON module
+
+The **CustomGeoJSONModule** renders your own GeoJSON data with typed sources, clustering, custom images, and style-change restoration.
+
+```javascript
+import { CustomGeoJSONModule } from '@tomtom-org/maps-sdk/map';
+
+const customModule = await CustomGeoJSONModule.create(map, {
+    sources: {
+        heatmap: { layers: [{ type: 'heatmap' }] }
+    }
+});
+
+await customModule.show(heatmapData, 'heatmap');
+```
+
+**[Learn more about Custom GeoJSON Module →](./custom.mdx)**
+
+### Traffic incident details module
+
+The **TrafficIncidentDetailsModule** renders a specific set of incidents you fetched yourself, rather than the live vector-tile layer.
+
+```javascript
+import { TrafficIncidentDetailsModule } from '@tomtom-org/maps-sdk/map';
+import { trafficIncidentDetails } from '@tomtom-org/maps-sdk/services';
+
+const incidentDetailsModule = await TrafficIncidentDetailsModule.create(map);
+
+const result = await trafficIncidentDetails({ bbox });
+await incidentDetailsModule.show(result);
+```
+
+**[Learn more about Traffic Incident Details Module →](./traffic-incident-details.mdx)**
+
+### Traffic area analytics module
+
+The **TrafficAreaAnalyticsModule** visualizes aggregated traffic statistics for an area as a hexgrid, square grid, or heatmap.
+
+```javascript
+import { TrafficAreaAnalyticsModule } from '@tomtom-org/maps-sdk/map';
+
+const analyticsModule = await TrafficAreaAnalyticsModule.create(map, {
+    displayMode: 'hexgrid-3d',
+    activeMetric: 'congestionLevel',
+});
+
+await analyticsModule.show(analyticsResult);
+analyticsModule.updateConfig({ activeMetric: 'speed' });
+```
+
+**[Learn more about Traffic Area Analytics Module →](./traffic-area-analytics-module.mdx)**
+
+### Terrain module
+
+The **TerrainModule** draws the relief of the elevation data: hillshade shading, and the map surface raised in 3D.
+
+```javascript
+import { TerrainModule } from '@tomtom-org/maps-sdk/map';
+
+const terrain = await TerrainModule.get(map, { hillshade: { visible: true } });
+
+// Raise the surface in 3D, for a pitched camera
+terrain.setElevationVisible(true);
+```
+
+**[Learn more about Terrain Module →](./terrain.mdx)**
