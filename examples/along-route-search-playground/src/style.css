@@ -1,0 +1,51 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/form/input.css";
+@import "../../src/templates/css/form/checkbox.css";
+@import "../../src/templates/css/form/field.css";
+@import "../../src/templates/css/form/slider.css";
+@import "../../src/templates/css/button/button.css";
+
+/* CUSTOM STYLES (example-specific) */
+
+.ui-customPanel {
+    width: 280px;
+}
+
+#ui-clearButton {
+    margin-bottom: var(--ui-space-3);
+}
+
+.ui-categories-section {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.ui-categories-list {
+    max-height: 240px;
+    overflow-y: auto;
+    padding-right: var(--ui-space-1);
+}
+
+.ui-footer-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ui-space-2);
+}
+
+/* Responsive: max-height 700px */
+@media (max-height: 700px) {
+    .ui-categories-list {
+        max-height: 160px;
+    }
+}
+
+/* Responsive: max-height 550px */
+@media (max-height: 550px) {
+    .ui-categories-list {
+        max-height: 100px;
+    }
+}

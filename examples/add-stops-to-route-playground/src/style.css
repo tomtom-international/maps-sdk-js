@@ -1,0 +1,33 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/button/button.css";
+@import "../../src/templates/css/maplibre/popup.css";
+
+/* INSTRUCTIONS */
+
+.ui-instructions {
+    margin: 0 0 var(--ui-space-3);
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-s);
+    line-height: var(--ui-font-body-s-lh);
+    color: var(--ui-text-med-em);
+}
+
+/* POPUPS */
+
+.stop-action-popup .maplibregl-popup-content {
+    padding: var(--ui-space-2);
+    border-radius: var(--ui-rounded-15);
+    box-shadow: var(--ui-elevation-e4);
+    background: var(--ui-surface-0);
+}
+
+.stop-popup-btn {
+    height: var(--ui-height-sm);
+    font-size: var(--ui-font-caption-m);
+    padding: 0 var(--ui-space-3);
+    border-radius: var(--ui-rounded-30);
+    white-space: nowrap;
+}

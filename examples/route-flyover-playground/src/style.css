@@ -1,0 +1,119 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/panel/search-panel.css";
+@import "../../src/templates/css/form/field.css";
+@import "../../src/templates/css/form/input.css";
+@import "../../src/templates/css/form/dropdown.css";
+@import "../../src/templates/css/form/slider.css";
+@import "../../src/templates/css/form/toggle.css";
+@import "../../src/templates/css/button/button.css";
+
+/* CUSTOM STYLES (example-specific) */
+
+/* The panel clips its own overflow, so the result list rides in its flow instead of hanging
+   below the input as it does in a floating search panel. */
+.ui-customPanel .ui-result-list {
+    position: static;
+    max-width: none;
+    margin-top: var(--ui-space-2);
+}
+
+.ui-customPanel .ui-input {
+    margin-bottom: var(--ui-space-2);
+}
+
+.ui-button-row {
+    display: flex;
+    gap: var(--ui-space-2);
+}
+
+.ui-button-row .ui-button {
+    flex: 1;
+}
+
+.ui-readout {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--ui-space-2);
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-s);
+    color: var(--ui-text-med-em);
+}
+
+.ui-readout-value {
+    color: var(--ui-text-high-em);
+}
+
+/* A slider and the value it is at, on the line above it rather than beside it: the label already
+   owns that line, and a column of sliders all starting at the same left edge reads as a group. */
+.ui-field {
+    margin-bottom: var(--ui-space-4);
+}
+
+.ui-field:last-child {
+    margin-bottom: 0;
+}
+
+.ui-field-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--ui-space-2);
+}
+
+.ui-field .ui-form-label {
+    margin-bottom: 0;
+}
+
+.ui-field .ui-slider {
+    display: block;
+    width: 100%;
+    margin-top: var(--ui-space-2);
+}
+
+/* Two switches on one line: each is a word and a control, and stacking them spends a panel's
+   height on very little. */
+.ui-toggle-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ui-space-2) var(--ui-space-5);
+    margin-bottom: var(--ui-space-4);
+}
+
+/* The camera's modes, folded away. They are the part of this panel a visitor tunes second, and
+   open they are half its height. */
+.ui-disclosure-summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: var(--ui-space-2);
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-s);
+    font-weight: var(--ui-font-weight-bold);
+    color: var(--ui-text-med-em);
+}
+
+.ui-disclosure-summary::-webkit-details-marker {
+    display: none;
+}
+
+.ui-disclosure-summary::before {
+    content: "";
+    width: 0;
+    height: 0;
+    border-left: 5px solid currentcolor;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    transition: transform var(--ui-transition-fast);
+}
+
+.ui-disclosure[open] .ui-disclosure-summary::before {
+    transform: rotate(90deg);
+}
+
+.ui-disclosure-content {
+    margin-top: var(--ui-space-3);
+}

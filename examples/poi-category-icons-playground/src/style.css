@@ -1,0 +1,51 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/form/dropdown.css";
+@import "../../src/templates/css/form/toggle.css";
+@import "../../src/templates/css/form/color-picker.css";
+
+.ui-toggle-label + .ui-toggle-label {
+    margin-top: 8px;
+}
+
+#category-rows {
+    display: grid;
+    grid-template-columns: 30px minmax(0, 1fr) 124px 32px;
+    gap: 8px;
+    align-items: center;
+}
+
+.category-row {
+    display: contents;
+}
+
+.category-preview {
+    justify-self: center;
+    max-width: 30px;
+    max-height: 34px;
+}
+
+.category-row .ui-label {
+    margin-bottom: 0;
+}
+
+.category-row input[type="color"]:disabled {
+    opacity: 0.35;
+}
+
+/* The narrow panel gives each name a line of its own, the controls under it */
+@media (max-width: 768px) {
+    #category-rows {
+        grid-template-columns: 30px minmax(0, 1fr) 32px;
+    }
+
+    .category-row .ui-label {
+        grid-column: 2 / -1;
+    }
+
+    .category-row .ui-dropdown {
+        grid-column: 1 / span 2;
+    }
+}

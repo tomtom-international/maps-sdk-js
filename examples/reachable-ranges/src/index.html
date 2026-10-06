@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Reachable Range</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div class="ui-search-wrapper">
+            <div class="ui-searchPanel">
+                <input
+                    id="ui-originSearch"
+                    class="ui-input"
+                    type="text"
+                    placeholder="Search for origin..."
+                    autocomplete="off"
+                >
+                <button id="ui-searchButton" class="ui-button">Search</button>
+                <button id="ui-clearButton" class="ui-button ui-button-secondary">Clear</button>
+            </div>
+            <ul id="ui-searchResults" class="ui-result-list"></ul>
+        </div>
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Options</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 24 24" width="16" height="16">
+                            <path d="M7 10l5 5 5-5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="ui-mapStyles">Map Style:</label>
+                        <select id="ui-mapStyles" class="ui-dropdown"></select>
+                    </div>
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="ui-palette">Band Colours:</label>
+                        <select id="ui-palette" class="ui-dropdown"></select>
+                    </div>
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="ui-beforeLayer">Layer Position:</label>
+                        <select id="ui-beforeLayer" class="ui-dropdown"></select>
+                    </div>
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="ui-fillStyle">Fill Style:</label>
+                        <select id="ui-fillStyle" class="ui-dropdown"></select>
+                    </div>
+                </div>
+                <div class="ui-section">
+                    <h1 class="ui-subheading">Budget</h1>
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="ui-budgetType">Budget Type:</label>
+                        <select id="ui-budgetType" class="ui-dropdown"></select>
+                    </div>
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="ui-maxBudget">Max Budget:</label>
+                        <select id="ui-maxBudget" class="ui-dropdown"></select>
+                    </div>
+                </div>
+            </div>
+            <div id="ui-status-section" class="ui-panel-centered">
+                <span id="ui-spinner" class="ui-spinner" aria-hidden="true"></span>
+                <span class="ui-text" id="ui-statusText" hidden></span>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

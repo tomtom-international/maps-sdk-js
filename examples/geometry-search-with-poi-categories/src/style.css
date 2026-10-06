@@ -1,0 +1,29 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/search-panel.css";
+@import "../../src/templates/css/form/dropdown.css";
+@import "../../src/templates/css/form/input.css";
+@import "../../src/templates/css/button/button.css";
+
+/* CUSTOM STYLES (example-specific) */
+
+.ui-searchPanel .ui-dropdown {
+    width: auto;
+}
+
+.ui-status {
+    margin: var(--ui-space-2) 0 0;
+    padding: var(--ui-space-2) var(--ui-space-3);
+    max-width: 420px;
+    font-size: var(--ui-font-caption-m);
+    line-height: var(--ui-font-caption-m-lh);
+    color: var(--ui-text-med-em);
+    background: var(--ui-surface-0);
+    border-radius: var(--ui-rounded-10);
+    box-shadow: var(--ui-elevation-e2);
+}
+
+.ui-status:empty {
+    display: none;
+}

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Map theme from colours, an image or CSS</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Map theme</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <span class="ui-form-label" id="ui-source-label">Theme from:</span>
+                    <div
+                        class="ui-radio-group ui-radio-group-horizontal"
+                        role="radiogroup"
+                        aria-labelledby="ui-source-label"
+                    >
+                        <label class="ui-radio-label">
+                            <input type="radio" name="ui-source" value="palette" checked>
+                            Palette
+                        </label>
+                        <label class="ui-radio-label">
+                            <input type="radio" name="ui-source" value="colors">
+                            Colours
+                        </label>
+                        <label class="ui-radio-label">
+                            <input type="radio" name="ui-source" value="file">
+                            File
+                        </label>
+                    </div>
+                    <div class="ui-source" data-source="palette">
+                        <select class="ui-dropdown" id="ui-palette" aria-label="Palette">
+                            <option value="miro">Miró — cobalt, red, yellow</option>
+                            <option value="hokusai">Hokusai — Prussian blue, cream</option>
+                            <option value="earthy">Warm earthy tones</option>
+                            <option value="neon">Neon night</option>
+                        </select>
+                    </div>
+                    <div class="ui-source" data-source="colors" hidden>
+                        <input
+                            class="ui-input"
+                            id="ui-colors"
+                            type="text"
+                            spellcheck="false"
+                            aria-label="Any CSS colours, comma-separated"
+                        >
+                        <button class="ui-button" id="ui-apply" type="button">Apply colours</button>
+                    </div>
+                    <div class="ui-source" data-source="file" hidden>
+                        <input class="ui-sr-only" id="ui-file" type="file" accept="image/*,.css,text/css">
+                        <label class="ui-button ui-button-outline" for="ui-file">Choose an image or a CSS file</label>
+                    </div>
+                </div>
+                <div class="ui-section">
+                    <label class="ui-form-label" for="ui-mode">Map:</label>
+                    <select class="ui-dropdown" id="ui-mode">
+                        <option value="auto">Light or dark — decide from the colours</option>
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
+                    </select>
+                </div>
+                <div class="ui-section ui-swatches" id="ui-swatches"></div>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

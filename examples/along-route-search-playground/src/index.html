@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Along route search playground</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Along Route Search</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <label class="ui-form-label" for="ui-queryInput">Query</label>
+                    <input id="ui-queryInput" class="ui-input" type="text" placeholder="e.g. coffee, hotel...">
+                </div>
+
+                <div class="ui-section ui-categories-section">
+                    <h4 class="ui-subheading">POI Categories</h4>
+                    <div id="ui-categoriesContainer" class="ui-checkbox-list ui-categories-list"></div>
+                </div>
+
+                <div class="ui-section">
+                    <label class="ui-form-label" for="ui-detourSlider">Max detour time</label>
+                    <div class="ui-slider-container">
+                        <input id="ui-detourSlider" class="ui-slider" type="range" min="1" max="15" step="1" value="5">
+                        <span id="ui-detourValue" class="ui-slider-value">5 min</span>
+                    </div>
+                </div>
+
+                <div class="ui-panel-footer">
+                    <div class="ui-footer-buttons">
+                        <button id="ui-searchButton" class="ui-button ui-button-full">Search</button>
+                        <button id="ui-clearButton" class="ui-button ui-button-full ui-button-secondary">Clear</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

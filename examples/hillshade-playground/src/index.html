@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Hillshade playground</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Hillshade</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <label class="ui-form-label" for="ui-look">Look</label>
+                    <select class="ui-dropdown" id="ui-look"></select>
+                    <label class="ui-form-label" for="ui-mapStyle">Map style</label>
+                    <select class="ui-dropdown" id="ui-mapStyle"></select>
+                </div>
+                <div class="ui-section" id="ui-shading"></div>
+                <div class="ui-section" id="ui-light"></div>
+                <div class="ui-section" id="ui-colors"></div>
+                <div class="ui-section">
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" id="ui-sun">
+                        <span class="ui-toggle-switch"></span>
+                        Sun through the day
+                    </label>
+                    <div class="ui-button-group ui-button-group-horizontal">
+                        <button class="ui-button" id="ui-rotate">Rotate the map</button>
+                        <button class="ui-button" id="ui-reset">Reset</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

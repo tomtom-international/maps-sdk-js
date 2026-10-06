@@ -1,0 +1,16 @@
+{
+  "name": "@examples/nodejs-routing",
+  "description": "NodeJS example for the Calculate Route Service",
+  "type": "module",
+  "scripts": {
+    "develop": "node src/index.ts",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tomtom-org/maps-sdk": "catalog:"
+  },
+  "devDependencies": {
+    "@playwright/test": "catalog:",
+    "typescript": "catalog:"
+  }
+}

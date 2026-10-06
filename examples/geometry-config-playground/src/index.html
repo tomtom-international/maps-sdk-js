@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Geometry config playground</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div id="ui-panel" class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Geometry config</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+            <div class="ui-panel-content">
+                <p class="ui-hint">
+                    Style the fill and line independently: color, opacity, width and layer-stack position, and how much
+                    denser and wider they draw while the boundary is clicked.
+                </p>
+
+                <div class="ui-section">
+                    <div class="ui-form-field-inline">
+                        <label class="ui-form-label" for="ui-mapStyles">Map style</label>
+                        <select class="ui-dropdown" id="ui-mapStyles"></select>
+                    </div>
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" id="ui-visible" checked>
+                        <span class="ui-toggle-switch"></span>
+                        Visible
+                    </label>
+                </div>
+
+                <div class="ui-section">
+                    <h4 class="ui-subheading">Fill</h4>
+                    <div class="ui-form-field-inline">
+                        <label class="ui-form-label" for="ui-fillStyle">Style</label>
+                        <select class="ui-dropdown" id="ui-fillStyle"></select>
+                    </div>
+                    <div class="ui-form-field-inline">
+                        <label class="ui-form-label" for="ui-fillColor">Color</label>
+                        <span class="ui-color-swatch">
+                            <input type="color" id="ui-fillColor" value="#2A5BD7">
+                        </span>
+                    </div>
+                    <div class="ui-form-field-inline">
+                        <label class="ui-form-label" for="ui-fillOpacity">Opacity</label>
+                        <span class="ui-slider-container">
+                            <input type="range" class="ui-slider" id="ui-fillOpacity">
+                            <span class="ui-slider-value" id="ui-fillOpacity-value"></span>
+                        </span>
+                    </div>
+                    <div class="ui-form-field-inline">
+                        <label class="ui-form-label" for="ui-fillLayer">Below layer</label>
+                        <select class="ui-dropdown" id="ui-fillLayer"></select>
+                    </div>
+                </div>
+
+                <div class="ui-section">
+                    <h4 class="ui-subheading">Line</h4>
+                    <div class="ui-form-field-inline">
+                        <label class="ui-form-label" for="ui-lineColor">Color</label>
+                        <span class="ui-color-swatch">
+                            <input type="color" id="ui-lineColor" value="#1B3A8C">
+                        </span>
+                    </div>
+                    <div class="ui-form-field-inline">
+                        <label class="ui-form-label" for="ui-lineWidth">Width</label>
+                        <span class="ui-slider-container">
+                            <input type="range" class="ui-slider" id="ui-lineWidth">
+                            <span class="ui-slider-value" id="ui-lineWidth-value"></span>
+                        </span>
+                    </div>
+                    <div class="ui-form-field-inline">
+                        <label class="ui-form-label" for="ui-lineLayer">Below layer</label>
+                        <select class="ui-dropdown" id="ui-lineLayer"></select>
+                    </div>
+                </div>
+
+                <div class="ui-section">
+                    <h4 class="ui-subheading">Highlight</h4>
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" id="ui-clicked">
+                        <span class="ui-toggle-switch"></span>
+                        Clicked
+                    </label>
+                    <div class="ui-form-field-inline">
+                        <label class="ui-form-label" for="ui-highlightFillOpacity">Opacity &times;</label>
+                        <span class="ui-slider-container">
+                            <input type="range" class="ui-slider" id="ui-highlightFillOpacity">
+                            <span class="ui-slider-value" id="ui-highlightFillOpacity-value"></span>
+                        </span>
+                    </div>
+                    <div class="ui-form-field-inline">
+                        <label class="ui-form-label" for="ui-highlightLineWidth">Width &times;</label>
+                        <span class="ui-slider-container">
+                            <input type="range" class="ui-slider" id="ui-highlightLineWidth">
+                            <span class="ui-slider-value" id="ui-highlightLineWidth-value"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

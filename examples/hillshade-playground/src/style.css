@@ -1,0 +1,16 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/form/dropdown.css";
+@import "../../src/templates/css/form/field.css";
+@import "../../src/templates/css/form/toggle.css";
+@import "../../src/templates/css/form/slider.css";
+@import "../../src/templates/css/form/color-picker.css";
+@import "../../src/templates/css/button/button.css";
+@import "../../src/templates/css/button/groups.css";
+
+#ui-colors {
+    display: flex;
+    gap: var(--ui-space-3);
+}

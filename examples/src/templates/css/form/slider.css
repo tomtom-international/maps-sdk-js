@@ -1,0 +1,106 @@
+/* SLIDER */
+
+.ui-slider-container {
+    display: flex;
+    align-items: center;
+    gap: var(--ui-space-2);
+    margin: var(--ui-space-3) 0;
+}
+
+.ui-slider {
+    flex: 1;
+    min-width: 0;
+    height: 6px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--ui-border-low-em);
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+}
+
+/* Webkit */
+.ui-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--ui-surface-brand-red);
+    border-radius: var(--ui-rounded-full);
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition:
+        transform var(--ui-transition-fast),
+        box-shadow var(--ui-transition-fast);
+}
+
+.ui-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.ui-slider::-webkit-slider-thumb:active {
+    transform: scale(0.95);
+}
+
+/* Firefox */
+.ui-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: var(--ui-surface-brand-red);
+    border: none;
+    border-radius: var(--ui-rounded-full);
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition:
+        transform var(--ui-transition-fast),
+        box-shadow var(--ui-transition-fast);
+}
+
+.ui-slider::-moz-range-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.ui-slider::-moz-range-thumb:active {
+    transform: scale(0.95);
+}
+
+.ui-slider::-moz-range-track {
+    background: var(--ui-border-low-em);
+    border-radius: 3px;
+}
+
+.ui-slider-value {
+    flex-shrink: 0;
+    min-width: 50px;
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-s);
+    line-height: var(--ui-font-body-s-lh);
+    font-weight: var(--ui-font-weight-bold);
+    color: var(--ui-surface-brand-red);
+    text-align: right;
+}
+
+.ui-slider:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.ui-slider:disabled::-webkit-slider-thumb {
+    cursor: not-allowed;
+    background: var(--ui-text-disabled);
+}
+
+.ui-slider:disabled::-moz-range-thumb {
+    cursor: not-allowed;
+    background: var(--ui-text-disabled);
+}
+
+/* Responsive: max-width 600px */
+@media (max-width: 600px) {
+    .ui-slider-value {
+        min-width: 40px;
+        font-size: 11px;
+    }
+}

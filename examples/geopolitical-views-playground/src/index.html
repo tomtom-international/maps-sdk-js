@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Geopolitical views playground</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Geopolitical views</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="ui-territorySelect">Disputed territory</label>
+                        <select id="ui-territorySelect" class="ui-dropdown"></select>
+                    </div>
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="ui-viewSelect">
+                            Geopolitical view
+                            <span class="ui-form-hint">geopoliticalView</span>
+                        </label>
+                        <select id="ui-viewSelect" class="ui-dropdown"></select>
+                    </div>
+                </div>
+
+                <div class="ui-section">
+                    <h4 class="ui-subheading">
+                        Reverse geocoded
+                        <span class="ui-form-hint">reverseGeocode</span>
+                    </h4>
+                    <dl id="ui-address" class="ui-summary"></dl>
+                    <p id="ui-status" class="ui-status" role="status"></p>
+                </div>
+            </div>
+        </div>
+
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

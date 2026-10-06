@@ -1,0 +1,79 @@
+/* FORM FIELDS */
+
+.ui-form-field {
+    margin-bottom: var(--ui-form-field-margin);
+}
+
+.ui-form-field:last-child {
+    margin-bottom: 0;
+}
+
+.ui-form-field-inline {
+    display: flex;
+    align-items: center;
+    gap: var(--ui-space-3);
+    margin-bottom: var(--ui-form-field-margin);
+}
+
+.ui-form-field-inline .ui-label,
+.ui-form-field-inline .ui-form-label {
+    margin-bottom: 0;
+    flex-shrink: 0;
+}
+
+.ui-form-field-inline .ui-input,
+.ui-form-field-inline .ui-dropdown {
+    flex: 1;
+}
+
+.ui-form-helper {
+    margin-top: var(--ui-label-margin);
+    font-size: var(--ui-font-caption-s);
+    line-height: var(--ui-font-caption-s-lh);
+    color: var(--ui-text-low-em);
+}
+
+.ui-form-hint {
+    display: block;
+    font-family: var(--ui-font-fira);
+    font-size: var(--ui-font-caption-s);
+    font-weight: var(--ui-font-weight-normal);
+    text-transform: none;
+    color: var(--ui-text-low-em);
+}
+
+.ui-form-error {
+    margin-top: var(--ui-label-margin);
+    font-size: var(--ui-font-caption-s);
+    line-height: var(--ui-font-caption-s-lh);
+    color: var(--ui-surface-brand-red);
+    font-weight: var(--ui-font-weight-medium);
+}
+
+/* Responsive: max-width 768px */
+@media (max-width: 768px) {
+    .ui-form-field {
+        margin-bottom: var(--ui-space-5);
+    }
+}
+
+/* Responsive: max-width 600px */
+@media (max-width: 600px) {
+    .ui-form-field {
+        margin-bottom: var(--ui-space-4);
+    }
+}
+
+/* Responsive: max-height 700px */
+@media (max-height: 700px) {
+    .ui-form-field {
+        margin-bottom: var(--ui-space-4);
+    }
+}
+
+/* Responsive: max-height 550px */
+@media (max-height: 550px) {
+    .ui-form-field {
+        margin-bottom: var(--ui-space-3);
+    }
+}

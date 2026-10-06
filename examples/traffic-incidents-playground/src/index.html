@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Traffic Incidents Playground</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Traffic Incidents</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <h4 class="ui-subheading">When</h4>
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" name="timeValidity" value="present" checked>
+                        <span class="ui-toggle-switch"></span>
+                        Happening now
+                    </label>
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" name="timeValidity" value="future">
+                        <span class="ui-toggle-switch"></span>
+                        Planned
+                    </label>
+                </div>
+
+                <div class="ui-section">
+                    <h4 class="ui-subheading">Magnitude Filter</h4>
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" name="magnitude" value="unknown" checked>
+                        <span class="ui-toggle-switch"></span>
+                        Unknown
+                    </label>
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" name="magnitude" value="minor" checked>
+                        <span class="ui-toggle-switch"></span>
+                        Minor
+                    </label>
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" name="magnitude" value="moderate" checked>
+                        <span class="ui-toggle-switch"></span>
+                        Moderate
+                    </label>
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" name="magnitude" value="major" checked>
+                        <span class="ui-toggle-switch"></span>
+                        Major
+                    </label>
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" name="magnitude" value="indefinite" checked>
+                        <span class="ui-toggle-switch"></span>
+                        Indefinite
+                    </label>
+                </div>
+
+                <div class="ui-section">
+                    <button class="ui-button ui-button-full" id="ui-clearFilter">Show All</button>
+                </div>
+
+                <div class="ui-section">
+                    <label class="ui-form-label" for="ui-language">Language</label>
+                    <select class="ui-dropdown" id="ui-language">
+                        <option value="en-US" selected>English</option>
+                        <option value="fr-FR">Français</option>
+                        <option value="de-DE">Deutsch</option>
+                        <option value="es-ES">Español</option>
+                        <option value="it-IT">Italiano</option>
+                        <option value="nl-NL">Nederlands</option>
+                        <option value="pl-PL">Polski</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

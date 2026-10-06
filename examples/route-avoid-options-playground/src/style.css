@@ -1,0 +1,107 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/button/button.css";
+@import "../../src/templates/css/button/variants.css";
+@import "../../src/templates/css/form/checkbox.css";
+
+/* INSTRUCTIONS */
+
+.ui-instructions {
+    margin: 0 0 var(--ui-space-3);
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-s);
+    line-height: var(--ui-font-body-s-lh);
+    color: var(--ui-text-med-em);
+}
+
+/* AVOID TYPES — 2-column checkbox grid */
+
+.avoid-types-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--ui-space-2) var(--ui-space-3);
+}
+
+/* AVOIDED AREAS LIST */
+
+.avoid-areas-section {
+    padding-bottom: var(--ui-panel-padding);
+}
+
+.avoid-areas-empty {
+    margin: 0;
+}
+
+.avoid-areas-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--ui-space-2);
+}
+
+.avoid-area-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ui-space-2);
+    padding: var(--ui-space-2) var(--ui-space-3);
+    background: var(--ui-surface-1);
+    border-radius: var(--ui-rounded-10);
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-s);
+    color: var(--ui-text-high-em);
+}
+
+.avoid-area-label {
+    flex: 1;
+    font-weight: var(--ui-font-weight-medium);
+}
+
+.avoid-area-remove {
+    width: var(--ui-height-xs);
+    height: var(--ui-height-xs);
+    min-height: unset;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--ui-rounded-full);
+    flex-shrink: 0;
+}
+
+.avoid-area-remove svg {
+    width: 12px;
+    height: 12px;
+}
+
+/* PANEL FOOTER */
+
+.panel-footer-section {
+    border-top: 1px solid var(--ui-border-low-em);
+    padding-top: var(--ui-panel-padding);
+}
+
+.reset-button {
+    width: 100%;
+}
+
+/* SECTION POPUP */
+
+.avoid-section-popup .maplibregl-popup-content {
+    padding: var(--ui-space-2);
+    border-radius: var(--ui-rounded-15);
+    box-shadow: var(--ui-elevation-e4);
+    background: var(--ui-surface-0);
+}
+
+.avoid-popup-btn {
+    height: var(--ui-height-sm);
+    font-size: var(--ui-font-caption-m);
+    padding: 0 var(--ui-space-3);
+    border-radius: var(--ui-rounded-30);
+    white-space: nowrap;
+}

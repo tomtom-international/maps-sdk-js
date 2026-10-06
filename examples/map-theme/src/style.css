@@ -1,0 +1,53 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/form/dropdown.css";
+@import "../../src/templates/css/form/input.css";
+@import "../../src/templates/css/form/field.css";
+@import "../../src/templates/css/form/radio.css";
+@import "../../src/templates/css/button/button.css";
+@import "../../src/templates/css/button/variants.css";
+
+/* The input of the chosen source; only one is shown */
+.ui-source {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ui-space-3);
+    margin-top: var(--ui-space-4);
+}
+
+.ui-source[hidden] {
+    display: none;
+}
+
+/* The file input is hidden behind its label, which is styled as a button */
+.ui-sr-only:focus-visible + .ui-button {
+    box-shadow: var(--ui-shadow-focus);
+}
+
+/* The roles the theme resolved to, accent included */
+.ui-swatches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.ui-swatch {
+    flex: 1 1 30%;
+    min-width: 0;
+    padding: 6px 4px;
+    border: 1px solid rgb(0 0 0 / 0.12);
+    border-radius: 4px;
+    font-size: 11px;
+    text-align: center;
+    color: transparent;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ui-swatch:hover {
+    color: inherit;
+    mix-blend-mode: difference;
+}

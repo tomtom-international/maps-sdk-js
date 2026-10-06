@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Display multiple geometries in map</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div id="ui-panel" class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Geometries</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <label class="ui-form-label" for="ui-mapStyles">Map Style:</label>
+                    <select class="ui-dropdown" id="ui-mapStyles"></select>
+                </div>
+
+                <div class="ui-section">
+                    <label class="ui-form-label" for="ui-placeSelector">Region:</label>
+                    <select class="ui-dropdown" id="ui-placeSelector">
+                        <option value="france">Regions of France</option>
+                        <option value="italy">Regions of Italy</option>
+                        <option value="netherlands">Regions of NL</option>
+                        <option value="germany">Regions of Germany</option>
+                        <option value="spain">Regions of Spain</option>
+                        <option value="chicagoDistricts">Districts in Chicago</option>
+                        <option value="chicagoPostcodes">Postcodes in Chicago</option>
+                    </select>
+                </div>
+
+                <div class="ui-section">
+                    <span class="ui-form-label">Layer position:</span>
+                    <div class="ui-radio-group">
+                        <label class="ui-radio-label">
+                            <input type="radio" name="layerOption" value="top" checked>
+                            Top
+                        </label>
+                        <label class="ui-radio-label">
+                            <input type="radio" name="layerOption" value="country">
+                            Below countries
+                        </label>
+                        <label class="ui-radio-label">
+                            <input type="radio" name="layerOption" value="lowestPlaceLabel">
+                            Below place labels
+                        </label>
+                        <label class="ui-radio-label">
+                            <input type="radio" name="layerOption" value="poi">
+                            Below Map POIs
+                        </label>
+                        <label class="ui-radio-label">
+                            <input type="radio" name="layerOption" value="lowestLabel">
+                            Below all labels
+                        </label>
+                        <label class="ui-radio-label">
+                            <input type="radio" name="layerOption" value="lowestRoadLine">
+                            Below roads
+                        </label>
+                        <label class="ui-radio-label">
+                            <input type="radio" name="layerOption" value="lowestBuilding">
+                            Below buildings
+                        </label>
+                    </div>
+                </div>
+
+                <div class="ui-section">
+                    <button id="ui-reCenter" class="ui-button">Re-Center</button>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

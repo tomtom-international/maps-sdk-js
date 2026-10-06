@@ -1,0 +1,70 @@
+/* BUTTON GROUPS */
+
+.ui-button-group {
+    display: flex;
+    gap: var(--ui-space-2);
+    align-items: center;
+}
+
+.ui-button-group-horizontal {
+    display: flex;
+    gap: var(--ui-space-2);
+    align-items: center;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.ui-button-group-horizontal .ui-button {
+    flex: 1 1 auto;
+    min-width: fit-content;
+}
+
+.ui-button-group-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ui-space-2);
+    width: max-content;
+}
+
+.ui-button-group-segmented {
+    display: inline-flex;
+    border-radius: var(--ui-rounded-30);
+    overflow: hidden;
+    box-shadow: var(--ui-elevation-e2);
+}
+
+.ui-button-group-segmented .ui-button {
+    border-radius: 0;
+    box-shadow: none;
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.ui-button-group-segmented .ui-button:first-child {
+    border-top-left-radius: var(--ui-rounded-30);
+    border-bottom-left-radius: var(--ui-rounded-30);
+}
+
+.ui-button-group-segmented .ui-button:last-child {
+    border-top-right-radius: var(--ui-rounded-30);
+    border-bottom-right-radius: var(--ui-rounded-30);
+    border-right: none;
+}
+
+/* Responsive: max-width 768px */
+@media (max-width: 768px) {
+    .ui-button-group {
+        flex-wrap: wrap;
+    }
+}
+
+/* Responsive: max-width 600px */
+@media (max-width: 600px) {
+    .ui-button-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .ui-button-group .ui-button {
+        width: 100%;
+    }
+}

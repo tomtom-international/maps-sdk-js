@@ -1,0 +1,32 @@
+{
+  "author": "TomTom International B.V.",
+  "bugs": {
+    "url": "https://github.com/tomtom-international/maps-sdk-js/issues"
+  },
+  "description": "Runnable examples of the TomTom Maps SDK for JavaScript (@tomtom-org/maps-sdk) and its plugins.",
+  "devDependencies": {
+    "@turf/turf": "catalog:",
+    "culori": "catalog:",
+    "lodash-es": "catalog:",
+    "maplibre-gl": "catalog:",
+    "terser": "^5.44.1",
+    "zod": "catalog:"
+  },
+  "engines": {
+    "node": ">=24",
+    "pnpm": ">=11"
+  },
+  "homepage": "https://docs.tomtom.com/maps-sdk-js/introduction/overview",
+  "license": "See in LICENSE.txt",
+  "name": "maps-sdk-js-examples",
+  "packageManager": "pnpm@11.13.1",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tomtom-international/maps-sdk-js.git"
+  },
+  "scripts": {
+    "build:examples": "pnpm -r --filter '@examples/*' build",
+    "type-check:examples": "pnpm -r --filter '@examples/*' type-check"
+  }
+}

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Maps SDK Traffic and POI visibility Playground</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Map Configuration</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <label class="ui-form-label" for="ui-mapStyles">Map Style:</label>
+                    <select class="ui-dropdown" id="ui-mapStyles"></select>
+                </div>
+
+                <div class="ui-section">
+                    <h4 class="ui-subheading">Layers</h4>
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" id="ui-toggleTraffic">
+                        <span class="ui-toggle-switch"></span>
+                        All
+                    </label>
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" id="ui-toggleIncidents">
+                        <span class="ui-toggle-switch"></span>
+                        Incidents
+                    </label>
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" id="ui-toggleIncidentIcons">
+                        <span class="ui-toggle-switch"></span>
+                        Incident icons
+                    </label>
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" id="ui-toggleFlow">
+                        <span class="ui-toggle-switch"></span>
+                        Flow
+                    </label>
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" id="ui-togglePOIs">
+                        <span class="ui-toggle-switch"></span>
+                        POIs
+                    </label>
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" id="ui-toggleHillshade">
+                        <span class="ui-toggle-switch"></span>
+                        Hillshade
+                    </label>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

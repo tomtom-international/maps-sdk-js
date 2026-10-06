@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Places by category in words</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+
+        <div class="ui-search-wrapper">
+            <form id="ui-categoryForm" class="ui-searchPanel">
+                <select id="ui-languageSelect" class="ui-dropdown" aria-label="Language"></select>
+                <input id="ui-categoryInput" class="ui-input" type="text" aria-label="Category in words" required>
+                <button class="ui-button" type="submit">Search</button>
+            </form>
+            <p id="ui-status" class="ui-status" role="status"></p>
+        </div>
+
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <title>Complex Panel Example - Maps SDK JS</title>
+        <link rel="icon" href="data:,">
+
+        <!-- Import complete SDK Example styles -->
+        <link rel="stylesheet" href="../css/styles.css">
+    </head>
+    <body class="ui-body">
+        <!-- Map container -->
+        <div id="sdk-map"></div>
+
+        <!-- Search Panel (Top-left) -->
+        <div class="ui-searchPanel">
+            <input type="text" id="searchInput" class="ui-input" placeholder="Search for EV stations...">
+            <button id="searchButton" class="ui-button">Search</button>
+            <button id="clearButton" class="ui-button ui-button-secondary">Clear</button>
+        </div>
+
+        <!-- Complex Control Panel (Top-right) -->
+        <div class="ui-customPanel">
+            <!-- Sticky header with title -->
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">EV Station Customization</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 24 24" width="16" height="16">
+                            <path d="M7 10l5 5 5-5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+
+            <div class="ui-panel-content">
+                <!-- Background Stations Section -->
+                <div class="ui-section">
+                    <h4 class="ui-subheading">Background Stations</h4>
+
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" id="bgAvailability" class="ui-toggle-input">
+                        <span class="ui-toggle-switch"></span>
+                        Show Availability
+                    </label>
+
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" id="bgCustomIcon" class="ui-toggle-input">
+                        <span class="ui-toggle-switch"></span>
+                        Use Custom Icons
+                    </label>
+                </div>
+
+                <!-- Search Results Section -->
+                <div class="ui-section">
+                    <h4 class="ui-subheading">Search Results</h4>
+
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" id="searchAvailability" class="ui-toggle-input" checked>
+                        <span class="ui-toggle-switch"></span>
+                        Show Availability
+                    </label>
+
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" id="searchCustomIcon" class="ui-toggle-input" checked>
+                        <span class="ui-toggle-switch"></span>
+                        Use Custom Icons
+                    </label>
+                </div>
+
+                <!-- Availability Display Section -->
+                <div class="ui-section">
+                    <h4 class="ui-subheading">Availability Display</h4>
+
+                    <!-- Threshold Slider -->
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="thresholdSlider">Availability Threshold</label>
+                        <div class="ui-slider-container">
+                            <input type="range" id="thresholdSlider" class="ui-slider" min="0" max="100" value="30">
+                            <span id="thresholdValue" class="ui-slider-value">30%</span>
+                        </div>
+                        <p class="ui-form-helper">Stations below this threshold are marked as unavailable</p>
+                    </div>
+
+                    <!-- Format Dropdown -->
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="formatSelect">Display Format</label>
+                        <select id="formatSelect" class="ui-dropdown">
+                            <option value="slash" selected>Slash (5/10)</option>
+                            <option value="of">Of (5 of 10)</option>
+                            <option value="available">Available (5 available)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Text Styling Section -->
+                <div class="ui-section">
+                    <h4 class="ui-subheading">Text Styling</h4>
+
+                    <!-- Text Color -->
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="textColor-picker">Text Color</label>
+                        <span class="ui-color-swatch">
+                            <input type="color" id="textColor-picker" value="#ffffff">
+                        </span>
+                    </div>
+
+                    <!-- Halo Color -->
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="haloColor-picker">Halo Color</label>
+                        <span class="ui-color-swatch">
+                            <input type="color" id="haloColor-picker" value="#000000">
+                        </span>
+                    </div>
+
+                    <!-- Halo Width -->
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="haloWidthSlider">Halo Width</label>
+                        <div class="ui-slider-container">
+                            <input
+                                type="range"
+                                id="haloWidthSlider"
+                                class="ui-slider"
+                                min="0"
+                                max="5"
+                                step="0.5"
+                                value="1"
+                            >
+                            <span id="haloWidthValue" class="ui-slider-value">1px</span>
+                        </div>
+                    </div>
+
+                    <!-- Text Offset -->
+                    <div class="ui-form-field">
+                        <label class="ui-checkbox-label">
+                            <input type="checkbox" id="useCustomOffset">
+                            Use Custom Text Offset
+                        </label>
+
+                        <div id="offsetControls" style="display: none; margin-top: 8px;">
+                            <div class="ui-slider-container">
+                                <input
+                                    type="range"
+                                    id="textOffsetSlider"
+                                    class="ui-slider"
+                                    min="-20"
+                                    max="20"
+                                    value="0"
+                                >
+                                <span id="textOffsetValue" class="ui-slider-value">0px</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filter Options Section -->
+                <div class="ui-section">
+                    <h4 class="ui-subheading">Filter Options</h4>
+
+                    <div class="ui-form-field">
+                        <span class="ui-form-label">Connector Types</span>
+                        <div class="ui-checkbox-list">
+                            <label class="ui-checkbox-label">
+                                <input type="checkbox" id="chademo" checked>
+                                CHAdeMO
+                            </label>
+                            <label class="ui-checkbox-label">
+                                <input type="checkbox" id="ccs" checked>
+                                CCS
+                            </label>
+                            <label class="ui-checkbox-label">
+                                <input type="checkbox" id="type2" checked>
+                                Type 2
+                            </label>
+                            <label class="ui-checkbox-label">
+                                <input type="checkbox" id="tesla">
+                                Tesla Supercharger
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="ui-form-field">
+                        <span class="ui-form-label">Minimum Power (kW)</span>
+                        <div class="ui-radio-group">
+                            <label class="ui-radio-label">
+                                <input type="radio" name="minPower" value="0" checked>
+                                Any
+                            </label>
+                            <label class="ui-radio-label">
+                                <input type="radio" name="minPower" value="50">
+                                50 kW+
+                            </label>
+                            <label class="ui-radio-label">
+                                <input type="radio" name="minPower" value="150">
+                                150 kW+
+                            </label>
+                            <label class="ui-radio-label">
+                                <input type="radio" name="minPower" value="350">
+                                350 kW+
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions Section (Sticky Footer) -->
+                <div class="ui-panel-footer">
+                    <div class="ui-button-group">
+                        <button id="applyButton" class="ui-button ui-button-md ui-button-full">Apply</button>
+                        <button id="resetButton" class="ui-button ui-button-md ui-button-secondary ui-button-full">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="module">
+        console.log('Complex Panel Example - Maps SDK JS');
+
+        const toggleButton = document.querySelector('.ui-heading-toggle');
+        const panelContent = document.querySelector('.ui-panel-content');
+
+        toggleButton?.addEventListener('click', () => {
+            const isExpanded = toggleButton.getAttribute('aria-expanded') === 'true';
+            toggleButton.setAttribute('aria-expanded', !isExpanded);
+            panelContent?.classList.toggle('collapsed');
+        });
+
+        // Toggle offset controls visibility
+        document.querySelector('#useCustomOffset')?.addEventListener('change', (e) => {
+            const offsetControls = document.querySelector('#offsetControls');
+            offsetControls.style.display = e.target.checked ? 'block' : 'none';
+        });
+
+        // Update slider values
+        const updateSlider = (sliderId, valueId, formatter = (v) => v) => {
+            const slider = document.querySelector(`#${sliderId}`);
+            const value = document.querySelector(`#${valueId}`);
+            slider?.addEventListener('input', () => {
+                value.textContent = formatter(slider.value);
+            });
+        };
+
+        updateSlider('thresholdSlider', 'thresholdValue', (v) => `${v}%`);
+        updateSlider('haloWidthSlider', 'haloWidthValue', (v) => `${v}px`);
+        updateSlider('textOffsetSlider', 'textOffsetValue', (v) => `${v}px`);
+
+        // Color pickers
+        const setupColorPicker = (prefix) => {
+            const picker = document.getElementById(`${prefix}-picker`);
+            picker?.addEventListener('input', () => {
+                console.log(`${prefix}:`, picker.value);
+            });
+        };
+
+        setupColorPicker('textColor');
+        setupColorPicker('haloColor');
+
+        // Apply and Reset buttons
+        document.querySelector('#applyButton')?.addEventListener('click', () => {
+            console.log('Applying all changes...');
+        });
+
+        document.querySelector('#resetButton')?.addEventListener('click', () => {
+            console.log('Resetting to defaults...');
+        });
+        </script>
+    </body>
+</html>

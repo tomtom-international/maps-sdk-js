@@ -1,0 +1,59 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/form/input.css";
+@import "../../src/templates/css/button/button.css";
+
+/* CUSTOM STYLES (example-specific) */
+
+.ui-searchPanel {
+    position: absolute;
+    top: var(--ui-panel-margin);
+    right: var(--ui-panel-margin);
+    padding: var(--ui-space-3);
+    background: var(--ui-surface-0);
+    border-radius: var(--ui-rounded-20);
+    box-shadow: var(--ui-elevation-e2);
+    z-index: var(--ui-z-panel);
+}
+
+.ui-search-row {
+    display: flex;
+    gap: var(--ui-space-2);
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+.ui-search-row .ui-input {
+    flex: 1;
+    min-width: 0;
+}
+
+.ui-button-container {
+    position: absolute;
+    right: var(--ui-panel-margin);
+    bottom: var(--ui-panel-margin);
+    z-index: var(--ui-z-panel);
+}
+
+/* Responsive: max-width 768px */
+@media (max-width: 768px) {
+    .ui-search-row {
+        flex-wrap: wrap;
+    }
+}
+
+/* Responsive: max-width 600px */
+@media (max-width: 600px) {
+    .ui-searchPanel {
+        left: var(--ui-panel-margin);
+        right: var(--ui-panel-margin);
+    }
+}
+
+/* Responsive: max-height 550px */
+@media (max-height: 550px) {
+    .ui-searchPanel {
+        padding: var(--ui-space-2);
+    }
+}

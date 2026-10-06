@@ -1,0 +1,149 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/form/input.css";
+@import "../../src/templates/css/form/dropdown.css";
+@import "../../src/templates/css/form/color-picker.css";
+@import "../../src/templates/css/button/button.css";
+@import "../../src/templates/css/button/sizes.css";
+@import "../../src/templates/css/button/variants.css";
+@import "../../src/templates/css/button/groups.css";
+@import "../../src/templates/css/feedback/loading-spinner.css";
+
+.ui-body {
+    overflow: hidden;
+}
+
+/* ── Right controls panel width override ──────────────────────────── */
+
+@media (min-width: 769px) {
+    .ui-customPanel {
+        width: 280px;
+    }
+}
+
+/* ── Map controls (top-left overlay) ────────────────────────────── */
+
+.aa-map-controls {
+    position: absolute;
+    top: var(--ui-space-3);
+    left: var(--ui-space-3);
+    display: flex;
+    align-items: center;
+    gap: var(--ui-space-2);
+    z-index: 10;
+}
+
+.aa-style-select {
+    width: auto;
+    min-width: 150px;
+    height: var(--ui-height-sm);
+    font-size: var(--ui-font-body-s);
+    line-height: var(--ui-font-body-s-lh);
+}
+
+/* ── Color stop row ──────────────────────────────────────────────── */
+
+.aa-color-stop-row {
+    display: flex;
+    align-items: center;
+    gap: var(--ui-space-2);
+}
+
+/* ── Dynamic stop controls ───────────────────────────────────────── */
+
+.aa-stop-value-input {
+    width: 72px;
+    height: var(--ui-height-sm);
+    flex-shrink: 0;
+}
+
+.aa-stop-remove {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-radius: var(--ui-rounded-5);
+    border: 1px solid var(--ui-border-low-em);
+    background: transparent;
+    color: var(--ui-text-med-em);
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    transition: var(--ui-transition-fast);
+}
+
+.aa-stop-remove:hover:not(:disabled) {
+    background: var(--ui-surface-1);
+    color: var(--ui-text-high-em);
+    border-color: var(--ui-border-med-em);
+}
+
+.aa-stop-remove:disabled {
+    color: var(--ui-text-disabled);
+    cursor: default;
+}
+
+#add-stop-btn {
+    margin-top: var(--ui-space-2);
+}
+
+/* ── Generic label-value field rows ─────────────────────────────── */
+
+.aa-field-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ui-space-2);
+    margin-bottom: var(--ui-space-2);
+}
+
+.aa-field-label {
+    font-size: var(--ui-font-caption-m);
+    line-height: var(--ui-font-caption-m-lh);
+    color: var(--ui-text-med-em);
+    white-space: nowrap;
+}
+
+.aa-field-input-sm {
+    width: 90px;
+    height: var(--ui-height-sm);
+    flex-shrink: 0;
+}
+
+.aa-field-select-sm {
+    height: var(--ui-height-sm);
+    font-size: var(--ui-font-caption-m);
+    flex-shrink: 0;
+    max-width: 145px;
+}
+
+/* ── Loading overlay ─────────────────────────────────────────────── */
+
+.aa-loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(4px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--ui-space-3);
+    z-index: var(--ui-z-modal);
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-m);
+    color: var(--ui-text-med-em);
+}
+
+.aa-loading.aa-hidden {
+    display: none;
+}

@@ -1,0 +1,16 @@
+import { test } from '@playwright/test';
+import { TAG_PROD } from '../../src/e2e-test-utils/e2eTestConstants';
+import { sanityE2ETest } from '../../src/e2e-test-utils/sanityE2ETest';
+
+test.describe('sanity', () => {
+    test('sanity test - prod', { tag: TAG_PROD }, async ({ page }) => {
+        // The reverse geocoded country and address come from the live service and move with its
+        // map data. The chrome shot is compared at zero tolerance, so they are pinned and only
+        // their styling is what the baseline holds.
+        await sanityE2ETest({
+            page,
+            testInfo: test.info(),
+            uiPinnedValues: { '.ui-summary-value': 'Gilgit-Baltistan, Pakistan' },
+        });
+    });
+});

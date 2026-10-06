@@ -1,0 +1,45 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/form/field.css";
+@import "../../src/templates/css/form/dropdown.css";
+@import "../../src/templates/css/form/color-picker.css";
+@import "../../src/templates/css/form/toggle.css";
+@import "../../src/templates/css/form/slider.css";
+
+/* CUSTOM STYLES (example-specific) */
+
+.ui-customPanel {
+    width: 300px;
+}
+
+.ui-hint {
+    margin: 0 0 var(--ui-space-4);
+    color: var(--ui-text-med-em, #5c5c5c);
+    font-size: 12px;
+    line-height: 16px;
+}
+
+/* Section subheadings sit tight above their fields. */
+.ui-subheading {
+    margin-bottom: var(--ui-space-3);
+}
+
+/* In an inline row the color swatch right-aligns, lining up with the dropdowns' right edge. */
+.ui-form-field-inline .ui-color-swatch {
+    margin-left: auto;
+}
+
+/* In an inline row the slider fills what its label leaves. */
+.ui-form-field-inline .ui-slider-container {
+    flex: 1;
+    margin: 0 0 0 var(--ui-space-3);
+}
+
+/* Responsive: max-width 768px */
+@media (max-width: 768px) {
+    .ui-customPanel {
+        width: 240px;
+    }
+}

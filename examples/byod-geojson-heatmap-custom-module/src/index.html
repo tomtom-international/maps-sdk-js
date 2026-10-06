@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Custom GeoJSON Module: West Yorkshire Listed Buildings</title>
+        <meta name="viewport" content="initial-scale=1">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Custom GeoJSON Module</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <p class="ui-description">
+                        Heatmap and circle markers are rendered from two sources managed by the same
+                        <code>CustomGeoJSONModule</code>. Hover or click a marker to inspect, and use the selector to
+                        swap the base map style — the data restores itself automatically.
+                    </p>
+                </div>
+                <div class="ui-section">
+                    <label class="ui-form-label" for="ui-mapStyles">Map Style:</label>
+                    <select class="ui-dropdown" id="ui-mapStyles"></select>
+                </div>
+                <div class="ui-section">
+                    <label class="ui-form-label" for="ui-selection">Selection</label>
+                    <div id="ui-selection" class="ui-selection">Hover or click a marker.</div>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

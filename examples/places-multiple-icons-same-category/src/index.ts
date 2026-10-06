@@ -1,0 +1,42 @@
+import { bboxFromGeoJSON, TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { discoverPlaces } from '@tomtom-org/maps-sdk/services';
+import airportEsSVG from './airport-pin-es.svg?raw';
+import airportFrSVG from './airport-pin-fr.svg?raw';
+import airportItSVG from './airport-pin-it.svg?raw';
+import './style.css';
+import { API_KEY } from './config';
+
+// (Set your own API key when working in your own environment)
+TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-US' });
+
+(async () => {
+    const [spainAirports, italyAirports, franceAirports] = await Promise.all([
+        discoverPlaces({ filters: { countries: ['ES'], poiCategories: ['PUBLIC_AIRPORT'] }, limit: 100 }), // searching for locations by postcode
+        discoverPlaces({ filters: { countries: ['IT'], poiCategories: ['PUBLIC_AIRPORT'] }, limit: 100 }),
+        discoverPlaces({ filters: { countries: ['FR'], poiCategories: ['PUBLIC_AIRPORT'] }, limit: 100 }),
+    ]);
+
+    const map = new TomTomMap({
+        mapLibre: {
+            container: 'sdk-map',
+            bounds: bboxFromGeoJSON([spainAirports, italyAirports, franceAirports]),
+            fitBoundsOptions: { padding: 50 },
+        },
+    });
+
+    const spainAirportsModule = await PlacesModule.create(map, {
+        icon: { categoryIcons: [{ id: 'PUBLIC_AIRPORT', image: airportEsSVG }] },
+    });
+    await spainAirportsModule.show(spainAirports);
+
+    const italyAirportsModule = await PlacesModule.create(map, {
+        icon: { categoryIcons: [{ id: 'PUBLIC_AIRPORT', image: airportItSVG }] },
+    });
+    await italyAirportsModule.show(italyAirports);
+
+    const franceAirportsModule = await PlacesModule.create(map, {
+        icon: { categoryIcons: [{ id: 'PUBLIC_AIRPORT', image: airportFrSVG }] },
+    });
+    await franceAirportsModule.show(franceAirports);
+})();

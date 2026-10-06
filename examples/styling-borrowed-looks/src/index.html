@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Borrowed looks</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Borrowed looks</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+            <div class="ui-panel-content">
+                <!-- One control per knob, generated from knobs.ts -->
+                <div class="ui-section">
+                    <span class="ui-form-label">POIs: the restaurants follow them</span>
+                    <div id="ui-poi-knobs"></div>
+                </div>
+                <div class="ui-section">
+                    <span class="ui-form-label">Incidents: the overlay and the route follow them</span>
+                    <div id="ui-incident-knobs"></div>
+                </div>
+                <div class="ui-section">
+                    <button class="ui-button" id="ui-reset" type="button">Reset to the style</button>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

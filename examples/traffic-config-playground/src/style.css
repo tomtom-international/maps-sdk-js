@@ -1,0 +1,45 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/form/dropdown.css";
+@import "../../src/templates/css/form/toggle.css";
+@import "../../src/templates/css/form/slider.css";
+@import "../../src/templates/css/form/color-picker.css";
+@import "../../src/templates/css/form/checkbox.css";
+@import "../../src/templates/css/form/field.css";
+
+/* CUSTOM STYLES (example-specific) */
+
+/* An unset toggle, which follows what its description names: the thumb rests midway. */
+.ui-toggle-label:has(.ui-toggle-input:indeterminate) .ui-toggle-switch::after {
+    transform: translateX(7px);
+}
+
+/* A list knob folds its options under its id. The marker sits on the hint line: a long id leaves no
+   room for it beside the id. */
+summary.ui-form-label {
+    cursor: pointer;
+}
+
+summary.ui-form-label::-webkit-details-marker {
+    display: none;
+}
+
+summary .ui-form-hint::before {
+    content: "";
+    display: inline-block;
+    margin-right: var(--ui-space-2);
+    border-block: 4px solid transparent;
+    border-inline-start: 6px solid currentColor;
+    transition: rotate var(--ui-transition-slow);
+}
+
+details[open] > summary .ui-form-hint::before {
+    rotate: 90deg;
+}
+
+/* A knob id has no spaces to wrap at, and the longest outruns the panel. */
+.ui-toggle-label {
+    overflow-wrap: anywhere;
+}

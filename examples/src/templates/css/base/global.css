@@ -1,0 +1,26 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+.ui-body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-m);
+    line-height: var(--ui-font-body-m-lh);
+    color: var(--ui-text-high-em);
+    background-color: var(--ui-surface-0);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+#sdk-map {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}

@@ -1,0 +1,46 @@
+import { bboxFromGeoJSON, type Place, TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { PlacesModule, RoutingModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { calculateRoute, discoverOnePlace } from '@tomtom-org/maps-sdk/services';
+import './style.css';
+import { API_KEY } from './config';
+
+// (Set your own API key when working in your own environment)
+TomTomConfig.instance.put({ apiKey: API_KEY });
+
+(async () => {
+    const destination = (await discoverOnePlace('Schiphol airport, Amsterdam')) as Place;
+
+    const origins = (await Promise.all([
+        discoverOnePlace('Amsterdam Centraal'),
+        discoverOnePlace('Leiden Centraal'),
+        discoverOnePlace('Utrecht Centraal'),
+    ])) as Place[];
+
+    const map = new TomTomMap({
+        mapLibre: {
+            container: 'sdk-map',
+            bounds: bboxFromGeoJSON([...origins, destination]),
+            fitBoundsOptions: { padding: 100 },
+        },
+        style: 'monoLight',
+    });
+
+    // Show a single place for the common destination:
+    (await PlacesModule.create(map)).show(destination);
+
+    // Create routing modules dynamically based on the number of origins
+    const routeColors = ['#0066CC', '#00BBDD', '#33AA33', '#99BB00'];
+    const routingModules = await Promise.all(
+        origins.map((_, index) => RoutingModule.create(map, { color: routeColors[index % routeColors.length] })),
+    );
+
+    for (const origin of origins) {
+        const routingModule = routingModules[origins.indexOf(origin)];
+        await routingModule.showWaypoints([origin]);
+        const route = await calculateRoute({
+            locations: [origin, destination],
+            costModel: { traffic: 'historical' },
+        });
+        await routingModule.showRoutes(route);
+    }
+})();

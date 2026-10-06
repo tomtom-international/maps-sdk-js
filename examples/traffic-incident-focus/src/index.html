@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Traffic Incident Focus</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div class="ui-customPanel">
+            <div class="ui-panel-content">
+                <label
+                    class="ui-toggle-label"
+                    title="Module layers configs bring the incidents and boundary forward; styling.layers groups push traffic flow, POIs and road labels back"
+                >
+                    <input type="checkbox" class="ui-toggle-input" id="ui-focus" checked>
+                    <span class="ui-toggle-switch"></span>Focus on incidents
+                </label>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

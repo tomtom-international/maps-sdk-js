@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Place entry points playground</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Entry points</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <p class="ui-instructions">
+                        Pins come from a search of the view. Click the map anywhere else to add the address there. Large
+                        dots are main entrances, small ones the rest.
+                    </p>
+                </div>
+
+                <div class="ui-section">
+                    <span class="ui-form-label">
+                        Show entry points for
+                        <span class="ui-form-hint">showFor</span>
+                    </span>
+                    <div class="ui-radio-group">
+                        <label class="ui-radio-label">
+                            <input type="radio" name="ui-showFor" value="all" checked>
+                            All places
+                        </label>
+                        <label class="ui-radio-label">
+                            <input type="radio" name="ui-showFor" value="selected">
+                            Hovered or clicked places
+                        </label>
+                        <label class="ui-radio-label">
+                            <input type="radio" name="ui-showFor" value="clicked">
+                            Clicked places
+                        </label>
+                    </div>
+                </div>
+
+                <div class="ui-section">
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="ui-minZoomSlider">
+                            Minimum zoom
+                            <span class="ui-form-hint">minZoom</span>
+                        </label>
+                        <div class="ui-slider-container">
+                            <input
+                                id="ui-minZoomSlider"
+                                class="ui-slider"
+                                type="range"
+                                min="10"
+                                max="19"
+                                step="0.5"
+                                value="15"
+                            >
+                            <span id="ui-minZoomValue" class="ui-slider-value">15</span>
+                        </div>
+                        <p id="ui-zoomNote" class="ui-note"></p>
+                    </div>
+
+                    <label class="ui-toggle-label">
+                        <input id="ui-linesToggle" class="ui-toggle-input" type="checkbox" checked>
+                        <span class="ui-toggle-switch"></span>
+                        Lines to the place
+                    </label>
+                </div>
+
+                <div class="ui-section">
+                    <h4 class="ui-subheading">
+                        Last clicked
+                        <span class="ui-form-hint">events.places, events.entryPoints</span>
+                    </h4>
+                    <dl id="ui-lastClicked" class="ui-summary"></dl>
+                    <p id="ui-lastClickedStatus" class="ui-status" role="status">Click a pin or an entry point.</p>
+                </div>
+            </div>
+        </div>
+
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Places Customization Playground</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Places Customization</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <label class="ui-form-label" for="ui-icon-style-selector"> Change places layer icon style: </label>
+                    <select class="ui-dropdown" id="ui-icon-style-selector">
+                        <option value="pin">Pin</option>
+                        <option value="circle-icon">Circle</option>
+                        <option value="base-map">Base Map</option>
+                        <option value="pin-clustered">Pin (clustered)</option>
+                    </select>
+                </div>
+                <div class="ui-section">
+                    <span class="ui-form-label">Draw places:</span>
+                    <div class="ui-radio-group">
+                        <label class="ui-radio-label">
+                            <input
+                                type="radio"
+                                class="ui-layer-position-selector"
+                                name="ui-layer-position-selector"
+                                value="over"
+                                checked
+                            >
+                            Over the map labels
+                        </label>
+                        <label class="ui-radio-label">
+                            <input
+                                type="radio"
+                                class="ui-layer-position-selector"
+                                name="ui-layer-position-selector"
+                                value="under"
+                            >
+                            Under the map labels
+                        </label>
+                    </div>
+                </div>
+                <div class="ui-section">
+                    <label class="ui-checkbox-label">
+                        <input type="checkbox" id="ui-custom-icons-toggle">
+                        Use custom icons
+                    </label>
+                </div>
+                <div class="ui-section">
+                    <label class="ui-form-label" for="ui-labelColorPicker"> Change places layer label color: </label>
+                    <span class="ui-color-swatch">
+                        <input type="color" id="ui-labelColorPicker" value="#333333">
+                    </span>
+                </div>
+                <div class="ui-section">
+                    <span class="ui-form-label">Change places layer label font:</span>
+                    <div class="ui-radio-group">
+                        <label class="ui-radio-label">
+                            <input type="radio" class="ui-font-selector" name="ui-font-selector" value="Noto-Regular">
+                            Regular
+                        </label>
+                        <label class="ui-radio-label">
+                            <input type="radio" class="ui-font-selector" name="ui-font-selector" value="Noto-Medium">
+                            Medium
+                        </label>
+                        <label class="ui-radio-label">
+                            <input
+                                type="radio"
+                                class="ui-font-selector"
+                                name="ui-font-selector"
+                                value="Noto-Bold"
+                                checked
+                            >
+                            Bold
+                        </label>
+                    </div>
+                </div>
+                <div class="ui-section">
+                    <span class="ui-form-label">Change places layer label content:</span>
+                    <div class="ui-radio-group">
+                        <label class="ui-radio-label">
+                            <input
+                                type="radio"
+                                class="ui-content-selector"
+                                name="ui-content-selector"
+                                value="default"
+                                checked
+                            >
+                            Default
+                        </label>
+                        <label class="ui-radio-label">
+                            <input
+                                type="radio"
+                                class="ui-content-selector"
+                                name="ui-content-selector"
+                                value="multi-line"
+                            >
+                            Multi line label
+                        </label>
+                    </div>
+                </div>
+                <div class="ui-section">
+                    <span class="ui-form-label">Custom icon offset X:</span>
+                    <div class="ui-slider-container">
+                        <input
+                            type="range"
+                            id="ui-icon-offset-x"
+                            min="-50"
+                            max="50"
+                            value="0"
+                            step="1"
+                            class="ui-slider"
+                        >
+                        <span id="ui-icon-offset-x-value" class="ui-slider-value">0px</span>
+                    </div>
+                    <span class="ui-form-label">Custom icon offset Y:</span>
+                    <div class="ui-slider-container">
+                        <input
+                            type="range"
+                            id="ui-icon-offset-y"
+                            min="-50"
+                            max="50"
+                            value="0"
+                            step="1"
+                            class="ui-slider"
+                        >
+                        <span id="ui-icon-offset-y-value" class="ui-slider-value">0px</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

@@ -1,0 +1,122 @@
+# Changelog
+
+## 0.5.1
+
+### Patch Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - Modules keep the `base-map` marker type under the renamed `markerType`, which needs `@tomtom-org/maps-sdk` `>=0.61.0`.
+  
+  - Modules keep drawing as `base-map` by default under the renamed `markerType`
+  - The peer dependency on `@tomtom-org/maps-sdk` is the range `>=0.61.0 <1.0.0`, the first release with `markerType`
+- Updated dependencies:
+  - @tomtom-org/maps-sdk@0.61.0
+
+## 0.5.0
+
+### Minor Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - Requires `@tomtom-org/maps-sdk` `>=0.59.0 <1.0.0`: each module's viewport searches run through the SDK's new `createLatestRequest`, with no change to what the plugin shows or cancels
+
+- Thanks [@JulianChinAFoeng-TomTom](https://github.com/JulianChinAFoeng-TomTom)! - **Breaking:** `searchOptions` takes the SDK's grouped `filters` — `searchOptions: { filters: { poiCategories } }` — and `update()` merges `filters` member by member, like the rest of `searchOptions`. It takes no `cursor`: every module searches the first page of the current viewport
+
+## 0.4.0
+
+### Minor Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** `ViewportPlaces.remove` throws for an unknown ID, as `update` does, instead of logging to the console
+
+### Patch Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - Built with the latest minor releases of the plugin build toolchain; no change to the plugin's API or peer dependencies
+
+- Thanks [@JulianChinAFoeng-TomTom](https://github.com/JulianChinAFoeng-TomTom)! - Viewport searches call `discoverPlaces`, following the SDK renaming `search`
+- Updated dependencies:
+  - @tomtom-org/maps-sdk@0.58.0
+
+## 0.3.0
+
+### Minor Changes
+
+- Thanks [@AlvaroGraca-TomTom](https://github.com/AlvaroGraca-TomTom)!
+  
+  - **Breaking:** `searchOptions` no longer accepts `geoBias`; each module always searches the current viewport
+  - A new viewport cancels the search a module still has in flight
+  - Accept every SDK release below 1.0: the peer dependency on `@tomtom-org/maps-sdk` is the range `>=0.55.1 <1.0.0` instead of an exact version
+
+### Patch Changes
+
+- Updated dependencies:
+  - @tomtom-org/maps-sdk@0.56.0
+
+## [0.2.1](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-viewport-places-v0.2.0...maps-sdk-plugin-viewport-places-v0.2.1) (2026-04-30)
+
+
+### Features
+
+* improve api reference types, adjust syntax for agent toolkit plugin, and improve agents.md ([9428902](https://github.com/tomtom-international/maps-sdk-js/commit/9428902605299302fdbb206f22a514e6761d0716))
+
+## [0.2.0](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-viewport-places-v0.1.8...maps-sdk-plugin-viewport-places-v0.2.0) (2026-03-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* improve poi categories relationship with search
+
+### Features
+
+* improve poi categories relationship with search ([52f5a26](https://github.com/tomtom-international/maps-sdk-js/commit/52f5a265dbe0ae4cbb3386de3740cb887ed1a11c))
+* incident details service improvements and added agent tools ([9f3058d](https://github.com/tomtom-international/maps-sdk-js/commit/9f3058dd55fde278ea8d8b58ddb223c354dd9ada))
+
+## [0.1.8](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-viewport-places-v0.1.7...maps-sdk-plugin-viewport-places-v0.1.8) (2026-02-16)
+
+
+### Bug Fixes
+
+* omit bounding box and position from search options in viewport places plugin since they should be automatically set ([a2ffd50](https://github.com/tomtom-international/maps-sdk-js/commit/a2ffd503c58cbf0c17c678b54cf6f83d8074936f))
+
+## [0.1.6](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-viewport-places-v0.1.5...maps-sdk-plugin-viewport-places-v0.1.6) (2026-01-30)
+
+
+### Features
+
+* **viewport-places:** improve types ([817678e](https://github.com/tomtom-international/maps-sdk-js/commit/817678e6d280560307bfb445bf183136aca69a41))
+
+
+### Bug Fixes
+
+* improve release workflow and update documentation ([905a7ed](https://github.com/tomtom-international/maps-sdk-js/commit/905a7ed0f3770ce51ac2937a948ef4ad6b8bfcaa))
+
+## [0.1.5](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-viewport-places-v0.1.4...maps-sdk-plugin-viewport-places-v0.1.5) (2026-01-30)
+
+
+### Bug Fixes
+
+* improve release workflow and update documentation ([905a7ed](https://github.com/tomtom-international/maps-sdk-js/commit/905a7ed0f3770ce51ac2937a948ef4ad6b8bfcaa))
+
+## [0.1.4](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-viewport-places-v0.1.3...maps-sdk-plugin-viewport-places-v0.1.4) (2026-01-30)
+
+
+### Features
+
+* **viewport-places:** improve types ([817678e](https://github.com/tomtom-international/maps-sdk-js/commit/817678e6d280560307bfb445bf183136aca69a41))
+
+## [0.1.3](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-viewport-places-v0.1.2...maps-sdk-plugin-viewport-places-v0.1.3) (2026-01-30)
+
+
+### Features
+
+* **viewport-places:** improve TSDocs ([01ced36](https://github.com/tomtom-international/maps-sdk-js/commit/01ced36e895f679e0f92f2241d9442c9415e0eb2))
+
+## [0.1.2](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-viewport-places-v0.1.1...maps-sdk-plugin-viewport-places-v0.1.2) (2026-01-29)
+
+
+### Features
+
+* simplify viewport places method name, and improve api reference docs ([46c7de1](https://github.com/tomtom-international/maps-sdk-js/commit/46c7de1f504839a796d8052567069b5d87ccdb0b))
+
+## [0.1.1](https://github.com/tomtom-international/maps-sdk-js/compare/maps-sdk-plugin-viewport-places-v0.1.0...maps-sdk-plugin-viewport-places-v0.1.1) (2026-01-29)
+
+
+### Features
+
+* add plugins workspace with first plugin to easily display search-powered layers of places on the map ([eac82a2](https://github.com/tomtom-international/maps-sdk-js/commit/eac82a2ebe731e87463564eb5e1331089ca1cc70))

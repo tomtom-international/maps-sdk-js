@@ -1,0 +1,35 @@
+import { CommonPlaceProps, Places, TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import './style.css';
+import { API_KEY } from './config';
+import { addHeatmapSourceAndLayer } from './heatmapLayers';
+
+// (Set your own API key when working in your own environment)
+TomTomConfig.instance.put({ apiKey: API_KEY });
+
+const map = new TomTomMap({
+    mapLibre: {
+        container: 'sdk-map',
+        center: [-1.7, 53.75],
+        zoom: 9.5,
+    },
+});
+
+const DATA_URL = 'https://dataworks.calderdale.gov.uk/download/2kyp8/hcj/listed%20buildings%20west%20yorkshire.json';
+
+type ListedBuilding = CommonPlaceProps & { Name: string };
+
+(async () => {
+    const data: Places<ListedBuilding> = await (await fetch(DATA_URL)).json();
+
+    await addHeatmapSourceAndLayer(map.mapLibreMap, data);
+
+    const placesModule = await PlacesModule.create<ListedBuilding>(map, {
+        markerType: 'base-map',
+        icon: { mapping: { to: 'poiCategory', fn: () => 'COMPANY' } },
+        label: { title: (place) => place.properties.Name },
+        layers: { main: { minzoom: 15 }, micro: { minzoom: 14 } },
+    });
+
+    await placesModule.show(data);
+})();

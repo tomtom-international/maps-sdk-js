@@ -1,0 +1,26 @@
+/* SPINNER */
+
+.ui-spinner {
+    --ui-spinner-size: 32px;
+    --ui-spinner-width: 3px;
+    --ui-spinner-color: var(--ui-surface-brand-red);
+
+    width: var(--ui-spinner-size);
+    height: var(--ui-spinner-size);
+    border: var(--ui-spinner-width) solid var(--ui-border-low-em);
+    border-bottom-color: var(--ui-spinner-color);
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: sdk-spinner-rotation 1s linear infinite;
+}
+
+@keyframes sdk-spinner-rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}

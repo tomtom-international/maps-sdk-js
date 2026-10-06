@@ -1,0 +1,74 @@
+import type { BBox, Places } from '@tomtom-org/maps-sdk/core';
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import {
+    calculateFittingBBox,
+    GeometriesModule,
+    type GeometryBeforeLayerConfig,
+    type StandardStyleID,
+    standardStyleIDs,
+    TomTomMap,
+} from '@tomtom-org/maps-sdk/map';
+import { geocode, geometryData } from '@tomtom-org/maps-sdk/services';
+import type { LngLatBoundsLike } from 'maplibre-gl';
+import type { Config } from './placeConfiguration';
+import { namedConfigs } from './placeConfiguration';
+import './style.css';
+import { API_KEY } from './config';
+import { initTogglePanel } from './togglePanel';
+
+// (Set your own API key when working in your own environment)
+TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
+
+(async () => {
+    const map = new TomTomMap({
+        mapLibre: {
+            container: 'sdk-map',
+        },
+    });
+    const geometryModule = await GeometriesModule.create(map);
+    let placeSubdivisions: Places;
+
+    const placeBBox = () =>
+        calculateFittingBBox({
+            map,
+            toBeContainedBBox: placeSubdivisions.bbox as BBox,
+            surroundingElements: ['#ui-panel'],
+        }) as LngLatBoundsLike;
+
+    const updateMap = async (config: Config) => {
+        placeSubdivisions = await geocode({ limit: 100, query: '', ...config.searchConfig });
+        map.mapLibreMap.fitBounds(placeBBox());
+        const geometries = await geometryData({ geometries: placeSubdivisions, zoom: 14 });
+        geometryModule.applyConfig(config.geometryConfig);
+        geometryModule.show(geometries);
+    };
+
+    const listenToUIEvents = async () => {
+        const placeSelector = document.getElementById('ui-placeSelector') as HTMLSelectElement;
+        placeSelector.addEventListener('change', (event) =>
+            updateMap(namedConfigs[(event.target as HTMLInputElement).value]),
+        );
+
+        const options = document.querySelectorAll<HTMLInputElement>('input[type=radio][name=layerOption]');
+        options.forEach((option) => {
+            option.addEventListener('change', () =>
+                geometryModule.updateConfig({ beforeLayerConfig: option.value as GeometryBeforeLayerConfig }),
+            );
+        });
+
+        const stylesSelector = document.querySelector('#ui-mapStyles') as HTMLSelectElement;
+        standardStyleIDs.forEach((id) => stylesSelector.add(new Option(id)));
+        stylesSelector.addEventListener('change', (event) =>
+            map.setStyle((event.target as HTMLOptionElement).value as StandardStyleID),
+        );
+
+        document
+            .querySelector('#ui-reCenter')
+            ?.addEventListener('click', () => placeSubdivisions && map.mapLibreMap.fitBounds(placeBBox()));
+    };
+
+    await updateMap(namedConfigs.france);
+    await listenToUIEvents();
+
+    initTogglePanel();
+})();

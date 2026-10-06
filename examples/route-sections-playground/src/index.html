@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Route Sections Playground</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Route sections</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <span class="ui-subheading">route</span>
+                    <select id="route-picker" class="ui-dropdown"></select>
+                </div>
+
+                <div class="ui-section">
+                    <span class="ui-subheading">border crossings</span>
+                    <div id="country-crossing-row" class="section-row enabled">
+                        <label class="ui-checkbox-label section-name">
+                            <input type="checkbox" data-crossing-knob="visible" checked>
+                            <span>countryCrossings</span>
+                        </label>
+                        <span class="section-count" title="border crossings on this route"></span>
+                        <span class="ui-color-swatch">
+                            <input type="color" data-crossing-knob="color" value="#1A2024">
+                        </span>
+                        <div class="section-knobs">
+                            <label class="section-knob">
+                                <span class="section-knob-name">alignment</span>
+                                <select class="ui-dropdown" data-crossing-knob="alignment">
+                                    <option value="viewport">viewport</option>
+                                    <option value="route">route</option>
+                                </select>
+                            </label>
+                            <label class="section-knob">
+                                <span class="section-knob-name">label.color</span>
+                                <span class="ui-color-swatch">
+                                    <input type="color" data-crossing-knob="label.color" value="#F1F3F5">
+                                </span>
+                            </label>
+                            <label class="section-knob section-knob-wide">
+                                <span class="section-knob-name">minZoom</span>
+                                <span class="ui-slider-container">
+                                    <input
+                                        type="range"
+                                        class="ui-slider"
+                                        data-crossing-knob="minZoom"
+                                        min="0"
+                                        max="14"
+                                        step="1"
+                                        value="4"
+                                    >
+                                    <span class="ui-slider-value" data-readout="countryCrossings-minZoom"></span>
+                                </span>
+                            </label>
+                            <span class="section-knob section-knob-wide crossing-detail" id="crossing-detail">
+                                click a plaque for the two sections it joins
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ui-section">
+                    <span class="ui-subheading">sections — drawn by default</span>
+                    <div id="drawn-section-rows" class="section-rows"></div>
+                </div>
+
+                <div class="ui-section">
+                    <span class="ui-subheading">sections — opt-in</span>
+                    <div id="opt-in-section-rows" class="section-rows"></div>
+                </div>
+            </div>
+        </div>
+
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

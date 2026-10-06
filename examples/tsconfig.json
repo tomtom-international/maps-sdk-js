@@ -1,0 +1,15 @@
+{
+  "extends": "@tsconfig/recommended",
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+
+    "types": ["vite/client", "react", "react-dom", "vitest/globals", "node"],
+    "jsx": "react-jsx",
+    "jsxImportSource": "react"
+  }
+}

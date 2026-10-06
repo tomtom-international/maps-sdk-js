@@ -1,0 +1,112 @@
+/* BUTTON */
+
+.ui-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--ui-space-2);
+    height: var(--ui-height-md);
+    padding: 0 var(--ui-space-4);
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-m);
+    line-height: var(--ui-font-body-m-lh);
+    font-weight: var(--ui-font-weight-semibold);
+    color: var(--ui-text-white);
+    background-color: var(--ui-surface-brand-red);
+    border: none;
+    border-radius: var(--ui-rounded-30);
+    box-shadow: var(--ui-elevation-e2);
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    user-select: none;
+    transition:
+        background-color var(--ui-transition-normal),
+        transform var(--ui-transition-fast),
+        box-shadow var(--ui-transition-normal);
+}
+
+.ui-button:hover {
+    background-color: var(--ui-surface-brand-red-hover);
+}
+
+.ui-button:active {
+    background-color: var(--ui-surface-brand-red-active);
+    transform: translateY(1px);
+    box-shadow: var(--ui-elevation-e1);
+}
+
+.ui-button:focus {
+    outline: none;
+    box-shadow: var(--ui-shadow-focus), var(--ui-elevation-e2);
+}
+
+.ui-button:disabled {
+    background-color: var(--ui-surface-1);
+    color: var(--ui-text-disabled);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.ui-button:disabled:hover,
+.ui-button:disabled:active {
+    background-color: var(--ui-surface-1);
+    transform: none;
+}
+
+.ui-button-secondary {
+    background-color: var(--ui-border-med-em);
+    color: var(--ui-text-high-em);
+}
+
+.ui-button-secondary:hover {
+    background-color: #b3b3b3;
+}
+
+.ui-button-secondary:active {
+    background-color: #999999;
+}
+
+a.ui-button {
+    text-decoration: none;
+}
+
+a.ui-button:visited {
+    color: inherit;
+}
+
+.ui-button-full {
+    width: 100%;
+}
+
+/* Responsive: max-width 768px */
+@media (max-width: 768px) {
+    .ui-button {
+        font-size: 13px;
+    }
+}
+
+/* Responsive: max-width 600px */
+@media (max-width: 600px) {
+    .ui-button {
+        height: var(--ui-height-sm);
+        padding: 0 var(--ui-space-3);
+        font-size: 12px;
+    }
+}
+
+/* Responsive: max-width 768px and max-height 500px */
+@media (max-width: 768px) and (max-height: 500px) {
+    .ui-button {
+        height: var(--ui-height-sm);
+        padding: 0 var(--ui-space-2);
+        font-size: 11px;
+    }
+}
+
+/* Responsive: high contrast */
+@media (prefers-contrast: high) {
+    .ui-button {
+        border: 2px solid currentColor;
+    }
+}

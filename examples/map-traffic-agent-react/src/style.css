@@ -1,0 +1,4 @@
+/* This example's Tailwind entry. `@import "tailwindcss"` must live in each example's own src/ —
+   the live-editor build discovers and compiles it per-example (see tailwindPlugin.ts).
+   Shared layers load via index.tsx; this example adds no rules of its own. */
+@import "tailwindcss";

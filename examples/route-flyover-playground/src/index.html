@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Route fly-over playground</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Route fly-over</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <h4 class="ui-subheading">Route</h4>
+                    <label class="ui-form-label" for="ui-origin">From</label>
+                    <input class="ui-input" id="ui-origin" type="text" placeholder="Search a place" autocomplete="off">
+                    <ul class="ui-result-list" id="ui-originResults"></ul>
+                    <label class="ui-form-label" for="ui-destination">To</label>
+                    <input
+                        class="ui-input"
+                        id="ui-destination"
+                        type="text"
+                        placeholder="Search a place"
+                        autocomplete="off"
+                    >
+                    <ul class="ui-result-list" id="ui-destinationResults"></ul>
+                    <label class="ui-form-label" for="ui-routeType">Route type</label>
+                    <select class="ui-dropdown" id="ui-routeType">
+                        <option value="thrilling" selected>thrilling</option>
+                        <option value="fast">fast</option>
+                        <option value="short">short</option>
+                    </select>
+                </div>
+
+                <div class="ui-section">
+                    <h4 class="ui-subheading">Flight</h4>
+                    <div class="ui-button-row">
+                        <button class="ui-button" id="ui-playPause" type="button">Fly the route</button>
+                        <button class="ui-button ui-button-secondary" id="ui-restart" type="button">
+                            Back to start
+                        </button>
+                    </div>
+                    <div class="ui-readout">
+                        <span id="ui-status">Planning the route…</span>
+                        <span class="ui-readout-value" id="ui-progress"></span>
+                    </div>
+                    <div class="ui-field">
+                        <div class="ui-field-header">
+                            <label class="ui-form-label" for="ui-position">Position along the route</label>
+                            <span class="ui-slider-value" id="ui-positionValue">0%</span>
+                        </div>
+                        <input type="range" class="ui-slider" id="ui-position" min="0" max="1000" step="1" value="0">
+                    </div>
+                    <div class="ui-field">
+                        <div class="ui-field-header">
+                            <label class="ui-form-label" for="ui-speed">Speed</label>
+                            <span class="ui-slider-value" id="ui-speedValue">300 km/h</span>
+                        </div>
+                        <input type="range" class="ui-slider" id="ui-speed" min="60" max="900" step="20" value="300">
+                    </div>
+                </div>
+
+                <div class="ui-section">
+                    <h4 class="ui-subheading">Camera</h4>
+                    <div class="ui-field">
+                        <div class="ui-field-header">
+                            <label class="ui-form-label" for="ui-pitch">Pitch</label>
+                            <span class="ui-slider-value" id="ui-pitchValue">60°</span>
+                        </div>
+                        <input type="range" class="ui-slider" id="ui-pitch" min="0" max="85" step="1" value="60">
+                    </div>
+                    <div class="ui-field">
+                        <div class="ui-field-header">
+                            <label class="ui-form-label" for="ui-anchor">Position on screen</label>
+                            <span class="ui-slider-value" id="ui-anchorValue">67%</span>
+                        </div>
+                        <input type="range" class="ui-slider" id="ui-anchor" min="40" max="90" step="1" value="67">
+                        <p class="ui-form-helper">
+                            How far down the view the marker sits. Follows the pitch until you move it.
+                        </p>
+                    </div>
+                    <details class="ui-disclosure">
+                        <summary class="ui-disclosure-summary">Aim and framing</summary>
+                        <div class="ui-disclosure-content">
+                            <label class="ui-form-label" for="ui-aimMode">Aim ahead at</label>
+                            <select class="ui-dropdown" id="ui-aimMode">
+                                <option value="instruction" selected>the next instruction</option>
+                                <option value="points">a number of route points</option>
+                                <option value="distance">a fixed distance</option>
+                            </select>
+                            <div class="ui-field" id="ui-aimPoints" hidden>
+                                <div class="ui-field-header">
+                                    <label class="ui-form-label" for="ui-points">Route points ahead</label>
+                                    <span class="ui-slider-value" id="ui-pointsValue">12</span>
+                                </div>
+                                <input
+                                    type="range"
+                                    class="ui-slider"
+                                    id="ui-points"
+                                    min="1"
+                                    max="60"
+                                    step="1"
+                                    value="12"
+                                >
+                            </div>
+                            <div class="ui-field" id="ui-aimDistance" hidden>
+                                <div class="ui-field-header">
+                                    <label class="ui-form-label" for="ui-distance">Distance ahead</label>
+                                    <span class="ui-slider-value" id="ui-distanceValue">250 m</span>
+                                </div>
+                                <input
+                                    type="range"
+                                    class="ui-slider"
+                                    id="ui-distance"
+                                    min="50"
+                                    max="2000"
+                                    step="50"
+                                    value="250"
+                                >
+                            </div>
+                            <label class="ui-form-label" for="ui-zoomMode">Zoom</label>
+                            <select class="ui-dropdown" id="ui-zoomMode">
+                                <option value="instructions" selected>framed on the junctions ahead</option>
+                                <option value="speed">following the speed</option>
+                                <option value="fixed">fixed</option>
+                            </select>
+                            <div class="ui-field" id="ui-zoomInstructions">
+                                <div class="ui-field-header">
+                                    <label class="ui-form-label" for="ui-instructions">Instructions in frame</label>
+                                    <span class="ui-slider-value" id="ui-instructionsValue">2</span>
+                                </div>
+                                <input
+                                    type="range"
+                                    class="ui-slider"
+                                    id="ui-instructions"
+                                    min="1"
+                                    max="4"
+                                    step="1"
+                                    value="2"
+                                >
+                            </div>
+                            <div class="ui-field" id="ui-zoomFixed" hidden>
+                                <div class="ui-field-header">
+                                    <label class="ui-form-label" for="ui-zoom">Camera zoom</label>
+                                    <span class="ui-slider-value" id="ui-zoomValue">12.5</span>
+                                </div>
+                                <input
+                                    type="range"
+                                    class="ui-slider"
+                                    id="ui-zoom"
+                                    min="11"
+                                    max="14.5"
+                                    step="0.1"
+                                    value="12.5"
+                                >
+                            </div>
+                        </div>
+                    </details>
+                </div>
+
+                <div class="ui-section">
+                    <h4 class="ui-subheading">Scene</h4>
+                    <div class="ui-toggle-row">
+                        <label class="ui-toggle-label">
+                            <input type="checkbox" class="ui-toggle-input" id="ui-hillshade" checked>
+                            <span class="ui-toggle-switch"></span>
+                            Hillshade
+                        </label>
+                        <label class="ui-toggle-label">
+                            <input type="checkbox" class="ui-toggle-input" id="ui-depthOfField">
+                            <span class="ui-toggle-switch"></span>
+                            Depth of field
+                        </label>
+                        <label class="ui-toggle-label">
+                            <input type="checkbox" class="ui-toggle-input" id="ui-marker" checked>
+                            <span class="ui-toggle-switch"></span>
+                            Marker
+                        </label>
+                    </div>
+                    <div class="ui-field">
+                        <div class="ui-field-header">
+                            <label class="ui-form-label" for="ui-exaggeration">Terrain exaggeration</label>
+                            <span class="ui-slider-value" id="ui-exaggerationValue">1</span>
+                        </div>
+                        <input
+                            type="range"
+                            class="ui-slider"
+                            id="ui-exaggeration"
+                            min="0.5"
+                            max="3"
+                            step="0.1"
+                            value="1"
+                        >
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

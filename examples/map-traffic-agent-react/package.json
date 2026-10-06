@@ -1,0 +1,51 @@
+{
+  "name": "@examples/map-traffic-agent-react",
+  "description": "TomTom Maps SDK Agent Toolkit React traffic-manager example with Azure OpenAI",
+  "type": "module",
+  "scripts": {
+    "build": "vite build --config ./vite.config.ts",
+    "build:eval": "VITE_EVAL_MODE=true vite build --config ./vite.config.ts",
+    "clean:dist": "rimraf ./dist",
+    "develop": "vite --config ./vite.config.ts",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test  --ui",
+    "test:e2e:update-snapshots": "playwright test --update-snapshots",
+    "start-test-server:prod": "vite serve dist/prod --port 9050"
+  },
+  "dependencies": {
+    "@ai-sdk/azure": "catalog:",
+    "@ai-sdk/react": "^3.0.303",
+    "@assistant-ui/react": "catalog:",
+    "@assistant-ui/react-ai-sdk": "catalog:",
+    "@assistant-ui/react-markdown": "catalog:",
+    "@assistant-ui/react-ui": "^0.2.1",
+    "@microsoft/applicationinsights-web": "^3.4.4",
+    "@tomtom-org/maps-sdk": "catalog:",
+    "@tomtom-org/maps-sdk-plugin-agent-toolkit": "catalog:",
+    "ai": "catalog:",
+    "assistant-stream": "catalog:",
+    "chart.js": "catalog:",
+    "chartjs-plugin-zoom": "catalog:",
+    "marked": "catalog:",
+    "react": "catalog:",
+    "react-chartjs-2": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "devDependencies": {
+    "@playwright/test": "catalog:",
+    "@tailwindcss/vite": "catalog:",
+    "@types/geojson": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "maplibre-gl": "catalog:",
+    "rimraf": "catalog:",
+    "rollup-plugin-visualizer": "catalog:",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:"
+  }
+}

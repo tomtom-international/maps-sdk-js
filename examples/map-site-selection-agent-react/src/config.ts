@@ -1,0 +1,64 @@
+import { createAzure } from '@ai-sdk/azure';
+
+export const API_KEY = process.env.API_KEY_EXAMPLES;
+export const MOVE_PORTAL_KEY = process.env.MOVE_PORTAL_KEY;
+export const APPLICATIONINSIGHTS_CONNECTION_STRING = process.env.APPLICATIONINSIGHTS_CONNECTION_STRING;
+
+const demosProxyUrl = process.env.DEMOS_PROXY_URL;
+const gatewayBaseUrl = process.env.AZURE_GATEWAY_BASE_URL;
+const resourceName = process.env.AZURE_RESOURCE_NAME;
+const azureApiKey = process.env.AZURE_API_KEY;
+
+// AZURE_MODEL_IDS is the leading source — when set, its comma-separated list
+// IS the picker (AZURE_DEPLOYMENT_ID is ignored). When unset, fall back to a
+// single deployment via AZURE_DEPLOYMENT_ID so legacy setups keep working.
+const modelIds = process.env.AZURE_MODEL_IDS;
+const fallbackDeploymentId = process.env.AZURE_DEPLOYMENT_ID;
+
+const parsedModelIds = (modelIds ?? '')
+    .split(',')
+    .map((s: string) => s.trim())
+    .filter(Boolean);
+
+const resolved: string[] =
+    parsedModelIds.length > 0 ? parsedModelIds : fallbackDeploymentId ? [fallbackDeploymentId] : [];
+
+if (resolved.length === 0) {
+    throw new Error(
+        'AZURE_MODEL_IDS (comma-separated) or AZURE_DEPLOYMENT_ID is required. Set one in your .env. AZURE_MODEL_IDS takes precedence and overrides AZURE_DEPLOYMENT_ID when both are set.',
+    );
+}
+
+export const availableDeployments: readonly string[] = resolved;
+export const defaultDeploymentId = resolved[0];
+
+const fetchWithCredentials: typeof fetch = (input, init) => fetch(input, { ...init, credentials: 'include' });
+
+/**
+ * Build an Azure OpenAI client appropriate for the runtime:
+ *  - Demos-proxy mode: route through `<demos-proxy>/llm/v1`, which holds the real key
+ *  - APIM gateway mode: route through the configured gateway base URL
+ *  - Direct mode (local dev): talk to api.openai.azure.com with the user's key
+ */
+export const createDemoAzure = () => {
+    if (demosProxyUrl) {
+        // The /v1 must be explicit: @ai-sdk/azure appends a bare /chat/completions to a custom
+        // (non-Azure) baseURL, and the proxy forwards /llm/* verbatim to Azure OpenAI's /openai/*,
+        // where only the v1 surface accepts model-in-body requests without a deployment path.
+        return createAzure({
+            baseURL: `${demosProxyUrl}/llm/v1`,
+            apiKey: 'placeholder',
+            fetch: fetchWithCredentials,
+        });
+    }
+    if (gatewayBaseUrl) {
+        return createAzure({ baseURL: gatewayBaseUrl, apiKey: azureApiKey ?? 'placeholder' });
+    }
+    if (!resourceName) {
+        throw new Error('AZURE_RESOURCE_NAME is required (or set DEMOS_PROXY_URL for demos-proxy mode).');
+    }
+    if (!azureApiKey) {
+        throw new Error('AZURE_API_KEY is required (or set DEMOS_PROXY_URL for demos-proxy mode).');
+    }
+    return createAzure({ resourceName, apiKey: azureApiKey });
+};

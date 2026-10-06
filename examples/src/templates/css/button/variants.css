@@ -1,0 +1,137 @@
+/* BUTTON VARIANTS */
+
+.ui-button-tertiary {
+    background-color: transparent;
+    color: var(--ui-surface-brand-red);
+    border: 2px solid var(--ui-surface-brand-red);
+    box-shadow: none;
+}
+
+.ui-button-tertiary:hover {
+    background-color: rgba(223, 27, 18, 0.1);
+}
+
+.ui-button-tertiary:active {
+    background-color: rgba(223, 27, 18, 0.2);
+}
+
+.ui-button-tertiary:disabled {
+    background-color: transparent;
+    color: var(--ui-text-disabled);
+    border-color: var(--ui-text-disabled);
+}
+
+.ui-button-outline {
+    background-color: transparent;
+    color: var(--ui-text-high-em);
+    border: 2px solid var(--ui-border-high-em);
+    box-shadow: none;
+}
+
+.ui-button-outline:hover {
+    background-color: var(--ui-surface-1);
+    border-color: var(--ui-border-med-em);
+}
+
+.ui-button-outline:active {
+    background-color: var(--ui-surface-2);
+}
+
+.ui-button-outline:disabled {
+    background-color: transparent;
+    color: var(--ui-text-disabled);
+    border-color: var(--ui-text-disabled);
+}
+
+.ui-button-ghost {
+    background-color: transparent;
+    color: var(--ui-text-high-em);
+    box-shadow: none;
+}
+
+.ui-button-ghost:hover {
+    background-color: var(--ui-surface-1);
+}
+
+.ui-button-ghost:active {
+    background-color: var(--ui-surface-2);
+}
+
+.ui-button-ghost:disabled {
+    background-color: transparent;
+    color: var(--ui-text-disabled);
+}
+
+.ui-button-success {
+    background-color: var(--ui-surface-success);
+}
+
+.ui-button-success:hover {
+    background-color: #008f53;
+}
+
+.ui-button-success:active {
+    background-color: #007844;
+}
+
+.ui-button-warning {
+    background-color: var(--ui-surface-warning);
+    color: var(--ui-text-high-em);
+}
+
+.ui-button-warning:hover {
+    background-color: #e0a600;
+}
+
+.ui-button-warning:active {
+    background-color: #c89200;
+}
+
+.ui-toggle {
+    background-color: var(--ui-surface-0);
+    color: var(--ui-text-high-em);
+    border: 2px solid var(--ui-border-high-em);
+    box-shadow: none;
+}
+
+.ui-toggle:hover {
+    background-color: var(--ui-surface-1);
+}
+
+.ui-toggle.active {
+    background-color: var(--ui-surface-brand-red);
+    color: var(--ui-text-white);
+    border-color: var(--ui-surface-brand-red);
+}
+
+.ui-toggle.active:hover {
+    background-color: var(--ui-surface-brand-red-hover);
+    border-color: var(--ui-surface-brand-red-hover);
+}
+
+.ui-button-loading {
+    position: relative;
+    color: transparent;
+    pointer-events: none;
+}
+
+.ui-button-loading::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    margin-top: -8px;
+    margin-left: -8px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: button-spin 0.6s linear infinite;
+}
+
+@keyframes button-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

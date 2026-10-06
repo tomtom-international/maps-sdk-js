@@ -1,0 +1,26 @@
+{
+  "name": "@examples/route-waypoints-playground",
+  "description": "Playground for route waypoint pins: per-role colours, stop numbering, labels, hover growth and icons of your own, every knob from the catalogue.",
+  "type": "module",
+  "scripts": {
+    "build": "vite build --config ../example-vite.config.ts",
+    "clean:dist": "rimraf ./dist",
+    "develop": "vite --config ../example-vite.config.ts",
+    "type-check": "tsc --noEmit",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test  --ui",
+    "test:e2e:update-snapshots": "playwright test --update-snapshots",
+    "start-test-server:prod": "vite preview --port 9050 --outDir dist/prod"
+  },
+  "dependencies": {
+    "@tomtom-org/maps-sdk": "catalog:"
+  },
+  "devDependencies": {
+    "@playwright/test": "catalog:",
+    "@types/node": "catalog:",
+    "rimraf": "catalog:",
+    "rollup-plugin-visualizer": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  }
+}

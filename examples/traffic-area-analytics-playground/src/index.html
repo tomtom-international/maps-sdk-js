@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Area Analytics Explorer</title>
+        <meta name="viewport" content="initial-scale=1">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+
+        <!-- Controls panel (top-right) -->
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Traffic Area Analytics</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <label class="ui-form-label" for="city-input">City</label>
+                    <div class="aa-search-wrapper">
+                        <input
+                            type="text"
+                            class="ui-input"
+                            id="city-input"
+                            placeholder="Search for a city..."
+                            autocomplete="off"
+                        >
+                        <ul id="city-suggestions" class="aa-suggestions" aria-label="City suggestions"></ul>
+                    </div>
+                </div>
+                <div class="ui-section">
+                    <label class="ui-form-label" for="metric-selector">Metric</label>
+                    <select class="ui-dropdown" id="metric-selector">
+                        <option value="congestionLevel" selected>Congestion Level</option>
+                        <option value="speed">Speed</option>
+                        <option value="travelTime">Travel Time</option>
+                        <option value="freeFlowSpeed">Free Flow Speed</option>
+                        <option value="networkLength">Network Length (road density)</option>
+                    </select>
+                </div>
+                <div class="ui-section">
+                    <label class="ui-form-label" for="mode-selector">Visualization</label>
+                    <select class="ui-dropdown" id="mode-selector">
+                        <option value="hexgrid-3d" selected>3D Hex Grid</option>
+                        <option value="hexgrid-2d">Flat Hex Grid</option>
+                        <option value="square-3d">3D Square Grid</option>
+                        <option value="square-2d">Flat Square Grid</option>
+                        <option value="heatmap">Heatmap</option>
+                    </select>
+                </div>
+                <div class="ui-section">
+                    <label class="ui-form-label" for="palette-selector">Palette</label>
+                    <select class="ui-dropdown" id="palette-selector">
+                        <option value="trafficLight" selected>Traffic Light</option>
+                        <option value="heat">Heat</option>
+                        <option value="monochrome">Monochrome</option>
+                        <option value="viridis">Viridis</option>
+                        <option value="plasma">Plasma</option>
+                    </select>
+                </div>
+
+                <details class="aa-filters" open>
+                    <summary class="aa-filters-summary">Query filters</summary>
+
+                    <div class="ui-section aa-date-row">
+                        <div>
+                            <label class="ui-form-label" for="filter-start-date">Start date</label>
+                            <input type="date" class="ui-input" id="filter-start-date">
+                        </div>
+                        <div>
+                            <label class="ui-form-label" for="filter-end-date">End date</label>
+                            <input type="date" class="ui-input" id="filter-end-date">
+                        </div>
+                    </div>
+                    <p class="aa-filters-hint">End date must be ≥ 2 days ago; max 31-day window.</p>
+                    <p id="filter-date-error" class="aa-filters-error aa-hidden" role="alert"></p>
+
+                    <fieldset class="ui-section aa-fieldset">
+                        <legend class="ui-form-label">Hours of day</legend>
+                        <div id="filter-hour-presets" class="aa-preset-row"></div>
+                        <div id="filter-hour-grid" class="aa-hour-grid"></div>
+                    </fieldset>
+
+                    <fieldset class="ui-section aa-fieldset">
+                        <legend class="ui-form-label">Functional road classes</legend>
+                        <div class="aa-preset-row">
+                            <button type="button" id="filter-frc-all" class="aa-preset-button">All</button>
+                            <button type="button" id="filter-frc-none" class="aa-preset-button">None</button>
+                        </div>
+                        <div id="filter-frc-list" class="ui-checkbox-list aa-frc-list"></div>
+                    </fieldset>
+
+                    <div class="ui-section">
+                        <button type="button" id="filter-apply" class="ui-button ui-button-full" disabled>
+                            Apply filters
+                        </button>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <!-- Stats + heatmap panel (bottom-left) -->
+        <div id="bottom-panel" class="aa-bottom-panel aa-hidden">
+            <div class="aa-bottom-panel-header">
+                <span id="panel-city-name" class="aa-city-name"></span>
+                <div class="aa-bottom-panel-actions">
+                    <button type="button" id="busiest-cell" class="aa-preset-button">Most congested cell</button>
+                    <button class="aa-bottom-panel-toggle" aria-label="Toggle data panel" aria-expanded="false">
+                        <svg class="aa-bottom-panel-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="aa-bottom-panel-content collapsed">
+                <div class="aa-stats">
+                    <div class="aa-stat-chip">
+                        <span class="aa-stat-label">Avg Congestion</span>
+                        <span id="stat-congestion" class="aa-stat-value">--</span>
+                    </div>
+                    <div class="aa-stat-chip">
+                        <span class="aa-stat-label">Avg Speed</span>
+                        <span id="stat-speed" class="aa-stat-value">--</span>
+                    </div>
+                    <div class="aa-stat-chip">
+                        <span class="aa-stat-label">Avg Travel Time</span>
+                        <span id="stat-traveltime" class="aa-stat-value">--</span>
+                    </div>
+                    <div class="aa-stat-chip">
+                        <span class="aa-stat-label">Free Flow</span>
+                        <span id="stat-freeflow" class="aa-stat-value">--</span>
+                    </div>
+                </div>
+                <div class="aa-heatmap-section">
+                    <span class="ui-form-label" id="heatmap-label">Congestion by Day &amp; Hour (UTC)</span>
+                    <div id="heatmap-chart"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating legend -->
+        <div class="aa-floating-legend">
+            <span class="aa-legend-title" id="legend-title">Congestion Level</span>
+            <div class="aa-legend-bar" id="legend-bar"></div>
+            <div class="aa-legend-labels">
+                <span id="legend-min">Free</span>
+                <span id="legend-max">Standstill</span>
+            </div>
+        </div>
+
+        <!-- Loading overlay -->
+        <div id="loading-overlay" class="aa-loading aa-hidden">
+            <div class="ui-spinner"></div>
+            <span>Loading analytics...</span>
+        </div>
+
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <title>Color Picker - Maps SDK JS</title>
+        <link rel="stylesheet" href="../css/styles.css">
+    </head>
+    <body class="body">
+        <!-- Simple color picker -->
+        <div class="ui-form-field">
+            <label class="ui-form-label" for="ui-textColorPicker">Text Color</label>
+            <span class="ui-color-swatch">
+                <input type="color" id="ui-textColorPicker" value="#df1b12">
+            </span>
+        </div>
+
+        <!-- Multiple color pickers for different properties -->
+        <div class="ui-section">
+            <h4 class="ui-subheading">Color Options</h4>
+
+            <!-- Text Color -->
+            <div class="ui-form-field">
+                <label class="ui-form-label" for="ui-textColorPicker2">Text Color</label>
+                <span class="ui-color-swatch">
+                    <input type="color" id="ui-textColorPicker2" value="#ffffff">
+                </span>
+            </div>
+
+            <!-- Background Color -->
+            <div class="ui-form-field">
+                <label class="ui-form-label" for="ui-bgColorPicker">Background Color</label>
+                <span class="ui-color-swatch">
+                    <input type="color" id="ui-bgColorPicker" value="#ffffff">
+                </span>
+            </div>
+        </div>
+
+        <!-- Color preview (shows currently selected color) -->
+        <div class="ui-color-preview">
+            <div class="ui-color-box">
+                <div class="ui-color-indicator" id="ui-selectedColorIndicator" style="background: #df1b12;"></div>
+                <span class="ui-label">Selected: <span id="ui-selectedColorValue">#df1b12</span></span>
+            </div>
+        </div>
+
+        <!--
+    JavaScript Event Listener Example:
+
+    const colorPicker = document.getElementById('ui-textColorPicker') as HTMLInputElement;
+
+    colorPicker.addEventListener('input', () => {
+        console.log('Selected color:', colorPicker.value);
+    });
+    -->
+    </body>
+</html>

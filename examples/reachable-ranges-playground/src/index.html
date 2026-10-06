@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Reachable ranges playground</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div id="ui-panel" class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Reachable ranges</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+            <div class="ui-panel-content">
+                <p class="ui-hint">
+                    10, 20 and 30 minutes of driving from two stations. Theme the map and the bands follow it, or give
+                    them colours of your own.
+                </p>
+
+                <div class="ui-section">
+                    <div class="ui-form-field-inline">
+                        <label class="ui-form-label" for="ui-theme">Map theme</label>
+                        <select class="ui-dropdown" id="ui-theme"></select>
+                    </div>
+                </div>
+
+                <div class="ui-section">
+                    <h4 class="ui-subheading">Knobs</h4>
+                    <div id="ui-knobs"></div>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

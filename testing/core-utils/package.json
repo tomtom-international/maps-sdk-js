@@ -1,0 +1,29 @@
+{
+  "name": "@testing/core-utils",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc --noEmit",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "devDependencies": {
+    "@playwright/test": "catalog:",
+    "@tsconfig/recommended": "catalog:",
+    "@types/geojson": "catalog:",
+    "@types/node": "catalog:",
+    "@tomtom-org/maps-sdk": "catalog:",
+    "maplibre-gl": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

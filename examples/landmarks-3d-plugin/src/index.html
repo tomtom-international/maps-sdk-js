@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>3D Landmarks</title>
+        <meta name="viewport" content="initial-scale=1">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">3D Landmarks</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="ui-basemap">Basemap theme:</label>
+                        <select class="ui-dropdown" id="ui-basemap"></select>
+                    </div>
+
+                    <div class="ui-form-field">
+                        <span class="ui-form-label">Landmarks theme:</span>
+                        <div class="ui-radio-group">
+                            <label class="ui-radio-label">
+                                <input type="radio" name="displayMode" value="inherited" checked>
+                                Inherited
+                            </label>
+                            <label class="ui-radio-label">
+                                <input type="radio" name="displayMode" value="dark">
+                                Dark
+                            </label>
+                            <label class="ui-radio-label">
+                                <input type="radio" name="displayMode" value="light">
+                                Light
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

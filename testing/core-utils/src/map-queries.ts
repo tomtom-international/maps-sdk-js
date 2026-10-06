@@ -1,0 +1,271 @@
+import type { Page } from '@playwright/test';
+import type { Position } from 'geojson';
+import type { LayerSpecWithSource } from '@tomtom-org/maps-sdk/map';
+import type { AllPaintProperties, LayerSpecification, LngLatLike, MapGeoJSONFeature } from 'maplibre-gl';
+import { tryBeforeTimeout, waitForTimeout } from './async-utils';
+import type { MapWindowLike } from './map-window';
+
+// ---------------------------------------------------------------------------
+// Map idle
+// ---------------------------------------------------------------------------
+
+export const waitForMapIdle = async (page: Page): Promise<void> => {
+    await page.evaluate(async () => {
+        const map = (globalThis as MapWindowLike).mapLibreMap;
+        if (!map) {
+            throw new Error('globalThis.mapLibreMap is not available.');
+        }
+        // A camera animation that has just started still reports its previous tiles as loaded.
+        const isIdle = () =>
+            !map.isMoving() && map.loaded() && (typeof map.areTilesLoaded !== 'function' || map.areTilesLoaded());
+        if (isIdle()) {
+            return;
+        }
+        await new Promise<void>((resolve) => {
+            let resolved = false;
+            const done = () => {
+                if (resolved) return;
+                resolved = true;
+                clearInterval(poll);
+                resolve();
+            };
+            map.once('idle', done);
+            // Poll as fallback in case idle event fired before the listener was attached
+            const poll = setInterval(() => {
+                if (isIdle()) done();
+            }, 200);
+        });
+    });
+};
+
+export const nextMapIdleEvent = async (page: Page, timeoutMs = 10_000): Promise<void> => {
+    await tryBeforeTimeout(
+        () =>
+            page.evaluate(async () => {
+                const map = (globalThis as MapWindowLike).mapLibreMap;
+                if (!map) {
+                    throw new Error('globalThis.mapLibreMap is not available.');
+                }
+                await new Promise<void>((resolve) => {
+                    map.once('idle', () => resolve());
+                });
+            }),
+        `nextMapIdleEvent: no 'idle' event within ${timeoutMs}ms.`,
+        timeoutMs,
+    );
+};
+
+// ---------------------------------------------------------------------------
+// Layers
+// ---------------------------------------------------------------------------
+
+export const getLayersBySource = async (page: Page, sourceId: string): Promise<LayerSpecWithSource[]> =>
+    page.evaluate((pageSourceId) => {
+        const map = (globalThis as MapWindowLike).mapLibreMap;
+        if (!map) {
+            throw new Error('globalThis.mapLibreMap is not available.');
+        }
+        return map
+            .getStyle()
+            .layers.filter((layer) => (layer as LayerSpecWithSource).source === pageSourceId) as LayerSpecWithSource[];
+    }, sourceId);
+
+export const getNumLayersBySource = async (page: Page, sourceId: string): Promise<number> =>
+    (await getLayersBySource(page, sourceId)).length;
+
+export const getVisibleLayersBySource = async (page: Page, sourceId: string): Promise<LayerSpecWithSource[]> =>
+    page.evaluate((pageSourceId) => {
+        const map = (globalThis as MapWindowLike).mapLibreMap;
+        if (!map) {
+            throw new Error('globalThis.mapLibreMap is not available.');
+        }
+        return map
+            .getStyle()
+            .layers.filter(
+                (layer) =>
+                    (layer as LayerSpecWithSource).source === pageSourceId && layer.layout?.visibility !== 'none',
+            ) as LayerSpecWithSource[];
+    }, sourceId);
+
+export const getNumVisibleLayersBySource = async (page: Page, sourceId: string): Promise<number> =>
+    (await getVisibleLayersBySource(page, sourceId)).length;
+
+export const getLayerById = async (page: Page, layerId: string): Promise<LayerSpecification> =>
+    page.evaluate((symbolLayerId) => {
+        const map = (globalThis as MapWindowLike).mapLibreMap;
+        if (!map) {
+            throw new Error('globalThis.mapLibreMap is not available.');
+        }
+        return map.getStyle().layers.find((layer) => layer.id === symbolLayerId) as LayerSpecification;
+    }, layerId);
+
+export const getLayersByIds = async (page: Page, layerIds: string[]): Promise<LayerSpecWithSource[]> =>
+    page.evaluate((pageLayerIds) => {
+        const map = (globalThis as MapWindowLike).mapLibreMap;
+        if (!map) {
+            throw new Error('globalThis.mapLibreMap is not available.');
+        }
+        return map.getStyle().layers.filter((layer) => pageLayerIds.includes(layer.id)) as LayerSpecWithSource[];
+    }, layerIds);
+
+export const isLayerVisible = async (page: Page, layerId: string): Promise<boolean> =>
+    page.evaluate(
+        (inputLayerId) =>
+            (globalThis as MapWindowLike).mapLibreMap?.getLayoutProperty(inputLayerId, 'visibility') !== 'none',
+        layerId,
+    );
+
+/**
+ * The position of a layer in the style's draw order, counting from the bottom. `-1` when the style
+ * has no such layer.
+ *
+ * @remarks
+ * Two indices compared say which of two layers draws over the other, which is what a test asserting
+ * stacking needs — the absolute number shifts with every layer the basemap adds.
+ */
+export const getLayerIndex = async (page: Page, layerId: string): Promise<number> =>
+    page.evaluate((inputLayerId) => {
+        const map = (globalThis as MapWindowLike).mapLibreMap;
+        if (!map) {
+            throw new Error('globalThis.mapLibreMap is not available.');
+        }
+        return map.getStyle().layers.findIndex((layer) => layer.id === inputLayerId);
+    }, layerId);
+
+// ---------------------------------------------------------------------------
+// Paint
+// ---------------------------------------------------------------------------
+
+export const getPaintProperty = async (page: Page, layerId: string, propertyName: string): Promise<unknown> =>
+    page.evaluate(
+        ({ layerID, propertyName: prop }) =>
+            (globalThis as MapWindowLike).mapLibreMap?.getPaintProperty(layerID, prop as keyof AllPaintProperties),
+        { layerID: layerId, propertyName },
+    );
+
+// ---------------------------------------------------------------------------
+// Features
+// ---------------------------------------------------------------------------
+
+export const queryRenderedFeatures = async (
+    page: Page,
+    layerIDs: string[],
+    lngLat?: Position,
+): Promise<MapGeoJSONFeature[]> =>
+    page.evaluate(
+        ({ inputLayerIDs, inputLngLat }) => {
+            const map = (globalThis as MapWindowLike).mapLibreMap;
+            if (!map) {
+                throw new Error('globalThis.mapLibreMap is not available.');
+            }
+            const options = { layers: inputLayerIDs, validate: false };
+            try {
+                if (inputLngLat) {
+                    return map.queryRenderedFeatures(map.project(inputLngLat as [number, number]), options);
+                }
+                return map.queryRenderedFeatures(options);
+            } catch {
+                // MapLibre can throw when decoding symbol tile features (e.g. empty string table in newer tile formats).
+                // Return an empty array so callers can retry.
+                return [];
+            }
+        },
+        { inputLayerIDs: layerIDs, inputLngLat: lngLat },
+    );
+
+const allLayersPresent = async (page: Page, layerIDs: string[]): Promise<boolean> =>
+    page.evaluate((ids) => {
+        const map = (globalThis as MapWindowLike).mapLibreMap;
+        if (!map) return false;
+        const existing = new Set(map.getStyle().layers.map((l) => l.id));
+        return ids.every((id) => existing.has(id));
+    }, layerIDs);
+
+export const waitUntilRenderedFeatures = async (
+    page: Page,
+    layerIDs: string[],
+    expectNumFeatures: number,
+    timeoutMs: number,
+    lngLat?: Position,
+): Promise<MapGeoJSONFeature[]> =>
+    tryBeforeTimeout(
+        async () => {
+            let currentFeatures: MapGeoJSONFeature[] = [];
+            do {
+                await waitForTimeout(500);
+                // A module re-registers its layers while the style change is being applied, so a
+                // query issued in between finds no layer, and MapLibre logs a `console.error`
+                // that fails tests asserting on empty `consoleErrors`. Skip the query until all
+                // requested layers exist; the outer `tryBeforeTimeout` still bounds the wait, so
+                // a permanently-missing layer still fails the test.
+                if (!(await allLayersPresent(page, layerIDs))) continue;
+                currentFeatures = await queryRenderedFeatures(page, layerIDs, lngLat);
+            } while (currentFeatures.length !== expectNumFeatures);
+            return currentFeatures;
+        },
+        `Features didn't match ${expectNumFeatures} count for layers: ${layerIDs}.`,
+        timeoutMs,
+    );
+
+export const waitUntilRenderedFeaturesChange = async (
+    page: Page,
+    layerIDs: string[],
+    previousNumFeatures: number,
+    timeoutMs: number,
+    lngLat?: Position,
+): Promise<MapGeoJSONFeature[]> =>
+    tryBeforeTimeout(
+        async () => {
+            let currentFeatures: MapGeoJSONFeature[] = [];
+            do {
+                await waitForTimeout(500);
+                if (!(await allLayersPresent(page, layerIDs))) continue;
+                currentFeatures = await queryRenderedFeatures(page, layerIDs, lngLat);
+            } while (currentFeatures.length === previousNumFeatures);
+            return currentFeatures;
+        },
+        `Features didn't change from ${previousNumFeatures} for layers: ${layerIDs}.`,
+        timeoutMs,
+    );
+
+export const getPixelCoords = async (
+    page: Page,
+    coordinates: [number, number] | Position,
+): Promise<{ x: number; y: number }> =>
+    page.evaluate((inputCoordinates) => {
+        const map = (globalThis as MapWindowLike).mapLibreMap;
+        if (!map) {
+            throw new Error('globalThis.mapLibreMap is not available.');
+        }
+        const point = map.project(inputCoordinates as [number, number]);
+        return { x: point.x, y: point.y };
+    }, coordinates);
+
+export const getCursor = async (page: Page): Promise<string> =>
+    page.evaluate(() => {
+        const map = (globalThis as MapWindowLike).mapLibreMap;
+        if (!map) {
+            throw new Error('globalThis.mapLibreMap is not available.');
+        }
+        return map.getCanvas().style.cursor;
+    });
+
+export const moveAndZoomTo = async (page: Page, viewport: { center: LngLatLike; zoom: number }): Promise<void> => {
+    await page.evaluate(({ center, zoom }) => {
+        const map = (globalThis as MapWindowLike).mapLibreMap;
+        if (!map) {
+            throw new Error('globalThis.mapLibreMap is not available.');
+        }
+        map.jumpTo({ center, zoom });
+    }, viewport);
+};
+
+export const zoomTo = async (page: Page, zoom: number): Promise<void> => {
+    await page.evaluate((inputZoom) => {
+        const map = (globalThis as MapWindowLike).mapLibreMap;
+        if (!map) {
+            throw new Error('globalThis.mapLibreMap is not available.');
+        }
+        map.zoomTo(inputZoom);
+    }, zoom);
+};

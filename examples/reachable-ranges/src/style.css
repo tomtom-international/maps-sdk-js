@@ -1,0 +1,21 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/panel/search-panel.css";
+@import "../../src/templates/css/button/button.css";
+@import "../../src/templates/css/form/field.css";
+@import "../../src/templates/css/form/input.css";
+@import "../../src/templates/css/form/dropdown.css";
+@import "../../src/templates/css/feedback/loading-spinner.css";
+
+/* CUSTOM STYLES (example-specific) */
+
+#ui-spinner {
+    --ui-spinner-size: 24px;
+    visibility: hidden;
+}
+
+#ui-status-section {
+    padding: var(--ui-panel-padding) 0;
+}

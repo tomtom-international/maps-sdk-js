@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Base Map Layer Groups</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Layer Groups</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <label class="ui-form-label" for="ui-mapStyles">Map Style:</label>
+                    <select class="ui-dropdown" id="ui-mapStyles"></select>
+                </div>
+
+                <div class="ui-section">
+                    <h4 class="ui-subheading">Base Map layer groups</h4>
+                    <div id="ui-baseMapToggles"></div>
+                </div>
+
+                <div class="ui-section">
+                    <h4 class="ui-subheading">Other</h4>
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" id="ui-togglePOIs" checked>
+                        <span class="ui-toggle-switch"></span>
+                        POIs
+                    </label>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

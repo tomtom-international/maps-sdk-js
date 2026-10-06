@@ -1,0 +1,110 @@
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import {
+    FilterablePOICategory,
+    FilterShowMode,
+    POICategoryGroup,
+    POIsModule,
+    TomTomMap,
+    ValuesFilter,
+} from '@tomtom-org/maps-sdk/map';
+import './style.css';
+import { API_KEY } from './config';
+import { initTogglePanel } from './togglePanel';
+
+// (Set your own API key when working in your own environment)
+TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
+
+(async () => {
+    let poisModule: POIsModule;
+    let modeSelector: HTMLSelectElement;
+    const filterInputs: HTMLInputElement[] = [];
+
+    const categories: Partial<Record<POICategoryGroup, string>> = {
+        FOOD_DRINKS_GROUP: 'Food & Drinks',
+        TRANSPORTATION_GROUP: 'Transportation',
+        HOLIDAY_TOURISM_GROUP: 'Holiday & Tourism',
+        HEALTH_GROUP: 'Health',
+        PARKING_GROUP: 'Parking',
+        SHOPPING_GROUP: 'Shopping',
+        ACCOMMODATION_GROUP: 'Accommodation',
+        ENTERTAINMENT_GROUP: 'Entertainment',
+        GOVERNMENT_GROUP: 'Government Organizations',
+        EDUCATION_GROUP: 'Education',
+        GAS_STATIONS_GROUP: 'Gas Stations',
+        EV_CHARGING_STATIONS_GROUP: 'EV Charging Stations',
+    };
+
+    let categoryFilter: ValuesFilter<FilterablePOICategory> = {
+        show: 'all-except',
+        values: [],
+    };
+
+    const toggleCategoryFilter = (category: FilterablePOICategory, isChecked: boolean) => {
+        isChecked
+            ? categoryFilter.values.push(category)
+            : (categoryFilter.values = categoryFilter.values.filter((cat) => cat != category));
+        poisModule.updateConfig({ filters: { categories: categoryFilter } });
+    };
+
+    const changeFilterMode = (mode: FilterShowMode) => {
+        categoryFilter.show = mode;
+        poisModule.updateConfig({ filters: { categories: categoryFilter } });
+    };
+
+    const resetConfig = () => {
+        categoryFilter = {
+            show: 'all-except',
+            values: [],
+        };
+        poisModule.updateConfig({ filters: { categories: categoryFilter } });
+        filterInputs.forEach((input) => (input.checked = false));
+        modeSelector.selectedIndex = 0;
+    };
+
+    const createFilterToggles = () => {
+        const container = document.getElementById('ui-filtersContainer');
+        for (const [key, value] of Object.entries(categories) as [POICategoryGroup, string][]) {
+            const label = document.createElement('label');
+            label.className = 'ui-toggle-label';
+
+            const input = document.createElement('input');
+            input.type = 'checkbox';
+            input.className = 'ui-toggle-input';
+            input.value = key;
+            input.checked = categoryFilter.values.includes(key);
+            input.id = key;
+
+            const toggle = document.createElement('span');
+            toggle.className = 'ui-toggle-switch';
+
+            label.appendChild(input);
+            label.appendChild(toggle);
+            label.appendChild(document.createTextNode(value));
+
+            input.addEventListener('change', () => toggleCategoryFilter(key, input.checked));
+
+            filterInputs.push(input);
+            container?.appendChild(label);
+        }
+    };
+
+    const map = new TomTomMap({
+        mapLibre: {
+            container: 'sdk-map',
+            center: [4.89437, 52.36859],
+            zoom: 16.5,
+        },
+    });
+    poisModule = await POIsModule.get(map);
+
+    modeSelector = document.getElementById('ui-modeSelector') as HTMLSelectElement;
+    modeSelector?.addEventListener('change', (e) =>
+        changeFilterMode((e.target as HTMLSelectElement).value as FilterShowMode),
+    );
+
+    document.getElementById('ui-resetButton')?.addEventListener('click', resetConfig);
+
+    createFilterToggles();
+
+    initTogglePanel();
+})();

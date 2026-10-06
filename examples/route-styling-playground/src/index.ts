@@ -1,0 +1,99 @@
+import type { Waypoint } from '@tomtom-org/maps-sdk/core';
+import { bboxFromGeoJSON, TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { RoutingModule, SELECTED_ROUTE_FILTER, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { calculateRoute, geocodeOne } from '@tomtom-org/maps-sdk/services';
+import { API_KEY } from './config';
+import type { RoutePlaygroundState } from './controls';
+import { initControls } from './controls';
+import './style.css';
+
+TomTomConfig.instance.put({ apiKey: API_KEY });
+
+(async () => {
+    const waypoints: Waypoint[] = await Promise.all([geocodeOne('London'), geocodeOne('Paris')]);
+
+    const map = new TomTomMap({
+        mapLibre: {
+            container: 'sdk-map',
+            bounds: bboxFromGeoJSON(waypoints),
+            fitBoundsOptions: { padding: 100 },
+        },
+    });
+
+    const state: RoutePlaygroundState = {
+        visible: true,
+        color: undefined,
+        waypointLabelColor: undefined,
+        width: 'm',
+        widthFactor: 1,
+        waypointSize: 'm',
+        waypointSizeFactor: 1,
+        centerDash: false,
+        routeOpacity: 1,
+        highlight: { outline: {} },
+    };
+
+    const buildConfig = () => ({
+        visible: state.visible,
+        color: state.color,
+        widthPreset: state.width,
+        widthFactor: state.widthFactor,
+        waypoints: {
+            sizePreset: state.waypointSize,
+            sizeFactor: state.waypointSizeFactor,
+            label: { color: state.waypointLabelColor },
+        },
+        highlight: { outline: { ...state.highlight.outline } },
+        layers: {
+            mainLines: {
+                routeLine: {
+                    paint: { 'line-opacity': state.routeOpacity },
+                },
+                routeOutline: {
+                    paint: { 'line-opacity': state.routeOpacity },
+                },
+                ...(state.centerDash && {
+                    additional: {
+                        routeCenterDash: {
+                            type: 'line' as const,
+                            filter: SELECTED_ROUTE_FILTER,
+                            paint: {
+                                'line-color': 'white',
+                                'line-dasharray': [3, 2],
+                                'line-opacity': state.routeOpacity,
+                            },
+                            beforeID: 'routeIncidentBackgroundLine',
+                        },
+                    },
+                }),
+            },
+            sections: {
+                tollRoad: {
+                    routeTollRoadOutline: {
+                        paint: { 'line-opacity': state.routeOpacity },
+                    },
+                },
+                tunnel: {
+                    routeTunnelLine: {
+                        paint: { 'line-opacity': 0.3 * state.routeOpacity },
+                    },
+                },
+            },
+        },
+    });
+
+    const routingModule = await RoutingModule.create(map, buildConfig());
+    routingModule.showWaypoints(waypoints);
+    routingModule.showRoutes(await calculateRoute({ locations: waypoints }));
+
+    const apply = () => routingModule.applyConfig(buildConfig());
+
+    // A click state lasts through applyConfig, so the clicked route repaints in place as the factor moves
+    initControls(
+        state,
+        apply,
+        (visible) => routingModule.setVisible(visible),
+        (clicked) =>
+            clicked ? routingModule.setEventState({ index: 0, state: 'click' }) : routingModule.clearEventStates(),
+    );
+})();

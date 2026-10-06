@@ -1,0 +1,498 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/form/input.css";
+@import "../../src/templates/css/form/dropdown.css";
+@import "../../src/templates/css/form/checkbox.css";
+@import "../../src/templates/css/button/button.css";
+@import "../../src/templates/css/button/variants.css";
+@import "../../src/templates/css/button/groups.css";
+@import "../../src/templates/css/feedback/loading-spinner.css";
+@import "../../src/templates/css/maplibre/popup.css";
+
+.ui-body {
+    overflow: hidden;
+}
+
+/* ── City search suggestions ─────────────────────────────────────── */
+
+.aa-search-wrapper {
+    position: relative;
+}
+
+.aa-suggestions {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 4px;
+    background: var(--ui-surface-0);
+    border: 1px solid var(--ui-border-med-em);
+    border-radius: var(--ui-rounded-10);
+    list-style: none;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: var(--ui-z-dropdown);
+    box-shadow: var(--ui-elevation-e3);
+    padding: 0;
+}
+
+.aa-suggestions.visible {
+    display: block;
+}
+
+.aa-suggestions li {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: var(--ui-font-body-s);
+    color: var(--ui-text-high-em);
+    border-bottom: 1px solid var(--ui-border-low-em);
+}
+
+.aa-suggestions li:last-child {
+    border-bottom: none;
+}
+
+.aa-suggestions li:hover {
+    background: var(--ui-surface-1);
+}
+
+/* ── Floating legend (top-left) ───────────────────────────────────── */
+
+.aa-floating-legend {
+    position: fixed;
+    top: var(--ui-panel-margin);
+    left: var(--ui-panel-margin);
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--ui-border-med-em);
+    border-radius: var(--ui-rounded-10);
+    padding: 8px 16px;
+    box-shadow: var(--ui-elevation-e3);
+    z-index: var(--ui-z-panel);
+    min-width: 200px;
+    font-family: var(--ui-font-gilroy);
+}
+
+.aa-legend-title {
+    font-size: var(--ui-font-caption-s);
+    font-weight: var(--ui-font-weight-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ui-text-low-em);
+    display: block;
+    margin-bottom: 4px;
+}
+
+.aa-legend-bar {
+    height: 8px;
+    border-radius: 4px;
+    background: linear-gradient(to right, #2dc653, #f5a623, #e03030, #8b0000);
+}
+
+.aa-legend-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2px;
+    font-size: var(--ui-font-caption-s);
+    color: var(--ui-text-low-em);
+}
+
+/* ── Right controls panel width override ──────────────────────────── */
+
+@media (min-width: 769px) {
+    .ui-customPanel {
+        width: 300px;
+        max-height: calc(100vh - 2 * var(--ui-panel-margin));
+        overflow-y: auto;
+    }
+}
+
+/* ── Query filters ────────────────────────────────────────────────── */
+
+.aa-filters {
+    border-top: 1px solid var(--ui-border-low-em);
+    margin-top: var(--ui-space-3);
+    padding-top: var(--ui-space-3);
+}
+
+.aa-filters-summary {
+    cursor: pointer;
+    font-size: var(--ui-font-caption-s);
+    font-weight: var(--ui-font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ui-text-low-em);
+    margin-bottom: var(--ui-space-3);
+    user-select: none;
+}
+
+.aa-filters-summary:focus-visible {
+    outline: 2px solid var(--ui-surface-brand-red);
+    outline-offset: 2px;
+    border-radius: var(--ui-rounded-5);
+}
+
+.aa-filters-hint {
+    font-size: var(--ui-font-caption-s);
+    color: var(--ui-text-low-em);
+    margin: 0 0 var(--ui-space-3);
+}
+
+.aa-filters-error {
+    font-size: var(--ui-font-caption-s);
+    color: #c0392b;
+    margin: 0 0 var(--ui-space-3);
+}
+
+.aa-input-invalid {
+    border-color: #c0392b !important;
+    outline: 1px solid rgba(192, 57, 43, 0.2);
+}
+
+.aa-date-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--ui-space-2);
+}
+
+.aa-date-row input[type="date"] {
+    width: 100%;
+}
+
+.aa-preset-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: var(--ui-space-2);
+}
+
+.aa-preset-button {
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-caption-s);
+    padding: 4px 8px;
+    background: var(--ui-surface-1);
+    color: var(--ui-text-high-em);
+    border: 1px solid var(--ui-border-med-em);
+    border-radius: var(--ui-rounded-30);
+    cursor: pointer;
+    transition:
+        background var(--ui-transition-fast),
+        border-color var(--ui-transition-fast);
+}
+
+.aa-preset-button:hover {
+    background: var(--ui-surface-2, #e5e7eb);
+    border-color: var(--ui-surface-brand-red);
+}
+
+/* fieldset is used over <div role="group"> so AT exposes a real group with a
+   legend; reset the browser's built-in border/padding/inline-size so the
+   section keeps the same layout as the surrounding ui-sections. */
+.aa-fieldset {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    min-inline-size: 0;
+}
+
+.aa-fieldset > legend {
+    padding: 0;
+}
+
+.aa-hour-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 2px;
+}
+
+.aa-hour-cell {
+    font-family: var(--ui-font-gilroy);
+    font-size: 10px;
+    line-height: 1;
+    padding: 4px 0;
+    background: var(--ui-surface-1);
+    color: var(--ui-text-low-em);
+    border: 1px solid var(--ui-border-low-em);
+    border-radius: var(--ui-rounded-5);
+    cursor: pointer;
+    transition:
+        background var(--ui-transition-fast),
+        color var(--ui-transition-fast);
+    font-variant-numeric: tabular-nums;
+}
+
+.aa-hour-cell:hover {
+    border-color: var(--ui-surface-brand-red);
+}
+
+.aa-hour-cell.selected {
+    background: var(--ui-surface-brand-red);
+    color: var(--ui-text-white);
+    border-color: var(--ui-surface-brand-red);
+}
+
+.aa-frc-list {
+    /* No inner scroll — the outer panel handles overflow */
+}
+
+.aa-frc-row {
+    margin-bottom: 4px;
+    font-size: var(--ui-font-caption-m);
+}
+
+/* ── Stats + heatmap panel (bottom-left) ──────────────────────────── */
+
+.aa-bottom-panel {
+    position: absolute;
+    bottom: var(--ui-panel-margin);
+    left: var(--ui-panel-margin);
+    background: var(--ui-surface-0);
+    border: 1px solid var(--ui-border-med-em);
+    border-top: 2px solid var(--ui-surface-brand-red);
+    border-radius: var(--ui-rounded-15);
+    padding: var(--ui-space-3) var(--ui-space-4);
+    box-shadow: var(--ui-elevation-e4);
+    z-index: var(--ui-z-panel);
+    width: 580px;
+    font-family: var(--ui-font-gilroy);
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease;
+    margin-bottom: 16px;
+}
+
+.aa-bottom-panel.aa-hidden {
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+}
+
+.aa-bottom-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ui-space-3);
+    padding-bottom: var(--ui-space-2);
+    margin-bottom: var(--ui-space-2);
+    border-bottom: 1px solid var(--ui-border-low-em);
+}
+
+.aa-bottom-panel:has(.aa-bottom-panel-content.collapsed) .aa-bottom-panel-header {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.aa-bottom-panel-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--ui-space-2);
+}
+
+.aa-preset-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.aa-bottom-panel-toggle {
+    background: none;
+    border: none;
+    padding: var(--ui-space-1);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--ui-rounded-5);
+    flex-shrink: 0;
+    transition: background var(--ui-transition-fast);
+}
+
+.aa-bottom-panel-toggle:hover {
+    background: var(--ui-surface-1);
+}
+
+.aa-bottom-panel-chevron {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: var(--ui-text-high-em);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform var(--ui-transition-normal);
+}
+
+.aa-bottom-panel-toggle[aria-expanded="false"] .aa-bottom-panel-chevron {
+    transform: rotate(-180deg);
+}
+
+.aa-bottom-panel-content.collapsed {
+    display: none;
+}
+
+.aa-city-name {
+    font-size: var(--ui-font-title-2);
+    font-weight: var(--ui-font-weight-semibold);
+    color: var(--ui-text-high-em);
+}
+
+.aa-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 4px;
+}
+
+.aa-stat-chip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 3px 6px;
+    background: var(--ui-surface-1);
+    border: 1px solid var(--ui-border-low-em);
+    border-radius: var(--ui-rounded-5);
+}
+
+.aa-stat-label {
+    font-size: var(--ui-font-caption-s);
+    font-weight: var(--ui-font-weight-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ui-text-low-em);
+    white-space: nowrap;
+}
+
+.aa-stat-value {
+    font-size: var(--ui-font-body-s);
+    font-weight: var(--ui-font-weight-semibold);
+    color: var(--ui-surface-brand-red);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── HTML heatmap chart ──────────────────────────────────────────── */
+
+.aa-heatmap-section {
+    border-top: 1px solid var(--ui-border-low-em);
+    padding-top: var(--ui-space-2);
+}
+
+.aa-chart {
+    display: grid;
+    grid-template-columns: auto repeat(24, 1fr);
+    gap: 1px;
+    margin-top: 4px;
+    width: 100%;
+    overflow-x: auto;
+}
+
+.aa-chart-corner {
+    /* spacer aligning day labels with the hour-label row */
+}
+
+.aa-chart-hour-label {
+    font-size: 8px;
+    color: var(--ui-text-low-em, #6b7280);
+    text-align: center;
+    line-height: 16px;
+    min-width: 16px;
+}
+
+.aa-chart-day-label {
+    font-size: 9px;
+    color: var(--ui-text-low-em, #6b7280);
+    text-align: right;
+    padding-right: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    white-space: nowrap;
+    min-height: 18px;
+}
+
+.aa-chart-cell {
+    min-height: 18px;
+    border-radius: 1px;
+    font-size: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-variant-numeric: tabular-nums;
+    cursor: default;
+}
+
+.aa-chart-cell-empty {
+    background-color: var(--ui-surface-1);
+}
+
+/* ── Loading overlay ─────────────────────────────────────────────── */
+
+.aa-loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(4px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--ui-space-3);
+    z-index: var(--ui-z-modal);
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-m);
+    color: var(--ui-text-med-em);
+}
+
+.aa-loading.aa-hidden {
+    display: none;
+}
+
+/* ── Tile hover popup ────────────────────────────────────────────── */
+
+.aa-tile-popup .maplibregl-popup-content {
+    padding: var(--ui-space-2) var(--ui-space-3);
+    border-left: 3px solid var(--ui-surface-brand-red);
+    border-radius: var(--ui-rounded-10);
+    font-size: var(--ui-font-caption-m);
+    line-height: 1.5;
+    color: var(--ui-text-high-em);
+    box-shadow: var(--ui-elevation-e3);
+}
+
+.aa-tile-popup .maplibregl-popup-tip {
+    display: none;
+}
+
+.aa-tooltip-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.aa-tooltip-label {
+    color: var(--ui-text-low-em);
+}
+
+.aa-tooltip-value {
+    font-weight: var(--ui-font-weight-semibold);
+    color: var(--ui-surface-brand-red);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+    .aa-bottom-panel {
+        right: var(--ui-panel-margin);
+        width: auto;
+        margin-bottom: 16px;
+    }
+
+    .aa-stats {
+        grid-template-columns: 1fr 1fr;
+    }
+}

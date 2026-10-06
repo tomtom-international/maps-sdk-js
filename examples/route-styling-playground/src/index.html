@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Route Style Playground</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Route Style Playground</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="toggle-route-visible">Show route</label>
+                        <label class="ui-toggle-label">
+                            <input type="checkbox" class="ui-toggle-input" id="toggle-route-visible" checked>
+                            <span class="ui-toggle-switch"></span>
+                        </label>
+                    </div>
+
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="routeColor-picker">Route color</label>
+                        <span class="ui-color-swatch">
+                            <input type="color" id="routeColor-picker" value="#36A8F0">
+                        </span>
+                    </div>
+
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="waypointLabelColor-picker">Waypoint label color</label>
+                        <span class="ui-color-swatch">
+                            <input type="color" id="waypointLabelColor-picker" value="#333333">
+                        </span>
+                    </div>
+
+                    <div class="ui-form-field">
+                        <span class="ui-form-label">Route opacity</span>
+                        <div class="ui-slider-container">
+                            <input
+                                type="range"
+                                id="route-opacity"
+                                min="0"
+                                max="100"
+                                value="100"
+                                step="5"
+                                class="ui-slider"
+                            >
+                            <span id="route-opacity-value" class="ui-slider-value">100%</span>
+                        </div>
+                    </div>
+
+                    <div class="ui-form-field">
+                        <span class="ui-form-label">Route width</span>
+                        <div class="ui-radio-group ui-radio-group-horizontal">
+                            <label class="ui-radio-label"><input type="radio" name="width" value="s">S</label>
+                            <label class="ui-radio-label"><input type="radio" name="width" value="m" checked>M</label>
+                            <label class="ui-radio-label"><input type="radio" name="width" value="l">L</label>
+                        </div>
+                    </div>
+
+                    <div class="ui-form-field">
+                        <span class="ui-form-label">Width factor</span>
+                        <div class="ui-slider-container">
+                            <input type="range" id="width-factor" class="ui-slider">
+                            <span id="width-factor-value" class="ui-slider-value"></span>
+                        </div>
+                    </div>
+
+                    <div class="ui-form-field">
+                        <span class="ui-form-label">Waypoint size</span>
+                        <div class="ui-radio-group ui-radio-group-horizontal">
+                            <label class="ui-radio-label"><input type="radio" name="waypointSize" value="s">S</label>
+                            <label class="ui-radio-label"
+                                ><input type="radio" name="waypointSize" value="m" checked>
+                                M</label
+                            >
+                            <label class="ui-radio-label"><input type="radio" name="waypointSize" value="l">L</label>
+                        </div>
+                    </div>
+
+                    <div class="ui-form-field">
+                        <span class="ui-form-label">Waypoint size factor</span>
+                        <div class="ui-slider-container">
+                            <input type="range" id="waypoint-size-factor" class="ui-slider">
+                            <span id="waypoint-size-factor-value" class="ui-slider-value"></span>
+                        </div>
+                    </div>
+
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="toggle-center-dash">Centered dash-line</label>
+                        <label class="ui-toggle-label">
+                            <input type="checkbox" class="ui-toggle-input" id="toggle-center-dash">
+                            <span class="ui-toggle-switch"></span>
+                        </label>
+                    </div>
+
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="toggle-clicked">Clicked</label>
+                        <label class="ui-toggle-label">
+                            <input type="checkbox" class="ui-toggle-input" id="toggle-clicked">
+                            <span class="ui-toggle-switch"></span>
+                        </label>
+                    </div>
+
+                    <div class="ui-form-field">
+                        <span class="ui-form-label">Clicked outline factor</span>
+                        <div class="ui-slider-container">
+                            <input type="range" id="highlight-outline-width-factor" class="ui-slider">
+                            <span id="highlight-outline-width-factor-value" class="ui-slider-value"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

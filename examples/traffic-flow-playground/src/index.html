@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Traffic Flow Playground</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Traffic Flow</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <h4 class="ui-subheading">Road Category Filter</h4>
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" name="roadCategory" value="motorway" checked>
+                        <span class="ui-toggle-switch"></span>
+                        Motorway
+                    </label>
+                    <label class="ui-toggle-label">
+                        <input
+                            type="checkbox"
+                            class="ui-toggle-input"
+                            name="roadCategory"
+                            value="motorway_link"
+                            checked
+                        >
+                        <span class="ui-toggle-switch"></span>
+                        Motorway Link
+                    </label>
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" name="roadCategory" value="trunk" checked>
+                        <span class="ui-toggle-switch"></span>
+                        Trunk
+                    </label>
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" name="roadCategory" value="trunk_link" checked>
+                        <span class="ui-toggle-switch"></span>
+                        Trunk Link
+                    </label>
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" name="roadCategory" value="primary" checked>
+                        <span class="ui-toggle-switch"></span>
+                        Primary
+                    </label>
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" name="roadCategory" value="primary_link" checked>
+                        <span class="ui-toggle-switch"></span>
+                        Primary Link
+                    </label>
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" name="roadCategory" value="secondary" checked>
+                        <span class="ui-toggle-switch"></span>
+                        Secondary
+                    </label>
+                    <label class="ui-toggle-label">
+                        <input
+                            type="checkbox"
+                            class="ui-toggle-input"
+                            name="roadCategory"
+                            value="secondary_link"
+                            checked
+                        >
+                        <span class="ui-toggle-switch"></span>
+                        Secondary Link
+                    </label>
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" name="roadCategory" value="tertiary" checked>
+                        <span class="ui-toggle-switch"></span>
+                        Tertiary
+                    </label>
+                    <label class="ui-toggle-label">
+                        <input
+                            type="checkbox"
+                            class="ui-toggle-input"
+                            name="roadCategory"
+                            value="tertiary_link"
+                            checked
+                        >
+                        <span class="ui-toggle-switch"></span>
+                        Tertiary Link
+                    </label>
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" name="roadCategory" value="street" checked>
+                        <span class="ui-toggle-switch"></span>
+                        Street
+                    </label>
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" name="roadCategory" value="service" checked>
+                        <span class="ui-toggle-switch"></span>
+                        Service
+                    </label>
+                    <label class="ui-toggle-label">
+                        <input type="checkbox" class="ui-toggle-input" name="roadCategory" value="track" checked>
+                        <span class="ui-toggle-switch"></span>
+                        Track
+                    </label>
+                </div>
+
+                <div class="ui-section">
+                    <button class="ui-button ui-button-full" id="ui-clearFilter">Show All</button>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

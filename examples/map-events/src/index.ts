@@ -1,0 +1,154 @@
+import { formatDuration, Place, TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import {
+    BaseMapModule,
+    PlacesModule,
+    TomTomMap,
+    TrafficIncidentsModule,
+    TrafficIncidentsModuleFeature,
+} from '@tomtom-org/maps-sdk/map';
+import { discoverPlaces, reverseGeocode } from '@tomtom-org/maps-sdk/services';
+import { LngLat, Marker, NavigationControl, Popup } from 'maplibre-gl';
+import './style.css';
+import { API_KEY } from './config';
+
+// (Set your own API key when working in your own environment)
+TomTomConfig.instance.put({ apiKey: API_KEY });
+
+(async () => {
+    const map = new TomTomMap({
+        mapLibre: {
+            container: 'sdk-map',
+            center: [-0.12634, 51.50276],
+            zoom: 14,
+        },
+    });
+    const popUp = new Popup({
+        closeButton: true,
+        closeOnClick: true,
+        closeOnMove: true,
+        offset: 15,
+        className: 'ui-popup',
+    });
+    let isMarkerVisible = false;
+    const revGeocodingMarker = new Marker({ color: '#df1b12' });
+
+    const showTrafficPopup = (topFeature: TrafficIncidentsModuleFeature, lngLat: LngLat) => {
+        const { properties } = topFeature;
+
+        popUp
+            .setOffset(5)
+            .setHTML(
+                `
+        <div id="traffic-incident-popup">
+        <h3>Traffic incident</h3>
+        <b id="traffic-incident-road-type">Road type</b> ${topFeature.properties.roadCategory}<br />
+        <b id="traffic-incident-magnitude">Magnitude</b> ${topFeature.properties.magnitudeOfDelay} <br />
+        <b id="traffic-incident-delay">Delay</b> ${formatDuration(properties.delayInSeconds)} <br />
+        </div>
+        `,
+            )
+            .setLngLat(lngLat)
+            .addTo(map.mapLibreMap);
+    };
+
+    const initTrafficIncidents = async () => {
+        (await TrafficIncidentsModule.get(map, { visible: true })).events.on('long-hover', showTrafficPopup);
+    };
+
+    const showPlacesPopUp = (topFeature: Place, lngLat: LngLat) => {
+        const { address, poi } = topFeature.properties;
+
+        if (isMarkerVisible) {
+            revGeocodingMarker.remove();
+        }
+
+        new Popup({
+            closeButton: true,
+            closeOnClick: true,
+            closeOnMove: true,
+            offset: 15,
+            className: 'ui-popup',
+        })
+            .setHTML(
+                `
+            <div id="place-popup">
+            <h3 id="place-name">${poi?.name}</h3>
+            <b id="place-address"> Address: </b> ${address.freeformAddress}
+            <br />
+            ${poi?.phone ? `<b> Phone: </b> ${poi?.phone}` : ''}
+            <div id="ui-popup-tags">
+            ${poi?.localizedCategories?.map((category) => `<span class="ui-popup-tags-item">${category}</span>`)}
+            </div>
+            </div> 
+            `,
+            )
+            .setLngLat(lngLat)
+            .addTo(map.mapLibreMap)
+            .once('close', () => (isMarkerVisible = true));
+    };
+
+    const initPlacesModule = async () => {
+        const placesModule = await PlacesModule.create(map);
+
+        const places = await discoverPlaces({
+            query: 'pharmacy',
+            limit: 35,
+            geoBias: { boundingBox: map.getBBox() },
+        });
+
+        placesModule.show(places);
+        placesModule.events.places.on('click', showPlacesPopUp);
+    };
+
+    const showBasemapPopup = async (_: any, lnglat: LngLat) => {
+        const { properties } = await reverseGeocode({ position: [lnglat.lng, lnglat.lat] });
+        revGeocodingMarker.setLngLat(lnglat).addTo(map.mapLibreMap);
+
+        if (!isMarkerVisible) {
+            new Popup({
+                closeButton: true,
+                closeOnClick: true,
+                closeOnMove: true,
+                offset: 6,
+                className: 'ui-popup-basemap',
+            })
+                .setHTML(
+                    `
+                <div id="ui-popup-basemap">
+                ${
+                    properties.address.freeformAddress
+                        ? ` <h4 id="ui-popup-basemap-address">${properties.address.freeformAddress}</h4> <hr class="ui-hr" />`
+                        : ''
+                }
+                    <div id="ui-popup-lnglat">
+                        <span> ${lnglat.lng.toFixed(5)}, ${lnglat.lat.toFixed(5)}</span>
+                    </div>
+                </div> 
+                `,
+                )
+                .setLngLat(lnglat)
+                .addTo(map.mapLibreMap);
+            isMarkerVisible = true;
+        } else {
+            revGeocodingMarker.remove();
+            isMarkerVisible = false;
+        }
+    };
+
+    const initBaseMapModule = async () => {
+        const baseModule = await BaseMapModule.get(map);
+        // Listening hover events on Basemap module to remove traffic popups.
+        baseModule.events.on('hover', () => popUp.isOpen() && popUp.remove());
+        baseModule.events.on('click', showBasemapPopup);
+    };
+
+    map.mapLibreMap.addControl(new NavigationControl());
+    map.mapLibreMap.on('dragstart', () => {
+        revGeocodingMarker.remove();
+        isMarkerVisible = false;
+    });
+
+    await initBaseMapModule();
+    await initPlacesModule();
+    await initTrafficIncidents();
+})();

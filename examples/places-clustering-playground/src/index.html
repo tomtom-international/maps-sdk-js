@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Places clustering playground</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Clustering</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <p class="ui-instructions">
+                        Charging and fuel stations in view. A cluster of one kind shows its icon with a corner badge, a
+                        mixed one a larger centred count.
+                    </p>
+                </div>
+
+                <div class="ui-section">
+                    <h4 class="ui-subheading">
+                        Clusters
+                        <span class="ui-form-hint">cluster.source</span>
+                    </h4>
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="ui-clusterRadius">
+                            Radius in pixels
+                            <span class="ui-form-hint">radius</span>
+                        </label>
+                        <div class="ui-slider-container">
+                            <input id="ui-clusterRadius" class="ui-slider" type="range" min="20" max="120" step="10">
+                            <span id="ui-clusterRadiusValue" class="ui-slider-value"></span>
+                        </div>
+                    </div>
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="ui-clusterMaxZoom">
+                            Last zoom with clusters
+                            <span class="ui-form-hint">maxZoom</span>
+                        </label>
+                        <div class="ui-slider-container">
+                            <input id="ui-clusterMaxZoom" class="ui-slider" type="range" min="8" max="17" step="1">
+                            <span id="ui-clusterMaxZoomValue" class="ui-slider-value"></span>
+                        </div>
+                        <p id="ui-zoomNote" class="ui-note"></p>
+                    </div>
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="ui-clusterMinPoints">
+                            Places per cluster, at least
+                            <span class="ui-form-hint">minPoints</span>
+                        </label>
+                        <div class="ui-slider-container">
+                            <input
+                                id="ui-clusterMinPoints"
+                                class="ui-slider"
+                                type="range"
+                                min="2"
+                                max="10"
+                                step="1"
+                                value="2"
+                            >
+                            <span id="ui-clusterMinPointsValue" class="ui-slider-value"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ui-section">
+                    <h4 class="ui-subheading">
+                        Badge
+                        <span class="ui-form-hint">cluster.badge</span>
+                    </h4>
+                    <div class="ui-form-field ui-form-field-inline">
+                        <label class="ui-form-label" for="ui-badgeColor">
+                            Colour
+                            <span class="ui-form-hint">color</span>
+                        </label>
+                        <span class="ui-color-swatch">
+                            <input type="color" id="ui-badgeColor">
+                        </span>
+                    </div>
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="ui-singleRadius">
+                            One-kind badge radius
+                            <span class="ui-form-hint">radius.single</span>
+                        </label>
+                        <div class="ui-slider-container">
+                            <input id="ui-singleRadius" class="ui-slider" type="range" min="8" max="20" step="1">
+                            <span id="ui-singleRadiusValue" class="ui-slider-value"></span>
+                        </div>
+                    </div>
+                    <div class="ui-form-field">
+                        <label class="ui-form-label" for="ui-mixedRadius">
+                            Mixed badge radius
+                            <span class="ui-form-hint">radius.mixed</span>
+                        </label>
+                        <div class="ui-slider-container">
+                            <input id="ui-mixedRadius" class="ui-slider" type="range" min="10" max="30" step="1">
+                            <span id="ui-mixedRadiusValue" class="ui-slider-value"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ui-section">
+                    <span class="ui-form-label">
+                        Badge counts
+                        <span class="ui-form-hint">cluster.source.properties</span>
+                    </span>
+                    <div class="ui-radio-group">
+                        <label class="ui-radio-label">
+                            <input type="radio" name="ui-badgeCount" value="places" checked>
+                            Places
+                        </label>
+                        <label class="ui-radio-label">
+                            <input type="radio" name="ui-badgeCount" value="connectors">
+                            Charging connectors
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

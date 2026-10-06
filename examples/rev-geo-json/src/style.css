@@ -1,0 +1,9 @@
+#ui-rev-geo-json-output {
+    background-color: #24292e;
+    color: white;
+    padding: 12px;
+    height: 600px;
+    max-height: calc(100vh - 24px);
+    overflow: auto;
+    box-sizing: border-box;
+}

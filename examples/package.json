@@ -1,0 +1,59 @@
+{
+  "name": "@tomtom-org/maps-sdk-examples",
+  "version": "0.59.5",
+  "private": true,
+  "type": "module",
+  "description": "JavaScript library for examples of TomTom maps and location services",
+  "module": "dist/examples.js",
+  "types": "dist/src/index.d.ts",
+  "nx": {
+    "implicitDependencies": [
+      "@tomtom-org/maps-sdk",
+      "@tomtom-org/maps-sdk-plugin-*",
+      "shared-configs"
+    ]
+  },
+  "scripts": {
+    "test:e2e": "pnpm exec playwright install --with-deps chromium firefox webkit && playwright test",
+    "test:e2e:prod": "pnpm exec playwright install --with-deps chromium firefox webkit && playwright test --grep @prod",
+    "test:e2e:ui": "pnpm exec playwright install --with-deps chromium firefox webkit && playwright test --ui",
+    "test:e2e:update-all-snapshots": "pnpm exec playwright install --with-deps chromium firefox webkit && playwright test --update-snapshots",
+    "test:e2e:update-snapshot": "bash -c 'pnpm exec playwright install --with-deps chromium firefox webkit && playwright test \"$1\"/ --update-snapshots' _",
+    "start-test-server:prod": "npx serve . -p 9050"
+  },
+  "dependencies": {
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "devDependencies": {
+    "@playwright/test": "catalog:",
+    "@tailwindcss/node": "catalog:",
+    "@tailwindcss/oxide": "catalog:",
+    "@testing/core-utils": "workspace:*",
+    "@tsconfig/recommended": "catalog:",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "js-yaml": "^5.4.2",
+    "rollup-plugin-visualizer": "catalog:",
+    "sharp": "^0.35.5",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plugin-singlefile": "catalog:",
+    "vitest": "catalog:"
+  },
+  "files": [
+    "dist",
+    "*/dist/prod/**",
+    "*/src/**",
+    "*/content/**"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/examples.js"
+    }
+  }
+}

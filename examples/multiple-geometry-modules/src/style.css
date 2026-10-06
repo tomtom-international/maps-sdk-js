@@ -1,0 +1,87 @@
+@import "../../src/templates/css/base/tokens.css";
+
+#sdk-map {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.ui-button-container {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.ui-panel {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    background: white;
+    padding: 8px 16px;
+    margin: 15px 10px;
+    font-family: var(--ui-font-gilroy);
+    color: #333;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 20px;
+    max-height: calc(100vh - 50px);
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.ui-heading-label {
+    margin: 15px 0 5px 0;
+    font-weight: bold;
+}
+
+.ui-dropdown {
+    margin-left: 10px;
+    padding: 7px;
+    border-radius: 5px;
+}
+
+#ui-reCenter {
+    padding: 8px 16px;
+    margin-bottom: 5px;
+    font-family: var(--ui-font-gilroy);
+    color: #fff;
+    background-color: #df1b12;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border: 0 solid rgba(0, 0, 0, 0);
+    border-radius: 20px;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+    user-select: none;
+}
+
+.ui-layers {
+    display: flex;
+    align-items: flex-start;
+    justify-content: left;
+    flex-direction: column;
+    gap: 5px;
+}
+
+#ui-mapStyles {
+    position: absolute;
+    right: 20px;
+    height: 26px;
+    padding: 8px 16px;
+    font-family: var(--ui-font-gilroy);
+    color: #fff;
+    background-color: #df1b12;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border: 0 solid rgba(0, 0, 0, 0);
+    border-radius: 20px;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+    user-select: none;
+}

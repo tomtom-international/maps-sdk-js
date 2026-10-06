@@ -1,0 +1,10 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/maplibre/popup.css";
+
+#sdk-map {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}

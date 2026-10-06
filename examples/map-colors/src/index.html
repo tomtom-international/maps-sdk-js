@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Map colours</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Map colours</span>
+                    <button class="ui-heading-toggle" aria-label="Toggle panel" aria-expanded="true">
+                        <svg class="ui-heading-chevron" viewBox="0 0 16 10">
+                            <path d="M3 1.5L8 6.5L13 1.5" />
+                        </svg>
+                    </button>
+                </h3>
+            </div>
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <label class="ui-form-label" for="ui-sample">Colours:</label>
+                    <!-- One option per set in sampleColors.ts, generated on load -->
+                    <select class="ui-dropdown" id="ui-sample">
+                        <option value="">Style default</option>
+                    </select>
+                </div>
+                <!-- One colour picker per semantic colour, generated from the catalogue -->
+                <div class="ui-section" id="ui-colors"></div>
+                <div class="ui-section">
+                    <button class="ui-button" id="ui-export" type="button">Export style JSON</button>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

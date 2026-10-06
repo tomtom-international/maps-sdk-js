@@ -1,0 +1,12 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/button/button.css";
+
+/* CUSTOM STYLES (example-specific) */
+
+.ui-floating-button {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    z-index: var(--ui-z-panel);
+}

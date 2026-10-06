@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Feature event states</title>
+        <meta name="viewport" content="initial-scale=1">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div class="ui-customPanel">
+            <div class="ui-panel-header">
+                <h3 class="ui-heading">
+                    <span class="ui-heading-text">Feature event states</span>
+                </h3>
+            </div>
+            <div class="ui-panel-content">
+                <div class="ui-section">
+                    <p class="ui-description">
+                        Sweep the pointer across the triangles, rest it on one, or click one. Each triangle is coloured
+                        by its <code>eventState</code>.
+                    </p>
+                </div>
+                <div class="ui-section">
+                    <ul class="ui-legend">
+                        <li><span class="ui-legend-swatch" data-state="none"></span>none</li>
+                        <li><span class="ui-legend-swatch" data-state="hover"></span><code>hover</code></li>
+                        <li><span class="ui-legend-swatch" data-state="long-hover"></span><code>long-hover</code></li>
+                        <li>
+                            <span class="ui-legend-swatch" data-state="recently-hovered"></span
+                            ><code>recently-hovered</code>
+                        </li>
+                        <li><span class="ui-legend-swatch" data-state="click"></span><code>click</code></li>
+                    </ul>
+                </div>
+                <div class="ui-section">
+                    <label class="ui-form-label" for="ui-longHoverDelay">Long-hover delay on a still map</label>
+                    <div class="ui-slider-container">
+                        <input
+                            type="range"
+                            class="ui-slider"
+                            id="ui-longHoverDelay"
+                            min="0"
+                            max="2000"
+                            step="100"
+                            value="300"
+                        >
+                        <span class="ui-slider-value"></span>
+                    </div>
+                    <label class="ui-form-label" for="ui-gracePeriod">Recently hovered for</label>
+                    <div class="ui-slider-container">
+                        <input
+                            type="range"
+                            class="ui-slider"
+                            id="ui-gracePeriod"
+                            min="0"
+                            max="3000"
+                            step="100"
+                            value="1000"
+                        >
+                        <span class="ui-slider-value"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

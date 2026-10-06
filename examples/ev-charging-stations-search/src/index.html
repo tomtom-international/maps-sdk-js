@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>EV Charging Stations Search</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div class="ui-searchPanel">
+            <div class="ui-search-row">
+                <input id="ui-evBrandTextBox" class="ui-input" type="text" placeholder="EV brand">
+                <span class="ui-label">in</span>
+                <input id="ui-areaTextBox" class="ui-input" type="text" placeholder="Area">
+            </div>
+            <div class="ui-controls-row">
+                <div class="ui-kw-field">
+                    <label class="ui-form-label" for="ui-minPowerKWMapEVStations">Min KW map</label>
+                    <input
+                        id="ui-minPowerKWMapEVStations"
+                        type="text"
+                        placeholder="Min KW"
+                        class="ui-input ui-kw-input"
+                    >
+                </div>
+                <div class="ui-kw-field">
+                    <label class="ui-form-label" for="ui-minPowerKWSearchedEVStations">Min KW search</label>
+                    <input
+                        id="ui-minPowerKWSearchedEVStations"
+                        type="text"
+                        placeholder="Min KW"
+                        class="ui-input ui-kw-input"
+                    >
+                </div>
+                <button id="ui-searchButton" class="ui-button">Search</button>
+                <button id="ui-clearButton" class="ui-button ui-button-secondary">Clear</button>
+            </div>
+        </div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

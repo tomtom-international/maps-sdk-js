@@ -1,0 +1,48 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/form/toggle.css";
+@import "../../src/templates/css/form/field.css";
+@import "../../src/templates/css/button/button.css";
+@import "../../src/templates/css/maplibre/popup.css";
+
+/* FLOW POPUP */
+
+.ui-flow-popup-wrapper .maplibregl-popup-content {
+    padding: 0;
+    border-radius: var(--ui-rounded-15);
+    box-shadow: var(--ui-elevation-e4);
+    overflow: hidden;
+    min-width: 200px;
+}
+
+.ui-flow-popup {
+    padding: var(--ui-panel-padding);
+    padding-right: calc(var(--ui-panel-padding) + 20px);
+}
+
+.ui-flow-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--ui-space-4);
+    padding: var(--ui-space-1) 0;
+    border-bottom: 1px solid var(--ui-border-base-em);
+}
+
+.ui-flow-row:last-child {
+    border-bottom: none;
+}
+
+.ui-flow-row .ui-form-label {
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.ui-flow-value {
+    font-size: var(--ui-font-body-s);
+    font-weight: var(--ui-font-weight-medium);
+    color: var(--ui-text-high-em);
+    text-align: right;
+}

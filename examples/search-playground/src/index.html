@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Search playground</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link rel="icon" href="data:,">
+    </head>
+    <body class="ui-body">
+        <div id="sdk-map"></div>
+        <div class="ui-searchPanel">
+            <div class="ui-search-row">
+                <input id="ui-searchBox" type="text" class="ui-input" placeholder="Search for place">
+                <button id="ui-clearButton" class="ui-button ui-button-secondary">Clear</button>
+            </div>
+            <ul id="ui-refinementResults" class="ui-result-list"></ul>
+            <ul id="ui-placeResults" class="ui-result-list"></ul>
+            <div id="ui-loadMore"></div>
+        </div>
+        <div id="ui-searchThisArea"></div>
+        <script type="module" src="./index.ts"></script>
+    </body>
+</html>

@@ -1,0 +1,15 @@
+@import "../../src/templates/css/base/tokens.css";
+@import "../../src/templates/css/base/global.css";
+@import "../../src/templates/css/base/typography.css";
+@import "../../src/templates/css/panel/custom-panel.css";
+@import "../../src/templates/css/button/button.css";
+
+/* CUSTOM STYLES (example-specific) */
+
+.ui-instructions {
+    margin: 0 0 var(--ui-space-3);
+    font-family: var(--ui-font-gilroy);
+    font-size: var(--ui-font-body-s);
+    line-height: var(--ui-font-body-s-lh);
+    color: var(--ui-text-med-em);
+}
