@@ -1,0 +1,550 @@
+---
+title: Migrating from Maps SDK for Web V6
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+Maps SDK for Web V6 was deprecated on February 1, 2025, and its CDN endpoints were withdrawn on February 1, 2026. They answer `404` unless your contract runs past that date, and then only until it ends. V6 receives no further updates, security patches or bug fixes. The **Maps SDK for JavaScript** replaces it.
+
+<Blockquote>
+  **Migration carries no additional cost.** Your API key, contract and per-call pricing stay the same ([Pricing and commercial impact](#pricing-and-commercial-impact)).
+</Blockquote>
+
+---
+
+## Why migrate
+
+| Benefit | What it means for you |
+|---|---|
+| **Map + services integration** | A route, a place search or a traffic query renders on the map in one call, through a [map module](../map/modules.mdx), with no `addSource`/`addLayer` boilerplate. |
+| **Open rendering engine** | Built on [MapLibre GL JS](../map/about-maplibre.mdx), open source and BSD-licensed, with its plugin ecosystem. |
+| **Orbis Maps** | Native support for TomTom's next-generation map data ([Future-proof with Orbis Maps](#future-proof-with-orbis-maps)). |
+| **Smaller bundles** | ES modules with tree-shaking, so you ship only what you import. V6 shipped monolithic UMD files. |
+| **First-class TypeScript** | Complete type definitions ship with the package, so you don't install `@types`. |
+| **Cross-platform services** | The Services bundle runs in the browser, Node.js 24+ and React Native from one codebase. |
+| **Native GeoJSON** | Places, routes, reachable ranges, geometries and traffic come back as [GeoJSON](https://geojson.org/) (the POI category and search-suggestion services return plain objects), ready for the map, deck.gl or your database. |
+| **Your brand on the map** | Restyle the map at runtime with [styling knobs](../map/styling.mdx) for label sizes, road widths and colours, apply [your brand colours](../map/styling-map-colors.mdx) in one call, and [derive a theme](../plugins/map-theme.mdx) from your site's CSS or an image. |
+| **Built for AI** | A [coding-agent skill](../ai-coding.mdx) for Claude Code, Cursor, Copilot and others, and the [Agent Toolkit](../plugins/agent-toolkit/overview.mdx) that lets your users talk to the map. |
+
+---
+
+## Feature comparison
+
+### Map display
+
+| Capability | V6 | New SDK | Notes |
+|---|:---:|:---:|---|
+| Vector map rendering | Yes | Yes | [MapLibre-based](../map/about-maplibre.mdx) |
+| Map styles (Light, Dark, Driving, Mono, Satellite) | Yes | Yes | [Built-in themes](../map/styles.mdx) |
+| Custom style files or URLs | Yes | — | Restyle a standard style at runtime with [styling knobs](../map/styling.mdx) and [map colours](../map/styling-map-colors.mdx) |
+| Style switching keeps your data | — | Yes | V6's `setStyle` dropped added layers. SDK modules [restore themselves](../map/styles.mdx#keeping-or-dropping-state) |
+| Map language | Yes | Yes | `map.setLanguage`, or once for map and services in the [global config](../core/global-config.mdx) |
+| [Geopolitical views](../core/geopolitical-views.mdx) | Map tiles only | Yes | One setting covers the map and every service call |
+| 3D buildings | Yes | Yes | The `buildings3D` layer group of the [Base Map Module](../map/base-map.mdx) |
+| [Hillshade and 3D terrain](../map/terrain.mdx) | — | Yes | New |
+| [Globe projection and sky](../map/styling-globe-and-sky.mdx) | — | Yes | New |
+| [Semantic styling](../map/styling.mdx) (label sizes, road widths, traffic colours, presets) | — | Yes | New: every setting is a knob with a stable id |
+| [Brand colours and the accent](../map/styling-map-colors.mdx) | — | Yes | New: `setMapColors`, and [`exportStyle`](../map/styling.mdx#exporting-the-style) to save the result |
+| Markers, popups, controls | Yes | Yes | [MapLibre API](../map/about-maplibre.mdx) |
+| Search results as map pins | Manual | Yes | [Places module](../map/places.mdx): pins, clustering, [entry points and connections](../map/places-connections-and-entry-points.mdx) |
+| Built-in POI filtering and icons | Show/hide only | Yes | [POIs module](../map/pois.mdx): by category, with your own icons |
+| Route display | Manual | Yes | [Routing module](../map/routes.mdx): alternatives, waypoints, [sections](../map/routes-sections.mdx), speed-limit signs |
+| Reachable ranges on the map | Manual | Yes | [Reachable ranges module](../map/reachable-ranges.mdx) |
+| GeoJSON layers / custom data | Yes | Yes | [Geometries](../map/geometries.mdx) and the [Custom GeoJSON module](../map/custom.mdx), which keeps your layer specs across style changes |
+| Bring-your-own-data (heatmaps, etc.) | Manual | Yes | Example included |
+| Click and hover on map features | Manual | Yes | [Module events](../map/events.mdx) with hover and click states |
+| Orbis Maps support | — | Yes | New map data |
+| Layer group toggling | — | Yes | [Base map module](../map/base-map.mdx) |
+| Style part lazy loading | — | Yes | Faster initial load |
+
+### Services
+
+| Capability | V6 | New SDK | Notes |
+|---|:---:|:---:|---|
+| [Calculate route](../services/routing/quickstart.mdx) (A→B, waypoints) | Yes | Yes | GeoJSON response |
+| Route alternatives | Yes | Yes | |
+| [Route guidance](../services/routing/guidance.mdx) (arrows) | Yes | Yes | Example included |
+| Route with live traffic | Manual | Yes | [Built-in module](../map/traffic.mdx) |
+| Route reconstruction | Yes | Yes | Interactive playground |
+| Long Distance EV Routing | Yes | No | Routes are planned without a vehicle consumption model |
+| [Reachable ranges](../services/routing/reachable-ranges.mdx) | Yes | Yes | Several origins and budgets in one call. It is in private preview, so your key needs access |
+| EV Charging Availability | Yes | No | [Search](../services/places/search.mdx) returns EV stations with their connectors and charging points, without live status |
+| [Fuzzy, category and nearby search](../services/places/search.mdx) | Yes | Yes | One `discoverPlaces` function; playground included |
+| [Geometry search](../services/places/search.mdx#geometry-search) / [along-route search](../services/places/search.mdx#along-route-search) | Yes | Yes | Same `discoverPlaces` function |
+| [Search suggestions](../services/places/suggest.mdx) | Autocomplete | Yes | Places, brands and categories ranked together |
+| [Geocoding](../services/places/geocoding.mdx) / [reverse geocoding](../services/places/reverse-geocoding.mdx) | Yes | Yes | Web + Node.js |
+| [Place details](../services/places/place-by-id.mdx) | Yes | Yes | Opening hours, entry points, related POIs |
+| [POI categories](../services/places/poi-categories.mdx) | Yes | Yes | Match categories by name in any supported language |
+| [Geometry data](../services/places/geometry-data.mdx) (place boundaries) | Yes | Yes | V6's `additionalData` |
+| [Traffic flow tiles](../map/traffic-flow.mdx) | Yes | Yes | Config playground |
+| [Traffic incidents](../map/traffic-incidents.mdx) | Yes | Yes | Typed filters by magnitude, category and road |
+| [Traffic incident details](../services/traffic/traffic-incident-details.mdx) | Yes | Yes | Drawn on the map by the [incident details module](../map/traffic-incident-details.mdx) |
+| [Traffic area analytics](../services/traffic/traffic-area-analytics.mdx) | — | Yes | New: historical speed and congestion over any area, drawn as a [heatmap or 3D grid](../map/traffic-area-analytics-module.mdx). Needs a Move Portal key |
+| Server-side services (Node.js) | Services only | Yes | Full support |
+| React Native services | — | Yes | New platform |
+
+### Developer experience
+
+| Capability | V6 | New SDK | Notes |
+|---|:---:|:---:|---|
+| TypeScript support | Annotations only | Full types | No `@types` needed |
+| Tree-shaking / ESM | UMD bundles | ESM | Smaller bundles |
+| [Centralized config](../core/quickstart.mdx) (singleton) | — | Yes | Set once, use everywhere |
+| Framework examples (React, Vue) | Limited | Yes | In docs |
+| CodeSandbox examples | — | Yes | 110+ runnable examples |
+| API reference docs | Yes | Yes | Full TypeDoc |
+| Per-call API key override | Yes | Yes | Flexible key management |
+| [Keeping the API key off the page](../security/proxying-api-calls.mdx) | Manual | Yes | Proxy mode: your server adds the key |
+| 39 languages supported | Yes | Yes | Global config |
+| [Settings as data](../map/modules.mdx#every-setting-as-data) | — | Yes | Every module setting has an id: save, replay, or build a UI from the catalogue |
+| [AI coding-agent skill](../ai-coding.mdx) | — | Yes | `npx skills add` for Claude Code, Cursor, Copilot and others |
+| Open-source rendering engine | Mapbox GL (proprietary) | MapLibre (BSD) | No license risk |
+
+### Plugins
+
+| V6 plugin or capability | New SDK |
+|---|---|
+| SearchBox | No drop-in plugin yet. Build on [`getSearchSuggestions()`](../services/places/suggest.mdx) |
+| Zoom and pan controls | MapLibre's `NavigationControl`, through [`map.mapLibreMap`](../map/about-maplibre.mdx) |
+| Minimap, DrawingTools | [MapLibre community plugins](../map/about-maplibre.mdx) |
+| — | [Viewport places](../plugins/viewport-places.mdx): search results that follow the visible map |
+| — | [Map theme](../plugins/map-theme.mdx): the map's colours from your brand colours, your site's CSS, an image or a mood |
+| — | [Map effects](../plugins/map-effects.mdx): bloom, depth of field, colour grade, tint, fog, vignette and your own GPU passes |
+| — | [Fly-over](../plugins/flyover.mdx): a camera that flies a route, framing the junctions ahead |
+| — | [Landmarks 3D](../plugins/landmarks-3d.mdx): detailed 3D meshes of landmark buildings, in private preview |
+| — | [Agent Toolkit](../plugins/agent-toolkit/overview.mdx): LLM tools that search, route and restyle the map from a conversation |
+
+---
+
+## Estimating migration effort
+
+Use the table below to estimate the effort from the V6 features you use.
+
+| What you use today | Effort | What to expect |
+|---|:---:|---|
+| Basic map display only | **Low** | Replace the map initialization (`tt.map` → [`TomTomMap`](../map/tomtom-map.mdx)). Update the CSS import. Typically under 1 day. |
+| Map + markers + popups | **Low** | Markers use [MapLibre's API](../map/about-maplibre.mdx), with a nearly identical pattern. Popups are the same concept. Expect a few hours of find-and-replace. |
+| Map + routing display | **Low–Medium** | Route calculation returns GeoJSON natively, which is simpler than V6. |
+| Map + traffic layers | **Low–Medium** | Traffic is integrated into the map module. Replace the `stylesVisibility` config with the new [traffic module configuration](../map/traffic.mdx). |
+| Search / geocoding services | **Low** | Import from `@tomtom-org/maps-sdk/services` instead of `tt.services`. Fuzzy, category, nearby, geometry and along-route search become one [`discoverPlaces`](../services/places/search.mdx) function; see the [service mapping](#v6-api-to-new-sdk) below. Responses are typed. Server-side Node.js code works with minimal changes. |
+| EV routing / charging | **High** | Long-distance EV routing, vehicle consumption models and live charging availability have no equivalent. [Search](../services/places/search.mdx) returns EV stations with their connectors and charging points. |
+| Custom map styles (Map Styler) | **Medium** | The map loads standard styles only. Start from the closest one and restyle it in code with [styling knobs](../map/styling.mdx) and [`setMapColors`](../map/styling-map-colors.mdx). |
+| SearchBox plugin | **Medium** | No drop-in SearchBox plugin yet. Build on [`getSearchSuggestions()`](../services/places/suggest.mdx), with the [search playground](../../examples/search-playground) as a starting point, or use a [MapLibre geocoder plugin](../map/about-maplibre.mdx). |
+| Minimap / DrawingTools plugins | **Medium** | No first-party equivalents yet. Use [MapLibre community plugins](../map/about-maplibre.mdx). |
+| Custom data visualization | **Low** | Your layer specs carry over unchanged. Use MapLibre's `addSource`/`addLayer` as before, or the [Custom GeoJSON module](../map/custom.mdx), which keeps them across style switches and adds SDK events. GeoJSON heatmaps, clusters, and choropleth maps work out of the box. |
+| CDN-only deployment (no bundler) | **Medium** | The new SDK requires npm and a bundler (Vite, Webpack). If your project has no build step, you need to add one, a one-time setup cost. |
+
+<Blockquote>
+  For most integrations using map display, routing and traffic, expect **2–4 developer-days** of migration work, with the 110+ runnable examples to check each feature against.
+</Blockquote>
+
+---
+
+## V6 API to new SDK
+
+Find each V6 call you use and its replacement. Services come from `@tomtom-org/maps-sdk/services` and map classes from `@tomtom-org/maps-sdk/map`. None of them takes a `key`, because the [global configuration](../core/global-config.mdx) holds it.
+
+### Map
+
+| V6 | New SDK |
+|---|---|
+| `tt.map({ key, container, center, zoom })` | `new TomTomMap({ mapLibre: { container, center, zoom } })` ([TomTom map](../map/tomtom-map.mdx)) |
+| `map.setStyle(style)` | `await map.setStyle('streetDark')`. Modules keep their data and settings ([Map styles](../map/styles.mdx#dynamic-style-switching)) |
+| `stylesVisibility`, `showTrafficFlow()`, `hideTrafficFlow()` | `(await TrafficFlowModule.get(map)).setVisible(true)` ([Traffic flow](../map/traffic-flow.mdx)) |
+| `showTrafficIncidents()`, `hideTrafficIncidents()` | `(await TrafficIncidentsModule.get(map)).setVisible(true)` ([Traffic incidents](../map/traffic-incidents.mdx)) |
+| `showPOI()`, `hidePOI()` | `(await POIsModule.get(map)).setVisible(false)` ([POIs](../map/pois.mdx)) |
+| `map.setLanguage(language)` | `map.setLanguage(language)`, or `language` in the global configuration for the map and services |
+| `map.setGeopoliticalView(view)`, tiles only | `map.setGeopoliticalView(view)`, or `geopoliticalView` in the global configuration for the map and services ([Geopolitical views](../core/geopolitical-views.mdx)) |
+| `tt.Marker`, `tt.Popup` | `Marker`, `Popup` from `maplibre-gl`, or the [Places module](../map/places.mdx) for many pins |
+| `map.addLayer(…)` with a route's `toGeoJson()` | `await (await RoutingModule.create(map)).showRoutes(routes)` ([Routes](../map/routes.mdx)) |
+| `map.addLayer(…)` with your own GeoJSON | the [Geometries](../map/geometries.mdx) or [Custom GeoJSON](../map/custom.mdx) module, or `map.mapLibreMap.addLayer(…)` |
+
+### Services
+
+| V6 `tt.services.…` | New SDK |
+|---|---|
+| `fuzzySearch`, `poiSearch`, `categorySearch`, `nearbySearch` | [`discoverPlaces`](../services/places/search.mdx), or `discoverOnePlace` for the best match |
+| `geometrySearch` | `discoverPlaces({ geometries })` ([Geometry search](../services/places/search.mdx#geometry-search)) |
+| `alongRouteSearch` | `discoverPlaces({ route, maxDetourTimeSeconds })` ([Along-route search](../services/places/search.mdx#along-route-search)) |
+| `autocomplete` | [`getSearchSuggestions`](../services/places/suggest.mdx) |
+| `geocode` | [`geocode`](../services/places/geocoding.mdx), or `geocodeOne` for the best match |
+| `reverseGeocode` | [`reverseGeocode`](../services/places/reverse-geocoding.mdx) |
+| `placeById` | [`getPlaceDetails`](../services/places/place-by-id.mdx) |
+| `poiCategories` | [`getPOICategories`](../services/places/poi-categories.mdx) |
+| `additionalData` | [`geometryData`](../services/places/geometry-data.mdx) |
+| `calculateRoute` | [`calculateRoute`](../services/routing/quickstart.mdx) |
+| `calculateReachableRange` | [`calculateReachableRange`](../services/routing/reachable-ranges.mdx), or `calculateReachableRanges` for several |
+| `incidentDetails`, `incidentDetailsV5` | [`trafficIncidentDetails`](../services/traffic/traffic-incident-details.mdx) |
+| `matrixRouting`, `structuredGeocode`, `crossStreetLookup`, `staticImage`, `trafficFlowSegmentData`, `incidentViewport`, `longDistanceEVRouting`, `evChargingStationsAvailability` | No equivalent yet. See *What's not yet available* below |
+
+Responses are GeoJSON as returned, so there is no `toGeoJson()`. Positions are `[longitude, latitude]` arrays throughout.
+
+---
+
+## Step-by-step migration
+
+Migrate incrementally, following only the sections your integration needs. The SDK works at two levels, which you can mix:
+
+- At the high level, map modules draw what services return, with no layer management of your own.
+- At the low level, `map.mapLibreMap` is the full MapLibre API. It is the most direct path for V6 code that called the map's low-level methods ([Using TomTom map with MapLibre directly](#using-tomtom-map-with-maplibre-directly)). As you go, move each feature up to a module to get [what the SDK adds](../map/about-maplibre.mdx#what-the-sdk-adds-over-raw-maplibre).
+
+### Install the new SDK
+
+Remove the legacy packages and CDN references, then install the new SDK:
+
+```bash
+# Remove legacy packages
+npm uninstall @tomtom-international/web-sdk-maps @tomtom-international/web-sdk-services
+
+# Install new SDK (peer dependencies installed automatically)
+npm install @tomtom-org/maps-sdk
+```
+
+Also remove any V6 CDN `<script>` and `<link>` tags from your HTML. Your existing API key works with the new SDK.
+
+### Set up centralized configuration
+
+The new SDK uses a [singleton configuration pattern](../core/quickstart.mdx). Set your API key once at startup, and it applies to all maps and service calls.
+
+**Before (V6):**
+```javascript
+// API key passed to every call individually
+var map = tt.map({ key: 'YOUR_API_KEY', container: 'map' });
+tt.services.fuzzySearch({ key: 'YOUR_API_KEY', query: 'pizza' });
+```
+
+**After:**
+```typescript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+
+// Set once at app startup — used by all maps and service calls
+TomTomConfig.instance.put({
+    apiKey: 'YOUR_API_KEY',
+    language: 'en-GB',
+});
+```
+
+You can still override the key per call or per map.
+
+### Migrate map initialization
+
+**Before (V6):**
+```javascript
+var map = tt.map({
+    key: 'YOUR_API_KEY',
+    container: 'map',
+    center: [4.8156, 52.4414],
+    zoom: 8,
+});
+```
+
+**After:**
+```typescript
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+
+const map = new TomTomMap({
+    mapLibre: {
+        container: 'map',
+        center: [4.8156, 52.4414],
+        zoom: 8,
+    },
+});
+```
+
+Map options (`center`, `zoom`, `bearing`, `pitch`, and all other [MapLibre options](../map/about-maplibre.mdx)) pass through unchanged under the `mapLibre` key.
+
+**Available [styles](../map/styles.mdx):**
+
+| V6 style name | New SDK style ID |
+|---|---|
+| `basic_main` / `basic_night`, `2/basic_street-light` / `2/basic_street-dark` | `streetLight` / `streetDark` |
+| `driving_main` / `driving_night` | `streetLightDriving` / `streetDarkDriving` |
+| `hybrid_main`, or `labels_main` over your own imagery | `streetSatellite`, which carries imagery, roads and labels in one style |
+| — | `monoLight` / `monoDark`, muted backdrops for your own data |
+
+V6's separate `trafficFlow`, `trafficIncidents` and `poi` styles have no names of their own. You load the traffic parts with `include` (see [Migrate traffic layers](#migrate-traffic-layers)), and show, hide and filter the style's own POIs with the [POIs module](../map/pois.mdx).
+
+```typescript
+const map = new TomTomMap({
+    style: 'streetDark',
+    mapLibre: { container: 'map' },
+});
+```
+
+To switch style at runtime, call `await map.setStyle('streetLight')`. In V6, `setStyle` dropped every layer you had added. The SDK's modules keep their data and settings and redraw on the new style ([Map styles](../map/styles.mdx#dynamic-style-switching)).
+
+### Migrate routing
+
+**Before (V6):**
+```javascript doc-resolution-skip
+tt.services.calculateRoute({
+    key: 'YOUR_API_KEY',
+    locations: '4.89,52.37:4.88,52.36',
+}).then(function(routeData) {
+    var geojson = routeData.toGeoJson();
+    map.addLayer({ /* ... */ });
+});
+```
+
+**After:**
+```typescript
+import { calculateRoute } from '@tomtom-org/maps-sdk/services';
+import { RoutingModule } from '@tomtom-org/maps-sdk/map';
+
+const routes = await calculateRoute({
+    locations: [
+        [4.89, 52.37],   // [longitude, latitude]
+        [4.88, 52.36],
+    ],
+    travelMode: 'car',
+});
+
+// Pass directly to RoutingModule — no .toGeoJson() or manual layer setup needed
+const routingModule = await RoutingModule.create(map);
+await routingModule.showRoutes(routes);
+```
+
+The response is standard GeoJSON, with no `.toGeoJson()` conversion step. [`RoutingModule`](../map/routes.mdx) handles the layers, default styling, waypoint icons and traffic-section colouring, so the route renders with a single call and looks production-ready by default. The module has configuration options for a different colour scheme, custom line widths or your own waypoint markers.
+
+To manage the map layers yourself, closer to how V6 worked, pass the GeoJSON response directly to `map.mapLibreMap.addSource` / `addLayer`:
+
+```typescript
+// Low-level approach — use the MapLibre instance directly
+map.mapLibreMap.addSource('route', { type: 'geojson', data: routes });
+map.mapLibreMap.addLayer({ id: 'route-line', type: 'line', source: 'route', paint: { 'line-color': '#0080ff', 'line-width': 4 } });
+```
+
+Layers added this way are dropped by `setStyle` and get no SDK events. To keep your own layer specs with both, give them to the [Custom GeoJSON module](../map/custom.mdx) instead.
+
+### Migrate search and geocoding
+
+Search and geocoding responses are standard GeoJSON, so you can pass them directly to the map. [`PlacesModule`](../map/places.mdx) renders search results on the map as styled, interactive markers with minimal setup. For a data-only integration, the GeoJSON features work equally well with any MapLibre data source.
+
+**Before (V6):**
+```javascript
+tt.services.fuzzySearch({
+    key: 'YOUR_API_KEY',
+    query: 'restaurant',
+    center: { lat: 52.37, lng: 4.89 },
+}).then(function(results) { /* ... */ });
+```
+
+**After:**
+```typescript
+import { discoverPlaces } from '@tomtom-org/maps-sdk/services';
+
+const results = await discoverPlaces({
+    query: 'restaurant',
+    geoBias: { position: [4.89, 52.37] }, // [longitude, latitude]
+});
+// results is a typed GeoJSON FeatureCollection — access via results.features
+```
+
+For reverse geocoding:
+
+**Before (V6):**
+```javascript
+tt.services.reverseGeocode({
+    key: 'YOUR_API_KEY',
+    position: { lat: 52.37, lng: 4.89 },
+}).then(response => { /* ... */ });
+```
+
+**After:**
+```typescript
+import { reverseGeocode } from '@tomtom-org/maps-sdk/services';
+
+const place = await reverseGeocode({ position: [4.89, 52.37] });
+const address = place.properties.address;
+```
+
+### Migrate traffic layers
+
+`TrafficFlowModule` and `TrafficIncidentsModule` connect live TomTom traffic data to the map with pre-styled, interactive layers. Incident markers are clickable and richly styled out of the box. You can filter them by magnitude, category or road type without writing any rendering logic, and customise the modules if you need a different look.
+
+**Before (V6):**
+```javascript
+var map = tt.map({
+    key: 'YOUR_API_KEY',
+    container: 'map',
+    stylesVisibility: { trafficFlow: true, trafficIncidents: true },
+});
+// Toggle later:
+map.showTrafficFlow();
+map.hideTrafficFlow();
+```
+
+**After:**
+```typescript
+import { TomTomMap, TrafficFlowModule, TrafficIncidentsModule } from '@tomtom-org/maps-sdk/map';
+
+// Include traffic layers when initializing the map style
+const map = new TomTomMap({
+    style: { type: 'standard', id: 'streetLight', include: ['trafficFlow', 'trafficIncidents'] },
+    mapLibre: { container: 'map' },
+});
+
+const trafficFlow = await TrafficFlowModule.get(map, { visible: true });
+const trafficIncidents = await TrafficIncidentsModule.get(map, { visible: true });
+
+// Toggle visibility
+trafficFlow.setVisible(false);
+trafficIncidents.setVisible(true);
+
+// Typed filtering — show only major and moderate incidents
+trafficIncidents.updateConfig({
+    filters: { magnitudes: { show: 'only', values: ['major', 'moderate'] } },
+});
+```
+
+### Migrate custom styling
+
+In V6, you restyled the map by editing a style in Map Styler and loading its JSON. The new SDK loads standard styles only. Instead, the [Styling Foundations module](../map/styling.mdx) changes a style at runtime, and the change survives style switches.
+
+```typescript
+import { setKnob, StylingFoundationsModule, stylingFoundationsKnobCatalogue } from '@tomtom-org/maps-sdk/map';
+
+const styling = await StylingFoundationsModule.get(map);
+setKnob(styling, stylingFoundationsKnobCatalogue, 'labels.sizeFactor', 1.2); // every base-map label 20% bigger
+setKnob(styling, stylingFoundationsKnobCatalogue, 'roads.widthFactor', 0.8);  // thinner roads, hierarchy kept
+styling.setMapColors({ land: '#f3f5f7', water: '#accbe2', roadMajor: '#a1b8ce' });
+```
+
+The [map theme plugin](../plugins/map-theme.mdx) derives those colours for you from your brand colours, your site's CSS or an image. [`exportStyle`](../map/styling.mdx#exporting-the-style) saves the result as a style file.
+
+### Update CSS
+
+**Before (V6):**
+```html
+<link rel='stylesheet' href='https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/.../maps.css'>
+```
+
+**After:**
+
+The SDK applies the [MapLibre CSS](../map/about-maplibre.mdx#maplibre-css) itself, from its own bundle. You only need this import to use the CSS of the MapLibre version you installed.
+
+```javascript
+// In your JS/TS entry point
+import 'maplibre-gl/dist/maplibre-gl.css';
+```
+
+---
+
+## Performance improvements
+
+### Bundle size
+
+With modular ESM, you only ship the code you use. With tree-shaking enabled:
+
+| Component | V6 (min + gzip) | New SDK |
+|---|---|---|
+| Maps library | ~720 KB monolithic | ~220 KB MapLibre + SDK modules (tree-shaken) |
+| Services library | ~175 KB monolithic | Import only what you use (significantly smaller) |
+| Total (maps + routing) | ~895 KB | Substantially reduced |
+
+### Rendering engine
+
+- [MapLibre GL JS](../map/about-maplibre.mdx) is actively maintained with performance improvements in every release
+- Vector tile rendering runs on WebGL 2, which the map requires. In a browser without it, `new TomTomMap` throws a `TomTomMapError` with the code `WEBGL_UNSUPPORTED`
+- [Style part lazy loading](../map/styles.mdx) enables faster initial map display by loading layers on demand
+- [Layer group visibility animation](../../examples/layer-groups-visibility-animation) support for smooth UX transitions
+
+### API response handling
+
+- Native GeoJSON responses eliminate the serialisation/deserialisation overhead of V6's `.toGeoJson()` conversion
+- Typed responses enable compile-time validation, reducing runtime errors
+
+---
+
+## Future-proof with Orbis Maps
+
+The new SDK is the first to support TomTom **Orbis Maps** natively. Orbis Maps is the next-generation map data platform that combines open data (OpenStreetMap) with TomTom's proprietary data.
+
+| What Orbis Maps delivers | Details |
+|---|---|
+| **Fresher data** | Community-contributed open data combined with TomTom's own map-making operations for faster update cycles |
+| **Richer detail** | More granular POI data, improved address precision, and better coverage in emerging markets |
+| **Same APIs, better data** | Orbis Maps work with the same [Routing](../services/routing/quickstart.mdx), [Search](../services/places/search.mdx), and [Traffic](../map/traffic.mdx) APIs you already use. The data quality improves, and your code stays the same |
+| **Forward investment** | TomTom's roadmap is centred on Orbis. New features, coverage improvements, and data quality investments will land on Orbis first |
+
+After migrating, your application gets every Orbis Maps improvement automatically.
+
+---
+
+## Pricing and commercial impact
+
+- Your API key stays the same. No new key is required.
+- Per-call pricing stays the same. Both SDKs call the same backend APIs, billed at the same rate whichever SDK made the call.
+- Contract terms stay the same. Your existing agreement covers the new SDK, with no amendment.
+- The free evaluation plan's daily requests cover prototyping and testing the migration.
+- Tailored enterprise plans, QPS limits and support levels carry over.
+
+---
+
+## Using TomTom map with MapLibre directly
+
+`TomTomMap` exposes the underlying MapLibre GL JS instance as `map.mapLibreMap`. Through it, the full MapLibre API (`addSource`, `addLayer`, `on`, `queryRenderedFeatures` and everything else) works exactly as in a standalone MapLibre project.
+
+This is the **most direct migration path** for V6 code that calls TomTom's `tt.map` methods directly. Replace `tt.map(...)` with `new TomTomMap(...)`, swap the CSS import, and then migrate the rest of the codebase incrementally. Each time a feature is ready for a high-level module, replace its manual layer code. Everything else keeps working unchanged through `map.mapLibreMap`.
+
+```typescript
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+
+map.mapLibreMap.on('load', () => {
+    // Standard MapLibre API
+    map.mapLibreMap.addSource('my-data', { type: 'geojson', data: myGeojson });
+    map.mapLibreMap.addLayer({ id: 'my-layer', type: 'fill', source: 'my-data' });
+});
+```
+
+Custom data visualisation, such as heatmaps, clustering, choropleth maps and deck.gl layers, works through `map.mapLibreMap` without any SDK-specific code. You can use the high-level modules and the raw MapLibre API on the same map instance at once. For GeoJSON layers, the [Custom GeoJSON module](../map/custom.mdx) takes the same layer specs and restores them after every style switch.
+
+---
+
+## What's not yet available
+
+The new SDK is in **Public Preview** (0.x versions). Until 1.0, a minor release can carry a breaking change, and [Upgrading to 1.0](./upgrading-to-1-0.mdx) lists each one. Some V6 capabilities are not yet available as first-party SDK features:
+
+- SearchBox plugin - No drop-in replacement yet. Build on [`getSearchSuggestions()`](../services/places/suggest.mdx), starting from the [search playground](../../examples/search-playground).
+- Minimap / DrawingTools plugins - Use [MapLibre community plugins](../map/about-maplibre.mdx), listed in [awesome-maplibre](https://github.com/maplibre/awesome-maplibre).
+- Turn-by-turn navigation UI - In-car navigation UI components are not yet available.
+- Long-distance EV routing, vehicle consumption models and live EV charging availability - Not offered. [Search](../services/places/search.mdx) returns EV stations with their static connectors and charging points.
+- Matrix routing, structured geocoding, cross-street lookup, static map images, traffic flow segment data and incident viewport - No SDK function yet, so call those TomTom APIs over HTTP. For structured geocoding, pass the full address to [`geocode`](../services/places/geocoding.mdx).
+- CDN-only deployment - The new SDK requires a bundler (Vite, Webpack, etc.).
+
+For GeoJSON data that no first-party module covers, use the [Custom GeoJSON module](../map/custom.mdx). For anything else, [`map.mapLibreMap`](#using-tomtom-map-with-maplibre-directly) is the full MapLibre GL JS API.
+
+---
+
+## Further reading
+
+- [How the SDK works](../how-the-sdk-works.mdx) — Architecture overview and key concepts
+- [Project setup](../../introduction/project-setup.mdx) — Installation and API key configuration
+- [Map quickstart](../map/quickstart.mdx) — Your first map in minutes
+- [Services quickstart](../services/quickstart.mdx) — Search and routing
+- [Core quickstart](../core/quickstart.mdx) — What glues map and services together
+- [Map modules](../map/modules.mdx) — Traffic, routing, places, and more
+- [Map styles](../map/styles.mdx) — Built-in themes and switching them
+- [Map styling](../map/styling.mdx) — Restyle the map at runtime with knobs, brand colours and presets
+- [Terrain](../map/terrain.mdx) — Hillshade and 3D elevation
+- [Geopolitical views](../core/geopolitical-views.mdx) — One view for the map and every service call
+- [About MapLibre](../map/about-maplibre.mdx) — What the SDK adds over raw MapLibre, and when to use `map.mapLibreMap` directly
+- [Traffic flow](../map/traffic-flow.mdx) — Configuring live traffic flow layers
+- [Traffic incidents](../map/traffic-incidents.mdx) — Filtering and displaying incidents
+- [Routing guide](../services/routing/quickstart.mdx) — Route calculation parameters and options
+- [Search guide](../services/places/search.mdx) — Fuzzy, geometry and along-route search
+- [Search suggestions](../services/places/suggest.mdx) — Search-as-you-type over places, brands and categories
+- [Geocoding](../services/places/geocoding.mdx) / [Reverse geocoding](../services/places/reverse-geocoding.mdx)
+- [Proxying your API calls](../security/proxying-api-calls.mdx) — Keep the API key on your server
+- [Map theme](../plugins/map-theme.mdx), [Map effects](../plugins/map-effects.mdx), [Fly-over](../plugins/flyover.mdx), [Viewport places](../plugins/viewport-places.mdx), [Agent Toolkit](../plugins/agent-toolkit/overview.mdx) — Plugins with no V6 counterpart
+- [AI coding with the SDK](../ai-coding.mdx) — The skill for your coding agent
+- [Upgrading to 1.0](./upgrading-to-1-0.mdx) — Breaking changes between 0.x releases
+- [API reference](/maps-sdk-js/api-reference/index.html) — Complete TypeDoc reference

@@ -1,0 +1,128 @@
+---
+title: Geometry data
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+[`geometryData()`](/maps-sdk-js/api-reference/functions/services.geometryData.html) fetches the
+boundary polygons of areas, such as countries, regions, cities and neighbourhoods, that
+[geocoding](./geocoding.mdx) or [search](./search.mdx) returned.
+
+## Basic usage
+
+```javascript
+import { geocode, geometryData } from '@tomtom-org/maps-sdk/services';
+
+const places = await geocode({ query: 'Amsterdam, Netherlands' });
+const boundaries = await geometryData({ geometries: places, zoom: 10 });
+
+console.log(boundaries.features[0].geometry.type); // "Polygon" or "MultiPolygon"
+```
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `geometries` | `Places` \| `Place[]` \| `string[]` | **Required.** The places, or their geometry IDs, to fetch outlines for. An array holds 1 to 20. Wrap a single `Place` in an array. |
+| `zoom` | `number` | Level of detail, 0 to 22. By default, the service returns its highest detail. |
+
+It also takes the [options every service call takes](../request-options-and-errors.mdx). The full
+type is [`GeometryDataParams`](/maps-sdk-js/api-reference/types/services.GeometryDataParams.html).
+
+- The geometry ID is `place.properties.dataSources.geometry.id`, which geocoding and search set on
+  area results ([Data sources](../../core/places.mdx#data-sources)). Places without one are skipped,
+  so a street address or a POI without an outline adds no polygon.
+- [Reverse geocoded](./reverse-geocoding.mdx) places **have no geometry ID**. Geocode or search for
+  the area instead.
+- The result is `PolygonFeatures`, one feature per geometry with the geometry ID as its `id`. Each
+  feature and the collection have a `bbox`.
+- For a `Places` collection, each polygon also gets its place's properties and
+  `placeCoordinates`, the place's point. A `Place[]` or `string[]` input returns only the polygons.
+- A low `zoom` returns simplified outlines that are lighter to transfer and draw. Match it to the
+  zoom you show the area at.
+
+## Integration with map module
+
+The result is polygons, not places, so show it with the [Geometries module](../../map/geometries.mdx),
+not the Places module.
+
+```javascript
+import { TomTomMap, GeometriesModule } from '@tomtom-org/maps-sdk/map';
+import { geocode, geometryData } from '@tomtom-org/maps-sdk/services';
+
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+const geometriesModule = await GeometriesModule.create(map);
+
+const places = await geocode({ query: 'Netherlands' });
+const boundaries = await geometryData({ geometries: places, zoom: 6 });
+
+await geometriesModule.show(boundaries);
+map.mapLibreMap.fitBounds(boundaries.bbox, { padding: 50 });
+```
+
+[Custom styling configuration](../../map/geometries.mdx#custom-styling-configuration) covers the
+module's fill, line and label styling.
+
+## Working with multiple geometries
+
+One call fetches the outlines of several places, such as every geography result of a search:
+
+```javascript
+import { discoverPlaces, geometryData } from '@tomtom-org/maps-sdk/services';
+
+const places = await discoverPlaces({
+    query: 'Amsterdam',
+    filters: { indexes: ['Geo'] },
+    limit: 5,
+});
+const allBoundaries = await geometryData({ geometries: places, zoom: 12 });
+
+await geometriesModule.show(allBoundaries);
+```
+
+`show` replaces what the module showed before. To add outlines from separate calls, merge their
+`features` into one collection and show that.
+
+## Use cases
+
+### Administrative boundaries
+
+Countries, regions and cities have outlines. Fetch one with the area's name and a `zoom` that
+fits its size:
+
+```javascript
+const [province] = (await geocode({ query: 'Utrecht province, Netherlands', limit: 1 })).features;
+const outline = await geometryData({ geometries: [province], zoom: 8 });
+```
+
+### Search inside an area
+
+A [geometry search](./search.mdx#geometry-search) takes the result as it is:
+
+```javascript
+const city = await geocode({ query: 'Utrecht, Netherlands', limit: 1 });
+const cityOutline = await geometryData({ geometries: city });
+
+const cafes = await discoverPlaces({ query: 'cafe', geometries: [cityOutline] });
+```
+
+## Related guides and examples
+
+### Related guides
+- **[Geometries module](../../map/geometries.mdx)** - Showing and styling boundaries on the map
+- **[Places module](../../map/places.mdx)** - The places the outlines belong to
+
+### Related examples
+- **[Basic geometry](../../../examples/basic-geometry)** - The outline around a searched area
+- **[Geometries playground](../../../examples/multiple-geometries)** - Several outlines, each configured differently
+- **[Places in geometry](../../../examples/places-in-geometry)** - Places searched within an outline
+- **[Search places within geometry](../../../examples/search-places-in-geometry)** - Places searched within the area of a location
+- **[Places by category in words](../../../examples/geometry-search-with-poi-categories)** - A category named in words, in five languages, searched inside a city outline
+
+### Related services
+- **[Discover places](./search.mdx)** - Areas to fetch outlines for, and searches inside them
+- **[Geocoding](./geocoding.mdx)** - Areas by name

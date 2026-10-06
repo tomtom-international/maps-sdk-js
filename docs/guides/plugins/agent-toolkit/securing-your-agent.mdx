@@ -1,0 +1,218 @@
+---
+title: Securing your agent
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.15.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+An agent application has two keys, not one. The [Security guides](../../security/where-your-api-key-runs.mdx) cover the TomTom API key. This one covers the other: the key to your model provider, and the bill attached to it.
+
+They deserve separate treatment because the two keys cost differently. Map calls are billed at a published rate you can reason about. Model calls are billed by how much text goes through them, which makes an unattended provider key harder to put a number on.
+
+## Where the agent runs
+
+All of it runs in the browser. `ToolState` needs a live MapLibre instance, so the agent loop, the model call and every tool execution happen on the page in front of the user.
+
+```d2
+direction: down
+
+Browser: Browser (everything here is editable by the user) {
+  style: {
+    stroke: "#f87171"
+    stroke-width: 3
+    fill: "#fef2f2"
+    border-radius: 8
+    font-size: 18
+    font-color: "#333"
+  }
+
+  Loop: Agent loop (system prompt, maxSteps, tool schemas) {
+    style: {
+      fill: "white"
+      stroke: "#f87171"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 14
+    }
+  }
+
+  Tools: Tool execution (map, search, routing) {
+    style: {
+      fill: "white"
+      stroke: "#295DAA"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 14
+    }
+  }
+}
+
+Proxy: Your proxy (holds both keys) {
+  style: {
+    fill: "#e3f2fd"
+    stroke: "#1565c0"
+    stroke-width: 3
+    font-color: "#333"
+    border-radius: 8
+    font-size: 18
+  }
+  width: 260
+  height: 80
+}
+
+Model: Model provider {
+  style: {
+    fill: "#f3e5f5"
+    stroke: "#4a148c"
+    stroke-width: 3
+    font-color: "#333"
+    border-radius: 8
+    font-size: 18
+  }
+  width: 220
+  height: 80
+}
+
+API: api.tomtom.com {
+  style: {
+    fill: "#f3e5f5"
+    stroke: "#4a148c"
+    stroke-width: 3
+    font-color: "#333"
+    border-radius: 8
+    font-size: 18
+  }
+  width: 220
+  height: 80
+}
+
+Browser.Loop -> Proxy: "prompts + conversation history" {
+  style: {
+    stroke-width: 2
+  }
+}
+Browser.Tools -> Proxy: "service calls" {
+  style: {
+    stroke-width: 2
+  }
+}
+Proxy -> Model: "model key added, model pinned, tokens capped" {
+  style: {
+    stroke: "#1565c0"
+    stroke-width: 3
+  }
+}
+Proxy -> API: "TomTom key added here" {
+  style: {
+    stroke: "#1565c0"
+    stroke-width: 3
+  }
+}
+```
+
+Everything inside the red boundary is visible and editable by the person using your application. That includes the system prompt, the tool definitions, the model name, and any limit you set in JavaScript. Treat all of it as published.
+
+As in the API key guide, and for the same reason, **a provider key configured in the page is a public key**. It is worse than the map key, because most model providers offer nothing like a referrer restriction. Once the key has left, nothing ties it to your domain.
+
+## Proxy the model too
+
+The fix is the same as for [proxying your API calls](../../security/proxying-api-calls.mdx). A small service of yours holds the key and forwards the request.
+
+AI SDK providers accept a `baseURL`, so you point the agent at your proxy when you create the provider, not the agent.
+
+```typescript
+import { createOpenAI } from '@ai-sdk/openai';
+import { createMapAgent } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+
+const openai = createOpenAI({
+    baseURL: 'https://your-app.example.com/api/model',
+    // The provider requires some value here. Your proxy replaces the
+    // Authorization header with the real key on the way out, so this is a
+    // placeholder, never a working key.
+    apiKey: 'proxied',
+});
+
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+});
+```
+
+Run the [four checks from the proxy hardening guide](../../security/hardening-your-proxy.mdx) on this route too, unchanged: origin allowlist, challenge gate, session cookie and rate limit.
+
+## What a model route needs on top
+
+Map requests all cost roughly the same, so a generous ceiling works for them. Model requests don't. One chat turn can cost a thousand times another, depending on how much text went into it, so set the limits on this route deliberately.
+
+Four settings do most of the work, and all of them belong on the server, where the client cannot change them:
+
+- Choose the model yourself. Ignore any model named in the request and substitute your own, so the caller can't pick your price per token.
+- Cap the output length, and cap the input too, both message count and total prompt size. Conversation history grows with every turn.
+- Meter on tokens instead of requests, if your provider reports usage. A per-minute request limit treats a short exchange and a very long one the same.
+- Forward only the chat-completion path. The same key also reaches fine-tuning, uploads and batch endpoints, which your application never needs.
+
+Then set a spend cap and a billing alert at the provider. It costs nothing and catches whatever the settings above did not anticipate.
+
+<Blockquote type="warning">
+    Streaming responses make usage accounting arrive late. If you meter on the usage figures in the response, a burst of concurrent streams can overshoot the ceiling before any of them report. Cap concurrency per session as well as rate.
+</Blockquote>
+
+## What the toolkit already bounds
+
+The toolkit sets some limits itself. They hold with or without a proxy, because they constrain the loop, not the caller.
+
+- Tool-loop length - `stopWhen: stepCountIs(maxSteps ?? 10)` caps the model round-trips one turn can make. This is a spend bound as much as a loop guard, so lower it if your tools are expensive.
+- Tool arguments - Every tool declares a zod `inputSchema`, and the AI SDK validates model-supplied arguments against it before the tool body runs. Off-schema arguments never reach the tool, and some inputs that fan out into upstream calls carry explicit caps (result counts, route alternatives, avoid areas). Route waypoints and reachable-area origins do not.
+- Generated code - In the browser, `analyseData`, `processData`, `createTracker` and `clusterIncidents` code [runs in an opaque-origin iframe](./code-generation.mdx#data-tool-execution-isolation-experimental) under a `default-src 'none'` CSP, with no network access and a 10-second default timeout, after which the worker is terminated. `executeMaplibreCode` runs in the page itself, so remove it where you can't trust the model.
+- Untrusted data in context - [BYOD](./byod.mdx) property profiles withhold customer-supplied string values from the model, since free text arriving from your data is an injection vector.
+
+You can observe all of it through `onToolExecute`, which fires per call with the tool name, duration and error state:
+
+```typescript
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    maxSteps: 6, // tighter than the default, for expensive tool sets
+    onToolExecute: ({ toolName, durationMs, isError }) => {
+        telemetry.record('agent.tool', { toolName, durationMs, isError });
+    },
+});
+```
+
+## What the toolkit cannot bound
+
+The list above stops at the edge of one turn, because that is the last point where the toolkit is the only thing running.
+
+It does not bound how many turns someone starts, how many tabs they open, or what they send once they know your endpoint. It cannot meter tokens, since the provider call is yours to configure and theirs to answer. Nor can it attribute usage to a user, since it has no notion of one.
+
+All of that needs state that outlives the page, which means a server. Without one, the numbers above are sensible defaults, not enforced limits.
+
+## Prompt injection
+
+Content that reaches the model context can carry instructions, and the model has no reliable way to tell yours from someone else's. In an agent application that content arrives from more places than the chat box: property values in bring-your-own-data, place names and addresses returned by search, and anything you retrieve from a documentation or knowledge service.
+
+The toolkit strips string values from BYOD profiles for this reason. That is one source among several, and it is the only one we can address for you, since we do not see what your custom tools return.
+
+Treat anything a tool brings back as data. Give custom tools narrow schemas and specific capabilities instead of broad ones, and keep credentials and internal detail out of the system prompt, which any user can extract. If a tool has a real-world effect, put the confirmation in your own code on the server, not in a prompt that asks the model to check first.
+
+## Things that look like solutions
+
+- **Lowering `maxSteps` as a spend control.** It bounds one turn. Nothing bounds how many turns a user starts.
+- **Rate limiting in your chat component.** The limit and the code enforcing it are both on the attacker's machine.
+- **Calling the provider from the browser with a "restricted" key.** Provider key restrictions are account-scoped, not origin-scoped. A key that works from your page works from anywhere.
+- **A system prompt that asks the model to refuse expensive requests.** It is an instruction inside the thing being steered.
+- **A confirmation dialog in the UI.** Good for genuine mistakes, but the request it guards can be sent without it.
+
+## Related guides
+
+- [Where your API key runs](../../security/where-your-api-key-runs.mdx) - The same question for the TomTom key, and what changes for Node.js.
+- [Proxying your API calls](../../security/proxying-api-calls.mdx) - Building the proxy this guide extends.
+- [Hardening your proxy](../../security/hardening-your-proxy.mdx) - The four checks, in order.
+- [Code generation](./code-generation.mdx) - What the sandbox does and does not allow.
+- [Bring your own data](./byod.mdx) - How customer data reaches the model context.
+- [What the agent sends, and where](./what-the-agent-sends.mdx) - What reaches your model provider and the hosts the agent loads from, for your privacy notice.

@@ -1,0 +1,294 @@
+---
+title: Route planning parameters
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+`calculateRoute` takes these options besides its `locations`. All are optional, with the defaults
+given below.
+
+## Locations
+
+`locations` is the only required parameter, the ordered waypoints and paths the route passes
+through. [Locations](./locations.mdx) covers every accepted form.
+
+```javascript
+import { calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+const routes = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676], // Amsterdam
+        [2.3522, 48.8566]  // Paris
+    ]
+});
+```
+
+## Alternative routes
+
+`maxAlternatives` – 0 (default) to 5 alternatives on top of the best route, which always comes
+first.
+
+- The service can return fewer alternatives than asked for.
+- Each alternative adds response time.
+- On the map, the routing module draws one route as selected. See
+  [Route selection](../../map/routes.mdx#route-selection).
+
+```javascript
+const routes = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    maxAlternatives: 2 // up to 3 routes in total
+});
+```
+
+## Cost model
+
+`costModel` decides which path wins.
+
+`routeType` – What the route is optimised for:
+- `fast` – Travel time (default).
+- `short` – A compromise between travel time and distance.
+- `efficient` – A compromise between travel time and fuel or energy consumption.
+- `thrilling` – Interesting roads and as few motorways as possible, up to 900 km.
+
+`traffic` – Which traffic the route plans around:
+- `live` – Live jams and closures on top of historical travel times (default).
+- `historical` – Historical travel times and long-term closures only.
+
+`avoid` – What the route tries to avoid (nothing by default). If no other route exists, avoidance is
+not guaranteed:
+- `tollRoads` – Roads with a toll.
+- `motorways` – High-speed, limited-access roads.
+- `ferries` – Ferry crossings.
+- `unpavedRoads` – Unpaved roads.
+- `carpools` – Carpool (HOV) lanes.
+- `alreadyUsedRoads` – The same road twice, as delivery rounds need.
+- `borderCrossings` – International borders.
+- `tunnels` – Tunnels.
+- `carTrains` – Car trains.
+- `lowEmissionZones` – Zones with emission restrictions.
+
+`avoidAreas` – Up to 10 rectangles to bypass, each a bounding box `[west, south, east, north]` or any
+GeoJSON whose bounding box is the rectangle:
+- At most ~160×160 km each.
+- Not crossing the 180th meridian, and between −80° and +80° latitude.
+
+```javascript
+const routes = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    costModel: {
+        routeType: 'efficient',
+        traffic: 'historical',
+        avoid: ['motorways', 'ferries'],
+        avoidAreas: [[2.265938, 48.81851, 2.41115, 48.90309]] // around Paris
+    }
+});
+```
+
+A single leg can override `routeType` and `avoid`. See [Per-stop options](#per-stop-options).
+
+## Departure and arrival time
+
+`when` – Depart at, or arrive by, a given time (default: depart now). A past or unreachable time
+falls back to departing now. The response carries both times as `summary.departureTime` and
+`summary.arrivalTime`.
+
+```javascript
+const departing = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    when: { option: 'departAt', date: new Date('2025-12-25T09:00:00Z') }
+});
+
+const arriving = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    when: { option: 'arriveBy', date: new Date('2025-12-25T17:00:00Z') }
+});
+```
+
+## Vehicle configuration
+
+`vehicle` – Weight, heading and restrictions, all listed in
+[Vehicle configuration](./vehicle.mdx).
+
+- `travelMode` takes only `'car'`, and weight is the only dimension. See
+  [Truck parameters](./vehicle.mdx#truck-parameters).
+
+```javascript
+const routes = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    vehicle: { model: { dimensions: { weightKG: 3500 } } }
+});
+```
+
+## Turn-by-turn guidance
+
+`guidance: { type: 'coded' }` adds instructions to each route. See [Guidance](./guidance.mdx).
+
+## Route sections
+
+`sectionTypes` – Which [sections](../../core/routes.mdx#section-types) the response carries. By
+default, it requests every type. A list narrows the response to those types, and `[]` asks for none.
+
+| Section type | Requested |
+|---|---|
+| `carpool`, `carTrain`, `country`, `ferry`, `importantRoadStretch`, `lowEmissionZone`, `motorway`, `pedestrian`, `roadShields`, `speedLimit`, `toll`, `tollRoad`, `tollVignette`, `traffic`, `tunnel`, `unpaved`, `urban`, `vehicleRestricted` | Through `sectionTypes` |
+| `lanes` | Only with `guidance`, and through `sectionTypes` when a list is given |
+| `leg` | Always |
+
+- A requested type only appears when the route traverses it (no `ferry` without a crossing).
+- On the map, [Route sections](../../map/routes-sections.mdx) covers how each is drawn.
+
+```javascript
+const routes = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    sectionTypes: ['toll', 'ferry', 'traffic', 'motorway', 'country']
+});
+```
+
+## Extended route information
+
+`extendedRouteRepresentations` – Cumulative distance and travel time at points along the route, in
+the route's `progress` property (default `['distance', 'travelTime']`).
+
+- Any non-empty list returns both. `[]` leaves the progress out of the response.
+- [Route progress utilities](../../core/utilities/routes.mdx) read it, for example the progress at
+  a point, or the point at a given progress.
+
+```javascript
+const routes = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    extendedRouteRepresentations: [] // no progress data
+});
+```
+
+## Traffic-based travel times
+
+`computeTravelTimeFor` – `'none'` (default), or `'all'` for three more travel times in the summary,
+to show what traffic costs or what leaving now saves:
+- `noTrafficTravelTimeInSeconds` – Free flow.
+- `historicTrafficTravelTimeInSeconds` – Historical traffic.
+- `liveTrafficIncidentsTravelTimeInSeconds` – Live traffic.
+
+```javascript
+const routes = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    computeTravelTimeFor: 'all'
+});
+```
+
+## Per-stop options
+
+Any waypoint feature carries its own options in `properties`, typed with `RouteStopOptions`. They
+describe the leg *arriving* at that stop and the wait there, so if you insert an earlier stop, they
+stay attached to the right place.
+
+- `pauseDurationSeconds` – How long the vehicle waits at this stop.
+  - Counted into the route's `travelTimeInSeconds`, not only its arrival time.
+  - Rejected on the destination.
+  - A core waypoint property, so `RoutingModule.showWaypoints` labels the stop's pin with it.
+- `legCostModel` – `routeType` and `avoid` for the arriving leg only, falling back to the route-wide
+  cost model. The origin, which has no arriving leg, ignores it.
+- `candidateEntryPoints` – Approach points for the routing engine to choose between, with an
+  optional `preferredEntryPointIndex`. Takes precedence over `useEntryPoints` for this stop.
+
+```javascript
+const routes = await calculateRoute({
+    locations: [
+        [2.1734, 41.3851],
+        {
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: [2.4467, 41.5381] },
+            properties: {
+                pauseDurationSeconds: 1800,
+                legCostModel: { routeType: 'short', avoid: ['motorways'] }
+            }
+        },
+        [2.8214, 41.9794]
+    ]
+});
+
+const legs = routes.features[0].properties.sections.leg;
+legs[0].summary.stopTimeInSeconds;   // the whole time at the first stop
+legs[0].summary.travelTimeInSeconds; // driving only
+```
+
+The wait comes back as the arriving leg's `stopTimeInSeconds`. Leg travel times are driving only,
+while the route's travel time includes every stop. [What the routing SDK adds](./what-the-sdk-adds.mdx#fields-the-api-does-not-return)
+explains both.
+
+## Arrival side
+
+`arrivalSide` – Which side of the road to arrive on, at the destination and every intermediate stop,
+as one of the importable `arrivalSides`:
+- `any` – Either side, whichever is faster (default).
+- `curb` – The curb side for the country's driving direction, so passengers or deliveries need not
+  cross the road.
+
+```javascript
+const routes = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    arrivalSide: 'curb'
+});
+```
+
+## Entry points
+
+`useEntryPoints` – Where a [place](../../core/places.mdx) waypoint with entry points is routed to:
+- `main-when-available` – Its main entrance, falling back to its geometry.
+- `ignore` – Its geometry. So does leaving it unset.
+
+```javascript
+const routes = await calculateRoute({
+    locations: [origin, destinationPlace],
+    useEntryPoints: 'main-when-available'
+});
+```
+
+For a stop with several usable entrances, [`candidateEntryPoints`](#per-stop-options) hands the
+alternatives to the routing engine instead of resolving one position client-side.
+
+## A parameter the endpoint cannot accept
+
+`calculateRoute()` and `calculateReachableRange()` call two endpoints that do not accept the same
+parameters. The SDK never drops one silently. It either:
+
+- Narrows the type, so you can't express the parameter. See the reachable range's
+  [unsupported options](./reachable-ranges.mdx#unsupported-options).
+- Rejects the call at [validation](../request-options-and-errors.mdx#request-validation), with a
+  message naming the parameter and what to do instead:
+
+  ```
+  vehicle.state.heading: calculateReachableRange has no vehicle heading parameter.
+  Remove it, or use calculateRoute, which accepts it.
+  ```
+
+A request that dropped an input would still return a route with plausible numbers, computed
+from something other than what you asked for.
+
+## API reference
+
+- [CalculateRouteParams](/maps-sdk-js/api-reference/types/services.CalculateRouteParams.html) – Every parameter
+- [CostModel](/maps-sdk-js/api-reference/types/services.CostModel.html) – The cost model
+- [RouteStopOptions](/maps-sdk-js/api-reference/types/services.RouteStopOptions.html) – Per-stop options
+
+## Related guides and examples
+
+### Related guides
+- [Routing quickstart](./quickstart.mdx) – Getting started with route calculation
+- [Locations](./locations.mdx) – Waypoints and paths
+- [Vehicle configuration](./vehicle.mdx) – The vehicle in full
+- [Guidance](./guidance.mdx) – Turn-by-turn instructions
+- [Route object](../../core/routes.mdx) – The shape of the response
+- [Displaying routes](../../map/routes.mdx) – Routes on the map
+
+### Related examples
+- [Route avoid options playground](../../../examples/route-avoid-options-playground) – Avoid road types and areas
+- [Route with alternatives](../../../examples/route-with-alternatives) – Several route options
+- [Route stop wait playground](../../../examples/route-stop-wait-playground) – Adjust the wait at a stop and watch the journey time
+- [Route leg options playground](../../../examples/route-leg-options-playground) – Give each leg its own route type and avoid list
+- [Route progress playground](../../../examples/route-point-progress-playground) – Time and distance progress along the route

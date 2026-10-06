@@ -1,0 +1,446 @@
+---
+title: Discover places (fuzzy/geometry/along-route)
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+[`discoverPlaces()`](/maps-sdk-js/api-reference/functions/services.discoverPlaces.html) is the one
+search function. Its parameters pick which of three searches runs:
+
+| Search | Runs when | Finds |
+| --- | --- | --- |
+| [Along-route](#along-route-search) | `route` is given | Places within a detour budget of a route |
+| [Geometry](#geometry-search) | `geometries` is given | Places inside circles or polygons |
+| [Fuzzy](#fuzzy-search) | neither is | Places and addresses for free text, optionally near a [`geoBias`](#geographic-bias) |
+
+There is no separate export per search. Each returns [places](../../core/places.mdx) as a GeoJSON
+`FeatureCollection` that the [Places module](../../map/places.mdx) shows as it is.
+
+## Available search types
+
+### Fuzzy search
+
+Fuzzy search tolerates typos, partial input and natural-language phrasing, for POIs and addresses alike:
+
+```javascript
+import { discoverPlaces } from '@tomtom-org/maps-sdk/services';
+
+const results = await discoverPlaces({
+    query: 'coffe shop near dam square',
+    geoBias: { position: [4.9041, 52.3676] },
+});
+```
+
+Only fuzzy search takes [`geoBias`](#geographic-bias), [`cursor`](#pagination), `typeahead` and
+`filters.countries`. See [Fuzzy search parameters](#fuzzy-search-parameters).
+
+### Geometry search
+
+Geometry search finds places inside one or more areas:
+
+```javascript
+import { discoverPlaces } from '@tomtom-org/maps-sdk/services';
+
+const inCircle = await discoverPlaces({
+    query: 'restaurants',
+    geometries: [{ type: 'Circle', coordinates: [4.9041, 52.3676], radius: 5000 }], // radius in metres
+});
+
+const inPolygon = await discoverPlaces({
+    query: 'museums',
+    geometries: [{
+        type: 'Polygon',
+        coordinates: [[[4.7, 52.2], [5.1, 52.2], [5.1, 52.5], [4.7, 52.5], [4.7, 52.2]]],
+    }],
+});
+```
+
+- `geometries` takes a `Circle` (`coordinates` plus `radius` in metres, an SDK extension to GeoJSON), a
+  `Polygon`, a `MultiPolygon`, or a polygon `FeatureCollection` such as a
+  [`geometryData`](./geometry-data.mdx) result, passed as it is. You can mix several in one array.
+- Only a polygon's outer ring is sent to the API, so holes are ignored. The ring is sampled
+  down to 50 vertices, and a `MultiPolygon` of more than 50 polygons keeps its 50 largest.
+
+### Along-route search
+
+Along-route search finds places reachable within `maxDetourTimeSeconds` of a route, such as fuel stops, cafés or EV
+chargers:
+
+```javascript
+import { calculateRoute, discoverPlaces } from '@tomtom-org/maps-sdk/services';
+
+const routes = await calculateRoute({ locations: [[4.9041, 52.3676], [5.1214, 52.0907]] });
+
+const chargers = await discoverPlaces({
+    route: routes.features[0],
+    maxDetourTimeSeconds: 600,
+    filters: { poiCategories: ['CHARGING_LOCATION'] },
+    limit: 10,
+});
+
+const cafes = await discoverPlaces({
+    route: [[4.9, 52.37], [4.95, 52.28], [5.1, 52.09]], // or a GeoJSON LineString
+    maxDetourTimeSeconds: 300,
+    query: 'cafe',
+    sortBy: 'detourOffset',
+});
+```
+
+<SDKGuideLiveCodingExample exampleDirectory="nodejs-along-route-search" />
+
+### Search as you type
+
+For a search box, use [`getSearchSuggestions()`](./suggest.mdx). One call returns places
+with brand and category suggestions.
+
+## Parameter reference
+
+The full type is [`DiscoverPlacesParams`](/maps-sdk-js/api-reference/types/services.DiscoverPlacesParams.html).
+An option of another search variant, such as `cursor` beside `geometries` or `geoBias` beside `route`,
+is a compile error, not silently dropped.
+
+### Common parameters
+
+All three searches take these, plus the options every service call takes (`language`, `signal`,
+`validateRequest`), covered in [Request options and errors](../request-options-and-errors.mdx):
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `query` | `string` *(optional)* | Search text. Omit it to search by `filters` or geometry alone. |
+| `limit` | `number` | Maximum results, up to 100. Default `10`. |
+| `filters` | `PlaceFilters` (`SearchFilters` on fuzzy search) | What may come back. See [Filters](#filters). |
+| `openingHours` | `OpeningHoursMode` | Adds opening hours to POIs, e.g. `'nextSevenDays'`. |
+| `timeZone` | `TimeZoneRequest` | `'iana'` adds the POI's IANA time zone, e.g. `'Europe/Amsterdam'`. |
+| `relatedPois` | `RelatedPoisRequest` | `'off'` (default), `'child'`, `'parent'` or `'all'`. |
+| `geopoliticalView` | `GeopoliticalView` | Which country a place in a disputed territory belongs to. Defaults to the global one. See [Geopolitical views](../../core/geopolitical-views.mdx). |
+| `mapcodes` | `MapcodeType[]` | Adds [mapcodes](../../core/places.mdx#mapcodes): `'Local'`, `'International'`, `'Alternative'`. |
+| `extendedPostalCodesFor` | `SearchIndexType[]` | Indexes to return extended postal codes for. Default: all except `'Geo'`. |
+
+### Filters
+
+Every option that drops results lives under `filters`. [`geoBias`](#geographic-bias) stays separate.
+It sets *where* to look, not *what* to accept.
+
+| Member | Type | Description |
+|--------|------|-------------|
+| `poiCategories` | `POICategory[]` | POI category codes, found through [POI categories](#poi-categories). |
+| `poiCategoryQuery` | `string \| string[]` | Categories in words, `discoverPlaces` only, never with `poiCategories`. See [Naming the category in words](#naming-the-category-in-words-poicategoryquery). |
+| `poiBrands` | `string[]` | Brand names, case-sensitive, e.g. `['Starbucks', 'Costa Coffee']`. Quote a name with a comma, as in `'"A,B"'`. |
+| `indexes` | `SearchIndexType[]` | Which indexes to search: `'Geo'`, `'PAD'`, `'Addr'`, `'Str'`, `'XStr'`, `'POI'`. Default: all. |
+| `geographyTypes` | `GeographyType[]` | Kinds of `Geography` result, e.g. `['Municipality', 'Neighbourhood']`. |
+| `connectors` | `ConnectorType[]` | EV connector types, e.g. `['IEC62196Type2CCS', 'Chademo']`. |
+| `fuelTypes` | `Fuel[]` | Fuel types, e.g. `['Petrol', 'Diesel', 'E85']`. |
+| `minPowerKW` / `maxPowerKW` | `number` | EV charging power bounds, in kilowatts. |
+| `countries` | `string[]` | ISO 3166-1 alpha-2 or alpha-3 codes, e.g. `['NL', 'DE']`. **Fuzzy search only.** |
+
+- A filter excludes. A place that doesn't match is dropped, not ranked lower.
+- Values within one member are OR'd, and members are AND'd. `poiBrands: ['Shell', 'BP']` with
+  `fuelTypes: ['Diesel']` keeps stations of either brand that sell diesel.
+- The type follows the search. Fuzzy search takes `SearchFilters` (`PlaceFilters & GeographicFilters`).
+  Geometry and along-route search take `PlaceFilters`, so `filters.countries` beside `geometries` or `route`
+  is a compile error. [Geocoding](./geocoding.mdx#filtering-results) takes `countries` and `geographyTypes`.
+
+```typescript
+import { discoverPlaces } from '@tomtom-org/maps-sdk/services';
+import type { SearchFilters } from '@tomtom-org/maps-sdk/services';
+
+const dieselStations: SearchFilters = {
+    countries: ['NL', 'BE'],
+    poiBrands: ['Shell', 'BP'],
+    fuelTypes: ['Diesel'],
+};
+
+const results = await discoverPlaces({
+    filters: dieselStations,
+    geoBias: { position: [4.9041, 52.3676], radiusMeters: 20000 },
+});
+```
+
+### Geographic bias
+
+Fuzzy search and [geocoding](./geocoding.mdx) take one `geoBias`, either a point or a rectangle.
+The compiler rejects both together.
+
+```typescript
+// Around a point: ranks nearer results higher; with radiusMeters, also confines results to the circle
+geoBias: { position: [4.9041, 52.3676], radiusMeters: 2000 }
+
+// Inside a rectangle: [minLng, minLat, maxLng, maxLat], or any GeoJSON a bbox derives from
+geoBias: { boundingBox: map.getBBox() }
+```
+
+- `position` takes `[longitude, latitude]` or any GeoJSON carrying one.
+- Omit `geoBias` to search without a geographic bias.
+- Geometry and along-route search take none, because their `geometries` or `route` is the search area.
+
+### Fuzzy search parameters
+
+On top of the [common parameters](#common-parameters):
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `geoBias` | `GeoBias` | `{ position, radiusMeters? }` or `{ boundingBox }`. See [Geographic bias](#geographic-bias). |
+| `typeahead` | `boolean` | Treat the query as partial input. Default `false`. |
+| `cursor` | `string` | The previous response's `nextCursor`, to fetch the next page. See [Pagination](#pagination). |
+| `minFuzzyLevel` | `number` | Minimum fuzziness, 1–4. Default `1`. |
+| `maxFuzzyLevel` | `number` | Maximum fuzziness, 1–4. Default `2`. Higher tolerates more typos. |
+
+### Geometry search parameters
+
+On top of the [common parameters](#common-parameters):
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `geometries` | `SearchGeometryInput[]` | **Required.** The areas to search: `Circle`, `Polygon`, `MultiPolygon` or a polygon `FeatureCollection`. |
+
+### Along-route search parameters
+
+On top of the [common parameters](#common-parameters):
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `route` | `Route \| LineString \| Position[]` | **Required.** A `Route` from `calculateRoute`, its `LineString` geometry, or `[longitude, latitude]` positions. |
+| `maxDetourTimeSeconds` | `number` | **Required.** The detour budget, in seconds, as a positive integer. |
+| `sortBy` | `'detourTime' \| 'detourOffset'` | Order by detour time (default) or by position along the route. |
+
+## POI categories
+
+`filters.poiCategories` takes `POICategory` codes, such as `ITALIAN_RESTAURANT`, `FUEL_STATION`,
+`HOTEL`, `PHARMACY`, `PARKING_GARAGE` or `CHARGING_LOCATION`. The
+[POI categories service](./poi-categories.mdx) lists them and finds them by name or synonym.
+
+```javascript
+import { discoverPlaces, getPOICategoryCodes } from '@tomtom-org/maps-sdk/services';
+
+const geoBias = { position: [4.9041, 52.3676], radiusMeters: 1000 };
+
+const italian = await discoverPlaces({ geoBias, filters: { poiCategories: ['ITALIAN_RESTAURANT'] } });
+
+// Codes looked up by keyword first
+const restaurantCodes = await getPOICategoryCodes({ filters: ['restaurant'] });
+const restaurants = await discoverPlaces({ geoBias, filters: { poiCategories: restaurantCodes } });
+
+// Or named in words, in one call
+const sushi = await discoverPlaces({ geoBias, filters: { poiCategoryQuery: 'sushi' } });
+
+// EV charging, by connector and power
+const fastChargers = await discoverPlaces({
+    geoBias: { position: [4.9041, 52.3676], radiusMeters: 5000 },
+    filters: { poiCategories: ['CHARGING_LOCATION'], connectors: ['IEC62196Type2CCS', 'Tesla'], minPowerKW: 50 },
+});
+```
+
+### Naming the category in words: `poiCategoryQuery`
+
+`filters.poiCategoryQuery` takes categories as a person says them, such as `'sushi'` or `['gym', 'parking']`,
+and searches the POI categories they name. Every search variant takes it, whether near a `geoBias`, inside
+`geometries` or along a `route`.
+
+- The words go through [`resolvePOICategories`](./poi-categories.mdx#resolving-words-for-a-search-resolvepoicategories)
+  in the call's `language`, and the codes it returns become the search's `poiCategories`.
+- The category list costs one request per language and session, and is then cached.
+- An unmatched word is left out. If no word matches, the call rejects with an
+  `SDKError` and sends no search. To handle unmatched words yourself, call `resolvePOICategories` first.
+- When the user names a kind of place, prefer it to `query: 'sushi'`, as `query` also matches names and addresses.
+
+For a category the user picks while typing, [search suggestions](./suggest.mdx) return it as a `category`
+suggestion whose `refine()` filters on its code, with no lookup.
+
+In the demo below, a word in the chosen language searches its category inside the Paris outline:
+
+<GuideDemo demo="geometry-search-with-poi-categories" />
+
+## Working with search results
+
+Each feature is a `Place` with `SearchPlaceProps`. [Places](../../core/places.mdx) describes every
+property, including the [search-specific ones](../../core/places.mdx#search-specific-properties).
+
+```javascript
+const results = await discoverPlaces({ query: 'coffee', geoBias: { position: [4.9041, 52.3676] } });
+
+results.features.forEach((place) => {
+    console.log(place.properties.poi?.name);               // POI results only
+    console.log(place.properties.address.freeformAddress);
+    console.log(place.geometry.coordinates);               // [longitude, latitude]
+    console.log(place.properties.poi?.categories);         // POICategory[], e.g. ['CAFE_PUB']
+    console.log(place.properties.poi?.localizedCategories); // string[] in the call's language
+    console.log(place.properties.distance);                // metres from geoBias.position, when given
+});
+```
+
+`discoverOnePlace()` returns the first fuzzy-search result, and throws an `Error` when there is none:
+
+```javascript
+import { discoverOnePlace } from '@tomtom-org/maps-sdk/services';
+
+const place = await discoverOnePlace('Eiffel Tower');
+
+// The params form takes the fuzzy search parameters except `limit`
+const nearby = await discoverOnePlace({ query: 'coffee', geoBias: { position: [2.2945, 48.8584] } });
+```
+
+## Pagination
+
+A fuzzy search response carries `nextCursor` in its properties while a next page exists. Pass it back
+as `cursor`, with the same parameters:
+
+```javascript
+let response = await discoverPlaces({ query: 'cafe', limit: 20 });
+const all = [...response.features];
+
+while (response.properties?.nextCursor) {
+    response = await discoverPlaces({ query: 'cafe', limit: 20, cursor: response.properties?.nextCursor });
+    all.push(...response.features);
+}
+```
+
+The loop spends a request per page up front. To fetch one page per **Load more** click instead, keep
+the request and the last `nextCursor` between clicks, as the
+[search playground](../../../examples/search-playground) does:
+
+```typescript
+import { discoverPlaces } from '@tomtom-org/maps-sdk/services';
+import type { FuzzySearchParams } from '@tomtom-org/maps-sdk/services';
+
+const request: FuzzySearchParams = { query: 'cafe', geoBias: { position: [4.9041, 52.3676] }, limit: 20 };
+let nextCursor: string | undefined;
+
+const loadPage = async (cursor?: string) => {
+    loadMoreButton.disabled = true; // a second click before the page lands would fetch it twice
+    const page = await discoverPlaces({ ...request, cursor });
+    appendToResultList(page.features);
+    nextCursor = page.properties?.nextCursor;
+    loadMoreButton.disabled = !nextCursor;
+};
+
+await loadPage();
+loadMoreButton.onclick = () => loadPage(nextCursor);
+```
+
+- The cursor is opaque. Pass it back unchanged. Its contents aren't part of the
+  contract. A value the SDK didn't produce throws an `SDKError`.
+- A cursor continues one search. A new query or different `filters` start a new search, so leave
+  `cursor` out.
+- **`nextCursor`, not `totalResults`, tells whether a next page exists.** It is absent once the
+  results are exhausted, after an empty page, and once the next page would start past result 1900,
+  the furthest the backend serves.
+- Only fuzzy search and geocoding paginate. Geometry and along-route search return one page, with no
+  `nextCursor`. [`geocode`](./geocoding.mdx#multiple-result-handling) pages the same way.
+
+## Fields that may be absent
+
+**The type is the contract.** Where a property is optional, handle its absence instead of assuming
+a value.
+
+| Field | What it carries |
+| --- | --- |
+| `places.properties.totalResults` | The total number of matches, beyond the page returned |
+| `places.properties.fuzzyLevel` | How loosely the query was matched |
+| `places.properties.geoBias` | The position results were biased towards |
+| `places.properties.queryIntent` (fuzzy search) | Detection of coordinates, what3words codes and "near X" phrasings |
+| `place.properties.score` | A relevance score, for thresholding and merging results |
+| `places.bbox` | A bounding box, on results that cover an area |
+
+```javascript
+const results = await discoverPlaces({ query: 'pizza', limit: 10 });
+
+if (results.properties?.totalResults !== undefined) {
+    const { numResults, totalResults } = results.properties;
+    console.log(`Showing ${numResults} of ${totalResults}`);
+}
+```
+
+A missing `fuzzyLevel` means "not reported", not "matched exactly", so don't read it as `0`.
+
+## Examples
+
+### Find bus stops in an area (Node.js)
+
+A category search confined to a rectangle, as in the
+[Node.js POI search](../../../examples/nodejs-poi-search) example:
+
+```javascript
+import { discoverPlaces } from '@tomtom-org/maps-sdk/services';
+
+const results = await discoverPlaces({
+    filters: { poiCategories: ['BUS_STOP'] },
+    geoBias: { boundingBox: [4.72, 52.27, 5.07, 52.43] }, // [minLng, minLat, maxLng, maxLat]
+    limit: 100,
+});
+
+results.features.forEach((stop) => {
+    const [lng, lat] = stop.geometry.coordinates;
+    console.log(`${stop.properties.poi?.name} — ${lng}, ${lat}`);
+});
+```
+
+## Integration with map visualization
+
+The [Places module](../../map/places.mdx) shows a search response without mapping fields first:
+
+```javascript
+import { TomTomMap, PlacesModule } from '@tomtom-org/maps-sdk/map';
+import { discoverPlaces } from '@tomtom-org/maps-sdk/services';
+
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+const placesModule = await PlacesModule.create(map);
+
+await placesModule.show(await discoverPlaces({ query: 'museums', geoBias: { position: [4.9041, 52.3676] } }));
+```
+
+### Searching again as the map moves
+
+A search re-run on every map move can answer out of order, and a slow answer for the previous
+viewport would paint over the current one. Run it through
+[`createLatestRequest`](../request-options-and-errors.mdx#keeping-only-the-latest-request), as the
+[places customization playground](../../../examples/places-customize-playground) does:
+
+```javascript
+import { createLatestRequest, discoverPlaces } from '@tomtom-org/maps-sdk/services';
+
+const latestSearch = createLatestRequest();
+
+map.mapLibreMap.on('moveend', async () => {
+    const search = await latestSearch.run((signal) =>
+        discoverPlaces({
+            filters: { poiCategories: ['CAFE_PUB'] },
+            geoBias: { boundingBox: map.getBBox() },
+            signal,
+        })
+    );
+    if (search.current) await placesModule.show(search.value);
+});
+```
+
+To keep POI categories on the map as it moves without writing this yourself, use the
+[viewport places plugin](../../plugins/viewport-places.mdx).
+
+## Related guides and examples
+
+### Map integration
+- **[Places module](../../map/places.mdx)** - Search results as interactive places on the map
+- **[POIs](../../map/pois.mdx)** - The map's own POI icons, filtered by the same categories
+
+### Related examples
+- **[Along route search](../../../examples/along-route-search)** - Beaches and viewpoints within a one-minute detour of a drive
+- **[Along route search (Node.js)](../../../examples/nodejs-along-route-search)** - Fast chargers along a route, in Node.js
+- **[Along route search playground](../../../examples/along-route-search-playground)** - A query and POI categories along a route
+- **[Geometry searches along a route](../../../examples/route-geometry-searches)** - Corridors of different widths around a route, as polygons
+- **[Geometry search playground](../../../examples/geometry-search-playground)** - Searching inside area boundaries
+- **[Geometry search (Node.js)](../../../examples/nodejs-geometry-search)** - Cafés inside a polygon, in Node.js
+- **[Places by category in words](../../../examples/geometry-search-with-poi-categories)** - A category named in words, in five languages, inside a city outline
+- **[Search playground](../../../examples/search-playground)** - Search-as-you-type, and a picked brand or category paged in with `nextCursor`
+- **[Search places in geometry](../../../examples/search-places-in-geometry)** - Places inside the outline of a geocoded area
+- **[Search places nearby location](../../../examples/search-places-nearby-location)** - Places around a geocoded location
+- **[Places customization playground](../../../examples/places-customize-playground)** - Customizing how search results look
+
+### Related services
+- **[Geocoding](./geocoding.mdx)** - Addresses to coordinates
+- **[Reverse geocoding](./reverse-geocoding.mdx)** - Coordinates to an address
+- **[Geometry data](./geometry-data.mdx)** - The outlines a geometry search can run inside

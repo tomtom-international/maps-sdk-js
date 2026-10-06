@@ -1,0 +1,311 @@
+---
+title: Customizing tools
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.15.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+You can remove tools users shouldn't trigger from the [built-in registry](./tools.mdx), replace
+a default with one wired to your backend, add domain tools, or start from a blank slate and hand-pick built-ins. The four
+patterns combine in one `createMapAgent` call.
+
+## How the registry is resolved
+
+Three sources, in this order, make the tool set the agent exposes:
+
+1. `DEFAULT_TOOLS` - The 56 built-in tools, unless you set `includeDefaultTools: false`.
+2. [`dataEntries`](./state.mdx#defaults-via-createmapagent) - A disabled kind drops its tools, as listed in
+   `TOOLS_BY_DATA_ENTRY_KIND`, and leaves the data tools' inputs. `byod: { enabled: false }` removes `addByodSource`,
+   `setByodLayers` and `updateByodDisplay`.
+3. Your `tools` option - Per-key overrides. They win over both, so a tool you pass under a dropped name comes back.
+
+```d2
+direction: right
+
+Defaults: DEFAULT_TOOLS {
+  style: {
+    fill: "#fffde7"
+    stroke: "#ff6f00"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 18
+  }
+  width: 220
+  height: 60
+}
+
+DataEntries: dataEntries narrowing {
+  style: {
+    fill: "#fef2f2"
+    stroke: "#f87171"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 16
+  }
+  width: 220
+  height: 50
+}
+
+Overrides: tools \{ ... \} overrides {
+  style: {
+    fill: "#e8f5e9"
+    stroke: "#1b5e20"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 16
+  }
+  width: 220
+  height: 50
+}
+
+Result: Agent's live tool set {
+  style: {
+    fill: "#f3e5f5"
+    stroke: "#4a148c"
+    stroke-width: 3
+    font-color: "#333"
+    border-radius: 8
+    font-size: 18
+  }
+  width: 220
+  height: 60
+}
+
+Defaults -> DataEntries: "1. start from defaults"
+DataEntries -> Overrides: "2. drop disabled kinds"
+Overrides -> Result: "3. apply per-key overrides" {
+  style: {
+    stroke-width: 2
+  }
+}
+```
+
+## Remove a default tool
+
+To drop a tool, pass `false` under its key. Do this when a tool is irrelevant to your use case, such as language switching in a single-language deployment, or harmful, such as `executeMaplibreCode` where prompts are untrusted.
+
+```typescript
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    tools: {
+        setLanguage: false,
+        executeMaplibreCode: false,
+    },
+});
+```
+
+The classifier doesn't see removed tools, and the model can't call them.
+
+## Replace a default tool
+
+Pass a full `ToolEntry` under a built-in's key, and the built-in is never instantiated. Usually you wire a
+built-in to your backend. Here, `getCurrentLocation` reads the fleet system instead of the browser's geolocation API:
+
+```typescript
+import { z } from 'zod';
+
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    tools: {
+        getCurrentLocation: {
+            description: 'Returns the user position from the company fleet system.',
+            inputSchema: z.object({}),
+            execute: async () => {
+                const position = await fleetApi.getDriverPosition();
+                return { position };
+            },
+            classificationPrompt: 'Get the driver\'s current GPS position from the fleet system.',
+            tags: ['location'],
+        },
+    },
+});
+```
+
+Keep the original's input and output shape where you can, because other tool descriptions and the system prompt
+may assume it. If yours differs, say so in its `description` or your `systemPromptSuffix`, so the model doesn't pass the old fields.
+
+## Add a custom tool
+
+Custom tools receive the same [`state`](./state.mdx) as the built-ins, so they can hand results to the built-in display
+flow. Add places with `state.places.addPlaceResult` and your GeoJSON with `state.byod.addEntry`.
+
+```typescript
+import { z } from 'zod';
+import type { Place } from '@tomtom-org/maps-sdk/core';
+import type { ToolEntry } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+
+const getFleetVehicle: ToolEntry = {
+    description: 'Get the current map position of a fleet vehicle by ID and add it to the places history.',
+    classificationPrompt: 'Locate or display a fleet vehicle on the map by its ID.',
+    inputSchema: z.object({ vehicleId: z.string().describe('The fleet vehicle identifier') }),
+    execute: async ({ vehicleId }, state) => {
+        const position = await fleetApi.getPosition(vehicleId);
+        const place: Place = {
+            type: 'Feature',
+            id: `vehicle-${vehicleId}`,
+            geometry: { type: 'Point', coordinates: position },
+            properties: {
+                type: 'POI',
+                address: { freeformAddress: '' },
+                poi: { name: `Vehicle ${vehicleId}`, categories: [], localizedCategories: [] },
+            },
+        };
+        // Append to the places history; the model can then show it via updatePlacesDisplay,
+        // route to it via setRoute, or recall it later through recallState.
+        const entryId = await state.places.addPlaceResult(place, `Vehicle ${vehicleId}`);
+        return { vehicleId, entryId, position };
+    },
+    tags: ['location'],
+    examplePrompts: ['Where is vehicle TT-001?', 'Show fleet vehicle on the map'],
+};
+
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    tools: { getFleetVehicle },
+});
+```
+
+The tool takes part in [intent classification](./how-it-works.mdx#1-intent-classification) through its
+`classificationPrompt`. The classifier reads that line, not the `description`. A tool whose schema should change with
+what the user asked is a [scopable custom tool](./scope-aware-data-tools.mdx#add-a-scopable-custom-tool).
+
+### Resolve a place in a custom tool
+
+A custom tool that needs one place by name can run the same lookup as the built-in `locatePlace` tool:
+
+- `locatePlace(query, queryAs, bias?, execOptions?)` - Returns the best-matching `Place`, or `null`. `queryAs` is `'poi'` to search points of interest by name, or `'place'` to geocode an address or an area. Pass the `execute` options as `execOptions`, so a cancelled turn cancels the request.
+- `getViewportBias(state.baseMap)` - Returns the map centre as `[longitude, latitude]`, to favour results the user is looking at. Below zoom `MIN_VIEWPORT_BIAS_ZOOM` (6) it returns `undefined`, because the view is too wide to tell where the user means.
+
+```typescript
+import { getViewportBias, locatePlace, type ToolEntry } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+import { z } from 'zod';
+
+const findStore: ToolEntry = {
+    description: 'Find one of our stores by name, near the map view when zoomed in, and add it to the places history.',
+    classificationPrompt: 'Locate a named store of ours.',
+    inputSchema: z.object({ storeName: z.string() }),
+    execute: async ({ storeName }, state, options) => {
+        try {
+            const position = getViewportBias(state.baseMap);
+            const place = await locatePlace(storeName, 'poi', position && { position }, options);
+            if (!place) return { status: 'not_found' };
+            return { entryId: await state.places.addPlaceResult(place, storeName) };
+        } catch (error) {
+            return { error: `Store lookup failed: ${error instanceof Error ? error.message : String(error)}` };
+        }
+    },
+};
+```
+
+A failed or cancelled lookup rejects, so `execute` catches it and returns an error shape, as the next section explains.
+
+### Errors are part of the contract
+
+Every `execute` catches its own failures and returns an error shape, typically `{ error: string }`. A throw surfaces as
+an opaque step failure the model can't reason about. Name the missing entity and the next valid action:
+
+```typescript
+execute: async ({ vehicleId }, state) => {
+    try {
+        const position = await fleetApi.getPosition(vehicleId);
+        // …
+    } catch (error) {
+        return { error: `Fleet vehicle "${vehicleId}" not found. Call listFleetVehicles to see available IDs.` };
+    }
+}
+```
+
+- When the model must branch on the failure (retry, call something else, give up), return a discriminated status
+  (`{ status: 'not_found' | 'unauthorized' | … }`) instead of prose.
+- Tell input errors from external ones. An unknown id means calling something else first. A service 5xx is safe to
+  retry once. Vague error strings are the main cause of retry loops.
+- A [cancelled](./tools.mdx#cancellation) turn is not a failure, so catch `SDKAbortError` separately.
+- When a TomTom service or the map fails, the default tools return `{ error, code }`. `code` is the
+  [`SDKErrorCode`](../../services/request-options-and-errors.mdx#error-handling), and the error text ends by saying
+  whether retrying helps.
+
+## Start from a blank slate
+
+For a narrowly scoped agent that should not stray into general map control, set `includeDefaultTools: false` and re-add
+the built-ins you want from `DEFAULT_TOOLS`. `tools` takes any tool definition, an entry or a builder:
+
+```typescript
+import { createMapAgent, DEFAULT_TOOLS } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    includeDefaultTools: false,
+    tools: {
+        getFleetVehicle,                         // your custom tool
+        locatePlace: DEFAULT_TOOLS.locatePlace,  // re-add built-ins
+        flyTo: DEFAULT_TOOLS.flyTo,
+        analyseData: DEFAULT_TOOLS.analyseData,
+    },
+});
+```
+
+`dataEntries` still narrows the data tools you re-add, such as `analyseData`. The
+[site selection agent example](../../../examples/map-site-selection-agent-react) builds its agent this way.
+
+## Putting it all together
+
+A real deployment usually combines all four patterns:
+
+```typescript
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+
+    // Narrow the data surface — drops every byod-related default tool.
+    dataEntries: {
+        byod: { enabled: false },
+        routes: { entryMode: 'single' },
+    },
+
+    // Per-key overrides on top of what dataEntries left.
+    tools: {
+        // Remove what doesn't fit the deployment
+        setLanguage: false,
+        executeMaplibreCode: false,
+
+        // Replace with a backend-backed version
+        getCurrentLocation: fleetCurrentLocationTool,
+
+        // Add new domain tools
+        getFleetVehicle,
+        getDispatchJobs,
+    },
+});
+```
+
+## Verifying your registry
+
+Use `onClassify` to confirm the right tools survive resolution and the classifier picks up your custom tools:
+
+```typescript
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    tools: { getFleetVehicle },
+    onClassify: (result) => {
+        console.log('Tools selected for this turn:', result?.activeToolNames);
+    },
+});
+```
+
+If a custom tool doesn't activate when expected, rework its `classificationPrompt`. A prompt that's too vague fires
+every turn, and one that's too narrow never does. `alwaysActive: true` offers the tool on every step regardless.
+
+## Related
+
+- **[Tool registry](./tools.mdx)** — the full list of built-in tools and what each one does.
+- **[Scope-aware data tools](./scope-aware-data-tools.mdx)** — building custom tools whose schema changes per turn.
+- **[Bring your own data](./byod.mdx)** — when your "data" is a GeoJSON layer rather than a new tool.
+- **[State](./state.mdx)** — extending agent state alongside a custom tool.
+- **[Securing your agent](./securing-your-agent.mdx)** — giving custom tools narrow schemas, and keeping side effects off the model's word.

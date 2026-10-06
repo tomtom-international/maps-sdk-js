@@ -1,0 +1,286 @@
+---
+title: Where your API key runs
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+Where the SDK runs decides how much care your API key needs:
+
+- The Services bundle runs in Node.js, so search, geocoding, routing and traffic calls can run on a server, in a cron job or a script, with no front-end at all.
+- The Map bundle renders in the browser, so any key it uses travels to the browser with it.
+
+TomTom's [API key management best practices](https://docs.tomtom.com/platform/documentation/api-best-practices/api-key-management-best-practices) cover keys in general: scoping, segregation, rotation and monitoring. What follows is specific to the SDK, and to a key that has to sit in a page.
+
+## Which situation you are in
+
+```d2
+direction: down
+
+Server: 1. Node.js only, no front-end {
+  style: {
+    stroke: "#333"
+    stroke-width: 2
+    fill: "#f8f8f8"
+    border-radius: 8
+    font-size: 18
+    font-color: "#333"
+  }
+
+  Job: Script, cron job or backend service {
+    style: {
+      fill: "#e3f2fd"
+      stroke: "#1565c0"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 14
+    }
+  }
+
+  API: api.tomtom.com {
+    style: {
+      fill: "#f3e5f5"
+      stroke: "#4a148c"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 14
+    }
+  }
+
+  Job -> API: "key from the environment" {
+    style: {
+      stroke: "#1565c0"
+      stroke-width: 3
+    }
+  }
+}
+
+Backend: 2. Browser plus your own backend {
+  style: {
+    stroke: "#333"
+    stroke-width: 2
+    fill: "#f8f8f8"
+    border-radius: 8
+    font-size: 18
+    font-color: "#333"
+  }
+
+  Page: Your page (no key) {
+    style: {
+      fill: "#fef2f2"
+      stroke: "#f87171"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 14
+    }
+  }
+
+  Backend: Your Node.js API {
+    style: {
+      fill: "#e3f2fd"
+      stroke: "#1565c0"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 14
+    }
+  }
+
+  API: api.tomtom.com {
+    style: {
+      fill: "#f3e5f5"
+      stroke: "#4a148c"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 14
+    }
+  }
+
+  Page -> Backend: "your own results" {
+    style: {
+      stroke-width: 2
+    }
+  }
+  Backend -> API: "key from the environment" {
+    style: {
+      stroke: "#1565c0"
+      stroke-width: 3
+    }
+  }
+}
+
+Direct: 3. Browser only {
+  style: {
+    stroke: "#333"
+    stroke-width: 2
+    fill: "#f8f8f8"
+    border-radius: 8
+    font-size: 18
+    font-color: "#333"
+  }
+
+  Page: Your page (Map + Services) {
+    style: {
+      fill: "#fef2f2"
+      stroke: "#f87171"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 14
+    }
+  }
+
+  API: api.tomtom.com {
+    style: {
+      fill: "#f3e5f5"
+      stroke: "#4a148c"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 14
+    }
+  }
+
+  Page -> API: "every request carries the key" {
+    style: {
+      stroke: "#f87171"
+      stroke-width: 3
+    }
+  }
+}
+
+Proxy: 4. Browser map behind a proxy {
+  style: {
+    stroke: "#333"
+    stroke-width: 2
+    fill: "#f8f8f8"
+    border-radius: 8
+    font-size: 18
+    font-color: "#333"
+  }
+
+  Page: Your page (Map, no key) {
+    style: {
+      fill: "#fef2f2"
+      stroke: "#f87171"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 14
+    }
+  }
+
+  Prx: Your proxy {
+    style: {
+      fill: "#e3f2fd"
+      stroke: "#1565c0"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 14
+    }
+  }
+
+  API: api.tomtom.com {
+    style: {
+      fill: "#f3e5f5"
+      stroke: "#4a148c"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 14
+    }
+  }
+
+  Page -> Prx: "tiles and services, session cookie" {
+    style: {
+      stroke-width: 2
+    }
+  }
+  Prx -> API: "key from the environment" {
+    style: {
+      stroke: "#1565c0"
+      stroke-width: 3
+    }
+  }
+}
+```
+
+| Where your code runs | Who can see the key | What to think about |
+| --- | --- | --- |
+| Node.js script, job or backend service, no front-end | Nobody outside your infrastructure | Secret hygiene, and bounding what a job can spend |
+| Node.js API behind a browser app | Nobody, as long as you do not pass it on | The same, plus keeping it out of what you return |
+| Browser, Map bundle or Services bundle | Anyone who opens the page | The rest of this guide |
+| React Native app, Services bundle | Anyone who unpacks the app | Same as the browser |
+
+## Server-side apps (Node.js)
+
+In a nightly geocoding job, a CLI script, your own API that calls routing, a queue worker, or tests and CI, the key stays inside your infrastructure. You don't need the proxying and hardening guides.
+
+Read the key from the environment instead of your source code:
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+
+TomTomConfig.instance.put({
+    apiKey: process.env.TOMTOM_API_KEY,
+});
+```
+
+Specific to the SDK:
+
+- **Redact both forms of the key in your logs.** Some services send it as a `TomTom-Api-Key` header and others as a `key=` query parameter ([which is which](./proxying-api-calls.mdx#inject-the-key-in-exactly-one-place)).
+- The SDK already retries and validates. It retries `429` responses with backoff limited by [`retry.timeoutMs`](../core/global-config.mdx#retry). It also validates requests by default, so a malformed one is rejected before it becomes a billable call. A retry loop of your own multiplies the attempts.
+
+On a server, the realistic failure is your own code, since every call is billed. Count a batch job's input before you start it, cap concurrency, and cache what you have already resolved.
+
+If your Node.js code serves a front-end, keep the key out of everything you return to the browser, including config endpoints, server-rendered HTML and serialized state blobs.
+
+<Blockquote type="warning">
+    Server-side rendering blurs the line. A framework that runs the same component on the server and the client will inline `process.env.TOMTOM_API_KEY` into the browser bundle. Variables with a public prefix (`NEXT_PUBLIC_`, `VITE_`) are client-visible by design. Check what your build actually ships before you assume a key is server-only.
+</Blockquote>
+
+## Browser apps
+
+A page that shows a map needs a key in the browser. For most applications that is fine.
+
+Take a second look if your application is public and anonymous. Anyone who opens the page can read the key and use it from their own application, on your bill. Behind a login, you know who your users are. Self-service signup counts as public.
+
+Ask yourself: *if someone started using your key from their own application tomorrow, would you find out?* If not, take these measures. They are settings on the key in the [dashboard](https://docs.tomtom.com/platform/documentation/dashboard/api-key-management), not something you build:
+
+- A domain whitelist, so a copy stops working from anyone else's page. It is the cheapest measure there is, but it does not stop a non-browser client.
+- Only the products you use, so a copy buys less than full access.
+- One key per application and environment, so a compromise is contained and you can revoke without a coordinated release.
+- Query limits, which turn an open-ended bill into a capped one.
+- Per-key analytics, because how quickly you notice decides how big the surprise gets.
+- Rotation on a schedule. A rotated key stays valid for up to 48 hours, which is your window to ship a new build and let caches drain.
+
+The [best practices](https://docs.tomtom.com/platform/documentation/api-best-practices/api-key-management-best-practices) detail each. Together they cap the damage and make a leak visible quickly, which is enough for many applications.
+
+## When a proxy is worth it
+
+Only a server, your own or a proxy, takes the key off the page. The measures above leave the key public and limit what it is worth, which is often the right trade.
+
+Two cheaper steps come first:
+
+- Move service calls into your own backend. That takes the key off those calls, but the browser still fetches the map's tiles.
+- Set the key restrictions above. It takes an afternoon and no infrastructure.
+
+Move to a proxy when a stolen key would be a bill you would notice, when your application is public and anonymous at meaningful volume, or when you rotate keys because of abuse, not policy. An unguarded proxy is just your key with extra steps, so treat [proxying your API calls](./proxying-api-calls.mdx) and [hardening your proxy](./hardening-your-proxy.mdx) as one job.
+
+## Next steps
+
+- [Proxying your API calls](./proxying-api-calls.mdx) - The SDK's built-in proxy mode, and what the proxy itself needs to do.
+- [Hardening your proxy](./hardening-your-proxy.mdx) - The checks that keep the proxy from becoming a public key of its own.
+- [Global configuration](../core/global-config.mdx) - Where `apiKey` and `commonBaseURL` are set, including in Node.js.
+- [API key management best practices](https://docs.tomtom.com/platform/documentation/api-best-practices/api-key-management-best-practices) - TomTom's platform guidance on restrictions, rotation, segregation and monitoring.
+- [Securing your agent](../plugins/agent-toolkit/securing-your-agent.mdx) - If you build with the Agent Toolkit, the model provider key needs the same treatment, plus limits of its own.

@@ -1,0 +1,262 @@
+---
+title: Project setup
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+Install the SDK, set your API key, and wire the map into your framework.
+
+## Prerequisites and requirements
+
+- **A TomTom API key**, for map data, services and real-time traffic. [Where your API key runs](../guides/security/where-your-api-key-runs.mdx) decides how much care it needs before you deploy.
+- **Node.js 24+** at install time, the package's `engines` floor, whether or not you target the browser.
+- **A browser with WebGL** for the Map bundle.
+- **A bundler** such as Vite or Webpack: the SDK ships as ES modules.
+- **TypeScript** is optional; the type definitions ship with the package.
+
+The Services bundle also runs in Node.js and React Native; the Map bundle runs in the browser, in any framework (React, Vue, Angular or none).
+
+## Obtaining your API key
+
+1. Navigate to [my.tomtom.com](https://my.tomtom.com)
+2. Create an account or sign in to your existing MyTomTom account
+3. Go to **Products** and find Maps SDK for JavaScript in the list, click on **Start now**
+4. Click on **Create new free SDK key**
+5. **Configure key permissions** for the APIs you plan to use
+
+<Blockquote>
+    **Before you ship, decide where this key will live.** A key used from the browser can be read by anyone who opens the page; a key used from Node.js cannot. See [Where your API key runs](../guides/security/where-your-api-key-runs.mdx), and TomTom's [API key management best practices](https://docs.tomtom.com/platform/documentation/api-best-practices/api-key-management-best-practices) for key restrictions, rotation and monitoring.
+</Blockquote>
+
+## AI coding agent skill
+
+Using an AI coding agent? Install the `tomtom-maps-sdk-js` skill so it writes against the real API; [AI coding with the SDK](../guides/ai-coding.mdx) has the install line and the topics it covers.
+
+## Installing dependencies
+
+One package, `@tomtom-org/maps-sdk`, carries all three bundles: `/core`, `/services` and `/map`.
+
+### SDK installation
+
+```bash
+npm install @tomtom-org/maps-sdk
+```
+
+### Installing peer dependencies
+
+**npm (v7+) and Yarn** install the peer dependencies with the SDK:
+
+```bash
+npm install @tomtom-org/maps-sdk
+# or
+yarn add @tomtom-org/maps-sdk
+```
+
+**pnpm** installs them once you ask it to:
+
+```bash
+# One-time setup
+echo "auto-install-peers=true" >> .npmrc
+
+pnpm add @tomtom-org/maps-sdk
+```
+
+Or install them yourself:
+
+```bash
+pnpm add @tomtom-org/maps-sdk @turf/turf culori lodash-es maplibre-gl zod
+```
+
+#### Peer dependency requirements by bundle
+
+| Peer dependency | Version | Used by |
+| --- | --- | --- |
+| `lodash-es` | 4 | Core, Services, Map |
+| `@turf/turf` | 7 | Core, Services, Map: geospatial calculations |
+| `zod` | 4 | Services: request validation |
+| `maplibre-gl` | 6 | Map: rendering ([About MapLibre GL JS](../guides/map/about-maplibre.mdx)) |
+| `culori` | 4 | Map: colour parsing, conversion and contrast |
+
+The package declares all five as peer dependencies, so install all five even when you import one bundle.
+
+### Vite projects
+
+MapLibre GL JS v6 runs its web worker from a separate file, `maplibre-gl-worker.mjs`, which it locates at runtime. Neither the Vite dev server nor `vite build` emits that file on its own. Without it the map stays blank, and the console logs `Worker failed to load`.
+
+`TomTomMap` takes care of it on Vite 8, and in `vite build` on Vite 7, with no Vite configuration: the SDK hands Vite a worker entry that imports your own `maplibre-gl` worker, and registers the URL Vite gives it with MapLibre before creating the map. The worker is served from your app's origin, with no third-party request, and always matches your MapLibre version. After `vite build`, `dist/assets` holds a `maplibre-gl-worker-*.js` file next to your bundle.
+
+The Vite 7 dev server is the exception. Its pre-bundler moves the SDK into `node_modules/.vite/deps/`, where the worker entry doesn't exist. Upgrade to Vite 8, or keep the SDK out of pre-bundling and list its peer dependencies, which Vite then pre-bundles on their own:
+
+```typescript
+// vite.config.ts, Vite 7
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+    optimizeDeps: { exclude: ['@tomtom-org/maps-sdk'], include: ['@turf/turf', 'culori/fn', 'lodash-es', 'zod'] },
+});
+```
+
+`TomTomMap` leaves MapLibre's own worker lookup in place when:
+
+- your app already called MapLibre's `setWorkerUrl` before creating the map, whose URL it keeps;
+- your bundler builds classic workers, as webpack does by default, or builds no worker at all, as with Rollup and esbuild: set up the worker as the MapLibre documentation describes. With ES module output (`output.module` and `experiments.outputModule`), webpack builds a module worker, which `TomTomMap` registers as it does Vite's;
+- MapLibre loads unbundled, from a CDN or an import map;
+- you pass `registerMapLibreWorker: false`.
+
+```typescript
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+
+const map = new TomTomMap({ registerMapLibreWorker: false, mapLibre: { container: 'map' } });
+```
+
+## TypeScript support
+
+No `@types` package is needed:
+
+```typescript
+import { TomTomConfig, type Language } from '@tomtom-org/maps-sdk/core';
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+```
+
+## SDK common configuration
+
+Set your API key once at startup with `TomTomConfig`. The map and every service call read it from there:
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+
+TomTomConfig.instance.put({
+    apiKey: process.env.TOMTOM_API_KEY,
+    language: 'en-GB',
+});
+```
+
+- **The other options** have defaults: `language`, `geopoliticalView`, `displayUnits`, `retry`, `sendUserAgentHeader` and `commonBaseURL`. [Global configuration](../guides/core/global-config.mdx) covers each one, and how `put` merges.
+- **Language**: one of the [39 supported codes](/maps-sdk-js/api-reference/variables/core.languages.html), typed as `Language`, such as `en-US`, `pt-BR`, `zh-Hans` or `ngt`, the Neutral Ground Truth that shows each place in its local language.
+- **`commonBaseURL`** changes only to route requests through a [proxy of your own](../guides/security/proxying-api-calls.mdx).
+
+### Multiple API keys
+
+A service call or a map can override the global key:
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { discoverPlaces } from '@tomtom-org/maps-sdk/services';
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+
+TomTomConfig.instance.put({ apiKey: process.env.TOMTOM_DEFAULT_API_KEY });
+
+const results = await discoverPlaces({
+    query: 'restaurants',
+    geoBias: { position: [4.9041, 52.3676] },
+    apiKey: process.env.TOMTOM_PREMIUM_API_KEY, // this call only
+});
+
+const map = new TomTomMap({
+    mapLibre: { container: 'map' },
+    apiKey: process.env.TOMTOM_MAP_API_KEY, // this map only
+});
+```
+
+## Framework-specific setup
+
+### React
+
+```javascript
+// src/config/tomtom.js
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+
+TomTomConfig.instance.put({
+    apiKey: process.env.REACT_APP_TOMTOM_API_KEY,
+    language: 'en-US'
+});
+
+// src/components/Map.jsx
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { useEffect, useRef } from 'react';
+
+export function MapComponent() {
+    const mapRef = useRef();
+
+    useEffect(() => {
+        const map = new TomTomMap({
+            mapLibre: {
+                container: mapRef.current
+            }
+        });
+
+        return () => map.mapLibreMap.remove();
+    }, []);
+
+    return <div ref={mapRef} style={{ width: '100%', height: '400px' }} />;
+}
+```
+
+### Vue
+
+```javascript
+// src/plugins/tomtom.js
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+
+TomTomConfig.instance.put({
+    apiKey: process.env.VUE_APP_TOMTOM_API_KEY,
+    language: 'en-US'
+});
+
+// src/components/MapComponent.vue
+<template>
+    <div ref="mapContainer" class="map-container"></div>
+</template>
+
+<script>
+import { TomTomMap } from '@tomtom-org/maps-sdk/map';
+
+export default {
+    mounted() {
+        this.map = new TomTomMap({
+            mapLibre: {
+                container: this.$refs.mapContainer
+            }
+        });
+    },
+    beforeUnmount() {
+        this.map?.mapLibreMap.remove();
+    }
+};
+</script>
+```
+
+### Node.js
+
+```javascript
+// src/config/tomtom.js
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+
+TomTomConfig.instance.put({
+    apiKey: process.env.TOMTOM_API_KEY,
+    language: 'en-US'
+});
+
+// src/services/geocoding.js
+import { geocode } from '@tomtom-org/maps-sdk/services';
+
+export async function geocodeAddress(query) {
+    return await geocode({
+        query
+    });
+}
+```
+
+## Next steps
+
+- [Map quickstart](../guides/map/quickstart.mdx): an interactive map with TomTom data
+- [Services quickstart](../guides/services/quickstart.mdx): search, geocoding and routing
+- [Core quickstart](../guides/core/quickstart.mdx): the configuration, types and utilities both share
+- [Map styles](../guides/map/styles.mdx), [user events](../guides/map/user-events.mdx), [traffic](../guides/map/traffic.mdx), [POIs](../guides/map/pois.mdx) and [route planning](../guides/services/routing/quickstart.mdx)
+- The [examples gallery](../examples), for complete apps to start from

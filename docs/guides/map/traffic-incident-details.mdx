@@ -1,0 +1,184 @@
+---
+title: Traffic incident details module
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+`TrafficIncidentDetailsModule` draws exactly the incidents a [`trafficIncidentDetails`](../services/traffic/traffic-incident-details.mdx) call returned, and highlights a subset of them. Use it when your app also holds the typed incidents, for popups, lists or route correlation, and decides when they render.
+
+The module owns the incident lines and icons it draws from your fetched details, and their look, including the focus treatment below. The live incident tiles and their colours belong to the [Traffic Incidents Module](./traffic-incidents.mdx#appearance). This module borrows those colours, so that module's `colors.*` knobs recolour it too ([Borrowed looks](./styling-borrowed-looks.mdx)). No other knob reaches it. See [Who owns what](./modules.mdx#who-owns-what).
+
+<GuideDemo demo="traffic-incident-details" />
+
+## When to use the details module vs `TrafficIncidentsModule`
+
+| You need… | Use |
+|---|---|
+| Live, full-coverage incidents with no fetch | `TrafficIncidentsModule` |
+| Typed incident objects in your app code | `TrafficIncidentDetailsModule` |
+| Render exactly the result of a single REST call | `TrafficIncidentDetailsModule` |
+| Per-feature focus / highlight a subset | `TrafficIncidentDetailsModule` |
+| Maximum visual fidelity (per-road-class styling, declutter) | `TrafficIncidentsModule` |
+
+The tile incidents are [hidden until shown](./styles.mdx#available-style-parts), so by default the two don't collide. If your app shows `TrafficIncidentsModule`, hide it while this module draws, or each incident renders twice.
+
+## Initialization
+
+```javascript
+import { TomTomMap, TrafficIncidentDetailsModule } from '@tomtom-org/maps-sdk/map';
+
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+const incidentDetailsModule = await TrafficIncidentDetailsModule.create(map);
+```
+
+It is [data-owned](./modules.mdx#types-of-modules), so every `create()` returns a new, independent instance.
+
+## Rendering incidents
+
+Pass the service result to `show()`:
+
+```javascript
+import { trafficIncidentDetails } from '@tomtom-org/maps-sdk/services';
+
+const result = await trafficIncidentDetails({ bbox: map.getBBox() });
+await incidentDetailsModule.show(result);
+```
+
+- `show()` replaces what was shown and clears the focus. `clear()` removes every incident.
+- `getShown().incidents` is the collection last passed to `show()`, not a viewport query.
+- The `shown-features` [module event](./module-events.mdx#shown-features) fires on each `show()`.
+
+## Focusing a subset
+
+`setFocus(ids)` marks the incidents with those ids through MapLibre feature state. `setFocus(null)` or `setFocus([])` clears the focus:
+
+```javascript
+incidentDetailsModule.setFocus([result.features[0].properties.id]);
+incidentDetailsModule.setFocus(null);
+```
+
+- The default highlight widens the focused incidents and paints an outline beneath them, black on a light style and white on a dark one. The highlight only adds emphasis, so the other incidents aren't dimmed.
+- `setFocus` does nothing before `show()`. A style change that [keeps state](./styles.mdx#keeping-or-dropping-state) keeps the focus.
+- Once a handler covers the module, a hovered or clicked incident gets the same highlight. Its state is the module's [event state](./user-events.mdx#event-states), which `setEventState` sets from your own UI.
+
+### Customising or disabling the highlight
+
+`highlight` takes an `IncidentHighlightConfig`. Unset fields keep their defaults:
+
+```javascript
+const incidentDetailsModule = await TrafficIncidentDetailsModule.create(map, {
+    highlight: { outline: { color: '#1976d2' }, line: { widthFactor: 1.8 } },
+});
+```
+
+- `line.widthFactor` multiplies the width of the highlighted incidents, `1.6` by default and clamped to `1`–`1.8`. `1` keeps the outline without widening. A wider stripe would cover the outline at high zoom.
+- `highlight: false` turns the highlight off for focused, hovered and clicked incidents alike. `setFocus` still writes `feature-state.focused`, and user events still write their `eventState`, for your own layers to draw.
+- Changing `highlight` on a module already showing incidents repaints the highlighted ones in place:
+
+```javascript
+incidentDetailsModule.updateConfig({ highlight: { outline: { color: '#c2185b' }, line: { widthFactor: 1.2 } } });
+incidentDetailsModule.updateConfig({ highlight: false });
+```
+
+## Events
+
+The handlers of `click`, `hover` and the other [user events](./user-events.mdx) receive the typed `TrafficIncident`, with its `Date` and array properties intact:
+
+```javascript
+incidentDetailsModule.events.on('click', (incident) => {
+    incidentDetailsModule.setFocus([incident.properties.id]);
+});
+```
+
+The handler's third argument, `allEventFeatures`, holds every incident under the pointer once, however many of its layers were hit.
+
+## Visibility and layer ordering
+
+`isVisible()` reports the `visible` setting, `true` by default, not whether any incident is drawn. While hidden, `show()` updates the data without drawing it.
+
+```javascript
+incidentDetailsModule.setVisible(false);
+incidentDetailsModule.getShown().incidents.features.length > 0; // whether there are incidents to draw
+
+// Above every other layer (default: below the labels, 'lowestLabel')
+incidentDetailsModule.updateConfig({ beforeLayerConfig: 'top' });
+```
+
+`beforeLayerConfig` takes one target for every layer of the module, `'top'` or a key of `mapStyleLayerIDs` ([Layer position](./modules.mdx#appearance-vocabulary)). You can't position parts separately.
+
+## Layer overrides
+
+Beyond the settings above, `layers` (`TrafficIncidentDetailsLayersConfig`) takes a partial MapLibre layer for each layer the module draws. Bottom to top, they are `highlightHalo`, `outline`, `innerSolid`, `innerChevron`, `innerPattern`, then the `incidentMarker`, `jamMarker` and `closedRoadMarker` icons.
+
+```javascript
+incidentDetailsModule.updateConfig({
+    layers: {
+        incidentMarker: { minzoom: 11 },                  // the category icons from zoom 11
+        jamMarker: { layout: { 'text-field': '' } },      // jam icons without their delay
+        innerChevron: { layout: { visibility: 'none' } }, // no direction chevrons
+    },
+});
+```
+
+- `paint` and `layout` merge per property onto the module's own, and win over the incident colours and the highlight.
+- A layer an entry hides through `layout.visibility` stays hidden while the module is shown.
+- `beforeLayerConfig` places the layers, so a `beforeID` is ignored.
+
+## Every setting as data
+
+`trafficIncidentDetailsKnobCatalogue` lists the module's plain-valued settings with their kind,
+range and any default that holds everywhere. It is readable with no map loaded:
+
+```javascript
+import { knobEntryOf, trafficIncidentDetailsKnobCatalogue } from '@tomtom-org/maps-sdk/map';
+
+const widthFactor = knobEntryOf(trafficIncidentDetailsKnobCatalogue, 'highlight.line.widthFactor');
+// { id: 'highlight.line.widthFactor', kind: 'factor', description: '…', range: { min: 1, max: 1.8, step: 0.1, bounds: 'hard' }, default: 1.6 }
+```
+
+| Id | Kind |
+|---|---|
+| `visible` | toggle, `true` by default |
+| `highlight.outline.color` | colour, following the map's light/dark theme if unset |
+| `highlight.line.widthFactor` | factor 1–1.8, `1.6` by default |
+
+- `trafficIncidentDetailsKnobIds` lists the ids, `TrafficIncidentDetailsKnobId` is their union,
+  and `TrafficIncidentDetailsKnobValueOf<ID>` is the plain value an id takes.
+- It leaves out `beforeLayerConfig`, `layers`, `highlight: false` (which turns the highlight off) and `events`. The
+  incident lines take the style's incident colours, which the [Traffic Incidents Module](./traffic-incidents.mdx#appearance)'s
+  `colors.*` knobs set.
+- The demo above builds its panel from the catalogue. Click an incident to focus it, then turn the
+  highlight knobs.
+
+## Limitations
+
+The Incident Details API returns a feature list, not rendering-ready tiles, so it lacks the tags the tile pipeline adds per feature:
+
+- There's no road-class-aware width or offset. Every incident is a uniform stripe centred on the road.
+- There's no declutter by road importance. Every incident shows above its layer's minimum zoom, and the icons of shorter delays from a higher one.
+- There's no secondary cause icon. Only the primary category icon renders.
+
+For full visual fidelity, use `TrafficIncidentsModule`.
+
+Where incidents share a point or stack along one road, MapLibre's symbol collision keeps only the highest-sort-key icon, and `queryRenderedFeatures` can't reach the culled ones. To surface every incident at a location, read the `FeatureCollection` you passed to `show()`.
+
+## API reference
+
+[`TrafficIncidentDetailsModule`](/maps-sdk-js/api-reference/classes/map.TrafficIncidentDetailsModule.html), [`TrafficIncidentDetailsModuleConfig`](/maps-sdk-js/api-reference/types/map.TrafficIncidentDetailsModuleConfig.html) and [`IncidentHighlightConfig`](/maps-sdk-js/api-reference/types/map.IncidentHighlightConfig.html).
+
+## Related guides and examples
+
+### Related guides
+- **[Incident details service](../services/traffic/traffic-incident-details.mdx)** - The query this module draws
+- **[Traffic incidents module](./traffic-incidents.mdx)** - The live incident tiles, and the colours this module borrows
+- **[Traffic overview](./traffic.mdx)** - Every way the SDK draws traffic
+
+### Related examples
+- **[Traffic incident details](../../examples/traffic-incident-details)** - A city's incidents clipped to its boundary, a clicked one focused
+- **[Traffic incident focus](../../examples/traffic-incident-focus)** - A city's incidents brought forward through `layers`, and the rest of the map pushed back

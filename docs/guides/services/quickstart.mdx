@@ -1,0 +1,115 @@
+---
+title: Services quickstart
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Services bundle (`@tomtom-org/maps-sdk/services`) calls TomTom's location APIs and returns typed results, in GeoJSON when they have a geometry. It runs in browsers, Node.js and React Native, and needs no map.
+
+## Installing dependencies
+
+```bash
+npm install @tomtom-org/maps-sdk
+```
+
+Services needs `@turf/turf`, `lodash-es` and `zod` as peer dependencies. The [project setup guide](../../introduction/project-setup.mdx#installing-peer-dependencies) covers installing them with pnpm.
+
+## Setup
+
+Set the API key once in the [global configuration](../core/global-config.mdx). Every call reads it:
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+
+TomTomConfig.instance.put({ apiKey: 'YOUR_API_KEY' });
+```
+
+<Blockquote>
+    **Before you ship, decide where this key will live.** Anyone who opens the page can read a key used from the browser. A key used from Node.js stays private. [Where your API key runs](../security/where-your-api-key-runs.mdx) explains which case you are in and what to do. TomTom's [API key management best practices](https://docs.tomtom.com/platform/documentation/api-best-practices/api-key-management-best-practices) cover key restrictions, rotation and monitoring.
+</Blockquote>
+
+## Available services
+
+Places, routes, reachable ranges, geometries and traffic come back as GeoJSON, ready for the map modules. `getPOICategories`, `getPOICategoryCodes` and `getSearchSuggestions` return plain objects. Every call takes the [common request options](./request-options-and-errors.mdx) for cancellation, validation and per-call overrides.
+
+### Places services
+
+[Places services](./places/quickstart.mdx) cover search, geocoding, place details, POI categories and EV charging stations. They return [places](../core/places.mdx).
+
+```javascript
+import {
+    discoverPlaces,         // free-form, category, in-area and along-route search
+    geocode,                // address → coordinates
+    reverseGeocode,         // coordinates → address
+    getSearchSuggestions,   // search box: places, brands and categories
+    getPlaceDetails,        // a place by its id
+    getPOICategories,       // the POI category tree
+    geometryData,           // the outlines of areas such as cities and countries
+} from '@tomtom-org/maps-sdk/services';
+
+const results = await discoverPlaces({ query: 'restaurants', geoBias: { position: [4.9041, 52.3676] } });
+const location = await geocode({ query: 'Dam Square, Amsterdam' });
+const address = await reverseGeocode({ position: [4.9041, 52.3676] });
+```
+
+### Routing services
+
+[Routing services](./routing/quickstart.mdx) calculate routes and reachable ranges (isochrones). They return [routes](../core/routes.mdx).
+
+```javascript
+import {
+    calculateRoute,           // routes between locations
+    calculateReachableRanges, // reachable-range polygons (private preview)
+} from '@tomtom-org/maps-sdk/services';
+
+const routes = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676], // Amsterdam
+        [2.3522, 48.8566]  // Paris
+    ]
+});
+```
+
+### Traffic services
+
+[Traffic incident details](./traffic/traffic-incident-details.mdx) and [traffic area analytics](./traffic/traffic-area-analytics.mdx):
+
+```javascript
+import { trafficAreaAnalytics, trafficIncidentDetails } from '@tomtom-org/maps-sdk/services';
+
+const incidents = await trafficIncidentDetails({
+    bbox: [4.728, 52.278, 5.08, 52.479] // [minLng, minLat, maxLng, maxLat]
+});
+```
+
+## Node.js usage
+
+The services work the same in Node.js, where the API key stays off the client. The package ships ES modules only, so `import` it from a `.mjs` file or a package with `"type": "module"`. This also allows the top-level `await` below.
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { discoverPlaces } from '@tomtom-org/maps-sdk/services';
+
+TomTomConfig.instance.put({ apiKey: process.env.TOMTOM_API_KEY });
+
+const results = await discoverPlaces({
+    query: 'coffee shops',
+    geoBias: { position: [4.9041, 52.3676] }
+});
+```
+
+The [Node.js geocoding example](../../examples/nodejs-geocode) runs this setup end to end.
+
+## Next steps
+
+- [Places services](./places/quickstart.mdx): search, geocoding, POIs, EV charging
+- [Routing services](./routing/quickstart.mdx): routes and reachable ranges
+- [Traffic services](./traffic/traffic-incident-details.mdx): incident details and area analytics
+- [Request options and errors](./request-options-and-errors.mdx): validation, cancellation, deadlines and errors
+- [Where your API key runs](../security/where-your-api-key-runs.mdx): why Node.js keeps your key private and the browser does not

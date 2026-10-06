@@ -1,0 +1,134 @@
+---
+title: Viewport places plugin
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.5.3"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Viewport Places plugin shows search results for the visible map area, and searches again
+each time the map moves. It connects the SDK's [search](../services/places/search.mdx) to the
+[Places module](../map/places.mdx), one module per search you add.
+
+<GuideDemo demo="viewport-places-plugin" />
+
+## Use cases
+
+- Choose which POI categories show on your map, from which zoom and with which marker type.
+- Search this area, with results limited to the viewport and refreshed when the user pans or zooms.
+- Stack several searches, such as base-map POIs under a brand's results.
+
+## How it works
+
+- On every `moveend`, each added search runs a [`discoverPlaces`](../services/places/search.mdx)
+  fuzzy search biased to the viewport's bounding box, and shows its first page in its own
+  `PlacesModule`.
+  - A newer move cancels the search still in flight, so a slow response never overwrites a newer one.
+- Each search has its own search options (query, POI categories, and limit, 100 by default) and its own
+  [Places module configuration](../map/places-styling.mdx) (marker type, clustering, colour…).
+- Outside its `minZoom` to `maxZoom` range, a search clears its places and sends no request.
+
+### API reference:
+
+[`ViewportPlaces`](/maps-sdk-js/api-reference/classes/plugins.ViewportPlaces.html)
+
+## Installation
+
+```bash
+npm install @tomtom-org/maps-sdk maplibre-gl @tomtom-org/maps-sdk-plugin-viewport-places
+```
+
+`@tomtom-org/maps-sdk` is a peer dependency. Set up a `TomTomMap` as in
+[Project setup](../../introduction/project-setup.mdx), then add a search:
+
+```javascript
+import { ViewportPlaces } from '@tomtom-org/maps-sdk-plugin-viewport-places';
+
+const viewportPlaces = new ViewportPlaces(map);
+await viewportPlaces.addPOICategories({
+  id: 'restaurants',
+  categories: ['RESTAURANT'],
+  minZoom: 10
+});
+```
+
+The `restaurants` places now follow the visible map area from zoom 10.
+
+<Blockquote>
+    Place modules stack in the order they are added: the first one at the bottom, later ones on top.
+</Blockquote>
+
+The [viewport places example](../../examples/viewport-places-plugin) above stacks two category
+searches under a brand search.
+
+## Usage examples
+
+### Add base-map POI categories (styled like the base map)
+
+`addPOICategories` searches the given [POI categories](../services/places/poi-categories.mdx) and
+draws them with the `base-map` marker type, like the style's own POIs:
+
+```javascript
+await viewportPlaces.addPOICategories({
+  id: 'base-pois',
+  categories: ['PARKING_GARAGE', 'CHARGING_LOCATION'],
+  minZoom: 10,
+  maxZoom: 17
+});
+```
+
+### Add a branded search place module (custom marker type)
+
+`add` takes a `placesModuleConfig`, whose marker type defaults to `base-map`, and any fuzzy search
+options except `geoBias`, `cursor` and `signal`, which the plugin sets itself:
+
+```javascript
+const brandPlaces = await viewportPlaces.add({
+  id: 'brand-search',
+  searchOptions: { query: 'Lidl', filters: { poiCategories: ['SUPERMARKET'] }, limit: 20 },
+  minZoom: 8,
+  placesModuleConfig: { markerType: 'pin' }
+});
+
+brandPlaces.events.places.on('click', (place) => console.log(place.properties.poi?.name));
+```
+
+- `add` and `addPOICategories` resolve with the search's `PlacesModule`, for its
+  [events](../map/places.mdx#user-events) and everything else the module offers.
+- Give an `id` to update or remove the search later. Otherwise, the plugin generates one.
+
+### Update an existing place module
+
+```javascript
+await viewportPlaces.update({
+  id: 'brand-search',
+  searchOptions: { query: 'Aldi', limit: 30 },
+  placesModuleConfig: { markerType: 'base-map' }
+});
+```
+
+- The new `searchOptions` merge into the current ones, `filters` member by member.
+  `placesModuleConfig` merges one level deep.
+- The search runs again immediately.
+
+### Remove a place module
+
+```javascript
+viewportPlaces.remove('brand-search');
+viewportPlaces.removeAll();
+```
+
+- Removing a search stops it and clears its places.
+- `remove` and `update` both throw for an unknown ID.
+
+## Related guides and examples
+
+- **[Search](../services/places/search.mdx)** - The fuzzy search each added search runs
+- **[Places module](../map/places.mdx)** - The module each search draws its results with
+- **[Place styling](../map/places-styling.mdx)** - Marker types, clustering and colour for `placesModuleConfig`
+- **[Viewport places example](../../examples/viewport-places-plugin)** - Category and brand searches stacked over the map
+

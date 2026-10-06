@@ -1,0 +1,76 @@
+---
+title: Editing style layers
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+`styling.layers` edits the loaded style's layers directly, for what the knobs of the [Styling Foundations module](./styling.mdx) don't cover. This advanced tier depends on the style version, so prefer a [knob](./styling.mdx#knobs) or [`setMapColors`](./styling-map-colors.mdx) wherever one covers your need.
+
+## The advanced tier: `styling.layers`
+
+`styling.layers.query(...)` selects style layers and returns a [`LayerSelection`](/maps-sdk-js/api-reference/classes/map.LayerSelection.html) to edit their paint, layout, filter or visibility:
+
+```javascript
+styling.layers.query({ group: 'roadLabels' }).setPaint({ 'text-color': '#93c5fd' });
+styling.layers.query({ metadataGroups: ['water'], layerTypes: ['fill'] }).setPaint({ 'fill-opacity': 0.6 });
+styling.layers.query({ idIncludes: ['railway'] }).setVisible(false);
+styling.layers.query({ group: 'trafficFlow', layerTypes: ['line'] }).setPaint({ 'line-opacity': 0.6 });
+styling.layers.query({ group: 'roadLabels' }).reset(); // undo the edits made on those layers
+styling.layers.query({ group: 'railways' }).layerIds;  // what matched, in draw order
+```
+
+| Query field | Selects by |
+| --- | --- |
+| `group` | A base-map group, named as in [`BaseMapModule`](./base-map.mdx), or the layers of another style-owned module: `pois`, `trafficFlow`, `trafficIncidents`, `hillshade` (`styleModuleLayerGroupNames`) |
+| `metadataGroups` | The style's own `metadata.group` values, for groups the SDK does not name |
+| `layerTypes` | MapLibre layer types: `line`, `fill`, `symbol`, … |
+| `sourceLayers` | Vector-tile source layers: `roads`, `places`, `poi`, … |
+| `idIncludes`, `idExcludes` | Fragments the layer id must, or must not, contain (case-insensitive) |
+
+A layer must match every field you give, so other fields narrow a `group`. A query covers every style layer, whichever module shows or hides it.
+
+## Only the style's own layers
+
+`styling.layers` and the knobs reach only the layers the loaded style declares. To override the layers a data-owned module adds, use its own `layers` configuration, which it merges over its defaults and keeps across style switches:
+
+| Module | Its `layers` entries |
+|---|---|
+| [Places](./places-styling.mdx) | `main`, `micro`, `selected`, the cluster layers, and those of its connections and entry points |
+| [Routing](./routes-styling.mdx) | the route lines, waypoints, sections and their labels, by group (`mainLines`, `sections`, …) |
+| [Geometries](./geometries.mdx), [Reachable ranges](./reachable-ranges.mdx) | `fill`, `line`, `label`, `lineLabel` |
+| [Traffic incident details](./traffic-incident-details.mdx) | the incident lines, from `highlightHalo` to `innerPattern`, and the three markers |
+| [Traffic area analytics](./traffic-area-analytics-module.mdx) | `heatmap`, each grid's fill, outline, extrusion and highlight, and the region |
+
+The layers you add through `map.mapLibreMap` are yours to style.
+
+In the demo below, one switch fades the traffic flow, POIs and road labels through `styling.layers` groups, and brings a city's incidents and boundary forward through their modules' `layers` configs.
+
+<GuideDemo demo="traffic-incident-focus" />
+
+## What an edit keeps
+
+- After a style switch that carries state, the SDK re-applies your edits on top of the knobs, as long as the layers still exist. A clean switch (`resetState: true`) drops every edit.
+- `setFilter` replaces the filter the style gave a layer. The filters other modules add, such as POI categories, still narrow it.
+- Edits are not part of `getConfig()`, because they apply to this style only.
+
+## How durable is it?
+
+Layer ids, property expressions and even which layers exist depend on the style version the map loads. A query that matches nothing warns once and does nothing.
+
+You can still use `map.mapLibreMap` underneath ([which to use when](./about-maplibre.mdx#when-to-use-tomtom-sdk-vs-direct-maplibre)). Note that a `setPaintProperty` on a style layer there is not re-applied after a style switch.
+
+## Related guides and examples
+
+### Related guides
+- **[Map styling](./styling.mdx#how-durable-is-this)** — the knobs, and which of them depend on the TomTom styles
+- **[About MapLibre](./about-maplibre.mdx)** — the raw MapLibre map underneath
+
+### Related examples
+- **[Map styling playground](../../examples/map-styling-playground)** — every knob on a panel built from the catalogue
+- **[Traffic incident focus](../../examples/traffic-incident-focus)** — `styling.layers` groups and module `layers` configs applied and reset by one switch

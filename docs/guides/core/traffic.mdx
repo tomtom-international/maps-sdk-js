@@ -1,0 +1,163 @@
+---
+title: Traffic
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+`@tomtom-org/maps-sdk/core` exports the traffic types that the services, map modules and routing share, so an incident looks the same whichever API returns it.
+
+## Where traffic types are used
+
+| Context | Type | Description |
+|---------|------|-------------|
+| [Incident Details service](../services/traffic/traffic-incident-details.mdx) | `TrafficIncident` / `TrafficIncidentDetails` | The parsed incidents of a `trafficIncidentDetails` call |
+| [Traffic Incidents map module](../map/traffic-incidents.mdx) | `TrafficIncidentsModuleFeature` (map) | A live incident tile feature, extending `TrafficIncidentBaseProperties` |
+| [Route sections](../map/routes-sections.mdx) | `TrafficSectionProps` | A stretch of route affected by a traffic incident |
+| [Traffic Area Analytics service](../services/traffic/traffic-area-analytics.mdx) | `TrafficAreaAnalytics`, `AreaAnalyticsMetricKey` | A region's historical traffic report and its metric names (`areaAnalyticsMetricKeys`) |
+
+## Shared types
+
+### `TrafficIncidentCategory`
+
+The kind of incident, used by the Incident Details service, the incident tiles and route sections:
+
+```typescript
+import type { TrafficIncidentCategory } from '@tomtom-org/maps-sdk/core';
+
+// 'accident' | 'animals-on-road' | 'broken-down-vehicle' | 'danger' |
+// 'flooding' | 'fog' | 'frost' | 'jam' | 'lane-closed' | 'narrow-lanes' |
+// 'other' | 'rain' | 'road-closed' | 'roadworks' | 'wind'
+const category: TrafficIncidentCategory = incident.properties.category;
+```
+
+- `fullTrafficIncidentCategories` lists every category, for UI filters or validation.
+- `trafficIncidentRequestCategories` (`TrafficIncidentRequestCategory`) lists the ones the Incident Details service's [`categoryFilter`](../services/traffic/traffic-incident-details.mdx#by-category) accepts. It leaves out `animals-on-road` and `narrow-lanes`, which only the tiles carry.
+
+```typescript
+import { fullTrafficIncidentCategories } from '@tomtom-org/maps-sdk/core';
+
+// ['accident', 'broken-down-vehicle', 'danger', 'flooding', ..., 'animals-on-road', 'narrow-lanes']
+console.log(fullTrafficIncidentCategories);
+```
+
+### `DelayMagnitude`
+
+The severity of a delay, in `TrafficIncidentProperties.magnitudeOfDelay`, `TrafficSectionProps.magnitudeOfDelay` and the values of the incidents module's [`magnitudes` filter](../map/traffic-incidents.mdx#severity):
+
+```typescript
+import type { DelayMagnitude } from '@tomtom-org/maps-sdk/core';
+
+// 'unknown' | 'minor' | 'moderate' | 'major' | 'indefinite'
+const severity: DelayMagnitude = incident.properties.magnitudeOfDelay;
+```
+
+| Value | Meaning |
+|-------|---------|
+| `unknown` | Severity cannot be determined |
+| `minor` | Small delay (a few minutes) |
+| `moderate` | Noticeable delay (several minutes) |
+| `major` | Significant delay (10+ minutes) |
+| `indefinite` | Unknown or extremely long delay (e.g. road closure) |
+
+`indexedMagnitudes` lists every magnitude in the order above, which matches the Traffic API's numeric `magnitudeOfDelay` codes. For example, index `2` is `moderate`. The SDK's results already carry the names. Use it to build a magnitude filter or check whether all are selected:
+
+```typescript
+import { indexedMagnitudes } from '@tomtom-org/maps-sdk/core';
+
+const allSelected = selectedMagnitudes.length === indexedMagnitudes.length;
+```
+
+### `TrafficIncidentTimeValidity`
+
+Whether an incident is active now or planned, used by the Incident Details service and the incident tiles:
+
+```typescript
+import type { TrafficIncidentTimeValidity } from '@tomtom-org/maps-sdk/core';
+
+// 'present' | 'future'
+const validity: TrafficIncidentTimeValidity = incident.properties.timeValidity;
+```
+
+`trafficIncidentTimeValidities` lists both, `present` first, for a picker over the service's [`timeValidityFilter`](../services/traffic/traffic-incident-details.mdx#by-time-validity) or the incidents module's [`timeValidity`](../map/traffic-incidents.mdx#planned-incidents).
+
+## Incident types
+
+### `TrafficIncidentBaseProperties`
+
+The nine properties the Incident Details response and the incident tile features share:
+
+```typescript
+import type { TrafficIncidentBaseProperties } from '@tomtom-org/maps-sdk/core';
+
+type TrafficIncidentBaseProperties = {
+    id: string;
+    category: TrafficIncidentCategory;
+    magnitudeOfDelay: DelayMagnitude;
+    delayInSeconds?: number;
+    startTime?: Date;
+    endTime?: Date;
+    probabilityOfOccurrence?: TrafficIncidentProbability; // 'certain' | 'probable' | 'risk_of' | 'improbable'
+    numberOfReports?: number;
+    lastReportTime?: Date;
+};
+```
+
+### `TrafficIncidentProperties`
+
+`TrafficIncidentBaseProperties` plus what only the Incident Details response carries:
+
+```typescript
+import type { TrafficIncidentProperties } from '@tomtom-org/maps-sdk/core';
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `events` | `TrafficIncidentEvent[]` | One or more event descriptions, each with its `description`, `code` and `category` |
+| `from` | `string?` | Start of the affected road stretch |
+| `to` | `string?` | End of the affected road stretch |
+| `lengthInMeters` | `number?` | Length of the affected road section |
+| `roadNumbers` | `string[]?` | Road numbers (e.g. `['A10']`) |
+| `timeValidity` | `TrafficIncidentTimeValidity` | Always present in the service response |
+
+### `TrafficIncident` and `TrafficIncidentDetails`
+
+```typescript
+import type { TrafficIncident, TrafficIncidentDetails } from '@tomtom-org/maps-sdk/core';
+
+// TrafficIncident — a GeoJSON Feature<Point | LineString, TrafficIncidentProperties>
+// TrafficIncidentDetails — a GeoJSON FeatureCollection of them, what trafficIncidentDetails returns
+```
+
+## Routing traffic types
+
+### `TrafficSectionProps`
+
+A route's `traffic` sections share `TrafficIncidentCategory` and `DelayMagnitude` with the incident types above:
+
+```typescript
+import type { TrafficSectionProps } from '@tomtom-org/maps-sdk/core';
+
+const trafficSections: TrafficSectionProps[] = route.properties.sections.traffic ?? [];
+
+for (const section of trafficSections) {
+    console.log(section.categories);          // e.g. ['jam']
+    console.log(section.magnitudeOfDelay);    // e.g. 'moderate'
+    console.log(section.delayInSeconds);      // e.g. 420
+    console.log(section.effectiveSpeedInKmh); // e.g. 18
+}
+```
+
+- `eventId` - The incident behind the section. Pass it to [`trafficIncidentDetails({ ids })`](../services/traffic/traffic-incident-details.mdx#query-by-incident-ids) for the whole record.
+- `tec` - The section's TPEG2-TEC codes, the international traffic message classification.
+
+## Related
+
+- [Incident Details service](../services/traffic/traffic-incident-details.mdx) — Fetch incidents
+- [Traffic Incidents map module](../map/traffic-incidents.mdx) — Show the live incident tiles
+- [Routing parameters](../services/routing/parameters.mdx#traffic-based-travel-times) — Routes whose travel times account for live traffic

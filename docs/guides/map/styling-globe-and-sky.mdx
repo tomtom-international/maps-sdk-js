@@ -1,0 +1,63 @@
+---
+title: Globe and sky
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The [Styling Foundations module](./styling.mdx)'s `view` knobs hold the projection and sky, the map-level MapLibre state that a style switch would otherwise reset. So a globe stays a globe across `setStyle`. Like any other [knobs](./styling.mdx#knobs), they work with `setKnob`, `getKnob`, `resetKnob` and `getConfig()`, on every style.
+
+<GuideDemo demo="globe-terrain" />
+
+## Projection and sky
+
+```javascript
+import { setKnob, StylingFoundationsModule, stylingFoundationsKnobCatalogue } from '@tomtom-org/maps-sdk/map';
+
+const styling = await StylingFoundationsModule.get(map);
+setKnob(styling, stylingFoundationsKnobCatalogue, 'view.projection', 'globe');
+setKnob(styling, stylingFoundationsKnobCatalogue, 'view.sky.visible', true); // without it, a globe has no atmosphere
+```
+
+- The `globe` [preset](./styling.mdx#presets) sets both in one call.
+- 3D terrain is not a knob. It needs the elevation style part loaded first, which [`TerrainModule`](./terrain.mdx#3d-elevation) does for you.
+
+## Sky colours
+
+`view.sky.color` and `view.sky.horizonColor` colour the sky. If you don't set them, they take:
+
+- The style's own `sky`, if the style declares one.
+- Otherwise, the style's light or dark theme: daylit blue with a white horizon on a light style, night blue with a dim horizon on a dark one.
+
+## The colour behind the map
+
+`view.space.color` is the colour **behind** the map. It shows around the planet on a globe, where the map canvas is transparent.
+
+- If your page already gives the map container a background, that colour is the knob's default, and a reset returns to it.
+- Otherwise, it follows the style theme: white on a light style, the night sky's blue on a dark one. The SDK re-applies it after a `setStyle`, so it follows a light-to-dark switch.
+
+```javascript
+setKnob(styling, stylingFoundationsKnobCatalogue, 'view.space.color', '#05070d');
+```
+
+## What to expect
+
+- The globe flattens to Mercator between zoom 11 and 12, by design.
+- Fog over a tilted view starts at pitch 60, which is also MapLibre's default `maxPitch`. To see it, raise `maxPitch` on the map.
+
+The demo above zooms a globe into 3D terrain. The [3D terrain playground](../../examples/terrain-playground) keeps a tilted camera, its sky and its relief across a style switch. The map effects plugin's [depth of field](../plugins/map-effects-depth-of-field.mdx) keeps one distance of a tilted view sharp and blurs the rest.
+
+## Related guides and examples
+
+### Related guides
+- **[Map styling](./styling.mdx)** — the knobs, their catalogue, presets and settings
+- **[Terrain](./terrain.mdx)** — hillshade and the 3D surface a pitched globe shows
+
+### Related examples
+- **[Globe and 3D terrain](../../examples/globe-terrain)** — the `view` knobs, then 3D terrain as you zoom in
+- **[3D terrain playground](../../examples/terrain-playground)** — sky and relief that outlive a style switch

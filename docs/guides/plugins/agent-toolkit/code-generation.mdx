@@ -1,0 +1,411 @@
+---
+title: Code generation
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.15.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+<Blockquote type="warning">
+    **Experimental.** `analyseData`, `processData`, `createTracker`, `clusterIncidents` and `executeMaplibreCode` run model-written JavaScript; their inputs, injected identifiers and output contracts may change without notice. In the browser, the data tools' code runs [isolated](#data-tool-execution-isolation-experimental) with no DOM, storage or network. `executeMaplibreCode` — and the data tools under Node or when the isolation can't start — run in your app's own realm, with its privileges. Read the [threat model](#threat-model) before shipping.
+</Blockquote>
+
+Five tools take JavaScript as a parameter instead of a fixed argument list (`clusterIncidents` optionally). The model writes the code. The plugin
+compiles it with `new AsyncFunction(...paramNames, code)` and calls it with the injected inputs.
+
+This lets the agent answer open-ended questions, such as *"bar chart of POI categories"*, *"union the boundaries of these
+cities"* or *"focus the camera on the worst traffic on the route"*, without a dedicated parameter for every variation.
+Each tool covers one *intent*, with any computation inside.
+
+## Where it shows up
+
+| Family | Tools | What the code does |
+|---|---|---|
+| **Analyse** | `analyseData` | Aggregate state into a result, such as counts, group-bys, top-N, hex bins, Chart.js configs or cross-kind correlations. Read-only. The result is recorded against every contributing entry and returned to the model. `monitor: true` recomputes it whenever a source entry changes, and `monitorAnalysis` switches that on or off later. |
+| **Process** | `processData` | Transform state into one new entry: `places` (with optional attached `geometries` and `placeConnections`), standalone `geometries` (a new `customGeometries` entry), or `byod`. `fitOnMap` moves the camera alongside any of them. |
+| **Track** | `createTracker` | Return a verdict `{ active, members, summary }` over the same inputs as `analyseData`, saying whether a watched condition holds now. It recomputes whenever a source entry changes. |
+| **Cluster** | `clusterIncidents` | Optional: filter or combine the inputs, then return `cluster(...)`. Without `code`, the tool runs its default clustering. |
+| **MapLibre** | `executeMaplibreCode` | Run arbitrary JS against the live `map` for anything no other tool covers, such as custom layers, animations or raster overlays. Returns a diff of added / removed / updated sources and layers. |
+
+## Execution model
+
+Each tool that accepts `code` builds an `AsyncFunction` whose parameters are a fixed set of
+[injected identifiers](#injected-identifiers), then calls it. `analyseData`, `processData` and `clusterIncidents` narrow their inputs per turn. See
+[Scope-aware data tools](./scope-aware-data-tools.mdx).
+
+Where the code runs:
+
+- In the browser, `analyseData` / `processData` / `createTracker` / `clusterIncidents` code runs in a Web Worker inside a sandboxed, opaque-origin iframe. See
+  [Data-tool execution isolation](#data-tool-execution-isolation-experimental).
+- Under Node or SSR, or if the iframe can't start, the same tools run on the main thread with only
+  [input copying](#input-copying) and [shadowed globals](#shadowed-globals). These raise the bar but are no boundary.
+- `executeMaplibreCode` always runs in the page itself, with the live `map` and none of those measures.
+
+The body works like any other async function body. Top-level `await`, locals and helper consts are fine, and the body must end with `return …;`. Note that:
+
+- `code` is the function **body**, not a function expression. Writing `(args) => { return result; }` as the whole code creates an arrow and discards it. Drop the wrapper and end the body itself with `return result;`.
+- The sandbox is **not a Node module**. `require` is undefined, and ES `import` / `export` statements don't parse inside the function body. The libraries you'd reach for (`turf`, `h3`, `routeUtils`, `cluster`) are already injected, and the sanitiser strips `const x = await import(…)` redeclarations of those names.
+- The sandbox **cannot call other tools** (no `functions.discoverPlaces(...)`, no `tools.X`). To bring in new data, call the relevant tool BEFORE the code-generation tool and pass the resulting entry id in.
+
+### Pre-flight sanitisation
+
+LLMs regularly prepend `const turf = require('@turf/turf')`, `const h3 = await import('h3-js')`, or `const placesByEntry = arguments[0].placesByEntry` out of habit. These collide with the injected parameters and would throw at parse time ("Identifier 'X' has already been declared") before the body runs.
+
+The plugin removes those lines, but **only** if the right-hand side is one of:
+
+- `require(…)`
+- `import(…)` (with or without `await`)
+- `arguments[N].name` or `arguments[N]['name']`, or the same without `[N]`
+
+A `const geometriesByEntry = …` that genuinely shadows an injected name (e.g. `const geometriesByEntry = placesByEntry['places-2'].features.map(...)`) is left untouched. This is deliberate, because a naive name-only filter would silently corrupt legitimate user code.
+
+### Input copying
+
+The injected state inputs are **copied** before they reach the code, on every path. These are the per-entry records such as `placesByEntry`, plus `previous` / `now` on monitored runs. The browser's isolated run receives a structured clone. Mutating them in place is safe and local:
+
+```javascript
+// Sorting/splicing the injected collection touches a throwaway copy, never live state.
+const places = placesByEntry['places-2'];
+places.features.sort((a, b) => a.properties.score - b.properties.score);
+return { places: { type: 'FeatureCollection', features: places.features.slice(0, 10) } };
+```
+
+Without the copy, an in-place mutation would corrupt the entry the data came from and leak into later turns. The libraries are passed through unchanged.
+
+### Shadowed globals
+
+Inside the data tools' code (every tool above but `executeMaplibreCode`), a fixed set of network, storage, DOM and process globals is bound to `undefined`, wherever it runs: `fetch`, `XMLHttpRequest`, `WebSocket`, `EventSource`, `localStorage`, `sessionStorage`, `indexedDB`, `document`, `window`, `globalThis`, `self`, `navigator`, `importScripts` and `process`. Code that reaches for one fails loudly instead of making a network call or touching browser state.
+
+This is a **tripwire, not a security boundary**. The same capabilities stay reachable through constructor walks (`({}).constructor.constructor`) and other realm escapes, so it catches accidental access, not a determined or jailbroken model. `executeMaplibreCode` is **not** shadowed, because it needs live browser access. In the browser, the [isolated run](#data-tool-execution-isolation-experimental) is the boundary.
+
+### Injected identifiers
+
+| Tool | Injected identifiers |
+|---|---|
+| `analyseData` | `placesByEntry`, `routesByEntry`, `incidentsByEntry`, `geometriesByEntry`, `trafficAreaAnalyticsByEntry`, `byodByEntry`, `h3`, `turf`, `routeUtils`, `cluster` *(plus `previous`, `now`, `log` when the analysis is monitored)* |
+| `processData` | same as `analyseData`, without the monitor extras |
+| `clusterIncidents` | same as `analyseData`, with `previous`, `now` and `log` on every run (`previous` holds the last clustering while the recipe stays the same) |
+| `createTracker` | same as `processData` on the first run; re-runs add `now` and `log`, with `previous` always `undefined` |
+| `executeMaplibreCode` | `map` (live MapLibre `Map` instance) |
+
+There is **one per-entry record per kind**, mapping an entry id to that entry's data, and no merged variable:
+
+- `placesByEntry` - `Record<entryId, FeatureCollection<Place>>`
+- `routesByEntry` - `Record<entryId, FeatureCollection<Route>>`
+- `incidentsByEntry` - `Record<entryId, TrafficIncident[]>` (values are plain arrays)
+- `geometriesByEntry` - `Record<"${kind}:${id}", PolygonFeature[]>`, keyed by the composite tagged source `${kind}:${id}`, e.g. `"customGeometries:abc"`, not a bare id. Values are plain arrays, and each feature carries `properties._source: { kind, id }`.
+- `trafficAreaAnalyticsByEntry` - `Record<entryId, TrafficAreaAnalytics>`. Each value is a full `FeatureCollection` that keeps its collection-level `properties`, with no cross-entry merge.
+- `byodByEntry` - `Record<entryId, FeatureCollection>`
+
+Read one entry by id (`placesByEntry['places-2']`). To span every requested entry of a kind, merge with `Object.values(...)`. Use `Object.values(placesByEntry).flatMap((fc) => fc.features)` for the FeatureCollection kinds (places / routes / byod / trafficAreaAnalytics), and `Object.values(incidentsByEntry).flat()` for the array kinds (incidents / geometries).
+
+A record is `undefined` if the tool call left out its `*EntryIDs` argument, so code must guard before reading (`if (placesByEntry) ...`, `placesByEntry['places-2']?.features.length`, etc.). Scope narrowing trims which kinds the tool *documents* in its prompt, but the sandbox always carries the full set of names. Out-of-scope kinds arrive as `undefined`.
+
+### Shared libraries
+
+The four data tools get four libraries. `executeMaplibreCode` gets none, only `map`:
+
+- `turf` - [@turf/turf](https://turfjs.org/) v7: `area`, `length`, `bbox`, `centroid`, `union`, `intersect`, `difference`, `buffer`, `distance`, `booleanPointInPolygon`, `pointsWithinPolygon`, `clustersDbscan`, `convex`, etc.
+- `h3` - [h3-js](https://github.com/uber/h3-js), for hex-grid math only (`latLngToCell`, `cellToLatLng`, `cellToBoundary`, `polygonToCells`, `gridDisk`, `cellArea`).
+- `routeUtils` - SDK route section and progress helpers, useful if `routesByEntry` is in scope: `getSectionBBox`, `getRouteProgressForSection`, `getRouteProgressBetween`, `calculateProgressAtRoutePoint`, `getCoordinateAtRouteProgress`, `getProgressAtNearestRoutePoint`. For a plain route bounding box, `turf.bbox(route)` is enough.
+- `cluster(incidents, params?, previous?, now?)` - The DBSCAN incident clustering behind `clusterIncidents`. `params` takes `eps`, `minMembers`, `maxClusters` and `preFilter`.
+
+All four are pure computation. **None does spatial search, place lookup, or HTTP.** To fetch new places, the agent must call `discoverPlaces` (or `locatePlace`) BEFORE the code-generation tool and pass the resulting entry id in.
+
+## Turf input gotchas
+
+Turf is fussy about input shape. If it throws, the runtime hints at the right pattern, but knowing the rules up front avoids the retry loop:
+
+- A single entry of a FeatureCollection kind (`placesByEntry[id]`, `routesByEntry[id]`, `trafficAreaAnalyticsByEntry[id]`, `byodByEntry[id]`) is a `FeatureCollection`, so pass it directly: `turf.bbox(placesByEntry['places-2'])`. Never `turf.bbox(placesByEntry['places-2'].features)`.
+- Iterate arrays (`incidentsByEntry[id]`, `geometriesByEntry[key]`, or any merged `Object.values(...)` list) per feature (`for (const f of incidentsByEntry[id]) turf.X(f)`), or wrap them with `turf.featureCollection([...])`.
+- **Never** feed turf with `.map(f => f.geometry.coordinates).flatMap(...)`. That strips the feature wrapper turf reads, and either throws `"coordinates must be an Array"` or silently mixes Point/LineString shapes.
+- Incidents mix Point and LineString geometries. Guard with `if (inc.geometry.type === "LineString")` before line-only operations.
+- In Turf v7, the set operations `union` / `intersect` / `difference` take **one** `FeatureCollection`:
+  ```typescript
+  turf.difference(turf.featureCollection([outer, inner]))   // v7 ✓
+  turf.difference(outer, inner)                             // v6 — throws in v7
+  ```
+
+## Performance hints
+
+For large-N nearest/within queries, pre-bucket points with h3 before running turf:
+
+```typescript
+const cells = points.map((p) => h3.latLngToCell(p.geometry.coordinates[1], p.geometry.coordinates[0], 8));
+// Only run turf on same- or neighbour-cell pairs — O(N+M) instead of O(N·M).
+```
+
+Pick `res` so each cell is approximately your query radius (h3 res 8 ≈ 460 m edge, res 9 ≈ 175 m).
+
+## Output contract
+
+### `analyseData`: `outputFormat`
+
+- `"json"` (default) - Any JSON-serializable value, rendered as text in the chat.
+- `"chart"` - A [Chart.js](https://www.chartjs.org/) `ChartConfiguration` (`{ type, data, options? }`). The chat UI passes the config straight to `new Chart(ctx, analysis)`.
+
+The accepted chart types are `bar`, `line`, `pie`, `doughnut`, `radar`, `polarArea`, `scatter` and `bubble`. A config with any other `type` is rejected before the result reaches the model.
+
+For per-point detail you'd normally put in a Chart.js `tooltip.callbacks` function, use a `string[]` label, because functions don't survive the JSON boundary. Chart.js renders the label multi-line on the axis tick AND in the tooltip title.
+
+### `processData` envelope
+
+`processData` code returns `{ places?, placeConnections?, geometries?, fitOnMap?, byod? }`, with at least one of `places`, `geometries`, `fitOnMap` or `byod`:
+
+- `places` (with optional attached `geometries`), standalone `geometries` and `byod` are **mutually exclusive**. One is written per call, and the others are dropped.
+- `placeConnections` draws lines between output places and requires `places`.
+- `fitOnMap` moves the camera and composes with any of them.
+
+### Return-value validation
+
+`analyseData` runs its return value through three checks before handing it to the model, as do `clusterIncidents`
+code and tracker re-runs. `processData` validates its envelope instead, and `executeMaplibreCode` returns its value
+as is:
+
+1. **Not `undefined`.** If the body doesn't `return` (e.g. the code was written as `(args) => { return … }` so the arrow is created and discarded), the tool surfaces a targeted error telling the model to drop the arrow wrapper.
+2. **`JSON.parse(JSON.stringify(value))`.** This converts `NaN`, `Infinity`, `undefined` object values and sparse arrays to `null` or drops them. These silent-poison values would otherwise break the next turn's `ModelMessage` validation. Circular references throw and surface as a clear error for the model.
+3. **Chart shape check** (for `outputFormat: "chart"` only). The `type` must be in the whitelist above and `data` must be a non-null object.
+
+As a result, anything that comes out of the sandbox is either safe to round-trip through the model's next prompt, or surfaces a precise diagnostic the model can act on.
+
+## Self-correcting error hints
+
+When sandbox code throws, the runtime matches the message against a curated list of common pitfalls and appends a targeted `Hint:` to the error returned to the model. The model usually fixes the code on the next attempt.
+
+Patterns recognised include:
+
+| Pattern | What the hint redirects toward |
+|---|---|
+| `Cannot read property of undefined/null` | Missing `?.` / `??`, or a `reduce` callback without `return acc` / initial value. |
+| `h3.X is not a function` / `turf.X is not a function` | Library purpose (hex math / GeoJSON geometry). Rejects spatial-search / HTTP use and suggests `discoverPlaces` instead. |
+| `coordinates must be an Array` / `Unknown Geometry Type` | Pass the feature, not bare coordinates. Guard mixed-kind arrays like `incidentsByEntry[id]`. |
+| `Illegal return statement` | Mismatched braces in a multi-line `.map((item) => { ... })`. |
+| `Identifier 'X' has already been declared` | Dropped redeclaration (rare after the sanitiser). |
+| `Unexpected token / identifier / end of input` | Body didn't parse as an async-function body, because of unbalanced braces or a stray `import`/`export`. |
+| `require is not defined` / `import outside a module` | The sandbox is not a Node module. Inputs and libraries are already injected. |
+| `functions / tools / discoverPlaces / recallState is not defined` | The sandbox can't call other tools. List entry ids in the tool input, or call the tool BEFORE this one. |
+| `is not iterable` | Default with `?? []` before `for..of` / spread / destructuring. |
+| `Cannot access 'X' before initialization` | Temporal dead zone. Move the declaration above the first use. |
+| `Assignment to constant variable` | Use `let` or mutate in place. |
+| `structuredClone / DataCloneError / could not be cloned` | The return value isn't pure JSON (no functions, no classes, no DOM/Map refs). Use `string[]` labels instead of tooltip callbacks. |
+
+The tool descriptions therefore needn't spell out every guardrail. The runtime corrects the model when it trips.
+
+## Threat model
+
+In the browser, the data tools' code is [isolated](#data-tool-execution-isolation-experimental). Everywhere else, the security boundary is **the model and the prompt path you let users drive**, not the runtime. [Input copying](#input-copying) and [shadowed globals](#shadowed-globals) stop accidental mutation and casual global access, not a determined model. Treat that code like a `<script>` tag controlled by your model provider:
+
+- `executeMaplibreCode` holds the live `map` and, through it, the page. A jailbroken or compromised model can exfiltrate user data or rewrite the page.
+- Data tools on the main thread (Node, SSR, or a browser where the iframe failed to start) can reach `fetch`, storage and the DOM through realm escapes such as `({}).constructor.constructor("return globalThis")()`.
+- Prompt injection from a tool result, such as a place description with adversarial text, can steer the model into writing such code.
+
+If your deployment can't tolerate this, for example on a page with privileged session cookies or sensitive in-browser state, remove the code-generation tools:
+
+```typescript
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    tools: {
+        analyseData: false,
+        processData: false,
+        createTracker: false,
+        clusterIncidents: false,
+        executeMaplibreCode: false,
+    },
+});
+```
+
+Removing `executeMaplibreCode` alone keeps the isolated data tools. The fixed-schema tools (`locatePlace`, `setRoute`, `findReachableAreas`, the display tools, …) stay usable either way.
+
+## Data-tool execution isolation (experimental)
+
+In the browser, the data tools' code runs **off the main thread in a locked-down realm**: a Web Worker inside a sandboxed, opaque-origin `<iframe>`. The environment picks where it runs ([selection by environment](#selection-by-environment)). No setup is needed. To tune the browser run, use the optional `codeExecution`:
+
+```typescript
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    codeExecution: {
+        timeoutMs: 5000, // wall-clock budget per isolated run (default 10000)
+    },
+});
+```
+
+What this buys you, and what it doesn't:
+
+- Opaque origin (`sandbox="allow-scripts"`, no `allow-same-origin`) - The code can't read the parent's cookies, `localStorage` or DOM.
+- No network - The iframe's CSP is `default-src 'none'`, so `fetch`, XHR, WebSocket and beacon all fail. The data is injected, so the sandbox has no legitimate network need.
+- Termination - A runaway or infinite-loop body is killed at `timeoutMs` without freezing the main thread. The worker is terminated and respawned.
+- The iframe is long-lived. The worker stays warm, and each call runs in a fresh function scope.
+
+### How the pieces fit
+
+The generated code runs two hops away from your app, across an opaque-origin iframe and into a Web Worker. `postMessage` + `structuredClone` is the only channel between them:
+
+```d2
+direction: down
+
+Main: Main thread (host realm) {
+  style: {
+    stroke: "#333"
+    stroke-width: 3
+    fill: "#f5f5f5"
+    border-radius: 8
+    font-size: 20
+    font-color: "#333"
+  }
+
+  Tools: "analyseData · processData\ncreateTracker · clusterIncidents" {
+    style: { fill: "#fffde7"; stroke: "#ff6f00"; stroke-width: 2; font-color: "#333"; border-radius: 6; font-size: 14 }
+  }
+
+  Executor: IframeWorkerExecutor (splits args, 10 s timeout) {
+    style: { fill: "#e3f2fd"; stroke: "#0d47a1"; stroke-width: 2; font-color: "#333"; border-radius: 6; font-size: 14 }
+  }
+
+  Tools -> Executor: runSandboxedFn(code, args) {
+    style: { stroke-dash: 3; stroke-width: 2 }
+  }
+}
+
+Iframe: Opaque-origin sandboxed iframe · CSP default-src 'none' {
+  style: {
+    stroke: "#1b5e20"
+    stroke-width: 3
+    fill: "#e8f5e9"
+    border-radius: 8
+    font-size: 16
+    font-color: "#333"
+  }
+
+  Bootstrap: bootstrap (relays parent ⇄ worker) {
+    style: { fill: "#ffffff"; stroke: "#1b5e20"; stroke-width: 2; font-color: "#333"; border-radius: 6; font-size: 14 }
+  }
+
+  Worker: Web Worker (Blob URL) {
+    direction: down
+    style: { stroke: "#4a148c"; stroke-width: 2; fill: "#f3e5f5"; border-radius: 6; font-size: 14; font-color: "#333" }
+
+    Libs: worker-libs (lazy chunk) — self.turf · self.h3 · self.routeUtils · self.cluster {
+      style: { fill: "#ffffff"; stroke: "#4a148c"; stroke-width: 1; font-color: "#333"; border-radius: 4; font-size: 13 }
+    }
+    Runtime: worker-runtime — new AsyncFunction(…) {
+      style: { fill: "#ffffff"; stroke: "#4a148c"; stroke-width: 1; font-color: "#333"; border-radius: 4; font-size: 13 }
+    }
+    Libs -> Runtime: provides turf / h3 / routeUtils / cluster
+  }
+
+  Bootstrap -> Worker: postMessage {
+    style: { stroke-dash: 3; stroke-width: 2 }
+  }
+}
+
+Main.Executor -> Iframe.Bootstrap: postMessage (structuredClone) {
+  style: { stroke-dash: 3; stroke-width: 2 }
+}
+Iframe.Bootstrap -> Main.Executor: "{ ok, value } | { error }" {
+  style: { stroke-dash: 3; stroke-width: 2 }
+}
+
+Node: Node / SSR — no browser sandbox APIs → mainThreadExecutor (NOT a boundary) {
+  style: { fill: "#fff3e0"; stroke: "#e65100"; stroke-width: 2; font-color: "#333"; border-radius: 6; font-size: 13 }
+}
+```
+
+Each boundary stops one threat. The opaque origin stops DOM and storage access, the CSP stops network egress, and worker termination stops runaway loops. The libraries are bundled into the worker, so generated code never imports them.
+
+### Why a worker *inside* an iframe
+
+The two-layer nesting isn't redundant. Each layer provides a boundary the other can't:
+
+- **Why a worker, not just script in the iframe.** The iframe alone gives the opaque origin and the CSP, but code running on the iframe's *own* thread can't be stopped. A synchronous `while (true) {}` blocks that thread's event loop, and nothing outside can interrupt a running thread. `worker.terminate()` is the only reliable kill switch, so the generated code runs in a worker that can be killed and respawned on timeout, leaving the warm iframe intact.
+- **Why an iframe, not just a bare worker.** A bare worker inherits its *owner document's* CSP. A stricter `default-src 'none'` would require serving the worker script with a `Content-Security-Policy` response header, so the **consuming app's server** would have to cooperate. The SDK ships to arbitrary hosts and can't require that. A `<meta>` CSP authored in the iframe's `srcdoc` travels *with the SDK code* and needs no host config. This is the decisive reason for the iframe.
+
+Running off the main thread is also why heavy turf/h3 computation over large `FeatureCollection`s doesn't freeze the map UI. The `postMessage` + `structuredClone` hop still pays a serialization cost at each edge, so it's a net win for compute-heavy bodies, not zero main-thread work.
+
+### Worker libraries (turf / h3 / routeUtils / cluster)
+
+The worker can't `import` your app's modules, so it needs the libraries as one self-contained script. The plugin ships them in a **separate lazy chunk**, loaded only when the isolated run first starts, so your main bundle is unaffected.
+
+To pin a build, override it with `loadWorkerLibrarySource`. Return UMD or IIFE JavaScript that defines `self.turf` and `self.h3`, plus `self.routeUtils` and `self.cluster` if generated code uses them. The override **replaces** the bundled source, so re-supply every namespace your code relies on:
+
+```typescript
+codeExecution: {
+    loadWorkerLibrarySource: async () => {
+        const turf = await (await fetch('/vendor/turf.min.js')).text();
+        const h3 = await (await fetch('/vendor/h3-js.umd.js')).text();
+        // turf first — routeUtils reads self.turf. Append your own routeUtils / cluster
+        // scripts here too if your generated code calls them.
+        return `${turf}\n;${h3}`;
+    },
+},
+```
+
+### Selection by environment
+
+The execution mode is **not configurable**. The environment chooses it:
+
+| Environment | Runs in | Why |
+|---|---|---|
+| Browser | iframe-worker | The boundary is the iframe's opaque origin + CSP egress-block + worker termination. |
+| Node / SSR | main thread | None of those layers exist server-side. A `worker_thread` would add only termination while exposing `fs` / `net` / `child_process`, which is isolation in name only, so we don't spin one up. The main-thread runner still deep-copies inputs so code can't corrupt live state, but it's defense-in-depth, not a boundary. |
+
+There is no opt-out in the browser. If the iframe fails to start, execution falls back to the main thread with a console warning, never silently.
+
+<Blockquote type="warning">
+    **Experimental.** The isolation depends on real-browser behaviour — CSP enforcement, opaque-origin iframes, worker termination — which an end-to-end suite verifies in real Chromium on every CI run. `executeMaplibreCode` is not isolated: it needs the live map.
+</Blockquote>
+
+## Example
+
+A user asks *"Bar chart of how many places of each category we have."* The classifier picks `analyseData` with `toolScopes.analyseData = { kinds: ['places'] }`, which narrows its schema to places. The model emits:
+
+```typescript
+analyseData({
+    placesEntryIDs: ['places-2'],
+    name: 'category-bar',
+    outputFormat: 'chart',
+    code: `
+        const counts = {};
+        for (const p of placesByEntry['places-2'].features)
+            for (const c of (p.properties.poi?.categories ?? []))
+                counts[c] = (counts[c] ?? 0) + 1;
+        const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+        return {
+            type: 'bar',
+            data: {
+                labels: entries.map((e) => e[0]),
+                datasets: [{ label: 'Places', data: entries.map((e) => e[1]) }],
+            },
+        };
+    `,
+});
+```
+
+The plugin runs the body, validates the Chart.js config, records it as `category-bar` against the source entry, and returns it to the model. The chat UI receives the same config and renders the chart inline.
+
+## Cross-kind composition
+
+`turf` and `h3` work on **every feature, whichever record it came from**, so one call can combine `placesByEntry` (Points), `routesByEntry` (LineStrings), `incidentsByEntry` (Point or LineString), `geometriesByEntry` (Polygon / MultiPolygon), `trafficAreaAnalyticsByEntry` (Polygon tiles with metrics) and `byodByEntry` (mixed GeoJSON).
+
+A few common bridges:
+
+- Point ↔ LineString - `turf.pointToLineDistance(point, lineFeature, { units: "meters" })`, `turf.nearestPointOnLine(line, point)`.
+- Point ↔ Polygon - `turf.booleanPointInPolygon(point, poly)`, `turf.pointsWithinPolygon(turf.featureCollection(points), poly)`.
+- LineString ↔ Polygon - `turf.lineIntersect(line, poly)`, `turf.booleanCrosses(line, poly)`, `turf.lineSplit(line, poly)`.
+- Polygon ↔ Polygon - `turf.union/intersect/difference(turf.featureCollection([a, b]))` (Turf v7 takes a single collection).
+- Point/LineString ↔ trafficAreaAnalytics tile - Iterate `trafficAreaAnalyticsByEntry[id].features` (or `Object.values(trafficAreaAnalyticsByEntry).flatMap((fc) => fc.features)`) to find which tile a place or route segment falls into, and read its metric (`tile.properties.congestionLevel`, etc.).
+- Buffer to bridge kinds - `turf.buffer(anyFeature, meters/1000, { units: "kilometers" })` turns a point or line into a polygon you can then filter against.
+- h3 - `h3.latLngToCell(lat, lng, res)` for any Point, `h3.polygonToCells(poly.geometry.coordinates, res)` for any Polygon.
+
+The arguments are GeoJSON Features. Pass the whole feature (`placesByEntry[id].features[i]`, `routesByEntry[id].features[0]`, `geometriesByEntry[key][i]`, …), not the bare `geometry.coordinates`. A few helpers accept coordinates directly, but most expect Features.
+
+## Related
+
+- **[Scope-aware data tools](./scope-aware-data-tools.mdx)** — how the per-turn scope mechanism keeps the prompt small.
+- **[Bring your own data](./byod.mdx)** — feeding BYOD layers into the sandbox via `byodEntryIDs`.
+- **[Customizing tools](./customizing-tools.mdx)** — removing the code-generation tools, or wrapping them with policy.
+- **[State](./state.mdx)** — how `processData` outputs land as new entries.
+- **[Securing your agent](./securing-your-agent.mdx)** — where the sandbox sits among the limits the toolkit does and does not enforce.

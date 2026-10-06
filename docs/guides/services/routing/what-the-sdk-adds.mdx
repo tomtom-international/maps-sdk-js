@@ -1,0 +1,98 @@
+---
+title: What the routing SDK adds
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The routing services, the map modules and the core types work as one. Every response is GeoJSON
+that the next call and the map take unchanged.
+
+<GuideDemo demo="routing-composite" />
+
+## What you get
+
+- Fields the API doesn't return, computed from the ones it does.
+- Section types drawn and styled by config, not by layer specs.
+- Every output is the next call's input, with no adapters and one API key.
+- The MapLibre escape hatch stays open. Use `map.mapLibreMap`, or a full layer spec per section
+  whenever you want one.
+
+## Fields the API does not return
+
+| Field | How the SDK derives it |
+|---|---|
+| `LegSummary.stopTimeInSeconds` | The API has no wait-time field. Time at a stop is the gap between one leg's arrival and the next leg's departure. |
+| Route versus leg `travelTimeInSeconds` | The route total **includes** time at stops, while per-leg values are driving only. The difference is the time standing still. |
+| `Instruction.pathPointIndex` | Each maneuver point matched to its index in the route geometry. |
+| `originalWaypointIndex` on each leg | Maps a leg back to the requested location it ends at, when a path location has expanded into legs of its own. |
+| `countryCodeISO3` on country and vignette sections, `countryCode` on instructions | Converted from the API's ISO 2 codes. |
+| `categories` on traffic sections | Read from the incident's TPEG2-TEC cause codes, or from its icon category when it has none. |
+
+## Sections, drawn and styled
+
+A route carries *sections*, the stretches with a property worth showing, such as traffic delays,
+tunnels, ferries, toll roads, low-emission zones, unpaved surfaces and speed limits. The
+[route object](../../core/routes.mdx#section-types) lists every type.
+
+- Without `sectionTypes`, the SDK asks for all eighteen requestable types. If you pass a list, it
+  drops any type you left out, even where the API returns it anyway.
+- `RoutingModule` draws fifteen of them. To restyle one, change its config, not a layer spec:
+
+```ts
+const routing = await RoutingModule.create(map, {
+  sections: {
+    urban: { visible: true },
+    lowEmissionZone: { color: '#1B7A43', opacity: 0.8 },
+  },
+});
+```
+
+- The stretches worth seeing at a glance, such as tunnels, ferries, toll roads and traffic, draw by
+  default. `urban` is opt-in because it spans most of a route. [Route sections](../../map/routes-sections.mdx)
+  covers which draw by default and every knob.
+- The module also handles what breaks in a hand-rolled version: the z-order between the
+  selected route and its alternatives, surviving a `setStyle`, keeping two route modules on one map
+  from colliding, and hit-testing.
+
+## Every output is the next call's input
+
+Each step takes the previous step's response unchanged:
+
+```ts
+const waypoints = await Promise.all(['Munich, DE', 'Innsbruck, AT', 'Verona, IT'].map(geocodeOne));
+const routes = await calculateRoute({ locations: waypoints });
+
+// The route feature goes straight into the search
+const alongRoute = await discoverPlaces({
+  filters: { poiCategories: ['CHARGING_LOCATION'] },
+  route: routes.features[0],
+  maxDetourTimeSeconds: 300,
+});
+
+// The destination waypoint goes straight into the range
+const ranges = await calculateReachableRanges([
+  { origin: waypoints.at(-1), budget: { type: 'timeMinutes', value: 20 } },
+]);
+```
+
+- All four calls share one key and one configuration, and their results go to the map modules
+  unchanged.
+- The demo above shows this chain on a map.
+
+## Where a reachable range goes
+
+A [reachable range](./reachable-ranges.mdx) is a polygon, not a route, so `RoutingModule`
+doesn't draw it. The [reachable ranges module](../../map/reachable-ranges.mdx) does. It titles each
+band from its budget and nests each origin's bands.
+
+## Related guides and examples
+
+- [Route planning parameters](./parameters.mdx) – Every parameter `calculateRoute` takes
+- [Displaying routes](../../map/routes.mdx) – `RoutingModule`, section styling and route events
+- [Routing composite](../../../examples/routing-composite) – The four-service chain above

@@ -1,0 +1,32 @@
+---
+title: Coordinates
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The SDK takes a location in several shapes (`HasLngLat`): a `[longitude, latitude]` array, a GeoJSON `Point`, or a `Point` feature such as a [place](../places.mdx). `getPosition` turns any of them into a plain `[longitude, latitude]`.
+
+## getPosition
+
+```javascript
+import { getPosition } from '@tomtom-org/maps-sdk/core';
+import { geocodeOne } from '@tomtom-org/maps-sdk/services';
+
+getPosition([4.9, 52.3]);                             // [4.9, 52.3]
+getPosition({ type: 'Point', coordinates: [4.9, 52.3] }); // [4.9, 52.3]
+
+const place = await geocodeOne('Amsterdam Centraal');
+getPosition(place);                                   // the place's geometry coordinates
+
+// The main entrance, when the place has one; its geometry otherwise
+getPosition(place, { useEntryPoint: 'main-when-available' });
+```
+
+- `useEntryPoint` - `'ignore'` (the default) returns the feature's geometry. `'main-when-available'` returns the position of the place's `main` [entry point](../places.mdx#entry-points) if it has one.
+- **Returns** `Position | null`: `null` for an input that holds no position.

@@ -1,0 +1,177 @@
+---
+title: Routes
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.1"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+These helpers read a calculated [route](../routes.mdx). They find where a new stop fits among the existing ones, a section's bounds, and the distance, time and position at any point along it. The examples below share this setup:
+
+```javascript
+import { calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+const routes = await calculateRoute({ locations: [[4.9, 52.3], [5.1, 52.5]] });
+const route = routes.features[0];
+const waypoints = [[4.9, 52.3], [5.1, 52.5]];
+```
+
+## Inserting waypoints
+
+All four helpers project the stops onto the route line and place each new one by where it falls along the route. Waypoints are any `WaypointLike`: a `[longitude, latitude]`, a GeoJSON `Point`, or a `Point` feature such as a place.
+
+| Helper | Takes | Returns |
+| --- | --- | --- |
+| `withInsertedWaypoint` | one new stop | a new array with it inserted |
+| `withInsertedWaypoints` | several new stops | a new array with all of them inserted, in along-route order |
+| `findBestWaypointInsertionIndex` | one new stop | the index to insert it at |
+| `findBestWaypointInsertionIndices` | several new stops | one index per stop, in input order |
+
+- An index of `0` means before the origin, and `waypoints.length` after the destination.
+- With no route geometry or fewer than two existing waypoints, every index is `0` and new stops are prepended.
+- For several stops, **use the plural helpers** instead of the singular one in a loop. They project each stop once, and the result doesn't depend on the input order.
+
+### withInsertedWaypoint
+
+<GuideDemo demo="add-stops-to-route-playground" />
+
+```javascript
+import { withInsertedWaypoint } from '@tomtom-org/maps-sdk/core';
+
+const updated = withInsertedWaypoint(route, waypoints, [4.95, 52.35]);
+// [[4.9, 52.3], [4.95, 52.35], [5.1, 52.5]]
+
+const updatedRoutes = await calculateRoute({ locations: updated });
+```
+
+### withInsertedWaypoints
+
+<GuideDemo demo="add-stops-to-route" />
+
+`withInsertedWaypoints` inserts every new stop in one pass. Each goes to its slot between existing waypoints. Stops sharing a slot are ordered by where they fall along the route, and ties keep their input order. Use it, for example, to merge the places `discoverPlaces` finds along a route:
+
+```javascript
+import { withInsertedWaypoints } from '@tomtom-org/maps-sdk/core';
+
+// Passed in any order; returned in along-route order
+const updated = withInsertedWaypoints(route, waypoints, [[5.05, 52.45], [4.95, 52.35]]);
+// [[4.9, 52.3], [4.95, 52.35], [5.05, 52.45], [5.1, 52.5]]
+```
+
+An empty list of new stops returns a copy of `waypoints`.
+
+### findBestWaypointInsertionIndex
+
+```javascript
+import { findBestWaypointInsertionIndex } from '@tomtom-org/maps-sdk/core';
+
+findBestWaypointInsertionIndex(route, waypoints, [4.95, 52.35]); // 1: between origin and destination
+```
+
+### findBestWaypointInsertionIndices
+
+```javascript
+import { findBestWaypointInsertionIndices } from '@tomtom-org/maps-sdk/core';
+
+findBestWaypointInsertionIndices(route, waypoints, [[5.05, 52.45], [4.95, 52.35]]); // [1, 1]
+```
+
+Several stops can share a slot. `withInsertedWaypoints` also orders them within it.
+
+## getSectionBBox
+
+The bounding box of a route [section](../routes.mdx#sections), from its start, middle and end points:
+
+```javascript
+import { getSectionBBox } from '@tomtom-org/maps-sdk/core';
+
+for (const section of route.properties.sections.country ?? []) {
+    const bbox = getSectionBBox(route, section);
+    if (bbox) map.mapLibreMap.fitBounds(bbox, { padding: 40 });
+}
+```
+
+**Returns** `BBox | undefined`: `undefined` when the route has no coordinates or the section's indices fall outside them. Three points are fast, but a winding section can stray outside their box. For a tighter box, pass the section's slice of coordinates as a `LineString` to [`bboxFromGeoJSON`](./bounding-boxes.mdx#bboxfromgeojson).
+
+## Route progress
+
+These helpers read the route's [`progress`](../routes.mdx#progress) points, which routes have by default. Between two points, values follow the line's length rather than its vertex count, because vertices crowd into bends. Equal steps of distance cover equal ground, which is what an animation along the route needs.
+
+### calculateProgressAtRoutePoint
+
+The distance and time from the start at a coordinate index:
+
+```javascript
+import { calculateProgressAtRoutePoint } from '@tomtom-org/maps-sdk/core';
+
+const progress = calculateProgressAtRoutePoint(route, 10);
+// { distanceInMeters, travelTimeInSeconds } | undefined
+```
+
+**Returns** `RouteProgressAtPoint | undefined`: `undefined` when the index is out of range, the route has no progress, or the progress points around the index lack a value.
+
+### getRouteProgressBetween
+
+The progress at two coordinate indices and the difference between them:
+
+```javascript
+import { getRouteProgressBetween } from '@tomtom-org/maps-sdk/core';
+
+const segment = getRouteProgressBetween(route, 5, 20);
+if (segment) {
+    console.log(`${segment.delta.distanceInMeters} m, ${segment.delta.travelTimeInSeconds} s`);
+}
+```
+
+**Returns** `RouteSegmentProgress | undefined`: `{ start, end, delta }`, or `undefined` when either index cannot be interpolated.
+
+### getRouteProgressForSection
+
+`getRouteProgressBetween` over a section's `startPointIndex` and `endPointIndex`:
+
+```javascript
+import { getRouteProgressForSection } from '@tomtom-org/maps-sdk/core';
+
+for (const section of route.properties.sections.traffic ?? []) {
+    const progress = getRouteProgressForSection(route, section);
+    if (progress) console.log(`Incident from ${progress.start.distanceInMeters} m, ${progress.delta.travelTimeInSeconds} s to cross`);
+}
+```
+
+### getCoordinateAtRouteProgress
+
+The position and progress at a point given by exactly one of: elapsed time, distance travelled, or a clock time.
+
+```javascript
+import { getCoordinateAtRouteProgress } from '@tomtom-org/maps-sdk/core';
+
+const byTime = getCoordinateAtRouteProgress(route, { traveledTimeInSeconds: 600 });
+const byDistance = getCoordinateAtRouteProgress(route, { traveledDistanceInMeters: 5000 });
+// Elapsed time counted from route.properties.summary.departureTime
+const byClock = getCoordinateAtRouteProgress(route, { clockTime: new Date('2025-06-01T09:10:00Z') });
+
+if (byTime) console.log(`After 10 min: ${byTime.position}, ${byTime.distanceInMeters} m`);
+```
+
+- Values beyond either end of the route return its first or last point.
+- **Returns** `RouteCoordinateAtProgress | undefined`: `{ position, travelTimeInSeconds, distanceInMeters }`, or `undefined` when the route has no progress, the clock time is before the departure, or the progress points lack a value.
+
+### getProgressAtNearestRoutePoint
+
+Snaps any location to the nearest point on the route and returns the position and progress there, for hover or click interactions:
+
+```javascript
+import { formatDistance, getProgressAtNearestRoutePoint } from '@tomtom-org/maps-sdk/core';
+
+map.mapLibreMap.on('mousemove', (event) => {
+    const nearest = getProgressAtNearestRoutePoint(route, event.lngLat.toArray());
+    if (nearest) console.log(`${formatDistance(nearest.distanceInMeters)} from the start`);
+});
+```
+
+- The location is any `HasLngLat`: a `[longitude, latitude]`, a GeoJSON `Point`, or a `Point` feature such as a place.
+- **Returns** `RouteCoordinateAtProgress | undefined`: `undefined` when the route has no progress, or the progress points around the snapped position lack a value.
