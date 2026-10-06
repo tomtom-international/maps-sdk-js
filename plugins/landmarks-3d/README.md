@@ -1,6 +1,6 @@
 # Landmarks 3D Plugin
 
-Plugin for the [TomTom Maps SDK for Javascript](https://docs.tomtom.com/maps-sdk-js/introduction/overview) that renders TomTom Orbis 3D Landmarks — high-detail building meshes streamed as tiles — on a `TomTomMap` using Three.js.
+Plugin for the [TomTom Maps SDK for JavaScript](https://docs.tomtom.com/maps-sdk-js/introduction/overview) that renders TomTom Orbis 3D Landmarks — high-detail building meshes streamed as tiles — on a `TomTomMap` using Three.js.
 
 > **Private Preview**: the [Orbis 3D Landmarks API](https://developer.tomtom.com/map-display-api/documentation/tomtom-orbis-maps/3d/landmarks) is in Private Preview. Your API key needs Orbis 3D Landmarks entitlements.
 
@@ -25,7 +25,7 @@ Note: this plugin declares `@tomtom-org/maps-sdk`, `maplibre-gl` and `three` as 
 npm install @tomtom-org/maps-sdk maplibre-gl three @tomtom-org/maps-sdk-plugin-landmarks-3d
 ```
 
-1. Follow the SDK [Project setup](https://docs.tomtom.com/maps-sdk-js/guides/introduction/project-setup) or the Map [quickstart](https://docs.tomtom.com/maps-sdk-js/guides/map/quickstart) to create and initialize a `TomTomMap`. Use a pitched camera for the best result; the plugin enables the standard style's 3D building layer automatically.
+1. Follow the SDK [Project setup](https://docs.tomtom.com/maps-sdk-js/introduction/project-setup) or the Map [quickstart](https://docs.tomtom.com/maps-sdk-js/guides/map/quickstart) to create and initialize a `TomTomMap`. Use a pitched camera for the best result; the plugin enables the standard style's 3D building layer automatically.
 
 2. Import and use the plugin (plugin-specific steps only):
 
@@ -35,9 +35,14 @@ import { Landmarks3D } from '@tomtom-org/maps-sdk-plugin-landmarks-3d';
 // assume `map` is your initialized TomTomMap instance
 const landmarks = new Landmarks3D(map);
 
-// optional: change how landmarks blend with the base map
-await landmarks.setDisplayMode('inherited');
+// optional: give the landmarks the dark style's building look instead of the base map's
+await landmarks.setDisplayMode('dark');
+
+// optional: hide them, and bring them back with setVisible(true)
+await landmarks.setVisible(false);
 ```
+
+`new Landmarks3D(map, { displayMode, visible, minZoom, maxZoom })` sets the same options up front; the zoom range defaults to that of the base map's 3D building layer.
 
 ## License
 

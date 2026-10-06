@@ -214,7 +214,7 @@ export const buildSiteTools = (): Record<string, ToolEntry | ToolEntryBuilder> =
     getStandardMapStyles: builtin.getStandardMapStyles,
     clearMap: builtin.clearMap,
     setLanguage: builtin.setLanguage,
-    toggleTilesPOIs: builtin.toggleTilesPOIs,
+    setMapStyling: builtin.setMapStyling,
     // Location primitives (no overlap — fixes the "ask for location then can't" loop):
     locatePlace: builtin.locatePlace,
     reverseGeocode: builtin.reverseGeocode,

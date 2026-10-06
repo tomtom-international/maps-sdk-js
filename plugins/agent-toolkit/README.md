@@ -1,4 +1,4 @@
-# TomTom Maps SDK - Agent Toolkit Plugin
+# Agent Toolkit Plugin
 
 A headless conversational agent that gives Large Language Models tool-based control over a [TomTom Map](https://docs.tomtom.com/maps-sdk-js/guides/map/tomtom-map) and TomTom location services, powered by [Vercel AI SDK v6](https://ai-sdk.dev/).
 
@@ -18,16 +18,18 @@ No UI is included — bring your own chat interface. No LLM provider is bundled 
 ## Installation
 
 ```bash
-pnpm add @tomtom-org/maps-sdk @tomtom-org/maps-sdk-plugin-agent-toolkit ai zod maplibre-gl @turf/turf chart.js h3-js
+pnpm add @tomtom-org/maps-sdk @tomtom-org/maps-sdk-plugin-agent-toolkit @tomtom-org/maps-sdk-plugin-map-theme ai zod maplibre-gl @turf/turf chart.js h3-js
 ```
 
-Install at least one AI SDK provider:
+Install at least one AI SDK provider, plus `@ai-sdk/react` for the `useChat` example below:
 
 ```bash
 # Pick one (or more)
 pnpm add @ai-sdk/openai
 pnpm add @ai-sdk/anthropic
 pnpm add @ai-sdk/azure
+
+pnpm add @ai-sdk/react
 ```
 
 ## Quick start
@@ -79,7 +81,7 @@ function ChatPanel() {
 }
 ```
 
-See [`examples/map-traffic-agent-react`](../../examples/map-traffic-agent-react) for a full working example.
+See the [traffic agent example](https://docs.tomtom.com/maps-sdk-js/examples/map-traffic-agent-react) for a full working example.
 
 ## Tools reference
 
@@ -118,9 +120,6 @@ The plugin ships a `DEFAULT_TOOLS` registry covering search, routing, traffic, r
 | `clusterIncidents` | Group loaded incidents into hotspots (DBSCAN) with road and category labels, delay totals and trends |
 | `focusIncidents` | Highlight a subset of incidents (by id / category / severity) on the map and dim the rest |
 | `getTrafficAreaAnalytics` | Fetch historical traffic analytics (speed, congestion, travel time) for an area |
-| `toggleTilesTrafficFlow` | Toggle the real-time traffic-flow tile overlay |
-| `toggleTilesTrafficIncidents` | Toggle the real-time traffic-incidents tile overlay |
-| `setMapStyling` | Set or reset how the map looks — label/icon/road sizes, exit numbers and road arrows, POI and hillshade looks, congestion colours, map colours, map presets, or a whole theme from a few colours or an image |
 
 ### Trackers
 
@@ -168,9 +167,9 @@ const agent = createMapAgent(map, {
 | Tool | Description |
 |---|---|
 | `updatePlacesDisplay` | Show, hide, or restyle place entries on the map |
-| `updateRoutesDisplay` | Show, hide, or restyle route entries (line color, waypoint icons, fit camera) |
+| `updateRoutesDisplay` | Show, hide, or swap route entries, switch the highlighted alternative, fit the camera |
 | `updateWaypointsDisplay` | Show staged waypoint markers without the route line |
-| `updateTrafficAreaAnalyticsDisplay` | Visualize traffic-area-analytics as hexgrid, heatmap, or tiles |
+| `updateTrafficAreaAnalyticsDisplay` | Show, hide, or swap traffic-area-analytics entries |
 | `clearMap` | Remove displayed places, routes, BYOD layers, or all features |
 
 ### Map control
@@ -183,15 +182,15 @@ const agent = createMapAgent(map, {
 | `getStandardMapStyles` | List available standard map style presets |
 | `setMapStandardStyle` | Switch map style (light, dark, satellite, driving, etc.) |
 | `setLanguage` | Change the language for map labels and API responses |
-| `toggleTilesPOIs` | Show/hide built-in map POI icons with optional category filtering |
+| `setGeopoliticalView` | Show disputed borders and territory names from a country's view, for the map and later searches |
+| `setMapStyling` | Set or reset what the base map shows and how it looks, by knob id — layer groups such as 3D buildings, the built-in POI icons and their categories, the live traffic overlays and their filters, the hillshade and 3D terrain, sizes, colours, map presets, or a whole theme from a few colours or an image — and the look of every layer the agent drew: places, routes and their sections, polygons, reachable areas, area analytics and fetched incidents; the classifier scope lists only the knob families a turn touches |
 
 ### MapLibre direct access
 
 | Tool | Description |
 |---|---|
 | `getMapStyleLayers` | List MapLibre layer IDs with their paint/layout properties |
-| `setLayoutProperties` | Set MapLibre layout properties on named layers |
-| `setPaintProperties` | Set MapLibre paint properties (colors, widths, opacity) on named layers |
+| `setLayerProperties` | Set MapLibre paint (colors, widths, opacity) and layout (visibility, text, sizes) properties on named layers |
 
 ### State & recall
 
@@ -337,11 +336,12 @@ createMapAgent(map, { model, tools: fleetTools });
 Every tool (built-in or custom) follows the `ToolEntry` interface:
 
 ```typescript
-type ToolEntry<S extends ToolState = ToolState> = {
+type ToolEntry<S extends ToolState = ToolState, Scope = unknown> = {
     description: string;            // Operational contract for the LLM
     inputSchema: z.ZodType;         // Zod schema for input validation
     outputSchema?: z.ZodType;       // Optional structured output schema
-    execute: (input, state: S) => Promise<any>;
+    // options.signal is the turn's AbortSignal: forward it to the services calls the tool makes
+    execute: (input, state: S, options?: ToolExecuteOptions) => Promise<any>;
 
     // Classifier metadata (optional)
     classificationPrompt?: string;  // One-liner for the intent classifier
@@ -350,6 +350,12 @@ type ToolEntry<S extends ToolState = ToolState> = {
     examplePrompts?: string[];      // Natural language prompt examples
     relatedTools?: string[];        // Tools often used together
     dependsOn?: string[];           // Tools that must run before this one
+    scopeSchema?: z.ZodType<Scope>; // Per-turn scope the classifier may emit to narrow the tool
+    scopePrompt?: string;           // Classifier hint on when and how to scope the tool
+
+    // Loop control (optional)
+    alwaysActive?: boolean;         // Visible on every step, whatever the classifier picks
+    endsTurnOnCall?: boolean;       // Stop the loop on the step that calls this tool
 };
 ```
 
@@ -519,9 +525,8 @@ const agent = createMapAgent(map, {
     tools: {
         setMapStandardStyle: false,
         setLanguage: false,
-        setLayoutProperties: false,
-        setPaintProperties: false,
-        toggleTilesPOIs: false,
+        setLayerProperties: false,
+        setMapStyling: false,
     },
 });
 ```
@@ -547,7 +552,8 @@ For the complete, always-current list of exports — factories, tool-registry he
 
 | Type | Package | Purpose |
 |---|---|---|
-| Peer | `@tomtom-org/maps-sdk` | TomTom Maps SDK (types, services, map modules) |
+| Peer | `@tomtom-org/maps-sdk@>=1.0.0-rc.0 <1.0.0` | TomTom Maps SDK (types, services, map modules) — its 1.0.0 release candidates |
+| Peer | `@tomtom-org/maps-sdk-plugin-map-theme@>=0.3.0` | Theming the map from a few colours or an image in `setMapStyling` |
 | Peer | `ai@^6` | Vercel AI SDK (ToolLoopAgent, tool types) |
 | Peer | `zod@^4` | Schema validation |
 | Peer | `maplibre-gl@^6` | Map rendering engine |
@@ -567,7 +573,7 @@ For the complete, always-current list of exports — factories, tool-registry he
     - [Bring your own data](https://docs.tomtom.com/maps-sdk-js/guides/plugins/agent-toolkit/byod) — ingest customer GeoJSON layers
 - [AI SDK v6 documentation](https://ai-sdk.dev/)
 - [TomTom Maps SDK documentation](https://docs.tomtom.com/maps-sdk-js)
-- [Example application](../../examples/map-traffic-agent-react) — full chat interface implementation
+- [Example application](https://docs.tomtom.com/maps-sdk-js/examples/map-traffic-agent-react) — full chat interface implementation
 
 ## License
 

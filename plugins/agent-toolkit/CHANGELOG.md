@@ -1,5 +1,80 @@
 # Changelog
 
+## 0.15.0
+
+### Minor Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** `setLayerProperties` replaces `setPaintProperties` and `setLayoutProperties`, `setMapStyling` lists only the knobs a turn touches, and it styles the layers the agent drew
+  - `setMapStyling` sets the look knobs of every layer the agent drew, shown now or later: `places.*`, `routes.*` (sections included), `geometries.*`, `ranges.*`, `traffic.areaAnalytics.*` and `traffic.incidentDetails.*`; showing them, the marker type and the fill style stay with the display tools
+  - `updateRoutesDisplay` drops `color`, now `setMapStyling({ set: { 'routes.color': … } })`; `RoutingState.color` and `setColor` give way to `RoutingState.knobs`
+  - `updateTrafficAreaAnalyticsDisplay` drops `mode`, `metric`, `palette`, `scaleMode`, `maxHeightMeters`, `metersPerUnit` and `filter`, now the `traffic.areaAnalytics.*` knobs
+  - Each entry slice holds its modules' look as a `SliceKnobs`, such as `state.routing.knobs` and `state.places.geometriesKnobs`
+  - Showing a custom geometries or places entry in another fill style keeps the styling set on its module
+  - `setLayerProperties({ changes: [{ layerId, paint?, layout? }] })` sets both kinds of property on a style layer in one call
+  - `setMapStyling` is scopable: the classifier picks the knob families a turn touches (`look`, `baseMap`, `pois`, `trafficFlow`, `trafficIncidents`, `terrain`, `places`, `routes`, `geometries`, `ranges`, `trafficAreaAnalytics`, `trafficIncidentDetails`), and its `set` parameter lists only their ids, while any id stays settable
+  - An unknown knob id is refused with the closest ids, such as `did you mean pois.label.color?`
+  - The default tools count 51
+  - New example prompts cover planned roadworks, analytics recolouring, the dark styles, incident descriptions in another language and geopolitical views
+
+### Patch Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The README installs every peer dependency, `@tomtom-org/maps-sdk-plugin-map-theme` included
+  - `@ai-sdk/react` is listed for the `useChat` example
+  - The example links open the docs portal rather than a path outside the package
+  - The `ToolEntry` shape lists the scope, loop-control and `execute` options fields
+
+## 0.14.0
+
+### Minor Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** `setMapStyling` shows, hides and filters the base map, its POIs and the live traffic overlays by knob id, replacing the four `toggleTiles*` tools
+  - `toggleTilesBaseMapLayerGroups` is `setMapStyling` with `visible` and `groups.<group>.visible`
+  - `toggleTilesPOIs` is `pois.visible` and `pois.filters.categories.show` / `.values`
+  - `toggleTilesTrafficFlow` and `toggleTilesTrafficIncidents` are `traffic.flow.visible` and `traffic.incidents.visible`, with their `filters.*` knobs
+  - `setMapStyling({ reset: true })` resets what the map shows too, not only its look
+  - The default tools count 52
+  - `traffic.incidents.timeValidity` brings the planned incidents onto the overlay too
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** map: the last config properties and knob ids off the shared vocabulary follow it: a size preset is a `*Preset`, a fill style sits under `fill`, and a unit is named once
+  - map: `GeometriesModule` and `ReachableRangesModule` take `fill: { style }` instead of `fillStyle`, and `TrafficAreaAnalyticsModule` `regionPolygon: { fill: { style } }` instead of `regionPolygon.fillStyle`; a feature's `properties.fillStyle` stays
+  - map: `RoutingModule` `width`, `sections.<type>.width` and `waypoints.size` are `widthPreset`, `sections.<type>.widthPreset` and `waypoints.sizePreset`
+  - map: `PlacesModule` `cluster.source` takes `radius`, `maxZoom`, `minPoints` and `properties` instead of MapLibre's `clusterRadius`, `clusterMaxZoom`, `clusterMinPoints` and `clusterProperties`, typed by `PlacesClusterSourceConfig`
+  - map: `PlacesModule` `label.offset` is `label.distance`, since an `offset` is an `[x, y]` displacement on every module
+  - map: `TrafficAreaAnalyticsModule` `height.maxHeightMeters` and `height.minHeightMeters` are `height.maxMeters` and `height.minMeters`, in `setHeight` too
+  - map: each renamed property's knob id follows it
+  - agent-toolkit: the tools keep their parameters, and the plugin needs SDK 1.0.0-rc.0
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** map: each standard style ID is the Orbis style it loads, in camelCase
+  - map: `standardLight`, `standardDark`, `drivingLight`, `drivingDark` and `satellite` are `streetLight`, `streetDark`, `streetLightDriving`, `streetDarkDriving` and `streetSatellite`; `monoLight` and `monoDark` stay
+  - agent-toolkit: `setMapStandardStyle` takes the new IDs, `resetState` reverts to `streetLight`, and the plugin needs SDK 1.0.0-rc.0
+  - map-theme, landmarks-3d: their docs name the new IDs
+
+### Patch Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The `maplibre-gl` peer dependency moves up to `^6.12.0`
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The route schema the model reads no longer lists the EV and fuel consumption fields the SDK dropped from route summaries
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The agent can show disputed borders from a country's view, turn on 3D terrain, and answer tolls, ferries and traffic delay questions from a route
+  - New default tool `setGeopoliticalView`, which sets the view on the map and for the searches that follow
+  - `setMapStyling` takes every terrain knob: `terrain.hillshade.visible`, `terrain.elevation.visible` and `terrain.elevation.exaggeration` too
+  - Route summaries carry `sectionCounts` (toll roads, ferries, traffic…) and the `countries` crossed, and `setRoute` requests the free-flow, historic and live-traffic travel times
+  - A tool whose TomTom service or map call fails returns the `SDKErrorCode` as `code`, and its error text says whether retrying helps
+  - `updateTrafficAreaAnalyticsDisplay` colours by `freeFlowSpeed` and `networkLength` too
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - `recallState` and `setMapStyling` read the map style as a standard style, the only kind the SDK loads
+  - `recallState`'s `mapStyle` is always `{ id }`, one of `standardStyleIDs`: `streetLight` for a map created without a `style`, instead of `null`
+  - `setMapStyling` switches a map created without a `style` to `streetDark` when a theme comes out dark, as it does for an explicit `streetLight`
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** map: the sky, space, incident delay and hillshade knobs are named as every other knob is: a part's settings sit under it, and no name repeats its parent
+  - map: `StylingFoundationsModule` knob ids `view.sky`, `view.skyColor`, `view.horizonColor` and `view.spaceColor` are `view.sky.visible`, `view.sky.color`, `view.sky.horizonColor` and `view.space.color`, in `styleColorKnobIds`, `getStyleColor` and map presets too
+  - map: `TrafficIncidentsModule` `filters: { delays: { mustHaveDelay, minDelayMinutes } }` is `filters: { delays: { required, minMinutes } }`, and the knob ids follow
+  - map: `TerrainModule` `hillshade: { lightDirection, exaggeration, shadowColor, highlightColor, accentColor }` is `hillshade: { light: { direction }, intensity, colors: { shaded, lit, steep } }`, and the knob ids follow, in `styleColorKnobIds` and `getStyleColor` too; `exaggeration` is now only the raised surface's vertical scale
+  - agent-toolkit: `setMapStyling`'s globe example sets `view.sky.visible`
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - The package ships without source maps, so a stack trace through the plugin points into its minified bundle
+  - An app's own source maps still lead a trace to the plugin's frames (`dist/index.es.js:1:2345`); share such a trace in a report and TomTom maps it back to the source
+
 ## 0.13.0
 
 ### Minor Changes

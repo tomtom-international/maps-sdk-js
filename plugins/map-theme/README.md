@@ -18,11 +18,13 @@ Plugin for the [TomTom Maps SDK for JavaScript](https://docs.tomtom.com/maps-sdk
 
 ## Quickstart
 
-The plugin declares `@tomtom-org/maps-sdk` and `culori` as peer dependencies; npm 7+ and Yarn install them for you.
+Note: this plugin declares `@tomtom-org/maps-sdk` and `culori` as peer dependencies — ensure both are installed in your project.
 
 ```bash
-npm install @tomtom-org/maps-sdk maplibre-gl @tomtom-org/maps-sdk-plugin-map-theme
+npm install @tomtom-org/maps-sdk maplibre-gl culori @tomtom-org/maps-sdk-plugin-map-theme
 ```
+
+Then, with your initialized `TomTomMap` as `map` (see the SDK [Project setup](https://docs.tomtom.com/maps-sdk-js/introduction/project-setup) or the Map [quickstart](https://docs.tomtom.com/maps-sdk-js/guides/map/quickstart)):
 
 ```ts
 import { StylingFoundationsModule } from '@tomtom-org/maps-sdk/map';

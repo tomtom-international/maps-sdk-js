@@ -43,7 +43,7 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
         BaseMapModule.get(map),
     ]);
     // The standard styles fade the shading out by zoom 13; these keep it at every zoom.
-    const terrain = await TerrainModule.get(map, { hillshade: { visible: true, exaggeration: 0.5, maxZoom: 22 } });
+    const terrain = await TerrainModule.get(map, { hillshade: { visible: true, intensity: 0.5, maxZoom: 22 } });
     const styling = await StylingFoundationsModule.get(map, { 'labels.sizeFactor': 1.2 });
 
     // How the map looks is held by the module drawing each part: the foundations by StylingFoundationsModule,

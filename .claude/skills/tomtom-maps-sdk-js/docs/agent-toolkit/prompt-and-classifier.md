@@ -75,7 +75,7 @@ Seven named, individually overridable sections (`SystemPromptSection`), in order
 
 Defaults are exported as `SYSTEM_PROMPT_SECTIONS`; `BASE_SYSTEM_PROMPT` is the assembled default.
 
-**The system prompt never reaches the classifier.** "Always also call `toggleTilesTrafficFlow`" does nothing on a turn
+**The system prompt never reaches the classifier.** "Always also call `getTrafficIncidents`" does nothing on a turn
 where that tool wasn't picked — extend its `classificationPrompt`, or set `alwaysActive: true`.
 
 Prefix, suffix and section overrides compose; a full string replaces everything:

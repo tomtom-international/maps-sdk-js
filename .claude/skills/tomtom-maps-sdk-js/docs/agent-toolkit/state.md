@@ -23,6 +23,12 @@ lazy SDK modules (all accessors are `async`).
 | `trafficTiles` | Traffic flow / incident tile overlays | `getTrafficFlowModule()`, `getTrafficIncidentsModule()` |
 | `mapPOIs` | Base-map POI layer | `getPOIsModule()` |
 
+Each entry slice holds its modules' look as a `SliceKnobs` — `routing.knobs`, `places.knobs` / `places.geometriesKnobs`,
+`ranges.knobs` / `ranges.geometriesKnobs` / `ranges.placesKnobs`, `customGeometries.knobs`, `trafficAreaAnalytics.knobs`,
+`trafficIncidents.knobs`: `set(id, value)` / `reset(id)` / `resetAll()` / `values` by the module catalogue's ids, applied to
+every module of that kind the slice holds and to each one it creates later (`setMapStyling` writes through them).
+`trafficAreaAnalytics` shows an entry's `activeMetric` only if the entry fetched it, else its first metric.
+
 Session-level fields: `analyses` (every `analyseData` result), `trackers`, `engine` (re-runs monitored analyses and
 trackers when their source entries change), `codeExecution` (the sandbox executor).
 

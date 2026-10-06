@@ -66,8 +66,8 @@ Invalid values throw `RangeError` naming the knob and its range; unknown ids thr
 | Roads | `roads.widthFactor` | factor 0.5–1.5 |
 | Map colours | `colors.land`, `colors.water`, `colors.vegetation`, `colors.park`, `colors.artificial`, `colors.roadMajor`, `colors.road`, `colors.roadOutline`, `colors.label`, `colors.labelHalo`, `colors.accent` (see `setMapColors`) | color |
 | View | `view.projection` (`'mercator'` \| `'globe'`) | enum |
-| | `view.sky` | toggle |
-| | `view.skyColor`, `view.horizonColor`, `view.spaceColor` | color |
+| | `view.sky.visible` | toggle |
+| | `view.sky.color`, `view.sky.horizonColor`, `view.space.color` | color |
 
 **No knob here shows or hides a part of the map** — water, railways, 2D/3D buildings, road shields, label groups and the road markings within them are `BaseMapModule` (`baseMap.setVisible(visible, { layerGroups: { show: 'only', values: ['buildings3D'] } })`, or `setKnob(baseMap, baseMapKnobCatalogue, 'groups.buildings3D.visible', true)`; `map-setup.md`).
 
@@ -140,15 +140,15 @@ Map-level MapLibre state a `setStyle` would reset; owned here so it survives sty
 
 ```ts
 setKnob(styling, stylingFoundationsKnobCatalogue, 'view.projection', 'globe');
-setKnob(styling, stylingFoundationsKnobCatalogue, 'view.sky', true); // without it a globe has NO atmosphere (MapLibre's default sky is transparent)
+setKnob(styling, stylingFoundationsKnobCatalogue, 'view.sky.visible', true); // without it a globe has NO atmosphere (MapLibre's default sky is transparent)
 map.mapLibreMap.setMaxPitch(75);                          // fog over a tilted view starts at pitch 60 = MapLibre's default maxPitch
 ```
 
 3D terrain is **not** a knob — it needs the elevation style part loaded first, which `TerrainModule.get(map, { elevation: { visible: true } })` does (see `map-setup.md` § TerrainModule).
 
-Sky colours: a set `view.skyColor` / `view.horizonColor` wins; unset, they take the style's own `sky` where it declares one, else follow `map.styleLightDarkTheme` — daylit blue + white horizon on a light style, night blue + dim horizon on a dark one.
+Sky colours: a set `view.sky.color` / `view.sky.horizonColor` wins; unset, they take the style's own `sky` where it declares one, else follow `map.styleLightDarkTheme` — daylit blue + white horizon on a light style, night blue + dim horizon on a dark one.
 
-`view.spaceColor` is the colour **behind** the map, which a globe leaves visible around the planet. The map canvas is transparent there, so something has to fill it. A background your page already gives the map container is the knob's default and what `resetKnob` returns to — the SDK does not paint over it. Otherwise it follows the theme (white on light, the night sky's `#0a1626` on dark) and is re-applied after a `setStyle`, so a light→dark switch carries it.
+`view.space.color` is the colour **behind** the map, which a globe leaves visible around the planet. The map canvas is transparent there, so something has to fill it. A background your page already gives the map container is the knob's default and what `resetKnob` returns to — the SDK does not paint over it. Otherwise it follows the theme (white on light, the night sky's `#0a1626` on dark) and is re-applied after a `setStyle`, so a light→dark switch carries it.
 
 Gotcha: the globe flattens to Mercator between zoom 11–12 by design.
 
@@ -161,7 +161,7 @@ Named bundles of knob settings across the modules that hold the look: this one, 
 | `'data-viz'` | quiet base under your data: smaller labels/icons, thinner roads, no exit numbers or arrows, no micro markers, POIs from z14 |
 | `'night-driving'` | bigger labels and icons, wider roads, exit numbers and arrows shown, no micro markers, POIs from z13 |
 | `'minimal'` | bare map: smaller labels, no road markings, exit numbers or micro markers, POIs from z16 |
-| `'globe'` | `view.projection: 'globe'` + `view.sky: true` |
+| `'globe'` | `view.projection: 'globe'` + `view.sky.visible: true` |
 
 ```ts
 await applyMapPreset(map, 'data-viz');                // resets the knobs the presets set, then applies this one
@@ -238,7 +238,7 @@ Rebuild only on external changes (a reset, a `setStyle`, an agent) — keep a fl
 
 ## Hillshade
 
-The shading's look is `TerrainModule`'s `hillshade.*` knobs — method, light, strength, max zoom, colours — in `map-setup.md` § TerrainModule. Their map-wide colour ids carry `terrain.`: `getStyleColor(map, 'terrain.hillshade.shadowColor')`.
+The shading's look is `TerrainModule`'s `hillshade.*` knobs — method, light, strength, max zoom, colours — in `map-setup.md` § TerrainModule. Their map-wide colour ids carry `terrain.`: `getStyleColor(map, 'terrain.hillshade.colors.shaded')`.
 
 ## Advanced tier — `styling.layers.query(...)` (version-coupled)
 

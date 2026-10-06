@@ -80,7 +80,7 @@ const focusLabel = (focus: number) => {
     });
 
     const [styling, terrainModule] = await Promise.all([
-        StylingFoundationsModule.get(map, { 'view.sky': true }),
+        StylingFoundationsModule.get(map, { 'view.sky.visible': true }),
         // The hillshade shades the same elevation the surface is raised from, which keeps a slope
         // readable where the camera flattens it.
         TerrainModule.get(map, {
@@ -122,13 +122,13 @@ const focusLabel = (focus: number) => {
 
     const applySkyOf = (styleId: StandardStyleID) => {
         if (styleId === 'streetSatellite') {
-            setKnob(styling, stylingFoundationsKnobCatalogue, 'view.skyColor', DAYLIGHT_SKY_COLOR);
-            setKnob(styling, stylingFoundationsKnobCatalogue, 'view.horizonColor', DAYLIGHT_HORIZON_COLOR);
+            setKnob(styling, stylingFoundationsKnobCatalogue, 'view.sky.color', DAYLIGHT_SKY_COLOR);
+            setKnob(styling, stylingFoundationsKnobCatalogue, 'view.sky.horizonColor', DAYLIGHT_HORIZON_COLOR);
             return;
         }
 
-        resetKnob(styling, stylingFoundationsKnobCatalogue, 'view.skyColor');
-        resetKnob(styling, stylingFoundationsKnobCatalogue, 'view.horizonColor');
+        resetKnob(styling, stylingFoundationsKnobCatalogue, 'view.sky.color');
+        resetKnob(styling, stylingFoundationsKnobCatalogue, 'view.sky.horizonColor');
     };
 
     // The terrain controls read their tooltips from the module's catalogue, and the exaggeration
@@ -164,7 +164,9 @@ const focusLabel = (focus: number) => {
     });
 
     terrain.addEventListener('change', () => terrainModule.setElevationVisible(terrain.checked));
-    sky.addEventListener('change', () => setKnob(styling, stylingFoundationsKnobCatalogue, 'view.sky', sky.checked));
+    sky.addEventListener('change', () =>
+        setKnob(styling, stylingFoundationsKnobCatalogue, 'view.sky.visible', sky.checked),
+    );
     hillshade.addEventListener('change', () => terrainModule.setHillshadeVisible(hillshade.checked));
 
     depthOfField.addEventListener('change', applyDepthOfField);

@@ -100,11 +100,11 @@ const DEPTH_OF_FIELD = { 'depthOfField.intensity': 20, 'depthOfField.band': 0.08
             },
         }),
         StylingFoundationsModule.get(map, {
-            'view.sky': true,
+            'view.sky.visible': true,
             // The satellite basemap is a daylit photograph, but its dark labels put the style in
             // the dark theme, whose night sky sits oddly above sunlit rock.
-            'view.skyColor': '#88c6fc',
-            'view.horizonColor': '#ffffff',
+            'view.sky.color': '#88c6fc',
+            'view.sky.horizonColor': '#ffffff',
         }),
         RoutingModule.create(map, { summaryBubbles: { visible: false } }),
     ]);

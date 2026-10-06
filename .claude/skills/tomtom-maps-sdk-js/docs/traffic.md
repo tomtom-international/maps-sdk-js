@@ -92,8 +92,8 @@ const allSelected = selectedMagnitudes.length === indexedMagnitudes.length;
 trafficIncidents.updateConfig({
     filters: { incidentCategories: { show: 'only', values: ['accident', 'road-closed', 'jam'] } },
 });
-// mustHaveDelay drops incidents reporting no delay; without it, minDelayMinutes keeps them
-trafficIncidents.updateConfig({ filters: { delays: { mustHaveDelay: true, minDelayMinutes: 5 } } });
+// required drops incidents reporting no delay; without it, minMinutes keeps them
+trafficIncidents.updateConfig({ filters: { delays: { required: true, minMinutes: 5 } } });
 trafficIncidents.updateConfig({ filters: { roadCategories: { show: 'only', values: ['motorway', 'trunk'] } } });
 trafficIncidents.updateConfig({ filters: undefined });  // reset
 
@@ -482,8 +482,8 @@ const mode: TrafficAreaAnalyticsKnobValueOf<'displayMode'> = 'heatmap';
 | `filters.incidentCategories.values` | enums, `fullTrafficIncidentCategories` | — |
 | `filters.magnitudes.show` | enum, `only` / `all-except` | — |
 | `filters.magnitudes.values` | enums, `unknown` / `minor` / `moderate` / `major` / `indefinite` | — |
-| `filters.delays.mustHaveDelay` | toggle | `false` |
-| `filters.delays.minDelayMinutes` | number, 0–120 | — |
+| `filters.delays.required` | toggle | `false` |
+| `filters.delays.minMinutes` | number, 0–120 | — |
 | `colors.minor`, `colors.moderate`, `colors.major`, `colors.closed` | color | — the style's |
 | `widthFactor` | factor, 0.5–2 | `1` |
 

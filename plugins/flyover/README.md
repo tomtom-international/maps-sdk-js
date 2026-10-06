@@ -1,11 +1,20 @@
-# @tomtom-org/maps-sdk-plugin-flyover
+# Flyover Plugin
 
-A camera that flies a route on a [TomTom Maps SDK for JavaScript](https://docs.tomtom.com/maps-sdk-js/)
+A camera that flies a route on a [TomTom Maps SDK for JavaScript](https://docs.tomtom.com/maps-sdk-js/introduction/overview)
 map: it follows the line, aims at the junctions ahead, frames them, keeps clear of the terrain it
 crosses, and parks the followed position — marked with an arrow — where you want it on screen.
 
+## Docs & examples
+
+- Developer guide: https://docs.tomtom.com/maps-sdk-js/guides/plugins/flyover
+- Example: https://docs.tomtom.com/maps-sdk-js/examples/route-flyover-playground
+
+## Quickstart
+
+Note: this plugin declares `@tomtom-org/maps-sdk` and `maplibre-gl` as peer dependencies and bundles neither — ensure both are installed in your project.
+
 ```bash
-npm install @tomtom-org/maps-sdk @tomtom-org/maps-sdk-plugin-flyover
+npm install @tomtom-org/maps-sdk maplibre-gl @tomtom-org/maps-sdk-plugin-flyover
 ```
 
 ```javascript
@@ -23,6 +32,8 @@ const flyover = new RouteFlyover(map, {
 flyover.start();
 ```
 
+## Features
+
 The route is the only geometry it needs — no camera keyframes to author, and no animation to
 re-time when the route changes. The flight loops: it wraps at the destination and never lands.
 
@@ -36,10 +47,6 @@ re-time when the route changes. The flight loops: it wraps at the destination an
   so a mountain route stays a flight.
 - **Smooth by default** — every value the camera changes moves on a critically damped spring, the
   same at any frame rate.
-
-Full documentation: **[Fly-over plugin guide](https://docs.tomtom.com/maps-sdk-js/guides/plugins/flyover)**.
-
-`@tomtom-org/maps-sdk` and `maplibre-gl` are peer dependencies; this package bundles neither.
 
 ## License
 

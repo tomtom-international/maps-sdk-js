@@ -33,14 +33,16 @@ TomTomConfig.instance.put({ apiKey: API_KEY, language: 'en-GB' });
     const exaggerationValue = document.querySelector('#ui-exaggerationValue') as HTMLElement;
 
     const [styling, terrainModule] = await Promise.all([
-        StylingFoundationsModule.get(map, { 'view.projection': 'globe', 'view.sky': true }),
+        StylingFoundationsModule.get(map, { 'view.projection': 'globe', 'view.sky.visible': true }),
         TerrainModule.get(map, { elevation: { exaggeration: Number(exaggeration.value) } }),
     ]);
 
     globe.addEventListener('change', () =>
         setKnob(styling, stylingFoundationsKnobCatalogue, 'view.projection', globe.checked ? 'globe' : 'mercator'),
     );
-    sky.addEventListener('change', () => setKnob(styling, stylingFoundationsKnobCatalogue, 'view.sky', sky.checked));
+    sky.addEventListener('change', () =>
+        setKnob(styling, stylingFoundationsKnobCatalogue, 'view.sky.visible', sky.checked),
+    );
     terrain.addEventListener('change', () => terrainModule.setElevationVisible(terrain.checked));
     exaggeration.addEventListener('input', () => {
         exaggerationValue.textContent = exaggeration.value;

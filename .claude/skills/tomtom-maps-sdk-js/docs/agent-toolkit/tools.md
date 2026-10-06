@@ -7,27 +7,26 @@ See [base reference](../agent-toolkit.md) for setup and `MapAgentOptions`.
 
 ## `DEFAULT_TOOLS` registry
 
-Flat record of the 55 default tools; `TOOL_NAMES` lists their names and `ToolName` is the union type.
+Flat record of the 51 default tools; `TOOL_NAMES` lists their names and `ToolName` is the union type.
 
 - **Location**: `locatePlace`, `reverseGeocode`, `getCurrentLocation`, `getViewport`, `calculateBBox`
 - **Places & search**: `discoverPlaces`, `getPOICategoryCodes`
 - **Routing**: `setRoute`, `addWaypointsToRoute`, `removeWaypointsFromRoute`, `replaceWaypointInRoute`, `getCurrentWaypoints`, `startRouteMonitor`, `stopRouteMonitor`
 - **Reachable areas**: `findReachableAreas` — calls `calculateReachableRanges`, in private preview: the API key needs Calculate Reachable Range access ([routing.md](../routing.md#reachable-ranges-isochrones))
 - **BYOD**: `addByodSource`, `setByodLayers`, `updateByodDisplay` — [byod.md](./byod.md)
-- **Traffic tiles**: `toggleTilesTrafficFlow`, `toggleTilesTrafficIncidents`
 - **Traffic incidents**: `getTrafficIncidents`, `setTrafficIncidentsMonitor`, `clusterIncidents`, `focusIncidents`
-- **Traffic area analytics**: `getTrafficAreaAnalytics`, `updateTrafficAreaAnalyticsDisplay`
+- **Traffic area analytics**: `getTrafficAreaAnalytics`, `updateTrafficAreaAnalyticsDisplay` (show / hide only; the look is `setMapStyling`'s)
 - **Trackers (geofence / proximity alerts)**: `createTracker`, `getTrackers`, `getTrackerHistory`, `clearTracker`
 - **Data tools (scopable)**: `analyseData`, `processData`, `monitorAnalysis` — [data-tools.md](./data-tools.md)
-- **Map display**: `updatePlacesDisplay`, `updateRoutesDisplay`, `updateWaypointsDisplay`, `clearMap`
-- **Map control**: `flyTo`, `zoomInOrOut`, `setPitchBearing`, `setMapStandardStyle`, `getStandardMapStyles`, `setLanguage`, `toggleTilesPOIs`, `toggleTilesBaseMapLayerGroups`
-- **Map styling**: `setMapStyling`
-- **MapLibre direct**: `executeMaplibreCode`, `getMapStyleLayers`, `setLayoutProperties`, `setPaintProperties`
+- **Map display**: `updatePlacesDisplay`, `updateRoutesDisplay`, `updateWaypointsDisplay`, `clearMap` — which entries show, not how they look
+- **Map control**: `flyTo`, `zoomInOrOut`, `setPitchBearing`, `setMapStandardStyle`, `getStandardMapStyles`, `setLanguage`, `setGeopoliticalView`
+- **Map styling**: `setMapStyling` — what the base map shows (layer groups, POI icons, the live traffic overlays) and how it looks, and the look of every layer the agent drew
+- **MapLibre direct**: `executeMaplibreCode`, `getMapStyleLayers`, `setLayerProperties` (`changes: [{ layerId, paint?, layout? }]`)
 - **State**: `recallState`, `setEntryMode`, `resetState`
 - **Utilities**: `clarifyIntent`, `help`
 
-Names are stable; reference entries as `DEFAULT_TOOLS.locatePlace`. Five entries are builders (`ToolEntryBuilder`):
-`discoverPlaces`, `analyseData`, `processData`, `clusterIncidents`, `recallState`.
+Names are stable; reference entries as `DEFAULT_TOOLS.locatePlace`. Six entries are builders (`ToolEntryBuilder`):
+`discoverPlaces`, `analyseData`, `processData`, `clusterIncidents`, `recallState`, `setMapStyling`.
 
 `TOOLS_BY_DATA_ENTRY_KIND` maps each `DataEntryKind` to the tools dropped when `dataEntries[kind].enabled` is `false`.
 `getDefaultToolPrompts()` returns `Record<ToolName, readonly string[]>` of every tool's `examplePrompts` — chat-UI starter
@@ -36,12 +35,28 @@ suggestions from the same source as the `help` tool.
 ### Notes on specific tools
 
 - **`setMapStyling`** — `{ set?, reset?, preset?, theme? }`, applied in the order reset → preset → theme → set.
-  `set` takes knob ids from every module's catalogue (`labels.sizeFactor`, `pois.label.color`, `traffic.flow.colors.slow`,
-  `terrain.hillshade.method`, …); `reset: true` resets every module's look knobs, or pass ids; `preset` calls `applyMapPreset`;
+  `set` takes every knob id of the `StylingFoundationsModule`, `BaseMapModule`, `POIsModule`, `TrafficFlowModule`,
+  `TrafficIncidentsModule` and `TerrainModule` catalogues, under the map-wide prefixes `''`, `pois.`, `traffic.flow.`,
+  `traffic.incidents.` and `terrain.`: `labels.sizeFactor`, `groups.buildings3D.visible`, `pois.visible`,
+  `pois.filters.categories.values`, `traffic.flow.visible`, `traffic.incidents.filters.magnitudes.values`,
+  `terrain.elevation.visible`, …; `reset: true` resets every knob, visibility included, or pass ids; `preset` calls `applyMapPreset`;
+  scopable: the classifier emits `{ kinds }` from `look`, `baseMap`, `pois`, `trafficFlow`, `trafficIncidents`, `terrain`
+  and the `set` description lists only those families' ids, while any id stays settable; an unknown id is refused with
+  the closest ones (`did you mean pois.label.color?`);
+  the layers the agent drew take their module catalogues under `places.` (`PlacesModule`, the ranges' origin pins too),
+  `routes.` (`RoutingModule`), `geometries.` (custom geometries, place boundaries, ranges drawn as geometries),
+  `ranges.` (`ReachableRangesModule`), `traffic.areaAnalytics.` and `traffic.incidentDetails.`, minus `visible`,
+  `markerType` and `fill.style`, which the display tools set per entry; families `places`, `routes`, `geometries`,
+  `ranges`, `trafficAreaAnalytics`, `trafficIncidentDetails`; each slice's `SliceKnobs` (`state.routing.knobs`,
+  `state.places.geometriesKnobs`, …) sets the knob on every module of that kind and on each one created later;
   `theme: { colors | imageUrl, mode }` themes the map and returns `switchedStyle` when it had to switch the standard style.
   See [map-styling.md](../map-styling.md), [map-theming.md](../map-theming.md).
-- **`toggleTilesBaseMapLayerGroups`** — `{ visible, layerGroups? }` or `{ reset: true }`, backed by `BaseMapModule.setVisible`; returns `hiddenGroups`.
-  Showing or hiding a layer group (3D buildings, road shields) is this tool, not a knob.
+- **`setGeopoliticalView`** — `{ geopoliticalView? }` from `geopoliticalViews`; sets it on the map
+  (`setGeopoliticalView`) and in `TomTomConfig`, so later searches follow; omitted resets to the default view.
+- **`setRoute`** — requests every travel time (`computeTravelTimeFor: 'all'`); each route summary also carries
+  `sectionCounts` (`tollRoad`, `ferry`, `traffic`, … above zero) and the `countries` crossed (ISO3).
+- **Errors** — a failed TomTom service or map call returns `{ error, code }`, `code` being the `SDKErrorCode`, the
+  error text ending with whether retrying helps.
 - **`recallState`** — reads state, never fetches. No args: session snapshot (places / routes / ranges index, entry modes,
   map style, POIs, traffic). `{ kind }`: that kind's index. `{ kind, id }`: one entry's summarised detail.
   Kinds: `places`, `routes`, `ranges`, `geometries`, `byod`, `incidents`, `trafficAreaAnalytics`.

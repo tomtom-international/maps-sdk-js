@@ -74,13 +74,13 @@ minimumReleaseAgeExclude:
   - "@tomtom-org/*"
 
 catalog:
-  "@tomtom-org/maps-sdk": 0.64.0
-  "@tomtom-org/maps-sdk-plugin-agent-toolkit": 0.13.0
-  "@tomtom-org/maps-sdk-plugin-flyover": 0.0.3
-  "@tomtom-org/maps-sdk-plugin-landmarks-3d": 0.0.8
-  "@tomtom-org/maps-sdk-plugin-map-effects": 0.2.1
-  "@tomtom-org/maps-sdk-plugin-map-theme": 0.3.0
-  "@tomtom-org/maps-sdk-plugin-viewport-places": 0.5.1
+  "@tomtom-org/maps-sdk": 1.0.0-rc.1
+  "@tomtom-org/maps-sdk-plugin-agent-toolkit": 0.15.0
+  "@tomtom-org/maps-sdk-plugin-flyover": 0.0.5
+  "@tomtom-org/maps-sdk-plugin-landmarks-3d": 0.0.10
+  "@tomtom-org/maps-sdk-plugin-map-effects": 0.2.3
+  "@tomtom-org/maps-sdk-plugin-map-theme": 0.3.2
+  "@tomtom-org/maps-sdk-plugin-viewport-places": 0.5.3
   "@ai-sdk/azure": ^3.0.133
   # Pinned exact: 0.14.16+ (core 0.2.12+/tap 0.7+) makes a `useSyncExternalStore`
   # getSnapshot return a fresh value every call — React throws "Maximum update depth

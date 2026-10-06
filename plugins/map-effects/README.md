@@ -30,7 +30,7 @@ Note: this plugin declares `@tomtom-org/maps-sdk` and `maplibre-gl` as peer depe
 npm install @tomtom-org/maps-sdk maplibre-gl @tomtom-org/maps-sdk-plugin-map-effects
 ```
 
-1. Follow the SDK [Project setup](https://docs.tomtom.com/maps-sdk-js/guides/introduction/project-setup) or the Map [quickstart](https://docs.tomtom.com/maps-sdk-js/guides/map/quickstart) to create and initialize a `TomTomMap`. For bloom, the depth of field, your own passes and capture, create it with `mapLibre: { canvasContextAttributes: { preserveDrawingBuffer: true } }`.
+1. Follow the SDK [Project setup](https://docs.tomtom.com/maps-sdk-js/introduction/project-setup) or the Map [quickstart](https://docs.tomtom.com/maps-sdk-js/guides/map/quickstart) to create and initialize a `TomTomMap`. For bloom, the depth of field, your own passes and capture, create it with `mapLibre: { canvasContextAttributes: { preserveDrawingBuffer: true } }`.
 
 2. Import and use the plugin:
 

@@ -1,5 +1,83 @@
 # Changelog
 
+## 1.0.0-rc.1
+
+### Patch Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - `npm install @tomtom-org/maps-sdk` installs the 1.0.0 release candidate, with no `@rc` needed, and the npm page shows its README
+
+## 1.0.0-rc.0
+
+### Major Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - core, services, map: 1.0.0, the first stable release of the SDK. The *Upgrading to 1.0 from a 0.x release* guide lists every change to apply from a 0.x release.
+
+### Minor Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** core, services, map: the error codes take the TomTom Navigation SDK's names: `API_KEY_REJECTED` is `INVALID_CREDENTIALS`, `SERVICE_UNAVAILABLE` is `LIVE_SERVICE_NOT_AVAILABLE`, `NETWORK_ERROR` is `NETWORK_NOT_AVAILABLE` and `UNEXPECTED` is `INTERNAL`
+  **Breaking:** core, services, map: a `403` is `INSUFFICIENT_PERMISSIONS`, a valid key not allowed the request, and `INVALID_CREDENTIALS` is a `401` only, a key the API does not know
+  - services, map: `SDKError.canRetry` and `TomTomMapError.canRetry` are `true` for `RATE_LIMITED`, `LIVE_SERVICE_NOT_AVAILABLE` and `NETWORK_NOT_AVAILABLE`, the failures that clear on their own
+  - services: a `403` keeps the API's message, and `SDKServiceError.apiErrorCode` holds the API's own code: `'Forbidden'` when the API is not enabled for the key, `'InvalidReferer'` when its domain restriction refused the page
+  - services: `calculateReachableRange` and `calculateReachableRanges`, in Private Preview, name the access a key lacks, and link the Private Preview terms, in the message; the access is also in `SDKServiceError.privatePreviewAccess`, `{ product, requestAccessURL }`
+  - map: a style, tile, sprite or glyph answered `403` reaches the error handlers as `INSUFFICIENT_PERMISSIONS`
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** map: the sky, space, incident delay and hillshade knobs are named as every other knob is: a part's settings sit under it, and no name repeats its parent
+  - map: `StylingFoundationsModule` knob ids `view.sky`, `view.skyColor`, `view.horizonColor` and `view.spaceColor` are `view.sky.visible`, `view.sky.color`, `view.sky.horizonColor` and `view.space.color`, in `styleColorKnobIds`, `getStyleColor` and map presets too
+  - map: `TrafficIncidentsModule` `filters: { delays: { mustHaveDelay, minDelayMinutes } }` is `filters: { delays: { required, minMinutes } }`, and the knob ids follow
+  - map: `TerrainModule` `hillshade: { lightDirection, exaggeration, shadowColor, highlightColor, accentColor }` is `hillshade: { light: { direction }, intensity, colors: { shaded, lit, steep } }`, and the knob ids follow, in `styleColorKnobIds` and `getStyleColor` too; `exaggeration` is now only the raised surface's vertical scale
+  - agent-toolkit: `setMapStyling`'s globe example sets `view.sky.visible`
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** map: `PlacesKnob` and the traffic knob types list only the kinds their catalogues hold, so a `switch` over their `kind` drops the cases no entry reaches
+  - `PlacesKnob` no longer includes `text`
+  - `TrafficFlowKnob`, `TrafficIncidentsKnob`, `TrafficIncidentDetailsKnob` and `TrafficAreaAnalyticsKnob` no longer include `image`
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** map: the last config properties and knob ids off the shared vocabulary follow it: a size preset is a `*Preset`, a fill style sits under `fill`, and a unit is named once
+  - map: `GeometriesModule` and `ReachableRangesModule` take `fill: { style }` instead of `fillStyle`, and `TrafficAreaAnalyticsModule` `regionPolygon: { fill: { style } }` instead of `regionPolygon.fillStyle`; a feature's `properties.fillStyle` stays
+  - map: `RoutingModule` `width`, `sections.<type>.width` and `waypoints.size` are `widthPreset`, `sections.<type>.widthPreset` and `waypoints.sizePreset`
+  - map: `PlacesModule` `cluster.source` takes `radius`, `maxZoom`, `minPoints` and `properties` instead of MapLibre's `clusterRadius`, `clusterMaxZoom`, `clusterMinPoints` and `clusterProperties`, typed by `PlacesClusterSourceConfig`
+  - map: `PlacesModule` `label.offset` is `label.distance`, since an `offset` is an `[x, y]` displacement on every module
+  - map: `TrafficAreaAnalyticsModule` `height.maxHeightMeters` and `height.minHeightMeters` are `height.maxMeters` and `height.minMeters`, in `setHeight` too
+  - map: each renamed property's knob id follows it
+  - agent-toolkit: the tools keep their parameters, and the plugin needs SDK 1.0.0-rc.0
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** map: the map loads TomTom standard styles only, so a custom style URL or style JSON no longer loads
+  - `StyleInput` no longer takes `{ type: 'custom', url }` or `{ type: 'custom', json }`, and `CustomStyle` and `CustomStyleSource` are no longer exported
+  - `lightDarkTheme` is gone with them: `map.styleLightDarkTheme` follows from the standard style ID
+  - Restyle a standard style at runtime with `StylingFoundationsModule` and `setMapColors` instead
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** core, services, map: the SDK no longer offers real-time EV charging availability, nor routes and reachable ranges planned on a vehicle consumption model; search results keep their static EV station data
+  - services: `evChargingStationsAvailability`, `getPlacesWithEVAvailability`, `getPlaceWithEVAvailability` and `hasChargingAvailability` are removed
+  - services: long-distance EV routing is removed: `vehicle.preferences`, `chargingStopsStrategy` and `chargingStopsStrategies`
+  - services: `vehicle` takes `model.dimensions.weightKG`, `state.heading` and `restrictions` only: `engineType`, `model.engine`, `model.variantId` and the charge and fuel state are removed, with the electric, combustion and generic vehicle types
+  - core: the reachable-range budgets `remainingChargePCT`, `spentChargePCT` and `spentFuelLiters` are removed; a budget is `timeMinutes` or `distanceKM`
+  - core: route and leg summaries lose their battery, charge and fuel fields and `chargingInformationAtEndOfLeg`, with `ChargingStop`
+  - core: `ChargingPark.availability`, `ChargingPoint.status` and `dataSources.chargingAvailability` are removed; `StaticChargingPoint` becomes `ChargingPoint`, and `ChargingStation` takes no type parameter
+  - map: `PlacesModule` loses `evAvailability`, `categoryIcons` entries lose `availabilityLevel`, and `RoutingModule` loses `chargingStops`, with their knobs, events and shown data
+  
+  The *Upgrading to 1.0 from a 0.x release* guide lists every removed name.
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - **Breaking:** map: each standard style ID is the Orbis style it loads, in camelCase
+  - map: `standardLight`, `standardDark`, `drivingLight`, `drivingDark` and `satellite` are `streetLight`, `streetDark`, `streetLightDriving`, `streetDarkDriving` and `streetSatellite`; `monoLight` and `monoDark` stay
+  - agent-toolkit: `setMapStandardStyle` takes the new IDs, `resetState` reverts to `streetLight`, and the plugin needs SDK 1.0.0-rc.0
+  - map-theme, landmarks-3d: their docs name the new IDs
+
+### Patch Changes
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: the `maplibre-gl` peer dependency moves up to `^6.12.0`
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - core, services, map: the package ships without source maps, so a stack trace through the SDK points into its minified bundles, which keep their function names
+  - An app's own source maps still lead a trace to the SDK's frames (`map/dist/map.es.js:1:84523`); share such a trace in a report and TomTom maps it back to the source
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: `TerrainModule` sets the hillshade light's height and what its direction turns with, and the `multidirectional` method fans its four lights around the light's direction
+  - map: `hillshade.light.altitude`, in degrees above the horizon, and `hillshade.light.alignment`, `viewport` or `map` (`hillshadeLightAlignments`), in the config and as `terrainKnobCatalogue` knobs
+  - map: with `method: 'multidirectional'`, `hillshade.light.direction` is the centre of four lights spread over 135°
+
+- Thanks [@DanielForniessoria-TomTom](https://github.com/DanielForniessoria-TomTom)! - map: `TrafficIncidentsModule` can show planned incidents, and its incident descriptions follow the map language
+  
+  - `timeValidity: ['present', 'future']` brings scheduled roadworks and closures in next to the incidents under way, also as the `timeValidity` knob
+  - `description` is in the map language, or the nearest one the traffic service has (`pt-PT` for `pt-BR`), else English; `map.setLanguage` reloads the incident tiles when that changes
+  - core: `trafficIncidentTimeValidities` lists every `TrafficIncidentTimeValidity`, `present` first
+
 ## 0.64.0
 
 ### Minor Changes

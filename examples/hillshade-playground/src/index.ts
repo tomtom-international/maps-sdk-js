@@ -27,18 +27,18 @@ const ALWAYS: TerrainHillshadeConfig = { visible: true, maxZoom: 22 };
 const sections: Record<string, [TerrainKnobId, string][]> = {
     '#ui-shading': [
         ['hillshade.method', 'Method'],
-        ['hillshade.exaggeration', 'Strength'],
+        ['hillshade.intensity', 'Strength'],
         ['hillshade.maxZoom', 'Drawn up to zoom'],
     ],
     '#ui-light': [
-        ['hillshade.lightDirection', 'Light direction (°)'],
-        ['hillshade.lightAltitude', 'Light altitude (°)'],
-        ['hillshade.lightAlignment', 'Light measured from'],
+        ['hillshade.light.direction', 'Light direction (°)'],
+        ['hillshade.light.altitude', 'Light altitude (°)'],
+        ['hillshade.light.alignment', 'Light measured from'],
     ],
     '#ui-colors': [
-        ['hillshade.shadowColor', 'Shadow'],
-        ['hillshade.highlightColor', 'Highlight'],
-        ['hillshade.accentColor', 'Accent'],
+        ['hillshade.colors.shaded', 'Shadow'],
+        ['hillshade.colors.lit', 'Highlight'],
+        ['hillshade.colors.steep', 'Accent'],
     ],
 };
 
@@ -97,9 +97,9 @@ const sunAt = (progress: number) => ({
     let frame = 0;
     const playDay = (startedAt: number) => (now: number) => {
         const { direction, altitude } = sunAt(((now - startedAt) % DAY_MS) / DAY_MS);
-        setKnob(terrain, terrainKnobCatalogue, 'hillshade.lightDirection', direction);
-        setKnob(terrain, terrainKnobCatalogue, 'hillshade.lightAltitude', altitude);
-        showValues(['hillshade.lightDirection', 'hillshade.lightAltitude']);
+        setKnob(terrain, terrainKnobCatalogue, 'hillshade.light.direction', direction);
+        setKnob(terrain, terrainKnobCatalogue, 'hillshade.light.altitude', altitude);
+        showValues(['hillshade.light.direction', 'hillshade.light.altitude']);
         frame = requestAnimationFrame(playDay(startedAt));
     };
     sun.addEventListener('change', () => {

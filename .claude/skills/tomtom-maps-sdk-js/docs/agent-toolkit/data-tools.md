@@ -79,7 +79,8 @@ Threat model: [code generation guide](https://docs.tomtom.com/maps-sdk-js/guides
 ## Per-turn scope
 
 An unscoped data tool documents every enabled kind with its schema docs. To keep each request small, the classifier emits
-`toolScopes[<name>] = { kinds: [...] }` for every scopable tool it picks (`analyseData`, `processData`, `clusterIncidents`),
+`toolScopes[<name>] = { kinds: [...] }` for every scopable tool it picks (`analyseData`, `processData`, `clusterIncidents`;
+`setMapStyling` scopes the same way by knob family, see [tools.md](./tools.md#notes-on-specific-tools)),
 and `prepareStep` rebuilds that tool's `description` + `inputSchema` for the turn with only those kinds. Scoped or not, the
 helper docs follow the active kinds: the cross-kind cheat-sheet when more than one is active, `routeUtils` with routes,
 `cluster` with incidents.

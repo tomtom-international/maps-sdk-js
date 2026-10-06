@@ -45,7 +45,7 @@ export const configPresets: {
                 filters: {
                     any: [
                         {
-                            delays: { mustHaveDelay: true },
+                            delays: { required: true },
                         },
                     ],
                 },
@@ -77,7 +77,7 @@ export const configPresets: {
                 filters: {
                     any: [
                         {
-                            delays: { minDelayMinutes: 5 },
+                            delays: { minMinutes: 5 },
                         },
                     ],
                 },
