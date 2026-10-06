@@ -1,0 +1,171 @@
+---
+title: Reachable ranges
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.0"
+  color: "grey5"
+- label: "PRIVATE PREVIEW"
+  color: "grey5"
+---
+
+<Button
+    label="Request Access"
+    href="https://www.tomtom.com/contact-sales/?source_app=docs-portal&source_product=calculate-reachable-range"
+    target="_blank">
+    Request Access
+</Button>
+
+<Blockquote type="warning">
+**Important note**
+Calculate Reachable Range is in [Private Preview](https://docs.tomtom.com/legal/private-preview) and unavailable on a Freemium or Pay As You Grow (PAYG) basis.
+Your API key needs access to it, and its API documentation requires a TomTom enterprise login.
+Click the **Request Access** button above to contact our Sales team.
+A call with a key that lacks the access rejects with `INSUFFICIENT_PERMISSIONS`, naming it: see [A key refused access](../request-options-and-errors.mdx#a-key-refused-access).
+</Blockquote>
+
+`calculateReachableRanges` computes the area reachable from an origin within a travel time or
+distance budget, and returns one GeoJSON polygon per budget. Several budgets from
+one origin give concentric bands. `calculateReachableRange` computes a single range.
+
+The demo below shows 10, 20 and 30 minutes of driving from two stations, drawn by the
+[reachable ranges module](../../map/reachable-ranges.mdx) in the map's own colours.
+
+<GuideDemo demo="reachable-ranges-playground" />
+
+## Budget types
+
+Each range takes a `budget` of `{ type, value }`:
+
+- `timeMinutes` – Travel time, in minutes
+- `distanceKM` – Distance, in kilometres
+
+`budgetTypes` and the `BudgetType` type list them, and `budgetUnits` holds the unit of each. All
+come from `@tomtom-org/maps-sdk/core`, so your own labels can read like the module's titles:
+
+```ts
+import { budgetUnits } from '@tomtom-org/maps-sdk/core';
+
+const title = `${budget.value} ${budgetUnits[budget.type]}`; // '30 min', '50 km'
+```
+
+## Example
+
+```typescript
+import { ReachableRangesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { calculateReachableRanges } from '@tomtom-org/maps-sdk/services';
+
+const origin: [number, number] = [4.9041, 52.3676];
+
+const result = await calculateReachableRanges([
+    { origin, budget: { type: 'timeMinutes', value: 10 } },
+    { origin, budget: { type: 'timeMinutes', value: 20 } },
+    { origin, budget: { type: 'timeMinutes', value: 30 } },
+]);
+
+const map = new TomTomMap({ mapLibre: { container: 'map', center: origin, zoom: 9 } });
+const rangesModule = await ReachableRangesModule.create(map);
+await rangesModule.show(result); // titled '30 min', '20 min', '10 min'
+```
+
+- `result.features` – One polygon per range the service could calculate, in request order.
+- `result.bbox` – The bounding box of them all.
+- `feature.properties` – The request it was calculated with (`origin`, `budget`, `vehicle`, …),
+  without the API key or any other common service parameter.
+- Ranges are calculated one after another, not in parallel, to stay within the service's
+  rate limit.
+
+## Range options
+
+Besides `vehicle`, `costModel` and `when`, which work as in
+[`calculateRoute`](./parameters.mdx) within the [limits below](#unsupported-options), a range takes:
+
+- `maxFerryLengthMeters` – Leaves out ferries longer than this, so a long crossing doesn't stretch
+  the range.
+- `smoothing` – How much to smooth the polygon's boundary. One of `'none'`, `'weak'` or `'strong'` (default).
+
+## Display on the map
+
+[`ReachableRangesModule`](../../map/reachable-ranges.mdx) draws the result unchanged. Its guide
+covers fill styles, band colours, titles, events and every setting.
+
+```typescript
+const ranges = await ReachableRangesModule.create(map, { fill: { style: 'inverted' } });
+await ranges.show(result);
+```
+
+## Ranges that can't be calculated
+
+If the service answers a range with an error, `calculateReachableRanges` skips it instead of rejecting
+the batch. The service answers `NO_RANGE_FOUND` for an origin it can't match to a drivable road, such
+as a pedestrian square or a point on water.
+
+- `result.features` can be shorter than the request array, or empty. Match each feature to its
+  request through `properties.budget` and `properties.origin`, and treat an empty result as "no
+  range from this origin".
+- `calculateReachableRange` rejects with that error instead.
+- A `401`, `403` or `429` response, a network failure, an aborted signal and an invalid request
+  reject the batch.
+
+## Cancelling a batch
+
+`calculateReachableRanges` takes one signal for the whole batch as its second argument. Aborting it cancels
+the range in flight and skips the rest. When a new origin replaces the previous one, run the batch
+through [`createLatestRequest`](../request-options-and-errors.mdx#keeping-only-the-latest-request),
+as the [reachable ranges example](../../../examples/reachable-ranges) does on every map click:
+
+```typescript
+import type { HasLngLat } from '@tomtom-org/maps-sdk/core';
+import { calculateReachableRanges, createLatestRequest } from '@tomtom-org/maps-sdk/services';
+
+const latestRanges = createLatestRequest();
+
+const showRanges = async (origin: HasLngLat) => {
+    const ranges = await latestRanges.run((signal) =>
+        calculateReachableRanges(
+            [10, 20, 30].map((value) => ({ origin, budget: { type: 'timeMinutes', value } })),
+            { signal },
+        ),
+    );
+    if (!ranges.current) return; // a newer origin retired this batch
+
+    await rangesModule.show(ranges.value);
+};
+```
+
+<GuideDemo demo="reachable-ranges" />
+
+## Unsupported options
+
+The types leave out these routing parameters, and validation rejects them for untyped callers
+instead of returning a range computed without them.
+
+| Parameter | Use instead |
+|---|---|
+| `vehicle.state.heading` | Omit it, or use `calculateRoute`, which accepts it |
+| `costModel.avoid: 'alreadyUsedRoads'` | Drop that entry. The other avoidables are accepted |
+| `costModel.avoidAreas` | Omit it. This endpoint can't avoid areas |
+| `when.arriveBy` | Use `when.departAt`, or omit `when` entirely |
+
+## API reference
+
+- [calculateReachableRanges](/maps-sdk-js/api-reference/functions/services.calculateReachableRanges.html) – A batch of ranges
+- [calculateReachableRange](/maps-sdk-js/api-reference/functions/services.calculateReachableRange.html) – A single range
+- [ReachableRangeParams](/maps-sdk-js/api-reference/types/services.ReachableRangeParams.html) – Request parameters
+- [ReachableRangeProperties](/maps-sdk-js/api-reference/types/services.ReachableRangeProperties.html) – Properties of each result polygon
+- [Calculate Reachable Range API](https://developer.tomtom.com/routing-api/documentation/tomtom-orbis-maps/v3/calculate-reachable-range) – API documentation (requires an enterprise login)
+
+## Related guides and examples
+
+### Related guides
+
+- [Reachable ranges module](../../map/reachable-ranges.mdx) – Drawing the ranges: fill styles, colours, labels, events and every setting
+- [Vehicle configuration](./vehicle.mdx) – Weight and restrictions of the vehicle a range is calculated for
+- [Geometries](../../map/geometries.mdx) – Polygons of your own, styled per feature rather than as bands
+
+### Related examples
+
+- [Reachable ranges](../../../examples/reachable-ranges) – Ranges around the clicked point, by time or distance
+- [Reachable ranges playground](../../../examples/reachable-ranges-playground) – Every knob of the module, and bands following a map theme
+- [Routing composite](../../../examples/routing-composite) – Ranges alongside a route and its places

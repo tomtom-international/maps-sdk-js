@@ -1,0 +1,392 @@
+---
+title: How the Agent Toolkit works
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.14.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Agent Toolkit sits between your application (chat UI and model provider) and the TomTom Maps SDK. Each user message
+goes through two phases, intent classification and then a tool loop. Shared [state](./state.mdx) carries context
+across turns.
+
+```d2
+direction: right
+App: Your Application {
+  style: {
+    stroke: "#f87171"
+    stroke-width: 3
+    border-radius: 8
+    font-size: 24
+  }
+
+  Chat: Chat UI (BYO) {
+    style: {
+      fill: "#fef2f2"
+      stroke: "#f87171"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 16
+    }
+  }
+
+  Model: LLM Provider (BYO) {
+    style: {
+      fill: "#fef2f2"
+      stroke: "#f87171"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 16
+    }
+  }
+}
+
+  Agent: Agent Toolkit Plugin {
+    direction: down
+    style: {
+      stroke: "#333"
+      stroke-width: 3
+      fill: "#f5f5f5"
+      border-radius: 8
+      font-size: 24
+      font-color: "#333"
+    }
+
+    Classifier: Intent Classifier {
+      style: {
+        fill: "#e8f5e9"
+        stroke: "#1b5e20"
+        stroke-width: 2
+        font-color: "#333"
+        border-radius: 6
+        font-size: 16
+      }
+      width: 150
+      height: 50
+    }
+
+    Tools: Tools {
+      style: {
+        fill: "#fffde7"
+        stroke: "#ff6f00"
+        stroke-width: 2
+        font-color: "#333"
+        border-radius: 6
+        font-size: 16
+      }
+      width: 150
+      height: 50
+    }
+
+    State: State {
+      style: {
+        fill: "#f3e5f5"
+        stroke: "#4a148c"
+        stroke-width: 2
+        font-color: "#333"
+        border-radius: 6
+        font-size: 16
+      }
+      width: 150
+      height: 50
+    }
+
+    Classifier -> Tools: {
+      style: {
+        stroke-dash: 3
+        stroke-width: 2
+      }
+    }
+
+    Tools -> State: {
+      style: {
+        stroke-dash: 3
+        stroke-width: 2
+      }
+    }
+  }
+
+  SDK: Maps SDK for JavaScript {
+    style: {
+      stroke: "#333"
+      stroke-width: 3
+      fill: "#e8e8e8"
+      border-radius: 8
+      font-size: 16
+      font-color: "#333"
+    }
+  }
+
+  Agent.Tools -> SDK: {
+    style: {
+      stroke-dash: 3
+      stroke-width: 2
+    }
+  }
+
+App -> Agent: {
+  style: {
+    stroke: "#f87171"
+    stroke-width: 2
+  }
+}
+```
+
+## 1. Intent classification
+
+Before the model sees any tool, one lightweight LLM call (two if the first answer fails validation) picks the tools this turn needs. Fewer tools in the request means
+fewer wrong choices and fewer tokens.
+
+- It reads each tool's `classificationPrompt`, a one-line "when to use me". A custom tool that has one takes part
+  automatically.
+- It sees the last user message plus up to 8 earlier messages, each cut to 300 characters. It never sees the system prompt,
+  tool results or state.
+- Tools with `alwaysActive: true` (`clarifyIntent` by default) are added every step, whatever the classifier picked.
+- For *scopable* tools (`analyseData`, `processData`, `clusterIncidents`, and custom tools with a `scopeSchema`), it also
+  names the data kinds the turn touches, and the tool's schema shrinks to those kinds. See
+  [Scope-aware data tools](./scope-aware-data-tools.mdx).
+- If classification fails, every tool is offered (fail-open).
+
+The default classifier reuses your main model. Give it a smaller one, or change how much history it sees:
+
+```typescript
+import { createMapAgent, createDefaultClassifier } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+import { openai } from '@ai-sdk/openai';
+
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    classifier: createDefaultClassifier({
+        model: openai('gpt-4o-mini'),
+        maxHistoryMessages: 8,        // earlier messages sent (default 8)
+        maxHistoryMessageLength: 300, // characters kept per earlier message (default 300)
+    }),
+});
+```
+
+Or turn it off. Every tool is then offered every turn, and scopable tools keep their full, unscoped schema:
+
+```typescript
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    classifier: false,
+});
+```
+
+`classifier` also accepts your own function, `(context) => Promise<ClassificationResult | null>`. It receives the
+messages and every tool's metadata. Returning `null` offers every tool.
+
+## 2. Tool loop
+
+The model calls tools, such as geocode, search, route and show on map, in sequence or in parallel until it can answer.
+
+- Tools return compact summaries (ids, counts, names, status). The geodata stays in [state](./state.mdx).
+- Results are stored as entries with stable ids (`places-3`, `routes-1`), and the model reads them back with
+  `recallState`. That is why *"add a stop after the first one"* or *"what were those restaurants again?"* work turns
+  later.
+- The loop stops after `maxSteps` steps (default 10), or as soon as a tool with `endsTurnOnCall` is called.
+
+The [tool registry](./tools.mdx) lists every tool.
+
+### Per-turn sequence
+
+```d2
+direction: down
+
+User: User message {
+  style: {
+    fill: "#fef2f2"
+    stroke: "#f87171"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 16
+  }
+  width: 220
+  height: 50
+}
+
+Classifier: Intent classifier {
+  style: {
+    fill: "#e8f5e9"
+    stroke: "#1b5e20"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 16
+  }
+
+  Pick: Picks active tools {
+    style: {
+      fill: "#e8f5e9"
+      stroke: "#1b5e20"
+      stroke-width: 1
+      font-color: "#333"
+      border-radius: 4
+      font-size: 13
+    }
+  }
+
+  Scope: "Emits per-tool scopes { analyseData: { kinds: [...] } }" {
+    style: {
+      fill: "#e8f5e9"
+      stroke: "#1b5e20"
+      stroke-width: 1
+      font-color: "#333"
+      border-radius: 4
+      font-size: 13
+    }
+  }
+}
+
+PrepareStep: prepareStep rebuilds narrowed inputSchema for scopable tools {
+  style: {
+    fill: "#fffde7"
+    stroke: "#ff6f00"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 13
+  }
+}
+
+Loop: Tool loop {
+  style: {
+    fill: "#fffde7"
+    stroke: "#ff6f00"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 16
+  }
+
+  Call: Model picks a tool, calls it {
+    style: {
+      fill: "#fffde7"
+      stroke: "#ff6f00"
+      stroke-width: 1
+      font-color: "#333"
+      border-radius: 4
+      font-size: 13
+    }
+  }
+
+  Exec: Tool execute returns summary {
+    style: {
+      fill: "#fffde7"
+      stroke: "#ff6f00"
+      stroke-width: 1
+      font-color: "#333"
+      border-radius: 4
+      font-size: 13
+    }
+  }
+
+  State: Heavy data lands in state {
+    style: {
+      fill: "#f3e5f5"
+      stroke: "#4a148c"
+      stroke-width: 1
+      font-color: "#333"
+      border-radius: 4
+      font-size: 13
+    }
+  }
+}
+
+Reply: Final assistant reply {
+  style: {
+    fill: "#fef2f2"
+    stroke: "#f87171"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 16
+  }
+  width: 220
+  height: 50
+}
+
+User -> Classifier: "1. classify"
+Classifier -> PrepareStep: "2. activeToolNames + toolScopes"
+PrepareStep -> Loop: "3. rebuilt schemas"
+Loop.Call -> Loop.Exec: "4. call"
+Loop.Exec -> Loop.State: "5. persist"
+Loop.State -> Loop.Call: "6. next step reads state" {
+  style: {
+    stroke-dash: 3
+    stroke-width: 1
+  }
+}
+Loop -> Reply: "7. done — compose answer"
+```
+
+### Hooking into the loop
+
+| Option | Use it to |
+|---|---|
+| `prepareStep` | Run your own per-step logic. Any `activeTools` it returns are intersected with the classifier's pick |
+| `maxSteps` | Cap the steps per turn (default 10) |
+| `providerOptions` | Pass provider settings such as reasoning effort to every step |
+| `stepProviderOptions` | Return per-step provider settings from `{ activeTools, stepNumber }`, merged over `providerOptions` |
+| `outputSchemas` | Set `false` for providers that reject structured tool outputs |
+| `onToolExecute` | Observe each call's `toolName`, `durationMs`, `isError` and `errorMessage` |
+
+```typescript
+const agent = createMapAgent(map, {
+    model: openai('gpt-5'),
+    providerOptions: { openai: { reasoningEffort: 'low' } },
+    // Think harder only on turns that write code.
+    stepProviderOptions: ({ activeTools }) =>
+        activeTools?.some((name) => name === 'analyseData' || name === 'processData')
+            ? { openai: { reasoningEffort: 'medium' } }
+            : undefined,
+    onToolExecute: ({ toolName, durationMs, isError }) => console.log(toolName, durationMs, isError),
+});
+```
+
+Run one turn at a time per agent, because scoping rewrites the agent's shared tool objects each turn, and state belongs to the
+agent too. Create one agent per concurrent conversation.
+
+## Per-tool classification prompts
+
+If a custom tool is offered too often, or not when it should be, tune its `classificationPrompt`:
+
+```typescript
+// Too broad — activates for any location question
+classificationPrompt: 'Get fleet vehicle data.'
+
+// Precise — activates only for explicit vehicle ID references
+classificationPrompt: 'Locate a fleet vehicle by its ID (e.g. "TT-001"); not for general location queries.'
+```
+
+The system prompt never reaches the classifier, so an instruction there cannot make a tool available. The
+[system prompt guide](./customizing-system-prompt.mdx) explains what to do instead.
+
+## Observing classification
+
+`onClassify` receives each turn's pick and per-tool scopes, or `null` if the classifier failed open:
+
+```typescript
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    onClassify: (result) => {
+        if (result) {
+            console.log('Selected tools:', result.activeToolNames);
+            console.log('Per-tool scopes:', result.toolScopes); // e.g. { analyseData: { kinds: ['places', 'routes'] } }
+            console.log('Classification took:', result.timeMs, 'ms', result.usage.totalTokens, 'tokens');
+        }
+    },
+});
+```
+
+## Related
+
+- **[Tool registry](./tools.mdx)** — the tools the classifier selects from.
+- **[Customizing the system prompt](./customizing-system-prompt.mdx)** — the prompt the tool loop runs with.
+- **[Securing your agent](./securing-your-agent.mdx)** — what bounds a turn, and why everything in this flow runs where the user can edit it.

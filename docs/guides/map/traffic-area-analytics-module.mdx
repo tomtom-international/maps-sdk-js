@@ -1,0 +1,377 @@
+---
+title: Traffic area analytics module
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+`TrafficAreaAnalyticsModule` draws a region's historical traffic from a [`trafficAreaAnalytics`](../services/traffic/traffic-area-analytics.mdx) response as hexagon or square grids, flat or extruded, or as a density heatmap, with the region's boundary.
+
+The module owns the grid and heatmap layers it renders, and their look, set by the colour, height and layer-position configuration below. It never restyles the base map underneath, which belongs to the [Styling Foundations module](./styling.mdx), and styling knobs never touch these layers. See [Who owns what](./modules.mdx#who-owns-what).
+
+<GuideDemo demo="traffic-area-analytics" />
+
+## Initialization
+
+```javascript
+import { TomTomMap, TrafficAreaAnalyticsModule } from '@tomtom-org/maps-sdk/map';
+
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+const analyticsModule = await TrafficAreaAnalyticsModule.create(map, {
+    displayMode: 'hexgrid-3d',
+    activeMetric: 'congestionLevel',
+    metrics: { congestionLevel: { palette: 'trafficLight' } },
+});
+```
+
+- Every setting is optional. From `create()` on, `getConfig()` returns the display mode, the active metric and every metric's settings, defaults filled in.
+- It is [data-owned](./modules.mdx#types-of-modules), so every `create()` returns a new, independent instance.
+
+## Fetching and displaying data
+
+Pass a [`trafficAreaAnalytics`](../services/traffic/traffic-area-analytics.mdx#basic-usage) response to `show()` as it arrives. To switch metrics later without fetching again, ask for `metrics: 'all'`:
+
+```javascript
+import { geocodeOne, geometryData, trafficAreaAnalytics } from '@tomtom-org/maps-sdk/services';
+
+const place = await geocodeOne('Amsterdam, Netherlands');
+const boundary = await geometryData({ geometries: [place] });
+
+const analytics = await trafficAreaAnalytics({
+    apiKey: 'YOUR_MOVE_PORTAL_KEY',
+    startDate: '2024-08-06',
+    endDate: '2024-08-12',
+    metrics: 'all',
+    functionalRoadClasses: 'all',
+    hours: 'all',
+    geometry: boundary.features[0].geometry,
+});
+
+await analyticsModule.show(analytics);
+await analyticsModule.clear(); // removes it again
+```
+
+- `show()` draws every tile and every region of the response into all three cell sources. The active display mode picks which one shows.
+- The service needs a Move Portal key and gated access ([Basic usage](../services/traffic/traffic-area-analytics.mdx#basic-usage)).
+
+## Visualization modes
+
+`displayMode` sets one of five modes, at `create()` or through `updateConfig({ displayMode })`:
+
+| Mode | Draws |
+|------|-------------|
+| `'hexgrid-3d'` | Hexagons coloured and raised by the metric (default) |
+| `'hexgrid-2d'` | Flat hexagons coloured by the metric |
+| `'square-3d'` | Squares coloured and raised by the metric |
+| `'square-2d'` | Flat squares coloured by the metric |
+| `'heatmap'` | A MapLibre density heatmap from the tile centres |
+
+```javascript
+analyticsModule.updateConfig({ displayMode: 'heatmap' });
+```
+
+## Metrics
+
+`activeMetric` picks the metric that colours and raises the cells, `congestionLevel` by default. Each metric's look (palette or colour stops, height, filters) sits under `metrics.<metric>`, so you can set up several and switch between them:
+
+```javascript
+const analyticsModule = await TrafficAreaAnalyticsModule.create(map, {
+    activeMetric: 'congestionLevel',
+    metrics: {
+        congestionLevel: { palette: 'trafficLight' },
+        speed: { palette: 'heat' },
+        travelTime: { height: { maxMeters: 300 } },
+    },
+});
+analyticsModule.updateConfig({ activeMetric: 'speed' });
+```
+
+The metrics are `areaAnalyticsMetricKeys`, with the units of the [service](../services/traffic/traffic-area-analytics.mdx#available-metrics). On a tile, `networkLength` is the road length within that tile, a road-density indicator.
+
+## Color
+
+A metric takes its colours from `metrics.<metric>.palette`, a named palette, or `metrics.<metric>.colorStops`, your own stops.
+
+- `colorStops` wins when both are set. With neither, the metric draws `'trafficLight'`.
+- `setPalette()` and `setColorStops()` set every metric, or only those in their second argument, and each changes only its own field.
+
+### Palettes
+
+`areaAnalyticsPalettes` lists the names (`AreaAnalyticsPalette`). Each runs from good traffic to bad:
+
+```javascript
+analyticsModule.setPalette('trafficLight'); // green → amber → red (default)
+analyticsModule.setPalette('heat');         // blue → orange → red
+analyticsModule.setPalette('monochrome');   // light grey → dark grey
+analyticsModule.setPalette('viridis');      // yellow → green → blue → purple
+analyticsModule.setPalette('plasma');       // yellow → orange → magenta → purple
+
+analyticsModule.setPalette('viridis', ['speed', 'freeFlowSpeed']); // only these metrics
+```
+
+- A palette spans the metric's predefined range. On `networkLength` it spans the loaded range, as per-tile values vary too widely for a fixed one.
+- On `speed` and `freeFlowSpeed` it runs the other way, so slow traffic takes the bad end.
+- `getConfig()` keeps the palette as its name.
+
+### Custom color stops
+
+`setColorStops()`, or `colorStops` in the config, takes an `AreaAnalyticsColorStopsConfig` of `stops`, each a `value` and a CSS `color`, and the `scaleMode` that says what the values are.
+
+| `scaleMode` | A stop's `value` is |
+|---|---|
+| `'raw'` (default) | a metric value |
+| `'predefinedRange'` | 0–100 % of the SDK's range for the metric: congestion 0–100, speed and free-flow speed 0–120 km/h, travel time 0–20 minutes per 10 km, network length 0–5000 m |
+| `'currentRange'` | 0–100 % of the range in the loaded tiles, 0 % being the loaded minimum |
+
+```javascript
+analyticsModule.setColorStops({
+    scaleMode: 'raw',
+    stops: [
+        { value: 0, color: '#2dc653' },   // 0 % congestion
+        { value: 30, color: '#f5a623' },
+        { value: 100, color: '#e03030' },
+    ],
+}, ['congestionLevel']);
+```
+
+- Stops are used as given, never reversed for speed, and in any order. The ramp sorts them by value, and of stops sharing a value, the last one wins.
+- `predefinedRange` colours datasets alike. `currentRange` gives the most contrast for whatever is loaded.
+- `undefined` clears a field. Clearing the stops brings the palette back, and clearing both draws `'trafficLight'`.
+
+```javascript
+analyticsModule.setColorStops(undefined); // back to the metric's palette
+analyticsModule.setPalette(undefined);    // and with no palette, 'trafficLight'
+```
+
+### Reading a metric's colours
+
+`resolveColorStops(metric, metricConfig)` returns the stops a metric is painted with, as an `AreaAnalyticsColorStopsConfig`. These are its `colorStops` when set, otherwise its palette spread from 0 to 100 % of its range, reversed on the speed metrics. A legend or chart drawn from it follows whatever the config sets:
+
+```javascript
+import { resolveColorStops } from '@tomtom-org/maps-sdk/map';
+
+const { scaleMode, stops } = resolveColorStops('speed', analyticsModule.getConfig()?.metrics?.speed);
+const legendColors = stops.map((stop) => stop.color);
+```
+
+## Height
+
+In the 3D modes, `metrics.<metric>.height` (`AreaAnalyticsHeightConfig`) raises the cells. `setHeight()` sets every metric, or only those in its second argument.
+
+```javascript
+analyticsModule.setHeight({ maxMeters: 200 });                   // tallest cell 200 m
+analyticsModule.setHeight({ maxMeters: 100, minMeters: 10 });    // and a floor
+analyticsModule.setHeight({ scaleMode: 'currentRange', maxMeters: 150 }, ['speed']);
+analyticsModule.setHeight({ scaleMode: 'raw', metersPerUnit: 10 });    // 10 m per unit of the metric
+```
+
+- `scaleMode` takes the colour stops' three modes. In `predefinedRange` (the default) and `currentRange`, the tallest cell reaches `maxMeters`, `1000` by default.
+- In `raw`, a cell rises `metersPerUnit` metres, `1` by default, per unit of the metric.
+- `networkLength` scales its height to the loaded range by default, as its palette does.
+- On `speed`, a cell rises as traffic slows.
+
+## Filtering
+
+`setFilters()` hides the cells outside a value range, for every metric or only those in its second argument:
+
+```javascript
+analyticsModule.setFilters({ min: 50 });                    // congestion ≥ 50
+analyticsModule.setFilters({ min: 20, max: 80 }, ['congestionLevel']);
+analyticsModule.setFilters(undefined);                      // clears them
+```
+
+Only the active metric's filter hides cells, and never in the heatmap.
+
+## Region boundary
+
+`show()` draws each region polygon of the response alongside the cells, as a fill and an outline. `regionPolygon` styles it:
+
+```javascript
+const analyticsModule = await TrafficAreaAnalyticsModule.create(map, {
+    regionPolygon: {
+        color: '#0052a5',                // fill and line; default black on a light style, white on a dark one
+        // style 'inverted' tints the world outside the region; defaults 'filled' and opacity 0
+        fill: { style: 'inverted', opacity: 0.08 },
+        line: { opacity: 1, width: 3 },  // defaults 0.5 and 2 px
+    },
+});
+```
+
+## Layer positioning
+
+`beforeLayerConfig` (`AreaAnalyticsBeforeLayerConfig`) takes one target for every display mode (`'top'` or a key of `mapStyleLayerIDs`), or a record keyed by display mode, plus `all` for the modes it leaves out:
+
+```javascript
+const analyticsModule = await TrafficAreaAnalyticsModule.create(map, {
+    beforeLayerConfig: { all: 'lowestLabel', 'hexgrid-3d': 'lowestPlaceLabel', 'square-3d': 'lowestPlaceLabel' },
+});
+analyticsModule.updateConfig({ beforeLayerConfig: { 'hexgrid-3d': 'top' } });
+```
+
+- By default, the heatmap and the 2D modes sit below `lowestLabel`, and the 3D modes below `lowestPlaceLabel`. The region boundary always sits below the labels.
+- Without an `all`, a mode the record leaves out goes back to its default.
+- A target the style lacks (Satellite has no `lowestRoadLine` or `lowestBuilding`) puts that mode's layers on top.
+
+## Layer overrides
+
+Beyond the settings above, `layers` (`TrafficAreaAnalyticsLayersConfig`) takes a partial MapLibre layer per layer the module draws. Each display mode draws its own:
+
+| Mode | Layers |
+|---|---|
+| `heatmap` | `heatmap` |
+| `hexgrid-2d` | `hexgridFill`, `hexgridOutline` (the outline of a hovered or clicked cell) |
+| `hexgrid-3d` | `hexgridExtrusion`, `hexgridExtrusionHighlight` |
+| `square-2d`, `square-3d` | the same four `square*` entries |
+| every mode | `regionFill`, `regionLine` |
+
+```javascript
+analyticsModule.updateConfig({
+    layers: {
+        hexgridFill: { paint: { 'fill-opacity': 0.85 } },
+        hexgridExtrusion: { paint: { 'fill-extrusion-vertical-gradient': false } },
+        regionLine: { paint: { 'line-dasharray': [2, 2] } },
+    },
+});
+```
+
+- `paint` and `layout` merge per property onto the module's own, and win over the active metric's colours and heights.
+- A cell layer's `filter` applies together with the active metric's [filters](#filtering), and both must hold.
+- An extrusion highlight follows its extrusion's height, so it stays on top of the prism you raised.
+- A layer an entry hides through `layout.visibility` stays hidden in its display mode, and a `beforeID` is ignored.
+
+## Visibility
+
+`isVisible()` reports the `visible` setting, `true` by default, not whether any cell is drawn. Hiding keeps the data. While hidden, `show()` updates the data without drawing.
+
+```javascript
+const analyticsModule = await TrafficAreaAnalyticsModule.create(map, { visible: false });
+analyticsModule.setVisible(true);
+analyticsModule.getShown().hexgrid.features.length > 0; // whether there are cells to draw
+```
+
+## Events
+
+`click`, `hover`, `long-hover` and the other [user events](./user-events.mdx) fire on what the active mode draws: hexagon or square cells, or the heatmap's tile-centre points. The handler receives it as an `AreaAnalyticsTileFeature`, with its metric values in `properties`:
+
+```javascript
+analyticsModule.events.on('click', (cell, lngLat) => {
+    console.log(cell.properties.congestionLevel, cell.properties.speed);
+});
+analyticsModule.events.off('click');
+```
+
+A hovered or clicked cell is highlighted. The module's [event state methods](./user-events.mdx#event-states) highlight one from your own UI, or read which ones are:
+
+```javascript
+analyticsModule.setEventState({ index: 0, state: 'click' });
+const { click = [] } = analyticsModule.getEventStates();
+```
+
+### Custom tooltip on hover
+
+```javascript
+import { Popup } from 'maplibre-gl';
+
+const popup = new Popup({ closeButton: false, anchor: 'left', offset: 12 });
+
+analyticsModule.events.on('hover', (cell, lngLat) => {
+    const { congestionLevel, speed } = cell.properties;
+    popup
+        .setLngLat(lngLat)
+        .setHTML(`<strong>Congestion:</strong> ${congestionLevel ?? 0}%<br/><strong>Speed:</strong> ${speed ?? 0} km/h`)
+        .addTo(map.mapLibreMap);
+});
+
+map.mapLibreMap.getCanvas().addEventListener('mouseleave', () => popup.remove());
+```
+
+## Changing the configuration
+
+- `applyConfig(config)` replaces the whole configuration. Anything it omits returns to its default.
+- `updateConfig(partial)` keeps the rest, one level deep. A `metrics` you pass replaces the whole record, so the others return to their defaults.
+- To change one metric and keep the others, use `setPalette`, `setColorStops`, `setHeight` or `setFilters` with that metric.
+- `AREA_ANALYTICS_DEFAULTS` holds every default. Read it, or spread it as the base of a config.
+
+```javascript
+analyticsModule.applyConfig({ displayMode: 'heatmap' }); // everything else back to its default
+analyticsModule.updateConfig({ activeMetric: 'speed' }); // displayMode stays 'heatmap'
+analyticsModule.setPalette('viridis', ['speed']);        // the other metrics keep their colours
+```
+
+## Config change events
+
+Every setter, `applyConfig` and `updateConfig` emit `config-change`, and each `show()` emits `shown-features` with the response ([module events](./module-events.mdx)):
+
+```javascript
+const unsubscribe = analyticsModule.events.on('config-change', (config) => {
+    console.log('Active metric:', config?.activeMetric);
+});
+```
+
+## Querying shown features
+
+`getShown()` returns the `heatmap` points and the `hexgrid` and `square` polygons the sources hold, whichever mode shows:
+
+```javascript
+const { heatmap, hexgrid, square } = analyticsModule.getShown();
+console.log(`Hexagonal cells: ${hexgrid.features.length}`);
+```
+
+## Every setting as data
+
+`trafficAreaAnalyticsKnobCatalogue` lists the module's plain-valued settings with their kind, range
+or options, and their default where one value holds everywhere. A UI can build its controls from it with no map loaded:
+
+```javascript
+import { trafficAreaAnalyticsKnobCatalogue } from '@tomtom-org/maps-sdk/map';
+
+const speedKnobs = trafficAreaAnalyticsKnobCatalogue.filter(({ id }) => id.startsWith('metrics.speed.'));
+// [{ id: 'metrics.speed.palette', kind: 'enum', description: '…', options: ['trafficLight', 'heat', …], default: 'trafficLight' }, …,
+//  { id: 'metrics.speed.filters.min', kind: 'number', description: '…', range: { min: 0, max: 120, bounds: 'hard-min' } }, …]
+```
+
+The module-wide knobs come first, then the same seven for each metric, `<metric>` standing for any of
+`areaAnalyticsMetricKeys`:
+
+| Id | Kind |
+|---|---|
+| `visible` | toggle, `true` by default |
+| `displayMode` | enum, `hexgrid-3d` by default |
+| `activeMetric` | enum, `congestionLevel` by default |
+| `regionPolygon.color` | color, by default black on a light style, white on a dark one |
+| `regionPolygon.fill.style` | enum: `filled`, `inverted` |
+| `regionPolygon.fill.opacity`, `regionPolygon.line.opacity` | number, 0 to 1 |
+| `regionPolygon.line.width` | number, 0 to 10 pixels |
+| `metrics.<metric>.palette` | enum: `areaAnalyticsPalettes`, default `trafficLight` |
+| `metrics.<metric>.height.scaleMode` | enum: `predefinedRange`, `currentRange`, `raw` |
+| `metrics.<metric>.height.maxMeters`, `metrics.<metric>.height.minMeters` | number, 0 to 5000 metres |
+| `metrics.<metric>.height.metersPerUnit` | number, 0 to 100 metres per unit of the metric, in the `raw` scale mode |
+| `metrics.<metric>.filters.min`, `metrics.<metric>.filters.max` | number, over the metric's predefined range |
+
+- `trafficAreaAnalyticsKnobIds` lists the ids, `TrafficAreaAnalyticsKnobId` is their union, and
+  `TrafficAreaAnalyticsKnobValueOf<ID>` is the plain value one takes.
+- A filter's range is the one the module scales colours and heights over, not a bound on the data.
+- Heights, line width and the filters have [`hard-min`](./modules.mdx#every-setting-as-data)
+  ranges, so a value larger than `max` still applies.
+- It leaves out `colorStops`, `beforeLayerConfig`, `layers` and `events`, which take structured values.
+  The [modules guide](./modules.mdx#every-setting-as-data) describes the entry shape and its kinds.
+
+## API reference
+
+[`TrafficAreaAnalyticsModule`](/maps-sdk-js/api-reference/classes/map.TrafficAreaAnalyticsModule.html), [`TrafficAreaAnalyticsModuleConfig`](/maps-sdk-js/api-reference/types/map.TrafficAreaAnalyticsModuleConfig.html) and [`AreaAnalyticsMetricConfig`](/maps-sdk-js/api-reference/types/map.AreaAnalyticsMetricConfig.html).
+
+## Related guides and examples
+
+### Related guides
+- **[Traffic area analytics service](../services/traffic/traffic-area-analytics.mdx)** - The request and its response
+- **[Traffic overview](./traffic.mdx)** - Every way the SDK draws traffic
+
+### Related examples
+- **[Traffic area analytics](../../examples/traffic-area-analytics)** - A geocoded city's past week as extruded hexagons
+- **[Traffic area analytics playground](../../examples/traffic-area-analytics-playground)** - City search, legend, tooltips, and the most congested cell selected with `setEventState`
+- **[Traffic area analytics config playground](../../examples/traffic-area-analytics-config-playground)** - Palettes, colour stops, heights and layer positions from a panel

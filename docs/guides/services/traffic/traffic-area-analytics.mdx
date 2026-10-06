@@ -1,0 +1,287 @@
+---
+title: Traffic area analytics
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+<Button
+    label="Request Access"
+    href="https://www.tomtom.com/contact-sales/?source_app=docs-portal&source_product=traffic-area-analytics"
+    target="_blank">
+    Request Access
+</Button>
+
+<Blockquote type="warning">
+**Important note**
+Traffic Area Analytics is unavailable on a Freemium or Pay As You Grow (PAYG) basis.
+Click the **Request Access** button above to contact our Sales team.
+</Blockquote>
+
+`trafficAreaAnalytics` runs a historical traffic report for a polygon or multi-polygon region. Give it the region, a date range or a list of dates, and the metrics you want. One call returns the aggregates, their time series and per-tile values, without polling.
+
+<SDKGuideLiveCodingExample exampleDirectory="nodejs-traffic-area-analytics" />
+
+## Introduction
+
+- Any region, from a neighbourhood to a country, as a GeoJSON `Polygon` or `MultiPolygon`.
+- Any period, as a continuous range of up to 31 days or a list of separate days.
+- Several metrics in one call: speed, free-flow speed, congestion level, travel time and network length.
+- Aggregates for the whole period, time series from hourly to yearly, and per-tile values that the [Traffic Area Analytics Module](../../map/traffic-area-analytics-module.mdx) draws as grids or a heatmap.
+- For planners measuring an infrastructure or policy change, consultants benchmarking areas, analysts and researchers reporting on mobility.
+
+## Core concepts
+
+You describe a report with:
+
+- `geometry` - The region, one per call, as a GeoJSON `Polygon` or `MultiPolygon`.
+- A date selection, one of:
+  - `startDate` and optional `endDate` - A continuous range.
+  - `days` - A list of dates, consecutive or not.
+- `metrics` - The [metrics](#available-metrics) to compute, or `'all'`.
+- `functionalRoadClasses` - The [road classes](#functional-road-classes) to include, or `'all'`.
+- `hours` - The hours of the day in UTC (0–23) to include, or `'all'`.
+
+## Basic usage
+
+Traffic Area Analytics is a [TomTom Move Portal](https://move.tomtom.com) product, so it takes a **Move Portal API key**, not the Maps API key the rest of the SDK uses. Keep your Maps key in `TomTomConfig` and pass the Move Portal key per call ([per-call overrides](../request-options-and-errors.mdx#per-call-overrides)):
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { trafficAreaAnalytics } from '@tomtom-org/maps-sdk/services';
+
+TomTomConfig.instance.put({ apiKey: 'YOUR_API_KEY' }); // Maps API key, for everything else
+
+const result = await trafficAreaAnalytics({
+    apiKey: 'YOUR_MOVE_PORTAL_KEY', // this service only
+    startDate: '2024-08-06',        // YYYY-MM-DD string or Date
+    endDate: '2024-08-12',          // optional: defaults to three days ago
+    metrics: ['speed', 'congestionLevel'],
+    functionalRoadClasses: ['MOTORWAY', 'MAJOR_ROAD', 'OTHER_MAJOR_ROAD', 'SECONDARY_ROAD'],
+    hours: [5, 6, 7, 15, 16],       // UTC: Amsterdam's rush hours in summer time (UTC+2)
+    geometry: {
+        type: 'Polygon',
+        coordinates: [
+            [[4.896128, 52.382402], [4.875701, 52.368459], [4.923611, 52.36341], [4.896128, 52.382402]],
+        ],
+    },
+});
+
+const region = result.features[0];
+console.log(region.properties.baseData.speed);           // km/h
+console.log(region.properties.baseData.congestionLevel); // %
+```
+
+If this service returns `401` or `403`, the call usually went out with your Maps API key.
+
+## Available metrics
+
+`areaAnalyticsMetricKeys` lists them:
+
+| `metrics` value | Description | Unit |
+|---|---|---|
+| `'speed'` | Average speed on the road network | km/h |
+| `'freeFlowSpeed'` | Average speed under uncongested conditions | km/h |
+| `'congestionLevel'` | Increase in travel time above free flow | % |
+| `'travelTime'` | Average travel time per 10 km | minutes |
+| `'networkLength'` | Total length of the road segments with data | metres |
+
+## Parameters
+
+### Date selection
+
+Give **either** `startDate`, with an optional `endDate`, **or** `days`. Both take `Date` objects or `'YYYY-MM-DD'` strings, read as UTC calendar days.
+
+#### Continuous range (`startDate` / `endDate`)
+
+- `endDate` must be 1 to 31 days after `startDate`, so equal dates fail validation.
+- The latest date the API accepts is two days ago, but it publishes a day 24 to 48 hours after it ends. By default, `endDate` is three days ago, the latest date that always has data.
+
+```javascript
+// The last week with data: endDate defaults to three days ago
+const startDate = new Date();
+startDate.setUTCDate(startDate.getUTCDate() - 9);
+const lastWeek = await trafficAreaAnalytics({ startDate, /* ... */ });
+
+const firstWeekOfAugust = await trafficAreaAnalytics({ startDate: '2024-08-01', endDate: '2024-08-07', /* ... */ });
+```
+
+#### Specific dates (`days`)
+
+All `days` must be two days ago or earlier.
+
+```javascript
+// Every Monday of August 2024
+const result = await trafficAreaAnalytics({
+    days: ['2024-08-05', '2024-08-12', '2024-08-19', '2024-08-26'],
+    metrics: ['speed', 'congestionLevel'],
+    functionalRoadClasses: 'all',
+    hours: [7, 8, 9, 17, 18],
+    geometry: { /* ... */ },
+});
+```
+
+### Functional road classes
+
+`functionalRoadClasses` selects the road classes, or `'all'`. The importable `functionalRoadClasses` catalogue lists them, most important first:
+
+| Value | Description |
+|---|---|
+| `'MOTORWAY'` | Motorways, freeways, and major roads |
+| `'MAJOR_ROAD'` | Major roads, less important than motorways |
+| `'OTHER_MAJOR_ROAD'` | Other major roads connecting neighbouring regions |
+| `'SECONDARY_ROAD'` | Secondary roads linking parts of the same region |
+| `'LOCAL_CONNECTING_ROAD'` | Local roads providing settlement access |
+| `'LOCAL_ROAD_HIGH_IMPORTANCE'` | Local roads of high importance within a settlement |
+| `'LOCAL_ROAD'` | Local roads within settlement sections |
+| `'LOCAL_ROAD_MINOR_IMPORTANCE'` | Local roads of minor importance (dead-ends, alleys) |
+| `'OTHER_ROAD'` | Other roads (paths, cycle routes, pedestrian infrastructure) |
+
+### Region geometry
+
+`geometry` takes one GeoJSON `Polygon` or `MultiPolygon`, in `[longitude, latitude]` order. Each ring must be closed, with equal first and last positions:
+
+```javascript
+const geometry = {
+    type: 'MultiPolygon',
+    coordinates: [
+        [[[4.89, 52.37], [4.91, 52.37], [4.91, 52.39], [4.89, 52.39], [4.89, 52.37]]],
+        [[[4.95, 52.40], [4.97, 52.40], [4.97, 52.42], [4.95, 52.42], [4.95, 52.40]]],
+    ],
+};
+```
+
+A city's boundary comes from [`geocodeOne` and `geometryData`](../places/geometry-data.mdx):
+
+```javascript
+import { geocodeOne, geometryData, trafficAreaAnalytics } from '@tomtom-org/maps-sdk/services';
+
+const place = await geocodeOne('Amsterdam, Netherlands');
+const boundaries = await geometryData({ geometries: [place] });
+
+const result = await trafficAreaAnalytics({
+    startDate: '2024-08-06',
+    endDate: '2024-08-12',
+    metrics: ['speed', 'congestionLevel'],
+    functionalRoadClasses: 'all',
+    hours: [7, 8, 9, 17, 18],
+    geometry: boundaries.features[0].geometry,
+});
+```
+
+Set `name` to name the report. Otherwise, the SDK names it.
+
+## Response structure
+
+The result is a `TrafficAreaAnalytics` `FeatureCollection` with one feature, the submitted region.
+
+### Top-level properties
+
+```javascript
+const { startDate, endDate, metrics, frcs, ranges } = result.properties;
+```
+
+- `startDate` and `endDate` are the first and last analysed days, as `Date`s at midnight UTC.
+- `frcs` holds the road classes as the API's numeric indices, 0 (`MOTORWAY`) to 8 (`OTHER_ROAD`).
+- `ranges` holds each metric's minimum and maximum over the tiles, such as `ranges.congestionLevel`.
+
+### Feature properties
+
+```javascript
+const region = result.features[0];
+const { baseData, timedData, tiledData, anomalies } = region.properties;
+```
+
+### Base data
+
+`baseData` aggregates each requested metric over the whole period. Metrics you didn't request are absent:
+
+```javascript
+const { speed, freeFlowSpeed, congestionLevel, travelTime, networkLength } = region.properties.baseData;
+```
+
+### Timed data
+
+`timedData` breaks the metrics down by granularity. Each has its own entry type, with the metric fields of `baseData` and its time identifiers always set:
+
+| Granularity | Entry type | Time identifiers |
+|---|---|---|
+| `yearly` | `AreaAnalyticsYearlyEntry` | `year` |
+| `monthly` | `AreaAnalyticsMonthlyEntry` | `year`, `month` (1–12) |
+| `weekly` | `AreaAnalyticsWeeklyEntry` | `year`, `week` (ISO 8601, from Monday) |
+| `daily` | `AreaAnalyticsDailyEntry` | `date` (midnight UTC) |
+| `hourly` | `AreaAnalyticsHourlyEntry` | `date`, `hour` (0–23) |
+| `average` | `AreaAnalyticsAverageEntry` | `day` (1 = Monday to 7 = Sunday), `hour` (0–23) |
+
+```javascript
+const { daily, hourly, average } = region.properties.timedData;
+
+daily?.forEach((entry) => {
+    console.log(entry.date.toISOString().slice(0, 10), entry.speed, entry.congestionLevel);
+});
+
+// hourly spans every day of the range, so read the day with the hour
+hourly?.forEach((entry) => {
+    console.log(`${entry.date.toISOString().slice(0, 10)} ${entry.hour}:00: ${entry.speed} km/h`);
+});
+
+average?.forEach((entry) => {
+    console.log(`Day ${entry.day}, ${entry.hour}:00: ${entry.congestionLevel}%`);
+});
+```
+
+- Which granularities come back depends on the date range and the hours.
+- Every time identifier is in UTC, like `hours`.
+- `average` holds one entry per day of the week and hour with data, Monday first. A range shorter than a week, or an `hours` filter, gives fewer than 168. Read `day` and `hour`, not the index.
+- A `weekly` entry's `year` is the ISO 8601 year its week counts in. The week from Monday 30 December 2024 is week 1 of 2025.
+
+### Tiled data
+
+`tiledData` holds per-tile values, if the response has them. Each tile has its `tileCentre` (`[longitude, latitude]`) and the requested metrics, where `networkLength` is the road length within that tile.
+
+```javascript
+region.properties.tiledData?.tiles.forEach((tile) => {
+    const [lon, lat] = tile.tileCentre;
+    console.log(`Tile at [${lon}, ${lat}]: congestion=${tile.congestionLevel}%`);
+});
+```
+
+To draw them, pass the whole response to the [Traffic Area Analytics Module](../../map/traffic-area-analytics-module.mdx).
+
+### Anomalies
+
+`anomalies` maps a metric to its anomalies, which are runs of UTC hours, each labelled with the public holidays it overlaps. It is currently always empty, because the service detects anomalies only over 35 days or more, beyond a request's 31-day limit.
+
+```javascript
+const speedAnomalies = region.properties.anomalies?.speed ?? [];
+speedAnomalies.forEach((anomaly) => {
+    console.log(anomaly.startDate, anomaly.endDate, anomaly.labels);
+});
+```
+
+## Error handling
+
+A failed call rejects with an `SDKError` whose `code` says what went wrong. If the API answered with an error, it is an `SDKServiceError`, which also carries the HTTP `status`. A request breaking the date rules rejects before it is sent ([Error handling](../request-options-and-errors.mdx#error-handling)).
+
+## API reference
+
+- [`trafficAreaAnalytics`](/maps-sdk-js/api-reference/functions/services.trafficAreaAnalytics.html)
+- [`TrafficAreaAnalyticsParams`](/maps-sdk-js/api-reference/types/services.TrafficAreaAnalyticsParams.html) – Request parameters
+- [`TrafficAreaAnalytics`](/maps-sdk-js/api-reference/types/core.TrafficAreaAnalytics.html) – Response type
+- [Area Analytics API](https://developer.tomtom.com/area-analytics/documentation/api/analysis-lite) – API documentation
+
+## Related guides and examples
+
+### Related examples
+- **[Traffic area analytics NodeJS](../../../examples/nodejs-traffic-area-analytics)** – Server-side analytics for a geocoded city
+- **[Traffic area analytics](../../../examples/traffic-area-analytics)** – The response drawn as extruded hexagons
+
+### Related guides
+- **[Traffic area analytics module](../../map/traffic-area-analytics-module.mdx)** – Draw the response on a map
+- **[Traffic incident details](./traffic-incident-details.mdx)** – Live incidents of an area
+- **[Geometry data](../places/geometry-data.mdx)** – A place's boundary, for the region

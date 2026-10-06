@@ -1,0 +1,180 @@
+---
+title: Places
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+A place (`Place`) is a GeoJSON `Feature` with `Point` geometry and a required string `id`. Its properties carry the address, POI details, entry points and the ids for follow-up calls. A list of places (`Places`) is a `FeatureCollection` of them.
+
+## Where places are used
+
+- [Search](../services/places/search.mdx), [geocoding](../services/places/geocoding.mdx), [reverse geocoding](../services/places/reverse-geocoding.mdx) and [place details](../services/places/place-by-id.mdx) return places.
+- The [places module](../map/places.mdx) displays them as markers with popups and interaction.
+
+## Place object structure
+
+- `id` - A unique string.
+- `geometry.coordinates` - `[longitude, latitude]`.
+- `bbox` - The area the place covers, if it is wider than a point (a city, a country).
+- `properties`:
+  - `type` - The [place type](#place-types).
+  - `address` - The [structured address](#address).
+  - `poi` - [POI details](#point-of-interest-poi), if `type` is `'POI'`.
+  - `relatedPois` - [Parent and child POIs](#related-pois).
+  - `entryPoints` - [Entrances](#entry-points).
+  - `geographyType` - [Administrative levels](#geography), if `type` is `'Geography'`.
+  - `chargingPark` - [EV charging infrastructure](#ev-charging-stations).
+  - `addressRanges` - [House number ranges](#address-ranges), if `type` is `'Address Range'`.
+  - `mapcodes` - [Mapcodes](#mapcodes) for the location.
+  - `dataSources` - [Ids for follow-up calls](#data-sources).
+
+Search and reverse geocoding results add [their own properties](#search-specific-properties).
+
+## Place types
+
+`place.properties.type` is one of `placeTypes`:
+
+| Type | Meaning |
+| --- | --- |
+| `POI` | Point of interest: a business, landmark or facility |
+| `Street` | A named street |
+| `Geography` | An administrative area: city, state, country, postal code area |
+| `Point Address` | A street address with a building number |
+| `Address Range` | A range of house numbers along a street segment |
+| `Cross Street` | An intersection of two streets |
+
+## Address
+
+In `place.properties.address`, only `freeformAddress` is always present:
+
+- Full address: `freeformAddress`, formatted the way the place's country writes addresses.
+- Street: `streetNumber`, `streetName`, `routeNumbers` (road numbers such as highway designations).
+- Local areas: `neighborhood` (informal, no official boundary), `municipalitySecondarySubdivision`, `municipalitySubdivision`, `municipality` (city or town), `localName`.
+- Administrative divisions: `countryTertiarySubdivision`, `countrySecondarySubdivision` (county), `countrySubdivision` (state or province), `countrySubdivisionName` (its full name, when `countrySubdivision` is abbreviated), `countrySubdivisionCodeIso` (e.g. `'US-CA'`).
+- Postal codes: `postalCode`, `extendedPostalCode`, and `postalName` on a postal code area.
+- Country: `country`, `countryCode` (ISO 3166-1 alpha-2, e.g. `'NL'`), `countryCodeISO3` (alpha-3, e.g. `'NLD'`).
+
+## Point of interest (POI)
+
+`place.properties.poi` is present if `type` is `'POI'`:
+
+- `name` - Display name, in the request language.
+- `phone`, `url`, `brands` (e.g. `['Shell']`).
+- `categories` - Standardized `POICategory` codes, e.g. `['ITALIAN_RESTAURANT']`, for filtering and icon mapping. The [POI categories service](../services/places/poi-categories.mdx) resolves words to them.
+- `localizedCategories` - Human-readable category names in the request language, e.g. `['italian', 'restaurant']`, for display.
+- `openingHours` - If you asked for it with `openingHours: 'nextSevenDays'`.
+  - `mode` - Always `'nextSevenDays'`.
+  - `timeRanges` - Open periods, each a `start` and `end` with a `Date` and its parts (`dateYYYYMMDD`, `year`, `month` 1–12, `day`, `hour`, `minute`). An overnight period ends on the next day.
+  - `alwaysOpenThisPeriod` - `true` for a place open around the clock. Its `timeRanges` is then empty.
+- `timeZone.ianaId` - e.g. `'Europe/Amsterdam'`.
+
+## Related POIs
+
+`place.properties.relatedPois` links a POI to the ones it contains or sits in:
+
+- `relationType` - `'parent'` if this POI is inside the referenced one (a store in a mall), `'child'` if the referenced one is inside it.
+- `id` - Pass it to [place details](../services/places/place-by-id.mdx) to fetch the related POI.
+
+## Entry points
+
+`place.properties.entryPoints` lists the entrances of a building or facility, for routing to the right door:
+
+- `position` - `[longitude, latitude]`.
+- `type` - `'main'` (at most one per place) or `'minor'`, if the service classifies it.
+- `functions` - What the entrance is for, e.g. `'FrontDoor'`, `'ServiceEntrance'`, `'ParkingGarage'`.
+
+Reverse geocoding returns entry points on the road network, where a vehicle arrives, not where the door is, and without a `type`. [`getPosition`](./utilities/coordinates.mdx#getposition) can pick the main entry point over the place's position.
+
+## Geography
+
+`place.properties.geographyType` is present if `type` is `'Geography'`. From largest to smallest:
+
+- `Country`
+- `CountrySubdivision` - State or province
+- `CountrySecondarySubdivision` - County
+- `CountryTertiarySubdivision`
+- `Municipality` - City or town
+- `MunicipalitySubdivision` - District within a city
+- `MunicipalitySecondarySubdivision`
+- `Neighbourhood`
+- `PostalCodeArea`
+
+An area with several administrative roles carries several types.
+
+## EV charging stations
+
+`place.properties.chargingPark` appears on EV charging station POIs:
+
+- `connectors` - Connector counts, grouped by type and power.
+  - `connector` - `type` (e.g. `'IEC62196Type2CCS'`), `ratedPowerKW`, `chargingSpeed`, `currentType`, `voltageV`, `currentA`.
+  - `count` - How many connectors of that kind the park has.
+- `chargingStations` - The charging stations, on search results.
+  - `chargingPoints` - Each charging point (EVSE), with `capabilities`, `restrictions`, its `connectors`, and `evseId` when the operator publishes one.
+
+## Address ranges
+
+`place.properties.addressRanges` is present if `type` is `'Address Range'`:
+
+- `rangeLeft`, `rangeRight` - The house numbers on each side, looking from `from` towards `to`.
+- `from`, `to` - The segment's end coordinates, `[longitude, latitude]`.
+
+## Mapcodes
+
+`place.properties.mapcodes` holds short codes to use instead of coordinates:
+
+- `type` - `'Local'` (shortest, needs its territory), `'International'` (unambiguous worldwide) or `'Alternative'` (another local code).
+- `fullMapcode` - The complete code, territory included, e.g. `'NLD 4J.P2'`.
+- `territory` - On local and alternative codes, e.g. `'NLD'`.
+- `code` - The code without the territory, e.g. `'4J.P2'`.
+
+## Data sources
+
+`place.properties.dataSources` holds the ids for follow-up calls:
+
+- `geometry.id` - Pass it to [geometry data](../services/places/geometry-data.mdx) for the place's outline. Only search results have it, not reverse geocoded places.
+- `poiDetails.id` - Pass it to [place details](../services/places/place-by-id.mdx).
+
+## Search-specific properties
+
+Search results (`SearchPlaceProps`) add:
+
+- `score` - Relevance. Higher is a better match.
+- `distance` - Meters from the `geoBias` position, if you gave one.
+- `info` - The original data source.
+
+Geocoding results (`GeocodingProps`) carry `score` and `distance` too, plus `matchConfidence.score` for how well the text matched. Their `type` is never `'POI'`.
+
+## Reverse geocoding properties
+
+Reverse geocoded places (`RevGeoAddressProps`) add `originalPosition`, the `[longitude, latitude]` the service matched. The feature's own `geometry` holds the position you queried.
+
+## API reference
+
+- [Places](/maps-sdk-js/api-reference/types/core.Places.html)
+- [CommonPlaceProps](/maps-sdk-js/api-reference/types/core.CommonPlaceProps.html)
+- [SearchPlaceProps](/maps-sdk-js/api-reference/types/core.SearchPlaceProps.html)
+- [RevGeoAddressProps](/maps-sdk-js/api-reference/types/core.RevGeoAddressProps.html)
+
+## Related guides and examples
+
+### Places services
+- [Places quickstart](../services/places/quickstart.mdx)
+- [Search](../services/places/search.mdx)
+- [Geocoding](../services/places/geocoding.mdx)
+- [Reverse geocoding](../services/places/reverse-geocoding.mdx)
+- [Geometry data](../services/places/geometry-data.mdx)
+
+### Map integration
+- [Places module](../map/places.mdx)
+
+### Related examples
+- [Geocode](../../examples/geocode): geocode an address and show it
+- [Reverse geocode](../../examples/reverse-geocode): turn coordinates into an address
+- [Places in geometry](../../examples/places-in-geometry): search places inside a boundary
+- [Places default icon styling](../../examples/places-default-icon-styling): style the default place markers

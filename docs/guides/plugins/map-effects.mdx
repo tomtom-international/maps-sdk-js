@@ -1,0 +1,238 @@
+---
+title: Map effects plugin
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.2.2"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Map Effects plugin adds **practical post-processing** to a `TomTomMap`. Its effects are computed from the rendered map's pixels, not its style, so they work on every style and survive style releases. MapLibre itself has no post-processing. The playground below puts every effect on one panel:
+
+<GuideDemo demo="map-effects-playground" />
+
+Each effect is named after the problem it solves, is off by default and has its own guide:
+
+| Guide | Effects | Solves |
+| --- | --- | --- |
+| [Bloom](./map-effects-bloom.mdx) | `bloom.*` | Emphasis on dark and driving styles. Lit roads, traffic tubes and route lines glow, optionally only in the colours you name |
+| [Depth of field](./map-effects-depth-of-field.mdx) | `depthOfField.*` | Depth on a tilted map. One band of distance stays sharp, and the rest defocuses as through a lens |
+| [Grade, tint, fog, edge blur and vignette](./map-effects-overlays.mdx) | `grade.*`, `tint.*`, `fog.*`, `edgeBlur.*`, `vignette.*` | Muting the base map under your data, and depth and focus at the rim of the view |
+| [Custom GPU passes](./map-effects-custom-passes.mdx) | `addPass` | Your own fragment shaders inside the effect chain, with every other effect working on their result |
+
+## Installation
+
+```bash
+npm install @tomtom-org/maps-sdk maplibre-gl @tomtom-org/maps-sdk-plugin-map-effects
+```
+
+`@tomtom-org/maps-sdk` and `maplibre-gl` are peer dependencies.
+
+## Usage
+
+```javascript
+import { resetKnob, setKnob, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { effectKnobCatalogue, MapEffects } from '@tomtom-org/maps-sdk-plugin-map-effects';
+
+const map = new TomTomMap({
+    style: 'streetDark',
+    mapLibre: {
+        container: 'map',
+        // Bloom, the depth of field, your own passes and capture read the map canvas back.
+        canvasContextAttributes: { preserveDrawingBuffer: true },
+    },
+});
+
+const effects = new MapEffects(map); // or new MapEffects(map, settings)
+
+effects.updateConfig({ 'grade.saturation': 0.4, 'grade.brightness': 0.85, 'tint.opacity': 0.15 }); // a quiet base
+setKnob(effects, effectKnobCatalogue, 'bloom.intensity', 0.5);                                     // one knob
+
+resetKnob(effects, effectKnobCatalogue, 'bloom.intensity'); // one effect off
+effects.resetConfig();                                      // everything off
+```
+
+- Bloom, the depth of field, your own passes and capture read the map canvas back, so they need `preserveDrawingBuffer: true`. The plugin warns once if it is missing.
+- For one knob, use the SDK's [`setKnob`, `getKnob` and `resetKnob`](../map/modules.mdx#setting-a-knob-by-its-id) with `effectKnobCatalogue`, as on a map module. `getKnob` returns the value set, otherwise the catalogue default.
+- For several knobs, `updateConfig(settings)` sets them and keeps the rest, and `applyConfig(settings)` replaces them all. `resetConfig()` turns everything off, and `getConfig()` returns the knobs set as a plain object (`MapEffectsSettings`).
+- Every value is checked with the SDK's [`validateKnobValue`](../map/modules.mdx#setting-a-knob-by-its-id) before anything changes. A refused value throws `RangeError` and an unknown id `Error`, so the picture never half-changes.
+- `remove()` detaches the effects, removes their elements from the page and releases the chain's WebGL context. This matters because browsers cap the contexts per page.
+
+## How it renders
+
+No effect knob writes the MapLibre style. Every effect reads the map's rendered pixels, so the knobs change the *frame* rather than what the map draws. The one link to the style is [`bloom.only`](./map-effects-bloom.mdx#scoping-bloom-by-colour), which keys on the colours the style paints for the [style colour knobs](../map/styling.mdx#the-knob-catalogue) it names, whichever module holds them:
+
+```d2
+direction: down
+
+Styling: "Style colour knobs\nStylingFoundationsModule · POIsModule · traffic modules · TerrainModule" {
+  style: {
+    fill: "#fff3e0"
+    stroke: "#e65100"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 14
+  }
+}
+
+MapLibre: MapLibre map {
+  style: {
+    fill: "#e8eef8"
+    stroke: "#295DAA"
+    stroke-width: 2
+    font-color: "#295DAA"
+    border-radius: 8
+    font-size: 16
+  }
+
+  LoadedStyle: "The loaded style\nno effect knob writes it" {
+    style: {
+      fill: "#295DAA"
+      stroke: "#295DAA"
+      font-color: white
+      border-radius: 4
+      font-size: 14
+    }
+  }
+  Canvas: "The rendered canvas\npreserveDrawingBuffer: true" {
+    style: {
+      fill: "#295DAA"
+      stroke: "#295DAA"
+      font-color: white
+      border-radius: 4
+      font-size: 14
+    }
+  }
+  LoadedStyle -> Canvas: "renders"
+}
+
+Effects: "MapEffects: its own knobs, effectKnobCatalogue" {
+  style: {
+    fill: "#f3e5f5"
+    stroke: "#4a148c"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 16
+  }
+
+  Chain: "1. GPU chain\nyour passes · depthOfField.*" {
+    style: {
+      fill: "#ffffff"
+      stroke: "#4a148c"
+      font-color: "#333"
+      border-radius: 4
+      font-size: 13
+    }
+  }
+  Bloom: "2. Bloom\nbloom.*" {
+    style: {
+      fill: "#ffffff"
+      stroke: "#4a148c"
+      font-color: "#333"
+      border-radius: 4
+      font-size: 13
+    }
+  }
+  Overlays: "3. Overlays\ngrade.* · fog.* · edgeBlur.* · tint.* · vignette.*" {
+    style: {
+      fill: "#ffffff"
+      stroke: "#4a148c"
+      font-color: "#333"
+      border-radius: 4
+      font-size: 13
+    }
+  }
+  Chain -> Bloom: "reads the chain's output"
+  Bloom -> Overlays
+}
+
+Frame: "The frame on screen, and capture()" {
+  style: {
+    fill: "#fef2f2"
+    stroke: "#f87171"
+    stroke-width: 2
+    font-color: "#333"
+    border-radius: 8
+    font-size: 14
+  }
+}
+
+Styling -> MapLibre.LoadedStyle: "colour knobs" {
+  style.stroke-width: 2
+}
+MapLibre.Canvas -> Effects.Chain: "reads the pixels" {
+  style.stroke-width: 2
+}
+MapLibre.LoadedStyle -> Effects.Bloom: "bloom.only keys on the colours\nthe style paints for named colour knobs\n(getStyleColor)" {
+  style.stroke-dash: 3
+}
+Effects.Overlays -> Frame {
+  style.stroke-width: 2
+}
+```
+
+The effects draw in three kinds of layer, in this order:
+
+1. **The GPU chain** is a WebGL2 canvas under everything else. It runs [your passes](./map-effects-custom-passes.mdx) and the [depth of field](./map-effects-depth-of-field.mdx) on the map's pixels. Each pass reads the previous pass's output without the picture leaving the GPU.
+2. **[Bloom](./map-effects-bloom.mdx)** is a small canvas blended in `screen` mode over that result.
+3. **[Overlays](./map-effects-overlays.mdx)** are CSS layers over both: grade, fog, edge blur, tint and vignette.
+
+As a result:
+
+- Bloom reads the chain's output, not the raw map. A defocused highlight glows as the wide soft disc a photograph gives it, and a hue-shifting pass of yours runs before bloom's colour key.
+- The overlays work on the glow too. A grade, a tint or a vignette changes the bloom along with the map under it.
+- Capture runs the same chain at the requested pixel ratio, then composites the same overlays, so what you capture is what was on screen.
+- The chain and bloom redraw on the map's `render` event, at most once per animation frame. The CSS overlays need no redrawing.
+- Nothing takes pointer events. The effects sit below the map's controls and leave hit-testing and SDK events alone.
+
+## The catalogue
+
+`effectKnobCatalogue` lists every knob as static data, readable with no map: `id`, `kind` (`number`, `color` or `colors`), `description`, `default` and `useCase`, plus a `range` on a number knob and the accepted names in `options` on `bloom.only`. It shares the entry shape of the SDK's [knob catalogues](../map/modules.mdx#every-setting-as-data), and the playground above builds its panel from it. `effectKnobIds` lists the ids, `EffectKnobId` is their union and `EffectKnobValueOf<ID>` is the value one takes.
+
+Each effect's guide lists its ranges and defaults:
+
+| Effect | Knob ids |
+| --- | --- |
+| [Bloom](./map-effects-bloom.mdx#turning-it-on) | `bloom.intensity`, `bloom.radius`, `bloom.threshold`, `bloom.only`, `bloom.onlyTolerance` |
+| [Grade](./map-effects-overlays.mdx#the-knobs) | `grade.brightness`, `grade.contrast`, `grade.saturation` |
+| [Fog](./map-effects-overlays.mdx#the-knobs) | `fog.intensity`, `fog.reach` |
+| [Edge blur](./map-effects-overlays.mdx#the-knobs) | `edgeBlur.intensity`, `edgeBlur.reach` |
+| [Depth of field](./map-effects-depth-of-field.mdx#turning-it-on) | `depthOfField.intensity`, `depthOfField.focus`, `depthOfField.band`, `depthOfField.bokeh` |
+| [Tint](./map-effects-overlays.mdx#the-knobs) | `tint.color`, `tint.opacity` |
+| [Vignette](./map-effects-overlays.mdx#the-knobs) | `vignette.intensity`, `vignette.reach` |
+
+## Capture
+
+`capture({ pixelRatio })` renders the current view, map and effects, into one canvas. The map is re-rendered at the requested ratio (never resampled), read back once every tile is drawn, and then set back to its previous ratio. MapLibre clamps to its `maxCanvasSize`, so measure the ratio you got from the returned canvas.
+
+```javascript
+const canvas = await effects.capture({ pixelRatio: 3 });
+canvas.toBlob((blob) => upload(blob), 'image/png');
+```
+
+## Relation to the Styling Foundations module
+
+The [Styling Foundations module](../map/styling.mdx) changes the *style* (what the map draws), and effects change the *frame* (how the drawn map looks). The two combine. The `data-viz` [map preset](../map/styling.mdx#presets) quiets the map's content, and `grade.saturation` and `tint.opacity` mute what remains.
+
+## API reference
+
+For complete documentation see the **[MapEffects API Reference](/maps-sdk-js/api-reference/classes/plugins.MapEffects.html)** and **[`effectKnobCatalogue`](/maps-sdk-js/api-reference/variables/plugins.effectKnobCatalogue.html)**.
+
+## Related guides and examples
+
+### Related guides
+- **[Map styling](../map/styling.mdx)** - The styling knobs, and the map-wide colour ids `bloom.only` names
+- **[Map modules](../map/modules.mdx#every-setting-as-data)** - The knob kinds the effect catalogue shares with the SDK's own catalogues
+
+### Related examples
+- **[Map effects playground](../../examples/map-effects-playground)** - Every effect on one panel
+- **[Bloom playground](../../examples/bloom-effect-playground)** - Every bloom knob, the colour scope included
+- **[Traffic flow with bloom](../../examples/traffic-bloom-effect)** - Live traffic glowing over a dark map
+- **[Mixed map effects](../../examples/mixed-map-effects)** - A watercolour pass of your own, with bloom, grade and vignette over it
+- **[3D terrain playground](../../examples/terrain-playground)** - A depth of field over a valley
+- **[Route fly-over playground](../../examples/route-flyover-playground)** - A depth of field holding the road ahead in focus

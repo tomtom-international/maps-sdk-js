@@ -1,0 +1,57 @@
+---
+title: Introduction to the map bundle
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+## Map architecture
+
+The map bundle, `@tomtom-org/maps-sdk/map`, renders through [MapLibre GL JS](./about-maplibre.mdx), a peer dependency, and adds TomTom's styles, data and services on top. It has two parts.
+
+### TomTomMap: the foundation
+
+[TomTomMap](./tomtom-map.mdx) wraps MapLibre's `Map`. It:
+
+- Loads TomTom's map styles with your API key, and switches them at runtime, keeping the SDK's state.
+- Coordinates user events across every module.
+- Exposes the underlying MapLibre map for anything the SDK doesn't cover.
+
+### Modules: extensible functionality
+
+[Modules](./modules.mdx) each add one capability to the map. There are two kinds:
+
+- **Style-owned** modules control what the map style already draws, such as the base map, POIs, live traffic, terrain and the overall look, without extra API calls. `get(map)` returns the one instance per map.
+- **Data-owned** modules draw data you give them, typically from TomTom services: places, routes, geometries, reachable ranges or your own GeoJSON. `create(map)` returns a new instance each time.
+
+The [module reference](./modules.mdx#per-module-reference) lists them all.
+
+## Why this architecture?
+
+- Tree-shaking - Only the modules you import are bundled, so a map with traffic is smaller than one with routing and places too.
+- Composition - Modules work together on one map, and data-owned ones stack, such as one route per plan and one set of places per search.
+- Flexibility - Start with `TomTomMap` alone and add modules as needed. MapLibre stays fully exposed, so its API and plugins cover the rest ([when to use which](./about-maplibre.mdx#when-to-use-tomtom-sdk-vs-direct-maplibre)).
+
+## Adding modules
+
+```javascript
+import { RoutingModule, TrafficFlowModule } from '@tomtom-org/maps-sdk/map';
+
+// Style-owned: the one traffic flow module of this map
+const trafficFlowModule = await TrafficFlowModule.get(map, { visible: true });
+
+// Data-owned: a new routing module, for routes you calculate
+const routingModule = await RoutingModule.create(map);
+```
+
+## Next steps
+
+- **[TomTomMap guide](./tomtom-map.mdx)**: initialize and configure a map
+- **[Modules guide](./modules.mdx)**: how map modules work
+- **[Map styles](./styles.mdx)**: choose and switch the map style
+- **[User interaction events](./user-events.mdx)**: handle user interactions

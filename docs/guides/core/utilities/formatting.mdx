@@ -1,0 +1,89 @@
+---
+title: Formatting
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+`formatDuration` and `formatDistance` turn seconds and meters into display strings, and round larger values more coarsely. The SDK formats its own durations and distances with them, such as the [routing module](../../map/routes.mdx)'s labels.
+
+## formatDuration
+
+```javascript
+import { formatDuration } from '@tomtom-org/maps-sdk/core';
+import { calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+formatDuration(20);     // undefined: under 30 seconds
+formatDuration(30);     // "1 min"
+formatDuration(100);    // "2 min"
+formatDuration(1800);   // "30 min"
+formatDuration(3599);   // "1 hr 00 min"
+formatDuration(36120);  // "10 hr 02 min"
+
+formatDuration(3660, { hours: 'h', minutes: 'm' }); // "1 h 01 m"
+
+const routes = await calculateRoute({ locations: [[4.9, 52.37], [4.48, 51.92]] });
+formatDuration(routes.features[0].properties.summary.travelTimeInSeconds);
+```
+
+- Rounds to the nearest minute. From one hour on, it shows hours and two-digit minutes.
+- **Returns** `string | undefined`: `undefined` for `0`, `undefined`, or anything that rounds to zero minutes.
+- The second argument (`TimeDisplayUnits`) sets the `hours` and `minutes` labels, `'hr'` and `'min'` by default.
+
+## formatDistance
+
+```javascript
+import { formatDistance } from '@tomtom-org/maps-sdk/core';
+
+// metric (default)
+formatDistance(2);       // "2 m"
+formatDistance(237);     // "240 m"
+formatDistance(950);     // "1 km"
+formatDistance(2850);    // "2.9 km"
+formatDistance(283520);  // "284 km"
+formatDistance(-999);    // "-1 km"
+
+// imperial_us: feet, then miles with fractions
+formatDistance(100, { type: 'imperial_us' });     // "330 ft"
+formatDistance(205.95, { type: 'imperial_us' });  // "¼ mi"
+formatDistance(5309.7, { type: 'imperial_us' });  // "3½ mi"
+
+// imperial_uk: yards, then miles with fractions
+formatDistance(150.88, { type: 'imperial_uk' });  // "170 yd"
+formatDistance(4344.3, { type: 'imperial_uk' });  // "2¾ mi"
+
+formatDistance(1500, { kilometers: 'KM' });       // "1.5 KM"
+```
+
+| `type` | Short distances | From ⅛ mile / 1 km |
+| --- | --- | --- |
+| `'metric'` | `m`, rounded to 10 m from 10 m, to 100 m from 500 m | `km`: one decimal below 10 km, whole above |
+| `'imperial_us'` | `ft` below ⅛ mi | `mi`: ¼ steps below 3 mi, ½ steps below 10 mi, whole above |
+| `'imperial_uk'` | `yd` below ⅛ mi | `mi`, as `imperial_us` |
+
+- The second argument (`DistanceDisplayUnits`) sets the `type` and labels: `meters`, `kilometers`, `feet`, `yards`, `miles`.
+- **Returns** `string`: `''` for `null` or `undefined`.
+
+## Global configuration
+
+The [`displayUnits`](../global-config.mdx#displayunits) global option sets the defaults for both functions, and so for every distance and duration the SDK displays:
+
+```javascript
+import { TomTomConfig, formatDistance, formatDuration } from '@tomtom-org/maps-sdk/core';
+
+TomTomConfig.instance.put({
+    displayUnits: {
+        distance: { type: 'imperial_us' },
+        time: { hours: 'h', minutes: 'm' }
+    }
+});
+
+formatDistance(1000);                       // "½ mi"
+formatDuration(3600);                       // "1 h 00 m"
+formatDistance(1000, { type: 'metric' });   // "1 km": the argument wins, key by key
+```

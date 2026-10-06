@@ -1,0 +1,77 @@
+---
+title: Vehicle configuration
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+`vehicle` describes the vehicle you plan the route for, such as its weight, heading and restrictions.
+`calculateRoute` and [`calculateReachableRanges`](./reachable-ranges.mdx) take the same object, with
+one [exception](#reachable-ranges).
+
+## Parameters
+
+`model`
+- `dimensions.weightKG` – The only dimension routing uses. See [Truck parameters](#truck-parameters).
+
+`state`
+- `heading` – The heading at the origin, in degrees clockwise from true North.
+
+`restrictions`
+- `maxSpeedKMH` – From 0 to 250. The default, 0, lets the router pick a value for the vehicle.
+- `tollTransponder` – Whether the vehicle carries an electronic toll collection transponder:
+  `all`, `unknown` (default) or `none`. With `none`, the route avoids tolls you can pay only by
+  transponder. With `all`, it avoids tolls you can't pay by transponder.
+
+### Reachable ranges
+
+[`calculateReachableRanges`](./reachable-ranges.mdx) takes the same vehicle without `state`.
+
+## Truck parameters
+
+Routing on Orbis v3 plans routes for a car. `travelMode` takes `'car'` only, and the only vehicle
+dimension it uses is the weight. On 2026-09-01, each parameter below was sent on its own to both
+endpoints, the route and the reachable range:
+
+| Parameter | Accepted | What the API answers |
+|---|---|---|
+| Weight — `model.dimensions.weightKG` | Yes | `200` |
+| Maximum speed — `restrictions.maxSpeedKMH` | Yes | `200` |
+| Length, width, height, axle weight | No | `400 Unknown JSON field` |
+| Load type (hazardous materials), ADR tunnel restriction code | No | `400 Unknown JSON field` |
+| Commercial vehicle | No | `400 Invalid boolean value` for anything but `false`, which restricts nothing |
+| `travelMode: 'truck'` | No | `car` is the only travel mode |
+
+- The SDK types have none of the rejected parameters, so truck dimensions fail to compile instead
+  of returning a car's route.
+- Other spellings don't help. v3 rejects any body field it doesn't know by name, such as
+  `vehicleHeight` or `vehicleHeightInMeters`.
+
+## Example
+
+```javascript
+const routes = await calculateRoute({
+    locations: [[4.9041, 52.3676], [2.3522, 48.8566]],
+    vehicle: {
+        model: { dimensions: { weightKG: 3500 } },
+        state: { heading: 90 },
+        restrictions: { maxSpeedKMH: 90, tollTransponder: 'none' }
+    }
+});
+```
+
+## API reference
+
+- [VehicleParameters](/maps-sdk-js/api-reference/types/services.VehicleParameters.html) – The `calculateRoute` vehicle
+- [ReachableRangeVehicleParameters](/maps-sdk-js/api-reference/types/services.ReachableRangeVehicleParameters.html) – The reachable range vehicle
+
+## Related guides and examples
+
+### Related guides
+- [Route planning parameters](./parameters.mdx) – Every other routing option
+- [Reachable ranges](./reachable-ranges.mdx) – Time and distance budgets, with the same vehicle

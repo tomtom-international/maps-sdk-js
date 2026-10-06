@@ -1,0 +1,325 @@
+---
+title: Agent Toolkit state
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.14.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The Agent Toolkit keeps structured state for the whole conversation. Tools return compact summaries and keep the
+underlying data in state, so the next tool call or turn reads it instead of the model re-deriving or inventing
+it. The model reads it back with `recallState`, which also returns summaries.
+
+## State slices
+
+State is organized by feature area:
+
+```d2
+direction: down
+
+State: agent.state {
+  grid-columns: 2
+  style: {
+    fill: "#f3e5f5"
+    stroke: "#4a148c"
+    stroke-width: 3
+    font-color: "#333"
+    border-radius: 8
+    font-size: 20
+  }
+
+  Places: places (entries) {
+    style: {
+      fill: "#f3e5f5"
+      stroke: "#4a148c"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 14
+    }
+    P0: "places-0 — places-by-query 'coffee shops'"
+    P1: "places-1 — single-place 'Eiffel Tower'"
+    P2: "places-2 — processData output"
+  }
+
+  Routing: routing (entries) {
+    style: {
+      fill: "#f3e5f5"
+      stroke: "#4a148c"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 14
+    }
+    R0: "routes-0 — Berlin → Munich"
+    R1: "routes-1 — Amsterdam → Utrecht"
+  }
+
+  Ranges: ranges (entries) {
+    style: {
+      fill: "#f3e5f5"
+      stroke: "#4a148c"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 14
+    }
+    Range0: "ranges-0 — 20 min from hospital"
+  }
+
+  CustomGeoms: customGeometries (entries) {
+    style: {
+      fill: "#f3e5f5"
+      stroke: "#4a148c"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 14
+    }
+    CG0: "geometries-0 — union of city polys"
+  }
+
+  BYOD: byod (entries) {
+    style: {
+      fill: "#f3e5f5"
+      stroke: "#4a148c"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 14
+    }
+    B0: "byod-0 — sales territories"
+  }
+
+  TAA: trafficAreaAnalytics (entries) {
+    style: {
+      fill: "#f3e5f5"
+      stroke: "#4a148c"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 14
+    }
+    TAA0: "tta-0 — central Berlin congestion"
+  }
+
+  Incidents: trafficIncidents (entries) {
+    style: {
+      fill: "#f3e5f5"
+      stroke: "#4a148c"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 14
+    }
+    I0: "incidents-0 — Berlin viewport snapshot"
+  }
+
+  BaseMap: baseMap (flat) {
+    style: {
+      fill: "#e8e8e8"
+      stroke: "#333"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 14
+    }
+    BM: "TomTomMap, MapLibre Map, base-map, styling and terrain modules"
+  }
+
+  POIs: mapPOIs (flat) {
+    style: {
+      fill: "#e8e8e8"
+      stroke: "#333"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 14
+    }
+    Vis: "base-map POI layer module"
+  }
+
+  Tiles: trafficTiles (flat) {
+    style: {
+      fill: "#e8e8e8"
+      stroke: "#333"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 14
+    }
+    Flow: "flow + incident overlay tile visibility"
+  }
+}
+```
+
+Slices flagged **entries** own an append-only history of results. The rest hold the map's shared modules. Entry slices
+share one shape (`entries`, `entryMode`, `setEntryMode(mode)`), and each entry owns SDK modules created lazily on first
+display. See [Entry mode](#entry-mode).
+
+| State slice | Entries | What it holds |
+|---|---|---|
+| `places` | Yes | Place entries (search results, single lookups, processed sets) with attached footprints and connections. `getEntryPlacesModule(id, markerType)` and `getEntryGeometriesModule(id)` return each entry's modules. |
+| `routing` | Yes | Route entries, staged waypoint slots and the current route parameters; `getEntryRoutingModule(id)`. |
+| `ranges` | Yes | Reachable range (isochrone / isodistance) entries, with origins, budgets and polygons. `getEntryRangesModule(id)` returns the bands' `ReachableRangesModule`. `getEntryGeometriesModule(id)` returns a plain `GeometriesModule` for polygons you style yourself, and `getEntryPlacesModule(id)` returns the origin pins. |
+| `customGeometries` | Yes | Polygons derived by `processData` (union, buffer, difference, h3 coverage, …), kept apart from `places` so their provenance (source ids, operation label) stays explicit; `getEntryGeometriesModule(id)`. |
+| `byod` | Yes | Your GeoJSON layers, each with an auto-detected [`BYODDataProfile`](./byod.mdx#auto-detected-data-profile); `getEntryModule(id)`. |
+| `trafficAreaAnalytics` | Yes | Area-analytics entries with their request, result and display config; `getEntryModule(id)`. |
+| `trafficIncidents` | Yes | Fetched incident entries, focused subsets and the polling monitor that keeps them fresh; `getEntryModule(id)`. |
+| `baseMap` | — | The `TomTomMap` (`ttMap`) and its MapLibre map (`mapLibreMap`); `getBaseMapModule()`, `getStylingFoundationsModule()`, `getTerrainModule()`. |
+| `mapPOIs` | — | The base-map POI layer; `getPOIsModule()`. |
+| `trafficTiles` | — | Traffic flow and incident tile overlays; `getTrafficFlowModule()`, `getTrafficIncidentsModule()`. |
+
+Beside the slices, `agent.state` holds every `analyseData` result (`analyses`), the `trackers`, and the sandbox that runs
+generated code (`codeExecution`).
+
+## Sharing across tools
+
+All tools share state. A place that `locatePlace` resolves is available to `addWaypointsToRoute` without the model
+passing it along. Tools pass entry ids, not data, which avoids the error-prone "read then pass" pattern.
+
+Tool results carry summaries, not the data. When a user asks *"what were those places?"* an hour into a session, the
+model calls [`recallState`](./tools.mdx#tools-that-read-state-vs-fetch-data) instead of guessing.
+
+## Entry mode
+
+Every entry slice has an **entry mode**. `multiple`, the default, renders several entries side by side. `single` keeps
+only the most recent one, and switching to it drops the older ones. The `EntryModeSliceName` union names these slices by
+their keys on `agent.state` (`routing`, not `routes`; `customGeometries`, not `geometries`):
+
+| Slice | Field |
+|---|---|
+| `places` | `agent.state.places` |
+| `routing` | `agent.state.routing` |
+| `ranges` | `agent.state.ranges` |
+| `customGeometries` | `agent.state.customGeometries` |
+| `byod` | `agent.state.byod` |
+| `trafficAreaAnalytics` | `agent.state.trafficAreaAnalytics` |
+| `trafficIncidents` | `agent.state.trafficIncidents` |
+
+The model switches modes with the `setEntryMode` tool when the user asks to *"only show one at a time"* or *"let me
+overlay multiple"*. The [state playground example](../../../examples/map-chat-agent-state-playground) shows every
+slice's entries and mode live.
+
+### Defaults via `createMapAgent`
+
+Set per-kind defaults with the `dataEntries` option. Each kind accepts `{ enabled?, entryMode? }`. Keys are data kinds
+(`routes`, `incidents`), not slice names (`routing`, `trafficIncidents`).
+
+```typescript
+import { createMapAgent } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+
+const agent = createMapAgent(map, {
+    model: openai('gpt-4o'),
+    dataEntries: {
+        routes: { entryMode: 'single' },          // only one route on the map
+        incidents: { entryMode: 'single' },       // each refresh replaces the previous snapshot
+        byod: { enabled: false },                 // hide byod from analyse/process scope + drop addByodSource / setByodLayers / updateByodDisplay
+    },
+});
+```
+
+Omitted kinds keep their defaults (`enabled: true`, `entryMode: 'multiple'`). `enabled: false` removes the kind from
+the agent. It leaves the `analyseData` / `processData` inputs, and the agent drops its fetch and display tools.
+[`TOOLS_BY_DATA_ENTRY_KIND`](/maps-sdk-js/api-reference/variables/plugins.TOOLS_BY_DATA_ENTRY_KIND.html) lists them per
+kind. A tool you pass under one of those names in `tools` is kept.
+
+Switch a mode at any time after construction:
+
+```typescript
+await agent.state.customGeometries.setEntryMode('single');
+```
+
+### Working with the union from your own code
+
+`EntryModeSliceName` and its runtime list `ENTRY_MODE_SLICE_NAMES` let custom tools and dev UIs iterate every entry
+slice without hard-coding names:
+
+```typescript
+import {
+    ENTRY_MODE_SLICE_NAMES,
+    type EntryModeSliceName,
+} from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+
+for (const slice of ENTRY_MODE_SLICE_NAMES) {
+    console.log(slice, agent.state[slice].entryMode);
+}
+```
+
+## Inspecting state from your application
+
+Read live state at any time:
+
+```typescript
+agent.state.routing.currentRoutes;            // most recent route results
+agent.state.places.latestPlace;               // places of the most recent entry
+agent.state.places.shownEntryIds;             // entries currently on the map
+agent.state.places.entries;                   // full history of place entries
+agent.state.trafficIncidents.entries;         // fetched incident entries
+agent.state.trafficAreaAnalytics.entries;     // historical analytics entries
+agent.state.customGeometries.entries;         // derived polygon entries
+agent.state.byod.entries;                     // bring-your-own-data layer entries
+agent.state.baseMap.mapLibreMap;              // raw MapLibre Map instance
+```
+
+### Telling the model what the user changed
+
+If your UI changes the map between turns, such as hiding a layer or picking another route, the model doesn't
+know. `getStateDigest` snapshots what is shown. `formatStateDigestDiff` turns two snapshots into a short note to
+prepend to the next message, or returns `null` when nothing changed:
+
+```typescript
+import { formatStateDigestDiff, getStateDigest } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+
+let baseline = getStateDigest(agent.state); // after each assistant reply
+
+// … before sending the user's next message:
+const diff = formatStateDigestDiff(baseline, getStateDigest(agent.state));
+const content = diff ? `${diff}\n${userText}` : userText;
+```
+
+## What state holds, and how to wipe it
+
+State lives in memory only. The toolkit writes nothing to browser storage. State holds every entry of the session, meaning the places, routes, ranges, BYOD layers, incidents, analyses and trackers the user produced, until one of these clears it:
+
+- The `resetState` tool, which the agent calls when the user asks to start over.
+- `agent.destroy()` from your code.
+
+The chat history is not part of state. It lives in your chat component. To erase a user's data, clear that history and call `agent.destroy()`. See [What the agent sends, and where](./what-the-agent-sends.mdx#what-the-toolkit-keeps).
+
+## Custom state slices
+
+If your custom tools need to share data across calls, extend `ToolState` with your own slice. Implement `reset()` to
+take part in `agent.destroy()` cleanup, and give the model a tool that reads the slice back:
+
+```typescript
+import type { ToolState, StateSlice } from '@tomtom-org/maps-sdk-plugin-agent-toolkit';
+
+class FleetState implements StateSlice {
+    vehicles: Map<string, VehiclePosition> = new Map();
+    reset() { this.vehicles.clear(); }
+}
+
+interface MyState extends ToolState {
+    fleet: FleetState;
+}
+
+const agent = createMapAgent<MyState>(map, {
+    model: openai('gpt-4o'),
+    state: { fleet: new FleetState() },
+    tools: { getFleetVehicle: myFleetTool },
+});
+
+// Access live state from your application
+agent.state.fleet.vehicles;
+agent.state.routing.currentRoutes;
+```
+
+The [site selection agent example](../../../examples/map-site-selection-agent-react) adds a custom slice. The
+[tool registry](./tools.mdx) lists the tools that read and write the built-in ones.
+
+State lives in the page, so the person using your application can see and edit everything in it. [Securing your agent](./securing-your-agent.mdx) covers what follows from that.

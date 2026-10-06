@@ -1,0 +1,117 @@
+---
+title: Routes
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+A route (`Route`) is a GeoJSON `Feature` whose `LineString` geometry is the path. Its properties carry the summary, sections, guidance and progress. `calculateRoute` returns `Routes`, a `FeatureCollection` of the main route and its alternatives.
+
+## Where routes are used
+
+- [Route calculation](../services/routing/quickstart.mdx) returns them, configured by the [route planning parameters](../services/routing/parameters.mdx).
+- The [routing module](../map/routes.mdx) displays them.
+- The [route utilities](./utilities/routes.mdx) read them for waypoint insertion, section bounds and progress along the route.
+
+## Route object structure
+
+- `id` - A unique string, distinguishing a route from its alternatives.
+- `bbox` - The bounding box of the route.
+- `geometry.coordinates` - The path, as `[longitude, latitude]` pairs.
+- `properties`:
+  - `index` - `0` for the main route, `1` and up for alternatives.
+  - `summary` - [Totals](#summary) for the whole route.
+  - `sections` - [Stretches with a characteristic](#sections), by type.
+  - `guidance` - [Turn-by-turn instructions](#guidance), if requested.
+  - `progress` - [Distance and time at points along the path](#progress).
+
+## Summary
+
+`route.properties.summary`:
+
+- Time and distance: `departureTime`, `arrivalTime` (both `Date`), `lengthInMeters`, `travelTimeInSeconds`.
+- Traffic: `trafficDelayInSeconds`, `trafficLengthInMeters`.
+- Alternative travel times, if [requested](../services/routing/parameters.mdx#traffic-based-travel-times): `noTrafficTravelTimeInSeconds`, `historicTrafficTravelTimeInSeconds`, `liveTrafficIncidentsTravelTimeInSeconds`.
+- Where an alternative forks off, on alternatives only: `deviationPoint`, and the `deviationDistanceInMeters` and `deviationTimeInSeconds` from the start to it.
+
+## Sections
+
+`route.properties.sections` groups the stretches of a route by type. Each section spans a range of indices into the route's coordinates. [`sectionTypes`](../services/routing/parameters.mdx#route-sections) sets which types a calculation returns. A requested type appears only where the route has such a stretch (no `ferry` without a water crossing). The [routing module](../map/routes-sections.mdx) draws them.
+
+### Section types
+
+- Structure:
+  - `leg` - From one stop to the next, with its own summary. Always present.
+  - `country` - One per country crossed, covering the route end to end.
+  - `importantRoadStretch` - The street names and road numbers that identify the route's course.
+- Road types: `motorway`, `ferry`, `carTrain`, `tunnel`, `pedestrian`, `urban`, `unpaved`.
+- Costs and restrictions:
+  - `toll` - Stretches charging a per-use toll, either a ticket or barrier motorway or a free-flow tolling point.
+  - `tollRoad` - Stretches that cost money by any scheme, including every `toll` section, vignette-only motorways and urban charge zones.
+  - `tollVignette` - One per country requiring a vignette.
+  - `carpool`, `lowEmissionZone`, `vehicleRestricted`.
+- Traffic and guidance:
+  - `traffic` - Stretches with a traffic incident.
+  - `lanes` - Lane configurations, only with guidance.
+  - `speedLimit`, `roadShields`.
+
+### Section properties
+
+Every section has `id`, `startPointIndex` and `endPointIndex` (inclusive). These types have more:
+
+- `leg`:
+  - `summary` - The leg's own totals, plus `stopTimeInSeconds` if the route waits at the stop it ends at.
+  - `originalWaypointIndex` - The entry of the request's `locations` this leg arrives at. A path location expands into legs of its own, so `legs[i]` is not reliably the leg arriving at `locations[i + 1]`. It is absent on the final leg and on legs ending where you did not ask, so handle `undefined`.
+- `traffic`:
+  - `categories` - The same values as a traffic incident's category, e.g. `['jam']`.
+  - `magnitudeOfDelay` - `'unknown'`, `'minor'`, `'moderate'`, `'major'` or `'indefinite'`.
+  - `delayInSeconds`, `effectiveSpeedInKmh`.
+  - `eventId` - The incident behind the section. Pass it to [traffic incident details](../services/traffic/traffic-incident-details.mdx) for the whole record.
+  - `tec` - TPEG2-TEC effect and cause codes.
+- `country` - `countryCodeISO2` (e.g. `'NL'`), `countryCodeISO3` (e.g. `'NLD'`). `tollVignette` sections carry the same.
+- `importantRoadStretch` - `index` (0 is the most important, and equal indices belong to one stretch), `streetName`, `roadNumbers` (e.g. `['A1', 'E30']`).
+- `lanes` - `lanes` (each with its possible `directions` and the one to `follow`), `laneSeparators`.
+- `speedLimit` - `maxSpeedLimitInKmh`.
+- `roadShields` - `roadShieldReferences`.
+
+## Progress
+
+Unless the calculation passed `extendedRouteRepresentations: []`, `route.properties.progress` gives the cumulative distance and time at points along the path.
+
+- `pointIndex` - An index into the route's coordinates. The first and last points are always included.
+- `distanceInMeters`, `travelTimeInSeconds` - From the start of the route.
+
+The [progress utilities](./utilities/routes.mdx#calculateprogressatroutepoint) interpolate between these points.
+
+## Guidance
+
+If you request [guidance](../services/routing/parameters.mdx#turn-by-turn-guidance), each of `route.properties.guidance.instructions` has:
+
+- `message` - The instruction text, localised by the service, e.g. `'Turn right onto Damrak'`.
+- `maneuver` - The maneuver code, e.g. `'TURN_RIGHT'`.
+- `maneuverPoint` - Where it happens, `[longitude, latitude]`. `pathPointIndex` is its index in the route's coordinates.
+- `routeOffsetInMeters` - Its distance from the start of the route.
+- `previousRoadInfo`, `nextRoadInfo` - The roads before and after it.
+
+## API reference
+
+[Route](/maps-sdk-js/api-reference/types/core.Route.html)
+
+## Related guides and examples
+
+### Related guides
+- [Routing quickstart](../services/routing/quickstart.mdx)
+- [Route planning parameters](../services/routing/parameters.mdx)
+- [Route utilities](./utilities/routes.mdx)
+
+### Map integration
+- [Routing module](../map/routes.mdx)
+
+### Related examples
+- [Route with waypoints](../../examples/route): calculate and show a route
+- [Route with alternatives](../../examples/route-with-alternatives): several route options

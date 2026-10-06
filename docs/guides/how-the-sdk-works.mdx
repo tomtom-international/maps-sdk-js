@@ -1,0 +1,211 @@
+---
+title: How the SDK works
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The SDK is one npm package, `@tomtom-org/maps-sdk`, with three entry points. Map draws the map, Services calls TomTom's location APIs, and Core holds what both share. Use each alone or together.
+
+```d2
+direction: down
+
+App: Your Application {
+  style: {
+    stroke: "#f87171"
+    stroke-width: 3
+    border-radius: 8
+    font-size: 18
+  }
+  width: 250
+  height: 80
+}
+
+MapLibre: MapLibre GL JS {
+  style: {
+    fill: "#295DAA"
+    stroke: "#295DAA"
+    font-color: white
+    border-radius: 8
+    font-size: 18
+  }
+  link: https://maplibre.org/maplibre-gl-js/docs/
+  width: 250
+  height: 80
+}
+
+SDK: Maps SDK for JavaScript {
+  style: {
+    stroke: "#333"
+    stroke-width: 3
+    fill: "#e8e8e8"
+    border-radius: 8
+    font-size: 20
+    font-color: "#333"
+  }
+  width: 800
+  height: 200
+
+  Map: Map {
+    style: {
+      fill: "#fffde7"
+      stroke: "#ff6f00"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 18
+    }
+    link: "#map"
+    width: 220
+    height: 100
+  }
+
+  Services: Services {
+    style: {
+      fill: "#f3e5f5"
+      stroke: "#4a148c"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 18
+    }
+    link: "#services"
+    width: 220
+    height: 100
+  }
+
+  Core: Core {
+    style: {
+      fill: "#e8f5e9"
+      stroke: "#1b5e20"
+      stroke-width: 2
+      font-color: "#333"
+      border-radius: 6
+      font-size: 18
+    }
+    link: "#core"
+    width: 220
+    height: 100
+  }
+
+  Map -> Core: {
+    style: {
+      stroke-dash: 3
+      stroke-width: 2
+    }
+  }
+
+  Services -> Core: {
+    style: {
+      stroke-dash: 3
+      stroke-width: 2
+    }
+  }
+}
+
+SDK.Map -> MapLibre: {
+  style: {
+    stroke-dash: 3
+    stroke-width: 2
+  }
+}
+
+App -> SDK.Map: {
+  style: {
+    stroke: "#f87171"
+    stroke-width: 3
+  }
+}
+
+App -> MapLibre: {
+  style: {
+    stroke: "#f87171"
+    stroke-width: 3
+  }
+}
+
+App -> SDK.Services: {
+  style: {
+    stroke: "#f87171"
+    stroke-width: 3
+  }
+}
+
+App -> SDK.Core: {
+  style: {
+    stroke: "#f87171"
+    stroke-width: 3
+  }
+}
+```
+
+The playground below uses only the Map bundle, with a `TomTomMap` configured once through Core.
+
+<GuideDemo demo="map-config-playground" />
+
+## The three bundles
+
+| Bundle | Import path | Runs in | Holds | Start with |
+| --- | --- | --- | --- | --- |
+| [Map](#map) | `@tomtom-org/maps-sdk/map` | Browser | `TomTomMap` and its modules | [Map introduction](./map/introduction.mdx) |
+| [Services](#services) | `@tomtom-org/maps-sdk/services` | Browser, Node.js, React Native | One async function per TomTom API | [Services quickstart](./services/quickstart.mdx) |
+| [Core](#core) | `@tomtom-org/maps-sdk/core` | Anywhere | `TomTomConfig`, shared types, utilities | [Core quickstart](./core/quickstart.mdx) |
+
+- Map and Services never depend on each other. Both depend on Core, so Services runs on a server with no map, and Map draws your own data with no service.
+- They meet through Core's GeoJSON types. A map module shows what a service returns unchanged, with no adapter in between.
+- Everything is tree-shakable. Your bundle carries only the modules and services you import.
+
+## Data flow
+
+```typescript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+import { discoverPlaces } from '@tomtom-org/maps-sdk/services';
+import { PlacesModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
+
+TomTomConfig.instance.put({ apiKey: 'YOUR_API_KEY', language: 'en-GB' });
+
+const map = new TomTomMap({ mapLibre: { container: 'map', center: [4.9, 52.37], zoom: 13 } });
+
+const places = await PlacesModule.create(map);
+await places.show(await discoverPlaces({ query: 'coffee', geoBias: { position: [4.9, 52.37] } }));
+```
+
+1. `TomTomConfig` holds the API key and language once, for the map and every service call.
+2. `discoverPlaces` merges its own parameters over that configuration, calls the API, and resolves to a GeoJSON `FeatureCollection` of `Place` features.
+3. `PlacesModule.show` takes that collection as it is and draws it on its own sources and layers.
+
+## Map
+
+- [`TomTomMap`](./map/tomtom-map.mdx) wraps a MapLibre `Map`. It loads a TomTom [style](./map/styles.mdx), applies the global configuration, and exposes the MapLibre instance as `map.mapLibreMap` ([when to use the SDK or MapLibre](./map/about-maplibre.mdx#when-to-use-tomtom-sdk-vs-direct-maplibre)).
+- [Modules](./map/modules.mdx) add everything else, each covering one area of the map. There are [two kinds](./map/modules.mdx#types-of-modules):
+  - Style-owned modules, from `get(map)`, cover what the style already draws, such as the base map, POIs, traffic and terrain. A map has one of each.
+  - Data-owned modules, from `create(map)`, show your data, such as places, routes, geometries and your own GeoJSON. Create as many as you need.
+- Modules survive style switches. `await map.setStyle(…)` restores every module's data and settings on the new style ([Map styles](./map/styles.mdx#dynamic-style-switching)).
+- Every setting is data. Each module's configuration has stable knob ids, set the same way on every module ([Every setting as data](./map/modules.mdx#every-setting-as-data)). [Map styling](./map/styling.mdx) restyles the map at runtime.
+- Events are typed per module. A click on a place pin gives you the `Place` you showed ([User events](./map/user-events.mdx)).
+
+## Services
+
+- Each API has one async function. [Places](./services/places/quickstart.mdx) covers search and geocoding, [Routing](./services/routing/quickstart.mdx) route calculation and reachable ranges, and [Traffic](./services/traffic/traffic-incident-details.mdx) incident details and area analytics.
+- The global configuration is the baseline. A call's own parameters win for that call only ([Global configuration](./core/global-config.mdx#how-global-and-per-request-configuration-combine)).
+- Results are typed GeoJSON for places, routes, reachable ranges, geometries and traffic. The POI category, EV availability and search-suggestion services return plain objects.
+- Every call takes the same request options: validation, an `AbortSignal`, and typed errors ([Request options and errors](./services/request-options-and-errors.mdx)).
+
+<SDKGuideLiveCodingExample exampleDirectory="nodejs-rev-geo" />
+
+## Core
+
+- [Global configuration](./core/global-config.mdx): `TomTomConfig.instance.put({ apiKey, language, … })`, called once and read by the map and every service.
+- Shared types: [`Place`](./core/places.mdx), [`Route`](./core/routes.mdx) and the [traffic](./core/traffic.mdx) types, the shape both bundles agree on.
+- Utilities that need no map: [bounding boxes](./core/utilities/bounding-boxes.mdx), [coordinates](./core/utilities/coordinates.mdx), [formatting](./core/utilities/formatting.mdx) and [route progress](./core/utilities/routes.mdx).
+
+## Next steps
+
+- Map only, with your own data: see the [Map quickstart](./map/quickstart.mdx).
+- Services only, in Node.js, a browser or React Native: see the [Services quickstart](./services/quickstart.mdx).
+- Both: see the [examples gallery](../examples), where most apps combine them.

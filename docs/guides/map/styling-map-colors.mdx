@@ -1,0 +1,164 @@
+---
+title: Map colours and the accent
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+To show the map in your brand colours, make one call to the [Styling Foundations module](./styling.mdx) with the map's ten semantic colours. An eleventh colour, the accent, carries the theme to the routes, areas and pins drawn on top.
+
+The ten colours below are the whole theme. Edit any of them and the map redraws in it. If you set them right after `StylingFoundationsModule.get` resolves, they appear on the first frame the map draws, with no fade from the default palette.
+
+<SDKGuideLiveCodingExample exampleDirectory="themed-map" />
+
+## Map colours: `setMapColors()`
+
+Partial objects are fine. An unknown name throws an `Error`, and a value that is not a colour throws a `RangeError`:
+
+```javascript
+import { StylingFoundationsModule } from '@tomtom-org/maps-sdk/map';
+
+const styling = await StylingFoundationsModule.get(map);
+styling.setMapColors({ land: '#f3f5f7', water: '#accbe2', roadMajor: '#a1b8ce', label: '#364659' });
+```
+
+`mapColorNames` lists all eleven, with `accent` last. `baseMapColorNames` (typed `BaseMapColorName`) lists only the ten, in the same order, for building a base-map colour picker. `MapColors` is the object type `setMapColors` takes. What each reaches:
+
+| Name | Reaches |
+|---|---|
+| `land` | Map background and other bare-land features, influences admin borders/labels. Also used to derive all map colours if undefined. |
+| `water` | Waterbodies, waterways and other water features. Also influences glaciers, water labels and ferry lines. |
+| `vegetation` | Forests and other land cover such as grass and shrubland. Also influences earth cover vegetation at smaller scales. |
+| `park` | City parks and sport/recreation grounds. Also influences National Parks and other protected areas at smaller scales. |
+| `artificial` | Built-up-areas and man-made features such as landuse grounds and buildings. Also influences railways. |
+| `roadMajor` | Most important road classes, from motorways & trunks to primary roads. Also influences outline and tunnel colours. |
+| `road` | Less important road classes, from secondary/tertiary to streets and service roads. Also influences tunnel colours. |
+| `roadOutline` | Road outlines for secondary/tertiary roads and minor classes. Also influences road labels and all other outline colours. |
+| `label` | Labels for capitals and other populated places/admin areas. Also influences border styling and all other label colours. |
+| `labelHalo` | Halos of populated places and admin area labels. Also influences border outlines and all other label halos. |
+
+How one name fans out:
+
+- It recolours every layer and shade the style built from it. `roadMajor` recolours the motorway line, the trunk line one shade lighter, their darker outlines, the tunnel and bridge variants and the small-scale version. Each is re-derived from your colour by the same HSL offset the style used, so the shade relationships survive instead of a flat fill. The offsets are measured from the loaded style, not shipped as a table, so this follows the style to its next version.
+- Features with their own hue, such as a hospital's pink, a campus's cream or a shopping area's yellow, keep that hue and follow `artificial`'s lightness. Their saturation scales with its luminance, the way the style's theme derives them. A dark built-up colour, grey included, darkens and mutes them too.
+- The mono styles derive everything from `land`. `monoLight` and `monoDark` compute the other nine from `land` with their theme's own formulas, so `land` alone recolours the whole map. A colour you set explicitly still wins, and a `road` you set carries its outline and major class with it. The other styles set all ten and derive nothing.
+
+```javascript
+await map.setStyle('monoLight');
+styling.setMapColors({ land: 'hsl(38, 36%, 93%)' }); // a sepia map: water, roads and land cover follow
+```
+
+Pick each colour in the demo below to watch it fan out:
+
+<GuideDemo demo="map-colors" />
+
+The ten colours are also the `colors.*` [knobs](./styling.mdx#knobs):
+
+```javascript
+import { getKnob, resetKnob, stylingFoundationsKnobCatalogue } from '@tomtom-org/maps-sdk/map';
+
+getKnob(styling, stylingFoundationsKnobCatalogue, 'colors.water');   // the style's own, or derived from your land, until set
+resetKnob(styling, stylingFoundationsKnobCatalogue, 'colors.roadMajor'); // one colour back to the style
+```
+
+The catalogue carries each summary from the table above as the knob's `description`. `getConfig()` returns the colours with the rest of the settings.
+
+A palette is a **recolour, not an inversion**. Every literal is re-derived by its offset from the style's own colour. A palette near the loaded style's lightness lands cleanly. One that inverts it, such as dark land over `streetLight`, pushes the derived shades to the ends of their range and washes out the road hierarchy. Pair a dark palette with `streetDark` and recolour from there:
+
+```javascript
+await map.setStyle('streetDark');
+styling.setMapColors({ land: '#161b27', water: '#2c486d', roadMajor: '#b68e54', label: '#dce0e5' });
+```
+
+The goal is a coherent recolour, faithful for reasonable palettes and approximate for extreme ones. The colours a mono style derives from `land` match the theme exactly. The shades within each colour are re-derived from the loaded style, not pixel-matched to a compiled theme.
+
+### From a few colours, a stylesheet or an image
+
+If your look starts as a brand's swatches, a website's CSS, a photo or a mood instead of ten named colours, the [Map Theme plugin](../plugins/map-theme.mdx) assigns the roles for you:
+
+```javascript
+import {
+    deriveMapColors,
+    deriveMapColorsFromCss,
+    deriveMapColorsFromImage,
+} from '@tomtom-org/maps-sdk-plugin-map-theme';
+
+styling.setMapColors(deriveMapColors(['#1d3f8a', '#e63312', '#f5d000', '#111111', '#f4f1ea']));
+styling.setMapColors(deriveMapColorsFromCss(await cssFile.text()));
+styling.setMapColors(await deriveMapColorsFromImage(fileInput.files[0]));
+```
+
+## The accent: what a theme reaches beyond the base map
+
+`colors.accent` is the colour for **what is drawn on top** of the map. It is a knob like the other colours, so `getKnob`, `setKnob`, `resetKnob` and `getConfig()` carry it, but it paints no style layer.
+
+The map publishes it in `map.mapColors`, with the ten map colours in force. `map.mapColors` is empty until a Styling Foundations module exists. The modules that draw their own layers read the accent as their **default**, so one theme recolours the base map and the routes, areas and pins drawn on it:
+
+```javascript
+import { RoutingModule, StylingFoundationsModule } from '@tomtom-org/maps-sdk/map';
+import { deriveMapColors } from '@tomtom-org/maps-sdk-plugin-map-theme';
+
+const styling = await StylingFoundationsModule.get(map);
+const routes = await RoutingModule.create(map); // no colour chosen
+styling.setMapColors(deriveMapColors(['#1d3f8a', '#e63312', '#f5d000', '#111111', '#f4f1ea']));
+// the base map is Miró, and so is the route drawn across it
+map.mapColors.accent; // the colour the route took
+```
+
+| Module | What takes the accent | Your own colour instead |
+| --- | --- | --- |
+| `RoutingModule` | the route line, its outline and the waypoint icons | `color`, or a `layers` paint override for one layer |
+| `GeometriesModule` | the fill and the outline | `color`, `fill.color` or `fill.palette` for both, `line.color` for the outline, a feature's `color` property |
+| `PlacesModule` | the pin, the selected label, connection lines and entry points | [`color`](./places-styling.mdx#colour) for all four; over it, `icon.default.style.fillColor` for the pin, `label.color` or `layers.selected` for the label, `connections.layers` and `entryPoints.layers` for the rest |
+| [`ReachableRangesModule`](./reachable-ranges.mdx) | its bands, as a ramp from the accent (innermost) toward the map's `land` colour (outermost), reversed for `fill.style: 'inverted'` | `fill.palette` |
+
+- **A colour you choose always wins.** With `routes.applyConfig({ color: '#c8102e' })`, the route stays `#c8102e` through every theme change.
+- Modules you give no colour follow the accent live. Without an accent, each keeps its own default.
+- No knob writes a module's layers. The accent is one more input the module reads ([Who owns what](./modules.mdx#who-owns-what)).
+- The [Map Theme plugin](../plugins/map-theme.mdx#how-colours-get-their-roles)'s `deriveMapColors` returns an accent chosen to be legible on the land.
+
+To theme only the base map, leave the accent out or reset it. The modules go back to their own defaults:
+
+```javascript
+import { resetKnob, stylingFoundationsKnobCatalogue } from '@tomtom-org/maps-sdk/map';
+import { deriveMapColors } from '@tomtom-org/maps-sdk-plugin-map-theme';
+
+const { accent, ...baseMapColors } = deriveMapColors(['#1d3f8a', '#e63312', '#f5d000', '#111111', '#f4f1ea']);
+styling.setMapColors(baseMapColors);
+
+// or, with an accent already set:
+resetKnob(styling, stylingFoundationsKnobCatalogue, 'colors.accent');
+```
+
+Only those four modules read it:
+
+- `CustomGeoJSONModule`, `TrafficAreaAnalyticsModule`, the [flyover plugin](../plugins/flyover.mdx)'s marker and your own MapLibre layers draw the colours you give them.
+- `TrafficIncidentDetailsModule` draws the style's incident colours ([Borrowed looks](./styling-borrowed-looks.mdx)). Base-map POI icons and the places cluster badges keep the style's colours. `cluster.badge.color` sets a badge's colour.
+
+To match the theme in your own layers, read `map.mapColors.accent` whenever the settings change:
+
+```javascript
+styling.events.on('config-change', () =>
+    map.mapLibreMap.setPaintProperty('my-trail', 'line-color', map.mapColors.accent ?? '#0a3653'),
+);
+```
+
+The demo below themes the base map, an area, pins and a route in one call:
+
+<GuideDemo demo="map-theme" />
+
+## Related guides and examples
+
+### Related guides
+- **[Map styling](./styling.mdx)** — the knobs, their catalogue, presets and settings
+- **[Borrowed looks](./styling-borrowed-looks.mdx)** — the module parts that follow the style's own colours instead of the accent
+- **[Map Theme plugin](../plugins/map-theme.mdx)** — the map colours, accent included, from a few colours or an image
+### Related examples
+- **[Themed map](../../examples/themed-map)** — a map that opens in its own colours, themed from the first frame
+- **[Map colours](../../examples/map-colors)** — the ten map colours, each recolouring every shade derived from it
+- **[Map theme](../../examples/map-theme)** — the base map, an area, pins and a route themed in one call

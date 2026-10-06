@@ -1,0 +1,25 @@
+---
+title: Events
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+Every map module has one `events` object for what users do on its features and for what happens to the module itself. Map style changes and raw MapLibre events have their own hooks.
+
+| You want to react to | Use | Guide |
+|---|---|---|
+| A click, right click, hover or long hover on a place, route, traffic incident or your own data | `module.events.on('click', …)` | [User interaction events](./user-events.mdx) |
+| A click or hover on the rest of the map | `BaseMapModule` events | [Handling events on the rest of the map](./user-events.mdx#handling-events-on-the-rest-of-the-map) |
+| Selecting or highlighting a feature from your own UI | `setEventState`, `getEventStates` | [Event states](./user-events.mdx#event-states) |
+| A module's configuration changing, to keep your UI in sync | `module.events.on('config-change', …)` | [Module lifecycle events](./module-events.mdx) |
+| New data drawn by a module's `show` | `module.events.on('shown-features', …)` | [Module lifecycle events](./module-events.mdx#shown-features) |
+| A map style switch, to keep your own layers or a dark-mode class | `map.addStyleChangeHandler(…)` | [Listening to style changes](./styles.mdx#listening-to-style-changes) |
+| Map lifecycle such as `load`, `moveend` or `zoom` | `map.mapLibreMap.on(…)` | [MapLibre `Map` events](https://maplibre.org/maplibre-gl-js/docs/API/classes/Map/#events) |
+
+For anything a module draws, use the module's `events` instead of a raw MapLibre listener. Only the top-most feature receives the event, the cursor has one state, and handlers get your original typed data. [About MapLibre](./about-maplibre.mdx) explains when to use the raw listener.

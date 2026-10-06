@@ -1,0 +1,124 @@
+---
+title: Routing quickstart
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+`calculateRoute` plans a route through an ordered list of [locations](./locations.mdx) and returns
+a GeoJSON `FeatureCollection` of [route features](../../core/routes.mdx), with the best route
+first. It runs in the browser and in Node.js.
+
+<SDKGuideLiveCodingExample exampleDirectory="nodejs-routing" />
+
+## Initialization
+
+```javascript
+import { TomTomConfig } from '@tomtom-org/maps-sdk/core';
+
+TomTomConfig.instance.put({ apiKey: 'YOUR_API_KEY' });
+```
+
+The [global configuration](../../core/global-config.mdx) also sets the language and units every call
+uses.
+
+## Calculating a route
+
+```javascript
+import { calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+const routes = await calculateRoute({
+    locations: [
+        [4.9041, 52.3676], // Amsterdam
+        [2.3522, 48.8566]  // Paris
+    ]
+});
+```
+
+- A location can be coordinates, a geocoding or search result, or a previous route. See
+  [Locations](./locations.mdx).
+- [Route planning parameters](./parameters.mdx) covers the other options, such as cost model,
+  departure time, alternatives, sections and guidance. [Vehicle configuration](./vehicle.mdx)
+  covers the vehicle.
+
+## Accessing route information
+
+```javascript
+const { summary } = routes.features[0].properties;
+
+console.log(`Distance: ${summary.lengthInMeters} m`);
+console.log(`Duration: ${summary.travelTimeInSeconds} s`);
+```
+
+The [route object](../../core/routes.mdx) lists the summary, sections, guidance and progress fields.
+[What the routing SDK adds](./what-the-sdk-adds.mdx) lists the fields the SDK adds to the API response.
+
+## Showing a route on the map
+
+`RoutingModule.showRoutes` takes the response unchanged:
+
+```javascript
+import { TomTomMap, RoutingModule } from '@tomtom-org/maps-sdk/map';
+import { calculateRoute } from '@tomtom-org/maps-sdk/services';
+
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+const routingModule = await RoutingModule.create(map);
+
+const locations = [[4.9041, 52.3676], [2.3522, 48.8566]];
+const routes = await calculateRoute({ locations });
+
+await routingModule.showRoutes(routes);
+await routingModule.showWaypoints(locations);
+```
+
+[Displaying routes](../../map/routes.mdx) covers the module's selection, waypoints, events and
+[sections](../../map/routes-sections.mdx).
+
+## Planning again on every change
+
+If you recalculate the route whenever a waypoint moves or an option changes, a slow earlier plan can
+finish after a newer one and draw a stale route. Run each plan through
+[`createLatestRequest`](../request-options-and-errors.mdx#keeping-only-the-latest-request), as the
+[route sections playground](../../../examples/route-sections-playground) does:
+
+```javascript
+import { calculateRoute, createLatestRequest } from '@tomtom-org/maps-sdk/services';
+
+const latestPlan = createLatestRequest();
+
+const showRoute = async (locations) => {
+    const plan = await latestPlan.run((signal) => calculateRoute({ locations, signal }));
+    if (!plan.current) return; // a newer change retired this plan
+
+    await routingModule.showWaypoints(locations);
+    await routingModule.showRoutes(plan.value);
+};
+```
+
+## API reference
+
+- [calculateRoute](/maps-sdk-js/api-reference/functions/services.calculateRoute.html)
+- [CalculateRouteParams](/maps-sdk-js/api-reference/types/services.CalculateRouteParams.html)
+
+## Related guides and examples
+
+### Related guides
+- [Route planning parameters](./parameters.mdx) – Every option `calculateRoute` takes
+- [Locations](./locations.mdx) – Waypoints, paths and per-stop options
+- [Route object](../../core/routes.mdx) – The shape of the response
+- [Request options and errors](../request-options-and-errors.mdx) – Validation, cancelling and errors, shared by every service
+
+### Map integration
+- [Displaying routes](../../map/routes.mdx) – `RoutingModule`
+
+### Related examples
+- [Route with waypoints](../../../examples/route) – Basic route calculation and display
+- [Route with alternatives](../../../examples/route-with-alternatives) – Several route options
+- [Waypoints](../../../examples/waypoints) – Multi-stop routing
+- [Route sections playground](../../../examples/route-sections-playground) – A picked route retires the plan still in flight
+- [Node.js routing](../../../examples/nodejs-routing) – Server-side routing

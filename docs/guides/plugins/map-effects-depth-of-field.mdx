@@ -1,0 +1,62 @@
+---
+title: Depth of field
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.2.2"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The [map effects plugin](./map-effects.mdx)'s `depthOfField` holds one **distance** sharp on a pitched map and defocuses the rest, as a lens focused there would. It is the only effect that reads the map's camera. In the playground below, the band keeps one stretch of the valley in focus and lets the ridges behind it soften:
+
+<GuideDemo demo="terrain-playground" />
+
+## Turning it on
+
+```javascript
+effects.updateConfig({
+    'depthOfField.intensity': 18, // the widest circle of confusion, in CSS pixels
+    'depthOfField.focus': 0,      // 0 = the nearest ground, 1 = the farthest the frame shows
+    'depthOfField.band': 0.3,     // how much of that depth stays sharp
+    'depthOfField.bokeh': 0.5,    // whether a defocused highlight fades or returns as a disc
+});
+```
+
+| Knob | Range | Default |
+| --- | --- | --- |
+| `depthOfField.intensity` (CSS px) | 0–30 | 0 (off) |
+| `depthOfField.focus` (0 = nearest, 1 = farthest shown), `depthOfField.band` | 0–1 | 0, 0.3 |
+| `depthOfField.bokeh` | 0–1 | 0.5 |
+
+- `focus: 0` needs nothing set, because the nearest thing in a tilted shot is the bottom edge. Raise it to make the middle distance sharp, with the foreground *and* the horizon out of focus, like a tilt-shift picture.
+- **The map needs [`preserveDrawingBuffer: true`](./map-effects.mdx#usage)**, because the pass reads the rendered map back as a texture.
+
+## How it works
+
+- It runs on the GPU, in the plugin's [GPU chain](./map-effects.mdx#how-it-renders). A full-screen pass gathers a disc of the map's pixels per fragment, at a radius that grows with distance from the plane of focus. A `backdrop-filter`, with one radius for the whole layer, reads as haze instead of a lens.
+- Bokeh separates a defocus from a blur. Each sample is weighted by the fourth power of its brightness, so a lit road or a traffic tube keeps its brightness across the circle it is spread over. At 0, the light is averaged away, as in a blur.
+- No depth buffer is needed. The map is a plane, so the reciprocal distance a lens defocuses by is affine in the screen row. The pitch and vertical field of view give the frame's whole depth as one ramp, `span = 2·tan(fov/2)·tan(pitch)` normalised to `span/(1 + span/2)`. It is 0 from straight above, 0.5 at a 45° tilt, and past 1 once the horizon is on screen.
+
+## Planning around it
+
+- A flat map ends the effect, with no pitch check. Every part of the ground is the same distance away, so the pass doesn't run. Tilt the map to bring it back.
+- The same `band` covers more of the view at a gentle tilt. It is an amount of depth, not a share of the frame, and a gentle tilt puts little depth in the frame.
+- Bloom glows over the defocus. It reads the chain's output, so a defocused highlight glows as a wide soft disc.
+- Your own passes run [before or after it](./map-effects-custom-passes.mdx), wherever you place them.
+
+It pairs with [3D terrain](../map/terrain.mdx#3d-elevation), which gives the view relief to defocus, as in the [3D terrain playground](../../examples/terrain-playground) above. With the [fly-over plugin](./flyover.mdx), as in the [route fly-over playground](../../examples/route-flyover-playground), it holds the road ahead in focus through the whole flight.
+
+## Related guides and examples
+
+### Related guides
+- **[Map effects plugin](./map-effects.mdx)** - Setup, how the effects render, and every knob
+- **[Terrain](../map/terrain.mdx)** - The relief a depth of field defocuses
+- **[Globe and sky](../map/styling-globe-and-sky.mdx)** - The sky above a tilted view
+- **[Fly-over plugin](./flyover.mdx)** - A camera flying a route, with the road ahead in focus
+
+### Related examples
+- **[3D terrain playground](../../examples/terrain-playground)** - A depth of field over a valley
+- **[Route fly-over playground](../../examples/route-flyover-playground)** - A depth of field holding the road ahead in focus

@@ -1,0 +1,207 @@
+---
+title: POI categories
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.0"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+[`getPOICategories()`](/maps-sdk-js/api-reference/functions/services.getPOICategories.html) returns
+every POI category the Search API knows, with its names and synonyms in a language. Use it to build a
+category picker, or to find categories by name or synonym. A category's `code`, a `POICategory`, works in:
+
+- Search filtering, with [`discoverPlaces({ filters: { poiCategories } })`](./search.mdx#poi-categories).
+- The map's own POI icons, with the `POIsModule` `filters.categories` setting, which takes generic parent
+  codes only ([Filtering the map's built-in POI icons](#filtering-the-maps-built-in-poi-icons)).
+
+<SDKGuideLiveCodingExample exampleDirectory="nodejs-poi-categories" />
+
+## Basic usage
+
+```javascript
+import { getPOICategories } from '@tomtom-org/maps-sdk/services';
+
+const { poiCategories: categories } = await getPOICategories();
+
+categories.forEach((category) => {
+    console.log(category.name);               // e.g. "Sports Center"
+    console.log(category.code);               // e.g. "SPORTS_CENTER"
+    console.log(category.synonyms);           // e.g. ["Sports Centre"]
+    console.log(category.childCategoryCodes); // e.g. ["FITNESS_CLUB_AND_CENTER", "HORSE_RIDING", ...]
+});
+```
+
+## Getting codes directly: `getPOICategoryCodes`
+
+`getPOICategoryCodes` takes the same parameters and returns only the codes:
+
+```javascript
+import { discoverPlaces, getPOICategoryCodes } from '@tomtom-org/maps-sdk/services';
+
+const all = await getPOICategoryCodes();
+
+// Codes matching a keyword, best match first, e.g. ['RESTAURANT', 'RESTAURANT_AREA']
+const restaurantCodes = await getPOICategoryCodes({ filters: ['restaurant'] });
+
+const results = await discoverPlaces({
+    filters: { poiCategories: restaurantCodes },
+    geoBias: { position: [4.9041, 52.3676] },
+});
+```
+
+## Fetching in a specific language
+
+`language` localizes the names and synonyms, and defaults to the global
+[`language`](../../core/global-config.mdx#language):
+
+```javascript
+const { poiCategories: categories } = await getPOICategories({ language: 'fr-FR' });
+console.log(categories[0].name); // e.g. "Centre sportif"
+```
+
+## Filtering categories
+
+`filters` finds categories by keyword, client-side, against the cached list, with no request after
+the first. Each filter ranks the categories it matches, strongest first:
+
+1. A category code, such as `'CAFE'`, matches that category only.
+2. Any other filter ranks an exact name or synonym first, then a name or synonym that starts with the
+   filter (`'parking'` finds `'Parking Garage'`), then one with it as a later word, and last one
+   containing it as a substring.
+
+- A filter keeps only matches close to its best one, so `'bar'` finds `'Bar'` but not
+  `'Nail Salon'` through its synonym `'Nail Bar'`.
+- Matching ignores case, accents and punctuation, and spaces too for a substring.
+  `'cafe'` finds `'Café'`, and `'bookstore'` finds `'Book Shop'` through its synonym `'Book Store'`.
+  A blank filter matches nothing.
+- Several filters merge round-robin, so each filter's best match comes first, with one entry per code.
+  A category ranked below its matched parent is left out, as the parent already covers it.
+
+```javascript
+const { poiCategories: gymCategories } = await getPOICategories({ filters: ['gym'] });
+
+// Each filter's best match first, one entry per code
+const { poiCategories: combined } = await getPOICategories({ filters: ['gym', 'parking'] });
+
+const { poiCategories: restaurants } = await getPOICategories({ language: 'en-GB', filters: ['restaurant'] });
+```
+
+## Using categories in search
+
+Pass `code` values to `discoverPlaces()`, such as the one picked from a dropdown:
+
+```javascript
+import { discoverPlaces, getPOICategories } from '@tomtom-org/maps-sdk/services';
+
+const { poiCategories: allCategories } = await getPOICategories();
+const options = allCategories.map((category) => ({ label: category.name, value: category.code }));
+
+const results = await discoverPlaces({
+    filters: { poiCategories: ['SPORTS_CENTER'] },
+    geoBias: { position: [4.9041, 52.3676] },
+    limit: 20,
+});
+```
+
+When the category comes as a word rather than a choice from a list, skip the lookup and pass it as
+[`filters.poiCategoryQuery`](./search.mdx#naming-the-category-in-words-poicategoryquery), which
+resolves it with `resolvePOICategories`:
+
+```javascript
+const gyms = await discoverPlaces({ filters: { poiCategoryQuery: 'gym' }, geoBias: { position: [4.9041, 52.3676] } });
+```
+
+### Resolving words for a search: `resolvePOICategories`
+
+`resolvePOICategories` turns words, or codes, into the `poiCategories` of one search, and reports the
+words that match nothing. Call it before searching to handle those words yourself: search with
+the rest, ask the user, or fall back to a free-text `query`.
+
+```javascript
+import { discoverPlaces, resolvePOICategories } from '@tomtom-org/maps-sdk/services';
+
+const { poiCategories, unmatched } = await resolvePOICategories({ filters: ['café', 'PHARMACY', 'xyzzy'] });
+// unmatched: ['xyzzy']
+
+if (poiCategories.length) {
+    const places = await discoverPlaces({ filters: { poiCategories }, geoBias: { position: [4.9041, 52.3676] } });
+}
+```
+
+- Each filter matches as in [Filtering categories](#filtering-categories), so a code stays itself.
+- It keeps each filter's best three codes, merged round-robin and capped at the 10 a search accepts.
+- `filters.poiCategoryQuery` runs this lookup, so both resolve a word the same way.
+- Codes alone skip the catalogue request and come back deduplicated.
+- `resolvePOICategories` builds one search, while `getPOICategoryCodes` lists every close match, for a
+  picker or the map's POI icons.
+
+## Filtering the map's built-in POI icons
+
+To choose which of the map's own POI icons show, set the `POIsModule` `filters.categories` setting to
+generic parent codes or `POICategoryGroup` values such as `'FOOD_DRINKS_GROUP'`. It doesn't support
+specific child codes such as `'ITALIAN_RESTAURANT'`, so use the parent `'RESTAURANT'` or a group. The [POIs module guide](../../map/pois.mdx#filtering) covers the setting and its groups.
+
+```javascript
+import { POIsModule, TomTomMap } from '@tomtom-org/maps-sdk/map';
+import { getPOICategoryCodes } from '@tomtom-org/maps-sdk/services';
+
+const map = new TomTomMap({ mapLibre: { container: 'map' } });
+const poisModule = await POIsModule.get(map);
+
+const codes = await getPOICategoryCodes({ filters: ['restaurant', 'sports center'] });
+poisModule.updateConfig({ filters: { categories: { show: 'only', values: codes } } });
+```
+
+## Exploring sub-categories
+
+`childCategoryCodes` lists a category's sub-categories, for drill-down navigation:
+
+```javascript
+const { poiCategories: categories } = await getPOICategories();
+
+const restaurant = categories.find((category) => category.code === 'RESTAURANT');
+console.log(restaurant?.childCategoryCodes); // e.g. ['ITALIAN_RESTAURANT', 'FRENCH_RESTAURANT', ...]
+```
+
+## Cache management
+
+- The first call in a language fetches the list, and every later call in that language reads the cache, filtered or not, including `resolvePOICategories` and `filters.poiCategoryQuery`.
+- The cache is in memory for the lifetime of the page or process. There is nothing to clear.
+
+```javascript
+const { poiCategories: english } = await getPOICategories({ language: 'en-GB' });
+const { poiCategories: french } = await getPOICategories({ language: 'fr-FR' }); // a second request
+```
+
+## Parameter reference
+
+On top of the [options every service call takes](../request-options-and-errors.mdx):
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `language` | `string` | IETF language tag for names and synonyms, e.g. `'en-GB'`, `'fr-FR'`. Defaults to the global language. |
+| `filters` | `string[]` | Keywords matched client-side, as in [Filtering categories](#filtering-categories). Omit it to return every category. `resolvePOICategories` requires it. |
+
+## Response reference
+
+Each entry of `poiCategories`:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `code` | `POICategory` | The code `filters.poiCategories` takes. |
+| `name` | `string` | Category name in the requested language. |
+| `childCategoryCodes` | `POICategory[]` | Sub-category codes, whether or not they matched `filters`. |
+| `synonyms` | `string[]` | Alternative names in the requested language. |
+
+`resolvePOICategories` returns `{ poiCategories, unmatched }` instead, with the codes for one
+search, best first, and the filters that matched nothing, as given.
+
+## Related guides
+
+- **[Discover places](./search.mdx#poi-categories)** — Searching by category code or by category in words
+- **[POIs module](../../map/pois.mdx)** — The map's own POI icons, filtered by parent codes or groups
+- **[Search suggestions](./suggest.mdx)** — A category the user is typing, as a `category` suggestion
