@@ -1,0 +1,158 @@
+---
+title: Landmarks 3D plugin
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 0.0.13"
+  color: "grey5"
+- label: "PRIVATE PREVIEW"
+  color: "grey5"
+---
+
+<Button
+    label="Request Access"
+    href="https://www.tomtom.com/contact-sales/?source_app=docs-portal&source_product=map-display-api-3d"
+    target="_blank">
+    Request Access
+</Button>
+
+<Blockquote type="warning">
+**Important note**
+3D Landmarks are in [Private Preview](https://docs.tomtom.com/legal/private-preview) and unavailable on a Freemium or Pay As You Grow (PAYG) basis.
+Click the **Request Access** button above to contact our Sales team.
+With a key that lacks the access, the map draws no landmarks and the console warns, per tile, that the key needs it.
+</Blockquote>
+
+<GuideDemo demo="landmarks-3d-plugin" />
+
+## Use cases
+
+- City-scale 3D visualization - Recognizable buildings (stadiums, cathedrals, towers) appear as detailed meshes instead of plain extrusions.
+- Blend with the base map - Landmarks take the basemap building colour, or the look of `streetDark` or `streetLight`.
+
+## How it works
+
+- A MapLibre custom layer fetches the landmark tiles covering the viewport and renders them with Three.js, lit to match the map style.
+- The layer draws when the map draws and asks for a frame only when a tile arrives, so a still map stays idle. If you change a field on `landmarks.layer` yourself, call `map.mapLibreMap.triggerRepaint()`.
+- The layer sits below the POI layer, so POI labels and icons draw over the meshes and roads stay below.
+- The plugin shows the standard style's 3D building layer, hidden by default, so landmarks sit in a full 3D city. Basemap buildings that overlap a landmark carry `has_landmark`, and the plugin filters them out so they don't clip through the meshes.
+- After `setStyle`, the plugin restores the layer, its visibility, the filter and the display mode.
+- The plugin builds the tile URL from the global `TomTomConfig` (`apiKey`, `commonBaseURL`). Behind a credentialed proxy, tile requests send cookies like every other SDK request. `withCredentials` overrides that.
+- Three.js decodes KTX2 textures with the Basis Universal transcoder. It ships with the plugin in a chunk loaded with the first landmark tile, so no request goes to a CDN.
+  - A strict Content Security Policy needs `data:` in `connect-src` and `blob:` in `worker-src`.
+  - `Landmarks3D` always uses the bundled copy. To serve your own, build the layer yourself with `new ModelsLayer(layerSpecification, sourceSpecification)` and set `transcoderPath` on the `ModelsSourceSpecification`.
+
+## Installation
+
+<Blockquote>
+    This plugin uses `@tomtom-org/maps-sdk`, `maplibre-gl` and `three` as peer dependencies. Install all three.
+</Blockquote>
+
+```bash
+npm install @tomtom-org/maps-sdk maplibre-gl three @tomtom-org/maps-sdk-plugin-landmarks-3d
+```
+
+1. Follow the [SDK Project Setup](../../introduction/project-setup.mdx) to create a `TomTomMap`. Pitch the camera. From above, the meshes look flat.
+2. Create the plugin. Rendering starts once the map is ready, so there is nothing to await.
+
+```javascript
+import { Landmarks3D } from '@tomtom-org/maps-sdk-plugin-landmarks-3d';
+
+const landmarks = new Landmarks3D(map);
+```
+
+## Usage examples
+
+### Change the display mode
+
+```javascript
+// 'inherited' (default) | 'dark' | 'light'
+await landmarks.setDisplayMode('dark');
+landmarks.getDisplayMode(); // 'dark'
+```
+
+- `inherited` - Mirrors the colour, opacity and vertical gradient of the basemap 3D building layer, so landmarks blend in. Without that layer, or when its colour doesn't resolve to one value, it falls back to the `streetLight` look.
+- `dark` and `light` - Use the 3D building look of the `streetDark` and `streetLight` styles.
+
+### Terrain
+
+Landmarks stand on [3D terrain](../map/terrain.mdx#3d-elevation) without any configuration. The plugin lowers each one onto the lowest ground under its footprint, so no wall floats above a slope. Landmarks follow the terrain as it loads or its exaggeration changes.
+
+```javascript
+import { TerrainModule } from '@tomtom-org/maps-sdk/map';
+import { Landmarks3D } from '@tomtom-org/maps-sdk-plugin-landmarks-3d';
+
+await TerrainModule.get(map, { elevation: { visible: true }, hillshade: { visible: true } });
+const landmarks = new Landmarks3D(map);
+```
+
+### Toggle visibility
+
+```javascript
+await landmarks.setVisible(false);
+landmarks.isVisible(); // false
+```
+
+### Several maps
+
+Create one `Landmarks3D` per map. Each one loads the tiles of its own map's view:
+
+```javascript
+const landmarks = maps.map((map) => new Landmarks3D(map));
+```
+
+- Each map takes a WebGL context, and a browser allows only so many per page (16 in Chrome). To show more landmarks than maps, move the maps you have instead of creating new ones.
+- With more than one map, Three.js warns about `Multiple active KTX2 loaders`. The landmarks still render.
+
+To frame a tall landmark, aim the camera at its mid-height instead of its foot. Set `centerClampedToGround: false` on the map and give the camera an `elevation` in metres. MapLibre's `flyTo` and `easeTo` leave the elevation where it was, so move with `jumpTo`:
+
+```javascript
+const map = new TomTomMap({
+    mapLibre: {
+        container: 'map',
+        centerClampedToGround: false,
+        center: [2.2945, 48.8584],
+        elevation: 165, // halfway up the Eiffel Tower
+        zoom: 15.4,
+        pitch: 60,
+    },
+});
+new Landmarks3D(map);
+
+map.mapLibreMap.jumpTo({ center: [-122.3493, 47.6205], elevation: 92 }); // on to the Space Needle
+```
+
+The demo below shows four landmarks of one kind, one per map:
+
+<GuideDemo demo="multiple-maps-landmarks" />
+
+### Configuration
+
+```javascript
+const landmarks = new Landmarks3D(map, {
+  displayMode: 'inherited',
+  visible: true,
+  minZoom: 14,
+});
+```
+
+| Option | Default |
+|---|---|
+| `displayMode` | `'inherited'` |
+| `visible` | `true` |
+| `minZoom`, `maxZoom` | the basemap 3D building layer's range, so landmarks appear and disappear with it. Without that layer, `10` and `22` |
+| `withCredentials` | follows the SDK's proxy configuration |
+
+Landmark tiles exist at zoom 15 only. Below it, each view needs more of them: at zoom 13, 16 times as many, and more again on a pitched map. Keep `minZoom` close to 15, above all with several maps on a page.
+
+## API reference
+
+For complete documentation see the **[Landmarks3D API Reference](/maps-sdk-js/api-reference/classes/plugins.Landmarks3D.html)**.
+
+## Related guides and examples
+
+- **[Landmarks 3D plugin](../../examples/landmarks-3d-plugin)** - Landmarks over a pitched city, with a display mode switcher
+- **[3D terrain map](../../examples/3d-terrain)** - Landmarks standing on the relief
+- **[3D landmarks of one kind](../../examples/multiple-maps-landmarks)** - Four towers, cathedrals, stadiums or monuments, each on its own map
+- **[Terrain](../map/terrain.mdx)** - Hillshade and 3D elevation

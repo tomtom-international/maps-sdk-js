@@ -1,0 +1,127 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>WaypointDisplayProps | TomTom Maps for JavaScript</title><meta name="description" content="Documentation for TomTom Maps for JavaScript"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container"><a href="../index.html" class="title">TomTom Maps for JavaScript</a>
+<div id="tsd-toolbar-links"></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/>
+<ul role="listbox" id="tsd-search-results"></ul>
+<div id="tsd-search-status" aria-live="polite" aria-atomic="true">
+<div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header>
+<div class="container container-main">
+<div class="col-content">
+<div class="tsd-page-title">
+<ul class="tsd-breadcrumb" aria-label="Breadcrumb">
+<li><a href="../modules/map.html">map</a></li>
+<li><a href="" aria-current="page">WaypointDisplayProps</a></li></ul>
+<h1>Type Alias WaypointDisplayProps</h1></div>
+<div class="tsd-signature"><span class="tsd-kind-type-alias">WaypointDisplayProps</span><span class="tsd-signature-symbol">:</span> <a href="map.PlaceDisplayProps.html" class="tsd-signature-type tsd-kind-type-alias">PlaceDisplayProps</a> <span class="tsd-signature-symbol">&amp;</span> <span class="tsd-signature-symbol">{</span><br/>    <span class="tsd-kind-property">index</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">indexType</span><span class="tsd-signature-symbol">:</span> <a href="map.WaypointIndexType.html" class="tsd-signature-type tsd-kind-type-alias">WaypointIndexType</a><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">stopDisplayIndex</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">stopDisplayLabel</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">stopDuration</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div>
+<div class="tsd-comment tsd-typography"><p>Display properties for a waypoint marker on the map.</p>
+<p>They extend location display properties with waypoint-specific information,
+including route position and stop numbering.</p>
+</div>
+<div class="tsd-type-declaration">
+<h4>Type Declaration</h4>
+<ul class="tsd-parameters">
+<li class="tsd-parameter">
+<h5><span class="tsd-kind-property">index</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+<div class="tsd-comment tsd-typography"><p>The waypoint's index among the other waypoints.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks">Remarks<a href="#remarks" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>It is zero-based, over the complete waypoints array including start, all stops
+and finish.</p>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example">Example<a href="#example" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-9">index</span><span class="hl-2">: </span><span class="hl-8">0</span><span class="hl-2">  </span><span class="hl-0">// First waypoint (start)</span><br/><span class="hl-9">index</span><span class="hl-2">: </span><span class="hl-8">1</span><span class="hl-2">  </span><span class="hl-0">// Second waypoint (first stop or finish)</span><br/><span class="hl-9">index</span><span class="hl-2">: </span><span class="hl-8">2</span><span class="hl-2">  </span><span class="hl-0">// Third waypoint</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></li>
+<li class="tsd-parameter">
+<h5><span class="tsd-kind-property">indexType</span><span class="tsd-signature-symbol">: </span><a href="map.WaypointIndexType.html" class="tsd-signature-type tsd-kind-type-alias">WaypointIndexType</a></h5>
+<div class="tsd-comment tsd-typography"><p>The type of the index, which describes where the waypoint sits in the list of waypoints.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-1">Remarks<a href="#remarks-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>It sets the waypoint's role and look:</p>
+<ul>
+<li><code>start</code>: Origin point</li>
+<li><code>middle</code>: Intermediate stop</li>
+<li><code>finish</code>: Final destination</li>
+</ul>
+<p>It affects icon selection and labelling.</p>
+</div></div></li>
+<li class="tsd-parameter">
+<h5><code class="tsd-tag">Optional</code><span class="tsd-kind-property">stopDisplayIndex</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span></h5>
+<div class="tsd-comment tsd-typography"><p>The stop index to display.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-2">Remarks<a href="#remarks-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Stops are the waypoints between origin and destination, numbered from 1. It is
+present only for middle waypoints.</p>
+<p>Display behaviour:</p>
+<ul>
+<li>Start waypoint: undefined</li>
+<li>First stop: 1</li>
+<li>Second stop: 2</li>
+<li>Finish waypoint: undefined</li>
+</ul>
+<p>Use it to display stop numbers, such as &quot;Stop 1&quot; or &quot;Stop 2&quot;, in the UI.</p>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-1">Example<a href="#example-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-9">stopDisplayIndex</span><span class="hl-2">: </span><span class="hl-8">1</span><span class="hl-2">  </span><span class="hl-0">// First intermediate stop</span><br/><span class="hl-9">stopDisplayIndex</span><span class="hl-2">: </span><span class="hl-8">2</span><span class="hl-2">  </span><span class="hl-0">// Second intermediate stop</span><br/><span class="hl-9">stopDisplayIndex</span><span class="hl-2">: </span><span class="hl-5">undefined</span><span class="hl-2">  </span><span class="hl-0">// Start or finish waypoint</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></li>
+<li class="tsd-parameter">
+<h5><code class="tsd-tag">Optional</code><span class="tsd-kind-property">stopDisplayLabel</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span></h5>
+<div class="tsd-comment tsd-typography"><p>The mark the stop's pin draws inside it, under <a href="map.WaypointsConfig.html#stopnumbering" class="tsd-kind-property">WaypointsConfig.stopNumbering</a>, such as
+<code>'2'</code> or <code>'B'</code> for the second stop.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-3">Remarks<a href="#remarks-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Absent on the origin and destination, under <code>'none'</code>, and on a stop drawn with a <code>middle.image</code>
+or a mapped icon, none of which carries a mark.</p>
+</div></div></li>
+<li class="tsd-parameter">
+<h5><code class="tsd-tag">Optional</code><span class="tsd-kind-property">stopDuration</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span></h5>
+<div class="tsd-comment tsd-typography"><p>How long the route waits at this waypoint, formatted for display.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-4">Remarks<a href="#remarks-4" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Taken from WaypointProps.pauseDurationSeconds and rendered on the stop's label by
+default (e.g. <code>30 min</code>). Absent when the waypoint carries no wait.</p>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-2">Example<a href="#example-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-9">stopDuration</span><span class="hl-2">: </span><span class="hl-4">&#39;30 min&#39;</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></li></ul></div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-remarks">
+<h4 class="tsd-anchor-link" id="remarks-5">Remarks<a href="#remarks-5" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Waypoints display differently by their position:</p>
+<ul>
+<li>Start: Origin marker (often &quot;A&quot; or green pin)</li>
+<li>Middle: Numbered stop markers (1, 2, 3, etc.)</li>
+<li>Finish: Destination marker (often &quot;B&quot; or red pin)</li>
+</ul>
+</div>
+<div class="tsd-tag-example">
+<h4 class="tsd-anchor-link" id="example-3">Example<a href="#example-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><pre><code class="typescript"><span class="hl-0">// Start waypoint</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">start</span><span class="hl-2">: </span><span class="hl-7">WaypointDisplayProps</span><span class="hl-2"> = {</span><br/><span class="hl-2">  </span><span class="hl-1">id:</span><span class="hl-2"> </span><span class="hl-4">&#39;waypoint-0&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-1">iconID:</span><span class="hl-2"> </span><span class="hl-4">&#39;waypoint-start&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-1">index:</span><span class="hl-2"> </span><span class="hl-8">0</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-1">indexType:</span><span class="hl-2"> </span><span class="hl-4">&#39;start&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-1">title:</span><span class="hl-2"> </span><span class="hl-4">&#39;Amsterdam Central Station&#39;</span><br/><span class="hl-2">};</span><br/><br/><span class="hl-0">// Intermediate stop</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">stop</span><span class="hl-2">: </span><span class="hl-7">WaypointDisplayProps</span><span class="hl-2"> = {</span><br/><span class="hl-2">  </span><span class="hl-1">id:</span><span class="hl-2"> </span><span class="hl-4">&#39;waypoint-1&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-1">iconID:</span><span class="hl-2"> </span><span class="hl-4">&#39;waypoint-stop&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-1">index:</span><span class="hl-2"> </span><span class="hl-8">1</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-1">indexType:</span><span class="hl-2"> </span><span class="hl-4">&#39;middle&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-1">stopDisplayIndex:</span><span class="hl-2"> </span><span class="hl-8">1</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-1">title:</span><span class="hl-2"> </span><span class="hl-4">&#39;Schiphol Airport&#39;</span><br/><span class="hl-2">};</span><br/><br/><span class="hl-0">// Destination</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">finish</span><span class="hl-2">: </span><span class="hl-7">WaypointDisplayProps</span><span class="hl-2"> = {</span><br/><span class="hl-2">  </span><span class="hl-1">id:</span><span class="hl-2"> </span><span class="hl-4">&#39;waypoint-2&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-1">iconID:</span><span class="hl-2"> </span><span class="hl-4">&#39;waypoint-finish&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-1">index:</span><span class="hl-2"> </span><span class="hl-8">2</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-1">indexType:</span><span class="hl-2"> </span><span class="hl-4">&#39;finish&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-1">title:</span><span class="hl-2"> </span><span class="hl-4">&#39;Rotterdam Central Station&#39;</span><br/><span class="hl-2">};</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div></div>
+<div class="col-sidebar">
+<div class="page-menu">
+<div class="tsd-navigation settings">
+<details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div>
+<div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div></div>
+<div class="site-menu">
+<nav class="tsd-navigation"><a href="../index.html">TomTom Maps for JavaScript</a>
+<ul class="tsd-small-nested-navigation" id="tsd-nav-container">
+<li>Loading...</li></ul></nav></div></div></div><footer>
+<p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer>
+<div class="overlay"></div></body></html>

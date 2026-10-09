@@ -1,0 +1,110 @@
+---
+title: Map typeface
+hideMenu: false
+hideSubmenu: false
+hasTwoColumns: false
+titleTags:
+- label: "VERSION 1.0.0-rc.2"
+  color: "grey5"
+- label: "PUBLIC PREVIEW"
+  color: "grey5"
+---
+
+The [Styling Foundations module](./styling.mdx) sets every label on the map in one typeface. That covers the street and place names, the POIs, and the labels of your routes, places and geometries. Pick one of the serif and italic faces the map style already serves, or bring your own font files.
+
+<GuideDemo demo="map-typeface" />
+
+## The style's own faces
+
+The `labels.typeface` knob switches between the Noto faces the TomTom styles serve. It takes `sans` (the style as shipped), `sans-italic`, `serif` and `serif-italic`, which `mapTypefaces` lists.
+
+```javascript
+import { setKnob, StylingFoundationsModule, stylingFoundationsKnobCatalogue } from '@tomtom-org/maps-sdk/map';
+
+const styling = await StylingFoundationsModule.get(map, { labels: { typeface: 'serif' } });
+setKnob(styling, stylingFoundationsKnobCatalogue, 'labels.typeface', 'sans-italic');
+```
+
+- Each label keeps its weight. A bold city name stays bold in the serif.
+- The serif faces have no Arabic, and the italics cover Latin, Greek and Cyrillic only. The style's own face draws the other scripts, so no label goes missing.
+- Like any other [knob](./styling.mdx#knobs), it works with `getKnob`, `resetKnob` and `getConfig()`, and lasts across `setStyle`.
+
+## Your own font files
+
+To set the labels in a font of your own, give `labels.customTypeface` a URL per weight, to a WOFF2, TTF or any other file the browser draws text with. The SDK ships no font. The map downloads your files itself, from your server or a font CDN.
+
+```javascript
+const fraunces = 'https://cdn.jsdelivr.net/fontsource/fonts/fraunces@5/latin';
+
+await StylingFoundationsModule.get(map, {
+    labels: {
+        customTypeface: {
+            regular: `${fraunces}-400-normal.woff2`,
+            medium: `${fraunces}-500-normal.woff2`,
+            bold: `${fraunces}-700-normal.woff2`,
+            regularItalic: `${fraunces}-400-italic.woff2`,
+        },
+    },
+});
+```
+
+- `regular` is required, and `medium`, `bold`, `regularItalic`, `mediumItalic` and `boldItalic` are optional. A weight without a file takes the nearest weight you gave, and an italic without one takes the upright file of its weight.
+- While it is set, it wins over the `labels.typeface` knob.
+- `updateConfig` replaces `labels` whole, so spread the labels you have whenever you set or unset the files. Otherwise `labels.sizeFactor` and `labels.typeface` go with them. To unset the files alone, call `styling.updateConfig({ labels: { ...styling.getConfig()?.labels, customTypeface: undefined } })`.
+- It isn't a knob, since no knob kind takes font files. It is in `getConfig()` all the same, and the SDK declares the files again after every `setStyle`.
+- Check the font's license before you serve it. Fonts under the SIL Open Font License, such as those on [Fontsource](https://fontsource.org) and Google Fonts, allow it.
+
+### Characters and scripts
+
+By default, a file draws the characters of the `latin` files Fontsource and Google Fonts serve: Basic Latin, Latin-1 and the common punctuation. Every other character, and every character of a file that fails to load, is drawn in the style's own Noto face of the same weight. A Cyrillic or Chinese name next to your Latin font still shows. For a file that fails, MapLibre logs a warning to the console with the file's URL and the reason.
+
+To cover more, list the characters your files have in `unicodeRange`, as CSS `unicode-range` values. For a weight split into files by script, as font CDNs serve them, give a list of files, each with its own range:
+
+```javascript
+const file = (subset, weight) => `https://cdn.jsdelivr.net/fontsource/fonts/fraunces@5/${subset}-${weight}-normal.woff2`;
+const weight = (value) => [
+    { url: file('latin', value), unicodeRange: ['U+0000-00FF', 'U+0152-0153', 'U+2000-206F'] },
+    { url: file('latin-ext', value), unicodeRange: ['U+0100-02BA', 'U+1E00-1E9F'] },
+];
+
+styling.updateConfig({
+    labels: { ...styling.getConfig()?.labels, customTypeface: { regular: weight(400), bold: weight(700) } },
+});
+```
+
+Note that a character inside the range that the file lacks is drawn in the browser's default sans-serif, so list only what your files have. The browser draws your font one character cluster at a time, so a script whose letters join or reorder, such as Arabic or Devanagari, reads best left to the style's faces, outside the range.
+
+## Your routes, places and geometries
+
+The labels the SDK draws follow the map's typeface. They are the route waypoints and summary bubbles, places, geometry titles and border labels, reachable ranges and incident details.
+
+To set one module's labels apart, give their label settings a typeface of their own. Each label setting takes the same two fields as the map's `labels`:
+
+- `typeface`, one of `mapTypefaces`. It's a knob, such as `label.typeface` or `waypoints.label.typeface`.
+- `customTypeface`, your own font files, in the same shape as the map's. It wins over `typeface`.
+
+```javascript
+const fraunces = 'https://cdn.jsdelivr.net/fontsource/fonts/fraunces@5/latin';
+
+const routing = await RoutingModule.create(map, {
+    waypoints: { label: { customTypeface: { regular: `${fraunces}-400-normal.woff2`, bold: `${fraunces}-700-normal.woff2` } } },
+});
+const places = await PlacesModule.create(map, { label: { typeface: 'serif-italic' } });
+const districts = await GeometriesModule.create(map, { label: { typeface: 'serif' }, lineLabel: { typeface: 'sans-italic' } });
+```
+
+- A module's typeface sets its own labels only. Leave it unset and they follow the map's typeface again, files included.
+- A `font` on the same label wins over both, for when you want one exact face.
+- Like the map's own files, a module's files are declared again after every `setStyle`.
+
+The [Map typeface example](../../examples/map-typeface) switches between ten open-source families and the style's faces, with a route, museums and a district in Paris. Each has a typeface of its own to pick.
+
+## Related guides and examples
+
+### Related guides
+- **[Map styling](./styling.mdx)** — the knobs, their catalogue, presets and settings
+- **[Places styling](./places-styling.mdx)**, **[Routes styling](./routes-styling.mdx)** and **[Geometries](./geometries.mdx)** — the label settings of each module
+
+### Related examples
+- **[Map typeface](../../examples/map-typeface)** — every label in one typeface, from font files or the style's faces
+- **[Map styling playground](../../examples/map-styling-playground)** — the map's typeface beside every other look knob, and a route, museums and a district in typefaces of their own
